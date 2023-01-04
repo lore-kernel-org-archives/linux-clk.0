@@ -2,121 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5802C46467
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 12:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE49AC54EBE
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 13:32:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239264AbjADMpg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Jan 2023 07:45:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60026 "EHLO
+        id S236983AbjADNcF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Jan 2023 08:32:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239196AbjADMpJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 07:45:09 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3463217E0F
-        for <linux-clk@vger.kernel.org>; Wed,  4 Jan 2023 04:45:08 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id b24-20020a05600c4a9800b003d21efdd61dso26319645wmp.3
-        for <linux-clk@vger.kernel.org>; Wed, 04 Jan 2023 04:45:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JoyE4PJWzp52kEQxZdg5xRzmINtYTSDR3GIdh/fen5o=;
-        b=i2Q/j+795TYv9w0QGb5kGADj0/TDDYgZ7oc9eCOCy8Xrgx1fBkExbj4IrVJVkwUM21
-         8ES9qTesJVKLd49BSl+uXksWGO7vf8sI4EfhxMK67L6JQNFTqZHqwHTCWgxiEy+oavFK
-         EeDqIPKvUKsMvoyQLGSptukGhbsdLBw/cZUVnLx2I4XaGt9RwZSdpqfmwgF3t991ES0p
-         LVq9LKBrnxUzguC22xPQ/UT+gi43vjis4XleOV7RqPvh3jLowLV+eDI2POPaY/bIG1eF
-         tHqFKVlTXMUYlTENM0qkltyKfY/W0kbXBdXeLdhJCffE1bB794OhfPPGSoBnCmWgTKsw
-         Pu3A==
+        with ESMTP id S239445AbjADNbV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 08:31:21 -0500
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63A6E3D9DA;
+        Wed,  4 Jan 2023 05:27:06 -0800 (PST)
+Received: by mail-qt1-f169.google.com with SMTP id c7so27127172qtw.8;
+        Wed, 04 Jan 2023 05:27:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JoyE4PJWzp52kEQxZdg5xRzmINtYTSDR3GIdh/fen5o=;
-        b=bgrzUh0LjAPTDxijIWWbIkyCHrOuaXcGRU/Oz7n2b8emYetuT031iBkZ7d6hgHTuv8
-         2+CXH0vaH0+8TqESwvii9AdXLn/AipL6mlPcbzNkXg6jNrbzyzLKhUoceSIhlEsOJwoE
-         qbqwbE//8RGycI814mxtHz6e03Qf3jriDBcHj3D6wZhRSAaLQmkkOt9Azw7bqr+uElgs
-         NPHn+OuUH6LM3z7+CDnLDpApmcVsjL5lxCTJRRdhS+XgXfNHERb/4nxrGg6jtF1LHmfI
-         bHW0s+kjrJN0I0nCnQ/I0m28wNw6hNPQpeZBl56PRT4cPb0/P0+KnX4xDVxCc8+uU5rd
-         yH+w==
-X-Gm-Message-State: AFqh2kokyPYgUx0H1/DVRh0xikYMQZ8A6damQB+4vnj0ju2+aQvlHKey
-        Ake93cg05NKSyIr19obI0AH4Og==
-X-Google-Smtp-Source: AMrXdXuOHq0R3jJqhQZ89qbuXqn8jDJ+4fL/qm9ZowCLln8b45hYqyJuEujJSRfFX1H2V9Pf4KG6pg==
-X-Received: by 2002:a05:600c:4a9b:b0:3d1:dc6f:b1a4 with SMTP id b27-20020a05600c4a9b00b003d1dc6fb1a4mr41485468wmp.5.1672836306720;
-        Wed, 04 Jan 2023 04:45:06 -0800 (PST)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id m28-20020a05600c3b1c00b003d1e3b1624dsm54726447wms.2.2023.01.04.04.45.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jan 2023 04:45:06 -0800 (PST)
-Date:   Wed, 4 Jan 2023 14:45:04 +0200
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v8 3/4] clk: qcom: rpmh: Add support for SM8550 rpmh
- clocks
-Message-ID: <Y7V00JiPAYfqF4wH@linaro.org>
-References: <20230104093450.3150578-1-abel.vesa@linaro.org>
- <20230104093450.3150578-4-abel.vesa@linaro.org>
- <07a849a9-03dc-f3af-1d3f-2369cb71451e@linaro.org>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3apLs5SUEYCS8chIsKhmtTxwRF+eOByUathcApBcwhU=;
+        b=tREeZoatX4hC/sEGfSkC1T1RW1lXCIzjWw+rj9cIsb9iu8R8hZTL2c+vcMs+mEgx+r
+         2HASgJVSloNieaOSRBx6DCScq/wFT7yT0giPVLl95oOgwNzK2xQRWm22i/VWaJY1Fogl
+         Z7AKmlIq2i8zjj6Q/CW8vbB8ztiG9V+w0ANKO0bVbGVcwdJCoSUcWJOg2+DaQWAo0kd6
+         1SKd6TMi2W7pL2YzdHFr3HGSHrocdGEqnKSFpFP0MQ7bsqXX+XPf7NKAUfVdQD/LAVYF
+         7zKugAyV0elP7apZoW9LsUjzzFYj9T1kaFkV5PIl+aqC1F2lCbSmLDoAVtY5BKFdK0Pe
+         ubIA==
+X-Gm-Message-State: AFqh2kobJKjg+4uKtGowr/HMaFm4VeFeVzVF8+JVpcSPGwG+bM8ATn+Q
+        t50nxYqVvrRtlq73k0kpC/8fl2i2Lu4LKw==
+X-Google-Smtp-Source: AMrXdXsRMiUBdFPQxgwSndmnnsvCE17pTM+kW/eH0JJCydi8O/nTMKjYyO0fMfFeldbzuW4PnIow1Q==
+X-Received: by 2002:ac8:7457:0:b0:3a8:2122:7c28 with SMTP id h23-20020ac87457000000b003a821227c28mr69960797qtr.47.1672838825357;
+        Wed, 04 Jan 2023 05:27:05 -0800 (PST)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id g14-20020ac87d0e000000b003a7eceb8cbasm20494228qtb.90.2023.01.04.05.27.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Jan 2023 05:27:05 -0800 (PST)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-43ea87d0797so476160087b3.5;
+        Wed, 04 Jan 2023 05:27:04 -0800 (PST)
+X-Received: by 2002:a81:1b0a:0:b0:37e:6806:a5f9 with SMTP id
+ b10-20020a811b0a000000b0037e6806a5f9mr5542429ywb.47.1672838824691; Wed, 04
+ Jan 2023 05:27:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <07a849a9-03dc-f3af-1d3f-2369cb71451e@linaro.org>
+References: <f904fd28b2087d1463ea65f059924e3b1acc193c.1672764239.git.geert+renesas@glider.be>
+ <Y7RmnswYX+1g5vci@spud>
+In-Reply-To: <Y7RmnswYX+1g5vci@spud>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 4 Jan 2023 14:26:53 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX--sfenmb7WMgpe5045YfR7UjXAM-T9ZNZO3eTN_R=bg@mail.gmail.com>
+Message-ID: <CAMuHMdX--sfenmb7WMgpe5045YfR7UjXAM-T9ZNZO3eTN_R=bg@mail.gmail.com>
+Subject: Re: [PATCH] clk: microchip: mpfs-ccc: Use devm_kasprintf() for
+ allocating formatted strings
+To:     Conor Dooley <conor@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-01-04 12:46:55, Dmitry Baryshkov wrote:
-> On 04/01/2023 11:34, Abel Vesa wrote:
-> > Adds the RPMH clocks present in SM8550 SoC.
-> > 
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > ---
-> >   drivers/clk/qcom/clk-rpmh.c | 36 ++++++++++++++++++++++++++++++++++++
-> >   1 file changed, 36 insertions(+)
-> 
-> I think the plan was to have the _PAD clock as a child node of the rpmcc. Is
-> it still the planned implementation?
+Hi Conor,
 
-Yes. Here is how the dts rpmhcc node will look like:
+On Tue, Jan 3, 2023 at 6:32 PM Conor Dooley <conor@kernel.org> wrote:
+> On Tue, Jan 03, 2023 at 05:45:30PM +0100, Geert Uytterhoeven wrote:
+> > In various places, string buffers of a fixed size are allocated, and
+> > filled using snprintf() with the same fixed size, which is error-prone.
+> >
+> > Replace this by calling devm_kasprintf() instead, which always uses the
+> > appropriate size.
+> >
+> > While at it, remove an unneeded intermediate variable, which allows us
+> > to drop a cast as a bonus.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Tested-by: Conor Dooley <conor.dooley@microchip.com>
 
-         rpmhcc: clock-controller {
-                 compatible = "qcom,sm8550-rpmh-clk";
-                 #clock-cells = <1>;
-                 clock-names = "xo";
-                 clocks = <&xo_board>;
+Thanks!
 
-                 bi_tcxo_div2: bi-tcxo-div2-clk {
-                         #clock-cells = <0>;
-                         compatible = "fixed-factor-clock";
-                         clocks = <&rpmhcc RPMH_CXO_CLK>;
-                         clock-mult = <1>;
-                         clock-div = <2>;
-                 };
+> I half wonder if this should actually have a fixes tag too. Since it
+> used what came after the @ in $full_name, it'd be possible to create
+> (an incorrect) DTS that would lead to a clash between pll names &
+> therefore probe would fail.
+> The tag would be:
+> Fixes: d39fb172760e ("clk: microchip: add PolarFire SoC fabric clock support")
 
-                 bi_tcxo_ao_div2: bi-tcxo-div2-ao-clk {
-                         #clock-cells = <0>;
-                         compatible = "fixed-factor-clock";
-                         clocks = <&rpmhcc RPMH_CXO_CLK_A>;
-                         clock-mult = <1>;
-                         clock-div = <2>;
-                 };
-         };
+But I don't change any of that in my patch?
+/me confused.
 
-The clock nodes will be probed on of_clk_init.
+Gr{oetje,eeting}s,
 
-> 
-> -- 
-> With best wishes
-> Dmitry
-> 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
