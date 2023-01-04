@@ -2,148 +2,130 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1476CC54EF1
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 15:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C33C3C4708E
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 16:10:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239748AbjADP7S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Jan 2023 10:59:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52396 "EHLO
+        id S239738AbjADQKV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Jan 2023 11:10:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239372AbjADP7C (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 10:59:02 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D36091A042;
-        Wed,  4 Jan 2023 07:59:01 -0800 (PST)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 304EXLir021217;
-        Wed, 4 Jan 2023 15:58:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=0lHZ963tDIwG5HKJcK/1mhsvlFtiSGiWC2Jyu5Sui3E=;
- b=aF08d6DpO8yJfvNVlnLTzGBZV4HXxzBRraVw9DmVVZamsQpImDu8OhPTF0zPIbjMxmyw
- qZIwItOP1jMtBUH51X9UDP5AMR3praPcRjX73pKW/RtS+rdBA9EG+ShMfE3KepOB0wVj
- L5iWq399WkZiXE2qAFmJlaU9u4pPL2yMkP4wy8CHPQb3Kq2udSSymdxAoZY73o+RYW4u
- Vyxmpb5NIDR/4uQLqnc2dWJ90eWmmciFGi/BnermKDGK0fM392FuQWfYXQUbNCECTB1l
- nue5NYP/syMjyaseu7uymA6hlxQuZ3gN3niPkI5bKOxXARO6qutxgb/jDr84Th4aP1bn Gw== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mvsvgt50n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Jan 2023 15:58:55 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 304FwoFO031879
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 4 Jan 2023 15:58:50 GMT
-Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Wed, 4 Jan 2023 07:58:45 -0800
-From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-To:     <swboyd@chromium.org>, <agross@kernel.org>, <andersson@kernel.org>,
-        <robh+dt@kernel.org>, <broonie@kernel.org>,
-        <quic_plai@quicinc.com>, <krzysztof.kozlowski+dt@linaro.org>,
-        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_rohkumar@quicinc.com>
-CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Subject: [RESEND v3 4/4] clk: qcom: lpasscc-sc7280: Add resets for audioreach
-Date:   Wed, 4 Jan 2023 21:28:12 +0530
-Message-ID: <1672847892-25154-5-git-send-email-quic_srivasam@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1672847892-25154-1-git-send-email-quic_srivasam@quicinc.com>
-References: <1672847892-25154-1-git-send-email-quic_srivasam@quicinc.com>
+        with ESMTP id S239881AbjADQJj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 11:09:39 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC8C240851
+        for <linux-clk@vger.kernel.org>; Wed,  4 Jan 2023 08:09:19 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id u18so47797358eda.9
+        for <linux-clk@vger.kernel.org>; Wed, 04 Jan 2023 08:09:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Fdz8ydnkLz5wna1uPMyDPqPnfgZcb47kfpiU1wAhAo=;
+        b=GLxN5JXuiOtzMgmWrdYlcn0q2EhxBeBj1Rl8jzjd0XS6VAIeuEbKEWnWpKnCu4FZsi
+         /M4yqOkCuBcCOPjewV8qkVtP4lrZJXY37qkXPCp125xA85llOpBibFgovnnHpVgVfCkZ
+         UDkOFnE6O6SFEzF3Ov+SbSMj0cf6n2R3GNslY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7Fdz8ydnkLz5wna1uPMyDPqPnfgZcb47kfpiU1wAhAo=;
+        b=BnfW+hZEH+1teo9wg+OvILye40Bn0Ihi+cvV78mjK07S3jmwy3hEh5LTOrW0wRsuwa
+         Q5IHbRLfhJQ8HeHxqmInR3dWcQCoIWUQmWPz3nhOvcHxCzJBjUHd94ri75mnAW9sAcKN
+         gm+HMTfSQtnaa+XE96BMuoamUIu3X7p6XcSGD6rO+8w86OtWUVOOMaqZNAJ8g7GPpXE2
+         eKpcS2P2MowCN14wdTM4g5OiK2q/49XEaG95bE5eJc/NiR9uomdq5fCL/50FjUVVyvYb
+         RmIrPay4hx6hUva4Vsq8jcD3ZAvgUG6ohoN3ReR+3vKaZkLk78mBNPEafcClkMcKL70p
+         iP6Q==
+X-Gm-Message-State: AFqh2krxQtaoIoAFl4wU4h5q8dxvEhEetBt2ivt1yho2ya0Je7H88+ns
+        4Gby4DuUNSNgvvZkFgSc5+MHKGcpCydzs1ArH1H+ig==
+X-Google-Smtp-Source: AMrXdXsv1xg2M0bhVn1lwVtKy4iXv8iFGb+5mdRNNhgcOA/iAYMeYuCuQaM7J9fZy2xr9HWmpKkA9zSLNNe3G6JTUuY=
+X-Received: by 2002:aa7:d35a:0:b0:46c:4b56:8c06 with SMTP id
+ m26-20020aa7d35a000000b0046c4b568c06mr4381025edr.230.1672848558235; Wed, 04
+ Jan 2023 08:09:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 9Dg5BLOeiMqYewdgzCmbxNrX7bdlptve
-X-Proofpoint-ORIG-GUID: 9Dg5BLOeiMqYewdgzCmbxNrX7bdlptve
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2023-01-04_07,2023-01-04_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=863
- priorityscore=1501 adultscore=0 bulkscore=0 spamscore=0 phishscore=0
- lowpriorityscore=0 impostorscore=0 suspectscore=0 mlxscore=0
- malwarescore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2212070000 definitions=main-2301040133
+References: <20230101175740.1010258-1-dario.binacchi@amarulasolutions.com> <73979439-2e41-c4ea-02e0-d382f7ae1459@denx.de>
+In-Reply-To: <73979439-2e41-c4ea-02e0-d382f7ae1459@denx.de>
+From:   Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date:   Wed, 4 Jan 2023 17:09:07 +0100
+Message-ID: <CABGWkvpaCmV9Hwpbvd2KdZNqNZHeon4Cz2r+AucfpXTTHt52Cw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 00/11] clk: imx8mn: setup clocks from the device tree
+To:     Marek Vasut <marex@denx.de>
+Cc:     linux-kernel@vger.kernel.org, angelo@amarulasolutions.com,
+        michael@amarulasolutions.com, tommaso.merciai@amarulasolutions.com,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        linux-amarula@amarulasolutions.com, anthony@amarulasolutions.com,
+        jagan@amarulasolutions.com, Abel Vesa <abelvesa@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Li Jun <jun.li@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
+        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clock gating control for TX/RX/WSA core bus clocks would be required
-to be reset(moved from hardware control) from audio core driver. Thus
-add the support for the reset clocks in audioreach based clock driver.
+Hi Marek,
 
-Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Tested-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
----
- drivers/clk/qcom/lpasscc-sc7280.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+On Tue, Jan 3, 2023 at 12:04 AM Marek Vasut <marex@denx.de> wrote:
+>
+> On 1/1/23 18:57, Dario Binacchi wrote:
+> > The idea for this series was born back from Dublin (ELCE 2022) after
+> > having attended the talk entitled "Updating and Modernizing Clock
+> > Drivers" held by Chen-Yu Tsai and the availability of a board with
+> > imx8mn SOC.
+> >
+> > This series aims to setup all imx8mn's clocks from the device tree and
+> > remove the legacy setup code with hardwired parameters.
+> >
+> > I am well aware that the series lacks patches for the DT bindings. The
+> > effort up to this point has been important and so I thought I'd ask for
+> > feedback from the community before proceeding to implement them. If it
+> > is positive I will add the DT binding patches starting from version 2.
+> >
+> > The series has been tested on the BSH SystemMaster (SMM) S2 board:
+> > https://www.apertis.org/reference_hardware/imx8mn_bsh_smm_s2pro_setup
+>
+> I might be wrong, but I vaguely recall AT91 (?) had this kind of massive
+> clock tree description in DT and they then switched to much simpler
+> clock description where the clock topology is encoded in the driver
+> instead (like what iMX does right now). It might be worth having a look
+> at that and the reasoning around that conversion.
 
-diff --git a/drivers/clk/qcom/lpasscc-sc7280.c b/drivers/clk/qcom/lpasscc-sc7280.c
-index e1af32c..1efb72d 100644
---- a/drivers/clk/qcom/lpasscc-sc7280.c
-+++ b/drivers/clk/qcom/lpasscc-sc7280.c
-@@ -12,10 +12,12 @@
- #include <linux/regmap.h>
- 
- #include <dt-bindings/clock/qcom,lpass-sc7280.h>
-+#include <dt-bindings/clock/qcom,lpassaudiocc-sc7280.h>
- 
- #include "clk-regmap.h"
- #include "clk-branch.h"
- #include "common.h"
-+#include "reset.h"
- 
- static struct clk_branch lpass_top_cc_lpi_q6_axim_hs_clk = {
- 	.halt_reg = 0x0,
-@@ -102,6 +104,18 @@ static const struct qcom_cc_desc lpass_qdsp6ss_sc7280_desc = {
- 	.num_clks = ARRAY_SIZE(lpass_qdsp6ss_sc7280_clocks),
- };
- 
-+static const struct qcom_reset_map lpass_cc_sc7280_resets[] = {
-+	[LPASS_AUDIO_SWR_RX_CGCR] =  { 0xa0, 1 },
-+	[LPASS_AUDIO_SWR_TX_CGCR] =  { 0xa8, 1 },
-+	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
-+};
-+
-+static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
-+	.config = &lpass_regmap_config,
-+	.resets = lpass_cc_sc7280_resets,
-+	.num_resets = ARRAY_SIZE(lpass_cc_sc7280_resets),
-+};
-+
- static int lpass_cc_sc7280_probe(struct platform_device *pdev)
- {
- 	const struct qcom_cc_desc *desc;
-@@ -125,7 +139,6 @@ static int lpass_cc_sc7280_probe(struct platform_device *pdev)
- 		ret = qcom_cc_probe_by_index(pdev, 0, desc);
- 		if (ret)
- 			goto destroy_pm_clk;
--		}
- 	}
- 
- 	lpass_regmap_config.name = "top_cc";
-@@ -135,6 +148,15 @@ static int lpass_cc_sc7280_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto destroy_pm_clk;
- 
-+	if (of_property_read_bool(pdev->dev.of_node, "qcom,adsp-pil-mode")) {
-+		lpass_regmap_config.name = "reset_cgcr";
-+		desc = &lpass_audio_cc_reset_sc7280_desc;
-+
-+		ret = qcom_cc_probe_by_index(pdev, 2, desc);
-+		if (ret)
-+			goto destroy_pm_clk;
-+	}
-+
- 	return 0;
- 
- destroy_pm_clk:
+I took inspiration from Tero Kristo's work on the clock subsystem for
+TI platforms.
+I think he did a great job in both device tree definition and driver
+implementation.
+IMHO, this way the drivers are more flexible and the code can be more easily
+re-used on more platforms.
+
+Thanks and regards,
+Dario
+
 -- 
-2.7.4
 
+Dario Binacchi
+
+Senior Embedded Linux Developer
+
+dario.binacchi@amarulasolutions.com
+
+__________________________________
+
+
+Amarula Solutions SRL
+
+Via Le Canevare 30, 31100 Treviso, Veneto, IT
+
+T. +39 042 243 5310
+info@amarulasolutions.com
+
+www.amarulasolutions.com
