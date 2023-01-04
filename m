@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7DA8C678DB
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 16:22:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D69C678DC
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 16:22:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229461AbjADQWp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Jan 2023 11:22:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45840 "EHLO
+        id S234555AbjADQWq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Jan 2023 11:22:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239634AbjADQWU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 11:22:20 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90BFC42E35;
-        Wed,  4 Jan 2023 08:22:19 -0800 (PST)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 304Dx1q8031849;
-        Wed, 4 Jan 2023 16:22:13 GMT
+        with ESMTP id S239792AbjADQW3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 11:22:29 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 436501A048;
+        Wed,  4 Jan 2023 08:22:29 -0800 (PST)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 304FUjAg022412;
+        Wed, 4 Jan 2023 16:22:22 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=nLEGtR3xX/fAobQiHP8Fq1vCYtn2NPDHBpPXNLpRiNE=;
- b=Iv3wo3XylX48q4TlGKLgVnej6OplRG3tQovKik2nQwAcLtVoG2moRaUTFC8M4OYQzrdL
- ZXA/6Cx0f80s+LD5Xzm7wRBWcWiu4Og42FdqfkeeqeH6fjjiZngVRkRbtKdn5gC+F2XX
- gvOQEfXNLUKB+hflfrLDlqAsKtj4Yc0Zuzhpq5T9NyCoQbYIfE1VjbKcbhh/EjEXx0ZY
- wPk68VBm5GbHzYpPATdtWEe4Re+j87+WaowC/j56JCtLBJso4Vc+7kpy/lZeMdZ5RQ8S
- NXxPqPEuI8pMA5nae420af4BJq3qCIG4rFz01fHxau1Q9psRyRVqhRy/QoVdj0B8Kcpo Kg== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mvsvvaagc-1
+ bh=3KPGEp3I4+Jctna2PAD8ox70bJxxOEzVkwc5+X1wK+Q=;
+ b=MmEcmYe+z8KBtYu8e3a/BEBr5I6WSpQVppBPx+PW8iOY9g1WMYLODcqXzHp4GCr0GDTF
+ Mpe3HearOffp94wUBKbLcD0XkVZKNnfV5TgxzwxOeC7hDQNdckHdqaTuKNPaDm9qT4wb
+ jQuJtVRR4yMgYdLn3RR8RGuU6rRVTT4JZc9I7l1zaWs9B493E9K5krjPUr6R9FamWyJe
+ eqFGnJKRmCck/pamj234qoZ7CxW/E85+tv2CXkKq1kEwtcgqOEPgcPI7fHBpGElcFJde
+ lZpLd/Go7pptjahvOIv7z8j2FhmdAXrjFfLIYYSTLqDIjzQS3cPYv0GeaIEWwuDHwBER AQ== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mvsvgt6eu-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Jan 2023 16:22:13 +0000
+        Wed, 04 Jan 2023 16:22:22 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 304GMCJT005016
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 304GMMVY027391
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 4 Jan 2023 16:22:12 GMT
+        Wed, 4 Jan 2023 16:22:22 GMT
 Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Wed, 4 Jan 2023 08:22:07 -0800
+ 15.2.986.36; Wed, 4 Jan 2023 08:22:17 -0800
 From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 To:     <swboyd@chromium.org>, <agross@kernel.org>, <andersson@kernel.org>,
         <robh+dt@kernel.org>, <broonie@kernel.org>,
@@ -47,9 +47,9 @@ To:     <swboyd@chromium.org>, <agross@kernel.org>, <andersson@kernel.org>,
         <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <quic_rohkumar@quicinc.com>
 CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Subject: [RESEND v3 2/4] dt-bindings: clock: qcom,sc7280-lpasscc: Add resets for audioreach
-Date:   Wed, 4 Jan 2023 21:51:35 +0530
-Message-ID: <1672849297-3116-3-git-send-email-quic_srivasam@quicinc.com>
+Subject: [RESEND v3 4/4] clk: qcom: lpasscc-sc7280: Add resets for audioreach
+Date:   Wed, 4 Jan 2023 21:51:37 +0530
+Message-ID: <1672849297-3116-5-git-send-email-quic_srivasam@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1672849297-3116-1-git-send-email-quic_srivasam@quicinc.com>
 References: <1672849297-3116-1-git-send-email-quic_srivasam@quicinc.com>
@@ -60,71 +60,82 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: g4eTRnP9Y9GGRQuyiR98iUCzsP2c0HCg
-X-Proofpoint-GUID: g4eTRnP9Y9GGRQuyiR98iUCzsP2c0HCg
+X-Proofpoint-GUID: AR6hxzU592cHiXw1FOkOZmhKxmUcohPG
+X-Proofpoint-ORIG-GUID: AR6hxzU592cHiXw1FOkOZmhKxmUcohPG
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2023-01-04_07,2023-01-04_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- lowpriorityscore=0 mlxscore=0 malwarescore=0 suspectscore=0
- impostorscore=0 adultscore=0 bulkscore=0 mlxlogscore=999
- priorityscore=1501 phishscore=0 classifier=spam adjust=0 reason=mlx
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=888
+ priorityscore=1501 adultscore=0 bulkscore=0 spamscore=0 phishscore=0
+ lowpriorityscore=0 impostorscore=0 suspectscore=0 mlxscore=0
+ malwarescore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.12.0-2212070000 definitions=main-2301040136
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for LPASS audio clock gating for RX/TX/SWA core bus clocks
-for audioreach based SC7280 platforms.
+The clock gating control for TX/RX/WSA core bus clocks would be required
+to be reset(moved from hardware control) from audio core driver. Thus
+add the support for the reset clocks in audioreach based clock driver.
 
 Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 Tested-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
 ---
- .../devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml       | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/lpasscc-sc7280.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
-index 97c6bd9..054c496 100644
---- a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
-@@ -31,15 +31,20 @@ properties:
-   '#clock-cells':
-     const: 1
+diff --git a/drivers/clk/qcom/lpasscc-sc7280.c b/drivers/clk/qcom/lpasscc-sc7280.c
+index 85dd5b9..1efb72d 100644
+--- a/drivers/clk/qcom/lpasscc-sc7280.c
++++ b/drivers/clk/qcom/lpasscc-sc7280.c
+@@ -12,10 +12,12 @@
+ #include <linux/regmap.h>
  
-+  '#reset-cells':
-+    const: 1
+ #include <dt-bindings/clock/qcom,lpass-sc7280.h>
++#include <dt-bindings/clock/qcom,lpassaudiocc-sc7280.h>
+ 
+ #include "clk-regmap.h"
+ #include "clk-branch.h"
+ #include "common.h"
++#include "reset.h"
+ 
+ static struct clk_branch lpass_top_cc_lpi_q6_axim_hs_clk = {
+ 	.halt_reg = 0x0,
+@@ -102,6 +104,18 @@ static const struct qcom_cc_desc lpass_qdsp6ss_sc7280_desc = {
+ 	.num_clks = ARRAY_SIZE(lpass_qdsp6ss_sc7280_clocks),
+ };
+ 
++static const struct qcom_reset_map lpass_cc_sc7280_resets[] = {
++	[LPASS_AUDIO_SWR_RX_CGCR] =  { 0xa0, 1 },
++	[LPASS_AUDIO_SWR_TX_CGCR] =  { 0xa8, 1 },
++	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
++};
 +
-   reg:
-     items:
-       - description: LPASS qdsp6ss register
-       - description: LPASS top-cc register
-+      - description: LPASS reset-cgcr register
++static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
++	.config = &lpass_regmap_config,
++	.resets = lpass_cc_sc7280_resets,
++	.num_resets = ARRAY_SIZE(lpass_cc_sc7280_resets),
++};
++
+ static int lpass_cc_sc7280_probe(struct platform_device *pdev)
+ {
+ 	const struct qcom_cc_desc *desc;
+@@ -134,6 +148,15 @@ static int lpass_cc_sc7280_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto destroy_pm_clk;
  
-   reg-names:
-     items:
-       - const: qdsp6ss
-       - const: top_cc
-+      - const: reset_cgcr
++	if (of_property_read_bool(pdev->dev.of_node, "qcom,adsp-pil-mode")) {
++		lpass_regmap_config.name = "reset_cgcr";
++		desc = &lpass_audio_cc_reset_sc7280_desc;
++
++		ret = qcom_cc_probe_by_index(pdev, 2, desc);
++		if (ret)
++			goto destroy_pm_clk;
++	}
++
+ 	return 0;
  
-   qcom,adsp-pil-mode:
-     description:
-@@ -62,11 +67,14 @@ examples:
-     #include <dt-bindings/clock/qcom,lpass-sc7280.h>
-     clock-controller@3000000 {
-       compatible = "qcom,sc7280-lpasscc";
--      reg = <0x03000000 0x40>, <0x03c04000 0x4>;
--      reg-names = "qdsp6ss", "top_cc";
-+      reg = <0x03000000 0x40>,
-+            <0x03c04000 0x4>,
-+            <0x032a9000 0x1000>;
-+      reg-names = "qdsp6ss", "top_cc", "reset_cgcr";
-       clocks = <&gcc GCC_CFG_NOC_LPASS_CLK>;
-       clock-names = "iface";
-       qcom,adsp-pil-mode;
-       #clock-cells = <1>;
-+      #reset-cells = <1>;
-     };
- ...
+ destroy_pm_clk:
 -- 
 2.7.4
 
