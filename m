@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 208D3C4708E
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 16:22:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE05C46467
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 16:22:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235121AbjADQWr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Jan 2023 11:22:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45964 "EHLO
+        id S235343AbjADQWs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Jan 2023 11:22:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239774AbjADQWY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 11:22:24 -0500
+        with ESMTP id S235253AbjADQWQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 11:22:16 -0500
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E86B141D46;
-        Wed,  4 Jan 2023 08:22:23 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3552F4085C;
+        Wed,  4 Jan 2023 08:22:15 -0800 (PST)
 Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 304CU9Ym007943;
-        Wed, 4 Jan 2023 16:22:18 GMT
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 304G257B031845;
+        Wed, 4 Jan 2023 16:22:08 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=Hun4tShDJW/J1A08g/Eq2RnjtlijMdJDXBWLheWhPsM=;
- b=VowSkmqWdjv4Jyk0+0Y9qNUwUY/81EbWHfqwD4RRAsIGZxtYoWGRQq44WGYWDoP8oKvd
- fqySPM0+ujxHAXLoudOBweCuDn2nIokceEuWdgQi6ABfBONczzWeL5Sug3mWuopjvlyE
- J5bpyQuaFnD3BCEAbJVA0nYPgWA2BtZr24x86BT2IfIjKcdKdkBsgEgSsHp+rF6lzlm/
- hWMeJ2bkh4YR3pRPpN9cmW1d1pIrCNx0NXlDZKGx8pyalVRoiovk1GFPY/Pi2DDcTs08
- 0TTLBPLrNAAons0NLR94mgKb+AuFuIu4agOJ4vIirXrnYrUGBYi9RAZ2NVcWtm28tLV3 Sg== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mvsvxta5n-1
+ bh=qVxLVNi1vjauSf0iGsvDfnimrpo5LpqH79zwOIt7/GY=;
+ b=iffvpJ2u8YNT5awhj1uWrUlYld6nsHfpX4UzCIBEF/HZ0NMOm9BRt7O+8uw+4/HVzxB6
+ dB6hlpdHDkSKoKTAeCEMbN75/W6hfj03z6XHIdwJH8j3dy1MNbcwwKr41THAQBhB/q/g
+ XRJHnqprDyXVHNv09R/5VyaGTn5ht3YCA7AbF1wkL/+K0CDTDecBWj+ef7dkrM6eHAAR
+ QYo2fXEXYkhCWAHOLi11lWpo0PdDRva7r7xKWg3XHhT/9Wpame1XmXk++OmgFL/H4RVw
+ e5RD/jACxiNTE7Pf4WtEAyg06/SCeDLgD2mxz+/U/la22d6/T8aQxuS1DsMEXeTsPRUh sw== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mvsvxta5f-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Jan 2023 16:22:18 +0000
+        Wed, 04 Jan 2023 16:22:08 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 304GMGZb022781
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 304GM7Iw027208
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 4 Jan 2023 16:22:16 GMT
+        Wed, 4 Jan 2023 16:22:07 GMT
 Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Wed, 4 Jan 2023 08:22:12 -0800
+ 15.2.986.36; Wed, 4 Jan 2023 08:22:02 -0800
 From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 To:     <swboyd@chromium.org>, <agross@kernel.org>, <andersson@kernel.org>,
         <robh+dt@kernel.org>, <broonie@kernel.org>,
@@ -47,9 +47,9 @@ To:     <swboyd@chromium.org>, <agross@kernel.org>, <andersson@kernel.org>,
         <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <quic_rohkumar@quicinc.com>
 CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Subject: [RESEND v3 3/4] clk: qcom: lpasscc-sc7280: Skip qdsp6ss clock registration
-Date:   Wed, 4 Jan 2023 21:51:36 +0530
-Message-ID: <1672849297-3116-4-git-send-email-quic_srivasam@quicinc.com>
+Subject: [RESEND v3 1/4] dt-bindings: clock: qcom,sc7280-lpasscc: Add qcom,adsp-pil-mode property
+Date:   Wed, 4 Jan 2023 21:51:34 +0530
+Message-ID: <1672849297-3116-2-git-send-email-quic_srivasam@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1672849297-3116-1-git-send-email-quic_srivasam@quicinc.com>
 References: <1672849297-3116-1-git-send-email-quic_srivasam@quicinc.com>
@@ -60,12 +60,12 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: -jmnsLhLaaR45AARn9NkhFFC-dGhkl-w
-X-Proofpoint-GUID: -jmnsLhLaaR45AARn9NkhFFC-dGhkl-w
+X-Proofpoint-ORIG-GUID: V9aOv9mUu05jz2SxJs-E47ocJkf71tZp
+X-Proofpoint-GUID: V9aOv9mUu05jz2SxJs-E47ocJkf71tZp
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2023-01-04_07,2023-01-04_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=32 bulkscore=0
  suspectscore=0 malwarescore=0 impostorscore=0 lowpriorityscore=0
  clxscore=1015 priorityscore=1501 spamscore=0 mlxlogscore=999 phishscore=0
  mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
@@ -74,43 +74,44 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The qdsp6ss memory region is being shared by ADSP remoteproc device and
-lpasscc clock device, hence causing memory conflict.
-As the qdsp6ss clocks are being enabled in remoteproc driver, skip qdsp6ss
-clock registration if "qcom,adsp-pil-mode" is enabled.
+When this property is set, the remoteproc is used to boot the
+LPASS and therefore qdsp6ss clocks would be used to bring LPASS
+out of reset, hence they are directly controlled by the remoteproc.
 
-Fixes: 4ab43d171181 ("clk: qcom: Add lpass clock controller driver for SC7280")
+This is a cleanup done to handle overlap of regmap of lpasscc
+and adsp remoteproc blocks.
 
 Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 Tested-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
 ---
- drivers/clk/qcom/lpasscc-sc7280.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/clk/qcom/lpasscc-sc7280.c b/drivers/clk/qcom/lpasscc-sc7280.c
-index 5c1e17b..85dd5b9 100644
---- a/drivers/clk/qcom/lpasscc-sc7280.c
-+++ b/drivers/clk/qcom/lpasscc-sc7280.c
-@@ -118,12 +118,14 @@ static int lpass_cc_sc7280_probe(struct platform_device *pdev)
- 		goto destroy_pm_clk;
- 	}
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
+index 6151fde..97c6bd9 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
+@@ -41,6 +41,12 @@ properties:
+       - const: qdsp6ss
+       - const: top_cc
  
--	lpass_regmap_config.name = "qdsp6ss";
--	desc = &lpass_qdsp6ss_sc7280_desc;
-+	if (!of_property_read_bool(pdev->dev.of_node, "qcom,adsp-pil-mode")) {
-+		lpass_regmap_config.name = "qdsp6ss";
-+		desc = &lpass_qdsp6ss_sc7280_desc;
- 
--	ret = qcom_cc_probe_by_index(pdev, 0, desc);
--	if (ret)
--		goto destroy_pm_clk;
-+		ret = qcom_cc_probe_by_index(pdev, 0, desc);
-+		if (ret)
-+			goto destroy_pm_clk;
-+	}
- 
- 	lpass_regmap_config.name = "top_cc";
- 	desc = &lpass_cc_top_sc7280_desc;
++  qcom,adsp-pil-mode:
++    description:
++      Indicates if the LPASS would be brought out of reset using
++      remoteproc peripheral loader.
++    type: boolean
++
+ required:
+   - compatible
+   - reg
+@@ -60,6 +66,7 @@ examples:
+       reg-names = "qdsp6ss", "top_cc";
+       clocks = <&gcc GCC_CFG_NOC_LPASS_CLK>;
+       clock-names = "iface";
++      qcom,adsp-pil-mode;
+       #clock-cells = <1>;
+     };
+ ...
 -- 
 2.7.4
 
