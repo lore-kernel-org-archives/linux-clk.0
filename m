@@ -2,53 +2,52 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6594C4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 09:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 853F6C46467
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 09:36:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234135AbjADJfv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Jan 2023 04:35:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50102 "EHLO
+        id S234847AbjADJfx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Jan 2023 04:35:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239141AbjADJfa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 04:35:30 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FD0A193EA
-        for <linux-clk@vger.kernel.org>; Wed,  4 Jan 2023 01:35:07 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id z8-20020a05600c220800b003d33b0bda11so569994wml.0
-        for <linux-clk@vger.kernel.org>; Wed, 04 Jan 2023 01:35:06 -0800 (PST)
+        with ESMTP id S239122AbjADJf3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 04:35:29 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79AB21BE91
+        for <linux-clk@vger.kernel.org>; Wed,  4 Jan 2023 01:35:04 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id bi26-20020a05600c3d9a00b003d3404a89faso378280wmb.1
+        for <linux-clk@vger.kernel.org>; Wed, 04 Jan 2023 01:35:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AC7xaypPibvzJOcPS3LFlREzrhHc51KAqqlF1uf2uTY=;
-        b=RqfqrSVMzAP4FRzTVwiYotoUV2tcAdVdT3kqRjhs2eM4/qdPPjE/HWskuR1OGh3Msm
-         avlDUFm6UBX858yTiIeQHnyW+gUJdsYYs5oZTHVrdqpqdG1N6Vldlwfpwe6R+IFVpMh6
-         foN60ZwdLZRFsEnMSCYezjPhrvxI59YHR9+Y0Mcwsay2cKqoYMrG+Mq/L8XlEqw3pg9m
-         iPoVAXnr+KcSR0RBYk/TOnxn1a92zjL+zBZphM+2e+zvGapIbww9z840wuMzqUjuPGqU
-         73xmgpe7Bu/qQahR6dXokspV1rxwDBJpNbz3L5tJS/WYmQA7mhb95dOtwxfZ52teAO1n
-         hsJg==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bn35MCymS4jefAOtB8LpHRl6V3chqeTKM4An0AeJQ8Q=;
+        b=rug8cHT3SMg1Zi5j+BhP5N7pPAd1Fv0zoxcy5+Wfd/4hoI7jy7PmTwcj7pw20vVwoI
+         F48LcmbtOqhmVa2sjulZ0qTEBd/YpTf8HW83k8vLCN1R3fqTGUpZayZreN38HoL7BaTO
+         ducmaxN7/sTgk3S06c6yYxCm5tidP7VEhh+Nr3FkEKyalZpw2v6Vr5q1v1oq4f4iUZ2I
+         RRWeJIyBs1j1DOT61dbtNngDUIGXUXLV+MRDErM8imtZlxZJANQkhM/B4MNMOiXEPmE7
+         1ss8IPG0EGGENxMgN8ejSIr0TYpZRTkafYTXKliRlraAIscw4zpD85U1bcsCVBKwe8Vu
+         BVOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AC7xaypPibvzJOcPS3LFlREzrhHc51KAqqlF1uf2uTY=;
-        b=hT8YrNy7aRd0qieCaFCLsGfrma26g+YP2nRYcC0Hl980kgGmfDEfyFhNT98/dnGB86
-         xCu5wxNWAd5hrOsCPjmkv31PnXa/xegfClKZRKHt76HcXPoshXOO5JTwGXGDnxScjieT
-         GJlPdhE+2ROR1SN7F8pUmzIUivWi4LAURN1POuA7l+DtXDCVisDSHBTCGtGJwIW5I427
-         KwlTG9L9cgK8cNo8Jisvg8NBU9tR7BR9WigXJvmwqznKgBURgEu/KGtDgXBLWY12hKdG
-         YnZkAv2vT3fT+sMsFV+edG9vKntbijfxyc55wvm1ZVOVcCjrNVv+la4M8CRjrZRPRMEU
-         2zPA==
-X-Gm-Message-State: AFqh2krI5sFDIGXjEj9pheqP9l46IkCQHodv2hFlHhm8uusEzHALT55m
-        kUtSKokSqWTjirGl6fuVdQS+MA==
-X-Google-Smtp-Source: AMrXdXuoxbroV7S+KgNn1FMLN1SJImfJXx0lKl29Z8pNoGV/09KnkQtJXlAtWeIvnHhtzsafq08gKA==
-X-Received: by 2002:a05:600c:3644:b0:3d2:39dc:4ab9 with SMTP id y4-20020a05600c364400b003d239dc4ab9mr36679647wmq.13.1672824905529;
-        Wed, 04 Jan 2023 01:35:05 -0800 (PST)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bn35MCymS4jefAOtB8LpHRl6V3chqeTKM4An0AeJQ8Q=;
+        b=4bhYoU/HS+eMBaUldxhC6HF6/KjOxc5Wu//usftaPRKEs8HTeGYtgxp5goDCur5LV5
+         1umMRVKbHpzQgAOb/R0frujGDuPoSlTA43XukPLkha5892hqSOjAHg71RWelzejZmjsO
+         qFdwbAsyZLtQAmLxH/9KnO+cSMKjGiL+yUAdlb8NxdnTnC7Gyj06JhDv08LcyJWoLlre
+         tU4YOBCyM0dGLkPpPOh7L4xGY8DkBd1d6jH+dok1Ys3CF6nfAzXU/tjD6tx4HLI+O3fe
+         Hrgaw9gpD8yP8fBf1V3UT2Lbune8jiINgvumaK3ZXmC29LvZaJpgrzq/35SxfeVaXka7
+         6FIw==
+X-Gm-Message-State: AFqh2kpiM+WO7Bqcx6LSBMVzrungr7sSVwP8pZCvY1TFwQcECDvQ0tsh
+        W1ufDUmnxFJfO2M8Qzy+o9EQPg==
+X-Google-Smtp-Source: AMrXdXuqzkSn3rR1xjuy80hePampeT5Cf59w1yG+YqfnwcxBFFloj6msrL55FaBTqOxpmsZizCsspg==
+X-Received: by 2002:a05:600c:2e54:b0:3cf:ceac:94d3 with SMTP id q20-20020a05600c2e5400b003cfceac94d3mr32396174wmf.13.1672824902914;
+        Wed, 04 Jan 2023 01:35:02 -0800 (PST)
 Received: from hackbox.lan ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id b22-20020a05600c4e1600b003c6d21a19a0sm45561452wmq.29.2023.01.04.01.35.04
+        by smtp.gmail.com with ESMTPSA id b22-20020a05600c4e1600b003c6d21a19a0sm45561452wmq.29.2023.01.04.01.35.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jan 2023 01:35:05 -0800 (PST)
+        Wed, 04 Jan 2023 01:35:02 -0800 (PST)
 From:   Abel Vesa <abel.vesa@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -60,40 +59,54 @@ To:     Andy Gross <agross@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v8 2/4] dt-bindings: clock: Add RPMHCC for SM8550
-Date:   Wed,  4 Jan 2023 11:34:48 +0200
-Message-Id: <20230104093450.3150578-3-abel.vesa@linaro.org>
+        linux-clk@vger.kernel.org
+Subject: [PATCH v8 0/4] clk: qcom: Add support for SM8550
+Date:   Wed,  4 Jan 2023 11:34:46 +0200
+Message-Id: <20230104093450.3150578-1-abel.vesa@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230104093450.3150578-1-abel.vesa@linaro.org>
-References: <20230104093450.3150578-1-abel.vesa@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add bindings and update documentation for clock rpmh driver on SM8550.
+This patchset adds more clocks support for the Qualcomm SM8550 SoC,
+It adds the TCSR clock controller driver and the rpmh clocks.
 
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Changes since v7:
+ * Replaced RPMH_CXO_PAD_CLK with RPMH_CXO_CLK in the TCSR CC binding
+   schema example
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
-index cf25ba0419e2..6d7d699aaff9 100644
---- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
-@@ -31,6 +31,7 @@ properties:
-       - qcom,sm8250-rpmh-clk
-       - qcom,sm8350-rpmh-clk
-       - qcom,sm8450-rpmh-clk
-+      - qcom,sm8550-rpmh-clk
- 
-   clocks:
-     maxItems: 1
+To: Andy Gross <agross@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Rob Herring <robh+dt@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+Abel Vesa (4):
+  dt-bindings: clock: Add SM8550 TCSR CC clocks
+  dt-bindings: clock: Add RPMHCC for SM8550
+  clk: qcom: rpmh: Add support for SM8550 rpmh clocks
+  clk: qcom: Add TCSR clock driver for SM8550
+
+ .../bindings/clock/qcom,rpmhcc.yaml           |   1 +
+ .../bindings/clock/qcom,sm8550-tcsr.yaml      |  55 +++++
+ drivers/clk/qcom/Kconfig                      |   7 +
+ drivers/clk/qcom/Makefile                     |   1 +
+ drivers/clk/qcom/clk-rpmh.c                   |  36 ++++
+ drivers/clk/qcom/tcsrcc-sm8550.c              | 192 ++++++++++++++++++
+ include/dt-bindings/clock/qcom,sm8550-tcsr.h  |  18 ++
+ 7 files changed, 310 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+ create mode 100644 drivers/clk/qcom/tcsrcc-sm8550.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm8550-tcsr.h
+
 -- 
 2.34.1
 
