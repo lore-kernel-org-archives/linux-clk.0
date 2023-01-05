@@ -2,97 +2,110 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 371FFC3DA7A
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Jan 2023 17:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99285C54EBC
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Jan 2023 22:19:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235034AbjAERel (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Jan 2023 12:34:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47174 "EHLO
+        id S234829AbjAEWTA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Jan 2023 17:19:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235278AbjAERej (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Jan 2023 12:34:39 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24B26E45;
-        Thu,  5 Jan 2023 09:34:39 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id z16so20354658wrw.1;
-        Thu, 05 Jan 2023 09:34:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4yFsobRjIEmQm/DKnD82AMLE2egCJRjpMOIJdP27XLs=;
-        b=Ok61nY5Kao4ppgyPXSS8swkii7i2kd66zOt2jX9qQ+Tfv5GgacxnCkiGMezhCzNj9X
-         n+Yp+EgcV4yBHYcDQx7PMoYmmKI2phxaAubd5No7nP248rq4vsV6kw0nvlkHwVAMvtDk
-         6IIdWux63nEEUuW4QIsp203EoX2UDzCjXzuPXTTOT2zQtSzD1m3COLJgM2JC1PzOIPUT
-         B22Ny80hRW+8y/M27B7QEY07eZZWQAo4KZaKClg/HO2xbFWiDhheFZ0doa4eTMagK0jG
-         AK4zRba8lh7A+Nj0p4GNzIVy20smjUdFKLrFvIdY+YTLtrXQcR5dKlO05uml5C5sdmLn
-         0/jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4yFsobRjIEmQm/DKnD82AMLE2egCJRjpMOIJdP27XLs=;
-        b=ZlWGBMebHiEMwlvDycxuD8WJ+s+d6wGKqEPx1SbWKQKA+bRx3LxOU4bcLBQY3arc2i
-         YUUgDwa5oOk+TdpobuKlLXGhu6poce5NbgKTMEm6HUjCG1Dgr5hlQgYLAjj1oHUYp+Ca
-         AoW1jZbkPaTZdADV8rp6i0Ia7Qe/3jHFbyXiGob4cwI3CcZiqLf9np9KZAfqo6V9MVX1
-         xqm9LnTFQqskh1cFzFrRvKU7bpO0YhdSOEVOk0w7AZQhFxqla8tJrrH0P+tVCoMXg+jV
-         xYsyISYY+rsfgBKhIzgjAALpVWCqJvEii60k3RUNKATYVUc7mXiBJCi0SS0/HFEwJqvG
-         tXWg==
-X-Gm-Message-State: AFqh2kqE0G5rQ1l5WF8edhib88l8ey4QrFvKUIVsc+AT4GXUXBDuruhX
-        NANA2ky4dl2BxJJW08v5ockPoZKvsykNKzH3
-X-Google-Smtp-Source: AMrXdXuRNLB0HJ7TJiRxUb5UM81lg4k8r0EpzD0Wo6njhgCYm6MxIzN0BDQ7pYFS6fb59zvHXKaEYQ==
-X-Received: by 2002:a5d:6dc1:0:b0:242:3353:26ed with SMTP id d1-20020a5d6dc1000000b00242335326edmr28981391wrz.62.1672940077645;
-        Thu, 05 Jan 2023 09:34:37 -0800 (PST)
-Received: from jernej-laptop.localnet (82-149-19-102.dynamic.telemach.net. [82.149.19.102])
-        by smtp.gmail.com with ESMTPSA id a18-20020adfed12000000b0027cfd9463d7sm30165469wro.110.2023.01.05.09.34.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jan 2023 09:34:36 -0800 (PST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Samuel Holland <samuel@sholland.org>
-Cc:     Samuel Holland <samuel@sholland.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-sunxi@lists.linux.dev,
-        Fabien Poussin <fabien.poussin@gmail.com>,
-        Andre Przywara <andre.przywara@arm.com>
-Subject: Re: [PATCH v2 6/6] clk: sunxi-ng: d1: Add CAN bus gates and resets
-Date:   Thu, 05 Jan 2023 18:34:35 +0100
-Message-ID: <22918155.6Emhk5qWAg@jernej-laptop>
-In-Reply-To: <20221231231429.18357-7-samuel@sholland.org>
-References: <20221231231429.18357-1-samuel@sholland.org>
- <20221231231429.18357-7-samuel@sholland.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        with ESMTP id S229694AbjAEWS7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Jan 2023 17:18:59 -0500
+Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63F0967BFF;
+        Thu,  5 Jan 2023 14:18:58 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.west.internal (Postfix) with ESMTP id DEFA132007CF;
+        Thu,  5 Jan 2023 17:18:56 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Thu, 05 Jan 2023 17:18:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; t=1672957136; x=1673043536; bh=TCaP7y5pzb
+        RmEVCDjX4if25GDRs9o9AP2CCvuXdY0Rc=; b=PIcSr8fYa2Ax3wFTq+g4lz8Egp
+        wYqg/YGdva+cVwXt9uZTfsZxQ27iGq06akBW3eOl9ixhfehTWB3WrkYUFvKlqjGX
+        fkDHxuUKwRqhFU1fJZSEY72aKgS7wK2oGkZR7hPZvBR0TXrRwI0DErsLhfuXL+wq
+        1LLFWpIgTcG0jicVeuyuEbB1QIEb5MjM9WGhT/ubOkKMCkLH0Ecwpw4LJeu0yVym
+        8hYV59utE/civUmOmUnpquSOzbUyoK9wysJUWv9vnspWvw5sfzU5Ag4wm6ReiNln
+        hAHk2M9XwcRNPpdW5VxqeC2pxe4BoWnEcm5XB9ErG77SnAx9MeaFEfDCqnIA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm2; t=1672957136; x=1673043536; bh=TCaP7y5pzbRmEVCDjX4if25GDRs9
+        o9AP2CCvuXdY0Rc=; b=KMsvE1ioZEJTW+IdbA+3wGtpwUfjL4X5vYLLsXNwgRnF
+        kJNW9lSFH1mTj5y2b1o0Pf7/+uQWyAWHH6Tt3czXMXjWK5TPdyOUBX3D1X2xuLah
+        VoopmZ/WCRH2kgGIVVD8aF3Wtz2E1wtxUtfdwq/Ls6K5VKY5EnInSGSxnQhHrZKj
+        Njf8/2KyYFpkQooJ/i7iA4cPqzLRHOkl3u4tqFogRRJPF9lA9ecv/v7+MTio1Lh0
+        9qrlhlSkboVbAeyPPCvPquI0nycez6ygf4E3uP0mHa4LqxzGu0XMO10xmMwYihJE
+        /oTmRbH/NzOFpIh+ovc2x83PqXBVKej9uuxjxn4sAg==
+X-ME-Sender: <xms:0Ey3Y-N9OIa30Ll-O0fn6BQt1edYAiQecStmo9eRbf_bE0ocd_Tpaw>
+    <xme:0Ey3Y8-nYRa5KFIlQKnDj11hBYzEX2cbhtnVcgKH88s73q_5vcRzZMHV920RPpAK0
+    zCC3CIafHqmLRWOldI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrjeekgdduiedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepudeiffeghfdtueeigeeljedvfeeludffkedtkeeuvdeifeefudeiteefffev
+    gfeunecuffhomhgrihhnpehgihhtqdhstghmrdgtohhmnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:0Ey3Y1TFjHCzrZ2JaGGMwVbtgyXn7sd4iaiuXTWXh5qFZMUTRdMWcw>
+    <xmx:0Ey3Y-vojGuC9-6fZRpSlURSXNeCG0jVb64p7noARUjoj6nrMK4aeg>
+    <xmx:0Ey3Y2cSKiNDTsmyL3QQIXUndMdjQUSDDWXZW7HyP2T7YVnjjFE7mg>
+    <xmx:0Ey3Y81ofk1jtNnS7fQq4IK9qdJxpsx_hJ3kTP1jYmHzhwlQlYJZlA>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 1B0ECB60086; Thu,  5 Jan 2023 17:18:55 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.7.0-alpha0-1185-g841157300a-fm-20221208.002-g84115730
+Mime-Version: 1.0
+Message-Id: <8b50ce1d-59d8-44b6-b330-d2ab56fb85a7@app.fastmail.com>
+In-Reply-To: <202301060326.qh0NHlzm-lkp@intel.com>
+References: <20230105141231.2006353-1-arnd@kernel.org>
+ <202301060326.qh0NHlzm-lkp@intel.com>
+Date:   Thu, 05 Jan 2023 23:18:36 +0100
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "kernel test robot" <lkp@intel.com>,
+        "Arnd Bergmann" <arnd@kernel.org>,
+        "Krzysztof Kozlowski" <krzk@kernel.org>,
+        "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+        "Tomasz Figa" <tomasz.figa@gmail.com>,
+        "Chanwoo Choi" <cw00.choi@samsung.com>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>
+Cc:     oe-kbuild-all@lists.linux.dev,
+        "Alim Akhtar" <alim.akhtar@samsung.com>,
+        "Ajay Kumar" <ajaykumar.rs@samsung.com>,
+        "Pankaj Dubey" <pankaj.dubey@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: samsung: remove s3c24xx specific pll bits
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne nedelja, 01. januar 2023 ob 00:14:29 CET je Samuel Holland napisal(a):
-> From: Fabien Poussin <fabien.poussin@gmail.com>
-> 
-> The D1 CCU contains gates and resets for two CAN buses. While the CAN
-> bus controllers are only documented for the T113 SoC, the CCU is the
-> same across all SoC variants.
-> 
-> Signed-off-by: Fabien Poussin <fabien.poussin@gmail.com>
-> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
+On Thu, Jan 5, 2023, at 20:49, kernel test robot wrote:
+> Hi Arnd,
+>
+> I love your patch! Yet something to improve:
+>
+> [auto build test ERROR on krzk/for-next]
+> [also build test ERROR on linus/master v6.2-rc2 next-20230105]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+>
+>>> drivers/clk/samsung/clk-s3c2410.c:123:9: error: implicit declaration of function 'PLL_S3C2410_MPLL_RATE' [-Werror=implicit-function-declaration]
+>      123 |         PLL_S3C2410_MPLL_RATE(12 * MHZ, 270000000, 127, 1, 1),
+>          |         ^~~~~~~~~~~~~~~~~~~~~
 
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+For clarification, the order in the patch series puts this
+patch after the one that removes clk-s3c2410.c, so there should
+be no bisection problem.
 
-Best regards,
-Jernej
-
-
+    Arnd
