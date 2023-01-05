@@ -2,116 +2,79 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE05C46467
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Jan 2023 16:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79EC6C678DC
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Jan 2023 00:41:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235343AbjADQWs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Jan 2023 11:22:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45732 "EHLO
+        id S239423AbjAEAlL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Jan 2023 19:41:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235253AbjADQWQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 11:22:16 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3552F4085C;
-        Wed,  4 Jan 2023 08:22:15 -0800 (PST)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 304G257B031845;
-        Wed, 4 Jan 2023 16:22:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=qVxLVNi1vjauSf0iGsvDfnimrpo5LpqH79zwOIt7/GY=;
- b=iffvpJ2u8YNT5awhj1uWrUlYld6nsHfpX4UzCIBEF/HZ0NMOm9BRt7O+8uw+4/HVzxB6
- dB6hlpdHDkSKoKTAeCEMbN75/W6hfj03z6XHIdwJH8j3dy1MNbcwwKr41THAQBhB/q/g
- XRJHnqprDyXVHNv09R/5VyaGTn5ht3YCA7AbF1wkL/+K0CDTDecBWj+ef7dkrM6eHAAR
- QYo2fXEXYkhCWAHOLi11lWpo0PdDRva7r7xKWg3XHhT/9Wpame1XmXk++OmgFL/H4RVw
- e5RD/jACxiNTE7Pf4WtEAyg06/SCeDLgD2mxz+/U/la22d6/T8aQxuS1DsMEXeTsPRUh sw== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mvsvxta5f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Jan 2023 16:22:08 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 304GM7Iw027208
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 4 Jan 2023 16:22:07 GMT
-Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Wed, 4 Jan 2023 08:22:02 -0800
-From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-To:     <swboyd@chromium.org>, <agross@kernel.org>, <andersson@kernel.org>,
-        <robh+dt@kernel.org>, <broonie@kernel.org>,
-        <quic_plai@quicinc.com>, <krzysztof.kozlowski+dt@linaro.org>,
-        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_rohkumar@quicinc.com>
-CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Subject: [RESEND v3 1/4] dt-bindings: clock: qcom,sc7280-lpasscc: Add qcom,adsp-pil-mode property
-Date:   Wed, 4 Jan 2023 21:51:34 +0530
-Message-ID: <1672849297-3116-2-git-send-email-quic_srivasam@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1672849297-3116-1-git-send-email-quic_srivasam@quicinc.com>
-References: <1672849297-3116-1-git-send-email-quic_srivasam@quicinc.com>
+        with ESMTP id S240711AbjAEAiv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jan 2023 19:38:51 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 995B0C52;
+        Wed,  4 Jan 2023 16:38:19 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 44EB26189D;
+        Thu,  5 Jan 2023 00:38:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A025C433AF;
+        Thu,  5 Jan 2023 00:38:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1672879095;
+        bh=CxNoIVnojblXsI8lyz2C7HZU+DjFixYiXxVzbQ0VHio=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GxIGer1xiDRSnTm9x+cgEIpwPFleN8jJWt7nMRRFCSNe+IWTPwYTPyl5NaUl3Z4aU
+         dadJN77L9NqR9PdFB9lFm8MfKtwIQ6jpV4quuiu01+O8ajM3E35AQh8cZdUl6nZBLZ
+         nBXuH8yoJRw/hekFt71mCZkAz/R1CalnZBztCaLfVhLzuIZzJSRXdfAv22QWX6MG8E
+         u76P2bubsn8cWa8WvKGHPc+Cq0NjeBXz+u6wzGCT0E+EZf7NEOCx3kHPSTYMCnit4b
+         2mty9hdlvm3dC5fGSWvfeQLF7dP3gNWcdXW6PFQljLNrS9r5FAP33KYolJbT8xWfwz
+         EENLg03YirXsA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+        id C5AAC5C1C5D; Wed,  4 Jan 2023 16:38:14 -0800 (PST)
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     rcu@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-team@meta.com,
+        rostedt@goodmis.org, "Paul E. McKenney" <paulmck@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH rcu 09/27] drivers/clk: Remove "select SRCU"
+Date:   Wed,  4 Jan 2023 16:37:55 -0800
+Message-Id: <20230105003813.1770367-9-paulmck@kernel.org>
+X-Mailer: git-send-email 2.31.1.189.g2e36527f23
+In-Reply-To: <20230105003759.GA1769545@paulmck-ThinkPad-P17-Gen-1>
+References: <20230105003759.GA1769545@paulmck-ThinkPad-P17-Gen-1>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: V9aOv9mUu05jz2SxJs-E47ocJkf71tZp
-X-Proofpoint-GUID: V9aOv9mUu05jz2SxJs-E47ocJkf71tZp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2023-01-04_07,2023-01-04_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=32 bulkscore=0
- suspectscore=0 malwarescore=0 impostorscore=0 lowpriorityscore=0
- clxscore=1015 priorityscore=1501 spamscore=0 mlxlogscore=999 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301040136
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When this property is set, the remoteproc is used to boot the
-LPASS and therefore qdsp6ss clocks would be used to bring LPASS
-out of reset, hence they are directly controlled by the remoteproc.
+Now that the SRCU Kconfig option is unconditionally selected, there is
+no longer any point in selecting it.  Therefore, remove the "select SRCU"
+Kconfig statements.
 
-This is a cleanup done to handle overlap of regmap of lpasscc
-and adsp remoteproc blocks.
-
-Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Tested-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: <linux-clk@vger.kernel.org>
 ---
- Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clk/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
-index 6151fde..97c6bd9 100644
---- a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
-@@ -41,6 +41,12 @@ properties:
-       - const: qdsp6ss
-       - const: top_cc
- 
-+  qcom,adsp-pil-mode:
-+    description:
-+      Indicates if the LPASS would be brought out of reset using
-+      remoteproc peripheral loader.
-+    type: boolean
-+
- required:
-   - compatible
-   - reg
-@@ -60,6 +66,7 @@ examples:
-       reg-names = "qdsp6ss", "top_cc";
-       clocks = <&gcc GCC_CFG_NOC_LPASS_CLK>;
-       clock-names = "iface";
-+      qcom,adsp-pil-mode;
-       #clock-cells = <1>;
-     };
- ...
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index d79905f3e1744..b6c5bf69a2b2c 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -23,7 +23,6 @@ menuconfig COMMON_CLK
+ 	depends on !HAVE_LEGACY_CLK
+ 	select HAVE_CLK_PREPARE
+ 	select HAVE_CLK
+-	select SRCU
+ 	select RATIONAL
+ 	help
+ 	  The common clock framework is a single definition of struct
 -- 
-2.7.4
+2.31.1.189.g2e36527f23
 
