@@ -2,88 +2,82 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 561DEC3DA7A
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Jan 2023 15:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C13C3DA7A
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Jan 2023 16:25:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234709AbjAEPXy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Jan 2023 10:23:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46472 "EHLO
+        id S233384AbjAEQZU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Jan 2023 11:25:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234190AbjAEPXd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Jan 2023 10:23:33 -0500
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::224])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 448FE288;
-        Thu,  5 Jan 2023 07:23:32 -0800 (PST)
-Received: (Authenticated sender: herve.codina@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id 26F85E0006;
-        Thu,  5 Jan 2023 15:23:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1672932210;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+GoDYEKK8Y9YZdjSvUSOyQ3kYOxIaR/Idlu49Gec+8k=;
-        b=Z8aB/DXDeLWCisL6QMEpoc7sT8Ib+w/cNxoA2pO7lc3KenzFuIvGDk2qlEE6rCEEPmCLAH
-        5UaA9VHBdsNvlSTLYT3YeL1FpNe8vpGFLyDJ4tuLSfS0F9PI+qecL5DoIZ5UM98/tGObZ5
-        Dr97806OT25ZpN6oyVh+FG0FAaRz+PA8OysaDicHytLu1Z20T1YBJSmcfBe7DLc7diYCSO
-        0h7yidYzMPYVYPsv3TovB+Mjkz2gJ7CBRPe5FBEeALNIhc41LGTaCXP/yI9g87Kv11kuZf
-        27tpz5Sxb7FBPytTdZ5zNBNrtkXmEMnvHy8KvbTyT9LbSD4LTiqI7SZCzagKjw==
-From:   Herve Codina <herve.codina@bootlin.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        with ESMTP id S232012AbjAEQZT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Jan 2023 11:25:19 -0500
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C7E358304;
+        Thu,  5 Jan 2023 08:25:18 -0800 (PST)
+Received: by mail-ej1-x634.google.com with SMTP id u19so91187475ejm.8;
+        Thu, 05 Jan 2023 08:25:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EGcjNWkYyFV7KGtDmAPcnHFpakjpf87o3mWY6B3jNYE=;
+        b=kkvPJ+0gP56qm8Gm9tFVNHPLid+GH4Znb+lcoJ5awmOUBN26bnPtyYc4yVt36VwAHh
+         lU4Rs3J9dvunQghJMYZCjdo57bRhKlksSOfqGM5GMI8Zkv0PUx+5Dj3un9lXQpGx9yEk
+         8udoJGOAwp02/sHn4NXWtnHHwRWArLEdwGpTT61nY3aAEFtG/WrFQPbjWsH4DzeYq1tC
+         oniICgQxBL/X3KszV7NLR7HvuqJZnuEjMlk6GrsuYzxT5NVB6d2OPfIhYv/i+TOXQg1w
+         mWIKs0O858viOkrDkhik5wt1iiEkCxc0vSj+cY8OFpMKWaSOBEewncXLf+mwBpughF8n
+         cTBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EGcjNWkYyFV7KGtDmAPcnHFpakjpf87o3mWY6B3jNYE=;
+        b=m+gtFb4X/Ry6YHy22cR68JOAuEfAPGdj0tKt435/+S0mr5+Mq4YgBbC2Ir6SDjzelS
+         6x0i5lLTM1gJcEPUvA6UUQU5TLpiSMhMANJUva3qpfU7Kf1ytqHQIlrsRRTdsyzACzt8
+         qXG4Ah2tbVwp7nNQakODBTkR8Pfq9EsB0dIw5GJc2wYqnzZ1AzRk4jduteqLFjJKFejj
+         9VK2cPwD6hM+XndvKYQtQ2coiUmQbe/zO7oRV2cWtfAXV2d/8Qe4TQR7cR4TDbj4zNmM
+         8G1cL/Vr1A32zhKCmt+3qS8p+BgR7C/Noe8SI0WHmB4IQ7qOkBmJUvJs9XXVQzFB11Xa
+         kB+Q==
+X-Gm-Message-State: AFqh2koBwmyMtr9c3KKt7qMGXmZxnCyz60uAkokgz3hd9p9UUcyLwN7S
+        fHZpsva6dn2uU5f6UA2IlVI=
+X-Google-Smtp-Source: AMrXdXud+NA0Suedx7vVT0q3+kaXBXllkZ9GjEa6ydtq6LSRAxonQbvR+e2OR6Avz1mD7lO5OS0w8Q==
+X-Received: by 2002:a17:906:910:b0:7ad:aed7:a5da with SMTP id i16-20020a170906091000b007adaed7a5damr57431170ejd.28.1672935916846;
+        Thu, 05 Jan 2023 08:25:16 -0800 (PST)
+Received: from jernej-laptop.localnet (82-149-19-102.dynamic.telemach.net. [82.149.19.102])
+        by smtp.gmail.com with ESMTPSA id 17-20020a170906211100b0084cb4d37b8csm6504278ejt.141.2023.01.05.08.25.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Jan 2023 08:25:16 -0800 (PST)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To:     Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>
+Cc:     Samuel Holland <samuel@sholland.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v5 5/5] MAINTAINERS: add the Renesas RZ/N1 USBF controller entry
-Date:   Thu,  5 Jan 2023 16:22:57 +0100
-Message-Id: <20230105152257.310642-6-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20230105152257.310642-1-herve.codina@bootlin.com>
-References: <20230105152257.310642-1-herve.codina@bootlin.com>
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v2] clk: sunxi-ng: Avoid computing the rate twice
+Date:   Thu, 05 Jan 2023 17:25:15 +0100
+Message-ID: <2860887.e9J7NaK4W3@jernej-laptop>
+In-Reply-To: <20221231173055.42384-1-samuel@sholland.org>
+References: <20221231173055.42384-1-samuel@sholland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-After contributing the driver, add myself as the maintainer
-for Renesas RZ/N1 USBF controller.
+Dne sobota, 31. december 2022 ob 18:30:55 CET je Samuel Holland napisal(a):
+> The ccu_*_find_best() functions already compute a best_rate at the same
+> time as the other factors. Return this value so the caller does not need
+> to duplicate the computation.
+> 
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7f86d02cb427..ed8afef5386f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17859,6 +17859,14 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
- F:	drivers/rtc/rtc-rzn1.c
- 
-+RENESAS RZ/N1 USBF CONTROLLER DRIVER
-+M:	Herve Codina <herve.codina@bootlin.com>
-+L:	linux-renesas-soc@vger.kernel.org
-+L:	linux-usb@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/usb/renesas,rzn1-usbf.yaml
-+F:	drivers/usb/gadget/udc/renesas_usbf.c
-+
- RENESAS R-CAR GEN3 & RZ/N1 NAND CONTROLLER DRIVER
- M:	Miquel Raynal <miquel.raynal@bootlin.com>
- L:	linux-mtd@lists.infradead.org
--- 
-2.38.1
+Best regards,
+Jernej
+
 
