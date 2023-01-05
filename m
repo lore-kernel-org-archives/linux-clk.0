@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C13C3DA7A
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Jan 2023 16:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB594C3DA7A
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Jan 2023 17:30:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233384AbjAEQZU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Jan 2023 11:25:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59150 "EHLO
+        id S231827AbjAERa1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Jan 2023 12:30:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232012AbjAEQZT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Jan 2023 11:25:19 -0500
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C7E358304;
-        Thu,  5 Jan 2023 08:25:18 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id u19so91187475ejm.8;
-        Thu, 05 Jan 2023 08:25:18 -0800 (PST)
+        with ESMTP id S234360AbjAERa0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Jan 2023 12:30:26 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7733392;
+        Thu,  5 Jan 2023 09:30:25 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id b24-20020a05600c4a9800b003d21efdd61dso1882830wmp.3;
+        Thu, 05 Jan 2023 09:30:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EGcjNWkYyFV7KGtDmAPcnHFpakjpf87o3mWY6B3jNYE=;
-        b=kkvPJ+0gP56qm8Gm9tFVNHPLid+GH4Znb+lcoJ5awmOUBN26bnPtyYc4yVt36VwAHh
-         lU4Rs3J9dvunQghJMYZCjdo57bRhKlksSOfqGM5GMI8Zkv0PUx+5Dj3un9lXQpGx9yEk
-         8udoJGOAwp02/sHn4NXWtnHHwRWArLEdwGpTT61nY3aAEFtG/WrFQPbjWsH4DzeYq1tC
-         oniICgQxBL/X3KszV7NLR7HvuqJZnuEjMlk6GrsuYzxT5NVB6d2OPfIhYv/i+TOXQg1w
-         mWIKs0O858viOkrDkhik5wt1iiEkCxc0vSj+cY8OFpMKWaSOBEewncXLf+mwBpughF8n
-         cTBw==
+        bh=o5jZcZ+YgPoIjP8SOU3FjXlsuvcwtes2avBtwRlJmuo=;
+        b=Jm4esGPypCFk9CsOcodMN6zqTZiqZyUp+yCwCShUysTZojG5j/XGWOVabVR1zfnKEl
+         qarZQJ17W3XHSuVEn72fDOsYjg8LWSryNbUvxOZazMjdM6eZBSbIoVocNxUwJgyWjoED
+         Eg5ix4nnNgnKyG/EI8zgmFc56NSBtQeb6VdQ6G+rREAFvOoU00Izcg4Zx9yoEpzT9hNJ
+         +2yjaApu6bXySJXBCh5RoQa2QRDE0zDdtjdN/kU9d1xHYEthN1I7rQeLsHQygTrHuVef
+         ez7W69mmn5/wR/UG8hzuSSETs5BjIZ/njSj+EUEv6BnoujzKgHWz9ehZz+cV6Ds4xxwy
+         +RXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EGcjNWkYyFV7KGtDmAPcnHFpakjpf87o3mWY6B3jNYE=;
-        b=m+gtFb4X/Ry6YHy22cR68JOAuEfAPGdj0tKt435/+S0mr5+Mq4YgBbC2Ir6SDjzelS
-         6x0i5lLTM1gJcEPUvA6UUQU5TLpiSMhMANJUva3qpfU7Kf1ytqHQIlrsRRTdsyzACzt8
-         qXG4Ah2tbVwp7nNQakODBTkR8Pfq9EsB0dIw5GJc2wYqnzZ1AzRk4jduteqLFjJKFejj
-         9VK2cPwD6hM+XndvKYQtQ2coiUmQbe/zO7oRV2cWtfAXV2d/8Qe4TQR7cR4TDbj4zNmM
-         8G1cL/Vr1A32zhKCmt+3qS8p+BgR7C/Noe8SI0WHmB4IQ7qOkBmJUvJs9XXVQzFB11Xa
-         kB+Q==
-X-Gm-Message-State: AFqh2koBwmyMtr9c3KKt7qMGXmZxnCyz60uAkokgz3hd9p9UUcyLwN7S
-        fHZpsva6dn2uU5f6UA2IlVI=
-X-Google-Smtp-Source: AMrXdXud+NA0Suedx7vVT0q3+kaXBXllkZ9GjEa6ydtq6LSRAxonQbvR+e2OR6Avz1mD7lO5OS0w8Q==
-X-Received: by 2002:a17:906:910:b0:7ad:aed7:a5da with SMTP id i16-20020a170906091000b007adaed7a5damr57431170ejd.28.1672935916846;
-        Thu, 05 Jan 2023 08:25:16 -0800 (PST)
+        bh=o5jZcZ+YgPoIjP8SOU3FjXlsuvcwtes2avBtwRlJmuo=;
+        b=BaaGvKdIXv243ckzlFsM7QB+5bUhurTqECBIkpaBDJz5rpg2gy/LU7XfU+a/7MUras
+         xicmSOHBiGEpKxaSjN1/WT34JGf7MeOV6n+dDJNXKalPdjqAeQIB6Pqb7lpr1cTRJPDz
+         Z8EQG8PhrHj80gxo5CY0R8Nq9GbQG3fFjXqwkCiCSL1yvp2tGPI6/AQA9qG+lhKfumEP
+         k3uWdw+MzzCTqAozM71A/LtJHlcRLgb9Bw/ueZ6fWsxYiANu74ufvClh6JNIQOApUkDW
+         yVdF7pB0bMQQgaWvX1WSVkdK5Z9KR78IyZGNn7n+1xxe5iMOLjkH3eiqXF7RTQcmC7Ap
+         qFQw==
+X-Gm-Message-State: AFqh2krzqk28ElCgqBncev4otmCvkcUDHrMbw05mrwLmD7lnjT/g34kM
+        42wYwxU6sUvifdKmCWFo2pY=
+X-Google-Smtp-Source: AMrXdXtoWb7E6Dy6FLBwdAlWwtTGcbQjgmyTvP7NyPyv/3l4C9+TmdcOtOwt7pi9RmpFSm+BPb2nLw==
+X-Received: by 2002:a05:600c:1e10:b0:3cf:973e:c874 with SMTP id ay16-20020a05600c1e1000b003cf973ec874mr37716677wmb.14.1672939824130;
+        Thu, 05 Jan 2023 09:30:24 -0800 (PST)
 Received: from jernej-laptop.localnet (82-149-19-102.dynamic.telemach.net. [82.149.19.102])
-        by smtp.gmail.com with ESMTPSA id 17-20020a170906211100b0084cb4d37b8csm6504278ejt.141.2023.01.05.08.25.15
+        by smtp.gmail.com with ESMTPSA id o9-20020a05600c510900b003c6f8d30e40sm3641462wms.31.2023.01.05.09.30.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jan 2023 08:25:16 -0800 (PST)
+        Thu, 05 Jan 2023 09:30:23 -0800 (PST)
 From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
 To:     Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>
 Cc:     Samuel Holland <samuel@sholland.org>,
@@ -56,23 +56,37 @@ Cc:     Samuel Holland <samuel@sholland.org>,
         Stephen Boyd <sboyd@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v2] clk: sunxi-ng: Avoid computing the rate twice
-Date:   Thu, 05 Jan 2023 17:25:15 +0100
-Message-ID: <2860887.e9J7NaK4W3@jernej-laptop>
-In-Reply-To: <20221231173055.42384-1-samuel@sholland.org>
-References: <20221231173055.42384-1-samuel@sholland.org>
+Subject: Re: [PATCH] clk: sunxi-ng: h3/h5: Model H3 CLK_DRAM as a fixed clock
+Date:   Thu, 05 Jan 2023 18:30:21 +0100
+Message-ID: <3394555.QJadu78ljV@jernej-laptop>
+In-Reply-To: <20221229042230.24532-1-samuel@sholland.org>
+References: <20221229042230.24532-1-samuel@sholland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne sobota, 31. december 2022 ob 18:30:55 CET je Samuel Holland napisal(a):
-> The ccu_*_find_best() functions already compute a best_rate at the same
-> time as the other factors. Return this value so the caller does not need
-> to duplicate the computation.
-> 
+Dne =C4=8Detrtek, 29. december 2022 ob 05:22:30 CET je Samuel Holland napis=
+al(a):
+> The DRAM controller clock is only allowed to change frequency while the
+> DRAM chips are in self-refresh. To support this, changes to the CLK_DRAM
+> mux and divider have no effect until acknowledged by the memory dynamic
+> frequency scaling (MDFS) hardware inside the DRAM controller. (There is
+> a SDRCLK_UPD bit in DRAM_CFG_REG which should serve a similar purpose,
+> but this bit actually does nothing.)
+>=20
+> However, the MDFS hardware in H3 appears to be broken. Triggering a
+> frequency change using the procedure from similar SoCs (A64/H5) hangs
+> the hardware. Additionally, the vendor BSP specifically avoids using the
+> MDFS hardware on H3, instead performing all DRAM PHY parameter updates
+> and resets in software.
+>=20
+> Thus, it is effectively impossible to change the CLK_DRAM mux/divider,
+> so those features should not be modeled. Add CLK_SET_RATE_PARENT so
+> frequency changes apply to PLL_DDR instead.
+>=20
 > Signed-off-by: Samuel Holland <samuel@sholland.org>
 
 Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
