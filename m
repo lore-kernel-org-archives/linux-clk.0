@@ -2,60 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6770CC4708D
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Jan 2023 12:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD9DC3DA7A
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Jan 2023 13:39:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233524AbjAFMul (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Jan 2023 07:50:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39768 "EHLO
+        id S232530AbjAFNjb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Jan 2023 08:39:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232864AbjAFMuk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Jan 2023 07:50:40 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78C94745AD
-        for <linux-clk@vger.kernel.org>; Fri,  6 Jan 2023 04:50:39 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id ja17so982418wmb.3
-        for <linux-clk@vger.kernel.org>; Fri, 06 Jan 2023 04:50:39 -0800 (PST)
+        with ESMTP id S230208AbjAFNja (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Jan 2023 08:39:30 -0500
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 118D36C2AE
+        for <linux-clk@vger.kernel.org>; Fri,  6 Jan 2023 05:39:29 -0800 (PST)
+Received: by mail-io1-xd2a.google.com with SMTP id g20so731765iob.2
+        for <linux-clk@vger.kernel.org>; Fri, 06 Jan 2023 05:39:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=rePk4otgmJsoUZx3wQir/mu8uKDtUT/unn9iCMuDGXc=;
-        b=MqIJJ92YjJFSQvhXLtVY8CkFHRQ13ALDrV/xKqsiSFrxW3Xqh3zr9vjSFz9dtQlu0O
-         vargvSI325gDktqjgCCUqTQvoNQFTolCA9ixi1w+O9pzujBdaK4FZu2+X/wapQAiqc1J
-         vDegVa3jmE3oWMQVaKLQgSYCBLj1KKpxUU65gCkG/C7oKimli2qjdn4vQMpiu2Q5yE5m
-         RDifRiDL6Z+QRTUevhcXVn4vowqHiXGiI/Z8H+16FyUX0cpAYITZpffjxz214WSF0P0Y
-         YzfnelvTityLktxfnTcKBSHFVV0ZJe3WGxJcDFpx1SYlgV/AXu4aSVTw5O7+0pdvqZJi
-         co6Q==
+        bh=Ceg3VkOhpcJNdMZIgPdIbnXe0RLV55L3LTXGXOf9SIQ=;
+        b=pyySRwGk2hxTT2bnXRV85gzXyrvH9lG610OVdZ0sBfIFhFye/qMiQA2wmS7gN92XS8
+         doICUjM80sG45wlJ5XJsr+Oo7/WxnSFD5LuNj20Zzm0Jduh3nYrdYxHHgqrJiKAr9h8F
+         ITV3WoZ0QZMQTo5p790GYm/uWQKrC7ILcj4X0g0q4EpzaGQNXYeRI85fodXlFcq0XGAp
+         u15pX3g7vbbPl8jHwsAa9/GWx4bATYBLXCi8RRe7rQ9ocMb6Saf9kJRzjfslKTUUPL+A
+         4xQHTzrCkvLGQQe0mMX91P4v9Yh5SwjqeRu9zAF2R9WX3u5qN5IIAfK4MMdw5B2LGUf/
+         8+OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rePk4otgmJsoUZx3wQir/mu8uKDtUT/unn9iCMuDGXc=;
-        b=GFS49TeT0SfsrRBzC0xBu8S3cEk/oawOKj26N/kU4Jg8IsFfiDZ4iJI3dOffoFKxDn
-         tIb29KKQXGnZ+e9JX/bp75V27IiFZJQVc3AFX2DqbFZTyFikMAv1m1X6qZNIuGWHnBWV
-         86EIXMKvS7HVNXswUTlZsH4PEtiPVtRKPEn/AMD2bQ7lzJfh0Bn9fvb1sZt+vt0QauGc
-         dxyg6D1qC3sDJ3snvuk2MFpUnobGYqpvaf0ihvp7SGxULGOa/Ga4zzpe4LuguH0vTsq6
-         TVG8jCt4znpRJz1dxA1qY3BXoQolpgpwbqyYnr1dlT2Aj2elvj/zaECGcgEoAOD4Af/v
-         XXfA==
-X-Gm-Message-State: AFqh2krBhmicnS0sw9C7hsMNZE+Wridfa9/EaxhHlLuX24Av6CBD1jWk
-        SNhvQW+UU1Ea/2D2N/1FN25aaA==
-X-Google-Smtp-Source: AMrXdXtyoYVLJQIjlfYxEMk1BpTcEtQndRolLJIQH+LL6HNl3W2EK7y2mrtxK6fpyK1Iu3cAyTteFA==
-X-Received: by 2002:a05:600c:3495:b0:3c6:e62e:2e74 with SMTP id a21-20020a05600c349500b003c6e62e2e74mr39719299wmq.15.1673009438067;
-        Fri, 06 Jan 2023 04:50:38 -0800 (PST)
-Received: from [192.168.1.102] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id u16-20020a05600c00d000b003cf4eac8e80sm1880432wmm.23.2023.01.06.04.50.36
+        bh=Ceg3VkOhpcJNdMZIgPdIbnXe0RLV55L3LTXGXOf9SIQ=;
+        b=R3/lB9dRrrco1qjeZa2KFIbzt9YOJHqyetvWnxhueKSz+8hhAKaqKWohuxHPwxOA62
+         CHA+qOA3aRJlwZHnYGqoXK7cqOeftOp21ZqbILw3mmO82GTZ+lmjJx/oTQh/WKtD1+Rq
+         XJR733bHkMdyzTxhoaHJhtYwJpw7zN0OpVb0VUHuENEpm3Qs0R9/B9mc5TRtzS1Y9WAV
+         yRtPWJiZXfOVBdkUhVBY7d8eqrvekDIuXQ+xb8vLLTUtPXI6fZqtBc7ICqZy8Zkz/5Ze
+         UiqTiay219N8yDwhw1GBZTS5EPgsOT1SSFtXB9G2Q+zMToxiR9ETXfUT5teiL/M6Fyb+
+         jKhQ==
+X-Gm-Message-State: AFqh2kpHu/ujCxFjax/Z8/0DjAE2C8wgxCC0db7HQqtHmes5VoNIcvdc
+        BY9UkBGKgPIeVB09Gc3yKoCH4w==
+X-Google-Smtp-Source: AMrXdXsg+VHVt3KwLloLHaCCwaqFJNO0SSyRpzNvBxputGf6uvCknauXhpUJfR028Ff2Q7UeJJX7DA==
+X-Received: by 2002:a05:6602:370a:b0:6ed:a708:7ed6 with SMTP id bh10-20020a056602370a00b006eda7087ed6mr37039786iob.9.1673012368365;
+        Fri, 06 Jan 2023 05:39:28 -0800 (PST)
+Received: from [172.22.22.4] ([98.61.227.136])
+        by smtp.googlemail.com with ESMTPSA id o23-20020a02a1d7000000b0038437cba721sm346630jah.7.2023.01.06.05.39.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Jan 2023 04:50:37 -0800 (PST)
-Message-ID: <ed1b6934-a836-65ef-86a4-18706345ec29@linaro.org>
-Date:   Fri, 6 Jan 2023 13:50:35 +0100
+        Fri, 06 Jan 2023 05:39:27 -0800 (PST)
+Message-ID: <927673c9-ce50-d03a-83f5-45d5416838d1@linaro.org>
+Date:   Fri, 6 Jan 2023 07:39:26 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v2 03/12] dt-bindings: clock: qcom,mmcc: define
- clocks/clock-names for APQ8084
+ Thunderbird/102.4.2
+Subject: Re: [PATCH 1/9] clk: qcom: rpmh: define IPA clocks where required
 Content-Language: en-US
 To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Andy Gross <agross@kernel.org>,
@@ -66,28 +65,72 @@ To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+Cc:     Georgi Djakov <djakov@kernel.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
         devicetree@vger.kernel.org
-References: <20230105134133.1550618-1-dmitry.baryshkov@linaro.org>
- <20230105134133.1550618-4-dmitry.baryshkov@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230105134133.1550618-4-dmitry.baryshkov@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+References: <20230106073313.1720029-1-dmitry.baryshkov@linaro.org>
+ <20230106073313.1720029-2-dmitry.baryshkov@linaro.org>
+From:   Alex Elder <elder@linaro.org>
+In-Reply-To: <20230106073313.1720029-2-dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05/01/2023 14:41, Dmitry Baryshkov wrote:
-> Define clock/clock-names properties of the MMCC device node to be used
-> on APQ8084 platform.
+On 1/6/23 1:33 AM, Dmitry Baryshkov wrote:
+> Follow the example of sc7180 and sdx55 and implement IP0 resource as
+> clocks rather than interconnects.
 > 
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+So this is simply adding these clocks?  Were they not
+defined/implemented as interconnects before?  (It
+isn't clear from your message above, and I just want
+to be sure there's no duplication.)
+
+					-Alex
+
 > ---
-
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+>   drivers/clk/qcom/clk-rpmh.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> index 586a810c682c..5f914cf36b10 100644
+> --- a/drivers/clk/qcom/clk-rpmh.c
+> +++ b/drivers/clk/qcom/clk-rpmh.c
+> @@ -445,6 +445,7 @@ static struct clk_hw *sm8150_rpmh_clocks[] = {
+>   	[RPMH_RF_CLK2_A]	= &clk_rpmh_rf_clk2_a_ao.hw,
+>   	[RPMH_RF_CLK3]		= &clk_rpmh_rf_clk3_a.hw,
+>   	[RPMH_RF_CLK3_A]	= &clk_rpmh_rf_clk3_a_ao.hw,
+> +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
+>   };
+>   
+>   static const struct clk_rpmh_desc clk_rpmh_sm8150 = {
+> @@ -484,6 +485,7 @@ static struct clk_hw *sc8180x_rpmh_clocks[] = {
+>   	[RPMH_RF_CLK2_A]	= &clk_rpmh_rf_clk2_d_ao.hw,
+>   	[RPMH_RF_CLK3]		= &clk_rpmh_rf_clk3_d.hw,
+>   	[RPMH_RF_CLK3_A]	= &clk_rpmh_rf_clk3_d_ao.hw,
+> +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
+>   };
+>   
+>   static const struct clk_rpmh_desc clk_rpmh_sc8180x = {
+> @@ -504,6 +506,7 @@ static struct clk_hw *sm8250_rpmh_clocks[] = {
+>   	[RPMH_RF_CLK1_A]	= &clk_rpmh_rf_clk1_a_ao.hw,
+>   	[RPMH_RF_CLK3]		= &clk_rpmh_rf_clk3_a.hw,
+>   	[RPMH_RF_CLK3_A]	= &clk_rpmh_rf_clk3_a_ao.hw,
+> +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
+>   };
+>   
+>   static const struct clk_rpmh_desc clk_rpmh_sm8250 = {
+> @@ -546,6 +549,7 @@ static struct clk_hw *sc8280xp_rpmh_clocks[] = {
+>   	[RPMH_IPA_CLK]          = &clk_rpmh_ipa.hw,
+>   	[RPMH_PKA_CLK]          = &clk_rpmh_pka.hw,
+>   	[RPMH_HWKM_CLK]         = &clk_rpmh_hwkm.hw,
+> +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
+>   };
+>   
+>   static const struct clk_rpmh_desc clk_rpmh_sc8280xp = {
 
