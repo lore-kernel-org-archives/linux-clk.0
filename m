@@ -2,52 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB63C63707
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE23EC63797
 	for <linux-clk@archiver.kernel.org>; Fri,  6 Jan 2023 07:34:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232222AbjAFHdg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Jan 2023 02:33:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54564 "EHLO
+        id S232255AbjAFHdf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Jan 2023 02:33:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232211AbjAFHdS (ORCPT
+        with ESMTP id S232212AbjAFHdS (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Jan 2023 02:33:18 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 568576ADBA
-        for <linux-clk@vger.kernel.org>; Thu,  5 Jan 2023 23:33:16 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id bu8so936936lfb.4
-        for <linux-clk@vger.kernel.org>; Thu, 05 Jan 2023 23:33:16 -0800 (PST)
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 183EA3E858
+        for <linux-clk@vger.kernel.org>; Thu,  5 Jan 2023 23:33:17 -0800 (PST)
+Received: by mail-lj1-x233.google.com with SMTP id bx6so712466ljb.3
+        for <linux-clk@vger.kernel.org>; Thu, 05 Jan 2023 23:33:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dvEio1+igdk3BKLM5KwSSynNukEGELLp+8lBoQco51w=;
-        b=pJbr+K2AWSSMaminushp6rGTkoXBXInQuyWhTREUiCca0ycmNr/zT1savQv5a4n5Vs
-         QfNWgbRpUuQy8QSlKr12U0RBBsGBhPu2VKsKDW4vtLP/fOvQ55vE5x/7yD0pGPaPWmKO
-         5odvT21Xlsz2tydmFoatjWiihhnxZxj3PfL3DJzJcnn6Z2rGx/ZpI67Abhr3jX5Bsx7K
-         15hJOiI9H5fMkPLYiMZ4g5ymRkhCSbro5HhdY+WJSzkOeUgtDQPG/8YfADYnJwbypVNR
-         B/2oKtoytHuNX+aIFVO7mTWNsy/ZM/EoVPLTRXB2lqQyNsgKsoJwnsOu38DFnLES65zU
-         OtVg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RmoHH6Hgcnax4siMasK0u+Npv8V2UvkY+nngddvtueY=;
+        b=LtDOu7nd3mhwhim5Dh7dNG8512puR0MGGiTUbR0rJDQ3Wunf0IWjy77k6qvW86aBi0
+         rsDuXJ2f5Xs0g+JwANwnIGxiKKoB/JA8M0Q4+AA2dvYNGwpsYneQlolBoKBH11w7+3oy
+         Xwx0o2q8FI455E87yzWc07NqVg2lsYJgoIprwE5juELIF6dqmp0vRebnxd+IWLMIEpVK
+         cw50pKUEHMVDPJZ9d7//fSame7+CdD2BEeFgBYJDi1kgRGRdKv+dkP8nbed1S1OKq31b
+         hnlmH2+M6KNGrTTI9ryQLvjI6e4+8RaRNNHwN9GBEuy/i/IdmJ/YvHMvr+L9+2eb/k1V
+         JZgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dvEio1+igdk3BKLM5KwSSynNukEGELLp+8lBoQco51w=;
-        b=Kzw4f9bXFz4UnIJ5uIVvVM41U42k5A5H0HGxC4IA8Qv/VdHxyaxjMYE46x672/o5iQ
-         Al1JALnmQyOmobp4zFtm08wvehsIi6tTEEcmeUfn1IBf2XSksSkXF3V4YozlHkqRJ2XW
-         mfL8Ega8F/isOx2wpYvWevAXVShX3gpFT77X3jBb2pqQ56+h++nCAQRc9I1Qf/F1IHsc
-         FIR7GHWiTwrlPAEMbNSFgAJivAzU1SdpJYOYkla+uOvK8d7xXkeOSSJHgTVjx4Wy1qCd
-         gSPf9Mm638rTEhtuAdCzvpr04gT8E7fSJ9cb3jV7eI1ADJMB3vrqDcmfHArIHN+s/9D/
-         CBJQ==
-X-Gm-Message-State: AFqh2kq+HGzBiDgMJrF+9mFvtz+Rdx8dCutucT4WNRZaHdRVQRnW6EzQ
-        ikhLFdrhvfgmMbjdNXTaaCa98DXdZ8zIQQ0E
-X-Google-Smtp-Source: AMrXdXvgKCAsAEmTM7x6a3J2dJ8Nq5gml79wA5CV7Ao70xYDgfzyOojrtzSJ2wkORtRZx9eQ3tlFGg==
-X-Received: by 2002:ac2:5ec9:0:b0:4b5:b6e8:bb53 with SMTP id d9-20020ac25ec9000000b004b5b6e8bb53mr14240275lfq.24.1672990394713;
-        Thu, 05 Jan 2023 23:33:14 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RmoHH6Hgcnax4siMasK0u+Npv8V2UvkY+nngddvtueY=;
+        b=5bXi3qviI+zXAQjq1PJAUYpT7WjsCBgUrB9+01arF2T62LQwNrEiIHIwrWnwJ7yeO7
+         g6sp+38CzYr5PCbaRAZMGkuKk1B5wsRt+akLA28qJFJz4EXO/QM91DqiSZKPm5Evb45s
+         C1x2eFhGP6tziDXEtAPUp8UyRL2dh5NBsgn6tIHa2zuGJDlQawp9DZ5oQvvLflIS7vJm
+         tTtIA+aL8mTFpYzzYzovABIPpPVjLZuJNsJd+LUYj9p/HQyRyRjwoNZOqMShqhC4NKOc
+         QMvFzdCIQT/jYvrcSDGdCAv2qmPxcbcVM2AayzPymUjhYMBwkdHnvA/1YSj03Yv9W+i0
+         8Kqw==
+X-Gm-Message-State: AFqh2kq+6Q1wcFCSLXh/KOQLYkl4YbYmBMSAKo02bL9ixE8qjoKwT5l9
+        cMH/y/I+r9xgMScMr2PQForCSA==
+X-Google-Smtp-Source: AMrXdXsYYIC7k1DVAtBaRJp04PBOPDYVuhFBXLnSyr+HGIuqywO3HMAf3rkAvXGdxYRNw6ElDUWUjQ==
+X-Received: by 2002:a05:651c:1992:b0:27f:ae36:83af with SMTP id bx18-20020a05651c199200b0027fae3683afmr18496353ljb.9.1672990395477;
+        Thu, 05 Jan 2023 23:33:15 -0800 (PST)
 Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id c28-20020ac25f7c000000b004b4bb6286d8sm61114lfc.84.2023.01.05.23.33.13
+        by smtp.gmail.com with ESMTPSA id c28-20020ac25f7c000000b004b4bb6286d8sm61114lfc.84.2023.01.05.23.33.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jan 2023 23:33:14 -0800 (PST)
+        Thu, 05 Jan 2023 23:33:15 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -62,54 +63,62 @@ Cc:     Georgi Djakov <djakov@kernel.org>,
         Alex Elder <elder@linaro.org>, Johan Hovold <johan@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH 0/9] clk/interconnect: qcom: finish migration of IP0 to clocks
-Date:   Fri,  6 Jan 2023 09:33:04 +0200
-Message-Id: <20230106073313.1720029-1-dmitry.baryshkov@linaro.org>
+Subject: [PATCH 1/9] clk: qcom: rpmh: define IPA clocks where required
+Date:   Fri,  6 Jan 2023 09:33:05 +0200
+Message-Id: <20230106073313.1720029-2-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230106073313.1720029-1-dmitry.baryshkov@linaro.org>
+References: <20230106073313.1720029-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Commits 2f3724930eb4 ("interconnect: qcom: sc7180: Drop IP0
-interconnects") and 2fb251c26560 ("interconnect: qcom: sdx55: Drop IP0
-interconnects") removed IP0 interconnects (and ipa-virt devices support)
-in favour of the RPMH clocks. Follow this example for other platforms
-defining IP0 RPMH resource. While we are at it, remove several leftover
-from the mentioned patches.
+Follow the example of sc7180 and sdx55 and implement IP0 resource as
+clocks rather than interconnects.
 
-Dmitry Baryshkov (9):
-  clk: qcom: rpmh: define IPA clocks where required
-  interconnect: qcom: sdx55: drop IP0 remnants
-  interconnect: qcom: sc7180: drop IP0 remnants
-  interconnect: qcom: sm8150: Drop IP0 interconnects
-  interconnect: qcom: sm8250: Drop IP0 interconnects
-  interconnect: qcom: sc8180x: Drop IP0 interconnects
-  interconnect: qcom: sc8280xp: Drop IP0 interconnects
-  dt-bindings: interconnect: qcom: Remove sc7180/sdx55 ipa compatibles
-  dt-bindings: interconnect: qcom: drop IPA_CORE related defines
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ drivers/clk/qcom/clk-rpmh.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- .../bindings/interconnect/qcom,rpmh.yaml      |  3 --
- drivers/clk/qcom/clk-rpmh.c                   |  4 ++
- drivers/interconnect/qcom/sc7180.h            |  2 -
- drivers/interconnect/qcom/sc8180x.c           | 38 -------------------
- drivers/interconnect/qcom/sc8180x.h           |  2 -
- drivers/interconnect/qcom/sc8280xp.c          | 25 ------------
- drivers/interconnect/qcom/sc8280xp.h          |  2 -
- drivers/interconnect/qcom/sdx55.h             |  2 -
- drivers/interconnect/qcom/sm8150.c            | 21 ----------
- drivers/interconnect/qcom/sm8150.h            |  2 -
- drivers/interconnect/qcom/sm8250.c            | 21 ----------
- drivers/interconnect/qcom/sm8250.h            |  2 -
- .../dt-bindings/interconnect/qcom,sc7180.h    |  3 --
- .../dt-bindings/interconnect/qcom,sc8180x.h   |  3 --
- .../dt-bindings/interconnect/qcom,sc8280xp.h  |  2 -
- include/dt-bindings/interconnect/qcom,sdx55.h |  2 -
- .../dt-bindings/interconnect/qcom,sm8150.h    |  3 --
- .../dt-bindings/interconnect/qcom,sm8250.h    |  3 --
- 18 files changed, 4 insertions(+), 136 deletions(-)
-
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index 586a810c682c..5f914cf36b10 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -445,6 +445,7 @@ static struct clk_hw *sm8150_rpmh_clocks[] = {
+ 	[RPMH_RF_CLK2_A]	= &clk_rpmh_rf_clk2_a_ao.hw,
+ 	[RPMH_RF_CLK3]		= &clk_rpmh_rf_clk3_a.hw,
+ 	[RPMH_RF_CLK3_A]	= &clk_rpmh_rf_clk3_a_ao.hw,
++	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
+ };
+ 
+ static const struct clk_rpmh_desc clk_rpmh_sm8150 = {
+@@ -484,6 +485,7 @@ static struct clk_hw *sc8180x_rpmh_clocks[] = {
+ 	[RPMH_RF_CLK2_A]	= &clk_rpmh_rf_clk2_d_ao.hw,
+ 	[RPMH_RF_CLK3]		= &clk_rpmh_rf_clk3_d.hw,
+ 	[RPMH_RF_CLK3_A]	= &clk_rpmh_rf_clk3_d_ao.hw,
++	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
+ };
+ 
+ static const struct clk_rpmh_desc clk_rpmh_sc8180x = {
+@@ -504,6 +506,7 @@ static struct clk_hw *sm8250_rpmh_clocks[] = {
+ 	[RPMH_RF_CLK1_A]	= &clk_rpmh_rf_clk1_a_ao.hw,
+ 	[RPMH_RF_CLK3]		= &clk_rpmh_rf_clk3_a.hw,
+ 	[RPMH_RF_CLK3_A]	= &clk_rpmh_rf_clk3_a_ao.hw,
++	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
+ };
+ 
+ static const struct clk_rpmh_desc clk_rpmh_sm8250 = {
+@@ -546,6 +549,7 @@ static struct clk_hw *sc8280xp_rpmh_clocks[] = {
+ 	[RPMH_IPA_CLK]          = &clk_rpmh_ipa.hw,
+ 	[RPMH_PKA_CLK]          = &clk_rpmh_pka.hw,
+ 	[RPMH_HWKM_CLK]         = &clk_rpmh_hwkm.hw,
++	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
+ };
+ 
+ static const struct clk_rpmh_desc clk_rpmh_sc8280xp = {
 -- 
 2.39.0
 
