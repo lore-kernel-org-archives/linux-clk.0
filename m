@@ -2,227 +2,128 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FDBC54E76
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Jan 2023 07:46:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09748C54EF1
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Jan 2023 09:40:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231603AbjAFHqe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Jan 2023 02:46:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60706 "EHLO
+        id S233882AbjAFJj6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Jan 2023 04:39:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229923AbjAFHqe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Jan 2023 02:46:34 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E31293898
-        for <linux-clk@vger.kernel.org>; Thu,  5 Jan 2023 23:46:29 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id s9so529624wru.13
-        for <linux-clk@vger.kernel.org>; Thu, 05 Jan 2023 23:46:29 -0800 (PST)
+        with ESMTP id S232990AbjAFJjb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Jan 2023 04:39:31 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1357A5F918
+        for <linux-clk@vger.kernel.org>; Fri,  6 Jan 2023 01:32:01 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id m3so687396wmq.0
+        for <linux-clk@vger.kernel.org>; Fri, 06 Jan 2023 01:32:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=v563mb00vCWNWAOHxpRUXnYRk/uO/xCpvvmnUOhNiLQ=;
-        b=fSkv6LWlnW87DqjwGOdAXaZJB6/vRufsEHr336mT0qEmmQhu8x1CJLFS+0W3JFhcKC
-         1/t0InaxTtWB7RwjI12IF+8V17vQG/mR2wz0NKmZyR7FrQLTeDU/piQkUNdzIpF7reeo
-         jViDAyMLmKudSr+AbQ3mytDCjXcAduq+hkSB1AH+OTHBJyIRv+Y8vVQNZw2e3oft2OlF
-         DHuEDZUSlNBgxi3NQKp41s1vvRHYgvyNLXPDBZkgCY1SM0ndvoRpbLyk1HNdNWeTF3wE
-         m4mEjoaYMajBU/Ji7aw8U6pkFVlm9Qxd076vdTJGnh8i/83sq6xW8tS6i3vkjLG/S9fK
-         2K5g==
+        bh=v982tKjruzjnEGR+qtBvwCfxbuiittS57VqGvWmNxEA=;
+        b=xaCDj00Zx5JE+B4HrORfAr0IUeuE5ge23LPipHcZiC+zhR+ezzDiRV+IkbNT1CNAfz
+         rcZpOyT+Fjty9jGTicbtHTPGVD6+xBAHsPfRj7SmGkCbqgYflh6KN0ngzQiHkZ/wb0g2
+         GQwNtJiRUz9XyhjzUb4XRYeJXa/9JHTqgG/f+6ZMzLL5EV9512q02xKq0HL9ZrKmbdZo
+         qIf8MnF2ucYuTihFjPM26qK+eqI35YBoIWuZGBJN6rDpvJLAJAOqN2ynjxDf85eUp+9L
+         w/mouXYO4yJKgYvCtgK5fOo2+VuFObrE8U8Z4zW0W4w58uztuEn9Gk10ZqHfObAvhaQr
+         g5bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v563mb00vCWNWAOHxpRUXnYRk/uO/xCpvvmnUOhNiLQ=;
-        b=iYKkkyGFdvJGRAy1t2nDkRqyGNqxcizL+CaQDqtWCN0rTfTAix5jlIKt76d86jyDyr
-         hjiUBWHEAPKN2hju2V3rjRtyN4Md1ztHul+MTl/CkDOUG6NcKDeLcnSsni/JKFyj+O1b
-         mG0BejgSs1SzN3LykzVaYWZheiEZyBwFb/ETJbJHWHjVDmve5ffeP/XtaRPZ9Cb2V+zY
-         PjHjEycYRRdvSnRksMmPUF6nIP3gSFYg7CISx8dfHgPXQSF7ZJ1WV1mXWqd4BFRNoMDd
-         bp09haH744CgoAs35OqD3M2I8TbLi0E8gyB6xu7lasKQxKnpoKnmjnskZO9LIhNZDU/j
-         p6gQ==
-X-Gm-Message-State: AFqh2koNN78wtjfCFlqc+TMH7zg2NsnHFEHbKYp2uZ3b0Zwkju9qhNW8
-        ZRcjwlRUZzgMsl7lAgeQcMt49A==
-X-Google-Smtp-Source: AMrXdXvouXuHCt0K8J1PkgyDwTjCK9xV0e287NvQF5VWWMYpI7Ed1/nROUqq0n1hcikX7XzUSpLLNw==
-X-Received: by 2002:a5d:53cb:0:b0:27c:84c4:5913 with SMTP id a11-20020a5d53cb000000b0027c84c45913mr22717415wrw.30.1672991188434;
-        Thu, 05 Jan 2023 23:46:28 -0800 (PST)
+        bh=v982tKjruzjnEGR+qtBvwCfxbuiittS57VqGvWmNxEA=;
+        b=ylnZZcruxDCtgG/euOjq1i/uF185efA70CDX1MB+LgIjV3ocqKSV/PgXZk81xZmc2j
+         KLcY7tdXgchGaRF7DOftMdJ4werMHkp9mFPoRaxNxA7ybbJZC5Y2Wkry2J7yDSAelwnt
+         3MNR74m3U5mnMMnFqaQyEn3EQZcZ6Irltqj4p0mwH0Iu0hPMdN1uPbSZDSjemCf/RxVC
+         NeGJjyAozzVcP+m+PqWI7QrgGA6W8bHV0VMYvQngv7tARiUh7LsDCD3E97cAM31iTHkO
+         lTMja352ac836TAkSMvt9y1IGaSos9D7dFPkez2cqiLort0gk7KqXuy+kivKjUGH2bAj
+         TZPQ==
+X-Gm-Message-State: AFqh2kppIJAJE467EQAsbkbrsecm1Tm3E1fcO5hewGrJ90UZ2bmlDbou
+        dd89SRNRs6wO2N82HO7iqxSuTA==
+X-Google-Smtp-Source: AMrXdXvYSLjYzCElzyzK7yhn2iQbRJ2DGluk25DvaH9fz9jVXIzkSfkiBzSZ7TwN2v8AjLBXVXylQw==
+X-Received: by 2002:a05:600c:798:b0:3d3:5737:3b0f with SMTP id z24-20020a05600c079800b003d357373b0fmr47719090wmo.36.1672997519650;
+        Fri, 06 Jan 2023 01:31:59 -0800 (PST)
 Received: from [192.168.1.102] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id i2-20020adfdec2000000b002b9b9445149sm457548wrn.54.2023.01.05.23.46.26
+        by smtp.gmail.com with ESMTPSA id iv14-20020a05600c548e00b003b47b80cec3sm6203606wmb.42.2023.01.06.01.31.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Jan 2023 23:46:28 -0800 (PST)
-Message-ID: <0b512afa-00ba-07ef-6e47-731a54510719@linaro.org>
-Date:   Fri, 6 Jan 2023 08:46:26 +0100
+        Fri, 06 Jan 2023 01:31:58 -0800 (PST)
+Message-ID: <bb52b82d-5149-c512-ad30-3b993221bd78@linaro.org>
+Date:   Fri, 6 Jan 2023 10:31:56 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH v6 4/5] clk: qcom: rpmh: Add support for SM8550 rpmh
- clocks
+Subject: Re: [PATCH 1/3] dt-bindings: clock: document SM8550 DISPCC clock
+ controller
 Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+To:     Neil Armstrong <neil.armstrong@linaro.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Mike Tipton <quic_mdtipton@quicinc.com>
-Cc:     Abel Vesa <abel.vesa@linaro.org>, Andy Gross <agross@kernel.org>,
+        Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20221206224515.1495457-1-abel.vesa@linaro.org>
- <20221206224515.1495457-5-abel.vesa@linaro.org>
- <6fc64fae-e616-2038-0424-34ce0cb7e16d@linaro.org>
- <20221228185254.4acnjchbyq4krblb@builder.lan>
- <b1227e06-be29-7d8d-e8df-192a603d6424@linaro.org>
- <c2f78788-edcd-6c64-9581-bc84dc9dd609@linaro.org>
-In-Reply-To: <c2f78788-edcd-6c64-9581-bc84dc9dd609@linaro.org>
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230103-topic-sm8550-upstream-dispcc-v1-0-81bfcc26b2dc@linaro.org>
+ <20230103-topic-sm8550-upstream-dispcc-v1-1-81bfcc26b2dc@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230103-topic-sm8550-upstream-dispcc-v1-1-81bfcc26b2dc@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/01/2023 08:45, Krzysztof Kozlowski wrote:
-> On 28/12/2022 19:59, Dmitry Baryshkov wrote:
->> On 28/12/2022 20:52, Bjorn Andersson wrote:
->>> On Wed, Dec 14, 2022 at 06:25:01PM +0200, Dmitry Baryshkov wrote:
->>>> On 07/12/2022 00:45, Abel Vesa wrote:
->>>>> Adds the RPMH clocks present in SM8550 SoC.
->>>>>
->>>>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
->>>>> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->>>>> ---
->>>>>    drivers/clk/qcom/clk-rpmh.c | 110 +++++++++++++++++++++++++++++-------
->>>>>    1 file changed, 90 insertions(+), 20 deletions(-)
->>>>>
->>>>> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
->>>>> index 2c2ef4b6d130..ce81c76ed0fd 100644
->>>>> --- a/drivers/clk/qcom/clk-rpmh.c
->>>>> +++ b/drivers/clk/qcom/clk-rpmh.c
->>>>> @@ -130,6 +130,34 @@ static DEFINE_MUTEX(rpmh_clk_lock);
->>>>>    		},							\
->>>>>    	}
->>>>> +#define DEFINE_CLK_FIXED_FACTOR(_name, _parent_name, _div)		\
->>>>> +	static struct clk_fixed_factor clk_fixed_factor##_##_name = {	\
->>>>> +		.mult = 1,						\
->>>>> +		.div = _div,						\
->>>>> +		.hw.init = &(struct clk_init_data){			\
->>>>> +			.ops = &clk_fixed_factor_ops,			\
->>>>> +			.name = #_name,					\
->>>>> +			.parent_data =  &(const struct clk_parent_data){ \
->>>>> +				.fw_name = #_parent_name,		\
->>>>> +				.name = #_parent_name,			\
->>>>> +			},						\
->>>>> +			.num_parents = 1,				\
->>>>> +		},							\
->>>>> +	};								\
->>>>> +	static struct clk_fixed_factor clk_fixed_factor##_##_name##_ao = { \
->>>>> +		.mult = 1,						\
->>>>> +		.div = _div,						\
->>>>> +		.hw.init = &(struct clk_init_data){			\
->>>>> +			.ops = &clk_fixed_factor_ops,			\
->>>>> +			.name = #_name "_ao",				\
->>>>> +			.parent_data =  &(const struct clk_parent_data){ \
->>>>> +				.fw_name = #_parent_name "_ao",		\
->>>>> +				.name = #_parent_name "_ao",		\
->>>>> +			},						\
->>>>> +			.num_parents = 1,				\
->>>>> +		},							\
->>>>> +	}
->>>>> +
->>>>>    static inline struct clk_rpmh *to_clk_rpmh(struct clk_hw *_hw)
->>>>>    {
->>>>>    	return container_of(_hw, struct clk_rpmh, hw);
->>>>> @@ -345,6 +373,8 @@ DEFINE_CLK_RPMH_ARC(bi_tcxo, "xo.lvl", 0x3, 2);
->>>>>    DEFINE_CLK_RPMH_ARC(bi_tcxo, "xo.lvl", 0x3, 4);
->>>>>    DEFINE_CLK_RPMH_ARC(qlink, "qphy.lvl", 0x1, 4);
->>>>> +DEFINE_CLK_FIXED_FACTOR(bi_tcxo_div2, bi_tcxo, 2);
->>>>> +
->>>>>    DEFINE_CLK_RPMH_VRM(ln_bb_clk1, _a2, "lnbclka1", 2);
->>>>>    DEFINE_CLK_RPMH_VRM(ln_bb_clk2, _a2, "lnbclka2", 2);
->>>>>    DEFINE_CLK_RPMH_VRM(ln_bb_clk3, _a2, "lnbclka3", 2);
->>>>> @@ -366,6 +396,16 @@ DEFINE_CLK_RPMH_VRM(rf_clk2, _d, "rfclkd2", 1);
->>>>>    DEFINE_CLK_RPMH_VRM(rf_clk3, _d, "rfclkd3", 1);
->>>>>    DEFINE_CLK_RPMH_VRM(rf_clk4, _d, "rfclkd4", 1);
->>>>> +DEFINE_CLK_RPMH_VRM(clk1, _a1, "clka1", 1);
->>>>> +DEFINE_CLK_RPMH_VRM(clk2, _a1, "clka2", 1);
->>>>> +DEFINE_CLK_RPMH_VRM(clk3, _a1, "clka3", 1);
->>>>> +DEFINE_CLK_RPMH_VRM(clk4, _a1, "clka4", 1);
->>>>> +DEFINE_CLK_RPMH_VRM(clk5, _a1, "clka5", 1);
->>>>> +
->>>>> +DEFINE_CLK_RPMH_VRM(clk6, _a2, "clka6", 2);
->>>>> +DEFINE_CLK_RPMH_VRM(clk7, _a2, "clka7", 2);
->>>>> +DEFINE_CLK_RPMH_VRM(clk8, _a2, "clka8", 2);
->>>>> +
->>>>>    DEFINE_CLK_RPMH_VRM(div_clk1, _div2, "divclka1", 2);
->>>>>    DEFINE_CLK_RPMH_BCM(ce, "CE0");
->>>>> @@ -576,6 +616,33 @@ static const struct clk_rpmh_desc clk_rpmh_sm8450 = {
->>>>>    	.num_clks = ARRAY_SIZE(sm8450_rpmh_clocks),
->>>>>    };
->>>>> +static struct clk_hw *sm8550_rpmh_clocks[] = {
->>>>> +	[RPMH_CXO_PAD_CLK]      = &clk_rpmh_bi_tcxo_div2.hw,
->>>>> +	[RPMH_CXO_PAD_CLK_A]    = &clk_rpmh_bi_tcxo_div2_ao.hw,
->>>>> +	[RPMH_CXO_CLK]		= &clk_fixed_factor_bi_tcxo_div2.hw,
->>>>> +	[RPMH_CXO_CLK_A]	= &clk_fixed_factor_bi_tcxo_div2_ao.hw,
->>>>> +	[RPMH_LN_BB_CLK1]	= &clk_rpmh_clk6_a2.hw,
->>>>> +	[RPMH_LN_BB_CLK1_A]	= &clk_rpmh_clk6_a2_ao.hw,
->>>>> +	[RPMH_LN_BB_CLK2]	= &clk_rpmh_clk7_a2.hw,
->>>>> +	[RPMH_LN_BB_CLK2_A]	= &clk_rpmh_clk7_a2_ao.hw,
->>>>> +	[RPMH_LN_BB_CLK3]	= &clk_rpmh_clk8_a2.hw,
->>>>> +	[RPMH_LN_BB_CLK3_A]	= &clk_rpmh_clk8_a2_ao.hw,
->>>>> +	[RPMH_RF_CLK1]		= &clk_rpmh_clk1_a1.hw,
->>>>> +	[RPMH_RF_CLK1_A]	= &clk_rpmh_clk1_a1_ao.hw,
->>>>> +	[RPMH_RF_CLK2]		= &clk_rpmh_clk2_a1.hw,
->>>>> +	[RPMH_RF_CLK2_A]	= &clk_rpmh_clk2_a1_ao.hw,
->>>>> +	[RPMH_RF_CLK3]		= &clk_rpmh_clk3_a1.hw,
->>>>> +	[RPMH_RF_CLK3_A]	= &clk_rpmh_clk3_a1_ao.hw,
->>>>> +	[RPMH_RF_CLK4]		= &clk_rpmh_clk4_a1.hw,
->>>>> +	[RPMH_RF_CLK4_A]	= &clk_rpmh_clk4_a1_ao.hw,
->>>>> +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
->>>>> +};
->>>>> +
->>>>> +static const struct clk_rpmh_desc clk_rpmh_sm8550 = {
->>>>> +	.clks = sm8550_rpmh_clocks,
->>>>> +	.num_clks = ARRAY_SIZE(sm8550_rpmh_clocks),
->>>>> +};
->>>>> +
->>>>>    static struct clk_hw *sc7280_rpmh_clocks[] = {
->>>>>    	[RPMH_CXO_CLK]      = &clk_rpmh_bi_tcxo_div4.hw,
->>>>>    	[RPMH_CXO_CLK_A]    = &clk_rpmh_bi_tcxo_div4_ao.hw,
->>>>> @@ -683,29 +750,31 @@ static int clk_rpmh_probe(struct platform_device *pdev)
->>>>>    		name = hw_clks[i]->init->name;
->>>>> -		rpmh_clk = to_clk_rpmh(hw_clks[i]);
->>>>> -		res_addr = cmd_db_read_addr(rpmh_clk->res_name);
->>>>> -		if (!res_addr) {
->>>>> -			dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
->>>>> -				rpmh_clk->res_name);
->>>>> -			return -ENODEV;
->>>>> -		}
->>>>> +		if (hw_clks[i]->init->ops != &clk_fixed_factor_ops) {
->>>>
->>>> We discussed this separately, the fixed factor clocks will be moved to the
->>>> child nodes, leaving rpmhcc with only cmd-db based clocks.
->>>>
->>>
->>> Are you saying that you will represent bi_tcxo as a fixed-factor-clock
->>> under /clocks with RPMH_CXO_PAD_CLK as parent and a clock-div = <2>; ?
->>
->> Yes, this was the idea. The rpmhcc driver is pretty much centric around 
->> the cmd-db clocks. Adding a fixed-factor clock results either in a 
->> horrible hacks or in a significant code refactoring. However we already 
->> have an existing way to fixed-factor clocks: DT nodes. Adding support 
->> for such nodes to rpmhcc driver requires just a single additional API 
->> call: devm_of_platform_populate().
+On 03/01/2023 14:53, Neil Armstrong wrote:
+> Document device tree bindings for display clock controller for
+> Qualcomm SM8550 SoC.
 > 
-> Please no. DT is not to solve driver issues, skip some code or make
-> things simpler for driver developers. If everyone - U-boot, *BSD,
-> firmwares - pushes to DT stuff like this, because this makes their
-> driver development easier, you would have total mess. Linux does not
-> have any priorities here in this approach.
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  .../bindings/clock/qcom,sm8550-dispcc.yaml         | 106 +++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,sm8550-dispcc.h     | 101 ++++++++++++++++++++
+>  2 files changed, 207 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.yaml
+> new file mode 100644
+> index 000000000000..06c04656cb55
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.yaml
+> @@ -0,0 +1,106 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,sm8550-dispcc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Display Clock & Reset Controller for SM8550
+> +
+> +maintainers:
+> +  - Bjorn Andersson <andersson@kernel.org>
+> +  - Neil Armstrong <neil.armstrong@linaro.org>
+> +
+> +description: |
+> +  Qualcomm display clock control module provides the clocks, resets and power
+> +  domains on SM8550.
+> +
+> +  See also:: include/dt-bindings/clock/qcom,sm8550-dispcc.h
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,sm8550-dispcc
+> +
+> +  clocks:
+> +    minItems: 3
 
-Assuming we talk about Abel's implementation of putting these nodes in
-rpmhcc, because you wrote here devm_of_platform_populate()...
+Clock inputs should be optional if we can really treat them optional,
+e.g. reparent to something else or just adjust list of parents. Since
+the driver has fixed parent data, it suggests these are not really
+optional and they are all in the hardware (always).
+
 
 Best regards,
 Krzysztof
