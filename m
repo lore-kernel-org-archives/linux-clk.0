@@ -2,117 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5F2C5479D
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Jan 2023 16:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9C4C54EF0
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Jan 2023 17:00:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231424AbjAFQ5H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Jan 2023 11:57:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40308 "EHLO
+        id S229686AbjAFRAy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Jan 2023 12:00:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233967AbjAFQ5G (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Jan 2023 11:57:06 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 174DB7A393;
-        Fri,  6 Jan 2023 08:57:02 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BE595B81E0E;
-        Fri,  6 Jan 2023 16:57:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88044C433EF;
-        Fri,  6 Jan 2023 16:56:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673024219;
-        bh=r1TugKFhTopftyqZXhFj4NZAEhxezwqJpeyrAMjzPxg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GJTrnxSh2OInsOKJ9LVjqBdAjVht1rikq72Gij3sNIBDjQwbYItW5K3d8spq4FgVM
-         jMHZNvGPNqeqa+HfRZZHh5swxxpv/ThZz9zzDJCOBuxfa21Nveqz+5og7i8HeyvZR9
-         E3fGOhWO5/dy6lO2gcgDoLkKVOb6h9lm92TXipsIzhzl5xnOA+rdxcqTPCkK2QQg3U
-         7w1aCzKdizipVXbQ9IqeXYV/WdfOqu7tmjXCWwjMAVGVjrW9jiIbBhbmgmSeuDZRIo
-         KVNG0uBd/J0paJt+bbUEYGMVv3vIi5M6nP7nsCMeR+tqpfPOUjznOCVDK6GfokNDEG
-         Vq3/El3gO9REA==
-Date:   Fri, 6 Jan 2023 10:56:56 -0600
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Abel Vesa <abel.vesa@linaro.org>
-Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v8 3/4] clk: qcom: rpmh: Add support for SM8550 rpmh
- clocks
-Message-ID: <20230106165656.zseftsxay4c74v6e@builder.lan>
-References: <20230104093450.3150578-1-abel.vesa@linaro.org>
- <20230104093450.3150578-4-abel.vesa@linaro.org>
- <07a849a9-03dc-f3af-1d3f-2369cb71451e@linaro.org>
- <Y7V00JiPAYfqF4wH@linaro.org>
+        with ESMTP id S232218AbjAFRAx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Jan 2023 12:00:53 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5001B43E50
+        for <linux-clk@vger.kernel.org>; Fri,  6 Jan 2023 09:00:51 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id w13so555299wrk.9
+        for <linux-clk@vger.kernel.org>; Fri, 06 Jan 2023 09:00:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NPGjO3GLxwuKoc7lZtIvtYmPySePxCmc9A8414gqSgU=;
+        b=euSC14S8bRke4P9nxYzrLsV7/Rs+V6Xwl16eqrk35fgRXHrcJW5M+EQ3TnnmVVz0OG
+         imulyWr/yTkRznDSLBl6k+WUX9Hs08bCyaj/QtWTBFWr7PY4Bs/uZgGVLA+u+G0kjK1Q
+         qXyAQWkNWXr2Jtmwao2CR7rfbv8Gr9gBMeR00JF4LoZPF4CGI8jAAZLlvp+/VbpPfmIo
+         4eeQb6ZkqPijQpvRdJPZbbz8MfSqPjoTyC40kWVWydVWtcd5HC6/wjxYGrCZJJ8aS6w/
+         OHJDK985nTHcaHYGlN3Uos/RdUc/afXFpdOH7junzOIQUY5F7bbBQggu0lFe/Q4h5PNO
+         TfVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NPGjO3GLxwuKoc7lZtIvtYmPySePxCmc9A8414gqSgU=;
+        b=EBWi7cwDskA3pI8LCaN9zNIcgiDLZMMlhkOewk/vzE33uwyKVIhGH+kvWCnqr8Ik6Z
+         2xl2+TxLpcKeauA+3pPVQSm+95i7bkqfYLL1A5f8Yusq/n26pbgVFoy+cEK33lDp2R95
+         7LiFhxvWj2tJe6c4WIQjHQSfryxYsfF13Hu4tIUG/k8SxiJSV9A9bRBXOiKEn/86zns9
+         6Z3rC6LAFemh1Os9KFmexlXGnY6v/Fr4wgFgu4tFFFNMb7t00iEL4imGuOn9yfOmh/Cq
+         lNqC3gm3kUfAKK3pWUZmLG0nP/9K1WNWUwc/titaw3L97ycAybirt+qU3WNwVmvuFCXt
+         XGDg==
+X-Gm-Message-State: AFqh2kpUcx/c460FX4TxcoZ5WebIgZ3BPQiXcRLT/qtY9mozWGNJVLc6
+        7RldHxq+oRUQe+SM0U5HZh6BTQ==
+X-Google-Smtp-Source: AMrXdXuFqZYcBKNOWyaXZXz+967P6PyjNmHIk3ic4subWD87vHVwOE8AwQVtHuWeEOjpKP7UFEo2PQ==
+X-Received: by 2002:adf:da51:0:b0:2b6:daf8:52ad with SMTP id r17-20020adfda51000000b002b6daf852admr3402719wrl.52.1673024449899;
+        Fri, 06 Jan 2023 09:00:49 -0800 (PST)
+Received: from blmsp ([2001:4091:a245:805c:8713:84e4:2a9e:cbe8])
+        by smtp.gmail.com with ESMTPSA id f8-20020a0560001b0800b002423edd7e50sm1633417wrz.32.2023.01.06.09.00.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jan 2023 09:00:49 -0800 (PST)
+Date:   Fri, 6 Jan 2023 18:00:48 +0100
+From:   Markus Schneider-Pargmann <msp@baylibre.com>
+To:     Chen-Yu Tsai <wenst@chromium.org>
+Cc:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, mturquette@baylibre.com,
+        sboyd@kernel.org, matthias.bgg@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, johnson.wang@mediatek.com,
+        miles.chen@mediatek.com, fparent@baylibre.com,
+        chun-jie.chen@mediatek.com, sam.shih@mediatek.com,
+        y.oudjana@protonmail.com, nfraprado@collabora.com,
+        rex-bc.chen@mediatek.com, ryder.lee@kernel.org,
+        daniel@makrotopia.org, jose.exposito89@gmail.com,
+        yangyingliang@huawei.com, pablo.sun@mediatek.com,
+        weiyi.lu@mediatek.com, ikjn@chromium.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH v2 04/23] clk: mediatek: cpumux: Propagate struct device
+ where possible
+Message-ID: <20230106170048.p4d3rq6kehmf3adp@blmsp>
+References: <20221223094259.87373-1-angelogioacchino.delregno@collabora.com>
+ <20221223094259.87373-5-angelogioacchino.delregno@collabora.com>
+ <CAGXv+5F8QZGc4oDKJAGbpvubqiewvngURpNhrenS3pcGQNrOYw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Y7V00JiPAYfqF4wH@linaro.org>
+In-Reply-To: <CAGXv+5F8QZGc4oDKJAGbpvubqiewvngURpNhrenS3pcGQNrOYw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jan 04, 2023 at 02:45:04PM +0200, Abel Vesa wrote:
-> On 23-01-04 12:46:55, Dmitry Baryshkov wrote:
-> > On 04/01/2023 11:34, Abel Vesa wrote:
-> > > Adds the RPMH clocks present in SM8550 SoC.
-> > > 
-> > > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > > ---
-> > >   drivers/clk/qcom/clk-rpmh.c | 36 ++++++++++++++++++++++++++++++++++++
-> > >   1 file changed, 36 insertions(+)
-> > 
-> > I think the plan was to have the _PAD clock as a child node of the rpmcc. Is
-> > it still the planned implementation?
-> 
-> Yes. Here is how the dts rpmhcc node will look like:
-> 
->          rpmhcc: clock-controller {
->                  compatible = "qcom,sm8550-rpmh-clk";
->                  #clock-cells = <1>;
->                  clock-names = "xo";
->                  clocks = <&xo_board>;
-> 
->                  bi_tcxo_div2: bi-tcxo-div2-clk {
+Hi Angelo,
 
-Considering that the remainder of the clock exposed (except ipa clock)
-by the rpmhcc provider represent clock signals coming out of the pmic;
-and that this divider is not located in the aoss (rsc), I don't think
-these nodes should live here.
-
-/clocks seems perfectly fine to me.
-
-Regards,
-Bjorn
-
->                          #clock-cells = <0>;
->                          compatible = "fixed-factor-clock";
->                          clocks = <&rpmhcc RPMH_CXO_CLK>;
->                          clock-mult = <1>;
->                          clock-div = <2>;
->                  };
+On Mon, Dec 26, 2022 at 03:07:10PM +0800, Chen-Yu Tsai wrote:
+> On Fri, Dec 23, 2022 at 5:43 PM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
+> >
+> > Take a pointer to a struct device in mtk_clk_register_cpumuxes() and
+> > propagate the same to mtk_clk_register_cpumux() => clk_hw_register().
+> > Even though runtime pm is unlikely to be used with CPU muxes, this
+> > helps with code consistency and possibly opens to commonization of
+> > some mtk_clk_register_(x) functions.
+> >
+> > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > 
->                  bi_tcxo_ao_div2: bi-tcxo-div2-ao-clk {
->                          #clock-cells = <0>;
->                          compatible = "fixed-factor-clock";
->                          clocks = <&rpmhcc RPMH_CXO_CLK_A>;
->                          clock-mult = <1>;
->                          clock-div = <2>;
->                  };
->          };
+> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 > 
-> The clock nodes will be probed on of_clk_init.
-> 
-> > 
-> > -- 
-> > With best wishes
-> > Dmitry
-> > 
+> As with the gates patch, could we make the |struct device *| parameter the
+> first one? Also for this case I think we could even drop the
+> |struct device_node *| parameter.
+
+Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
+
+clk_hw_register and others are using the device pointer as first
+parameter as well. So I think it makes sense to do it the same way as
+ChenYu suggested.
+
+Best,
+Markus
