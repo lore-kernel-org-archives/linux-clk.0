@@ -2,95 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F406CC53210
-	for <linux-clk@archiver.kernel.org>; Sun,  8 Jan 2023 09:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B22C53210
+	for <linux-clk@archiver.kernel.org>; Sun,  8 Jan 2023 13:04:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230390AbjAHJBs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 8 Jan 2023 04:01:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46584 "EHLO
+        id S229627AbjAHNEs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 8 Jan 2023 08:04:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230165AbjAHJBr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Jan 2023 04:01:47 -0500
-Received: from smtp3-g21.free.fr (smtp3-g21.free.fr [212.27.42.3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46527BC26;
-        Sun,  8 Jan 2023 01:01:46 -0800 (PST)
-Received: from SOPL295.local (unknown [IPv6:2a01:e0a:a6a:5f90:5959:63b1:9783:3e26])
-        (Authenticated sender: robert.jarzmik@free.fr)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 1B45A13F87E;
-        Sun,  8 Jan 2023 10:01:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
-        s=smtp-20201208; t=1673168504;
-        bh=jN07y0o4PEKT+hhbGgEcvZdsd+ibKgA08wW81JoUNZc=;
-        h=References:From:To:Cc:Subject:Date:In-reply-to:From;
-        b=ifwFeaaqAL0DtcSDhmdxYoKbxgn7RL5akTq+jbOkcYPa63wTJpMeFU6rtLu35fH19
-         Z87Mt/9UuWXDpcY4dHlXP6E8YZSaRRIo/lFdceyVxXJ+2sQGfHP3kXxHaY1zS/1w/8
-         c+wfslIBoPsit+xrsR61Z1SeeqE6weDcHoBv2kOe7SuMcEWHd2jPYGWEqljsj6n8TR
-         7wFQb7NpB+6S4r3Zxf5izc4bkESQwLua6rpX4q80OGW5iHsc6h3qZWyYjWNY9mALuh
-         Azwl0H3U5ucIylDrJW09TAFFmeE1rQIKEytClw4kgPoiSrobm+yfWSs5ILoACwQl55
-         PLjDeBmsZFbhw==
-References: <20230105134622.254560-1-arnd@kernel.org>
- <20230105134622.254560-5-arnd@kernel.org>
-User-agent: mu4e 1.8.11; emacs 28.1
-From:   Robert Jarzmik <robert.jarzmik@free.fr>
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-mmc@vger.kernel.org
-Subject: Re: [PATCH 04/27] ARM: pxa: drop pxa310/pxa320/pxa93x support
-Date:   Sun, 08 Jan 2023 09:49:17 +0100
-In-reply-to: <20230105134622.254560-5-arnd@kernel.org>
-Message-ID: <m2sfglh02h.fsf@free.fr>
+        with ESMTP id S229520AbjAHNEr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Jan 2023 08:04:47 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FB65DF82;
+        Sun,  8 Jan 2023 05:04:46 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id 18so8723468edw.7;
+        Sun, 08 Jan 2023 05:04:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pbPYYWyqM3Km+MmO9M4MvtLvP8fuh3Tc+91cRMxFpfs=;
+        b=f53LoH7fItXvtlkArddm8RAl+/EDorUMczf+yqZ6S9QjOmj6sniNIQQScBKu4uY2s5
+         FHzdgC95593j8Qy8tKdA+TMwfwtig+ynLe+43yXtcZS0wUmlRsVpr+3EpGmLf6CZ8/Ds
+         SeAlPPdGatgLjFvVC+/nyndYffgd8Fyk/7/crQDXWawhHPHhaKmXmKq6ev0n4zLMObsb
+         pLq8GHSCNOtRPxJ34PEWjtQUBkHcJhE8DsMUBBNmmKXwcQQxPHxrEadS/tZxoQEr9KMW
+         LfIM8gj9dGDPKnumGiSG9ZW+dpwVIIe9iHqJxti/ofRz7mjLT19LTu8GOmnWj3Cp4uR9
+         /mpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pbPYYWyqM3Km+MmO9M4MvtLvP8fuh3Tc+91cRMxFpfs=;
+        b=00H+QHUR3ljhXMC4Z8DhErOAD+x0j6mUfob/WekNj30qhzIm2YZJuQXLHw0FHMguUv
+         gjwXW+4eYOQM67k2YtMKwioeC7t67tmQP6hP1QolAtgU5UIysp0XNqCii5Jevka3SRMl
+         J0KoZDpBaJ9lRPF9pGEgDmyam+BvEdk4B9TGEpk7+Iw0ba1xMLvAI4l0CJsV5vBe48eh
+         SgEOR3wcnu/563bh8FBHsgIJWkBK8Kdpa8Vg2hzzHwicIzup7FO5lbDf1ywCB3nINBpA
+         r+16EHdzddqbaVhz5YI3IA7AmGPPqPKCghzzlZBWZWfUFIcv2k/zkKbneIUHW5ooXlT/
+         hzRw==
+X-Gm-Message-State: AFqh2krE9fsVcwaG3cC9qKOwAErSeEUo8l5iWjeGa3cUlQuf4e1vaP01
+        WUdWBJmgHA5Znywp29la9Vc=
+X-Google-Smtp-Source: AMrXdXuzq4+RB/jzO8hsBGSL8+tJxAHR09IDSwyHUvpD8zU0jmnaFUFz9kcQFLBYGLlk6W+2B+c3Yg==
+X-Received: by 2002:a05:6402:541a:b0:46c:6ed1:83b0 with SMTP id ev26-20020a056402541a00b0046c6ed183b0mr53791418edb.9.1673183084497;
+        Sun, 08 Jan 2023 05:04:44 -0800 (PST)
+Received: from fedora.. (cpezg-94-253-128-11-cbl.xnet.hr. [94.253.128.11])
+        by smtp.googlemail.com with ESMTPSA id l10-20020aa7d94a000000b0048ebf8a5736sm2499285eds.21.2023.01.08.05.04.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Jan 2023 05:04:43 -0800 (PST)
+From:   Robert Marko <robimarko@gmail.com>
+To:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     Robert Marko <robimarko@gmail.com>
+Subject: [PATCH 1/2] clk: qcom: ipq8074: populate fw_name for usb3phy-s
+Date:   Sun,  8 Jan 2023 14:04:39 +0100
+Message-Id: <20230108130440.670181-1-robimarko@gmail.com>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Having only .name populated in parent_data for clocks which are only
+globally searchable currently will not work as the clk core won't copy
+that name if there is no .fw_name present as well.
 
-Arnd Bergmann <arnd@kernel.org> writes:
-> There is currently no devicetree support for any of these three
-> SoCs, and no board files remain. As it seems unlikely that 
-> anyone
-> is going to add DT support soon, let's drop the SoC specific 
-> code
-> now.
+So, populate .fw_name for usb3phy clocks in parent_data as they were
+missed by me in ("clk: qcom: ipq8074: populate fw_name for all parents").
 
-Hi Arnd,
+Fixes: ae55ad32e273 ("clk: qcom: ipq8074: convert to parent data")
+Signed-off-by: Robert Marko <robimarko@gmail.com>
+---
+ drivers/clk/qcom/gcc-ipq8074.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Here you're dropping pxa variant support. For the currently 
-"partly" working
-boards in devicetree, such a zylonite, this will break their 
-current support.
+diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+index 8374cc40915a..888e8df7bc92 100644
+--- a/drivers/clk/qcom/gcc-ipq8074.c
++++ b/drivers/clk/qcom/gcc-ipq8074.c
+@@ -934,7 +934,7 @@ static struct clk_rcg2 usb0_mock_utmi_clk_src = {
+ };
+ 
+ static const struct clk_parent_data gcc_usb3phy_0_cc_pipe_clk_xo[] = {
+-	{ .name = "usb3phy_0_cc_pipe_clk" },
++	{ .fw_name = "usb3phy_0_cc_pipe_clk", .name = "usb3phy_0_cc_pipe_clk" },
+ 	{ .fw_name = "xo", .name = "xo" },
+ };
+ 
+@@ -1002,7 +1002,7 @@ static struct clk_rcg2 usb1_mock_utmi_clk_src = {
+ };
+ 
+ static const struct clk_parent_data gcc_usb3phy_1_cc_pipe_clk_xo[] = {
+-	{ .name = "usb3phy_1_cc_pipe_clk" },
++	{ .fw_name = "usb3phy_1_cc_pipe_clk", .name = "usb3phy_1_cc_pipe_clk" },
+ 	{ .fw_name = "xo", .name = "xo" },
+ };
+ 
+-- 
+2.39.0
 
-For example the zylonite I have which is working on DT has a 
-pxa310 variant.
-The cm-x300, which also works in DT, has a pxa320 variant.
-
-What these boards need is their IO mappings and cpufreq to still 
-work after
-your serie in DT. What bothers me are the changes to :
- - drivers/clk/pxa/clk-pxa3xx.c
- - drivers/cpufreq/pxa3xx-cpufreq.c
-
-Here the clock changes will probably remove the clock provided to 
-specific
-pxa310/pxa320 drivers for example.
-
-I don't know how you want to proceed, yet this change will break 
-some pxa3xx
-platforms.
-
-Cheers.
-
---
-Robert
