@@ -2,117 +2,100 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F1B5C54EBC
-	for <linux-clk@archiver.kernel.org>; Sun,  8 Jan 2023 21:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E2AC61DB3
+	for <linux-clk@archiver.kernel.org>; Sun,  8 Jan 2023 22:17:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236253AbjAHVIc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 8 Jan 2023 16:08:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56072 "EHLO
+        id S229503AbjAHWRh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 8 Jan 2023 17:17:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236516AbjAHVHn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Jan 2023 16:07:43 -0500
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EB2811A1A;
-        Sun,  8 Jan 2023 13:06:49 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id u9so15670188ejo.0;
-        Sun, 08 Jan 2023 13:06:49 -0800 (PST)
+        with ESMTP id S231336AbjAHWRg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Jan 2023 17:17:36 -0500
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C97711145
+        for <linux-clk@vger.kernel.org>; Sun,  8 Jan 2023 14:17:33 -0800 (PST)
+Received: by mail-lj1-x22b.google.com with SMTP id f20so7136650lja.4
+        for <linux-clk@vger.kernel.org>; Sun, 08 Jan 2023 14:17:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IqsPmxN00edrHGi0cQNfG1ZlbY68R6DFWjN9C23HMdo=;
-        b=VLyhUT2siNF/GSpeQqo7AyhTHW46LJ63JExQJ9DPEjLKXoAnnbjmcx/ecVZO9VXvhX
-         nmQQ82mcK28Fl39xCf6NLwKIEcdwiX75riNMwp08TbxTa1mU4VGxa1xt2+Nhyv5+MCv2
-         Hc+xIurh3N1XZg0G/o47EnAp3vHlsFZDvdD+bXChWkv8KHoj4sWQWEYHft2h0AlnLm0E
-         jlwvhMGiGD6YkXESMqqe0dtAN82zEKXACnXgbB0WC4w/gRLBcZHpKASu3bTlIzSZJkDX
-         B+mwq+pPR345I7H3/1Oyh6lJ5YB6XiicQ5Z9Y+4vXMjVII5wq8qZQQ0Sx2jQ8BS34IVF
-         PP9Q==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oz4lnXq6zsv6hP/Mmlcfiy6rqGfdQvTRhmdQMJNbZiw=;
+        b=R6MQHjysGHcISIPjYvCKEHfJ3bKwxcifjHORZSvbsljfF2On6qZOCq8z9UnzHwzABJ
+         yjUpx/OoqRUr1MlfA/UURLULjE0mDBgVkQKogTn+0J8dh7Y3GMYOykIRMmT7rtEdV1s3
+         6QM5ozL6w8BfAAjsvX9UOviF8cormULQPTOah2dQFc2ZVuxOAq3vMIsEpfEe2OHXa1/W
+         EvaMPZfDpR+GZzcjydp5h77T91urWrThRX04qmpvwhqnhM9rtin62xcZpOsyRxba3bk7
+         M4rh4qrPYGeJsnu42iNIHiDYP6Cqk73ocPbNGkbtmggGs0SzW3YFEefyW8Y3WIgJIibn
+         hFvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IqsPmxN00edrHGi0cQNfG1ZlbY68R6DFWjN9C23HMdo=;
-        b=tx0AOxtNFhgoN43kaAmGGB/E0iMrklGVPmIgh+g94kge4NbiUV/t5+mmRewEB12SZB
-         rtZM7vINrjVnZKrfLXeU01NkJ5C1ZNG6oxC/h4OsFulP9rW6UGEGurVfy+PIb0j4jckK
-         Gj5SugTmFKeRqGfGEMrNBLFfw/WrVmHN96MwErm1gwfF5w5qQXm96g6EF3+4agagrahG
-         fsLGeKvE/X1XI3Qv++kVQjYmER4yziR3tyHE2W0mA7XFlwe5calfsZmAGs7akHi4Yksw
-         DxbdRG0eYt3/knf0P3kjgpRL1M/10qGLSf9xFWVw6iVqE9p8ggM3Lha+9tgcd3w43yMQ
-         fMaA==
-X-Gm-Message-State: AFqh2kpeXG40cdQNmGJD8gBAPMzYbGQf7/Hn3Hmnp454J5yGCRwzT9Jr
-        Omz7ZzfqZurULjTJSQ+f9V4=
-X-Google-Smtp-Source: AMrXdXuvFsQDJJdexEZkEdb0clbew5BO+rs+TUYwxrWPyE3UnE9MdiC0wJkhwmAFYA0l93S8SSIrrA==
-X-Received: by 2002:a17:906:9d8e:b0:84d:3921:11e2 with SMTP id fq14-20020a1709069d8e00b0084d392111e2mr3481848ejc.58.1673212007713;
-        Sun, 08 Jan 2023 13:06:47 -0800 (PST)
-Received: from jernej-laptop.localnet (82-149-19-102.dynamic.telemach.net. [82.149.19.102])
-        by smtp.gmail.com with ESMTPSA id d9-20020a1709063ec900b007c0d6b34d54sm2919231ejj.129.2023.01.08.13.06.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Jan 2023 13:06:47 -0800 (PST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Samuel Holland <samuel@sholland.org>
-Cc:     Samuel Holland <samuel@sholland.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v2 0/6] clk: sunxi-ng: Allwinner R528/T113 clock support
-Date:   Sun, 08 Jan 2023 22:06:46 +0100
-Message-ID: <4275771.ejJDZkT8p0@jernej-laptop>
-In-Reply-To: <20221231231429.18357-1-samuel@sholland.org>
-References: <20221231231429.18357-1-samuel@sholland.org>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oz4lnXq6zsv6hP/Mmlcfiy6rqGfdQvTRhmdQMJNbZiw=;
+        b=xpZhBtGpRa+JaL8MW4PBwjH0mVcKe9pFqieY7EaAbxJwSsd7nRsFoQKvyq4gPgVKCS
+         9zP+7jRF+/i0lg1WEtitEe+YHo8/YbJvd8SGatEMd8PsiRx2/rA7OGYC4k0gzT6dWo5c
+         RSUhw9gcX8/fJE3eo6TicmhXgdYRXvBo34guPdtQwEMni8L9DCYK5Xiq3fbdHihGzWsM
+         iXS6jSXNoewN5wAmqnElUgDDNrUZgB0Vd0cuSFnQAw0RwQoGui2i8Sk9Eo28x/63Qso7
+         BjmVQBkwFbnsWtbBK7vuUD4eTl/dBFof9EFQL9IcHwynvW/WzOj+HC7lBkxJzKDyItBu
+         EejA==
+X-Gm-Message-State: AFqh2kqO2NW3vivcqhlBekIf92WS+McugU3MvM72KeaHvGcdSZeBhH6Q
+        ZqEXaS+VbzA/GGaYgUB6wMiVzw==
+X-Google-Smtp-Source: AMrXdXtGM6I56my/2fgVoHR1BvQfwPTPkgimjsiGQFXvfD9wtD3PMh/xmupc4zqACwPqkJd1UnzQZA==
+X-Received: by 2002:a2e:b5ad:0:b0:27f:b693:59de with SMTP id f13-20020a2eb5ad000000b0027fb69359demr13049192ljn.42.1673216251675;
+        Sun, 08 Jan 2023 14:17:31 -0800 (PST)
+Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
+        by smtp.gmail.com with ESMTPSA id f19-20020ac25333000000b004cb2e3089a7sm1246240lfh.38.2023.01.08.14.17.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Jan 2023 14:17:31 -0800 (PST)
+Message-ID: <94172b72-4eaf-b7ce-d3fa-f181db779deb@linaro.org>
+Date:   Mon, 9 Jan 2023 00:17:30 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v2 01/16] dt-bindings: clock: qcom,gcc-msm8998: drop
+ core_bi_pll_test_se
+Content-Language: en-GB
+To:     Rob Herring <robh@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>, devicetree@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org
+References: <20221228185237.3111988-1-dmitry.baryshkov@linaro.org>
+ <20221228185237.3111988-2-dmitry.baryshkov@linaro.org>
+ <167320330549.188812.3791526731906955387.robh@kernel.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <167320330549.188812.3791526731906955387.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne nedelja, 01. januar 2023 ob 00:14:23 CET je Samuel Holland napisal(a):
-> R528 and T113 are SoCs based on the same design as D1/D1s, but with ARM
-> CPUs instead of RISC-V. They use the same CCU implementation, meaning
-> the CCU has gates/resets for all peripherals present on any SoC in this
-> family. I verified the CAN bus bits are also present on D1/D1s.
->=20
-> Patches 1-2 clean up the Kconfig in preparation for patch 3, which
-> allows building the driver. Patches 4-6 add the missing binding header
-> and driver bits.
->=20
-> Changes in v2:
->  - Expand commit message
->  - Move dt-bindings header changes to a separate patch
->=20
-> Andr=C3=A1s Szemz=C5=91 (1):
->   clk: sunxi-ng: d1: Mark cpux clock as critical
->=20
-> Fabien Poussin (1):
->   clk: sunxi-ng: d1: Add CAN bus gates and resets
->=20
-> Samuel Holland (4):
->   clk: sunxi-ng: Remove duplicate ARCH_SUNXI dependencies
->   clk: sunxi-ng: Move SoC driver conditions to dependencies
->   clk: sunxi-ng: d1: Allow building for R528/T113
->   dt-bindings: clock: Add D1 CAN bus gates and resets
->=20
->  drivers/clk/sunxi-ng/Kconfig              | 71 ++++++++++++-----------
->  drivers/clk/sunxi-ng/ccu-sun20i-d1.c      | 13 ++++-
->  drivers/clk/sunxi-ng/ccu-sun20i-d1.h      |  2 +-
->  include/dt-bindings/clock/sun20i-d1-ccu.h |  2 +
->  include/dt-bindings/reset/sun20i-d1-ccu.h |  2 +
->  5 files changed, 53 insertions(+), 37 deletions(-)
+On 08/01/2023 20:41, Rob Herring wrote:
+> 
+> On Wed, 28 Dec 2022 20:52:22 +0200, Dmitry Baryshkov wrote:
+>> The test clock apparently it's not used by anyone upstream. Remove it.
+>>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> ---
+>>   .../devicetree/bindings/clock/qcom,gcc-msm8998.yaml         | 6 +-----
+>>   1 file changed, 1 insertion(+), 5 deletions(-)
+>>
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Applied, thanks!
-
-Best regards,
-Jernej
+Just at the point when we decided to keep the clock in bindings and just 
+drop it from the driver :-(
 
 
+-- 
+With best wishes
+Dmitry
 
