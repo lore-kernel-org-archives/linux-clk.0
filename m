@@ -2,120 +2,153 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91CDDC61DB3
-	for <linux-clk@archiver.kernel.org>; Sun,  8 Jan 2023 13:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE21C63797
+	for <linux-clk@archiver.kernel.org>; Sun,  8 Jan 2023 13:41:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233233AbjAHNEt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 8 Jan 2023 08:04:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36790 "EHLO
+        id S233282AbjAHNlO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 8 Jan 2023 08:41:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232900AbjAHNEs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Jan 2023 08:04:48 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8633DF83;
-        Sun,  8 Jan 2023 05:04:47 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id c17so8691350edj.13;
-        Sun, 08 Jan 2023 05:04:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZSsCe1/vYrCPdq2/qm0aU0QWLaInEUASjxbLN6gEMCs=;
-        b=LyJWVkmkVQDracXJJR1Fnzi4JLU/adPerzQZNgCGezlTDDfY33AgCdT+6EkACT2wI/
-         gI/6ciVPbG6LDcZvrK9EQwNkvV6SbzOKj3utJzad3cneej0JH7aHqB9gr4ghzZSNS49y
-         y1ZMjiFHO7iiw14O0Go4NNvmJNxAjZBrtcVU020KlNsQGWmx9VELCzujvVjuxbpBmUN1
-         Hh73QCrZ1+4Hf+NHQn4pCUtcEAEEcS7SCUbkBZn87zPcluoOkFCT2URY3vkidBWTrPXu
-         0czzc3o/JVBCrfz9xfrSXJQaPEXwNRMhZ0PAaqr07QSWQZiobvF/CTaHSCQcq25rPQTU
-         i8Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZSsCe1/vYrCPdq2/qm0aU0QWLaInEUASjxbLN6gEMCs=;
-        b=JAqH9Hr1B7AI3mC/goZPotGe/nSyKBGpvsehq3iQoiKQx1D74BhW1jRdVjq+jYMAPH
-         x4FEZfYu51Kjs7SXw6ip2PhkWF1xa6r4Gjs5lmzerCVuF6ZgcweRQFnzemAc29ilEaWM
-         5rx/c/yTEZ/5sxYqC7aWESVIv/Ay9pJBOcFjgc78jUUNIsSfGRKrOe1Ke3mACaWZnfZs
-         KsrJhIeprpDgJWiEzanYmGfXFsMLyhW5MWkKeEGf5p2aFiO9xiwOO4zhaLbnSh3ZDMA5
-         0VQ1DFXSOllk5z/7ZS5gJi+TZ03CJNfRE2inzDnmh1vcrB9TzbStmG59QZZnQ429gG3R
-         O+EA==
-X-Gm-Message-State: AFqh2krQu16ajF7LGKjckR/NR436CyeWyFkkvLM7MtjHR2CPNSvWTKd4
-        mS8zLi9jlwbHwzwAjQhAK9uZh7VPve64Ow==
-X-Google-Smtp-Source: AMrXdXvIg7qVZS0BDw1oYpfXn7Aq8TDaG087Z9cth3zZXWQ1MOPSPsU0+XIGwVesdwYDFpsGYRZRvg==
-X-Received: by 2002:aa7:cd49:0:b0:497:d8ea:d79c with SMTP id v9-20020aa7cd49000000b00497d8ead79cmr5259999edw.27.1673183086239;
-        Sun, 08 Jan 2023 05:04:46 -0800 (PST)
-Received: from fedora.. (cpezg-94-253-128-11-cbl.xnet.hr. [94.253.128.11])
-        by smtp.googlemail.com with ESMTPSA id l10-20020aa7d94a000000b0048ebf8a5736sm2499285eds.21.2023.01.08.05.04.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Jan 2023 05:04:45 -0800 (PST)
-From:   Robert Marko <robimarko@gmail.com>
-To:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     Robert Marko <robimarko@gmail.com>
-Subject: [PATCH 2/2] arm64: dts: qcom: ipq8074: correct USB3 QMP PHY-s clock output names
-Date:   Sun,  8 Jan 2023 14:04:40 +0100
-Message-Id: <20230108130440.670181-2-robimarko@gmail.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230108130440.670181-1-robimarko@gmail.com>
-References: <20230108130440.670181-1-robimarko@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        with ESMTP id S230205AbjAHNlN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Jan 2023 08:41:13 -0500
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F22EABCBD;
+        Sun,  8 Jan 2023 05:41:11 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id A73295C0099;
+        Sun,  8 Jan 2023 08:41:08 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Sun, 08 Jan 2023 08:41:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; t=1673185268; x=1673271668; bh=pzHAbdQL+W
+        AHy+4O5PrQB6Gr0C7YcxjNyQrc/0x2zps=; b=Xa60G+rAC3iidMuZ8dtIXstRWH
+        Qx5c+WT240uC48PQfQMNI8+0MAGnGwQmQfqUbbAz+wzI9BDMGSzPWf+D/zVPRzPw
+        F2Iu+jB0pwqLfON9lnzcoQrcLKIsZNHXfZj6hi+CGRFZXON3992NLMnIJnuL2wrN
+        g1pZI/k/72M3XHUMf0ZgmFwr/0Fa49KLJe6nunUkxBPk9cosv+mYzVy1eRdvM7Co
+        9LAZdLzqth0xPEIQOCM2OoItmHQy7IoTH+FznjWcrFAr1UrTmp0TeS2WVbwt6fjr
+        LJE5V1DzUPkvjyZ/+L7PjxPvSgi8WnBb1mR669kQQXo1iWjuCIbjfDSJ4xcw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; t=1673185268; x=1673271668; bh=pzHAbdQL+WAHy+4O5PrQB6Gr0C7Y
+        cxjNyQrc/0x2zps=; b=loQ54YCdSXJiSI9Kv2X090IUbTDQrvox1ery1xh/0BA+
+        2MFmALo/stswBhFe5HEahH12k1CTXZI9RvBH3e4+k6IespOTCnsxrlKN8BriPnVU
+        F4pD6Qx9fDrn5VDpAjfEBsozSaj9s57lUJBk/ZW0JWAEInRLe9hlvgy9Dd5weB7E
+        neGKSM4YqPWy4glkgHnwpDGl8ursUViECbhKubs37ejTWL6hPr481CuIQM3XaIoT
+        +4Jx4EnFn5OpwqlckzbO1HAHUKTPybi+1mnhsSNTIapC/v4I0l+n5os56nsnThB6
+        +tUEJoUBdBSvAFezHQxsS4gGdVUzkNh7JKQv3MByCw==
+X-ME-Sender: <xms:9Me6Y8Sa5-Hm01QBr92QnMfE4XDevhMmcSSkkQyXs7JdE_CN1abBTA>
+    <xme:9Me6Y5wZTzFcbjWJ0qwZirJan6nV7zUZP3tX_SklTpIdphp4VTl53wdLtph8ozXZa
+    PMS6OY1fLYic1ve9nA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrkeeggdehiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:9Me6Y51n4OrHfZe-hh-e-ZOVlAqkHwyYa-McpmAwsARQ0xkOANfF8Q>
+    <xmx:9Me6YwCYQo66qrLhIxD34OOuvT14sTN25j4EwWw1PUEL5cMJKHUFYA>
+    <xmx:9Me6Y1h8LsPyPO251o6t5mM1TfzXHyVGEr8eN9Kb6jNcKSCUwFa2vQ>
+    <xmx:9Me6Y-ZumOpxlL0Jv3IWIl8XxzlJUWhs-KuDStSvLqxzrDdK-YKpfQ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 23398B60089; Sun,  8 Jan 2023 08:41:08 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.7.0-alpha0-1185-g841157300a-fm-20221208.002-g84115730
+Mime-Version: 1.0
+Message-Id: <2d085660-41a2-492c-a343-7df80d510a59@app.fastmail.com>
+In-Reply-To: <m2sfglh02h.fsf@free.fr>
+References: <20230105134622.254560-1-arnd@kernel.org>
+ <20230105134622.254560-5-arnd@kernel.org> <m2sfglh02h.fsf@free.fr>
+Date:   Sun, 08 Jan 2023 14:40:47 +0100
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Robert Jarzmik" <robert.jarzmik@free.fr>,
+        "Arnd Bergmann" <arnd@kernel.org>
+Cc:     "Daniel Mack" <daniel@zonque.org>,
+        "Haojian Zhuang" <haojian.zhuang@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        "Viresh Kumar" <viresh.kumar@linaro.org>,
+        "Ulf Hansson" <ulf.hansson@linaro.org>,
+        "Dominik Brodowski" <linux@dominikbrodowski.net>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        "linux-mmc @ vger . kernel . org" <linux-mmc@vger.kernel.org>
+Subject: Re: [PATCH 04/27] ARM: pxa: drop pxa310/pxa320/pxa93x support
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It seems that clock-output-names for the USB3 QMP PHY-s where set without
-actually checking what is the GCC clock driver expecting, so clock core
-could never actually find the parents for usb0_pipe_clk_src and
-usb1_pipe_clk_src clocks in the GCC driver.
+On Sun, Jan 8, 2023, at 09:49, Robert Jarzmik wrote:
+> Arnd Bergmann <arnd@kernel.org> writes:
+>> There is currently no devicetree support for any of these three
+>> SoCs, and no board files remain. As it seems unlikely that 
+>> anyone is going to add DT support soon, let's drop the SoC specific 
+>> code now.
+>
+> Hi Arnd,
+>
+> Here you're dropping pxa variant support. For the currently 
+> "partly" working boards in devicetree, such a zylonite, this
+> will break their current support.
+>
+> For example the zylonite I have which is working on DT has a 
+> pxa310 variant.
+> The cm-x300, which also works in DT, has a pxa320 variant.
+>
+> What these boards need is their IO mappings and cpufreq to still 
+> work after
+> your serie in DT. What bothers me are the changes to :
+>  - drivers/clk/pxa/clk-pxa3xx.c
+>  - drivers/cpufreq/pxa3xx-cpufreq.c
+>
+> Here the clock changes will probably remove the clock provided to 
+> specific
+> pxa310/pxa320 drivers for example.
+>
+> I don't know how you want to proceed, yet this change will break 
+> some pxa3xx platforms.
 
-So, correct the names to be what the driver expects so that parenting
-works.
+Hi Robert,
 
-Before:
-gcc_usb0_pipe_clk_src                0        0        0   125000000          0     0  50000         Y
-gcc_usb1_pipe_clk_src                0        0        0   125000000          0     0  50000         Y
+Thanks for pointing this out, I thought that I had caught
+all the missing dependencies ones after you pointed out
+the AC97_BUS_NEW that I fixed in patch 14.
 
-After:
- usb3phy_0_cc_pipe_clk                1        1        0   125000000          0     0  50000         Y
-    usb0_pipe_clk_src                 1        1        0   125000000          0     0  50000         Y
-       gcc_usb0_pipe_clk              1        1        0   125000000          0     0  50000         Y
- usb3phy_1_cc_pipe_clk                1        1        0   125000000          0     0  50000         Y
-    usb1_pipe_clk_src                 1        1        0   125000000          0     0  50000         Y
-       gcc_usb1_pipe_clk              1        1        0   125000000          0     0  50000         Y
+From what I can tell, commit b5aaaa666a85 ("ARM: pxa: add
+Kconfig dependencies for ATAGS based boards"), the
+PXA310/PXA320 DT support became dead code because
+MACH_PXA3XX_DT only selects CPU_PXA300, so if it worked
+before that commit, it now needs CONFIG_UNUSED_BOARD_FILES
+and CONFIG_EXPERT as well as enabling one of the legacy
+board files with the corresponding chip support.
 
-Fixes: 5e09bc51d07b ("arm64: dts: ipq8074: enable USB support")
-Signed-off-by: Robert Marko <robimarko@gmail.com>
----
- arch/arm64/boot/dts/qcom/ipq8074.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+If that's all you think is missing, I can add this
+trivial patch as well and rework the series to not
+drop code that depends on PXA310/PXA320:
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-index a0f7460020c2..3d1fccdf37c7 100644
---- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-@@ -263,7 +263,7 @@ usb1_ssphy: phy@58200 {
- 				#clock-cells = <0>;
- 				clocks = <&gcc GCC_USB1_PIPE_CLK>;
- 				clock-names = "pipe0";
--				clock-output-names = "gcc_usb1_pipe_clk_src";
-+				clock-output-names = "usb3phy_1_cc_pipe_clk";
- 			};
- 		};
- 
-@@ -306,7 +306,7 @@ usb0_ssphy: phy@78200 {
- 				#clock-cells = <0>;
- 				clocks = <&gcc GCC_USB0_PIPE_CLK>;
- 				clock-names = "pipe0";
--				clock-output-names = "gcc_usb0_pipe_clk_src";
-+				clock-output-names = "usb3phy_0_cc_pipe_clk";
- 			};
- 		};
- 
--- 
-2.39.0
+--- a/arch/arm/mach-pxa/Kconfig
++++ b/arch/arm/mach-pxa/Kconfig
+@@ -45,6 +45,8 @@ config MACH_PXA27X_DT
+ config MACH_PXA3XX_DT
+        bool "Support PXA3xx platforms from device tree"
+        select CPU_PXA300
++       select CPU_PXA310
++       select CPU_PXA320
+        select PINCTRL
+        select POWER_SUPPLY
+        select PXA3xx
 
+Can you have a look at the other patches to see if there
+are more removed drivers or platform bits that are currently
+dead code but are actually required?
+
+     Arnd
