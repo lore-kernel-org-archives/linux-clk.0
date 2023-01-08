@@ -2,82 +2,117 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF6BC54EBC
-	for <linux-clk@archiver.kernel.org>; Sun,  8 Jan 2023 20:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F1B5C54EBC
+	for <linux-clk@archiver.kernel.org>; Sun,  8 Jan 2023 21:08:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233843AbjAHUzv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 8 Jan 2023 15:55:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53002 "EHLO
+        id S236253AbjAHVIc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 8 Jan 2023 16:08:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233762AbjAHUzu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Jan 2023 15:55:50 -0500
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89FD210B54;
-        Sun,  8 Jan 2023 12:55:48 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id tz12so15536902ejc.9;
-        Sun, 08 Jan 2023 12:55:48 -0800 (PST)
+        with ESMTP id S236516AbjAHVHn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Jan 2023 16:07:43 -0500
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EB2811A1A;
+        Sun,  8 Jan 2023 13:06:49 -0800 (PST)
+Received: by mail-ej1-x634.google.com with SMTP id u9so15670188ejo.0;
+        Sun, 08 Jan 2023 13:06:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=crpfjZM94sBjTdlu1shG1LkqjgfplZcyyBtcQUiOMZo=;
-        b=kKwYSHIw+6aI8aCXdVDcWaaFk5UXs3VY6mf4QkJwi7JLvFClmNB+5gh/OV0YFQL9e4
-         K7FgzsbXRsvhTanibJikhGZg2Y3n/gpGYwDRMksGkCsdVvQ+p4D80us2LIqBaKpmXNKk
-         FrzC/FJ+2xvNV28VmIvOv4fzchKqXKfeKLYGHV7K1IvfqmpKrpjf3RJJ1eAIzOrxXYck
-         WA9OG7SLz1GsAa/v84UDSnggnxa27Ej72lIaUyvPWyAuI4rEoN+FxP5eUMfT+3iHqqUv
-         RIyp/jYdLjrwwkI3wP/pJdf24Et5jZkrK3NMKvkXQCBmB31c602BRep3MJSnlQF/IeqA
-         PWHA==
+        bh=IqsPmxN00edrHGi0cQNfG1ZlbY68R6DFWjN9C23HMdo=;
+        b=VLyhUT2siNF/GSpeQqo7AyhTHW46LJ63JExQJ9DPEjLKXoAnnbjmcx/ecVZO9VXvhX
+         nmQQ82mcK28Fl39xCf6NLwKIEcdwiX75riNMwp08TbxTa1mU4VGxa1xt2+Nhyv5+MCv2
+         Hc+xIurh3N1XZg0G/o47EnAp3vHlsFZDvdD+bXChWkv8KHoj4sWQWEYHft2h0AlnLm0E
+         jlwvhMGiGD6YkXESMqqe0dtAN82zEKXACnXgbB0WC4w/gRLBcZHpKASu3bTlIzSZJkDX
+         B+mwq+pPR345I7H3/1Oyh6lJ5YB6XiicQ5Z9Y+4vXMjVII5wq8qZQQ0Sx2jQ8BS34IVF
+         PP9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=crpfjZM94sBjTdlu1shG1LkqjgfplZcyyBtcQUiOMZo=;
-        b=Pwz4KnDr9ampVgcM9tjrno66Rw+FDBgKU5LVdp09GeS8OIom/vfrDyxt0GP9zmuj8d
-         aCOGRhm+1GN1t9dZ92ZqM/oyTnyvWd3JRDy9pw5Ry3YfIeq1Yp2hv951vQnIel6vpd4t
-         dulGKXNjPn3rY5duajTT5pqlW8521/ArtjrFY9M5JelPoQzDJ9j979iWAcE4g6oRqSwK
-         VX9sU7fz2vby+iZWtoDX+OLoVORybb3I1rpIQ5K4ps2sOBnrK469BmuONrBcSJeNQR5M
-         ZJnEVazn5twei7GgmYm+Tg9XFH4RPyx1m+qtIAIU91A7OXVHl5izGUudZNL7/BxsbRPq
-         eAWw==
-X-Gm-Message-State: AFqh2koEOXpeyMddC5wNW6Cl3NEhIEKSMnOaNo10l/MfN1fKbcqu9yaX
-        esXlQnLhjOVsI5WOVms3Ymc=
-X-Google-Smtp-Source: AMrXdXueoz05zEL9B097p+4pYDjTnklX4awORsEgJzQcdlTb0tvcDQfwnjHZnDl1wgUcHhLd6A3bBA==
-X-Received: by 2002:a17:907:4d8:b0:7c0:9a2f:ac93 with SMTP id vz24-20020a17090704d800b007c09a2fac93mr42824575ejb.31.1673211347114;
-        Sun, 08 Jan 2023 12:55:47 -0800 (PST)
+        bh=IqsPmxN00edrHGi0cQNfG1ZlbY68R6DFWjN9C23HMdo=;
+        b=tx0AOxtNFhgoN43kaAmGGB/E0iMrklGVPmIgh+g94kge4NbiUV/t5+mmRewEB12SZB
+         rtZM7vINrjVnZKrfLXeU01NkJ5C1ZNG6oxC/h4OsFulP9rW6UGEGurVfy+PIb0j4jckK
+         Gj5SugTmFKeRqGfGEMrNBLFfw/WrVmHN96MwErm1gwfF5w5qQXm96g6EF3+4agagrahG
+         fsLGeKvE/X1XI3Qv++kVQjYmER4yziR3tyHE2W0mA7XFlwe5calfsZmAGs7akHi4Yksw
+         DxbdRG0eYt3/knf0P3kjgpRL1M/10qGLSf9xFWVw6iVqE9p8ggM3Lha+9tgcd3w43yMQ
+         fMaA==
+X-Gm-Message-State: AFqh2kpeXG40cdQNmGJD8gBAPMzYbGQf7/Hn3Hmnp454J5yGCRwzT9Jr
+        Omz7ZzfqZurULjTJSQ+f9V4=
+X-Google-Smtp-Source: AMrXdXuvFsQDJJdexEZkEdb0clbew5BO+rs+TUYwxrWPyE3UnE9MdiC0wJkhwmAFYA0l93S8SSIrrA==
+X-Received: by 2002:a17:906:9d8e:b0:84d:3921:11e2 with SMTP id fq14-20020a1709069d8e00b0084d392111e2mr3481848ejc.58.1673212007713;
+        Sun, 08 Jan 2023 13:06:47 -0800 (PST)
 Received: from jernej-laptop.localnet (82-149-19-102.dynamic.telemach.net. [82.149.19.102])
-        by smtp.gmail.com with ESMTPSA id ti11-20020a170907c20b00b007c10bb5b4b8sm2849210ejc.224.2023.01.08.12.55.46
+        by smtp.gmail.com with ESMTPSA id d9-20020a1709063ec900b007c0d6b34d54sm2919231ejj.129.2023.01.08.13.06.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Jan 2023 12:55:46 -0800 (PST)
+        Sun, 08 Jan 2023 13:06:47 -0800 (PST)
 From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>
-Cc:     Samuel Holland <samuel@sholland.org>,
+To:     Chen-Yu Tsai <wens@csie.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Samuel Holland <samuel@sholland.org>
+Cc:     Samuel Holland <samuel@sholland.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v2] clk: sunxi-ng: Avoid computing the rate twice
-Date:   Sun, 08 Jan 2023 21:55:45 +0100
-Message-ID: <3433729.QJadu78ljV@jernej-laptop>
-In-Reply-To: <20221231173055.42384-1-samuel@sholland.org>
-References: <20221231173055.42384-1-samuel@sholland.org>
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v2 0/6] clk: sunxi-ng: Allwinner R528/T113 clock support
+Date:   Sun, 08 Jan 2023 22:06:46 +0100
+Message-ID: <4275771.ejJDZkT8p0@jernej-laptop>
+In-Reply-To: <20221231231429.18357-1-samuel@sholland.org>
+References: <20221231231429.18357-1-samuel@sholland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne sobota, 31. december 2022 ob 18:30:55 CET je Samuel Holland napisal(a):
-> The ccu_*_find_best() functions already compute a best_rate at the same
-> time as the other factors. Return this value so the caller does not need
-> to duplicate the computation.
-> 
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
+Dne nedelja, 01. januar 2023 ob 00:14:23 CET je Samuel Holland napisal(a):
+> R528 and T113 are SoCs based on the same design as D1/D1s, but with ARM
+> CPUs instead of RISC-V. They use the same CCU implementation, meaning
+> the CCU has gates/resets for all peripherals present on any SoC in this
+> family. I verified the CAN bus bits are also present on D1/D1s.
+>=20
+> Patches 1-2 clean up the Kconfig in preparation for patch 3, which
+> allows building the driver. Patches 4-6 add the missing binding header
+> and driver bits.
+>=20
+> Changes in v2:
+>  - Expand commit message
+>  - Move dt-bindings header changes to a separate patch
+>=20
+> Andr=C3=A1s Szemz=C5=91 (1):
+>   clk: sunxi-ng: d1: Mark cpux clock as critical
+>=20
+> Fabien Poussin (1):
+>   clk: sunxi-ng: d1: Add CAN bus gates and resets
+>=20
+> Samuel Holland (4):
+>   clk: sunxi-ng: Remove duplicate ARCH_SUNXI dependencies
+>   clk: sunxi-ng: Move SoC driver conditions to dependencies
+>   clk: sunxi-ng: d1: Allow building for R528/T113
+>   dt-bindings: clock: Add D1 CAN bus gates and resets
+>=20
+>  drivers/clk/sunxi-ng/Kconfig              | 71 ++++++++++++-----------
+>  drivers/clk/sunxi-ng/ccu-sun20i-d1.c      | 13 ++++-
+>  drivers/clk/sunxi-ng/ccu-sun20i-d1.h      |  2 +-
+>  include/dt-bindings/clock/sun20i-d1-ccu.h |  2 +
+>  include/dt-bindings/reset/sun20i-d1-ccu.h |  2 +
+>  5 files changed, 53 insertions(+), 37 deletions(-)
 
 Applied, thanks!
 
 Best regards,
 Jernej
+
 
 
