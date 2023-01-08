@@ -2,80 +2,76 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAFFCC54EBD
-	for <linux-clk@archiver.kernel.org>; Sun,  8 Jan 2023 18:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 822E8C54EBE
+	for <linux-clk@archiver.kernel.org>; Sun,  8 Jan 2023 18:41:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236164AbjAHSI6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 8 Jan 2023 13:08:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43000 "EHLO
+        id S233274AbjAHSlw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 8 Jan 2023 13:41:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236140AbjAHSIp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Jan 2023 13:08:45 -0500
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E620657F;
-        Sun,  8 Jan 2023 10:08:44 -0800 (PST)
-Received: by mail-il1-f171.google.com with SMTP id o8so3843331ilo.1;
-        Sun, 08 Jan 2023 10:08:44 -0800 (PST)
+        with ESMTP id S229520AbjAHSlv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Jan 2023 13:41:51 -0500
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39BE2D2CC;
+        Sun,  8 Jan 2023 10:41:50 -0800 (PST)
+Received: by mail-il1-f169.google.com with SMTP id o13so3853510ilc.7;
+        Sun, 08 Jan 2023 10:41:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7G2aF2Rlg2azVZf2JFJeNKVoMm1OVbhxv0Ci3azN7wE=;
-        b=dpy1TFbdVVJvROIkfWTyE8wiPwbunr+w8+rURH6AyzaCePob0QDwyZHCNKjCkZPC/n
-         eDa95/NOTX4H0qYtq6YUfZ+uZJY1tWjd7KnEfEJX9LyQNiddgr4P1gRUkITOPgVZxbNi
-         qGTvhlo0srIIfgy/qLXD327i+ZmgyyNhC5Ru1iYAxiNei4E9h76RP8wVJ+s3uzhxjFiP
-         f7dJHcKClqWkzTuE1jLzzVfPgn2ng8ARYHUb3rQJzYj+xDF2zLDnEkwh74metDR61ULw
-         T2fsdedpT9uvXTtVoGp3TJ2DReoz75A/twpu0UhjuPeNuEMdy0MHhwyPXZksBY1mnVb5
-         8aBg==
-X-Gm-Message-State: AFqh2kq5wpC72s0pZCU+UYgSSiJthu1f5wTh777fowql5XaUmK2HW62S
-        IfL+kj2zj6Uy1AWBiQAN99EAZNHleA==
-X-Google-Smtp-Source: AMrXdXtwGhnMqe9C2G+mYOvJ/eN9hOjcLZPmAVnaDhw1Q+GPzNfHud/mEjKEJ6nfHLiRx0oZyQ2jJw==
-X-Received: by 2002:a92:d20f:0:b0:303:27a3:8666 with SMTP id y15-20020a92d20f000000b0030327a38666mr42281126ily.28.1673201323881;
-        Sun, 08 Jan 2023 10:08:43 -0800 (PST)
+        bh=UJwSsdN78Mw/74fCf2IAdNqU5RKJJMT26secV+Cj7Jo=;
+        b=vqwa3DxC5EmhDa9EhyqKKmRCX/JnWwC/nZVMm6WZBWs9oMJ8Gsvsd5B+kCoMAPhdP5
+         TMcmcUZIfma+6GvIRaRntMbZiisWTAQMeFX8pBwH0UKprCSpTGDxkE3h/VPogWSth29U
+         +nUbaXeytpMKHvVTy63OWdrkwhdQabK/IpXUl5JJj0ijoPgJm3gxbGy+euYPUe7ARVCj
+         /cq1ZGg0eC+b8s5q0Ol1yZtq56z0+DSQNBmASHNne1895DqFtljCQAdD/fB9FyIBKfQw
+         TKTPfA1heTDYVjkolM8VgPe38YcwIOOpyDHtnuMgcnO0Tl6YCY1p6vDQWcUgpRGOKvZE
+         OEDQ==
+X-Gm-Message-State: AFqh2kpER0S+YfnqZvLZ0ouoXJe81BRVA4DxUoavrVraDlXKP49ml1Mw
+        Ji6sZfXC2/T5lrq1kIBe1w==
+X-Google-Smtp-Source: AMrXdXspwZ2mLgkCWVegw1f2MHlYfn3soxwbwdp9FqgJXfuiubLWO3mZt9Z4CWmZySB4ynG/BFClEQ==
+X-Received: by 2002:a92:cec4:0:b0:30b:e957:1e78 with SMTP id z4-20020a92cec4000000b0030be9571e78mr40237996ilq.29.1673203309380;
+        Sun, 08 Jan 2023 10:41:49 -0800 (PST)
 Received: from robh_at_kernel.org ([2605:ef80:8069:516a:f2b0:691e:4315:7c0f])
-        by smtp.gmail.com with ESMTPSA id e30-20020a02211e000000b00370decbbff3sm2079795jaa.148.2023.01.08.10.08.41
+        by smtp.gmail.com with ESMTPSA id g93-20020a028566000000b003781331d909sm2130451jai.9.2023.01.08.10.41.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Jan 2023 10:08:43 -0800 (PST)
-Received: (nullmailer pid 151858 invoked by uid 1000);
-        Sun, 08 Jan 2023 18:08:40 -0000
-Date:   Sun, 8 Jan 2023 12:08:40 -0600
+        Sun, 08 Jan 2023 10:41:48 -0800 (PST)
+Received: (nullmailer pid 188886 invoked by uid 1000);
+        Sun, 08 Jan 2023 18:41:46 -0000
+Date:   Sun, 8 Jan 2023 12:41:46 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>, devicetree@vger.kernel.org,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
         Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] dt-bindings: clock: qcom,camcc-sm8250: extend clocks and
- power domains
-Message-ID: <167320131871.151783.4587146709277238289.robh@kernel.org>
-References: <20221224214404.18280-1-krzysztof.kozlowski@linaro.org>
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 01/16] dt-bindings: clock: qcom,gcc-msm8998: drop
+ core_bi_pll_test_se
+Message-ID: <167320330549.188812.3791526731906955387.robh@kernel.org>
+References: <20221228185237.3111988-1-dmitry.baryshkov@linaro.org>
+ <20221228185237.3111988-2-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221224214404.18280-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221228185237.3111988-2-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Sat, 24 Dec 2022 22:44:04 +0100, Krzysztof Kozlowski wrote:
-> Add clocks and properties (power-domains, required-opps) already used in
-> SM8250 DTS:
+On Wed, 28 Dec 2022 20:52:22 +0200, Dmitry Baryshkov wrote:
+> The test clock apparently it's not used by anyone upstream. Remove it.
 > 
->   sm8250-hdk.dtb: clock-controller@ad00000: clocks: [[46, 10], [44, 0], [44, 1], [45]] is too long
->   sm8250-hdk.dtb: clock-controller@ad00000: clock-names:0: 'bi_tcxo' was expected
->   sm8250-hdk.dtb: clock-controller@ad00000: 'power-domains', 'required-opps' do not match any of the regexes: 'pinctrl-[0-9]+'
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->  .../bindings/clock/qcom,camcc-sm8250.yaml     | 20 +++++++++++++++++--
->  1 file changed, 18 insertions(+), 2 deletions(-)
+>  .../devicetree/bindings/clock/qcom,gcc-msm8998.yaml         | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
