@@ -2,307 +2,162 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25727C54EBD
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Jan 2023 16:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0F4C54EBD
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Jan 2023 17:45:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230513AbjAIQat (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Jan 2023 11:30:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59662 "EHLO
+        id S233468AbjAIRpj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Jan 2023 12:45:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235060AbjAIQap (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Jan 2023 11:30:45 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ACE4193C8
-        for <linux-clk@vger.kernel.org>; Mon,  9 Jan 2023 08:30:26 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id o7-20020a17090a0a0700b00226c9b82c3aso10184510pjo.3
-        for <linux-clk@vger.kernel.org>; Mon, 09 Jan 2023 08:30:26 -0800 (PST)
+        with ESMTP id S234955AbjAIRpe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Jan 2023 12:45:34 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD81334D78
+        for <linux-clk@vger.kernel.org>; Mon,  9 Jan 2023 09:45:33 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id az7so9011456wrb.5
+        for <linux-clk@vger.kernel.org>; Mon, 09 Jan 2023 09:45:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WtRT+wwwKvHWECOr7HcCnX4J5vFUq9c9V1yolIUSEGo=;
-        b=0z3/3/A9lynNElzxD/uqnFXGW/31Ie7nEDika90bnMQHxp/F1SC1MyP9xNGhQo9oui
-         kj6OXgpjoOQJduyPPEyqQHHL4g78xPCQa7YsxlF9qFuifJZUb/ccOGdjL4ag6IBl+Znd
-         Ok8/Y9fBd2ecPMWnTe3/XyKYEOVgjIUYlB+gUXiuzJDypxlQtZYTI+kXgMuBuVNYZ6kV
-         4rhWoIKXdDIZ6b2noMto28aS70uP19b5AhPMkc7Oz+izmH8fW8BGf7yqysp3Vi1agl66
-         xwYx23azw+477pIaOWjlgM9W8P8ipjEuXDTwB6egVMGHZqrDzUMfnsaV6A0qIVNxNBAI
-         sSBA==
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=48ftCATxHgOiOe6xbKGx2ZiY6n3+BUStS7/be/RWXjo=;
+        b=uIyVlkZMW/HK5vBfVUvOkqrToPfP556HNThca4pQQfYpADbQsZh5bnOZnXrlQfuh/x
+         OJTgZXPMIBFwIfeEC5Ekj8YBKMs5TNSSH+vlvtRMzYbi3ZiyT7ik8GFNE/Q02NRjJJ80
+         oUhRleC0eXkskPsDGH4RiF43IlSg8LaEJfGCM8orW5aCQvFkjxGmSC2OpKBNJ+/LAbcb
+         nWe8Yj304C1lxFOJrm4q+sRmQjgXnQ6ocZBohOnptfyNLB0MEOoaa5gyTd8A2NmJCuPA
+         Wa7Ix6RAJXjybmvcDRC0hM1dcXhlF7c6AdvnlRAXYCY4Enr8AoxyphhTL46nl07TPwbU
+         kpdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WtRT+wwwKvHWECOr7HcCnX4J5vFUq9c9V1yolIUSEGo=;
-        b=5SHHd+VWG69hh15CDYyhCcx4H4hkfnuEKt7QyVEFEryOu3rdFqkXvCq/JjsDy7Ikq7
-         RNyxzGJ8qolYX90jdfUrOeBdYd1W3P2GgnhnGyvgOVrMI3A9l0FqnCpKT3BzYrqJHr8N
-         XHeQffqn2w/i4bbGdF7lXXgU2IuY2r709mLWBn8I+QOv3HyltMGFxWng+INtHn/Eblb1
-         NMnioVg+six2IXd49CvTgWrIs3ZY6udw+EHhiJaUZnBkwnilLawF8DfnTbbCpnpEomGl
-         fytFVpclKqET+umLCR+QIoekRm/ZsYZ1oX4pSHZ6mrXP8GohUUIQn8bOvcg5I72s4/lM
-         aGjA==
-X-Gm-Message-State: AFqh2krFTfxTyyJ0bP9uyUDJX5QfxSssIPbrdseRjVT4QboF73scHTFb
-        ebslllInUnGKF6SNoFkDuIiCAw==
-X-Google-Smtp-Source: AMrXdXuXGd/rX6Uz/geXG3OE+/fYoWxsnnM+3qiSrZ0b6rxBD+RuG70T1nHtrCR1xjM0XqP8JYLyvw==
-X-Received: by 2002:a17:90a:a618:b0:210:ccdf:2952 with SMTP id c24-20020a17090aa61800b00210ccdf2952mr68582504pjq.28.1673281825459;
-        Mon, 09 Jan 2023 08:30:25 -0800 (PST)
-Received: from localhost (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id ct14-20020a17090af58e00b00219186abd7csm5766795pjb.16.2023.01.09.08.30.24
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=48ftCATxHgOiOe6xbKGx2ZiY6n3+BUStS7/be/RWXjo=;
+        b=fA8EogmEdtgkLNMYyhpE03K9MCe8kLV1Gpu/CWhBEp+5i5A80QbJH0JSyQR4puI1U5
+         8wGx0SKuq1mslWxqXlA/VR9JD5sE/JNsm3CQ+iNwhlMuFyiG9hO9ZtXU1ug6yJI9U5O4
+         XmeYmCMQYPJzUTCZaO5TDDPuzDmC0va9dUEiQ5K8XL1p6EFlAe3b848GOv4uSAMJegqq
+         D0tSRwMSoeqTiwdkWsdHzlk7B217w1Wk0hnX2chMIVNagsspxaIQLo3P81VZVtpEwdDa
+         Y4lbOy6KUarFK69B6E2gI620U3R+Wrxqf69ysmk6wkiQ+UJMhnmzOyn3niLgWJ6MqZGT
+         cQxA==
+X-Gm-Message-State: AFqh2kqN6u6qUthhiJSOSrBuspqDcoHQmdT3yD8eTne6JPNX0J+KDCN7
+        enFbDI2K5DBM696TGR6t0V13Jg==
+X-Google-Smtp-Source: AMrXdXu9JkiYxSufEml13EpQTB0wBLF4UHrsBsfZhlYDworiPjQZ/MQb2g6EnCJfiC/KysHLez8NFg==
+X-Received: by 2002:a05:6000:1e1a:b0:290:968:f1ac with SMTP id bj26-20020a0560001e1a00b002900968f1acmr25786641wrb.33.1673286332425;
+        Mon, 09 Jan 2023 09:45:32 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:c88:901e:c74c:8e80])
+        by smtp.gmail.com with ESMTPSA id m1-20020a5d6241000000b002bbdaf21744sm6142902wrv.113.2023.01.09.09.45.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jan 2023 08:30:24 -0800 (PST)
-Date:   Mon, 9 Jan 2023 17:30:22 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Maciek Machnikowski <maciek@machnikowski.net>,
-        'Vadim Fedorenko' <vfedorenko@novek.ru>,
-        'Jonathan Lemon' <jonathan.lemon@gmail.com>,
-        'Paolo Abeni' <pabeni@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
-Message-ID: <Y7xBHtR3XwfAahry@nanopsycho>
-References: <Y4oj1q3VtcQdzeb3@nanopsycho>
- <20221206184740.28cb7627@kernel.org>
- <10bb01d90a45$77189060$6549b120$@gmail.com>
- <20221207152157.6185b52b@kernel.org>
- <6e252f6d-283e-7138-164f-092709bc1292@machnikowski.net>
- <Y5MW/7jpMUXAGFGX@nanopsycho>
- <a8f9792b-93f1-b0b7-2600-38ac3c0e3832@machnikowski.net>
- <20221209083104.2469ebd6@kernel.org>
- <Y5czl6HgY2GPKR4v@nanopsycho>
- <DM6PR11MB46571573010AB727E1BE99AE9BFE9@DM6PR11MB4657.namprd11.prod.outlook.com>
+        Mon, 09 Jan 2023 09:45:32 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Alex Elder <elder@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
+        netdev@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH 00/18] arm64: qcom: add support for sa8775p-ride
+Date:   Mon,  9 Jan 2023 18:44:53 +0100
+Message-Id: <20230109174511.1740856-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <DM6PR11MB46571573010AB727E1BE99AE9BFE9@DM6PR11MB4657.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Mon, Jan 09, 2023 at 03:43:01PM CET, arkadiusz.kubalewski@intel.com wrote:
->>From: Jiri Pirko <jiri@resnulli.us>
->>Sent: Monday, December 12, 2022 2:59 PM
->>
->>Fri, Dec 09, 2022 at 05:31:04PM CET, kuba@kernel.org wrote:
->>>On Fri, 9 Dec 2022 15:09:08 +0100 Maciek Machnikowski wrote:
->>>> On 12/9/2022 12:07 PM, Jiri Pirko wrote:
->>>> > Looking at the documentation of the chips, they all have mupltiple
->>DPLLs
->>>> > on a die. Arkadiusz, in your proposed implementation, do you model
->>each
->>>> > DPLL separatelly? If yes, then I understand the urgency of need of a
->>>> > shared pin. So all DPLLs sharing the pin are part of the same chip?
->>>> >
->>>> > Question: can we have an entity, that would be 1:1 mapped to the
->>actual
->>>> > device/chip here? Let's call is "a synchronizer". It would contain
->>>> > multiple DPLLs, user-facing-sources(input_connector),
->>>> > user-facing-outputs(output_connector), i/o pins.
->>>> >
->>>> > An example:
->>>> >                                SYNCHRONIZER
->>>> >
->>>> >
->>┌───────────────────────────────────────┐
->>>> >                               │
->>│
->>>> >                               │
->>│
->>>> >   SyncE in connector          │              ┌─────────┐
->>│     SyncE out connector
->>>> >                 ┌───┐         │in pin 1      │DPLL_1   │     out pin
->>1│    ┌───┐
->>>> >                 │   ├─────────┼──────────────┤
->>├──────────────┼────┤   │
->>>> >                 │   │         │              │         │
->>│    │   │
->>>> >                 └───┘         │              │         │
->>│    └───┘
->>>> >                               │              │         │
->>│
->>>> >                               │           ┌──┤         │
->>│
->>>> >    GNSS in connector          │           │  └─────────┘
->>│
->>>> >                 ┌───┐         │in pin 2   │                  out pin
->>2│     EXT SMA connector
->>>> >                 │   ├─────────┼───────────┘
->>│    ┌───┐
->>>> >                 │   │         │
->>┌───────────┼────┤   │
->>>> >                 └───┘         │                           │
->>│    │   │
->>>> >                               │                           │
->>│    └───┘
->>>> >                               │                           │
->>│
->>>> >    EXT SMA connector          │                           │
->>│
->>>> >                 ┌───┐   mux   │in pin 3      ┌─────────┐  │
->>│
->>>> >                 │   ├────┬────┼───────────┐  │         │  │
->>│
->>>> >                 │   │    │    │           │  │DPLL_2   │  │
->>│
->>>> >                 └───┘    │    │           │  │         │  │
->>│
->>>> >                          │    │           └──┤         ├──┘
->>│
->>>> >                          │    │              │         │
->>│
->>>> >    EXT SMA connector     │    │              │         │
->>│
->>>> >                 ┌───┐    │    │              │         │
->>│
->>>> >                 │   ├────┘    │              └─────────┘
->>│
->>>> >                 │   │         │
->>│
->>>> >                 └───┘
->>└───────────────────────────────────────┘
->>>> >
->>>> > Do I get that remotelly correct?
->>>>
->>>> It looks goot, hence two corrections are needed:
->>>> - all inputs can go to all DPLLs, and a single source can drive more
->>>>   than one DPLL
->>>> - The external mux for SMA connector should not be a part of the
->>>>   Synchronizer subsystem - I believe there's already a separate MUX
->>>>   subsystem in the kernel and all external connections should be handled
->>>>   by a devtree or a similar concept.
->>>>
->>>> The only "muxing" thing that could potentially be modeled is a
->>>> synchronizer output to synchronizer input relation. Some synchronizers
->>>> does that internally and can use the output of one DPLL as a source for
->>>> another.
->>>
->>>My experience with DT and muxes is rapidly aging, have you worked with
->>>those recently? From what I remember the muxes were really.. "embedded"
->>>and static compared to what we want here.
->>
->>Why do you think we need something "non-static"? The mux is part of the
->>board, isn't it? That sounds quite static to me.
->>
->>
->>>
->>>Using DT may work nicely for defining the topology, but for config we
->>>still need a different mechanism.
->>
->>"config" of what? Each item in topology would be configure according to
->>the item type, won't it?
->>
->>[...]
->
->
->Hi guys,
->
->We have been trying to figure out feasibility of new approach proposed on our
->latest meeting - to have a single object which encapsulates multiple DPLLs.
->
->Please consider following example:
->
->Shared common inputs:                                      
->i0 - GPS  / external                                       
->i1 - SMA1 / external                                       
->i2 - SMA2 / external                                       
->i3 - MUX0 / clk recovered from PHY0.X driven by MAC0       
->i4 - MUX1 / clk recovered from PHY1.X driven by MAC1       
->
->+---------------------------------------------------------+
->| Channel A / FW0             +---+                       |
->|                         i0--|   |                       |
->|         +---+               |   |                       |
->| PHY0.0--|   |           i1--| D |                       |
->|         |   |               | P |                       |
->| PHY0.1--| M |           i2--| L |   +---+   +--------+  |
->|         | U |               | L |---|   |---| PHY0.0 |--|
->| PHY0.2--| X |-+---------i3--| 0 |   |   |   +--------+  |
->|         | 0 | |+------+     |   |---| M |---| PHY0.1 |--|
->| ...   --|   | || MUX1 |-i4--|   |   | A |   +--------+  |
->|         |   | |+------+     +---+   | C |---| PHY0.2 |--|
->| PHY0.7--|   | |         i0--|   |   | 0 |   +--------+  |
->|         +---+ |             |   |---|   |---| ...    |--|
->|               |         i1--| D |   |   |   +--------+  |
->|               |             | P |---|   |---| PHY0.7 |--|
->|               |         i2--| L |   +---+   +--------+  |
->|               |             | L |                       |
->|               \---------i3--| 1 |                       |
->|                +------+     |   |                       |
->|                | MUX1 |-i4--|   |                       |
->|                +------+     +---+                       |
->+---------------------------------------------------------+
->| Channel B / FW1             +---+                       |
->|                         i0--|   |                       |
->|                             |   |                       |
->|                         i1--| D |                       |
->|         +---+               | P |                       |
->| PHY1.0--|   |           i2--| L |   +---+   +--------+  |
->|         |   |  +------+     | L |---|   |---| PHY1.0 |--|
->| PHY1.1--| M |  | MUX0 |-i3--| 0 |   |   |   +--------+  |
->|         | U |  +------+     |   |---| M |---| PHY1.1 |--|
->| PHY1.2--| X |-+---------i4--|   |   | A |   +--------+  |
->|         | 1 | |             +---+   | C |---| PHY1.2 |--|
->| ...   --|   | |         i0--|   |   | 1 |   +--------+  |
->|         |   | |             |   |---|   |---| ...    |--|
->| PHY1.7--|   | |         i1--| D |   |   |   +--------+  |
->|         +---+ |             | P |---|   |---| PHY1.7 |--|
->|               |         i2--| L |   +---+   +--------+  |
->|               |+------+     | L |                       |
->|               || MUX0 |-i3--| 1 |                       |
->|               |+------+     |   |                       |
->|               \---------i4--|   |                       |
->|                             +---+                       |
->+---------------------------------------------------------+
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-What is "a channel" here? Are these 2 channels part of the same physival
-chip? Could you add the synchronizer chip/device entities to your drawing?
+This adds basic support for the Qualcomm sa8775p platform and its reference
+board: sa8775p-ride. The dtsi contains basic SoC description required for
+a simple boot-to-shell. The dts enables boot-to-shell with UART on the
+sa8775p-ride board. There are three new drivers required to boot the board:
+pinctrl, interconnect and GCC clock. Other patches contain various tweaks
+to existing code. More support is coming up.
 
+Bartosz Golaszewski (15):
+  dt-bindings: clock: sa8775p: add bindings for Qualcomm gcc-sa8775p
+  arm64: defconfig: enable the clock driver for Qualcomm SA8775P
+    platforms
+  dt-bindings: clock: qcom-rpmhcc: document the clock for sa8775p
+  clk: qcom: rpmh: add clocks for sa8775p
+  dt-bindings: interconnect: qcom: document the interconnects for
+    sa8775p
+  arm64: defconfig: enable the interconnect driver for Qualcomm SA8775P
+  dt-bindings: pinctrl: sa8775p: add bindings for qcom,sa8775p-tlmm
+  arm64: defconfig: enable the pinctrl driver for Qualcomm SA8775P
+    platforms
+  dt-bindings: mailbox: qcom-ipcc: document the sa8775p platform
+  dt-bindings: power: qcom,rpmpd: document sa8775p
+  soc: qcom: rmphpd: add power domains for sa8775p
+  dt-bindings: arm-smmu: document the smmu on Qualcomm SA8775P
+  iommu: arm-smmu: qcom: add support for sa8775p
+  dt-bindings: arm: qcom: document the sa8775p reference board
+  arm64: dts: qcom: add initial support for qcom sa8775p-ride
 
->
->This is a simplified network switch board example.
->It has 2 synchronization channels, where each channel:
->- provides clk to 8 PHYs driven by separated MAC chips,
->- controls 2 DPLLs.
->
->Basically only given FW has control over its PHYs, so also a control over it's
->MUX inputs.
->All external sources are shared between the channels.
->
->This is why we believe it is not best idea to enclose multiple DPLLs with one
->object:
->- sources are shared even if DPLLs are not a single synchronizer chip,
->- control over specific MUX type input shall be controllable from different
->driver/firmware instances.
->
->As we know the proposal of having multiple DPLLs in one object was a try to
->simplify currently implemented shared pins. We fully support idea of having
->interfaces as simple as possible, but at the same time they shall be flexible
->enough to serve many use cases.
->
->Right now the use case of single "synchronizer chip" is possible (2 DPLLs with
->shared inputs), as well as multiple synchronizer chips with shared inputs.
->
->If we would entirely get rid of sharing pins idea and instead allowed only to
->have multiple DPLLs in one object, we would fall back to the problem where
->change on one input is braking another "synchronizer chip" input.
->I.e. considering above scheme, user configured both channels to use SMA1 1MHz.
->If SMA1 input is changed to 10MHz, all DPLLs are affected, thus all using that
+Shazad Hussain (2):
+  clk: qcom: add the GCC driver for sa8775p
+  interconnect: qcom: add a driver for sa8775p
 
-You say "SMA1 input *is changed*". Could you add to your drawing:
-1) Who is the one triggering the change.
-2) Entity that manages the SMA input and applies the configuration.
+Yadu MG (1):
+  pinctrl: qcom: sa8775p: add the pinctrl driver for the sa8775p
+    platform
 
+ .../devicetree/bindings/arm/qcom.yaml         |    5 +
+ .../bindings/clock/qcom,gcc-sa8775p.yaml      |   77 +
+ .../bindings/clock/qcom,rpmhcc.yaml           |    1 +
+ .../bindings/interconnect/qcom,rpmh.yaml      |   14 +
+ .../devicetree/bindings/iommu/arm,smmu.yaml   |    1 +
+ .../bindings/mailbox/qcom-ipcc.yaml           |    1 +
+ .../bindings/pinctrl/qcom,sa8775p-tlmm.yaml   |  142 +
+ .../devicetree/bindings/power/qcom,rpmpd.yaml |    1 +
+ arch/arm64/boot/dts/qcom/Makefile             |    1 +
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dts     |   39 +
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         |  841 +++
+ arch/arm64/configs/defconfig                  |    3 +
+ drivers/clk/qcom/Kconfig                      |    9 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/clk-rpmh.c                   |   17 +
+ drivers/clk/qcom/gcc-sa8775p.c                | 4806 +++++++++++++++++
+ drivers/interconnect/qcom/Kconfig             |    9 +
+ drivers/interconnect/qcom/Makefile            |    2 +
+ drivers/interconnect/qcom/sa8775p.c           | 2542 +++++++++
+ drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c    |    1 +
+ drivers/pinctrl/qcom/Kconfig                  |    9 +
+ drivers/pinctrl/qcom/Makefile                 |    1 +
+ drivers/pinctrl/qcom/pinctrl-sa8775p.c        | 1649 ++++++
+ drivers/soc/qcom/rpmhpd.c                     |   34 +
+ include/dt-bindings/clock/qcom,gcc-sa8775p.h  |  320 ++
+ .../dt-bindings/interconnect/qcom,sa8775p.h   |  231 +
+ include/dt-bindings/power/qcom-rpmpd.h        |   19 +
+ 27 files changed, 10776 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sa8775p.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml
+ create mode 100644 arch/arm64/boot/dts/qcom/sa8775p-ride.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/sa8775p.dtsi
+ create mode 100644 drivers/clk/qcom/gcc-sa8775p.c
+ create mode 100644 drivers/interconnect/qcom/sa8775p.c
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-sa8775p.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sa8775p.h
+ create mode 100644 include/dt-bindings/interconnect/qcom,sa8775p.h
 
->input shall be notified, as long as that input is shared.
->For the drivers that have single point of control over dpll, they might just
->skip those requests. But if there are multiple firmware instances controlling
->multiple DPLLs, they would process it independently.
->
->Current implementation is the most flexible and least complex for the level of
->flexibility it provides.
->
->BR, Happy new year!
->Arkadiusz
+-- 
+2.37.2
+
