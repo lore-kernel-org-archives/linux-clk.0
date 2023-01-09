@@ -2,59 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44149C61DB3
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Jan 2023 18:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E84B4C61DB3
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Jan 2023 18:30:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237590AbjAIS0D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Jan 2023 13:26:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45288 "EHLO
+        id S231358AbjAISaH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Jan 2023 13:30:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237511AbjAISZl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Jan 2023 13:25:41 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9C326D526
-        for <linux-clk@vger.kernel.org>; Mon,  9 Jan 2023 10:23:13 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id bs20so9118026wrb.3
-        for <linux-clk@vger.kernel.org>; Mon, 09 Jan 2023 10:23:13 -0800 (PST)
+        with ESMTP id S237768AbjAIS32 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Jan 2023 13:29:28 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C8313B924
+        for <linux-clk@vger.kernel.org>; Mon,  9 Jan 2023 10:26:14 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id p3-20020a05600c1d8300b003d9ee5f125bso3309089wms.4
+        for <linux-clk@vger.kernel.org>; Mon, 09 Jan 2023 10:26:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=A00xyofDnmYBC+YdwEJ6rLbaZfkGLo4zgr19f7CaBy0=;
-        b=Nn560XwbDWnu6G77ftDb5073LFO23GkitBB9lcflnyEaIUw6AmwQ40dLP+Fesu/+gU
-         So2x/k+DlrgBQp4MOuwLTGgW/jrh+w9xRoQjI4FzwiyOi9zwkhZ3v4UPjxF1El9qTIFN
-         A4/3U0/cgq7jTetYBLGPkwd5YVIvwNW3J8eGHihIRBcyc8KuUgjd00lPBHuqlWNtlFOi
-         SsH78muTDUrTIQDzAbjGLJFRENx+pdugFomt97C4CVvjR3HQzpC1B+6fgaN0d6FlNg+D
-         C3cmDbAE79TDfnAUsRisA+a5RXmGm1foH294ilbiRRQ3NiWM+NrufrI0U4L5pWL3RSAF
-         4PJA==
+        bh=34xoWv9ZRaBvWx1Ukqb34kE7Vi5rXidYbq8azSquKUM=;
+        b=yMpIDlUHX3k8RTsFFou3FoMEoLzlTKpxrfNQlV/yrqZsOASlElbveKx2EKtsYTa5kt
+         UP1NgB1TjuuIdrgM+qIq6RjHNHcICS2/5b4CQcFLmjltRlDQGRemi9qYe3MU8U5PM/LZ
+         sF4/uRX8vwz3eD0b0GXq5ZOkL6YonAErnLS7XokjvW9QrjkXHWgi1ZdYORY6v478ReY7
+         YEBgDCep1tzjEdWcezmOlim53cVMd3yFRC2AZ3+mDt2iSoyEKLGf3yTspR4o6x8jflB0
+         dNHHyngRE2CmidQKtvOGTybVs0ypyk0tEsyRTDq30VgpNbxC2W51zptdpTf4ddVfHb4/
+         XNmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A00xyofDnmYBC+YdwEJ6rLbaZfkGLo4zgr19f7CaBy0=;
-        b=MNHyPBOKKjySfSdr/653g6id+1c35G8sIHKhriZJxjta1jZFFaOWYW9AqzacayxQQE
-         tk5I70iYwSXfwq/BHVZNYiM2OhW3xAxa0hZrBN5SMevvBVvv8Vxd8mm5i7vm5ounxlBt
-         mntMrsGTamzdA21sNMGMPGTtali/lAuTWAbmUjr8+NCPR5bHx5IU4HeypRTcvu8nwUgW
-         1HY3ECORzFEe6gaizoZI7Rl3bOS3rxB6vVSqM9IVvCO+JHIfoUQp8JNX4ETKA4WjB92o
-         hlgkRcqSqsIiGTK23gRyOvGqSLb54uaT00sEUE0tEQ1UWeNwKxdcEoIhsTdKcXskoTfv
-         AcFA==
-X-Gm-Message-State: AFqh2kpEt2NJX2Q2f+JwJ53jcyyt8isCuILHZCQ97/ZWVn3I+fJKCurv
-        BKXCgw+AfiNXzZqYDyZyMCAEmw==
-X-Google-Smtp-Source: AMrXdXuMGYUrHoq4kIUWUWO5tf56nNLAhc62b2axVIsjwOUdF/rm8nQM5YAguQaJeokfqPilyj+DXQ==
-X-Received: by 2002:adf:e383:0:b0:242:3cb6:36b8 with SMTP id e3-20020adfe383000000b002423cb636b8mr42328232wrm.44.1673288592385;
-        Mon, 09 Jan 2023 10:23:12 -0800 (PST)
+        bh=34xoWv9ZRaBvWx1Ukqb34kE7Vi5rXidYbq8azSquKUM=;
+        b=HIt5KuIkVjVfLTy7zN2RtCtWGnSTpA88WKSbb9gmxAey9kdOnuiXjYVPnmeI2Lth6I
+         jC5386V6JcjHYWYxf2Vj7zH3GvmgEMNFSh4U0KdNsEBHwY1RaZanNChGbA0J2jScHdRT
+         Qdaczyl7apJN4wdI0oSXxT07VIiVKh0TujfX1J7q1aQpox/9u+IHaQM7v/wfg+ueR1NF
+         HtVq2G281GxeJ62/jZ730BrlpPzZhT1lAtTtdC5rCySzfs9xwgoEq1qFO1fHxrGpLX2Z
+         JWmA5lYL2A43XPMhDGsen1if7QRqS2h/J5XsT9OQSEZXI+kDqFwAI42+TThPh271jtOy
+         gMLA==
+X-Gm-Message-State: AFqh2krPA04zNF0H+GxJo1OiaanJyosHk9COSKrLKJRwGR6c+zYGNvOz
+        OmYX6jv4VpcCd5HwCFMfiocz+g==
+X-Google-Smtp-Source: AMrXdXskjGH2VdSEumH2gFdf5DIfnsEbLq2aONWSNFs8KOjUrGAT3E3icDeZXe8W48sTqhNPO/bfyw==
+X-Received: by 2002:a7b:c3c1:0:b0:3c7:1359:783b with SMTP id t1-20020a7bc3c1000000b003c71359783bmr47028901wmj.1.1673288773021;
+        Mon, 09 Jan 2023 10:26:13 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id u5-20020adfdb85000000b002ba2646fd30sm10713382wri.36.2023.01.09.10.23.09
+        by smtp.gmail.com with ESMTPSA id g14-20020a05600c4ece00b003d9ea176d54sm9545165wmq.27.2023.01.09.10.26.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Jan 2023 10:23:11 -0800 (PST)
-Message-ID: <aa146dc5-b4de-0e77-345a-8592b097f444@linaro.org>
-Date:   Mon, 9 Jan 2023 19:23:09 +0100
+        Mon, 09 Jan 2023 10:26:12 -0800 (PST)
+Message-ID: <94744e36-e4d2-fe19-fc2b-cf801db247ca@linaro.org>
+Date:   Mon, 9 Jan 2023 19:26:10 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH 13/18] dt-bindings: power: qcom,rpmpd: document sa8775p
+Subject: Re: [PATCH 17/18] dt-bindings: arm: qcom: document the sa8775p
+ reference board
 Content-Language: en-US
 To:     Bartosz Golaszewski <brgl@bgdev.pl>,
         Andy Gross <agross@kernel.org>,
@@ -82,9 +83,9 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         netdev@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 References: <20230109174511.1740856-1-brgl@bgdev.pl>
- <20230109174511.1740856-14-brgl@bgdev.pl>
+ <20230109174511.1740856-18-brgl@bgdev.pl>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230109174511.1740856-14-brgl@bgdev.pl>
+In-Reply-To: <20230109174511.1740856-18-brgl@bgdev.pl>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -94,14 +95,24 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On 09/01/2023 18:45, Bartosz Golaszewski wrote:
 > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> Add a compatible for sa8775p platforms and relevant defines to the include
-> file.
+> Add a new compatible for the sa8775p-ride board.
 > 
 > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > ---
+>  Documentation/devicetree/bindings/arm/qcom.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+> index 27063a045bd0..7490eb0c3e3c 100644
+> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
+> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+> @@ -751,6 +751,11 @@ properties:
+>            - const: qcom,qcs404-evb
+>            - const: qcom,qcs404
 
+You miss the update of SoC in this file (beginning).
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>  
 
 Best regards,
 Krzysztof
