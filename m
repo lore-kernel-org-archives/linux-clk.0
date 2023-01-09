@@ -2,102 +2,167 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D419C5479D
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Jan 2023 10:49:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF7BCC5479D
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Jan 2023 10:50:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231126AbjAIKtb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Jan 2023 05:49:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58190 "EHLO
+        id S233702AbjAIKuv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Jan 2023 05:50:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229865AbjAIKtb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Jan 2023 05:49:31 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10D35B4E
-        for <linux-clk@vger.kernel.org>; Mon,  9 Jan 2023 02:49:29 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id fc4so18936063ejc.12
-        for <linux-clk@vger.kernel.org>; Mon, 09 Jan 2023 02:49:28 -0800 (PST)
+        with ESMTP id S236610AbjAIKuo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Jan 2023 05:50:44 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BFAAFE6
+        for <linux-clk@vger.kernel.org>; Mon,  9 Jan 2023 02:50:43 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id j16so11872632edw.11
+        for <linux-clk@vger.kernel.org>; Mon, 09 Jan 2023 02:50:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xqAqPhIqERgD29GWWy+ln9sbSBK7E7D/BXF1DQNgTDU=;
-        b=O2+RQyS8HsQ7EWLgCpAFgp+Vo3Omg/v6W5paOULH5B7BSlhnwQP/nFusR6fwnTU9gp
-         O4Q6ZhCect9eMFhcnj9t+ssyCA+MJvXSHvhhHCXi1z/d2V8H5FfqzpbJ3EtLQ2iojyVG
-         DFdjwFodA+NvbyhmpAMLyv4tAdroDBSBb1dlpVMMBU0m5dL4j1G+DAMaNrG7g4R3kdye
-         G88ukGxjX/VOSUv0oz06f1S1dfu8TfJXd+QOa0O3i+XlAlJlBClDMuPR3s8nw9BvMLdA
-         NikjApF5FhKT4adr5i91Yx9Oplfat0/3y1VYr8hFbR5ER0THlyojVdP1ZoXZEwD7/a5o
-         bbHA==
+        bh=fqpbrmxeSQQBxu71jkn/XTeqp1cCCSTeMHOpaUyG7fI=;
+        b=SByDc+YboU7YzuE2RU55S4PSRPtNPCVKltMmSvsWl99LYIq2MsIKmqMdn01FVK8Ox4
+         dwfizovmv8tyrXCsGaK/K2JjCxuuFpW0OSrJsmN+ZBxnbCwM5orNiKTVrok6UNrGjlOX
+         QGyoq8VxBjiqOQUVQ1ND9N+MUajmQ931gry6xDaN1W40YKXYmD2wk5z3E9Ow/6kTFIvN
+         bglFIoNZ5sFB/Kf0Q7Hle3sAVRZ/L5jyC9Fk0KZckygk6CbewjtQb+M/C/Ljjj08r6GG
+         Zw+CERzkR+Vsn+hWy0iu712oB5pbeL1Gnt0ZcPiFcQW+tRFj1n3RKY+vJClfsU/uXuaH
+         KXYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xqAqPhIqERgD29GWWy+ln9sbSBK7E7D/BXF1DQNgTDU=;
-        b=sesG6P1vgq6SFya6xMp3IL6r7Pv77CIaA6+RS7OIWIrYAvd8YWrmdDCPyCwsBiWnZD
-         JXmhLwihDHESdgBCfYocj76MHaXYelg9NFJbmZAY91dPSo7XISOB3JT6DubCwWnDdzuj
-         xk7bxdquUabaJp0CyWYTXxyUFTdEAJr/NGsptOfy7HpmId3baqhbnFaH1/9RoCpouqwp
-         giHJ19aTB6rewBykS15SEl9t4RE4Z6ij63GZxf8YKv15ezHc2PUVIsSF+WE8k7oAJt8B
-         6zaBJM1rw+iWykZYV9SWbfdH9E1ThUP1cO3I67PjqcJxWEHNZVheaNUXwr7ErNbMi9Xl
-         EZSA==
-X-Gm-Message-State: AFqh2kpPvkF2NFz6U66XDNpR9p5lS4BeX69cHlK6K2jOdIpSWbE0pF8r
-        vJAYHSxhrg9E3pvg/qzcuBmYGQ==
-X-Google-Smtp-Source: AMrXdXuDMndAcHwHQy7+2S02KFcRC5cWaGLNPd+fcA5kFAGcMEV2c1u69dIoKNmuKgcu+Jr/wn3GvA==
-X-Received: by 2002:a17:907:c011:b0:7c0:e5ca:411c with SMTP id ss17-20020a170907c01100b007c0e5ca411cmr52648321ejc.17.1673261367517;
-        Mon, 09 Jan 2023 02:49:27 -0800 (PST)
+        bh=fqpbrmxeSQQBxu71jkn/XTeqp1cCCSTeMHOpaUyG7fI=;
+        b=Iw8zA/1MEuQa8s8VXhwkLqXxO9W8LAw45Y6g4cf2gt7ZrjrwSyD3AJzOfjPpOCb8GA
+         vlh3hyiZTFHb5Z/rSjHbeJOTpT1suglsX79KWcp1HVSWPPM2RWWigIGJ2ZmO6Dys3ji2
+         eUhM6kQxGt58GD5V+dQgW/g4vTvR2fYeW/GLz0096GzIpd3Q/rTzSk6GrZ7qrSPnrHUX
+         CimrO9mVbCmUlEnfx4yS5Exgm+PFypdhSRxKWvwnDZ8O936xvr3cHwKEK5aN/4s9SKyE
+         8EOJEerWC+dj3xxuXs00GOR0pgo2DsKvVIjmkJZ7hJ4eUFHZUBrfA1d1xZNlSjaMGwM4
+         AnCA==
+X-Gm-Message-State: AFqh2koAadGvTYxNhQC4/FIgo3DyV1JPkYtEubXbzOVOAbKHHLnv5RzF
+        Dhr//fRpAGaqM1RGeA29yIPO2Q==
+X-Google-Smtp-Source: AMrXdXtYJYLVPTI4WLtq8sxOc8zoksIY9GdCa9B7v/Ng/gLbxGBzT6tcH11TG3tccr7Lr2DRyYp1+Q==
+X-Received: by 2002:a05:6402:500a:b0:498:18e7:1667 with SMTP id p10-20020a056402500a00b0049818e71667mr7651891eda.10.1673261442127;
+        Mon, 09 Jan 2023 02:50:42 -0800 (PST)
 Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id a20-20020a17090680d400b007c4f32726c4sm3579814ejx.133.2023.01.09.02.49.26
+        by smtp.gmail.com with ESMTPSA id s17-20020a1709060c1100b0084d21db0691sm3573669ejf.179.2023.01.09.02.50.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jan 2023 02:49:27 -0800 (PST)
-Date:   Mon, 9 Jan 2023 12:49:25 +0200
+        Mon, 09 Jan 2023 02:50:41 -0800 (PST)
+Date:   Mon, 9 Jan 2023 12:50:40 +0200
 From:   Abel Vesa <abel.vesa@linaro.org>
-To:     LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
-Cc:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        18701859600@163.com, bsp-development.geo@leica-geosystems.com,
-        Marco Felsch <m.felsch@pengutronix.de>
-Subject: Re: [PATCH V4 1/1] clk: imx8mp: Alias M7 SRC/DIV to M7 CORE
-Message-ID: <Y7vxNX2HAp5TPoWp@linaro.org>
-References: <20221214030719.4123889-1-Qing-wu.Li@leica-geosystems.com.cn>
- <20221214030719.4123889-2-Qing-wu.Li@leica-geosystems.com.cn>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Abel Vesa <abelvesa@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Jesse Taube <mr.bossman075@gmail.com>,
+        Giulio Benetti <giulio.benetti@benettiengineering.com>,
+        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: imx: fix compile testing imxrt1050
+Message-ID: <Y7vxgEgCQyp6ODCx@linaro.org>
+References: <20221215165836.2136448-1-arnd@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221214030719.4123889-2-Qing-wu.Li@leica-geosystems.com.cn>
+In-Reply-To: <20221215165836.2136448-1-arnd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-12-14 04:07:19, LI Qingwu wrote:
-> Defined IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV in imx8mp-clock.h
-> but never assigned. It will cause the system to hang if using them.
-> Alias IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV to IMX8MP_CLK_M7_CORE
-> for backward compatibility.
+On 22-12-15 17:58:18, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Fixes: 8c83a8ff4dd9 (clk: imx8mp: use imx8m_clk_hw_composite_core to simplify code)
-> Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
+> Randconfig testing revealed multiple issues with this driver:
+> 
+> ERROR: modpost: missing MODULE_LICENSE() in drivers/clk/imx/clk-imxrt1050.o
+> ERROR: modpost: "imx_clk_hw_pllv3" [drivers/clk/imx/clk-imxrt1050.ko] undefined!
+> ERROR: modpost: "imx_clk_hw_pfd" [drivers/clk/imx/clk-imxrt1050.ko] undefined!
+> 
+> Export the necessary symbols from the core clk driver and add the
+> license and author tags. To find this type of problem more easily
+> in the future, also enable building on other platforms, as we do for
+> the other i.MX clk drivers.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Fixes tag maybe?
 
 Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
-> Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
 > ---
->  drivers/clk/imx/clk-imx8mp.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/clk/imx/Kconfig         | 2 +-
+>  drivers/clk/imx/clk-imxrt1050.c | 4 ++++
+>  drivers/clk/imx/clk-pfd.c       | 2 ++
+>  drivers/clk/imx/clk-pllv3.c     | 2 ++
+>  4 files changed, 9 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-> index 652ae58c2735..601eea7ab99d 100644
-> --- a/drivers/clk/imx/clk-imx8mp.c
-> +++ b/drivers/clk/imx/clk-imx8mp.c
-> @@ -522,6 +522,8 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
->  	hws[IMX8MP_CLK_A53_SRC] = hws[IMX8MP_CLK_A53_DIV];
->  	hws[IMX8MP_CLK_A53_CG] = hws[IMX8MP_CLK_A53_DIV];
->  	hws[IMX8MP_CLK_M7_CORE] = imx8m_clk_hw_composite_core("m7_core", imx8mp_m7_sels, ccm_base + 0x8080);
-> +	hws[IMX8MP_CLK_M7_DIV] = hws[IMX8MP_CLK_M7_CORE];
-> +	hws[IMX8MP_CLK_M7_SRC] = hws[IMX8MP_CLK_M7_CORE];
->  	hws[IMX8MP_CLK_ML_CORE] = imx8m_clk_hw_composite_core("ml_core", imx8mp_ml_sels, ccm_base + 0x8100);
->  	hws[IMX8MP_CLK_GPU3D_CORE] = imx8m_clk_hw_composite_core("gpu3d_core", imx8mp_gpu3d_core_sels, ccm_base + 0x8180);
->  	hws[IMX8MP_CLK_GPU3D_SHADER_CORE] = imx8m_clk_hw_composite("gpu3d_shader_core", imx8mp_gpu3d_shader_sels, ccm_base + 0x8200);
+> diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
+> index 25785ec9c276..f6b82e0b9703 100644
+> --- a/drivers/clk/imx/Kconfig
+> +++ b/drivers/clk/imx/Kconfig
+> @@ -115,7 +115,7 @@ config CLK_IMX93
+>  
+>  config CLK_IMXRT1050
+>  	tristate "IMXRT1050 CCM Clock Driver"
+> -	depends on SOC_IMXRT
+> +	depends on SOC_IMXRT || COMPILE_TEST
+>  	select MXC_CLK
+>  	help
+>  	    Build the driver for i.MXRT1050 CCM Clock Driver
+> diff --git a/drivers/clk/imx/clk-imxrt1050.c b/drivers/clk/imx/clk-imxrt1050.c
+> index e972abd299a8..fd5c51fc92c0 100644
+> --- a/drivers/clk/imx/clk-imxrt1050.c
+> +++ b/drivers/clk/imx/clk-imxrt1050.c
+> @@ -167,3 +167,7 @@ static struct platform_driver imxrt1050_clk_driver = {
+>  	},
+>  };
+>  module_platform_driver(imxrt1050_clk_driver);
+> +
+> +MODULE_LICENSE("Dual BSD/GPL");
+> +MODULE_AUTHOR("Jesse Taube <Mr.Bossman075@gmail.com>");
+> +MODULE_AUTHOR("Giulio Benetti <giulio.benetti@benettiengineering.com>");
+> diff --git a/drivers/clk/imx/clk-pfd.c b/drivers/clk/imx/clk-pfd.c
+> index 5d2a9a3be95e..5cf0149dfa15 100644
+> --- a/drivers/clk/imx/clk-pfd.c
+> +++ b/drivers/clk/imx/clk-pfd.c
+> @@ -5,6 +5,7 @@
+>   */
+>  
+>  #include <linux/clk-provider.h>
+> +#include <linux/export.h>
+>  #include <linux/io.h>
+>  #include <linux/slab.h>
+>  #include <linux/err.h>
+> @@ -153,3 +154,4 @@ struct clk_hw *imx_clk_hw_pfd(const char *name, const char *parent_name,
+>  
+>  	return hw;
+>  }
+> +EXPORT_SYMBOL_GPL(imx_clk_hw_pfd);
+> diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+> index eea32f87c60a..11fb238ee8f0 100644
+> --- a/drivers/clk/imx/clk-pllv3.c
+> +++ b/drivers/clk/imx/clk-pllv3.c
+> @@ -6,6 +6,7 @@
+>  
+>  #include <linux/clk-provider.h>
+>  #include <linux/delay.h>
+> +#include <linux/export.h>
+>  #include <linux/io.h>
+>  #include <linux/iopoll.h>
+>  #include <linux/slab.h>
+> @@ -486,3 +487,4 @@ struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
+>  
+>  	return hw;
+>  }
+> +EXPORT_SYMBOL_GPL(imx_clk_hw_pllv3);
 > -- 
-> 2.25.1
+> 2.35.1
 > 
