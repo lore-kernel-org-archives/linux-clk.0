@@ -2,179 +2,122 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EEEAC5479D
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Jan 2023 15:09:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A46C6379F
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Jan 2023 15:48:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235799AbjAIPJh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Jan 2023 10:09:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52956 "EHLO
+        id S234883AbjAIPsF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Jan 2023 10:48:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234274AbjAIPJV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Jan 2023 10:09:21 -0500
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2122.outbound.protection.outlook.com [40.107.114.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62406B3;
-        Mon,  9 Jan 2023 07:09:19 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dVlDTxIRQF/RAfWaBQKPrVbmul42c1q5hI7wXTixOsHXMgZIa5ZOyf7l3P0C2MTIQ9e32qnCZ3/tzmMgNfVuF7nd2seieX3mSONjHoAsRTmtB4ezE+oxiYXcJyNZI7hShrJvHTm8TA1UrIh2AdXABE3wtBi9hIh4wpiW1C/gAM6GKr/+LOzVj5VccN6REiKA9++Vm7yYlVeieeQGowMUYYLxfAXA0W0BE1MSS/xTTMdqS+ZzjAngm14j/2yVtdaG64ZzXUVFSCbJ2JyGFmM82MjfvaGhiqInK4w4onh8t3Wi0D1ckPB4yL4417dgOv8vvT5SBdxoXHlNj8hsH7asag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ixqMxH0nHT3N5dcKYSQ23BM1EXY6aUT1ETQNY8AyqMA=;
- b=l5t4sFJrR2XiOM7mewW6+u17SgirD9WfxAnDiDewxJfNgySihRBnHbU+7fED+WV91y/DAibTlbDf+QZJ6ZKINQRS1NAxstFpTQf+yATBJlJQlTB46dyeRWgxHHB3lf3RuOxJjLmFeQe7GDjwcgHA4AEXrCqqTE6kunuavtCf2KSf1sRPk0xsE38uQV6WvxNFUX2OTJoXnayj1pjJdkx+RYvTCCyNboDBpDjPVzqsFXiXUaqcvfw5waI04nPR+xPFPO3sDK6x7mjTBhN79vhrPGMBjmO/sWvMHMcm/tnbnt7V7JdPwcaRCxzS3jQdsqJbmizHP842B/U54wmHXDnFKA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ixqMxH0nHT3N5dcKYSQ23BM1EXY6aUT1ETQNY8AyqMA=;
- b=EuBWqFQd0+Jz2/n2RgBAYbrQZJQ+An1vQHOI51ULxiGAfXS70Nbh48vx6PQohAA77FlndXl7QNZur/U//bkDs6Tpvku2e72Sj1KtG6oqKB4M9Og5N+o9im28KZPPXDtFiI9uJ9esEEMssurHmzb0v/sseIDCVdlimVIq6X2BDHc=
-Received: from TYWPR01MB8775.jpnprd01.prod.outlook.com (2603:1096:400:169::11)
- by OS3PR01MB7922.jpnprd01.prod.outlook.com (2603:1096:604:162::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.18; Mon, 9 Jan
- 2023 15:09:16 +0000
-Received: from TYWPR01MB8775.jpnprd01.prod.outlook.com
- ([fe80::9459:ffa9:a884:8a8e]) by TYWPR01MB8775.jpnprd01.prod.outlook.com
- ([fe80::9459:ffa9:a884:8a8e%3]) with mapi id 15.20.5986.018; Mon, 9 Jan 2023
- 15:09:16 +0000
-From:   Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        with ESMTP id S237211AbjAIPr3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Jan 2023 10:47:29 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80C6F16488
+        for <linux-clk@vger.kernel.org>; Mon,  9 Jan 2023 07:47:25 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id g19-20020a05600c4ed300b003d9eb1dbc0aso4256147wmq.3
+        for <linux-clk@vger.kernel.org>; Mon, 09 Jan 2023 07:47:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kxRux3nm0gOqVR3jIQ7t+bypbcUlPNns6Z9B8M0EfvU=;
+        b=qBJxtbB/xnrjVFosn9TLZ4jfg2D5UKYoJo4S8PkHltDQA7Euvyx47BxSzo5hyMww2I
+         rSWvno+86C775FgPP+82a8/GRL48aWiu79c/KgYMsMylwho/yyr18lqs3ftrJr+XJOE9
+         n42swZSQxbxb28CYCk98t+Jrghbjxrs3d4w2ep/+TlzY/ev5wt61p0n9qnvj7RgIoqmm
+         h9n/eQhOwdIj2UE30y5rl3F5I4eSYTNj22Ybm1wM1sJY1ejJnsE1Hnfa7lhNgQE9ki/F
+         P4q7NGxGwDQnKvUWgtYkZ6NrLDGWEORo7nOh9P1BlLy2xc1ER4eLkpcyYSPXUS+go6cA
+         fWAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kxRux3nm0gOqVR3jIQ7t+bypbcUlPNns6Z9B8M0EfvU=;
+        b=VJTsOp+BByGTDlWrsaelUPlgm4coINGXO4k//fO1bv4BqXDmQyOrO31IGuixymlgJi
+         bogIuKTKu/Sm/9MIFCyRu0LOT41fo+UBDHqxokzKrU4EZ8rUWUJpblPjICTTHX/Oop+I
+         GrOgLNS4CBoqk4EEVtmVSfHI8miEXHC2MiUUVxvGVMkdqGQoC60oig7i6AE9LJhmp0ks
+         pMnxGJO05Y6YLXO/7mNohfqO5Mp1+xDIqn25J5LJo3eFEdU40TCoithdChuw0WChmoNM
+         YtrNKnlJwlldKLCEyC271hivYHjJQ33lkCj33utg0F5ocL35RakwhdqyRAMai0hw8lOt
+         breQ==
+X-Gm-Message-State: AFqh2koacxf+ksteUu/SZMVbemq81oV0NYczU5HYYY4JOzB9FNwJI9Y3
+        RfXPtZDrnI7h3XY0IbI9Ntz41g==
+X-Google-Smtp-Source: AMrXdXtPfE7/PbM9wPt9OMTTD17lc4ylpNd6XvEXVk7CJQ8CSaGBx+J76qZNa0mPPuJIic0SBlYtyQ==
+X-Received: by 2002:a05:600c:4e07:b0:3d3:5319:b6d3 with SMTP id b7-20020a05600c4e0700b003d35319b6d3mr46958252wmq.38.1673279244032;
+        Mon, 09 Jan 2023 07:47:24 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id q1-20020a1ce901000000b003b3307fb98fsm11479928wmc.24.2023.01.09.07.47.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jan 2023 07:47:23 -0800 (PST)
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH v3 0/3] clk: qcom: Add DISPCC driver for SM8550
+Date:   Mon, 09 Jan 2023 16:47:21 +0100
+Message-Id: <20230103-topic-sm8550-upstream-dispcc-v3-0-8a03d348c572@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAk3vGMC/5XOTQ7CIBAF4Ks0rB0D9I+48h7GBQxoJ2mBQG00p
+ neXdudON5O8t/jevFl2iVxmp+rNklsoU/Al1IeK4aD93QHZkpnksuaC1zCHSAh5Um3L4RHznJye
+ wFKOiNAIYeoGy+E9K4TR2YFJ2uNQEP8Yx1LG5G703Dcv15IHynNIr/2FRWztj2uLAA5KmBui7Iy
+ 0eB7J6xSOId3ZJi/yH00WrVedtVb1qtXyS1vX9QPu+sSrLAEAAA==
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>
-Subject: RE: [PATCH 4/4] arm64: dts: renesas: r9a09g011: Add eMMC and SDHI
- support
-Thread-Topic: [PATCH 4/4] arm64: dts: renesas: r9a09g011: Add eMMC and SDHI
- support
-Thread-Index: AQHZD0brJZWEh0Wnlkygwc/8wYZvPa6WPe2AgAAbmVA=
-Date:   Mon, 9 Jan 2023 15:09:16 +0000
-Message-ID: <TYWPR01MB8775E5C532C3849E63DFA123C2FE9@TYWPR01MB8775.jpnprd01.prod.outlook.com>
-References: <20221213230129.549968-1-fabrizio.castro.jz@renesas.com>
- <20221213230129.549968-5-fabrizio.castro.jz@renesas.com>
- <CAMuHMdUrAF7CRGSirfZE+aKB9dmWe9mjZoUJW3yRNu1dSuhFig@mail.gmail.com>
-In-Reply-To: <CAMuHMdUrAF7CRGSirfZE+aKB9dmWe9mjZoUJW3yRNu1dSuhFig@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYWPR01MB8775:EE_|OS3PR01MB7922:EE_
-x-ms-office365-filtering-correlation-id: f2a90ede-5341-4dde-1a81-08daf25379e3
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: n3aFGa4XZ261VydO96y36fDKS6SVARl/9T3MuHV7bhSX5L3GMg/j87AQHIQ7P3LpbumL4/82NEeEYJ5xDNdvU+gLSP2UW2h1xzY/1KE5N3QGOkrmD2TaBq1Tu9bMvx3NHykWveA+MunGOwoTPLsVQ1/GhrnApjRsbloiE804OmcPNDkyw03vh77Sg/TraXXoZ7+XCULcKmqCQzrJtQK97SRbNCmlFZo0p7gCLU68E67zJGFHRzJ9tbF02c7dhYMTJbKiCpq5PlOzltLmJvMZrm/wLiDiRI7xVcQ6rnYe9apjmgYEYH/CVMOb4pDHCALwKv3D9vJ0NJzGTA5RiIGXCpzs5n8qEOO4e161PhI/9PAbPnLiywvzknY8kl/w4QtNqBuXV62aMtfzNq+gcrYul2Cy2eEQmQ8jFsCR8AFU1i/Yk3QJJgL8g0FZwYf3K68g/0Fp2OvHbwk6pXyPlLTmQ7eAJoyzQ7HWvH+4EcnAh6cT8PCOA/GBvYxMv1xQ0poiLoNDF8PIIKDsNdbyRqVi4klTM12OspfaQOPy2WXvt24XwulAJLEEgYiF2inyd65cGLIeX3xoUy6+2ZwGc8/4pIplpLuoQAZ8rnAlBWcorz5ewyn/ZVdyvls01EQGn7DXBWP202AAaqYx/+d42jhRDiZOFG8R74INuVYI403Tq8vLUglinFyDajjWFEH0H1tYbrthEL3NbDrtiTFICB0AEir13cqmUKpm2VAtLAOD8O0=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB8775.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(376002)(39860400002)(136003)(346002)(366004)(396003)(451199015)(2906002)(83380400001)(54906003)(9686003)(66476007)(7416002)(66446008)(66556008)(64756008)(5660300002)(55016003)(66946007)(7696005)(33656002)(52536014)(26005)(53546011)(186003)(122000001)(8936002)(6506007)(478600001)(76116006)(38100700002)(8676002)(41300700001)(86362001)(38070700005)(966005)(6916009)(4326008)(45080400002)(316002)(71200400001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?J8YFugFlszlo3it/8ZI0ImSwZvB//PbJ3O1906x7SqrN229JVNU9xzptvmCI?=
- =?us-ascii?Q?ZQw9KDkd7xVe1bhdxsZ0A+a9m3llSqlIKEAheY6I8a6iCWsqMWBnTlfh4gl2?=
- =?us-ascii?Q?90KRDdma2yCQSQqfCIhdAdfhbuLLYyCcO+HN0uTkgwoC1VMKI8mAKsVDiQIg?=
- =?us-ascii?Q?c90TKgCDtXi/cdSK+V66m+ABTl93mzh/eFWloGQqqMZwBfFYlls3MgGZ3Tkq?=
- =?us-ascii?Q?V6iU/KJv/3mls1J336aAI/Iy4h81Z3p2wDIwYj+7+ZtKEV4yLaCIrUss610d?=
- =?us-ascii?Q?3eyk/fIeI0c4uOKTUyePLxaUs55txMq78I7hjwlNmmsUadUkmGbz8eoiaM2u?=
- =?us-ascii?Q?ly+W+7fYNzWKoS+Zm4b0z3d6On61QbmBCpkZMy15gKXHswz8LPSX3SgcKkir?=
- =?us-ascii?Q?jl1Ai6FAdU7efBi1+dd1kAa70zmKU61e+1e/M40Kzh0eDpDCBT7pDFbcxHRj?=
- =?us-ascii?Q?FTGNIjFEYJBmSCLpiYZlaeMjAyY3q6vXRq7pC06+r46LvUjaIc9HrI3+jxpQ?=
- =?us-ascii?Q?+SK5q524bOJoO2ySd9457+n+VPkFvkWruntU7Atjfz2+TN1dYrGKbKjtXffb?=
- =?us-ascii?Q?wTticmeAoQNr+0ZQCyDszqvNGkLs+MsP2wWr6Uc42E5aW99uTvr6UZXpIh9W?=
- =?us-ascii?Q?BU7G0XWHZayS/H8izkBqG2SpgDiPDZQRDHVB70LGmbsjUqHUOSvmbMWykslQ?=
- =?us-ascii?Q?PQkMH18DmcjAxooYfP5caC3eF/k9SIM0032O3mGvJ+5zpNnmGMepRbo1ppSH?=
- =?us-ascii?Q?qOQvJ0xMgi+/D+g8ycs7J63CWP0mc0Zz+OT3fgcmhW5p/Qbai1vRKAimjJE2?=
- =?us-ascii?Q?c6SMcAQ7C4q3JS86tLvk0Q4Qm3UNsYRYv5u6KCK27pDaVBC4Xm+H11MCpR/R?=
- =?us-ascii?Q?FM7X67QtUIVE8LbLrqT8k50tVrUoUIrEnb3GDsVgONSCNAM6aMyNsqsXvEdv?=
- =?us-ascii?Q?7jqlkXzFHxpEit7ujFZYfdQpAAl+hzgzHe9O8V4OEg3tG0s7hkeelaRBCir/?=
- =?us-ascii?Q?Eqy4PK3Vx5aP+S3RsaT1rXYw8ClNaD+CE2FO9+Jb3MTZjE51xAsDmbHPMkUk?=
- =?us-ascii?Q?cm92Ycyy03pD/ASeGAvAp2xKqAmAhj10LhzqmI2SHUKiNIO/ir/Ex0puy44b?=
- =?us-ascii?Q?CieUnGU+Wkv1b93DbmERnptaeekLfSWXfF9CWvx3QeKSVBkRVCR0Myc3BCce?=
- =?us-ascii?Q?EVJc+JgTlIyQhrMRdaV3pgbO06yk3X+BuKcRzBp4H7BSeLIAh6ishcr9rfey?=
- =?us-ascii?Q?6+c3wIJVayc9FtQhXABiOteikCBsZhVvNrsUgB1wq8sJWjBI8y6gf9jmiAkg?=
- =?us-ascii?Q?lnACf5MJ7vYjuvXLU4lPaqp2+7vIeXX2w2iPfu7O4HPVry2pIAvRJpzZDMAU?=
- =?us-ascii?Q?gjcpgfmi+VCK5S5kjSY2a8KtT241yA9031K16Zm9yUyWecdTFL89AVA/9pHl?=
- =?us-ascii?Q?8Dnuv609E2u15IUfhqJCiZUaMQh75AEgRaGiPfp5AhyzzKd/JukVNcRVrVMK?=
- =?us-ascii?Q?PFFg+W/+tdIgFJReJt97o6UxFGEb9fG8lix2mtS2rSLmu2guqS9WgMIPSedQ?=
- =?us-ascii?Q?LxS7RCLvbP/THTMDAfkUFqQajuHp6MnHLdwILD1vh0BPxufqheC6LYG4eQX0?=
- =?us-ascii?Q?AQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB8775.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2a90ede-5341-4dde-1a81-08daf25379e3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jan 2023 15:09:16.7167
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 77qc6OeDmitVhB8N3+Dx56ueYxd9b5jvZEmXEz5iafV0zSdavD20LdKcPP13b+IjaIZV6h273XPMes8HG7GgHIaliEMcBlzTdNzBs2oI4Zk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB7922
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.11.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+Add the Display Clock Controller controller based on
+downstream and upstream SM8450 driver.
 
->=20
-> Hi Fabrizio,
->=20
-> On Wed, Dec 14, 2022 at 12:02 AM Fabrizio Castro
-> <fabrizio.castro.jz@renesas.com> wrote:
-> > The RZ/V2M comes with 2 SDHI interfaces and 1 eMMC interface.
-> > Add the relevant nodes to the SoC specific device tree.
-> >
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
->=20
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-devel for v6.3.
->=20
-> Note that this causes "make dtbs_check" failures, due to a bug in
-> the bindings. I have sent a fix.
-> https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Flore.=
-ker
-> nel.org%2F054c9f4dbb0bb1525f780d1e85c724436465c20c.1673270716.git.geert%2=
-B
-> renesas%40glider.be&data=3D05%7C01%7Cfabrizio.castro.jz%40renesas.com%7Cb=
-621
-> 0a13c0e64f5719a408daf245694d%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C0%7=
-C
-> 638088677177461554%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2=
-l
-> uMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=3DcHhpiy1cwPTir=
-i2I
-> l1j7Ck6iwR9DEdvlc8egJDBc2cM%3D&reserved=3D0
+To: Bjorn Andersson <andersson@kernel.org>
+To: Andy Gross <agross@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Rob Herring <robh+dt@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-Thanks for that!
+---
+Changes in v3:
+- Fixed copyright year (dropped 2022)
+- Link to v2: https://lore.kernel.org/r/20230103-topic-sm8550-upstream-dispcc-v2-0-786ddd8785a2@linaro.org
 
-Fab
+Changes in v2:
+- Removed clocks minItems
+- Added Konrad's Reviewed-by on patch 2 & 3
+- Switched to parent_hws & devm_pm_runtime_enable()
+- Link to v1: https://lore.kernel.org/r/20230103-topic-sm8550-upstream-dispcc-v1-0-81bfcc26b2dc@linaro.org
 
->=20
-> Gr{oetje,eeting}s,
->=20
->                         Geert
->=20
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-
-> m68k.org
->=20
-> In personal conversations with technical people, I call myself a hacker.
-> But
-> when I'm talking to journalists I just say "programmer" or something like
-> that.
->                                 -- Linus Torvalds
+---
+Neil Armstrong (3):
+      dt-bindings: clock: document SM8550 DISPCC clock controller
+      clk: qcom: clk-alpha-pll: define alias of LUCID OLE reset ops to EVO reset ops
+      clk: qcom: add SM8550 DISPCC driver
+
+ .../bindings/clock/qcom,sm8550-dispcc.yaml         |  105 ++
+ drivers/clk/qcom/Kconfig                           |    9 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-alpha-pll.h                   |    1 +
+ drivers/clk/qcom/dispcc-sm8550.c                   | 1807 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,sm8550-dispcc.h     |  101 ++
+ 6 files changed, 2024 insertions(+)
+---
+base-commit: 1b929c02afd37871d5afb9d498426f83432e71c2
+change-id: 20230103-topic-sm8550-upstream-dispcc-411b34c1b307
+
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
