@@ -2,89 +2,89 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBACC46467
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 20:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B63BC46467
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 22:13:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229536AbjAJUF7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Jan 2023 15:05:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56812 "EHLO
+        id S231612AbjAJWNv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Jan 2023 17:13:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231654AbjAJUF5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 15:05:57 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF9532C4;
-        Tue, 10 Jan 2023 12:05:52 -0800 (PST)
+        with ESMTP id S234773AbjAJWNs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 17:13:48 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45DC45CF96;
+        Tue, 10 Jan 2023 14:13:47 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E1184618E5;
-        Tue, 10 Jan 2023 20:05:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBAE3C433EF;
-        Tue, 10 Jan 2023 20:05:50 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 050CFB819B0;
+        Tue, 10 Jan 2023 22:13:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFA27C433F0;
+        Tue, 10 Jan 2023 22:13:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673381151;
-        bh=Vd0GZVeHo6JIhOHYGd6tKf+QIQ4pPMNDJBgviINx9fE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=o3eiLY3U8M8pGbVPR2U3WTwZagHMpVndZHKQPrnuRHRNxiGG0Ie9Usxn3wvM3m4Dc
-         FsFY4HJrAYujIGOytwA18gM04V882HzdcHC34KF5ooDnT8Bl4JGb1rVBgg3CqqPKym
-         egfFnUPTR7YUaSaRfpEgB8mZ9Rf71CIhD6j80fsgSHdHQM+khuwGR/KfsYNZ2WD8US
-         avcxktNzqZPKtmedCdiOmwl5tF69wtQomwDcPmLY6W6dIs5J4OGnLbIQSUI+CReOXp
-         XECbioWHgMI+ZB3PBi5p57fSPoaZJGaBJ3oS9yvBTDpULvmyIpepV8y+OzpYRix12w
-         D0OkRDt/tnkGg==
-Date:   Tue, 10 Jan 2023 12:05:49 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Jiri Pirko <jiri@resnulli.us>,
-        Maciek Machnikowski <maciek@machnikowski.net>,
-        'Vadim Fedorenko' <vfedorenko@novek.ru>,
-        'Jonathan Lemon' <jonathan.lemon@gmail.com>,
-        "'Paolo Abeni'" <pabeni@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
-Message-ID: <20230110120549.4d764609@kernel.org>
-In-Reply-To: <DM6PR11MB46571573010AB727E1BE99AE9BFE9@DM6PR11MB4657.namprd11.prod.outlook.com>
-References: <Y4dNV14g7dzIQ3x7@nanopsycho>
-        <DM6PR11MB4657003794552DC98ACF31669B179@DM6PR11MB4657.namprd11.prod.outlook.com>
-        <Y4oj1q3VtcQdzeb3@nanopsycho>
-        <20221206184740.28cb7627@kernel.org>
-        <10bb01d90a45$77189060$6549b120$@gmail.com>
-        <20221207152157.6185b52b@kernel.org>
-        <6e252f6d-283e-7138-164f-092709bc1292@machnikowski.net>
-        <Y5MW/7jpMUXAGFGX@nanopsycho>
-        <a8f9792b-93f1-b0b7-2600-38ac3c0e3832@machnikowski.net>
-        <20221209083104.2469ebd6@kernel.org>
-        <Y5czl6HgY2GPKR4v@nanopsycho>
-        <DM6PR11MB46571573010AB727E1BE99AE9BFE9@DM6PR11MB4657.namprd11.prod.outlook.com>
+        s=k20201202; t=1673388824;
+        bh=hOR9fEFSY9mL4tLhalxVJ/enA1aE8+wwDQ0kW/9dC9o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=smFCHLaRwvg8MPuR6WknR55mdj/li5sZ+0+TkfnW88VKvzyb2nPX9YqzvN5zgmmII
+         aoKrJnvaJdCvyJNKFdw8x+4E0GmSN9Fw5IjNNQoD66sl54Jw4clOhONQyucE15NQ6m
+         1uNxRFeuFAXWawPgjqoruCRHYaE+KVXKbT/ovPth5APXnbcZ94hiIz9lB7OKhAxdH0
+         aRidZxNnS3OtIoLxyGfCRQC7sL56pxe99ekQ4MAExN3WFmpbv/r9Xz4nJkdONEhiB8
+         0XNVADSw5qRBpQrAR/O2nU2/wpJBiRZYSaJ5GKRTZTjWoY0YogD5R/lLb7IJ4FKu2l
+         EmYxY5ayjxuFg==
+Date:   Tue, 10 Jan 2023 16:13:41 -0600
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 15/21] clk: qcom: gpucc-msm8998: switch to parent_hws
+Message-ID: <20230110221341.h4wzucm54q27q7he@builder.lan>
+References: <20230103145515.1164020-1-dmitry.baryshkov@linaro.org>
+ <20230103145515.1164020-16-dmitry.baryshkov@linaro.org>
+ <CAOCk7Nr4smGnQS-yh1hGKFFXzeUUt86JSdiuoSun7vJ11z9SWQ@mail.gmail.com>
+ <e2493080-f7fd-50de-173f-2e46fa846e23@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e2493080-f7fd-50de-173f-2e46fa846e23@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 9 Jan 2023 14:43:01 +0000 Kubalewski, Arkadiusz wrote:
-> This is a simplified network switch board example.
-> It has 2 synchronization channels, where each channel:
-> - provides clk to 8 PHYs driven by separated MAC chips,
-> - controls 2 DPLLs.
+On Tue, Jan 03, 2023 at 06:00:28PM +0200, Dmitry Baryshkov wrote:
+> On 03/01/2023 17:08, Jeffrey Hugo wrote:
+> > On Tue, Jan 3, 2023 at 7:56 AM Dmitry Baryshkov
+> > <dmitry.baryshkov@linaro.org> wrote:
+> > > 
+> > > Change several entries of parent_data to use parent_hws instead, which
+> > > results in slightly more ovbious code.
+> > 
+> > obvious -> obvious
+> > 
+> > Also, you are changing one of two parent_data structs in this file.
+> > That's not "several".  It's really not clear why you are touching one,
+> > but not the other.  Can you be more specific about what is going on in
+> > this particular file?
 > 
-> Basically only given FW has control over its PHYs, so also a control over it's
-> MUX inputs.
-> All external sources are shared between the channels.
+> The other struct has .hw and .fw_data entries so it can not be switched to
+> just clk_hw enumeration.
 > 
-> This is why we believe it is not best idea to enclose multiple DPLLs with one
-> object:
-> - sources are shared even if DPLLs are not a single synchronizer chip,
-> - control over specific MUX type input shall be controllable from different
-> driver/firmware instances.
+> I agree, that one is not 'several' (yeah, I was just using template for
+> commit messages), I can change that for v2.
 > 
-> As we know the proposal of having multiple DPLLs in one object was a try to
-> simplify currently implemented shared pins. We fully support idea of having
-> interfaces as simple as possible, but at the same time they shall be flexible
-> enough to serve many use cases.
 
-I must be missing context from other discussions but what is this
-proposal trying to solve? Well implemented shared pins is all we need.
+While I dislike the copy-paste commit message, there's little point in
+spending more effort on it. I fixed the commit message of this one and
+picked the whole series.
+
+Thanks Dmitry,
+Bjorn
+
+> -- 
+> With best wishes
+> Dmitry
+> 
