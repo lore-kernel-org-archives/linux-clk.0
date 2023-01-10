@@ -2,132 +2,240 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1A9C678DE
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 17:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A70C678D6
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 18:39:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234350AbjAJRRp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Jan 2023 12:17:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48328 "EHLO
+        id S239450AbjAJSiq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Jan 2023 13:38:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234716AbjAJRRG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 12:17:06 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FD7354DA0;
-        Tue, 10 Jan 2023 09:17:00 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 8281BCE1799;
-        Tue, 10 Jan 2023 17:16:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 996A5C433D2;
-        Tue, 10 Jan 2023 17:16:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673371016;
-        bh=iwpyzqVQok4g2qkFvOCpfycpEy0u8yaiB88caR2d+yw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZFlSHcAy0NVD0oYNOUp4HIjmISXck5EjgZpyTmX54tPypcLovVkFVVpnudqYpDO9K
-         UplsOHprYvZuBJWXROow17T1QSPJ9QZQ54qHZ7K+4lIImwm21BkKOyDX/y6aNRNvIE
-         YOpOjPeo1MC8X78tpaaZcAaMnqfo/1PzI3LMkc9s/RTBpOn7HtDmwPMLtFlftePR1Z
-         dAvWgG/yUp0DYlqlctwKty89d/SAmKWqT6wyI1dHKOOf4q5AptgEh75dVt0mY/JWx+
-         HcyXcmbv91fqoUnJSNq1nvDjzZ57STNdv1N6O+WPWU7RKaEQSN9AqknmRWvvddHlxI
-         yLxzhbWz+WeNg==
-Date:   Tue, 10 Jan 2023 11:16:52 -0600
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Akhil P Oommen <quic_akhilpo@quicinc.com>,
-        Rob Clark <robdclark@gmail.com>
-Cc:     freedreno <freedreno@lists.freedesktop.org>,
-        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Andy Gross <agross@kernel.org>, Chia-I Wu <olvaffe@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@gmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Kevin Hilman <khilman@kernel.org>,
+        with ESMTP id S239553AbjAJShz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 13:37:55 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5725B9151C;
+        Tue, 10 Jan 2023 10:33:11 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id ay40so9478091wmb.2;
+        Tue, 10 Jan 2023 10:33:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SyBzt69jJkefG6UZiNhazmCV+d955MniSRj+C0Ih5Zs=;
+        b=EdU9HqHJtcezz+uwRPIMIwdcX6vg1FnXr7a4oHkNbEcWPxLIpt85dDxujZUnhxIx+8
+         Enpt8y+kIt7kyYf0T0mrXcTsVeGdQPapb9cdRi2pvsGDDWofnLJzW4VMGDJvUo1CLINX
+         WUWUiUnzGXfMDTZQ8Ud7aPnwpFdYfDHZ/pzQHz/UWvsTbjmopxdngs93gDyGImyNDGl4
+         8+j/zfd9Bx3J5YETNheOvxmtzsqCzGrlg5Q88jyC5ET9esYBouteEA+yVK9BbcJMzU+n
+         Gci+GxF/menkK62afNxXCrTyKznxioVc3tntsVp9RYqD2+e1LNtJckctBtplh6TVAY8Y
+         zOTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SyBzt69jJkefG6UZiNhazmCV+d955MniSRj+C0Ih5Zs=;
+        b=T7fx/6UXSgTu8NWg0VeLy/EHtQhsu24M3ich+0s6nwWKhKJOcVbeiVbbsDOeHs2Fk2
+         tLVM7vBLnXXrGMMzZ+5dsn+JfkDifvof3qbHuP7oWB/gk/M4aRvDVlZxteW8E8cZHOkk
+         1mVzHrJN/jmg28Vpvah+c5eEEw+YVI48M6kTYE2MSBHOd/LKs4SLYJcqZHgOBWGrXjsx
+         ZD1DwKvpvxEb1H5y0ylp0UtCpxflO+73O+wzYIO4vfpdj1pAGBkYsn90o7gSLx+ATZzr
+         j1VAB3NJS3UniQm+8phbrxnHwp9uiyLS3hCdXmYB05nDfaj6EBaGhXfzIXQFVRb15HiM
+         rckw==
+X-Gm-Message-State: AFqh2krUeXSues5urHNpIi/hovQVwHku5hz6Qgwmtf/HYcP0TwEbE1k9
+        yquByeYoqUKjE+4vEYeoj2I=
+X-Google-Smtp-Source: AMrXdXugEOZLaI9h2VgasQkLnfhX/z2WM4YrKkVwU2YXKch0yfwy95T1y4xYskhrMkKv700KMNRG7Q==
+X-Received: by 2002:a05:600c:3b87:b0:3d2:813:138a with SMTP id n7-20020a05600c3b8700b003d20813138amr53770949wms.35.1673375589697;
+        Tue, 10 Jan 2023 10:33:09 -0800 (PST)
+Received: from localhost.localdomain (93-34-92-88.ip49.fastwebnet.it. [93.34.92.88])
+        by smtp.googlemail.com with ESMTPSA id r126-20020a1c2b84000000b003d35c845cbbsm19927757wmr.21.2023.01.10.10.33.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jan 2023 10:33:09 -0800 (PST)
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Len Brown <len.brown@intel.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sean Paul <sean@poorly.run>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5 0/5] Improve GPU reset sequence for Adreno GPU
-Message-ID: <20230110171652.ur5zgdwvjj3kaimj@builder.lan>
-References: <1672656511-1931-1-git-send-email-quic_akhilpo@quicinc.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v6 3/6] dt-bindings: arm: msm: Rework kpss-gcc driver Documentation to yaml
+Date:   Tue, 10 Jan 2023 19:32:56 +0100
+Message-Id: <20230110183259.19142-4-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20230110183259.19142-1-ansuelsmth@gmail.com>
+References: <20230110183259.19142-1-ansuelsmth@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1672656511-1931-1-git-send-email-quic_akhilpo@quicinc.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jan 02, 2023 at 04:18:26PM +0530, Akhil P Oommen wrote:
-> 
-> This is a rework of [1] using genpd instead of 'reset' framework.
-> 
-> As per the recommended reset sequence of Adreno gpu, we should ensure that
-> gpucc-cx-gdsc has collapsed at hardware to reset gpu's internal hardware states.
-> Because this gdsc is implemented as 'votable', gdsc driver doesn't poll and
-> wait until its hw status says OFF.
-> 
-> So use the newly introduced genpd api (dev_pm_genpd_synced_poweroff()) to
-> provide a hint to the gdsc driver to poll for the hw status and use genpd
-> notifier to wait from adreno gpu driver until gdsc is turned OFF.
-> 
-> This series is rebased on top of linux-next (20221215) since the changes span
-> multiple drivers.
-> 
-> [1] https://patchwork.freedesktop.org/series/107507/
-> 
+Rework kpss-gcc driver Documentation to yaml Documentation and move it
+to clock as it's a clock-controller.
+The current kpss-gcc Documentation have major problems and can't be
+converted directly. Introduce various changes to the original
+Documentation.
 
-@Rob, please find the PM and gdsc implementation changes picked up here:
+Add #clock-cells additional binding as this clock outputs a static clk
+named acpu_l2_aux with supported compatible.
+Only some compatible require and outputs a clock, for the others, set
+only the reg as a required binding to correctly export the kpss-gcc
+registers. As the reg is shared also add the required syscon compatible.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/1672656511-1931-1-git-send-email-quic_akhilpo@quicinc.com
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ .../bindings/arm/msm/qcom,kpss-gcc.txt        | 44 ----------
+ .../bindings/clock/qcom,kpss-gcc.yaml         | 88 +++++++++++++++++++
+ 2 files changed, 88 insertions(+), 44 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml
 
-Regards,
-Bjorn
+diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+deleted file mode 100644
+index e628758950e1..000000000000
+--- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
++++ /dev/null
+@@ -1,44 +0,0 @@
+-Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
+-
+-PROPERTIES
+-
+-- compatible:
+-	Usage: required
+-	Value type: <string>
+-	Definition: should be one of the following. The generic compatible
+-			"qcom,kpss-gcc" should also be included.
+-			"qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc"
+-			"qcom,kpss-gcc-apq8064", "qcom,kpss-gcc"
+-			"qcom,kpss-gcc-msm8974", "qcom,kpss-gcc"
+-			"qcom,kpss-gcc-msm8960", "qcom,kpss-gcc"
+-
+-- reg:
+-	Usage: required
+-	Value type: <prop-encoded-array>
+-	Definition: base address and size of the register region
+-
+-- clocks:
+-	Usage: required
+-	Value type: <prop-encoded-array>
+-	Definition: reference to the pll parents.
+-
+-- clock-names:
+-	Usage: required
+-	Value type: <stringlist>
+-	Definition: must be "pll8_vote", "pxo".
+-
+-- clock-output-names:
+-	Usage: required
+-	Value type: <string>
+-	Definition: Name of the output clock. Typically acpu_l2_aux indicating
+-		    an L2 cache auxiliary clock.
+-
+-Example:
+-
+-	l2cc: clock-controller@2011000 {
+-		compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc";
+-		reg = <0x2011000 0x1000>;
+-		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
+-		clock-names = "pll8_vote", "pxo";
+-		clock-output-names = "acpu_l2_aux";
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml
+new file mode 100644
+index 000000000000..88b7672123a0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml
+@@ -0,0 +1,88 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,kpss-gcc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
++
++maintainers:
++  - Christian Marangi <ansuelsmth@gmail.com>
++
++description:
++  Krait Processor Sub-system (KPSS) Global Clock Controller (GCC). Used
++  to control L2 mux (in the current implementation) and provide access
++  to the kpss-gcc registers.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - qcom,kpss-gcc-ipq8064
++          - qcom,kpss-gcc-apq8064
++          - qcom,kpss-gcc-msm8974
++          - qcom,kpss-gcc-msm8960
++          - qcom,kpss-gcc-msm8660
++          - qcom,kpss-gcc-mdm9615
++      - const: qcom,kpss-gcc
++      - const: syscon
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    minItems: 2
++    maxItems: 2
++
++  clock-names:
++    items:
++      - const: pll8_vote
++      - const: pxo
++
++  '#clock-cells':
++    const: 0
++
++required:
++  - compatible
++  - reg
++
++if:
++  properties:
++    compatible:
++      contains:
++        enum:
++          - qcom,kpss-gcc-ipq8064
++          - qcom,kpss-gcc-apq8064
++          - qcom,kpss-gcc-msm8974
++          - qcom,kpss-gcc-msm8960
++then:
++  required:
++    - clocks
++    - clock-names
++    - '#clock-cells'
++else:
++  properties:
++    clock: false
++    clock-names: false
++    '#clock-cells': false
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,gcc-ipq806x.h>
++
++    clock-controller@2011000 {
++      compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc", "syscon";
++      reg = <0x2011000 0x1000>;
++      clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
++      clock-names = "pll8_vote", "pxo";
++      #clock-cells = <0>;
++    };
++
++  - |
++    clock-controller@2011000 {
++      compatible = "qcom,kpss-gcc-mdm9615", "qcom,kpss-gcc", "syscon";
++      reg = <0x02011000 0x1000>;
++    };
++...
+-- 
+2.37.2
 
-> Changes in v5:
-> - Capture all Reviewed-by tags
-> 
-> Changes in v4:
-> - Update genpd function documentation (Ulf)
-> 
-> Changes in v3:
-> - Rename the var 'force_sync' to 'wait (Stephen)
-> 
-> Changes in v2:
-> - Minor formatting fix
-> - Select PM_GENERIC_DOMAINS from Kconfig
-> 
-> Akhil P Oommen (4):
->   clk: qcom: gdsc: Support 'synced_poweroff' genpd flag
->   drm/msm/a6xx: Vote for cx gdsc from gpu driver
->   drm/msm/a6xx: Remove cx gdsc polling using 'reset'
->   drm/msm/a6xx: Use genpd notifier to ensure cx-gdsc collapse
-> 
-> Ulf Hansson (1):
->   PM: domains: Allow a genpd consumer to require a synced power off
-> 
->  drivers/base/power/domain.c           | 26 ++++++++++++++++++++
->  drivers/clk/qcom/gdsc.c               | 11 +++++----
->  drivers/gpu/drm/msm/Kconfig           |  1 +
->  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 46 ++++++++++++++++++++++++++++++++---
->  drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  7 ++++++
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 13 +++++++---
->  drivers/gpu/drm/msm/msm_gpu.c         |  4 ---
->  drivers/gpu/drm/msm/msm_gpu.h         |  4 ---
->  include/linux/pm_domain.h             |  5 ++++
->  9 files changed, 97 insertions(+), 20 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
