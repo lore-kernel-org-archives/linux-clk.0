@@ -2,90 +2,156 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5496FC54EBE
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 09:25:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B339BC61DB3
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 10:00:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238202AbjAJJZo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Jan 2023 04:25:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39274 "EHLO
+        id S232037AbjAJKAO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Jan 2023 05:00:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235313AbjAJJZQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 04:25:16 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25E00544FC
-        for <linux-clk@vger.kernel.org>; Tue, 10 Jan 2023 01:25:15 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id bk16so11015079wrb.11
-        for <linux-clk@vger.kernel.org>; Tue, 10 Jan 2023 01:25:15 -0800 (PST)
+        with ESMTP id S231476AbjAJKAN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 05:00:13 -0500
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F2ED3F47D;
+        Tue, 10 Jan 2023 02:00:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cAers7RJkSbAqWZ/DY7+7hCFdFQyY7dh3A3KAt7bg78=;
-        b=VtvA+tzWqE8zMypNL2S+9CXEyJQCvIqlgLsR/ksThTScdxWGBQEDep0YDbI4/X/C7n
-         nDEbb4pkkLaB7HPPgiZvMyZMojFpg/vMYrw/hbyXoeyBJ8HHKlSI046R5gV28zsVB4hV
-         862O/H10egIBkpoHw+dxErtUAb/HrstuuCK/ZN+TXb8jLYkB55B8zYr3lcbYI8d4kbkx
-         RnAOwgUDjnOzKxNuFbJGTon7FGyNV0QYBbM1GgdxaEPi4finMugql75J/r2L+pQ19Xz9
-         l/h5dQ5k0qMdvDkBWbyQ9EN7fhLeV9ZG+bEWvp5b/fZ0XyZDVoQbStsjqvoMQbJhaQjK
-         e3IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cAers7RJkSbAqWZ/DY7+7hCFdFQyY7dh3A3KAt7bg78=;
-        b=LdGGq2+35SAeGdncSH225VdZR+NonvrUzvtu1niAjEa+Mb4yrjHLZZn3evUQDw50kV
-         VO5txtbH8Uj1WbxEaxDznpfQasNNGKZPsg5oJQPxOSAoewAMeB0n5dlClUQo9X2DFFiB
-         L9189XYSr56ss5GNissAcbh00O0fZvoP4jpD/s9EPcVQB13+BLqfMyk8c119EcS/iali
-         Ps2AtsJaEdcVJ3jBrz62ZldirtzJVPx3ySjf5Olh8rY02FJC3Zi40oWMKtbvirbiAQg3
-         J3BRakk6xZB+nBYJGX2XsT5ZYzCFUiIqaPPkswiYWcivGf8obAulyNC8xmylzWscqeTG
-         KPTw==
-X-Gm-Message-State: AFqh2krhwEyaPk3uATs5GYU2WX1bSXfXYLmcS14p2EB63P7xHpwe2JnD
-        eEcg/r2rXZWSemJGrwbkLgJ5UA==
-X-Google-Smtp-Source: AMrXdXurdokXYHTX4nNY+VTIpNAOasrzVAkQZTCeQjZdpnZ0x4w2KMAxce6L5BYg2eiNlLTpQ5J4vw==
-X-Received: by 2002:a05:6000:1b0e:b0:28c:44b4:d8ec with SMTP id f14-20020a0560001b0e00b0028c44b4d8ecmr25395500wrz.7.1673342713686;
-        Tue, 10 Jan 2023 01:25:13 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id m10-20020a056000008a00b002683695bf97sm10561160wrx.58.2023.01.10.01.25.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jan 2023 01:25:13 -0800 (PST)
-Message-ID: <c71d5d68-e81b-048c-c97c-23b235ae377b@linaro.org>
-Date:   Tue, 10 Jan 2023 10:25:11 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v3 1/3] dt-bindings: clock: document SM8550 DISPCC clock
- controller
-Content-Language: en-US
-To:     Neil Armstrong <neil.armstrong@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1673344812; x=1704880812;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=K2Y2CQau0fezRUiaIxz1WEdSg4CaZHgjuGH9HuT0agk=;
+  b=gPGEDI/oeFlZgs9F3bxpVS23fDTJEzTTpxYINU5+gYHR0PSutxRpz5q8
+   R6LH3QazkQlz0gwjBd2d8ERFkyGT/jDapi+s8aXEtLQsTele4i0baRmJz
+   aSvJH4PuWrxcoH0iOdtJqtts4LuABSAl9VjGbMZYOgFZ2nzFATbJtBAil
+   Uami30niTehnYUcSK5zeV8nv7BEWE+tG/f65di8W5l6IkXmBuC4+x8/WH
+   oxAiWBxK3pygXZlEZLRDLjB+y0OdlB7LlPwQ4rr0pALAhfXtGm1z3vgil
+   7mRnKMEUjLiCnyZRA0EO7IwzPdg6jEuPOkVn5+XWowEI9EX21GCn3JvLu
+   w==;
+X-IronPort-AV: E=Sophos;i="5.96,314,1665439200"; 
+   d="scan'208";a="28324365"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 10 Jan 2023 11:00:09 +0100
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Tue, 10 Jan 2023 11:00:09 +0100
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Tue, 10 Jan 2023 11:00:09 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1673344809; x=1704880809;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=K2Y2CQau0fezRUiaIxz1WEdSg4CaZHgjuGH9HuT0agk=;
+  b=ElXJ6iZaXjEqn21W0zgGNliJfjj/IpCxt/DpQtLW7599gST2wBePV9gL
+   Y0nrNMuzgnMEyAqiW1cxkoDgic2vSlbA9OxV7XnNM5zCFEf3HLSpwj36b
+   /GaAEHychUuHaHP/rLkIr6Xuf7fkFhMQUe4zFEVNj3iuvBRb3gqW342EV
+   z+XofSGo7N5DzgJcQ9+4WCtbqinDLs7vundL2OSP4a6zjEH6ODZp1KgDE
+   9kN1ZaIkYX0C3mUoAatDJwxRw88rtzPHfOl4SRZiOaa6dQ7krFWaPiEM5
+   x7HlfYhalVpyMdjEkJohAE7u2+9+z3h28YM7YLDE2sOiZnztHGkRAHjjq
+   w==;
+X-IronPort-AV: E=Sophos;i="5.96,314,1665439200"; 
+   d="scan'208";a="28324364"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 10 Jan 2023 11:00:09 +0100
+Received: from steina-w.tq-net.de (unknown [10.123.53.21])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 1C96A280056;
+        Tue, 10 Jan 2023 11:00:09 +0100 (CET)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230103-topic-sm8550-upstream-dispcc-v3-0-8a03d348c572@linaro.org>
- <20230103-topic-sm8550-upstream-dispcc-v3-1-8a03d348c572@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230103-topic-sm8550-upstream-dispcc-v3-1-8a03d348c572@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Marek Vasut <marex@denx.de>
+Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 1/4] clk: rs9: Check for vendor/device ID
+Date:   Tue, 10 Jan 2023 11:00:00 +0100
+Message-Id: <20230110100003.370917-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/01/2023 16:47, Neil Armstrong wrote:
-> Document device tree bindings for display clock controller for
-> Qualcomm SM8550 SoC.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
+This is in preparation to support additional devices which have different
+IDs as well as a slightly different register layout.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+Changes in v2:
+* Use dev_err_probe to include return statement in one line
 
-Best regards,
-Krzysztof
+ drivers/clk/clk-renesas-pcie.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+index e6247141d0c05..bba09a88c2ccc 100644
+--- a/drivers/clk/clk-renesas-pcie.c
++++ b/drivers/clk/clk-renesas-pcie.c
+@@ -45,6 +45,13 @@
+ #define RS9_REG_DID				0x6
+ #define RS9_REG_BCP				0x7
+ 
++#define RS9_REG_VID_IDT				0x01
++
++#define RS9_REG_DID_TYPE_FGV			(0x0 << RS9_REG_DID_TYPE_SHIFT)
++#define RS9_REG_DID_TYPE_DBV			(0x1 << RS9_REG_DID_TYPE_SHIFT)
++#define RS9_REG_DID_TYPE_DMV			(0x2 << RS9_REG_DID_TYPE_SHIFT)
++#define RS9_REG_DID_TYPE_SHIFT			0x6
++
+ /* Supported Renesas 9-series models. */
+ enum rs9_model {
+ 	RENESAS_9FGV0241,
+@@ -54,6 +61,7 @@ enum rs9_model {
+ struct rs9_chip_info {
+ 	const enum rs9_model	model;
+ 	unsigned int		num_clks;
++	u8			did;
+ };
+ 
+ struct rs9_driver_data {
+@@ -270,6 +278,7 @@ static int rs9_probe(struct i2c_client *client)
+ {
+ 	unsigned char name[5] = "DIF0";
+ 	struct rs9_driver_data *rs9;
++	unsigned int vid, did;
+ 	struct clk_hw *hw;
+ 	int i, ret;
+ 
+@@ -306,6 +315,20 @@ static int rs9_probe(struct i2c_client *client)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	ret = regmap_read(rs9->regmap, RS9_REG_VID, &vid);
++	if (ret < 0)
++		return ret;
++
++	ret = regmap_read(rs9->regmap, RS9_REG_DID, &did);
++	if (ret < 0)
++		return ret;
++
++	if (vid != RS9_REG_VID_IDT || did != rs9->chip_info->did)
++		return dev_err_probe(&client->dev, -ENODEV,
++				     "Incorrect VID/DID: %#02x, %#02x. Expected %#02x, %#02x\n",
++				     vid, did, RS9_REG_VID_IDT,
++				     rs9->chip_info->did);
++
+ 	/* Register clock */
+ 	for (i = 0; i < rs9->chip_info->num_clks; i++) {
+ 		snprintf(name, 5, "DIF%d", i);
+@@ -349,6 +372,7 @@ static int __maybe_unused rs9_resume(struct device *dev)
+ static const struct rs9_chip_info renesas_9fgv0241_info = {
+ 	.model		= RENESAS_9FGV0241,
+ 	.num_clks	= 2,
++	.did		= RS9_REG_DID_TYPE_FGV | 0x02,
+ };
+ 
+ static const struct i2c_device_id rs9_id[] = {
+-- 
+2.34.1
 
