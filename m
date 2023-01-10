@@ -2,69 +2,89 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B5FC54EBE
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 18:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBACC46467
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 20:06:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239591AbjAJSpe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Jan 2023 13:45:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32948 "EHLO
+        id S229536AbjAJUF7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Jan 2023 15:05:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239475AbjAJSpO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 13:45:14 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E808196115;
-        Tue, 10 Jan 2023 10:40:11 -0800 (PST)
+        with ESMTP id S231654AbjAJUF5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 15:05:57 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF9532C4;
+        Tue, 10 Jan 2023 12:05:52 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A842BB81910;
-        Tue, 10 Jan 2023 18:40:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D6F6C43392;
-        Tue, 10 Jan 2023 18:40:08 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E1184618E5;
+        Tue, 10 Jan 2023 20:05:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBAE3C433EF;
+        Tue, 10 Jan 2023 20:05:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673376009;
-        bh=opAs2nnw3kFxRUm6VtuaK25Z5MzUf0Em/Ibb0JfZJPw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q3+H8k2g8XhivjDcqWOfChx5Sh4Q1euaJGvAuZo2y9TZsFusrXB2eXAWzu3tPtK2c
-         zILNIVuKQLwDaMZCEi0Gop7H43ss0iGnayzzLQMjxz3M2KT2LrKDjNpPeGA/HbVyBY
-         AhoMRaboQn+4Iu+/YZJokx04ryg4egwgViRbgY/cabq8H9sids3mCRlydS0i1zztBM
-         tXLW6zGNtGz4nbbQS9erwPE3iupX118G8tevv+1KPY5i+lJ0O2+jT0+Zz9BtkWU1Q9
-         aRstEmg7QOTTHwns2nlGcYmnzKQ4UzKl/i4gvU72PqqPKzTie7NGAX5zi3e62ek5l6
-         7rL7N57rNVB/g==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        sboyd@kernel.org, mturquette@baylibre.com, agross@kernel.org,
-        neil.armstrong@linaro.org, konrad.dybcio@linaro.org
-Cc:     linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] clk: qcom: Add DISPCC driver for SM8550
-Date:   Tue, 10 Jan 2023 12:40:05 -0600
-Message-Id: <167337600119.2164548.8599951480799708349.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20230103-topic-sm8550-upstream-dispcc-v3-0-8a03d348c572@linaro.org>
-References: <20230103-topic-sm8550-upstream-dispcc-v3-0-8a03d348c572@linaro.org>
+        s=k20201202; t=1673381151;
+        bh=Vd0GZVeHo6JIhOHYGd6tKf+QIQ4pPMNDJBgviINx9fE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=o3eiLY3U8M8pGbVPR2U3WTwZagHMpVndZHKQPrnuRHRNxiGG0Ie9Usxn3wvM3m4Dc
+         FsFY4HJrAYujIGOytwA18gM04V882HzdcHC34KF5ooDnT8Bl4JGb1rVBgg3CqqPKym
+         egfFnUPTR7YUaSaRfpEgB8mZ9Rf71CIhD6j80fsgSHdHQM+khuwGR/KfsYNZ2WD8US
+         avcxktNzqZPKtmedCdiOmwl5tF69wtQomwDcPmLY6W6dIs5J4OGnLbIQSUI+CReOXp
+         XECbioWHgMI+ZB3PBi5p57fSPoaZJGaBJ3oS9yvBTDpULvmyIpepV8y+OzpYRix12w
+         D0OkRDt/tnkGg==
+Date:   Tue, 10 Jan 2023 12:05:49 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Jiri Pirko <jiri@resnulli.us>,
+        Maciek Machnikowski <maciek@machnikowski.net>,
+        'Vadim Fedorenko' <vfedorenko@novek.ru>,
+        'Jonathan Lemon' <jonathan.lemon@gmail.com>,
+        "'Paolo Abeni'" <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
+Message-ID: <20230110120549.4d764609@kernel.org>
+In-Reply-To: <DM6PR11MB46571573010AB727E1BE99AE9BFE9@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <Y4dNV14g7dzIQ3x7@nanopsycho>
+        <DM6PR11MB4657003794552DC98ACF31669B179@DM6PR11MB4657.namprd11.prod.outlook.com>
+        <Y4oj1q3VtcQdzeb3@nanopsycho>
+        <20221206184740.28cb7627@kernel.org>
+        <10bb01d90a45$77189060$6549b120$@gmail.com>
+        <20221207152157.6185b52b@kernel.org>
+        <6e252f6d-283e-7138-164f-092709bc1292@machnikowski.net>
+        <Y5MW/7jpMUXAGFGX@nanopsycho>
+        <a8f9792b-93f1-b0b7-2600-38ac3c0e3832@machnikowski.net>
+        <20221209083104.2469ebd6@kernel.org>
+        <Y5czl6HgY2GPKR4v@nanopsycho>
+        <DM6PR11MB46571573010AB727E1BE99AE9BFE9@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 09 Jan 2023 16:47:21 +0100, Neil Armstrong wrote:
-> Add the Display Clock Controller controller based on
-> downstream and upstream SM8450 driver.
+On Mon, 9 Jan 2023 14:43:01 +0000 Kubalewski, Arkadiusz wrote:
+> This is a simplified network switch board example.
+> It has 2 synchronization channels, where each channel:
+> - provides clk to 8 PHYs driven by separated MAC chips,
+> - controls 2 DPLLs.
 > 
+> Basically only given FW has control over its PHYs, so also a control over it's
+> MUX inputs.
+> All external sources are shared between the channels.
 > 
+> This is why we believe it is not best idea to enclose multiple DPLLs with one
+> object:
+> - sources are shared even if DPLLs are not a single synchronizer chip,
+> - control over specific MUX type input shall be controllable from different
+> driver/firmware instances.
+> 
+> As we know the proposal of having multiple DPLLs in one object was a try to
+> simplify currently implemented shared pins. We fully support idea of having
+> interfaces as simple as possible, but at the same time they shall be flexible
+> enough to serve many use cases.
 
-Applied, thanks!
-
-[1/3] dt-bindings: clock: document SM8550 DISPCC clock controller
-      commit: 0960ec915a7531e3a760cf97d523ce2fa90b1412
-[2/3] clk: qcom: clk-alpha-pll: define alias of LUCID OLE reset ops to EVO reset ops
-      commit: 494162c739775426c8a9ab9cd2056386e9bf6b4c
-[3/3] clk: qcom: add SM8550 DISPCC driver
-      commit: 90114ca114760315507b218ee1a3b23609d9d2b8
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+I must be missing context from other discussions but what is this
+proposal trying to solve? Well implemented shared pins is all we need.
