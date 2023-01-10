@@ -2,53 +2,51 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94231C678DA
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 18:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A6ECC71131
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 18:39:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239482AbjAJSiq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Jan 2023 13:38:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48580 "EHLO
+        id S239503AbjAJSir (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Jan 2023 13:38:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239558AbjAJSh4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 13:37:56 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3366E136;
-        Tue, 10 Jan 2023 10:33:12 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id ja17so9473194wmb.3;
-        Tue, 10 Jan 2023 10:33:12 -0800 (PST)
+        with ESMTP id S239532AbjAJShx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 13:37:53 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6394C983FC;
+        Tue, 10 Jan 2023 10:33:08 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id i17-20020a05600c355100b003d99434b1cfso10826643wmq.1;
+        Tue, 10 Jan 2023 10:33:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7Y1nMwWnnzoIU66WxhIxzkUN8go5QhinLrg0UAABFHI=;
-        b=fXnO/ed1z90y8H+xIsqtGdGttUPNzWoN0/ovP55BMzWC/h02ytTLEtl+TNdgxNhCaI
-         KlBSrZdkj2qzkcD4MpKX++YC8FGxqGaIqBHfFJ5M5hEVrxFkQmewwG+pdNBBRhnmVG5y
-         dPxkY9AxCHwna8dTAQ3mgSNKcg4VvcXHAFwZLZVLKtYs5hJdvx8gSUfgbvP1K7/Cacd8
-         QF3MuwOWWrT3jTsjvTHWYsGNyuy9l3KAOb8kt7teYTuERasVqkMg2un2vImlwIHhTceM
-         4JBZ7iLtXX67ov1e2YiEq+luW26oD2jjPaHG9zURN3p4WxL3BgOCkl/jmkB+lP0YCjZM
-         YUFw==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tl8lBWv7buHCR9gMhXnIz+zvhX/T9gnX9dlIEfcocLw=;
+        b=Q/skHsxHvgm7rQBUYu43CLugTzLuL2JZiUMS8bMUgbf923x73PqUYoUrp/NHYPlIsi
+         HnItvWvSWaT/XxaSu2tvlfu3oWv+IQ3kXKsN7yCTYBfZjYC0VBc8AYy8HNv066Dg27f+
+         rElNAh8n4wbS7vPFXSLOOJ0R7M9PUWG+j7U1shlXkfAoGJ7VQJxpB94V8Bt8VUwOGutk
+         iE81B4UzjgFBDt8Jq+PUs35UxRvEA9nCxFV4bIG//Gv8rhrhEMVXqgjzU1iU6oH82V5T
+         RTzutAAkjyvT+nud1DzpCK7ho1vcw92FABtrUCcZJZZkU3Cmp06UJXaXn2T8/s2ZsbvW
+         A9gA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7Y1nMwWnnzoIU66WxhIxzkUN8go5QhinLrg0UAABFHI=;
-        b=FzLEj1YOuU/h4bXH/ARxmdETr/mhaMQUFukWyBwmpgYQcnSZjVnc46jU18ite4v3Hs
-         84Dnl8B9IbgRTlhGhi4RqY8meDp/cPlISUqjC7lhJN3LOOI3fzDC3n1TG/iapSPaUgpn
-         joQFs5QDDJsYN2NLVbD0x440MsYtWRUBz8eK9SFY5U4lv5nZ0B49exWI4PP8E9cjaINR
-         D1iv+IYzplflarvkQudwUmg9xev7AHkUFmo1i49D5yHbmwmP6LBuqexfL3xgp+vebVxT
-         MSEkzGYNEw5qY61HK5XRSBgBRFX7ZxjYm3g7B5HILzGNqzPQfvJNDXw4joeeU8X010DD
-         SzbA==
-X-Gm-Message-State: AFqh2kob9rATAOJmE1jFS8Cd5rhbMuZVW6b+whNNKsfZ64C2yWekmqhT
-        2fOikTkAgFwczDIHFHqSTIY=
-X-Google-Smtp-Source: AMrXdXssL+Xd7EON7O9ZwXSQ3T04sO1h1rLKbXPj4KYCCXjhO8SCErenxjjtXToa5xWdYFWmse8itw==
-X-Received: by 2002:a05:600c:556f:b0:3d2:2a74:3a90 with SMTP id ja15-20020a05600c556f00b003d22a743a90mr52551528wmb.22.1673375590657;
-        Tue, 10 Jan 2023 10:33:10 -0800 (PST)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tl8lBWv7buHCR9gMhXnIz+zvhX/T9gnX9dlIEfcocLw=;
+        b=r4nGDtvTeCIArQ9IxM785s8sPDd8WI2EgAVLTRaObUIzJSAML1xNyMw/mGrtUuBQdt
+         vFM3f9ko+nGipLvgA5BhdxDq+ycPv2rEdTQh85JEwHHRGR2XaGbXnN8Sq7C2Dye4sSrF
+         HAPQJq3/djzs9R8i83JSUfFAQD4+ggefODm2uxreYPHkmRczW6IxIsGaHHpm3HDVFSZ+
+         D3Xv+te5DPVmMHrvXneEk6cT7WIssp4iygj8s68hOJuSiMu/QsXUXHH1JP7QAPDV4hXU
+         nKlDFmvMhck+wThrqDB53KaHx7oB/mSfcJHuHJOc/7+X9LlpVQg8IA+jLuDQ+LdbrK2S
+         BHDA==
+X-Gm-Message-State: AFqh2koYS0QOiSO3/sPnVIZhJrhwMd6upabi2zQzdzxy/aWk/RST9zrB
+        6rnaqEFIKnBFufOWVNEPNFs=
+X-Google-Smtp-Source: AMrXdXsvLt9GmGGCOdUU1CprDUR8igLSAF5NW8gfxnfeVYmBc5QMjCvtZSfPmkdrDzu/cSiBrLrQlQ==
+X-Received: by 2002:a05:600c:3d12:b0:3d2:392b:3165 with SMTP id bh18-20020a05600c3d1200b003d2392b3165mr49651677wmb.12.1673375586760;
+        Tue, 10 Jan 2023 10:33:06 -0800 (PST)
 Received: from localhost.localdomain (93-34-92-88.ip49.fastwebnet.it. [93.34.92.88])
-        by smtp.googlemail.com with ESMTPSA id r126-20020a1c2b84000000b003d35c845cbbsm19927757wmr.21.2023.01.10.10.33.09
+        by smtp.googlemail.com with ESMTPSA id r126-20020a1c2b84000000b003d35c845cbbsm19927757wmr.21.2023.01.10.10.33.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jan 2023 10:33:10 -0800 (PST)
+        Tue, 10 Jan 2023 10:33:06 -0800 (PST)
 From:   Christian Marangi <ansuelsmth@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -60,113 +58,100 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Christian Marangi <ansuelsmth@gmail.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v6 4/6] ARM: dts: qcom: fix various wrong definition for kpss-gcc node
-Date:   Tue, 10 Jan 2023 19:32:57 +0100
-Message-Id: <20230110183259.19142-5-ansuelsmth@gmail.com>
+Subject: [PATCH v6 0/6] Krait Documentation conversion
+Date:   Tue, 10 Jan 2023 19:32:53 +0100
+Message-Id: <20230110183259.19142-1-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20230110183259.19142-1-ansuelsmth@gmail.com>
-References: <20230110183259.19142-1-ansuelsmth@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fix dtbs_check warning now that we have a correct kpss-gcc yaml
-schema. Add additional qcom,kpss-gcc compatible to differentiate
-devices where kpss-gcc should provide a clk and where kpss-gcc should
-just provide the registers and the syscon phandle.
-Add missing #clock-cells and remove useless clock-output-names for
-ipq806x.
-Add missing bindings for msm8960 and apq8064 kpss-gcc node.
+This series convert the krait-cc and the kpps-acc/gcc Documentation to
+yaml.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- arch/arm/boot/dts/qcom-apq8064.dtsi | 5 ++++-
- arch/arm/boot/dts/qcom-ipq8064.dtsi | 4 ++--
- arch/arm/boot/dts/qcom-mdm9615.dtsi | 2 +-
- arch/arm/boot/dts/qcom-msm8660.dtsi | 2 +-
- arch/arm/boot/dts/qcom-msm8960.dtsi | 5 ++++-
- 5 files changed, 12 insertions(+), 6 deletions(-)
+This series comes form a split of a bigger series that got too big and
+now hard to review.
 
-diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
-index 1f3e0aa9ab0c..1e68b42acb91 100644
---- a/arch/arm/boot/dts/qcom-apq8064.dtsi
-+++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
-@@ -880,8 +880,11 @@ mmcc: clock-controller@4000000 {
- 		};
- 
- 		l2cc: clock-controller@2011000 {
--			compatible = "qcom,kpss-gcc", "syscon";
-+			compatible = "qcom,kpss-gcc-apq8064", "qcom,kpss-gcc", "syscon";
- 			reg = <0x2011000 0x1000>;
-+			clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
-+			clock-names = "pll8_vote", "pxo";
-+			#clock-cells = <0>;
- 		};
- 
- 		rpm: rpm@108000 {
-diff --git a/arch/arm/boot/dts/qcom-ipq8064.dtsi b/arch/arm/boot/dts/qcom-ipq8064.dtsi
-index 7e784b0995da..de87fcaaa836 100644
---- a/arch/arm/boot/dts/qcom-ipq8064.dtsi
-+++ b/arch/arm/boot/dts/qcom-ipq8064.dtsi
-@@ -570,11 +570,11 @@ IRQ_TYPE_EDGE_RISING)>,
- 		};
- 
- 		l2cc: clock-controller@2011000 {
--			compatible = "qcom,kpss-gcc", "syscon";
-+			compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc", "syscon";
- 			reg = <0x02011000 0x1000>;
- 			clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
- 			clock-names = "pll8_vote", "pxo";
--			clock-output-names = "acpu_l2_aux";
-+			#clock-cells = <0>;
- 		};
- 
- 		acc0: clock-controller@2088000 {
-diff --git a/arch/arm/boot/dts/qcom-mdm9615.dtsi b/arch/arm/boot/dts/qcom-mdm9615.dtsi
-index b0fe1d95d88f..61dfec3b9037 100644
---- a/arch/arm/boot/dts/qcom-mdm9615.dtsi
-+++ b/arch/arm/boot/dts/qcom-mdm9615.dtsi
-@@ -116,7 +116,7 @@ lcc: clock-controller@28000000 {
- 		};
- 
- 		l2cc: clock-controller@2011000 {
--			compatible = "qcom,kpss-gcc", "syscon";
-+			compatible = "qcom,kpss-gcc-mdm9615", "qcom,kpss-gcc", "syscon";
- 			reg = <0x02011000 0x1000>;
- 		};
- 
-diff --git a/arch/arm/boot/dts/qcom-msm8660.dtsi b/arch/arm/boot/dts/qcom-msm8660.dtsi
-index 86f76d0feff4..f601b40ebcf4 100644
---- a/arch/arm/boot/dts/qcom-msm8660.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8660.dtsi
-@@ -473,7 +473,7 @@ pm8058_led133: led@133 {
- 		};
- 
- 		l2cc: clock-controller@2082000 {
--			compatible = "qcom,kpss-gcc", "syscon";
-+			compatible = "qcom,kpss-gcc-msm8660", "qcom,kpss-gcc", "syscon";
- 			reg = <0x02082000 0x1000>;
- 		};
- 
-diff --git a/arch/arm/boot/dts/qcom-msm8960.dtsi b/arch/arm/boot/dts/qcom-msm8960.dtsi
-index 7debf9db7cb1..3bd07cac315b 100644
---- a/arch/arm/boot/dts/qcom-msm8960.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8960.dtsi
-@@ -183,8 +183,11 @@ clock-controller@4000000 {
- 		};
- 
- 		l2cc: clock-controller@2011000 {
--			compatible = "qcom,kpss-gcc", "syscon";
-+			compatible = "qcom,kpss-gcc-msm8960", "qcom,kpss-gcc", "syscon";
- 			reg = <0x2011000 0x1000>;
-+			clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
-+			clock-names = "pll8_vote", "pxo";
-+			#clock-cells = <0>;
- 		};
- 
- 		rpm: rpm@108000 {
+While they are still more or less wrong and doesn't really reflect real
+driver implementation, they are converted to prepare for a fixup later
+when dts and driver are finally fixed.
+
+Minor changes are done to the kpss-gcc driver and minor fixes are done to
+the various affected dts to fix dtbs_check warning with the new introduced
+schema.
+
+Also fix kpss-acc dtbs_check warning.
+
+v6:
+- Split kpss-acc to separate v1 and v2 schema (thing changed from
+  simple clock controller to a power domain in later SoCs)
+- Fix whitespace error (extra new line at the end of the file)
+- rebase on top of linux-next/master
+v5:
+- rebase on top of linux-next/master
+v4:
+- Fix error from kpss-acc schema
+- Fix dtbs_check warning from kpss-acc
+- Improve kpss-gcc for apq8064
+v3:
+- Update all Sob
+- Rework kpss-gcc Documentation with the new finding
+- Fix dtbs_check warning
+v2:
+- Fix bot error by adding missing #clock-cells
+
+Changelog for previous series "Modernize rest of the krait drivers"
+that was split to smaller series (only Documentation changes):
+v7:
+- Rework kpss-gcc Documentation (split patch for pure conversion and
+  tweaks)
+v6:
+- Address comments from Rob
+- Fix warning from make dtbs_check
+v5:
+- Address comments from Krzysztof
+v4:
+- Fix more dt-bindings bug errors
+v3:
+- Split Documentation files for kpss and krait-cc
+v2:
+- fix missing new line on patch 16 (krait-cc patch)
+
+Christian Marangi (6):
+  dt-bindings: clock: Convert qcom,krait-cc to yaml
+  dt-bindings: arm: msm: Convert and split kpss-acc driver Documentation
+    to yaml
+  dt-bindings: arm: msm: Rework kpss-gcc driver Documentation to yaml
+  ARM: dts: qcom: fix various wrong definition for kpss-gcc node
+  ARM: dts: qcom: fix various wrong definition for kpss-acc-v1
+  ARM: dts: qcom: fix various wrong definition for kpss-acc-v2
+
+ .../bindings/arm/msm/qcom,kpss-acc.txt        | 49 -----------
+ .../bindings/arm/msm/qcom,kpss-gcc.txt        | 44 ----------
+ .../bindings/clock/qcom,kpss-acc-v1.yaml      | 72 +++++++++++++++
+ .../bindings/clock/qcom,kpss-gcc.yaml         | 88 +++++++++++++++++++
+ .../bindings/clock/qcom,krait-cc.txt          | 34 -------
+ .../bindings/clock/qcom,krait-cc.yaml         | 59 +++++++++++++
+ .../bindings/power/qcom,kpss-acc-v2.yaml      | 47 ++++++++++
+ arch/arm/boot/dts/qcom-apq8064.dtsi           | 21 ++++-
+ arch/arm/boot/dts/qcom-apq8084.dtsi           | 12 ++-
+ arch/arm/boot/dts/qcom-ipq4019.dtsi           | 12 ++-
+ arch/arm/boot/dts/qcom-ipq8064.dtsi           | 12 ++-
+ arch/arm/boot/dts/qcom-mdm9615.dtsi           |  2 +-
+ arch/arm/boot/dts/qcom-msm8660.dtsi           |  2 +-
+ arch/arm/boot/dts/qcom-msm8960.dtsi           | 13 ++-
+ arch/arm/boot/dts/qcom-msm8974.dtsi           | 12 ++-
+ 15 files changed, 334 insertions(+), 145 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
+ delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,kpss-acc-v1.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,kpss-gcc.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.yaml
+ create mode 100644 Documentation/devicetree/bindings/power/qcom,kpss-acc-v2.yaml
+
 -- 
 2.37.2
 
