@@ -2,47 +2,54 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9663C46467
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 17:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 146A5C54EBE
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 17:18:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233326AbjAJRRo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Jan 2023 12:17:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48528 "EHLO
+        id S232141AbjAJRRn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Jan 2023 12:17:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235161AbjAJRRa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 12:17:30 -0500
+        with ESMTP id S235190AbjAJRRe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 12:17:34 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A092C1CB2B;
-        Tue, 10 Jan 2023 09:17:28 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D13561CB2B;
+        Tue, 10 Jan 2023 09:17:32 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4B9E9B816AC;
-        Tue, 10 Jan 2023 17:17:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 582D7C433EF;
-        Tue, 10 Jan 2023 17:17:25 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 84BF2B816AC;
+        Tue, 10 Jan 2023 17:17:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F0E7C433A0;
+        Tue, 10 Jan 2023 17:17:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673371046;
-        bh=arVpxsbh0h2qnQmd5r0sVza5zxutwpvfWMQgiktyXT0=;
+        s=k20201202; t=1673371050;
+        bh=fI0Jd97+0nJRqxn7ywqClnDN9QYikPAUW+G+b73cGsw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SxNWhH6Yjiv4wOv9cVVXT82/l6vxYNZdDrp/wlfKwQuaxuFcI4qv4M4XcL06dbPl2
-         It/FCnCQcvsL/SQ84h8bS/OU+m9RX1WLUcVu+RDpgeZIYNBoVYsnqApeLI329Tkjjv
-         0N9dvGChwElbfccQv7PuP0Pb+rLKlXw0mI5VIxNrzkWKE6Haw5Vbn6f1idXNDDEX5b
-         p1FRzcng4UrZGf78AeucC+047vODPRoD64cVCvmuaRNv978DkqTtjXmqhF+u3LqPkO
-         xxeDSi3rQnd0BtFvWvqDCg3tJS3LsAD0ZREP22lA7ranVk5E3mtEkFD6ZSMeU+dVVK
-         L0V+McfvB6CHw==
+        b=TAyaNn8R90QBXTYYVWpNj7QZfz7KxlQDXO/m7VE8osVfxQEuj5Zu9fj/dHPiCoeN+
+         FVJKyJ3FF6D/q2SjADCbThiid2Ju0T8pPC4gM46ovMk691fZfQ6vnuSooLcriMqNKR
+         07q8AS6zdlpKa+ckfSDsTBLYJ62iznLVQxNOpe2YYgqt/shiKz5AwU6+dMP+5pbaLT
+         DC892KlUYnalfDVVhVhqzZR6IkWedINctg51nqN8WvfrCO+BxLbu3S27/WVLqiFe9o
+         fTC74jyXiLgtwC5ELoyW7+XW/d82VNX7LvmereeShq3GOdTFlXVBrqjgNepTg5dQ3+
+         MY1Cu0e3teuGw==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     dmitry.baryshkov@linaro.org, sboyd@kernel.org, agross@kernel.org,
-        abel.vesa@linaro.org, mturquette@baylibre.com,
-        konrad.dybcio@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: (subset) [PATCH v3 1/2] clk: Add generic sync_state callback for disabling unused clocks
-Date:   Tue, 10 Jan 2023 11:17:22 -0600
-Message-Id: <167337103771.2139708.5296972457662830009.b4-ty@kernel.org>
+To:     linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        p.zabel@pengutronix.de, dri-devel@lists.freedesktop.org,
+        ulf.hansson@linaro.org, sboyd@kernel.org, quic_akhilpo@quicinc.com,
+        robdclark@gmail.com
+Cc:     linux-kernel@vger.kernel.org, rafael@kernel.org, sean@poorly.run,
+        konrad.dybcio@somainline.org, mturquette@baylibre.com,
+        khilman@kernel.org, agross@kernel.org, pavel@ucw.cz,
+        linux-clk@vger.kernel.org, quic_abhinavk@quicinc.com,
+        dmitry.baryshkov@linaro.org, len.brown@intel.com, daniel@ffwll.ch,
+        olvaffe@gmail.com, gregkh@linuxfoundation.org, linux@roeck-us.net,
+        linux-pm@vger.kernel.org, dianders@chromium.org,
+        geert@linux-m68k.org, airlied@gmail.com, konrad.dybcio@linaro.org
+Subject: Re: (subset) [PATCH v5 0/5] Improve GPU reset sequence for Adreno GPU
+Date:   Tue, 10 Jan 2023 11:17:24 -0600
+Message-Id: <167337103777.2139708.8328240666621116621.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20221227204528.1899863-1-abel.vesa@linaro.org>
-References: <20221227204528.1899863-1-abel.vesa@linaro.org>
+In-Reply-To: <1672656511-1931-1-git-send-email-quic_akhilpo@quicinc.com>
+References: <1672656511-1931-1-git-send-email-quic_akhilpo@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -50,25 +57,22 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 27 Dec 2022 22:45:27 +0200, Abel Vesa wrote:
-> There are unused clocks that need to remain untouched by clk_disable_unused,
-> and most likely could be disabled later on sync_state. So provide a generic
-> sync_state callback for the clock providers that register such clocks.
-> Then, use the same mechanism as clk_disable_unused from that generic
-> callback, but pass the device to make sure only the clocks belonging to
-> the current clock provider get disabled, if unused. Also, during the
-> default clk_disable_unused, if the driver that registered the clock has
-> the generic clk_sync_state_disable_unused callback set for sync_state,
-> skip disabling its clocks.
+On Mon, 2 Jan 2023 16:18:26 +0530, Akhil P Oommen wrote:
+> This is a rework of [1] using genpd instead of 'reset' framework.
+> 
+> As per the recommended reset sequence of Adreno gpu, we should ensure that
+> gpucc-cx-gdsc has collapsed at hardware to reset gpu's internal hardware states.
+> Because this gdsc is implemented as 'votable', gdsc driver doesn't poll and
+> wait until its hw status says OFF.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] clk: Add generic sync_state callback for disabling unused clocks
-      commit: 26b36df7516692292312063ca6fd19e73c06d4e7
-[2/2] clk: qcom: sdm845: Use generic clk_sync_state_disable_unused callback
-      commit: 99c0f7d35c4b204dd95ba50e155f32c99695b445
+[1/5] PM: domains: Allow a genpd consumer to require a synced power off
+      commit: a9236a0aa7d7f52a974cc7eaa971fae92aa477c5
+[2/5] clk: qcom: gdsc: Support 'synced_poweroff' genpd flag
+      commit: 8b6af3b58cafc2cbdf6269f655b2d3731eb93c2f
 
 Best regards,
 -- 
