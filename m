@@ -2,105 +2,102 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F446C54EBE
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 03:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADFEC46467
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 08:18:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229582AbjAJDw0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Jan 2023 22:52:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56092 "EHLO
+        id S237753AbjAJISt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Jan 2023 03:18:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229576AbjAJDwZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Jan 2023 22:52:25 -0500
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D1868FE9;
-        Mon,  9 Jan 2023 19:52:24 -0800 (PST)
-Received: by mail-ot1-f49.google.com with SMTP id v15-20020a9d69cf000000b006709b5a534aso6306467oto.11;
-        Mon, 09 Jan 2023 19:52:24 -0800 (PST)
+        with ESMTP id S237912AbjAJISo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 03:18:44 -0500
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83EE442E04
+        for <linux-clk@vger.kernel.org>; Tue, 10 Jan 2023 00:18:41 -0800 (PST)
+Received: by mail-yb1-xb2c.google.com with SMTP id l139so10995176ybl.12
+        for <linux-clk@vger.kernel.org>; Tue, 10 Jan 2023 00:18:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rq6kbFa9Q6XePoTGZMyOqndZFFNOA4hEyY3g6DmupTM=;
+        b=peSqu6O2atn6rcoXsO2zx056ilEHN6U4fJ0NwepwoB9a03kpyGWlsG8S+S4f44GhvU
+         EomHOSgabfexEYSUmzfCosXXWVBOZsuiRslBuuSRgU+keh/2x8TA7MvepwuS9VPu2Ddm
+         UMY6JOeug81X3/FaWz3EYU5q9ZlZk3OJ1VZxDOiXhY93tvHjU1I49Gwcfz0axXtEBboV
+         pZo8S18ayW+eMwynh8wWT62o1Hek5swzQJ6xzAndMyPYLWDYNNY6fZdY8tgklzfYDv4B
+         jkAjhJb47GCRwwXXEIrK/nZ2njMYdMh/YiWPKWmOKCOpiBT+/kwie4t/xc4BiR8JhLGi
+         1ocA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Den6eVQxTXWgmQYL+6Gk2EvIgXPuCXvXEt4ZGf3AJys=;
-        b=eeeW1jgU9R6g28HVUHGMvrKpbnFm4pOp/oc4k1WixQDL2R3/eWcM4y8coTMyVjPfOb
-         wBP6666a2NmvdQJVUTJ7lCQ/c1EtVRzFRilrNQAwZff0qpBMu7dlWsJOfPODjuuReUG5
-         fszhRPPPpDa+9BMgjTEVBAnwQDlBlInE2NNpcWffHrz5s6DxLrr4koSz8EoVwYhnv7Aj
-         NkMhqkLSpfCWPrs3i1WKnjgc1s1mRex1jdmZQ1bwbTgKKIpwE8GAzvXVVO2s5ot1R7y+
-         2B182REKUweQyJVj4IXXZoDxsv4IrRT/r8BL1g7QGhu1LIAlTEkiDunH+BrsVnmm3PKm
-         V6jA==
-X-Gm-Message-State: AFqh2kpXa4vm0zB83+Lltg6oSLe1SbwtVedDEAoWwK+TUI13dlRm1rNv
-        gyC5wNgpQR6SO50/53uqvIEyQsfuSg==
-X-Google-Smtp-Source: AMrXdXsRMMiHDBIvv6ftgy15vU/Od0B99Vb17vvk1wdENPzm4pEPtH+MZZ4SoXh9P182kbJtokmM2A==
-X-Received: by 2002:a9d:17ac:0:b0:66e:a35c:c051 with SMTP id j41-20020a9d17ac000000b0066ea35cc051mr33771762otj.35.1673322743575;
-        Mon, 09 Jan 2023 19:52:23 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id f14-20020a9d5e8e000000b006705e35c4e2sm5475603otl.35.2023.01.09.19.52.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jan 2023 19:52:22 -0800 (PST)
-Received: (nullmailer pid 785952 invoked by uid 1000);
-        Tue, 10 Jan 2023 03:52:21 -0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rq6kbFa9Q6XePoTGZMyOqndZFFNOA4hEyY3g6DmupTM=;
+        b=Wgr8fJOk/yJMbXl+/E1u0Nn+Q5ianNWBCL2XE655IH2rcTAFJCHxiS+AyALw7kPfaS
+         no+VgeBKPXZMEW65fER1zHXag7xhbvGSkG7pn4qm7u80StyPYi1HFEZeIBlNai9pJ5uj
+         rw/Pf9wI+eFcepN2IEmU9+p4msvN6jqYtM8vBIRpKy2SsAOndK83hPiJXA7QAzaXobgL
+         RxyOeeiZ1YVwAUDc3eP7zrxUCR3xFqr0pGEV+yTnLuqEMnTxcbms/1ymLmPm6Q9PQLO6
+         pB1jLXkOWuxyg66by2folfPO5MKgANHFQuc/KWAuU+TTgIhxavMIrWwgg6EVOW176x3p
+         JEOg==
+X-Gm-Message-State: AFqh2kqqAAx8kXISqZP99QgL6RlW75bV06PAgai+lEx2+gOuA6UAcFN8
+        DP5l/80kONwiNgcorogjqphXeCLvkZJ2Pp+kOkQywQ==
+X-Google-Smtp-Source: AMrXdXuRBov6hoRRwKns5OAP09txTff/z7ySQGBUSEs6TNAFQ9Usf4qJbJA5b0gLCb3g8S1mE0oGzUkYOtYbbFCRf1I=
+X-Received: by 2002:a25:4903:0:b0:770:d766:b5e8 with SMTP id
+ w3-20020a254903000000b00770d766b5e8mr4722239yba.24.1673338720651; Tue, 10 Jan
+ 2023 00:18:40 -0800 (PST)
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Danila Tikhonov <danila@jiaxyga.com>
-Cc:     robh+dt@kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        David Wronek <davidwronek@gmail.com>,
-        linux-arm-msm@vger.kernel.org, andersson@kernel.org,
-        mturquette@baylibre.com, konrad.dybcio@linaro.org,
-        agross@kernel.org, devicetree@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
-In-Reply-To: <20230109193030.42764-2-danila@jiaxyga.com>
-References: <20230109193030.42764-1-danila@jiaxyga.com>
- <20230109193030.42764-2-danila@jiaxyga.com>
-Message-Id: <167332272486.785431.16211599391425282320.robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Add SM7150 GCC clock binding
-Date:   Mon, 09 Jan 2023 21:52:21 -0600
+References: <20230109174511.1740856-1-brgl@bgdev.pl> <20230109174511.1740856-11-brgl@bgdev.pl>
+In-Reply-To: <20230109174511.1740856-11-brgl@bgdev.pl>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 10 Jan 2023 09:18:29 +0100
+Message-ID: <CACRpkdb7C763xYvZKc=6-oZtGGtqSwdNK5j_aA16f6j7bR1yqw@mail.gmail.com>
+Subject: Re: [PATCH 10/18] pinctrl: qcom: sa8775p: add the pinctrl driver for
+ the sa8775p platform
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Alex Elder <elder@kernel.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
+        netdev@vger.kernel.org, Yadu MG <quic_ymg@quicinc.com>,
+        Prasad Sodagudi <quic_psodagud@quicinc.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, Jan 9, 2023 at 6:45 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-On Mon, 09 Jan 2023 22:30:29 +0300, Danila Tikhonov wrote:
-> Add device tree bindings for global clock subsystem clock
-> controller for Qualcomm Technology Inc's SM7150 SoCs.
-> 
-> Co-developed-by: David Wronek <davidwronek@gmail.com>
-> Signed-off-by: David Wronek <davidwronek@gmail.com>
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> ---
->  .../bindings/clock/qcom,sm7150-gcc.yaml       |  50 +++++
->  include/dt-bindings/clock/qcom,sm7150-gcc.h   | 193 ++++++++++++++++++
->  2 files changed, 243 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm7150-gcc.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,sm7150-gcc.h
-> 
+> From: Yadu MG <quic_ymg@quicinc.com>
+>
+> Add support for Lemans TLMM configuration and control via the pinctrl
+> framework.
+>
+> Signed-off-by: Yadu MG <quic_ymg@quicinc.com>
+> Signed-off-by: Prasad Sodagudi <quic_psodagud@quicinc.com>
+> [Bartosz: made the driver ready for upstream]
+> Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Overall looks good, Konrad has some comments to be addressed.
+Is this something I can just apply in the next iteration?
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/clock/qcom,sm7150-gcc.yaml:50:4: [error] no new line character at the end of file (new-line-at-end-of-file)
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,sm7150-gcc.example.dtb: clock-controller@100000: '#clock-cells', '#power-domain-cells', '#reset-cells', 'reg' do not match any of the regexes: 'pinctrl-[0-9]+'
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,sm7150-gcc.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230109193030.42764-2-danila@jiaxyga.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Yours,
+Linus Walleij
