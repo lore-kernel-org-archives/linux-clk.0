@@ -2,252 +2,188 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD33BC54EBE
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 11:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF669C54EBC
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 11:46:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231230AbjAJLGk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Jan 2023 06:06:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46254 "EHLO
+        id S231893AbjAJLqd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Jan 2023 06:46:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237709AbjAJLFp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 06:05:45 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 246DDEA8;
-        Tue, 10 Jan 2023 03:05:28 -0800 (PST)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 6EFD36602D76;
-        Tue, 10 Jan 2023 11:05:25 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1673348727;
-        bh=npkTfw5AkuKfVozPXHhlB8Rn+FzOl8AfixjbglEYM5E=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=g8mf7PG7JBP8XJNBtWZ8xgKI0tOPJZokIWTbOEYuVJkOn5DbhJxaSJNBUO2Q1bfmK
-         y1cMK33sW6/WquNq39qtJ+odJJSftGycmg4aztwS874/mPrMof0lYm+fsOrT5Nwq3m
-         XnH22BPZ3qXZeaD8iU9PxqrEuIq9uU/28KPoxfuz6lIefi1XhBECgx/F1zSWa3QYd6
-         O8SATtKZfIVM6gP8Dbp4oVWKgnhmhGHx8mh24o8yFg0qe82SJMc0J2wNSJlPzhtsBA
-         8YRHsF805A+5id8/DCqbidHCpsqprOFHMyUNHvuTAtsYxRnwpJUAkqoFwxh6d1Bs8L
-         GKudUCJsH8MLQ==
-Message-ID: <4dbaf8a4-21df-8a7e-89ef-9ad2580ff341@collabora.com>
-Date:   Tue, 10 Jan 2023 12:05:22 +0100
+        with ESMTP id S230406AbjAJLqb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 06:46:31 -0500
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0B3948CD1;
+        Tue, 10 Jan 2023 03:46:30 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1673351179; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=KzUVpDH4yAJRpJ8xxKrcI+ABzCtsWIvYAoBfYdqUdr/YMp/f3h85IauWXnvUxpShHj9kIewwWpnIChCUKGm+DQI+nTbQQ98Lune8Qz4IDoKgR3ZQ3neEQg5vGn+gOTUn3sqGcbCKfQPSKmwNrFuSXndoGADHwDir7m2ChGKUODM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1673351179; h=Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
+        bh=RPawfXkHoPL7Y8+J9U9JKYo2P4bL8EODHWvhtbG7JUM=; 
+        b=noo5uskees5bJsL53OoThxFJ7Aj5kyxkAaVZD/CDqhRwnVY1FZS50srIgWA9DBg/Sa/4QTmoIyTc+SDgGuaYhJLaVumrENjeNatf0WIHKRoFcJbtQDIqWJs75uhkMvay8kdn1BAngoFfUBKlP/rOU212mJaam8I8pv1Wy+1zW90=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=linux.beauty;
+        spf=pass  smtp.mailfrom=me@linux.beauty;
+        dmarc=pass header.from=<me@linux.beauty>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1673351179;
+        s=zmail; d=linux.beauty; i=me@linux.beauty;
+        h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
+        bh=RPawfXkHoPL7Y8+J9U9JKYo2P4bL8EODHWvhtbG7JUM=;
+        b=cMBmQMqpuLqyn71C4hiies8itTeQAPKfHZLKzwv4/wR3TvNFR45elQf7Yz2ggUal
+        rFTSIinvxMCQhd3FYt7QUg+38wL2qePJYt3Zns7q7T5lYex3tHkJXmDBdXMx9yZNyH/
+        AeLfz+huOtWh/+9P1kcMLaGG1C6Njp3LOMiq5v8o=
+Received: from shbuild9.ambarella.net (116.246.37.178 [116.246.37.178]) by mx.zohomail.com
+        with SMTPS id 1673351177408190.58179689203598; Tue, 10 Jan 2023 03:46:17 -0800 (PST)
+From:   Li Chen <me@linux.beauty>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Li Chen <lchen@ambarella.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: create write_enable file to control clk rate write and other dangerous ops permission
+Date:   Tue, 10 Jan 2023 19:45:39 +0800
+Message-Id: <20230110114540.2975540-1-me@linux.beauty>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v2 03/23] clk: mediatek: clk-gate: Propagate struct device
- with mtk_clk_register_gates()
-Content-Language: en-US
-To:     Markus Schneider-Pargmann <msp@baylibre.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        wenst@chromium.org, johnson.wang@mediatek.com,
-        miles.chen@mediatek.com, fparent@baylibre.com,
-        chun-jie.chen@mediatek.com, sam.shih@mediatek.com,
-        y.oudjana@protonmail.com, nfraprado@collabora.com,
-        rex-bc.chen@mediatek.com, ryder.lee@kernel.org,
-        daniel@makrotopia.org, jose.exposito89@gmail.com,
-        yangyingliang@huawei.com, pablo.sun@mediatek.com,
-        weiyi.lu@mediatek.com, ikjn@chromium.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        kernel@collabora.com
-References: <20221223094259.87373-1-angelogioacchino.delregno@collabora.com>
- <20221223094259.87373-4-angelogioacchino.delregno@collabora.com>
- <20230104112144.n2mx33xqavigxwa2@blmsp>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230104112144.n2mx33xqavigxwa2@blmsp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 04/01/23 12:21, Markus Schneider-Pargmann ha scritto:
-> Hi Angelo,
-> 
-> On Fri, Dec 23, 2022 at 10:42:39AM +0100, AngeloGioacchino Del Regno wrote:
->> Commit e4c23e19aa2a ("clk: mediatek: Register clock gate with device")
->> introduces a helper function for the sole purpose of propagating a
->> struct device pointer to the clk API when registering the mtk-gate
->> clocks to take advantage of Runtime PM when/where needed and where
->> a power domain is defined in devicetree.
->>
->> Function mtk_clk_register_gates() then becomes a wrapper around the
->> new mtk_clk_register_gates_with_dev() function that will simply pass
->> NULL as struct device: this is essential when registering drivers
->> with CLK_OF_DECLARE instead of as a platform device, as there will
->> be no struct device to pass... but we can as well simply have only
->> one function that always takes such pointer as a param and pass NULL
->> when unavoidable.
->>
->> This commit removes the mtk_clk_register_gates() wrapper and renames
->> mtk_clk_register_gates_with_dev() to the former and all of the calls
->> to either of the two functions were fixed in all drivers in order to
->> reflect this change.
->>
->> Since a lot of MediaTek clock drivers are actually registering as a
->> platform device, but were still registering the mtk-gate clocks
->> without passing any struct device to the clock framework, they've
->> been changed to pass a valid one now, as to make all those platforms
->> able to use runtime power management where available.
->>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> 
-> A few nitpicks, otherwise it looks good,
-> 
-> Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
-> 
->> ---
->>   drivers/clk/mediatek/clk-gate.c              | 16 ++++------------
->>   drivers/clk/mediatek/clk-gate.h              |  8 ++------
->>   drivers/clk/mediatek/clk-mt2701-aud.c        |  2 +-
->>   drivers/clk/mediatek/clk-mt2701-eth.c        |  2 +-
->>   drivers/clk/mediatek/clk-mt2701-g3d.c        |  2 +-
->>   drivers/clk/mediatek/clk-mt2701-hif.c        |  2 +-
->>   drivers/clk/mediatek/clk-mt2701-mm.c         |  2 +-
->>   drivers/clk/mediatek/clk-mt2701.c            |  6 +++---
->>   drivers/clk/mediatek/clk-mt2712-mm.c         |  2 +-
->>   drivers/clk/mediatek/clk-mt2712.c            |  6 +++---
->>   drivers/clk/mediatek/clk-mt6765.c            |  6 +++---
->>   drivers/clk/mediatek/clk-mt6779-mm.c         |  2 +-
->>   drivers/clk/mediatek/clk-mt6779.c            |  4 ++--
->>   drivers/clk/mediatek/clk-mt6795-infracfg.c   |  3 ++-
->>   drivers/clk/mediatek/clk-mt6795-mm.c         |  3 ++-
->>   drivers/clk/mediatek/clk-mt6795-pericfg.c    |  3 ++-
->>   drivers/clk/mediatek/clk-mt6797-mm.c         |  2 +-
->>   drivers/clk/mediatek/clk-mt6797.c            |  2 +-
->>   drivers/clk/mediatek/clk-mt7622-aud.c        |  2 +-
->>   drivers/clk/mediatek/clk-mt7622-eth.c        |  4 ++--
->>   drivers/clk/mediatek/clk-mt7622-hif.c        |  4 ++--
->>   drivers/clk/mediatek/clk-mt7622.c            |  9 +++++----
->>   drivers/clk/mediatek/clk-mt7629-eth.c        |  5 +++--
->>   drivers/clk/mediatek/clk-mt7629-hif.c        |  4 ++--
->>   drivers/clk/mediatek/clk-mt7629.c            |  6 +++---
->>   drivers/clk/mediatek/clk-mt7986-eth.c        |  6 +++---
->>   drivers/clk/mediatek/clk-mt7986-infracfg.c   |  2 +-
->>   drivers/clk/mediatek/clk-mt8135.c            |  4 ++--
->>   drivers/clk/mediatek/clk-mt8167-aud.c        |  2 +-
->>   drivers/clk/mediatek/clk-mt8167-img.c        |  2 +-
->>   drivers/clk/mediatek/clk-mt8167-mfgcfg.c     |  2 +-
->>   drivers/clk/mediatek/clk-mt8167-mm.c         |  2 +-
->>   drivers/clk/mediatek/clk-mt8167-vdec.c       |  3 ++-
->>   drivers/clk/mediatek/clk-mt8167.c            |  2 +-
->>   drivers/clk/mediatek/clk-mt8173-mm.c         |  2 +-
->>   drivers/clk/mediatek/clk-mt8173.c            | 12 ++++++------
->>   drivers/clk/mediatek/clk-mt8183-audio.c      |  2 +-
->>   drivers/clk/mediatek/clk-mt8183-mm.c         |  2 +-
->>   drivers/clk/mediatek/clk-mt8183.c            |  8 ++++----
->>   drivers/clk/mediatek/clk-mt8186-mm.c         |  3 ++-
->>   drivers/clk/mediatek/clk-mt8192-aud.c        |  3 ++-
->>   drivers/clk/mediatek/clk-mt8192-mm.c         |  3 ++-
->>   drivers/clk/mediatek/clk-mt8192.c            | 12 ++++++------
->>   drivers/clk/mediatek/clk-mt8195-apmixedsys.c |  3 ++-
->>   drivers/clk/mediatek/clk-mt8195-topckgen.c   |  3 ++-
->>   drivers/clk/mediatek/clk-mt8195-vdo0.c       |  3 ++-
->>   drivers/clk/mediatek/clk-mt8195-vdo1.c       |  3 ++-
->>   drivers/clk/mediatek/clk-mt8365-mm.c         |  5 ++---
->>   drivers/clk/mediatek/clk-mt8365.c            |  2 +-
->>   drivers/clk/mediatek/clk-mt8516-aud.c        |  2 +-
->>   drivers/clk/mediatek/clk-mt8516.c            |  2 +-
->>   drivers/clk/mediatek/clk-mtk.c               |  4 ++--
->>   52 files changed, 103 insertions(+), 103 deletions(-)
->>
-> 
-> [...]
-> 
->> diff --git a/drivers/clk/mediatek/clk-mt7986-eth.c b/drivers/clk/mediatek/clk-mt7986-eth.c
->> index 7868c0728e96..765df117afa6 100644
->> --- a/drivers/clk/mediatek/clk-mt7986-eth.c
->> +++ b/drivers/clk/mediatek/clk-mt7986-eth.c
->> @@ -85,7 +85,7 @@ static void __init mtk_sgmiisys_0_init(struct device_node *node)
->>   	clk_data = mtk_alloc_clk_data(ARRAY_SIZE(sgmii0_clks));
->>   
->>   	mtk_clk_register_gates(node, sgmii0_clks, ARRAY_SIZE(sgmii0_clks),
->> -			       clk_data);
->> +			       clk_data, NULL);
->>   
->>   	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
->>   	if (r)
->> @@ -103,7 +103,7 @@ static void __init mtk_sgmiisys_1_init(struct device_node *node)
->>   	clk_data = mtk_alloc_clk_data(ARRAY_SIZE(sgmii1_clks));
->>   
->>   	mtk_clk_register_gates(node, sgmii1_clks, ARRAY_SIZE(sgmii1_clks),
->> -			       clk_data);
->> +			       clk_data, NULL);
->>   
->>   	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
->>   
->> @@ -121,7 +121,7 @@ static void __init mtk_ethsys_init(struct device_node *node)
->>   
->>   	clk_data = mtk_alloc_clk_data(ARRAY_SIZE(eth_clks));
->>   
->> -	mtk_clk_register_gates(node, eth_clks, ARRAY_SIZE(eth_clks), clk_data);
->> +	mtk_clk_register_gates(node, eth_clks, ARRAY_SIZE(eth_clks), clk_data, NULL);
-> 
-> You kept within 80c nearly everywhere, but there are a few calls where
-> you added 'NULL' that go over the 80c now. Not sure if that was
-> intended?!
-> 
+From: Li Chen <lchen@ambarella.com>
 
-Yeah that's intended. It's 86 columns, and one more line just for a NULL doesn't
-really look good to my eyes.
-Besides, we're using 80c terminals from the 1980's anymore in 2023, so that's
-fine :-)
+It's common requirement for bsp debug/test to change clk rate from userspace.
 
->>   
->>   	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
->>   
-> 
-> [...]
-> 
->> diff --git a/drivers/clk/mediatek/clk-mt8183-mm.c b/drivers/clk/mediatek/clk-mt8183-mm.c
->> index 11ecc6fb0065..f93043da26c0 100644
->> --- a/drivers/clk/mediatek/clk-mt8183-mm.c
->> +++ b/drivers/clk/mediatek/clk-mt8183-mm.c
->> @@ -91,7 +91,7 @@ static int clk_mt8183_mm_probe(struct platform_device *pdev)
->>   	clk_data = mtk_alloc_clk_data(CLK_MM_NR_CLK);
->>   
->>   	mtk_clk_register_gates(node, mm_clks, ARRAY_SIZE(mm_clks),
->> -			clk_data);
->> +			clk_data, &pdev->dev);
-> 
-> This is not aligned with the opening bracket here and a few below. Maybe
-> you can fix it with your patch as well.
-> 
+Currently, we must define CLKOCK_ALLOW_WRITE_DEBUGFS then re-compile kernel
+to allow this feature. Let's replace it with a "write_enable" file to
+allow enable it at runtime.
 
-Keeping in mind the size of the series, I wanted to reduce the changes to the bone
-and to avoid touching indentation as well, but I guess the TAB key on my keyboard
-can handle one more keypress :-P
+Signed-off-by: Li Chen <lchen@ambarella.com>
+Change-Id: Ic4bf94c572c24f6979c2b7aea042fec654370220
+---
+ drivers/clk/clk.c | 39 ++++++++++-----------------------------
+ 1 file changed, 10 insertions(+), 29 deletions(-)
 
->>   
->>   	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
->>   }
-> [...]
->> diff --git a/drivers/clk/mediatek/clk-mt8192.c b/drivers/clk/mediatek/clk-mt8192.c
->> index 991d78a71644..e1b625b86911 100644
->> --- a/drivers/clk/mediatek/clk-mt8192.c
->> +++ b/drivers/clk/mediatek/clk-mt8192.c
->> @@ -1127,7 +1127,7 @@ static int clk_mt8192_top_probe(struct platform_device *pdev)
->>   	if (r)
->>   		goto unregister_top_composites;
->>   
->> -	r = mtk_clk_register_gates_with_dev(node, top_clks, ARRAY_SIZE(top_clks),
->> +	r = mtk_clk_register_gates(node, top_clks, ARRAY_SIZE(top_clks),
->>   					    top_clk_data, &pdev->dev);
-> 
-> Here and below, the function call got shorter, please fix the
-> indentation in the following lines.
-> 
-
-More keypresses to do!
-
-Thanks for the review, will fix for v3 :-)
-
-Regards,
-Angelo
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e62552a75f08..668f691bf67a 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -89,6 +89,7 @@ struct clk_core {
+ 	struct hlist_node	debug_node;
+ #endif
+ 	struct kref		ref;
++	bool write_enable;
+ };
+ 
+ #define CREATE_TRACE_POINTS
+@@ -3263,8 +3264,6 @@ static int clk_dump_show(struct seq_file *s, void *data)
+ }
+ DEFINE_SHOW_ATTRIBUTE(clk_dump);
+ 
+-#undef CLOCK_ALLOW_WRITE_DEBUGFS
+-#ifdef CLOCK_ALLOW_WRITE_DEBUGFS
+ /*
+  * This can be dangerous, therefore don't provide any real compile time
+  * configuration option for this feature.
+@@ -3275,6 +3274,9 @@ static int clk_rate_set(void *data, u64 val)
+ 	struct clk_core *core = data;
+ 	int ret;
+ 
++	if (!core->write_enable)
++		return -EACCES;
++
+ 	clk_prepare_lock();
+ 	ret = clk_core_set_rate_nolock(core, val);
+ 	clk_prepare_unlock();
+@@ -3289,6 +3291,9 @@ static int clk_prepare_enable_set(void *data, u64 val)
+ 	struct clk_core *core = data;
+ 	int ret = 0;
+ 
++	if (!core->write_enable)
++		return -EACCES;
++
+ 	if (val)
+ 		ret = clk_prepare_enable(core->hw->clk);
+ 	else
+@@ -3301,6 +3306,9 @@ static int clk_prepare_enable_get(void *data, u64 *val)
+ {
+ 	struct clk_core *core = data;
+ 
++	if (!core->write_enable)
++		return -EACCES;
++
+ 	*val = core->enable_count && core->prepare_count;
+ 	return 0;
+ }
+@@ -3308,11 +3316,6 @@ static int clk_prepare_enable_get(void *data, u64 *val)
+ DEFINE_DEBUGFS_ATTRIBUTE(clk_prepare_enable_fops, clk_prepare_enable_get,
+ 			 clk_prepare_enable_set, "%llu\n");
+ 
+-#else
+-#define clk_rate_set	NULL
+-#define clk_rate_mode	0444
+-#endif
+-
+ static int clk_rate_get(void *data, u64 *val)
+ {
+ 	struct clk_core *core = data;
+@@ -3426,7 +3429,6 @@ static int current_parent_show(struct seq_file *s, void *data)
+ }
+ DEFINE_SHOW_ATTRIBUTE(current_parent);
+ 
+-#ifdef CLOCK_ALLOW_WRITE_DEBUGFS
+ static ssize_t current_parent_write(struct file *file, const char __user *ubuf,
+ 				    size_t count, loff_t *ppos)
+ {
+@@ -3460,7 +3462,6 @@ static const struct file_operations current_parent_rw_fops = {
+ 	.llseek		= seq_lseek,
+ 	.release	= single_release,
+ };
+-#endif
+ 
+ static int clk_duty_cycle_show(struct seq_file *s, void *data)
+ {
+@@ -3524,7 +3525,6 @@ static void clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
+ 	debugfs_create_u32("clk_notifier_count", 0444, root, &core->notifier_count);
+ 	debugfs_create_file("clk_duty_cycle", 0444, root, core,
+ 			    &clk_duty_cycle_fops);
+-#ifdef CLOCK_ALLOW_WRITE_DEBUGFS
+ 	debugfs_create_file("clk_prepare_enable", 0644, root, core,
+ 			    &clk_prepare_enable_fops);
+ 
+@@ -3532,7 +3532,6 @@ static void clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
+ 		debugfs_create_file("clk_parent", 0644, root, core,
+ 				    &current_parent_rw_fops);
+ 	else
+-#endif
+ 	if (core->num_parents > 0)
+ 		debugfs_create_file("clk_parent", 0444, root, core,
+ 				    &current_parent_fops);
+@@ -3592,24 +3591,6 @@ static int __init clk_debug_init(void)
+ {
+ 	struct clk_core *core;
+ 
+-#ifdef CLOCK_ALLOW_WRITE_DEBUGFS
+-	pr_warn("\n");
+-	pr_warn("********************************************************************\n");
+-	pr_warn("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE           **\n");
+-	pr_warn("**                                                                **\n");
+-	pr_warn("**  WRITEABLE clk DebugFS SUPPORT HAS BEEN ENABLED IN THIS KERNEL **\n");
+-	pr_warn("**                                                                **\n");
+-	pr_warn("** This means that this kernel is built to expose clk operations  **\n");
+-	pr_warn("** such as parent or rate setting, enabling, disabling, etc.      **\n");
+-	pr_warn("** to userspace, which may compromise security on your system.    **\n");
+-	pr_warn("**                                                                **\n");
+-	pr_warn("** If you see this message and you are not debugging the          **\n");
+-	pr_warn("** kernel, report this immediately to your vendor!                **\n");
+-	pr_warn("**                                                                **\n");
+-	pr_warn("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE           **\n");
+-	pr_warn("********************************************************************\n");
+-#endif
+-
+ 	rootdir = debugfs_create_dir("clk", NULL);
+ 
+ 	debugfs_create_file("clk_summary", 0444, rootdir, &all_lists,
+-- 
+2.34.1
 
