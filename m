@@ -2,118 +2,105 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD8BBC67871
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Jan 2023 21:12:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F446C54EBE
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 03:52:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237684AbjAIVML (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Jan 2023 16:12:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51964 "EHLO
+        id S229582AbjAJDw0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Jan 2023 22:52:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237845AbjAIVLl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Jan 2023 16:11:41 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9EFD6359
-        for <linux-clk@vger.kernel.org>; Mon,  9 Jan 2023 13:06:16 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id bq39so15081494lfb.0
-        for <linux-clk@vger.kernel.org>; Mon, 09 Jan 2023 13:06:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ATq9lfwFr3RZyhEmOv68Lea4iswGw4nEYd9xucpaSYI=;
-        b=ZnHdLMPbbgf9UrAg9c/LZOWyW3VZt31oKL8x4C6RX9hvUmc4knhTljAbwJiRv/46jh
-         udIB4KWy1VZo7xUMsjusVkPPts5uuRggRun1Qp7LPTkaJ9JXUr/Pimi7Hqp97vBJgTOA
-         yH+HCn9sSJ3IZwpUjLOlXdm/zkU4vG6Y7+WpaMcSVHu4v6HMlkbxX8Jl8mb+oCWUa1WI
-         VPP8CPXaOUWe9zU7vZ5abd1NYUIzuw+Q67fJbLk4UbBkqgq4K6QdIASOk9RXxRjbJKh4
-         cZvcm26xYwAhfEczyf84Muh2jfibMQgKFN40g4Jrm+2Lg73Hg3a1YFbP5kaEZlu2E7Dg
-         LYiw==
+        with ESMTP id S229576AbjAJDwZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Jan 2023 22:52:25 -0500
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D1868FE9;
+        Mon,  9 Jan 2023 19:52:24 -0800 (PST)
+Received: by mail-ot1-f49.google.com with SMTP id v15-20020a9d69cf000000b006709b5a534aso6306467oto.11;
+        Mon, 09 Jan 2023 19:52:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ATq9lfwFr3RZyhEmOv68Lea4iswGw4nEYd9xucpaSYI=;
-        b=f1SdOxekAPZXacf8CQPobS7cSxYevTKoXlErHtdR8uhHTmzdwX9ZtIQSTa8PaBCYKN
-         3Cr/1GCgluW09304kGeX/gyoMVbSnX1MUtuBlmPq2hCGEldsJ1ox66anyWeNrIh22KM/
-         P8KlRGuVQl64xuwb6WJdj3Lw+2u/WR9flIhVYoejEpOXW1V2COA4bccbfN4XURZ4esOp
-         VmH/MMqKWUsbQGSWbRaf/uTSFZS1KrBwydGNVUeC+J5NJ3VlCHjsSok91f8ztdKfWY0o
-         KujU7oAjpm+nwtCmb87adxV9fJ2INZcGS9AjMm9fhVsOOuD5fsmeLWJqVQEmGFiqO5yg
-         nz/A==
-X-Gm-Message-State: AFqh2kqohlyN8MJeydtgJqGxGAvHGoNdOsF7icEzmbYPKIqYJjNoOC1P
-        cqOs9rqfTjkC7OzX+Ns0+K88Wg==
-X-Google-Smtp-Source: AMrXdXtMlPauAhWufnKfAA9Z0/kuM8Pxw6F0q+IwmA1VbDLnvpRiG1kH2m6PlPKVn/aIBM8cKwFg9Q==
-X-Received: by 2002:ac2:5191:0:b0:4cb:20b3:e7f6 with SMTP id u17-20020ac25191000000b004cb20b3e7f6mr10698809lfi.19.1673298375321;
-        Mon, 09 Jan 2023 13:06:15 -0800 (PST)
-Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id c19-20020a056512325300b004cb3d77a936sm1780286lfr.46.2023.01.09.13.06.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Jan 2023 13:06:14 -0800 (PST)
-Message-ID: <843eed4b-552a-a529-83ed-b813c1346c5f@linaro.org>
-Date:   Mon, 9 Jan 2023 23:06:13 +0200
+        h=date:subject:message-id:references:in-reply-to:cc:to:from
+         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Den6eVQxTXWgmQYL+6Gk2EvIgXPuCXvXEt4ZGf3AJys=;
+        b=eeeW1jgU9R6g28HVUHGMvrKpbnFm4pOp/oc4k1WixQDL2R3/eWcM4y8coTMyVjPfOb
+         wBP6666a2NmvdQJVUTJ7lCQ/c1EtVRzFRilrNQAwZff0qpBMu7dlWsJOfPODjuuReUG5
+         fszhRPPPpDa+9BMgjTEVBAnwQDlBlInE2NNpcWffHrz5s6DxLrr4koSz8EoVwYhnv7Aj
+         NkMhqkLSpfCWPrs3i1WKnjgc1s1mRex1jdmZQ1bwbTgKKIpwE8GAzvXVVO2s5ot1R7y+
+         2B182REKUweQyJVj4IXXZoDxsv4IrRT/r8BL1g7QGhu1LIAlTEkiDunH+BrsVnmm3PKm
+         V6jA==
+X-Gm-Message-State: AFqh2kpXa4vm0zB83+Lltg6oSLe1SbwtVedDEAoWwK+TUI13dlRm1rNv
+        gyC5wNgpQR6SO50/53uqvIEyQsfuSg==
+X-Google-Smtp-Source: AMrXdXsRMMiHDBIvv6ftgy15vU/Od0B99Vb17vvk1wdENPzm4pEPtH+MZZ4SoXh9P182kbJtokmM2A==
+X-Received: by 2002:a9d:17ac:0:b0:66e:a35c:c051 with SMTP id j41-20020a9d17ac000000b0066ea35cc051mr33771762otj.35.1673322743575;
+        Mon, 09 Jan 2023 19:52:23 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id f14-20020a9d5e8e000000b006705e35c4e2sm5475603otl.35.2023.01.09.19.52.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jan 2023 19:52:22 -0800 (PST)
+Received: (nullmailer pid 785952 invoked by uid 1000);
+        Tue, 10 Jan 2023 03:52:21 -0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH 02/18] clk: qcom: add the GCC driver for sa8775p
-Content-Language: en-GB
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Alex Elder <elder@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
-        netdev@vger.kernel.org, Shazad Hussain <quic_shazhuss@quicinc.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20230109174511.1740856-1-brgl@bgdev.pl>
- <20230109174511.1740856-3-brgl@bgdev.pl>
- <bbd21894-234e-542e-80ec-8f2bb11e268e@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <bbd21894-234e-542e-80ec-8f2bb11e268e@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From:   Rob Herring <robh@kernel.org>
+To:     Danila Tikhonov <danila@jiaxyga.com>
+Cc:     robh+dt@kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        David Wronek <davidwronek@gmail.com>,
+        linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        mturquette@baylibre.com, konrad.dybcio@linaro.org,
+        agross@kernel.org, devicetree@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org
+In-Reply-To: <20230109193030.42764-2-danila@jiaxyga.com>
+References: <20230109193030.42764-1-danila@jiaxyga.com>
+ <20230109193030.42764-2-danila@jiaxyga.com>
+Message-Id: <167332272486.785431.16211599391425282320.robh@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Add SM7150 GCC clock binding
+Date:   Mon, 09 Jan 2023 21:52:21 -0600
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/01/2023 19:58, Konrad Dybcio wrote:
+
+On Mon, 09 Jan 2023 22:30:29 +0300, Danila Tikhonov wrote:
+> Add device tree bindings for global clock subsystem clock
+> controller for Qualcomm Technology Inc's SM7150 SoCs.
 > 
+> Co-developed-by: David Wronek <davidwronek@gmail.com>
+> Signed-off-by: David Wronek <davidwronek@gmail.com>
+> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+> ---
+>  .../bindings/clock/qcom,sm7150-gcc.yaml       |  50 +++++
+>  include/dt-bindings/clock/qcom,sm7150-gcc.h   | 193 ++++++++++++++++++
+>  2 files changed, 243 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm7150-gcc.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,sm7150-gcc.h
 > 
-> On 9.01.2023 18:44, Bartosz Golaszewski wrote:
->> From: Shazad Hussain <quic_shazhuss@quicinc.com>
->>
->> Add support for the Global Clock Controller found in the QTI SA8775P
->> platforms.
->>
->> Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
->> [Bartosz: made the driver ready for upstream]
->> Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->> ---
-> [...]
->
 
-As the driver didn't get to the list, I'll comment OOB.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Please use clk_regmap_phy_mux_ops where applicable (PCIe PIPE clocks).
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/clock/qcom,sm7150-gcc.yaml:50:4: [error] no new line character at the end of file (new-line-at-end-of-file)
 
--- 
-With best wishes
-Dmitry
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,sm7150-gcc.example.dtb: clock-controller@100000: '#clock-cells', '#power-domain-cells', '#reset-cells', 'reg' do not match any of the regexes: 'pinctrl-[0-9]+'
+	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,sm7150-gcc.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230109193030.42764-2-danila@jiaxyga.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
