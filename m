@@ -2,39 +2,47 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD4FC46467
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 15:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A30C6379F
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 16:18:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238877AbjAJP0p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Jan 2023 10:26:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33202 "EHLO
+        id S234007AbjAJQRf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Jan 2023 11:17:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238922AbjAJP0V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 10:26:21 -0500
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1C575D418;
-        Tue, 10 Jan 2023 07:25:46 -0800 (PST)
-Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=phil.lan)
-        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <heiko@sntech.de>)
-        id 1pFGVO-0005YW-Jl; Tue, 10 Jan 2023 16:25:38 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Xing Zheng <zhengxing@rock-chips.com>,
-        Quentin Schulz <foss+kernel@0leil.net>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Heiko Stuebner <heiko@sntech.de>, stable@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Quentin Schulz <quentin.schulz@theobroma-systems.com>,
-        linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH] clk: rockchip: rk3399: allow clk_cifout to force clk_cifout_src to reparent
-Date:   Tue, 10 Jan 2023 16:25:37 +0100
-Message-Id: <167336433299.2636594.362082360376536202.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221117-rk3399-cifout-set-rate-parent-v1-0-432548d04081@theobroma-systems.com>
-References: <20221117-rk3399-cifout-set-rate-parent-v1-0-432548d04081@theobroma-systems.com>
+        with ESMTP id S234774AbjAJQRd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 11:17:33 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B1D138ADA;
+        Tue, 10 Jan 2023 08:17:33 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D82BB617C9;
+        Tue, 10 Jan 2023 16:17:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C1ADC433EF;
+        Tue, 10 Jan 2023 16:17:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673367452;
+        bh=+x2IvXQjGr6DrraXaN81PccrihWdV0IXUMv5rA+i6x4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=tywHxvL9RFuQuFPxU3ErCR52zKxjYLs4cYiiK6DdPvOs00Cu72kNf9vmfIES2C5YH
+         7QmtVgw+u7Wkvg3eWLKeXdKGtZ1tgvubxL3yG2ntlRPRBYtIIjizdo93ZrOXCdsalv
+         L6XgzO9dD6sHgYT2PSjKFnLZAsx1yhj5GapI+sSNXX6VIhWAYYskB+Y9oi6l0+rQt/
+         aHoQ/G+qYax3cNIWFGASrdT334dIOE8+4B/c/kmm4u+78WlZRNOI65HOC7icvoGxYl
+         EhQ6fcJLlwAaBz6LRllBo51aQ3aSoeSCnxKRf6h7W9duWE8azdyaBxtdYkCz7fLCAp
+         g8dUvApMkWdxg==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     linux-arm-msm@vger.kernel.org, yangyingliang@huawei.com,
+        linux-clk@vger.kernel.org
+Cc:     sboyd@kernel.org, Christian Marangi <ansuelsmth@gmail.com>,
+        mturquette@baylibre.com, agross@kernel.org,
+        konrad.dybcio@linaro.org
+Subject: Re: [PATCH] clk: qcom: krait-cc: fix wrong pointer passed to IS_ERR()
+Date:   Tue, 10 Jan 2023 10:17:23 -0600
+Message-Id: <167336743970.2134489.10192920031427357433.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20230104080235.1748953-1-yangyingliang@huawei.com>
+References: <20230104080235.1748953-1-yangyingliang@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -42,21 +50,16 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 17 Nov 2022 13:04:31 +0100, Quentin Schulz wrote:
-> From: Quentin Schulz <quentin.schulz@theobroma-systems.com>
+On Wed, 4 Jan 2023 16:02:35 +0800, Yang Yingliang wrote:
+> It should be 'mux' passed to IS_ERR/PTR_ERR().
 > 
-> clk_cifout is derived from clk_cifout_src through an integer divider
-> limited to 32. clk_cifout_src is a child of either cpll, gpll or npll
-> without any possibility of a divider of any sort. The default clock
-> parent is cpll.
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] clk: rockchip: rk3399: allow clk_cifout to force clk_cifout_src to reparent
-      commit: 3ad07d73ae650057fe64b2d85721c644a30428c1
+[1/1] clk: qcom: krait-cc: fix wrong pointer passed to IS_ERR()
+      commit: 3b36713d69d99318592d261eaca9b7460313c8c2
 
 Best regards,
 -- 
-Heiko Stuebner <heiko@sntech.de>
+Bjorn Andersson <andersson@kernel.org>
