@@ -2,291 +2,402 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A80AC54EBE
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 14:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A2AC46467
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 14:29:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232176AbjAJOXm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Jan 2023 09:23:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44224 "EHLO
+        id S232072AbjAJO3C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Jan 2023 09:29:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238373AbjAJOX0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 09:23:26 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE2D881D6E;
-        Tue, 10 Jan 2023 06:23:25 -0800 (PST)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30ABg6Lx029247;
-        Tue, 10 Jan 2023 14:23:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=8wZrOfG4wZ4NmHzZU5ZeitpgG0nH+0uCnaWIJ4V3we0=;
- b=JgPyJ3orQuDjvyViYGqmYWYi/xahgKIxrwhFYvzETM0ztcNwxdmNjTdDEp23BMFQRHdq
- gqPgc35JArvcxjaC2lH08TjfzzEZ1IAq1NQv3xa3XCr6gkjLvkTgcxJ7JYiAPQ3hejAB
- V8P/J1FgYUXJEDS2Q17YTKyH0Sb4eksorV0sA0MiID6+nzyGf+9zs6x5iaciaGzgvyBr
- RU2F0pwYoan+IJWqX0EFxXKfYeXkso7mimLqi1zyhiiq7FZJT17rkllubqjVFEwE4V3V
- /QMO2dZKaJIqg0AkGUzAX7laUWyGZxCURg1WaFak0wGo4MXjnSFoz3Yhf+HQ9aQPBCfj VA== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n113p140w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 10 Jan 2023 14:23:21 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30AENKCG004658
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 10 Jan 2023 14:23:20 GMT
-Received: from [10.50.29.234] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 10 Jan
- 2023 06:23:10 -0800
-Message-ID: <168bd49c-9abe-d90c-a4a4-4a76e2ba7f10@quicinc.com>
-Date:   Tue, 10 Jan 2023 19:53:02 +0530
+        with ESMTP id S238435AbjAJO2m (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 09:28:42 -0500
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CDB4C1F
+        for <linux-clk@vger.kernel.org>; Tue, 10 Jan 2023 06:28:40 -0800 (PST)
+Received: by mail-pj1-x102c.google.com with SMTP id c8-20020a17090a4d0800b00225c3614161so16644125pjg.5
+        for <linux-clk@vger.kernel.org>; Tue, 10 Jan 2023 06:28:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1uAPm4TvuyfFiFiTXnXvZ5Lp4pJKxecoZo4KRpCVo8o=;
+        b=LEpEW9Ssbm936q/NCQYLaqvHxdrA4k3lsfgfx3ICIdcyrp0eTpywjWLm0mTlN9/BZl
+         c8F3IxrAp/VAsqZMemuJXBgqJjaZZLj1XJ5MIh/oKvSuFfei/k0+FAJc1pxsUIcUSaiT
+         U03iFnov0EREVdJBIBKClDDne8YOWmOO1JT+Ch1rW0wXcPC1kBxPsnQ3SCoykO0WhLWW
+         VewGxF0LIMOI5TUrMfsOX99vsZ013TzLtl6eArCx4OVkXvSzkTXupgXvKTXVmyIjZOwG
+         mg3qfI/KBpyJ0tNezHPXNC/Jsdzsh8bVSAJ1LY6EN6GGEAAT/4qkgO8K8ja0prGlPwAZ
+         sUcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1uAPm4TvuyfFiFiTXnXvZ5Lp4pJKxecoZo4KRpCVo8o=;
+        b=NxESh2unMyPa8gSvZNySzcrMlLukmCWMZ6Ml17q/In7jikbVjwR5LnQvZNKjHivcp3
+         T4HXJjyLaa+dfWh/2NEtMqHp3TvcQ6AALD/64ZQIdkN2SgKXKasXdNiTGUe+wOJhHwlZ
+         nOOIHsDjPlnT3N4yN3mo1A34d1JltFvssFmnGdOmkF1CDgYRp7aQVgfYjzoBfvRi3Wp3
+         GKVj5kAFWSCPizz9Efg3RESTejZ2e/SDbiaHh2y7oM6NQGsYFtrCLxThrKeyIZwp6Sim
+         yH43dH3Pe8+vR9WbUR0Kda+sNgsxpE6diCLg2yqvVUdbdo9J+ruYbN2Gbxdgjd+gmZDB
+         tSow==
+X-Gm-Message-State: AFqh2krlj+W0cFczzFHoeq9S0+VQ4ncAQPeSfrD9jPd24gZumqtJFbZa
+        ZnnH2ksO0sXBADtW2rh0MpZ+CQ==
+X-Google-Smtp-Source: AMrXdXt2WIz7aq75Fyr4MN5VOK1LagUefbYmsLpAC/QqGptcud67imAJxjVJKdRqcJqjooQZQpoZiA==
+X-Received: by 2002:a05:6a21:32a1:b0:aa:6efd:1883 with SMTP id yt33-20020a056a2132a100b000aa6efd1883mr110130914pzb.37.1673360919947;
+        Tue, 10 Jan 2023 06:28:39 -0800 (PST)
+Received: from localhost (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id w65-20020a623044000000b0056c349f5c70sm8179608pfw.79.2023.01.10.06.28.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jan 2023 06:28:39 -0800 (PST)
+Date:   Tue, 10 Jan 2023 15:28:36 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Maciek Machnikowski <maciek@machnikowski.net>,
+        'Vadim Fedorenko' <vfedorenko@novek.ru>,
+        'Jonathan Lemon' <jonathan.lemon@gmail.com>,
+        'Paolo Abeni' <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
+Message-ID: <Y712FMgQssL0RYAS@nanopsycho>
+References: <10bb01d90a45$77189060$6549b120$@gmail.com>
+ <20221207152157.6185b52b@kernel.org>
+ <6e252f6d-283e-7138-164f-092709bc1292@machnikowski.net>
+ <Y5MW/7jpMUXAGFGX@nanopsycho>
+ <a8f9792b-93f1-b0b7-2600-38ac3c0e3832@machnikowski.net>
+ <20221209083104.2469ebd6@kernel.org>
+ <Y5czl6HgY2GPKR4v@nanopsycho>
+ <DM6PR11MB46571573010AB727E1BE99AE9BFE9@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <Y7xBHtR3XwfAahry@nanopsycho>
+ <DM6PR11MB4657E51AD937BBA5DC2B1FF19BFF9@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH V4] clk: qcom: clk-alpha-pll: Add support for Stromer PLLs
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Varadarajan Narayanan <quic_varada@quicinc.com>,
-        Sricharan R <quic_srichara@quicinc.com>
-References: <20221227132507.2506-1-quic_kathirav@quicinc.com>
-Content-Language: en-US
-From:   Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-In-Reply-To: <20221227132507.2506-1-quic_kathirav@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ASoXYtkKZflGRlQ3Y33GWf4oVJHuyros
-X-Proofpoint-ORIG-GUID: ASoXYtkKZflGRlQ3Y33GWf4oVJHuyros
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2023-01-10_04,2023-01-10_03,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
- suspectscore=0 mlxlogscore=999 impostorscore=0 lowpriorityscore=0
- clxscore=1015 priorityscore=1501 malwarescore=0 mlxscore=0 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301100090
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DM6PR11MB4657E51AD937BBA5DC2B1FF19BFF9@DM6PR11MB4657.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Tue, Jan 10, 2023 at 11:54:20AM CET, arkadiusz.kubalewski@intel.com wrote:
+>>From: Jiri Pirko <jiri@resnulli.us>
+>>Sent: Monday, January 9, 2023 5:30 PM
+>>
+>>Mon, Jan 09, 2023 at 03:43:01PM CET, arkadiusz.kubalewski@intel.com wrote:
+>>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>>Sent: Monday, December 12, 2022 2:59 PM
+>>>>
+>>>>Fri, Dec 09, 2022 at 05:31:04PM CET, kuba@kernel.org wrote:
+>>>>>On Fri, 9 Dec 2022 15:09:08 +0100 Maciek Machnikowski wrote:
+>>>>>> On 12/9/2022 12:07 PM, Jiri Pirko wrote:
+>>>>>> > Looking at the documentation of the chips, they all have mupltiple
+>>>>DPLLs
+>>>>>> > on a die. Arkadiusz, in your proposed implementation, do you model
+>>>>each
+>>>>>> > DPLL separatelly? If yes, then I understand the urgency of need of a
+>>>>>> > shared pin. So all DPLLs sharing the pin are part of the same chip?
+>>>>>> >
+>>>>>> > Question: can we have an entity, that would be 1:1 mapped to the
+>>>>actual
+>>>>>> > device/chip here? Let's call is "a synchronizer". It would contain
+>>>>>> > multiple DPLLs, user-facing-sources(input_connector),
+>>>>>> > user-facing-outputs(output_connector), i/o pins.
+>>>>>> >
+>>>>>> > An example:
+>>>>>> >                                SYNCHRONIZER
+>>>>>> >
+>>>>>> >
+>>>>┌───────────────────────────────────────┐
+>>>>>> >                               │
+>>>>│
+>>>>>> >                               │
+>>>>│
+>>>>>> >   SyncE in connector          │              ┌─────────┐
+>>>>│     SyncE out connector
+>>>>>> >                 ┌───┐         │in pin 1      │DPLL_1   │     out pin
+>>>>1│    ┌───┐
+>>>>>> >                 │   ├─────────┼──────────────┤
+>>>>├──────────────┼────┤   │
+>>>>>> >                 │   │         │              │         │
+>>>>│    │   │
+>>>>>> >                 └───┘         │              │         │
+>>>>│    └───┘
+>>>>>> >                               │              │         │
+>>>>│
+>>>>>> >                               │           ┌──┤         │
+>>>>│
+>>>>>> >    GNSS in connector          │           │  └─────────┘
+>>>>│
+>>>>>> >                 ┌───┐         │in pin 2   │                  out pin
+>>>>2│     EXT SMA connector
+>>>>>> >                 │   ├─────────┼───────────┘
+>>>>│    ┌───┐
+>>>>>> >                 │   │         │
+>>>>┌───────────┼────┤   │
+>>>>>> >                 └───┘         │                           │
+>>>>│    │   │
+>>>>>> >                               │                           │
+>>>>│    └───┘
+>>>>>> >                               │                           │
+>>>>│
+>>>>>> >    EXT SMA connector          │                           │
+>>>>│
+>>>>>> >                 ┌───┐   mux   │in pin 3      ┌─────────┐  │
+>>>>│
+>>>>>> >                 │   ├────┬────┼───────────┐  │         │  │
+>>>>│
+>>>>>> >                 │   │    │    │           │  │DPLL_2   │  │
+>>>>│
+>>>>>> >                 └───┘    │    │           │  │         │  │
+>>>>│
+>>>>>> >                          │    │           └──┤         ├──┘
+>>>>│
+>>>>>> >                          │    │              │         │
+>>>>│
+>>>>>> >    EXT SMA connector     │    │              │         │
+>>>>│
+>>>>>> >                 ┌───┐    │    │              │         │
+>>>>│
+>>>>>> >                 │   ├────┘    │              └─────────┘
+>>>>│
+>>>>>> >                 │   │         │
+>>>>│
+>>>>>> >                 └───┘
+>>>>└───────────────────────────────────────┘
+>>>>>> >
+>>>>>> > Do I get that remotelly correct?
+>>>>>>
+>>>>>> It looks goot, hence two corrections are needed:
+>>>>>> - all inputs can go to all DPLLs, and a single source can drive more
+>>>>>>   than one DPLL
+>>>>>> - The external mux for SMA connector should not be a part of the
+>>>>>>   Synchronizer subsystem - I believe there's already a separate MUX
+>>>>>>   subsystem in the kernel and all external connections should be
+>>handled
+>>>>>>   by a devtree or a similar concept.
+>>>>>>
+>>>>>> The only "muxing" thing that could potentially be modeled is a
+>>>>>> synchronizer output to synchronizer input relation. Some synchronizers
+>>>>>> does that internally and can use the output of one DPLL as a source
+>>for
+>>>>>> another.
+>>>>>
+>>>>>My experience with DT and muxes is rapidly aging, have you worked with
+>>>>>those recently? From what I remember the muxes were really.. "embedded"
+>>>>>and static compared to what we want here.
+>>>>
+>>>>Why do you think we need something "non-static"? The mux is part of the
+>>>>board, isn't it? That sounds quite static to me.
+>>>>
+>>>>
+>>>>>
+>>>>>Using DT may work nicely for defining the topology, but for config we
+>>>>>still need a different mechanism.
+>>>>
+>>>>"config" of what? Each item in topology would be configure according to
+>>>>the item type, won't it?
+>>>>
+>>>>[...]
+>>>
+>>>
+>>>Hi guys,
+>>>
+>>>We have been trying to figure out feasibility of new approach proposed on
+>>our
+>>>latest meeting - to have a single object which encapsulates multiple
+>>DPLLs.
+>>>
+>>>Please consider following example:
+>>>
+>>>Shared common inputs:
+>>>i0 - GPS  / external
+>>>i1 - SMA1 / external
+>>>i2 - SMA2 / external
+>>>i3 - MUX0 / clk recovered from PHY0.X driven by MAC0
+>>>i4 - MUX1 / clk recovered from PHY1.X driven by MAC1
+>>>
+>>>+---------------------------------------------------------+
+>>>| Channel A / FW0             +---+                       |
+>>>|                         i0--|   |                       |
+>>>|         +---+               |   |                       |
+>>>| PHY0.0--|   |           i1--| D |                       |
+>>>|         |   |               | P |                       |
+>>>| PHY0.1--| M |           i2--| L |   +---+   +--------+  |
+>>>|         | U |               | L |---|   |---| PHY0.0 |--|
+>>>| PHY0.2--| X |-+---------i3--| 0 |   |   |   +--------+  |
+>>>|         | 0 | |+------+     |   |---| M |---| PHY0.1 |--|
+>>>| ...   --|   | || MUX1 |-i4--|   |   | A |   +--------+  |
+>>>|         |   | |+------+     +---+   | C |---| PHY0.2 |--|
+>>>| PHY0.7--|   | |         i0--|   |   | 0 |   +--------+  |
+>>>|         +---+ |             |   |---|   |---| ...    |--|
+>>>|               |         i1--| D |   |   |   +--------+  |
+>>>|               |             | P |---|   |---| PHY0.7 |--|
+>>>|               |         i2--| L |   +---+   +--------+  |
+>>>|               |             | L |                       |
+>>>|               \---------i3--| 1 |                       |
+>>>|                +------+     |   |                       |
+>>>|                | MUX1 |-i4--|   |                       |
+>>>|                +------+     +---+                       |
+>>>+---------------------------------------------------------+
+>>>| Channel B / FW1             +---+                       |
+>>>|                         i0--|   |                       |
+>>>|                             |   |                       |
+>>>|                         i1--| D |                       |
+>>>|         +---+               | P |                       |
+>>>| PHY1.0--|   |           i2--| L |   +---+   +--------+  |
+>>>|         |   |  +------+     | L |---|   |---| PHY1.0 |--|
+>>>| PHY1.1--| M |  | MUX0 |-i3--| 0 |   |   |   +--------+  |
+>>>|         | U |  +------+     |   |---| M |---| PHY1.1 |--|
+>>>| PHY1.2--| X |-+---------i4--|   |   | A |   +--------+  |
+>>>|         | 1 | |             +---+   | C |---| PHY1.2 |--|
+>>>| ...   --|   | |         i0--|   |   | 1 |   +--------+  |
+>>>|         |   | |             |   |---|   |---| ...    |--|
+>>>| PHY1.7--|   | |         i1--| D |   |   |   +--------+  |
+>>>|         +---+ |             | P |---|   |---| PHY1.7 |--|
+>>>|               |         i2--| L |   +---+   +--------+  |
+>>>|               |+------+     | L |                       |
+>>>|               || MUX0 |-i3--| 1 |                       |
+>>>|               |+------+     |   |                       |
+>>>|               \---------i4--|   |                       |
+>>>|                             +---+                       |
+>>>+---------------------------------------------------------+
+>>
+>>What is "a channel" here? Are these 2 channels part of the same physival
+>>chip? Could you add the synchronizer chip/device entities to your drawing?
+>>
+>
+>No.
+>A "Synchronization Channel" on a switch would allow to separate groups
+>of physical ports. Each channel/group has own "Synchronizer Chip", which is
+>used to drive PHY clocks of that group.
+>
+>"Synchronizer chip" would be the 2 DPLLs on old draw, something like this:
+>+--------------------------------------------------------------+
+>| Channel A / FW0        +-------------+   +---+   +--------+  |
+>|                    i0--|Synchronizer0|---|   |---| PHY0.0 |--|
+>|         +---+          |             |   |   |   +--------+  |
+>| PHY0.0--|   |      i1--|             |---| M |---| PHY0.1 |--|
+>|         |   |          | +-----+     |   | A |   +--------+  |
+>| PHY0.1--| M |      i2--| |DPLL0|     |   | C |---| PHY0.2 |--|
+>|         | U |          | +-----+     |   | 0 |   +--------+  |
+>| PHY0.2--| X |--+---i3--| +-----+     |---|   |---| ...    |--|
+>|         | 0 |  |       | |DPLL1|     |   |   |   +--------+  |
+>| ...   --|   |  | /-i4--| +-----+     |---|   |---| PHY0.7 |--|
+>|         |   |  | |     +-------------+   +---+   +--------+  |
+>| PHY0.7--|   |  | |                                           |
+>|         +---+  | |                                           |
+>+----------------|-|-------------------------------------------+
+>| Channel B / FW1| |     +-------------+   +---+   +--------+  |
+>|                | | i0--|Synchronizer1|---|   |---| PHY1.0 |--|
+>|         +---+  | |     |             |   |   |   +--------+  |
+>| PHY1.0--|   |  | | i1--|             |---| M |---| PHY1.1 |--|
+>|         |   |  | |     | +-----+     |   | A |   +--------+  |
+>| PHY1.1--| M |  | | i2--| |DPLL0|     |   | C |---| PHY1.2 |--|
+>|         | U |  | |     | +-----+     |   | 1 |   +--------+  |
+>| PHY1.2--| X |  \-|-i3--| +-----+     |---|   |---| ...    |--|
+>|         | 1 |    |     | |DPLL1|     |   |   |   +--------+  |
+>| ...   --|   |----+-i4--| +-----+     |---|   |---| PHY1.7 |--|
+>|         |   |          +-------------+   +---+   +--------+  |
+>| PHY1.7--|   |                                                |
+>|         +---+                                                |
+>+--------------------------------------------------------------+
+>Also, please keep in mind that is an example, there could be easily 4
+>(or more) channels wired similarly.
 
-On 12/27/2022 6:55 PM, Kathiravan T wrote:
-> From: Varadarajan Narayanan <quic_varada@quicinc.com>
->
-> Add programming sequence support for managing the Stromer
-> PLLs.
->
-> Co-developed-by: Sricharan R <quic_srichara@quicinc.com>
-> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
 
-Gentle ping!...
+Good. So there are 2 synchronizers out there, each has a list of pins
+and contain multiple dplls. 1 synchronizer is 1 device. No pin sharing
+between devices, just between dplls inside one device. That eliminates
+this odd concept of flying pin. Good.
 
-> ---
-> Changes since V3:
-> 	- Updated the title with correct patch version
+
 >
-> Changes since V2:
-> 	- splitted this patch from IPQ5018 series[1]
-> 	- Rebased on linux-6.2-rc1
-> [1]
-> https://lore.kernel.org/linux-arm-msm/20220621161126.15883-1-quic_srichara@quicinc.com/
+>>
+>>>
+>>>This is a simplified network switch board example.
+>>>It has 2 synchronization channels, where each channel:
+>>>- provides clk to 8 PHYs driven by separated MAC chips,
+>>>- controls 2 DPLLs.
+>>>
+>>>Basically only given FW has control over its PHYs, so also a control over
+>>it's
+>>>MUX inputs.
+>>>All external sources are shared between the channels.
+>>>
+>>>This is why we believe it is not best idea to enclose multiple DPLLs with
+>>one
+>>>object:
+>>>- sources are shared even if DPLLs are not a single synchronizer chip,
+>>>- control over specific MUX type input shall be controllable from
+>>different
+>>>driver/firmware instances.
+>>>
+>>>As we know the proposal of having multiple DPLLs in one object was a try
+>>to
+>>>simplify currently implemented shared pins. We fully support idea of
+>>having
+>>>interfaces as simple as possible, but at the same time they shall be
+>>flexible
+>>>enough to serve many use cases.
+>>>
+>>>Right now the use case of single "synchronizer chip" is possible (2 DPLLs
+
+Btw, fix your email client not to mangle the text you reply to with line
+breaks like this one.
+
+
+>>with
+>>>shared inputs), as well as multiple synchronizer chips with shared inputs.
+>>>
+>>>If we would entirely get rid of sharing pins idea and instead allowed only
+>>to
+>>>have multiple DPLLs in one object, we would fall back to the problem where
+>>>change on one input is braking another "synchronizer chip" input.
+>>>I.e. considering above scheme, user configured both channels to use SMA1
+>>1MHz.
+>>>If SMA1 input is changed to 10MHz, all DPLLs are affected, thus all using
+>>that
+>>
+>>You say "SMA1 input *is changed*". Could you add to your drawing:
+>>1) Who is the one triggering the change.
+>>2) Entity that manages the SMA input and applies the configuration.
+>>
 >
->   drivers/clk/qcom/clk-alpha-pll.c | 100 ++++++++++++++++++++++++++++++-
->   drivers/clk/qcom/clk-alpha-pll.h |   7 ++-
->   2 files changed, 105 insertions(+), 2 deletions(-)
+>A user or some tool, this change requires to switch a frequency on a signal
+>generator connected to that SMA1. Whatever would make the change is an external
+>entity here. The draw show connections on board, don't see a point on having a
+>external signal generator or user connected to the board :)
 >
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index f9e4cfd7261c..29866100df08 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -204,9 +204,24 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
->   		[PLL_OFF_CONFIG_CTL] = 0x1C,
->   		[PLL_OFF_STATUS] = 0x20,
->   	},
-> +	[CLK_ALPHA_PLL_TYPE_STROMER] = {
-> +		[PLL_OFF_L_VAL] = 0x08,
-> +		[PLL_OFF_ALPHA_VAL] = 0x10,
-> +		[PLL_OFF_ALPHA_VAL_U] = 0x14,
-> +		[PLL_OFF_USER_CTL] = 0x18,
-> +		[PLL_OFF_USER_CTL_U] = 0x1c,
-> +		[PLL_OFF_CONFIG_CTL] = 0x20,
-> +		[PLL_OFF_CONFIG_CTL_U] = 0xff,
-> +		[PLL_OFF_TEST_CTL] = 0x30,
-> +		[PLL_OFF_TEST_CTL_U] = 0x34,
-> +		[PLL_OFF_STATUS] = 0x28,
-> +	},
->   };
->   EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
->   
-> +static unsigned long
-> +alpha_pll_round_rate(unsigned long rate, unsigned long prate, u32 *l, u64 *a,
-> +		     u32 alpha_width);
->   /*
->    * Even though 40 bits are present, use only 32 for ease of calculation.
->    */
-> @@ -215,6 +230,8 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
->   #define ALPHA_BITWIDTH		32U
->   #define ALPHA_SHIFT(w)		min(w, ALPHA_BITWIDTH)
->   
-> +#define	ALPHA_PLL_STATUS_REG_SHIFT	8
-> +
->   #define PLL_HUAYRA_M_WIDTH		8
->   #define PLL_HUAYRA_M_SHIFT		8
->   #define PLL_HUAYRA_M_MASK		0xff
-> @@ -325,7 +342,7 @@ static void clk_alpha_pll_write_config(struct regmap *regmap, unsigned int reg,
->   void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->   			     const struct alpha_pll_config *config)
->   {
-> -	u32 val, mask;
-> +	u32 val, val_u, mask, mask_u;
->   
->   	regmap_write(regmap, PLL_L_VAL(pll), config->l);
->   	regmap_write(regmap, PLL_ALPHA_VAL(pll), config->alpha);
-> @@ -355,14 +372,85 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->   	mask |= config->pre_div_mask;
->   	mask |= config->post_div_mask;
->   	mask |= config->vco_mask;
-> +	mask |= config->alpha_en_mask;
-> +	mask |= config->alpha_mode_mask;
->   
->   	regmap_update_bits(regmap, PLL_USER_CTL(pll), mask, val);
->   
-> +	/* Stromer APSS PLL does not enable LOCK_DET by default, so enable it */
-> +	val_u = config->status_reg_val << ALPHA_PLL_STATUS_REG_SHIFT;
-> +	val_u |= config->lock_det;
-> +
-> +	mask_u = config->status_reg_mask;
-> +	mask_u |= config->lock_det;
-> +
-> +	if (val_u)
-> +		regmap_update_bits(regmap, PLL_USER_CTL_U(pll), mask_u, val_u);
-> +
-> +	if (config->test_ctl_val)
-> +		regmap_write(regmap, PLL_TEST_CTL(pll), config->test_ctl_val);
-> +
-> +	if (config->test_ctl_hi_val)
-> +		regmap_write(regmap, PLL_TEST_CTL_U(pll), config->test_ctl_hi_val);
-> +
->   	if (pll->flags & SUPPORTS_FSM_MODE)
->   		qcom_pll_set_fsm_mode(regmap, PLL_MODE(pll), 6, 0);
->   }
->   EXPORT_SYMBOL_GPL(clk_alpha_pll_configure);
->   
-> +static int clk_alpha_pll_stromer_determine_rate(struct clk_hw *hw,
-> +						struct clk_rate_request *req)
-> +{
-> +	u32 l;
-> +	u64 a;
-> +
-> +	req->rate = alpha_pll_round_rate(req->rate, req->best_parent_rate,
-> +					 &l, &a, ALPHA_REG_BITWIDTH);
-> +
-> +	return 0;
-> +}
-> +
-> +static int clk_alpha_pll_stromer_set_rate(struct clk_hw *hw, unsigned long rate,
-> +					  unsigned long prate)
-> +{
-> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-> +	u32 l;
-> +	int ret;
-> +	u64 a;
-> +
-> +	rate = alpha_pll_round_rate(rate, prate, &l, &a, ALPHA_REG_BITWIDTH);
-> +
-> +	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
-> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
-> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll),
-> +		     a >> ALPHA_BITWIDTH);
-> +
-> +	regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll),
-> +			   PLL_ALPHA_EN, PLL_ALPHA_EN);
-> +
-> +	if (!clk_hw_is_enabled(hw))
-> +		return 0;
-> +
-> +	/*
-> +	 * Stromer PLL supports Dynamic programming.
-> +	 * It allows the PLL frequency to be changed on-the-fly without first
-> +	 * execution of a shutdown procedure followed by a bring up procedure.
-> +	 */
-> +
-> +	regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_UPDATE,
-> +			   PLL_UPDATE);
-> +
-> +	ret = wait_for_pll_update(pll);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = wait_for_pll_enable_lock(pll);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
->   static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
->   {
->   	int ret;
-> @@ -1013,6 +1101,16 @@ const struct clk_ops clk_alpha_pll_hwfsm_ops = {
->   };
->   EXPORT_SYMBOL_GPL(clk_alpha_pll_hwfsm_ops);
->   
-> +const struct clk_ops clk_alpha_pll_stromer_ops = {
-> +	.enable = clk_alpha_pll_enable,
-> +	.disable = clk_alpha_pll_disable,
-> +	.is_enabled = clk_alpha_pll_is_enabled,
-> +	.recalc_rate = clk_alpha_pll_recalc_rate,
-> +	.determine_rate = clk_alpha_pll_stromer_determine_rate,
-> +	.set_rate = clk_alpha_pll_stromer_set_rate,
-> +};
-> +EXPORT_SYMBOL_GPL(clk_alpha_pll_stromer_ops);
-> +
->   const struct clk_ops clk_alpha_pll_fixed_trion_ops = {
->   	.enable = clk_trion_pll_enable,
->   	.disable = clk_trion_pll_disable,
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-> index 2bdae362c827..1d122919e275 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.h
-> +++ b/drivers/clk/qcom/clk-alpha-pll.h
-> @@ -1,5 +1,5 @@
->   /* SPDX-License-Identifier: GPL-2.0 */
-> -/* Copyright (c) 2015, 2018, The Linux Foundation. All rights reserved. */
-> +/* Copyright (c) 2015, 2018, 2021 The Linux Foundation. All rights reserved. */
->   
->   #ifndef __QCOM_CLK_ALPHA_PLL_H__
->   #define __QCOM_CLK_ALPHA_PLL_H__
-> @@ -22,6 +22,7 @@ enum {
->   	CLK_ALPHA_PLL_TYPE_RIVIAN_EVO,
->   	CLK_ALPHA_PLL_TYPE_DEFAULT_EVO,
->   	CLK_ALPHA_PLL_TYPE_BRAMMO_EVO,
-> +	CLK_ALPHA_PLL_TYPE_STROMER,
->   	CLK_ALPHA_PLL_TYPE_MAX,
->   };
->   
-> @@ -131,6 +132,9 @@ struct alpha_pll_config {
->   	u32 post_div_mask;
->   	u32 vco_val;
->   	u32 vco_mask;
-> +	u32 status_reg_val;
-> +	u32 status_reg_mask;
-> +	u32 lock_det;
->   };
->   
->   extern const struct clk_ops clk_alpha_pll_ops;
-> @@ -139,6 +143,7 @@ extern const struct clk_ops clk_alpha_pll_hwfsm_ops;
->   extern const struct clk_ops clk_alpha_pll_postdiv_ops;
->   extern const struct clk_ops clk_alpha_pll_huayra_ops;
->   extern const struct clk_ops clk_alpha_pll_postdiv_ro_ops;
-> +extern const struct clk_ops clk_alpha_pll_stromer_ops;
->   
->   extern const struct clk_ops clk_alpha_pll_fabia_ops;
->   extern const struct clk_ops clk_alpha_pll_fixed_fabia_ops;
+>If something is not clear, we could prepare some different draw, please just
+>let me know what exactly we want to see. It sound like a sequence diagram?
+
+
+I think I got it. The pins are shared between DPLLS within single
+synchronizer entity. That clears up my modeling concerns. Also it makes
+your code much simplier, you don't need special shared pin beast with
+reference counting etc. You just have a pin with synchronizer entity as
+owner and expose the linkage inside this synchronizer entity between
+individual DPLLs and pins.
+
+
+>
+>Thanks!
+>Arkadiusz
+>
+>>
+>>>input shall be notified, as long as that input is shared.
+>>>For the drivers that have single point of control over dpll, they might
+>>just
+>>>skip those requests. But if there are multiple firmware instances
+>>controlling
+>>>multiple DPLLs, they would process it independently.
+>>>
+>>>Current implementation is the most flexible and least complex for the
+>>level of
+>>>flexibility it provides.
+>>>
+>>>BR, Happy new year!
+>>>Arkadiusz
