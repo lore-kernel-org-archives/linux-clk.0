@@ -2,127 +2,210 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C5DC46467
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 13:29:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 854DCC54EBC
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 13:32:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238373AbjAJN3l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Jan 2023 08:29:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54836 "EHLO
+        id S230045AbjAJNcD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Jan 2023 08:32:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238334AbjAJN3j (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 08:29:39 -0500
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75094A469;
-        Tue, 10 Jan 2023 05:29:34 -0800 (PST)
-Received: by mail-oi1-f175.google.com with SMTP id o66so10002852oia.6;
-        Tue, 10 Jan 2023 05:29:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ylhyb07nBatqigygjs/qnbUzW1F5v2uWBB/vpftxr7Y=;
-        b=fOL7T1IPZD6uNIME7YD7G5MBI/0zaflTOGRlbkP2MkZwPg9Xnu7MlCKmNdieOVkZXY
-         Wjl6rsFgxoPhDWVRB5Pb8xmBZIDeMQr7DOBuTlYC2zy2rIt53+p8xAK6uOGRtUCTWlwg
-         OOY6DDvQR+0Vz21lcPNZLBZDKQz7QSFo0oi8RqkSfntJNVq+iFMlxMGfgq5bTscg6U81
-         dQ3wimX3NmR0uMLnbbuv+xuM9VhgRH27bIxh2dkG788PiXvDSIWVUdcSFCwMSoyuxs6Z
-         Zrdq6YCeXRQgPKyUjgmsUdC710iFp/Mj5ts1UyDfyW3I0yhoA2Ztmu7zOARRGtkaF7VV
-         2IgA==
-X-Gm-Message-State: AFqh2kq42NO0UGGyRTZmN6P5veuwX7aQuRz/BucLbAaUoYKf1nInZyIt
-        cGQczCzCACdbv2DeSFblTw==
-X-Google-Smtp-Source: AMrXdXtwO/PhRlomM5A6dF6OoKCHg3+XXfeF06MGvncoUKF+PZZ9GgCaWBCAqc7Lt5F6ycb44BfNfg==
-X-Received: by 2002:aca:e0d4:0:b0:363:b22c:4c7 with SMTP id x203-20020acae0d4000000b00363b22c04c7mr14883792oig.7.1673357373663;
-        Tue, 10 Jan 2023 05:29:33 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id u23-20020a056808001700b0035e7c48d08esm5257608oic.15.2023.01.10.05.29.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jan 2023 05:29:32 -0800 (PST)
-Received: (nullmailer pid 1984999 invoked by uid 1000);
-        Tue, 10 Jan 2023 13:29:30 -0000
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S238605AbjAJNbs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 08:31:48 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EC4E3F120;
+        Tue, 10 Jan 2023 05:31:45 -0800 (PST)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 1A6796602D78;
+        Tue, 10 Jan 2023 13:31:43 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1673357504;
+        bh=nU+9tDyRUi5VH2nG2ng3G2MunVx5ogxNNUVZZkeyweo=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=MBSFiqnFkqymXPVHM4PSJRYeKX5CShiIOTQDI+g42dl51/zC67q5KWPTHoTzsmCjx
+         tZMZI266wArfaNginE7dSUrQfvU5war2EgRlqiK1GN72mlBTnV459UYy+JvkIWuwnD
+         obMPwbADdt2mOKLw0jcFlc3Jrk9J6eY/jcckshSJj/50J654DmdJvC2vgJRBk5x6f5
+         UU18clv9bw3i402F1I7qyUibC0eeCrp5wqzswMNwlVe9Bwh+NY8Q6L9zgAFuqv5WbA
+         rAnf/1eFFWJLZJS5Errxu0r8s7/jldJbw2elAwuVrMwatiEKYxzAo79usy4ReIOB8V
+         +yKm3hjYUxBmQ==
+Message-ID: <cba61b03-7e54-09e2-b1bd-8352f583a81b@collabora.com>
+Date:   Tue, 10 Jan 2023 14:31:40 +0100
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     devi priya <quic_devipriy@quicinc.com>
-Cc:     tdas@codeaurora.org, quic_kathirav@quicinc.com,
-        dmitry.baryshkov@linaro.org, quic_gokulsri@quicinc.com,
-        nfraprado@collabora.com, linux-arm-msm@vger.kernel.org,
-        quic_poovendh@quicinc.com, robh+dt@kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        andersson@kernel.org, arnd@arndb.de, sboyd@kernel.org,
-        broonie@kernel.org, will@kernel.org, quic_sjaganat@quicinc.com,
-        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
-        quic_srichara@quicinc.com, linux-gpio@vger.kernel.org,
-        p.zabel@pengutronix.de, catalin.marinas@arm.com,
-        marcel.ziswiler@toradex.com, linus.walleij@linaro.org,
-        konrad.dybcio@linaro.org, mturquette@baylibre.com,
-        shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org,
-        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
-        agross@kernel.org
-In-Reply-To: <20230110121316.24892-2-quic_devipriy@quicinc.com>
-References: <20230110121316.24892-1-quic_devipriy@quicinc.com>
- <20230110121316.24892-2-quic_devipriy@quicinc.com>
-Message-Id: <167335661700.1967953.6789968437095688240.robh@kernel.org>
-Subject: Re: [PATCH 1/7] dt-bindings: arm64: ipq9574: Add binding descriptions
- for clock and reset
-Date:   Tue, 10 Jan 2023 07:29:30 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v2 11/23] clk: mediatek: Switch to mtk_clk_simple_probe()
+ where possible
+Content-Language: en-US
+To:     Chen-Yu Tsai <wenst@chromium.org>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        johnson.wang@mediatek.com, miles.chen@mediatek.com,
+        fparent@baylibre.com, chun-jie.chen@mediatek.com,
+        sam.shih@mediatek.com, y.oudjana@protonmail.com,
+        nfraprado@collabora.com, rex-bc.chen@mediatek.com,
+        ryder.lee@kernel.org, daniel@makrotopia.org,
+        jose.exposito89@gmail.com, yangyingliang@huawei.com,
+        pablo.sun@mediatek.com, msp@baylibre.com, weiyi.lu@mediatek.com,
+        ikjn@chromium.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        kernel@collabora.com
+References: <20221223094259.87373-1-angelogioacchino.delregno@collabora.com>
+ <20221223094259.87373-12-angelogioacchino.delregno@collabora.com>
+ <CAGXv+5GYk2wr-UnnshT3R2uDUSn7-i5KifyJ4qDDZbptSQ9G7A@mail.gmail.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <CAGXv+5GYk2wr-UnnshT3R2uDUSn7-i5KifyJ4qDDZbptSQ9G7A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Tue, 10 Jan 2023 17:43:10 +0530, devi priya wrote:
-> Adding support for the global clock controller found on
-> IPQ9574 based devices
+Il 30/12/22 06:12, Chen-Yu Tsai ha scritto:
+> On Fri, Dec 23, 2022 at 5:43 PM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
+>>
+>> mtk_clk_simple_probe() is a function that registers mtk gate clocks
+>> and, if reset data is present, a reset controller and across all of
+>> the MTK clock drivers, such a function is duplicated many times:
+>> switch to the common mtk_clk_simple_probe() function for all of the
+>> clock drivers that are registering as platform drivers.
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>   drivers/clk/mediatek/clk-mt2701-aud.c   | 26 +++----
+>>   drivers/clk/mediatek/clk-mt2701-eth.c   | 34 +++------
+>>   drivers/clk/mediatek/clk-mt2701-g3d.c   | 56 +++-----------
+>>   drivers/clk/mediatek/clk-mt2701-hif.c   | 36 +++------
+>>   drivers/clk/mediatek/clk-mt2712.c       | 83 ++++++++-------------
+>>   drivers/clk/mediatek/clk-mt6779.c       | 42 ++++++-----
+>>   drivers/clk/mediatek/clk-mt7622-aud.c   | 49 +++----------
+>>   drivers/clk/mediatek/clk-mt7622-eth.c   | 82 ++++-----------------
+>>   drivers/clk/mediatek/clk-mt7622-hif.c   | 85 ++++-----------------
+>>   drivers/clk/mediatek/clk-mt7629-hif.c   | 85 ++++-----------------
+>>   drivers/clk/mediatek/clk-mt8183-audio.c | 19 +++--
+>>   drivers/clk/mediatek/clk-mt8183.c       | 75 ++++++++-----------
+>>   drivers/clk/mediatek/clk-mt8192-aud.c   | 25 +++----
+>>   drivers/clk/mediatek/clk-mt8192.c       | 98 ++++++++-----------------
+>>   14 files changed, 236 insertions(+), 559 deletions(-)
 > 
-> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
-> ---
->  .../bindings/clock/qcom,gcc-other.yaml        |   4 +
->  .../devicetree/bindings/clock/qcom,gcc.yaml   |   9 +-
->  include/dt-bindings/clock/qcom,gcc-ipq9574.h  | 226 ++++++++++++++++++
->  include/dt-bindings/reset/qcom,gcc-ipq9574.h  | 164 +++++++++++++
->  4 files changed, 402 insertions(+), 1 deletion(-)
->  create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq9574.h
->  create mode 100644 include/dt-bindings/reset/qcom,gcc-ipq9574.h
+> This looks mostly good, however ...
+> 
+>> diff --git a/drivers/clk/mediatek/clk-mt2701-aud.c b/drivers/clk/mediatek/clk-mt2701-aud.c
+>> index ab13ab618fb5..1fd6d96b34dc 100644
+>> --- a/drivers/clk/mediatek/clk-mt2701-aud.c
+>> +++ b/drivers/clk/mediatek/clk-mt2701-aud.c
+>> @@ -76,6 +76,7 @@ static const struct mtk_gate_regs audio3_cg_regs = {
+>>   };
+>>
+>>   static const struct mtk_gate audio_clks[] = {
+>> +       GATE_DUMMY(CLK_DUMMY, "aud_dummy"),
+>>          /* AUDIO0 */
+>>          GATE_AUDIO0(CLK_AUD_AFE, "audio_afe", "aud_intbus_sel", 2),
+>>          GATE_AUDIO0(CLK_AUD_HDMI, "audio_hdmi", "audpll_sel", 20),
+>> @@ -138,29 +139,26 @@ static const struct mtk_gate audio_clks[] = {
+>>          GATE_AUDIO3(CLK_AUD_MEM_ASRC5, "audio_mem_asrc5", "asm_h_sel", 14),
+>>   };
+>>
+>> +static const struct mtk_clk_desc audio_desc = {
+>> +       .clks = audio_clks,
+>> +       .num_clks = ARRAY_SIZE(audio_clks),
+>> +};
+>> +
+>>   static const struct of_device_id of_match_clk_mt2701_aud[] = {
+>> -       { .compatible = "mediatek,mt2701-audsys", },
+>> -       {}
+>> +       { .compatible = "mediatek,mt2701-audsys", .data = &audio_desc },
+>> +       { /* sentinel */ }
+>>   };
+>>
+>>   static int clk_mt2701_aud_probe(struct platform_device *pdev)
+>>   {
+>> -       struct clk_hw_onecell_data *clk_data;
+>> -       struct device_node *node = pdev->dev.of_node;
+>>          int r;
+>>
+>> -       clk_data = mtk_alloc_clk_data(CLK_AUD_NR);
+>> -
+>> -       mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
+>> -                              clk_data, &pdev->dev);
+>> -
+>> -       r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+>> +       r = mtk_clk_simple_probe(pdev);
+>>          if (r) {
+>>                  dev_err(&pdev->dev,
+>>                          "could not register clock provider: %s: %d\n",
+>>                          pdev->name, r);
+>> -
+>> -               goto err_clk_provider;
+>> +               return r;
+>>          }
+>>
+>>          r = devm_of_platform_populate(&pdev->dev);
+>> @@ -170,13 +168,13 @@ static int clk_mt2701_aud_probe(struct platform_device *pdev)
+>>          return 0;
+>>
+>>   err_plat_populate:
+>> -       of_clk_del_provider(node);
+>> -err_clk_provider:
+>> +       mtk_clk_simple_remove(pdev);
+>>          return r;
+>>   }
+>>
+>>   static struct platform_driver clk_mt2701_aud_drv = {
+>>          .probe = clk_mt2701_aud_probe,
+>> +       .remove = mtk_clk_simple_remove,
+> 
+> I'm not a big fan of mixing devres and non-devres teardown code. Automatic
+> devres teardown happens after the remove callback returns, so in this
+> case you could have child devices being unregistered that touch clocks
+> or resets that have already been unregistered and freed in the remove
+> callback.
 > 
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+I'll add a custom remove function that calls of_platform_depopulate() and
+tears everything down manually in the correct order.
 
-yamllint warnings/errors:
+Thanks for catching this one, I didn't notice at all!
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,sm8550-gcc.example.dtb: clock-controller@100000: clocks: [[4294967295, 0], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295, 0], [4294967295, 1], [4294967295, 2], [4294967295]] is too long
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,sm8550-gcc.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,sm8550-gcc.example.dtb: clock-controller@100000: Unevaluated properties are not allowed ('#clock-cells', '#power-domain-cells', '#reset-cells', 'reg' were unexpected)
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,sm8550-gcc.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.example.dtb: clock-controller@100000: clocks: [[4294967295, 0], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295]] is too long
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.example.dtb: clock-controller@100000: Unevaluated properties are not allowed ('#clock-cells', '#power-domain-cells', '#reset-cells', 'reg' were unexpected)
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.example.dtb: clock-controller@100000: clocks: [[4294967295, 0], [4294967295, 1], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295]] is too long
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.example.dtb: clock-controller@100000: clock-names: ['bi_tcxo', 'bi_tcxo_ao', 'sleep_clk', 'pcie_0_pipe_clk', 'pcie_1_pipe_clk', 'ufs_phy_rx_symbol_0_clk', 'ufs_phy_rx_symbol_1_clk', 'ufs_phy_tx_symbol_0_clk', 'usb3_phy_wrapper_gcc_usb30_pipe_clk'] is too long
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.example.dtb: clock-controller@100000: Unevaluated properties are not allowed ('#clock-cells', '#power-domain-cells', '#reset-cells', 'reg' were unexpected)
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.yaml
+>>          .driver = {
+>>                  .name = "clk-mt2701-aud",
+>>                  .of_match_table = of_match_clk_mt2701_aud,
+> 
+> [...]
+> 
+>> --- a/drivers/clk/mediatek/clk-mt2712.c
+>> +++ b/drivers/clk/mediatek/clk-mt2712.c
+> 
+> [...]
+> 
+>> @@ -1482,7 +1459,11 @@ static struct platform_driver clk_mt2712_drv = {
+>>
+>>   static int __init clk_mt2712_init(void)
+>>   {
+>> -       return platform_driver_register(&clk_mt2712_drv);
+>> +       int ret = platform_driver_register(&clk_mt2712_drv);
+>> +
+>> +       if (ret)
+>> +               return ret;
+>> +       return platform_driver_register(&clk_mt2712_simple_drv);
+>>   }
+>>
+>>   arch_initcall(clk_mt2712_init);
+> 
+> Would this get cleaned up even more? I.e. have just one driver left and
+> we could have the nice *_platform_driver() macros.
+> 
 
-doc reference errors (make refcheckdocs):
+In the future, yes - granted that I find someone that can help with the testing,
+as I don't have any MT2712 hardware here.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230110121316.24892-2-quic_devipriy@quicinc.com
+Not in this series though (please!).
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Cheers,
+Angelo
 
