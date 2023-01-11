@@ -2,112 +2,152 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B4FC54EBC
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 15:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F75C46467
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 15:05:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232251AbjAKPDy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Jan 2023 10:03:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38650 "EHLO
+        id S232469AbjAKPFa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Jan 2023 10:05:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236157AbjAKPDb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 10:03:31 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2066313E1E
-        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 07:03:27 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id bs20so15331257wrb.3
-        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 07:03:27 -0800 (PST)
+        with ESMTP id S238776AbjAKPEz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 10:04:55 -0500
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FEE22E2
+        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 07:04:53 -0800 (PST)
+Received: by mail-ej1-x634.google.com with SMTP id tz12so37535909ejc.9
+        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 07:04:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gSjNh53fuTFX648VbV+cFXPXevheHMtqh9ORKZBfONQ=;
-        b=f/DcrDMTm8lUsMVzMA8CVkGtWSVbYy0MBnnFulQCEoaplBnKgCmmlA6eu+TPbwNyjT
-         ue/gAZSerx8XPU2+nVTkUu4idw0agYAb4x79ZlW1tVSLLQrs8vpvTilUbIZNfsZthldY
-         eIM6Y7xaOEX2hd+7rd7z/FjmilAtsdhEzhPj3dqoqR4T03uAp4/IdnduAuzzdhRytJtR
-         rwlBS9CJ6LoBv1+DwkLW+WTEE9ic9xtf933JMrcZGWamx4SaOABE2VoUuZNX0Gk/B7ga
-         lTfXcrtwgYFiEZXW3WZVDqkRXRdusDuDKL8GPPERQg1Qah4UxEs4y7uPm/BDROgI7Em+
-         Cbow==
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wSndVBDlN4JUzHCG4iLF5UhWZTMXbKyI15vPIo6KiSU=;
+        b=WTmIT17URH/10jxaZkCFZ/Su0dMdGH7NE5GghquSvWPPwpJd+6ILKuWlyNMm4H395e
+         xxxRl10u9LGTOQaXpIKBxLC/FDqshM9cN589y9hVEsHgEwYnPXHEwK6qVD8FG6hH+pvE
+         wrAlS2DiweSE7pAwI7neVmyozpz2rRA6hxUwmw7ztiGv1D2Dv/asvYg19Fk6VHhGU5NV
+         IxjGNcfhzCgvP/n0ENrWZ705Nu0rcm2BPJBsia+jXMN3hBjfkPPUGskM4RMbnoc1blBr
+         Z3Ts5KMdNCbIMyjPXfmrcsGDEEca7L/7CLtupaHeINXXkQRtV2U4OiVaG38GK2j+1ExM
+         i1Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gSjNh53fuTFX648VbV+cFXPXevheHMtqh9ORKZBfONQ=;
-        b=r+Vz9c4QCVfJ0uR3KF2SuLe41zqNXIkc1pCSDvZBmGCU05QIg30BAyaGBXCHJbJmUI
-         0Xukcal71Sx2gGkioFlmq/feyv52pwGkoUzAT7rQkI6SSGd8hfboLuodcI7A+RDyAmt0
-         DFqpg9LDtH5UwVRlbe67Z7B2FvLJ15vB87AqTI+EXf4YhKRjWnqWUOoJ4N6RuezOyMkz
-         DQ7BMjEb0ZoTmmjCr1gWCpmQ7EBG/pamE04+MM/KX5Xk8zxgFV8/nrVia5KnPn5rPI7H
-         sWqE3b4cFq9m79MHBGXfJeDhxMqvZ7bzXvqoaGN2FaqcXUgI+pbov/MbqvbQIiXtYLtP
-         7Y3Q==
-X-Gm-Message-State: AFqh2koOiXOvfibuVCU3Y/Gb5kW6nYxz1W/f1ZhbTX/1vrXD6SyrA+Gw
-        b9JfrK8Oom3kdSs03bc6IpAePA==
-X-Google-Smtp-Source: AMrXdXtmbc+MAiHw2DNZmN5yQ7ULD99oOLR1VBGQvIju6NvR2aRocEC8S977tjFA900+RAJES1EUBQ==
-X-Received: by 2002:a5d:6b87:0:b0:2bc:371a:8a1 with SMTP id n7-20020a5d6b87000000b002bc371a08a1mr7240550wrx.22.1673449405630;
-        Wed, 11 Jan 2023 07:03:25 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id w5-20020a05600018c500b002420dba6447sm13885188wrq.59.2023.01.11.07.03.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jan 2023 07:03:25 -0800 (PST)
-Message-ID: <24461c28-0939-bd37-a6bc-774dc70ed8ed@linaro.org>
-Date:   Wed, 11 Jan 2023 16:03:22 +0100
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wSndVBDlN4JUzHCG4iLF5UhWZTMXbKyI15vPIo6KiSU=;
+        b=eft5OqkwC6JCdCGgYg3M6i0kV4rQ29s7SJbIv26RJVvkJxe0YIbtHj3JSuStsbN8bh
+         VDVftDkudkXUYnQB2IV33J5jfxiyyM+kUNJa8s+oX0m0LHNUFL3dL1+CKBj5DHGiKKVp
+         ZdXs1kAO/ETo35ExdUqYoDLAJ2I/7y/17IOCbJ73ThkuMN7JNJuuAri3pnmjEaIQb6W1
+         tT5ZFGhNmxX0GzRSnKTsZjdKkee8oW4nCDrVR5tAFC3WLXDJUwBsSbyMMDXQKwFBq5rm
+         EKTmwR0Ljn/wg1TZeiOM0Ozyo00lUWoTuS9i4sns3b1tisWBOb65zKgqixQnMY1nNMBa
+         n2Aw==
+X-Gm-Message-State: AFqh2krOe2gUOBUtUUzeHTZHr324qInAb3f6D5Jj1CufabY/WCXrxTeS
+        8VuVVxhUox4tOmcXEze42tf14Q==
+X-Google-Smtp-Source: AMrXdXsAzLI1Zlu5S4eptp/SXJsEAFI0xjbkUEdexBFitl92UPyIF9Z09CaOEcx6v3MsIYc8oMHD7w==
+X-Received: by 2002:a17:906:184a:b0:78d:f456:1ed0 with SMTP id w10-20020a170906184a00b0078df4561ed0mr70252597eje.33.1673449491869;
+        Wed, 11 Jan 2023 07:04:51 -0800 (PST)
+Received: from localhost ([217.111.27.204])
+        by smtp.gmail.com with ESMTPSA id ka13-20020a170907990d00b0073c10031dc9sm6196545ejc.80.2023.01.11.07.04.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jan 2023 07:04:50 -0800 (PST)
+Date:   Wed, 11 Jan 2023 16:04:49 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Maciek Machnikowski <maciek@machnikowski.net>,
+        'Vadim Fedorenko' <vfedorenko@novek.ru>,
+        'Jonathan Lemon' <jonathan.lemon@gmail.com>,
+        'Paolo Abeni' <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
+Message-ID: <Y77QEajGlJewGKy1@nanopsycho>
+References: <20221207152157.6185b52b@kernel.org>
+ <6e252f6d-283e-7138-164f-092709bc1292@machnikowski.net>
+ <Y5MW/7jpMUXAGFGX@nanopsycho>
+ <a8f9792b-93f1-b0b7-2600-38ac3c0e3832@machnikowski.net>
+ <20221209083104.2469ebd6@kernel.org>
+ <Y5czl6HgY2GPKR4v@nanopsycho>
+ <DM6PR11MB46571573010AB727E1BE99AE9BFE9@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <20230110120549.4d764609@kernel.org>
+ <Y75xFlEDCThGtMDq@nanopsycho>
+ <DM6PR11MB4657AC41BBF714A280B578D49BFC9@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH 7/7] arm64: defconfig: Enable IPQ9574 SoC base configs
-Content-Language: en-US
-To:     Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
-        devi priya <quic_devipriy@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linus.walleij@linaro.org,
-        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
-        shawnguo@kernel.org, arnd@arndb.de, marcel.ziswiler@toradex.com,
-        dmitry.baryshkov@linaro.org, nfraprado@collabora.com,
-        broonie@kernel.org, tdas@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_arajkuma@quicinc.com,
-        quic_anusha@quicinc.com, quic_poovendh@quicinc.com
-References: <20230110121316.24892-1-quic_devipriy@quicinc.com>
- <20230110121316.24892-8-quic_devipriy@quicinc.com>
- <a9dfc45a-dc7a-9e39-ccc4-a451ea165bdf@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <a9dfc45a-dc7a-9e39-ccc4-a451ea165bdf@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM6PR11MB4657AC41BBF714A280B578D49BFC9@DM6PR11MB4657.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/01/2023 15:48, Kathiravan Thirumoorthy wrote:
-> 
-> On 1/10/2023 5:43 PM, devi priya wrote:
->> Enables clk & pinctrl related configs
+Wed, Jan 11, 2023 at 03:16:59PM CET, arkadiusz.kubalewski@intel.com wrote:
+>>From: Jiri Pirko <jiri@resnulli.us>
+>>Sent: Wednesday, January 11, 2023 9:20 AM
 >>
->> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
->> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
->> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
->> ---
->>   arch/arm64/configs/defconfig | 2 ++
->>   1 file changed, 2 insertions(+)
+>>Tue, Jan 10, 2023 at 09:05:49PM CET, kuba@kernel.org wrote:
+>>>On Mon, 9 Jan 2023 14:43:01 +0000 Kubalewski, Arkadiusz wrote:
+>>>> This is a simplified network switch board example.
+>>>> It has 2 synchronization channels, where each channel:
+>>>> - provides clk to 8 PHYs driven by separated MAC chips,
+>>>> - controls 2 DPLLs.
+>>>>
+>>>> Basically only given FW has control over its PHYs, so also a control
+>>over it's
+>>>> MUX inputs.
+>>>> All external sources are shared between the channels.
+>>>>
+>>>> This is why we believe it is not best idea to enclose multiple DPLLs
+>>with one
+>>>> object:
+>>>> - sources are shared even if DPLLs are not a single synchronizer chip,
+>>>> - control over specific MUX type input shall be controllable from
+>>different
+>>>> driver/firmware instances.
+>>>>
+>>>> As we know the proposal of having multiple DPLLs in one object was a try
+>>to
+>>>> simplify currently implemented shared pins. We fully support idea of
+>>having
+>>>> interfaces as simple as possible, but at the same time they shall be
+>>flexible
+>>>> enough to serve many use cases.
+>>>
+>>>I must be missing context from other discussions but what is this
+>>>proposal trying to solve? Well implemented shared pins is all we need.
 >>
->> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
->> index 851e8f9be06d..e0ae0996d5ad 100644
->> --- a/arch/arm64/configs/defconfig
->> +++ b/arch/arm64/configs/defconfig
->> @@ -545,6 +545,7 @@ CONFIG_PINCTRL_IMX93=y
->>   CONFIG_PINCTRL_MSM=y
->>   CONFIG_PINCTRL_IPQ8074=y
->>   CONFIG_PINCTRL_IPQ6018=y
->> +CONFIG_PINCTRL_IPQ9574=y
-> Please move this after IPQ8074, to keep it in ascending order. We can 
-> move the IPQ6018 config before IPQ8074.
+>>There is an entity containing the pins. The synchronizer chip. One
+>>synchronizer chip contains 1-n DPLLs. The source pins are connected
+>>to each DPLL (usually). What we missed in the original model was the
+>>synchronizer entity. If we have it, we don't need any notion of somehow
+>>floating pins as independent entities being attached to one or many
+>>DPLL refcounted, etc. The synchronizer device holds them in
+>>straightforward way.
+>>
+>>Example of a synchronizer chip:
+>>https://www.renesas.com/us/en/products/clocks-timing/jitter-attenuators-
+>>frequency-translation/8a34044-multichannel-dpll-dco-four-eight-
+>>channels#overview
+>
+>Not really, as explained above, multiple separated synchronizer chips can be
+>connected to the same external sources.
+>This is why I wrote this email, to better explain need for references between
+>DPLLs and shared pins.
+>Synchronizer chip object with multiple DPLLs would have sense if the pins would
+>only belong to that single chip, but this is not true.
 
-This must match savedefconfig order, not alphabetical.
+I don't understand how it is physically possible that 2 pins belong to 2
+chips. Could you draw this to me?
 
-Best regards,
-Krzysztof
 
+>As the pins are shared between multiple DPLLs (both inside 1 integrated circuit
+>and between multiple integrated circuits), all of them shall have current state
+>of the source or output.
+>Pins still need to be shared same as they would be inside of one synchronizer
+>chip.
+
+Do I understand correctly that you connect one synchronizer output to
+the input of the second synchronizer chip?
+
+>
+>BR,
+>Arkadiusz
