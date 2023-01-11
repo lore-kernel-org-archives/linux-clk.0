@@ -2,74 +2,97 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9796C54EBE
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 08:24:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8958AC6379F
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 08:57:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231599AbjAKIX5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Jan 2023 03:23:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41744 "EHLO
+        id S230457AbjAKI5V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Jan 2023 03:57:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235912AbjAKIXm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 03:23:42 -0500
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0022A2738
-        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 00:23:40 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:d992:2e67:38c1:3ab7])
-        by andre.telenet-ops.be with bizsmtp
-        id 7LPe2900m22nSWd01LPe4X; Wed, 11 Jan 2023 09:23:39 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1pFWOX-001YSm-3h;
-        Wed, 11 Jan 2023 09:23:39 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1pFWOY-003Boo-Tq;
-        Wed, 11 Jan 2023 09:23:38 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Chris Brandt <chris.brandt@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: cpg-mssr: Remove superfluous check in resume code
-Date:   Wed, 11 Jan 2023 09:23:34 +0100
-Message-Id: <144a3e66d748c0c17f3524ac8fa6ece5bf5b6f1e.1673425314.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S232053AbjAKI5D (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 03:57:03 -0500
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FB4610B53;
+        Wed, 11 Jan 2023 00:56:53 -0800 (PST)
+X-UUID: e0fcac1c918d11ed945fc101203acc17-20230111
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=iqNH2YUWSkJRgdVGPCUzJ5c0vvuMRJVGt9fwd5XJbJ0=;
+        b=aRMsTWQEMn5usojbHq7ihj/Yd5aVNbjDe6QHkJz+qn5bd7XDwTjVG3ESYRc/7Aua+f6VbU+c5Uuoa1TlmQlMvu1vEE7CaRRsrOyE69+aiAFdOcptBIUDlyym2kNFU8MpfJ3eSYhQawH5GEiHk9qio0vxf9q4E+eaoi9vI0xndZ4=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.17,REQID:da5bd908-956e-4154-b277-e5025f9f9712,IP:0,U
+        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+        :release,TS:45
+X-CID-INFO: VERSION:1.1.17,REQID:da5bd908-956e-4154-b277-e5025f9f9712,IP:0,URL
+        :0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+        elease,TS:45
+X-CID-META: VersionHash:543e81c,CLOUDID:8cd37ff5-ff42-4fb0-b929-626456a83c14,B
+        ulkID:230111165649FHL7UB0I,BulkQuantity:0,Recheck:0,SF:28|17|19|48|102,TC:
+        nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,O
+        SI:0,OSA:0
+X-CID-APTURL: Status:success,Category:nil,Trust:0,Unknown:0,Malicious:0
+X-CID-BVR: 1,FCT|NGT
+X-UUID: e0fcac1c918d11ed945fc101203acc17-20230111
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1891818550; Wed, 11 Jan 2023 16:56:46 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.186) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.3;
+ Wed, 11 Jan 2023 16:56:45 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.792.15 via Frontend Transport; Wed, 11 Jan 2023 16:56:45 +0800
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     <wenst@chromium.org>
+CC:     <angelogioacchino.delregno@collabora.com>,
+        <chun-jie.chen@mediatek.com>, <daniel@makrotopia.org>,
+        <devicetree@vger.kernel.org>, <fparent@baylibre.com>,
+        <ikjn@chromium.org>, <johnson.wang@mediatek.com>,
+        <jose.exposito89@gmail.com>, <kernel@collabora.com>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
+        <miles.chen@mediatek.com>, <msp@baylibre.com>,
+        <mturquette@baylibre.com>, <nfraprado@collabora.com>,
+        <pablo.sun@mediatek.com>, <rex-bc.chen@mediatek.com>,
+        <robh+dt@kernel.org>, <ryder.lee@kernel.org>,
+        <sam.shih@mediatek.com>, <sboyd@kernel.org>,
+        <weiyi.lu@mediatek.com>, <y.oudjana@protonmail.com>,
+        <yangyingliang@huawei.com>, <mingming.su@mediatek.com>
+Subject: Re: [PATCH v2 11/23] clk: mediatek: Switch to mtk_clk_simple_probe()
+Date:   Wed, 11 Jan 2023 16:56:45 +0800
+Message-ID: <20230111085645.30683-1-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <Y74jNZbjpopT2rNY@google.com>
+References: <Y74jNZbjpopT2rNY@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When the code flow arrives at printing the error message in
-cpg_mssr_resume_noirq(), we know for sure that we are not running on an
-RZ/A Soc, as the code checked for that before.
+cc Mingming
 
-Fixes: ace342097768e35f ("clk: renesas: cpg-mssr: Fix STBCR suspend/resume handling")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in renesas-clk for v6.3.
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+>> > Would this get cleaned up even more? I.e. have just one driver left and
+>> > we could have the nice *_platform_driver() macros.
+>> > 
+>> 
+>> In the future, yes - granted that I find someone that can help with the testing,
+>> as I don't have any MT2712 hardware here.
+>> 
+>> Not in this series though (please!).
+>
+>Got it.
+>
+>Maybe Miles has access to some EVBs, or knows someone who does.
+>
+>ChenYu
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 1a0cdf001b2f27ca..be16fb3ce1659260 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -943,9 +943,8 @@ static int cpg_mssr_resume_noirq(struct device *dev)
- 		}
- 
- 		if (!i)
--			dev_warn(dev, "Failed to enable %s%u[0x%x]\n",
--				 priv->reg_layout == CLK_REG_LAYOUT_RZ_A ?
--				 "STB" : "SMSTP", reg, oldval & mask);
-+			dev_warn(dev, "Failed to enable SMSTP%u[0x%x]\n", reg,
-+				 oldval & mask);
- 	}
- 
- 	return 0;
--- 
-2.34.1
+I do not have any MT2712 board.
+Thanks for Mingming's help, Mingming will test v2 series on the MT2712 platform.
 
+thanks,
+Miles
