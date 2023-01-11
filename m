@@ -2,94 +2,66 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3190C5479D
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 19:46:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89003C63797
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 19:49:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238445AbjAKTq4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Jan 2023 14:46:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49126 "EHLO
+        id S235376AbjAKTtm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Jan 2023 14:49:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235273AbjAKTqG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 14:46:06 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A38CCD2F2;
-        Wed, 11 Jan 2023 11:45:02 -0800 (PST)
+        with ESMTP id S235022AbjAKTta (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 14:49:30 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8924EC21;
+        Wed, 11 Jan 2023 11:49:14 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3DDAA61E06;
-        Wed, 11 Jan 2023 19:45:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97BF2C433D2;
-        Wed, 11 Jan 2023 19:45:01 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id AE4F4CE1BB1;
+        Wed, 11 Jan 2023 19:49:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C968C433F1;
+        Wed, 11 Jan 2023 19:49:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673466301;
-        bh=xRr7us8zBW0sk990QLjOp0ucsfIPeo81l4T24fBaPC4=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=sKny68A3/QnJwl4Wk9++6MFNKMrAlPUELmesjETKeCB20k/As5eX4jlVVJy9UB+JG
-         vkfnftDpWJ/G1xD56x9raf2Q0G/oFMdFJJtZfFUeYq9aTVHl6TkR2MB9tY4vDy+yQV
-         S7tslv0IMokoh95dI43PC8ppZEl/h2WQGiilovuORceThkx1RWjp9dZNcK5tW5sf4B
-         CL1lOZBwxuQEahlWvhuGS4jJn8LYOz2K38AZgV2bN6OJ+U94P5Ow+40NCdtH/oH7Mi
-         ZWLOPjgTU92ubxpASPdAYCtAvPY3BjNnTddzXlxecSx3DWTj+7GcfCCicC5TmVvwrx
-         gyEoZ//R/BlBw==
-Message-ID: <8980856c1138571976f00413b94cfeb8.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1673466551;
+        bh=hR9gicPlyQiFsf85VdDJGh4EoIBO+8Y9gUPxlPQfCEA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=eBOGbVLJQMz6ORMnZIIM1FqpbwFRRnzCjbsQtUtDwcX1C8iEg+zI1zYklY7ye/1x5
+         FBKTzMx8v3DksQOr7mHyupEECXiJjCMDMFBSlovR8WeJnu2SxpnBypwI82LdxqzIJa
+         xUuLtZ+9KySVJ0MN/rdunPW/H6g9GaiTzHXdlF8AFddYkgCQeZZcfJ6JJyvOVtZTwo
+         vizSh/nyqvP1PkrU4mW/rJcWrOTb7S/eokxSlA6gLojvzl2gbPqEI/t4U4hu0hgQY9
+         PIKtgVpD5injiCX9bh1d/kequeO5FbjZ3ZDyzoH3iZFRdnoJcWEIBSQSgjHttxzK+k
+         rchE0vbV/SGFQ==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     quic_tdas@quicinc.com, krzysztof.kozlowski+dt@linaro.org,
+        dmitry.baryshkov@linaro.org, konrad.dybcio@linaro.org,
+        agross@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+        robh+dt@kernel.org
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: msm8996: mark apcs as clock provider
+Date:   Wed, 11 Jan 2023 13:49:00 -0600
+Message-Id: <167346654440.2315924.11284041931895696178.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20230111191634.2509616-1-dmitry.baryshkov@linaro.org>
+References: <20230111191634.2509616-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221226095745.19757-2-a-bhatia1@ti.com>
-References: <20221226095745.19757-1-a-bhatia1@ti.com> <20221226095745.19757-2-a-bhatia1@ti.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: fixed-factor: Add TI AM62 SoC OLDI clock
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Tomi Valkeinen <tomba@kernel.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Linux Clock List <linux-clk@vger.kernel.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        Linux Kernel List <linux-kernel@vger.kernel.org>,
-        Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Devarsh Thakkar <devarsht@ti.com>,
-        Jai Luthra <j-luthra@ti.com>, Aradhya Bhatia <a-bhatia1@ti.com>
-To:     Aradhya Bhatia <a-bhatia1@ti.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 11 Jan 2023 11:44:59 -0800
-User-Agent: alot/0.10
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Aradhya Bhatia (2022-12-26 01:57:44)
-> Add "ti,k3-am62-oldi-clk-div" to the fixed factor clock compatible enum
-> list.
->=20
-> "ti,k3-am62-oldi-clk-div" is a fixed-factor clock that helps the TI
-> display subsystem request a pixel clock for itself and a corresponding
-> serial clock for its OLDI Transmitters. The serial clock is 7 times the
-> pixel clock. This clock needs the clock set rate request to be
-> propagated to the parent clock provider.
->=20
-> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
-> ---
->  Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/fixed-factor-clock.y=
-aml b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
-> index 8f71ab300470..0696237530f7 100644
-> --- a/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
-> @@ -14,6 +14,7 @@ properties:
->    compatible:
->      enum:
->        - fixed-factor-clock
-> +      - ti,k3-am62-oldi-clk-div
+On Wed, 11 Jan 2023 22:16:34 +0300, Dmitry Baryshkov wrote:
+> Now as we added the APCS clock controller support, mark apcs device as
+> clock provider by adding #clock-cells property.
+> 
+> 
 
-I don't see this compatible anywhere in the kernel tree. Is there a
-patch that adds a node using this? I wonder why the display subsystem
-can't add this fixed factor clk directly in the driver. Does the OLDI
-Transmitter send a clk to the display subsystem?
+Applied, thanks!
 
-I'm asking all these questions because we got rid of vendor compatibles
-here in hopes of simplifying the logic. Maybe the problem can be
-approached differently, but I don't know all the details.
+[1/1] arm64: dts: qcom: msm8996: mark apcs as clock provider
+      commit: 2e3015c2d190760ff59e41336a0a27d6caaacf3b
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
