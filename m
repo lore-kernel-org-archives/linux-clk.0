@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21548C54EBC
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 20:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8127AC678D6
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 20:01:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238826AbjAKUBG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Jan 2023 15:01:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56624 "EHLO
+        id S239524AbjAKUBM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Jan 2023 15:01:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239544AbjAKUAT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 15:00:19 -0500
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21DD643A2C
-        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 11:57:59 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id j17so25212593lfr.3
-        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 11:57:58 -0800 (PST)
+        with ESMTP id S239624AbjAKUAZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 15:00:25 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B45E543E40
+        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 11:58:01 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id m6so25171770lfj.11
+        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 11:58:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lv9bTYfOgZlifc7mVz4D2n8gQZjrUwJsqNeJHpwbhTE=;
-        b=kWHfnvPi5LFWy0aNss+fxorW1fbXVt5mD0pPVELIXD5skDirCVJa0yx9YqBBHH81D7
-         dqat5LR9Q/TK4pQykXWGEYDKhYEMGrk+P8zmkZnUBktfxiopnQxIYrb4PUdXX6r0NU69
-         J8FgzhRb+gttG2un5FF0e2cVSo0La6mlqJxSYhWzPsfeEVJeT5mNo2xX6FQL2FtuJhZU
-         WoseCXOPK6QRvkQNyIs2LrGWHBFtpBp06C4xwj85MCWGMlrweRs2QgoNY56hyP/FH7Ta
-         +rrMIkPgxgc3v9BWb9pCfgkMIzZkoEAxjpBlovKOz8NFhnrCC/d7Q479WQFFj/kmYn+/
-         gS7A==
+        bh=+AC6eqnmCMNVcGNe0mju6hDV8wr8UXHC5zlM4CacDZE=;
+        b=t5jFXj87//k+X0NhB8/XfjQFnJsNwjro9Q3GZ1WZQYE/LtKorrQE7XqowRTMapgjrx
+         m0Im8IssbRCn9kusS4kTrPstUVEQMEnYPh/Th34H33go67A15wHLS7mzUJCPn7MhnKiw
+         1qltRAGz6hgT9GQ2SVFDCzNyUG624NpBWXui4lRr+A3kscvWbkpLResse+IV3ByR7YWd
+         zG/kiYiDN65yMfdEgL3/z/cTxEsBU1bWDgVZT0RqWxsjcw+geewwdCABl1C28Uu0C+Df
+         ISb3jliqs37GLhaWlRB6/xNFMZ2I5HQFNccJrLiPrJBkt3z28CWzV3B7/yWislpBEq+R
+         n4sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lv9bTYfOgZlifc7mVz4D2n8gQZjrUwJsqNeJHpwbhTE=;
-        b=1it9t0uorCEY6wqN6g7qBwRrgIlg8yJl9qkNLM5o4m6HDiJ+mMbFhcwPmZ1v7rOTVP
-         N4RqJFJGqc4RpnAstVhf7h5hEXThCS5WQzg5ID72V5bqob6l9sDIcFQzn9Z/9ISwfO1P
-         hED2chiZj4UBzlTozHwozuQj15b7XTRIJJ+wUFpSnaQrooAXXRKrt30bolkXLKeOgJyd
-         NtBnQGRBUQJIwbWXHy1K5ptZ+bJYYrQTlqoOc3LHyA1o7MOsemNDLxbZSqbOJ1jYraat
-         6eRP/Zu6sypG6LBSHuC4OiOS784x8iOLRIrZbHopEnMjJpWMrz+IpvcG9sCWFY4TbIBb
-         veCg==
-X-Gm-Message-State: AFqh2kpSwQKBzTG6otuB33UQaITr7DWa4iujzSyh0KB0euVZJESURcV/
-        7HH3ccpxN4vjtC+BzkjBMKB/yg==
-X-Google-Smtp-Source: AMrXdXsIBfxG5IBaUrShWxsZOvli9AWnqpp0OVkEMYmCsjDrbzsVNyvgMu/Z/ulBVwsUFZ76sp4t6Q==
-X-Received: by 2002:a05:6512:261c:b0:4ca:fe64:1010 with SMTP id bt28-20020a056512261c00b004cafe641010mr18186182lfb.26.1673467077449;
-        Wed, 11 Jan 2023 11:57:57 -0800 (PST)
+        bh=+AC6eqnmCMNVcGNe0mju6hDV8wr8UXHC5zlM4CacDZE=;
+        b=70r05gWb5CUDG65L4uYrPSA4uGmONwYaUF+HntG1aLXjefZu+YYAaUUSh0sZ3XuM+5
+         z1HqNtT4jNRI8o1nk9le5pNhH/DIs8hDv7Mist6cRfj5Ye7r4a4aE0mENklT9J6J76fP
+         Vu4GsKS6YlEX123RhLleKRwFXeAeXOjGTy/+f6a+AvgnwaRMjUQvip7mroRNXFzQJkzh
+         VjGJKs7RH3x/a9/fr5nm5+VHd9hPojw4KlLqavuURoICak10+zZHgtUZ/14Wo0vb/azX
+         uZqsRwiYttargOIe9m58xViKkscEyGgrA79WHOiFn5RIjglbSzIHeQbWButEwtG64efe
+         ZFIw==
+X-Gm-Message-State: AFqh2krOxAtYA/2UpFESjk0E37yBZC1/6dMoKC8JQSUmIR9ockHzSC5K
+        d01P+42NkJUKSMENeb6ul9S6SA==
+X-Google-Smtp-Source: AMrXdXsybeJG4mLyaeiPfcVLFX+8QdicW/3SMfXvqeKH+BIv6IHHEP1XJPJ2ae+6kMblpxC1RZzpOg==
+X-Received: by 2002:ac2:43b5:0:b0:4cb:40ba:4ae8 with SMTP id t21-20020ac243b5000000b004cb40ba4ae8mr7772013lfl.34.1673467079354;
+        Wed, 11 Jan 2023 11:57:59 -0800 (PST)
 Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id c3-20020ac25f63000000b0049f54c5f2a4sm2872452lfc.229.2023.01.11.11.57.56
+        by smtp.gmail.com with ESMTPSA id c3-20020ac25f63000000b0049f54c5f2a4sm2872452lfc.229.2023.01.11.11.57.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jan 2023 11:57:57 -0800 (PST)
+        Wed, 11 Jan 2023 11:57:58 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -59,11 +59,10 @@ To:     Andy Gross <agross@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-Subject: [PATCH 2/5] clk: qcom: add msm8996 Core Bus Framework (CBF) support
-Date:   Wed, 11 Jan 2023 22:57:51 +0300
-Message-Id: <20230111195754.2593134-3-dmitry.baryshkov@linaro.org>
+        devicetree@vger.kernel.org
+Subject: [PATCH 5/5] arm64: dts: qcom: msm8996: scale CBF clock according to the CPUfreq
+Date:   Wed, 11 Jan 2023 22:57:54 +0300
+Message-Id: <20230111195754.2593134-6-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20230111195754.2593134-1-dmitry.baryshkov@linaro.org>
 References: <20230111195754.2593134-1-dmitry.baryshkov@linaro.org>
@@ -73,361 +72,332 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add CBF clock driver as a part of MSM8996 CPU clocks. Significantly
-based on AngeloGioacchino del Regno's work at [1].
+Turn CBF into the interconnect provider. Scale CBF frequency (bandwidth)
+according to CPU frequencies.
 
-The CBF is an interconnect between two CPU clusters, setting it up
-properly is required for booting the MSM8996 with all four cores
-enabled.
-
-[1] https://github.com/sonyxperiadev/kernel/blob/aosp/LE.UM.2.3.2.r1.4/drivers/clk/qcom/clk-cpu-8996.c
-
-Co-developed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
-Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/Makefile       |   2 +-
- drivers/clk/qcom/clk-cbf-8996.c | 318 ++++++++++++++++++++++++++++++++
- 2 files changed, 319 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/qcom/clk-cbf-8996.c
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 50 +++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index ca2f586edb3e..d6ecd2bf7040 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -52,7 +52,7 @@ obj-$(CONFIG_MSM_MMCC_8998) += mmcc-msm8998.o
- obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
- obj-$(CONFIG_QCOM_A7PLL) += a7-pll.o
- obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
--obj-$(CONFIG_QCOM_CLK_APCC_MSM8996) += apcs-msm8996.o clk-cpu-8996.o
-+obj-$(CONFIG_QCOM_CLK_APCC_MSM8996) += apcs-msm8996.o clk-cpu-8996.o clk-cbf-8996.o
- obj-$(CONFIG_QCOM_CLK_APCS_SDX55) += apcs-sdx55.o
- obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
- obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
-diff --git a/drivers/clk/qcom/clk-cbf-8996.c b/drivers/clk/qcom/clk-cbf-8996.c
-new file mode 100644
-index 000000000000..bdd4f8b48a7e
---- /dev/null
-+++ b/drivers/clk/qcom/clk-cbf-8996.c
-@@ -0,0 +1,318 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2022, Linaro Ltd.
-+ */
-+#include <linux/bitfield.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-alpha-pll.h"
-+#include "clk-regmap.h"
-+
-+/* Need to match the order of clocks in DT binding */
-+enum {
-+	DT_XO,
-+	DT_APCS_AUX,
-+};
-+
-+enum {
-+	CBF_XO_INDEX,
-+	CBF_PLL_INDEX,
-+	CBF_DIV_INDEX,
-+	CBF_APCS_AUX_INDEX,
-+};
-+
-+#define DIV_THRESHOLD		600000000
-+
-+#define CBF_MUX_OFFSET		0x18
-+#define CBF_MUX_PARENT_MASK		GENMASK(1, 0)
-+#define CBF_MUX_AUTO_CLK_SEL_ALWAYS_ON_MASK GENMASK(5, 4)
-+#define CBF_MUX_AUTO_CLK_SEL_ALWAYS_ON_GPLL0_SEL \
-+	FIELD_PREP(CBF_MUX_AUTO_CLK_SEL_ALWAYS_ON_MASK, 0x03)
-+#define CBF_MUX_AUTO_CLK_SEL_BIT	BIT(6)
-+
-+#define CBF_PLL_OFFSET 0xf000
-+
-+static const u8 cbf_pll_regs[PLL_OFF_MAX_REGS] = {
-+	[PLL_OFF_L_VAL] = 0x08,
-+	[PLL_OFF_ALPHA_VAL] = 0x10,
-+	[PLL_OFF_USER_CTL] = 0x18,
-+	[PLL_OFF_CONFIG_CTL] = 0x20,
-+	[PLL_OFF_CONFIG_CTL_U] = 0x24,
-+	[PLL_OFF_TEST_CTL] = 0x30,
-+	[PLL_OFF_TEST_CTL_U] = 0x34,
-+	[PLL_OFF_STATUS] = 0x28,
-+};
-+
-+static const struct alpha_pll_config cbfpll_config = {
-+	.l = 72,
-+	.config_ctl_val = 0x200d4828,
-+	.config_ctl_hi_val = 0x006,
-+	.test_ctl_val = 0x1c000000,
-+	.test_ctl_hi_val = 0x00004000,
-+	.pre_div_mask = BIT(12),
-+	.post_div_mask = 0x3 << 8,
-+	.post_div_val = 0x1 << 8,
-+	.main_output_mask = BIT(0),
-+	.early_output_mask = BIT(3),
-+};
-+
-+static struct clk_alpha_pll cbf_pll = {
-+	.offset = CBF_PLL_OFFSET,
-+	.regs = cbf_pll_regs,
-+	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "cbf_pll",
-+		.parent_data = (const struct clk_parent_data[]) {
-+			{ .index = DT_XO, },
-+		},
-+		.num_parents = 1,
-+		.ops = &clk_alpha_pll_hwfsm_ops,
-+	},
-+};
-+
-+static struct clk_fixed_factor cbf_pll_postdiv = {
-+	.mult = 1,
-+	.div = 2,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cbf_pll_postdiv",
-+		.parent_data = &(const struct clk_parent_data){
-+			.hw = &cbf_pll.clkr.hw
-+		},
-+		.num_parents = 1,
-+		.ops = &clk_fixed_factor_ops,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static const struct clk_parent_data cbf_mux_parent_data[] = {
-+	{ .index = DT_XO },
-+	{ .hw = &cbf_pll.clkr.hw },
-+	{ .hw = &cbf_pll_postdiv.hw },
-+	{ .index = DT_APCS_AUX },
-+};
-+
-+struct clk_cbf_8996_mux {
-+	u32 reg;
-+	struct notifier_block nb;
-+	struct clk_regmap clkr;
-+};
-+
-+static struct clk_cbf_8996_mux *to_clk_cbf_8996_mux(struct clk_regmap *clkr)
-+{
-+	return container_of(clkr, struct clk_cbf_8996_mux, clkr);
-+}
-+
-+static int cbf_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
-+			       void *data);
-+
-+static u8 clk_cbf_8996_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clkr = to_clk_regmap(hw);
-+	struct clk_cbf_8996_mux *mux = to_clk_cbf_8996_mux(clkr);
-+	u32 val;
-+
-+	regmap_read(clkr->regmap, mux->reg, &val);
-+
-+	return FIELD_GET(CBF_MUX_PARENT_MASK, val);
-+}
-+
-+static int clk_cbf_8996_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_regmap *clkr = to_clk_regmap(hw);
-+	struct clk_cbf_8996_mux *mux = to_clk_cbf_8996_mux(clkr);
-+	u32 val;
-+
-+	val = FIELD_PREP(CBF_MUX_PARENT_MASK, index);
-+
-+	return regmap_update_bits(clkr->regmap, mux->reg, CBF_MUX_PARENT_MASK, val);
-+}
-+
-+static int clk_cbf_8996_mux_determine_rate(struct clk_hw *hw,
-+					   struct clk_rate_request *req)
-+{
-+	struct clk_hw *parent;
-+
-+	if (req->rate < (DIV_THRESHOLD / 2))
-+		return -EINVAL;
-+
-+	if (req->rate < DIV_THRESHOLD)
-+		parent = clk_hw_get_parent_by_index(hw, CBF_DIV_INDEX);
-+	else
-+		parent = clk_hw_get_parent_by_index(hw, CBF_PLL_INDEX);
-+
-+	if (!parent)
-+		return -EINVAL;
-+
-+	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
-+	req->best_parent_hw = parent;
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops clk_cbf_8996_mux_ops = {
-+	.set_parent = clk_cbf_8996_mux_set_parent,
-+	.get_parent = clk_cbf_8996_mux_get_parent,
-+	.determine_rate = clk_cbf_8996_mux_determine_rate,
-+};
-+
-+static struct clk_cbf_8996_mux cbf_mux = {
-+	.reg = CBF_MUX_OFFSET,
-+	.nb.notifier_call = cbf_clk_notifier_cb,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "cbf_mux",
-+		.parent_data = cbf_mux_parent_data,
-+		.num_parents = ARRAY_SIZE(cbf_mux_parent_data),
-+		.ops = &clk_cbf_8996_mux_ops,
-+		/* CPU clock is critical and should never be gated */
-+		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-+	},
-+};
-+
-+static int cbf_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
-+			       void *data)
-+{
-+	struct clk_notifier_data *cnd = data;
-+	int ret;
-+
-+	switch (event) {
-+	case PRE_RATE_CHANGE:
-+		/*
-+		 * Avoid overvolting. clk_core_set_rate_nolock() walks from top
-+		 * to bottom, so it will change the rate of the PLL before
-+		 * chaging the parent of PMUX. This can result in pmux getting
-+		 * clocked twice the expected rate.
-+		 *
-+		 * Manually switch to PLL/2 here.
-+		 */
-+		if (cnd->old_rate > DIV_THRESHOLD &&
-+		    cnd->new_rate < DIV_THRESHOLD)
-+			clk_cbf_8996_mux_set_parent(&cbf_mux.clkr.hw, CBF_DIV_INDEX);
-+		break;
-+	case ABORT_RATE_CHANGE:
-+		/* Revert manual change */
-+		if (cnd->new_rate < DIV_THRESHOLD &&
-+		    cnd->old_rate > DIV_THRESHOLD)
-+			clk_cbf_8996_mux_set_parent(&cbf_mux.clkr.hw, CBF_PLL_INDEX);
-+		break;
-+	default:
-+		ret = 0;
-+		break;
-+	}
-+
-+	return notifier_from_errno(ret);
-+};
-+
-+static struct clk_hw *cbf_msm8996_hw_clks[] = {
-+	&cbf_pll_postdiv.hw,
-+};
-+
-+static struct clk_regmap *cbf_msm8996_clks[] = {
-+	&cbf_pll.clkr,
-+	&cbf_mux.clkr,
-+};
-+
-+static const struct regmap_config cbf_msm8996_regmap_config = {
-+	.reg_bits		= 32,
-+	.reg_stride		= 4,
-+	.val_bits		= 32,
-+	.max_register		= 0x10000,
-+	.fast_io		= true,
-+	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
-+};
-+
-+static int qcom_msm8996_cbf_probe(struct platform_device *pdev)
-+{
-+	void __iomem *base;
-+	struct regmap *regmap;
-+	struct device *dev = &pdev->dev;
-+	int i, ret;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(dev, base, &cbf_msm8996_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	/* Select GPLL0 for 300MHz for the CBF clock */
-+	regmap_write(regmap, CBF_MUX_OFFSET, 0x3);
-+
-+	/* Ensure write goes through before PLLs are reconfigured */
-+	udelay(5);
-+
-+	/* Set the auto clock sel always-on source to GPLL0/2 (300MHz) */
-+	regmap_update_bits(regmap, CBF_MUX_OFFSET,
-+			   CBF_MUX_AUTO_CLK_SEL_ALWAYS_ON_MASK,
-+			   CBF_MUX_AUTO_CLK_SEL_ALWAYS_ON_GPLL0_SEL);
-+
-+	clk_alpha_pll_configure(&cbf_pll, regmap, &cbfpll_config);
-+
-+	/* Wait for PLL(s) to lock */
-+        udelay(50);
-+
-+	/* Enable auto clock selection for CBF */
-+	regmap_update_bits(regmap, CBF_MUX_OFFSET,
-+			   CBF_MUX_AUTO_CLK_SEL_BIT,
-+			   CBF_MUX_AUTO_CLK_SEL_BIT);
-+
-+	/* Ensure write goes through before muxes are switched */
-+	udelay(5);
-+
-+	/* Switch CBF to use the primary PLL */
-+	regmap_update_bits(regmap, CBF_MUX_OFFSET,
-+			   CBF_MUX_PARENT_MASK, 0x1);
-+
-+	for (i = 0; i < ARRAY_SIZE(cbf_msm8996_hw_clks); i++) {
-+		ret = devm_clk_hw_register(dev, cbf_msm8996_hw_clks[i]);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(cbf_msm8996_clks); i++) {
-+		ret = devm_clk_register_regmap(dev, cbf_msm8996_clks[i]);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	ret = devm_clk_notifier_register(dev, cbf_mux.clkr.hw.clk, &cbf_mux.nb);
-+	if (ret)
-+		return ret;
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &cbf_mux.clkr.hw);
-+}
-+
-+static const struct of_device_id qcom_msm8996_cbf_match_table[] = {
-+	{ .compatible = "qcom,msm8996-cbf" },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, qcom_msm8996_cbf_match_table);
-+
-+static struct platform_driver qcom_msm8996_cbf_driver = {
-+	.probe = qcom_msm8996_cbf_probe,
-+	.driver = {
-+		.name = "qcom-msm8996-cbf",
-+		.of_match_table = qcom_msm8996_cbf_match_table,
-+	},
-+};
-+
-+/* Register early enough to fix the clock to be used for other cores */
-+static int __init qcom_msm8996_cbf_init(void)
-+{
-+	return platform_driver_register(&qcom_msm8996_cbf_driver);
-+}
-+postcore_initcall(qcom_msm8996_cbf_init);
-+
-+static void __exit qcom_msm8996_cbf_exit(void)
-+{
-+	platform_driver_unregister(&qcom_msm8996_cbf_driver);
-+}
-+module_exit(qcom_msm8996_cbf_exit);
-+
-+MODULE_DESCRIPTION("QCOM MSM8996 CPU Bus Fabric Clock Driver");
-+MODULE_LICENSE("GPL v2");
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index e5a638b85ffc..675933e8e98a 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -49,6 +49,7 @@ CPU0: cpu@0 {
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
+ 			capacity-dmips-mhz = <1024>;
+ 			clocks = <&kryocc 0>;
++			interconnects = <&cbf 0 &cbf 1>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+@@ -66,6 +67,7 @@ CPU1: cpu@1 {
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
+ 			capacity-dmips-mhz = <1024>;
+ 			clocks = <&kryocc 0>;
++			interconnects = <&cbf 0 &cbf 1>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+@@ -79,6 +81,7 @@ CPU2: cpu@100 {
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
+ 			capacity-dmips-mhz = <1024>;
+ 			clocks = <&kryocc 1>;
++			interconnects = <&cbf 0 &cbf 1>;
+ 			operating-points-v2 = <&cluster1_opp>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+@@ -96,6 +99,7 @@ CPU3: cpu@101 {
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
+ 			capacity-dmips-mhz = <1024>;
+ 			clocks = <&kryocc 1>;
++			interconnects = <&cbf 0 &cbf 1>;
+ 			operating-points-v2 = <&cluster1_opp>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+@@ -147,91 +151,109 @@ opp-307200000 {
+ 			opp-hz = /bits/ 64 <307200000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-422400000 {
+ 			opp-hz = /bits/ 64 <422400000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-480000000 {
+ 			opp-hz = /bits/ 64 <480000000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-556800000 {
+ 			opp-hz = /bits/ 64 <556800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-652800000 {
+ 			opp-hz = /bits/ 64 <652800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <384000>;
+ 		};
+ 		opp-729600000 {
+ 			opp-hz = /bits/ 64 <729600000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <460800>;
+ 		};
+ 		opp-844800000 {
+ 			opp-hz = /bits/ 64 <844800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <537600>;
+ 		};
+ 		opp-960000000 {
+ 			opp-hz = /bits/ 64 <960000000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <672000>;
+ 		};
+ 		opp-1036800000 {
+ 			opp-hz = /bits/ 64 <1036800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <672000>;
+ 		};
+ 		opp-1113600000 {
+ 			opp-hz = /bits/ 64 <1113600000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <825600>;
+ 		};
+ 		opp-1190400000 {
+ 			opp-hz = /bits/ 64 <1190400000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <825600>;
+ 		};
+ 		opp-1228800000 {
+ 			opp-hz = /bits/ 64 <1228800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <902400>;
+ 		};
+ 		opp-1324800000 {
+ 			opp-hz = /bits/ 64 <1324800000>;
+ 			opp-supported-hw = <0xd>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1056000>;
+ 		};
+ 		opp-1363200000 {
+ 			opp-hz = /bits/ 64 <1363200000>;
+ 			opp-supported-hw = <0x2>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1132800>;
+ 		};
+ 		opp-1401600000 {
+ 			opp-hz = /bits/ 64 <1401600000>;
+ 			opp-supported-hw = <0xd>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1132800>;
+ 		};
+ 		opp-1478400000 {
+ 			opp-hz = /bits/ 64 <1478400000>;
+ 			opp-supported-hw = <0x9>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1190400>;
+ 		};
+ 		opp-1497600000 {
+ 			opp-hz = /bits/ 64 <1497600000>;
+ 			opp-supported-hw = <0x04>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1305600>;
+ 		};
+ 		opp-1593600000 {
+ 			opp-hz = /bits/ 64 <1593600000>;
+ 			opp-supported-hw = <0x9>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1382400>;
+ 		};
+ 	};
+ 
+@@ -245,136 +267,163 @@ opp-307200000 {
+ 			opp-hz = /bits/ 64 <307200000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-403200000 {
+ 			opp-hz = /bits/ 64 <403200000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-480000000 {
+ 			opp-hz = /bits/ 64 <480000000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-556800000 {
+ 			opp-hz = /bits/ 64 <556800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-652800000 {
+ 			opp-hz = /bits/ 64 <652800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-729600000 {
+ 			opp-hz = /bits/ 64 <729600000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-806400000 {
+ 			opp-hz = /bits/ 64 <806400000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <384000>;
+ 		};
+ 		opp-883200000 {
+ 			opp-hz = /bits/ 64 <883200000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <460800>;
+ 		};
+ 		opp-940800000 {
+ 			opp-hz = /bits/ 64 <940800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <537600>;
+ 		};
+ 		opp-1036800000 {
+ 			opp-hz = /bits/ 64 <1036800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <595200>;
+ 		};
+ 		opp-1113600000 {
+ 			opp-hz = /bits/ 64 <1113600000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <672000>;
+ 		};
+ 		opp-1190400000 {
+ 			opp-hz = /bits/ 64 <1190400000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <672000>;
+ 		};
+ 		opp-1248000000 {
+ 			opp-hz = /bits/ 64 <1248000000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <748800>;
+ 		};
+ 		opp-1324800000 {
+ 			opp-hz = /bits/ 64 <1324800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <825600>;
+ 		};
+ 		opp-1401600000 {
+ 			opp-hz = /bits/ 64 <1401600000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <902400>;
+ 		};
+ 		opp-1478400000 {
+ 			opp-hz = /bits/ 64 <1478400000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <979200>;
+ 		};
+ 		opp-1555200000 {
+ 			opp-hz = /bits/ 64 <1555200000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1056000>;
+ 		};
+ 		opp-1632000000 {
+ 			opp-hz = /bits/ 64 <1632000000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1190400>;
+ 		};
+ 		opp-1708800000 {
+ 			opp-hz = /bits/ 64 <1708800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1228800>;
+ 		};
+ 		opp-1785600000 {
+ 			opp-hz = /bits/ 64 <1785600000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1305600>;
+ 		};
+ 		opp-1804800000 {
+ 			opp-hz = /bits/ 64 <1804800000>;
+ 			opp-supported-hw = <0xe>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1305600>;
+ 		};
+ 		opp-1824000000 {
+ 			opp-hz = /bits/ 64 <1824000000>;
+ 			opp-supported-hw = <0x1>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1382400>;
+ 		};
+ 		opp-1900800000 {
+ 			opp-hz = /bits/ 64 <1900800000>;
+ 			opp-supported-hw = <0x4>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1305600>;
+ 		};
+ 		opp-1920000000 {
+ 			opp-hz = /bits/ 64 <1920000000>;
+ 			opp-supported-hw = <0x1>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1459200>;
+ 		};
+ 		opp-1996800000 {
+ 			opp-hz = /bits/ 64 <1996800000>;
+ 			opp-supported-hw = <0x1>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1593600>;
+ 		};
+ 		opp-2073600000 {
+ 			opp-hz = /bits/ 64 <2073600000>;
+ 			opp-supported-hw = <0x1>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1593600>;
+ 		};
+ 		opp-2150400000 {
+ 			opp-hz = /bits/ 64 <2150400000>;
+ 			opp-supported-hw = <0x1>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1593600>;
+ 		};
+ 	};
+ 
+@@ -3563,6 +3612,7 @@ cbf: clock-controller@9a11000 {
+ 			reg = <0x09a11000 0x10000>;
+ 			clocks = <&rpmcc RPM_SMD_BB_CLK1>, <&apcs_glb>;
+ 			#clock-cells = <0>;
++			#interconnect-cells = <1>;
+ 		};
+ 
+ 		intc: interrupt-controller@9bc0000 {
 -- 
 2.30.2
 
