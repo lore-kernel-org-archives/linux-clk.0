@@ -2,96 +2,115 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DEAFC46467
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 19:26:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71FB1C46467
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 19:40:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233812AbjAKT0q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Jan 2023 14:26:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39208 "EHLO
+        id S234545AbjAKTkV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Jan 2023 14:40:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229869AbjAKT0l (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 14:26:41 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F15F0E03F;
-        Wed, 11 Jan 2023 11:26:40 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A4E31B81BB1;
-        Wed, 11 Jan 2023 19:26:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 497F8C433D2;
-        Wed, 11 Jan 2023 19:26:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673465198;
-        bh=NleARjxyAqOU4E6Gc4WXlvYzEESeAOLR01W4bjxV+cc=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=FFizbUFjr0opSJqhFyCNSRcRyDH0Nt5qYeQZ9YVixe2JFLQYnl+vnZE0t3ILTF13N
-         o/h+Sbe9P/l2tM+0G4WbE40GgnH5O79Xvxgru5YnHx+ks+B5RA9HoxHqRbAFU92B93
-         hjP966MNpL/3APC6MaBrLCm1BQAQdfmE2l9GihclZmCWt5qHBE3/u4/+qxajjA8NHt
-         0OTBOnEb9C/S2vHZeQ2avlpR+R6uQdZ+npqf/aB+qQLfMLvUBf5heY068jekx7x9dg
-         Vl9w0Aw4n51I3pzfdmQgSzdY8l6gd5P3m0B1x/fcCHCk+yD1PX41/7oI4w+fE/kXcZ
-         C75nPSknhDygg==
-Message-ID: <2ff36d115e8d29af631e60d1861ae2a7.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S234693AbjAKTkK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 14:40:10 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4011EE0A8;
+        Wed, 11 Jan 2023 11:40:09 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id g19-20020a05600c4ed300b003d9eb1dbc0aso10550390wmq.3;
+        Wed, 11 Jan 2023 11:40:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zqjyIjqa21DKlLc9aiLyfHVjAwLQSQqAdSY+ejwIkis=;
+        b=cyZj3gnrvmF8CnpQxy9/fPUf4R722i8raRiSVDtidZIzrJ6zAHa8P9TQTyQvB6Qp9i
+         Mzq19yoP8G+5PhJl9UfKr6Hgy5oPu1chk6+ZLnkyoeCpbNycrTMAOvCCAobNvLUY38en
+         YNTuuYKbGI4J2xwwVchiD2que80nEawIqs8NLOenb+ndIN93950B2EXXec1DdPVus4pb
+         FXYbQHghxWEmsL053HHODj4vm+by7AZLaxhKz1mm/Kgy39KaECIMekfmqF7Y9p3DTdr+
+         ngDSSQPDMT7jk163/nhXbFqBT7eDNhy7s9fF0jF7wJ6kjD6+V/QJPgPmaIYxRW0oetor
+         n5Gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zqjyIjqa21DKlLc9aiLyfHVjAwLQSQqAdSY+ejwIkis=;
+        b=sbWIAifyNADCTxjSvAFU8NRo5DORgqUfRHKirJgION4BGSEy2V6vjVZheW0/nmMfx2
+         JBT1vdZH3VIDrNrv3PVZim+WYWPbRzALrWUWzlq/KLKKW/RapP4lUcRAZWjrcbdx5S+t
+         /RIl7liPy2/vhWAR6mLuDG82v42UO5vgrc2ASjyTWhGE8r7KgC+QSstlK9aKAE2L7zHG
+         HbuiYLm5a00RHvwzNFlEx9E2kN3HKkmKmIf056inZ1+obyEt5xzCYcyAHD9V8lKnhi3f
+         OI1PrS3NNq/KIHGZkAjcwgSK7ZJrQ1ZK8WB/69+n7BGyNtAAUHfHxDm6NmNbrDW1h97p
+         ooVg==
+X-Gm-Message-State: AFqh2krhanEd6xYDjQa7gyRnC+uLAFhlbDFIEM5RfMOFpcW3aVHm9hBT
+        ESulV5UgKmM4wR7LXXSTykY=
+X-Google-Smtp-Source: AMrXdXs56CDgvt1nUOLqLqObRvQcTxebbICW2BYjPDtCRRSWfu/8YL2yfyo7sbrGuI8gr7QcbEVZTQ==
+X-Received: by 2002:a05:600c:42d5:b0:3d6:e790:c9a0 with SMTP id j21-20020a05600c42d500b003d6e790c9a0mr63567225wme.10.1673466007570;
+        Wed, 11 Jan 2023 11:40:07 -0800 (PST)
+Received: from localhost.localdomain (93-34-92-88.ip49.fastwebnet.it. [93.34.92.88])
+        by smtp.googlemail.com with ESMTPSA id p11-20020a05600c358b00b003cfa3a12660sm7815451wmq.1.2023.01.11.11.40.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jan 2023 11:40:07 -0800 (PST)
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Christian Marangi <ansuelsmth@gmail.com>
+Subject: [RESEND PATCH] clk: Warn and add workaround on misuse of .parent_data with .name only
+Date:   Wed, 11 Jan 2023 20:39:57 +0100
+Message-Id: <20230111193957.27650-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230111192004.2509750-5-dmitry.baryshkov@linaro.org>
-References: <20230111192004.2509750-1-dmitry.baryshkov@linaro.org> <20230111192004.2509750-5-dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH 04/13] clk: qcom: cpu-8996: support using GPLL0 as SMUX input
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Date:   Wed, 11 Jan 2023 11:26:36 -0800
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dmitry Baryshkov (2023-01-11 11:19:55)
-> In some cases the driver might need using GPLL0 to drive CPU clocks.
-> Bring it in through the sys_apcs_aux clock.
->=20
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/clk/qcom/clk-cpu-8996.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->=20
-> diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8=
-996.c
-> index d51965fda56d..0e0c00d44c6f 100644
-> --- a/drivers/clk/qcom/clk-cpu-8996.c
-> +++ b/drivers/clk/qcom/clk-cpu-8996.c
-> @@ -12,6 +12,8 @@
->   *                              +-------+
->   *               XO             |       |
->   *           +------------------>0      |
-> + *               SYS_APCS_AUX   |       |
-> + *           +------------------>3      |
->   *                              |       |
->   *                    PLL/2     | SMUX  +----+
->   *                      +------->1      |    |
-> @@ -310,20 +312,29 @@ static const struct clk_ops clk_cpu_8996_pmux_ops =
-=3D {
->         .determine_rate =3D clk_cpu_8996_pmux_determine_rate,
->  };
-> =20
-> +static const struct parent_map smux_parent_map[] =3D {
-> +       { .cfg =3D 0, }, /* xo */
-> +       { .cfg =3D 1, }, /* pll */
-> +       { .cfg =3D 3, }, /* sys_apcs_aux */
-> +};
-> +
->  static const struct clk_parent_data pwrcl_smux_parents[] =3D {
->         { .fw_name =3D "xo" },
->         { .hw =3D &pwrcl_pll_postdiv.hw },
-> +       { .fw_name =3D "sys_apcs_aux" },
+By a simple mistake in a .parent_names to .parent_data conversion it was
+found that clk core assume fw_name is always provided with a parent_data
+struct for each parent and never fallback to .name to get parent name even
+if declared.
 
-Is there a binding update?
+This is caused by clk_core_get that only checks for parent .fw_name and
+doesn't handle .name.
+
+While it's sane to request the dev to correctly do the conversion and
+add both .fw_name and .name in a parent_data struct, it's not sane to
+silently drop parents without a warning.
+
+Fix this in 2 ways. Add a kernel warning when a wrong implementation is
+used and copy .name in .fw_name in parent map populate function to
+handle clk problems and malfunctions.
+
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ drivers/clk/clk.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 57b83665e5c3..dccd4ea6f692 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -4015,10 +4015,21 @@ static int clk_core_populate_parent_map(struct clk_core *core,
+ 			ret = clk_cpy_name(&parent->name, parent_names[i],
+ 					   true);
+ 		} else if (parent_data) {
++			const char *parent_name;
++
+ 			parent->hw = parent_data[i].hw;
+ 			parent->index = parent_data[i].index;
++			parent_name = parent_data[i].fw_name;
++
++			if (!parent_name && parent_data[i].name) {
++				WARN(1, "Empty .fw_name with .name in %s's .parent_data. Using .name for .fw_name declaration.\n",
++				     core->name);
++				parent_name = parent_data[i].name;
++			}
++
+ 			ret = clk_cpy_name(&parent->fw_name,
+-					   parent_data[i].fw_name, false);
++					   parent_name, false);
++
+ 			if (!ret)
+ 				ret = clk_cpy_name(&parent->name,
+ 						   parent_data[i].name,
+-- 
+2.37.2
+
