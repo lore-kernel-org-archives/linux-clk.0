@@ -2,145 +2,127 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 012ADC5479D
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 04:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D18C46467
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 05:19:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229581AbjAKEto (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Jan 2023 23:49:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43680 "EHLO
+        id S235715AbjAKFTA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Jan 2023 00:19:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230274AbjAKEtm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 23:49:42 -0500
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A8855F9F
-        for <linux-clk@vger.kernel.org>; Tue, 10 Jan 2023 20:49:41 -0800 (PST)
-Received: by mail-yb1-xb29.google.com with SMTP id p188so13939335yba.5
-        for <linux-clk@vger.kernel.org>; Tue, 10 Jan 2023 20:49:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=dulW+mDs3mdxOnkK4txbbtBe+bJDNLN5lWpQRHpUhwU=;
-        b=oc2Qh78TxCslQnFWhWEWZfT0R7/L81Tf4Ck0tqIy61YLWrnYxZpNVrnwyDw5RO/5Xi
-         +pQKaxWO3i3K8Kt556j1+zambVmsBZ2SuwfDhoayvrIsoUU8Xdj6sbY7vhyBgOW0LFsE
-         aCcASrXeLhtf2ZsGXS2eV8pQ1+Bdbjzt7JRk02/aQMSepIwuQR2llZV2fYwWQplYVV6E
-         DtomNCteAO29BjzxGwmcWvqw80nyY/VVnif0hLXfN3/rEQBiGUsjdVEn91Vh/BBRp0JK
-         fTjWQWyu4d+MCIwpw0EPs361Hh3Vnxp1nOLZOKvSO+K4ahfsBVit0Q1VzjaZEm02FkdG
-         gt2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dulW+mDs3mdxOnkK4txbbtBe+bJDNLN5lWpQRHpUhwU=;
-        b=Iy6RXgxm3kTFvdhQYnLyCPRQI62KUsrU2iPznkPiZNROVLwHcxYIxbSEkeWnfAChYj
-         BRIgGLoaALe2dRw1nItSGKVrmOJACnYnx+TXOhBgAcV06FOkXVE8/4q63li7CXpnMjvJ
-         LoYhNAtLJWaellhn7za/pz60FXx1qJ8lA9MjuJI551SKjdKVKAQzQjtQieWkk6DsmS14
-         vTk2f8LBUDPJGmuVkgRFzgzuuzB8rzWfnaaVlL3W3YxyXJ0GrjU5jpQR5TNqBq1bTkJw
-         2jZJ5Ksbc1/XeSlU9W4LTWXgOSMrq0ZJZGOAPtVtGX9R3uwQ0XfFLN92Fo71MRql2GrV
-         mmDQ==
-X-Gm-Message-State: AFqh2koMlFnVSM1qxFApu1x1Ga5wRgEB1coKG7nsn/OFksaXmJf2tDVu
-        WGS1SWaOLLQwhdV4vs4IvyytXHa+WMKp1fF5B9U4Hg==
-X-Google-Smtp-Source: AMrXdXuj5GAZaQZyRcxNYxlWIZXOHCEuF32dh1iXsTwC+LLssWh/vzu3u3pffIqEXRbqcJJU8/zCZJ5do1t0KebEBN4=
-X-Received: by 2002:a25:c404:0:b0:757:591e:cee3 with SMTP id
- u4-20020a25c404000000b00757591ecee3mr7659274ybf.15.1673412580422; Tue, 10 Jan
- 2023 20:49:40 -0800 (PST)
+        with ESMTP id S229931AbjAKFRx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 00:17:53 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 893EFEE13;
+        Tue, 10 Jan 2023 21:09:46 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4C379B81AC7;
+        Wed, 11 Jan 2023 05:09:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6424FC433F0;
+        Wed, 11 Jan 2023 05:09:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673413784;
+        bh=GEC0JQH87H858q8GAXq/MIF3wsD1y0o4oewzOkpAZxA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=rWz6NUpYnJPbypZae+uubV+oj5JTFGU/AruG/75igWwFzeVHVydm02LMIeAoH0yIB
+         bUEEqWOm4ef8G5qU6pOYyNbfripIoyGHcG4Y0JZHgVc9YPDihP0HwpMaN0lJoY2l+x
+         GpFnL7unX3ZHI0PepK9kD1RTsee5bsJFjiXzok2mGzt4K1fkfS3O63gXWFA04MgVWy
+         2vsTNqMK9TYLrYJCsFtn/Afy2J7JT89OIfSm8wG2gIkQubRA1Gz0TLC60JhZtSQY+/
+         xyAojWSl7ma2xOK4tDSdNw4bk2hWeYItMn9/BHgl7x1FvrK8r+hKAplHorGWTrQnYF
+         8SKsvCf1pzJ9w==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     quic_tdas@quicinc.com, dmitry.baryshkov@linaro.org,
+        konrad.dybcio@linaro.org, agross@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 00/21] clk: qcom: small cleanup
+Date:   Tue, 10 Jan 2023 23:09:07 -0600
+Message-Id: <167341377717.2246479.15825009712395547724.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20230103145515.1164020-1-dmitry.baryshkov@linaro.org>
+References: <20230103145515.1164020-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-References: <20221228203555.3130090-1-dmitry.baryshkov@linaro.org> <20230111044715.5nbxasuhlqv6t2fw@builder.lan>
-In-Reply-To: <20230111044715.5nbxasuhlqv6t2fw@builder.lan>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Wed, 11 Jan 2023 06:49:29 +0200
-Message-ID: <CAA8EJppzHoHp5BVBJN-ZF0OmwbtKfxhX_qTEPc5cwSnLTvTcJQ@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: qcom: common: use parent_hws in _qcom_cc_register_board_clk()
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 11 Jan 2023 at 06:47, Bjorn Andersson <andersson@kernel.org> wrote:
->
-> On Wed, Dec 28, 2022 at 10:35:55PM +0200, Dmitry Baryshkov wrote:
-> > Switch _qcom_cc_register_board_clk() to use parent_hws.
-> >
->
-> There's more to this patch then this short sentence, please describe it
-> further.
+On Tue, 3 Jan 2023 16:54:54 +0200, Dmitry Baryshkov wrote:
+> While reviewing dispcc-sm8550 I noticed that existing drivers also have
+> several small points for improvement.
+> 
+> Dmitry Baryshkov (21):
+>   clk: qcom: dispcc-sm8450: switch to parent_hws
+>   clk: qcom: dispcc-sc7180: switch to parent_hws
+>   clk: qcom: dispcc-sm6375: switch to parent_hws
+>   clk: qcom: camcc-sc7280: switch to parent_hws
+>   clk: qcom: camcc-sm8450: switch to parent_hws
+>   clk: qcom: gcc-msm8939: switch to parent_hws
+>   clk: qcom: gcc-msm8976: switch to parent_hws
+>   clk: qcom: gcc-sc7180: switch to parent_hws
+>   clk: qcom: gcc-sc7280: switch to parent_hws
+>   clk: qcom: gcc-sdx65: switch to parent_hws
+>   clk: qcom: gcc-sm6375: switch to parent_hws
+>   clk: qcom: gcc-sm8250: switch to parent_hws
+>   clk: qcom: gcc-sm8450: switch to parent_hws
+>   clk: qcom: gcc-sm8550: switch to parent_hws
+>   clk: qcom: gpucc-msm8998: switch to parent_hws
+>   clk: qcom: gpucc-sc7180: switch to parent_hws
+>   clk: qcom: lpasscc-sc7180: switch to parent_hws
+>   clk: qcom: dispcc-sm8250: switch to devm_pm_runtime_enable
+>   clk: qcom: dispcc-sm8450: switch to devm_pm_runtime_enable
+>   clk: qcom: lpasscc-sc7280: switch to devm_pm_runtime_enable
+>   clk: qcom: videocc-sm8250: switch to devm_pm_runtime_enable
+> 
+> [...]
 
-True, I'll fix it for v3.
+Applied, thanks!
 
->
-> And given Dan's reported-by, I must assume that there's an issue with
-> the current code. Is there a Fixes?
+[01/21] clk: qcom: dispcc-sm8450: switch to parent_hws
+        commit: 5c0df30cb3e431b9bcc10b457bb9fda388842035
+[02/21] clk: qcom: dispcc-sc7180: switch to parent_hws
+        commit: a9e46af1718a206b79f8801ad258e773cec81c49
+[03/21] clk: qcom: dispcc-sm6375: switch to parent_hws
+        commit: 0e042233bd56e8731fc9455cca391fce9e7468ec
+[04/21] clk: qcom: camcc-sc7280: switch to parent_hws
+        commit: 17f0b48f8de68776f1ba7498695f26262016cb44
+[05/21] clk: qcom: camcc-sm8450: switch to parent_hws
+        commit: a2a796c1d6859b32c686388d762612b03d9a2bdb
+[06/21] clk: qcom: gcc-msm8939: switch to parent_hws
+        commit: 3f1c24b9674a1cd30fdd3d66f9244a08c8f0f728
+[07/21] clk: qcom: gcc-msm8976: switch to parent_hws
+        commit: fec6a7b5454baa41b5879b2763e952efc57c6ba6
+[08/21] clk: qcom: gcc-sc7180: switch to parent_hws
+        commit: bbedddafa069773fdb085155117c873343959b50
+[09/21] clk: qcom: gcc-sc7280: switch to parent_hws
+        commit: a28c07fc915bebc0f79ab9957f7a7a4077cef22a
+[10/21] clk: qcom: gcc-sdx65: switch to parent_hws
+        commit: 76ffb1921084ae64ccfe107bef5e5d4b351ebc55
+[11/21] clk: qcom: gcc-sm6375: switch to parent_hws
+        commit: 5d0e6922b8a300de941bd552d95365ec2892f7ad
+[12/21] clk: qcom: gcc-sm8250: switch to parent_hws
+        commit: 6df8ecd018ae6012ee8f402c342ad5bb23106487
+[13/21] clk: qcom: gcc-sm8450: switch to parent_hws
+        commit: 1b299e87b1c731a77ec397da15cefc5acbeb1f15
+[14/21] clk: qcom: gcc-sm8550: switch to parent_hws
+        commit: 18aa0dc22d2b09eda19312aed82fe02f80d616e2
+[15/21] clk: qcom: gpucc-msm8998: switch to parent_hws
+        commit: 353b18dca2c0abf7db85e59c6bdc459543317b43
+[16/21] clk: qcom: gpucc-sc7180: switch to parent_hws
+        commit: 77e1e697cf380ab970613d517fa1df79ec5d5e54
+[17/21] clk: qcom: lpasscc-sc7180: switch to parent_hws
+        commit: 7e5c218f33a4e10f982e08556ab1a9aacc4d008e
+[18/21] clk: qcom: dispcc-sm8250: switch to devm_pm_runtime_enable
+        commit: 009d43686ec6cfd6ceb7ef6a940132232268aa8e
+[19/21] clk: qcom: dispcc-sm8450: switch to devm_pm_runtime_enable
+        commit: b69069c3ff68ff39aa182a901db89b0fdcfefa02
+[20/21] clk: qcom: lpasscc-sc7280: switch to devm_pm_runtime_enable
+        commit: f9048217a48cd86c1dd32e0e9b5ad204896b1343
+[21/21] clk: qcom: videocc-sm8250: switch to devm_pm_runtime_enable
+        commit: 68714ad80829dc34b7db71819bd8b908ecdd7222
 
-No. Dan reported an issue with v1, thus his Reported-by was included into v2.
-
->
-> Regards,
-> Bjorn
->
-> > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >
-> > Changes since v1:
-> > - Properly fix the clock's parent data in case parent clock is present
-> >   in the dtsi.
-> >
-> > ---
-> >  drivers/clk/qcom/common.c | 11 +++++++++--
-> >  1 file changed, 9 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-> > index 75f09e6e057e..9f2bd37c9540 100644
-> > --- a/drivers/clk/qcom/common.c
-> > +++ b/drivers/clk/qcom/common.c
-> > @@ -133,7 +133,7 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
-> >       struct device_node *node = NULL;
-> >       struct device_node *clocks_node;
-> >       struct clk_fixed_factor *factor;
-> > -     struct clk_fixed_rate *fixed;
-> > +     struct clk_fixed_rate *fixed = NULL;
-> >       struct clk_init_data init_data = { };
-> >       int ret;
-> >
-> > @@ -161,6 +161,8 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
-> >       of_node_put(node);
-> >
-> >       if (add_factor) {
-> > +             struct clk_parent_data parent_data;
-> > +
-> >               factor = devm_kzalloc(dev, sizeof(*factor), GFP_KERNEL);
-> >               if (!factor)
-> >                       return -EINVAL;
-> > @@ -168,8 +170,13 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
-> >               factor->mult = factor->div = 1;
-> >               factor->hw.init = &init_data;
-> >
-> > +             if (fixed)
-> > +                     parent_data.hw = &fixed->hw;
-> > +             else
-> > +                     parent_data.name = path;
-> > +
-> >               init_data.name = name;
-> > -             init_data.parent_names = &path;
-> > +             init_data.parent_data = &parent_data;
-> >               init_data.num_parents = 1;
-> >               init_data.flags = 0;
-> >               init_data.ops = &clk_fixed_factor_ops;
-> > --
-> > 2.39.0
-> >
-
-
-
+Best regards,
 -- 
-With best wishes
-Dmitry
+Bjorn Andersson <andersson@kernel.org>
