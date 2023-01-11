@@ -2,89 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B63BC46467
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Jan 2023 22:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11435C677F1
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 02:27:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231612AbjAJWNv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Jan 2023 17:13:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34812 "EHLO
+        id S229875AbjAKC10 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Jan 2023 21:27:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234773AbjAJWNs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 17:13:48 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45DC45CF96;
-        Tue, 10 Jan 2023 14:13:47 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 050CFB819B0;
-        Tue, 10 Jan 2023 22:13:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFA27C433F0;
-        Tue, 10 Jan 2023 22:13:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673388824;
-        bh=hOR9fEFSY9mL4tLhalxVJ/enA1aE8+wwDQ0kW/9dC9o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=smFCHLaRwvg8MPuR6WknR55mdj/li5sZ+0+TkfnW88VKvzyb2nPX9YqzvN5zgmmII
-         aoKrJnvaJdCvyJNKFdw8x+4E0GmSN9Fw5IjNNQoD66sl54Jw4clOhONQyucE15NQ6m
-         1uNxRFeuFAXWawPgjqoruCRHYaE+KVXKbT/ovPth5APXnbcZ94hiIz9lB7OKhAxdH0
-         aRidZxNnS3OtIoLxyGfCRQC7sL56pxe99ekQ4MAExN3WFmpbv/r9Xz4nJkdONEhiB8
-         0XNVADSw5qRBpQrAR/O2nU2/wpJBiRZYSaJ5GKRTZTjWoY0YogD5R/lLb7IJ4FKu2l
-         EmYxY5ayjxuFg==
-Date:   Tue, 10 Jan 2023 16:13:41 -0600
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 15/21] clk: qcom: gpucc-msm8998: switch to parent_hws
-Message-ID: <20230110221341.h4wzucm54q27q7he@builder.lan>
-References: <20230103145515.1164020-1-dmitry.baryshkov@linaro.org>
- <20230103145515.1164020-16-dmitry.baryshkov@linaro.org>
- <CAOCk7Nr4smGnQS-yh1hGKFFXzeUUt86JSdiuoSun7vJ11z9SWQ@mail.gmail.com>
- <e2493080-f7fd-50de-173f-2e46fa846e23@linaro.org>
+        with ESMTP id S235460AbjAKC1K (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 21:27:10 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D02016457
+        for <linux-clk@vger.kernel.org>; Tue, 10 Jan 2023 18:27:08 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id dw9so12972785pjb.5
+        for <linux-clk@vger.kernel.org>; Tue, 10 Jan 2023 18:27:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WdQ1c6eIJ8Pfh7VJVWDgTo7nFYYtcTyxyIymvuRY7c8=;
+        b=OWz6nrL6Wuyi/TWAJns/mDs7pQZjgqFrZ9wUn5e/fzATmgMoVuVRsjAwmOSWW2+K+N
+         z8zAIrFngkWZMTl1cShrD0INkGiavt+5wH/F0YAttPa9YJAH62VE9kTl5UuW+bXCLqEc
+         H4K73gA1/jtHMuUOJkoIYBm8LvPP/GHCWxY4Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WdQ1c6eIJ8Pfh7VJVWDgTo7nFYYtcTyxyIymvuRY7c8=;
+        b=y0W2gFDrfROtwnkl2Jo3NpXTqjEyBa98FZx5bAkoRpTE6pBFnYODEn3W3LxUD23HLk
+         Rxb9XXkXsUbAWszZdYvDPc5ojuTVe7nZkW4CndPvIr+Jk3dXXAqaWmTgNNibgKMrVrkp
+         Sc9M1TSRFVvY3Q93b5u9P4nLMSy6yvLJPKFX5D+Jv/dFjQPYu5mJAJlH+3xSMp3aO3id
+         VMbNqdfGESj/PsbDF1Q5lWYWCHXAVrjjv/KRMDKlYp1m0jZcncQu1hQsMwQePSSYtVmO
+         k034Rt9gYP20UnuqAlJ+8KqpFO+kk8yiDG406IhB5tLIU75sypzDqFtehs5hNU9pL+S9
+         xKTw==
+X-Gm-Message-State: AFqh2krF/VuqQMb3/xMYe64KV8j77WfrO3HY1tcgbfCdadAue/XZGktZ
+        xPOqPIOOWKKA0WLfwnBi94HrdQ==
+X-Google-Smtp-Source: AMrXdXvXToYtzezykd+4mKc0RKkAYBPN8uoLeLVJ1EmSVDKfwhrNLNUGBwdmAi/c8oZEsXTdioXOUw==
+X-Received: by 2002:a05:6a20:548e:b0:ac:19cf:1553 with SMTP id i14-20020a056a20548e00b000ac19cf1553mr96271314pzk.61.1673404028343;
+        Tue, 10 Jan 2023 18:27:08 -0800 (PST)
+Received: from google.com (2001-b011-0003-1479-d038-ab51-d40d-2b1f.dynamic-ip6.hinet.net. [2001:b011:3:1479:d038:ab51:d40d:2b1f])
+        by smtp.gmail.com with ESMTPSA id t2-20020a1709027fc200b00192f9991e51sm8649128plb.251.2023.01.10.18.27.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jan 2023 18:27:08 -0800 (PST)
+Date:   Wed, 11 Jan 2023 10:27:01 +0800
+From:   Chen-Yu Tsai <wenst@chromium.org>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        johnson.wang@mediatek.com, miles.chen@mediatek.com,
+        fparent@baylibre.com, chun-jie.chen@mediatek.com,
+        sam.shih@mediatek.com, y.oudjana@protonmail.com,
+        nfraprado@collabora.com, rex-bc.chen@mediatek.com,
+        ryder.lee@kernel.org, daniel@makrotopia.org,
+        jose.exposito89@gmail.com, yangyingliang@huawei.com,
+        pablo.sun@mediatek.com, msp@baylibre.com, weiyi.lu@mediatek.com,
+        ikjn@chromium.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH v2 09/23] clk: mediatek: mt8173: Remove
+ mtk_clk_enable_critical()
+Message-ID: <Y74edWvIF6I40ANt@google.com>
+References: <20221223094259.87373-1-angelogioacchino.delregno@collabora.com>
+ <20221223094259.87373-10-angelogioacchino.delregno@collabora.com>
+ <CAGXv+5Hk8kguJ=joLXF3OrRXxGvuFAJFKYoK+y7q+wqDBS-wtQ@mail.gmail.com>
+ <8bc4330b-0cfe-222b-7b8a-35fd15a30a52@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e2493080-f7fd-50de-173f-2e46fa846e23@linaro.org>
+In-Reply-To: <8bc4330b-0cfe-222b-7b8a-35fd15a30a52@collabora.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 03, 2023 at 06:00:28PM +0200, Dmitry Baryshkov wrote:
-> On 03/01/2023 17:08, Jeffrey Hugo wrote:
-> > On Tue, Jan 3, 2023 at 7:56 AM Dmitry Baryshkov
-> > <dmitry.baryshkov@linaro.org> wrote:
+On Tue, Jan 10, 2023 at 01:32:34PM +0100, AngeloGioacchino Del Regno wrote:
+> Il 30/12/22 05:58, Chen-Yu Tsai ha scritto:
+> > On Fri, Dec 23, 2022 at 5:43 PM AngeloGioacchino Del Regno
+> > <angelogioacchino.delregno@collabora.com> wrote:
 > > > 
-> > > Change several entries of parent_data to use parent_hws instead, which
-> > > results in slightly more ovbious code.
+> > > The entire point of mtk_clk_enable_critical() is to raise the refcount
+> > > of some clocks so that they won't be turned off during runtime, but
+> > > this is the same as what the CLK_IS_CRITICAL flag does.
+> > > 
+> > > Set CLK_IS_CRITICAL on all of the critical clocks and remove the
+> > > aforementioned function as a cleanup.
+> > > 
+> > > No functional changes.
+> > > 
+> > > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > > 
-> > obvious -> obvious
 > > 
-> > Also, you are changing one of two parent_data structs in this file.
-> > That's not "several".  It's really not clear why you are touching one,
-> > but not the other.  Can you be more specific about what is going on in
-> > this particular file?
+> > Looks good to me,
+> > 
+> > Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> > 
+> > However, if you move this patch before the previous one ...
+> > 
+> > > ---
+> > >   drivers/clk/mediatek/clk-mt8173.c | 41 ++++++++++++-------------------
+> > >   1 file changed, 16 insertions(+), 25 deletions(-)
+> > > 
+> > > diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
+> > > index 70cdc0719658..02231f8ba6d9 100644
+> > > --- a/drivers/clk/mediatek/clk-mt8173.c
+> > > +++ b/drivers/clk/mediatek/clk-mt8173.c
 > 
-> The other struct has .hw and .fw_data entries so it can not be switched to
-> just clk_hw enumeration.
+> > > @@ -846,23 +852,8 @@ static const struct mtk_clk_rst_desc clk_rst_desc[] = {
+> > >          }
+> > >   };
+> > > 
+> > > -static struct clk_hw_onecell_data *mt8173_top_clk_data;
+> > > -static struct clk_hw_onecell_data *mt8173_pll_clk_data;
+> > 
+> > You wouldn't have to touch these lines twice?
+> > 
 > 
-> I agree, that one is not 'several' (yeah, I was just using template for
-> commit messages), I can change that for v2.
-> 
+> That's true, but please,  I prefer not to, as the patches are ordered for
+> eas(y/ier) bisectability in case anything happens.
 
-While I dislike the copy-paste commit message, there's little point in
-spending more effort on it. I fixed the commit message of this one and
-picked the whole series.
-
-Thanks Dmitry,
-Bjorn
-
-> -- 
-> With best wishes
-> Dmitry
-> 
+Got it.
