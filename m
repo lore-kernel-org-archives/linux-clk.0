@@ -2,88 +2,235 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88B1CC677F1
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 15:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E5AC5479D
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 16:15:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233800AbjAKP4B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Jan 2023 10:56:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45534 "EHLO
+        id S230465AbjAKQPF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Jan 2023 11:15:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234108AbjAKPz3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 10:55:29 -0500
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EED68272C
-        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 07:55:25 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:fced:c2a7:4b41:d72d])
-        by andre.telenet-ops.be with bizsmtp
-        id 7TvM290071ktn1N01TvMZa; Wed, 11 Jan 2023 16:55:22 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1pFdRf-001aS3-Bs;
-        Wed, 11 Jan 2023 16:55:21 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1pFdRh-003sSw-5M;
-        Wed, 11 Jan 2023 16:55:21 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Sean Anderson <sean.anderson@seco.com>,
-        Marek Vasut <marek.vasut@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-reneas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: clk: vc5: Make SD/OE pin configuration properties not required
-Date:   Wed, 11 Jan 2023 16:55:17 +0100
-Message-Id: <68037ad181991fe0b792f6d003e3e9e538d5ffd7.1673452118.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S232344AbjAKQPE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 11:15:04 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FAD31400C
+        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 08:14:58 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id hw16so26229416ejc.10
+        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 08:14:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZVgO94N/nb0C0chpJhGPxGhX0WKBJe9OSAqLZGN9MPA=;
+        b=TVjIDl188h/cYo2yMId+ghWA1ae7nHMzsfPHhLnY2daGFnW+b3e89R33GuP68rIeAp
+         j3TrKsoUXI4EuEGn3fI+WMO8VFRKMv7OrandqlXq0GxysjHRZ4YcKEcBHbNaiYwtVxFj
+         HVYSg1LD09vSiAgZs/q9kyX1KvJu26kqlxNalwrN6H67diFhZ4MK8SYrmv9ayntnVYNM
+         sk1UEabg3VPMK5+V8GQ0vHbaPhCFQR3hoJJi2xn/936eL3oCvvidmJUp3FA0tJjTMdfJ
+         Pyke+8+TjLrhQU74BqiFcwLqS4N62KEbquTszcNAFDZsv25/gTrBFJRmV8TyE20mHq19
+         e/ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZVgO94N/nb0C0chpJhGPxGhX0WKBJe9OSAqLZGN9MPA=;
+        b=mvdEwiabF6iVozKJnSHdIPw4j3rzULSOqnQ/cfoEBFMbYDg5sJ/yhB3i9yeKAbr+ew
+         04wTTR+44GCV4OegmpVQZw24ylZOhQUkXlf1ujYvsc/dK7N4hYIETMot55ZWl17wxOdG
+         PEqMp2kYK2USOD04hr8kKMRhKrB0cB0LNGorMYcMeUs1AHzciu6JeniaMcBxiQKD8TsC
+         GtKBuDRo84J8w6jeKUT1rJt5/yKtRyUEniWDvngUJ/gD6/yxO7vQCPEbDxXHS6c61ZA0
+         P/3DUggPGUvMKU8aJVWZ6zB5sygt/dGzubIYPET+yVQnkW7wRygeEWqAaS0Bqkk6MH2L
+         XXiA==
+X-Gm-Message-State: AFqh2kqYxqTS9A/O2PZy1Hr6mZRdx+p6NmWSghoUP/6k6KPzUW9wfPDk
+        /RbQHhevvuXAPhWEPCerKvDhOg==
+X-Google-Smtp-Source: AMrXdXuSR36GmVbjDPgUTeX4saKd1sSyRhGvbBjAG2pdjSju/GXYaL2gQ0TWNCxnQ2scE0lImMX/jg==
+X-Received: by 2002:a17:906:524b:b0:7c1:5098:907f with SMTP id y11-20020a170906524b00b007c15098907fmr62080864ejm.61.1673453697040;
+        Wed, 11 Jan 2023 08:14:57 -0800 (PST)
+Received: from localhost ([217.111.27.204])
+        by smtp.gmail.com with ESMTPSA id v19-20020a509553000000b0046cbcc86bdesm6336970eda.7.2023.01.11.08.14.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jan 2023 08:14:56 -0800 (PST)
+Date:   Wed, 11 Jan 2023 17:14:55 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Maciek Machnikowski <maciek@machnikowski.net>,
+        'Vadim Fedorenko' <vfedorenko@novek.ru>,
+        'Jonathan Lemon' <jonathan.lemon@gmail.com>,
+        'Paolo Abeni' <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
+Message-ID: <Y77gf1ekbSMdY83b@nanopsycho>
+References: <Y5MW/7jpMUXAGFGX@nanopsycho>
+ <a8f9792b-93f1-b0b7-2600-38ac3c0e3832@machnikowski.net>
+ <20221209083104.2469ebd6@kernel.org>
+ <Y5czl6HgY2GPKR4v@nanopsycho>
+ <DM6PR11MB46571573010AB727E1BE99AE9BFE9@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <20230110120549.4d764609@kernel.org>
+ <Y75xFlEDCThGtMDq@nanopsycho>
+ <DM6PR11MB4657AC41BBF714A280B578D49BFC9@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <Y77QEajGlJewGKy1@nanopsycho>
+ <DM6PR11MB4657DC9A41A69B71A42DD22F9BFC9@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM6PR11MB4657DC9A41A69B71A42DD22F9BFC9@DM6PR11MB4657.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-"make dtbs_check":
+Wed, Jan 11, 2023 at 04:30:44PM CET, arkadiusz.kubalewski@intel.com wrote:
+>>From: Jiri Pirko <jiri@resnulli.us>
+>>Sent: Wednesday, January 11, 2023 4:05 PM
+>>To: Kubalewski, Arkadiusz <arkadiusz.kubalewski@intel.com>
+>>
+>>Wed, Jan 11, 2023 at 03:16:59PM CET, arkadiusz.kubalewski@intel.com wrote:
+>>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>>Sent: Wednesday, January 11, 2023 9:20 AM
+>>>>
+>>>>Tue, Jan 10, 2023 at 09:05:49PM CET, kuba@kernel.org wrote:
+>>>>>On Mon, 9 Jan 2023 14:43:01 +0000 Kubalewski, Arkadiusz wrote:
+>>>>>> This is a simplified network switch board example.
+>>>>>> It has 2 synchronization channels, where each channel:
+>>>>>> - provides clk to 8 PHYs driven by separated MAC chips,
+>>>>>> - controls 2 DPLLs.
+>>>>>>
+>>>>>> Basically only given FW has control over its PHYs, so also a control
+>>>>over it's
+>>>>>> MUX inputs.
+>>>>>> All external sources are shared between the channels.
+>>>>>>
+>>>>>> This is why we believe it is not best idea to enclose multiple DPLLs
+>>>>with one
+>>>>>> object:
+>>>>>> - sources are shared even if DPLLs are not a single synchronizer chip,
+>>>>>> - control over specific MUX type input shall be controllable from
+>>>>different
+>>>>>> driver/firmware instances.
+>>>>>>
+>>>>>> As we know the proposal of having multiple DPLLs in one object was a
+>>try
+>>>>to
+>>>>>> simplify currently implemented shared pins. We fully support idea of
+>>>>having
+>>>>>> interfaces as simple as possible, but at the same time they shall be
+>>>>flexible
+>>>>>> enough to serve many use cases.
+>>>>>
+>>>>>I must be missing context from other discussions but what is this
+>>>>>proposal trying to solve? Well implemented shared pins is all we need.
+>>>>
+>>>>There is an entity containing the pins. The synchronizer chip. One
+>>>>synchronizer chip contains 1-n DPLLs. The source pins are connected
+>>>>to each DPLL (usually). What we missed in the original model was the
+>>>>synchronizer entity. If we have it, we don't need any notion of somehow
+>>>>floating pins as independent entities being attached to one or many
+>>>>DPLL refcounted, etc. The synchronizer device holds them in
+>>>>straightforward way.
+>>>>
+>>>>Example of a synchronizer chip:
+>>>>https://www.renesas.com/us/en/products/clocks-timing/jitter-attenuators-
+>>>>frequency-translation/8a34044-multichannel-dpll-dco-four-eight-
+>>>>channels#overview
+>>>
+>>>Not really, as explained above, multiple separated synchronizer chips can
+>>be
+>>>connected to the same external sources.
+>>>This is why I wrote this email, to better explain need for references
+>>between
+>>>DPLLs and shared pins.
+>>>Synchronizer chip object with multiple DPLLs would have sense if the pins
+>>would
+>>>only belong to that single chip, but this is not true.
+>>
+>>I don't understand how it is physically possible that 2 pins belong to 2
+>>chips. Could you draw this to me?
+>>
+>
+>Well, sure, I was hoping this is clear, without extra connections on the draw:
 
-    arch/arm64/boot/dts/renesas/r8a77951-salvator-xs.dtb: clock-generator@6a: 'idt,shutdown' is a required property
-	    From schema: Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-    arch/arm64/boot/dts/renesas/r8a77951-salvator-xs.dtb: clock-generator@6a: 'idt,output-enable-active' is a required property
-	    From schema: Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+Okay, now I understand. It is not a shared pin but shared source for 2
+pins.
 
-Versaclock 5 clock generators can have their configuration stored in
-One-Time Programmable (OTP) memory.  Hence there is no need to specify
-DT properties for manual configuration if the OTP has been programmed
-before.  Likewise, the Linux driver does not touch the SD/OE bits if the
-corresponding properties are not specified, cfr. commit d83e561d43bc71e5
-("clk: vc5: Add properties for configuring SD/OE behavior").
 
-Reflect this in the bindings by making the "idt,shutdown" and
-"idt,output-enable-active" properties not required, just like the
-various "idt,*" properties in the per-output child nodes.
+>+----------+                 
+>|i0 - GPS  |--------------\
+>+----------+              |
+>+----------+              |
+>|i1 - SMA1 |------------\ |
+>+----------+            | |
+>+----------+            | |
+>|i2 - SMA2 |----------\ | |
+>+----------+          | | |
+>                      | | |
+>+---------------------|-|-|-------------------------------------------+
+>| Channel A / FW0     | | |     +-------------+   +---+   +--------+  |
+>|                     | | |-i0--|Synchronizer0|---|   |---| PHY0.0 |--|
 
-Fixes: 275e4e2dc0411508 ("dt-bindings: clk: vc5: Add properties for configuring the SD/OE pin")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/clock/idt,versaclock5.yaml | 2 --
- 1 file changed, 2 deletions(-)
+One pin here               ^^^
 
-diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-index 61b246cf5e72aa47..a5472bbfb8d1fdcc 100644
---- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-+++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-@@ -125,8 +125,6 @@ required:
-   - compatible
-   - reg
-   - '#clock-cells'
--  - idt,shutdown
--  - idt,output-enable-active
- 
- allOf:
-   - if:
--- 
-2.34.1
+>|         +---+       | | |     |             |   |   |   +--------+  |
+>| PHY0.0--|   |       | |---i1--|             |---| M |---| PHY0.1 |--|
+>|         |   |       | | |     | +-----+     |   | A |   +--------+  |
+>| PHY0.1--| M |       |-----i2--| |DPLL0|     |   | C |---| PHY0.2 |--|
+>|         | U |       | | |     | +-----+     |   | 0 |   +--------+  |
+>| PHY0.2--| X |--+----------i3--| +-----+     |---|   |---| ...    |--|
+>|         | 0 |  |    | | |     | |DPLL1|     |   |   |   +--------+  |
+>| ...   --|   |  | /--------i4--| +-----+     |---|   |---| PHY0.7 |--|
+>|         |   |  | |  | | |     +-------------+   +---+   +--------+  |
+>| PHY0.7--|   |  | |  | | |                                           |
+>|         +---+  | |  | | |                                           |
+>+----------------|-|--|-|-|-------------------------------------------+
+>| Channel B / FW1| |  | | |     +-------------+   +---+   +--------+  |
+>|                | |  | | \-i0--|Synchronizer1|---|   |---| PHY1.0 |--|
 
+And second pin here        ^^^
+
+There are 2 separate pins. Sure, they need to have the same config as
+they are connected to the same external entity (GPS, SMA1, SMA2).
+
+Perhaps we need to have a board description using dts to draw this
+picture so the drivers can use this schema in order to properly
+configure this?
+
+My point is, you are trying to hardcode the board geometry in the
+driver. Is that correct?
+
+
+>|         +---+  | |  | |       |             |   |   |   +--------+  |
+>| PHY1.0--|   |  | |  | \---i1--|             |---| M |---| PHY1.1 |--|
+>|         |   |  | |  |         | +-----+     |   | A |   +--------+  |
+>| PHY1.1--| M |  | |  \-----i2--| |DPLL0|     |   | C |---| PHY1.2 |--|
+>|         | U |  | |            | +-----+     |   | 1 |   +--------+  |
+>| PHY1.2--| X |  \-|--------i3--| +-----+     |---|   |---| ...    |--|
+>|         | 1 |    |            | |DPLL1|     |   |   |   +--------+  |
+>| ...   --|   |----+--------i4--| +-----+     |---|   |---| PHY1.7 |--|
+>|         |   |                 +-------------+   +---+   +--------+  |
+>| PHY1.7--|   |                                                       |
+>|         +---+                                                       |
+>+---------------------------------------------------------------------+
+>
+>>
+>>>As the pins are shared between multiple DPLLs (both inside 1 integrated
+>>circuit
+>>>and between multiple integrated circuits), all of them shall have current
+>>state
+>>>of the source or output.
+>>>Pins still need to be shared same as they would be inside of one
+>>synchronizer
+>>>chip.
+>>
+>>Do I understand correctly that you connect one synchronizer output to
+>>the input of the second synchronizer chip?
+>
+>No, I don't recall such use case. At least nothing that needs to exposed
+>in the DPLL subsystem itself.
+>
+>BR,
+>Arkadiusz
+>
+>>
+>>>
+>>>BR,
+>>>Arkadiusz
