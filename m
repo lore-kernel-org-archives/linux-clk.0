@@ -2,65 +2,72 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3623C5479D
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 19:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D25DC46467
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 19:52:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235373AbjAKTts (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Jan 2023 14:49:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51158 "EHLO
+        id S234808AbjAKTwz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Jan 2023 14:52:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235509AbjAKTtb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 14:49:31 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81869E0A8;
-        Wed, 11 Jan 2023 11:49:16 -0800 (PST)
+        with ESMTP id S238445AbjAKTwc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 14:52:32 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB0064318C;
+        Wed, 11 Jan 2023 11:50:28 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 25F44B81CCE;
-        Wed, 11 Jan 2023 19:49:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15DB4C433F1;
-        Wed, 11 Jan 2023 19:49:13 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E8EE461E06;
+        Wed, 11 Jan 2023 19:50:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54557C433EF;
+        Wed, 11 Jan 2023 19:50:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673466553;
-        bh=8ITmzr3alPpJcS3hQWDTSyLjBdW7Kev5u5x5E2Dt4Kk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rsrqQnZP29tJIFlVCu4cLzVm6czdxfDfHMybhghkm6d1d9ELhvx3mnynzaYJcNhXC
-         gofgsouzuH9WwAeUqcyt16tnKji6ufjQ7A74276LR8H5S1BopZ437QAwSj8mP8BS+V
-         a3NJ30kc33uGMFwgHmOrY1jBsUI4clDAmr3jukfkAtKHNU2QONPD5vG1WhLOwohxBr
-         snSWhtI45en89ELaLkS8NmTHGrlm47C4pkvmn20beK1njeeZFzHZbiQm3b43Qa4bbV
-         la8hl8bWjaGIcep0Bo6wcEJyS27X4b+zNYSuLQZjPwSNVHbklqwL9NoaO93KefJJIr
-         j/ptxRk7AawNw==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     agross@kernel.org, krzysztof.kozlowski@linaro.org,
-        konrad.dybcio@linaro.org, linux-arm-msm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, marijn.suijten@somainline.org,
-        sboyd@kernel.org, lkp@intel.com, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com
-Subject: Re: [PATCH] clk: qcom: camcc-sm6350: Make camcc_sm6350_hws static
-Date:   Wed, 11 Jan 2023 13:49:03 -0600
-Message-Id: <167346654443.2315924.16045077859789889895.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20230107120434.1902666-1-konrad.dybcio@linaro.org>
-References: <20230107120434.1902666-1-konrad.dybcio@linaro.org>
+        s=k20201202; t=1673466627;
+        bh=1rnb9bDgHwGMTz5A20UrPy/V5pD9T4YnbPxjYPkWHAI=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=i5ZNYw3Ebh8thAcUTckqN52yigjE+h6oq6/G88H0UhzaOGUKGN5vdA+EF5g5rL7pj
+         loRFg/dW095QC7jUpNadqR8MmrXJolYcycA8Kx//51alA7FoceRUaBrRzh5GlseZlX
+         lMOqovMN7GdRjCpbHrKPJfnsP5FMmKGEpQQVDn72iVhpk2sE3zK1Y74CHA59zHZhuH
+         ovS+jC6zQ+K9TgQid6EsDsPw1xUojE9k9Hk1yJzSij/KfyTnCDKhQJ4GbjqHLVl/RH
+         5qBP1zMIfMmf+rTAE7gCglvlgDCy0L7q8bf/1dmfoN2eDSTqZtS4U+QJkVGBLtGIpr
+         Ika4JJdwRndUw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+        id 011FB5C0920; Wed, 11 Jan 2023 11:50:26 -0800 (PST)
+Date:   Wed, 11 Jan 2023 11:50:26 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@meta.com, rostedt@goodmis.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH rcu 09/27] drivers/clk: Remove "select SRCU"
+Message-ID: <20230111195026.GY4028633@paulmck-ThinkPad-P17-Gen-1>
+Reply-To: paulmck@kernel.org
+References: <20230105003759.GA1769545@paulmck-ThinkPad-P17-Gen-1>
+ <20230105003813.1770367-9-paulmck@kernel.org>
+ <c59b64de02161ceeed11b43230cd46d0.sboyd@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c59b64de02161ceeed11b43230cd46d0.sboyd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 7 Jan 2023 13:04:34 +0100, Konrad Dybcio wrote:
-> There's no reason for it not to be static, and some compilers don't
-> like not it being that way. Make it so.
+On Wed, Jan 11, 2023 at 11:37:15AM -0800, Stephen Boyd wrote:
+> Quoting Paul E. McKenney (2023-01-04 16:37:55)
+> > Now that the SRCU Kconfig option is unconditionally selected, there is
+> > no longer any point in selecting it.  Therefore, remove the "select SRCU"
+> > Kconfig statements.
+> > 
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Cc: Stephen Boyd <sboyd@kernel.org>
+> > Cc: <linux-clk@vger.kernel.org>
+> > ---
 > 
-> 
+> Applied to clk-next
 
-Applied, thanks!
+Thank you!  I will drop it from my tree on my next rebase.
 
-[1/1] clk: qcom: camcc-sm6350: Make camcc_sm6350_hws static
-      commit: bfc7486991c2b1b514cee90854af0f90c56b6bf2
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+							Thanx, Paul
