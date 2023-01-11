@@ -2,225 +2,111 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E90C54EBC
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 02:47:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9895C54EBC
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 03:02:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230291AbjAKCr2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Jan 2023 21:47:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50694 "EHLO
+        id S230106AbjAKDCC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Jan 2023 22:02:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229819AbjAKCr0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 21:47:26 -0500
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0816913F6E
-        for <linux-clk@vger.kernel.org>; Tue, 10 Jan 2023 18:47:25 -0800 (PST)
-Received: by mail-pj1-x1029.google.com with SMTP id z4-20020a17090a170400b00226d331390cso15619566pjd.5
-        for <linux-clk@vger.kernel.org>; Tue, 10 Jan 2023 18:47:25 -0800 (PST)
+        with ESMTP id S230035AbjAKDCB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 22:02:01 -0500
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC7CA167FE
+        for <linux-clk@vger.kernel.org>; Tue, 10 Jan 2023 19:02:00 -0800 (PST)
+Received: by mail-lf1-x12a.google.com with SMTP id f34so21439320lfv.10
+        for <linux-clk@vger.kernel.org>; Tue, 10 Jan 2023 19:02:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qzr0JKU+WrNNdmNSTbtISsg/fn4Ggbon1eEakhCke7s=;
-        b=my34k4t+99yjolbLsD13HKjZiz4mbCXBtKZRvjbd1uNo6TqWY8H5Nt9Oa4qK+Bt0D/
-         TCD4Yg2iATIrTq4MpUN1tyH1Cf5tpAPkV2K8U7YoJzAzgajcd6WtnkN7Xz3ShYG6fL0B
-         GJXnSmQ5fx6kLUxyz5afXwBgl+LRZhJqJXXwo=
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PncCxYyvcTnAkGz0YWPtK6aiQnP/pdPnzgEOYBMREc0=;
+        b=HnxJAXe3BGP4muuFIAjvvqS5Qk8pXgbg/5AIIkgggWS6Nk76RwA43qiBfIaGg8DngE
+         rWL77n1EnGYxgkNytK7HwtSC9XlLH0nJEoJjpG7mR4LBcVLwI/Cyb8ND8Z0aTHsoN7Ry
+         waoAWRaKZb1caL91QIcQcRBXA+UmQxL94yTBCvPVES6gmEhMl24q+na5ZzCPZmLCAbNK
+         RUjTBXkS5ruNwzjz8SW5KIuCOcEemr3S+hnzTVJvj1p4xQS1LuzfBJ6lGTc14ek04liV
+         t+e8ZWeovsdl1H0zl6sq/e+iHS51h3s7NGfCd3e1iPEnyAgJcpR7iUeaxFlLHTWUK1w0
+         KJZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qzr0JKU+WrNNdmNSTbtISsg/fn4Ggbon1eEakhCke7s=;
-        b=0mDu0/QPTZQr3iIYWW+0+RGDTBJWj1E+0XhiYqfDhFKc0P1KaOSNHzyQTTZJZP7U4X
-         RAediPC8rTqtsnMBpwLBJEBNPHDqYTX0xlimj7loCksrSUxLO+J59WgiIox+YLok5iKr
-         7gKA/by/AKDc+Q+GZA3XEj7j0oW8EaARNBjpJ+Jvy9Y78QLt5FLBX3GTVm9pIG78HhLM
-         6aVaEZh8zT/q+iVpcqjhxVUdONV5DisPfeNBV99tX0FitBWHuTmho7vouARd/ch02siz
-         Z/F/0SnRXG46R2Bl+lqZLBFeJlmRsC3s2oZ680EaHXvqKAB//ZNns+ALF5LJf2Y9OVL+
-         6PUA==
-X-Gm-Message-State: AFqh2kpY6G6kW2iWgi+B3M54M26HSYihgbzqhtDC5XtRWM5SB7xISnly
-        HYr8c4vwXVL4DTwm3Mw/AQQhTQ==
-X-Google-Smtp-Source: AMrXdXtGHAZBhJxYvt5LLbcwXUDRmIA/eYlKMycH8TioarHtdcbhq3RUtLvz2hTlhRLdWdZsW/nG2A==
-X-Received: by 2002:a05:6a20:13a6:b0:af:9c75:6699 with SMTP id w38-20020a056a2013a600b000af9c756699mr115021236pzh.1.1673405244494;
-        Tue, 10 Jan 2023 18:47:24 -0800 (PST)
-Received: from google.com (2001-b011-0003-1479-d038-ab51-d40d-2b1f.dynamic-ip6.hinet.net. [2001:b011:3:1479:d038:ab51:d40d:2b1f])
-        by smtp.gmail.com with ESMTPSA id r2-20020a634402000000b0046ffe3fea77sm7356985pga.76.2023.01.10.18.47.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jan 2023 18:47:24 -0800 (PST)
-Date:   Wed, 11 Jan 2023 10:47:17 +0800
-From:   Chen-Yu Tsai <wenst@chromium.org>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        johnson.wang@mediatek.com, miles.chen@mediatek.com,
-        fparent@baylibre.com, chun-jie.chen@mediatek.com,
-        sam.shih@mediatek.com, y.oudjana@protonmail.com,
-        nfraprado@collabora.com, rex-bc.chen@mediatek.com,
-        ryder.lee@kernel.org, daniel@makrotopia.org,
-        jose.exposito89@gmail.com, yangyingliang@huawei.com,
-        pablo.sun@mediatek.com, msp@baylibre.com, weiyi.lu@mediatek.com,
-        ikjn@chromium.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCH v2 11/23] clk: mediatek: Switch to mtk_clk_simple_probe()
- where possible
-Message-ID: <Y74jNZbjpopT2rNY@google.com>
-References: <20221223094259.87373-1-angelogioacchino.delregno@collabora.com>
- <20221223094259.87373-12-angelogioacchino.delregno@collabora.com>
- <CAGXv+5GYk2wr-UnnshT3R2uDUSn7-i5KifyJ4qDDZbptSQ9G7A@mail.gmail.com>
- <cba61b03-7e54-09e2-b1bd-8352f583a81b@collabora.com>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PncCxYyvcTnAkGz0YWPtK6aiQnP/pdPnzgEOYBMREc0=;
+        b=mbW0teaz3xcFwETZtdg95KhcXXonsC1FnQbA8LAwPqM7Gvh3QSSLmmdvEFHplQApRF
+         YFtlTooLjPOvuPZXxpEzaCRBeIrqysDIPiqys2JDq/50FgaI4G32z9D7Q19fyuf3lFEl
+         JRGF04gO2ypcGcBQPoyxiqrl4Ae3QxOnjg+SkuYxBmOELU+ClAN34xbnRle1NykG1HzZ
+         5GHQElcuS2nAGke9Zjcx6XpUapqIz5XhY6ZO+gfLVyAn9/DKaXNqE9VrSb3GPu9rqfPJ
+         3Zu1nRiBM8gW1Gd/4yHcdvMjOBKi1RY0bWXc7mB6mznzgPS4fGTafUL6TyndmcjNfv1s
+         zHLA==
+X-Gm-Message-State: AFqh2krEC7tVrOHYZD0K3lo0teK0gm0UyeoHhEKkAmG/Qs2yX15Ufq/8
+        Y+FpCfVYQYokby1MYoWiBlgFlw==
+X-Google-Smtp-Source: AMrXdXubJKxD8c0aw2OtMg29FOcIE3GbEQ0pGs+GzlvB3Ue2tWimg2Pe743h/7+vWJiGyA8nZ6fwTA==
+X-Received: by 2002:a05:6512:398c:b0:4b5:7a91:70f5 with SMTP id j12-20020a056512398c00b004b57a9170f5mr22534607lfu.63.1673406119053;
+        Tue, 10 Jan 2023 19:01:59 -0800 (PST)
+Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
+        by smtp.gmail.com with ESMTPSA id g1-20020a056512118100b004cc84e29d74sm1281373lfr.52.2023.01.10.19.01.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Jan 2023 19:01:58 -0800 (PST)
+Message-ID: <5416b022-9567-1b56-b994-95b037d1f11a@linaro.org>
+Date:   Wed, 11 Jan 2023 05:01:57 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cba61b03-7e54-09e2-b1bd-8352f583a81b@collabora.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH 15/21] clk: qcom: gpucc-msm8998: switch to parent_hws
+Content-Language: en-GB
+To:     Bjorn Andersson <andersson@kernel.org>
+Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20230103145515.1164020-1-dmitry.baryshkov@linaro.org>
+ <20230103145515.1164020-16-dmitry.baryshkov@linaro.org>
+ <CAOCk7Nr4smGnQS-yh1hGKFFXzeUUt86JSdiuoSun7vJ11z9SWQ@mail.gmail.com>
+ <e2493080-f7fd-50de-173f-2e46fa846e23@linaro.org>
+ <20230110221341.h4wzucm54q27q7he@builder.lan>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <20230110221341.h4wzucm54q27q7he@builder.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 10, 2023 at 02:31:40PM +0100, AngeloGioacchino Del Regno wrote:
-> Il 30/12/22 06:12, Chen-Yu Tsai ha scritto:
-> > On Fri, Dec 23, 2022 at 5:43 PM AngeloGioacchino Del Regno
-> > <angelogioacchino.delregno@collabora.com> wrote:
-> > > 
-> > > mtk_clk_simple_probe() is a function that registers mtk gate clocks
-> > > and, if reset data is present, a reset controller and across all of
-> > > the MTK clock drivers, such a function is duplicated many times:
-> > > switch to the common mtk_clk_simple_probe() function for all of the
-> > > clock drivers that are registering as platform drivers.
-> > > 
-> > > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> > > ---
-> > >   drivers/clk/mediatek/clk-mt2701-aud.c   | 26 +++----
-> > >   drivers/clk/mediatek/clk-mt2701-eth.c   | 34 +++------
-> > >   drivers/clk/mediatek/clk-mt2701-g3d.c   | 56 +++-----------
-> > >   drivers/clk/mediatek/clk-mt2701-hif.c   | 36 +++------
-> > >   drivers/clk/mediatek/clk-mt2712.c       | 83 ++++++++-------------
-> > >   drivers/clk/mediatek/clk-mt6779.c       | 42 ++++++-----
-> > >   drivers/clk/mediatek/clk-mt7622-aud.c   | 49 +++----------
-> > >   drivers/clk/mediatek/clk-mt7622-eth.c   | 82 ++++-----------------
-> > >   drivers/clk/mediatek/clk-mt7622-hif.c   | 85 ++++-----------------
-> > >   drivers/clk/mediatek/clk-mt7629-hif.c   | 85 ++++-----------------
-> > >   drivers/clk/mediatek/clk-mt8183-audio.c | 19 +++--
-> > >   drivers/clk/mediatek/clk-mt8183.c       | 75 ++++++++-----------
-> > >   drivers/clk/mediatek/clk-mt8192-aud.c   | 25 +++----
-> > >   drivers/clk/mediatek/clk-mt8192.c       | 98 ++++++++-----------------
-> > >   14 files changed, 236 insertions(+), 559 deletions(-)
-> > 
-> > This looks mostly good, however ...
-> > 
-> > > diff --git a/drivers/clk/mediatek/clk-mt2701-aud.c b/drivers/clk/mediatek/clk-mt2701-aud.c
-> > > index ab13ab618fb5..1fd6d96b34dc 100644
-> > > --- a/drivers/clk/mediatek/clk-mt2701-aud.c
-> > > +++ b/drivers/clk/mediatek/clk-mt2701-aud.c
-> > > @@ -76,6 +76,7 @@ static const struct mtk_gate_regs audio3_cg_regs = {
-> > >   };
-> > > 
-> > >   static const struct mtk_gate audio_clks[] = {
-> > > +       GATE_DUMMY(CLK_DUMMY, "aud_dummy"),
-> > >          /* AUDIO0 */
-> > >          GATE_AUDIO0(CLK_AUD_AFE, "audio_afe", "aud_intbus_sel", 2),
-> > >          GATE_AUDIO0(CLK_AUD_HDMI, "audio_hdmi", "audpll_sel", 20),
-> > > @@ -138,29 +139,26 @@ static const struct mtk_gate audio_clks[] = {
-> > >          GATE_AUDIO3(CLK_AUD_MEM_ASRC5, "audio_mem_asrc5", "asm_h_sel", 14),
-> > >   };
-> > > 
-> > > +static const struct mtk_clk_desc audio_desc = {
-> > > +       .clks = audio_clks,
-> > > +       .num_clks = ARRAY_SIZE(audio_clks),
-> > > +};
-> > > +
-> > >   static const struct of_device_id of_match_clk_mt2701_aud[] = {
-> > > -       { .compatible = "mediatek,mt2701-audsys", },
-> > > -       {}
-> > > +       { .compatible = "mediatek,mt2701-audsys", .data = &audio_desc },
-> > > +       { /* sentinel */ }
-> > >   };
-> > > 
-> > >   static int clk_mt2701_aud_probe(struct platform_device *pdev)
-> > >   {
-> > > -       struct clk_hw_onecell_data *clk_data;
-> > > -       struct device_node *node = pdev->dev.of_node;
-> > >          int r;
-> > > 
-> > > -       clk_data = mtk_alloc_clk_data(CLK_AUD_NR);
-> > > -
-> > > -       mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
-> > > -                              clk_data, &pdev->dev);
-> > > -
-> > > -       r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
-> > > +       r = mtk_clk_simple_probe(pdev);
-> > >          if (r) {
-> > >                  dev_err(&pdev->dev,
-> > >                          "could not register clock provider: %s: %d\n",
-> > >                          pdev->name, r);
-> > > -
-> > > -               goto err_clk_provider;
-> > > +               return r;
-> > >          }
-> > > 
-> > >          r = devm_of_platform_populate(&pdev->dev);
-> > > @@ -170,13 +168,13 @@ static int clk_mt2701_aud_probe(struct platform_device *pdev)
-> > >          return 0;
-> > > 
-> > >   err_plat_populate:
-> > > -       of_clk_del_provider(node);
-> > > -err_clk_provider:
-> > > +       mtk_clk_simple_remove(pdev);
-> > >          return r;
-> > >   }
-> > > 
-> > >   static struct platform_driver clk_mt2701_aud_drv = {
-> > >          .probe = clk_mt2701_aud_probe,
-> > > +       .remove = mtk_clk_simple_remove,
-> > 
-> > I'm not a big fan of mixing devres and non-devres teardown code. Automatic
-> > devres teardown happens after the remove callback returns, so in this
-> > case you could have child devices being unregistered that touch clocks
-> > or resets that have already been unregistered and freed in the remove
-> > callback.
-> > 
+On 11/01/2023 00:13, Bjorn Andersson wrote:
+> On Tue, Jan 03, 2023 at 06:00:28PM +0200, Dmitry Baryshkov wrote:
+>> On 03/01/2023 17:08, Jeffrey Hugo wrote:
+>>> On Tue, Jan 3, 2023 at 7:56 AM Dmitry Baryshkov
+>>> <dmitry.baryshkov@linaro.org> wrote:
+>>>>
+>>>> Change several entries of parent_data to use parent_hws instead, which
+>>>> results in slightly more ovbious code.
+>>>
+>>> obvious -> obvious
+>>>
+>>> Also, you are changing one of two parent_data structs in this file.
+>>> That's not "several".  It's really not clear why you are touching one,
+>>> but not the other.  Can you be more specific about what is going on in
+>>> this particular file?
+>>
+>> The other struct has .hw and .fw_data entries so it can not be switched to
+>> just clk_hw enumeration.
+>>
+>> I agree, that one is not 'several' (yeah, I was just using template for
+>> commit messages), I can change that for v2.
+>>
 > 
-> I'll add a custom remove function that calls of_platform_depopulate() and
-> tears everything down manually in the correct order.
-> 
-> Thanks for catching this one, I didn't notice at all!
-> 
-> > >          .driver = {
-> > >                  .name = "clk-mt2701-aud",
-> > >                  .of_match_table = of_match_clk_mt2701_aud,
-> > 
-> > [...]
-> > 
-> > > --- a/drivers/clk/mediatek/clk-mt2712.c
-> > > +++ b/drivers/clk/mediatek/clk-mt2712.c
-> > 
-> > [...]
-> > 
-> > > @@ -1482,7 +1459,11 @@ static struct platform_driver clk_mt2712_drv = {
-> > > 
-> > >   static int __init clk_mt2712_init(void)
-> > >   {
-> > > -       return platform_driver_register(&clk_mt2712_drv);
-> > > +       int ret = platform_driver_register(&clk_mt2712_drv);
-> > > +
-> > > +       if (ret)
-> > > +               return ret;
-> > > +       return platform_driver_register(&clk_mt2712_simple_drv);
-> > >   }
-> > > 
-> > >   arch_initcall(clk_mt2712_init);
-> > 
-> > Would this get cleaned up even more? I.e. have just one driver left and
-> > we could have the nice *_platform_driver() macros.
-> > 
-> 
-> In the future, yes - granted that I find someone that can help with the testing,
-> as I don't have any MT2712 hardware here.
-> 
-> Not in this series though (please!).
+> While I dislike the copy-paste commit message, there's little point in
+> spending more effort on it. I fixed the commit message of this one and
+> picked the whole series.
 
-Got it.
+Thanks!
 
-Maybe Miles has access to some EVBs, or knows someone who does.
+-- 
+With best wishes
+Dmitry
 
-ChenYu
