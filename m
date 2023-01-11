@@ -2,52 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96387C5479D
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 19:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48BA6C678D6
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 19:20:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230169AbjAKTUN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Jan 2023 14:20:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34002 "EHLO
+        id S232719AbjAKTUO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Jan 2023 14:20:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232487AbjAKTUI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 14:20:08 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACF0FCDF
-        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 11:20:06 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id b3so25067084lfv.2
-        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 11:20:06 -0800 (PST)
+        with ESMTP id S233869AbjAKTUJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 14:20:09 -0500
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B1FF15F0D
+        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 11:20:08 -0800 (PST)
+Received: by mail-lj1-x22b.google.com with SMTP id n5so16525622ljc.9
+        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 11:20:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bemqEEgA0VxN54ppHUN6LqnTVBLfz/fQJTaypfkAfeg=;
-        b=l/5sRgseiaNqSIuHMF/bFNw4OO9+EKUYK/MBTtQ3qhE7HEftTdwVik/RrE9bmjv2vH
-         2qYxE0Gl3hekyHHYXpNxwnyy+dzfXt/XVwQeyrFyh2svXowZiy3FuxK12nzjWDRbMucb
-         CFfemNHSApNUDjvKT+9sMXNYCSJB/xuX6jiztCHvz0nzSfXEk1GZJktzwG7Q7GcevUUa
-         9aeLTqSYWVD7NDOHQH4KOO+zzM6bQmv2Dsp2LJEf5969GPllJ36RmbyP6y1JTJuXL8DU
-         Pt1hg6C8C9Od3bpzmkSoFZaDFCZzr6YAmjnxXLBnilEXNincUgTU4VFZTOwtQEqbiHhM
-         IQfw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nqckWVN1EW8nGGVGrmVxxAgycA7grXm6YjyhUvZ/LK8=;
+        b=QDAO3+7FNVSpvTpgHC6ZPHLqTA4E1/skLSyUjaGLXVDi3HaafNET4be2m0nlcfxbvt
+         H2OLGcizTHkFFCfpkqr0lIBBKYu34bldT5rEnA6okfihkF2NIyxuFHMXsQYAG8/vrpzt
+         5Z8xmJdryZhXPSaiHCxGw5em93Exnqfky1qfQi1gjSufCIKkraNumgM40TW3neslRIGN
+         9VI2tHg/BZ+QWuauTFO/6LoxF82HXUZBwyvs1udD5R6C85Ay4BoD5yAvfDQPWxQr2s4r
+         r5tzjatbiEj8oRjV/NIO3AveyzxTnDGgYnq/ESd90Cxo2oaCzlxaXjLmWbGXu/lovrUh
+         8omw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bemqEEgA0VxN54ppHUN6LqnTVBLfz/fQJTaypfkAfeg=;
-        b=te7yBn/M7HSowrD7MXsIFLL5YXuUg4VeLpZrC4gt5e/NRQ0Sq6CyCyHx7GdLBpSwhk
-         rHfRSPXNPyMjUAXH0iACUWG2V8LYSdUeOoUDEPuiqq5AKVSMHOJivRjSBSPlhqck1d/D
-         Atpl1S8g7/KsMVOWxpwNt8Xo3U632GccXtxMZGgSajTsaJCagXlV3iR8p5vaccuY2dLL
-         RpZznMNIn17SPFgZ0TIiwGoR0F7JLooBXqBK+TkPyWjeXcg3uv5vg6GWmLpgveO2ZUeP
-         tR7kLio2hYkUeyV10yStyFsZbDwLrwnmvxL5cmwHsmw7L98qCkvSJvFX7G2J+aTXAcSW
-         vI1g==
-X-Gm-Message-State: AFqh2kquBE54BQYXxH2zRLkkLE2K45BaZdKVn9REhzmGCSHPK1JrNToh
-        ECiI/MEWgq7r8v32yvsN8bRrbA==
-X-Google-Smtp-Source: AMrXdXskLgELe3qNVkma9JHgy6rZmiAQ6EurGjIfRRlp9EJgp0TliZo6ZDEPJNS+Z7YpKW7T4RUP9A==
-X-Received: by 2002:ac2:4317:0:b0:4b5:834b:9f82 with SMTP id l23-20020ac24317000000b004b5834b9f82mr2281161lfh.58.1673464805100;
-        Wed, 11 Jan 2023 11:20:05 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nqckWVN1EW8nGGVGrmVxxAgycA7grXm6YjyhUvZ/LK8=;
+        b=cU3MueU3u1KrTDZoVRgPlRpsIYpp3w6S2XR/GKOYi1DjZ3CeMV16AC6IjMRFjCOQEi
+         aK4A1xunejxWZPlJpeloYmv5E1wbH55xTzAMg41sMNWdgFWOYajEFv1dH/UH7hTFhdAq
+         HWbjJ7FyTIttBXfztsgAWAr98FDd5YnG0NhFYMc7XzKkMIL0JszCFEcffBvWPDimG6uZ
+         4DZCg0lNfSg1kC3hP39FG63z/zPJuKrHOHM5PdrAgeEPEbswfdgS/Z6ii/9tRhCyMtZQ
+         lK6Zt8PAw6uxyAvo7L3/bB2rB1c/D/OHrhl9pyS9Oj8dVuad5Y2gIfSPydvxYy/wF9AS
+         y9nQ==
+X-Gm-Message-State: AFqh2krbJEuIESSCxyvF9oy4iqkOui+xsQjUwkJ/huY97DWULXPdoO2n
+        3ea6xhHB5qSLiZgcgTk+ELrlDg==
+X-Google-Smtp-Source: AMrXdXvFVr+d40Gk4K3TP8L+4m/fELfW9r1HFX3FLupJlwXBJMtXvY/gODVZ9PuVEk1NEaYNikG33w==
+X-Received: by 2002:a2e:b054:0:b0:27f:e465:859e with SMTP id d20-20020a2eb054000000b0027fe465859emr10846990ljl.2.1673464806592;
+        Wed, 11 Jan 2023 11:20:06 -0800 (PST)
 Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id bj36-20020a2eaaa4000000b0027ff2fabcb5sm1807787ljb.104.2023.01.11.11.20.04
+        by smtp.gmail.com with ESMTPSA id bj36-20020a2eaaa4000000b0027ff2fabcb5sm1807787ljb.104.2023.01.11.11.20.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jan 2023 11:20:04 -0800 (PST)
+        Wed, 11 Jan 2023 11:20:06 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -59,46 +60,54 @@ To:     Andy Gross <agross@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH 00/13] clk: qcom: cpu-8996: stability fixes
-Date:   Wed, 11 Jan 2023 22:19:51 +0300
-Message-Id: <20230111192004.2509750-1-dmitry.baryshkov@linaro.org>
+Subject: [PATCH 02/13] clk: qcom: cpu-8996: correct PLL programming
+Date:   Wed, 11 Jan 2023 22:19:53 +0300
+Message-Id: <20230111192004.2509750-3-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20230111192004.2509750-1-dmitry.baryshkov@linaro.org>
+References: <20230111192004.2509750-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series provides stability fixes for the MSM8996 boot process. It
-changes the order of calls during the CPU PLL setup, makes it use GPLL0
-(through sys_apcs_aux) during PLL init, finetunes the ACD, etc.
+Change PLL programming to follow the downstream setup.
 
-Dependencies: [1], [2]
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ drivers/clk/qcom/clk-cpu-8996.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-[1] https://lore.kernel.org/linux-arm-msm/20230111191453.2509468-1-dmitry.baryshkov@linaro.org/
-[2] https://lore.kernel.org/linux-arm-msm/20230111191634.2509616-1-dmitry.baryshkov@linaro.org/
-
-
-Dmitry Baryshkov (13):
-  clk: qcom: clk-alpha-pll: program PLL_TEST/PLL_TEST_U if required
-  clk: qcom: cpu-8996: correct PLL programming
-  clk: qcom: cpu-8996: fix the init clock rate
-  clk: qcom: cpu-8996: support using GPLL0 as SMUX input
-  clk: qcom: cpu-8996: skip ACD init if the setup is valid
-  clk: qcom: cpu-8996: simplify the cpu_clk_notifier_cb
-  clk: qcom: cpu-8996: setup PLLs before registering clocks
-  clk: qcom: cpu-8996: move qcom_cpu_clk_msm8996_acd_init call
-  clk: qcom: cpu-8996: fix PLL configuration sequence
-  clk: qcom: cpu-8996: fix ACD initialization
-  clk: qcom: cpu-8996: fix PLL clock ops
-  clk: qcom: cpu-8996: change setup sequence to follow vendor kernel
-  arm64: dts: qcom: msm8996: support using GPLL0 as kryocc input
-
- arch/arm64/boot/dts/qcom/msm8996.dtsi |   4 +-
- drivers/clk/qcom/clk-alpha-pll.c      |   5 +
- drivers/clk/qcom/clk-cpu-8996.c       | 145 ++++++++++++++++++--------
- 3 files changed, 111 insertions(+), 43 deletions(-)
-
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index ee76ef958d31..ed8cb558e1aa 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -93,12 +93,9 @@ static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
+ static const u8 alt_pll_regs[PLL_OFF_MAX_REGS] = {
+ 	[PLL_OFF_L_VAL] = 0x04,
+ 	[PLL_OFF_ALPHA_VAL] = 0x08,
+-	[PLL_OFF_ALPHA_VAL_U] = 0x0c,
+ 	[PLL_OFF_USER_CTL] = 0x10,
+-	[PLL_OFF_USER_CTL_U] = 0x14,
+ 	[PLL_OFF_CONFIG_CTL] = 0x18,
+ 	[PLL_OFF_TEST_CTL] = 0x20,
+-	[PLL_OFF_TEST_CTL_U] = 0x24,
+ 	[PLL_OFF_STATUS] = 0x28,
+ };
+ 
+@@ -106,8 +103,10 @@ static const u8 alt_pll_regs[PLL_OFF_MAX_REGS] = {
+ 
+ static const struct alpha_pll_config hfpll_config = {
+ 	.l = 60,
+-	.config_ctl_val = 0x200d4aa8,
++	.config_ctl_val = 0x200d4828,
+ 	.config_ctl_hi_val = 0x006,
++	.test_ctl_val = 0x1c000000,
++	.test_ctl_hi_val = 0x00004000,
+ 	.pre_div_mask = BIT(12),
+ 	.post_div_mask = 0x3 << 8,
+ 	.post_div_val = 0x1 << 8,
 -- 
 2.30.2
 
