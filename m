@@ -2,104 +2,122 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A14C5479D
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 21:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A6FC46467
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 21:51:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235157AbjAKVY1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Jan 2023 16:24:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42040 "EHLO
+        id S235748AbjAKVvR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Jan 2023 16:51:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235155AbjAKVYW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 16:24:22 -0500
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 665B21929B
-        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 13:24:21 -0800 (PST)
-Received: by mail-lj1-x22f.google.com with SMTP id s22so17372982ljp.5
-        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 13:24:21 -0800 (PST)
+        with ESMTP id S235729AbjAKVvQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 16:51:16 -0500
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 418376329
+        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 13:51:14 -0800 (PST)
+Received: by mail-lj1-x22a.google.com with SMTP id s25so17453432lji.2
+        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 13:51:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=to:subject:message-id:date:user-agent:from:references:in-reply-to
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=E3ouReEkUi6rpeaDUi73MWa8zDe8GfIZfYqDVIXiGL8=;
-        b=n1B1osc8MSidHzm9DzPZDwklg/mTFKXmP7yRtNAjdNwX8cQ5ir/AdtR/oCEaTSe7hD
-         MaYDksh6tMioZ2uNwNdl5KPR5jpaHMsJNkAFtmSE8LbnkX4ouQw7nkxTXW4ESTiKG/tY
-         xRej9CC0YxSKJsvA2gXsdw6sfdbV2/rmtCH5Q=
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wkpNlQJGygfo/fmA7rKKLb341X0fk1CDJsPweTK2OTU=;
+        b=xKHhqZXwFCOJKJ6L+Slq/3zOuSxNWpT452x21xEnopSuJoV/9BxWE0IuE++Lyv/J3a
+         SQ9JhW3bQ5gfDxsKpRwrtG0+wg3ih9Rw5E1L+ValNVgRTOHGLtm2/leozzUrVvgcsAoO
+         8qr2JpqFObAlib8OWRWUUtlgO8Y5NjW1UBjAV2LO84qWv0XjwtepGozuZTHIVHJ622fQ
+         ebsEYQLNtxo7adUiHM9aAJFXResacaCQ8cnXYI0Dj2mqc5/z5jKfM8+OlOwf3mkl0dAZ
+         Ssy/pSUwKLCJiSC3nR5Jd1zEZMI+27t3q8JNhwt2PdL93gO6oIfGsU5aYXce7ZbsEGGi
+         jAeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:user-agent:from:references:in-reply-to
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E3ouReEkUi6rpeaDUi73MWa8zDe8GfIZfYqDVIXiGL8=;
-        b=K1LAfLDgeRmlzXiPx5yl6bNzGQId0jpKjqtU8omFVGHhaMcb6GaPSNAiyT7FCA7aFt
-         sjVK77UEuBHX2KLBgixii3BOCxdnRIqwpNxIBXnqUu8tsvrU8BqF6ldycCy4VOyTbHaX
-         JQjUwasn4U4QkxQ5jlHEctCI08wQOpmj+7gdkGFrEgo9KaTUqEFk2Z+rQfQPwnnJkDZp
-         JoCkEjtqMhyUG0z37lGfyvUQLo7t3TB4vQeB8FnN2kbVSlZtQSmLl/iyGMo+wb8H4hDH
-         l0oSJWpXIT8dFsKZnTMaaQed4VHwLkf/F7oEqlxhXuvVQdMNr30eAP10UKxXISb1UPzm
-         NVmg==
-X-Gm-Message-State: AFqh2kpchb7B1teS3au7gnoAJ7IkPFQKHktcC4rHX33szTT1nKmbss7U
-        vV6YAltNvwqoB1cdeCyeMzVOD0ZYgVXVnOcpmKMYKA==
-X-Google-Smtp-Source: AMrXdXuMNICL9YpyiTa9tdbBFuIGRzDSVubjSkk9E9X3C1ZtxuNdgu97gzWZ8c+eZp/ov7qiTd7PqItMmYqyqc9bz7E=
-X-Received: by 2002:a2e:2ac4:0:b0:27f:cc03:496a with SMTP id
- q187-20020a2e2ac4000000b0027fcc03496amr4183575ljq.359.1673472259758; Wed, 11
- Jan 2023 13:24:19 -0800 (PST)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 11 Jan 2023 13:24:19 -0800
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wkpNlQJGygfo/fmA7rKKLb341X0fk1CDJsPweTK2OTU=;
+        b=bGleEMgLEdbmoiWEdMpnDM/l+Wzyin9mCb9/j0x644L7iUhyANPIhtizjI2XTmHWRT
+         p+E5dseQeiklayfrmA7ueRUaNYg7bpMVCTm1rqMICzpHXaQdWaQQJ+RL0/Gyy+54qCXu
+         0yVicjzFXkVoTeXv3e4zgkh26Sdfj6lgMMElujKgsvoeqAmyCzivI6RLBpQK6mpjdmok
+         7gH2464MMi7OA7opYtPr8jclh+qDPcDQCjr5lygbvCFf4pyZcpOYVWTOe3Awo+ioUL4C
+         0Y3jW+cSHqWXLI4UbZYoac15wB0Lw5z6fHiECHfzJXfhIWOKDuVJ87Pp4yCQgRKdsPue
+         v9PA==
+X-Gm-Message-State: AFqh2krwhdvVTniHGeEtAhXzPoMqcHDFAMz3oQuxxcOpBynBCsjWYlOl
+        GSLyxUqyWiCRka4T823yFZdy1w==
+X-Google-Smtp-Source: AMrXdXvBmuGNZ0bIj34YG2GkyiggiEWSO0bCNhkeqdVBRrSJS6xrJbsAsnvAWRvoBCwKMDg1KaXiHA==
+X-Received: by 2002:a05:651c:ba1:b0:288:2dce:3bf9 with SMTP id bg33-20020a05651c0ba100b002882dce3bf9mr1303107ljb.1.1673473872599;
+        Wed, 11 Jan 2023 13:51:12 -0800 (PST)
+Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
+        by smtp.gmail.com with ESMTPSA id p21-20020a2eba15000000b0027fc4a35c30sm1934763lja.48.2023.01.11.13.51.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Jan 2023 13:51:12 -0800 (PST)
+Message-ID: <0a2e9def-c963-d4cd-eb2e-2b9adfa2fd1a@linaro.org>
+Date:   Wed, 11 Jan 2023 23:51:11 +0200
 MIME-Version: 1.0
-In-Reply-To: <1672849297-3116-5-git-send-email-quic_srivasam@quicinc.com>
-References: <1672849297-3116-1-git-send-email-quic_srivasam@quicinc.com> <1672849297-3116-5-git-send-email-quic_srivasam@quicinc.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date:   Wed, 11 Jan 2023 13:24:19 -0800
-Message-ID: <CAE-0n51AZCa9K_uY=ikTLqV-g_MsSA6Lv=Zq1LMrF-wVhR8_pg@mail.gmail.com>
-Subject: Re: [RESEND v3 4/4] clk: qcom: lpasscc-sc7280: Add resets for audioreach
-To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
-        agross@kernel.org, andersson@kernel.org, broonie@kernel.org,
-        konrad.dybcio@somainline.org, krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        quic_plai@quicinc.com, quic_rohkumar@quicinc.com,
-        robh+dt@kernel.org, swboyd@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH 03/13] clk: qcom: cpu-8996: fix the init clock rate
+Content-Language: en-GB
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20230111192004.2509750-1-dmitry.baryshkov@linaro.org>
+ <20230111192004.2509750-4-dmitry.baryshkov@linaro.org>
+ <9a3071e1-0e3f-ae87-0574-7659c52bc884@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <9a3071e1-0e3f-ae87-0574-7659c52bc884@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Srinivasa Rao Mandadapu (2023-01-04 08:21:37)
-> The clock gating control for TX/RX/WSA core bus clocks would be required
-> to be reset(moved from hardware control) from audio core driver. Thus
-> add the support for the reset clocks in audioreach based clock driver.
->
-> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-> Tested-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-> ---
->  drivers/clk/qcom/lpasscc-sc7280.c | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
->
-> diff --git a/drivers/clk/qcom/lpasscc-sc7280.c b/drivers/clk/qcom/lpasscc-sc7280.c
-> index 85dd5b9..1efb72d 100644
-> --- a/drivers/clk/qcom/lpasscc-sc7280.c
-> +++ b/drivers/clk/qcom/lpasscc-sc7280.c
-> @@ -12,10 +12,12 @@
->  #include <linux/regmap.h>
->
->  #include <dt-bindings/clock/qcom,lpass-sc7280.h>
-> +#include <dt-bindings/clock/qcom,lpassaudiocc-sc7280.h>
->
->  #include "clk-regmap.h"
->  #include "clk-branch.h"
->  #include "common.h"
-> +#include "reset.h"
->
->  static struct clk_branch lpass_top_cc_lpi_q6_axim_hs_clk = {
->         .halt_reg = 0x0,
-> @@ -102,6 +104,18 @@ static const struct qcom_cc_desc lpass_qdsp6ss_sc7280_desc = {
->         .num_clks = ARRAY_SIZE(lpass_qdsp6ss_sc7280_clocks),
->  };
->
-> +static const struct qcom_reset_map lpass_cc_sc7280_resets[] = {
-> +       [LPASS_AUDIO_SWR_RX_CGCR] =  { 0xa0, 1 },
-> +       [LPASS_AUDIO_SWR_TX_CGCR] =  { 0xa8, 1 },
-> +       [LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
+On 11/01/2023 22:58, Konrad Dybcio wrote:
+> 
+> 
+> On 11.01.2023 20:19, Dmitry Baryshkov wrote:
+>> Change PLL programming to let both power and performance cluster clocks
+>> to start from the maximum common frequency.
+>>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> ---
+> Can you point me to the source of this? My local random msm-3.18 has this at 60.
 
-Why are we adding these resets again? These are already exposed in
-lpassaudiocc-sc7280.c
+Yes, but with 60 cluster start at the unlisted frequency (60 * 19.2 = 
+1152 MHz), which leads to cpufreq whining and immediately performing a 
+switch.
+
+I modified this to 54 * 19.2 =  1036.8 MHz which is supported by both 
+power and performance clusters. Maybe we could have gone to 58 * 19.2 = 
+1113. Mhz or to 62 * 19.2 = 1190.4 MHz, but as all the safety and power 
+measures and not probed at this point, I preferred to rather be safe 
+than sorry.
+
+> 
+> Konrad
+>>   drivers/clk/qcom/clk-cpu-8996.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+>> index ed8cb558e1aa..d51965fda56d 100644
+>> --- a/drivers/clk/qcom/clk-cpu-8996.c
+>> +++ b/drivers/clk/qcom/clk-cpu-8996.c
+>> @@ -102,7 +102,7 @@ static const u8 alt_pll_regs[PLL_OFF_MAX_REGS] = {
+>>   /* PLLs */
+>>   
+>>   static const struct alpha_pll_config hfpll_config = {
+>> -	.l = 60,
+>> +	.l = 54,
+>>   	.config_ctl_val = 0x200d4828,
+>>   	.config_ctl_hi_val = 0x006,
+>>   	.test_ctl_val = 0x1c000000,
+
+-- 
+With best wishes
+Dmitry
+
