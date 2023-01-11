@@ -2,48 +2,45 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2586BC678D8
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 05:19:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4FC7C678D5
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 05:19:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235784AbjAKFTD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Jan 2023 00:19:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56694 "EHLO
+        id S235804AbjAKFTG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Jan 2023 00:19:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230194AbjAKFSA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 00:18:00 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F12D313D66;
-        Tue, 10 Jan 2023 21:09:48 -0800 (PST)
+        with ESMTP id S230282AbjAKFSH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 00:18:07 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AAD513DD3;
+        Tue, 10 Jan 2023 21:09:51 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8BEA161A34;
-        Wed, 11 Jan 2023 05:09:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 312F3C433D2;
-        Wed, 11 Jan 2023 05:09:47 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E0C6B61A34;
+        Wed, 11 Jan 2023 05:09:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCA84C433EF;
+        Wed, 11 Jan 2023 05:09:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673413788;
-        bh=kHAW7mxeVAQoI9/rn841+psqYw9s0pIqxCzVXQp2AvU=;
+        s=k20201202; t=1673413790;
+        bh=8T+8nScsj6h7UAaq3JbWj4lsi2Ok/kNZGDGLdst/u3A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pgkFnFPMoYCNNhWZwSy+MMWTr3XBrdIeLcYoso6ChB6das0YQ4Km58l+t7s/PF2dQ
-         urr8kae7aYaHUAbTaK4YXp9Kdl8JjUesLxELAucY//EgDHSuycSzj5yQDO3FFiOviT
-         SN8Ezf2RRFz6hYdvKRRiyiuPOipVYvoqiOpa/VpvI8VFN2968MNGDZV/ckdDLnQb1m
-         xP4vjQu+6j2BxQEDtuvr3X0mjfTPsdoU/SeDQphVfLxpBqBexvqmhPhUemSI9cgcJB
-         MaPAEERO92+wEDzlbLEvdPMXSIyQPif8Qag4eALs4S9D4g8zDPewhttbx9mj0diT+S
-         t2KorFtU4ymtQ==
+        b=Uywpe3V/Hbx3iZbKhwIOOsNkxpKZgXqzn1UBosDj0NeMhgEz9q5zXTQS7yHfxRLP+
+         pyefyyVJMiyN5IeEYhEAhk8jAss6ZITlVxtpAymXTF/tyfA0sqO05LEmbzfL5HkZ4r
+         BbtPb6DVZvbYtrQ3XF+8aHZW7BOKsGZcqPGIi/DWDhXlljdVuxKlnvfkD0lyFaSIqo
+         zs3Bws17fIguplQ80kMO6dwADuULp0I3TBdyAha50nmzl20HUXZLSQ7fpp/vzzqcWe
+         g9NZL4twVm+E1VH5wFdz/x3JkXY/Y7ljGZ7riMrRaYM1wBzEbVAT8T5nw0IjyFJSjO
+         IjDLPre1NmrqQ==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     quic_tdas@quicinc.com, dmitry.baryshkov@linaro.org,
-        konrad.dybcio@linaro.org, agross@kernel.org,
-        mturquette@baylibre.com, krzysztof.kozlowski+dt@linaro.org,
-        sboyd@kernel.org, robh+dt@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: (subset) [PATCH v2 00/16] clk: qcom: get rid of core_bi_pll_test_se
-Date:   Tue, 10 Jan 2023 23:09:12 -0600
-Message-Id: <167341377731.2246479.1608061507340814832.b4-ty@kernel.org>
+To:     dmitry.baryshkov@linaro.org, konrad.dybcio@linaro.org,
+        agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2] clk: qcom: clk-spmi-pmic-div: convert to use parent_data
+Date:   Tue, 10 Jan 2023 23:09:15 -0600
+Message-Id: <167341377720.2246479.15585168622539676439.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20221228185237.3111988-1-dmitry.baryshkov@linaro.org>
-References: <20221228185237.3111988-1-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20221210191013.453040-1-dmitry.baryshkov@linaro.org>
+References: <20221210191013.453040-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -51,37 +48,16 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 28 Dec 2022 20:52:21 +0200, Dmitry Baryshkov wrote:
-> Drop core_bi_pll_test_se from all Qualcomm clock controller's bindings
-> and drivers. The clock is not used by anyone.
+On Sat, 10 Dec 2022 22:10:13 +0300, Dmitry Baryshkov wrote:
+> The clk-spmi-pmic-div driver gets the parent name from the first (and
+> the only) clock parent. So, use parent data, index 0 to setup the clock.
 > 
-> Changes since v1:
-> - Fixed error in the qcom,gcc-msm8998 example.
 > 
-> Dmitry Baryshkov (16):
->   dt-bindings: clock: qcom,gcc-msm8998: drop core_bi_pll_test_se
->   dt-bindings: clock: qcom,gcc-sdx55: drop core_bi_pll_test_se
->   dt-bindings: clock: qcom,gcc-sdx65: drop core_bi_pll_test_se
->   dt-bindings: clock: qcom,gcc-sm8350: drop core_bi_pll_test_se
->   dt-bindings: clock: qcom,mmcc-msm8998: drop core_bi_pll_test_se
->   dt-bindings: clock: qcom: gcc-sm8350: drop test clock
->   dt-bindings: clock: qcom: gcc-sm8450: drop test clock
->   clk: qcom: dispcc-qcm2290: get rid of test clock
->   clk: qcom: gcc-msm8998: get rid of test clock
->   clk: qcom: gcc-sc7180: get rid of test clock
->   clk: qcom: gcc-sdx55: use ARRAY_SIZE instead of specifying num_parents
->   clk: qcom: gcc-sdx55: get rid of test clock
->   clk: qcom: gcc-sm8150: get rid of test clock
->   clk: qcom: gcc-sm8350: get rid of test clock
->   clk: qcom: mmcc-msm8998: get rid of test clock
->   arm64: dts: qcom: msm8998: get rid of test clock
-> 
-> [...]
 
 Applied, thanks!
 
-[16/16] arm64: dts: qcom: msm8998: get rid of test clock
-        commit: ef6868a2d69d18273ebda3b3bc304242532aa76c
+[1/1] clk: qcom: clk-spmi-pmic-div: convert to use parent_data
+      commit: a622c1dc84d920f231df539b3013c58a15fa2a19
 
 Best regards,
 -- 
