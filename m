@@ -2,152 +2,88 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F75C46467
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 15:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62EDFC46467
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 15:32:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232469AbjAKPFa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Jan 2023 10:05:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38644 "EHLO
+        id S233100AbjAKPcK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Jan 2023 10:32:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238776AbjAKPEz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 10:04:55 -0500
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FEE22E2
-        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 07:04:53 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id tz12so37535909ejc.9
-        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 07:04:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wSndVBDlN4JUzHCG4iLF5UhWZTMXbKyI15vPIo6KiSU=;
-        b=WTmIT17URH/10jxaZkCFZ/Su0dMdGH7NE5GghquSvWPPwpJd+6ILKuWlyNMm4H395e
-         xxxRl10u9LGTOQaXpIKBxLC/FDqshM9cN589y9hVEsHgEwYnPXHEwK6qVD8FG6hH+pvE
-         wrAlS2DiweSE7pAwI7neVmyozpz2rRA6hxUwmw7ztiGv1D2Dv/asvYg19Fk6VHhGU5NV
-         IxjGNcfhzCgvP/n0ENrWZ705Nu0rcm2BPJBsia+jXMN3hBjfkPPUGskM4RMbnoc1blBr
-         Z3Ts5KMdNCbIMyjPXfmrcsGDEEca7L/7CLtupaHeINXXkQRtV2U4OiVaG38GK2j+1ExM
-         i1Rg==
+        with ESMTP id S238851AbjAKPcB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 10:32:01 -0500
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA64FE014;
+        Wed, 11 Jan 2023 07:31:59 -0800 (PST)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-4c15c4fc8ccso199824457b3.4;
+        Wed, 11 Jan 2023 07:31:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wSndVBDlN4JUzHCG4iLF5UhWZTMXbKyI15vPIo6KiSU=;
-        b=eft5OqkwC6JCdCGgYg3M6i0kV4rQ29s7SJbIv26RJVvkJxe0YIbtHj3JSuStsbN8bh
-         VDVftDkudkXUYnQB2IV33J5jfxiyyM+kUNJa8s+oX0m0LHNUFL3dL1+CKBj5DHGiKKVp
-         ZdXs1kAO/ETo35ExdUqYoDLAJ2I/7y/17IOCbJ73ThkuMN7JNJuuAri3pnmjEaIQb6W1
-         tT5ZFGhNmxX0GzRSnKTsZjdKkee8oW4nCDrVR5tAFC3WLXDJUwBsSbyMMDXQKwFBq5rm
-         EKTmwR0Ljn/wg1TZeiOM0Ozyo00lUWoTuS9i4sns3b1tisWBOb65zKgqixQnMY1nNMBa
-         n2Aw==
-X-Gm-Message-State: AFqh2krOe2gUOBUtUUzeHTZHr324qInAb3f6D5Jj1CufabY/WCXrxTeS
-        8VuVVxhUox4tOmcXEze42tf14Q==
-X-Google-Smtp-Source: AMrXdXsAzLI1Zlu5S4eptp/SXJsEAFI0xjbkUEdexBFitl92UPyIF9Z09CaOEcx6v3MsIYc8oMHD7w==
-X-Received: by 2002:a17:906:184a:b0:78d:f456:1ed0 with SMTP id w10-20020a170906184a00b0078df4561ed0mr70252597eje.33.1673449491869;
-        Wed, 11 Jan 2023 07:04:51 -0800 (PST)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id ka13-20020a170907990d00b0073c10031dc9sm6196545ejc.80.2023.01.11.07.04.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jan 2023 07:04:50 -0800 (PST)
-Date:   Wed, 11 Jan 2023 16:04:49 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Maciek Machnikowski <maciek@machnikowski.net>,
-        'Vadim Fedorenko' <vfedorenko@novek.ru>,
-        'Jonathan Lemon' <jonathan.lemon@gmail.com>,
-        'Paolo Abeni' <pabeni@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
-Message-ID: <Y77QEajGlJewGKy1@nanopsycho>
-References: <20221207152157.6185b52b@kernel.org>
- <6e252f6d-283e-7138-164f-092709bc1292@machnikowski.net>
- <Y5MW/7jpMUXAGFGX@nanopsycho>
- <a8f9792b-93f1-b0b7-2600-38ac3c0e3832@machnikowski.net>
- <20221209083104.2469ebd6@kernel.org>
- <Y5czl6HgY2GPKR4v@nanopsycho>
- <DM6PR11MB46571573010AB727E1BE99AE9BFE9@DM6PR11MB4657.namprd11.prod.outlook.com>
- <20230110120549.4d764609@kernel.org>
- <Y75xFlEDCThGtMDq@nanopsycho>
- <DM6PR11MB4657AC41BBF714A280B578D49BFC9@DM6PR11MB4657.namprd11.prod.outlook.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WWWK6I7J26Ex/aS6RPMJ/FobgR20kblYkBrs1gZdrv8=;
+        b=gqxexgJNamrQERS9rrvY51LyAl9oZqDgticUK0EYy1YIoi6j7/XIKCMu1l/pDijJQS
+         i9cxWwXx4yKcGPQDZMHNFjelMOF5FVE3CH6ev/8sVnW/qj2WR5Cdzo42M3qxc7vtam9T
+         Lc2yYlWjJytAwsHERq9BK+h5TPQTJZlTv8oZ8mNUdZiyiSNW5ROSk0ze3eFaX6Ih+5NV
+         Rq3cZKBdij/zswrTXLewu2JjFo6FIoxTcmLfJs/0h48Za/SHIVAR2gwQTSSkXzmxRPyX
+         cTTwC/XQcm4rwDXgEDnuWy3ftnBeOLDXHPhffFMyHU5XtMEWy2vSTM+xlJ5Vgr0bMS3n
+         HVOA==
+X-Gm-Message-State: AFqh2kro29SpQf7UGrqqRBuUimm32cwp20MwQYttxT2q8+thH4oSlhUT
+        tfmDKY5jaGcSjbNVgmWv3cKqzzXps/104A==
+X-Google-Smtp-Source: AMrXdXs8e4HQdOVIfhEQvlc99qBR22LN9wW9bqTc2/kXvYMgXKkvkzVhExSesw0xb8437Q8H9uUIgg==
+X-Received: by 2002:a05:690c:b14:b0:470:a693:8fd2 with SMTP id cj20-20020a05690c0b1400b00470a6938fd2mr12767497ywb.4.1673451118659;
+        Wed, 11 Jan 2023 07:31:58 -0800 (PST)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
+        by smtp.gmail.com with ESMTPSA id n21-20020a05620a295500b00704c6263924sm9226768qkp.13.2023.01.11.07.31.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Jan 2023 07:31:58 -0800 (PST)
+Received: by mail-yb1-f176.google.com with SMTP id p188so15391981yba.5;
+        Wed, 11 Jan 2023 07:31:58 -0800 (PST)
+X-Received: by 2002:a25:d84e:0:b0:7b4:6a33:d89f with SMTP id
+ p75-20020a25d84e000000b007b46a33d89fmr1631365ybg.543.1673451117777; Wed, 11
+ Jan 2023 07:31:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM6PR11MB4657AC41BBF714A280B578D49BFC9@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20221221212703.348278-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20221221212703.348278-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 11 Jan 2023 16:31:45 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWQ-mecRFyLRhFnSdG2L-P+MTUudsqKouGY85Nw=eLWgw@mail.gmail.com>
+Message-ID: <CAMuHMdWQ-mecRFyLRhFnSdG2L-P+MTUudsqKouGY85Nw=eLWgw@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r9a07g044: Add clock and reset entries for CRU
+To:     Prabhakar <prabhakar.csengg@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Wed, Jan 11, 2023 at 03:16:59PM CET, arkadiusz.kubalewski@intel.com wrote:
->>From: Jiri Pirko <jiri@resnulli.us>
->>Sent: Wednesday, January 11, 2023 9:20 AM
->>
->>Tue, Jan 10, 2023 at 09:05:49PM CET, kuba@kernel.org wrote:
->>>On Mon, 9 Jan 2023 14:43:01 +0000 Kubalewski, Arkadiusz wrote:
->>>> This is a simplified network switch board example.
->>>> It has 2 synchronization channels, where each channel:
->>>> - provides clk to 8 PHYs driven by separated MAC chips,
->>>> - controls 2 DPLLs.
->>>>
->>>> Basically only given FW has control over its PHYs, so also a control
->>over it's
->>>> MUX inputs.
->>>> All external sources are shared between the channels.
->>>>
->>>> This is why we believe it is not best idea to enclose multiple DPLLs
->>with one
->>>> object:
->>>> - sources are shared even if DPLLs are not a single synchronizer chip,
->>>> - control over specific MUX type input shall be controllable from
->>different
->>>> driver/firmware instances.
->>>>
->>>> As we know the proposal of having multiple DPLLs in one object was a try
->>to
->>>> simplify currently implemented shared pins. We fully support idea of
->>having
->>>> interfaces as simple as possible, but at the same time they shall be
->>flexible
->>>> enough to serve many use cases.
->>>
->>>I must be missing context from other discussions but what is this
->>>proposal trying to solve? Well implemented shared pins is all we need.
->>
->>There is an entity containing the pins. The synchronizer chip. One
->>synchronizer chip contains 1-n DPLLs. The source pins are connected
->>to each DPLL (usually). What we missed in the original model was the
->>synchronizer entity. If we have it, we don't need any notion of somehow
->>floating pins as independent entities being attached to one or many
->>DPLL refcounted, etc. The synchronizer device holds them in
->>straightforward way.
->>
->>Example of a synchronizer chip:
->>https://www.renesas.com/us/en/products/clocks-timing/jitter-attenuators-
->>frequency-translation/8a34044-multichannel-dpll-dco-four-eight-
->>channels#overview
+On Wed, Dec 21, 2022 at 10:32 PM Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
->Not really, as explained above, multiple separated synchronizer chips can be
->connected to the same external sources.
->This is why I wrote this email, to better explain need for references between
->DPLLs and shared pins.
->Synchronizer chip object with multiple DPLLs would have sense if the pins would
->only belong to that single chip, but this is not true.
-
-I don't understand how it is physically possible that 2 pins belong to 2
-chips. Could you draw this to me?
-
-
->As the pins are shared between multiple DPLLs (both inside 1 integrated circuit
->and between multiple integrated circuits), all of them shall have current state
->of the source or output.
->Pins still need to be shared same as they would be inside of one synchronizer
->chip.
-
-Do I understand correctly that you connect one synchronizer output to
-the input of the second synchronizer chip?
-
+> Add CRU clock and reset entries to CPG driver.
 >
->BR,
->Arkadiusz
+> CRU_SYSCLK and CRU_VCLK clocks need to be turned ON/OFF in particular
+> sequence for the CRU block hence add these clocks to
+> r9a07g044_no_pm_mod_clks[] array and pass it as part of CPG data for
+> both RZ/G2L and RZ/V2L SoCs.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v6.3.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
