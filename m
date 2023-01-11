@@ -2,97 +2,167 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8958AC6379F
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 08:57:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D1E9C678D5
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 09:38:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230457AbjAKI5V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Jan 2023 03:57:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34526 "EHLO
+        id S231599AbjAKJiv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Jan 2023 04:38:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232053AbjAKI5D (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 03:57:03 -0500
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FB4610B53;
-        Wed, 11 Jan 2023 00:56:53 -0800 (PST)
-X-UUID: e0fcac1c918d11ed945fc101203acc17-20230111
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=iqNH2YUWSkJRgdVGPCUzJ5c0vvuMRJVGt9fwd5XJbJ0=;
-        b=aRMsTWQEMn5usojbHq7ihj/Yd5aVNbjDe6QHkJz+qn5bd7XDwTjVG3ESYRc/7Aua+f6VbU+c5Uuoa1TlmQlMvu1vEE7CaRRsrOyE69+aiAFdOcptBIUDlyym2kNFU8MpfJ3eSYhQawH5GEiHk9qio0vxf9q4E+eaoi9vI0xndZ4=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.17,REQID:da5bd908-956e-4154-b277-e5025f9f9712,IP:0,U
-        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-        :release,TS:45
-X-CID-INFO: VERSION:1.1.17,REQID:da5bd908-956e-4154-b277-e5025f9f9712,IP:0,URL
-        :0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-        elease,TS:45
-X-CID-META: VersionHash:543e81c,CLOUDID:8cd37ff5-ff42-4fb0-b929-626456a83c14,B
-        ulkID:230111165649FHL7UB0I,BulkQuantity:0,Recheck:0,SF:28|17|19|48|102,TC:
-        nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,O
-        SI:0,OSA:0
-X-CID-APTURL: Status:success,Category:nil,Trust:0,Unknown:0,Malicious:0
-X-CID-BVR: 1,FCT|NGT
-X-UUID: e0fcac1c918d11ed945fc101203acc17-20230111
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1891818550; Wed, 11 Jan 2023 16:56:46 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.186) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.3;
- Wed, 11 Jan 2023 16:56:45 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.792.15 via Frontend Transport; Wed, 11 Jan 2023 16:56:45 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     <wenst@chromium.org>
-CC:     <angelogioacchino.delregno@collabora.com>,
-        <chun-jie.chen@mediatek.com>, <daniel@makrotopia.org>,
-        <devicetree@vger.kernel.org>, <fparent@baylibre.com>,
-        <ikjn@chromium.org>, <johnson.wang@mediatek.com>,
-        <jose.exposito89@gmail.com>, <kernel@collabora.com>,
-        <krzysztof.kozlowski+dt@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
-        <miles.chen@mediatek.com>, <msp@baylibre.com>,
-        <mturquette@baylibre.com>, <nfraprado@collabora.com>,
-        <pablo.sun@mediatek.com>, <rex-bc.chen@mediatek.com>,
-        <robh+dt@kernel.org>, <ryder.lee@kernel.org>,
-        <sam.shih@mediatek.com>, <sboyd@kernel.org>,
-        <weiyi.lu@mediatek.com>, <y.oudjana@protonmail.com>,
-        <yangyingliang@huawei.com>, <mingming.su@mediatek.com>
-Subject: Re: [PATCH v2 11/23] clk: mediatek: Switch to mtk_clk_simple_probe()
-Date:   Wed, 11 Jan 2023 16:56:45 +0800
-Message-ID: <20230111085645.30683-1-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <Y74jNZbjpopT2rNY@google.com>
-References: <Y74jNZbjpopT2rNY@google.com>
+        with ESMTP id S233533AbjAKJhb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 04:37:31 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 946166275
+        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 01:36:17 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id p1-20020a05600c1d8100b003d8c9b191e0so12140750wms.4
+        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 01:36:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=agrBGzLEfDLBSaCHOLwWqzPW8aLKgXJ9Qn5pOrzQb5Y=;
+        b=L1ew/2SCwJ61mAaiVWmR/o/h0rvj5/f8oWZHWzHzYRw3DibCnHMEDLdOE6f3JibAv4
+         TIbFr3b6wleD09DJbyz69vNg50+ZP+SzNowSevdxBHlyMEYmtkEs/cfgpI3fBLmNFK7R
+         nj/kwt7wwkxVeqOcx6fTIfreTT7aXZpE185iHv1G3KCJnJjK4GbWVrbx2EC8H+LPLZO4
+         cbbthMcG4ULnar4283XFnePmqly+AR2Whbt32lHWAYJi4KAkQCudsQm8EvBNcH5Pn4bV
+         LGXG9pwErge9lO8e+ELGjblOWgaA8i8KSoo0pcm6JEtRNmzguwM2yBmgb+xfeuMicRhs
+         VcVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=agrBGzLEfDLBSaCHOLwWqzPW8aLKgXJ9Qn5pOrzQb5Y=;
+        b=RzdmTWYabW+usDXfZC+YDGHxHScwgauOD0xMjcld8N0odbP1Ov+h8CWwEqJOliV8Up
+         HWY6hCK5KzNoua1Gk7zOwcMziXUYWyxZweLcmMjYGGr/NOAbThajFGEYAQZZvBPaSuFS
+         t7ymrvNorj4CeTp/HgLkNbvQah8Y9pHcEnYqIGc/uIHZPM+6n951Se5RV+wuLmwQ5WxS
+         0+6Mmw3L5zTJSzClXTJaZEdP/8XL6oHdunkxQxMAJnK/MMH9m6z3VY12omfaBpBeFqP0
+         mrP9+wp2BKDpLNFB+Qo9nKSlIP9H4AmBse1k3yW7DElNaLU6umKvnLATMj+UFx10dKqE
+         mELw==
+X-Gm-Message-State: AFqh2kpzfd65RXR6+VSTZK7BhZwSg/NYDt22ShMvWTNKF2nr5XK4KtUi
+        x2oyjCeGeF6T1S+x6OASVTWspA==
+X-Google-Smtp-Source: AMrXdXur2VYSsIb72rrxWp6CTmFDaeh2Stw30IqyKOpakPOnkVDT29DdV1AQ6EJLmwgaYmiy5MRsiw==
+X-Received: by 2002:a05:600c:4d25:b0:3d3:5b7a:1791 with SMTP id u37-20020a05600c4d2500b003d35b7a1791mr62592799wmp.41.1673429776076;
+        Wed, 11 Jan 2023 01:36:16 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id he5-20020a05600c540500b003d9ed40a512sm13601488wmb.45.2023.01.11.01.36.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Jan 2023 01:36:15 -0800 (PST)
+Message-ID: <603f9c39-3e36-bb44-2305-1d37fe033dd5@linaro.org>
+Date:   Wed, 11 Jan 2023 10:36:12 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH 1/7] dt-bindings: arm64: ipq9574: Add binding descriptions
+ for clock and reset
+Content-Language: en-US
+To:     devi priya <quic_devipriy@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linus.walleij@linaro.org,
+        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
+        shawnguo@kernel.org, arnd@arndb.de, marcel.ziswiler@toradex.com,
+        dmitry.baryshkov@linaro.org, nfraprado@collabora.com,
+        broonie@kernel.org, tdas@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
+        quic_poovendh@quicinc.com
+References: <20230110121316.24892-1-quic_devipriy@quicinc.com>
+ <20230110121316.24892-2-quic_devipriy@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230110121316.24892-2-quic_devipriy@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-cc Mingming
+On 10/01/2023 13:13, devi priya wrote:
+> Adding support for the global clock controller found on
+> IPQ9574 based devices
 
->> > Would this get cleaned up even more? I.e. have just one driver left and
->> > we could have the nice *_platform_driver() macros.
->> > 
->> 
->> In the future, yes - granted that I find someone that can help with the testing,
->> as I don't have any MT2712 hardware here.
->> 
->> Not in this series though (please!).
->
->Got it.
->
->Maybe Miles has access to some EVBs, or knows someone who does.
->
->ChenYu
+Subject: drop second/last, redundant "bindings descriptions for". The
+"dt-bindings" prefix is already stating that these are bindings.
 
-I do not have any MT2712 board.
-Thanks for Mingming's help, Mingming will test v2 series on the MT2712 platform.
+> 
+> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+> ---
+>  .../bindings/clock/qcom,gcc-other.yaml        |   4 +
+>  .../devicetree/bindings/clock/qcom,gcc.yaml   |   9 +-
+>  include/dt-bindings/clock/qcom,gcc-ipq9574.h  | 226 ++++++++++++++++++
+>  include/dt-bindings/reset/qcom,gcc-ipq9574.h  | 164 +++++++++++++
+>  4 files changed, 402 insertions(+), 1 deletion(-)
+>  create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq9574.h
+>  create mode 100644 include/dt-bindings/reset/qcom,gcc-ipq9574.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+> index 2e8acca64af1..cc563d640336 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+> @@ -18,6 +18,8 @@ description: |
+>      include/dt-bindings/clock/qcom,gcc-ipq4019.h
+>      include/dt-bindings/clock/qcom,gcc-ipq6018.h
+>      include/dt-bindings/reset/qcom,gcc-ipq6018.h
+> +    include/dt-bindings/clock/qcom,gcc-ipq9574.h
+> +    include/dt-bindings/reset/qcom,gcc-ipq9574.h
+>      include/dt-bindings/clock/qcom,gcc-msm8953.h
+>      include/dt-bindings/clock/qcom,gcc-mdm9607.h
+>      include/dt-bindings/clock/qcom,gcc-mdm9615.h
+> @@ -34,6 +36,8 @@ properties:
+>        - qcom,gcc-mdm9607
+>        - qcom,gcc-msm8953
+>        - qcom,gcc-mdm9615
+> +      - qcom,gcc-ipq9574
 
-thanks,
-Miles
+Incorrect order but anyway let's switch to new naming style just like
+SM8550 and SA8775p.
+
+> +
+
+Not related change.
+
+>  
+>  required:
+>    - compatible
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+> index 7129fbcf2b6c..5a71268538e6 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+> @@ -24,6 +24,14 @@ properties:
+>    '#power-domain-cells':
+>      const: 1
+>  
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 8
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 8
+
+This does not look correct, neither related.
+> +
+>    reg:
+>      maxItems: 1
+>  
+> @@ -35,7 +43,6 @@ required:
+>    - reg
+>    - '#clock-cells'
+>    - '#reset-cells'
+> -  - '#power-domain-cells'
+
+Eee? Why? What's this?
+
+
+
+
+Best regards,
+Krzysztof
+
