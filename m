@@ -2,60 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCEF2C46467
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 22:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 971D1C46467
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 22:05:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229968AbjAKWB6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Jan 2023 17:01:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55452 "EHLO
+        id S235946AbjAKWFe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Jan 2023 17:05:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234769AbjAKWB4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 17:01:56 -0500
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9797315FC3
-        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 14:01:54 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id bq39so25671622lfb.0
-        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 14:01:54 -0800 (PST)
+        with ESMTP id S235945AbjAKWFY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 17:05:24 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E10534318C
+        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 14:05:22 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id g13so25645449lfv.7
+        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 14:05:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ds+ysKNpdyUSZP+78toha7tZH4ghJPhiLQmEloFPzAk=;
-        b=KjTmFWTDlgLdJclssfDOuIyB+caIQTSzyi/4JtbrHlCeg+gHDrA1uruvifd0chNXvc
-         cYtmpEsn/T+lp5EzdlCp1x0bfe5u1klutCVNG16f1eJ9sXZUXqHA5D/Dkeb5xylMXFGO
-         h7Afr3pii0KF+NLrGdA8AcBRGTLCT9ga35e8DgS9LvTqFfp6PB70O2Z6cFoBkCicrmaa
-         zp4XpG09KJkQgSNp9ccQ27ts8VTJH9+0pmdunbX1EaaZH3OOiKzht3ndck9yr3iO8hZE
-         pfVTknPxsyVigD6NowkLJFcOfzMe6qvnDUO5Qnu+6JY/v0hKFWMDzuLN4C0OpTFpiQCY
-         zXqg==
+        bh=4K5zK7fDf08t/OhFP3CP7dF756IpX6+tYU9iSJ/5cow=;
+        b=rbWCCBbMIwtvlznW8tsbDElv5X2MvNWBAZURnRcgP73YSirGodRJtUixY53+kEhSpi
+         swD7Km2vcxG7oeN7/RVyEFDIA1bKo0i+GEhDru/6H6HFOqZ0FUwpKIH3MHUa9nnztEgK
+         goPRISkqXWjMJfkQvEs3vvVZCl602jQHf10v/PxVHQbrnfncBEb8n2hJhS9DlNyKiY+M
+         mjWp7Y0rVQBn3OVWGW/VcEe+WUPaaqiUg14+9/R9BQBQRavnDlVWy7lDEEB3Ajt+nYQ0
+         e1hxxjnCKXDXBZCc3pf75/pIdMYe1g4oiLk8oBLCwygD/FbbtsndDGfxcGeP1pJzMrD3
+         iVkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ds+ysKNpdyUSZP+78toha7tZH4ghJPhiLQmEloFPzAk=;
-        b=WZVFjcBpC5xWwOB1veFjX1OH0+Yu5sW1jo9uqVyD/5wpmuf2Ht4vvOCAAltENshsl0
-         bARQj3qjHTaRJWtjmPZboQH6Fyd4hnt4S+x8qf9OmdquZnFVulE0VVHXW3OmtWRvlyID
-         tib0iJSsyLjaqCoUl2kMVXhYebxRARjANAIc/JDx61FP2f67sliTr7EREJQ1HjEBa531
-         siPtpy3OP5+ipgvyTeQ0iy6kzJFx6FTyO8HSSydx9EZ2wie/2peacVQacTPLG5cOTXNO
-         HceuFucLQv7+s+pRrU2XX2PxoQ/a53rliN9RSHHBCBSuVDMBKD9OPZRyS745w20a9Wws
-         e4yg==
-X-Gm-Message-State: AFqh2koYr7BjqhR5Vs9c7a78iOqqRiCwgm95aba1zQaFOnXUYo0wqc8I
-        AZvEMEV7O9v3LuT7Z60pUKk3lQ==
-X-Google-Smtp-Source: AMrXdXsBUSyK3CCGvG5xf9Fl5bejVA6aAg1DPofedhAjZBydvV4hQcLhgPoCuk9CUVL1NoTu6nezgQ==
-X-Received: by 2002:a05:6512:130c:b0:4ca:f9ec:eee2 with SMTP id x12-20020a056512130c00b004caf9eceee2mr22340609lfu.20.1673474512851;
-        Wed, 11 Jan 2023 14:01:52 -0800 (PST)
+        bh=4K5zK7fDf08t/OhFP3CP7dF756IpX6+tYU9iSJ/5cow=;
+        b=KJ4zDkmAPspxhmkizeZBw7btnfCdX7GSOliODs3GGJWcAUVca7sSfrYiT4hyUE5ll+
+         Tl1NL2nsPhXHSxMBzRVTd4obKBj/YrKZcvE8lxXO32M8qTo+a5MlFNVpkcji+D5bGj5u
+         5jReW9ymHMP/aQjF1jxPk2g8HAJoQBCeHd19O0M4pDvxjLeP6kk8CkKb8mo7A4D4SEEc
+         HyKpMVVctRInoTjv8pAJrYZErO1ETJ99tBLxiqDRrka/74y7HKeqt8gC7WUvD1mbS6VM
+         qehMCt/vXH9KszuTDB1Cq5PbYBAQc3BLRfn8MqWAmtqmsqBgtXS19wBTzR6h5U4TCbi1
+         yD0A==
+X-Gm-Message-State: AFqh2kqvBTS5Hk24O0Tg+3vnUBJ5cUyqlm8L4b/UOQd8fz+rOF2RjubY
+        Rpp1GosMvLDj8Pyi7CRWwv8vIQ==
+X-Google-Smtp-Source: AMrXdXtJ5LMApL6Lh+6GG9WSpnzHi/6H31s8+Ht1/QTlOkRwZA3Oie2133BXqk31tMN7ly18v8Vhgw==
+X-Received: by 2002:a05:6512:32cb:b0:4c5:38ae:4b1e with SMTP id f11-20020a05651232cb00b004c538ae4b1emr28212103lfg.45.1673474721279;
+        Wed, 11 Jan 2023 14:05:21 -0800 (PST)
 Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id x30-20020a0565123f9e00b004b543f38b7csm2934833lfa.21.2023.01.11.14.01.52
+        by smtp.gmail.com with ESMTPSA id bi26-20020a0565120e9a00b004cc8620281csm1550585lfb.62.2023.01.11.14.05.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jan 2023 14:01:52 -0800 (PST)
-Message-ID: <bbaea2e2-cea4-3528-4e9b-b003d53d0af7@linaro.org>
-Date:   Thu, 12 Jan 2023 00:01:51 +0200
+        Wed, 11 Jan 2023 14:05:20 -0800 (PST)
+Message-ID: <449be451-f12c-ee14-a5f8-7a1e0d417597@linaro.org>
+Date:   Thu, 12 Jan 2023 00:05:20 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.0
-Subject: Re: [PATCH 06/13] clk: qcom: cpu-8996: simplify the
- cpu_clk_notifier_cb
+Subject: Re: [PATCH 09/13] clk: qcom: cpu-8996: fix PLL configuration sequence
 Content-Language: en-GB
 To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
         Andy Gross <agross@kernel.org>,
@@ -68,99 +67,81 @@ To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
 References: <20230111192004.2509750-1-dmitry.baryshkov@linaro.org>
- <20230111192004.2509750-7-dmitry.baryshkov@linaro.org>
- <b4721d61-799e-2677-4273-0c92cb555cae@linaro.org>
+ <20230111192004.2509750-10-dmitry.baryshkov@linaro.org>
+ <e556e250-7ae4-a5a7-7d0f-eb80a0231e8b@linaro.org>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <b4721d61-799e-2677-4273-0c92cb555cae@linaro.org>
+In-Reply-To: <e556e250-7ae4-a5a7-7d0f-eb80a0231e8b@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/01/2023 23:03, Konrad Dybcio wrote:
+On 11/01/2023 23:08, Konrad Dybcio wrote:
 > 
 > 
-> On 11.01.2023 20:19, Dmitry Baryshkov wrote:
->> - Do not use the Alt PLL completely. Switch to smux when necessary to
->>    prevent overvolting
-> Is this empirical evidence, or did Qualcomm recommendations change since
-> msm-3.18 was released?
-
-I think this is what they are doing, see 
-https://git.codelinaro.org/clo/la/kernel/msm-3.18/-/blob/LA.UM.7.5.r1-05300-8x96.0/drivers/clk/msm/clock-cpu-8996.c#L675
-
-They switch altpll frequency for whatever reasons, then they do the 
-dance of switching the parent rate to half rate if necessary and then 
-they finally switch the parent's rate to the target rate. That's the 
-only way I can interpret the cpu_clk_8996_set_rate().
-
-https://git.codelinaro.org/clo/la/kernel/msm-3.18/-/blob/LA.UM.7.5.r1-05300-8x96.0/drivers/clk/msm/clock-cpu-8996.c#L675
-
-> 
-> 
->> - Restore the parent in case the rate change aborts for some reason
->> - Do not duplicate resetting the parent in set_parent operation.
-> These sound good.
-> 
-> Konrad
+> On 11.01.2023 20:20, Dmitry Baryshkov wrote:
+>> Switch both power and performance clocks to the GPLL0/2 (sys_apcs_aux)
+>> before PLL configuration. Switch them to the ACD afterwards.
 >>
 >> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 >> ---
->>   drivers/clk/qcom/clk-cpu-8996.c | 31 +++++++++++++++++++------------
->>   1 file changed, 19 insertions(+), 12 deletions(-)
+>>   drivers/clk/qcom/clk-cpu-8996.c | 14 ++++++++++++++
+>>   1 file changed, 14 insertions(+)
 >>
 >> diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
->> index 7e5246ca7e7f..ee7e18b37832 100644
+>> index 571ed52b3026..47c58bb5f21a 100644
 >> --- a/drivers/clk/qcom/clk-cpu-8996.c
 >> +++ b/drivers/clk/qcom/clk-cpu-8996.c
->> @@ -506,27 +506,34 @@ static int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+>> @@ -432,13 +432,27 @@ static int qcom_cpu_clk_msm8996_register_clks(struct device *dev,
 >>   {
->>   	struct clk_cpu_8996_pmux *cpuclk = to_clk_cpu_8996_pmux_nb(nb);
->>   	struct clk_notifier_data *cnd = data;
->> -	int ret;
+>>   	int i, ret;
 >>   
->>   	switch (event) {
->>   	case PRE_RATE_CHANGE:
->> -		ret = clk_cpu_8996_pmux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
->>   		qcom_cpu_clk_msm8996_acd_init(base);
+>> +	/* Select GPLL0 for 300MHz for the both clusters */
+> superfluous 'the'
+> 
+>> +	regmap_write(regmap, PERFCL_REG_OFFSET + MUX_OFFSET, 0xc);
+>> +	regmap_write(regmap, PWRCL_REG_OFFSET + MUX_OFFSET, 0xc);
 >> +
->> +		/*
->> +		 * Avoid overvolting. clk_core_set_rate_nolock() walks from top
->> +		 * to bottom, so it will change the rate of the PLL before
->> +		 * chaging the parent of PMUX. This can result in pmux getting
->> +		 * clocked twice the expected rate.
->> +		 *
->> +		 * Manually switch to PLL/2 here.
->> +		 */
->> +		if (cnd->new_rate < DIV_2_THRESHOLD &&
->> +		    cnd->old_rate > DIV_2_THRESHOLD)
->> +			clk_cpu_8996_pmux_set_parent(&cpuclk->clkr.hw, SMUX_INDEX);
+>> +	/* Ensure write goes through before PLLs are reconfigured */
+>> +	udelay(5);
+> Is this value based on n clock cycles, or 'good enough'?
+
+Don't know, this is based on downstream direclty.
+
+> 
 >> +
->>   		break;
->> -	case POST_RATE_CHANGE:
->> -		if (cnd->new_rate < DIV_2_THRESHOLD)
->> -			ret = clk_cpu_8996_pmux_set_parent(&cpuclk->clkr.hw,
->> -							   SMUX_INDEX);
->> -		else
->> -			ret = clk_cpu_8996_pmux_set_parent(&cpuclk->clkr.hw,
->> -							   ACD_INDEX);
->> -		break;
->> +	case ABORT_RATE_CHANGE:
->> +		/* Revert manual change */
->> +		if (cnd->new_rate < DIV_2_THRESHOLD &&
->> +		    cnd->old_rate > DIV_2_THRESHOLD)
->> +			clk_cpu_8996_pmux_set_parent(&cpuclk->clkr.hw, ACD_INDEX);
->>   	default:
->> -		ret = 0;
->>   		break;
->>   	}
+>>   	clk_alpha_pll_configure(&pwrcl_pll, regmap, &hfpll_config);
+>>   	clk_alpha_pll_configure(&perfcl_pll, regmap, &hfpll_config);
+>>   	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
+>>   	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
 >>   
->> -	return notifier_from_errno(ret);
->> +	return NOTIFY_OK;
->>   };
+>> +	/* Wait for PLL(s) to lock */
+>> +        udelay(50);
+> Weird indentation
+> 
+> Maybe wait_for_pll_enable_lock() to be super sure?
+
+Does it work for HWFSM PLLs?
+
+> 
+>> +
+>>   	qcom_cpu_clk_msm8996_acd_init(regmap);
 >>   
->>   static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
+>> +	/* Switch clusters to use the ACD leg */
+>> +	regmap_write(regmap, PWRCL_REG_OFFSET + MUX_OFFSET, 0x2);
+>> +	regmap_write(regmap, PERFCL_REG_OFFSET + MUX_OFFSET, 0x2);
+>> +
+> No delays here?
+
+No. Probably it isn't required since there is no additional PLL locking, 
+etc.
+
+> 
+> Konrad
+>>   	for (i = 0; i < ARRAY_SIZE(cpu_msm8996_hw_clks); i++) {
+>>   		ret = devm_clk_hw_register(dev, cpu_msm8996_hw_clks[i]);
+>>   		if (ret)
 
 -- 
 With best wishes
