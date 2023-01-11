@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B72C678D8
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 19:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D295C63797
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 19:20:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233812AbjAKTUb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Jan 2023 14:20:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34454 "EHLO
+        id S239316AbjAKTUd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Jan 2023 14:20:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234693AbjAKTUR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 14:20:17 -0500
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E059317E28
+        with ESMTP id S235401AbjAKTUS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 14:20:18 -0500
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E03361705F
         for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 11:20:16 -0800 (PST)
-Received: by mail-lj1-x232.google.com with SMTP id g14so17028396ljh.10
+Received: by mail-lj1-x230.google.com with SMTP id f21so12639567ljc.7
         for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 11:20:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/6oxkO9QAPLP0YswH75g78WKyT87UeTs24N1///f/iE=;
-        b=GUzn5UYzDux1UDq5x9iKZ0hwiCHxBTdC4+4a/gOGfTQatCqYzPXg1u9laL4niqclbK
-         CpJy1E5vVVNKuF13JZRXJJUh+4wgxl8CiPMIneLGducXPFaV4DUEwVpbSyT6LYRotbg1
-         qs5K32HRykTy7s0U3UnTXba4a5hPbct7nStNaqX/LAhglEVQFTDftauauce7v54CqYAQ
-         Bg+SEBcs2EkKekeZTZYqySjuxGFAq91/qdF89m37d4l+1owcPqKaxntAEWFfigy3biut
-         4/L4oA25BMO7XTIWfOpOn+IcMgITki9K24X/Lw7q2Lbelxisgs6NEBH2eKd+cOGhAJ/Q
-         afbA==
+        bh=o9TfgZ8Zdbv763+42Ud+oVMz+eIqSvcSMEMLtjMi/xo=;
+        b=jwhsObXKo/coHvJbhxPTaewQmc6+ONipv8wkxiF8ZPty8mKsLdFPSRs2hDqg9y5ho6
+         eZPN1Ma04rm8HFkKY9aZtZHMU6YyVPcUabzD+QWPV9H+XtK1kGPca1aHXEdC5mKWBrND
+         RBEnwxzFTpA1CZaoE6MoECEzqoWmpdm5B59rqtPG6ZJzeWl1rQBg1/f6Z/kM7GWcOIVz
+         jwGsLj23Qu+R4Ur+hcp7fcoe5NtX/Tnxjqzy3AuSnaJ6nMdCbmLDNkJEXl41pIkPIG6B
+         8bARiB9bp4ubBCy7rfhNEyANBSbPoZQ9hP9TM1OrXApVF2+RvfhmQdpOt3O1hR7yC4nc
+         qTnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/6oxkO9QAPLP0YswH75g78WKyT87UeTs24N1///f/iE=;
-        b=LXaTk8oOIAf1eAKlAUN0yBSl/0Szx3sgNJV2+b9o3++gc7ckAwBTAvlpIb+b23Ya6K
-         he2UDdv0WYCRfpCS82fJRXL5HbyyZ12KBEbRO3BcAK/xcF0kYfGE2S6EtLs4miIf8Nvo
-         KjuTsCd5sOkneSMG0nHO/slco2xDAc9etFdudziKGp17SMibjY5+SV3xQcRLADqhibMm
-         6Gs2Gwdaokgxg9l7/pCOOoYKNsMLh7C2dXiyvP6PcprczS2n9AnoBWiPc7RyOTTCSYrx
-         4oTEp7D7cSvByOcvCa5VQ7AC477H6/egUYsJtC2BSLx7Qvkxdh/G0ATRwuxc7xZYOlEu
-         j7bg==
-X-Gm-Message-State: AFqh2krhKifc9UUj2XjbEFousK0mWxEghuJJw15hM9TIopIlXvVQIQjg
-        6ZEMbvBUxSoP/0Y3uWtxjSfBEg==
-X-Google-Smtp-Source: AMrXdXvl0IM1Ir+K7DmFG3Jey9+jyD+I9e8lHBh+JSb7ZROysP5ogmll+FHtNFsKiyGgc5RwSX+hWA==
-X-Received: by 2002:a2e:b5c4:0:b0:285:820a:3167 with SMTP id g4-20020a2eb5c4000000b00285820a3167mr2686929ljn.36.1673464816401;
-        Wed, 11 Jan 2023 11:20:16 -0800 (PST)
+        bh=o9TfgZ8Zdbv763+42Ud+oVMz+eIqSvcSMEMLtjMi/xo=;
+        b=f31GSyk+3Nzndnezeoi/ZQ/9T6tnPNHtRNYOD0/uWzr9Tm9kNsVotWtqvODdfOnnyL
+         Vngr8lkwCk7wDbUmy6JplignDf3wEpTrHjuascV3Jq4zrEuz7zexj3hDIKEwxMB+DO6Q
+         /7VCv0HTIWJbFyTS2AXJo89znaQ16ntovxkE1LDB2YRXD4KOQQqibQ5sIyIzGEKdGbpv
+         xGy4zIKI+EaS9Wcdq/AKc+JYBNx1IDYfwTgMMF1/4B21QYBcb0l2Jkk+MyiQnKmEMMgu
+         xFxHuOMxeuc6+ZLBuoH///n4nu1noi6v15uim1UoV15/oRGIpKyzHYDW1lqtdWfptNwh
+         gkAA==
+X-Gm-Message-State: AFqh2krWNgDjHT6jKojUISFmcdxwP0PFG+wLE94xh0h0lt51pruSeyIV
+        2JCibobW8jkblJ9T2+o17BW+zg==
+X-Google-Smtp-Source: AMrXdXtO8D6A2JvEf+Igc3GNYE2NSOngNjMbK5U2NDeOvtWW+cgtXAWNdkq64PLfHe2/XE8lSO+8aA==
+X-Received: by 2002:a2e:9206:0:b0:27f:e50b:9e35 with SMTP id k6-20020a2e9206000000b0027fe50b9e35mr10609099ljg.52.1673464815027;
+        Wed, 11 Jan 2023 11:20:15 -0800 (PST)
 Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id bj36-20020a2eaaa4000000b0027ff2fabcb5sm1807787ljb.104.2023.01.11.11.20.15
+        by smtp.gmail.com with ESMTPSA id bj36-20020a2eaaa4000000b0027ff2fabcb5sm1807787ljb.104.2023.01.11.11.20.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jan 2023 11:20:16 -0800 (PST)
+        Wed, 11 Jan 2023 11:20:14 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -60,9 +60,9 @@ To:     Andy Gross <agross@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH 13/13] arm64: dts: qcom: msm8996: support using GPLL0 as kryocc input
-Date:   Wed, 11 Jan 2023 22:20:04 +0300
-Message-Id: <20230111192004.2509750-14-dmitry.baryshkov@linaro.org>
+Subject: [PATCH 11/13] clk: qcom: cpu-8996: fix PLL clock ops
+Date:   Wed, 11 Jan 2023 22:20:02 +0300
+Message-Id: <20230111192004.2509750-12-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20230111192004.2509750-1-dmitry.baryshkov@linaro.org>
 References: <20230111192004.2509750-1-dmitry.baryshkov@linaro.org>
@@ -72,29 +72,36 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In some cases the driver might need using GPLL0 to drive CPU clocks.
-Bring it in through the sys_apcs_aux clock.
+Switch CPU PLLs to use clk_alpha_pll_hwfsm_ops, it seems to suit
+better.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 4 ++--
+ drivers/clk/qcom/clk-cpu-8996.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index d52023c19682..4e3068bedf4c 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -2940,8 +2940,8 @@ kryocc: clock-controller@6400000 {
- 			compatible = "qcom,msm8996-apcc";
- 			reg = <0x06400000 0x90000>;
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index 1c00eb629b61..b53cddc4bca3 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -128,7 +128,7 @@ static struct clk_alpha_pll pwrcl_pll = {
+ 		.name = "pwrcl_pll",
+ 		.parent_data = pll_parent,
+ 		.num_parents = ARRAY_SIZE(pll_parent),
+-		.ops = &clk_alpha_pll_huayra_ops,
++		.ops = &clk_alpha_pll_hwfsm_ops,
+ 	},
+ };
  
--			clock-names = "xo";
--			clocks = <&rpmcc RPM_SMD_BB_CLK1>;
-+			clock-names = "xo", "sys_apcs_aux";
-+			clocks = <&rpmcc RPM_SMD_BB_CLK1>, <&apcs_glb>;
+@@ -140,7 +140,7 @@ static struct clk_alpha_pll perfcl_pll = {
+ 		.name = "perfcl_pll",
+ 		.parent_data = pll_parent,
+ 		.num_parents = ARRAY_SIZE(pll_parent),
+-		.ops = &clk_alpha_pll_huayra_ops,
++		.ops = &clk_alpha_pll_hwfsm_ops,
+ 	},
+ };
  
- 			#clock-cells = <1>;
- 		};
 -- 
 2.30.2
 
