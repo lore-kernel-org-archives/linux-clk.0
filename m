@@ -2,60 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F39B6C678D7
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 09:49:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 733CAC67871
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 09:51:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232041AbjAKJsX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Jan 2023 04:48:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46630 "EHLO
+        id S238350AbjAKJvG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Jan 2023 04:51:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231998AbjAKJrl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 04:47:41 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EB28BE34
-        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 01:46:42 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id c4-20020a1c3504000000b003d9e2f72093so9090011wma.1
-        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 01:46:42 -0800 (PST)
+        with ESMTP id S238284AbjAKJtg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 04:49:36 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF20EBE34
+        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 01:48:28 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id bk16so14419999wrb.11
+        for <linux-clk@vger.kernel.org>; Wed, 11 Jan 2023 01:48:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=DqMKfZ4HdDIBNj9OjnuIifVi3RC3QORFKptzKvWxKcE=;
-        b=mA7rds7/glwxiTj8qYO8Fzpzilrrybarn91meiO2MalEclrv+PDm/8c5se7Tk96C+U
-         7xINCprb15wVTxmr/W9NOBqCTyZLMGPtRXWyCKhc+BPh/n16fd2x0lSxpGDt6wiRgT2Z
-         eQE9J2rlcp9gNNocDrE1clvTfdzr2nRHyOTWN7uOzTx9Y14JwMs3gvi48Gkk4ZyIe1r2
-         DhaJKH9Va3crOuPykyxoMb7DSWwgowtLIErRIyz0RHbTm59kZ5ZV5Gc4ZKkFbjcgY3yu
-         BUZ+lBFW9sYKwYMLKzGX8+WrIPcPhG4akMrj0A3UZrTWthFuMkHu3FVxPMn4yDaTjh7W
-         Ghww==
+        bh=k4e/bFIClwcTBFeT4bkg7MJYA1/OHdeu+1QtASBuUpA=;
+        b=yCNGqgnirpDTpOmA9ZMnA71FVuItnXd5NTyRIB4RcKl6FpMMbIvgPc0qrOAIGF2BEo
+         ym28MJvtaDewPgjpX0+rodvcVLZelQLUjHsfesTrdhoSMyeOxcXV403RuEoFm8u2Q4tN
+         D4YK5Jgg9UYPITFDTxS5wLSjuR/jSo+zyB752B5jukBSo9xp4n62JrjqXRGNcNgs8gf/
+         Yo0APw7M8kL/sqx+CYOJ7FpvtoS88KUDkx78WYE+vh4W/E8G38ZkrPD4AkVB7LR4oIEH
+         dA0XsZ8o0NYzgdbCtDHWKeW8jAji4eDsQgsVskL/hdAWVLw5mpMXGBhpdHhVOlnXfEqJ
+         H3eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DqMKfZ4HdDIBNj9OjnuIifVi3RC3QORFKptzKvWxKcE=;
-        b=OyM7QGMkftVOi88tx9z4lIMHOZAYSenO/CA0Dq/HSPFxTHEifuFpCsQ/YwkSWalFhA
-         stBEKkowbcXmSUfkRrg+8fhG6s9DOLIu+asm8MrtdlLWIz5KyHAtpoZ72REn6IQHvG7K
-         TVVUgYnoq/2eQBEsB3g7kPF2EAVyFOsg+hQ5S/qK68lk08bdPVxxBIo9rZtxEodfhJZH
-         5PoSzZLPrnEsTR0ieRUcdAsDX6YBpeiptIzlF+dU+TMto0qTLKce3iPl+NgNFJP71ozD
-         LUnMl7XsDT3CyPdMfvyEMyrZAfM+f4tM49TOWZ7RKK5E40Y9jg+qpgkVfNdqmscr+GG4
-         shfA==
-X-Gm-Message-State: AFqh2kp4i/WrSynF8MfUEVIHokfEA9nvmtMzsQTookemijWYpehvLFUu
-        63jMdIPMpxUZqJ2Z+zsSR0tddQ==
-X-Google-Smtp-Source: AMrXdXvGv7gNzilmGdxnCRA232nJngNZyR71k77CNlklw82CTtFZmiGA3tUrl9b++lc9NMdNw7xqvg==
-X-Received: by 2002:a05:600c:34cd:b0:3d5:1175:92c3 with SMTP id d13-20020a05600c34cd00b003d5117592c3mr51173404wmq.23.1673430400740;
-        Wed, 11 Jan 2023 01:46:40 -0800 (PST)
+        bh=k4e/bFIClwcTBFeT4bkg7MJYA1/OHdeu+1QtASBuUpA=;
+        b=nm9QEawZ6RB8IEksKb7z8t9fSTd0HdKnc3UmGzC04i5OeyZOmK2Lay+3GnSB62LDNI
+         bPNJtNnxI1BFw1hPGZtuUjIhPtaH1DxoO5gdLfpXrxrYgAL7eWKHrXJ1qMVda6krMmru
+         4NAu3dNNYYnI57PpDCjGCwpL6VyuvK3DubGNaEvXKJP3XB8YWGkOc8C7sp8dYcWhSvQ5
+         Rx7gfkP7ttFy9ViIjxaVi4pqODv/s91LghBKw+gzew8IxNCUqRqh51pxEur3xM0qmyBn
+         v96XhYQtOLh+UY0DNrihT3P5PVHDERd1m7CEPpWWqjfTpQuZdFvjq1aNESv2+xtmdUej
+         F0nA==
+X-Gm-Message-State: AFqh2kppt0tmnVuSL1WsuZ1C0MfzTQoFHMR+8Uex/tdBmRD0r9e5U/0G
+        3mtcidkOR5Q6eq/e4uumxtbYFQ==
+X-Google-Smtp-Source: AMrXdXuAIqa4Yx/QQNnTYGq31pq8ZDb6GToJbV+OAf2qTRr/UFfcFhrwFymZTtQABI2yg3S+/SIoLg==
+X-Received: by 2002:a5d:680a:0:b0:2bd:c690:2e66 with SMTP id w10-20020a5d680a000000b002bdc6902e66mr595170wru.5.1673430507469;
+        Wed, 11 Jan 2023 01:48:27 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id q18-20020adfdfd2000000b002bdc129c8f6sm1703241wrn.43.2023.01.11.01.46.38
+        by smtp.gmail.com with ESMTPSA id t19-20020a0560001a5300b002362f6fcaf5sm13289650wry.48.2023.01.11.01.48.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jan 2023 01:46:40 -0800 (PST)
-Message-ID: <788ddb2a-7c29-cc10-fce2-ca348cd81b65@linaro.org>
-Date:   Wed, 11 Jan 2023 10:46:37 +0100
+        Wed, 11 Jan 2023 01:48:27 -0800 (PST)
+Message-ID: <16b185ae-99a7-61d9-b5a0-f3eb157ea420@linaro.org>
+Date:   Wed, 11 Jan 2023 10:48:23 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH 4/7] pinctrl: qcom: Add IPQ9574 pinctrl driver
+Subject: Re: [PATCH 6/7] arm64: dts: Add ipq9574 SoC and AL02 board support
 Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     devi priya <quic_devipriy@quicinc.com>, agross@kernel.org,
         andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
@@ -72,41 +73,29 @@ Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
         quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
         quic_poovendh@quicinc.com
 References: <20230110121316.24892-1-quic_devipriy@quicinc.com>
- <20230110121316.24892-5-quic_devipriy@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230110121316.24892-5-quic_devipriy@quicinc.com>
+ <20230110121316.24892-7-quic_devipriy@quicinc.com>
+ <f6ef1834-b629-b76c-9cde-55af56320665@linaro.org>
+In-Reply-To: <f6ef1834-b629-b76c-9cde-55af56320665@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/01/2023 13:13, devi priya wrote:
-> Add pinctrl definitions for the TLMM of IPQ9574
+On 11/01/2023 10:44, Krzysztof Kozlowski wrote:
+> And here
 > 
-> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
-> ---
->  drivers/pinctrl/qcom/Kconfig           |   10 +
->  drivers/pinctrl/qcom/Makefile          |    1 +
->  drivers/pinctrl/qcom/pinctrl-ipq9574.c | 1003 ++++++++++++++++++++++++
->  3 files changed, 1014 insertions(+)
->  create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq9574.c
+>> +			clock-names = "xo", "iface", "core";
 > 
-> diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-> index 1378ddca084f..a9b4b07e3de0 100644
-> --- a/drivers/pinctrl/qcom/Kconfig
-> +++ b/drivers/pinctrl/qcom/Kconfig
-> @@ -70,6 +70,16 @@ config PINCTRL_IPQ6018
->  	  Qualcomm Technologies Inc. IPQ6018 platform. Select this for
->  	  IPQ6018.
->  
-> +config PINCTRL_IPQ9574
-> +	tristate "Qualcomm Technologies, Inc. IPQ9574 pin controller driver"
-> +	depends on GPIOLIB && OF
+> Does not look like you tested the bindings. Please run `make
+> dt_binding_check` (see
+> Documentation/devicetree/bindings/writing-schema.rst for instructions).
 
-Look at other entries and use similar style.
+Apologies, wrong template. Correct comment:
+
+Does not look like you tested the DTS against bindings. Please run `make
+dtbs_check` (see Documentation/devicetree/bindings/writing-schema.rst
+for instructions).
 
 Best regards,
 Krzysztof
