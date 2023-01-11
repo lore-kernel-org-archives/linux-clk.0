@@ -2,115 +2,199 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71FB1C46467
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 19:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FEC3C46467
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 19:45:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234545AbjAKTkV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Jan 2023 14:40:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44562 "EHLO
+        id S231511AbjAKTpP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Jan 2023 14:45:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234693AbjAKTkK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 14:40:10 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4011EE0A8;
-        Wed, 11 Jan 2023 11:40:09 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id g19-20020a05600c4ed300b003d9eb1dbc0aso10550390wmq.3;
-        Wed, 11 Jan 2023 11:40:09 -0800 (PST)
+        with ESMTP id S234993AbjAKTot (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Jan 2023 14:44:49 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7230C138;
+        Wed, 11 Jan 2023 11:43:02 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id d17so16127266wrs.2;
+        Wed, 11 Jan 2023 11:43:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zqjyIjqa21DKlLc9aiLyfHVjAwLQSQqAdSY+ejwIkis=;
-        b=cyZj3gnrvmF8CnpQxy9/fPUf4R722i8raRiSVDtidZIzrJ6zAHa8P9TQTyQvB6Qp9i
-         Mzq19yoP8G+5PhJl9UfKr6Hgy5oPu1chk6+ZLnkyoeCpbNycrTMAOvCCAobNvLUY38en
-         YNTuuYKbGI4J2xwwVchiD2que80nEawIqs8NLOenb+ndIN93950B2EXXec1DdPVus4pb
-         FXYbQHghxWEmsL053HHODj4vm+by7AZLaxhKz1mm/Kgy39KaECIMekfmqF7Y9p3DTdr+
-         ngDSSQPDMT7jk163/nhXbFqBT7eDNhy7s9fF0jF7wJ6kjD6+V/QJPgPmaIYxRW0oetor
-         n5Gw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UYevc0/VBCj9wBQRWlQ/9Q4O5TfPY8fJu+BvNTU/yG0=;
+        b=Xk3wLwZIsPcBP4s0vXhPN8TQl2dDXq36Tyy8/K1UYGJmyCuf96p2Hm7Y5mE+3yBc6N
+         EldNKEN2ZXmBlnfrHG7+IH0x1vx/1nAN4Gmweoj8Ublcm3VB/tzy03kEoSyhA15vnget
+         PCImX4WRw8ON9d6k8CLhoAJ6UuVpQUS1WGJiiqVI4sz8e6ASeltwWGCaSxA6KHXHaTAH
+         27wiJYYD9E49R65bM4NMZxseFT7043MfUpagCoIUcFiUbrgAVXlwSXS28RvuoKhQ3ddg
+         kBCvh49QIJyqg3lSnFkl7rDe23tlfV+cNTu1wqP6lTvHSRbBO32OfAKdVGhIXegjfFq4
+         Jwgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zqjyIjqa21DKlLc9aiLyfHVjAwLQSQqAdSY+ejwIkis=;
-        b=sbWIAifyNADCTxjSvAFU8NRo5DORgqUfRHKirJgION4BGSEy2V6vjVZheW0/nmMfx2
-         JBT1vdZH3VIDrNrv3PVZim+WYWPbRzALrWUWzlq/KLKKW/RapP4lUcRAZWjrcbdx5S+t
-         /RIl7liPy2/vhWAR6mLuDG82v42UO5vgrc2ASjyTWhGE8r7KgC+QSstlK9aKAE2L7zHG
-         HbuiYLm5a00RHvwzNFlEx9E2kN3HKkmKmIf056inZ1+obyEt5xzCYcyAHD9V8lKnhi3f
-         OI1PrS3NNq/KIHGZkAjcwgSK7ZJrQ1ZK8WB/69+n7BGyNtAAUHfHxDm6NmNbrDW1h97p
-         ooVg==
-X-Gm-Message-State: AFqh2krhanEd6xYDjQa7gyRnC+uLAFhlbDFIEM5RfMOFpcW3aVHm9hBT
-        ESulV5UgKmM4wR7LXXSTykY=
-X-Google-Smtp-Source: AMrXdXs56CDgvt1nUOLqLqObRvQcTxebbICW2BYjPDtCRRSWfu/8YL2yfyo7sbrGuI8gr7QcbEVZTQ==
-X-Received: by 2002:a05:600c:42d5:b0:3d6:e790:c9a0 with SMTP id j21-20020a05600c42d500b003d6e790c9a0mr63567225wme.10.1673466007570;
-        Wed, 11 Jan 2023 11:40:07 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UYevc0/VBCj9wBQRWlQ/9Q4O5TfPY8fJu+BvNTU/yG0=;
+        b=cEI5QsTNGQmcdk4gX2U8owFzEykB2mch54jRRXFjufm+E3x7EjqxuPo10kwmy1UiZC
+         +eewa/nkQHSRNy+Lf8DnbgftpxHNyN5Tl2Chf1KyQNPDugNJ0foPDuEH1BB4jVF3HkXH
+         mWk0yDwfJ8EQggiZJPL/odR0l6Bz3JvJyK2R938mC5zlblUi5ABawcExN6gmiF1RkfUG
+         O0G1xFNxmdYsfW7/RkWnHi8V3tH6WTFCptmN5SB1MuK7bYMCi3sswR9mKdnEFm2ubD2K
+         EJVzzFCATTuy3hgXxl+NUtT8dXxflMSigMELi4gxisIh+5j0uGnwTA1tkDHVmYGs4mWZ
+         /QdA==
+X-Gm-Message-State: AFqh2kpWjzIDST1+iVdjqeBXVIE9dpl0vLYId5x9qTkGf4ja1IJ2CY0g
+        o0dDCAtZK5iBZOaglArLDWY=
+X-Google-Smtp-Source: AMrXdXsmuPWreyUo7TQ6maw1tmEdm5EoqYay1ncZIsrNYTLkueMvwCZyA7hJvKlFT5YsNysC+6Z+8w==
+X-Received: by 2002:a05:6000:1a41:b0:24b:b74d:8012 with SMTP id t1-20020a0560001a4100b0024bb74d8012mr44439839wry.18.1673466180776;
+        Wed, 11 Jan 2023 11:43:00 -0800 (PST)
 Received: from localhost.localdomain (93-34-92-88.ip49.fastwebnet.it. [93.34.92.88])
-        by smtp.googlemail.com with ESMTPSA id p11-20020a05600c358b00b003cfa3a12660sm7815451wmq.1.2023.01.11.11.40.06
+        by smtp.googlemail.com with ESMTPSA id bt19-20020a056000081300b002bdc3f5945dsm2179789wrb.89.2023.01.11.11.42.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Jan 2023 11:40:07 -0800 (PST)
+        Wed, 11 Jan 2023 11:43:00 -0800 (PST)
 From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Christian Marangi <ansuelsmth@gmail.com>
-Subject: [RESEND PATCH] clk: Warn and add workaround on misuse of .parent_data with .name only
-Date:   Wed, 11 Jan 2023 20:39:57 +0100
-Message-Id: <20230111193957.27650-1-ansuelsmth@gmail.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Christian Marangi <ansuelsmth@gmail.com>,
+        Robert Marko <robimarko@gmail.com>
+Subject: [RESEND PATCH 2/2] clk: qcom: gcc-ipq8074: rework nss_port5/6 clock to multiple conf
+Date:   Wed, 11 Jan 2023 20:42:50 +0100
+Message-Id: <20230111194250.15793-2-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20230111194250.15793-1-ansuelsmth@gmail.com>
+References: <20230111194250.15793-1-ansuelsmth@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-By a simple mistake in a .parent_names to .parent_data conversion it was
-found that clk core assume fw_name is always provided with a parent_data
-struct for each parent and never fallback to .name to get parent name even
-if declared.
+Rework nss_port5/6 to use the new multiple configuration implementation
+and correctly fix the clocks for these port under some corner case.
 
-This is caused by clk_core_get that only checks for parent .fw_name and
-doesn't handle .name.
+This is particularly relevant for device that have 2.5G or 10G port
+connected to port5 or port 6 on ipq8074. As the parent are shared
+across multiple port it may be required to select the correct
+configuration to accomplish the desired clock. Without this patch such
+port doesn't work in some specific ethernet speed as the clock will be
+set to the wrong frequency as we just select the first configuration for
+the related frequency instead of selecting the best one.
 
-While it's sane to request the dev to correctly do the conversion and
-add both .fw_name and .name in a parent_data struct, it's not sane to
-silently drop parents without a warning.
-
-Fix this in 2 ways. Add a kernel warning when a wrong implementation is
-used and copy .name in .fw_name in parent map populate function to
-handle clk problems and malfunctions.
-
+Tested-by: Robert Marko <robimarko@gmail.com> # ipq8074 Qnap QHora-301W
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- drivers/clk/clk.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/clk/qcom/gcc-ipq8074.c | 64 +++++++++++++++++++++++++---------
+ 1 file changed, 48 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 57b83665e5c3..dccd4ea6f692 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -4015,10 +4015,21 @@ static int clk_core_populate_parent_map(struct clk_core *core,
- 			ret = clk_cpy_name(&parent->name, parent_names[i],
- 					   true);
- 		} else if (parent_data) {
-+			const char *parent_name;
+diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+index 42d185fe19c8..02d04a552b78 100644
+--- a/drivers/clk/qcom/gcc-ipq8074.c
++++ b/drivers/clk/qcom/gcc-ipq8074.c
+@@ -1787,13 +1787,21 @@ static struct clk_regmap_div nss_port4_tx_div_clk_src = {
+ 	},
+ };
+ 
++static const struct freq_conf ftbl_nss_port5_rx_clk_src_25[] = {
++	C(P_UNIPHY1_RX, 12.5, 0, 0),
++	C(P_UNIPHY0_RX, 5, 0, 0),
++};
 +
- 			parent->hw = parent_data[i].hw;
- 			parent->index = parent_data[i].index;
-+			parent_name = parent_data[i].fw_name;
++static const struct freq_conf ftbl_nss_port5_rx_clk_src_125[] = {
++	C(P_UNIPHY1_RX, 2.5, 0, 0),
++	C(P_UNIPHY0_RX, 1, 0, 0),
++};
 +
-+			if (!parent_name && parent_data[i].name) {
-+				WARN(1, "Empty .fw_name with .name in %s's .parent_data. Using .name for .fw_name declaration.\n",
-+				     core->name);
-+				parent_name = parent_data[i].name;
-+			}
+ static const struct freq_tbl ftbl_nss_port5_rx_clk_src[] = {
+ 	F(19200000, P_XO, 1, 0, 0),
+-	F(25000000, P_UNIPHY1_RX, 12.5, 0, 0),
+-	F(25000000, P_UNIPHY0_RX, 5, 0, 0),
++	FM(25000000, ftbl_nss_port5_rx_clk_src_25),
+ 	F(78125000, P_UNIPHY1_RX, 4, 0, 0),
+-	F(125000000, P_UNIPHY1_RX, 2.5, 0, 0),
+-	F(125000000, P_UNIPHY0_RX, 1, 0, 0),
++	FM(125000000, ftbl_nss_port5_rx_clk_src_125),
+ 	F(156250000, P_UNIPHY1_RX, 2, 0, 0),
+ 	F(312500000, P_UNIPHY1_RX, 1, 0, 0),
+ 	{ }
+@@ -1829,13 +1837,21 @@ static struct clk_regmap_div nss_port5_rx_div_clk_src = {
+ 	},
+ };
+ 
++static struct freq_conf ftbl_nss_port5_tx_clk_src_25[] = {
++	C(P_UNIPHY1_TX, 12.5, 0, 0),
++	C(P_UNIPHY0_TX, 5, 0, 0),
++};
 +
- 			ret = clk_cpy_name(&parent->fw_name,
--					   parent_data[i].fw_name, false);
-+					   parent_name, false);
++static struct freq_conf ftbl_nss_port5_tx_clk_src_125[] = {
++	C(P_UNIPHY1_TX, 2.5, 0, 0),
++	C(P_UNIPHY0_TX, 1, 0, 0),
++};
 +
- 			if (!ret)
- 				ret = clk_cpy_name(&parent->name,
- 						   parent_data[i].name,
+ static const struct freq_tbl ftbl_nss_port5_tx_clk_src[] = {
+ 	F(19200000, P_XO, 1, 0, 0),
+-	F(25000000, P_UNIPHY1_TX, 12.5, 0, 0),
+-	F(25000000, P_UNIPHY0_TX, 5, 0, 0),
++	FM(25000000, ftbl_nss_port5_tx_clk_src_25),
+ 	F(78125000, P_UNIPHY1_TX, 4, 0, 0),
+-	F(125000000, P_UNIPHY1_TX, 2.5, 0, 0),
+-	F(125000000, P_UNIPHY0_TX, 1, 0, 0),
++	FM(125000000, ftbl_nss_port5_tx_clk_src_125),
+ 	F(156250000, P_UNIPHY1_TX, 2, 0, 0),
+ 	F(312500000, P_UNIPHY1_TX, 1, 0, 0),
+ 	{ }
+@@ -1871,13 +1887,21 @@ static struct clk_regmap_div nss_port5_tx_div_clk_src = {
+ 	},
+ };
+ 
++static struct freq_conf ftbl_nss_port6_rx_clk_src_25[] = {
++	C(P_UNIPHY2_RX, 5, 0, 0),
++	C(P_UNIPHY2_RX, 12.5, 0, 0),
++};
++
++static struct freq_conf ftbl_nss_port6_rx_clk_src_125[] = {
++	C(P_UNIPHY2_RX, 1, 0, 0),
++	C(P_UNIPHY2_RX, 2.5, 0, 0),
++};
++
+ static const struct freq_tbl ftbl_nss_port6_rx_clk_src[] = {
+ 	F(19200000, P_XO, 1, 0, 0),
+-	F(25000000, P_UNIPHY2_RX, 5, 0, 0),
+-	F(25000000, P_UNIPHY2_RX, 12.5, 0, 0),
++	FM(25000000, ftbl_nss_port6_rx_clk_src_25),
+ 	F(78125000, P_UNIPHY2_RX, 4, 0, 0),
+-	F(125000000, P_UNIPHY2_RX, 1, 0, 0),
+-	F(125000000, P_UNIPHY2_RX, 2.5, 0, 0),
++	FM(125000000, ftbl_nss_port6_rx_clk_src_125),
+ 	F(156250000, P_UNIPHY2_RX, 2, 0, 0),
+ 	F(312500000, P_UNIPHY2_RX, 1, 0, 0),
+ 	{ }
+@@ -1913,13 +1937,21 @@ static struct clk_regmap_div nss_port6_rx_div_clk_src = {
+ 	},
+ };
+ 
++static struct freq_conf ftbl_nss_port6_tx_clk_src_25[] = {
++	C(P_UNIPHY2_TX, 5, 0, 0),
++	C(P_UNIPHY2_TX, 12.5, 0, 0),
++};
++
++static struct freq_conf ftbl_nss_port6_tx_clk_src_125[] = {
++	C(P_UNIPHY2_TX, 1, 0, 0),
++	C(P_UNIPHY2_TX, 2.5, 0, 0),
++};
++
+ static const struct freq_tbl ftbl_nss_port6_tx_clk_src[] = {
+ 	F(19200000, P_XO, 1, 0, 0),
+-	F(25000000, P_UNIPHY2_TX, 5, 0, 0),
+-	F(25000000, P_UNIPHY2_TX, 12.5, 0, 0),
++	FM(25000000, ftbl_nss_port6_tx_clk_src_25),
+ 	F(78125000, P_UNIPHY2_TX, 4, 0, 0),
+-	F(125000000, P_UNIPHY2_TX, 1, 0, 0),
+-	F(125000000, P_UNIPHY2_TX, 2.5, 0, 0),
++	FM(125000000, ftbl_nss_port6_tx_clk_src_125),
+ 	F(156250000, P_UNIPHY2_TX, 2, 0, 0),
+ 	F(312500000, P_UNIPHY2_TX, 1, 0, 0),
+ 	{ }
 -- 
 2.37.2
 
