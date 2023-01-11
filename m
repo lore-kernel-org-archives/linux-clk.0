@@ -2,111 +2,119 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9895C54EBC
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 03:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29FBEC5479D
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Jan 2023 04:47:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230106AbjAKDCC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Jan 2023 22:02:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54060 "EHLO
+        id S230194AbjAKErX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Jan 2023 23:47:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230035AbjAKDCB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 22:02:01 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC7CA167FE
-        for <linux-clk@vger.kernel.org>; Tue, 10 Jan 2023 19:02:00 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id f34so21439320lfv.10
-        for <linux-clk@vger.kernel.org>; Tue, 10 Jan 2023 19:02:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PncCxYyvcTnAkGz0YWPtK6aiQnP/pdPnzgEOYBMREc0=;
-        b=HnxJAXe3BGP4muuFIAjvvqS5Qk8pXgbg/5AIIkgggWS6Nk76RwA43qiBfIaGg8DngE
-         rWL77n1EnGYxgkNytK7HwtSC9XlLH0nJEoJjpG7mR4LBcVLwI/Cyb8ND8Z0aTHsoN7Ry
-         waoAWRaKZb1caL91QIcQcRBXA+UmQxL94yTBCvPVES6gmEhMl24q+na5ZzCPZmLCAbNK
-         RUjTBXkS5ruNwzjz8SW5KIuCOcEemr3S+hnzTVJvj1p4xQS1LuzfBJ6lGTc14ek04liV
-         t+e8ZWeovsdl1H0zl6sq/e+iHS51h3s7NGfCd3e1iPEnyAgJcpR7iUeaxFlLHTWUK1w0
-         KJZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PncCxYyvcTnAkGz0YWPtK6aiQnP/pdPnzgEOYBMREc0=;
-        b=mbW0teaz3xcFwETZtdg95KhcXXonsC1FnQbA8LAwPqM7Gvh3QSSLmmdvEFHplQApRF
-         YFtlTooLjPOvuPZXxpEzaCRBeIrqysDIPiqys2JDq/50FgaI4G32z9D7Q19fyuf3lFEl
-         JRGF04gO2ypcGcBQPoyxiqrl4Ae3QxOnjg+SkuYxBmOELU+ClAN34xbnRle1NykG1HzZ
-         5GHQElcuS2nAGke9Zjcx6XpUapqIz5XhY6ZO+gfLVyAn9/DKaXNqE9VrSb3GPu9rqfPJ
-         3Zu1nRiBM8gW1Gd/4yHcdvMjOBKi1RY0bWXc7mB6mznzgPS4fGTafUL6TyndmcjNfv1s
-         zHLA==
-X-Gm-Message-State: AFqh2krEC7tVrOHYZD0K3lo0teK0gm0UyeoHhEKkAmG/Qs2yX15Ufq/8
-        Y+FpCfVYQYokby1MYoWiBlgFlw==
-X-Google-Smtp-Source: AMrXdXubJKxD8c0aw2OtMg29FOcIE3GbEQ0pGs+GzlvB3Ue2tWimg2Pe743h/7+vWJiGyA8nZ6fwTA==
-X-Received: by 2002:a05:6512:398c:b0:4b5:7a91:70f5 with SMTP id j12-20020a056512398c00b004b57a9170f5mr22534607lfu.63.1673406119053;
-        Tue, 10 Jan 2023 19:01:59 -0800 (PST)
-Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id g1-20020a056512118100b004cc84e29d74sm1281373lfr.52.2023.01.10.19.01.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jan 2023 19:01:58 -0800 (PST)
-Message-ID: <5416b022-9567-1b56-b994-95b037d1f11a@linaro.org>
-Date:   Wed, 11 Jan 2023 05:01:57 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH 15/21] clk: qcom: gpucc-msm8998: switch to parent_hws
-Content-Language: en-GB
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Andy Gross <agross@kernel.org>,
+        with ESMTP id S229793AbjAKErW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2023 23:47:22 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7419D38B1;
+        Tue, 10 Jan 2023 20:47:21 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id DF962CE1AA8;
+        Wed, 11 Jan 2023 04:47:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81F6CC433D2;
+        Wed, 11 Jan 2023 04:47:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673412438;
+        bh=EzxG25X2qSpJY1TkjGVK3HjBdsZ6CesEv8+zK9pexJo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rvpQMFQQinur10IyM85sLoJKkZJEeGWAdVYIAaoRMo/kGfayQZdU+G23asw1LRaft
+         XRAazC7QOPGrMcwtfzuRiNs4FLD9WxlkBw7sFSCg7yp2sqIJm5If/BYw9IeZfYQPG5
+         mZztwpYj4YScIHmhdMjs1uNStcJMXqV7AKD5J/J4WwLQssSMBW2RxHpMHeYC+C8hbQ
+         edObG2dZfaXC1kt6tzWK+198D2vOJl0RWuH0AVJ7ojLviZo5vdIqbm73Rf5GIjCSsB
+         T9KxTD4S8fKo5HKpDn6fm7Fj2PFjoZ6RoRGA/4tGab8voWfQ86VUmMNPDCMR3vp5iP
+         wozuLFkTchzLg==
+Date:   Tue, 10 Jan 2023 22:47:15 -0600
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20230103145515.1164020-1-dmitry.baryshkov@linaro.org>
- <20230103145515.1164020-16-dmitry.baryshkov@linaro.org>
- <CAOCk7Nr4smGnQS-yh1hGKFFXzeUUt86JSdiuoSun7vJ11z9SWQ@mail.gmail.com>
- <e2493080-f7fd-50de-173f-2e46fa846e23@linaro.org>
- <20230110221341.h4wzucm54q27q7he@builder.lan>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20230110221341.h4wzucm54q27q7he@builder.lan>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH v2] clk: qcom: common: use parent_hws in
+ _qcom_cc_register_board_clk()
+Message-ID: <20230111044715.5nbxasuhlqv6t2fw@builder.lan>
+References: <20221228203555.3130090-1-dmitry.baryshkov@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221228203555.3130090-1-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/01/2023 00:13, Bjorn Andersson wrote:
-> On Tue, Jan 03, 2023 at 06:00:28PM +0200, Dmitry Baryshkov wrote:
->> On 03/01/2023 17:08, Jeffrey Hugo wrote:
->>> On Tue, Jan 3, 2023 at 7:56 AM Dmitry Baryshkov
->>> <dmitry.baryshkov@linaro.org> wrote:
->>>>
->>>> Change several entries of parent_data to use parent_hws instead, which
->>>> results in slightly more ovbious code.
->>>
->>> obvious -> obvious
->>>
->>> Also, you are changing one of two parent_data structs in this file.
->>> That's not "several".  It's really not clear why you are touching one,
->>> but not the other.  Can you be more specific about what is going on in
->>> this particular file?
->>
->> The other struct has .hw and .fw_data entries so it can not be switched to
->> just clk_hw enumeration.
->>
->> I agree, that one is not 'several' (yeah, I was just using template for
->> commit messages), I can change that for v2.
->>
+On Wed, Dec 28, 2022 at 10:35:55PM +0200, Dmitry Baryshkov wrote:
+> Switch _qcom_cc_register_board_clk() to use parent_hws.
 > 
-> While I dislike the copy-paste commit message, there's little point in
-> spending more effort on it. I fixed the commit message of this one and
-> picked the whole series.
 
-Thanks!
+There's more to this patch then this short sentence, please describe it
+further.
 
--- 
-With best wishes
-Dmitry
+And given Dan's reported-by, I must assume that there's an issue with
+the current code. Is there a Fixes?
 
+Regards,
+Bjorn
+
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+> 
+> Changes since v1:
+> - Properly fix the clock's parent data in case parent clock is present
+>   in the dtsi.
+> 
+> ---
+>  drivers/clk/qcom/common.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index 75f09e6e057e..9f2bd37c9540 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -133,7 +133,7 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+>  	struct device_node *node = NULL;
+>  	struct device_node *clocks_node;
+>  	struct clk_fixed_factor *factor;
+> -	struct clk_fixed_rate *fixed;
+> +	struct clk_fixed_rate *fixed = NULL;
+>  	struct clk_init_data init_data = { };
+>  	int ret;
+>  
+> @@ -161,6 +161,8 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+>  	of_node_put(node);
+>  
+>  	if (add_factor) {
+> +		struct clk_parent_data parent_data;
+> +
+>  		factor = devm_kzalloc(dev, sizeof(*factor), GFP_KERNEL);
+>  		if (!factor)
+>  			return -EINVAL;
+> @@ -168,8 +170,13 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+>  		factor->mult = factor->div = 1;
+>  		factor->hw.init = &init_data;
+>  
+> +		if (fixed)
+> +			parent_data.hw = &fixed->hw;
+> +		else
+> +			parent_data.name = path;
+> +
+>  		init_data.name = name;
+> -		init_data.parent_names = &path;
+> +		init_data.parent_data = &parent_data;
+>  		init_data.num_parents = 1;
+>  		init_data.flags = 0;
+>  		init_data.ops = &clk_fixed_factor_ops;
+> -- 
+> 2.39.0
+> 
