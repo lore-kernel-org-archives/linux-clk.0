@@ -2,264 +2,197 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C50CC54EBD
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Jan 2023 14:58:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5639DC54EBD
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Jan 2023 15:04:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240138AbjALO6G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Jan 2023 09:58:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47518 "EHLO
+        id S240521AbjALPEF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Jan 2023 10:04:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240244AbjALO5g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Jan 2023 09:57:36 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FC47625D6
-        for <linux-clk@vger.kernel.org>; Thu, 12 Jan 2023 06:43:53 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id v6so2284703ejg.6
-        for <linux-clk@vger.kernel.org>; Thu, 12 Jan 2023 06:43:52 -0800 (PST)
+        with ESMTP id S240308AbjALPDK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Jan 2023 10:03:10 -0500
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 810539598
+        for <linux-clk@vger.kernel.org>; Thu, 12 Jan 2023 06:50:50 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id u19so45289079ejm.8
+        for <linux-clk@vger.kernel.org>; Thu, 12 Jan 2023 06:50:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=resnulli-us.20210112.gappssmtp.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FZ+8HHMtBhm4FR1fBsHJK63o1abNxUgWSrPVOH5d3iw=;
-        b=DoEmtYJQGonS61K6saGJQpRl1ps1UfR3y5aUXY6FfjIuBPpg10sTz5IL/L+f7Y5WA3
-         u5zRK4mXI+VlhEKi+TdT4y7oXIlmlYsr5CR4MuXxXZUdOnD1ViU8hO2cAZI4pbHI7YLj
-         PcnGtOnl5yjFVe8RaH7/0P4TNYwd/3NsgAzoyCY3o/jbNlRF+h5EIvwyMmnSpsriQFwY
-         Lvzw/uVQ5/RAzTuhO3mUlCzIipfpSz1qUuKLhdM6FW4od80MkKs2f+FFaoeBqFuNDa9O
-         4z7BkA43AVFb+qGHkzK9kZqkqnWI3lkKj8bnjA3tchIVx2U/prFNRvA8VtLgLjtIpt/D
-         TBUw==
+        bh=yqigpjqdOBD3H+YX96cx5iW5aN2Sy82sRN53SWaFfpQ=;
+        b=vpC5aT5Xc4CbMULU8ErpEZg0n98iSLv/1LTtMB3pdQ3ii1wwZDxi1BN71r+WBR3gwz
+         XCLj2UNel51FvlKV/wLr4Z2FSOlOXB7fS1IZNuVX7tTEA5Y7aFHJGAAByxDWyJ5oI5bi
+         3A7NhwRWaG7QDzTZzsLin2ve0Edb9el4s7qDof1lI/R6roNS9G6w2nT+hQwgVh8g16KB
+         aAxr3ju7BLdctjj1QRukOAYRTJzT3qTIqDvHXeHkMgHU4klxGVSY1mP6KV1cG4BpaFn8
+         jQbVGPdq+N2FWs9GB2eWki7/NFpI1Mv2thFtTo5gIpA85weZicpQiM6AcYHSCjdBt/f0
+         U+sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FZ+8HHMtBhm4FR1fBsHJK63o1abNxUgWSrPVOH5d3iw=;
-        b=lp4Sgo3D5TqPKto68V9iwAWAnmXbTyCZcL0eZTYWVH/8+nhN0AdrmlDg7YtV/LOF+q
-         tz04b5cDo/5t4oeymxxfCBk78Dl28FbhjFgLXuLp+WuQIFfMJcviJ7lTOOynv045KwIU
-         qo4dSZpldTmP+ciO4Qv7rnCBjy4l66Aiur95Mi2sACTib2SmNvVO2nzbZV0dp3mR6f/l
-         cmW3omOZRREhvZAFLE7FXLuMcLPIiSQ7T5Bjq1oFwtHl41Z2AXiZ8FbRcP8PuxEJwhEK
-         vLTpJ9GlyNMJ2jWbwSMZn/jcpwMPIAxO+dtrJVc9bMVgLOz8PpfYaic1rLVs0BYUFlTr
-         yF+w==
-X-Gm-Message-State: AFqh2koi0BB2V+lUa95pZLiwqZxV62WkWYpiCZTyPsUPhpnJbZMVSEKf
-        7UVexZVnC3bUrA6VfFNO+ItuwQ==
-X-Google-Smtp-Source: AMrXdXvhGyAFE70MT9iQZf8X8kJsSReLM9h1cNphTO+3C0L/b7eEXI+p2GJzuQKFcutM1uXXNfP1EA==
-X-Received: by 2002:a17:907:d48a:b0:7c1:766e:e09 with SMTP id vj10-20020a170907d48a00b007c1766e0e09mr70504227ejc.29.1673534631462;
-        Thu, 12 Jan 2023 06:43:51 -0800 (PST)
+        bh=yqigpjqdOBD3H+YX96cx5iW5aN2Sy82sRN53SWaFfpQ=;
+        b=KlIRurV2xMrV0sQal9p/T9fRCc3Ma21LGkmVKZKo2O6PyWNjiDavR+7xO2AwGc0gNi
+         bPgxLaerUhf3Rrfxx9MalN3sSDPb3S7V0AB381fBUdJA/20KEhem3OOn51otywHy4NeI
+         SxwSqNUXtDjJaSJAKgePyqhSoNzjiE84V8iUBrY8Xkv8wd8dfOfF8WugUZNz19dfCMXM
+         0G6/sX0UJXhn7xbyG4Uqpz9tBbiW7fkDIXNvcMJlaB3L3oE9Efs5CELQ7PdVVYCVCLos
+         qefR9KwOmMqYC3UdkXUxw4v7B6wnV9aAJ7GP7PFZ036PO/KK5KD3oC7/tVnQ7006RNM0
+         J9xw==
+X-Gm-Message-State: AFqh2kopwFVexPjZKxWzfosnTifT8DQo1aYyZOF+7aqCHvopVBF5hUk2
+        zJUGZKDBc6qVmud1NjdamtHG8g==
+X-Google-Smtp-Source: AMrXdXtM20wyj7W7OhWhZQjQKkRV/NmMM6eTbMMW8FWWqTz5PHlKW944BEdC5/4v99CWCk+aDig/Ow==
+X-Received: by 2002:a17:906:5f98:b0:84d:1b67:cecb with SMTP id a24-20020a1709065f9800b0084d1b67cecbmr19846042eju.43.1673535048887;
+        Thu, 12 Jan 2023 06:50:48 -0800 (PST)
 Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id y11-20020aa7c24b000000b004954c90c94bsm7290057edo.6.2023.01.12.06.43.50
+        by smtp.gmail.com with ESMTPSA id eg49-20020a05640228b100b00488117821ffsm7313998edb.31.2023.01.12.06.50.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jan 2023 06:43:50 -0800 (PST)
-Date:   Thu, 12 Jan 2023 15:43:49 +0100
+        Thu, 12 Jan 2023 06:50:48 -0800 (PST)
+Date:   Thu, 12 Jan 2023 15:50:46 +0100
 From:   Jiri Pirko <jiri@resnulli.us>
 To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Maciek Machnikowski <maciek@machnikowski.net>,
-        'Vadim Fedorenko' <vfedorenko@novek.ru>,
-        'Jonathan Lemon' <jonathan.lemon@gmail.com>,
-        'Paolo Abeni' <pabeni@redhat.com>,
+Cc:     Vadim Fedorenko <vfedorenko@novek.ru>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
-Message-ID: <Y8Acpf5AhZ5UgyA3@nanopsycho>
-References: <20221209083104.2469ebd6@kernel.org>
- <Y5czl6HgY2GPKR4v@nanopsycho>
- <DM6PR11MB46571573010AB727E1BE99AE9BFE9@DM6PR11MB4657.namprd11.prod.outlook.com>
- <20230110120549.4d764609@kernel.org>
- <Y75xFlEDCThGtMDq@nanopsycho>
- <DM6PR11MB4657AC41BBF714A280B578D49BFC9@DM6PR11MB4657.namprd11.prod.outlook.com>
- <Y77QEajGlJewGKy1@nanopsycho>
- <DM6PR11MB4657DC9A41A69B71A42DD22F9BFC9@DM6PR11MB4657.namprd11.prod.outlook.com>
- <Y77gf1ekbSMdY83b@nanopsycho>
- <DM6PR11MB4657A41D59E6B1162EA6AFDB9BFD9@DM6PR11MB4657.namprd11.prod.outlook.com>
+Message-ID: <Y8AeRnhwqT7Wo8OT@nanopsycho>
+References: <20221129213724.10119-1-vfedorenko@novek.ru>
+ <DM6PR11MB4657BF81BEBC10E6EC5044149BFD9@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DM6PR11MB4657A41D59E6B1162EA6AFDB9BFD9@DM6PR11MB4657.namprd11.prod.outlook.com>
+In-Reply-To: <DM6PR11MB4657BF81BEBC10E6EC5044149BFD9@DM6PR11MB4657.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thu, Jan 12, 2023 at 01:15:30PM CET, arkadiusz.kubalewski@intel.com wrote:
->>From: Jiri Pirko <jiri@resnulli.us>
->>Sent: Wednesday, January 11, 2023 5:15 PM
->>To: Kubalewski, Arkadiusz <arkadiusz.kubalewski@intel.com>
+Thu, Jan 12, 2023 at 01:23:29PM CET, arkadiusz.kubalewski@intel.com wrote:
+>>From: Vadim Fedorenko <vfedorenko@novek.ru>
+>>Sent: Tuesday, November 29, 2022 10:37 PM
 >>
->>Wed, Jan 11, 2023 at 04:30:44PM CET, arkadiusz.kubalewski@intel.com wrote:
->>>>From: Jiri Pirko <jiri@resnulli.us>
->>>>Sent: Wednesday, January 11, 2023 4:05 PM
->>>>To: Kubalewski, Arkadiusz <arkadiusz.kubalewski@intel.com>
->>>>
->>>>Wed, Jan 11, 2023 at 03:16:59PM CET, arkadiusz.kubalewski@intel.com
->>wrote:
->>>>>>From: Jiri Pirko <jiri@resnulli.us>
->>>>>>Sent: Wednesday, January 11, 2023 9:20 AM
->>>>>>
->>>>>>Tue, Jan 10, 2023 at 09:05:49PM CET, kuba@kernel.org wrote:
->>>>>>>On Mon, 9 Jan 2023 14:43:01 +0000 Kubalewski, Arkadiusz wrote:
->>>>>>>> This is a simplified network switch board example.
->>>>>>>> It has 2 synchronization channels, where each channel:
->>>>>>>> - provides clk to 8 PHYs driven by separated MAC chips,
->>>>>>>> - controls 2 DPLLs.
->>>>>>>>
->>>>>>>> Basically only given FW has control over its PHYs, so also a control
->>>>>>over it's
->>>>>>>> MUX inputs.
->>>>>>>> All external sources are shared between the channels.
->>>>>>>>
->>>>>>>> This is why we believe it is not best idea to enclose multiple DPLLs
->>>>>>with one
->>>>>>>> object:
->>>>>>>> - sources are shared even if DPLLs are not a single synchronizer
->>chip,
->>>>>>>> - control over specific MUX type input shall be controllable from
->>>>>>different
->>>>>>>> driver/firmware instances.
->>>>>>>>
->>>>>>>> As we know the proposal of having multiple DPLLs in one object was a
->>>>try
->>>>>>to
->>>>>>>> simplify currently implemented shared pins. We fully support idea of
->>>>>>having
->>>>>>>> interfaces as simple as possible, but at the same time they shall be
->>>>>>flexible
->>>>>>>> enough to serve many use cases.
->>>>>>>
->>>>>>>I must be missing context from other discussions but what is this
->>>>>>>proposal trying to solve? Well implemented shared pins is all we need.
->>>>>>
->>>>>>There is an entity containing the pins. The synchronizer chip. One
->>>>>>synchronizer chip contains 1-n DPLLs. The source pins are connected
->>>>>>to each DPLL (usually). What we missed in the original model was the
->>>>>>synchronizer entity. If we have it, we don't need any notion of somehow
->>>>>>floating pins as independent entities being attached to one or many
->>>>>>DPLL refcounted, etc. The synchronizer device holds them in
->>>>>>straightforward way.
->>>>>>
->>>>>>Example of a synchronizer chip:
->>>>>>https://www.renesas.com/us/en/products/clocks-timing/jitter-
->>attenuators-
->>>>>>frequency-translation/8a34044-multichannel-dpll-dco-four-eight-
->>>>>>channels#overview
->>>>>
->>>>>Not really, as explained above, multiple separated synchronizer chips
->>can
->>>>be
->>>>>connected to the same external sources.
->>>>>This is why I wrote this email, to better explain need for references
->>>>between
->>>>>DPLLs and shared pins.
->>>>>Synchronizer chip object with multiple DPLLs would have sense if the
->>pins
->>>>would
->>>>>only belong to that single chip, but this is not true.
->>>>
->>>>I don't understand how it is physically possible that 2 pins belong to 2
->>>>chips. Could you draw this to me?
->>>>
->>>
->>>Well, sure, I was hoping this is clear, without extra connections on the
->>draw:
+>>Implement common API for clock/DPLL configuration and status reporting.
+>>The API utilises netlink interface as transport for commands and event
+>>notifications. This API aim to extend current pin configuration and make it
+>>flexible and easy to cover special configurations.
 >>
->>Okay, now I understand. It is not a shared pin but shared source for 2
->>pins.
+>>v3 -> v4:
+>> * redesign framework to make pins dynamically allocated (Arkadiusz)
+>> * implement shared pins (Arkadiusz)
+>>v2 -> v3:
+>> * implement source select mode (Arkadiusz)
+>> * add documentation
+>> * implementation improvements (Jakub)
+>>v1 -> v2:
+>> * implement returning supported input/output types
+>> * ptp_ocp: follow suggestions from Jonathan
+>> * add linux-clk mailing list
+>>v0 -> v1:
+>> * fix code style and errors
+>> * add linux-arm mailing list
 >>
+>>
+>>Arkadiusz Kubalewski (1):
+>>  dpll: add dpll_attr/dpll_pin_attr helper classes
+>>
+>>Vadim Fedorenko (3):
+>>  dpll: Add DPLL framework base functions
+>>  dpll: documentation on DPLL subsystem interface
+>>  ptp_ocp: implement DPLL ops
+>>
+>> Documentation/networking/dpll.rst  | 271 ++++++++
+>> Documentation/networking/index.rst |   1 +
+>> MAINTAINERS                        |   8 +
+>> drivers/Kconfig                    |   2 +
+>> drivers/Makefile                   |   1 +
+>> drivers/dpll/Kconfig               |   7 +
+>> drivers/dpll/Makefile              |  11 +
+>> drivers/dpll/dpll_attr.c           | 278 +++++++++
+>> drivers/dpll/dpll_core.c           | 760 +++++++++++++++++++++++
+>> drivers/dpll/dpll_core.h           | 176 ++++++
+>> drivers/dpll/dpll_netlink.c        | 963 +++++++++++++++++++++++++++++
+>> drivers/dpll/dpll_netlink.h        |  24 +
+>> drivers/dpll/dpll_pin_attr.c       | 456 ++++++++++++++
+>> drivers/ptp/Kconfig                |   1 +
+>> drivers/ptp/ptp_ocp.c              | 123 ++--
+>> include/linux/dpll.h               | 261 ++++++++
+>> include/linux/dpll_attr.h          | 433 +++++++++++++
+>> include/uapi/linux/dpll.h          | 263 ++++++++
+>> 18 files changed, 4002 insertions(+), 37 deletions(-)  create mode 100644
+>>Documentation/networking/dpll.rst  create mode 100644 drivers/dpll/Kconfig
+>>create mode 100644 drivers/dpll/Makefile  create mode 100644
+>>drivers/dpll/dpll_attr.c  create mode 100644 drivers/dpll/dpll_core.c
+>>create mode 100644 drivers/dpll/dpll_core.h  create mode 100644
+>>drivers/dpll/dpll_netlink.c  create mode 100644 drivers/dpll/dpll_netlink.h
+>>create mode 100644 drivers/dpll/dpll_pin_attr.c  create mode 100644
+>>include/linux/dpll.h  create mode 100644 include/linux/dpll_attr.h  create
+>>mode 100644 include/uapi/linux/dpll.h
+>>
+>>--
+>>2.27.0
 >
->Yes, exactly.
+>New thread with regard of our yesterday's call.
 >
->>
->>>+----------+
->>>|i0 - GPS  |--------------\
->>>+----------+              |
->>>+----------+              |
->>>|i1 - SMA1 |------------\ |
->>>+----------+            | |
->>>+----------+            | |
->>>|i2 - SMA2 |----------\ | |
->>>+----------+          | | |
->>>                      | | |
->>>+---------------------|-|-|-------------------------------------------+
->>>| Channel A / FW0     | | |     +-------------+   +---+   +--------+  |
->>>|                     | | |-i0--|Synchronizer0|---|   |---| PHY0.0 |--|
->>
->>One pin here               ^^^
->>
->>>|         +---+       | | |     |             |   |   |   +--------+  |
->>>| PHY0.0--|   |       | |---i1--|             |---| M |---| PHY0.1 |--|
->>>|         |   |       | | |     | +-----+     |   | A |   +--------+  |
->>>| PHY0.1--| M |       |-----i2--| |DPLL0|     |   | C |---| PHY0.2 |--|
->>>|         | U |       | | |     | +-----+     |   | 0 |   +--------+  |
->>>| PHY0.2--| X |--+----------i3--| +-----+     |---|   |---| ...    |--|
->>>|         | 0 |  |    | | |     | |DPLL1|     |   |   |   +--------+  |
->>>| ...   --|   |  | /--------i4--| +-----+     |---|   |---| PHY0.7 |--|
->>>|         |   |  | |  | | |     +-------------+   +---+   +--------+  |
->>>| PHY0.7--|   |  | |  | | |                                           |
->>>|         +---+  | |  | | |                                           |
->>>+----------------|-|--|-|-|-------------------------------------------+
->>>| Channel B / FW1| |  | | |     +-------------+   +---+   +--------+  |
->>>|                | |  | | \-i0--|Synchronizer1|---|   |---| PHY1.0 |--|
->>
->>And second pin here        ^^^
->>
->>There are 2 separate pins. Sure, they need to have the same config as
->>they are connected to the same external entity (GPS, SMA1, SMA2).
->>
->>Perhaps we need to have a board description using dts to draw this
->>picture so the drivers can use this schema in order to properly
->>configure this?
->>
->>My point is, you are trying to hardcode the board geometry in the
->>driver. Is that correct?
->>
+>Is it possible to initialize a multiple output MUX?
+>Yes it is. Let's consider 4 input/2 output MUX and DPLL it connects with:
+>            +---+   
+>          --|   |   
+>  +---+     |   |   
+>--|   |   --| D |--
+>  |   |     | P |   
+>--| M |-----| L |--
+>  | U |     | L |   
+>--| X |-----|   |--
+>  |   |     |   |   
+>--|   |   --|   |   
+>  +---+     +---+  
+> 
+>Basically dpll pins are initialized and assigned ids, like:
+>5 inputs (0-4), 3 outputs (5-7).
+>   +---+   
+>0--|   |   
+>   |   |   
+>1--| D |--5
+>   | P |   
+>2--| L |--6
+>   | L |   
+>3--|   |--7
+>   |   |   
+>4--|   |   
+>   +---+
 >
->Well, we are trying to have userspace-friendly interface :)
->As we discussed yesterday dts is more of embedded world thing and we don't
->want to go that far, the driver knows the hardware it is using, thus it
->shall be enough if it has all the information needed for initialization.
->At least that is what I understood.
+>Then we would create and register muxed pins with existing dpll pins.
+>Each muxed pin is allocated and registered with each parent it can provide
+>signal with, like below (number in bracket is parent idx):
+>                           +---+   
+>                        0--|   |   
+>                +---+      |   |   
+> 8(2) /  9(3)---|   |   1--| D |--5
+>                |   |      | P |   
+>10(2) / 11(3)---| M |---2--| L |--6
+>                | U |      | L |   
+>12(2) / 13(3)---| X |---3--|   |--7
+>                |   |      |   |   
+>14(2) / 15(3)---|   |   4--|   |   
+>                +---+      +---+
+>
+>Controlling the mux input/output:
+>In this case selecting pin #8 would provide its signal into DPLLs input#2 and
+>selecting #9 would provide its signal into DPLLs input#3.
 
-Yes, I think yesterday called cleared things up. Thanks!
+Duplication of the mux pin (for example 8,9) seems a bit silly. What if
+the mux has 8 outputs? You would have to have 8 pin indexes for each mux
+input.
+
+One thing is not clear to me. The mux outputs are fixed or selectable?
+I mean, can the outputs be enabled/disabled wired to a specific mux
+input?
 
 
 >
 >BR,
 >Arkadiusz
->
->>
->>>|         +---+  | |  | |       |             |   |   |   +--------+  |
->>>| PHY1.0--|   |  | |  | \---i1--|             |---| M |---| PHY1.1 |--|
->>>|         |   |  | |  |         | +-----+     |   | A |   +--------+  |
->>>| PHY1.1--| M |  | |  \-----i2--| |DPLL0|     |   | C |---| PHY1.2 |--|
->>>|         | U |  | |            | +-----+     |   | 1 |   +--------+  |
->>>| PHY1.2--| X |  \-|--------i3--| +-----+     |---|   |---| ...    |--|
->>>|         | 1 |    |            | |DPLL1|     |   |   |   +--------+  |
->>>| ...   --|   |----+--------i4--| +-----+     |---|   |---| PHY1.7 |--|
->>>|         |   |                 +-------------+   +---+   +--------+  |
->>>| PHY1.7--|   |                                                       |
->>>|         +---+                                                       |
->>>+---------------------------------------------------------------------+
->>>
->>>>
->>>>>As the pins are shared between multiple DPLLs (both inside 1 integrated
->>>>circuit
->>>>>and between multiple integrated circuits), all of them shall have
->>current
->>>>state
->>>>>of the source or output.
->>>>>Pins still need to be shared same as they would be inside of one
->>>>synchronizer
->>>>>chip.
->>>>
->>>>Do I understand correctly that you connect one synchronizer output to
->>>>the input of the second synchronizer chip?
->>>
->>>No, I don't recall such use case. At least nothing that needs to exposed
->>>in the DPLL subsystem itself.
->>>
->>>BR,
->>>Arkadiusz
->>>
->>>>
->>>>>
->>>>>BR,
->>>>>Arkadiusz
