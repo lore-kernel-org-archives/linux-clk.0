@@ -2,98 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C272C61DB3
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Jan 2023 18:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADAE8C54EBE
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Jan 2023 19:22:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240476AbjALSSO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Jan 2023 13:18:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59720 "EHLO
+        id S240422AbjALTWS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Jan 2023 14:22:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240439AbjALSRx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Jan 2023 13:17:53 -0500
-Received: from smtp4-g21.free.fr (smtp4-g21.free.fr [IPv6:2a01:e0c:1:1599::13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59B9D7148A;
-        Thu, 12 Jan 2023 09:47:13 -0800 (PST)
-Received: from SOPL295.local (unknown [IPv6:2a02:8440:d20f:6de0:6125:d027:2017:9d97])
-        (Authenticated sender: robert.jarzmik@free.fr)
-        by smtp4-g21.free.fr (Postfix) with ESMTPSA id 0B0F519F59E;
-        Thu, 12 Jan 2023 18:46:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
-        s=smtp-20201208; t=1673545631;
-        bh=KRTPZlKd33p2jA5AfUXMRlfCbedKs4GMu6pgnM4y4Qo=;
-        h=References:From:To:Cc:Subject:Date:In-reply-to:From;
-        b=LctVqhCykYrI8EvXeqUmUdArGNK/b6sZcJ0gtvgPgfxfckye4plPdcS9NoAVKI7ya
-         +OuDsuuF1zEN2T6xCaKeWWVNYOB0hsY5QWeDseR4wMcwypp6ocReR+eShxR7Tn5nAZ
-         Ufw1bfs5KavS1JtsBALOpAasZvUcCYSVZBr5CRr/gIpWIYd1aDgoywyutwO3O20sH5
-         /0Nwd4W/cm8SSndULierf0N+0aujwJO0K/OH7wn8eJtMgEnMJffLWHTvy94+7kx3Ie
-         RDFaxi9Ee4NeCA6M3Qk5O/EZiFYqWMlnc3k/vIrnGVtjWeFF1dX/rXG9L9x5gqdwv/
-         qwjMqYBvKHKJA==
-References: <20230105134622.254560-1-arnd@kernel.org>
- <20230105134622.254560-5-arnd@kernel.org> <m2sfglh02h.fsf@free.fr>
- <2d085660-41a2-492c-a343-7df80d510a59@app.fastmail.com>
-User-agent: mu4e 1.8.11; emacs 28.1
-From:   Robert Jarzmik <robert.jarzmik@free.fr>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        Arnd Bergmann <arnd@kernel.org>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        "linux-mmc @ vger . kernel . org" <linux-mmc@vger.kernel.org>
-Subject: Re: [PATCH 04/27] ARM: pxa: drop pxa310/pxa320/pxa93x support
-Date:   Thu, 12 Jan 2023 18:37:32 +0100
-In-reply-to: <2d085660-41a2-492c-a343-7df80d510a59@app.fastmail.com>
-Message-ID: <m2k01rhchf.fsf@free.fr>
+        with ESMTP id S240378AbjALTVs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Jan 2023 14:21:48 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51E14676D4;
+        Thu, 12 Jan 2023 11:09:49 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DE766B82016;
+        Thu, 12 Jan 2023 19:09:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EE6BC433D2;
+        Thu, 12 Jan 2023 19:09:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673550586;
+        bh=LfVocOPeuXU9PT7e7b20/1KuExU0UCPaV8icE6vvT7E=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=tD3acM42NClnAlycdRwkO7q9r46gNcdJFDIYdMPkYmnnUqI3U+ftoqv8VLWoTUFMA
+         VCOK8H1uJWoeYJIvUSMS+Ks20CTQDiERDYDrPGQ9IzLqJGvSsYro79DI6VzutKvKye
+         hdSRNCMao/RrkYacvCTYmTq5UmYV8XTZaN8HCnbZbvC08lhy3pPQoAvZMT1zLOz4Bs
+         cjaxqjnZAhr4/H+d7sQ9WpXd3cvIgE0PHVmsN1yW82a3qLKPnPcReHWq0NPb+75Uwz
+         bf7E6a7WTx4Yc+zQDVRNuFyCavpSPsjsDEumoH5G3A01NkyMLjku5GGBNIIISO0uDp
+         s5zRzOUYXpPhg==
+Date:   Thu, 12 Jan 2023 11:09:45 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Vadim Fedorenko <vfedorenko@novek.ru>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
+Message-ID: <20230112110945.6f168a3e@kernel.org>
+In-Reply-To: <DM6PR11MB4657BF81BEBC10E6EC5044149BFD9@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20221129213724.10119-1-vfedorenko@novek.ru>
+        <DM6PR11MB4657BF81BEBC10E6EC5044149BFD9@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, 12 Jan 2023 12:23:29 +0000 Kubalewski, Arkadiusz wrote:
+> Then we would create and register muxed pins with existing dpll pins.
+> Each muxed pin is allocated and registered with each parent it can provide
+> signal with, like below (number in bracket is parent idx):
+>                            +---+   
+>                         0--|   |   
+>                 +---+      |   |   
+>  8(2) /  9(3)---|   |   1--| D |--5
+>                 |   |      | P |   
+> 10(2) / 11(3)---| M |---2--| L |--6
+>                 | U |      | L |   
+> 12(2) / 13(3)---| X |---3--|   |--7
+>                 |   |      |   |   
+> 14(2) / 15(3)---|   |   4--|   |   
+>                 +---+      +---+
+> 
+> Controlling the mux input/output:
+> In this case selecting pin #8 would provide its signal into DPLLs input#2 and
+> selecting #9 would provide its signal into DPLLs input#3.
 
-"Arnd Bergmann" <arnd@arndb.de> writes:
+I agree with Jiri, the duplication seems unnecessary. My thinking would
+be to handle this as follows:
 
-> Hi Robert,
-Hi Arnd,
+                             +---+   
+                          0--|   |   
+                +---+        |   |   
+           10---|   |     1--| D |--5
+                |   |        | P |   
+           11---| M |-8---2--| L |--6
+                | U |        | L |   
+           12---| X |-9---3--|   |--7
+                |   |        |   |   
+           13---|   |     4--|   |   
+                +---+        +---+
 
-> Thanks for pointing this out, I thought that I had caught
-> all the missing dependencies ones after you pointed out
-> the AC97_BUS_NEW that I fixed in patch 14.
-Sorry I've not seen this one in my previous review.
+Give the user the ability to both select the inputs to DPLL from 
+0-4 and from 10-13. If 10-13 are selected the core should give mapping
+things automatically a try (but we don't need to support auto-mapping 
+for muxes with more than one output from the start).
+There should also be an API for manually configuring muxes. 
 
-> From what I can tell, commit b5aaaa666a85 ("ARM: pxa: add
-> Kconfig dependencies for ATAGS based boards"), the
-> PXA310/PXA320 DT support became dead code because
-> MACH_PXA3XX_DT only selects CPU_PXA300, so if it worked
-> before that commit, it now needs CONFIG_UNUSED_BOARD_FILES
-> and CONFIG_EXPERT as well as enabling one of the legacy
-> board files with the corresponding chip support.
->
-> If that's all you think is missing, I can add this
-> trivial patch as well and rework the series to not
-> drop code that depends on PXA310/PXA320:
-Yes, that would be great !
+Eg.
 
-> Can you have a look at the other patches to see if there
-> are more removed drivers or platform bits that are currently
-> dead code but are actually required?
-Yes, I've been through your whole serie and that's the
-last thing I have identified. I've read carefully all the
-patches now, and the whole serie looks good to me.
+User requests DPLL inputs: 0, 1, 10, 11
+  Core automatically maps 10 -> 8, 11 -> 9
 
-So with this patch and keeping the clocks and cpufreq
-parts for pxa3*0, you can add everywhere my :
+User requests DPLL inputs: 0, 1, 10, 11, 12
+  Core responds with an error
 
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
-
-Cheers.
-
---
-Robert
+User requests DPLL inputs: 0, 1, 2, 3
+  Core doesn't touch the mux
+User requests mux to direct 10 -> 8
+User requests mux to direct 11 -> 9
+  Now the config is equivalent to case #1
