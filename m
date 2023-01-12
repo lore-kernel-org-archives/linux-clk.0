@@ -2,202 +2,457 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87869C61DB3
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Jan 2023 10:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC0BC61DB3
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Jan 2023 10:30:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230356AbjALKLM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Jan 2023 05:11:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45584 "EHLO
+        id S230153AbjALKaQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Jan 2023 05:30:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235547AbjALKKJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Jan 2023 05:10:09 -0500
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB388DF2B;
-        Thu, 12 Jan 2023 02:05:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1673517901; x=1705053901;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=CdNd2rs3sbZQ0JgyaL5CRtp37nBlIz42j2ArIfclvlg=;
-  b=z1yQue+PWme8VH6ebKCFTgyGdMNdfpiLuvya8vvbajAGYgudOcqzVZON
-   LEGv5JTHD2unOwO999Ig8IJ2Cp9yV2KRbivNau8yurvG9B8gyphLZOJMg
-   ySBa4/KoyquyR5WZJIZJpphvH/RCGxMO+oNKSrM5Eo3WD01uMzPg+7raW
-   jN2uSQMHzr6NQNCmZbeM1cOCgtllWefNH59wsinm2Qr7DmKfBk5WvY/1F
-   8UO1KgB52/ZV2sb6X0fH4SZUCPRN68ciPRODLlB49/hbEcCp2l0OsuK9b
-   lH2YpEQqjmbhtSMzxE50ge89mOvsFh1Xr9/DTRvWzng/Ge0XOrQFNxB1+
-   g==;
-X-IronPort-AV: E=Sophos;i="5.96,319,1665471600"; 
-   d="scan'208";a="207456822"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 12 Jan 2023 03:05:00 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16; Thu, 12 Jan 2023 03:04:59 -0700
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.16 via Frontend
- Transport; Thu, 12 Jan 2023 03:04:59 -0700
+        with ESMTP id S236620AbjALK3c (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Jan 2023 05:29:32 -0500
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on20601.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e8a::601])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C485B116C
+        for <linux-clk@vger.kernel.org>; Thu, 12 Jan 2023 02:26:51 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HWdKZldQpdcY9AmyWwyONCH68MhVXMYINEiPdRn9YGpxvsEAES85C/H+WsQhYP5znzAMUOcnF0R6pvr8QZItVNDDz/apCvSqLIjea4JRiYmrxFgkCWHwaAmjwZaZhVtglxzyeKTvg6fHVOEHzvyLYiXB3kygvp4IntKki1OYdVRCUZ8yV/edaTVkm0ZrTN2BfVJOgvti+Y4KXHDmk0P218RF8GQZ/mnWwlBfognsUOmo16G9x/g2tffJ9snE6OUcW7zouitYaouvbgZrvofy6CPfJKFr7lxPJQJxRUSS3A7jBPWGHT215Nc931vXd8KXyS9wDjN+f3RPYcI6LBYi0g==
+ b=LVOQk09+u0u1pHL5zYDyVyre+gQvzlsN/ZJIz7wet+A7XIuxfPAdCf3n/FuEWtwu9rdbjDdRhJZwit8Oa88CtCBYjsPR9jO7HUHlIUNrg68mhwBhWKWjqCTsvVpcv9oQv6+AVY/hVUcm46GVJ4xLDKulT1jnP/93o6ZzDKiNFok4fIJvoOcUYdTPuzbdTkP/He6cYBrjhfpxqxCc1AJx02maMZ1529H169td3SIgZdQK/ZnPAfH/+M/rSMLd7qpYnvetkpvqLN4ug16qxT1m83QNJWLoGCXYKsVLa5eaJ2I0FKy3d0gchoTWGq6APJHHCwlC8bpoWGzXtYDaUcYJKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CdNd2rs3sbZQ0JgyaL5CRtp37nBlIz42j2ArIfclvlg=;
- b=NYhHGsvzrAJ7Zn8Wy9UNvMCjbuaejxDCAQAnnWlQzTLQRJu1casbtqY5FKf3JkO48ab/HjL65BziAtTa4fv3J3bbXZ724pOU1iKsDb5i6BY5VvU/uHvUcN1ogaGWaSrsZ3OQbq+5kuBaPWxh3WiFRc7c9j+EnGWoOsCeqrExE441Q0eErOXZh1NLRhCvrSttkXKwKzQHwDl8imXcGrE0/sIYIMAuDBNnZEzACkTt5kOqJSJwXl6BIVO6hW8J5C8R5fCEuxIN6hKNcqWXvc7VFM/bRFh3bKMQVq0oE3e1KbczZyS9cEhtXHQjt4SXdsDlB1a10cUNMaVVrbl6Ta6Iqg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
+ bh=0MYrPfKp1mhDqpNkETpRofbPJb4EYpk0lH7CKRKOg6o=;
+ b=mEJYjTtX5sNJgOwmtyUnjariwfa1Z6hvME1v62Bgo462u2F7tLIxYMdN9l8k9kegYVNKy5Gl/6Sk6S67YlfIrJeUxI5Tz6UpsQxACFzmI1GQpSGyD/YSeqqxMWSLIAR2sNGIoYOdohcytm+Z3Ix806t4P5HSxjiBrwK0orAPel8JlmIMM5OEYqZr6HhjNjos4IzpTSMBnCIITgKNW1Rtk3fEN6u269mJDrBycRJ1QL2E44zqENe3nYiyira3M55GuzfKzhswqWa5s2pR+1W2DlT6uCamLTref2il92vXN22mwNdBcRQXCGtnNwN6NdT+qN68YdOXm+FIKHM6lzvtYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CdNd2rs3sbZQ0JgyaL5CRtp37nBlIz42j2ArIfclvlg=;
- b=oCB0KExq103OBIV8BMelPKTO7lIWLkZ6HK+fZ/gBLax/ByrrhxtUB15V0iv3F+wP6ISKRvTz083IYQ76j5SvWIQ7gmWfNCzlQD7SN6HDJzzaoCxsnsV9MhqCyAgGKEV27eHENzfPOyHPoYQokW/LGWUhWJbHTnk9LuBpZjMf0UQ=
-Received: from BN6PR11MB1953.namprd11.prod.outlook.com (2603:10b6:404:105::14)
- by DS0PR11MB7530.namprd11.prod.outlook.com (2603:10b6:8:146::15) with
+ bh=0MYrPfKp1mhDqpNkETpRofbPJb4EYpk0lH7CKRKOg6o=;
+ b=fuEqb2dv+dbHM0RLEI5ZWWNofoqoVMNKsQ5vDuKlF3bU6WU25pAhGX4tMLqtTyXJ3uGgDx1xI8Ze20XhnHqJaS++7YIcvtP5fJOHnWjHTtjXzO0f0ylJxF13M1NgdRa+QLBzL4iHZKvfC7ZdvTp4BC9Xz5xVula7tdQEPcoBqp4=
+Received: from DS7PR03CA0134.namprd03.prod.outlook.com (2603:10b6:5:3b4::19)
+ by CH3PR12MB7500.namprd12.prod.outlook.com (2603:10b6:610:148::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.18; Thu, 12 Jan
- 2023 10:04:57 +0000
-Received: from BN6PR11MB1953.namprd11.prod.outlook.com
- ([fe80::2177:8dce:88bf:bec5]) by BN6PR11MB1953.namprd11.prod.outlook.com
- ([fe80::2177:8dce:88bf:bec5%9]) with mapi id 15.20.6002.013; Thu, 12 Jan 2023
- 10:04:56 +0000
-From:   <Claudiu.Beznea@microchip.com>
-To:     <geert+renesas@glider.be>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <Conor.Dooley@microchip.com>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: microchip: mpfs-ccc: Use devm_kasprintf() for
- allocating formatted strings
-Thread-Topic: [PATCH] clk: microchip: mpfs-ccc: Use devm_kasprintf() for
- allocating formatted strings
-Thread-Index: AQHZJm1SmvfM1AcehE+opR7KJSov7g==
-Date:   Thu, 12 Jan 2023 10:04:56 +0000
-Message-ID: <715515eb-0a9c-8ee8-5393-d8986facb55b@microchip.com>
-References: <f904fd28b2087d1463ea65f059924e3b1acc193c.1672764239.git.geert+renesas@glider.be>
-In-Reply-To: <f904fd28b2087d1463ea65f059924e3b1acc193c.1672764239.git.geert+renesas@glider.be>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN6PR11MB1953:EE_|DS0PR11MB7530:EE_
-x-ms-office365-filtering-correlation-id: 6c6b532f-5055-495c-0166-08daf4847564
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 7noa7KzRhVKDN2bhSKCSmvnTLT1uyiwwBmT/XxeP5oRxAE2bFrAulF7954DFYeF6h4pEcn1xM3s5RlrM2KbA/smqU30pPCWGj5YBC3enE37yvgRH8UaYCBUv5c1gckUefwg4JOr6a9y7rgXFnxKXLdjgGfhlqDV+16uCnA0BV9WkMivLlDNwdJA3MUPl26w1hrQ41rmOFuUZlfFDRzhDHflIawqYB41QY/m4/8vQQNITHz7VyUdfO0dCW31gqrrAUL+JNDxDAskHycEjpNCjJlvWsOvCBgvqDpYXT178IZ1Mmuhz9c1VQM5oyxYHStpqnZzUXIvWhfVPrP2KNONSZ2JGJEqkSmYL87c74D9kIx1QelElQ0DkuwHIOhFdXw2G6SVUIf8sgt3hr91zI7qsvjfNXGPGse8ZqVqoRyU7AOQdkGd/wmP6bZGnKHaOJYf2KZ2yVRjVLSTohKiOmHTc+wjM82vahNtrfhd4hUmlNeXMkfUEEnGGSNmN/OlpaXCw10l/m8HllRiA9378f+/xn1LNllDMtywqAExo528ajPBdoVqOSmIPgU4WR5uVS5Ep82aw3/kxNd7ByHP4RsesZ1/1M/NvbOqP55rcH3hCASRHYTuheIm0HOXFP6J4UnqrJPl8KoNCl4QNbrSkNQQOdPct7jXjtuotti2LSG3R3HZp/V+aSYqikHCFoqPvr96VP8SdZB2tJgSWAGRgH+5Bj26lD+4Huuv4Y8R4gKGaaDoMeCW51ZPYZArJAcXwX4wbEZ/u5ZSlW8wTg9wyj2dF1g==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR11MB1953.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(366004)(346002)(376002)(396003)(39860400002)(136003)(451199015)(2906002)(83380400001)(478600001)(66446008)(66476007)(64756008)(66556008)(5660300002)(66946007)(8936002)(53546011)(122000001)(26005)(6636002)(36756003)(186003)(6506007)(31686004)(6512007)(6486002)(2616005)(41300700001)(38100700002)(110136005)(8676002)(54906003)(76116006)(86362001)(38070700005)(316002)(71200400001)(4326008)(91956017)(31696002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?YU5mQ2pTT210Zy9Eb3dCU1hWd3gweHVkUEt2WmNnZnBoaVZJVmZpWll2UFJy?=
- =?utf-8?B?Nk5SMjB5bWI0WUJLMjNkWHpYYTBlTDlpSTBOV0RPb2RuZVpWaHRnRWpYWFJN?=
- =?utf-8?B?bnFtSE9LcDIraGJaUSs0TG82WG9LVS9mNVBnNHlEYS8vNHdsOXVjM1NoNFRB?=
- =?utf-8?B?RW15dlBLWm93OVIzRCtLYjlqVXgyV3dQVnZVVElIcGR0cVpnRUVUQUczbG5w?=
- =?utf-8?B?R1EwTG9qNjFGQXJWeUp2emdpS3daSVErY1NQNEpnd1o3anBYQW9IendxRks0?=
- =?utf-8?B?SVcrU05vWERoemp3U2U4K2R2M3RheExTc3ZFazVFNXF2MmExV1NuZW9ScUgz?=
- =?utf-8?B?WFh4NFpIZFgxbkNYRXNjZTR3TG9FSjVpWEQwTC83WDNFUE1Td0xMdkx4ZXVh?=
- =?utf-8?B?ZlM3S291VGQyUWJsa3k0SmpMZ3hRcHhKa1YzU1lIUTdxSkN1Z0pDTmpuYnNP?=
- =?utf-8?B?Uk1sem1ia2lLbkN2R0ZORGhkMnUwc1QrZWRBSDMzbnlyTDlmMVRBajdUT3dj?=
- =?utf-8?B?TU1jWE44a1hWeWNQSEtiUXJMU2RSR1prcFByN09RSE43QjAvZFJOYTIydk1S?=
- =?utf-8?B?N3lBL3N2bnhpemJjSXB3dlpWMlJROXpETkRobld3dzRVSHRGUjJWcmRDWllE?=
- =?utf-8?B?WUVpNEQzMUgyUVFMRkFpK284a29OK0ZxZ1Exdnl4THZBNFd6YTRhTGRMem1P?=
- =?utf-8?B?MnVzbEw3U3NMWTFqZmlCVWRQYXFMNVNQUGR0RDdzK1dBaGRXbXJ1d2VtVFRQ?=
- =?utf-8?B?dE1mcVMwS3RKMVppaHVxb2p3SjQwTHNsbnFoM3ljRGtYWFF4TzVzK2NoTjFQ?=
- =?utf-8?B?UXZsVmRiZHR5eHBSZnZzUmpJbG03R0cyMjJMbE1yRGlDdXIvRXI3OEEyUGht?=
- =?utf-8?B?L1FjTVpuQmFreG1TNkpENS9TNnkycmdlcG1acG5iNDhVV0VSL293YlQ4S0Jx?=
- =?utf-8?B?OC8rTTRDbTg5cHZ3K2xCbU1WYlM3T2wrb1FTYjJtejRTUitlelZMRHhyNWtK?=
- =?utf-8?B?Q2V1MWhQVFZDaUtleFkvTk5FblJvUlRLSGVkZ0NsRzM2WTlqU09SWk9rcHZI?=
- =?utf-8?B?WFNTd2wyay9FbHBnbXZ6SjlQanZuLzhnRWZmZ1BwNzZKVDA4alQ4VmpkajQy?=
- =?utf-8?B?bjhmVkxGTXBNZ2hIOGU2aHZwLzZHd3VDTk1qaTcrZm1mZ2VCUjl4ZmpXZm0y?=
- =?utf-8?B?NmtlQk1CNFdjK2RNS2hHOHpvdjJ6MkhaYVZDd0Y1TlVtcFVaU1U1QWtXV29q?=
- =?utf-8?B?ZTVHL25uelRlTU03NnJFRUNvT3liUlFjeFVtT3FiZEFlTjRFdk1CVGljNTBZ?=
- =?utf-8?B?Lzl5bk5SV0RScGVocjQwQzZFekpjTktiS2xkWUhTckhqNU1RTUQweGFUK0tW?=
- =?utf-8?B?T2ZGenloclYyK2tqMGd1MURUaXErWEhNOHpUZzUwZWVLWUk0SW9yQ0tmUENF?=
- =?utf-8?B?b1dZa0JSWG9iVGZ3bXBySlpuc1BSQVNEa3V6MHh6WW5RRjVwMTMvNDQ5M2Jz?=
- =?utf-8?B?djd4QzlDeHNFVnBUa2hPYUdiZ3Rxa2hRbkhCSldHTjlJTjZZZGZvRVJMYnpD?=
- =?utf-8?B?K0NLOFIvbzhXL3gxeEJ5dStKaktYY0Rqdi95OXhCekRidnVLcE5oWlpZdkg3?=
- =?utf-8?B?VThUL3d0MmhGK2FQQlZidFROU2ZFQXdlckdKZHg5Yjc1STlXVnhtSFZIcTFC?=
- =?utf-8?B?bkpwdkJCWlg2ZUNsYnluNGVRR2FkWElFQm9hczVMRlIrZmI1cDRPNFlQcXpz?=
- =?utf-8?B?ZTNyQXRpZVFOWWl4d0VXUnZYRXJMVnhOaDB3b2EySEF4dTNXT29KcldVZ1hM?=
- =?utf-8?B?cXBJb2lMdHgvQUQrNWFWUUFpa0YvejRJdnRsdkl1aGIwYS9lU3ZSSkJMdXhW?=
- =?utf-8?B?R3NiN3AxVExPL0FBVk9hdmM3eWNGeEs2dlgzdEVxaUFGeWZyRkh3eXNVT21m?=
- =?utf-8?B?MGpuUkZkK2kxMnI4ZHA4MWREamhvK253N2phNDFoRHV1R3RKKzFxVVhFQmlE?=
- =?utf-8?B?SlVoWks5N2g1ZXM3bExrSERHdW5YME9XR3BmOGVLZGVISTVxTEI2VHkyL1Na?=
- =?utf-8?B?ZXlRdlAra0NWWnJJSzJuVUpyLytUUFdRSm1DUDBhKzVrYXVLdnVUMW1YRUxB?=
- =?utf-8?B?UGhVOGN1MUdXQWxIbzU5QStUNDE2aW9kQ2ZqNk5qSmQxQkI1eElINlFzaytV?=
- =?utf-8?B?Tmc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C23B5497B7078E449A486364C2AD6045@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.13; Thu, 12 Jan
+ 2023 10:26:48 +0000
+Received: from DM6NAM11FT058.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:3b4:cafe::3a) by DS7PR03CA0134.outlook.office365.com
+ (2603:10b6:5:3b4::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.13 via Frontend
+ Transport; Thu, 12 Jan 2023 10:26:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ DM6NAM11FT058.mail.protection.outlook.com (10.13.172.216) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.6002.13 via Frontend Transport; Thu, 12 Jan 2023 10:26:48 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Thu, 12 Jan
+ 2023 04:26:47 -0600
+Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2375.34 via Frontend
+ Transport; Thu, 12 Jan 2023 04:26:45 -0600
+From:   Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+To:     <linux-clk@vger.kernel.org>
+CC:     <git@amd.com>, <michal.simek@xilinx.com>, <sboyd@kernel.org>,
+        <mturquette@baylibre.com>
+Subject: [PATCH v2] clocking-wizard: Support higher frequency accuracy
+Date:   Thu, 12 Jan 2023 15:56:44 +0530
+Message-ID: <20230112102644.28019-1-shubhrajyoti.datta@amd.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN6PR11MB1953.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c6b532f-5055-495c-0166-08daf4847564
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jan 2023 10:04:56.8382
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT058:EE_|CH3PR12MB7500:EE_
+X-MS-Office365-Filtering-Correlation-Id: ecbd466c-0127-403b-773d-08daf4878312
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: uWd2dNtL6745lHY7xDhWJH+uUmZxCEipHJNyg49+N0hmUCaJ2tqdIDc7CwltObPPkkhtGjx/Z0fCKzcexFX72HiaQNifxUrw6GZ9nNLvaac20gxGpqVsJr5l5C9KUXxgqrKoPqkU3Wjv/D2yzGIYZxgXVSZKfsy7kO9jS9K0xxhySHClB2awbANfovua5N/bvY3wmez8zI8PYyhpgVY5lQHZjbTuYtzycfquQqrjjL8835FeVCx7lo/v+FXybilT8ojHK91uznPGWUCNsNXeCXrrlOVSVr8NuVXBErk5uyAOtBaXssTpwDmxZKYUR4HgQ8iYYMlMVqWRyyILYJDL2YPOc9xiSfhsrb3bo0oLmpTqaF+TkNBxWrz5UyOTEBEg618r5xhBry/E2p7++kTajjphSGZ+e2l3de/4VWMPuMD1pig2cR4EjD7Rwh2M1DsQfgMezd417QrgAdbDlzj1Z5ns9NqwxyPh1VKlAGtQiwZJQa4kOKXjooGq5l30iYI/tatzMAAtiOcz4M7fIufHsbVkCLZEG2RdN6k3TlMgtN2q/rMwXJrYB70ss53pELc1P0m5ZRPgohE2r/lUfy2He1cTxqd798TbTisnM/Cd0dyF/M+G5zf5J8c+wsE2DrKH0FtdWrAuX207Lczhx1wxmvxKbb757sT8XLp5H/IPPwG66lieHa6cP55//9hK1NzFbFEg49IvObg4cn0nPSkp19G1bqWZJyivLcruFgj9Ods=
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(396003)(346002)(136003)(376002)(39860400002)(451199015)(36840700001)(40470700004)(46966006)(30864003)(41300700001)(426003)(47076005)(44832011)(8936002)(5660300002)(2906002)(36860700001)(83380400001)(4326008)(336012)(6916009)(82740400003)(8676002)(70586007)(70206006)(81166007)(40460700003)(356005)(316002)(1076003)(54906003)(36756003)(478600001)(2616005)(40480700001)(82310400005)(86362001)(186003)(26005)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jan 2023 10:26:48.2353
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1u6QHoXW2NfmUZ8h5O682ljNk1UKDxSRnqeKD/AoaKrgxJLIz8AyWfUKPDXilVX/s8PpGtI1gm2AUHYFSow5MqDQ1gdNp0EfGkMGo/CCUZs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7530
+X-MS-Exchange-CrossTenant-Network-Message-Id: ecbd466c-0127-403b-773d-08daf4878312
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT058.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7500
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gMDMuMDEuMjAyMyAxODo0NSwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0KPiBFWFRFUk5B
-TCBFTUFJTDogRG8gbm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0YWNobWVudHMgdW5sZXNzIHlv
-dSBrbm93IHRoZSBjb250ZW50IGlzIHNhZmUNCj4gDQo+IEluIHZhcmlvdXMgcGxhY2VzLCBzdHJp
-bmcgYnVmZmVycyBvZiBhIGZpeGVkIHNpemUgYXJlIGFsbG9jYXRlZCwgYW5kDQo+IGZpbGxlZCB1
-c2luZyBzbnByaW50ZigpIHdpdGggdGhlIHNhbWUgZml4ZWQgc2l6ZSwgd2hpY2ggaXMgZXJyb3It
-cHJvbmUuDQo+IA0KPiBSZXBsYWNlIHRoaXMgYnkgY2FsbGluZyBkZXZtX2thc3ByaW50ZigpIGlu
-c3RlYWQsIHdoaWNoIGFsd2F5cyB1c2VzIHRoZQ0KPiBhcHByb3ByaWF0ZSBzaXplLg0KPiANCj4g
-V2hpbGUgYXQgaXQsIHJlbW92ZSBhbiB1bm5lZWRlZCBpbnRlcm1lZGlhdGUgdmFyaWFibGUsIHdo
-aWNoIGFsbG93cyB1cw0KPiB0byBkcm9wIGEgY2FzdCBhcyBhIGJvbnVzLg0KPiANCj4gU2lnbmVk
-LW9mZi1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT4NCg0K
-QXBwbGllZCB0byBjbGstbWljcm9jaGlwLWZpeGVzLCB0aGFua3MhDQoNCj4gLS0tDQo+ICBkcml2
-ZXJzL2Nsay9taWNyb2NoaXAvY2xrLW1wZnMtY2NjLmMgfCAxMCArKysrLS0tLS0tDQo+ICAxIGZp
-bGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvY2xrL21pY3JvY2hpcC9jbGstbXBmcy1jY2MuYyBiL2RyaXZlcnMvY2xr
-L21pY3JvY2hpcC9jbGstbXBmcy1jY2MuYw0KPiBpbmRleCAzMmFhZTg4MGExNGYzYjFjLi4wZGRj
-NzNlMDdiZTQyOTczIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2Nsay9taWNyb2NoaXAvY2xrLW1w
-ZnMtY2NjLmMNCj4gKysrIGIvZHJpdmVycy9jbGsvbWljcm9jaGlwL2Nsay1tcGZzLWNjYy5jDQo+
-IEBAIC0xNjQsMTIgKzE2NCwxMSBAQCBzdGF0aWMgaW50IG1wZnNfY2NjX3JlZ2lzdGVyX291dHB1
-dHMoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgbXBmc19jY2Nfb3V0X2h3Xw0KPiANCj4gICAg
-ICAgICBmb3IgKHVuc2lnbmVkIGludCBpID0gMDsgaSA8IG51bV9jbGtzOyBpKyspIHsNCj4gICAg
-ICAgICAgICAgICAgIHN0cnVjdCBtcGZzX2NjY19vdXRfaHdfY2xvY2sgKm91dF9odyA9ICZvdXRf
-aHdzW2ldOw0KPiAtICAgICAgICAgICAgICAgY2hhciAqbmFtZSA9IGRldm1fa3phbGxvYyhkZXYs
-IDIzLCBHRlBfS0VSTkVMKTsNCj4gKyAgICAgICAgICAgICAgIGNoYXIgKm5hbWUgPSBkZXZtX2th
-c3ByaW50ZihkZXYsIEdGUF9LRVJORUwsICIlc19vdXQldSIsIHBhcmVudC0+bmFtZSwgaSk7DQo+
-IA0KPiAgICAgICAgICAgICAgICAgaWYgKCFuYW1lKQ0KPiAgICAgICAgICAgICAgICAgICAgICAg
-ICByZXR1cm4gLUVOT01FTTsNCj4gDQo+IC0gICAgICAgICAgICAgICBzbnByaW50ZihuYW1lLCAy
-MywgIiVzX291dCV1IiwgcGFyZW50LT5uYW1lLCBpKTsNCj4gICAgICAgICAgICAgICAgIG91dF9o
-dy0+ZGl2aWRlci5ody5pbml0ID0gQ0xLX0hXX0lOSVRfSFcobmFtZSwgJnBhcmVudC0+aHcsICZj
-bGtfZGl2aWRlcl9vcHMsIDApOw0KPiAgICAgICAgICAgICAgICAgb3V0X2h3LT5kaXZpZGVyLnJl
-ZyA9IGRhdGEtPnBsbF9iYXNlW2kgLyBNUEZTX0NDQ19PVVRQVVRTX1BFUl9QTExdICsNCj4gICAg
-ICAgICAgICAgICAgICAgICAgICAgb3V0X2h3LT5yZWdfb2Zmc2V0Ow0KPiBAQCAtMjAxLDE0ICsy
-MDAsMTMgQEAgc3RhdGljIGludCBtcGZzX2NjY19yZWdpc3Rlcl9wbGxzKHN0cnVjdCBkZXZpY2Ug
-KmRldiwgc3RydWN0IG1wZnNfY2NjX3BsbF9od19jbG8NCj4gDQo+ICAgICAgICAgZm9yICh1bnNp
-Z25lZCBpbnQgaSA9IDA7IGkgPCBudW1fY2xrczsgaSsrKSB7DQo+ICAgICAgICAgICAgICAgICBz
-dHJ1Y3QgbXBmc19jY2NfcGxsX2h3X2Nsb2NrICpwbGxfaHcgPSAmcGxsX2h3c1tpXTsNCj4gLSAg
-ICAgICAgICAgICAgIGNoYXIgKm5hbWUgPSBkZXZtX2t6YWxsb2MoZGV2LCAxOCwgR0ZQX0tFUk5F
-TCk7DQo+IA0KPiAtICAgICAgICAgICAgICAgaWYgKCFuYW1lKQ0KPiArICAgICAgICAgICAgICAg
-cGxsX2h3LT5uYW1lID0gZGV2bV9rYXNwcmludGYoZGV2LCBHRlBfS0VSTkVMLCAiY2NjJXNfcGxs
-JXUiLA0KPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3Ry
-Y2hybnVsKGRldi0+b2Zfbm9kZS0+ZnVsbF9uYW1lLCAnQCcpLCBpKTsNCj4gKyAgICAgICAgICAg
-ICAgIGlmICghcGxsX2h3LT5uYW1lKQ0KPiAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4g
-LUVOT01FTTsNCj4gDQo+ICAgICAgICAgICAgICAgICBwbGxfaHctPmJhc2UgPSBkYXRhLT5wbGxf
-YmFzZVtpXTsNCj4gLSAgICAgICAgICAgICAgIHNucHJpbnRmKG5hbWUsIDE4LCAiY2NjJXNfcGxs
-JXUiLCBzdHJjaHJudWwoZGV2LT5vZl9ub2RlLT5mdWxsX25hbWUsICdAJyksIGkpOw0KPiAtICAg
-ICAgICAgICAgICAgcGxsX2h3LT5uYW1lID0gKGNvbnN0IGNoYXIgKiluYW1lOw0KPiAgICAgICAg
-ICAgICAgICAgcGxsX2h3LT5ody5pbml0ID0gQ0xLX0hXX0lOSVRfUEFSRU5UU19EQVRBX0ZJWEVE
-X1NJWkUocGxsX2h3LT5uYW1lLA0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGxsX2h3LT5wYXJlbnRzLA0KPiAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgJm1wZnNfY2NjX3BsbF9vcHMsIDApOw0KPiAtLQ0KPiAyLjI1LjENCj4gDQoN
-Cg==
+Change the multipliers and divisors to support a higher
+frequency accuracy if there is only one output.
+Currently only O is changed now we are changing M, D and O.
+For multiple output case the earlier behavior is retained.
+
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+---
+
+Changes in v2:
+remove an unneeded assignment
+
+ drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 210 +++++++++++++++++++--
+ 1 file changed, 191 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+index eb1dfe7ecc1b..2c5f103f57a1 100644
+--- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
++++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+@@ -8,6 +8,7 @@
+  *
+  */
+ 
++#include <linux/bitfield.h>
+ #include <linux/platform_device.h>
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+@@ -37,6 +38,7 @@
+ #define WZRD_CLKOUT_DIVIDE_MASK		(0xff << WZRD_DIVCLK_DIVIDE_SHIFT)
+ #define WZRD_CLKOUT_FRAC_SHIFT		8
+ #define WZRD_CLKOUT_FRAC_MASK		0x3ff
++#define WZRD_CLKOUT0_FRAC_MASK		GENMASK(17, 8)
+ 
+ #define WZRD_DR_MAX_INT_DIV_VALUE	255
+ #define WZRD_DR_STATUS_REG_OFFSET	0x04
+@@ -49,6 +51,22 @@
+ 
+ #define WZRD_USEC_POLL		10
+ #define WZRD_TIMEOUT_POLL		1000
++
++/* Divider limits, from UG572 Table 3-4 for Ultrascale+ */
++#define DIV_O				0x01
++#define DIV_ALL				0x03
++
++#define WZRD_M_MIN			2
++#define WZRD_M_MAX			128
++#define WZRD_D_MIN			1
++#define WZRD_D_MAX			106
++#define WZRD_VCO_MIN			800000000
++#define WZRD_VCO_MAX			1600000000
++#define WZRD_O_MIN			1
++#define WZRD_O_MAX			128
++#define WZRD_MIN_ERR			20000
++#define WZRD_FRAC_POINTS		1000
++
+ /* Get the mask from width */
+ #define div_mask(width)			((1 << (width)) - 1)
+ 
+@@ -97,6 +115,9 @@ struct clk_wzrd {
+  * @width:	width of the divider bit field
+  * @flags:	clk_wzrd divider flags
+  * @table:	array of value/divider pairs, last entry should have div = 0
++ * @valuem:	value of the multiplier
++ * @valued:	value of the common divider
++ * @valueo:	value of the leaf divider
+  * @lock:	register lock
+  */
+ struct clk_wzrd_divider {
+@@ -107,6 +128,9 @@ struct clk_wzrd_divider {
+ 	u8 width;
+ 	u8 flags;
+ 	const struct clk_div_table *table;
++	u32 valuem;
++	u32 valued;
++	u32 valueo;
+ 	spinlock_t *lock;  /* divider lock */
+ };
+ 
+@@ -198,12 +222,144 @@ static long clk_wzrd_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	return *prate / div;
+ }
+ 
++static int clk_wzrd_get_divisors(struct clk_hw *hw, unsigned long rate,
++				 unsigned long parent_rate)
++{
++	struct clk_wzrd_divider *divider = to_clk_wzrd_divider(hw);
++	u64 vco_freq, freq, diff;
++	u32 m, d, o;
++
++	for (m = WZRD_M_MIN; m <= WZRD_M_MAX; m++) {
++		for (d = WZRD_D_MIN; d <= WZRD_D_MAX; d++) {
++			vco_freq = DIV_ROUND_CLOSEST_ULL((u64)(parent_rate * m), d);
++			if (vco_freq >= WZRD_VCO_MIN && vco_freq <= WZRD_VCO_MAX) {
++				for (o = WZRD_O_MIN; o <= WZRD_O_MAX; o++) {
++					freq = DIV_ROUND_CLOSEST_ULL(vco_freq, o);
++					diff = abs(freq - rate);
++
++					if (diff < WZRD_MIN_ERR) {
++						divider->valuem = m;
++						divider->valued = d;
++						divider->valueo = o;
++						return 0;
++					}
++				}
++			}
++		}
++	}
++	return -EBUSY;
++}
++
++static int clk_wzrd_dynamic_all_nolock(struct clk_hw *hw, unsigned long rate,
++				       unsigned long parent_rate)
++{
++	struct clk_wzrd_divider *divider = to_clk_wzrd_divider(hw);
++	unsigned long vco_freq, rate_div, f, clockout0_div;
++	u32 reg, pre, value;
++	int err;
++
++	err = clk_wzrd_get_divisors(hw, rate, parent_rate);
++	if (err)
++		return err;
++
++	vco_freq = DIV_ROUND_CLOSEST((parent_rate * divider->valuem), divider->valued);
++	rate_div = DIV_ROUND_CLOSEST((vco_freq * WZRD_FRAC_POINTS), rate);
++
++	clockout0_div = rate_div / WZRD_FRAC_POINTS;
++
++	pre = DIV_ROUND_CLOSEST((vco_freq * WZRD_FRAC_POINTS), rate);
++	f = (u32)(pre - (clockout0_div * WZRD_FRAC_POINTS));
++	f = f & WZRD_CLKOUT_FRAC_MASK;
++
++	reg = FIELD_PREP(WZRD_CLKOUT_DIVIDE_MASK, clockout0_div) |
++	      FIELD_PREP(WZRD_CLKOUT0_FRAC_MASK, f);
++
++	writel(reg, divider->base + WZRD_CLK_CFG_REG(2));
++	/* Set divisor and clear phase offset */
++	reg = FIELD_PREP(WZRD_CLKFBOUT_MULT_MASK, divider->valuem) |
++	      FIELD_PREP(WZRD_DIVCLK_DIVIDE_MASK, divider->valued);
++	writel(reg, divider->base + WZRD_CLK_CFG_REG(0));
++	writel(divider->valueo, divider->base + WZRD_CLK_CFG_REG(2));
++	writel(0, divider->base + WZRD_CLK_CFG_REG(3));
++	/* Check status register */
++	err = readl_poll_timeout(divider->base + WZRD_DR_STATUS_REG_OFFSET, value,
++				 value & WZRD_DR_LOCK_BIT_MASK,
++				 WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
++	if (err)
++		return -ETIMEDOUT;
++
++	/* Initiate reconfiguration */
++	writel(WZRD_DR_BEGIN_DYNA_RECONF,
++	       divider->base + WZRD_DR_INIT_REG_OFFSET);
++
++	/* Check status register */
++	err = readl_poll_timeout(divider->base + WZRD_DR_STATUS_REG_OFFSET, value,
++				 value & WZRD_DR_LOCK_BIT_MASK,
++				 WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
++	if (err)
++		return -ETIMEDOUT;
++
++	return 0;
++}
++
++static int clk_wzrd_dynamic_all(struct clk_hw *hw, unsigned long rate,
++				unsigned long parent_rate)
++{
++	struct clk_wzrd_divider *divider = to_clk_wzrd_divider(hw);
++	unsigned long flags = 0;
++	int ret;
++
++	if (divider->lock)
++		spin_lock_irqsave(divider->lock, flags);
++	else
++		__acquire(divider->lock);
++
++	ret = clk_wzrd_dynamic_all_nolock(hw, rate, parent_rate);
++
++	if (divider->lock)
++		spin_unlock_irqrestore(divider->lock, flags);
++	else
++		__release(divider->lock);
++
++	return ret;
++}
++
++static unsigned long clk_wzrd_recalc_rate_all(struct clk_hw *hw,
++					      unsigned long parent_rate)
++{
++	struct clk_wzrd_divider *divider = to_clk_wzrd_divider(hw);
++	u32 m, d, o, div, reg, f;
++
++	reg = readl(divider->base + WZRD_CLK_CFG_REG(0));
++	d = FIELD_GET(WZRD_DIVCLK_DIVIDE_MASK, reg);
++	m = FIELD_GET(WZRD_CLKFBOUT_MULT_MASK, reg);
++	reg = readl(divider->base + WZRD_CLK_CFG_REG(2));
++	o = FIELD_GET(WZRD_DIVCLK_DIVIDE_MASK, reg);
++	f = FIELD_GET(WZRD_CLKOUT0_FRAC_MASK, reg);
++
++	div = DIV_ROUND_CLOSEST(d * (WZRD_FRAC_POINTS * o + f), WZRD_FRAC_POINTS);
++	return divider_recalc_rate(hw, parent_rate * m, div, divider->table,
++			divider->flags, divider->width);
++}
++
++static long clk_wzrd_round_rate_all(struct clk_hw *hw, unsigned long rate,
++				    unsigned long *prate)
++{
++	return rate;
++}
++
+ static const struct clk_ops clk_wzrd_clk_divider_ops = {
+ 	.round_rate = clk_wzrd_round_rate,
+ 	.set_rate = clk_wzrd_dynamic_reconfig,
+ 	.recalc_rate = clk_wzrd_recalc_rate,
+ };
+ 
++static const struct clk_ops clk_wzrd_clk_div_all_ops = {
++	.round_rate = clk_wzrd_round_rate_all,
++	.set_rate = clk_wzrd_dynamic_all,
++	.recalc_rate = clk_wzrd_recalc_rate_all,
++};
++
+ static unsigned long clk_wzrd_recalc_ratef(struct clk_hw *hw,
+ 					   unsigned long parent_rate)
+ {
+@@ -280,7 +436,7 @@ static struct clk *clk_wzrd_register_divf(struct device *dev,
+ 					  void __iomem *base, u16 offset,
+ 					  u8 shift, u8 width,
+ 					  u8 clk_divider_flags,
+-					  const struct clk_div_table *table,
++					  u32 div_type,
+ 					  spinlock_t *lock)
+ {
+ 	struct clk_wzrd_divider *div;
+@@ -307,7 +463,7 @@ static struct clk *clk_wzrd_register_divf(struct device *dev,
+ 	div->flags = clk_divider_flags;
+ 	div->lock = lock;
+ 	div->hw.init = &init;
+-	div->table = table;
++	div->table = NULL;
+ 
+ 	hw = &div->hw;
+ 	ret =  devm_clk_hw_register(dev, hw);
+@@ -324,7 +480,7 @@ static struct clk *clk_wzrd_register_divider(struct device *dev,
+ 					     void __iomem *base, u16 offset,
+ 					     u8 shift, u8 width,
+ 					     u8 clk_divider_flags,
+-					     const struct clk_div_table *table,
++					     u32 div_type,
+ 					     spinlock_t *lock)
+ {
+ 	struct clk_wzrd_divider *div;
+@@ -337,7 +493,12 @@ static struct clk *clk_wzrd_register_divider(struct device *dev,
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	init.name = name;
+-	init.ops = &clk_wzrd_clk_divider_ops;
++	if (clk_divider_flags & CLK_DIVIDER_READ_ONLY)
++		init.ops = &clk_divider_ro_ops;
++	else if (div_type == DIV_O)
++		init.ops = &clk_wzrd_clk_divider_ops;
++	else
++		init.ops = &clk_wzrd_clk_div_all_ops;
+ 	init.flags = flags;
+ 	init.parent_names =  &parent_name;
+ 	init.num_parents =  1;
+@@ -349,7 +510,7 @@ static struct clk *clk_wzrd_register_divider(struct device *dev,
+ 	div->flags = clk_divider_flags;
+ 	div->lock = lock;
+ 	div->hw.init = &init;
+-	div->table = table;
++	div->table = NULL;
+ 
+ 	hw = &div->hw;
+ 	ret = devm_clk_hw_register(dev, hw);
+@@ -425,6 +586,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+ 	const char *clk_name;
+ 	void __iomem *ctrl_reg;
+ 	struct clk_wzrd *clk_wzrd;
++	const char *clkout_name;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	int nr_outputs;
+ 	unsigned long flags = 0;
+@@ -469,6 +631,26 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+ 		goto err_disable_clk;
+ 	}
+ 
++	ret = of_property_read_u32(np, "xlnx,nr-outputs", &nr_outputs);
++	if (ret || nr_outputs > WZRD_NUM_OUTPUTS) {
++		ret = -EINVAL;
++		goto err_disable_clk;
++	}
++
++	clkout_name = kasprintf(GFP_KERNEL, "%s_out0", dev_name(&pdev->dev));
++	if (nr_outputs == 1) {
++		clk_wzrd->clkout[0] = clk_wzrd_register_divider
++				(&pdev->dev, clkout_name,
++				__clk_get_name(clk_wzrd->clk_in1), 0,
++				clk_wzrd->base, WZRD_CLK_CFG_REG(3),
++				WZRD_CLKOUT_DIVIDE_SHIFT,
++				WZRD_CLKOUT_DIVIDE_WIDTH,
++				CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO,
++				DIV_ALL, &clkwzrd_lock);
++
++		goto out;
++	}
++
+ 	reg = readl(clk_wzrd->base + WZRD_CLK_CFG_REG(0));
+ 	reg_f = reg & WZRD_CLKFBOUT_FRAC_MASK;
+ 	reg_f =  reg_f >> WZRD_CLKFBOUT_FRAC_SHIFT;
+@@ -481,19 +663,11 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+ 		ret = -ENOMEM;
+ 		goto err_disable_clk;
+ 	}
+-
+-	ret = of_property_read_u32(np, "xlnx,nr-outputs", &nr_outputs);
+-	if (ret || nr_outputs > WZRD_NUM_OUTPUTS) {
+-		ret = -EINVAL;
+-		goto err_disable_clk;
+-	}
+-	if (nr_outputs == 1)
+-		flags = CLK_SET_RATE_PARENT;
+-
+ 	clk_wzrd->clks_internal[wzrd_clk_mul] = clk_register_fixed_factor
+ 			(&pdev->dev, clk_name,
+ 			 __clk_get_name(clk_wzrd->clk_in1),
+ 			0, mult, 1000);
++	kfree(clk_name);
+ 	if (IS_ERR(clk_wzrd->clks_internal[wzrd_clk_mul])) {
+ 		dev_err(&pdev->dev, "unable to register fixed-factor clock\n");
+ 		ret = PTR_ERR(clk_wzrd->clks_internal[wzrd_clk_mul]);
+@@ -521,8 +695,6 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+ 
+ 	/* register div per output */
+ 	for (i = nr_outputs - 1; i >= 0 ; i--) {
+-		const char *clkout_name;
+-
+ 		clkout_name = kasprintf(GFP_KERNEL, "%s_out%d", dev_name(&pdev->dev), i);
+ 		if (!clkout_name) {
+ 			ret = -ENOMEM;
+@@ -537,7 +709,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+ 				WZRD_CLKOUT_DIVIDE_SHIFT,
+ 				WZRD_CLKOUT_DIVIDE_WIDTH,
+ 				CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO,
+-				NULL, &clkwzrd_lock);
++				DIV_O, &clkwzrd_lock);
+ 		else
+ 			clk_wzrd->clkout[i] = clk_wzrd_register_divider
+ 				(&pdev->dev, clkout_name,
+@@ -546,7 +718,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+ 				WZRD_CLKOUT_DIVIDE_SHIFT,
+ 				WZRD_CLKOUT_DIVIDE_WIDTH,
+ 				CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO,
+-				NULL, &clkwzrd_lock);
++				DIV_O, &clkwzrd_lock);
+ 		if (IS_ERR(clk_wzrd->clkout[i])) {
+ 			int j;
+ 
+@@ -560,7 +732,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	kfree(clk_name);
+-
++out:
+ 	clk_wzrd->clk_data.clks = clk_wzrd->clkout;
+ 	clk_wzrd->clk_data.clk_num = ARRAY_SIZE(clk_wzrd->clkout);
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_wzrd->clk_data);
+-- 
+2.17.1
+
