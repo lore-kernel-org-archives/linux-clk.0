@@ -2,346 +2,159 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2BA7C54EBD
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Jan 2023 12:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD4E7C61DB3
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Jan 2023 12:17:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230046AbjALMQJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Jan 2023 07:16:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49198 "EHLO
+        id S236797AbjALMRt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Jan 2023 07:17:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229521AbjALMPm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Jan 2023 07:15:42 -0500
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24C5DDEC9;
-        Thu, 12 Jan 2023 04:15:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1673525740; x=1705061740;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=S/CsC1crUsHX+7qdWyQgxbmLypY6YkFCeiYk/iwwmSI=;
-  b=R1a6s8Pv9hGeC3MF2KmHR56q+kYA/DXSRxyYDsAhR+5auPLViB3Jw/sy
-   RjoY77jmIjhe+1+cKxfou1p96g9m1nfeNAbcnkOPSJLYxGEZ7BIkeFHbK
-   nAeC05rnx3DbkZcCNIbmcbyK98UTx/lMdZ6fNrfcRtfzTQX8SQZ9rKwBa
-   U0ksjqfCbKbX2jdCUf6ySYdr7swmYesKhxKPYkcMwFw1nA52NQmfi6FAX
-   DmqZPbzy2kaCZokFDy/GcxuO1R+JmbPBVlhpEuFRLeqD+whnp9CKDjfU8
-   mze74snH6APe96YMyzkMTHgcSVSZtwyeL/R8jJ7L9y8GbVHlOnUrJxJrd
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10586"; a="324926049"
-X-IronPort-AV: E=Sophos;i="5.97,319,1669104000"; 
-   d="scan'208";a="324926049"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2023 04:15:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10586"; a="657781862"
-X-IronPort-AV: E=Sophos;i="5.97,319,1669104000"; 
-   d="scan'208";a="657781862"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orsmga002.jf.intel.com with ESMTP; 12 Jan 2023 04:15:39 -0800
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16; Thu, 12 Jan 2023 04:15:38 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16; Thu, 12 Jan 2023 04:15:38 -0800
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16 via Frontend Transport; Thu, 12 Jan 2023 04:15:38 -0800
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.172)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.16; Thu, 12 Jan 2023 04:15:38 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aSPX5JuEjcx5PhVuPHag/NJ8a9cQENARhMFPrFWVw/QVhoYYSNt60F3y8viIZ8tFJMSNbKGmyT1a9+h21fWu1gJZYMeaThrC46hZB7+Onyzdxaorl5+HynCU4AC1+nYRTXA7HFSoa4QGTVx6Bz7NjQU4RqjJcL3GA0A4u+2bqd/5R9VwMfl196MhX6wsoCiDn6/mFaf1sgvcQVZ2HBAV69TeVpDfsJH8JdtnMq95QCNOWHqm2tre2zoa2GiwBNirxfKOfVtvF4IFNjnHJq2fJbKYSOZ7skpLR13iKMI95RkMUv6LvLMibW2+LNtf7W4kIEM3j9gu5//ZIv+XComGdg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pMs/B5Osu/hioH4in5cKDWvFEQaRPPe+0VJaKAxkbEQ=;
- b=KvhwcMQIAfhju7V3jU2XzSPtQ2srY7Ohy/Eu5w5Yuu+I+bx3aH1PZdvXhG93GmW2XKhExdFEL+XGq+91ccPARiCOn7DK0I2yxpIa+x6eSmTl2xpEi/4sw23n+zXf9FZ0YbEoNUEKh5vymo9A6T/kpOPb1LFunKKymXWJFV8aOeH20pEkbV8fkhG5QnXYicpspMGpQWdNbQcaamnFVqM+e+0saqIcE0Hu3iC8AHY9/1+t80uj30GAm85AeJFBBDhb4vopbK0S50giUpItFQw5A28G0fHt6ivY4FoW0nbglL7Pp3TXTpw+M0hhlkLilXZ1htYUNuz8BRO5hFhDn2QSmQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
- PH7PR11MB7549.namprd11.prod.outlook.com (2603:10b6:510:27b::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.18; Thu, 12 Jan
- 2023 12:15:30 +0000
-Received: from DM6PR11MB4657.namprd11.prod.outlook.com
- ([fe80::5006:f262:3103:f080]) by DM6PR11MB4657.namprd11.prod.outlook.com
- ([fe80::5006:f262:3103:f080%8]) with mapi id 15.20.6002.013; Thu, 12 Jan 2023
- 12:15:30 +0000
-From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-To:     Jiri Pirko <jiri@resnulli.us>
-CC:     Jakub Kicinski <kuba@kernel.org>,
-        Maciek Machnikowski <maciek@machnikowski.net>,
-        'Vadim Fedorenko' <vfedorenko@novek.ru>,
-        "'Jonathan Lemon'" <jonathan.lemon@gmail.com>,
-        'Paolo Abeni' <pabeni@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
-Thread-Topic: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
-Thread-Index: AQHZBDr1K1GsCJct2UayQH1vPDEq/65XZyGAgAMK4oCAAFcrAIAG+ucAgAC+YICAAJp7gIABOqIAgAEc44CAADKwAIAAJ6gAgASMcoCALA0RgIAB7ReAgADNAgCAAF4QcIAAEyqAgAAChKCAABESgIAAA3/A
-Date:   Thu, 12 Jan 2023 12:15:30 +0000
-Message-ID: <DM6PR11MB4657A41D59E6B1162EA6AFDB9BFD9@DM6PR11MB4657.namprd11.prod.outlook.com>
-References: <Y5MW/7jpMUXAGFGX@nanopsycho>
- <a8f9792b-93f1-b0b7-2600-38ac3c0e3832@machnikowski.net>
- <20221209083104.2469ebd6@kernel.org> <Y5czl6HgY2GPKR4v@nanopsycho>
- <DM6PR11MB46571573010AB727E1BE99AE9BFE9@DM6PR11MB4657.namprd11.prod.outlook.com>
- <20230110120549.4d764609@kernel.org> <Y75xFlEDCThGtMDq@nanopsycho>
- <DM6PR11MB4657AC41BBF714A280B578D49BFC9@DM6PR11MB4657.namprd11.prod.outlook.com>
- <Y77QEajGlJewGKy1@nanopsycho>
- <DM6PR11MB4657DC9A41A69B71A42DD22F9BFC9@DM6PR11MB4657.namprd11.prod.outlook.com>
- <Y77gf1ekbSMdY83b@nanopsycho>
-In-Reply-To: <Y77gf1ekbSMdY83b@nanopsycho>
-Accept-Language: pl-PL, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|PH7PR11MB7549:EE_
-x-ms-office365-filtering-correlation-id: 15b9a662-b6d1-4733-77a8-08daf496b29c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 8S3lOQT1wWWY1bzPWDLP/F/j90LqVjE2WiM6QzQ2vSBBF1jDWvwjR/1/kUakLNaDqOXLLvPg1L1dYtEU+huCn6xXEinLsNUcAVp5yqQy5ufK6ZOzmxNiA3QZH6cjSsIJm/UjtIHN5gUN3P/pLH7RLsXMi16dVxzLRtArgX55n4jAk0qEPYW9Kj/TWSGWEqv/wrGCAwC17dU2duvKRwaKnMbNE0tKpsfQ8bMxqzYJaEyVJADuY8o1stjV2SLYIUS8twjW5ZDbibfDZ4jREudmt2hgtEU52KH+zgq3juj5gO9lybGtKuxejLmddwMiuQvPpWIaREGQWhhM4V39IQ6ms9GEVi7SCFIMmBtgbnyrZZ7+7hDrP9xOFopTfCd85nqUZvaoucOiVVHaTWESn5AGDlirbwnJZm5lnXhpGxBAUJoj99XZEVuKfZRHWlNUSzmlZVRIOp52/cuyLvD4N3anSUc9iSg8ARSy5YX/RiPnIsE10ojGCcJRhHmuNR22z3BS6O8OMq+4lr4bVU7BeFg5sh5Si1bD+FUQnI44L6Yq7kd2KIhXKvGb94/sPlnAAZxNf/I4jGSpoW+EKQVHk5E3QJYAuiZi5jPQbaZLFPSSvNmU/eUqVGa9q0Ab/w7F9Ht3p8dSK/4Wa8Mzvx8VCYY77mQtHWzMrAZAN/f8JoKVOB4+I99EjUCTlODueUotRVaQb1PQuRKngoM+FZSrCXY3nABEF6ODzuDmdoSEzdSU1cU=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(366004)(39860400002)(396003)(136003)(376002)(346002)(451199015)(2906002)(71200400001)(6506007)(7696005)(26005)(478600001)(9686003)(186003)(55016003)(8676002)(83380400001)(66446008)(66946007)(64756008)(54906003)(316002)(76116006)(66556008)(66476007)(6916009)(4326008)(41300700001)(33656002)(82960400001)(122000001)(38100700002)(52536014)(38070700005)(86362001)(8936002)(5660300002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Hr5DRquMq02BCIv+pjwNDB4t6C1nfcdopfXVLCElrPyv5/JNYUFb909CJ5n9?=
- =?us-ascii?Q?FTyxaISOu6xBLCSMd4/QDkwnyvlqwxuPXrq9Mng65gAsevJ8bWerF1W6RN3l?=
- =?us-ascii?Q?t8JR2UgZM1J2FW1LB5TFQzYlGvHVN3+pGpk68kmw/QXcAre07XJy2kK7p6bK?=
- =?us-ascii?Q?9T3MNSLGZhiHrYCzayV/9hlTtl7AABq4gohiNRibaoh4Ys1xtWhUcNAkJYiV?=
- =?us-ascii?Q?z0rX0BJ5hYBySA01bUfkI/LOAHKuC8vHwOppUowHhR0UYjvTzA58LcIQwWHy?=
- =?us-ascii?Q?E3ljCUxq5mCkgx3+vhJoMoHljAGOPoiz3kpSm7DbqX40ivTyVgrGeYLVR6Nl?=
- =?us-ascii?Q?5DTtbqiJzERGr2+AbRDNf8dXyNOqR4kOcmSdWU0ILZUTysTz8OBRDnrKopzu?=
- =?us-ascii?Q?TOWWgAUGddvqHi40NwhD8f24E2jMXP7TFXxTtD/HLYeyj3XTIzKksWQoPHRe?=
- =?us-ascii?Q?ZZMDu7o3x030+7egjYgbRZcKgGNazRmlx8YvmaPhT7S5fkrUw+2psqKdaEoQ?=
- =?us-ascii?Q?pX5T1cSLCeu2E9XuV1vHcGJVs9ph4cumzb964dOG1XWRQsLkjPhFmd+MEaSj?=
- =?us-ascii?Q?6DIDikwydlWB3i5xN/WqNhTdd82YjEAPu10Ywb7vWP9jWok9JXukAH5GNRo9?=
- =?us-ascii?Q?FpDgHWENuqD5KTVsNrEVMbH0qqT9FyMDqoLKbFr0/j3GULHSGtlC/m+GR4an?=
- =?us-ascii?Q?42X5aOxeTiPeUREGXBFDg2yPbIPjMqTQgjdAXOyyTVJSfbVkRBNsng9aGYS6?=
- =?us-ascii?Q?vQi7z5L72+N1MrLbHh4gD3/nkhDzHmA9FQnqk7iDPrSMjxd+4Q3bmvQrON9K?=
- =?us-ascii?Q?mfNStaaxaJsMpOceHpUiHavYSskm/VTlMJULq5IMvaJVUxUdtqCnhQvJeKqc?=
- =?us-ascii?Q?AHtNJAy7MwSdPsgU2qGvyxqrWR0dWf85mbL38EArGPzvpe0xU8D+EuH5mLO1?=
- =?us-ascii?Q?gh/BfTvWff35mViNFaxJFTohVPl8/ZsLalgZue96bf3I1dCnCLVpgjgiZDt+?=
- =?us-ascii?Q?gxqg9rWqp9m2YQqocjbW0O+vHgvH5+smssgndmOOSkA8umY0Ivrj8PcEp3Pn?=
- =?us-ascii?Q?3y6w5lVCG9N9lAvk4U76otjwfC7vnv8bTxCPKQslLlQslDOO/zJipSBVbJWr?=
- =?us-ascii?Q?d79riGQWkisUL3bgYw+Vc9eW9jmtAaIZuTNYSgKMKmCEbIuofhMJUCRvwAYr?=
- =?us-ascii?Q?T383Hnyy7LBrGkZvg6Kk88XoF1QNOnT8M6dTFogYjEbgjSrzfJLFfA6XI/MK?=
- =?us-ascii?Q?0TXsQUOYpv3Ng6+MUgESylM+F2OMZqS236e2QTeNM9rfuZ4yHWPTf/zOwSwo?=
- =?us-ascii?Q?73MgwXJRhfcPhB01tc3ddlRdbwCW+zSOZlw6YWaThWcBNKV4XRGQnUnSUOQg?=
- =?us-ascii?Q?lTRV8U9PW+pDZ+aR8MQO7yRU+p4N67WutK0kFbnEcCBabUaV+OwDKLisX49S?=
- =?us-ascii?Q?RnDD6voMwuMxz040cIAKnysSxkdpmAkotn/oicvX4kyrI8CE9b37r13tftS1?=
- =?us-ascii?Q?K7/jF+WIVJssd37H25jfQOvEWiJLMmqdxeGwbnNoyYynF8AuJ0iIdH5xjku8?=
- =?us-ascii?Q?8XIJc3Q7wiegTiaZcCpplWRo6CO1ieASZ1tFz+FQMP5gM23Li62kbPSi1y4p?=
- =?us-ascii?Q?bg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S236834AbjALMRE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Jan 2023 07:17:04 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62D0F4C70D
+        for <linux-clk@vger.kernel.org>; Thu, 12 Jan 2023 04:17:01 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id bt23so28102249lfb.5
+        for <linux-clk@vger.kernel.org>; Thu, 12 Jan 2023 04:17:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I/Crti06zdfvOeajjPfc6JQjPbNYY5J/eTBerZMm4d0=;
+        b=usrpwr3EluaKa4Uwns8VicqiX7w9TrJImYoxAf1x48fP3BessI1ay8ByaxYmQR5Hn0
+         CNwXfETezzlhtqCmLEq0TGFjjKN0ih1wGONa0slebwl7qzHDbseodmppilzXBBTbFMoW
+         NKtGlfhBpWZI2JyCxfDbzEKmSQrvFRU4k/jDJXHm+K5NweIA0gd6+H8UkwFTXbp1plpp
+         nUAB2iQaTaP2Kt2FJWtJKO6QWKY+6ZWbxTH+vSewAS4NQkc3qqZQW218C4+z9jnAIZeH
+         +T9BQqoR7BQE/MO4OIpiTSLI+qEKq3/Qcy8Ddyl3vJxwtLWFxx8LQrdvmjas592sIO6G
+         bvPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I/Crti06zdfvOeajjPfc6JQjPbNYY5J/eTBerZMm4d0=;
+        b=qConj7SSwy7TD3m6Wl/W9D6sgCh8h1mwZamMDoYGrZFzlmYoLVvqWcFMrf/+lM0ds1
+         Lfx42WsbBMWGG63botXUumfHSyJmSvGN5dvXMSku3hK11R/7W9qDljk6mJ5OGLwk4xZ5
+         /gzBLNiWUhWlZpKDcu8dNAOdN/giU3Bpp25yR6BNHq7xBMgRgl09J867NMNMA7qVkF/Q
+         ugjI8kNTf6bVe6AKtX+RDx49o18REei6nSrDxDKTm410TjqdjWfaWGM6JKHNuP8lUlKx
+         IcDY10zAdTyN6yCgcVEIUOBW2lLleIzl8OQCwrGyOCIeyOktTbq8h1LloXqNf7szh+NR
+         juEQ==
+X-Gm-Message-State: AFqh2kqSOYeI0f46ILJoGtNiUGbN7R3plK12zNwimpEJ4NMaPnduwpvb
+        LFP+c0p54uoqDoTWiTQlkdg3Uw==
+X-Google-Smtp-Source: AMrXdXt3+Rwm9DxZ9ObnUuIybM/SXHl3nlvUEi3NYYVy9pIKtVXTNCxmQ/3A3vVdQE6CaxaC+OJ+dw==
+X-Received: by 2002:a05:6512:b22:b0:4cb:154d:2175 with SMTP id w34-20020a0565120b2200b004cb154d2175mr17433236lfu.30.1673525819675;
+        Thu, 12 Jan 2023 04:16:59 -0800 (PST)
+Received: from [192.168.1.101] (abym53.neoplus.adsl.tpnet.pl. [83.9.32.53])
+        by smtp.gmail.com with ESMTPSA id n27-20020a05651203fb00b004cb21eaf6e6sm3277894lfq.0.2023.01.12.04.16.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jan 2023 04:16:58 -0800 (PST)
+Message-ID: <c05e1f57-3d09-7b2a-9e1d-4885e52bc263@linaro.org>
+Date:   Thu, 12 Jan 2023 13:16:56 +0100
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15b9a662-b6d1-4733-77a8-08daf496b29c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jan 2023 12:15:30.4735
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: QIvmlFHGduILk1Ta0Yjehb5rWxY4IXBYF30ftfJMtRH7k409Kq1IjE/fNYU4/XGfuL9yAKBOjhzviN8AmjJu3bOMskxljeoM40DuXdzRHDI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7549
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH 04/13] clk: qcom: cpu-8996: support using GPLL0 as SMUX
+ input
+Content-Language: en-US
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20230111192004.2509750-1-dmitry.baryshkov@linaro.org>
+ <20230111192004.2509750-5-dmitry.baryshkov@linaro.org>
+ <33a6bf2c-bb93-c183-3915-5b90b72e4503@linaro.org>
+ <39c01d7b-eee4-ceb7-f7c4-7862c5527f33@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <39c01d7b-eee4-ceb7-f7c4-7862c5527f33@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
->From: Jiri Pirko <jiri@resnulli.us>
->Sent: Wednesday, January 11, 2023 5:15 PM
->To: Kubalewski, Arkadiusz <arkadiusz.kubalewski@intel.com>
->
->Wed, Jan 11, 2023 at 04:30:44PM CET, arkadiusz.kubalewski@intel.com wrote:
->>>From: Jiri Pirko <jiri@resnulli.us>
->>>Sent: Wednesday, January 11, 2023 4:05 PM
->>>To: Kubalewski, Arkadiusz <arkadiusz.kubalewski@intel.com>
->>>
->>>Wed, Jan 11, 2023 at 03:16:59PM CET, arkadiusz.kubalewski@intel.com
->wrote:
->>>>>From: Jiri Pirko <jiri@resnulli.us>
->>>>>Sent: Wednesday, January 11, 2023 9:20 AM
->>>>>
->>>>>Tue, Jan 10, 2023 at 09:05:49PM CET, kuba@kernel.org wrote:
->>>>>>On Mon, 9 Jan 2023 14:43:01 +0000 Kubalewski, Arkadiusz wrote:
->>>>>>> This is a simplified network switch board example.
->>>>>>> It has 2 synchronization channels, where each channel:
->>>>>>> - provides clk to 8 PHYs driven by separated MAC chips,
->>>>>>> - controls 2 DPLLs.
->>>>>>>
->>>>>>> Basically only given FW has control over its PHYs, so also a contro=
-l
->>>>>over it's
->>>>>>> MUX inputs.
->>>>>>> All external sources are shared between the channels.
->>>>>>>
->>>>>>> This is why we believe it is not best idea to enclose multiple DPLL=
-s
->>>>>with one
->>>>>>> object:
->>>>>>> - sources are shared even if DPLLs are not a single synchronizer
->chip,
->>>>>>> - control over specific MUX type input shall be controllable from
->>>>>different
->>>>>>> driver/firmware instances.
->>>>>>>
->>>>>>> As we know the proposal of having multiple DPLLs in one object was =
-a
->>>try
->>>>>to
->>>>>>> simplify currently implemented shared pins. We fully support idea o=
-f
->>>>>having
->>>>>>> interfaces as simple as possible, but at the same time they shall b=
-e
->>>>>flexible
->>>>>>> enough to serve many use cases.
->>>>>>
->>>>>>I must be missing context from other discussions but what is this
->>>>>>proposal trying to solve? Well implemented shared pins is all we need=
-.
->>>>>
->>>>>There is an entity containing the pins. The synchronizer chip. One
->>>>>synchronizer chip contains 1-n DPLLs. The source pins are connected
->>>>>to each DPLL (usually). What we missed in the original model was the
->>>>>synchronizer entity. If we have it, we don't need any notion of someho=
-w
->>>>>floating pins as independent entities being attached to one or many
->>>>>DPLL refcounted, etc. The synchronizer device holds them in
->>>>>straightforward way.
->>>>>
->>>>>Example of a synchronizer chip:
->>>>>https://www.renesas.com/us/en/products/clocks-timing/jitter-
->attenuators-
->>>>>frequency-translation/8a34044-multichannel-dpll-dco-four-eight-
->>>>>channels#overview
->>>>
->>>>Not really, as explained above, multiple separated synchronizer chips
->can
->>>be
->>>>connected to the same external sources.
->>>>This is why I wrote this email, to better explain need for references
->>>between
->>>>DPLLs and shared pins.
->>>>Synchronizer chip object with multiple DPLLs would have sense if the
->pins
->>>would
->>>>only belong to that single chip, but this is not true.
->>>
->>>I don't understand how it is physically possible that 2 pins belong to 2
->>>chips. Could you draw this to me?
->>>
->>
->>Well, sure, I was hoping this is clear, without extra connections on the
->draw:
->
->Okay, now I understand. It is not a shared pin but shared source for 2
->pins.
->
 
-Yes, exactly.
 
->
->>+----------+
->>|i0 - GPS  |--------------\
->>+----------+              |
->>+----------+              |
->>|i1 - SMA1 |------------\ |
->>+----------+            | |
->>+----------+            | |
->>|i2 - SMA2 |----------\ | |
->>+----------+          | | |
->>                      | | |
->>+---------------------|-|-|-------------------------------------------+
->>| Channel A / FW0     | | |     +-------------+   +---+   +--------+  |
->>|                     | | |-i0--|Synchronizer0|---|   |---| PHY0.0 |--|
->
->One pin here               ^^^
->
->>|         +---+       | | |     |             |   |   |   +--------+  |
->>| PHY0.0--|   |       | |---i1--|             |---| M |---| PHY0.1 |--|
->>|         |   |       | | |     | +-----+     |   | A |   +--------+  |
->>| PHY0.1--| M |       |-----i2--| |DPLL0|     |   | C |---| PHY0.2 |--|
->>|         | U |       | | |     | +-----+     |   | 0 |   +--------+  |
->>| PHY0.2--| X |--+----------i3--| +-----+     |---|   |---| ...    |--|
->>|         | 0 |  |    | | |     | |DPLL1|     |   |   |   +--------+  |
->>| ...   --|   |  | /--------i4--| +-----+     |---|   |---| PHY0.7 |--|
->>|         |   |  | |  | | |     +-------------+   +---+   +--------+  |
->>| PHY0.7--|   |  | |  | | |                                           |
->>|         +---+  | |  | | |                                           |
->>+----------------|-|--|-|-|-------------------------------------------+
->>| Channel B / FW1| |  | | |     +-------------+   +---+   +--------+  |
->>|                | |  | | \-i0--|Synchronizer1|---|   |---| PHY1.0 |--|
->
->And second pin here        ^^^
->
->There are 2 separate pins. Sure, they need to have the same config as
->they are connected to the same external entity (GPS, SMA1, SMA2).
->
->Perhaps we need to have a board description using dts to draw this
->picture so the drivers can use this schema in order to properly
->configure this?
->
->My point is, you are trying to hardcode the board geometry in the
->driver. Is that correct?
->
-
-Well, we are trying to have userspace-friendly interface :)
-As we discussed yesterday dts is more of embedded world thing and we don't
-want to go that far, the driver knows the hardware it is using, thus it
-shall be enough if it has all the information needed for initialization.
-At least that is what I understood.
-
-BR,
-Arkadiusz
-
->
->>|         +---+  | |  | |       |             |   |   |   +--------+  |
->>| PHY1.0--|   |  | |  | \---i1--|             |---| M |---| PHY1.1 |--|
->>|         |   |  | |  |         | +-----+     |   | A |   +--------+  |
->>| PHY1.1--| M |  | |  \-----i2--| |DPLL0|     |   | C |---| PHY1.2 |--|
->>|         | U |  | |            | +-----+     |   | 1 |   +--------+  |
->>| PHY1.2--| X |  \-|--------i3--| +-----+     |---|   |---| ...    |--|
->>|         | 1 |    |            | |DPLL1|     |   |   |   +--------+  |
->>| ...   --|   |----+--------i4--| +-----+     |---|   |---| PHY1.7 |--|
->>|         |   |                 +-------------+   +---+   +--------+  |
->>| PHY1.7--|   |                                                       |
->>|         +---+                                                       |
->>+---------------------------------------------------------------------+
+On 11.01.2023 22:52, Dmitry Baryshkov wrote:
+> On 11/01/2023 22:59, Konrad Dybcio wrote:
 >>
+>>
+>> On 11.01.2023 20:19, Dmitry Baryshkov wrote:
+>>> In some cases the driver might need using GPLL0 to drive CPU clocks.
+>>> Bring it in through the sys_apcs_aux clock.
 >>>
->>>>As the pins are shared between multiple DPLLs (both inside 1 integrated
->>>circuit
->>>>and between multiple integrated circuits), all of them shall have
->current
->>>state
->>>>of the source or output.
->>>>Pins still need to be shared same as they would be inside of one
->>>synchronizer
->>>>chip.
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> ---
+>> Oh that's new.. downstream doesn't talk about this..
+> 
+> It does, but under the hood of the init procedure. See:
+> 
+>         /* Select GPLL0 for 300MHz for the perf cluster */
+>         writel_relaxed(0xC, vbases[APC1_BASE] + MUX_OFFSET);
+> 
+Okay I see it now!
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+Konrad
+> 
+>>
+>> Konrad
+>>>   drivers/clk/qcom/clk-cpu-8996.c | 12 ++++++++++++
+>>>   1 file changed, 12 insertions(+)
 >>>
->>>Do I understand correctly that you connect one synchronizer output to
->>>the input of the second synchronizer chip?
->>
->>No, I don't recall such use case. At least nothing that needs to exposed
->>in the DPLL subsystem itself.
->>
->>BR,
->>Arkadiusz
->>
->>>
->>>>
->>>>BR,
->>>>Arkadiusz
+>>> diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+>>> index d51965fda56d..0e0c00d44c6f 100644
+>>> --- a/drivers/clk/qcom/clk-cpu-8996.c
+>>> +++ b/drivers/clk/qcom/clk-cpu-8996.c
+>>> @@ -12,6 +12,8 @@
+>>>    *                              +-------+
+>>>    *               XO             |       |
+>>>    *           +------------------>0      |
+>>> + *               SYS_APCS_AUX   |       |
+>>> + *           +------------------>3      |
+>>>    *                              |       |
+>>>    *                    PLL/2     | SMUX  +----+
+>>>    *                      +------->1      |    |
+>>> @@ -310,20 +312,29 @@ static const struct clk_ops clk_cpu_8996_pmux_ops = {
+>>>       .determine_rate = clk_cpu_8996_pmux_determine_rate,
+>>>   };
+>>>   +static const struct parent_map smux_parent_map[] = {
+>>> +    { .cfg = 0, }, /* xo */
+>>> +    { .cfg = 1, }, /* pll */
+>>> +    { .cfg = 3, }, /* sys_apcs_aux */
+>>> +};
+>>> +
+>>>   static const struct clk_parent_data pwrcl_smux_parents[] = {
+>>>       { .fw_name = "xo" },
+>>>       { .hw = &pwrcl_pll_postdiv.hw },
+>>> +    { .fw_name = "sys_apcs_aux" },
+>>>   };
+>>>     static const struct clk_parent_data perfcl_smux_parents[] = {
+>>>       { .fw_name = "xo" },
+>>>       { .hw = &perfcl_pll_postdiv.hw },
+>>> +    { .fw_name = "sys_apcs_aux" },
+>>>   };
+>>>     static struct clk_regmap_mux pwrcl_smux = {
+>>>       .reg = PWRCL_REG_OFFSET + MUX_OFFSET,
+>>>       .shift = 2,
+>>>       .width = 2,
+>>> +    .parent_map = smux_parent_map,
+>>>       .clkr.hw.init = &(struct clk_init_data) {
+>>>           .name = "pwrcl_smux",
+>>>           .parent_data = pwrcl_smux_parents,
+>>> @@ -337,6 +348,7 @@ static struct clk_regmap_mux perfcl_smux = {
+>>>       .reg = PERFCL_REG_OFFSET + MUX_OFFSET,
+>>>       .shift = 2,
+>>>       .width = 2,
+>>> +    .parent_map = smux_parent_map,
+>>>       .clkr.hw.init = &(struct clk_init_data) {
+>>>           .name = "perfcl_smux",
+>>>           .parent_data = perfcl_smux_parents,
+> 
