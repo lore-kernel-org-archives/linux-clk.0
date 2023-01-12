@@ -2,186 +2,100 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37307C54EBD
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Jan 2023 13:52:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D712C54EBD
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Jan 2023 14:20:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230422AbjALNwj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Jan 2023 08:52:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48702 "EHLO
+        id S231560AbjALOUW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Jan 2023 09:20:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229971AbjALNwh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Jan 2023 08:52:37 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A45E51169;
-        Thu, 12 Jan 2023 05:52:36 -0800 (PST)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30CARCei009736;
-        Thu, 12 Jan 2023 13:52:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=qcppdkim1;
- bh=SYIvEG8pmrpBPywF9py6RlwQ1BL6zQFVc3QP7tQ9KFs=;
- b=gcWD7EhnOYuyJ193CVHYjL/D1r50XImE2FIt8wL2rRro59p+VIcjDAWJp2Zt7fzNGJAp
- alMHdj23+HK2L/zLyRsCBA2BINJKUPyoFI269C19PBaKhV6Y7ZkJvgQmMmqhuys8BWfP
- ygQDtl2m+MuD2dFWMmIOv2B2l6MBietV2JNigV21w+fi7Pm1GC6BS6CqXRcujnshZwEB
- eDbbXciaFhPSvFw3nCxRfTrzkUSBAr5rhdWMjv4ich8rp3/V/nJ/rVyIFW78+8KnkMSc
- jx5rU83035oi6h0+ZXKoKy7v7lvo0aBVXLZpBEQRbw5LDWXgCgTbzIVRjoyP+qJC4AQW pw== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n2d750y9j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Jan 2023 13:52:31 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30CDqUOv031106
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Jan 2023 13:52:30 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Thu, 12 Jan 2023 05:52:29 -0800
-From:   Bjorn Andersson <quic_bjorande@quicinc.com>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        with ESMTP id S235285AbjALOTn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Jan 2023 09:19:43 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ADC45D8B3;
+        Thu, 12 Jan 2023 06:11:33 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2534162030;
+        Thu, 12 Jan 2023 14:11:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15A89C433EF;
+        Thu, 12 Jan 2023 14:11:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1673532692;
+        bh=hFHgEBJNfHtR9W/tpNOIplcWkQkfby8IZDga/jnLI0g=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=JZO5D1Msqoyp27j2FCDpdYogNMJqoEJ8mR7zg/QFi8NEPCenm0kOGuQ64NBxFIE0Z
+         oVLRYDS4wXMPAeaLdFwb3J+iUarMt5/Nq8a9Pcu5Cxde1Lz7K6Ok33Jy1+ErAQrlSV
+         VqG7MPiP62kzKJ4vV7EvLfYKaMY/mAsCpM9JMMfk=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     stable@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        patches@lists.linux.dev, Dinh Nguyen <dinguyen@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Abel Vesa <abel.vesa@linaro.org>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] clk: qcom: gdsc: Disable HW control until supported
-Date:   Thu, 12 Jan 2023 05:52:24 -0800
-Message-ID: <20230112135224.3837820-1-quic_bjorande@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.10 246/783] clk: socfpga: clk-pll: Remove unused variable rc
+Date:   Thu, 12 Jan 2023 14:49:22 +0100
+Message-Id: <20230112135535.803381200@linuxfoundation.org>
+X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230112135524.143670746@linuxfoundation.org>
+References: <20230112135524.143670746@linuxfoundation.org>
+User-Agent: quilt/0.67
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.49.16.6]
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: AQpynj6-zGzN2bRDomeYvYhomB2fsL1j
-X-Proofpoint-GUID: AQpynj6-zGzN2bRDomeYvYhomB2fsL1j
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2023-01-12_08,2023-01-12_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- adultscore=0 malwarescore=0 bulkscore=0 priorityscore=1501
- lowpriorityscore=0 clxscore=1011 mlxlogscore=999 impostorscore=0
- spamscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301120100
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Software normally uses the SW_COLLAPSE bit to collapse a GDSC, but in
-some scenarios it's beneficial to let the hardware perform this without
-software intervention.
+From: Lee Jones <lee.jones@linaro.org>
 
-This is done by configuring the GDSC in "hardware control" state, in
-which case the SW_COLLAPSE bit is ignored and some hardware signal is
-relies upon instead.
+[ Upstream commit 75fddccbca32349570b2d53955982b4117fa5515 ]
 
-The GDSCs are modelled as power-domains in Linux and as such it's
-reasonable to assume that the device drivers intend for the hardware
-block to be accessible when their power domain is active.
+Fixes the following W=1 kernel build warning(s):
 
-But in the current implementation, any GDSC that is marked to support
-hardware control, gets hardware control unconditionally while the
-client driver requests it to be active. It's therefor conceivable that
-the hardware collapses a GDSC while Linux is accessing resources
-depending on it.
+ drivers/clk/socfpga/clk-pll.c: In function ‘__socfpga_pll_init’:
+ drivers/clk/socfpga/clk-pll.c:83:6: warning: variable ‘rc’ set but not used [-Wunused-but-set-variable]
 
-There are ongoing discussions about how to properly expose this control
-to the client drivers, but until conclusion in that discussion is
-reached, the safer option would be to keep the GDSC in software control
-mode.
-
-Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+Cc: Dinh Nguyen <dinguyen@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Link: https://lore.kernel.org/r/20210120093040.1719407-8-lee.jones@linaro.org
+Acked-by: Dinh Nguyen <dinguyen@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Stable-dep-of: 0b8ba891ad4d ("clk: socfpga: Fix memory leak in socfpga_gate_init()")
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/gdsc.c | 48 ++++++-----------------------------------
- 1 file changed, 7 insertions(+), 41 deletions(-)
+ drivers/clk/socfpga/clk-pll.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index 9e4d6ce891aa..6d3b36a52a48 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -291,22 +291,6 @@ static int gdsc_enable(struct generic_pm_domain *domain)
- 	 */
- 	udelay(1);
+diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
+index e5fb786843f3..3cf99df7d005 100644
+--- a/drivers/clk/socfpga/clk-pll.c
++++ b/drivers/clk/socfpga/clk-pll.c
+@@ -80,7 +80,6 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
+ 	const char *parent_name[SOCFPGA_MAX_PARENTS];
+ 	struct clk_init_data init;
+ 	struct device_node *clkmgr_np;
+-	int rc;
  
--	/* Turn on HW trigger mode if supported */
--	if (sc->flags & HW_CTRL) {
--		ret = gdsc_hwctrl(sc, true);
--		if (ret)
--			return ret;
--		/*
--		 * Wait for the GDSC to go through a power down and
--		 * up cycle.  In case a firmware ends up polling status
--		 * bits for the gdsc, it might read an 'on' status before
--		 * the GDSC can finish the power cycle.
--		 * We wait 1us before returning to ensure the firmware
--		 * can't immediately poll the status bits.
--		 */
--		udelay(1);
--	}
--
- 	if (sc->flags & RETAIN_FF_ENABLE)
- 		gdsc_retain_ff_on(sc);
+ 	of_property_read_u32(node, "reg", &reg);
  
-@@ -321,24 +305,6 @@ static int gdsc_disable(struct generic_pm_domain *domain)
- 	if (sc->pwrsts == PWRSTS_ON)
- 		return gdsc_assert_reset(sc);
- 
--	/* Turn off HW trigger mode if supported */
--	if (sc->flags & HW_CTRL) {
--		ret = gdsc_hwctrl(sc, false);
--		if (ret < 0)
--			return ret;
--		/*
--		 * Wait for the GDSC to go through a power down and
--		 * up cycle.  In case we end up polling status
--		 * bits for the gdsc before the power cycle is completed
--		 * it might read an 'on' status wrongly.
--		 */
--		udelay(1);
--
--		ret = gdsc_poll_status(sc, GDSC_ON);
--		if (ret)
--			return ret;
--	}
--
- 	if (sc->pwrsts & PWRSTS_OFF)
- 		gdsc_clear_mem_on(sc);
- 
-@@ -419,13 +385,6 @@ static int gdsc_init(struct gdsc *sc)
- 				goto err_disable_supply;
- 		}
- 
--		/* Turn on HW trigger mode if supported */
--		if (sc->flags & HW_CTRL) {
--			ret = gdsc_hwctrl(sc, true);
--			if (ret < 0)
--				goto err_disable_supply;
--		}
--
- 		/*
- 		 * Make sure the retain bit is set if the GDSC is already on,
- 		 * otherwise we end up turning off the GDSC and destroying all
-@@ -439,6 +398,13 @@ static int gdsc_init(struct gdsc *sc)
- 		on = true;
+@@ -111,7 +110,7 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
+ 		kfree(pll_clk);
+ 		return NULL;
  	}
+-	rc = of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	of_clk_add_provider(node, of_clk_src_simple_get, clk);
+ 	return clk;
+ }
  
-+	/* Disable HW trigger mode until propertly supported */
-+	if (sc->flags & HW_CTRL) {
-+		ret = gdsc_hwctrl(sc, false);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
- 	if (on || (sc->pwrsts & PWRSTS_RET))
- 		gdsc_force_mem_on(sc);
- 	else
 -- 
-2.37.3
+2.35.1
+
+
 
