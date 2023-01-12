@@ -2,131 +2,125 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC20C678D8
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Jan 2023 20:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAF3C63797
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Jan 2023 21:02:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240157AbjALU46 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Jan 2023 15:56:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52952 "EHLO
+        id S233363AbjALVCH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Jan 2023 16:02:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240634AbjALUxn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Jan 2023 15:53:43 -0500
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D058A1EECD;
-        Thu, 12 Jan 2023 12:37:55 -0800 (PST)
-Received: by mail-oi1-f171.google.com with SMTP id p133so926379oig.8;
-        Thu, 12 Jan 2023 12:37:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=te3B7QXiN9a5dOliEetl+fEAA7YyitjOHHWZmEchd3w=;
-        b=glIVCEb5+TcQQaQjOut7R+KGoYBvNI791BluYJ/OYHr0bDF+/Z1heVXQSFhYra6Dvz
-         As7awkhwMXMhQseRZqcNdF48EIgGsjupYNgVzNrG111dAZVCre745GdpHpijuVdA6Ni6
-         f90hyGzBj9GLzw93DTRFOZIemp0c4ifEeJ+qNHfmLQX28nXu1EoRTEcws6ZEhKHGKRne
-         +6kP4eHG6VI+B1l+OXpk3gk2GPbAjjaYAQKhj6TBDqCEWa6KaiuxfAkVQZNJfDSADjJw
-         EiaTABQCKLf7K7LahSFHBVZzBz+eAQY2E75ALYQpVnL2RkpNffXNELjnlJumwON4rSTn
-         ABWw==
-X-Gm-Message-State: AFqh2krx0dvK0W74x5XK58C50EzA0KKTxPyk/UAaXEm9k54CLaXAmPLM
-        VnZ6a+hGhNRgmG4I5XjPgA==
-X-Google-Smtp-Source: AMrXdXtC9JDQSCNr2mBpmyaH+oX/tQisTbLPdzKuWPbRgBBSAol/1Q54L3bzvRFV7wQZ4EvPIFzPhA==
-X-Received: by 2002:a05:6808:f8f:b0:364:9fd7:4fc with SMTP id o15-20020a0568080f8f00b003649fd704fcmr1212036oiw.50.1673555874866;
-        Thu, 12 Jan 2023 12:37:54 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id x8-20020a9d6288000000b00661a3f4113bsm9393754otk.64.2023.01.12.12.37.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jan 2023 12:37:54 -0800 (PST)
-Received: (nullmailer pid 126537 invoked by uid 1000);
-        Thu, 12 Jan 2023 20:37:53 -0000
-Date:   Thu, 12 Jan 2023 14:37:53 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sean Anderson <sean.anderson@seco.com>
-Cc:     Madalin Bucur <madalin.bucur@nxp.com>,
+        with ESMTP id S240087AbjALVAC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Jan 2023 16:00:02 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F332FB91;
+        Thu, 12 Jan 2023 12:45:05 -0800 (PST)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30CKeXXf010657;
+        Thu, 12 Jan 2023 20:45:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=vBXwAb72vX2Wqd9imLAbByiYWkxH8zt/8X98sXB0xUY=;
+ b=UPPFmjGuAvBKhP5RPkt4QdYgnZPYWu+PBa4MQCvHbOsMIvyNUBHq5PE6EzyBqkji0c6b
+ fFW23hElqJLExNJGEnLvWg55vvBCjPAsy/Rvyvp/UMCzYZzmQsPPUbMoUJA0lbCmKrJI
+ hs0Y6oUTNddLN5DIeK3T40FqKsLRbzCnxW2NfBXVMQ/XFcY087gvuvr4x6TWif7zuq8w
+ w5Q456mCZ2FCyc0D+927j9w2NjHexMTf1QDdwfvNJsCQnscfZUs9/8xdVsArB/hBcdS+
+ vC2qGp+gNuqx0Kxy+o1gL5bgJ9qBYYMADwyMi2dRXin1D5SjMM0uV9Bv7vzCpdXpFee+ AQ== 
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n2evhsnw8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Jan 2023 20:45:01 +0000
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30CKj04x031349
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Jan 2023 20:45:00 GMT
+Received: from hu-molvera-sd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Thu, 12 Jan 2023 12:45:00 -0800
+From:   Melody Olvera <quic_molvera@quicinc.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        linux-clk@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-phy@lists.infradead.org,
-        Camelia Alexandra Groza <camelia.groza@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: Re: [PATCH v9 02/10] dt-bindings: phy: Add Lynx 10G phy binding
-Message-ID: <167355587246.126242.1070313368786035671.robh@kernel.org>
-References: <20221230000139.2846763-1-sean.anderson@seco.com>
- <20221230000139.2846763-3-sean.anderson@seco.com>
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+CC:     Taniya Das <quic_tdas@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Melody Olvera <quic_molvera@quicinc.com>
+Subject: [PATCH v6 0/2] clk: qcom: Add clocks for the QDU1000 and QRU1000 SoCs
+Date:   Thu, 12 Jan 2023 12:44:44 -0800
+Message-ID: <20230112204446.30236-1-quic_molvera@quicinc.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221230000139.2846763-3-sean.anderson@seco.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: -wCfVRrsQSm6l3MvxfrZyS4c1EsCvWFg
+X-Proofpoint-ORIG-GUID: -wCfVRrsQSm6l3MvxfrZyS4c1EsCvWFg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2023-01-12_12,2023-01-12_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ clxscore=1011 mlxlogscore=942 mlxscore=0 lowpriorityscore=0 bulkscore=0
+ priorityscore=1501 impostorscore=0 malwarescore=0 spamscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301120148
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+This series adds the GCC, RPMh, and PDC clock support required for the
+QDU1000 and QRU1000 SoCs along with the devicetree bindings for them.
 
-On Thu, 29 Dec 2022 19:01:31 -0500, Sean Anderson wrote:
-> This adds a binding for the SerDes module found on QorIQ processors.
-> Each phy is a subnode of the top-level device, possibly supporting
-> multiple lanes and protocols. This "thick" #phy-cells is used due to
-> allow for better organization of parameters. Note that the particular
-> parameters necessary to select a protocol-controller/lane combination
-> vary across different SoCs, and even within different SerDes on the same
-> SoC.
-> 
-> The driver is designed to be able to completely reconfigure lanes at
-> runtime. Generally, the phy consumer can select the appropriate
-> protocol using set_mode.
-> 
-> There are two PLLs, each of which can be used as the master clock for
-> each lane. Each PLL has its own reference. For the moment they are
-> required, because it simplifies the driver implementation. Absent
-> reference clocks can be modeled by a fixed-clock with a rate of 0.
-> 
-> Signed-off-by: Sean Anderson <sean.anderson@seco.com>
-> ---
-> 
-> Changes in v9:
-> - Add fsl,unused-lanes-reserved to allow for a gradual transition
->   between firmware and Linux control of the SerDes
-> - Change phy-type back to fsl,type, as I was getting the error
->     '#phy-cells' is a dependency of 'phy-type'
-> 
-> Changes in v7:
-> - Use double quotes everywhere in yaml
-> 
-> Changes in v6:
-> - fsl,type -> phy-type
-> 
-> Changes in v4:
-> - Use subnodes to describe lane configuration, instead of describing
->   PCCRs. This is the same style used by phy-cadence-sierra et al.
-> 
-> Changes in v3:
-> - Manually expand yaml references
-> - Add mode configuration to device tree
-> 
-> Changes in v2:
-> - Rename to fsl,lynx-10g.yaml
-> - Refer to the device in the documentation, rather than the binding
-> - Move compatible first
-> - Document phy cells in the description
-> - Allow a value of 1 for phy-cells. This allows for compatibility with
->   the similar (but according to Ioana Ciornei different enough) lynx-28g
->   binding.
-> - Remove minItems
-> - Use list for clock-names
-> - Fix example binding having too many cells in regs
-> - Add #clock-cells. This will allow using assigned-clocks* to configure
->   the PLLs.
-> - Document the structure of the compatible strings
-> 
->  .../devicetree/bindings/phy/fsl,lynx-10g.yaml | 248 ++++++++++++++++++
->  1 file changed, 248 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/fsl,lynx-10g.yaml
-> 
+The Qualcomm Technologies, Inc. Distributed Unit 1000 and Radio Unit
+1000 are new SoCs meant for enabling Open RAN solutions. See more at
+https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/documents/qualcomm_5g_ran_platforms_product_brief.pdf
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Changes from v5:
+- Fixed properties in bindings
+- Updated dt index macros
+
+Changes from v4:
+- removed syscon from bindings and update style
+- removed optional clocks and redundant properties
+- updated compatible to new standard
+
+Changes from v3:
+- added example sources for PCIE and USB clocks
+- added index enum in GCC clock driver
+- fixed some style issues
+- removed pdc patches from set
+
+Changes from v2:
+- Revised dt-bindings
+- Removed qru compat strings
+- Updated some clocks to use clk_branch ops instead of clk_branch2 and HALT_ENABLE
+
+Melody Olvera (1):
+  dt-bindings: clock: Add QDU1000 and QRU1000 GCC clocks
+
+Taniya Das (1):
+  clk: qcom: Add QDU1000 and QRU1000 GCC support
+
+ .../bindings/clock/qcom,qdu1000-gcc.yaml      |   51 +
+ drivers/clk/qcom/Kconfig                      |    8 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/gcc-qdu1000.c                | 2653 +++++++++++++++++
+ include/dt-bindings/clock/qcom,qdu1000-gcc.h  |  175 ++
+ 5 files changed, 2888 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,qdu1000-gcc.yaml
+ create mode 100644 drivers/clk/qcom/gcc-qdu1000.c
+ create mode 100644 include/dt-bindings/clock/qcom,qdu1000-gcc.h
+
+
+base-commit: 0a093b2893c711d82622a9ab27da4f1172821336
+-- 
+2.38.1
+
