@@ -2,120 +2,75 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 455E7C678D4
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Jan 2023 19:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52ED6C63797
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Jan 2023 19:26:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240248AbjALTW6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Jan 2023 14:22:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45702 "EHLO
+        id S240163AbjALT00 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Jan 2023 14:26:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239964AbjALTWa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Jan 2023 14:22:30 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0058178AB;
-        Thu, 12 Jan 2023 11:10:45 -0800 (PST)
+        with ESMTP id S240439AbjALTZv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Jan 2023 14:25:51 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 547261087;
+        Thu, 12 Jan 2023 11:18:14 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5F132B82018;
-        Thu, 12 Jan 2023 19:10:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB2D7C433D2;
-        Thu, 12 Jan 2023 19:10:42 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ECEDB62168;
+        Thu, 12 Jan 2023 19:18:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53E3FC433D2;
+        Thu, 12 Jan 2023 19:18:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673550643;
-        bh=wsRZ5b8Hncv/sjW+FA6nhhHPjnkIIFUD6E+cajEKTX0=;
+        s=k20201202; t=1673551093;
+        bh=exAI5jxTDcYsnJh04WDwQlQnjnxZ4VDRUEZsnjm/Mbg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Zdy/g2iPZ67TF1wrBtvg8m0PwRcMDlpHljIO+QYfNPhcVZkgzwaLty2cIJU3b+/M5
-         rtYnLBOXWX9YvxA8Ko0v9YAaAe4+mWI9qqBDuMWn/m4OMwhwE+LDjSYl6HlQqjJbas
-         CXdSDH7GfGqlTK2CZjyIjx1mAqi4J9X0+Q432YsBW2DYkA4FesONL7VwilbdiEt2iX
-         OjxpN3jx3kBbd5sR2ufFYlTfiW5FsI3WBsoPxoivAfFRrfAVH4UZkRUMfSsXN+PNrl
-         VLgPZM0R9YD7khxT8xEXO8iQ66u+yAHG9MBHxI+BbxlvlTowFdfjxJgdsBZPunL5kJ
-         jN01SrHNAkxFg==
-Message-ID: <40b90d7309246484afa09b2d2b2e23e7.sboyd@kernel.org>
+        b=kPMFfhEzMtpBSOXKw4uhoYyWiX4FPW41nPcAnhIqSz9ADflBEozCbjQwaX55wJRLU
+         tyuzDx32GEIhF/vW6wWlBAixKiempGw8azg5JeDZqGTJLQWqxGWezawXLGDVQjsI0V
+         DMrOFzMix+JE/j2vn/g0nQU/RH3Cu7HzekXub5Kij5r/JiBtXaWy6gQHplibvCX/TP
+         OlxFfiGwXd85pkwcQ1WpTGrtq1tE01EhlMMK/JuZNav3OC9jzpXNPyVXqp8mvDOMqu
+         zsrrdGk2Z9zp2D79hWD9bNvtcb+D8hy5WyDPP29yGorCOZ+lH67d+GZ1jOgCz3bH4r
+         Ml080Aqw2PpNQ==
+Message-ID: <0c19d8dedda3e308c75a6c97358d2af3.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230112135224.3837820-1-quic_bjorande@quicinc.com>
-References: <20230112135224.3837820-1-quic_bjorande@quicinc.com>
-Subject: Re: [PATCH] clk: qcom: gdsc: Disable HW control until supported
+In-Reply-To: <185a3f0a326.b623e6bd1243489.6765528573167668508@linux.beauty>
+References: <20230110114540.2975540-1-me@linux.beauty> <57d1f58c4c6cca793d629d5776b477d0.sboyd@kernel.org> <185a3f0a326.b623e6bd1243489.6765528573167668508@linux.beauty>
+Subject: Re: [PATCH] clk: create write_enable file to control clk rate write and other dangerous ops permission
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Abel Vesa <abel.vesa@linaro.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Bjorn Andersson <quic_bjorande@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>
-Date:   Thu, 12 Jan 2023 11:10:40 -0800
+Cc:     michael turquette <mturquette@baylibre.com>,
+        li chen <lchen@ambarella.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+To:     Li Chen <me@linux.beauty>
+Date:   Thu, 12 Jan 2023 11:18:11 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bjorn Andersson (2023-01-12 05:52:24)
-> Software normally uses the SW_COLLAPSE bit to collapse a GDSC, but in
-> some scenarios it's beneficial to let the hardware perform this without
-> software intervention.
->=20
-> This is done by configuring the GDSC in "hardware control" state, in
-> which case the SW_COLLAPSE bit is ignored and some hardware signal is
-> relies upon instead.
->=20
-> The GDSCs are modelled as power-domains in Linux and as such it's
-> reasonable to assume that the device drivers intend for the hardware
-> block to be accessible when their power domain is active.
->=20
-> But in the current implementation, any GDSC that is marked to support
-> hardware control, gets hardware control unconditionally while the
-> client driver requests it to be active. It's therefor conceivable that
-> the hardware collapses a GDSC while Linux is accessing resources
-> depending on it.
-
-Why would software want the GDSC to be enabled and accessing resources
-while the hardware signals that it isn't required? It sounds like
-hardware control isn't complete?
-
->=20
-> There are ongoing discussions about how to properly expose this control
-
-Any link? When we implemented hardware clk gating years ago the design
-was to have software override hardware control when the clk was enabled
-in software and let the hardware control go into effect when the clk was
-disabled in software. Hopefully with power domains this could be
-implemented in a better way by connecting hardware mode to some
-performance state so that enabling the power domain goes to software
-mode and then transitioning to a performance state switches to hardware
-control mode.
-
-> to the client drivers, but until conclusion in that discussion is
-> reached, the safer option would be to keep the GDSC in software control
-> mode.
->=20
-> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-> ---
->  drivers/clk/qcom/gdsc.c | 48 ++++++-----------------------------------
->  1 file changed, 7 insertions(+), 41 deletions(-)
->=20
-> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index 9e4d6ce891aa..6d3b36a52a48 100644
-> --- a/drivers/clk/qcom/gdsc.c
-> +++ b/drivers/clk/qcom/gdsc.c
-> @@ -439,6 +398,13 @@ static int gdsc_init(struct gdsc *sc)
->                 on =3D true;
->         }
+Quoting Li Chen (2023-01-11 19:05:34)
+> Hi Stephen,
+>  ---- On Thu, 12 Jan 2023 02:37:29 +0800  Stephen Boyd  wrote ---=20
+>  > Quoting Li Chen (2023-01-10 03:45:39)
+>  > > From: Li Chen lchen@ambarella.com>
+>  > >=20
+>  > > It's common requirement for bsp debug/test to change clk rate from u=
+serspace.
+>  > >=20
+>  > > Currently, we must define CLKOCK_ALLOW_WRITE_DEBUGFS then re-compile=
+ kernel
+>  > > to allow this feature. Let's replace it with a "write_enable" file to
+>  > > allow enable it at runtime.
+>  >=20
+>  > Nak. This design is intentional.
 > =20
-> +       /* Disable HW trigger mode until propertly supported */
-> +       if (sc->flags & HW_CTRL) {
-> +               ret =3D gdsc_hwctrl(sc, false);
-> +               if (ret < 0)
-> +                       return ret;
-> +       }
-> +
+> Thanks for your reply. Got it. But sometimes re-compile is somewhat low e=
+fficient. Is it acceptable to provide=20
+> a write_enable to clk_core(not enable by default), and allow clk driver t=
+o enable it inside clk_ops->init
+> via clk_hw->core->write_enable =3D 1?
+>=20
 
-Is it a problem for all hardware controlled gdscs? Or just some of them?
-Should we backport this to stable kernels? I seem to recall that
-hardware mode was required for some drivers like camera and video? Are
-they going to keep working if we simply knock out the hardware control
-mode here?
+No
