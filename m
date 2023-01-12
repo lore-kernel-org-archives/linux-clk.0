@@ -2,109 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADAE8C54EBE
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Jan 2023 19:22:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 455E7C678D4
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Jan 2023 19:22:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240422AbjALTWS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Jan 2023 14:22:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44830 "EHLO
+        id S240248AbjALTW6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Jan 2023 14:22:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240378AbjALTVs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Jan 2023 14:21:48 -0500
+        with ESMTP id S239964AbjALTWa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Jan 2023 14:22:30 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51E14676D4;
-        Thu, 12 Jan 2023 11:09:49 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0058178AB;
+        Thu, 12 Jan 2023 11:10:45 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DE766B82016;
-        Thu, 12 Jan 2023 19:09:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EE6BC433D2;
-        Thu, 12 Jan 2023 19:09:46 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 5F132B82018;
+        Thu, 12 Jan 2023 19:10:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB2D7C433D2;
+        Thu, 12 Jan 2023 19:10:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673550586;
-        bh=LfVocOPeuXU9PT7e7b20/1KuExU0UCPaV8icE6vvT7E=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=tD3acM42NClnAlycdRwkO7q9r46gNcdJFDIYdMPkYmnnUqI3U+ftoqv8VLWoTUFMA
-         VCOK8H1uJWoeYJIvUSMS+Ks20CTQDiERDYDrPGQ9IzLqJGvSsYro79DI6VzutKvKye
-         hdSRNCMao/RrkYacvCTYmTq5UmYV8XTZaN8HCnbZbvC08lhy3pPQoAvZMT1zLOz4Bs
-         cjaxqjnZAhr4/H+d7sQ9WpXd3cvIgE0PHVmsN1yW82a3qLKPnPcReHWq0NPb+75Uwz
-         bf7E6a7WTx4Yc+zQDVRNuFyCavpSPsjsDEumoH5G3A01NkyMLjku5GGBNIIISO0uDp
-         s5zRzOUYXpPhg==
-Date:   Thu, 12 Jan 2023 11:09:45 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Vadim Fedorenko <vfedorenko@novek.ru>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
-Message-ID: <20230112110945.6f168a3e@kernel.org>
-In-Reply-To: <DM6PR11MB4657BF81BEBC10E6EC5044149BFD9@DM6PR11MB4657.namprd11.prod.outlook.com>
-References: <20221129213724.10119-1-vfedorenko@novek.ru>
-        <DM6PR11MB4657BF81BEBC10E6EC5044149BFD9@DM6PR11MB4657.namprd11.prod.outlook.com>
+        s=k20201202; t=1673550643;
+        bh=wsRZ5b8Hncv/sjW+FA6nhhHPjnkIIFUD6E+cajEKTX0=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=Zdy/g2iPZ67TF1wrBtvg8m0PwRcMDlpHljIO+QYfNPhcVZkgzwaLty2cIJU3b+/M5
+         rtYnLBOXWX9YvxA8Ko0v9YAaAe4+mWI9qqBDuMWn/m4OMwhwE+LDjSYl6HlQqjJbas
+         CXdSDH7GfGqlTK2CZjyIjx1mAqi4J9X0+Q432YsBW2DYkA4FesONL7VwilbdiEt2iX
+         OjxpN3jx3kBbd5sR2ufFYlTfiW5FsI3WBsoPxoivAfFRrfAVH4UZkRUMfSsXN+PNrl
+         VLgPZM0R9YD7khxT8xEXO8iQ66u+yAHG9MBHxI+BbxlvlTowFdfjxJgdsBZPunL5kJ
+         jN01SrHNAkxFg==
+Message-ID: <40b90d7309246484afa09b2d2b2e23e7.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230112135224.3837820-1-quic_bjorande@quicinc.com>
+References: <20230112135224.3837820-1-quic_bjorande@quicinc.com>
+Subject: Re: [PATCH] clk: qcom: gdsc: Disable HW control until supported
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Abel Vesa <abel.vesa@linaro.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>
+Date:   Thu, 12 Jan 2023 11:10:40 -0800
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 12 Jan 2023 12:23:29 +0000 Kubalewski, Arkadiusz wrote:
-> Then we would create and register muxed pins with existing dpll pins.
-> Each muxed pin is allocated and registered with each parent it can provide
-> signal with, like below (number in bracket is parent idx):
->                            +---+   
->                         0--|   |   
->                 +---+      |   |   
->  8(2) /  9(3)---|   |   1--| D |--5
->                 |   |      | P |   
-> 10(2) / 11(3)---| M |---2--| L |--6
->                 | U |      | L |   
-> 12(2) / 13(3)---| X |---3--|   |--7
->                 |   |      |   |   
-> 14(2) / 15(3)---|   |   4--|   |   
->                 +---+      +---+
-> 
-> Controlling the mux input/output:
-> In this case selecting pin #8 would provide its signal into DPLLs input#2 and
-> selecting #9 would provide its signal into DPLLs input#3.
+Quoting Bjorn Andersson (2023-01-12 05:52:24)
+> Software normally uses the SW_COLLAPSE bit to collapse a GDSC, but in
+> some scenarios it's beneficial to let the hardware perform this without
+> software intervention.
+>=20
+> This is done by configuring the GDSC in "hardware control" state, in
+> which case the SW_COLLAPSE bit is ignored and some hardware signal is
+> relies upon instead.
+>=20
+> The GDSCs are modelled as power-domains in Linux and as such it's
+> reasonable to assume that the device drivers intend for the hardware
+> block to be accessible when their power domain is active.
+>=20
+> But in the current implementation, any GDSC that is marked to support
+> hardware control, gets hardware control unconditionally while the
+> client driver requests it to be active. It's therefor conceivable that
+> the hardware collapses a GDSC while Linux is accessing resources
+> depending on it.
 
-I agree with Jiri, the duplication seems unnecessary. My thinking would
-be to handle this as follows:
+Why would software want the GDSC to be enabled and accessing resources
+while the hardware signals that it isn't required? It sounds like
+hardware control isn't complete?
 
-                             +---+   
-                          0--|   |   
-                +---+        |   |   
-           10---|   |     1--| D |--5
-                |   |        | P |   
-           11---| M |-8---2--| L |--6
-                | U |        | L |   
-           12---| X |-9---3--|   |--7
-                |   |        |   |   
-           13---|   |     4--|   |   
-                +---+        +---+
+>=20
+> There are ongoing discussions about how to properly expose this control
 
-Give the user the ability to both select the inputs to DPLL from 
-0-4 and from 10-13. If 10-13 are selected the core should give mapping
-things automatically a try (but we don't need to support auto-mapping 
-for muxes with more than one output from the start).
-There should also be an API for manually configuring muxes. 
+Any link? When we implemented hardware clk gating years ago the design
+was to have software override hardware control when the clk was enabled
+in software and let the hardware control go into effect when the clk was
+disabled in software. Hopefully with power domains this could be
+implemented in a better way by connecting hardware mode to some
+performance state so that enabling the power domain goes to software
+mode and then transitioning to a performance state switches to hardware
+control mode.
 
-Eg.
+> to the client drivers, but until conclusion in that discussion is
+> reached, the safer option would be to keep the GDSC in software control
+> mode.
+>=20
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> ---
+>  drivers/clk/qcom/gdsc.c | 48 ++++++-----------------------------------
+>  1 file changed, 7 insertions(+), 41 deletions(-)
+>=20
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index 9e4d6ce891aa..6d3b36a52a48 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -439,6 +398,13 @@ static int gdsc_init(struct gdsc *sc)
+>                 on =3D true;
+>         }
+> =20
+> +       /* Disable HW trigger mode until propertly supported */
+> +       if (sc->flags & HW_CTRL) {
+> +               ret =3D gdsc_hwctrl(sc, false);
+> +               if (ret < 0)
+> +                       return ret;
+> +       }
+> +
 
-User requests DPLL inputs: 0, 1, 10, 11
-  Core automatically maps 10 -> 8, 11 -> 9
-
-User requests DPLL inputs: 0, 1, 10, 11, 12
-  Core responds with an error
-
-User requests DPLL inputs: 0, 1, 2, 3
-  Core doesn't touch the mux
-User requests mux to direct 10 -> 8
-User requests mux to direct 11 -> 9
-  Now the config is equivalent to case #1
+Is it a problem for all hardware controlled gdscs? Or just some of them?
+Should we backport this to stable kernels? I seem to recall that
+hardware mode was required for some drivers like camera and video? Are
+they going to keep working if we simply knock out the hardware control
+mode here?
