@@ -2,197 +2,456 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5639DC54EBD
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Jan 2023 15:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 886D7C54EBD
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Jan 2023 15:11:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240521AbjALPEF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Jan 2023 10:04:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51124 "EHLO
+        id S233589AbjALPLK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Jan 2023 10:11:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240308AbjALPDK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Jan 2023 10:03:10 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 810539598
-        for <linux-clk@vger.kernel.org>; Thu, 12 Jan 2023 06:50:50 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id u19so45289079ejm.8
-        for <linux-clk@vger.kernel.org>; Thu, 12 Jan 2023 06:50:50 -0800 (PST)
+        with ESMTP id S240202AbjALPKg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Jan 2023 10:10:36 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA56D631BD
+        for <linux-clk@vger.kernel.org>; Thu, 12 Jan 2023 06:58:38 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id bp15so28788485lfb.13
+        for <linux-clk@vger.kernel.org>; Thu, 12 Jan 2023 06:58:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yqigpjqdOBD3H+YX96cx5iW5aN2Sy82sRN53SWaFfpQ=;
-        b=vpC5aT5Xc4CbMULU8ErpEZg0n98iSLv/1LTtMB3pdQ3ii1wwZDxi1BN71r+WBR3gwz
-         XCLj2UNel51FvlKV/wLr4Z2FSOlOXB7fS1IZNuVX7tTEA5Y7aFHJGAAByxDWyJ5oI5bi
-         3A7NhwRWaG7QDzTZzsLin2ve0Edb9el4s7qDof1lI/R6roNS9G6w2nT+hQwgVh8g16KB
-         aAxr3ju7BLdctjj1QRukOAYRTJzT3qTIqDvHXeHkMgHU4klxGVSY1mP6KV1cG4BpaFn8
-         jQbVGPdq+N2FWs9GB2eWki7/NFpI1Mv2thFtTo5gIpA85weZicpQiM6AcYHSCjdBt/f0
-         U+sw==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Bfdgx236BNZbCuAzoF8/LAeIwZ6heoAIFH1lmaLnqB8=;
+        b=idOuRie0FTUbfld6vL2Rn3IcYoweLofh/RPDdL+VH04vmN2VIzuC/6bVmt3plOxi2o
+         9cgRkUC/UUZJ5XpcCfSsIhdcE6bS4ltn0X83IpMEZXCvt4R2GhqFLBiD008CQZaQPJsI
+         8i9Zv7pSgUAVeZmPrSvH12PITEnaNlapjLrgrD8iRpGeUo66C+BT9PPGi3TBWO4dA2m8
+         yTRebn3PuDNMtfXFzUZfBqHZay6RJLuPbxw7e+wIJbVJUlBbC5eo2ULSPCoaiXZiaSWe
+         AMPzT9ofOStYes5MxD782gKOmo9f94vyIXaxjiRQf4cqwasuEgMMzGH4gPS+4gScie+/
+         4rIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yqigpjqdOBD3H+YX96cx5iW5aN2Sy82sRN53SWaFfpQ=;
-        b=KlIRurV2xMrV0sQal9p/T9fRCc3Ma21LGkmVKZKo2O6PyWNjiDavR+7xO2AwGc0gNi
-         bPgxLaerUhf3Rrfxx9MalN3sSDPb3S7V0AB381fBUdJA/20KEhem3OOn51otywHy4NeI
-         SxwSqNUXtDjJaSJAKgePyqhSoNzjiE84V8iUBrY8Xkv8wd8dfOfF8WugUZNz19dfCMXM
-         0G6/sX0UJXhn7xbyG4Uqpz9tBbiW7fkDIXNvcMJlaB3L3oE9Efs5CELQ7PdVVYCVCLos
-         qefR9KwOmMqYC3UdkXUxw4v7B6wnV9aAJ7GP7PFZ036PO/KK5KD3oC7/tVnQ7006RNM0
-         J9xw==
-X-Gm-Message-State: AFqh2kopwFVexPjZKxWzfosnTifT8DQo1aYyZOF+7aqCHvopVBF5hUk2
-        zJUGZKDBc6qVmud1NjdamtHG8g==
-X-Google-Smtp-Source: AMrXdXtM20wyj7W7OhWhZQjQKkRV/NmMM6eTbMMW8FWWqTz5PHlKW944BEdC5/4v99CWCk+aDig/Ow==
-X-Received: by 2002:a17:906:5f98:b0:84d:1b67:cecb with SMTP id a24-20020a1709065f9800b0084d1b67cecbmr19846042eju.43.1673535048887;
-        Thu, 12 Jan 2023 06:50:48 -0800 (PST)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id eg49-20020a05640228b100b00488117821ffsm7313998edb.31.2023.01.12.06.50.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jan 2023 06:50:48 -0800 (PST)
-Date:   Thu, 12 Jan 2023 15:50:46 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Vadim Fedorenko <vfedorenko@novek.ru>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [RFC PATCH v4 0/4] Create common DPLL/clock configuration API
-Message-ID: <Y8AeRnhwqT7Wo8OT@nanopsycho>
-References: <20221129213724.10119-1-vfedorenko@novek.ru>
- <DM6PR11MB4657BF81BEBC10E6EC5044149BFD9@DM6PR11MB4657.namprd11.prod.outlook.com>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bfdgx236BNZbCuAzoF8/LAeIwZ6heoAIFH1lmaLnqB8=;
+        b=d8srq/FENQyMVujZ07bCJ47QgjiUIsKUnHfNDix34j//6f/cc4nO7cOZf1RHpImYux
+         8ia8mF7hcTViORBdIb5s4d8Sk8rU1qRyvxv43HRWZE7VSsM3jVLD6v7lP+CQ9b9R+8o8
+         fRHtliNCF6R7Qzzhpqxg0QLOeQslvcNUNyJylw6vpDC29oQLBhT7I7Cszhl/rokXea0H
+         T3XJKefMDKgspZeQveqhvZQ5oIcaND5Da5zZvuF1Zm2n7tIsMfHmFudW4j+kfUE1uE4U
+         R1P0p8vlU7H7KbafcjDQSbI3xVWQj/qUDo6sCqSnJIcsv9ot253vqpb6FbB/f3U71lWB
+         9AHQ==
+X-Gm-Message-State: AFqh2kpMwbedoR5UK+zAIkjOlDcK2kXL8RS6CwSO+7ssN8KuvnQYt7hT
+        HYrpX2rRExVNYZh2ezW++w7q3g==
+X-Google-Smtp-Source: AMrXdXvQavjHfUgGPYH2voVUKXE0MQhyBK8ZzDExetiLUpIbut/fE16PBISPBLhwqolLztGD6nsYMg==
+X-Received: by 2002:a05:6512:3194:b0:4b0:2a2f:ea6d with SMTP id i20-20020a056512319400b004b02a2fea6dmr26537815lfe.35.1673535517095;
+        Thu, 12 Jan 2023 06:58:37 -0800 (PST)
+Received: from [192.168.1.101] (abym53.neoplus.adsl.tpnet.pl. [83.9.32.53])
+        by smtp.gmail.com with ESMTPSA id t28-20020ac2549c000000b004cc9fa6aba5sm448578lfk.237.2023.01.12.06.58.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Jan 2023 06:58:34 -0800 (PST)
+Message-ID: <1b25e736-1894-5144-2c15-f45fc70d8c74@linaro.org>
+Date:   Thu, 12 Jan 2023 15:58:33 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM6PR11MB4657BF81BEBC10E6EC5044149BFD9@DM6PR11MB4657.namprd11.prod.outlook.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH 2/5] clk: qcom: add msm8996 Core Bus Framework (CBF)
+ support
+Content-Language: en-US
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@somainline.org>
+References: <20230111195754.2593134-1-dmitry.baryshkov@linaro.org>
+ <20230111195754.2593134-3-dmitry.baryshkov@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230111195754.2593134-3-dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thu, Jan 12, 2023 at 01:23:29PM CET, arkadiusz.kubalewski@intel.com wrote:
->>From: Vadim Fedorenko <vfedorenko@novek.ru>
->>Sent: Tuesday, November 29, 2022 10:37 PM
->>
->>Implement common API for clock/DPLL configuration and status reporting.
->>The API utilises netlink interface as transport for commands and event
->>notifications. This API aim to extend current pin configuration and make it
->>flexible and easy to cover special configurations.
->>
->>v3 -> v4:
->> * redesign framework to make pins dynamically allocated (Arkadiusz)
->> * implement shared pins (Arkadiusz)
->>v2 -> v3:
->> * implement source select mode (Arkadiusz)
->> * add documentation
->> * implementation improvements (Jakub)
->>v1 -> v2:
->> * implement returning supported input/output types
->> * ptp_ocp: follow suggestions from Jonathan
->> * add linux-clk mailing list
->>v0 -> v1:
->> * fix code style and errors
->> * add linux-arm mailing list
->>
->>
->>Arkadiusz Kubalewski (1):
->>  dpll: add dpll_attr/dpll_pin_attr helper classes
->>
->>Vadim Fedorenko (3):
->>  dpll: Add DPLL framework base functions
->>  dpll: documentation on DPLL subsystem interface
->>  ptp_ocp: implement DPLL ops
->>
->> Documentation/networking/dpll.rst  | 271 ++++++++
->> Documentation/networking/index.rst |   1 +
->> MAINTAINERS                        |   8 +
->> drivers/Kconfig                    |   2 +
->> drivers/Makefile                   |   1 +
->> drivers/dpll/Kconfig               |   7 +
->> drivers/dpll/Makefile              |  11 +
->> drivers/dpll/dpll_attr.c           | 278 +++++++++
->> drivers/dpll/dpll_core.c           | 760 +++++++++++++++++++++++
->> drivers/dpll/dpll_core.h           | 176 ++++++
->> drivers/dpll/dpll_netlink.c        | 963 +++++++++++++++++++++++++++++
->> drivers/dpll/dpll_netlink.h        |  24 +
->> drivers/dpll/dpll_pin_attr.c       | 456 ++++++++++++++
->> drivers/ptp/Kconfig                |   1 +
->> drivers/ptp/ptp_ocp.c              | 123 ++--
->> include/linux/dpll.h               | 261 ++++++++
->> include/linux/dpll_attr.h          | 433 +++++++++++++
->> include/uapi/linux/dpll.h          | 263 ++++++++
->> 18 files changed, 4002 insertions(+), 37 deletions(-)  create mode 100644
->>Documentation/networking/dpll.rst  create mode 100644 drivers/dpll/Kconfig
->>create mode 100644 drivers/dpll/Makefile  create mode 100644
->>drivers/dpll/dpll_attr.c  create mode 100644 drivers/dpll/dpll_core.c
->>create mode 100644 drivers/dpll/dpll_core.h  create mode 100644
->>drivers/dpll/dpll_netlink.c  create mode 100644 drivers/dpll/dpll_netlink.h
->>create mode 100644 drivers/dpll/dpll_pin_attr.c  create mode 100644
->>include/linux/dpll.h  create mode 100644 include/linux/dpll_attr.h  create
->>mode 100644 include/uapi/linux/dpll.h
->>
->>--
->>2.27.0
->
->New thread with regard of our yesterday's call.
->
->Is it possible to initialize a multiple output MUX?
->Yes it is. Let's consider 4 input/2 output MUX and DPLL it connects with:
->            +---+   
->          --|   |   
->  +---+     |   |   
->--|   |   --| D |--
->  |   |     | P |   
->--| M |-----| L |--
->  | U |     | L |   
->--| X |-----|   |--
->  |   |     |   |   
->--|   |   --|   |   
->  +---+     +---+  
+
+
+On 11.01.2023 20:57, Dmitry Baryshkov wrote:
+> Add CBF clock driver as a part of MSM8996 CPU clocks. Significantly
+> based on AngeloGioacchino del Regno's work at [1].
 > 
->Basically dpll pins are initialized and assigned ids, like:
->5 inputs (0-4), 3 outputs (5-7).
->   +---+   
->0--|   |   
->   |   |   
->1--| D |--5
->   | P |   
->2--| L |--6
->   | L |   
->3--|   |--7
->   |   |   
->4--|   |   
->   +---+
->
->Then we would create and register muxed pins with existing dpll pins.
->Each muxed pin is allocated and registered with each parent it can provide
->signal with, like below (number in bracket is parent idx):
->                           +---+   
->                        0--|   |   
->                +---+      |   |   
-> 8(2) /  9(3)---|   |   1--| D |--5
->                |   |      | P |   
->10(2) / 11(3)---| M |---2--| L |--6
->                | U |      | L |   
->12(2) / 13(3)---| X |---3--|   |--7
->                |   |      |   |   
->14(2) / 15(3)---|   |   4--|   |   
->                +---+      +---+
->
->Controlling the mux input/output:
->In this case selecting pin #8 would provide its signal into DPLLs input#2 and
->selecting #9 would provide its signal into DPLLs input#3.
+> The CBF is an interconnect between two CPU clusters, setting it up
+> properly is required for booting the MSM8996 with all four cores
+> enabled.
+> 
+> [1] https://github.com/sonyxperiadev/kernel/blob/aosp/LE.UM.2.3.2.r1.4/drivers/clk/qcom/clk-cpu-8996.c
+> 
+> Co-developed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/clk/qcom/Makefile       |   2 +-
+>  drivers/clk/qcom/clk-cbf-8996.c | 318 ++++++++++++++++++++++++++++++++
+>  2 files changed, 319 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/qcom/clk-cbf-8996.c
+> 
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index ca2f586edb3e..d6ecd2bf7040 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -52,7 +52,7 @@ obj-$(CONFIG_MSM_MMCC_8998) += mmcc-msm8998.o
+>  obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
+>  obj-$(CONFIG_QCOM_A7PLL) += a7-pll.o
+>  obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
+> -obj-$(CONFIG_QCOM_CLK_APCC_MSM8996) += apcs-msm8996.o clk-cpu-8996.o
+> +obj-$(CONFIG_QCOM_CLK_APCC_MSM8996) += apcs-msm8996.o clk-cpu-8996.o clk-cbf-8996.o
+>  obj-$(CONFIG_QCOM_CLK_APCS_SDX55) += apcs-sdx55.o
+>  obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
+>  obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
+> diff --git a/drivers/clk/qcom/clk-cbf-8996.c b/drivers/clk/qcom/clk-cbf-8996.c
+> new file mode 100644
+> index 000000000000..bdd4f8b48a7e
+> --- /dev/null
+> +++ b/drivers/clk/qcom/clk-cbf-8996.c
+> @@ -0,0 +1,318 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2022, Linaro Ltd.
+Happy new year!
 
-Duplication of the mux pin (for example 8,9) seems a bit silly. What if
-the mux has 8 outputs? You would have to have 8 pin indexes for each mux
-input.
+> + */
+> +#include <linux/bitfield.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +#include "clk-alpha-pll.h"
+> +#include "clk-regmap.h"
+> +
+> +/* Need to match the order of clocks in DT binding */
+> +enum {
+> +	DT_XO,
+No, it should be XO_A, otherwise the platform will never sleep.
 
-One thing is not clear to me. The mux outputs are fixed or selectable?
-I mean, can the outputs be enabled/disabled wired to a specific mux
-input?
++	DT_APCS_AUX,
+> +};
+> +
+> +enum {
+> +	CBF_XO_INDEX,
+> +	CBF_PLL_INDEX,
+> +	CBF_DIV_INDEX,
+> +	CBF_APCS_AUX_INDEX,
+> +};
+> +
+> +#define DIV_THRESHOLD		600000000
+> +
+> +#define CBF_MUX_OFFSET		0x18
+> +#define CBF_MUX_PARENT_MASK		GENMASK(1, 0)
+> +#define CBF_MUX_AUTO_CLK_SEL_ALWAYS_ON_MASK GENMASK(5, 4)
+> +#define CBF_MUX_AUTO_CLK_SEL_ALWAYS_ON_GPLL0_SEL \
+> +	FIELD_PREP(CBF_MUX_AUTO_CLK_SEL_ALWAYS_ON_MASK, 0x03)
+> +#define CBF_MUX_AUTO_CLK_SEL_BIT	BIT(6)
+> +
+> +#define CBF_PLL_OFFSET 0xf000
+> +
+> +static const u8 cbf_pll_regs[PLL_OFF_MAX_REGS] = {
+> +	[PLL_OFF_L_VAL] = 0x08,
+> +	[PLL_OFF_ALPHA_VAL] = 0x10,
+> +	[PLL_OFF_USER_CTL] = 0x18,
+> +	[PLL_OFF_CONFIG_CTL] = 0x20,
+> +	[PLL_OFF_CONFIG_CTL_U] = 0x24,
+> +	[PLL_OFF_TEST_CTL] = 0x30,
+> +	[PLL_OFF_TEST_CTL_U] = 0x34,
+> +	[PLL_OFF_STATUS] = 0x28,
+> +};
+> +
+> +static const struct alpha_pll_config cbfpll_config = {
+> +	.l = 72,
+> +	.config_ctl_val = 0x200d4828,
+> +	.config_ctl_hi_val = 0x006,
+> +	.test_ctl_val = 0x1c000000,
+> +	.test_ctl_hi_val = 0x00004000,
+> +	.pre_div_mask = BIT(12),
+> +	.post_div_mask = 0x3 << 8,
+> +	.post_div_val = 0x1 << 8,
+> +	.main_output_mask = BIT(0),
+> +	.early_output_mask = BIT(3),
+> +};
+> +
+> +static struct clk_alpha_pll cbf_pll = {
+> +	.offset = CBF_PLL_OFFSET,
+> +	.regs = cbf_pll_regs,
+> +	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "cbf_pll",
+> +		.parent_data = (const struct clk_parent_data[]) {
+> +			{ .index = DT_XO, },
+> +		},
+> +		.num_parents = 1,
+> +		.ops = &clk_alpha_pll_hwfsm_ops,
+> +	},
+> +};
+> +
+> +static struct clk_fixed_factor cbf_pll_postdiv = {
+> +	.mult = 1,
+> +	.div = 2,
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "cbf_pll_postdiv",
+> +		.parent_data = &(const struct clk_parent_data){
+parent_hws?
 
+> +			.hw = &cbf_pll.clkr.hw
+> +		},
+> +		.num_parents = 1,
+> +		.ops = &clk_fixed_factor_ops,
+> +		.flags = CLK_SET_RATE_PARENT,
+> +	},
+> +};
+> +
+> +static const struct clk_parent_data cbf_mux_parent_data[] = {
+> +	{ .index = DT_XO },
+> +	{ .hw = &cbf_pll.clkr.hw },
+> +	{ .hw = &cbf_pll_postdiv.hw },
+> +	{ .index = DT_APCS_AUX },
+> +};
+> +
+> +struct clk_cbf_8996_mux {
+> +	u32 reg;
+> +	struct notifier_block nb;
+> +	struct clk_regmap clkr;
+> +};
+> +
+> +static struct clk_cbf_8996_mux *to_clk_cbf_8996_mux(struct clk_regmap *clkr)
+> +{
+> +	return container_of(clkr, struct clk_cbf_8996_mux, clkr);
+> +}
+> +
+> +static int cbf_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+> +			       void *data);
+Please align the indentation with the opening bracket.
 
->
->BR,
->Arkadiusz
+> +
+> +static u8 clk_cbf_8996_mux_get_parent(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap *clkr = to_clk_regmap(hw);
+> +	struct clk_cbf_8996_mux *mux = to_clk_cbf_8996_mux(clkr);
+> +	u32 val;
+> +
+> +	regmap_read(clkr->regmap, mux->reg, &val);
+> +
+> +	return FIELD_GET(CBF_MUX_PARENT_MASK, val);
+> +}
+> +
+> +static int clk_cbf_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+> +{
+> +	struct clk_regmap *clkr = to_clk_regmap(hw);
+> +	struct clk_cbf_8996_mux *mux = to_clk_cbf_8996_mux(clkr);
+> +	u32 val;
+> +
+> +	val = FIELD_PREP(CBF_MUX_PARENT_MASK, index);
+> +
+> +	return regmap_update_bits(clkr->regmap, mux->reg, CBF_MUX_PARENT_MASK, val);
+> +}
+> +
+> +static int clk_cbf_8996_mux_determine_rate(struct clk_hw *hw,
+> +					   struct clk_rate_request *req)
+> +{
+> +	struct clk_hw *parent;
+> +
+> +	if (req->rate < (DIV_THRESHOLD / 2))
+> +		return -EINVAL;
+Shouldn't you parent it to APCS AUX here?
+
+> +
+> +	if (req->rate < DIV_THRESHOLD)
+> +		parent = clk_hw_get_parent_by_index(hw, CBF_DIV_INDEX);
+> +	else
+> +		parent = clk_hw_get_parent_by_index(hw, CBF_PLL_INDEX);
+> +
+> +	if (!parent)
+> +		return -EINVAL;
+> +
+> +	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
+> +	req->best_parent_hw = parent;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct clk_ops clk_cbf_8996_mux_ops = {
+> +	.set_parent = clk_cbf_8996_mux_set_parent,
+> +	.get_parent = clk_cbf_8996_mux_get_parent,
+> +	.determine_rate = clk_cbf_8996_mux_determine_rate,
+> +};
+> +
+> +static struct clk_cbf_8996_mux cbf_mux = {
+> +	.reg = CBF_MUX_OFFSET,
+> +	.nb.notifier_call = cbf_clk_notifier_cb,
+> +	.clkr.hw.init = &(struct clk_init_data) {
+> +		.name = "cbf_mux",
+> +		.parent_data = cbf_mux_parent_data,
+> +		.num_parents = ARRAY_SIZE(cbf_mux_parent_data),
+> +		.ops = &clk_cbf_8996_mux_ops,
+> +		/* CPU clock is critical and should never be gated */
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+> +	},
+> +};
+> +
+> +static int cbf_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+> +			       void *data)
+> +{
+> +	struct clk_notifier_data *cnd = data;
+> +	int ret;
+> +
+> +	switch (event) {
+> +	case PRE_RATE_CHANGE:
+> +		/*
+> +		 * Avoid overvolting. clk_core_set_rate_nolock() walks from top
+> +		 * to bottom, so it will change the rate of the PLL before
+> +		 * chaging the parent of PMUX. This can result in pmux getting
+> +		 * clocked twice the expected rate.
+> +		 *
+> +		 * Manually switch to PLL/2 here.
+> +		 */
+> +		if (cnd->old_rate > DIV_THRESHOLD &&
+> +		    cnd->new_rate < DIV_THRESHOLD)
+> +			clk_cbf_8996_mux_set_parent(&cbf_mux.clkr.hw, CBF_DIV_INDEX);
+> +		break;
+> +	case ABORT_RATE_CHANGE:
+> +		/* Revert manual change */
+> +		if (cnd->new_rate < DIV_THRESHOLD &&
+> +		    cnd->old_rate > DIV_THRESHOLD)
+> +			clk_cbf_8996_mux_set_parent(&cbf_mux.clkr.hw, CBF_PLL_INDEX);
+> +		break;
+> +	default:
+> +		ret = 0;
+> +		break;
+> +	}
+> +
+> +	return notifier_from_errno(ret);
+> +};
+> +
+> +static struct clk_hw *cbf_msm8996_hw_clks[] = {
+> +	&cbf_pll_postdiv.hw,
+> +};
+> +
+> +static struct clk_regmap *cbf_msm8996_clks[] = {
+> +	&cbf_pll.clkr,
+> +	&cbf_mux.clkr,
+> +};
+> +
+> +static const struct regmap_config cbf_msm8996_regmap_config = {
+> +	.reg_bits		= 32,
+> +	.reg_stride		= 4,
+> +	.val_bits		= 32,
+> +	.max_register		= 0x10000,
+> +	.fast_io		= true,
+> +	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
+> +};
+> +
+> +static int qcom_msm8996_cbf_probe(struct platform_device *pdev)
+> +{
+> +	void __iomem *base;
+> +	struct regmap *regmap;
+> +	struct device *dev = &pdev->dev;
+> +	int i, ret;
+> +
+> +	base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+> +
+> +	regmap = devm_regmap_init_mmio(dev, base, &cbf_msm8996_regmap_config);
+> +	if (IS_ERR(regmap))
+> +		return PTR_ERR(regmap);
+> +
+> +	/* Select GPLL0 for 300MHz for the CBF clock */
+> +	regmap_write(regmap, CBF_MUX_OFFSET, 0x3);
+> +
+> +	/* Ensure write goes through before PLLs are reconfigured */
+> +	udelay(5);
+> +
+> +	/* Set the auto clock sel always-on source to GPLL0/2 (300MHz) */
+> +	regmap_update_bits(regmap, CBF_MUX_OFFSET,
+> +			   CBF_MUX_AUTO_CLK_SEL_ALWAYS_ON_MASK,
+> +			   CBF_MUX_AUTO_CLK_SEL_ALWAYS_ON_GPLL0_SEL);
+> +
+> +	clk_alpha_pll_configure(&cbf_pll, regmap, &cbfpll_config);
+> +
+> +	/* Wait for PLL(s) to lock */
+> +        udelay(50);
+Weird indentation?
+
+> +
+> +	/* Enable auto clock selection for CBF */
+> +	regmap_update_bits(regmap, CBF_MUX_OFFSET,
+> +			   CBF_MUX_AUTO_CLK_SEL_BIT,
+> +			   CBF_MUX_AUTO_CLK_SEL_BIT);
+> +
+> +	/* Ensure write goes through before muxes are switched */
+> +	udelay(5);
+> +
+> +	/* Switch CBF to use the primary PLL */
+> +	regmap_update_bits(regmap, CBF_MUX_OFFSET,
+> +			   CBF_MUX_PARENT_MASK, 0x1);
+I think you can unwrap this.
+
+> +
+> +	for (i = 0; i < ARRAY_SIZE(cbf_msm8996_hw_clks); i++) {
+> +		ret = devm_clk_hw_register(dev, cbf_msm8996_hw_clks[i]);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	for (i = 0; i < ARRAY_SIZE(cbf_msm8996_clks); i++) {
+> +		ret = devm_clk_register_regmap(dev, cbf_msm8996_clks[i]);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	ret = devm_clk_notifier_register(dev, cbf_mux.clkr.hw.clk, &cbf_mux.nb);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &cbf_mux.clkr.hw);
+> +}
+> +
+> +static const struct of_device_id qcom_msm8996_cbf_match_table[] = {
+> +	{ .compatible = "qcom,msm8996-cbf" },
+> +	{ /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, qcom_msm8996_cbf_match_table);
+> +
+> +static struct platform_driver qcom_msm8996_cbf_driver = {
+> +	.probe = qcom_msm8996_cbf_probe,
+> +	.driver = {
+> +		.name = "qcom-msm8996-cbf",
+> +		.of_match_table = qcom_msm8996_cbf_match_table,
+> +	},
+> +};
+> +
+> +/* Register early enough to fix the clock to be used for other cores */
+> +static int __init qcom_msm8996_cbf_init(void)
+> +{
+> +	return platform_driver_register(&qcom_msm8996_cbf_driver);
+> +}
+> +postcore_initcall(qcom_msm8996_cbf_init);
+> +
+> +static void __exit qcom_msm8996_cbf_exit(void)
+> +{
+> +	platform_driver_unregister(&qcom_msm8996_cbf_driver);
+> +}
+> +module_exit(qcom_msm8996_cbf_exit);
+> +
+> +MODULE_DESCRIPTION("QCOM MSM8996 CPU Bus Fabric Clock Driver");
+> +MODULE_LICENSE("GPL v2");
+"GPL"
+
+The rest looks good..
+
+Konrad
