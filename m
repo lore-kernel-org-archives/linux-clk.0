@@ -2,57 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EDBC54EBE
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 09:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E358C61DB3
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 10:46:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240768AbjAMJLF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Jan 2023 04:11:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44514 "EHLO
+        id S241205AbjAMKq2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Jan 2023 05:46:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241070AbjAMJKZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 04:10:25 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C131755CB
-        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 01:07:54 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id d30so27293238lfv.8
-        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 01:07:54 -0800 (PST)
+        with ESMTP id S241224AbjAMKp5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 05:45:57 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 319F010565
+        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 02:44:11 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id m6so32517672lfj.11
+        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 02:44:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=60yxEW22hoAOOhOWGOTH5M2hZiABdMD97947KesUJto=;
-        b=REXQMGrJIZiWEPdOgQHYLdJ9o+K2QMjcuaT+NTV+ebUUz4hhyPNl9sS599Q6Ybm7on
-         LjFQxGfLaVPqPg5CNyr7pWxxYPYt99yLCFsnkoU0UH6WnbuqPHHNqSOjSYhwD74f3Lig
-         Z2Kuvn5xMbIy8l7iXCZ8oWHZ4WxCyJE4Ztf6vAMucE4c8LRI9NlKyDiNeavPUhV+EnhX
-         DjNYDvoFKcpxXdqP2jflY7yQYUHA1Kf0Wx5ozomvhedwtI5rIxe3Ws6ZwAjqPt/9SWOV
-         RHO5xV2KDTI58qogbnCe2QuGJMEicSGwPyCEXB06Jls1QNS5SbT+XSuQQZXrrmouxgfy
-         IHug==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0cJY2QzJymCV6m/o9AZRrVEg4sA7Mf8RR5di2bPPh1U=;
+        b=uveNyrhYtUe+KMVJmtCuq8ovBhUOw7d4yvfWZUfLG7hdZrFC+FFfK12ZUbXlBY2Sh7
+         1eGGy21dbx4l/CP7uWbdILWR2ZeaoaoYFEkjSjKcMZp1cmkPMmYj3RveMb5DwxgL0Wuo
+         MGBoeRbXFtVDHCgGX+6JiS6NTtqfS0Oy9NxtyLczLiPQcikwDtZVWE6ONAVbTQCVWZpw
+         2v8lGl42aH1rjr18xHAG63lgOfj7JuNUha2OPwWEKENARpsRb4QbnCWE8Fq/hYpydmi5
+         YLF/4PV1Is8QRRzNV5CFt2NrtInXKqxIvXQG/LlDadGfW9zElZe/sJdK4MAFIwfYGp1E
+         9f3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=60yxEW22hoAOOhOWGOTH5M2hZiABdMD97947KesUJto=;
-        b=NEwRPZ0Q6fmseSq3pF2sMWAfPReJUsDwwRoLWj9DpzcmXu3nJVd/NlKHPePwCZpPvB
-         T3lLAid2mhQJr0B8w7XiwWlsek2YmUy7n2l8I76vZ/n7TiNYHJE/JUGoJxUP8nhkDtpI
-         xXek9QshAmuumoWFfLmtDV6YMlDqwSA4dpacrtwMbqZO5jE7nTD4TiRyGKFHvPrRb7xd
-         VTYr0oML6GkzWMyJRy+cQ9mXpUEgWizBfdf1y39ATqVQBv9A+sNPV6ZVpjy9c8lQOWIn
-         +PyH4YJ40dv3MbOJZqoagcF9XfubPYIFd7RTO7Oage6jwwSLyF91uMZppBznp1AdJiWh
-         kz+w==
-X-Gm-Message-State: AFqh2kpRBgcnhb78KihFxASY0lE+7U/WyHFkOXj6xOz5IEp0C7uClB40
-        JHwymSJ0sRh92TQLaHjQSIcHag==
-X-Google-Smtp-Source: AMrXdXtXkDr/H6UigCTKrCgJk574+PyWuTRkf5tQWSma76n0kWaaeffJv22h2NdCvHUGDJNVy3Ixog==
-X-Received: by 2002:a05:6512:3051:b0:4b5:79ca:e62d with SMTP id b17-20020a056512305100b004b579cae62dmr32092348lfb.16.1673600872902;
-        Fri, 13 Jan 2023 01:07:52 -0800 (PST)
-Received: from eriador.lumag.spb.ru ([194.204.33.9])
-        by smtp.gmail.com with ESMTPSA id d4-20020a05651233c400b004947a12232bsm3735296lfg.275.2023.01.13.01.07.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jan 2023 01:07:52 -0800 (PST)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0cJY2QzJymCV6m/o9AZRrVEg4sA7Mf8RR5di2bPPh1U=;
+        b=HdfjQq56AKvmO4K5snG3/I8xA/NCaWxD1qKojZWWIihs8NEeo3NyJoyIsovQzDQ0Fx
+         cVgHpmAQp8k18+F4eHhyv6uEMOm7h1bzFqHdZj7/k8loNYAnUJHmQ5hHwdzC4V5ZczrH
+         3qOL4fQLaEG+RIKx4UqzzAAhIZ72F5SAman/gy8w098sBdvj4IXr/RfsxQRf0zMgexMl
+         A0+WsUPcvFKN2Y5aUvAnYLCU7SOiFKA8gjMH8UkbYn2qnSnMQcX9fGdTmF29EMByIecj
+         /54d0PjPYLfLPN1WG7jd/K8so+jgIgOgdkdPYrUVXjLlKVuRCTrWcbODmFFyHrBtvnf/
+         9Ylg==
+X-Gm-Message-State: AFqh2kqKjiT3LxSutVLHNvvScD8K5xFv9CKSa2zmmaDmre97Yzo8gIC/
+        fiDaaDVDSNCRZO5Qa0y0HR3Pww==
+X-Google-Smtp-Source: AMrXdXs1K3k8dz69gU2BLNHHD/h9uh6YkU5C8bzpVHqrsIMLkLR2+NqBiudu5n0wZCBa8adp/by7FA==
+X-Received: by 2002:a05:6512:15a7:b0:4ae:8476:2df with SMTP id bp39-20020a05651215a700b004ae847602dfmr5485495lfb.10.1673606649524;
+        Fri, 13 Jan 2023 02:44:09 -0800 (PST)
+Received: from [192.168.2.31] ([188.170.82.205])
+        by smtp.gmail.com with ESMTPSA id b8-20020a056512060800b004cb1de3f487sm3786430lfe.104.2023.01.13.02.44.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Jan 2023 02:44:09 -0800 (PST)
+Message-ID: <f2140e89-84a4-99a9-b2d1-7b4e0d0313d3@linaro.org>
+Date:   Fri, 13 Jan 2023 12:44:07 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH 10/13] clk: qcom: cpu-8996: fix ACD initialization
+Content-Language: en-GB
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -60,40 +66,96 @@ To:     Andy Gross <agross@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v2 3/4] mailbox: qcom-apcs-ipc: enable APCS clock device for MSM8996
-Date:   Fri, 13 Jan 2023 11:07:38 +0200
-Message-Id: <20230113090739.45805-4-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230113090739.45805-1-dmitry.baryshkov@linaro.org>
-References: <20230113090739.45805-1-dmitry.baryshkov@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230111192004.2509750-1-dmitry.baryshkov@linaro.org>
+ <20230111192004.2509750-11-dmitry.baryshkov@linaro.org>
+ <1c8d38e0-2f9d-9e89-5e21-e74ac7851727@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <1c8d38e0-2f9d-9e89-5e21-e74ac7851727@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-MSM8996 also has the clock-related part of the APCS mailbox device.
-Follow the usual pattern and create a child device to handle these
-clocks.
+On 12/01/2023 16:35, Konrad Dybcio wrote:
+> 
+> 
+> On 11.01.2023 20:20, Dmitry Baryshkov wrote:
+>> The vendor kernel applies different order while programming SSSCTL and
+>> L2ACDCR registers on power and performance clusters. However it was
+>> demonstrated that doing this upstream results in the board reset. Make
+>> both clusters use the same sequence, which fixes the reset.
+>>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> ---
+> I think we should look for the source of why this doesn't work,
+> e.g. does downstream program it earlier somewhere? Are we
+> missing something else that may bite later?
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/mailbox/qcom-apcs-ipc-mailbox.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'm not sure what is the reason for downstream doing init in such 
+sequence. Right now I'm sure that doing ACD init with the provided 
+sequence fails the boot in some conditions. There might be the 
+difference in the CPU init order. Or any other ordering issue. Or the 
+lack of the CPR. Or Kryo LDO programming. There is a huge difference 
+between vendor's 3.18 and the current 6.x.
 
-diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-index 0e9f9cba8668..bd61dacb44ba 100644
---- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-+++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-@@ -42,7 +42,7 @@ static const struct qcom_apcs_ipc_data msm8994_apcs_data = {
- };
- 
- static const struct qcom_apcs_ipc_data msm8996_apcs_data = {
--	.offset = 16, .clk_name = NULL
-+	.offset = 16, .clk_name = "qcom-apcs-msm8996-clk"
- };
- 
- static const struct qcom_apcs_ipc_data apps_shared_apcs_data = {
+I propose to take the patch in, as it fixes the boot and runtime issue 
+and revisit it later if any of the problems occur. I don't fancy such 
+approach usually, but without the documentation I don't see a way to 
+find any particular reason for programming pwr and perf using the 
+different order of operations.
+
+> 
+> Konrad
+>>   drivers/clk/qcom/clk-cpu-8996.c | 20 ++++++++------------
+>>   1 file changed, 8 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+>> index 47c58bb5f21a..1c00eb629b61 100644
+>> --- a/drivers/clk/qcom/clk-cpu-8996.c
+>> +++ b/drivers/clk/qcom/clk-cpu-8996.c
+>> @@ -475,9 +475,9 @@ static int qcom_cpu_clk_msm8996_register_clks(struct device *dev,
+>>   	return ret;
+>>   }
+>>   
+>> -#define CPU_AFINITY_MASK 0xFFF
+>> -#define PWRCL_CPU_REG_MASK 0x3
+>> -#define PERFCL_CPU_REG_MASK 0x103
+>> +#define CPU_CLUSTER_AFFINITY_MASK 0xf00
+>> +#define PWRCL_AFFINITY_MASK 0x000
+>> +#define PERFCL_AFFINITY_MASK 0x100
+>>   
+>>   #define L2ACDCR_REG 0x580ULL
+>>   #define L2ACDTD_REG 0x581ULL
+>> @@ -498,21 +498,17 @@ static void qcom_cpu_clk_msm8996_acd_init(struct regmap *regmap)
+>>   	if (val == 0x00006a11)
+>>   		goto out;
+>>   
+>> -	hwid = read_cpuid_mpidr() & CPU_AFINITY_MASK;
+>> -
+>>   	kryo_l2_set_indirect_reg(L2ACDTD_REG, 0x00006a11);
+>>   	kryo_l2_set_indirect_reg(L2ACDDVMRC_REG, 0x000e0f0f);
+>>   	kryo_l2_set_indirect_reg(L2ACDSSCR_REG, 0x00000601);
+>>   
+>> -	if (PWRCL_CPU_REG_MASK == (hwid | PWRCL_CPU_REG_MASK)) {
+>> -		regmap_write(regmap, PWRCL_REG_OFFSET + SSSCTL_OFFSET, 0xf);
+>> -		kryo_l2_set_indirect_reg(L2ACDCR_REG, 0x002c5ffd);
+>> -	}
+>> +	kryo_l2_set_indirect_reg(L2ACDCR_REG, 0x002c5ffd);
+>>   
+>> -	if (PERFCL_CPU_REG_MASK == (hwid | PERFCL_CPU_REG_MASK)) {
+>> -		kryo_l2_set_indirect_reg(L2ACDCR_REG, 0x002c5ffd);
+>> +	hwid = read_cpuid_mpidr();
+>> +	if ((hwid & CPU_CLUSTER_AFFINITY_MASK) == PWRCL_AFFINITY_MASK)
+>> +		regmap_write(regmap, PWRCL_REG_OFFSET + SSSCTL_OFFSET, 0xf);
+>> +	else
+>>   		regmap_write(regmap, PERFCL_REG_OFFSET + SSSCTL_OFFSET, 0xf);
+>> -	}
+>>   
+>>   out:
+>>   	spin_unlock_irqrestore(&qcom_clk_acd_lock, flags);
+
 -- 
-2.39.0
+With best wishes
+Dmitry
 
