@@ -2,81 +2,68 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1E9C54EBD
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 13:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F40C54EBD
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 13:44:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241288AbjAMNmm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Jan 2023 08:42:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41198 "EHLO
+        id S241753AbjAMNoW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Jan 2023 08:44:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241785AbjAMNlq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 08:41:46 -0500
+        with ESMTP id S242061AbjAMNoB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 08:44:01 -0500
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34F6378A54;
-        Fri, 13 Jan 2023 05:35:48 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ABD758F9D;
+        Fri, 13 Jan 2023 05:37:24 -0800 (PST)
 Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30DBvOcb006848;
-        Fri, 13 Jan 2023 13:35:02 GMT
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30DBqPaG028139;
+        Fri, 13 Jan 2023 13:37:20 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=0g9Fa4yBvIR5LT8urEdDLcS8YvdjAZnhQhR96ggA7/I=;
- b=iDlAyfmodn+7qEag0+13wAp63Xr8zzdsBCgL7VZc76478bMWwb5qrbvmumj1eCsVW+lI
- ySllJKBhg43IDssSDhPfugMJysK/RBoM+CYmVpr1UuJcTXAQPHjgOpCTcAb75uyyLb0Q
- IQ6JFKg2H1SO/vZOXuZlBci/W/6wOszykLQMQGrKMPO1CmkxbBNA5q9/dhc1+uZGDShG
- SYqhGIOA8frLmXUaloPrqBpP2rlS7Or7zOyw7hAnwQC5/4GDQLt/yIEIdRZDwXa1j/WQ
- gOHKaEhAwFeeeu0/NdOTg03dHUV0fw0MwbimHr6zrpPbsemOCWT2igekdpUF7Nlon1TE Yw== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n2wun1k73-1
+ bh=4bXhPkketjLur3urkiMOHLcnfwXWVqg4tEG9styfBNg=;
+ b=oN+qORGKD8TNZVPVY/Njo0eYJYYaiWv8KYiDpohZa5tEMhFKd+V4kFvSNQVzb6bYP+30
+ X2oNdxe3OWkzAIW1Jd52M0dLqDL6Lv6e4n5oi5LPWik4udKALxJAR0fgXdd2cPwF8b4G
+ kmL02iCLJRtpNuQ6ayef3Q+YCwlNs3DXJ3CWed7Q2n46PfTmLtjPu6TZ6yS+WihlM1Fu
+ 5qSSDdu3oxojA1HYPcxd1t9/Ye/7CgWkTCzQ6KHrD0vad45QG4zEzlK84b8GdnAT9cAK
+ DxdslX98ehgZpkmLynvc/50VaAzqdgLsdw7MENZF/5CCVz9mSOaoU0HL1sJqIcm9SsYe Eg== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n2wun1kbt-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 13 Jan 2023 13:35:02 +0000
+        Fri, 13 Jan 2023 13:37:20 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30DDZ1HS001063
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30DDbJVG005344
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 13 Jan 2023 13:35:01 GMT
-Received: from [10.50.57.3] (10.80.80.8) by nalasex01a.na.qualcomm.com
+        Fri, 13 Jan 2023 13:37:19 GMT
+Received: from [10.50.20.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Fri, 13 Jan
- 2023 05:34:52 -0800
-Message-ID: <ccea4a27-a986-0320-da28-1f53be8ab7a9@quicinc.com>
-Date:   Fri, 13 Jan 2023 19:04:49 +0530
+ 2023 05:37:02 -0800
+Message-ID: <0061aac5-e96f-64b4-6c57-6a67a759d886@quicinc.com>
+Date:   Fri, 13 Jan 2023 19:06:49 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH 6/7] arm64: dts: Add ipq9574 SoC and AL02 board support
+ Thunderbird/102.6.1
+Subject: Re: [PATCH V4] clk: qcom: clk-alpha-pll: Add support for Stromer PLLs
+To:     Stephen Boyd <sboyd@kernel.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>
+CC:     Varadarajan Narayanan <quic_varada@quicinc.com>,
+        Sricharan R <quic_srichara@quicinc.com>
+References: <20221227132507.2506-1-quic_kathirav@quicinc.com>
+ <fd150fa2b35e1e07808e3d1e67e1def7.sboyd@kernel.org>
 Content-Language: en-US
-To:     Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linus.walleij@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <p.zabel@pengutronix.de>, <shawnguo@kernel.org>, <arnd@arndb.de>,
-        <marcel.ziswiler@toradex.com>, <dmitry.baryshkov@linaro.org>,
-        <nfraprado@collabora.com>, <broonie@kernel.org>,
-        <tdas@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_arajkuma@quicinc.com>,
-        <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
-References: <20230110121316.24892-1-quic_devipriy@quicinc.com>
- <20230110121316.24892-7-quic_devipriy@quicinc.com>
- <f6ef1834-b629-b76c-9cde-55af56320665@linaro.org>
- <69d67ce2-563c-984d-7eeb-8319a535d17a@quicinc.com>
-From:   Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <69d67ce2-563c-984d-7eeb-8319a535d17a@quicinc.com>
+From:   Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+In-Reply-To: <fd150fa2b35e1e07808e3d1e67e1def7.sboyd@kernel.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: eRw8pYJTc7xs3OMxns9cYul-TuDC0clG
-X-Proofpoint-GUID: eRw8pYJTc7xs3OMxns9cYul-TuDC0clG
+X-Proofpoint-ORIG-GUID: SzIGtWlXuqY-lDo1HTuJbRCd6nt4QTES
+X-Proofpoint-GUID: SzIGtWlXuqY-lDo1HTuJbRCd6nt4QTES
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.923,Hydra:6.0.562,FMLib:17.11.122.1
  definitions=2023-01-13_06,2023-01-13_01,2022-06-22_01
@@ -89,480 +76,212 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Stephen,
+
+Thanks for taking time to review the patch.
 
 
-On 1/11/2023 8:22 PM, Kathiravan Thirumoorthy wrote:
-> 
-> On 1/11/2023 3:14 PM, Krzysztof Kozlowski wrote:
->> On 10/01/2023 13:13, devi priya wrote:
->>> From: POOVENDHAN SELVARAJ <quic_poovendh@quicinc.com>
->>>
->>> Add initial device tree support for Qualcomm IPQ9574 SoC
->>> and AL02 board
->>>
->>> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
->>> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
->>> Co-developed-by: devi priya <quic_devipriy@quicinc.com>
->>> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
->>> Signed-off-by: POOVENDHAN SELVARAJ <quic_poovendh@quicinc.com>
->>> ---
->>>   arch/arm64/boot/dts/qcom/Makefile            |   1 +
->>>   arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts |  69 ++++
->>>   arch/arm64/boot/dts/qcom/ipq9574.dtsi        | 318 +++++++++++++++++++
->>>   3 files changed, 388 insertions(+)
->>>   create mode 100644 arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts
->>>   create mode 100644 arch/arm64/boot/dts/qcom/ipq9574.dtsi
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/Makefile 
->>> b/arch/arm64/boot/dts/qcom/Makefile
->>> index 3e79496292e7..872c62028a0b 100644
->>> --- a/arch/arm64/boot/dts/qcom/Makefile
->>> +++ b/arch/arm64/boot/dts/qcom/Makefile
->>> @@ -7,6 +7,7 @@ dtb-$(CONFIG_ARCH_QCOM)    += ipq6018-cp01-c1.dtb
->>>   dtb-$(CONFIG_ARCH_QCOM)    += ipq8074-hk01.dtb
->>>   dtb-$(CONFIG_ARCH_QCOM)    += ipq8074-hk10-c1.dtb
->>>   dtb-$(CONFIG_ARCH_QCOM)    += ipq8074-hk10-c2.dtb
->>> +dtb-$(CONFIG_ARCH_QCOM)    += ipq9574-al02-c7.dtb
->>>   dtb-$(CONFIG_ARCH_QCOM)    += msm8916-alcatel-idol347.dtb
->>>   dtb-$(CONFIG_ARCH_QCOM)    += msm8916-asus-z00l.dtb
->>>   dtb-$(CONFIG_ARCH_QCOM)    += msm8916-huawei-g7.dtb
->>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts 
->>> b/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts
->>> new file mode 100644
->>> index 000000000000..ae3c32f3e16a
->>> --- /dev/null
->>> +++ b/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts
->>> @@ -0,0 +1,69 @@
->>> +// SPDX-License-Identifier: GPL-2.0-only
->> Not dual licensed? Not BSD?
->>
->>> +/*
->>> + * IPQ9574 AL02-C7 board device tree source
->>> + *
->>> + * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
->>> + * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights 
->>> reserved.
->>> + */
->>> +
->>> +/dts-v1/;
->>> +
->>> +#include "ipq9574.dtsi"
->>> +
->>> +/ {
->>> +    model = "Qualcomm Technologies, Inc. IPQ9574/AP-AL02-C7";
->>> +    compatible = "qcom,ipq9574-ap-al02-c7", "qcom,ipq9574";
->>> +    interrupt-parent = <&intc>;
-> Can this be droppeed? since it is already part of DTSI.
-Sure okay
->>> +
->>> +    aliases {
->>> +        serial0 = &blsp1_uart2;
->>> +    };
->>> +
->>> +    chosen {
->>> +        stdout-path = "serial0:115200n8";
->>> +    };
->>> +};
->>> +
->>> +&blsp1_uart2 {
->>> +    pinctrl-0 = <&uart2_pins>;
->>> +    pinctrl-names = "default";
->>> +    status = "okay";
->>> +};
->>> +
->>> +&sdhc_1 {
->>> +    pinctrl-0 = <&emmc_pins>;
->>> +    pinctrl-names = "default";
->>> +    status = "okay";
->>> +};
->>> +
->>> +&tlmm {
->>> +    emmc_pins: emmc-state {
->>> +        emmc-clk-pins {
->>> +            pins = "gpio5";
->>> +            function = "sdc_clk";
->>> +            drive-strength = <8>;
->>> +            bias-disable;
->>> +        };
->>> +        emmc-cmd-pins {
->>> +            pins = "gpio4";
->>> +            function = "sdc_cmd";
->>> +            drive-strength = <8>;
->>> +            bias-pull-up;
->>> +        };
->>> +        emmc-data-pins {
->>> +            pins = "gpio0", "gpio1", "gpio2",
->>> +                 "gpio3", "gpio6", "gpio7",
->>> +                 "gpio8", "gpio9";
->>> +            function = "sdc_data";
->>> +            drive-strength = <8>;
->>> +            bias-pull-up;
->>> +        };
->>> +        emmc-rclk-pins {
->>> +            pins = "gpio10";
->>> +            function = "sdc_rclk";
->>> +            drive-strength = <8>;
->>> +            bias-pull-down;
->>> +        };
->>> +    };
->>> +
->>> +};
->>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi 
->>> b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->>> new file mode 100644
->>> index 000000000000..188d18688a77
->>> --- /dev/null
->>> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->>> @@ -0,0 +1,318 @@
->>> +// SPDX-License-Identifier: GPL-2.0-only
->>> +/*
->>> + * IPQ9574 SoC device tree source
->>> + *
->>> + * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
->>> + * Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights 
->>> reserved.
->>> + */
->>> +
->>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->>> +#include <dt-bindings/clock/qcom,gcc-ipq9574.h>
->>> +#include <dt-bindings/reset/qcom,gcc-ipq9574.h>
->>> +
->>> +/ {
->>> +    interrupt-parent = <&intc>;
->>> +    #address-cells = <2>;
->>> +    #size-cells = <2>;
->>> +
->>> +    clocks {
->>> +        bias_pll_ubi_nc_clk: bias_pll_ubi_nc_clk {
->> No undercores in node names.
->>
->>> +            compatible = "fixed-clock";
->>> +            clock-frequency = <353000000>;
->>> +            #clock-cells = <0>;
->>> +        };
->>> +
->>> +        pcie30_phy0_pipe_clk: pcie30_phy0_pipe_clk {
->>> +            compatible = "fixed-clock";
->>> +            clock-frequency = <250000000>;
->>> +            #clock-cells = <0>;
->>> +        };
->>> +
->>> +        pcie30_phy1_pipe_clk: pcie30_phy1_pipe_clk {
->>> +            compatible = "fixed-clock";
->>> +            clock-frequency = <250000000>;
->>> +            #clock-cells = <0>;
->>> +        };
->>> +
->>> +        pcie30_phy2_pipe_clk: pcie30_phy2_pipe_clk {
->>> +            compatible = "fixed-clock";
->>> +            clock-frequency = <250000000>;
->>> +            #clock-cells = <0>;
->>> +        };
->>> +
->>> +        pcie30_phy3_pipe_clk: pcie30_phy3_pipe_clk {
->>> +            compatible = "fixed-clock";
->>> +            clock-frequency = <250000000>;
->>> +            #clock-cells = <0>;
->>> +        };
->>> +
->>> +        usb3phy_0_cc_pipe_clk: usb3phy_0_cc_pipe_clk {
->>> +            compatible = "fixed-clock";
->>> +            clock-frequency = <125000000>;
->>> +            #clock-cells = <0>;
->>> +        };
->>> +
->>> +        sleep_clk: sleep-clk {
->>> +            compatible = "fixed-clock";
->>> +            clock-frequency = <32000>;
->> That's not a property of the SoC, but board. Either entire clock or at
->> least frequency to indicate that the board is providing the clock.
->>
->>> +            #clock-cells = <0>;> +        };
->>> +
->>> +        xo_board_clk: xo-board-clk {
->>> +            compatible = "fixed-clock";
->>> +            clock-frequency = <24000000>;
->> Ditto.
->>
->>> +            #clock-cells = <0>;
->>> +        };
->>> +    };
->>> +
->>> +    cpus {
->>> +        #address-cells = <1>;
->>> +        #size-cells = <0>;
->>> +
->>> +        CPU0: cpu@0 {
->>> +            device_type = "cpu";
->>> +            compatible = "arm,cortex-a73";
->>> +            reg = <0x0>;
->>> +            enable-method = "psci";
->>> +            next-level-cache = <&L2_0>;
->>> +        };
->>> +
->>> +        CPU1: cpu@1 {
->>> +            device_type = "cpu";
->>> +            compatible = "arm,cortex-a73";
->>> +            reg = <0x1>;
->>> +            enable-method = "psci";
->>> +            next-level-cache = <&L2_0>;
->>> +        };
->>> +
->>> +        CPU2: cpu@2 {
->>> +            device_type = "cpu";
->>> +            compatible = "arm,cortex-a73";
->>> +            reg = <0x2>;
->>> +            enable-method = "psci";
->>> +            next-level-cache = <&L2_0>;
->>> +        };
->>> +
->>> +        CPU3: cpu@3 {
->>> +            device_type = "cpu";
->>> +            compatible = "arm,cortex-a73";
->>> +            reg = <0x3>;
->>> +            enable-method = "psci";
->>> +            next-level-cache = <&L2_0>;
->>> +        };
->>> +
->>> +        L2_0: l2-cache {
->>> +            compatible = "cache";
->>> +            cache-level = <2>;
->>> +        };
->>> +    };
->>> +
->>> +    memory@40000000 {
->>> +        device_type = "memory";
->>> +        /* We expect the bootloader to fill in the size */
->>> +        reg = <0x0 0x40000000 0x0 0x0>;
->>> +    };
->>> +
->>> +    pmu {
->>> +        compatible = "arm,cortex-a73-pmu";
->>> +        interrupts = <GIC_PPI 7 (GIC_CPU_MASK_SIMPLE(4) | 
->>> IRQ_TYPE_LEVEL_HIGH)>;
->>> +    };
->>> +
->>> +    psci {
->>> +        compatible = "arm,psci-1.0";
->>> +        method = "smc";
->>> +    };
->>> +
->>> +    reserved-memory {
->>> +        #address-cells = <2>;
->>> +        #size-cells = <2>;
->>> +        ranges;
->>> +
->>> +        tz_region: memory@4a600000 {
->>> +            reg = <0x0 0x4a600000 0x0 0x400000>;
->>> +            no-map;
->>> +        };
->>> +    };
->>> +
->>> +    soc: soc@0 {
->>> +        #address-cells = <1>;
->>> +        #size-cells = <1>;
->>> +        ranges = <0 0 0 0xffffffff>;
->>> +        compatible = "simple-bus";
->>> +
->>> +        tlmm: pinctrl@1000000 {
->>> +            compatible = "qcom,ipq9574-tlmm";
->>> +            reg = <0x01000000 0x300000>;
->>> +            interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
->>> +            gpio-controller;
->>> +            #gpio-cells = <2>;
->>> +            gpio-ranges = <&tlmm 0 0 65>;
->>> +            gpio-reserved-ranges = <59 1>;
->> Hm, why reserved ranges are in SoC?
->>
->>> +            interrupt-controller;
->>> +            #interrupt-cells = <2>;
->>> +
->>> +            uart2_pins: uart2-state {
->>> +                pins = "gpio34", "gpio35";
->>> +                function = "blsp2_uart";
->>> +                drive-strength = <8>;
->>> +                bias-disable;
->>> +            };
->>> +        };
->>> +
->>> +        gcc: clock-controller@1800000 {
->>> +            compatible = "qcom,gcc-ipq9574";
->>> +            reg = <0x1800000 0x80000>;
-> Address can be padded to 8-hex-digits. Please take care of this in all 
-> nodes.
-Sure, will do
->>> +            clocks = <&xo_board_clk>,
->>> +                <&sleep_clk>,
->>> +                <&bias_pll_ubi_nc_clk>,
->>> +                <&pcie30_phy0_pipe_clk>,
->>> +                <&pcie30_phy1_pipe_clk>,
->>> +                <&pcie30_phy2_pipe_clk>,
->>> +                <&pcie30_phy3_pipe_clk>,
->>> +                <&usb3phy_0_cc_pipe_clk>;
->>> +            clock-names = "xo",
->>> +                "sleep_clk",
->> Misaligned. Multiple other places probably as well.
->>
->>> +                "bias_pll_ubi_nc_clk",
->>> +                "pcie30_phy0_pipe_clk",
->>> +                "pcie30_phy1_pipe_clk",
->>> +                "pcie30_phy2_pipe_clk",
->>> +                "pcie30_phy3_pipe_clk",
->>> +                "usb3phy_0_cc_pipe_clk";
->>> +            #clock-cells = <1>;
->>> +            #reset-cells = <1>;
->>> +        };
->>> +
->>> +        sdhc_1: sdhci@7804000 {
->>> +            compatible = "qcom,sdhci-msm-v5";
->>> +            reg = <0x7804000 0x1000>, <0x7805000 0x1000>;
->>> +            reg-names = "hc_mem", "cmdq_mem";
->>> +
->>> +            interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
->>> +                   <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
->> Like here.
->>
->>> +            interrupt-names = "hc_irq", "pwr_irq";
->>> +
->>> +            clocks = <&xo_board_clk>,
->>> +                   <&gcc GCC_SDCC1_AHB_CLK>,
->>> +                   <&gcc GCC_SDCC1_APPS_CLK>;
->> And here
->>
->>> +            clock-names = "xo", "iface", "core";
->> Does not look like you tested the bindings. Please run `make
->> dt_binding_check` (see
->> Documentation/devicetree/bindings/writing-schema.rst for instructions).
->>
->>> +            mmc-ddr-1_8v;
->>> +            mmc-hs200-1_8v;
->>> +            mmc-hs400-1_8v;
->>> +            mmc-hs400-enhanced-strobe;
->>> +            max-frequency = <384000000>;
->>> +            bus-width = <8>;
->>> +            non-removable;
->>> +            status = "disabled";
->>> +        };
->>> +
->>> +        blsp1_uart2: serial@78b1000 {
->>> +            compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
->>> +            reg = <0x078b1000 0x200>;
->>> +            interrupts = <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>;
->>> +            clocks = <&gcc GCC_BLSP1_UART3_APPS_CLK>,
->>> +                 <&gcc GCC_BLSP1_AHB_CLK>;
->>> +            clock-names = "core", "iface";
->>> +            status = "disabled";
->>> +        };
->>> +
->>> +        intc: interrupt-controller@b000000 {
->>> +            compatible = "qcom,msm-qgic2";
->>> +            reg = <0x0b000000 0x1000>,  /* GICD */
->>> +                  <0x0b002000 0x1000>,  /* GICC */
->>> +                  <0x0b001000 0x1000>,  /* GICH */
->>> +                  <0x0b004000 0x1000>;  /* GICV */
->>> +            #address-cells = <1>;
->>> +            #size-cells = <1>;
->>> +            interrupt-controller;
->>> +            #interrupt-cells = <3>;
->>> +            interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
->>> +            ranges = <0 0x0b00c000 0x3000>;
->>> +
->>> +            v2m0: v2m@0 {
->>> +                compatible = "arm,gic-v2m-frame";
->>> +                reg = <0x0 0xffd>;
->>> +                msi-controller;
->>> +            };
->>> +
->>> +            v2m1: v2m@1 {
->>> +                compatible = "arm,gic-v2m-frame";
->>> +                reg = <0x1000 0xffd>;
->>> +                msi-controller;
->>> +            };
->>> +
->>> +            v2m2: v2m@2 {
->>> +                compatible = "arm,gic-v2m-frame";
->>> +                reg = <0x2000 0xffd>;
->>> +                msi-controller;
->>> +            };
->>> +        };
->>> +
->>> +        timer@b120000 {
->>> +            compatible = "arm,armv7-timer-mem";
->>> +            reg = <0xb120000 0x1000>;
->>> +            #address-cells = <1>;
->>> +            #size-cells = <1>;
->>> +            ranges;
->>> +            clock-frequency = <24000000>;
->>> +
->>> +            frame@b120000 {
->>> +                reg = <0xb121000 0x1000>,
->>> +                      <0xb122000 0x1000>;
->>> +                frame-number = <0>;
->>> +                interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
->>> +                         <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
->>> +            };
->>> +
->>> +            frame@b123000 {
->>> +                reg = <0xb123000 0x1000>;
->>> +                frame-number = <1>;
->>> +                interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
->>> +                status = "disabled";
->>> +            };
->>> +
->>> +            frame@b124000 {
->>> +                reg = <0xb124000 0x1000>;
->>> +                frame-number = <2>;
->>> +                interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
->>> +                status = "disabled";
->>> +            };
->>> +
->>> +            frame@b125000 {
->>> +                reg = <0xb125000 0x1000>;
->>> +                frame-number = <3>;
->>> +                interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
->>> +                status = "disabled";
->>> +            };
->>> +
->>> +            frame@b126000 {
->>> +                reg = <0xb126000 0x1000>;
->>> +                frame-number = <4>;
->>> +                interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
->>> +                status = "disabled";
->>> +            };
->>> +
->>> +            frame@b127000 {
->>> +                reg = <0xb127000 0x1000>;
->>> +                frame-number = <5>;
->>> +                interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
->>> +                status = "disabled";
->>> +            };
->>> +
->>> +            frame@b128000 {
->>> +                reg = <0xb128000 0x1000>;
->>> +                frame-number = <6>;
->>> +                interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
->>> +                status = "disabled";
->>> +            };
->>> +        };
->>> +    };
->>> +
->>> +    timer {
->>> +        compatible = "arm,armv8-timer";
->>> +        interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | 
->>> IRQ_TYPE_LEVEL_LOW)>,
->>> +                 <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(4) | 
->>> IRQ_TYPE_LEVEL_LOW)>,
->>> +                 <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | 
->>> IRQ_TYPE_LEVEL_LOW)>,
->>> +                 <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | 
->>> IRQ_TYPE_LEVEL_LOW)>;
->>> +        clock-frequency = <24000000>;
->> Is this allowed in recent designs?
->>
->>> +    };
->>> +};
->> Best regards,
->> Krzysztof
->>
-Best Regards,
-Devi Priya
+On 1/13/2023 5:23 AM, Stephen Boyd wrote:
+> Quoting Kathiravan T (2022-12-27 05:25:07)
+>> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+>> index f9e4cfd7261c..29866100df08 100644
+>> --- a/drivers/clk/qcom/clk-alpha-pll.c
+>> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+>> @@ -204,9 +204,24 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+>>                  [PLL_OFF_CONFIG_CTL] = 0x1C,
+>>                  [PLL_OFF_STATUS] = 0x20,
+>>          },
+>> +       [CLK_ALPHA_PLL_TYPE_STROMER] = {
+>> +               [PLL_OFF_L_VAL] = 0x08,
+>> +               [PLL_OFF_ALPHA_VAL] = 0x10,
+>> +               [PLL_OFF_ALPHA_VAL_U] = 0x14,
+>> +               [PLL_OFF_USER_CTL] = 0x18,
+>> +               [PLL_OFF_USER_CTL_U] = 0x1c,
+>> +               [PLL_OFF_CONFIG_CTL] = 0x20,
+>> +               [PLL_OFF_CONFIG_CTL_U] = 0xff,
+>> +               [PLL_OFF_TEST_CTL] = 0x30,
+>> +               [PLL_OFF_TEST_CTL_U] = 0x34,
+>> +               [PLL_OFF_STATUS] = 0x28,
+>> +       },
+>>   };
+>>   EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+>>   
+>> +static unsigned long
+>> +alpha_pll_round_rate(unsigned long rate, unsigned long prate, u32 *l, u64 *a,
+> Is this necessary?
+
+
+Not really, will re-arrange the functions and drop this.
+
+
+>
+>> +                    u32 alpha_width);
+>>   /*
+>>    * Even though 40 bits are present, use only 32 for ease of calculation.
+>>    */
+>> @@ -215,6 +230,8 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+>>   #define ALPHA_BITWIDTH         32U
+>>   #define ALPHA_SHIFT(w)         min(w, ALPHA_BITWIDTH)
+>>   
+>> +#define        ALPHA_PLL_STATUS_REG_SHIFT      8
+>> +
+>>   #define PLL_HUAYRA_M_WIDTH             8
+>>   #define PLL_HUAYRA_M_SHIFT             8
+>>   #define PLL_HUAYRA_M_MASK              0xff
+>> @@ -325,7 +342,7 @@ static void clk_alpha_pll_write_config(struct regmap *regmap, unsigned int reg,
+>>   void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>>                               const struct alpha_pll_config *config)
+>>   {
+>> -       u32 val, mask;
+>> +       u32 val, val_u, mask, mask_u;
+>>   
+>>          regmap_write(regmap, PLL_L_VAL(pll), config->l);
+>>          regmap_write(regmap, PLL_ALPHA_VAL(pll), config->alpha);
+>> @@ -355,14 +372,85 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>>          mask |= config->pre_div_mask;
+>>          mask |= config->post_div_mask;
+>>          mask |= config->vco_mask;
+>> +       mask |= config->alpha_en_mask;
+>> +       mask |= config->alpha_mode_mask;
+>>   
+>>          regmap_update_bits(regmap, PLL_USER_CTL(pll), mask, val);
+>>   
+>> +       /* Stromer APSS PLL does not enable LOCK_DET by default, so enable it */
+> Instead of adding these things to clk_alpha_pll_configure() can you
+> introduce another api like clk_stromer_pll_configure() that sets these
+> values unconditionally? That way we don't have to think or worry about
+> the other alpha PLLs (of which there are many).
+
+
+Sure, will introduce the new API.
+
+>
+>> +       val_u = config->status_reg_val << ALPHA_PLL_STATUS_REG_SHIFT;
+>> +       val_u |= config->lock_det;
+>> +
+>> +       mask_u = config->status_reg_mask;
+>> +       mask_u |= config->lock_det;
+>> +
+>> +       if (val_u)
+>> +               regmap_update_bits(regmap, PLL_USER_CTL_U(pll), mask_u, val_u);
+>> +
+>> +       if (config->test_ctl_val)
+>> +               regmap_write(regmap, PLL_TEST_CTL(pll), config->test_ctl_val);
+>> +
+>> +       if (config->test_ctl_hi_val)
+>> +               regmap_write(regmap, PLL_TEST_CTL_U(pll), config->test_ctl_hi_val);
+>> +
+>>          if (pll->flags & SUPPORTS_FSM_MODE)
+>>                  qcom_pll_set_fsm_mode(regmap, PLL_MODE(pll), 6, 0);
+>>   }
+>>   EXPORT_SYMBOL_GPL(clk_alpha_pll_configure);
+>>   
+>> +static int clk_alpha_pll_stromer_determine_rate(struct clk_hw *hw,
+>> +                                               struct clk_rate_request *req)
+>> +{
+>> +       u32 l;
+>> +       u64 a;
+>> +
+>> +       req->rate = alpha_pll_round_rate(req->rate, req->best_parent_rate,
+>> +                                        &l, &a, ALPHA_REG_BITWIDTH);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int clk_alpha_pll_stromer_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +                                         unsigned long prate)
+>> +{
+>> +       struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+>> +       u32 l;
+>> +       int ret;
+>> +       u64 a;
+>> +
+>> +       rate = alpha_pll_round_rate(rate, prate, &l, &a, ALPHA_REG_BITWIDTH);
+>> +
+>> +       regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
+>> +       regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
+>> +       regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll),
+>> +                    a >> ALPHA_BITWIDTH);
+>> +
+>> +       regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll),
+>> +                          PLL_ALPHA_EN, PLL_ALPHA_EN);
+>> +
+>> +       if (!clk_hw_is_enabled(hw))
+>> +               return 0;
+>> +
+>> +       /*
+>> +        * Stromer PLL supports Dynamic programming.
+>> +        * It allows the PLL frequency to be changed on-the-fly without first
+>> +        * execution of a shutdown procedure followed by a bring up procedure.
+>> +        */
+>> +
+> Drop newline above please.
+
+
+Ack.
+
+
+>
+>> +       regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_UPDATE,
+>> +                          PLL_UPDATE);
+>> +
+>> +       ret = wait_for_pll_update(pll);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       ret = wait_for_pll_enable_lock(pll);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       return 0;
+> Just use
+>
+> 	return wait_for_pll_enable_lock(pll);
+
+
+Ack.
+
+
+>
+>> +}
+>> +
+>>   static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
+>>   {
+>>          int ret;
+>> @@ -1013,6 +1101,16 @@ const struct clk_ops clk_alpha_pll_hwfsm_ops = {
+>>   };
+>>   EXPORT_SYMBOL_GPL(clk_alpha_pll_hwfsm_ops);
+>>   
+>> +const struct clk_ops clk_alpha_pll_stromer_ops = {
+>> +       .enable = clk_alpha_pll_enable,
+>> +       .disable = clk_alpha_pll_disable,
+>> +       .is_enabled = clk_alpha_pll_is_enabled,
+>> +       .recalc_rate = clk_alpha_pll_recalc_rate,
+>> +       .determine_rate = clk_alpha_pll_stromer_determine_rate,
+>> +       .set_rate = clk_alpha_pll_stromer_set_rate,
+>> +};
+>> +EXPORT_SYMBOL_GPL(clk_alpha_pll_stromer_ops);
+>> +
+>>   const struct clk_ops clk_alpha_pll_fixed_trion_ops = {
+>>          .enable = clk_trion_pll_enable,
+>>          .disable = clk_trion_pll_disable,
+>> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+>> index 2bdae362c827..1d122919e275 100644
+>> --- a/drivers/clk/qcom/clk-alpha-pll.h
+>> +++ b/drivers/clk/qcom/clk-alpha-pll.h
+>> @@ -1,5 +1,5 @@
+>>   /* SPDX-License-Identifier: GPL-2.0 */
+>> -/* Copyright (c) 2015, 2018, The Linux Foundation. All rights reserved. */
+>> +/* Copyright (c) 2015, 2018, 2021 The Linux Foundation. All rights reserved. */
+> 2022 or 2023?
+
+
+Will make it as 2023.
+
+I'm on vacation next week. I will post the V5 once I'm back.
+
+Thanks,
+
+Kathiravan T.
+
+
