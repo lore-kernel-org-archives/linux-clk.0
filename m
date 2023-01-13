@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74876C67871
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 12:13:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22909C54EBE
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 12:13:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241288AbjAMMNc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Jan 2023 07:13:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47732 "EHLO
+        id S231956AbjAMMNr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Jan 2023 07:13:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232448AbjAMMMp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 07:12:45 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F24847FEFC
-        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 04:07:14 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id d30so27916757lfv.8
-        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 04:07:14 -0800 (PST)
+        with ESMTP id S233015AbjAMMMx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 07:12:53 -0500
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4346A80628
+        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 04:07:19 -0800 (PST)
+Received: by mail-lf1-x12a.google.com with SMTP id o20so880039lfk.5
+        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 04:07:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XICYznfZYxXiiAhtbbMF4a9r4ilj5DIXP6v6rzvSdU0=;
-        b=zYBTbgr1b7V79zdj/rCoawMIWNLaVnGzAPxjzIm/SpT82IKBOKyQfxVANitULnp3w7
-         7tyBTwdL2W36fUa6GXBMN8oM8Vp/AbyjNO1VzTj53vJqQCknsafToKq9mCKmS5kb9qgA
-         YYDEoO2MHWScNkYu+adCj7L0dxsbI3c22ZaOpNHs1X1QQJMGHzzrk+o3q9GjZjXi2s9U
-         QbNlTrbtTTyXHaWU+99SrcTuWjjgz2lzngJEHZOZDTymOSliOrcR1dFeINwaFXhSgxVk
-         HbdQw9+POcC2lPMQEnHS8SMacWvAyq1hbIw8j7c/Vk/lt4l6tV9uHjdU6+m1C4xhXgQX
-         YMzQ==
+        bh=3EjEKvcykQA4uyk5ga1WESuVjINo+zSzb0UWVoBWmHk=;
+        b=BZK4NU3eyNehga7ckN9Xxqkj1ewsyCp2fpv1yOaylwV2qg/EYlwE/IA4Aloy48XHQI
+         sZ05KUCbD3imqgtQ/iTSzYpzgkMcTydvKcNp2ekzzpmjtVG7HhGpe+cxX1es56kCcHGp
+         2hiGtlcU2KY1u+EClSTZk3CFtA/F3HUNNrV6Hk/ZnF1yeMhqWz4o5Zvr1DyMYuzuI6zX
+         vtbER/pPXwKQIq7rFP0uWq1CSgtAY2gj+6TkoZJvq+E9F3mPmR3LN/0csE3oupvD/txP
+         PhZ5/hCYX8kVv+jN0EvRdA1sffk/ib+VyNeryT/y5zaiWgOC4rby0gJ0I0OPZMp2vx7j
+         VtZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XICYznfZYxXiiAhtbbMF4a9r4ilj5DIXP6v6rzvSdU0=;
-        b=GFZrkjb9jsFkbelBUE66wsGwa56/JFVYxel0ek8e/zsNaAHBXUU9rZ/Es+gCL09JE9
-         eYjnfeihvSeeQ4uQIhAIhWYxb8tcaKKjWBHKXQUIoNG978FBNYwGylLHqj20/p/QCtVr
-         uP86Qqw03tdVOnrSbicC8EIyUA9/MzsSFBNE1H8nKXJlFby5EIwVPy6wciS7oQcwxLrM
-         /xAfOqrhFk+AzG9F7RwH/lutpD/VyDYQM66+koetBbUDHW4Qo3mEGBPisH9oXW0iSlJn
-         HVIgf/eqwSoyLU5MeeWtDq4jvNHBryiK6u4RG6sbH+/qmBZHTnHSUOVkYSM9icqd8idj
-         FkXQ==
-X-Gm-Message-State: AFqh2kqlJskvSkHCd7wLtjb4AoqmK4lAqpHI/Q9KOZ3vpjMT3O0WzE3h
-        fRQWGCxlcTWAkgcfuezmRN25aw==
-X-Google-Smtp-Source: AMrXdXsrTZC03Rk0/BNnWvhU3wTUb68QUs+BvJd0oC6hGKrmErSiI7mxwZ61cGkgMCxMXL8rdjjv+g==
-X-Received: by 2002:ac2:4c4a:0:b0:4cc:a19c:1856 with SMTP id o10-20020ac24c4a000000b004cca19c1856mr2097911lfk.61.1673611633286;
-        Fri, 13 Jan 2023 04:07:13 -0800 (PST)
+        bh=3EjEKvcykQA4uyk5ga1WESuVjINo+zSzb0UWVoBWmHk=;
+        b=ZBeCJ9M5nqPDLRgpKU+ts3d1xrxmddo+vULFG6rv9eX2Fukt806kaB4AR4wWMrOkCn
+         NOSbMJjsY5GWEyP/Onp4kgnbEgkZIkuXt2g7c2+AXsOjZ6a/3nQWZhJPl4Nmz79+CSvp
+         fJ0JzOaegcB5vYV1XzAArBym9rCZ9B4oyZeaaCRN+FUgi2MaomDK2fXR/7iQNsYv/qRn
+         9sID2sCovNdp+O+afja+jC9/p4AQIOAGebsCjJjYLIa9DoKBZWj0crzL7atm2PtvMjoO
+         hLYh1Ix3/pqXynm2q1hbO8z6jqkRCWGd0VO5ZQvIyNASmDqfKwBici/ZQj3UyuClUxIC
+         aHOg==
+X-Gm-Message-State: AFqh2krIa4oTQFZ7D63PvSVFji3l7VCes3MghNkqk0GsQ5nsAYXPu1CY
+        ZWTzRrbjZaMZBL29IVVmKd+QPQ==
+X-Google-Smtp-Source: AMrXdXvNNEWDF8QUVrckhJNBTbwfedEJq5e5lyrtj3Yb0fZDwYg+x3gwbklxezUkUHg67uW5e8tj5w==
+X-Received: by 2002:a05:6512:3191:b0:4d0:90f0:f81f with SMTP id i17-20020a056512319100b004d090f0f81fmr723771lfe.31.1673611638820;
+        Fri, 13 Jan 2023 04:07:18 -0800 (PST)
 Received: from eriador.lumag.spb.ru ([188.170.82.205])
-        by smtp.gmail.com with ESMTPSA id i7-20020ac25227000000b004ac6a444b26sm3806290lfl.141.2023.01.13.04.07.11
+        by smtp.gmail.com with ESMTPSA id i7-20020ac25227000000b004ac6a444b26sm3806290lfl.141.2023.01.13.04.07.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jan 2023 04:07:12 -0800 (PST)
+        Fri, 13 Jan 2023 04:07:18 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -60,9 +60,9 @@ To:     Andy Gross <agross@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v3 08/14] clk: qcom: cpu-8996: setup PLLs before registering clocks
-Date:   Fri, 13 Jan 2023 14:05:38 +0200
-Message-Id: <20230113120544.59320-9-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v3 11/14] clk: qcom: cpu-8996: fix ACD initialization
+Date:   Fri, 13 Jan 2023 14:05:41 +0200
+Message-Id: <20230113120544.59320-12-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230113120544.59320-1-dmitry.baryshkov@linaro.org>
 References: <20230113120544.59320-1-dmitry.baryshkov@linaro.org>
@@ -72,44 +72,60 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Setup all PLLs before registering clocks in the common clock framework.
-This ensures that the clocks are not accessed before being setup in the
-known way and that the CCF is in sync with the actual HW programming.
+The vendor kernel applies different order while programming SSSCTL and
+L2ACDCR registers on power and performance clusters. However it was
+demonstrated that doing this upstream results in the board reset. Make
+both clusters use the same sequence, which fixes the reset.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/clk-cpu-8996.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/clk/qcom/clk-cpu-8996.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-index ee7e18b37832..e390f4aadff1 100644
+index 07d59bca741e..c471c6836c63 100644
 --- a/drivers/clk/qcom/clk-cpu-8996.c
 +++ b/drivers/clk/qcom/clk-cpu-8996.c
-@@ -430,6 +430,11 @@ static int qcom_cpu_clk_msm8996_register_clks(struct device *dev,
- {
- 	int i, ret;
+@@ -475,9 +475,9 @@ static int qcom_cpu_clk_msm8996_register_clks(struct device *dev,
+ 	return ret;
+ }
  
-+	clk_alpha_pll_configure(&pwrcl_pll, regmap, &hfpll_config);
-+	clk_alpha_pll_configure(&perfcl_pll, regmap, &hfpll_config);
-+	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
-+	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
-+
- 	for (i = 0; i < ARRAY_SIZE(cpu_msm8996_hw_clks); i++) {
- 		ret = devm_clk_hw_register(dev, cpu_msm8996_hw_clks[i]);
- 		if (ret)
-@@ -442,11 +447,6 @@ static int qcom_cpu_clk_msm8996_register_clks(struct device *dev,
- 			return ret;
- 	}
+-#define CPU_AFINITY_MASK 0xFFF
+-#define PWRCL_CPU_REG_MASK 0x3
+-#define PERFCL_CPU_REG_MASK 0x103
++#define CPU_CLUSTER_AFFINITY_MASK 0xf00
++#define PWRCL_AFFINITY_MASK 0x000
++#define PERFCL_AFFINITY_MASK 0x100
  
--	clk_alpha_pll_configure(&pwrcl_pll, regmap, &hfpll_config);
--	clk_alpha_pll_configure(&perfcl_pll, regmap, &hfpll_config);
--	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
--	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
+ #define L2ACDCR_REG 0x580ULL
+ #define L2ACDTD_REG 0x581ULL
+@@ -498,21 +498,17 @@ static void qcom_cpu_clk_msm8996_acd_init(struct regmap *regmap)
+ 	if (val == 0x00006a11)
+ 		goto out;
+ 
+-	hwid = read_cpuid_mpidr() & CPU_AFINITY_MASK;
 -
- 	/* Enable alt PLLs */
- 	clk_prepare_enable(pwrcl_alt_pll.clkr.hw.clk);
- 	clk_prepare_enable(perfcl_alt_pll.clkr.hw.clk);
+ 	kryo_l2_set_indirect_reg(L2ACDTD_REG, 0x00006a11);
+ 	kryo_l2_set_indirect_reg(L2ACDDVMRC_REG, 0x000e0f0f);
+ 	kryo_l2_set_indirect_reg(L2ACDSSCR_REG, 0x00000601);
+ 
+-	if (PWRCL_CPU_REG_MASK == (hwid | PWRCL_CPU_REG_MASK)) {
+-		regmap_write(regmap, PWRCL_REG_OFFSET + SSSCTL_OFFSET, 0xf);
+-		kryo_l2_set_indirect_reg(L2ACDCR_REG, 0x002c5ffd);
+-	}
++	kryo_l2_set_indirect_reg(L2ACDCR_REG, 0x002c5ffd);
+ 
+-	if (PERFCL_CPU_REG_MASK == (hwid | PERFCL_CPU_REG_MASK)) {
+-		kryo_l2_set_indirect_reg(L2ACDCR_REG, 0x002c5ffd);
++	hwid = read_cpuid_mpidr();
++	if ((hwid & CPU_CLUSTER_AFFINITY_MASK) == PWRCL_AFFINITY_MASK)
++		regmap_write(regmap, PWRCL_REG_OFFSET + SSSCTL_OFFSET, 0xf);
++	else
+ 		regmap_write(regmap, PERFCL_REG_OFFSET + SSSCTL_OFFSET, 0xf);
+-	}
+ 
+ out:
+ 	spin_unlock_irqrestore(&qcom_clk_acd_lock, flags);
 -- 
 2.39.0
 
