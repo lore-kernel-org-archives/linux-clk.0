@@ -2,93 +2,94 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8140FC61DB3
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 15:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B5D8C54EBE
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 15:09:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229635AbjAMPJ2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Jan 2023 10:09:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32900 "EHLO
+        id S230071AbjAMPJt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Jan 2023 10:09:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229873AbjAMPH5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 10:07:57 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89D2891505
-        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 06:59:03 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id ud5so52963979ejc.4
-        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 06:59:03 -0800 (PST)
+        with ESMTP id S230393AbjAMPJ0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 10:09:26 -0500
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E0B7A41EB
+        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 07:00:11 -0800 (PST)
+Received: by mail-ej1-x636.google.com with SMTP id u19so52877486ejm.8
+        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 07:00:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XU/dHO8DVmGPpqkb7r01X1pAdFG84fFdf1WtxGiiHvQ=;
-        b=ARnoDLgerC10W1udjRPEt/GqBBzqwMsZyw7cRxy9pAmrdaWhWipPNrxDp8DBWRpYG+
-         Iea+vxk4XoiUXFG//j9I13kfV+No6IlbMzurvbDOSa8gJIJ7jVIhkQwtRNZC2GtD/WQl
-         79tRkeKdEqvkoIvDjk7Eg6qqOwqxqDhh3dkJHf/2TMxpGesmbtrczYR68uFVNXqOd7Mg
-         9vvQ/zaF+WdZCC567si2DOhLTihqGrCKEIJ/GpoR+zyrxB4HLBzDz28JUWXMonFTufTi
-         tzrEcMZoHzRylV3/dN2XRl+t+JSa6Mg/8+Cn18L2q7Lqr8VfmriCR0tI1KaRlhtW1+L0
-         nZAg==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nS91eXlAnjiMj88u7y4etQkD7FYD30yOBtDOqeWl1RI=;
+        b=wOuyW6N2Mx8g42Uoi9tdjcu0uUhDMRGAD+7VTa5uVk28bs1w/TWjH0vnwMKGizov80
+         BRFj04/TtRVA1B40ip1jbwcacBvlGIiudiPjAyqSDXRoy5LnMB2R2vQ9XBmAsJ6TWqNX
+         pX3SPoTDyGCOAOCAVo9QZGejRZAlmpALqnmF/DOajsqsceHhsdJ1cmovM+IRoKyV1rdt
+         4XPEgHX7YVcw+TvttKv7d3maWBzXwk/5HFAdr7j47slxAy/kmQtTswJos+zKyCehDyek
+         e/v0qxEn/vnfg7FX3bgjAEzG8V+s8MylLEfWi4GP5swCa8ffLg6MErP7ovLemEQJYxuO
+         cJWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XU/dHO8DVmGPpqkb7r01X1pAdFG84fFdf1WtxGiiHvQ=;
-        b=e4wcCCErbBSN1rtLoCKeOTa8Kaa7968U6xjM62VydnYlj7XeY9JSeojWsdbNaBxyvC
-         Snbj66tNdAKdpRR19z2aQYm7dGouRAMk6KvwWo469ISNeXEjFEzGtoO8he2EFxpENRMk
-         wDrIFr/IY10b939WLQkpatY4u/Nimdn5Hx20N/9tIkXrAAsfixPhrlCzq1mYib3t6pJZ
-         LVyL8jQX5hEfOxD/XzHMZlgLCOuJYrMqB/OglEKehM0xSUX1m8wP1OEQQGwaUyynkFEQ
-         hupAVrfeg6jBE9C5aVNRLLkmbT3/QPg4NRrQ8N0kmNg+wxMQAyiWS2mbNfimlE8xUfHB
-         XWgQ==
-X-Gm-Message-State: AFqh2kpyAy5qTj6UYS8VTADr2SL/n0kaabtxdIQBlmzCGhYnurfgPNb2
-        idkZ39g64rhMkvrtN80kYFBKvw==
-X-Google-Smtp-Source: AMrXdXvQMbq4TsL6YlyMhhJSIvA4tsjszzryU1CY+N0v6fsjTiGu3umfQ6d6YPAX7S+tZ+ikL7UVbw==
-X-Received: by 2002:a17:906:2813:b0:7c0:f9ef:23a2 with SMTP id r19-20020a170906281300b007c0f9ef23a2mr84066794ejc.30.1673621942178;
-        Fri, 13 Jan 2023 06:59:02 -0800 (PST)
-Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id f1-20020a17090631c100b007aea1dc1840sm8621468ejf.111.2023.01.13.06.59.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jan 2023 06:59:01 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: clock: qcom,a53pll: drop operating-points-v2
-Date:   Fri, 13 Jan 2023 15:58:59 +0100
-Message-Id: <20230113145859.82868-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nS91eXlAnjiMj88u7y4etQkD7FYD30yOBtDOqeWl1RI=;
+        b=2U1K7ZUO3sRX3JPydr7UBehhGrq3/r+bzHn5eyYgypaja5D5TG0DtkRqXm5ac4mL84
+         rn79YISm3NOeppLkXjJnJt0kiOZ3xHU4zxJdHqr2WGLDAj/fdvcBio15wL40wf/YF6Ag
+         fPsVdiRNlWzNV1Jpt3YRrwLzoQc/4zU0tOTutXVnnDeGFAeEKujvoN9ALeBgguBvHvcz
+         mr7O1eiXQqaYbd19150GO8XfimIWdU9kW241DJ2heEF1UibJTd3FZ2h3ijEaybGe0OAD
+         sdclTXX7azThiNTWU/9nmzN89mVV3HCfD7Nr8NsaO5tkU2fRJaE8SayXAuiuvhKXnbLk
+         Fmow==
+X-Gm-Message-State: AFqh2kqaKDHbtZS+nDu1mlTNBetyZsrqlX2jmYEujtwAnfC9NCxpPNWn
+        RBbXB6xXVC6tx0+BDGljnZdWiA==
+X-Google-Smtp-Source: AMrXdXsWX8HUJt6uHUEBIf4LBeWwMEFhTHD/ZQm32MweHVaxizG2md5tcw/+0pa5J+VC2VZlCfmmYQ==
+X-Received: by 2002:a17:907:2a57:b0:84d:2fdf:a41b with SMTP id fe23-20020a1709072a5700b0084d2fdfa41bmr16430423ejc.50.1673622010042;
+        Fri, 13 Jan 2023 07:00:10 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id f22-20020a17090631d600b00779cde476e4sm8586330ejf.62.2023.01.13.07.00.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Jan 2023 07:00:09 -0800 (PST)
+Message-ID: <117ff817-196d-6be7-01b7-7f2ba9111daf@linaro.org>
+Date:   Fri, 13 Jan 2023 16:00:07 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH 5/6] dt-bindings: mailbox: Add compatible for IPQ9574
+Content-Language: en-US
+To:     devi priya <quic_devipriy@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, jassisinghbrar@gmail.com,
+        catalin.marinas@arm.com, will@kernel.org, shawnguo@kernel.org,
+        arnd@arndb.de, marcel.ziswiler@toradex.com,
+        dmitry.baryshkov@linaro.org, nfraprado@collabora.com,
+        broonie@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
+        quic_poovendh@quicinc.com
+References: <20230113143647.14961-1-quic_devipriy@quicinc.com>
+ <20230113143647.14961-6-quic_devipriy@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230113143647.14961-6-quic_devipriy@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The CPU PLL clock node does not use OPP tables (neither driver).
+On 13/01/2023 15:36, devi priya wrote:
+> Add the mailbox compatible string for IPQ9574 SoC
+> 
+> Co-developed-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+> ---
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/clock/qcom,a53pll.yaml | 2 --
- 1 file changed, 2 deletions(-)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml b/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
-index 525ebaa93c85..6bf70af948d7 100644
---- a/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
-@@ -35,8 +35,6 @@ properties:
-     items:
-       - const: xo
- 
--  operating-points-v2: true
--
- required:
-   - compatible
-   - reg
--- 
-2.34.1
+Best regards,
+Krzysztof
 
