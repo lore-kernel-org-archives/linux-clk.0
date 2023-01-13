@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B467C61DB3
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 15:19:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D24AC54EBD
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 15:20:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229666AbjAMPT4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Jan 2023 10:19:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37744 "EHLO
+        id S230018AbjAMPUN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Jan 2023 10:20:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229683AbjAMPTb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 10:19:31 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEE3D88A0A
-        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 07:12:17 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id f34so33534320lfv.10
-        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 07:12:17 -0800 (PST)
+        with ESMTP id S229958AbjAMPTo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 10:19:44 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18BD2D66
+        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 07:13:35 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id g13so33572077lfv.7
+        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 07:13:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=BIY98kPJHyijXd7ZkHV2FnXqne7Lt3cNAo7nyQqbLCQ=;
-        b=y46y+lz3GKAUel7jfTZ1Si4H+C1iKfJ8kEkvGHVZ+5IwWxYhiR+qf6kV8uSSafmoNE
-         bwAE3PLgQ95iVV7nAVjDHuN1ogQt8pc0qD84B/t12k/EUjvHnK90HA+5lGXjzh/gCoC+
-         yCAiOqj4tx1U8hgTPcLImYZS/mJrhpkB5Jd/7cevlG7ui92ngjBbKcjokyWewyl1BxjB
-         svaP+NUcKIuTBr6Ol1EUBSiILFfeSTA3IOBwMNjQkS2k3GRNJgJ9K0CtSwKj60lGT0s0
-         88vdM8Ey6PL08n6CtDm4ewPLl+EvxAJ0Dc3wbSulIjrXTtVs1WKq6H0AO2yo35aEVFsO
-         zUww==
+        bh=zUYGeT36rdUoWdmbRVQkbA4vrtGHPM/cta2o4YS1FyY=;
+        b=uPDu9VmAG8xj/S26qpUk1CnS0UmsreGp/NEqPwXtGnKwecwZ2Ctbm5Yp0ixsx3z6hs
+         jaJlNR/j/ohUPAx9Uxj5sJ6oxTcPVcFt5MLC7tckK6YRicxHWYB9fk1spCyGSNklIkS7
+         nR5/dS1/wCjhHDY/cma/xgxqf6ZIzdGOKDBSr+4YuRmwzjei2vO33aTbIADbVu0OVDdV
+         myAXOkPG0Udo86lU2BZbm0IhL/dw0f3i6SlIxebB8vlNhShjjIeF7G1CPu/SPF4pk+c6
+         /W7dBB497Sjy2JKRBD2JfHtEcYxPYDOB8vi9509zoFvngAONQ9BLdZl4+5U+hL6PBvtV
+         mgzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BIY98kPJHyijXd7ZkHV2FnXqne7Lt3cNAo7nyQqbLCQ=;
-        b=f/ayQ4MBUw2TCVmbbN2Ly9jv64VQCb7O/uNBInGK6eMI9jT/hls+KoiLfQDJCS8JJj
-         Zpf7gnrh7vPjP9hJxFnBX15e/p3T7SQptMK92L1VpSkvM5l+mFhrpKJGFC3nmYh4stFX
-         eSWDJIT4YTStfnMFQQjxM097MxabI4gw64HYCMBZBIyMlgeD/XAxGm+qngL1khU6myzz
-         66LYjw3dpbl8WbgebIa13U/zucLMIf2GyXKBxvmgfsZgZ3CaTj+qB5NJq5tPIRAdkSGM
-         hK67B6pUon5MRPvDUOMkxyUJM15Rn0cZDxw/OqqStEd7W9kytkaoAVHAkF2gRHZdaCyy
-         n8OA==
-X-Gm-Message-State: AFqh2koRAdF+g6GSY6+JCWazynYREEfK0muU1AaPOKUfNNY6HJbjRG1L
-        e0NWd6LULpGLqSErMoigmKpOIw==
-X-Google-Smtp-Source: AMrXdXsEfUe+AqYQC1WC5x69hG4UhSrgJ8qZxilHr6zseZ/JQN5sQgNY2iXbwoA3BPEANtllwSEHAA==
-X-Received: by 2002:ac2:5216:0:b0:4cb:13d7:77e2 with SMTP id a22-20020ac25216000000b004cb13d777e2mr37380lfl.26.1673622736207;
-        Fri, 13 Jan 2023 07:12:16 -0800 (PST)
+        bh=zUYGeT36rdUoWdmbRVQkbA4vrtGHPM/cta2o4YS1FyY=;
+        b=JqypDta4wN3tNTUdBnvD703UI1scGy8v2vByWTXSCdfIZw1/BKCEIE2LBbBZIZrUEB
+         dAEiQZpxSRgAJW80XCBUJAV5WpbsJb8sjbedvPBwHTX0uZanP4ehM8X9lryW1HemLlNG
+         19hO4/jDREpPq4rksTYdBvCVb4GHA760wB+dxly290d+iBl+mIDK56fy0iqbPNkYVFSk
+         Nvv+pg0rzHsEH9hzEPW02UpvA7d5Ngu4SK9Utc927RCJIZo00ggMY5a3o7ZmqWRIpMqx
+         IrfmfRGA/ePElK9K3sphAwL938D0nYjAkBXPx9gpCUBKKVXr53+hlvz3i/itIKP1E52R
+         6+CQ==
+X-Gm-Message-State: AFqh2kpiD75d+6g78Ra0Sn2VzmcvlfP3zE5ijNQnPSWQ3ZduKDz7wCVD
+        qUonFj3BWOUTNA/i1TokvRQDsQ==
+X-Google-Smtp-Source: AMrXdXsNFSB4i5fU5BCEY1bOU1s3DzBggRjE5V04XQ1OXzn1osBJ2odaHVEsTW5dMNL9bNp01Oa7Ng==
+X-Received: by 2002:a05:6512:b23:b0:4cb:d3:3b99 with SMTP id w35-20020a0565120b2300b004cb00d33b99mr22731307lfu.36.1673622813471;
+        Fri, 13 Jan 2023 07:13:33 -0800 (PST)
 Received: from [192.168.1.101] (abym53.neoplus.adsl.tpnet.pl. [83.9.32.53])
-        by smtp.gmail.com with ESMTPSA id i4-20020ac25d24000000b004b578e52d81sm3869961lfb.176.2023.01.13.07.12.12
+        by smtp.gmail.com with ESMTPSA id f7-20020ac25327000000b004b4ea0f4e25sm3892681lfh.301.2023.01.13.07.13.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jan 2023 07:12:15 -0800 (PST)
-Message-ID: <9157d3c9-cca2-8694-ffcb-6cafa7b43d84@linaro.org>
-Date:   Fri, 13 Jan 2023 16:12:11 +0100
+        Fri, 13 Jan 2023 07:13:33 -0800 (PST)
+Message-ID: <83718846-1c51-d102-d11a-a14860be8454@linaro.org>
+Date:   Fri, 13 Jan 2023 16:13:30 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH 2/6] clk: qcom: ipq9574: Enable APSS clock driver
+Subject: Re: [PATCH 5/6] dt-bindings: mailbox: Add compatible for IPQ9574
 Content-Language: en-US
 To:     devi priya <quic_devipriy@quicinc.com>, agross@kernel.org,
         andersson@kernel.org, robh+dt@kernel.org,
@@ -71,9 +71,9 @@ Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
         quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
         quic_poovendh@quicinc.com
 References: <20230113143647.14961-1-quic_devipriy@quicinc.com>
- <20230113143647.14961-3-quic_devipriy@quicinc.com>
+ <20230113143647.14961-6-quic_devipriy@quicinc.com>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230113143647.14961-3-quic_devipriy@quicinc.com>
+In-Reply-To: <20230113143647.14961-6-quic_devipriy@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -83,91 +83,45 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 13.01.2023 15:36, devi priya wrote:
-> Enable APSS clock driver for IPQ9574 based devices
-Please be more descriptive of what you're doing and why
-you're doing it.
-
-clk: qcom: apss-ipq-pll: Add IPQ9574 support
-
-Add IPQ9574-specific APSS PLL configuration values.
-
-
-mailbox: qcom-apcs-ipc: Add IPQ9574 support
-
-Add a compatible for IPQ9574's mailbox. The SoC, similarly
-to other IPQs uses the APSS IPQ PLL driver for CPU scaling.
-
-
+> Add the mailbox compatible string for IPQ9574 SoC
 > 
 > Co-developed-by: Praveenkumar I <quic_ipkumar@quicinc.com>
 > Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
 > Signed-off-by: devi priya <quic_devipriy@quicinc.com>
 > ---
->  drivers/clk/qcom/apss-ipq-pll.c         | 13 +++++++++++++
->  drivers/mailbox/qcom-apcs-ipc-mailbox.c |  5 +++++
->  2 files changed, 18 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/apss-ipq-pll.c b/drivers/clk/qcom/apss-ipq-pll.c
-> index a5aea27eb867..dd0c01bf5a98 100644
-> --- a/drivers/clk/qcom/apss-ipq-pll.c
-> +++ b/drivers/clk/qcom/apss-ipq-pll.c
-> @@ -61,6 +61,18 @@ static const struct alpha_pll_config ipq8074_pll_config = {
->  	.test_ctl_hi_val = 0x4000,
->  };
->  
-> +static const struct alpha_pll_config ipq9574_pll_config = {
-> +	.l = 0x3b,
-> +	.config_ctl_val = 0x200D4828,
-Lowercase hex, please.
-
-> +	.config_ctl_hi_val = 0x6,
-> +	.early_output_mask = BIT(3),
-> +	.aux2_output_mask = BIT(2),
-> +	.aux_output_mask = BIT(1),
-> +	.main_output_mask = BIT(0),
-> +	.test_ctl_val = 0x0,
-> +	.test_ctl_hi_val = 0x4000,
-> +};
-> +
->  static const struct regmap_config ipq_pll_regmap_config = {
->  	.reg_bits		= 32,
->  	.reg_stride		= 4,
-> @@ -102,6 +114,7 @@ static int apss_ipq_pll_probe(struct platform_device *pdev)
->  static const struct of_device_id apss_ipq_pll_match_table[] = {
->  	{ .compatible = "qcom,ipq6018-a53pll", .data = &ipq6018_pll_config },
->  	{ .compatible = "qcom,ipq8074-a53pll", .data = &ipq8074_pll_config },
-> +	{ .compatible = "qcom,ipq9574-a73pll", .data = &ipq9574_pll_config },
->  	{ }
->  };
-These are very small changes, so maybe they'll pass, but generally
-it's preferred to split changes per-file if possible (and here it is
-possible if you change the APSS PLL driver first and then bind it in
-APCS mbox afterwards).
-
->  MODULE_DEVICE_TABLE(of, apss_ipq_pll_match_table);
-> diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> index 0e9f9cba8668..90e74f9d7cb3 100644
-> --- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> +++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> @@ -33,6 +33,10 @@ static const struct qcom_apcs_ipc_data ipq6018_apcs_data = {
->  	.offset = 8, .clk_name = "qcom,apss-ipq6018-clk"
->  };
->  
-> +static const struct qcom_apcs_ipc_data ipq9574_apcs_data = {
-> +	.offset = 8, .clk_name = "qcom,apss-ipq6018-clk"
-> +};
-Please reuse ipq6018_apcs_data, it's identical.
+Binding changes should come before driver changes, so that
+you're not introducing an "illegal" compatible and only
+"legalize" it later - please reorder the patch.
 
 Konrad
-> +
->  static const struct qcom_apcs_ipc_data msm8916_apcs_data = {
->  	.offset = 8, .clk_name = "qcom-apcs-msm8916-clk"
->  };
-> @@ -143,6 +147,7 @@ static int qcom_apcs_ipc_remove(struct platform_device *pdev)
->  static const struct of_device_id qcom_apcs_ipc_of_match[] = {
->  	{ .compatible = "qcom,ipq6018-apcs-apps-global", .data = &ipq6018_apcs_data },
->  	{ .compatible = "qcom,ipq8074-apcs-apps-global", .data = &ipq6018_apcs_data },
-> +	{ .compatible = "qcom,ipq9574-apcs-apps-global", .data = &ipq9574_apcs_data },
->  	{ .compatible = "qcom,msm8916-apcs-kpss-global", .data = &msm8916_apcs_data },
->  	{ .compatible = "qcom,msm8939-apcs-kpss-global", .data = &msm8916_apcs_data },
->  	{ .compatible = "qcom,msm8953-apcs-kpss-global", .data = &msm8994_apcs_data },
+>  .../devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml     | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
+> index 943f9472ae10..9e076758a58a 100644
+> --- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
+> +++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
+> @@ -20,6 +20,7 @@ properties:
+>            - enum:
+>                - qcom,ipq6018-apcs-apps-global
+>                - qcom,ipq8074-apcs-apps-global
+> +              - qcom,ipq9574-apcs-apps-global
+>                - qcom,msm8976-apcs-kpss-global
+>                - qcom,msm8996-apcs-hmss-global
+>                - qcom,msm8998-apcs-hmss-global
+> @@ -113,6 +114,7 @@ allOf:
+>            enum:
+>              - qcom,ipq6018-apcs-apps-global
+>              - qcom,ipq8074-apcs-apps-global
+> +            - qcom,ipq9574-apcs-apps-global
+>      then:
+>        properties:
+>          clocks:
+> @@ -129,6 +131,7 @@ allOf:
+>            enum:
+>              - qcom,ipq6018-apcs-apps-global
+>              - qcom,ipq8074-apcs-apps-global
+> +            - qcom,ipq9574-apcs-apps-global
+>      then:
+>        properties:
+>          '#clock-cells':
