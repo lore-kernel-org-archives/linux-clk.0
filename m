@@ -2,72 +2,72 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA363C67871
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 12:29:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFFEC61DB3
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 13:20:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232955AbjAMM3R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Jan 2023 07:29:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58352 "EHLO
+        id S241856AbjAMNUJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Jan 2023 08:20:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241221AbjAMM2D (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 07:28:03 -0500
+        with ESMTP id S241875AbjAMNTi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 08:19:38 -0500
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AFCA1B9F3;
-        Fri, 13 Jan 2023 04:25:32 -0800 (PST)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30DAbvXY003163;
-        Fri, 13 Jan 2023 12:24:41 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F1E3103;
+        Fri, 13 Jan 2023 05:09:51 -0800 (PST)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30DBlBka032516;
+        Fri, 13 Jan 2023 13:09:01 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=FLKDNmDTs22NYoQdmcaDLbxot9m4TNetlGOYrtzw2mQ=;
- b=nnJ0sV30so+/JEIQKgP/kW0G9rFAYGXq2FjM6Dd5OrtbHbuusoDFphJASUVUiQceWpe3
- IyMbPGjwM2bp1W9FvJYVwYJupYnFaFmM8slPpZ2PDQYStzebzMTElUQ1lzwAW71bjPkC
- u8PSPYuTRgvBhHIHOiuFHyKmdabTV+l1rl5vpMVz1Jh1pxxXhajcog70JGMNMATjigq5
- F4/1TRvGHhG961eWlyaSLx/wtr7oYCZHbEBTqv3KsoPr8RWrORF1EPtSYROMgOAFgHNw
- o/DSaOQW7cgcrmBp1n3b8rZ3J80bAFKcNPGtG2BFvk6SJoN6ASERYbGyfBqERZaRM7cN qA== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n351f8j90-1
+ bh=Pcu7qTXYqJaD0IKb069b6gojgn9RycIXtUdyV8gwfqs=;
+ b=jbXxzjDLc8UvPo+TzSLsh5rg/bOG0nvPXi2cuVYXa8dvwMt3vzSol4VuHC5jpNqS5gbY
+ zqzc99QbpkaHoHIaZBLD7a5+J6ywFAzRHUr6og18+gyp/mG1JN0dbG8g0uaM+hf+WZ5u
+ tcc/V5wdkHwhnPTGRqTbaOSYoYQx0ZALZRmWCYyi/dkBm+qGDxoEtjv6VRJz59QJqRf9
+ d5qs4V9K6GujwQWtMG9zaEwyv/A2rUpv4nHzgaWuWVGhi7yAC/Zj++qGPOKOV/1+R5Zi
+ RgN0CEHqh3mZaW9AlindClvymxg/xft6T78eatQ72rjoddFu8xrm6qKWwJdEG6VfgABI qQ== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n32wu90wj-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 13 Jan 2023 12:24:41 +0000
+        Fri, 13 Jan 2023 13:09:00 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30DCOetc001712
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30DD8uvv007975
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 13 Jan 2023 12:24:40 GMT
+        Fri, 13 Jan 2023 13:08:56 GMT
 Received: from [10.50.57.3] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Fri, 13 Jan
- 2023 04:24:31 -0800
-Message-ID: <90484f63-bd72-f3a4-b1c5-d3830c2245d0@quicinc.com>
-Date:   Fri, 13 Jan 2023 17:54:22 +0530
+ 2023 05:08:48 -0800
+Message-ID: <bd52102b-6b01-2659-09ec-238463b0eb82@quicinc.com>
+Date:   Fri, 13 Jan 2023 18:38:45 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.2
 Subject: Re: [PATCH 1/7] dt-bindings: arm64: ipq9574: Add binding descriptions
  for clock and reset
-To:     Rob Herring <robh@kernel.org>
-CC:     <tdas@codeaurora.org>, <quic_kathirav@quicinc.com>,
-        <dmitry.baryshkov@linaro.org>, <quic_gokulsri@quicinc.com>,
-        <nfraprado@collabora.com>, <linux-arm-msm@vger.kernel.org>,
-        <quic_poovendh@quicinc.com>, <robh+dt@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <andersson@kernel.org>, <arnd@arndb.de>, <sboyd@kernel.org>,
-        <broonie@kernel.org>, <will@kernel.org>,
-        <quic_sjaganat@quicinc.com>, <krzysztof.kozlowski+dt@linaro.org>,
-        <linux-clk@vger.kernel.org>, <quic_srichara@quicinc.com>,
-        <linux-gpio@vger.kernel.org>, <p.zabel@pengutronix.de>,
-        <catalin.marinas@arm.com>, <marcel.ziswiler@toradex.com>,
-        <linus.walleij@linaro.org>, <konrad.dybcio@linaro.org>,
-        <mturquette@baylibre.com>, <shawnguo@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linus.walleij@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <p.zabel@pengutronix.de>, <shawnguo@kernel.org>, <arnd@arndb.de>,
+        <marcel.ziswiler@toradex.com>, <dmitry.baryshkov@linaro.org>,
+        <nfraprado@collabora.com>, <broonie@kernel.org>,
+        <tdas@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
         <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
-        <agross@kernel.org>
+        <quic_poovendh@quicinc.com>
 References: <20230110121316.24892-1-quic_devipriy@quicinc.com>
  <20230110121316.24892-2-quic_devipriy@quicinc.com>
- <167335661700.1967953.6789968437095688240.robh@kernel.org>
-Content-Language: en-US
+ <603f9c39-3e36-bb44-2305-1d37fe033dd5@linaro.org>
 From:   Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <167335661700.1967953.6789968437095688240.robh@kernel.org>
+In-Reply-To: <603f9c39-3e36-bb44-2305-1d37fe033dd5@linaro.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
@@ -75,27 +75,31 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: EDSnF2RVtGWsYcqRMoJXvr-AVfLhZTKG
-X-Proofpoint-ORIG-GUID: EDSnF2RVtGWsYcqRMoJXvr-AVfLhZTKG
+X-Proofpoint-GUID: 3qn-0KVstC7QwFw_lMeGphGaiX0YT-GO
+X-Proofpoint-ORIG-GUID: 3qn-0KVstC7QwFw_lMeGphGaiX0YT-GO
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.923,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-01-13_05,2023-01-13_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- clxscore=1011 impostorscore=0 mlxlogscore=999 spamscore=0
- lowpriorityscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
- mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301130083
+ definitions=2023-01-13_06,2023-01-13_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ mlxlogscore=999 spamscore=0 clxscore=1011 lowpriorityscore=0
+ suspectscore=0 impostorscore=0 priorityscore=1501 mlxscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301130088
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 1/10/2023 6:59 PM, Rob Herring wrote:
-> 
-> On Tue, 10 Jan 2023 17:43:10 +0530, devi priya wrote:
+On 1/11/2023 3:06 PM, Krzysztof Kozlowski wrote:
+> On 10/01/2023 13:13, devi priya wrote:
 >> Adding support for the global clock controller found on
 >> IPQ9574 based devices
+> 
+> Subject: drop second/last, redundant "bindings descriptions for". The
+> "dt-bindings" prefix is already stating that these are bindings.
+Sure, will do
+> 
 >>
 >> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
 >> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
@@ -109,46 +113,74 @@ On 1/10/2023 6:59 PM, Rob Herring wrote:
 >>   create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq9574.h
 >>   create mode 100644 include/dt-bindings/reset/qcom,gcc-ipq9574.h
 >>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+>> index 2e8acca64af1..cc563d640336 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+>> @@ -18,6 +18,8 @@ description: |
+>>       include/dt-bindings/clock/qcom,gcc-ipq4019.h
+>>       include/dt-bindings/clock/qcom,gcc-ipq6018.h
+>>       include/dt-bindings/reset/qcom,gcc-ipq6018.h
+>> +    include/dt-bindings/clock/qcom,gcc-ipq9574.h
+>> +    include/dt-bindings/reset/qcom,gcc-ipq9574.h
+>>       include/dt-bindings/clock/qcom,gcc-msm8953.h
+>>       include/dt-bindings/clock/qcom,gcc-mdm9607.h
+>>       include/dt-bindings/clock/qcom,gcc-mdm9615.h
+>> @@ -34,6 +36,8 @@ properties:
+>>         - qcom,gcc-mdm9607
+>>         - qcom,gcc-msm8953
+>>         - qcom,gcc-mdm9615
+>> +      - qcom,gcc-ipq9574
 > 
-> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> Incorrect order but anyway let's switch to new naming style just like
+> SM8550 and SA8775p.
+okay
 > 
-> yamllint warnings/errors:
+>> +
 > 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,sm8550-gcc.example.dtb: clock-controller@100000: clocks: [[4294967295, 0], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295, 0], [4294967295, 1], [4294967295, 2], [4294967295]] is too long
-> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,sm8550-gcc.yaml
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,sm8550-gcc.example.dtb: clock-controller@100000: Unevaluated properties are not allowed ('#clock-cells', '#power-domain-cells', '#reset-cells', 'reg' were unexpected)
-> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,sm8550-gcc.yaml
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.example.dtb: clock-controller@100000: clocks: [[4294967295, 0], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295]] is too long
-> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.example.dtb: clock-controller@100000: Unevaluated properties are not allowed ('#clock-cells', '#power-domain-cells', '#reset-cells', 'reg' were unexpected)
-> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.example.dtb: clock-controller@100000: clocks: [[4294967295, 0], [4294967295, 1], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295], [4294967295]] is too long
-> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.yaml
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.example.dtb: clock-controller@100000: clock-names: ['bi_tcxo', 'bi_tcxo_ao', 'sleep_clk', 'pcie_0_pipe_clk', 'pcie_1_pipe_clk', 'ufs_phy_rx_symbol_0_clk', 'ufs_phy_rx_symbol_1_clk', 'ufs_phy_tx_symbol_0_clk', 'usb3_phy_wrapper_gcc_usb30_pipe_clk'] is too long
-> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.yaml
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.example.dtb: clock-controller@100000: Unevaluated properties are not allowed ('#clock-cells', '#power-domain-cells', '#reset-cells', 'reg' were unexpected)
-> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.yaml
+> Not related change.
 > 
-> doc reference errors (make refcheckdocs):
+Understood, will remove
+>>   
+>>   required:
+>>     - compatible
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+>> index 7129fbcf2b6c..5a71268538e6 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+>> @@ -24,6 +24,14 @@ properties:
+>>     '#power-domain-cells':
+>>       const: 1
+>>   
+>> +  clocks:
+>> +    minItems: 1
+>> +    maxItems: 8
+>> +
+>> +  clock-names:
+>> +    minItems: 1
+>> +    maxItems: 8
 > 
-> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230110121316.24892-2-quic_devipriy@quicinc.com
+> This does not look correct, neither related.
+Okay
+>> +
+>>     reg:
+>>       maxItems: 1
+>>   
+>> @@ -35,7 +43,6 @@ required:
+>>     - reg
+>>     - '#clock-cells'
+>>     - '#reset-cells'
+>> -  - '#power-domain-cells'
 > 
-> The base for the series is generally the latest rc1. A different dependency
-> should be noted in *this* patch.
+> Eee? Why? What's this?
+Sure, will address it accordingly
 > 
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
 > 
-> pip3 install dtschema --upgrade
 > 
-> Please check and re-submit after running the above command yourself. Note
-> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> your schema. However, it must be unset to test all examples with your schema.
 > 
-Sure, will check
+> Best regards,
+> Krzysztof
+> 
 
-Best Regards,
+Best regards,
 Devi Priya
