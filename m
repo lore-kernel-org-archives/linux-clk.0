@@ -2,60 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B6FC67871
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 14:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 248FCC61DB3
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 14:30:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229450AbjAMOZd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Jan 2023 09:25:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49616 "EHLO
+        id S229468AbjAMO34 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Jan 2023 09:29:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230197AbjAMOWU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 09:22:20 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8BFC90271
-        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 06:16:42 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id u9so52690159ejo.0
-        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 06:16:42 -0800 (PST)
+        with ESMTP id S229379AbjAMO33 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 09:29:29 -0500
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 740366CFF4
+        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 06:20:30 -0800 (PST)
+Received: by mail-ej1-x62e.google.com with SMTP id cf18so46297640ejb.5
+        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 06:20:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZQ8HvKYQ47OTqDVjRH8LTpbxjkkWcoNwTcrLCx60dq8=;
-        b=qZRIbUIl0ZeWNS8pwD4Wq6APrPK9H5UmGJCnG5nIHjyQkGnVhBvrxNZBm6nLeiLunQ
-         wmgEaOV/TNIMsjFwatJbrktHTYuN5Cum1NARgT6JDAJ066Ee0Kjmia6YD9N9xOaQrgMX
-         lz+RMPWS5bwxgNdpmdUy62D8t8A1gb2a7WH8AsBc/6nz7GP9YIVWLCRXUCDNVDxJRdZF
-         H9bTZJWcZnjHgvCqCS6tpcdNBZAIAc8sNkwGTlu58hFUZZu9AnW/Z5FzqHggVK+sMULm
-         bZ1zEr0AQC1wk/erthlLGcXPIjdkA7ofu7xLnS99boY1K4UesmPy8ENkYiYSsV82+Z/e
-         LOSQ==
+        bh=aXm/KVhv1Q+MJT4WARwvCEecY+Pt3DzZrZnoHTVBa9c=;
+        b=nr2atzfb+mPTcqxh+qo03K/MkGPKipx/pu1w6IOQaCy0ubgEMTWuZi8M1DPRQ7Qd6E
+         isy4pAbJYsnTbrPbQ4Nt/grugBLz6qFkTPvLapBXsfA5EEHDBnS0dGSZnuiWL114xQdH
+         qnfI3Ze7DBplXLb3ssiXrPUBlLyYozd3YeRKK8YxZ75Z1mE3fbFBi0RD1FjZtepCKF6X
+         gANHMg2asjUUGdRT/E5ekZNGKOc4JFGqexCFymrDgvvILVHiwHf/7yr9wYpMY2VwbqsT
+         8iv19WITTw12jTtEdvpQ8Kv4N+r6fbOSvID/VaVqT4HznN5MUcuwmXte4aEd4E9rfoEa
+         vuVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZQ8HvKYQ47OTqDVjRH8LTpbxjkkWcoNwTcrLCx60dq8=;
-        b=tA+UJcoNzuYNpFP0UgKwayUuC2SBuAU6whJHw63fY7BHiRhzzhuNa3II/EZ1Fd4eM+
-         0A3oWeG2KM2q8ZHzU9/QnHlzOu5qcpSpZIUZ61R0ka7hdgAQwAcAviBxvMAa6fTwhcYr
-         cpDc73ij/ngEFe153UwdLP72gaB/7WkXaAA90OJvzP+JAjzCFhkSk1WUWrbswun3x0Hi
-         bIdX7LzpYw8jmNCRiv2fC3HBWR8q8fM3gZVRaoeKL37294DBfFbZ68h41qdUhkjJdpUd
-         sXWHFI0K+uRACBWtWy+3LonB1LyVIlFdy6tM/soDPhZZf+QY7Bekfclvglz2/pn5FOFl
-         dhiw==
-X-Gm-Message-State: AFqh2kqgUTGBwDCHWZoOP4O1R+E1WiCZLbDhR7qWk2fk7pN+DoBlgtv0
-        eagC75oq1FXYrJibkCYkDVip3g==
-X-Google-Smtp-Source: AMrXdXvOy1QBDodaKkn3VZGyoZrz3NQaYK1Sz6QjfCOA2Z+4+fzPifTracuLw+LEjqRRyKd9k8L7hQ==
-X-Received: by 2002:a17:906:284a:b0:7c1:e78:1e2 with SMTP id s10-20020a170906284a00b007c10e7801e2mr86503655ejc.11.1673619398943;
-        Fri, 13 Jan 2023 06:16:38 -0800 (PST)
+        bh=aXm/KVhv1Q+MJT4WARwvCEecY+Pt3DzZrZnoHTVBa9c=;
+        b=g0kmxGcmPu006ElhsfapPCIGndotA99mIt7QsRhGFD5lR5glmROITrpgJT9zglwZWR
+         OKEuXDHvLypoGLPgnHy/gr6+GJrokKX2po0wScbk1TGe9Y6VtIyFUbaGJBeY2i2aVUd4
+         H4/8glqlISh1IpAHBAF5gC9O7znyZHtoKF2Cwmm+lGqw3JSDh1MpWynfvnRJ/uplNZHA
+         6CKarTIiNw6whhoFjp4UCvr8gbn9Gx5s/VFW/eAX0XitkeYa9JZrrdsSK4bOMnlb76EE
+         fjBSmvZQkZCOsvMnQVAFRupbg78Kw3H5UUjxSzGHsCjGjpQprHN3bCk845B4DZFt1U2J
+         oGRg==
+X-Gm-Message-State: AFqh2koDU/32hEKqZW/aQVbsvGSfI8xI82AckFDI76otqKTXzd3800ap
+        3kIaqBASfUM35vYdQqE+y9kz1w==
+X-Google-Smtp-Source: AMrXdXuhoTbM4wM81X8S1RJYwrtdyd2fyIBnofyfbBJZ4gOKdtlpxhGW8rh1SA9w6+Q0K44Yhwoq9g==
+X-Received: by 2002:a17:907:c48d:b0:7c1:4bb:b157 with SMTP id tp13-20020a170907c48d00b007c104bbb157mr3645542ejc.4.1673619629025;
+        Fri, 13 Jan 2023 06:20:29 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id d26-20020a170906305a00b0084c90164a56sm8551726ejd.29.2023.01.13.06.16.36
+        by smtp.gmail.com with ESMTPSA id g3-20020a1709067c4300b007c0a7286ac8sm8606501ejp.69.2023.01.13.06.20.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jan 2023 06:16:38 -0800 (PST)
-Message-ID: <06799086-1068-1288-b309-80c245f34ce8@linaro.org>
-Date:   Fri, 13 Jan 2023 15:16:35 +0100
+        Fri, 13 Jan 2023 06:20:28 -0800 (PST)
+Message-ID: <84aa79c3-b793-0d0e-d6a5-035aff5a17b4@linaro.org>
+Date:   Fri, 13 Jan 2023 15:20:25 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH 3/7] dt-bindings: pinctrl: qcom: Add ipq9574 pinctrl
- bindings
+Subject: Re: [PATCH 6/7] arm64: dts: Add ipq9574 SoC and AL02 board support
 Content-Language: en-US
 To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
         andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
@@ -73,40 +72,39 @@ Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
         quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
         quic_poovendh@quicinc.com
 References: <20230110121316.24892-1-quic_devipriy@quicinc.com>
- <20230110121316.24892-4-quic_devipriy@quicinc.com>
- <b63600f9-82ef-83dc-1680-1df125b5d971@linaro.org>
- <a0db608a-2c65-e831-abc2-072609fd7a5a@quicinc.com>
+ <20230110121316.24892-7-quic_devipriy@quicinc.com>
+ <f6ef1834-b629-b76c-9cde-55af56320665@linaro.org>
+ <7f157b73-f856-04d2-1b39-e1f8861d0439@quicinc.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <a0db608a-2c65-e831-abc2-072609fd7a5a@quicinc.com>
+In-Reply-To: <7f157b73-f856-04d2-1b39-e1f8861d0439@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/01/2023 14:24, Devi Priya wrote:
->>> +    properties:
->>> +      pins:
->>> +        description:
->>> +          List of gpio pins affected by the properties specified in this
->>> +          subnode.
->>> +        items:
->>> +          oneOf:
->>> +            - pattern: "^gpio([0-9]|[1-5][0-9]|6[0-4])$"
->>> +            - enum: [ sdc1_clk, sdc1_cmd, sdc1_data, sdc2_clk, sdc2_cmd,
->>> +                      sdc2_data, qdsd_cmd, qdsd_data0, qdsd_data1, qdsd_data2,
->>> +                      qdsd_data3 ]
->>
->> These are ordered by name.
-> The enum values seem to be ordered alphabetically.
-> could you please help us understand the ordering?
-
-q goes before s
-
->>
->>> +        minItems: 1
->>> +        maxItems: 8
+On 13/01/2023 14:29, Devi Priya wrote:
 >>> +
+>>> +	soc: soc@0 {
+>>> +		#address-cells = <1>;
+>>> +		#size-cells = <1>;
+>>> +		ranges = <0 0 0 0xffffffff>;
+>>> +		compatible = "simple-bus";
+>>> +
+>>> +		tlmm: pinctrl@1000000 {
+>>> +			compatible = "qcom,ipq9574-tlmm";
+>>> +			reg = <0x01000000 0x300000>;
+>>> +			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+>>> +			gpio-controller;
+>>> +			#gpio-cells = <2>;
+>>> +			gpio-ranges = <&tlmm 0 0 65>;
+>>> +			gpio-reserved-ranges = <59 1>;
+>>
+>> Hm, why reserved ranges are in SoC?
+> As the gpio is forbidden on all ipq9574 boards, we have added it in SoC
+
+Why it is forbidden on all boards? I guess it depends on the firmware
+and this can differ, can't it?
 
 Best regards,
 Krzysztof
