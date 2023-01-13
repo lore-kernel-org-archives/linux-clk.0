@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 790CAC54EBE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 878C5C678D8
 	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 11:33:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232924AbjAMLdW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Jan 2023 06:33:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52970 "EHLO
+        id S241242AbjAMLdV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Jan 2023 06:33:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240603AbjAMLc5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 06:32:57 -0500
+        with ESMTP id S241074AbjAMLcz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 06:32:55 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AEE74D486;
-        Fri, 13 Jan 2023 03:07:31 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C9D64883B;
+        Fri, 13 Jan 2023 03:07:28 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id D5FF86602DCD;
-        Fri, 13 Jan 2023 11:07:28 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id D97596602DD4;
+        Fri, 13 Jan 2023 11:07:25 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1673608050;
-        bh=8wZXrCMxoQHMeYBZ5eexWDTOyOVhEpLHJc+v3nva7D4=;
+        s=mail; t=1673608047;
+        bh=soqoVSF9tVJj9LPbEsm5KtjYNzQFuQRSnoVxuMrxji0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NGEVupYDbUPCM/5tqt0xt1DAq5HZZeeT448Z5c3ntRk1LCdRhu4wRwcmZcH8N8RFD
-         f5bNbA/blOyIfrH0g3WDndT9CQMLn2sK4t+8G1s4NoQu2J1z/Vg0lnosKpQKcbwpHM
-         YsyLFihyqxt2zRVQXi7nY29FXA+7NnW7nGWk7rCyqseTsxCcEza9VhMqgH7aYC5bq3
-         ALyHbmPCRd3GfZO6+Xe5VmIQM62O/4DlvDz3JfWshMogiiNulEks9wnrikYyiKxG/t
-         3hqheA9z2NXpiduvioGutsvyzOYSsalsIxpgW3Aq8BwzTAaWe/XdO1t8uKPernEsua
-         xFSwvn/d3UtHw==
+        b=ItpW2T2jfkqnJ2rCC2xgZRIqfoVTm/IwuJl8MxbMKnuLQEGDZurmM25ORskRKAt9k
+         yeM/g+97m2gOp/Y8Xd5sgyVPB3HrGQy/czHNl35bLKG50vfOTggOyB1zw5TYt3MCKI
+         jzD+AifSOzhQ5Ibdls2FQRZ7DnTD6TLs5HdDNfFiZWlAEl4amwZkm5Hhn9PWDgMCOn
+         EaZA16rq/+J2e8jpsJqNerINgHmCoVKVFe2HZN3M04Q9xr34E3+vdKRvR2potk80MK
+         CvIs5SxB5zdeB07JcfMbkGfbjjOkdKKSa3L2bV/9jNTzEd25uY+HqG9c+VBgom3yu7
+         hG8uE2/Ai5xrg==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -48,9 +48,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com, robh+dt@kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
         kernel@collabora.com
-Subject: [PATCH v3 20/23] clk: mediatek: clk-mt8186-topckgen: Migrate to mtk_clk_simple_probe()
-Date:   Fri, 13 Jan 2023 12:06:13 +0100
-Message-Id: <20230113110616.111001-21-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v3 18/23] clk: mediatek: clk-mtk: Register MFG notifier in mtk_clk_simple_probe()
+Date:   Fri, 13 Jan 2023 12:06:11 +0100
+Message-Id: <20230113110616.111001-19-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230113110616.111001-1-angelogioacchino.delregno@collabora.com>
 References: <20230113110616.111001-1-angelogioacchino.delregno@collabora.com>
@@ -60,140 +60,51 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As done with MT8192, migrate MT8186 topckgen away from a custom probe
-function and use mtk_clk_simple_{probe, remove}().
+In preparation for commonizing topckgen probe on various MediaTek SoCs
+clock drivers, add the ability to register the MFG MUX notifier in
+mtk_clk_simple_probe() by passing a custom notifier register function
+pointer, as this function will be slightly different across different
+SoCs.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Reviewed-by: Miles Chen <miles.chen@mediatek.com>
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/clk/mediatek/clk-mt8186-topckgen.c | 103 ++++-----------------
- 1 file changed, 19 insertions(+), 84 deletions(-)
+ drivers/clk/mediatek/clk-mtk.c | 8 ++++++++
+ drivers/clk/mediatek/clk-mtk.h | 3 +++
+ 2 files changed, 11 insertions(+)
 
-diff --git a/drivers/clk/mediatek/clk-mt8186-topckgen.c b/drivers/clk/mediatek/clk-mt8186-topckgen.c
-index c1107b2b614c..c6786c8b315f 100644
---- a/drivers/clk/mediatek/clk-mt8186-topckgen.c
-+++ b/drivers/clk/mediatek/clk-mt8186-topckgen.c
-@@ -681,11 +681,6 @@ static struct mtk_composite top_muxes[] = {
- 			0x0320, 4, 0x0334, 8, 0),
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index 171d6dfc880b..82faca9a8771 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -533,6 +533,14 @@ int mtk_clk_simple_probe(struct platform_device *pdev)
+ 			goto unregister_composites;
+ 	}
+ 
++	if (mcd->clk_notifier_func) {
++		struct clk *mfg_mux = clk_data->hws[mcd->mfg_clk_idx]->clk;
++
++		r = mcd->clk_notifier_func(&pdev->dev, mfg_mux);
++		if (r)
++			goto unregister_clks;
++	}
++
+ 	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+ 	if (r)
+ 		goto unregister_clks;
+diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+index 1bdaa0acb909..41f4fa3b0c21 100644
+--- a/drivers/clk/mediatek/clk-mtk.h
++++ b/drivers/clk/mediatek/clk-mtk.h
+@@ -231,6 +231,9 @@ struct mtk_clk_desc {
+ 	const struct mtk_clk_rst_desc *rst_desc;
+ 	spinlock_t *clk_lock;
+ 	bool shared_io;
++
++	int (*clk_notifier_func)(struct device *dev, struct clk *clk);
++	unsigned int mfg_clk_idx;
  };
  
--static const struct of_device_id of_match_clk_mt8186_topck[] = {
--	{ .compatible = "mediatek,mt8186-topckgen", },
--	{}
--};
--
- /* Register mux notifier for MFG mux */
- static int clk_mt8186_reg_mfg_mux_notifier(struct device *dev, struct clk *clk)
- {
-@@ -708,88 +703,28 @@ static int clk_mt8186_reg_mfg_mux_notifier(struct device *dev, struct clk *clk)
- 	return devm_mtk_clk_mux_notifier_register(dev, clk, mfg_mux_nb);
- }
- 
--static int clk_mt8186_topck_probe(struct platform_device *pdev)
--{
--	struct clk_hw_onecell_data *clk_data;
--	struct device_node *node = pdev->dev.of_node;
--	int r;
--	void __iomem *base;
--
--	clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
--	if (!clk_data)
--		return -ENOMEM;
--
--	base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(base)) {
--		r = PTR_ERR(base);
--		goto free_top_data;
--	}
--
--	r = mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
--					clk_data);
--	if (r)
--		goto free_top_data;
--
--	r = mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), clk_data);
--	if (r)
--		goto unregister_fixed_clks;
--
--	r = mtk_clk_register_muxes(&pdev->dev, top_mtk_muxes,
--				   ARRAY_SIZE(top_mtk_muxes), node,
--				   &mt8186_clk_lock, clk_data);
--	if (r)
--		goto unregister_factors;
--
--	r = mtk_clk_register_composites(&pdev->dev, top_muxes,
--					ARRAY_SIZE(top_muxes), base,
--					&mt8186_clk_lock, clk_data);
--	if (r)
--		goto unregister_muxes;
--
--	r = clk_mt8186_reg_mfg_mux_notifier(&pdev->dev,
--					    clk_data->hws[CLK_TOP_MFG]->clk);
--	if (r)
--		goto unregister_composite_muxes;
--
--	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--	if (r)
--		goto unregister_composite_muxes;
--
--	platform_set_drvdata(pdev, clk_data);
--
--	return r;
--
--unregister_composite_muxes:
--	mtk_clk_unregister_composites(top_muxes, ARRAY_SIZE(top_muxes), clk_data);
--unregister_muxes:
--	mtk_clk_unregister_muxes(top_mtk_muxes, ARRAY_SIZE(top_mtk_muxes), clk_data);
--unregister_factors:
--	mtk_clk_unregister_factors(top_divs, ARRAY_SIZE(top_divs), clk_data);
--unregister_fixed_clks:
--	mtk_clk_unregister_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks), clk_data);
--free_top_data:
--	mtk_free_clk_data(clk_data);
--	return r;
--}
--
--static int clk_mt8186_topck_remove(struct platform_device *pdev)
--{
--	struct clk_hw_onecell_data *clk_data = platform_get_drvdata(pdev);
--	struct device_node *node = pdev->dev.of_node;
--
--	of_clk_del_provider(node);
--	mtk_clk_unregister_composites(top_muxes, ARRAY_SIZE(top_muxes), clk_data);
--	mtk_clk_unregister_muxes(top_mtk_muxes, ARRAY_SIZE(top_mtk_muxes), clk_data);
--	mtk_clk_unregister_factors(top_divs, ARRAY_SIZE(top_divs), clk_data);
--	mtk_clk_unregister_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks), clk_data);
--	mtk_free_clk_data(clk_data);
-+static const struct mtk_clk_desc topck_desc = {
-+	.fixed_clks = top_fixed_clks,
-+	.num_fixed_clks = ARRAY_SIZE(top_fixed_clks),
-+	.factor_clks = top_divs,
-+	.num_factor_clks = ARRAY_SIZE(top_divs),
-+	.mux_clks = top_mtk_muxes,
-+	.num_mux_clks = ARRAY_SIZE(top_mtk_muxes),
-+	.composite_clks = top_muxes,
-+	.num_composite_clks = ARRAY_SIZE(top_muxes),
-+	.clk_lock = &mt8186_clk_lock,
-+	.clk_notifier_func = clk_mt8186_reg_mfg_mux_notifier,
-+	.mfg_clk_idx = CLK_TOP_MFG,
-+};
- 
--	return 0;
--}
-+static const struct of_device_id of_match_clk_mt8186_topck[] = {
-+	{ .compatible = "mediatek,mt8186-topckgen", .data = &topck_desc },
-+	{ /* sentinel */ }
-+};
- 
- static struct platform_driver clk_mt8186_topck_drv = {
--	.probe = clk_mt8186_topck_probe,
--	.remove = clk_mt8186_topck_remove,
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
- 	.driver = {
- 		.name = "clk-mt8186-topck",
- 		.of_match_table = of_match_clk_mt8186_topck,
+ int mtk_clk_simple_probe(struct platform_device *pdev);
 -- 
 2.39.0
 
