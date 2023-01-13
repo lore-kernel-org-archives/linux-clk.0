@@ -2,96 +2,164 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D4FCC54EBD
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 15:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5146C67871
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 16:24:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbjAMPdo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Jan 2023 10:33:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53478 "EHLO
+        id S229936AbjAMQYb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Jan 2023 11:24:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230200AbjAMPdV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 10:33:21 -0500
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3736C7278D;
-        Fri, 13 Jan 2023 07:26:55 -0800 (PST)
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-15eec491b40so1663919fac.12;
-        Fri, 13 Jan 2023 07:26:55 -0800 (PST)
+        with ESMTP id S230358AbjAMQXf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 11:23:35 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D52D28BA8D;
+        Fri, 13 Jan 2023 08:18:03 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id az20so34371232ejc.1;
+        Fri, 13 Jan 2023 08:18:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KBg+QFTYjTGLhJ0dWRu15lQFUco6OnMwSAINFR2Ufc8=;
+        b=cuK/VFk+DbNtK+OX/wHoutGa2p4Kfe5Q7d3XI9jKvGON2hd2fxHFauh53Nk23UYdy5
+         sDyv0e6TdaqU+uu5e1cqqY0+Ay0KRDzjd8KIKYxdgM5Qj9MxpRyuEVsPQf4bHVxm7Fqq
+         K607+e+ezHlARhTUhPjSQ1F3204Tz+2yNDbm0pOdMiApqrYhPzOseIXq2tjXVdhHoNBI
+         kGNQBaDL8YddNGR81t2OVdWGZgJ/uDwYLWpsiA1pd8Y0iTepefBqzZCawGk0eX9BxNR7
+         abXDexkP6HIe3skYOeKSwWTnZ3muL0d1IZlM0SoTjpH0nQwFwmHfT4ED2IGG9GdUDqdW
+         O5Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EVGeTme+bKzd3d4knCGcoP4a5CWNlrIX9hy3r7ftn/g=;
-        b=CKJRPAZt/mbr402uVD6mN0iXocIEmvNbHpWC0APTDOHB7uDWOx7iXnxz1K//O+blPa
-         OcG7K/tIyu4KcR92T5PehebYeXvtgWAhMo3Qr6TUHrVyEQeiIcDnruCtIdjhe05yeBlT
-         NgRYNaMmezHy/uP4kRubzDIr2w8bq2nu6Zq4yPad999U8+M2ir0FmmUVy1/g8a+siHO2
-         NXUmSss4SSomaJddSKdEwhJ2jTK/AbfCh5zWf2a8CChfmyvLrySxQriiYyWaj9TBKyyf
-         0Jj/s8RZgEWdqn1AZ8xl5rS4koI0LzXUwQ7FUYBrHbe5SGodfcYcDfS6SHz/IhgPx3HX
-         oFTQ==
-X-Gm-Message-State: AFqh2krPuVBGu9iCogdlnQgilwn8Hu4ao85JtveYOZuvl4sSbKd3+Bex
-        QHSaC4k1e84duSfWxpA2HA==
-X-Google-Smtp-Source: AMrXdXsemvtKvDZG+AFU0Xve3Mn8xu129jjDjTlWOJCKaOUvqnRedXOSlnH9nBPF7clmH+pOTV2cYQ==
-X-Received: by 2002:a05:6871:93:b0:143:e045:7082 with SMTP id u19-20020a056871009300b00143e0457082mr29912421oaa.58.1673623614498;
-        Fri, 13 Jan 2023 07:26:54 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id v12-20020a056870b50c00b0014fc049fc0asm10771366oap.57.2023.01.13.07.26.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jan 2023 07:26:54 -0800 (PST)
-Received: (nullmailer pid 2224499 invoked by uid 1000);
-        Fri, 13 Jan 2023 15:26:52 -0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KBg+QFTYjTGLhJ0dWRu15lQFUco6OnMwSAINFR2Ufc8=;
+        b=XXbyuixdYvQwYPSXQKWldwpIsqZUN9ynpkUwFednYitvUYSxUyCZPGLG+RkFJ55w/k
+         evPd+ar4c4zUv5JilGt0dgApWQXiLDGUSiWrI8WE6FDJY3C01S9S3VmjxREdd0paeXo2
+         B4Jvh7PZWwpntcnOZhlIkbRSn8uAY4KZi0bisdcD2bZ6Lo9KsDVSfb5SVWlVbiPiGGfq
+         3Cgh5RjGpR7gcUb3JiDMw7Mxp7W41rsJdf2rk+hzObom2O5p0w4SNs/aN5nexq5EcM6K
+         m4cTTtcdV5wmtw7e/f4JUNOiZIfxlQUWzs9aN6dHhh4WdgvtaAzOjjvZ4RGoPbIFYRf7
+         Rbqw==
+X-Gm-Message-State: AFqh2kpUF/hFVFAD5Bxmc4fojI8yoiydSFpi2znUS6KSE9Iq0VLiHXj7
+        EsIEPk3G0PRi3KPWVm5L5uc=
+X-Google-Smtp-Source: AMrXdXvcGT14YEQV+qWf4s+TmjhpCr9Dmu7pQheS9QCpPIxtnSymAa70ZRFEZnWqE1SX+bGON8nJ6Q==
+X-Received: by 2002:a17:906:7046:b0:7ae:8194:7e06 with SMTP id r6-20020a170906704600b007ae81947e06mr72640122ejj.56.1673626682362;
+        Fri, 13 Jan 2023 08:18:02 -0800 (PST)
+Received: from [192.168.3.32] (dh207-97-245.xnet.hr. [88.207.97.245])
+        by smtp.gmail.com with ESMTPSA id 17-20020a170906059100b007933047f923sm8698684ejn.118.2023.01.13.08.18.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Jan 2023 08:18:01 -0800 (PST)
+Message-ID: <0e5e2d46-3578-678b-5980-ecf68f9a5f18@gmail.com>
+Date:   Fri, 13 Jan 2023 17:17:59 +0100
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Keguang Zhang <keguang.zhang@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-In-Reply-To: <20230113110738.1505973-2-keguang.zhang@gmail.com>
-References: <20230113110738.1505973-1-keguang.zhang@gmail.com>
- <20230113110738.1505973-2-keguang.zhang@gmail.com>
-Message-Id: <167362342081.2212182.3990856069388425566.robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Add binding for Loongson-1 clock driver
-Date:   Fri, 13 Jan 2023 09:26:52 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH 6/6] clk: qcom: Fix APSS PLL and RCG Configuration
+Content-Language: en-US
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        devi priya <quic_devipriy@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, jassisinghbrar@gmail.com,
+        catalin.marinas@arm.com, will@kernel.org, shawnguo@kernel.org,
+        arnd@arndb.de, marcel.ziswiler@toradex.com,
+        dmitry.baryshkov@linaro.org, nfraprado@collabora.com,
+        broonie@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
+        quic_poovendh@quicinc.com
+References: <20230113143647.14961-1-quic_devipriy@quicinc.com>
+ <20230113143647.14961-7-quic_devipriy@quicinc.com>
+ <b87ab80d-0936-5a5a-25da-35c0dbdede33@linaro.org>
+From:   Robert Marko <robimarko@gmail.com>
+In-Reply-To: <b87ab80d-0936-5a5a-25da-35c0dbdede33@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Fri, 13 Jan 2023 19:07:37 +0800, Keguang Zhang wrote:
-> Add devicetree binding document for the Loongson-1 clock driver.
-> 
-> Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
-> ---
->  .../bindings/clock/loongson,ls1x-clk.yaml     | 81 +++++++++++++++++++
->  1 file changed, 81 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/loongson,ls1x-clk.yaml
-> 
+On 13. 01. 2023. 16:20, Konrad Dybcio wrote:
+>
+> On 13.01.2023 15:36, devi priya wrote:
+>> Included CLK_IS_CRITICAL flag which helps to properly enable
+>> the APSS PLL during bootup.
+> Please describe the issue and not only the user-visible impact it
+> makes. Does the PLL get shut down by clk_ignore_unused? Maybe you
+> would be interested in the sync_state changes that landed in recent
+> -next that may solve it for you?
+>
+> I don't think it should be always-on, as you have an alternate source
+> for low power modes, adding CLK_IS_CRITICAL will keep the PLL enabled
+> even if you're not using it.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+I have the same opinion, as this is working fine on IPQ6018 and IPQ8074
+and I have not experienced any issues with it.
 
-yamllint warnings/errors:
+>
+>> clk_rcg2_ops should be used for APSS clock RCG, as other ops
+>> will not configure the RCG register
+> RCG register meaning RCG register*s*, meaning in this case M/N/D
+> which would be required for proper rate setting and not only input
+> switching (which arguably doesn't seem to be of much concern on a
+> single-parent clock)? This all is not obvious..
+Same question from me as well, why do you need clk_rcg2_ops with
+a dummy frequency table since this is just a mux using RCG2 control
+bits?
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/clock/loongson,ls1x-clk.example.dts:36.39-41.15: Warning (unique_unit_address_if_enabled): /example-0/clocks/cpu_clk@1fe78034: duplicate unit-address (also used in node /example-0/clocks/ahb_clk@1fe78034)
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230113110738.1505973-2-keguang.zhang@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Regards,
+Robert
+>
+> Konrad
+>> Co-developed-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+>> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+>> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/apss-ipq-pll.c | 1 +
+>>   drivers/clk/qcom/apss-ipq6018.c | 8 +++++++-
+>>   2 files changed, 8 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/qcom/apss-ipq-pll.c b/drivers/clk/qcom/apss-ipq-pll.c
+>> index dd0c01bf5a98..75486a124fcd 100644
+>> --- a/drivers/clk/qcom/apss-ipq-pll.c
+>> +++ b/drivers/clk/qcom/apss-ipq-pll.c
+>> @@ -33,6 +33,7 @@ static struct clk_alpha_pll ipq_pll = {
+>>   			},
+>>   			.num_parents = 1,
+>>   			.ops = &clk_alpha_pll_huayra_ops,
+>> +			.flags = CLK_IS_CRITICAL,
+>>   		},
+>>   	},
+>>   };
+>> diff --git a/drivers/clk/qcom/apss-ipq6018.c b/drivers/clk/qcom/apss-ipq6018.c
+>> index f2f502e2d5a4..0d0e7196a4dc 100644
+>> --- a/drivers/clk/qcom/apss-ipq6018.c
+>> +++ b/drivers/clk/qcom/apss-ipq6018.c
+>> @@ -33,15 +33,21 @@ static const struct parent_map parents_apcs_alias0_clk_src_map[] = {
+>>   	{ P_APSS_PLL_EARLY, 5 },
+>>   };
+>>   
+>> +static const struct freq_tbl ftbl_apcs_alias0_clk_src[] = {
+>> +	{ .src = P_APSS_PLL_EARLY, .pre_div = 1 },
+>> +	{ }
+>> +};
+>> +
+>>   static struct clk_rcg2 apcs_alias0_clk_src = {
+>>   	.cmd_rcgr = 0x0050,
+>> +	.freq_tbl = ftbl_apcs_alias0_clk_src,
+>>   	.hid_width = 5,
+>>   	.parent_map = parents_apcs_alias0_clk_src_map,
+>>   	.clkr.hw.init = &(struct clk_init_data){
+>>   		.name = "apcs_alias0_clk_src",
+>>   		.parent_data = parents_apcs_alias0_clk_src,
+>>   		.num_parents = ARRAY_SIZE(parents_apcs_alias0_clk_src),
+>> -		.ops = &clk_rcg2_mux_closest_ops,
+>> +		.ops = &clk_rcg2_ops,
+>>   		.flags = CLK_SET_RATE_PARENT,
+>>   	},
+>>   };
+>
