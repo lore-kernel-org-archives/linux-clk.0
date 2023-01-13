@@ -2,113 +2,112 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F74EC61DB3
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 14:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B6FC67871
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 14:25:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240927AbjAMOQI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Jan 2023 09:16:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40378 "EHLO
+        id S229450AbjAMOZd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Jan 2023 09:25:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241328AbjAMOOJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 09:14:09 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AB2B655F
-        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 06:13:45 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id b3so33314885lfv.2
-        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 06:13:45 -0800 (PST)
+        with ESMTP id S230197AbjAMOWU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 09:22:20 -0500
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8BFC90271
+        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 06:16:42 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id u9so52690159ejo.0
+        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 06:16:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=d2wb4QzlfSFMGgz56I7id9+tIGfaOAlRVUGG8w11u8o=;
-        b=ZWQNSfyOd39xTZ3DRL56NNpdR56QqBXBinp+KZVXMAygER4G/XUuQfUmeV12Dc6D4F
-         Uzqa/4cwcvjzu2lUDvNlXrGItuNETCby03gW2vLDxI4qDf5Qfi3UKoCtpDISlcJ6QNE9
-         l1X7lLg3JgNKlSz2jlLHzMmAQ1aPHFb8/piCGBhI4k/i2lU9TufSiM7LdybFO+662S3n
-         Qc/gmd5B3BhJM0gtTYS6sx3hXdMIZ2K+N+2rSVeCueFL+bKmAIY1t+BAIzHr7gQabIYJ
-         d8MwHrb/DqfzRiiFtGNAxs8xwu9UdL0IG2Q85H1oZl1pWnCo7oW4eBXlFwUlcJfmFdvh
-         AR7g==
+        bh=ZQ8HvKYQ47OTqDVjRH8LTpbxjkkWcoNwTcrLCx60dq8=;
+        b=qZRIbUIl0ZeWNS8pwD4Wq6APrPK9H5UmGJCnG5nIHjyQkGnVhBvrxNZBm6nLeiLunQ
+         wmgEaOV/TNIMsjFwatJbrktHTYuN5Cum1NARgT6JDAJ066Ee0Kjmia6YD9N9xOaQrgMX
+         lz+RMPWS5bwxgNdpmdUy62D8t8A1gb2a7WH8AsBc/6nz7GP9YIVWLCRXUCDNVDxJRdZF
+         H9bTZJWcZnjHgvCqCS6tpcdNBZAIAc8sNkwGTlu58hFUZZu9AnW/Z5FzqHggVK+sMULm
+         bZ1zEr0AQC1wk/erthlLGcXPIjdkA7ofu7xLnS99boY1K4UesmPy8ENkYiYSsV82+Z/e
+         LOSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d2wb4QzlfSFMGgz56I7id9+tIGfaOAlRVUGG8w11u8o=;
-        b=0mVILeWKnNjGuyuqdIzLG5eY8G/SwIhKG7zCQFjtRR0R9NQHVYtXmJAGLEWBRUwT+6
-         k5yCqR2YTfXeWBIslb9PanhMiHpLGswoHIRxT82EwcWz7LPcHPCIjz8AF5AqvPbcl08m
-         SU31ZjiXVi1WAVGOJ7awqrtku6kcJLTGDSxCRvvmsY58hSP26Ktag8sCKef6HHbMdIop
-         WUqyiDVQ32t+D2VXi1BvMKTKQiqiXrHK0uZxWH1vmV9DHNtMHfCDRj0WW06EyThv+R2Z
-         3PB5v04JnrCRBTCJAHq8h8G8fxGr0FhJwBs38FxHt+OrUP5n19zJTft1alYx1Pq/IApJ
-         Q0bw==
-X-Gm-Message-State: AFqh2kpVFalBJ6rBAecvC5xUxr8EJ4VNdOKUeiiGI6+ZDJg3zvDLLe7G
-        Xi/H/Zzn8kibtZ8NB5iXO8f4hQ==
-X-Google-Smtp-Source: AMrXdXsaVwUWjQciY3aaXpukAVwX0uZxWa/SibAxvjD8ggD7osAzON+ONUEySVL9kUu6+RWd+UPd1w==
-X-Received: by 2002:a05:6512:23a3:b0:4cb:6bcb:de4e with SMTP id c35-20020a05651223a300b004cb6bcbde4emr11066117lfv.24.1673619223899;
-        Fri, 13 Jan 2023 06:13:43 -0800 (PST)
-Received: from [192.168.1.101] (abym53.neoplus.adsl.tpnet.pl. [83.9.32.53])
-        by smtp.gmail.com with ESMTPSA id r16-20020ac252b0000000b004cc716da978sm3769961lfm.209.2023.01.13.06.13.41
+        bh=ZQ8HvKYQ47OTqDVjRH8LTpbxjkkWcoNwTcrLCx60dq8=;
+        b=tA+UJcoNzuYNpFP0UgKwayUuC2SBuAU6whJHw63fY7BHiRhzzhuNa3II/EZ1Fd4eM+
+         0A3oWeG2KM2q8ZHzU9/QnHlzOu5qcpSpZIUZ61R0ka7hdgAQwAcAviBxvMAa6fTwhcYr
+         cpDc73ij/ngEFe153UwdLP72gaB/7WkXaAA90OJvzP+JAjzCFhkSk1WUWrbswun3x0Hi
+         bIdX7LzpYw8jmNCRiv2fC3HBWR8q8fM3gZVRaoeKL37294DBfFbZ68h41qdUhkjJdpUd
+         sXWHFI0K+uRACBWtWy+3LonB1LyVIlFdy6tM/soDPhZZf+QY7Bekfclvglz2/pn5FOFl
+         dhiw==
+X-Gm-Message-State: AFqh2kqgUTGBwDCHWZoOP4O1R+E1WiCZLbDhR7qWk2fk7pN+DoBlgtv0
+        eagC75oq1FXYrJibkCYkDVip3g==
+X-Google-Smtp-Source: AMrXdXvOy1QBDodaKkn3VZGyoZrz3NQaYK1Sz6QjfCOA2Z+4+fzPifTracuLw+LEjqRRyKd9k8L7hQ==
+X-Received: by 2002:a17:906:284a:b0:7c1:e78:1e2 with SMTP id s10-20020a170906284a00b007c10e7801e2mr86503655ejc.11.1673619398943;
+        Fri, 13 Jan 2023 06:16:38 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id d26-20020a170906305a00b0084c90164a56sm8551726ejd.29.2023.01.13.06.16.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jan 2023 06:13:42 -0800 (PST)
-Message-ID: <498801bc-64c4-df76-8683-999f3a14afa5@linaro.org>
-Date:   Fri, 13 Jan 2023 15:13:41 +0100
+        Fri, 13 Jan 2023 06:16:38 -0800 (PST)
+Message-ID: <06799086-1068-1288-b309-80c245f34ce8@linaro.org>
+Date:   Fri, 13 Jan 2023 15:16:35 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH v3 12/14] clk: qcom: cpu-8996: fix PLL clock ops
+Subject: Re: [PATCH 3/7] dt-bindings: pinctrl: qcom: Add ipq9574 pinctrl
+ bindings
 Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20230113120544.59320-1-dmitry.baryshkov@linaro.org>
- <20230113120544.59320-13-dmitry.baryshkov@linaro.org>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230113120544.59320-13-dmitry.baryshkov@linaro.org>
+To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linus.walleij@linaro.org,
+        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
+        shawnguo@kernel.org, arnd@arndb.de, marcel.ziswiler@toradex.com,
+        dmitry.baryshkov@linaro.org, nfraprado@collabora.com,
+        broonie@kernel.org, tdas@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
+        quic_poovendh@quicinc.com
+References: <20230110121316.24892-1-quic_devipriy@quicinc.com>
+ <20230110121316.24892-4-quic_devipriy@quicinc.com>
+ <b63600f9-82ef-83dc-1680-1df125b5d971@linaro.org>
+ <a0db608a-2c65-e831-abc2-072609fd7a5a@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <a0db608a-2c65-e831-abc2-072609fd7a5a@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 13/01/2023 14:24, Devi Priya wrote:
+>>> +    properties:
+>>> +      pins:
+>>> +        description:
+>>> +          List of gpio pins affected by the properties specified in this
+>>> +          subnode.
+>>> +        items:
+>>> +          oneOf:
+>>> +            - pattern: "^gpio([0-9]|[1-5][0-9]|6[0-4])$"
+>>> +            - enum: [ sdc1_clk, sdc1_cmd, sdc1_data, sdc2_clk, sdc2_cmd,
+>>> +                      sdc2_data, qdsd_cmd, qdsd_data0, qdsd_data1, qdsd_data2,
+>>> +                      qdsd_data3 ]
+>>
+>> These are ordered by name.
+> The enum values seem to be ordered alphabetically.
+> could you please help us understand the ordering?
 
+q goes before s
 
-On 13.01.2023 13:05, Dmitry Baryshkov wrote:
-> Switch CPU PLLs to use clk_alpha_pll_hwfsm_ops, it seems to suit
-> better.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>
+>>> +        minItems: 1
+>>> +        maxItems: 8
+>>> +
 
-Konrad
->  drivers/clk/qcom/clk-cpu-8996.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-> index c471c6836c63..b99a47aca478 100644
-> --- a/drivers/clk/qcom/clk-cpu-8996.c
-> +++ b/drivers/clk/qcom/clk-cpu-8996.c
-> @@ -128,7 +128,7 @@ static struct clk_alpha_pll pwrcl_pll = {
->  		.name = "pwrcl_pll",
->  		.parent_data = pll_parent,
->  		.num_parents = ARRAY_SIZE(pll_parent),
-> -		.ops = &clk_alpha_pll_huayra_ops,
-> +		.ops = &clk_alpha_pll_hwfsm_ops,
->  	},
->  };
->  
-> @@ -140,7 +140,7 @@ static struct clk_alpha_pll perfcl_pll = {
->  		.name = "perfcl_pll",
->  		.parent_data = pll_parent,
->  		.num_parents = ARRAY_SIZE(pll_parent),
-> -		.ops = &clk_alpha_pll_huayra_ops,
-> +		.ops = &clk_alpha_pll_hwfsm_ops,
->  	},
->  };
->  
+Best regards,
+Krzysztof
+
