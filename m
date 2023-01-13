@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 878C5C678D8
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 11:33:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C73CC54EBD
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 11:33:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241242AbjAMLdV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Jan 2023 06:33:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51580 "EHLO
+        id S241270AbjAMLdX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Jan 2023 06:33:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241074AbjAMLcz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 06:32:55 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C9D64883B;
-        Fri, 13 Jan 2023 03:07:28 -0800 (PST)
+        with ESMTP id S241146AbjAMLc6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 06:32:58 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63A844882B;
+        Fri, 13 Jan 2023 03:07:25 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id D97596602DD4;
-        Fri, 13 Jan 2023 11:07:25 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id E37CE6602DD7;
+        Fri, 13 Jan 2023 11:07:22 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1673608047;
-        bh=soqoVSF9tVJj9LPbEsm5KtjYNzQFuQRSnoVxuMrxji0=;
+        s=mail; t=1673608044;
+        bh=SXiLONoRIH0CB+iFY3cC1DgibyfjwwOez/ev+oSe93E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ItpW2T2jfkqnJ2rCC2xgZRIqfoVTm/IwuJl8MxbMKnuLQEGDZurmM25ORskRKAt9k
-         yeM/g+97m2gOp/Y8Xd5sgyVPB3HrGQy/czHNl35bLKG50vfOTggOyB1zw5TYt3MCKI
-         jzD+AifSOzhQ5Ibdls2FQRZ7DnTD6TLs5HdDNfFiZWlAEl4amwZkm5Hhn9PWDgMCOn
-         EaZA16rq/+J2e8jpsJqNerINgHmCoVKVFe2HZN3M04Q9xr34E3+vdKRvR2potk80MK
-         CvIs5SxB5zdeB07JcfMbkGfbjjOkdKKSa3L2bV/9jNTzEd25uY+HqG9c+VBgom3yu7
-         hG8uE2/Ai5xrg==
+        b=H7zwtXKiSJIvYUdxmx+dqpK/XBuebU/UdSFRFj5SxaPdzjqlpfW4nJtL/WIACGLe9
+         WFwduJeFh7cDGLAFEJ0ODW4FhG7fM04Dlm6cWG7hSmMfvk7mwnek1QLQZxFzt3WoZL
+         oNaNtZbBfZs54/6bh4NbPULdFVE1Q5FfJmc6mg2BzioDTithftbYPLflzvDjtQcLOl
+         k0cpouOEC2blQWGlQ9mkc1DaeKxSFfL39+s/YFSrgdKSV/cDiDeoOrny5Q1xfTlgqw
+         sS3+YB1wsoeda8Gb5Uezn4wyzTCmOAeXS6v/zFo4PmfD8CuESu2pJpGWMyOLhXAbPX
+         57HTNNYcUzENQ==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -48,9 +48,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com, robh+dt@kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
         kernel@collabora.com
-Subject: [PATCH v3 18/23] clk: mediatek: clk-mtk: Register MFG notifier in mtk_clk_simple_probe()
-Date:   Fri, 13 Jan 2023 12:06:11 +0100
-Message-Id: <20230113110616.111001-19-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v3 16/23] clk: mediatek: mt8186: Join top_adj_div and top_muxes
+Date:   Fri, 13 Jan 2023 12:06:09 +0100
+Message-Id: <20230113110616.111001-17-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230113110616.111001-1-angelogioacchino.delregno@collabora.com>
 References: <20230113110616.111001-1-angelogioacchino.delregno@collabora.com>
@@ -60,51 +60,66 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In preparation for commonizing topckgen probe on various MediaTek SoCs
-clock drivers, add the ability to register the MFG MUX notifier in
-mtk_clk_simple_probe() by passing a custom notifier register function
-pointer, as this function will be slightly different across different
-SoCs.
+Like done for MT8192, join the two to register them in one shot, as
+there's no point in doing that separately from one another.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/clk/mediatek/clk-mtk.c | 8 ++++++++
- drivers/clk/mediatek/clk-mtk.h | 3 +++
- 2 files changed, 11 insertions(+)
+ drivers/clk/mediatek/clk-mt8186-topckgen.c | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index 171d6dfc880b..82faca9a8771 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -533,6 +533,14 @@ int mtk_clk_simple_probe(struct platform_device *pdev)
- 			goto unregister_composites;
- 	}
+diff --git a/drivers/clk/mediatek/clk-mt8186-topckgen.c b/drivers/clk/mediatek/clk-mt8186-topckgen.c
+index 3ce2818dcbdd..c1107b2b614c 100644
+--- a/drivers/clk/mediatek/clk-mt8186-topckgen.c
++++ b/drivers/clk/mediatek/clk-mt8186-topckgen.c
+@@ -669,9 +669,6 @@ static struct mtk_composite top_muxes[] = {
+ 	MUX(CLK_TOP_APLL_I2S4_MCK_SEL, "apll_i2s4_mck_sel", apll_mck_parents, 0x0320, 19, 1),
+ 	MUX(CLK_TOP_APLL_TDMOUT_MCK_SEL, "apll_tdmout_mck_sel", apll_mck_parents,
+ 		0x0320, 20, 1),
+-};
+-
+-static const struct mtk_composite top_adj_divs[] = {
+ 	DIV_GATE(CLK_TOP_APLL12_CK_DIV0, "apll12_div0", "apll_i2s0_mck_sel",
+ 			0x0320, 0, 0x0328, 8, 0),
+ 	DIV_GATE(CLK_TOP_APLL12_CK_DIV1, "apll12_div1", "apll_i2s1_mck_sel",
+@@ -749,27 +746,19 @@ static int clk_mt8186_topck_probe(struct platform_device *pdev)
+ 	if (r)
+ 		goto unregister_muxes;
  
-+	if (mcd->clk_notifier_func) {
-+		struct clk *mfg_mux = clk_data->hws[mcd->mfg_clk_idx]->clk;
-+
-+		r = mcd->clk_notifier_func(&pdev->dev, mfg_mux);
-+		if (r)
-+			goto unregister_clks;
-+	}
-+
+-	r = mtk_clk_register_composites(&pdev->dev, top_adj_divs,
+-					ARRAY_SIZE(top_adj_divs), base,
+-					&mt8186_clk_lock, clk_data);
+-	if (r)
+-		goto unregister_composite_muxes;
+-
+ 	r = clk_mt8186_reg_mfg_mux_notifier(&pdev->dev,
+ 					    clk_data->hws[CLK_TOP_MFG]->clk);
+ 	if (r)
+-		goto unregister_composite_divs;
++		goto unregister_composite_muxes;
+ 
  	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
  	if (r)
- 		goto unregister_clks;
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index 1bdaa0acb909..41f4fa3b0c21 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -231,6 +231,9 @@ struct mtk_clk_desc {
- 	const struct mtk_clk_rst_desc *rst_desc;
- 	spinlock_t *clk_lock;
- 	bool shared_io;
-+
-+	int (*clk_notifier_func)(struct device *dev, struct clk *clk);
-+	unsigned int mfg_clk_idx;
- };
+-		goto unregister_composite_divs;
++		goto unregister_composite_muxes;
  
- int mtk_clk_simple_probe(struct platform_device *pdev);
+ 	platform_set_drvdata(pdev, clk_data);
+ 
+ 	return r;
+ 
+-unregister_composite_divs:
+-	mtk_clk_unregister_composites(top_adj_divs, ARRAY_SIZE(top_adj_divs), clk_data);
+ unregister_composite_muxes:
+ 	mtk_clk_unregister_composites(top_muxes, ARRAY_SIZE(top_muxes), clk_data);
+ unregister_muxes:
+@@ -789,7 +778,6 @@ static int clk_mt8186_topck_remove(struct platform_device *pdev)
+ 	struct device_node *node = pdev->dev.of_node;
+ 
+ 	of_clk_del_provider(node);
+-	mtk_clk_unregister_composites(top_adj_divs, ARRAY_SIZE(top_adj_divs), clk_data);
+ 	mtk_clk_unregister_composites(top_muxes, ARRAY_SIZE(top_muxes), clk_data);
+ 	mtk_clk_unregister_muxes(top_mtk_muxes, ARRAY_SIZE(top_mtk_muxes), clk_data);
+ 	mtk_clk_unregister_factors(top_divs, ARRAY_SIZE(top_divs), clk_data);
 -- 
 2.39.0
 
