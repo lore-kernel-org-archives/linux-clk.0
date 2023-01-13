@@ -2,794 +2,296 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4206C54EBE
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 16:59:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0400C678D6
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 18:16:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229499AbjAMQ7l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Jan 2023 11:59:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47610 "EHLO
+        id S229436AbjAMSQR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Jan 2023 13:16:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229547AbjAMQ7N (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 11:59:13 -0500
-Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 972CC72D16;
-        Fri, 13 Jan 2023 08:59:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1673629148; x=1705165148;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=JPiHzzRV1B8HaL9yM6E3MJxcZz2dy885iNt7C0hDdZE=;
-  b=R22Cv2dYw48Akjtk7yQEAYTqFbm2Bc7r4sbSZtGchEZE3wkNeqTSWJE4
-   zWyMUfaQy2w3t2PBfVe6OrHCtA8heSoLKnCoyoy9yhKBl5Xo2wMXuAd3t
-   HyxGsMnetaL+B8l3n/q6Xjyj+BD/NSCfLYlcG1t3j3HgD6YbbA8FtYPco
-   s=;
-Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 13 Jan 2023 08:59:08 -0800
-X-QCInternal: smtphost
-Received: from nasanex01b.na.qualcomm.com ([10.46.141.250])
-  by ironmsg-SD-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2023 08:59:07 -0800
-Received: from [10.110.64.161] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Fri, 13 Jan
- 2023 08:59:06 -0800
-Message-ID: <cfe35932-948e-1dc0-a686-c4f80d70396a@quicinc.com>
-Date:   Fri, 13 Jan 2023 08:58:44 -0800
+        with ESMTP id S230088AbjAMSPi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 13:15:38 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77D0E6DB8A;
+        Fri, 13 Jan 2023 10:06:41 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 555DACE2122;
+        Fri, 13 Jan 2023 18:06:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DD93C433F1;
+        Fri, 13 Jan 2023 18:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673633197;
+        bh=9JM2l3wQvAeTEYaZAWr5I3gZoNrgDAq2iaamsrQXne0=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=d/TyPrfu3TMN3RDQxpqP5fajACgLxUzrO1o0lviquPae0CCREqyfMhbNaFpmIDnAD
+         gc9rcn8tXi7SZ4Sa6feTIN2Ae1ZeCBFbV5dmTzybf+txFmSo/tzOIYxAQ5C/w8Dqvn
+         lUFscWLbHB7PxSvBS0qnt6QQanZXshhTtjgmZdd4dd7UYrIROlbOAFQjGgiw28eaXg
+         ZWAP2DT2ukYPCwIGpUnzoCfZFD2NIBDmWoE7vSQ2LoozWiuoZLz82Zhhis8k4Jr+Bj
+         yNgUqYimkNr/a2hjrvrPsnsWtLyOCrg7bz13Vy3HC3zIgb+UrU6VBUs4Zs2yFiDWYy
+         hI2RWs0YaghDg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+        id D78905C06D0; Fri, 13 Jan 2023 10:06:36 -0800 (PST)
+Date:   Fri, 13 Jan 2023 10:06:36 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
+        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
+        nsekhar@ti.com, brgl@bgdev.pl, ulli.kroll@googlemail.com,
+        linus.walleij@linaro.org, shawnguo@kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, tony@atomide.com,
+        khilman@kernel.org, krzysztof.kozlowski@linaro.org,
+        alim.akhtar@samsung.com, catalin.marinas@arm.com, will@kernel.org,
+        guoren@kernel.org, bcain@quicinc.com, chenhuacai@kernel.org,
+        kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net,
+        monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org,
+        jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
+        shorne@gmail.com, James.Bottomley@HansenPartnership.com,
+        deller@gmx.de, mpe@ellerman.id.au, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, paul.walmsley@sifive.com,
+        palmer@dabbelt.com, aou@eecs.berkeley.edu, hca@linux.ibm.com,
+        gor@linux.ibm.com, agordeev@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com,
+        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
+        richard@nod.at, anton.ivanov@cambridgegreys.com,
+        johannes@sipsolutions.net, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+        hpa@zytor.com, acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, pv-drivers@vmware.com,
+        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
+        gregkh@linuxfoundation.org, mturquette@baylibre.com,
+        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@linaro.org, anup@brainfault.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        jacob.jun.pan@linux.intel.com, atishp@atishpatra.org,
+        Arnd Bergmann <arnd@arndb.de>, yury.norov@gmail.com,
+        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
+        dennis@kernel.org, tj@kernel.org, cl@linux.com,
+        rostedt@goodmis.org, mhiramat@kernel.org, frederic@kernel.org,
+        pmladek@suse.com, senozhatsky@chromium.org,
+        john.ogness@linutronix.de, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
+        vschneid@redhat.com, ryabinin.a.a@gmail.com, glider@google.com,
+        andreyknvl@gmail.com, dvyukov@google.com,
+        vincenzo.frascino@arm.com,
+        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-csky@vger.kernel.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com
+Subject: Re: [PATCH v3 00/51] cpuidle,rcu: Clean up the mess
+Message-ID: <20230113180636.GA4028633@paulmck-ThinkPad-P17-Gen-1>
+Reply-To: paulmck@kernel.org
+References: <20230112194314.845371875@infradead.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH 18/18] arm64: dts: qcom: add initial support for qcom
- sa8775p-ride
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Alex Elder <elder@kernel.org>,
-        <quic_psodagud@quicinc.com>
-CC:     <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
-        <netdev@vger.kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20230109174511.1740856-1-brgl@bgdev.pl>
- <20230109174511.1740856-19-brgl@bgdev.pl>
- <f3a87b5b-5a9f-b19f-b16f-cd5a7394f4f0@linaro.org>
-From:   Prasad Sodagudi <quic_psodagud@quicinc.com>
-In-Reply-To: <f3a87b5b-5a9f-b19f-b16f-cd5a7394f4f0@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230112194314.845371875@infradead.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, Jan 12, 2023 at 08:43:14PM +0100, Peter Zijlstra wrote:
+> Hi All!
+> 
+> The (hopefully) final respin of cpuidle vs rcu cleanup patches. Barring any
+> objections I'll be queueing these patches in tip/sched/core in the next few
+> days.
+> 
+> v2: https://lkml.kernel.org/r/20220919095939.761690562@infradead.org
+> 
+> These here patches clean up the mess that is cpuidle vs rcuidle.
+> 
+> At the end of the ride there's only on RCU_NONIDLE user left:
+> 
+>   arch/arm64/kernel/suspend.c:            RCU_NONIDLE(__cpu_suspend_exit());
+> 
+> And I know Mark has been prodding that with something sharp.
+> 
+> The last version was tested by a number of people and I'm hoping to not have
+> broken anything in the meantime ;-)
+> 
+> 
+> Changes since v2:
 
+150 rcutorture hours on each of the default scenarios passed.  This
+is qemu/KVM on x86:
 
-On 1/9/2023 10:34 AM, Krzysztof Kozlowski wrote:
-> On 09/01/2023 18:45, Bartosz Golaszewski wrote:
->> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>
->> This adds basic support for the Qualcomm sa8775p platform and the
->> reference board: sa8775p-ride. The dt files describe the basics of the
->> SoC and enable booting to shell.
->>
->> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->> ---
->>   arch/arm64/boot/dts/qcom/Makefile         |   1 +
->>   arch/arm64/boot/dts/qcom/sa8775p-ride.dts |  39 +
->>   arch/arm64/boot/dts/qcom/sa8775p.dtsi     | 841 ++++++++++++++++++++++
->>   3 files changed, 881 insertions(+)
->>   create mode 100644 arch/arm64/boot/dts/qcom/sa8775p-ride.dts
->>   create mode 100644 arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>
->> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
->> index 3e79496292e7..39b8206f7131 100644
->> --- a/arch/arm64/boot/dts/qcom/Makefile
->> +++ b/arch/arm64/boot/dts/qcom/Makefile
->> @@ -61,6 +61,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qrb5165-rb5-vision-mezzanine.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= sa8155p-adp.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= sa8295p-adp.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= sa8540p-ride.dtb
->> +dtb-$(CONFIG_ARCH_QCOM) += sa8775p-ride.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= sc7180-idp.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= sc7180-trogdor-coachz-r1.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= sc7180-trogdor-coachz-r1-lte.dtb
->> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dts b/arch/arm64/boot/dts/qcom/sa8775p-ride.dts
->> new file mode 100644
->> index 000000000000..d4dae32a84cc
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dts
->> @@ -0,0 +1,39 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (c) 2023, Linaro Limited
->> + */
->> +
->> +/dts-v1/;
->> +
->> +#include "sa8775p.dtsi"
->> +
->> +/ {
->> +	model = "Qualcomm SA8875P Ride";
->> +	compatible = "qcom,sa8775p-ride", "qcom,sa8775p";
->> +
->> +	aliases {
->> +		serial0 = &uart10;
->> +	};
->> +
->> +	chosen {
->> +		stdout-path = "serial0:115200n8";
->> +	};
->> +};
->> +
->> +&qupv3_id_1 {
->> +	status = "okay";
->> +};
->> +
->> +&uart10 {
->> +	compatible = "qcom,geni-debug-uart";
->> +	status = "okay";
->> +	pinctrl-names = "default";
->> +	pinctrl-0 = <&qup_uart10_state>;
->> +};
->> +
->> +&tlmm {
->> +	qup_uart10_state: qup_uart10_state {
-> 
-> Does not look like you tested the DTS against bindings. Please run `make
-> dtbs_check` (see Documentation/devicetree/bindings/writing-schema.rst
-> for instructions).
-> 
->> +		pins = "gpio46", "gpio47";
->> +		function = "qup1_se3";
->> +	};
->> +};
->> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->> new file mode 100644
->> index 000000000000..1a3b11628e38
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->> @@ -0,0 +1,841 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
-> 
-> Why GPL-2.0-only? Isn't this based on other code which is either
-> dual-licensed or BSD license?
-> 
->> +/*
->> + * Copyright (c) 2023, Linaro Limited
->> + */
->> +
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +#include <dt-bindings/clock/qcom,gcc-sa8775p.h>
->> +#include <dt-bindings/clock/qcom,rpmh.h>
->> +#include <dt-bindings/interconnect/qcom,sa8775p.h>
->> +#include <dt-bindings/power/qcom-rpmpd.h>
->> +#include <dt-bindings/soc/qcom,rpmh-rsc.h>
->> +
->> +/ {
->> +	interrupt-parent = <&intc>;
->> +
->> +	#address-cells = <2>;
->> +	#size-cells = <2>;
->> +
->> +	clocks {
->> +		xo_board_clk: xo-board-clk {
->> +			compatible = "fixed-clock";
->> +			#clock-cells = <0>;
-> 
-> Your board needs clock frequency.
-> 
->> +		};
->> +
->> +		sleep_clk: sleep-clk {
->> +			compatible = "fixed-clock";
->> +			#clock-cells = <0>;
->> +			clock-frequency = <32764>;
-> 
-> Usual comment: this (entire clock or at least its frequency) is usually
-> not a property of a SoC, but board. Did something change here in SA8775?
-> 
-> 
->> +		};
->> +	};
->> +
->> +	cpus {
->> +		#address-cells = <2>;
->> +		#size-cells = <0>;
->> +
->> +		CPU0: cpu@0 {
->> +			device_type = "cpu";
->> +			compatible = "qcom,kryo";
->> +			reg = <0x0 0x0>;
->> +			enable-method = "psci";
->> +			next-level-cache = <&L2_0>;
->> +			L2_0: l2-cache {
->> +			      compatible = "cache";
->> +			      next-level-cache = <&L3_0>;
-> 
-> Messed indentation.
-> 
->> +				L3_0: l3-cache {
->> +				      compatible = "cache";
->> +				};
->> +			};
->> +		};
->> +
->> +		CPU1: cpu@100 {
->> +			device_type = "cpu";
->> +			compatible = "qcom,kryo";
->> +			reg = <0x0 0x100>;
->> +			enable-method = "psci";
->> +			cpu-release-addr = <0x0 0x90000000>;
->> +			next-level-cache = <&L2_1>;
->> +			L2_1: l2-cache {
->> +			      compatible = "cache";
->> +			      next-level-cache = <&L3_0>;
->> +			};
->> +		};
->> +
->> +		CPU2: cpu@200 {
->> +			device_type = "cpu";
->> +			compatible = "qcom,kryo";
->> +			reg = <0x0 0x200>;
->> +			enable-method = "psci";
->> +			next-level-cache = <&L2_2>;
->> +			L2_2: l2-cache {
->> +			      compatible = "cache";
->> +			      next-level-cache = <&L3_0>;
->> +			};
->> +		};
->> +
->> +		CPU3: cpu@300 {
->> +			device_type = "cpu";
->> +			compatible = "qcom,kryo";
->> +			reg = <0x0 0x300>;
->> +			enable-method = "psci";
->> +			next-level-cache = <&L2_3>;
->> +			L2_3: l2-cache {
->> +			      compatible = "cache";
->> +			      next-level-cache = <&L3_0>;
->> +			};
->> +		};
->> +
->> +		CPU4: cpu@10000 {
->> +			device_type = "cpu";
->> +			compatible = "qcom,kryo";
->> +			reg = <0x0 0x10000>;
->> +			enable-method = "psci";
->> +			next-level-cache = <&L2_4>;
->> +			L2_4: l2-cache {
->> +			      compatible = "cache";
->> +			      next-level-cache = <&L3_1>;
->> +				L3_1: l3-cache {
->> +				      compatible = "cache";
->> +				};
->> +
->> +			};
->> +		};
->> +
->> +		CPU5: cpu@10100 {
->> +			device_type = "cpu";
->> +			compatible = "qcom,kryo";
->> +			reg = <0x0 0x10100>;
->> +			enable-method = "psci";
->> +			next-level-cache = <&L2_5>;
->> +			L2_5: l2-cache {
->> +			      compatible = "cache";
->> +			      next-level-cache = <&L3_1>;
->> +			};
->> +		};
->> +
->> +		CPU6: cpu@10200 {
->> +			device_type = "cpu";
->> +			compatible = "qcom,kryo";
->> +			reg = <0x0 0x10200>;
->> +			enable-method = "psci";
->> +			next-level-cache = <&L2_6>;
->> +			L2_6: l2-cache {
->> +			      compatible = "cache";
->> +			      next-level-cache = <&L3_1>;
->> +			};
->> +		};
->> +
->> +		CPU7: cpu@10300 {
->> +			device_type = "cpu";
->> +			compatible = "qcom,kryo";
->> +			reg = <0x0 0x10300>;
->> +			enable-method = "psci";
->> +			next-level-cache = <&L2_7>;
->> +			L2_7: l2-cache {
->> +			      compatible = "cache";
->> +			      next-level-cache = <&L3_1>;
->> +			};
->> +		};
->> +
->> +		cpu-map {
->> +			cluster0 {
->> +				core0 {
->> +					cpu = <&CPU0>;
->> +				};
->> +
->> +				core1 {
->> +					cpu = <&CPU1>;
->> +				};
->> +
->> +				core2 {
->> +					cpu = <&CPU2>;
->> +				};
->> +
->> +				core3 {
->> +					cpu = <&CPU3>;
->> +				};
->> +			};
->> +
->> +			cluster1 {
->> +				core0 {
->> +					cpu = <&CPU4>;
->> +				};
->> +
->> +				core1 {
->> +					cpu = <&CPU5>;
->> +				};
->> +
->> +				core2 {
->> +					cpu = <&CPU6>;
->> +				};
->> +
->> +				core3 {
->> +					cpu = <&CPU7>;
->> +				};
->> +			};
->> +		};
->> +	};
->> +
->> +	/* Will be updated by the bootloader. */
->> +	memory {
->> +		device_type = "memory";
->> +		reg = <0 0 0 0>;
->> +	};
->> +
->> +	reserved-memory {
->> +		#address-cells = <2>;
->> +		#size-cells = <2>;
->> +		ranges;
->> +
->> +		sail_ss_mem: sail_ss_region@80000000 {
-> 
-> No underscores in node names.
-> 
-> (...)
-> 
->> +
->> +	qup_opp_table_100mhz: qup-100mhz-opp-table {
-> 
-> opp-table-....
-> 
-> Does not look like you tested the DTS against bindings. Please run `make
-> dtbs_check` (see Documentation/devicetree/bindings/writing-schema.rst
-> for instructions).
-> 
->> +		compatible = "operating-points-v2";
->> +
->> +		opp-100000000 {
->> +			opp-hz = /bits/ 64 <100000000>;
->> +			required-opps = <&rpmhpd_opp_svs_l1>;
->> +		};
->> +	};
->> +
->> +	soc: soc@0 {
->> +		compatible = "simple-bus";
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
+Tested-by: Paul E. McKenney <paulmck@kernel.org>
 
-Can you please update address-cells and size-cells as <2> and update sub 
-nodes accordingly?
-                 #address-cells = <2>;
-                 #size-cells = <2>;
-
->> +		ranges = <0 0 0 0xffffffff>;
->> +
->> +		gcc: clock-controller@100000 {
->> +			compatible = "qcom,gcc-sa8775p";
->> +			reg = <0x100000 0xc7018>;
->> +			#clock-cells = <1>;
->> +			#reset-cells = <1>;
->> +			#power-domain-cells = <1>;
->> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
->> +				 <&sleep_clk>,
->> +				 <0>,
->> +				 <0>,
->> +				 <0>,
->> +				 <0>,
->> +				 <0>,
->> +				 <0>,
->> +				 <0>,
->> +				 <0>,
->> +				 <0>, /* TODO: usb_0_ssphy */
->> +				 <0>,
->> +				 <0>,
->> +				 <0>,
->> +				 <0>;
->> +			power-domains = <&rpmhpd SA8775P_CX>;
->> +		};
->> +
->> +		ipcc: mailbox@408000 {
->> +			compatible = "qcom,sa8775p-ipcc", "qcom,ipcc";
->> +			reg = <0x408000 0x1000>;
->> +			interrupts = <GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH>;
->> +			interrupt-controller;
->> +			#interrupt-cells = <3>;
->> +			#mbox-cells = <2>;
->> +		};
->> +
->> +		aggre1_noc:interconnect-aggre1-noc {
+>  - rebased to v6.2-rc3; as available at:
+>      git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/idle
 > 
-> Missing space after :
+>  - folded: https://lkml.kernel.org/r/Y3UBwYNY15ETUKy9@hirez.programming.kicks-ass.net
+>    which makes the ARM cpuidle index 0 consistently not use
+>    CPUIDLE_FLAG_RCU_IDLE, as requested by Ulf.
 > 
->> +			compatible = "qcom,sa8775p-aggre1-noc";
+>  - added a few more __always_inline to empty stub functions as found by the
+>    robot.
 > 
-> This does not match your bindings, so nothing here was tested against
-> your own files which you sent.
+>  - Used _RET_IP_ instead of _THIS_IP_ in a few placed because of:
+>    https://github.com/ClangBuiltLinux/linux/issues/263
 > 
->> +			#interconnect-cells = <2>;
->> +			qcom,bcm-voters = <&apps_bcm_voter>;
->> +		};
->> +
->> +		aggre2_noc: interconnect-aggre2-noc {
->> +			compatible = "qcom,sa8775p-aggre2-noc";
->> +			#interconnect-cells = <2>;
->> +			qcom,bcm-voters = <&apps_bcm_voter>;
->> +		};
->> +
->> +		clk_virt: interconnect-clk-virt {
->> +			compatible = "qcom,sa8775p-clk-virt";
->> +			#interconnect-cells = <2>;
->> +			qcom,bcm-voters = <&apps_bcm_voter>;
->> +		};
->> +
->> +		config_noc: interconnect-config-noc {
->> +			compatible = "qcom,sa8775p-config-noc";
->> +			#interconnect-cells = <2>;
->> +			qcom,bcm-voters = <&apps_bcm_voter>;
->> +		};
->> +
->> +		dc_noc: interconnect-dc-noc {
->> +			compatible = "qcom,sa8775p-dc-noc";
->> +			#interconnect-cells = <2>;
->> +			qcom,bcm-voters = <&apps_bcm_voter>;
->> +		};
->> +
->> +		gem_noc: interconnect-gem-noc {
->> +			compatible = "qcom,sa8775p-gem-noc";
->> +			#interconnect-cells = <2>;
->> +			qcom,bcm-voters = <&apps_bcm_voter>;
->> +		};
->> +
->> +		gpdsp_anoc: interconnect-gpdsp-anoc {
->> +			compatible = "qcom,sa8775p-gpdsp-anoc";
->> +			#interconnect-cells = <2>;
->> +			qcom,bcm-voters = <&apps_bcm_voter>;
->> +		};
->> +
->> +		lpass_ag_noc: interconnect-lpass-ag-noc {
->> +			compatible = "qcom,sa8775p-lpass-ag-noc";
->> +			#interconnect-cells = <2>;
->> +			qcom,bcm-voters = <&apps_bcm_voter>;
->> +		};
->> +
->> +		mc_virt: interconnect-mc-virt {
->> +			compatible = "qcom,sa8775p-mc-virt";
->> +			#interconnect-cells = <2>;
->> +			qcom,bcm-voters = <&apps_bcm_voter>;
->> +		};
->> +
->> +		mmss_noc: interconnect-mmss-noc {
->> +			compatible = "qcom,sa8775p-mmss-noc";
->> +			#interconnect-cells = <2>;
->> +			qcom,bcm-voters = <&apps_bcm_voter>;
->> +		};
->> +
->> +		nspa_noc: interconnect-nspa-noc {
->> +			compatible = "qcom,sa8775p-nspa-noc";
->> +			#interconnect-cells = <2>;
->> +			qcom,bcm-voters = <&apps_bcm_voter>;
->> +		};
->> +
->> +		nspb_noc: interconnect-nspb-noc {
->> +			compatible = "qcom,sa8775p-nspb-noc";
->> +			#interconnect-cells = <2>;
->> +			qcom,bcm-voters = <&apps_bcm_voter>;
->> +		};
->> +
->> +		pcie_anoc: interconnect-pcie-anoc {
->> +			compatible = "qcom,sa8775p-pcie-anoc";
->> +			#interconnect-cells = <2>;
->> +			qcom,bcm-voters = <&apps_bcm_voter>;
->> +		};
->> +
->> +		system_noc: interconnect-system-noc {
->> +			compatible = "qcom,sa8775p-system-noc";
->> +			#interconnect-cells = <2>;
->> +			qcom,bcm-voters = <&apps_bcm_voter>;
->> +		};
->> +
->> +		intc: interrupt-controller@17a00000 {
->> +			compatible = "arm,gic-v3";
->> +			#interrupt-cells = <3>;
->> +			interrupt-controller;
->> +			#address-cells = <1>;
->> +			#size-cells = <1>;
->> +			ranges;
->> +			#redistributor-regions = <1>;
->> +			redistributor-stride = <0x0 0x20000>;
->> +			reg = <0x17a00000 0x10000>,     /* GICD */
->> +			      <0x17a60000 0x100000>;    /* GICR * 8 */
+>  - Added new patches to address various robot reports:
 > 
-> Compatible goes first, then reg, then ranges.
-> 
->> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
->> +		};
->> +
->> +		apps_rsc: rsc@18200000 {
->> +			compatible = "qcom,rpmh-rsc";
->> +			reg = <0x18200000 0x10000>,
->> +			      <0x18210000 0x10000>,
->> +			      <0x18220000 0x10000>;
->> +			reg-names = "drv-0", "drv-1", "drv-2";
->> +			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
->> +			      <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
->> +			      <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
->> +			qcom,tcs-offset = <0xd00>;
->> +			qcom,drv-id = <2>;
->> +			qcom,tcs-config = <ACTIVE_TCS 2>,
->> +					  <SLEEP_TCS 3>,
->> +					  <WAKE_TCS 3>,
->> +					  <CONTROL_TCS 0>;
->> +			label = "apps_rsc";
->> +
->> +			apps_bcm_voter: bcm_voter {
-> 
-> Does not look like you tested the DTS against bindings. Please run `make
-> dtbs_check` (see Documentation/devicetree/bindings/writing-schema.rst
-> for instructions).
-> 
->> +				compatible = "qcom,bcm-voter";
->> +			};
->> +
->> +			rpmhcc: clock-controller {
->> +				compatible = "qcom,sa8775p-rpmh-clk";
->> +				#clock-cells = <1>;
->> +				clock-names = "xo";
->> +				clocks = <&xo_board_clk>;
->> +			};
->> +
->> +			rpmhpd: power-controller {
->> +				compatible = "qcom,sa8775p-rpmhpd";
->> +				#power-domain-cells = <1>;
->> +				operating-points-v2 = <&rpmhpd_opp_table>;
->> +
->> +				rpmhpd_opp_table: opp-table {
->> +					compatible = "operating-points-v2";
->> +
->> +					rpmhpd_opp_ret: opp1 {
-> 
-> opp-0
-> (so numbering from 0 and hyphen)
-> 
->> +						opp-level = <RPMH_REGULATOR_LEVEL_RETENTION>;
->> +					};
->> +
->> +					rpmhpd_opp_min_svs: opp2 {
-> 
-> opp-1
-> 
->> +						opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
->> +					};
->> +
->> +					rpmhpd_opp_low_svs: opp3 {
->> +						opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
->> +					};
->> +
->> +					rpmhpd_opp_svs: opp4 {
->> +						opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
->> +					};
->> +
->> +					rpmhpd_opp_svs_l1: opp5 {
->> +						opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
->> +					};
->> +
->> +					rpmhpd_opp_nom: opp6 {
->> +						opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
->> +					};
->> +
->> +					rpmhpd_opp_nom_l1: opp7 {
->> +						opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
->> +					};
->> +
->> +					rpmhpd_opp_nom_l2: opp8 {
->> +						opp-level = <RPMH_REGULATOR_LEVEL_NOM_L2>;
->> +					};
->> +
->> +					rpmhpd_opp_turbo: opp9 {
->> +						opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
->> +					};
->> +
->> +					rpmhpd_opp_turbo_l1: opp10 {
->> +						opp-level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
->> +					};
->> +				};
->> +			};
->> +		};
->> +
->> +		arch_timer: timer {
->> +			compatible = "arm,armv8-timer";
->> +			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
->> +				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
->> +				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
->> +				     <GIC_PPI 12 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
->> +			clock-frequency = <19200000>;
->> +		};
->> +
->> +		memtimer: timer@17c20000 {
-> 
-> Why this one is outside of soc node? Or are we inside soc? But then
-> ARMv8 timer cannot be here... dtbs W=1 would warn you, wouldn't it?
+>      #35:  trace,hardirq: No moar _rcuidle() tracing
+>      #47:  cpuidle: Ensure ct_cpuidle_enter() is always called from noinstr/__cpuidle
+>      #48:  cpuidle,arch: Mark all ct_cpuidle_enter() callers __cpuidle
+>      #49:  cpuidle,arch: Mark all regular cpuidle_state::enter methods __cpuidle
+>      #50:  cpuidle: Comments about noinstr/__cpuidle
+>      #51:  context_tracking: Fix noinstr vs KASAN
 > 
 > 
->> +			#address-cells = <1>;
->> +			#size-cells = <1>;
->> +			ranges;
->> +			compatible = "arm,armv7-timer-mem";
-> 
-> Weird order of properties.
-> 
->> +			reg = <0x17c20000 0x1000>;
->> +			clock-frequency = <19200000>;
->> +
->> +			frame@17c21000 {
->> +				frame-number = <0>;
->> +				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
->> +					     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
->> +				reg = <0x17c21000 0x1000>,
->> +				      <0x17c22000 0x1000>;
->> +			};
->> +
->> +			frame@17c23000 {
->> +				frame-number = <1>;
->> +				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
->> +				reg = <0x17c23000 0x1000>;
->> +				status = "disabled";
->> +			};
->> +
->> +			frame@17c25000 {
->> +				frame-number = <2>;
->> +				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
->> +				reg = <0x17c25000 0x1000>;
->> +				status = "disabled";
->> +			};
->> +
->> +			frame@17c27000 {
->> +				frame-number = <3>;
->> +				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
->> +				reg = <0x17c27000 0x1000>;
->> +				status = "disabled";
->> +			};
->> +
->> +			frame@17c29000 {
->> +				frame-number = <4>;
->> +				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
->> +				reg = <0x17c29000 0x1000>;
->> +				status = "disabled";
->> +			};
->> +
->> +			frame@17c2b000 {
->> +				frame-number = <5>;
->> +				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
->> +				reg = <0x17c2b000 0x1000>;
->> +				status = "disabled";
->> +			};
->> +
->> +			frame@17c2d000 {
->> +				frame-number = <6>;
->> +				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
->> +				reg = <0x17c2d000 0x1000>;
->> +				status = "disabled";
->> +			};
->> +		};
->> +
->> +		tcsr_mutex: hwlock@1f40000 {
->> +			compatible = "qcom,tcsr-mutex";
->> +			reg = <0x1f40000 0x20000>;
->> +			#hwlock-cells = <1>;
->> +		};
->> +
->> +		tlmm: pinctrl@f000000 {
->> +			compatible = "qcom,sa8775p-pinctrl";
->> +			reg = <0xf000000 0x1000000>;
->> +			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
->> +			gpio-controller;
->> +			#gpio-cells = <2>;
->> +			interrupt-controller;
->> +			#interrupt-cells = <2>;
->> +			gpio-ranges = <&tlmm 0 0 149>;
->> +		};
->> +
->> +		qcom-wdt@17c10000 {
-> 
-> Node names should be generic.
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-> 
->> +			compatible = "qcom,kpss-wdt";
->> +			reg = <0x17c10000 0x1000>;
->> +			clocks = <&sleep_clk>;
->> +			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
->> +		};
->> +
->> +		qupv3_id_1: geniqup@ac0000 {
->> +			compatible = "qcom,geni-se-qup";
->> +			reg = <0xac0000 0x6000>;
->> +			#address-cells = <1>;
->> +			#size-cells = <1>;
->> +			ranges;
->> +			clock-names = "m-ahb", "s-ahb";
->> +			clocks = <&gcc GCC_QUPV3_WRAP_1_M_AHB_CLK>,
->> +				 <&gcc GCC_QUPV3_WRAP_1_S_AHB_CLK>;
->> +			iommus = <&apps_smmu 0x443 0x0>;
->> +			status = "disabled";
->> +
->> +			uart10: serial@a8c000 {
->> +				compatible = "qcom,geni-uart";
->> +				reg = <0xa8c000 0x4000>;
->> +				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
->> +				clock-names = "se";
->> +				clocks = <&gcc GCC_QUPV3_WRAP1_S3_CLK>;
->> +				interconnect-names = "qup-core", "qup-config", "qup-memory";
->> +				interconnects = <&clk_virt MASTER_QUP_CORE_1 0 &clk_virt SLAVE_QUP_CORE_1 0>,
->> +						<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_QUP_1 0>,
->> +						<&aggre2_noc MASTER_QUP_1 0 &mc_virt SLAVE_EBI1 0>;
->> +				power-domains = <&rpmhpd SA8775P_CX>;
->> +				operating-points-v2 = <&qup_opp_table_100mhz>;
->> +				status = "disabled";
->> +			};
->> +		};
->> +
->> +		apps_smmu: apps-smmu@15000000 {
-> 
-> iommu, node names should be generic.
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-> 
-> and probably also fails dtbs_check...
-> 
->> +			compatible = "qcom,sa8775p-smmu-500", "arm,mmu-500";
->> +			reg = <0x15000000 0x100000>, <0x15182000 0x28>;
->> +			reg-names = "base", "tcu-base";
->> +			#iommu-cells = <2>;
->> +			qcom,skip-init;
->> +			qcom,use-3-lvl-tables;
->> +			#global-interrupts = <2>;
->> +			#size-cells = <1>;
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+> ---
+>  arch/alpha/kernel/process.c               |  1 -
+>  arch/alpha/kernel/vmlinux.lds.S           |  1 -
+>  arch/arc/kernel/process.c                 |  3 ++
+>  arch/arc/kernel/vmlinux.lds.S             |  1 -
+>  arch/arm/include/asm/vmlinux.lds.h        |  1 -
+>  arch/arm/kernel/cpuidle.c                 |  4 +-
+>  arch/arm/kernel/process.c                 |  1 -
+>  arch/arm/kernel/smp.c                     |  6 +--
+>  arch/arm/mach-davinci/cpuidle.c           |  4 +-
+>  arch/arm/mach-gemini/board-dt.c           |  3 +-
+>  arch/arm/mach-imx/cpuidle-imx5.c          |  4 +-
+>  arch/arm/mach-imx/cpuidle-imx6q.c         |  8 ++--
+>  arch/arm/mach-imx/cpuidle-imx6sl.c        |  4 +-
+>  arch/arm/mach-imx/cpuidle-imx6sx.c        |  9 ++--
+>  arch/arm/mach-imx/cpuidle-imx7ulp.c       |  4 +-
+>  arch/arm/mach-omap2/common.h              |  6 ++-
+>  arch/arm/mach-omap2/cpuidle34xx.c         | 16 ++++++-
+>  arch/arm/mach-omap2/cpuidle44xx.c         | 29 +++++++------
+>  arch/arm/mach-omap2/omap-mpuss-lowpower.c | 12 +++++-
+>  arch/arm/mach-omap2/pm.h                  |  2 +-
+>  arch/arm/mach-omap2/pm24xx.c              | 51 +---------------------
+>  arch/arm/mach-omap2/pm34xx.c              | 14 +++++--
+>  arch/arm/mach-omap2/pm44xx.c              |  2 +-
+>  arch/arm/mach-omap2/powerdomain.c         | 10 ++---
+>  arch/arm/mach-s3c/cpuidle-s3c64xx.c       |  5 +--
+>  arch/arm64/kernel/cpuidle.c               |  2 +-
+>  arch/arm64/kernel/idle.c                  |  1 -
+>  arch/arm64/kernel/smp.c                   |  4 +-
+>  arch/arm64/kernel/vmlinux.lds.S           |  1 -
+>  arch/csky/kernel/process.c                |  1 -
+>  arch/csky/kernel/smp.c                    |  2 +-
+>  arch/csky/kernel/vmlinux.lds.S            |  1 -
+>  arch/hexagon/kernel/process.c             |  1 -
+>  arch/hexagon/kernel/vmlinux.lds.S         |  1 -
+>  arch/ia64/kernel/process.c                |  1 +
+>  arch/ia64/kernel/vmlinux.lds.S            |  1 -
+>  arch/loongarch/kernel/idle.c              |  1 +
+>  arch/loongarch/kernel/vmlinux.lds.S       |  1 -
+>  arch/m68k/kernel/vmlinux-nommu.lds        |  1 -
+>  arch/m68k/kernel/vmlinux-std.lds          |  1 -
+>  arch/m68k/kernel/vmlinux-sun3.lds         |  1 -
+>  arch/microblaze/kernel/process.c          |  1 -
+>  arch/microblaze/kernel/vmlinux.lds.S      |  1 -
+>  arch/mips/kernel/idle.c                   | 14 +++----
+>  arch/mips/kernel/vmlinux.lds.S            |  1 -
+>  arch/nios2/kernel/process.c               |  1 -
+>  arch/nios2/kernel/vmlinux.lds.S           |  1 -
+>  arch/openrisc/kernel/process.c            |  1 +
+>  arch/openrisc/kernel/vmlinux.lds.S        |  1 -
+>  arch/parisc/kernel/process.c              |  2 -
+>  arch/parisc/kernel/vmlinux.lds.S          |  1 -
+>  arch/powerpc/kernel/idle.c                |  5 +--
+>  arch/powerpc/kernel/vmlinux.lds.S         |  1 -
+>  arch/riscv/kernel/process.c               |  1 -
+>  arch/riscv/kernel/vmlinux-xip.lds.S       |  1 -
+>  arch/riscv/kernel/vmlinux.lds.S           |  1 -
+>  arch/s390/kernel/idle.c                   |  1 -
+>  arch/s390/kernel/vmlinux.lds.S            |  1 -
+>  arch/sh/kernel/idle.c                     |  1 +
+>  arch/sh/kernel/vmlinux.lds.S              |  1 -
+>  arch/sparc/kernel/leon_pmc.c              |  4 ++
+>  arch/sparc/kernel/process_32.c            |  1 -
+>  arch/sparc/kernel/process_64.c            |  3 +-
+>  arch/sparc/kernel/vmlinux.lds.S           |  1 -
+>  arch/um/kernel/dyn.lds.S                  |  1 -
+>  arch/um/kernel/process.c                  |  1 -
+>  arch/um/kernel/uml.lds.S                  |  1 -
+>  arch/x86/boot/compressed/vmlinux.lds.S    |  1 +
+>  arch/x86/coco/tdx/tdcall.S                | 15 +------
+>  arch/x86/coco/tdx/tdx.c                   | 25 ++++-------
+>  arch/x86/events/amd/brs.c                 | 13 +++---
+>  arch/x86/include/asm/fpu/xcr.h            |  4 +-
+>  arch/x86/include/asm/irqflags.h           | 11 ++---
+>  arch/x86/include/asm/mwait.h              | 14 +++----
+>  arch/x86/include/asm/nospec-branch.h      |  2 +-
+>  arch/x86/include/asm/paravirt.h           |  6 ++-
+>  arch/x86/include/asm/perf_event.h         |  2 +-
+>  arch/x86/include/asm/shared/io.h          |  4 +-
+>  arch/x86/include/asm/shared/tdx.h         |  1 -
+>  arch/x86/include/asm/special_insns.h      |  8 ++--
+>  arch/x86/include/asm/xen/hypercall.h      |  2 +-
+>  arch/x86/kernel/cpu/bugs.c                |  2 +-
+>  arch/x86/kernel/fpu/core.c                |  4 +-
+>  arch/x86/kernel/paravirt.c                | 14 ++++++-
+>  arch/x86/kernel/process.c                 | 65 ++++++++++++++--------------
+>  arch/x86/kernel/vmlinux.lds.S             |  1 -
+>  arch/x86/lib/memcpy_64.S                  |  5 +--
+>  arch/x86/lib/memmove_64.S                 |  4 +-
+>  arch/x86/lib/memset_64.S                  |  4 +-
+>  arch/x86/xen/enlighten_pv.c               |  2 +-
+>  arch/x86/xen/irq.c                        |  2 +-
+>  arch/xtensa/kernel/process.c              |  1 +
+>  arch/xtensa/kernel/vmlinux.lds.S          |  1 -
+>  drivers/acpi/processor_idle.c             | 28 ++++++++-----
+>  drivers/base/power/runtime.c              | 24 +++++------
+>  drivers/clk/clk.c                         |  8 ++--
+>  drivers/cpuidle/cpuidle-arm.c             |  4 +-
+>  drivers/cpuidle/cpuidle-big_little.c      | 12 ++++--
+>  drivers/cpuidle/cpuidle-mvebu-v7.c        | 13 ++++--
+>  drivers/cpuidle/cpuidle-psci.c            | 26 +++++-------
+>  drivers/cpuidle/cpuidle-qcom-spm.c        |  4 +-
+>  drivers/cpuidle/cpuidle-riscv-sbi.c       | 19 +++++----
+>  drivers/cpuidle/cpuidle-tegra.c           | 31 +++++++++-----
+>  drivers/cpuidle/cpuidle.c                 | 70 ++++++++++++++++++++++---------
+>  drivers/cpuidle/dt_idle_states.c          |  2 +-
+>  drivers/cpuidle/poll_state.c              | 10 ++++-
+>  drivers/idle/intel_idle.c                 | 19 ++++-----
+>  drivers/perf/arm_pmu.c                    | 11 +----
+>  drivers/perf/riscv_pmu_sbi.c              |  8 +---
+>  include/asm-generic/vmlinux.lds.h         |  9 ++--
+>  include/linux/clockchips.h                |  4 +-
+>  include/linux/compiler_types.h            | 18 +++++++-
+>  include/linux/cpu.h                       |  3 --
+>  include/linux/cpuidle.h                   | 32 ++++++++++++++
+>  include/linux/cpumask.h                   |  4 +-
+>  include/linux/percpu-defs.h               |  2 +-
+>  include/linux/sched/idle.h                | 40 +++++++++++++-----
+>  include/linux/thread_info.h               | 18 +++++++-
+>  include/linux/tracepoint.h                | 15 ++++++-
+>  kernel/context_tracking.c                 | 12 +++---
+>  kernel/cpu_pm.c                           |  9 ----
+>  kernel/printk/printk.c                    |  2 +-
+>  kernel/sched/idle.c                       | 47 ++++++---------------
+>  kernel/time/tick-broadcast-hrtimer.c      | 29 ++++++-------
+>  kernel/time/tick-broadcast.c              |  6 ++-
+>  kernel/trace/trace.c                      |  3 ++
+>  kernel/trace/trace_preemptirq.c           | 50 ++++++----------------
+>  lib/ubsan.c                               |  5 ++-
+>  mm/kasan/kasan.h                          |  4 ++
+>  mm/kasan/shadow.c                         | 38 +++++++++++++++++
+>  tools/objtool/check.c                     | 17 ++++++++
+>  131 files changed, 617 insertions(+), 523 deletions(-)
 > 
