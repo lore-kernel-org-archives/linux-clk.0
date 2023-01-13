@@ -2,63 +2,56 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 007F1C61DB3
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 11:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0161C54EBE
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 12:12:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241324AbjAMLoo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Jan 2023 06:44:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34188 "EHLO
+        id S232417AbjAMMMr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Jan 2023 07:12:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241669AbjAMLoP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 06:44:15 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26D48564F6
-        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 03:35:14 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id bf43so32727249lfb.6
-        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 03:35:14 -0800 (PST)
+        with ESMTP id S230079AbjAMMLm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 07:11:42 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C92078A46
+        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 04:06:05 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id g13so32840969lfv.7
+        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 04:06:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iapGRaVZJCJhixJmVEyuyZPoh1zMlniKZSdec3xz9/s=;
-        b=gzuRt+XXCGY+pseGlNd8jzfI0vyS1DiOWhXp42uUmVYV9hVHCcVWWCKiJPPT5yineG
-         kWtBfnIkHQ6Ud3vmRf5rmNCqviBMODil+TlyOSjQjXKr+j5EBcKrEDbmceG+MMww7UOb
-         PMnN4IxZYd+04iY/L+T1fU8iLgThf6wa+cdwrrzv63Leowz+PLptytw2ZKUHbbmWBLoQ
-         t9oX6qWTXDE2CHQ18LIBEX9W1GCGm1n/EhMnw1HYhg9YJHFgptLNbhIVjHIuMhB/08TA
-         gWdEdhSO6eDNPzgoSEaJrEpFWI63cP0LVJgkHE4SNEGS9C2Q9uUPITcRC1tLngoD8qiu
-         veXQ==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=q/4eRHojkDz/W1PqGW3L+6StYgWEoOhMr1+9HnHapgo=;
+        b=qVyn8mm09ffo+2jE/5CN6FKrSmG+GpJBFAqKwOdtdetKXctK6z+CYsRISVQ/jlwLg+
+         ag4+j8kctpd9y4jmpj+r9bP+z2b7C57cpApmp1x++i+fZ1ZB5aZ4LUWOyCOwx3dnF5en
+         4xeCmwTAFj9+MEjCc1AckqNISTLL6zV7GgFBp+aAZYAf0ffK23ZFhtcncABr/ezdtRUZ
+         2BAjSDxEkq2dL5BU+gaEYwPByw9O58Fjna6FNZtb76/tYnMiu9UT7NInMm9OulrZOwx2
+         P+kZ7z9RhWE+WtH+1ntiYUPW2dCQ9O3epNTT7XoSKiRymU5h2+pBx1ALnKDtYgKp+cUr
+         K2Cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iapGRaVZJCJhixJmVEyuyZPoh1zMlniKZSdec3xz9/s=;
-        b=l/YJM9+n6lGdKcAyovgI2TjvtZj/R0+Hto9tlKPxqyvmmbwV2ukLWYj4cNPsVh/BWD
-         Zz4NsDDAHOT4gCcoF2nMBd4YFsa+3u3KUq0PaNu+7Vp2jjbUWlwKRxJP2mVWzAiGWeGs
-         GYDPf/ZRhT1a9Ciax08HQXWl6y7uxc0xyuL6EF4FeCNnhd6Vy1wdpzA2+m5XBxfQ7no1
-         NqFbC2V4J27au77g4Tr+Y+/+gZ8JVyqAD1+7jqcbCaNb4ud4R5SvhbTAf9qqvsuA0myM
-         I50XdOsX3GZgsG8vMsehCygbycP068d0zcXiAEKcWBzREJwm0iNXT35ckGeXq2wjc4bd
-         VXIQ==
-X-Gm-Message-State: AFqh2krx+LneqCeO/oky4rXJ5HmBf0d2aX/nGBa7Ttkxv8635Q3toopO
-        esTq0MiZ23k+hEuv69WyBfNosg==
-X-Google-Smtp-Source: AMrXdXtQ9D+5uTSbrFcqZzXxSXL0fie2kl2XAydJ3YJvlFna/70bK4USgVvrvOfMPDcWOU9myMUMHA==
-X-Received: by 2002:a05:6512:a83:b0:4cc:a108:842b with SMTP id m3-20020a0565120a8300b004cca108842bmr2215979lfu.41.1673609710462;
-        Fri, 13 Jan 2023 03:35:10 -0800 (PST)
-Received: from [192.168.2.31] ([188.170.82.205])
-        by smtp.gmail.com with ESMTPSA id v15-20020a056512348f00b004abc977ad7fsm3800668lfr.294.2023.01.13.03.35.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jan 2023 03:35:10 -0800 (PST)
-Message-ID: <66296817-669f-b3f9-146e-48d5808e124e@linaro.org>
-Date:   Fri, 13 Jan 2023 13:35:01 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH 11/13] clk: qcom: cpu-8996: fix PLL clock ops
-Content-Language: en-GB
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q/4eRHojkDz/W1PqGW3L+6StYgWEoOhMr1+9HnHapgo=;
+        b=SOA3ta5QdvQJGGLPfWRiuakIWsfLd7n+NemthQT/Z9vkGuym0g+AzDh+QPnEGkgHSJ
+         oxaqwDD+QY8+ZiMEBofs706sNcYLusjeQGtaBN+j+QAjW6o8Sm3D8JL0IvEIDoYIYDRI
+         s2O0qetCk657x7gWPGLOYT4J91PT6vpbxXCDa3X2tVxWcCj7TIvdXNTuki4l5jEzLKQb
+         82Y+dCrPnX0ewCrgDeGBlucgwYvuCG0PrxTR4MLBXhjOEe3cGIDua8wPQr0E0+b4TiPY
+         FSMhgY5+Aq4yB+KQfqup78akWFAtTV2lZddojCLqbuGf032iZR3Fd/pb/QYtJGVeiHC9
+         a6cg==
+X-Gm-Message-State: AFqh2ko2z+Y0cmh8NXheZkuulPL94mho/nOkOPftn2EjdM4S0ZlBUP6u
+        1yD38tuain4aKqdHrTYXCp4iIQ==
+X-Google-Smtp-Source: AMrXdXsRAAoAUVlTVPzqF3mLhm8Mv72VdPudcTGDOJxdPsDpUzz/aUK1ix2uSqe8hocTph2M1gnEEw==
+X-Received: by 2002:a05:6512:3d94:b0:4a4:68b8:f4f4 with SMTP id k20-20020a0565123d9400b004a468b8f4f4mr28520638lfv.58.1673611563931;
+        Fri, 13 Jan 2023 04:06:03 -0800 (PST)
+Received: from eriador.lumag.spb.ru ([188.170.82.205])
+        by smtp.gmail.com with ESMTPSA id i7-20020ac25227000000b004ac6a444b26sm3806290lfl.141.2023.01.13.04.05.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jan 2023 04:06:03 -0800 (PST)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -66,70 +59,55 @@ To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-References: <20230111192004.2509750-1-dmitry.baryshkov@linaro.org>
- <20230111192004.2509750-12-dmitry.baryshkov@linaro.org>
- <b2798d5a-d637-cc94-501e-0739345f0fed@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <b2798d5a-d637-cc94-501e-0739345f0fed@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v3 00/14] clk: qcom: cpu-8996: stability fixes
+Date:   Fri, 13 Jan 2023 14:05:30 +0200
+Message-Id: <20230113120544.59320-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.39.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/01/2023 18:10, Konrad Dybcio wrote:
-> 
-> 
-> On 11.01.2023 20:20, Dmitry Baryshkov wrote:
->> Switch CPU PLLs to use clk_alpha_pll_hwfsm_ops, it seems to suit
->> better.
->>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
-> I *think* SUPPORTS_DYNAMIC_UPDATE should also be kicked from
-> non-alt PLLs.. Otherwise we might have been kicking ourselves
-> in the face all along, changing the frequency of a running
-> PLL that doesn't support it if we were using the main PLL
-> and not the altPLL/ACD..
-> 
-> Downstream sets it only for clk_ops_alpha_pll_hwfsm which is
-> used on alt PLLs only
-> 
-> This change seems sound, as Huayra supports dynamic update
-> even without setting any flags.
+This series provides stability fixes for the MSM8996 boot process. It
+changes the order of calls during the CPU PLL setup, makes it use GPLL0
+(through sys_apcs_aux) during PLL init, finetunes the ACD, etc.
 
-I don't know where Huayra came from. Downstream uses plain hwfsm pll. 
-Huayra uses different alpha register settings.
+Dependency: [1]
 
-> 
-> Konrad
->>   drivers/clk/qcom/clk-cpu-8996.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
->> index 1c00eb629b61..b53cddc4bca3 100644
->> --- a/drivers/clk/qcom/clk-cpu-8996.c
->> +++ b/drivers/clk/qcom/clk-cpu-8996.c
->> @@ -128,7 +128,7 @@ static struct clk_alpha_pll pwrcl_pll = {
->>   		.name = "pwrcl_pll",
->>   		.parent_data = pll_parent,
->>   		.num_parents = ARRAY_SIZE(pll_parent),
->> -		.ops = &clk_alpha_pll_huayra_ops,
->> +		.ops = &clk_alpha_pll_hwfsm_ops,
->>   	},
->>   };
->>   
->> @@ -140,7 +140,7 @@ static struct clk_alpha_pll perfcl_pll = {
->>   		.name = "perfcl_pll",
->>   		.parent_data = pll_parent,
->>   		.num_parents = ARRAY_SIZE(pll_parent),
->> -		.ops = &clk_alpha_pll_huayra_ops,
->> +		.ops = &clk_alpha_pll_hwfsm_ops,
->>   	},
->>   };
->>   
+[1] https://lore.kernel.org/linux-arm-msm/20230111191453.2509468-1-dmitry.baryshkov@linaro.org/
+
+Changes since v2:
+- Expanded commit message for the PLL frequency setup (Konrad)
+- Removed the extra 'the' from the comment (Korad)
+- Fixed indentation of the udelay in the PLL config sequence patch
+  (Konrad)
+
+Changes since v1:
+ - Included bindings update (Stephen)
+
+Dmitry Baryshkov (14):
+  dt-bindings: clock: qcom,msm8996-apcc: add sys_apcs_aux clock
+  clk: qcom: clk-alpha-pll: program PLL_TEST/PLL_TEST_U if required
+  clk: qcom: cpu-8996: correct PLL programming
+  clk: qcom: cpu-8996: fix the init clock rate
+  clk: qcom: cpu-8996: support using GPLL0 as SMUX input
+  clk: qcom: cpu-8996: skip ACD init if the setup is valid
+  clk: qcom: cpu-8996: simplify the cpu_clk_notifier_cb
+  clk: qcom: cpu-8996: setup PLLs before registering clocks
+  clk: qcom: cpu-8996: move qcom_cpu_clk_msm8996_acd_init call
+  clk: qcom: cpu-8996: fix PLL configuration sequence
+  clk: qcom: cpu-8996: fix ACD initialization
+  clk: qcom: cpu-8996: fix PLL clock ops
+  clk: qcom: cpu-8996: change setup sequence to follow vendor kernel
+  arm64: dts: qcom: msm8996: support using GPLL0 as kryocc input
+
+ .../bindings/clock/qcom,msm8996-apcc.yaml     |   6 +-
+ arch/arm64/boot/dts/qcom/msm8996.dtsi         |   4 +-
+ drivers/clk/qcom/clk-alpha-pll.c              |   5 +
+ drivers/clk/qcom/clk-cpu-8996.c               | 145 +++++++++++++-----
+ 4 files changed, 115 insertions(+), 45 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+2.39.0
 
