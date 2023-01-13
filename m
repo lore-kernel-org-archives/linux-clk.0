@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B137C54EBE
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 14:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCAB9C61DB3
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 14:36:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229685AbjAMOgj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Jan 2023 09:36:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58352 "EHLO
+        id S229908AbjAMOgk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Jan 2023 09:36:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229934AbjAMOeh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 09:34:37 -0500
+        with ESMTP id S229927AbjAMOeg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 09:34:36 -0500
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 919875373C
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 918EB53736
         for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 06:28:10 -0800 (PST)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ore@pengutronix.de>)
-        id 1pGL1f-0006GY-Jm; Fri, 13 Jan 2023 15:27:23 +0100
+        id 1pGL1g-0006He-3p; Fri, 13 Jan 2023 15:27:24 +0100
 Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ore@pengutronix.de>)
-        id 1pGL1e-005myz-TD; Fri, 13 Jan 2023 15:27:22 +0100
+        id 1pGL1f-005mzH-C0; Fri, 13 Jan 2023 15:27:23 +0100
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ore@pengutronix.de>)
-        id 1pGL1b-00CkQ4-Br; Fri, 13 Jan 2023 15:27:19 +0100
+        id 1pGL1b-00CkRf-J3; Fri, 13 Jan 2023 15:27:19 +0100
 From:   Oleksij Rempel <o.rempel@pengutronix.de>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -42,9 +42,9 @@ Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
         Russell King <linux@armlinux.org.uk>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH v1 04/20] ARM: imx6q: use of_clk_get_by_name() instead of_clk_get() to get ptp clock
-Date:   Fri, 13 Jan 2023 15:27:02 +0100
-Message-Id: <20230113142718.3038265-5-o.rempel@pengutronix.de>
+Subject: [PATCH v1 15/20] clk: imx: add imx_obtain_fixed_of_clock()
+Date:   Fri, 13 Jan 2023 15:27:13 +0100
+Message-Id: <20230113142718.3038265-16-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20230113142718.3038265-1-o.rempel@pengutronix.de>
 References: <20230113142718.3038265-1-o.rempel@pengutronix.de>
@@ -58,27 +58,54 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It is not clear from the code what clock should be taken. So, make sure it
-is readable and no other clock will be taken by accident.
+Add imx_obtain_fixed_of_clock() to optionally add clock not configured in
+the devicetree.
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- arch/arm/mach-imx/mach-imx6q.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/imx/clk.c | 14 ++++++++++++++
+ drivers/clk/imx/clk.h |  3 +++
+ 2 files changed, 17 insertions(+)
 
-diff --git a/arch/arm/mach-imx/mach-imx6q.c b/arch/arm/mach-imx/mach-imx6q.c
-index 7f6200925752..4885d3dfcf7f 100644
---- a/arch/arm/mach-imx/mach-imx6q.c
-+++ b/arch/arm/mach-imx/mach-imx6q.c
-@@ -98,7 +98,7 @@ static void __init imx6q_1588_init(void)
- 	if (!IS_ERR(fec_enet_ref))
- 		goto put_node;
+diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+index b636cc099d96..5f1f729008ee 100644
+--- a/drivers/clk/imx/clk.c
++++ b/drivers/clk/imx/clk.c
+@@ -110,6 +110,20 @@ struct clk_hw *imx_obtain_fixed_clock_hw(
+ 	return __clk_get_hw(clk);
+ }
  
--	ptp_clk = of_clk_get(np, 2);
-+	ptp_clk = of_clk_get_by_name(np, "ptp");
- 	if (IS_ERR(ptp_clk)) {
- 		pr_warn("%s: failed to get ptp clock\n", __func__);
- 		goto put_node;
++struct clk_hw *imx_obtain_fixed_of_clock(struct device_node *np,
++					 const char *name, unsigned long rate)
++{
++	struct clk *clk = of_clk_get_by_name(np, name);
++	struct clk_hw *hw;
++
++	if (IS_ERR(clk))
++		hw = imx_obtain_fixed_clock_hw(name, rate);
++	else
++		hw = __clk_get_hw(clk);
++
++	return hw;
++}
++
+ struct clk_hw *imx_get_clk_hw_by_name(struct device_node *np, const char *name)
+ {
+ 	struct clk *clk;
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 801213109697..f0a24cd54d1c 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -288,6 +288,9 @@ struct clk * imx_obtain_fixed_clock(
+ struct clk_hw *imx_obtain_fixed_clock_hw(
+ 			const char *name, unsigned long rate);
+ 
++struct clk_hw *imx_obtain_fixed_of_clock(struct device_node *np,
++					 const char *name, unsigned long rate);
++
+ struct clk_hw *imx_get_clk_hw_by_name(struct device_node *np, const char *name);
+ 
+ struct clk_hw *imx_clk_hw_gate_exclusive(const char *name, const char *parent,
 -- 
 2.30.2
 
