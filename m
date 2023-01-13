@@ -2,172 +2,154 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC958C54EBD
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 11:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD90C54EBD
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 11:33:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240683AbjAMLaY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Jan 2023 06:30:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50192 "EHLO
+        id S240845AbjAMLdU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Jan 2023 06:33:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240830AbjAML3z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 06:29:55 -0500
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B038C7F446
-        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 03:19:48 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id s25so22172059lji.2
-        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 03:19:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tcbhud+BTQvGqbycS44PAcBjfV10i0xhamz4QQC0ejM=;
-        b=ft86/eamMUDyP6HK+DrYsmXkOqf2V7mD9nYgm0BtJdNBDrDrrdWyDRSS8oC0h0I8zB
-         /SQddepJXIuyw8KuMWCN3Rbcc3PAABoRA+HWtMISo2TgbXj0RhAbtB00cr/2HrmOfOh6
-         KRBHePwl45JR8da/byKjLNmS45I6IHqUSmuKN+3rFSdMkPB7yZkMC29mIFlyA5lYvrCZ
-         RT8gkeDJilfBo7aKLnaZXE51zoiadEQGlNPZ4RDSEHyVqxT+7kMkr5cnSWw3K2JmnsKB
-         nvHHD6NMQMUPH4vIForUpOZLK27A2B3WxpY06wkgU83E/Z0AEWfggvDLpZVdktJFufdr
-         ZK1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tcbhud+BTQvGqbycS44PAcBjfV10i0xhamz4QQC0ejM=;
-        b=e601eJ3EVd1CHk3MkHK3+L9rmQKySI8+xvQQM7rNkhzl+0AoBGbID0vFsBGAAj8Z64
-         IUkCp+HH8IRkaqNTir4Sg7qKRgfmcjKWbryxPF1hKe9qmVBORJWIr4CvoUgIRjz0hgDC
-         VLD0BDLbJa0NgZZkrAeBYiE3qaiypj3XJ2+jCNyId3BATmg5lXP6q4rxN0K2OE4n/E62
-         agFT5c/mPg1WWXl+x30gRAG6nqbFepnS23Gq5aHqdqZ2iDsVuF199zCk/w59Y4x18c+H
-         CZJ8+d5ldcEjH5pScIl9zmh/sdn+j883JnQWYovtVnbGMDMUMbyLIdptNvfe/KVm3n6x
-         qJrA==
-X-Gm-Message-State: AFqh2kqJPmckPMxru6pVj6+Ahhd8Nd1AIvpTvVDV36lKuPAd9x7Ucau8
-        ATmG6qV9iDa78i+8UGPkAY9rWA==
-X-Google-Smtp-Source: AMrXdXsiEgxKFBlR2hLBjvmb7rYo1b40QSH5rLDjWI6e85wWXkd5xBONKxPsH4TZAbOCRZhOVfJv6w==
-X-Received: by 2002:a2e:998e:0:b0:278:e50e:9b38 with SMTP id w14-20020a2e998e000000b00278e50e9b38mr20067612lji.5.1673608787040;
-        Fri, 13 Jan 2023 03:19:47 -0800 (PST)
-Received: from [192.168.2.31] ([188.170.82.205])
-        by smtp.gmail.com with ESMTPSA id u17-20020a2eb811000000b0027fc3980e48sm2491331ljo.118.2023.01.13.03.19.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jan 2023 03:19:46 -0800 (PST)
-Message-ID: <ee457852-adb7-3ecf-e02b-264e804a280c@linaro.org>
-Date:   Fri, 13 Jan 2023 13:19:42 +0200
+        with ESMTP id S241052AbjAMLcu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 06:32:50 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DC6855652;
+        Fri, 13 Jan 2023 03:07:34 -0800 (PST)
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id CE22A6602DD6;
+        Fri, 13 Jan 2023 11:07:31 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1673608053;
+        bh=veBd2JTLsjF36au7M5gXmubbsmxaRJK4ZtEZdeWnvyU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=FWgbwc7dZax6LDBGEiGQnlvmFGkqmm2NLP36YgDVmqMDx2405TYWjC6ZNug9yYTi7
+         fM5P32VJB3VmIAhHZr56qdwVEtCTJVmDwGipkLo1G7j5mEtVHL9QLyh5eL93Fq8CE+
+         7CTrFCgv3K3oAVQwlpTShZsrPkdhKoELLGUyKpp9tGKAve/Kfpqq1bJvyMrg6ZLpGm
+         X6Fof2s9gv62jQGJMVLFnEMdlE4zmh5wWLwYZmoApZo3AIJGrd+laIjlxtabNJH2VB
+         0WihPmsnI2SULIPQXApOUeEJEweDSKpr1Yvl3dYqAoa53TJMVoLD2yoAg7DVVvJnPZ
+         BjhCsFkXRDjZg==
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+To:     mturquette@baylibre.com
+Cc:     sboyd@kernel.org, matthias.bgg@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org,
+        angelogioacchino.delregno@collabora.com, wenst@chromium.org,
+        johnson.wang@mediatek.com, miles.chen@mediatek.com,
+        fparent@baylibre.com, chun-jie.chen@mediatek.com,
+        sam.shih@mediatek.com, y.oudjana@protonmail.com,
+        nfraprado@collabora.com, rex-bc.chen@mediatek.com,
+        ryder.lee@kernel.org, daniel@makrotopia.org,
+        jose.exposito89@gmail.com, yangyingliang@huawei.com,
+        pablo.sun@mediatek.com, msp@baylibre.com, weiyi.lu@mediatek.com,
+        ikjn@chromium.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        kernel@collabora.com
+Subject: [PATCH v3 22/23] clk: mediatek: clk-mt7986-topckgen: Properly keep some clocks enabled
+Date:   Fri, 13 Jan 2023 12:06:15 +0100
+Message-Id: <20230113110616.111001-23-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230113110616.111001-1-angelogioacchino.delregno@collabora.com>
+References: <20230113110616.111001-1-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH 09/13] clk: qcom: cpu-8996: fix PLL configuration sequence
-Content-Language: en-GB
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20230111192004.2509750-1-dmitry.baryshkov@linaro.org>
- <20230111192004.2509750-10-dmitry.baryshkov@linaro.org>
- <e556e250-7ae4-a5a7-7d0f-eb80a0231e8b@linaro.org>
- <449be451-f12c-ee14-a5f8-7a1e0d417597@linaro.org>
- <942a6282-5519-8871-5043-229bead87bd8@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <942a6282-5519-8871-5043-229bead87bd8@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/01/2023 16:32, Konrad Dybcio wrote:
-> 
-> 
-> On 11.01.2023 23:05, Dmitry Baryshkov wrote:
->> On 11/01/2023 23:08, Konrad Dybcio wrote:
->>>
->>>
->>> On 11.01.2023 20:20, Dmitry Baryshkov wrote:
->>>> Switch both power and performance clocks to the GPLL0/2 (sys_apcs_aux)
->>>> before PLL configuration. Switch them to the ACD afterwards.
->>>>
->>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>>> ---
->>>>    drivers/clk/qcom/clk-cpu-8996.c | 14 ++++++++++++++
->>>>    1 file changed, 14 insertions(+)
->>>>
->>>> diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
->>>> index 571ed52b3026..47c58bb5f21a 100644
->>>> --- a/drivers/clk/qcom/clk-cpu-8996.c
->>>> +++ b/drivers/clk/qcom/clk-cpu-8996.c
->>>> @@ -432,13 +432,27 @@ static int qcom_cpu_clk_msm8996_register_clks(struct device *dev,
->>>>    {
->>>>        int i, ret;
->>>>    +    /* Select GPLL0 for 300MHz for the both clusters */
->>> superfluous 'the'
->>>
->>>> +    regmap_write(regmap, PERFCL_REG_OFFSET + MUX_OFFSET, 0xc);
->>>> +    regmap_write(regmap, PWRCL_REG_OFFSET + MUX_OFFSET, 0xc);
->>>> +
->>>> +    /* Ensure write goes through before PLLs are reconfigured */
->>>> +    udelay(5);
->>> Is this value based on n clock cycles, or 'good enough'?
->>
->> Don't know, this is based on downstream direclty.
-> Right, I see it now.
-> 
->>
->>>
->>>> +
->>>>        clk_alpha_pll_configure(&pwrcl_pll, regmap, &hfpll_config);
->>>>        clk_alpha_pll_configure(&perfcl_pll, regmap, &hfpll_config);
->>>>        clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
->>>>        clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
->>>>    +    /* Wait for PLL(s) to lock */
->>>> +        udelay(50);
->>> Weird indentation
+Instead of calling clk_prepare_enable() on a bunch of clocks at probe
+time, set the CLK_IS_CRITICAL flag to the same as these are required
+to be always on, and this is the right way of achieving that.
 
-Fixing for v2.
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+Reviewed-by: Miles Chen <miles.chen@mediatek.com>
+---
+ drivers/clk/mediatek/clk-mt7986-topckgen.c | 46 +++++++++++-----------
+ 1 file changed, 24 insertions(+), 22 deletions(-)
 
->>>
->>> Maybe wait_for_pll_enable_lock() to be super sure?
->>
->> Does it work for HWFSM PLLs?
-> Not sure, but wait_for_pll_update_ack_clear() should, since it's
-> called by
-
-I'd prefer to keep it as is. First, this seems to be the difference 
-between normal and hwfsm PLLs, see clk_alpha_pll_is_enabled() vs 
-clk_alpha_pll_hwfsm_is_enabled(). And second, the wait_for_pll() 
-function is not exported from the clk-alpha-pll.c. Note, that downstream 
-also does sleep instead of waiting.
-
-> 
-> clk_alpha_pll_hwfsm_set_rate() ->
->    __clk_alpha_pll_set_rate() ->
->      clk_alpha_pll_update_latch() ->
->        __clk_alpha_pll_update_latch()
-> 
-> Konrad
->>
->>>
->>>> +
->>>>        qcom_cpu_clk_msm8996_acd_init(regmap);
->>>>    +    /* Switch clusters to use the ACD leg */
->>>> +    regmap_write(regmap, PWRCL_REG_OFFSET + MUX_OFFSET, 0x2);
->>>> +    regmap_write(regmap, PERFCL_REG_OFFSET + MUX_OFFSET, 0x2);
->>>> +
->>> No delays here?
->>
->> No. Probably it isn't required since there is no additional PLL locking, etc.
->>
->>>
->>> Konrad
->>>>        for (i = 0; i < ARRAY_SIZE(cpu_msm8996_hw_clks); i++) {
->>>>            ret = devm_clk_hw_register(dev, cpu_msm8996_hw_clks[i]);
->>>>            if (ret)
->>
-
+diff --git a/drivers/clk/mediatek/clk-mt7986-topckgen.c b/drivers/clk/mediatek/clk-mt7986-topckgen.c
+index c9bf47e6098f..36553f0c13fe 100644
+--- a/drivers/clk/mediatek/clk-mt7986-topckgen.c
++++ b/drivers/clk/mediatek/clk-mt7986-topckgen.c
+@@ -202,16 +202,23 @@ static const struct mtk_mux top_muxes[] = {
+ 	MUX_GATE_CLR_SET_UPD(CLK_TOP_F_26M_ADC_SEL, "f_26m_adc_sel",
+ 			     f_26m_adc_parents, 0x020, 0x024, 0x028, 16, 1, 23,
+ 			     0x1C0, 10),
+-	MUX_GATE_CLR_SET_UPD(CLK_TOP_DRAMC_SEL, "dramc_sel", f_26m_adc_parents,
+-			     0x020, 0x024, 0x028, 24, 1, 31, 0x1C0, 11),
++	MUX_GATE_CLR_SET_UPD_FLAGS(CLK_TOP_DRAMC_SEL, "dramc_sel",
++				   f_26m_adc_parents, 0x020, 0x024, 0x028,
++				   24, 1, 31, 0x1C0, 11,
++				   CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
+ 	/* CLK_CFG_3 */
+-	MUX_GATE_CLR_SET_UPD(CLK_TOP_DRAMC_MD32_SEL, "dramc_md32_sel",
+-			     dramc_md32_parents, 0x030, 0x034, 0x038, 0, 1, 7,
+-			     0x1C0, 12),
+-	MUX_GATE_CLR_SET_UPD(CLK_TOP_SYSAXI_SEL, "sysaxi_sel", sysaxi_parents,
+-			     0x030, 0x034, 0x038, 8, 2, 15, 0x1C0, 13),
+-	MUX_GATE_CLR_SET_UPD(CLK_TOP_SYSAPB_SEL, "sysapb_sel", sysapb_parents,
+-			     0x030, 0x034, 0x038, 16, 2, 23, 0x1C0, 14),
++	MUX_GATE_CLR_SET_UPD_FLAGS(CLK_TOP_DRAMC_MD32_SEL, "dramc_md32_sel",
++				   dramc_md32_parents, 0x030, 0x034, 0x038,
++				   0, 1, 7, 0x1C0, 12,
++				   CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
++	MUX_GATE_CLR_SET_UPD_FLAGS(CLK_TOP_SYSAXI_SEL, "sysaxi_sel",
++				   sysaxi_parents, 0x030, 0x034, 0x038,
++				   8, 2, 15, 0x1C0, 13,
++				   CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
++	MUX_GATE_CLR_SET_UPD_FLAGS(CLK_TOP_SYSAPB_SEL, "sysapb_sel",
++				   sysapb_parents, 0x030, 0x034, 0x038,
++				   16, 2, 23, 0x1C0, 14,
++				   CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
+ 	MUX_GATE_CLR_SET_UPD(CLK_TOP_ARM_DB_MAIN_SEL, "arm_db_main_sel",
+ 			     arm_db_main_parents, 0x030, 0x034, 0x038, 24, 1,
+ 			     31, 0x1C0, 15),
+@@ -234,9 +241,10 @@ static const struct mtk_mux top_muxes[] = {
+ 	MUX_GATE_CLR_SET_UPD(CLK_TOP_SGM_325M_SEL, "sgm_325m_sel",
+ 			     sgm_325m_parents, 0x050, 0x054, 0x058, 8, 1, 15,
+ 			     0x1C0, 21),
+-	MUX_GATE_CLR_SET_UPD(CLK_TOP_SGM_REG_SEL, "sgm_reg_sel",
+-			     sgm_reg_parents, 0x050, 0x054, 0x058, 16, 1, 23,
+-			     0x1C0, 22),
++	MUX_GATE_CLR_SET_UPD_FLAGS(CLK_TOP_SGM_REG_SEL, "sgm_reg_sel",
++				   sgm_reg_parents, 0x050, 0x054, 0x058,
++				   16, 1, 23, 0x1C0, 22,
++				   CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
+ 	MUX_GATE_CLR_SET_UPD(CLK_TOP_A1SYS_SEL, "a1sys_sel", a1sys_parents,
+ 			     0x050, 0x054, 0x058, 24, 1, 31, 0x1C0, 23),
+ 	/* CLK_CFG_6 */
+@@ -252,9 +260,10 @@ static const struct mtk_mux top_muxes[] = {
+ 			     f_26m_adc_parents, 0x060, 0x064, 0x068, 24, 1, 31,
+ 			     0x1C0, 27),
+ 	/* CLK_CFG_7 */
+-	MUX_GATE_CLR_SET_UPD(CLK_TOP_F26M_SEL, "csw_f26m_sel",
+-			     f_26m_adc_parents, 0x070, 0x074, 0x078, 0, 1, 7,
+-			     0x1C0, 28),
++	MUX_GATE_CLR_SET_UPD_FLAGS(CLK_TOP_F26M_SEL, "csw_f26m_sel",
++				   f_26m_adc_parents, 0x070, 0x074, 0x078,
++				   0, 1, 7, 0x1C0, 28,
++				   CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
+ 	MUX_GATE_CLR_SET_UPD(CLK_TOP_AUD_L_SEL, "aud_l_sel", aud_l_parents,
+ 			     0x070, 0x074, 0x078, 8, 2, 15, 0x1C0, 29),
+ 	MUX_GATE_CLR_SET_UPD(CLK_TOP_A_TUNER_SEL, "a_tuner_sel",
+@@ -307,13 +316,6 @@ static int clk_mt7986_topckgen_probe(struct platform_device *pdev)
+ 			       ARRAY_SIZE(top_muxes), node,
+ 			       &mt7986_clk_lock, clk_data);
+ 
+-	clk_prepare_enable(clk_data->hws[CLK_TOP_SYSAXI_SEL]->clk);
+-	clk_prepare_enable(clk_data->hws[CLK_TOP_SYSAPB_SEL]->clk);
+-	clk_prepare_enable(clk_data->hws[CLK_TOP_DRAMC_SEL]->clk);
+-	clk_prepare_enable(clk_data->hws[CLK_TOP_DRAMC_MD32_SEL]->clk);
+-	clk_prepare_enable(clk_data->hws[CLK_TOP_F26M_SEL]->clk);
+-	clk_prepare_enable(clk_data->hws[CLK_TOP_SGM_REG_SEL]->clk);
+-
+ 	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+ 
+ 	if (r) {
 -- 
-With best wishes
-Dmitry
+2.39.0
 
