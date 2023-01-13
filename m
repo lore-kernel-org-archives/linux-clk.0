@@ -2,110 +2,111 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EAFFC61DB3
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 14:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEFD8C54EBD
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 14:59:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229682AbjAMOza (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Jan 2023 09:55:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48426 "EHLO
+        id S230018AbjAMO7u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Jan 2023 09:59:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229781AbjAMOyw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 09:54:52 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FF1569532;
-        Fri, 13 Jan 2023 06:40:49 -0800 (PST)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30DBdc0S019731;
-        Fri, 13 Jan 2023 14:37:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=qcppdkim1;
- bh=HM5xSvGbqqHtkUNjIzR2+WfHdaLsxvU6qaBRKEg0FcA=;
- b=dePc3oa1bALUgR3ObSdGhyhXK1hoVs+6bCIIC80u5WItWNZ2rqM+hOQ7GLbl4myHZZ/J
- /GwLDJbdgRTiO9tDYQ1Z5b63LNAAi6JFZJLKT7aMqopvwYIIWWIbOjKiNho+ccq2U8I3
- y7tsluJTm3Vxb6i1cmf3YIqjHeS1ERcBzRCwBfBGbDQDVHO6jVjwFNZSk6C1YfIqTlfy
- Ehuqo7ghQvsElCOtufKCSV67IEbH4qutQYVzEyuh2G+5GyKYl3/+pMMgGngXrvWr8ii3
- S9SQa2MWGyGCGgM0HOKIZ029fztsB1kWrqZxzUNMVEXTYlVwmCxijoCWSUUvpgxpT9m0 5g== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n2d75403c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 13 Jan 2023 14:37:12 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30DEbBO8015525
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 13 Jan 2023 14:37:11 GMT
-Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Fri, 13 Jan 2023 06:37:03 -0800
-From:   devi priya <quic_devipriy@quicinc.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <jassisinghbrar@gmail.com>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <shawnguo@kernel.org>, <arnd@arndb.de>,
-        <marcel.ziswiler@toradex.com>, <dmitry.baryshkov@linaro.org>,
-        <nfraprado@collabora.com>, <broonie@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_poovendh@quicinc.com>
-Subject: [PATCH 0/6] Add APSS clock controller support for IPQ9574
-Date:   Fri, 13 Jan 2023 20:06:41 +0530
-Message-ID: <20230113143647.14961-1-quic_devipriy@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+        with ESMTP id S229600AbjAMO7C (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 09:59:02 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 877E87279B;
+        Fri, 13 Jan 2023 06:48:58 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 76C8BB82143;
+        Fri, 13 Jan 2023 14:48:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 291BDC433EF;
+        Fri, 13 Jan 2023 14:48:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673621336;
+        bh=mKDVcodgQCR6DPkp/F4rI7u1VeNzP/9JniqcDRZGYt8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GlkccT/Hr2LutWYIz7x2OeZwDKnzimkm3AKE/6pQDz7vMVa+5Ysxp2cXVA1uDc585
+         tQu+sSYrG4mCQCUpcKotZX/0gkRc6Sp8eojXlizzx2VSGudlXZ6UHXs0UTKUkFg07t
+         Zg0lVU7doBCMAB56RDZ86axs+9pIsk5l6QWfD2Y46HgJWHg4wzQsIYdkPKMQRNqPSB
+         QEKxqUKniznS11sgtKlEeomB6ebH21Lpsh7UJD9Dhdz3yuNDJQoy/VZGU1Mt1s8x2G
+         dz6k2lOgOQS84JcpLtasgHMczxnX0Jz6Mb0VVq7hrsV9zhlZqGUplkzxDt/aBlB2qg
+         /G/4NlCcu07Bg==
+Date:   Fri, 13 Jan 2023 14:48:48 +0000
+From:   Lee Jones <lee@kernel.org>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        kernel@pengutronix.de, Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v1 17/20] clk: imx6ul: add ethernet refclock mux support
+Message-ID: <Y8FvULElX2D8FGXA@google.com>
+References: <20230113142718.3038265-1-o.rempel@pengutronix.de>
+ <20230113142718.3038265-18-o.rempel@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 5rnfP-18Ml1hcBS6pIGFo3cmW1jttdGo
-X-Proofpoint-GUID: 5rnfP-18Ml1hcBS6pIGFo3cmW1jttdGo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.923,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-01-13_06,2023-01-13_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- adultscore=0 malwarescore=0 bulkscore=0 priorityscore=1501
- lowpriorityscore=0 clxscore=1011 mlxlogscore=694 impostorscore=0
- spamscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301130096
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230113142718.3038265-18-o.rempel@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The APSS clock controller in IPQ9574 based devices supports cpu with
-frequencies above 800Mhz
+On Fri, 13 Jan 2023, Oleksij Rempel wrote:
 
-This patch series adds the support for the same
+> Add ethernet refclock mux support and set it to internal clock by
+> default. This configuration will not affect existing boards.
+> 
+> clock tree before this patch:
+> fec1 <- enet1_ref_125m (gate) <- enet1_ref (divider) <-,
+>                                                        |- pll6_enet
+> fec2 <- enet2_ref_125m (gate) <- enet2_ref (divider) <-´
+> 
+> after this patch:
+> fec1 <- enet1_ref_sel(mux) <- enet1_ref_125m (gate) <- ...
+>                `--<> enet1_ref_pad                      |- pll6_enet
+> fec2 <- enet2_ref_sel(mux) <- enet2_ref_125m (gate) <- ...
+>                `--<> enet2_ref_pad
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  drivers/clk/imx/clk-imx6ul.c                | 26 +++++++++++++++++++++
+>  include/dt-bindings/clock/imx6ul-clock.h    |  6 ++++-
+>  include/linux/mfd/syscon/imx6q-iomuxc-gpr.h |  6 +++--
+>  3 files changed, 35 insertions(+), 3 deletions(-)
 
-This series depends on the below patchset
-https://lore.kernel.org/linux-arm-msm/20230110121316.24892-1-quic_devipriy@quicinc.com/
+[...]
 
-devi priya (6):
-  dt-bindings: clock: Add YAML schemas for QCOM A73 PLL
-  clk: qcom: ipq9574: Enable APSS clock driver
-  arm64: defconfig: Enable ipq6018 apss clock and PLL controller
-  arm64: dts: qcom: ipq9574: Add support for APSS clock controller
-  dt-bindings: mailbox: Add compatible for IPQ9574
-  clk: qcom: Fix APSS PLL and RCG Configuration
+> --- a/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h
+> +++ b/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h
+> @@ -451,8 +451,10 @@
+>  #define IMX6SX_GPR12_PCIE_RX_EQ_2			(0x2 << 0)
+>  
+>  /* For imx6ul iomux gpr register field define */
+> -#define IMX6UL_GPR1_ENET1_CLK_DIR		(0x1 << 17)
+> -#define IMX6UL_GPR1_ENET2_CLK_DIR		(0x1 << 18)
+> +#define IMX6UL_GPR1_ENET2_TX_CLK_DIR		BIT(18)
+> +#define IMX6UL_GPR1_ENET1_TX_CLK_DIR		BIT(17)
+> +#define IMX6UL_GPR1_ENET2_CLK_SEL		BIT(14)
+> +#define IMX6UL_GPR1_ENET1_CLK_SEL		BIT(13)
+>  #define IMX6UL_GPR1_ENET1_CLK_OUTPUT		(0x1 << 17)
+>  #define IMX6UL_GPR1_ENET2_CLK_OUTPUT		(0x1 << 18)
+>  #define IMX6UL_GPR1_ENET_CLK_DIR		(0x3 << 17)
 
- .../bindings/clock/qcom,a73pll.yaml           | 52 +++++++++++++++++++
- .../mailbox/qcom,apcs-kpss-global.yaml        |  3 ++
- arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 17 ++++++
- arch/arm64/configs/defconfig                  |  1 +
- drivers/clk/qcom/apss-ipq-pll.c               | 14 +++++
- drivers/clk/qcom/apss-ipq6018.c               |  8 ++-
- drivers/mailbox/qcom-apcs-ipc-mailbox.c       |  5 ++
- 7 files changed, 99 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,a73pll.yaml
+Why not convert more of them them?
 
+Either way, could you please refrain from sending me subsequent
+patch-sets please.
 
-base-commit: 1fe4fd6f5cad346e598593af36caeadc4f5d4fa9
+Acked-by: Lee Jones <lee@kernel.org>
+
 -- 
-2.17.1
-
+Lee Jones [李琼斯]
