@@ -2,131 +2,125 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7735C61DB3
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 14:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 526FEC54EBE
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 14:41:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229865AbjAMOgr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Jan 2023 09:36:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57136 "EHLO
+        id S229896AbjAMOlK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Jan 2023 09:41:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229980AbjAMOe4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 09:34:56 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5DEF5793F
-        for <linux-clk@vger.kernel.org>; Fri, 13 Jan 2023 06:28:13 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1pGL1e-0006Dv-KE; Fri, 13 Jan 2023 15:27:22 +0100
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ore@pengutronix.de>)
-        id 1pGL1d-005mya-FJ; Fri, 13 Jan 2023 15:27:21 +0100
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ore@pengutronix.de>)
-        id 1pGL1b-00CkPv-BB; Fri, 13 Jan 2023 15:27:19 +0100
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Lee Jones <lee@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH v1 03/20] ARM: imx6q: skip ethernet refclock reconfiguration if enet_clk_ref is present
-Date:   Fri, 13 Jan 2023 15:27:01 +0100
-Message-Id: <20230113142718.3038265-4-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20230113142718.3038265-1-o.rempel@pengutronix.de>
-References: <20230113142718.3038265-1-o.rempel@pengutronix.de>
+        with ESMTP id S230451AbjAMOkC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 09:40:02 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B09884600;
+        Fri, 13 Jan 2023 06:31:47 -0800 (PST)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30DDFKcw006951;
+        Fri, 13 Jan 2023 14:31:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=cqj0Z+ztU0pkNZ48hYFvSFMXrtOoDDHl6jjBO0OdfBk=;
+ b=IbLuye9SKHHQ49yDm3OmVNuuuHURwKIrYb24XRLGjo6dqQZvrAYI1nsv3cu198PIoTpd
+ wWBvHcz1khmXAI6+go1NiNsxPyAPfYK1Em8gR6f/I9xRy4mYJ1cBkJALXumJwGoqtAzd
+ Qsko4pYUeOApYzVCBxyTEh3TZOlCipyg5RuprirnBitqV0CD7YFA1uokhdKYAAxYFzkM
+ hmrgHJ0S/qdUpYlIzj9O39aLTqBREeGKeBrVtPzOjaYPmzkKMIQUs5I4Dd0clgOfDBTT
+ F7pmEcm/+U6nbOAt3QohxYG3KAhyVjiD4zh1Y/xVKv2H+olEgjvq+3aIjWnAnLgstFSR iw== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n2wqw1j24-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 13 Jan 2023 14:31:07 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30DEV6Ck009259
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 13 Jan 2023 14:31:06 GMT
+Received: from [10.50.57.3] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Fri, 13 Jan
+ 2023 06:30:57 -0800
+Message-ID: <5081e96b-5b6c-4a5d-56fc-76a26632cd86@quicinc.com>
+Date:   Fri, 13 Jan 2023 20:00:55 +0530
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH 3/7] dt-bindings: pinctrl: qcom: Add ipq9574 pinctrl
+ bindings
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linus.walleij@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <p.zabel@pengutronix.de>, <shawnguo@kernel.org>, <arnd@arndb.de>,
+        <marcel.ziswiler@toradex.com>, <dmitry.baryshkov@linaro.org>,
+        <nfraprado@collabora.com>, <broonie@kernel.org>,
+        <tdas@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>
+References: <20230110121316.24892-1-quic_devipriy@quicinc.com>
+ <20230110121316.24892-4-quic_devipriy@quicinc.com>
+ <b63600f9-82ef-83dc-1680-1df125b5d971@linaro.org>
+ <a0db608a-2c65-e831-abc2-072609fd7a5a@quicinc.com>
+ <06799086-1068-1288-b309-80c245f34ce8@linaro.org>
+From:   Devi Priya <quic_devipriy@quicinc.com>
+In-Reply-To: <06799086-1068-1288-b309-80c245f34ce8@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: J1HYudvvvdyaSVOXzFhaeYyP3mw-zIP9
+X-Proofpoint-ORIG-GUID: J1HYudvvvdyaSVOXzFhaeYyP3mw-zIP9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.923,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-01-13_06,2023-01-13_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=794 spamscore=0 malwarescore=0 adultscore=0 mlxscore=0
+ suspectscore=0 impostorscore=0 clxscore=1015 phishscore=0 bulkscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301130095
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Current mach-imx6q code has following logic:
-- if ptp clock of the ethernet controller node is attached to the SoC
-  internal enet_ref clock, then we configure RMII reference clock pin as
-  output by setting IOMUXC_GPR1 BIT(21).
-  In this case - MAC (SoC) is the clock provider, PHY is the clock consumer.
-- if ptp clock of the ethernet controller node is not attached to the
-  enet_ref clock, then we configure RMII reference clock pin as input by
-  clearing IOMUXC_GPR1 BIT(21).
-  In this case - PHY is the clock provider, MAC is the clock consumer.
 
-According to the Freescale MX6SDL ReferenceManual v4, IOMUXC_GPR1 BIT(21)
-(page 2033) this configuration bit is not related to the PTP (IEEE1588)
-clock:
-21 ENET_CLK_SEL - choose enet reference clk mode:
-   0 - get enet tx reference clk from pad (external OSC for both external
-       PHY and Internal Controller)
-   1 - get enet tx reference clk from internal clock from anatop (loopback
-       through pad), this clock also sent out to external PHY.
 
-According to the Documentation/devicetree/bindings/net/fsl,fec.yaml:
-      The "ptp"(option), for IEEE1588 timer clock that requires the clock.
-      The "enet_clk_ref"(option), for MAC transmit/receiver reference clock
-      like RGMII TXC clock or RMII reference clock. It depends on board
-      design, the clock is required if RGMII TXC and RMII reference clock
-      source from SOC internal PLL.
-      The "enet_out"(option), output clock for external device, like supply
-      clock for PHY. The clock is required if PHY clock source from SOC.
-
-We can see, that "enet_clk_ref" clock is the best fit for this purpose.
-Other properties like "ptp" is designed for IEEE1588 and "enet_out" do
-not have real functionality within imx related clock infrastructure.
-
-Since the "enet_clk_ref" is not used by the imx6qdl devicetrees, we can
-use it as indicator of potentially properly configured DT. At same time
-we can keep ptp clock based logic as the fallback for old DTs.
-
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- arch/arm/mach-imx/mach-imx6q.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-imx/mach-imx6q.c b/arch/arm/mach-imx/mach-imx6q.c
-index c9d7c29d95e1..7f6200925752 100644
---- a/arch/arm/mach-imx/mach-imx6q.c
-+++ b/arch/arm/mach-imx/mach-imx6q.c
-@@ -79,7 +79,7 @@ static void __init imx6q_enet_phy_init(void)
- static void __init imx6q_1588_init(void)
- {
- 	struct device_node *np;
--	struct clk *ptp_clk;
-+	struct clk *ptp_clk, *fec_enet_ref;
- 	struct clk *enet_ref;
- 	struct regmap *gpr;
- 	u32 clksel;
-@@ -90,6 +90,14 @@ static void __init imx6q_1588_init(void)
- 		return;
- 	}
- 
-+	/*
-+	 * If enet_clk_ref configured, we assume DT did it properly and .
-+	 * clk-imx6q.c will do needed configuration.
-+	 */
-+	fec_enet_ref = of_clk_get_by_name(np, "enet_clk_ref");
-+	if (!IS_ERR(fec_enet_ref))
-+		goto put_node;
-+
- 	ptp_clk = of_clk_get(np, 2);
- 	if (IS_ERR(ptp_clk)) {
- 		pr_warn("%s: failed to get ptp clock\n", __func__);
--- 
-2.30.2
-
+On 1/13/2023 7:46 PM, Krzysztof Kozlowski wrote:
+> On 13/01/2023 14:24, Devi Priya wrote:
+>>>> +    properties:
+>>>> +      pins:
+>>>> +        description:
+>>>> +          List of gpio pins affected by the properties specified in this
+>>>> +          subnode.
+>>>> +        items:
+>>>> +          oneOf:
+>>>> +            - pattern: "^gpio([0-9]|[1-5][0-9]|6[0-4])$"
+>>>> +            - enum: [ sdc1_clk, sdc1_cmd, sdc1_data, sdc2_clk, sdc2_cmd,
+>>>> +                      sdc2_data, qdsd_cmd, qdsd_data0, qdsd_data1, qdsd_data2,
+>>>> +                      qdsd_data3 ]
+>>>
+>>> These are ordered by name.
+>> The enum values seem to be ordered alphabetically.
+>> could you please help us understand the ordering?
+> 
+> q goes before s
+Oops! sorry. Will update
+> 
+>>>
+>>>> +        minItems: 1
+>>>> +        maxItems: 8
+>>>> +
+> 
+> Best regards,
+> Krzysztof
+> 
+Best Regards,
+Devi Priya
