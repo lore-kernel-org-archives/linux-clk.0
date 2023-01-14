@@ -2,94 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82BDEC3DA78
-	for <linux-clk@archiver.kernel.org>; Sat, 14 Jan 2023 11:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67061C3DA78
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Jan 2023 13:31:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229723AbjANLjq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 14 Jan 2023 06:39:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54352 "EHLO
+        id S229900AbjANNbB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 14 Jan 2023 08:31:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229635AbjANLjq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Jan 2023 06:39:46 -0500
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2CEF3A9E;
-        Sat, 14 Jan 2023 03:39:44 -0800 (PST)
-Received: by mail-pf1-x42b.google.com with SMTP id 207so1814315pfv.5;
-        Sat, 14 Jan 2023 03:39:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FJvgwP2yhKq5HRMv+nGTGGcOYvJiL+zhxVk6tWVvWYs=;
-        b=gbq+otLy1KBkkCrGFkFCqFwOhcIuV4PULSfpPUszRaHQr/f+pUidKShev/xBAHgtHU
-         yLhonT8wUsEuVEV0CZy2CauJhNr3UvlMsAU5gOmgENToKuNcxPCVMT6nHCQIQ+0NZ3L+
-         sL/uV7R/azABne/VgB632a8L0J7dq1d2LHJQBKyGiV1Qz6HIDodyCdwl7XrASNyrtWgs
-         vEQOavb3x1DDYh4unwD83x71J1ns2a7MKnLWKUrVzMLnHMug15owLyL10K73tT5yYuM/
-         q+OG5C8CMLB227KG++3NRP/l4MQSnLi/rJsRRwN0umyIQKK+X+9mDL6JzwwVjQNugh++
-         9e4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FJvgwP2yhKq5HRMv+nGTGGcOYvJiL+zhxVk6tWVvWYs=;
-        b=iP7kQZxHW0KZTh1/tAZQ3YsUskM6/40r6QsIvc0AJ2XQAkU4OBlTrqdHjBJdGkfAZo
-         dicH+gsS47iwZaVWMOACTNfbdqOWuMs8R8LLmZz0MiuLohnqJlMvVt8yCjoEtDITOqak
-         HpSf+spwQTKLw9QA1U7qURDB/zSZ9djA4bJn9vWxdtVFf68knIO7ClPNmom11e7Qa+85
-         17xfd5UkdzleGldHebtd0wGKExZq9umr+gkq6qtWa6isl4Xxi2iYcYSvwKrp72LknRku
-         bmq/B5dBgeGIz7fPz9EMA8SKQgzdBX5eUvmBv4CBbafZYPMz9KPi+PXrRb6hTJc2pNo2
-         KdBA==
-X-Gm-Message-State: AFqh2kp7KAQtGjPiuWbgTbHJWkV8Tf6B7/jE57KFVP+bwIWiy49tyJQI
-        9kibgllwGeE/15MZrDpPF0sk/sCZDpLHAlu4AOE=
-X-Google-Smtp-Source: AMrXdXuG4YlWidLin5pPzaupNzmOUxneWxv+FS2QYfh/LEJq9SXxtq8AhqG2++3ACqChh2B8EHBBrzXi9F+llg4AffI=
-X-Received: by 2002:a63:154c:0:b0:4ad:7773:fd02 with SMTP id
- 12-20020a63154c000000b004ad7773fd02mr1636466pgv.603.1673696384290; Sat, 14
- Jan 2023 03:39:44 -0800 (PST)
+        with ESMTP id S229875AbjANNbA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Jan 2023 08:31:00 -0500
+X-Greylist: delayed 302 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 14 Jan 2023 05:30:59 PST
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67630524D
+        for <linux-clk@vger.kernel.org>; Sat, 14 Jan 2023 05:30:59 -0800 (PST)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by xavier.telenet-ops.be with bizsmtp
+        id 8dRv2900H4C55Sk01dRvNX; Sat, 14 Jan 2023 14:25:56 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1pGgXg-003z7a-38;
+        Sat, 14 Jan 2023 14:25:55 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1pGgXj-006HxD-Pv;
+        Sat, 14 Jan 2023 14:25:55 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v6.3
+Date:   Sat, 14 Jan 2023 14:25:54 +0100
+Message-Id: <cover.1673702689.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230113142718.3038265-1-o.rempel@pengutronix.de> <20230113142718.3038265-9-o.rempel@pengutronix.de>
-In-Reply-To: <20230113142718.3038265-9-o.rempel@pengutronix.de>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Sat, 14 Jan 2023 08:39:27 -0300
-Message-ID: <CAOMZO5C8SSVZF8z2HngxG-d59aa=CmAQRThxkC3xaR695uKFSA@mail.gmail.com>
-Subject: Re: [PATCH v1 08/20] ARM: dts: imx6dl-plybas: configure ethernet
- reference clock parent
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        kernel@pengutronix.de, NXP Linux Team <linux-imx@nxp.com>,
-        Lee Jones <lee@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Oleksij,
+	Hi Mike, Stephen,
 
-On Fri, Jan 13, 2023 at 11:27 AM Oleksij Rempel <o.rempel@pengutronix.de> wrote:
->
-> Configure Ethernet reference clock parent in an obvious way instead of
-> using cryptic ptp way.
+The following changes since commit 1b929c02afd37871d5afb9d498426f83432e71c2:
 
-Could you please improve the commit log?
+  Linux 6.2-rc1 (2022-12-25 13:41:39 -0800)
 
-The "obvious way" is not obvious for people that don't have the board
-schematics.
+are available in the Git repository at:
 
-I like better the way you described the 20/20 patch:
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.3-tag1
 
-"On this board the PHY is the ref clock provider. So, configure ethernet
-reference clock as input."
+for you to fetch changes up to fbfd614aeaa2853c2c575299dfe2458db8eff67e:
 
-Please use this format globally in the series, as it becomes clear who
-is providing the ref clock.
+  clk: renesas: cpg-mssr: Fix use after free if cpg_mssr_common_init() failed (2023-01-12 17:18:48 +0100)
 
-Thanks
+----------------------------------------------------------------
+clk: renesas: Updates for v6.3
+
+  - Add PWM, Compare-Match Timer (TIM), USB, SDHI, and eMMC clocks and
+    resets on RZ/V2M,
+  - Add display clocks on R-Car V4H,
+  - Add Camera Receiving Unit (CRU) clocks and resets on RZ/G2L,
+  - Miscellaneous fixes and improvements.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Alexey Khoroshilov (1):
+      clk: renesas: cpg-mssr: Fix use after free if cpg_mssr_common_init() failed
+
+Biju Das (3):
+      clk: renesas: r9a09g011: Add PWM clock and reset entries
+      clk: renesas: r9a09g011: Add TIM clock and reset entries
+      clk: renesas: r9a09g011: Add USB clock and reset entries
+
+Geert Uytterhoeven (2):
+      clk: renesas: r8a779g0: Fix OSC predividers
+      clk: renesas: rcar-gen4: Restore PLL enum sort order
+
+Lad Prabhakar (1):
+      clk: renesas: r9a07g044: Add clock and reset entries for CRU
+
+Phil Edworthy (1):
+      clk: renesas: r9a09g011: Add SDHI/eMMC clock and reset entries
+
+Tomi Valkeinen (1):
+      clk: renesas: r8a779g0: Add display related clocks
+
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c | 17 ++++++--
+ drivers/clk/renesas/r9a07g044-cpg.c     | 26 +++++++++++-
+ drivers/clk/renesas/r9a09g011-cpg.c     | 73 +++++++++++++++++++++++++++++++++
+ drivers/clk/renesas/rcar-gen4-cpg.h     |  2 +-
+ drivers/clk/renesas/renesas-cpg-mssr.c  |  3 +-
+ 5 files changed, 114 insertions(+), 7 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
