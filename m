@@ -2,40 +2,39 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1040C3DA78
-	for <linux-clk@archiver.kernel.org>; Sat, 14 Jan 2023 23:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC26C46467
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Jan 2023 23:56:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230358AbjANX4j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 14 Jan 2023 18:56:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45590 "EHLO
+        id S230373AbjANX4l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 14 Jan 2023 18:56:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230257AbjANX4i (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Jan 2023 18:56:38 -0500
-X-Greylist: delayed 1272 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 14 Jan 2023 15:56:37 PST
+        with ESMTP id S230368AbjANX4l (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Jan 2023 18:56:41 -0500
 Received: from www381.your-server.de (www381.your-server.de [78.46.137.84])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 091FC5269;
-        Sat, 14 Jan 2023 15:56:36 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9742D5269;
+        Sat, 14 Jan 2023 15:56:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=metafoo.de;
-        s=default2002; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:
-        Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References;
-        bh=c6HaRC/5BFVWpEQLqi7AYsioOEhg+RGVAbybpQsqhhc=; b=lofKh7YBz5AET+NTFDJ2fihj+I
-        Fj6hM/H7F5d/mSwkEbccKkAGR09HmRQInoVvZCzwoEJZG6hmJSyseFw/bVVSNinOqo3VGiC6jYs7d
-        /07c6FHI2/hNzwixSy4SKtSG4zSxU4D1O3QhIrmfeYNANp6CWqO+n8XWo0Oh4N3HKqjHPjvlZf+eU
-        82oqxTBtZdOO4Jz7gbb8LnAY+X1epWW9Y2R1IBLcPwSmhYIvqgkkxMMokW+SsiFlU2XrgS817c4M+
-        JKy6Fvbp3ViHs7sAbkdVTOURd4gs9e8EkIGfVPJVDg/S0dq+Ec5qgpg8UnRPCfV9xQidxab8bxOfW
-        VxX2ZbMg==;
+        s=default2002; h=Content-Transfer-Encoding:MIME-Version:References:
+        In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID;
+        bh=4uMQEPmSSsjWWpucQFP5FFkGpoxKilfkptONSJ4evRs=; b=Ds8Pe+jPLK7sUhOfpqGtkI4ilx
+        JIUU5L5IM/yl4YQDPtHvtk84aCaCMFXk9hffHa0VJCTgIKW5ZbrmOX6MmlEhwcSSI7ZkRhRvzUzMO
+        NT8XxfvEl0jGVWMKeWtYCMIuPGnZAuCEpz6OLDEdn5RR5cKau7UA+0FJLTqIcBKGL7jdfUnLiQ8bm
+        /DHQCJ0JOe9PXsy+mcWMytpLLAePQEtq61tVlcM/mzANmGb6PNNYgQHxz/fbJygsp6s7xsU3AOA2D
+        tGkCcAuM+7jQHZJqsBICktYQg1EPdaBOMFGvsCX/llAZFr8dFXaEI60YoVwHHo29R9D/YTkWibyub
+        j2WxS8Og==;
 Received: from sslproxy02.your-server.de ([78.47.166.47])
         by www381.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
         (Exim 4.94.2)
         (envelope-from <lars@metafoo.de>)
-        id 1pGq3V-0001aE-6w; Sun, 15 Jan 2023 00:35:21 +0100
+        id 1pGq3b-0001az-EK; Sun, 15 Jan 2023 00:35:27 +0100
 Received: from [2604:5500:c0e5:eb00:da5e:d3ff:feff:933b] (helo=lars-desktop.lan)
         by sslproxy02.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <lars@metafoo.de>)
-        id 1pGq3U-0009Au-L0; Sun, 15 Jan 2023 00:35:20 +0100
+        id 1pGq3a-0009Au-PR; Sun, 15 Jan 2023 00:35:27 +0100
 From:   Lars-Peter Clausen <lars@metafoo.de>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -44,10 +43,12 @@ Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Lars-Peter Clausen <lars@metafoo.de>
-Subject: [PATCH 1/3] clk: vc5: Use `clamp()` to restrict PLL range
-Date:   Sat, 14 Jan 2023 15:34:58 -0800
-Message-Id: <20230114233500.3294789-1-lars@metafoo.de>
+Subject: [PATCH 3/3] dt-bindings: clock: versaclock5: Document 5P49V60 compatible string
+Date:   Sat, 14 Jan 2023 15:35:00 -0800
+Message-Id: <20230114233500.3294789-3-lars@metafoo.de>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20230114233500.3294789-1-lars@metafoo.de>
+References: <20230114233500.3294789-1-lars@metafoo.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Authenticated-Sender: lars@metafoo.de
@@ -56,33 +57,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The VCO frequency needs to be within a certain range and the driver
-enforces this.
+The 5P49V60 clock generator is part of the same family of devices that is
+described by the versaclock5 binding documentation.
 
-Make use of the clamp macro to implement this instead of open-coding it.
-This makes the code a bit shorter and also semanticly stronger.
+Add the compatible string of the 5P49V60 to the binding documentation.
 
 Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
 ---
- drivers/clk/clk-versaclock5.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ Documentation/devicetree/bindings/clock/idt,versaclock5.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index e9737969170e..54fee43d6564 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -449,10 +449,7 @@ static long vc5_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	u32 div_int;
- 	u64 div_frc;
- 
--	if (rate < VC5_PLL_VCO_MIN)
--		rate = VC5_PLL_VCO_MIN;
--	if (rate > VC5_PLL_VCO_MAX)
--		rate = VC5_PLL_VCO_MAX;
-+	rate = clamp(rate, VC5_PLL_VCO_MIN, VC5_PLL_VCO_MAX);
- 
- 	/* Determine integer part, which is 12 bit wide */
- 	div_int = rate / *parent_rate;
+diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+index 61b246cf5e72..a2c6eea9871d 100644
+--- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
++++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+@@ -54,6 +54,7 @@ properties:
+       - idt,5p49v5925
+       - idt,5p49v5933
+       - idt,5p49v5935
++      - idt,5p49v60
+       - idt,5p49v6901
+       - idt,5p49v6965
+       - idt,5p49v6975
 -- 
 2.30.2
 
