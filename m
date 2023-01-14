@@ -2,86 +2,94 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA31C54EBE
-	for <linux-clk@archiver.kernel.org>; Sat, 14 Jan 2023 00:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82BDEC3DA78
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Jan 2023 11:39:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230040AbjANAUn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Jan 2023 19:20:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57684 "EHLO
+        id S229723AbjANLjq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 14 Jan 2023 06:39:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229797AbjANAUm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 19:20:42 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9DCD26F1;
-        Fri, 13 Jan 2023 16:20:39 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1402362384;
-        Sat, 14 Jan 2023 00:20:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 616B1C433D2;
-        Sat, 14 Jan 2023 00:20:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673655638;
-        bh=jB/n2oqoPZWrRVR1g4+7Zx4XohoKCQJBT0cq+l8bSDo=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=GUfA6jFoM/MJGbIJ5k+tLoWy/OgmbxwJ2hbtq9B0ykvd+RGR4biMoVJNVswg4T9hz
-         MdXE9Oz6wU4fK6/gKbAHb/kvmTayvq59oMkY61T6VIRQFUp5/xMa84vAUdn6IYpQ+N
-         nE9T6so/xcG2RXUaxwCVNZHk8Ct3SzOoMV21LnZp/k+U9d2vN8aOJf+NkmvAKsGssC
-         w+v20RbY/6myV9yyhVY810+Cr+PsqGMN4dwaSq3y1Dr3NuOnTnuF49qH/lu+PpU+iQ
-         VnoEFizNDLVE6ym7H24C+VAzcX7afIpUXGPQYAYmP95+5CmqiJ02GrCKsi2Yt9Gyeb
-         v+n8lVKn6Vr3A==
-Message-ID: <66131cea80d3a8a33e559f84fb808c6b.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229635AbjANLjq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Jan 2023 06:39:46 -0500
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2CEF3A9E;
+        Sat, 14 Jan 2023 03:39:44 -0800 (PST)
+Received: by mail-pf1-x42b.google.com with SMTP id 207so1814315pfv.5;
+        Sat, 14 Jan 2023 03:39:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=FJvgwP2yhKq5HRMv+nGTGGcOYvJiL+zhxVk6tWVvWYs=;
+        b=gbq+otLy1KBkkCrGFkFCqFwOhcIuV4PULSfpPUszRaHQr/f+pUidKShev/xBAHgtHU
+         yLhonT8wUsEuVEV0CZy2CauJhNr3UvlMsAU5gOmgENToKuNcxPCVMT6nHCQIQ+0NZ3L+
+         sL/uV7R/azABne/VgB632a8L0J7dq1d2LHJQBKyGiV1Qz6HIDodyCdwl7XrASNyrtWgs
+         vEQOavb3x1DDYh4unwD83x71J1ns2a7MKnLWKUrVzMLnHMug15owLyL10K73tT5yYuM/
+         q+OG5C8CMLB227KG++3NRP/l4MQSnLi/rJsRRwN0umyIQKK+X+9mDL6JzwwVjQNugh++
+         9e4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FJvgwP2yhKq5HRMv+nGTGGcOYvJiL+zhxVk6tWVvWYs=;
+        b=iP7kQZxHW0KZTh1/tAZQ3YsUskM6/40r6QsIvc0AJ2XQAkU4OBlTrqdHjBJdGkfAZo
+         dicH+gsS47iwZaVWMOACTNfbdqOWuMs8R8LLmZz0MiuLohnqJlMvVt8yCjoEtDITOqak
+         HpSf+spwQTKLw9QA1U7qURDB/zSZ9djA4bJn9vWxdtVFf68knIO7ClPNmom11e7Qa+85
+         17xfd5UkdzleGldHebtd0wGKExZq9umr+gkq6qtWa6isl4Xxi2iYcYSvwKrp72LknRku
+         bmq/B5dBgeGIz7fPz9EMA8SKQgzdBX5eUvmBv4CBbafZYPMz9KPi+PXrRb6hTJc2pNo2
+         KdBA==
+X-Gm-Message-State: AFqh2kp7KAQtGjPiuWbgTbHJWkV8Tf6B7/jE57KFVP+bwIWiy49tyJQI
+        9kibgllwGeE/15MZrDpPF0sk/sCZDpLHAlu4AOE=
+X-Google-Smtp-Source: AMrXdXuG4YlWidLin5pPzaupNzmOUxneWxv+FS2QYfh/LEJq9SXxtq8AhqG2++3ACqChh2B8EHBBrzXi9F+llg4AffI=
+X-Received: by 2002:a63:154c:0:b0:4ad:7773:fd02 with SMTP id
+ 12-20020a63154c000000b004ad7773fd02mr1636466pgv.603.1673696384290; Sat, 14
+ Jan 2023 03:39:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230113142718.3038265-5-o.rempel@pengutronix.de>
-References: <20230113142718.3038265-1-o.rempel@pengutronix.de> <20230113142718.3038265-5-o.rempel@pengutronix.de>
-Subject: Re: [PATCH v1 04/20] ARM: imx6q: use of_clk_get_by_name() instead of_clk_get() to get ptp clock
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
+References: <20230113142718.3038265-1-o.rempel@pengutronix.de> <20230113142718.3038265-9-o.rempel@pengutronix.de>
+In-Reply-To: <20230113142718.3038265-9-o.rempel@pengutronix.de>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Sat, 14 Jan 2023 08:39:27 -0300
+Message-ID: <CAOMZO5C8SSVZF8z2HngxG-d59aa=CmAQRThxkC3xaR695uKFSA@mail.gmail.com>
+Subject: Re: [PATCH v1 08/20] ARM: dts: imx6dl-plybas: configure ethernet
+ reference clock parent
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        kernel@pengutronix.de, NXP Linux Team <linux-imx@nxp.com>,
         Lee Jones <lee@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, netdev@vger.kernel.org
-To:     Abel Vesa <abelvesa@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Oleksij Rempel <o.rempel@pengutronix.de>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Date:   Fri, 13 Jan 2023 16:15:53 -0800
-User-Agent: alot/0.10
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Oleksij Rempel (2023-01-13 06:27:02)
-> It is not clear from the code what clock should be taken. So, make sure it
-> is readable and no other clock will be taken by accident.
->=20
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->  arch/arm/mach-imx/mach-imx6q.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm/mach-imx/mach-imx6q.c b/arch/arm/mach-imx/mach-imx6=
-q.c
-> index 7f6200925752..4885d3dfcf7f 100644
-> --- a/arch/arm/mach-imx/mach-imx6q.c
-> +++ b/arch/arm/mach-imx/mach-imx6q.c
-> @@ -98,7 +98,7 @@ static void __init imx6q_1588_init(void)
->         if (!IS_ERR(fec_enet_ref))
->                 goto put_node;
-> =20
-> -       ptp_clk =3D of_clk_get(np, 2);
-> +       ptp_clk =3D of_clk_get_by_name(np, "ptp");
+Hi Oleksij,
 
-The 'clocks' property in DTS should not be reordered. Order matters in
-the binding. This patch makes the code do a string comparison (or a
-few?) in the name of readability. Perhaps make a #define for '2' like
-CLOCKS_PTP_INDEX, or just don't change it because it ain't broke.
+On Fri, Jan 13, 2023 at 11:27 AM Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+>
+> Configure Ethernet reference clock parent in an obvious way instead of
+> using cryptic ptp way.
+
+Could you please improve the commit log?
+
+The "obvious way" is not obvious for people that don't have the board
+schematics.
+
+I like better the way you described the 20/20 patch:
+
+"On this board the PHY is the ref clock provider. So, configure ethernet
+reference clock as input."
+
+Please use this format globally in the series, as it becomes clear who
+is providing the ref clock.
+
+Thanks
