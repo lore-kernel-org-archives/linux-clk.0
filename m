@@ -2,60 +2,86 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D1A2C3DA78
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Jan 2023 20:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA31C54EBE
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Jan 2023 00:20:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229834AbjAMU21 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Jan 2023 15:28:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52150 "EHLO
+        id S230040AbjANAUn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Jan 2023 19:20:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229813AbjAMU20 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 15:28:26 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4725CDFB7;
-        Fri, 13 Jan 2023 12:28:26 -0800 (PST)
+        with ESMTP id S229797AbjANAUm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Jan 2023 19:20:42 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9DCD26F1;
+        Fri, 13 Jan 2023 16:20:39 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D97D462325;
-        Fri, 13 Jan 2023 20:28:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35914C433EF;
-        Fri, 13 Jan 2023 20:28:25 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1402362384;
+        Sat, 14 Jan 2023 00:20:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 616B1C433D2;
+        Sat, 14 Jan 2023 00:20:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673641705;
-        bh=HwyfpRpcKiNgFxBF8Fbg2rQkB/xW2UMxV2EyZwi2Cdg=;
+        s=k20201202; t=1673655638;
+        bh=jB/n2oqoPZWrRVR1g4+7Zx4XohoKCQJBT0cq+l8bSDo=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=daL+l5NdFwnvuDTj4Zl99RfFy4ymHTe4yruuyRkEzU5Vvz1Zzb6rCQN6YLeLGKc0i
-         yAgEhPfPckED5m1j04C5sUbxEjoNO3UU9Yjt14mlo+UXF5xPGYCtqvbzZWdIkoQ6NM
-         Ej+2ldLt1DtJn0ohk20r9LQ469uWUOMtTi58Lrgu0ieQbVT0xoqq1rKpSbDuCHaqtn
-         lGfH4IOYDWj3jNCoc3p8oIfLnLQWSWUCvSTU2Je5w5MMQeto3+wNsqIUykGGmJ+9P1
-         b+DkKZkG5P3uWoMMALpqoJ7+nmEJG0CCLxOlXBGui4G0g/TodQc1aXSyRCkjTTcNdz
-         +Z9wZL0kNxhoA==
-Message-ID: <e73ad320fafa1365e3506bbd4cc77d8d.sboyd@kernel.org>
+        b=GUfA6jFoM/MJGbIJ5k+tLoWy/OgmbxwJ2hbtq9B0ykvd+RGR4biMoVJNVswg4T9hz
+         MdXE9Oz6wU4fK6/gKbAHb/kvmTayvq59oMkY61T6VIRQFUp5/xMa84vAUdn6IYpQ+N
+         nE9T6so/xcG2RXUaxwCVNZHk8Ct3SzOoMV21LnZp/k+U9d2vN8aOJf+NkmvAKsGssC
+         w+v20RbY/6myV9yyhVY810+Cr+PsqGMN4dwaSq3y1Dr3NuOnTnuF49qH/lu+PpU+iQ
+         VnoEFizNDLVE6ym7H24C+VAzcX7afIpUXGPQYAYmP95+5CmqiJ02GrCKsi2Yt9Gyeb
+         v+n8lVKn6Vr3A==
+Message-ID: <66131cea80d3a8a33e559f84fb808c6b.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230113145859.82868-1-krzysztof.kozlowski@linaro.org>
-References: <20230113145859.82868-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] dt-bindings: clock: qcom,a53pll: drop operating-points-v2
+In-Reply-To: <20230113142718.3038265-5-o.rempel@pengutronix.de>
+References: <20230113142718.3038265-1-o.rempel@pengutronix.de> <20230113142718.3038265-5-o.rempel@pengutronix.de>
+Subject: Re: [PATCH v1 04/20] ARM: imx6q: use of_clk_get_by_name() instead of_clk_get() to get ptp clock
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Lee Jones <lee@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, netdev@vger.kernel.org
+To:     Abel Vesa <abelvesa@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 13 Jan 2023 12:28:23 -0800
+        Oleksij Rempel <o.rempel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Date:   Fri, 13 Jan 2023 16:15:53 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2023-01-13 06:58:59)
-> The CPU PLL clock node does not use OPP tables (neither driver).
+Quoting Oleksij Rempel (2023-01-13 06:27:02)
+> It is not clear from the code what clock should be taken. So, make sure it
+> is readable and no other clock will be taken by accident.
+>=20
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  arch/arm/mach-imx/mach-imx6q.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm/mach-imx/mach-imx6q.c b/arch/arm/mach-imx/mach-imx6=
+q.c
+> index 7f6200925752..4885d3dfcf7f 100644
+> --- a/arch/arm/mach-imx/mach-imx6q.c
+> +++ b/arch/arm/mach-imx/mach-imx6q.c
+> @@ -98,7 +98,7 @@ static void __init imx6q_1588_init(void)
+>         if (!IS_ERR(fec_enet_ref))
+>                 goto put_node;
+> =20
+> -       ptp_clk =3D of_clk_get(np, 2);
+> +       ptp_clk =3D of_clk_get_by_name(np, "ptp");
 
-What device is qcom_a53pll_get_freq_tbl() operating on?
+The 'clocks' property in DTS should not be reordered. Order matters in
+the binding. This patch makes the code do a string comparison (or a
+few?) in the name of readability. Perhaps make a #define for '2' like
+CLOCKS_PTP_INDEX, or just don't change it because it ain't broke.
