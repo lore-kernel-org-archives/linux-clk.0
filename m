@@ -2,57 +2,57 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C261C46467
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Jan 2023 21:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9044DC46467
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Jan 2023 21:06:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231138AbjAPVFq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Jan 2023 16:05:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53862 "EHLO
+        id S231611AbjAPVG1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Jan 2023 16:06:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231611AbjAPVFn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Jan 2023 16:05:43 -0500
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BBBB2311D
-        for <linux-clk@vger.kernel.org>; Mon, 16 Jan 2023 13:05:42 -0800 (PST)
-Received: by mail-yb1-xb30.google.com with SMTP id a9so14987217ybb.3
-        for <linux-clk@vger.kernel.org>; Mon, 16 Jan 2023 13:05:42 -0800 (PST)
+        with ESMTP id S233921AbjAPVGN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Jan 2023 16:06:13 -0500
+Received: from mail-yw1-x112f.google.com (mail-yw1-x112f.google.com [IPv6:2607:f8b0:4864:20::112f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE37B16334
+        for <linux-clk@vger.kernel.org>; Mon, 16 Jan 2023 13:06:08 -0800 (PST)
+Received: by mail-yw1-x112f.google.com with SMTP id 00721157ae682-4a263c4ddbaso397135827b3.0
+        for <linux-clk@vger.kernel.org>; Mon, 16 Jan 2023 13:06:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qi16rqRfpVxEIDPG8yaq6fMfKHFwbsCk0KPMN6hDEDQ=;
-        b=PBMJZDaOQp1JclDMa/01hpziebOYPox2et3WTjTnSzGSEMZvGQT1Lbv+hPf02Z0MA4
-         0YJH3/pd6X4vxKQqgqv5nogChYwIYBG5F4FgkPoydW22jCYyGZtcA3n0P2UhYdZElG+l
-         r6a1c+qvdYN2mMWj/Fy9mdWXfJO5pZ5jbH4GdqPE+pXNYhKmzx3U2VUIM2XI/qftzDAH
-         cFOoP+buTHBEH2OS7tk9Mitg01rfy/YYIszs6dzkiVnbByiIMeSfL/M3Nqt9o9oCA5/5
-         AuIuWCxo05EF4CVHbfqRneJ5lPJqEwYcSTKKR79omXvE+St8fCQKd1ocTM8u6jbNA2wx
-         STiw==
+        bh=pTx0hKUehj5zlFMm8je22yYIdgmSFNrS9JKax6jHuBQ=;
+        b=TslgB/uw5OZ7lyuSRs9ylD8Njzd6I2vt5fglIxu6Ub/uB0qGZeWMKHdRzW/HJG6lsZ
+         9xudq/U89FOtQcaxBE/5/x5dQaTouirIBcV5OR4EjPzhRe+LZkgQDP9qIvSCuY0mQ9HX
+         RyFMxumcmyTYFx0j5aP7D95hgezZubz0GDldGis8O0QWZJzKNthh0JJlEnAG3NUqd/RJ
+         0BUN5TGqNn/6F/HSljpP0mWorX7FWgCtmTpyHqyfP6uDQyI7UZx637kHM9843bEVMKvx
+         FTRs+6ehFNkgBYFYTwASZqnnB3kDCn2kjhhsVBatyQo/1i3GtGqbQIKE0Z4CMCMR9yWV
+         kh1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Qi16rqRfpVxEIDPG8yaq6fMfKHFwbsCk0KPMN6hDEDQ=;
-        b=ETkyTyhtfgQZm8st0mGfvf+st6h65x1Kw4TCk5hUbuSQp2QYtOmtk2H9zgtx2ZPXQD
-         9t5QxBZiCk1T4UjiMui3kufK6y50D97SurpgZ8mZczKNZwctfJ8y8+punG3hiaCw3OJp
-         Ub47rGYxDDiLLTdFHbeGl4wSQmHOiu2Ru22HLhTih8G9ZxI8ot/axPmhfcksnMyp1R+B
-         IsQ/Ih6C9eDmyAGtduNnCRewtb28n0icer3BazsjQnw8COk4sJmMwqWHS0Ne3JiKWwsO
-         Jeq0/9BXd/oxRZsidl6UqRxhv/ghMpPt4lFV6/IMZRAWlYQXjp/KRBQKr4cYcvuoDqRS
-         XV8w==
-X-Gm-Message-State: AFqh2kpW14mO9vP/9S1Si2G7wR26vmmwmL4Uqw7r8QaVmhlSZWuLHXkm
-        UhpRveRbqt//yBd3TufGSEM0IJTtvIx+qjDtZWM4bg==
-X-Google-Smtp-Source: AMrXdXvUFbKj/8VK1PqxF3SoqqhT54oJaVtabwef3rW+11qq+8X4WHWpCQjx3gPW4zHB70/sxyRjqRKMlHRycFgU+3s=
-X-Received: by 2002:a25:9002:0:b0:7c2:d9f1:3b04 with SMTP id
- s2-20020a259002000000b007c2d9f13b04mr147791ybl.516.1673903141353; Mon, 16 Jan
- 2023 13:05:41 -0800 (PST)
+        bh=pTx0hKUehj5zlFMm8je22yYIdgmSFNrS9JKax6jHuBQ=;
+        b=1kg7cvfwxiEQkMlswIhDrXz621o8VPFSQxAIY6Fy0lJmC7qrK2h1MaTZcH9zOUXrjJ
+         szd1UOKy3+lGHQpuZ2vYVl9sZv7fxFXjFjuMFD54wrMpyANaJpfpXJp8O1YGmuQq2H0s
+         uGzEZzFSYXiAzA70nm0RdwJOq4vnypTc2qhQs5FQcf0ehnoWgRUqBx+2EZqpcWFqwdKd
+         +sdKvsAtqucDT1gTgKpiS51mnPdMk5jqBAAfTGAWYAzOw0zRy8r/349RJrArmJGmDIEy
+         sy0GTMtL3oyUo/zBzQSgNzcNtCKv/5Yl19sci8D0+KbmjtfzjNFgV1m9KDmI04F1xxFk
+         Rh6A==
+X-Gm-Message-State: AFqh2kolTgemSMai1yrn3jEzIPXCH4thQb5V1wWhbdyoyMqjDwqwT/YV
+        6AwyGKM3jr1cycMzlYPAhhbxHad3mdTSwsSCUHsS1A==
+X-Google-Smtp-Source: AMrXdXv9CEbf8RGoRc6TXpluqPTTq48HnVzFbmyL8U8sOQv2gZMYUAx7xB2dnKo3zWCRMrxZ3DXsJ6juWXp614GVzd8=
+X-Received: by 2002:a0d:d60e:0:b0:432:2458:f6ca with SMTP id
+ y14-20020a0dd60e000000b004322458f6camr103782ywd.138.1673903168207; Mon, 16
+ Jan 2023 13:06:08 -0800 (PST)
 MIME-Version: 1.0
-References: <20230116204751.23045-1-ansuelsmth@gmail.com> <20230116204751.23045-6-ansuelsmth@gmail.com>
-In-Reply-To: <20230116204751.23045-6-ansuelsmth@gmail.com>
+References: <20230116204751.23045-1-ansuelsmth@gmail.com> <20230116204751.23045-8-ansuelsmth@gmail.com>
+In-Reply-To: <20230116204751.23045-8-ansuelsmth@gmail.com>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Mon, 16 Jan 2023 23:05:30 +0200
-Message-ID: <CAA8EJprEOaduAd_OwpbW0m4aWwoFxNVqExTtMhTK4giPMkBGFA@mail.gmail.com>
-Subject: Re: [PATCH v7 5/7] ARM: dts: qcom: add and fix clock configuration
- for kpss-gcc nodes
+Date:   Mon, 16 Jan 2023 23:05:57 +0200
+Message-ID: <CAA8EJpreAtkY3RvUbU9JS4E3Ye=trc8MvyTLXp6PxPt71X0Jjw@mail.gmail.com>
+Subject: Re: [PATCH v7 7/7] ARM: dts: qcom: rename kpss-acc-v2 nodes to
+ power-manager nodes
 To:     Christian Marangi <ansuelsmth@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -70,18 +70,18 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Mon, 16 Jan 2023 at 22:48, Christian Marangi <ansuelsmth@gmail.com> wrote:
 >
-> Add missing clock configuration by adding clocks, clock-names
-> and #clock-cells bindings for each kpss-acc-v1 clock-controller
-> node for apq8064 and msm8960 to reflect Documentation schema.
-> Add missing #clock-cells binding and remove useless clock-output-names for
-> ipq806x dtsi.
+> Change kpss-acc-v2 nodes naming to power-manager to reflect Documentation
+> schema.
 >
 > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  arch/arm/boot/dts/qcom-apq8084.dtsi | 8 ++++----
+>  arch/arm/boot/dts/qcom-ipq4019.dtsi | 8 ++++----
+>  arch/arm/boot/dts/qcom-msm8974.dtsi | 8 ++++----
+>  3 files changed, 12 insertions(+), 12 deletions(-)
+
 
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-
-
 
 -- 
 With best wishes
