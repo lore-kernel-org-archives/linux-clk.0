@@ -2,181 +2,87 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63132C67871
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Jan 2023 20:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C261C46467
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Jan 2023 21:05:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233774AbjAPUsi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Jan 2023 15:48:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45442 "EHLO
+        id S231138AbjAPVFq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Jan 2023 16:05:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232873AbjAPUsK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Jan 2023 15:48:10 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF2FB2B086;
-        Mon, 16 Jan 2023 12:48:05 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id n7so2552780wrx.5;
-        Mon, 16 Jan 2023 12:48:05 -0800 (PST)
+        with ESMTP id S231611AbjAPVFn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Jan 2023 16:05:43 -0500
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BBBB2311D
+        for <linux-clk@vger.kernel.org>; Mon, 16 Jan 2023 13:05:42 -0800 (PST)
+Received: by mail-yb1-xb30.google.com with SMTP id a9so14987217ybb.3
+        for <linux-clk@vger.kernel.org>; Mon, 16 Jan 2023 13:05:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XTQcxRSsDdNAmsWj8v2rraUSWcRmffK40pcDPX9MDPE=;
-        b=eJpQMTL9DTzM8UbZ7Fl+3J41l5BqMK+iITIqr7Vz7af2vbVCPDNa19QOdYZZZvgq1K
-         g0UbeXM4AukFSjsY012L9LEySpKHK7UX0o/En5pg+Mzuv6CTaxR0EcHOiVH4Jl9gO48z
-         n2CmUgwHQuehcYK2/HaG8a5xlH/9T8v3awE8CN+PMMpO51/TPvKGqRC+bE4v35Cy9JLN
-         6nba9f6ztZX5z0B4bZDwJ+hipWPOmmdX/x+L4pe9UfeO7oc0jNnXzldVz19OLZxGe+o0
-         Jy+PikJJKvvn+HxP//daS1ZfyRfmdh9OPFJmD4631rfm/NBsKTnM4PZ7m224umUPCVki
-         +llw==
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qi16rqRfpVxEIDPG8yaq6fMfKHFwbsCk0KPMN6hDEDQ=;
+        b=PBMJZDaOQp1JclDMa/01hpziebOYPox2et3WTjTnSzGSEMZvGQT1Lbv+hPf02Z0MA4
+         0YJH3/pd6X4vxKQqgqv5nogChYwIYBG5F4FgkPoydW22jCYyGZtcA3n0P2UhYdZElG+l
+         r6a1c+qvdYN2mMWj/Fy9mdWXfJO5pZ5jbH4GdqPE+pXNYhKmzx3U2VUIM2XI/qftzDAH
+         cFOoP+buTHBEH2OS7tk9Mitg01rfy/YYIszs6dzkiVnbByiIMeSfL/M3Nqt9o9oCA5/5
+         AuIuWCxo05EF4CVHbfqRneJ5lPJqEwYcSTKKR79omXvE+St8fCQKd1ocTM8u6jbNA2wx
+         STiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XTQcxRSsDdNAmsWj8v2rraUSWcRmffK40pcDPX9MDPE=;
-        b=YzzoDI3q0eh/oPBW4kPfo3+0ewNK4/iH7NGHnlzkZp/6hMjw75ys5uWIe7bVKiEny9
-         ZIvP1QfpZ6m3BniTRNQO6tf/6hnvml8ue7TXpDhkighgO0TRjhvsVOjkPYVsOWBUczp6
-         KLJv14PorDNrFHIchUorWPzqDyRgwZ/IYdQNTpSKscb9WjP+wH+Ili1MmkiX06kK70xO
-         B3FmMlzRrNOWJWaLgUmv7rACJh0L6G9+ctOS1j+VQA1d1qM0pe+Dbn+NzJc1HZNj8xaA
-         W0O0wfp39U2j3iyVgqr9P60sH5kfI3cdmft6zNuPlGPnhc9t32Bz3Z2tZFlRykM1RXRP
-         H+jg==
-X-Gm-Message-State: AFqh2krXtRyqyCdc2L7c7oQ5DptlCw5eXNOAD6vgMz5cxRaxb94L185x
-        NbJS7Gq8khaeIJJV9Ks2/O6Y3usDKUE=
-X-Google-Smtp-Source: AMrXdXuZI2PiJ9CAMQ8ZgFdZNgSImhtfa0M4kSb9rN6EwatsAe5QG768gV5TvnbTtTDhLdiaD8Uo/A==
-X-Received: by 2002:adf:e109:0:b0:2bd:e547:943a with SMTP id t9-20020adfe109000000b002bde547943amr675272wrz.14.1673902084323;
-        Mon, 16 Jan 2023 12:48:04 -0800 (PST)
-Received: from localhost.localdomain (93-34-92-88.ip49.fastwebnet.it. [93.34.92.88])
-        by smtp.googlemail.com with ESMTPSA id k18-20020adfb352000000b00241fab5a296sm27785372wrd.40.2023.01.16.12.48.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jan 2023 12:48:04 -0800 (PST)
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Qi16rqRfpVxEIDPG8yaq6fMfKHFwbsCk0KPMN6hDEDQ=;
+        b=ETkyTyhtfgQZm8st0mGfvf+st6h65x1Kw4TCk5hUbuSQp2QYtOmtk2H9zgtx2ZPXQD
+         9t5QxBZiCk1T4UjiMui3kufK6y50D97SurpgZ8mZczKNZwctfJ8y8+punG3hiaCw3OJp
+         Ub47rGYxDDiLLTdFHbeGl4wSQmHOiu2Ru22HLhTih8G9ZxI8ot/axPmhfcksnMyp1R+B
+         IsQ/Ih6C9eDmyAGtduNnCRewtb28n0icer3BazsjQnw8COk4sJmMwqWHS0Ne3JiKWwsO
+         Jeq0/9BXd/oxRZsidl6UqRxhv/ghMpPt4lFV6/IMZRAWlYQXjp/KRBQKr4cYcvuoDqRS
+         XV8w==
+X-Gm-Message-State: AFqh2kpW14mO9vP/9S1Si2G7wR26vmmwmL4Uqw7r8QaVmhlSZWuLHXkm
+        UhpRveRbqt//yBd3TufGSEM0IJTtvIx+qjDtZWM4bg==
+X-Google-Smtp-Source: AMrXdXvUFbKj/8VK1PqxF3SoqqhT54oJaVtabwef3rW+11qq+8X4WHWpCQjx3gPW4zHB70/sxyRjqRKMlHRycFgU+3s=
+X-Received: by 2002:a25:9002:0:b0:7c2:d9f1:3b04 with SMTP id
+ s2-20020a259002000000b007c2d9f13b04mr147791ybl.516.1673903141353; Mon, 16 Jan
+ 2023 13:05:41 -0800 (PST)
+MIME-Version: 1.0
+References: <20230116204751.23045-1-ansuelsmth@gmail.com> <20230116204751.23045-6-ansuelsmth@gmail.com>
+In-Reply-To: <20230116204751.23045-6-ansuelsmth@gmail.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Mon, 16 Jan 2023 23:05:30 +0200
+Message-ID: <CAA8EJprEOaduAd_OwpbW0m4aWwoFxNVqExTtMhTK4giPMkBGFA@mail.gmail.com>
+Subject: Re: [PATCH v7 5/7] ARM: dts: qcom: add and fix clock configuration
+ for kpss-gcc nodes
+To:     Christian Marangi <ansuelsmth@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: [PATCH v7 6/7] ARM: dts: qcom: add missing clock configuration for kpss-acc-v1
-Date:   Mon, 16 Jan 2023 21:47:50 +0100
-Message-Id: <20230116204751.23045-7-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20230116204751.23045-1-ansuelsmth@gmail.com>
-References: <20230116204751.23045-1-ansuelsmth@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add missing clock configuration by adding clocks, clock-names,
-clock-output-names and #clock-cells bindings for each kpss-acc-v1
-clock-controller to reflect Documentation schema.
+On Mon, 16 Jan 2023 at 22:48, Christian Marangi <ansuelsmth@gmail.com> wrote:
+>
+> Add missing clock configuration by adding clocks, clock-names
+> and #clock-cells bindings for each kpss-acc-v1 clock-controller
+> node for apq8064 and msm8960 to reflect Documentation schema.
+> Add missing #clock-cells binding and remove useless clock-output-names for
+> ipq806x dtsi.
+>
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- arch/arm/boot/dts/qcom-apq8064.dtsi | 16 ++++++++++++++++
- arch/arm/boot/dts/qcom-ipq8064.dtsi |  8 ++++++++
- arch/arm/boot/dts/qcom-msm8960.dtsi |  8 ++++++++
- 3 files changed, 32 insertions(+)
 
-diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
-index 1e68b42acb91..af84f2d350ef 100644
---- a/arch/arm/boot/dts/qcom-apq8064.dtsi
-+++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
-@@ -389,21 +389,37 @@ timer@200a000 {
- 		acc0: clock-controller@2088000 {
- 			compatible = "qcom,kpss-acc-v1";
- 			reg = <0x02088000 0x1000>, <0x02008000 0x1000>;
-+			clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
-+			clock-names = "pll8_vote", "pxo";
-+			clock-output-names = "acpu0_aux";
-+			#clock-cells = <0>;
- 		};
- 
- 		acc1: clock-controller@2098000 {
- 			compatible = "qcom,kpss-acc-v1";
- 			reg = <0x02098000 0x1000>, <0x02008000 0x1000>;
-+			clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
-+			clock-names = "pll8_vote", "pxo";
-+			clock-output-names = "acpu1_aux";
-+			#clock-cells = <0>;
- 		};
- 
- 		acc2: clock-controller@20a8000 {
- 			compatible = "qcom,kpss-acc-v1";
- 			reg = <0x020a8000 0x1000>, <0x02008000 0x1000>;
-+			clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
-+			clock-names = "pll8_vote", "pxo";
-+			clock-output-names = "acpu2_aux";
-+			#clock-cells = <0>;
- 		};
- 
- 		acc3: clock-controller@20b8000 {
- 			compatible = "qcom,kpss-acc-v1";
- 			reg = <0x020b8000 0x1000>, <0x02008000 0x1000>;
-+			clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
-+			clock-names = "pll8_vote", "pxo";
-+			clock-output-names = "acpu3_aux";
-+			#clock-cells = <0>;
- 		};
- 
- 		saw0: power-controller@2089000 {
-diff --git a/arch/arm/boot/dts/qcom-ipq8064.dtsi b/arch/arm/boot/dts/qcom-ipq8064.dtsi
-index de87fcaaa836..e796094a7af5 100644
---- a/arch/arm/boot/dts/qcom-ipq8064.dtsi
-+++ b/arch/arm/boot/dts/qcom-ipq8064.dtsi
-@@ -580,6 +580,10 @@ l2cc: clock-controller@2011000 {
- 		acc0: clock-controller@2088000 {
- 			compatible = "qcom,kpss-acc-v1";
- 			reg = <0x02088000 0x1000>, <0x02008000 0x1000>;
-+			clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
-+			clock-names = "pll8_vote", "pxo";
-+			clock-output-names = "acpu0_aux";
-+			#clock-cells = <0>;
- 		};
- 
- 		saw0: regulator@2089000 {
-@@ -591,6 +595,10 @@ saw0: regulator@2089000 {
- 		acc1: clock-controller@2098000 {
- 			compatible = "qcom,kpss-acc-v1";
- 			reg = <0x02098000 0x1000>, <0x02008000 0x1000>;
-+			clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
-+			clock-names = "pll8_vote", "pxo";
-+			clock-output-names = "acpu1_aux";
-+			#clock-cells = <0>;
- 		};
- 
- 		saw1: regulator@2099000 {
-diff --git a/arch/arm/boot/dts/qcom-msm8960.dtsi b/arch/arm/boot/dts/qcom-msm8960.dtsi
-index 3bd07cac315b..4fd56d85be3f 100644
---- a/arch/arm/boot/dts/qcom-msm8960.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8960.dtsi
-@@ -208,11 +208,19 @@ regulators {
- 		acc0: clock-controller@2088000 {
- 			compatible = "qcom,kpss-acc-v1";
- 			reg = <0x02088000 0x1000>, <0x02008000 0x1000>;
-+			clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
-+			clock-names = "pll8_vote", "pxo";
-+			clock-output-names = "acpu0_aux";
-+			#clock-cells = <0>;
- 		};
- 
- 		acc1: clock-controller@2098000 {
- 			compatible = "qcom,kpss-acc-v1";
- 			reg = <0x02098000 0x1000>, <0x02008000 0x1000>;
-+			clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
-+			clock-names = "pll8_vote", "pxo";
-+			clock-output-names = "acpu1_aux";
-+			#clock-cells = <0>;
- 		};
- 
- 		saw0: regulator@2089000 {
+
+
+
 -- 
-2.37.2
-
+With best wishes
+Dmitry
