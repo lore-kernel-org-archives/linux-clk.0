@@ -2,32 +2,32 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6102EC46467
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Jan 2023 16:29:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E223C54EBE
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Jan 2023 17:02:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233085AbjAPQ3p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Jan 2023 11:29:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46498 "EHLO
+        id S234184AbjAPRCz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Jan 2023 12:02:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233283AbjAPQ3R (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Jan 2023 11:29:17 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48E2027487;
-        Mon, 16 Jan 2023 08:17:41 -0800 (PST)
+        with ESMTP id S230304AbjAPRCO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Jan 2023 12:02:14 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A262939B93;
+        Mon, 16 Jan 2023 08:44:15 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EF769B80E93;
-        Mon, 16 Jan 2023 16:17:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AE66C433D2;
-        Mon, 16 Jan 2023 16:17:38 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3F64E61086;
+        Mon, 16 Jan 2023 16:44:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51428C433EF;
+        Mon, 16 Jan 2023 16:44:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1673885858;
-        bh=MUyBCoF4EUSkIHgsegItBGB/Fe++aR/mkRhb7NvgJE0=;
+        s=korg; t=1673887454;
+        bh=/uD1altzWUbvTZtvp+kt0F96PDIo8Gh6WA/oadSVZsM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HdGC++HErXiCyiXxqZ2AVeKHfnyIIOpvQWeijPfhYKqvV6INY+fBK0pk3f0rMN/vF
-         62UyXZyCBG6V6cv4E4lljDh2Or5BVORpAsJ51C7aNFrn6OY68o5/mgMbu/VLVaiUub
-         TLKvNGfIXDlMiz70fKIly4NJR1f+kDqvthNp9kk4=
+        b=X/UWlysV3OANtZ1sxJbRiFyE6pFlni/1QLoE/y94Ci8Z9gXpl87+Zs4j/bwDWmFcj
+         542jGm7CYv6cm9HAfloqvldchVlB80yeqs9mWBop59xs8lCkDZqXbB0K3LZ5BJ4pEb
+         gglRt+H5kFk7FbajOFcaox67iA2IWdTHcw9733+k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -36,12 +36,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 210/658] clk: socfpga: clk-pll: Remove unused variable rc
-Date:   Mon, 16 Jan 2023 16:44:58 +0100
-Message-Id: <20230116154919.054153174@linuxfoundation.org>
+Subject: [PATCH 4.19 155/521] clk: socfpga: clk-pll: Remove unused variable rc
+Date:   Mon, 16 Jan 2023 16:46:57 +0100
+Message-Id: <20230116154854.174598801@linuxfoundation.org>
 X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230116154909.645460653@linuxfoundation.org>
-References: <20230116154909.645460653@linuxfoundation.org>
+In-Reply-To: <20230116154847.246743274@linuxfoundation.org>
+References: <20230116154847.246743274@linuxfoundation.org>
 User-Agent: quilt/0.67
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -67,17 +67,16 @@ Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Link: https://lore.kernel.org/r/20210120093040.1719407-8-lee.jones@linaro.org
 Acked-by: Dinh Nguyen <dinguyen@kernel.org>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Stable-dep-of: 0b8ba891ad4d ("clk: socfpga: Fix memory leak in socfpga_gate_init()")
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
  drivers/clk/socfpga/clk-pll.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
-index dc65cc0fd3bd..444f3948fff4 100644
+index b4b44e9b5901..973c4713d085 100644
 --- a/drivers/clk/socfpga/clk-pll.c
 +++ b/drivers/clk/socfpga/clk-pll.c
-@@ -80,7 +80,6 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
+@@ -90,7 +90,6 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
  	const char *parent_name[SOCFPGA_MAX_PARENTS];
  	struct clk_init_data init;
  	struct device_node *clkmgr_np;
@@ -85,7 +84,7 @@ index dc65cc0fd3bd..444f3948fff4 100644
  
  	of_property_read_u32(node, "reg", &reg);
  
-@@ -113,7 +112,7 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
+@@ -123,7 +122,7 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
  		kfree(pll_clk);
  		return NULL;
  	}
