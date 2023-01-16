@@ -2,58 +2,57 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E76C54EBE
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Jan 2023 21:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6533FC54EBE
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Jan 2023 21:29:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231171AbjAPVUW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Jan 2023 16:20:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60594 "EHLO
+        id S234882AbjAPV3y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Jan 2023 16:29:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231703AbjAPVUW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Jan 2023 16:20:22 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE52794;
-        Mon, 16 Jan 2023 13:20:20 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id fl11-20020a05600c0b8b00b003daf72fc844so3376367wmb.0;
-        Mon, 16 Jan 2023 13:20:20 -0800 (PST)
+        with ESMTP id S234422AbjAPV3a (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Jan 2023 16:29:30 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CD822B638
+        for <linux-clk@vger.kernel.org>; Mon, 16 Jan 2023 13:29:10 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id a11so4281779lfg.0
+        for <linux-clk@vger.kernel.org>; Mon, 16 Jan 2023 13:29:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=wx6dFpBiKRF+lOp7tVSvWrSb/+7pTNhNIK42JetspUc=;
-        b=DUu/lyLhWrxqyxq6o1rBYVNColZC4w3ZfDC4z+kYDQZfcz0rcpMtIDFd8OdacWa0zx
-         aRxHpDXTh3DSvZsFC6UMowq8dM2ljk6so70O5QO5ZvkRQwe9H2j/nCJOFazlsrEt1xTR
-         H5Aa3h4ivCis+KGgBsBF4EGk4hlxt+U149GenS6C7PEdTII93zrcZen8wbcLjiZy8EW1
-         TusiVSMhG7j76mQPpLYLu2qRTD62OQvM6iPolDBWpLp6FQXYN/0V/i0rc0dhXO2y1yu2
-         xYLsc/3PWxbzPEYNgpg5754nfSr4Pc2mB2aHpVh5qNoJbEy5MQiLsm40klwQ4QatlkBk
-         0Aaw==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FqTPgVEI+/l0Z2M0FqNHN/wbtlAyAwzZL0OO5z8BaCc=;
+        b=jhMWQjDKGdbCHydqu5ubgmaJLHdxpngHI5nIJF0VbdiS0N39R/lmWztXM0FfDp/deu
+         9W+CdGTu3IqFjDdhFus0JXhdV1t8Afe4N3GXQNZgkaOwo3waflvGyJRpE4Z2/NiQvbhw
+         pnxs7b1q0YWuQgkDeRHi8tXd+keSvtCEb+IoDiE8PJ+5kxdHUnYEVDsQF781coj2Xu+y
+         UwYTNj69ieAKeoZ7BLs0fYqxYrol4bv7oWT3XoNzlJFI7I3AEgbesFMWqZgKNAEph5Uu
+         isYn0HT2hOwcdFvWvZT/2vju2xbuxMW9HttRClnJoqXQ89KrMieXnDQLFK37RzrB6V26
+         VtYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wx6dFpBiKRF+lOp7tVSvWrSb/+7pTNhNIK42JetspUc=;
-        b=THE0CVy3OQoXW1r0BF9R1rwddMnGG7Ua/lCXpB98Y/gx+3n7dFW5I2xFeRotozX51v
-         rVHrliYR8Xnr1e0HTpu2XZ5Kxp+sWJ2d+2pzLB1msC61jxjmmcaz1ZKGMEqsqizg1hWz
-         sEFod4bdfrMx9RSN+vg1sTMy/h0iNp4Pr7F7/bc6VBLzlIczp/143Pw2VVvO23mxv04K
-         BC1ONx82RAAZ4wQ1eXjksnSBac48gaSi7UhjOPF2dKlWCxukzTIfP/3VwDq4jW+3d0vY
-         7HYnKPRUi6T0+bMurDLCEPZwk+3E0uqmW2GgCr0FEf/U6/Da9Hc969+4k3Wnvv6QleEY
-         dW9g==
-X-Gm-Message-State: AFqh2koBBG/87W4Dp4/Mg9UY4GruJpeuLQUzqcs0BgZ4nEvhgBupvzZw
-        vKTblYdmYnSyX2YX6toAATI=
-X-Google-Smtp-Source: AMrXdXs67C5IV65UlljRSfTVXQGMuK4uLXUEVOX7qzhxlrdEahu7BgQ49aO5FK8+AA2WDoRFE9QqsQ==
-X-Received: by 2002:a05:600c:13c8:b0:3db:3e8:feca with SMTP id e8-20020a05600c13c800b003db03e8fecamr1314881wmg.15.1673904018984;
-        Mon, 16 Jan 2023 13:20:18 -0800 (PST)
-Received: from Ansuel-xps. (93-34-92-88.ip49.fastwebnet.it. [93.34.92.88])
-        by smtp.gmail.com with ESMTPSA id n37-20020a05600c502500b003db03be9420sm1207370wmr.13.2023.01.16.13.20.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jan 2023 13:20:18 -0800 (PST)
-Message-ID: <63c5bf92.050a0220.bca9b.5439@mx.google.com>
-X-Google-Original-Message-ID: <Y8W/kTrBS6fJbV9e@Ansuel-xps.>
-Date:   Mon, 16 Jan 2023 22:20:17 +0100
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FqTPgVEI+/l0Z2M0FqNHN/wbtlAyAwzZL0OO5z8BaCc=;
+        b=0KqRkNoDCOBUyI9sKZ04WTpgDsdN1s6ch6L4R9WQFRYoJvCx7skxk2kHXmqZTgUZJa
+         LGq1XMHBxX9YoHjbqKW2PiwbRQZBWBxihvgu0x8m/6IUdyLzCif3fC9xRP48A+lk3WJ9
+         r2S5Th11IvzVBvsnbH6MDlsZAkOCZx2fcO+9/Lfg49Fc7cQD8RQG/UPRYteGe+c4b+sQ
+         EWU6hKO9yoXV2FflccwVRTIRplFULN1JSky3DzJFhxCKlyJ47mi9zX20IoUKSNdHQqRw
+         JNJop8hVBkQSsO36pTgQv+fuVoo1VHLLN9TW7RVc8U91RYkb7KXyGW6rCJtpODS7FkO9
+         +kEg==
+X-Gm-Message-State: AFqh2krN7HvDpxRFfQnbiRj5AwqvBA4m7Hyi1OZPAfrvn2hM02CnYTfV
+        RNAXxLWpRGCv6sKYS3WuJz1s1g==
+X-Google-Smtp-Source: AMrXdXuufVRubDriD/2a/Gz86R2bSzUvxoguE9Cq9tfcujYu1aRL76EHwPDPPYn9I3UYwcsO/DL6hw==
+X-Received: by 2002:ac2:4f04:0:b0:4a4:68b8:f4bd with SMTP id k4-20020ac24f04000000b004a468b8f4bdmr143452lfr.3.1673904548546;
+        Mon, 16 Jan 2023 13:29:08 -0800 (PST)
+Received: from [127.0.0.1] (85-76-18-55-nat.elisa-mobile.fi. [85.76.18.55])
+        by smtp.gmail.com with ESMTPSA id j11-20020a056512344b00b004d580823c25sm128540lfr.11.2023.01.16.13.29.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Jan 2023 13:29:08 -0800 (PST)
+Date:   Mon, 16 Jan 2023 23:29:04 +0200
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Christian Marangi <ansuelsmth@gmail.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -64,186 +63,208 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-clk@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
         Rob Herring <robh@kernel.org>
 Subject: Re: [PATCH v7 1/7] dt-bindings: clock: Convert qcom,krait-cc to yaml
-References: <20230116204751.23045-1-ansuelsmth@gmail.com>
- <20230116204751.23045-2-ansuelsmth@gmail.com>
- <CAA8EJppdYqwM6n+6BdKtjO+TTerqeodLO7CEpBVNW45yduFV0g@mail.gmail.com>
+User-Agent: K-9 Mail for Android
+In-Reply-To: <63c5bf92.050a0220.bca9b.5439@mx.google.com>
+References: <20230116204751.23045-1-ansuelsmth@gmail.com> <20230116204751.23045-2-ansuelsmth@gmail.com> <CAA8EJppdYqwM6n+6BdKtjO+TTerqeodLO7CEpBVNW45yduFV0g@mail.gmail.com> <63c5bf92.050a0220.bca9b.5439@mx.google.com>
+Message-ID: <E690C301-63D8-4563-8A82-43D2EB996D10@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAA8EJppdYqwM6n+6BdKtjO+TTerqeodLO7CEpBVNW45yduFV0g@mail.gmail.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jan 16, 2023 at 11:14:10PM +0200, Dmitry Baryshkov wrote:
-> On Mon, 16 Jan 2023 at 22:48, Christian Marangi <ansuelsmth@gmail.com> wrote:
-> >
-> > Convert qcom,krait-cc to yaml Documentation.
-> >
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > Acked-by: Rob Herring <robh@kernel.org>
-> 
-> I know this has been reviewed already. I checked again my apq8064
-> branch and noticed that the bindings are not compatible with the
-> apq8064. The SoC in question is a 4-core device, so this is what I had
-> in mind:
-> 
->        kraitcc: clock-controller {
->                compatible = "qcom,krait-cc-v1";
->                clocks = <&gcc PLL9>, /* hfpll0 */
->                         <&gcc PLL10>, /* hfpll1 */
->                         <&gcc PLL16>, /* hfpll2 */
->                         <&gcc PLL17>, /* hfpll3 */
->                         <&gcc PLL12>, /* hfpll_l2 */
->                         <&acc0>,
->                         <&acc1>,
->                         <&acc2>,
->                         <&acc3>,
->                         <&l2cc>;
->                clock-names = "hfpll0",
->                              "hfpll1",
->                              "hfpll2",
->                              "hfpll3",
->                              "hfpll_l2",
->                              "acpu0_aux",
->                              "acpu1_aux",
->                              "acpu2_aux",
->                              "acpu3_aux",
->                              "acpu_l2_aux";
->                #clock-cells = <1>;
->        };
-> 
+16 =D1=8F=D0=BD=D0=B2=D0=B0=D1=80=D1=8F 2023 =D0=B3=2E 23:20:17 GMT+02:00, =
+Christian Marangi <ansuelsmth@gmail=2Ecom> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>On Mon, Jan 16, 2023 at 11:14:10PM +0200, Dmitry Baryshkov wrote:
+>> On Mon, 16 Jan 2023 at 22:48, Christian Marangi <ansuelsmth@gmail=2Ecom=
+> wrote:
+>> >
+>> > Convert qcom,krait-cc to yaml Documentation=2E
+>> >
+>> > Signed-off-by: Christian Marangi <ansuelsmth@gmail=2Ecom>
+>> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel=2Eorg>
+>> > Acked-by: Rob Herring <robh@kernel=2Eorg>
+>>=20
+>> I know this has been reviewed already=2E I checked again my apq8064
+>> branch and noticed that the bindings are not compatible with the
+>> apq8064=2E The SoC in question is a 4-core device, so this is what I ha=
+d
+>> in mind:
+>>=20
+>>        kraitcc: clock-controller {
+>>                compatible =3D "qcom,krait-cc-v1";
+>>                clocks =3D <&gcc PLL9>, /* hfpll0 */
+>>                         <&gcc PLL10>, /* hfpll1 */
+>>                         <&gcc PLL16>, /* hfpll2 */
+>>                         <&gcc PLL17>, /* hfpll3 */
+>>                         <&gcc PLL12>, /* hfpll_l2 */
+>>                         <&acc0>,
+>>                         <&acc1>,
+>>                         <&acc2>,
+>>                         <&acc3>,
+>>                         <&l2cc>;
+>>                clock-names =3D "hfpll0",
+>>                              "hfpll1",
+>>                              "hfpll2",
+>>                              "hfpll3",
+>>                              "hfpll_l2",
+>>                              "acpu0_aux",
+>>                              "acpu1_aux",
+>>                              "acpu2_aux",
+>>                              "acpu3_aux",
+>>                              "acpu_l2_aux";
+>>                #clock-cells =3D <1>;
+>>        };
+>>=20
+>
+>Oh wow=2E=2E=2E Wasn't aware, but I wonder if a good idea would be to pat=
+ch
+>the yaml if and when this series is merged? This is a direct conversion
+>of the krait-cc txt=2E=2E=2E
+>
+>If we really want I can send a v8 with adding these extra stuff to the
+>just converted yaml in a different commit? (afaik conversion should not
+>add more info if the documentation is not broken enough and can be
+>converted)
 
-Oh wow... Wasn't aware, but I wonder if a good idea would be to patch
-the yaml if and when this series is merged? This is a direct conversion
-of the krait-cc txt...
+I think we can ask Bjorn to pick the rest of the patches (if they are acke=
+d/reviewed, they look good to me) and work on this one=2E It might make sen=
+se to add per-SoC compatibles=2E Also note, the qsb clock=2E Which block ge=
+nerates it on ipq8064?
 
-If we really want I can send a v8 with adding these extra stuff to the
-just converted yaml in a different commit? (afaik conversion should not
-add more info if the documentation is not broken enough and can be
-converted)
+>
+>> > ---
+>> >  =2E=2E=2E/bindings/clock/qcom,krait-cc=2Etxt          | 34 ---------=
+--
+>> >  =2E=2E=2E/bindings/clock/qcom,krait-cc=2Eyaml         | 59 +++++++++=
+++++++++++
+>> >  2 files changed, 59 insertions(+), 34 deletions(-)
+>> >  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,krai=
+t-cc=2Etxt
+>> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,krai=
+t-cc=2Eyaml
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/clock/qcom,krait-cc=2E=
+txt b/Documentation/devicetree/bindings/clock/qcom,krait-cc=2Etxt
+>> > deleted file mode 100644
+>> > index 030ba60dab08=2E=2E000000000000
+>> > --- a/Documentation/devicetree/bindings/clock/qcom,krait-cc=2Etxt
+>> > +++ /dev/null
+>> > @@ -1,34 +0,0 @@
+>> > -Krait Clock Controller
+>> > -
+>> > -PROPERTIES
+>> > -
+>> > -- compatible:
+>> > -       Usage: required
+>> > -       Value type: <string>
+>> > -       Definition: must be one of:
+>> > -                       "qcom,krait-cc-v1"
+>> > -                       "qcom,krait-cc-v2"
+>> > -
+>> > -- #clock-cells:
+>> > -       Usage: required
+>> > -       Value type: <u32>
+>> > -       Definition: must be 1
+>> > -
+>> > -- clocks:
+>> > -       Usage: required
+>> > -       Value type: <prop-encoded-array>
+>> > -       Definition: reference to the clock parents of hfpll, secondar=
+y muxes=2E
+>> > -
+>> > -- clock-names:
+>> > -       Usage: required
+>> > -       Value type: <stringlist>
+>> > -       Definition: must be "hfpll0", "hfpll1", "acpu0_aux", "acpu1_a=
+ux", "qsb"=2E
+>> > -
+>> > -Example:
+>> > -
+>> > -       kraitcc: clock-controller {
+>> > -               compatible =3D "qcom,krait-cc-v1";
+>> > -               clocks =3D <&hfpll0>, <&hfpll1>, <&acpu0_aux>, <&acpu=
+1_aux>, <qsb>;
+>> > -               clock-names =3D "hfpll0", "hfpll1", "acpu0_aux", "acp=
+u1_aux", "qsb";
+>> > -               #clock-cells =3D <1>;
+>> > -       };
+>> > diff --git a/Documentation/devicetree/bindings/clock/qcom,krait-cc=2E=
+yaml b/Documentation/devicetree/bindings/clock/qcom,krait-cc=2Eyaml
+>> > new file mode 100644
+>> > index 000000000000=2E=2E8caa5a677394
+>> > --- /dev/null
+>> > +++ b/Documentation/devicetree/bindings/clock/qcom,krait-cc=2Eyaml
+>> > @@ -0,0 +1,59 @@
+>> > +# SPDX-License-Identifier: GPL-2=2E0-only OR BSD-2-Clause
+>> > +%YAML 1=2E2
+>> > +---
+>> > +$id: http://devicetree=2Eorg/schemas/clock/qcom,krait-cc=2Eyaml#
+>> > +$schema: http://devicetree=2Eorg/meta-schemas/core=2Eyaml#
+>> > +
+>> > +title: Qualcomm Krait Clock Controller
+>> > +
+>> > +maintainers:
+>> > +  - Christian Marangi <ansuelsmth@gmail=2Ecom>
+>> > +
+>> > +description: |
+>> > +  Qualcomm Krait Clock Controller used to correctly scale the CPU an=
+d the L2
+>> > +  rates=2E
+>> > +
+>> > +properties:
+>> > +  compatible:
+>> > +    enum:
+>> > +      - qcom,krait-cc-v1
+>> > +      - qcom,krait-cc-v2
+>> > +
+>> > +  clocks:
+>> > +    items:
+>> > +      - description: phandle to hfpll for CPU0 mux
+>> > +      - description: phandle to hfpll for CPU1 mux
+>> > +      - description: phandle to CPU0 aux clock
+>> > +      - description: phandle to CPU1 aux clock
+>> > +      - description: phandle to QSB fixed clk
+>> > +
+>> > +  clock-names:
+>> > +    items:
+>> > +      - const: hfpll0
+>> > +      - const: hfpll1
+>> > +      - const: acpu0_aux
+>> > +      - const: acpu1_aux
+>> > +      - const: qsb
+>> > +
+>> > +  '#clock-cells':
+>> > +    const: 1
+>> > +
+>> > +required:
+>> > +  - compatible
+>> > +  - clocks
+>> > +  - clock-names
+>> > +  - '#clock-cells'
+>> > +
+>> > +additionalProperties: false
+>> > +
+>> > +examples:
+>> > +  - |
+>> > +    clock-controller {
+>> > +      compatible =3D "qcom,krait-cc-v1";
+>> > +      clocks =3D <&hfpll0>, <&hfpll1>,
+>> > +               <&acpu0_aux>, <&acpu1_aux>, <&qsb>;
+>> > +      clock-names =3D "hfpll0", "hfpll1",
+>> > +                    "acpu0_aux", "acpu1_aux", "qsb";
+>> > +      #clock-cells =3D <1>;
+>> > +    };
+>> > +=2E=2E=2E
+>> > --
+>> > 2=2E37=2E2
+>> >
+>>=20
+>>=20
+>> --=20
+>> With best wishes
+>> Dmitry
+>
 
-> > ---
-> >  .../bindings/clock/qcom,krait-cc.txt          | 34 -----------
-> >  .../bindings/clock/qcom,krait-cc.yaml         | 59 +++++++++++++++++++
-> >  2 files changed, 59 insertions(+), 34 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-> > deleted file mode 100644
-> > index 030ba60dab08..000000000000
-> > --- a/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-> > +++ /dev/null
-> > @@ -1,34 +0,0 @@
-> > -Krait Clock Controller
-> > -
-> > -PROPERTIES
-> > -
-> > -- compatible:
-> > -       Usage: required
-> > -       Value type: <string>
-> > -       Definition: must be one of:
-> > -                       "qcom,krait-cc-v1"
-> > -                       "qcom,krait-cc-v2"
-> > -
-> > -- #clock-cells:
-> > -       Usage: required
-> > -       Value type: <u32>
-> > -       Definition: must be 1
-> > -
-> > -- clocks:
-> > -       Usage: required
-> > -       Value type: <prop-encoded-array>
-> > -       Definition: reference to the clock parents of hfpll, secondary muxes.
-> > -
-> > -- clock-names:
-> > -       Usage: required
-> > -       Value type: <stringlist>
-> > -       Definition: must be "hfpll0", "hfpll1", "acpu0_aux", "acpu1_aux", "qsb".
-> > -
-> > -Example:
-> > -
-> > -       kraitcc: clock-controller {
-> > -               compatible = "qcom,krait-cc-v1";
-> > -               clocks = <&hfpll0>, <&hfpll1>, <&acpu0_aux>, <&acpu1_aux>, <qsb>;
-> > -               clock-names = "hfpll0", "hfpll1", "acpu0_aux", "acpu1_aux", "qsb";
-> > -               #clock-cells = <1>;
-> > -       };
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,krait-cc.yaml b/Documentation/devicetree/bindings/clock/qcom,krait-cc.yaml
-> > new file mode 100644
-> > index 000000000000..8caa5a677394
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,krait-cc.yaml
-> > @@ -0,0 +1,59 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/qcom,krait-cc.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Qualcomm Krait Clock Controller
-> > +
-> > +maintainers:
-> > +  - Christian Marangi <ansuelsmth@gmail.com>
-> > +
-> > +description: |
-> > +  Qualcomm Krait Clock Controller used to correctly scale the CPU and the L2
-> > +  rates.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - qcom,krait-cc-v1
-> > +      - qcom,krait-cc-v2
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: phandle to hfpll for CPU0 mux
-> > +      - description: phandle to hfpll for CPU1 mux
-> > +      - description: phandle to CPU0 aux clock
-> > +      - description: phandle to CPU1 aux clock
-> > +      - description: phandle to QSB fixed clk
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: hfpll0
-> > +      - const: hfpll1
-> > +      - const: acpu0_aux
-> > +      - const: acpu1_aux
-> > +      - const: qsb
-> > +
-> > +  '#clock-cells':
-> > +    const: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - clocks
-> > +  - clock-names
-> > +  - '#clock-cells'
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    clock-controller {
-> > +      compatible = "qcom,krait-cc-v1";
-> > +      clocks = <&hfpll0>, <&hfpll1>,
-> > +               <&acpu0_aux>, <&acpu1_aux>, <&qsb>;
-> > +      clock-names = "hfpll0", "hfpll1",
-> > +                    "acpu0_aux", "acpu1_aux", "qsb";
-> > +      #clock-cells = <1>;
-> > +    };
-> > +...
-> > --
-> > 2.37.2
-> >
-> 
-> 
-> -- 
-> With best wishes
-> Dmitry
-
--- 
-	Ansuel
