@@ -2,165 +2,100 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DAC7C677F1
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Jan 2023 14:51:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6102EC46467
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Jan 2023 16:29:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229489AbjAPOvp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Jan 2023 09:51:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43608 "EHLO
+        id S233085AbjAPQ3p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Jan 2023 11:29:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229817AbjAPOvY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Jan 2023 09:51:24 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A69361D92B
-        for <linux-clk@vger.kernel.org>; Mon, 16 Jan 2023 06:36:03 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id b4so21459080edf.0
-        for <linux-clk@vger.kernel.org>; Mon, 16 Jan 2023 06:36:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rCZPqWPiwmy+Qg3w9Zw0kU442c7Jihjgka7OZcZFvZ4=;
-        b=vK/m3ZhBu0rXmwlaHWgHg/SJV3wZwAcbhd6qMxLW6BfEHoQz0LWh1fbCr8C+lK5HmS
-         bhRZ1X9ylmKvKawQ3N6yph8My2pmJvfm0eafkOElbuheYZVdMhjGMwR8YExcCfbR/kL8
-         7eeGDkBW4uSNo0sICPIofDBbdeMdir6P4y2J0LpZl3rAU4eXG4k6SY8gQa6LsLjo1Hyd
-         UJgJqfqxKJJnyqeIXL8PxL4bMoBZkHOqmADuqiClaUMVQQH1XIk5czTyl31+GkSEqVyO
-         b/3x0jhIpJSBAntgZfJ52P3wbP7zLAnGw9xJE+2x3+hDg8AAW3SluiWijSVism0Kxc2q
-         uc/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rCZPqWPiwmy+Qg3w9Zw0kU442c7Jihjgka7OZcZFvZ4=;
-        b=o0MLG40yO3sRutP1eDU5vNbbeghXohaDGot6ycrHowzpB4CULoXGhj+HxMiuB+Esdi
-         HNLID9xmBAEjtbglOcOsnRkrQu73TIjD1IS6ZCTnLnXf/vAydEtlT/jbgaggo1rBV3H4
-         fbvvqJMYt4d+orULDb5uMAvA2RoRvspAlA9hnI+lJ92RZDhXDnnLKAv2PuYKAKITsI3h
-         H8n5oFTzAoi58bSVONEpLv1HE6W0V/0vt6oyAW2f3XT1ZT256/xlm4r829JGO+ax2GGy
-         QDxugEwBkK2+U9ZlxT0Ih66IBpB1ZdIaH8gfGtvB2jxFT8tge9Q5YDcp3UprclQSpVZv
-         Wg6Q==
-X-Gm-Message-State: AFqh2krBLj/DxB8ButZvua3dukQqmDZhm2uy1M0GW4oV58Xv/m8Ivf16
-        rct6ZCewhnxrPyT607DCHQ+tIQ==
-X-Google-Smtp-Source: AMrXdXtV7SF+3RSBX9E7TN51Zz8RFwX6gb7hQ8yrCuB589NuTrrLEfdLDjrguaEyTdVgTYDRIpbTRw==
-X-Received: by 2002:a05:6402:2a02:b0:470:44eb:9e58 with SMTP id ey2-20020a0564022a0200b0047044eb9e58mr82109589edb.30.1673879762167;
-        Mon, 16 Jan 2023 06:36:02 -0800 (PST)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id d3-20020aa7d5c3000000b004835bd8dfe5sm11665624eds.35.2023.01.16.06.36.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jan 2023 06:36:01 -0800 (PST)
-Date:   Mon, 16 Jan 2023 16:35:59 +0200
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, angelo@amarulasolutions.com,
-        michael@amarulasolutions.com, tommaso.merciai@amarulasolutions.com,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        linux-amarula@amarulasolutions.com, anthony@amarulasolutions.com,
-        jagan@amarulasolutions.com, Abel Vesa <abelvesa@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Li Jun <jun.li@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
-        Marek Vasut <marex@denx.de>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+        with ESMTP id S233283AbjAPQ3R (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Jan 2023 11:29:17 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48E2027487;
+        Mon, 16 Jan 2023 08:17:41 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EF769B80E93;
+        Mon, 16 Jan 2023 16:17:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AE66C433D2;
+        Mon, 16 Jan 2023 16:17:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1673885858;
+        bh=MUyBCoF4EUSkIHgsegItBGB/Fe++aR/mkRhb7NvgJE0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HdGC++HErXiCyiXxqZ2AVeKHfnyIIOpvQWeijPfhYKqvV6INY+fBK0pk3f0rMN/vF
+         62UyXZyCBG6V6cv4E4lljDh2Or5BVORpAsJ51C7aNFrn6OY68o5/mgMbu/VLVaiUub
+         TLKvNGfIXDlMiz70fKIly4NJR1f+kDqvthNp9kk4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     stable@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        patches@lists.linux.dev, Dinh Nguyen <dinguyen@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [RFC PATCH v2 11/11] arm64: dts: imx8mn: add clocks description
-Message-ID: <Y8VgzyNxGpqSvJ2b@linaro.org>
-References: <20230101175740.1010258-1-dario.binacchi@amarulasolutions.com>
- <20230101175740.1010258-12-dario.binacchi@amarulasolutions.com>
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 210/658] clk: socfpga: clk-pll: Remove unused variable rc
+Date:   Mon, 16 Jan 2023 16:44:58 +0100
+Message-Id: <20230116154919.054153174@linuxfoundation.org>
+X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230116154909.645460653@linuxfoundation.org>
+References: <20230116154909.645460653@linuxfoundation.org>
+User-Agent: quilt/0.67
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230101175740.1010258-12-dario.binacchi@amarulasolutions.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-01-01 18:57:40, Dario Binacchi wrote:
-> The patch creates a unique node for each clock in the imx8mn clock
-> control module (CCM).
-> 
-> To ensure backwards compatibility it was not possible to separate the
-> changes to the device tree from those applied to the clocks setup code.
-> In doing so, all clocks are initialized from the device tree and the
-> legacy setup code with hardwired parameters is removed.
-> 
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> 
-> ---
-> 
-> (no changes since v1)
-> 
->  .../boot/dts/freescale/imx8mn-clocks.dtsi     | 1885 +++++++++++++++++
->  arch/arm64/boot/dts/freescale/imx8mn.dtsi     |   54 +-
->  drivers/clk/imx/clk-imx8mn.c                  |  714 ++-----
->  3 files changed, 2086 insertions(+), 567 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mn-clocks.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mn-clocks.dtsi b/arch/arm64/boot/dts/freescale/imx8mn-clocks.dtsi
-> new file mode 100644
-> index 000000000000..21e02ea996d0
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8mn-clocks.dtsi
-> @@ -0,0 +1,1885 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Device Tree Source for imx8mn clock data
-> + *
-> + * Copyright (c) 2022 Amarula Solutions
-> + *
-> + * Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> + */
-> +
-> +/ {
-> +	osc_32k: clock-osc-32k {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <32768>;
-> +		clock-output-names = "osc_32k";
-> +	};
-> +
+From: Lee Jones <lee.jones@linaro.org>
 
-[...]
+[ Upstream commit 75fddccbca32349570b2d53955982b4117fa5515 ]
 
-> +
-> +	clk_audio_pll2_bypass: clock-audio-pll2-bypass@14 {
-> +		compatible = "fsl,imx8mn-mux-clock";
-> +		#clock-cells = <0>;
-> +		clocks = <&clk_audio_pll2>, <&clk_audio_pll2_ref_sel>;
-> +		fsl,anatop = <&anatop 0x14>;
-> +		fsl,bit-shift = <16>;
-> +		fsl,set-rate-parent;
+Fixes the following W=1 kernel build warning(s):
 
-NACK. I'm sorry, but this creates a huge effort on maintaining the
-bindings. Plus the vendor specific properties will keep increasing.
+ drivers/clk/socfpga/clk-pll.c: In function ‘__socfpga_pll_init’:
+ drivers/clk/socfpga/clk-pll.c:83:6: warning: variable ‘rc’ set but not used [-Wunused-but-set-variable]
 
-I don't think Rob and Krzysztof will be OK with this either.
+Cc: Dinh Nguyen <dinguyen@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Link: https://lore.kernel.org/r/20210120093040.1719407-8-lee.jones@linaro.org
+Acked-by: Dinh Nguyen <dinguyen@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Stable-dep-of: 0b8ba891ad4d ("clk: socfpga: Fix memory leak in socfpga_gate_init()")
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/socfpga/clk-pll.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
+index dc65cc0fd3bd..444f3948fff4 100644
+--- a/drivers/clk/socfpga/clk-pll.c
++++ b/drivers/clk/socfpga/clk-pll.c
+@@ -80,7 +80,6 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
+ 	const char *parent_name[SOCFPGA_MAX_PARENTS];
+ 	struct clk_init_data init;
+ 	struct device_node *clkmgr_np;
+-	int rc;
+ 
+ 	of_property_read_u32(node, "reg", &reg);
+ 
+@@ -113,7 +112,7 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
+ 		kfree(pll_clk);
+ 		return NULL;
+ 	}
+-	rc = of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	of_clk_add_provider(node, of_clk_src_simple_get, clk);
+ 	return clk;
+ }
+ 
+-- 
+2.35.1
 
 
-> +		clock-output-names = "audio_pll2_bypass";
-> +	};
-> +
-> +	clk_audio_pll2_out: clock-audio-pll2-out@14 {
-> +		compatible = "fsl,imx8mn-gate-clock";
-> +		#clock-cells = <0>;
-> +		clocks = <&clk_audio_pll2_bypass>;
-> +		fsl,anatop = <&anatop 0x14>;
-> +		fsl,bit-shift = <13>;
-> +		clock-output-names = "audio_pll2_out";
-> +	};
-> +
 
-[...]
-
-> -- 
-> 2.32.0
-> 
