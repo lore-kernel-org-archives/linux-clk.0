@@ -2,159 +2,106 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C93F9C63797
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Jan 2023 09:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A15C54EBE
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Jan 2023 14:47:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229683AbjAPJwM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Jan 2023 04:52:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42830 "EHLO
+        id S231304AbjAPOrK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Jan 2023 09:47:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229684AbjAPJvv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Jan 2023 04:51:51 -0500
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E01018B2D;
-        Mon, 16 Jan 2023 01:51:44 -0800 (PST)
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 30G9paqv111117;
-        Mon, 16 Jan 2023 03:51:36 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1673862696;
-        bh=aj+YwrBXqvVTIN9nghpKbmPuw2Y5pAaBxDP4vN9zFfI=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=QmTAliAbznRepS2jRLLPCsxIWN3p2TDYKZ4lcIiis1yqZjSLeNjp1R1pQPPKxXWDk
-         n4X4sao3t9KkioDPnIpRhFyJdos78QPdgkOF2AdrD42iPWdx0meL+u4/8Dj8aE/Fsf
-         b9LSKaXt5SYpcfAers/tMoOKz0czCtr7Pu49vdWo=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 30G9pa0B121801
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 16 Jan 2023 03:51:36 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Mon, 16
- Jan 2023 03:51:36 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Mon, 16 Jan 2023 03:51:36 -0600
-Received: from [172.24.222.39] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 30G9pUB7007704;
-        Mon, 16 Jan 2023 03:51:31 -0600
-Message-ID: <1856e963-4514-92f3-5d43-d5b711083193@ti.com>
-Date:   Mon, 16 Jan 2023 15:21:30 +0530
+        with ESMTP id S231206AbjAPOqx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Jan 2023 09:46:53 -0500
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15FFE22038
+        for <linux-clk@vger.kernel.org>; Mon, 16 Jan 2023 06:28:37 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id ud5so68537018ejc.4
+        for <linux-clk@vger.kernel.org>; Mon, 16 Jan 2023 06:28:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VxLG6TTl8Ic/7g0hQk8ggT8NcHPanULLyMvVruCtN2c=;
+        b=QGlGugyS3UvUwNLlIz8UrjuOagHJQAqHFl0b7LiY3pjSEWd3QV1zO3d7SD+ZdOrza/
+         x5G601a1q2QAghOuPl7OdIp9uPmU80fKtCLExlG0gqWjm6fUeq7GSy9iQGAcg40I4EQD
+         uBAIPv9fIr6E02fF+8KfST95igZxAubbSqvFiLGzsFV1t2wHawhuQyiS4tuxLUNCZVcm
+         IiZ/evYO0C57J+AqkIVIgcTDq3eESoliRyBmTsdEnB5TzNDp3BBNwGSSAMLmo2niFZ2R
+         BjVB1PJEfyiH2hs5yn26f08V0UfgPzYpxG7tmnn7c0kQrvek5qNl7gTTU6p4wQQlV5rJ
+         QJEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VxLG6TTl8Ic/7g0hQk8ggT8NcHPanULLyMvVruCtN2c=;
+        b=lcYPhCfMZTH6G1i+Z3jBzInX6eNM3/6bQCjSFlNBxss6KXqeM7qv5yrU3ytURwtC6r
+         tAeK3cQ4OPYUHOZSG0BtSOUIYEXmti/3JAWphezSk+00jpjwOclqgRkYSF4Gg/f6x7ij
+         kHahzUe/gy6eX/N9F++IePf1C0JN/GYs80PvrM/kAT1Fdz+BRcPUOFe75xfTw9Bllxa2
+         SFLv4HpCkfRNf9MRj9JOVBnjY6upvYDPibSVu8oYovBoBgX1xIcDvdoROk19lOyIqNNY
+         9E7bE6DPX1Xb8Fxx3j4vztLZ53HwXRdUUx/8hDQ5WMaeYOgwvieogExEbX2tTZFGg8+a
+         ugGA==
+X-Gm-Message-State: AFqh2krWlWE6nTYaRwcg/YyQTbxO0XZAkyGqvD67gqnNT3D2aMMGBpsD
+        QHQeg5prTDLaejllJjTp7BSgwQ==
+X-Google-Smtp-Source: AMrXdXvhKj+dWSAovh86aIL0ls/STdzn8oZMPR+FmLegGDzAEOO/UU2HiZ10lUEtT+U1aacM+pz0zw==
+X-Received: by 2002:a17:906:5786:b0:7c0:e535:13fc with SMTP id k6-20020a170906578600b007c0e53513fcmr100863185ejq.37.1673879315637;
+        Mon, 16 Jan 2023 06:28:35 -0800 (PST)
+Received: from linaro.org ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id lb14-20020a170907784e00b007c0fd177c0bsm11753152ejc.46.2023.01.16.06.28.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jan 2023 06:28:35 -0800 (PST)
+Date:   Mon, 16 Jan 2023 16:28:33 +0200
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>,
+        abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        18701859600@163.com, bsp-development.geo@leica-geosystems.com,
+        Marco Felsch <m.felsch@pengutronix.de>
+Subject: Re: [PATCH V5 1/1] clk: imx8mp: Alias M7 SRC/DIV to M7 CORE
+Message-ID: <Y8VfEfnWwt8+QB1W@linaro.org>
+References: <20230111101030.686885-1-Qing-wu.Li@leica-geosystems.com.cn>
+ <20230111101030.686885-2-Qing-wu.Li@leica-geosystems.com.cn>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH 1/2] dt-bindings: clock: fixed-factor: Add TI AM62 SoC
- OLDI clock
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Tomi Valkeinen <tomba@kernel.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Linux Clock List <linux-clk@vger.kernel.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        Linux Kernel List <linux-kernel@vger.kernel.org>,
-        Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Devarsh Thakkar <devarsht@ti.com>, Jai Luthra <j-luthra@ti.com>
-References: <20221226095745.19757-1-a-bhatia1@ti.com>
- <20221226095745.19757-2-a-bhatia1@ti.com>
- <8980856c1138571976f00413b94cfeb8.sboyd@kernel.org>
-From:   Aradhya Bhatia <a-bhatia1@ti.com>
-In-Reply-To: <8980856c1138571976f00413b94cfeb8.sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230111101030.686885-2-Qing-wu.Li@leica-geosystems.com.cn>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
-
-Thanks for taking a look at the patch.
-
-On 12-Jan-23 01:14, Stephen Boyd wrote:
-> Quoting Aradhya Bhatia (2022-12-26 01:57:44)
->> Add "ti,k3-am62-oldi-clk-div" to the fixed factor clock compatible enum
->> list.
->>
->> "ti,k3-am62-oldi-clk-div" is a fixed-factor clock that helps the TI
->> display subsystem request a pixel clock for itself and a corresponding
->> serial clock for its OLDI Transmitters. The serial clock is 7 times the
->> pixel clock. This clock needs the clock set rate request to be
->> propagated to the parent clock provider.
->>
->> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
->> ---
->>   Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
->> index 8f71ab300470..0696237530f7 100644
->> --- a/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
->> +++ b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
->> @@ -14,6 +14,7 @@ properties:
->>     compatible:
->>       enum:
->>         - fixed-factor-clock
->> +      - ti,k3-am62-oldi-clk-div
+On 23-01-11 11:10:30, LI Qingwu wrote:
+> Defined IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV in imx8mp-clock.h
+> but never assigned. It will cause the system to hang if using them.
+> Alias IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV to IMX8MP_CLK_M7_CORE
+> for backward compatibility.
 > 
-> I don't see this compatible anywhere in the kernel tree. Is there a
-> patch that adds a node using this? I wonder why the display subsystem
-> can't add this fixed factor clk directly in the driver. Does the OLDI
-> Transmitter send a clk to the display subsystem?
+> Fixes: 8c83a8ff4dd9 (clk: imx8mp: use imx8m_clk_hw_composite_core to simplify code)
+> Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
+> Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+> Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+
+Stephen, can you please pick this up yourself?
+
+Thanks!
+
+> ---
+>  drivers/clk/imx/clk-imx8mp.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> I'm asking all these questions because we got rid of vendor compatibles
-> here in hopes of simplifying the logic. Maybe the problem can be
-> approached differently, but I don't know all the details.
-
-
-+--------+                       +------------------+
-|        |                       |                  |
-|  PLL   +---+----+------------->| OLDI Transmitter |
-|        |   |    |              |                  |
-+--------+   |    |              +------------------+
-              |    |
-              |    |              +------------------+
-              |    |              |                  |
-              |    +------------->| OLDI Transmitter |
-              |                   |                  |
-              |                   +------------------+
-              |
-              |                   +------------------+
-              |   +----------+    |                  |
-              |   |    /7    |    |      Display     |
-              +-->|   Clock  +--->| Sub-System (DSS) |
-                  |    Div   |    |                  |
-                  +----------+    +------------------+
-
-This is how the the clock architecture for DSS looks like.
-
-The clock divider is not a part of DSS, but outside it.
-
-The clock request flow is initiated by the DSS driver because it has the
-required timing parameter information. It requests a certain pixel
-frequency. But the frequency required by the OLDI TXes is 7 times
-that pixel frequency.
-
-(Just for clarification, in some cases, the OLDI TX does require only
-3.5 times the pixel frequency, but in those situations there is another
-divider in-front of OLDI TX that gets activated with a signal and
-divides the incoming frequency by 2, thereby requiring the PLL to still
-generate a 7x frequency.)
-
-Hence, the idea is that the clock divider is able to propagate the set
-rate request back to PLL, asking for a frequency 7 times more than the
-DSS's asking rate.
-
-If this is something less than ideal and should not go up, then I can
-implement a new clock device with a separate but similar clock driver.
-
-Let me know what you think!
-
-
-Regards
-Aradhya
+> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+> index 652ae58c2735..601eea7ab99d 100644
+> --- a/drivers/clk/imx/clk-imx8mp.c
+> +++ b/drivers/clk/imx/clk-imx8mp.c
+> @@ -522,6 +522,8 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+>  	hws[IMX8MP_CLK_A53_SRC] = hws[IMX8MP_CLK_A53_DIV];
+>  	hws[IMX8MP_CLK_A53_CG] = hws[IMX8MP_CLK_A53_DIV];
+>  	hws[IMX8MP_CLK_M7_CORE] = imx8m_clk_hw_composite_core("m7_core", imx8mp_m7_sels, ccm_base + 0x8080);
+> +	hws[IMX8MP_CLK_M7_DIV] = hws[IMX8MP_CLK_M7_CORE];
+> +	hws[IMX8MP_CLK_M7_SRC] = hws[IMX8MP_CLK_M7_CORE];
+>  	hws[IMX8MP_CLK_ML_CORE] = imx8m_clk_hw_composite_core("ml_core", imx8mp_ml_sels, ccm_base + 0x8100);
+>  	hws[IMX8MP_CLK_GPU3D_CORE] = imx8m_clk_hw_composite_core("gpu3d_core", imx8mp_gpu3d_core_sels, ccm_base + 0x8180);
+>  	hws[IMX8MP_CLK_GPU3D_SHADER_CORE] = imx8m_clk_hw_composite("gpu3d_shader_core", imx8mp_gpu3d_shader_sels, ccm_base + 0x8200);
+> -- 
+> 2.25.1
+> 
