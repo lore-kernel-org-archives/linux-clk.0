@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43219C3DA78
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 06:17:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 589F0C3DA78
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 06:17:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235782AbjAQGRL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Jan 2023 01:17:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57038 "EHLO
+        id S235903AbjAQGRX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Jan 2023 01:17:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235491AbjAQGQE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 01:16:04 -0500
+        with ESMTP id S235784AbjAQGQM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 01:16:12 -0500
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEADF23332
-        for <linux-clk@vger.kernel.org>; Mon, 16 Jan 2023 22:15:45 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71F3D28858
+        for <linux-clk@vger.kernel.org>; Mon, 16 Jan 2023 22:15:46 -0800 (PST)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ore@pengutronix.de>)
-        id 1pHfFf-0002Te-Vh; Tue, 17 Jan 2023 07:15:20 +0100
+        id 1pHfFb-0002TQ-Do; Tue, 17 Jan 2023 07:15:15 +0100
 Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ore@pengutronix.de>)
-        id 1pHfFa-006c0Z-AH; Tue, 17 Jan 2023 07:15:14 +0100
+        id 1pHfFZ-006c09-Gj; Tue, 17 Jan 2023 07:15:13 +0100
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ore@pengutronix.de>)
-        id 1pHfFX-00FckI-3M; Tue, 17 Jan 2023 07:15:11 +0100
+        id 1pHfFX-00Fckj-53; Tue, 17 Jan 2023 07:15:11 +0100
 From:   Oleksij Rempel <o.rempel@pengutronix.de>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -41,14 +41,13 @@ Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
         Russell King <linux@armlinux.org.uk>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH v2 15/19] clk: imx6ul: fix enet1 gate configuration
-Date:   Tue, 17 Jan 2023 07:14:49 +0100
-Message-Id: <20230117061453.3723649-16-o.rempel@pengutronix.de>
+Subject: [PATCH v2 18/19] ARM: mach-imx: imx6ul: remove not optional ethernet refclock overwrite
+Date:   Tue, 17 Jan 2023 07:14:52 +0100
+Message-Id: <20230117061453.3723649-19-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20230117061453.3723649-1-o.rempel@pengutronix.de>
 References: <20230117061453.3723649-1-o.rempel@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
 X-SA-Exim-Mail-From: ore@pengutronix.de
@@ -58,74 +57,59 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-According to the "i.MX 6UltraLite Applications Processor Reference Manual,
-Rev. 2, 03/2017", BIT(13) is ENET1_125M_EN which is not controlling root
-of PLL6. It is controlling ENET1 separately.
-
-So, instead of this picture (implementation before this patch):
-fec1 <- enet_ref (divider) <---------------------------,
-                                                       |- pll6_enet (gate)
-fec2 <- enet2_ref_125m (gate) <- enet2_ref (divider) <-´
-
-we should have this one (after this patch):
-fec1 <- enet1_ref_125m (gate) <- enet1_ref (divider) <-,
-                                                       |- pll6_enet
-fec2 <- enet2_ref_125m (gate) <- enet2_ref (divider) <-´
-
-With this fix, the RMII reference clock will be turned off, after
-setting network interface down on each separate interface
-(ip l s dev eth0 down). Which was not working before, on system with both
-FECs enabled.
+Ethernet refclock direction is board specific and should be configurable
+by devicetree. In fact there are board not working with this defaults,
+which will be fixed by separate patch.
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- drivers/clk/imx/clk-imx6ul.c             | 7 ++++---
- include/dt-bindings/clock/imx6ul-clock.h | 3 ++-
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ arch/arm/mach-imx/mach-imx6ul.c | 20 --------------------
+ 1 file changed, 20 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 67a7a77ca540..c3c465c1b0e7 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -176,7 +176,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	hws[IMX6UL_CLK_PLL3_USB_OTG]	= imx_clk_hw_gate("pll3_usb_otg",	"pll3_bypass", base + 0x10, 13);
- 	hws[IMX6UL_CLK_PLL4_AUDIO]	= imx_clk_hw_gate("pll4_audio",	"pll4_bypass", base + 0x70, 13);
- 	hws[IMX6UL_CLK_PLL5_VIDEO]	= imx_clk_hw_gate("pll5_video",	"pll5_bypass", base + 0xa0, 13);
--	hws[IMX6UL_CLK_PLL6_ENET]	= imx_clk_hw_gate("pll6_enet",	"pll6_bypass", base + 0xe0, 13);
-+	hws[IMX6UL_CLK_PLL6_ENET]	= imx_clk_hw_fixed_factor("pll6_enet",	"pll6_bypass", 1, 1);
- 	hws[IMX6UL_CLK_PLL7_USB_HOST]	= imx_clk_hw_gate("pll7_usb_host",	"pll7_bypass", base + 0x20, 13);
+diff --git a/arch/arm/mach-imx/mach-imx6ul.c b/arch/arm/mach-imx/mach-imx6ul.c
+index 35e81201cb5d..9208a2d6a9da 100644
+--- a/arch/arm/mach-imx/mach-imx6ul.c
++++ b/arch/arm/mach-imx/mach-imx6ul.c
+@@ -4,8 +4,6 @@
+  */
+ #include <linux/irqchip.h>
+ #include <linux/mfd/syscon.h>
+-#include <linux/mfd/syscon/imx6q-iomuxc-gpr.h>
+-#include <linux/micrel_phy.h>
+ #include <linux/of_platform.h>
+ #include <linux/phy.h>
+ #include <linux/regmap.h>
+@@ -16,30 +14,12 @@
+ #include "cpuidle.h"
+ #include "hardware.h"
  
- 	/*
-@@ -205,12 +205,13 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	hws[IMX6UL_CLK_PLL3_PFD2] = imx_clk_hw_pfd("pll3_pfd2_508m", "pll3_usb_otg", base + 0xf0,	 2);
- 	hws[IMX6UL_CLK_PLL3_PFD3] = imx_clk_hw_pfd("pll3_pfd3_454m", "pll3_usb_otg", base + 0xf0,	 3);
+-static void __init imx6ul_enet_clk_init(void)
+-{
+-	struct regmap *gpr;
+-
+-	gpr = syscon_regmap_lookup_by_compatible("fsl,imx6ul-iomuxc-gpr");
+-	if (!IS_ERR(gpr))
+-		regmap_update_bits(gpr, IOMUXC_GPR1, IMX6UL_GPR1_ENET_CLK_DIR,
+-				   IMX6UL_GPR1_ENET_CLK_OUTPUT);
+-	else
+-		pr_err("failed to find fsl,imx6ul-iomux-gpr regmap\n");
+-}
+-
+-static inline void imx6ul_enet_init(void)
+-{
+-	imx6ul_enet_clk_init();
+-}
+-
+ static void __init imx6ul_init_machine(void)
+ {
+ 	imx_print_silicon_rev(cpu_is_imx6ull() ? "i.MX6ULL" : "i.MX6UL",
+ 		imx_get_soc_revision());
  
--	hws[IMX6UL_CLK_ENET_REF] = clk_hw_register_divider_table(NULL, "enet_ref", "pll6_enet", 0,
-+	hws[IMX6UL_CLK_ENET_REF] = clk_hw_register_divider_table(NULL, "enet1_ref", "pll6_enet", 0,
- 			base + 0xe0, 0, 2, 0, clk_enet_ref_table, &imx_ccm_lock);
- 	hws[IMX6UL_CLK_ENET2_REF] = clk_hw_register_divider_table(NULL, "enet2_ref", "pll6_enet", 0,
- 			base + 0xe0, 2, 2, 0, clk_enet_ref_table, &imx_ccm_lock);
- 
--	hws[IMX6UL_CLK_ENET2_REF_125M] = imx_clk_hw_gate("enet_ref_125m", "enet2_ref", base + 0xe0, 20);
-+	hws[IMX6UL_CLK_ENET1_REF_125M] = imx_clk_hw_gate("enet1_ref_125m", "enet1_ref", base + 0xe0, 13);
-+	hws[IMX6UL_CLK_ENET2_REF_125M] = imx_clk_hw_gate("enet2_ref_125m", "enet2_ref", base + 0xe0, 20);
- 	hws[IMX6UL_CLK_ENET_PTP_REF]	= imx_clk_hw_fixed_factor("enet_ptp_ref", "pll6_enet", 1, 20);
- 	hws[IMX6UL_CLK_ENET_PTP]	= imx_clk_hw_gate("enet_ptp", "enet_ptp_ref", base + 0xe0, 21);
- 
-diff --git a/include/dt-bindings/clock/imx6ul-clock.h b/include/dt-bindings/clock/imx6ul-clock.h
-index 79094338e6f1..b44920f1edb0 100644
---- a/include/dt-bindings/clock/imx6ul-clock.h
-+++ b/include/dt-bindings/clock/imx6ul-clock.h
-@@ -256,7 +256,8 @@
- #define IMX6UL_CLK_GPIO4		247
- #define IMX6UL_CLK_GPIO5		248
- #define IMX6UL_CLK_MMDC_P1_IPG		249
-+#define IMX6UL_CLK_ENET1_REF_125M	250
- 
--#define IMX6UL_CLK_END			250
-+#define IMX6UL_CLK_END			251
- 
- #endif /* __DT_BINDINGS_CLOCK_IMX6UL_H */
+ 	of_platform_default_populate(NULL, NULL, NULL);
+-	imx6ul_enet_init();
+ 	imx_anatop_init();
+ 	imx6ul_pm_init();
+ }
 -- 
 2.30.2
 
