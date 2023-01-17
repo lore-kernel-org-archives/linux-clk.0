@@ -2,52 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FFBC678D7
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 13:55:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A53C678D8
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 13:55:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230126AbjAQNzZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Jan 2023 08:55:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51862 "EHLO
+        id S230372AbjAQNz2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Jan 2023 08:55:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229695AbjAQNzX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 08:55:23 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E5EB3C3E;
-        Tue, 17 Jan 2023 05:55:22 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id q8so10501555wmo.5;
-        Tue, 17 Jan 2023 05:55:22 -0800 (PST)
+        with ESMTP id S229684AbjAQNzY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 08:55:24 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF05E7ABC;
+        Tue, 17 Jan 2023 05:55:23 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id c4-20020a1c3504000000b003d9e2f72093so21035249wma.1;
+        Tue, 17 Jan 2023 05:55:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=z60P+F5yrVPU+RcrdTjGo7YHCmfZ47F2G2bKTQG7QcQ=;
-        b=ZYBe+xbXY0HrXWRYOjW1aeiRtYtxZfds1/0dMWPVBZSUa6fDFQeD1puw25NfpeJIlp
-         qKk89WDEks39dvtQMGhl/hACUXC+H7llXvQfqVhxRq6t13lcNNooQtekL+Trj579qVrN
-         6mr0voeX0Zy3cdq/ehUYuO1sEazhbRwxpUtjd24Zpq+DBmTCJZ3HSEw/RiWs5Idm3quy
-         vyNUfzJ1SFotkLsu47Op0/3ksURz3WqmPE2gAScxma+fdJ+mlTc8lpdrAUsiu6Yy7Qn3
-         UNzJuKTYY6Y/sG1wjIIxURu2KM8CjFDGgGD5nAOAuPXCq553H3bdzdVbCxANdlgmSwpG
-         IoOA==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gdWr3l6Lx7GA+PzAYzrOffiqrgjBeqJI1wVp2EC7E7E=;
+        b=qVjukzf3AL4RFTbzl4nNjsVAhOPp2mmpE7QQizyXC+6PqDzg7A19WIaQ5k4BwSipla
+         +CQRQu6nk6M2Nb8ZZn2u4x6/AExBF5u3vd4l6f1nItY/V65bX4dtgE3rKbSQlLzkYt1U
+         ZQDY2cOS0BDP1Hd3PZUj17UoBKLV+pdCwT5bw7c4eznuC2n/WT7wdJHlg2SVulJ3WBU2
+         Mx8zHKPVqa1EVkW3lDAaplPoXoCKLKl49llsuXPpJIf5R1yjKlDZYOw/UocMBeWAN8hS
+         7prfP/6QPYpJGMhyV8sPj+X07H0rffS83rxQ5CeUX2UhcqjFpnXl5AaS6QG9ZnAuX6Ls
+         e6WA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z60P+F5yrVPU+RcrdTjGo7YHCmfZ47F2G2bKTQG7QcQ=;
-        b=RLvrtAynvhsvclQ7b3raXCPCOKewOmFaVCKBRrrVlzLTmYGwDg9FlS8TUGY+nxWYnB
-         oV/wwCIyA8W8dIpK+N4mbFD0U6m1rrjCeaLuyH78im4GaZBKehMIDFc/hHerrJR7qUyJ
-         UpyyuxkC4u4LAyP8P7oU8Cf9xlOASLGOauNr77K9h90ENU+EEjNQevU5Z8LNk6UbYRsH
-         esGd0OonalJt0nRO/Y10ZfAQnXGN+33mH2v7N7CjRrwXhS9uR5qBVJuUx0iWTr0y/VX0
-         8rb3DlSgq5SGwkb7AclGI+VLTa6IRn4WzoEiYhRTbT1MYvb3PErkJzviLpZsYkgLXUu3
-         s2ww==
-X-Gm-Message-State: AFqh2kpyYB6H5DLjt/Dc1sWbeO1b4R2hK6gdyDBm0or9L15CJwgBucEZ
-        DTlCyQeiv5Bp+XOWHQIZrk0=
-X-Google-Smtp-Source: AMrXdXuEsX79K0f5sO9n79Z74zmNvX8Zxw4uXDYNn7aIl4Yrr44wzNoS41K6GHoVTWNRm5WWwwhxwg==
-X-Received: by 2002:a05:600c:54d0:b0:3da:f9c9:cec9 with SMTP id iw16-20020a05600c54d000b003daf9c9cec9mr3282729wmb.1.1673963720425;
-        Tue, 17 Jan 2023 05:55:20 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gdWr3l6Lx7GA+PzAYzrOffiqrgjBeqJI1wVp2EC7E7E=;
+        b=htQBPc60auRNwqqFBykyPoujtrRhD6eG7lft4j9/mdAJB2lQB93iyXZ9qIQzIo+lF6
+         TxCnqfsvNAlAwXO5LvoFWaVg5YQTnKpFmWeBRSgNNslVNeMwZ0e80gZayQ/6IMl3+SKk
+         XGmpTJ3kKYpDueZTCRYFumMtI69292PkJ0y/lgHerSAhMGvqmqR3yD8hRxrx8j/3Bk+V
+         3mwK2zQww6LeMPZQwcKyw1+XKZyihSAvNm3D0l6PjAyqW3IUwW+INKJZnS6zyedEavUI
+         Lv54tklklAElKvyh9a2dhUwZ5WJEb/NZQbhxYoh3IHRq0cyxKsZHcYjll5yAyAlTQVXh
+         umdg==
+X-Gm-Message-State: AFqh2koadQic3+/1u+GDeU6p3sWSHrMH+bA51pch6Z43Pw+1JAAEhG8d
+        Hvupnkd1yLeM+7s2W4epL84rdGPSx48=
+X-Google-Smtp-Source: AMrXdXu86Cu7Vhu8dR/ivQOr61yHw+oFpXa918y7P41GWKSUv4yM27EkJXJk2swk6TRHF+qRVHh3sw==
+X-Received: by 2002:a05:600c:3acf:b0:3d9:fb89:4e3b with SMTP id d15-20020a05600c3acf00b003d9fb894e3bmr3108945wms.23.1673963722295;
+        Tue, 17 Jan 2023 05:55:22 -0800 (PST)
 Received: from localhost.localdomain (93-34-92-88.ip49.fastwebnet.it. [93.34.92.88])
-        by smtp.googlemail.com with ESMTPSA id s7-20020a1cf207000000b003d98438a43asm35147461wmc.34.2023.01.17.05.55.19
+        by smtp.googlemail.com with ESMTPSA id s7-20020a1cf207000000b003d98438a43asm35147461wmc.34.2023.01.17.05.55.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jan 2023 05:55:20 -0800 (PST)
+        Tue, 17 Jan 2023 05:55:21 -0800 (PST)
 From:   Christian Marangi <ansuelsmth@gmail.com>
 To:     Bjorn Andersson <andersson@kernel.org>,
         Andy Gross <agross@kernel.org>,
@@ -56,71 +57,39 @@ To:     Bjorn Andersson <andersson@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH v3 0/6] clk: qcom: clk-rcg2: introduce support for multiple conf for same freq
-Date:   Tue, 17 Jan 2023 14:54:53 +0100
-Message-Id: <20230117135459.16868-1-ansuelsmth@gmail.com>
+Subject: [PATCH v3 2/6] clk: qcom: gcc-sdm660: drop redundant F define
+Date:   Tue, 17 Jan 2023 14:54:55 +0100
+Message-Id: <20230117135459.16868-3-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20230117135459.16868-1-ansuelsmth@gmail.com>
+References: <20230117135459.16868-1-ansuelsmth@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This small series fix a current problem with ipq8074 where the 2 uniphy
-port doesn't work in some corner case with some clk configuration. The
-port to correctly work require a specific frequency, using the wrong one
-results in the port not transmitting data.
+The same exact F frequency table entry is defined in clk-rcg.h
+Drop the redundant define to cleanup code.
 
-With the current code with a requested freq of 125MHz, the frequency is
-set to 105MHz. This is caused by the fact that there are 2 different
-configuration to set 125MHz and it's always selected the first one that
-results in 105MHz.
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ drivers/clk/qcom/gcc-sdm660.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-In the original QSDK code, the frequency configuration selection is
-different and the CEIL FLOOR logic is not present. Instead it's used a
-BEST approach where the frequency table is checked and then it's checked
-if there are duplicate entry.
-
-This proposed implementation is more specific and keep the CEIL FLOOR
-logic while maitaining the possibility to provide multiple
-configuration.
-
-The first 2 patch drop redundant F entry redefinition.
-
-The 3rd and 4th one try to align rcg2 set rate to what clock core suggest
-by using just what determine_clock pass to clk core.
-
-The 5th one implement the change with also some macro description on how
-this new implementation works. On determine the old v2 logic is used but
-for set the requested parent is used instead of researching.
-
-The 6th one migrate the gcc-ipq8074 driver to this new implementation.
-
-Changes v3:
-- Add qcom_find_freq_exact
-- Drop re-search on rcg2_set_rate
-- Rework multiple conf patch to follow new implementation
-Changes v2:
-- Out of RFC
-- Fix compile warning from buildbot related to F redefinition
-
-Christian Marangi (6):
-  clk: qcom: gcc-ipq6018: drop redundant F define
-  clk: qcom: gcc-sdm660: drop redundant F define
-  clk: qcom: common: add qcom_find_freq_exact
-  clk: qcom: clk-rcg2: don't re-search config on rcg2_set_rate
-  clk: qcom: clk-rcg2: introduce support for multiple conf for same freq
-  clk: qcom: gcc-ipq8074: rework nss_port5/6 clock to multiple conf
-
- drivers/clk/qcom/clk-rcg.h     |  14 +++-
- drivers/clk/qcom/clk-rcg2.c    | 140 +++++++++++++++++++++++++++------
- drivers/clk/qcom/common.c      |  17 ++++
- drivers/clk/qcom/common.h      |   2 +
- drivers/clk/qcom/gcc-ipq6018.c |   2 -
- drivers/clk/qcom/gcc-ipq8074.c |  64 +++++++++++----
- drivers/clk/qcom/gcc-sdm660.c  |   2 -
- 7 files changed, 196 insertions(+), 45 deletions(-)
-
+diff --git a/drivers/clk/qcom/gcc-sdm660.c b/drivers/clk/qcom/gcc-sdm660.c
+index db918c92a522..6afce8e42ede 100644
+--- a/drivers/clk/qcom/gcc-sdm660.c
++++ b/drivers/clk/qcom/gcc-sdm660.c
+@@ -25,8 +25,6 @@
+ #include "reset.h"
+ #include "gdsc.h"
+ 
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ enum {
+ 	P_XO,
+ 	P_SLEEP_CLK,
 -- 
 2.38.1
 
