@@ -2,118 +2,89 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF4FC3DA78
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 17:47:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C46ECC3DA78
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 18:19:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234525AbjAQRro (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Jan 2023 12:47:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34728 "EHLO
+        id S229908AbjAQSTq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Jan 2023 13:19:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234676AbjAQRqF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 12:46:05 -0500
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C73F58294;
-        Tue, 17 Jan 2023 09:35:48 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id a37so8014126ljq.0;
-        Tue, 17 Jan 2023 09:35:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=eqwxXzbfJuwcyGV/f2tlqmYfB0CiqMfLfLaQcdfnmUc=;
-        b=MyCE+2jZcl1rM9cMmvHpoG06LRLV/svFtYCoO7JmE82low/a5o3Cem3f5q1BtoQX8v
-         sFW+sal/QrDLsHz8gQ64WHxjZovKa7Y/mfCCSAp65ek67BRv+ygF8vlRveB89Uz0jfTk
-         LYTsDuhBYjsRPL1z3Pt4OfNEl3YtsdA2xBqLhb2bEVpoPtGLewff/XmAGKcFVI/tikRj
-         IsWx5dmwQ/f2mJqw2EeSOEfdaSq8IxD8b7h08djbGInpi6XK/7dbEorU9q6EBr/gopcT
-         UeTUv1QV3st+GxOzcbh3UIuwT9dn3nmnwwiQkntfEUCGw7TAVLidEsZFinZk7ivPGmgd
-         SIwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eqwxXzbfJuwcyGV/f2tlqmYfB0CiqMfLfLaQcdfnmUc=;
-        b=R7XmSYhiZTJNmzYGolU0Tk5nT+/QJu0MMsxEYU1PeKE/vBmsFPilyIeu3JgVEUxNJw
-         l6fxmekk2ZTigmB4MYvkj9JlWMtUA1BdfPcGOJNemM1gTBoWZ61AducsYgxAsT6qTKhQ
-         oPsbyjM7pcpJubj+oHtr0CUh1lnoOznhYYquLITRYUIk2QqRYSB9OJJ67cW/ryJFd2V+
-         +huAsCtzYSPF3QA9Bd1+owV2whrAs7+8y+F+vLYh6nd7njy88hljUyORKBhPExVdjOEu
-         vZEfC3HOzJcb3gBIajNKyFxNw5Z6U8XoWz18AKAY2uw2En4bKhL9EDRbmy+KRYultxcT
-         4i+g==
-X-Gm-Message-State: AFqh2kq2ZMIbA2mqerYMwyF4M9f4Mn047J3vxMmHeFdIcudjPmQjLD5P
-        0hbQ2F+T7a6Y6M/WC8xmZ2TFgdN2SYSlhXtio3k=
-X-Google-Smtp-Source: AMrXdXtTvhPNqCVQYqglQf+ISfVQE7hLx5JKwaKAIPT/rLf6I8GI1A9GLS3VUlQLvSF000OVBErwGm6Ra1X22JJ+XZU=
-X-Received: by 2002:a2e:9c83:0:b0:287:4e8e:2139 with SMTP id
- x3-20020a2e9c83000000b002874e8e2139mr427811lji.73.1673976944884; Tue, 17 Jan
- 2023 09:35:44 -0800 (PST)
-MIME-Version: 1.0
-References: <20221211204324.169991-1-tmaimon77@gmail.com> <20221211204324.169991-2-tmaimon77@gmail.com>
- <20221216184402.8A426C433D2@smtp.kernel.org>
-In-Reply-To: <20221216184402.8A426C433D2@smtp.kernel.org>
-From:   Tomer Maimon <tmaimon77@gmail.com>
-Date:   Tue, 17 Jan 2023 19:35:33 +0200
-Message-ID: <CAP6Zq1iPmy-fvqqAwBuoskR18v0dPVwYm0tEcE5h1g8fOiOQvg@mail.gmail.com>
-Subject: Re: [PATCH v14 1/1] clk: npcm8xx: add clock controller
+        with ESMTP id S232363AbjAQSQ5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 13:16:57 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F18BE17CE1
+        for <linux-clk@vger.kernel.org>; Tue, 17 Jan 2023 09:56:04 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1pHqBd-0000ph-Pk; Tue, 17 Jan 2023 18:55:53 +0100
+Received: from mfe by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1pHqBd-0006Lb-82; Tue, 17 Jan 2023 18:55:53 +0100
+Date:   Tue, 17 Jan 2023 18:55:53 +0100
+From:   Marco Felsch <m.felsch@pengutronix.de>
 To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     avifishman70@gmail.com, benjaminfair@google.com, joel@jms.id.au,
-        mturquette@baylibre.com, tali.perry1@gmail.com, venture@google.com,
-        yuenn@google.com, openbmc@lists.ozlabs.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Cc:     abel.vesa@linaro.org, abelvesa@kernel.org, festevam@gmail.com,
+        kernel@pengutronix.de, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, robh+dt@kernel.org,
+        s.hauer@pengutronix.de, shawnguo@kernel.org,
+        Peng Fan <peng.fan@nxp.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-imx@nxp.com, Marek Vasut <marex@denx.de>
+Subject: Re: [RFC PATCH 0/2] Propose critical clocks
+Message-ID: <20230117175553.fedlob24udnhgdkn@pengutronix.de>
+References: <20220913102141.971148-1-m.felsch@pengutronix.de>
+ <20221005082348.v43xbjrhbdlbaohv@pengutronix.de>
+ <20221005230609.5BA04C433D6@smtp.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221005230609.5BA04C433D6@smtp.kernel.org>
+User-Agent: NeoMutt/20180716
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Stephen,
 
-Very sorry for the late reply.
+sorry for the delay.
 
-On Fri, 16 Dec 2022 at 20:44, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Tomer Maimon (2022-12-11 12:43:24)
-> > diff --git a/drivers/clk/clk-npcm8xx.c b/drivers/clk/clk-npcm8xx.c
-> > new file mode 100644
-> > index 000000000000..08ee7bea6f3a
-> > --- /dev/null
-> > +++ b/drivers/clk/clk-npcm8xx.c
-> > @@ -0,0 +1,650 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> [...]
-> > +#define NPCM8XX_CLK_S_RCP        "rcp"
-> > +
-> > +static const u32 pll_mux_table[] = { 0, 1, 2, 3 };
-> > +static const struct clk_parent_data pll_mux_parents[] = {
-> > +       { .fw_name = NPCM8XX_CLK_S_PLL0, .name = NPCM8XX_CLK_S_PLL0 },
->
-> As this is a new driver either you should only have .fw_name here. The
-> .name field is a backup to migrate code over to a new binding. When
-> .fw_name is used there should be an associated DT binding update. I
-What do you mean by associated DT binding? does the.fw_name, for
-example, NPCM8XX_CLK_S_PLL0 need to represent in the device tree?
-> doubt the usage of .fw_name is correct though, because aren't these clks
-> internal to the controller? The .fw_name field is about describing does the
-yes the PLL clocks are internal.
-> parents that are an input to the clk controller node in DT (because the
-> controller is a consumer of these clks that are external to the device).
->
-> So can you use the .hw field for these internal clks? Check out
-> CLK_HW_INIT_HWS() macro and friends for a possible way to initialize
-> this.
-but still, I have used devm_clk_hw_register_mux_parent_data_table
-function to register the clock mux,
-should I use  devm_clk_hw_register_mux_parent_hws function instead?
-Does this modification need to be done in all the mux parent struct?
-could you point me to some example in the Linux kernel how do you
-think that I should represent the mux clock in the NPCM8XX clock
-driver?
->
-> > +       { .fw_name = NPCM8XX_CLK_S_PLL1, .name = NPCM8XX_CLK_S_PLL1 },
-> > +       { .fw_name = NPCM8XX_CLK_S_REFCLK, .name = NPCM8XX_CLK_S_REFCLK },
->
-> Maybe this is external? If so, it would be great to have this in the
-> binding as a `clocks` property.
-O.K.
+On 22-10-05, Stephen Boyd wrote:
+> Quoting Marco Felsch (2022-10-05 01:23:48)
+> > Hi Stephen, Michael,
+> > 
+> > I know it is a busy time right now, but maybe you have a few minutes for
+> > this RFC. I know it is incomplete, but the interessting part is there
+> > and it would fix a real issue we encountered on the imx8mm-evk's.
+> > 
+> 
+> There's another approach by Marek[1]. Can you work together on a
+> solution? I think we should step away from trying to make the critical
+> flag work during clk registration, and turn on the clk during provider
+> registration instead. That hopefully makes it simpler. We can keep the
+> clk flag of course, so that the clk can't be turned off, but otherwise
+> we shouldn't need to make registration path check for the property.
 
-Thanks,
+Can you please explain your idea a bit more in detail so I can follow
+you. The whole idea of this patchset is to enable a clock and never turn
+it off. According the clk-provider.h comment this is the exact use-case
+for the CLK_IS_CRITICAL flag. For static clock provider tree's like
+soc-clock tree's this can be done by the driver by setting the
+CLK_IS_CRITICAL flag within the struct clk_init_data. Now the question
+is how I can add such a handling to "dynamic" clock providers which are
+added by system-designs e.g. an i2c-clock provider. Of course each I2C
+clock provider driver can check the flag but I wanted to make it common
+to all.
 
-Tomer
+Regards,
+  Marco
+
+
+> 
+> [1] https://lore.kernel.org/all/20220924174517.458657-1-marex@denx.de/
+> 
