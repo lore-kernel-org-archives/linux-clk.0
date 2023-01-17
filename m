@@ -2,70 +2,74 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A61FC677F1
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 19:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F068C54E76
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 19:31:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230451AbjAQTOz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Jan 2023 14:14:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44400 "EHLO
+        id S232191AbjAQTbn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Jan 2023 14:31:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232562AbjAQTKm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 14:10:42 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6E8C5C0DA;
-        Tue, 17 Jan 2023 10:24:43 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7E1E1B819A1;
-        Tue, 17 Jan 2023 18:24:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 541F2C433EF;
-        Tue, 17 Jan 2023 18:24:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673979881;
-        bh=nzfUs+1A1pevf8jvETmlvd0NaCb8+CcDm6mOkmkO39E=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=EwPcM+YwQlJqQesodktRNEkTaliGUwliLSeClIJcjSItat6jdcN/q15cxjyZS8lJQ
-         lL7Cp04qXwjQ99iDWIHMvb0NTUPZQ9wTyK1pBtcNQ3pyB3be5tp1wwzu0AoyhGuvTZ
-         vFWK0arI2eaSVpu5vDcmkutLHHYX0lNefPsMd6Rz5uN5+4/o1uClqgUYXmzqr3IdTH
-         bbgO+hYSK4E9GcWavDahuMbXOsKRZGs/8DiVtfJdfc51MTazOye8q3B6/Se8mWHO1u
-         99MIFMQF6+8cbU4Pe5fk45vwECdqO6AVhc44A3mdPjKGh4lIlvzXMIu4zu31zmJ5Ts
-         hjqIwjND5ZDcA==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     devicetree@vger.kernel.org, sboyd@kernel.org, jonathan@marek.ca,
-        linux-arm-msm@vger.kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski@linaro.org, mturquette@baylibre.com,
-        agross@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        konrad.dybcio@linaro.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: clock: qcom,camcc-sm8250: extend clocks and power domains
-Date:   Tue, 17 Jan 2023 12:24:26 -0600
-Message-Id: <167397986255.2832389.5822400891524503974.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20221224214404.18280-1-krzysztof.kozlowski@linaro.org>
-References: <20221224214404.18280-1-krzysztof.kozlowski@linaro.org>
+        with ESMTP id S234646AbjAQT3L (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 14:29:11 -0500
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 051B453E4D;
+        Tue, 17 Jan 2023 10:34:52 -0800 (PST)
+Received: by mail-oi1-f182.google.com with SMTP id p133so11361273oig.8;
+        Tue, 17 Jan 2023 10:34:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lX+6Z0OlQ07+t9nQjvkv2dDMkjX1pwcJNWhvE932sdU=;
+        b=RfHsCTn4rKj2P2vLdHyaPs80SczzrlCbI3K9QoBw8luK+p2sLYh5iwyrWLLllP7U8Z
+         TheeCvL9Osz4jpveC2EN06ewySrEb5P6HVU6vCRKzcNh+cxTucSKbe7i6G6GCpLzZWZI
+         yYk/CudZR3mDMlR9RtCP6Hl6oP0tsNRSiFkC2OJvFxWi9faEv01odvxfKBXGBYwReUYX
+         Q80ncAT0edNun7smdMAbsv2N77EP0da4YF3ghr6iuCHrW3jJZZLBAk0R0dU6jAGA5+C8
+         JFfjZNmF6ifDjVSYl6HmJybBVPLCH12E3JDaP9OlMlk33LiM5RiGSZWO7Y538NqMkFfJ
+         TjxA==
+X-Gm-Message-State: AFqh2kpe0/GhQvG4Dp9x4oR9lbY6bSUQ+p78qL2PgRKbpnqnfCeLQi51
+        ACoMiCrq+jCcq7KS4cYGZA==
+X-Google-Smtp-Source: AMrXdXvilM2PLUJPhr+TCdUeK5S5Diqs5zjhMdzfpDEA02/efrzjJvygZgdZLG92tuDhm11fpfNFPQ==
+X-Received: by 2002:a54:489a:0:b0:35c:687:2ff8 with SMTP id r26-20020a54489a000000b0035c06872ff8mr1833297oic.21.1673980491272;
+        Tue, 17 Jan 2023 10:34:51 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id s40-20020a05683043a800b00684bc23f2cfsm9609899otv.32.2023.01.17.10.34.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Jan 2023 10:34:50 -0800 (PST)
+Received: (nullmailer pid 3426273 invoked by uid 1000);
+        Tue, 17 Jan 2023 18:34:50 -0000
+Date:   Tue, 17 Jan 2023 12:34:50 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Gross <agross@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>
+Subject: Re: [PATCH] dt-bindings: clock: qcom,a53pll: drop operating-points-v2
+Message-ID: <167398048822.3426199.2848666545032964620.robh@kernel.org>
+References: <20230113145859.82868-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230113145859.82868-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 24 Dec 2022 22:44:04 +0100, Krzysztof Kozlowski wrote:
-> Add clocks and properties (power-domains, required-opps) already used in
-> SM8250 DTS:
+
+On Fri, 13 Jan 2023 15:58:59 +0100, Krzysztof Kozlowski wrote:
+> The CPU PLL clock node does not use OPP tables (neither driver).
 > 
->   sm8250-hdk.dtb: clock-controller@ad00000: clocks: [[46, 10], [44, 0], [44, 1], [45]] is too long
->   sm8250-hdk.dtb: clock-controller@ad00000: clock-names:0: 'bi_tcxo' was expected
->   sm8250-hdk.dtb: clock-controller@ad00000: 'power-domains', 'required-opps' do not match any of the regexes: 'pinctrl-[0-9]+'
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,a53pll.yaml | 2 --
+>  1 file changed, 2 deletions(-)
 > 
-> [...]
 
-Applied, thanks!
-
-[1/1] dt-bindings: clock: qcom,camcc-sm8250: extend clocks and power domains
-      commit: f6f10b4ae5e5c986f521cc2282721f3c1b158df4
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
