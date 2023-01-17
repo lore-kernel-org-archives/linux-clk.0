@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E05C63797
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 06:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C352C3DA78
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 06:15:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235747AbjAQGPw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Jan 2023 01:15:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56012 "EHLO
+        id S235685AbjAQGPy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Jan 2023 01:15:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235685AbjAQGPn (ORCPT
+        with ESMTP id S235700AbjAQGPn (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 01:15:43 -0500
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9146223311
-        for <linux-clk@vger.kernel.org>; Mon, 16 Jan 2023 22:15:41 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11A2023330
+        for <linux-clk@vger.kernel.org>; Mon, 16 Jan 2023 22:15:42 -0800 (PST)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ore@pengutronix.de>)
-        id 1pHfFb-0002TD-Dr; Tue, 17 Jan 2023 07:15:15 +0100
+        id 1pHfFb-0002TC-Dx; Tue, 17 Jan 2023 07:15:15 +0100
 Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ore@pengutronix.de>)
-        id 1pHfFY-006bzo-Mp; Tue, 17 Jan 2023 07:15:12 +0100
+        id 1pHfFY-006bzn-M7; Tue, 17 Jan 2023 07:15:12 +0100
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ore@pengutronix.de>)
-        id 1pHfFX-00Fcka-4W; Tue, 17 Jan 2023 07:15:11 +0100
+        id 1pHfFW-00FciP-S2; Tue, 17 Jan 2023 07:15:10 +0100
 From:   Oleksij Rempel <o.rempel@pengutronix.de>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -41,9 +41,9 @@ Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
         Russell King <linux@armlinux.org.uk>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH v2 17/19] ARM: dts: imx6ul: set enet_clk_ref to CLK_ENETx_REF_SEL
-Date:   Tue, 17 Jan 2023 07:14:51 +0100
-Message-Id: <20230117061453.3723649-18-o.rempel@pengutronix.de>
+Subject: [PATCH v2 02/19] clk: imx6q: add ethernet refclock mux support
+Date:   Tue, 17 Jan 2023 07:14:36 +0100
+Message-Id: <20230117061453.3723649-3-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20230117061453.3723649-1-o.rempel@pengutronix.de>
 References: <20230117061453.3723649-1-o.rempel@pengutronix.de>
@@ -57,53 +57,77 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-IMX6UL_CLK_ENETx_REF is behind of CLK_ENETx_REF_SEL:
+Add ethernet refclock mux support and set it to internal clock by
+default. This configuration will not affect existing boards since
+machine code currently overwrites this default.
 
-FEC MAC <---------- CLK_ENETx_REF_SEL <--------- CLK_ENETx_REF
-		       \
-		        ^------<-> CLK_ENETx_REF_PAD
-
-We should point to the clock selector instead. So, we will be able to
-use external clock source from CLK_ENETx_REF_PAD as well.
-
-At same time, remove enet_out clk. It is using always the same clock as
-enet_clk_ref and do not help to solve any challenges of this HW.
+The machine code will be fixed in a separate patch.
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- arch/arm/boot/dts/imx6ul.dtsi | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/clk/imx/clk-imx6q.c               | 13 +++++++++++++
+ include/dt-bindings/clock/imx6qdl-clock.h |  4 +++-
+ 2 files changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
-index 2b5996395701..fa9afedb6549 100644
---- a/arch/arm/boot/dts/imx6ul.dtsi
-+++ b/arch/arm/boot/dts/imx6ul.dtsi
-@@ -532,10 +532,9 @@ fec2: ethernet@20b4000 {
- 				clocks = <&clks IMX6UL_CLK_ENET>,
- 					 <&clks IMX6UL_CLK_ENET_AHB>,
- 					 <&clks IMX6UL_CLK_ENET_PTP>,
--					 <&clks IMX6UL_CLK_ENET2_REF_125M>,
--					 <&clks IMX6UL_CLK_ENET2_REF_125M>;
-+					 <&clks IMX6UL_CLK_ENET2_REF_SEL>;
- 				clock-names = "ipg", "ahb", "ptp",
--					      "enet_clk_ref", "enet_out";
-+					      "enet_clk_ref";
- 				fsl,num-tx-queues = <1>;
- 				fsl,num-rx-queues = <1>;
- 				fsl,stop-mode = <&gpr 0x10 4>;
-@@ -880,10 +879,9 @@ fec1: ethernet@2188000 {
- 				clocks = <&clks IMX6UL_CLK_ENET>,
- 					 <&clks IMX6UL_CLK_ENET_AHB>,
- 					 <&clks IMX6UL_CLK_ENET_PTP>,
--					 <&clks IMX6UL_CLK_ENET_REF>,
--					 <&clks IMX6UL_CLK_ENET_REF>;
-+					 <&clks IMX6UL_CLK_ENET1_REF_SEL>;
- 				clock-names = "ipg", "ahb", "ptp",
--					      "enet_clk_ref", "enet_out";
-+					      "enet_clk_ref";
- 				fsl,num-tx-queues = <1>;
- 				fsl,num-rx-queues = <1>;
- 				fsl,stop-mode = <&gpr 0x10 3>;
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index de36f58d551c..22b464ca22c8 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -12,6 +12,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
++#include <linux/mfd/syscon/imx6q-iomuxc-gpr.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
+@@ -115,6 +116,10 @@ static struct clk_div_table video_div_table[] = {
+ 	{ /* sentinel */ }
+ };
+ 
++static const char * enet_ref_sels[] = { "enet_ref", "enet_ref_pad", };
++static const u32 enet_ref_sels_table[] = { IMX6Q_GPR1_ENET_CLK_SEL_ANATOP, IMX6Q_GPR1_ENET_CLK_SEL_PAD };
++static const u32 enet_ref_sels_table_mask = IMX6Q_GPR1_ENET_CLK_SEL_ANATOP;
++
+ static unsigned int share_count_esai;
+ static unsigned int share_count_asrc;
+ static unsigned int share_count_ssi1;
+@@ -908,6 +913,12 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	if (clk_on_imx6q() && imx_get_soc_revision() == IMX_CHIP_REVISION_1_0)
+ 		hws[IMX6QDL_CLK_GPT_3M] = hws[IMX6QDL_CLK_GPT_IPG_PER];
+ 
++	hws[IMX6QDL_CLK_ENET_REF_PAD] = imx6q_obtain_fixed_clk_hw(ccm_node, "enet_ref_pad", 0);
++
++	hws[IMX6QDL_CLK_ENET_REF_SEL] = imx_clk_gpr_mux("enet_ref_sel", "fsl,imx6q-iomuxc-gpr",
++				IOMUXC_GPR1, enet_ref_sels, ARRAY_SIZE(enet_ref_sels),
++				enet_ref_sels_table, enet_ref_sels_table_mask);
++
+ 	imx_check_clk_hws(hws, IMX6QDL_CLK_END);
+ 
+ 	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
+@@ -974,6 +985,8 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 			       hws[IMX6QDL_CLK_PLL3_USB_OTG]->clk);
+ 	}
+ 
++	clk_set_parent(hws[IMX6QDL_CLK_ENET_REF_SEL]->clk, hws[IMX6QDL_CLK_ENET_REF]->clk);
++
+ 	imx_register_uart_clocks(2);
+ }
+ CLK_OF_DECLARE(imx6q, "fsl,imx6q-ccm", imx6q_clocks_init);
+diff --git a/include/dt-bindings/clock/imx6qdl-clock.h b/include/dt-bindings/clock/imx6qdl-clock.h
+index e20c43cc36f6..e5b2a1ba02bc 100644
+--- a/include/dt-bindings/clock/imx6qdl-clock.h
++++ b/include/dt-bindings/clock/imx6qdl-clock.h
+@@ -273,6 +273,8 @@
+ #define IMX6QDL_CLK_MMDC_P0_IPG			263
+ #define IMX6QDL_CLK_DCIC1			264
+ #define IMX6QDL_CLK_DCIC2			265
+-#define IMX6QDL_CLK_END				266
++#define IMX6QDL_CLK_ENET_REF_SEL		266
++#define IMX6QDL_CLK_ENET_REF_PAD		267
++#define IMX6QDL_CLK_END				268
+ 
+ #endif /* __DT_BINDINGS_CLOCK_IMX6QDL_H */
 -- 
 2.30.2
 
