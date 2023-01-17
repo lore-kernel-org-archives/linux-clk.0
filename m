@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17AB5C6379F
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 23:49:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B40AEC00A5A
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 23:49:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229916AbjAQXtk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Jan 2023 18:49:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41162 "EHLO
+        id S229953AbjAQXtl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Jan 2023 18:49:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229514AbjAQXtY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 18:49:24 -0500
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FD925AB58
-        for <linux-clk@vger.kernel.org>; Tue, 17 Jan 2023 14:58:29 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id tz11so14652524ejc.0
-        for <linux-clk@vger.kernel.org>; Tue, 17 Jan 2023 14:58:29 -0800 (PST)
+        with ESMTP id S229579AbjAQXtZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 18:49:25 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA4075B440
+        for <linux-clk@vger.kernel.org>; Tue, 17 Jan 2023 14:58:30 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id vm8so79027216ejc.2
+        for <linux-clk@vger.kernel.org>; Tue, 17 Jan 2023 14:58:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qIQad+x4siansYRAnSbkhDyfhHTKHzFx8R9RG/AozD4=;
-        b=LdE3KrgbYW9pRybb5A3yvqqbxjSbc4JwBl11SUQvWUcAgIX+fFJXv9zyILSVot1wSk
-         0bsFquU7FyIQfW4yn6tJRybz/8a1KMe5DYfRq+88IYssdh8t/QkzmUpdUgZkpjDVGget
-         hSoxER/XNtL4mpb40MdQvz6S8BCDKc+ZbQdtZVCvh8ym5xifwRoAsQ1NAmkPaVi4BnE6
-         ORW6XA/Dwcpg0guvntcBbrNzuiayeBNQ6v5h6JqbPPonlDd0+teNQnYi9K4RDQCHFqS3
-         BDGGYi2DngpZ6K8M4qpLVQW7TLF/Hsf41HOZlvsD/gIMPk7cMgQdV2h+UihVzyx2KD2A
-         SC/w==
+        bh=r6O2bAVOs5/hhww8OaAu0tscdsqPgbVmDpydd53A4mw=;
+        b=eSvNL0aaE9O/wHtBqn7HUQHzrFKfchchN7mMh3Pm1AqCdZ66XiZdgOSZZFkB4GxKFc
+         kMBn6i4ghT3U3TZsX7gFq9WznIM67suAn4O51rdNiLzDHXQ2BqhM3AmpAODf8usl2VWT
+         lfiRb8CKJujcBiJyOF35EWbE7cH4yF3SSvc112iZoVUnKGQ0t7PDEM94CWL4GFwH7mMQ
+         cwGuVlcZRBWcPYsR9QmcWjIkBzPACCyE3AM3ov4MpRnNdzBPNUoCpjM81s1xdjYEIpoq
+         sMhcdzxa3WYzoxoWsrpWVQjGBDzUETmsVbiezqO2LdUgm31bebA0sne06/GkYVLuIUIh
+         Oh8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qIQad+x4siansYRAnSbkhDyfhHTKHzFx8R9RG/AozD4=;
-        b=BVj0CivLMGB+gjmspJ1KTE+0l2simHkknLj/0OTysHSVxRiRObeFq2zFQ3byD7l6Iw
-         p46jPRxPJzJ0/AMcIgSVPi0qTh5SSTY0SXolPsAjp6jp/nv3qJ9QCx8UkpOTqaHKbF2h
-         I2h5rihEWliwAKsFSQM4kad6MMs9fy8Ym5RI1RCDf1jwaG6CIyTZl0/svmjUyuVR89KD
-         dLUcxnSgUwC0uJDn+lw3/YutbulnN252CcXPy/Qc/DHA8gWHBKeUO/mZKH+BOKyweCii
-         Fv6+/yQGOzYQz+sMMCLtI8vnWwGXT0O9lrgfUrUCVFj6m+UbWxpzifiinaRwh7LKV75M
-         yOBg==
-X-Gm-Message-State: AFqh2kq05PGbNLbbhJAmgr2d109EWu797OHToaTgk7TtJN6A0nN8BOPN
-        qQYlaIlEbggwOlrt0VYj9BhSYQ==
-X-Google-Smtp-Source: AMrXdXvMTBIuGNMi3fBBopfq35BJBgoDR6eaaFiAA2xEeOTcTwIkXTbHKTjDg6am0US1G/4c664c3w==
-X-Received: by 2002:a17:906:d8a8:b0:84b:b481:6188 with SMTP id qc8-20020a170906d8a800b0084bb4816188mr692693ejb.64.1673996308356;
-        Tue, 17 Jan 2023 14:58:28 -0800 (PST)
+        bh=r6O2bAVOs5/hhww8OaAu0tscdsqPgbVmDpydd53A4mw=;
+        b=GW8VJ2q24jN0YrcdDnGg/Y6stNipwFBSJTcxkIFIYrt+xtJ9xV0Ee5K4eWFin02rnw
+         tvspTW9JbDX/MWOFF1otxjn3GlIWtAIfoD/se73QriSiaMuYdb9aMQt2n4kXAfdibCzK
+         Sy/xZJtm6SXWVqqykhwVaKagSIlIvH5qRfCKVAlpQ7JtB7SNV8ryrum1ijDeyrM6h3cI
+         b2PlmNB0UVV848irCVnb4qG1T/NGWpqyHuLlv908+4TYa/Uc6qwdIJGV1R79hpx16yo3
+         dP4EbynWQwJLt08tiwh9pC6VBUyQJObFFEVyfCz0hmFrGH5OD1xMe+J/sy86mjux7a5h
+         ZqZQ==
+X-Gm-Message-State: AFqh2krTAUJ6+4k8hwpef7VTWfjJpzJFKM47PhBl2C0F1/TkQvY8/0mZ
+        KgPtDv+DrULgtFdrKnYsYHU3Wg==
+X-Google-Smtp-Source: AMrXdXuyObr22mqWwYgkn4ALEv+H2YdS5qmXHPQOwUd+Q9KV69rGDrelhdJ8JjNLY8fisBDXDSw17g==
+X-Received: by 2002:a17:906:dfe9:b0:84d:378b:8820 with SMTP id lc9-20020a170906dfe900b0084d378b8820mr19019943ejc.18.1673996310512;
+        Tue, 17 Jan 2023 14:58:30 -0800 (PST)
 Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id t1-20020a1709061be100b0086f40238403sm3919762ejg.223.2023.01.17.14.58.27
+        by smtp.gmail.com with ESMTPSA id t1-20020a1709061be100b0086f40238403sm3919762ejg.223.2023.01.17.14.58.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jan 2023 14:58:28 -0800 (PST)
+        Tue, 17 Jan 2023 14:58:30 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -59,11 +59,10 @@ To:     Andy Gross <agross@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-Subject: [PATCH v2 2/7] clk: qcom: add msm8996 Core Bus Framework (CBF) support
-Date:   Wed, 18 Jan 2023 00:58:19 +0200
-Message-Id: <20230117225824.1552604-3-dmitry.baryshkov@linaro.org>
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 4/7] clk: qcom: smd-rpm: provide RPM_SMD_XO_CLK_SRC on MSM8996 platform
+Date:   Wed, 18 Jan 2023 00:58:21 +0200
+Message-Id: <20230117225824.1552604-5-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230117225824.1552604-1-dmitry.baryshkov@linaro.org>
 References: <20230117225824.1552604-1-dmitry.baryshkov@linaro.org>
@@ -73,360 +72,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add CBF clock driver as a part of MSM8996 CPU clocks. Significantly
-based on AngeloGioacchino del Regno's work at [1].
+Extend the list of RPM clocks provided on MSM8996 platform to also
+include RPM_SMD_XO_CLK_SRC and RPM_SMD_XO_A_CLK_SRC.
 
-The CBF is an interconnect between two CPU clusters, setting it up
-properly is required for booting the MSM8996 with all four cores
-enabled.
-
-[1] https://github.com/sonyxperiadev/kernel/blob/aosp/LE.UM.2.3.2.r1.4/drivers/clk/qcom/clk-cpu-8996.c
-
-Co-developed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
-Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+Fixes: 7066fdd0d742 ("clk: qcom: clk-smd-rpm: add msm8996 rpmclks")
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/Makefile       |   2 +-
- drivers/clk/qcom/clk-cbf-8996.c | 317 ++++++++++++++++++++++++++++++++
- 2 files changed, 318 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/qcom/clk-cbf-8996.c
+ drivers/clk/qcom/clk-smd-rpm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 98523c48c541..639d3edf9385 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -52,7 +52,7 @@ obj-$(CONFIG_MSM_MMCC_8998) += mmcc-msm8998.o
- obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
- obj-$(CONFIG_QCOM_A7PLL) += a7-pll.o
- obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
--obj-$(CONFIG_QCOM_CLK_APCC_MSM8996) += apcs-msm8996.o clk-cpu-8996.o
-+obj-$(CONFIG_QCOM_CLK_APCC_MSM8996) += apcs-msm8996.o clk-cpu-8996.o clk-cbf-8996.o
- obj-$(CONFIG_QCOM_CLK_APCS_SDX55) += apcs-sdx55.o
- obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
- obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
-diff --git a/drivers/clk/qcom/clk-cbf-8996.c b/drivers/clk/qcom/clk-cbf-8996.c
-new file mode 100644
-index 000000000000..9cde0e660228
---- /dev/null
-+++ b/drivers/clk/qcom/clk-cbf-8996.c
-@@ -0,0 +1,317 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2022, 2023 Linaro Ltd.
-+ */
-+#include <linux/bitfield.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-alpha-pll.h"
-+#include "clk-regmap.h"
-+
-+/* Need to match the order of clocks in DT binding */
-+enum {
-+	DT_XO,
-+	DT_APCS_AUX,
-+};
-+
-+enum {
-+	CBF_XO_INDEX,
-+	CBF_PLL_INDEX,
-+	CBF_DIV_INDEX,
-+	CBF_APCS_AUX_INDEX,
-+};
-+
-+#define DIV_THRESHOLD		600000000
-+
-+#define CBF_MUX_OFFSET		0x18
-+#define CBF_MUX_PARENT_MASK		GENMASK(1, 0)
-+#define CBF_MUX_AUTO_CLK_SEL_ALWAYS_ON_MASK GENMASK(5, 4)
-+#define CBF_MUX_AUTO_CLK_SEL_ALWAYS_ON_GPLL0_SEL \
-+	FIELD_PREP(CBF_MUX_AUTO_CLK_SEL_ALWAYS_ON_MASK, 0x03)
-+#define CBF_MUX_AUTO_CLK_SEL_BIT	BIT(6)
-+
-+#define CBF_PLL_OFFSET 0xf000
-+
-+static const u8 cbf_pll_regs[PLL_OFF_MAX_REGS] = {
-+	[PLL_OFF_L_VAL] = 0x08,
-+	[PLL_OFF_ALPHA_VAL] = 0x10,
-+	[PLL_OFF_USER_CTL] = 0x18,
-+	[PLL_OFF_CONFIG_CTL] = 0x20,
-+	[PLL_OFF_CONFIG_CTL_U] = 0x24,
-+	[PLL_OFF_TEST_CTL] = 0x30,
-+	[PLL_OFF_TEST_CTL_U] = 0x34,
-+	[PLL_OFF_STATUS] = 0x28,
-+};
-+
-+static const struct alpha_pll_config cbfpll_config = {
-+	.l = 72,
-+	.config_ctl_val = 0x200d4828,
-+	.config_ctl_hi_val = 0x006,
-+	.test_ctl_val = 0x1c000000,
-+	.test_ctl_hi_val = 0x00004000,
-+	.pre_div_mask = BIT(12),
-+	.post_div_mask = 0x3 << 8,
-+	.post_div_val = 0x1 << 8,
-+	.main_output_mask = BIT(0),
-+	.early_output_mask = BIT(3),
-+};
-+
-+static struct clk_alpha_pll cbf_pll = {
-+	.offset = CBF_PLL_OFFSET,
-+	.regs = cbf_pll_regs,
-+	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "cbf_pll",
-+		.parent_data = (const struct clk_parent_data[]) {
-+			{ .index = DT_XO, },
-+		},
-+		.num_parents = 1,
-+		.ops = &clk_alpha_pll_hwfsm_ops,
-+	},
-+};
-+
-+static struct clk_fixed_factor cbf_pll_postdiv = {
-+	.mult = 1,
-+	.div = 2,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cbf_pll_postdiv",
-+		.parent_hws = (const struct clk_hw*[]){
-+			&cbf_pll.clkr.hw
-+		},
-+		.num_parents = 1,
-+		.ops = &clk_fixed_factor_ops,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static const struct clk_parent_data cbf_mux_parent_data[] = {
-+	{ .index = DT_XO },
-+	{ .hw = &cbf_pll.clkr.hw },
-+	{ .hw = &cbf_pll_postdiv.hw },
-+	{ .index = DT_APCS_AUX },
-+};
-+
-+struct clk_cbf_8996_mux {
-+	u32 reg;
-+	struct notifier_block nb;
-+	struct clk_regmap clkr;
-+};
-+
-+static struct clk_cbf_8996_mux *to_clk_cbf_8996_mux(struct clk_regmap *clkr)
-+{
-+	return container_of(clkr, struct clk_cbf_8996_mux, clkr);
-+}
-+
-+static int cbf_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
-+			       void *data);
-+
-+static u8 clk_cbf_8996_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clkr = to_clk_regmap(hw);
-+	struct clk_cbf_8996_mux *mux = to_clk_cbf_8996_mux(clkr);
-+	u32 val;
-+
-+	regmap_read(clkr->regmap, mux->reg, &val);
-+
-+	return FIELD_GET(CBF_MUX_PARENT_MASK, val);
-+}
-+
-+static int clk_cbf_8996_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_regmap *clkr = to_clk_regmap(hw);
-+	struct clk_cbf_8996_mux *mux = to_clk_cbf_8996_mux(clkr);
-+	u32 val;
-+
-+	val = FIELD_PREP(CBF_MUX_PARENT_MASK, index);
-+
-+	return regmap_update_bits(clkr->regmap, mux->reg, CBF_MUX_PARENT_MASK, val);
-+}
-+
-+static int clk_cbf_8996_mux_determine_rate(struct clk_hw *hw,
-+					   struct clk_rate_request *req)
-+{
-+	struct clk_hw *parent;
-+
-+	if (req->rate < (DIV_THRESHOLD / 2))
-+		return -EINVAL;
-+
-+	if (req->rate < DIV_THRESHOLD)
-+		parent = clk_hw_get_parent_by_index(hw, CBF_DIV_INDEX);
-+	else
-+		parent = clk_hw_get_parent_by_index(hw, CBF_PLL_INDEX);
-+
-+	if (!parent)
-+		return -EINVAL;
-+
-+	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
-+	req->best_parent_hw = parent;
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops clk_cbf_8996_mux_ops = {
-+	.set_parent = clk_cbf_8996_mux_set_parent,
-+	.get_parent = clk_cbf_8996_mux_get_parent,
-+	.determine_rate = clk_cbf_8996_mux_determine_rate,
-+};
-+
-+static struct clk_cbf_8996_mux cbf_mux = {
-+	.reg = CBF_MUX_OFFSET,
-+	.nb.notifier_call = cbf_clk_notifier_cb,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "cbf_mux",
-+		.parent_data = cbf_mux_parent_data,
-+		.num_parents = ARRAY_SIZE(cbf_mux_parent_data),
-+		.ops = &clk_cbf_8996_mux_ops,
-+		/* CPU clock is critical and should never be gated */
-+		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-+	},
-+};
-+
-+static int cbf_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
-+			       void *data)
-+{
-+	struct clk_notifier_data *cnd = data;
-+	int ret;
-+
-+	switch (event) {
-+	case PRE_RATE_CHANGE:
-+		/*
-+		 * Avoid overvolting. clk_core_set_rate_nolock() walks from top
-+		 * to bottom, so it will change the rate of the PLL before
-+		 * chaging the parent of PMUX. This can result in pmux getting
-+		 * clocked twice the expected rate.
-+		 *
-+		 * Manually switch to PLL/2 here.
-+		 */
-+		if (cnd->old_rate > DIV_THRESHOLD &&
-+		    cnd->new_rate < DIV_THRESHOLD)
-+			clk_cbf_8996_mux_set_parent(&cbf_mux.clkr.hw, CBF_DIV_INDEX);
-+		break;
-+	case ABORT_RATE_CHANGE:
-+		/* Revert manual change */
-+		if (cnd->new_rate < DIV_THRESHOLD &&
-+		    cnd->old_rate > DIV_THRESHOLD)
-+			clk_cbf_8996_mux_set_parent(&cbf_mux.clkr.hw, CBF_PLL_INDEX);
-+		break;
-+	default:
-+		ret = 0;
-+		break;
-+	}
-+
-+	return notifier_from_errno(ret);
-+};
-+
-+static struct clk_hw *cbf_msm8996_hw_clks[] = {
-+	&cbf_pll_postdiv.hw,
-+};
-+
-+static struct clk_regmap *cbf_msm8996_clks[] = {
-+	&cbf_pll.clkr,
-+	&cbf_mux.clkr,
-+};
-+
-+static const struct regmap_config cbf_msm8996_regmap_config = {
-+	.reg_bits		= 32,
-+	.reg_stride		= 4,
-+	.val_bits		= 32,
-+	.max_register		= 0x10000,
-+	.fast_io		= true,
-+	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
-+};
-+
-+static int qcom_msm8996_cbf_probe(struct platform_device *pdev)
-+{
-+	void __iomem *base;
-+	struct regmap *regmap;
-+	struct device *dev = &pdev->dev;
-+	int i, ret;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(dev, base, &cbf_msm8996_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	/* Select GPLL0 for 300MHz for the CBF clock */
-+	regmap_write(regmap, CBF_MUX_OFFSET, 0x3);
-+
-+	/* Ensure write goes through before PLLs are reconfigured */
-+	udelay(5);
-+
-+	/* Set the auto clock sel always-on source to GPLL0/2 (300MHz) */
-+	regmap_update_bits(regmap, CBF_MUX_OFFSET,
-+			   CBF_MUX_AUTO_CLK_SEL_ALWAYS_ON_MASK,
-+			   CBF_MUX_AUTO_CLK_SEL_ALWAYS_ON_GPLL0_SEL);
-+
-+	clk_alpha_pll_configure(&cbf_pll, regmap, &cbfpll_config);
-+
-+	/* Wait for PLL(s) to lock */
-+	udelay(50);
-+
-+	/* Enable auto clock selection for CBF */
-+	regmap_update_bits(regmap, CBF_MUX_OFFSET,
-+			   CBF_MUX_AUTO_CLK_SEL_BIT,
-+			   CBF_MUX_AUTO_CLK_SEL_BIT);
-+
-+	/* Ensure write goes through before muxes are switched */
-+	udelay(5);
-+
-+	/* Switch CBF to use the primary PLL */
-+	regmap_update_bits(regmap, CBF_MUX_OFFSET, CBF_MUX_PARENT_MASK, 0x1);
-+
-+	for (i = 0; i < ARRAY_SIZE(cbf_msm8996_hw_clks); i++) {
-+		ret = devm_clk_hw_register(dev, cbf_msm8996_hw_clks[i]);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(cbf_msm8996_clks); i++) {
-+		ret = devm_clk_register_regmap(dev, cbf_msm8996_clks[i]);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	ret = devm_clk_notifier_register(dev, cbf_mux.clkr.hw.clk, &cbf_mux.nb);
-+	if (ret)
-+		return ret;
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &cbf_mux.clkr.hw);
-+}
-+
-+static const struct of_device_id qcom_msm8996_cbf_match_table[] = {
-+	{ .compatible = "qcom,msm8996-cbf" },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, qcom_msm8996_cbf_match_table);
-+
-+static struct platform_driver qcom_msm8996_cbf_driver = {
-+	.probe = qcom_msm8996_cbf_probe,
-+	.driver = {
-+		.name = "qcom-msm8996-cbf",
-+		.of_match_table = qcom_msm8996_cbf_match_table,
-+	},
-+};
-+
-+/* Register early enough to fix the clock to be used for other cores */
-+static int __init qcom_msm8996_cbf_init(void)
-+{
-+	return platform_driver_register(&qcom_msm8996_cbf_driver);
-+}
-+postcore_initcall(qcom_msm8996_cbf_init);
-+
-+static void __exit qcom_msm8996_cbf_exit(void)
-+{
-+	platform_driver_unregister(&qcom_msm8996_cbf_driver);
-+}
-+module_exit(qcom_msm8996_cbf_exit);
-+
-+MODULE_DESCRIPTION("QCOM MSM8996 CPU Bus Fabric Clock Driver");
-+MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index 8f6e274c6030..b503be8b3a93 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -810,6 +810,8 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8994 = {
+ };
+ 
+ static struct clk_smd_rpm *msm8996_clks[] = {
++	[RPM_SMD_XO_CLK_SRC] = &clk_smd_rpm_branch_bi_tcxo,
++	[RPM_SMD_XO_A_CLK_SRC] = &clk_smd_rpm_branch_bi_tcxo_a,
+ 	[RPM_SMD_PCNOC_CLK] = &clk_smd_rpm_bus_0_pcnoc_clk,
+ 	[RPM_SMD_PCNOC_A_CLK] = &clk_smd_rpm_bus_0_pcnoc_a_clk,
+ 	[RPM_SMD_SNOC_CLK] = &clk_smd_rpm_bus_1_snoc_clk,
 -- 
 2.39.0
 
