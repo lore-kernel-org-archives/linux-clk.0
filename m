@@ -2,34 +2,34 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D07B6C38142
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Jan 2023 00:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF2EC38147
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Jan 2023 00:04:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229459AbjARAEK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Jan 2023 19:04:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48850 "EHLO
+        id S229776AbjARAEY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Jan 2023 19:04:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229667AbjARADf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 19:03:35 -0500
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6A413B0F3;
-        Tue, 17 Jan 2023 15:16:44 -0800 (PST)
+        with ESMTP id S229469AbjARADt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 19:03:49 -0500
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16B416796B;
+        Tue, 17 Jan 2023 15:16:54 -0800 (PST)
 Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id CE92A855BA;
-        Wed, 18 Jan 2023 00:16:41 +0100 (CET)
+        by phobos.denx.de (Postfix) with ESMTPSA id 6825A855C0;
+        Wed, 18 Jan 2023 00:16:44 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1673997402;
-        bh=xyfGc0aEnzCD0axHpZLu+fHs6gA6mnDR9wtio8Vzobg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=VpeXJ4pJ27FLf1QPSPfur+AjQ2cZ6qu+0CUZ+EQyygh/Tw41GQ8NqDnb5k3dX0Gjv
-         3cSySJ/ytBCzqzbfVF95h8UU8ZZ8pJ1f1hLoH+lyf/MGLRzvmxK4HsRbeiIwkPt16q
-         Sl7hY6z8slTRIRztulcQ1Ckdcf6rpRGZe743VLamscuQZknXtQUqvPrKgE2X79VDBB
-         b1qAIgpwWUWDeV6bohDfoKbt5j8gef4WthG58lVtOgRrpLShSOkbQt3rDOZFFWFrQS
-         CryFNaKVdzCQDD17IHku64BiRpRfwzrluDvJwcuFwuoHLDmnjzVWtgI/VzFu0akZ63
-         2cyEwzkraRCHw==
+        s=phobos-20191101; t=1673997404;
+        bh=wO1hSSRqfqnLACJMPscMDWXkiPwtg0os6INSuyLq4lw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ByKSUvPRA1u35i+s0mU3XVRD/o+7qINCw/rQIjrLOv9wEOIE2USineigwPurk8csx
+         BG7Ei5IFgruPsn1zXwTXwvl6+Hpvy4dPodrwUQXTC8Zcw6Tk3bgDw1Wa2/4tJblLE6
+         XW2al9qBtmtyC5T7ZjP5qYAARerVzmulHrGAGEqf/Y+b4LevZo3KwAkgjwAtpkGnX1
+         huZTZTiPadoRoUr2BPhmQ1u9RDPlwzxL4AlEwCqV6ilsuF1s5miob6r29NivHXBHog
+         nEl1wiMSc1F8D7IE0ETqClE2GXWaGDhVafgFYPDsMEwCcebYLuBpIOXMdy0giiLIAq
+         eT/ns5S7s6Lxg==
 From:   Marek Vasut <marex@denx.de>
 To:     linux-clk@vger.kernel.org
 Cc:     Marek Vasut <marex@denx.de>,
@@ -42,10 +42,12 @@ Cc:     Marek Vasut <marex@denx.de>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org
-Subject: [PATCH v2 1/2] dt-bindings: clk: si521xx: Add Skyworks Si521xx I2C PCIe clock generators
-Date:   Wed, 18 Jan 2023 00:16:25 +0100
-Message-Id: <20230117231626.134588-1-marex@denx.de>
+Subject: [PATCH v2 2/2] clk: si521xx: Clock driver for Skyworks Si521xx I2C PCIe clock generators
+Date:   Wed, 18 Jan 2023 00:16:26 +0100
+Message-Id: <20230117231626.134588-2-marex@denx.de>
 X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230117231626.134588-1-marex@denx.de>
+References: <20230117231626.134588-1-marex@denx.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
@@ -54,10 +56,9 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add binding for Skyworks Si521xx PCIe clock generators. This binding
-is designed to support Si52144/Si52146/Si52147 series I2C PCIe clock
-generators, tested model is Si52144. It should be possible to add
-Si5213x series as well.
+Add driver for the Skyworks Si521xx PCIe clock generators. Supported models
+are Si52144/Si52146/Si52147, tested model is Si52144. It should be possible
+to add Si5213x series as well.
 
 Signed-off-by: Marek Vasut <marex@denx.de>
 ---
@@ -75,80 +76,447 @@ Cc: linux-mediatek@lists.infradead.org
 Cc: linux-riscv@lists.infradead.org
 To: linux-clk@vger.kernel.org
 ---
-V2: - Drop 'Binding for'
-    - Drop reg: description
-    - Drop ref25 from example
+V2: - Include bitfield.h to pull in FIELD_PREP macro
 ---
- .../bindings/clock/skyworks,si521xx.yaml      | 60 +++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/skyworks,si521xx.yaml
+ drivers/clk/Kconfig       |   9 +
+ drivers/clk/Makefile      |   1 +
+ drivers/clk/clk-si521xx.c | 395 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 405 insertions(+)
+ create mode 100644 drivers/clk/clk-si521xx.c
 
-diff --git a/Documentation/devicetree/bindings/clock/skyworks,si521xx.yaml b/Documentation/devicetree/bindings/clock/skyworks,si521xx.yaml
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index d79905f3e1744..b853fc60d118d 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -368,6 +368,15 @@ config COMMON_CLK_RS9_PCIE
+ 	  This driver supports the Renesas 9-series PCIe clock generator
+ 	  models 9FGV/9DBV/9DMV/9FGL/9DML/9QXL/9SQ.
+ 
++config COMMON_CLK_SI521XX
++	tristate "Clock driver for SkyWorks Si521xx PCIe clock generators"
++	depends on I2C
++	depends on OF
++	select REGMAP_I2C
++	help
++	  This driver supports the SkyWorks Si521xx PCIe clock generator
++	  models Si52144/Si52146/Si52147.
++
+ config COMMON_CLK_VC5
+ 	tristate "Clock driver for IDT VersaClock 5,6 devices"
+ 	depends on I2C
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index e3ca0d058a256..5e2c225f040c4 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -72,6 +72,7 @@ obj-$(CONFIG_COMMON_CLK_TPS68470)      += clk-tps68470.o
+ obj-$(CONFIG_CLK_TWL6040)		+= clk-twl6040.o
+ obj-$(CONFIG_ARCH_VT8500)		+= clk-vt8500.o
+ obj-$(CONFIG_COMMON_CLK_RS9_PCIE)	+= clk-renesas-pcie.o
++obj-$(CONFIG_COMMON_CLK_SI521XX)	+= clk-si521xx.o
+ obj-$(CONFIG_COMMON_CLK_VC5)		+= clk-versaclock5.o
+ obj-$(CONFIG_COMMON_CLK_VC7)		+= clk-versaclock7.o
+ obj-$(CONFIG_COMMON_CLK_WM831X)		+= clk-wm831x.o
+diff --git a/drivers/clk/clk-si521xx.c b/drivers/clk/clk-si521xx.c
 new file mode 100644
-index 0000000000000..fb30c5fb1ddd7
+index 0000000000000..de952a6999479
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/skyworks,si521xx.yaml
-@@ -0,0 +1,60 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/skyworks,si521xx.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/clk/clk-si521xx.c
+@@ -0,0 +1,395 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Driver for Skyworks Si521xx PCIe clock generator driver
++ *
++ * The following series can be supported:
++ *   - Si52144 - 4x DIFF
++ *   - Si52146 - 6x DIFF
++ *   - Si52147 - 9x DIFF
++ * Currently tested:
++ *   - Si52144
++ *
++ * Copyright (C) 2022 Marek Vasut <marex@denx.de>
++ */
 +
-+title: Skyworks Si521xx I2C PCIe clock generators
++#include <linux/bitfield.h>
++#include <linux/bitrev.h>
++#include <linux/clk-provider.h>
++#include <linux/i2c.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/regmap.h>
 +
-+description: |
-+  The Skyworks Si521xx are I2C PCIe clock generators providing
-+  from 4 to 9 output clocks.
++/* OE1 and OE2 register */
++#define SI521XX_REG_OE(n)			(((n) & 0x1) + 1)
++#define SI521XX_REG_ID				0x3
++#define SI521XX_REG_ID_PROG			GENMASK(7, 4)
++#define SI521XX_REG_ID_VENDOR			GENMASK(3, 0)
++#define SI521XX_REG_BC				0x4
++#define SI521XX_REG_DA				0x5
++#define SI521XX_REG_DA_AMP_SEL			BIT(7)
++#define SI521XX_REG_DA_AMP_MASK			GENMASK(6, 4)
++#define SI521XX_REG_DA_AMP_MIN			300000
++#define SI521XX_REG_DA_AMP_DEFAULT		800000
++#define SI521XX_REG_DA_AMP_MAX			1000000
++#define SI521XX_REG_DA_AMP_STEP			100000
++#define SI521XX_REG_DA_AMP(UV)			\
++	FIELD_PREP(SI521XX_REG_DA_AMP_MASK,	\
++		   ((UV) - SI521XX_REG_DA_AMP_MIN) / SI521XX_REG_DA_AMP_STEP)
++#define SI521XX_REG_DA_UNKNOWN			BIT(3)	/* Always set */
 +
-+maintainers:
-+  - Marek Vasut <marex@denx.de>
++/* Count of populated OE bits in control register ref, 1 and 2 */
++#define SI521XX_OE_MAP(cr1, cr2)	(((cr2) << 8) | (cr1))
++#define SI521XX_OE_MAP_GET_OE(oe, map)	(((map) >> (((oe) - 1) * 8)) & 0xff)
 +
-+properties:
-+  compatible:
-+    enum:
-+      - skyworks,si52144
-+      - skyworks,si52146
-+      - skyworks,si52147
++#define SI521XX_DIFF_MULT	4
++#define SI521XX_DIFF_DIV	1
 +
-+  reg:
-+    const: 0x6b
++/* Supported Skyworks Si521xx models. */
++enum si521xx_model {
++	SI52144 = 0x44,
++	SI52146 = 0x46,
++	SI52147 = 0x47,
++};
 +
-+  '#clock-cells':
-+    const: 1
++struct si521xx;
 +
-+  clocks:
-+    items:
-+      - description: XTal input clock
++struct si_clk {
++	struct clk_hw		hw;
++	struct si521xx		*si;
++	u8			reg;
++	u8			bit;
++};
 +
-+  skyworks,out-amplitude-microvolt:
-+    enum: [ 300000, 400000, 500000, 600000, 700000, 800000, 900000, 1000000 ]
-+    description: Output clock signal amplitude
++struct si521xx {
++	struct i2c_client	*client;
++	struct regmap		*regmap;
++	struct si_clk		clk_dif[9];
++	u16			chip_info;
++	u8			pll_amplitude;
++};
 +
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - '#clock-cells'
++/*
++ * Si521xx i2c regmap
++ */
++static const struct regmap_range si521xx_readable_ranges[] = {
++	regmap_reg_range(SI521XX_REG_OE(0), SI521XX_REG_DA),
++};
 +
-+additionalProperties: false
++static const struct regmap_access_table si521xx_readable_table = {
++	.yes_ranges = si521xx_readable_ranges,
++	.n_yes_ranges = ARRAY_SIZE(si521xx_readable_ranges),
++};
 +
-+examples:
-+  - |
-+    i2c@0 {
-+        reg = <0x0 0x100>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
++static const struct regmap_range si521xx_writeable_ranges[] = {
++	regmap_reg_range(SI521XX_REG_OE(0), SI521XX_REG_OE(1)),
++	regmap_reg_range(SI521XX_REG_BC, SI521XX_REG_DA),
++};
 +
-+        clock-generator@6b {
-+            compatible = "skyworks,si52144";
-+            reg = <0x6b>;
-+            #clock-cells = <1>;
-+            clocks = <&ref25m>;
-+        };
-+    };
++static const struct regmap_access_table si521xx_writeable_table = {
++	.yes_ranges = si521xx_writeable_ranges,
++	.n_yes_ranges = ARRAY_SIZE(si521xx_writeable_ranges),
++};
 +
-+...
++static int si521xx_regmap_i2c_write(void *context, unsigned int reg,
++				    unsigned int val)
++{
++	struct i2c_client *i2c = context;
++	const u8 data[3] = { reg, 1, val };
++	const int count = ARRAY_SIZE(data);
++	int ret;
++
++	ret = i2c_master_send(i2c, data, count);
++	if (ret == count)
++		return 0;
++	else if (ret < 0)
++		return ret;
++	else
++		return -EIO;
++}
++
++static int si521xx_regmap_i2c_read(void *context, unsigned int reg,
++				   unsigned int *val)
++{
++	struct i2c_client *i2c = context;
++	struct i2c_msg xfer[2];
++	u8 txdata = reg;
++	u8 rxdata[2];
++	int ret;
++
++	xfer[0].addr = i2c->addr;
++	xfer[0].flags = 0;
++	xfer[0].len = 1;
++	xfer[0].buf = (void *)&txdata;
++
++	xfer[1].addr = i2c->addr;
++	xfer[1].flags = I2C_M_RD;
++	xfer[1].len = 2;
++	xfer[1].buf = (void *)rxdata;
++
++	ret = i2c_transfer(i2c->adapter, xfer, 2);
++	if (ret < 0)
++		return ret;
++	if (ret != 2)
++		return -EIO;
++
++	/*
++	 * Byte 0 is transfer length, which is always 1 due
++	 * to BCP register programming to 1 in si521xx_probe(),
++	 * ignore it and use data from Byte 1.
++	 */
++	*val = rxdata[1];
++	return 0;
++}
++
++static const struct regmap_config si521xx_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.cache_type = REGCACHE_NONE,
++	.max_register = SI521XX_REG_DA,
++	.rd_table = &si521xx_readable_table,
++	.wr_table = &si521xx_writeable_table,
++	.reg_write = si521xx_regmap_i2c_write,
++	.reg_read = si521xx_regmap_i2c_read,
++};
++
++static unsigned long si521xx_diff_recalc_rate(struct clk_hw *hw,
++					      unsigned long parent_rate)
++{
++	unsigned long long rate;
++
++	rate = (unsigned long long)parent_rate * SI521XX_DIFF_MULT;
++	do_div(rate, SI521XX_DIFF_DIV);
++	return (unsigned long)rate;
++}
++
++static long si521xx_diff_round_rate(struct clk_hw *hw, unsigned long rate,
++				    unsigned long *prate)
++{
++	unsigned long best_parent;
++
++	best_parent = (rate / SI521XX_DIFF_MULT) * SI521XX_DIFF_DIV;
++	*prate = clk_hw_round_rate(clk_hw_get_parent(hw), best_parent);
++
++	return (*prate / SI521XX_DIFF_DIV) * SI521XX_DIFF_MULT;
++}
++
++static int si521xx_diff_set_rate(struct clk_hw *hw, unsigned long rate,
++				 unsigned long parent_rate)
++{
++	/*
++	 * We must report success but we can do so unconditionally because
++	 * si521xx_diff_round_rate returns values that ensure this call is a
++	 * nop.
++	 */
++
++	return 0;
++}
++
++#define to_si521xx_clk(_hw) container_of(_hw, struct si_clk, hw)
++
++static int si521xx_diff_prepare(struct clk_hw *hw)
++{
++	struct si_clk *si_clk = to_si521xx_clk(hw);
++	struct si521xx *si = si_clk->si;
++
++	regmap_set_bits(si->regmap, SI521XX_REG_OE(si_clk->reg), si_clk->bit);
++
++	return 0;
++}
++
++static void si521xx_diff_unprepare(struct clk_hw *hw)
++{
++	struct si_clk *si_clk = to_si521xx_clk(hw);
++	struct si521xx *si = si_clk->si;
++
++	regmap_clear_bits(si->regmap, SI521XX_REG_OE(si_clk->reg), si_clk->bit);
++}
++
++const struct clk_ops si521xx_diff_clk_ops = {
++	.round_rate	= si521xx_diff_round_rate,
++	.set_rate	= si521xx_diff_set_rate,
++	.recalc_rate	= si521xx_diff_recalc_rate,
++	.prepare	= si521xx_diff_prepare,
++	.unprepare	= si521xx_diff_unprepare,
++};
++
++static int si521xx_get_common_config(struct si521xx *si)
++{
++	struct i2c_client *client = si->client;
++	struct device_node *np = client->dev.of_node;
++	unsigned int amp;
++	int ret;
++
++	/* Set defaults */
++	si->pll_amplitude = SI521XX_REG_DA_AMP(SI521XX_REG_DA_AMP_DEFAULT);
++
++	/* Output clock amplitude */
++	ret = of_property_read_u32(np, "skyworks,out-amplitude-microvolt",
++				   &amp);
++	if (!ret) {
++		if (amp < SI521XX_REG_DA_AMP_MIN || amp > SI521XX_REG_DA_AMP_MAX ||
++		    amp % SI521XX_REG_DA_AMP_STEP) {
++			return dev_err_probe(&client->dev, -EINVAL,
++					     "Invalid skyworks,out-amplitude-microvolt value\n");
++		}
++		si->pll_amplitude = SI521XX_REG_DA_AMP(amp);
++	}
++
++	return 0;
++}
++
++static void si521xx_update_config(struct si521xx *si)
++{
++	/* If amplitude is non-default, update it. */
++	if (si->pll_amplitude == SI521XX_REG_DA_AMP(SI521XX_REG_DA_AMP_DEFAULT))
++		return;
++
++	regmap_update_bits(si->regmap, SI521XX_REG_DA,
++			   SI521XX_REG_DA_AMP_MASK, si->pll_amplitude);
++}
++
++static void si521xx_diff_idx_to_reg_bit(const u16 chip_info, const int idx,
++					struct si_clk *clk)
++{
++	unsigned long mask;
++	int oe, b, ctr = 0;
++
++	for (oe = 1; oe <= 2; oe++) {
++		mask = bitrev8(SI521XX_OE_MAP_GET_OE(oe, chip_info));
++		for_each_set_bit(b, &mask, 8) {
++			if (ctr++ != idx)
++				continue;
++			clk->reg = SI521XX_REG_OE(oe);
++			clk->bit = 7 - b;
++			return;
++		}
++	}
++}
++
++static struct clk_hw *
++si521xx_of_clk_get(struct of_phandle_args *clkspec, void *data)
++{
++	struct si521xx *si = data;
++	unsigned int idx = clkspec->args[0];
++
++	return &si->clk_dif[idx].hw;
++}
++
++static int si521xx_probe(struct i2c_client *client)
++{
++	const u16 chip_info = (u16)(uintptr_t)device_get_match_data(&client->dev);
++	const struct clk_parent_data clk_parent_data = { .index = 0 };
++	struct si521xx *si;
++	unsigned char name[6] = "DIFF0";
++	struct clk_init_data init = {};
++	int i, ret;
++
++	if (!chip_info)
++		return -EINVAL;
++
++	si = devm_kzalloc(&client->dev, sizeof(*si), GFP_KERNEL);
++	if (!si)
++		return -ENOMEM;
++
++	i2c_set_clientdata(client, si);
++	si->client = client;
++
++	/* Fetch common configuration from DT (if specified) */
++	ret = si521xx_get_common_config(si);
++	if (ret)
++		return ret;
++
++	si->regmap = devm_regmap_init(&client->dev, NULL, client,
++				      &si521xx_regmap_config);
++	if (IS_ERR(si->regmap))
++		return dev_err_probe(&client->dev, PTR_ERR(si->regmap),
++				     "Failed to allocate register map\n");
++
++	/* Always read back 1 Byte via I2C */
++	ret = regmap_write(si->regmap, SI521XX_REG_BC, 1);
++	if (ret < 0)
++		return ret;
++
++	/* Register clock */
++	for (i = 0; i < hweight16(chip_info); i++) {
++		memset(&init, 0, sizeof(init));
++		snprintf(name, 6, "DIFF%d", i);
++		init.name = name;
++		init.ops = &si521xx_diff_clk_ops;
++		init.parent_data = &clk_parent_data;
++		init.num_parents = 1;
++		init.flags = CLK_SET_RATE_PARENT;
++
++		si->clk_dif[i].hw.init = &init;
++		si->clk_dif[i].si = si;
++
++		si521xx_diff_idx_to_reg_bit(chip_info, i, &si->clk_dif[i]);
++
++		ret = devm_clk_hw_register(&client->dev, &si->clk_dif[i].hw);
++		if (ret)
++			return ret;
++	}
++
++	ret = devm_of_clk_add_hw_provider(&client->dev, si521xx_of_clk_get, si);
++	if (!ret)
++		si521xx_update_config(si);
++
++	return ret;
++}
++
++static int __maybe_unused si521xx_suspend(struct device *dev)
++{
++	struct si521xx *si = dev_get_drvdata(dev);
++
++	regcache_cache_only(si->regmap, true);
++	regcache_mark_dirty(si->regmap);
++
++	return 0;
++}
++
++static int __maybe_unused si521xx_resume(struct device *dev)
++{
++	struct si521xx *si = dev_get_drvdata(dev);
++	int ret;
++
++	regcache_cache_only(si->regmap, false);
++	ret = regcache_sync(si->regmap);
++	if (ret)
++		dev_err(dev, "Failed to restore register map: %d\n", ret);
++	return ret;
++}
++
++static const struct i2c_device_id si521xx_id[] = {
++	{ "si52144", .driver_data = SI521XX_OE_MAP(0x5, 0xc0) },
++	{ "si52146", .driver_data = SI521XX_OE_MAP(0x15, 0xe0) },
++	{ "si52147", .driver_data = SI521XX_OE_MAP(0x17, 0xf8) },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, si521xx_id);
++
++static const struct of_device_id clk_si521xx_of_match[] = {
++	{ .compatible = "skyworks,si52144", .data = (void *)SI521XX_OE_MAP(0x5, 0xc0) },
++	{ .compatible = "skyworks,si52146", .data = (void *)SI521XX_OE_MAP(0x15, 0xe0) },
++	{ .compatible = "skyworks,si52147", .data = (void *)SI521XX_OE_MAP(0x15, 0xf8) },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, clk_si521xx_of_match);
++
++static SIMPLE_DEV_PM_OPS(si521xx_pm_ops, si521xx_suspend, si521xx_resume);
++
++static struct i2c_driver si521xx_driver = {
++	.driver = {
++		.name = "clk-si521xx",
++		.pm	= &si521xx_pm_ops,
++		.of_match_table = clk_si521xx_of_match,
++	},
++	.probe_new	= si521xx_probe,
++	.id_table	= si521xx_id,
++};
++module_i2c_driver(si521xx_driver);
++
++MODULE_AUTHOR("Marek Vasut <marex@denx.de>");
++MODULE_DESCRIPTION("Skyworks Si521xx PCIe clock generator driver");
++MODULE_LICENSE("GPL");
 -- 
 2.39.0
 
