@@ -2,147 +2,149 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A77C8C678D4
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 08:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16CD4C63797
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 09:42:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235958AbjAQIyn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Jan 2023 03:54:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57046 "EHLO
+        id S236416AbjAQJmg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Jan 2023 04:42:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235927AbjAQIyk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 03:54:40 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA4213C07;
-        Tue, 17 Jan 2023 00:54:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=82O7MPpmKDKH/y6naoktZs3WQBLC/PHyEl3Wjqd7/dM=; b=Ke5GdVNvGDwhG+k46q7dng0FmD
-        4svqJ3BuhIzpCyRd3d34EzrwpAYhtIPNP9U0JudPObAhyc7mKDDB2ufRnVUe8NMuF1emh9A0PNWIH
-        p1R0fL14Y4BiUEbkIt1kuIDfTIDr+dtl1B0SONy0L6U6H9msSNXgpTQM8WUKpqJC+XOMDTKkpqJUy
-        A0FDeq5XRHSYeh/RQjtt4CQSF65Phgmx7FmreCSehAcpaORvkTTe37Nk1Kd9I9heUV3/iILob+ev7
-        j5Jfjn7noy51S9Ufs13OCaNuk4vpeID6Jvr5f0ui2whQba0QF6a+wxAzj0g5CzDexgL5+ikNTlFRJ
-        Sa81nPeg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pHhjP-009Wew-5Z; Tue, 17 Jan 2023 08:54:11 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 99EF1302D60;
-        Tue, 17 Jan 2023 09:53:52 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 46751201ABB3C; Tue, 17 Jan 2023 09:53:52 +0100 (CET)
-Date:   Tue, 17 Jan 2023 09:53:52 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
-        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
-        nsekhar@ti.com, brgl@bgdev.pl, ulli.kroll@googlemail.com,
-        linus.walleij@linaro.org, shawnguo@kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, tony@atomide.com,
-        khilman@kernel.org, krzysztof.kozlowski@linaro.org,
-        alim.akhtar@samsung.com, catalin.marinas@arm.com, will@kernel.org,
-        guoren@kernel.org, bcain@quicinc.com, chenhuacai@kernel.org,
-        kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net,
-        monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org,
-        jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
-        shorne@gmail.com, James.Bottomley@hansenpartnership.com,
-        deller@gmx.de, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, paul.walmsley@sifive.com,
-        palmer@dabbelt.com, aou@eecs.berkeley.edu, hca@linux.ibm.com,
-        gor@linux.ibm.com, agordeev@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
-        richard@nod.at, anton.ivanov@cambridgegreys.com,
-        johannes@sipsolutions.net, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-        hpa@zytor.com, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, anup@brainfault.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        jacob.jun.pan@linux.intel.com, atishp@atishpatra.org,
-        Arnd Bergmann <arnd@arndb.de>, yury.norov@gmail.com,
-        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
-        dennis@kernel.org, tj@kernel.org, cl@linux.com,
-        rostedt@goodmis.org, frederic@kernel.org, paulmck@kernel.org,
-        pmladek@suse.com, senozhatsky@chromium.org,
-        john.ogness@linutronix.de, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
-        vschneid@redhat.com, ryabinin.a.a@gmail.com, glider@google.com,
-        andreyknvl@gmail.com, dvyukov@google.com,
-        vincenzo.frascino@arm.com,
-        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-csky@vger.kernel.org,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com
-Subject: Re: [PATCH v3 35/51] trace,hardirq: No moar _rcuidle() tracing
-Message-ID: <Y8ZiIMHyXX/yW1EI@hirez.programming.kicks-ass.net>
-References: <20230112194314.845371875@infradead.org>
- <20230112195541.477416709@infradead.org>
- <20230117132446.02ec12e4c10718de27790900@kernel.org>
+        with ESMTP id S235875AbjAQJlP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 04:41:15 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E008189;
+        Tue, 17 Jan 2023 01:40:31 -0800 (PST)
+Received: from [192.168.1.15] (91-154-32-225.elisa-laajakaista.fi [91.154.32.225])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A480810C;
+        Tue, 17 Jan 2023 10:40:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1673948428;
+        bh=pwcY+nhMvG/TRw/6a23Tkmw05fU7m9erKXgldfhdtKs=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=cYB3srwjuy25uquA3HfrV9XgcNNZC0uzFWAmKVLDC88prn2l7TdA8UdpW1riCiTUw
+         bI7W0xJvy84evkSzMYe0tyfBuelwxCmVcMXGkmy4d+7CMcOeg1y+z6HIrRxe+eBvlq
+         onJ8cV9jePy0uL5vg5jixJwRgV8Kxw5xOa3+GE5c=
+Message-ID: <367fba29-bc08-1f27-249c-09e406adfbbb@ideasonboard.com>
+Date:   Tue, 17 Jan 2023 11:40:24 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230117132446.02ec12e4c10718de27790900@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH 1/2] dt-bindings: clock: fixed-factor: Add TI AM62 SoC
+ OLDI clock
+Content-Language: en-US
+To:     Aradhya Bhatia <a-bhatia1@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Samuel Holland <samuel@sholland.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Linux Clock List <linux-clk@vger.kernel.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        Linux Kernel List <linux-kernel@vger.kernel.org>,
+        Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Devarsh Thakkar <devarsht@ti.com>, Jai Luthra <j-luthra@ti.com>
+References: <20221226095745.19757-1-a-bhatia1@ti.com>
+ <20221226095745.19757-2-a-bhatia1@ti.com>
+ <8980856c1138571976f00413b94cfeb8.sboyd@kernel.org>
+ <1856e963-4514-92f3-5d43-d5b711083193@ti.com>
+From:   Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+In-Reply-To: <1856e963-4514-92f3-5d43-d5b711083193@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 17, 2023 at 01:24:46PM +0900, Masami Hiramatsu wrote:
-> Hi Peter,
+On 16/01/2023 11:51, Aradhya Bhatia wrote:
+> Hi Stephen,
 > 
-> On Thu, 12 Jan 2023 20:43:49 +0100
-> Peter Zijlstra <peterz@infradead.org> wrote:
+> Thanks for taking a look at the patch.
 > 
-> > Robot reported that trace_hardirqs_{on,off}() tickle the forbidden
-> > _rcuidle() tracepoint through local_irq_{en,dis}able().
-> > 
-> > For 'sane' configs, these calls will only happen with RCU enabled and
-> > as such can use the regular tracepoint. This also means it's possible
-> > to trace them from NMI context again.
-> > 
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> On 12-Jan-23 01:14, Stephen Boyd wrote:
+>> Quoting Aradhya Bhatia (2022-12-26 01:57:44)
+>>> Add "ti,k3-am62-oldi-clk-div" to the fixed factor clock compatible enum
+>>> list.
+>>>
+>>> "ti,k3-am62-oldi-clk-div" is a fixed-factor clock that helps the TI
+>>> display subsystem request a pixel clock for itself and a corresponding
+>>> serial clock for its OLDI Transmitters. The serial clock is 7 times the
+>>> pixel clock. This clock needs the clock set rate request to be
+>>> propagated to the parent clock provider.
+>>>
+>>> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+>>> ---
+>>>   Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml | 1 +
+>>>   1 file changed, 1 insertion(+)
+>>>
+>>> diff --git 
+>>> a/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml 
+>>> b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
+>>> index 8f71ab300470..0696237530f7 100644
+>>> --- a/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
+>>> +++ b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
+>>> @@ -14,6 +14,7 @@ properties:
+>>>     compatible:
+>>>       enum:
+>>>         - fixed-factor-clock
+>>> +      - ti,k3-am62-oldi-clk-div
+>>
+>> I don't see this compatible anywhere in the kernel tree. Is there a
+>> patch that adds a node using this? I wonder why the display subsystem
+>> can't add this fixed factor clk directly in the driver. Does the OLDI
+>> Transmitter send a clk to the display subsystem?
+>>
+>> I'm asking all these questions because we got rid of vendor compatibles
+>> here in hopes of simplifying the logic. Maybe the problem can be
+>> approached differently, but I don't know all the details.
 > 
-> The code looks good to me. I just have a question about comment.
 > 
-> > ---
-> >  kernel/trace/trace_preemptirq.c |   21 +++++++++++++--------
-> >  1 file changed, 13 insertions(+), 8 deletions(-)
-> > 
-> > --- a/kernel/trace/trace_preemptirq.c
-> > +++ b/kernel/trace/trace_preemptirq.c
-> > @@ -20,6 +20,15 @@
-> >  static DEFINE_PER_CPU(int, tracing_irq_cpu);
-> >  
-> >  /*
-> > + * ...
+> +--------+                       +------------------+
+> |        |                       |                  |
+> |  PLL   +---+----+------------->| OLDI Transmitter |
+> |        |   |    |              |                  |
+> +--------+   |    |              +------------------+
+>               |    |
+>               |    |              +------------------+
+>               |    |              |                  |
+>               |    +------------->| OLDI Transmitter |
+>               |                   |                  |
+>               |                   +------------------+
+>               |
+>               |                   +------------------+
+>               |   +----------+    |                  |
+>               |   |    /7    |    |      Display     |
+>               +-->|   Clock  +--->| Sub-System (DSS) |
+>                   |    Div   |    |                  |
+>                   +----------+    +------------------+
 > 
-> Is this intended? Wouldn't you leave any comment here?
+> This is how the the clock architecture for DSS looks like.
+> 
+> The clock divider is not a part of DSS, but outside it.
+> 
+> The clock request flow is initiated by the DSS driver because it has the
+> required timing parameter information. It requests a certain pixel
+> frequency. But the frequency required by the OLDI TXes is 7 times
+> that pixel frequency.
+> 
+> (Just for clarification, in some cases, the OLDI TX does require only
+> 3.5 times the pixel frequency, but in those situations there is another
+> divider in-front of OLDI TX that gets activated with a signal and
+> divides the incoming frequency by 2, thereby requiring the PLL to still
+> generate a 7x frequency.)
+> 
+> Hence, the idea is that the clock divider is able to propagate the set
+> rate request back to PLL, asking for a frequency 7 times more than the
+> DSS's asking rate.
+> 
+> If this is something less than ideal and should not go up, then I can
+> implement a new clock device with a separate but similar clock driver.
+> 
+> Let me know what you think!
 
-I indeed forgot to write the comment before posting, my bad :/ Ingo fixed
-it up when he applied.
+As a clarification I would also add to the above that on other TI SoCs 
+with DSS, and also for the second video port on AM62, the clock 
+framework provides DSS a clock using the pclk frequency.
+
+  Tomi
+
