@@ -2,149 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60F8EC3DA78
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 10:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A4F1C3DA78
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 10:54:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236519AbjAQKrh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Jan 2023 05:47:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49074 "EHLO
+        id S236197AbjAQKyV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Jan 2023 05:54:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236231AbjAQKrg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 05:47:36 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 672C52DE74
-        for <linux-clk@vger.kernel.org>; Tue, 17 Jan 2023 02:47:35 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id iv8-20020a05600c548800b003db04a0a46bso1088094wmb.0
-        for <linux-clk@vger.kernel.org>; Tue, 17 Jan 2023 02:47:35 -0800 (PST)
+        with ESMTP id S236144AbjAQKyU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 05:54:20 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14B1F30288;
+        Tue, 17 Jan 2023 02:54:19 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id v10so43265433edi.8;
+        Tue, 17 Jan 2023 02:54:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dvIcZpPr71LAli4Ctw18NaK663H1wXEFiZ1hnSUC9M0=;
-        b=Y+86NVomNfbZJj3bNQA99LzfKbWS1gl9P3M2xDVt54IbzeIw1atZ9k256jeY4iqz1k
-         GrzlzHfeZdOytZpecBqdel9sXmGpRdXrrHWqBVg8e4PoCKfkpYkqnQhqfBbOlfzi0uIK
-         35DWzJIHZb82vq36jduj5kDx8Cq70WWP10NAkap5YlurQQ/CNeXezt/FU2Du/fUszMsn
-         EYhZE1ePjBR+HWxLlX6txelo8DfG9wI6f8D0UIkQlFwpdE9cTNHrkIn1MvDAGppQfJcz
-         wblJjHentHrITYgSlMEyYnpCTqqybAfZljFRRc4VOMO+OvvbquMbwywO/VQH/yFFcewu
-         zuaA==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ab9kaP68KTbfELnA5RfuMX2nySH/a7yjfTaW9w+IzMo=;
+        b=IMJsIosuncWC677AT8d/nb0C8g4B8iGlXdSzem9YfITAYaR9yAt5Q5kEttKpLUGHBP
+         8BrQB2vCWSwh9RhZ1Jc6J5UthP3dFY54ygujzPKPWNQtx21Kw2LDi80zSZl//ZaOfjO8
+         YxN47xbBSz3U/NF7iUB6wNsMch+flIXxZMeELpyl1tcQjCp113nnzXwrifGx1r8a/jQ3
+         39jQ0gRTzePAMgJH/nCSljQWKER4SDfz7dWihYz1vTO/7T8GytIcFmlFspFLQp3qL0E1
+         tVYMp4znWVE9axpv4BO7I66dyt+rGMbIRP134wq3OudZCW4/HiqArbKt0OzxKa5c8nEp
+         JM+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dvIcZpPr71LAli4Ctw18NaK663H1wXEFiZ1hnSUC9M0=;
-        b=CZ1WJZXbs+QytiEVsnqSnhpKOqkbFeGOQLDGigS3Awq16O9ychLZCyCklVMNLkgt4P
-         P/eIiJfU2fyz5HdGmErXKtmCn3hizqna997hJ/SJBWsIxbbp5rjc3qmFEv1nD10Qy8ya
-         Ybm75frIMgCRpw8t0IzVSdQ13mVr9DCe6+r6BhZPFmnVpdVW6EbeC14Nbj/tK2q8vq1m
-         zCtXlMPE+RSVd5fz34cX12OGNhiwCo47A4q0a43OlSO+yi2agmQz105DtTgPCAsXiQIG
-         TM56LqHIhFy9Vhg0N151r9UaJQ6e3wqB6PLtxzIMEas+ptw5dg3/SFzTCI9XPGFnfgiA
-         Heeg==
-X-Gm-Message-State: AFqh2kp1y7syUiewJEcX3algrT5bNDwNA+TMiYaxcyh5pQ3j3KbOflZJ
-        KdJSdDbzAVeD4F2PZCldfyBvuw==
-X-Google-Smtp-Source: AMrXdXsUfsCQI3brlhkYMF0HmGM1NDMYajoVu/4uY4pbIRkMs5bSGZzmtTCq2ZDO/aOjIEuDbOFsPg==
-X-Received: by 2002:a05:600c:538c:b0:3cf:6f4d:c259 with SMTP id hg12-20020a05600c538c00b003cf6f4dc259mr2514487wmb.39.1673952453939;
-        Tue, 17 Jan 2023 02:47:33 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id r126-20020a1c2b84000000b003d35c845cbbsm40262609wmr.21.2023.01.17.02.47.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Jan 2023 02:47:33 -0800 (PST)
-Message-ID: <4f56e6b3-c698-0909-17a0-ec8c39b6c25d@linaro.org>
-Date:   Tue, 17 Jan 2023 11:47:32 +0100
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ab9kaP68KTbfELnA5RfuMX2nySH/a7yjfTaW9w+IzMo=;
+        b=P3OKO2mazzMhPMWlZryZ7fyQKhhFF7RIFsRg+C7xyV2IzVx8fRQAbWv2BiOm+iUGT5
+         3cUY8o+W2pNbzrDr6yHzgtfXqm9qEUvdBRH+sFpJYL3olZKpGjukxL6XvpFnvoqykHEu
+         gotH3A/4mSbhisX9Tu/OThm29JE5EjewFjymB+5o9xyvj9puAzhxaVihZffMn41FypfC
+         nizfRQVT2mvgeFjkklHHI8+5jLPtUyuxOXsY0pQQPoTFn2wc4ZlRIDa7S5U9piIKiiJB
+         eGlW42036Slhwmx3PBle8t/7FH/39prbitkmT8yB3zcWYwHACEXy42mmhek/0/Xk+JFO
+         UJjg==
+X-Gm-Message-State: AFqh2kpdQYtj1bF8vwo5E0gAVOG8i8q/6oWVBJWxn20Dth7WHiRfjxkn
+        yvGS/AUb60day9xhJUm8sIWS0YPJ0immiJYNSEr+C4EWfnliXQ==
+X-Google-Smtp-Source: AMrXdXtUkj+X80GHaCSEtfK6VJkoXzpNIi4Od+Fm5gJKD0odkEZAqk2seQg9CBH2llI5M+tCvOu1m9jg56a0UoHPfa0=
+X-Received: by 2002:a05:6402:910:b0:49d:f658:7989 with SMTP id
+ g16-20020a056402091000b0049df6587989mr268384edz.300.1673952857535; Tue, 17
+ Jan 2023 02:54:17 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Add binding for Loongson-1 clock
- driver
-Content-Language: en-US
-To:     Kelvin Cheung <keguang.zhang@gmail.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 References: <20230113110738.1505973-1-keguang.zhang@gmail.com>
- <20230113110738.1505973-2-keguang.zhang@gmail.com>
- <63fdd223-c5e1-302d-ffef-9e582874e938@linaro.org>
- <CAJhJPsV5wC_fNgP9iSi1bUp+HFY=dgyh4-x0OueZ8fQO=p7r8w@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CAJhJPsV5wC_fNgP9iSi1bUp+HFY=dgyh4-x0OueZ8fQO=p7r8w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <20230113110738.1505973-2-keguang.zhang@gmail.com> <167362342081.2212182.3990856069388425566.robh@kernel.org>
+In-Reply-To: <167362342081.2212182.3990856069388425566.robh@kernel.org>
+From:   Kelvin Cheung <keguang.zhang@gmail.com>
+Date:   Tue, 17 Jan 2023 18:54:00 +0800
+Message-ID: <CAJhJPsX-c_05bzA6cvN5b5wubS=cJCcXvRcQNTqR2RUa6Y3ZFw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Add binding for Loongson-1 clock driver
+To:     Rob Herring <robh@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17/01/2023 11:31, Kelvin Cheung wrote:
->>> +  "#clock-cells":
->>> +    const: 0
->>> +
->>> +  compatible:
->>> +    enum:
->>> +      - loongson,ls1b-clk-pll
->>> +      - loongson,ls1b-clk-cpu
->>> +      - loongson,ls1b-clk-ahb
->>> +      - loongson,ls1c-clk-pll
->>> +      - loongson,ls1c-clk-cpu
->>> +      - loongson,ls1c-clk-ahb
->>
->> Are you registering single clocks? It looks like. No, make a proper
->> clock controller.
-> 
-> This binding contains two types of clock, pll-clk and div-clk.
-> Should I split the binding to two bindings files?
+Rob Herring <robh@kernel.org> =E4=BA=8E2023=E5=B9=B41=E6=9C=8813=E6=97=A5=
+=E5=91=A8=E4=BA=94 23:26=E5=86=99=E9=81=93=EF=BC=9A
+>
+>
+> On Fri, 13 Jan 2023 19:07:37 +0800, Keguang Zhang wrote:
+> > Add devicetree binding document for the Loongson-1 clock driver.
+> >
+> > Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
+> > ---
+> >  .../bindings/clock/loongson,ls1x-clk.yaml     | 81 +++++++++++++++++++
+> >  1 file changed, 81 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/loongson,ls=
+1x-clk.yaml
+> >
+>
+> My bot found errors running 'make DT_CHECKER_FLAGS=3D-m dt_binding_check'
+> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+>
+> yamllint warnings/errors:
+>
+> dtschema/dtc warnings/errors:
+> Documentation/devicetree/bindings/clock/loongson,ls1x-clk.example.dts:36.=
+39-41.15: Warning (unique_unit_address_if_enabled): /example-0/clocks/cpu_c=
+lk@1fe78034: duplicate unit-address (also used in node /example-0/clocks/ah=
+b_clk@1fe78034)
 
-No, you should register rather one clock controller. Why this have to be
-3 separate clock controllers?
+I did notice this warning.
+But my situation is the cpu_clk and ahb_clk share the same registers.
+May I have your suggestion?
+Thanks!
+>
+> doc reference errors (make refcheckdocs):
+>
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/202301=
+13110738.1505973-2-keguang.zhang@gmail.com
+>
+> The base for the series is generally the latest rc1. A different dependen=
+cy
+> should be noted in *this* patch.
+>
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+>
+> pip3 install dtschema --upgrade
+>
+> Please check and re-submit after running the above command yourself. Note
+> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> your schema. However, it must be unset to test all examples with your sch=
+ema.
+>
 
->>
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  clocks:
->>> +    maxItems: 1
->>> +
->>> +required:
->>> +  - "#clock-cells"
->>> +  - compatible
->>> +  - clocks
->>> +  - reg
->>> +
->>> +additionalProperties: false
->>> +
->>> +examples:
->>> +  - |
->>> +    clocks {
->>
->> No, not really related to the binding.
-> 
-> Should I remove the "clocks" section?
 
-Yes.
-
->>
->>> +        #address-cells = <1>;
->>> +        #size-cells = <1>;
->>> +        ranges;
->>> +
->>> +        xtal: xtal {
->>
->> Incorrect in this context. Missing unit address.
-> 
-> XTAL doesn't have reg property.
-
-Yeah, but DTS is not correct now, is it? If you doubt, build your DTB
-with W=1.
-
->>
->>> +            compatible = "fixed-clock";
->>> +            #clock-cells = <0>;
->>> +            clock-frequency = <33000000>;
->>> +        };
->>> +
-
+--=20
 Best regards,
-Krzysztof
 
+Kelvin Cheung
