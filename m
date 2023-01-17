@@ -2,77 +2,82 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC0EC3DA78
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 16:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D0DC677F1
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 17:02:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232562AbjAQQud (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Jan 2023 11:50:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57210 "EHLO
+        id S233241AbjAQRCb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Jan 2023 12:02:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231150AbjAQQub (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 11:50:31 -0500
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63A779EF2;
-        Tue, 17 Jan 2023 08:50:30 -0800 (PST)
-Received: by mail-ot1-f44.google.com with SMTP id cc13-20020a05683061cd00b00684b8cf2f4dso9954474otb.12;
-        Tue, 17 Jan 2023 08:50:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fvuc6TjM15pVEhxNJlvL+6pzxQbFucyexQNcCZt/Obk=;
-        b=rQO0yBRQL5IzvAXRDYD0NagQ0qxsED/a19oVCb/nWMCjfkmekNgUluiONqIxFLOYF1
-         Z+5NF6Ny/GCXoQArz6lyKlCQJHdxKNwBuI+BZ70MlKq/1hjMYdEyFooCoYKnKBK/w4cM
-         mNCQeF8qMIHkIvWCmCpzpIw9rkr/miLRTJvxpQEt3OJUYcPH6DP2Szm0O7oahgSW1cvf
-         qH2BCSb4D8ndHmaKENMBtIx0WjpXL3WBM/GdbFhoSBqGoI59H7REQyTU2bkXBWvQREnk
-         h3ke56R0zsYVDMtWWZ8g3r9VTd3SFyfN3nFIUQu7T3L2/NiDsIvwbRP0iVQM7b/uqnZq
-         HfPQ==
-X-Gm-Message-State: AFqh2kpbCGZN5o01qyI9pwoMs+9UerdfsYQTZZVW5H4AC8fO51jF1Y+7
-        rK6KYBS6D+999Yg3y629NQ==
-X-Google-Smtp-Source: AMrXdXtpRB/FOy6cBnSBXmhohKcCcDRGTsqlFyeZQjY+LjpTHV89nHl1JhdrJ+trknfsrI4O7z/HjA==
-X-Received: by 2002:a05:6830:1498:b0:67a:1598:de18 with SMTP id s24-20020a056830149800b0067a1598de18mr1901579otq.6.1673974229623;
-        Tue, 17 Jan 2023 08:50:29 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id g2-20020a9d6b02000000b006864b75be16sm987912otp.19.2023.01.17.08.50.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jan 2023 08:50:29 -0800 (PST)
-Received: (nullmailer pid 3224869 invoked by uid 1000);
-        Tue, 17 Jan 2023 16:50:28 -0000
-Date:   Tue, 17 Jan 2023 10:50:28 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     linux-clk@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S233883AbjAQRCZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 12:02:25 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95B054393E;
+        Tue, 17 Jan 2023 09:02:24 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 332106149A;
+        Tue, 17 Jan 2023 17:02:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64C67C433D2;
+        Tue, 17 Jan 2023 17:02:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673974943;
+        bh=J0fMJMgzFoKpVLn+Krs4tXYA63OB6Vo+2PIw/pLLrAw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=gOsZkyAXeNghzO5zL4f/bDsyewx6FbmWk5rvXdLOEvJkEUJaBmQMKy1khkUUIVTd4
+         Oc8m/RR2SuwRihhHcJet6Uy8cU68N/+HUee3bnWhhDZ+GjHvetErRgX8k/owV3j5UI
+         T6jdml3rFZOoNe8lxzrVWZB36P4QQhG/IH/tgmTm9Tv0wLcufmxJT0pef5l4Wf0YPu
+         BH5mkjJcg6S+bTjTcVSuGZxUJVeaZYCvLUm0XD6WzavhBHvpQlBcd7k53bTvn942x3
+         xmxN5nA1eQS4jOoFd9iUHAy7oyixABvFmzEt65DPZIjUMJbr30gpEKLEbyhCg6oXoE
+         zbHPWi3bP2I+Q==
+From:   Arnd Bergmann <arnd@kernel.org>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH] dt-bindings: clock: qcom,videocc: correct clocks per
- variant
-Message-ID: <167397422754.3224805.16727826269476784233.robh@kernel.org>
-References: <20221224154152.43272-1-krzysztof.kozlowski@linaro.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Alex Elder <elder@linaro.org>,
+        Richard Acayan <mailingradian@gmail.com>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: rpmh: remove duplicate IPA clock reference
+Date:   Tue, 17 Jan 2023 18:02:09 +0100
+Message-Id: <20230117170217.2462320-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221224154152.43272-1-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Arnd Bergmann <arnd@arndb.de>
 
-On Sat, 24 Dec 2022 16:41:52 +0100, Krzysztof Kozlowski wrote:
-> Different SoCs come with a bit different clock inputs:
-> 
->   sm8250-mtp.dtb: clock-controller@abf0000: clock-names:0: 'bi_tcxo' was expected
->   sm8250-mtp.dtb: clock-controller@abf0000: clock-names: ['iface', 'bi_tcxo', 'bi_tcxo_ao'] is too long
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../bindings/clock/qcom,videocc.yaml          | 59 +++++++++++++++++--
->  1 file changed, 55 insertions(+), 4 deletions(-)
-> 
+One of the ones that were recently added was already there:
 
-Applied, thanks!
+drivers/clk/qcom/clk-rpmh.c:578:35: error: initialized field overwritten [-Werror=override-init]
+  578 |         [RPMH_IPA_CLK]          = &clk_rpmh_ipa.hw,
+
+Fixes: aa055bf158cd ("clk: qcom: rpmh: define IPA clocks where required")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/clk/qcom/clk-rpmh.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index 393b83f6020e..45ee370f3307 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -575,7 +575,6 @@ static struct clk_hw *sc8280xp_rpmh_clocks[] = {
+ 	[RPMH_IPA_CLK]          = &clk_rpmh_ipa.hw,
+ 	[RPMH_PKA_CLK]          = &clk_rpmh_pka.hw,
+ 	[RPMH_HWKM_CLK]         = &clk_rpmh_hwkm.hw,
+-	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
+ };
+ 
+ static const struct clk_rpmh_desc clk_rpmh_sc8280xp = {
+-- 
+2.39.0
+
