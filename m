@@ -2,402 +2,119 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FBEBC678DF
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 23:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F2DC00A5A
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 23:52:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229790AbjAQXtr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Jan 2023 18:49:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41192 "EHLO
+        id S229556AbjAQXwJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Jan 2023 18:52:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbjAQXt1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 18:49:27 -0500
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9B4F5B456
-        for <linux-clk@vger.kernel.org>; Tue, 17 Jan 2023 14:58:33 -0800 (PST)
-Received: by mail-ej1-x62a.google.com with SMTP id v6so36045952ejg.6
-        for <linux-clk@vger.kernel.org>; Tue, 17 Jan 2023 14:58:33 -0800 (PST)
+        with ESMTP id S229863AbjAQXvd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 18:51:33 -0500
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00E4447EF4
+        for <linux-clk@vger.kernel.org>; Tue, 17 Jan 2023 15:01:53 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id ud5so79115599ejc.4
+        for <linux-clk@vger.kernel.org>; Tue, 17 Jan 2023 15:01:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8jEqdGtyBbqWcrp6Pvw8/l4oThEOWyJiXSzY/dBYsqg=;
-        b=gbtZn88Oxh9k7ANsEdCV3iSNPui95jhWmyBC5jZf++N+AMCkZwdzyds5JhV0nX8uOy
-         tBrYPte3WHtH+87Io7i/xKAFxr38uvIMeayzzODAxassOJH7x5a3Yfn3n3uLu49XArXj
-         Dsmbq08GEDtEhmLUc8DfCLsglth6DXYpPb5OYUV8h80MhSkhmANvYdu/cv0AoBbtmGRs
-         gMc9B9NQ9wkSF6IZa16j1uOyIoyYxi1ZCYIJMNHgHxRnZIHcvBxnigHSows5Q0jHOKLB
-         kPUCV2BwPEKvhTVaTWst1VcMrvuODoV7DuUsl1f1PtXqSGjt1BB3H29Bw3cFepEdw6FD
-         uwew==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3Rm/I8nO9gd2qK++J479RUyAvGB50YCflkNIheUW3mw=;
+        b=kpFSFEFu1royNwIwK2EHJAzZZ2zAfVa3bMf74nggMFzAc/3fitC0IZRmBqb9r8I1RY
+         t49QMkzlE6Vu2+7OB+uJwzs7vJXixkZVs7t5gRV2FEmtp9V5FS9Sva68+TRy+OlYVYkt
+         1nkOniopaEL/T6BOeXAW7zDDS2qt43tAPj2a+hRxikujO9XLqxGnVb6ocVImAspYpogX
+         3qwVmICK9wERMKs7PEX3dxj8cmgjQzKiWFOx1+QrsV0a/9T06/2+Qfity6dMNuyT/+ac
+         zDRzja8svsbsOT4Ks6M0PvcApxUNdd/TXfjMdhV18vDEymRhuavzegNeftFaqEM40O58
+         Zxfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8jEqdGtyBbqWcrp6Pvw8/l4oThEOWyJiXSzY/dBYsqg=;
-        b=6h5+E1KFZmA8WcFHWTvIfjbzGMNxsIXfi3W+8Y4TlPCaCtITagbcE0WbO7R6gkyh9s
-         SRditfkRhfMppESGhRpOuDYKiqIUF0boWZTfVOogXWKfj4MTxkvvXnBid6o7ty5xT1GI
-         cwuMsTyt8H7H5bLz7cohcaVxl8ejhkiQG/nX+5Yk4+rVJsZMqlKvQH4J5x/O9/gskjO2
-         wQ/ElJbzwKFMxsMqOmsQtOvGWCodrV6Y9k0rzXkG2K7TNjV3ATC0aeFS4HtCd4gcb/Hq
-         y2UUzZKJQg1IWyx5AlSxrj8+O6aNncnEfFtxwmeWng1QP6MUVQ5jlE2LdsAKjKzBBqfX
-         X3mg==
-X-Gm-Message-State: AFqh2krjhe7Z/+yb0yFqSdqN3ErtEkBhWeKE9/oZq8QODwPybpNLcNjV
-        oralds71YEtw06dSUrRqNwq7hw==
-X-Google-Smtp-Source: AMrXdXu4nBhl8pMvwCzOPf30JraOhXnT06IOwYElLA6qMZkDa2SbP+ArX3YGeAyG5PBSwbBBr3bXQw==
-X-Received: by 2002:a17:906:48cb:b0:86d:d334:b90b with SMTP id d11-20020a17090648cb00b0086dd334b90bmr4415264ejt.67.1673996313451;
-        Tue, 17 Jan 2023 14:58:33 -0800 (PST)
-Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id t1-20020a1709061be100b0086f40238403sm3919762ejg.223.2023.01.17.14.58.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jan 2023 14:58:33 -0800 (PST)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Rm/I8nO9gd2qK++J479RUyAvGB50YCflkNIheUW3mw=;
+        b=aRwqFiEwr/ls0jIvs2MQBoskdnC3ihDKLB9IsBD5XyZNrayoa9s0THgudXWw6pB2FE
+         ai11C3KliUd03Eax3502FbhnnccQfR4f3nw2TXmONEWN4B3ukxtf5olmBRsgd2M7ntQY
+         ccRAnwgdhjdtoCHFxQt6bPPWv2f/EntzAlMgOueWhO4w8/2SupsKJ+N4t1nMav28MfQ5
+         1WhMc4wpKCnWmxKiXBDF0LhummEkx4WPJuOwL4XnYDaEwK0bSWsfhf1zsDphyRCQM1t7
+         eWXTseMS9Z74qejezVa+x8PePeGhA58Ki1kZBsPEB++Jl8xvzRIuFFM8fDafg8y6I9rW
+         Wuiw==
+X-Gm-Message-State: AFqh2komiaSX9q4VAtJBoK2TkjUKM4HPr3Xz/nl4CSPRJJ5lhQg6pnfs
+        AC2QCQZWov3sSVcpbKp36CBqKA==
+X-Google-Smtp-Source: AMrXdXurc0vhLvVdLRLeDt5w9RkfHwaMIRUkHQW7M1vvDzpCkrBmoNO3oe0Tmc0SmYKQQq8b5+PgYg==
+X-Received: by 2002:a17:906:9417:b0:86c:f7ac:71ff with SMTP id q23-20020a170906941700b0086cf7ac71ffmr4846348ejx.10.1673996512516;
+        Tue, 17 Jan 2023 15:01:52 -0800 (PST)
+Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
+        by smtp.gmail.com with ESMTPSA id kz11-20020a17090777cb00b007aece68483csm13826994ejc.193.2023.01.17.15.01.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Jan 2023 15:01:52 -0800 (PST)
+Message-ID: <5f8d1b76-5948-3b98-52c0-0f280042fa20@linaro.org>
+Date:   Wed, 18 Jan 2023 01:01:50 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v2] clk: qcom: common: use parent_hws in
+ _qcom_cc_register_board_clk()
+Content-Language: en-GB
+To:     Bjorn Andersson <andersson@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v2 7/7] arm64: dts: qcom: msm8996: scale CBF clock according to the CPUfreq
-Date:   Wed, 18 Jan 2023 00:58:24 +0200
-Message-Id: <20230117225824.1552604-8-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230117225824.1552604-1-dmitry.baryshkov@linaro.org>
-References: <20230117225824.1552604-1-dmitry.baryshkov@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>
+References: <20221228203555.3130090-1-dmitry.baryshkov@linaro.org>
+ <20230111044715.5nbxasuhlqv6t2fw@builder.lan>
+ <CAA8EJppzHoHp5BVBJN-ZF0OmwbtKfxhX_qTEPc5cwSnLTvTcJQ@mail.gmail.com>
+ <20230117033003.ky2i7fc2l72rhysd@builder.lan>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <20230117033003.ky2i7fc2l72rhysd@builder.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Turn CBF into the interconnect provider. Scale CBF frequency (bandwidth)
-according to CPU frequencies.
+On 17/01/2023 05:30, Bjorn Andersson wrote:
+> On Wed, Jan 11, 2023 at 06:49:29AM +0200, Dmitry Baryshkov wrote:
+>> On Wed, 11 Jan 2023 at 06:47, Bjorn Andersson <andersson@kernel.org> wrote:
+>>>
+>>> On Wed, Dec 28, 2022 at 10:35:55PM +0200, Dmitry Baryshkov wrote:
+>>>> Switch _qcom_cc_register_board_clk() to use parent_hws.
+>>>>
+>>>
+>>> There's more to this patch then this short sentence, please describe it
+>>> further.
+>>
+>> True, I'll fix it for v3.
+>>
+>>>
+>>> And given Dan's reported-by, I must assume that there's an issue with
+>>> the current code. Is there a Fixes?
+>>
+>> No. Dan reported an issue with v1, thus his Reported-by was included into v2.
+>>
+> 
+> I though it meant "this corrects an issue that was Reported-by".
+> 
+> IMHO including "issues was fixed during code review after being
+> Reported-by" diminishing the value of this trailer - in particular since
+> we don't use it broadly to capture anyone else's review feedback.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 50 +++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+I particularly use it for the cases when the issue was reported by 
+testing robot or by Dan (or Dan's robot), since these emails explicitly 
+ask for such trailer.
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 7d8e31b84959..fc932a059d9f 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -49,6 +49,7 @@ CPU0: cpu@0 {
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			capacity-dmips-mhz = <1024>;
- 			clocks = <&kryocc 0>;
-+			interconnects = <&cbf 0 &cbf 1>;
- 			operating-points-v2 = <&cluster0_opp>;
- 			#cooling-cells = <2>;
- 			next-level-cache = <&L2_0>;
-@@ -66,6 +67,7 @@ CPU1: cpu@1 {
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			capacity-dmips-mhz = <1024>;
- 			clocks = <&kryocc 0>;
-+			interconnects = <&cbf 0 &cbf 1>;
- 			operating-points-v2 = <&cluster0_opp>;
- 			#cooling-cells = <2>;
- 			next-level-cache = <&L2_0>;
-@@ -79,6 +81,7 @@ CPU2: cpu@100 {
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			capacity-dmips-mhz = <1024>;
- 			clocks = <&kryocc 1>;
-+			interconnects = <&cbf 0 &cbf 1>;
- 			operating-points-v2 = <&cluster1_opp>;
- 			#cooling-cells = <2>;
- 			next-level-cache = <&L2_1>;
-@@ -96,6 +99,7 @@ CPU3: cpu@101 {
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			capacity-dmips-mhz = <1024>;
- 			clocks = <&kryocc 1>;
-+			interconnects = <&cbf 0 &cbf 1>;
- 			operating-points-v2 = <&cluster1_opp>;
- 			#cooling-cells = <2>;
- 			next-level-cache = <&L2_1>;
-@@ -147,91 +151,109 @@ opp-307200000 {
- 			opp-hz = /bits/ 64 <307200000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <307200>;
- 		};
- 		opp-422400000 {
- 			opp-hz = /bits/ 64 <422400000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <307200>;
- 		};
- 		opp-480000000 {
- 			opp-hz = /bits/ 64 <480000000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <307200>;
- 		};
- 		opp-556800000 {
- 			opp-hz = /bits/ 64 <556800000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <307200>;
- 		};
- 		opp-652800000 {
- 			opp-hz = /bits/ 64 <652800000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <384000>;
- 		};
- 		opp-729600000 {
- 			opp-hz = /bits/ 64 <729600000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <460800>;
- 		};
- 		opp-844800000 {
- 			opp-hz = /bits/ 64 <844800000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <537600>;
- 		};
- 		opp-960000000 {
- 			opp-hz = /bits/ 64 <960000000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <672000>;
- 		};
- 		opp-1036800000 {
- 			opp-hz = /bits/ 64 <1036800000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <672000>;
- 		};
- 		opp-1113600000 {
- 			opp-hz = /bits/ 64 <1113600000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <825600>;
- 		};
- 		opp-1190400000 {
- 			opp-hz = /bits/ 64 <1190400000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <825600>;
- 		};
- 		opp-1228800000 {
- 			opp-hz = /bits/ 64 <1228800000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <902400>;
- 		};
- 		opp-1324800000 {
- 			opp-hz = /bits/ 64 <1324800000>;
- 			opp-supported-hw = <0xd>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <1056000>;
- 		};
- 		opp-1363200000 {
- 			opp-hz = /bits/ 64 <1363200000>;
- 			opp-supported-hw = <0x2>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <1132800>;
- 		};
- 		opp-1401600000 {
- 			opp-hz = /bits/ 64 <1401600000>;
- 			opp-supported-hw = <0xd>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <1132800>;
- 		};
- 		opp-1478400000 {
- 			opp-hz = /bits/ 64 <1478400000>;
- 			opp-supported-hw = <0x9>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <1190400>;
- 		};
- 		opp-1497600000 {
- 			opp-hz = /bits/ 64 <1497600000>;
- 			opp-supported-hw = <0x04>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <1305600>;
- 		};
- 		opp-1593600000 {
- 			opp-hz = /bits/ 64 <1593600000>;
- 			opp-supported-hw = <0x9>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <1382400>;
- 		};
- 	};
- 
-@@ -245,136 +267,163 @@ opp-307200000 {
- 			opp-hz = /bits/ 64 <307200000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <307200>;
- 		};
- 		opp-403200000 {
- 			opp-hz = /bits/ 64 <403200000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <307200>;
- 		};
- 		opp-480000000 {
- 			opp-hz = /bits/ 64 <480000000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <307200>;
- 		};
- 		opp-556800000 {
- 			opp-hz = /bits/ 64 <556800000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <307200>;
- 		};
- 		opp-652800000 {
- 			opp-hz = /bits/ 64 <652800000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <307200>;
- 		};
- 		opp-729600000 {
- 			opp-hz = /bits/ 64 <729600000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <307200>;
- 		};
- 		opp-806400000 {
- 			opp-hz = /bits/ 64 <806400000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <384000>;
- 		};
- 		opp-883200000 {
- 			opp-hz = /bits/ 64 <883200000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <460800>;
- 		};
- 		opp-940800000 {
- 			opp-hz = /bits/ 64 <940800000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <537600>;
- 		};
- 		opp-1036800000 {
- 			opp-hz = /bits/ 64 <1036800000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <595200>;
- 		};
- 		opp-1113600000 {
- 			opp-hz = /bits/ 64 <1113600000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <672000>;
- 		};
- 		opp-1190400000 {
- 			opp-hz = /bits/ 64 <1190400000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <672000>;
- 		};
- 		opp-1248000000 {
- 			opp-hz = /bits/ 64 <1248000000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <748800>;
- 		};
- 		opp-1324800000 {
- 			opp-hz = /bits/ 64 <1324800000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <825600>;
- 		};
- 		opp-1401600000 {
- 			opp-hz = /bits/ 64 <1401600000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <902400>;
- 		};
- 		opp-1478400000 {
- 			opp-hz = /bits/ 64 <1478400000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <979200>;
- 		};
- 		opp-1555200000 {
- 			opp-hz = /bits/ 64 <1555200000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <1056000>;
- 		};
- 		opp-1632000000 {
- 			opp-hz = /bits/ 64 <1632000000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <1190400>;
- 		};
- 		opp-1708800000 {
- 			opp-hz = /bits/ 64 <1708800000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <1228800>;
- 		};
- 		opp-1785600000 {
- 			opp-hz = /bits/ 64 <1785600000>;
- 			opp-supported-hw = <0xf>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <1305600>;
- 		};
- 		opp-1804800000 {
- 			opp-hz = /bits/ 64 <1804800000>;
- 			opp-supported-hw = <0xe>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <1305600>;
- 		};
- 		opp-1824000000 {
- 			opp-hz = /bits/ 64 <1824000000>;
- 			opp-supported-hw = <0x1>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <1382400>;
- 		};
- 		opp-1900800000 {
- 			opp-hz = /bits/ 64 <1900800000>;
- 			opp-supported-hw = <0x4>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <1305600>;
- 		};
- 		opp-1920000000 {
- 			opp-hz = /bits/ 64 <1920000000>;
- 			opp-supported-hw = <0x1>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <1459200>;
- 		};
- 		opp-1996800000 {
- 			opp-hz = /bits/ 64 <1996800000>;
- 			opp-supported-hw = <0x1>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <1593600>;
- 		};
- 		opp-2073600000 {
- 			opp-hz = /bits/ 64 <2073600000>;
- 			opp-supported-hw = <0x1>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <1593600>;
- 		};
- 		opp-2150400000 {
- 			opp-hz = /bits/ 64 <2150400000>;
- 			opp-supported-hw = <0x1>;
- 			clock-latency-ns = <200000>;
-+			opp-peak-kBps = <1593600>;
- 		};
- 	};
- 
-@@ -3567,6 +3616,7 @@ cbf: clock-controller@9a11000 {
- 			reg = <0x09a11000 0x10000>;
- 			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>, <&apcs_glb>;
- 			#clock-cells = <0>;
-+			#interconnect-cells = <1>;
- 		};
- 
- 		intc: interrupt-controller@9bc0000 {
+> 
+> 
+> PS. I'm definitely in favour of introducing a trailer to give Dan, and
+> others, credit for reviews.
+
+Any particular suggestion?
+
 -- 
-2.39.0
+With best wishes
+Dmitry
 
