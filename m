@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE73DC6379F
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 06:17:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 637B6C678D4
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Jan 2023 06:17:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235775AbjAQGRK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Jan 2023 01:17:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57054 "EHLO
+        id S235902AbjAQGRJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Jan 2023 01:17:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235782AbjAQGQF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 01:16:05 -0500
+        with ESMTP id S235772AbjAQGQE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jan 2023 01:16:04 -0500
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 508E628849
-        for <linux-clk@vger.kernel.org>; Mon, 16 Jan 2023 22:15:46 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68AC8279B4
+        for <linux-clk@vger.kernel.org>; Mon, 16 Jan 2023 22:15:45 -0800 (PST)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ore@pengutronix.de>)
-        id 1pHfFf-0002TY-Hr; Tue, 17 Jan 2023 07:15:19 +0100
+        id 1pHfFf-0002TW-Do; Tue, 17 Jan 2023 07:15:19 +0100
 Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ore@pengutronix.de>)
-        id 1pHfFZ-006c0Q-SL; Tue, 17 Jan 2023 07:15:13 +0100
+        id 1pHfFZ-006c0M-OF; Tue, 17 Jan 2023 07:15:13 +0100
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ore@pengutronix.de>)
-        id 1pHfFX-00Fck9-2p; Tue, 17 Jan 2023 07:15:11 +0100
+        id 1pHfFW-00FciY-Sk; Tue, 17 Jan 2023 07:15:10 +0100
 From:   Oleksij Rempel <o.rempel@pengutronix.de>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -41,9 +41,9 @@ Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
         Russell King <linux@armlinux.org.uk>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH v2 14/19] clk: imx: add imx_obtain_fixed_of_clock()
-Date:   Tue, 17 Jan 2023 07:14:48 +0100
-Message-Id: <20230117061453.3723649-15-o.rempel@pengutronix.de>
+Subject: [PATCH v2 03/19] ARM: imx6q: skip ethernet refclock reconfiguration if enet_clk_ref is present
+Date:   Tue, 17 Jan 2023 07:14:37 +0100
+Message-Id: <20230117061453.3723649-4-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20230117061453.3723649-1-o.rempel@pengutronix.de>
 References: <20230117061453.3723649-1-o.rempel@pengutronix.de>
@@ -57,54 +57,75 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add imx_obtain_fixed_of_clock() to optionally add clock not configured in
-the devicetree.
+Current mach-imx6q code has following logic:
+- if ptp clock of the ethernet controller node is attached to the SoC
+  internal enet_ref clock, then we configure RMII reference clock pin as
+  output by setting IOMUXC_GPR1 BIT(21).
+  In this case - MAC (SoC) is the clock provider, PHY is the clock consumer.
+- if ptp clock of the ethernet controller node is not attached to the
+  enet_ref clock, then we configure RMII reference clock pin as input by
+  clearing IOMUXC_GPR1 BIT(21).
+  In this case - PHY is the clock provider, MAC is the clock consumer.
+
+According to the Freescale MX6SDL ReferenceManual v4, IOMUXC_GPR1 BIT(21)
+(page 2033) this configuration bit is not related to the PTP (IEEE1588)
+clock:
+21 ENET_CLK_SEL - choose enet reference clk mode:
+   0 - get enet tx reference clk from pad (external OSC for both external
+       PHY and Internal Controller)
+   1 - get enet tx reference clk from internal clock from anatop (loopback
+       through pad), this clock also sent out to external PHY.
+
+According to the Documentation/devicetree/bindings/net/fsl,fec.yaml:
+      The "ptp"(option), for IEEE1588 timer clock that requires the clock.
+      The "enet_clk_ref"(option), for MAC transmit/receiver reference clock
+      like RGMII TXC clock or RMII reference clock. It depends on board
+      design, the clock is required if RGMII TXC and RMII reference clock
+      source from SOC internal PLL.
+      The "enet_out"(option), output clock for external device, like supply
+      clock for PHY. The clock is required if PHY clock source from SOC.
+
+We can see, that "enet_clk_ref" clock is the best fit for this purpose.
+Other properties like "ptp" is designed for IEEE1588 and "enet_out" do
+not have real functionality within imx related clock infrastructure.
+
+Since the "enet_clk_ref" is not used by the imx6qdl devicetrees, we can
+use it as indicator of potentially properly configured DT. At same time
+we can keep ptp clock based logic as the fallback for old DTs.
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- drivers/clk/imx/clk.c | 14 ++++++++++++++
- drivers/clk/imx/clk.h |  3 +++
- 2 files changed, 17 insertions(+)
+ arch/arm/mach-imx/mach-imx6q.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-index b636cc099d96..5f1f729008ee 100644
---- a/drivers/clk/imx/clk.c
-+++ b/drivers/clk/imx/clk.c
-@@ -110,6 +110,20 @@ struct clk_hw *imx_obtain_fixed_clock_hw(
- 	return __clk_get_hw(clk);
- }
- 
-+struct clk_hw *imx_obtain_fixed_of_clock(struct device_node *np,
-+					 const char *name, unsigned long rate)
-+{
-+	struct clk *clk = of_clk_get_by_name(np, name);
-+	struct clk_hw *hw;
-+
-+	if (IS_ERR(clk))
-+		hw = imx_obtain_fixed_clock_hw(name, rate);
-+	else
-+		hw = __clk_get_hw(clk);
-+
-+	return hw;
-+}
-+
- struct clk_hw *imx_get_clk_hw_by_name(struct device_node *np, const char *name)
+diff --git a/arch/arm/mach-imx/mach-imx6q.c b/arch/arm/mach-imx/mach-imx6q.c
+index c9d7c29d95e1..7f6200925752 100644
+--- a/arch/arm/mach-imx/mach-imx6q.c
++++ b/arch/arm/mach-imx/mach-imx6q.c
+@@ -79,7 +79,7 @@ static void __init imx6q_enet_phy_init(void)
+ static void __init imx6q_1588_init(void)
  {
- 	struct clk *clk;
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 801213109697..f0a24cd54d1c 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -288,6 +288,9 @@ struct clk * imx_obtain_fixed_clock(
- struct clk_hw *imx_obtain_fixed_clock_hw(
- 			const char *name, unsigned long rate);
+ 	struct device_node *np;
+-	struct clk *ptp_clk;
++	struct clk *ptp_clk, *fec_enet_ref;
+ 	struct clk *enet_ref;
+ 	struct regmap *gpr;
+ 	u32 clksel;
+@@ -90,6 +90,14 @@ static void __init imx6q_1588_init(void)
+ 		return;
+ 	}
  
-+struct clk_hw *imx_obtain_fixed_of_clock(struct device_node *np,
-+					 const char *name, unsigned long rate);
++	/*
++	 * If enet_clk_ref configured, we assume DT did it properly and .
++	 * clk-imx6q.c will do needed configuration.
++	 */
++	fec_enet_ref = of_clk_get_by_name(np, "enet_clk_ref");
++	if (!IS_ERR(fec_enet_ref))
++		goto put_node;
 +
- struct clk_hw *imx_get_clk_hw_by_name(struct device_node *np, const char *name);
- 
- struct clk_hw *imx_clk_hw_gate_exclusive(const char *name, const char *parent,
+ 	ptp_clk = of_clk_get(np, 2);
+ 	if (IS_ERR(ptp_clk)) {
+ 		pr_warn("%s: failed to get ptp clock\n", __func__);
 -- 
 2.30.2
 
