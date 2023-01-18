@@ -2,74 +2,157 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C082C38147
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Jan 2023 19:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D2B7C32793
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Jan 2023 19:15:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229734AbjARTLG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Jan 2023 14:11:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46858 "EHLO
+        id S229944AbjARTPr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Jan 2023 14:15:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229663AbjARTLF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 14:11:05 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17745530C1;
-        Wed, 18 Jan 2023 11:11:04 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S229915AbjARTPq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 14:15:46 -0500
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6018F53B02;
+        Wed, 18 Jan 2023 11:15:41 -0800 (PST)
+Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A70BF619C5;
-        Wed, 18 Jan 2023 19:11:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA584C433D2;
-        Wed, 18 Jan 2023 19:11:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674069063;
-        bh=Nv6pusw6gTldht2J9OiYqivb3O/jn9kff9e+OmktbW4=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=QAnoE0mc1tZha037fZcCzUut7YSpS9BilUeV3MFKvRJh96egg16FLHt9D3+i6jnll
-         syOsfEFxjxciz+6QD5QvATeb+A+py+oHRDPYuqDnGwbb3MKoMRA6i1WmtsvpHdRcFt
-         eJI8prfVRmw+bkzWNbCz6XW/Mf/bsu13HLuR55xpBuBKC2Pyr6AY+bfV07E5EB4Xku
-         pZVkP7DSH9GdU+CKBbgu+voj3YlUnugTlf0gwwLxEtJuIpA49NDBTrgoVQnhnGs2x5
-         hsS5AClCbp2W8Uj829mXBscL0tqb7JNYMIgmW1h0aJPNzxJGx5yBBjJG3UfMFdCVpR
-         1gST9rBagNXaA==
-Message-ID: <705c78c1d0da18089419b064832d5fed.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <063c5516-417d-7c21-b58f-a6552779a621@linaro.org>
-References: <20230113145859.82868-1-krzysztof.kozlowski@linaro.org> <e73ad320fafa1365e3506bbd4cc77d8d.sboyd@kernel.org> <063c5516-417d-7c21-b58f-a6552779a621@linaro.org>
-Subject: Re: [PATCH] dt-bindings: clock: qcom,a53pll: drop operating-points-v2
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 653CB83E5D;
+        Wed, 18 Jan 2023 20:15:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1674069339;
+        bh=a7gPiG8FFgLvCnSNSaMmiJpOA8+f0Jg5tthAV6Kjb8g=;
+        h=From:To:Cc:Subject:Date:From;
+        b=P66KFyM/lT9Ifd6F+NCBv5hLtZtQZYRzyvRfS/mJUu8I1U5Jv0NMbroak3jv865uP
+         wE2qTJkzWXTUKbcv+yB87UkHx/wqyx0Pvm9VdY5igf+BRnIh/VyG7qwlQMWalNRSlW
+         AICN5Xv2/aDS+OrRv4GInhkpPnUd6lziYnc9WGwTfKDgvguk9az3fU8Md7DEYhKgKr
+         OS/aTVdeHiwdiBnCrSUU0nWalQbi8lMj90WL4O6QKYQHEh1igt6Nkf35xYh6l0qL0+
+         +Dc6w41wHNPkLvtSlXLcZknuDqPXlTVkar1fdM24vsAlKioCYalqgt3sOb+SawFmZ1
+         aZBNV2c2J58CQ==
+From:   Marek Vasut <marex@denx.de>
+To:     linux-clk@vger.kernel.org
+Cc:     Marek Vasut <marex@denx.de>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 18 Jan 2023 11:11:00 -0800
-User-Agent: alot/0.10
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org
+Subject: [PATCH v3 1/2] dt-bindings: clk: si521xx: Add Skyworks Si521xx I2C PCIe clock generators
+Date:   Wed, 18 Jan 2023 20:15:20 +0100
+Message-Id: <20230118191521.15544-1-marex@denx.de>
+X-Mailer: git-send-email 2.39.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2023-01-15 06:35:23)
-> On 13/01/2023 21:28, Stephen Boyd wrote:
-> > Quoting Krzysztof Kozlowski (2023-01-13 06:58:59)
-> >> The CPU PLL clock node does not use OPP tables (neither driver).
-> >=20
-> > What device is qcom_a53pll_get_freq_tbl() operating on?
->=20
-> On its own, internal table. While of course driver could be converted to
-> operating-points-v2, no one did it within last 5 years, so why it should
-> happen now?
->=20
+Add binding for Skyworks Si521xx PCIe clock generators. This binding
+is designed to support Si52144/Si52146/Si52147 series I2C PCIe clock
+generators, tested model is Si52144. It should be possible to add
+Si5213x series as well.
 
-The property was added mid 2021 by Shawn[1], that's not 5 years ago. I
-guess there were plans to add an OPP table that never happened[2]? Is
-Shawn still working on this? If not, we should revert the OPP code out
-of the driver.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Marek Vasut <marex@denx.de>
+---
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: Marek Vasut <marex@denx.de>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-mediatek@lists.infradead.org
+Cc: linux-riscv@lists.infradead.org
+To: linux-clk@vger.kernel.org
+---
+V2: - Drop 'Binding for'
+    - Drop reg: description
+    - Drop ref25 from example
+V3: - Replace i2c@0 with plain i2c
+    - Drop reg property from the i2c node
+    - Add RB from Krzysztof
+---
+ .../bindings/clock/skyworks,si521xx.yaml      | 59 +++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/skyworks,si521xx.yaml
 
-[1] https://lore.kernel.org/all/20210704024032.11559-4-shawn.guo@linaro.org/
-[2] https://lore.kernel.org/all/20210709021334.GB11342@dragon/
+diff --git a/Documentation/devicetree/bindings/clock/skyworks,si521xx.yaml b/Documentation/devicetree/bindings/clock/skyworks,si521xx.yaml
+new file mode 100644
+index 0000000000000..9e35e0e51ce8a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/skyworks,si521xx.yaml
+@@ -0,0 +1,59 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/skyworks,si521xx.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Skyworks Si521xx I2C PCIe clock generators
++
++description: |
++  The Skyworks Si521xx are I2C PCIe clock generators providing
++  from 4 to 9 output clocks.
++
++maintainers:
++  - Marek Vasut <marex@denx.de>
++
++properties:
++  compatible:
++    enum:
++      - skyworks,si52144
++      - skyworks,si52146
++      - skyworks,si52147
++
++  reg:
++    const: 0x6b
++
++  '#clock-cells':
++    const: 1
++
++  clocks:
++    items:
++      - description: XTal input clock
++
++  skyworks,out-amplitude-microvolt:
++    enum: [ 300000, 400000, 500000, 600000, 700000, 800000, 900000, 1000000 ]
++    description: Output clock signal amplitude
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        clock-generator@6b {
++            compatible = "skyworks,si52144";
++            reg = <0x6b>;
++            #clock-cells = <1>;
++            clocks = <&ref25m>;
++        };
++    };
++
++...
+-- 
+2.39.0
+
