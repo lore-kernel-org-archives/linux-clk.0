@@ -2,82 +2,106 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB487C004D4
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Jan 2023 09:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FFD4C32793
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Jan 2023 09:50:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230059AbjARJZi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Jan 2023 04:25:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45156 "EHLO
+        id S229887AbjARJuT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Jan 2023 04:50:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230124AbjARJTs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 04:19:48 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9841731E11
-        for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 00:36:50 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id k16so3438588wms.2
-        for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 00:36:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xr06O8+W1sZizWGYArRkHB/dtHQ3jw0hjkts8auzEDE=;
-        b=fKXbCTo7EeN6KYvgEFqkRBP599jfdlGXNHPulXDVTXtwYQgIb9kUNcGD6wz4NVkaIy
-         zW3xyYU4j1loeH/A1viCrVawCbMpF7dK1vgzleW+Dodigbk/dsdrd3gud563prgSXiFl
-         PtkBYMS8olXllMk6nBio3MJ6QVwoXdciL46sAPgQYkRjhlQixRZT+7mRVuMr07+uaCHp
-         3t7zid9epPIjUIpegC58ylfbzH5j4qfgsTQfFZ9hnDCEhFSbGTrfOjIFAKEGQig3MOVt
-         W7WQM23Hwk9n0u/euB6n/eKNb+lHpI0Q97SY5LZKqnrMJe5VGzLIqpOr3MZuGvi0MU++
-         ohPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xr06O8+W1sZizWGYArRkHB/dtHQ3jw0hjkts8auzEDE=;
-        b=t9Nj2IAmF22/CABziKy5EcV9/lS850Aum7FNXEoxauAgK6JsbjWHbm7fLdMIiMZf7k
-         2Te7UorUxWPFFbK5/CHN6Ovnc+dONJ+uVeuVSATberr47Yt1J5xmcgtH5IS7oqqyrFm2
-         GFy9O6yrkkPNBq+qtGyN0QEmVBK3FtC6Y9DRyMa0wl7QIEIc85g1zPK+OBvANy6Da4JA
-         Lhl3gPf7HTc53vh0uYX/XP7x4MoIIvdsslTS2qlWcbMRpFI0IdifMxi7kpaLtdMk608n
-         UEgbURVCHwqWDO4LBXVCxtk6XpBNLm8IHmfhWS9UCTA9AN7morwSSeh9LAdvaUjLMp+9
-         LDwg==
-X-Gm-Message-State: AFqh2kplBaVu4fNDG0jGYlkSvk//MV+gK59qvz/Ie6df885H1b/PI3Es
-        bJNNN/eGYnAQnfF2walk+fA=
-X-Google-Smtp-Source: AMrXdXtKQhT8TnWPOKreOAAUc4AsLxXQUWO2I/Ba6/8kWkOMsTsOStng0OU1TRNqO2COLT0Cxn3hpA==
-X-Received: by 2002:a05:600c:3488:b0:3cf:68f8:790b with SMTP id a8-20020a05600c348800b003cf68f8790bmr1763913wmq.11.1674031009058;
-        Wed, 18 Jan 2023 00:36:49 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id l11-20020a1ced0b000000b003dafb0c8dfbsm1582835wmh.14.2023.01.18.00.36.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jan 2023 00:36:48 -0800 (PST)
-Date:   Wed, 18 Jan 2023 11:36:45 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     Antoine Tenart <atenart@kernel.org>
-Cc:     linux-clk@vger.kernel.org
-Subject: Re: [bug report] net: macb: convert to phylink
-Message-ID: <Y8evnRh4y6GVMnyZ@kadam>
-References: <Y8apdBlLDcqydGcG@kili>
- <167396948997.3401.13412978788541812942@kwain.local>
+        with ESMTP id S230364AbjARJtZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 04:49:25 -0500
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C19A893C1;
+        Wed, 18 Jan 2023 01:01:04 -0800 (PST)
+Received: (Authenticated sender: clement.leger@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id DBF4A40012;
+        Wed, 18 Jan 2023 09:01:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1674032463;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=8z/Q2gyB/XYfvoTgyUKTlJZT/mKlDjrAbq9hj0Y/D0A=;
+        b=iEyZ3aQ+4h9CQnWbkJCIwoSqekzHo+MiiACP8029LqTGD2NJSoztMy69tAM5jgxSDtQdQB
+        nCK9i3Z+wQ/H/DYUO02Ts5BVa6B0xzGV93624icz4/7oe5PRBQLDd6f68+TlsxnTapIuUD
+        iQ8H9Pt1QIBrfnXs+gnJcQc7d9zYQvKQquFqH0wiXVxu0T1P/a9UuUEIyGg6++r1jiAOBN
+        BBRs90e3ADC9MhfwGOpUwOGM1CkbRZ02ca1R30lADrGTIHLNkDX4MFOnYVMQWZIRH7QCQA
+        Hp9PPcZAxN96NDmscRuyoXn19UrBjC3IOghcV6InNIzF5ygaINpAs2TOO9c4eQ==
+From:   =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: add missing of_node_put() in "assigned-clocks" property parsing
+Date:   Wed, 18 Jan 2023 10:02:47 +0100
+Message-Id: <20230118090247.184596-1-clement.leger@bootlin.com>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <167396948997.3401.13412978788541812942@kwain.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 17, 2023 at 04:31:29PM +0100, Antoine Tenart wrote:
-> Quoting Dan Carpenter (2023-01-17 14:58:12)
-> > 
-> > The patch 7897b071ac3b: "net: macb: convert to phylink" from Nov 13,
-> > 2019, leads to the following Smatch static checker warning:
-> 
-> I don't think the above commit is the right one, macb_set_tx_clk wasn't
-> called while holding a spinlock at the time. This behaviour seemed to
-> have been introduced by commit 633e98a711ac ("net: macb: use resolved
-> link config in mac_link_up()").
-> 
+When returning from of_parse_phandle_with_args(), the np member of the
+of_phandle_args structure should be put after usage. Add missing
+of_node_put() calls in both __set_clk_parents() and __set_clk_rates().
 
-Oh, yeah.  You're right.  Let me send this to Russell.
+Signed-off-by: Clément Léger <clement.leger@bootlin.com>
+---
+ drivers/clk/clk-conf.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
+index 2ef819606c41..1a4e6340f95c 100644
+--- a/drivers/clk/clk-conf.c
++++ b/drivers/clk/clk-conf.c
+@@ -33,9 +33,12 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
+ 			else
+ 				return rc;
+ 		}
+-		if (clkspec.np == node && !clk_supplier)
++		if (clkspec.np == node && !clk_supplier) {
++			of_node_put(clkspec.np);
+ 			return 0;
++		}
+ 		pclk = of_clk_get_from_provider(&clkspec);
++		of_node_put(clkspec.np);
+ 		if (IS_ERR(pclk)) {
+ 			if (PTR_ERR(pclk) != -EPROBE_DEFER)
+ 				pr_warn("clk: couldn't get parent clock %d for %pOF\n",
+@@ -48,10 +51,12 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
+ 		if (rc < 0)
+ 			goto err;
+ 		if (clkspec.np == node && !clk_supplier) {
++			of_node_put(clkspec.np);
+ 			rc = 0;
+ 			goto err;
+ 		}
+ 		clk = of_clk_get_from_provider(&clkspec);
++		of_node_put(clkspec.np);
+ 		if (IS_ERR(clk)) {
+ 			if (PTR_ERR(clk) != -EPROBE_DEFER)
+ 				pr_warn("clk: couldn't get assigned clock %d for %pOF\n",
+@@ -93,10 +98,13 @@ static int __set_clk_rates(struct device_node *node, bool clk_supplier)
+ 				else
+ 					return rc;
+ 			}
+-			if (clkspec.np == node && !clk_supplier)
++			if (clkspec.np == node && !clk_supplier) {
++				of_node_put(clkspec.np);
+ 				return 0;
++			}
+ 
+ 			clk = of_clk_get_from_provider(&clkspec);
++			of_node_put(clkspec.np);
+ 			if (IS_ERR(clk)) {
+ 				if (PTR_ERR(clk) != -EPROBE_DEFER)
+ 					pr_warn("clk: couldn't get clock %d for %pOF\n",
+-- 
+2.39.0
 
