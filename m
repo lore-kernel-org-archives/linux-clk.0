@@ -2,160 +2,119 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A5FC32793
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Jan 2023 12:10:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F461C38147
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Jan 2023 12:15:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230253AbjARMKf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Jan 2023 07:10:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41492 "EHLO
+        id S230190AbjARMPN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Jan 2023 07:15:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230256AbjARMJs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 07:09:48 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF3664523A
-        for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 03:28:47 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id q10-20020a1cf30a000000b003db0edfdb74so1029675wmq.1
-        for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 03:28:47 -0800 (PST)
+        with ESMTP id S230296AbjARMOi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 07:14:38 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C05E84672B
+        for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 03:34:55 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id fl11-20020a05600c0b8b00b003daf72fc844so1224586wmb.0
+        for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 03:34:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=UxUpFn+vHXo2x03dVOOns5Z5QVeKCPlOcCL5Odszc18=;
-        b=d3EV88ulnfx6lUcl0/QzgicIPKxB5qwBgvjZVjaqWEUTnU+MajTyD7Z22LRE9ox1z2
-         YgBAg5yhz2EctzUwY0FtohcQro2wiiVSfs8YnuLO2994Cx5GkGzTeorCs0wxuvGXUrCx
-         vtyPJykT7oVTryo/s+bFwHRGpDBlB7xYPtUN5N64gezpD1Qx2x984XPiK0cTwyW/Xtb+
-         /FqtjiCijX42x8+mi7JreftzeVF8wah9A5MM/DdlqEiY5u3e28uo1S70JD3FGluU+hOq
-         C10xJCcpOCYfw0Vkfj2z7JifNKHj9lzIBykMkWqNR/1mpS0Z83xgQP9AZt4056QUes4i
-         6ztA==
+        bh=UmrZHvM1DlPNSOW3Xlkk3jNqiZi+8RsKuRw9Ed+dB6M=;
+        b=soyoUjyM6lCyBm738nBiG3QZMffXSdK/FAbzUKQqOOnOa1KE2ODZHiW4vHSpHOAkWH
+         nlnuprkLbTVnqi1A7qa3Awa/oQyrcNjg/L7DKmSm6W64tZR+JTG/QAZgZmeW3OfvIoG/
+         o/6xscBJP90jIQPwbDIwnEd8lGR0NVafYEvz7yK2nRTP3HL2A3GlW60c+l35lzqdAmdB
+         P/M8gGXfNWf1T1dyCYupm/TM/DtBF5vVW/DSNnsib+1GXYKfeZBov8cFJ4gnypsY8Wfi
+         Q/CUdcrNIu57jnqT3/Txa1tbUBUTK6XFZeF6BJSUkJ8qeODvXHWWs0KVxa/l9xra8kLx
+         hxBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UxUpFn+vHXo2x03dVOOns5Z5QVeKCPlOcCL5Odszc18=;
-        b=kHVhUxWSIwgTX2LshENUBI0UHPAdJsrFxmEiW3QmWmFxN7R5AAt1EKlDO3Fezf3IT9
-         AZoJUqhZ7HFWm1L+PSFRU9NCWhak2iBEtx4J+yMB6DGbs6zd798dkaicnkuuX5EKgioT
-         NV7JQwjkXWBH3IlasV1P0cRPFlA654UYGBOYVu53Y7uUD1ev2ngpPoNwtK9DT0OPmheY
-         f0YUgqqy4gQX5hqq3usCOIGG5ftnD8+fXQZxb2r6OSUvzbTXuPCjEvGd0JU2ds6d9MzW
-         11IYvecGecVUPzelcL1ZAXq2mX6bKmvk2TA0QTsASLXZigyz/Qwo9VOxIDr3sfso7JDl
-         KrMw==
-X-Gm-Message-State: AFqh2koj2nKUFgRrjNHACWJU2TgWqDUKcg7xV/7FRVWWW2SLv4Y7WHTt
-        7S5TLVxpOpcCbSTt0WwsBJIycQ==
-X-Google-Smtp-Source: AMrXdXuId3Foh0SWVAY6qz8qAyCxJvW+7NG5DagvGGRV2VtZXY8/2QFgCREY5aLHUMTPIz9TAgGKYg==
-X-Received: by 2002:a05:600c:4f12:b0:3d0:7415:c5a9 with SMTP id l18-20020a05600c4f1200b003d07415c5a9mr2286903wmq.21.1674041326432;
-        Wed, 18 Jan 2023 03:28:46 -0800 (PST)
+        bh=UmrZHvM1DlPNSOW3Xlkk3jNqiZi+8RsKuRw9Ed+dB6M=;
+        b=wRwn9qkUx+FUyDdhhoubz3sSV2JYO65vTSFwXfDJi0BI5nhsoCjOkujwzgq6XY3fG/
+         6bSklmbrSj06TgFv5NXikWTZ91Pyla5z5hps0S8tNQ/BobLdw7xkqLHu2ChACqStZbec
+         P4ASvSzMCWc6EiCn9AI/TWshbprztO6NVFPByfoWV6qOqLGCstWSSGYllMOpvrADFpys
+         vd5idU3kSXlM5dJXsZ8g4UNem+AAulYFPYd/ECtRMtotNZ8O6eWXqJ1THIu8UFe8aaTL
+         SIdEGdEHMRgIafAzYfPKUhGaLQC8Ij0UNyyMXBeKuVkmjAmPXKlMl+2ucr9A92jvdK+t
+         RYfg==
+X-Gm-Message-State: AFqh2krclJnuY9GxKgmvvzX39m9UZ9qYOha2lVP66jMIA6UvunMn23Jx
+        hv/6fkPXndy0yWpBG1tLYp5BDA==
+X-Google-Smtp-Source: AMrXdXsLfr9LdA2Qpx9wkQv4kWlO1tu+d9Q9P47dtmh/jHU40qAohVcnlAkJVbaTTAmxwXJnbjnN4A==
+X-Received: by 2002:a05:600c:c8d:b0:3da:fcee:2ef1 with SMTP id fj13-20020a05600c0c8d00b003dafcee2ef1mr6266128wmb.32.1674041694337;
+        Wed, 18 Jan 2023 03:34:54 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id i18-20020a05600c355200b003d9df9e59c4sm1922828wmq.37.2023.01.18.03.28.44
+        by smtp.gmail.com with ESMTPSA id r9-20020a05600c458900b003d35acb0fd7sm1716356wmo.34.2023.01.18.03.34.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Jan 2023 03:28:45 -0800 (PST)
-Message-ID: <b31ed518-a39a-c4fa-e0c6-785c77c11edd@linaro.org>
-Date:   Wed, 18 Jan 2023 12:28:44 +0100
+        Wed, 18 Jan 2023 03:34:53 -0800 (PST)
+Message-ID: <d2b84b4c-1529-8709-b9eb-3cf21ad8cc7e@linaro.org>
+Date:   Wed, 18 Jan 2023 12:34:52 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.0
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Add binding for Loongson-1 clock
- driver
+Subject: Re: [PATCH v2 1/2] dt-bindings: clk: si521xx: Add Skyworks Si521xx
+ I2C PCIe clock generators
 Content-Language: en-US
-To:     Kelvin Cheung <keguang.zhang@gmail.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-References: <20230113110738.1505973-1-keguang.zhang@gmail.com>
- <20230113110738.1505973-2-keguang.zhang@gmail.com>
- <63fdd223-c5e1-302d-ffef-9e582874e938@linaro.org>
- <CAJhJPsV5wC_fNgP9iSi1bUp+HFY=dgyh4-x0OueZ8fQO=p7r8w@mail.gmail.com>
- <4f56e6b3-c698-0909-17a0-ec8c39b6c25d@linaro.org>
- <CAJhJPsXOX16SA0bb8zWJ=wSxshjv38g038cR0b3u0CDDm1aUQw@mail.gmail.com>
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org
+References: <20230117231626.134588-1-marex@denx.de>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CAJhJPsXOX16SA0bb8zWJ=wSxshjv38g038cR0b3u0CDDm1aUQw@mail.gmail.com>
+In-Reply-To: <20230117231626.134588-1-marex@denx.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18/01/2023 12:16, Kelvin Cheung wrote:
-> Hi Krzysztof,
+On 18/01/2023 00:16, Marek Vasut wrote:
+> Add binding for Skyworks Si521xx PCIe clock generators. This binding
+> is designed to support Si52144/Si52146/Si52147 series I2C PCIe clock
+> generators, tested model is Si52144. It should be possible to add
+> Si5213x series as well.
 > 
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> 于2023年1月17日周二 18:47写道：
->>
->> On 17/01/2023 11:31, Kelvin Cheung wrote:
->>>>> +  "#clock-cells":
->>>>> +    const: 0
->>>>> +
->>>>> +  compatible:
->>>>> +    enum:
->>>>> +      - loongson,ls1b-clk-pll
->>>>> +      - loongson,ls1b-clk-cpu
->>>>> +      - loongson,ls1b-clk-ahb
->>>>> +      - loongson,ls1c-clk-pll
->>>>> +      - loongson,ls1c-clk-cpu
->>>>> +      - loongson,ls1c-clk-ahb
->>>>
->>>> Are you registering single clocks? It looks like. No, make a proper
->>>> clock controller.
->>>
->>> This binding contains two types of clock, pll-clk and div-clk.
->>> Should I split the binding to two bindings files?
->>
->> No, you should register rather one clock controller. Why this have to be
->> 3 separate clock controllers?
->>
-> This sounds like a big change for the driver.
-> Could you please show me a good example of one clock controller?
 
-All or almost all the drivers?
+Thank you for your patch. There is something to discuss/improve.
 
-> Thanks very much!
->>>>
->>>>> +
->>>>> +  reg:
->>>>> +    maxItems: 1
->>>>> +
->>>>> +  clocks:
->>>>> +    maxItems: 1
->>>>> +
->>>>> +required:
->>>>> +  - "#clock-cells"
->>>>> +  - compatible
->>>>> +  - clocks
->>>>> +  - reg
->>>>> +
->>>>> +additionalProperties: false
->>>>> +
->>>>> +examples:
->>>>> +  - |
->>>>> +    clocks {
->>>>
->>>> No, not really related to the binding.
->>>
->>> Should I remove the "clocks" section?
->>
->> Yes.
->>
->>>>
->>>>> +        #address-cells = <1>;
->>>>> +        #size-cells = <1>;
->>>>> +        ranges;
->>>>> +
->>>>> +        xtal: xtal {
->>>>
->>>> Incorrect in this context. Missing unit address.
->>>
->>> XTAL doesn't have reg property.
->>
->> Yeah, but DTS is not correct now, is it? If you doubt, build your DTB
->> with W=1.
->>
-> No doubt.
-> I just want to know the right way to declare XTAL.
-> Could you please show me an example?
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: XTal input clock
+> +
+> +  skyworks,out-amplitude-microvolt:
+> +    enum: [ 300000, 400000, 500000, 600000, 700000, 800000, 900000, 1000000 ]
+> +    description: Output clock signal amplitude
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - '#clock-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c@0 {
 
-Almost all DTSes?
+Just i2c {
+
+> +        reg = <0x0 0x100>;
+
+And drop this one.
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
 Best regards,
