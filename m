@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A4EC38147
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Jan 2023 13:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4769C46467
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Jan 2023 13:52:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229714AbjARNwS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Jan 2023 08:52:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49500 "EHLO
+        id S229748AbjARNwT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Jan 2023 08:52:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229748AbjARNvw (ORCPT
+        with ESMTP id S229761AbjARNvw (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 08:51:52 -0500
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 860D84CE49
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A44EB4CE6E
         for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 05:23:03 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id ss4so75901580ejb.11
+Received: by mail-ej1-x62e.google.com with SMTP id vw16so20044171ejc.12
         for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 05:23:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QXnOHOh5QfaalI7LSXB28OMKjzgZCCU/t1AphNsWkmU=;
-        b=jVy6cI5Y2Gqwq63utnSYVTfRMoB0i/4a2T4WK0rqHMmk934kXDo48bhRIqqA/5bPRr
-         yxj9gy7Jpcve/AK8UyQg3DFbuZ0bXYlPKRmJEJ3PWvWMhO57n0apT8/Uw9aoqAfknfwx
-         bBu/aoXAoOGRuopTsGs1YTra1QL/IzM4rxxZVlipHWecWEKcONzU0Wm5jtmj8udQp2jJ
-         3hsZ70+asjKJgUg21YPG+4p0oyic6n/shJE9gq2I2TggTiLFzqistku8lY9iex6qSgUg
-         MklMdD8oaTb8e1z3crNhepAFgVevzoI91Ladek55ZL6pzckZ16yk00wx1wQSBbEEzjXF
-         qvXw==
+        bh=60yxEW22hoAOOhOWGOTH5M2hZiABdMD97947KesUJto=;
+        b=gfY6iL0rwH5atzxFw11g+DLW74OMhX2MYgGHfFVXdXWRoIhLjavXDTvM70MkEMFli2
+         2K1cyBaSkZF3spWf7BmE+i7CNbG0XzAgMYUTPqLoJdLw6DEdsuaUpdCCun6fYc9ZAVDM
+         5Y4IjCcAp/A9t8WQGASm4efMBVkfHj6ug7snNgOMT+dc/1aFCQS/GJrjETCsHBOEpLsk
+         fHLDZ5Slo55EofdS2WQjAHvfi1pWgKKHFZAfpGBopjUy+9xMzMXxEmaJdsu+ftaomyMt
+         UVV9S9vAwhNIn1K0NvWV3+fNtH8jLR6TbPJ2oZlhFfWfRQKNk1jkMn7O4aovM+RN2Z3Q
+         AQRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QXnOHOh5QfaalI7LSXB28OMKjzgZCCU/t1AphNsWkmU=;
-        b=yJnOUi0a67NAfax+2zwCzE283Y1g4NJBewvfj6ztoJvBnLpYEdvun1RVYuLP+JPaYL
-         wyGNId2onA+828k8m6sWvaebdeWtMccEyv8gmJlQAJu/HdW1m9LsePbayZLyyi4BOuia
-         D96tPLEge1BotX86UW0Cvhk7OaRZ9m0+qV8p1jqhS1nvkY0Ew6Scp83o8J39B/W9ewyj
-         lyEERZFaXi3n6d8waw7WA3sGEmcOSWLUeujY3dO3pn+MqfhcFU8LtZleMZLs9Av9E+AV
-         Z5bpx0CrX9doffmt2qYXxAHNM78L2rmAJgfDPqtnm9PbIHBy6FZdmMOvnif6vcSEyiCA
-         fvcg==
-X-Gm-Message-State: AFqh2koQgDHkpsafpVaL0ecPLAJX6cLgPtjm6b1iagcD44MhMnNxAbbN
-        y6KqfS2BpsUCjzfCuxEPg/Ax6A==
-X-Google-Smtp-Source: AMrXdXvEvf8lIORvXJrxWslPTiqR0cMA289EZOn/n3Fnaz44xSeTERqwc5iSyyK2avTmGujkJwsc1A==
-X-Received: by 2002:a17:906:a393:b0:7c1:1fcf:266c with SMTP id k19-20020a170906a39300b007c11fcf266cmr7015490ejz.14.1674048182042;
-        Wed, 18 Jan 2023 05:23:02 -0800 (PST)
+        bh=60yxEW22hoAOOhOWGOTH5M2hZiABdMD97947KesUJto=;
+        b=fmUKrT+BmK2Y/a+z/sgLw/Lztzh9dTO20KpKIz/1nZ/1ap1YmmhuX1Q6eZxmZvgoyk
+         AQ7AKTD5+LvS6bB50kVvH1kIVJBlu6buHxcSGyGUpW0+uxJt+tatDmqLjmQfI/jr9rM5
+         jz88OVNBhYSYY18gwAJCRwNtRKmjrBTwSVfek04+YVDb8royEc3PKKV1RJc2/ykDDtLS
+         AuWPVgnvgj5a2Jw0JJysIK4CF8lwKehOR4UOgi+Av6oWPfecJYQaMXR676cEuh0kzrc9
+         YBQSnLw4d6Pqcv0L2Dnn2wAFtCM6jcAjKOT+EKfS0tx1HVaKhFCYlQMUwr/VYSsbIzC+
+         fVdw==
+X-Gm-Message-State: AFqh2kpZzwkRA/N+PUMIdFPzgEK/uMW4yKHxd7d8rLr1XwtF8/m/m1IB
+        K4jVdxoUABvag3HeNNZkC6d7vw==
+X-Google-Smtp-Source: AMrXdXu9XmiL3q2VIQiZbBOHbxXO0ki9w+4xQCqDxJve3AGmadrWZRhx+jG374RE1UzWUeeRaUQQIA==
+X-Received: by 2002:a17:907:1621:b0:870:34c:97df with SMTP id hb33-20020a170907162100b00870034c97dfmr16824173ejc.4.1674048183291;
+        Wed, 18 Jan 2023 05:23:03 -0800 (PST)
 Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id u2-20020a1709061da200b0083f91a32131sm14633831ejh.0.2023.01.18.05.23.00
+        by smtp.gmail.com with ESMTPSA id u2-20020a1709061da200b0083f91a32131sm14633831ejh.0.2023.01.18.05.23.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jan 2023 05:23:01 -0800 (PST)
+        Wed, 18 Jan 2023 05:23:02 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -60,11 +60,10 @@ To:     Andy Gross <agross@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>,
         Jassi Brar <jassisinghbrar@gmail.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v4 5/7] dt-bindings: mailbox: qcom: add #clock-cells to msm8996 example
-Date:   Wed, 18 Jan 2023 15:22:52 +0200
-Message-Id: <20230118132254.2356209-6-dmitry.baryshkov@linaro.org>
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 6/7] mailbox: qcom-apcs-ipc: enable APCS clock device for MSM8996
+Date:   Wed, 18 Jan 2023 15:22:53 +0200
+Message-Id: <20230118132254.2356209-7-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230118132254.2356209-1-dmitry.baryshkov@linaro.org>
 References: <20230118132254.2356209-1-dmitry.baryshkov@linaro.org>
@@ -74,27 +73,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the #clock-cells property to the MSM8996 example, as the APCS block
-is going to provide the `sys_apcs_aux' clock to the consumers.
+MSM8996 also has the clock-related part of the APCS mailbox device.
+Follow the usual pattern and create a child device to handle these
+clocks.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- .../devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml       | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-index 7d8de7a16984..1633aa82fc84 100644
---- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-+++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-@@ -166,6 +166,7 @@ examples:
-         reg = <0x9820000 0x1000>;
+diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+index 0e9f9cba8668..bd61dacb44ba 100644
+--- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
++++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+@@ -42,7 +42,7 @@ static const struct qcom_apcs_ipc_data msm8994_apcs_data = {
+ };
  
-         #mbox-cells = <1>;
-+        #clock-cells = <0>;
-     };
+ static const struct qcom_apcs_ipc_data msm8996_apcs_data = {
+-	.offset = 16, .clk_name = NULL
++	.offset = 16, .clk_name = "qcom-apcs-msm8996-clk"
+ };
  
-     rpm-glink {
+ static const struct qcom_apcs_ipc_data apps_shared_apcs_data = {
 -- 
 2.39.0
 
