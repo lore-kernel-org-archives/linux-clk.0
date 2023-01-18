@@ -2,102 +2,106 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE105C38159
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Jan 2023 13:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA4DC38159
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Jan 2023 14:03:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230017AbjARNw3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Jan 2023 08:52:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49618 "EHLO
+        id S230516AbjARODs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Jan 2023 09:03:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230287AbjARNvk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 08:51:40 -0500
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24C1F2A9A8
-        for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 05:22:59 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id vw16so20043559ejc.12
-        for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 05:22:59 -0800 (PST)
+        with ESMTP id S230526AbjARODb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 09:03:31 -0500
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 564893C2E
+        for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 05:38:55 -0800 (PST)
+Received: by mail-ej1-x62d.google.com with SMTP id tz11so18895815ejc.0
+        for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 05:38:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BQXELW2Do44btByeSJJTILU+sMVZVBVp+PBgWqh0iPQ=;
-        b=mdlQpnPf+uKgvSYoCCHJ/a33KtYz7Y/Z91Keh7J1dVduTh+DVWviEa7bfa+49wHu6U
-         XjrdGvOWaikxGOrenkW4klkxNFQaO6IW6f7MjBG6/680yL+aBU6J9nCD00cV08qFTA46
-         DqL0eqKskZkO+mYgQLtns5Vn/bX1CpirCtj1frA+wuOFVqUyBWyXaLYJTSs//0wIiZax
-         g8QBmppPDRSTF2WGTaulWHljkIBxB/gg3lKrtd1bxx2LLXx0kbycZw5WQg6pyE8grr6J
-         iHGs9kQZtpanuG7WPuIj9c8YBKcwcI6pI9budQ8ntLeJ6WoQMvuY/234Vz0Bwg+YZ9YS
-         6O4g==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GMyicKAXsPcwp39xMdPMj84Z2tS6+fCOTx1iONHicI0=;
+        b=JsoV4hzVvX4mrFwIeAqbBnVbKCZrrucJOK4/ocJ0+pi88UBO8GcF5rCxuenNHRt8rX
+         7jDFwNP7Uo/RUjO7IkTQs4XYUYRQAzjWSUseH4MoHdkRCim1JQcmqiOcXWBDqLLftep7
+         bTK52zEXB/ry47JA43nLcMn2rY+/HXy92mjtvTH1NxiFbGgE8sUWnJNPhWV8MXfVwfiF
+         bqd1i4qJ7up6l7lg9wK1m9NjcRIQTgBzkcYWxCZ5pr/b3IixXSkTAByegcHYi0RuKPHo
+         5TVZty/wO4ijF20XaUSUWUjM/8dA17gq3YNmQ+fkDGz0em9deeE9csduZG5rNHLuHuuS
+         RoHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BQXELW2Do44btByeSJJTILU+sMVZVBVp+PBgWqh0iPQ=;
-        b=7QWoofrRJ1cTHMkW744P9v0zagwp11sYilrCL5Q7Y+5f4eY7cjTdZgWvFy1N0sR1ro
-         5UAwOCsttayiUotegimLaXj10qnhbi1jI1qd+SPkI0QrpTGjPqoBZ36O2vOos7Gt+2OF
-         WA8qjPWZLiAV/hyy+bo10wIFyan0BDPxJy+8CS7icxQvNUbZq15HnZTExabrioCP8u7B
-         hBQog+BLYctN5fFyX0aYn0uR6fEWbVMK9mAwAYR+zoTpUz0jBTdeAda/Z2cxnVNSGNj/
-         vvATT+FL0zxVYmEs/KeJMxGSV75t6S8nVjAagMnt4+/IsQ2OJoaAzhmpEo9nU5DA2URI
-         KTuA==
-X-Gm-Message-State: AFqh2kqeS6XAUszB91bHrD1cUqG7vvk/sEd69Skm992fvEMUJ60gXuBw
-        wlzCZJir4t/6jNOzIRsfd49BcQ==
-X-Google-Smtp-Source: AMrXdXu5CSOCJza++NFweL6KpfKXKYInRWlUyYp9fYiDkiK6c0iahxTAEyYET9kPGEz0jBuXBSRamA==
-X-Received: by 2002:a17:907:2135:b0:86f:fe8a:be with SMTP id qo21-20020a170907213500b0086ffe8a00bemr6880577ejb.4.1674048177546;
-        Wed, 18 Jan 2023 05:22:57 -0800 (PST)
-Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id u2-20020a1709061da200b0083f91a32131sm14633831ejh.0.2023.01.18.05.22.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jan 2023 05:22:57 -0800 (PST)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GMyicKAXsPcwp39xMdPMj84Z2tS6+fCOTx1iONHicI0=;
+        b=PUg5VYH+Wcb4ZTwfnKYQCGLNrTIKaLO0oxwSHtL9n2pndAARTg3kbapNgQ44FX6lTG
+         5V8cMsWQsFnPzI3+EnDDjaGKdVzAmDqaaq1prX/lZb9m/YvyCjQylSeRx6EYYsMitIIA
+         uOg3j1gCIXE/sg0s4cY+mSxO1zmWTkVbsZKBkcPlZWJvB+fgECGG85s3+Lo7zeyYk79s
+         /ZBsDqSl29UP7Rfci6pzUt4sQ31nJeCYmqLyMI7Kx1DbuKpBmbxbShbTkAgvM08lpRFS
+         FkEt99aPydPfZ1gPIBgbX8J14r5J+Rt3sct7BmpAG26oT7BvjP8hyJzDmgNb+RSR4Oq3
+         T9Bw==
+X-Gm-Message-State: AFqh2kokDOofa75cnTeecvldJFN271q4JRb/LR3RrH8bgM96oxjgheKf
+        zdalxebNxxBW6jGUugFFdwBO8wzRsXfDafmD
+X-Google-Smtp-Source: AMrXdXtV+LW0G/9CEyBapA4IhWCgkDDoft46dvN11AFEl7XN+4Q2Ymee5eSr6qDBMFvjZxXUQwfd6g==
+X-Received: by 2002:a17:907:a092:b0:86d:c466:6b16 with SMTP id hu18-20020a170907a09200b0086dc4666b16mr7142893ejc.7.1674049133929;
+        Wed, 18 Jan 2023 05:38:53 -0800 (PST)
+Received: from [192.168.1.101] (abxh252.neoplus.adsl.tpnet.pl. [83.9.1.252])
+        by smtp.gmail.com with ESMTPSA id q14-20020a1709066b0e00b0074134543f82sm14966677ejr.90.2023.01.18.05.38.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Jan 2023 05:38:53 -0800 (PST)
+Message-ID: <403c0a2a-735e-f893-741a-b742118c9ba6@linaro.org>
+Date:   Wed, 18 Jan 2023 14:38:49 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH v2 4/7] clk: qcom: smd-rpm: provide RPM_SMD_XO_CLK_SRC on
+ MSM8996 platform
+Content-Language: en-US
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>
+        Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v4 1/7] dt-bindings: mailbox: qcom: add SDX55 compatible
-Date:   Wed, 18 Jan 2023 15:22:48 +0200
-Message-Id: <20230118132254.2356209-2-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230118132254.2356209-1-dmitry.baryshkov@linaro.org>
-References: <20230118132254.2356209-1-dmitry.baryshkov@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        devicetree@vger.kernel.org
+References: <20230117225824.1552604-1-dmitry.baryshkov@linaro.org>
+ <20230117225824.1552604-5-dmitry.baryshkov@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230117225824.1552604-5-dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The commit 0d17014e9189 ("dt-bindings: mailbox: Add binding for SDX55
-APCS") added SDX55 compatible string to one of clock-selection
-conditions, but failed to add one to the main schema's compatible list.
-Fix this omission.
 
-Fixes: 0d17014e9189 ("dt-bindings: mailbox: Add binding for SDX55 APCS")
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- .../devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml       | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-index 943f9472ae10..36deddca1524 100644
---- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-+++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-@@ -39,6 +39,7 @@ properties:
-               - qcom,msm8953-apcs-kpss-global
-               - qcom,msm8994-apcs-kpss-global
-               - qcom,qcs404-apcs-apps-global
-+              - qcom,sdx55-apcs-gcc
-           - const: syscon
-   reg:
-     maxItems: 1
--- 
-2.39.0
+On 17.01.2023 23:58, Dmitry Baryshkov wrote:
+> Extend the list of RPM clocks provided on MSM8996 platform to also
+> include RPM_SMD_XO_CLK_SRC and RPM_SMD_XO_A_CLK_SRC.
+> 
+> Fixes: 7066fdd0d742 ("clk: qcom: clk-smd-rpm: add msm8996 rpmclks")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
+Konrad
+>  drivers/clk/qcom/clk-smd-rpm.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+> index 8f6e274c6030..b503be8b3a93 100644
+> --- a/drivers/clk/qcom/clk-smd-rpm.c
+> +++ b/drivers/clk/qcom/clk-smd-rpm.c
+> @@ -810,6 +810,8 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8994 = {
+>  };
+>  
+>  static struct clk_smd_rpm *msm8996_clks[] = {
+> +	[RPM_SMD_XO_CLK_SRC] = &clk_smd_rpm_branch_bi_tcxo,
+> +	[RPM_SMD_XO_A_CLK_SRC] = &clk_smd_rpm_branch_bi_tcxo_a,
+>  	[RPM_SMD_PCNOC_CLK] = &clk_smd_rpm_bus_0_pcnoc_clk,
+>  	[RPM_SMD_PCNOC_A_CLK] = &clk_smd_rpm_bus_0_pcnoc_a_clk,
+>  	[RPM_SMD_SNOC_CLK] = &clk_smd_rpm_bus_1_snoc_clk,
