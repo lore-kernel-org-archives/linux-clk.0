@@ -2,71 +2,74 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA48C38159
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Jan 2023 19:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C082C38147
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Jan 2023 19:11:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230032AbjARTCL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Jan 2023 14:02:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41766 "EHLO
+        id S229734AbjARTLG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Jan 2023 14:11:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229892AbjARTBL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 14:01:11 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 302B35B479;
-        Wed, 18 Jan 2023 11:00:40 -0800 (PST)
+        with ESMTP id S229663AbjARTLF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 14:11:05 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17745530C1;
+        Wed, 18 Jan 2023 11:11:04 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B6E8B619C6;
-        Wed, 18 Jan 2023 19:00:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C59BC433EF;
-        Wed, 18 Jan 2023 19:00:38 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A70BF619C5;
+        Wed, 18 Jan 2023 19:11:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA584C433D2;
+        Wed, 18 Jan 2023 19:11:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674068439;
-        bh=weTLZG8IsGIN+dW9FnU1+H8fULkXuUXBKDQBQ6V8wqU=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=SLzj9xO01/OI/eGBS3unEvefzng3fwo3+fycbHhn7MXd7g6HSBXi9e4KNPmgNjzMP
-         MrPfPMbeTgq42EYUIeqjlQisKw/MmoNTmLqOUkrT9GUbF12AB/Niwca98J0RC7yhht
-         HUH2SdHvw6PQLpu7NM0A8+moC0cgI+65AMwjDftVpUMQXn3HDERfjgPYJQvG9Zat9s
-         vnyA919v0HhUa2qBgheQd3E6QYb0bkQ5oYAPn8xr+5gVgbgDF/dXNP1SIwLPpyGYVD
-         6lAMtFJ51ZIeBYjrZKSJFuLl5B+3MPjQO9d1zXERgmPIgVwV+Jy7duZUur6rXMW0It
-         RVil9O9e1naVQ==
-Message-ID: <a1285cb87151130de782fc1941b13f34.sboyd@kernel.org>
+        s=k20201202; t=1674069063;
+        bh=Nv6pusw6gTldht2J9OiYqivb3O/jn9kff9e+OmktbW4=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=QAnoE0mc1tZha037fZcCzUut7YSpS9BilUeV3MFKvRJh96egg16FLHt9D3+i6jnll
+         syOsfEFxjxciz+6QD5QvATeb+A+py+oHRDPYuqDnGwbb3MKoMRA6i1WmtsvpHdRcFt
+         eJI8prfVRmw+bkzWNbCz6XW/Mf/bsu13HLuR55xpBuBKC2Pyr6AY+bfV07E5EB4Xku
+         pZVkP7DSH9GdU+CKBbgu+voj3YlUnugTlf0gwwLxEtJuIpA49NDBTrgoVQnhnGs2x5
+         hsS5AClCbp2W8Uj829mXBscL0tqb7JNYMIgmW1h0aJPNzxJGx5yBBjJG3UfMFdCVpR
+         1gST9rBagNXaA==
+Message-ID: <705c78c1d0da18089419b064832d5fed.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <Y8VfEfnWwt8+QB1W@linaro.org>
-References: <20230111101030.686885-1-Qing-wu.Li@leica-geosystems.com.cn> <20230111101030.686885-2-Qing-wu.Li@leica-geosystems.com.cn> <Y8VfEfnWwt8+QB1W@linaro.org>
-Subject: Re: [PATCH V5 1/1] clk: imx8mp: Alias M7 SRC/DIV to M7 CORE
+In-Reply-To: <063c5516-417d-7c21-b58f-a6552779a621@linaro.org>
+References: <20230113145859.82868-1-krzysztof.kozlowski@linaro.org> <e73ad320fafa1365e3506bbd4cc77d8d.sboyd@kernel.org> <063c5516-417d-7c21-b58f-a6552779a621@linaro.org>
+Subject: Re: [PATCH] dt-bindings: clock: qcom,a53pll: drop operating-points-v2
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>,
-        abelvesa@kernel.org, mturquette@baylibre.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        18701859600@163.com, bsp-development.geo@leica-geosystems.com,
-        Marco Felsch <m.felsch@pengutronix.de>
-To:     Abel Vesa <abel.vesa@linaro.org>
-Date:   Wed, 18 Jan 2023 11:00:36 -0800
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 18 Jan 2023 11:11:00 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2023-01-16 06:28:33)
-> On 23-01-11 11:10:30, LI Qingwu wrote:
-> > Defined IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV in imx8mp-clock.h
-> > but never assigned. It will cause the system to hang if using them.
-> > Alias IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV to IMX8MP_CLK_M7_CORE
-> > for backward compatibility.
+Quoting Krzysztof Kozlowski (2023-01-15 06:35:23)
+> On 13/01/2023 21:28, Stephen Boyd wrote:
+> > Quoting Krzysztof Kozlowski (2023-01-13 06:58:59)
+> >> The CPU PLL clock node does not use OPP tables (neither driver).
 > >=20
-> > Fixes: 8c83a8ff4dd9 (clk: imx8mp: use imx8m_clk_hw_composite_core to si=
-mplify code)
-> > Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
-> > Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
-> > Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+> > What device is qcom_a53pll_get_freq_tbl() operating on?
 >=20
-> Stephen, can you please pick this up yourself?
+> On its own, internal table. While of course driver could be converted to
+> operating-points-v2, no one did it within last 5 years, so why it should
+> happen now?
 >=20
 
-Is it needed for clk-fixes? When did the system start hanging?
+The property was added mid 2021 by Shawn[1], that's not 5 years ago. I
+guess there were plans to add an OPP table that never happened[2]? Is
+Shawn still working on this? If not, we should revert the OPP code out
+of the driver.
+
+[1] https://lore.kernel.org/all/20210704024032.11559-4-shawn.guo@linaro.org/
+[2] https://lore.kernel.org/all/20210709021334.GB11342@dragon/
