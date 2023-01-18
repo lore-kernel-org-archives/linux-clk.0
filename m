@@ -2,60 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF143C32793
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Jan 2023 12:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 079B7C38159
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Jan 2023 12:19:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229749AbjARMTW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S229635AbjARMTW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Wed, 18 Jan 2023 07:19:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47402 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230012AbjARMRG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 07:17:06 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1250582AB
-        for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 03:40:27 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id f25-20020a1c6a19000000b003da221fbf48so1293600wmc.1
-        for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 03:40:27 -0800 (PST)
+        with ESMTP id S230384AbjARMRF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 07:17:05 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB1F353F97
+        for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 03:40:14 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id b5so12467258wrn.0
+        for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 03:40:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=dqQJJl1MXv+9dPuJMpwYZsIEmIu3Y6KB4eobe/SEMC8=;
-        b=r/AtxOx2fmtZXGff/Hnfj1nWOtDnyDtRbCOww3cvbPaqNPgISoKia8PKNwhy0Kbpd0
-         yjyM+RxnIsFEBBJegj3+kh3ARvPvuAf0ovQ+v4aV7YYu4FIKM0o8C9GKA4aCTuMAyZKI
-         etaUqwtZcZzWBlSkeO+zn+XvTjdO/uTw4c+OF++M99VRR5Ve0nIlWhd2OkwfwvZhBYIj
-         mLxAjbJPZnUfNzdgdFT58Dpq0wqtpzEHM0FowCtPs92sGyzsSq+1jLR1K8XhncNpIaHV
-         Tp2N+Up7bXGDunbKNb4wpeFSazAFeT9fN+vTQlTvXHkyPGgDIK4OX3yR8Xp4vg+p9VNh
-         WuaQ==
+        bh=kM4TmYHUESokHiFW3imA6PqhaD3cG8rorNJ+MQr3euM=;
+        b=h0Fl4+o6vE2/vPJbrvZttRQMtkF6bZ0VG2f6mJvUzGuUY5Vfo2lCxRx1AeTqaevaOE
+         VZQiNWTh98uL+Y7Y/yvfRdblexzTpjTeDAni7U6z1mEUaowNzkPhYDc0XP+o4KFP9d+g
+         shJ26R5xvZikoZEh2l35A0ruzCYdqtg9Z+wc0H2Q7Firyp48H9l0iWXH1NB2z3RMP5V+
+         ZOoGHS4Tpgu17SENmG515AJ2NO8ymKFkOI9rOyLhl3crtUK3tkbd3iavCqpIPDdV9jgN
+         Dn8pmIpfK2THl1M8vIuclFVjid8r3sNxxAe95+5DUrLr0t1EzBOCG+SRose7XP4/VLIh
+         PZgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dqQJJl1MXv+9dPuJMpwYZsIEmIu3Y6KB4eobe/SEMC8=;
-        b=BsA+WENHGN2r+wvBBYpgPFmqGNXvu607VTZNul7I6/LSPuFn4v+Cw1GmwtQESxua2/
-         FUTYPbYoGMHBE3FHnjPPzYoOxQCQP5Y9zMwcDIVjUbuKpc0mQ99WVAxSLggVXa0zdBJo
-         8LgXaBrqa/Hqy7cjeVP0Rvlp8YJytKssXgq5MAB+ujuTkBxpuMgmCe6Hzx2C3y0h2tVZ
-         /3pbvLy27gU3cG6iWy+34vM1D3pPM07t5sIzgilAjACKn+Ce87A1P6L6Hn0pvSbPcsb3
-         UoZ00TbihsH1msKEbfh1MwHqZKJs1j4GT1KQqIRwoH0SoCAk3NvL56bTLPWfP01JMHt7
-         C+OQ==
-X-Gm-Message-State: AFqh2kq+t4XdLxECt692ymth5p5PPBWfugC0GThkicEPjnmCHLpLZc3f
-        l9ac5Z9Yc6cLtv8CfFBds1AycA==
-X-Google-Smtp-Source: AMrXdXsvlsA81Kd5HuWdhL98Ck/AGumekBmnqK8lVG4dcfWyI1boqUT/qU0e/RcXz1BPIi65K1hqlA==
-X-Received: by 2002:a05:600c:1e19:b0:3da:2ba4:b97 with SMTP id ay25-20020a05600c1e1900b003da2ba40b97mr13866343wmb.19.1674042026510;
-        Wed, 18 Jan 2023 03:40:26 -0800 (PST)
+        bh=kM4TmYHUESokHiFW3imA6PqhaD3cG8rorNJ+MQr3euM=;
+        b=HLPhUhicnMpokLXhAAzUsjk1pq1xNN0KWq6nDl9AQ1ux0crRdGnKtlT1NA0dAOGp5Z
+         O5/676WsuiiAI1siAVSzFfCm7/EASnxi66F6YrdzVlmP4X0iOXPK7O9FiS3+rvxURDe2
+         5vN7+XmpmjO0V0NAt+CrPgoi38nInN9lRFiRRLkpAKeHUyc9jLxcMbagRSekhWC8Xna8
+         FyHDETrzjDq03v22kaCxayfZlUOOGAMcm6PITJo6IrrFA6CO8qngtGIXJq9ye5mIYm2y
+         lCanqeBYBZSlYwQLpWc3Y0ycxm0MLvdnX7nC/ertvR06riiRz0KnvBQbAPGbS0X2WUxb
+         M3CQ==
+X-Gm-Message-State: AFqh2kq1DEhr4wZzjqMUCqNg9HdyAPYc7hkldT0qoAuJ00jPCFge2FsX
+        XF1E4+OuU7f6WC6QbGey7nblNQ==
+X-Google-Smtp-Source: AMrXdXuBdBiAcwQWG/BeyGrwSRj2MigBb3eyc9eCrsnkqKeP4E8cQkVLTDUgmzDXiDagP+0iXvFQxw==
+X-Received: by 2002:adf:f90e:0:b0:2bd:9b1e:165a with SMTP id b14-20020adff90e000000b002bd9b1e165amr5883672wrr.6.1674042013397;
+        Wed, 18 Jan 2023 03:40:13 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id j35-20020a05600c1c2300b003c71358a42dsm2324551wms.18.2023.01.18.03.40.24
+        by smtp.gmail.com with ESMTPSA id l4-20020a05600012c400b002bbb2d43f65sm28061605wrx.14.2023.01.18.03.40.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Jan 2023 03:40:26 -0800 (PST)
-Message-ID: <990345b4-4dd9-8e73-87c0-68666b9474ce@linaro.org>
-Date:   Wed, 18 Jan 2023 12:40:24 +0100
+        Wed, 18 Jan 2023 03:40:12 -0800 (PST)
+Message-ID: <ba0c861f-6349-32d8-33e8-26c7380fbee2@linaro.org>
+Date:   Wed, 18 Jan 2023 12:40:09 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.0
-Subject: Re: [PATCH v3 2/6] dt-bindings: mailbox: qcom: enable syscon
- compatible for msm8976
+Subject: Re: [PATCH v3 1/6] dt-bindings: mailbox: qcom: add SDX55 compatible
 Content-Language: en-US
 To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Andy Gross <agross@kernel.org>,
@@ -70,9 +69,9 @@ To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20230117223013.1545026-1-dmitry.baryshkov@linaro.org>
- <20230117223013.1545026-3-dmitry.baryshkov@linaro.org>
+ <20230117223013.1545026-2-dmitry.baryshkov@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230117223013.1545026-3-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20230117223013.1545026-2-dmitry.baryshkov@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -80,15 +79,16 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 17/01/2023 23:30, Dmitry Baryshkov wrote:
-> On msm8976 platform APCS also uses syscon compatible, so move it to the
-> block of compatibles using SoC-compat together with syscon.
+> The commit 0d17014e9189 ("dt-bindings: mailbox: Add binding for SDX55
+> APCS") added SDX55 compatible string to one of clock-selection
+> conditions, but failed to add one to the main schema's compatible list.
+> Fix this omission.
 > 
-> Fixes: 60545466180e ("dt-bindings: mailbox: qcom,apcs-kpss-global: Add syscon const for relevant entries")
+> Fixes: 0d17014e9189 ("dt-bindings: mailbox: Add binding for SDX55 APCS")
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
 
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
