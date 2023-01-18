@@ -2,63 +2,65 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A47ADC32793
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Jan 2023 14:38:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A4BC32793
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Jan 2023 15:42:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231444AbjAROi3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Jan 2023 09:38:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33712 "EHLO
+        id S230454AbjARPmZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Jan 2023 10:42:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231156AbjAROhv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 09:37:51 -0500
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EC0866EE8
-        for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 06:28:00 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id hw16so71799522ejc.10
-        for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 06:28:00 -0800 (PST)
+        with ESMTP id S230309AbjARPmY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 10:42:24 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 410801817A
+        for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 07:42:23 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id bg13-20020a05600c3c8d00b003d9712b29d2so1696181wmb.2
+        for <linux-clk@vger.kernel.org>; Wed, 18 Jan 2023 07:42:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=tGsNaYd8lzrEJBZWh/jXK77/CF4jiaEZbxlPMQt1yUA=;
-        b=yGgv4bRS23TPtTiAaUpfhM7ARvm/Md/VxtiJeL6mzD/ShTWfpUCOmR2JYuBXb9nwV8
-         Hnjx4/fhXVb75lGNMSC6kR+eOmOGg/nsAmix226J9z1IltroWTgraHT67mb9C0NSlgdN
-         2FYm9ogR/3dvC6TGl4uV+C8JvUBo2QsX32nYkjO7uxAY88e5q0qLkoORP56kXrt7Jarm
-         ojfbGc/I9iN1zTbo6RyJVjKsvbObTFE+NL8H98j6OKruudOMBLu/d7fqP7bVkTcd9kAT
-         4q2GB6mH24pr3FviUt7tBrEoXfy18t2g/bPCy6tmkaGbCg1s9txiRVGS64UFnxK6Uhzz
-         YCoA==
+        bh=P5NtzvFdoFFlXehDB6hdQDZxmdVgG0Ute1O+CIKYQYY=;
+        b=RWhZjnHh9WSWwTA9jw44PxMZPDNPFFp0GKA5E9S9AFAxhg9ZhTjXsgO6CSoawr0cjq
+         z9XfsVboRXUEz35SLMUdVCU6nBqLV+gnZPLC71xHaKsdipcz71akbOCe2meuDTGz6blv
+         Ml9Y4OOrwM8det2bsUSaBWKDOhnLYcDpSYbyJ6PZqLTgr2sV5dv0mjy4Y5gvZ9ZqQ8Dq
+         //pU9iYsXKYHp/4zxJ1MA17qH0TUmO7uDypH9UeyRJP45FRMA/ZV8GrppjYLafQEVfbX
+         NN9LLf6cvW/20oHlmr2dLTmdh272/jN4WFJsXD8nRUGFCA9v9o1zPZTJflgHNXrgy2mZ
+         w2mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tGsNaYd8lzrEJBZWh/jXK77/CF4jiaEZbxlPMQt1yUA=;
-        b=iwDqqUcLurx8C5MEw/2ox/gz+OZ0ePzd9LfsW/vnCAR2+/hbf/BllQTkMR8DJgnpGU
-         3pOVAdApfD0uQyYHpSb19WsAr47xUPfbTqN7Ofqw9eETP17MOAIQaokst4cI5NT54BQ9
-         T919GxkWNXAU/TLKIc74XEnSrAf4tVOfrDwZBaDYCmWS9GeNOuU7DcAXAfxw+XSrH+fV
-         NLbc9skdgiXo7SnrzV1DqDxkeKkLFAHbFSyHkC/rnXGnVkFrJ2faLRYmgAGolFWWGr5H
-         rwlxYk09DloebMOKFDqJbVKcHK13C7frz+W6GJ2nVklQQtWLUd2CsyFwcro2ViSRu6sD
-         83IA==
-X-Gm-Message-State: AFqh2krZM7ccWUb9ZOSQ3kQclG2zhtxxR82FpkZwmM07CNEqkwbgnfYf
-        70nCECICYUgcRySWT1pxp4oTIA==
-X-Google-Smtp-Source: AMrXdXtaZoCq1axVrnXR3NO7JWhyRBJo7prw3mrcpWnr7PBsifQfh/PbqAmQtCohleDsgwL+x5LqLQ==
-X-Received: by 2002:a17:906:5906:b0:870:2f70:c624 with SMTP id h6-20020a170906590600b008702f70c624mr7429241ejq.3.1674052078711;
-        Wed, 18 Jan 2023 06:27:58 -0800 (PST)
-Received: from [192.168.1.101] (abxh252.neoplus.adsl.tpnet.pl. [83.9.1.252])
-        by smtp.gmail.com with ESMTPSA id um41-20020a170907cb2900b0086c4fbb8507sm6114730ejc.225.2023.01.18.06.27.56
+        bh=P5NtzvFdoFFlXehDB6hdQDZxmdVgG0Ute1O+CIKYQYY=;
+        b=hiqBqn14j1HdSDUmkwwOStG5eQ8n69+Q1oVBQhPh0VNXf1dbB27qnCbURcaXzLQHcU
+         Lgz+Sf1f95jyv2WI0PmCHA4ax2tZ+y0HU9g2fO5rAzb0IZ9Ep6HluC2Zb9lOFsesuK6K
+         a4fXD2cpG/GeYULhq7jSC0jQMLsgIwGnZmfNe3+kDbhSkXIdCvcb4T/OwcsgZ01U8jeS
+         1qWYK6Z1gNcIEe6FmEeVWXNy685DEYa29MrQxH4BpN8TESXMf0kZszCzZYDFpaBs0sdH
+         N8cwml9f6JYUUS7PDkJp4e925qjM+siWmtdFUYNqAJa00PG7JfHAz0TToWklXo1emNze
+         A1iA==
+X-Gm-Message-State: AFqh2kr/M7SiBmr3eV+Cn9IysFOgreaXA4kjFTx7sJkeZrkWcG/f22td
+        d6eGUhzvaTVt1WDfNFmqK479zw==
+X-Google-Smtp-Source: AMrXdXsVLoYdnXbgjpmAkxbAFGqj9KLwuhq20Nolx42pqNG+EPcjLIG/4NRdxKA1mRETFlBNcXa9OA==
+X-Received: by 2002:a05:600c:4f4a:b0:3db:5f1:53a5 with SMTP id m10-20020a05600c4f4a00b003db05f153a5mr7157275wmq.20.1674056541792;
+        Wed, 18 Jan 2023 07:42:21 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id m9-20020a7bca49000000b003d98f92692fsm2210849wml.17.2023.01.18.07.42.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Jan 2023 06:27:58 -0800 (PST)
-Message-ID: <e47e3ec7-4c89-0472-cc87-9c9cc6db8519@linaro.org>
-Date:   Wed, 18 Jan 2023 15:27:55 +0100
+        Wed, 18 Jan 2023 07:42:21 -0800 (PST)
+Message-ID: <f6ad4465-b991-3afa-903b-027f38239321@linaro.org>
+Date:   Wed, 18 Jan 2023 16:42:19 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v2 2/2] clk: qcom: add the GCC driver for sa8775p
+ Thunderbird/102.7.0
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: qcom: document the GCC clock
+ on Qualcomm sa8775p
 Content-Language: en-US
 To:     Bartosz Golaszewski <brgl@bgdev.pl>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -66,51 +68,37 @@ To:     Bartosz Golaszewski <brgl@bgdev.pl>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, Shazad Hussain <quic_shazhuss@quicinc.com>,
+        netdev@vger.kernel.org,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 References: <20230117180429.305266-1-brgl@bgdev.pl>
- <20230117180429.305266-3-brgl@bgdev.pl>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230117180429.305266-3-brgl@bgdev.pl>
+ <20230117180429.305266-2-brgl@bgdev.pl>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230117180429.305266-2-brgl@bgdev.pl>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 17.01.2023 19:04, Bartosz Golaszewski wrote:
-> From: Shazad Hussain <quic_shazhuss@quicinc.com>
+On 17/01/2023 19:04, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> Add support for the Global Clock Controller found in the QTI SA8775P
-> platforms.
-> 
-> Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
-> [Bartosz: made the driver ready for upstream]
-> Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
+> Add DT bindings for the GCC clock on SA8775P platforms. Add relevant
+> DT include definitions as well.
 
-[...]
+Previously you had nice, clean and short "add ...." in the subject. Now
+it became long "document" while no one asked for that change? What
+happened? Subject space is precious, so why changing it?
 
-> +
-> +static int __init gcc_sa8775p_init(void)
-> +{
-> +	return platform_driver_register(&gcc_sa8775p_driver);
-> +}
-> +subsys_initcall(gcc_sa8775p_init);
-core_initcall, otherwise you'll be waiting for years :P
+"document" is a bit redundant because bindings are documentation. So
+basically "document documentation"...
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+This applies also to other patches like the interconnect.
 
-Konrad
-> +
-> +static void __exit gcc_sa8775p_exit(void)
-> +{
-> +	platform_driver_unregister(&gcc_sa8775p_driver);
-> +}
-> +module_exit(gcc_sa8775p_exit);
-> +
-> +MODULE_DESCRIPTION("Qualcomm SA8775P GCC driver");
-> +MODULE_LICENSE("GPL");
+With fixed subject as I asked in your v1:
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
