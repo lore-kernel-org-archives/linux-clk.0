@@ -2,47 +2,48 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E17A1C678D6
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 02:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 621A5C678DD
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 02:43:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229973AbjASCRe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Jan 2023 21:17:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38964 "EHLO
+        id S229947AbjASCnB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Jan 2023 21:43:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229910AbjASCRW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 21:17:22 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DF02683E0;
-        Wed, 18 Jan 2023 18:17:10 -0800 (PST)
+        with ESMTP id S229934AbjASCm7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 21:42:59 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35CC4B47E;
+        Wed, 18 Jan 2023 18:42:59 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0435D61A94;
-        Thu, 19 Jan 2023 02:17:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A467C4331E;
-        Thu, 19 Jan 2023 02:17:08 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id F0945B81FBA;
+        Thu, 19 Jan 2023 02:42:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3ABDC4339B;
+        Thu, 19 Jan 2023 02:42:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674094629;
-        bh=RFmFJdLqLW2wV2flJR/SwVY2rW47yWtRjfwVKAuORRM=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=fcfFOEl1uOGzu492+GljyqW93MWAdR097aADexD6QEFr1h7a4VJn0k3NCRApX8evi
-         /S0Spy7cekpPzZa4qbRoMz9IVIOQNPuElS7oYMb1xP/HtmTkndGbxagqY8lGQ3sISI
-         F9+GiVNRhbGPd3re8+IkvymmYkPosdDqAqAYyj8KsJdrNjdTz8L2rvFZAYPJNgBzvL
-         KUVbqyEqboaw4kQ6ktlAESAbXC9wnJB+4zo3pPLVALV70AYmGvIee4kVsvaM3WP26N
-         4NWEdWvQRsC15NvZt04/d+oeQL7Kb7vS/h/beXL8v6YVCfpSDpIY7WtihWMpY7qBks
-         Tk+36yyfbeZaA==
+        s=k20201202; t=1674096176;
+        bh=XiJBo+Rb6OfHZD1AubVx/LNMabwU6aDM9SbmNqLeqhA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ErRaTj/aXXv5NF/K3DC2vRjXJBMKY8qC/1oGNtKrpPoWpsUGlBPbIAsgOUqGLDvTo
+         ey/WiZnuUm1ceZs1JqXj2jgQJbgyfTKY8ArZ5CXhW0sI6oMdhoMXApEd4eVpFazrEd
+         P6OVL9GKGyb5IVQuvTb1ZE5bwaTQlQO9T8FUeCyinj1IBwwl1F5QNFb584A2bmb1wZ
+         n0tQSGkqlm4tF23hhMpXr7R/xUmZSGdordvxI5Gts/vVIaIL2cq1i5Vp4SIxYs7DJp
+         HuBWZg+3YP1wmijbx4ot+tvYsu70rcyTcB91wEEQgHGYHwOs+fxfkQaSVnRtsl7PG9
+         B0d0SlZSsTTcA==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     krzysztof.kozlowski+dt@linaro.org, konrad.dybcio@linaro.org,
-        agross@kernel.org, linux-arm-msm@vger.kernel.org,
-        robh+dt@kernel.org, sboyd@kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        robimarko@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 1/2] clk: qcom: ipq8074: populate fw_name for usb3phy-s
-Date:   Wed, 18 Jan 2023 20:16:58 -0600
-Message-Id: <167409461440.3017003.1860190800471771653.b4-ty@kernel.org>
+To:     robh+dt@kernel.org, quic_molvera@quicinc.com, agross@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, konrad.dybcio@linaro.org
+Cc:     linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        quic_tdas@quicinc.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/2] clk: qcom: Add clocks for the QDU1000 and QRU1000 SoCs
+Date:   Wed, 18 Jan 2023 20:42:51 -0600
+Message-Id: <167409616956.3024582.17239635574684353077.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20230108130440.670181-1-robimarko@gmail.com>
-References: <20230108130440.670181-1-robimarko@gmail.com>
+In-Reply-To: <20230112204446.30236-1-quic_molvera@quicinc.com>
+References: <20230112204446.30236-1-quic_molvera@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -50,20 +51,22 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 8 Jan 2023 14:04:39 +0100, Robert Marko wrote:
-> Having only .name populated in parent_data for clocks which are only
-> globally searchable currently will not work as the clk core won't copy
-> that name if there is no .fw_name present as well.
+On Thu, 12 Jan 2023 12:44:44 -0800, Melody Olvera wrote:
+> This series adds the GCC, RPMh, and PDC clock support required for the
+> QDU1000 and QRU1000 SoCs along with the devicetree bindings for them.
 > 
-> So, populate .fw_name for usb3phy clocks in parent_data as they were
-> missed by me in ("clk: qcom: ipq8074: populate fw_name for all parents").
+> The Qualcomm Technologies, Inc. Distributed Unit 1000 and Radio Unit
+> 1000 are new SoCs meant for enabling Open RAN solutions. See more at
+> https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/documents/qualcomm_5g_ran_platforms_product_brief.pdf
 > 
 > [...]
 
 Applied, thanks!
 
-[2/2] arm64: dts: qcom: ipq8074: correct USB3 QMP PHY-s clock output names
-      commit: 877cff3568c0f54511d77918ae16b2d6e9a0dfce
+[1/2] dt-bindings: clock: Add QDU1000 and QRU1000 GCC clocks
+      commit: f636dee9b60dd1cc4d8dcac98cf975991bc12d58
+[2/2] clk: qcom: Add QDU1000 and QRU1000 GCC support
+      commit: 475b330cca2acbf19a00e80a12c66919209b0183
 
 Best regards,
 -- 
