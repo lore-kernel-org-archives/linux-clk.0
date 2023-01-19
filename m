@@ -2,83 +2,76 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B322C00A5A
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 03:15:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D266AC00A5A
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 05:23:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229788AbjASDOc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Jan 2023 22:14:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34498 "EHLO
+        id S229561AbjASFXh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Jan 2023 00:23:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbjASDMF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 22:12:05 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 849C82B61B;
-        Wed, 18 Jan 2023 19:11:40 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0CAAE60684;
-        Thu, 19 Jan 2023 03:11:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 896D2C433EF;
-        Thu, 19 Jan 2023 03:11:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674097899;
-        bh=ZFnXbMslwExvHQav6CVuep6N5rjcp0bLLlr1yNvmzoU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DpkQ21nZnOs3m6T6tOitOPjcIx3DVIdYR3FhDlS1ilJ1p/rSr8xE1reulRJWOAIiz
-         EK/xpM3GwcmbPwomuQ72wp4IrfaXfEeEApp5I1szlK9m6AOnPVwwyKjzwVO3EHcaWR
-         KFIyX9ocvhRLl2gVjEjn42wqL4b7trjl9vB1rADCS4U7ngD2FMx/vOmQnZciCMrQ9O
-         vjfRfHUE8ZnISjG0pJePWE+ApEovi5V3j1m6up3TzUU1aKb7Fm5nAJ7l8jIaKkxTAt
-         bppiB69ouGd+pOgGkO/wd1nFYUt1kKsTl6m/9UaiYPevyh/rp4CmmY3AIVRiHcB//f
-         /oyGQYYnPfBtg==
-Date:   Wed, 18 Jan 2023 21:11:36 -0600
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: clock: qcom,a53pll: drop operating-points-v2
-Message-ID: <20230119031136.27vson2awemt3nkt@builder.lan>
-References: <20230113145859.82868-1-krzysztof.kozlowski@linaro.org>
- <e73ad320fafa1365e3506bbd4cc77d8d.sboyd@kernel.org>
- <063c5516-417d-7c21-b58f-a6552779a621@linaro.org>
- <705c78c1d0da18089419b064832d5fed.sboyd@kernel.org>
+        with ESMTP id S229654AbjASFXg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 00:23:36 -0500
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A33FA8;
+        Wed, 18 Jan 2023 21:23:33 -0800 (PST)
+X-UUID: 67572b4497b911ed945fc101203acc17-20230119
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=/7Yi1/TMdF0ZsngPg/D7r3gCUq5DRgym11bWH2ZX2aA=;
+        b=e8yyzlcpYUExm4xjS1jPrciM7zF7of3lvO0A9m89cCdt/A+oCRqfdRes2wYn/GIqi8kQzRvmupToiClFJmcfO/ebEnOxQ4vuLJhDvt9aRLdKrvxT3u6DA+N3nQ+S3+d7qDp1phPQ8WHQ+MIzZthEdABZSRFZo+8La2vG/9Dbd7g=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.18,REQID:837c0451-4987-4a38-8722-aac40b04ee79,IP:0,U
+        RL:0,TC:0,Content:14,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+        :release,TS:14
+X-CID-META: VersionHash:3ca2d6b,CLOUDID:8eb5af8c-8530-4eff-9f77-222cf6e2895b,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:3,EDM:-3,IP:nil,U
+        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0
+X-CID-BVR: 0
+X-UUID: 67572b4497b911ed945fc101203acc17-20230119
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 185289891; Thu, 19 Jan 2023 13:23:27 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.792.15; Thu, 19 Jan 2023 13:23:26 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.792.15 via Frontend Transport; Thu, 19 Jan 2023 13:23:26 +0800
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     <angelogioacchino.delregno@collabora.com>
+CC:     <chun-jie.chen@mediatek.com>, <daniel@makrotopia.org>,
+        <devicetree@vger.kernel.org>, <fparent@baylibre.com>,
+        <ikjn@chromium.org>, <johnson.wang@mediatek.com>,
+        <jose.exposito89@gmail.com>, <kernel@collabora.com>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
+        <miles.chen@mediatek.com>, <msp@baylibre.com>,
+        <mturquette@baylibre.com>, <nfraprado@collabora.com>,
+        <pablo.sun@mediatek.com>, <rex-bc.chen@mediatek.com>,
+        <robh+dt@kernel.org>, <ryder.lee@kernel.org>,
+        <sam.shih@mediatek.com>, <sboyd@kernel.org>,
+        <weiyi.lu@mediatek.com>, <wenst@chromium.org>,
+        <y.oudjana@protonmail.com>, <yangyingliang@huawei.com>,
+        <Mingming.Su@mediatek.com>
+Subject: Re: [PATCH v3 00/23] MediaTek clocks cleanups and improvements
+Date:   Thu, 19 Jan 2023 13:23:26 +0800
+Message-ID: <20230119052326.15790-1-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20230113110616.111001-1-angelogioacchino.delregno@collabora.com>
+References: <20230113110616.111001-1-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <705c78c1d0da18089419b064832d5fed.sboyd@kernel.org>
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jan 18, 2023 at 11:11:00AM -0800, Stephen Boyd wrote:
-> Quoting Krzysztof Kozlowski (2023-01-15 06:35:23)
-> > On 13/01/2023 21:28, Stephen Boyd wrote:
-> > > Quoting Krzysztof Kozlowski (2023-01-13 06:58:59)
-> > >> The CPU PLL clock node does not use OPP tables (neither driver).
-> > > 
-> > > What device is qcom_a53pll_get_freq_tbl() operating on?
-> > 
-> > On its own, internal table. While of course driver could be converted to
-> > operating-points-v2, no one did it within last 5 years, so why it should
-> > happen now?
-> > 
-> 
-> The property was added mid 2021 by Shawn[1], that's not 5 years ago. I
-> guess there were plans to add an OPP table that never happened[2]? Is
-> Shawn still working on this? If not, we should revert the OPP code out
-> of the driver.
-> 
+cc Mingming for mt2712.
 
-@Bryan, what do you think about this?
+I tested this v3 series on mt6779 and mt8192.
 
-Thanks,
-Bjorn
+Tested-by: Miles Chen <miles.chen@mediatek.com> 
 
-> [1] https://lore.kernel.org/all/20210704024032.11559-4-shawn.guo@linaro.org/
-> [2] https://lore.kernel.org/all/20210709021334.GB11342@dragon/
