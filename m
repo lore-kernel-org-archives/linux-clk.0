@@ -2,199 +2,185 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBCBFC004D4
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 11:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F41F6C004D4
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 11:35:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230450AbjASLc1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Jan 2023 06:32:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41008 "EHLO
+        id S230412AbjASLem (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Jan 2023 06:34:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230458AbjASLbz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 06:31:55 -0500
+        with ESMTP id S230421AbjASLeX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 06:34:23 -0500
 Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB27C7570B
-        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 03:31:49 -0800 (PST)
-Received: by mail-wm1-x334.google.com with SMTP id f25-20020a1c6a19000000b003da221fbf48so1028601wmc.1
-        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 03:31:49 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 205BBEC73
+        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 03:33:44 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id fl11-20020a05600c0b8b00b003daf72fc844so3384046wmb.0
+        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 03:33:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=8y8gxYsUcnAtqMlaYXb0rYXDx4AIIfXHx+EI4g6LIBE=;
-        b=8L+sVM6mzom55nfPj24OcrHW9b+jXmKtqWVfrpg0my6d9IhYPJ8CF81ioXO9Y6ShEl
-         sYiCLiJ1xqsJMBBX1F1b1Z5WMGCaLew+EdssnRL9fe9Jz44X38f5n4KeGk25goQDwotB
-         j9yQP+trfu/QlJZt02ULpS5ykf+5UvDBcbBS9Y5QSatYpzzyt7oaOwSBSfmjEBRPAef1
-         y0jVjSVcKg+gywd0fwJX2k4DhrZmTo3joV3S7ulVu8NAObTFSBorb/zsMVx7pvyK7dX2
-         VKVrNca2sqTFL7LoXvKRwprhKpVbChx3Mb0fUKkCwqr1h3U5hevPI7tZG22HKitKvsqm
-         XgSg==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Fl+mZE0bzcHSG7RJ3fjFnUtUZhQ6+Zdss6o32rRiNi8=;
+        b=kme6Q5uu+9jfciuTWgvoy5Okl+8i7gXFBfjnmqrc51HE3R2c4KNpeVRg9F5o23jX3I
+         D25qitLLkEaAfD/CJYIhfbLjbicryA6y9PepjB8cDmZ9AOh2wcZSgFt1FvvOLRQl64sz
+         BGq2PxgFt0Ey1qGaoXttVktf3zlA9fRs1MTPEvs18VDGw8Tan+4IhvatDNo3XYGqglR3
+         xWEhJKiAr2v8G6B3AXkRtHzavJO69tuEoBPfoJKm/FSx6PrIWygy+q1lQRrcg6ieYpu9
+         uhqu9JEkHRPysI9gctSV38iVJ6egB++PlvUlHS1LkQRz5OC5B6tXdJdljQC7a4VUVFT5
+         mF4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8y8gxYsUcnAtqMlaYXb0rYXDx4AIIfXHx+EI4g6LIBE=;
-        b=kL+HKuX50pSwizUou0MsatVMEVBO/oW+bBD+xXfZIVLmybGj/YSkrErR0ii1CwQCL3
-         4UmvGh0rLc1I4Tlt8tRcQ2l9TV3lT8rX2VK6WkgNipXi6OAzh3NoxqygMrb4wtiFd9h4
-         /jcsVnt4HPlpEAySnrMhBwSLUhK4HRM/Q92kASYYf8beKQEgxVi76nw03YR6IVik3TsA
-         240YrAkPEriwirvyM+sbUbocbcCsMT1Ghw0kzXNix/lbZC//6wM5iByChFnqNhVWlMc9
-         hmz7Y7HJtB+0GP4eVMlPOl2HgEurIxf06/46MW5wO4h2+VSXVbwf12D52mEnXYRmepoL
-         ZPWQ==
-X-Gm-Message-State: AFqh2koClhpvAocDB9V+pDaE1oOXATL0YhUN3gq5O/drnB6K+MYRyqKR
-        10r1jmjskCVR0QSFOAPUxhEK+Q==
-X-Google-Smtp-Source: AMrXdXsWetgX83imAS+ETSHgMkanTq9tZSORTCmP1Hf79hKgFNFlP03wmr07wJXc++XyUDs3N5UyGA==
-X-Received: by 2002:a7b:c5d6:0:b0:3d9:fb89:4e3d with SMTP id n22-20020a7bc5d6000000b003d9fb894e3dmr10406935wmk.28.1674127908326;
-        Thu, 19 Jan 2023 03:31:48 -0800 (PST)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id h10-20020a05600c314a00b003db0659c454sm5757084wmo.32.2023.01.19.03.31.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jan 2023 03:31:47 -0800 (PST)
-References: <20230116074214.2326-1-yu.tu@amlogic.com>
- <20230116074214.2326-3-yu.tu@amlogic.com>
-User-agent: mu4e 1.8.10; emacs 28.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     "kelvin . zhang" <Kelvin.Zhang@amlogic.com>,
-        "qi . duan" <qi.duan@amlogic.com>
-Subject: Re: [PATCH V6 2/3] clk: meson: S4: add support for Amlogic S4 SoC
- PLL clock driver
-Date:   Thu, 19 Jan 2023 12:20:39 +0100
-In-reply-to: <20230116074214.2326-3-yu.tu@amlogic.com>
-Message-ID: <1jedrqyd3w.fsf@starbuckisacylon.baylibre.com>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fl+mZE0bzcHSG7RJ3fjFnUtUZhQ6+Zdss6o32rRiNi8=;
+        b=CS8P5y6pSgUjtmzFGvf2dHiS2VknYPhEXVsWeyggp0/ykt0jL61nKzztxiWBXXhrv8
+         a+bRd+mTN0Rs76nSH4cnUZLJIzkL5A8+vBy3UnZ1sajdMS9XB7vbu/LledBZHNv1mBmY
+         zEYUPylCNLgsO80kjrK8XQXAANY5MRVHGs3CtAWepHMIFDBvr5PVfjn9IOmOTlVSfXyo
+         VKD1/S6vBTaBSjuEWD6gM3IfGxStJVnjift+K4sllLHlcTBNoEyDkrpG1H5inBAV3ITr
+         6nIyFCOLupTpDbd4qkIJOck1FBPscIe8L6wxgL/2KQyy5GWkNNiR7hSCYPwxQ2q16cvm
+         oHLQ==
+X-Gm-Message-State: AFqh2kohuAN4dLxYVjDQiMtEpo/8qxQHReVDntR6R3ZLbnnNmNHRXCmi
+        wCLTTJiMjsehG4ODgdkdxt+fTw==
+X-Google-Smtp-Source: AMrXdXt3JnAI8NaxR3aCD+iy4yUN0eTtuOdknbjGr/KseeMccHT+0ESuESX+f0IeULtjJskJEz3oBQ==
+X-Received: by 2002:a05:600c:214f:b0:3da:68e1:5d45 with SMTP id v15-20020a05600c214f00b003da68e15d45mr10031208wml.23.1674128022801;
+        Thu, 19 Jan 2023 03:33:42 -0800 (PST)
+Received: from [192.168.0.159] (188-141-3-169.dynamic.upc.ie. [188.141.3.169])
+        by smtp.gmail.com with ESMTPSA id m27-20020a05600c3b1b00b003db012d49b7sm7025228wms.2.2023.01.19.03.33.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Jan 2023 03:33:42 -0800 (PST)
+Message-ID: <f18bbf82-8555-7645-abd7-71610060b10c@linaro.org>
+Date:   Thu, 19 Jan 2023 11:33:40 +0000
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH] dt-bindings: clock: qcom,a53pll: drop operating-points-v2
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, fabien.parent@linaro.org
+References: <20230113145859.82868-1-krzysztof.kozlowski@linaro.org>
+ <e73ad320fafa1365e3506bbd4cc77d8d.sboyd@kernel.org>
+ <063c5516-417d-7c21-b58f-a6552779a621@linaro.org>
+ <705c78c1d0da18089419b064832d5fed.sboyd@kernel.org>
+ <20230119031136.27vson2awemt3nkt@builder.lan>
+ <776b67b2-2405-36f5-f072-78f33ae59fcc@linaro.org>
+ <b6dae46b-7dd4-f731-aa26-f4ea3e4f3118@linaro.org>
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <b6dae46b-7dd4-f731-aa26-f4ea3e4f3118@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 19/01/2023 11:04, Krzysztof Kozlowski wrote:
+> On 19/01/2023 11:55, Bryan O'Donoghue wrote:
+>> On 19/01/2023 03:11, Bjorn Andersson wrote:
+>>> On Wed, Jan 18, 2023 at 11:11:00AM -0800, Stephen Boyd wrote:
+>>>> Quoting Krzysztof Kozlowski (2023-01-15 06:35:23)
+>>>>> On 13/01/2023 21:28, Stephen Boyd wrote:
+>>>>>> Quoting Krzysztof Kozlowski (2023-01-13 06:58:59)
+>>>>>>> The CPU PLL clock node does not use OPP tables (neither driver).
+>>>>>>
+>>>>>> What device is qcom_a53pll_get_freq_tbl() operating on?
+>>>>>
+>>>>> On its own, internal table. While of course driver could be converted to
+>>>>> operating-points-v2, no one did it within last 5 years, so why it should
+>>>>> happen now?
+>>>>>
+>>>>
+>>>> The property was added mid 2021 by Shawn[1], that's not 5 years ago. I
+>>>> guess there were plans to add an OPP table that never happened[2]? Is
+>>>> Shawn still working on this? If not, we should revert the OPP code out
+>>>> of the driver.
+>>>>
+>>>
+>>> @Bryan, what do you think about this?
+>>
+>> I'd be in favour of starting the CPR patchset instead, which depends on
+>> the opps.
+>>
+>> I think @Fabien has been waiting on the core 8939 dtsi, I also think the
+>> dtsi is close enough to merge that we could reasonably initiate the CPR
+>> stuff.
+> 
+> So you would make use of operating-points-v2 property? Then probably we
+> also miss opp-table, but anyway this patch can be dropped then.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-On Mon 16 Jan 2023 at 15:42, Yu Tu <yu.tu@amlogic.com> wrote:
 
-> Add the S4 PLL clock controller driver in the s4 SoC family.
->
-> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
-> ---
+Yep.
 
-[...]
+Looks something like this.
 
-> +
-> +static struct clk_regmap s4_fclk_div2 = {
-> +	.data = &(struct clk_regmap_gate_data){
-> +		.offset = ANACTRL_FIXPLL_CTRL1,
-> +		.bit_idx = 24,
-> +	},
-> +	.hw.init = &(struct clk_init_data){
-> +		.name = "fclk_div2",
-> +		.ops = &clk_regmap_gate_ro_ops,
+CPU2: cpu@102 {
+     device_type = "cpu";
+     compatible = "arm,cortex-a53", "arm,armv8";
+     reg = <0x102>;
+     next-level-cache = <&L2_1>;
+     enable-method = "qcom,kpss-acc-v2";
+     qcom,acc = <&acc2>;
+     qcom,saw = <&saw2>;
+     clocks = <&apcs1>;
+     operating-points-v2 = <&cluster1_opp_table>;
+     power-domains = <&cpr>;
+     power-domain-names = "cpr";
+     #cooling-cells = <2>;
+     capacity-dmips-mhz = <1024>;
+};
 
-On the previous SoC, these fixed divider gate were not read-only.
-They are marked as critical when necessary, with the appropriate
-comment.
+cluster1_opp_table: cluster1-opp-table {
+     compatible = "operating-points-v2-qcom-cpu";
+     opp-shared;
 
-Why is it different on the s4 ?
+     /* Used by qcom-cpufreq-nvmem.c */
+     nvmem-cells = <&cpr_efuse_speedbin_pvs>;
+     nvmem-cell-names = "cpr_efuse_speedbin_pvs";
 
-> +		.parent_hws = (const struct clk_hw *[]) {
-> +			&s4_fclk_div2_div.hw
-> +		},
-> +		.num_parents = 1,
-> +	},
-> +};
-> +
+     opp-200000000 {
+         opp-hz = /bits/ 64 <200000000>;
+         opp-supported-hw = <0x3f>;
+         required-opps = <&cpr_opp3>;
+     };
 
-[...]
+     opp-345600000 {
+         opp-hz = /bits/ 64 <345600000>;
+         opp-supported-hw = <0x3f>;
+         required-opps = <&cpr_opp3>;
+     };
+};
 
-> +#ifndef __MESON_S4_PLL_H__
-> +#define __MESON_S4_PLL_H__
-> +
-> +/* ANA_CTRL - Registers
-> + * REG_BASE:  REGISTER_BASE_ADDR = 0xfe008000
+cpr_opp_table: cpr-opp-table {
+     compatible = "operating-points-v2-qcom-level";
 
-This multi-line comment style is wrong in clk/
-REG_BASE is not used so I'm not sure this is useful
+     cpr_opp1: opp1 {
+         opp-hz = /bits/ 64 <200000000>;
+             opp-level = <1>;
+             qcom,opp-fuse-level = <1>;
+         };
+     cpr_opp2: opp2 {
+         opp-hz = /bits/ 64 <345600000>;
+             opp-level = <2>;
+             qcom,opp-fuse-level = <1>;
+          };
+          cpr_opp3: opp3 {
+             opp-hz = /bits/ 64 <400000000>;
+             opp-level = <3>;
+             qcom,opp-fuse-level = <1>;
+          };
+     };
+     /* etc */
+};
 
-> + */
-> +#define ANACTRL_FIXPLL_CTRL0                       0x040
-> +#define ANACTRL_FIXPLL_CTRL1                       0x044
-> +#define ANACTRL_FIXPLL_CTRL2                       0x048
-> +#define ANACTRL_FIXPLL_CTRL3                       0x04c
-> +#define ANACTRL_FIXPLL_CTRL4                       0x050
-> +#define ANACTRL_FIXPLL_CTRL5                       0x054
-> +#define ANACTRL_FIXPLL_CTRL6                       0x058
-> +#define ANACTRL_FIXPLL_STS                         0x05c
-> +#define ANACTRL_GP0PLL_CTRL0                       0x080
-> +#define ANACTRL_GP0PLL_CTRL1                       0x084
-> +#define ANACTRL_GP0PLL_CTRL2                       0x088
-> +#define ANACTRL_GP0PLL_CTRL3                       0x08c
-> +#define ANACTRL_GP0PLL_CTRL4                       0x090
-> +#define ANACTRL_GP0PLL_CTRL5                       0x094
-> +#define ANACTRL_GP0PLL_CTRL6                       0x098
-> +#define ANACTRL_GP0PLL_STS                         0x09c
-> +#define ANACTRL_HIFIPLL_CTRL0                      0x100
-> +#define ANACTRL_HIFIPLL_CTRL1                      0x104
-> +#define ANACTRL_HIFIPLL_CTRL2                      0x108
-> +#define ANACTRL_HIFIPLL_CTRL3                      0x10c
-> +#define ANACTRL_HIFIPLL_CTRL4                      0x110
-> +#define ANACTRL_HIFIPLL_CTRL5                      0x114
-> +#define ANACTRL_HIFIPLL_CTRL6                      0x118
-> +#define ANACTRL_HIFIPLL_STS                        0x11c
-> +#define ANACTRL_MPLL_CTRL0                         0x180
-> +#define ANACTRL_MPLL_CTRL1                         0x184
-> +#define ANACTRL_MPLL_CTRL2                         0x188
-> +#define ANACTRL_MPLL_CTRL3                         0x18c
-> +#define ANACTRL_MPLL_CTRL4                         0x190
-> +#define ANACTRL_MPLL_CTRL5                         0x194
-> +#define ANACTRL_MPLL_CTRL6                         0x198
-> +#define ANACTRL_MPLL_CTRL7                         0x19c
-> +#define ANACTRL_MPLL_CTRL8                         0x1a0
-> +#define ANACTRL_MPLL_STS                           0x1a4
-> +#define ANACTRL_HDMIPLL_CTRL0                      0x1c0
-> +#define ANACTRL_HDMIPLL_CTRL1                      0x1c4
-> +#define ANACTRL_HDMIPLL_CTRL2                      0x1c8
-> +#define ANACTRL_HDMIPLL_CTRL3                      0x1cc
-> +#define ANACTRL_HDMIPLL_CTRL4                      0x1d0
-> +#define ANACTRL_HDMIPLL_CTRL5                      0x1d4
-> +#define ANACTRL_HDMIPLL_CTRL6                      0x1d8
-> +#define ANACTRL_HDMIPLL_STS                        0x1dc
-> +#define ANACTRL_HDMIPLL_VLOCK                      0x1e4
-> +
-> +/*
-> + * CLKID index values
-> + *
-> + * These indices are entirely contrived and do not map onto the hardware.
-> + * It has now been decided to expose everything by default in the DT header:
-> + * include/dt-bindings/clock/axg-clkc.h. Only the clocks ids we don't want
-> + * to expose, such as the internal muxes and dividers of composite clocks,
-> + * will remain defined here.
-> + */
-> +#define CLKID_FIXED_PLL_DCO		0
-> +#define CLKID_FCLK_DIV2_DIV		2
-> +#define CLKID_FCLK_DIV3_DIV		4
-> +#define CLKID_FCLK_DIV4_DIV		6
-> +#define CLKID_FCLK_DIV5_DIV		8
-> +#define CLKID_FCLK_DIV7_DIV		10
-> +#define CLKID_FCLK_DIV2P5_DIV		12
-> +#define CLKID_GP0_PLL_DCO		14
-> +#define CLKID_HIFI_PLL_DCO		16
-> +#define CLKID_HDMI_PLL_DCO		18
-> +#define CLKID_HDMI_PLL_OD		19
-> +#define CLKID_MPLL_50M_DIV		21
-> +#define CLKID_MPLL_PREDIV		23
-> +#define CLKID_MPLL0_DIV			24
-> +#define CLKID_MPLL1_DIV			26
-> +#define CLKID_MPLL2_DIV			28
-> +#define CLKID_MPLL3_DIV			30
-> +
-> +#define NR_PLL_CLKS			32
-> +/* include the CLKIDs that have been made part of the DT binding */
-> +#include <dt-bindings/clock/amlogic,s4-pll-clkc.h>
-> +
-> +#endif /* __MESON_S4_PLL_H__ */
-
+---
+bod
