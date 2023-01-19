@@ -2,302 +2,84 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A244CC00A5A
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 13:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B50CAC004D4
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 14:13:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231346AbjASNl5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Jan 2023 08:41:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48142 "EHLO
+        id S231551AbjASOND (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Jan 2023 09:13:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231376AbjASNlf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 08:41:35 -0500
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1153B7EE7D
-        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 05:41:33 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id mp20so5732465ejc.7
-        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 05:41:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FbuSSAB+OhIzxBUKh46RxxJlInOaDmPByFm2EV+vyhQ=;
-        b=uenwdMVdpHXmtDev0dHuYtR79xX4JnQfQ8+HggDaBg9/BUDnnEn99BaODzpSSscmFT
-         E69jv5F6ysgrQbrfYT7044gNccK94zF28vkTR1c8EKJqrxO4J6tQn9ubp5iewi94Evcu
-         wZG6fP110MUfHtS/J7xxapBBf/HSXJWmQDA4+joi8O79yIchk8luQiLbm7obaUQzGVUs
-         6MPYYcGiCSmAD3Zde7M5qxRFLB/iV/hr57NtraFxf9yH+7X/Bwk6ORBtFKd5aP66nJay
-         d/wmDw8SGhQW67z8c5BFMyBQtMvH3avLjpNsJEjnXUCMEw2bP3tsQdYTLeZLCTV9/KNm
-         5EOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FbuSSAB+OhIzxBUKh46RxxJlInOaDmPByFm2EV+vyhQ=;
-        b=T11i91/YH/mwYNK3zBNkT3rvlbwE7AMT7yTIwxfefL4Y4nF3w0RtevS6BNpmT373Ok
-         WKO3DS8qcZWjgrODYDyx7X4T40n+BvltmXcKp4aNHhuYhXLYWDQVinBzefXL5IcigTHg
-         jHV5+y4iZklgdR1mWJL6Qirhe3kJSOa3hLd3ayZOfhiTdrHEf+9absiZFjTXyRyj1UhS
-         T0zloQ7yMmn/xvCVaz9lONUlwVH3Nh0Mvjbn2oWNQ145617DQK5zS3VinyHbFBbqjd8S
-         uNRQ8q3ZfVMUFL+imS5jJx5pCG8Khoa157CkaoUIYeLvSQbePbGdrU+umIH4sqKzJmoW
-         mxKA==
-X-Gm-Message-State: AFqh2kqU+wDJzq9jdMY3Zp8gKVeunNZqVZKjbbmH4dUutfqkmkrabYW0
-        dL17DJx04uQqwysfGNf/oH9s0g==
-X-Google-Smtp-Source: AMrXdXsq0Rw7kUD1TrDbtZ4lFEbJ2jNlTLOOo9rUOTGNNtBF9Z59lEdDFGmF+J9Mea4Oo78+7v5MIQ==
-X-Received: by 2002:a17:907:8c88:b0:86e:d375:1f04 with SMTP id td8-20020a1709078c8800b0086ed3751f04mr11892868ejc.30.1674135691580;
-        Thu, 19 Jan 2023 05:41:31 -0800 (PST)
-Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id sb25-20020a1709076d9900b007b2a58e31dasm16509986ejc.145.2023.01.19.05.41.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Jan 2023 05:41:31 -0800 (PST)
-Message-ID: <762d09a6-3143-648f-dae0-80007d6a3701@linaro.org>
-Date:   Thu, 19 Jan 2023 15:41:30 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v2 3/7] clk: qcom: cbf-msm8996: scale CBF clock according
- to the CPUfreq
-Content-Language: en-GB
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        with ESMTP id S231573AbjASOMg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 09:12:36 -0500
+Received: from fudo.makrotopia.org (fudo.makrotopia.org [IPv6:2a07:2ec0:3002::71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F251E4ED12;
+        Thu, 19 Jan 2023 06:11:15 -0800 (PST)
+Received: from local
+        by fudo.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+         (Exim 4.96)
+        (envelope-from <daniel@makrotopia.org>)
+        id 1pIVdE-0008Lb-1h;
+        Thu, 19 Jan 2023 15:11:08 +0100
+Date:   Thu, 19 Jan 2023 14:11:01 +0000
+From:   Daniel Golle <daniel@makrotopia.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20230117225824.1552604-1-dmitry.baryshkov@linaro.org>
- <20230117225824.1552604-4-dmitry.baryshkov@linaro.org>
- <671e8d1d-d41b-5747-540f-9174b12ffb4b@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <671e8d1d-d41b-5747-540f-9174b12ffb4b@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     Chen-Yu Tsai <wenst@chromium.org>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Edward-JW Yang <edward-jw.yang@mediatek.com>,
+        Johnson Wang <johnson.wang@mediatek.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Sam Shih <sam.shih@mediatek.com>,
+        Jianhui Zhao <zhaojh329@gmail.com>
+Subject: [PATCH 0/2] add support for clocks on MT7981 SoC
+Message-ID: <cover.1674137304.git.daniel@makrotopia.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18/01/2023 16:21, Konrad Dybcio wrote:
-> 
-> 
-> On 17.01.2023 23:58, Dmitry Baryshkov wrote:
->> Turn CBF into the interconnect provider. Scale CBF frequency (bandwidth)
->> according to CPU frequencies.
->>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
->>   drivers/clk/qcom/clk-cbf-8996.c | 141 +++++++++++++++++++++++++++++++-
->>   1 file changed, 140 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/qcom/clk-cbf-8996.c b/drivers/clk/qcom/clk-cbf-8996.c
->> index 9cde0e660228..9e30311a310b 100644
->> --- a/drivers/clk/qcom/clk-cbf-8996.c
->> +++ b/drivers/clk/qcom/clk-cbf-8996.c
->> @@ -5,6 +5,7 @@
->>   #include <linux/bitfield.h>
->>   #include <linux/clk.h>
->>   #include <linux/clk-provider.h>
->> +#include <linux/interconnect-provider.h>
->>   #include <linux/of.h>
->>   #include <linux/module.h>
->>   #include <linux/platform_device.h>
->> @@ -225,6 +226,133 @@ static const struct regmap_config cbf_msm8996_regmap_config = {
->>   	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
->>   };
->>   
->> +#ifdef CONFIG_INTERCONNECT
->> +struct qcom_msm8996_cbf_icc_provider {
->> +	struct icc_provider provider;
->> +	struct clk *clk;
->> +};
->> +
->> +#define to_qcom_cbf_provider(_provider) \
->> +	container_of(_provider, struct qcom_msm8996_cbf_icc_provider, provider)
->> +
->> +enum {
->> +	CBF_MASTER_NODE = 2000,
-> Where did the 2000 come from?
+The MediaTek MT7981 SoC is quite similar to its big sibling, the
+MT7986. Hence most drivers can be reused and not much is missing the
+get also this SoC working on mainline Linux.
 
-Pure random. This is an internal ID. OSM_L3 uses 10000 here.
+Start with a cleaned-up version of the clock drivers, based on what can
+also be found in MediaTek's SDK[1].
 
-> 
->> +	CBF_SLAVE_NODE
->> +};
->> +
->> +#define CBF_NUM_NODES 2
->> +
->> +static int qcom_msm8996_cbf_set(struct icc_node *src, struct icc_node *dst)
->> +{
->> +	struct qcom_msm8996_cbf_icc_provider *qp;
->> +
->> +	qp = to_qcom_cbf_provider(src->provider);
->> +
->> +	return clk_set_rate(qp->clk, icc_units_to_bps(dst->peak_bw));
->> +}
->> +
->> +static int qcom_msm8996_cbf_icc_get_bw(struct icc_node *node, u32 *avg, u32 *peak)
->> +{
->> +	struct qcom_msm8996_cbf_icc_provider *qp;
->> +
->> +	qp = to_qcom_cbf_provider(node->provider);
->> +	*peak = clk_get_rate(qp->clk) / 1000ULL;
->> +
->> +	return 0;
->> +}
->> +
->> +static int qcom_msm8996_cbf_icc_register(struct platform_device *pdev, struct clk_hw *cbf_hw)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct qcom_msm8996_cbf_icc_provider *qp;
->> +	struct icc_provider *provider;
->> +	struct icc_onecell_data *data;
->> +	struct icc_node *node;
->> +	struct clk *clk;
->> +	int ret;
->> +
->> +	clk = devm_clk_hw_get_clk(dev, cbf_hw, "cbf");
->> +	if (IS_ERR(clk))
->> +		return PTR_ERR(clk);
->> +
->> +	data = devm_kzalloc(dev, struct_size(data, nodes, CBF_NUM_NODES), GFP_KERNEL);
->> +	if (!data)
->> +		return -ENOMEM;
->> +
->> +	data->num_nodes = CBF_NUM_NODES;
->> +
->> +	qp = devm_kzalloc(dev, sizeof(*qp), GFP_KERNEL);
->> +	if (!qp)
->> +		return -ENOMEM;
->> +
->> +	qp->clk = clk;
->> +
->> +	provider = &qp->provider;
->> +	provider->dev = dev;
->> +	provider->get_bw = qcom_msm8996_cbf_icc_get_bw;
->> +	provider->set = qcom_msm8996_cbf_set;
->> +	provider->aggregate = icc_std_aggregate;
->> +	provider->xlate = of_icc_xlate_onecell;
->> +	INIT_LIST_HEAD(&provider->nodes);
->> +	provider->data = data;
->> +
->> +	ret = icc_provider_add(provider);
->> +	if (ret) {
->> +		dev_err(dev, "error adding interconnect provider\n");
->> +		return ret;
->> +	}
->> +
->> +	node = icc_node_create(CBF_MASTER_NODE);
->> +	if (IS_ERR(node)) {
->> +		ret = PTR_ERR(node);
->> +		goto err;
->> +	}
->> +
->> +	node->name = "cbf_master";
->> +	icc_node_add(node, provider);
->> +	icc_link_create(node, CBF_SLAVE_NODE);
->> +	data->nodes[0] = node;
->> +
->> +	node = icc_node_create(CBF_SLAVE_NODE);
->> +	if (IS_ERR(node)) {
->> +		ret = PTR_ERR(node);
->> +		goto err;
->> +	}
->> +
->> +	node->name = "cbf_slave";
->> +	icc_node_add(node, provider);
->> +	data->nodes[1] = node;
->> +
->> +	platform_set_drvdata(pdev, provider);
->> +
->> +	return 0;
->> +
->> +err:
->> +	icc_nodes_remove(provider);
->> +	icc_provider_del(provider);
->> +
->> +	return ret;
->> +}
->> +
->> +static int qcom_msm8996_cbf_icc_remove(struct platform_device *pdev)
->> +{
->> +	struct icc_provider *provider = platform_get_drvdata(pdev);
->> +
->> +	icc_nodes_remove(provider);
->> +	icc_provider_del(provider);
->> +
->> +	return 0;
->> +}
->> +#else
->> +static int qcom_msm8996_cbf_icc_register(struct platform_device *pdev)
->> +{
->> +	dev_warn(&pdev->dev, "interconnects support is disabled, CBF clock is fixed\n");
-> s/interconnects/interconnect
+[1]: https://git01.mediatek.com/plugins/gitiles/openwrt/feeds/mtk-openwrt-feeds/+/refs/heads/master/target/linux/mediatek/files-5.4/drivers/clk/mediatek/clk-mt7981.c
 
-ack
+Daniel Golle (2):
+  dt-bindings: clock: add some compatible strings for MT7981
+  clk: mediatek: add MT7981 clock support
 
-> 
-> Will cpufreq still work correctly with opp tables having bw
-> properties, the nodes having icc properties and the icc provider
-> not probing?
+ .../bindings/clock/mediatek,apmixedsys.yaml   |   1 +
+ .../bindings/clock/mediatek,topckgen.yaml     |   1 +
+ drivers/clk/mediatek/Kconfig                  |  17 +
+ drivers/clk/mediatek/Makefile                 |   4 +
+ drivers/clk/mediatek/clk-mt7981-apmixed.c     | 103 +++++
+ drivers/clk/mediatek/clk-mt7981-eth.c         | 138 ++++++
+ drivers/clk/mediatek/clk-mt7981-infracfg.c    | 236 ++++++++++
+ drivers/clk/mediatek/clk-mt7981-topckgen.c    | 431 ++++++++++++++++++
+ include/dt-bindings/clock/mt7981-clk.h        | 215 +++++++++
+ 9 files changed, 1146 insertions(+)
+ create mode 100644 drivers/clk/mediatek/clk-mt7981-apmixed.c
+ create mode 100644 drivers/clk/mediatek/clk-mt7981-eth.c
+ create mode 100644 drivers/clk/mediatek/clk-mt7981-infracfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt7981-topckgen.c
+ create mode 100644 include/dt-bindings/clock/mt7981-clk.h
 
-I presume CPUfreq will error out during probe with -EPROVE_DEFER.
 
-> And then, will the system not choke up with high CPU
-> and inadequately low CBF clocks?
-
-The CBF clock is set high during init. It is then lowered by using the 
-icc/bandwidth.
-
-> 
-> Maybe `select INTERCONNECT_something_8996` would be better?
-
-There is no separate interconnect driver, it is provided as a part of 
-this driver. And I didn't want to select INTERCONNECT.
-
-> 
-> Konrad
->> +
->> +	return 0;
->> +}
->> +#define qcom_msm8996_cbf_icc_remove(pdev) (0)
->> +#endif
->> +
->>   static int qcom_msm8996_cbf_probe(struct platform_device *pdev)
->>   {
->>   	void __iomem *base;
->> @@ -283,7 +411,16 @@ static int qcom_msm8996_cbf_probe(struct platform_device *pdev)
->>   	if (ret)
->>   		return ret;
->>   
->> -	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &cbf_mux.clkr.hw);
->> +	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &cbf_mux.clkr.hw);
->> +	if (ret)
->> +		return ret;
->> +
->> +	return qcom_msm8996_cbf_icc_register(pdev, &cbf_mux.clkr.hw);
->> +}
->> +
->> +static int qcom_msm8996_cbf_remove(struct platform_device *pdev)
->> +{
->> +	return qcom_msm8996_cbf_icc_remove(pdev);
->>   }
->>   
->>   static const struct of_device_id qcom_msm8996_cbf_match_table[] = {
->> @@ -294,9 +431,11 @@ MODULE_DEVICE_TABLE(of, qcom_msm8996_cbf_match_table);
->>   
->>   static struct platform_driver qcom_msm8996_cbf_driver = {
->>   	.probe = qcom_msm8996_cbf_probe,
->> +	.remove = qcom_msm8996_cbf_remove,
->>   	.driver = {
->>   		.name = "qcom-msm8996-cbf",
->>   		.of_match_table = qcom_msm8996_cbf_match_table,
->> +		.sync_state = icc_sync_state,
->>   	},
->>   };
->>   
-
+base-commit: aa5c49149a823599764e6953229b028e4bf6e9cc
 -- 
-With best wishes
-Dmitry
+2.39.1
 
