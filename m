@@ -2,42 +2,41 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E18C004D4
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 14:26:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC6B8C004D4
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 14:31:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231136AbjASO0b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Jan 2023 09:26:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48270 "EHLO
+        id S231621AbjASObY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Jan 2023 09:31:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231153AbjASO01 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 09:26:27 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 981DB56EC9;
-        Thu, 19 Jan 2023 06:26:18 -0800 (PST)
+        with ESMTP id S231716AbjASOaz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 09:30:55 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14ED587299;
+        Thu, 19 Jan 2023 06:29:28 -0800 (PST)
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 3CD2166003AE;
-        Thu, 19 Jan 2023 14:26:16 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 47BEB6600874;
+        Thu, 19 Jan 2023 14:29:25 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1674138377;
-        bh=ZIe5yqaxTy9L2ycOBJ1E+XvV/jSScf3+kST/Lx30c6w=;
+        s=mail; t=1674138566;
+        bh=p/A/jWIk2sK78OlSgWI3fy+vpqk60q5IY/hSeAcs6AY=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Re6RpkzC8eP7wmKOfuy/jmDsBJpgP1RgEMrDw7TrWVFnCURyEN+C3SYg840tuV9Ga
-         fVFjoo+lk/FfHue5Nw0JdT/GDvnIKPUdNv1ka8XnV2uHeLeucUZ3YUJSdUlUXH+lyu
-         Ux0FvxhuPQERqysMy4AZHebmZIZG3iZ+hlPKBJGScMOFaFeZe9PMGYG5ESvyaoA8ue
-         FwD+/b+wO4KFQL8zCAV2ydnooiJDuW4DGSdVWv7o6LDrAuqPAfogaMpPbrwLuArlfr
-         M36CVcyw7xXE2Dvu6sOXlMswxpT2beE0fXXXyA9+CFkxNSn8ZMBSFOIGELQL5sSotg
-         VxDLKc/7GpIUg==
-Message-ID: <d462e9b0-7900-e611-a464-0484cdba4571@collabora.com>
-Date:   Thu, 19 Jan 2023 15:26:12 +0100
+        b=AksgbLzNeb2yo5Q6rWlWYXCGSsU4Pw/YGPRQEW1/m2X3nIhXkAmzKvRiJFLQkhCgb
+         ukyskjoKouGS2gXuEQJINq9XuoH6OYZsUt9oO28COwpJ7T22eLdTZ7AmsIo2dphiBp
+         TyPFWJflc5dKPM7QADxTaqIOOoG12xtf2fJnqz/M2MwZp7vt5ww2+qtDmThvAsL1+A
+         aZ73cLGHN43OnZ3/21dRCEk1nfVUNkbY4RfPNxK56KRa3vWDqPI9MPhx4ahriTCyKH
+         8kVvCc1YbmOzwji4Zyr2Y1dyP3ZqS5tWPxRZnA4bjXC549UvdB/jdpvLWLEHtfYVdE
+         j/yIeZyytE8Sg==
+Message-ID: <b8fafc86-40fe-c0ef-1310-b4e284e14609@collabora.com>
+Date:   Thu, 19 Jan 2023 15:29:22 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.0
-Subject: Re: [PATCH 1/2] dt-bindings: clock: add some compatible strings for
- MT7981
+Subject: Re: [PATCH 2/2] clk: mediatek: add MT7981 clock support
 Content-Language: en-US
 To:     Daniel Golle <daniel@makrotopia.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -57,33 +56,54 @@ Cc:     Chen-Yu Tsai <wenst@chromium.org>,
         Sam Shih <sam.shih@mediatek.com>,
         Jianhui Zhao <zhaojh329@gmail.com>
 References: <cover.1674137304.git.daniel@makrotopia.org>
- <cad4f70cd009ba82e39c623485389c021992762e.1674137304.git.daniel@makrotopia.org>
+ <d1718b4f9887664e56b56019b8d21470407c4aaf.1674137304.git.daniel@makrotopia.org>
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <cad4f70cd009ba82e39c623485389c021992762e.1674137304.git.daniel@makrotopia.org>
+In-Reply-To: <d1718b4f9887664e56b56019b8d21470407c4aaf.1674137304.git.daniel@makrotopia.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 19/01/23 15:11, Daniel Golle ha scritto:
-> Add compatible strings for MT7981 to existing binding documenation
-> at mediatek,apmixedsys.yaml and mediatek,topckgen.yaml.
+Il 19/01/23 15:12, Daniel Golle ha scritto:
+> Add MT7986 clock support, include topckgen, apmixedsys, infracfg and
+> ethernet subsystem clocks.
+> 
+> The drivers are based on clk-mt7981.c which can be found in MediaTek's
+> SDK sources. To be fit for upstream inclusion the driver has been split
+> into clock domains and the infracfg part has been significantly
+> de-bloated by removing all the 1:1 factors (aliases).
 > 
 > Signed-off-by: Jianhui Zhao <zhaojh329@gmail.com>
 > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> ---
+>   drivers/clk/mediatek/Kconfig               |  17 +
+>   drivers/clk/mediatek/Makefile              |   4 +
+>   drivers/clk/mediatek/clk-mt7981-apmixed.c  | 103 +++++
+>   drivers/clk/mediatek/clk-mt7981-eth.c      | 138 +++++++
+>   drivers/clk/mediatek/clk-mt7981-infracfg.c | 236 +++++++++++
+>   drivers/clk/mediatek/clk-mt7981-topckgen.c | 431 +++++++++++++++++++++
+>   include/dt-bindings/clock/mt7981-clk.h     | 215 ++++++++++
 
-dt-bindings: clock: Add apmixedsys/topckgen compatibles for MT7981
+dt-bindings go in a different commit; also, please follow binding rules for
+filenames... mt7981-clk.h -> mediatek,mt7981-clk.h
 
-looks better as a title... :-)
+>   7 files changed, 1144 insertions(+)
+>   create mode 100644 drivers/clk/mediatek/clk-mt7981-apmixed.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt7981-eth.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt7981-infracfg.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt7981-topckgen.c
+>   create mode 100644 include/dt-bindings/clock/mt7981-clk.h
+> 
+
+Moreover, I have pushed a pretty big cleanup series, which would reduce a bit
+the size of the drivers that you're trying to introduce, and which is well
+tested and reviewed: can you please rebase this on top of [1]?
+
+Thanks!
+
+[1]: https://patchwork.kernel.org/project/linux-mediatek/list/?series=711734
 
 Regards,
 Angelo
-
-> ---
->   Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml | 1 +
->   Documentation/devicetree/bindings/clock/mediatek,topckgen.yaml   | 1 +
->   2 files changed, 2 insertions(+)
-> 
-
