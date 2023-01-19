@@ -2,185 +2,82 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F41F6C004D4
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 11:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48349C004D4
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 11:39:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230412AbjASLem (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Jan 2023 06:34:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42316 "EHLO
+        id S230486AbjASLjU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Jan 2023 06:39:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230421AbjASLeX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 06:34:23 -0500
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 205BBEC73
-        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 03:33:44 -0800 (PST)
-Received: by mail-wm1-x334.google.com with SMTP id fl11-20020a05600c0b8b00b003daf72fc844so3384046wmb.0
-        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 03:33:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Fl+mZE0bzcHSG7RJ3fjFnUtUZhQ6+Zdss6o32rRiNi8=;
-        b=kme6Q5uu+9jfciuTWgvoy5Okl+8i7gXFBfjnmqrc51HE3R2c4KNpeVRg9F5o23jX3I
-         D25qitLLkEaAfD/CJYIhfbLjbicryA6y9PepjB8cDmZ9AOh2wcZSgFt1FvvOLRQl64sz
-         BGq2PxgFt0Ey1qGaoXttVktf3zlA9fRs1MTPEvs18VDGw8Tan+4IhvatDNo3XYGqglR3
-         xWEhJKiAr2v8G6B3AXkRtHzavJO69tuEoBPfoJKm/FSx6PrIWygy+q1lQRrcg6ieYpu9
-         uhqu9JEkHRPysI9gctSV38iVJ6egB++PlvUlHS1LkQRz5OC5B6tXdJdljQC7a4VUVFT5
-         mF4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fl+mZE0bzcHSG7RJ3fjFnUtUZhQ6+Zdss6o32rRiNi8=;
-        b=CS8P5y6pSgUjtmzFGvf2dHiS2VknYPhEXVsWeyggp0/ykt0jL61nKzztxiWBXXhrv8
-         a+bRd+mTN0Rs76nSH4cnUZLJIzkL5A8+vBy3UnZ1sajdMS9XB7vbu/LledBZHNv1mBmY
-         zEYUPylCNLgsO80kjrK8XQXAANY5MRVHGs3CtAWepHMIFDBvr5PVfjn9IOmOTlVSfXyo
-         VKD1/S6vBTaBSjuEWD6gM3IfGxStJVnjift+K4sllLHlcTBNoEyDkrpG1H5inBAV3ITr
-         6nIyFCOLupTpDbd4qkIJOck1FBPscIe8L6wxgL/2KQyy5GWkNNiR7hSCYPwxQ2q16cvm
-         oHLQ==
-X-Gm-Message-State: AFqh2kohuAN4dLxYVjDQiMtEpo/8qxQHReVDntR6R3ZLbnnNmNHRXCmi
-        wCLTTJiMjsehG4ODgdkdxt+fTw==
-X-Google-Smtp-Source: AMrXdXt3JnAI8NaxR3aCD+iy4yUN0eTtuOdknbjGr/KseeMccHT+0ESuESX+f0IeULtjJskJEz3oBQ==
-X-Received: by 2002:a05:600c:214f:b0:3da:68e1:5d45 with SMTP id v15-20020a05600c214f00b003da68e15d45mr10031208wml.23.1674128022801;
-        Thu, 19 Jan 2023 03:33:42 -0800 (PST)
-Received: from [192.168.0.159] (188-141-3-169.dynamic.upc.ie. [188.141.3.169])
-        by smtp.gmail.com with ESMTPSA id m27-20020a05600c3b1b00b003db012d49b7sm7025228wms.2.2023.01.19.03.33.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Jan 2023 03:33:42 -0800 (PST)
-Message-ID: <f18bbf82-8555-7645-abd7-71610060b10c@linaro.org>
-Date:   Thu, 19 Jan 2023 11:33:40 +0000
+        with ESMTP id S230434AbjASLiz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 06:38:55 -0500
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BDFB4CE56
+        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 03:37:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1674128277; x=1705664277;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=gz4VLMDhrcBag9yEpBKB1xhapLAVprFlDszzs5U36fk=;
+  b=SH10Nl5bxtsLdxWO1ziEyRTXhW2gMdIg4QzAcWvo8+j6XLLe1rEwOVuT
+   9kJlHY9UC/O92rylt/4Cmdr6+3DDc7ZrKU/Uy4cIrbnvozyazdAxaCfkc
+   ywHL/RazcZj8U6J2IfRLY+o9qE/sIGzsnJb1peC6VdFX+GXArYlmya3AJ
+   sS9LpnjJVJCJjQdiQiE0jhb4IYGZnMd0zzR5uysQQOmNZx5bvTmEsfbTF
+   rwHVhIAppLJqmGUjO95Is88GwWWfAcEh4jO0/nyMSkGcInVTfvQba3nJD
+   rPsXjSwaBeNCvWYA2GnRfp9L/voJltmjwxZs5pN2j66SX4Mnw42sY1uHT
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.97,229,1669100400"; 
+   d="scan'208";a="208444416"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 19 Jan 2023 04:37:56 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.16; Thu, 19 Jan 2023 04:37:56 -0700
+Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.115.15) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.16 via Frontend Transport; Thu, 19 Jan 2023 04:37:53 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC:     <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <conor.dooley@microchip.com>, <linux-clk@vger.kernel.org>
+Subject: [GIT PULL] Microchip clock fixes for 6.2
+Date:   Thu, 19 Jan 2023 13:35:51 +0200
+Message-ID: <20230119113551.43887-1-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH] dt-bindings: clock: qcom,a53pll: drop operating-points-v2
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, fabien.parent@linaro.org
-References: <20230113145859.82868-1-krzysztof.kozlowski@linaro.org>
- <e73ad320fafa1365e3506bbd4cc77d8d.sboyd@kernel.org>
- <063c5516-417d-7c21-b58f-a6552779a621@linaro.org>
- <705c78c1d0da18089419b064832d5fed.sboyd@kernel.org>
- <20230119031136.27vson2awemt3nkt@builder.lan>
- <776b67b2-2405-36f5-f072-78f33ae59fcc@linaro.org>
- <b6dae46b-7dd4-f731-aa26-f4ea3e4f3118@linaro.org>
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <b6dae46b-7dd4-f731-aa26-f4ea3e4f3118@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/01/2023 11:04, Krzysztof Kozlowski wrote:
-> On 19/01/2023 11:55, Bryan O'Donoghue wrote:
->> On 19/01/2023 03:11, Bjorn Andersson wrote:
->>> On Wed, Jan 18, 2023 at 11:11:00AM -0800, Stephen Boyd wrote:
->>>> Quoting Krzysztof Kozlowski (2023-01-15 06:35:23)
->>>>> On 13/01/2023 21:28, Stephen Boyd wrote:
->>>>>> Quoting Krzysztof Kozlowski (2023-01-13 06:58:59)
->>>>>>> The CPU PLL clock node does not use OPP tables (neither driver).
->>>>>>
->>>>>> What device is qcom_a53pll_get_freq_tbl() operating on?
->>>>>
->>>>> On its own, internal table. While of course driver could be converted to
->>>>> operating-points-v2, no one did it within last 5 years, so why it should
->>>>> happen now?
->>>>>
->>>>
->>>> The property was added mid 2021 by Shawn[1], that's not 5 years ago. I
->>>> guess there were plans to add an OPP table that never happened[2]? Is
->>>> Shawn still working on this? If not, we should revert the OPP code out
->>>> of the driver.
->>>>
->>>
->>> @Bryan, what do you think about this?
->>
->> I'd be in favour of starting the CPR patchset instead, which depends on
->> the opps.
->>
->> I think @Fabien has been waiting on the core 8939 dtsi, I also think the
->> dtsi is close enough to merge that we could reasonably initiate the CPR
->> stuff.
-> 
-> So you would make use of operating-points-v2 property? Then probably we
-> also miss opp-table, but anyway this patch can be dropped then.
-> 
-> Best regards,
-> Krzysztof
-> 
+The following changes since commit 1b929c02afd37871d5afb9d498426f83432e71c2:
 
+  Linux 6.2-rc1 (2022-12-25 13:41:39 -0800)
 
-Yep.
+are available in the Git repository at:
 
-Looks something like this.
+  https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-microchip-fixes-6.2
 
-CPU2: cpu@102 {
-     device_type = "cpu";
-     compatible = "arm,cortex-a53", "arm,armv8";
-     reg = <0x102>;
-     next-level-cache = <&L2_1>;
-     enable-method = "qcom,kpss-acc-v2";
-     qcom,acc = <&acc2>;
-     qcom,saw = <&saw2>;
-     clocks = <&apcs1>;
-     operating-points-v2 = <&cluster1_opp_table>;
-     power-domains = <&cpr>;
-     power-domain-names = "cpr";
-     #cooling-cells = <2>;
-     capacity-dmips-mhz = <1024>;
-};
+for you to fetch changes up to 86d884f5287f4369c198811aaa4931a3a11f36d2:
 
-cluster1_opp_table: cluster1-opp-table {
-     compatible = "operating-points-v2-qcom-cpu";
-     opp-shared;
+  clk: microchip: mpfs-ccc: Use devm_kasprintf() for allocating formatted strings (2023-01-19 11:45:35 +0200)
 
-     /* Used by qcom-cpufreq-nvmem.c */
-     nvmem-cells = <&cpr_efuse_speedbin_pvs>;
-     nvmem-cell-names = "cpr_efuse_speedbin_pvs";
+----------------------------------------------------------------
+Microchip clock fixes for 6.2:
 
-     opp-200000000 {
-         opp-hz = /bits/ 64 <200000000>;
-         opp-supported-hw = <0x3f>;
-         required-opps = <&cpr_opp3>;
-     };
+Only one fix for Polarfire SoCs at this time as follows:
+- replace devm_kzalloc() with devm_kasprintf(); this has been marked as
+  fix to avoid having registered 2 clocks with the same or invalid name in
+  case device tree node addresses will be longer such that clocks
+  registered with name patern "ccc<node_address>_pll<N>" will exeed the
+  allocated space.
 
-     opp-345600000 {
-         opp-hz = /bits/ 64 <345600000>;
-         opp-supported-hw = <0x3f>;
-         required-opps = <&cpr_opp3>;
-     };
-};
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      clk: microchip: mpfs-ccc: Use devm_kasprintf() for allocating formatted strings
 
-cpr_opp_table: cpr-opp-table {
-     compatible = "operating-points-v2-qcom-level";
-
-     cpr_opp1: opp1 {
-         opp-hz = /bits/ 64 <200000000>;
-             opp-level = <1>;
-             qcom,opp-fuse-level = <1>;
-         };
-     cpr_opp2: opp2 {
-         opp-hz = /bits/ 64 <345600000>;
-             opp-level = <2>;
-             qcom,opp-fuse-level = <1>;
-          };
-          cpr_opp3: opp3 {
-             opp-hz = /bits/ 64 <400000000>;
-             opp-level = <3>;
-             qcom,opp-fuse-level = <1>;
-          };
-     };
-     /* etc */
-};
-
----
-bod
+ drivers/clk/microchip/clk-mpfs-ccc.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
