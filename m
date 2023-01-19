@@ -2,80 +2,122 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED11EC46467
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Jan 2023 22:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA57C677F1
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 00:15:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229483AbjARWud (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Jan 2023 17:50:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46666 "EHLO
+        id S229493AbjASAP3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Jan 2023 19:15:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229564AbjARWuc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 17:50:32 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75CEC4A1DD;
-        Wed, 18 Jan 2023 14:50:31 -0800 (PST)
+        with ESMTP id S229463AbjASAP3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jan 2023 19:15:29 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9A70530C8;
+        Wed, 18 Jan 2023 16:15:27 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0E16B61A7E;
-        Wed, 18 Jan 2023 22:50:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 697D4C433EF;
-        Wed, 18 Jan 2023 22:50:29 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8912C61AA0;
+        Thu, 19 Jan 2023 00:15:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0EE3C433D2;
+        Thu, 19 Jan 2023 00:15:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674082230;
-        bh=eU3t7E1kJ8bwpugLyTtveqT2XvPWm3uToW/Yr7zPT5w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NGCr9GKKlPgFFJB/PzSNK6EW5+6KB6O8cjKBZN629EpMNFjTBjJXk43T1mVIhPMBr
-         fcPgc0sk155N3Ti4se16sgTVK0I6qSr/qMjrL/vycV8B6WLmi2dhWyVBEqmEhtxt2W
-         CaSowfji5+86JTIHecvRi4mYNWvDSSSR5DbbgQ096KIhMbs7SsYljI5FasOcn+QSGR
-         InyH9qtmrlANZtuQTzYGXY8yKMYY2u7H6+PRWTmxeduNMQYn669dgZze+XGXBkbw5m
-         gsOZY3FnmIdbhVJH5W6l+xF9IJWmdNrlW6mcM75rUE3SrxEx9o1J0jU8tkhVrihSlR
-         Iq6J/t6b4noRw==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     konrad.dybcio@linaro.org, mturquette@baylibre.com, brgl@bgdev.pl,
-        robh+dt@kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        sboyd@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        agross@kernel.org
-Cc:     netdev@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bartosz.golaszewski@linaro.org
-Subject: Re: [PATCH v2 0/2] qcom: sa8775p: add the GCC clock driver for Qualcomm SA8775P platforms
-Date:   Wed, 18 Jan 2023 16:50:20 -0600
-Message-Id: <167408222418.2952004.17876946319531324786.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20230117180429.305266-1-brgl@bgdev.pl>
-References: <20230117180429.305266-1-brgl@bgdev.pl>
+        s=k20201202; t=1674087327;
+        bh=35I7X2PSLZ3vBy6im40kDuz28tZPma63oL+FlhE9awo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=qwOYDfBLhxU5ca3QZacF9ctrxuQkWDwYSARG8U20WL9A3JLcvjgMSKVvjfbL87MT4
+         KKVnuOqSxkpDrxOukiCCGP21R9+9CH/vDnq8krIVbSjc5x3hIE1HsoLql/B0hxap4t
+         nUrVMmTfyEfWo9BFp+p3yPiWeRjCKXHiue3Q4T3E4Nuc838YcWe+Vq4Qyfg2tmdw0o
+         UOjzctu6VYT7uvHmPGLo5nsFQoE1WpN6AhHKRmI+x6QfhTC46EGuemEow3r6WJGtGa
+         HlfTpfad6d0nKUolxfYhGf+/lB0UG7Sg4yVM6QRNYL6RfEc7qngSkBsUsW9uEdR5lU
+         QfkFEtCPOHqwQ==
+Date:   Wed, 18 Jan 2023 16:15:25 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        Vadim Fedorenko <vadfed@meta.com>
+Cc:     "Jiri Pirko" <jiri@resnulli.us>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        "Paolo Abeni" <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [RFC PATCH v5 0/4] Create common DPLL/clock configuration API
+Message-ID: <20230118161525.01d6b94f@kernel.org>
+In-Reply-To: <DM6PR11MB4657644893C565877A71E1F19BC79@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20230117180051.2983639-1-vadfed@meta.com>
+        <DM6PR11MB4657644893C565877A71E1F19BC79@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 17 Jan 2023 19:04:27 +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Add the DT bindings and driver for the GCC clock on the sa8775p platform
-> from Qualcomm.
-> 
-> v1 -> v2:
-> - fix examples in DT bindings and make sure they pass tests
-> - use lowercase letters in hex numbers
-> - fix the name of DT compatible and headers (gcc-sa8775p -> sa8775p-gcc)
-> - fix licensing of DT bindings
-> - fix the regmap's max_register property
-> - use clk_regmap_phy_mux_ops where applicable
-> - other minor tweaks and improvements
-> 
-> [...]
+On Wed, 18 Jan 2023 18:07:53 +0000 Kubalewski, Arkadiusz wrote:
+> Based on today's sync meeting, changes we are going to introduce in next
+> version:
+> - reduce the muxed-pin number (artificial multiplication) on list of dpll's
+> pins, have a single pin which can be connected with multiple parents,
+> - introduce separated get command for the pin attributes,
+> - allow infinite name length of dpll device,
+> - remove a type embedded in dpll's name and introduce new attribute instead,
+> - remove clock class attribute as it is not known by the driver without
+> compliance testing on given SW/HW configuration,
+> - add dpll device "default" quality level attribute, as shall be known
+> by driver for a given hardware.
 
-Applied, thanks!
+I converted the patches to use the spec, and pushed them out here:
 
-[1/2] dt-bindings: clock: qcom: document the GCC clock on Qualcomm sa8775p
-      commit: 0fff9fa043f972b83935016b0e81d44d9a2229bd
-[2/2] clk: qcom: add the GCC driver for sa8775p
-      commit: 08c51ceb12f7ce2252513a38ad8a8ed26103a4e2
+https://github.com/kuba-moo/ynl/tree/dpll
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+I kept the conversion step-by-step to help the readers a bit but
+the conversion patches should all be squashed into the main DPLL patch.
+
+The patches are on top of my YNL branch ('main' in that repo). 
+I'll post the YNL patches later today, so hopefully very soon they will
+be upstream.
+
+Two major pieces of work which I didn't do for DPLL:
+ - docs - I dropped most of the kdocs, the copy-n-pasting was too much;
+   if you want to keep the docs in the uAPI you need to add the
+   appropriate stuff in the spec (look at the definition of
+   pin-signal-type for an example of a fully documented enum)
+ - the notifications are quite unorthodox in the current 
+   implementation, so I faked the enums :S
+   Usually the notification is the same as the response to a get.
+   IIRC 'notify' and 'event' operation types should be used in the spec.
+
+There is documentation on the specs in
+Documentation/userspace-api/netlink/ which should give some idea of how
+things work. There is also another example of a spec here:
+https://github.com/kuba-moo/ynl/blob/psp/Documentation/netlink/specs/psp.yaml
+
+To regenerate the C code after changes to YAML:
+
+  ./tools/net/ynl/ynl-regen.sh
+
+if the Python script doing the generation dies and eats the files -
+bring them back with:
+
+  git checkout drivers/dpll/dpll_nl.c drivers/dpll/dpll_nl.h \
+               include/uapi/linux/dpll.h
+
+There is a "universal CLI" script in:
+
+  ./tools/net/ynl/samples/cli.py
+
+which should be able to take in JSON requests and output JSON responses.
+I'm improvising, because I don't have any implementation to try it 
+out, but something like:
+
+  ./tools/net/ynl/samples/cli.py \
+       --spec Documentation/netlink/specs/dpll.yaml \
+       --do device-get --json '{"id": 1}'
+
+should pretty print the info about device with id 1. Actually - it
+probably won't because I didn't fill in all the attrs in the pin nest.
+But with a bit more work on the spec it should work.
+
+Would you be able to finish this conversion. Just LMK if you have any
+problems, the edges are definitely very sharp at this point.
