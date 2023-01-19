@@ -2,116 +2,127 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2681C00A5A
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 11:04:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 600E0C46467
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 11:14:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230021AbjASLEo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Jan 2023 06:04:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51482 "EHLO
+        id S230073AbjASLO0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Jan 2023 06:14:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230352AbjASLEZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 06:04:25 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B766C62D33
-        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 03:04:19 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id iv8-20020a05600c548800b003db04a0a46bso2801310wmb.0
-        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 03:04:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WFPCHnH4BLHfsWKrLXL/kRkVribIQYKCD+0tbIu1RlY=;
-        b=ORycp9/f4UvnbRnieWYiheKRbz4dQRj6ZCKMBB8oUeU+Id+izspyrbe1d8SJD4TDnv
-         MXQTkk087qeT27gM+1xw+eOBqCKd02Xkc/Z8OfZsov0zJlEmRy7p7LqiE1SuxWvkPvy+
-         /xn5/67z4Q7Xwm7frblc0U8DMCXVz21egKc2CWa6TfS/0R7KPah5ytNYmzdU2GPcl2YW
-         bLnPTu/qFioJ6YsjbOfJVtskoEMEJnnG6Glg/XClwEDAFGE8WnFgNvr0sC4W/OMYq2A9
-         af/fsFHT3N1QQDnMANHrF1SmKqmfQDYzqcZQzrCE0lUxazmex15ivd+DmNH84RsP5iW2
-         TXvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WFPCHnH4BLHfsWKrLXL/kRkVribIQYKCD+0tbIu1RlY=;
-        b=QGHSOSEwDE+nzAXHcCajUAHFg3IPEsXe4zmPIU63NBkvCTi+cHMzy90ESfhlLMcYmK
-         WETAkUqph0mSHjt5EkGs+aKZZ9HTgKOxNHhdY/klJ6pSMIMN6VIEAFO5we7oRp3iWyQN
-         BWeqHoGSNoA8x2nMpblyqbP8HXGCb8+ywX1TkkNWqNyWfvtHYcFzI1Jwi4AkDfUlD9SZ
-         92/UlEzagIg3H8pBllVnmUE2mmWPgvR5KUqSInR7yGp7DWcuxuIqXSdrouOiMTykiIVF
-         Y+e6Ob0D6Zk8MG9+pwjBMSj1mfqGff8dvzrjYbyFzflkd7zjUVIMDukBP8VRKVwkL2ng
-         Qf9A==
-X-Gm-Message-State: AFqh2kr6CVNvtL5MN7qR0797J4R/zlQvfaPfH0DmvOnU6Sew4RJj2ABW
-        B+xy3xZ7fk/2wWKEKC+GlMMyMw==
-X-Google-Smtp-Source: AMrXdXv1b/NdkFoUj8MkBo3cwBpSRggisPj59zoDU29d9SSgAJdooDC4XRMfufn4i6dLoRwq4xM07Q==
-X-Received: by 2002:a05:600c:3b17:b0:3cf:7397:c768 with SMTP id m23-20020a05600c3b1700b003cf7397c768mr9770538wms.30.1674126258288;
-        Thu, 19 Jan 2023 03:04:18 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id a10-20020adfdd0a000000b002bb6b45ab57sm31533210wrm.85.2023.01.19.03.04.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Jan 2023 03:04:17 -0800 (PST)
-Message-ID: <b6dae46b-7dd4-f731-aa26-f4ea3e4f3118@linaro.org>
-Date:   Thu, 19 Jan 2023 12:04:16 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH] dt-bindings: clock: qcom,a53pll: drop operating-points-v2
-Content-Language: en-US
-To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        with ESMTP id S230316AbjASLOK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 06:14:10 -0500
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A42B7494D;
+        Thu, 19 Jan 2023 03:13:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1674126831; x=1705662831;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=O9Ppel+iepCFWa6otaPpGVfa9DVKCGM/plTA65MWvdg=;
+  b=fr+UZ78W0BxpRGn55hsZauF9EisInUU9bGVB+z/LVmV/yWy0SNXT+UqB
+   F42ce4VWf+2uHWG494QoISJuTE8P3fgfXH72fqbSLUIJXfjl3bLFjK5Xl
+   YoDLe3MsS+4jwd1muENb8KMydJu7lQLsRaG9L9OmQ+XSejT0hyDP9HLJa
+   BFoI8f5Io/eOCcjh5l0lCtzbbe/cnRzRtBr5S3vGM/ZBDZdTq69XSWnI/
+   OrjLZOH+AnK1eK16reS5OCy0fGEe7OnHZHE1wvQGRMF+9wNQFl0nWD1vL
+   8edcTfAmhg3baZ9/NTCnh1X6/xa5gGXalVGFGITVhgE1UV9cf11d2vPT8
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10594"; a="326518923"
+X-IronPort-AV: E=Sophos;i="5.97,228,1669104000"; 
+   d="scan'208";a="326518923"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2023 03:13:50 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10594"; a="768183528"
+X-IronPort-AV: E=Sophos;i="5.97,228,1669104000"; 
+   d="scan'208";a="768183528"
+Received: from lkp-server01.sh.intel.com (HELO 5646d64e7320) ([10.239.97.150])
+  by fmsmga002.fm.intel.com with ESMTP; 19 Jan 2023 03:13:47 -0800
+Received: from kbuild by 5646d64e7320 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pISrb-0001P2-00;
+        Thu, 19 Jan 2023 11:13:47 +0000
+Date:   Thu, 19 Jan 2023 19:13:35 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Keguang Zhang <keguang.zhang@gmail.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, fabien.parent@linaro.org
-References: <20230113145859.82868-1-krzysztof.kozlowski@linaro.org>
- <e73ad320fafa1365e3506bbd4cc77d8d.sboyd@kernel.org>
- <063c5516-417d-7c21-b58f-a6552779a621@linaro.org>
- <705c78c1d0da18089419b064832d5fed.sboyd@kernel.org>
- <20230119031136.27vson2awemt3nkt@builder.lan>
- <776b67b2-2405-36f5-f072-78f33ae59fcc@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <776b67b2-2405-36f5-f072-78f33ae59fcc@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Keguang Zhang <keguang.zhang@gmail.com>
+Subject: Re: [PATCH 2/2] clk: loongson1: Refactor to add devicetree support
+Message-ID: <202301191914.Rs7JrOPY-lkp@intel.com>
+References: <20230113110738.1505973-3-keguang.zhang@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230113110738.1505973-3-keguang.zhang@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/01/2023 11:55, Bryan O'Donoghue wrote:
-> On 19/01/2023 03:11, Bjorn Andersson wrote:
->> On Wed, Jan 18, 2023 at 11:11:00AM -0800, Stephen Boyd wrote:
->>> Quoting Krzysztof Kozlowski (2023-01-15 06:35:23)
->>>> On 13/01/2023 21:28, Stephen Boyd wrote:
->>>>> Quoting Krzysztof Kozlowski (2023-01-13 06:58:59)
->>>>>> The CPU PLL clock node does not use OPP tables (neither driver).
->>>>>
->>>>> What device is qcom_a53pll_get_freq_tbl() operating on?
->>>>
->>>> On its own, internal table. While of course driver could be converted to
->>>> operating-points-v2, no one did it within last 5 years, so why it should
->>>> happen now?
->>>>
->>>
->>> The property was added mid 2021 by Shawn[1], that's not 5 years ago. I
->>> guess there were plans to add an OPP table that never happened[2]? Is
->>> Shawn still working on this? If not, we should revert the OPP code out
->>> of the driver.
->>>
->>
->> @Bryan, what do you think about this?
-> 
-> I'd be in favour of starting the CPR patchset instead, which depends on 
-> the opps.
-> 
-> I think @Fabien has been waiting on the core 8939 dtsi, I also think the 
-> dtsi is close enough to merge that we could reasonably initiate the CPR 
-> stuff.
+Hi Keguang,
 
-So you would make use of operating-points-v2 property? Then probably we
-also miss opp-table, but anyway this patch can be dropped then.
+I love your patch! Yet something to improve:
 
-Best regards,
-Krzysztof
+[auto build test ERROR on 1b929c02afd37871d5afb9d498426f83432e71c2]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Keguang-Zhang/dt-bindings-clock-Add-binding-for-Loongson-1-clock-driver/20230113-192017
+base:   1b929c02afd37871d5afb9d498426f83432e71c2
+patch link:    https://lore.kernel.org/r/20230113110738.1505973-3-keguang.zhang%40gmail.com
+patch subject: [PATCH 2/2] clk: loongson1: Refactor to add devicetree support
+config: mips-loongson1b_defconfig (https://download.01.org/0day-ci/archive/20230119/202301191914.Rs7JrOPY-lkp@intel.com/config)
+compiler: mipsel-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/b753dca857d9c85e25ba410fe013b78c7c73ca40
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Keguang-Zhang/dt-bindings-clock-Add-binding-for-Loongson-1-clock-driver/20230113-192017
+        git checkout b753dca857d9c85e25ba410fe013b78c7c73ca40
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=mips olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=mips SHELL=/bin/bash
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+
+All error/warnings (new ones prefixed by >>):
+
+>> drivers/clk/clk-loongson1.c:115:23: warning: no previous prototype for 'ls1x_clk_hw_register_pll' [-Wmissing-prototypes]
+     115 | struct clk_hw *__init ls1x_clk_hw_register_pll(struct device *dev,
+         |                       ^~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/clk-loongson1.c: In function 'ls1x_divider_set_rate':
+>> drivers/clk/clk-loongson1.c:186:13: warning: the comparison will always evaluate as 'true' for the address of 'lock' will never be NULL [-Waddress]
+     186 |         if (&divider->lock)
+         |             ^
+   drivers/clk/clk-loongson1.c:28:20: note: 'lock' declared here
+      28 |         spinlock_t lock;        /* protect access to DIV registers */
+         |                    ^~~~
+   drivers/clk/clk-loongson1.c:212:13: warning: the comparison will always evaluate as 'true' for the address of 'lock' will never be NULL [-Waddress]
+     212 |         if (&divider->lock)
+         |             ^
+   drivers/clk/clk-loongson1.c:28:20: note: 'lock' declared here
+      28 |         spinlock_t lock;        /* protect access to DIV registers */
+         |                    ^~~~
+   drivers/clk/clk-loongson1.c: At top level:
+>> drivers/clk/clk-loongson1.c:226:23: warning: no previous prototype for 'ls1x_clk_hw_register_divider' [-Wmissing-prototypes]
+     226 | struct clk_hw *__init ls1x_clk_hw_register_divider(struct device *dev,
+         |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/clk-loongson1.c:310:34: warning: 'ls1x_divider_match' defined but not used [-Wunused-const-variable=]
+     310 | static const struct of_device_id ls1x_divider_match[] __initconst = {
+         |                                  ^~~~~~~~~~~~~~~~~~
+   drivers/clk/clk-loongson1.c:275:34: warning: 'ls1x_pll_match' defined but not used [-Wunused-const-variable=]
+     275 | static const struct of_device_id ls1x_pll_match[] __initconst = {
+         |                                  ^~~~~~~~~~~~~~
+--
+   mipsel-linux-ld: arch/mips/loongson32/common/time.o: in function `plat_time_init':
+>> time.c:(.init.text+0x8): undefined reference to `ls1x_clk_init'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
