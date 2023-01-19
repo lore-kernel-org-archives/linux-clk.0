@@ -2,21 +2,21 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8F1C38142
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 09:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD39C00A5A
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 09:00:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229610AbjASJAG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Jan 2023 04:00:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59462 "EHLO
+        id S229630AbjASJAI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Jan 2023 04:00:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229630AbjASJAE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 04:00:04 -0500
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BA856796A
-        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 01:00:03 -0800 (PST)
+        with ESMTP id S229699AbjASJAH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 04:00:07 -0500
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A3DE6796A
+        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 01:00:05 -0800 (PST)
 Received: from toolbox.toradex.int ([31.10.206.125]) by mrelay.perfora.net
- (mreueus004 [74.208.5.2]) with ESMTPSA (Nemesis) id 1M4JBN-1pI9Zd4Bzl-000KPT;
- Thu, 19 Jan 2023 09:54:29 +0100
+ (mreueus004 [74.208.5.2]) with ESMTPSA (Nemesis) id 1N33hJ-1oZIlF0O2H-013PPj;
+ Thu, 19 Jan 2023 09:54:36 +0100
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
@@ -31,47 +31,71 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Shawn Guo <shawnguo@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v1 0/2] ARM: arm64: dts/clk: imx: indentation permission whitespace cleanup 2
-Date:   Thu, 19 Jan 2023 09:54:19 +0100
-Message-Id: <20230119085421.102804-1-marcel@ziswiler.com>
+Subject: [RESEND PATCH v1 2/2] dt-bindings: imx8ulp: clock: no spaces before tabs
+Date:   Thu, 19 Jan 2023 09:54:21 +0100
+Message-Id: <20230119085421.102804-3-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20230119085421.102804-1-marcel@ziswiler.com>
+References: <20230119085421.102804-1-marcel@ziswiler.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:vWuOTF3Cmn5I3Dc5W+An3aVQczJy3zXtoUMHW0dXoUy0viH+2s8
- Hw4Bx2mnzqppb6yab8MudfWEpnqe0VOV6+IwkZ9JFF/zp9fsiOAQY4Y/HYp8Z1Z0XShDWk4
- s2Pefynwh/fmGapn7TeWfdG7MLL1h8B7pbv797W5cU3wBIdiB5pTl3cgGOVv/v+mp5pvaEp
- p1bMJVkGvZ5lGSCxYGo4A==
-UI-OutboundReport: notjunk:1;M01:P0:ktwZmlrjDrY=;NncWV6KWZuZSAMGulRPx+ILTJ6d
- kr/La0bNz8iOEx9z7DHLg5/XpEwvrgtyKkZo3bgm22YWhBVGkykKnX3RRy35QLLBoS8QWnhGd
- fn+1XHverXOl0Uty3kBffXhQrJ14fvzXbJNdDZXi+oKzNylTOkxpNnm0nXbN7m10xkmW7IKMS
- jz8eWuUeb+eeUirhauMecG3TfLyAu5DXeO0VtZHzIXqkJb4DLBCi2SSUMOLfWWl1LrgiD/bEf
- o+veCGIkQTJf9QZGoZr6gtqsObTT8NfnTBfsRM88w0rtEtADbM1Q7ezXXOiztpF0v2mZn+zhy
- 7PHGz3mRXlmYtgQeL8NOJmUJcMJZF4ClIBZjn0736e+1j6YI0hsy9RHxMMmb8p0sO3wcUnXdm
- eyHygxIf9wv74vD49CXWMUFSIOSBS7zkHWH7f2+/GbcBlF3esZY0yU8sAxMXqnmg8wTm52t8A
- M0swYSa6crvKBuBRvc5PHy5mxbB7v2uCcGpkXatpHrxLieLGRDv0x4ZGMbtaxHErcvbO1kdCI
- OvIc/I+MkNmxmpIXLPaUQabrvDUzdJW5XZhWnYxoJMNrwEjN4EhL4mL6T8jfSf1SHQVsQjzHY
- b3hoyC/d5RRJ3PUpd3BC/VSungSr5b1tiSf/1kIBHqySyUe77yIalWs2nlI7EYZq51CbNbF8d
- PozTX2pjggzwHd/dCRoJUQAEK9qGDWJvFAwQmVsuHA==
+X-Provags-ID: V03:K1:3lsqMvUjg840JDNVAxsVGyJ9oYSECeJt/YcR4tz5LlvH0MyIZ5M
+ 8Npt2lmIuRVcgtf1FuK5eoaiXKMvRPsy03Q6VVJH3lsSLnN2gYdZEAWQsDbTE/2rTJmN8Ny
+ mDYkTeBq2CZQToy+ImK2B61bskOsXQpfclANoSvv8huslrBWc4l+TwjcPLtnViecnxUt0z0
+ YO+I3Wm/IbA8cJEvn3NNA==
+UI-OutboundReport: notjunk:1;M01:P0:dFUiy6TnYGY=;f35icOD0Cj6LpLsQF+z4FEdzXzx
+ WLJ6qHmpIlWQGH8Pagpd2RyT725Wuyv/vM7FWAXJCQuWSi1ZP4XOfXho9Xuet5V8nIxevGusj
+ dq6vwQNaoYTzx/woK2p34AEbCRd7nM/vU2WuxTflTt0rju0Hi0nkWtGHjY1/ceVKpXYib21Mv
+ 78HAVLEXrvY18nqHOsAwuSS30FJMT2KolZuIDzR5B2xcJo3juRl3IHgcFc5YzFL57wy87DKox
+ T7wZQ+mpMc9HapUYA/YcHMhYN6psJn4Nr0z94pLEHxx8jPYX6tcfyu+xiFFsmg6OnZmxUSacb
+ VjUorHEQQaRe7RZmv7ZvcGNuVqi71O+aJVOVJQSrvlP5X36fC7BoyJHIW2onEVRoJFwpfcvcQ
+ qr8BS/dAzmCfs1VWdALqeYy5biiR5pPP4GQUGtegsJIkP+beGMace/2vmERrhB8aIbsGqesiR
+ kh1cJhEa/yxJuA1b41UdcvJali7n2IVU8IjPFPf3QtShjDtvXaSvwon5CRCUDhFkqaRLtihDB
+ HlKYgWOBggWz+sdqcW1Ctz6A4iHnehu3M7pmw5s59wbyuSphIY9iD8RKH2T+VqJuzKPnXbm/u
+ mXj8mKoXBGeehm/A6neoBzhuO9mR2B1mhrlAATD7SOy2HNIC5fWVKNm1um1rDetKRVl8WKMey
+ xKv0nOpy2xDCTzjS5YF0hjxJDkAwu1/GJUheT1HTVw==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
+This fixes the following warnings:
 
-While further synchronising them imx device trees with U-Boot I stumbled
-over more checkpatch warnings. This series addresses those trivial
-indentation, file permission and/or whitespace cleanups.
+include/dt-bindings/clock/imx8ulp-clock.h:204: warning: please, no space
+ before tabs
+include/dt-bindings/clock/imx8ulp-clock.h:215: warning: please, no space
+ before tabs
 
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Marcel Ziswiler (2):
-  clk: imx6sll: add proper spdx license identifier
-  dt-bindings: imx8ulp: clock: no spaces before tabs
+---
 
- include/dt-bindings/clock/imx6sll-clock.h | 2 +-
  include/dt-bindings/clock/imx8ulp-clock.h | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/include/dt-bindings/clock/imx8ulp-clock.h b/include/dt-bindings/clock/imx8ulp-clock.h
+index 953ecfe8ebcc..827404fadf5c 100644
+--- a/include/dt-bindings/clock/imx8ulp-clock.h
++++ b/include/dt-bindings/clock/imx8ulp-clock.h
+@@ -201,7 +201,7 @@
+ #define IMX8ULP_CLK_SAI7		2
+ #define IMX8ULP_CLK_SPDIF		3
+ #define IMX8ULP_CLK_ISI			4
+-#define IMX8ULP_CLK_CSI_REGS 		5
++#define IMX8ULP_CLK_CSI_REGS		5
+ #define IMX8ULP_CLK_PCTLD		6
+ #define IMX8ULP_CLK_CSI			7
+ #define IMX8ULP_CLK_DSI			8
+@@ -212,7 +212,7 @@
+ #define IMX8ULP_CLK_GPU2D		13
+ #define IMX8ULP_CLK_GPU3D		14
+ #define IMX8ULP_CLK_DC_NANO		15
+-#define IMX8ULP_CLK_CSI_CLK_UI 		16
++#define IMX8ULP_CLK_CSI_CLK_UI		16
+ #define IMX8ULP_CLK_CSI_CLK_ESC		17
+ #define IMX8ULP_CLK_RGPIOD		18
+ #define IMX8ULP_CLK_DMA2_MP		19
 -- 
 2.36.1
 
