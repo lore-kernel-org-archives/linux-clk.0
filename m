@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D76A9C004D4
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 15:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4F1C00A5A
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 16:09:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230395AbjASPvF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Jan 2023 10:51:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45540 "EHLO
+        id S230170AbjASQJW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Jan 2023 11:09:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231374AbjASPui (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 10:50:38 -0500
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77A5E893D1;
-        Thu, 19 Jan 2023 07:50:04 -0800 (PST)
-Received: by mail-wm1-x334.google.com with SMTP id g10so1893384wmo.1;
-        Thu, 19 Jan 2023 07:50:04 -0800 (PST)
+        with ESMTP id S229734AbjASQIx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 11:08:53 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4954649425;
+        Thu, 19 Jan 2023 08:08:51 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id bg13-20020a05600c3c8d00b003d9712b29d2so3911517wmb.2;
+        Thu, 19 Jan 2023 08:08:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=2wVQPucPn/4N6eq7dGZ6TeO17YnTENvcpUYFEdBhnrI=;
-        b=GzoWLUXDhcBm7VPBAEoLLYRp0qB+EENNjncD/NH+TYq+KLoxPQtSSBFn9C71UzjAbP
-         GYP1N8R/btP0DFxy6clir06OFnlxDspd7Dn6NlnkqnWGCknbHvhwftnKzqxE/+0PtL9S
-         Jp/9fIsz/ibzXrKAqmOw0XuVTwbV8QWLK6GMfYIrpxN5QsGzXbbnHt06bz95+Twg2vsR
-         UECr1gkrnwRmxbvI/2xo1z8oWKVCw7z9tErSMhU4fYDE7N6CkYgNC6saM7nZzu51Y5E9
-         6bSDTkvrm3VOXWM3AUHpU6AcVCMclr530fkuhJ7WZrfb7aygxTVUVy0/pntoW1kA29S1
-         numA==
+        bh=yXxv4f/GrzSHSPu/QzcHkyK4EnmsjXpwAUc8WugyuBY=;
+        b=C1lMrrVx4bxj9zX1x/HNOWUgVfK4+6w+sbcqfAxU0BO8dfhmUvSl511zCVyOpOAUlu
+         rabqut5ECP1iUkMafoskAChJhOM3IIgczRnAZ+k1NVX6MH5WDI7aScfamWfhihq3SC3N
+         6DoyRntCpYgjrS9ZS357UbdY76LKm/zKp9RVQd8AOoMMH4OJgrTGwnsAu8uzBvN6xzeE
+         6jeU9GYiD0vVd6tGfc3VGmOMYccvbADx1K+/3oTfvUj9U7pUEWdQcq8jKfT96XxXKnHy
+         Hy5L3pKxRjsoL/GUpPbDa7ugLBA20zdmAAy5zPcKo9J8tiEsoXfIcC5nD1/zXag5Lkyy
+         KseA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2wVQPucPn/4N6eq7dGZ6TeO17YnTENvcpUYFEdBhnrI=;
-        b=I4AKKXbA6400NDAenV8mvHRmlSfItqFdQfy4W9lMQiXXvD+lC73OWeQT343akA0CNs
-         bAbOypAUmlUv83b2ovlK3FavxMa1WMxFKXV1oTVgzwxyZ8CZUPwCiaKMBC9qJswrZt7b
-         TNsfy++BFj8w0iamoxw8XPSYg+sAGgkdE54vZb4fG4k/y4Wr0vvhk/Yl9rfK3Vf9NHIc
-         5Y3U4O9tc6HlDQ/1eocp6esl05iKMjnBuBIO6SRiSWcGc4hIE3brgTkzUStvJf7uukrV
-         Qon0GGgb/1Ki3dMfXkqgOvUiBsxd9/fNiyK9j0qXbi4Zl1cFz+0io/h4U6O7jFc+1nwr
-         Me0A==
-X-Gm-Message-State: AFqh2krdIcffRJa+gi6Jizgt/oTela8G3qULmsH2aCdipblDJg78fza1
-        pltoqB5CGVrqSqIBo8DsHF0=
-X-Google-Smtp-Source: AMrXdXsvPxP5GAgFiwZRv2Fpgnrwc9rnvZyLzAJChkNt06zUWqu4L+MVDkX3aIGYEefydWUx4Puoiw==
-X-Received: by 2002:a05:600c:a13:b0:3db:1de2:af31 with SMTP id z19-20020a05600c0a1300b003db1de2af31mr3088765wmp.37.1674143402986;
-        Thu, 19 Jan 2023 07:50:02 -0800 (PST)
+        bh=yXxv4f/GrzSHSPu/QzcHkyK4EnmsjXpwAUc8WugyuBY=;
+        b=68+y6wmAEyHoyFQXLRAQ9Z1fYGEdLHC9Y91j/HHArinlcSIeVoha5A0udljbzWu9md
+         GtcEh7s6/JRvaMAkno6+rcrRzL4xzJiFiQbomkI9CkRUsEpyfc4GznH6o2Zk9MLiITUT
+         /1oQrSyW5VEOUgb7Y2XYI0RoUE0gkScq0H1DLBCTc9uUN/CpZY6csQN8nURCz/8FiGvy
+         Xym3vcF0Aeu4xdesCCxtbnX//5xNY2uV9E5G7vqvy9ns80BFzWRhitGnVs19cOW5IPl2
+         enJX+9MwtejAfvFyF0J8hdqCcjy5sReixfgAEx1t2U1VeoZl/7lJxZkmSKsjzRQFsk7/
+         vbLg==
+X-Gm-Message-State: AFqh2kplI8qeKsBcDOXh5vwp4b1UAmsElsm7o8k4Q603F+Qlgww+72rC
+        6cdK3mZZ+l8zTeGcCNGIPlI=
+X-Google-Smtp-Source: AMrXdXuHd37802o67zKMA0vSXhoL6McWWKMzRHrp3BkFuf9/dCjllHInE53NvVEDqDJ4iZmyFfmG4w==
+X-Received: by 2002:a05:600c:1912:b0:3db:f0a:8707 with SMTP id j18-20020a05600c191200b003db0f0a8707mr7630059wmq.40.1674144529818;
+        Thu, 19 Jan 2023 08:08:49 -0800 (PST)
 Received: from [192.168.2.177] ([207.188.167.132])
-        by smtp.gmail.com with ESMTPSA id n19-20020a05600c4f9300b003d1d5a83b2esm5829981wmq.35.2023.01.19.07.50.01
+        by smtp.gmail.com with ESMTPSA id be12-20020a05600c1e8c00b003db06224953sm6249655wmb.41.2023.01.19.08.08.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Jan 2023 07:50:02 -0800 (PST)
-Message-ID: <1503b3b8-261d-a434-cfd7-2a5db4d0d2a1@gmail.com>
-Date:   Thu, 19 Jan 2023 16:50:01 +0100
+        Thu, 19 Jan 2023 08:08:49 -0800 (PST)
+Message-ID: <8ae4469e-ed2c-5019-605b-013a49af77ea@gmail.com>
+Date:   Thu, 19 Jan 2023 17:08:48 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH v6 3/4] clk: mediatek: remove MT8195 vppsys/0/1
- simple_probe
+Subject: Re: [PATCH v6 1/4] dt-bindings: arm: mediatek: migrate MT8195
+ vppsys0/1 to mtk-mmsys driver
 Content-Language: en-US
 To:     Moudy Ho <moudy.ho@mediatek.com>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -66,9 +66,9 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
         Project_Global_Chrome_Upstream_Group@mediatek.com
 References: <20230118031509.29834-1-moudy.ho@mediatek.com>
- <20230118031509.29834-4-moudy.ho@mediatek.com>
+ <20230118031509.29834-2-moudy.ho@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
-In-Reply-To: <20230118031509.29834-4-moudy.ho@mediatek.com>
+In-Reply-To: <20230118031509.29834-2-moudy.ho@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -78,164 +78,66 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 18/01/2023 04:15, Moudy Ho wrote:
-> MT8195 VPPSYS0/1 will be probed by the compatible name in
-> the mtk-mmsys driver and then probe its own clock driver as
-> a platform driver.
+> MT8195 VPPSYS 0/1 should be probed from mtk-mmsys driver to
+> populate device by platform_device_register_data then start
+> its own clock driver.
 > 
 > Signed-off-by: Moudy Ho <moudy.ho@mediatek.com>
 
 Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
+Stephen, if you want I can take 1/4 and 3/4 through my tree. 3/4 shouldn't be a 
+problem, not sure about this patch. In any case if you want me to do so, I'd 
+need a Acked-by from you.
+
+Regards,
+Matthias
+
 > ---
->   drivers/clk/mediatek/clk-mt8195-vpp0.c | 58 +++++++++++++++++++-------
->   drivers/clk/mediatek/clk-mt8195-vpp1.c | 58 +++++++++++++++++++-------
->   2 files changed, 86 insertions(+), 30 deletions(-)
+>   .../arm/mediatek/mediatek,mt8195-clock.yaml      | 16 ----------------
+>   1 file changed, 16 deletions(-)
 > 
-> diff --git a/drivers/clk/mediatek/clk-mt8195-vpp0.c b/drivers/clk/mediatek/clk-mt8195-vpp0.c
-> index bf2939c3a023..6d5800f69f6c 100644
-> --- a/drivers/clk/mediatek/clk-mt8195-vpp0.c
-> +++ b/drivers/clk/mediatek/clk-mt8195-vpp0.c
-> @@ -86,26 +86,54 @@ static const struct mtk_gate vpp0_clks[] = {
->   	GATE_VPP0_2(CLK_VPP0_WARP1_MDP_DL_ASYNC, "vpp0_warp1_mdp_dl_async", "top_wpe_vpp", 3),
->   };
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-clock.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-clock.yaml
+> index 17fcbb45d121..d62d60181147 100644
+> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-clock.yaml
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-clock.yaml
+> @@ -28,11 +28,9 @@ properties:
+>             - mediatek,mt8195-imp_iic_wrap_s
+>             - mediatek,mt8195-imp_iic_wrap_w
+>             - mediatek,mt8195-mfgcfg
+> -          - mediatek,mt8195-vppsys0
+>             - mediatek,mt8195-wpesys
+>             - mediatek,mt8195-wpesys_vpp0
+>             - mediatek,mt8195-wpesys_vpp1
+> -          - mediatek,mt8195-vppsys1
+>             - mediatek,mt8195-imgsys
+>             - mediatek,mt8195-imgsys1_dip_top
+>             - mediatek,mt8195-imgsys1_dip_nr
+> @@ -92,13 +90,6 @@ examples:
+>           #clock-cells = <1>;
+>       };
 >   
-> -static const struct mtk_clk_desc vpp0_desc = {
-> -	.clks = vpp0_clks,
-> -	.num_clks = ARRAY_SIZE(vpp0_clks),
-> -};
-> +static int clk_mt8195_vpp0_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *node = dev->parent->of_node;
-> +	struct clk_onecell_data *clk_data;
-> +	int r;
+> -  - |
+> -    vppsys0: clock-controller@14000000 {
+> -        compatible = "mediatek,mt8195-vppsys0";
+> -        reg = <0x14000000 0x1000>;
+> -        #clock-cells = <1>;
+> -    };
+> -
+>     - |
+>       wpesys: clock-controller@14e00000 {
+>           compatible = "mediatek,mt8195-wpesys";
+> @@ -120,13 +111,6 @@ examples:
+>           #clock-cells = <1>;
+>       };
 >   
-> -static const struct of_device_id of_match_clk_mt8195_vpp0[] = {
-> -	{
-> -		.compatible = "mediatek,mt8195-vppsys0",
-> -		.data = &vpp0_desc,
-> -	}, {
-> -		/* sentinel */
-> -	}
-> -};
-> +	clk_data = mtk_alloc_clk_data(CLK_VPP0_NR_CLK);
-> +	if (!clk_data)
-> +		return -ENOMEM;
-> +
-> +	r = mtk_clk_register_gates(node, vpp0_clks, ARRAY_SIZE(vpp0_clks), clk_data);
-> +	if (r)
-> +		goto free_vpp0_data;
-> +
-> +	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-> +	if (r)
-> +		goto unregister_gates;
-> +
-> +	platform_set_drvdata(pdev, clk_data);
-> +
-> +	return r;
-> +
-> +unregister_gates:
-> +	mtk_clk_unregister_gates(vpp0_clks, ARRAY_SIZE(vpp0_clks), clk_data);
-> +free_vpp0_data:
-> +	mtk_free_clk_data(clk_data);
-> +	return r;
-> +}
-> +
-> +static int clk_mt8195_vpp0_remove(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *node = dev->parent->of_node;
-> +	struct clk_hw_onecell_data *clk_data = platform_get_drvdata(pdev);
-> +
-> +	of_clk_del_provider(node);
-> +	mtk_clk_unregister_gates(vpp0_clks, ARRAY_SIZE(vpp0_clks), clk_data);
-> +	mtk_free_clk_data(clk_data);
-> +
-> +	return 0;
-> +}
->   
->   static struct platform_driver clk_mt8195_vpp0_drv = {
-> -	.probe = mtk_clk_simple_probe,
-> -	.remove = mtk_clk_simple_remove,
-> +	.probe = clk_mt8195_vpp0_probe,
-> +	.remove = clk_mt8195_vpp0_remove,
->   	.driver = {
->   		.name = "clk-mt8195-vpp0",
-> -		.of_match_table = of_match_clk_mt8195_vpp0,
->   	},
->   };
->   builtin_platform_driver(clk_mt8195_vpp0_drv);
-> diff --git a/drivers/clk/mediatek/clk-mt8195-vpp1.c b/drivers/clk/mediatek/clk-mt8195-vpp1.c
-> index ffd52c762890..3b88c69e96c9 100644
-> --- a/drivers/clk/mediatek/clk-mt8195-vpp1.c
-> +++ b/drivers/clk/mediatek/clk-mt8195-vpp1.c
-> @@ -84,26 +84,54 @@ static const struct mtk_gate vpp1_clks[] = {
->   	GATE_VPP1_1(CLK_VPP1_VPP_SPLIT_26M, "vpp1_vpp_split_26m", "clk26m", 26),
->   };
->   
-> -static const struct mtk_clk_desc vpp1_desc = {
-> -	.clks = vpp1_clks,
-> -	.num_clks = ARRAY_SIZE(vpp1_clks),
-> -};
-> +static int clk_mt8195_vpp1_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *node = dev->parent->of_node;
-> +	struct clk_onecell_data *clk_data;
-> +	int r;
->   
-> -static const struct of_device_id of_match_clk_mt8195_vpp1[] = {
-> -	{
-> -		.compatible = "mediatek,mt8195-vppsys1",
-> -		.data = &vpp1_desc,
-> -	}, {
-> -		/* sentinel */
-> -	}
-> -};
-> +	clk_data = mtk_alloc_clk_data(CLK_VPP1_NR_CLK);
-> +	if (!clk_data)
-> +		return -ENOMEM;
-> +
-> +	r = mtk_clk_register_gates(node, vpp1_clks, ARRAY_SIZE(vpp1_clks), clk_data);
-> +	if (r)
-> +		goto free_vpp1_data;
-> +
-> +	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-> +	if (r)
-> +		goto unregister_gates;
-> +
-> +	platform_set_drvdata(pdev, clk_data);
-> +
-> +	return r;
-> +
-> +unregister_gates:
-> +	mtk_clk_unregister_gates(vpp1_clks, ARRAY_SIZE(vpp1_clks), clk_data);
-> +free_vpp1_data:
-> +	mtk_free_clk_data(clk_data);
-> +	return r;
-> +}
-> +
-> +static int clk_mt8195_vpp1_remove(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *node = dev->parent->of_node;
-> +	struct clk_hw_onecell_data *clk_data = platform_get_drvdata(pdev);
-> +
-> +	of_clk_del_provider(node);
-> +	mtk_clk_unregister_gates(vpp1_clks, ARRAY_SIZE(vpp1_clks), clk_data);
-> +	mtk_free_clk_data(clk_data);
-> +
-> +	return 0;
-> +}
->   
->   static struct platform_driver clk_mt8195_vpp1_drv = {
-> -	.probe = mtk_clk_simple_probe,
-> -	.remove = mtk_clk_simple_remove,
-> +	.probe = clk_mt8195_vpp1_probe,
-> +	.remove = clk_mt8195_vpp1_remove,
->   	.driver = {
->   		.name = "clk-mt8195-vpp1",
-> -		.of_match_table = of_match_clk_mt8195_vpp1,
->   	},
->   };
->   builtin_platform_driver(clk_mt8195_vpp1_drv);
+> -  - |
+> -    vppsys1: clock-controller@14f00000 {
+> -        compatible = "mediatek,mt8195-vppsys1";
+> -        reg = <0x14f00000 0x1000>;
+> -        #clock-cells = <1>;
+> -    };
+> -
+>     - |
+>       imgsys: clock-controller@15000000 {
+>           compatible = "mediatek,mt8195-imgsys";
