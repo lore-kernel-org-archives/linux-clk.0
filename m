@@ -2,98 +2,95 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 550ECC00A5A
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 11:41:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A101C00A5A
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 11:41:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230143AbjASLlT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Jan 2023 06:41:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46482 "EHLO
+        id S230378AbjASLl2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Jan 2023 06:41:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230243AbjASLkq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 06:40:46 -0500
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E57F674E9C
-        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 03:40:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1674128432; x=1705664432;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ZvPdwqurW1dvbyCe6JVYpZFdsO4i4djjDh4kBNjzzc8=;
-  b=NQUB3vWZscR7O32Ym0Jwu3j4QK35bAaciyudboForNbd3vAkGDLLb/hv
-   rsDEtAdyviPaky22AM9pCduezDNQVLFHcG2slLx3klKx7ovD3DorMd2Ol
-   SOpdpx5iR69jIOWX8H9UZMJ7/L7L5TNOfx1utEobsqysn0qXmyixf0NGQ
-   IB9/TqbLLy4qqTuXJYM4CvcYju2QpWznJW/W8jvA+jHCn2vWV5OnL7xpt
-   nCvryPHPNHkblVGQzrnExwoCgZ995wuaTMFbuFMOkTkw6WN+WiJudjnWJ
-   wyfnCRa1vWzKnwhoGqQkx89XN8walr4IYm4Gg6//Irkq/pKmz2JXJqZwv
-   g==;
-X-IronPort-AV: E=Sophos;i="5.97,229,1669100400"; 
-   d="scan'208";a="197445748"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 19 Jan 2023 04:40:32 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16; Thu, 19 Jan 2023 04:40:31 -0700
-Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.16 via Frontend Transport; Thu, 19 Jan 2023 04:40:29 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <conor.dooley@microchip.com>, <linux-clk@vger.kernel.org>
-Subject: [GIT PULL] Microchip clock updates for 6.3
-Date:   Thu, 19 Jan 2023 13:38:25 +0200
-Message-ID: <20230119113825.44374-1-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S230468AbjASLlN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 06:41:13 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65FFA47EEE
+        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 03:41:10 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id n7so1575184wrx.5
+        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 03:41:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WoyFT0cbatPpquHGlGmq+CVFexdYi8Sb0FFBdBRA/oU=;
+        b=lE8lhn4kFosWwH1F5qK1+ReSvndnaCAYkFudXTg9+yBHvpo6GgiU5mozLyMMqDsC0b
+         mLOAjD/z1oFckMHuPzYe15fLVfUDc6ye5Gpj9kc3Ni22S706bJtojGWVdtprUHUNBbvI
+         6GYAP3Qc75vLUkrRz8PcKI41DiMsdpL9gKknOjEfAKKH7bfXcs9NviVJHcbMdZnmCOaO
+         yQlHG7jv+bQ7ve7pjNDwHKxXRDJX87MMCeQMBQO1sFrkgs9XXx6/7TS1XRCNxvhxy2qu
+         VszYqHpEqdt/yZ3/6o86mcJLgRmA+GHbtF+uPokecf7LtzwrPrfXWZK+Lvc0pXFDTall
+         903g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WoyFT0cbatPpquHGlGmq+CVFexdYi8Sb0FFBdBRA/oU=;
+        b=0NMbVCuS+0bt7urewArJmwgihpsC3TSIOOc0dYINaIV3RYWPsml+Ga9PotNIMT4ZrG
+         fhypJG/oKmVWH/xQ4T+qsrgXyLCRO/6HvG3gnDD9z3UARxarDJvCD5/SWeGhgAhsEy4Y
+         rR5RNEB9UGcRPhhq4Dp8fGmNVJ2PpZT19TO2Sq9l1d8huj3zulYPnI/at0s7WKlhB+UZ
+         h3fqeP4dKEiymi6g+KzswskHBsMpWRoWudhNyfGC0+Lc4jKQ873YEY75vv0jKAh9HPNW
+         QTdB1IkB5jLRBi9r/e0rbAikOSbhFF62d/aDf7/v6eJgqGx1BmHgxB1hGAjELD+eLdKY
+         DJ8A==
+X-Gm-Message-State: AFqh2kpRXGa+ORWSyJW2Oibtgt2oYYwdT8MoxJ8f1YwMEcQk5TWg5x12
+        5O2s+0H/BevqQ1j6XWcMqeNPlro+HeMn6Oli
+X-Google-Smtp-Source: AMrXdXs218++12twDEoYyYduIE1B+u+Btq8eB2DlNmjlIceQN0Uugn7LpFeuozQboOEFKkErDv6NZg==
+X-Received: by 2002:a5d:5b0e:0:b0:2bd:e873:e20c with SMTP id bx14-20020a5d5b0e000000b002bde873e20cmr11350111wrb.70.1674128469007;
+        Thu, 19 Jan 2023 03:41:09 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id b13-20020a05600003cd00b002be07cbefb2sm11806849wrg.18.2023.01.19.03.41.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Jan 2023 03:41:08 -0800 (PST)
+Message-ID: <660bb2a3-79f8-b657-782a-50ec61dc8932@linaro.org>
+Date:   Thu, 19 Jan 2023 12:41:06 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH v4 3/7] dt-bindings: mailbox: qcom: correct the list of
+ platforms using clocks
+Content-Language: en-US
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230118132254.2356209-1-dmitry.baryshkov@linaro.org>
+ <20230118132254.2356209-4-dmitry.baryshkov@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230118132254.2356209-4-dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit 1b929c02afd37871d5afb9d498426f83432e71c2:
+On 18/01/2023 14:22, Dmitry Baryshkov wrote:
+> The schema incorrectly lists some of the platforms in the statement
+> requiring clocks/clock-names. Correct this by moving platforms not
+> requiring additional clocks to the separate clause.
+> 
+> Fixes: 0d17014e9189 ("dt-bindings: mailbox: Add binding for SDX55 APCS")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
 
-  Linux 6.2-rc1 (2022-12-25 13:41:39 -0800)
 
-are available in the Git repository at:
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-microchip-6.3
+Best regards,
+Krzysztof
 
-for you to fetch changes up to 80519d8ccc6b65bfbc8571ea16992141d71510e9:
-
-  clk: at91: do not compile dt-compat.c for sama7g5 and sam9x60 (2023-01-09 14:05:41 +0200)
-
-----------------------------------------------------------------
-Microchip clock updates for 6.3
-
-Only updates for AT91 SoCs this time as follows:
-- DDR clocks were marked as critical in the proper clock driver for each
-  AT91 SoC such that drivers/memory/atmel-sdramc.c to be deleted
-  in the next releases as it only does clock enablement;
-- patch to avoid compiling dt-compat.o for all AT91 SoCs as only some of
-  them may use it.
-
-----------------------------------------------------------------
-Claudiu Beznea (2):
-      clk: at91: mark ddr clocks as critical
-      clk: at91: do not compile dt-compat.c for sama7g5 and sam9x60
-
- drivers/clk/at91/Makefile         | 16 ++++++++--------
- drivers/clk/at91/at91rm9200.c     |  2 +-
- drivers/clk/at91/at91sam9260.c    |  2 +-
- drivers/clk/at91/at91sam9g45.c    | 10 ++++++++--
- drivers/clk/at91/at91sam9n12.c    | 12 +++++++++---
- drivers/clk/at91/at91sam9rl.c     |  2 +-
- drivers/clk/at91/at91sam9x5.c     | 17 ++++++++++++-----
- drivers/clk/at91/clk-peripheral.c |  8 ++++----
- drivers/clk/at91/clk-system.c     |  4 ++--
- drivers/clk/at91/dt-compat.c      | 25 +++++++++++++++++++++++--
- drivers/clk/at91/pmc.h            |  4 ++--
- drivers/clk/at91/sam9x60.c        | 20 ++++++++++++++++----
- drivers/clk/at91/sama5d2.c        | 22 +++++++++++++++++-----
- drivers/clk/at91/sama5d3.c        | 20 ++++++++++++++++----
- drivers/clk/at91/sama5d4.c        | 22 +++++++++++++++++-----
- drivers/clk/at91/sama7g5.c        |  4 ++--
- 16 files changed, 139 insertions(+), 51 deletions(-)
