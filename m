@@ -2,340 +2,89 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF3EBC38142
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 08:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB84C004D4
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 09:00:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229983AbjASInq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Jan 2023 03:43:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53714 "EHLO
+        id S229674AbjASJAF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Jan 2023 04:00:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230195AbjASInl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 03:43:41 -0500
-Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CA10676CB
-        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 00:43:38 -0800 (PST)
-Received: by mail-ua1-x92c.google.com with SMTP id a40so340386uad.12
-        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 00:43:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CwD8DaTV7HbTR4hShcporK6xZauIpXkKV4HSg2vJsOI=;
-        b=aqcrT+v6oIoHD135mvgEusjsxtXhZ8taKAVLc7UdJ3YFZPQ4YP8snRUewKE8gM1u8J
-         Y7G4B11Fi1ayid0O9YB+z4drcZqc5ztn92ELVRALm1ynv9EY2lhSugneJzgFaykWgeRl
-         Cw+RE47hrNjjpf0Ian1DEYImJr1XUDm5Bqh0kp7GsEUm3Kmn322BuJzh4PB/tCprwV2O
-         CmCK9N3o0Qx6QnEBye6uQA2Y1lCCZXm1vrE2hQyRPilw9kdS/syex7rek/iNu4uoQ6GK
-         IYYaAoVIw7wvYW1Y1gNAEstfnJlM4/BFiiMgDmUGrfdHLsvb378PbLfw/7o7OsKJpmpN
-         bP2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CwD8DaTV7HbTR4hShcporK6xZauIpXkKV4HSg2vJsOI=;
-        b=aDX7doXUtcQHLA1DGaSDEGQy5MXDANV8QIEc+MwvzmH8JnZ/OE0h/XV8DxOURpiIF5
-         kqM63A2LxFMj0/6GlCGbALV+xHU6uUPn5UQuUkKuav2/X83oRr5K+CShC1UbHoTgKvi3
-         002FLUa/oEDr/nTsyME+dOnaWSXu7bga1VD0EoF5ChS6FvD/pFweDR/J1wvAFhzJptH/
-         J3nED5pIqSuLQOGaf1bNmbsUiRyo6wx135EP5/eG+RvE9JOZz1TeTgzrCOEXcGMbIeLM
-         zZYX20NqcMtTa8fXBDdaVvhtkes/0oNJwF3Y/eB7UvBPPnoNgSq6OBXSWRJJ+0KxXGr5
-         lJPw==
-X-Gm-Message-State: AFqh2koy5CF2pRma3YeXDz6WCOyS9871Ljn4cj3dltpADHJyFtxc/npQ
-        z6iltgizzExRaXdt9JyTDPx4QCNWjUHIbAVS6+pPNg==
-X-Google-Smtp-Source: AMrXdXvkfjcS4LxHkJp5jmtmIoknkiHBM4iIQVohRz8hS301Ex+SgUvD6mSYEC8kFB1/MpTkU7BZ5sY0Jb+cvbiq4rI=
-X-Received: by 2002:a9f:3748:0:b0:5ab:8b60:2a44 with SMTP id
- a8-20020a9f3748000000b005ab8b602a44mr1179224uae.33.1674117817192; Thu, 19 Jan
- 2023 00:43:37 -0800 (PST)
-MIME-Version: 1.0
-References: <20230109174511.1740856-1-brgl@bgdev.pl> <20230109174511.1740856-11-brgl@bgdev.pl>
- <20230110162654.sm7yzyzfucbmuyhx@builder.lan>
-In-Reply-To: <20230110162654.sm7yzyzfucbmuyhx@builder.lan>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 19 Jan 2023 09:43:26 +0100
-Message-ID: <CAMRc=MdcqfRATCzwpwLskFqZdtS6ELJtyuVGvNMq3Y33uS+5mw@mail.gmail.com>
-Subject: Re: [PATCH 10/18] pinctrl: qcom: sa8775p: add the pinctrl driver for
- the sa8775p platform
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        with ESMTP id S229610AbjASJAD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 04:00:03 -0500
+X-Greylist: delayed 313 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 19 Jan 2023 01:00:02 PST
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.194])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFA7B67975
+        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 01:00:02 -0800 (PST)
+Received: from toolbox.toradex.int ([31.10.206.125]) by mrelay.perfora.net
+ (mreueus004 [74.208.5.2]) with ESMTPSA (Nemesis) id 1MHnyM-1pXKPO2Kb0-00Eqzc;
+ Thu, 19 Jan 2023 09:54:33 +0100
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Alex Elder <elder@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
-        netdev@vger.kernel.org,
-        Prasad Sodagudi <quic_psodagud@quicinc.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Yadu MG <quic_ymg@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v1 1/2] clk: imx6sll: add proper spdx license identifier
+Date:   Thu, 19 Jan 2023 09:54:20 +0100
+Message-Id: <20230119085421.102804-2-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20230119085421.102804-1-marcel@ziswiler.com>
+References: <20230119085421.102804-1-marcel@ziswiler.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:GL2rVT1JpqMd06MBhb1IBAtTIz0M492IhxLsitDd6WeuTyBlAKe
+ t/SnNg0eLxYXzBrOdrC5iH2Pa+Cbnf00EVKe5G9N21OsAXQZRwY6DPR8DSiJry1Oh47o8HM
+ +XJNHHHF/aNHU5Y3DqZJx+CZHMRLwsQ6/Mwfky5ODwMtzs3t03+NJ+JrZn7krRY1+1bVbcA
+ CfnjzHWB3E5trFWT0K2fg==
+UI-OutboundReport: notjunk:1;M01:P0:SNMhYVDnNOs=;R0dkgFMnbPT3sxFZ3yfu1TyMqfM
+ xPmFVf0g+PcXpA/wVjcOVXZjbW3tDNAz8Pz8wBARAJtkKMSOUOUl77wM8Vt9VHP48kzq7/pay
+ ZVmFrCzivlxA7S978LXVaYFd4ts0r8PqFcKmg7tgoJbXQdnaiK2EfNYRMnDPhK7Oyctd6udQL
+ 2h2A5jG6/7Jew7zyB9D7/3LGOqBd4WlCOdHVMn+3O0Yoo1XaDcJnbt3Cul24C0mtPdECJ2L7e
+ GV4rI+c2Wrp/9y7w9YDeZxdemhIxGrwGpRNnZmJ6nfPWRIu1D4q9NRxqINOrfmlkrzj9r68KP
+ v3nwjxTF0iJXf1O3a4J0WF6GB06JRYcM7yvaHPTugfQ+k+HnuChjZGjlicVTWx5l9AC4CYQbQ
+ l8lTUKeLp3MB+20uH/Bk61bjLqYrlnQEmNNR5O8nF0p5WFgFxIGsZqyBjx/TxZ2JSKj12KSQH
+ n/g4izKJui7WGOMKm+BTmONACfFX89lA6PhjZPKH36ZLuy7xwrrIVIfpy805jCtdYNl2Dkna+
+ KnHqVf+oIM3tcu2/1H0491UwxSrXe6dr/IOTwgCO7gy8nMgMih/Jb9LZWJvVgkGR/ligo5MsT
+ SYibpczQVS0+iYtU5WJlYubeX3WRtBEzPV9AqEK/VROo3IM+4rv1JZJ5PhdRNPbfGpRsHCyNC
+ /XsumcsRdAsvgJ/wRBkOY5nzowsGJTk9oDhSZUt02w==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 10, 2023 at 5:26 PM Bjorn Andersson <andersson@kernel.org> wrote:
->
-> On Mon, Jan 09, 2023 at 06:45:03PM +0100, Bartosz Golaszewski wrote:
-> [..]
-> > +enum sa8775p_functions {
-> > +     msm_mux_gpio,
-> > +     msm_mux_atest_char,
-> > +     msm_mux_atest_char0,
-> > +     msm_mux_atest_char1,
-> > +     msm_mux_atest_char2,
-> > +     msm_mux_atest_char3,
-> > +     msm_mux_atest_usb2,
-> > +     msm_mux_atest_usb20,
-> > +     msm_mux_atest_usb21,
-> > +     msm_mux_atest_usb22,
-> > +     msm_mux_atest_usb23,
->
-> Please squash these to a single msm_mux_atest.
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-How about staying consistent with the sc8280xp which is the closest
-platform to sa8775p and do a group for atest_char, a separate group
-for atest_usb2...
+This fixes the following error:
 
->
-> > +     msm_mux_audio_ref,
-> > +     msm_mux_cam_mclk,
-> > +     msm_mux_cci_async,
-> > +     msm_mux_cci_i2c,
-> > +     msm_mux_cci_timer0,
-> > +     msm_mux_cci_timer1,
-> > +     msm_mux_cci_timer2,
-> > +     msm_mux_cci_timer3,
-> > +     msm_mux_cci_timer4,
-> > +     msm_mux_cci_timer5,
-> > +     msm_mux_cci_timer6,
-> > +     msm_mux_cci_timer7,
-> > +     msm_mux_cci_timer8,
-> > +     msm_mux_cci_timer9,
-> > +     msm_mux_cri_trng,
-> > +     msm_mux_cri_trng0,
-> > +     msm_mux_cri_trng1,
-> > +     msm_mux_dbg_out,
-> > +     msm_mux_ddr_bist,
-> > +     msm_mux_ddr_pxi0,
-> > +     msm_mux_ddr_pxi1,
-> > +     msm_mux_ddr_pxi2,
-> > +     msm_mux_ddr_pxi3,
-> > +     msm_mux_ddr_pxi4,
-> > +     msm_mux_ddr_pxi5,
-> > +     msm_mux_edp0_hot,
-> > +     msm_mux_edp0_lcd,
-> > +     msm_mux_edp1_hot,
-> > +     msm_mux_edp1_lcd,
-> > +     msm_mux_edp2_hot,
-> > +     msm_mux_edp2_lcd,
-> > +     msm_mux_edp3_hot,
-> > +     msm_mux_edp3_lcd,
-> > +     msm_mux_emac0_mcg0,
-> > +     msm_mux_emac0_mcg1,
-> > +     msm_mux_emac0_mcg2,
-> > +     msm_mux_emac0_mcg3,
-> > +     msm_mux_emac0_mdc,
-> > +     msm_mux_emac0_mdio,
-> > +     msm_mux_emac0_ptp,
->
-> msm_mux_emac0
->
-> > +     msm_mux_emac1_mcg0,
-> > +     msm_mux_emac1_mcg1,
-> > +     msm_mux_emac1_mcg2,
-> > +     msm_mux_emac1_mcg3,
-> > +     msm_mux_emac1_mdc,
-> > +     msm_mux_emac1_mdio,
-> > +     msm_mux_emac1_ptp,
->
-> msm_mux_emac1
->
+include/dt-bindings/clock/imx6sll-clock.h:1: warning: Improper SPDX
+ comment style for 'include/dt-bindings/clock/imx6sll-clock.h', please
+ use '/*' instead
+include/dt-bindings/clock/imx6sll-clock.h:1: warning: Missing or
+ malformed SPDX-License-Identifier tag in line 1
 
-...leave these two here as is...
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+---
 
-> > +     msm_mux_gcc_gp1,
-> > +     msm_mux_gcc_gp2,
-> > +     msm_mux_gcc_gp3,
-> > +     msm_mux_gcc_gp4,
-> > +     msm_mux_gcc_gp5,
-> > +     msm_mux_hs0_mi2s,
-> > +     msm_mux_hs1_mi2s,
-> > +     msm_mux_hs2_mi2s,
-> > +     msm_mux_ibi_i3c,
-> > +     msm_mux_jitter_bist,
-> > +     msm_mux_mdp0_vsync0,
-> > +     msm_mux_mdp0_vsync1,
-> > +     msm_mux_mdp0_vsync2,
-> > +     msm_mux_mdp0_vsync3,
-> > +     msm_mux_mdp0_vsync4,
-> > +     msm_mux_mdp0_vsync5,
-> > +     msm_mux_mdp0_vsync6,
-> > +     msm_mux_mdp0_vsync7,
-> > +     msm_mux_mdp0_vsync8,
-> > +     msm_mux_mdp1_vsync0,
-> > +     msm_mux_mdp1_vsync1,
-> > +     msm_mux_mdp1_vsync2,
-> > +     msm_mux_mdp1_vsync3,
-> > +     msm_mux_mdp1_vsync4,
-> > +     msm_mux_mdp1_vsync5,
-> > +     msm_mux_mdp1_vsync6,
-> > +     msm_mux_mdp1_vsync7,
-> > +     msm_mux_mdp1_vsync8,
-> > +     msm_mux_mdp_vsync,
-> > +     msm_mux_mi2s1_data0,
-> > +     msm_mux_mi2s1_data1,
-> > +     msm_mux_mi2s1_sck,
-> > +     msm_mux_mi2s1_ws,
-> > +     msm_mux_mi2s2_data0,
-> > +     msm_mux_mi2s2_data1,
-> > +     msm_mux_mi2s2_sck,
-> > +     msm_mux_mi2s2_ws,
-> > +     msm_mux_mi2s_mclk0,
-> > +     msm_mux_mi2s_mclk1,
-> > +     msm_mux_pcie0_clkreq,
-> > +     msm_mux_pcie1_clkreq,
-> > +     msm_mux_phase_flag0,
-> > +     msm_mux_phase_flag1,
-> > +     msm_mux_phase_flag10,
-> > +     msm_mux_phase_flag11,
-> > +     msm_mux_phase_flag12,
-> > +     msm_mux_phase_flag13,
-> > +     msm_mux_phase_flag14,
-> > +     msm_mux_phase_flag15,
-> > +     msm_mux_phase_flag16,
-> > +     msm_mux_phase_flag17,
-> > +     msm_mux_phase_flag18,
-> > +     msm_mux_phase_flag19,
-> > +     msm_mux_phase_flag2,
-> > +     msm_mux_phase_flag20,
-> > +     msm_mux_phase_flag21,
-> > +     msm_mux_phase_flag22,
-> > +     msm_mux_phase_flag23,
-> > +     msm_mux_phase_flag24,
-> > +     msm_mux_phase_flag25,
-> > +     msm_mux_phase_flag26,
-> > +     msm_mux_phase_flag27,
-> > +     msm_mux_phase_flag28,
-> > +     msm_mux_phase_flag29,
-> > +     msm_mux_phase_flag3,
-> > +     msm_mux_phase_flag30,
-> > +     msm_mux_phase_flag31,
-> > +     msm_mux_phase_flag4,
-> > +     msm_mux_phase_flag5,
-> > +     msm_mux_phase_flag6,
-> > +     msm_mux_phase_flag7,
-> > +     msm_mux_phase_flag8,
-> > +     msm_mux_phase_flag9,
->
-> msm_mux_phase_flag
->
+ include/dt-bindings/clock/imx6sll-clock.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-... change this one as you suggest...
+diff --git a/include/dt-bindings/clock/imx6sll-clock.h b/include/dt-bindings/clock/imx6sll-clock.h
+index f446710fe63d..494fd0c37fb5 100644
+--- a/include/dt-bindings/clock/imx6sll-clock.h
++++ b/include/dt-bindings/clock/imx6sll-clock.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (C) 2016 Freescale Semiconductor, Inc.
+  * Copyright 2017-2018 NXP.
+-- 
+2.36.1
 
-> > +     msm_mux_pll_bist,
-> > +     msm_mux_pll_clk,
-> > +     msm_mux_prng_rosc0,
-> > +     msm_mux_prng_rosc1,
-> > +     msm_mux_prng_rosc2,
-> > +     msm_mux_prng_rosc3,
-> > +     msm_mux_qdss_cti,
-> > +     msm_mux_qdss_gpio,
-> > +     msm_mux_qdss_gpio0,
-> > +     msm_mux_qdss_gpio1,
-> > +     msm_mux_qdss_gpio10,
-> > +     msm_mux_qdss_gpio11,
-> > +     msm_mux_qdss_gpio12,
-> > +     msm_mux_qdss_gpio13,
-> > +     msm_mux_qdss_gpio14,
-> > +     msm_mux_qdss_gpio15,
-> > +     msm_mux_qdss_gpio2,
-> > +     msm_mux_qdss_gpio3,
-> > +     msm_mux_qdss_gpio4,
-> > +     msm_mux_qdss_gpio5,
-> > +     msm_mux_qdss_gpio6,
-> > +     msm_mux_qdss_gpio7,
-> > +     msm_mux_qdss_gpio8,
-> > +     msm_mux_qdss_gpio9,
->
-> msm_mux_qdss
-
-... and have these as qdss_cti and qdss_gpio.
-
->
-> > +     msm_mux_qup0_se0,
-> > +     msm_mux_qup0_se1,
-> > +     msm_mux_qup0_se2,
-> > +     msm_mux_qup0_se3,
-> > +     msm_mux_qup0_se4,
-> > +     msm_mux_qup0_se5,
-> > +     msm_mux_qup1_se0,
-> > +     msm_mux_qup1_se1,
-> > +     msm_mux_qup1_se2,
-> > +     msm_mux_qup1_se3,
-> > +     msm_mux_qup1_se4,
-> > +     msm_mux_qup1_se5,
-> > +     msm_mux_qup1_se6,
-> > +     msm_mux_qup2_se0,
-> > +     msm_mux_qup2_se1,
-> > +     msm_mux_qup2_se2,
-> > +     msm_mux_qup2_se3,
-> > +     msm_mux_qup2_se4,
-> > +     msm_mux_qup2_se5,
-> > +     msm_mux_qup2_se6,
-> > +     msm_mux_qup3_se0,
-> > +     msm_mux_sail_top,
-> > +     msm_mux_sailss_emac0,
-> > +     msm_mux_sailss_ospi,
-> > +     msm_mux_sgmii_phy,
-> > +     msm_mux_tb_trig,
-> > +     msm_mux_tgu_ch0,
-> > +     msm_mux_tgu_ch1,
-> > +     msm_mux_tgu_ch2,
-> > +     msm_mux_tgu_ch3,
-> > +     msm_mux_tgu_ch4,
-> > +     msm_mux_tgu_ch5,
-> > +     msm_mux_tsense_pwm1,
-> > +     msm_mux_tsense_pwm2,
-> > +     msm_mux_tsense_pwm3,
-> > +     msm_mux_tsense_pwm4,
-> > +     msm_mux_usb2phy_ac,
-> > +     msm_mux_vsense_trigger,
-> > +     msm_mux__,
-> > +};
-> > +
-> [..]
-> > +static const struct msm_pingroup sa8775p_groups[] = {
-> > +     [0] = PINGROUP(0, _, _, _, _, _, _, _, _, _),
-> > +     [1] = PINGROUP(1, pcie0_clkreq, _, _, _, _, _, _, _, _),
-> > +     [2] = PINGROUP(2, _, _, _, _, _, _, _, _, _),
-> > +     [3] = PINGROUP(3, pcie1_clkreq, _, _, _, _, _, _, _, _),
-> > +     [4] = PINGROUP(4, _, _, _, _, _, _, _, _, _),
-> > +     [5] = PINGROUP(5, _, _, _, _, _, _, _, _, _),
-> > +     [6] = PINGROUP(6, emac0_ptp, emac0_ptp, emac1_ptp, emac1_ptp, _, _, _, _, _),
->
-> How is it possible to select the first or the second one of these
-> functions when they are named the same?
->
-
-I think Prasad and Yadu (the original authors of the driver) followed
-the example from sc8280xp:
-
-c0e4c71a9e7ce (Bjorn Andersson 2022-03-08 14:11:32 -0800 1804) [156] =
-PINGROUP(156, qup6, emac0_ptp, emac0_ptp, _, _, _, _),
-
-Do you remember what your original intention was? I also see that the
-GPIOs repeat in the groups definitions:
-
- 980 static const char * const emac0_ptp_groups[] = {
- 981         "gpio130", "gpio130", "gpio131", "gpio131", "gpio156", "gpio156",
- 982         "gpio157", "gpio157", "gpio158", "gpio158", "gpio159", "gpio159",
- 983 };
-
-[...]
-
-Bart
