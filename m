@@ -2,100 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD39C00A5A
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 09:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E53B2C004D4
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Jan 2023 09:27:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229630AbjASJAI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Jan 2023 04:00:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59468 "EHLO
+        id S229690AbjASJ15 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Jan 2023 04:27:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229699AbjASJAH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 04:00:07 -0500
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A3DE6796A
-        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 01:00:05 -0800 (PST)
-Received: from toolbox.toradex.int ([31.10.206.125]) by mrelay.perfora.net
- (mreueus004 [74.208.5.2]) with ESMTPSA (Nemesis) id 1N33hJ-1oZIlF0O2H-013PPj;
- Thu, 19 Jan 2023 09:54:36 +0100
-From:   Marcel Ziswiler <marcel@ziswiler.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v1 2/2] dt-bindings: imx8ulp: clock: no spaces before tabs
-Date:   Thu, 19 Jan 2023 09:54:21 +0100
-Message-Id: <20230119085421.102804-3-marcel@ziswiler.com>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20230119085421.102804-1-marcel@ziswiler.com>
-References: <20230119085421.102804-1-marcel@ziswiler.com>
+        with ESMTP id S229459AbjASJ1z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 04:27:55 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAF055A817;
+        Thu, 19 Jan 2023 01:27:53 -0800 (PST)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30J7q61D024885;
+        Thu, 19 Jan 2023 09:27:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=mNUhj6u7UGE9ZUDhd2dOiqYOGqWaj/ut8JDso0pz/AQ=;
+ b=P7zSsK7bjCt0BqyMZRkiA2eQTEn7Vu3RADM/dniRedpFZEkDZVCNMp5IKlelHrop0miN
+ RuTz7OXtkkAIrlWf0ujhOtQIXHWqwz6cCD7jLHF1rWfdMY/h1B52vi7VEzD6CETrmiE1
+ 8s8Gqbxz9H9AosZLIIvK587em+FcE11lVFLDOxqKv9C3WQTNV2ligbIEfFKhM4D9OgTF
+ v6er5yFFeBme67L9JohoUle9P/JP6c8cMIw6qs69GHXlEgzRKJm2ZcgiRaJgGMU0sbtf
+ bfUAkWtFRCGKhkGrx3iFKrYi0hb2USlpY1YUJ83Ex7of5JCFQ9cuHXJnHSOy5atDcg3q Bw== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n6wbs8wuw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 19 Jan 2023 09:27:45 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30J9Ri22016089
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 19 Jan 2023 09:27:44 GMT
+Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Thu, 19 Jan 2023 01:27:39 -0800
+From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+To:     <swboyd@chromium.org>, <agross@kernel.org>, <andersson@kernel.org>,
+        <robh+dt@kernel.org>, <broonie@kernel.org>,
+        <quic_plai@quicinc.com>, <krzysztof.kozlowski+dt@linaro.org>,
+        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_rohkumar@quicinc.com>
+CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Subject: [PATCH v4 0/6] Add resets for ADSP based audio clock controller driver
+Date:   Thu, 19 Jan 2023 14:57:18 +0530
+Message-ID: <1674120444-23706-1-git-send-email-quic_srivasam@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:3lsqMvUjg840JDNVAxsVGyJ9oYSECeJt/YcR4tz5LlvH0MyIZ5M
- 8Npt2lmIuRVcgtf1FuK5eoaiXKMvRPsy03Q6VVJH3lsSLnN2gYdZEAWQsDbTE/2rTJmN8Ny
- mDYkTeBq2CZQToy+ImK2B61bskOsXQpfclANoSvv8huslrBWc4l+TwjcPLtnViecnxUt0z0
- YO+I3Wm/IbA8cJEvn3NNA==
-UI-OutboundReport: notjunk:1;M01:P0:dFUiy6TnYGY=;f35icOD0Cj6LpLsQF+z4FEdzXzx
- WLJ6qHmpIlWQGH8Pagpd2RyT725Wuyv/vM7FWAXJCQuWSi1ZP4XOfXho9Xuet5V8nIxevGusj
- dq6vwQNaoYTzx/woK2p34AEbCRd7nM/vU2WuxTflTt0rju0Hi0nkWtGHjY1/ceVKpXYib21Mv
- 78HAVLEXrvY18nqHOsAwuSS30FJMT2KolZuIDzR5B2xcJo3juRl3IHgcFc5YzFL57wy87DKox
- T7wZQ+mpMc9HapUYA/YcHMhYN6psJn4Nr0z94pLEHxx8jPYX6tcfyu+xiFFsmg6OnZmxUSacb
- VjUorHEQQaRe7RZmv7ZvcGNuVqi71O+aJVOVJQSrvlP5X36fC7BoyJHIW2onEVRoJFwpfcvcQ
- qr8BS/dAzmCfs1VWdALqeYy5biiR5pPP4GQUGtegsJIkP+beGMace/2vmERrhB8aIbsGqesiR
- kh1cJhEa/yxJuA1b41UdcvJali7n2IVU8IjPFPf3QtShjDtvXaSvwon5CRCUDhFkqaRLtihDB
- HlKYgWOBggWz+sdqcW1Ctz6A4iHnehu3M7pmw5s59wbyuSphIY9iD8RKH2T+VqJuzKPnXbm/u
- mXj8mKoXBGeehm/A6neoBzhuO9mR2B1mhrlAATD7SOy2HNIC5fWVKNm1um1rDetKRVl8WKMey
- xKv0nOpy2xDCTzjS5YF0hjxJDkAwu1/GJUheT1HTVw==
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 7QzgjqAHO_ddjL8OKJMI8pi6hOF7iBO5
+X-Proofpoint-GUID: 7QzgjqAHO_ddjL8OKJMI8pi6hOF7iBO5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-01-19_07,2023-01-18_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=814 malwarescore=0 impostorscore=0 priorityscore=1501
+ bulkscore=0 phishscore=0 adultscore=0 mlxscore=0 suspectscore=0
+ clxscore=1011 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301190076
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Add resets and remove qdsp6ss clcok controller for audioreach based platforms. 
 
-This fixes the following warnings:
+Changes since v3:
+    -- Remove duplicate clock resets patch.
+    -- Add binding headers for q6 clocks.
+    -- Create new patch for merging lpasscc q6 clocks into lpass_aon.
+    -- Create new patches for handling conflicts of ADSP and bypass solution.
 
-include/dt-bindings/clock/imx8ulp-clock.h:204: warning: please, no space
- before tabs
-include/dt-bindings/clock/imx8ulp-clock.h:215: warning: please, no space
- before tabs
+Changes since v2:
+    -- Revert removing qdsp6ss clock control.
+    -- Add Conditional check for qdsp6ss clock registration.
+Changes since v1:
+    -- Update commit message.
+    -- Remove qdsp6ss clock control.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Srinivasa Rao Mandadapu (6):
+  dt-bindings: clock: qcom,sc7280-lpasscc: Add qcom,adsp-pil-mode
+    property
+  dt-bindings: clock: lpassaudiocc-sc7280: Add binding headers for
+    lpasscc
+  clk: qcom: lpasscc-sc7280: Skip qdsp6ss clock registration
+  clk: qcom: lpasscorecc-sc7280: Skip lpasscorecc registration
+  clk: qcom: lpassaudiocc-sc7280: Merge lpasscc into lpass_aon
+  clk: qcom: lpassaudiocc-sc7280: Skip lpass_aon_cc_pll config
 
----
+ .../bindings/clock/qcom,sc7280-lpasscc.yaml        |  7 +++++++
+ drivers/clk/qcom/lpassaudiocc-sc7280.c             | 23 ++++------------------
+ drivers/clk/qcom/lpasscc-sc7280.c                  | 12 ++++++-----
+ drivers/clk/qcom/lpasscorecc-sc7280.c              |  3 +++
+ .../dt-bindings/clock/qcom,lpassaudiocc-sc7280.h   |  2 ++
+ 5 files changed, 23 insertions(+), 24 deletions(-)
 
- include/dt-bindings/clock/imx8ulp-clock.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/include/dt-bindings/clock/imx8ulp-clock.h b/include/dt-bindings/clock/imx8ulp-clock.h
-index 953ecfe8ebcc..827404fadf5c 100644
---- a/include/dt-bindings/clock/imx8ulp-clock.h
-+++ b/include/dt-bindings/clock/imx8ulp-clock.h
-@@ -201,7 +201,7 @@
- #define IMX8ULP_CLK_SAI7		2
- #define IMX8ULP_CLK_SPDIF		3
- #define IMX8ULP_CLK_ISI			4
--#define IMX8ULP_CLK_CSI_REGS 		5
-+#define IMX8ULP_CLK_CSI_REGS		5
- #define IMX8ULP_CLK_PCTLD		6
- #define IMX8ULP_CLK_CSI			7
- #define IMX8ULP_CLK_DSI			8
-@@ -212,7 +212,7 @@
- #define IMX8ULP_CLK_GPU2D		13
- #define IMX8ULP_CLK_GPU3D		14
- #define IMX8ULP_CLK_DC_NANO		15
--#define IMX8ULP_CLK_CSI_CLK_UI 		16
-+#define IMX8ULP_CLK_CSI_CLK_UI		16
- #define IMX8ULP_CLK_CSI_CLK_ESC		17
- #define IMX8ULP_CLK_RGPIOD		18
- #define IMX8ULP_CLK_DMA2_MP		19
 -- 
-2.36.1
+2.7.4
 
