@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE82C27C76
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 08:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D27ACC05027
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 08:13:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229943AbjATIMu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Jan 2023 03:12:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41392 "EHLO
+        id S230409AbjATINX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Jan 2023 03:13:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230409AbjATIMt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jan 2023 03:12:49 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A59694FCC7
-        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 00:12:46 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id b5so4157555wrn.0
-        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 00:12:46 -0800 (PST)
+        with ESMTP id S230361AbjATINW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jan 2023 03:13:22 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1354A4ABF3
+        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 00:13:21 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id q8so3351194wmo.5
+        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 00:13:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=yiAdPlVGnlmrDGm9QLZ2Gsviy1Uod58CRnOWNst221Q=;
-        b=UBCYHnYVR9kc4oxoLdRjzF7Ay+gEz8PcDG8bFf6Z7xlhX9J3kVeY2q1fSqaDpEerrl
-         NJvF0D3scSBxK/fXlz0XYUfMc1KeHMY303Q8YUjXjluHlIXmSm4p5Qp/u544/Bu8vZp5
-         KOC9mJxxcYA9DcEUZmF0A4Ma/0utJ0VI025kVGbWjqzhbMiYSOQxEkX7zo+LiFaAsIVl
-         OnK9x2G4EPLQJrW/Fx28GCJ1FzoBXfRgeog2KF/iVMD82nAgO6CdoVSbdmN1jXpUfW1M
-         SOoYYbEX5E0dCOIraIg7Aq3SXhb2InPtncSBp5yGZCoqpFl2c/QZL683Q76uWpdGq/8D
-         ppyw==
+        bh=1uvdzDEyw4aMwwFxv90bw7L4K8vMnN12+a5SiR5f2e0=;
+        b=Mp1BjMIrt1Bi1aLAxlXS+/LFjW+NZGHTlV7Y4BKVN5+DwwJVvl3BzXuXP508RF/7VF
+         wLz8w9nn8OEmMKKXxAeh1fdlQv62aTFiFn/u4Pj6R0uENSzB28DD/8jtrVDFi6AWc985
+         wHxhrAPSq4pQoQLfuIH3lsY8630Ug3in47toRtWnq0Vr9+BFFB5hRv/v3f0MqSS8bMA/
+         JzheOBQWmFYTtatlAIJRsOcgK0G0GbYFfvlo6k7b8wm8OvX2xIBhaB9XZA5MKP726NG+
+         +n2l4wTpNa7TOAGSV657iu9qNZvCMLGaEL5axCcvhOXmTfxf5SisAtkoFLiN/ngZbQVz
+         /W8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yiAdPlVGnlmrDGm9QLZ2Gsviy1Uod58CRnOWNst221Q=;
-        b=JRXFeswNW2TdrujiNETRcx8gKn7EtBkA4AgGKgaEImKdu3K3arHQj5tQcHm6trv4AL
-         KyhP8rJtPd63cBjjieqwwygXXPOuwmQMHFom0ePXCBdgXZWdLp5jy9xMjaBJTD+5juIp
-         1bkkEih9EsTh0yVUcPSfz0kZ1aDA7Snw5vTiQB3HSYPCI8UGPq3PQjDSjtyeSoo5ZtI4
-         6CassspOzNk7rIu6jbLhKzeXnVk/ydK6MVQFeVWxQBD8ZSxE6RHyn7SEJxMjykh0xfrK
-         +Y1sVFrZp1n1ZLUJsg0VE5dDgIDwdjyixQLjZTXfeJmEu+z58FCC2xWIsRz1pt5Y4WpI
-         /Bxw==
-X-Gm-Message-State: AFqh2kqdH8xHBR+M7PFJZXbl/rxAB4psUA1yDgq94PIuvpSs9/NCxgVu
-        a7qEc4g6CDT6gj0RQUV0UTLZiQ==
-X-Google-Smtp-Source: AMrXdXssFgmae4BzCMjzn8XNhOeYLTMGSkgCtWcOpFxpMhkomalTT1AMRy/aq8pWNIniEw4M5hrE9Q==
-X-Received: by 2002:a05:6000:79d:b0:2be:34fa:7866 with SMTP id bu29-20020a056000079d00b002be34fa7866mr7158910wrb.63.1674202364905;
-        Fri, 20 Jan 2023 00:12:44 -0800 (PST)
+        bh=1uvdzDEyw4aMwwFxv90bw7L4K8vMnN12+a5SiR5f2e0=;
+        b=1gV2BNAuA6bhk+s6YK7t8ciKYxDD4JAHCXtfU2JJC1TCkxqQUNGKXAUYzAOf2ZScYD
+         DVjTCC7TxFRRXOQJFnDAjgMGtltcWAD/c7znwqRjIVhoM/IYeJrAxrmkuMSBd4M4QQ2F
+         Z3fy+N8agPACzqd5805mdVtzw7v9U/G5N0QFx8EGfuBcbZb7EFXExisApu8N2HQdXwN7
+         FyZbvIMAhRTqLt8gv9aiCZax2/KJU5M8BhnvLwR7slxrO/PyC/GWuM3q9i+Mup6p/Oo9
+         gAK12/yFAD7kUvhkml9HmHno0Qbnm7lVyjgpaMiOK9uJZewMQvWOFyN355h+KApkbuun
+         R6NA==
+X-Gm-Message-State: AFqh2kqVoEhg4sC6vi9h9O7DU2spqEJnaoCj8rHrWsXVUBDKKBdqYnws
+        X5st6VFP8GJ1VhPAVvg1jsMu5Lkks9A/yePr
+X-Google-Smtp-Source: AMrXdXuBhIv+nqBTjZiIRYIa8I/haxKNtjRNPQGzggHVcsUGxIMnPvQInpf1qsbsZaO20LitnygE5w==
+X-Received: by 2002:a05:600c:b96:b0:3db:19:798 with SMTP id fl22-20020a05600c0b9600b003db00190798mr9333419wmb.39.1674202398590;
+        Fri, 20 Jan 2023 00:13:18 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id g2-20020a5d64e2000000b002be063f6820sm16678189wri.81.2023.01.20.00.12.40
+        by smtp.gmail.com with ESMTPSA id f14-20020a05600c154e00b003daff80f16esm2089490wmg.27.2023.01.20.00.13.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Jan 2023 00:12:44 -0800 (PST)
-Message-ID: <f85f5283-98b2-46b1-5a91-64ae708a6353@linaro.org>
-Date:   Fri, 20 Jan 2023 09:12:39 +0100
+        Fri, 20 Jan 2023 00:13:18 -0800 (PST)
+Message-ID: <428dc119-82ab-e565-7bd6-1a99ec3967d9@linaro.org>
+Date:   Fri, 20 Jan 2023 09:13:15 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.0
-Subject: Re: [PATCH v1 04/11] dt-bindings: clock: Add StarFive JH7110
- Image-Signal-Process clock and reset generator
+Subject: Re: [PATCH v1 07/11] dt-bindings: clock: Add StarFive JH7110
+ Video-Output clock and reset generator
 Content-Language: en-US
 To:     Xingyu Wu <xingyu.wu@starfivetech.com>,
         linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
@@ -71,9 +71,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
         Hal Feng <hal.feng@starfivetech.com>,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 References: <20230120024445.244345-1-xingyu.wu@starfivetech.com>
- <20230120024445.244345-5-xingyu.wu@starfivetech.com>
+ <20230120024445.244345-8-xingyu.wu@starfivetech.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230120024445.244345-5-xingyu.wu@starfivetech.com>
+In-Reply-To: <20230120024445.244345-8-xingyu.wu@starfivetech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -81,66 +81,66 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 20/01/2023 03:44, Xingyu Wu wrote:
-> Add bindings for the Image-Signal-Process clock and reset
-> generator (ISPCRG) on the JH7110 RISC-V SoC by StarFive Ltd.
+> Add bindings for the Video-Output clock and reset generator (VOUTCRG)
+> on the JH7110 RISC-V SoC by StarFive Ltd.
 > 
 > Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
 > ---
->  .../clock/starfive,jh7110-ispcrg.yaml         | 97 +++++++++++++++++++
->  .../dt-bindings/clock/starfive,jh7110-crg.h   | 18 ++++
->  .../dt-bindings/reset/starfive,jh7110-crg.h   | 16 +++
->  3 files changed, 131 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-ispcrg.yaml
+>  .../clock/starfive,jh7110-voutcrg.yaml        | 96 +++++++++++++++++++
+>  .../dt-bindings/clock/starfive,jh7110-crg.h   | 22 +++++
+>  .../dt-bindings/reset/starfive,jh7110-crg.h   | 16 ++++
+>  3 files changed, 134 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-voutcrg.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-ispcrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-ispcrg.yaml
+> diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-voutcrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-voutcrg.yaml
 > new file mode 100644
-> index 000000000000..32794f809364
+> index 000000000000..a6a43d86a392
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-ispcrg.yaml
-> @@ -0,0 +1,97 @@
+> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-voutcrg.yaml
+> @@ -0,0 +1,96 @@
 > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/clock/starfive,jh7110-ispcrg.yaml#
+> +$id: http://devicetree.org/schemas/clock/starfive,jh7110-voutcrg.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: StarFive JH7110 Image-Signal-Process Clock and Reset Generator
+> +title: StarFive JH7110 Video-Output Clock and Reset Generator
 > +
 > +maintainers:
 > +  - Xingyu Wu <xingyu.wu@starfivetech.com>
 > +
 > +properties:
 > +  compatible:
-> +    const: starfive,jh7110-ispcrg
+> +    const: starfive,jh7110-voutcrg
 > +
 > +  reg:
 > +    maxItems: 1
 > +
 > +  clocks:
 > +    items:
-> +      - description: ISP Top core
-> +      - description: ISP Top Axi
-> +      - description: NOC ISP Bus
-> +      - description: external DVP
+> +      - description: Vout Top core
+> +      - description: Vout Top Ahb
+> +      - description: Vout Top Axi
+> +      - description: Vout Top HDMI MCLK
+> +      - description: I2STX0 BCLK
+> +      - description: external HDMI pixel
 > +
 > +  clock-names:
 > +    items:
-> +      - const: isp_top_core
-> +      - const: isp_top_axi
-> +      - const: noc_bus_isp_axi
-> +      - const: dvp_clk
+> +      - const: vout_src
+> +      - const: vout_top_ahb
+> +      - const: vout_top_axi
+> +      - const: vout_top_hdmitx0_mclk
+> +      - const: i2stx0_bclk
+> +      - const: hdmitx0_pixelclk
 > +
 > +  resets:
 > +    items:
-> +      - description: ISP Top core
-> +      - description: ISP Top Axi
-> +      - description: NOC ISP Bus
+> +      - description: Vout Top core
 > +
 > +  reset-names:
 > +    items:
-> +      - const: isp_top_core
-> +      - const: isp_top_axi
-> +      - const: noc_bus_isp_axi
+> +      - const: vout_top_src
 > +
 > +  '#clock-cells':
 > +    const: 1
@@ -155,7 +155,7 @@ On 20/01/2023 03:44, Xingyu Wu wrote:
 > +  power-domains:
 > +    maxItems: 1
 > +    description:
-> +      ISP domain power
+> +      Vout domain power
 > +
 > +required:
 > +  - compatible
@@ -176,64 +176,68 @@ On 20/01/2023 03:44, Xingyu Wu wrote:
 > +    #include <dt-bindings/power/starfive,jh7110-pmu.h>
 > +    #include <dt-bindings/reset/starfive,jh7110-crg.h>
 > +
-> +    ispcrg: clock-controller@19810000 {
-> +        compatible = "starfive,jh7110-ispcrg";
-> +        reg = <0x19810000 0x10000>;
-> +        clocks = <&syscrg JH7110_SYSCLK_ISP_TOP_CORE>,
-> +                 <&syscrg JH7110_SYSCLK_ISP_TOP_AXI>,
-> +                 <&syscrg JH7110_SYSCLK_NOC_BUS_ISP_AXI>,
-> +                 <&dvp_clk>;
-> +        clock-names = "isp_top_core", "isp_top_axi",
-> +                      "noc_bus_isp_axi", "dvp_clk";
-> +        resets = <&syscrg JH7110_SYSRST_ISP_TOP>,
-> +                 <&syscrg JH7110_SYSRST_ISP_TOP_AXI>,
-> +                 <&syscrg JH7110_SYSRST_NOC_BUS_ISP_AXI>;
-> +        reset-names = "isp_top_core",
-> +                      "isp_top_axi",
-> +                      "noc_bus_isp_axi";
+> +    voutcrg: clock-controller@295C0000 {
+> +        compatible = "starfive,jh7110-voutcrg";
+> +        reg = <0x295C0000 0x10000>;
+> +        clocks = <&syscrg JH7110_SYSCLK_VOUT_SRC>,
+> +                 <&syscrg JH7110_SYSCLK_VOUT_TOP_AHB>,
+> +                 <&syscrg JH7110_SYSCLK_VOUT_TOP_AXI>,
+> +                 <&syscrg JH7110_SYSCLK_VOUT_TOP_HDMITX0_MCLK>,
+> +                 <&syscrg JH7110_SYSCLK_I2STX0_BCLK>,
+> +                 <&hdmitx0_pixelclk>;
+> +        clock-names = "vout_src", "vout_top_ahb",
+> +                      "vout_top_axi", "vout_top_hdmitx0_mclk",
+> +                      "i2stx0_bclk", "hdmitx0_pixelclk";
+> +        resets = <&syscrg JH7110_SYSRST_VOUT_TOP_SRC>;
+> +        reset-names = "vout_top_src";
 > +        #clock-cells = <1>;
 > +        #reset-cells = <1>;
-> +        power-domains = <&pwrc JH7110_PD_ISP>;
+> +        power-domains = <&pwrc JH7110_PD_VOUT>;
 > +    };
 > diff --git a/include/dt-bindings/clock/starfive,jh7110-crg.h b/include/dt-bindings/clock/starfive,jh7110-crg.h
-> index 5ac8a4d90a7a..91ee589809c3 100644
+> index 91ee589809c3..3ebece93cbd3 100644
 > --- a/include/dt-bindings/clock/starfive,jh7110-crg.h
 > +++ b/include/dt-bindings/clock/starfive,jh7110-crg.h
-> @@ -256,4 +256,22 @@
+> @@ -274,4 +274,26 @@
 >  
->  #define JH7110_STGCLK_END			29
+>  #define JH7110_ISPCLK_END			14
 >  
-> +/* ISPCRG clocks */
-> +#define JH7110_ISPCLK_DOM4_APB_FUNC		0
-> +#define JH7110_ISPCLK_MIPI_RX0_PXL		1
-> +#define JH7110_ISPCLK_DVP_INV			2
-> +#define JH7110_ISPCLK_M31DPHY_CFGCLK_IN		3
-> +#define JH7110_ISPCLK_M31DPHY_REFCLK_IN		4
-> +#define JH7110_ISPCLK_M31DPHY_TXCLKESC_LAN0	5
-> +#define JH7110_ISPCLK_VIN_PCLK			6
-> +#define JH7110_ISPCLK_VIN_SYS_CLK		7
-> +#define JH7110_ISPCLK_VIN_PIXEL_CLK_IF0		8
-> +#define JH7110_ISPCLK_VIN_PIXEL_CLK_IF1		9
-> +#define JH7110_ISPCLK_VIN_PIXEL_CLK_IF2		10
-> +#define JH7110_ISPCLK_VIN_PIXEL_CLK_IF3		11
-> +#define JH7110_ISPCLK_VIN_CLK_P_AXIWR		12
-> +#define JH7110_ISPCLK_ISPV2_TOP_WRAPPER_CLK_C	13
+> +/* VOUTCRG clocks */
+> +#define JH7110_VOUTCLK_APB			0
+> +#define JH7110_VOUTCLK_DC8200_PIX		1
+> +#define JH7110_VOUTCLK_DSI_SYS			2
+> +#define JH7110_VOUTCLK_TX_ESC			3
+> +#define JH7110_VOUTCLK_DC8200_AXI		4
+> +#define JH7110_VOUTCLK_DC8200_CORE		5
+> +#define JH7110_VOUTCLK_DC8200_AHB		6
+> +#define JH7110_VOUTCLK_DC8200_PIX0		7
+> +#define JH7110_VOUTCLK_DC8200_PIX1		8
+> +#define JH7110_VOUTCLK_DOM_VOUT_TOP_LCD		9
+> +#define JH7110_VOUTCLK_DSITX_APB		10
+> +#define JH7110_VOUTCLK_DSITX_SYS		11
+> +#define JH7110_VOUTCLK_DSITX_DPI		12
+> +#define JH7110_VOUTCLK_DSITX_TXESC		13
+> +#define JH7110_VOUTCLK_MIPITX_DPHY_TXESC	14
+> +#define JH7110_VOUTCLK_HDMI_TX_MCLK		15
+> +#define JH7110_VOUTCLK_HDMI_TX_BCLK		16
+> +#define JH7110_VOUTCLK_HDMI_TX_SYS		17
 > +
-> +#define JH7110_ISPCLK_END			14
+> +#define JH7110_VOUTCLK_END			18
 > +
 >  #endif /* __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__ */
 > diff --git a/include/dt-bindings/reset/starfive,jh7110-crg.h b/include/dt-bindings/reset/starfive,jh7110-crg.h
-> index cb70a1759482..1b40df62cdac 100644
+> index 1b40df62cdac..f89589610cf5 100644
 > --- a/include/dt-bindings/reset/starfive,jh7110-crg.h
 > +++ b/include/dt-bindings/reset/starfive,jh7110-crg.h
-> @@ -179,4 +179,20 @@
+> @@ -195,4 +195,20 @@
 >  
->  #define JH7110_STGRST_END			23
+>  #define JH7110_ISPRST_END			12
 >  
-> +/* ISPCRG resets */
-> +#define	JH7110_ISPRST_ISPV2_TOP_WRAPPER_P	0
+> +/* VOUTCRG resets */
+> +#define	JH7110_VOUTRST_DC8200_AXI		0
+> +#define	JH7110_VOUTRST_DC8200_AHB		1
 
-Drop weird indentation.
+Ditto
 
 Best regards,
 Krzysztof
