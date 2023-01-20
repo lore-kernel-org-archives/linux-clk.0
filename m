@@ -2,214 +2,132 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96395C05027
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 17:47:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE64C05027
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 22:11:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230002AbjATRrZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Jan 2023 12:47:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36156 "EHLO
+        id S229922AbjATWLn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Jan 2023 17:11:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbjATRrY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jan 2023 12:47:24 -0500
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4DBD518D1
-        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 09:47:22 -0800 (PST)
-Received: by mail-ed1-x530.google.com with SMTP id v30so7638710edb.9
-        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 09:47:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BipnOyO2jsAkSmzvNbujWDpxdaTEf2MUiztSdhwIYZM=;
-        b=Bd3FjursiOsjI69j3RURLqlVLWzxWtZw1tS9m3pap8RceZvgWm6SQ18OSQOwxnZbR5
-         95CZzqiuQtlbzDTw2+kXJfHS47PqWgeBCNsJUrBetsIVxT7d35ITORG35757jkfXMExY
-         AMS2ZeC+x8/ZpqzWF+fvfradiRNEznbCJqmEI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BipnOyO2jsAkSmzvNbujWDpxdaTEf2MUiztSdhwIYZM=;
-        b=ikrDH87nIqvgJWGhFGjaHCDVbVMV6/TMK/H6P8/iG3srwTjnVmnaPuiw4pRfcJhFZp
-         9bfelTLkBBnh0yxBugE+rH6XObA1er+gzPcOl8g0Lig87SuLWCU59SMulxX0dubay+xC
-         CGdbLT1HOLc9JljMuYgMaeZ7UAB6fN/KguU6vqG1IpwFn55cfdHKX+3fhQ33yg/y0F8b
-         CNvZXmF0txrp7Q09FLetMagwzLWgQoezDswKjPirCvixrVOWAp6N/9jzCuhbf6vqfut5
-         6h9ruPpMEFRwwhbafu2ILBd1O7PtcihonHbntBvY8esYnTfth0wEYDZ1QMNlH1O82KVM
-         mfDA==
-X-Gm-Message-State: AFqh2krJlJ0bbkwj+Z1+3Fck1SJQo4I0BJ6OSyeVulXMexEa9MqdAj/Z
-        nlxevZUrcYiFXrkwN4y5TYrfEROgD1sNv9NqA/jP5w==
-X-Google-Smtp-Source: AMrXdXtTqlcT7UkNlFBypYAC/4a4mGUM44HYZB7Bo3ZplyiQ8KH3qBRlCAOatXHxjolMvMR8xpieQN103+X9bl+aHh4=
-X-Received: by 2002:a05:6402:1396:b0:49b:52b4:83ca with SMTP id
- b22-20020a056402139600b0049b52b483camr1773177edv.225.1674236841244; Fri, 20
- Jan 2023 09:47:21 -0800 (PST)
+        with ESMTP id S229587AbjATWLn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jan 2023 17:11:43 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6D8C36441;
+        Fri, 20 Jan 2023 14:11:41 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7C20FB82A8B;
+        Fri, 20 Jan 2023 22:11:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C661C433EF;
+        Fri, 20 Jan 2023 22:11:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674252699;
+        bh=fY92xshQMLDdPXyG9FcNkhWbhYvRBMxZmEl2a/bUYwE=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=MKJQJ7VHJ4+NchxxWdA3fCaDWfPqCerxmUYk1gUrzKS67DP8o5pctztlqVEgHtm6d
+         8bgfN3b8fHuVLRi484wMLag5HFsj7mzIa8Wh812VtIwITEVUmESHxAqptESbyoEJy6
+         h4Wzr2bdstsWpQvXTmzdru9pb5TGTxv32gJX8lgjQMAoABLOSBpbaovgEDMxztrmLt
+         IK0famR5YSsmL4mviMn3N+MjCCY0uuNxOiOw7KiV1W/z8WMxRp4X9JBQ02dDp52RK+
+         8kLXSPrmmjL3rQ3QPFJP3DJbxodUm2zbD8BtQ/Vi+/YDS2hlXPtyAJxIgxpCS32LWp
+         2kQXlgjwCHV2A==
+Message-ID: <078c5a8254ac006b65fc5fa81dfbc515.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20230101175740.1010258-1-dario.binacchi@amarulasolutions.com>
- <20230101175740.1010258-12-dario.binacchi@amarulasolutions.com> <Y8VgzyNxGpqSvJ2b@linaro.org>
-In-Reply-To: <Y8VgzyNxGpqSvJ2b@linaro.org>
-From:   Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date:   Fri, 20 Jan 2023 18:47:10 +0100
-Message-ID: <CABGWkvrmKzPHozcB6Wn94sG50qEsR8rK-p32eP127XPBJ7xe0A@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 11/11] arm64: dts: imx8mn: add clocks description
-To:     Abel Vesa <abel.vesa@linaro.org>,
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230120061417.2623751-5-dmitry.baryshkov@linaro.org>
+References: <20230120061417.2623751-1-dmitry.baryshkov@linaro.org> <20230120061417.2623751-5-dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v3 4/8] clk: qcom: cbf-msm8996: scale CBF clock according to the CPUfreq
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, angelo@amarulasolutions.com,
-        michael@amarulasolutions.com, tommaso.merciai@amarulasolutions.com,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        linux-amarula@amarulasolutions.com, anthony@amarulasolutions.com,
-        jagan@amarulasolutions.com, Abel Vesa <abelvesa@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>, Li Jun <jun.li@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Marek Vasut <marex@denx.de>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Tero Kristo <kristo@kernel.org>,
-        Tony Lindgren <tony@atomide.com>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Date:   Fri, 20 Jan 2023 14:11:35 -0800
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Quoting Dmitry Baryshkov (2023-01-19 22:14:13)
+> Turn CBF into the interconnect provider. Scale CBF frequency (bandwidth)
+> according to CPU frequencies.
+>=20
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/clk/qcom/clk-cbf-8996.c | 143 +++++++++++++++++++++++++++++++-
+>  1 file changed, 142 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/qcom/clk-cbf-8996.c b/drivers/clk/qcom/clk-cbf-8=
+996.c
+> index 9cde0e660228..b049b4f7b270 100644
+> --- a/drivers/clk/qcom/clk-cbf-8996.c
+> +++ b/drivers/clk/qcom/clk-cbf-8996.c
+> @@ -5,11 +5,14 @@
+>  #include <linux/bitfield.h>
+>  #include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+> +#include <linux/interconnect-provider.h>
+>  #include <linux/of.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regmap.h>
+> =20
+> +#include <dt-bindings/interconnect/qcom,msm8996-cbf.h>
+> +
+>  #include "clk-alpha-pll.h"
+>  #include "clk-regmap.h"
+> =20
+> @@ -225,6 +228,133 @@ static const struct regmap_config cbf_msm8996_regma=
+p_config =3D {
+>         .val_format_endian      =3D REGMAP_ENDIAN_LITTLE,
+>  };
+> =20
+> +#ifdef CONFIG_INTERCONNECT
 
-On Mon, Jan 16, 2023 at 3:36 PM Abel Vesa <abel.vesa@linaro.org> wrote:
->
-> On 23-01-01 18:57:40, Dario Binacchi wrote:
-> > The patch creates a unique node for each clock in the imx8mn clock
-> > control module (CCM).
-> >
-> > To ensure backwards compatibility it was not possible to separate the
-> > changes to the device tree from those applied to the clocks setup code.
-> > In doing so, all clocks are initialized from the device tree and the
-> > legacy setup code with hardwired parameters is removed.
-> >
-> > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> >
-> > ---
-> >
-> > (no changes since v1)
-> >
-> >  .../boot/dts/freescale/imx8mn-clocks.dtsi     | 1885 +++++++++++++++++
-> >  arch/arm64/boot/dts/freescale/imx8mn.dtsi     |   54 +-
-> >  drivers/clk/imx/clk-imx8mn.c                  |  714 ++-----
-> >  3 files changed, 2086 insertions(+), 567 deletions(-)
-> >  create mode 100644 arch/arm64/boot/dts/freescale/imx8mn-clocks.dtsi
-> >
-> > diff --git a/arch/arm64/boot/dts/freescale/imx8mn-clocks.dtsi b/arch/arm64/boot/dts/freescale/imx8mn-clocks.dtsi
-> > new file mode 100644
-> > index 000000000000..21e02ea996d0
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/freescale/imx8mn-clocks.dtsi
-> > @@ -0,0 +1,1885 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Device Tree Source for imx8mn clock data
-> > + *
-> > + * Copyright (c) 2022 Amarula Solutions
-> > + *
-> > + * Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> > + */
-> > +
-> > +/ {
-> > +     osc_32k: clock-osc-32k {
-> > +             compatible = "fixed-clock";
-> > +             #clock-cells = <0>;
-> > +             clock-frequency = <32768>;
-> > +             clock-output-names = "osc_32k";
-> > +     };
-> > +
->
-> [...]
->
-> > +
-> > +     clk_audio_pll2_bypass: clock-audio-pll2-bypass@14 {
-> > +             compatible = "fsl,imx8mn-mux-clock";
-> > +             #clock-cells = <0>;
-> > +             clocks = <&clk_audio_pll2>, <&clk_audio_pll2_ref_sel>;
-> > +             fsl,anatop = <&anatop 0x14>;
-> > +             fsl,bit-shift = <16>;
-> > +             fsl,set-rate-parent;
->
-> NACK. I'm sorry, but this creates a huge effort on maintaining the
-> bindings.
+Can you move this driver to drivers/interconnect/ ?
 
-IMHO I don't think that's the point. Rather, is it correct to keep adding
-platforms always replicating the same code that makes use of hardwired
-parameters? When I thought about the development of this series I
-thought it could be an opportunity to reverse the trend. In the direction
-suggested by the linux kernel development policies.The benefits of using the
-device tree have been proven for quite some time now.
-The 03/11 and 04/11 patches of the series make a list of the legacy code that
-has been added over time (functions with names that are sometimes unclear)
-and that with the progressive use of the device tree would be removed.
+> +struct qcom_msm8996_cbf_icc_provider {
+> +       struct icc_provider provider;
+> +       struct clk *clk;
+> +};
+> +
+> +#define to_qcom_cbf_provider(_provider) \
+> +       container_of(_provider, struct qcom_msm8996_cbf_icc_provider, pro=
+vider)
+> +
+> +enum {
+> +       CBF_MASTER_NODE =3D 2000,
+[...]
+> +static int qcom_msm8996_cbf_icc_remove(struct platform_device *pdev)
+> +{
+> +       struct icc_provider *provider =3D platform_get_drvdata(pdev);
+> +
+> +       icc_nodes_remove(provider);
+> +       icc_provider_del(provider);
+> +
+> +       return 0;
+> +}
+> +#else
+> +static int qcom_msm8996_cbf_icc_register(struct platform_device *pdev)
+> +{
+> +       dev_warn(&pdev->dev, "interconnects support is disabled, CBF cloc=
+k is fixed\n");
+> +
+> +       return 0;
+> +}
+> +#define qcom_msm8996_cbf_icc_remove(pdev) (0)
 
-As written in the cover letter, I am available to add the necessary DT
-bindings to
-the series.
+It's like two drivers in one.
 
-Plus the vendor specific properties will keep increasing.
->
-> I don't think Rob and Krzysztof will be OK with this either.
-
-I hope instead that they agree with me. I didn't answer right away as
-I was waiting
-for their opinion. And I keep hoping for their response. And any other
-recipients of
-the series as well.
-
-By the way, I add Tero Kristo and Toni Lindgren as their work done for
-the TI clock
-subsystem has been a great help for me in the implementation of this series.
-
-Thanks and regards,
-Dario
-
->
->
-> > +             clock-output-names = "audio_pll2_bypass";
-> > +     };
-> > +
-> > +     clk_audio_pll2_out: clock-audio-pll2-out@14 {
-> > +             compatible = "fsl,imx8mn-gate-clock";
-> > +             #clock-cells = <0>;
-> > +             clocks = <&clk_audio_pll2_bypass>;
-> > +             fsl,anatop = <&anatop 0x14>;
-> > +             fsl,bit-shift = <13>;
-> > +             clock-output-names = "audio_pll2_out";
-> > +     };
-> > +
->
-> [...]
->
-> > --
-> > 2.32.0
-> >
-
-
-
--- 
-
-Dario Binacchi
-
-Senior Embedded Linux Developer
-
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
+> +#endif
+> +
+>  static int qcom_msm8996_cbf_probe(struct platform_device *pdev)
+>  {
+>         void __iomem *base;
