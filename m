@@ -2,242 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D27ACC05027
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 08:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E338C05027
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 08:18:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230409AbjATINX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Jan 2023 03:13:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41796 "EHLO
+        id S230527AbjATISe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Jan 2023 03:18:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230361AbjATINW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jan 2023 03:13:22 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1354A4ABF3
-        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 00:13:21 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id q8so3351194wmo.5
-        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 00:13:21 -0800 (PST)
+        with ESMTP id S229864AbjATISe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jan 2023 03:18:34 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2910310AB6
+        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 00:18:33 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id d2so4102606wrp.8
+        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 00:18:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1uvdzDEyw4aMwwFxv90bw7L4K8vMnN12+a5SiR5f2e0=;
-        b=Mp1BjMIrt1Bi1aLAxlXS+/LFjW+NZGHTlV7Y4BKVN5+DwwJVvl3BzXuXP508RF/7VF
-         wLz8w9nn8OEmMKKXxAeh1fdlQv62aTFiFn/u4Pj6R0uENSzB28DD/8jtrVDFi6AWc985
-         wHxhrAPSq4pQoQLfuIH3lsY8630Ug3in47toRtWnq0Vr9+BFFB5hRv/v3f0MqSS8bMA/
-         JzheOBQWmFYTtatlAIJRsOcgK0G0GbYFfvlo6k7b8wm8OvX2xIBhaB9XZA5MKP726NG+
-         +n2l4wTpNa7TOAGSV657iu9qNZvCMLGaEL5axCcvhOXmTfxf5SisAtkoFLiN/ngZbQVz
-         /W8Q==
+        bh=04cr3oM77vtN8LfGWpfaCYtk7vDm8eozzkmdIql1hhs=;
+        b=h5U1ItDyBVg5MkRF35lpFx4g3kTNsCUg80glYG5X1vv6D4cXwIkXMA6qri2t90+Tbx
+         ra+JDdqw6RH6zDBf/RQohRtBx4eGXSyapN7FZiltRhXU+xzRrmGknYNrMLBeXQh6ywIP
+         6go0CV7QQAVuqCSKRQJhUUINsSOUDFYL4ecjsPFAQt4aG9bp9CCgVHuPS0vA4hLpRhVh
+         +Xpfyt+LBbtqxYKTgYUyFTd6yCKKUAUECrJL1HbH4sGBR5R0dgZelw9s5ir2PIYYoQ2k
+         sfHmSrfmMcnAaE1B1zc3MtW+F8sofSjNxt7a3J6a/zIPdZR1sjPSs/Mep64QQLH4bYfx
+         4aBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1uvdzDEyw4aMwwFxv90bw7L4K8vMnN12+a5SiR5f2e0=;
-        b=1gV2BNAuA6bhk+s6YK7t8ciKYxDD4JAHCXtfU2JJC1TCkxqQUNGKXAUYzAOf2ZScYD
-         DVjTCC7TxFRRXOQJFnDAjgMGtltcWAD/c7znwqRjIVhoM/IYeJrAxrmkuMSBd4M4QQ2F
-         Z3fy+N8agPACzqd5805mdVtzw7v9U/G5N0QFx8EGfuBcbZb7EFXExisApu8N2HQdXwN7
-         FyZbvIMAhRTqLt8gv9aiCZax2/KJU5M8BhnvLwR7slxrO/PyC/GWuM3q9i+Mup6p/Oo9
-         gAK12/yFAD7kUvhkml9HmHno0Qbnm7lVyjgpaMiOK9uJZewMQvWOFyN355h+KApkbuun
-         R6NA==
-X-Gm-Message-State: AFqh2kqVoEhg4sC6vi9h9O7DU2spqEJnaoCj8rHrWsXVUBDKKBdqYnws
-        X5st6VFP8GJ1VhPAVvg1jsMu5Lkks9A/yePr
-X-Google-Smtp-Source: AMrXdXuBhIv+nqBTjZiIRYIa8I/haxKNtjRNPQGzggHVcsUGxIMnPvQInpf1qsbsZaO20LitnygE5w==
-X-Received: by 2002:a05:600c:b96:b0:3db:19:798 with SMTP id fl22-20020a05600c0b9600b003db00190798mr9333419wmb.39.1674202398590;
-        Fri, 20 Jan 2023 00:13:18 -0800 (PST)
+        bh=04cr3oM77vtN8LfGWpfaCYtk7vDm8eozzkmdIql1hhs=;
+        b=gegI59huDJWhy07Cv8hL5mSA0o8g8YeJWG33fu+5tyoacWlYIc8nFomkZ2C52yhePn
+         jW9Z36Grgz9qL2f5Jq7xb2odc0slhppCK8mckeiT2VzJ6wTnxk4vQIqw2p43rH1+E+C6
+         vIo6do1dIRauotLH+WbLnfLxxFEIJ9SSsywI+alA99vquZgxajbH4/PLp8LkckdYNVTI
+         xIig9C6/h11k6mZiUilGYkvicWRUFBTkQocHG2xJmJj91uU1paTMJeDBwbhFFk7jraMY
+         BxeXSMtuAm5kFHNGiOWyWzLnbQ73keMdF5/kJmZ8Fl2S9s8I9WOGfz5Z7GIGol1U3kfS
+         Yqmw==
+X-Gm-Message-State: AFqh2kpmBA4SS4TItBpAOwr3EbMwY/3Hyi7bTyGjmpJLcsitiMzMA1/Z
+        V55lxgLjD9V9s5/6OzM0paJdhA==
+X-Google-Smtp-Source: AMrXdXtTB7C5TqJJt0iSVIDXrkSwRPe5tbKe9Mtkw56Xr6RYqWyp/++OsQ1xifYMqHgGBgoDr6bJPQ==
+X-Received: by 2002:adf:ef4f:0:b0:2bc:7ff8:fb83 with SMTP id c15-20020adfef4f000000b002bc7ff8fb83mr11997475wrp.47.1674202711681;
+        Fri, 20 Jan 2023 00:18:31 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id f14-20020a05600c154e00b003daff80f16esm2089490wmg.27.2023.01.20.00.13.16
+        by smtp.gmail.com with ESMTPSA id bt19-20020a056000081300b002bdc3f5945dsm23285543wrb.89.2023.01.20.00.18.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Jan 2023 00:13:18 -0800 (PST)
-Message-ID: <428dc119-82ab-e565-7bd6-1a99ec3967d9@linaro.org>
-Date:   Fri, 20 Jan 2023 09:13:15 +0100
+        Fri, 20 Jan 2023 00:18:31 -0800 (PST)
+Message-ID: <78f963ca-8cd7-ff02-f651-28ade8b7537e@linaro.org>
+Date:   Fri, 20 Jan 2023 09:18:28 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.0
-Subject: Re: [PATCH v1 07/11] dt-bindings: clock: Add StarFive JH7110
- Video-Output clock and reset generator
+Subject: Re: [PATCH v2 1/3] dt-bindings: clk: Add apmixedsys/topckgen
+ compatibles for MT7981
 Content-Language: en-US
-To:     Xingyu Wu <xingyu.wu@starfivetech.com>,
-        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+To:     Daniel Golle <daniel@makrotopia.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-armkernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Emil Renner Berthing <kernel@esmil.dk>
-Cc:     Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20230120024445.244345-1-xingyu.wu@starfivetech.com>
- <20230120024445.244345-8-xingyu.wu@starfivetech.com>
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Chen-Yu Tsai <wenst@chromium.org>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Edward-JW Yang <edward-jw.yang@mediatek.com>,
+        Johnson Wang <johnson.wang@mediatek.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Sam Shih <sam.shih@mediatek.com>,
+        Jianhui Zhao <zhaojh329@gmail.com>
+References: <cover.1674152610.git.daniel@makrotopia.org>
+ <ac08655ce45fa60fc0f510c72dce18fd4807b345.1674152610.git.daniel@makrotopia.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230120024445.244345-8-xingyu.wu@starfivetech.com>
+In-Reply-To: <ac08655ce45fa60fc0f510c72dce18fd4807b345.1674152610.git.daniel@makrotopia.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20/01/2023 03:44, Xingyu Wu wrote:
-> Add bindings for the Video-Output clock and reset generator (VOUTCRG)
-> on the JH7110 RISC-V SoC by StarFive Ltd.
+On 20/01/2023 02:25, Daniel Golle wrote:
+> Add compatible string for MT7981 to existing binding documenation
+> at mediatek,apmixedsys.yaml and mediatek,topckgen.yaml.
 > 
-> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> ---
->  .../clock/starfive,jh7110-voutcrg.yaml        | 96 +++++++++++++++++++
->  .../dt-bindings/clock/starfive,jh7110-crg.h   | 22 +++++
->  .../dt-bindings/reset/starfive,jh7110-crg.h   | 16 ++++
->  3 files changed, 134 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-voutcrg.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-voutcrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-voutcrg.yaml
-> new file mode 100644
-> index 000000000000..a6a43d86a392
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-voutcrg.yaml
-> @@ -0,0 +1,96 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/starfive,jh7110-voutcrg.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: StarFive JH7110 Video-Output Clock and Reset Generator
-> +
-> +maintainers:
-> +  - Xingyu Wu <xingyu.wu@starfivetech.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: starfive,jh7110-voutcrg
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: Vout Top core
-> +      - description: Vout Top Ahb
-> +      - description: Vout Top Axi
-> +      - description: Vout Top HDMI MCLK
-> +      - description: I2STX0 BCLK
-> +      - description: external HDMI pixel
-> +
-> +  clock-names:
-> +    items:
-> +      - const: vout_src
-> +      - const: vout_top_ahb
-> +      - const: vout_top_axi
-> +      - const: vout_top_hdmitx0_mclk
-> +      - const: i2stx0_bclk
-> +      - const: hdmitx0_pixelclk
-> +
-> +  resets:
-> +    items:
-> +      - description: Vout Top core
-> +
-> +  reset-names:
-> +    items:
-> +      - const: vout_top_src
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +    description:
-> +      See <dt-bindings/clock/starfive,jh7110-crg.h> for valid indices.
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +    description:
-> +      See <dt-bindings/reset/starfive,jh7110-crg.h> for valid indices.
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +    description:
-> +      Vout domain power
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +  - '#clock-cells'
-> +  - '#reset-cells'
-> +  - power-domains
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/starfive,jh7110-crg.h>
-> +    #include <dt-bindings/power/starfive,jh7110-pmu.h>
-> +    #include <dt-bindings/reset/starfive,jh7110-crg.h>
-> +
-> +    voutcrg: clock-controller@295C0000 {
-> +        compatible = "starfive,jh7110-voutcrg";
-> +        reg = <0x295C0000 0x10000>;
-> +        clocks = <&syscrg JH7110_SYSCLK_VOUT_SRC>,
-> +                 <&syscrg JH7110_SYSCLK_VOUT_TOP_AHB>,
-> +                 <&syscrg JH7110_SYSCLK_VOUT_TOP_AXI>,
-> +                 <&syscrg JH7110_SYSCLK_VOUT_TOP_HDMITX0_MCLK>,
-> +                 <&syscrg JH7110_SYSCLK_I2STX0_BCLK>,
-> +                 <&hdmitx0_pixelclk>;
-> +        clock-names = "vout_src", "vout_top_ahb",
-> +                      "vout_top_axi", "vout_top_hdmitx0_mclk",
-> +                      "i2stx0_bclk", "hdmitx0_pixelclk";
-> +        resets = <&syscrg JH7110_SYSRST_VOUT_TOP_SRC>;
-> +        reset-names = "vout_top_src";
-> +        #clock-cells = <1>;
-> +        #reset-cells = <1>;
-> +        power-domains = <&pwrc JH7110_PD_VOUT>;
-> +    };
-> diff --git a/include/dt-bindings/clock/starfive,jh7110-crg.h b/include/dt-bindings/clock/starfive,jh7110-crg.h
-> index 91ee589809c3..3ebece93cbd3 100644
-> --- a/include/dt-bindings/clock/starfive,jh7110-crg.h
-> +++ b/include/dt-bindings/clock/starfive,jh7110-crg.h
-> @@ -274,4 +274,26 @@
->  
->  #define JH7110_ISPCLK_END			14
->  
-> +/* VOUTCRG clocks */
-> +#define JH7110_VOUTCLK_APB			0
-> +#define JH7110_VOUTCLK_DC8200_PIX		1
-> +#define JH7110_VOUTCLK_DSI_SYS			2
-> +#define JH7110_VOUTCLK_TX_ESC			3
-> +#define JH7110_VOUTCLK_DC8200_AXI		4
-> +#define JH7110_VOUTCLK_DC8200_CORE		5
-> +#define JH7110_VOUTCLK_DC8200_AHB		6
-> +#define JH7110_VOUTCLK_DC8200_PIX0		7
-> +#define JH7110_VOUTCLK_DC8200_PIX1		8
-> +#define JH7110_VOUTCLK_DOM_VOUT_TOP_LCD		9
-> +#define JH7110_VOUTCLK_DSITX_APB		10
-> +#define JH7110_VOUTCLK_DSITX_SYS		11
-> +#define JH7110_VOUTCLK_DSITX_DPI		12
-> +#define JH7110_VOUTCLK_DSITX_TXESC		13
-> +#define JH7110_VOUTCLK_MIPITX_DPHY_TXESC	14
-> +#define JH7110_VOUTCLK_HDMI_TX_MCLK		15
-> +#define JH7110_VOUTCLK_HDMI_TX_BCLK		16
-> +#define JH7110_VOUTCLK_HDMI_TX_SYS		17
-> +
-> +#define JH7110_VOUTCLK_END			18
-> +
->  #endif /* __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__ */
-> diff --git a/include/dt-bindings/reset/starfive,jh7110-crg.h b/include/dt-bindings/reset/starfive,jh7110-crg.h
-> index 1b40df62cdac..f89589610cf5 100644
-> --- a/include/dt-bindings/reset/starfive,jh7110-crg.h
-> +++ b/include/dt-bindings/reset/starfive,jh7110-crg.h
-> @@ -195,4 +195,20 @@
->  
->  #define JH7110_ISPRST_END			12
->  
-> +/* VOUTCRG resets */
-> +#define	JH7110_VOUTRST_DC8200_AXI		0
-> +#define	JH7110_VOUTRST_DC8200_AHB		1
+> Signed-off-by: Jianhui Zhao <zhaojh329@gmail.com>
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 
-Ditto
+Use subject prefixes matching the subsystem (which you can get for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching).
+
+You got comment to fix it with nice example, so why using something else?
+
+
 
 Best regards,
 Krzysztof
