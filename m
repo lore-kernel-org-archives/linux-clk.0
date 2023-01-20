@@ -2,108 +2,111 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD14C27C76
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 11:14:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0FD4C25B4E
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 12:47:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229535AbjATLOe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Jan 2023 06:14:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42940 "EHLO
+        id S230008AbjATMrO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Jan 2023 07:47:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229683AbjATLOd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jan 2023 06:14:33 -0500
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6436619C
-        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 03:14:27 -0800 (PST)
-Received: by mail-ej1-x62b.google.com with SMTP id v6so13079630ejg.6
-        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 03:14:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=P2X4s4BtpK/aJlH6LhfyKD6YkP3AiRfVscHdOk053Ic=;
-        b=vjmUzd684UTNTFfBD6QCvS7yvGk6EDhT1p3tYE7wbGgEu5GiUVB+ovpOdfK1UtAR9M
-         X9a5Y3G+iCMeMiX4iJ2sbKcMY/URztUrVK/21T3qNssiKBzTakBPnGD1/U7ILgu8YpIg
-         VVj2E7rCyUzf56Qn8XZIxDjxgQWfw9aFKtrcjtdGIaMoUp0WQuJlrF+4EeqcW0ytnG8g
-         zuri/9Y1cDLF7FROPiGo6d6rV7y3roRVOdJ/NrBT+m1Av+nmM7pzxl5YE+S2mjX/1BJ9
-         d1TdJR7aRQiBMhH8aZmLCTQcCDL7gJzH84yk373PhOkZxhBnemh5AFzYFx2fHJC6mGco
-         ZMuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P2X4s4BtpK/aJlH6LhfyKD6YkP3AiRfVscHdOk053Ic=;
-        b=OYXTxkxLTCD+aXRqlRtxOSOm5GUD+6mMrPbcrXGJu36QFAK8nilJcBg6S29E5uN5YT
-         4ybIPMyGdmCKGqkfhxBlzgw4BiAs5IuS5K0GPUfO2Cv1VNJ6cxD0vLtmH63OcTu3G66u
-         j7rq9eW92BPsx5Y/RvXQqhnOdgnCjeDyxic0IoPPhDGMio8789HBVG5odCt1+i5HeWHM
-         TS9Gpk+OGjxK8VmhpXyzaPdtyg9DZnWNkzCcmteuYubNUNsFDy8ooteNkgh7rq0NQvIM
-         5psGYw4D7ArsacSYUDK70bjqHcpe/MFLhGkwF1SEbXqkmVDKs2iVVdRwgGA3Sb6RSEsR
-         VohA==
-X-Gm-Message-State: AFqh2kpwtJ78xrvQsywbG7sXDwarjfqQTz1KY2UUMmKqfICPiqjw3sRp
-        DUIMige+0IX8nl+s8GRbi06KPg==
-X-Google-Smtp-Source: AMrXdXvknQ0f7UQ0UYNxv8FK4qT+LCFtsjtVVHNCvOtv0KsLw++TkHUNbKKRJ+1WApT7aQniVff0wQ==
-X-Received: by 2002:a17:907:a2c6:b0:7c1:92b2:fa9e with SMTP id re6-20020a170907a2c600b007c192b2fa9emr15504854ejc.59.1674213266512;
-        Fri, 20 Jan 2023 03:14:26 -0800 (PST)
-Received: from [192.168.1.101] (abyk37.neoplus.adsl.tpnet.pl. [83.9.30.37])
-        by smtp.gmail.com with ESMTPSA id 10-20020a170906218a00b0073d796a1043sm17512602eju.123.2023.01.20.03.14.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Jan 2023 03:14:26 -0800 (PST)
-Message-ID: <64e32ee3-404e-3832-c451-a758db12158e@linaro.org>
-Date:   Fri, 20 Jan 2023 12:14:23 +0100
+        with ESMTP id S229540AbjATMrN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jan 2023 07:47:13 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F06681BC2;
+        Fri, 20 Jan 2023 04:47:12 -0800 (PST)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30KCX71f029448;
+        Fri, 20 Jan 2023 12:47:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=JzX+rtg+HZuJiDwfuJ8Do11GcSMBCSLI9yEvqazh47E=;
+ b=peQdyfjWJsnDOnoEnKOAwSo3cucozcJqsB947+rYRo5kwKfXCH7m0jhKNuQ5ez3QLIou
+ 6jwS9wJ3GfInPZacnPJpC9AvIK3eUi1TtEe++PpZVliPwGmdFA0rLTFO1C5lgdHjVaWX
+ +YN5AZHXIf+Cy6YgZpqudok+C9aBj5eqfAU5mLm4jueUzfe8CIpUoHsriRmuMqzZ9Fnv
+ BvCxET86NE5DPuCsyXPd2w+kEu7utm5yPer4TWu1UuO0H3EHZQzrPfb0L2FUXD1iR2Z2
+ AFJooqNvKLOT0lqyNTepR7VuS5gfMSbMvczy31MmiFg/c05BLOLAEnx3XjCbUjcji8WU zA== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n6wbsbxy7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 20 Jan 2023 12:47:05 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30KCl4Ke029528
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 20 Jan 2023 12:47:04 GMT
+Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Fri, 20 Jan 2023 04:46:59 -0800
+From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+To:     <swboyd@chromium.org>, <agross@kernel.org>, <andersson@kernel.org>,
+        <robh+dt@kernel.org>, <broonie@kernel.org>,
+        <quic_plai@quicinc.com>, <krzysztof.kozlowski+dt@linaro.org>,
+        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_rohkumar@quicinc.com>
+CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Subject: [PATCH v5 0/6] Add resets for ADSP based audio clock controller driver
+Date:   Fri, 20 Jan 2023 18:16:40 +0530
+Message-ID: <1674218806-7711-1-git-send-email-quic_srivasam@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v3 7/8] arm64: dts: qcom: msm8996: add CBF device entry
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20230120061417.2623751-1-dmitry.baryshkov@linaro.org>
- <20230120061417.2623751-8-dmitry.baryshkov@linaro.org>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230120061417.2623751-8-dmitry.baryshkov@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: GTXD0lSssPkQvaRwYHZe80-wcdkj5d1i
+X-Proofpoint-GUID: GTXD0lSssPkQvaRwYHZe80-wcdkj5d1i
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-01-20_08,2023-01-20_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=802 malwarescore=0 impostorscore=0 priorityscore=1501
+ bulkscore=0 phishscore=0 adultscore=0 mlxscore=0 suspectscore=0
+ clxscore=1015 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301200120
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add resets and remove qdsp6ss clcok controller for audioreach based platforms. 
 
+Changes since v4:
+    -- Update Fixes tag in Merge lpasscc into lpass_aon patch.
+    -- Revert removal of clk_regmap structure in Merge lpasscc into lpass_aon patch.
 
-On 20.01.2023 07:14, Dmitry Baryshkov wrote:
-> Add device tree node for the CBF clock.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Changes since v3:
+    -- Remove duplicate clock resets patch.
+    -- Add binding headers for q6 clocks.
+    -- Create new patch for merging lpasscc q6 clocks into lpass_aon.
+    -- Create new patches for handling conflicts of ADSP and bypass solution.
 
-Konrad
->  arch/arm64/boot/dts/qcom/msm8996.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> index 4427305f8a94..6f180a8efe77 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> @@ -3572,6 +3572,13 @@ saw3: syscon@9a10000 {
->  			reg = <0x09a10000 0x1000>;
->  		};
->  
-> +		cbf: clock-controller@9a11000 {
-> +			compatible = "qcom,msm8996-cbf";
-> +			reg = <0x09a11000 0x10000>;
-> +			clocks = <&rpmcc RPM_SMD_XO_A_CLK_SRC>, <&apcs_glb>;
-> +			#clock-cells = <0>;
-> +		};
-> +
->  		intc: interrupt-controller@9bc0000 {
->  			compatible = "qcom,msm8996-gic-v3", "arm,gic-v3";
->  			#interrupt-cells = <3>;
+Changes since v2:
+    -- Revert removing qdsp6ss clock control.
+    -- Add Conditional check for qdsp6ss clock registration.
+Changes since v1:
+    -- Update commit message.
+    -- Remove qdsp6ss clock control.
+
+Srinivasa Rao Mandadapu (6):
+  dt-bindings: clock: qcom,sc7280-lpasscc: Add qcom,adsp-pil-mode
+    property
+  dt-bindings: clock: lpassaudiocc-sc7280: Add binding headers for
+    lpasscc
+  clk: qcom: lpasscc-sc7280: Skip qdsp6ss clock registration
+  clk: qcom: lpasscorecc-sc7280: Skip lpasscorecc registration
+  clk: qcom: lpassaudiocc-sc7280: Merge lpasscc into lpass_aon
+  clk: qcom: lpassaudiocc-sc7280: Skip lpass_aon_cc_pll config
+
+ .../devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml    |  7 +++++++
+ drivers/clk/qcom/lpassaudiocc-sc7280.c                    | 15 ++++++++++-----
+ drivers/clk/qcom/lpasscc-sc7280.c                         | 12 +++++++-----
+ drivers/clk/qcom/lpasscorecc-sc7280.c                     |  3 +++
+ include/dt-bindings/clock/qcom,lpassaudiocc-sc7280.h      |  2 ++
+ 5 files changed, 29 insertions(+), 10 deletions(-)
+
+-- 
+2.7.4
+
