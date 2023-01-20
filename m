@@ -2,130 +2,112 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC9D9C05027
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 15:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84FF5C05027
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 15:20:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230061AbjATPI5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Jan 2023 10:08:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43106 "EHLO
+        id S230483AbjATPUW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Jan 2023 10:20:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230005AbjATPI4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jan 2023 10:08:56 -0500
-Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E770744BA
-        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 07:08:54 -0800 (PST)
-Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-4d59d518505so76566697b3.1
-        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 07:08:54 -0800 (PST)
+        with ESMTP id S230422AbjATPUW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jan 2023 10:20:22 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF844DB7BA
+        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 07:19:59 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id vw16so14725214ejc.12
+        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 07:19:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pBi3ffU51iejmbjZQdj0oR9LDHIFBr0OZALJjIdQl6s=;
-        b=IAR+djixseOq3jujbfi2bCnwrdqKvF/Hj92LldFzw7K3pR0UkGgZo29Kj1ScJMqbVT
-         QWO1o80x9LlwXtpRk3xF3uN0OmsR0u42fQWOf3fDIuzu13H0miJ701CibLZpoOtLwFo2
-         2jqgEwILWw9h7eHpp90ieOd1D+/9wY1RY4R2g=
+        d=fairphone.com; s=fair;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oohYZqlXb/UEppW6rQtISKF6pXwhrVR4gJAAjhthm3M=;
+        b=L3xzaMDpCnHoKgPC6Jo0Lpa2a+zydubEH2Zg2XksukzxOMnWENJ9xKNJ+jyT4XsxiJ
+         UjfEGE0epmcdSxMhuJylugp1jH4Muof1LwCIwXHgaPZLddeTIhHu2Yzo8r0mYBGbwISX
+         TBvCCSki0UHfCvGuOB0/cPthgQ1LC4jnBx4Z/zySb8p4kKax9wUs0TocD2mMEN0cQE5j
+         9M+pGd0g7jKfv83fwFXEi5HjSMMIYoYg5magZ1avuVzYTpD0h7e2FeTDyY7dT6Uph0+6
+         wcra6nRWFpLdsxXTPywthzp2EMw1cOgYwirD1GwC/rwMvwYUKMJKxG/V9USVssv4GOeI
+         hj3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pBi3ffU51iejmbjZQdj0oR9LDHIFBr0OZALJjIdQl6s=;
-        b=kcMV7dKe2cifMVasc1psue+dhVOuqTFPX4/LbAPULbPH/ICALcdAigOSpwCnL/OHEw
-         GsKkpKuoVng4290Oj26B9fFtNX3Ni4IwKbOf3mcFGjWqFQlyhvG8WRIUZne2LDaQznmH
-         qlcdGNW48mLVIXAQznE79iuFpsExwJt2A7mtBKUj9E4lZTunHjwOX9q6Em6AtN/LfTIH
-         JoXCtPflD4fQOMzueRUGGXp81bhC2mbYfKPlZo70yjj4jlp75RQAHLPJRgJFuEPMO6kE
-         /xG8Jq5pEXwao891xFWqUeJkDO08xueTc8X6M+qZPASmhhHKn59zO+eeuKpF0r1SwAPg
-         EF1Q==
-X-Gm-Message-State: AFqh2kp58OB1VlHVgHIntPDMV0JLQI8OW9nF389M0xF7/FyiXrIkQL4O
-        F8cWtsiTbZGFYcOeurEkBtpuBNmOpzgElCeP/KrNAw==
-X-Google-Smtp-Source: AMrXdXte3RJRifErKDri4ufOLNtUc+I381qg5srevvWpCT+9akcsEUzeJT7w9khoMlB0A7nSuyN3J3u1pWiC2hEGDCg=
-X-Received: by 2002:a0d:cbcb:0:b0:4f2:1365:fa5 with SMTP id
- n194-20020a0dcbcb000000b004f213650fa5mr1686671ywd.279.1674227333774; Fri, 20
- Jan 2023 07:08:53 -0800 (PST)
-MIME-Version: 1.0
-References: <20230120061417.2623751-1-dmitry.baryshkov@linaro.org>
-In-Reply-To: <20230120061417.2623751-1-dmitry.baryshkov@linaro.org>
-From:   Simon Glass <sjg@chromium.org>
-Date:   Fri, 20 Jan 2023 08:08:07 -0700
-Message-ID: <CAPnjgZ3MQ4E_3n_Z881QsdO-zELPkLaCm0cOFwz6Fds+u73OWg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/8] clk: qcom: msm8996: add support for the CBF clock
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=oohYZqlXb/UEppW6rQtISKF6pXwhrVR4gJAAjhthm3M=;
+        b=1jg4IVciFZIVNAARu3ADQcakKXaol/mS8xlydsM7yR+MATrYbzhvtntJMgQilJBz9y
+         gu1dx3kXZKXp+1XsQKr0Ia8ZGuWNkpuBzIK8S2ITLByKLvbIupndtGI8A2aLK/JW7SQy
+         TUsnvlrCaH5yqFPu6OVdy0PxR8s5oOLk/+vuv1MMWwdQQtETnQyAoVhL0JjVYJWVFK4x
+         4Py3zc41JxK1kLgSCi7l4eaRuL6YG5oO/x3hnU22OcnF6mMT2XKH5uoE+ayvoLPo/SJF
+         OvaLHJ2oRhPkeBA5mHtxUoUlF4qsFAy5SoPhc4OEa9HuW5ldvwUh+urydQ6hQTu5EXre
+         55nw==
+X-Gm-Message-State: AFqh2kp7I4+kRLTGoJ5+Lj3NdD5dUnhTJ+TU43TOAtMQaJyu+SpbHlPd
+        zKB0ptix0RmiRID4GtpqetADIw==
+X-Google-Smtp-Source: AMrXdXuNmUs4phh4bB2kbw3WJrDxVfTHziau8J+3frDuKxt57+6s1sDoG8Uc/9i74Lj8U3HHEjyqxQ==
+X-Received: by 2002:a17:906:608d:b0:872:a2ee:271d with SMTP id t13-20020a170906608d00b00872a2ee271dmr14170359ejj.53.1674227998279;
+        Fri, 20 Jan 2023 07:19:58 -0800 (PST)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id w15-20020a17090633cf00b008711cab8875sm6977298eja.216.2023.01.20.07.19.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Jan 2023 07:19:57 -0800 (PST)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Fri, 20 Jan 2023 16:19:57 +0100
+Message-Id: <CPX4AK05WU5V.2XZ2KT3M3ZHA@otso>
+Cc:     <~postmarketos/upstreaming@lists.sr.ht>,
+        "Andy Gross" <agross@kernel.org>,
+        "Bjorn Andersson" <andersson@kernel.org>,
+        "Konrad Dybcio" <konrad.dybcio@linaro.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] clk: qcom: smd: Add XO RPM clocks for
+ MSM8226/MSM8974
+From:   "Luca Weiss" <luca.weiss@fairphone.com>
+To:     "Rayyan Ansari" <rayyan@ansari.sh>, <linux-arm-msm@vger.kernel.org>
+X-Mailer: aerc 0.14.0
+References: <20230119190534.317041-1-rayyan@ansari.sh>
+ <20230119190534.317041-2-rayyan@ansari.sh>
+In-Reply-To: <20230119190534.317041-2-rayyan@ansari.sh>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Dmitry,
+On Thu Jan 19, 2023 at 8:05 PM CET, Rayyan Ansari wrote:
+> Add the XO and XO_A clocks to the MSM8974 clock list, which is also
+> used on MSM8226.
+>
+> Signed-off-by: Rayyan Ansari <rayyan@ansari.sh>
+> ---
+>  drivers/clk/qcom/clk-smd-rpm.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rp=
+m.c
+> index fea505876855..42ea3bb37f63 100644
+> --- a/drivers/clk/qcom/clk-smd-rpm.c
+> +++ b/drivers/clk/qcom/clk-smd-rpm.c
+> @@ -549,6 +549,8 @@ DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8974, cxo_a1_=
+pin, cxo_a1_a_pin, 5, 19200
+>  DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8974, cxo_a2_pin, cxo_a2_a_pin, =
+6, 19200000);
+> =20
+>  static struct clk_smd_rpm *msm8974_clks[] =3D {
+> +	[RPM_SMD_XO_CLK_SRC] 		=3D &sdm660_bi_tcxo,
+> +	[RPM_SMD_XO_A_CLK_SRC] 		=3D &sdm660_bi_tcxo_a,
 
-On Thu, 19 Jan 2023 at 23:14, Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On MSM8996 two CPU clusters are interconnected using the Core Bus
-> Fabric (CBF). In order for the CPU clusters to function properly, it
-> should be clocked following the core's frequencies to provide adequate
-> bandwidth. On the other hand the CBF's clock rate can be used by other
-> drivers (e.g. by the pending SPDM driver to provide input on the CPU
-> performance).
->
-> Thus register CBF as a clock (required for CPU to boot) and add a tiny
-> interconnect layer on top of it to let cpufreq/opp scale the CBF clock.
->
-> Dependencies: [1]
->
-> [1] https://lore.kernel.org/linux-arm-msm/20230111191453.2509468-1-dmitry.baryshkov@linaro.org/
->
-> Changes since v2:
-> - Added interconnect-related bindings
-> - Switched CPU and CBF clocks to RPM_SMD_XO_A_CLK_SRC
->
-> Changes since v1:
-> - Relicensed schema to GPL-2.0 + BSD-2-Clause (Krzysztof)
-> - Changed clock driver to use parent_hws (Konrad)
-> - Fixed indentation in CBF clock driver (Konrad)
-> - Changed MODULE_LICENSE of CBF clock driver to GPL from GPL-v2
-> - Switched CBF to use RPM_SMD_XO_CLK_SRC as one of the parents
-> - Enabled RPM_SMD_XO_CLK_SRC on msm8996 platform and switch to it from
->   RPM_SMD_BB_CLK1 clock
->
-> Dmitry Baryshkov (8):
->   dt-bindings: clock: qcom,msm8996-cbf: Describe the MSM8996 CBF clock
->     controller
->   dt-bindints: interconnect/msm8996-cbf: add defines to be used by CBF
->   clk: qcom: add msm8996 Core Bus Framework (CBF) support
->   clk: qcom: cbf-msm8996: scale CBF clock according to the CPUfreq
->   clk: qcom: smd-rpm: provide RPM_SMD_XO_CLK_SRC on MSM8996 platform
->   arm64: qcom: dts: msm8996 switch from RPM_SMD_BB_CLK1 to
->     RPM_SMD_XO_CLK_SRC
->   arm64: dts: qcom: msm8996: add CBF device entry
->   arm64: dts: qcom: msm8996: scale CBF clock according to the CPUfreq
->
->  .../bindings/clock/qcom,msm8996-cbf.yaml      |  53 ++
->  arch/arm64/boot/dts/qcom/msm8996.dtsi         |  72 ++-
->  drivers/clk/qcom/Makefile                     |   2 +-
->  drivers/clk/qcom/clk-cbf-8996.c               | 458 ++++++++++++++++++
->  drivers/clk/qcom/clk-smd-rpm.c                |   2 +
->  .../interconnect/qcom,msm8996-cbf.h           |  12 +
->  6 files changed, 591 insertions(+), 8 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,msm8996-cbf.yaml
->  create mode 100644 drivers/clk/qcom/clk-cbf-8996.c
->  create mode 100644 include/dt-bindings/interconnect/qcom,msm8996-cbf.h
->
-> --
+Hi Rayyan,
+
+This doesn't apply on linux-next.
+The references were renamed to clk_smd_rpm_branch_bi_tcxo*
+Please rebase.
+
+Regards
+Luca
+
+>  	[RPM_SMD_PNOC_CLK]		=3D &msm8916_pcnoc_clk,
+>  	[RPM_SMD_PNOC_A_CLK]		=3D &msm8916_pcnoc_a_clk,
+>  	[RPM_SMD_SNOC_CLK]		=3D &msm8916_snoc_clk,
+> --=20
 > 2.39.0
->
 
-Could you please tell me which dev board this is targeting and where I
-can get one? Also could you please point me to the SoC documentation?
-
-Thanks,
-Simon
