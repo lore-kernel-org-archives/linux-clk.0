@@ -2,38 +2,36 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB112C38142
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 02:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48522C46467
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 02:32:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229481AbjATC03 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Jan 2023 21:26:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39498 "EHLO
+        id S229630AbjATCcX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Jan 2023 21:32:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbjATC02 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 21:26:28 -0500
+        with ESMTP id S229447AbjATCcW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jan 2023 21:32:22 -0500
 Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE2FFA1007;
-        Thu, 19 Jan 2023 18:25:44 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78F499CBA7;
+        Thu, 19 Jan 2023 18:31:35 -0800 (PST)
 Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.13; Fri, 20 Jan
- 2023 10:25:42 +0800
-Message-ID: <9c34a8fc-de76-4beb-8841-9bcfd1a55cd1@amlogic.com>
-Date:   Fri, 20 Jan 2023 10:25:42 +0800
+ 2023 10:31:33 +0800
+Message-ID: <d8e91e45-19a1-eedb-4b74-5df49b35ca0a@amlogic.com>
+Date:   Fri, 20 Jan 2023 10:31:33 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH V6 1/3] dt-bindings: clock: document Amlogic S4 SoC PLL &
- peripheral clock controller
-To:     Kevin Hilman <khilman@baylibre.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <linux-clk@vger.kernel.org>,
+Subject: Re: [PATCH V6 0/3] Add S4 SoC PLL and Peripheral clock controller
+Content-Language: en-US
+To:     Jerome Brunet <jbrunet@baylibre.com>, <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-amlogic@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Neil Armstrong <neil.armstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -41,13 +39,9 @@ To:     Kevin Hilman <khilman@baylibre.com>,
 CC:     "kelvin . zhang" <Kelvin.Zhang@amlogic.com>,
         "qi . duan" <qi.duan@amlogic.com>
 References: <20230116074214.2326-1-yu.tu@amlogic.com>
- <20230116074214.2326-2-yu.tu@amlogic.com>
- <02b6b3a6-e2ad-8cbc-fa15-fbd2db6ada64@linaro.org>
- <7c0133a2-ea4d-645e-3df2-2bb832bbd498@amlogic.com>
- <7hwn5jqrxf.fsf@baylibre.com>
-Content-Language: en-US
+ <1jilh2ydns.fsf@starbuckisacylon.baylibre.com>
 From:   Yu Tu <yu.tu@amlogic.com>
-In-Reply-To: <7hwn5jqrxf.fsf@baylibre.com>
+In-Reply-To: <1jilh2ydns.fsf@starbuckisacylon.baylibre.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.18.29.47]
@@ -57,47 +51,62 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Jerome,
 
-Hi Kevin,
-
-On 2023/1/19 8:38, Kevin Hilman wrote:
+On 2023/1/19 19:18, Jerome Brunet wrote:
 > [ EXTERNAL EMAIL ]
 > 
-> Yu Tu <yu.tu@amlogic.com> writes:
 > 
->> On 2023/1/16 16:29, Krzysztof Kozlowski wrote:
+> On Mon 16 Jan 2023 at 15:42, Yu Tu <yu.tu@amlogic.com> wrote:
 > 
-> [...]
-> 
->>>> diff --git a/include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h b/include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
->>>> new file mode 100644
->>>> index 000000000000..bbec5094d5c3
->>>> --- /dev/null
->>>> +++ b/include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
->>>> @@ -0,0 +1,131 @@
->>>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->>>
->>> Unusual license... are you sure to license the bindings under GPLv4 or
->>> GPLv5? Fine by me.
->>>
+>> 1. Add S4 SoC PLL and Peripheral clock controller dt-bindings.
+>> 2. Add PLL and Peripheral clock controller driver for S4 SOC.
 >>
->> Yes.
+>> Yu Tu (3):
+>>    dt-bindings: clock: document Amlogic S4 SoC PLL & peripheral clock
+>>      controller
+>>    clk: meson: S4: add support for Amlogic S4 SoC PLL clock driver
+>>    clk: meson: s4: add support for Amlogic S4 SoC peripheral clock
+>>      controller
 > 
-> The rest of the bindings for Amlogic SoCs are GPL-2.0 (without the '+').
-> Adding the dual-license for MIT seems fine, but adding the '+' is
-> curious.
+> You are adding 2 controller driver with this series.
+> Making 2 driver patches on clk/ is good. Please do the same for the bindings
 > 
-> It would be helpful if you could please explain why you'd like these
-> bindings to be licensed differently than the rest of the SoC family.
-> 
+okay.I will change the next edition as you suggest.
 
-I actually refer to the previous g12a Soc.
-https://elixir.bootlin.com/linux/v6.2-rc4/source/include/dt-bindings/clock/g12a-clkc.h
-https://elixir.bootlin.com/linux/v6.2-rc4/source/include/dt-bindings/clock/axg-clkc.h
-[...]
+Please check Krzysztof's opinion. Do you agree? Thank you!
 
-So if you think it is not necessary, I will delete the '+' as you 
-suggested. Don't know what you choose?
-
-> Kevin
+>>
+>> V5 -> V6: Change send patch series, as well change format and clock flags.
+>> V4 -> V5: change format and clock flags and adjust the patch series as suggested
+>> by Jerome.
+>> V3 -> V4: change format and clock flags.
+>> V2 -> V3: Use two clock controller.
+>> V1 -> V2: Change format as discussed in the email.
+>>
+>> Link:https://lore.kernel.org/all/20221123021346.18136-1-yu.tu@amlogic.com/
+>>
+>>   .../clock/amlogic,s4-peripherals-clkc.yaml    |  104 +
+>>   .../bindings/clock/amlogic,s4-pll-clkc.yaml   |   50 +
+>>   MAINTAINERS                                   |    1 +
+>>   drivers/clk/meson/Kconfig                     |   25 +
+>>   drivers/clk/meson/Makefile                    |    2 +
+>>   drivers/clk/meson/s4-peripherals.c            | 3874 +++++++++++++++++
+>>   drivers/clk/meson/s4-peripherals.h            |  218 +
+>>   drivers/clk/meson/s4-pll.c                    |  875 ++++
+>>   drivers/clk/meson/s4-pll.h                    |   88 +
+>>   .../clock/amlogic,s4-peripherals-clkc.h       |  131 +
+>>   .../dt-bindings/clock/amlogic,s4-pll-clkc.h   |   30 +
+>>   11 files changed, 5398 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml
+>>   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
+>>   create mode 100644 drivers/clk/meson/s4-peripherals.c
+>>   create mode 100644 drivers/clk/meson/s4-peripherals.h
+>>   create mode 100644 drivers/clk/meson/s4-pll.c
+>>   create mode 100644 drivers/clk/meson/s4-pll.h
+>>   create mode 100644 include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
+>>   create mode 100644 include/dt-bindings/clock/amlogic,s4-pll-clkc.h
+>>
+>>
+>> base-commit: 1b929c02afd37871d5afb9d498426f83432e71c2
 > 
