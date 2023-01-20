@@ -2,60 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 713FBC46467
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 06:27:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E9CC46467
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 06:41:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229877AbjATG1t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Jan 2023 01:27:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34474 "EHLO
+        id S229445AbjATGlZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Jan 2023 01:41:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229490AbjATG1s (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jan 2023 01:27:48 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CD8739BAA
-        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 22:27:45 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id q10-20020a1cf30a000000b003db0edfdb74so359585wmq.1
-        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 22:27:45 -0800 (PST)
+        with ESMTP id S229498AbjATGlY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jan 2023 01:41:24 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38C1945221
+        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 22:41:22 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id n7so3940153wrx.5
+        for <linux-clk@vger.kernel.org>; Thu, 19 Jan 2023 22:41:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=G+Tk9C+q5ul7HvkddDemsyL3qMNqs61Qh9C/G8R7Spg=;
-        b=kXM01cTPdkqoNmA1Ih8ur44KRT2KTmKp2876rTMbOzTyhgpnt6yrrLkq3Uk1tuOcjq
-         yUjf4BLGRx4cmOKa0YBXtA8/EFBNxLWBpwgOspGYiSsCR3LoeLa6XLHE1nL3wBDZ3vXY
-         b0t5Yl27SwyGUxbyiTQl4KMG8lDoUqH4rM4fCeg4Ltrfc7KDyAA3VHTIoTg8lYsDDK4F
-         QhJolxqMqsJ8d/vpvglrDXUyWa5uPGCd7aObG29XzrUYyWmNckziagGteqbjxSTuzILk
-         2HyQmFjeZjz0KfFq9E3jZKT9mj7o9w4AS+CQhzMyfRh+/NjIX3eEbwsmH4Bcv6uCKRSR
-         Tilg==
+        bh=slGPI6crOMYVC8sg2UdbToHUlfJe2Yt2u0BePxW+DE8=;
+        b=syu8BvlihPitmOdzTlCvAKZdU0CYUPdiFZAMMB324wLdZi6aBGYiVdeFs0mVcpo5rL
+         L3mtJQa3rFwuMK3Iu1x58Mgpb0AuR8ATuRu+AwSMRNFqMmlElKbaBaohxDf7Y+Ypk3SA
+         7birmWEI2+Atf+CuDiCl+P9U8xLS4glBIg1yfgmytNVN2bCzA5u7zGI31eI1rU2fqj84
+         E7qOIkcVnkqvgrVCAkQ1sdSKW5RW1MHETFpxOC0U2C3tGpSX3ih5uLiWT29s9WBXn+Jf
+         /MQ5cGEbvgFXOswsuFR3v0oFZw9K8VtgV7f6DKyWltLjOHZfrglD8EP8RHSFlz/cDp8Z
+         6AKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G+Tk9C+q5ul7HvkddDemsyL3qMNqs61Qh9C/G8R7Spg=;
-        b=uePI5wRae4/cEQ27jo6TUptvCZT7lJ1w7GV9NKpbxPa5yFuVoPZ4bFDnlf0Lvl3Hq3
-         40cQT3r0s+1z2MVLGbY4b7azRpSOC9NdE/S4eFUNf8us29lMfIS8RPdYvGO2FOEJ7x+7
-         h+DJOn4F93w/Z5giuIwdWf++7XmrGt8qcgVlVFp9f8mKMwk7spHO0r9n1QwNdzLBhhgo
-         dxx4U+d4tBizvuhRClRtkdlW41n1lu1VqzpLQu9YVrhush3/40DhQLaBZMezP1xkGIuL
-         NfEnyppjtvTguMoH1vGpuNgnrYSvoMgrXrcnHvy7TdPYQtULw1EsgytYjbOJ+vx0sgj6
-         NBsg==
-X-Gm-Message-State: AFqh2kpT8s6Wai0Cg8aFsnDh6NiukP1vv7LzekfIPOWTqiaXzqGCRZpK
-        Q2GDsT+MgONNW3f2y3kyOwPYRw==
-X-Google-Smtp-Source: AMrXdXtsDceSjwYxpV4w5uyzI6qYJM5e2w8ikYCnGdd5smpRRAv9JHkND9z6YVaWaRyQ9HmwbDwZzg==
-X-Received: by 2002:a05:600c:b8a:b0:3d9:f806:2f89 with SMTP id fl10-20020a05600c0b8a00b003d9f8062f89mr12750002wmb.41.1674196063851;
-        Thu, 19 Jan 2023 22:27:43 -0800 (PST)
+        bh=slGPI6crOMYVC8sg2UdbToHUlfJe2Yt2u0BePxW+DE8=;
+        b=THmn8m6CpEsb1enY5Vt4BbPdr5n/M4IPkP/OSyQuhYtlqcgdOaxqX9jufq6gwn4i8J
+         Y7YwZmyoRUXGUobBZ5HGyaB90uGl3L7h5NFbUpQrbsATa7m23bbKg1lg2p85UhFja9An
+         Le6hYmkYOQ/KIiAHxGd6e6wMvjd/pG3AyH1yANRfY+sqelIs3qS/C97Zpj/ZIoikSyFx
+         f35pljDO9Zu2M552t133adlHOC+Xif9djC6Xm2sWr6nzRLlGKvWNLx90tMzI4/ru5990
+         HHNhJn6/AZOpiUpiyMTq+KNFj+3XAUdOmEaxcO0iWQsjr92mOuwAc9WKytljyAy7SfsO
+         RRew==
+X-Gm-Message-State: AFqh2kr83aDtDPJcpYK74FpyL3gQksE7FdgO27XdXfmgeQtnI5V/OP0a
+        40VD29yd4gpSlbn8uGqztYgX6A==
+X-Google-Smtp-Source: AMrXdXsEQJpb4J+80as5QAfc8VdtlHuSYRcxkbLulhlLE4kmrEIl6O1WXICsnLmy9n/UBpwLCIu6Jg==
+X-Received: by 2002:a5d:6b0e:0:b0:2be:d03:287 with SMTP id v14-20020a5d6b0e000000b002be0d030287mr11554212wrw.44.1674196880688;
+        Thu, 19 Jan 2023 22:41:20 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id k16-20020a05600c0b5000b003db0a08694bsm1262291wmr.8.2023.01.19.22.27.41
+        by smtp.gmail.com with ESMTPSA id v14-20020adff68e000000b002365730eae8sm35429959wrp.55.2023.01.19.22.41.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Jan 2023 22:27:43 -0800 (PST)
-Message-ID: <9adec806-5529-f98a-949a-630edf3e1d0a@linaro.org>
-Date:   Fri, 20 Jan 2023 07:27:41 +0100
+        Thu, 19 Jan 2023 22:41:20 -0800 (PST)
+Message-ID: <e8b6034e-f163-6f6b-2f02-f2eda808950f@linaro.org>
+Date:   Fri, 20 Jan 2023 07:41:18 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.0
 Subject: Re: [PATCH 2/2] dt-bindings: opp: constrain required-opps
 Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -73,47 +74,52 @@ Cc:     Andy Gross <agross@kernel.org>,
 References: <20230119130028.106817-1-krzysztof.kozlowski@linaro.org>
  <20230119130028.106817-2-krzysztof.kozlowski@linaro.org>
  <20230120043834.txkg4tockxcjqs2g@vireshk-i7>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230120043834.txkg4tockxcjqs2g@vireshk-i7>
+ <9adec806-5529-f98a-949a-630edf3e1d0a@linaro.org>
+In-Reply-To: <9adec806-5529-f98a-949a-630edf3e1d0a@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20/01/2023 05:38, Viresh Kumar wrote:
-> On 19-01-23, 14:00, Krzysztof Kozlowski wrote:
->> Be specific how many required-opps are allowed.
+On 20/01/2023 07:27, Krzysztof Kozlowski wrote:
+> On 20/01/2023 05:38, Viresh Kumar wrote:
+>> On 19-01-23, 14:00, Krzysztof Kozlowski wrote:
+>>> Be specific how many required-opps are allowed.
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>
+>>> ---
+>>>
+>>> This change is independent, although logically is connected with my
+>>> dtschema pull:
+>>> https://github.com/devicetree-org/dt-schema/pull/95
+>>> ---
+>>>  Documentation/devicetree/bindings/opp/opp-v2-base.yaml     | 1 +
+>>>  Documentation/devicetree/bindings/opp/opp-v2-kryo-cpu.yaml | 3 ++-
+>>>  2 files changed, 3 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/opp/opp-v2-base.yaml b/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
+>>> index 47e6f36b7637..9b141a409191 100644
+>>> --- a/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
+>>> +++ b/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
+>>> @@ -202,6 +202,7 @@ patternProperties:
+>>>            for the functioning of the current device at the current OPP (where
+>>>            this property is present).
+>>>          $ref: /schemas/types.yaml#/definitions/phandle-array
+>>> +        maxItems: 1
 >>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> I may not under this property very well. What exactly does this line
+>> say ? Asking as required-properties can have an array of phandles as
+>> well.
 >>
->> ---
->>
->> This change is independent, although logically is connected with my
->> dtschema pull:
->> https://github.com/devicetree-org/dt-schema/pull/95
->> ---
->>  Documentation/devicetree/bindings/opp/opp-v2-base.yaml     | 1 +
->>  Documentation/devicetree/bindings/opp/opp-v2-kryo-cpu.yaml | 3 ++-
->>  2 files changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/opp/opp-v2-base.yaml b/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
->> index 47e6f36b7637..9b141a409191 100644
->> --- a/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
->> +++ b/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
->> @@ -202,6 +202,7 @@ patternProperties:
->>            for the functioning of the current device at the current OPP (where
->>            this property is present).
->>          $ref: /schemas/types.yaml#/definitions/phandle-array
->> +        maxItems: 1
 > 
-> I may not under this property very well. What exactly does this line
-> say ? Asking as required-properties can have an array of phandles as
-> well.
-> 
+> It says we can have maximum one item in "required-opps" in "opp" node
+> and you are right that we could have here more. I'll fix it.
 
-It says we can have maximum one item in "required-opps" in "opp" node
-and you are right that we could have here more. I'll fix it.
+OK, this patch can be actually dropped. The dtschema will bring
+constraints of 1-8 number of items here, which should cover all cases
+for both opps - v2 and v2-kryo-cpu.
 
 Best regards,
 Krzysztof
