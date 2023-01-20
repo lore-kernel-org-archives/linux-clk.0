@@ -2,169 +2,162 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 140A5C05027
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 22:34:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA640C05027
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 22:55:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229445AbjATWeX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Jan 2023 17:34:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43982 "EHLO
+        id S229949AbjATWzs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Jan 2023 17:55:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbjATWeX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jan 2023 17:34:23 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B33E61D44
-        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 14:34:20 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id mp20so17431332ejc.7
-        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 14:34:20 -0800 (PST)
+        with ESMTP id S229656AbjATWzq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jan 2023 17:55:46 -0500
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A19E9778
+        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 14:55:17 -0800 (PST)
+Received: by mail-lf1-f54.google.com with SMTP id a11so10285827lfg.0
+        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 14:55:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=+22l4h2Ao22twC9WP8isPUC2uf4BscA3JtagPEjb/K8=;
-        b=tQkH3Sxf2joe8/11Z9vcW7jKBSNNwPv9lKtwKj2hs+avnYMHg+7MaLjETWA1bCBUr7
-         mh48ldW5eZdJB8soZCIteQDNqOTjtS2VcxxxzSPJAiIOtnSW7Z7zWLO6A6d6razimbYY
-         zmgDvfKFD4nMczOQ/lqlW5fBxUOGRYs5ibsybUATsP1AxdOcC0Nm7yGoCH1PFTTrq6/T
-         d5GsfNJtFY1+liay7O79/Z2O0ascvGh8HU+b3XaUyIE6k/zHMLTdv1w6dyey8S15ntx3
-         ZlPvt/sOlih8v3EjUn3AeJIF8BFrJu/vJDTYqUazrjwHwC3lg1Qs0u6egG9q/9SpnYq1
-         DqSQ==
+        bh=Hbm1EsGZAeT2mHTFiqh0Dx28LeC9mCKTbUcH0BzL/No=;
+        b=mpB0UJHp3a+W4Up5ODk4M/2agnrtRI29W7jdtrMM7sUitAEWVM0wn5iQVGuvoaEGgE
+         6KIO6Ww3/MGhL0X73TxjqOkp2UgPHhe9QOq9A4V2txjt4REmD0oVtS2bnaGUs/bTC4iR
+         f8JvVwXUcyCMkDyR+av/kZ639ZXYLPvgRG02Fp4L834KU7JkUDuCueeJZQoTsaUNXmRF
+         UDSLjXx/p3BG8KUFVISw/lGWZoY9W+ZD6VI+T39nbT8GmxB2iskrWQJ/i3+VhkzIDT1f
+         k5cR3I6m4xyyvgwmCG9G0h3v8v2lLkiogUo83rSf9sg5zmvxe4DB0bAM7OtIaA1ClEye
+         BJdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+22l4h2Ao22twC9WP8isPUC2uf4BscA3JtagPEjb/K8=;
-        b=gX9lHqvcCRS4gRIfAcCLSEfl07+KVkK/PXwU0nMjR6yX8MC1Te38xLK1E1+bJyXr5z
-         Tg6Qv79s+HkK04WyPj4g1bUFXsIzUnD9AgYpjEG+zeqy0pKXEID35qc9E+EBsfk9jE1i
-         0wpd19GCO4+qrYxQr90Gc6dKlJiv2gUESS5Cx/tWhEaPLbVp1JNkS0Ti0hOfRXccbIWt
-         Dm9sDuS8otAwKUVluXh+bkx0OMDqgilMUCo4h52J/TxlG5fssdUHTCYBq8sqbMpjr84m
-         CE6XgZH1RFo06b5kxXYyWcMEnG/6+jF7ANYU7tUz5v7ipWngeFTmIBWjw/O1rResJ/eu
-         onuQ==
-X-Gm-Message-State: AFqh2kqq7Esm9ZnGa+sbpjy1jq8l3pSX1+CUA7bzw/+mae0RFUZADq5Q
-        yUkfYuoME8FywvR2Kyo8v4PSBg==
-X-Google-Smtp-Source: AMrXdXtGEMES32gcdxnGySUqv6iJYQ7w6NVQhQhaaxPQgQOeTtTxL/c7HRLz5P+bfxaReOQyLajJsg==
-X-Received: by 2002:a17:906:c58:b0:78d:f456:1ed0 with SMTP id t24-20020a1709060c5800b0078df4561ed0mr30433841ejf.33.1674254059219;
-        Fri, 20 Jan 2023 14:34:19 -0800 (PST)
-Received: from [192.168.1.101] (abyk37.neoplus.adsl.tpnet.pl. [83.9.30.37])
-        by smtp.gmail.com with ESMTPSA id v10-20020a170906292a00b00782fbb7f5f7sm18544288ejd.113.2023.01.20.14.34.17
+        bh=Hbm1EsGZAeT2mHTFiqh0Dx28LeC9mCKTbUcH0BzL/No=;
+        b=O6B1iQS6EM7A1p9+JXbLBQCtKKBMBhy+ST9f9nocTpuU+fuKDsegDa1Ha3q68qjmRI
+         p5IrxEboBnO44sM6/cP/CKlJhngRnl5DuKwSzzZs1+vVFz/SmYBGoUK7ThEzqllAYm3G
+         W8wN1LCm58QBpOTAKBUyzXlHo3cGioiaIzWZfFYAA/Q0VsByZxoMXR0YxBxUo+xZL/nj
+         fs3VrPf474N52Pk7ZPOqO9CNWdsMmjPfc/hVLbVLjbZbF5oMZaaWsR6QGAVSrq/ScZVf
+         pof9tdO2ltCd9TJUoIJjSXcYMeJZ0mOe2ji88iJ0FkSEOmnSkbpUN4Jdf3sFJoxo8FmS
+         DfRg==
+X-Gm-Message-State: AFqh2krMpPU9c3eITR98V22b0Ap+6PSI5M6raMURIS1TuJ+mU51iKX8s
+        +svk1qrqq0DqYin2J3PVyTgl2g==
+X-Google-Smtp-Source: AMrXdXu7FVclTVblU/bHESbrokULCekzEfzB978ZHJVMnBBS6ReI9nV7Te2jsL6OuDizMc61dMzDpg==
+X-Received: by 2002:a05:6512:143:b0:4cc:a1a1:9aaf with SMTP id m3-20020a056512014300b004cca1a19aafmr3834418lfo.23.1674255203191;
+        Fri, 20 Jan 2023 14:53:23 -0800 (PST)
+Received: from [192.168.1.211] ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id j5-20020a05651231c500b004b5480edf67sm6197207lfe.36.2023.01.20.14.53.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Jan 2023 14:34:18 -0800 (PST)
-Message-ID: <be8cd14f-98b4-0a98-a61a-3dfb4f6e7aa8@linaro.org>
-Date:   Fri, 20 Jan 2023 23:34:17 +0100
+        Fri, 20 Jan 2023 14:53:22 -0800 (PST)
+Message-ID: <3a355075-cc29-957a-678b-2a05aed25587@linaro.org>
+Date:   Sat, 21 Jan 2023 00:53:21 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v3 0/8] clk: qcom: msm8996: add support for the CBF clock
-Content-Language: en-US
-To:     Simon Glass <sjg@chromium.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v3 4/8] clk: qcom: cbf-msm8996: scale CBF clock according
+ to the CPUfreq
+Content-Language: en-GB
+To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
 References: <20230120061417.2623751-1-dmitry.baryshkov@linaro.org>
- <CAPnjgZ3MQ4E_3n_Z881QsdO-zELPkLaCm0cOFwz6Fds+u73OWg@mail.gmail.com>
- <4f63a3e0-daeb-5b6a-f998-681502dd7abf@linaro.org>
- <CAPnjgZ1Cw51q=nHrqv5YOr4SFtZRWhgv_X=mSJ4vgAT9dJjvuQ@mail.gmail.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <CAPnjgZ1Cw51q=nHrqv5YOr4SFtZRWhgv_X=mSJ4vgAT9dJjvuQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+ <20230120061417.2623751-5-dmitry.baryshkov@linaro.org>
+ <078c5a8254ac006b65fc5fa81dfbc515.sboyd@kernel.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <078c5a8254ac006b65fc5fa81dfbc515.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 21/01/2023 00:11, Stephen Boyd wrote:
+> Quoting Dmitry Baryshkov (2023-01-19 22:14:13)
+>> Turn CBF into the interconnect provider. Scale CBF frequency (bandwidth)
+>> according to CPU frequencies.
+>>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> ---
+>>   drivers/clk/qcom/clk-cbf-8996.c | 143 +++++++++++++++++++++++++++++++-
+>>   1 file changed, 142 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/qcom/clk-cbf-8996.c b/drivers/clk/qcom/clk-cbf-8996.c
+>> index 9cde0e660228..b049b4f7b270 100644
+>> --- a/drivers/clk/qcom/clk-cbf-8996.c
+>> +++ b/drivers/clk/qcom/clk-cbf-8996.c
+>> @@ -5,11 +5,14 @@
+>>   #include <linux/bitfield.h>
+>>   #include <linux/clk.h>
+>>   #include <linux/clk-provider.h>
+>> +#include <linux/interconnect-provider.h>
+>>   #include <linux/of.h>
+>>   #include <linux/module.h>
+>>   #include <linux/platform_device.h>
+>>   #include <linux/regmap.h>
+>>   
+>> +#include <dt-bindings/interconnect/qcom,msm8996-cbf.h>
+>> +
+>>   #include "clk-alpha-pll.h"
+>>   #include "clk-regmap.h"
+>>   
+>> @@ -225,6 +228,133 @@ static const struct regmap_config cbf_msm8996_regmap_config = {
+>>          .val_format_endian      = REGMAP_ENDIAN_LITTLE,
+>>   };
+>>   
+>> +#ifdef CONFIG_INTERCONNECT
+> 
+> Can you move this driver to drivers/interconnect/ ?
 
+Only the interconnect part? At some point I considered dropping the 
+whole CBF mux support and moving the whole driver to 
+drivers/interconnect, but I could not find a good way to use alpha-pll 
+from the interconnect driver. Would you recommend one?
 
-On 20.01.2023 23:22, Simon Glass wrote:
-> Hi Dmitry,
 > 
-> On Fri, 20 Jan 2023 at 15:18, Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
->>
->> On 20/01/2023 17:08, Simon Glass wrote:
->>> Hi Dmitry,
->>>
->>> On Thu, 19 Jan 2023 at 23:14, Dmitry Baryshkov
->>> <dmitry.baryshkov@linaro.org> wrote:
->>>>
->>>> On MSM8996 two CPU clusters are interconnected using the Core Bus
->>>> Fabric (CBF). In order for the CPU clusters to function properly, it
->>>> should be clocked following the core's frequencies to provide adequate
->>>> bandwidth. On the other hand the CBF's clock rate can be used by other
->>>> drivers (e.g. by the pending SPDM driver to provide input on the CPU
->>>> performance).
->>>>
->>>> Thus register CBF as a clock (required for CPU to boot) and add a tiny
->>>> interconnect layer on top of it to let cpufreq/opp scale the CBF clock.
->>>>
->>>> Dependencies: [1]
->>>>
->>>> [1] https://lore.kernel.org/linux-arm-msm/20230111191453.2509468-1-dmitry.baryshkov@linaro.org/
->>>>
->>>> Changes since v2:
->>>> - Added interconnect-related bindings
->>>> - Switched CPU and CBF clocks to RPM_SMD_XO_A_CLK_SRC
->>>>
->>>> Changes since v1:
->>>> - Relicensed schema to GPL-2.0 + BSD-2-Clause (Krzysztof)
->>>> - Changed clock driver to use parent_hws (Konrad)
->>>> - Fixed indentation in CBF clock driver (Konrad)
->>>> - Changed MODULE_LICENSE of CBF clock driver to GPL from GPL-v2
->>>> - Switched CBF to use RPM_SMD_XO_CLK_SRC as one of the parents
->>>> - Enabled RPM_SMD_XO_CLK_SRC on msm8996 platform and switch to it from
->>>>    RPM_SMD_BB_CLK1 clock
->>>>
->>>> Dmitry Baryshkov (8):
->>>>    dt-bindings: clock: qcom,msm8996-cbf: Describe the MSM8996 CBF clock
->>>>      controller
->>>>    dt-bindints: interconnect/msm8996-cbf: add defines to be used by CBF
->>>>    clk: qcom: add msm8996 Core Bus Framework (CBF) support
->>>>    clk: qcom: cbf-msm8996: scale CBF clock according to the CPUfreq
->>>>    clk: qcom: smd-rpm: provide RPM_SMD_XO_CLK_SRC on MSM8996 platform
->>>>    arm64: qcom: dts: msm8996 switch from RPM_SMD_BB_CLK1 to
->>>>      RPM_SMD_XO_CLK_SRC
->>>>    arm64: dts: qcom: msm8996: add CBF device entry
->>>>    arm64: dts: qcom: msm8996: scale CBF clock according to the CPUfreq
->>>>
->>>>   .../bindings/clock/qcom,msm8996-cbf.yaml      |  53 ++
->>>>   arch/arm64/boot/dts/qcom/msm8996.dtsi         |  72 ++-
->>>>   drivers/clk/qcom/Makefile                     |   2 +-
->>>>   drivers/clk/qcom/clk-cbf-8996.c               | 458 ++++++++++++++++++
->>>>   drivers/clk/qcom/clk-smd-rpm.c                |   2 +
->>>>   .../interconnect/qcom,msm8996-cbf.h           |  12 +
->>>>   6 files changed, 591 insertions(+), 8 deletions(-)
->>>>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,msm8996-cbf.yaml
->>>>   create mode 100644 drivers/clk/qcom/clk-cbf-8996.c
->>>>   create mode 100644 include/dt-bindings/interconnect/qcom,msm8996-cbf.h
->>>>
->>>> --
->>>> 2.39.0
->>>>
->>>
->>> Could you please tell me which dev board this is targeting and where I
->>> can get one?
->>
->> This is targeting db820c, which is available from arrow.com. Note, this
->> patchset is related only msm8996 aka Snapdragon 820, it has limited
->> applicability to msm8996-pro and is of no concern to most of other chipsets.
+>> +struct qcom_msm8996_cbf_icc_provider {
+>> +       struct icc_provider provider;
+>> +       struct clk *clk;
+>> +};
+>> +
+>> +#define to_qcom_cbf_provider(_provider) \
+>> +       container_of(_provider, struct qcom_msm8996_cbf_icc_provider, provider)
+>> +
+>> +enum {
+>> +       CBF_MASTER_NODE = 2000,
+> [...]
+>> +static int qcom_msm8996_cbf_icc_remove(struct platform_device *pdev)
+>> +{
+>> +       struct icc_provider *provider = platform_get_drvdata(pdev);
+>> +
+>> +       icc_nodes_remove(provider);
+>> +       icc_provider_del(provider);
+>> +
+>> +       return 0;
+>> +}
+>> +#else
+>> +static int qcom_msm8996_cbf_icc_register(struct platform_device *pdev)
+>> +{
+>> +       dev_warn(&pdev->dev, "interconnects support is disabled, CBF clock is fixed\n");
+>> +
+>> +       return 0;
+>> +}
+>> +#define qcom_msm8996_cbf_icc_remove(pdev) (0)
 > 
-> Thanks!
+> It's like two drivers in one.
 > 
->>
->>> Also could you please point me to the SoC documentation?
->>
->> https://developer.qualcomm.com/hardware/apq-8096sg/tools
-> 
-> Which doc has the register descriptions for I2C, etc.? I am not seeing it.
-Not public.
+>> +#endif
+>> +
+>>   static int qcom_msm8996_cbf_probe(struct platform_device *pdev)
+>>   {
+>>          void __iomem *base;
 
-Konrad
-> 
-> Regards,
-> Simon
+-- 
+With best wishes
+Dmitry
+
