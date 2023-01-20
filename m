@@ -2,96 +2,316 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA6CAC05027
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 08:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C25DC25B50
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 08:47:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229948AbjATI3t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Jan 2023 03:29:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50752 "EHLO
+        id S229609AbjATIrP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Jan 2023 03:47:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbjATI3s (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jan 2023 03:29:48 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01348C14F
-        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 00:29:46 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id k16so3400847wms.2
-        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 00:29:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UZ1kQ6Dc/Aq1ANuf4SsTTOiufClKPa57UzLLGIHz6lA=;
-        b=jgParfB21yrZPlsfTLXKtBj85ZlU3hEUYG35prDPSa/wKEWSILYui/Q3N+ntb9bx0O
-         ET1RwUNCNFkHjT27224FkDTS/BAKl6L9ih9LE263YlBkVH8M3+mHSmuTJRBGQjV8yGCg
-         d26UkidnKC0QT+633G1nO3V5hzfRenrn1rT0Dbn/ii2IGC2zJpKMd7IhuHNbINUeXrlQ
-         2++OWg+2lmEUQ04u/MZBXp02tM2VAzigE/6gnzVofKEpp95WW65TNNnK76dvnbsgJgdC
-         92VRjB/s+lDxvnOjZETVrDh97aV9sxWfl+dUeYDg9GEkEup6M/SZng4wU8U+zb7GzSZm
-         kEnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UZ1kQ6Dc/Aq1ANuf4SsTTOiufClKPa57UzLLGIHz6lA=;
-        b=ufNjDpuUjNxH2y7iB29Fn52m3yssa3tgKfZ3767BLcWYlpaShvZlxA6S3X7xuI2WAg
-         gGYJ5scWMp2DyeeNxJzUS6ADRZ2ioZhLRloPIOY7pGEyJRk5jOivXwQepfAY8ec8n6rO
-         X1J3KVUmp4GfDleo/G3UDjl21p5wmAaahFoLgj7oZdSnKnhnTqrgaXNrtkjbfKRsrIPZ
-         VvfMbzTou4yXbY9OJqGirygqkivM8nezmQn03bgdRZ5dwH5kYoPvgMR/Oz8CFLM1rW5+
-         qTRqbepdFPSRmJgTvfxuy2P6AqJ84Y0GNTeDofV4UsOKW5+Z1XFO7HSmPVNhIXsII94z
-         d6OA==
-X-Gm-Message-State: AFqh2krhaIT+txIn8CZHR9xIpoxu6Pd6a7KeW9zE5ZW4V4+Za8xuu3u/
-        +GywPR6g3OWTaHoVxM1BVMX2Lw==
-X-Google-Smtp-Source: AMrXdXvt2hZOZLqdPD4UWX5LsE6FgLHiW5K1inIkH+ssvdTcXfKQ/nK9NhNqjlexM0zd0IwTVVGTcQ==
-X-Received: by 2002:a05:600c:a13:b0:3db:1de2:af31 with SMTP id z19-20020a05600c0a1300b003db1de2af31mr5499408wmp.37.1674203385532;
-        Fri, 20 Jan 2023 00:29:45 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id t13-20020a1c770d000000b003db1ca20170sm1485418wmi.37.2023.01.20.00.29.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Jan 2023 00:29:45 -0800 (PST)
-Message-ID: <402ac5a2-334e-1843-0517-5ecf61f6a965@linaro.org>
-Date:   Fri, 20 Jan 2023 09:29:43 +0100
+        with ESMTP id S229590AbjATIrO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jan 2023 03:47:14 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B22D79E81;
+        Fri, 20 Jan 2023 00:47:13 -0800 (PST)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id B43A3660087F;
+        Fri, 20 Jan 2023 08:47:10 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1674204431;
+        bh=/SK8ISCMrpGsFtSoxiSJpeLREJYNFoufne4NUgMTmHA=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=XUcohdPfeK625umviXPYsywtgCILi5Tt5xJieyZ6tdGB6ZXt3bF6Pk2VcBGA/DETo
+         FEsJ+3LHqwVGuedCFX36QPm9lVV7jiGLFBD9557V88Muuvf0dVRFQjetywKnXcqqZV
+         e0IC8j2+tO8F3BKYa8ucF1YrErnYjS9/k3hNUMJzLnx8/WEqcYtPbJwIzRg4T4lJQl
+         dshsxKsDhjDKW6SPO2OOpc1CWaL+ielLTnwnbOZhY8rKFe6H0Ih6tudSAZMxe3BzN4
+         mfB/LvcYTd2gSkJINvw0l5s1EKRorHyUmM4XeGap19/ECrsew/glo5cX9g9q9Z+Ax9
+         ZIxuygQTbxR0g==
+Message-ID: <0e8452bd-3c7f-57bf-2cef-b9b2411742c5@collabora.com>
+Date:   Fri, 20 Jan 2023 09:47:07 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH v5 01/19] dt-bindings: clock: mediatek: Add new MT8188
- clock
-Content-Language: en-US
-To:     "Garmin.Chang" <Garmin.Chang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v2 3/3] clk: mediatek: add MT7981 clock support
+To:     Daniel Golle <daniel@makrotopia.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-armkernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>
-Cc:     Project_Global_Chrome_Upstream_Group@mediatek.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-clk@vger.kernel.org, netdev@vger.kernel.org
-References: <20230119124848.26364-1-Garmin.Chang@mediatek.com>
- <20230119124848.26364-2-Garmin.Chang@mediatek.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230119124848.26364-2-Garmin.Chang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Chen-Yu Tsai <wenst@chromium.org>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Edward-JW Yang <edward-jw.yang@mediatek.com>,
+        Johnson Wang <johnson.wang@mediatek.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Sam Shih <sam.shih@mediatek.com>,
+        Jianhui Zhao <zhaojh329@gmail.com>
+References: <cover.1674152610.git.daniel@makrotopia.org>
+ <1f5749622816b9da315ac092cfa2be515b1d3505.1674152610.git.daniel@makrotopia.org>
+Content-Language: en-US
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <1f5749622816b9da315ac092cfa2be515b1d3505.1674152610.git.daniel@makrotopia.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/01/2023 13:48, Garmin.Chang wrote:
-> Add the new binding documentation for system clock
-> and functional clock on MediaTek MT8188.
+Il 20/01/23 02:27, Daniel Golle ha scritto:
+> Add MT7986 clock support, include topckgen, apmixedsys, infracfg and
+> ethernet subsystem clocks.
 > 
-> Signed-off-by: Garmin.Chang <Garmin.Chang@mediatek.com>
+> The drivers are based on clk-mt7981.c which can be found in MediaTek's
+> SDK sources. To be fit for upstream inclusion the driver has been split
+> into clock domains and the infracfg part has been significantly
+> de-bloated by removing all the 1:1 factors (aliases).
+> 
+> Signed-off-by: Jianhui Zhao <zhaojh329@gmail.com>
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 > ---
->  .../bindings/clock/mediatek,mt8188-clock.yaml |  71 ++
->  .../clock/mediatek,mt8188-sys-clock.yaml      |  55 ++
->  .../dt-bindings/clock/mediatek,mt8188-clk.h   | 733 ++++++++++++++++++
->  3 files changed, 859 insertions(+)
+>   drivers/clk/mediatek/Kconfig               |  17 +
+>   drivers/clk/mediatek/Makefile              |   4 +
+>   drivers/clk/mediatek/clk-mt7981-apmixed.c  | 103 +++++
+>   drivers/clk/mediatek/clk-mt7981-eth.c      | 138 +++++++
+>   drivers/clk/mediatek/clk-mt7981-infracfg.c | 236 ++++++++++++
+>   drivers/clk/mediatek/clk-mt7981-topckgen.c | 423 +++++++++++++++++++++
+>   6 files changed, 921 insertions(+)
+>   create mode 100644 drivers/clk/mediatek/clk-mt7981-apmixed.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt7981-eth.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt7981-infracfg.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt7981-topckgen.c
+> 
+> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+> index a40135f563777..c8f045a7f4aa8 100644
+> --- a/drivers/clk/mediatek/Kconfig
+> +++ b/drivers/clk/mediatek/Kconfig
+> @@ -388,6 +388,23 @@ config COMMON_CLK_MT7629_HIFSYS
+>   	  This driver supports MediaTek MT7629 HIFSYS clocks providing
+>   	  to PCI-E and USB.
+>   
+> +config COMMON_CLK_MT7981
+> +	bool "Clock driver for MediaTek MT7981"
+> +	depends on ARCH_MEDIATEK || COMPILE_TEST
+> +	select COMMON_CLK_MEDIATEK
+> +	default ARCH_MEDIATEK
+> +	help
+> +	  This driver supports MediaTek MT7981 basic clocks and clocks
+> +	  required for various peripherals found on this SoC.
+> +
+> +config COMMON_CLK_MT7981_ETHSYS
+> +	bool "Clock driver for MediaTek MT7981 ETHSYS"
+
+If you convert this to platform driver, you can change this bool to tristate
+and compile ETHSYS as a module, as this is not a boot-critical clock driver.
+Usually, you want to boot from eMMC/SD... but in case you really want to boot
+from ethernet (nfs?) you can always either compile this as builtin or keep it
+a module and provide a ramdisk(/initrd) that has this module inside.
+
+Please, do so.
 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> diff --git a/drivers/clk/mediatek/clk-mt7981-apmixed.c b/drivers/clk/mediatek/clk-mt7981-apmixed.c
+> new file mode 100644
+> index 0000000000000..df41d2aa8706e
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt7981-apmixed.c
+> @@ -0,0 +1,103 @@
 
-Best regards,
-Krzysztof
+..snip..
+
+> +
+> +static int clk_mt7981_apmixed_probe(struct platform_device *pdev)
+> +{
+> +	struct clk_hw_onecell_data *clk_data;
+> +	struct device_node *node = pdev->dev.of_node;
+> +	int r;
+> +
+> +	clk_data = mtk_alloc_clk_data(ARRAY_SIZE(plls));
+> +	if (!clk_data)
+> +		return -ENOMEM;
+> +
+> +	mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
+> +
+> +	clk_prepare_enable(clk_data->hws[CLK_APMIXED_ARMPLL]->clk);
+
+No, this is not the right way of managing a clock that has to be always on.
+The CLK_IS_CRITICAL flag is what you're looking for.
+
+> +
+> +	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+> +	if (r) {
+> +		pr_err("%s(): could not register clock provider: %d\n",
+> +		       __func__, r);
+> +		goto free_apmixed_data;
+> +	}
+> +	return r;
+> +
+> +free_apmixed_data:
+> +	mtk_free_clk_data(clk_data);
+> +	return r;
+> +}
+> +
+> +static struct platform_driver clk_mt7981_apmixed_drv = {
+> +	.probe = clk_mt7981_apmixed_probe,
+> +	.driver = {
+> +		.name = "clk-mt7981-apmixed",
+> +		.of_match_table = of_match_clk_mt7981_apmixed,
+> +	},
+> +};
+> +builtin_platform_driver(clk_mt7981_apmixed_drv);
+> diff --git a/drivers/clk/mediatek/clk-mt7981-eth.c b/drivers/clk/mediatek/clk-mt7981-eth.c
+> new file mode 100644
+> index 0000000000000..ade7645c921ec
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt7981-eth.c
+> @@ -0,0 +1,138 @@
+
+..snip..
+
+> +
+> +static void __init mtk_sgmiisys_0_init(struct device_node *node)
+> +{
+> +	struct clk_hw_onecell_data *clk_data;
+> +	int r;
+> +
+> +	clk_data = mtk_alloc_clk_data(ARRAY_SIZE(sgmii0_clks));
+> +
+> +	mtk_clk_register_gates(NULL, node, sgmii0_clks, ARRAY_SIZE(sgmii0_clks),
+> +			       clk_data);
+> +
+> +	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+> +	if (r)
+> +		pr_err("%s(): could not register clock provider: %d\n",
+> +		       __func__, r);
+> +}
+> +CLK_OF_DECLARE(mtk_sgmiisys_0, "mediatek,mt7981-sgmiisys_0",
+> +	       mtk_sgmiisys_0_init);
+
+Do you really need to use CLK_OF_DECLARE?
+
+Is there any reason why SGMIISYS 0/1 and ETHSYS are not platform drivers?
+
+Please, convert to platform drivers.
+
+> diff --git a/drivers/clk/mediatek/clk-mt7981-infracfg.c b/drivers/clk/mediatek/clk-mt7981-infracfg.c
+> new file mode 100644
+> index 0000000000000..0cb301895c7bf
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt7981-infracfg.c
+> @@ -0,0 +1,236 @@
+
+..snip..
+
+
+You can remove this probe function entirely:
+
+static const struct mtk_clk_desc topck_desc = {
+	.factor_clks = infra_divs,
+	.num_factor_clks = ARRAY_SIZE(infra_divs),
+	.mux_clks = infra_muxes,
+	.num_mux_clks = ARRAY_SIZE(infra_muxes),
+	.clks = infra_clks,
+	.num_clks = ARRAY_SIZE(infra_clks),
+	.clk_lock = &mt7981_clk_lock,
+};
+
+> +static int clk_mt7981_infracfg_probe(struct platform_device *pdev)
+> +{
+> +	struct clk_hw_onecell_data *clk_data;
+> +	struct device_node *node = pdev->dev.of_node;
+> +	int r;
+> +	void __iomem *base;
+> +	int nr = ARRAY_SIZE(infra_divs) + ARRAY_SIZE(infra_muxes) +
+> +		 ARRAY_SIZE(infra_clks);
+> +
+> +	base = of_iomap(node, 0);
+> +	if (!base) {
+> +		pr_err("%s(): ioremap failed\n", __func__);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	clk_data = mtk_alloc_clk_data(nr);
+> +
+> +	if (!clk_data)
+> +		return -ENOMEM;
+> +
+> +	mtk_clk_register_factors(infra_divs, ARRAY_SIZE(infra_divs), clk_data);
+> +	mtk_clk_register_muxes(&pdev->dev, infra_muxes, ARRAY_SIZE(infra_muxes), node,
+> +			       &mt7981_clk_lock, clk_data);
+> +	mtk_clk_register_gates(&pdev->dev, node, infra_clks, ARRAY_SIZE(infra_clks),
+> +			       clk_data);
+> +
+> +	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+> +	if (r) {
+> +		pr_err("%s(): could not register clock provider: %d\n",
+> +		       __func__, r);
+> +		goto free_infracfg_data;
+> +	}
+> +	return r;
+> +
+> +free_infracfg_data:
+> +	mtk_free_clk_data(clk_data);
+> +	return r;
+> +
+> +}
+> +
+> +static const struct of_device_id of_match_clk_mt7981_infracfg[] = {
+> +	{ .compatible = "mediatek,mt7981-infracfg", },
+> +	{}
+
+Please always end of_device_id arrays with
+
+	{ /* sentinel */ }
+
+> +};
+> +
+> +static struct platform_driver clk_mt7981_infracfg_drv = {
+> +	.probe = clk_mt7981_infracfg_probe,
+> +	.driver = {
+> +		.name = "clk-mt7981-infracfg",
+> +		.of_match_table = of_match_clk_mt7981_infracfg,
+> +	},
+> +};
+> +builtin_platform_driver(clk_mt7981_infracfg_drv);
+> diff --git a/drivers/clk/mediatek/clk-mt7981-topckgen.c b/drivers/clk/mediatek/clk-mt7981-topckgen.c
+> new file mode 100644
+> index 0000000000000..e711c39993dd3
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt7981-topckgen.c
+> @@ -0,0 +1,423 @@
+
+..snip..
+
+> +static const struct of_device_id of_match_clk_mt7981_topckgen[] = {
+> +	{ .compatible = "mediatek,mt7981-topckgen", .data = &topck_desc },
+> +	{}
+
+	{ /* sentinel */ }
+
+> +};
+> +
+> +static struct platform_driver clk_mt7981_topckgen_drv = {
+> +	.probe = mtk_clk_simple_probe,
+> +	.remove = mtk_clk_simple_remove,
+> +
+
+Please remove this unnecessary blank line.
+
+> +	.driver = {
+> +		.name = "clk-mt7981-topckgen",
+> +		.of_match_table = of_match_clk_mt7981_topckgen,
+> +	},
+> +};
+> +builtin_platform_driver(clk_mt7981_topckgen_drv);
+
+
 
