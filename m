@@ -2,378 +2,256 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3397CC25B50
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 09:52:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF0AAC25B4E
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 09:57:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229957AbjATJwz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Jan 2023 04:52:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43302 "EHLO
+        id S230092AbjATJ5w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Jan 2023 04:57:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229500AbjATJwy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jan 2023 04:52:54 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 133C9518F6
-        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 01:52:51 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id j17so3594648wms.0
-        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 01:52:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=FnjzLigWTWrmVYT7keQxDKaopp0We8SxlDZVkLkpEYc=;
-        b=CkgI1BIZB/UVM6UII4xu7jq+VyvnfafGgTj6jesx5TVV9fBJwMW6oITwzQhWKtrHyk
-         uy2yPxhzqMa5r4bm+UxhcH+fl6iTXEsXi6GI+HNlK/ao2CKpREvxU5RoR1Bh9t3AeOZX
-         r+TqA9dF/GsFGNrBqh49qpoaqleQHh47gYaf9oAGojQn9bnthXK9GhnF0puo/5+z/HNr
-         wJKhEq1s18AjKsEhqhQS/cuHm1+7IBtLM5pDCBJALqDMP+VPoWrI49Bs3yXwbvPoJd8G
-         GWIYPcbVn1c2/TwM/B3PKALxRz7D7U5NClbZURDa2UXLeAJFG8+7ybjLNe81hJpcBDzC
-         /gMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FnjzLigWTWrmVYT7keQxDKaopp0We8SxlDZVkLkpEYc=;
-        b=r8+kFKTOI5V/yrZbazTdNFxpxcgzj0suiP1C4E9qK3CasEETuNAW9qpsm5y7Vu0DPg
-         kYsnfRTXQCb3nTnpQ0gtPPSsnfjCTR4GKbfKWQnHFId9hbPWUM5DECl6aWKr0JbQ6eQj
-         Ub9fjXVdnFcxRKGrDyOMeY0L8wGaCIm1YjM+H1bOyTvOHZPvwe5lVismJMkBco17e2JT
-         xlIM0pf9N6m4oVV7+QgD2ZX+pXlCj10nEuL+3P5AKMEGp6FVS0t1+bGrEOovoHfVxYmA
-         vBADCpyoCkdU6aX/aR2oXV9YNXE6rpEv1KiaV/+brl6m0EOYw1Y1a7G3euQ2BJgQDa0C
-         IgnQ==
-X-Gm-Message-State: AFqh2krMqVlzohMvrJ9rvqFzX6ugvFF5rX0huQhnSxX9yLvsRFig7gPi
-        +/LPTXXyswBgUcAVyKM6BOJumw==
-X-Google-Smtp-Source: AMrXdXup3WUxvn3YSSPPEY8ObOfbzJeR6OV0og1Ivv7BMGJZOj1s6tojl0jM8yq9LLbQWb2eu2d6fQ==
-X-Received: by 2002:a05:600c:3b05:b0:3d6:b691:b80d with SMTP id m5-20020a05600c3b0500b003d6b691b80dmr13511451wms.21.1674208369487;
-        Fri, 20 Jan 2023 01:52:49 -0800 (PST)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id m2-20020a05600c4f4200b003db0ad636d1sm1923545wmq.28.2023.01.20.01.52.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jan 2023 01:52:48 -0800 (PST)
-References: <20230116074214.2326-1-yu.tu@amlogic.com>
- <20230116074214.2326-4-yu.tu@amlogic.com>
- <1ja62eybrv.fsf@starbuckisacylon.baylibre.com>
- <aedb0764-b5cb-7f49-f279-51dbec070e80@amlogic.com>
-User-agent: mu4e 1.8.10; emacs 28.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     "kelvin . zhang" <Kelvin.Zhang@amlogic.com>,
-        "qi . duan" <qi.duan@amlogic.com>
-Subject: Re: [PATCH V6 3/3] clk: meson: s4: add support for Amlogic S4 SoC
- peripheral clock controller
-Date:   Fri, 20 Jan 2023 10:47:31 +0100
-In-reply-to: <aedb0764-b5cb-7f49-f279-51dbec070e80@amlogic.com>
-Message-ID: <1jwn5hwn0w.fsf@starbuckisacylon.baylibre.com>
+        with ESMTP id S230051AbjATJ5v (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jan 2023 04:57:51 -0500
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87BEC9028;
+        Fri, 20 Jan 2023 01:57:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=5PCjUACeYMR6O3y/YgzV4vR8g0qeDy6mmRm0X3w+etU=; b=UZLTzgFBQJ0CQY6DaI73G+uFss
+        KwqGSOIdxHfJPvAvpX0h5594aYEYuxp9p+5pIYFQiUyoAtjfGblRYGkqNzzC7O97qLGLXKgOA6xcT
+        W2FVpKWX5ry5A3YJ73W5lemSQrX8POUcGFF7oICR8UVyWBARWyply9gPbxYr03MOkT4RNv8a7lsM2
+        GazDd5sT6cIuf+3/HAZqobxVWQ/2ElCMUjfxs3yQvXPFy+TlHZutHnPGN5zaBk3/2GxDDh+Chwiar
+        rw/dMsVd9kwwUKYpn7si4MqeWxgiSIiBAN6g7snkhdi9zBu81hUwPqpAaiLr5X9LZFKT3ZN6B53aD
+        8key49Jw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+        by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1pIo83-000bhg-2d;
+        Fri, 20 Jan 2023 09:56:12 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A8490300750;
+        Fri, 20 Jan 2023 10:56:35 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 739372133D202; Fri, 20 Jan 2023 10:56:35 +0100 (CET)
+Date:   Fri, 20 Jan 2023 10:56:35 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
+        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
+        nsekhar@ti.com, brgl@bgdev.pl, ulli.kroll@googlemail.com,
+        linus.walleij@linaro.org, shawnguo@kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, tony@atomide.com,
+        khilman@kernel.org, krzysztof.kozlowski@linaro.org,
+        alim.akhtar@samsung.com, catalin.marinas@arm.com, will@kernel.org,
+        guoren@kernel.org, bcain@quicinc.com, chenhuacai@kernel.org,
+        kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net,
+        monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org,
+        jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
+        shorne@gmail.com, James.Bottomley@hansenpartnership.com,
+        deller@gmx.de, mpe@ellerman.id.au, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, paul.walmsley@sifive.com,
+        palmer@dabbelt.com, aou@eecs.berkeley.edu, hca@linux.ibm.com,
+        gor@linux.ibm.com, agordeev@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com,
+        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
+        richard@nod.at, anton.ivanov@cambridgegreys.com,
+        johannes@sipsolutions.net, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+        hpa@zytor.com, acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, pv-drivers@vmware.com,
+        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
+        gregkh@linuxfoundation.org, mturquette@baylibre.com,
+        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@linaro.org, anup@brainfault.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        jacob.jun.pan@linux.intel.com, atishp@atishpatra.org,
+        Arnd Bergmann <arnd@arndb.de>, yury.norov@gmail.com,
+        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
+        dennis@kernel.org, tj@kernel.org, cl@linux.com,
+        rostedt@goodmis.org, mhiramat@kernel.org, frederic@kernel.org,
+        paulmck@kernel.org, pmladek@suse.com, senozhatsky@chromium.org,
+        john.ogness@linutronix.de, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
+        vschneid@redhat.com, ryabinin.a.a@gmail.com, glider@google.com,
+        andreyknvl@gmail.com, dvyukov@google.com,
+        vincenzo.frascino@arm.com,
+        Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-csky@vger.kernel.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v3 16/51] cpuidle: Annotate poll_idle()
+Message-ID: <Y8plU/f2WsmGG66H@hirez.programming.kicks-ass.net>
+References: <20230112194314.845371875@infradead.org>
+ <20230112195540.312601331@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230112195540.312601331@infradead.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, Jan 12, 2023 at 08:43:30PM +0100, Peter Zijlstra wrote:
+> The __cpuidle functions will become a noinstr class, as such they need
+> explicit annotations.
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Acked-by: Frederic Weisbecker <frederic@kernel.org>
+> Tested-by: Tony Lindgren <tony@atomide.com>
+> Tested-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  drivers/cpuidle/poll_state.c |    6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> --- a/drivers/cpuidle/poll_state.c
+> +++ b/drivers/cpuidle/poll_state.c
+> @@ -13,7 +13,10 @@
+>  static int __cpuidle poll_idle(struct cpuidle_device *dev,
+>  			       struct cpuidle_driver *drv, int index)
+>  {
+> -	u64 time_start = local_clock();
+> +	u64 time_start;
+> +
+> +	instrumentation_begin();
+> +	time_start = local_clock();
+>  
+>  	dev->poll_time_limit = false;
+>  
+> @@ -39,6 +42,7 @@ static int __cpuidle poll_idle(struct cp
+>  	raw_local_irq_disable();
+>  
+>  	current_clr_polling();
+> +	instrumentation_end();
+>  
+>  	return index;
+>  }
 
-On Fri 20 Jan 2023 at 11:33, Yu Tu <yu.tu@amlogic.com> wrote:
+Pff, this patch is garbage. However wrote it didn't have his brain
+engaged :/
 
-> Hi
-> On 2023/1/19 19:37, Jerome Brunet wrote:
->> [ EXTERNAL EMAIL ]
->> On Mon 16 Jan 2023 at 15:42, Yu Tu <yu.tu@amlogic.com> wrote:
->> 
->>> Add the peripherals clock controller driver in the s4 SoC family.
->>>
->>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
->> [...]
->> 
->>> +
->>> +/* Video Clocks */
->>> +static struct clk_regmap s4_vid_pll_div = {
->>> +	.data = &(struct meson_vid_pll_div_data){
->>> +		.val = {
->>> +			.reg_off = CLKCTRL_VID_PLL_CLK_DIV,
->>> +			.shift   = 0,
->>> +			.width   = 15,
->>> +		},
->>> +		.sel = {
->>> +			.reg_off = CLKCTRL_VID_PLL_CLK_DIV,
->>> +			.shift   = 16,
->>> +			.width   = 2,
->>> +		},
->>> +	},
->>> +	.hw.init = &(struct clk_init_data) {
->>> +		.name = "vid_pll_div",
->>> +		/*
->>> +		 * The frequency division from the hdmi_pll clock to the vid_pll_div
->>> +		 * clock is the default value of this register. When designing the
->>> +		 * video module of the chip, a default value that can meet the
->>> +		 * requirements of the video module will be solidified according
->>> +		 * to the usage requirements of the chip, so as to facilitate chip
->>> +		 * simulation. So this is ro_ops.
->>> +		 * It is important to note that this clock is not used on this
->>> +		 * chip and is described only for the integrity of the clock tree.
->>> +		 */
->> If it is reset value and will be applicable to all the design, regarless
->> of the use-case, then yes RO ops is OK
->> 
->>>From what I understand here, the value will depend on the use-case requirements.
->> This is a typical case where the DT prop "assigned-rate" should be used, not RO ops.
->
-> Check the previous chip history, the actual scene is not used at all,
-> basically is used in simulation. So the previous SOC was "ro_ops" without
-> any problems.  This S4 SOC is not actually useful either.
->
-> So when you were upstream, you had no problem making "ro_ops". I wonder if
-> I could delete this useless clock, so you don't have to worry about it.
+Something like the below fixes it, but I still need to build me funny
+configs like ia64 and paravirt to see if I didn't wreck me something...
 
-I don't know what to make of this. What is the point of adding a useless
-clock ?
-
->
->> 
->>> +		.ops = &meson_vid_pll_div_ro_ops,
->>> +		.parent_data = (const struct clk_parent_data []) {
->>> +			{ .fw_name = "hdmi_pll", }
->>> +		},
->>> +		.num_parents = 1,
->>> +		.flags = CLK_SET_RATE_PARENT,
->>> +	},
->>> +};
->>> +
->> 
->>> +
->>> +/* VDEC clocks */
->>> +static const struct clk_parent_data s4_dec_parent_data[] = {
->>> +	{ .fw_name = "fclk_div2p5", },
->>> +	{ .fw_name = "fclk_div3", },
->>> +	{ .fw_name = "fclk_div4", },
->>> +	{ .fw_name = "fclk_div5", },
->>> +	{ .fw_name = "fclk_div7", },
->>> +	{ .fw_name = "hifi_pll", },
->>> +	{ .fw_name = "gp0_pll", },
->>> +	{ .fw_name = "xtal", }
->>> +};
->>> +
->>> +static struct clk_regmap s4_vdec_p0_mux = {
->>> +	.data = &(struct clk_regmap_mux_data){
->>> +		.offset = CLKCTRL_VDEC_CLK_CTRL,
->>> +		.mask = 0x7,
->>> +		.shift = 9,
->>> +		.flags = CLK_MUX_ROUND_CLOSEST,
->>> +	},
->>> +	.hw.init = &(struct clk_init_data) {
->>> +		.name = "vdec_p0_mux",
->>> +		.ops = &clk_regmap_mux_ops,
->>> +		.parent_data = s4_dec_parent_data,
->>> +		.num_parents = ARRAY_SIZE(s4_dec_parent_data),
->>> +		/*
->>> +		 * When the driver uses this clock, needs to specify the patent clock
->>> +		 * he wants in the dts.
->> s/patent/parent ?
->> s/he wants/it requires ?
->
-> Okay.
->
->> 
->>> +		 */
->>> +		.flags = CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
->>> +	},
->>> +};
->>> +
->> [...]
->> 
->>> +static const struct clk_parent_data s4_vpu_clkc_parent_data[] = {
->>> +	{ .fw_name = "fclk_div4", },
->>> +	{ .fw_name = "fclk_div3", },
->>> +	{ .fw_name = "fclk_div5", },
->>> +	{ .fw_name = "fclk_div7", },
->>> +	{ .fw_name = "mpll1", },
->>> +	{ .hw = &s4_vid_pll.hw },
->>> +	{ .fw_name = "mpll2", },
->>> +	{ .fw_name = "gp0_pll", },
->>> +};
->>> +
->>> +static struct clk_regmap s4_vpu_clkc_p0_mux  = {
->>> +	.data = &(struct clk_regmap_mux_data){
->>> +		.offset = CLKCTRL_VPU_CLKC_CTRL,
->>> +		.mask = 0x7,
->>> +		.shift = 9,
->>> +	},
->>> +	.hw.init = &(struct clk_init_data) {
->>> +		.name = "vpu_clkc_p0_mux",
->>> +		.ops = &clk_regmap_mux_ops,
->>> +		.parent_data = s4_vpu_clkc_parent_data,
->>> +		.num_parents = ARRAY_SIZE(s4_vpu_clkc_parent_data),
->>> +		/*
->>> +		 * When the driver uses this clock, needs to specify the patent clock
->>> +		 * he wants in the dts.
->>> +		 */
->> That's quite a lot of occurences of the same comment.
->> At the same time, other clocks with the same flag have no comment.
->> Please make general comment, before the Video/VPU section, explaining
->> which clocks needs on a use-case basis (through DT) and possibly how it
->> should be set, what should drive the choices.
->> 
->
-> The owner of the corresponding driver module wants to have a fixed clock,
-> but I can't explain every specific reason.
-
-Why can't you ?
-
-> So I'm going to change it all
-> to.flags = CLK_SET_RATE_PARENT in the next version. Let CCF choose the
-> appropriate clock as you suggested. If there is a corresponding module you
-> want to change, ask him to give you a specific explanation. Do you think
-> that's all right?
-
-If the flag is actually required and there is a reason, no it is not.
-
->
-> I will not reply to you below.
-
-Noted.
-
->
->>> +		.flags = CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
->>> +	},
->>> +};
->>> +
->> 
->>> +
->>> +/* EMMC/NAND clock */
->>> +static const struct clk_parent_data s4_sd_emmc_clk0_parent_data[] = {
->>> +	{ .fw_name = "xtal", },
->>> +	{ .fw_name = "fclk_div2", },
->>> +	{ .fw_name = "fclk_div3", },
->>> +	{ .fw_name = "hifi_pll", },
->>> +	{ .fw_name = "fclk_div2p5", },
->>> +	{ .fw_name = "mpll2", },
->>> +	{ .fw_name = "mpll3", },
->>> +	{ .fw_name = "gp0_pll", },
->>> +};
->>> +
->>> +static struct clk_regmap s4_sd_emmc_c_clk0_sel = {
->>> +	.data = &(struct clk_regmap_mux_data){
->>> +		.offset = CLKCTRL_NAND_CLK_CTRL,
->>> +		.mask = 0x7,
->>> +		.shift = 9,
->>> +	},
->>> +	.hw.init = &(struct clk_init_data) {
->>> +		.name = "sd_emmc_c_clk0_sel",
->>> +		.ops = &clk_regmap_mux_ops,
->>> +		.parent_data = s4_sd_emmc_clk0_parent_data,
->>> +		.num_parents = ARRAY_SIZE(s4_sd_emmc_clk0_parent_data),
->>> +		/*
->>> +		 * When the driver uses this clock, needs to specify the patent clock
->>> +		 * he wants in the dts.
->>> +		 */
->> I'm getting a bit suspicious about the use (and abuse ...) of this flag.
->> I don't quite get how selecting the base PLL for MMC should be done on
->> use-case basis and should be up the board DT ...
->> Other SoC have all used fdiv2 so far. Do you expect this setting to be
->> part of the dtsi SoC file ?
->> 
->>> +		.flags = CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
->>> +	},
->>> +};
->>> +
->> 
->>> +
->>> +/* SPICC Clock */
->>> +static const struct clk_parent_data s4_spicc_parent_data[] = {
->>> +	{ .fw_name = "xtal", },
->>> +	{ .hw = &s4_sys_clk.hw },
->>> +	{ .fw_name = "fclk_div4", },
->>> +	{ .fw_name = "fclk_div3", },
->>> +	{ .fw_name = "fclk_div2", },
->>> +	{ .fw_name = "fclk_div5", },
->>> +	{ .fw_name = "fclk_div7", },
->>> +};
->>> +
->>> +static struct clk_regmap s4_spicc0_mux = {
->>> +	.data = &(struct clk_regmap_mux_data){
->>> +		.offset = CLKCTRL_SPICC_CLK_CTRL,
->>> +		.mask = 0x7,
->>> +		.shift = 7,
->>> +	},
->>> +	.hw.init = &(struct clk_init_data) {
->>> +		.name = "spicc0_mux",
->>> +		.ops = &clk_regmap_mux_ops,
->>> +		.parent_data = s4_spicc_parent_data,
->>> +		.num_parents = ARRAY_SIZE(s4_spicc_parent_data),
->>> +		/*
->>> +		 * When the driver uses this clock, needs to specify the patent clock
->>> +		 * he wants in the dts.
->>> +		 */
->> This is getting too far. All the parent clocks are fixed.
->> Let CCF do the job of picking the most adequate clock for the job
->> instead of manually settings things
->> 
->>> +		.flags = CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
->>> +	},
->>> +};
->>> +
->> 
->>> +
->>> +/* PWM Clock */
->>> +static const struct clk_parent_data s4_pwm_parent_data[] = {
->>> +	{ .fw_name = "xtal", },
->>> +	{ .hw = &s4_vid_pll.hw },
->>> +	{ .fw_name = "fclk_div4", },
->>> +	{ .fw_name = "fclk_div3", },
->>> +};
->>> +
->>> +static struct clk_regmap s4_pwm_a_mux = {
->>> +	.data = &(struct clk_regmap_mux_data) {
->>> +		.offset = CLKCTRL_PWM_CLK_AB_CTRL,
->>> +		.mask = 0x3,
->>> +		.shift = 9,
->>> +	},
->>> +	.hw.init = &(struct clk_init_data){
->>> +		.name = "pwm_a_mux",
->>> +		.ops = &clk_regmap_mux_ops,
->>> +		.parent_data = s4_pwm_parent_data,
->>> +		.num_parents = ARRAY_SIZE(s4_pwm_parent_data),
->>> +		/*
->>> +		 * When the driver uses this clock, needs to specify the patent clock
->>> +		 * he wants in the dts.
->>> +		 */
->> Same here ... this is really going to far.
->> 
->>> +		.flags = CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
->>> +	},
->>> +};
->>> +
->> 
->>> +
->>> +static struct clk_regmap s4_saradc_mux = {
->>> +	.data = &(struct clk_regmap_mux_data) {
->>> +		.offset = CLKCTRL_SAR_CLK_CTRL,
->>> +		.mask = 0x3,
->>> +		.shift = 9,
->>> +	},
->>> +	.hw.init = &(struct clk_init_data){
->>> +		.name = "saradc_mux",
->>> +		.ops = &clk_regmap_mux_ops,
->>> +		.parent_data = (const struct clk_parent_data []) {
->>> +			{ .fw_name = "xtal", },
->>> +			{ .hw = &s4_sys_clk.hw },
->>> +		},
->>> +		.num_parents = 2,
->>> +		/*
->>> +		 * When the driver uses this clock, needs to specify the patent clock
->>> +		 * he wants in the dts.
->>> +		 */
->> For each clock type, if this flag is going to be used, I'd like a clear
->> explanation about why it is use-case dependent and why you need manual
->> control over this. Same applies to all the occurence.
->> 
->>> +		.flags = CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
->>> +	},
->>> +};
->> 
-
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index a78e73da4a74..70c07e11caa6 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -215,7 +215,7 @@ static void __init cyc2ns_init_secondary_cpus(void)
+ /*
+  * Scheduler clock - returns current time in nanosec units.
+  */
+-u64 native_sched_clock(void)
++noinstr u64 native_sched_clock(void)
+ {
+ 	if (static_branch_likely(&__use_tsc)) {
+ 		u64 tsc_now = rdtsc();
+diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
+index 500d1720421e..0b00f21cefe3 100644
+--- a/drivers/cpuidle/cpuidle.c
++++ b/drivers/cpuidle/cpuidle.c
+@@ -426,7 +426,7 @@ void cpuidle_reflect(struct cpuidle_device *dev, int index)
+  * @dev:   the cpuidle device
+  *
+  */
+-u64 cpuidle_poll_time(struct cpuidle_driver *drv,
++__cpuidle u64 cpuidle_poll_time(struct cpuidle_driver *drv,
+ 		      struct cpuidle_device *dev)
+ {
+ 	int i;
+diff --git a/drivers/cpuidle/poll_state.c b/drivers/cpuidle/poll_state.c
+index d25ec52846e6..bdcfeaecd228 100644
+--- a/drivers/cpuidle/poll_state.c
++++ b/drivers/cpuidle/poll_state.c
+@@ -15,7 +15,6 @@ static int __cpuidle poll_idle(struct cpuidle_device *dev,
+ {
+ 	u64 time_start;
+ 
+-	instrumentation_begin();
+ 	time_start = local_clock();
+ 
+ 	dev->poll_time_limit = false;
+@@ -42,7 +41,6 @@ static int __cpuidle poll_idle(struct cpuidle_device *dev,
+ 	raw_local_irq_disable();
+ 
+ 	current_clr_polling();
+-	instrumentation_end();
+ 
+ 	return index;
+ }
+diff --git a/include/linux/sched/clock.h b/include/linux/sched/clock.h
+index 867d588314e0..7960f0769884 100644
+--- a/include/linux/sched/clock.h
++++ b/include/linux/sched/clock.h
+@@ -45,7 +45,7 @@ static inline u64 cpu_clock(int cpu)
+ 	return sched_clock();
+ }
+ 
+-static inline u64 local_clock(void)
++static __always_inline u64 local_clock(void)
+ {
+ 	return sched_clock();
+ }
+@@ -79,7 +79,7 @@ static inline u64 cpu_clock(int cpu)
+ 	return sched_clock_cpu(cpu);
+ }
+ 
+-static inline u64 local_clock(void)
++static __always_inline u64 local_clock(void)
+ {
+ 	return sched_clock_cpu(raw_smp_processor_id());
+ }
+diff --git a/kernel/sched/clock.c b/kernel/sched/clock.c
+index e374c0c923da..6b3b0559e53c 100644
+--- a/kernel/sched/clock.c
++++ b/kernel/sched/clock.c
+@@ -260,7 +260,7 @@ notrace static inline u64 wrap_max(u64 x, u64 y)
+  *  - filter out backward motion
+  *  - use the GTOD tick value to create a window to filter crazy TSC values
+  */
+-notrace static u64 sched_clock_local(struct sched_clock_data *scd)
++noinstr static u64 sched_clock_local(struct sched_clock_data *scd)
+ {
+ 	u64 now, clock, old_clock, min_clock, max_clock, gtod;
+ 	s64 delta;
+@@ -287,7 +287,7 @@ notrace static u64 sched_clock_local(struct sched_clock_data *scd)
+ 	clock = wrap_max(clock, min_clock);
+ 	clock = wrap_min(clock, max_clock);
+ 
+-	if (!try_cmpxchg64(&scd->clock, &old_clock, clock))
++	if (!arch_try_cmpxchg64(&scd->clock, &old_clock, clock))
+ 		goto again;
+ 
+ 	return clock;
+@@ -360,7 +360,7 @@ notrace static u64 sched_clock_remote(struct sched_clock_data *scd)
+  *
+  * See cpu_clock().
+  */
+-notrace u64 sched_clock_cpu(int cpu)
++noinstr u64 sched_clock_cpu(int cpu)
+ {
+ 	struct sched_clock_data *scd;
+ 	u64 clock;
