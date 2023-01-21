@@ -2,162 +2,158 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA640C05027
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Jan 2023 22:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28464C004D4
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Jan 2023 05:35:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229949AbjATWzs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Jan 2023 17:55:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37114 "EHLO
+        id S229608AbjAUFfB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 21 Jan 2023 00:35:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229656AbjATWzq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jan 2023 17:55:46 -0500
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A19E9778
-        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 14:55:17 -0800 (PST)
-Received: by mail-lf1-f54.google.com with SMTP id a11so10285827lfg.0
-        for <linux-clk@vger.kernel.org>; Fri, 20 Jan 2023 14:55:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hbm1EsGZAeT2mHTFiqh0Dx28LeC9mCKTbUcH0BzL/No=;
-        b=mpB0UJHp3a+W4Up5ODk4M/2agnrtRI29W7jdtrMM7sUitAEWVM0wn5iQVGuvoaEGgE
-         6KIO6Ww3/MGhL0X73TxjqOkp2UgPHhe9QOq9A4V2txjt4REmD0oVtS2bnaGUs/bTC4iR
-         f8JvVwXUcyCMkDyR+av/kZ639ZXYLPvgRG02Fp4L834KU7JkUDuCueeJZQoTsaUNXmRF
-         UDSLjXx/p3BG8KUFVISw/lGWZoY9W+ZD6VI+T39nbT8GmxB2iskrWQJ/i3+VhkzIDT1f
-         k5cR3I6m4xyyvgwmCG9G0h3v8v2lLkiogUo83rSf9sg5zmvxe4DB0bAM7OtIaA1ClEye
-         BJdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hbm1EsGZAeT2mHTFiqh0Dx28LeC9mCKTbUcH0BzL/No=;
-        b=O6B1iQS6EM7A1p9+JXbLBQCtKKBMBhy+ST9f9nocTpuU+fuKDsegDa1Ha3q68qjmRI
-         p5IrxEboBnO44sM6/cP/CKlJhngRnl5DuKwSzzZs1+vVFz/SmYBGoUK7ThEzqllAYm3G
-         W8wN1LCm58QBpOTAKBUyzXlHo3cGioiaIzWZfFYAA/Q0VsByZxoMXR0YxBxUo+xZL/nj
-         fs3VrPf474N52Pk7ZPOqO9CNWdsMmjPfc/hVLbVLjbZbF5oMZaaWsR6QGAVSrq/ScZVf
-         pof9tdO2ltCd9TJUoIJjSXcYMeJZ0mOe2ji88iJ0FkSEOmnSkbpUN4Jdf3sFJoxo8FmS
-         DfRg==
-X-Gm-Message-State: AFqh2krMpPU9c3eITR98V22b0Ap+6PSI5M6raMURIS1TuJ+mU51iKX8s
-        +svk1qrqq0DqYin2J3PVyTgl2g==
-X-Google-Smtp-Source: AMrXdXu7FVclTVblU/bHESbrokULCekzEfzB978ZHJVMnBBS6ReI9nV7Te2jsL6OuDizMc61dMzDpg==
-X-Received: by 2002:a05:6512:143:b0:4cc:a1a1:9aaf with SMTP id m3-20020a056512014300b004cca1a19aafmr3834418lfo.23.1674255203191;
-        Fri, 20 Jan 2023 14:53:23 -0800 (PST)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id j5-20020a05651231c500b004b5480edf67sm6197207lfe.36.2023.01.20.14.53.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Jan 2023 14:53:22 -0800 (PST)
-Message-ID: <3a355075-cc29-957a-678b-2a05aed25587@linaro.org>
-Date:   Sat, 21 Jan 2023 00:53:21 +0200
+        with ESMTP id S229544AbjAUFfB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Jan 2023 00:35:01 -0500
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00DEE4F84B;
+        Fri, 20 Jan 2023 21:34:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1674279300; x=1705815300;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NyAaTmyfPMukEU82BbayaCdDYiu0nA0LRprRqC50EW4=;
+  b=MjK8izKm4nynY0Nh24ue4AzZqWi+PBYSomZlBmNFY3gZe5JCfdoF6WQ9
+   KMhg841cN/pL4Uhctc4ZF5MKd/80TVjedkXkSRSiUmXd4SvcplgAfDKFy
+   bIFf5ymrJbZS8A9logkkoDIZJ5j8evjToh4Mx0vAPM0GNG5J3QmIrbNVK
+   wU12GpcaXmFejHdI3hV1IAVM7w9/Aiq9ihx2KnC33u4PFRUJ305vDwDUD
+   S5re4HJkPDYz1nEfOfsA9aJ3dQdGS9j6IX8PZl5ZpwfD2mI92iX2dZIte
+   /mCz1YxnnNQ3oEH30O80rzLoA0sj1x5m6pBke6cE0J2GVZ0dcuudAUbSX
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10596"; a="324448691"
+X-IronPort-AV: E=Sophos;i="5.97,234,1669104000"; 
+   d="scan'208";a="324448691"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2023 21:34:59 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10596"; a="662773341"
+X-IronPort-AV: E=Sophos;i="5.97,234,1669104000"; 
+   d="scan'208";a="662773341"
+Received: from lkp-server01.sh.intel.com (HELO 5646d64e7320) ([10.239.97.150])
+  by fmsmga007.fm.intel.com with ESMTP; 20 Jan 2023 21:34:55 -0800
+Received: from kbuild by 5646d64e7320 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pJ6Wk-0003ZX-2Q;
+        Sat, 21 Jan 2023 05:34:54 +0000
+Date:   Sat, 21 Jan 2023 13:34:14 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
+        swboyd@chromium.org, agross@kernel.org, andersson@kernel.org,
+        robh+dt@kernel.org, broonie@kernel.org, quic_plai@quicinc.com,
+        krzysztof.kozlowski+dt@linaro.org, konrad.dybcio@somainline.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com
+Cc:     oe-kbuild-all@lists.linux.dev,
+        Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Subject: Re: [PATCH v5 5/6] clk: qcom: lpassaudiocc-sc7280: Merge lpasscc
+ into lpass_aon
+Message-ID: <202301211339.VDhvfKMQ-lkp@intel.com>
+References: <1674218806-7711-6-git-send-email-quic_srivasam@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v3 4/8] clk: qcom: cbf-msm8996: scale CBF clock according
- to the CPUfreq
-Content-Language: en-GB
-To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20230120061417.2623751-1-dmitry.baryshkov@linaro.org>
- <20230120061417.2623751-5-dmitry.baryshkov@linaro.org>
- <078c5a8254ac006b65fc5fa81dfbc515.sboyd@kernel.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <078c5a8254ac006b65fc5fa81dfbc515.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1674218806-7711-6-git-send-email-quic_srivasam@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/01/2023 00:11, Stephen Boyd wrote:
-> Quoting Dmitry Baryshkov (2023-01-19 22:14:13)
->> Turn CBF into the interconnect provider. Scale CBF frequency (bandwidth)
->> according to CPU frequencies.
->>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
->>   drivers/clk/qcom/clk-cbf-8996.c | 143 +++++++++++++++++++++++++++++++-
->>   1 file changed, 142 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/qcom/clk-cbf-8996.c b/drivers/clk/qcom/clk-cbf-8996.c
->> index 9cde0e660228..b049b4f7b270 100644
->> --- a/drivers/clk/qcom/clk-cbf-8996.c
->> +++ b/drivers/clk/qcom/clk-cbf-8996.c
->> @@ -5,11 +5,14 @@
->>   #include <linux/bitfield.h>
->>   #include <linux/clk.h>
->>   #include <linux/clk-provider.h>
->> +#include <linux/interconnect-provider.h>
->>   #include <linux/of.h>
->>   #include <linux/module.h>
->>   #include <linux/platform_device.h>
->>   #include <linux/regmap.h>
->>   
->> +#include <dt-bindings/interconnect/qcom,msm8996-cbf.h>
->> +
->>   #include "clk-alpha-pll.h"
->>   #include "clk-regmap.h"
->>   
->> @@ -225,6 +228,133 @@ static const struct regmap_config cbf_msm8996_regmap_config = {
->>          .val_format_endian      = REGMAP_ENDIAN_LITTLE,
->>   };
->>   
->> +#ifdef CONFIG_INTERCONNECT
-> 
-> Can you move this driver to drivers/interconnect/ ?
+Hi Srinivasa,
 
-Only the interconnect part? At some point I considered dropping the 
-whole CBF mux support and moving the whole driver to 
-drivers/interconnect, but I could not find a good way to use alpha-pll 
-from the interconnect driver. Would you recommend one?
+Thank you for the patch! Yet something to improve:
 
-> 
->> +struct qcom_msm8996_cbf_icc_provider {
->> +       struct icc_provider provider;
->> +       struct clk *clk;
->> +};
->> +
->> +#define to_qcom_cbf_provider(_provider) \
->> +       container_of(_provider, struct qcom_msm8996_cbf_icc_provider, provider)
->> +
->> +enum {
->> +       CBF_MASTER_NODE = 2000,
-> [...]
->> +static int qcom_msm8996_cbf_icc_remove(struct platform_device *pdev)
->> +{
->> +       struct icc_provider *provider = platform_get_drvdata(pdev);
->> +
->> +       icc_nodes_remove(provider);
->> +       icc_provider_del(provider);
->> +
->> +       return 0;
->> +}
->> +#else
->> +static int qcom_msm8996_cbf_icc_register(struct platform_device *pdev)
->> +{
->> +       dev_warn(&pdev->dev, "interconnects support is disabled, CBF clock is fixed\n");
->> +
->> +       return 0;
->> +}
->> +#define qcom_msm8996_cbf_icc_remove(pdev) (0)
-> 
-> It's like two drivers in one.
-> 
->> +#endif
->> +
->>   static int qcom_msm8996_cbf_probe(struct platform_device *pdev)
->>   {
->>          void __iomem *base;
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on linus/master v6.2-rc4 next-20230120]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Srinivasa-Rao-Mandadapu/dt-bindings-clock-qcom-sc7280-lpasscc-Add-qcom-adsp-pil-mode-property/20230120-204835
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/1674218806-7711-6-git-send-email-quic_srivasam%40quicinc.com
+patch subject: [PATCH v5 5/6] clk: qcom: lpassaudiocc-sc7280: Merge lpasscc into lpass_aon
+config: arc-randconfig-r043-20230119 (https://download.01.org/0day-ci/archive/20230121/202301211339.VDhvfKMQ-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/9163f9ad677af61b97b9ea5ef569722f277a7d20
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Srinivasa-Rao-Mandadapu/dt-bindings-clock-qcom-sc7280-lpasscc-Add-qcom-adsp-pil-mode-property/20230120-204835
+        git checkout 9163f9ad677af61b97b9ea5ef569722f277a7d20
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arc olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arc SHELL=/bin/bash
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+   drivers/clk/qcom/lpassaudiocc-sc7280.c: In function 'lpass_aon_cc_sc7280_probe':
+>> drivers/clk/qcom/lpassaudiocc-sc7280.c:831:17: error: 'res' undeclared (first use in this function); did you mean 'ret'?
+     831 |                 res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cc");
+         |                 ^~~
+         |                 ret
+   drivers/clk/qcom/lpassaudiocc-sc7280.c:831:17: note: each undeclared identifier is reported only once for each function it appears in
+
+
+vim +831 drivers/clk/qcom/lpassaudiocc-sc7280.c
+
+   819	
+   820	static int lpass_aon_cc_sc7280_probe(struct platform_device *pdev)
+   821	{
+   822		const struct qcom_cc_desc *desc;
+   823		struct regmap *regmap;
+   824		int ret;
+   825	
+   826		ret = lpass_audio_setup_runtime_pm(pdev);
+   827		if (ret)
+   828			return ret;
+   829	
+   830		if (of_property_read_bool(pdev->dev.of_node, "qcom,adsp-pil-mode")) {
+ > 831			res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cc");
+   832			if (res) {
+   833				lpass_audio_cc_sc7280_regmap_config.name = "cc";
+   834				desc = &lpass_cc_sc7280_desc;
+   835				return qcom_cc_probe(pdev, desc);
+   836			}
+   837		}
+   838	
+   839		lpass_audio_cc_sc7280_regmap_config.name = "lpasscc_aon";
+   840		lpass_audio_cc_sc7280_regmap_config.max_register = 0xa0008;
+   841		desc = &lpass_aon_cc_sc7280_desc;
+   842	
+   843		regmap = qcom_cc_map(pdev, desc);
+   844		if (IS_ERR(regmap)) {
+   845			ret = PTR_ERR(regmap);
+   846			goto exit;
+   847		}
+   848	
+   849		clk_lucid_pll_configure(&lpass_aon_cc_pll, regmap, &lpass_aon_cc_pll_config);
+   850	
+   851		ret = qcom_cc_really_probe(pdev, &lpass_aon_cc_sc7280_desc, regmap);
+   852		if (ret) {
+   853			dev_err(&pdev->dev, "Failed to register LPASS AON CC clocks\n");
+   854			goto exit;
+   855		}
+   856	
+   857		pm_runtime_mark_last_busy(&pdev->dev);
+   858	exit:
+   859		pm_runtime_put_autosuspend(&pdev->dev);
+   860	
+   861		return ret;
+   862	}
+   863	
 
 -- 
-With best wishes
-Dmitry
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
