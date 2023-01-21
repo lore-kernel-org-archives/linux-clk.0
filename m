@@ -2,34 +2,33 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39DE9C25B50
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Jan 2023 19:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE62C004D4
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Jan 2023 19:35:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230028AbjAUTXr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 21 Jan 2023 14:23:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54904 "EHLO
+        id S229867AbjAUTfv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 21 Jan 2023 14:35:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229883AbjAUTXp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Jan 2023 14:23:45 -0500
-Received: from out2.migadu.com (out2.migadu.com [IPv6:2001:41d0:2:aacc::])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1ED228D26;
-        Sat, 21 Jan 2023 11:23:44 -0800 (PST)
-Message-ID: <f2266be7-b0b8-8b10-8b0f-e8bae4196917@ansari.sh>
+        with ESMTP id S229789AbjAUTfv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Jan 2023 14:35:51 -0500
+Received: from out-244.mta0.migadu.com (out-244.mta0.migadu.com [IPv6:2001:41d0:1004:224b::f4])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D167B18156
+        for <linux-clk@vger.kernel.org>; Sat, 21 Jan 2023 11:35:49 -0800 (PST)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ansari.sh; s=key1;
-        t=1674329023;
+        t=1674329150;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=vkejwVXi6/FCUirpcEx8CpAKTfT9V6ZNYQg0zp0VucE=;
-        b=OwsNbhHNx9WIgZg10kN708xweLzQ221HgXIvPxC37f/1ryTR4pKy5PrAjJOQ3oCIcuOWiD
-        FsDCvT7ny40siLOVBMbvk0H0J1DJkwJjdl1rYfKLu/gT2coLXsXvy37AA0wXXDfh6kLiYW
-        dYcq6ysXl0/TJKvDyVKJNMIYYgl41mM=
-Date:   Sat, 21 Jan 2023 19:23:41 +0000
-MIME-Version: 1.0
-Subject: Re: [PATCH v3 0/3] Add XO clocks for MSM8226/MSM8974
+        bh=Gko113jOC9a2EwUmD2parDNR6d3vxA2nTyF78mHftxg=;
+        b=H5xs/8BqLkR6xS0ZSMS8o67s0C3qCgO3z6C+IIO6GeifI/ZtaIH2T0B/zeP3VyG/osSKKM
+        23N1vPBPSAP9V3g1jOXVHEO6oy4t59Srm0ajmxJKsF6BCQmtrGxuNnpfC7PVs+jWci2ETH
+        gH5Wko+BX87WYeZ3Ggbcc9QiECczcJI=
+From:   Rayyan Ansari <rayyan@ansari.sh>
 To:     linux-arm-msm@vger.kernel.org
 Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        Rayyan Ansari <rayyan@ansari.sh>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         devicetree@vger.kernel.org,
@@ -39,39 +38,49 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>
-References: <20230121175838.755636-1-rayyan@ansari.sh>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Rayyan Ansari <rayyan@ansari.sh>
-In-Reply-To: <20230121175838.755636-1-rayyan@ansari.sh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v4 2/3] ARM: dts: qcom: msm8226: add clocks and clock-names to GCC node
+Date:   Sat, 21 Jan 2023 19:25:39 +0000
+Message-Id: <20230121192540.9177-3-rayyan@ansari.sh>
+In-Reply-To: <20230121192540.9177-1-rayyan@ansari.sh>
+References: <20230121192540.9177-1-rayyan@ansari.sh>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/01/2023 17:58, Rayyan Ansari wrote:
-> Changes since v2:
-> - Base off linux-next
-> - Add correct XO clock to MSM8974 as well
-> 
-> Rayyan Ansari (3):
->    clk: qcom: smd: Add XO RPM clocks for MSM8226/MSM8974
->    ARM: dts: qcom: msm8226: add clocks and clock-names to GCC node
+Add the XO and Sleep Clock sources to the GCC node on MSM8226.
 
-I've just noticed that rpmcc.h has somehow been missed in this commit. I 
-will send v4 to address this.
+Signed-off-by: Rayyan Ansari <rayyan@ansari.sh>
+---
+ arch/arm/boot/dts/qcom-msm8226.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
->    ARM: dts: qcom: msm8974: add correct XO clock source to GCC node
-> 
->   arch/arm/boot/dts/qcom-msm8226.dtsi | 5 +++++
->   arch/arm/boot/dts/qcom-msm8974.dtsi | 2 +-
->   drivers/clk/qcom/clk-smd-rpm.c      | 2 ++
->   3 files changed, 8 insertions(+), 1 deletion(-)
-> 
-
+diff --git a/arch/arm/boot/dts/qcom-msm8226.dtsi b/arch/arm/boot/dts/qcom-msm8226.dtsi
+index c373081bc21b..42acb9ddb8cc 100644
+--- a/arch/arm/boot/dts/qcom-msm8226.dtsi
++++ b/arch/arm/boot/dts/qcom-msm8226.dtsi
+@@ -8,6 +8,7 @@
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/qcom,gcc-msm8974.h>
+ #include <dt-bindings/clock/qcom,mmcc-msm8974.h>
++#include <dt-bindings/clock/qcom,rpmcc.h>
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/power/qcom-rpmpd.h>
+ #include <dt-bindings/reset/qcom,gcc-msm8974.h>
+@@ -377,6 +378,11 @@ gcc: clock-controller@fc400000 {
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
++
++			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
++				 <&sleep_clk>;
++			clock-names = "xo",
++				      "sleep_clk";
+ 		};
+ 
+ 		mmcc: clock-controller@fd8c0000 {
 -- 
-Rayyan Ansari
-https://ansari.sh
+2.39.0
 
