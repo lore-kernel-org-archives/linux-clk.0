@@ -2,102 +2,75 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14517C004D4
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Jan 2023 17:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B56AC004D4
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Jan 2023 18:00:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229523AbjAURei (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 21 Jan 2023 12:34:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51440 "EHLO
+        id S229796AbjAUSAi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 21 Jan 2023 13:00:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230038AbjAUReg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Jan 2023 12:34:36 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 227EB2D15B;
-        Sat, 21 Jan 2023 09:34:20 -0800 (PST)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30LHUfHT005012;
-        Sat, 21 Jan 2023 17:34:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=pKv8w7uR5wAI9JticJAXtQh6P199EYXCddfynwTNuNI=;
- b=j2dcg4jrbfc9c1I7pr82pXBXME8ORVLhDgIRUXQrCCfU2IxySqsHLXdB3isy00p8ELeB
- x1qB6Kc3boMa/HBqiJe14joJJ8buZeiRGsbuQOJxvIZTbiqEgv2g0gAi0GpiIE7jk+Bf
- oNmpIIio6pHS0ZMx4o+JHat0WyKYKM3bq3tRKnIJbigxexjzcbsEH6FGE2Ea3XiV2LMe
- j3SrXekNCOIiwaD03dp+lbW3mOg8H5l+lDg5W6nbHrQs7BquLPHkSOHVpvxh2Q35/nsy
- c5HjRKynt+gIoTXM4h/q41fuQ5XaZcNm/yogbxj5ssfLHaybkQAFOLJwDeFO570DeHty Jw== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n89f58nsv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 21 Jan 2023 17:34:14 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30LHYDkv023852
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 21 Jan 2023 17:34:13 GMT
-Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Sat, 21 Jan 2023 09:34:08 -0800
-From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-To:     <swboyd@chromium.org>, <agross@kernel.org>, <andersson@kernel.org>,
-        <robh+dt@kernel.org>, <broonie@kernel.org>,
-        <quic_plai@quicinc.com>, <krzysztof.kozlowski+dt@linaro.org>,
-        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_rohkumar@quicinc.com>
-CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Subject: [RESEND v5 6/6] clk: qcom: lpassaudiocc-sc7280: Skip lpass_aon_cc_pll config
-Date:   Sat, 21 Jan 2023 23:02:20 +0530
-Message-ID: <1674322340-25882-7-git-send-email-quic_srivasam@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1674322340-25882-1-git-send-email-quic_srivasam@quicinc.com>
-References: <1674322340-25882-1-git-send-email-quic_srivasam@quicinc.com>
+        with ESMTP id S229685AbjAUSAh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Jan 2023 13:00:37 -0500
+X-Greylist: delayed 80 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 21 Jan 2023 10:00:35 PST
+Received: from out0.migadu.com (out0.migadu.com [94.23.1.103])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88624658F;
+        Sat, 21 Jan 2023 10:00:35 -0800 (PST)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ansari.sh; s=key1;
+        t=1674323943;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=S77AubuYa5OrTV/jgUtcL1ihA4inmRuRojyuL5xTg7c=;
+        b=ba970Vb+HajZc+wE0Nq0L8pBg21OWxOfTAkAYIKkdCskIrKZPp9tFSqk/a0sNjv3aboWhP
+        7CNKrbBUMYotKfeLJTx4cWS7wgiaw+2TI1Mt15NfXxU3x1uVd23l/rQ3P9a+wjuFDJRuMm
+        tbICmVyoCyJxKaVi5O8PEGP107/8+bA=
+From:   Rayyan Ansari <rayyan@ansari.sh>
+To:     linux-arm-msm@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        Rayyan Ansari <rayyan@ansari.sh>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        devicetree@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH v3 3/3] ARM: dts: qcom: msm8974: add correct XO clock source to GCC node
+Date:   Sat, 21 Jan 2023 17:58:37 +0000
+Message-Id: <20230121175838.755636-4-rayyan@ansari.sh>
+In-Reply-To: <20230121175838.755636-1-rayyan@ansari.sh>
+References: <20230121175838.755636-1-rayyan@ansari.sh>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 9pG1OYmTNsHleL-fGwg__Eo7vlAbBuf6
-X-Proofpoint-GUID: 9pG1OYmTNsHleL-fGwg__Eo7vlAbBuf6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-01-21_11,2023-01-20_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
- clxscore=1015 mlxscore=0 spamscore=0 phishscore=0 adultscore=0
- lowpriorityscore=0 suspectscore=0 malwarescore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301210168
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Skip lpass_aon_cc_pll configuration for ADSP based platforms
-based on qcom,adsp-pil-mode property.
-This is to avoid ADSP out of reset fail.
+Change the XO clock in MSM8974's GCC node to point to RPMCC.
 
-Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Tested-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Signed-off-by: Rayyan Ansari <rayyan@ansari.sh>
 ---
- drivers/clk/qcom/lpassaudiocc-sc7280.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/qcom-msm8974.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-index 8e2f433..1511337 100644
---- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
-+++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-@@ -847,7 +847,8 @@ static int lpass_aon_cc_sc7280_probe(struct platform_device *pdev)
- 		goto exit;
- 	}
+diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
+index 834ad95515b1..31e9721b571d 100644
+--- a/arch/arm/boot/dts/qcom-msm8974.dtsi
++++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
+@@ -1057,7 +1057,7 @@ gcc: clock-controller@fc400000 {
+ 			#power-domain-cells = <1>;
+ 			reg = <0xfc400000 0x4000>;
  
--	clk_lucid_pll_configure(&lpass_aon_cc_pll, regmap, &lpass_aon_cc_pll_config);
-+	if (!of_property_read_bool(pdev->dev.of_node, "qcom,adsp-pil-mode"))
-+		clk_lucid_pll_configure(&lpass_aon_cc_pll, regmap, &lpass_aon_cc_pll_config);
- 
- 	ret = qcom_cc_really_probe(pdev, &lpass_aon_cc_sc7280_desc, regmap);
- 	if (ret) {
+-			clocks = <&xo_board>,
++			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
+ 				 <&sleep_clk>;
+ 			clock-names = "xo",
+ 				      "sleep_clk";
 -- 
-2.7.4
+2.39.0
 
