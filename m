@@ -2,87 +2,108 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4673C27C76
-	for <linux-clk@archiver.kernel.org>; Sun, 22 Jan 2023 13:51:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D08A9C27C76
+	for <linux-clk@archiver.kernel.org>; Sun, 22 Jan 2023 15:41:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229983AbjAVNvK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 22 Jan 2023 08:51:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57500 "EHLO
+        id S230287AbjAVPlh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 22 Jan 2023 10:41:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229973AbjAVNvJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 Jan 2023 08:51:09 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 833CD1DBA8
-        for <linux-clk@vger.kernel.org>; Sun, 22 Jan 2023 05:51:08 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id q10-20020a1cf30a000000b003db0edfdb74so3070797wmq.1
-        for <linux-clk@vger.kernel.org>; Sun, 22 Jan 2023 05:51:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JBQsna4Ml4m+CXKj50BA/m/QubV2oPbdfMdO4WVRYYc=;
-        b=VLQgazTYjVfIt001bxaQt/FbWF7560Tm2HbPWameob7U/hMBFgmtO5QiueZDdoBgST
-         yJRDUHKPcDtFlR13MfwK6UuMpmGd/SsY9jm8/56ZcX2A9c82dw/uikQ5rAqilaLe/AAP
-         J0WyJ7vEcVPba/Y5NGTYvKgpEW6uxn1gOFOCq/R2CjuFU/COPhPmSg/syLVEs1LdD5BR
-         uKL2zHK5Wj7t5i3jgeZLpULo6IME8uPpWMCqMAa6/ygs+p+fJP0GywNXldgX7EJ6mQRm
-         N5ks7NmEbfrIZuWruK+nx1M60WisROVzxiueSsYiwDoXDdvIdTp5Yi8ukREaOlVTau2p
-         1sGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JBQsna4Ml4m+CXKj50BA/m/QubV2oPbdfMdO4WVRYYc=;
-        b=O3ewdcBfd5eJ1JOPkUaPI9hd0iG2k1S5gpB01+AxMKwBWtNR9bJk2tYNG6cBiiWC1R
-         MQYEcu+lyRlPerg4EQVnVsR3XkEISIMFEJw4ofOHxeakLQRKLq10CBH8ThPNudnq/DyT
-         Mv0YlsD+1F5H7jN5aMc38WKP0CvzzUcCIwC34GtbZNoRyQfqdm7KRYABcd8GbuEfu/Hx
-         XbKSy/e2B8sEeTuvB7nL1wL3HlwIKX24YinW0R7mAPJWyEjBoYa8lphYt2ay6eB07wTZ
-         H2uUKRob81M0QWwJooswGe6aVZUk4rlfAkF5t3aRMzCn8Ga1m3G5/kpy/qPr0/bAosPa
-         HseQ==
-X-Gm-Message-State: AFqh2kqke+XC4EaKfFS/0ZqfkUp2itlVXDOaVs9mR9b/CDkYQacE+oI9
-        fuv9imNnjMM1y0gHXFaOMps8pQ==
-X-Google-Smtp-Source: AMrXdXsXRA6OI2AcFH5C60qUwEPyDPWkyeNw6lIIh9+btcIBhRDQrJ9zcvZzYhgFuv/QMs45W/Znng==
-X-Received: by 2002:a05:600c:1c9c:b0:3d3:49db:9b25 with SMTP id k28-20020a05600c1c9c00b003d349db9b25mr17348348wms.26.1674395467083;
-        Sun, 22 Jan 2023 05:51:07 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id o6-20020a05600c378600b003d9fba3c7a4sm7953734wmr.16.2023.01.22.05.51.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Jan 2023 05:51:06 -0800 (PST)
-Message-ID: <030115dd-f489-5d4e-c993-e9fa8b550f04@linaro.org>
-Date:   Sun, 22 Jan 2023 14:51:03 +0100
+        with ESMTP id S230148AbjAVPlg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 Jan 2023 10:41:36 -0500
+Received: from fudo.makrotopia.org (fudo.makrotopia.org [IPv6:2a07:2ec0:3002::71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F1A717168;
+        Sun, 22 Jan 2023 07:41:34 -0800 (PST)
+Received: from local
+        by fudo.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+         (Exim 4.96)
+        (envelope-from <daniel@makrotopia.org>)
+        id 1pJcTH-0002fr-0n;
+        Sun, 22 Jan 2023 16:41:27 +0100
+Date:   Sun, 22 Jan 2023 15:41:16 +0000
+From:   Daniel Golle <daniel@makrotopia.org>
+To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Chen-Yu Tsai <wenst@chromium.org>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Edward-JW Yang <edward-jw.yang@mediatek.com>,
+        Johnson Wang <johnson.wang@mediatek.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Sam Shih <sam.shih@mediatek.com>,
+        Jianhui Zhao <zhaojh329@gmail.com>
+Subject: [PATCH v4 0/3] add support for clocks on MT7981 SoC
+Message-ID: <cover.1674401764.git.daniel@makrotopia.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [RESEND v5 0/6] Add resets for ADSP based audio clock controller
- driver
-Content-Language: en-US
-To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
-        swboyd@chromium.org, agross@kernel.org, andersson@kernel.org,
-        robh+dt@kernel.org, broonie@kernel.org, quic_plai@quicinc.com,
-        krzysztof.kozlowski+dt@linaro.org, konrad.dybcio@somainline.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com
-References: <1674322340-25882-1-git-send-email-quic_srivasam@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <1674322340-25882-1-git-send-email-quic_srivasam@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/01/2023 18:32, Srinivasa Rao Mandadapu wrote:
-> Add resets and remove qdsp6ss clcok controller for audioreach based platforms. 
-> 
-> Changes since v4:
->     -- Update Fixes tag in Merge lpasscc into lpass_aon patch.
->     -- Revert removal of clk_regmap structure in Merge lpasscc into lpass_aon patch.
-> 
+The MediaTek MT7981 SoC is quite similar to its big sibling, the
+MT7986. Hence most drivers can be reused and not much is missing the
+get also this SoC working on mainline Linux.
 
-Your v5 before resend have build issues. Please fix.
+Start with a cleaned-up version of the clock drivers, based on what can
+also be found in MediaTek's SDK[1].
 
-Best regards,
-Krzysztof
+Upon request of AngeloGioacchino Del Regno this series has been rebased
+and adapted to be applied on top of the pending series
+"MediaTek clocks cleanups and improvements"[2]
+
+The complete tree used for testing (with still some to-be-cleaned-up
+changes, esp. for the Ethernet driver) can be found on Github[3].
+
+[1]: https://git01.mediatek.com/plugins/gitiles/openwrt/feeds/mtk-openwrt-feeds/+/refs/heads/master/target/linux/mediatek/files-5.4/drivers/clk/mediatek/clk-mt7981.c
+[2]: https://patchwork.kernel.org/project/linux-clk/list/?series=714057
+[3]: https://github.com/dangowrt/linux
+
+Changes since v3:
+ * fixed typos in commit descriptions
+
+Changes since v2:
+ * rebase on top of next-20230120 with v4 of AngeloGioacchino's series[2]
+ * fix titles of dt-bindings commits (this time for real)
+ * convert clk-mt7981-infracfg to use mtk_clk_simple_probe
+ * make use of PLL_AO flag in clk-mt7981-apmixed
+ * convert clk-mt7981-ethsys into platform driver, also using the generic
+   probe function, allow building as module
+
+Changes since v1:
+ * rebase and adapt on top of [2]
+ * split-off addition of dt-bindings header, fix filename
+ * changed commit title as requested
+
+Daniel Golle (3):
+  dt-bindings: clock: Add apmixedsys/topckgen compatibles for MT7981
+  dt-bindings: clock: mediatek: add mt7981 clock IDs
+  clk: mediatek: add MT7981 clock support
+
+ .../bindings/clock/mediatek,apmixedsys.yaml   |   1 +
+ .../bindings/clock/mediatek,topckgen.yaml     |   1 +
+ drivers/clk/mediatek/Kconfig                  |  17 +
+ drivers/clk/mediatek/Makefile                 |   4 +
+ drivers/clk/mediatek/clk-mt7981-apmixed.c     | 102 +++++
+ drivers/clk/mediatek/clk-mt7981-eth.c         | 117 +++++
+ drivers/clk/mediatek/clk-mt7981-infracfg.c    | 207 +++++++++
+ drivers/clk/mediatek/clk-mt7981-topckgen.c    | 422 ++++++++++++++++++
+ .../dt-bindings/clock/mediatek,mt7981-clk.h   | 215 +++++++++
+ 9 files changed, 1086 insertions(+)
+ create mode 100644 drivers/clk/mediatek/clk-mt7981-apmixed.c
+ create mode 100644 drivers/clk/mediatek/clk-mt7981-eth.c
+ create mode 100644 drivers/clk/mediatek/clk-mt7981-infracfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt7981-topckgen.c
+ create mode 100644 include/dt-bindings/clock/mediatek,mt7981-clk.h
+
+-- 
+2.39.1
 
