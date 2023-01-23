@@ -2,115 +2,75 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9201C05027
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Jan 2023 16:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFBA4C25B50
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Jan 2023 18:32:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232404AbjAWQyf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Jan 2023 11:54:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33384 "EHLO
+        id S232626AbjAWScI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Jan 2023 13:32:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232250AbjAWQye (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Jan 2023 11:54:34 -0500
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3A7B26842
-        for <linux-clk@vger.kernel.org>; Mon, 23 Jan 2023 08:54:27 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id u19so32160308ejm.8
-        for <linux-clk@vger.kernel.org>; Mon, 23 Jan 2023 08:54:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TyX82vPOIRaw0yggTWaq/3Oo2qgrAU1QHXC12/h8UuM=;
-        b=LamCiot5hB6BVO5B1VXZ5MS0c/JvLaOjLQeDSVNpskuf5oBQbDVS7E8ozhg6rq13Fy
-         TBkI/vGgUU98w+PV2UxC0ZbEmNW5HDeQqrpxbXp/wh32gaAjlT96qS+kIXRoE7NglTNA
-         xssya8cfnCmCwMFY3pTYVu7L93hXoY/OUeECTaYDp3/KGqrahgfXMMy3cPbQxmWHtYze
-         T7IrPOAYSPgmoHePiJFwtGEtuMgbylwza27fswd5Jinyi55bA6HESkYtc6kxNfg7M3jK
-         LHM0+e04BONm4Lgxw1Dlel/EhZ+CPQAt7Az3+xFFQwIxCTDFGIU+qkJxy2ZbEttRlGGV
-         cOXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TyX82vPOIRaw0yggTWaq/3Oo2qgrAU1QHXC12/h8UuM=;
-        b=zPDYWUsKMz23ccAwpdzvjqZ7nWpR6BGWyxq8H25ulh3lTVJ6ssKEU+WXj51M+upoGg
-         Qeh7T7qNqXHBtsbDWzP0umV8qFmBrOPkvC8UWaX0HKjAYDVKiPYUHjaQtTJaXQiqVe3T
-         BIFEr5tG9K1oyBmvBTV7fgsoH6NSuvBf9E5myLY+BuPn1NxLWq6n56r/7IqVkqVaZnVw
-         Q7ZQc5N4ronN42NbgBSz+YuG+YxEw/ani5dIAV6rfna5yLz6Rvt3VMn5ZQM8QVWU8YQ7
-         CxSmaBahR06BpxTT8XAv8Z2KXHFypf/5gEtkVFl9v1o/+f+qRKmqy9XFqN46TqEa/9Mj
-         vaeg==
-X-Gm-Message-State: AFqh2koxHfM7cjuCDXnk/xC2+F5/+HKToJF0swfLWLH5NZ3XJ8Y5ihFR
-        b5xRSKSJWFc+B1WUJtk+4y9MqA==
-X-Google-Smtp-Source: AMrXdXuat4el3JVkyiVnp3ON/Xi7vGPmjkA5PhNHDy0zakGSNqull5jgcyTzrbtHPeYocp+lLOIL2w==
-X-Received: by 2002:a17:906:80d:b0:870:d15a:c2e0 with SMTP id e13-20020a170906080d00b00870d15ac2e0mr26386260ejd.51.1674492866576;
-        Mon, 23 Jan 2023 08:54:26 -0800 (PST)
-Received: from [192.168.1.101] (abxi24.neoplus.adsl.tpnet.pl. [83.9.2.24])
-        by smtp.gmail.com with ESMTPSA id 10-20020a170906210a00b007c0f2d051f4sm22219862ejt.203.2023.01.23.08.54.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jan 2023 08:54:26 -0800 (PST)
-Message-ID: <5ed7735c-5160-e6e4-6558-d21a269fbe64@linaro.org>
-Date:   Mon, 23 Jan 2023 17:54:24 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH v4 2/3] ARM: dts: qcom: msm8226: add clocks and
- clock-names to GCC node
-Content-Language: en-US
-To:     Rayyan Ansari <rayyan@ansari.sh>, linux-arm-msm@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S233033AbjAWSbs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Jan 2023 13:31:48 -0500
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 752043344C
+        for <linux-clk@vger.kernel.org>; Mon, 23 Jan 2023 10:31:30 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:6083:1fd7:ba05:ea8d])
+        by laurent.telenet-ops.be with bizsmtp
+        id CJXS2900X4604Ck01JXSsv; Mon, 23 Jan 2023 19:31:26 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1pK1bC-0076Dp-IS;
+        Mon, 23 Jan 2023 19:31:26 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1pK1bK-00Ej91-Ex;
+        Mon, 23 Jan 2023 19:31:26 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-References: <20230121192540.9177-1-rayyan@ansari.sh>
- <20230121192540.9177-3-rayyan@ansari.sh>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230121192540.9177-3-rayyan@ansari.sh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a779g0: Add CAN-FD clocks
+Date:   Mon, 23 Jan 2023 19:31:24 +0100
+Message-Id: <a78f534bd80f170f3f1267f3270fdb3b7a73b5d4.1674498643.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add the CANFD core clock and the CANFD0 module clock, which are used by
+the CAN-FD Interface on the Renesas R-Car V4H (R8A779G0) SoC.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in renesas-clk for v6.3.
 
-On 21.01.2023 20:25, Rayyan Ansari wrote:
-> Add the XO and Sleep Clock sources to the GCC node on MSM8226.
-> 
-> Signed-off-by: Rayyan Ansari <rayyan@ansari.sh>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Konrad
->  arch/arm/boot/dts/qcom-msm8226.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/qcom-msm8226.dtsi b/arch/arm/boot/dts/qcom-msm8226.dtsi
-> index c373081bc21b..42acb9ddb8cc 100644
-> --- a/arch/arm/boot/dts/qcom-msm8226.dtsi
-> +++ b/arch/arm/boot/dts/qcom-msm8226.dtsi
-> @@ -8,6 +8,7 @@
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/clock/qcom,gcc-msm8974.h>
->  #include <dt-bindings/clock/qcom,mmcc-msm8974.h>
-> +#include <dt-bindings/clock/qcom,rpmcc.h>
->  #include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/power/qcom-rpmpd.h>
->  #include <dt-bindings/reset/qcom,gcc-msm8974.h>
-> @@ -377,6 +378,11 @@ gcc: clock-controller@fc400000 {
->  			#clock-cells = <1>;
->  			#reset-cells = <1>;
->  			#power-domain-cells = <1>;
-> +
-> +			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-> +				 <&sleep_clk>;
-> +			clock-names = "xo",
-> +				      "sleep_clk";
->  		};
->  
->  		mmcc: clock-controller@fd8c0000 {
+diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+index 48d9f34bbf37657a..357dac933dfa62d8 100644
+--- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+@@ -145,6 +145,7 @@ static const struct cpg_core_clk r8a779g0_core_clks[] __initconst = {
+ 	DEF_FIXED("viobusd2",	R8A779G0_CLK_VIOBUSD2,	CLK_VIO,	2, 1),
+ 	DEF_FIXED("vcbus",	R8A779G0_CLK_VCBUS,	CLK_VC,		1, 1),
+ 	DEF_FIXED("vcbusd2",	R8A779G0_CLK_VCBUSD2,	CLK_VC,		2, 1),
++	DEF_DIV6P1("canfd",     R8A779G0_CLK_CANFD,	CLK_PLL5_DIV4,	0x878),
+ 	DEF_FIXED("dsiref",	R8A779G0_CLK_DSIREF,	CLK_PLL5_DIV4,	48, 1),
+ 	DEF_DIV6P1("dsiext",	R8A779G0_CLK_DSIEXT,	CLK_PLL5_DIV4,	0x884),
+ 
+@@ -163,6 +164,7 @@ static const struct mssr_mod_clk r8a779g0_mod_clks[] __initconst = {
+ 	DEF_MOD("avb0",		211,	R8A779G0_CLK_S0D4_HSC),
+ 	DEF_MOD("avb1",		212,	R8A779G0_CLK_S0D4_HSC),
+ 	DEF_MOD("avb2",		213,	R8A779G0_CLK_S0D4_HSC),
++	DEF_MOD("canfd0",	328,	R8A779G0_CLK_SASYNCPERD2),
+ 	DEF_MOD("dis0",		411,	R8A779G0_CLK_VIOBUSD2),
+ 	DEF_MOD("dsitxlink0",	415,	R8A779G0_CLK_VIOBUSD2),
+ 	DEF_MOD("dsitxlink1",	416,	R8A779G0_CLK_VIOBUSD2),
+-- 
+2.34.1
+
