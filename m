@@ -2,178 +2,99 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71236C05027
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Jan 2023 07:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0B0C54EAA
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Jan 2023 08:01:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230355AbjAWHgr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Jan 2023 02:36:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60876 "EHLO
+        id S231608AbjAWIBR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Jan 2023 03:01:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230031AbjAWHgq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Jan 2023 02:36:46 -0500
-Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA57C18AB7
-        for <linux-clk@vger.kernel.org>; Sun, 22 Jan 2023 23:36:45 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1674459357; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=H7BwwRZ01ZN1U1RMbNO1pzm8QIU76QnpD1Vo+T4QfTTTFJsT3KYL8TyQM5QLd8ot6lcCeraREJkrjla9Pa6uiBnni+LDreRm299NAp8epsAvhspRIBy8yb7emmnYILSR1hTvSerkrPNB0a4jIcLQa8+6JHBBEJJiU+215wfLyRo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1674459357; h=Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject; 
-        bh=HkG+SmbIjA7sw7BLtfWk5YKVQYC6xM4eS1D5oo5HkRg=; 
-        b=CkpUrhKdNV6tLpuCqRjAYMct1rnU7+6ddITri4lxt2d1A0BgOASuGBeLothybj6CdE0RNaUqOMD6Ew9qaPweozGL+no3AP/39+41YOI77glP8KAOxpOowicvsncnZyL9ct6An7d8w5sVdtjg+1TXPy6fh9BJDFgR/8+8+W5EcZs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        spf=pass  smtp.mailfrom=me@linux.beauty;
-        dmarc=pass header.from=<lchen@ambarella.com>
-Received: from shbuild9.ambarella.net (116.246.37.178 [116.246.37.178]) by mx.zohomail.com
-        with SMTPS id 1674459355500620.8753836206259; Sun, 22 Jan 2023 23:35:55 -0800 (PST)
-From:   Li Chen <lchen@ambarella.com>
-Cc:     Li Chen <lchen@ambarella.com>,
-        =?UTF-8?q?Andreas=20B=C3=B6hler?= <dev@aboehler.at>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Brian Norris <briannorris@chromium.org>,
-        Chris Morgan <macromorgan@hotmail.com>,
-        Christian Lamparter <chunkeey@gmail.com>,
-        Chuanhong Guo <gch981213@gmail.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Daniel Palmer <daniel@0x0f.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), Florian Fainelli <f.fainelli@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
-        Jean Delvare <jdelvare@suse.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Li Chen <lchen@ambarella.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
-        (AARCH64 ARCHITECTURE)),
-        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-        linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-        linux-gpio@vger.kernel.org (open list:PIN CONTROL SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list),
-        linux-mtd@lists.infradead.org (open list:MEMORY TECHNOLOGY DEVICES
-        (MTD)), linux-serial@vger.kernel.org (open list:SERIAL DRIVERS),
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Rickard x Andersson <rickaran@axis.com>,
-        Rob Herring <robh@kernel.org>,
-        Roger Quadros <rogerq@kernel.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sven Peter <sven@svenpeter.dev>,
-        Yinbo Zhu <zhuyinbo@loongson.cn>
-Subject: [PATCH 00/15] Ambarella S6LM SoC bring-up
-Date:   Mon, 23 Jan 2023 15:32:15 +0800
-Message-Id: <20230123073305.149940-1-lchen@ambarella.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S231617AbjAWIBP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Jan 2023 03:01:15 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D53431CAE0
+        for <linux-clk@vger.kernel.org>; Mon, 23 Jan 2023 00:01:06 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id f19-20020a1c6a13000000b003db0ef4dedcso9941655wmc.4
+        for <linux-clk@vger.kernel.org>; Mon, 23 Jan 2023 00:01:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xgwS1wLKSY/UzsprCjGjz1jf0uYNHHiqTORdSq4h/xs=;
+        b=IsuNxvgMqdlvZT3QGtWGnsuF4PY7RvVV499fHpcNx5aM1X7MZ0k5cdDgw9zZlzWR+K
+         jVBQpgYP3Fc9W2dLwiUaBZ6UtY7KFBBnDxLMgIYDTHjmE3DBU4MUHgpYeGz47sPIKgcP
+         ie+HLMFvjEUpDyYg93WbT5hA6/dT3wXGM76PuYvn+8nNnWc4XMsUvtaQcaUADycAIx3O
+         CDnxYR6rYgFdUMJG5xFsPQo0ip2+vfQlBEuTTC+DQQ4BUriARJgmKA/mChWnpSGNGMDL
+         EqZD71AB8iDeXKTuZ8JSRMn8nIFo7G1bdrtKehwNJ5huWinE3Pld4T+buE8UIlEcSlt9
+         7GJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xgwS1wLKSY/UzsprCjGjz1jf0uYNHHiqTORdSq4h/xs=;
+        b=2/jeGLHE2Xb9huKqtwnYHFPP5xXgs6cYhJj+qvYxY30GXa7MZVsnK0WgV7/X/fAKLv
+         oBTOeeFv4PLF+SC7pDLzy9qHcVIb2gnCeXWLLd12tBkhJyTQljY6cySzZ8RiDElZyuLk
+         k233K+qV3jkc0d1MzNLhmPuyH9mp9jjIQQIeRgH3D6GszV4D7EMt8XLkbU5tjlFQOPXy
+         KHQS/BagFcKnJTV6RzBbh1cEuqdQ3gVHnMvp65g+YaSigRcZmlVYVB5lmNHp0SPwZNyG
+         tkp2nXVmrj2em052OqqrAx7IQbfb44uYmulZv+CD10T7LmkDyC/dSnfTv4xuMyolxr+P
+         dYMA==
+X-Gm-Message-State: AFqh2kq2D9KL1UuXDwWGY6Nmxzy7VtcEZgR8LGzB6fiHCSC7q1pGU/f/
+        Lnv2OCdAdk0O6/MBtKoLUAB9/A==
+X-Google-Smtp-Source: AMrXdXtBxcsmF6l5HL2ODsqVwfRUK9XbGKORvubwbbLb1eDRMhP295OnmpH8GomgMdPsglnkk0Vr8w==
+X-Received: by 2002:a05:600c:1d0b:b0:3db:88f:996d with SMTP id l11-20020a05600c1d0b00b003db088f996dmr22170395wms.36.1674460865387;
+        Mon, 23 Jan 2023 00:01:05 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id c14-20020adfa30e000000b002be50604c81sm8386152wrb.47.2023.01.23.00.01.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Jan 2023 00:01:04 -0800 (PST)
+Message-ID: <0c06bfb5-c0b7-c3eb-4c99-8e77280a942c@linaro.org>
+Date:   Mon, 23 Jan 2023 09:01:02 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
-To:     unlisted-recipients:; (no To-header on input)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [RESEND v5 0/6] Add resets for ADSP based audio clock controller
+ driver
+Content-Language: en-US
+To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
+        swboyd@chromium.org, agross@kernel.org, andersson@kernel.org,
+        robh+dt@kernel.org, broonie@kernel.org, quic_plai@quicinc.com,
+        krzysztof.kozlowski+dt@linaro.org, konrad.dybcio@somainline.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com
+References: <1674322340-25882-1-git-send-email-quic_srivasam@quicinc.com>
+ <030115dd-f489-5d4e-c993-e9fa8b550f04@linaro.org>
+ <43bea488-7a71-aec3-508c-6a541d5db508@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <43bea488-7a71-aec3-508c-6a541d5db508@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series brings up initial support for the Ambarella S6LM
-SoC.
+On 23/01/2023 06:13, Srinivasa Rao Mandadapu wrote:
+> 
+> On 1/22/2023 7:21 PM, Krzysztof Kozlowski wrote:
+> Thanks for Your time Krzysztof!!!
+>> On 21/01/2023 18:32, Srinivasa Rao Mandadapu wrote:
+>>> Add resets and remove qdsp6ss clcok controller for audioreach based platforms.
+>>>
+>>> Changes since v4:
+>>>      -- Update Fixes tag in Merge lpasscc into lpass_aon patch.
+>>>      -- Revert removal of clk_regmap structure in Merge lpasscc into lpass_aon patch.
+>>>
+>> Your v5 before resend have build issues. Please fix.
+> 
+> In v5, one commit missed to amend local changes.Hence resent it.
+> 
+> on Resent patch series no build issues.
 
-The following features are supported in this initial port:
+Resend means you send the same patches. If you change patches, it's not
+resend but new version.
 
-- UART with console support
-- Pinctrl with GPIO controller
-- Nand flash controller
-- Devicetree
-
-Li Chen (15):
-  debugfs: allow to use regmap for print regs
-  dt-bindings: vendor-prefixes: add Ambarella prefix
-  dt-bindings: arm: ambarella: Add binding for Ambarella ARM platforms
-  dt-bindings: arm: add support for Ambarella SoC
-  arm64: Kconfig: Introduce CONFIG_ARCH_AMBARELLA
-  soc: add Ambarella driver
-  dt-bindings: clock: Add Ambarella clock bindings
-  clk: add support for Ambarella clocks
-  dt-bindings: serial: add support for Ambarella
-  serial: ambarella: add support for Ambarella uart_port
-  dt-bindings: mtd: Add binding for Ambarella
-  mtd: nand: add Ambarella nand support
-  dt-bindings: pinctrl: add support for Ambarella
-  pinctrl: Add pinctrl/GPIO for Ambarella SoCs
-  arm64: dts: ambarella: introduce Ambarella s6lm SoC
-
- .../devicetree/bindings/arm/ambarella.yaml    |   22 +
- .../arm/ambarella/ambarella,cpuid.yaml        |   24 +
- .../bindings/arm/ambarella/ambarella,rct.yaml |   24 +
- .../arm/ambarella/ambarella,scratchpad.yaml   |   24 +
- .../bindings/arm/ambarella/ambarella.yaml     |   22 +
- .../clock/ambarella,composite-clock.yaml      |   52 +
- .../bindings/clock/ambarella,pll-clock.yaml   |   59 +
- .../bindings/mtd/ambarella,nand.yaml          |   77 +
- .../bindings/pinctrl/ambarella,pinctrl.yaml   |  160 ++
- .../bindings/serial/ambarella_uart.yaml       |   57 +
- .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
- Documentation/filesystems/debugfs.rst         |    2 +
- MAINTAINERS                                   |   29 +
- arch/arm64/Kconfig.platforms                  |    9 +
- .../boot/dts/ambarella/ambarella-s6lm.dtsi    |  332 ++++
- .../boot/dts/ambarella/s6lm_pineapple.dts     |   29 +
- drivers/clk/Makefile                          |    1 +
- drivers/clk/ambarella/Makefile                |    5 +
- drivers/clk/ambarella/clk-composite.c         |  293 +++
- drivers/clk/ambarella/clk-pll-common.c        |  308 ++++
- drivers/clk/ambarella/clk-pll-common.h        |   96 +
- drivers/clk/ambarella/clk-pll-normal.c        |  328 ++++
- drivers/mtd/nand/raw/Kconfig                  |    8 +
- drivers/mtd/nand/raw/Makefile                 |    1 +
- drivers/mtd/nand/raw/ambarella_combo_nand.c   | 1519 ++++++++++++++++
- drivers/mtd/nand/raw/ambarella_combo_nand.h   |  370 ++++
- drivers/mtd/nand/raw/nand_ids.c               |    4 +
- drivers/pinctrl/Kconfig                       |    6 +
- drivers/pinctrl/Makefile                      |    1 +
- drivers/pinctrl/pinctrl-ambarella.c           | 1357 ++++++++++++++
- drivers/soc/Makefile                          |    1 +
- drivers/soc/ambarella/Makefile                |    3 +
- drivers/soc/ambarella/soc.c                   |  136 ++
- drivers/tty/serial/Kconfig                    |   16 +
- drivers/tty/serial/Makefile                   |    1 +
- drivers/tty/serial/ambarella_uart.c           | 1581 +++++++++++++++++
- drivers/tty/serial/ambarella_uart.h           |  120 ++
- fs/debugfs/file.c                             |   43 +-
- include/linux/debugfs.h                       |   11 +
- include/soc/ambarella/misc.h                  |   17 +
- 40 files changed, 7149 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/arm/ambarella.yaml
- create mode 100644 Documentation/devicetree/bindings/arm/ambarella/ambarella,cpuid.yaml
- create mode 100644 Documentation/devicetree/bindings/arm/ambarella/ambarella,rct.yaml
- create mode 100644 Documentation/devicetree/bindings/arm/ambarella/ambarella,scratchpad.yaml
- create mode 100644 Documentation/devicetree/bindings/arm/ambarella/ambarella.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/ambarella,composite-clock.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/ambarella,pll-clock.yaml
- create mode 100644 Documentation/devicetree/bindings/mtd/ambarella,nand.yaml
- create mode 100644 Documentation/devicetree/bindings/pinctrl/ambarella,pinctrl.yaml
- create mode 100644 Documentation/devicetree/bindings/serial/ambarella_uart.yaml
- create mode 100644 arch/arm64/boot/dts/ambarella/ambarella-s6lm.dtsi
- create mode 100644 arch/arm64/boot/dts/ambarella/s6lm_pineapple.dts
- create mode 100644 drivers/clk/ambarella/Makefile
- create mode 100644 drivers/clk/ambarella/clk-composite.c
- create mode 100644 drivers/clk/ambarella/clk-pll-common.c
- create mode 100644 drivers/clk/ambarella/clk-pll-common.h
- create mode 100644 drivers/clk/ambarella/clk-pll-normal.c
- create mode 100644 drivers/mtd/nand/raw/ambarella_combo_nand.c
- create mode 100644 drivers/mtd/nand/raw/ambarella_combo_nand.h
- create mode 100644 drivers/pinctrl/pinctrl-ambarella.c
- create mode 100644 drivers/soc/ambarella/Makefile
- create mode 100644 drivers/soc/ambarella/soc.c
- create mode 100644 drivers/tty/serial/ambarella_uart.c
- create mode 100644 drivers/tty/serial/ambarella_uart.h
- create mode 100644 include/soc/ambarella/misc.h
-
--- 
-2.34.1
+Best regards,
+Krzysztof
 
