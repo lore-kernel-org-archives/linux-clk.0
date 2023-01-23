@@ -2,103 +2,105 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C00C05027
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Jan 2023 14:12:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 958DDC38142
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Jan 2023 16:51:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232225AbjAWOMy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Jan 2023 09:12:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32896 "EHLO
+        id S231866AbjAWQvL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Jan 2023 11:51:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232228AbjAWOMv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Jan 2023 09:12:51 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 693D2EFA0
-        for <linux-clk@vger.kernel.org>; Mon, 23 Jan 2023 06:12:49 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id m5-20020a05600c4f4500b003db03b2559eso8645658wmq.5
-        for <linux-clk@vger.kernel.org>; Mon, 23 Jan 2023 06:12:49 -0800 (PST)
+        with ESMTP id S231480AbjAWQvK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Jan 2023 11:51:10 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A6032CFD4
+        for <linux-clk@vger.kernel.org>; Mon, 23 Jan 2023 08:51:03 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id y11so15235018edd.6
+        for <linux-clk@vger.kernel.org>; Mon, 23 Jan 2023 08:51:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:message-id:date:subject:cc:to:from:user-agent:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=G39hMZwAB1I+MR/8X+9Z84y3g7mvJ1HkDca7b+0MgBY=;
-        b=qs9sdYaR4ERMkJB5aqIe9MBCuNbnYUAfb1Yixdfj8kTvjCnWZ3IKRI5VbcVMbGF42n
-         cQ3beP3HZYC4U0GeQ7aubljNohHnoSbv3KY+KtA0IjgACaqwQbKqBm6/2cmOuaWDeazM
-         +9AtDaibIv5xKL8R4NmZxS5x4t6n7rWU1ax47FLHTvQnL3vupn1+iKaZB7i0vBXJQom9
-         vr9T/mZPzA9MJ3AEOgYNzpDjNgH+etjY9Db9zhxkYJ0uLyCL+WWN+YTzIlXt/HhYFAZL
-         xKjFxGa/u2Dqmvs0/lJpdunVkVbMx1hEKt74+2bVAT8eWSNWmiOXxz+/jJnI95WGd1oi
-         bygg==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fFIft8S32BmFZKXY5TvNYqQs4sV2+M7z/vCsuLNDIQE=;
+        b=pM4MCpPZ58vBoPT5SaN7QWcijJhXPym6TiFxQeHTPGWJ7oVF6196AL0E2oFMBnTBWv
+         UEABa6ZOXpI3n4hhk2g9xHy424c10v73x30XC3JTnQHYxVQ0a9NEKgPahnWVs2Jajq3q
+         uPokLboxZrVWSzy1if8wyka+clN99G4TBYhYrEtPfRDVRKuYBzjpkgfAY1CAhkue3mdQ
+         5AtyGSvtvc9h38hQOoTooh42TFAwHD44LGcbs6zwf1AigZDs0tErfJ256nEwxFX83RLW
+         SHy4LtYUw+bOmgM4rRAzQwPY/y0++X4epXLza3zzaSFWEXGDx8XEeLNcNz2ltecfaNYt
+         8qLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=mime-version:message-id:date:subject:cc:to:from:user-agent
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G39hMZwAB1I+MR/8X+9Z84y3g7mvJ1HkDca7b+0MgBY=;
-        b=HFUwKHUJqgfImUHB+JVsumjl7B/J+p5y0sLSb802b1pzupAYvpyr5KefCfCeB2zu8d
-         EkBpVwl+Y7n170/n56Id1J/XEPorvB4RN6VzuKjhT9N62qPx7cutGP7DiVNl8mzD7rmg
-         Ht3vVnBT2PY/TSwWr09dGnJ+HFZThFsn4/OREch3TjAg/Hp5tgkgFGfpZ4JZANDWOCek
-         NdF8a2jDG9d401CUHMcBEgApn0zk7XjYwtW+04E9z6JOfDObT29UOfd4/NhnkoQRDo2C
-         I7M2UbhSI5SoK/hus/eGp8Ah716GwsIL0JhLylFfBHr+uxYjD3Qh0cfb2oanpC7iZgAB
-         bVSA==
-X-Gm-Message-State: AFqh2kq0GQFvNv0OB/66nWWxeD+cxPA/ap9RqV5LBR4iHSA+N3wE8C8C
-        NeUc8wKaswY4SIOixgvngwy/oJkw9x/HuCQe
-X-Google-Smtp-Source: AMrXdXv1uE+sN8GzZzkRGNz23hn8wPOXeFZa/hgo08zkWMCB2qtrhOLUKZIsAQYlItJJC9lmsX6n7A==
-X-Received: by 2002:a05:600c:3b84:b0:3da:fd7c:98b3 with SMTP id n4-20020a05600c3b8400b003dafd7c98b3mr23942841wms.25.1674483167939;
-        Mon, 23 Jan 2023 06:12:47 -0800 (PST)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id e12-20020adffd0c000000b002bf95821372sm6614471wrr.42.2023.01.23.06.12.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jan 2023 06:12:47 -0800 (PST)
-User-agent: mu4e 1.8.10; emacs 28.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        linux-amlogic <linux-amlogic-bounces@lists.infradead.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@linaro.org>
-Subject: [GIT PULL]: clk: meson: amlogic clock updates for v6.3
-Date:   Mon, 23 Jan 2023 15:07:11 +0100
-Message-ID: <1jmt69nxup.fsf@starbuckisacylon.baylibre.com>
+        bh=fFIft8S32BmFZKXY5TvNYqQs4sV2+M7z/vCsuLNDIQE=;
+        b=sZWC3X76muLNIs/scY9zgbU5twB7NkcD2MURO6h41uoGhNNQW5/gkuXtYTPkGuNH9z
+         3eEHGqZ6MVWY19J5a6hQkWnoE76sa5+BPgi67dHTZ0PP6LaZy3OPv6VU7pUyfgdHHbOT
+         PwGbQx0Hdks2LZHfd6eh5FSe1Xytexmm2gE3p2fDJ+phPIUevTk95iht4RhBxuI6080Y
+         +ahmbk9HIcUkoI1VdFJXbaYjjDeCXD+SnpvLLfGPxZykqipWpNCU+9hCPtVmnG6CcwET
+         WSjtKgWmCWeNOR1B9Pckq/X7s4p7IGVQsH0N/zaErosN7NGM4Uyr/JdiLeXR0aPSmZKw
+         jjDg==
+X-Gm-Message-State: AFqh2kqBdyw59oo1Zr3ByTpntSKGPUlRK0uGvFSvqQHGNg1GIc05zBWO
+        R6aOGPoSDi+7xaI4X8prm4jNdQ==
+X-Google-Smtp-Source: AMrXdXv5E+oOzXqjXTpRxirJ47TSsNWS2CN2ScOVvs+G5nw1KdES0FIdpKuXaVeAJyIRrcFsuq3e4w==
+X-Received: by 2002:aa7:c393:0:b0:49e:6887:9f88 with SMTP id k19-20020aa7c393000000b0049e68879f88mr17844573edq.29.1674492661547;
+        Mon, 23 Jan 2023 08:51:01 -0800 (PST)
+Received: from [192.168.1.101] (abxi24.neoplus.adsl.tpnet.pl. [83.9.2.24])
+        by smtp.gmail.com with ESMTPSA id r25-20020a50aad9000000b0049f29a7c0d6sm80220edc.34.2023.01.23.08.51.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Jan 2023 08:51:01 -0800 (PST)
+Message-ID: <22746282-3029-8451-bd3d-9aacc4112eb7@linaro.org>
+Date:   Mon, 23 Jan 2023 17:50:59 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH v4 1/3] clk: qcom: smd: Add XO RPM clocks for
+ MSM8226/MSM8974
+Content-Language: en-US
+To:     Rayyan Ansari <rayyan@ansari.sh>, linux-arm-msm@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+References: <20230121192540.9177-1-rayyan@ansari.sh>
+ <20230121192540.9177-2-rayyan@ansari.sh>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230121192540.9177-2-rayyan@ansari.sh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-Hi Stephen,
 
-Here are the amlogic clock updates for v6.3.
-Please pull.
+On 21.01.2023 20:25, Rayyan Ansari wrote:
+> Add the XO and XO_A clocks to the MSM8974 clock list, which is also
+> used on MSM8226.
+> 
+> Signed-off-by: Rayyan Ansari <rayyan@ansari.sh>
+> ---
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Cheers
-Jerome
-
-The following changes since commit 1b929c02afd37871d5afb9d498426f83432e71c2:
-
-  Linux 6.2-rc1 (2022-12-25 13:41:39 -0800)
-
-are available in the Git repository at:
-
-  https://github.com/BayLibre/clk-meson.git tags/clk-meson-v6.3-1
-
-for you to fetch changes up to 716592fdb5e255a1b9dcb444822c9c1f9a1e248c:
-
-  clk: meson: clk-cpu-dyndiv: switch from .round_rate to .determine_rate (2023-01-13 15:14:12 +0100)
-
-----------------------------------------------------------------
-Amlogic clock updates for v6.3
-
-* Use .determine_rate() instead of .round_rate() for the dualdiv, mpll,
-  sclk-div and cpu-dyn-div amlogic clock drivers.
-
-----------------------------------------------------------------
-Martin Blumenstingl (4):
-      clk: meson: mpll: Switch from .round_rate to .determine_rate
-      clk: meson: dualdiv: switch from .round_rate to .determine_rate
-      clk: meson: sclk-div: switch from .round_rate to .determine_rate
-      clk: meson: clk-cpu-dyndiv: switch from .round_rate to .determine_rate
-
- drivers/clk/meson/clk-cpu-dyndiv.c |  9 ++++-----
- drivers/clk/meson/clk-dualdiv.c    | 21 +++++++++++++--------
- drivers/clk/meson/clk-mpll.c       | 20 +++++++++++++-------
- drivers/clk/meson/sclk-div.c       | 11 ++++++-----
- 4 files changed, 36 insertions(+), 25 deletions(-)
+Konrad
+>  drivers/clk/qcom/clk-smd-rpm.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+> index 6f23ca4828f4..31f6de13d156 100644
+> --- a/drivers/clk/qcom/clk-smd-rpm.c
+> +++ b/drivers/clk/qcom/clk-smd-rpm.c
+> @@ -610,6 +610,8 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8936 = {
+>  };
+>  
+>  static struct clk_smd_rpm *msm8974_clks[] = {
+> +	[RPM_SMD_XO_CLK_SRC]		= &clk_smd_rpm_branch_bi_tcxo,
+> +	[RPM_SMD_XO_A_CLK_SRC]		= &clk_smd_rpm_branch_bi_tcxo_a,
+>  	[RPM_SMD_PNOC_CLK]		= &clk_smd_rpm_bus_0_pcnoc_clk,
+>  	[RPM_SMD_PNOC_A_CLK]		= &clk_smd_rpm_bus_0_pcnoc_a_clk,
+>  	[RPM_SMD_SNOC_CLK]		= &clk_smd_rpm_bus_1_snoc_clk,
