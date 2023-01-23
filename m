@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 958DDC38142
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Jan 2023 16:51:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9201C05027
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Jan 2023 16:54:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231866AbjAWQvL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Jan 2023 11:51:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56748 "EHLO
+        id S232404AbjAWQyf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Jan 2023 11:54:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231480AbjAWQvK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Jan 2023 11:51:10 -0500
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A6032CFD4
-        for <linux-clk@vger.kernel.org>; Mon, 23 Jan 2023 08:51:03 -0800 (PST)
-Received: by mail-ed1-x533.google.com with SMTP id y11so15235018edd.6
-        for <linux-clk@vger.kernel.org>; Mon, 23 Jan 2023 08:51:02 -0800 (PST)
+        with ESMTP id S232250AbjAWQye (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Jan 2023 11:54:34 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3A7B26842
+        for <linux-clk@vger.kernel.org>; Mon, 23 Jan 2023 08:54:27 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id u19so32160308ejm.8
+        for <linux-clk@vger.kernel.org>; Mon, 23 Jan 2023 08:54:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=fFIft8S32BmFZKXY5TvNYqQs4sV2+M7z/vCsuLNDIQE=;
-        b=pM4MCpPZ58vBoPT5SaN7QWcijJhXPym6TiFxQeHTPGWJ7oVF6196AL0E2oFMBnTBWv
-         UEABa6ZOXpI3n4hhk2g9xHy424c10v73x30XC3JTnQHYxVQ0a9NEKgPahnWVs2Jajq3q
-         uPokLboxZrVWSzy1if8wyka+clN99G4TBYhYrEtPfRDVRKuYBzjpkgfAY1CAhkue3mdQ
-         5AtyGSvtvc9h38hQOoTooh42TFAwHD44LGcbs6zwf1AigZDs0tErfJ256nEwxFX83RLW
-         SHy4LtYUw+bOmgM4rRAzQwPY/y0++X4epXLza3zzaSFWEXGDx8XEeLNcNz2ltecfaNYt
-         8qLA==
+        bh=TyX82vPOIRaw0yggTWaq/3Oo2qgrAU1QHXC12/h8UuM=;
+        b=LamCiot5hB6BVO5B1VXZ5MS0c/JvLaOjLQeDSVNpskuf5oBQbDVS7E8ozhg6rq13Fy
+         TBkI/vGgUU98w+PV2UxC0ZbEmNW5HDeQqrpxbXp/wh32gaAjlT96qS+kIXRoE7NglTNA
+         xssya8cfnCmCwMFY3pTYVu7L93hXoY/OUeECTaYDp3/KGqrahgfXMMy3cPbQxmWHtYze
+         T7IrPOAYSPgmoHePiJFwtGEtuMgbylwza27fswd5Jinyi55bA6HESkYtc6kxNfg7M3jK
+         LHM0+e04BONm4Lgxw1Dlel/EhZ+CPQAt7Az3+xFFQwIxCTDFGIU+qkJxy2ZbEttRlGGV
+         cOXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fFIft8S32BmFZKXY5TvNYqQs4sV2+M7z/vCsuLNDIQE=;
-        b=sZWC3X76muLNIs/scY9zgbU5twB7NkcD2MURO6h41uoGhNNQW5/gkuXtYTPkGuNH9z
-         3eEHGqZ6MVWY19J5a6hQkWnoE76sa5+BPgi67dHTZ0PP6LaZy3OPv6VU7pUyfgdHHbOT
-         PwGbQx0Hdks2LZHfd6eh5FSe1Xytexmm2gE3p2fDJ+phPIUevTk95iht4RhBxuI6080Y
-         +ahmbk9HIcUkoI1VdFJXbaYjjDeCXD+SnpvLLfGPxZykqipWpNCU+9hCPtVmnG6CcwET
-         WSjtKgWmCWeNOR1B9Pckq/X7s4p7IGVQsH0N/zaErosN7NGM4Uyr/JdiLeXR0aPSmZKw
-         jjDg==
-X-Gm-Message-State: AFqh2kqBdyw59oo1Zr3ByTpntSKGPUlRK0uGvFSvqQHGNg1GIc05zBWO
-        R6aOGPoSDi+7xaI4X8prm4jNdQ==
-X-Google-Smtp-Source: AMrXdXv5E+oOzXqjXTpRxirJ47TSsNWS2CN2ScOVvs+G5nw1KdES0FIdpKuXaVeAJyIRrcFsuq3e4w==
-X-Received: by 2002:aa7:c393:0:b0:49e:6887:9f88 with SMTP id k19-20020aa7c393000000b0049e68879f88mr17844573edq.29.1674492661547;
-        Mon, 23 Jan 2023 08:51:01 -0800 (PST)
+        bh=TyX82vPOIRaw0yggTWaq/3Oo2qgrAU1QHXC12/h8UuM=;
+        b=zPDYWUsKMz23ccAwpdzvjqZ7nWpR6BGWyxq8H25ulh3lTVJ6ssKEU+WXj51M+upoGg
+         Qeh7T7qNqXHBtsbDWzP0umV8qFmBrOPkvC8UWaX0HKjAYDVKiPYUHjaQtTJaXQiqVe3T
+         BIFEr5tG9K1oyBmvBTV7fgsoH6NSuvBf9E5myLY+BuPn1NxLWq6n56r/7IqVkqVaZnVw
+         Q7ZQc5N4ronN42NbgBSz+YuG+YxEw/ani5dIAV6rfna5yLz6Rvt3VMn5ZQM8QVWU8YQ7
+         CxSmaBahR06BpxTT8XAv8Z2KXHFypf/5gEtkVFl9v1o/+f+qRKmqy9XFqN46TqEa/9Mj
+         vaeg==
+X-Gm-Message-State: AFqh2koxHfM7cjuCDXnk/xC2+F5/+HKToJF0swfLWLH5NZ3XJ8Y5ihFR
+        b5xRSKSJWFc+B1WUJtk+4y9MqA==
+X-Google-Smtp-Source: AMrXdXuat4el3JVkyiVnp3ON/Xi7vGPmjkA5PhNHDy0zakGSNqull5jgcyTzrbtHPeYocp+lLOIL2w==
+X-Received: by 2002:a17:906:80d:b0:870:d15a:c2e0 with SMTP id e13-20020a170906080d00b00870d15ac2e0mr26386260ejd.51.1674492866576;
+        Mon, 23 Jan 2023 08:54:26 -0800 (PST)
 Received: from [192.168.1.101] (abxi24.neoplus.adsl.tpnet.pl. [83.9.2.24])
-        by smtp.gmail.com with ESMTPSA id r25-20020a50aad9000000b0049f29a7c0d6sm80220edc.34.2023.01.23.08.51.00
+        by smtp.gmail.com with ESMTPSA id 10-20020a170906210a00b007c0f2d051f4sm22219862ejt.203.2023.01.23.08.54.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jan 2023 08:51:01 -0800 (PST)
-Message-ID: <22746282-3029-8451-bd3d-9aacc4112eb7@linaro.org>
-Date:   Mon, 23 Jan 2023 17:50:59 +0100
+        Mon, 23 Jan 2023 08:54:26 -0800 (PST)
+Message-ID: <5ed7735c-5160-e6e4-6558-d21a269fbe64@linaro.org>
+Date:   Mon, 23 Jan 2023 17:54:24 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.0
-Subject: Re: [PATCH v4 1/3] clk: qcom: smd: Add XO RPM clocks for
- MSM8226/MSM8974
+Subject: Re: [PATCH v4 2/3] ARM: dts: qcom: msm8226: add clocks and
+ clock-names to GCC node
 Content-Language: en-US
 To:     Rayyan Ansari <rayyan@ansari.sh>, linux-arm-msm@vger.kernel.org
 Cc:     ~postmarketos/upstreaming@lists.sr.ht,
@@ -68,9 +68,9 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>
 References: <20230121192540.9177-1-rayyan@ansari.sh>
- <20230121192540.9177-2-rayyan@ansari.sh>
+ <20230121192540.9177-3-rayyan@ansari.sh>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230121192540.9177-2-rayyan@ansari.sh>
+In-Reply-To: <20230121192540.9177-3-rayyan@ansari.sh>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -80,27 +80,37 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 21.01.2023 20:25, Rayyan Ansari wrote:
-> Add the XO and XO_A clocks to the MSM8974 clock list, which is also
-> used on MSM8226.
+> Add the XO and Sleep Clock sources to the GCC node on MSM8226.
 > 
 > Signed-off-by: Rayyan Ansari <rayyan@ansari.sh>
 > ---
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
 Konrad
->  drivers/clk/qcom/clk-smd-rpm.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  arch/arm/boot/dts/qcom-msm8226.dtsi | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-> index 6f23ca4828f4..31f6de13d156 100644
-> --- a/drivers/clk/qcom/clk-smd-rpm.c
-> +++ b/drivers/clk/qcom/clk-smd-rpm.c
-> @@ -610,6 +610,8 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8936 = {
->  };
+> diff --git a/arch/arm/boot/dts/qcom-msm8226.dtsi b/arch/arm/boot/dts/qcom-msm8226.dtsi
+> index c373081bc21b..42acb9ddb8cc 100644
+> --- a/arch/arm/boot/dts/qcom-msm8226.dtsi
+> +++ b/arch/arm/boot/dts/qcom-msm8226.dtsi
+> @@ -8,6 +8,7 @@
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/clock/qcom,gcc-msm8974.h>
+>  #include <dt-bindings/clock/qcom,mmcc-msm8974.h>
+> +#include <dt-bindings/clock/qcom,rpmcc.h>
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/power/qcom-rpmpd.h>
+>  #include <dt-bindings/reset/qcom,gcc-msm8974.h>
+> @@ -377,6 +378,11 @@ gcc: clock-controller@fc400000 {
+>  			#clock-cells = <1>;
+>  			#reset-cells = <1>;
+>  			#power-domain-cells = <1>;
+> +
+> +			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
+> +				 <&sleep_clk>;
+> +			clock-names = "xo",
+> +				      "sleep_clk";
+>  		};
 >  
->  static struct clk_smd_rpm *msm8974_clks[] = {
-> +	[RPM_SMD_XO_CLK_SRC]		= &clk_smd_rpm_branch_bi_tcxo,
-> +	[RPM_SMD_XO_A_CLK_SRC]		= &clk_smd_rpm_branch_bi_tcxo_a,
->  	[RPM_SMD_PNOC_CLK]		= &clk_smd_rpm_bus_0_pcnoc_clk,
->  	[RPM_SMD_PNOC_A_CLK]		= &clk_smd_rpm_bus_0_pcnoc_a_clk,
->  	[RPM_SMD_SNOC_CLK]		= &clk_smd_rpm_bus_1_snoc_clk,
+>  		mmcc: clock-controller@fd8c0000 {
