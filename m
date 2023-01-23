@@ -2,98 +2,96 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB3DC54E94
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Jan 2023 12:32:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09566C38142
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Jan 2023 12:45:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231500AbjAWMcZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Jan 2023 07:32:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36036 "EHLO
+        id S231811AbjAWMpY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Jan 2023 07:45:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231522AbjAWMcY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Jan 2023 07:32:24 -0500
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C040D23103
-        for <linux-clk@vger.kernel.org>; Mon, 23 Jan 2023 04:32:11 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id kt14so30070137ejc.3
-        for <linux-clk@vger.kernel.org>; Mon, 23 Jan 2023 04:32:11 -0800 (PST)
+        with ESMTP id S231779AbjAWMpO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Jan 2023 07:45:14 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 857CC23C43
+        for <linux-clk@vger.kernel.org>; Mon, 23 Jan 2023 04:45:09 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id j17so8937601wms.0
+        for <linux-clk@vger.kernel.org>; Mon, 23 Jan 2023 04:45:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=JhlWhWaOLNECTGnOtfz6hWGWOG04+uarKG5fVZLNacI=;
-        b=xK4LAYkcnzT8hETQXr9hajRkyRACRzaJ0hTK6+SiYDXqHy5ivDHvMIXow8OwrzwWfQ
-         bWwS18Z2i/RvqOgojoZmJYZ4dK0lFMtKdfaYQTKrvC/faLzzri6aYphMEVk3X3e8OFml
-         LwS0zpbMZSPutYoTdRmI16BoatrC/yv9SZ5AcnKyb8guDl6CsEjasJjJ9WZRhMduGSf7
-         I7XNPaBOsHCq35zsAKfJDpKe7heKONkefomlp2Y6ymdYOIClOqzz4iFCHTjuP9Etazu0
-         ZnUKPc1WmQvYYM874ds8pz9SXaJC4nNeXNDWiA5TOv2TDz8AEAKKm5tJLm5jHylyLGt4
-         F2sg==
+        bh=oo2LtwevuJO23VOS8HqpfBp/blUHr1Rd4r3O8NDnc/w=;
+        b=Q7DVC9HbJXwYwY8CiNUTYudk4g7PiDlEKjDIANm4yn/GvB2iJYeih+XuwTWvJsWVWN
+         0lVwAx0QTOZPny7lmvlwNoPG0Z0FvOvtyE7Xl4+QeqdIwPAqwAWFW86EzaxdyDSmZ8xg
+         1u11mu8MuJwgvX9AFkSTzKmsRX4S2AhvAHf1RFGghNsNCh7d7suzVkF4lTdr/Yf9Ktps
+         /IwYn1Wj/z9QODX9H7Vzh/LilZOmYKhkz7IDPJJn+ELrsk3hpkMwZhIvs5QxTlQvcWtt
+         atCfOEmi59i59t9ErkqCH468luGLi7BJs0OnLeY+/+IGc9pbsZp8G1S3gmBTG8tn2BqP
+         QGvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JhlWhWaOLNECTGnOtfz6hWGWOG04+uarKG5fVZLNacI=;
-        b=I+md6GGea7+/gWg6BLK92sAAAORt2POq87Ap0MNF1B/eja/Y1jDsdSiYVr5HEfU6vc
-         X2LhPt4qezoVVw1TFutX01Ho9w/7AcAF/aPU8dEsB1z2ncVG3XDly1nt9Dy44W0lKc8p
-         oyWNgOzf13kFhNmPOtT+laTS+ViiO4BXK7oY9QuCCNEzJaqz1lUOTAamWdc3xfrqVd0y
-         Bib4Ndo4GBtOxWDlefaRTngwG6VJZzJRLBQhV8w63QHIal9Zz84+RUSo+GTXEqI0t3+h
-         qadYgkqaV42Z5VUQvSWUgKMpyskI8FtIHRl3Co8huZVTewsdvQGz2hrnXT6GjHUVnvx6
-         34cA==
-X-Gm-Message-State: AFqh2krXTwJdnC6xhROPF3pac/bmdgWfV5V1wgxYpr4+edDOfpQ8f/K1
-        +Z0qwL9D4OLHwMS2s///GxTNoQ==
-X-Google-Smtp-Source: AMrXdXv/47adF+0iseRFeXB/8zNXlnSKuqPhF9dw5dwzlb2OeZnmTqx2CeHIjiEWMVXww+ibHTTxog==
-X-Received: by 2002:a17:906:150d:b0:7c1:458b:a947 with SMTP id b13-20020a170906150d00b007c1458ba947mr24273622ejd.26.1674477130251;
-        Mon, 23 Jan 2023 04:32:10 -0800 (PST)
-Received: from [192.168.1.101] (abxi24.neoplus.adsl.tpnet.pl. [83.9.2.24])
-        by smtp.gmail.com with ESMTPSA id x11-20020a170906b08b00b0084c62b7b7d8sm22131454ejy.187.2023.01.23.04.32.09
+        bh=oo2LtwevuJO23VOS8HqpfBp/blUHr1Rd4r3O8NDnc/w=;
+        b=40rg2t5zSaMoVfPyl4kMXbchMVF+3BfmZ0ikyFrZieEq+xe7s0xM5EGRDjv5hFx1ck
+         YzfSeKJZxi8sp6w3Ef9tj3Fl/rf+g1jhfhPpGfNxTnOJThYkDJHmOwpMZuNxDQzS0u7U
+         i3D0/QBAeyV1J6PJWkFJFf9AycR6mn1a0i8HIdMViBC3K8pwBeDvcNlCHxHk6achgLVD
+         98G8GunZLJxWfIooTUdfMaObdTXS3Y7N8M5trZ9wabR96Az2qfpLevUoSpqigNsK8l6f
+         wIKbP6IMrnNuzv2VOETGNWy7Xnm7hXkr/6WP3eznTVmTN3TJiwQEOcapQBGubsGmRx09
+         yenQ==
+X-Gm-Message-State: AFqh2kr1QcqAJF/qL1uCdSC6oiXYXRDCoG2kAwpydt6R7IpDpi9YMZaI
+        O3LUyJFNTZTxMuKswzXeIiVQUQ==
+X-Google-Smtp-Source: AMrXdXvjsmkwmlyO4IK8FJN26tyIYSF2z/ep1upJFH/ZQJDcQ6QY6178NhHdNfOTlmlSPSWyE1Gp+A==
+X-Received: by 2002:a05:600c:4f86:b0:3db:15b1:fb28 with SMTP id n6-20020a05600c4f8600b003db15b1fb28mr19945075wmq.19.1674477908092;
+        Mon, 23 Jan 2023 04:45:08 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id o6-20020a05600c378600b003d9fba3c7a4sm10540433wmr.16.2023.01.23.04.45.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jan 2023 04:32:09 -0800 (PST)
-Message-ID: <d1d2fb43-60aa-742d-9839-e64be2a8fb19@linaro.org>
-Date:   Mon, 23 Jan 2023 13:32:08 +0100
+        Mon, 23 Jan 2023 04:45:07 -0800 (PST)
+Message-ID: <0cee46b0-445c-6e9f-3bc3-50a107cbaf4a@linaro.org>
+Date:   Mon, 23 Jan 2023 13:45:06 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.0
-Subject: Re: [PATCH 1/2] clk: qcom: add compile test to MSM8996 CPU clocks
+Subject: Re: [PATCH 2/2] clk: qcom: restrict drivers per ARM/ARM64
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20230123094925.54824-1-krzysztof.kozlowski@linaro.org>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230123094925.54824-1-krzysztof.kozlowski@linaro.org>
+ <20230123094925.54824-2-krzysztof.kozlowski@linaro.org>
+ <9cbbb9c3-f645-0066-a505-35cc7ae087bc@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <9cbbb9c3-f645-0066-a505-35cc7ae087bc@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 23.01.2023 10:49, Krzysztof Kozlowski wrote:
-> Allow compile testing of MSM8996 CPU clocks for build coverage.
+On 23/01/2023 13:31, Konrad Dybcio wrote:
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-
-Konrad
->  drivers/clk/qcom/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 1b6615fe1dba..1c360eed72d7 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -48,7 +48,7 @@ config QCOM_CLK_APCS_MSM8916
->  config QCOM_CLK_APCC_MSM8996
->  	tristate "MSM8996 CPU Clock Controller"
->  	select QCOM_KRYO_L2_ACCESSORS
-> -	depends on ARM64
-> +	depends on ARM64 || COMPILE_TEST
->  	help
->  	  Support for the CPU clock controller on msm8996 devices.
->  	  Say Y if you want to support CPU clock scaling using CPUfreq
+> On 23.01.2023 10:49, Krzysztof Kozlowski wrote:
+>> There is no point to allow selecting pin-controller drivers for Qualcomm
+>> ARMv7 SoCs when building ARM64 kernel, and vice versa.  This makes
+>> kernel configuration more difficult as many do not remember the Qualcomm
+>> SoCs model names/numbers.  There won't be a single image for ARMv7 and
+>> ARMv8/9 SoCs, so no features/options are lost.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+> Not sure about the newest of the newest SoCs with Cortex-X etc,
+> but older ones, particularly including 8916 (as some vendors
+> in their infinite wisdom decided that shipping a 32 bit tz is
+> a good idea) having ARM || ARM64 would make sense.
+
+Why? ARM || ARM64 is implied by ARCH_QCOM, so what would it give?
+
+Best regards,
+Krzysztof
+
