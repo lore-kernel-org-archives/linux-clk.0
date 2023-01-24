@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB90C38142
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Jan 2023 13:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8842EC25B4E
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Jan 2023 14:00:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234137AbjAXNXY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Jan 2023 08:23:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52862 "EHLO
+        id S234286AbjAXOAd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Jan 2023 09:00:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231749AbjAXNXX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Jan 2023 08:23:23 -0500
+        with ESMTP id S234227AbjAXOAd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Jan 2023 09:00:33 -0500
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 152686EA8;
-        Tue, 24 Jan 2023 05:23:21 -0800 (PST)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30OCn9Wa018703;
-        Tue, 24 Jan 2023 13:22:35 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63F4A47406;
+        Tue, 24 Jan 2023 06:00:07 -0800 (PST)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30ODb4Q0018482;
+        Tue, 24 Jan 2023 13:50:34 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=wtz1hdsjqAMLjMNgUJM77dIEL44auyeS5Qpr6iBlyFQ=;
- b=gKYXLUXeq01rknBWPtZAM3whq8Ew0wj15Fg/sj/TZEGNLOdQtpxcHUmEhsdSDtykF/n5
- uiYvR4n1enFGylRlPboGfMykS1GT7ggf4/VPbGvQ8CAGj97hjkKj2Sp0NEGm8brc7aHh
- 0j58ctsqWZXtuW/2RB9EWTNshvuRukx9CKa+jJm0wYiV2RTITJvrqizovYPdYRRl0aWd
- sSa2xPRpT2CzEG20SmQc8wDlz4OWjQpNS4QSJQDvcO7dgFv1E06QcGatQudB1yMqNZlv
- GnSSe2+LOTq3aJg/ytjqnt00Ivs1aTwNL0d7sY/2XXydub15nmuI3RWGO488Qxey1RTK 8g== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n89fm54ny-1
+ bh=okwaZtbgxul5id2YN34B2TCErKO9XRGGDQBgGxukluA=;
+ b=FxpYp+zsg8XoVKGCNG8Sjdprtv9i/pAB4vOYVfGw35gHIkV2FYDBr3q8idT/dMZOlLgC
+ hMVRMeks3uTOxKJSbt0Mx8/152L6PXWjLQjXraMe6M2Ajz8Q0cBcX9/CVGIriXgmD4+w
+ kAcSWOU9WrapbjJnrqooN2X1JBHZoImQqH4rqwCFHMRVDKvJiHZGZIWUAHNAepn72pwX
+ YxIGPd15pGzxzypTNTtB4so4HIuVj96L7AgXz7dS2azge7hscX5zGZ6KGQ+aHTkfx9HC
+ Koq8nEIrTOghv90q4x2qZ0Vx1AXWGztkSKvDLRtXJ+rkEn7YxkLrlx/9PqI+sFV94SxV 2g== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nag3081eg-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 24 Jan 2023 13:22:35 +0000
+        Tue, 24 Jan 2023 13:50:33 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30ODMXos023669
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30ODoWxt002797
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 24 Jan 2023 13:22:33 GMT
+        Tue, 24 Jan 2023 13:50:32 GMT
 Received: from [10.216.24.6] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 24 Jan
- 2023 05:22:24 -0800
-Message-ID: <e9456e31-4608-f933-d636-987c8ec46b42@quicinc.com>
-Date:   Tue, 24 Jan 2023 18:52:20 +0530
+ 2023 05:50:23 -0800
+Message-ID: <7bf1444d-7f57-0ddd-2466-95d396cc92e0@quicinc.com>
+Date:   Tue, 24 Jan 2023 19:20:20 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.2
-Subject: Re: [PATCH 6/7] arm64: dts: Add ipq9574 SoC and AL02 board support
+Subject: Re: [PATCH 2/7] clk: qcom: Add Global Clock Controller driver for
+ IPQ9574
 Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>, <robh+dt@kernel.org>,
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <robh+dt@kernel.org>,
         <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
         <sboyd@kernel.org>, <linus.walleij@linaro.org>,
         <catalin.marinas@arm.com>, <will@kernel.org>,
@@ -63,14 +63,14 @@ CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
         <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
         <quic_poovendh@quicinc.com>
 References: <20230110121316.24892-1-quic_devipriy@quicinc.com>
- <20230110121316.24892-7-quic_devipriy@quicinc.com>
- <f6ef1834-b629-b76c-9cde-55af56320665@linaro.org>
- <7f157b73-f856-04d2-1b39-e1f8861d0439@quicinc.com>
- <84aa79c3-b793-0d0e-d6a5-035aff5a17b4@linaro.org>
- <278a2e6e-69e0-81b0-f476-571edea950ff@quicinc.com>
- <675ed9f7-da31-6206-5089-1db22025ef4b@linaro.org>
+ <20230110121316.24892-3-quic_devipriy@quicinc.com>
+ <de346d71-1fe7-e357-d220-d4468e4bb933@linaro.org>
+ <afd2e5c8-fa5a-ac1f-4ede-4ab1f91c0d0d@quicinc.com>
+ <9bdf757d-1fa0-106f-eb77-7f2a8593213f@linaro.org>
+ <2852fc37-284f-6534-f163-45b37b153db1@quicinc.com>
+ <d73f0eec-6e02-e72f-79d7-2c56245f7651@linaro.org>
 From:   Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <675ed9f7-da31-6206-5089-1db22025ef4b@linaro.org>
+In-Reply-To: <d73f0eec-6e02-e72f-79d7-2c56245f7651@linaro.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.80.80.8]
@@ -78,61 +78,85 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: vy4keUEO0Ynvxsmw7KYejT_JDHYGYqgT
-X-Proofpoint-GUID: vy4keUEO0Ynvxsmw7KYejT_JDHYGYqgT
+X-Proofpoint-ORIG-GUID: fD48_vaBH9SERyEJvzTi-0AfnXR5fudz
+X-Proofpoint-GUID: fD48_vaBH9SERyEJvzTi-0AfnXR5fudz
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
  definitions=2023-01-23_12,2023-01-24_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- malwarescore=0 bulkscore=0 phishscore=0 lowpriorityscore=0 mlxlogscore=800
- mlxscore=0 priorityscore=1501 adultscore=0 suspectscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
- definitions=main-2301240122
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ suspectscore=0 bulkscore=0 adultscore=0 phishscore=0 lowpriorityscore=0
+ mlxlogscore=999 clxscore=1015 priorityscore=1501 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301240125
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 1/24/2023 3:16 PM, Konrad Dybcio wrote:
+On 1/24/2023 3:23 PM, Konrad Dybcio wrote:
 > 
 > 
-> On 24.01.2023 08:19, Devi Priya wrote:
+> On 24.01.2023 08:27, Devi Priya wrote:
 >>
 >>
->> On 1/13/2023 7:50 PM, Krzysztof Kozlowski wrote:
->>> On 13/01/2023 14:29, Devi Priya wrote:
->>>>>> +
->>>>>> +    soc: soc@0 {
->>>>>> +        #address-cells = <1>;
->>>>>> +        #size-cells = <1>;
->>>>>> +        ranges = <0 0 0 0xffffffff>;
->>>>>> +        compatible = "simple-bus";
->>>>>> +
->>>>>> +        tlmm: pinctrl@1000000 {
->>>>>> +            compatible = "qcom,ipq9574-tlmm";
->>>>>> +            reg = <0x01000000 0x300000>;
->>>>>> +            interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
->>>>>> +            gpio-controller;
->>>>>> +            #gpio-cells = <2>;
->>>>>> +            gpio-ranges = <&tlmm 0 0 65>;
->>>>>> +            gpio-reserved-ranges = <59 1>;
+>> On 1/13/2023 7:39 PM, Konrad Dybcio wrote:
+>>>
+>>>
+>>> On 13.01.2023 14:21, Devi Priya wrote:
+>>>>
+>>>>
+>>>> On 1/10/2023 6:07 PM, Konrad Dybcio wrote:
 >>>>>
->>>>> Hm, why reserved ranges are in SoC?
->>>> As the gpio is forbidden on all ipq9574 boards, we have added it in SoC
+>>>>>
+>>>>> On 10.01.2023 13:13, devi priya wrote:
+>>>>>> Add Global Clock Controller (GCC) driver for ipq9574 based devices
+>>>>>>
+>>>>>> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+>>>>>> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+>>>>>> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+>>>>>> ---
+>>> [...]
 >>>
->>> Why it is forbidden on all boards? I guess it depends on the firmware
->>> and this can differ, can't it?
->>>
->> This GPIO is protected and used by the TZ firmware and is forbidden on all the boards & firmware
-> If it's protected on *all* boards and *all* firmwares (for any
-> good reason that you probably have internally), perhaps it
-> would be better to describe it in the .c driver.. wdyt?
+>>>>>> +static struct clk_branch gcc_blsp1_qup6_i2c_apps_clk = {
+>>>>>> +    .halt_reg = 0x07024,
+>>>>>> +    .clkr = {
+>>>>>> +        .enable_reg = 0x07024,
+>>>>>> +        .enable_mask = BIT(0),
+>>>>>> +        .hw.init = &(struct clk_init_data) {
+>>>>>> +            .name = "gcc_blsp1_qup6_i2c_apps_clk",
+>>>>>> +            .parent_hws = (const struct clk_hw *[]) {
+>>>>>> +                    &blsp1_qup6_i2c_apps_clk_src.clkr.hw },
+>>>>>> +            .num_parents = 1,
+>>>>>> +            .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>>>>> Sounds very much like a hack..
+>>>> Got it, will remove the clock entry as it is not being used in linux
+>>> I'm not sure removing it is the best option, somebody might have a
+>>> funky board where they use this particular QUP for I2C for whatever
+>>> reason and then the clock would have to be re-added..
+>> Sure, Understood
+>> This clock is used by the RPM component to communicate with PMIC and we
+>> would add the critical flag here
+> Okay, so this SoC is intended to ship with some RPM PMICs and
+> *always* with an I2C companion that's required for some basic
+> functionality, correct?
 > 
-Sure, okay. Will add the gpio to reserved_gpios entry in the pinctrl driver
+> Otherwise, if it's just for wifi/multimedia/etc (like PM8008ij
+> on some newer devices), you should not make it critical and
+> simply rely on Linux keeping it alive like so:
+> 
+> consumer takes a regulator
+> the regulator does not go to sleep because it's consumed
+> the PMIC is active because a regulator on it is being used
+> the I2C bus is active because its child PMIC is used
+> the I2C clocks are alive because there's an active user
+> 
+Yes correct, the SoC would always have an I2C companion
 > Konrad
->>> Best regards,
->>> Krzysztof
+>>
+>>> Thanks for addressing all of the review comments so thoroughly!
 >>>
->> Regards,
+>>> Konrad
+>>
+>> Best Regards,
 >> Devi Priya
