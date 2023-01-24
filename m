@@ -2,137 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2453C38142
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Jan 2023 07:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE321C54EAA
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Jan 2023 08:14:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229939AbjAXH2H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Jan 2023 02:28:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53656 "EHLO
+        id S231593AbjAXIOM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Jan 2023 03:14:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229791AbjAXH2H (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Jan 2023 02:28:07 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1175E974C;
-        Mon, 23 Jan 2023 23:28:05 -0800 (PST)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30O7OPln026293;
-        Tue, 24 Jan 2023 07:27:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=KwQ/PtpYUTz+cVdN4b3hZ/Dm5u2vC7+yvEKnwB3nkAA=;
- b=PS6PoZCpSi3B5YUgjUt0VCH2FSsVBbgrEXJLdKMOUew2dgGxjzZae6oGyOg9dsEu9scL
- o/sCPGpSyUYi1dZa5fZhaOEpZxCMj6MNk6pLI0zMQb/iAtcI1pHIduLb/hsOIpMq+149
- +FYBevsmSikxwHlz/qK54206eVkZdDWMAOtwDW70ug+4560bkpXDllnUpEZd7FkJVMaM
- V7xpr4LRpN2DLDBPgSI1dt3pd96cmlk2urXZ+Dym2xvZzT5e0DxouZ5jsoazhCQGv8oP
- 5DzUwm1TAqN41MA4pVHIRyBCPm6qlIaeyp5e+BG0ylMkGO2zpVqITQX0JHqvRnXaRsEG Gw== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n89dncfdg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 24 Jan 2023 07:27:18 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30O7RGuG011025
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 24 Jan 2023 07:27:16 GMT
-Received: from [10.216.24.6] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 23 Jan
- 2023 23:27:07 -0800
-Message-ID: <2852fc37-284f-6534-f163-45b37b153db1@quicinc.com>
-Date:   Tue, 24 Jan 2023 12:57:04 +0530
+        with ESMTP id S229666AbjAXIOI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Jan 2023 03:14:08 -0500
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E74B3EFF4;
+        Tue, 24 Jan 2023 00:13:20 -0800 (PST)
+Received: from booty (unknown [77.244.183.192])
+        (Authenticated sender: luca.ceresoli@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 9DBAA60004;
+        Tue, 24 Jan 2023 08:12:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1674547959;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Am7QwC61FfDMKvryD0YanvfmZ7u+Yfxg+KRfwF9AvJY=;
+        b=gr8LYT0P5FKtDIANqIOHFlYb/X6ChUVG02o/eykUiSIn0oaPiYm2bRN5K5ed4D9vj0+nCI
+        fR7ha3hJsjVlg0/6Qg2vx9IlzFzlieIJSiySi6C4YvLIxLZNZ2sgqCcTRRne0kwyPzTUws
+        q6n90zXVMo7bQxgdTimsD8I3bcenMq4Tpf4bh1caChMuHtKet2yedfZE0HlVVFzBM4pCmy
+        CY5HGzPRK5RGPp+b6zWpgWvDT6XgF3Caof3t+JQN0SXB5X5vKqFJ9D9AJH6Z86PQlXLQsf
+        zf638ESTYpvjJvm8Z+BalyiWapP0SEMx7l3JJOXu7y8QSuaKs9IhtMRQSHH4AA==
+Date:   Tue, 24 Jan 2023 09:12:36 +0100
+From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
+To:     Sean Anderson <sean.anderson@seco.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-reneas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clk: vc5: Make SD/OE pin configuration
+ properties not required
+Message-ID: <20230124091236.1bf8c6da@booty>
+In-Reply-To: <5da02a9b-3d42-a26f-0d18-29a6b5b181e5@seco.com>
+References: <68037ad181991fe0b792f6d003e3e9e538d5ffd7.1673452118.git.geert+renesas@glider.be>
+        <5da02a9b-3d42-a26f-0d18-29a6b5b181e5@seco.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH 2/7] clk: qcom: Add Global Clock Controller driver for
- IPQ9574
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>, <agross@kernel.org>,
-        <andersson@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linus.walleij@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <p.zabel@pengutronix.de>, <shawnguo@kernel.org>, <arnd@arndb.de>,
-        <marcel.ziswiler@toradex.com>, <dmitry.baryshkov@linaro.org>,
-        <nfraprado@collabora.com>, <broonie@kernel.org>,
-        <tdas@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_poovendh@quicinc.com>
-References: <20230110121316.24892-1-quic_devipriy@quicinc.com>
- <20230110121316.24892-3-quic_devipriy@quicinc.com>
- <de346d71-1fe7-e357-d220-d4468e4bb933@linaro.org>
- <afd2e5c8-fa5a-ac1f-4ede-4ab1f91c0d0d@quicinc.com>
- <9bdf757d-1fa0-106f-eb77-7f2a8593213f@linaro.org>
-From:   Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <9bdf757d-1fa0-106f-eb77-7f2a8593213f@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: STEphrwkEN8UcQaS1cFm2yXVFfi5Dkf-
-X-Proofpoint-ORIG-GUID: STEphrwkEN8UcQaS1cFm2yXVFfi5Dkf-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-01-23_12,2023-01-23_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 spamscore=0 phishscore=0 mlxscore=0 bulkscore=0
- malwarescore=0 mlxlogscore=999 suspectscore=0 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301240068
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Sean, Geert,
 
+On Thu, 19 Jan 2023 14:27:43 -0500
+Sean Anderson <sean.anderson@seco.com> wrote:
 
-On 1/13/2023 7:39 PM, Konrad Dybcio wrote:
+> On 1/11/23 10:55, Geert Uytterhoeven wrote:
+> > "make dtbs_check":
+> > 
+> >     arch/arm64/boot/dts/renesas/r8a77951-salvator-xs.dtb: clock-generator@6a: 'idt,shutdown' is a required property
+> > 	    From schema: Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> >     arch/arm64/boot/dts/renesas/r8a77951-salvator-xs.dtb: clock-generator@6a: 'idt,output-enable-active' is a required property
+> > 	    From schema: Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> > 
+> > Versaclock 5 clock generators can have their configuration stored in
+> > One-Time Programmable (OTP) memory.  Hence there is no need to specify
+> > DT properties for manual configuration if the OTP has been programmed
+> > before.  Likewise, the Linux driver does not touch the SD/OE bits if the
+> > corresponding properties are not specified, cfr. commit d83e561d43bc71e5
+> > ("clk: vc5: Add properties for configuring SD/OE behavior").
+> > 
+> > Reflect this in the bindings by making the "idt,shutdown" and
+> > "idt,output-enable-active" properties not required, just like the
+> > various "idt,*" properties in the per-output child nodes.  
 > 
-> 
-> On 13.01.2023 14:21, Devi Priya wrote:
->>
->>
->> On 1/10/2023 6:07 PM, Konrad Dybcio wrote:
->>>
->>>
->>> On 10.01.2023 13:13, devi priya wrote:
->>>> Add Global Clock Controller (GCC) driver for ipq9574 based devices
->>>>
->>>> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
->>>> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
->>>> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
->>>> ---
-> [...]
-> 
->>>> +static struct clk_branch gcc_blsp1_qup6_i2c_apps_clk = {
->>>> +    .halt_reg = 0x07024,
->>>> +    .clkr = {
->>>> +        .enable_reg = 0x07024,
->>>> +        .enable_mask = BIT(0),
->>>> +        .hw.init = &(struct clk_init_data) {
->>>> +            .name = "gcc_blsp1_qup6_i2c_apps_clk",
->>>> +            .parent_hws = (const struct clk_hw *[]) {
->>>> +                    &blsp1_qup6_i2c_apps_clk_src.clkr.hw },
->>>> +            .num_parents = 1,
->>>> +            .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->>> Sounds very much like a hack..
->> Got it, will remove the clock entry as it is not being used in linux
-> I'm not sure removing it is the best option, somebody might have a
-> funky board where they use this particular QUP for I2C for whatever
-> reason and then the clock would have to be re-added..
-Sure, Understood
-This clock is used by the RPM component to communicate with PMIC and we
-would add the critical flag here
+> IMO we should set this stuff explicitly.
 
-> Thanks for addressing all of the review comments so thoroughly!
-> 
-> Konrad
+I took a moment to think better about this and I think I get your point
+Sean in preferring that the hardware is described in detail.
 
-Best Regards,
-Devi Priya
+However I'm still leaning towards approving Geert's proposal.
+
+I'm based on the principle that DT is there to describe the aspects of
+the hardware that the software needs _and_ it is unable to discover by
+itself.
+
+Based on that, does the software need to know SD/OR configuration? If
+they are already written in the OTP then it doesn't. Also if the chip
+default is the use that is implemented on the board, it also doesn't
+(like lots of optional properties, especially when in most cases a
+given chip is used in the default configuration but not always).
+
+To some extent, writing settings in an OTP is similar to producing a
+different chip where these values are hard-coded and not configured.
+
+I'm wondering whether Geert has a practical example of a situation
+where it is better to have these properties optional.
+
+Best regards.
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
