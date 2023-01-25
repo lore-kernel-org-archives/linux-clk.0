@@ -2,139 +2,65 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F32FC54EED
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 22:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B730C61D97
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 22:25:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230059AbjAYWFe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Jan 2023 17:05:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55658 "EHLO
+        id S236201AbjAYWZP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Jan 2023 17:25:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229957AbjAYWFd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 17:05:33 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5450746737
-        for <linux-clk@vger.kernel.org>; Wed, 25 Jan 2023 14:05:31 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id z11so257592ede.1
-        for <linux-clk@vger.kernel.org>; Wed, 25 Jan 2023 14:05:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RKFA19R6xv2eymSUsNElEgL5ULZ+IvWXQQkJeAKXWVk=;
-        b=Mv922n4G+JBjWDAthtVTqODJI6w1dOPq/YvqZMHNFTXZyw/hFSs42eLyj+18CT3xoz
-         IxSSgNi1jq6/WWvMdECZPSqI5nFfQwSGHXyvi5VLgp4b9m8oINijX6hrUbIee1VuEl+B
-         R2gN1m3eOBw7XlBS4KGcEOucAbqrR59FWB6toRnHP/dDWdwTYotvXJE+AO3mpeE4WcmK
-         OkThC3RzV6NnwiV09T+bcfkZr5PthUVwgXSj1B9U7z245xtFojcJ4oHc2qLkWtJv5Z+U
-         bTALDK+gAM2Z/XzFrSIZRVJM0Ck/4s4UuJDPmWSPMQy7CRB3WwNEF5H+QPcTNNSWxGFY
-         KKTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RKFA19R6xv2eymSUsNElEgL5ULZ+IvWXQQkJeAKXWVk=;
-        b=JQ5KQcqI2xMuf/GcNC0qzXJe6Esz9ZC1ebUzm5yXbBOWSQtnI+UAmuxH8xsGMAxTxp
-         t8xvLEjEm63WZPxRNeWKQeNsAmv8/rpG+Mc+oxalE8Qr8HXkt0mZYmb0bD+bik6aTIzd
-         pb0Y8idMyz4ES1x7EVXhNzfUfkgmW3XrePfkX4WKKGQMOhphGlFLb/NYrALyf6KsNgxN
-         CTkeNmJURf9Tw+wDLarrpUMepcrZ4SBSH0P7wK5IFKkGS0gQEEzAALo6PKv22MiZmSSk
-         BNec/pRFzAp0TJ91TPlEAVKRzA6IQx+v2v6U/At2tKObBP9xwynaZLGdZLzF2wW9nV+X
-         jr0g==
-X-Gm-Message-State: AFqh2kqI4NwGAwxzNyQbpY8WATCCtHfO61vDNyufZIhCvM1+ljlj3V7T
-        5jaKrjzHE/2X7+gLdpfVe22naA==
-X-Google-Smtp-Source: AMrXdXte6HidAfuRLRPGrzkYFjXGReU+SQgPe2DkHhMIRxDK8wTCY04tVP73Wx4a4BoX1D03IP2SWw==
-X-Received: by 2002:aa7:c619:0:b0:49e:6e34:c363 with SMTP id h25-20020aa7c619000000b0049e6e34c363mr26774712edq.35.1674684329832;
-        Wed, 25 Jan 2023 14:05:29 -0800 (PST)
-Received: from [192.168.1.101] (abyk108.neoplus.adsl.tpnet.pl. [83.9.30.108])
-        by smtp.gmail.com with ESMTPSA id cy5-20020a0564021c8500b0049ef56c01d0sm2871624edb.79.2023.01.25.14.05.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Jan 2023 14:05:29 -0800 (PST)
-Message-ID: <df133e5a-8030-0774-091c-6f8e0692e945@linaro.org>
-Date:   Wed, 25 Jan 2023 23:05:27 +0100
+        with ESMTP id S229446AbjAYWZO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 17:25:14 -0500
+Received: from out2.migadu.com (out2.migadu.com [IPv6:2001:41d0:2:aacc::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98637CA3B;
+        Wed, 25 Jan 2023 14:25:12 -0800 (PST)
+Message-ID: <4c531c68-b74f-2f90-e8f6-98a4b0316cd4@ansari.sh>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ansari.sh; s=key1;
+        t=1674685510;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=R90IOuy0iSwNHOL4lLloLfwx6viTyQ4Kc8W05QGyzLw=;
+        b=Vsw+7KxhRetIF7RueAZ7dDX0RaGBV5oqgELHFnoEpgMrjfBDtYgxuAMT6m+8juBnpZM/G4
+        i70kvo1i59Y5PLxcmk59vTpITQC4m4xyBgg8s5mDhNFdy168UBuR1VVBl9fGnl6z7HlQpO
+        Me9s+ihX0XTO1HmHQsUZh+43WYYiPmM=
+Date:   Wed, 25 Jan 2023 22:25:08 +0000
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH v4 7/7] clk: qcom: add the driver for the MSM8996 APCS
- clocks
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
+Subject: Re: [PATCH v4 1/3] clk: qcom: smd: Add XO RPM clocks for
+ MSM8226/MSM8974
+To:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
+        devicetree@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230118132254.2356209-1-dmitry.baryshkov@linaro.org>
- <20230118132254.2356209-8-dmitry.baryshkov@linaro.org>
- <7055af43f4a8894ac34e53c5847fb3de.sboyd@kernel.org>
- <63f017c7-d320-a996-7bda-33d263a847bc@linaro.org>
- <525ef5cdefe987c3412249760324eb09.sboyd@kernel.org>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <525ef5cdefe987c3412249760324eb09.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Rob Herring <robh+dt@kernel.org>
+References: <20230121192540.9177-1-rayyan@ansari.sh>
+ <20230121192540.9177-2-rayyan@ansari.sh>
+ <06d53a3fa48080d902476b71308e69bd.sboyd@kernel.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Rayyan Ansari <rayyan@ansari.sh>
+In-Reply-To: <06d53a3fa48080d902476b71308e69bd.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 25.01.2023 22:56, Stephen Boyd wrote:
-> Quoting Konrad Dybcio (2023-01-25 13:48:54)
->>
->>
->> On 25.01.2023 22:38, Stephen Boyd wrote:
->>> Quoting Dmitry Baryshkov (2023-01-18 05:22:54)
->>>> diff --git a/drivers/clk/qcom/apcs-msm8996.c b/drivers/clk/qcom/apcs-msm8996.c
->>>> new file mode 100644
->>>> index 000000000000..7e46ea8ed444
->>>> --- /dev/null
->>>> +++ b/drivers/clk/qcom/apcs-msm8996.c
->>>> @@ -0,0 +1,76 @@
->>> [...]
->>>> +
->>>> +static int qcom_apcs_msm8996_clk_probe(struct platform_device *pdev)
->>>> +{
->>>> +       struct device *dev = &pdev->dev;
->>>> +       struct device *parent = dev->parent;
->>>> +       struct regmap *regmap;
->>>> +       struct clk_hw *hw;
->>>> +       unsigned int val;
->>>> +       int ret = -ENODEV;
->>>> +
->>>> +       regmap = dev_get_regmap(parent, NULL);
->>>> +       if (!regmap) {
->>>> +               dev_err(dev, "failed to get regmap: %d\n", ret);
->>>> +               return ret;
->>>> +       }
->>>> +
->>>> +       regmap_read(regmap, APCS_AUX_OFFSET, &val);
->>>> +       regmap_update_bits(regmap, APCS_AUX_OFFSET, APCS_AUX_DIV_MASK,
->>>> +                          FIELD_PREP(APCS_AUX_DIV_MASK, APCS_AUX_DIV_2));
->>>> +
->>>> +       /* Hardware mandated delay */
->>>
->>> Delay for what? Setting the divider? What if the register value didn't
->>> change at all? Can you skip the delay in that case?
->> Waiting 5 us unconditionally in exchange for ensured CPU clock
->> source stability sounds like a rather fair deal.. Checking if
->> the register value changed would not save us much time..
+On 25/01/2023 20:58, Stephen Boyd wrote:
+> Quoting Rayyan Ansari (2023-01-21 11:25:38)
+>> Add the XO and XO_A clocks to the MSM8974 clock list, which is also
+>> used on MSM8226.
 > 
-> So it is waiting for the CPU clk to be stable? The comment is not clear.
-Okay, so perhaps this is just a misunderstanding because of a lackluster
-comment.. This SYS_APCS_AUX (provided by this driver) is one of the CPU
-clock sources (and probably the "safest" of them all, as it's fed by
-GPLL0 and not the CPU PLLs) the delay is there to ensure it can
-stabilize after setting the divider to DIV2. In a theoretical case, the
-big 8996 cpucc driver could select this clock as a target for one (or
-both) of the per-cluster muxes and it could put the CPUs in a weird state.
+> Why was this missing for so long? Does this break suspend? Why are you
+> adding it now?
 
-As unlikely as that would be, especially considering 8996 (AFAIK) doesn't
-use this clock source coming out of reset / bootloader, this lets us
-ensure one less thing can break.
-
-Konrad
-
+I am adding it because of a recommendation from a maintainer on an older 
+patch version.
+See 
+https://lore.kernel.org/linux-arm-msm/20230119023337.h6a7f56lizhv4tcy@builder.lan/#t
