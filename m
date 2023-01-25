@@ -2,82 +2,66 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 131EDC27C76
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 21:12:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C6BC54E94
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 21:31:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236193AbjAYVMA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Jan 2023 16:12:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33586 "EHLO
+        id S236720AbjAYVbO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Jan 2023 16:31:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230329AbjAYVLl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 16:11:41 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D53CD62D09;
-        Wed, 25 Jan 2023 13:11:02 -0800 (PST)
+        with ESMTP id S236703AbjAYVbN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 16:31:13 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA3322279B;
+        Wed, 25 Jan 2023 13:30:46 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7A001B81BA0;
-        Wed, 25 Jan 2023 21:10:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F165C433D2;
-        Wed, 25 Jan 2023 21:10:58 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 62132B81BDC;
+        Wed, 25 Jan 2023 21:29:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5A74C433D2;
+        Wed, 25 Jan 2023 21:29:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674681058;
-        bh=2xyucpV9NpzkKbccAToDq9c1AviJ3RxxcHz01+de8rA=;
+        s=k20201202; t=1674682197;
+        bh=Gvkn27TVndvlLjIXA3MlgXmmFcYs5DdYv/Gy7nAcp8Y=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Bd+EjrsqXmDWNSNrE4qIujUMCUyTzxw827dCbOyzsSOQMcDHBSZgdNyuge1lAzrel
-         hIItPItgM19jakg7qWSPRIjuqG34/AhwpMwfpWYsc0f9U7TAVFMrNVTj2qPSsmHFBF
-         Uy26IGdshltegEK3z2zGnkwZSTCM+RmzQAbQ+gmWwK2mWTikz4Krie9nTTB5oMxRgH
-         Xkd6OVr39DAniOWMUydZqXg6q6AKG1iVqdttXwFKbNWTS/2gFlCBQ2i5URTFhgvXZT
-         CT1p0/GfInT3jDKQJfTwF5ZMgvOsihiP5aBBqw5aH5JzAjPVs8M8Nh5zhuyBQ8/bU4
-         hGEBOqpgyRbIw==
-Message-ID: <1fc8686b0b66c3b3ff80c044ecf1add6.sboyd@kernel.org>
+        b=r6cxzmTmE9NKvzQLp07En7UgeUtH/sUI+qu5Na4cQuCsEnuXtyu9+hxYXfYwHViKN
+         P1DeOJGb+WRgEALEUtt7tYjb3bRsInbgawZg/A/l2DeiT7YDowzi0qfARIx3BQYXwk
+         BTQXQ1BEs0MWNtJUPkHkiw6yp4NlybWCncgt4fM+RFrkwrBEZrJI0N80WeueNEcAGz
+         SwaPrWLRj2DzLnfl6MImAC2Bu8epTqM+YpAZg01G12tzM4PpkTlgJLiNI0VykxqFgw
+         6r32F2PYCDldycoLj3imXZSMZSF18F3vAo2FRUGHysjmVGTp0eIPZcZ2E5IQRbpNvU
+         qajZEcU4XxL7w==
+Message-ID: <2987f2ce9377bd17d1cd85fce4bd3c28.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230101175740.1010258-1-dario.binacchi@amarulasolutions.com>
-References: <20230101175740.1010258-1-dario.binacchi@amarulasolutions.com>
-Subject: Re: [RFC PATCH v2 00/11] clk: imx8mn: setup clocks from the device tree
+In-Reply-To: <20230120082631.22053-1-quic_kathirav@quicinc.com>
+References: <20230120082631.22053-1-quic_kathirav@quicinc.com>
+Subject: Re: [PATCH V5] clk: qcom: clk-alpha-pll: Add support for Stromer PLLs
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     angelo@amarulasolutions.com, michael@amarulasolutions.com,
-        tommaso.merciai@amarulasolutions.com,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        linux-amarula@amarulasolutions.com, anthony@amarulasolutions.com,
-        jagan@amarulasolutions.com,
-        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Li Jun <jun.li@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
-        Marek Vasut <marex@denx.de>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-To:     Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 25 Jan 2023 13:10:55 -0800
+Cc:     Varadarajan Narayanan <quic_varada@quicinc.com>,
+        Sricharan R <quic_srichara@quicinc.com>,
+        Kathiravan T <quic_kathirav@quicinc.com>
+To:     Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
+        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com
+Date:   Wed, 25 Jan 2023 13:29:54 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dario Binacchi (2023-01-01 09:57:29)
-> The idea for this series was born back from Dublin (ELCE 2022) after
-> having attended the talk entitled "Updating and Modernizing Clock
-> Drivers" held by Chen-Yu Tsai and the availability of a board with
-> imx8mn SOC.
-
-Interesting. I didn't see any mention of putting clks into DT in that
-presentation.
-
+Quoting Kathiravan Thirumoorthy (2023-01-20 00:26:31)
+> From: Varadarajan Narayanan <quic_varada@quicinc.com>
 >=20
-> This series aims to setup all imx8mn's clocks from the device tree and
-> remove the legacy setup code with hardwired parameters.
+> Add programming sequence support for managing the Stromer
+> PLLs.
+>=20
+> Co-developed-by: Sricharan R <quic_srichara@quicinc.com>
+> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+> ---
 
-Please, no! We don't want one node per clk style of bindings.
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
