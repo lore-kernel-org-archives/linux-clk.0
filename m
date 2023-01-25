@@ -2,74 +2,79 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE31C54EED
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 23:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FCB7C54E94
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 23:05:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236068AbjAYXAZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Jan 2023 18:00:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51726 "EHLO
+        id S230328AbjAYXFF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Jan 2023 18:05:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229739AbjAYXAY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 18:00:24 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D301713DD8;
-        Wed, 25 Jan 2023 15:00:23 -0800 (PST)
+        with ESMTP id S229674AbjAYXFE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 18:05:04 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A621A10412;
+        Wed, 25 Jan 2023 15:05:03 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8E9AEB81C55;
-        Wed, 25 Jan 2023 23:00:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2922CC433D2;
-        Wed, 25 Jan 2023 23:00:21 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3042861647;
+        Wed, 25 Jan 2023 23:05:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79C0CC433EF;
+        Wed, 25 Jan 2023 23:05:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674687621;
-        bh=RZksb65p0COvQF0t0733KNOTzQrC/hPGvtjudMm7qIw=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=KG+P6oi76PcsMbhOHkhtWTkaqTl0yrOxQLKNJ9uoB/Zoi3L0Wyslfptmz49fVIJgB
-         ovbXowfC0jy9c6ho58PvqGWeyeB7F8IGV1bUwfGh1KoG4xv+2erniNbpEdVxYB4hB7
-         9s6Ccv3ferDUP6aPmjNRyodxdfEsURyCRLYADCgcQTKU+M52pRphsO7vZrxD4yImD1
-         bVqVpX+5Er6gtDHTb+Ls44qFse2d9N3jy5YGMI5IqiiVMwRdfifWT8dYchfSTzskh6
-         keBzE3bW6bq+2hrJmcBvING8m2F80bXgKZYsoHx3cAny3wwJmQQXLpbTd/GiGYDwbS
-         q0xxzpxGf/HTg==
-Message-ID: <a7058fb92642a1661995d7d3ca6411bd.sboyd@kernel.org>
+        s=k20201202; t=1674687902;
+        bh=QWzWtdHUy/769l77DiAcYt1zff7lP4hM9m1EdTQD9Oc=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=IO+QfJvv1fQs5p926ogMgxMHPeUXSWuPPCjueJ8YVJkisKlk9peNWxqUYW1vT2yLq
+         90k9nkyOpbh0PHIxoxwT4BaYPkYqsFwFOKqE3eFMIwfOR3nf1ydeXakm/acyqt6fsr
+         f6412waqN0rnJYTFif4UpLpDI9LblKdJTwLV6s53wlDqNfy9Fcmb89Kx1S8qzzHuMo
+         UVPzN/HR4zBvBGdh6RC56PD2EWFcj/8DpFzaSvHjni+zjfg0mIyM+MZs0Q5r7sZNhA
+         8nfGFfHeB4fIF+ylE4+M3nTK9MHj0nkJq0qOEhDXwUrvStAxexeW3kr4cwR1UpyLKd
+         yrPpYNavcqLhA==
+Message-ID: <17615d7cf32feb4cda1c9948e184e69e.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <4c531c68-b74f-2f90-e8f6-98a4b0316cd4@ansari.sh>
-References: <20230121192540.9177-1-rayyan@ansari.sh> <20230121192540.9177-2-rayyan@ansari.sh> <06d53a3fa48080d902476b71308e69bd.sboyd@kernel.org> <4c531c68-b74f-2f90-e8f6-98a4b0316cd4@ansari.sh>
-Subject: Re: [PATCH v4 1/3] clk: qcom: smd: Add XO RPM clocks for MSM8226/MSM8974
+In-Reply-To: <0c06bfb5-c0b7-c3eb-4c99-8e77280a942c@linaro.org>
+References: <1674322340-25882-1-git-send-email-quic_srivasam@quicinc.com> <030115dd-f489-5d4e-c993-e9fa8b550f04@linaro.org> <43bea488-7a71-aec3-508c-6a541d5db508@quicinc.com> <0c06bfb5-c0b7-c3eb-4c99-8e77280a942c@linaro.org>
+Subject: Re: [RESEND v5 0/6] Add resets for ADSP based audio clock controller driver
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        devicetree@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-To:     Rayyan Ansari <rayyan@ansari.sh>, linux-arm-msm@vger.kernel.org
-Date:   Wed, 25 Jan 2023 15:00:19 -0800
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
+        agross@kernel.org, andersson@kernel.org, broonie@kernel.org,
+        konrad.dybcio@somainline.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        quic_plai@quicinc.com, quic_rohkumar@quicinc.com,
+        robh+dt@kernel.org, swboyd@chromium.org
+Date:   Wed, 25 Jan 2023 15:05:00 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rayyan Ansari (2023-01-25 14:25:08)
-> On 25/01/2023 20:58, Stephen Boyd wrote:
-> > Quoting Rayyan Ansari (2023-01-21 11:25:38)
-> >> Add the XO and XO_A clocks to the MSM8974 clock list, which is also
-> >> used on MSM8226.
+Quoting Krzysztof Kozlowski (2023-01-23 00:01:02)
+> On 23/01/2023 06:13, Srinivasa Rao Mandadapu wrote:
 > >=20
-> > Why was this missing for so long? Does this break suspend? Why are you
-> > adding it now?
+> > On 1/22/2023 7:21 PM, Krzysztof Kozlowski wrote:
+> > Thanks for Your time Krzysztof!!!
+> >> On 21/01/2023 18:32, Srinivasa Rao Mandadapu wrote:
+> >>> Add resets and remove qdsp6ss clcok controller for audioreach based p=
+latforms.
+> >>>
+> >>> Changes since v4:
+> >>>      -- Update Fixes tag in Merge lpasscc into lpass_aon patch.
+> >>>      -- Revert removal of clk_regmap structure in Merge lpasscc into =
+lpass_aon patch.
+> >>>
+> >> Your v5 before resend have build issues. Please fix.
+> >=20
+> > In v5, one commit missed to amend local changes.Hence resent it.
+> >=20
+> > on Resent patch series no build issues.
 >=20
-> I am adding it because of a recommendation from a maintainer on an older =
+> Resend means you send the same patches. If you change patches, it's not
+> resend but new version.
+>=20
 
-> patch version.
-> See=20
-> https://lore.kernel.org/linux-arm-msm/20230119023337.h6a7f56lizhv4tcy@bui=
-lder.lan/#t
-
-So nobody has tested this on msm8974? Can you add this information to
-the commit text? And can it be tested on msm8974?
+I'm waiting for a new version now.
