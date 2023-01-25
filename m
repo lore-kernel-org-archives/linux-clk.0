@@ -2,109 +2,137 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94ED7C27C76
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 23:34:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D082C61DA2
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 23:41:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229454AbjAYXdu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Jan 2023 18:33:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35718 "EHLO
+        id S229481AbjAYXlS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Jan 2023 18:41:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235659AbjAYXdu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 18:33:50 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E50EB2916F
-        for <linux-clk@vger.kernel.org>; Wed, 25 Jan 2023 15:33:45 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id rl14so881951ejb.2
-        for <linux-clk@vger.kernel.org>; Wed, 25 Jan 2023 15:33:45 -0800 (PST)
+        with ESMTP id S235899AbjAYXlQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 18:41:16 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70C741E9FC
+        for <linux-clk@vger.kernel.org>; Wed, 25 Jan 2023 15:40:56 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id fi26so414706edb.7
+        for <linux-clk@vger.kernel.org>; Wed, 25 Jan 2023 15:40:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=alCMOK5cE2QJ8BpFheg8uTDRx7xWYhGAEAsl76U70GU=;
-        b=iwdxpbrD4xN0U5LygfOmg1YW8nrnc7w4b9dd96+FCvOM0/fr/yoyfu+s24nITIritQ
-         +sAxqwlHkVrESQmjBcitpOD+YXtmwEdS5cQ9ZuQA6eEZIsPgPLrHUzw1c5L5AIhF6gFp
-         PWibNgHpYXqwiI279sEdwnQwsuSYalCcMLJjIh743aDHHAdm8lJSJDyEGcpmUzrwP2DF
-         fE6PFIVKsjSCkLxbP+GysF51fRLeL0l370Skwqg320NOvAgfQPQm0/EhNJMqe6ZiWtnM
-         dyl1zYAqNPFjzbdqaLnfzkBmrjrbkcjRJA54n3X7zMMdmkhsuUo0k0PaTzRp4krxPfkv
-         Mqyw==
+        bh=pwbh4PMMgQkzK1kN5wBumD27P6cUdwxiPyBgeqdBGE8=;
+        b=fa0DKCBR1y8U9WBPRxnY2UCvnuvn1v8AiF6ILlWIsxizB5wrwtwS0CIj2zUbtWnAok
+         9L1zV52StAkqEa+NA34RXbIVwu3Vczf0gvqveuHsuYawckRwgreTanuoIDrlj+oAPc9p
+         p1ClcQUjXzefJakq/gI0g7M/AquA3ojsLjIToGgBoBlOZkWWQBQ1hyezlFIhSkUc5g7Z
+         fIsysE3cg3CmnS64yDTtL9fZ/Z6VtzEslN86/4sZcgYp5Vfk+uGgIO8rSJGLntGH3tbd
+         wx+RSDEsSu96+llKN8qYgYSCQOhrxiYT2cWOslznqaaZuSz4t9tPdg3OL5kDjWsbOeTn
+         UMtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=alCMOK5cE2QJ8BpFheg8uTDRx7xWYhGAEAsl76U70GU=;
-        b=XQ9XH/Ax1csaQ1tso4qeNIsxOUiWKWIZj7X/QH+hyQboqECnok6ndJRnBN31IqUTHa
-         Vz7R0Rn1R8yR8zoz8mm0/ZNJCfmF09HgvGlzI6RmReZ1rBQh6uONMgGsKLJJu8VxLNUM
-         GF2TzZ6/xhNHF4g1jbLyz5stnk1w6L1Cqo4q2Px9+VNdWcBwZXXhTi4gGqKiuEiEBg02
-         Ni908M+PdmuC78pBmo1b+E/phj0RTDy6IaYsMcG0bajIGVCOQ+5ggDJh371TkravB5Pu
-         RUUZfhCkw5RfEy6Dx7vbvtHMXVJv+glR8DYYxekLvgphFK26cGK2ZQvVXDpA5V5wg6vV
-         iElQ==
-X-Gm-Message-State: AFqh2kqEKtHAEqvI337xnZc35OcErSRRhHcoTMdueS/L+3xfVBCM/RvN
-        zOlEzVuJD6yrmaAEppmPxlbiiA==
-X-Google-Smtp-Source: AMrXdXvQtpO2go/Tg1RVocWt7FbIn7SqDzmAG1aqkYdbY4lVv5X/yly6tqxJLVRtU9IcjqvxdrWNCQ==
-X-Received: by 2002:a17:907:104d:b0:86e:d851:3a0a with SMTP id oy13-20020a170907104d00b0086ed8513a0amr44241035ejb.51.1674689624508;
-        Wed, 25 Jan 2023 15:33:44 -0800 (PST)
+        bh=pwbh4PMMgQkzK1kN5wBumD27P6cUdwxiPyBgeqdBGE8=;
+        b=3ej4AVFgmPd0K3oFfLLaKmObTvcLI5OAINUH1GIYYNGHWVSJ/oiaUT3E9UMfSYa9ke
+         ItSy9ZERzefpQCFtZtM153LXqL6PrvQEJcZGnF4td71Ctr6lz2RLnCZy3dy0vAETBQav
+         IDwB6pA7KEf4pO0CMVSna+UGhanhu5tY5hx66/0zPXGYhtljGD83bdVvcpdiZ4h1uOTg
+         NqexmWKP3537o4TjUd0KlxGhqqA8rT0ThnTJ/snBqNCpr7Htl1ZLztFGKxGKfRwtlzes
+         7LgnZfsvcB47L5Zk0PDjWLSA8KfxRoTPR4OtZYirgTvrqiRy7DtsU6BmJnTnrkvABkC8
+         o2dQ==
+X-Gm-Message-State: AFqh2kpP3n6MPTqeI8Uds2a/ELrZ0Nyf3okp1O0YBq1RytgTkiHC6uar
+        Yavx7MYWX7ghqR0/uhRbXmi/hg==
+X-Google-Smtp-Source: AMrXdXuYWSskUkqSo1Tvp5slx5lvO2ecBO+FafsWhHmYSfLfJmMEzAb40/zHEQvkBIp8Ofmlx80UMQ==
+X-Received: by 2002:a05:6402:3709:b0:488:6003:24b6 with SMTP id ek9-20020a056402370900b00488600324b6mr37104852edb.40.1674690054987;
+        Wed, 25 Jan 2023 15:40:54 -0800 (PST)
 Received: from [192.168.1.101] (abyk108.neoplus.adsl.tpnet.pl. [83.9.30.108])
-        by smtp.gmail.com with ESMTPSA id t6-20020a1709067c0600b00871ac327db6sm2989960ejo.45.2023.01.25.15.33.43
+        by smtp.gmail.com with ESMTPSA id g12-20020a056402180c00b00499703df898sm2934824edy.69.2023.01.25.15.40.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Jan 2023 15:33:44 -0800 (PST)
-Message-ID: <b24dbfb4-8b02-bb30-d859-a313a4aaa363@linaro.org>
-Date:   Thu, 26 Jan 2023 00:33:42 +0100
+        Wed, 25 Jan 2023 15:40:54 -0800 (PST)
+Message-ID: <41efc16a-8b6d-e6c1-efe1-4e0b4ce43533@linaro.org>
+Date:   Thu, 26 Jan 2023 00:40:51 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.0
-Subject: Re: [PATCH v4 1/3] clk: qcom: smd: Add XO RPM clocks for
- MSM8226/MSM8974
-To:     Stephen Boyd <sboyd@kernel.org>, Rayyan Ansari <rayyan@ansari.sh>,
-        linux-arm-msm@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Luca Weiss <luca.weiss@fairphone.com>
-References: <20230121192540.9177-1-rayyan@ansari.sh>
- <20230121192540.9177-2-rayyan@ansari.sh>
- <06d53a3fa48080d902476b71308e69bd.sboyd@kernel.org>
- <4c531c68-b74f-2f90-e8f6-98a4b0316cd4@ansari.sh>
- <a7058fb92642a1661995d7d3ca6411bd.sboyd@kernel.org>
+Subject: Re: [PATCH V1 7/8] arm64: dts: qcom: Add ipq9574 SoC and AL02 board
+ support
 Content-Language: en-US
+To:     Devi Priya <quic_devipriy@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        agross@kernel.org, andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, ulf.hansson@linaro.org, linus.walleij@linaro.org,
+        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
+        shawnguo@kernel.org, arnd@arndb.de, marcel.ziswiler@toradex.com,
+        dmitry.baryshkov@linaro.org, nfraprado@collabora.com,
+        broonie@kernel.org, tdas@codeaurora.org, bhupesh.sharma@linaro.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
+        quic_poovendh@quicinc.com
+References: <20230124141541.8290-1-quic_devipriy@quicinc.com>
+ <20230124141541.8290-8-quic_devipriy@quicinc.com>
+ <adb66162-6ff3-184e-fe92-109bdef8ed1c@linaro.org>
+ <9cce23e9-bb1e-b49e-b771-f61ac6d12933@quicinc.com>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <a7058fb92642a1661995d7d3ca6411bd.sboyd@kernel.org>
+In-Reply-To: <9cce23e9-bb1e-b49e-b771-f61ac6d12933@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 26.01.2023 00:00, Stephen Boyd wrote:
-> Quoting Rayyan Ansari (2023-01-25 14:25:08)
->> On 25/01/2023 20:58, Stephen Boyd wrote:
->>> Quoting Rayyan Ansari (2023-01-21 11:25:38)
->>>> Add the XO and XO_A clocks to the MSM8974 clock list, which is also
->>>> used on MSM8226.
->>>
->>> Why was this missing for so long? Does this break suspend? Why are you
->>> adding it now?
->>
->> I am adding it because of a recommendation from a maintainer on an older 
->> patch version.
->> See 
->> https://lore.kernel.org/linux-arm-msm/20230119023337.h6a7f56lizhv4tcy@builder.lan/#t
+On 25.01.2023 12:12, Devi Priya wrote:
 > 
-> So nobody has tested this on msm8974? Can you add this information to
-> the commit text?
-
-
-And can it be tested on msm8974?
-+ Luca
-
-^ could you, please?
+> 
+> On 1/24/2023 8:44 PM, Krzysztof Kozlowski wrote:
+>> On 24/01/2023 15:15, devi priya wrote:
+>>> From: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
+>>>
+>>> Add initial device tree support for Qualcomm IPQ9574 SoC
+>>> and AL02 board
+>>>
+>>> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+>>> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+>>> Co-developed-by: devi priya <quic_devipriy@quicinc.com>
+>>> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+>>> Signed-off-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
+>>> ---
+>>>   arch/arm64/boot/dts/qcom/Makefile            |   1 +
+>>>   arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts |  78 +++++
+>>>   arch/arm64/boot/dts/qcom/ipq9574.dtsi        | 285 +++++++++++++++++++
+>>>   3 files changed, 364 insertions(+)
+>>>   create mode 100644 arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts
+>>>   create mode 100644 arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+>>> index 3e79496292e7..872c62028a0b 100644
+>>> --- a/arch/arm64/boot/dts/qcom/Makefile
+>>> +++ b/arch/arm64/boot/dts/qcom/Makefile
+>>> @@ -7,6 +7,7 @@ dtb-$(CONFIG_ARCH_QCOM)    += ipq6018-cp01-c1.dtb
+>>>   dtb-$(CONFIG_ARCH_QCOM)    += ipq8074-hk01.dtb
+>>>   dtb-$(CONFIG_ARCH_QCOM)    += ipq8074-hk10-c1.dtb
+>>>   dtb-$(CONFIG_ARCH_QCOM)    += ipq8074-hk10-c2.dtb
+>>> +dtb-$(CONFIG_ARCH_QCOM)    += ipq9574-al02-c7.dtb
+>>>   dtb-$(CONFIG_ARCH_QCOM)    += msm8916-alcatel-idol347.dtb
+>>
+>> This does not match current tree, so I could not apply it for tests. I
+>> think you based it on a bit older version.
+>>
+> The patch series is based on Linux 6.2-rc1 and not the qcom/for-next branch.
+Linux 6.2-rc1 is very old already and Bjorn has already picked
+tens of patches atop it, so yours will not apply unless you
+base it on qcom/for-next (or just linux-next for that matter).
 
 Konrad
+>> Best regards,
+>> Krzysztof
+>>
+> Best Regards,
+> Devi Priya
