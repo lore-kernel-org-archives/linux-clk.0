@@ -2,66 +2,105 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42879C54E94
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 20:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A19C8C54EED
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 20:54:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236192AbjAYUoT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Jan 2023 15:44:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46660 "EHLO
+        id S236595AbjAYUym (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Jan 2023 15:54:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236173AbjAYUoS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 15:44:18 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E1A015C94;
-        Wed, 25 Jan 2023 12:44:14 -0800 (PST)
+        with ESMTP id S229453AbjAYUym (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 15:54:42 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 431854A237;
+        Wed, 25 Jan 2023 12:54:41 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C9B10B81B33;
-        Wed, 25 Jan 2023 20:44:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 679D6C433D2;
-        Wed, 25 Jan 2023 20:44:11 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CBBAD615AD;
+        Wed, 25 Jan 2023 20:54:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B378C433EF;
+        Wed, 25 Jan 2023 20:54:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674679451;
-        bh=p2N3zgnQfCgQxKWK2hV2QHveHQZJmLSmPQnhVgKDPGw=;
+        s=k20201202; t=1674680080;
+        bh=jLzNKjyc09opMzRxjkf1IrKwt5abM/dWPoSM+2ilEkk=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=a1oLHuIaQSxSu8FHUP1v+t4E5UxLNAC3cEkZVpqX8oTmjZV98R7eTVlNIbnEzRaw3
-         1Y+nV8Z2x2KrFRshFKGQuEe+zl8h1bcFU7AATqViHg15o+/fMaiKqqhC/2AN8uO9eQ
-         z80ynMNhom7b07I4/X61erLKmHFNuvPN5v9wa9lKlJqIJUJ1F4vqu82C0iBQFE8MQe
-         1GPrnjmWb74dznomeuF0L4Q9RQ3cDy70iTeLk6sqThWxeRcr1UyKSCykXBViHPOwVp
-         MCWNG5xm3GLBU+Ni2GlaZIUnE/Pm2sWQK1BQtsnsUiajiPHO3g3uiEV4pgvjcjvtb+
-         6GsTlxavh3Tsw==
-Message-ID: <7ddf5c74de84c5dc291996423cb1eb46.sboyd@kernel.org>
+        b=X/uDu3O5qXsiTWl6cqsmS+r3tM9PmmYl/gFX19wihE3gUQssRRRgZbXD/YR3Wiuqk
+         IDIOALPim0r8rA8sD99J+rL7RbcPKZHAqIShXKxxm20xyRARghupyDkZFnTF07p1Gg
+         x7JmCz7CT4EIbHToFXV/QEnk9aW3XzDnctemrD8C8d8lnlSF1y1AqY+DD2bTM9EgjZ
+         rLyHtU7lgSfEPSlueZesJyGbxtnJb3D59IZqPaa13fq5yleqo56ZMgQQGZL92OPVOb
+         PcN24IDwrkFTwLT+82hERv8tlcCyzyaPZzORg8i4LHKihykE/jVpLlPgqmGxZ0UHeE
+         1KCji5hDKRu5Q==
+Message-ID: <9cf8a94f7ec4d8912bcf507631991999.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230123094925.54824-2-krzysztof.kozlowski@linaro.org>
-References: <20230123094925.54824-1-krzysztof.kozlowski@linaro.org> <20230123094925.54824-2-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 2/2] clk: qcom: restrict drivers per ARM/ARM64
+In-Reply-To: <20230125104520.89684-6-quic_kathirav@quicinc.com>
+References: <20230125104520.89684-1-quic_kathirav@quicinc.com> <20230125104520.89684-6-quic_kathirav@quicinc.com>
+Subject: Re: [PATCH 05/10] clk: qcom: add Global Clock controller (GCC) driver for IPQ5332 SoC
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+Cc:     Kathiravan T <quic_kathirav@quicinc.com>
+To:     Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
+        agross@kernel.org, andersson@kernel.org, arnd@arndb.de,
+        bhupesh.sharma@linaro.org, broonie@kernel.org,
+        catalin.marinas@arm.com, devicetree@vger.kernel.org,
+        dmitry.baryshkov@linaro.org, konrad.dybcio@linaro.org,
+        krzysztof.kozlowski+dt@linaro.org, linus.walleij@linaro.org,
+        linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 25 Jan 2023 12:44:07 -0800
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, marcel.ziswiler@toradex.com,
+        mturquette@baylibre.com, nfraprado@collabora.com,
+        quic_gurus@quicinc.com, robh+dt@kernel.org, robimarko@gmail.com,
+        shawnguo@kernel.org, ulf.hansson@linaro.org, will@kernel.org
+Date:   Wed, 25 Jan 2023 12:54:37 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2023-01-23 01:49:25)
-> There is no point to allow selecting pin-controller drivers for Qualcomm
+Quoting Kathiravan Thirumoorthy (2023-01-25 02:45:15)
+> diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq533=
+2.c
+> new file mode 100644
+> index 000000000000..8351096a4d32
+> --- /dev/null
+> +++ b/drivers/clk/qcom/gcc-ipq5332.c
+> @@ -0,0 +1,3954 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights r=
+eserved.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/regmap.h>
+[...]
+> +
+> +static const struct freq_tbl ftbl_gcc_pcnoc_bfdcd_clk_src[] =3D {
+> +       F(24000000, P_XO, 1, 0, 0),
+> +       F(50000000, P_GPLL0_OUT_MAIN, 16, 0, 0),
+> +       F(100000000, P_GPLL0_OUT_MAIN, 8, 0, 0),
+> +       { }
+> +};
+> +
+> +static struct clk_rcg2 gcc_pcnoc_bfdcd_clk_src =3D {
+> +       .cmd_rcgr =3D 0x31004,
+> +       .mnd_width =3D 0,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D gcc_parent_map_0,
+> +       .freq_tbl =3D ftbl_gcc_pcnoc_bfdcd_clk_src,
+> +       .clkr.hw.init =3D &(const struct clk_init_data){
+> +               .name =3D "gcc_pcnoc_bfdcd_clk_src",
+> +               .parent_data =3D gcc_parent_data_0,
+> +               .num_parents =3D ARRAY_SIZE(gcc_parent_data_0),
+> +               .ops =3D &clk_rcg2_ops,
+> +               .flags =3D CLK_IS_CRITICAL,
 
-pin controllers?
-
-> ARMv7 SoCs when building ARM64 kernel, and vice versa.  This makes
-> kernel configuration more difficult as many do not remember the Qualcomm
-> SoCs model names/numbers.  There won't be a single image for ARMv7 and
-> ARMv8/9 SoCs, so no features/options are lost.
-
-Are the drivers used in arm32 emulation mode on these SoCs? I recall
-there are some SoCs they run with the arm architecture.
+Why not just turn these clks on in probe and never register them with
+the framework? That saves some memory for clks that there is no desire
+to control from linux. This is an RCG, so in theory the frequency can
+change, but does it really? Usually bus clks are controlled by the
+interconnect driver.
