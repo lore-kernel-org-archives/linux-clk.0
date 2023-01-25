@@ -2,105 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A19C8C54EED
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 20:54:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28798C27C76
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 20:58:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236595AbjAYUym (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Jan 2023 15:54:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55630 "EHLO
+        id S236637AbjAYU6Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Jan 2023 15:58:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbjAYUym (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 15:54:42 -0500
+        with ESMTP id S235993AbjAYU6P (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 15:58:15 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 431854A237;
-        Wed, 25 Jan 2023 12:54:41 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 976EE14495;
+        Wed, 25 Jan 2023 12:58:14 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CBBAD615AD;
-        Wed, 25 Jan 2023 20:54:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B378C433EF;
-        Wed, 25 Jan 2023 20:54:40 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 39F0E6162C;
+        Wed, 25 Jan 2023 20:58:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AF2CC4339B;
+        Wed, 25 Jan 2023 20:58:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674680080;
-        bh=jLzNKjyc09opMzRxjkf1IrKwt5abM/dWPoSM+2ilEkk=;
+        s=k20201202; t=1674680293;
+        bh=FM0mzRE+5UDJn4OWAUXa4Ds0/l1i4bq6FY3oRh66wGI=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=X/uDu3O5qXsiTWl6cqsmS+r3tM9PmmYl/gFX19wihE3gUQssRRRgZbXD/YR3Wiuqk
-         IDIOALPim0r8rA8sD99J+rL7RbcPKZHAqIShXKxxm20xyRARghupyDkZFnTF07p1Gg
-         x7JmCz7CT4EIbHToFXV/QEnk9aW3XzDnctemrD8C8d8lnlSF1y1AqY+DD2bTM9EgjZ
-         rLyHtU7lgSfEPSlueZesJyGbxtnJb3D59IZqPaa13fq5yleqo56ZMgQQGZL92OPVOb
-         PcN24IDwrkFTwLT+82hERv8tlcCyzyaPZzORg8i4LHKihykE/jVpLlPgqmGxZ0UHeE
-         1KCji5hDKRu5Q==
-Message-ID: <9cf8a94f7ec4d8912bcf507631991999.sboyd@kernel.org>
+        b=h2YjxE9+bsLf/Lr6eDWW8fqxOMsW4g/i1hLjis9npB98Ql3i6flf7l4Q6ctpnyGfF
+         hgUuCruLjm3A0yCekTne+ITQlyIm+Dtw1iFzJyCRX+KZ68EMEiP/yHv67w+d5k/ovr
+         Jc6DPVucwpwfRCyu5Ck1Ja+zMnxccZukiLRfKZKF8fBBGIIteBzyIIBv69mQqULTa2
+         nnhVmtUdFzfEShzpEhT2NLfl4boRBvFP2rj6f7lyHRmBfhPmcHcV5U3OFTg/5FGS4p
+         4rJUM2s6z/8UjBqLRvpgpOSeCgnB6j+5i7aaMwHD0rOdUE9tbHV8hjwP+gDGEu3FLf
+         c0B7FK0WJKg3g==
+Message-ID: <06d53a3fa48080d902476b71308e69bd.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230125104520.89684-6-quic_kathirav@quicinc.com>
-References: <20230125104520.89684-1-quic_kathirav@quicinc.com> <20230125104520.89684-6-quic_kathirav@quicinc.com>
-Subject: Re: [PATCH 05/10] clk: qcom: add Global Clock controller (GCC) driver for IPQ5332 SoC
+In-Reply-To: <20230121192540.9177-2-rayyan@ansari.sh>
+References: <20230121192540.9177-1-rayyan@ansari.sh> <20230121192540.9177-2-rayyan@ansari.sh>
+Subject: Re: [PATCH v4 1/3] clk: qcom: smd: Add XO RPM clocks for MSM8226/MSM8974
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Kathiravan T <quic_kathirav@quicinc.com>
-To:     Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
-        agross@kernel.org, andersson@kernel.org, arnd@arndb.de,
-        bhupesh.sharma@linaro.org, broonie@kernel.org,
-        catalin.marinas@arm.com, devicetree@vger.kernel.org,
-        dmitry.baryshkov@linaro.org, konrad.dybcio@linaro.org,
-        krzysztof.kozlowski+dt@linaro.org, linus.walleij@linaro.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, marcel.ziswiler@toradex.com,
-        mturquette@baylibre.com, nfraprado@collabora.com,
-        quic_gurus@quicinc.com, robh+dt@kernel.org, robimarko@gmail.com,
-        shawnguo@kernel.org, ulf.hansson@linaro.org, will@kernel.org
-Date:   Wed, 25 Jan 2023 12:54:37 -0800
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        Rayyan Ansari <rayyan@ansari.sh>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        devicetree@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>
+To:     Rayyan Ansari <rayyan@ansari.sh>, linux-arm-msm@vger.kernel.org
+Date:   Wed, 25 Jan 2023 12:58:11 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Kathiravan Thirumoorthy (2023-01-25 02:45:15)
-> diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq533=
-2.c
-> new file mode 100644
-> index 000000000000..8351096a4d32
-> --- /dev/null
-> +++ b/drivers/clk/qcom/gcc-ipq5332.c
-> @@ -0,0 +1,3954 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights r=
-eserved.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/regmap.h>
-[...]
-> +
-> +static const struct freq_tbl ftbl_gcc_pcnoc_bfdcd_clk_src[] =3D {
-> +       F(24000000, P_XO, 1, 0, 0),
-> +       F(50000000, P_GPLL0_OUT_MAIN, 16, 0, 0),
-> +       F(100000000, P_GPLL0_OUT_MAIN, 8, 0, 0),
-> +       { }
-> +};
-> +
-> +static struct clk_rcg2 gcc_pcnoc_bfdcd_clk_src =3D {
-> +       .cmd_rcgr =3D 0x31004,
-> +       .mnd_width =3D 0,
-> +       .hid_width =3D 5,
-> +       .parent_map =3D gcc_parent_map_0,
-> +       .freq_tbl =3D ftbl_gcc_pcnoc_bfdcd_clk_src,
-> +       .clkr.hw.init =3D &(const struct clk_init_data){
-> +               .name =3D "gcc_pcnoc_bfdcd_clk_src",
-> +               .parent_data =3D gcc_parent_data_0,
-> +               .num_parents =3D ARRAY_SIZE(gcc_parent_data_0),
-> +               .ops =3D &clk_rcg2_ops,
-> +               .flags =3D CLK_IS_CRITICAL,
+Quoting Rayyan Ansari (2023-01-21 11:25:38)
+> Add the XO and XO_A clocks to the MSM8974 clock list, which is also
+> used on MSM8226.
 
-Why not just turn these clks on in probe and never register them with
-the framework? That saves some memory for clks that there is no desire
-to control from linux. This is an RCG, so in theory the frequency can
-change, but does it really? Usually bus clks are controlled by the
-interconnect driver.
+Why was this missing for so long? Does this break suspend? Why are you
+adding it now?
