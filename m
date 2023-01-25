@@ -2,312 +2,133 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 434B3C54E94
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 09:55:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9565DC27C76
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 10:46:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235226AbjAYJzm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Jan 2023 04:55:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41286 "EHLO
+        id S233135AbjAYKqC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Jan 2023 05:46:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235256AbjAYJzl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 04:55:41 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 126229767
-        for <linux-clk@vger.kernel.org>; Wed, 25 Jan 2023 01:55:38 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id l8so13301023wms.3
-        for <linux-clk@vger.kernel.org>; Wed, 25 Jan 2023 01:55:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3TI3QogOYMMQNqPXE2b7du3WbjaJH52c2VaulOg3Bhg=;
-        b=qug77F6kd2bvCnnzdGxs88Cb4zDm8xwdWaHtW/FM+aX+u6m/7F+m7t6l5ZxBN7FxzL
-         PuisldXsfLPXNBsVX6qqQnVziYE3QVHDI/XRler2igoKlFYRilQpgt9OyXLfjAupLIM/
-         4G3z7l08N0VnZlHQQYWMd4shRsqfr0GVLfJWF3ZKR3YB7Zh499c61/2DZRwAkd7UFv4d
-         dVvS2UUNWMqOLFG2KqFUo3/tGeWQhdbNhpXsQ8RFmsjKLQ7APzRkskXAsAwBlNBNgt3R
-         sm4iTGxNQ8zkvSRX1cZh+UnEE5Dy6qHzKK2eZsmndGqrEfbtxahEtSBHJY7yE5DTEsp8
-         qttA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3TI3QogOYMMQNqPXE2b7du3WbjaJH52c2VaulOg3Bhg=;
-        b=FArSrVy5ss6Mn/C2bBcTVw1OE8ikKsXZMi1BpXAB1IdUF2t8Krt7Nzfrmgc5Mq0PHV
-         iGija4gucYTvA79GeAE2tiwFfsF1AndTf95dSKeAifXi0/AvnkadJQs92KItRIQy824H
-         n7Df/+Fz7Fg/2xVqmaySTzuu7n/HknpkNN6jtPnqzp1KDrfvNCoV5gJ1KgxSk97bIozz
-         JkjPK30Hg4JtSrWEiez3HRGALR03tUOm+08AEvrMLebUmvFL2geJiPcCXM5ne7s4K4pQ
-         etmDuusQD5sRN50uqvSwaXzlikfqCsB85w8SRSwkKVTCq6fBTsZAmwnlolkm5DBnepmm
-         e4LA==
-X-Gm-Message-State: AFqh2kpEGVQZHFbEgGtxwJSRNadp6XlcITSw/5MwWFqs0yozaLQGbBDk
-        CUdJpEhm64FR3zSOhT5KbUO9tQ==
-X-Google-Smtp-Source: AMrXdXu2KF4yvkw/TiJ9sngbPl4P5gsVXJvwzfHlUs9sLE0NttgDMQFlQjIghP75T8JZOp14TN7IMw==
-X-Received: by 2002:a05:600c:181a:b0:3d2:2043:9cbf with SMTP id n26-20020a05600c181a00b003d220439cbfmr31125729wmp.10.1674640536570;
-        Wed, 25 Jan 2023 01:55:36 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id j9-20020a5d6049000000b002be1dcb6efbsm4844333wrt.9.2023.01.25.01.55.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Jan 2023 01:55:36 -0800 (PST)
-Message-ID: <b26a52ff-6b8a-8a64-7189-346cd2b0d705@linaro.org>
-Date:   Wed, 25 Jan 2023 10:55:34 +0100
+        with ESMTP id S232999AbjAYKqB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 05:46:01 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07E032D56;
+        Wed, 25 Jan 2023 02:46:00 -0800 (PST)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30P7U2Ma007077;
+        Wed, 25 Jan 2023 10:45:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=/rE7plyDah/nBJmzuMFXucz4lzFGzHs4vSiVS7Yw+7Q=;
+ b=UXwi27jp13YLSmhUWkt1BGSdTz2wC3pssRAZCSpfwFjgvEF5IvELRoejYJR9Y1IKh9jg
+ PcoOC2wr4t/bFAVSlsFN1c4RqH6c/9jTvqZkpRaT880+NiL9i0wEjFidNn2jezGhClln
+ e6p2ka+68m9/HPNpGblulTsPHodXFWWPQZVIgl8PewXRBqctqDh9ROpADimj+vAi8AnP
+ ty/WW9Q/q9iJX3QY2gHD1s+1dR7Fp8dXBMnHH7zvLwBnAWsFhor2K8deE+8DityLIeBs
+ vpf8a2NsDtkL9SPGf3OTqn7UG77zi9JTkAAfaMn/RlF5WmDwaG9W6cqAfa4L5M6IMIyK Lw== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nag309xwd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 25 Jan 2023 10:45:43 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30PAjg5k000913
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 25 Jan 2023 10:45:42 GMT
+Received: from win-platform-upstream01.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Wed, 25 Jan 2023 02:45:34 -0800
+From:   Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
+        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <shawnguo@kernel.org>, <arnd@arndb.de>,
+        <marcel.ziswiler@toradex.com>, <dmitry.baryshkov@linaro.org>,
+        <nfraprado@collabora.com>, <broonie@kernel.org>,
+        <robimarko@gmail.com>, <quic_gurus@quicinc.com>,
+        <bhupesh.sharma@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     Kathiravan T <quic_kathirav@quicinc.com>
+Subject: [PATCH 00/10] Add minimal boot support for IPQ5332
+Date:   Wed, 25 Jan 2023 16:15:10 +0530
+Message-ID: <20230125104520.89684-1-quic_kathirav@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH 07/15] dt-bindings: clock: Add Ambarella clock bindings
-To:     Li Chen <me@linux.beauty>
-Cc:     Li Chen <lchen@ambarella.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        "moderated list:ARM/Ambarella SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20230123073305.149940-1-lchen@ambarella.com>
- <20230123073305.149940-8-lchen@ambarella.com>
- <0c19efb4-3bca-f500-ca24-14b9d24369ef@linaro.org>
- <87y1prgdyu.wl-me@linux.beauty>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <87y1prgdyu.wl-me@linux.beauty>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 0y2CuRzgWXyyYHKpRuNV58BgtErF3Mjg
+X-Proofpoint-GUID: 0y2CuRzgWXyyYHKpRuNV58BgtErF3Mjg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-01-25_05,2023-01-25_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ suspectscore=0 bulkscore=0 adultscore=0 phishscore=0 lowpriorityscore=0
+ mlxlogscore=579 clxscore=1015 priorityscore=1501 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301250098
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/01/2023 10:28, Li Chen wrote:
-> 
-> Hi Krzysztof,
-> 
-> Sorry for my late reply.
-> 
-> On Mon, 23 Jan 2023 16:11:08 +0800,
-> Krzysztof Kozlowski wrote:
->>
->> On 23/01/2023 08:32, Li Chen wrote:
->>> This patch introduce clock bindings for Ambarella.
->>>
->>> Signed-off-by: Li Chen <lchen@ambarella.com>
->>> Change-Id: I29018a23ed3a5b79a1103e859a5c7ed7bb83a261
->>
->> All the same problems plus new:
->>
->> Subject: drop second/last, redundant "bindings". The "dt-bindings"
->> prefix is already stating that these are bindings.
-> 
-> Well noted.
-> 
->>> ---
->>>  .../clock/ambarella,composite-clock.yaml      | 52 ++++++++++++++++
->>>  .../bindings/clock/ambarella,pll-clock.yaml   | 59 +++++++++++++++++++
->>>  MAINTAINERS                                   |  2 +
->>>  3 files changed, 113 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/clock/ambarella,composite-clock.yaml
->>>  create mode 100644 Documentation/devicetree/bindings/clock/ambarella,pll-clock.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/ambarella,composite-clock.yaml b/Documentation/devicetree/bindings/clock/ambarella,composite-clock.yaml
->>> new file mode 100644
->>> index 000000000000..fac1cb9379c4
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/clock/ambarella,composite-clock.yaml
->>> @@ -0,0 +1,52 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/clock/ambarella,composite-clock.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Ambarella Composite Clock
->>> +
->>> +maintainers:
->>> +  - Li Chen <lchen@ambarella.com>
->>> +
->>
->> Missing description.
-> 
-> Thanks, description as below will be added in v2:
-> 
-> "Ambarella SoCs integrates some composite clocks, like uart0, which aggrate the functionality
-> of the basic clock types, like mux and div."
-> 
->>> +properties:
->>> +  compatible:
->>> +    items:
->>
->> Drop items.
-> 
-> Ok.
-> 
->>> +      - const: ambarella,composite-clock
->>
->> Missing SoC specific compatible. This is anyway not really correct
->> compatible...
-> 
-> Most Ambarella's compatibles don't contain SoC name, because we prefer
-> to use syscon + offsets in dts to tell driver the correct register offsets, or
-> ues struct soc_device and SoC identity stores in a given physical address.
+From: Kathiravan T <quic_kathirav@quicinc.com>
 
-That's not correct hardware description. Drop the syscon and offsets.
+The IPQ5332 is Qualcomm's 802.11ax SoC for Routers, Gateways and
+Access Points.
 
-> 
-> So compatibles like "ambarella,composite-clock" and "ambarella,pinctrl" are
-> used widely in Ambarella kernels. 
+This series adds minimal board boot support for ipq5332-mi01.2 board.
 
-What do you do downstream does not matter. You can invent any crazy idea
-and it is not an argument that it should be done like that. Usually
-downstream code is incorrect...
+Also, this series depends on the below patch
+https://lore.kernel.org/linux-arm-msm/20230120082631.22053-1-quic_kathirav@quicinc.com/
 
-> Feel free to correct me if you think this
-> is not a good idea.
+Kathiravan T (10):
+  dt-bindings: pinctrl: qcom: add IPQ5332 pinctrl
+  pinctrl: qcom: Introduce IPQ5332 TLMM driver
+  clk: qcom: Add STROMER PLUS PLL type for IPQ5332
+  dt-bindings: clock: Add Qualcomm IPQ5332 GCC
+  clk: qcom: add Global Clock controller (GCC) driver for IPQ5332 SoC
+  dt-bindings: qcom: add ipq5332 boards
+  dt-bindings: firmware: document IPQ5332 SCM
+  dt-bindings: mmc: sdhci-msm: add IPQ5332 compatible
+  arm64: dts: qcom: add IPQ5332 SoC and MI01.2 board support
+  arm64: defconfig: Enable IPQ5332 SoC base configs
 
-This is bad idea. Compatibles should be specific. Devices should not use
-syscons to poke other registers, unless strictly necessary, but have
-strictly defined MMIO address space and use it.
+ .../devicetree/bindings/arm/qcom.yaml         |    7 +
+ .../bindings/clock/qcom,ipq5332-gcc.yaml      |   55 +
+ .../bindings/firmware/qcom,scm.yaml           |    1 +
+ .../devicetree/bindings/mmc/sdhci-msm.yaml    |    1 +
+ .../pinctrl/qcom,ipq5332-pinctrl.yaml         |  134 +
+ arch/arm64/boot/dts/qcom/Makefile             |    1 +
+ arch/arm64/boot/dts/qcom/ipq5332-mi01.2.dts   |   71 +
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi         |  273 ++
+ arch/arm64/configs/defconfig                  |    2 +
+ drivers/clk/qcom/Kconfig                      |    7 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/clk-alpha-pll.c              |   11 +
+ drivers/clk/qcom/clk-alpha-pll.h              |    1 +
+ drivers/clk/qcom/gcc-ipq5332.c                | 3954 +++++++++++++++++
+ drivers/pinctrl/qcom/Kconfig                  |   10 +
+ drivers/pinctrl/qcom/Makefile                 |    1 +
+ drivers/pinctrl/qcom/pinctrl-ipq5332.c        | 1008 +++++
+ include/dt-bindings/clock/qcom,gcc-ipq5332.h  |  359 ++
+ 18 files changed, 5897 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq5332-pinctrl.yaml
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq5332-mi01.2.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq5332.dtsi
+ create mode 100644 drivers/clk/qcom/gcc-ipq5332.c
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq5332.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq5332.h
 
-> 
->>> +
->>> +  clocks: true
->>
->> No, needs constraints.
-> 
-> Ok. I will list all clocks name
-> 
->>> +  assigned-clocks: true
->>> +  assigned-clock-parents: true
->>> +  assigned-clock-rates: true
->>
->> Drop these three.
-> 
-> Ok
-> 
->>> +  clock-output-names: true
->>
->> Missing constraints.
-> 
-> Ok, I will add "maxItems: 1"
-> 
->>> +  amb,mux-regmap: true
->>
->> NAK.
->>
->> It's enough. The patches have very, very poor quality.
->>
->> Missing description, missing type/$ref, wrong prefix.
-> 
-> Sorry, I forget to run dt_binding_check, I will spend some
-> time learning the binding and check, sorry for it.
-> 
->>> +  amb,div-regmap: true
->>> +  amb,div-width: true
->>> +  amb,div-shift: true
->>
->> These two are arguments to phandle.
-> 
-> I will add description and $ref to regmap and width/shift.
-
-Drop all these syscon properties.
-
-> 
->>> +
->>> +  '#clock-cells':
->>> +    const: 0
->>> +
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +  - clocks
->>> +  - '#clock-cells'
->>> +
->>> +additionalProperties: false
->>
->> So why you decided to add it here and not in other places?
-> 
-> I didn't understand it well. I will add it to other places in v2,
-> thanks for pointint out it.
-> 
->>> +
->>> +examples:
->>> +  - |
->>> +      gclk_uart0: gclk-uart0 {
->>
->> Wrong indentation.
-> 
-> Well noted.
-> 
->>> +        #clock-cells = <0>;
->>> +        compatible = "ambarella,composite-clock";
->>> +        clocks = <&osc>, <&gclk_core>, <&pll_out_enet>, <&pll_out_sd>;
->>> +        clock-output-names = "gclk_uart0";
->>> +        assigned-clocks = <&gclk_uart0>;
->>> +        assigned-clock-parents = <&osc>;
->>> +        assigned-clock-rates = <24000000>;
->>> +        amb,mux-regmap = <&rct_syscon 0x1c8>;
->>> +        amb,div-regmap = <&rct_syscon 0x038>;
->>> +        amb,div-width = <24>;
->>> +        amb,div-shift = <0>;
->>> +      };
->>> diff --git a/Documentation/devicetree/bindings/clock/ambarella,pll-clock.yaml b/Documentation/devicetree/bindings/clock/ambarella,pll-clock.yaml
->>> new file mode 100644
->>> index 000000000000..65c1feb60041
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/clock/ambarella,pll-clock.yaml
->>> @@ -0,0 +1,59 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/clock/ambarella,pll-clock.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Ambarella PLL Clock
->>> +
->>> +maintainers:
->>> +  - Li Chen <lchen@ambarella.com>
->>> +
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - ambarella,pll-clock
->>> +      - ambarella,clkpll-v0
->>> +
->>> +if:
->>
->> No, this does not work like that. It sits under "allOf", located after
->> "required:".
-> 
-> Thanks, I will learn "allOf" and use it in v2. BTW, we use the two compatibles as below:
-> clocks {
->                 compatible = "ambarella,clkpll-v0";
-
-Nope.
-
->                 ...
->                 gclk_core: gclk-core {
->                         #clock-cells = <0>;
->                         compatible = "ambarella,pll-clock";
-
-Also nope.
-
->                         clocks = <&osc>;
->                         clock-output-names = "gclk_core";
->                         amb,clk-regmap = <&rct_syscon 0x000 0x004 0x100 0x104 0x000 0x000>;
-
-Nope, nope, nope.
-
-You need proper clock-controller with its own MMIO address space.
-
->                 };
->                 ...
-> }
-> 
-> I'm not sure can I describe the two compatibles in this single yaml, can you give some advice? thanks!
-
-There are plenty of examples, including example-schema.
-
-Best regards,
-Krzysztof
+-- 
+2.34.1
 
