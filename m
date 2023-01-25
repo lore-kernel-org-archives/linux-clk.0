@@ -2,42 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 228F3C27C76
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 12:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE04C54E94
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 12:14:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234493AbjAYMHm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Jan 2023 07:07:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48256 "EHLO
+        id S235387AbjAYMOW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Jan 2023 07:14:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234279AbjAYMHl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 07:07:41 -0500
-Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C099568A2;
-        Wed, 25 Jan 2023 04:07:39 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1674648443; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=LJWZWgMDiOvUUOaxxGp5C9xXe/ZHhMSs5o934rGBP7am70paMhfe5n7ok2rlAbrCUcSIk3J1UJ3Dc77SNbm5R4xvuRCHBTwgs/15FvCNj8L3W053HKXINbVwKdIcoTEVZCbINRpNrVxlkPcB0Tc+qeDiIT5I+0PbbfZU+uW3ri8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1674648443; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=qawlbShSNoXounucMMWi7eU+2wNcInRRobNeMbuhMeI=; 
-        b=R6/wFhs9j7gRP2AGewtIPEg+O2vbXCpctTB+X9Q9NZ0DMVZlLesku4kCGDHECZHb552u0OymObfuFl7aR3kFok+VXVQbPkwm2FUbANVO5e7zsWvduzmeUERh+cNgh75s232rByVvtZg8IE6P3V3hr7GvHB8f+2nQ6j7SYoV98q0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=linux.beauty;
-        spf=pass  smtp.mailfrom=me@linux.beauty;
-        dmarc=pass header.from=<me@linux.beauty>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1674648443;
-        s=zmail; d=linux.beauty; i=me@linux.beauty;
-        h=Date:Date:Message-ID:From:From:To:To:Cc:Cc:Subject:Subject:In-Reply-To:References:MIME-Version:Content-Type:Message-Id:Reply-To;
-        bh=qawlbShSNoXounucMMWi7eU+2wNcInRRobNeMbuhMeI=;
-        b=ohSnSu8BoNmvslUHYqpZt1gXcPG9EcrR0c5VKZLiKdQ8DOhvpb8PEJs5fcc6Fq65
-        /aiJxKOQ/M7mXI9h9gyLGsgJqp41tUbpSIyNfJOBC9GfqqnLnRQNp0knc7uyx0qrkGh
-        tekv5GtEr/HoZOHvMaV2VqzVsRQ3Wm58pdTqNXPM=
-Received: from lchen-xiaoxin.linux.beauty (221.225.241.248 [221.225.241.248]) by mx.zohomail.com
-        with SMTPS id 1674648440762719.0128530744996; Wed, 25 Jan 2023 04:07:20 -0800 (PST)
-Date:   Wed, 25 Jan 2023 20:06:31 +0800
-Message-ID: <87tu0ehl88.wl-me@linux.beauty>
-From:   Li Chen <me@linux.beauty>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        with ESMTP id S234668AbjAYMOV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 07:14:21 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3B861556A
+        for <linux-clk@vger.kernel.org>; Wed, 25 Jan 2023 04:14:19 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id fl24so294751wmb.1
+        for <linux-clk@vger.kernel.org>; Wed, 25 Jan 2023 04:14:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=p3nys00BAXBYiwkPm1qWggtJyjI8u/AjRoT72LZRkRU=;
+        b=ZVkUD6ZsfOdwT9ueAomuqAq6ckxKvFI+FNbG63seRbFc+FzIk0DARAldY6bLh7DuLU
+         OcX3GcXfIoCT1WRgUsfdjdE01Yfll8h6zZWmgquYzteJyytjVgVj1Ao5lF1GidDrVIoQ
+         RadeCoe3YsOppWFVBBBMwJ295ZZJR1WdbMq/nCIjVfd53tlk0va2iLSRK2121KX62KRk
+         YbY58y7TNycB0eBjbFVu88hIdnJJNX+OwjmLPO7gQXyzpSM4pz8cQUUMg6yW9ygHVWi7
+         MYv9Ojc6FurrZFVPctnX/ug+LRvRsbb+d9uZlGCN8xM8dJhbM6OCjHRcFtIF8l9t0wwx
+         z8BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p3nys00BAXBYiwkPm1qWggtJyjI8u/AjRoT72LZRkRU=;
+        b=mGsz/xTxnKTImZgOdjquhqCIILRYcOfDSmHsjLW2GuUHykI+jznMe03W/ByT/O/uGR
+         jW8Ev+PHZKfoCqXmhaysWMVcgZm6KbbqjOaO1KJgjsvawD3Y/ELsM0kdz+pvMNPtARRh
+         QpaMYaBquvdfrueZK9J8y7oG6116WPMcS0qQYrGXPu4nNiwqtW64k1SPziTbxmT8tFFy
+         aDlTmjX+5rRKDIEOPo50BlA58hnnE46/huNHInEhEgcHcqiqYazd+HwEbFsWckbO3WL5
+         /0DFIuZSB2b4Gw0ylc/3cJ8RfyEGSdkWjO/+hs6r6tXU+rSS0tbvX74DEcDM+CULQvKJ
+         2zpA==
+X-Gm-Message-State: AFqh2kp6xQYvF+q7EOBr5YMgCiAXjpXCQVCfUTDmlEffh2ixzRgTnXfF
+        9yrgLC8E+BQ4odrT7+7cKkp/WA==
+X-Google-Smtp-Source: AMrXdXu4XO41SKZ2KvFIecQPMaaaNXvLZ7JH/wi5RI0Pa1oaXDVqsVic9AH1ko1mJxWoPe5walX2mw==
+X-Received: by 2002:a05:600c:1e08:b0:3da:f443:9f0f with SMTP id ay8-20020a05600c1e0800b003daf4439f0fmr31882547wmb.18.1674648858488;
+        Wed, 25 Jan 2023 04:14:18 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id f6-20020a05600c43c600b003db06224953sm1852874wmn.41.2023.01.25.04.14.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Jan 2023 04:14:18 -0800 (PST)
+Message-ID: <ec9fc589-2612-3315-3550-83b68bead926@linaro.org>
+Date:   Wed, 25 Jan 2023 13:14:16 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH 07/15] dt-bindings: clock: Add Ambarella clock bindings
+Content-Language: en-US
+To:     Li Chen <me@linux.beauty>
 Cc:     Li Chen <lchen@ambarella.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -50,275 +69,55 @@ Cc:     Li Chen <lchen@ambarella.com>,
         <devicetree@vger.kernel.org>,
         open list <linux-kernel@vger.kernel.org>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 07/15] dt-bindings: clock: Add Ambarella clock bindings
-In-Reply-To: <b26a52ff-6b8a-8a64-7189-346cd2b0d705@linaro.org>
 References: <20230123073305.149940-1-lchen@ambarella.com>
-        <20230123073305.149940-8-lchen@ambarella.com>
-        <0c19efb4-3bca-f500-ca24-14b9d24369ef@linaro.org>
-        <87y1prgdyu.wl-me@linux.beauty>
-        <b26a52ff-6b8a-8a64-7189-346cd2b0d705@linaro.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL-LB/10.8 EasyPG/1.0.0
- Emacs/28.2 (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-ZohoMailClient: External
+ <20230123073305.149940-8-lchen@ambarella.com>
+ <0c19efb4-3bca-f500-ca24-14b9d24369ef@linaro.org>
+ <87y1prgdyu.wl-me@linux.beauty>
+ <b26a52ff-6b8a-8a64-7189-346cd2b0d705@linaro.org>
+ <87tu0ehl88.wl-me@linux.beauty>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <87tu0ehl88.wl-me@linux.beauty>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 25 Jan 2023 17:55:34 +0800,
-Hi Krzysztof,
+On 25/01/2023 13:06, Li Chen wrote:
+>>> Feel free to correct me if you think this
+>>> is not a good idea.
+>>
+>> This is bad idea. Compatibles should be specific. Devices should not use
+>> syscons to poke other registers, unless strictly necessary, but have
+>> strictly defined MMIO address space and use it.
+> 
+> Ok, I will convert syscon-based regmaps to SoC-specific compatibles and of_device_id->data.
+> 
+> But I have three questions:
+> 
+> 0. why syscon + offsets is a bad idea copared to specific compatibles?
 
-Krzysztof Kozlowski wrote:
->
-> On 25/01/2023 10:28, Li Chen wrote:
-> >
-> > Hi Krzysztof,
-> >
-> > Sorry for my late reply.
-> >
-> > On Mon, 23 Jan 2023 16:11:08 +0800,
-> > Krzysztof Kozlowski wrote:
-> >>
-> >> On 23/01/2023 08:32, Li Chen wrote:
-> >>> This patch introduce clock bindings for Ambarella.
-> >>>
-> >>> Signed-off-by: Li Chen <lchen@ambarella.com>
-> >>> Change-Id: I29018a23ed3a5b79a1103e859a5c7ed7bb83a261
-> >>
-> >> All the same problems plus new:
-> >>
-> >> Subject: drop second/last, redundant "bindings". The "dt-bindings"
-> >> prefix is already stating that these are bindings.
-> >
-> > Well noted.
-> >
-> >>> ---
-> >>>  .../clock/ambarella,composite-clock.yaml      | 52 ++++++++++++++++
-> >>>  .../bindings/clock/ambarella,pll-clock.yaml   | 59 +++++++++++++++++++
-> >>>  MAINTAINERS                                   |  2 +
-> >>>  3 files changed, 113 insertions(+)
-> >>>  create mode 100644 Documentation/devicetree/bindings/clock/ambarella,composite-clock.yaml
-> >>>  create mode 100644 Documentation/devicetree/bindings/clock/ambarella,pll-clock.yaml
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/clock/ambarella,composite-clock.yaml b/Documentation/devicetree/bindings/clock/ambarella,composite-clock.yaml
-> >>> new file mode 100644
-> >>> index 000000000000..fac1cb9379c4
-> >>> --- /dev/null
-> >>> +++ b/Documentation/devicetree/bindings/clock/ambarella,composite-clock.yaml
-> >>> @@ -0,0 +1,52 @@
-> >>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >>> +%YAML 1.2
-> >>> +---
-> >>> +$id: http://devicetree.org/schemas/clock/ambarella,composite-clock.yaml#
-> >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >>> +
-> >>> +title: Ambarella Composite Clock
-> >>> +
-> >>> +maintainers:
-> >>> +  - Li Chen <lchen@ambarella.com>
-> >>> +
-> >>
-> >> Missing description.
-> >
-> > Thanks, description as below will be added in v2:
-> >
-> > "Ambarella SoCs integrates some composite clocks, like uart0, which aggrate the functionality
-> > of the basic clock types, like mux and div."
-> >
-> >>> +properties:
-> >>> +  compatible:
-> >>> +    items:
-> >>
-> >> Drop items.
-> >
-> > Ok.
-> >
-> >>> +      - const: ambarella,composite-clock
-> >>
-> >> Missing SoC specific compatible. This is anyway not really correct
-> >> compatible...
-> >
-> > Most Ambarella's compatibles don't contain SoC name, because we prefer
-> > to use syscon + offsets in dts to tell driver the correct register offsets, or
-> > ues struct soc_device and SoC identity stores in a given physical address.
->
-> That's not correct hardware description. Drop the syscon and offsets.
+Specific compatibles are a requirement. They are needed to match device
+in exact way, not some generic and unspecific. The same with every other
+interface, it must be specific to allow only correct usage.
 
-Ok.
+It's of course different with generic fallbacks, but we do not talk
+about them here...
 
-> > 
-> > So compatibles like "ambarella,composite-clock" and "ambarella,pinctrl" are
-> > used widely in Ambarella kernels.
->
-> What do you do downstream does not matter. You can invent any crazy idea
-> and it is not an argument that it should be done like that. Usually
-> downstream code is incorrect...
+> 1. when would it be a good idea to use syscon in device tree?
 
-Yeah, I understand it.
-I really hope to learn the standard/right ways and
-I am very grateful for your careful reviews.
+When your device needs to poke one or few registers from some
+system-controller block.
 
-> > Feel free to correct me if you think this
-> > is not a good idea.
->
-> This is bad idea. Compatibles should be specific. Devices should not use
-> syscons to poke other registers, unless strictly necessary, but have
-> strictly defined MMIO address space and use it.
+> 2. syscon VS reg, which is preferred in device tree?
 
-Ok, I will convert syscon-based regmaps to SoC-specific compatibles and of_device_id->data.
+There is no such choice. Your DTS *must* describe the hardware. The
+hardware description is for example clock controller which has its own
+address space. If you now do not add clock controller's address space to
+the clock controller, it is not a proper hardware description. The same
+with every other property. If your device has interrupts, but you do not
+add them, it is not correct description.
 
-But I have three questions:
+Best regards,
+Krzysztof
 
-0. why syscon + offsets is a bad idea copared to specific compatibles?
-1. when would it be a good idea to use syscon in device tree?
-2. syscon VS reg, which is preferred in device tree?
-
-Thanks in advanced.
-
-> >
-> >>> +
-> >>> +  clocks: true
-> >>
-> >> No, needs constraints.
-> >
-> > Ok. I will list all clocks name
-> >
-> >>> +  assigned-clocks: true
-> >>> +  assigned-clock-parents: true
-> >>> +  assigned-clock-rates: true
-> >>
-> >> Drop these three.
-> >
-> > Ok
-> >
-> >>> +  clock-output-names: true
-> >>
-> >> Missing constraints.
-> >
-> > Ok, I will add "maxItems: 1"
-> >
-> >>> +  amb,mux-regmap: true
-> >>
-> >> NAK.
-> >>
-> >> It's enough. The patches have very, very poor quality.
-> >>
-> >> Missing description, missing type/$ref, wrong prefix.
-> >
-> > Sorry, I forget to run dt_binding_check, I will spend some
-> > time learning the binding and check, sorry for it.
-> >
-> >>> +  amb,div-regmap: true
-> >>> +  amb,div-width: true
-> >>> +  amb,div-shift: true
-> >>
-> >> These two are arguments to phandle.
-> >
-> > I will add description and $ref to regmap and width/shift.
->
-> Drop all these syscon properties.
-
-Ok, so I should replace these regmaps with reg, right?
-
-> >
-> >>> +
-> >>> +  '#clock-cells':
-> >>> +    const: 0
-> >>> +
-> >>> +required:
-> >>> +  - compatible
-> >>> +  - reg
-> >>> +  - clocks
-> >>> +  - '#clock-cells'
-> >>> +
-> >>> +additionalProperties: false
-> >>
-> >> So why you decided to add it here and not in other places?
-> >
-> > I didn't understand it well. I will add it to other places in v2,
-> > thanks for pointint out it.
-> >
-> >>> +
-> >>> +examples:
-> >>> +  - |
-> >>> +      gclk_uart0: gclk-uart0 {
-> >>
-> >> Wrong indentation.
-> >
-> > Well noted.
-> >
-> >>> +        #clock-cells = <0>;
-> >>> +        compatible = "ambarella,composite-clock";
-> >>> +        clocks = <&osc>, <&gclk_core>, <&pll_out_enet>, <&pll_out_sd>;
-> >>> +        clock-output-names = "gclk_uart0";
-> >>> +        assigned-clocks = <&gclk_uart0>;
-> >>> +        assigned-clock-parents = <&osc>;
-> >>> +        assigned-clock-rates = <24000000>;
-> >>> +        amb,mux-regmap = <&rct_syscon 0x1c8>;
-> >>> +        amb,div-regmap = <&rct_syscon 0x038>;
-> >>> +        amb,div-width = <24>;
-> >>> +        amb,div-shift = <0>;
-> >>> +      };
-> >>> diff --git a/Documentation/devicetree/bindings/clock/ambarella,pll-clock.yaml b/Documentation/devicetree/bindings/clock/ambarella,pll-clock.yaml
-> >>> new file mode 100644
-> >>> index 000000000000..65c1feb60041
-> >>> --- /dev/null
-> >>> +++ b/Documentation/devicetree/bindings/clock/ambarella,pll-clock.yaml
-> >>> @@ -0,0 +1,59 @@
-> >>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >>> +%YAML 1.2
-> >>> +---
-> >>> +$id: http://devicetree.org/schemas/clock/ambarella,pll-clock.yaml#
-> >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >>> +
-> >>> +title: Ambarella PLL Clock
-> >>> +
-> >>> +maintainers:
-> >>> +  - Li Chen <lchen@ambarella.com>
-> >>> +
-> >>> +properties:
-> >>> +  compatible:
-> >>> +    enum:
-> >>> +      - ambarella,pll-clock
-> >>> +      - ambarella,clkpll-v0
-> >>> +
-> >>> +if:
-> >>
-> >> No, this does not work like that. It sits under "allOf", located after
-> >> "required:".
-> >
-> > Thanks, I will learn "allOf" and use it in v2. BTW, we use the two compatibles as below:
-> > clocks {
-> >                 compatible = "ambarella,clkpll-v0";
->
-> Nope.
->
-> >                 ...
-> >                 gclk_core: gclk-core {
-> >                         #clock-cells = <0>;
-> >                         compatible = "ambarella,pll-clock";
->
-> Also nope.
->
-> >                         clocks = <&osc>;
-> >                         clock-output-names = "gclk_core";
-> >                         amb,clk-regmap = <&rct_syscon 0x000 0x004 0x100 0x104 0x000 0x000>;
->
-> Nope, nope, nope.
->
-> You need proper clock-controller with its own MMIO address space.
->
-> >                 };
-> >                 ...
-> > }
-> >
-> > I'm not sure can I describe the two compatibles in this single yaml, can you give some advice? thanks!
->
-> There are plenty of examples, including example-schema.
-
-Ok, I will learn more and fix it.
-
-Regards,
-Li
