@@ -2,61 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE04C54E94
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 12:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 254C7C54E94
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 13:41:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235387AbjAYMOW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Jan 2023 07:14:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52620 "EHLO
+        id S235483AbjAYNl0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Jan 2023 08:41:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234668AbjAYMOV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 07:14:21 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3B861556A
-        for <linux-clk@vger.kernel.org>; Wed, 25 Jan 2023 04:14:19 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id fl24so294751wmb.1
-        for <linux-clk@vger.kernel.org>; Wed, 25 Jan 2023 04:14:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=p3nys00BAXBYiwkPm1qWggtJyjI8u/AjRoT72LZRkRU=;
-        b=ZVkUD6ZsfOdwT9ueAomuqAq6ckxKvFI+FNbG63seRbFc+FzIk0DARAldY6bLh7DuLU
-         OcX3GcXfIoCT1WRgUsfdjdE01Yfll8h6zZWmgquYzteJyytjVgVj1Ao5lF1GidDrVIoQ
-         RadeCoe3YsOppWFVBBBMwJ295ZZJR1WdbMq/nCIjVfd53tlk0va2iLSRK2121KX62KRk
-         YbY58y7TNycB0eBjbFVu88hIdnJJNX+OwjmLPO7gQXyzpSM4pz8cQUUMg6yW9ygHVWi7
-         MYv9Ojc6FurrZFVPctnX/ug+LRvRsbb+d9uZlGCN8xM8dJhbM6OCjHRcFtIF8l9t0wwx
-         z8BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p3nys00BAXBYiwkPm1qWggtJyjI8u/AjRoT72LZRkRU=;
-        b=mGsz/xTxnKTImZgOdjquhqCIILRYcOfDSmHsjLW2GuUHykI+jznMe03W/ByT/O/uGR
-         jW8Ev+PHZKfoCqXmhaysWMVcgZm6KbbqjOaO1KJgjsvawD3Y/ELsM0kdz+pvMNPtARRh
-         QpaMYaBquvdfrueZK9J8y7oG6116WPMcS0qQYrGXPu4nNiwqtW64k1SPziTbxmT8tFFy
-         aDlTmjX+5rRKDIEOPo50BlA58hnnE46/huNHInEhEgcHcqiqYazd+HwEbFsWckbO3WL5
-         /0DFIuZSB2b4Gw0ylc/3cJ8RfyEGSdkWjO/+hs6r6tXU+rSS0tbvX74DEcDM+CULQvKJ
-         2zpA==
-X-Gm-Message-State: AFqh2kp6xQYvF+q7EOBr5YMgCiAXjpXCQVCfUTDmlEffh2ixzRgTnXfF
-        9yrgLC8E+BQ4odrT7+7cKkp/WA==
-X-Google-Smtp-Source: AMrXdXu4XO41SKZ2KvFIecQPMaaaNXvLZ7JH/wi5RI0Pa1oaXDVqsVic9AH1ko1mJxWoPe5walX2mw==
-X-Received: by 2002:a05:600c:1e08:b0:3da:f443:9f0f with SMTP id ay8-20020a05600c1e0800b003daf4439f0fmr31882547wmb.18.1674648858488;
-        Wed, 25 Jan 2023 04:14:18 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id f6-20020a05600c43c600b003db06224953sm1852874wmn.41.2023.01.25.04.14.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Jan 2023 04:14:18 -0800 (PST)
-Message-ID: <ec9fc589-2612-3315-3550-83b68bead926@linaro.org>
-Date:   Wed, 25 Jan 2023 13:14:16 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH 07/15] dt-bindings: clock: Add Ambarella clock bindings
-Content-Language: en-US
-To:     Li Chen <me@linux.beauty>
+        with ESMTP id S229806AbjAYNlZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 08:41:25 -0500
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC99C4DCD4;
+        Wed, 25 Jan 2023 05:41:24 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1674654069; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=FYqS8pXHLDpygW1IQ0GkOLw8TvGh1suuGXX5dcgCR4kviESto6QkhbL2B1aKAjJcVLtj64bpmUFmVLyJee/hjbzg3iBRRLVyYHMaTuvdGnmeD67dbRz0qBIGS10mLNy5guVjQKa71+EkKrU5GRIpTlRBB2VnJO9AI0pF36/5x04=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1674654069; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=Buta/IEuOcOmRkcva2fQ1tSXMH4qcUYXjavj7E1aFaM=; 
+        b=H7IVh18j4spC50AvmeauW2WLpWCchVRxizHNYlQ/YU7KE9A+qshM/gQT6He53N66Js84Nxx2wOuhUQZ4pe95HdfB9mevYsDE0MLziSQWgKI1x3XlKBExmj6CHvPULCJdthLFPk+AP1qYRVv7ZRKI/sFTgUWmzzbq0EQNwEWa9vo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=linux.beauty;
+        spf=pass  smtp.mailfrom=me@linux.beauty;
+        dmarc=pass header.from=<me@linux.beauty>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1674654069;
+        s=zmail; d=linux.beauty; i=me@linux.beauty;
+        h=Date:Date:Message-ID:From:From:To:To:Cc:Cc:Subject:Subject:In-Reply-To:References:MIME-Version:Content-Type:Message-Id:Reply-To;
+        bh=Buta/IEuOcOmRkcva2fQ1tSXMH4qcUYXjavj7E1aFaM=;
+        b=iR9fvJXN2YOKwZ4jTdPNlcIB5azaqsL4YvIVUxl0D5Zo71alnZNa/IG9H0+LSOsV
+        ZXkQB0JslpTamZJLId+oKVVSlpJOgBeqdpPkh35hEhCICdGkqPWmc7OALFmtd83sXBu
+        SPKBg05RPZcvndMXv3yrN/aKI+OAkELiekFM2DZw=
+Received: from lchen-xiaoxin.linux.beauty (221.225.241.248 [221.225.241.248]) by mx.zohomail.com
+        with SMTPS id 1674654067964288.69962327378846; Wed, 25 Jan 2023 05:41:07 -0800 (PST)
+Date:   Wed, 25 Jan 2023 21:40:19 +0800
+Message-ID: <87sffyhgvw.wl-me@linux.beauty>
+From:   Li Chen <me@linux.beauty>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     Li Chen <lchen@ambarella.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -69,55 +50,100 @@ Cc:     Li Chen <lchen@ambarella.com>,
         <devicetree@vger.kernel.org>,
         open list <linux-kernel@vger.kernel.org>,
         Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 07/15] dt-bindings: clock: Add Ambarella clock bindings
+In-Reply-To: <ec9fc589-2612-3315-3550-83b68bead926@linaro.org>
 References: <20230123073305.149940-1-lchen@ambarella.com>
- <20230123073305.149940-8-lchen@ambarella.com>
- <0c19efb4-3bca-f500-ca24-14b9d24369ef@linaro.org>
- <87y1prgdyu.wl-me@linux.beauty>
- <b26a52ff-6b8a-8a64-7189-346cd2b0d705@linaro.org>
- <87tu0ehl88.wl-me@linux.beauty>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <87tu0ehl88.wl-me@linux.beauty>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        <20230123073305.149940-8-lchen@ambarella.com>
+        <0c19efb4-3bca-f500-ca24-14b9d24369ef@linaro.org>
+        <87y1prgdyu.wl-me@linux.beauty>
+        <b26a52ff-6b8a-8a64-7189-346cd2b0d705@linaro.org>
+        <87tu0ehl88.wl-me@linux.beauty>
+        <ec9fc589-2612-3315-3550-83b68bead926@linaro.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL-LB/10.8 EasyPG/1.0.0
+ Emacs/28.2 (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-ZohoMailClient: External
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/01/2023 13:06, Li Chen wrote:
->>> Feel free to correct me if you think this
->>> is not a good idea.
->>
->> This is bad idea. Compatibles should be specific. Devices should not use
->> syscons to poke other registers, unless strictly necessary, but have
->> strictly defined MMIO address space and use it.
-> 
-> Ok, I will convert syscon-based regmaps to SoC-specific compatibles and of_device_id->data.
-> 
-> But I have three questions:
-> 
-> 0. why syscon + offsets is a bad idea copared to specific compatibles?
+On Wed, 25 Jan 2023 20:14:16 +0800,
 
-Specific compatibles are a requirement. They are needed to match device
-in exact way, not some generic and unspecific. The same with every other
-interface, it must be specific to allow only correct usage.
+Hi Krzysztof,
 
-It's of course different with generic fallbacks, but we do not talk
-about them here...
+Krzysztof Kozlowski wrote:
+>
+> On 25/01/2023 13:06, Li Chen wrote:
+> >>> Feel free to correct me if you think this
+> >>> is not a good idea.
+> >>
+> >> This is bad idea. Compatibles should be specific. Devices should not use
+> >> syscons to poke other registers, unless strictly necessary, but have
+> >> strictly defined MMIO address space and use it.
+> >
+> > Ok, I will convert syscon-based regmaps to SoC-specific compatibles and of_device_id->data.
+> >
+> > But I have three questions:
+> >
+> > 0. why syscon + offsets is a bad idea copared to specific compatibles?
+>
+> Specific compatibles are a requirement. They are needed to match device
+> in exact way, not some generic and unspecific. The same with every other
+> interface, it must be specific to allow only correct usage.
+>
+> It's of course different with generic fallbacks, but we do not talk
+> about them here...
+>
+> > 1. when would it be a good idea to use syscon in device tree?
+>
+> When your device needs to poke one or few registers from some
+> system-controller block.
+>
+> > 2. syscon VS reg, which is preferred in device tree?
+>
+> There is no such choice. Your DTS *must* describe the hardware. The
+> hardware description is for example clock controller which has its own
+> address space. If you now do not add clock controller's address space to
+> the clock controller, it is not a proper hardware description. The same
+> with every other property. If your device has interrupts, but you do not
+> add them, it is not correct description.
 
-> 1. when would it be a good idea to use syscon in device tree?
+Got it. But Ambarella hardware design is kind of strange. I want to add mroe
+expalaination about why Ambarella's downstream kernel
+use so much syscon in device trees:
 
-When your device needs to poke one or few registers from some
-system-controller block.
+For most SoCs from other vendors, they have seperate address space regions
+for different peripherals, like
+axi address space A: ENET
+axi address space B: PCIe
+axi address space B: USB
+...
 
-> 2. syscon VS reg, which is preferred in device tree?
+Ambarella is somewhat **different**, its SoCs have two system controllers regions:
+RCT and scratchpad, take RCT for example:
+"The S6LM system software
+interacts with PLLs, PHYs and several other low-level hardware blocks using APB reset clock and test (RCT)
+registers with a system-layer application programming interface (API).
+This includes the setting of clock frequencies."
 
-There is no such choice. Your DTS *must* describe the hardware. The
-hardware description is for example clock controller which has its own
-address space. If you now do not add clock controller's address space to
-the clock controller, it is not a proper hardware description. The same
-with every other property. If your device has interrupts, but you do not
-add them, it is not correct description.
+There are so many peripherals registers located inside RCT and scratchpad
+(like usb/phy, gpio, sd, dac, enet, rng), and some peripherals even have no their
+own modules for register definitions.
 
-Best regards,
-Krzysztof
+So most time(for a peripheral driver), the only differences between different
+Ambarella SoCs are just the syscon(rct or scratchpad) offsets get changed.
 
+I don't think such lazy hardware design is common in vendors other than ambarella.
+
+If I switch to SoC-specific compatibles, and remove these syscon from device tree,
+of_device_id->data may only contain system controller(rct or scratchpad) offset for many Ambarella drivers,
+and ioremap/devm_ioremap carefully.
+
+The question is: can upstream kernel accept such codes?
+
+If yes, I will switch to SoC-specific compatibles and remove syscon without hesitation.
+
+Regards,
+Li
