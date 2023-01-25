@@ -2,486 +2,323 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D5BC61DA0
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 11:23:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 228F3C27C76
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 12:07:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235299AbjAYLXe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Jan 2023 06:23:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46414 "EHLO
+        id S234493AbjAYMHm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Jan 2023 07:07:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235281AbjAYLX3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 06:23:29 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07A9114221
-        for <linux-clk@vger.kernel.org>; Wed, 25 Jan 2023 03:23:01 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id l8so13487412wms.3
-        for <linux-clk@vger.kernel.org>; Wed, 25 Jan 2023 03:23:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Xt+vl8rRw5mhg9gfkhmLGr4GRspht5UpB/9onW75LaE=;
-        b=BLl2mNa5aGjjxsJq1wZmB5eFoLyRartRXEMVboY6qbP5509ml87YnB8ErfWLwPLIr9
-         nW8M6MP8YEDR+ayPIX4+PGl+rOkCg3adnRrw86QVvPOEbEFGOWYmq2zbzbbpGNapu12x
-         OPV77Dl5fA0OAfMRc5ebfhl4kB0vmf5cBAXi9K7wEQmV9h8FN9kn2Us0Og/24NlO9dmi
-         k2+GVWyaeTK3nfVjJM3iF2+KWNLCbuNDuLPy3RJUGFtPMimrWIyLjXPlmEpEXYMC0zuu
-         YuM5qJ4ZPdDLraf327lpxQwusoI5nmUyA8huCj8kUs03dvvklLDcnBxXfXa7Nx2oej3o
-         a2KQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xt+vl8rRw5mhg9gfkhmLGr4GRspht5UpB/9onW75LaE=;
-        b=GJNt2J20WFHFqbN+kBWG07R7SZINCSN7Zp2Yy/tDkNqrAN3uvpIqC/cGz3mEpnqbAm
-         qsgPOi4vG7t1Z+mADBIqLpVOJs9rYJbC27quGCGCue5AGGLx/s8Uu7+p0d/VbhsU1mOR
-         zMzFG/4yssKgiAJxj/N+0AM6j8JzqXcMi8Di435n+CMC3N3PuQ+oYWttpvYsTE+dtAx9
-         tdJT/JlMQyiR1fgOdz9NfH7sckUc+vKOemrQENN6JLUjl4774LMZvZwpMgdSKPbtjssm
-         ibhBUxlFYWIPuupOLoo5rXVyUNjkuFoJXcAh9UVKLZj+x4tF0zyCYFGL87RnsC64GIQh
-         yiTg==
-X-Gm-Message-State: AFqh2kqV3zOuD89dqMBI0ILnyCNFKtaSyDs4bNJaBNzcfF5Keb1fWI+e
-        tGgfWk63XnCyUsMPfpUBFyRiEQ==
-X-Google-Smtp-Source: AMrXdXvSRVYEmr+rYW5N2QSJPfvb+oS7O+VkdsbDRAgHsvTy2hrXGU/hmovUFz7prV/hc4w2991iWA==
-X-Received: by 2002:a05:600c:3b18:b0:3db:eab:3c5c with SMTP id m24-20020a05600c3b1800b003db0eab3c5cmr28597769wms.32.1674645780086;
-        Wed, 25 Jan 2023 03:23:00 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id t19-20020a1c7713000000b003c71358a42dsm1872933wmi.18.2023.01.25.03.22.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Jan 2023 03:22:59 -0800 (PST)
-Message-ID: <35bb0017-7ffc-d128-17be-4b9c14aace26@linaro.org>
-Date:   Wed, 25 Jan 2023 12:22:56 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH 09/10] arm64: dts: qcom: add IPQ5332 SoC and MI01.2 board
- support
-Content-Language: en-US
-To:     Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
-        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, ulf.hansson@linaro.org,
-        linus.walleij@linaro.org, catalin.marinas@arm.com, will@kernel.org,
-        shawnguo@kernel.org, arnd@arndb.de, marcel.ziswiler@toradex.com,
-        dmitry.baryshkov@linaro.org, nfraprado@collabora.com,
-        broonie@kernel.org, robimarko@gmail.com, quic_gurus@quicinc.com,
-        bhupesh.sharma@linaro.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20230125104520.89684-1-quic_kathirav@quicinc.com>
- <20230125104520.89684-10-quic_kathirav@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230125104520.89684-10-quic_kathirav@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S234279AbjAYMHl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 07:07:41 -0500
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C099568A2;
+        Wed, 25 Jan 2023 04:07:39 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1674648443; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=LJWZWgMDiOvUUOaxxGp5C9xXe/ZHhMSs5o934rGBP7am70paMhfe5n7ok2rlAbrCUcSIk3J1UJ3Dc77SNbm5R4xvuRCHBTwgs/15FvCNj8L3W053HKXINbVwKdIcoTEVZCbINRpNrVxlkPcB0Tc+qeDiIT5I+0PbbfZU+uW3ri8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1674648443; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=qawlbShSNoXounucMMWi7eU+2wNcInRRobNeMbuhMeI=; 
+        b=R6/wFhs9j7gRP2AGewtIPEg+O2vbXCpctTB+X9Q9NZ0DMVZlLesku4kCGDHECZHb552u0OymObfuFl7aR3kFok+VXVQbPkwm2FUbANVO5e7zsWvduzmeUERh+cNgh75s232rByVvtZg8IE6P3V3hr7GvHB8f+2nQ6j7SYoV98q0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=linux.beauty;
+        spf=pass  smtp.mailfrom=me@linux.beauty;
+        dmarc=pass header.from=<me@linux.beauty>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1674648443;
+        s=zmail; d=linux.beauty; i=me@linux.beauty;
+        h=Date:Date:Message-ID:From:From:To:To:Cc:Cc:Subject:Subject:In-Reply-To:References:MIME-Version:Content-Type:Message-Id:Reply-To;
+        bh=qawlbShSNoXounucMMWi7eU+2wNcInRRobNeMbuhMeI=;
+        b=ohSnSu8BoNmvslUHYqpZt1gXcPG9EcrR0c5VKZLiKdQ8DOhvpb8PEJs5fcc6Fq65
+        /aiJxKOQ/M7mXI9h9gyLGsgJqp41tUbpSIyNfJOBC9GfqqnLnRQNp0knc7uyx0qrkGh
+        tekv5GtEr/HoZOHvMaV2VqzVsRQ3Wm58pdTqNXPM=
+Received: from lchen-xiaoxin.linux.beauty (221.225.241.248 [221.225.241.248]) by mx.zohomail.com
+        with SMTPS id 1674648440762719.0128530744996; Wed, 25 Jan 2023 04:07:20 -0800 (PST)
+Date:   Wed, 25 Jan 2023 20:06:31 +0800
+Message-ID: <87tu0ehl88.wl-me@linux.beauty>
+From:   Li Chen <me@linux.beauty>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Li Chen <lchen@ambarella.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        "moderated list:ARM/Ambarella SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 07/15] dt-bindings: clock: Add Ambarella clock bindings
+In-Reply-To: <b26a52ff-6b8a-8a64-7189-346cd2b0d705@linaro.org>
+References: <20230123073305.149940-1-lchen@ambarella.com>
+        <20230123073305.149940-8-lchen@ambarella.com>
+        <0c19efb4-3bca-f500-ca24-14b9d24369ef@linaro.org>
+        <87y1prgdyu.wl-me@linux.beauty>
+        <b26a52ff-6b8a-8a64-7189-346cd2b0d705@linaro.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL-LB/10.8 EasyPG/1.0.0
+ Emacs/28.2 (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-ZohoMailClient: External
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/01/2023 11:45, Kathiravan Thirumoorthy wrote:
-> From: Kathiravan T <quic_kathirav@quicinc.com>
-> 
-> Add initial device tree support for the Qualcomm IPQ5332 SoC and
-> MI01.2 board.
-> 
-> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile           |   1 +
->  arch/arm64/boot/dts/qcom/ipq5332-mi01.2.dts |  71 +++++
->  arch/arm64/boot/dts/qcom/ipq5332.dtsi       | 273 ++++++++++++++++++++
->  3 files changed, 345 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/ipq5332-mi01.2.dts
->  create mode 100644 arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> index 3e79496292e7..fbd5bc583a9b 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -3,6 +3,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= apq8016-sbc.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= apq8094-sony-xperia-kitakami-karin_windy.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-db820c.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-ifc6640.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+= ipq5332-mi01.2.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= ipq6018-cp01-c1.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk01.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk10-c1.dtb
-> diff --git a/arch/arm64/boot/dts/qcom/ipq5332-mi01.2.dts b/arch/arm64/boot/dts/qcom/ipq5332-mi01.2.dts
-> new file mode 100644
-> index 000000000000..7984d8f824ce
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/ipq5332-mi01.2.dts
-> @@ -0,0 +1,71 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+On Wed, 25 Jan 2023 17:55:34 +0800,
+Hi Krzysztof,
 
-A bit odd license (accepting GPLv3...), especially that DTSI is only
-BSD. Was it really intended?
+Krzysztof Kozlowski wrote:
+>
+> On 25/01/2023 10:28, Li Chen wrote:
+> >
+> > Hi Krzysztof,
+> >
+> > Sorry for my late reply.
+> >
+> > On Mon, 23 Jan 2023 16:11:08 +0800,
+> > Krzysztof Kozlowski wrote:
+> >>
+> >> On 23/01/2023 08:32, Li Chen wrote:
+> >>> This patch introduce clock bindings for Ambarella.
+> >>>
+> >>> Signed-off-by: Li Chen <lchen@ambarella.com>
+> >>> Change-Id: I29018a23ed3a5b79a1103e859a5c7ed7bb83a261
+> >>
+> >> All the same problems plus new:
+> >>
+> >> Subject: drop second/last, redundant "bindings". The "dt-bindings"
+> >> prefix is already stating that these are bindings.
+> >
+> > Well noted.
+> >
+> >>> ---
+> >>>  .../clock/ambarella,composite-clock.yaml      | 52 ++++++++++++++++
+> >>>  .../bindings/clock/ambarella,pll-clock.yaml   | 59 +++++++++++++++++++
+> >>>  MAINTAINERS                                   |  2 +
+> >>>  3 files changed, 113 insertions(+)
+> >>>  create mode 100644 Documentation/devicetree/bindings/clock/ambarella,composite-clock.yaml
+> >>>  create mode 100644 Documentation/devicetree/bindings/clock/ambarella,pll-clock.yaml
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/clock/ambarella,composite-clock.yaml b/Documentation/devicetree/bindings/clock/ambarella,composite-clock.yaml
+> >>> new file mode 100644
+> >>> index 000000000000..fac1cb9379c4
+> >>> --- /dev/null
+> >>> +++ b/Documentation/devicetree/bindings/clock/ambarella,composite-clock.yaml
+> >>> @@ -0,0 +1,52 @@
+> >>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >>> +%YAML 1.2
+> >>> +---
+> >>> +$id: http://devicetree.org/schemas/clock/ambarella,composite-clock.yaml#
+> >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >>> +
+> >>> +title: Ambarella Composite Clock
+> >>> +
+> >>> +maintainers:
+> >>> +  - Li Chen <lchen@ambarella.com>
+> >>> +
+> >>
+> >> Missing description.
+> >
+> > Thanks, description as below will be added in v2:
+> >
+> > "Ambarella SoCs integrates some composite clocks, like uart0, which aggrate the functionality
+> > of the basic clock types, like mux and div."
+> >
+> >>> +properties:
+> >>> +  compatible:
+> >>> +    items:
+> >>
+> >> Drop items.
+> >
+> > Ok.
+> >
+> >>> +      - const: ambarella,composite-clock
+> >>
+> >> Missing SoC specific compatible. This is anyway not really correct
+> >> compatible...
+> >
+> > Most Ambarella's compatibles don't contain SoC name, because we prefer
+> > to use syscon + offsets in dts to tell driver the correct register offsets, or
+> > ues struct soc_device and SoC identity stores in a given physical address.
+>
+> That's not correct hardware description. Drop the syscon and offsets.
 
-> +/*
-> + * IPQ5332 AP-MI01.2 board device tree source
-> + *
-> + * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "ipq5332.dtsi"
-> +
-> +/ {
-> +	model = "Qualcomm Technologies, Inc. IPQ5332/AP-MI01.2";
+Ok.
 
-Just to be clear - you indicated in bindings that "AP" is the foundry
-ID. This is correct, right? Then I am not sure if it should be in model
-name.
+> > 
+> > So compatibles like "ambarella,composite-clock" and "ambarella,pinctrl" are
+> > used widely in Ambarella kernels.
+>
+> What do you do downstream does not matter. You can invent any crazy idea
+> and it is not an argument that it should be done like that. Usually
+> downstream code is incorrect...
 
-> +	compatible = "qcom,ipq5332-ap-mi01.2", "qcom,ipq5332";
-> +
-> +	aliases {
-> +		serial0 = &blsp1_uart0;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0";
-> +	};
-> +};
-> +
-> +&blsp1_uart0 {
-> +	pinctrl-0 = <&serial_0_pins>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +};
-> +
-> +&sdhc {
-> +	pinctrl-0 = <&sdc_default_state>;
-> +	pinctrl-names = "default";
-> +	non-removable;
-> +	status = "okay";
-> +};
-> +
-> +&sleep_clk {
-> +	clock-frequency = <32000>;
-> +};
-> +
-> +&xo_board {
-> +	clock-frequency = <24000000>;
-> +};
-> +
-> +/* PINCTRL */
-> +
-> +&tlmm {
-> +	sdc_default_state: sdc-default-state {
-> +		clk-pins {
-> +			pins = "gpio13";
-> +			function = "sdc_clk";
-> +			drive-strength = <8>;
-> +			bias-disable;
-> +		};
-> +
-> +		cmd-pins {
-> +			pins = "gpio12";
-> +			function = "sdc_cmd";
-> +			drive-strength = <8>;
-> +			bias-pull-up;
-> +		};
-> +
-> +		data-pins {
-> +			pins = "gpio8", "gpio9", "gpio10", "gpio11";
-> +			function = "sdc_data";
-> +			drive-strength = <8>;
-> +			bias-pull-up;
-> +		};
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> new file mode 100644
-> index 000000000000..d04244a3cd3a
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> @@ -0,0 +1,273 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * IPQ5332 device tree source
-> + *
-> + * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#include <dt-bindings/clock/qcom,gcc-ipq5332.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +/ {
-> +	interrupt-parent = <&intc>;
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +
-> +	clocks {
-> +		sleep_clk: sleep-clk {
-> +			compatible = "fixed-clock";
-> +			#clock-cells = <0>;
-> +		};
-> +
-> +		xo_board: xo-board-clk {
-> +			compatible = "fixed-clock";
-> +			#clock-cells = <0>;
-> +		};
-> +	};
-> +
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		CPU0: cpu@0 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x0>;
-> +			enable-method = "psci";
-> +			next-level-cache = <&L2_0>;
-> +		};
-> +
-> +		CPU1: cpu@1 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x1>;
-> +			enable-method = "psci";
-> +			next-level-cache = <&L2_0>;
-> +		};
-> +
-> +		CPU2: cpu@2 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x2>;
-> +			enable-method = "psci";
-> +			next-level-cache = <&L2_0>;
-> +		};
-> +
-> +		CPU3: cpu@3 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x3>;
-> +			enable-method = "psci";
-> +			next-level-cache = <&L2_0>;
-> +		};
-> +
-> +		L2_0: l2-cache {
-> +			compatible = "cache";
-> +			cache-level = <0x2>;
+Yeah, I understand it.
+I really hope to learn the standard/right ways and
+I am very grateful for your careful reviews.
 
-This is just "2", not hex.
+> > Feel free to correct me if you think this
+> > is not a good idea.
+>
+> This is bad idea. Compatibles should be specific. Devices should not use
+> syscons to poke other registers, unless strictly necessary, but have
+> strictly defined MMIO address space and use it.
 
-> +		};
-> +	};
-> +
-> +	firmware {
-> +		scm {
-> +			compatible = "qcom,scm-ipq5332", "qcom,scm";
-> +		};
-> +	};
-> +
-> +	memory@40000000 {
-> +		device_type = "memory";
-> +		/* We expect the bootloader to fill in the size */
-> +		reg = <0x0 0x40000000 0x0 0x0>;
-> +	};
-> +
-> +	pmu {
-> +		compatible = "arm,cortex-a53-pmu";
-> +		interrupts = <GIC_PPI 7 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-> +	};
-> +
-> +	psci {
-> +		compatible = "arm,psci-1.0";
-> +		method = "smc";
-> +	};
-> +
-> +	reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		tz: memory@4a600000 {
-> +			no-map;
-> +			reg = <0x0 0x4a600000 0x0 0x200000>;
-> +		};
-> +	};
-> +
-> +	soc@0 {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0 0 0 0xffffffff>;
-> +		compatible = "simple-bus";
-> +
-> +		tlmm: pinctrl@1000000 {
-> +			compatible = "qcom,ipq5332-tlmm";
-> +			reg = <0x01000000 0x300000>;
-> +			interrupts = <GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>;
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			gpio-ranges = <&tlmm 0 0 53>;
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +
-> +			serial_0_pins: serial0-state {
-> +				pins = "gpio18", "gpio19";
-> +				function = "blsp0_uart0";
-> +				drive-strength = <8>;
-> +				bias-pull-up;
-> +			};
-> +		};
-> +
-> +		gcc: clock-controller@1800000 {
-> +			compatible = "qcom,ipq5332-gcc";
-> +			reg = <0x01800000 0x80000>;
-> +			#clock-cells = <0x1>;
-> +			#reset-cells = <0x1>;
-> +			#power-domain-cells = <1>;
-> +			clock-names = "xo",
-> +				      "sleep_clk",
-> +				      "pcie_2lane_phy_pipe_clk",
-> +				      "pcie_2lane_phy_pipe_clk_x1",
-> +				      "usb_pcie_wrapper_pipe_clk";
-> +			clocks = <&xo_board>,
-> +				 <&sleep_clk>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>;
-> +		};
-> +
-> +		sdhc: mmc@7804000 {
-> +			compatible = "qcom,ipq5332-sdhci", "qcom,sdhci-msm-v5";
-> +			reg = <0x07804000 0x1000>, <0x07805000 0x1000>;
-> +
-> +			interrupts = <GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "hc_irq", "pwr_irq";
-> +
-> +			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
-> +				 <&gcc GCC_SDCC1_APPS_CLK>,
-> +				 <&xo_board>;
-> +			clock-names = "iface", "core", "xo";
-> +			mmc-ddr-1_8v;
-> +			mmc-hs200-1_8v;
-> +			max-frequency = <192000000>;
-> +			bus-width = <4>;
+Ok, I will convert syscon-based regmaps to SoC-specific compatibles and of_device_id->data.
 
-Aren't these five properties of the board? Do you fix the exact eMMC
-module inside the SoC?
+But I have three questions:
 
-> +			status = "disabled";
-> +		};
-> +
-> +		blsp1_uart0: serial@78af000 {
-> +			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-> +			reg = <0x078af000 0x200>;
-> +			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&gcc GCC_BLSP1_UART1_APPS_CLK>,
-> +				 <&gcc GCC_BLSP1_AHB_CLK>;
-> +			clock-names = "core", "iface";
-> +			status = "disabled";
-> +		};
-> +
-> +		intc: interrupt-controller@b000000 {
-> +			compatible = "qcom,msm-qgic2";
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			interrupt-controller;
-> +			#interrupt-cells = <0x3>;
-> +			reg = <0x0b000000 0x1000>,	/* GICD */
-> +			      <0x0b002000 0x1000>,	/* GICC */
-> +			      <0x0b001000 0x1000>,	/* GICH */
-> +			      <0x0b004000 0x1000>;	/* GICV */
-> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +			ranges = <0 0x0b00c000 0x3000>;
-> +
-> +			v2m0: v2m@0 {
-> +				compatible = "arm,gic-v2m-frame";
-> +				reg = <0x0 0xffd>;
-> +				msi-controller;
-> +			};
-> +
-> +			v2m1: v2m@1 {
-> +				compatible = "arm,gic-v2m-frame";
-> +				reg = <0x00001000 0xffd>;
-> +				msi-controller;
-> +			};
-> +
-> +			v2m2: v2m@2 {
-> +				compatible = "arm,gic-v2m-frame";
-> +				reg = <0x00002000 0xffd>;
-> +				msi-controller;
-> +			};
-> +		};
-> +
-> +		timer@b120000 {
-> +			compatible = "arm,armv7-timer-mem";
-> +			reg = <0x0b120000 0x1000>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			ranges;
-> +
-> +			frame@b120000 {
-> +				frame-number = <0>;
-> +				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-> +					     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x0b121000 0x1000>,
-> +				      <0x0b122000 0x1000>;
-> +			};
-> +
-> +			frame@b123000 {
-> +				frame-number = <1>;
-> +				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x0b123000 0x1000>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@b124000 {
-> +				frame-number = <2>;
-> +				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x0b124000 0x1000>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@b125000 {
-> +				frame-number = <3>;
-> +				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x0b125000 0x1000>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@b126000 {
-> +				frame-number = <4>;
-> +				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x0b126000 0x1000>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@b127000 {
-> +				frame-number = <5>;
-> +				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x0b127000 0x1000>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@b128000 {
-> +				frame-number = <6>;
-> +				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x0b128000 0x1000>;
-> +				status = "disabled";
-> +			};
-> +		};
-> +
+0. why syscon + offsets is a bad idea copared to specific compatibles?
+1. when would it be a good idea to use syscon in device tree?
+2. syscon VS reg, which is preferred in device tree?
 
-Drop blank line.
+Thanks in advanced.
 
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +				<GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +				<GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +				<GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-> +	};
-> +};
+> >
+> >>> +
+> >>> +  clocks: true
+> >>
+> >> No, needs constraints.
+> >
+> > Ok. I will list all clocks name
+> >
+> >>> +  assigned-clocks: true
+> >>> +  assigned-clock-parents: true
+> >>> +  assigned-clock-rates: true
+> >>
+> >> Drop these three.
+> >
+> > Ok
+> >
+> >>> +  clock-output-names: true
+> >>
+> >> Missing constraints.
+> >
+> > Ok, I will add "maxItems: 1"
+> >
+> >>> +  amb,mux-regmap: true
+> >>
+> >> NAK.
+> >>
+> >> It's enough. The patches have very, very poor quality.
+> >>
+> >> Missing description, missing type/$ref, wrong prefix.
+> >
+> > Sorry, I forget to run dt_binding_check, I will spend some
+> > time learning the binding and check, sorry for it.
+> >
+> >>> +  amb,div-regmap: true
+> >>> +  amb,div-width: true
+> >>> +  amb,div-shift: true
+> >>
+> >> These two are arguments to phandle.
+> >
+> > I will add description and $ref to regmap and width/shift.
+>
+> Drop all these syscon properties.
 
-Best regards,
-Krzysztof
+Ok, so I should replace these regmaps with reg, right?
 
+> >
+> >>> +
+> >>> +  '#clock-cells':
+> >>> +    const: 0
+> >>> +
+> >>> +required:
+> >>> +  - compatible
+> >>> +  - reg
+> >>> +  - clocks
+> >>> +  - '#clock-cells'
+> >>> +
+> >>> +additionalProperties: false
+> >>
+> >> So why you decided to add it here and not in other places?
+> >
+> > I didn't understand it well. I will add it to other places in v2,
+> > thanks for pointint out it.
+> >
+> >>> +
+> >>> +examples:
+> >>> +  - |
+> >>> +      gclk_uart0: gclk-uart0 {
+> >>
+> >> Wrong indentation.
+> >
+> > Well noted.
+> >
+> >>> +        #clock-cells = <0>;
+> >>> +        compatible = "ambarella,composite-clock";
+> >>> +        clocks = <&osc>, <&gclk_core>, <&pll_out_enet>, <&pll_out_sd>;
+> >>> +        clock-output-names = "gclk_uart0";
+> >>> +        assigned-clocks = <&gclk_uart0>;
+> >>> +        assigned-clock-parents = <&osc>;
+> >>> +        assigned-clock-rates = <24000000>;
+> >>> +        amb,mux-regmap = <&rct_syscon 0x1c8>;
+> >>> +        amb,div-regmap = <&rct_syscon 0x038>;
+> >>> +        amb,div-width = <24>;
+> >>> +        amb,div-shift = <0>;
+> >>> +      };
+> >>> diff --git a/Documentation/devicetree/bindings/clock/ambarella,pll-clock.yaml b/Documentation/devicetree/bindings/clock/ambarella,pll-clock.yaml
+> >>> new file mode 100644
+> >>> index 000000000000..65c1feb60041
+> >>> --- /dev/null
+> >>> +++ b/Documentation/devicetree/bindings/clock/ambarella,pll-clock.yaml
+> >>> @@ -0,0 +1,59 @@
+> >>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >>> +%YAML 1.2
+> >>> +---
+> >>> +$id: http://devicetree.org/schemas/clock/ambarella,pll-clock.yaml#
+> >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >>> +
+> >>> +title: Ambarella PLL Clock
+> >>> +
+> >>> +maintainers:
+> >>> +  - Li Chen <lchen@ambarella.com>
+> >>> +
+> >>> +properties:
+> >>> +  compatible:
+> >>> +    enum:
+> >>> +      - ambarella,pll-clock
+> >>> +      - ambarella,clkpll-v0
+> >>> +
+> >>> +if:
+> >>
+> >> No, this does not work like that. It sits under "allOf", located after
+> >> "required:".
+> >
+> > Thanks, I will learn "allOf" and use it in v2. BTW, we use the two compatibles as below:
+> > clocks {
+> >                 compatible = "ambarella,clkpll-v0";
+>
+> Nope.
+>
+> >                 ...
+> >                 gclk_core: gclk-core {
+> >                         #clock-cells = <0>;
+> >                         compatible = "ambarella,pll-clock";
+>
+> Also nope.
+>
+> >                         clocks = <&osc>;
+> >                         clock-output-names = "gclk_core";
+> >                         amb,clk-regmap = <&rct_syscon 0x000 0x004 0x100 0x104 0x000 0x000>;
+>
+> Nope, nope, nope.
+>
+> You need proper clock-controller with its own MMIO address space.
+>
+> >                 };
+> >                 ...
+> > }
+> >
+> > I'm not sure can I describe the two compatibles in this single yaml, can you give some advice? thanks!
+>
+> There are plenty of examples, including example-schema.
+
+Ok, I will learn more and fix it.
+
+Regards,
+Li
