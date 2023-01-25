@@ -2,63 +2,82 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28798C27C76
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 20:58:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 131EDC27C76
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 21:12:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236637AbjAYU6Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Jan 2023 15:58:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57344 "EHLO
+        id S236193AbjAYVMA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Jan 2023 16:12:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235993AbjAYU6P (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 15:58:15 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 976EE14495;
-        Wed, 25 Jan 2023 12:58:14 -0800 (PST)
+        with ESMTP id S230329AbjAYVLl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 16:11:41 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D53CD62D09;
+        Wed, 25 Jan 2023 13:11:02 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 39F0E6162C;
-        Wed, 25 Jan 2023 20:58:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AF2CC4339B;
-        Wed, 25 Jan 2023 20:58:13 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7A001B81BA0;
+        Wed, 25 Jan 2023 21:10:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F165C433D2;
+        Wed, 25 Jan 2023 21:10:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674680293;
-        bh=FM0mzRE+5UDJn4OWAUXa4Ds0/l1i4bq6FY3oRh66wGI=;
+        s=k20201202; t=1674681058;
+        bh=2xyucpV9NpzkKbccAToDq9c1AviJ3RxxcHz01+de8rA=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=h2YjxE9+bsLf/Lr6eDWW8fqxOMsW4g/i1hLjis9npB98Ql3i6flf7l4Q6ctpnyGfF
-         hgUuCruLjm3A0yCekTne+ITQlyIm+Dtw1iFzJyCRX+KZ68EMEiP/yHv67w+d5k/ovr
-         Jc6DPVucwpwfRCyu5Ck1Ja+zMnxccZukiLRfKZKF8fBBGIIteBzyIIBv69mQqULTa2
-         nnhVmtUdFzfEShzpEhT2NLfl4boRBvFP2rj6f7lyHRmBfhPmcHcV5U3OFTg/5FGS4p
-         4rJUM2s6z/8UjBqLRvpgpOSeCgnB6j+5i7aaMwHD0rOdUE9tbHV8hjwP+gDGEu3FLf
-         c0B7FK0WJKg3g==
-Message-ID: <06d53a3fa48080d902476b71308e69bd.sboyd@kernel.org>
+        b=Bd+EjrsqXmDWNSNrE4qIujUMCUyTzxw827dCbOyzsSOQMcDHBSZgdNyuge1lAzrel
+         hIItPItgM19jakg7qWSPRIjuqG34/AhwpMwfpWYsc0f9U7TAVFMrNVTj2qPSsmHFBF
+         Uy26IGdshltegEK3z2zGnkwZSTCM+RmzQAbQ+gmWwK2mWTikz4Krie9nTTB5oMxRgH
+         Xkd6OVr39DAniOWMUydZqXg6q6AKG1iVqdttXwFKbNWTS/2gFlCBQ2i5URTFhgvXZT
+         CT1p0/GfInT3jDKQJfTwF5ZMgvOsihiP5aBBqw5aH5JzAjPVs8M8Nh5zhuyBQ8/bU4
+         hGEBOqpgyRbIw==
+Message-ID: <1fc8686b0b66c3b3ff80c044ecf1add6.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230121192540.9177-2-rayyan@ansari.sh>
-References: <20230121192540.9177-1-rayyan@ansari.sh> <20230121192540.9177-2-rayyan@ansari.sh>
-Subject: Re: [PATCH v4 1/3] clk: qcom: smd: Add XO RPM clocks for MSM8226/MSM8974
+In-Reply-To: <20230101175740.1010258-1-dario.binacchi@amarulasolutions.com>
+References: <20230101175740.1010258-1-dario.binacchi@amarulasolutions.com>
+Subject: Re: [RFC PATCH v2 00/11] clk: imx8mn: setup clocks from the device tree
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        Rayyan Ansari <rayyan@ansari.sh>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        devicetree@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+Cc:     angelo@amarulasolutions.com, michael@amarulasolutions.com,
+        tommaso.merciai@amarulasolutions.com,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        linux-amarula@amarulasolutions.com, anthony@amarulasolutions.com,
+        jagan@amarulasolutions.com,
+        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Li Jun <jun.li@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
+        Marek Vasut <marex@denx.de>,
+        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-To:     Rayyan Ansari <rayyan@ansari.sh>, linux-arm-msm@vger.kernel.org
-Date:   Wed, 25 Jan 2023 12:58:11 -0800
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+To:     Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 25 Jan 2023 13:10:55 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rayyan Ansari (2023-01-21 11:25:38)
-> Add the XO and XO_A clocks to the MSM8974 clock list, which is also
-> used on MSM8226.
+Quoting Dario Binacchi (2023-01-01 09:57:29)
+> The idea for this series was born back from Dublin (ELCE 2022) after
+> having attended the talk entitled "Updating and Modernizing Clock
+> Drivers" held by Chen-Yu Tsai and the availability of a board with
+> imx8mn SOC.
 
-Why was this missing for so long? Does this break suspend? Why are you
-adding it now?
+Interesting. I didn't see any mention of putting clks into DT in that
+presentation.
+
+>=20
+> This series aims to setup all imx8mn's clocks from the device tree and
+> remove the legacy setup code with hardwired parameters.
+
+Please, no! We don't want one node per clk style of bindings.
