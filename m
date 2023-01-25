@@ -2,73 +2,75 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F024C54E94
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 23:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D5EC54E94
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Jan 2023 23:15:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229539AbjAYXJo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Jan 2023 18:09:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55220 "EHLO
+        id S229483AbjAYXPr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Jan 2023 18:15:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbjAYXJo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 18:09:44 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 748A737F28;
-        Wed, 25 Jan 2023 15:09:43 -0800 (PST)
+        with ESMTP id S229457AbjAYXPq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 18:15:46 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 105D93B67A;
+        Wed, 25 Jan 2023 15:15:46 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 07A0961647;
-        Wed, 25 Jan 2023 23:09:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B6FCC433EF;
-        Wed, 25 Jan 2023 23:09:42 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 5E0E6CE2248;
+        Wed, 25 Jan 2023 23:15:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87AE6C433D2;
+        Wed, 25 Jan 2023 23:15:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674688182;
-        bh=hCZ1XZTCSjWNvYxTSWzJ96eH/+NdoV+UKJq6grJNktI=;
+        s=k20201202; t=1674688542;
+        bh=HM9cYqq/Wx50VCJDYc4v22id5b4Gv1NOMWPHBYRQCmE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=XVVbEZ2kErRVnh97BqcWzoxJC5vh7Wn67EbUPoNnLYZUoz6EHueLMmDFG+xfpX8zY
-         zp75rSQSDY21OrXuj1KKP/Xcnmh/EazCRNkl4y6RtS25VJAO4xEgIzo8lGTOM2hSRu
-         FEoD2awLy5d1XvQ74PTQM24/JZamMA/zEYebtOqSJqHf0L31jqhGKk3zSy7oYNDt5b
-         sKc/c5LQzbt4EUOCRrgwXQPX3b2ubDgh9Nfcl+7IE/xSPs21n87TS1fyLvv3dFmFji
-         9pqXQX/d2fEAqoVaw5DZbrqDHZl1ma+UG1tIgWsrW/0qXXj+ry+cEfUNaTU6LXxqWy
-         8RLQqhNcCCaIg==
-Message-ID: <3dfa96e2dba814930445e8dcfae97e89.sboyd@kernel.org>
+        b=UHxc0S8L6FPfYYs7vVH3oUNGJpFy3Ml1RD1hT9LOHgy8VKZoj1d1iHEtVD4hTH4/x
+         VCDgNgBIX6aVdJXCq/zbVi5Fa6tEWfuXI/aGE2ErOSdjPsxrtNFmDHH6EKsacYfNRk
+         1w6sA6QBchdRNyPoamEQYxlq4o4E0fuTiaiJsnWSU+zznNewpkPN3IudK3r4qM6Vom
+         WY0Elb+AQGSE6BPL98xG3ZhqknW3TWiGZuOFqqE5DsRctcHh7MkAyv/weO/5a8zZ95
+         kZEqRzCHCjV08QCnsV+cSSTlchtD/7IKvXTP2sMOfBYTHdnEFqeYlRFYdI91NuQ0eI
+         dyNaRaNtRIXAg==
+Message-ID: <6db0c9da3a05ee8adaf7262ebce16d3d.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230120092053.182923-1-angelogioacchino.delregno@collabora.com>
-References: <20230120092053.182923-1-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v4 00/23] MediaTek clocks cleanups and improvements
+In-Reply-To: <df133e5a-8030-0774-091c-6f8e0692e945@linaro.org>
+References: <20230118132254.2356209-1-dmitry.baryshkov@linaro.org> <20230118132254.2356209-8-dmitry.baryshkov@linaro.org> <7055af43f4a8894ac34e53c5847fb3de.sboyd@kernel.org> <63f017c7-d320-a996-7bda-33d263a847bc@linaro.org> <525ef5cdefe987c3412249760324eb09.sboyd@kernel.org> <df133e5a-8030-0774-091c-6f8e0692e945@linaro.org>
+Subject: Re: [PATCH v4 7/7] clk: qcom: add the driver for the MSM8996 APCS clocks
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     matthias.bgg@gmail.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org,
-        angelogioacchino.delregno@collabora.com, wenst@chromium.org,
-        johnson.wang@mediatek.com, miles.chen@mediatek.com,
-        fparent@baylibre.com, chun-jie.chen@mediatek.com,
-        sam.shih@mediatek.com, y.oudjana@protonmail.com,
-        nfraprado@collabora.com, rex-bc.chen@mediatek.com,
-        ryder.lee@kernel.org, daniel@makrotopia.org,
-        jose.exposito89@gmail.com, yangyingliang@huawei.com,
-        pablo.sun@mediatek.com, msp@baylibre.com, weiyi.lu@mediatek.com,
-        ikjn@chromium.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        kernel@collabora.com
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, mturquette@baylibre.com
-Date:   Wed, 25 Jan 2023 15:09:40 -0800
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Date:   Wed, 25 Jan 2023 15:15:40 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting AngeloGioacchino Del Regno (2023-01-20 01:20:30)
+Quoting Konrad Dybcio (2023-01-25 14:05:27)
 >=20
-> * Some more spare cleanups here and there.
+> On 25.01.2023 22:56, Stephen Boyd wrote:
+> >=20
+> > So it is waiting for the CPU clk to be stable? The comment is not clear.
+> Okay, so perhaps this is just a misunderstanding because of a lackluster
+> comment.. This SYS_APCS_AUX (provided by this driver) is one of the CPU
+> clock sources (and probably the "safest" of them all, as it's fed by
+> GPLL0 and not the CPU PLLs) the delay is there to ensure it can
+> stabilize after setting the divider to DIV2. In a theoretical case, the
+> big 8996 cpucc driver could select this clock as a target for one (or
+> both) of the per-cluster muxes and it could put the CPUs in a weird state.
 >=20
-> All of this was manually tested on various Chromebooks (with different MTK
-> SoCs) and no regression was detected.
->=20
+> As unlikely as that would be, especially considering 8996 (AFAIK) doesn't
+> use this clock source coming out of reset / bootloader, this lets us
+> ensure one less thing can break.
 
-Do you want me to pick this up directly? Or is there some mediatek
-maintainer willing to send me a PR? If I don't hear anything soon I'll
-go sweep my inbox for mediatek clk patches and start applying them.
+Great! I look forward to a better comment.
