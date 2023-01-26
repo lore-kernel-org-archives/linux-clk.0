@@ -2,102 +2,105 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB71C54E94
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Jan 2023 10:16:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C55CC54EAA
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Jan 2023 10:50:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236737AbjAZKP7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Jan 2023 05:15:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38430 "EHLO
+        id S234698AbjAZKuj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Jan 2023 05:50:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237074AbjAZKPm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jan 2023 05:15:42 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C0EB13A;
-        Thu, 26 Jan 2023 02:15:23 -0800 (PST)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30Q9jw0Z003060;
-        Thu, 26 Jan 2023 10:15:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=pKv8w7uR5wAI9JticJAXtQh6P199EYXCddfynwTNuNI=;
- b=b8FM8Ef3kBf5/ldLwZrL3lspuPYctKygVr2+LXGxrkRrMLv8epyMOabJEazSMSp8RAaL
- D+JHCZDW/Hm4IH4wmzDD/G0IUatk82PsFxgeMxIaMt1tPMpnf0T/0XwqsM0igSRZ3Xmr
- st1jAR7IKi6f50AfY3PRqJhOVjVJlEB1tUy/DQTrQLTCYT3x0txXo9P46a79iqcMKFJj
- CYcKuHAlSz5IK7pkHg1Rx800cwWAUOHZ1FRH4Ry7YsCxBo6USfNlrtxkPL/QoSZvaC73
- 4YZmCn+zOjxARlpm17WFhmWWMl53s5+QXORLTrmiodkz3vxohysDTkBv6Ocq4bo/JVv6 BQ== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nasr0k03u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 26 Jan 2023 10:15:14 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30QAFDBH015342
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 26 Jan 2023 10:15:13 GMT
-Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Thu, 26 Jan 2023 02:15:08 -0800
-From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-To:     <swboyd@chromium.org>, <agross@kernel.org>, <andersson@kernel.org>,
-        <robh+dt@kernel.org>, <broonie@kernel.org>,
-        <quic_plai@quicinc.com>, <krzysztof.kozlowski+dt@linaro.org>,
-        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_rohkumar@quicinc.com>
-CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Subject: [PATCH v6 6/6] clk: qcom: lpassaudiocc-sc7280: Skip lpass_aon_cc_pll config
-Date:   Thu, 26 Jan 2023 15:44:25 +0530
-Message-ID: <1674728065-24955-7-git-send-email-quic_srivasam@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1674728065-24955-1-git-send-email-quic_srivasam@quicinc.com>
-References: <1674728065-24955-1-git-send-email-quic_srivasam@quicinc.com>
+        with ESMTP id S235698AbjAZKug (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jan 2023 05:50:36 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9C1532534
+        for <linux-clk@vger.kernel.org>; Thu, 26 Jan 2023 02:50:07 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id x10so1462534edd.10
+        for <linux-clk@vger.kernel.org>; Thu, 26 Jan 2023 02:50:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=LjQL7TO9ONiXI0Kn8PVbO14Ye8gCiDTv38CuhVRinkI=;
+        b=bCUnBjlWA3SxAUJS/jXAShOJzTXgwtniRqMifGDS9oXFifuRksxHVZQVxerZgUZ15J
+         PmMSQ4AyrBx1Zi4nCogj0PTlz/F0hGeNX5uGG1QLCnz9M1kx0WW/OS9kY16ivxVDdcam
+         M1K7VKNp6Sptq5nKVoWF+tgkJECHGQb4PKoY0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LjQL7TO9ONiXI0Kn8PVbO14Ye8gCiDTv38CuhVRinkI=;
+        b=w5A8waD41gexxCF53/VAKwOAbTKBX4bJdkszZSa0oQ7G1FCXRaQS5j6zogk4MMYWMp
+         5BnplQ6fPtIf47Y3R/apLQR1oXiz1tbZ77D4W4uBFeUMjnbo0SUv8tMevY+/Ugl4QnDP
+         NxAiztZR+ahZ9LVSgdkY1Xm9jLfNk6qgdST8V1IFMBRbMxF5CFUG9rbajbLWar7rvP8z
+         2ZPKw+hpgqV7MMQaO1mi2MbWafSRsx63fUdING4NTEHl85+8BQWWlztrB88mbu63v56m
+         tc+vA9VBW5HvR94/R4GUabvB9vwWVN9pYPTnwEsQz/4TdS9Rl+AsYb3GDCcvIIE2dW0A
+         ogKg==
+X-Gm-Message-State: AO0yUKVWZLOv4HegY6mHT8Vw2X722jyG5ZOeuoP5VT2gCN6WHehTjwNA
+        J9MofRKJJ93oqhb64UAYU2plYS5iQgIklTQgGxpJVQ==
+X-Google-Smtp-Source: AK7set9zqfLQV+2RRlvYb42Nj5OPfBN03/lMqEKmwcBlV06jvoNbdDi+VRMfZ0I00MIOc2R0Ag8kDGvNb5fVbOKfWSM=
+X-Received: by 2002:a05:6402:3483:b0:4a0:b0ed:9ff8 with SMTP id
+ v3-20020a056402348300b004a0b0ed9ff8mr1098942edc.39.1674730206125; Thu, 26 Jan
+ 2023 02:50:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: otUCfWNerGFlXsHE7KFPiQrGCDy-iNAk
-X-Proofpoint-ORIG-GUID: otUCfWNerGFlXsHE7KFPiQrGCDy-iNAk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-01-26_04,2023-01-25_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- mlxlogscore=999 clxscore=1015 phishscore=0 lowpriorityscore=0 adultscore=0
- priorityscore=1501 mlxscore=0 malwarescore=0 impostorscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
- definitions=main-2301260098
+References: <20230101175740.1010258-1-dario.binacchi@amarulasolutions.com> <1fc8686b0b66c3b3ff80c044ecf1add6.sboyd@kernel.org>
+In-Reply-To: <1fc8686b0b66c3b3ff80c044ecf1add6.sboyd@kernel.org>
+From:   Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Date:   Thu, 26 Jan 2023 11:49:54 +0100
+Message-ID: <CAOf5uwkMRSc7q1xUv4D=hc4w0HL=+x1_J60yyru_hGSuf5m0bA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 00/11] clk: imx8mn: setup clocks from the device tree
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        linux-kernel@vger.kernel.org, angelo@amarulasolutions.com,
+        tommaso.merciai@amarulasolutions.com,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        linux-amarula@amarulasolutions.com, anthony@amarulasolutions.com,
+        jagan@amarulasolutions.com, Abel Vesa <abelvesa@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Li Jun <jun.li@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
+        Marek Vasut <marex@denx.de>,
+        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Skip lpass_aon_cc_pll configuration for ADSP based platforms
-based on qcom,adsp-pil-mode property.
-This is to avoid ADSP out of reset fail.
+Hi
 
-Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Tested-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
----
- drivers/clk/qcom/lpassaudiocc-sc7280.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Wed, Jan 25, 2023 at 10:11 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Dario Binacchi (2023-01-01 09:57:29)
+> > The idea for this series was born back from Dublin (ELCE 2022) after
+> > having attended the talk entitled "Updating and Modernizing Clock
+> > Drivers" held by Chen-Yu Tsai and the availability of a board with
+> > imx8mn SOC.
+>
+> Interesting. I didn't see any mention of putting clks into DT in that
+> presentation.
+>
+> >
+> > This series aims to setup all imx8mn's clocks from the device tree and
+> > remove the legacy setup code with hardwired parameters.
+>
+> Please, no! We don't want one node per clk style of bindings.
 
-diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-index 8e2f433..1511337 100644
---- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
-+++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-@@ -847,7 +847,8 @@ static int lpass_aon_cc_sc7280_probe(struct platform_device *pdev)
- 		goto exit;
- 	}
- 
--	clk_lucid_pll_configure(&lpass_aon_cc_pll, regmap, &lpass_aon_cc_pll_config);
-+	if (!of_property_read_bool(pdev->dev.of_node, "qcom,adsp-pil-mode"))
-+		clk_lucid_pll_configure(&lpass_aon_cc_pll, regmap, &lpass_aon_cc_pll_config);
- 
- 	ret = qcom_cc_really_probe(pdev, &lpass_aon_cc_sc7280_desc, regmap);
- 	if (ret) {
--- 
-2.7.4
+I think the idea behind is:
+- create a way from silicon vendor to export their clock mapping with
+automatic exportation
+- reduce the copy and paste code across the drivers
+- avoid code duplication
 
+Is the binding a way to solve this problem? If you don't want one node
+per clk style bindings, did you still think that the way
+to go is totally wrong?
+
+Michael
