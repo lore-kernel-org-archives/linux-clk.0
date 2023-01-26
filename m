@@ -2,84 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C9AC54EED
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Jan 2023 15:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 535FDC54EED
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Jan 2023 16:01:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229736AbjAZPdx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Jan 2023 10:33:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45972 "EHLO
+        id S229838AbjAZQBM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Jan 2023 11:01:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbjAZPdw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jan 2023 10:33:52 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E193FEC47;
-        Thu, 26 Jan 2023 07:33:48 -0800 (PST)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7C93C66018E4;
-        Thu, 26 Jan 2023 15:33:46 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1674747227;
-        bh=VnYSm26lDjICpca46d2eb6U+0j18mBaNjiTo5MgOy4o=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=atQpLK2zMnpEBIfIlflQpObHLU42AH/Wn7iusq6aqTlmUu6cjjl0IBEV0aHmiN4Ep
-         gY5FCtFYMbjCNjQO7zrslGyQO2lROC7eAcVcR3BJWrioq06mkW6g0HTQQPZ6SrzAPB
-         KfYOOAMv5T01Ka+CIoHXVv7irJ80exyDOO+fx4Sub/L1DJRzD7/UcdlXLdLZ4jROBj
-         SaITmcxYb7AkeqoBcUYewXXq86LcP3HulhJ9C3OjWfDFlWt1Q7a9/U+yy/EAJs3hfx
-         kBlrtDH+HxXDZ97dP8m62frujitf9Q4v8Tp5SezPWGD4tPkkgY/i2iqjqNy1xdq7Wd
-         XL/kC3G3gthyw==
-Message-ID: <07eb3c04-c365-4ab2-7137-5fb37e4505c3@collabora.com>
-Date:   Thu, 26 Jan 2023 16:33:44 +0100
+        with ESMTP id S232405AbjAZQBM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jan 2023 11:01:12 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C82049950
+        for <linux-clk@vger.kernel.org>; Thu, 26 Jan 2023 08:01:10 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id l8so1442886wms.3
+        for <linux-clk@vger.kernel.org>; Thu, 26 Jan 2023 08:01:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FcQ8vq6lUSoBcskeTdnLtSTsDVmAwYg1jg2lyisgCl8=;
+        b=l2geVIF7Cfn/0E5HIjMq40Ir/HPwxXgiS7dR57dcGci+Y95s25TMwfB0YUJqd6DzVv
+         qEfN6GkXi+VyC7xiGffcp0Hhn2GgRG+IbuZ+IRN6QUgS+CswhZq7jNb5RdlgRvv5gUqQ
+         AN2XAOLGWn8yGWqpjyEBxuV5KCru+byPUtX0opGO87zUIBYJlxuHdpl/xeaV9fo1gc6a
+         En8sW7dzkyZ3cYuE6Xv8z04LVTHnqYw6OVG6pJ2xhn6g1EVB/31ydh66u7BUWg/XO7Dh
+         X3yXsMpRrDojOZi2gNQ2PruEHPbamKlCnTCIAdMzdMf2IsvNA+QyYp3qs0X4m9FgVuDg
+         xLoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FcQ8vq6lUSoBcskeTdnLtSTsDVmAwYg1jg2lyisgCl8=;
+        b=jN3uuYjmLos3uKwQ6cMjFJz8M0NmXBux7MiyDcGjXkiZwJqtFIzMCSotCVG2m9NBX4
+         Av1/o4HfSEIp/WL4nXtauKXIGsLTsAjI7cNKqq1owWPGFhJZcjoflBdoxzgaJ9aXo9oO
+         gc2ACf81koWCPTNQBZ855K8ZV4/YYoT9gdXuNozHddgWW0wWvdFSW7gQICufACEh0YJN
+         /BrBuvAWwZ2ZpbVFtnGV0eS03aW0JA33YBcZUlkjc9Bbe9fQ8D9cDycsJxZwUK2sfaf0
+         7KHtc42IK3G30xDdQXvgeOFn4AWad8GBSMBpUJNrZ3q3V5nAPjb1ZPNcgCFiwZxFK5SH
+         El8w==
+X-Gm-Message-State: AFqh2koWZPzVv6Ju9sY6Bk0hHqaVrSROnkhVcgFndcNvoU3nMrTbL9YY
+        9k3JqfDa1Rj+62ZilobVYgeTjw==
+X-Google-Smtp-Source: AMrXdXs6JAtLvjTpQlUAkzsZq1XnTeNHQWtt5ki8p1OQb+ECja5bbx3QJ6wq8n9QR639AVO1rNPmdQ==
+X-Received: by 2002:a05:600c:1906:b0:3da:1d51:ef9d with SMTP id j6-20020a05600c190600b003da1d51ef9dmr36757088wmq.15.1674748869113;
+        Thu, 26 Jan 2023 08:01:09 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id n10-20020a05600c180a00b003daf672a616sm1753836wmp.22.2023.01.26.08.01.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Jan 2023 08:01:08 -0800 (PST)
+Message-ID: <9cbc160e-5aef-1de4-f1c8-a2d51b37aa0e@linaro.org>
+Date:   Thu, 26 Jan 2023 17:01:07 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v2 2/6] dt-bindings: clock: mediatek,mt8186-fhctl: Support
- MT6795, MT8173/92/95
+ Thunderbird/102.7.0
+Subject: Re: [PATCH 2/6] clk: qcom: Add GPU clock controller driver for SM6125
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        sboyd@kernel.org
-Cc:     mturquette@baylibre.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
-        edward-jw.yang@mediatek.com, johnson.wang@mediatek.com,
-        wenst@chromium.org, miles.chen@mediatek.com,
-        chun-jie.chen@mediatek.com, rex-bc.chen@mediatek.com,
-        jose.exposito89@gmail.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-References: <20230126085321.87267-1-angelogioacchino.delregno@collabora.com>
- <20230126085321.87267-3-angelogioacchino.delregno@collabora.com>
- <4bcf8191-fe6a-7229-9ebe-a79cebdce87e@linaro.org>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <4bcf8191-fe6a-7229-9ebe-a79cebdce87e@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        agross@kernel.org
+Cc:     marijn.suijten@somainline.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20230126144033.216206-1-konrad.dybcio@linaro.org>
+ <20230126144033.216206-3-konrad.dybcio@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230126144033.216206-3-konrad.dybcio@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 26/01/23 16:32, Krzysztof Kozlowski ha scritto:
-> On 26/01/2023 09:53, AngeloGioacchino Del Regno wrote:
->> MT6795, MT8173, MT8192 and MT8195 support Frequency Hopping: add the
->> compatibles for them.
->>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
+On 26/01/2023 15:40, Konrad Dybcio wrote:
+> Add support for the GPU clock controller found on SM6125.
 > 
-> ... but you already had here an ack.
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>  drivers/clk/qcom/Kconfig        |   8 +
+>  drivers/clk/qcom/Makefile       |   1 +
+>  drivers/clk/qcom/gpucc-sm6125.c | 444 ++++++++++++++++++++++++++++++++
+>  3 files changed, 453 insertions(+)
+>  create mode 100644 drivers/clk/qcom/gpucc-sm6125.c
 > 
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index ca6c7d2ada6c..ca2c83ecc6a6 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -798,6 +798,14 @@ config SM_GCC_8550
+>  	  Say Y if you want to use peripheral devices such as UART,
+>  	  SPI, I2C, USB, SD/UFS, PCIe etc.
+>  
+> +config SM_GPUCC_6125
+> +	tristate "SM6125 Graphics Clock Controller"
+> +	select SM_GCC_6125
 
-Honest thanks for that. I'm sorry for missing it.
+depends on ARM64 || COMPILE_TEST
 
-Regards,
-Angelo
+Same for second patch
 
-> Best regards,
-> Krzysztof
-> 
-> 
+Best regards,
+Krzysztof
 
