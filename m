@@ -2,354 +2,145 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27955C61D97
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Jan 2023 22:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBA0DC05027
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Jan 2023 22:51:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231648AbjAZWMP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Jan 2023 17:12:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49472 "EHLO
+        id S231378AbjAZWv7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Jan 2023 17:51:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229851AbjAZWMO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jan 2023 17:12:14 -0500
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D9B134330
-        for <linux-clk@vger.kernel.org>; Thu, 26 Jan 2023 14:12:13 -0800 (PST)
-Received: by mail-il1-x12c.google.com with SMTP id i17so1239664ils.11
-        for <linux-clk@vger.kernel.org>; Thu, 26 Jan 2023 14:12:13 -0800 (PST)
+        with ESMTP id S232388AbjAZWv6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jan 2023 17:51:58 -0500
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 909DB48638
+        for <linux-clk@vger.kernel.org>; Thu, 26 Jan 2023 14:51:56 -0800 (PST)
+Received: by mail-il1-x12e.google.com with SMTP id m20so1439973ilj.4
+        for <linux-clk@vger.kernel.org>; Thu, 26 Jan 2023 14:51:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=PH5bYda4UNvBQbrP3sSsZzNGvFBGhD2UePSzdVYPBSE=;
-        b=Jxu2paTDCzqX2ZdByp8uGp/ZUXkFphjS2x6wEZrihFtVNb51FJ//0/eqlZLztRC2rl
-         1IcOpw5f+Pg7VG04V8iNuzPu7pKFHTz9zgGAULZzd0n+WH4zrHpPgEV972X2MrOO2jsM
-         WKzkr7x2eke75d5s0PJ9LLCS+9+PEmJGjCi5IVtBaBAxiHiwMX6pYP43F/m9iB/dbCDq
-         jToofTJoxw9Ywbe4EFLryYd0wf71LvHlmBVNDiTZElPSo4XpPrVuc96RSFKgAp8WrCqy
-         tud4YX/IDe9uGbavcxFWiu1Tila+knQBQByZT3FX0cBEusmwKZN0/jYadS6Ikkeig0RI
-         ywuQ==
+        bh=uo4DJ1lMHTQjHl0PyGseokoZraJeV8jwhzCuVW5LRgY=;
+        b=BzaQCkIizxh8plvJG7iydcbwTBB2KmS90zskK8PMkXY+40JZpDWrHFSmX1FvFS8AQq
+         gZW5s9WXuFdHxOnB7dPDwIFBKJpKWAFpm/WPOK1/u4buJPzzYAJK6PNfV6Sw31SOTnwC
+         4F5j8ycoLc2Z7lQo4j0wZgglXF8dtgjNYd99AGLhkPmuFKo3cA4rhOulWrt6Nz+ZO1CH
+         iXlBrWfIY+zg1YY8FeHxA6GeUTvN1pLO082IlYYkVHq2DHK952C8rlvndAlJ4yqgS1Hk
+         dMpRiz3xn0LyB+zCzCv2KAJMq5X9SqND0HLPyhZNUHiP+iqayXPuDYbAdpZJzo1J0ISF
+         0y3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PH5bYda4UNvBQbrP3sSsZzNGvFBGhD2UePSzdVYPBSE=;
-        b=v9F4/J4p6xbRZbNdig5SNVBi/VQGDXtAlgFKwM0KEQQp3XC5jdSv28WKku+DKptYIT
-         yXBrZpz4KmV2HheSAMV2U97F3JYuh8cwqYf7mliweIDZBsONQhRqL5sZTysUtmPO7N+Y
-         6gpagG16CRs7/PACXRtD/rRfZ2jyr3Jc7NG54SBFSiVjVMZdrSgapcPGG0t69Pn5v/AX
-         6fS/loe8+MZiy+AL5b/ZodURhORX+Wma3oj9ZMDYglHs9tkyYGBGror1F25YGu4sSvU7
-         xuKPhgGOGVsEyuM1/Wxwvs7ZRwAqVzLTVC45vSUotU/i4WMIB/609ZtjvWQmcXvrteJN
-         woAw==
-X-Gm-Message-State: AO0yUKXDLn0Vpqx3wL0F1ooSyPSzWi5+6eSa9L1TX3spBq98Cu1/MyDO
-        A5W+pHjUEgwlgb61KDH4p/G2HQ==
-X-Google-Smtp-Source: AK7set/EJ1dXjthCHXs/J2OOXy51vDxyFCKtXch5kSdtM5JcNkzDVoRI5CduvPkI76BJGfPLePa5Iw==
-X-Received: by 2002:a05:6e02:1a85:b0:310:a34b:b1c0 with SMTP id k5-20020a056e021a8500b00310a34bb1c0mr5852660ilv.10.1674771132595;
-        Thu, 26 Jan 2023 14:12:12 -0800 (PST)
+        bh=uo4DJ1lMHTQjHl0PyGseokoZraJeV8jwhzCuVW5LRgY=;
+        b=VQa0brBMIIEDfgxoY+edz9HWw9msVYJj+7xXi79P7oI7Wj7rzD+/2Cr96n64WFLF7W
+         K9SQ+PXBj+vXGm90LvQrQ7uhb2L9UN/NXAA5P44SRo3TXUdGX5SeJrnYPXvDeY4bBzV7
+         TbQtenSWhRZPedGzA8gKPcDxm+FWVtc9biP4NzI3YiLEQJPu2shXBS9ePk2hLi0Q5wc7
+         X6m5iJGY4V0JQ7jnS8/Ymc/CY51WbAomggqVuyE7NM/ssWlGpm66gFloypiBNHAuHthf
+         aXH9bSS82hgzOC0+iei5N9kFS1v53Q3/u4u5rRjH9S5aTMoearvzCFkMxQ5+ZHb6EJ/s
+         WaQg==
+X-Gm-Message-State: AFqh2kqNEjPi8NBcPvzm4zf4CHrKO1eIs1IH03bzSIxoEqtohdZTkm2r
+        /rs1Yr/02Ehw8p3D3bFTtALH4Q==
+X-Google-Smtp-Source: AMrXdXtchiQCUB3Dd3Ffougvu41joys5qhOIRIUqMHGgA5iHVseRT58AFLQqOicQNrt5nO3h2n27Tg==
+X-Received: by 2002:a92:bd12:0:b0:30f:36d8:e4ca with SMTP id c18-20020a92bd12000000b0030f36d8e4camr21487379ile.21.1674773515927;
+        Thu, 26 Jan 2023 14:51:55 -0800 (PST)
 Received: from [192.168.2.31] ([194.204.33.9])
-        by smtp.gmail.com with ESMTPSA id h31-20020a022b1f000000b00363f8e0ab41sm808132jaa.152.2023.01.26.14.12.09
+        by smtp.gmail.com with ESMTPSA id e5-20020a022105000000b003755aa71fffsm869305jaa.105.2023.01.26.14.51.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jan 2023 14:12:12 -0800 (PST)
-Message-ID: <acbb8d20-2e7e-e38c-9edb-8f8fa203a094@linaro.org>
-Date:   Fri, 27 Jan 2023 00:12:08 +0200
+        Thu, 26 Jan 2023 14:51:55 -0800 (PST)
+Message-ID: <7d0582ac-e5c1-7dbf-8063-f6ea8cb59862@linaro.org>
+Date:   Fri, 27 Jan 2023 00:51:51 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.0
-Subject: Re: [PATCH v2 2/6] clk: qcom: Add GPU clock controller driver for
- SM6125
+Subject: Re: [PATCH v4 7/7] clk: qcom: add the driver for the MSM8996 APCS
+ clocks
 Content-Language: en-GB
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm@vger.kernel.org, andersson@kernel.org,
-        agross@kernel.org, krzysztof.kozlowski@linaro.org
-Cc:     marijn.suijten@somainline.org,
+To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20230126181335.12970-1-konrad.dybcio@linaro.org>
- <20230126181335.12970-3-konrad.dybcio@linaro.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230118132254.2356209-1-dmitry.baryshkov@linaro.org>
+ <20230118132254.2356209-8-dmitry.baryshkov@linaro.org>
+ <7055af43f4a8894ac34e53c5847fb3de.sboyd@kernel.org>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20230126181335.12970-3-konrad.dybcio@linaro.org>
+In-Reply-To: <7055af43f4a8894ac34e53c5847fb3de.sboyd@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/01/2023 20:13, Konrad Dybcio wrote:
-> Add support for the GPU clock controller found on SM6125.
+On 25/01/2023 23:38, Stephen Boyd wrote:
+> Quoting Dmitry Baryshkov (2023-01-18 05:22:54)
+>> diff --git a/drivers/clk/qcom/apcs-msm8996.c b/drivers/clk/qcom/apcs-msm8996.c
+>> new file mode 100644
+>> index 000000000000..7e46ea8ed444
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/apcs-msm8996.c
+>> @@ -0,0 +1,76 @@
+> [...]
+>> +
+>> +static int qcom_apcs_msm8996_clk_probe(struct platform_device *pdev)
+>> +{
+>> +       struct device *dev = &pdev->dev;
+>> +       struct device *parent = dev->parent;
+>> +       struct regmap *regmap;
+>> +       struct clk_hw *hw;
+>> +       unsigned int val;
+>> +       int ret = -ENODEV;
+>> +
+>> +       regmap = dev_get_regmap(parent, NULL);
+>> +       if (!regmap) {
+>> +               dev_err(dev, "failed to get regmap: %d\n", ret);
+>> +               return ret;
+>> +       }
+>> +
+>> +       regmap_read(regmap, APCS_AUX_OFFSET, &val);
+>> +       regmap_update_bits(regmap, APCS_AUX_OFFSET, APCS_AUX_DIV_MASK,
+>> +                          FIELD_PREP(APCS_AUX_DIV_MASK, APCS_AUX_DIV_2));
+>> +
+>> +       /* Hardware mandated delay */
 > 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
-> v1 -> v2:
-> 
-> - Add "depends on" (Krzysztof)
+> Delay for what? Setting the divider? What if the register value didn't
+> change at all? Can you skip the delay in that case?
 
-With three nits fixed,
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Ack, I'll expand the comment.
 
 > 
->   drivers/clk/qcom/Kconfig        |   9 +
->   drivers/clk/qcom/Makefile       |   1 +
->   drivers/clk/qcom/gpucc-sm6125.c | 444 ++++++++++++++++++++++++++++++++
->   3 files changed, 454 insertions(+)
->   create mode 100644 drivers/clk/qcom/gpucc-sm6125.c
+>> +       udelay(5);
+>> +
+>> +       /*
+>> +        * Register the clock as fixed rate instead of being a child of gpll0
+>> +        * to let the driver register probe as early as possible.
 > 
+> The function doesn't block or return EPROBE_DEFER if the clk is orphaned
+> when registered. Why is this necessary? Are you getting defered by the
+> fw_devlink logic thinking it needs to defer probe of this driver until
+> gpll0 provider probes? We should fix fw_devlink to not do that. Maybe if
+> the node is a clk provider (#clock-cells exists) then we don't wait for
+> clocks property to be provided, because the clk core already handles
+> that itself.
 
-[skipped]
+Letting clock-controllers probe was my idea for the patch, but it was 
+delayed again by Saravana, see [1], [2]
 
-> +static struct clk_branch gpu_cc_gx_gfx3d_clk = {
-> +	.halt_reg = 0x1054,
-> +	.halt_check = BRANCH_HALT_SKIP,
-> +	.clkr = {
-> +		.enable_reg = 0x1054,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gpu_cc_gx_gfx3d_clk",
-> +			.parent_data = &(const struct clk_parent_data) {
-> +				.hw = &gpu_cc_gx_gfx3d_clk_src.clkr.hw,
-> +			},
+[1] 
+https://lore.kernel.org/all/20230118091122.2205452-1-dmitry.baryshkov@linaro.org/
 
-parent_hws
+[2] 
+https://lore.kernel.org/all/CAGETcx8Xy5OzsbW3123esxsbQJq-SqDkP1S5g2mmwzoCz4shtQ@mail.gmail.com/
 
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gpu_cc_cx_gfx3d_clk = {
-> +	.halt_reg = 0x10a4,
-> +	.halt_check = BRANCH_HALT_DELAY,
-> +	.clkr = {
-> +		.enable_reg = 0x10a4,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gpu_cc_cx_gfx3d_clk",
-> +			.parent_data = &(const struct clk_parent_data) {
-> +				.hw = &gpu_cc_gx_gfx3d_clk.clkr.hw,
-> +			},
-
-parent_hws
-
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gpu_cc_cx_gmu_clk = {
-> +	.halt_reg = 0x1098,
-> +	.halt_check = BRANCH_HALT,
-> +	.clkr = {
-> +		.enable_reg = 0x1098,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gpu_cc_cx_gmu_clk",
-> +			.parent_data = &(const struct clk_parent_data) {
-
-parent_hws
-
-> +				.hw = &gpu_cc_gmu_clk_src.clkr.hw,
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gpu_cc_cx_snoc_dvm_clk = {
-> +	.halt_reg = 0x108c,
-> +	.halt_check = BRANCH_HALT_DELAY,
-> +	.clkr = {
-> +		.enable_reg = 0x108c,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gpu_cc_cx_snoc_dvm_clk",
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gpu_cc_cxo_aon_clk = {
-> +	.halt_reg = 0x1004,
-> +	.halt_check = BRANCH_HALT_DELAY,
-> +	.clkr = {
-> +		.enable_reg = 0x1004,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gpu_cc_cxo_aon_clk",
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gpu_cc_cxo_clk = {
-> +	.halt_reg = 0x109c,
-> +	.halt_check = BRANCH_HALT,
-> +	.clkr = {
-> +		.enable_reg = 0x109c,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gpu_cc_cxo_clk",
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gpu_cc_sleep_clk = {
-> +	.halt_reg = 0x1090,
-> +	.halt_check = BRANCH_HALT_DELAY,
-> +	.clkr = {
-> +		.enable_reg = 0x1090,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gpu_cc_sleep_clk",
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gpu_cc_ahb_clk = {
-> +	.halt_reg = 0x1078,
-> +	.halt_check = BRANCH_HALT_DELAY,
-> +	.clkr = {
-> +		.enable_reg = 0x1078,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gpu_cc_ahb_clk",
-> +			.flags = CLK_IS_CRITICAL,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gpu_cc_hlos1_vote_gpu_smmu_clk = {
-> +	.halt_reg = 0x5000,
-> +	.halt_check = BRANCH_VOTED,
-> +	.clkr = {
-> +		.enable_reg = 0x5000,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gpu_cc_hlos1_vote_gpu_smmu_clk",
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct gdsc gpu_cx_gdsc = {
-> +	.gdscr = 0x106c,
-> +	.gds_hw_ctrl = 0x1540,
-> +	.pd = {
-> +		.name = "gpu_cx_gdsc",
-> +	},
-> +	.pwrsts = PWRSTS_OFF_ON,
-> +	.flags = VOTABLE,
-> +};
-> +
-> +static struct gdsc gpu_gx_gdsc = {
-> +	.gdscr = 0x100c,
-> +	.pd = {
-> +		.name = "gpu_gx_gdsc",
-> +	},
-> +	.pwrsts = PWRSTS_OFF_ON,
-> +	.flags = VOTABLE,
-> +};
-> +
-> +static struct clk_regmap *gpu_cc_sm6125_clocks[] = {
-> +	[GPU_CC_CRC_AHB_CLK] = &gpu_cc_crc_ahb_clk.clkr,
-> +	[GPU_CC_CX_APB_CLK] = &gpu_cc_cx_apb_clk.clkr,
-> +	[GPU_CC_CX_GFX3D_CLK] = &gpu_cc_cx_gfx3d_clk.clkr,
-> +	[GPU_CC_CX_GMU_CLK] = &gpu_cc_cx_gmu_clk.clkr,
-> +	[GPU_CC_CX_SNOC_DVM_CLK] = &gpu_cc_cx_snoc_dvm_clk.clkr,
-> +	[GPU_CC_CXO_AON_CLK] = &gpu_cc_cxo_aon_clk.clkr,
-> +	[GPU_CC_CXO_CLK] = &gpu_cc_cxo_clk.clkr,
-> +	[GPU_CC_GMU_CLK_SRC] = &gpu_cc_gmu_clk_src.clkr,
-> +	[GPU_CC_PLL0_OUT_AUX2] = &gpu_cc_pll0_out_aux2.clkr,
-> +	[GPU_CC_PLL1_OUT_AUX2] = &gpu_cc_pll1_out_aux2.clkr,
-> +	[GPU_CC_SLEEP_CLK] = &gpu_cc_sleep_clk.clkr,
-> +	[GPU_CC_GX_GFX3D_CLK] = &gpu_cc_gx_gfx3d_clk.clkr,
-> +	[GPU_CC_GX_GFX3D_CLK_SRC] = &gpu_cc_gx_gfx3d_clk_src.clkr,
-> +	[GPU_CC_AHB_CLK] = &gpu_cc_ahb_clk.clkr,
-> +	[GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK] = &gpu_cc_hlos1_vote_gpu_smmu_clk.clkr,
-> +};
-> +
-> +static struct gdsc *gpucc_sm6125_gdscs[] = {
-> +	[GPU_CX_GDSC] = &gpu_cx_gdsc,
-> +	[GPU_GX_GDSC] = &gpu_gx_gdsc,
-> +};
-> +
-> +static const struct regmap_config gpu_cc_sm6125_regmap_config = {
-> +	.reg_bits = 32,
-> +	.reg_stride = 4,
-> +	.val_bits = 32,
-> +	.max_register = 0x9000,
-> +	.fast_io = true,
-> +};
-> +
-> +static const struct qcom_cc_desc gpu_cc_sm6125_desc = {
-> +	.config = &gpu_cc_sm6125_regmap_config,
-> +	.clks = gpu_cc_sm6125_clocks,
-> +	.num_clks = ARRAY_SIZE(gpu_cc_sm6125_clocks),
-> +	.gdscs = gpucc_sm6125_gdscs,
-> +	.num_gdscs = ARRAY_SIZE(gpucc_sm6125_gdscs),
-> +};
-> +
-> +static const struct of_device_id gpu_cc_sm6125_match_table[] = {
-> +	{ .compatible = "qcom,sm6125-gpucc" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, gpu_cc_sm6125_match_table);
-> +
-> +static int gpu_cc_sm6125_probe(struct platform_device *pdev)
-> +{
-> +	struct regmap *regmap;
-> +	unsigned int value, mask;
-> +
-> +	regmap = qcom_cc_map(pdev, &gpu_cc_sm6125_desc);
-> +	if (IS_ERR(regmap))
-> +		return PTR_ERR(regmap);
-> +
-> +	clk_alpha_pll_configure(&gpu_cc_pll0_out_aux2, regmap, &gpu_pll0_config);
-> +	clk_alpha_pll_configure(&gpu_cc_pll1_out_aux2, regmap, &gpu_pll1_config);
-> +
-> +	/* Recommended WAKEUP/SLEEP settings for the gpu_cc_cx_gmu_clk */
-> +	mask = CX_GMU_CBCR_WAKE_MASK << CX_GMU_CBCR_WAKE_SHIFT;
-> +	mask |= CX_GMU_CBCR_SLEEP_MASK << CX_GMU_CBCR_SLEEP_SHIFT;
-> +	value = 0xf << CX_GMU_CBCR_WAKE_SHIFT | 0xf << CX_GMU_CBCR_SLEEP_SHIFT;
-> +	regmap_update_bits(regmap, gpu_cc_cx_gmu_clk.clkr.enable_reg, mask, value);
-> +
-> +	/* Set up PERIPH/MEM retain on the GPU core clock */
-> +	regmap_update_bits(regmap, gpu_cc_gx_gfx3d_clk.halt_reg,
-> +			   (BIT(14) | BIT(13)), (BIT(14) | BIT(13)));
-> +
-> +	return qcom_cc_really_probe(pdev, &gpu_cc_sm6125_desc, regmap);
-> +}
-> +
-> +static struct platform_driver gpu_cc_sm6125_driver = {
-> +	.probe = gpu_cc_sm6125_probe,
-> +	.driver = {
-> +		.name = "gpucc-sm6125",
-> +		.of_match_table = gpu_cc_sm6125_match_table,
-> +	},
-> +};
-> +
-> +static int __init gpu_cc_sm6125_init(void)
-> +{
-> +	return platform_driver_register(&gpu_cc_sm6125_driver);
-> +}
-> +subsys_initcall(gpu_cc_sm6125_init);
-> +
-> +static void __exit gpu_cc_sm6125_exit(void)
-> +{
-> +	platform_driver_unregister(&gpu_cc_sm6125_driver);
-> +}
-> +module_exit(gpu_cc_sm6125_exit);
-> +
-> +MODULE_DESCRIPTION("QTI GPUCC SM6125 Driver");
-> +MODULE_LICENSE("GPL");
+> 
+>> +        */
+>> +       hw = devm_clk_hw_register_fixed_rate(dev, "sys_apcs_aux", NULL, 0, 300000000);
 
 -- 
 With best wishes
