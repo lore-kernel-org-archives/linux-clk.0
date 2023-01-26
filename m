@@ -2,73 +2,73 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB84C27C76
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Jan 2023 02:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71139C54E94
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Jan 2023 02:19:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230288AbjAZCHg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Jan 2023 21:07:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54366 "EHLO
+        id S229876AbjAZCT2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Jan 2023 21:19:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229483AbjAZCHf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 21:07:35 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E0CA3D09E;
-        Wed, 25 Jan 2023 18:07:35 -0800 (PST)
+        with ESMTP id S229479AbjAZCT1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 21:19:27 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9CC4366AF;
+        Wed, 25 Jan 2023 18:19:26 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DB6666171A;
-        Thu, 26 Jan 2023 02:07:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42852C433D2;
-        Thu, 26 Jan 2023 02:07:34 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5581B6171A;
+        Thu, 26 Jan 2023 02:19:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6B96C433EF;
+        Thu, 26 Jan 2023 02:19:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674698854;
-        bh=F9namJy2H7fXeX9apQRVPaLcYLheAotswZx/3mZWdJk=;
+        s=k20201202; t=1674699565;
+        bh=FzfcYhdvhhqXC92MQNxZiIt7bbyHYk0TCSvJiiZVLdw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ffGT4D6kPViviUTwSZ8BlwETgHtu2rGL/6yh5gVjCjxwvq5fAmOpf31iXyHwljbIH
-         jwC2R7OpQdOETNo8LAPlmA83wlpq/P818izEeyitg3d0IZPCEQA1Xy5jrQsJBRfTpe
-         vBsBINStVguX31vOtvT6n6v5Da0W6DVF4W4fxZFKbsn7+SkzXdqQjdBRnlfyds5SeX
-         A8nfdUnyGMOyPXEQhG7nx8Tl4i5eBYH9P0vO/aj2UWXZVUY3NosLUSVi6Te1Oxxm2i
-         +ykZoT4gnyoub/b/5S+1iRyUo+BQoknb2cBUYI2lQe+/1N083eo8zEnrcSPVRgI0M9
-         Wo0/iSIZPLAIw==
-Message-ID: <5036f36916e12429d6f853049a2e5836.sboyd@kernel.org>
+        b=HRCpRnhYRh0Ijd+5XIEqo+S33nWqvMqLgd3dDfR7mU+YdX6Pcu+3Ti3v4mCuTiCSa
+         KCw7wEuYAQ62X1xP7/lQyOhQ//VBVWyTwiLGktbpInwYkZrcVSFShKSPfb/M7jSbw5
+         Gzs0c+QNuPqnYHOps9TLa7wVvDEpuce0XLaqEFlrV1cXkqpV6YRnK2PIjqzZgwa0xk
+         ips1BFWC0FLMc4Use//2QtU2aDpPFrJeYUFsBRSyGS2p53YIpuKheC0EUcVwOpPYbT
+         mpwqLYL+0XJ+CbYAhhdTQDvAvKRcH86VdSCnBgd0oqL0FHyAJzjJLeCI6q9O1kWUTI
+         krFHMVomsXrxg==
+Message-ID: <2b3a32bd490dbb55cbcd2cfdc5abffa3.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221222155147.158837-1-angelogioacchino.delregno@collabora.com>
-References: <20221222155147.158837-1-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v1 0/6] MediaTek Frequency Hopping: MT6795/8173/92/95
+In-Reply-To: <ae9acd210c1566b4bd72b09df4430bcad4a36c9b.1674401764.git.daniel@makrotopia.org>
+References: <cover.1674401764.git.daniel@makrotopia.org> <ae9acd210c1566b4bd72b09df4430bcad4a36c9b.1674401764.git.daniel@makrotopia.org>
+Subject: Re: [PATCH v4 1/3] dt-bindings: clock: Add apmixedsys/topckgen compatibles for MT7981
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
-        edward-jw.yang@mediatek.com, johnson.wang@mediatek.com,
-        wenst@chromium.org, miles.chen@mediatek.com,
-        chun-jie.chen@mediatek.com, rex-bc.chen@mediatek.com,
-        jose.exposito89@gmail.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
+Cc:     Chen-Yu Tsai <wenst@chromium.org>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Edward-JW Yang <edward-jw.yang@mediatek.com>,
+        Johnson Wang <johnson.wang@mediatek.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Sam Shih <sam.shih@mediatek.com>,
+        Jianhui Zhao <zhaojh329@gmail.com>
 To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, mturquette@baylibre.com
-Date:   Wed, 25 Jan 2023 18:07:32 -0800
+        <angelogioacchino.delregno@collabora.com>,
+        Daniel Golle <daniel@makrotopia.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Date:   Wed, 25 Jan 2023 18:19:23 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting AngeloGioacchino Del Regno (2022-12-22 07:51:41)
-> This series adds support for Frequency Hopping (FHCTL) on more MediaTek
-> SoCs, specifically, MT6795, MT8173, MT8192 and MT8195.
+Quoting Daniel Golle (2023-01-22 07:42:27)
+> Add compatible string for MT7981 to existing bindings
+> at mediatek,apmixedsys.yaml and mediatek,topckgen.yaml.
 >=20
-> In order to support older platforms like MT6795 and MT8173 it was
-> necessary to add a new register layout that is ever-so-slightly
-> different from the one that was previously introduced for MT8186.
->=20
-> Since the new layout refers to older SoCs, the one valid for MT8186
-> and newer SoCs was renamed to be a "v2" layout, while the new one
-> for older chips gets the "v1" name.
->=20
-> Note: These commits won't change any behavior unless FHCTL gets
->       explicitly enabled and configured in devicetrees.
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Jianhui Zhao <zhaojh329@gmail.com>
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> ---
 
-Can you resend this? It conflicts with your latest cleanup series.
+Applied to clk-next
