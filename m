@@ -2,78 +2,75 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EB27C27C76
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Jan 2023 01:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF5BC27C76
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Jan 2023 02:05:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229642AbjAZBWe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Jan 2023 20:22:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40970 "EHLO
+        id S229481AbjAZCFW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Jan 2023 21:05:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbjAZBWd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 20:22:33 -0500
+        with ESMTP id S229483AbjAZCFW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2023 21:05:22 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E973A64DA3;
-        Wed, 25 Jan 2023 17:22:05 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80BE75EFA3;
+        Wed, 25 Jan 2023 18:05:20 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B90ADB80DC0;
-        Thu, 26 Jan 2023 01:21:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E83DC433D2;
-        Thu, 26 Jan 2023 01:21:50 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2F447B81CA1;
+        Thu, 26 Jan 2023 02:05:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9C67C433EF;
+        Thu, 26 Jan 2023 02:05:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674696110;
-        bh=kmOdCPqq89Jrl2dOmzpIZUShpXw3FveHTYinnBSWHzM=;
+        s=k20201202; t=1674698717;
+        bh=1ZKDHuzqTTMDm+ZaUKoQD2C9STYg5gBiSN93t16ynUA=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=hlsxJyly7mfAQflpYGE2TZ9rXWWWD+SxCtqOZlaqrf2+xEaruJU1JQe+yfo6jDG3o
-         DCCP1iB+1BWfJNysdpcoFOzWFrhI2N9P7n5U1SqvvtmdKg3fLHb+GHvc8LKZc3qN0E
-         ci67SNmsUZkJ9D42449ibLaCwmoE3cCxHv0bO9AZG4U106iI8gMVVlvAFeEZrjtxYM
-         eotb9InFzUcRpbUYQU134YE6Cy/iATzRCsxiv6Y4l4CZrGCi5T5QRBckcAIrOcHCi3
-         cxU5BA+K+3suaEhySqK1yax8a0RMc6LQb1d+vTKHja8P3HuzdhEgO3guAWedDRnFSm
-         Om4DleJtfhPTg==
-Message-ID: <a6e30b47b574e3fea568931862bcc1a6.sboyd@kernel.org>
+        b=A+oKlTIbk0kTs3W5bmBB2K38oQmsJ+0jBj+4w80VAarnUd2SfPKCQNFC0jUJOhm/1
+         S9yO9Uw6ihKbKgpdlDP7+M8FMRvd8p28FeuuNyJ1lVV2QBHI7x3BXrNTD9YWAnTh0s
+         ACS0PoyuirJiOdW4XkQmEttvTfUjmDn0yH+en2qeEvqnsVbYXDt/IPhZnkdeCT/cjP
+         0YlWU7GxA3N7/Dgo6twPSAiO7MjVVko/Wt3JI05R+PZpz2A7otESldBckFb222Gmrj
+         V9QER2yYMAFX1dw5k4XxUGTg+La4PF8Pxb5copYde+8IaniV6lETBwQ8oS1W++5KGH
+         pYTXm7KFg9M9Q==
+Message-ID: <124f081819a80482b3bffd8e12d747fc.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221214123704.7305-1-paul@crapouillou.net>
-References: <20221214123704.7305-1-paul@crapouillou.net>
-Subject: Re: [PATCH] clk: ingenic: jz4760: Update M/N/OD calculation algorithm
+In-Reply-To: <8ae4469e-ed2c-5019-605b-013a49af77ea@gmail.com>
+References: <20230118031509.29834-1-moudy.ho@mediatek.com> <20230118031509.29834-2-moudy.ho@mediatek.com> <8ae4469e-ed2c-5019-605b-013a49af77ea@gmail.com>
+Subject: Re: [PATCH v6 1/4] dt-bindings: arm: mediatek: migrate MT8195 vppsys0/1 to mtk-mmsys driver
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     list@opendingux.net, linux-mips@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>, stable@vger.kernel.org
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Paul Cercueil <paul@crapouillou.net>
-Date:   Wed, 25 Jan 2023 17:21:48 -0800
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Moudy Ho <moudy.ho@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 25 Jan 2023 18:05:15 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Paul Cercueil (2022-12-14 04:37:04)
-> The previous algorithm was pretty broken.
+Quoting Matthias Brugger (2023-01-19 08:08:48)
 >=20
-> - The inner loop had a '(m > m_max)' condition, and the value of 'm'
->   would increase in each iteration;
 >=20
-> - Each iteration would actually multiply 'm' by two, so it is not needed
->   to re-compute the whole equation at each iteration;
+> On 18/01/2023 04:15, Moudy Ho wrote:
+> > MT8195 VPPSYS 0/1 should be probed from mtk-mmsys driver to
+> > populate device by platform_device_register_data then start
+> > its own clock driver.
+> >=20
+> > Signed-off-by: Moudy Ho <moudy.ho@mediatek.com>
 >=20
-> - It would loop until (m & 1) =3D=3D 0, which means it would loop at most
->   once.
+> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 >=20
-> - The outer loop would divide the 'n' value by two at the end of each
->   iteration. This meant that for a 12 MHz parent clock and a 1.2 GHz
->   requested clock, it would first try n=3D12, then n=3D6, then n=3D3, then
->   n=3D1, none of which would work; the only valid value is n=3D2 in this
->   case.
->=20
-> Simplify this algorithm with a single for loop, which decrements 'n'
-> after each iteration, addressing all of the above problems.
->=20
-> Fixes: bdbfc029374f ("clk: ingenic: Add support for the JZ4760")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
+> Stephen, if you want I can take 1/4 and 3/4 through my tree. 3/4 shouldn'=
+t be a=20
+> problem, not sure about this patch. In any case if you want me to do so, =
+I'd=20
+> need a Acked-by from you.
 
-Applied to clk-fixes
+Do you need to take them? I'm picking up mediatek patches currently so I
+can probably just take 1 and 3 if there isn't any build dependency.
