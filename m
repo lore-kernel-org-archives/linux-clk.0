@@ -2,79 +2,102 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B03DC05027
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Jan 2023 08:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1611EC54EAA
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Jan 2023 09:32:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234330AbjAZI4r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Jan 2023 03:56:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45292 "EHLO
+        id S236936AbjAZJcD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Jan 2023 04:32:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233264AbjAZI4r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jan 2023 03:56:47 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 562A646160;
-        Thu, 26 Jan 2023 00:56:44 -0800 (PST)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 614616602D35;
-        Thu, 26 Jan 2023 08:56:42 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1674723403;
-        bh=vWrEwXXnA+bh7FpREBlnFxIhMjPpoC7sXkVgldlRvJU=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=fpn8QBJJEnlOmo8CO36EN5fEhgUr0xjwTAV6/zl68U637DRFXGhToQlfWY1HNgn2D
-         S/Q8wUbFtJTEyQXm8qv6TBarcaefVZ0bBTIPC+WaroQHk0H7ZVO7pwjcXOegVej8b8
-         Mu3uX5rzSmZCoez7nefFujuQ2/dz90e44VpRu2skFtUl1XgKlfh6jFBX24QGOZ89HD
-         SgbLCYdSsqGUSfi0buO5ol8KnLB98XwKMICMHVAdcRId6mw8NqqQnxyHunVCAecM5S
-         i+DB2y5Mu8+sx6QqwYyCJVs4NWjZB2bRDaULCW42tbC1z6vzYziKRd+Hjico+HJIdF
-         neKt7uxJBM3Zg==
-Message-ID: <cc98e05b-714f-ba62-bc1e-b4f550d7f401@collabora.com>
-Date:   Thu, 26 Jan 2023 09:56:40 +0100
+        with ESMTP id S236925AbjAZJcB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jan 2023 04:32:01 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7E0C1258F
+        for <linux-clk@vger.kernel.org>; Thu, 26 Jan 2023 01:31:58 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id h16so1087214wrz.12
+        for <linux-clk@vger.kernel.org>; Thu, 26 Jan 2023 01:31:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=b6SEUgOOLVttkjjyygG5mdkiQxsZy5JbV8mD91QaKQE=;
+        b=QP6ZJaMSEwt3iT86IvkEkbU/MyVarBbGtLBV9NhNfsC02Ke2CfA9YLvM7caC0p2/pB
+         gBJckIOpkYJsCRDx0eh19/J2RQRGKU6m6J9218NUX9Y4UXzmymgkPImQ+QpGc0t2qfPX
+         Qqfa8bski53LX9/fzwOCPyqgxinPQ59WWCFTTEtbdaF87ITslN1RDsF0Cd5SSJ2p5rao
+         RmtRxXX5fifr3psVVGnPkGEMdB3nAbEpLBGjMxtpHtJ3X48k7aIc4zrPEn5whpAuQ3YN
+         Utbwz1gHkUEJtDJ/9WBHvjjinoJpyOwdruaXCwjK+/YOiOEM+O86bI+CzZkzQmaWLgPg
+         yIwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b6SEUgOOLVttkjjyygG5mdkiQxsZy5JbV8mD91QaKQE=;
+        b=kQMR1JMm7pKxeGHJVE0G5Y4MA5yv88hwwxSA9kARnQgPXp83kKH8trHqPKpouIjh9v
+         MdkKouFWdw4CH8h7gtJ7S5Vj0ggBmJ2SymPsNojfhf+gZrf39im9Nix7TkAM6zoO17dy
+         zwp7xxl8JfulcXYaHONoh14fXWd4ylo2JbmkZdG3pKMzn+wPeUl42SygTTovMg0SmzCu
+         sjrKnwZWyWflFt4IE4Yd54Qe961J7ISc2c7Shfmu2Kjh3ciPzCFpESCR30OgR3HJ8Dag
+         25YA/KfmNejkF6Q2sbZ1+p/myv6r8Wngzg7vxVHm78Wjl03S6JPBG6+EuClT+s1PPMZo
+         Ar/w==
+X-Gm-Message-State: AFqh2kpxVcHXzFHx3x7rWQYlWyuRqzOpcS2svo2RqtFMszigC+k97T5T
+        pM46Y7nEHuJCQitUjNO7G3/JDA==
+X-Google-Smtp-Source: AMrXdXu7j8rVDCIiqdsIyxSIbSHnAzH5HwyI7HwoZdj65P+j8DAIwfYwY/edM2IqHVLIM4GnY9EMuw==
+X-Received: by 2002:adf:e109:0:b0:2bd:de40:21f9 with SMTP id t9-20020adfe109000000b002bdde4021f9mr26538982wrz.61.1674725517439;
+        Thu, 26 Jan 2023 01:31:57 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id e4-20020adfef04000000b002bded7da2b8sm754023wro.102.2023.01.26.01.31.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Jan 2023 01:31:57 -0800 (PST)
+Message-ID: <febd59ed-ff7b-ffc4-5568-d856703c9123@linaro.org>
+Date:   Thu, 26 Jan 2023 10:31:55 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v5 3/3] clk: mediatek: add MT7981 clock support
-Content-Language: en-US
-To:     Daniel Golle <daniel@makrotopia.org>, linux-clk@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Thunderbird/102.7.0
+Subject: Re: [PATCH 2/2] clk: qcom: restrict drivers per ARM/ARM64
+To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     Jianhui Zhao <zhaojh329@gmail.com>,
-        Yassine Oudjana <y.oudjana@protonmail.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Edward-JW Yang <edward-jw.yang@mediatek.com>,
-        Johnson Wang <johnson.wang@mediatek.com>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Fabien Parent <fparent@baylibre.com>,
-        Miles Chen <miles.chen@mediatek.com>
-References: <cover.1674703830.git.daniel@makrotopia.org>
- <8136eb5b2049177bc2f6d3e0f2aefecc342d626f.1674703830.git.daniel@makrotopia.org>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <8136eb5b2049177bc2f6d3e0f2aefecc342d626f.1674703830.git.daniel@makrotopia.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230123094925.54824-1-krzysztof.kozlowski@linaro.org>
+ <20230123094925.54824-2-krzysztof.kozlowski@linaro.org>
+ <7ddf5c74de84c5dc291996423cb1eb46.sboyd@kernel.org>
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <7ddf5c74de84c5dc291996423cb1eb46.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 26/01/23 04:34, Daniel Golle ha scritto:
-> Add MT7981 clock support, include topckgen, apmixedsys, infracfg and
-> ethernet subsystem clocks.
+On 25/01/2023 21:44, Stephen Boyd wrote:
+> Quoting Krzysztof Kozlowski (2023-01-23 01:49:25)
+>> There is no point to allow selecting pin-controller drivers for Qualcomm
 > 
-> The drivers are based on clk-mt7981.c which can be found in MediaTek's
-> SDK sources. To be fit for upstream inclusion the driver has been split
-> into clock domains and the infracfg part has been significantly
-> de-bloated by removing all the 1:1 factors (aliases).
+> pin controllers?
+
+Copy-paste, I'll fix it.
+
 > 
-> Signed-off-by: Jianhui Zhao <zhaojh329@gmail.com>
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+>> ARMv7 SoCs when building ARM64 kernel, and vice versa.  This makes
+>> kernel configuration more difficult as many do not remember the Qualcomm
+>> SoCs model names/numbers.  There won't be a single image for ARMv7 and
+>> ARMv8/9 SoCs, so no features/options are lost.
+> 
+> Are the drivers used in arm32 emulation mode on these SoCs? I recall
+> there are some SoCs they run with the arm architecture.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+I did not add it to the few SoCs which have upstream DTS in ARM and
+ARM64. I added only to the ones which are in one specific folder. Also
+my patch does not affect defconfigs (qcom_defconfig and arm64/defconfig).
 
+Whether downstream could be affected, I do not know. Anyway, what's
+downstream it's the downstream's problem...
+
+
+Best regards,
+Krzysztof
 
