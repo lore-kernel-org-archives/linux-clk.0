@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F48C05027
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Jan 2023 08:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B99C54E94
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Jan 2023 08:53:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233849AbjAZIxn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Jan 2023 03:53:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41280 "EHLO
+        id S236502AbjAZIxo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Jan 2023 03:53:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233473AbjAZIxm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jan 2023 03:53:42 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE4DC6C100;
-        Thu, 26 Jan 2023 00:53:27 -0800 (PST)
+        with ESMTP id S233264AbjAZIxn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jan 2023 03:53:43 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB2A66C103;
+        Thu, 26 Jan 2023 00:53:29 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 409976602D35;
-        Thu, 26 Jan 2023 08:53:25 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8698E6602E6E;
+        Thu, 26 Jan 2023 08:53:27 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1674723206;
-        bh=HX+xRQ1MW+zhTnCO03qIVVo98R9P1arkoDNOQVwfKU0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=BAtopgoj/QqMawnbD1SOcgdbch/1thvXqI/fRAGMel/anVgACYESLpX7hD0PONfe5
-         M+86Z4d21XQM2t5o31Awz9QjjHzj/T7gYMOkoSoWds7fhmGkQe1EgpT3+91kJrUnxU
-         dDyb9CRba9h37GHu3SNtvfOmm0Ds2qLtiTFOg6q5wz95H8s6Ha5KUq/HTra454shpk
-         Y48r1+IMxr/avlYigxSx0wxyXldpU50MKtmSvz4YFBh7ZcwzaHbrbgHhrfBRUJ/B2a
-         N/P6I9PfqNIYlFft6ZzjtXcsU/8EhVcA7yrSgx6JqPdXj35v63mGWrkCccGOhsP0lF
-         W9JV0MOVyG2/Q==
+        s=mail; t=1674723208;
+        bh=3eFP3ouO4RR+WchS8C8yL39f+/y+XVsgL/MqIts3FDc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hCd7auwGfsAqGbzLGINNtMthJ6Z4LLNiYQUBVw5/z4rQ9IXdMy9gZ4cArpmR06ZHh
+         LB+RhJGMCpIzSsbwnSBQVr5PHNn4D2CDxz5Exg45Z52LzLYOJF55/BO9RU38bJ8N1o
+         Qjy+yuYIIJDR75/8dLwBqTKkOnjdCgJWSktwSLzZKg0qwiBV4Gtb+xGoj/uNjmTi65
+         IqekUOBH0pA9Bqd2SFqXKQIfwZVRRcGGcgJ9QxvRRLA+D166FlDxyLKmTA1ZqhXuea
+         /lxa+rvPaEMCU7EkBGBF7bppkoUT2UW3XDJfsKRagtPTtY/VtsxUdNiHFyxEj1/vFp
+         JxV2R5kvkfsWA==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     sboyd@kernel.org
@@ -44,56 +44,44 @@ Cc:     mturquette@baylibre.com, robh+dt@kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
         kernel@collabora.com
-Subject: [PATCH v2 0/6] MediaTek Frequency Hopping: MT6795/8173/92/95
-Date:   Thu, 26 Jan 2023 09:53:15 +0100
-Message-Id: <20230126085321.87267-1-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v2 2/6] dt-bindings: clock: mediatek,mt8186-fhctl: Support MT6795, MT8173/92/95
+Date:   Thu, 26 Jan 2023 09:53:17 +0100
+Message-Id: <20230126085321.87267-3-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230126085321.87267-1-angelogioacchino.delregno@collabora.com>
+References: <20230126085321.87267-1-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Changes in v2:
- - Rebased over v4 of my clock drivers cleanups series [1]
+MT6795, MT8173, MT8192 and MT8195 support Frequency Hopping: add the
+compatibles for them.
 
-This series adds support for Frequency Hopping (FHCTL) on more MediaTek
-SoCs, specifically, MT6795, MT8173, MT8192 and MT8195.
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ .../devicetree/bindings/clock/mediatek,mt8186-fhctl.yaml   | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-In order to support older platforms like MT6795 and MT8173 it was
-necessary to add a new register layout that is ever-so-slightly
-different from the one that was previously introduced for MT8186.
-
-Since the new layout refers to older SoCs, the one valid for MT8186
-and newer SoCs was renamed to be a "v2" layout, while the new one
-for older chips gets the "v1" name.
-
-Note: These commits won't change any behavior unless FHCTL gets
-      explicitly enabled and configured in devicetrees.
-
-[1]: https://patchwork.kernel.org/project/linux-mediatek/list/?series=714059
-
-AngeloGioacchino Del Regno (6):
-  clk: mediatek: fhctl: Add support for older fhctl register layout
-  dt-bindings: clock: mediatek,mt8186-fhctl: Support MT6795,
-    MT8173/92/95
-  clk: mediatek: mt6795: Add support for frequency hopping through FHCTL
-  clk: mediatek: mt8173: Add support for frequency hopping through FHCTL
-  clk: mediatek: mt8192: Add support for frequency hopping through FHCTL
-  clk: mediatek: mt8195: Add support for frequency hopping through FHCTL
-
- .../bindings/clock/mediatek,mt8186-fhctl.yaml |  7 +-
- drivers/clk/mediatek/clk-fhctl.c              | 26 ++++++-
- drivers/clk/mediatek/clk-fhctl.h              |  9 ++-
- drivers/clk/mediatek/clk-mt6795-apmixedsys.c  | 63 ++++++++++++++++-
- drivers/clk/mediatek/clk-mt8173-apmixedsys.c  | 65 ++++++++++++++++-
- drivers/clk/mediatek/clk-mt8186-apmixedsys.c  |  2 +
- drivers/clk/mediatek/clk-mt8192.c             | 67 +++++++++++++++++-
- drivers/clk/mediatek/clk-mt8195-apmixedsys.c  | 69 ++++++++++++++++++-
- drivers/clk/mediatek/clk-pllfh.c              | 23 +++++--
- drivers/clk/mediatek/clk-pllfh.h              |  1 +
- 10 files changed, 311 insertions(+), 21 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt8186-fhctl.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt8186-fhctl.yaml
+index cfd042ac1e14..d00327d12e1e 100644
+--- a/Documentation/devicetree/bindings/clock/mediatek,mt8186-fhctl.yaml
++++ b/Documentation/devicetree/bindings/clock/mediatek,mt8186-fhctl.yaml
+@@ -16,7 +16,12 @@ description: |
+ 
+ properties:
+   compatible:
+-    const: mediatek,mt8186-fhctl
++    enum:
++      - mediatek,mt6795-fhctl
++      - mediatek,mt8173-fhctl
++      - mediatek,mt8186-fhctl
++      - mediatek,mt8192-fhctl
++      - mediatek,mt8195-fhctl
+ 
+   reg:
+     maxItems: 1
 -- 
 2.39.0
 
