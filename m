@@ -2,76 +2,65 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23871C38142
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Jan 2023 23:17:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A6CC54EAA
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Jan 2023 23:20:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232935AbjA0XRp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Jan 2023 18:17:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33448 "EHLO
+        id S229737AbjA0XUR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Jan 2023 18:20:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232943AbjA0XRl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Jan 2023 18:17:41 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 255978CC6F;
-        Fri, 27 Jan 2023 15:17:35 -0800 (PST)
+        with ESMTP id S229464AbjA0XUQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Jan 2023 18:20:16 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 192898242F;
+        Fri, 27 Jan 2023 15:20:10 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7B45461DD9;
-        Fri, 27 Jan 2023 23:17:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D319EC433EF;
-        Fri, 27 Jan 2023 23:17:34 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C1565B82205;
+        Fri, 27 Jan 2023 23:20:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 542EDC433EF;
+        Fri, 27 Jan 2023 23:20:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674861454;
-        bh=UFxjpIbYoFQ6NbJOkP2MqtpAr04UPlyKiZQ82r5f//I=;
+        s=k20201202; t=1674861607;
+        bh=hSusYXl+QW4geeuVahIiZccPIu3lQiM8EzFLp84vDOo=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Y3wvr9+Px6TzEMg2qb2Tnx8CpTdh/FgDt/QyyShHIASvUX7iEr1W5YIPxSCkEu5jO
-         nUuKHNnx4FQk3Aet8xQYf2RZZdVOt4mZXt0m2BaDs/cS3WJaMYsX1qagZUF9Mzqesu
-         eBNVd5EhUeQXjEFzF+mW0RfcNxC55QdDPmkO3btpP4+WnC9ojXjjKGsadzAig0HSaZ
-         fS9AHqOvz9u83b6dtU1Z4gaO1DKYOskZW0rtLBU2c87MKSpPKNBhrRdWPQlR6vsbrH
-         zvRaYKmZp3WoduEtLh+Og/muuK4moYdkjgzzj/M1024sU0xoGAIDHZlb+bLPN7wF4H
-         mq16XN6lK8xsQ==
-Message-ID: <bba37b76bc7fbd8ad45e8c7a0b3c8dd0.sboyd@kernel.org>
+        b=Qh2mWphlrznoc8QFyxl13/qBE0Aqnss7Ng1cYvDHObj1iEagYdR9q8BPRDsn2vOBP
+         Lvr5hcdlsjxIRC/3tsWav2hKxBjPvGfoaERY5aOel8XObuwI9Zf+DUpBfQE549sL54
+         iBVZSGo8x4j5FATsCBjLTWljJIN82bEOhpCSun0K5GzLvxLf2nOVBBtrPbbqHTpyMA
+         ek8eREGpxb48javYQkD276Wh3gyFJco2p/M4/TyTPjiFC3THoL1V5DPMe0Ev5n2d8C
+         JSRDom0Ioo6S4MbqbjNX00moF4eu7ZSSjMBVHIfRfLVaHPbQ7DPYYz4otD/18FfR8o
+         +2xSHXko7+76w==
+Message-ID: <b88b235ea62db6e3200fef3d5abe1e99.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cc85ee470c781ff4013f6c21c92c0a21574b12b2.1674703830.git.daniel@makrotopia.org>
-References: <cover.1674703830.git.daniel@makrotopia.org> <cc85ee470c781ff4013f6c21c92c0a21574b12b2.1674703830.git.daniel@makrotopia.org>
-Subject: Re: [PATCH v5 1/3] dt-bindings: clock: Add compatibles for MT7981
+In-Reply-To: <20230118031509.29834-4-moudy.ho@mediatek.com>
+References: <20230118031509.29834-1-moudy.ho@mediatek.com> <20230118031509.29834-4-moudy.ho@mediatek.com>
+Subject: Re: [PATCH v6 3/4] clk: mediatek: remove MT8195 vppsys/0/1 simple_probe
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Jianhui Zhao <zhaojh329@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Yassine Oudjana <y.oudjana@protonmail.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Edward-JW Yang <edward-jw.yang@mediatek.com>,
-        Johnson Wang <johnson.wang@mediatek.com>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Fabien Parent <fparent@baylibre.com>,
-        Miles Chen <miles.chen@mediatek.com>
-To:     Daniel Golle <daniel@makrotopia.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com,
+        Moudy Ho <moudy.ho@mediatek.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Date:   Fri, 27 Jan 2023 15:17:32 -0800
+        Moudy Ho <moudy.ho@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 27 Jan 2023 15:20:05 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Daniel Golle (2023-01-25 19:33:46)
-> Add compatible string for MT7981 to existing bindings at
->  - mediatek,apmixedsys.yaml
->  - mediatek,topckgen.yaml
->  - mediatek,ethsys.txt
->  - mediatek,infracfg.yaml
->  - mediatek,sgmiisys.txt
+Quoting Moudy Ho (2023-01-17 19:15:08)
+> MT8195 VPPSYS0/1 will be probed by the compatible name in
+> the mtk-mmsys driver and then probe its own clock driver as
+> a platform driver.
 >=20
-> Signed-off-by: Jianhui Zhao <zhaojh329@gmail.com>
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> Signed-off-by: Moudy Ho <moudy.ho@mediatek.com>
 > ---
 
 Applied to clk-next
