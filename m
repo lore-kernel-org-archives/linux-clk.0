@@ -2,138 +2,213 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A08C54EAA
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Jan 2023 15:46:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03696C38142
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Jan 2023 16:15:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233864AbjA0Pqi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Jan 2023 10:46:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42376 "EHLO
+        id S234701AbjA0QPJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Jan 2023 11:15:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbjA0PqN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Jan 2023 10:46:13 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C74883275;
-        Fri, 27 Jan 2023 07:45:43 -0800 (PST)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30RFe3sS014988;
-        Fri, 27 Jan 2023 15:45:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=jw/pdfg7ganUSJNGxHljqeZbXL187Rr6P3gZUWxDpek=;
- b=all0PdFPnCLGrfjGcv0iNsbHa6vIAYli24+/duDv+5+WidMaNjwv6SY2ELFhuia/Z4de
- O2kSuPBC7cAnJVkr3nI0pi+JmiBVpchkWr25U7Qr+bMt9nesUJP/VY6c82A0hWpUW7cr
- f6FLrQzLqzknxFK9SUWlmJy2WznpfMrPTi1aUz1CztuuUPj9w1qrZVK2tXCDbSRLxOC0
- V7jHlFd8J6hRUTSVwbxSuCr2D+yFgs0p2pVZdeSDJqU/bEa6DS88qoWPAtk+xy2tKfMq
- cR+e8APUSs2YNH2OSvDq4SK4uONnb5T8Vbed1FsW4rHifiHTFBaafHGcP33pxuZU//tn 7Q== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ncheyr0bf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 27 Jan 2023 15:45:13 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30RFjCfR030673
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 27 Jan 2023 15:45:12 GMT
-Received: from [10.50.41.100] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Fri, 27 Jan
- 2023 07:45:05 -0800
-Message-ID: <fd8f34fa-77d1-98c4-64f3-cc5ffeb7bd0e@quicinc.com>
-Date:   Fri, 27 Jan 2023 21:15:02 +0530
+        with ESMTP id S233140AbjA0QPI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Jan 2023 11:15:08 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFA9516AC5
+        for <linux-clk@vger.kernel.org>; Fri, 27 Jan 2023 08:15:06 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id l41-20020a05600c1d2900b003daf986faaeso3843589wms.3
+        for <linux-clk@vger.kernel.org>; Fri, 27 Jan 2023 08:15:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mCnQvs4k+RsVxmk5hbaJTKv6OSpPLB/I5YR+Z678LJQ=;
+        b=OpFQhIKqlOlrFxqED4JLUirFh3ZaiWAH9Yg4vS+YyJ9kvKAX6AGzDqBXlmDdQMLLST
+         DG3/Ead425z+bVErrTwKs8/G/rUAQ6TF8HXshvK2F/4II+gVpgmy4hvSJmuTnaV7in24
+         PwQnHzOIy6bUwMF+aAIjEV4C8KPpNNpTw5539MkJynbyKuL0OtjvPuxZtts8j253bPW/
+         X33+49gmh94NNr5GgQEr+OK/mTfeFdxCjH2R+vItRDTbXJg4G4n2NKtTlAgAQEGhI087
+         gP3DITzofiar2c1Ma10fVWo2QJ625eoLtjsKLsuoZzgO2IxXU1ltWG4gmLOabAX6LQlg
+         ND2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mCnQvs4k+RsVxmk5hbaJTKv6OSpPLB/I5YR+Z678LJQ=;
+        b=rzoIsoYSSvfQDrqN+lfGhlNe9e4yvz8Y6cQXHJE1YjkOR+1zGp3S8Gv2VhLtse29rd
+         AmZArdeKTUonoJPIo26RyIx1QCTc7r4tSxrTJRNs5tMu7UC/RgC1z38o77MdBoy0r1g9
+         tO72xvWbgBnvdh9Uv0yNPmrHXpKvLcqMMBDOF7ywx4PIKa8jwJd5DOKNBuUVLni1ZLfc
+         n/qekn5AKzTLNBnKKNAlRhGe/XpeLs4xX7T13pHQAaPZIyp0x70GcwMa186wN2B3cpkY
+         XZEgqp3XT/gDmXFw20fJfP93BGtWbDwVadPw4OzjO0ikRx3RCY3ivRT4T7umkRkPnBCN
+         Jhow==
+X-Gm-Message-State: AFqh2kqw+pih3Naef89pcpvvULEEsCqzpICJARE/u7rbvraVRGmNTGx8
+        rF2Ow70N6CSRVQO7yJc4v3FRCA==
+X-Google-Smtp-Source: AMrXdXsWvYVaDXnaOI9NPoFW70XXGq3cJCqwZ+jzXypn1dndt2N9okp2CHRoYHrKauKTp+X/paSbPA==
+X-Received: by 2002:a05:600c:3d8d:b0:3d2:bca5:10a2 with SMTP id bi13-20020a05600c3d8d00b003d2bca510a2mr39652457wmb.22.1674836105224;
+        Fri, 27 Jan 2023 08:15:05 -0800 (PST)
+Received: from linaro.org ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id i21-20020a05600c071500b003db1ca20170sm4676925wmn.37.2023.01.27.08.15.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jan 2023 08:15:04 -0800 (PST)
+Date:   Fri, 27 Jan 2023 18:15:03 +0200
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Bjorn Andersson <andersson@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] clk: qcom: gdsc: Disable HW control until supported
+Message-ID: <Y9P4h5H78ZkgTpIY@linaro.org>
+References: <20230112135224.3837820-1-quic_bjorande@quicinc.com>
+ <40b90d7309246484afa09b2d2b2e23e7.sboyd@kernel.org>
+ <20230112215038.7rl6fzbprj7xsny4@builder.lan>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH 5/6] dt-bindings: mailbox: Add compatible for IPQ9574
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>, <agross@kernel.org>,
-        <andersson@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <jassisinghbrar@gmail.com>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <shawnguo@kernel.org>, <arnd@arndb.de>,
-        <marcel.ziswiler@toradex.com>, <dmitry.baryshkov@linaro.org>,
-        <nfraprado@collabora.com>, <broonie@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_poovendh@quicinc.com>
-References: <20230113143647.14961-1-quic_devipriy@quicinc.com>
- <20230113143647.14961-6-quic_devipriy@quicinc.com>
- <83718846-1c51-d102-d11a-a14860be8454@linaro.org>
-From:   Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <83718846-1c51-d102-d11a-a14860be8454@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: cGHARq-d65gP1i2G3XdnzqN4GCnuAheS
-X-Proofpoint-GUID: cGHARq-d65gP1i2G3XdnzqN4GCnuAheS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-01-27_09,2023-01-27_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 phishscore=0 adultscore=0 mlxscore=0 clxscore=1015
- bulkscore=0 mlxlogscore=990 spamscore=0 suspectscore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301270146
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230112215038.7rl6fzbprj7xsny4@builder.lan>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 23-01-12 15:50:38, Bjorn Andersson wrote:
+> On Thu, Jan 12, 2023 at 11:10:40AM -0800, Stephen Boyd wrote:
+> > Quoting Bjorn Andersson (2023-01-12 05:52:24)
+> > > Software normally uses the SW_COLLAPSE bit to collapse a GDSC, but in
+> > > some scenarios it's beneficial to let the hardware perform this without
+> > > software intervention.
+> > > 
+> > > This is done by configuring the GDSC in "hardware control" state, in
+> > > which case the SW_COLLAPSE bit is ignored and some hardware signal is
+> > > relies upon instead.
+> > > 
+> > > The GDSCs are modelled as power-domains in Linux and as such it's
+> > > reasonable to assume that the device drivers intend for the hardware
+> > > block to be accessible when their power domain is active.
+> > > 
+> > > But in the current implementation, any GDSC that is marked to support
+> > > hardware control, gets hardware control unconditionally while the
+> > > client driver requests it to be active. It's therefor conceivable that
+> > > the hardware collapses a GDSC while Linux is accessing resources
+> > > depending on it.
+> > 
+> > Why would software want the GDSC to be enabled and accessing resources
+> > while the hardware signals that it isn't required?
+> 
+> Wouldn't you want a logical OR between these two? As currently written,
+> no attention is given to the software's need for keeping the GDSC
+> active.
 
+Looking at this more closely, it is weird nobody complained about GDSC
+consumers collapsing out of the blue yet.
 
-On 1/13/2023 8:43 PM, Konrad Dybcio wrote:
 > 
+> > It sounds like hardware control isn't complete?
+> > 
 > 
-> On 13.01.2023 15:36, devi priya wrote:
->> Add the mailbox compatible string for IPQ9574 SoC
->>
->> Co-developed-by: Praveenkumar I <quic_ipkumar@quicinc.com>
->> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
->> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
->> ---
-> Binding changes should come before driver changes, so that
-> you're not introducing an "illegal" compatible and only
-> "legalize" it later - please reorder the patch.
+> Correct, we're lacking the means for a client driver to affect the
+> hardware vs software control.
 > 
-> Konrad
-Understood, will reorder the patches in V2
->>   .../devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml     | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
->> index 943f9472ae10..9e076758a58a 100644
->> --- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
->> +++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
->> @@ -20,6 +20,7 @@ properties:
->>             - enum:
->>                 - qcom,ipq6018-apcs-apps-global
->>                 - qcom,ipq8074-apcs-apps-global
->> +              - qcom,ipq9574-apcs-apps-global
->>                 - qcom,msm8976-apcs-kpss-global
->>                 - qcom,msm8996-apcs-hmss-global
->>                 - qcom,msm8998-apcs-hmss-global
->> @@ -113,6 +114,7 @@ allOf:
->>             enum:
->>               - qcom,ipq6018-apcs-apps-global
->>               - qcom,ipq8074-apcs-apps-global
->> +            - qcom,ipq9574-apcs-apps-global
->>       then:
->>         properties:
->>           clocks:
->> @@ -129,6 +131,7 @@ allOf:
->>             enum:
->>               - qcom,ipq6018-apcs-apps-global
->>               - qcom,ipq8074-apcs-apps-global
->> +            - qcom,ipq9574-apcs-apps-global
->>       then:
->>         properties:
->>           '#clock-cells':
-Best Regards,
-Devi Priya
+> > > 
+> > > There are ongoing discussions about how to properly expose this control
+> > 
+> > Any link? When we implemented hardware clk gating years ago the design
+> > was to have software override hardware control when the clk was enabled
+> > in software and let the hardware control go into effect when the clk was
+> > disabled in software.
+
+Discussion is off list for now.
+
+> 
+> That sounds very reasonable, but it is not what's implemented in this
+> file.
+> 
+> In gdsc_enable() we disable SW_COLLAPSE and then immediately give the
+> control to the hardware, and in gdsc_disable() we disable hardware
+> control and then set SW_COLLAPSE.
+> 
+> So effectively the GDSC state is either off when Linux says so, or in
+> hardware control.
+> 
+
+The discussed solution is the have a generic genpd API that is
+specifically for marking a PD in HW-controlled mode, while keeping other
+resources enabled from the consumer driver.
+
+> > Hopefully with power domains this could be
+> > implemented in a better way by connecting hardware mode to some
+> > performance state so that enabling the power domain goes to software
+> > mode and then transitioning to a performance state switches to hardware
+> > control mode.
+> > 
+> 
+> Right, this would allow the software to keep the GDSC on, give the
+> control to the hardware or collapse it.
+> 
+> The question is how the "some performance state" should be implemented.
+> 
+> > > to the client drivers, but until conclusion in that discussion is
+> > > reached, the safer option would be to keep the GDSC in software control
+> > > mode.
+> > > 
+> > > Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> > > ---
+> > >  drivers/clk/qcom/gdsc.c | 48 ++++++-----------------------------------
+> > >  1 file changed, 7 insertions(+), 41 deletions(-)
+> > > 
+> > > diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> > > index 9e4d6ce891aa..6d3b36a52a48 100644
+> > > --- a/drivers/clk/qcom/gdsc.c
+> > > +++ b/drivers/clk/qcom/gdsc.c
+> > > @@ -439,6 +398,13 @@ static int gdsc_init(struct gdsc *sc)
+> > >                 on = true;
+> > >         }
+> > >  
+> > > +       /* Disable HW trigger mode until propertly supported */
+> > > +       if (sc->flags & HW_CTRL) {
+> > > +               ret = gdsc_hwctrl(sc, false);
+> > > +               if (ret < 0)
+> > > +                       return ret;
+> > > +       }
+> > > +
+> > 
+> > Is it a problem for all hardware controlled gdscs? Or just some of them?
+> > Should we backport this to stable kernels?
+> 
+> Sorry, I probably wasn't clear enough. There is no observed problem,
+> this simply knocks out the hardware control mode.
+> 
+> The reason for sending this ahead of a design conclusion is that the
+> current behavior doesn't make sense to me (Linux says "enable!" and we
+> just ignore that) and consider how the "some performance state" would
+> relate to this, I don't see that it will be an amendment to the current
+> flow.
+
+I agree. The fact that this did not create any issues yet doesn't mean
+we should stick with the current implementation. In fact, disabling
+HW-control altogether (for now) is more reasonable.
+
+> 
+> > I seem to recall that hardware mode was required for some drivers like
+> > camera and video?
+> 
+> Given that the current implementation only adhere to the hardware signal
+> in-between gdsc_enable() and gdsc_disable(), the drivers for these
+> blocks must have been written such that the software-state covers the
+> needs of the hardware.
+> 
+> As mentioned above, the opposite is however not clear. The GDSC might be
+> collapsed at any time, even if Linux thinks it has the GDSC
+> non-collapsed. I not clear to me why the current logic hasn't caused
+> strange issues for us over the years...
+> 
+> > Are they going to keep working if we simply knock out the hardware
+> > control mode here?
+> 
+> If anything, we might keep the light on longer than today by missing
+> opportunities where the hardware control currently collapses the GDSC
+> behind Linux's back - and we haven't noticed.
+> 
+> Regards,
+> Bjorn
