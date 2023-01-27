@@ -2,153 +2,105 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23864C38142
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Jan 2023 10:22:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C8FEC54EAA
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Jan 2023 10:57:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229607AbjA0KW4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Jan 2023 05:22:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34910 "EHLO
+        id S229447AbjA0K5d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Jan 2023 05:57:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbjA0KWz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Jan 2023 05:22:55 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC34D1E2BB
-        for <linux-clk@vger.kernel.org>; Fri, 27 Jan 2023 02:22:52 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id z5so4521783wrt.6
-        for <linux-clk@vger.kernel.org>; Fri, 27 Jan 2023 02:22:52 -0800 (PST)
+        with ESMTP id S229464AbjA0K5c (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Jan 2023 05:57:32 -0500
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE8C5A244
+        for <linux-clk@vger.kernel.org>; Fri, 27 Jan 2023 02:57:29 -0800 (PST)
+Received: by mail-pj1-x102d.google.com with SMTP id m11so4286145pji.0
+        for <linux-clk@vger.kernel.org>; Fri, 27 Jan 2023 02:57:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/CEHKrMArowrp45y0BJCJO3EwlygbfM1dWauMJbvYl4=;
-        b=otigbkRW6OwuOG2Op9YG90y/V+Tu/nCl0D7Wg/TvdYnKbPVzQNxJRx0zM4SOoTK7MD
-         2Txd9qlyPedexlCQiNusoXu+emdX0JHchh7Xrml0Yt+XvNYRlLGQ/O1a4HrO3cczbXh1
-         1VYNF+dGw9FSP4ZV0V4sXVy7tMrKOJ7h3bthsWGCTJugtBJCd9klwMCAoSEkGaiR3OkA
-         RTchiXQPqraytJyp/9A/rWew1+S0BFJE8mCj5HVU8ade5WMSXgZXQ2PRANbqlfxh3nJj
-         tUyX6DwdNVX9iV3JJj8ajSqvyBto8Vse5s0uvaU5AVWACM51yo70S3BCC733S7Qm9YTH
-         QlCw==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0aTkPI+ubuKbzX2JNdC/dWfilw1TCJxuUE5W+uV+LEs=;
+        b=NmJUlnhgEI4JeSVj0TYtQdVtMz6iwCd816KUbIUK6n58sX6rOUMJNIZ/B/VfNCPHWj
+         PcxjhADWi3Ygbjwx3GY8ANbKNK3vk674UfY/vw6JIMF4luoDAzl7IR4Rplx2Z3Yg81AS
+         yeXTUhKbqVvuQr4vECpR0xNTMr9/1NVs/umGPV7IsgwaEUbrwcE2wbB9fEKTvRB1DXaZ
+         HMFhwB0sL3n6WJR7tdLP4DsCDbPgBt7wE8bHawjfl5Tb1oYzw6L9ks5FM4CqjKRgAFTu
+         H0ZXjcwvAG6B9TL3HlcU65eMOd6QQxjTd1bci3cUeJhn1lyCUoqrnZMAeerOglBKaJ4F
+         5XhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/CEHKrMArowrp45y0BJCJO3EwlygbfM1dWauMJbvYl4=;
-        b=ja4OutyZZ88yj791SupIzGvty8d3/vg/mxNVuht0GggCX41dgfmn71/K57myRmcIUm
-         t2ufRRs1fK4XH9fymLgPQM5UCpaJ8sJFq98WpRSvcXFG+OK+CqFjOuOpsdyI2YNm2n8L
-         gWOYKi9F5ndiSzV/O9kUiqY/sMWraX18l+dlLQkGxtgF2r7DmS7XclaXPHKtEWRH/Euq
-         i8LG2mIN3DeXy97XWVPYfAmE9r7VLYJpIKS9nLFCX/qld936zuvFFpQW+uW9yKgGeeet
-         /PGUGyykaqMySfDK0GSmNo1hfvq01+AF4wRdidOfA+tKv7KocWYseYzxGHUgFUQ7g46x
-         5Keg==
-X-Gm-Message-State: AFqh2kobkszEC1G2Z/AIT7k2EGrJidzlvsBwU7C5n8HrXImqVsqO/kRS
-        8aIqZBTO8re18fWYBUik3/Q2jQ==
-X-Google-Smtp-Source: AMrXdXuOhdgMh17Z4KujKWs02hUZNK/b3pZwJtW3Bkyst7YC0mAzk4Kn36PGmaGsYP8VOwfbJUywYw==
-X-Received: by 2002:a05:6000:81b:b0:2be:5c3d:99e3 with SMTP id bt27-20020a056000081b00b002be5c3d99e3mr27717572wrb.10.1674814971469;
-        Fri, 27 Jan 2023 02:22:51 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id x12-20020adfec0c000000b002b065272da2sm3706693wrn.13.2023.01.27.02.22.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Jan 2023 02:22:50 -0800 (PST)
-Message-ID: <b8ce28b5-0e53-aca4-a2e4-f6333b5ac80b@linaro.org>
-Date:   Fri, 27 Jan 2023 11:22:49 +0100
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0aTkPI+ubuKbzX2JNdC/dWfilw1TCJxuUE5W+uV+LEs=;
+        b=4whdAswVTuEK9zk/1jI9tWB8ZCeJPfzioROrPFQpUMbautuK8nA9t1dUUpl7Q8+7kl
+         W8VG9CAphqVAHYy+4vkBqC8Bkg2cASba0RXmiu291q/PKJeACDI4JrLFB+PqKJRSTNBC
+         jHLx00zNzeZKVpsjjXVksnU9wwmjEK75j9dbChNFWkcTeJIMMF/2NU2dd6Yg93ataO8D
+         kjv12MYYbzVk1AKq7eeWrpIq8GqFHWpSYudhDQuFeIi5YTUIfJJn2Bb9wwxXosPzkH0H
+         cHXVgNEutM7YqIsLZSFekXZXG/RZ4csjFDqjWTqLnAnDQMAIxuXQjWDrdXjWFjotN3n+
+         Lp2g==
+X-Gm-Message-State: AFqh2ko1Ziu7BBOr8hSyhnNCZ6u0iwk2sH7c7EBSRTzRP9GDxBhoIv4y
+        U/m0+Nu8MWCD9rOWbvQjwIxO+FO1pBDh60rqdPB7bw==
+X-Google-Smtp-Source: AMrXdXvnzz3ZpnHx/XmGCd35q5P+zooYE94/XE7raSNlvHYRmWHeCfHv0OlsELoyqCIE6l7P5JjHb2a3omXLwYpk91o=
+X-Received: by 2002:a17:90a:5102:b0:229:f71e:fe3 with SMTP id
+ t2-20020a17090a510200b00229f71e0fe3mr3758143pjh.47.1674817049307; Fri, 27 Jan
+ 2023 02:57:29 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH v2 5/6] dt-bindings: clock: Add Qcom SM6115 GPUCC
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm@vger.kernel.org, andersson@kernel.org,
-        agross@kernel.org
-Cc:     marijn.suijten@somainline.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230126181335.12970-1-konrad.dybcio@linaro.org>
- <20230126181335.12970-6-konrad.dybcio@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230126181335.12970-6-konrad.dybcio@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230124141541.8290-1-quic_devipriy@quicinc.com> <20230124141541.8290-7-quic_devipriy@quicinc.com>
+In-Reply-To: <20230124141541.8290-7-quic_devipriy@quicinc.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 27 Jan 2023 11:56:53 +0100
+Message-ID: <CAPDyKFqjiXp28M4uaBqvdsdwy_gtpV_K-nAJgZQJyQir-7orCA@mail.gmail.com>
+Subject: Re: [PATCH V1 6/8] dt-bindings: mmc: sdhci-msm: Document the IPQ9574 compatible
+To:     devi priya <quic_devipriy@quicinc.com>
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, catalin.marinas@arm.com, will@kernel.org,
+        p.zabel@pengutronix.de, shawnguo@kernel.org, arnd@arndb.de,
+        marcel.ziswiler@toradex.com, dmitry.baryshkov@linaro.org,
+        nfraprado@collabora.com, broonie@kernel.org, tdas@codeaurora.org,
+        bhupesh.sharma@linaro.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
+        quic_poovendh@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/01/2023 19:13, Konrad Dybcio wrote:
-> Add device tree bindings for graphics clock controller for Qualcomm
-> Technology Inc's SM6115 SoCs.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+On Tue, 24 Jan 2023 at 15:17, devi priya <quic_devipriy@quicinc.com> wrote:
+>
+> Document the compatible for SDHCI on IPQ9574.
+>
+> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+
+Applied for next, thanks!
+
+Kind regards
+Uffe
+
+
 > ---
-> v1 -> v2:
-> 
-> No changes
-> 
->  .../bindings/clock/qcom,sm6115-gpucc.yaml     | 71 +++++++++++++++++++
->  include/dt-bindings/clock/qcom,sm6115-gpucc.h | 36 ++++++++++
->  2 files changed, 107 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6115-gpucc.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,sm6115-gpucc.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm6115-gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm6115-gpucc.yaml
-> new file mode 100644
-> index 000000000000..abf4e87359a3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm6115-gpucc.yaml
-> @@ -0,0 +1,71 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,sm6115-gpucc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Graphics Clock & Reset Controller on SM6115
-> +
-> +maintainers:
-> +  - Konrad Dybcio <konrad.dybcio@linaro.org>
-> +
-> +description: |
-> +  Qualcomm graphics clock control module provides clocks and power domains on
-> +  Qualcomm SoCs.
-> +
-> +  See also:: include/dt-bindings/clock/qcom,sm6115-gpucc.h
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,sm6115-gpucc
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +      - description: GPLL0 main branch source
-> +      - description: GPLL0 main div source
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#power-domain-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - '#clock-cells'
-> +  - '#reset-cells'
-> +  - '#power-domain-cells'
-
-Why this one is not referencing gcc.yaml? Looks the same as your
-previous sm6375.
-
-Best regards,
-Krzysztof
-
+>  Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+> index 6b89238f0565..5af61789a8c2 100644
+> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+> @@ -34,6 +34,7 @@ properties:
+>            - const: qcom,sdhci-msm-v4 # for sdcc versions less than 5.0
+>        - items:
+>            - enum:
+> +              - qcom,ipq9574-sdhci
+>                - qcom,qcs404-sdhci
+>                - qcom,sc7180-sdhci
+>                - qcom,sc7280-sdhci
+> --
+> 2.17.1
+>
