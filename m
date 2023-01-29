@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F073CC61D97
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Jan 2023 17:33:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30FBAC05027
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Jan 2023 17:34:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229673AbjA2RdY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 29 Jan 2023 12:33:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53648 "EHLO
+        id S234992AbjA2Rej (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 29 Jan 2023 12:34:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229960AbjA2RdX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Jan 2023 12:33:23 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FE731CF79
-        for <linux-clk@vger.kernel.org>; Sun, 29 Jan 2023 09:33:22 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id m16-20020a05600c3b1000b003dc4050c94aso3878101wms.4
-        for <linux-clk@vger.kernel.org>; Sun, 29 Jan 2023 09:33:22 -0800 (PST)
+        with ESMTP id S230247AbjA2Rei (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Jan 2023 12:34:38 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 073442D46
+        for <linux-clk@vger.kernel.org>; Sun, 29 Jan 2023 09:34:37 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id d14so9095035wrr.9
+        for <linux-clk@vger.kernel.org>; Sun, 29 Jan 2023 09:34:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3wyrcsnAJHQLkBlEAUJbUxZ4oBTO6M9vjc3Y9RD/6oo=;
-        b=A2aCms+n4YGcmWdYSolPFAmhpBx4MfpP/uNc36PhvKi+hDlVvvTofhGmC91yPqhTA0
-         SxhxAiI7bZjVRVn/fp+CrSWr9uyOl7PkuCdvYpclssE5Oz5QYYdShz6XLRhGEUN8DPHk
-         ZJ+xlAGBygNfFsPBnzAEzvYL9dUw7s3W9YJd0FGTI7fT2sdFwcKb35EpFsL0L7V/qQMw
-         TWqOGYT8FLtATgtG8tTxNTxUalJfrEd/LAk1nvq4W8VCxZJXzi7ngdEBQToDcZ8s/B8t
-         /00RqQnOFUrbxBUxbCwQGAeHkjRVBDxeRNXqd2IU0I7wnKVy3vjNpp0TrAFr2QNP3PFw
-         1rhQ==
+        bh=5LhB+v37p+76x1E2O4Pvsff4S6wO2BA5elPpc0Squig=;
+        b=BwJw9IqWegGmspNRnIEFiRkjyDbVKhKZr3x1pF0UtFZAvY9bV1tjRnTwaco1KESWnw
+         wX5+qDQXPlq+8udFSMHVqmIPvr6v8k2sarIpSMXY4/qfw88hJ90g5/1iMY7Lv/t+PW3T
+         z5ndUGgQHTXglZmhVtZ8F4rR4xzXQcEeYuny8xX4dFH0azcYd9aU+lfDBkE1ndTfNnY+
+         k1sxQD5FfpKqZXvuvA/A+IFHR86XzYXCsP/MDRpjnArzXUtl/4lInbAEmGWMAKUkPSjC
+         3gRiIL3l9eQk0y6uxGVCC1nzGT3F1uyUhleLVdvc9Gj8bueM3t//OllU8gvarEo4YEpt
+         4bJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3wyrcsnAJHQLkBlEAUJbUxZ4oBTO6M9vjc3Y9RD/6oo=;
-        b=zAQf4UyJFuSpnM8QjOyIYaMwed6/bMaksHM1zBuQwCTGZEfh56uAvnG1ammFcHGtmb
-         B9bzJR3Zwawvxg6tK+pzZCYK/aV/o/se6MRy3yo6B4blX+YkBmKTOO5Qoj6ZqTpQ8WSn
-         5oxkatcUPj3jsQvbbYIczGLtp3JeJ955RNXdAwYyyqbmoFHhh6zgzxD2zJE6tPbdTB06
-         RuEcZyLweypC1UYXlIUtrFj+8e6uyVgVlXwqbqkA98ac/NIPhLJNVuJIFM5g2FWDIBQB
-         nVF7dFkFgTdsO2JH56W/To+ebsjTQ3hWSGwC19kjZKqe4YpJ1998CpK3Dok5dC6CCSUO
-         QEtg==
-X-Gm-Message-State: AFqh2kpjmItsJSsZkuqg7QBkysFq3qjwCXdmALtdKR83+08LSaw4mMtu
-        8JvEWrCGRxWwyJ2zH03DOEuWXg==
-X-Google-Smtp-Source: AMrXdXver1JGBIfb2pGmO6LeMB6HuNti4ktes8+wCf0byQntuAF3rUL80tvcDCbnMTI8fcz2upbGzw==
-X-Received: by 2002:a05:600c:19d0:b0:3dc:c05:9db6 with SMTP id u16-20020a05600c19d000b003dc0c059db6mr22791193wmq.33.1675013600853;
-        Sun, 29 Jan 2023 09:33:20 -0800 (PST)
+        bh=5LhB+v37p+76x1E2O4Pvsff4S6wO2BA5elPpc0Squig=;
+        b=FY38WhwGgR8xgI7qPGFKYuuKVJXD/EY8oLFYO9QPrpp0w2mkjmjGJeg2bmr/lqG04I
+         6i4ZdgHzXQWuKnN+9BuVgW7nFwVjuNKffSvD/GyevaZXUF3TfPgTk8N6x6eqxkw4pPqh
+         Xhzfdlyoy5zNLB6JWSPidC2Kz8s+T+d/g9VBhTzMb8qPD31OT2ZlwedhzQmxcM31fY0O
+         C9J6/WG8SSqcVAyuclI8yOSYZqlyqb/E+zn8Quz/9T+kaGxX9MqMeITqVfsB+m3tldAT
+         U1rwp5PvO1o/oLIEwjyqmPRFsDHF8HIgKqiyX0yvw/JbBGaKQkw9otfipUxVeA9ZDRa+
+         ov5Q==
+X-Gm-Message-State: AO0yUKXDtcWsnregjpHoqi/hKOgr3MVN6SVcpgH9Ti2+OCqT/Qv0lLmp
+        zF/Z2a6Gcn4D6T4/tw5Rmg0ht/4NLaBxqW2P
+X-Google-Smtp-Source: AK7set/ZqihGuUM8OBQtuR4yZAH6ZIXEV2MFHJy4fHsVKq1uTCbc0+HmZ8iyEmGyP3IWZMI7ncYHJQ==
+X-Received: by 2002:a05:6000:a17:b0:2bf:e766:90f4 with SMTP id co23-20020a0560000a1700b002bfe76690f4mr3119965wrb.68.1675013675608;
+        Sun, 29 Jan 2023 09:34:35 -0800 (PST)
 Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id f9-20020a7bcd09000000b003dc54344764sm2220396wmj.48.2023.01.29.09.33.19
+        by smtp.gmail.com with ESMTPSA id d3-20020adfe2c3000000b002bc7fcf08ddsm9389546wrj.103.2023.01.29.09.34.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jan 2023 09:33:20 -0800 (PST)
-Date:   Sun, 29 Jan 2023 19:33:19 +0200
+        Sun, 29 Jan 2023 09:34:35 -0800 (PST)
+Date:   Sun, 29 Jan 2023 19:34:33 +0200
 From:   Abel Vesa <abel.vesa@linaro.org>
 To:     Oleksij Rempel <o.rempel@pengutronix.de>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -64,70 +64,93 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 14/19] clk: imx: add imx_obtain_fixed_of_clock()
-Message-ID: <Y9at37jsgpy9RiNT@linaro.org>
+Subject: Re: [PATCH v2 02/19] clk: imx6q: add ethernet refclock mux support
+Message-ID: <Y9auKU6xS4eiEuVy@linaro.org>
 References: <20230117061453.3723649-1-o.rempel@pengutronix.de>
- <20230117061453.3723649-15-o.rempel@pengutronix.de>
+ <20230117061453.3723649-3-o.rempel@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230117061453.3723649-15-o.rempel@pengutronix.de>
+In-Reply-To: <20230117061453.3723649-3-o.rempel@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-01-17 07:14:48, Oleksij Rempel wrote:
-> Add imx_obtain_fixed_of_clock() to optionally add clock not configured in
-> the devicetree.
+On 23-01-17 07:14:36, Oleksij Rempel wrote:
+> Add ethernet refclock mux support and set it to internal clock by
+> default. This configuration will not affect existing boards since
+> machine code currently overwrites this default.
+> 
+> The machine code will be fixed in a separate patch.
 > 
 > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
 Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
 > ---
->  drivers/clk/imx/clk.c | 14 ++++++++++++++
->  drivers/clk/imx/clk.h |  3 +++
->  2 files changed, 17 insertions(+)
+>  drivers/clk/imx/clk-imx6q.c               | 13 +++++++++++++
+>  include/dt-bindings/clock/imx6qdl-clock.h |  4 +++-
+>  2 files changed, 16 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-> index b636cc099d96..5f1f729008ee 100644
-> --- a/drivers/clk/imx/clk.c
-> +++ b/drivers/clk/imx/clk.c
-> @@ -110,6 +110,20 @@ struct clk_hw *imx_obtain_fixed_clock_hw(
->  	return __clk_get_hw(clk);
+> diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+> index de36f58d551c..22b464ca22c8 100644
+> --- a/drivers/clk/imx/clk-imx6q.c
+> +++ b/drivers/clk/imx/clk-imx6q.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/err.h>
+>  #include <linux/io.h>
+> +#include <linux/mfd/syscon/imx6q-iomuxc-gpr.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_irq.h>
+> @@ -115,6 +116,10 @@ static struct clk_div_table video_div_table[] = {
+>  	{ /* sentinel */ }
+>  };
+>  
+> +static const char * enet_ref_sels[] = { "enet_ref", "enet_ref_pad", };
+> +static const u32 enet_ref_sels_table[] = { IMX6Q_GPR1_ENET_CLK_SEL_ANATOP, IMX6Q_GPR1_ENET_CLK_SEL_PAD };
+> +static const u32 enet_ref_sels_table_mask = IMX6Q_GPR1_ENET_CLK_SEL_ANATOP;
+> +
+>  static unsigned int share_count_esai;
+>  static unsigned int share_count_asrc;
+>  static unsigned int share_count_ssi1;
+> @@ -908,6 +913,12 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+>  	if (clk_on_imx6q() && imx_get_soc_revision() == IMX_CHIP_REVISION_1_0)
+>  		hws[IMX6QDL_CLK_GPT_3M] = hws[IMX6QDL_CLK_GPT_IPG_PER];
+>  
+> +	hws[IMX6QDL_CLK_ENET_REF_PAD] = imx6q_obtain_fixed_clk_hw(ccm_node, "enet_ref_pad", 0);
+> +
+> +	hws[IMX6QDL_CLK_ENET_REF_SEL] = imx_clk_gpr_mux("enet_ref_sel", "fsl,imx6q-iomuxc-gpr",
+> +				IOMUXC_GPR1, enet_ref_sels, ARRAY_SIZE(enet_ref_sels),
+> +				enet_ref_sels_table, enet_ref_sels_table_mask);
+> +
+>  	imx_check_clk_hws(hws, IMX6QDL_CLK_END);
+>  
+>  	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
+> @@ -974,6 +985,8 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+>  			       hws[IMX6QDL_CLK_PLL3_USB_OTG]->clk);
+>  	}
+>  
+> +	clk_set_parent(hws[IMX6QDL_CLK_ENET_REF_SEL]->clk, hws[IMX6QDL_CLK_ENET_REF]->clk);
+> +
+>  	imx_register_uart_clocks(2);
 >  }
+>  CLK_OF_DECLARE(imx6q, "fsl,imx6q-ccm", imx6q_clocks_init);
+> diff --git a/include/dt-bindings/clock/imx6qdl-clock.h b/include/dt-bindings/clock/imx6qdl-clock.h
+> index e20c43cc36f6..e5b2a1ba02bc 100644
+> --- a/include/dt-bindings/clock/imx6qdl-clock.h
+> +++ b/include/dt-bindings/clock/imx6qdl-clock.h
+> @@ -273,6 +273,8 @@
+>  #define IMX6QDL_CLK_MMDC_P0_IPG			263
+>  #define IMX6QDL_CLK_DCIC1			264
+>  #define IMX6QDL_CLK_DCIC2			265
+> -#define IMX6QDL_CLK_END				266
+> +#define IMX6QDL_CLK_ENET_REF_SEL		266
+> +#define IMX6QDL_CLK_ENET_REF_PAD		267
+> +#define IMX6QDL_CLK_END				268
 >  
-> +struct clk_hw *imx_obtain_fixed_of_clock(struct device_node *np,
-> +					 const char *name, unsigned long rate)
-> +{
-> +	struct clk *clk = of_clk_get_by_name(np, name);
-> +	struct clk_hw *hw;
-> +
-> +	if (IS_ERR(clk))
-> +		hw = imx_obtain_fixed_clock_hw(name, rate);
-> +	else
-> +		hw = __clk_get_hw(clk);
-> +
-> +	return hw;
-> +}
-> +
->  struct clk_hw *imx_get_clk_hw_by_name(struct device_node *np, const char *name)
->  {
->  	struct clk *clk;
-> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-> index 801213109697..f0a24cd54d1c 100644
-> --- a/drivers/clk/imx/clk.h
-> +++ b/drivers/clk/imx/clk.h
-> @@ -288,6 +288,9 @@ struct clk * imx_obtain_fixed_clock(
->  struct clk_hw *imx_obtain_fixed_clock_hw(
->  			const char *name, unsigned long rate);
->  
-> +struct clk_hw *imx_obtain_fixed_of_clock(struct device_node *np,
-> +					 const char *name, unsigned long rate);
-> +
->  struct clk_hw *imx_get_clk_hw_by_name(struct device_node *np, const char *name);
->  
->  struct clk_hw *imx_clk_hw_gate_exclusive(const char *name, const char *parent,
+>  #endif /* __DT_BINDINGS_CLOCK_IMX6QDL_H */
 > -- 
 > 2.30.2
 > 
