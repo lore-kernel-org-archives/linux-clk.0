@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 801E4C61D97
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Jan 2023 17:43:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C29BCC05027
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Jan 2023 17:45:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235199AbjA2RnI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 29 Jan 2023 12:43:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57926 "EHLO
+        id S235142AbjA2RpB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 29 Jan 2023 12:45:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235195AbjA2RnI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Jan 2023 12:43:08 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 808BC420B
-        for <linux-clk@vger.kernel.org>; Sun, 29 Jan 2023 09:43:06 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id iv8-20020a05600c548800b003db04a0a46bso7774571wmb.0
-        for <linux-clk@vger.kernel.org>; Sun, 29 Jan 2023 09:43:06 -0800 (PST)
+        with ESMTP id S231329AbjA2RpA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Jan 2023 12:45:00 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FCEA420B
+        for <linux-clk@vger.kernel.org>; Sun, 29 Jan 2023 09:44:59 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id l35-20020a05600c1d2300b003dc4634a466so2573717wms.4
+        for <linux-clk@vger.kernel.org>; Sun, 29 Jan 2023 09:44:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EESc6yHcetQSdYJXbMgFW7vC03SHAVb9eblyBiy6LFU=;
-        b=y01AtHPUuoTnAyyQI5Y84VCRlVRSr6eK1jtn5D9X0DeY0QtIqW7YKA7tL67ecJs0jS
-         taxMzSGnxw19AK5gbJZAxDxZq4FaRiVmOA0m6JnWFtG5vT6qT98kqn9dPPh07HeOrqjN
-         fvB4+zd1zcLkNC9evzo/NR29Bb5C/X3/6awaXbJ9vE3LcLIglsgTpwsbaBCC7E+jgFsz
-         LpQXWmO/MlfK6hSkR7YlLs02RpeoTHMwyKH436Rxp52pQHvyg5IGFtqP1usdCbr7/Ea4
-         quCDo3cBFfXG8cvkjcG0LC2wa2Bf089k4P5K3Iy/XaqTYHHI1hNol7f5jtreas3zrIBD
-         RPbA==
+        bh=KDVqMwkXzQiwnLCIs/h43LafiVs1rZMTm8awi1qCCKc=;
+        b=w0aTvaIintJcu8HU7uxDd+368iaEn8jPDp5DkzPJFdRPAwMrnip0Y77XTRfcJBAdHj
+         VWTidx1OV9y+w7+urHB/D+3I3K17rwJZbw7QYHtpaaIAXdBALUARE+t7mgaI4Wfw3IUH
+         GxyVFgg73RVe1BnW83ZJvtaIDw2ts0ODJ+TICcSb13MDrOOt1AwvudgwTzv2jeHzwXS6
+         YLbt3dPHP6LYvyUikKHBn65VPT0Cau8k1DSzDEV8vHxgcc/PydLwMSZo3gCJewqhNU9X
+         Padm4pJxlO9d+5aaSaEb752vxypSJyeab7IMASNwwtHsQ62dE50IDtJITU0rUKtJ+rPu
+         Sx7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EESc6yHcetQSdYJXbMgFW7vC03SHAVb9eblyBiy6LFU=;
-        b=KmtuOfpr8z2130DhaKLrKMo0ADxOQTN9eDUQ82xpvN19KOGXIX9ywwy4XGCOpW27Nc
-         zG3RZy28iCnfL7n3k1EGEmIUZFrAVZ91uM82MsulHZGJ7yUvrmd4weHAq/LceY5a1VqI
-         7m58CFO3rL3JYtDpp92gpcasIbAPPp0c12NKv7F54Vn1FyyEXiN/Zc2u8SbfitYhldWy
-         NqxH8xDaevdFNq27l4uNYb3C0qeY9Xb3HR48O2RgJ48EYqFUqXWWHrVkoFhOu+SLiBD3
-         agw2tBz+YQJqQlGGz9q1/ax1lxj4wb2Nkw3sq/OrZZU2XtlfF5iYVONX97CuMPSXfRHf
-         2ngA==
-X-Gm-Message-State: AO0yUKXgUNPEHRRf7gvJFmlDp7ERoLdHiB62AHd0ozmYUPn2/9X9E5vh
-        iGdlv5SJZJkUPkd1nCirOT0JiQ==
-X-Google-Smtp-Source: AK7set+2UOrnRZs2WQATlKfJG00hkAln8uWzTi7jsYZeI2wVskdLLWL0SHLBX0y2Hy280n/qgI8G6A==
-X-Received: by 2002:a05:600c:6008:b0:3da:282b:e774 with SMTP id az8-20020a05600c600800b003da282be774mr2998074wmb.38.1675014185123;
-        Sun, 29 Jan 2023 09:43:05 -0800 (PST)
+        bh=KDVqMwkXzQiwnLCIs/h43LafiVs1rZMTm8awi1qCCKc=;
+        b=geEYyd9mqIMWf6w2TovFpBSUZnZrRs38CQHmZZj/nqaUlvX6xQK+N2eK12S7WmZW55
+         3No7Hngfmw11cvG/313H3IZlKpQPi7GWUZrlgNvSFGHg3HcHTD/zl3AfwarAb/QBIF5y
+         XNkXTZlV3klzbj+jFUZ6+nh8g3YvWl1sChDMAz2zMF8SIgkK2z7RGE6KJyUIg+M2AN+v
+         rdiCvjJhc5fxTNtM/GAmU6iWGNbVKLFzuT1SOld74632y/ywgZev3/KFm8RB7WIRsbgf
+         kIJcOUop+a1EFvVr0+cpvjxnSJJmBTpOgUHBqvt6ApW/SdwqKyn0XJncEd7Uho7wi0Td
+         EGKQ==
+X-Gm-Message-State: AO0yUKWc6Lsk1DLei3KXS0I82FPavc/ELt2R9sXGZgYq5VxWGN12AB1X
+        Tni7GxVHjHnwVtt1GVJE9sh4Z3kcDkz9lipg
+X-Google-Smtp-Source: AK7set9OhOe4XHsV2+ozJ/7/aDfXe0ptogZxgvVXaITVWgOHypR3+G8KPJ7ocr022Dmi0R2srkRVIw==
+X-Received: by 2002:a05:600c:1e08:b0:3dc:58fb:c1eb with SMTP id ay8-20020a05600c1e0800b003dc58fbc1ebmr1126427wmb.8.1675014297663;
+        Sun, 29 Jan 2023 09:44:57 -0800 (PST)
 Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id z14-20020a5d640e000000b002bfb5bda59asm9737686wru.25.2023.01.29.09.43.03
+        by smtp.gmail.com with ESMTPSA id c1-20020a05600c0a4100b003d9fba3c7a4sm14899978wmq.16.2023.01.29.09.44.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jan 2023 09:43:04 -0800 (PST)
-Date:   Sun, 29 Jan 2023 19:43:03 +0200
+        Sun, 29 Jan 2023 09:44:57 -0800 (PST)
+Date:   Sun, 29 Jan 2023 19:44:55 +0200
 From:   Abel Vesa <abel.vesa@linaro.org>
 To:     Marcel Ziswiler <marcel@ziswiler.com>
 Cc:     linux-arm-kernel@lists.infradead.org,
@@ -66,7 +66,7 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [RESEND PATCH v1 2/2] dt-bindings: imx8ulp: clock: no spaces
  before tabs
-Message-ID: <Y9awJ04VzbGexSuc@linaro.org>
+Message-ID: <Y9awlwWhjoH77dM2@linaro.org>
 References: <20230119085421.102804-1-marcel@ziswiler.com>
  <20230119085421.102804-3-marcel@ziswiler.com>
 MIME-Version: 1.0
@@ -89,7 +89,9 @@ On 23-01-19 09:54:21, Marcel Ziswiler wrote:
 > 
 > Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Applied both.
+
+Thanks.
 
 > 
 > ---
