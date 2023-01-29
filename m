@@ -2,94 +2,147 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3F2C27C76
-	for <linux-clk@archiver.kernel.org>; Sat, 28 Jan 2023 18:38:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF593C05027
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Jan 2023 11:21:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231566AbjA1Siz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 28 Jan 2023 13:38:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56594 "EHLO
+        id S230413AbjA2LVV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 29 Jan 2023 06:21:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234384AbjA1Six (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 28 Jan 2023 13:38:53 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DD681F4A8
-        for <linux-clk@vger.kernel.org>; Sat, 28 Jan 2023 10:38:51 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id k16so5540038wms.2
-        for <linux-clk@vger.kernel.org>; Sat, 28 Jan 2023 10:38:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ktt+Jj0sDLgKEcmopucgL2DJuOv6S3oPl1SrPAyA73Y=;
-        b=m5PIyjyc1FSkioDuZ91i2Bs6GgW2+ryq7LYDtsorZZh79bpVI0tdHM66YPuwB0kXJB
-         nt6SYzOUznse7izWefZwK3/ky8ewaBakVvWIgynwr8CkqbOAERIRUnlxQjSSB5f2/64I
-         WTbQ1uaW4+AohBz2cqDjZWvcc8zKvmHFpY5mKob8hAVSd5mQXGlKYHXlAxAtJN/DFNg9
-         0GlPDYc2M38baxqv5Par7IZEfRzpHLs0EESjC624G0tGjXrCulRYGjORT70YfXUnGkiQ
-         id8Fz8ZDgQwW8j9x/9cxu0Tp8r09cV8+SGR0Jp4UHRCau1YoKj0Z6Jj7fe5Z3k0/5tdf
-         2X6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ktt+Jj0sDLgKEcmopucgL2DJuOv6S3oPl1SrPAyA73Y=;
-        b=J47r0SwurL+rDCBrgC3gvwQKmo2IKDEyGZIf9P7gxdgYIpduIhPX4oKXQylAWmdD9h
-         Lup3icbs2XD8EHyyt/qmzvSeakMs3ryCVRgCFmjGbYN5nJPA0IDJUDmJatxHXEEFXSlB
-         kUn6eMisVObyU4jiJcvh04w3NTyNgkv0Cltv+MdzbiyiV/cyY7BK6HjIEJmPU0/ehQuu
-         uJb6m+JuoE6ROEQ7j/1dcG1xj83PTbUXG/vijfa4cjSB/pFEiiAJMs75Ra9u3EMQzaBt
-         HmF4lsWSmqkEnEly7DVbXRqMBLkLpI5hk4nD3YGOeJQokEpbEz9ATqx6Y8GNzuSLypDN
-         gq/A==
-X-Gm-Message-State: AO0yUKUGCbHRP6wMBzgEx/bYxb/XoY8vsZTRC3J4joHiJIosRWLEw2xF
-        yl8dtAMOh602fxbbWi8KoxYD3w==
-X-Google-Smtp-Source: AK7set9mBphpUni7E7SMBDZ+fF5wJ5ZXafz26/EFCku5akdPkAcVR1iR9uGa/AmHRT5ML5bBRIpr1A==
-X-Received: by 2002:a05:600c:4451:b0:3dc:191a:3b13 with SMTP id v17-20020a05600c445100b003dc191a3b13mr15798892wmn.8.1674931130149;
-        Sat, 28 Jan 2023 10:38:50 -0800 (PST)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id t19-20020a1c7713000000b003dc48a2f997sm2476821wmi.17.2023.01.28.10.38.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Jan 2023 10:38:49 -0800 (PST)
-Date:   Sat, 28 Jan 2023 20:38:48 +0200
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>,
-        Peng Fan <peng.fan@nxp.com>
-Cc:     LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>,
-        abelvesa@kernel.org, mturquette@baylibre.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        18701859600@163.com, bsp-development.geo@leica-geosystems.com,
-        Marco Felsch <m.felsch@pengutronix.de>
-Subject: Re: [PATCH V5 1/1] clk: imx8mp: Alias M7 SRC/DIV to M7 CORE
-Message-ID: <Y9VruNgUuA5h3d70@linaro.org>
-References: <20230111101030.686885-1-Qing-wu.Li@leica-geosystems.com.cn>
- <20230111101030.686885-2-Qing-wu.Li@leica-geosystems.com.cn>
- <Y8VfEfnWwt8+QB1W@linaro.org>
- <a1285cb87151130de782fc1941b13f34.sboyd@kernel.org>
+        with ESMTP id S229519AbjA2LVT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Jan 2023 06:21:19 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E8F71EFF4;
+        Sun, 29 Jan 2023 03:21:18 -0800 (PST)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30TBKHrW032659;
+        Sun, 29 Jan 2023 11:20:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=g7s6pgRnAc7BMi0NH/ciA+M4IAwuFhaHBw4+zkpUDc4=;
+ b=ECIXdqgyx8KjqTOiHCQsj3d5tDJelajsNouVkI1lJG8iK/CNqconCNdVcmLBv+u8y/T0
+ mMekG4Ca3ueNm1F+FCppeIbbNsdZsCJl5MizBciNalLOPb07dymqU6KI23aeDIQ/9dI0
+ C8H40WT9LnAVt7zA+VAF8dqvUq9ATmQ+gRY9Bt1st6Lk6LtOA2uX82eGL53LuV4FYQzh
+ dQqURSyRSJJb9gEuH6brbVcFwrKKRc/4vA1138KjzWunTZt/9sRZ3CNypnyA0R4pIwoT
+ GFvAUuz3GpbQss+/OfD4T3mOH8YEpDwEpTLZvI056qQ7oNQ2wKWCBnoNEVIbUylvJUl4 9A== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ncvvu1sg8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 29 Jan 2023 11:20:16 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30TBKFi7032598
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 29 Jan 2023 11:20:15 GMT
+Received: from [10.50.4.9] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Sun, 29 Jan
+ 2023 03:20:04 -0800
+Message-ID: <758082b1-c4fd-23e1-1f54-1cf23b30328c@quicinc.com>
+Date:   Sun, 29 Jan 2023 16:49:54 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a1285cb87151130de782fc1941b13f34.sboyd@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH V1 3/8] dt-bindings: pinctrl: qcom: Document IPQ9574
+ pinctrl driver
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
+        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <p.zabel@pengutronix.de>, <shawnguo@kernel.org>,
+        <arnd@arndb.de>, <marcel.ziswiler@toradex.com>,
+        <dmitry.baryshkov@linaro.org>, <nfraprado@collabora.com>,
+        <broonie@kernel.org>, <tdas@codeaurora.org>,
+        <bhupesh.sharma@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>
+References: <20230124141541.8290-1-quic_devipriy@quicinc.com>
+ <20230124141541.8290-4-quic_devipriy@quicinc.com>
+ <36c9c3ce-1ae0-6619-d74d-142ed34b2f3f@linaro.org>
+Content-Language: en-US
+From:   Devi Priya <quic_devipriy@quicinc.com>
+In-Reply-To: <36c9c3ce-1ae0-6619-d74d-142ed34b2f3f@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: gFYWSVyPezJKCHJC45B1eQwyIkn4eYQN
+X-Proofpoint-ORIG-GUID: gFYWSVyPezJKCHJC45B1eQwyIkn4eYQN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-01-29_09,2023-01-27_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=999 suspectscore=0 spamscore=0 mlxscore=0 phishscore=0
+ clxscore=1015 lowpriorityscore=0 priorityscore=1501 bulkscore=0
+ adultscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2212070000 definitions=main-2301290110
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-01-18 11:00:36, Stephen Boyd wrote:
-> Quoting Abel Vesa (2023-01-16 06:28:33)
-> > On 23-01-11 11:10:30, LI Qingwu wrote:
-> > > Defined IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV in imx8mp-clock.h
-> > > but never assigned. It will cause the system to hang if using them.
-> > > Alias IMX8MP_CLK_M7_SRC and IMX8MP_CLK_M7_DIV to IMX8MP_CLK_M7_CORE
-> > > for backward compatibility.
-> > > 
-> > > Fixes: 8c83a8ff4dd9 (clk: imx8mp: use imx8m_clk_hw_composite_core to simplify code)
-> > > Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
-> > > Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
-> > > Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
-> > 
-> > Stephen, can you please pick this up yourself?
-> > 
-> 
-> Is it needed for clk-fixes? When did the system start hanging?
 
-Li, Peng, can you provide some details here?
+
+On 1/25/2023 4:37 PM, Krzysztof Kozlowski wrote:
+> On 24/01/2023 15:15, devi priya wrote:
+>> Document the pinctrl driver for IPQ9574
+>>
+>> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+>> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+>> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+>> ---
+>>   .../bindings/pinctrl/qcom,ipq9574-tlmm.yaml   | 135 ++++++++++++++++++
+>>   1 file changed, 135 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq9574-tlmm.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq9574-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,ipq9574-tlmm.yaml
+>> new file mode 100644
+>> index 000000000000..d736f0fb7835
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq9574-tlmm.yaml
+>> @@ -0,0 +1,135 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/pinctrl/qcom,ipq9574-tlmm.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Technologies, Inc. IPQ9574 TLMM block
+>> +
+>> +maintainers:
+>> +  - Bjorn Andersson <andersson@kernel.org>
+>> +  - Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> +
+>> +description:
+>> +  Top Level Mode Multiplexer pin controller in Qualcomm IPQ9574 SoC.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: qcom,ipq9574-tlmm
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  interrupts: true
+> 
+> Also - missing maxItems.
+> 
+> I think you based your patches on some older version, so you might miss
+> here changes we did recently.
+Sure, will rebase it on linux-next and post V3
+> 
+> Best regards,
+> Krzysztof
+> 
+Best Regards,
+Devi Priya
