@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E8EC61D97
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Jan 2023 17:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 801E4C61D97
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Jan 2023 17:43:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235186AbjA2Rmh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 29 Jan 2023 12:42:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57126 "EHLO
+        id S235199AbjA2RnI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 29 Jan 2023 12:43:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235181AbjA2Rmg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Jan 2023 12:42:36 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F03911EFD9
-        for <linux-clk@vger.kernel.org>; Sun, 29 Jan 2023 09:42:30 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id m15so6600689wms.4
-        for <linux-clk@vger.kernel.org>; Sun, 29 Jan 2023 09:42:30 -0800 (PST)
+        with ESMTP id S235195AbjA2RnI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Jan 2023 12:43:08 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 808BC420B
+        for <linux-clk@vger.kernel.org>; Sun, 29 Jan 2023 09:43:06 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id iv8-20020a05600c548800b003db04a0a46bso7774571wmb.0
+        for <linux-clk@vger.kernel.org>; Sun, 29 Jan 2023 09:43:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=34Hkkbw634RC9Fbld7Eci9GLP2rbD+JaNfekHKUfXNo=;
-        b=Dr1Q4ox+yEMCIIgQ6ygG+UKmdT2M6H8Da1GMcciWz/NuJ7KtwC3lYk8GEESwiQAiwB
-         uFkaMt5WGrLzn4GlBD6OQRhy02mKdmH0IimIjGsWnxBvYSEPHdxt9Y0DpGaAN3nUIIAQ
-         g9coapWPSNH2UgdEPLy7fXtwa2lovpiwbvWyRcasOXE4UohIQZTWYfsM4ZFV3mCyRbU5
-         AvF8Rh9u+uA1O+2Mn0p6yHvzl+wFdNDK+xva6lhDXh/kM6ZfuasYa0St9j8EfsVUTiQR
-         UK5Ii2gJSDD+apOAlvfdAw+OUcKntBCvUvF+pwjGPpbult9uHRKXW+0I1u0KLUM8kE1v
-         Z/kw==
+        bh=EESc6yHcetQSdYJXbMgFW7vC03SHAVb9eblyBiy6LFU=;
+        b=y01AtHPUuoTnAyyQI5Y84VCRlVRSr6eK1jtn5D9X0DeY0QtIqW7YKA7tL67ecJs0jS
+         taxMzSGnxw19AK5gbJZAxDxZq4FaRiVmOA0m6JnWFtG5vT6qT98kqn9dPPh07HeOrqjN
+         fvB4+zd1zcLkNC9evzo/NR29Bb5C/X3/6awaXbJ9vE3LcLIglsgTpwsbaBCC7E+jgFsz
+         LpQXWmO/MlfK6hSkR7YlLs02RpeoTHMwyKH436Rxp52pQHvyg5IGFtqP1usdCbr7/Ea4
+         quCDo3cBFfXG8cvkjcG0LC2wa2Bf089k4P5K3Iy/XaqTYHHI1hNol7f5jtreas3zrIBD
+         RPbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=34Hkkbw634RC9Fbld7Eci9GLP2rbD+JaNfekHKUfXNo=;
-        b=aVAC8zKLIhh0ZZ1pa9c5RjzWFG67tPtNrVzopC5t7aMMCweKUn1Jl9QUZ1pCwdTVGZ
-         iy00CH8ay36iTDkf9M9YEZFsYub5XyLhRrsf6RSoUBJk15kFs1I6JxYNQ2Ezdv3p1T75
-         3nBouDOpBR2ZNEnkOKS0YNKgesdshNzkOrRgc7BwODELE7ipbtADJGbaWaJ+WhYxMbIr
-         cbkKrvBlktmNfrjFH8L62Zs5kKoHgK2HJEsdD0mrVrVQ6eb4wCuM3x+L3BuR8vG58VAB
-         1quqMPI08PELKXewTYX7FS44cW3mWcydxktkN8j51V7q0lf8RJbTEVbXAYDFLNFRMIX8
-         M9hw==
-X-Gm-Message-State: AO0yUKWzA+xlnnzBFDwSDJVwJVn4wJtX3ILwD5oH9QmfK17ls23ufkdZ
-        T3M13IaPFCUpFAdp4SZldj2Yfg==
-X-Google-Smtp-Source: AK7set/mvmGmVMpNZl6PzqdJ7LQUH9WapUEZ7DRqpjONCtidqEpb6FtGnwBdTrMaCUdhyh08//kGKg==
-X-Received: by 2002:a7b:c8c7:0:b0:3dc:5a7c:f8ad with SMTP id f7-20020a7bc8c7000000b003dc5a7cf8admr285059wml.21.1675014149566;
-        Sun, 29 Jan 2023 09:42:29 -0800 (PST)
+        bh=EESc6yHcetQSdYJXbMgFW7vC03SHAVb9eblyBiy6LFU=;
+        b=KmtuOfpr8z2130DhaKLrKMo0ADxOQTN9eDUQ82xpvN19KOGXIX9ywwy4XGCOpW27Nc
+         zG3RZy28iCnfL7n3k1EGEmIUZFrAVZ91uM82MsulHZGJ7yUvrmd4weHAq/LceY5a1VqI
+         7m58CFO3rL3JYtDpp92gpcasIbAPPp0c12NKv7F54Vn1FyyEXiN/Zc2u8SbfitYhldWy
+         NqxH8xDaevdFNq27l4uNYb3C0qeY9Xb3HR48O2RgJ48EYqFUqXWWHrVkoFhOu+SLiBD3
+         agw2tBz+YQJqQlGGz9q1/ax1lxj4wb2Nkw3sq/OrZZU2XtlfF5iYVONX97CuMPSXfRHf
+         2ngA==
+X-Gm-Message-State: AO0yUKXgUNPEHRRf7gvJFmlDp7ERoLdHiB62AHd0ozmYUPn2/9X9E5vh
+        iGdlv5SJZJkUPkd1nCirOT0JiQ==
+X-Google-Smtp-Source: AK7set+2UOrnRZs2WQATlKfJG00hkAln8uWzTi7jsYZeI2wVskdLLWL0SHLBX0y2Hy280n/qgI8G6A==
+X-Received: by 2002:a05:600c:6008:b0:3da:282b:e774 with SMTP id az8-20020a05600c600800b003da282be774mr2998074wmb.38.1675014185123;
+        Sun, 29 Jan 2023 09:43:05 -0800 (PST)
 Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id f1-20020a7bc8c1000000b003c6bbe910fdsm15922293wml.9.2023.01.29.09.42.28
+        by smtp.gmail.com with ESMTPSA id z14-20020a5d640e000000b002bfb5bda59asm9737686wru.25.2023.01.29.09.43.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jan 2023 09:42:29 -0800 (PST)
-Date:   Sun, 29 Jan 2023 19:42:27 +0200
+        Sun, 29 Jan 2023 09:43:04 -0800 (PST)
+Date:   Sun, 29 Jan 2023 19:43:03 +0200
 From:   Abel Vesa <abel.vesa@linaro.org>
 To:     Marcel Ziswiler <marcel@ziswiler.com>
 Cc:     linux-arm-kernel@lists.infradead.org,
@@ -64,40 +64,61 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         Shawn Guo <shawnguo@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v1 0/2] ARM: arm64: dts/clk: imx: indentation
- permission whitespace cleanup 2
-Message-ID: <Y9awA42VPpC9Ne8o@linaro.org>
+Subject: Re: [RESEND PATCH v1 2/2] dt-bindings: imx8ulp: clock: no spaces
+ before tabs
+Message-ID: <Y9awJ04VzbGexSuc@linaro.org>
 References: <20230119085421.102804-1-marcel@ziswiler.com>
+ <20230119085421.102804-3-marcel@ziswiler.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230119085421.102804-1-marcel@ziswiler.com>
+In-Reply-To: <20230119085421.102804-3-marcel@ziswiler.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-01-19 09:54:19, Marcel Ziswiler wrote:
+On 23-01-19 09:54:21, Marcel Ziswiler wrote:
 > From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > 
+> This fixes the following warnings:
 > 
-> While further synchronising them imx device trees with U-Boot I stumbled
-> over more checkpatch warnings. This series addresses those trivial
-> indentation, file permission and/or whitespace cleanups.
+> include/dt-bindings/clock/imx8ulp-clock.h:204: warning: please, no space
+>  before tabs
+> include/dt-bindings/clock/imx8ulp-clock.h:215: warning: please, no space
+>  before tabs
+> 
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Nitpick: The subject line should not contain "ARM: arm64:" prefix, as it makes it
-confusing for maintainers through which tree the patches should be
-applied.
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
 > 
+> ---
 > 
-> Marcel Ziswiler (2):
->   clk: imx6sll: add proper spdx license identifier
->   dt-bindings: imx8ulp: clock: no spaces before tabs
-> 
->  include/dt-bindings/clock/imx6sll-clock.h | 2 +-
 >  include/dt-bindings/clock/imx8ulp-clock.h | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
+> diff --git a/include/dt-bindings/clock/imx8ulp-clock.h b/include/dt-bindings/clock/imx8ulp-clock.h
+> index 953ecfe8ebcc..827404fadf5c 100644
+> --- a/include/dt-bindings/clock/imx8ulp-clock.h
+> +++ b/include/dt-bindings/clock/imx8ulp-clock.h
+> @@ -201,7 +201,7 @@
+>  #define IMX8ULP_CLK_SAI7		2
+>  #define IMX8ULP_CLK_SPDIF		3
+>  #define IMX8ULP_CLK_ISI			4
+> -#define IMX8ULP_CLK_CSI_REGS 		5
+> +#define IMX8ULP_CLK_CSI_REGS		5
+>  #define IMX8ULP_CLK_PCTLD		6
+>  #define IMX8ULP_CLK_CSI			7
+>  #define IMX8ULP_CLK_DSI			8
+> @@ -212,7 +212,7 @@
+>  #define IMX8ULP_CLK_GPU2D		13
+>  #define IMX8ULP_CLK_GPU3D		14
+>  #define IMX8ULP_CLK_DC_NANO		15
+> -#define IMX8ULP_CLK_CSI_CLK_UI 		16
+> +#define IMX8ULP_CLK_CSI_CLK_UI		16
+>  #define IMX8ULP_CLK_CSI_CLK_ESC		17
+>  #define IMX8ULP_CLK_RGPIOD		18
+>  #define IMX8ULP_CLK_DMA2_MP		19
 > -- 
 > 2.36.1
 > 
