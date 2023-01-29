@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30FBAC05027
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Jan 2023 17:34:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF5FC636CC
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Jan 2023 17:36:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234992AbjA2Rej (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 29 Jan 2023 12:34:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54312 "EHLO
+        id S235164AbjA2Rg1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 29 Jan 2023 12:36:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230247AbjA2Rei (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Jan 2023 12:34:38 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 073442D46
-        for <linux-clk@vger.kernel.org>; Sun, 29 Jan 2023 09:34:37 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id d14so9095035wrr.9
-        for <linux-clk@vger.kernel.org>; Sun, 29 Jan 2023 09:34:36 -0800 (PST)
+        with ESMTP id S231851AbjA2RgZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Jan 2023 12:36:25 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A75701E5C5
+        for <linux-clk@vger.kernel.org>; Sun, 29 Jan 2023 09:36:21 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id l35-20020a05600c1d2300b003dc4634a466so2564688wms.4
+        for <linux-clk@vger.kernel.org>; Sun, 29 Jan 2023 09:36:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5LhB+v37p+76x1E2O4Pvsff4S6wO2BA5elPpc0Squig=;
-        b=BwJw9IqWegGmspNRnIEFiRkjyDbVKhKZr3x1pF0UtFZAvY9bV1tjRnTwaco1KESWnw
-         wX5+qDQXPlq+8udFSMHVqmIPvr6v8k2sarIpSMXY4/qfw88hJ90g5/1iMY7Lv/t+PW3T
-         z5ndUGgQHTXglZmhVtZ8F4rR4xzXQcEeYuny8xX4dFH0azcYd9aU+lfDBkE1ndTfNnY+
-         k1sxQD5FfpKqZXvuvA/A+IFHR86XzYXCsP/MDRpjnArzXUtl/4lInbAEmGWMAKUkPSjC
-         3gRiIL3l9eQk0y6uxGVCC1nzGT3F1uyUhleLVdvc9Gj8bueM3t//OllU8gvarEo4YEpt
-         4bJQ==
+        bh=2t9d/PFnAu76NCSByxhC2pLUkL7IDdlqzwyWR/4/cZQ=;
+        b=g1gILyyE7aWCdvMCWprqIT5pQBIvK0jy2wQr5CYWIIjZeLtzNE0kV6684JWfL9Slsx
+         FGt9cHMIhq20pn9/1jlcm5/1LX8aS0XkaccDA6YUQKfT2fAzX4muC+qYIS1UlkSYYAHk
+         IDZuPepb2vg5C5YBCneEAYDWcIwX9ocIemc0Qr5o55Ow6Ga3MXeCaCJM1BREvRmYW/GJ
+         wRkZsbOYyOlecusDW+8qXpOn7wV7UbYxOHdmW19323SMC0ox6mcPvkbbxNMYE3r4wL1c
+         UZ8Hn3KRRC2VOa1k2KqOS2OjeHrJxnkqiuNKaRODZdgzhVKWKP/dQrujWTndkCeeTXyd
+         w0cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5LhB+v37p+76x1E2O4Pvsff4S6wO2BA5elPpc0Squig=;
-        b=FY38WhwGgR8xgI7qPGFKYuuKVJXD/EY8oLFYO9QPrpp0w2mkjmjGJeg2bmr/lqG04I
-         6i4ZdgHzXQWuKnN+9BuVgW7nFwVjuNKffSvD/GyevaZXUF3TfPgTk8N6x6eqxkw4pPqh
-         Xhzfdlyoy5zNLB6JWSPidC2Kz8s+T+d/g9VBhTzMb8qPD31OT2ZlwedhzQmxcM31fY0O
-         C9J6/WG8SSqcVAyuclI8yOSYZqlyqb/E+zn8Quz/9T+kaGxX9MqMeITqVfsB+m3tldAT
-         U1rwp5PvO1o/oLIEwjyqmPRFsDHF8HIgKqiyX0yvw/JbBGaKQkw9otfipUxVeA9ZDRa+
-         ov5Q==
-X-Gm-Message-State: AO0yUKXDtcWsnregjpHoqi/hKOgr3MVN6SVcpgH9Ti2+OCqT/Qv0lLmp
-        zF/Z2a6Gcn4D6T4/tw5Rmg0ht/4NLaBxqW2P
-X-Google-Smtp-Source: AK7set/ZqihGuUM8OBQtuR4yZAH6ZIXEV2MFHJy4fHsVKq1uTCbc0+HmZ8iyEmGyP3IWZMI7ncYHJQ==
-X-Received: by 2002:a05:6000:a17:b0:2bf:e766:90f4 with SMTP id co23-20020a0560000a1700b002bfe76690f4mr3119965wrb.68.1675013675608;
-        Sun, 29 Jan 2023 09:34:35 -0800 (PST)
+        bh=2t9d/PFnAu76NCSByxhC2pLUkL7IDdlqzwyWR/4/cZQ=;
+        b=WxDzdTfK+Nz2AKquAbIxYMpWKfCQUWQzVDZusj0dM/pjaDeeQdCLdVCjyAOA0ikFOx
+         FjdKmFQ/BHWyWUaaLmqMx5WPjr12FJ0WASSdwz+BsSVncvQT25llcTV6f3NZcaKAIIL8
+         pi88fybBZOdAFCfxZ5zgYyYpwMz70Vkdx9HHq+DFL41zGNR1PuCE8jCsiGlobR7JgHyE
+         FmTJgvs8eANm8326BnOEPtdeRsAqkrF9PtIggunzT7qCC1w2hyJrpPqpMsxogVqzAYLT
+         n1kogHUjxEahzmbVAA8OP18jLUoCh9NiTPMyNHdyumQo/XwY9+QS/4+W0lD5RB7BBr34
+         3FDQ==
+X-Gm-Message-State: AO0yUKXRQcI6rsnIFdvCNMfpcar5HKFM0mdujaKgKvHbFEnqNu/mg6go
+        vfGLIy/8g1PeMGXiA4XtG4fzbw==
+X-Google-Smtp-Source: AK7set84I634bCcA5f5yHm3I7Mt3i3QNcDw7JuyBVOnZFuCMIXSqjwmdLt+8dHw3QMmkBxl7nsHG3w==
+X-Received: by 2002:a05:600c:354b:b0:3dc:16d2:ae5e with SMTP id i11-20020a05600c354b00b003dc16d2ae5emr19968193wmq.32.1675013780186;
+        Sun, 29 Jan 2023 09:36:20 -0800 (PST)
 Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id d3-20020adfe2c3000000b002bc7fcf08ddsm9389546wrj.103.2023.01.29.09.34.34
+        by smtp.gmail.com with ESMTPSA id i27-20020a05600c4b1b00b003dc54d9aeeasm2036307wmp.36.2023.01.29.09.36.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jan 2023 09:34:35 -0800 (PST)
-Date:   Sun, 29 Jan 2023 19:34:33 +0200
+        Sun, 29 Jan 2023 09:36:19 -0800 (PST)
+Date:   Sun, 29 Jan 2023 19:36:18 +0200
 From:   Abel Vesa <abel.vesa@linaro.org>
 To:     Oleksij Rempel <o.rempel@pengutronix.de>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -64,93 +64,196 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 02/19] clk: imx6q: add ethernet refclock mux support
-Message-ID: <Y9auKU6xS4eiEuVy@linaro.org>
+Subject: Re: [PATCH v2 01/19] clk: imx: add clk-gpr-mux driver
+Message-ID: <Y9aukmQwiwzpakYo@linaro.org>
 References: <20230117061453.3723649-1-o.rempel@pengutronix.de>
- <20230117061453.3723649-3-o.rempel@pengutronix.de>
+ <20230117061453.3723649-2-o.rempel@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230117061453.3723649-3-o.rempel@pengutronix.de>
+In-Reply-To: <20230117061453.3723649-2-o.rempel@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-01-17 07:14:36, Oleksij Rempel wrote:
-> Add ethernet refclock mux support and set it to internal clock by
-> default. This configuration will not affect existing boards since
-> machine code currently overwrites this default.
+On 23-01-17 07:14:35, Oleksij Rempel wrote:
+> Almost(?) every i'MX variant has clk mux for ethernet (rgmii/rmii) reference
+
+i.MX
+
+> clock located in the GPR1 register. So far this clk is configured in
+> different ways:
+> - mach-imx6q is doing mux configuration based on ptp vs enet_ref clk
+>   comparison.
+> - mach-imx7d is setting mux to PAD for all boards
+> - mach-imx6ul is setting mux to internal clock for all boards.
 > 
-> The machine code will be fixed in a separate patch.
+> Since we have imx7d and imx6ul board variants which do not work with
+> configurations forced by kernel mach code, we need to implement this clk
+> mux properly as part of the clk framework. Which is done by this patch.
 > 
 > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
 Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
 > ---
->  drivers/clk/imx/clk-imx6q.c               | 13 +++++++++++++
->  include/dt-bindings/clock/imx6qdl-clock.h |  4 +++-
->  2 files changed, 16 insertions(+), 1 deletion(-)
+>  drivers/clk/imx/Makefile      |   1 +
+>  drivers/clk/imx/clk-gpr-mux.c | 119 ++++++++++++++++++++++++++++++++++
+>  drivers/clk/imx/clk.h         |   5 ++
+>  3 files changed, 125 insertions(+)
+>  create mode 100644 drivers/clk/imx/clk-gpr-mux.c
 > 
-> diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-> index de36f58d551c..22b464ca22c8 100644
-> --- a/drivers/clk/imx/clk-imx6q.c
-> +++ b/drivers/clk/imx/clk-imx6q.c
-> @@ -12,6 +12,7 @@
->  #include <linux/clk-provider.h>
->  #include <linux/err.h>
->  #include <linux/io.h>
-> +#include <linux/mfd/syscon/imx6q-iomuxc-gpr.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
->  #include <linux/of_irq.h>
-> @@ -115,6 +116,10 @@ static struct clk_div_table video_div_table[] = {
->  	{ /* sentinel */ }
->  };
+> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+> index e8aacb0ee6ac..a75d59f7cb8a 100644
+> --- a/drivers/clk/imx/Makefile
+> +++ b/drivers/clk/imx/Makefile
+> @@ -22,6 +22,7 @@ mxc-clk-objs += clk-pllv3.o
+>  mxc-clk-objs += clk-pllv4.o
+>  mxc-clk-objs += clk-pll14xx.o
+>  mxc-clk-objs += clk-sscg-pll.o
+> +mxc-clk-objs += clk-gpr-mux.o
+>  obj-$(CONFIG_MXC_CLK) += mxc-clk.o
 >  
-> +static const char * enet_ref_sels[] = { "enet_ref", "enet_ref_pad", };
-> +static const u32 enet_ref_sels_table[] = { IMX6Q_GPR1_ENET_CLK_SEL_ANATOP, IMX6Q_GPR1_ENET_CLK_SEL_PAD };
-> +static const u32 enet_ref_sels_table_mask = IMX6Q_GPR1_ENET_CLK_SEL_ANATOP;
+>  obj-$(CONFIG_CLK_IMX8MM) += clk-imx8mm.o
+> diff --git a/drivers/clk/imx/clk-gpr-mux.c b/drivers/clk/imx/clk-gpr-mux.c
+> new file mode 100644
+> index 000000000000..47a3e3cdcc82
+> --- /dev/null
+> +++ b/drivers/clk/imx/clk-gpr-mux.c
+> @@ -0,0 +1,119 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + */
 > +
->  static unsigned int share_count_esai;
->  static unsigned int share_count_asrc;
->  static unsigned int share_count_ssi1;
-> @@ -908,6 +913,12 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
->  	if (clk_on_imx6q() && imx_get_soc_revision() == IMX_CHIP_REVISION_1_0)
->  		hws[IMX6QDL_CLK_GPT_3M] = hws[IMX6QDL_CLK_GPT_IPG_PER];
->  
-> +	hws[IMX6QDL_CLK_ENET_REF_PAD] = imx6q_obtain_fixed_clk_hw(ccm_node, "enet_ref_pad", 0);
+> +#define pr_fmt(fmt) "imx:clk-gpr-mux: " fmt
 > +
-> +	hws[IMX6QDL_CLK_ENET_REF_SEL] = imx_clk_gpr_mux("enet_ref_sel", "fsl,imx6q-iomuxc-gpr",
-> +				IOMUXC_GPR1, enet_ref_sels, ARRAY_SIZE(enet_ref_sels),
-> +				enet_ref_sels_table, enet_ref_sels_table_mask);
+> +#include <linux/module.h>
 > +
->  	imx_check_clk_hws(hws, IMX6QDL_CLK_END);
->  
->  	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
-> @@ -974,6 +985,8 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
->  			       hws[IMX6QDL_CLK_PLL3_USB_OTG]->clk);
->  	}
->  
-> +	clk_set_parent(hws[IMX6QDL_CLK_ENET_REF_SEL]->clk, hws[IMX6QDL_CLK_ENET_REF]->clk);
+> +#include <linux/clk-provider.h>
+> +#include <linux/errno.h>
+> +#include <linux/export.h>
+> +#include <linux/io.h>
+> +#include <linux/slab.h>
+> +#include <linux/regmap.h>
+> +#include <linux/mfd/syscon.h>
 > +
->  	imx_register_uart_clocks(2);
->  }
->  CLK_OF_DECLARE(imx6q, "fsl,imx6q-ccm", imx6q_clocks_init);
-> diff --git a/include/dt-bindings/clock/imx6qdl-clock.h b/include/dt-bindings/clock/imx6qdl-clock.h
-> index e20c43cc36f6..e5b2a1ba02bc 100644
-> --- a/include/dt-bindings/clock/imx6qdl-clock.h
-> +++ b/include/dt-bindings/clock/imx6qdl-clock.h
-> @@ -273,6 +273,8 @@
->  #define IMX6QDL_CLK_MMDC_P0_IPG			263
->  #define IMX6QDL_CLK_DCIC1			264
->  #define IMX6QDL_CLK_DCIC2			265
-> -#define IMX6QDL_CLK_END				266
-> +#define IMX6QDL_CLK_ENET_REF_SEL		266
-> +#define IMX6QDL_CLK_ENET_REF_PAD		267
-> +#define IMX6QDL_CLK_END				268
->  
->  #endif /* __DT_BINDINGS_CLOCK_IMX6QDL_H */
+> +#include "clk.h"
+> +
+> +struct imx_clk_gpr {
+> +	struct clk_hw hw;
+> +	struct regmap *regmap;
+> +	u32 mask;
+> +	u32 reg;
+> +	const u32 *mux_table;
+> +};
+> +
+> +static struct imx_clk_gpr *to_imx_clk_gpr(struct clk_hw *hw)
+> +{
+> +	return container_of(hw, struct imx_clk_gpr, hw);
+> +}
+> +
+> +static u8 imx_clk_gpr_mux_get_parent(struct clk_hw *hw)
+> +{
+> +	struct imx_clk_gpr *priv = to_imx_clk_gpr(hw);
+> +	unsigned int val;
+> +	int ret;
+> +
+> +	ret = regmap_read(priv->regmap, priv->reg, &val);
+> +	if (ret)
+> +		goto get_parent_err;
+> +
+> +	val &= priv->mask;
+> +
+> +	ret = clk_mux_val_to_index(hw, priv->mux_table, 0, val);
+> +	if (ret < 0)
+> +		goto get_parent_err;
+> +
+> +	return ret;
+> +
+> +get_parent_err:
+> +	pr_err("failed to get parent (%pe)\n", ERR_PTR(ret));
+> +
+> +	/* return some realistic non negative value. Potentially we could
+> +	 * give index to some dummy error parent.
+> +	 */
+> +	return 0;
+> +}
+> +
+> +static int imx_clk_gpr_mux_set_parent(struct clk_hw *hw, u8 index)
+> +{
+> +	struct imx_clk_gpr *priv = to_imx_clk_gpr(hw);
+> +	unsigned int val = clk_mux_index_to_val(priv->mux_table, 0, index);
+> +
+> +	return regmap_update_bits(priv->regmap, priv->reg, priv->mask, val);
+> +}
+> +
+> +static int imx_clk_gpr_mux_determine_rate(struct clk_hw *hw,
+> +					 struct clk_rate_request *req)
+> +{
+> +	return clk_mux_determine_rate_flags(hw, req, 0);
+> +}
+> +
+> +const struct clk_ops imx_clk_gpr_mux_ops = {
+> +	.get_parent = imx_clk_gpr_mux_get_parent,
+> +	.set_parent = imx_clk_gpr_mux_set_parent,
+> +	.determine_rate = imx_clk_gpr_mux_determine_rate,
+> +};
+> +
+> +struct clk_hw *imx_clk_gpr_mux(const char *name, const char *compatible,
+> +			       u32 reg, const char **parent_names,
+> +			       u8 num_parents, const u32 *mux_table, u32 mask)
+> +{
+> +	struct clk_init_data init  = { };
+> +	struct imx_clk_gpr *priv;
+> +	struct regmap *regmap;
+> +	struct clk_hw *hw;
+> +	int ret;
+> +
+> +	regmap = syscon_regmap_lookup_by_compatible(compatible);
+> +	if (IS_ERR(regmap)) {
+> +		pr_err("failed to find %s regmap\n", compatible);
+> +		return ERR_CAST(regmap);
+> +	}
+> +
+> +	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	init.name = name;
+> +	init.ops = &imx_clk_gpr_mux_ops;
+> +	init.parent_names = parent_names;
+> +	init.num_parents = num_parents;
+> +	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
+> +
+> +	priv->hw.init = &init;
+> +	priv->regmap = regmap;
+> +	priv->mux_table = mux_table;
+> +	priv->reg = reg;
+> +	priv->mask = mask;
+> +
+> +	hw = &priv->hw;
+> +	ret = clk_hw_register(NULL, &priv->hw);
+> +	if (ret) {
+> +		kfree(priv);
+> +		hw = ERR_PTR(ret);
+> +	}
+> +
+> +	return hw;
+> +}
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> index 689b3ad927c0..801213109697 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -458,4 +458,9 @@ struct clk_hw *imx_clk_hw_divider_gate(const char *name, const char *parent_name
+>  		unsigned long flags, void __iomem *reg, u8 shift, u8 width,
+>  		u8 clk_divider_flags, const struct clk_div_table *table,
+>  		spinlock_t *lock);
+> +
+> +struct clk_hw *imx_clk_gpr_mux(const char *name, const char *compatible,
+> +			       u32 reg, const char **parent_names,
+> +			       u8 num_parents, const u32 *mux_table, u32 mask);
+> +
+>  #endif
 > -- 
 > 2.30.2
 > 
