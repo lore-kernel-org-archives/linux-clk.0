@@ -2,108 +2,272 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 001A0C61D97
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Jan 2023 17:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 676D0C54EAA
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Jan 2023 06:21:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231429AbjA2Rs6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 29 Jan 2023 12:48:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59468 "EHLO
+        id S230434AbjA3GVd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Jan 2023 01:21:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229673AbjA2Rs5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Jan 2023 12:48:57 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC57319F00
-        for <linux-clk@vger.kernel.org>; Sun, 29 Jan 2023 09:48:55 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id l8so6615691wms.3
-        for <linux-clk@vger.kernel.org>; Sun, 29 Jan 2023 09:48:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sr4fFy3dWRxDTNDNO8Ar7sH6BDFvsFVUwILCU9VcaZM=;
-        b=Z0b567v2zrQsZmZpB1usLpNIA7m9hlpZar2O/dXmouTBfEfnbZMHzkbfLlHsQk2Uhy
-         HnC3c5w79TJ9pQiKxIOexVvLBtukUNUBGqP12H3L3iqKO2lvIpU3/xIwrpD/f3F28wGV
-         u3aU228GVcc56ajSOULx6MnM4lOYEcYYxnlO7IjXliLJUC4feyTtR909XF6cRnsbnnY0
-         iGoIO1WoIJLsamXRacRiGmO61tFOx6BtVH+acMpzfMv8r+7vUnK3dWdnf+B6367cuoNe
-         RusKb/pLiaxfFIsTaOMu4XGBpYtqUx976toY8VzCVj7MS2LylpbaozwdcRr0lcZHZAE9
-         wNCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sr4fFy3dWRxDTNDNO8Ar7sH6BDFvsFVUwILCU9VcaZM=;
-        b=ZJi+a2C3Dvu+9eT+nNxZM7TNw+bcs6qnOfOa8QuDMnFlRtweaBBOgAvJN3HUF2kOvT
-         zbdrmRcWwvxCTX2moGdzoEQn4zyX+8b4YT+RmHlqBSOXy5CMsAXWhkRWKTagMx26FtyF
-         z7wR1fAlKoYr5RvAYDmo/m7xrWwA13WJtMbbOlXFk6QbThvCT76Dp8HuDTdEHHkSVHbk
-         WS2TgNu4+Qr0vgCihFGR9rLPCmB3NPxcCtIAxghCIXhrYrmu5sHd3v9vm9mUZwxYqnny
-         wiR2WNV/EgCZBAF/2xpSiTIM4zgLn/auqV3VY+ui48UxukqwMHVTSIuiSwDu49YN4f3d
-         WI8w==
-X-Gm-Message-State: AO0yUKXO0FiVl7+Ii7Y32B1hydsosoXzDQZDID84oRFhsHJ87+53Kzvi
-        Lp6Q+6dDYcA7gHDjk8BGpK1yJQ==
-X-Google-Smtp-Source: AK7set8V03LwoICGduJRa2Bl27HyEiBCOlv3oVi6LLGhhTDf2BOMD2OtF6I5stna37Mo3ZDdkOdQTQ==
-X-Received: by 2002:a05:600c:54e6:b0:3dc:489e:1867 with SMTP id jb6-20020a05600c54e600b003dc489e1867mr5540037wmb.36.1675014534575;
-        Sun, 29 Jan 2023 09:48:54 -0800 (PST)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id v6-20020a05600c444600b003db09692364sm15200937wmn.11.2023.01.29.09.48.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jan 2023 09:48:53 -0800 (PST)
-Date:   Sun, 29 Jan 2023 19:48:52 +0200
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        aford173@gmail.com, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 0/4] clk: imx: imx_register_uart_clocks update
-Message-ID: <Y9axhPF3h/kZEsGg@linaro.org>
-References: <20230104110032.1220721-1-peng.fan@oss.nxp.com>
+        with ESMTP id S229653AbjA3GVd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jan 2023 01:21:33 -0500
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42D09193DF;
+        Sun, 29 Jan 2023 22:21:29 -0800 (PST)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id BB84724DFFD;
+        Mon, 30 Jan 2023 14:21:26 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 30 Jan
+ 2023 14:21:26 +0800
+Received: from [192.168.125.128] (183.27.97.127) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 30 Jan
+ 2023 14:21:25 +0800
+Message-ID: <dd51102c-79a8-1705-85f2-b82363cbe34a@starfivetech.com>
+Date:   Mon, 30 Jan 2023 14:17:16 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230104110032.1220721-1-peng.fan@oss.nxp.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH v1 01/11] dt-bindings: clock: Add StarFive JH7110
+ System-Top-Group clock and reset generator
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Emil Renner Berthing <kernel@esmil.dk>
+CC:     Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+        "Paul Walmsley" <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20230120024445.244345-1-xingyu.wu@starfivetech.com>
+ <20230120024445.244345-2-xingyu.wu@starfivetech.com>
+ <fd54fb94-ca9b-42a2-9de7-5cc6c87f410f@linaro.org>
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+In-Reply-To: <fd54fb94-ca9b-42a2-9de7-5cc6c87f410f@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [183.27.97.127]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-01-04 19:00:28, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On 2023/1/20 16:11, Krzysztof Kozlowski wrote:
+> On 20/01/2023 03:44, Xingyu Wu wrote:
+>> Add bindings for the System-Top-Group clock and reset generator (STGCRG)
+>> on the JH7110 RISC-V SoC by StarFive Ltd.
+>> 
+>> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+>> ---
+>>  .../clock/starfive,jh7110-stgcrg.yaml         | 82 +++++++++++++++++++
+>>  MAINTAINERS                                   |  2 +
+>>  .../dt-bindings/clock/starfive,jh7110-crg.h   | 34 ++++++++
+>>  .../dt-bindings/reset/starfive,jh7110-crg.h   | 28 +++++++
+>>  4 files changed, 146 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-stgcrg.yaml
+>> 
+>> diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-stgcrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-stgcrg.yaml
+>> new file mode 100644
+>> index 000000000000..b64ccd84200a
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-stgcrg.yaml
+>> @@ -0,0 +1,82 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/starfive,jh7110-stgcrg.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: StarFive JH7110 System-Top-Group Clock and Reset Generator
+>> +
+>> +maintainers:
+>> +  - Xingyu Wu <xingyu.wu@starfivetech.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: starfive,jh7110-stgcrg
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    items:
+>> +      - description: Main Oscillator (24 MHz)
+>> +      - description: HIFI4 core
+>> +      - description: STG AXI/AHB
+>> +      - description: USB (125 MHz)
+>> +      - description: CPU Bus
+>> +      - description: HIFI4 Axi
+>> +      - description: NOC STG Bus
+>> +      - description: APB Bus
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: osc
+>> +      - const: hifi4_core
+>> +      - const: stg_axiahb
+>> +      - const: usb_125m
+>> +      - const: cpu_bus
+>> +      - const: hifi4_axi
+>> +      - const: nocstg_bus
+>> +      - const: apb_bus
+>> +
+>> +  '#clock-cells':
+>> +    const: 1
+>> +    description:
+>> +      See <dt-bindings/clock/starfive,jh7110-crg.h> for valid indices.
+>> +
+>> +  '#reset-cells':
+>> +    const: 1
+>> +    description:
+>> +      See <dt-bindings/reset/starfive,jh7110-crg.h> for valid indices.
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +  - '#clock-cells'
+>> +  - '#reset-cells'
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/starfive,jh7110-crg.h>
+>> +
+>> +    stgcrg: clock-controller@10230000 {
+>> +        compatible = "starfive,jh7110-stgcrg";
+>> +        reg = <0x10230000 0x10000>;
+>> +        clocks = <&osc>,
+>> +                 <&syscrg JH7110_SYSCLK_HIFI4_CORE>,
+>> +                 <&syscrg JH7110_SYSCLK_STG_AXIAHB>,
+>> +                 <&syscrg JH7110_SYSCLK_USB_125M>,
+>> +                 <&syscrg JH7110_SYSCLK_CPU_BUS>,
+>> +                 <&syscrg JH7110_SYSCLK_HIFI4_AXI>,
+>> +                 <&syscrg JH7110_SYSCLK_NOCSTG_BUS>,
+>> +                 <&syscrg JH7110_SYSCLK_APB_BUS>;
+>> +        clock-names = "osc", "hifi4_core",
+>> +                      "stg_axiahb", "usb_125m",
+>> +                      "cpu_bus", "hifi4_axi",
+>> +                      "nocstg_bus", "apb_bus";
+>> +        #clock-cells = <1>;
+>> +        #reset-cells = <1>;
+>> +    };
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 84fd7054cb6e..20243eb5470c 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -19635,6 +19635,7 @@ F:	arch/riscv/boot/dts/starfive/
+>>  STARFIVE JH71X0 CLOCK DRIVERS
+>>  M:	Emil Renner Berthing <kernel@esmil.dk>
+>>  M:	Hal Feng <hal.feng@starfivetech.com>
+>> +M:	Xingyu Wu <xingyu.wu@starfivetech.com>
 > 
-> This patchset is to cleanup the imx_register_uart_clocks usage, and
-> use this API for i.MX93 clk driver.
-> 
-> Peng Fan (4):
->   clk: imx: avoid memory leak
->   clk: imx: get stdout clk count from device tree
->   clk: imx: remove clk_count of imx_register_uart_clocks
->   clk: imx: imx93: invoke imx_register_uart_clocks
+> Not related, drop from this patch.
 
-Applied all.
+This patch is about JH7110 STG/VOUT/ISP clock driver which belong to
+JH71X0 clock driver.
 
-Thanks.
 
 > 
->  drivers/clk/imx/clk-imx25.c   |  2 +-
->  drivers/clk/imx/clk-imx27.c   |  2 +-
->  drivers/clk/imx/clk-imx35.c   |  2 +-
->  drivers/clk/imx/clk-imx5.c    |  6 +++---
->  drivers/clk/imx/clk-imx6q.c   |  2 +-
->  drivers/clk/imx/clk-imx6sl.c  |  2 +-
->  drivers/clk/imx/clk-imx6sll.c |  2 +-
->  drivers/clk/imx/clk-imx6sx.c  |  2 +-
->  drivers/clk/imx/clk-imx7d.c   |  2 +-
->  drivers/clk/imx/clk-imx7ulp.c |  4 ++--
->  drivers/clk/imx/clk-imx8mm.c  |  2 +-
->  drivers/clk/imx/clk-imx8mn.c  |  2 +-
->  drivers/clk/imx/clk-imx8mp.c  |  2 +-
->  drivers/clk/imx/clk-imx8mq.c  |  2 +-
->  drivers/clk/imx/clk-imx8ulp.c |  2 +-
->  drivers/clk/imx/clk-imx93.c   |  2 ++
->  drivers/clk/imx/clk.c         | 17 ++++++++++++-----
->  drivers/clk/imx/clk.h         |  4 ++--
->  18 files changed, 34 insertions(+), 25 deletions(-)
+>>  S:	Maintained
+>>  F:	Documentation/devicetree/bindings/clock/starfive,jh71*.yaml
+>>  F:	drivers/clk/starfive/clk-starfive-jh71*
+>> @@ -19654,6 +19655,7 @@ F:	include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
+>>  STARFIVE JH71X0 RESET CONTROLLER DRIVERS
+>>  M:	Emil Renner Berthing <kernel@esmil.dk>
+>>  M:	Hal Feng <hal.feng@starfivetech.com>
+>> +M:	Xingyu Wu <xingyu.wu@starfivetech.com>
 > 
-> -- 
-> 2.37.1
+> Not related.
 > 
+>>  S:	Maintained
+>>  F:	Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
+>>  F:	drivers/reset/starfive/reset-starfive-jh71*
+>> diff --git a/include/dt-bindings/clock/starfive,jh7110-crg.h b/include/dt-bindings/clock/starfive,jh7110-crg.h
+>> index 5e4f21ca0642..5ac8a4d90a7a 100644
+>> --- a/include/dt-bindings/clock/starfive,jh7110-crg.h
+>> +++ b/include/dt-bindings/clock/starfive,jh7110-crg.h
+>> @@ -1,6 +1,7 @@
+>>  /* SPDX-License-Identifier: GPL-2.0 OR MIT */
+>>  /*
+>>   * Copyright 2022 Emil Renner Berthing <kernel@esmil.dk>
+>> + * Copyright 2022 StarFive Technology Co., Ltd.
+>>   */
+>>  
+>>  #ifndef __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
+>> @@ -222,4 +223,37 @@
+>>  
+>>  #define JH7110_AONCLK_END			14
+>>  
+>> +/* STGCRG clocks */
+>> +#define JH7110_STGCLK_HIFI4_CLK_CORE		0
+>> +#define JH7110_STGCLK_USB0_APB			1
+>> +#define JH7110_STGCLK_USB0_UTMI_APB		2
+>> +#define JH7110_STGCLK_USB0_AXI			3
+>> +#define JH7110_STGCLK_USB0_LPM			4
+>> +#define JH7110_STGCLK_USB0_STB			5
+>> +#define JH7110_STGCLK_USB0_APP_125		6
+>> +#define JH7110_STGCLK_USB0_REFCLK		7
+>> +#define JH7110_STGCLK_PCIE0_AXI_MST0		8
+>> +#define JH7110_STGCLK_PCIE0_APB			9
+>> +#define JH7110_STGCLK_PCIE0_TL			10
+>> +#define JH7110_STGCLK_PCIE1_AXI_MST0		11
+>> +#define JH7110_STGCLK_PCIE1_APB			12
+>> +#define JH7110_STGCLK_PCIE1_TL			13
+>> +#define JH7110_STGCLK_PCIE01_SLV_DEC_MAINCLK	14
+>> +#define JH7110_STGCLK_SEC_HCLK			15
+>> +#define JH7110_STGCLK_SEC_MISCAHB		16
+>> +#define JH7110_STGCLK_GRP0_MAIN			17
+>> +#define JH7110_STGCLK_GRP0_BUS			18
+>> +#define JH7110_STGCLK_GRP0_STG			19
+>> +#define JH7110_STGCLK_GRP1_MAIN			20
+>> +#define JH7110_STGCLK_GRP1_BUS			21
+>> +#define JH7110_STGCLK_GRP1_STG			22
+>> +#define JH7110_STGCLK_GRP1_HIFI			23
+>> +#define JH7110_STGCLK_E2_RTC			24
+>> +#define JH7110_STGCLK_E2_CORE			25
+>> +#define JH7110_STGCLK_E2_DBG			26
+>> +#define JH7110_STGCLK_DMA1P_AXI			27
+>> +#define JH7110_STGCLK_DMA1P_AHB			28
+>> +
+>> +#define JH7110_STGCLK_END			29
+>> +
+>>  #endif /* __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__ */
+>> diff --git a/include/dt-bindings/reset/starfive,jh7110-crg.h b/include/dt-bindings/reset/starfive,jh7110-crg.h
+>> index d78e38690ceb..cb70a1759482 100644
+>> --- a/include/dt-bindings/reset/starfive,jh7110-crg.h
+>> +++ b/include/dt-bindings/reset/starfive,jh7110-crg.h
+>> @@ -1,6 +1,7 @@
+>>  /* SPDX-License-Identifier: GPL-2.0 OR MIT */
+>>  /*
+>>   * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
+>> + * Copyright (C) 2022 StarFive Technology Co., Ltd.
+>>   */
+>>  
+>>  #ifndef __DT_BINDINGS_RESET_STARFIVE_JH7110_CRG_H__
+>> @@ -151,4 +152,31 @@
+>>  
+>>  #define JH7110_AONRST_END			8
+>>  
+>> +/* STGCRG resets */
+>> +#define	JH7110_STGRST_SYSCON			0
+> 
+> Drop weird indentation.
+
+Will fix in next patch.
+
+
+Best regards.
+Xingyu Wu
+
