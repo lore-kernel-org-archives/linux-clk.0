@@ -2,70 +2,88 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1CFEC636D6
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Jan 2023 22:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08EB6C636D3
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Jan 2023 23:30:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231569AbjA3WaY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Jan 2023 17:30:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40256 "EHLO
+        id S230060AbjA3XaV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Jan 2023 18:30:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230087AbjA3WaX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jan 2023 17:30:23 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 887E52ED68;
-        Mon, 30 Jan 2023 14:30:12 -0800 (PST)
+        with ESMTP id S230348AbjA3XaU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jan 2023 18:30:20 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6F4329E10;
+        Mon, 30 Jan 2023 15:30:18 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 37DB7B8118D;
-        Mon, 30 Jan 2023 22:30:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB2B8C433EF;
-        Mon, 30 Jan 2023 22:30:09 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4CA7A612C5;
+        Mon, 30 Jan 2023 23:30:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BAC6C433EF;
+        Mon, 30 Jan 2023 23:30:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675117809;
-        bh=d9G8/QnUInkOhp8U+UKSxXG01HfHMeg7Z48itkC2/EA=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=eo6j30SL57qwi0oTX4fKOlrj+t/+4Jpv4pqJPEWUOk0Jw6uY7YsXbhh3xw3+sbuvl
-         WNMSU9rBpb1vVFlSUBrNjoGG8ecNrr9ltvdZSkv8NA9hq1FYPXN4SnHr9LEOho7rJu
-         NgPMKCKHt4v/Giy1FedYeZbi8CLA9Xj2imEjEUEl3UTcZl4rTW24GecwzEzRytxD8r
-         hdBGA/iI+3az6sQW7ATm7prJuALC//YbTKO35kWCSD88FPEwe7VYGPqXQog51SZiy9
-         l8lG7uSR1LCaBRbMKQVojdPfjHIFPCu0VzK+KROWjE05ElOTYPTxbsGfOL1DpFazQb
-         lohilWY9hnlKw==
-Message-ID: <5243dd0a8ca7ca5c319ec42c98b22430.sboyd@kernel.org>
+        s=k20201202; t=1675121417;
+        bh=Clp5BMnnUdxApbXplgRLMJC/Be26Vp2UYv/I6BzVaiU=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=dn1Ud/wbWS+IurE5VWhFcWLFMBQBK5PHvdozOL6YFBot78UqC+wrFjFE0tGku5oEf
+         bGbMBlQFP2/1nD/f81Ve0SenN6TcdJZz8JPzOuWaobyYGplYatarJtTrIpXQg2Yvh7
+         scWZsRx49krbXUePwoCfHTZqNcICAPOvdcMRkrzKs69JWf+YpdJiyk96ph9v/qo884
+         G+g+zh8QSb3nRUK6mw48LApSSRubLdfZA9gNxN6O0k3PpHUT0tdfImw360nb9C5HAc
+         VtEACfmNpZAWBioAxwEX7PVKVJB96SZQNAhdnBVVtwOJ18DDd4fg8CKbCrxcnae1Sz
+         YrFeYglp/Oa9w==
+Message-ID: <9367139a425dc7e4811c757b62f33a4e.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230130135555.3268172-1-arnd@kernel.org>
-References: <20230130135555.3268172-1-arnd@kernel.org>
-Subject: Re: [PATCH] clk: qcom: gcc-qcs404: fix duplicate initializer warning
+In-Reply-To: <febd59ed-ff7b-ffc4-5568-d856703c9123@linaro.org>
+References: <20230123094925.54824-1-krzysztof.kozlowski@linaro.org> <20230123094925.54824-2-krzysztof.kozlowski@linaro.org> <7ddf5c74de84c5dc291996423cb1eb46.sboyd@kernel.org> <febd59ed-ff7b-ffc4-5568-d856703c9123@linaro.org>
+Subject: Re: [PATCH 2/2] clk: qcom: restrict drivers per ARM/ARM64
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Mon, 30 Jan 2023 14:30:07 -0800
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 30 Jan 2023 15:30:15 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Arnd Bergmann (2023-01-30 05:55:47)
-> From: Arnd Bergmann <arnd@arndb.de>
+Quoting Krzysztof Kozlowski (2023-01-26 01:31:55)
+> On 25/01/2023 21:44, Stephen Boyd wrote:
+> > Quoting Krzysztof Kozlowski (2023-01-23 01:49:25)
+> >> There is no point to allow selecting pin-controller drivers for Qualco=
+mm
+> >=20
+> > pin controllers?
 >=20
-> In one of the clocks, a redundant initialization for .num_parents
-> got left behind by a recent patch:
+> Copy-paste, I'll fix it.
 >=20
-> drivers/clk/qcom/gcc-qcs404.c:63:32: error: initialized field overwritten=
- [-Werror=3Doverride-init]
->    63 |                 .num_parents =3D 1,
->       |                                ^
+> >=20
+> >> ARMv7 SoCs when building ARM64 kernel, and vice versa.  This makes
+> >> kernel configuration more difficult as many do not remember the Qualco=
+mm
+> >> SoCs model names/numbers.  There won't be a single image for ARMv7 and
+> >> ARMv8/9 SoCs, so no features/options are lost.
+> >=20
+> > Are the drivers used in arm32 emulation mode on these SoCs? I recall
+> > there are some SoCs they run with the arm architecture.
 >=20
-> Fixes: 2ce81afa0c7c ("clk: qcom: gcc-qcs404: sort out the cxo clock")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
+> I did not add it to the few SoCs which have upstream DTS in ARM and
+> ARM64. I added only to the ones which are in one specific folder. Also
+> my patch does not affect defconfigs (qcom_defconfig and arm64/defconfig).
 
-This is https://lore.kernel.org/r/20230123201812.1230039-2-krzysztof.kozlow=
-ski@linaro.org
+Cool, thanks for checking. Is it possible to take a dtb from arm64 dts
+directory and boot it on an armv8 CPU running in 32-bit mode? Just
+wondering if even having the dts file exist in the arm64 architecture
+really matters here.
+
+>=20
+> Whether downstream could be affected, I do not know. Anyway, what's
+> downstream it's the downstream's problem...
+>=20
+
+Agreed. I wasn't asking about downstream.
