@@ -2,103 +2,102 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1FAAC54EAA
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Jan 2023 12:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28838C61DA4
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Jan 2023 12:15:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235690AbjA3MMO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Jan 2023 07:12:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39428 "EHLO
+        id S234199AbjA3MPn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Jan 2023 07:15:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236074AbjA3MLx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jan 2023 07:11:53 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A857437B73;
-        Mon, 30 Jan 2023 04:10:58 -0800 (PST)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30U9L4fJ020316;
-        Mon, 30 Jan 2023 12:10:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=qcppdkim1;
- bh=H02OYIqYF0RL/cTxU6PmDoYttvm0j21J0dmxP2N/sYQ=;
- b=Mg3fZJArHrPuxtp0T4DCbwnDnlYNAj5VrKxJ30dWER0b2nakdyc3U9y2EoL9QlKD7pKM
- Br14AdRN5uISVP92Dmz+UEOWWaAguSWwN6EC6W9J78UZJnul0FwUoYNrijul0iPpcrye
- U8WsCG0bI/Si9yc9jiukS8tPGUiDCGDcoac3hAoDQquceOD2srXEs2+3STvce7qJU+fZ
- QmLGTs5geUTWpv50KkXzhObv6pOskb4u1+OJ3OmCFgYiK/sOszPPCwHjYttw5q+VE8Vf
- xa0ZgH0Jpk1hOS63lnURZo0iX/J1QwGn8jCgBXFqVUwN4FS2hg2IvlhblIk/Di1yCUnz 3Q== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ncvfpbcn6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 30 Jan 2023 12:10:17 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30UCAGcq002568
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 30 Jan 2023 12:10:16 GMT
-Received: from kathirav-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Mon, 30 Jan 2023 04:10:13 -0800
-From:   Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-To:     <andersson@kernel.org>, <agross@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Kathiravan T <quic_kathirav@quicinc.com>
-Subject: [PATCH] clk: qcom: ipq5332: mark GPLL4 as critical temporarily
-Date:   Mon, 30 Jan 2023 17:39:59 +0530
-Message-ID: <20230130120959.9457-1-quic_kathirav@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+        with ESMTP id S233829AbjA3MPl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jan 2023 07:15:41 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68E7493D1
+        for <linux-clk@vger.kernel.org>; Mon, 30 Jan 2023 04:15:38 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1pMT4N-0003qm-24; Mon, 30 Jan 2023 13:15:31 +0100
+Received: from ore by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1pMT4M-0002HO-A1; Mon, 30 Jan 2023 13:15:30 +0100
+Date:   Mon, 30 Jan 2023 13:15:30 +0100
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     Abel Vesa <abel.vesa@linaro.org>
+Cc:     Richard Cochran <richardcochran@gmail.com>,
+        devicetree@vger.kernel.org, kernel@pengutronix.de,
+        Stephen Boyd <sboyd@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-clk@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        netdev@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Abel Vesa <abelvesa@kernel.org>
+Subject: Re: [PATCH v2 15/19] clk: imx6ul: fix enet1 gate configuration
+Message-ID: <20230130121530.GA10978@pengutronix.de>
+References: <20230117061453.3723649-1-o.rempel@pengutronix.de>
+ <20230117061453.3723649-16-o.rempel@pengutronix.de>
+ <Y9atr+Gn60+m4nOg@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: SyM2C95zJgOU4YOw8eioxI2nC6CAWs2o
-X-Proofpoint-ORIG-GUID: SyM2C95zJgOU4YOw8eioxI2nC6CAWs2o
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-01-30_10,2023-01-30_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- spamscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0
- priorityscore=1501 phishscore=0 mlxlogscore=786 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301300117
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Y9atr+Gn60+m4nOg@linaro.org>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Kathiravan T <quic_kathirav@quicinc.com>
+On Sun, Jan 29, 2023 at 07:32:31PM +0200, Abel Vesa wrote:
+> On 23-01-17 07:14:49, Oleksij Rempel wrote:
+> > According to the "i.MX 6UltraLite Applications Processor Reference Manual,
+> > Rev. 2, 03/2017", BIT(13) is ENET1_125M_EN which is not controlling root
+> > of PLL6. It is controlling ENET1 separately.
+> > 
+> > So, instead of this picture (implementation before this patch):
+> > fec1 <- enet_ref (divider) <---------------------------,
+> >                                                        |- pll6_enet (gate)
+> > fec2 <- enet2_ref_125m (gate) <- enet2_ref (divider) <-´
+> > 
+> > we should have this one (after this patch):
+> > fec1 <- enet1_ref_125m (gate) <- enet1_ref (divider) <-,
+> >                                                        |- pll6_enet
+> > fec2 <- enet2_ref_125m (gate) <- enet2_ref (divider) <-´
+> > 
+> > With this fix, the RMII reference clock will be turned off, after
+> > setting network interface down on each separate interface
+> > (ip l s dev eth0 down). Which was not working before, on system with both
+> > FECs enabled.
+> > 
+> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> 
+> I'm OK with this. Maybe a fixes tag ?
 
-Clock framework disables the GPLL4 source since there are no active users
-for this source currently. Some of the clocks initialized by the
-bootloaders uses the GPLL4 as the source. Due to this, when the GPLL4 is
-disabled by the clock framework, system is going for the reboot.
+Hm. Initial commit was:
+Fixes: 787b4271a6a0 ("clk: imx: add imx6ul clk tree support")
+but this patch will not apply on top of it.
+Next possible commit would be:
+Fixes: 1487b60dc2d2 ("clk: imx6ul: Switch to clk_hw based API")
+But this patch didn't introduce this issue, it was just refactoring.
 
-To avoid this, mark the GPLL4 as CRITICAL so that clock framework
-doesn't disable it. Once the users of this source is enabled, we can get
-rid of this flag.
+What do you prefer?
 
-Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
----
-Note: This patch depends on the IPQ5332 baseport series
-https://lore.kernel.org/linux-arm-msm/20230130114702.20606-1-quic_kathirav@quicinc.com/T/#t
-
- drivers/clk/qcom/gcc-ipq5332.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
-index a8ce618bb81b..6159d0e1e43f 100644
---- a/drivers/clk/qcom/gcc-ipq5332.c
-+++ b/drivers/clk/qcom/gcc-ipq5332.c
-@@ -127,6 +127,7 @@ static struct clk_alpha_pll gpll4_main = {
- 			.parent_data = &gcc_parent_data_xo,
- 			.num_parents = 1,
- 			.ops = &clk_alpha_pll_stromer_ops,
-+			.flags = CLK_IS_CRITICAL,
- 		},
- 	},
- };
+Regards,
+Oleksij
 -- 
-2.17.1
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
