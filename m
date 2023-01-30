@@ -2,44 +2,43 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36700C54EAA
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Jan 2023 08:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 603BFC636D0
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Jan 2023 08:15:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235775AbjA3IJL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Jan 2023 03:09:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59992 "EHLO
+        id S235951AbjA3IPQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Jan 2023 03:15:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235919AbjA3IIa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jan 2023 03:08:30 -0500
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F4842B29C;
-        Mon, 30 Jan 2023 00:07:43 -0800 (PST)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        with ESMTP id S236030AbjA3IPC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jan 2023 03:15:02 -0500
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16E3FE065;
+        Mon, 30 Jan 2023 00:14:39 -0800 (PST)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id 5065024E1ED;
-        Mon, 30 Jan 2023 16:07:36 +0800 (CST)
-Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 30 Jan
- 2023 16:07:36 +0800
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 9C3FF24E3A2;
+        Mon, 30 Jan 2023 16:13:19 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 30 Jan
+ 2023 16:13:19 +0800
 Received: from [192.168.125.128] (183.27.97.127) by EXMBX061.cuchost.com
  (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 30 Jan
- 2023 16:07:35 +0800
-Message-ID: <5a34660f-63b3-e6c8-c25c-6bd74b6dd99d@starfivetech.com>
-Date:   Mon, 30 Jan 2023 16:03:28 +0800
+ 2023 16:13:18 +0800
+Message-ID: <20969224-3212-be89-cefc-9c1d7bbf75f6@starfivetech.com>
+Date:   Mon, 30 Jan 2023 16:09:11 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH v1 04/11] dt-bindings: clock: Add StarFive JH7110
- Image-Signal-Process clock and reset generator
+Subject: Re: [PATCH v1 06/11] clk: starfive: Add StarFive JH7110
+ Image-Signal-Process clock driver
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Emil Renner Berthing <kernel@esmil.dk>
+        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>
 CC:     Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
         "Paul Walmsley" <paul.walmsley@sifive.com>,
         Palmer Dabbelt <palmer@dabbelt.com>,
@@ -47,10 +46,10 @@ CC:     Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
         Hal Feng <hal.feng@starfivetech.com>,
         <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
 References: <20230120024445.244345-1-xingyu.wu@starfivetech.com>
- <20230120024445.244345-5-xingyu.wu@starfivetech.com>
- <f85f5283-98b2-46b1-5a91-64ae708a6353@linaro.org>
+ <20230120024445.244345-7-xingyu.wu@starfivetech.com>
+ <eb37200702b27d239b2689daefc85ffa.sboyd@kernel.org>
 From:   Xingyu Wu <xingyu.wu@starfivetech.com>
-In-Reply-To: <f85f5283-98b2-46b1-5a91-64ae708a6353@linaro.org>
+In-Reply-To: <eb37200702b27d239b2689daefc85ffa.sboyd@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [183.27.97.127]
@@ -61,164 +60,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023/1/20 16:12, Krzysztof Kozlowski wrote:
-> On 20/01/2023 03:44, Xingyu Wu wrote:
->> Add bindings for the Image-Signal-Process clock and reset
->> generator (ISPCRG) on the JH7110 RISC-V SoC by StarFive Ltd.
->> 
->> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
->> ---
->>  .../clock/starfive,jh7110-ispcrg.yaml         | 97 +++++++++++++++++++
->>  .../dt-bindings/clock/starfive,jh7110-crg.h   | 18 ++++
->>  .../dt-bindings/reset/starfive,jh7110-crg.h   | 16 +++
->>  3 files changed, 131 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-ispcrg.yaml
->> 
->> diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-ispcrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-ispcrg.yaml
+On 2023/1/26 10:35, Stephen Boyd wrote:
+> Quoting Xingyu Wu (2023-01-19 18:44:40)
+>> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-isp.c b/drivers/clk/starfive/clk-starfive-jh7110-isp.c
 >> new file mode 100644
->> index 000000000000..32794f809364
+>> index 000000000000..f9fc94b4c6f8
 >> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-ispcrg.yaml
->> @@ -0,0 +1,97 @@
->> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/starfive,jh7110-ispcrg.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +++ b/drivers/clk/starfive/clk-starfive-jh7110-isp.c
+>> @@ -0,0 +1,218 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * StarFive JH7110 Image-Signal-Process Clock Driver
+>> + *
+>> + * Copyright (C) 2022 StarFive Technology Co., Ltd.
+>> + */
 >> +
->> +title: StarFive JH7110 Image-Signal-Process Clock and Reset Generator
->> +
->> +maintainers:
->> +  - Xingyu Wu <xingyu.wu@starfivetech.com>
->> +
->> +properties:
->> +  compatible:
->> +    const: starfive,jh7110-ispcrg
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    items:
->> +      - description: ISP Top core
->> +      - description: ISP Top Axi
->> +      - description: NOC ISP Bus
->> +      - description: external DVP
->> +
->> +  clock-names:
->> +    items:
->> +      - const: isp_top_core
->> +      - const: isp_top_axi
->> +      - const: noc_bus_isp_axi
->> +      - const: dvp_clk
->> +
->> +  resets:
->> +    items:
->> +      - description: ISP Top core
->> +      - description: ISP Top Axi
->> +      - description: NOC ISP Bus
->> +
->> +  reset-names:
->> +    items:
->> +      - const: isp_top_core
->> +      - const: isp_top_axi
->> +      - const: noc_bus_isp_axi
->> +
->> +  '#clock-cells':
->> +    const: 1
->> +    description:
->> +      See <dt-bindings/clock/starfive,jh7110-crg.h> for valid indices.
->> +
->> +  '#reset-cells':
->> +    const: 1
->> +    description:
->> +      See <dt-bindings/reset/starfive,jh7110-crg.h> for valid indices.
->> +
->> +  power-domains:
->> +    maxItems: 1
->> +    description:
->> +      ISP domain power
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - clocks
->> +  - clock-names
->> +  - resets
->> +  - reset-names
->> +  - '#clock-cells'
->> +  - '#reset-cells'
->> +  - power-domains
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/starfive,jh7110-crg.h>
->> +    #include <dt-bindings/power/starfive,jh7110-pmu.h>
->> +    #include <dt-bindings/reset/starfive,jh7110-crg.h>
->> +
->> +    ispcrg: clock-controller@19810000 {
->> +        compatible = "starfive,jh7110-ispcrg";
->> +        reg = <0x19810000 0x10000>;
->> +        clocks = <&syscrg JH7110_SYSCLK_ISP_TOP_CORE>,
->> +                 <&syscrg JH7110_SYSCLK_ISP_TOP_AXI>,
->> +                 <&syscrg JH7110_SYSCLK_NOC_BUS_ISP_AXI>,
->> +                 <&dvp_clk>;
->> +        clock-names = "isp_top_core", "isp_top_axi",
->> +                      "noc_bus_isp_axi", "dvp_clk";
->> +        resets = <&syscrg JH7110_SYSRST_ISP_TOP>,
->> +                 <&syscrg JH7110_SYSRST_ISP_TOP_AXI>,
->> +                 <&syscrg JH7110_SYSRST_NOC_BUS_ISP_AXI>;
->> +        reset-names = "isp_top_core",
->> +                      "isp_top_axi",
->> +                      "noc_bus_isp_axi";
->> +        #clock-cells = <1>;
->> +        #reset-cells = <1>;
->> +        power-domains = <&pwrc JH7110_PD_ISP>;
->> +    };
->> diff --git a/include/dt-bindings/clock/starfive,jh7110-crg.h b/include/dt-bindings/clock/starfive,jh7110-crg.h
->> index 5ac8a4d90a7a..91ee589809c3 100644
->> --- a/include/dt-bindings/clock/starfive,jh7110-crg.h
->> +++ b/include/dt-bindings/clock/starfive,jh7110-crg.h
->> @@ -256,4 +256,22 @@
->>  
->>  #define JH7110_STGCLK_END			29
->>  
->> +/* ISPCRG clocks */
->> +#define JH7110_ISPCLK_DOM4_APB_FUNC		0
->> +#define JH7110_ISPCLK_MIPI_RX0_PXL		1
->> +#define JH7110_ISPCLK_DVP_INV			2
->> +#define JH7110_ISPCLK_M31DPHY_CFGCLK_IN		3
->> +#define JH7110_ISPCLK_M31DPHY_REFCLK_IN		4
->> +#define JH7110_ISPCLK_M31DPHY_TXCLKESC_LAN0	5
->> +#define JH7110_ISPCLK_VIN_PCLK			6
->> +#define JH7110_ISPCLK_VIN_SYS_CLK		7
->> +#define JH7110_ISPCLK_VIN_PIXEL_CLK_IF0		8
->> +#define JH7110_ISPCLK_VIN_PIXEL_CLK_IF1		9
->> +#define JH7110_ISPCLK_VIN_PIXEL_CLK_IF2		10
->> +#define JH7110_ISPCLK_VIN_PIXEL_CLK_IF3		11
->> +#define JH7110_ISPCLK_VIN_CLK_P_AXIWR		12
->> +#define JH7110_ISPCLK_ISPV2_TOP_WRAPPER_CLK_C	13
->> +
->> +#define JH7110_ISPCLK_END			14
->> +
->>  #endif /* __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__ */
->> diff --git a/include/dt-bindings/reset/starfive,jh7110-crg.h b/include/dt-bindings/reset/starfive,jh7110-crg.h
->> index cb70a1759482..1b40df62cdac 100644
->> --- a/include/dt-bindings/reset/starfive,jh7110-crg.h
->> +++ b/include/dt-bindings/reset/starfive,jh7110-crg.h
->> @@ -179,4 +179,20 @@
->>  
->>  #define JH7110_STGRST_END			23
->>  
->> +/* ISPCRG resets */
->> +#define	JH7110_ISPRST_ISPV2_TOP_WRAPPER_P	0
+>> +#include <linux/clk.h>
 > 
-> Drop weird indentation.
+> Same include comment. This signals this is a clk consumer, which it
+> isn't?
 
-Will fix.
+This driver need to use 'clk_bulk_data' struct and some functions like
+'devm_clk_bulk_get()' and 'clk_bulk_prepare_enable()' from this include.
 
 Best regards,
 Xingyu Wu
-
