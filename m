@@ -2,97 +2,201 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19195C54EAA
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Jan 2023 19:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 588A5C54EAA
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Jan 2023 22:05:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238103AbjA3TgR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Jan 2023 14:36:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34922 "EHLO
+        id S230053AbjA3WFp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Jan 2023 17:05:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238075AbjA3TgQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jan 2023 14:36:16 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D96EE45202;
-        Mon, 30 Jan 2023 11:36:13 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8F6C5B81687;
-        Mon, 30 Jan 2023 19:36:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CAF4C433D2;
-        Mon, 30 Jan 2023 19:36:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675107371;
-        bh=sxcQJN3nO52mu5E7zYArOshdkoV/Yy47NYqmC/yXgMc=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=iGEDjJbTIJCG6wk51YNxxblRvJKJ5aHae5BywXrzG+wPODAcqzkjYRoAKOlsZq/CH
-         TpYHquNsbvp5Web5wTPWvy5qXRQUAGfMXtdPa88sIcwyCvOjykciy+2nJzLsJNoZJf
-         3RPKjEF+VYa8qJHt5dXN5XAh3lP0khElNyFfwZO3kJJ/YHuLUFy4oN5N63tyOxDQLR
-         MVF6PKK3z1y3abGE0WzIKlFhXJPMNULyqQ4579gfAwpXvIMZ5rSBEHPqX3r0IJZUzT
-         /PiW6Kf21xoWdIeRgo5tzc5/EampojjPZigKJwtsRGib8W1HuPQ7iuuQMNZq9hyPWv
-         b47D52LTmG1cw==
-Message-ID: <fe49e8b642c4c33fee37e97d957c37a3.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230118031509.29834-4-moudy.ho@mediatek.com>
-References: <20230118031509.29834-1-moudy.ho@mediatek.com> <20230118031509.29834-4-moudy.ho@mediatek.com>
-Subject: Re: [PATCH v6 3/4] clk: mediatek: remove MT8195 vppsys/0/1 simple_probe
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        Moudy Ho <moudy.ho@mediatek.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
+        with ESMTP id S229938AbjA3WFo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jan 2023 17:05:44 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FA9731E2A
+        for <linux-clk@vger.kernel.org>; Mon, 30 Jan 2023 14:05:42 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id h16so12510720wrz.12
+        for <linux-clk@vger.kernel.org>; Mon, 30 Jan 2023 14:05:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=emChjJeed1eKpYwI+TZyrMB77/b+qmQePLis86Dn8K8=;
+        b=fF4QBHq/CayAljWbeGvBRmwAVeRYHWdRGWTDW5oc0VA+rNzgrWKPB6l4dTTecYOF/1
+         f5RSzyYBEYaptwLCzcr7Znh4DPP0IKOYRwHL52HFfJgLIUTshE61h4ln6W+sjiE0QETr
+         J5s742TG3xlskH4NKaRZhQTpIHroJPQh4uWffpNdpBLuUG/bqiP5ENz+1rX/3QNZXTHA
+         9xtimiVFck9WH4GC8meOxr6KXR4167WaVm6e1IYdEIhvh3yMhik2yqwKi9VNWbhgtfNz
+         5xS8D6GdmxoBR4FtOub17+v8o8lJiIiPoyzU8cb4pFZg106naVfFkWDVz3CKu8CQaWCR
+         RxDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=emChjJeed1eKpYwI+TZyrMB77/b+qmQePLis86Dn8K8=;
+        b=OnptzbCBWZQUPHYjifLadNtURtCVyMjuvGmHvATsW0EhUg0bNdeCL0r9KmFDrT1Xjk
+         xIMNu6NsuyqqrGVKNg4n9QysGI+fa/Jq7MHNLwotYJ4OsYZtjoa1r6Tb94yhLuXt6imh
+         jFwaJY8DGny8ffWUt+T+OPGmCgogvg0cLPX9hIH5kAvJ3aGM3ghDABvZIHHOecNRqDQe
+         VkdvBVyLvNz+LOsckdcYCjYVvLI6ya+0zsM0NFmcWTOR8kWhupiaWd6Ypee3DGcah0vL
+         nxkMYWDCiJpSzMY3hZbnLyutG8XShyzgkEeKpRl1/x13EIySFzR8zJKiI02FZU9h+zxz
+         gZSg==
+X-Gm-Message-State: AO0yUKWW7mG8ljuj9YhDIzbzPPk0RzIaikJ5QhyoaStAIXCwlLTVof9P
+        y6pvEZL1sHs8YaymwuDXwsapTg==
+X-Google-Smtp-Source: AK7set/q/q0k9a9lQBsL6bgV46xu7DFQ7Ahv4AtNiE/p5jjyWJWrbre/yVqDiB0Onvne9eV6NvNyoA==
+X-Received: by 2002:adf:f041:0:b0:2bf:e45d:8e06 with SMTP id t1-20020adff041000000b002bfe45d8e06mr5871579wro.70.1675116341060;
+        Mon, 30 Jan 2023 14:05:41 -0800 (PST)
+Received: from linaro.org ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id u13-20020a5d514d000000b002be2f18938csm12847786wrt.41.2023.01.30.14.05.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jan 2023 14:05:40 -0800 (PST)
+Date:   Tue, 31 Jan 2023 00:05:38 +0200
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Abel Vesa <abelvesa@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Moudy Ho <moudy.ho@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 30 Jan 2023 11:36:09 -0800
-User-Agent: alot/0.10
+        Stephen Boyd <sboyd@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Lee Jones <lee@kernel.org>, kernel@pengutronix.de,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v2 16/19] clk: imx6ul: add ethernet refclock mux support
+Message-ID: <Y9g/Mpt+MywfJ6bx@linaro.org>
+References: <20230117061453.3723649-1-o.rempel@pengutronix.de>
+ <20230117061453.3723649-17-o.rempel@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230117061453.3723649-17-o.rempel@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Moudy Ho (2023-01-17 19:15:08)
-> diff --git a/drivers/clk/mediatek/clk-mt8195-vpp0.c b/drivers/clk/mediate=
-k/clk-mt8195-vpp0.c
-> index bf2939c3a023..6d5800f69f6c 100644
-> --- a/drivers/clk/mediatek/clk-mt8195-vpp0.c
-> +++ b/drivers/clk/mediatek/clk-mt8195-vpp0.c
-> @@ -86,26 +86,54 @@ static const struct mtk_gate vpp0_clks[] =3D {
->         GATE_VPP0_2(CLK_VPP0_WARP1_MDP_DL_ASYNC, "vpp0_warp1_mdp_dl_async=
-", "top_wpe_vpp", 3),
->  };
-> =20
-> -static const struct mtk_clk_desc vpp0_desc =3D {
-> -       .clks =3D vpp0_clks,
-> -       .num_clks =3D ARRAY_SIZE(vpp0_clks),
-> -};
-> +static int clk_mt8195_vpp0_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev =3D &pdev->dev;
-> +       struct device_node *node =3D dev->parent->of_node;
-> +       struct clk_onecell_data *clk_data;
-> +       int r;
-> =20
-> -static const struct of_device_id of_match_clk_mt8195_vpp0[] =3D {
-> -       {
-> -               .compatible =3D "mediatek,mt8195-vppsys0",
-> -               .data =3D &vpp0_desc,
-> -       }, {
-> -               /* sentinel */
-> -       }
-> -};
-> +       clk_data =3D mtk_alloc_clk_data(CLK_VPP0_NR_CLK);
-> +       if (!clk_data)
-> +               return -ENOMEM;
-> +
-> +       r =3D mtk_clk_register_gates(node, vpp0_clks, ARRAY_SIZE(vpp0_clk=
-s), clk_data);
+On 23-01-17 07:14:50, Oleksij Rempel wrote:
+> Add ethernet refclock mux support and set it to internal clock by
+> default. This configuration will not affect existing boards.
+> 
+> clock tree before this patch:
+> fec1 <- enet1_ref_125m (gate) <- enet1_ref (divider) <-,
+>                                                        |- pll6_enet
+> fec2 <- enet2_ref_125m (gate) <- enet2_ref (divider) <-´
+> 
+> after this patch:
+> fec1 <- enet1_ref_sel(mux) <- enet1_ref_125m (gate) <- ...
+>                `--<> enet1_ref_pad                      |- pll6_enet
+> fec2 <- enet2_ref_sel(mux) <- enet2_ref_125m (gate) <- ...
+>                `--<> enet2_ref_pad
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Acked-by: Lee Jones <lee@kernel.org>
 
-This API is wrecked by a patch from AngeloGioacchino. Can you resend, or
-tell me which device should be used here?
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+
+> ---
+>  drivers/clk/imx/clk-imx6ul.c                | 26 +++++++++++++++++++++
+>  include/dt-bindings/clock/imx6ul-clock.h    |  6 ++++-
+>  include/linux/mfd/syscon/imx6q-iomuxc-gpr.h |  6 +++--
+>  3 files changed, 35 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+> index c3c465c1b0e7..2836adb817b7 100644
+> --- a/drivers/clk/imx/clk-imx6ul.c
+> +++ b/drivers/clk/imx/clk-imx6ul.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/err.h>
+>  #include <linux/init.h>
+>  #include <linux/io.h>
+> +#include <linux/mfd/syscon/imx6q-iomuxc-gpr.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_irq.h>
+> @@ -94,6 +95,17 @@ static const struct clk_div_table video_div_table[] = {
+>  	{ }
+>  };
+>  
+> +static const char * enet1_ref_sels[] = { "enet1_ref_125m", "enet1_ref_pad", };
+> +static const u32 enet1_ref_sels_table[] = { IMX6UL_GPR1_ENET1_TX_CLK_DIR,
+> +					    IMX6UL_GPR1_ENET1_CLK_SEL };
+> +static const u32 enet1_ref_sels_table_mask = IMX6UL_GPR1_ENET1_TX_CLK_DIR |
+> +					     IMX6UL_GPR1_ENET1_CLK_SEL;
+> +static const char * enet2_ref_sels[] = { "enet2_ref_125m", "enet2_ref_pad", };
+> +static const u32 enet2_ref_sels_table[] = { IMX6UL_GPR1_ENET2_TX_CLK_DIR,
+> +					    IMX6UL_GPR1_ENET2_CLK_SEL };
+> +static const u32 enet2_ref_sels_table_mask = IMX6UL_GPR1_ENET2_TX_CLK_DIR |
+> +					     IMX6UL_GPR1_ENET2_CLK_SEL;
+> +
+>  static u32 share_count_asrc;
+>  static u32 share_count_audio;
+>  static u32 share_count_sai1;
+> @@ -472,6 +484,17 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+>  	/* mask handshake of mmdc */
+>  	imx_mmdc_mask_handshake(base, 0);
+>  
+> +	hws[IMX6UL_CLK_ENET1_REF_PAD] = imx_obtain_fixed_of_clock(ccm_node, "enet1_ref_pad", 0);
+> +
+> +	hws[IMX6UL_CLK_ENET1_REF_SEL] = imx_clk_gpr_mux("enet1_ref_sel", "fsl,imx6ul-iomuxc-gpr",
+> +				IOMUXC_GPR1, enet1_ref_sels, ARRAY_SIZE(enet1_ref_sels),
+> +				enet1_ref_sels_table, enet1_ref_sels_table_mask);
+> +	hws[IMX6UL_CLK_ENET2_REF_PAD] = imx_obtain_fixed_of_clock(ccm_node, "enet2_ref_pad", 0);
+> +
+> +	hws[IMX6UL_CLK_ENET2_REF_SEL] = imx_clk_gpr_mux("enet2_ref_sel", "fsl,imx6ul-iomuxc-gpr",
+> +				IOMUXC_GPR1, enet2_ref_sels, ARRAY_SIZE(enet2_ref_sels),
+> +				enet2_ref_sels_table, enet2_ref_sels_table_mask);
+> +
+>  	imx_check_clk_hws(hws, IMX6UL_CLK_END);
+>  
+>  	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
+> @@ -516,6 +539,9 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+>  		clk_set_parent(hws[IMX6ULL_CLK_EPDC_PRE_SEL]->clk, hws[IMX6UL_CLK_PLL3_PFD2]->clk);
+>  
+>  	clk_set_parent(hws[IMX6UL_CLK_ENFC_SEL]->clk, hws[IMX6UL_CLK_PLL2_PFD2]->clk);
+> +
+> +	clk_set_parent(hws[IMX6UL_CLK_ENET1_REF_SEL]->clk, hws[IMX6UL_CLK_ENET_REF]->clk);
+> +	clk_set_parent(hws[IMX6UL_CLK_ENET2_REF_SEL]->clk, hws[IMX6UL_CLK_ENET2_REF]->clk);
+>  }
+>  
+>  CLK_OF_DECLARE(imx6ul, "fsl,imx6ul-ccm", imx6ul_clocks_init);
+> diff --git a/include/dt-bindings/clock/imx6ul-clock.h b/include/dt-bindings/clock/imx6ul-clock.h
+> index b44920f1edb0..66239ebc0e23 100644
+> --- a/include/dt-bindings/clock/imx6ul-clock.h
+> +++ b/include/dt-bindings/clock/imx6ul-clock.h
+> @@ -257,7 +257,11 @@
+>  #define IMX6UL_CLK_GPIO5		248
+>  #define IMX6UL_CLK_MMDC_P1_IPG		249
+>  #define IMX6UL_CLK_ENET1_REF_125M	250
+> +#define IMX6UL_CLK_ENET1_REF_SEL	251
+> +#define IMX6UL_CLK_ENET1_REF_PAD	252
+> +#define IMX6UL_CLK_ENET2_REF_SEL	253
+> +#define IMX6UL_CLK_ENET2_REF_PAD	254
+>  
+> -#define IMX6UL_CLK_END			251
+> +#define IMX6UL_CLK_END			255
+>  
+>  #endif /* __DT_BINDINGS_CLOCK_IMX6UL_H */
+> diff --git a/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h b/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h
+> index d4b5e527a7a3..09c6b3184bb0 100644
+> --- a/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h
+> +++ b/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h
+> @@ -451,8 +451,10 @@
+>  #define IMX6SX_GPR12_PCIE_RX_EQ_2			(0x2 << 0)
+>  
+>  /* For imx6ul iomux gpr register field define */
+> -#define IMX6UL_GPR1_ENET1_CLK_DIR		(0x1 << 17)
+> -#define IMX6UL_GPR1_ENET2_CLK_DIR		(0x1 << 18)
+> +#define IMX6UL_GPR1_ENET2_TX_CLK_DIR		BIT(18)
+> +#define IMX6UL_GPR1_ENET1_TX_CLK_DIR		BIT(17)
+> +#define IMX6UL_GPR1_ENET2_CLK_SEL		BIT(14)
+> +#define IMX6UL_GPR1_ENET1_CLK_SEL		BIT(13)
+>  #define IMX6UL_GPR1_ENET1_CLK_OUTPUT		(0x1 << 17)
+>  #define IMX6UL_GPR1_ENET2_CLK_OUTPUT		(0x1 << 18)
+>  #define IMX6UL_GPR1_ENET_CLK_DIR		(0x3 << 17)
+> -- 
+> 2.30.2
+> 
