@@ -2,74 +2,144 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98909C636D0
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Jan 2023 08:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DFDCC54EED
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Jan 2023 09:07:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236099AbjA3Isp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Jan 2023 03:48:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33382 "EHLO
+        id S235961AbjA3JHl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Jan 2023 04:07:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236098AbjA3Isn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jan 2023 03:48:43 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 314AA15C93;
-        Mon, 30 Jan 2023 00:48:07 -0800 (PST)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 23F046602DE5;
-        Mon, 30 Jan 2023 08:48:04 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1675068485;
-        bh=MAOqAEBgvD2S1zgCqv5KXxmSTBg+M7tmyplC/Cf1sGw=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=NP7QWvQxoOQkrIo0DZJ7Sg5w18iN59deoI2jBB/vL01Xn5gvIqHvsxacTRznFwI7p
-         74eAziL8fL9go2YFlVeRHH4aGgB4WEUVgrG1MixdfKXL9FSna3M/+Mm7kTGrcGKsqJ
-         picheY74gSByXoBTbnYRemseiYKHl2ue//HRKBUZ4mZJn9bNezv3pEix1Ynq+X1iEA
-         Zc5K1d1h2Msjb+TlKf6JqPn1YAGHJ3UQIXIEGLq3kCvU4+whIoSp4umC/0WCI29ZqM
-         Yu0nkBbQWVgqNdop+3gEzuidFoQAb0QTscsKmao4AyTH8SNPJ8aLeZSg8RJGPSocwW
-         O5vdsodF0039Q==
-Message-ID: <136a6c96-6bff-8860-c2e9-5e484c75867a@collabora.com>
-Date:   Mon, 30 Jan 2023 09:48:00 +0100
+        with ESMTP id S233090AbjA3JHk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jan 2023 04:07:40 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2E0B2B296
+        for <linux-clk@vger.kernel.org>; Mon, 30 Jan 2023 01:07:38 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id t7so1990739wrp.5
+        for <linux-clk@vger.kernel.org>; Mon, 30 Jan 2023 01:07:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=lsYDdEUERNa3haOuJCyAm4JNnP3W5R6kzY4+GKk1/bQ=;
+        b=BcPcAmLYez/2WbtfoRyE4Tmt4L6RHSzHIyQHIxkGShoJ8nsggaHJo/hwm2rGInqlBY
+         TOd96pVmLH5CSkR0ZpjrrTbvm2nHG3lPJ2QuHgFFzzNcV9xsgqhyJgEKP2jh1wih3R0x
+         rHNeicYddOa1OfTbdn6h8Cuu0f80lXvIkp4d3WXn2ZPz4ZcHFX0Adcfpd/WPHXKWJK8w
+         aYW8w9p6UJOHYCcRhB7K8KfU1z3HL7YoMjMMUT7ROa/ei1AM3yNX3GfNGYS9wHK76lS7
+         sUDri8lcLIE+vQRuLMTizVOcbcxD7rF3PPnNVxxoOEqkxUHtH2CNO5XnuQF5b3RolWi6
+         APZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lsYDdEUERNa3haOuJCyAm4JNnP3W5R6kzY4+GKk1/bQ=;
+        b=NKGQcMgvIxjRQ7bjcPQuUC9ze5Bw4dDfVfj9Df8dZZlUG7YlwHMVXC/8nojtx1aJKP
+         rYbHhK9HZac/5/KME7zWt2IaTuaEzdwkNaHlrW7DtrPIP9swLmX42zyV5qqbNYrDqR/7
+         k8ep1zmMQjDtPXYYnWqCkSRHsGsP/qpugD1xinuMQDdJtjrNpFjL7swK133UtqDZQmLn
+         ncel9mFkEcGpUVh06GYhTWwxmbddyl1FRy3FMxSyTM/lbZPfCz3fa3mml00tVyOtdGrJ
+         UFkY0MG8ZJMltJ7bx8o7QlSK9lnak/Kxn+IKXfBlVq522WGEfTKzYd42gVJEjJYfLzDg
+         o+/w==
+X-Gm-Message-State: AFqh2kqQ5YUHVqIP3H/rFN+pPfSBkSQ7YkDDmdDN5on3Orgm3oWVBhgf
+        hS5rzaHrMgpbylo6PtDNEfDgMg==
+X-Google-Smtp-Source: AMrXdXtLM5yCOsKxBBWj+DH7khxMs+DnILPh4por/ncjDzW//iFJ0t2Qxjhu8HVdGwvrrSuBjQGabQ==
+X-Received: by 2002:adf:c78b:0:b0:2bd:dd13:170f with SMTP id l11-20020adfc78b000000b002bddd13170fmr52501442wrg.26.1675069657414;
+        Mon, 30 Jan 2023 01:07:37 -0800 (PST)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id t4-20020a05600001c400b002bdcce37d31sm12691897wrx.99.2023.01.30.01.07.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jan 2023 01:07:36 -0800 (PST)
+References: <20230116074214.2326-1-yu.tu@amlogic.com>
+ <20230116074214.2326-4-yu.tu@amlogic.com>
+ <1ja62eybrv.fsf@starbuckisacylon.baylibre.com>
+ <aedb0764-b5cb-7f49-f279-51dbec070e80@amlogic.com>
+ <1jwn5hwn0w.fsf@starbuckisacylon.baylibre.com>
+ <a4ad6ac6-60c2-8f7b-fdb0-509de31db282@amlogic.com>
+User-agent: mu4e 1.8.10; emacs 28.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     "kelvin . zhang" <Kelvin.Zhang@amlogic.com>,
+        "qi . duan" <qi.duan@amlogic.com>
+Subject: Re: [PATCH V6 3/3] clk: meson: s4: add support for Amlogic S4 SoC
+ peripheral clock controller
+Date:   Mon, 30 Jan 2023 10:06:49 +0100
+In-reply-to: <a4ad6ac6-60c2-8f7b-fdb0-509de31db282@amlogic.com>
+Message-ID: <1jy1pko0fc.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v3 00/23] MediaTek clocks cleanups and improvements
-To:     Miles Chen <miles.chen@mediatek.com>
-Cc:     chun-jie.chen@mediatek.com, daniel@makrotopia.org,
-        devicetree@vger.kernel.org, fparent@baylibre.com,
-        ikjn@chromium.org, johnson.wang@mediatek.com,
-        jose.exposito89@gmail.com, kernel@collabora.com,
-        krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        matthias.bgg@gmail.com, msp@baylibre.com, mturquette@baylibre.com,
-        nfraprado@collabora.com, pablo.sun@mediatek.com,
-        rex-bc.chen@mediatek.com, robh+dt@kernel.org, ryder.lee@kernel.org,
-        sam.shih@mediatek.com, sboyd@kernel.org, weiyi.lu@mediatek.com,
-        wenst@chromium.org, y.oudjana@protonmail.com,
-        yangyingliang@huawei.com, Mingming.Su@mediatek.com
-References: <20230113110616.111001-1-angelogioacchino.delregno@collabora.com>
- <20230130065141.2117-1-miles.chen@mediatek.com>
-Content-Language: en-US
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230130065141.2117-1-miles.chen@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 30/01/23 07:51, Miles Chen ha scritto:
-> Mingming has tested this series on mt2712.
-> 
-> Tested-by: Mingming Su <mingming.su@mediatek.com>
-> 
 
-Thanks everyone! :-)
+On Sat 28 Jan 2023 at 18:17, Yu Tu <yu.tu@amlogic.com> wrote:
 
-Cheers,
-Angelo
+> On 2023/1/20 17:47, Jerome Brunet wrote:
+>> [ EXTERNAL EMAIL ]
+>> On Fri 20 Jan 2023 at 11:33, Yu Tu <yu.tu@amlogic.com> wrote:
+>> 
+>>> Hi
+>>> On 2023/1/19 19:37, Jerome Brunet wrote:
+>>>> [ EXTERNAL EMAIL ]
+>>>> On Mon 16 Jan 2023 at 15:42, Yu Tu <yu.tu@amlogic.com> wrote:
+>>>>
+>>>>> Add the peripherals clock controller driver in the s4 SoC family.
+>>>>>
+>>>>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
+>>>> [...]
+>>>>
+>>>>> +
+>>>>> +/* Video Clocks */
+>>>>> +static struct clk_regmap s4_vid_pll_div = {
+>>>>> +	.data = &(struct meson_vid_pll_div_data){
+>>>>> +		.val = {
+>>>>> +			.reg_off = CLKCTRL_VID_PLL_CLK_DIV,
+>>>>> +			.shift   = 0,
+>>>>> +			.width   = 15,
+>>>>> +		},
+>>>>> +		.sel = {
+>>>>> +			.reg_off = CLKCTRL_VID_PLL_CLK_DIV,
+>>>>> +			.shift   = 16,
+>>>>> +			.width   = 2,
+>>>>> +		},
+>>>>> +	},
+>>>>> +	.hw.init = &(struct clk_init_data) {
+>>>>> +		.name = "vid_pll_div",
+>>>>> +		/*
+>>>>> +		 * The frequency division from the hdmi_pll clock to the vid_pll_div
+>>>>> +		 * clock is the default value of this register. When designing the
+>>>>> +		 * video module of the chip, a default value that can meet the
+>>>>> +		 * requirements of the video module will be solidified according
+>>>>> +		 * to the usage requirements of the chip, so as to facilitate chip
+>>>>> +		 * simulation. So this is ro_ops.
+>>>>> +		 * It is important to note that this clock is not used on this
+>>>>> +		 * chip and is described only for the integrity of the clock tree.
+>>>>> +		 */
+>>>> If it is reset value and will be applicable to all the design, regarless
+>>>> of the use-case, then yes RO ops is OK
+>>>>
+>>>> >From what I understand here, the value will depend on the use-case requirements.
+>>>> This is a typical case where the DT prop "assigned-rate" should be used, not RO ops.
+>>>
+>>> Check the previous chip history, the actual scene is not used at all,
+>>> basically is used in simulation. So the previous SOC was "ro_ops" without
+>>> any problems.  This S4 SOC is not actually useful either.
+>>>
+>>> So when you were upstream, you had no problem making "ro_ops". I wonder if
+>>> I could delete this useless clock, so you don't have to worry about it.
+>> I don't know what to make of this. What is the point of adding a useless
+>> clock ?
+>
+> As explained earlier this "vid_pll_div" is actually used in chip
+> emulation. So next I'd like to know what you suggest to do with the clock?
+>
+
+If it does not exist in the actual SoC, please remove it
