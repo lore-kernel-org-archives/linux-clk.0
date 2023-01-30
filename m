@@ -2,130 +2,121 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C3ADC54EAA
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Jan 2023 14:54:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82649C61DA4
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Jan 2023 15:33:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237886AbjA3Oy6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Jan 2023 09:54:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38366 "EHLO
+        id S237359AbjA3PdM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Jan 2023 10:33:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237882AbjA3Oy5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jan 2023 09:54:57 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA25C2942E
-        for <linux-clk@vger.kernel.org>; Mon, 30 Jan 2023 06:54:55 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id o18so1847668wrj.3
-        for <linux-clk@vger.kernel.org>; Mon, 30 Jan 2023 06:54:55 -0800 (PST)
+        with ESMTP id S236704AbjA3PdI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jan 2023 10:33:08 -0500
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13E2D3CE1F
+        for <linux-clk@vger.kernel.org>; Mon, 30 Jan 2023 07:33:07 -0800 (PST)
+Received: by mail-ej1-x62b.google.com with SMTP id m2so32372911ejb.8
+        for <linux-clk@vger.kernel.org>; Mon, 30 Jan 2023 07:33:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DBOpQJYrFBTRisXeKisTfMrcTyjxLh2di8KfVPbWNqU=;
-        b=yKHFfxGFUyCjIMcxvHJEvAUDSj9OgEptKjOD4txVEqyNPntE8lDUViVchodbt0Hj1k
-         c9FHCupazK3N7mGho43gKincjUaeyT7uCaNAy/6uOEg8XZxxztCvFK7oTBh2cJ4gmLgE
-         7r+5gKQ7fPfY3b+YJ8LnW/fwL0vA7ZiaIvLYtuOwEue7lNs7ZVJXg8eZIT8qFLdc8zvt
-         kaMj/LcWL6RJdqqLRdgOT7I+67H8NdS2dsMECQStAZAddAVkeXByo+gddLNkh9BOuc3R
-         1CexiZK4c6kCRryEirmAuBMG8PTviOWRK0QWC5qWNALfDzShp++ifTbl7sJXONrQamjH
-         VxGg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KZ+Opwm6jcHi17rVDvjxU6dDxEIV55VJ/74LTubqrB0=;
+        b=IIsKysQyfCEF6p8MD7eRzgo1qyjPHfvIoZIZD20jvXGEqHunHJgD+iefDncyUoDLDL
+         Xilf0NPG2xYwQB/LMJpet6CBbmQISUxlLxsn+3BfC0t6WSQfEkh/iZkI/MU2tE2DsyDS
+         g/fuiM6QIAJ8nlCWWSvWAuwaNj/vByor50sU6f82ewwupm7rBmLUBroQ7nARX9NRpYA8
+         gos/iWhl2ZzEv8ET7VXpXkF7FWgGdMe7trjQl7Wb6XwbeaqPeHjfiNlIUfvz1+2VoikS
+         maGu+P0ccozlCBOGjbnHKwhgkp5DQ+VBx6Hska4gzUywJczogaAU3HykW79KCrqBFUPg
+         7pEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DBOpQJYrFBTRisXeKisTfMrcTyjxLh2di8KfVPbWNqU=;
-        b=MvxyZdiOM0n5dbAJcb1eb4iRGVm59VNx9Flsywn92jkHAEcHCgxQYHhw1gL7mJVFsA
-         MofJdGJiz/Nriz+b91f0pLa2a0ecsoYWRL1MBCZJ4A4oSC1MRHSc9DX3A/xvUPG1yLeO
-         25dEogHcNgHVR6EM1k4xuiXfYbrolDPeeGGXR/hc1lhdt4/5KctiLhIlyg+/oOPD8JfP
-         DCWD+pcDLH/usqwT2H6h57J4dtIiDqmazIrBDIyzO1SutpAT7AeMKFjg5qcdxgne9GX6
-         V7nyWhUnL35OVQNfW0sDP9aYD8kENxLHabgA2OS0UCzOwYs/oXHK5ZbXMbZPGgbEmMcD
-         UFUQ==
-X-Gm-Message-State: AO0yUKXUaPyb//RKT2gelSVr0FywFs9mE9FS3aWC0Yafn/hVLIuQbQ+C
-        L0DcF6DCnmseWXcU52jaQm0CIA==
-X-Google-Smtp-Source: AK7set984+SMpkQTbwcvMG4YeVGE0ndrZoyiRnap/3z+W0qvqktcQHTobeelX/749h7V8DxCcL4QEg==
-X-Received: by 2002:a5d:4c49:0:b0:2bf:c82d:7ad4 with SMTP id n9-20020a5d4c49000000b002bfc82d7ad4mr13257293wrt.7.1675090494310;
-        Mon, 30 Jan 2023 06:54:54 -0800 (PST)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id m13-20020a5d56cd000000b002bfd462d13asm11233373wrw.18.2023.01.30.06.54.51
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KZ+Opwm6jcHi17rVDvjxU6dDxEIV55VJ/74LTubqrB0=;
+        b=1mrhf46WpCp7CdOASQbA6J7P92QuLpnS3OP7oVWfbPaQQUFC40zPejZfybNTPoFBr5
+         3yXJMCBYBZtzwMUspoOyiFloLLTblrJRsGkuc63HcN2A8ShItT3mOMo3S8m0asaLttVA
+         iqBGPnn3w/UDVtr+W3C/acxauH+4X3rs1e1Ol5G0lTM9K2GBS8t9DDN5w0t6MMMQOQLE
+         oP2uv14BeE/5dNXUokIPI9x6q6GPAkQzh+F6hQjiz73Gd7ff/mH/SdZF6fSypy6B7GTM
+         w9y9EnPRBUQ9EkjhgCirjUQ4Za6d2BnyJ78UhYRo2TGsagKxO7EKpkhtXACBhdUPKY5+
+         iXGA==
+X-Gm-Message-State: AFqh2kr1+PGBQdJDcRJDPUbOuKv6igEccuclNZfuQnBLi3oLQyEW9o9U
+        4VSmse6zQeOdPP414D5imBuVng==
+X-Google-Smtp-Source: AMrXdXv27LWMAuhyic7dKtXBukIAkn9o3CCikAJH885uC/dOHah7SGrpccYqvG3LkXJne3LMQ0LrFA==
+X-Received: by 2002:a17:906:a058:b0:84d:4e9b:ace5 with SMTP id bg24-20020a170906a05800b0084d4e9bace5mr48508058ejb.67.1675092785563;
+        Mon, 30 Jan 2023 07:33:05 -0800 (PST)
+Received: from localhost.localdomain (abyl20.neoplus.adsl.tpnet.pl. [83.9.31.20])
+        by smtp.gmail.com with ESMTPSA id k7-20020a170906054700b00878769f1e6bsm6805773eja.55.2023.01.30.07.33.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jan 2023 06:54:52 -0800 (PST)
-Date:   Mon, 30 Jan 2023 16:54:51 +0200
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Richard Cochran <richardcochran@gmail.com>,
-        devicetree@vger.kernel.org, kernel@pengutronix.de,
-        Stephen Boyd <sboyd@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-clk@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        netdev@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+        Mon, 30 Jan 2023 07:33:05 -0800 (PST)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+To:     linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        agross@kernel.org, krzysztof.kozlowski@linaro.org
+Cc:     marijn.suijten@somainline.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Abel Vesa <abelvesa@kernel.org>
-Subject: Re: [PATCH v2 15/19] clk: imx6ul: fix enet1 gate configuration
-Message-ID: <Y9faOzCkeNea1bmd@linaro.org>
-References: <20230117061453.3723649-1-o.rempel@pengutronix.de>
- <20230117061453.3723649-16-o.rempel@pengutronix.de>
- <Y9atr+Gn60+m4nOg@linaro.org>
- <20230130121530.GA10978@pengutronix.de>
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/8] clk: qcom: branch: Add helper functions for setting retain bits
+Date:   Mon, 30 Jan 2023 16:32:45 +0100
+Message-Id: <20230130153252.2310882-2-konrad.dybcio@linaro.org>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230130153252.2310882-1-konrad.dybcio@linaro.org>
+References: <20230130153252.2310882-1-konrad.dybcio@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230130121530.GA10978@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-01-30 13:15:30, Oleksij Rempel wrote:
-> On Sun, Jan 29, 2023 at 07:32:31PM +0200, Abel Vesa wrote:
-> > On 23-01-17 07:14:49, Oleksij Rempel wrote:
-> > > According to the "i.MX 6UltraLite Applications Processor Reference Manual,
-> > > Rev. 2, 03/2017", BIT(13) is ENET1_125M_EN which is not controlling root
-> > > of PLL6. It is controlling ENET1 separately.
-> > > 
-> > > So, instead of this picture (implementation before this patch):
-> > > fec1 <- enet_ref (divider) <---------------------------,
-> > >                                                        |- pll6_enet (gate)
-> > > fec2 <- enet2_ref_125m (gate) <- enet2_ref (divider) <-´
-> > > 
-> > > we should have this one (after this patch):
-> > > fec1 <- enet1_ref_125m (gate) <- enet1_ref (divider) <-,
-> > >                                                        |- pll6_enet
-> > > fec2 <- enet2_ref_125m (gate) <- enet2_ref (divider) <-´
-> > > 
-> > > With this fix, the RMII reference clock will be turned off, after
-> > > setting network interface down on each separate interface
-> > > (ip l s dev eth0 down). Which was not working before, on system with both
-> > > FECs enabled.
-> > > 
-> > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > 
-> > I'm OK with this. Maybe a fixes tag ?
-> 
-> Hm. Initial commit was:
-> Fixes: 787b4271a6a0 ("clk: imx: add imx6ul clk tree support")
-> but this patch will not apply on top of it.
-> Next possible commit would be:
-> Fixes: 1487b60dc2d2 ("clk: imx6ul: Switch to clk_hw based API")
-> But this patch didn't introduce this issue, it was just refactoring.
+Most Qualcomm branch clocks come with a pretty usual set of bits that
+can enable memory retention by means of not turning off parts of the
+memory logic. Add them to the common header file and introduce helper
+functions for setting them instead of using magic writes.
 
-Hm, in that case I don't think is qoing to be backported ever.
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+v2 -> v3:
 
-> 
-> What do you prefer?
+- New patch
 
-I'll apply it as it is.
+ drivers/clk/qcom/clk-branch.h | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-Thanks.
+diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
+index 17a58119165e..d8fc7b93ef6d 100644
+--- a/drivers/clk/qcom/clk-branch.h
++++ b/drivers/clk/qcom/clk-branch.h
+@@ -37,6 +37,29 @@ struct clk_branch {
+ 	struct clk_regmap clkr;
+ };
+ 
++/* Branch clock common bits for HLOS-owned clocks */
++#define CBCR_FORCE_MEM_CORE_ON		BIT(14)
++#define CBCR_FORCE_MEM_PERIPH_ON	BIT(13)
++#define CBCR_FORCE_MEM_PERIPH_OFF	BIT(12)
++
++static inline void qcom_branch_set_force_mem_core(struct regmap *regmap, u32 reg, bool on)
++{
++	regmap_update_bits(regmap, reg, CBCR_FORCE_MEM_CORE_ON,
++			   on ? CBCR_FORCE_MEM_CORE_ON : 0);
++}
++
++static inline void qcom_branch_set_force_periph_on(struct regmap *regmap, u32 reg, bool on)
++{
++	regmap_update_bits(regmap, reg, CBCR_FORCE_MEM_PERIPH_ON,
++			   on ? CBCR_FORCE_MEM_PERIPH_ON : 0);
++}
++
++static inline void qcom_branch_set_force_periph_off(struct regmap *regmap, u32 reg, bool on)
++{
++	regmap_update_bits(regmap, reg, CBCR_FORCE_MEM_PERIPH_OFF,
++			   on ? CBCR_FORCE_MEM_PERIPH_OFF : 0);
++}
++
+ extern const struct clk_ops clk_branch_ops;
+ extern const struct clk_ops clk_branch2_ops;
+ extern const struct clk_ops clk_branch_simple_ops;
+-- 
+2.39.1
 
-> 
-> Regards,
-> Oleksij
-> -- 
-> Pengutronix e.K.                           |                             |
-> Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
