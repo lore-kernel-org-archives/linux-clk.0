@@ -2,183 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A6F8C61DA4
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Jan 2023 10:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB42C61DA4
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Jan 2023 11:28:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236078AbjA3KPm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Jan 2023 05:15:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48956 "EHLO
+        id S236609AbjA3L17 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Jan 2023 06:27:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236259AbjA3KPi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jan 2023 05:15:38 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43E652E83A
-        for <linux-clk@vger.kernel.org>; Mon, 30 Jan 2023 02:15:33 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id k16so7600457wms.2
-        for <linux-clk@vger.kernel.org>; Mon, 30 Jan 2023 02:15:33 -0800 (PST)
+        with ESMTP id S236337AbjA3L16 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jan 2023 06:27:58 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C4EE6A74;
+        Mon, 30 Jan 2023 03:27:55 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id l8so7745204wms.3;
+        Mon, 30 Jan 2023 03:27:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=1GD6xvkAI4vVIPmoXjUJESxT67/DmEIL0NxqWHVJZ14=;
-        b=ou/WTQh/rbAEo5i1/IWRz6TsdWW9GiyVSx95zPqG1wlb8uWq7GDDJ1AF1NNoVq4cP7
-         Hk2AP5lqUGtDGN2zKp441z2I4OVTn//z/nMIdbVCWEyaijkTDCFIN9Fm/3+DrTm7tfb/
-         kr0MymPvx6aDZSR2W65kNFOhRZHvN7ax66qvN4fLLI4OT710+qUuo4xPvT2mKB1NeHth
-         c/XuA42ZBrSAmwl0qFnZSFdR3bmj9zZSMYUYHa68bnR/jOH5eXgvpuxOnUZtoxqxYx/S
-         48M/WsrjxhilD+BuPQ+j6gzyayhLv34WC+jhgOzPYLa0/WNjVIDfv9unLvqoQ9SpQMoE
-         vGLg==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OLtIKfrQlP60j4+DiH/uXns1J7cBM/abFHLneyBahMs=;
+        b=Irt249mnGvQvO23P85fhdsJ7dvOLw4yemt9EXkUwsHhP610YrgXtEsxLJBHhJb+zIv
+         vH3kXhG0fNhEuqOzY0vjpH3qn3+KYxn/uhJeYUsOHEk8ekF/668EGj3xjF6hQLPjABOr
+         iAMHcFoM17QRWeqQmSY2ySPZs9NQjQjpXrchvTmVpgNYHFafmgmWUwz53BbUZa0r59+q
+         fQJm+MUm55/BO/Y0RiFE0IwR8S8jgOhP3qHCoyjwgA3Fk2Z60tWXo4CP8tWIT60IlLC9
+         Gh8MK2Awpq+5ZUwR/wzPhZEHQFFeVOiUfGBlBxYp0scx9MbJjodnA8g5+B0JZYSH1tpC
+         NGhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1GD6xvkAI4vVIPmoXjUJESxT67/DmEIL0NxqWHVJZ14=;
-        b=lPu76t9hdUN3BtqTCdegKt8mLwizH88hr2VMppCnJxqit3NpfoGtbGznMJ0c70ZjzK
-         Do+FBefEnCilo8CAjBIVQE59DSw8x/dpIJ9DImRnqpV3bquGVBRZwEqQ+LuyisCc7me2
-         DwPNWI04DM2MJ+n9JBi2yrmBJjJ7oKgLcsR+IhJnFCgVZmE7gKUfwAHq8pK+KS7ArwEF
-         nNO0WP9KY655ym08yP1T3duYjUmrMRjGcg8GJ8mWhDPknYDfj0GN2ReSN7/sd3KDXyBb
-         YOXYLoOReq/OsxPv+/BGRW4YzbIZvrbCTDVVS1HY8DtIMh9cZxBHJ+We4uU43TzWTRft
-         F2xg==
-X-Gm-Message-State: AO0yUKVw/mg/1IV6BSRULQWcsSzmGlNM9FXvR7me8T+82NkFA3WiD7AA
-        tr5FUSwwDN61xoFY7BWdMu7rkw==
-X-Google-Smtp-Source: AK7set8BN8DVUVltmKpqNSmrNuOc+vShSw+Cdb+p4Xr2bLyDzS9ZnhXiE4NnCN8obYC0pP2DuBQrzw==
-X-Received: by 2002:a05:600c:b93:b0:3dc:5965:2c35 with SMTP id fl19-20020a05600c0b9300b003dc59652c35mr2792658wmb.24.1675073731709;
-        Mon, 30 Jan 2023 02:15:31 -0800 (PST)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id d33-20020a05600c4c2100b003dc41a9836esm8478505wmp.43.2023.01.30.02.15.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jan 2023 02:15:30 -0800 (PST)
-References: <20230116074214.2326-1-yu.tu@amlogic.com>
- <20230116074214.2326-4-yu.tu@amlogic.com>
- <1ja62eybrv.fsf@starbuckisacylon.baylibre.com>
- <aedb0764-b5cb-7f49-f279-51dbec070e80@amlogic.com>
- <1jwn5hwn0w.fsf@starbuckisacylon.baylibre.com>
- <a4ad6ac6-60c2-8f7b-fdb0-509de31db282@amlogic.com>
- <1jy1pko0fc.fsf@starbuckisacylon.baylibre.com>
- <e2e9045a-6e35-112f-69a7-15b080571b69@amlogic.com>
- <1jr0vcnyf7.fsf@starbuckisacylon.baylibre.com>
- <37e5d1a9-9379-a7ff-e288-9a4b80a0cc5f@amlogic.com>
-User-agent: mu4e 1.8.10; emacs 28.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     "kelvin . zhang" <Kelvin.Zhang@amlogic.com>,
-        "qi . duan" <qi.duan@amlogic.com>
-Subject: Re: [PATCH V6 3/3] clk: meson: s4: add support for Amlogic S4 SoC
- peripheral clock controller
-Date:   Mon, 30 Jan 2023 11:07:28 +0100
-In-reply-to: <37e5d1a9-9379-a7ff-e288-9a4b80a0cc5f@amlogic.com>
-Message-ID: <1jmt60nxa7.fsf@starbuckisacylon.baylibre.com>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OLtIKfrQlP60j4+DiH/uXns1J7cBM/abFHLneyBahMs=;
+        b=B+JWU8rLlFIdHVefU9YohbKJTKWSqWsffgESSzVWsuvvpjxm0Lo5wIQMlfs4YqPZHY
+         VFE40I/demFyhc0ddv23CSQWo9V68q42fZ9NMipCe9P6M2EMpJS2gBWGW2HgxSWJCWsx
+         EsfSXHEHYlljM0HzTexWcFV8Wu/0TGZ2cPEDGVrJplVb3tW/Tpa5WWRl6XWwVjHoVlJv
+         p4qEark+5hTL2WJcuOE3auV5B09UmBC3+yGu4JEtg//9aYhXez73bZLqzA7EzahunF3r
+         tTINMDESFInuQZs22JGSgkdVRJ/jI4XNAxrMlvsXRbZ0EPgscgADdGi03pyG0VbeOFkQ
+         8ncA==
+X-Gm-Message-State: AO0yUKVNnFwYmXs6PX1bg4TMH/fu83IeHSPaJ1BkR0Qr24AD3fFg/rdJ
+        E07yIq0ZVX3G3tq2AhOg0oQ=
+X-Google-Smtp-Source: AK7set/5iNsvsM5ybxrTH5ZpW/0KUhjubVlqPz+QI8m2RB1wvXMRG7KKhUq0WeLIHNH7pCYanD2Oqw==
+X-Received: by 2002:a7b:c7ce:0:b0:3dc:42d2:aeee with SMTP id z14-20020a7bc7ce000000b003dc42d2aeeemr10296508wmk.25.1675078074261;
+        Mon, 30 Jan 2023 03:27:54 -0800 (PST)
+Received: from [192.168.2.177] ([207.188.167.132])
+        by smtp.gmail.com with ESMTPSA id bd16-20020a05600c1f1000b003d1f3e9df3csm16557501wmb.7.2023.01.30.03.27.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Jan 2023 03:27:53 -0800 (PST)
+Message-ID: <c8023960-3361-91a3-6fdb-7c66bcabd2e9@gmail.com>
+Date:   Mon, 30 Jan 2023 12:27:52 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH v6 2/4] dt-bindings: arm: mediatek: mmsys: Add support for
+ MT8195 VPPSYS
+Content-Language: en-US
+To:     Moudy Ho <moudy.ho@mediatek.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20230118031509.29834-1-moudy.ho@mediatek.com>
+ <20230118031509.29834-3-moudy.ho@mediatek.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+In-Reply-To: <20230118031509.29834-3-moudy.ho@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Mon 30 Jan 2023 at 17:59, Yu Tu <yu.tu@amlogic.com> wrote:
 
-> On 2023/1/30 17:47, Jerome Brunet wrote:
->> [ EXTERNAL EMAIL ]
->> On Mon 30 Jan 2023 at 17:41, Yu Tu <yu.tu@amlogic.com> wrote:
->> 
->>> On 2023/1/30 17:06, Jerome Brunet wrote:
->>>> [ EXTERNAL EMAIL ]
->>>> On Sat 28 Jan 2023 at 18:17, Yu Tu <yu.tu@amlogic.com> wrote:
->>>>
->>>>> On 2023/1/20 17:47, Jerome Brunet wrote:
->>>>>> [ EXTERNAL EMAIL ]
->>>>>> On Fri 20 Jan 2023 at 11:33, Yu Tu <yu.tu@amlogic.com> wrote:
->>>>>>
->>>>>>> Hi
->>>>>>> On 2023/1/19 19:37, Jerome Brunet wrote:
->>>>>>>> [ EXTERNAL EMAIL ]
->>>>>>>> On Mon 16 Jan 2023 at 15:42, Yu Tu <yu.tu@amlogic.com> wrote:
->>>>>>>>
->>>>>>>>> Add the peripherals clock controller driver in the s4 SoC family.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
->>>>>>>> [...]
->>>>>>>>
->>>>>>>>> +
->>>>>>>>> +/* Video Clocks */
->>>>>>>>> +static struct clk_regmap s4_vid_pll_div = {
->>>>>>>>> +	.data = &(struct meson_vid_pll_div_data){
->>>>>>>>> +		.val = {
->>>>>>>>> +			.reg_off = CLKCTRL_VID_PLL_CLK_DIV,
->>>>>>>>> +			.shift   = 0,
->>>>>>>>> +			.width   = 15,
->>>>>>>>> +		},
->>>>>>>>> +		.sel = {
->>>>>>>>> +			.reg_off = CLKCTRL_VID_PLL_CLK_DIV,
->>>>>>>>> +			.shift   = 16,
->>>>>>>>> +			.width   = 2,
->>>>>>>>> +		},
->>>>>>>>> +	},
->>>>>>>>> +	.hw.init = &(struct clk_init_data) {
->>>>>>>>> +		.name = "vid_pll_div",
->>>>>>>>> +		/*
->>>>>>>>> +		 * The frequency division from the hdmi_pll clock to the vid_pll_div
->>>>>>>>> +		 * clock is the default value of this register. When designing the
->>>>>>>>> +		 * video module of the chip, a default value that can meet the
->>>>>>>>> +		 * requirements of the video module will be solidified according
->>>>>>>>> +		 * to the usage requirements of the chip, so as to facilitate chip
->>>>>>>>> +		 * simulation. So this is ro_ops.
->>>>>>>>> +		 * It is important to note that this clock is not used on this
->>>>>>>>> +		 * chip and is described only for the integrity of the clock tree.
->>>>>>>>> +		 */
->>>>>>>> If it is reset value and will be applicable to all the design, regarless
->>>>>>>> of the use-case, then yes RO ops is OK
->>>>>>>>
->>>>>>>> >From what I understand here, the value will depend on the use-case requirements.
->>>>>>>> This is a typical case where the DT prop "assigned-rate" should be used, not RO ops.
->>>>>>>
->>>>>>> Check the previous chip history, the actual scene is not used at all,
->>>>>>> basically is used in simulation. So the previous SOC was "ro_ops" without
->>>>>>> any problems.  This S4 SOC is not actually useful either.
->>>>>>>
->>>>>>> So when you were upstream, you had no problem making "ro_ops". I wonder if
->>>>>>> I could delete this useless clock, so you don't have to worry about it.
->>>>>> I don't know what to make of this. What is the point of adding a useless
->>>>>> clock ?
->>>>>
->>>>> As explained earlier this "vid_pll_div" is actually used in chip
->>>>> emulation. So next I'd like to know what you suggest to do with the clock?
->>>>>
->>>> If it does not exist in the actual SoC, please remove it
->>>>
->>>
->>> If I remove it, the "vid_pll_sel" clock will be missing a parent
->>> (vid_pll_div). I will use the table method and give the above reasons. Do
->>> you accept this method?
->> Either the clock exists or it does not.
->> If the HW actually exist, it is expected to be properly described.
->> If it does not, it obviously cannot be an input to another clock.
->> Please sort this out and make the necessary changes.
->> 
->
-> The CLKCTRL_VID_PLL_CLK_DIV register is actually described, but it is not
-> used in the actual board. According to your reply just now, description is
-> required, but I want to know how to describe it to meet your requirements.
->
-> Please give me some suggestions.
+On 18/01/2023 04:15, Moudy Ho wrote:
+> For MT8195, VPPSYS0 and VPPSYS1 are 2 display pipes with
+> hardware differences in power domains, clocks and subsystem counts,
+> which should be determined by compatible names.
+> 
+> Signed-off-by: Moudy Ho <moudy.ho@mediatek.com>
 
-Implementing things is NOT about usage, it is about correctness.
-Either there is actually a clock in the silicon you are producing at the
-Amlogic factory, or there is not. 
+Applied, thanks!
 
-If the clock is there in the actual HW should be properly
-described/implemented, as it "might" be used as an input to other clocks
-- even if you personnaly don't.
-
-If clock does not exists (nothing behind the registers, or broken, etc
-...)  then, yes you'll need to use parent tables and document this.
-
+> ---
+>   .../devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml        | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
+> index 84de12709323..b08ae7405b1a 100644
+> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
+> @@ -33,6 +33,8 @@ properties:
+>                 - mediatek,mt8186-mmsys
+>                 - mediatek,mt8188-vdosys0
+>                 - mediatek,mt8192-mmsys
+> +              - mediatek,mt8195-vppsys0
+> +              - mediatek,mt8195-vppsys1
+>                 - mediatek,mt8365-mmsys
+>             - const: syscon
+>   
