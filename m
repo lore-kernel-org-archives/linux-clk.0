@@ -2,107 +2,97 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED8E0C61D97
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Jan 2023 18:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19195C54EAA
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Jan 2023 19:36:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236176AbjA3SQW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Jan 2023 13:16:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47920 "EHLO
+        id S238103AbjA3TgR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Jan 2023 14:36:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237508AbjA3SQO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jan 2023 13:16:14 -0500
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C7AA44BF8;
-        Mon, 30 Jan 2023 10:16:09 -0800 (PST)
-Received: by mail-ot1-f41.google.com with SMTP id e12-20020a0568301e4c00b0068bc93e7e34so1713796otj.4;
-        Mon, 30 Jan 2023 10:16:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=G7bb455SP8TO1b2p4o1VPwtrIH2klzrLn8qwOehGPvI=;
-        b=R9uzLqsGJ790Jdn1vUMi11/uarnRhHJ8F4Fxc+9SpFUrAf6E7BAwCfgiKcGq/Y5XWg
-         NL6vAvV5/YvbTlwGHsu1nnqw1iBMQazJTKv6XSpfZuNF9zxoA8VG3S1QaTatQFN2jvHa
-         OGzJrzqCIERTC9Kt+bGrzoHvP0GOzm5IBOJzv5I7Po3OCtKaGAC5gVKoXODpEmmtJvkH
-         rzlKB6FXXht3NGsphzGi12ZkOTC8yanN8+Bnwj1qqFzDELCaJKStl5eNeKSSj3Q8VjLQ
-         UBKx6P0P8OROJRQaSz/4S1iy3aeCumZS3gNSPUPFoNJjw51rddXPvsjZtlzZnq49yITu
-         dcRQ==
-X-Gm-Message-State: AO0yUKV14Mw0FQBX1e4z/G7CCI5S7WFBiVcGMMzb7B2FgcoQEOzSWXSk
-        1zgbYC+3Xs9rOzSoetmO+Q==
-X-Google-Smtp-Source: AK7set8FrVHMNoEHAdLjytXCeX5uEnWuM2t6vdS0Beh/CVdEt/BsnVh76wgyLd1X+eb1EX1hfyXuJw==
-X-Received: by 2002:a9d:410a:0:b0:68b:d1c7:4eb4 with SMTP id o10-20020a9d410a000000b0068bd1c74eb4mr2404075ote.16.1675102568352;
-        Mon, 30 Jan 2023 10:16:08 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id h5-20020a056808014500b003785996ef36sm1111724oie.19.2023.01.30.10.16.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jan 2023 10:16:07 -0800 (PST)
-Received: (nullmailer pid 3060316 invoked by uid 1000);
-        Mon, 30 Jan 2023 18:16:07 -0000
+        with ESMTP id S238075AbjA3TgQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jan 2023 14:36:16 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D96EE45202;
+        Mon, 30 Jan 2023 11:36:13 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8F6C5B81687;
+        Mon, 30 Jan 2023 19:36:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CAF4C433D2;
+        Mon, 30 Jan 2023 19:36:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675107371;
+        bh=sxcQJN3nO52mu5E7zYArOshdkoV/Yy47NYqmC/yXgMc=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=iGEDjJbTIJCG6wk51YNxxblRvJKJ5aHae5BywXrzG+wPODAcqzkjYRoAKOlsZq/CH
+         TpYHquNsbvp5Web5wTPWvy5qXRQUAGfMXtdPa88sIcwyCvOjykciy+2nJzLsJNoZJf
+         3RPKjEF+VYa8qJHt5dXN5XAh3lP0khElNyFfwZO3kJJ/YHuLUFy4oN5N63tyOxDQLR
+         MVF6PKK3z1y3abGE0WzIKlFhXJPMNULyqQ4579gfAwpXvIMZ5rSBEHPqX3r0IJZUzT
+         /PiW6Kf21xoWdIeRgo5tzc5/EampojjPZigKJwtsRGib8W1HuPQ7iuuQMNZq9hyPWv
+         b47D52LTmG1cw==
+Message-ID: <fe49e8b642c4c33fee37e97d957c37a3.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, agross@kernel.org,
-        krzysztof.kozlowski@linaro.org, marijn.suijten@somainline.org,
-        linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        andersson@kernel.org, Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20230130153252.2310882-8-konrad.dybcio@linaro.org>
-References: <20230130153252.2310882-1-konrad.dybcio@linaro.org>
- <20230130153252.2310882-8-konrad.dybcio@linaro.org>
-Message-Id: <167510252236.3059233.560325193993095939.robh@kernel.org>
-Subject: Re: [PATCH v3 7/8] dt-bindings: clock: Add Qcom SM6115 GPUCC
-Date:   Mon, 30 Jan 2023 12:16:07 -0600
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230118031509.29834-4-moudy.ho@mediatek.com>
+References: <20230118031509.29834-1-moudy.ho@mediatek.com> <20230118031509.29834-4-moudy.ho@mediatek.com>
+Subject: Re: [PATCH v6 3/4] clk: mediatek: remove MT8195 vppsys/0/1 simple_probe
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com,
+        Moudy Ho <moudy.ho@mediatek.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Moudy Ho <moudy.ho@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 30 Jan 2023 11:36:09 -0800
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Moudy Ho (2023-01-17 19:15:08)
+> diff --git a/drivers/clk/mediatek/clk-mt8195-vpp0.c b/drivers/clk/mediate=
+k/clk-mt8195-vpp0.c
+> index bf2939c3a023..6d5800f69f6c 100644
+> --- a/drivers/clk/mediatek/clk-mt8195-vpp0.c
+> +++ b/drivers/clk/mediatek/clk-mt8195-vpp0.c
+> @@ -86,26 +86,54 @@ static const struct mtk_gate vpp0_clks[] =3D {
+>         GATE_VPP0_2(CLK_VPP0_WARP1_MDP_DL_ASYNC, "vpp0_warp1_mdp_dl_async=
+", "top_wpe_vpp", 3),
+>  };
+> =20
+> -static const struct mtk_clk_desc vpp0_desc =3D {
+> -       .clks =3D vpp0_clks,
+> -       .num_clks =3D ARRAY_SIZE(vpp0_clks),
+> -};
+> +static int clk_mt8195_vpp0_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev =3D &pdev->dev;
+> +       struct device_node *node =3D dev->parent->of_node;
+> +       struct clk_onecell_data *clk_data;
+> +       int r;
+> =20
+> -static const struct of_device_id of_match_clk_mt8195_vpp0[] =3D {
+> -       {
+> -               .compatible =3D "mediatek,mt8195-vppsys0",
+> -               .data =3D &vpp0_desc,
+> -       }, {
+> -               /* sentinel */
+> -       }
+> -};
+> +       clk_data =3D mtk_alloc_clk_data(CLK_VPP0_NR_CLK);
+> +       if (!clk_data)
+> +               return -ENOMEM;
+> +
+> +       r =3D mtk_clk_register_gates(node, vpp0_clks, ARRAY_SIZE(vpp0_clk=
+s), clk_data);
 
-On Mon, 30 Jan 2023 16:32:51 +0100, Konrad Dybcio wrote:
-> Add device tree bindings for graphics clock controller for Qualcomm
-> Technology Inc's SM6115 SoCs.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
-> v2 -> v3:
-> 
-> - Mention resets in description:
-> - Use gcc.yaml
-> 
->  .../bindings/clock/qcom,sm6115-gpucc.yaml     | 58 +++++++++++++++++++
->  include/dt-bindings/clock/qcom,sm6115-gpucc.h | 36 ++++++++++++
->  2 files changed, 94 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6115-gpucc.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,sm6115-gpucc.h
-> 
-
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,sm6115-gpucc.example.dtb: clock-controller@5990000: '#clock-cells', '#power-domain-cells', '#reset-cells', 'reg' do not match any of the regexes: 'pinctrl-[0-9]+'
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,sm6115-gpucc.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230130153252.2310882-8-konrad.dybcio@linaro.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+This API is wrecked by a patch from AngeloGioacchino. Can you resend, or
+tell me which device should be used here?
