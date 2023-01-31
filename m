@@ -2,56 +2,108 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBFA7C38142
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Jan 2023 08:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3BE9C636CC
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Jan 2023 08:52:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231488AbjAaIeN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Jan 2023 03:34:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46692 "EHLO
+        id S232013AbjAaIwc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Jan 2023 03:52:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231131AbjAaIdo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 03:33:44 -0500
-Received: from mail.lokoho.com (mail.lokoho.com [217.61.105.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57F7D46D58
-        for <linux-clk@vger.kernel.org>; Tue, 31 Jan 2023 00:33:31 -0800 (PST)
-Received: by mail.lokoho.com (Postfix, from userid 1001)
-        id 10A22839AF; Tue, 31 Jan 2023 08:31:47 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lokoho.com; s=mail;
-        t=1675154010; bh=Z0N5VlX9/JlryGOL5I747Le9USomZJCRNNGRT3LbbKc=;
-        h=Date:From:To:Subject:From;
-        b=DUylNzkEn7uJvujI1V47RCAzo5mI+G/xRTUqrjBGXN0y0EqeNg1nKlwNJjmjQplRK
-         JISt4nXFWuXOy0cgCHyGDid9asalN+lODg+PwPEGt9Bx6INPGXJHNVVdvFPhGw3F0v
-         7aqVN7gzkOvGIkBLe7h+DrUFMWUba5+m8TMz2Am9aEXEWHXzyMkppJbt2rb0qrnhZz
-         YXHX08U/d3SJHaqCi/ftSdIRYsT2FJYlOH4UdCLY5L1kwDFTZnC1xfSScWx19cn0zQ
-         tp/S2Pca019fnJn8yPi58y4lsCFIIcqCJEb8zxYZVPCeUR0f6OlTH7+3W4TBtyI5XE
-         IAJ4mUbzKNTZQ==
-Received: by mail.lokoho.com for <linux-clk@vger.kernel.org>; Tue, 31 Jan 2023 08:30:34 GMT
-Message-ID: <20230131074501-0.1.3q.w0mi.0.drdbck20rv@lokoho.com>
-Date:   Tue, 31 Jan 2023 08:30:34 GMT
-From:   "Adam Charachuta" <adam.charachuta@lokoho.com>
-To:     <linux-clk@vger.kernel.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
-X-Mailer: mail.lokoho.com
+        with ESMTP id S231728AbjAaIwB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 03:52:01 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4CA914495
+        for <linux-clk@vger.kernel.org>; Tue, 31 Jan 2023 00:47:57 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1pMmHu-0003rL-8E; Tue, 31 Jan 2023 09:46:46 +0100
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ore@pengutronix.de>)
+        id 1pMmHt-001eLV-TZ; Tue, 31 Jan 2023 09:46:45 +0100
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ore@pengutronix.de>)
+        id 1pMmHr-002yaU-6P; Tue, 31 Jan 2023 09:46:43 +0100
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>
+Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH v3 11/19] ARM: dts: imx6q-prtwd2: configure ethernet reference clock parent
+Date:   Tue, 31 Jan 2023 09:46:34 +0100
+Message-Id: <20230131084642.709385-12-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20230131084642.709385-1-o.rempel@pengutronix.de>
+References: <20230131084642.709385-1-o.rempel@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On this board the PHY is the ref clock provider. So, configure ethernet
+reference clock as input.
 
-zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
-=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
-o dalszych rozm=C3=B3w.=20
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ arch/arm/boot/dts/imx6q-prtwd2.dts | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
-=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
-=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
-strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
+diff --git a/arch/arm/boot/dts/imx6q-prtwd2.dts b/arch/arm/boot/dts/imx6q-prtwd2.dts
+index 349959d38020..54a57a4548e2 100644
+--- a/arch/arm/boot/dts/imx6q-prtwd2.dts
++++ b/arch/arm/boot/dts/imx6q-prtwd2.dts
+@@ -22,6 +22,13 @@ memory@80000000 {
+ 		reg = <0x80000000 0x20000000>;
+ 	};
+ 
++	clk50m_phy: phy-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <50000000>;
++		clock-output-names = "enet_ref_pad";
++	};
++
+ 	usdhc2_wifi_pwrseq: usdhc2_wifi_pwrseq {
+ 		compatible = "mmc-pwrseq-simple";
+ 		pinctrl-names = "default";
+@@ -49,13 +56,17 @@ &can1 {
+ 	status = "okay";
+ };
+ 
++&clks {
++	clocks = <&clk50m_phy>;
++	clock-names = "enet_ref_pad";
++	assigned-clocks = <&clks IMX6QDL_CLK_ENET_REF_SEL>;
++	assigned-clock-parents = <&clk50m_phy>;
++};
++
+ &fec {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_enet>;
+ 	phy-mode = "rmii";
+-	clocks = <&clks IMX6QDL_CLK_ENET>,
+-		 <&clks IMX6QDL_CLK_ENET>;
+-	clock-names = "ipg", "ahb";
+ 	status = "okay";
+ 
+ 	fixed-link {
+-- 
+2.30.2
 
-Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
-
-
-Pozdrawiam
-Adam Charachuta
