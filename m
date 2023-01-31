@@ -2,110 +2,111 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B914C636CC
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Jan 2023 08:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B9D9C38142
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Jan 2023 08:33:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230011AbjAaIav (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Jan 2023 03:30:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44124 "EHLO
+        id S231211AbjAaIdQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Jan 2023 03:33:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbjAaIau (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 03:30:50 -0500
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EDB91B568;
-        Tue, 31 Jan 2023 00:30:48 -0800 (PST)
-Received: (Authenticated sender: clement.leger@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 27D1C40005;
-        Tue, 31 Jan 2023 08:30:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1675153846;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=ajrwn/groQlhkLs4SJ7ZwaJ9XDOkgLm/eBN16amo+YQ=;
-        b=OwNt/8tkiHh5fwf3XqyErTgI8UCrtLcy2eE5f/XPpRKVMUS+47eIMD/2JQ6fdKI1baKrJy
-        cnH8QZLebKEOOdr2W7uBHyBSEiI4LZbgwAwrBt9DxBDY+i3wYjByHjFASJZMZ8BUt94ctg
-        An3KyNY2Dx1afu3JQEjEqS+628uMKbuNbSr1Ws8nfI6Zhl8IvlmTSheJyhvqxJ6libzfsr
-        DUVgHe/9bj5egNp+qqzEvg+kHBn59RjFKHClCCBrnbLBB+QZQI4z4R6zhYfsOSJoJKx4lf
-        MnU6WV63lY7xOn+9rxYMmtMlxH3XADo38HxEKtFiuklFekk8bHBnVdHXR1x1Ww==
-From:   =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] clk: add missing of_node_put() in "assigned-clocks" property parsing
-Date:   Tue, 31 Jan 2023 09:32:27 +0100
-Message-Id: <20230131083227.10990-1-clement.leger@bootlin.com>
-X-Mailer: git-send-email 2.39.0
+        with ESMTP id S231215AbjAaIdK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 03:33:10 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94D93C16F;
+        Tue, 31 Jan 2023 00:33:06 -0800 (PST)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id F017D6602EB0;
+        Tue, 31 Jan 2023 08:33:04 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1675153985;
+        bh=8znNGnB3SZ5cMbqV4jYJqOpR3KhVL1tOkUowpw7M7lI=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=QR6WyMzjxsw8hGag04dgpgrY88QAtxbgvKqMCA7HAk5/4CKFfp3XFXPD4poTOry+3
+         kBlxjC3qHq4r1EpXxJOqwqVrvjZgrZwfsxGxHCvi35GTktfsQ0wAVMvwta6LxYJMfL
+         HRMov1gkLvu5WQVPQciv3i2IVl3rf/RWWY4urQh44lcU9nlfByExrMz0WTXabdqwol
+         Ic4rI7pwy+xUhCSP2vSF8dWVY/NFCfFKwiadqRcJMmhGpamv+dpcGJZQGId6BMJiWN
+         uMF9XVf16eOTtJsqqg+/WRNQPbSM8RAsO+7Bwt0hTkiqqnoCao81C7FyczQNSfx/b2
+         NFp+/csgiCgew==
+Message-ID: <d3d913f3-d898-26c5-7c05-01b67826e662@collabora.com>
+Date:   Tue, 31 Jan 2023 09:33:01 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH v6 3/4] clk: mediatek: remove MT8195 vppsys/0/1
+ simple_probe
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Moudy Ho <moudy.ho@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20230118031509.29834-1-moudy.ho@mediatek.com>
+ <20230118031509.29834-4-moudy.ho@mediatek.com>
+ <fe49e8b642c4c33fee37e97d957c37a3.sboyd@kernel.org>
+Content-Language: en-US
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <fe49e8b642c4c33fee37e97d957c37a3.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When returning from of_parse_phandle_with_args(), the np member of the
-of_phandle_args structure should be put after usage. Add missing
-of_node_put() calls in both __set_clk_parents() and __set_clk_rates().
+Il 30/01/23 20:36, Stephen Boyd ha scritto:
+> Quoting Moudy Ho (2023-01-17 19:15:08)
+>> diff --git a/drivers/clk/mediatek/clk-mt8195-vpp0.c b/drivers/clk/mediatek/clk-mt8195-vpp0.c
+>> index bf2939c3a023..6d5800f69f6c 100644
+>> --- a/drivers/clk/mediatek/clk-mt8195-vpp0.c
+>> +++ b/drivers/clk/mediatek/clk-mt8195-vpp0.c
+>> @@ -86,26 +86,54 @@ static const struct mtk_gate vpp0_clks[] = {
+>>          GATE_VPP0_2(CLK_VPP0_WARP1_MDP_DL_ASYNC, "vpp0_warp1_mdp_dl_async", "top_wpe_vpp", 3),
+>>   };
+>>   
+>> -static const struct mtk_clk_desc vpp0_desc = {
+>> -       .clks = vpp0_clks,
+>> -       .num_clks = ARRAY_SIZE(vpp0_clks),
+>> -};
+>> +static int clk_mt8195_vpp0_probe(struct platform_device *pdev)
+>> +{
+>> +       struct device *dev = &pdev->dev;
+>> +       struct device_node *node = dev->parent->of_node;
+>> +       struct clk_onecell_data *clk_data;
+>> +       int r;
+>>   
+>> -static const struct of_device_id of_match_clk_mt8195_vpp0[] = {
+>> -       {
+>> -               .compatible = "mediatek,mt8195-vppsys0",
+>> -               .data = &vpp0_desc,
+>> -       }, {
+>> -               /* sentinel */
+>> -       }
+>> -};
+>> +       clk_data = mtk_alloc_clk_data(CLK_VPP0_NR_CLK);
+>> +       if (!clk_data)
+>> +               return -ENOMEM;
+>> +
+>> +       r = mtk_clk_register_gates(node, vpp0_clks, ARRAY_SIZE(vpp0_clks), clk_data);
+> 
+> This API is wrecked by a patch from AngeloGioacchino. Can you resend, or
+> tell me which device should be used here?
 
-Fixes: 86be408bfbd8 ("clk: Support for clock parents and rates assigned from device tree")
-Signed-off-by: Clément Léger <clement.leger@bootlin.com>
----
-v2:
- - Add "Fixes"
+mtk_clk_register_gates(&pdev->dev, node, vpp0_clks, ......);
 
- drivers/clk/clk-conf.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
-index 2ef819606c41..1a4e6340f95c 100644
---- a/drivers/clk/clk-conf.c
-+++ b/drivers/clk/clk-conf.c
-@@ -33,9 +33,12 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
- 			else
- 				return rc;
- 		}
--		if (clkspec.np == node && !clk_supplier)
-+		if (clkspec.np == node && !clk_supplier) {
-+			of_node_put(clkspec.np);
- 			return 0;
-+		}
- 		pclk = of_clk_get_from_provider(&clkspec);
-+		of_node_put(clkspec.np);
- 		if (IS_ERR(pclk)) {
- 			if (PTR_ERR(pclk) != -EPROBE_DEFER)
- 				pr_warn("clk: couldn't get parent clock %d for %pOF\n",
-@@ -48,10 +51,12 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
- 		if (rc < 0)
- 			goto err;
- 		if (clkspec.np == node && !clk_supplier) {
-+			of_node_put(clkspec.np);
- 			rc = 0;
- 			goto err;
- 		}
- 		clk = of_clk_get_from_provider(&clkspec);
-+		of_node_put(clkspec.np);
- 		if (IS_ERR(clk)) {
- 			if (PTR_ERR(clk) != -EPROBE_DEFER)
- 				pr_warn("clk: couldn't get assigned clock %d for %pOF\n",
-@@ -93,10 +98,13 @@ static int __set_clk_rates(struct device_node *node, bool clk_supplier)
- 				else
- 					return rc;
- 			}
--			if (clkspec.np == node && !clk_supplier)
-+			if (clkspec.np == node && !clk_supplier) {
-+				of_node_put(clkspec.np);
- 				return 0;
-+			}
- 
- 			clk = of_clk_get_from_provider(&clkspec);
-+			of_node_put(clkspec.np);
- 			if (IS_ERR(clk)) {
- 				if (PTR_ERR(clk) != -EPROBE_DEFER)
- 					pr_warn("clk: couldn't get clock %d for %pOF\n",
--- 
-2.39.0
+...with that change, for this patch:
 
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+P.S.: Next cleanup round will introduce mtk_clk_pdev_simple_probe()
+
+Cheers,
+Angelo
