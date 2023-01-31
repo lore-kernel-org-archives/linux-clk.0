@@ -2,93 +2,143 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7F2C636CC
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Jan 2023 16:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C9FC38142
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Jan 2023 16:50:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231802AbjAaQIm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Jan 2023 11:08:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48682 "EHLO
+        id S230367AbjAaQus (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Jan 2023 11:50:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229574AbjAaQIk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 11:08:40 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C3553F2AE;
-        Tue, 31 Jan 2023 08:08:39 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id k16so10710525wms.2;
-        Tue, 31 Jan 2023 08:08:39 -0800 (PST)
+        with ESMTP id S230200AbjAaQur (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 11:50:47 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECF632BEF0
+        for <linux-clk@vger.kernel.org>; Tue, 31 Jan 2023 08:50:45 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id n28-20020a05600c3b9c00b003ddca7a2bcbso1116695wms.3
+        for <linux-clk@vger.kernel.org>; Tue, 31 Jan 2023 08:50:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1vIstjQmt2YAgqtPX4b9HdNOSKY8Ewx+pBvmKBYLirE=;
-        b=Aatx73Y+I7DIm+vBlI2K2iI5Pkf5nt8ZpOW8eN37JJc8aa6RjrRAN56T7TUFZ3wdaD
-         Kk93XUUmCcLuIcKUVjYy+xoeb4X4gONQanbn44UqG8OhWmujsMYASoY5ARnnzP65JAE0
-         M71Dsodx1dvR+czkcEH5KxvFK7JtLgfZCBQsfYsibHHQDNcmXpLM8Fyes2UIj9qUOkxu
-         JgxLYX2ZvUACKLF69sGKLEipqmT1YGl38Rv3tt2Re+0/sabdSdSiTThBQ1NMnZEAASCT
-         p6krMbVYFCxDLoyMxPTI+9KQaAewuuaR2PjXGTAxnReZstxSAOGpv3zNPJRQZaFQnS/O
-         HfZw==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5XuvLcDLAk/pmrbKQwlDowxpATVa8cUm39NsNa3Uaak=;
+        b=Ndf4M2282U4vn98N8DKnwdT4/h8DhaWfBL+udLuVr5X9f4+bs/dC1PzEM55nqx25dW
+         UF4kCNf2WXjpO6p1Il/WbXhHgvzm/GWYX0dlGA+ZlaKRb0t9JDAQAggxgOGogGPbUavG
+         PxA2+6VhvnYi24tGYuiScVWp/RGA1Z3yc2Tji+mAl/8WewAC0EJ7RpxwOY4FI0huDXmE
+         aMuxhLxcu6S83g84KonPNBtLg4NWFGqxjw7GnoDrClJqrgo7qytS5qUxKOqhMfvwtMxW
+         SvJGyfaYeVnNvNdJSsBUelqcqR5LzN16314JF42TNFWCnwNxRnKv6Hq3tDYDP1Dxll5X
+         9v6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1vIstjQmt2YAgqtPX4b9HdNOSKY8Ewx+pBvmKBYLirE=;
-        b=Pqzbqa5tn7GB7dpgJ14v7EJo2UxovSSOl/8aao3jgAgzCEbWS3hD2kNeh9klA6UZSJ
-         /2RODc7bjwDdbzYld3Kg8Lg2TE4E+iWX5Tx+JqWYb0mbkIfTQPKJEyiH504aaK/hGijN
-         GYxYRUdSUqj7/7KiN7d1kdq9VxJ/GeFJKaXULHRyq/3VV4JND0qgyYrzc+lC+46YAQwK
-         kQ0u65k/cyFehz3Xw9Og2Xht82VcxS66Q8owl8LUQ2GfyCpbliXFjKIKwVNuOv8iJkO1
-         vPIWz+aQel/ud2gn16ttan5QNxTT01yEs2BDjH9sj+2aEqpN4DuO+pHsHo+Wg/rM+tJa
-         EXmw==
-X-Gm-Message-State: AFqh2kqTOTYdVoOsrPyCSEyx+ZvTQQCuF+Z5/AtU7mXO5606euAvdIyQ
-        fnsMU/lnJVvGzQDE+Z14yOc=
-X-Google-Smtp-Source: AMrXdXstLQzi/ypGtybtR9QaG9M+MlNHq65pstbxE9rPDe2ueHr0V5WWuCWPQH8j/XGdudYBD3M/+w==
-X-Received: by 2002:a05:600c:35c1:b0:3db:1424:e781 with SMTP id r1-20020a05600c35c100b003db1424e781mr48888549wmq.23.1675181317796;
-        Tue, 31 Jan 2023 08:08:37 -0800 (PST)
-Received: from localhost.localdomain (93-34-88-241.ip49.fastwebnet.it. [93.34.88.241])
-        by smtp.googlemail.com with ESMTPSA id ip7-20020a05600ca68700b003dc433bb5e1sm12622794wmb.9.2023.01.31.08.08.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Jan 2023 08:08:37 -0800 (PST)
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Christian Marangi <ansuelsmth@gmail.com>,
-        kernel test robot <oliver.sang@intel.com>
-Subject: [PATCH v2 2/2] clk: gate: Add missing fw_name for clk_gate_register_test_parent_data_legacy
-Date:   Tue, 31 Jan 2023 17:08:29 +0100
-Message-Id: <20230131160829.23369-2-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20230131160829.23369-1-ansuelsmth@gmail.com>
-References: <20230131160829.23369-1-ansuelsmth@gmail.com>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5XuvLcDLAk/pmrbKQwlDowxpATVa8cUm39NsNa3Uaak=;
+        b=1jLfHkzZEMpf0VeG33K0zYFi1uvTp0Md2Dj50G6u7Ly5Agzytk48foBliZ5fqZZ9oj
+         /kQVNUH68UNrpcmQ/Fp9rbF8R1kzRDVcSRQ9ZqhLP7kX1vI21uSZXqJXck1cb0fKzsqK
+         kHIlOQ6Nzt5NA/xRrFszEYHisek7Sv/ZFzuH2wE7rbdRqTztI02gDcAayEKtp0MZ5yyC
+         Y7aPsKwLwOzWfxImUJpogVxOJZAXLPpVkYD6auibCs7vmXdkwbT8NK1vemT2+8Zm5dTJ
+         UUaXSvoJaIkS94Vn1uP1lA/K20xnT/nBCJoA9LpACyU9BNXD6UqSWSXRm6HQCddXOu3N
+         VvQA==
+X-Gm-Message-State: AFqh2krssh23VJ/UwZO5hhsLGmkrLl9sbOTIvk1TxaU55RwIVgsO/VuX
+        YNW2H5dpIIFY5KfplrKQQngi0iv5hHjlk/k9
+X-Google-Smtp-Source: AMrXdXulAFl2rPcGHYe/Vg7Mc32h7TSOaot+MsYdOQScg65kYGdSM3YlAkJ5dURTcACfNim10dLSaw==
+X-Received: by 2002:a05:600c:1c1f:b0:3db:2d7e:1204 with SMTP id j31-20020a05600c1c1f00b003db2d7e1204mr45231041wms.27.1675183844534;
+        Tue, 31 Jan 2023 08:50:44 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id q17-20020a05600c2e5100b003dd1c45a7b0sm2828762wmf.23.2023.01.31.08.50.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 Jan 2023 08:50:44 -0800 (PST)
+Message-ID: <8b93062d-9d79-ad8f-0797-8ababc2066de@linaro.org>
+Date:   Tue, 31 Jan 2023 17:50:41 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH v3 7/8] dt-bindings: clock: Add Qcom SM6115 GPUCC
+Content-Language: en-US
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        agross@kernel.org
+Cc:     marijn.suijten@somainline.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230130153252.2310882-1-konrad.dybcio@linaro.org>
+ <20230130153252.2310882-8-konrad.dybcio@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230130153252.2310882-8-konrad.dybcio@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fix warning for missing .fw_name in parent_data based on names.
-It's wrong to define only .name since clk core expect always .fw_name to
-be defined.
+On 30/01/2023 16:32, Konrad Dybcio wrote:
+> Add device tree bindings for graphics clock controller for Qualcomm
+> Technology Inc's SM6115 SoCs.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+> v2 -> v3:
+> 
+> - Mention resets in description:
+> - Use gcc.yaml
+> 
+>  .../bindings/clock/qcom,sm6115-gpucc.yaml     | 58 +++++++++++++++++++
+>  include/dt-bindings/clock/qcom,sm6115-gpucc.h | 36 ++++++++++++
+>  2 files changed, 94 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6115-gpucc.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,sm6115-gpucc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm6115-gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm6115-gpucc.yaml
+> new file mode 100644
+> index 000000000000..354ace48301d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm6115-gpucc.yaml
+> @@ -0,0 +1,58 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,sm6115-gpucc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Graphics Clock & Reset Controller on SM6115
+> +
+> +maintainers:
+> +  - Konrad Dybcio <konrad.dybcio@linaro.org>
+> +
+> +description: |
+> +  Qualcomm graphics clock control module provides clocks, resets and power
+> +  domains on Qualcomm SoCs.
+> +
+> +  See also:: include/dt-bindings/clock/qcom,sm6115-gpucc.h
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,sm6115-gpucc
+> +
+> +  clocks:
+> +    items:
+> +      - description: Board XO source
+> +      - description: GPLL0 main branch source
+> +      - description: GPLL0 main div source
+> +
+> +required:
+> +  - compatible
+> +  - clocks
+> +
+> +allOf:
+> +  - $ref: qcom,gcc.yaml#
+> +
+> +additionalProperties: false
 
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/clk/clk-gate_test.c | 1 +
- 1 file changed, 1 insertion(+)
+unevaluatedProperties: false
 
-diff --git a/drivers/clk/clk-gate_test.c b/drivers/clk/clk-gate_test.c
-index e136aaad48bf..a0a63cd4ce0b 100644
---- a/drivers/clk/clk-gate_test.c
-+++ b/drivers/clk/clk-gate_test.c
-@@ -74,6 +74,7 @@ static void clk_gate_register_test_parent_data_legacy(struct kunit *test)
- 					    1000000);
- 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
- 	pdata.name = "test_parent";
-+	pdata.fw_name = "test_parent";
- 
- 	ret = clk_hw_register_gate_parent_data(NULL, "test_gate", &pdata, 0,
- 					       NULL, 0, 0, NULL);
--- 
-2.38.1
+
+Best regards,
+Krzysztof
 
