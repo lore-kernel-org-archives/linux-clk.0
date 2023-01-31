@@ -2,92 +2,103 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DF7AC636CD
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Jan 2023 09:12:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8E2C38142
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Jan 2023 09:18:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232151AbjAaJMG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Jan 2023 04:12:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35204 "EHLO
+        id S232598AbjAaJSS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Jan 2023 04:18:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232525AbjAaJLy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 04:11:54 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 151C07EF9
-        for <linux-clk@vger.kernel.org>; Tue, 31 Jan 2023 01:09:13 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id mf7so20872865ejc.6
-        for <linux-clk@vger.kernel.org>; Tue, 31 Jan 2023 01:09:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XGNaPzK2U8OjqkkgKKeaGWvj7mZwtAIyACD8dta243o=;
-        b=rJPinPrF35Ty3MrB0Wz4vPjo2Pj0WQN7bRyZ5VyYVD23whtHdYi8534sy4YjeNUAMN
-         q07x31vQeWM5sQV/eRetfxA/Gd3ESUJN3OlQZzIQWeqD3BFMZOdhpL4rYb7wlWVD52b+
-         N8fTTZNhisnrKRSel7heeR2UceBPd7Nc72JRi/k6iwoG3uTijiaIRLGEa+XZYM67dmd4
-         DdXz6DrdUovOoO5auzk6k346RkdvWEbvJfm81bF84H/5Ckl578Epe4GhkcR4BmShGh2f
-         CgSAgZVMT6gmxC/+ZMHabfT9xbo0B9+h2nJpFXwoWXlJBoRgVFFU3pRC0sAv/T1trVtm
-         q0PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XGNaPzK2U8OjqkkgKKeaGWvj7mZwtAIyACD8dta243o=;
-        b=0bVn6SvaSqEwFt0HJy2zmuHY6pk9pFkL+/Jy0SbOaxpkOK382qgTLIhm7EjSKl8WhI
-         Ac1vRmrtBmwm69LzqcjZgpxyfHumWkdPw6DzRY7vL2C9Hu2OFQfV+mXusG0TKo4uQ7iz
-         JDDwGWmpcApAm09Hp9OK/tWjbrY9YgAgGladAEeVAkhB3FOS9GNysA6lBLHGjQiGIOkf
-         6x32rgl+29fWz+I0enzb+KRjWJOh9dNbpaVA9dODJi1RVOxmiY5vUUAUed+XWhEkCcP4
-         9AfBq8c+wtatavdkpo+wHqy5Wc+IflqB29NtpXed9UuwEMHksJlDPulKJsLtYgNfvYOs
-         unsQ==
-X-Gm-Message-State: AO0yUKXpTvJNRwJl3cM0wsfJyyFc6/EMxcJ7V1O54SR/zjxQgoT3Dwue
-        sLaDlOC+qN0C47Ni07tcET/AxQ==
-X-Google-Smtp-Source: AK7set9xwr0Ub6/8apgAP/fWpvDkwUVW5oRkTmfZLR5/RMrgtG7rmKP51rElWG6e8IehSDrS1EtE5Q==
-X-Received: by 2002:a17:907:1c1f:b0:889:7781:f62e with SMTP id nc31-20020a1709071c1f00b008897781f62emr6971055ejc.22.1675156082027;
-        Tue, 31 Jan 2023 01:08:02 -0800 (PST)
-Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id c19-20020a50d653000000b004a0b0cd2e45sm8120510edj.75.2023.01.31.01.08.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 31 Jan 2023 01:08:01 -0800 (PST)
-Message-ID: <18f5a141-fa00-fb3a-6d6e-bea5cd4a7bc1@linaro.org>
-Date:   Tue, 31 Jan 2023 11:08:00 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v4 6/8] clk: qcom: Add GPU clock controller driver for
- SM6375
-Content-Language: en-GB
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm@vger.kernel.org, andersson@kernel.org,
-        agross@kernel.org, krzysztof.kozlowski@linaro.org
-Cc:     marijn.suijten@somainline.org,
+        with ESMTP id S232536AbjAaJSE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 04:18:04 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 838CF12860
+        for <linux-clk@vger.kernel.org>; Tue, 31 Jan 2023 01:17:07 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1pMmHv-0003tY-C2; Tue, 31 Jan 2023 09:46:47 +0100
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ore@pengutronix.de>)
+        id 1pMmHv-001eLz-CB; Tue, 31 Jan 2023 09:46:46 +0100
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ore@pengutronix.de>)
+        id 1pMmHr-002yZc-2x; Tue, 31 Jan 2023 09:46:43 +0100
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Abel Vesa <abelvesa@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20230130235926.2419776-1-konrad.dybcio@linaro.org>
- <20230130235926.2419776-7-konrad.dybcio@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20230130235926.2419776-7-konrad.dybcio@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>
+Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH v3 05/19] ARM: dts: imx6dl-lanmcu: configure ethernet reference clock parent
+Date:   Tue, 31 Jan 2023 09:46:28 +0100
+Message-Id: <20230131084642.709385-6-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20230131084642.709385-1-o.rempel@pengutronix.de>
+References: <20230131084642.709385-1-o.rempel@pengutronix.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 31/01/2023 01:59, Konrad Dybcio wrote:
-> Add support for the GPU clock controller found on SM6375.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->   drivers/clk/qcom/Kconfig        |   9 +
->   drivers/clk/qcom/Makefile       |   1 +
->   drivers/clk/qcom/gpucc-sm6375.c | 469 ++++++++++++++++++++++++++++++++
->   3 files changed, 479 insertions(+)
->   create mode 100644 drivers/clk/qcom/gpucc-sm6375.c
+On this board the PHY is the ref clock provider. So, configure ethernet
+reference clock as input.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ arch/arm/boot/dts/imx6dl-lanmcu.dts | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
+diff --git a/arch/arm/boot/dts/imx6dl-lanmcu.dts b/arch/arm/boot/dts/imx6dl-lanmcu.dts
+index 6b6e6fcdea9c..fa823988312d 100644
+--- a/arch/arm/boot/dts/imx6dl-lanmcu.dts
++++ b/arch/arm/boot/dts/imx6dl-lanmcu.dts
+@@ -21,6 +21,7 @@ clock_ksz8081: clock-ksz8081 {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <50000000>;
++		clock-output-names = "enet_ref_pad";
+ 	};
+ 
+ 	backlight: backlight {
+@@ -109,14 +110,17 @@ &can2 {
+ 	status = "okay";
+ };
+ 
++&clks {
++	clocks = <&clock_ksz8081>;
++	clock-names = "enet_ref_pad";
++	assigned-clocks = <&clks IMX6QDL_CLK_ENET_REF_SEL>;
++	assigned-clock-parents = <&clock_ksz8081>;
++};
++
+ &fec {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_enet>;
+ 	phy-mode = "rmii";
+-	clocks = <&clks IMX6QDL_CLK_ENET>,
+-		 <&clks IMX6QDL_CLK_ENET>,
+-		 <&clock_ksz8081>;
+-	clock-names = "ipg", "ahb", "ptp";
+ 	phy-handle = <&rgmii_phy>;
+ 	status = "okay";
+ 
 -- 
-With best wishes
-Dmitry
+2.30.2
 
