@@ -2,111 +2,56 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B9D9C38142
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Jan 2023 08:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBFA7C38142
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Jan 2023 08:34:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231211AbjAaIdQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Jan 2023 03:33:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46152 "EHLO
+        id S231488AbjAaIeN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Jan 2023 03:34:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231215AbjAaIdK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 03:33:10 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94D93C16F;
-        Tue, 31 Jan 2023 00:33:06 -0800 (PST)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id F017D6602EB0;
-        Tue, 31 Jan 2023 08:33:04 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1675153985;
-        bh=8znNGnB3SZ5cMbqV4jYJqOpR3KhVL1tOkUowpw7M7lI=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=QR6WyMzjxsw8hGag04dgpgrY88QAtxbgvKqMCA7HAk5/4CKFfp3XFXPD4poTOry+3
-         kBlxjC3qHq4r1EpXxJOqwqVrvjZgrZwfsxGxHCvi35GTktfsQ0wAVMvwta6LxYJMfL
-         HRMov1gkLvu5WQVPQciv3i2IVl3rf/RWWY4urQh44lcU9nlfByExrMz0WTXabdqwol
-         Ic4rI7pwy+xUhCSP2vSF8dWVY/NFCfFKwiadqRcJMmhGpamv+dpcGJZQGId6BMJiWN
-         uMF9XVf16eOTtJsqqg+/WRNQPbSM8RAsO+7Bwt0hTkiqqnoCao81C7FyczQNSfx/b2
-         NFp+/csgiCgew==
-Message-ID: <d3d913f3-d898-26c5-7c05-01b67826e662@collabora.com>
-Date:   Tue, 31 Jan 2023 09:33:01 +0100
+        with ESMTP id S231131AbjAaIdo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 03:33:44 -0500
+Received: from mail.lokoho.com (mail.lokoho.com [217.61.105.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57F7D46D58
+        for <linux-clk@vger.kernel.org>; Tue, 31 Jan 2023 00:33:31 -0800 (PST)
+Received: by mail.lokoho.com (Postfix, from userid 1001)
+        id 10A22839AF; Tue, 31 Jan 2023 08:31:47 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lokoho.com; s=mail;
+        t=1675154010; bh=Z0N5VlX9/JlryGOL5I747Le9USomZJCRNNGRT3LbbKc=;
+        h=Date:From:To:Subject:From;
+        b=DUylNzkEn7uJvujI1V47RCAzo5mI+G/xRTUqrjBGXN0y0EqeNg1nKlwNJjmjQplRK
+         JISt4nXFWuXOy0cgCHyGDid9asalN+lODg+PwPEGt9Bx6INPGXJHNVVdvFPhGw3F0v
+         7aqVN7gzkOvGIkBLe7h+DrUFMWUba5+m8TMz2Am9aEXEWHXzyMkppJbt2rb0qrnhZz
+         YXHX08U/d3SJHaqCi/ftSdIRYsT2FJYlOH4UdCLY5L1kwDFTZnC1xfSScWx19cn0zQ
+         tp/S2Pca019fnJn8yPi58y4lsCFIIcqCJEb8zxYZVPCeUR0f6OlTH7+3W4TBtyI5XE
+         IAJ4mUbzKNTZQ==
+Received: by mail.lokoho.com for <linux-clk@vger.kernel.org>; Tue, 31 Jan 2023 08:30:34 GMT
+Message-ID: <20230131074501-0.1.3q.w0mi.0.drdbck20rv@lokoho.com>
+Date:   Tue, 31 Jan 2023 08:30:34 GMT
+From:   "Adam Charachuta" <adam.charachuta@lokoho.com>
+To:     <linux-clk@vger.kernel.org>
+Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
+X-Mailer: mail.lokoho.com
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v6 3/4] clk: mediatek: remove MT8195 vppsys/0/1
- simple_probe
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Moudy Ho <moudy.ho@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20230118031509.29834-1-moudy.ho@mediatek.com>
- <20230118031509.29834-4-moudy.ho@mediatek.com>
- <fe49e8b642c4c33fee37e97d957c37a3.sboyd@kernel.org>
-Content-Language: en-US
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <fe49e8b642c4c33fee37e97d957c37a3.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 30/01/23 20:36, Stephen Boyd ha scritto:
-> Quoting Moudy Ho (2023-01-17 19:15:08)
->> diff --git a/drivers/clk/mediatek/clk-mt8195-vpp0.c b/drivers/clk/mediatek/clk-mt8195-vpp0.c
->> index bf2939c3a023..6d5800f69f6c 100644
->> --- a/drivers/clk/mediatek/clk-mt8195-vpp0.c
->> +++ b/drivers/clk/mediatek/clk-mt8195-vpp0.c
->> @@ -86,26 +86,54 @@ static const struct mtk_gate vpp0_clks[] = {
->>          GATE_VPP0_2(CLK_VPP0_WARP1_MDP_DL_ASYNC, "vpp0_warp1_mdp_dl_async", "top_wpe_vpp", 3),
->>   };
->>   
->> -static const struct mtk_clk_desc vpp0_desc = {
->> -       .clks = vpp0_clks,
->> -       .num_clks = ARRAY_SIZE(vpp0_clks),
->> -};
->> +static int clk_mt8195_vpp0_probe(struct platform_device *pdev)
->> +{
->> +       struct device *dev = &pdev->dev;
->> +       struct device_node *node = dev->parent->of_node;
->> +       struct clk_onecell_data *clk_data;
->> +       int r;
->>   
->> -static const struct of_device_id of_match_clk_mt8195_vpp0[] = {
->> -       {
->> -               .compatible = "mediatek,mt8195-vppsys0",
->> -               .data = &vpp0_desc,
->> -       }, {
->> -               /* sentinel */
->> -       }
->> -};
->> +       clk_data = mtk_alloc_clk_data(CLK_VPP0_NR_CLK);
->> +       if (!clk_data)
->> +               return -ENOMEM;
->> +
->> +       r = mtk_clk_register_gates(node, vpp0_clks, ARRAY_SIZE(vpp0_clks), clk_data);
-> 
-> This API is wrecked by a patch from AngeloGioacchino. Can you resend, or
-> tell me which device should be used here?
+Dzie=C5=84 dobry,
 
-mtk_clk_register_gates(&pdev->dev, node, vpp0_clks, ......);
+zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
+=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
+o dalszych rozm=C3=B3w.=20
+
+Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
+=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
+=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
+strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
+
+Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
 
 
-...with that change, for this patch:
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-P.S.: Next cleanup round will introduce mtk_clk_pdev_simple_probe()
-
-Cheers,
-Angelo
+Pozdrawiam
+Adam Charachuta
