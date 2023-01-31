@@ -2,59 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 260F0C636CC
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Jan 2023 09:29:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF8C6C38142
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Jan 2023 09:31:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232255AbjAaJ3c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Jan 2023 04:29:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58626 "EHLO
+        id S231272AbjAaJb7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Jan 2023 04:31:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229565AbjAaJ3b (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 04:29:31 -0500
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FB819759
-        for <linux-clk@vger.kernel.org>; Tue, 31 Jan 2023 01:29:29 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id ml19so16204624ejb.0
-        for <linux-clk@vger.kernel.org>; Tue, 31 Jan 2023 01:29:29 -0800 (PST)
+        with ESMTP id S231138AbjAaJb6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 04:31:58 -0500
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1682125BB
+        for <linux-clk@vger.kernel.org>; Tue, 31 Jan 2023 01:31:56 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id qw12so23873189ejc.2
+        for <linux-clk@vger.kernel.org>; Tue, 31 Jan 2023 01:31:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=aRk91iZt0V7nVEmmcjUezSryXc3efPUiO2hod8kq60c=;
-        b=lmm7qvL7RUNHMdC3C3o9kT9i/U3OiGufUVJsPuGjzw4/clYbkHY1OHBjjKsOjvrhzu
-         wlBlV2HZ+Uhx7rkvvG/VOdACeG3NL7+2lrFJdX4ATN7xB5xLbjavaKlDubi5eHoacnuo
-         0pS93RyDSgdM0kMMAjQMH4X2k1qnXVIlbU0VsWl5Jz17Op4ehTSnfmVzGea1gqZFwPaH
-         VNLIIgJWKp1HUyTscLnF+ybdFYoddLKGVl20E6ptvkRLYiD4YR4js/I63k+ddYCfQ1at
-         NMkQZPnSll2x5ABjQCWq7BN+6YPXkACR2EbtIHqKLB4VeSdxHUC2oQB9tDRIKQmbg+46
-         /MiA==
+        bh=A4df+YMYrca5Xl2bwz5EZIKoolwQF6iGlzj7p2qVcIs=;
+        b=FW6x0jGkYIwA8TqNbVVgHK6Pk0O6Kaaope8iCCGlh6oY+LWTKdTA8pusjVlZNT7Gzh
+         CNY9EN1wJRyIe3MRgcfrzyBE7CQW3lHlVsR+FoATiiOB78YeAEHJ9h120WXXyaivantA
+         iUlA5vz9fRD/aQCIv21oyz0nKAZvpyBYoGwnlYZDcCBWktphCnwDi81jfIUIkAWc9Z5R
+         P0cV3wujZFXuYRvmb8HIBIW4k7lx0oaN5jx7Eu6ekY9RBiCya8zAskNBQlzMAmhwKVq7
+         bd/kooO2gMj3eJrlol0eSJEvYvxXHLzRNZub9OFr7PwcMRSi5C+OX3oeLk1OqR5+bOtH
+         LH+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aRk91iZt0V7nVEmmcjUezSryXc3efPUiO2hod8kq60c=;
-        b=ccoTyTMr/4DoqH1p5iMgf7WuPUIZVpUzbWgEEvFHSTz4Kt9gqp7s3CcMEWjwXph2x1
-         h2hwH0bpsfo2L2MM8u5zYTCJz2uvgS5Y4CRInYQFHEZNNhjEzcQ6VPc9RE5QFDUz/Lk4
-         odegyTYHfObYE5IyBhKPGJjY7qwTOqORM9ewl1QGkJU2xoMisET3eAX2Hdql8V+dm6da
-         Nxx54HiJhlLFza3AX64QNdrIDKsm5TkqOpqxhg4L++Jkmx+FOFe6+KZaCEFoiRKCgxVZ
-         G6VjvYs/vdqoaN7FUq/KJhKYXqIsD4mJ7mOtq6UbkZsmfPJedyoXz6qj6MZ4zb1alHNI
-         q2mA==
-X-Gm-Message-State: AFqh2kp6FB74lBFQkn1sWd4uYvweAW8VwY+WXrBSHRfBHQ14pXZGaECv
-        FyLv112l/LcYIZdylGME6MSR6g==
-X-Google-Smtp-Source: AMrXdXuPnvGBiRaonxEYWamjUI2/fuicXzoJhRHIf4HzBHfB/bCMnAhTRc1GF7DwC8GeLBAM8NjctQ==
-X-Received: by 2002:a17:907:ca07:b0:7c0:a1f9:c778 with SMTP id uk7-20020a170907ca0700b007c0a1f9c778mr47614392ejc.13.1675157368093;
-        Tue, 31 Jan 2023 01:29:28 -0800 (PST)
+        bh=A4df+YMYrca5Xl2bwz5EZIKoolwQF6iGlzj7p2qVcIs=;
+        b=mB+7ocQs+anet4O/VVYBgJWPVztdT/szFq+9QBhfMRZtkbbmfR+lzpXabdDYmClIsM
+         tTuKW9KkXEBAT6s+IN6oNHZcNTpM1YWHFok52pf/NygCb8iam0MxHq1SXiZimum4MSlf
+         Qj9kmxSOeFfgs6W65dwp+DxkZeC6xfZRlxYH2fpaWIPtf+9rY1+tCI1Hc1/RVis6lSRr
+         TjVgioGrEo8h1cgmWq6cSORtkIhLAnic+F98UlyaAALBURHXlP9/u3Ox42HTsaLQSj6+
+         ZH+1QXFsfTlVmpw9EOvxrC6vBW4wg7H6uhtS7srcIPQqenNHdjyX6q5ODN+SsU9hZqUh
+         WUXg==
+X-Gm-Message-State: AFqh2kor3949N7KDlerINnV5GH9DtRsmYU5CAzmwgvlcOpqSFizCSGEz
+        fMKpZsl1zoucVwc3DMfeocD8uA==
+X-Google-Smtp-Source: AMrXdXvTI20pQa3xMP9ePTvSO6XvhZBS1sBCWdguw5OSM5xobqPC9/TI+CS7Z+mYGsluohhXwBtJuA==
+X-Received: by 2002:a17:907:971d:b0:870:d15a:c2dc with SMTP id jg29-20020a170907971d00b00870d15ac2dcmr73161479ejc.74.1675157515261;
+        Tue, 31 Jan 2023 01:31:55 -0800 (PST)
 Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id c23-20020a170906155700b00869f2ca6a87sm8089800ejd.135.2023.01.31.01.29.26
+        by smtp.gmail.com with ESMTPSA id j6-20020a170906474600b0088ba2de323csm1088152ejs.181.2023.01.31.01.31.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 31 Jan 2023 01:29:27 -0800 (PST)
-Message-ID: <c51ab88e-d568-8322-093e-b82f11f63a0b@linaro.org>
-Date:   Tue, 31 Jan 2023 11:29:26 +0200
+        Tue, 31 Jan 2023 01:31:54 -0800 (PST)
+Message-ID: <b8b90989-4bc9-f3a9-516e-2101bfc2293d@linaro.org>
+Date:   Tue, 31 Jan 2023 11:31:53 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.0
-Subject: Re: [PATCH 2/6] clk: qcom: ipq9574: Enable APSS clock driver
+Subject: Re: [PATCH 3/6] arm64: defconfig: Enable ipq6018 apss clock and PLL
+ controller
 Content-Language: en-GB
 To:     devi priya <quic_devipriy@quicinc.com>, agross@kernel.org,
         andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
@@ -71,9 +72,9 @@ Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
         quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
         quic_poovendh@quicinc.com
 References: <20230113143647.14961-1-quic_devipriy@quicinc.com>
- <20230113143647.14961-3-quic_devipriy@quicinc.com>
+ <20230113143647.14961-4-quic_devipriy@quicinc.com>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20230113143647.14961-3-quic_devipriy@quicinc.com>
+In-Reply-To: <20230113143647.14961-4-quic_devipriy@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -81,79 +82,36 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 13/01/2023 16:36, devi priya wrote:
-> Enable APSS clock driver for IPQ9574 based devices
+> Enable the PLL controller and IPQ6018 APSS clock controller
+
+... it is used on several IPQ platforms to clock the CPU so it should be 
+enabled and built-in.
+
 > 
 > Co-developed-by: Praveenkumar I <quic_ipkumar@quicinc.com>
 > Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
 > Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+
+Just to check: is the capitalization correct in your name here and 
+everywhere else? (please excuse my ignorance here, I do not know all the 
+spelling/capitalization rules).
+
 > ---
->   drivers/clk/qcom/apss-ipq-pll.c         | 13 +++++++++++++
->   drivers/mailbox/qcom-apcs-ipc-mailbox.c |  5 +++++
-
-Note, the drivers/mailbox isn't a part of the 'drivers/clk', so it 
-should go to a separate patch (and it will be handled by a different 
-maintainer).
-
->   2 files changed, 18 insertions(+)
+>   arch/arm64/configs/defconfig | 1 +
+>   1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/clk/qcom/apss-ipq-pll.c b/drivers/clk/qcom/apss-ipq-pll.c
-> index a5aea27eb867..dd0c01bf5a98 100644
-> --- a/drivers/clk/qcom/apss-ipq-pll.c
-> +++ b/drivers/clk/qcom/apss-ipq-pll.c
-> @@ -61,6 +61,18 @@ static const struct alpha_pll_config ipq8074_pll_config = {
->   	.test_ctl_hi_val = 0x4000,
->   };
->   
-> +static const struct alpha_pll_config ipq9574_pll_config = {
-> +	.l = 0x3b,
-> +	.config_ctl_val = 0x200D4828,
-> +	.config_ctl_hi_val = 0x6,
-> +	.early_output_mask = BIT(3),
-> +	.aux2_output_mask = BIT(2),
-> +	.aux_output_mask = BIT(1),
-> +	.main_output_mask = BIT(0),
-> +	.test_ctl_val = 0x0,
-> +	.test_ctl_hi_val = 0x4000,
-> +};
-> +
->   static const struct regmap_config ipq_pll_regmap_config = {
->   	.reg_bits		= 32,
->   	.reg_stride		= 4,
-> @@ -102,6 +114,7 @@ static int apss_ipq_pll_probe(struct platform_device *pdev)
->   static const struct of_device_id apss_ipq_pll_match_table[] = {
->   	{ .compatible = "qcom,ipq6018-a53pll", .data = &ipq6018_pll_config },
->   	{ .compatible = "qcom,ipq8074-a53pll", .data = &ipq8074_pll_config },
-> +	{ .compatible = "qcom,ipq9574-a73pll", .data = &ipq9574_pll_config },
->   	{ }
->   };
->   MODULE_DEVICE_TABLE(of, apss_ipq_pll_match_table);
-> diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> index 0e9f9cba8668..90e74f9d7cb3 100644
-> --- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> +++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> @@ -33,6 +33,10 @@ static const struct qcom_apcs_ipc_data ipq6018_apcs_data = {
->   	.offset = 8, .clk_name = "qcom,apss-ipq6018-clk"
->   };
->   
-> +static const struct qcom_apcs_ipc_data ipq9574_apcs_data = {
-> +	.offset = 8, .clk_name = "qcom,apss-ipq6018-clk"
-> +};
-
-As the data is identical to ipq6018's one, please don't add a duplicate 
-of it.
-
-> +
->   static const struct qcom_apcs_ipc_data msm8916_apcs_data = {
->   	.offset = 8, .clk_name = "qcom-apcs-msm8916-clk"
->   };
-> @@ -143,6 +147,7 @@ static int qcom_apcs_ipc_remove(struct platform_device *pdev)
->   static const struct of_device_id qcom_apcs_ipc_of_match[] = {
->   	{ .compatible = "qcom,ipq6018-apcs-apps-global", .data = &ipq6018_apcs_data },
->   	{ .compatible = "qcom,ipq8074-apcs-apps-global", .data = &ipq6018_apcs_data },
-> +	{ .compatible = "qcom,ipq9574-apcs-apps-global", .data = &ipq9574_apcs_data },
->   	{ .compatible = "qcom,msm8916-apcs-kpss-global", .data = &msm8916_apcs_data },
->   	{ .compatible = "qcom,msm8939-apcs-kpss-global", .data = &msm8916_apcs_data },
->   	{ .compatible = "qcom,msm8953-apcs-kpss-global", .data = &msm8994_apcs_data },
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index e0ae0996d5ad..8de3979b10a3 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -1092,6 +1092,7 @@ CONFIG_QCOM_CLK_APCS_MSM8916=y
+>   CONFIG_QCOM_CLK_APCC_MSM8996=y
+>   CONFIG_QCOM_CLK_SMD_RPM=y
+>   CONFIG_QCOM_CLK_RPMH=y
+> +CONFIG_IPQ_APSS_6018=y
+>   CONFIG_IPQ_GCC_6018=y
+>   CONFIG_IPQ_GCC_8074=y
+>   CONFIG_IPQ_GCC_9574=y
 
 -- 
 With best wishes
