@@ -2,91 +2,110 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F118C64EC7
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Jan 2023 06:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B914C636CC
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Jan 2023 08:30:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231221AbjAaG4k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Jan 2023 01:56:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51746 "EHLO
+        id S230011AbjAaIav (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Jan 2023 03:30:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230428AbjAaG4i (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 01:56:38 -0500
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A367B2748F;
-        Mon, 30 Jan 2023 22:56:36 -0800 (PST)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id 78A7424E1EB;
-        Tue, 31 Jan 2023 14:56:28 +0800 (CST)
-Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 31 Jan
- 2023 14:56:28 +0800
-Received: from [192.168.125.128] (183.27.97.127) by EXMBX061.cuchost.com
- (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 31 Jan
- 2023 14:56:27 +0800
-Message-ID: <93f9e7b9-90a7-0c9f-91c2-301a1431b12d@starfivetech.com>
-Date:   Tue, 31 Jan 2023 14:52:19 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v1 06/11] clk: starfive: Add StarFive JH7110
- Image-Signal-Process clock driver
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        with ESMTP id S229468AbjAaIau (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 03:30:50 -0500
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EDB91B568;
+        Tue, 31 Jan 2023 00:30:48 -0800 (PST)
+Received: (Authenticated sender: clement.leger@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 27D1C40005;
+        Tue, 31 Jan 2023 08:30:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1675153846;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=ajrwn/groQlhkLs4SJ7ZwaJ9XDOkgLm/eBN16amo+YQ=;
+        b=OwNt/8tkiHh5fwf3XqyErTgI8UCrtLcy2eE5f/XPpRKVMUS+47eIMD/2JQ6fdKI1baKrJy
+        cnH8QZLebKEOOdr2W7uBHyBSEiI4LZbgwAwrBt9DxBDY+i3wYjByHjFASJZMZ8BUt94ctg
+        An3KyNY2Dx1afu3JQEjEqS+628uMKbuNbSr1Ws8nfI6Zhl8IvlmTSheJyhvqxJ6libzfsr
+        DUVgHe/9bj5egNp+qqzEvg+kHBn59RjFKHClCCBrnbLBB+QZQI4z4R6zhYfsOSJoJKx4lf
+        MnU6WV63lY7xOn+9rxYMmtMlxH3XADo38HxEKtFiuklFekk8bHBnVdHXR1x1Ww==
+From:   =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>
-CC:     Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
-        "Paul Walmsley" <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <20230120024445.244345-1-xingyu.wu@starfivetech.com>
- <20230120024445.244345-7-xingyu.wu@starfivetech.com>
- <26437c6f0bda4dd18e16fa1f58013911.sboyd@kernel.org>
-From:   Xingyu Wu <xingyu.wu@starfivetech.com>
-In-Reply-To: <26437c6f0bda4dd18e16fa1f58013911.sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [183.27.97.127]
-X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX061.cuchost.com
- (172.16.6.61)
-X-YovoleRuleAgent: yovoleflag
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] clk: add missing of_node_put() in "assigned-clocks" property parsing
+Date:   Tue, 31 Jan 2023 09:32:27 +0100
+Message-Id: <20230131083227.10990-1-clement.leger@bootlin.com>
+X-Mailer: git-send-email 2.39.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023/1/31 8:38, Stephen Boyd wrote:
-> Quoting Xingyu Wu (2023-01-19 18:44:40)
->> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-isp.c b/drivers/clk/starfive/clk-starfive-jh7110-isp.c
->> new file mode 100644
->> index 000000000000..f9fc94b4c6f8
->> --- /dev/null
->> +++ b/drivers/clk/starfive/clk-starfive-jh7110-isp.c
->> @@ -0,0 +1,218 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * StarFive JH7110 Image-Signal-Process Clock Driver
-> [...]
->> +
->> +static int jh7110_isp_top_crg_enable(struct isp_top_crg *top)
->> +{
->> +       int ret;
->> +
->> +       ret = clk_bulk_prepare_enable(top->top_clks_num, top->top_clks);
->> +       if (ret)
->> +               return ret;
->> +
->> +       return reset_control_deassert(top->top_rsts);
->> +}
-> 
-> This needs to be undone on driver remove.
+When returning from of_parse_phandle_with_args(), the np member of the
+of_phandle_args structure should be put after usage. Add missing
+of_node_put() calls in both __set_clk_parents() and __set_clk_rates().
 
-Will add in next patch.
+Fixes: 86be408bfbd8 ("clk: Support for clock parents and rates assigned from device tree")
+Signed-off-by: Clément Léger <clement.leger@bootlin.com>
+---
+v2:
+ - Add "Fixes"
 
-Best regards,
-Xingyu Wu
+ drivers/clk/clk-conf.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
+index 2ef819606c41..1a4e6340f95c 100644
+--- a/drivers/clk/clk-conf.c
++++ b/drivers/clk/clk-conf.c
+@@ -33,9 +33,12 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
+ 			else
+ 				return rc;
+ 		}
+-		if (clkspec.np == node && !clk_supplier)
++		if (clkspec.np == node && !clk_supplier) {
++			of_node_put(clkspec.np);
+ 			return 0;
++		}
+ 		pclk = of_clk_get_from_provider(&clkspec);
++		of_node_put(clkspec.np);
+ 		if (IS_ERR(pclk)) {
+ 			if (PTR_ERR(pclk) != -EPROBE_DEFER)
+ 				pr_warn("clk: couldn't get parent clock %d for %pOF\n",
+@@ -48,10 +51,12 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
+ 		if (rc < 0)
+ 			goto err;
+ 		if (clkspec.np == node && !clk_supplier) {
++			of_node_put(clkspec.np);
+ 			rc = 0;
+ 			goto err;
+ 		}
+ 		clk = of_clk_get_from_provider(&clkspec);
++		of_node_put(clkspec.np);
+ 		if (IS_ERR(clk)) {
+ 			if (PTR_ERR(clk) != -EPROBE_DEFER)
+ 				pr_warn("clk: couldn't get assigned clock %d for %pOF\n",
+@@ -93,10 +98,13 @@ static int __set_clk_rates(struct device_node *node, bool clk_supplier)
+ 				else
+ 					return rc;
+ 			}
+-			if (clkspec.np == node && !clk_supplier)
++			if (clkspec.np == node && !clk_supplier) {
++				of_node_put(clkspec.np);
+ 				return 0;
++			}
+ 
+ 			clk = of_clk_get_from_provider(&clkspec);
++			of_node_put(clkspec.np);
+ 			if (IS_ERR(clk)) {
+ 				if (PTR_ERR(clk) != -EPROBE_DEFER)
+ 					pr_warn("clk: couldn't get clock %d for %pOF\n",
+-- 
+2.39.0
+
