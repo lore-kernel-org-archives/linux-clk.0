@@ -2,243 +2,178 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A166C636CD
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Jan 2023 09:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10DD0C636CC
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Jan 2023 10:25:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230202AbjAaJuZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Jan 2023 04:50:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51090 "EHLO
+        id S229919AbjAaKZu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Jan 2023 05:25:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233095AbjAaJuS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 04:50:18 -0500
-Received: from mail-vs1-xe2f.google.com (mail-vs1-xe2f.google.com [IPv6:2607:f8b0:4864:20::e2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04AA41B6
-        for <linux-clk@vger.kernel.org>; Tue, 31 Jan 2023 01:50:17 -0800 (PST)
-Received: by mail-vs1-xe2f.google.com with SMTP id j7so15424877vsl.11
-        for <linux-clk@vger.kernel.org>; Tue, 31 Jan 2023 01:50:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ay4JjzFOi8u8tMMqeo9ypRaHpCzMeD1s8ySg55sDfvA=;
-        b=X7qkWyQt8Nmpyd8tODNC6MVvJAs6pPWPg4+UGaJtcp92pV5yFejhXVMlk9N6Ne0O/x
-         sJDx+ymPit1ElxTDAPp2M2NaD+94yYbcjDeTJeHkBQndJoaPQzDoh/O0k5kga8a0/02c
-         rvzmD7VHZTbrwQPOdYeJNYWMApcfFEkMQ96vo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ay4JjzFOi8u8tMMqeo9ypRaHpCzMeD1s8ySg55sDfvA=;
-        b=1hfUcivvbD4Pg5JPtdHVypmLXIm8ZgqFMCDEusF4PrjdJtPZBCvdmSJ5ZePqb7ovL+
-         +BCV/oUjzGfS4SmlUSKw6NJ4ihV33ljiMUz3VAODMp8JMsDyBBU5T7f1bZeUvIbpxShX
-         qMYI7E+JA4T0blcEkgL7NjJGjey56iLf3Pcq3b7YRwkmQcLp7l7gM4vr1Urrx1m7BG+x
-         0MnHuQGvOmPKyZNuv9QvAtlq1sMZ7xjDZl3+NPSXODzchOVYVxKk5+06QQP1HGw/+KoB
-         jT86mQRRVRXs9WuUJp9T/Vk/aYzZNgTGCstJJ38RBZtWoAt4eRqIgo06C1Lnzw0Rm8Xn
-         gysQ==
-X-Gm-Message-State: AO0yUKVlGY+d0R7G2TUONpG/m5mYqQ6ECkH5mi82vFihDxhl0Yadi0sz
-        BHrBxaVp4Q5svv3jIhGR4NX8zrKufapOt8CkAFkTCA==
-X-Google-Smtp-Source: AK7set+/qcQFjgwbi+Ocj+LtBVuICC7AYNVeLlyhaPp038xPLhOSZqARwYUNLiyEVrFfSwlzmO4Suik/9e/bTguM2EY=
-X-Received: by 2002:a67:d294:0:b0:3ed:89c7:4bd2 with SMTP id
- z20-20020a67d294000000b003ed89c74bd2mr2766641vsi.26.1675158616078; Tue, 31
- Jan 2023 01:50:16 -0800 (PST)
+        with ESMTP id S229577AbjAaKZt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 05:25:49 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBC121C5A3;
+        Tue, 31 Jan 2023 02:25:48 -0800 (PST)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30V6BAen009974;
+        Tue, 31 Jan 2023 09:29:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=61YJvs37rVND9bnQtqkwhkRu7Ta9WxqCU5NShGp5dGg=;
+ b=Lh2ts7GMEkGjaqqfoeKaiRryi0W6zZJOHQDZgupTJpcAkNjnegMSxIZTCCT/kYpEvXby
+ dw95dTtiuvxEr8BJWFe981tZ4kY2eT5oSVbN9oUJUDONa0gp91Ld2SwW2eCG8HAgGPf/
+ f6Q1oA+aP3GW5Ru/Cbm8qj6SLmBUJpn04xSggTlhJqZQYt6ThM39Ictc9Udj6tPCgpQ2
+ K7qyl+tsQ+woqcalxc3fDenEbF4ZhPupo6xY5Y6ozvlbIzDi1IN2kzgEoekmdYa548xW
+ RHoDxBQYoQUjTFsEG8V+vnUguiXMkbzoOYhBp411yBpSRA7p+VuC6jproq6yC1rLKZwP wg== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3neua98u0s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 31 Jan 2023 09:29:25 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30V9TObw002725
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 31 Jan 2023 09:29:24 GMT
+Received: from [10.216.43.35] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 31 Jan
+ 2023 01:29:20 -0800
+Message-ID: <c8d779fe-2508-4aa1-8de9-26d858bc068b@quicinc.com>
+Date:   Tue, 31 Jan 2023 14:59:16 +0530
 MIME-Version: 1.0
-References: <20230118031509.29834-1-moudy.ho@mediatek.com> <20230118031509.29834-4-moudy.ho@mediatek.com>
-In-Reply-To: <20230118031509.29834-4-moudy.ho@mediatek.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Tue, 31 Jan 2023 17:50:05 +0800
-Message-ID: <CAGXv+5Gid0xT=Ru0G3d-z+ED_wKWpGYSbhwiFXRv5jqJL0vC_A@mail.gmail.com>
-Subject: Re: [PATCH v6 3/4] clk: mediatek: remove MT8195 vppsys/0/1 simple_probe
-To:     Moudy Ho <moudy.ho@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v6 5/6] clk: qcom: lpassaudiocc-sc7280: Merge lpasscc into
+ lpass_aon
+Content-Language: en-US
+To:     Stephen Boyd <swboyd@chromium.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <broonie@kernel.org>,
+        <konrad.dybcio@somainline.org>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
+        <quic_plai@quicinc.com>, <quic_rohkumar@quicinc.com>,
+        <robh+dt@kernel.org>
+References: <1674728065-24955-1-git-send-email-quic_srivasam@quicinc.com>
+ <1674728065-24955-6-git-send-email-quic_srivasam@quicinc.com>
+ <CAE-0n50y4JEQqW2wgS_qoDkdrqP=bzpC6b_LpA6Q9P+jDc00ZQ@mail.gmail.com>
+From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Organization: Qualcomm
+In-Reply-To: <CAE-0n50y4JEQqW2wgS_qoDkdrqP=bzpC6b_LpA6Q9P+jDc00ZQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: nI_bk7k3IjfC3b6TsEh--h2AaG1ywLfq
+X-Proofpoint-ORIG-GUID: nI_bk7k3IjfC3b6TsEh--h2AaG1ywLfq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-01-31_04,2023-01-30_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ mlxscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0 malwarescore=0
+ phishscore=0 priorityscore=1501 clxscore=1015 spamscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
+ definitions=main-2301310083
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jan 18, 2023 at 11:16 AM Moudy Ho <moudy.ho@mediatek.com> wrote:
->
-> MT8195 VPPSYS0/1 will be probed by the compatible name in
-> the mtk-mmsys driver and then probe its own clock driver as
-> a platform driver.
->
-> Signed-off-by: Moudy Ho <moudy.ho@mediatek.com>
-> ---
->  drivers/clk/mediatek/clk-mt8195-vpp0.c | 58 +++++++++++++++++++-------
->  drivers/clk/mediatek/clk-mt8195-vpp1.c | 58 +++++++++++++++++++-------
->  2 files changed, 86 insertions(+), 30 deletions(-)
->
-> diff --git a/drivers/clk/mediatek/clk-mt8195-vpp0.c b/drivers/clk/mediatek/clk-mt8195-vpp0.c
-> index bf2939c3a023..6d5800f69f6c 100644
-> --- a/drivers/clk/mediatek/clk-mt8195-vpp0.c
-> +++ b/drivers/clk/mediatek/clk-mt8195-vpp0.c
-> @@ -86,26 +86,54 @@ static const struct mtk_gate vpp0_clks[] = {
->         GATE_VPP0_2(CLK_VPP0_WARP1_MDP_DL_ASYNC, "vpp0_warp1_mdp_dl_async", "top_wpe_vpp", 3),
->  };
->
-> -static const struct mtk_clk_desc vpp0_desc = {
-> -       .clks = vpp0_clks,
-> -       .num_clks = ARRAY_SIZE(vpp0_clks),
-> -};
-> +static int clk_mt8195_vpp0_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev = &pdev->dev;
-> +       struct device_node *node = dev->parent->of_node;
-> +       struct clk_onecell_data *clk_data;
 
-mtk_alloc_clk_data() API changed a couple releases back. So:
-
-          struct clk_hw_onecell_data
-
-> +       int r;
+On 1/31/2023 6:34 AM, Stephen Boyd wrote:
+Thanks for your Time Stephen!!!
+> Quoting Srinivasa Rao Mandadapu (2023-01-26 02:14:24)
+>> Merge lpasscc clocks into lpass_aon clk_regmap structure as they
+>> are using same register space.
+>> Add conditional check for doing lpasscc clock registration only
+>> if regname specified in device tree node.
+>> In existing implementation, lpasscc clocks and lpass_aon clocks are
+>> being registered exclusively and overlapping if both of them are
+>> to be used.
+>> This is required to avoid such overlapping and to register
+>> lpasscc clocks and lpass_aon clocks simultaneously.
+> Can you describe the register ranges that are overlapping?
+Okay. Will add register ranges in description.
 >
-> -static const struct of_device_id of_match_clk_mt8195_vpp0[] = {
-> -       {
-> -               .compatible = "mediatek,mt8195-vppsys0",
-> -               .data = &vpp0_desc,
-> -       }, {
-> -               /* sentinel */
-> -       }
-> -};
-> +       clk_data = mtk_alloc_clk_data(CLK_VPP0_NR_CLK);
-> +       if (!clk_data)
-> +               return -ENOMEM;
-> +
-> +       r = mtk_clk_register_gates(node, vpp0_clks, ARRAY_SIZE(vpp0_clks), clk_data);
-
-API changed.
-
-> +       if (r)
-> +               goto free_vpp0_data;
-> +
-> +       r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-
-              of_clk_add_provider(node, of_clk_hw_onecell_get, clk_data);
-
-Same for the other driver.
-
-
-ChenYu
-
-> +       if (r)
-> +               goto unregister_gates;
-> +
-> +       platform_set_drvdata(pdev, clk_data);
-> +
-> +       return r;
-> +
-> +unregister_gates:
-> +       mtk_clk_unregister_gates(vpp0_clks, ARRAY_SIZE(vpp0_clks), clk_data);
-> +free_vpp0_data:
-> +       mtk_free_clk_data(clk_data);
-> +       return r;
-> +}
-> +
-> +static int clk_mt8195_vpp0_remove(struct platform_device *pdev)
-> +{
-> +       struct device *dev = &pdev->dev;
-> +       struct device_node *node = dev->parent->of_node;
-> +       struct clk_hw_onecell_data *clk_data = platform_get_drvdata(pdev);
-> +
-> +       of_clk_del_provider(node);
-> +       mtk_clk_unregister_gates(vpp0_clks, ARRAY_SIZE(vpp0_clks), clk_data);
-> +       mtk_free_clk_data(clk_data);
-> +
-> +       return 0;
-> +}
+> Here's what I see in DT right now:
 >
->  static struct platform_driver clk_mt8195_vpp0_drv = {
-> -       .probe = mtk_clk_simple_probe,
-> -       .remove = mtk_clk_simple_remove,
-> +       .probe = clk_mt8195_vpp0_probe,
-> +       .remove = clk_mt8195_vpp0_remove,
->         .driver = {
->                 .name = "clk-mt8195-vpp0",
-> -               .of_match_table = of_match_clk_mt8195_vpp0,
->         },
->  };
->  builtin_platform_driver(clk_mt8195_vpp0_drv);
-> diff --git a/drivers/clk/mediatek/clk-mt8195-vpp1.c b/drivers/clk/mediatek/clk-mt8195-vpp1.c
-> index ffd52c762890..3b88c69e96c9 100644
-> --- a/drivers/clk/mediatek/clk-mt8195-vpp1.c
-> +++ b/drivers/clk/mediatek/clk-mt8195-vpp1.c
-> @@ -84,26 +84,54 @@ static const struct mtk_gate vpp1_clks[] = {
->         GATE_VPP1_1(CLK_VPP1_VPP_SPLIT_26M, "vpp1_vpp_split_26m", "clk26m", 26),
->  };
+>                  lpasscc: lpasscc@3000000 {
+>                          compatible = "qcom,sc7280-lpasscc";
+>                          reg = <0 0x03000000 0 0x40>,
+>                                <0 0x03c04000 0 0x4>;
+>                          ...
+>                  };
 >
-> -static const struct mtk_clk_desc vpp1_desc = {
-> -       .clks = vpp1_clks,
-> -       .num_clks = ARRAY_SIZE(vpp1_clks),
-> -};
-> +static int clk_mt8195_vpp1_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev = &pdev->dev;
-> +       struct device_node *node = dev->parent->of_node;
-> +       struct clk_onecell_data *clk_data;
-> +       int r;
+>                  lpass_audiocc: clock-controller@3300000 {
+>                          compatible = "qcom,sc7280-lpassaudiocc";
+>                          reg = <0 0x03300000 0 0x30000>,
+>                                <0 0x032a9000 0 0x1000>;
+>                          ...
+>                  };
 >
-> -static const struct of_device_id of_match_clk_mt8195_vpp1[] = {
-> -       {
-> -               .compatible = "mediatek,mt8195-vppsys1",
-> -               .data = &vpp1_desc,
-> -       }, {
-> -               /* sentinel */
-> -       }
-> -};
-> +       clk_data = mtk_alloc_clk_data(CLK_VPP1_NR_CLK);
-> +       if (!clk_data)
-> +               return -ENOMEM;
-> +
-> +       r = mtk_clk_register_gates(node, vpp1_clks, ARRAY_SIZE(vpp1_clks), clk_data);
-> +       if (r)
-> +               goto free_vpp1_data;
-> +
-> +       r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-> +       if (r)
-> +               goto unregister_gates;
-> +
-> +       platform_set_drvdata(pdev, clk_data);
-> +
-> +       return r;
-> +
-> +unregister_gates:
-> +       mtk_clk_unregister_gates(vpp1_clks, ARRAY_SIZE(vpp1_clks), clk_data);
-> +free_vpp1_data:
-> +       mtk_free_clk_data(clk_data);
-> +       return r;
-> +}
-> +
-> +static int clk_mt8195_vpp1_remove(struct platform_device *pdev)
-> +{
-> +       struct device *dev = &pdev->dev;
-> +       struct device_node *node = dev->parent->of_node;
-> +       struct clk_hw_onecell_data *clk_data = platform_get_drvdata(pdev);
-> +
-> +       of_clk_del_provider(node);
-> +       mtk_clk_unregister_gates(vpp1_clks, ARRAY_SIZE(vpp1_clks), clk_data);
-> +       mtk_free_clk_data(clk_data);
-> +
-> +       return 0;
-> +}
+>                  lpass_aon: clock-controller@3380000 {
+>                          compatible = "qcom,sc7280-lpassaoncc";
+>                          reg = <0 0x03380000 0 0x30000>;
+>                          ...
+>                  };
 >
->  static struct platform_driver clk_mt8195_vpp1_drv = {
-> -       .probe = mtk_clk_simple_probe,
-> -       .remove = mtk_clk_simple_remove,
-> +       .probe = clk_mt8195_vpp1_probe,
-> +       .remove = clk_mt8195_vpp1_remove,
->         .driver = {
->                 .name = "clk-mt8195-vpp1",
-> -               .of_match_table = of_match_clk_mt8195_vpp1,
->         },
->  };
->  builtin_platform_driver(clk_mt8195_vpp1_drv);
-> --
-> 2.18.0
+>                  lpass_core: clock-controller@3900000 {
+>                          compatible = "qcom,sc7280-lpasscorecc";
+>                          reg = <0 0x03900000 0 0x50000>;
+>                          ...
+>                  };
 >
+> Presumably lpascc is really supposed to be a node named
+> 'clock-controller' and is the node that is overlapping with lpass_aon?
+
+Okay. As it's been coming previous patches, didn't change the name.
+
+May be we need to do it as separate patch.
+
+Yes. It's overlapping with lpass_aon ( <0 0x03380000 0 0x30000>).
+
+CC clocks range is <0 0x03389000 0 0x24>;
+
+>
+>> Fixes: 4ab43d171181 ("clk: qcom: Add lpass clock controller driver for SC7280")
+>> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+>> Tested-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/lpassaudiocc-sc7280.c | 13 +++++++++----
+>>   1 file changed, 9 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>> index 1339f92..8e2f433 100644
+>> --- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>> +++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>> @@ -826,10 +829,12 @@ static int lpass_aon_cc_sc7280_probe(struct platform_device *pdev)
+>>                  return ret;
+>>
+>>          if (of_property_read_bool(pdev->dev.of_node, "qcom,adsp-pil-mode")) {
+>> -               lpass_audio_cc_sc7280_regmap_config.name = "cc";
+>> -               desc = &lpass_cc_sc7280_desc;
+>> -               ret = qcom_cc_probe(pdev, desc);
+>> -               goto exit;
+>> +               res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cc");
+> We shouldn't need to check for reg-name property. Instead, the index
+> should be the only thing that matters.
+
+As qcom_cc_probe() function is mapping the zero index reg property, and
+
+in next implementation qcom_cc_really_probe() is also probing zero index 
+reg property,
+
+unable to map the same region twice.
+
+Hence all I want here is to skip this cc clock probing by keeping some 
+check.
+
+If we remove, it may cause ABI break.
+
+
+>
+>> +               if (res) {
+>> +                       lpass_audio_cc_sc7280_regmap_config.name = "cc";
+>> +                       desc = &lpass_cc_sc7280_desc;
