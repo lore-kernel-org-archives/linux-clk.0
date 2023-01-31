@@ -2,59 +2,64 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A891BC38142
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Jan 2023 04:52:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC2FBC38142
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Jan 2023 06:35:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229503AbjAaEwg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Jan 2023 23:52:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52558 "EHLO
+        id S229969AbjAaGf0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Jan 2023 01:35:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbjAaEwf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jan 2023 23:52:35 -0500
+        with ESMTP id S229468AbjAaGfZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 01:35:25 -0500
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 646B0CA0D;
-        Mon, 30 Jan 2023 20:52:33 -0800 (PST)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30V2tUb6014894;
-        Tue, 31 Jan 2023 04:52:30 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E75E822DF1;
+        Mon, 30 Jan 2023 22:35:22 -0800 (PST)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30V5DkRW032745;
+        Tue, 31 Jan 2023 06:35:14 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
+ mime-version : subject : to : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=awNgFRVp8lSxLrOJJUbczcUtxqgim8oex5qs0NUrYlc=;
- b=HbaPJjJlJK9cIq12Ak959Yryw+knB/BCnZAkaiJMfr4Pv0YI2ub+mPFSsJAveoEtMdJD
- GckupzK0SdNW+yVL3ngBYkWIvj6AVZPRQ5jgUF4vBB9GWOqoV44TXIyKNNl8xthHqi9b
- Lt0DidIu/dppvdHucwd7nYf1j51W1KAhJE6DOq14xSYXrnq75KnLAOY/e5qj5oZRZDLn
- Ml95IBxpApF0w+iuNtL3+4Ho+f/ryjeFCNaQ9D9lZdjFfETTv+Za14WX1hDinlgBhWAh
- brr92IJq0KlXaJaBqotQjReUGnYmcXG4tOCvASWXiIsmmxX4Hb44rl/49FqsLVnMqqM5 Zg== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ncsdpwjmq-1
+ bh=BakAXG4/dRnKq7zPddX4T/aMMMaXpMe5nvkicfBCMNw=;
+ b=c96fKEsa2ont1z6fpU7X28Bx3PdGCNbF3IwfHNC4BA0sk+J8M9tz5eCjX3KYGfmWaTXK
+ CoBKml0j5FwqWHhehVgsUwdPFDoIBHHXMuXDq+wNg1isI9MUdgz3Up+q7KSNUqhefENg
+ zTKjz79aTIb3jFhqXjM/ZD2PRczeBUPv66pIHZANxRCQMjltsh5f3BGyu3Q50bQhXYZg
+ S190VU99xXxE8yew3xls2sB9EbS0lYmR2F2hGJ+ABd1+cuvAEGyc+vs24/PshofvwwtK
+ zRFKNVNfdiYkosRbxRGmWD1dQTO4EjUQeU/yptHIOA4PBjhF6w0iwdUAQav/MTDYiNKy OQ== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nctnynmra-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 31 Jan 2023 04:52:29 +0000
+        Tue, 31 Jan 2023 06:35:14 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30V4qS99012120
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30V6ZDK5006110
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 31 Jan 2023 04:52:28 GMT
-Received: from [10.50.4.92] (10.80.80.8) by nalasex01a.na.qualcomm.com
+        Tue, 31 Jan 2023 06:35:13 GMT
+Received: from [10.216.43.35] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 30 Jan
- 2023 20:52:25 -0800
-Message-ID: <99c91609-61ce-fa30-96b1-ba45e9fe1e1e@quicinc.com>
-Date:   Tue, 31 Jan 2023 10:22:22 +0530
+ 2023 22:35:09 -0800
+Message-ID: <f4cc8f19-ff32-5bcb-14aa-1ced8143c202@quicinc.com>
+Date:   Tue, 31 Jan 2023 12:05:05 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH V5] clk: qcom: clk-alpha-pll: Add support for Stromer PLLs
-To:     Stephen Boyd <sboyd@kernel.org>, <agross@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>
-CC:     Varadarajan Narayanan <quic_varada@quicinc.com>,
-        Sricharan R <quic_srichara@quicinc.com>
-References: <20230120082631.22053-1-quic_kathirav@quicinc.com>
- <2987f2ce9377bd17d1cd85fce4bd3c28.sboyd@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v6 4/6] clk: qcom: lpasscorecc-sc7280: Skip lpasscorecc
+ registration
 Content-Language: en-US
-From:   Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-In-Reply-To: <2987f2ce9377bd17d1cd85fce4bd3c28.sboyd@kernel.org>
+To:     Stephen Boyd <swboyd@chromium.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <broonie@kernel.org>,
+        <konrad.dybcio@somainline.org>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
+        <quic_plai@quicinc.com>, <quic_rohkumar@quicinc.com>,
+        <robh+dt@kernel.org>
+References: <1674728065-24955-1-git-send-email-quic_srivasam@quicinc.com>
+ <1674728065-24955-5-git-send-email-quic_srivasam@quicinc.com>
+ <CAE-0n50n0JaBOukBvandsciHEyKpqSytU2y7K=fmR7gn8WPp5g@mail.gmail.com>
+From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Organization: Qualcomm
+In-Reply-To: <CAE-0n50n0JaBOukBvandsciHEyKpqSytU2y7K=fmR7gn8WPp5g@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
@@ -62,36 +67,47 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: gE-cOFG_4Zp0Ag0GGlkUZwTgc3dNmcuP
-X-Proofpoint-ORIG-GUID: gE-cOFG_4Zp0Ag0GGlkUZwTgc3dNmcuP
+X-Proofpoint-GUID: yxkRbQiyoqh2crZnVmuRsBZCMVvf4cJf
+X-Proofpoint-ORIG-GUID: yxkRbQiyoqh2crZnVmuRsBZCMVvf4cJf
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
  definitions=2023-01-31_02,2023-01-30_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 bulkscore=0 adultscore=0 suspectscore=0 mlxlogscore=737
- spamscore=0 clxscore=1015 impostorscore=0 mlxscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301310043
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ bulkscore=0 mlxscore=0 lowpriorityscore=0 mlxlogscore=999 clxscore=1015
+ impostorscore=0 priorityscore=1501 phishscore=0 suspectscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301310060
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On 1/26/2023 2:59 AM, Stephen Boyd wrote:
-> Quoting Kathiravan Thirumoorthy (2023-01-20 00:26:31)
->> From: Varadarajan Narayanan <quic_varada@quicinc.com>
+On 1/31/2023 6:24 AM, Stephen Boyd wrote:
+Thanks for your time Stephen!!!
+> Quoting Srinivasa Rao Mandadapu (2023-01-26 02:14:23)
+>> Skip lpasscorecc clocks registration for ADSP based platforms
+>> as it's causing NOC errors when ADSP based clocks are enabled.
 >>
->> Add programming sequence support for managing the Stromer
->> PLLs.
->>
->> Co-developed-by: Sricharan R <quic_srichara@quicinc.com>
->> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
->> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+>> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+>> Tested-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
 >> ---
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+>>   drivers/clk/qcom/lpasscorecc-sc7280.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/lpasscorecc-sc7280.c b/drivers/clk/qcom/lpasscorecc-sc7280.c
+>> index 6ad19b0..3aa16d8 100644
+>> --- a/drivers/clk/qcom/lpasscorecc-sc7280.c
+>> +++ b/drivers/clk/qcom/lpasscorecc-sc7280.c
+>> @@ -395,6 +395,9 @@ static int lpass_core_cc_sc7280_probe(struct platform_device *pdev)
+>>          const struct qcom_cc_desc *desc;
+>>          struct regmap *regmap;
+>>
+>> +       if (of_property_read_bool(pdev->dev.of_node, "qcom,adsp-pil-mode"))
+> Why is this node enabled in DT at all if it doesn't provide any clks?
 
-Thanks Stephen. Bjorn, is it possible to pick up this patch for v6.3?
+Yes. Agree that we can disable this node in board specific DTS file. As 
+I thought, disabling node is not appropriate,
 
-Thanks, Kathiravan T.
+preferred this way.
+Anyway, as suggested, will drop this patch and disable node in DT.
 
