@@ -2,467 +2,305 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CADCC38142
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Feb 2023 04:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 398AAC05027
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Feb 2023 05:38:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230267AbjBAEhI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Jan 2023 23:37:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43844 "EHLO
+        id S231296AbjBAFiS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Feb 2023 00:38:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229962AbjBAEhH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 23:37:07 -0500
-Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 145073EC43;
-        Tue, 31 Jan 2023 20:37:03 -0800 (PST)
-Received: from loongson.cn (unknown [10.20.42.35])
-        by gateway (Coremail) with SMTP id _____8AxnOpu7NljIi4LAA--.22782S3;
-        Wed, 01 Feb 2023 12:37:02 +0800 (CST)
-Received: from [10.20.42.35] (unknown [10.20.42.35])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8Axur1t7NljURsmAA--.9629S3;
-        Wed, 01 Feb 2023 12:37:01 +0800 (CST)
-Subject: Re: [PATCH v10 2/4] clk: clk-loongson2: add clock controller driver
- support
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        WANG Xuerui <kernel@xen0n.name>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Jianmin Lv <lvjianmin@loongson.cn>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-        lvjianmin@loongson.cn, wanghongliang@loongson.cn,
-        liupeibao@loongson.cn, zhuyinbo@loongson.cn
-References: <20221129034157.15036-1-zhuyinbo@loongson.cn>
- <20221129034157.15036-2-zhuyinbo@loongson.cn>
-From:   zhuyinbo <zhuyinbo@loongson.cn>
-Message-ID: <696c5747-f1ef-895f-f73c-2af7b185db4a@loongson.cn>
-Date:   Wed, 1 Feb 2023 12:37:01 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        with ESMTP id S229488AbjBAFiQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Feb 2023 00:38:16 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06C752F7B6;
+        Tue, 31 Jan 2023 21:38:14 -0800 (PST)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3114hBtr026763;
+        Wed, 1 Feb 2023 05:37:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=PyOBXszOi5f70yjy1+vveBqK67JgpijjFqZ06K00oFU=;
+ b=aEwcwVYQYO/oppWM6VzcbWO4EEm2qrdPwYBcAgehdY7R4o3FR8s6GNeBBhRSnHewfnuC
+ Wc9zt69vt9mPPF+G5MixIDbY+gB0lq6BXrbbGdggX38bKkt3qlRU/deeg47bsFwuC9vY
+ ZY+Rs9hT7ErqtPVq+JYeJ6hNOtJ3pviZsyWu4nNhkmIHxZXEFRkukPCaPCT94zRN5itW
+ ZGHCUS8LF10Dgx+OS0JsMyJAhB58oRD28m4hkDOAeY8QmSyVqg5123Fz0+O1Zi40VfBB
+ sA7ATXjaLFZ5RgSfWAzQptzb9bjEvVuCiqG6dhkDvvKLgA+HTyzhVZrZRnIif++uOz0W qg== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nfbyq0s5v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 01 Feb 2023 05:37:54 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3115brFW008466
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 1 Feb 2023 05:37:53 GMT
+Received: from [10.50.28.88] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 31 Jan
+ 2023 21:37:46 -0800
+Message-ID: <038b0f5a-5be1-bb90-80f0-29203ad7c0f0@quicinc.com>
+Date:   Wed, 1 Feb 2023 11:07:43 +0530
 MIME-Version: 1.0
-In-Reply-To: <20221129034157.15036-2-zhuyinbo@loongson.cn>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH V2 8/9] arm64: dts: qcom: add IPQ5332 SoC and MI01.2 board
+ support
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linus.walleij@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <shawnguo@kernel.org>, <arnd@arndb.de>,
+        <dmitry.baryshkov@linaro.org>, <marcel.ziswiler@toradex.com>,
+        <nfraprado@collabora.com>, <robimarko@gmail.com>,
+        <quic_gurus@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20230130114702.20606-1-quic_kathirav@quicinc.com>
+ <20230130114702.20606-9-quic_kathirav@quicinc.com>
+ <1d8777f7-ec11-b68c-629e-b17d5772396b@linaro.org>
 Content-Language: en-US
-X-CM-TRANSID: AQAAf8Axur1t7NljURsmAA--.9629S3
-X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjvJXoWfJw1UGFykAr4rWF1xZw1kZrb_yoWktryrpF
-        yfAay3GFWjqr4Uurs8JryDGFn8AasxK3W7ZF43G34UuFZ7X34UWr48GFyxCF4UZrWkAay2
-        vFZa9rWUCFs8W37anT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        bDAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
-        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28E
-        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
-        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY
-        6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrV
-        C2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE
-        7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14
-        v26r126r1DMxAIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_WwCFx2IqxVCFs4IE
-        7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I
-        0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAI
-        cVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcV
-        CF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jO-B_UUUUU=
+From:   Kathiravan T <quic_kathirav@quicinc.com>
+In-Reply-To: <1d8777f7-ec11-b68c-629e-b17d5772396b@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: bLZYQBKJ1E3-qY6vaLMMen9jAyYbuSyk
+X-Proofpoint-GUID: bLZYQBKJ1E3-qY6vaLMMen9jAyYbuSyk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-02-01_02,2023-01-31_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 mlxscore=0 spamscore=0 suspectscore=0 phishscore=0
+ mlxlogscore=999 impostorscore=0 clxscore=1015 malwarescore=0
+ lowpriorityscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2212070000 definitions=main-2302010047
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-Friendly ping ?
+On 1/30/2023 5:55 PM, Konrad Dybcio wrote:
+>
+> On 30.01.2023 12:47, Kathiravan Thirumoorthy wrote:
+>> From: Kathiravan T <quic_kathirav@quicinc.com>
+>>
+>> Add initial device tree support for the Qualcomm IPQ5332 SoC and
+>> MI01.2 board.
+>>
+>> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+>> ---
+> [...]
+>
+>> +
+>> +	reserved-memory {
+>> +		#address-cells = <2>;
+>> +		#size-cells = <2>;
+>> +		ranges;
+>> +
+>> +		tz_mem: tz@4a600000 {
+>> +			no-map;
+>> +			reg = <0x0 0x4a600000 0x0 0x200000>;
+> reg should come before no-map
 
 
-ÔÚ 2022/11/29 ÉÏÎç11:41, Yinbo Zhu Ð´µÀ:
-> This driver provides support for clock controller on Loongson-2 SoC,
-> the Loongson-2 SoC uses a 100MHz clock as the PLL reference clock,
-> there are five independent PLLs inside, each of which PLL can
-> provide up to three sets of frequency dependent clock outputs.
->
-> Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
-> ---
-> Change in v10:
-> 		1. Detach of_clk_init to another patch.
-> Change in v9:
-> 		1. Add all history changelog information.
-> Change in v8:
-> 		1. Remove the flag "CLK_IS_BASIC".
-> Change in v7:
-> 		1. Adjust position alphabetically in Kconfig and Makefile.
-> 		2. Add static for loongson2_pll_base.
-> 		3. Move other file-scope variables in probe.
-> Change in v6:
-> 		1. NO change, but other patch in this series of patches has
-> 		   changes.
-> Change in v5:
-> 		1. Replace loongson2 with Loongson-2 in commit info.
-> 		2. Replace Loongson2 with Loongson-2 in binding and
-> 		   Kconfig file.
-> 		3. Replace soc with SoC.
-> Change in v4:
-> 		1. Fixup clock-names that replace "xxx-clk" with "xxx".
-> Change in v3:
-> 		1. NO change, but other patch in this series of patches has
-> 		   changes.
-> Change in v2:
-> 		1. Update the include filename.
-> 		2. Change string from refclk/REFCLK to ref/REF.
->
->   MAINTAINERS                 |   1 +
->   arch/loongarch/Kconfig      |   1 +
->   drivers/clk/Kconfig         |   9 ++
->   drivers/clk/Makefile        |   1 +
->   drivers/clk/clk-loongson2.c | 286 ++++++++++++++++++++++++++++++++++++
->   5 files changed, 298 insertions(+)
->   create mode 100644 drivers/clk/clk-loongson2.c
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ab94893fe2f6..73fa56f1fd5d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12025,6 +12025,7 @@ LOONGSON-2 SOC SERIES CLOCK DRIVER
->   M:	Yinbo Zhu <zhuyinbo@loongson.cn>
->   L:	linux-clk@vger.kernel.org
->   S:	Maintained
-> +F:	drivers/clk/clk-loongson2.c
->   F:	include/dt-bindings/clock/loongson,ls2k-clk.h
->   
->   LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
-> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-> index 903096bd87f8..4f8f1b8f796d 100644
-> --- a/arch/loongarch/Kconfig
-> +++ b/arch/loongarch/Kconfig
-> @@ -127,6 +127,7 @@ config LOONGARCH
->   	select USE_PERCPU_NUMA_NODE_ID
->   	select USER_STACKTRACE_SUPPORT
->   	select ZONE_DMA32
-> +	select COMMON_CLK
->   
->   config 32BIT
->   	bool
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index d79905f3e174..d13626f63739 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -326,6 +326,15 @@ config COMMON_CLK_LOCHNAGAR
->   	  This driver supports the clocking features of the Cirrus Logic
->   	  Lochnagar audio development board.
->   
-> +config COMMON_CLK_LOONGSON2
-> +	bool "Clock driver for Loongson-2 SoC"
-> +	depends on COMMON_CLK && OF
-> +	help
-> +	  This driver provides support for Clock Controller that base on
-> +	  Common Clock Framework Controller (CCF) on Loongson-2 SoC. The
-> +	  Clock Controller can generates and supplies clock to various
-> +	  peripherals within the SoC.
-> +
->   config COMMON_CLK_NXP
->   	def_bool COMMON_CLK && (ARCH_LPC18XX || ARCH_LPC32XX)
->   	select REGMAP_MMIO if ARCH_LPC32XX
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index e3ca0d058a25..b298c5dabc1a 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -43,6 +43,7 @@ obj-$(CONFIG_COMMON_CLK_K210)		+= clk-k210.o
->   obj-$(CONFIG_LMK04832)			+= clk-lmk04832.o
->   obj-$(CONFIG_COMMON_CLK_LAN966X)	+= clk-lan966x.o
->   obj-$(CONFIG_COMMON_CLK_LOCHNAGAR)	+= clk-lochnagar.o
-> +obj-$(CONFIG_COMMON_CLK_LOONGSON2)	+= clk-loongson2.o
->   obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
->   obj-$(CONFIG_COMMON_CLK_MAX9485)	+= clk-max9485.o
->   obj-$(CONFIG_ARCH_MILBEAUT_M10V)	+= clk-milbeaut.o
-> diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
-> new file mode 100644
-> index 000000000000..7487effceeab
-> --- /dev/null
-> +++ b/drivers/clk/clk-loongson2.c
-> @@ -0,0 +1,286 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Author: Yinbo Zhu <zhuyinbo@loongson.cn>
-> + * Copyright (C) 2022-2023 Loongson Technology Corporation Limited
-> + */
-> +
-> +#include <linux/clkdev.h>
-> +#include <linux/err.h>
-> +#include <linux/init.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <dt-bindings/clock/loongson,ls2k-clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/slab.h>
-> +#include <linux/clk.h>
-> +
-> +#define LOONGSON2_PLL_MULT_SHIFT		32
-> +#define LOONGSON2_PLL_MULT_WIDTH		10
-> +#define LOONGSON2_PLL_DIV_SHIFT			26
-> +#define LOONGSON2_PLL_DIV_WIDTH			6
-> +#define LOONGSON2_APB_FREQSCALE_SHIFT		20
-> +#define LOONGSON2_APB_FREQSCALE_WIDTH		3
-> +#define LOONGSON2_USB_FREQSCALE_SHIFT		16
-> +#define LOONGSON2_USB_FREQSCALE_WIDTH		3
-> +#define LOONGSON2_SATA_FREQSCALE_SHIFT		12
-> +#define LOONGSON2_SATA_FREQSCALE_WIDTH		3
-> +
-> +static void __iomem *loongson2_pll_base;
-> +
-> +static struct clk_hw *loongson2_clk_register(struct device *dev,
-> +					  const char *name,
-> +					  const char *parent_name,
-> +					  const struct clk_ops *ops,
-> +					  unsigned long flags)
-> +{
-> +	int ret;
-> +	struct clk_hw *hw;
-> +	struct clk_init_data init;
-> +
-> +	/* allocate the divider */
-> +	hw = kzalloc(sizeof(*hw), GFP_KERNEL);
-> +	if (!hw)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	init.name = name;
-> +	init.ops = ops;
-> +	init.flags = flags;
-> +	init.parent_names = (parent_name ? &parent_name : NULL);
-> +	init.num_parents = (parent_name ? 1 : 0);
-> +	hw->init = &init;
-> +
-> +	/* register the clock */
-> +	ret = clk_hw_register(dev, hw);
-> +	if (ret) {
-> +		kfree(hw);
-> +		hw = ERR_PTR(ret);
-> +	}
-> +
-> +	return hw;
-> +}
-> +
-> +static struct clk_hw *loongson2_clk_pll_register(const char *name,
-> +				const char *parent, void __iomem *reg)
-> +{
-> +	u64 val;
-> +	u32 mult = 1, div = 1;
-> +
-> +	val = readq((void *)reg);
-> +
-> +	mult = (val >> LOONGSON2_PLL_MULT_SHIFT) &
-> +			clk_div_mask(LOONGSON2_PLL_MULT_WIDTH);
-> +	div = (val >> LOONGSON2_PLL_DIV_SHIFT) &
-> +			clk_div_mask(LOONGSON2_PLL_DIV_WIDTH);
-> +
-> +	return clk_hw_register_fixed_factor(NULL, name, parent,
-> +				CLK_SET_RATE_PARENT, mult, div);
-> +}
-> +
-> +static unsigned long loongson2_apb_recalc_rate(struct clk_hw *hw,
-> +					  unsigned long parent_rate)
-> +{
-> +	u64 val;
-> +	u32 mult;
-> +	unsigned long rate;
-> +
-> +	val = readq((void *)(loongson2_pll_base + 0x50));
-> +
-> +	mult = (val >> LOONGSON2_APB_FREQSCALE_SHIFT) &
-> +			clk_div_mask(LOONGSON2_APB_FREQSCALE_WIDTH);
-> +
-> +	rate = parent_rate * (mult + 1);
-> +	do_div(rate, 8);
-> +
-> +	return rate;
-> +}
-> +
-> +static const struct clk_ops loongson2_apb_clk_ops = {
-> +	.recalc_rate = loongson2_apb_recalc_rate,
-> +};
-> +
-> +static unsigned long loongson2_usb_recalc_rate(struct clk_hw *hw,
-> +					  unsigned long parent_rate)
-> +{
-> +	u64 val;
-> +	u32 mult;
-> +	unsigned long rate;
-> +
-> +	val = readq((void *)(loongson2_pll_base + 0x50));
-> +
-> +	mult = (val >> LOONGSON2_USB_FREQSCALE_SHIFT) &
-> +			clk_div_mask(LOONGSON2_USB_FREQSCALE_WIDTH);
-> +
-> +	rate = parent_rate * (mult + 1);
-> +	do_div(rate, 8);
-> +
-> +	return rate;
-> +}
-> +
-> +static const struct clk_ops loongson2_usb_clk_ops = {
-> +	.recalc_rate = loongson2_usb_recalc_rate,
-> +};
-> +
-> +static unsigned long loongson2_sata_recalc_rate(struct clk_hw *hw,
-> +					  unsigned long parent_rate)
-> +{
-> +	u64 val;
-> +	u32 mult;
-> +	unsigned long rate;
-> +
-> +	val = readq((void *)(loongson2_pll_base + 0x50));
-> +
-> +	mult = (val >> LOONGSON2_SATA_FREQSCALE_SHIFT) &
-> +			clk_div_mask(LOONGSON2_SATA_FREQSCALE_WIDTH);
-> +
-> +	rate = parent_rate * (mult + 1);
-> +	do_div(rate, 8);
-> +
-> +	return rate;
-> +}
-> +
-> +static const struct clk_ops loongson2_sata_clk_ops = {
-> +	.recalc_rate = loongson2_sata_recalc_rate,
-> +};
-> +
-> +static void loongson2_check_clk_hws(struct clk_hw *clks[], unsigned int count)
-> +{
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < count; i++)
-> +		if (IS_ERR(clks[i]))
-> +			pr_err("Loongson2 clk %u: register failed with %ld\n"
-> +				, i, PTR_ERR(clks[i]));
-> +}
-> +
-> +static struct clk_hw *loongson2_obtain_fixed_clk_hw(
-> +					struct device_node *np,
-> +					const char *name)
-> +{
-> +	struct clk *clk;
-> +
-> +	clk = of_clk_get_by_name(np, name);
-> +	if (IS_ERR(clk))
-> +		return ERR_PTR(-ENOENT);
-> +
-> +	return __clk_get_hw(clk);
-> +}
-> +
-> +static void __init loongson2_clocks_init(struct device_node *np)
-> +{
-> +	struct clk_hw **hws;
-> +	struct clk_hw_onecell_data *clk_hw_data;
-> +	spinlock_t loongson2_clk_lock;
-> +
-> +	loongson2_pll_base = of_iomap(np, 0);
-> +
-> +	if (!loongson2_pll_base) {
-> +		pr_err("clk: unable to map loongson2 clk registers\n");
-> +		goto err;
-> +	}
-> +
-> +	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws, LOONGSON2_CLK_END),
-> +					GFP_KERNEL);
-> +	if (WARN_ON(!clk_hw_data))
-> +		goto err;
-> +
-> +	clk_hw_data->num = LOONGSON2_CLK_END;
-> +	hws = clk_hw_data->hws;
-> +
-> +	hws[LOONGSON2_REF_100M] = loongson2_obtain_fixed_clk_hw(np,
-> +						"ref_100m");
-> +
-> +	hws[LOONGSON2_NODE_PLL] = loongson2_clk_pll_register("node_pll",
-> +						"ref_100m",
-> +						loongson2_pll_base);
-> +
-> +	hws[LOONGSON2_DDR_PLL] = loongson2_clk_pll_register("ddr_pll",
-> +						"ref_100m",
-> +						loongson2_pll_base + 0x10);
-> +
-> +	hws[LOONGSON2_DC_PLL] = loongson2_clk_pll_register("dc_pll",
-> +						"ref_100m",
-> +						loongson2_pll_base + 0x20);
-> +
-> +	hws[LOONGSON2_PIX0_PLL] = loongson2_clk_pll_register("pix0_pll",
-> +						"ref_100m",
-> +						loongson2_pll_base + 0x30);
-> +
-> +	hws[LOONGSON2_PIX1_PLL] = loongson2_clk_pll_register("pix1_pll",
-> +						"ref_100m",
-> +						loongson2_pll_base + 0x40);
-> +
-> +	hws[LOONGSON2_NODE_CLK] = clk_hw_register_divider(NULL, "node",
-> +						"node_pll", 0,
-> +						loongson2_pll_base + 0x8, 0,
-> +						6, CLK_DIVIDER_ONE_BASED,
-> +						&loongson2_clk_lock);
-> +
-> +	/*
-> +	 * The hda clk divisor in the upper 32bits and the clk-prodiver
-> +	 * layer code doesn't support 64bit io operation thus a conversion
-> +	 * is required that subtract shift by 32 and add 4byte to the hda
-> +	 * address
-> +	 */
-> +	hws[LOONGSON2_HDA_CLK] = clk_hw_register_divider(NULL, "hda",
-> +						"ddr_pll", 0,
-> +						loongson2_pll_base + 0x22, 12,
-> +						7, CLK_DIVIDER_ONE_BASED,
-> +						&loongson2_clk_lock);
-> +
-> +	hws[LOONGSON2_GPU_CLK] = clk_hw_register_divider(NULL, "gpu",
-> +						"ddr_pll", 0,
-> +						loongson2_pll_base + 0x18, 22,
-> +						6, CLK_DIVIDER_ONE_BASED,
-> +						&loongson2_clk_lock);
-> +
-> +	hws[LOONGSON2_DDR_CLK] = clk_hw_register_divider(NULL, "ddr",
-> +						"ddr_pll", 0,
-> +						loongson2_pll_base + 0x18, 0,
-> +						6, CLK_DIVIDER_ONE_BASED,
-> +						&loongson2_clk_lock);
-> +
-> +	hws[LOONGSON2_GMAC_CLK] = clk_hw_register_divider(NULL, "gmac",
-> +						"dc_pll", 0,
-> +						loongson2_pll_base + 0x28, 22,
-> +						6, CLK_DIVIDER_ONE_BASED,
-> +						&loongson2_clk_lock);
-> +
-> +	hws[LOONGSON2_DC_CLK] = clk_hw_register_divider(NULL, "dc",
-> +						"dc_pll", 0,
-> +						loongson2_pll_base + 0x28, 0,
-> +						6, CLK_DIVIDER_ONE_BASED,
-> +						&loongson2_clk_lock);
-> +
-> +	hws[LOONGSON2_APB_CLK] = loongson2_clk_register(NULL, "apb",
-> +						"gmac",
-> +						&loongson2_apb_clk_ops, 0);
-> +
-> +	hws[LOONGSON2_USB_CLK] = loongson2_clk_register(NULL, "usb",
-> +						"gmac",
-> +						&loongson2_usb_clk_ops, 0);
-> +
-> +	hws[LOONGSON2_SATA_CLK] = loongson2_clk_register(NULL, "sata",
-> +						"gmac",
-> +						&loongson2_sata_clk_ops, 0);
-> +
-> +	hws[LOONGSON2_PIX0_CLK] = clk_hw_register_divider(NULL, "pix0",
-> +						"pix0_pll", 0,
-> +						loongson2_pll_base + 0x38, 0, 6,
-> +						CLK_DIVIDER_ONE_BASED,
-> +						&loongson2_clk_lock);
-> +
-> +	hws[LOONGSON2_PIX1_CLK] = clk_hw_register_divider(NULL, "pix1",
-> +						"pix1_pll", 0,
-> +						loongson2_pll_base + 0x48, 0, 6,
-> +						CLK_DIVIDER_ONE_BASED,
-> +						&loongson2_clk_lock);
-> +
-> +	loongson2_check_clk_hws(hws, LOONGSON2_CLK_END);
-> +
-> +	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
-> +
-> +err:
-> +	iounmap(loongson2_pll_base);
-> +}
-> +
-> +CLK_OF_DECLARE(loongson2_clk, "loongson,ls2k-clk", loongson2_clocks_init);
+Ack. Will fix it in V3.
 
+
+>
+>
+>> +		};
+>> +	};
+>> +
+>> +	soc@0 {
+>> +		compatible = "simple-bus";
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges = <0 0 0 0xffffffff>;
+>> +
+>> +		tlmm: pinctrl@1000000 {
+>> +			compatible = "qcom,ipq5332-tlmm";
+>> +			reg = <0x01000000 0x300000>;
+>> +			interrupts = <GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>;
+>> +			gpio-controller;
+>> +			#gpio-cells = <2>;
+>> +			gpio-ranges = <&tlmm 0 0 53>;
+>> +			interrupt-controller;
+>> +			#interrupt-cells = <2>;
+>> +
+>> +			serial_0_pins: serial0-state {
+>> +				pins = "gpio18", "gpio19";
+>> +				function = "blsp0_uart0";
+>> +				drive-strength = <8>;
+>> +				bias-pull-up;
+>> +			};
+>> +		};
+>> +
+>> +		gcc: clock-controller@1800000 {
+>> +			compatible = "qcom,ipq5332-gcc";
+>> +			reg = <0x01800000 0x80000>;
+>> +			#clock-cells = <1>;
+>> +			#reset-cells = <1>;
+>> +			#power-domain-cells = <1>;
+>> +			clock-names = "xo",
+>> +				      "sleep_clk",
+>> +				      "pcie_2lane_phy_pipe_clk",
+>> +				      "pcie_2lane_phy_pipe_clk_x1",
+>> +				      "usb_pcie_wrapper_pipe_clk";
+>> +			clocks = <&xo_board>,
+>> +				 <&sleep_clk>,
+>> +				 <0>,
+>> +				 <0>,
+>> +				 <0>;
+>> +		};
+>> +
+>> +		sdhc: mmc@7804000 {
+>> +			compatible = "qcom,ipq5332-sdhci", "qcom,sdhci-msm-v5";
+>> +			reg = <0x07804000 0x1000>, <0x07805000 0x1000>;
+>> +
+>> +			interrupts = <GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>;
+>> +			interrupt-names = "hc_irq", "pwr_irq";
+>> +
+>> +			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
+>> +				 <&gcc GCC_SDCC1_APPS_CLK>,
+>> +				 <&xo_board>;
+>> +			clock-names = "iface", "core", "xo";
+>> +			mmc-ddr-1_8v;
+>> +			mmc-hs200-1_8v;
+>> +			max-frequency = <192000000>;
+>> +			bus-width = <4>;
+>> +			status = "disabled";
+>> +		};
+>> +
+>> +		blsp1_uart0: serial@78af000 {
+>> +			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
+>> +			reg = <0x078af000 0x200>;
+>> +			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&gcc GCC_BLSP1_UART1_APPS_CLK>,
+>> +				 <&gcc GCC_BLSP1_AHB_CLK>;
+>> +			clock-names = "core", "iface";
+>> +			status = "disabled";
+>> +		};
+>> +
+>> +		intc: interrupt-controller@b000000 {
+>> +			compatible = "qcom,msm-qgic2";
+>> +			reg = <0x0b000000 0x1000>,	/* GICD */
+>> +			      <0x0b002000 0x1000>,	/* GICC */
+>> +			      <0x0b001000 0x1000>,	/* GICH */
+>> +			      <0x0b004000 0x1000>;	/* GICV */
+>> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+>> +			interrupt-controller;
+>> +			#interrupt-cells = <3>;
+>> +			#address-cells = <1>;
+>> +			#size-cells = <1>;
+>> +			ranges = <0 0x0b00c000 0x3000>;
+>> +
+>> +			v2m0: v2m@0 {
+>> +				compatible = "arm,gic-v2m-frame";
+>> +				reg = <0x00000000 0xffd>;
+>> +				msi-controller;
+>> +			};
+>> +
+>> +			v2m1: v2m@1 {
+>> +				compatible = "arm,gic-v2m-frame";
+>> +				reg = <0x00001000 0xffd>;
+> The unit address does not match the address part of the reg
+> property, dtbs_check will not succeed..
+
+
+Thanks, will update the node name accordingly in V3. AFAIR, I didn't see 
+any dtbs_check warning. Let me cross check it again.
+
+
+>
+> The rest lgtm
+
+
+Thanks a lot for the review!
+
+
+>
+> Konrad
+>> +				msi-controller;
+>> +			};
+>> +
+>> +			v2m2: v2m@2 {
+>> +				compatible = "arm,gic-v2m-frame";
+>> +				reg = <0x00002000 0xffd>;
+>> +				msi-controller;
+>> +			};
+>> +		};
+>> +
+>> +		timer@b120000 {
+>> +			compatible = "arm,armv7-timer-mem";
+>> +			reg = <0x0b120000 0x1000>;
+>> +			#address-cells = <1>;
+>> +			#size-cells = <1>;
+>> +			ranges;
+>> +
+>> +			frame@b120000 {
+>> +				reg = <0x0b121000 0x1000>,
+>> +				      <0x0b122000 0x1000>;
+>> +				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
+>> +					     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+>> +				frame-number = <0>;
+>> +			};
+>> +
+>> +			frame@b123000 {
+>> +				reg = <0x0b123000 0x1000>;
+>> +				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+>> +				frame-number = <1>;
+>> +				status = "disabled";
+>> +			};
+>> +
+>> +			frame@b124000 {
+>> +				reg = <0x0b124000 0x1000>;
+>> +				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+>> +				frame-number = <2>;
+>> +				status = "disabled";
+>> +			};
+>> +
+>> +			frame@b125000 {
+>> +				reg = <0x0b125000 0x1000>;
+>> +				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+>> +				frame-number = <3>;
+>> +				status = "disabled";
+>> +			};
+>> +
+>> +			frame@b126000 {
+>> +				reg = <0x0b126000 0x1000>;
+>> +				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
+>> +				frame-number = <4>;
+>> +				status = "disabled";
+>> +			};
+>> +
+>> +			frame@b127000 {
+>> +				reg = <0x0b127000 0x1000>;
+>> +				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
+>> +				frame-number = <5>;
+>> +				status = "disabled";
+>> +			};
+>> +
+>> +			frame@b128000 {
+>> +				reg = <0x0b128000 0x1000>;
+>> +				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
+>> +				frame-number = <6>;
+>> +				status = "disabled";
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	timer {
+>> +		compatible = "arm,armv8-timer";
+>> +		interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+>> +			     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+>> +			     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+>> +			     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+>> +	};
+>> +};
