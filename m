@@ -2,100 +2,115 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF28C38142
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Feb 2023 08:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1289C05027
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Feb 2023 09:06:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231856AbjBAIXY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Feb 2023 03:23:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38354 "EHLO
+        id S231214AbjBAJGU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Feb 2023 04:06:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231731AbjBAIXX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Feb 2023 03:23:23 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 444105D11B
-        for <linux-clk@vger.kernel.org>; Wed,  1 Feb 2023 00:23:22 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pN8Oh-0003Il-Gz; Wed, 01 Feb 2023 09:23:15 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pN8Oh-001s6z-Bm; Wed, 01 Feb 2023 09:23:14 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pN8Of-00HXkB-Gt; Wed, 01 Feb 2023 09:23:13 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Russell King <linux@armlinux.org.uk>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        kernel@pengutronix.de, linux-clk@vger.kernel.org
-Subject: [PATCH] clk: Disambiguate comment about clk_get_rate() for disabled clocks
-Date:   Wed,  1 Feb 2023 09:23:09 +0100
-Message-Id: <20230201082309.233348-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.39.0
+        with ESMTP id S231535AbjBAJGT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Feb 2023 04:06:19 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C06FE5D919;
+        Wed,  1 Feb 2023 01:06:16 -0800 (PST)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3117VdHg011417;
+        Wed, 1 Feb 2023 09:05:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=AwaiLSDtQw5uLGESbQnWkJ31X4EUR2PwjzEPMhtai44=;
+ b=ShxbigjZ/Bc1Dihzu03Armc04Jqr9rYSFvqrsfCN/MF3+p/gEZsgHjH5+r53nnvBWjyJ
+ IbWDYdwn6WckwZrMF5jZR5/3QJNkp+ZHRO+d/0NpZCzdIEBYWWFkvtekWnXo5eEKrZn7
+ x1tXaQ2p6dby24WKYUonQxziP3NMcKbe+/9Ow0ginMQbcFNM2+JxWCdmlv087/DGHbh7
+ 9rKSvCx1LUVfYdR5JXAIzxcRyAY5kh4J9cgODkDUgjfJx2/mP2dNyXSc0MdEUdpNiPFu
+ m9l+vywpfdfW3HmnygPNgL4FIc/wrAnbJPFM7mhI9GI5A4GwnAl45aUCpVsYy3Ca7It/ kw== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3netc4btkm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 01 Feb 2023 09:05:57 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31195t3x023441
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 1 Feb 2023 09:05:55 GMT
+Received: from poovendh-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Wed, 1 Feb 2023 01:05:46 -0800
+From:   Poovendhan Selvaraj <quic_poovendh@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <lee@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <jassisinghbrar@gmail.com>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <shawnguo@kernel.org>, <arnd@arndb.de>,
+        <marcel.ziswiler@toradex.com>, <robimarko@gmail.com>,
+        <dmitry.baryshkov@linaro.org>, <nfraprado@collabora.com>,
+        <broonie@kernel.org>, <quic_gurus@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_devipriy@quicinc.com>
+Subject: [PATCH V2 0/5] Enable crashdump collection support for IPQ9574
+Date:   Wed, 1 Feb 2023 14:35:24 +0530
+Message-ID: <20230201090529.30446-1-quic_poovendh@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1611; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=rczvx3h2xKEdCbV1FLq/lCm85jRlDYWTQjodRqrQ3f0=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBj2iFpLiGYrCEZa1aqy8J6nfZ5G0mceAx3cIWOIAD2 NqltMVGJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCY9ohaQAKCRDB/BR4rcrsCZIaCA CALgzBJKQWySIoT1Z+GLinsdlBDuOgJ2bZhnY46xvNI5YdPtbhDXf2+rzU8LcFfJdNsLDSMrgoUfbj PkTrlYoB66/D9xlLF7Se+9O/NB0FZStNrlARmeHxXQimQynC4mh2q9Otf0/vlRfBOT3L7j9IE6SGp/ SvytqWIW2CIH6QZxVVIn7D3COzmdURRB1HP/7cJRCyz2jjiJpdPo3IOjCc3sWpJy3yu27fPeWrl9NW giW+MD6161Yvt65DpwG2I+2AtV7ZVlA5EkQTAC5dbAqvSq+CJ0drA/9OWGhqIaqWgv8R5L7W9R7FU9 IsnGX25qJisOsEgJFLGeb3B4G9bgHK
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: JYKSK0tXIDTmohLp25o6EZLqlz3ylFlN
+X-Proofpoint-ORIG-GUID: JYKSK0tXIDTmohLp25o6EZLqlz3ylFlN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-02-01_03,2023-01-31_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
+ impostorscore=0 phishscore=0 mlxlogscore=698 mlxscore=0 spamscore=0
+ adultscore=0 priorityscore=1501 lowpriorityscore=0 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302010079
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The sentence "[clk_get_rate()] is only valid once the clock source has
-been enabled." can be understood in two ways:
+Crashdump collection is enabled based on the DLOAD bit in the TCSR register.
+This bit is set during bootup and cleared during shutdown. During crash,
+dload bit is not cleared, due to which uboot starts crashdump collection.
 
-a) When called for a disabled clock the return value might be wrong; or
-b) The disabled clock must be enabled before it runs at the returned
-rate.
+This patch series adds the support for crashdump collection.
 
-It's hard to find evidence what is actually meant, but given that the
-clock tree can change between the call to clk_get_rate() and the return
-of a later clk_enable() call, it's prudent to assume a).
+This series depends on the below patch set.
+https://lore.kernel.org/linux-arm-msm/20230201060319.20434-1-quic_devipriy@quicinc.com/
 
-Adapt the comment accordingly to be unambiguous.
+Changes in V2:
+	- rebased on linux-next/master
+        - dropped co-developed by tag wherever applicable
+	- V1 can be found at
+	  https://lore.kernel.org/linux-arm-kernel/20230113160012.14893-1-quic_poovendh@quicinc.com/
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
-Hello,
+Poovendhan Selvaraj (5):
+  dt-bindings: scm: Add compatible for IPQ9574
+  arm64: dts: Add support for Crashdump collection on IPQ9574
+  firmware: scm: Modify only the DLOAD bit in TCSR register for download
+    mode
+  arm64: defconfig: Enable scm download mode config for IPQ9574 SoC.
+  dt-bindings: tcsr: Add compatible for IPQ9574
 
-while archiving my old mail I stumbled over
-https://lore.kernel.org/linux-clk/20210213165406.GQ1463@shell.armlinux.org.uk
-which supports semantic a).
+ .../bindings/firmware/qcom,scm.yaml           |  1 +
+ .../devicetree/bindings/mfd/qcom,tcsr.yaml    |  1 +
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 26 ++++++++++++++++++-
+ arch/arm64/configs/defconfig                  |  1 +
+ drivers/firmware/qcom_scm.c                   | 12 ++++++---
+ 5 files changed, 36 insertions(+), 5 deletions(-)
 
-Clearify the documentation accordingly.
 
-Best regards
-Uwe
-
- include/linux/clk.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 1ef013324237..72f90d4df433 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -676,8 +676,10 @@ void clk_bulk_disable(int num_clks, const struct clk_bulk_data *clks);
- 
- /**
-  * clk_get_rate - obtain the current clock rate (in Hz) for a clock source.
-- *		  This is only valid once the clock source has been enabled.
-  * @clk: clock source
-+ *
-+ * Note that the return value for disabled clks is unreliable. It might or
-+ * might not match the actual rate of the clock once it's enabled.
-  */
- unsigned long clk_get_rate(struct clk *clk);
- 
-
-base-commit: 58706f7fb045b7019bada81fa17f372189315fe5
+base-commit: 80bd9028fecadae4e8e3a278cd32d74badc2a6e0
 -- 
-2.39.0
+2.17.1
 
