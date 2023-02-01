@@ -2,132 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 245D7C05027
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Feb 2023 18:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D83C05027
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Feb 2023 18:37:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231775AbjBAS1a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Feb 2023 13:27:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33982 "EHLO
+        id S231766AbjBAShF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Feb 2023 13:37:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230091AbjBAS13 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Feb 2023 13:27:29 -0500
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6509A7F6A1
-        for <linux-clk@vger.kernel.org>; Wed,  1 Feb 2023 10:27:22 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id qw12so38108171ejc.2
-        for <linux-clk@vger.kernel.org>; Wed, 01 Feb 2023 10:27:22 -0800 (PST)
+        with ESMTP id S230255AbjBAShF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Feb 2023 13:37:05 -0500
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73C6D80033
+        for <linux-clk@vger.kernel.org>; Wed,  1 Feb 2023 10:36:33 -0800 (PST)
+Received: by mail-ed1-x534.google.com with SMTP id v10so18640142edi.8
+        for <linux-clk@vger.kernel.org>; Wed, 01 Feb 2023 10:36:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SP+ZJyoLhgbz6lBf/nMewvX1YgPG9NUPxjH5PQsVn7s=;
-        b=QlfZ0Ykhj3igqATK866qsnwImRHb+YEI8aLwIU3Yy1pjIiohUc2cKaOlGKuGJ8Nv16
-         cN694SJILaFK+mfYeqg8Q+7gkx51u0dc/8FQmYBquHeTdLUcxFNLVjvgsCBvhXa53EC0
-         azx3nbP5EE4Jk3kfTptJBlv90fUeFV3I6Z95rXUoRlIy0socLEwoi6Q31X0QP2JMqriN
-         D8K9mFGD98mEAt9LeZN26vM3g/7FZVzmuyMsJPX6vkNiiPZxyPh2edhJvvfUAySfR1DZ
-         sAdIg9ULSznLz63nZ2gi9BYkgkDewlo/YUZM5ikJHZl3hGzbmsbcy5I9OhxsK/CNGwV2
-         3uIw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pDicGkl+5x/PXSx3Dad29Z0zKYmJ8UAe01LZn9BX9P0=;
+        b=lgatjYCVYPzRwVfKLWY0TbmS/6NaTm3qJxDaz+9esYJTY2atIDNJW5P+PvnrBmkuoP
+         PJIjR6y5RscfxilsEijJ5S6XK/ozSce/dShr0Z1cdxBus5mtmVxe8reJwdkYQbEj7Uhs
+         irGlD9UO2FEm2YJUriY6EnY7tqRJmerb2hdXKFppLyhIqfh5/CVABupPoOUXGAfvwhKR
+         Qqb0jTbVarpsIwGeA/Ga7X4ttifcAmmlXFcF5BQJQ1+6mtbIgtV4jLalogay5i5UODtB
+         ziKBng7yJfNtFh5VDjxCGMqGhQDsiX3dRc2j5OAot2bDYG3GMWd4wjmSGdR2Mvyu4qA8
+         QJdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SP+ZJyoLhgbz6lBf/nMewvX1YgPG9NUPxjH5PQsVn7s=;
-        b=0lTuHFMkUvK18eoTLFfEhc4BnQldAtZPRyyevqKaZUILGC2vIG1sgqp+lNsOMtZ39W
-         7ifnVl5IxvCrYRb6UaR2BiMqU2IZzdymIoWposfYCD/KZmBbgICNORpabKx/x5fqAFrQ
-         yFw5t9Z1uUb+hytiDtrlwK5PZVbBJYhOBdv2toVrwocv3iNwPgt+9GcH7E0nKt5qeuaW
-         /KisfIyitKTEGCFtXVxbpBW4XbHgm+D+6MUDXk6uo2XidlyZp/uD7AFjGMfKXpTsn47Y
-         GhtMs7FbFlzkBHfd7xGHP9GKDUNIcpMKojPZ1s1OX07LOOBX9Njemc5FbBZknm6qXrMI
-         NqxA==
-X-Gm-Message-State: AO0yUKUGpmreJxCMqb1RkeF7m0KW8yEnKwfSpJiFhWQ88/LnDo8Zo8xO
-        uXnFW9AsTRuicGWqkHsrzNdvjGf0TQbVtFrh
-X-Google-Smtp-Source: AK7set8EweLE3KK6rBhUxD0GxS+r8ZRCN1cZjIHJurWjkQHzIU0Cxz7uVYqMjL9rscEMHARQlyAtgQ==
-X-Received: by 2002:a17:906:2ed7:b0:878:5f7a:7aab with SMTP id s23-20020a1709062ed700b008785f7a7aabmr3106062eji.39.1675276040932;
-        Wed, 01 Feb 2023 10:27:20 -0800 (PST)
-Received: from [192.168.1.101] (abyl20.neoplus.adsl.tpnet.pl. [83.9.31.20])
-        by smtp.gmail.com with ESMTPSA id oy17-20020a170907105100b0087bd50f6986sm8898136ejb.42.2023.02.01.10.27.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Feb 2023 10:27:20 -0800 (PST)
-Message-ID: <8212dd18-50db-8e83-23ff-2155b19611e0@linaro.org>
-Date:   Wed, 1 Feb 2023 19:27:19 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH v2 2/2] clk: qcom: gpucc-sdm845: fix clk_dis_wait being
- programmed for CX GDSC
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20230201172305.993146-1-dmitry.baryshkov@linaro.org>
- <20230201172305.993146-2-dmitry.baryshkov@linaro.org>
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pDicGkl+5x/PXSx3Dad29Z0zKYmJ8UAe01LZn9BX9P0=;
+        b=o3thQIdJdBPF9T8XVhKMRgOT2MHUNGOkkF5buwxq9Y59Bm8NF8g34RleV8dAxmsHV1
+         VXIQ8jI79c4J6yhxT8WIfgFZq3CK5/J5DMiMo4WeanjfJFfUimO9kDdcriBQPHUJG05a
+         9A5TLbhZHR8x0JF+LESgkzBso8rGqkqGZHb89mekBbz076/iuqRYJPfi77ePOYFohquS
+         m99nApqhiUW+xU7xvfMwnGLaKOaPMMObt4hzizzfRKSG68sT7VvAoPJJ+oyTPP1UBc3u
+         16heOlnM/wvmhRJzHHVmEPgoC3ylppRi+a7E1H8k6ruBI9C7Rxfwyve1EP2/wuYIGwt7
+         y65g==
+X-Gm-Message-State: AO0yUKXG2sAGOWLHj19uVNq4SG69T+Eaobr9wALIhin9NaCer4bSu3PV
+        hVhSMenPlV7/Wwkor4W15Y+n2Q==
+X-Google-Smtp-Source: AK7set9JGY1MR1r8KkizFypTJD/0/NyT4I6S6iUmAHWh1KbkYcTW9e2q5lqjie6NgWNoNsxLvRL8Ng==
+X-Received: by 2002:a05:6402:1bcc:b0:499:b672:ee30 with SMTP id ch12-20020a0564021bcc00b00499b672ee30mr3154277edb.11.1675276591697;
+        Wed, 01 Feb 2023 10:36:31 -0800 (PST)
+Received: from localhost.localdomain (abyl20.neoplus.adsl.tpnet.pl. [83.9.31.20])
+        by smtp.gmail.com with ESMTPSA id t13-20020a50d70d000000b00458b41d9460sm10297508edi.92.2023.02.01.10.36.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Feb 2023 10:36:31 -0800 (PST)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230201172305.993146-2-dmitry.baryshkov@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        agross@kernel.org, krzysztof.kozlowski@linaro.org
+Cc:     marijn.suijten@somainline.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 01/10] clk: qcom: branch: Add helper functions for setting retain bits
+Date:   Wed,  1 Feb 2023 19:36:17 +0100
+Message-Id: <20230201183626.351211-2-konrad.dybcio@linaro.org>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230201183626.351211-1-konrad.dybcio@linaro.org>
+References: <20230201183626.351211-1-konrad.dybcio@linaro.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Most Qualcomm branch clocks come with a pretty usual set of bits that
+can enable memory retention by means of not turning off parts of the
+memory logic. Add them to the common header file and introduce helper
+functions for setting them instead of using magic writes.
 
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+v4 -> v5:
 
-On 1.02.2023 18:23, Dmitry Baryshkov wrote:
-> The gdsc_init() function will rewrite the CLK_DIS_WAIT field while
-> registering the GDSC (writing the value 0x2 by default). This will
-> override the setting done in the driver's probe function.
-> 
-> Set cx_gdsc.clk_dis_wait_val to 8 to follow the intention of the probe
-> function.
-> 
-> Fixes: 453361cdd757 ("clk: qcom: Add graphics clock controller driver for SDM845")
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+- Make the helpers accept clk_branch instead of u64 reg
 
-Konrad
-> 
-> Changes since v1:
-> - Fixed the _val suffix in .clk_dis_wait_val.
-> 
-> ---
->  drivers/clk/qcom/gpucc-sdm845.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gpucc-sdm845.c b/drivers/clk/qcom/gpucc-sdm845.c
-> index 110b54401bc6..970d7414bdf0 100644
-> --- a/drivers/clk/qcom/gpucc-sdm845.c
-> +++ b/drivers/clk/qcom/gpucc-sdm845.c
-> @@ -22,8 +22,6 @@
->  #define CX_GMU_CBCR_SLEEP_SHIFT		4
->  #define CX_GMU_CBCR_WAKE_MASK		0xf
->  #define CX_GMU_CBCR_WAKE_SHIFT		8
-> -#define CLK_DIS_WAIT_SHIFT		12
-> -#define CLK_DIS_WAIT_MASK		(0xf << CLK_DIS_WAIT_SHIFT)
->  
->  enum {
->  	P_BI_TCXO,
-> @@ -121,6 +119,7 @@ static struct clk_branch gpu_cc_cxo_clk = {
->  static struct gdsc gpu_cx_gdsc = {
->  	.gdscr = 0x106c,
->  	.gds_hw_ctrl = 0x1540,
-> +	.clk_dis_wait_val = 0x8,
->  	.pd = {
->  		.name = "gpu_cx_gdsc",
->  	},
-> @@ -193,10 +192,6 @@ static int gpu_cc_sdm845_probe(struct platform_device *pdev)
->  	value = 0xf << CX_GMU_CBCR_WAKE_SHIFT | 0xf << CX_GMU_CBCR_SLEEP_SHIFT;
->  	regmap_update_bits(regmap, 0x1098, mask, value);
->  
-> -	/* Configure clk_dis_wait for gpu_cx_gdsc */
-> -	regmap_update_bits(regmap, 0x106c, CLK_DIS_WAIT_MASK,
-> -						8 << CLK_DIS_WAIT_SHIFT);
-> -
->  	return qcom_cc_really_probe(pdev, &gpu_cc_sdm845_desc, regmap);
->  }
->  
+ drivers/clk/qcom/clk-branch.h | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
+index 17a58119165e..55b3a2c3afed 100644
+--- a/drivers/clk/qcom/clk-branch.h
++++ b/drivers/clk/qcom/clk-branch.h
+@@ -37,6 +37,32 @@ struct clk_branch {
+ 	struct clk_regmap clkr;
+ };
+ 
++/* Branch clock common bits for HLOS-owned clocks */
++#define CBCR_FORCE_MEM_CORE_ON		BIT(14)
++#define CBCR_FORCE_MEM_PERIPH_ON	BIT(13)
++#define CBCR_FORCE_MEM_PERIPH_OFF	BIT(12)
++
++static inline void qcom_branch_set_force_mem_core(struct regmap *regmap,
++						  struct clk_branch clk, bool on)
++{
++	regmap_update_bits(regmap, clk.halt_reg, CBCR_FORCE_MEM_CORE_ON,
++			   on ? CBCR_FORCE_MEM_CORE_ON : 0);
++}
++
++static inline void qcom_branch_set_force_periph_on(struct regmap *regmap,
++						   struct clk_branch clk, bool on)
++{
++	regmap_update_bits(regmap, clk.halt_reg, CBCR_FORCE_MEM_PERIPH_ON,
++			   on ? CBCR_FORCE_MEM_PERIPH_ON : 0);
++}
++
++static inline void qcom_branch_set_force_periph_off(struct regmap *regmap,
++						    struct clk_branch clk, bool on)
++{
++	regmap_update_bits(regmap, clk.halt_reg, CBCR_FORCE_MEM_PERIPH_OFF,
++			   on ? CBCR_FORCE_MEM_PERIPH_OFF : 0);
++}
++
+ extern const struct clk_ops clk_branch_ops;
+ extern const struct clk_ops clk_branch2_ops;
+ extern const struct clk_ops clk_branch_simple_ops;
+-- 
+2.39.1
+
