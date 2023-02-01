@@ -2,110 +2,154 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1D8C05027
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Feb 2023 11:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC640C636D3
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Feb 2023 12:01:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232078AbjBALQb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Feb 2023 06:16:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39746 "EHLO
+        id S231364AbjBAMBo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Feb 2023 07:01:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231995AbjBALQ3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Feb 2023 06:16:29 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9E6BCDCB;
-        Wed,  1 Feb 2023 03:16:28 -0800 (PST)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 311BABLv025152;
-        Wed, 1 Feb 2023 11:16:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=AvurKkYyD2J+RmG+/enbomlNyfeaEHK4ectC7FlP0TM=;
- b=hCOSvWd6YPKybkTCbZ0boCEgeeI1l19EmS7ann3Fs1vwWEMctfierUuL0Zesmqx9EtPh
- LQAVLg/i8WEIhbw5eIAHPl8LgzGMsSYUVLufEAi+HcIWQQrxQO4o5HCCtuTYNj5xCrcR
- vOT98elRte4QHRbojdpYaoSZKt1P1ijQEHUmck8OMM0JzHalVtsGeZ71XL6HhhM/QByA
- 5L1a9xiJ3fBacLwwhSps+uphMtFv7AnT2U8ok46LRuhDGvsLozgaMLFT3XpCTDtpTyOZ
- 8/GZ2MCjs8sfHbP9BNvLMGtbm9ldP4rZoT4A24XRjGUs7VVh9Qgit2sJY/Q0bAXEofDA 1w== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nfkj5ggvv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 01 Feb 2023 11:16:11 +0000
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 311BGAaS022476
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 1 Feb 2023 11:16:10 GMT
-Received: from [10.216.7.142] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 1 Feb 2023
- 03:15:59 -0800
-Message-ID: <07263ca0-ddf6-1a6e-3ee6-3b88685d3d60@quicinc.com>
-Date:   Wed, 1 Feb 2023 16:45:56 +0530
+        with ESMTP id S231473AbjBAMBm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Feb 2023 07:01:42 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1AB029E29
+        for <linux-clk@vger.kernel.org>; Wed,  1 Feb 2023 04:01:36 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id d4-20020a05600c3ac400b003db1de2aef0so1231042wms.2
+        for <linux-clk@vger.kernel.org>; Wed, 01 Feb 2023 04:01:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6prvu2CI3NzcBWqU0N1Xpa6iVV1xGFav24j3mlsXXA4=;
+        b=In09R1A0QdGqESTC/tbUuyeGu1hlVo9zBahaCjmLsXyT9YmlXvcrYY5h4eV9Ezsnii
+         SxS1z4Xq3xRPII5NzoBuTDG1bkxeQiSXAflfnxM34O4B1w0EkmpaKZiUUnQ0usp4PgyY
+         2n5ukflsgbrsWs/Dno1DOyK3+fwOMA2+NmNfSZ5ZkJH9b+ZiE5RAoVqhdo6LgiQlgRcn
+         pv01MQninn/TwLUdLFP/0j0fi0WSwN8w2xWQfTOGFmqDSxnSSPq1w9BiAug9sODRqZ7V
+         TiWjXSQfLoeLA0UMOoZRmUvtfluMom8Z/I7A+47kNUu7Q0QjCgDiSDNJ4w/YqX4JRDyI
+         hUYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6prvu2CI3NzcBWqU0N1Xpa6iVV1xGFav24j3mlsXXA4=;
+        b=ZZX3qw4RKmAB5GQ0baz4+REsEbykjeMjPPliroYhgdMJu1KFw56PKOTzLcuQYAhWid
+         oKfjdbsvlTiurMmrVwcWiBeLUKKPf4jAccYynjxPDDs84yOvkE3cozaKIYlOGpiUf6hN
+         2pzC3frBo4Rvsw9358uanFnGvonIVtcqXMOjSuS3foHwu3+qLvHDqxEQpIpvKvnMXRKK
+         EC3727tpcp/oBhtWFAmJO87xUGZf9EBYMZi8IjmFT/K5Omw0DmwSEK9lfyfumhK5TB9G
+         Fvep9tFkMruyXBTWnRYjc/Zjyw2seAp2Dz/cmT4JyPsL4AD5txwXXJKsNqBkercaGcdG
+         qPog==
+X-Gm-Message-State: AO0yUKWM92oim8oyeGBIIIaFG0U3ArJorMTmU8N4y85/0n1P+qgTpD4k
+        n3QOcwdoN5l1rCknWo+BBKYbSQ==
+X-Google-Smtp-Source: AK7set9jSoYr+KrAD0fdumuXJ7Cz89lWI/z0xkcgMMNwyBtEpC8hJTmIUDg3r3Q6CgjkEMUjQeAWuQ==
+X-Received: by 2002:a05:600c:1d03:b0:3dd:1bcc:eb17 with SMTP id l3-20020a05600c1d0300b003dd1bcceb17mr1587144wms.28.1675252894823;
+        Wed, 01 Feb 2023 04:01:34 -0800 (PST)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id y13-20020a1c4b0d000000b003dc4aae4739sm1522444wma.27.2023.02.01.04.01.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Feb 2023 04:01:33 -0800 (PST)
+Message-ID: <0df20322-e520-1622-8da8-6dbb44705aec@linaro.org>
+Date:   Wed, 1 Feb 2023 12:01:32 +0000
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH V2 1/5] dt-bindings: scm: Add compatible for IPQ9574
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH V2 3/5] firmware: scm: Modify only the DLOAD bit in TCSR
+ register for download mode
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <lee@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <jassisinghbrar@gmail.com>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <shawnguo@kernel.org>, <arnd@arndb.de>,
-        <marcel.ziswiler@toradex.com>, <robimarko@gmail.com>,
-        <dmitry.baryshkov@linaro.org>, <nfraprado@collabora.com>,
-        <broonie@kernel.org>, <quic_gurus@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_devipriy@quicinc.com>
+To:     Poovendhan Selvaraj <quic_poovendh@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        jassisinghbrar@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+        shawnguo@kernel.org, arnd@arndb.de, marcel.ziswiler@toradex.com,
+        robimarko@gmail.com, dmitry.baryshkov@linaro.org,
+        nfraprado@collabora.com, broonie@kernel.org,
+        quic_gurus@quicinc.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
+        quic_devipriy@quicinc.com
 References: <20230201090529.30446-1-quic_poovendh@quicinc.com>
- <20230201090529.30446-2-quic_poovendh@quicinc.com>
- <13a4bd83-e4a3-c423-4d4e-32ea94c71e68@linaro.org>
-From:   POOVENDHAN SELVARAJ <quic_poovendh@quicinc.com>
-In-Reply-To: <13a4bd83-e4a3-c423-4d4e-32ea94c71e68@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+ <20230201090529.30446-4-quic_poovendh@quicinc.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <20230201090529.30446-4-quic_poovendh@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: h1xM5VhP0K7xdFEn-pEz7hiLb4F2nwfe
-X-Proofpoint-ORIG-GUID: h1xM5VhP0K7xdFEn-pEz7hiLb4F2nwfe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-02-01_04,2023-01-31_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
- lowpriorityscore=0 suspectscore=0 phishscore=0 mlxlogscore=487 spamscore=0
- priorityscore=1501 bulkscore=0 malwarescore=0 clxscore=1015 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
- definitions=main-2302010098
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On 2/1/2023 2:59 PM, Krzysztof Kozlowski wrote:
-> On 01/02/2023 10:05, Poovendhan Selvaraj wrote:
->> Add the scm compatible string for IPQ9574 SoC
->>
->> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
->> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
->> Co-developed-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
->> Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
->> Signed-off-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
-> I don't think this improved. This patch adds one line with one value -
-> one new compatible. Are you sure that three people were working on
-> exactly that line and that compatible? Especially that it is essentially
-> copy-paste of other compatibles so there is nothing to work on here?
-Sorry, missed it here. Will address in V3.
 
-Regards,
-Poovendhan S
-> Best regards,
-> Krzysztof
->
+On 01/02/2023 09:05, Poovendhan Selvaraj wrote:
+> Add support to read-modify-write TCSR register to modify only DLOAD bit.
+> 
+> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+> Co-developed-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+> Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+> Signed-off-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
+> ---
+>   drivers/firmware/qcom_scm.c | 12 ++++++++----
+>   1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+> index 2000323722bf..e3435587a72d 100644
+> --- a/drivers/firmware/qcom_scm.c
+> +++ b/drivers/firmware/qcom_scm.c
+> @@ -407,7 +407,7 @@ int qcom_scm_set_remote_state(u32 state, u32 id)
+>   }
+>   EXPORT_SYMBOL(qcom_scm_set_remote_state);
+>   
+> -static int __qcom_scm_set_dload_mode(struct device *dev, bool enable)
+> +static int __qcom_scm_set_dload_mode(struct device *dev, u32 val, bool enable)
+>   {
+>   	struct qcom_scm_desc desc = {
+>   		.svc = QCOM_SCM_SVC_BOOT,
+> @@ -417,7 +417,7 @@ static int __qcom_scm_set_dload_mode(struct device *dev, bool enable)
+>   		.owner = ARM_SMCCC_OWNER_SIP,
+>   	};
+>   
+> -	desc.args[1] = enable ? QCOM_SCM_BOOT_SET_DLOAD_MODE : 0;
+> +	desc.args[1] = enable ? val | QCOM_SCM_BOOT_SET_DLOAD_MODE : 0;
+
+
+It is not read-modify-write when enable == false, its just writing 0.
+
+Is this intentional?
+
+
+>   
+>   	return qcom_scm_call_atomic(__scm->dev, &desc, NULL);
+>   }
+> @@ -426,15 +426,19 @@ static void qcom_scm_set_download_mode(bool enable)
+>   {
+>   	bool avail;
+>   	int ret = 0;
+> +	u32 dload_addr_val;
+>   
+>   	avail = __qcom_scm_is_call_available(__scm->dev,
+>   					     QCOM_SCM_SVC_BOOT,
+>   					     QCOM_SCM_BOOT_SET_DLOAD_MODE);
+> +	ret = qcom_scm_io_readl(__scm->dload_mode_addr, &dload_addr_val);
+> +
+>   	if (avail) {
+> -		ret = __qcom_scm_set_dload_mode(__scm->dev, enable);
+> +		ret = __qcom_scm_set_dload_mode(__scm->dev, dload_addr_val, enable);
+>   	} else if (__scm->dload_mode_addr) {
+>   		ret = qcom_scm_io_writel(__scm->dload_mode_addr,
+> -				enable ? QCOM_SCM_BOOT_SET_DLOAD_MODE : 0);
+> +				enable ? dload_addr_val |
+> +					QCOM_SCM_BOOT_SET_DLOAD_MODE : 0);
+
+same here.
+
+
+--srini
+
+>   	} else {
+>   		dev_err(__scm->dev,
+>   			"No available mechanism for setting download mode\n");
