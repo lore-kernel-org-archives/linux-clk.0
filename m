@@ -2,129 +2,467 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 398A8C38142
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Jan 2023 22:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CADCC38142
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Feb 2023 04:37:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229615AbjAaWed (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Jan 2023 17:34:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58028 "EHLO
+        id S230267AbjBAEhI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Jan 2023 23:37:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229613AbjAaWec (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 17:34:32 -0500
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6066113EB;
-        Tue, 31 Jan 2023 14:34:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1675204471; x=1706740471;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=D8gJi0ehG5WvTwectwLP//Bmc1IPekTGj1oNIj2Eicc=;
-  b=kYqXdS+tad65k8TxdjpmShBjc/tLDWJZf2mMhbdEfbpZujosdjsU1TI7
-   01RY/89bsWuqdmmltgsFACUkhVx5qDf8Rlnc1qQo9nXghrqGB3btGXVZ4
-   EJgbgXL0eZ8OC/GacOi8Qw/yLuFY9ViCV9t65NStrtVlGFRcepm9DcqNA
-   yEUeHeBYyr5Fvvnwfgv7LPMR6cXGtuf/XirIkNvbSi6abnm6viiGoQ8ip
-   4ap1TDcg0mk+3F4Pw3AxTQzSiLrmP+MCZAUp28WmElqT1vrzN9D8O+2PK
-   oy8gcskVMW15CcieCeTklckrQRSOdOOVsGicfDtiNiZXku9eiYccQzD8b
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10607"; a="315948019"
-X-IronPort-AV: E=Sophos;i="5.97,261,1669104000"; 
-   d="scan'208";a="315948019"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2023 14:34:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10607"; a="788619371"
-X-IronPort-AV: E=Sophos;i="5.97,261,1669104000"; 
-   d="scan'208";a="788619371"
-Received: from lkp-server01.sh.intel.com (HELO ffa7f14d1d0f) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 31 Jan 2023 14:34:28 -0800
-Received: from kbuild by ffa7f14d1d0f with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pMzCt-0004lK-2T;
-        Tue, 31 Jan 2023 22:34:27 +0000
-Date:   Wed, 1 Feb 2023 06:33:38 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        with ESMTP id S229962AbjBAEhH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2023 23:37:07 -0500
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 145073EC43;
+        Tue, 31 Jan 2023 20:37:03 -0800 (PST)
+Received: from loongson.cn (unknown [10.20.42.35])
+        by gateway (Coremail) with SMTP id _____8AxnOpu7NljIi4LAA--.22782S3;
+        Wed, 01 Feb 2023 12:37:02 +0800 (CST)
+Received: from [10.20.42.35] (unknown [10.20.42.35])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8Axur1t7NljURsmAA--.9629S3;
+        Wed, 01 Feb 2023 12:37:01 +0800 (CST)
+Subject: Re: [PATCH v10 2/4] clk: clk-loongson2: add clock controller driver
+ support
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: qcom: gpucc-sdm845: fix clk_dis_wait being
- programmed for CX GDSC
-Message-ID: <202302010608.GDyw4Xuo-lkp@intel.com>
-References: <20230131092432.122711-2-dmitry.baryshkov@linaro.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Jianmin Lv <lvjianmin@loongson.cn>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+        lvjianmin@loongson.cn, wanghongliang@loongson.cn,
+        liupeibao@loongson.cn, zhuyinbo@loongson.cn
+References: <20221129034157.15036-1-zhuyinbo@loongson.cn>
+ <20221129034157.15036-2-zhuyinbo@loongson.cn>
+From:   zhuyinbo <zhuyinbo@loongson.cn>
+Message-ID: <696c5747-f1ef-895f-f73c-2af7b185db4a@loongson.cn>
+Date:   Wed, 1 Feb 2023 12:37:01 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230131092432.122711-2-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20221129034157.15036-2-zhuyinbo@loongson.cn>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID: AQAAf8Axur1t7NljURsmAA--.9629S3
+X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjvJXoWfJw1UGFykAr4rWF1xZw1kZrb_yoWktryrpF
+        yfAay3GFWjqr4Uurs8JryDGFn8AasxK3W7ZF43G34UuFZ7X34UWr48GFyxCF4UZrWkAay2
+        vFZa9rWUCFs8W37anT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        bDAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28E
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
+        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY
+        6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrV
+        C2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE
+        7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14
+        v26r126r1DMxAIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_WwCFx2IqxVCFs4IE
+        7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I
+        0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAI
+        cVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcV
+        CF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jO-B_UUUUU=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Dmitry,
 
-I love your patch! Yet something to improve:
-
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on linus/master v6.2-rc6 next-20230131]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Baryshkov/clk-qcom-gpucc-sdm845-fix-clk_dis_wait-being-programmed-for-CX-GDSC/20230131-172656
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20230131092432.122711-2-dmitry.baryshkov%40linaro.org
-patch subject: [PATCH 2/2] clk: qcom: gpucc-sdm845: fix clk_dis_wait being programmed for CX GDSC
-config: arm64-randconfig-r016-20230130 (https://download.01.org/0day-ci/archive/20230201/202302010608.GDyw4Xuo-lkp@intel.com/config)
-compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 4196ca3278f78c6e19246e54ab0ecb364e37d66a)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install arm64 cross compiling tool for clang build
-        # apt-get install binutils-aarch64-linux-gnu
-        # https://github.com/intel-lab-lkp/linux/commit/8222d81144cbdf9b51ffe1ffc61e16b471456329
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Dmitry-Baryshkov/clk-qcom-gpucc-sdm845-fix-clk_dis_wait-being-programmed-for-CX-GDSC/20230131-172656
-        git checkout 8222d81144cbdf9b51ffe1ffc61e16b471456329
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm64 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash drivers/clk/qcom/
-
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
->> drivers/clk/qcom/gpucc-sdm845.c:122:3: error: field designator 'clk_dis_wait' does not refer to any field in type 'struct gdsc'; did you mean 'clk_dis_wait_val'?
-           .clk_dis_wait = 0x8,
-            ^~~~~~~~~~~~
-            clk_dis_wait_val
-   drivers/clk/qcom/gdsc.h:47:17: note: 'clk_dis_wait_val' declared here
-           unsigned int                    clk_dis_wait_val;
-                                           ^
-   1 error generated.
+Friendly ping ?
 
 
-vim +122 drivers/clk/qcom/gpucc-sdm845.c
+ÔÚ 2022/11/29 ÉÏÎç11:41, Yinbo Zhu Ð´µÀ:
+> This driver provides support for clock controller on Loongson-2 SoC,
+> the Loongson-2 SoC uses a 100MHz clock as the PLL reference clock,
+> there are five independent PLLs inside, each of which PLL can
+> provide up to three sets of frequency dependent clock outputs.
+>
+> Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+> ---
+> Change in v10:
+> 		1. Detach of_clk_init to another patch.
+> Change in v9:
+> 		1. Add all history changelog information.
+> Change in v8:
+> 		1. Remove the flag "CLK_IS_BASIC".
+> Change in v7:
+> 		1. Adjust position alphabetically in Kconfig and Makefile.
+> 		2. Add static for loongson2_pll_base.
+> 		3. Move other file-scope variables in probe.
+> Change in v6:
+> 		1. NO change, but other patch in this series of patches has
+> 		   changes.
+> Change in v5:
+> 		1. Replace loongson2 with Loongson-2 in commit info.
+> 		2. Replace Loongson2 with Loongson-2 in binding and
+> 		   Kconfig file.
+> 		3. Replace soc with SoC.
+> Change in v4:
+> 		1. Fixup clock-names that replace "xxx-clk" with "xxx".
+> Change in v3:
+> 		1. NO change, but other patch in this series of patches has
+> 		   changes.
+> Change in v2:
+> 		1. Update the include filename.
+> 		2. Change string from refclk/REFCLK to ref/REF.
+>
+>   MAINTAINERS                 |   1 +
+>   arch/loongarch/Kconfig      |   1 +
+>   drivers/clk/Kconfig         |   9 ++
+>   drivers/clk/Makefile        |   1 +
+>   drivers/clk/clk-loongson2.c | 286 ++++++++++++++++++++++++++++++++++++
+>   5 files changed, 298 insertions(+)
+>   create mode 100644 drivers/clk/clk-loongson2.c
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index ab94893fe2f6..73fa56f1fd5d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12025,6 +12025,7 @@ LOONGSON-2 SOC SERIES CLOCK DRIVER
+>   M:	Yinbo Zhu <zhuyinbo@loongson.cn>
+>   L:	linux-clk@vger.kernel.org
+>   S:	Maintained
+> +F:	drivers/clk/clk-loongson2.c
+>   F:	include/dt-bindings/clock/loongson,ls2k-clk.h
+>   
+>   LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index 903096bd87f8..4f8f1b8f796d 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -127,6 +127,7 @@ config LOONGARCH
+>   	select USE_PERCPU_NUMA_NODE_ID
+>   	select USER_STACKTRACE_SUPPORT
+>   	select ZONE_DMA32
+> +	select COMMON_CLK
+>   
+>   config 32BIT
+>   	bool
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index d79905f3e174..d13626f63739 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -326,6 +326,15 @@ config COMMON_CLK_LOCHNAGAR
+>   	  This driver supports the clocking features of the Cirrus Logic
+>   	  Lochnagar audio development board.
+>   
+> +config COMMON_CLK_LOONGSON2
+> +	bool "Clock driver for Loongson-2 SoC"
+> +	depends on COMMON_CLK && OF
+> +	help
+> +	  This driver provides support for Clock Controller that base on
+> +	  Common Clock Framework Controller (CCF) on Loongson-2 SoC. The
+> +	  Clock Controller can generates and supplies clock to various
+> +	  peripherals within the SoC.
+> +
+>   config COMMON_CLK_NXP
+>   	def_bool COMMON_CLK && (ARCH_LPC18XX || ARCH_LPC32XX)
+>   	select REGMAP_MMIO if ARCH_LPC32XX
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index e3ca0d058a25..b298c5dabc1a 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -43,6 +43,7 @@ obj-$(CONFIG_COMMON_CLK_K210)		+= clk-k210.o
+>   obj-$(CONFIG_LMK04832)			+= clk-lmk04832.o
+>   obj-$(CONFIG_COMMON_CLK_LAN966X)	+= clk-lan966x.o
+>   obj-$(CONFIG_COMMON_CLK_LOCHNAGAR)	+= clk-lochnagar.o
+> +obj-$(CONFIG_COMMON_CLK_LOONGSON2)	+= clk-loongson2.o
+>   obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
+>   obj-$(CONFIG_COMMON_CLK_MAX9485)	+= clk-max9485.o
+>   obj-$(CONFIG_ARCH_MILBEAUT_M10V)	+= clk-milbeaut.o
+> diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
+> new file mode 100644
+> index 000000000000..7487effceeab
+> --- /dev/null
+> +++ b/drivers/clk/clk-loongson2.c
+> @@ -0,0 +1,286 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Author: Yinbo Zhu <zhuyinbo@loongson.cn>
+> + * Copyright (C) 2022-2023 Loongson Technology Corporation Limited
+> + */
+> +
+> +#include <linux/clkdev.h>
+> +#include <linux/err.h>
+> +#include <linux/init.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <dt-bindings/clock/loongson,ls2k-clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/slab.h>
+> +#include <linux/clk.h>
+> +
+> +#define LOONGSON2_PLL_MULT_SHIFT		32
+> +#define LOONGSON2_PLL_MULT_WIDTH		10
+> +#define LOONGSON2_PLL_DIV_SHIFT			26
+> +#define LOONGSON2_PLL_DIV_WIDTH			6
+> +#define LOONGSON2_APB_FREQSCALE_SHIFT		20
+> +#define LOONGSON2_APB_FREQSCALE_WIDTH		3
+> +#define LOONGSON2_USB_FREQSCALE_SHIFT		16
+> +#define LOONGSON2_USB_FREQSCALE_WIDTH		3
+> +#define LOONGSON2_SATA_FREQSCALE_SHIFT		12
+> +#define LOONGSON2_SATA_FREQSCALE_WIDTH		3
+> +
+> +static void __iomem *loongson2_pll_base;
+> +
+> +static struct clk_hw *loongson2_clk_register(struct device *dev,
+> +					  const char *name,
+> +					  const char *parent_name,
+> +					  const struct clk_ops *ops,
+> +					  unsigned long flags)
+> +{
+> +	int ret;
+> +	struct clk_hw *hw;
+> +	struct clk_init_data init;
+> +
+> +	/* allocate the divider */
+> +	hw = kzalloc(sizeof(*hw), GFP_KERNEL);
+> +	if (!hw)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	init.name = name;
+> +	init.ops = ops;
+> +	init.flags = flags;
+> +	init.parent_names = (parent_name ? &parent_name : NULL);
+> +	init.num_parents = (parent_name ? 1 : 0);
+> +	hw->init = &init;
+> +
+> +	/* register the clock */
+> +	ret = clk_hw_register(dev, hw);
+> +	if (ret) {
+> +		kfree(hw);
+> +		hw = ERR_PTR(ret);
+> +	}
+> +
+> +	return hw;
+> +}
+> +
+> +static struct clk_hw *loongson2_clk_pll_register(const char *name,
+> +				const char *parent, void __iomem *reg)
+> +{
+> +	u64 val;
+> +	u32 mult = 1, div = 1;
+> +
+> +	val = readq((void *)reg);
+> +
+> +	mult = (val >> LOONGSON2_PLL_MULT_SHIFT) &
+> +			clk_div_mask(LOONGSON2_PLL_MULT_WIDTH);
+> +	div = (val >> LOONGSON2_PLL_DIV_SHIFT) &
+> +			clk_div_mask(LOONGSON2_PLL_DIV_WIDTH);
+> +
+> +	return clk_hw_register_fixed_factor(NULL, name, parent,
+> +				CLK_SET_RATE_PARENT, mult, div);
+> +}
+> +
+> +static unsigned long loongson2_apb_recalc_rate(struct clk_hw *hw,
+> +					  unsigned long parent_rate)
+> +{
+> +	u64 val;
+> +	u32 mult;
+> +	unsigned long rate;
+> +
+> +	val = readq((void *)(loongson2_pll_base + 0x50));
+> +
+> +	mult = (val >> LOONGSON2_APB_FREQSCALE_SHIFT) &
+> +			clk_div_mask(LOONGSON2_APB_FREQSCALE_WIDTH);
+> +
+> +	rate = parent_rate * (mult + 1);
+> +	do_div(rate, 8);
+> +
+> +	return rate;
+> +}
+> +
+> +static const struct clk_ops loongson2_apb_clk_ops = {
+> +	.recalc_rate = loongson2_apb_recalc_rate,
+> +};
+> +
+> +static unsigned long loongson2_usb_recalc_rate(struct clk_hw *hw,
+> +					  unsigned long parent_rate)
+> +{
+> +	u64 val;
+> +	u32 mult;
+> +	unsigned long rate;
+> +
+> +	val = readq((void *)(loongson2_pll_base + 0x50));
+> +
+> +	mult = (val >> LOONGSON2_USB_FREQSCALE_SHIFT) &
+> +			clk_div_mask(LOONGSON2_USB_FREQSCALE_WIDTH);
+> +
+> +	rate = parent_rate * (mult + 1);
+> +	do_div(rate, 8);
+> +
+> +	return rate;
+> +}
+> +
+> +static const struct clk_ops loongson2_usb_clk_ops = {
+> +	.recalc_rate = loongson2_usb_recalc_rate,
+> +};
+> +
+> +static unsigned long loongson2_sata_recalc_rate(struct clk_hw *hw,
+> +					  unsigned long parent_rate)
+> +{
+> +	u64 val;
+> +	u32 mult;
+> +	unsigned long rate;
+> +
+> +	val = readq((void *)(loongson2_pll_base + 0x50));
+> +
+> +	mult = (val >> LOONGSON2_SATA_FREQSCALE_SHIFT) &
+> +			clk_div_mask(LOONGSON2_SATA_FREQSCALE_WIDTH);
+> +
+> +	rate = parent_rate * (mult + 1);
+> +	do_div(rate, 8);
+> +
+> +	return rate;
+> +}
+> +
+> +static const struct clk_ops loongson2_sata_clk_ops = {
+> +	.recalc_rate = loongson2_sata_recalc_rate,
+> +};
+> +
+> +static void loongson2_check_clk_hws(struct clk_hw *clks[], unsigned int count)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < count; i++)
+> +		if (IS_ERR(clks[i]))
+> +			pr_err("Loongson2 clk %u: register failed with %ld\n"
+> +				, i, PTR_ERR(clks[i]));
+> +}
+> +
+> +static struct clk_hw *loongson2_obtain_fixed_clk_hw(
+> +					struct device_node *np,
+> +					const char *name)
+> +{
+> +	struct clk *clk;
+> +
+> +	clk = of_clk_get_by_name(np, name);
+> +	if (IS_ERR(clk))
+> +		return ERR_PTR(-ENOENT);
+> +
+> +	return __clk_get_hw(clk);
+> +}
+> +
+> +static void __init loongson2_clocks_init(struct device_node *np)
+> +{
+> +	struct clk_hw **hws;
+> +	struct clk_hw_onecell_data *clk_hw_data;
+> +	spinlock_t loongson2_clk_lock;
+> +
+> +	loongson2_pll_base = of_iomap(np, 0);
+> +
+> +	if (!loongson2_pll_base) {
+> +		pr_err("clk: unable to map loongson2 clk registers\n");
+> +		goto err;
+> +	}
+> +
+> +	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws, LOONGSON2_CLK_END),
+> +					GFP_KERNEL);
+> +	if (WARN_ON(!clk_hw_data))
+> +		goto err;
+> +
+> +	clk_hw_data->num = LOONGSON2_CLK_END;
+> +	hws = clk_hw_data->hws;
+> +
+> +	hws[LOONGSON2_REF_100M] = loongson2_obtain_fixed_clk_hw(np,
+> +						"ref_100m");
+> +
+> +	hws[LOONGSON2_NODE_PLL] = loongson2_clk_pll_register("node_pll",
+> +						"ref_100m",
+> +						loongson2_pll_base);
+> +
+> +	hws[LOONGSON2_DDR_PLL] = loongson2_clk_pll_register("ddr_pll",
+> +						"ref_100m",
+> +						loongson2_pll_base + 0x10);
+> +
+> +	hws[LOONGSON2_DC_PLL] = loongson2_clk_pll_register("dc_pll",
+> +						"ref_100m",
+> +						loongson2_pll_base + 0x20);
+> +
+> +	hws[LOONGSON2_PIX0_PLL] = loongson2_clk_pll_register("pix0_pll",
+> +						"ref_100m",
+> +						loongson2_pll_base + 0x30);
+> +
+> +	hws[LOONGSON2_PIX1_PLL] = loongson2_clk_pll_register("pix1_pll",
+> +						"ref_100m",
+> +						loongson2_pll_base + 0x40);
+> +
+> +	hws[LOONGSON2_NODE_CLK] = clk_hw_register_divider(NULL, "node",
+> +						"node_pll", 0,
+> +						loongson2_pll_base + 0x8, 0,
+> +						6, CLK_DIVIDER_ONE_BASED,
+> +						&loongson2_clk_lock);
+> +
+> +	/*
+> +	 * The hda clk divisor in the upper 32bits and the clk-prodiver
+> +	 * layer code doesn't support 64bit io operation thus a conversion
+> +	 * is required that subtract shift by 32 and add 4byte to the hda
+> +	 * address
+> +	 */
+> +	hws[LOONGSON2_HDA_CLK] = clk_hw_register_divider(NULL, "hda",
+> +						"ddr_pll", 0,
+> +						loongson2_pll_base + 0x22, 12,
+> +						7, CLK_DIVIDER_ONE_BASED,
+> +						&loongson2_clk_lock);
+> +
+> +	hws[LOONGSON2_GPU_CLK] = clk_hw_register_divider(NULL, "gpu",
+> +						"ddr_pll", 0,
+> +						loongson2_pll_base + 0x18, 22,
+> +						6, CLK_DIVIDER_ONE_BASED,
+> +						&loongson2_clk_lock);
+> +
+> +	hws[LOONGSON2_DDR_CLK] = clk_hw_register_divider(NULL, "ddr",
+> +						"ddr_pll", 0,
+> +						loongson2_pll_base + 0x18, 0,
+> +						6, CLK_DIVIDER_ONE_BASED,
+> +						&loongson2_clk_lock);
+> +
+> +	hws[LOONGSON2_GMAC_CLK] = clk_hw_register_divider(NULL, "gmac",
+> +						"dc_pll", 0,
+> +						loongson2_pll_base + 0x28, 22,
+> +						6, CLK_DIVIDER_ONE_BASED,
+> +						&loongson2_clk_lock);
+> +
+> +	hws[LOONGSON2_DC_CLK] = clk_hw_register_divider(NULL, "dc",
+> +						"dc_pll", 0,
+> +						loongson2_pll_base + 0x28, 0,
+> +						6, CLK_DIVIDER_ONE_BASED,
+> +						&loongson2_clk_lock);
+> +
+> +	hws[LOONGSON2_APB_CLK] = loongson2_clk_register(NULL, "apb",
+> +						"gmac",
+> +						&loongson2_apb_clk_ops, 0);
+> +
+> +	hws[LOONGSON2_USB_CLK] = loongson2_clk_register(NULL, "usb",
+> +						"gmac",
+> +						&loongson2_usb_clk_ops, 0);
+> +
+> +	hws[LOONGSON2_SATA_CLK] = loongson2_clk_register(NULL, "sata",
+> +						"gmac",
+> +						&loongson2_sata_clk_ops, 0);
+> +
+> +	hws[LOONGSON2_PIX0_CLK] = clk_hw_register_divider(NULL, "pix0",
+> +						"pix0_pll", 0,
+> +						loongson2_pll_base + 0x38, 0, 6,
+> +						CLK_DIVIDER_ONE_BASED,
+> +						&loongson2_clk_lock);
+> +
+> +	hws[LOONGSON2_PIX1_CLK] = clk_hw_register_divider(NULL, "pix1",
+> +						"pix1_pll", 0,
+> +						loongson2_pll_base + 0x48, 0, 6,
+> +						CLK_DIVIDER_ONE_BASED,
+> +						&loongson2_clk_lock);
+> +
+> +	loongson2_check_clk_hws(hws, LOONGSON2_CLK_END);
+> +
+> +	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
+> +
+> +err:
+> +	iounmap(loongson2_pll_base);
+> +}
+> +
+> +CLK_OF_DECLARE(loongson2_clk, "loongson,ls2k-clk", loongson2_clocks_init);
 
-   118	
-   119	static struct gdsc gpu_cx_gdsc = {
-   120		.gdscr = 0x106c,
-   121		.gds_hw_ctrl = 0x1540,
- > 122		.clk_dis_wait = 0x8,
-   123		.pd = {
-   124			.name = "gpu_cx_gdsc",
-   125		},
-   126		.pwrsts = PWRSTS_OFF_ON,
-   127		.flags = VOTABLE,
-   128	};
-   129	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
