@@ -2,48 +2,47 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D729CC05027
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Feb 2023 14:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAAF1C6379F
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Feb 2023 14:41:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230462AbjBAO0t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Feb 2023 09:26:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39144 "EHLO
+        id S232051AbjBAOlI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Feb 2023 09:41:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229719AbjBAO0s (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Feb 2023 09:26:48 -0500
-Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 069A43D91B;
-        Wed,  1 Feb 2023 06:26:47 -0800 (PST)
+        with ESMTP id S231215AbjBAOlH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Feb 2023 09:41:07 -0500
+Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 255B3C67C;
+        Wed,  1 Feb 2023 06:41:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1675261607; x=1706797607;
+  t=1675262466; x=1706798466;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=71c35E+QlELiDoCRu9TrKbxnNSfXkZbgGsnlKAeDVBU=;
-  b=gAmzrnFS3kr+f+f0P5VTEyR02XhSwrZ7CrD6sYYAzYsfCNymKxqg8Z5Y
-   u7x242FObY1YKrd23RAULtZhcvN5VfPc0sRoshI2vLt8IjQwE8wCHXLeb
-   wTBl9hyyXUKb1zqSyi4F7Aji0lGDrxW0rN4FlVY9xY1L8fXcrhBOuz63e
-   4=;
-Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 01 Feb 2023 06:26:46 -0800
+  bh=FP3eOSKVuO2pSoDoClWW9jU0h8Pdb0AyhKyqyRnXwSc=;
+  b=r1T9jDiSeP+TS1u56fv3ezZqx1ENuC7DNwTe7BQQbPm5wVcohBBNZX6Y
+   AnTXmygQqCPj/h/FDmCclnD12WPWfLTyYPKxRqGLNsagjHH77fIBfjQXk
+   H4ZJ8rJS98Ifn8HzU/tEMax1Slgh5GjMuIYv46IgYSI0A8ikbk182hG2k
+   U=;
+Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 01 Feb 2023 06:41:05 -0800
 X-QCInternal: smtphost
 Received: from nalasex01a.na.qualcomm.com ([10.47.209.196])
-  by ironmsg04-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2023 06:26:45 -0800
+  by ironmsg-SD-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2023 06:41:05 -0800
 Received: from [10.50.40.201] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 1 Feb 2023
- 06:26:36 -0800
-Message-ID: <fd8ab034-7a50-0d28-dbfc-601a30f97af7@quicinc.com>
-Date:   Wed, 1 Feb 2023 19:56:33 +0530
+ 06:40:56 -0800
+Message-ID: <f21b74b2-cdaf-1be1-17e7-d004bfdddedd@quicinc.com>
+Date:   Wed, 1 Feb 2023 20:10:52 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.2
-Subject: Re: [PATCH 3/6] arm64: defconfig: Enable ipq6018 apss clock and PLL
- controller
+Subject: Re: [PATCH 6/6] clk: qcom: Fix APSS PLL and RCG Configuration
 Content-Language: en-US
 To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <robh+dt@kernel.org>,
         <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
         <sboyd@kernel.org>, <jassisinghbrar@gmail.com>,
         <catalin.marinas@arm.com>, <will@kernel.org>,
@@ -58,10 +57,12 @@ CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
         <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
         <quic_poovendh@quicinc.com>
 References: <20230113143647.14961-1-quic_devipriy@quicinc.com>
- <20230113143647.14961-4-quic_devipriy@quicinc.com>
- <b8b90989-4bc9-f3a9-516e-2101bfc2293d@linaro.org>
+ <20230113143647.14961-7-quic_devipriy@quicinc.com>
+ <b87ab80d-0936-5a5a-25da-35c0dbdede33@linaro.org>
+ <ea0dbbf0-958c-145b-abaa-3bbcb620df5c@quicinc.com>
+ <b8eee15f-e3e4-4a2d-853e-31e966c19cf5@linaro.org>
 From:   Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <b8b90989-4bc9-f3a9-516e-2101bfc2293d@linaro.org>
+In-Reply-To: <b8eee15f-e3e4-4a2d-853e-31e966c19cf5@linaro.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.80.80.8]
@@ -71,42 +72,99 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thanks for taking time to review the patch
 
-On 1/31/2023 3:01 PM, Dmitry Baryshkov wrote:
-> On 13/01/2023 16:36, devi priya wrote:
->> Enable the PLL controller and IPQ6018 APSS clock controller
-> 
-> ... it is used on several IPQ platforms to clock the CPU so it should be 
-> enabled and built-in.
-> 
-Okay, got it. Will update the commit message as suggested in V2
+
+On 1/31/2023 3:10 PM, Dmitry Baryshkov wrote:
+> On 31/01/2023 11:17, Devi Priya wrote:
+>> Thanks for taking time to review the patch
 >>
->> Co-developed-by: Praveenkumar I <quic_ipkumar@quicinc.com>
->> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
->> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+>> On 1/13/2023 8:50 PM, Konrad Dybcio wrote:
+>>>
+>>>
+>>> On 13.01.2023 15:36, devi priya wrote:
+>>>> Included CLK_IS_CRITICAL flag which helps to properly enable
+>>>> the APSS PLL during bootup.
+>>> Please describe the issue and not only the user-visible impact it
+>>> makes. Does the PLL get shut down by clk_ignore_unused? Maybe you
+>>> would be interested in the sync_state changes that landed in recent
+>>> -next that may solve it for you?
+>>>
+>>> I don't think it should be always-on, as you have an alternate source
+>>> for low power modes, adding CLK_IS_CRITICAL will keep the PLL enabled
+>>> even if you're not using it.
+>> Yeah, got it. Will drop the critical flag
+>>>
+>>>> clk_rcg2_ops should be used for APSS clock RCG, as other ops
+>>>> will not configure the RCG register
+>>> RCG register meaning RCG register*s*, meaning in this case M/N/D
+>>> which would be required for proper rate setting and not only input
+>>> switching (which arguably doesn't seem to be of much concern on a
+>>> single-parent clock)? This all is not obvious..
+>>>
+>>> Konrad
+>> The source selection is done by configuring the RCGR config register 
+>> with the source entry (P_APSS_PLL_EARLY) added to the frequency table. 
+>> Proper rate is achieved by configuring the PLL and hence M/N/D values 
+>> are not configured
 > 
-> Just to check: is the capitalization correct in your name here and 
-> everywhere else? (please excuse my ignorance here, I do not know all the 
-> spelling/capitalization rules).
+> But the clk_rcg2_mux_closest_ops also programs the parent for the clock. 
+> So from your description it isn't obvious what is wrong with the current 
+> _ops used for the clock.
 > 
-Sure, will change the naming style to Camel Case
->> ---
->>   arch/arm64/configs/defconfig | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
->> index e0ae0996d5ad..8de3979b10a3 100644
->> --- a/arch/arm64/configs/defconfig
->> +++ b/arch/arm64/configs/defconfig
->> @@ -1092,6 +1092,7 @@ CONFIG_QCOM_CLK_APCS_MSM8916=y
->>   CONFIG_QCOM_CLK_APCC_MSM8996=y
->>   CONFIG_QCOM_CLK_SMD_RPM=y
->>   CONFIG_QCOM_CLK_RPMH=y
->> +CONFIG_IPQ_APSS_6018=y
->>   CONFIG_IPQ_GCC_6018=y
->>   CONFIG_IPQ_GCC_8074=y
->>   CONFIG_IPQ_GCC_9574=y
+Okay, understood & agreed.
+Will re-verify it once and update it accordingly in V2
+>>>>
+>>>> Co-developed-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+>>>> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+>>>> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+>>>> ---
+>>>>   drivers/clk/qcom/apss-ipq-pll.c | 1 +
+>>>>   drivers/clk/qcom/apss-ipq6018.c | 8 +++++++-
+>>>>   2 files changed, 8 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/clk/qcom/apss-ipq-pll.c 
+>>>> b/drivers/clk/qcom/apss-ipq-pll.c
+>>>> index dd0c01bf5a98..75486a124fcd 100644
+>>>> --- a/drivers/clk/qcom/apss-ipq-pll.c
+>>>> +++ b/drivers/clk/qcom/apss-ipq-pll.c
+>>>> @@ -33,6 +33,7 @@ static struct clk_alpha_pll ipq_pll = {
+>>>>               },
+>>>>               .num_parents = 1,
+>>>>               .ops = &clk_alpha_pll_huayra_ops,
+>>>> +            .flags = CLK_IS_CRITICAL,
+>>>>           },
+>>>>       },
+>>>>   };
+>>>> diff --git a/drivers/clk/qcom/apss-ipq6018.c 
+>>>> b/drivers/clk/qcom/apss-ipq6018.c
+>>>> index f2f502e2d5a4..0d0e7196a4dc 100644
+>>>> --- a/drivers/clk/qcom/apss-ipq6018.c
+>>>> +++ b/drivers/clk/qcom/apss-ipq6018.c
+>>>> @@ -33,15 +33,21 @@ static const struct parent_map 
+>>>> parents_apcs_alias0_clk_src_map[] = {
+>>>>       { P_APSS_PLL_EARLY, 5 },
+>>>>   };
+>>>> +static const struct freq_tbl ftbl_apcs_alias0_clk_src[] = {
+>>>> +    { .src = P_APSS_PLL_EARLY, .pre_div = 1 },
+>>>> +    { }
+>>>> +};
+>>>> +
+>>>>   static struct clk_rcg2 apcs_alias0_clk_src = {
+>>>>       .cmd_rcgr = 0x0050,
+>>>> +    .freq_tbl = ftbl_apcs_alias0_clk_src,
+>>>>       .hid_width = 5,
+>>>>       .parent_map = parents_apcs_alias0_clk_src_map,
+>>>>       .clkr.hw.init = &(struct clk_init_data){
+>>>>           .name = "apcs_alias0_clk_src",
+>>>>           .parent_data = parents_apcs_alias0_clk_src,
+>>>>           .num_parents = ARRAY_SIZE(parents_apcs_alias0_clk_src),
+>>>> -        .ops = &clk_rcg2_mux_closest_ops,
+>>>> +        .ops = &clk_rcg2_ops,
+>>>>           .flags = CLK_SET_RATE_PARENT,
+>>>>       },
+>>>>   };
+>> Best Regards,
+>> Devi Priya
 > 
 Best Regards,
 Devi Priya
