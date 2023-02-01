@@ -2,154 +2,111 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC640C636D3
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Feb 2023 12:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D729CC05027
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Feb 2023 14:26:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231364AbjBAMBo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Feb 2023 07:01:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60660 "EHLO
+        id S230462AbjBAO0t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Feb 2023 09:26:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231473AbjBAMBm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Feb 2023 07:01:42 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1AB029E29
-        for <linux-clk@vger.kernel.org>; Wed,  1 Feb 2023 04:01:36 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id d4-20020a05600c3ac400b003db1de2aef0so1231042wms.2
-        for <linux-clk@vger.kernel.org>; Wed, 01 Feb 2023 04:01:36 -0800 (PST)
+        with ESMTP id S229719AbjBAO0s (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Feb 2023 09:26:48 -0500
+Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 069A43D91B;
+        Wed,  1 Feb 2023 06:26:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6prvu2CI3NzcBWqU0N1Xpa6iVV1xGFav24j3mlsXXA4=;
-        b=In09R1A0QdGqESTC/tbUuyeGu1hlVo9zBahaCjmLsXyT9YmlXvcrYY5h4eV9Ezsnii
-         SxS1z4Xq3xRPII5NzoBuTDG1bkxeQiSXAflfnxM34O4B1w0EkmpaKZiUUnQ0usp4PgyY
-         2n5ukflsgbrsWs/Dno1DOyK3+fwOMA2+NmNfSZ5ZkJH9b+ZiE5RAoVqhdo6LgiQlgRcn
-         pv01MQninn/TwLUdLFP/0j0fi0WSwN8w2xWQfTOGFmqDSxnSSPq1w9BiAug9sODRqZ7V
-         TiWjXSQfLoeLA0UMOoZRmUvtfluMom8Z/I7A+47kNUu7Q0QjCgDiSDNJ4w/YqX4JRDyI
-         hUYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6prvu2CI3NzcBWqU0N1Xpa6iVV1xGFav24j3mlsXXA4=;
-        b=ZZX3qw4RKmAB5GQ0baz4+REsEbykjeMjPPliroYhgdMJu1KFw56PKOTzLcuQYAhWid
-         oKfjdbsvlTiurMmrVwcWiBeLUKKPf4jAccYynjxPDDs84yOvkE3cozaKIYlOGpiUf6hN
-         2pzC3frBo4Rvsw9358uanFnGvonIVtcqXMOjSuS3foHwu3+qLvHDqxEQpIpvKvnMXRKK
-         EC3727tpcp/oBhtWFAmJO87xUGZf9EBYMZi8IjmFT/K5Omw0DmwSEK9lfyfumhK5TB9G
-         Fvep9tFkMruyXBTWnRYjc/Zjyw2seAp2Dz/cmT4JyPsL4AD5txwXXJKsNqBkercaGcdG
-         qPog==
-X-Gm-Message-State: AO0yUKWM92oim8oyeGBIIIaFG0U3ArJorMTmU8N4y85/0n1P+qgTpD4k
-        n3QOcwdoN5l1rCknWo+BBKYbSQ==
-X-Google-Smtp-Source: AK7set9jSoYr+KrAD0fdumuXJ7Cz89lWI/z0xkcgMMNwyBtEpC8hJTmIUDg3r3Q6CgjkEMUjQeAWuQ==
-X-Received: by 2002:a05:600c:1d03:b0:3dd:1bcc:eb17 with SMTP id l3-20020a05600c1d0300b003dd1bcceb17mr1587144wms.28.1675252894823;
-        Wed, 01 Feb 2023 04:01:34 -0800 (PST)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id y13-20020a1c4b0d000000b003dc4aae4739sm1522444wma.27.2023.02.01.04.01.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Feb 2023 04:01:33 -0800 (PST)
-Message-ID: <0df20322-e520-1622-8da8-6dbb44705aec@linaro.org>
-Date:   Wed, 1 Feb 2023 12:01:32 +0000
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1675261607; x=1706797607;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=71c35E+QlELiDoCRu9TrKbxnNSfXkZbgGsnlKAeDVBU=;
+  b=gAmzrnFS3kr+f+f0P5VTEyR02XhSwrZ7CrD6sYYAzYsfCNymKxqg8Z5Y
+   u7x242FObY1YKrd23RAULtZhcvN5VfPc0sRoshI2vLt8IjQwE8wCHXLeb
+   wTBl9hyyXUKb1zqSyi4F7Aji0lGDrxW0rN4FlVY9xY1L8fXcrhBOuz63e
+   4=;
+Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 01 Feb 2023 06:26:46 -0800
+X-QCInternal: smtphost
+Received: from nalasex01a.na.qualcomm.com ([10.47.209.196])
+  by ironmsg04-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2023 06:26:45 -0800
+Received: from [10.50.40.201] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 1 Feb 2023
+ 06:26:36 -0800
+Message-ID: <fd8ab034-7a50-0d28-dbfc-601a30f97af7@quicinc.com>
+Date:   Wed, 1 Feb 2023 19:56:33 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.2
-Subject: Re: [PATCH V2 3/5] firmware: scm: Modify only the DLOAD bit in TCSR
- register for download mode
+Subject: Re: [PATCH 3/6] arm64: defconfig: Enable ipq6018 apss clock and PLL
+ controller
 Content-Language: en-US
-To:     Poovendhan Selvaraj <quic_poovendh@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        jassisinghbrar@gmail.com, catalin.marinas@arm.com, will@kernel.org,
-        shawnguo@kernel.org, arnd@arndb.de, marcel.ziswiler@toradex.com,
-        robimarko@gmail.com, dmitry.baryshkov@linaro.org,
-        nfraprado@collabora.com, broonie@kernel.org,
-        quic_gurus@quicinc.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
-        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
-        quic_devipriy@quicinc.com
-References: <20230201090529.30446-1-quic_poovendh@quicinc.com>
- <20230201090529.30446-4-quic_poovendh@quicinc.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <20230201090529.30446-4-quic_poovendh@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <jassisinghbrar@gmail.com>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <shawnguo@kernel.org>, <arnd@arndb.de>,
+        <marcel.ziswiler@toradex.com>, <nfraprado@collabora.com>,
+        <broonie@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>
+References: <20230113143647.14961-1-quic_devipriy@quicinc.com>
+ <20230113143647.14961-4-quic_devipriy@quicinc.com>
+ <b8b90989-4bc9-f3a9-516e-2101bfc2293d@linaro.org>
+From:   Devi Priya <quic_devipriy@quicinc.com>
+In-Reply-To: <b8b90989-4bc9-f3a9-516e-2101bfc2293d@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Thanks for taking time to review the patch
 
-
-On 01/02/2023 09:05, Poovendhan Selvaraj wrote:
-> Add support to read-modify-write TCSR register to modify only DLOAD bit.
+On 1/31/2023 3:01 PM, Dmitry Baryshkov wrote:
+> On 13/01/2023 16:36, devi priya wrote:
+>> Enable the PLL controller and IPQ6018 APSS clock controller
 > 
-> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-> Co-developed-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-> Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-> Signed-off-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
-> ---
->   drivers/firmware/qcom_scm.c | 12 ++++++++----
->   1 file changed, 8 insertions(+), 4 deletions(-)
+> ... it is used on several IPQ platforms to clock the CPU so it should be 
+> enabled and built-in.
 > 
-> diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
-> index 2000323722bf..e3435587a72d 100644
-> --- a/drivers/firmware/qcom_scm.c
-> +++ b/drivers/firmware/qcom_scm.c
-> @@ -407,7 +407,7 @@ int qcom_scm_set_remote_state(u32 state, u32 id)
->   }
->   EXPORT_SYMBOL(qcom_scm_set_remote_state);
->   
-> -static int __qcom_scm_set_dload_mode(struct device *dev, bool enable)
-> +static int __qcom_scm_set_dload_mode(struct device *dev, u32 val, bool enable)
->   {
->   	struct qcom_scm_desc desc = {
->   		.svc = QCOM_SCM_SVC_BOOT,
-> @@ -417,7 +417,7 @@ static int __qcom_scm_set_dload_mode(struct device *dev, bool enable)
->   		.owner = ARM_SMCCC_OWNER_SIP,
->   	};
->   
-> -	desc.args[1] = enable ? QCOM_SCM_BOOT_SET_DLOAD_MODE : 0;
-> +	desc.args[1] = enable ? val | QCOM_SCM_BOOT_SET_DLOAD_MODE : 0;
-
-
-It is not read-modify-write when enable == false, its just writing 0.
-
-Is this intentional?
-
-
->   
->   	return qcom_scm_call_atomic(__scm->dev, &desc, NULL);
->   }
-> @@ -426,15 +426,19 @@ static void qcom_scm_set_download_mode(bool enable)
->   {
->   	bool avail;
->   	int ret = 0;
-> +	u32 dload_addr_val;
->   
->   	avail = __qcom_scm_is_call_available(__scm->dev,
->   					     QCOM_SCM_SVC_BOOT,
->   					     QCOM_SCM_BOOT_SET_DLOAD_MODE);
-> +	ret = qcom_scm_io_readl(__scm->dload_mode_addr, &dload_addr_val);
-> +
->   	if (avail) {
-> -		ret = __qcom_scm_set_dload_mode(__scm->dev, enable);
-> +		ret = __qcom_scm_set_dload_mode(__scm->dev, dload_addr_val, enable);
->   	} else if (__scm->dload_mode_addr) {
->   		ret = qcom_scm_io_writel(__scm->dload_mode_addr,
-> -				enable ? QCOM_SCM_BOOT_SET_DLOAD_MODE : 0);
-> +				enable ? dload_addr_val |
-> +					QCOM_SCM_BOOT_SET_DLOAD_MODE : 0);
-
-same here.
-
-
---srini
-
->   	} else {
->   		dev_err(__scm->dev,
->   			"No available mechanism for setting download mode\n");
+Okay, got it. Will update the commit message as suggested in V2
+>>
+>> Co-developed-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+>> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+>> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+> 
+> Just to check: is the capitalization correct in your name here and 
+> everywhere else? (please excuse my ignorance here, I do not know all the 
+> spelling/capitalization rules).
+> 
+Sure, will change the naming style to Camel Case
+>> ---
+>>   arch/arm64/configs/defconfig | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+>> index e0ae0996d5ad..8de3979b10a3 100644
+>> --- a/arch/arm64/configs/defconfig
+>> +++ b/arch/arm64/configs/defconfig
+>> @@ -1092,6 +1092,7 @@ CONFIG_QCOM_CLK_APCS_MSM8916=y
+>>   CONFIG_QCOM_CLK_APCC_MSM8996=y
+>>   CONFIG_QCOM_CLK_SMD_RPM=y
+>>   CONFIG_QCOM_CLK_RPMH=y
+>> +CONFIG_IPQ_APSS_6018=y
+>>   CONFIG_IPQ_GCC_6018=y
+>>   CONFIG_IPQ_GCC_8074=y
+>>   CONFIG_IPQ_GCC_9574=y
+> 
+Best Regards,
+Devi Priya
