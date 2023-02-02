@@ -2,112 +2,102 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62B86C05027
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Feb 2023 15:47:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26F4EC636D4
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Feb 2023 15:58:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232960AbjBBPrB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Feb 2023 10:47:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46444 "EHLO
+        id S233502AbjBBP6J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Feb 2023 10:58:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232807AbjBBPqv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Feb 2023 10:46:51 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33E7D7E6FA;
-        Thu,  2 Feb 2023 07:46:35 -0800 (PST)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 312Ck8BD026021;
-        Thu, 2 Feb 2023 15:46:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=gzCCsk0Ctsysaeucid/JyBiATjztNIa2l+ytA4r8cS0=;
- b=WFe1QAu3lhQfSysh64jI7twoC95rWm6kR0WzfoMdWosS+vULPjn+5NzFmDh9FGcV96T3
- 3BN+4V0OA1hWZAfX3l0GaXVDyLKoUSu4rtHNERNojHAl9GelDUKy562P+9g3Toz0tC8I
- le1XSOpAy6K8Exe1KioLxtkTDrlC7I55B8Nna0rQya0sUWWV1TQ/i5jSntRtTrHG8gnC
- aU8bIcEWYok0VMrE/nDsWAqLq8+jAq87qbAIvi7ZZS3GoaT0V5wiZz9Yh5xMlosbNvJQ
- hWfa/JHwhA5pniG9WTZfqMefvqcs3KW3KsLrVi6VzPO5pnRlkbZ6yJ9VDTLXWhVVodLw Rg== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nfvgbjcju-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 02 Feb 2023 15:46:10 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 312Fk9gU017594
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 2 Feb 2023 15:46:09 GMT
-Received: from [10.50.45.197] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Thu, 2 Feb 2023
- 07:46:05 -0800
-Message-ID: <04da9d4a-3c36-4119-313a-65d515ea670d@quicinc.com>
-Date:   Thu, 2 Feb 2023 21:16:02 +0530
+        with ESMTP id S233425AbjBBP5r (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Feb 2023 10:57:47 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCFD674C19
+        for <linux-clk@vger.kernel.org>; Thu,  2 Feb 2023 07:56:56 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id d4-20020a05600c3ac400b003db1de2aef0so1772333wms.2
+        for <linux-clk@vger.kernel.org>; Thu, 02 Feb 2023 07:56:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:references:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4npoJYuDLbg/8G76jYSERaIIDgSDtlVPwyq1/jDUJeE=;
+        b=aAwJTe/xnwPcc9cLsimMNF5XRP3Cc8n9AngyXxPDM4ApBV4Q+20Djh5aPxp/6GSw0X
+         ik2oEUCSHc+LcBh0070TvDtI7gNTmpxFz7HpK6G86+IExRsvv7v1Z3w3PFADFYPPhKHh
+         ZYfpBK4eVRcBAOox8VwBIZ4hlOwBBa49fMvvR4rW1Cx54YuWhX5KpcUIJrDFnR1Ax3fR
+         w6PbtiuW/oFo2iCvy+ZKTl5i2wpAOkVuXmr6z57fLgwegMtOFvOJgE1wmxlB8Mxh/9qC
+         LqEx5H52m569p6WmBbhH5/J8STfYGwSOU6x2VSeXM5vwrjETCMLmTSdMpxbR6NCeKLqc
+         20VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:references:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4npoJYuDLbg/8G76jYSERaIIDgSDtlVPwyq1/jDUJeE=;
+        b=0QnyQf6rGiNgMJRzr6ofCf4NGOBGCmrb1eWTo/O/WZdRIzhhXn3TSDwAt9RHbpM+Hs
+         kIhyccC6fvh6XRUeK4h3yBspUUYjHcPkW06N8qhPm5Kf+qyp3fRJ0efaOd2RG2/b0BPH
+         6ZZtOQlqa3/2EqPYtqKlpsFT7hucJKXrTvfObNYwjtNezQpJZ9kh/9vTVYafWB6T9FB+
+         vP4n2ciXUdSteUsNy2elMx+v+RRYfbq0omSjbqBR39Hm3aPosU+K9uSVX5wNGAdkQIDi
+         f455kiuOeilJWDJfNRAsrwpJxb7zlpzF2NcLPA/3cXUHW4G1BA+jf5vnAbi/c53yDZ/u
+         jrEg==
+X-Gm-Message-State: AO0yUKXzS/YXllz0m+3esHfFRXBqn4KpdwGFhXJJtqTMQ0IhZIHO4HtT
+        gYTfwUsSdkbPYs/wZmK16P3CJA==
+X-Google-Smtp-Source: AK7set/iRPkgqNynaIBwPLb5dsGVPcJZitXkLFMH3/+s7hFpY0rtdaKz+1jm+FcCb1gW52MJJSNZGA==
+X-Received: by 2002:a05:600c:3d8e:b0:3dc:43cf:7302 with SMTP id bi14-20020a05600c3d8e00b003dc43cf7302mr2259614wmb.3.1675353371176;
+        Thu, 02 Feb 2023 07:56:11 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id r17-20020a05600c459100b003dee8c5d814sm5271856wmo.24.2023.02.02.07.56.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Feb 2023 07:56:10 -0800 (PST)
+Message-ID: <1f5b6fa2-718e-3af4-2c79-caf906f9ba90@linaro.org>
+Date:   Thu, 2 Feb 2023 16:56:09 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH 4/6] dt-bindings: mailbox: qcom: add compatible for the
- IPQ5332 SoC
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 5/6] mailbox: qcom-apcs-ipc: add IPQ5332 APSS clock
+ support
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Kathiravan T <quic_kathirav@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 References: <20230202145208.2328032-1-quic_kathirav@quicinc.com>
- <20230202145208.2328032-5-quic_kathirav@quicinc.com>
- <3a346606-576b-ab89-78f5-5bbaca729090@linaro.org>
-From:   Kathiravan T <quic_kathirav@quicinc.com>
-In-Reply-To: <3a346606-576b-ab89-78f5-5bbaca729090@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+ <20230202145208.2328032-6-quic_kathirav@quicinc.com>
+ <2433c2c7-664d-0d1f-12ae-374cbd093dc0@linaro.org>
+ <1b75ab1a-44c9-c4a8-7fa4-d601fc710d2a@linaro.org>
+In-Reply-To: <1b75ab1a-44c9-c4a8-7fa4-d601fc710d2a@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: WWE0E17KG-0ylHJcZhcXToByLZI9fGUp
-X-Proofpoint-ORIG-GUID: WWE0E17KG-0ylHJcZhcXToByLZI9fGUp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-02-02_10,2023-02-02_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- spamscore=0 mlxscore=0 impostorscore=0 malwarescore=0 suspectscore=0
- phishscore=0 clxscore=1015 mlxlogscore=980 lowpriorityscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2302020140
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On 2/2/2023 9:05 PM, Krzysztof Kozlowski wrote:
-> On 02/02/2023 15:52, Kathiravan T wrote:
->> Add the mailbox compatible for the IPQ5332 SoC.
+On 02/02/2023 16:30, Krzysztof Kozlowski wrote:
+> On 02/02/2023 16:16, Konrad Dybcio wrote:
 >>
->> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
->> ---
->>   .../devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml     | 3 +++
->>   1 file changed, 3 insertions(+)
 >>
->> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
->> index 943f9472ae10..8d8cd1bbe67e 100644
->> --- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
->> +++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
->> @@ -18,6 +18,7 @@ properties:
->>       oneOf:
-> - items:
->      - enum:
->          - qcom,ipq5332-apcs-apps-global
->      - const: qcom,ipq6018-apcs-apps-global
->
-> and drop the next patch
+>> On 2.02.2023 15:52, Kathiravan T wrote:
+>>> IPQ5332 has the APSS clock controller utilizing the same register space
+>>> as the APCS, so provide access to the APSS utilizing a child device like
+>>> other IPQ chipsets.
+>>>
+>>> Like IPQ6018, the same controller and driver is used, so utilize IPQ6018
+>>> match data for IPQ5332.
+>>>
+>>> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+>>> ---
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> 
+> While this is not the fault of this patch, but we keep adding
+> compatibles with same driver data. I think this should start using
+> fallbacks at some point...
 
+I'll work on this.
 
-Thanks, will update in V2, as suggested.
+Best regards,
+Krzysztof
 
-
->
->
-> Best regards,
-> Krzysztof
->
