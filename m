@@ -2,100 +2,215 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C0BC61DA4
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Feb 2023 15:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17177C61DA4
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Feb 2023 15:41:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232240AbjBBPhK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Feb 2023 10:37:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59146 "EHLO
+        id S231836AbjBBPlq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Feb 2023 10:41:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233255AbjBBPgu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Feb 2023 10:36:50 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A3EB79CB4
-        for <linux-clk@vger.kernel.org>; Thu,  2 Feb 2023 07:36:21 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id t18so2090192wro.1
-        for <linux-clk@vger.kernel.org>; Thu, 02 Feb 2023 07:36:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=B4SCdiQNUp1vdTPbVGC7rojAZMjL5CcEHONPaTvlx+M=;
-        b=DKxsY5Mm1hJbLh6dFB81BN4TqdUNtmMXFkkTR+0tv2wgV4IELONO+pKd7FpDGWevVO
-         Tbuxyy+qHSloHeD7knsITw/rNTOZX+ZJHDPJV4l551ZJzBU3QyJwonMbLY+VAOIzmYmH
-         AtnV0RBOo9J19dKT1XgO5W+NsSO7D3X9cxH0ojKawH6fu/N8Gz/VZ+zMu/NX+/365SA5
-         3zdGYODvKztZ+LmGRldOB5afOyA54LP3RLtAhOJEP5wmAf/JwT/J8GrE8UDEQHo4jcGJ
-         1x9bbqGGilR4mSGHRx5w3vB5c0vOcY1y1hh3XahvKZdV2NREln4OoNVbQT4Byo3uJdeo
-         dLTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B4SCdiQNUp1vdTPbVGC7rojAZMjL5CcEHONPaTvlx+M=;
-        b=61sLkkNcdpI3OC5++s67NDeaZewdjHgLW54Z9zoyJsXa/LDdj3BBoElz6kEV5hxpzV
-         9hjTTObJx9bEBHfHiOo1nKZJfCp9EDe5ARb9xP+mMm1wi7kfSWyvv9feI5oAzFg+XN0q
-         lAm9LEYbqfvm7svdxXmqDB5nOTZXITUKHuOnPHid/u0GQaq7hJPrOpAd5WQowsprRAJ5
-         s3aUzXcHCbFrpl9SsldGnAd0Ge1Gi95TeEc1FRJ1z7ENq4ga8zZshKqeEgw1RGk6ycIV
-         L5bq86oJMVEC/W/z9HdWqtST6/82NpEaCBhdfnuS2l+k4lNHOue2qCa1Qe7Z1UO6FUac
-         GQHg==
-X-Gm-Message-State: AO0yUKVQJUgeD2S3scN0WAPFqWTZEYqKMejjH2eYAxQy5uWlYB3Ocw21
-        Oy6++GhRJW8PnHnnwxZrm0Il0Q==
-X-Google-Smtp-Source: AK7set+dXX4n5wzK3ZiMPIbn7fONMSV5qv1A9RaQSJcv8zd4XajPSghDl3Ux2QntyamQxdx+oyyBYg==
-X-Received: by 2002:a5d:4d47:0:b0:2bf:b4d1:af03 with SMTP id a7-20020a5d4d47000000b002bfb4d1af03mr5713861wru.30.1675352117264;
-        Thu, 02 Feb 2023 07:35:17 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id o6-20020adfe806000000b002bdf8dd6a8bsm19746658wrm.80.2023.02.02.07.35.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Feb 2023 07:35:16 -0800 (PST)
-Message-ID: <3a346606-576b-ab89-78f5-5bbaca729090@linaro.org>
-Date:   Thu, 2 Feb 2023 16:35:14 +0100
+        with ESMTP id S231644AbjBBPlp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Feb 2023 10:41:45 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAAC361B7;
+        Thu,  2 Feb 2023 07:41:24 -0800 (PST)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 312EiFwL028331;
+        Thu, 2 Feb 2023 15:40:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=8+jx3L5YQb/tbexJz3RWwzqDQPv+7Wl6BhYWqz55G+s=;
+ b=j8ERGNs9GgjAeGCHoh3uvdidpOmZriWupYxpHiLKKjkfeJaQ9Av/l0PLDPgo+dMW0A7J
+ BWAKFU2vAMIXMN4KnOfz37p0PW+jA7eoLccLENydOXF/HCP0UtjsBxm6gVD0B9tXk+Nz
+ kT5ZI4I82ML1DSYrxdYYPiNN4yaqICtXwvBLXxxZTVIT83cyOazFgxQwLinB6D2VokHc
+ cPCYQslGFe/e8stNBxTQYPmmXJROpv24AJJpnppObSYV6bWu65X8pNlcle1ZJPjXhVXo
+ jI/T0nQ6SANd/Y62MJWCdEwjtdiMttXnXB1dGqajUjkgagPmzeP/J8EAlFxKvYUgY2NG oQ== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nfqt3jv24-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 02 Feb 2023 15:40:20 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 312FeJUE016437
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 2 Feb 2023 15:40:19 GMT
+Received: from [10.50.45.197] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Thu, 2 Feb 2023
+ 07:40:14 -0800
+Message-ID: <93697919-55fa-43bd-d9a8-b842e4d52c1f@quicinc.com>
+Date:   Thu, 2 Feb 2023 21:10:11 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 4/6] dt-bindings: mailbox: qcom: add compatible for the
- IPQ5332 SoC
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH 3/6] clk: qcom: apss-ipq-pll: add support for IPQ5332
 Content-Language: en-US
-To:     Kathiravan T <quic_kathirav@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, jassisinghbrar@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 References: <20230202145208.2328032-1-quic_kathirav@quicinc.com>
- <20230202145208.2328032-5-quic_kathirav@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230202145208.2328032-5-quic_kathirav@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+ <20230202145208.2328032-4-quic_kathirav@quicinc.com>
+ <f60678a4-4dc7-9744-a8a2-e7af8a9594d1@linaro.org>
+From:   Kathiravan T <quic_kathirav@quicinc.com>
+In-Reply-To: <f60678a4-4dc7-9744-a8a2-e7af8a9594d1@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 0oZa-eFE5IGi_LJjeSDSle37cM0PnpYC
+X-Proofpoint-GUID: 0oZa-eFE5IGi_LJjeSDSle37cM0PnpYC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-02-02_10,2023-02-02_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ bulkscore=0 adultscore=0 mlxlogscore=999 impostorscore=0
+ priorityscore=1501 mlxscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302020140
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 02/02/2023 15:52, Kathiravan T wrote:
-> Add the mailbox compatible for the IPQ5332 SoC.
-> 
-> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
-> ---
->  .../devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml     | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-> index 943f9472ae10..8d8cd1bbe67e 100644
-> --- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-> +++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-> @@ -18,6 +18,7 @@ properties:
->      oneOf:
 
-- items:
-    - enum:
-        - qcom,ipq5332-apcs-apps-global
-    - const: qcom,ipq6018-apcs-apps-global
+On 2/2/2023 8:48 PM, Konrad Dybcio wrote:
+>
+> On 2.02.2023 15:52, Kathiravan T wrote:
+>> IPQ5332 APSS PLL is of type Stromer Plus. Add support for the same.
+>>
+>> To configure the stromer plus PLL separate API
+>> (clock_stromer_pll_configure) to be used. To achieve this, introduce the
+>> new member pll_type in device data structure and call the appropriate
+>> function based on this.
+>>
+>> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/apss-ipq-pll.c | 58 ++++++++++++++++++++++++++++++++-
+>>   1 file changed, 57 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/qcom/apss-ipq-pll.c b/drivers/clk/qcom/apss-ipq-pll.c
+>> index 6e815e8b7fe4..023a854f2c21 100644
+>> --- a/drivers/clk/qcom/apss-ipq-pll.c
+>> +++ b/drivers/clk/qcom/apss-ipq-pll.c
+>> @@ -19,6 +19,17 @@ static const u8 ipq_pll_offsets[][PLL_OFF_MAX_REGS] = {
+>>   		[PLL_OFF_TEST_CTL] = 0x30,
+>>   		[PLL_OFF_TEST_CTL_U] = 0x34,
+>>   	},
+>> +	[CLK_ALPHA_PLL_TYPE_STROMER_PLUS] = {
+>> +		[PLL_OFF_L_VAL] = 0x08,
+>> +		[PLL_OFF_ALPHA_VAL] = 0x10,
+>> +		[PLL_OFF_ALPHA_VAL_U] = 0x14,
+>> +		[PLL_OFF_USER_CTL] = 0x18,
+>> +		[PLL_OFF_USER_CTL_U] = 0x1c,
+>> +		[PLL_OFF_CONFIG_CTL] = 0x20,
+>> +		[PLL_OFF_STATUS] = 0x28,
+>> +		[PLL_OFF_TEST_CTL] = 0x30,
+>> +		[PLL_OFF_TEST_CTL_U] = 0x34,
+>> +	},
+> Any reason this couldn't use clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_STROMER_PLUS]
+> exported from clk-alpha-pll.c?
 
-and drop the next patch
+
+Same reason as Huayra. The APSS PLL offset is different than the one 
+exposed in clk-alpha-pll.c
 
 
-Best regards,
-Krzysztof
+Thanks,
 
+Kathiravan T.
+
+>
+> Konrad
+>>   };
+>>   
+>>   static struct clk_alpha_pll ipq_pll_huayra = {
+>> @@ -39,6 +50,38 @@ static struct clk_alpha_pll ipq_pll_huayra = {
+>>   	},
+>>   };
+>>   
+>> +static struct clk_alpha_pll ipq_pll_stromer_plus = {
+>> +	.offset = 0x0,
+>> +	.regs = ipq_pll_offsets[CLK_ALPHA_PLL_TYPE_STROMER_PLUS],
+>> +	.flags = SUPPORTS_DYNAMIC_UPDATE,
+>> +	.clkr = {
+>> +		.enable_reg = 0x0,
+>> +		.enable_mask = BIT(0),
+>> +		.hw.init = &(struct clk_init_data){
+>> +			.name = "a53pll",
+>> +			.parent_data = &(const struct clk_parent_data) {
+>> +				.fw_name = "xo",
+>> +			},
+>> +			.num_parents = 1,
+>> +			.ops = &clk_alpha_pll_stromer_ops,
+>> +		},
+>> +	},
+>> +};
+>> +
+>> +static const struct alpha_pll_config ipq5332_pll_config = {
+>> +	.l = 0x3e,
+>> +	.config_ctl_val = 0x4001075b,
+>> +	.config_ctl_hi_val = 0x304,
+>> +	.main_output_mask = BIT(0),
+>> +	.aux_output_mask = BIT(1),
+>> +	.early_output_mask = BIT(3),
+>> +	.alpha_en_mask = BIT(24),
+>> +	.status_val = 0x3,
+>> +	.status_mask = GENMASK(10, 8),
+>> +	.lock_det = BIT(2),
+>> +	.test_ctl_hi_val = 0x00400003,
+>> +};
+>> +
+>>   static const struct alpha_pll_config ipq6018_pll_config = {
+>>   	.l = 0x37,
+>>   	.config_ctl_val = 0x240d4828,
+>> @@ -64,16 +107,25 @@ static const struct alpha_pll_config ipq8074_pll_config = {
+>>   };
+>>   
+>>   struct apss_pll_data {
+>> +	int pll_type;
+>>   	struct clk_alpha_pll *pll;
+>>   	const struct alpha_pll_config *pll_config;
+>>   };
+>>   
+>> +static struct apss_pll_data ipq5332_pll_data = {
+>> +	.pll_type = CLK_ALPHA_PLL_TYPE_STROMER_PLUS,
+>> +	.pll = &ipq_pll_stromer_plus,
+>> +	.pll_config = &ipq5332_pll_config,
+>> +};
+>> +
+>>   static struct apss_pll_data ipq8074_pll_data = {
+>> +	.pll_type = CLK_ALPHA_PLL_TYPE_HUAYRA,
+>>   	.pll = &ipq_pll_huayra,
+>>   	.pll_config = &ipq8074_pll_config,
+>>   };
+>>   
+>>   static struct apss_pll_data ipq6018_pll_data = {
+>> +	.pll_type = CLK_ALPHA_PLL_TYPE_HUAYRA,
+>>   	.pll = &ipq_pll_huayra,
+>>   	.pll_config = &ipq6018_pll_config,
+>>   };
+>> @@ -106,7 +158,10 @@ static int apss_ipq_pll_probe(struct platform_device *pdev)
+>>   	if (!data)
+>>   		return -ENODEV;
+>>   
+>> -	clk_alpha_pll_configure(data->pll, regmap, data->pll_config);
+>> +	if (data->pll_type == CLK_ALPHA_PLL_TYPE_HUAYRA)
+>> +		clk_alpha_pll_configure(data->pll, regmap, data->pll_config);
+>> +	else if (data->pll_type == CLK_ALPHA_PLL_TYPE_STROMER_PLUS)
+>> +		clk_stromer_pll_configure(data->pll, regmap, data->pll_config);
+>>   
+>>   	ret = devm_clk_register_regmap(dev, &data->pll->clkr);
+>>   	if (ret)
+>> @@ -117,6 +172,7 @@ static int apss_ipq_pll_probe(struct platform_device *pdev)
+>>   }
+>>   
+>>   static const struct of_device_id apss_ipq_pll_match_table[] = {
+>> +	{ .compatible = "qcom,ipq5332-a53pll", .data = &ipq5332_pll_data },
+>>   	{ .compatible = "qcom,ipq6018-a53pll", .data = &ipq6018_pll_data },
+>>   	{ .compatible = "qcom,ipq8074-a53pll", .data = &ipq8074_pll_data },
+>>   	{ }
