@@ -2,186 +2,130 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A17C636D4
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Feb 2023 15:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E59C05027
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Feb 2023 15:07:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231245AbjBBPCS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Feb 2023 10:02:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42204 "EHLO
+        id S232209AbjBBPHP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Feb 2023 10:07:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232152AbjBBPCO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Feb 2023 10:02:14 -0500
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C24C921B9;
-        Thu,  2 Feb 2023 07:02:02 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id mf7so6732106ejc.6;
-        Thu, 02 Feb 2023 07:02:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AK8RJ/5wsSk833KBMZzt5YZaWG5BWPXHye5F6n2Sqww=;
-        b=Mhc19gRW/scfcgge9UMISxNUN6s69BN9+dQpXO4f8WPvCOP0fizKIUwlK0Pka2BxOf
-         Czd0mMZkgubGbwshXF1UU6INhJlqxqBeRzGwO7A8gYkt2cpFpn/sYWbohTFY1pfoKwAN
-         VFyw1H4yTeXAlaSJZw+UDTpgsD/j3djB4PktM2dWZkfqRQyIAEjFSH0iqMtOVAznYIIc
-         AoadjAtr+boF3612QhsrvvpZoHM3cXJ69fpuL0gdqpXndst5dTg/eVlELnvlS+ibz39f
-         dAJ09TFj5Wvo7uVhbVnBCwCBYGwWvnlP18jomteKzZoIFIBKpZxjFrgDfO3gt1ci89LY
-         bmqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AK8RJ/5wsSk833KBMZzt5YZaWG5BWPXHye5F6n2Sqww=;
-        b=N5oCgoveK2WXwcjfneK9V/psDB82arRwXCt+IUPCs8tBNKAy7kwyVYbRIhD2tXiKWe
-         P6g+0W+KC8Mgi4UNn+irX2IHrjqPIWlamUDjR8B/+ilpgw9tTDvvEpgVBNPxAydMqFfk
-         LGvbNams5NyjzvabNCd8OQZRv3cvCkFxzPiPNnGogdM2vWU64ZrCQM7gu3yHMlM40Pd/
-         ovTDdBGeBXcSP8lInDDRepQEv+tBDbwwxvpKyOGDhNd6bvdgNcVnXGo9/s/6wCc/kMpI
-         nE7TzaMFbGZjCITaGQBcgvQkJxBXpEb5GE5WlUMQ1+jeGdk6hyO2PiFkbMBrriOYA788
-         XthQ==
-X-Gm-Message-State: AO0yUKXroZTsCFEIUCOvnlk4y7o4Bv0zykbWkMNY9QWo941KJqJ1fm/b
-        qYsFauGJDtZTfldJkmKs/hc=
-X-Google-Smtp-Source: AK7set+BWJlS7YlV2HjVqiP/z5s0EhW92x9qVJ1mbI42Mcv0A/Rc3bk2UjxgdPXaUK/o5Tfu+xQCBQ==
-X-Received: by 2002:a17:906:1f47:b0:881:277:b77a with SMTP id d7-20020a1709061f4700b008810277b77amr6757235ejk.65.1675350120542;
-        Thu, 02 Feb 2023 07:02:00 -0800 (PST)
-Received: from [192.168.2.177] ([207.188.167.132])
-        by smtp.gmail.com with ESMTPSA id e24-20020a17090681d800b0087bda70d3efsm10161601ejx.118.2023.02.02.07.01.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Feb 2023 07:01:59 -0800 (PST)
-Message-ID: <41eafd31-558d-613c-69ef-15230a80db5c@gmail.com>
-Date:   Thu, 2 Feb 2023 16:01:58 +0100
+        with ESMTP id S232156AbjBBPHJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Feb 2023 10:07:09 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 534C284B40;
+        Thu,  2 Feb 2023 07:07:08 -0800 (PST)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 312D5gMA029018;
+        Thu, 2 Feb 2023 15:06:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=1zif5ytY87uKxJ+vKgYHMSv+bV5ssR+q75n3sSXTFBQ=;
+ b=KaJ7DZS1AlWVwoOOCAEmkdh57QLYUSH4RtZnUWmjbZJjvKu2re1D6WDS9CPBh/D/wIB+
+ 37A8XNu9qviQPHV96i6vhVEs/pRiKCyT+DLRLNP0enhDZ05lqqUq+q0cZI052Fh26Vex
+ SYm0GOXwY83EzN6Iw2/9rorj6virPGuTmVR5AxxWeGrJtnrd1+K6xL8yt6/U6IC1tcF1
+ Aua1fR+ImULaP+4NqOxE9inDzfA5LPikrOmnQkbSUH4tfO0Ligy1+isH9zSKet/Q6mIW
+ 4qFjSOi8PR+fGPLq3TPWdVoLPC/Pv+gWvbgQU/QcF+/dBPK+XZi9KQoXH9zLz794iTFY aQ== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nfqsyawcx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 02 Feb 2023 15:06:42 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 312F6fH2004269
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 2 Feb 2023 15:06:41 GMT
+Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Thu, 2 Feb 2023 07:06:32 -0800
+From:   Devi Priya <quic_devipriy@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linus.walleij@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <p.zabel@pengutronix.de>, <shawnguo@kernel.org>, <arnd@arndb.de>,
+        <marcel.ziswiler@toradex.com>, <dmitry.baryshkov@linaro.org>,
+        <nfraprado@collabora.com>, <broonie@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>
+Subject: [PATCH V6 0/7] Add minimal boot support for IPQ9574
+Date:   Thu, 2 Feb 2023 20:36:12 +0530
+Message-ID: <20230202150619.22425-1-quic_devipriy@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v6 0/6] add support for MT8195 VPPSYS on MMSYS and MUTEX
-Content-Language: en-US
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-To:     Moudy Ho <moudy.ho@mediatek.com>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20230118032122.29956-1-moudy.ho@mediatek.com>
- <cd82e2a1-dbf4-88ee-f658-f695ae9ef56a@gmail.com>
-In-Reply-To: <cd82e2a1-dbf4-88ee-f658-f695ae9ef56a@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: tls0TEPc2Ua39fSlpCbAwKwDp49KCA4G
+X-Proofpoint-ORIG-GUID: tls0TEPc2Ua39fSlpCbAwKwDp49KCA4G
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-02-02_04,2023-02-02_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 bulkscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
+ malwarescore=0 clxscore=1015 mlxscore=0 mlxlogscore=735 priorityscore=1501
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302020136
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The IPQ9574 is Qualcomm's 802.11ax SoC for Routers,
+Gateways and Access Points
+
+This series adds minimal board boot support for ipq9574-al02-c7 board
+
+V5 can be found at: https://lore.kernel.org/linux-arm-kernel/20230202083031.10457-1-quic_devipriy@quicinc.com/
+
+Changes in V6:
+	- [PATCH V6 7/7] : Updated the commit message and added the Reviewed-by tag 
+	- No changes were made to the remaining patches
+
+Devi Priya (7):
+  dt-bindings: clock: Add ipq9574 clock and reset definitions
+  clk: qcom: Add Global Clock Controller driver for IPQ9574
+  dt-bindings: pinctrl: qcom: Add support for IPQ9574
+  pinctrl: qcom: Add IPQ9574 pinctrl driver
+  dt-bindings: arm: qcom: Add ipq9574 compatible
+  arm64: dts: qcom: Add ipq9574 SoC and AL02 board support
+  arm64: defconfig: Enable IPQ9574 SoC base configs
+
+ .../devicetree/bindings/arm/qcom.yaml         |    7 +
+ .../bindings/clock/qcom,ipq9574-gcc.yaml      |   72 +
+ .../bindings/pinctrl/qcom,ipq9574-tlmm.yaml   |  137 +
+ arch/arm64/boot/dts/qcom/Makefile             |    1 +
+ arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts  |   84 +
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |  278 ++
+ arch/arm64/configs/defconfig                  |    2 +
+ drivers/clk/qcom/Kconfig                      |    8 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/gcc-ipq9574.c                | 4302 +++++++++++++++++
+ drivers/pinctrl/qcom/Kconfig                  |   11 +
+ drivers/pinctrl/qcom/Makefile                 |    1 +
+ drivers/pinctrl/qcom/pinctrl-ipq9574.c        |  861 ++++
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h  |  213 +
+ include/dt-bindings/reset/qcom,ipq9574-gcc.h  |  164 +
+ 15 files changed, 6142 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9574-gcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq9574-tlmm.yaml
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq9574.dtsi
+ create mode 100644 drivers/clk/qcom/gcc-ipq9574.c
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq9574.c
+ create mode 100644 include/dt-bindings/clock/qcom,ipq9574-gcc.h
+ create mode 100644 include/dt-bindings/reset/qcom,ipq9574-gcc.h
 
 
-On 02/02/2023 13:40, Matthias Brugger wrote:
-> Whole series queued for the next merge window.
-> 
+base-commit: ea4dabbb4ad7eb52632a2ca0b8f89f0ea7c55dcf
+-- 
+2.17.1
 
-I encountered some compile errors, so I deleted the whole series, please fix and 
-resubmit. Thanks
-
-drivers/soc/mediatek/mtk-mmsys.c: In function 'mtk_mmsys_vpp_rsz_merge_config':
-drivers/soc/mediatek/mtk-mmsys.c:261:9: error: too few arguments to function 
-'mtk_mmsys_update_bits'
-   261 |         mtk_mmsys_update_bits(dev_get_drvdata(dev), reg, ~0, enable);
-       |         ^~~~~~~~~~~~~~~~~~~~~
-drivers/soc/mediatek/mtk-mmsys.c:129:13: note: declared here
-   129 | static void mtk_mmsys_update_bits(struct mtk_mmsys *mmsys, u32 offset, 
-u32 mask, u32 val,
-       |             ^~~~~~~~~~~~~~~~~~~~~
-drivers/soc/mediatek/mtk-mmsys.c: In function 'mtk_mmsys_vpp_rsz_dcm_config':
-drivers/soc/mediatek/mtk-mmsys.c:270:9: error: too few arguments to function 
-'mtk_mmsys_update_bits'
-   270 |         mtk_mmsys_update_bits(dev_get_drvdata(dev),
-       |         ^~~~~~~~~~~~~~~~~~~~~
-drivers/soc/mediatek/mtk-mmsys.c:129:13: note: declared here
-   129 | static void mtk_mmsys_update_bits(struct mtk_mmsys *mmsys, u32 offset, 
-u32 mask, u32 val,
-       |             ^~~~~~~~~~~~~~~~~~~~~
-drivers/soc/mediatek/mtk-mmsys.c:273:9: error: too few arguments to function 
-'mtk_mmsys_update_bits'
-   273 |         mtk_mmsys_update_bits(dev_get_drvdata(dev),
-       |         ^~~~~~~~~~~~~~~~~~~~~
-drivers/soc/mediatek/mtk-mmsys.c:129:13: note: declared here
-   129 | static void mtk_mmsys_update_bits(struct mtk_mmsys *mmsys, u32 offset, 
-u32 mask, u32 val,
-       |             ^~~~~~~~~~~~~~~~~~~~~
-drivers/soc/mediatek/mtk-mmsys.c:278:9: error: too few arguments to function 
-'mtk_mmsys_update_bits'
-   278 |         mtk_mmsys_update_bits(dev_get_drvdata(dev),
-       |         ^~~~~~~~~~~~~~~~~~~~~
-drivers/soc/mediatek/mtk-mmsys.c:129:13: note: declared here
-   129 | static void mtk_mmsys_update_bits(struct mtk_mmsys *mmsys, u32 offset, 
-u32 mask, u32 val,
-       |             ^~~~~~~~~~~~~~~~~~~~~
-drivers/soc/mediatek/mtk-mmsys.c:281:9: error: too few arguments to function 
-'mtk_mmsys_update_bits'
-   281 |         mtk_mmsys_update_bits(dev_get_drvdata(dev),
-       |         ^~~~~~~~~~~~~~~~~~~~~
-drivers/soc/mediatek/mtk-mmsys.c:129:13: note: declared here
-   129 | static void mtk_mmsys_update_bits(struct mtk_mmsys *mmsys, u32 offset, 
-u32 mask, u32 val,
-       |             ^~~~~~~~~~~~~~~~~~~~~
-
-Regards,
-Matthias
-
-> Thanks!
-> 
-> On 18/01/2023 04:21, Moudy Ho wrote:
->> Changes since v5:
->> - Depend on :
->>    [1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=713031
->>
->> Changes since v4:
->> - Rebase on linux-next.
->> - Remove MMSYS fallback compatible.
->> - Migrate MT8195 VPPSYS0/1 from clock to mtk-mmsys driver.
->>
->> Changes since v3:
->> - Rebase on linux-next.
->>
->> Changes since v2:
->> - Depend on :
->>    [1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=681097
->> - Split dts settings into two patches based on belonging to MMSYS or MUTEX.
->>
->> Changes since v1:
->> - Depend on :
->>    [1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=681097
->> - Add compatible names to VPPSYS0 and VPPSYS1 in MMSYS binding file.
->> - Fix VPPSYS's MMSYS and MUTEX dts to pass the dtsb_check.
->> - Rename mtk_mmsys_merge_config() and mtk_mmsys_rsz_dcm_config() to
->>    mtk_mmsys_vpp_rsz_merge_config() and mtk_mmsys_vpp_rsz_dcm_config().
->> - Clean up mtk_mmsys_vpp_rsz_dcm_config().
->> - Add a comment to mtk_mutex_write_mod() and clean it up for use in more
->>    than 32 mods.
->>
->> Hi,
->>
->> This series add support for MT8195's two VPPSYS(Video Processor Pipe Subsystem),
->> under which there will be corresponding MMSYS and MUTEX settings that
->> need to be configured.
->>
->> Moudy Ho (1):
->>    arm64: dts: mediatek: mt8195: add MUTEX configuration for VPPSYS
->>
->> Roy-CW.Yeh (5):
->>    dt-bindings: soc: mediatek: Add support for MT8195 VPPSYS
->>    arm64: dts: mediatek: mt8195: add MMSYS configuration for VPPSYS
->>    soc: mediatek: mmsys: add config api for RSZ switching and DCM
->>    soc: mediatek: mutex: Add mtk_mutex_set_mod support to set MOD1
->>    soc: mediatek: mutex: support MT8195 VPPSYS
->>
->>   .../bindings/soc/mediatek/mediatek,mutex.yaml |   1 +
->>   arch/arm64/boot/dts/mediatek/mt8195.dtsi      |  26 +++-
->>   drivers/soc/mediatek/mt8195-mmsys.h           |  13 ++
->>   drivers/soc/mediatek/mtk-mmsys.c              |  42 ++++++
->>   drivers/soc/mediatek/mtk-mutex.c              | 135 +++++++++++++++++-
->>   include/linux/soc/mediatek/mtk-mmsys.h        |   4 +
->>   include/linux/soc/mediatek/mtk-mutex.h        |  35 +++++
->>   7 files changed, 245 insertions(+), 11 deletions(-)
->>
