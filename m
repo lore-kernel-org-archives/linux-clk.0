@@ -2,199 +2,86 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8909C61DA4
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Feb 2023 15:19:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC3BC61DA4
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Feb 2023 15:30:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232775AbjBBPTK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Feb 2023 10:19:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35440 "EHLO
+        id S232993AbjBBPaA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Feb 2023 10:30:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232193AbjBBPS7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Feb 2023 10:18:59 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE15B709B5
-        for <linux-clk@vger.kernel.org>; Thu,  2 Feb 2023 07:18:32 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id qw12so6948019ejc.2
-        for <linux-clk@vger.kernel.org>; Thu, 02 Feb 2023 07:18:32 -0800 (PST)
+        with ESMTP id S233097AbjBBP3u (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Feb 2023 10:29:50 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25DDD93CA
+        for <linux-clk@vger.kernel.org>; Thu,  2 Feb 2023 07:29:05 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id t7so2056710wrp.5
+        for <linux-clk@vger.kernel.org>; Thu, 02 Feb 2023 07:29:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Qso+/v0jjViUogFJotdIoyTWkD5ZvdgsxWyF9DZddKY=;
-        b=Y5JCHiE0BLlQLU6It/RY5ICxSiK25fhmCBvSMJr+r9CKEnM+S3VKNSmK5dyAKnN/4S
-         b5jXFlVGQt0r3c+66xAvM0LlyhwI7SAapK2hJbvmU3g23U3Yt/p4pk+G7omxwf090xr1
-         nlaM0kBb7uhXUc5DIU9EUYc4h07v9oIqnsX8/HLzEmVmbvfUHcPAZHUnX0UwtipHwdx4
-         /Ti3uBby2G+rl7AUlv249sQVg7PhFg7kCd//h1UpdWi38DY51nISdb0q1A3x/xYTrze5
-         bDI7NvBwBh+vtdcUqctc6XF28Tbx/hsgy9+3W0Ec6hms+BhoVxNZk5wbCHF+kq/6811I
-         vAHw==
+        bh=4Z/XOX5bG8yGv4MzjlHggQMoXQ9pyCAc4znwfftCw9k=;
+        b=tB32XjeQXip+lYFOTLbsvkHytujuR4kbcfeisnQ8i44dL8uRS+FPDbs2tn+JMklZDi
+         n559ZoMz6kkNjRqJWEX7jY5sVNkftxOfBkAUCJfVSD8i2OrnWDD3f9nE6l2+Dt8pkkSf
+         9f7ZYpU74R2eAdCI70IEbNA++iFj06qw1dsES7cG1mmAB8N0xbjDYYUpBTvLgvO9S6SF
+         Bk5/LHYwes+VVju53vqnCeDKhCi6ItuBFHJTwJge3qUKKH1pRLT63J4ZewWebHSVzBZX
+         plJbHhUoBqysHS1XdLr6tcrQA/pquWCDIWwFoCy6hPXwaSi8T7aArAy49fyuJBobBYLt
+         eVWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qso+/v0jjViUogFJotdIoyTWkD5ZvdgsxWyF9DZddKY=;
-        b=YP5c52IXzb5+w3Lty7UrXVs34SG8ih1evH227lmu4ftcnzZyBz/HmsXUMlzsKdHL6P
-         RnPvExZxgri4vK98ki7olN3oefjuDrJOnuqR5/n3lGJnjYvZB9AHdnC/LLL68WoeckwV
-         rV3cZIxyip8bx/A7KOXVqN/lbeHLLdpUAS+nseaUEVN5GSgURgfZ95KiS5r2upZPnCsD
-         1PjRs5wvzQbWBudADDCEBypHL9czthQteHKMcn5lqELUigzpibohDrMm1cC2tA1J69b8
-         ByIDzCJ0EIavd7tTYZKu+idXMeE74vjt6o659eQwEbKCuAVLzCczpEuaJ0PQ39VsEjWT
-         Gpkw==
-X-Gm-Message-State: AO0yUKUYkpxLg8+JhX9k1FuzLDA4OO//5DSXFtKVDEQWZh2A68UzekOA
-        MDPA+MDg7Aij6qlQ2uNZ7JJkfQ==
-X-Google-Smtp-Source: AK7set+qv0MK4YNSCw7pypa8ByystHnREluX9vZSDsLAiowBcdtkXMGgVygMdPmFEjGsjIWYMg3d/A==
-X-Received: by 2002:a17:906:2ad4:b0:871:dd2:4af0 with SMTP id m20-20020a1709062ad400b008710dd24af0mr6847922eje.26.1675351109364;
-        Thu, 02 Feb 2023 07:18:29 -0800 (PST)
-Received: from [192.168.1.101] (abyl20.neoplus.adsl.tpnet.pl. [83.9.31.20])
-        by smtp.gmail.com with ESMTPSA id kw5-20020a170907770500b0088519b9206bsm7931641ejc.130.2023.02.02.07.18.27
+        bh=4Z/XOX5bG8yGv4MzjlHggQMoXQ9pyCAc4znwfftCw9k=;
+        b=NnI5yJHITkJ0G+07XbXFCM2UICdyNNPkTYFZ+DicTf2BcAikCw8Db9YJL8WyEaGl2g
+         cf2998lC8ftZRhVo5Tg0UffGPvlrhE/hPWxv5gZpxiD2gMn6qeRJPn+tUkek+UsI9YI7
+         HLcWuZiN98ayuQmmohSruP9spAIIB7QbyfSp5IHbEhY4HplMUhmYqaILwN2bSs/WulgT
+         xFfHcy7Ql/hfceDPZQa8/7amG/eTgHjj2q0WAQYZo1fdzh6Ru7Sr6xByWcL9HZBUXBwG
+         7EYyzH44S0MRxVNampd1O8xvJGzW7Z2AVEAmwI2OK23bnXMAiI/IHSH0ZPyEf5hd/LcK
+         B/eg==
+X-Gm-Message-State: AO0yUKXq/+fy3LFMs8kEzKK4kJvZkVhZkX64zI42mRtJstLMjozVhduh
+        mxpW2XiCyhAug+v23GkF/fhDDw==
+X-Google-Smtp-Source: AK7set+9qfRXRhN1bMZ6UNCmOYR0aQOlT93xQt/sZRo2/r0MRH6rubyno0cK9agN2E/VYKCVZWa22w==
+X-Received: by 2002:a5d:4e04:0:b0:2c2:fa7:56b1 with SMTP id p4-20020a5d4e04000000b002c20fa756b1mr5785115wrt.56.1675351719601;
+        Thu, 02 Feb 2023 07:28:39 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id n9-20020a5d67c9000000b00294176c2c01sm20098243wrw.86.2023.02.02.07.28.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Feb 2023 07:18:28 -0800 (PST)
-Message-ID: <f60678a4-4dc7-9744-a8a2-e7af8a9594d1@linaro.org>
-Date:   Thu, 2 Feb 2023 16:18:27 +0100
+        Thu, 02 Feb 2023 07:28:39 -0800 (PST)
+Message-ID: <4ffa873f-f83e-38c0-6286-8c89940b65d1@linaro.org>
+Date:   Thu, 2 Feb 2023 16:28:37 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH 3/6] clk: qcom: apss-ipq-pll: add support for IPQ5332
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 2/6] dt-bindings: clock: qcom,a53pll: add IPQ5332
+ compatible
 Content-Language: en-US
 To:     Kathiravan T <quic_kathirav@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        andersson@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, jassisinghbrar@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20230202145208.2328032-1-quic_kathirav@quicinc.com>
- <20230202145208.2328032-4-quic_kathirav@quicinc.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230202145208.2328032-4-quic_kathirav@quicinc.com>
+ <20230202145208.2328032-3-quic_kathirav@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230202145208.2328032-3-quic_kathirav@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 2.02.2023 15:52, Kathiravan T wrote:
-> IPQ5332 APSS PLL is of type Stromer Plus. Add support for the same.
-> 
-> To configure the stromer plus PLL separate API
-> (clock_stromer_pll_configure) to be used. To achieve this, introduce the
-> new member pll_type in device data structure and call the appropriate
-> function based on this.
+On 02/02/2023 15:52, Kathiravan T wrote:
+> Add IPQ5332 compatible to A53 PLL bindings.
 > 
 > Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
 > ---
->  drivers/clk/qcom/apss-ipq-pll.c | 58 ++++++++++++++++++++++++++++++++-
->  1 file changed, 57 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/apss-ipq-pll.c b/drivers/clk/qcom/apss-ipq-pll.c
-> index 6e815e8b7fe4..023a854f2c21 100644
-> --- a/drivers/clk/qcom/apss-ipq-pll.c
-> +++ b/drivers/clk/qcom/apss-ipq-pll.c
-> @@ -19,6 +19,17 @@ static const u8 ipq_pll_offsets[][PLL_OFF_MAX_REGS] = {
->  		[PLL_OFF_TEST_CTL] = 0x30,
->  		[PLL_OFF_TEST_CTL_U] = 0x34,
->  	},
-> +	[CLK_ALPHA_PLL_TYPE_STROMER_PLUS] = {
-> +		[PLL_OFF_L_VAL] = 0x08,
-> +		[PLL_OFF_ALPHA_VAL] = 0x10,
-> +		[PLL_OFF_ALPHA_VAL_U] = 0x14,
-> +		[PLL_OFF_USER_CTL] = 0x18,
-> +		[PLL_OFF_USER_CTL_U] = 0x1c,
-> +		[PLL_OFF_CONFIG_CTL] = 0x20,
-> +		[PLL_OFF_STATUS] = 0x28,
-> +		[PLL_OFF_TEST_CTL] = 0x30,
-> +		[PLL_OFF_TEST_CTL_U] = 0x34,
-> +	},
-Any reason this couldn't use clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_STROMER_PLUS]
-exported from clk-alpha-pll.c?
 
-Konrad
->  };
->  
->  static struct clk_alpha_pll ipq_pll_huayra = {
-> @@ -39,6 +50,38 @@ static struct clk_alpha_pll ipq_pll_huayra = {
->  	},
->  };
->  
-> +static struct clk_alpha_pll ipq_pll_stromer_plus = {
-> +	.offset = 0x0,
-> +	.regs = ipq_pll_offsets[CLK_ALPHA_PLL_TYPE_STROMER_PLUS],
-> +	.flags = SUPPORTS_DYNAMIC_UPDATE,
-> +	.clkr = {
-> +		.enable_reg = 0x0,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "a53pll",
-> +			.parent_data = &(const struct clk_parent_data) {
-> +				.fw_name = "xo",
-> +			},
-> +			.num_parents = 1,
-> +			.ops = &clk_alpha_pll_stromer_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static const struct alpha_pll_config ipq5332_pll_config = {
-> +	.l = 0x3e,
-> +	.config_ctl_val = 0x4001075b,
-> +	.config_ctl_hi_val = 0x304,
-> +	.main_output_mask = BIT(0),
-> +	.aux_output_mask = BIT(1),
-> +	.early_output_mask = BIT(3),
-> +	.alpha_en_mask = BIT(24),
-> +	.status_val = 0x3,
-> +	.status_mask = GENMASK(10, 8),
-> +	.lock_det = BIT(2),
-> +	.test_ctl_hi_val = 0x00400003,
-> +};
-> +
->  static const struct alpha_pll_config ipq6018_pll_config = {
->  	.l = 0x37,
->  	.config_ctl_val = 0x240d4828,
-> @@ -64,16 +107,25 @@ static const struct alpha_pll_config ipq8074_pll_config = {
->  };
->  
->  struct apss_pll_data {
-> +	int pll_type;
->  	struct clk_alpha_pll *pll;
->  	const struct alpha_pll_config *pll_config;
->  };
->  
-> +static struct apss_pll_data ipq5332_pll_data = {
-> +	.pll_type = CLK_ALPHA_PLL_TYPE_STROMER_PLUS,
-> +	.pll = &ipq_pll_stromer_plus,
-> +	.pll_config = &ipq5332_pll_config,
-> +};
-> +
->  static struct apss_pll_data ipq8074_pll_data = {
-> +	.pll_type = CLK_ALPHA_PLL_TYPE_HUAYRA,
->  	.pll = &ipq_pll_huayra,
->  	.pll_config = &ipq8074_pll_config,
->  };
->  
->  static struct apss_pll_data ipq6018_pll_data = {
-> +	.pll_type = CLK_ALPHA_PLL_TYPE_HUAYRA,
->  	.pll = &ipq_pll_huayra,
->  	.pll_config = &ipq6018_pll_config,
->  };
-> @@ -106,7 +158,10 @@ static int apss_ipq_pll_probe(struct platform_device *pdev)
->  	if (!data)
->  		return -ENODEV;
->  
-> -	clk_alpha_pll_configure(data->pll, regmap, data->pll_config);
-> +	if (data->pll_type == CLK_ALPHA_PLL_TYPE_HUAYRA)
-> +		clk_alpha_pll_configure(data->pll, regmap, data->pll_config);
-> +	else if (data->pll_type == CLK_ALPHA_PLL_TYPE_STROMER_PLUS)
-> +		clk_stromer_pll_configure(data->pll, regmap, data->pll_config);
->  
->  	ret = devm_clk_register_regmap(dev, &data->pll->clkr);
->  	if (ret)
-> @@ -117,6 +172,7 @@ static int apss_ipq_pll_probe(struct platform_device *pdev)
->  }
->  
->  static const struct of_device_id apss_ipq_pll_match_table[] = {
-> +	{ .compatible = "qcom,ipq5332-a53pll", .data = &ipq5332_pll_data },
->  	{ .compatible = "qcom,ipq6018-a53pll", .data = &ipq6018_pll_data },
->  	{ .compatible = "qcom,ipq8074-a53pll", .data = &ipq8074_pll_data },
->  	{ }
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
