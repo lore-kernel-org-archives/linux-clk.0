@@ -2,145 +2,160 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C931C61DA4
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Feb 2023 10:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1DE8C61DA4
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Feb 2023 12:20:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233070AbjBCK4S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Feb 2023 05:56:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47000 "EHLO
+        id S231629AbjBCMUF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Feb 2023 07:20:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233074AbjBCK4L (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Feb 2023 05:56:11 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 698BA76436
-        for <linux-clk@vger.kernel.org>; Fri,  3 Feb 2023 02:56:03 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id bk15so14206704ejb.9
-        for <linux-clk@vger.kernel.org>; Fri, 03 Feb 2023 02:56:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BdYRjOM1n9bt8CN7mBjbmqA+shKAXX8Ovt8jaNWTShU=;
-        b=TTe8dPHkBNkUesxIWp8id6+kZt6bBhVLN1AbM9Q2yUCXy0U0dQnhiMNlSNMCzYlgVh
-         ZJW5B+IG4lEzWL1mLjJWKnN8UQFbKZMQPETLWbYmHSN0LcAy/We92w1jDFhdutqAY0XS
-         5AuBsWSWyyfvrOr6kJ315r7Lcv3OK9WY0u+NshplJxk9jO3CUwvRdr9gDuhaUcAJEel2
-         Rxk6vJlam0U+WN0pRVaHVSDFYHhIJTyfbexAko7p3nLyc6AiCCJc/MLchscD7GbZqEre
-         lCD6Dl3muFeI/L+0vtEjM8LVGU+9/lNYdSaHB03zKVEfGZTlRD99lLBWIaMdfvO+Xuu/
-         W3MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BdYRjOM1n9bt8CN7mBjbmqA+shKAXX8Ovt8jaNWTShU=;
-        b=xigzVtmtmdmMFum0cM4xqIu74XH7h6DXcCM8HR6QKCK3ay2XcttharljriKMy2+N10
-         YjHZdFpLpNp1jUpzVyn93lo6XJjBwAkYRjWLGDm/4D7YmcSbdYttyQKAss6QE+Z+AKIK
-         dwxID4kNHRR8Vvgb3+Mx/Vrb8sUHtNfChCVlX4W3tWpSBQ5a5QhPf2pRWp+3BOOXw7/C
-         eLafzVSfdtR90uEERuoVqHkoDu2DFqSj0RadozFtS9JnhxdrcdQMiVYpgY2bCR4n4a9D
-         A5IWTwQs/iPiVEATbzdEi1EMAguxahCDbTTn+KkyC8CTjSKsacYb65r2eP7zMv41UNiE
-         Wksw==
-X-Gm-Message-State: AO0yUKUWs44ca95UTubVpFTOZbd31Dgbe+bLnVY7np2LvXIppnpUSQVj
-        KSc4T2izPRUoe/s52pmofi9UKg==
-X-Google-Smtp-Source: AK7set+MxWM0+nZqvviW/bwAcAGYQkQyWGDadUbnUIpVzeXcg1uw20STr4HiMhMPlosIWq5Jv3GQrA==
-X-Received: by 2002:a17:906:9610:b0:878:5e84:e1d6 with SMTP id s16-20020a170906961000b008785e84e1d6mr11002336ejx.75.1675421761914;
-        Fri, 03 Feb 2023 02:56:01 -0800 (PST)
-Received: from [192.168.1.101] (abyl20.neoplus.adsl.tpnet.pl. [83.9.31.20])
-        by smtp.gmail.com with ESMTPSA id p2-20020a170906498200b00878803d4049sm1219445eju.93.2023.02.03.02.55.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Feb 2023 02:56:01 -0800 (PST)
-Message-ID: <e34f36b0-35a8-0b77-e6ab-49851213108e@linaro.org>
-Date:   Fri, 3 Feb 2023 11:55:58 +0100
+        with ESMTP id S229799AbjBCMUF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Feb 2023 07:20:05 -0500
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8F9070D55;
+        Fri,  3 Feb 2023 04:20:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1675426803; x=1706962803;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+Vdo0YGzZ1ka9qHdi9M3e75lauC6FuFXPxqZRrVJUKs=;
+  b=lxlFAxqL4OpkS7yh07XIX2henXxHpJQokGUp0RPPtXVYlvzC5mUsjrqP
+   QrejBkCH0aNFHl/fkfmeNJGEQ4gMzlrdWe2EWGUGB2OuRsF5HaaOm8/xI
+   JjhnVMqbLa4+o0rMypLif+PmHczhpaT4ZHmZ7VntN7/1W8jOShyrwGZD8
+   nfcqE8GhuQp62PysxkGdMeGJrDDboj81AWAYjYM2vdRQ8ZqR9//I7e29G
+   MRbx9GxO8QbdUooC0uRcsGAjbH5xYJ273R+nE/dlOUrm1leUnkb+OZo5p
+   EyeZ98CdYW/q+2YL+5AW2gghoN/+H//+V3mb4tit132zKox1oCi17xTsU
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10609"; a="326432126"
+X-IronPort-AV: E=Sophos;i="5.97,270,1669104000"; 
+   d="scan'208";a="326432126"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2023 04:20:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10609"; a="615697909"
+X-IronPort-AV: E=Sophos;i="5.97,270,1669104000"; 
+   d="scan'208";a="615697909"
+Received: from lkp-server01.sh.intel.com (HELO 4455601a8d94) ([10.239.97.150])
+  by orsmga003.jf.intel.com with ESMTP; 03 Feb 2023 04:19:59 -0800
+Received: from kbuild by 4455601a8d94 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pNv2s-0000TJ-1B;
+        Fri, 03 Feb 2023 12:19:58 +0000
+Date:   Fri, 3 Feb 2023 20:19:33 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     oe-kbuild-all@lists.linux.dev, Tomasz Figa <tomasz.figa@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/6] clk: samsung: exynos5433: Extract PM support to
+ common ARM64 layer
+Message-ID: <202302032018.WKygXXHK-lkp@intel.com>
+References: <20230203060924.8257-7-semen.protsenko@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH V6 2/7] clk: qcom: Add Global Clock Controller driver for
- IPQ9574
-To:     Kathiravan T <quic_kathirav@quicinc.com>,
-        Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linus.walleij@linaro.org,
-        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
-        shawnguo@kernel.org, arnd@arndb.de, marcel.ziswiler@toradex.com,
-        dmitry.baryshkov@linaro.org, nfraprado@collabora.com,
-        broonie@kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_arajkuma@quicinc.com,
-        quic_anusha@quicinc.com, quic_poovendh@quicinc.com
-References: <20230202150619.22425-1-quic_devipriy@quicinc.com>
- <20230202150619.22425-3-quic_devipriy@quicinc.com>
- <1d144aa4-6f0f-b10f-1d32-4acf4e06ae85@quicinc.com>
-Content-Language: en-US
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <1d144aa4-6f0f-b10f-1d32-4acf4e06ae85@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230203060924.8257-7-semen.protsenko@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Sam,
+
+Thank you for the patch! Yet something to improve:
+
+[auto build test ERROR on krzk/for-next]
+[also build test ERROR on linus/master v6.2-rc6]
+[cannot apply to next-20230203]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Sam-Protsenko/clk-samsung-Don-t-pass-reg_base-to-samsung_clk_register_pll/20230203-141059
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
+patch link:    https://lore.kernel.org/r/20230203060924.8257-7-semen.protsenko%40linaro.org
+patch subject: [PATCH 6/6] clk: samsung: exynos5433: Extract PM support to common ARM64 layer
+config: openrisc-randconfig-r003-20230202 (https://download.01.org/0day-ci/archive/20230203/202302032018.WKygXXHK-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/7fc08f82f3096e6f1c747f00b9d56c029b0b7a0f
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Sam-Protsenko/clk-samsung-Don-t-pass-reg_base-to-samsung_clk_register_pll/20230203-141059
+        git checkout 7fc08f82f3096e6f1c747f00b9d56c029b0b7a0f
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=openrisc olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=openrisc SHELL=/bin/bash drivers/clk/samsung/
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+   drivers/clk/samsung/clk-exynos-arm64.c: In function 'exynos_arm64_cmu_prepare_pm':
+>> drivers/clk/samsung/clk-exynos-arm64.c:136:17: error: implicit declaration of function 'kfree'; did you mean 'vfree'? [-Werror=implicit-function-declaration]
+     136 |                 kfree(data->clk_save);
+         |                 ^~~~~
+         |                 vfree
+   cc1: some warnings being treated as errors
 
 
-On 3.02.2023 06:47, Kathiravan T wrote:
-> 
-> On 2/2/2023 8:36 PM, Devi Priya wrote:
->> Add Global Clock Controller (GCC) driver for ipq9574 based devices
->>
->> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
->> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
->> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
->> ---
+vim +136 drivers/clk/samsung/clk-exynos-arm64.c
 
-[...]
+   114	
+   115	static int __init exynos_arm64_cmu_prepare_pm(struct device *dev,
+   116			const struct samsung_cmu_info *cmu)
+   117	{
+   118		struct exynos_arm64_cmu_data *data = dev_get_drvdata(dev);
+   119		int i;
+   120	
+   121		data->clk_save = samsung_clk_alloc_reg_dump(cmu->clk_regs,
+   122							    cmu->nr_clk_regs);
+   123		if (!data->clk_save)
+   124			return -ENOMEM;
+   125	
+   126		data->nr_clk_save = cmu->nr_clk_regs;
+   127		data->clk_suspend = cmu->suspend_regs;
+   128		data->nr_clk_suspend = cmu->nr_suspend_regs;
+   129		data->nr_pclks = of_clk_get_parent_count(dev->of_node);
+   130		if (!data->nr_pclks)
+   131			return 0;
+   132	
+   133		data->pclks = devm_kcalloc(dev, sizeof(struct clk *), data->nr_pclks,
+   134					   GFP_KERNEL);
+   135		if (!data->pclks) {
+ > 136			kfree(data->clk_save);
+   137			return -ENOMEM;
+   138		}
+   139	
+   140		for (i = 0; i < data->nr_pclks; i++) {
+   141			struct clk *clk = of_clk_get(dev->of_node, i);
+   142	
+   143			if (IS_ERR(clk)) {
+   144				kfree(data->clk_save);
+   145				while (--i >= 0)
+   146					clk_put(data->pclks[i]);
+   147				return PTR_ERR(clk);
+   148			}
+   149			data->pclks[i] = clk;
+   150		}
+   151	
+   152		return 0;
+   153	}
+   154	
 
->> +static int gcc_ipq9574_probe(struct platform_device *pdev)
->> +{
->> +    struct regmap *regmap;
->> +    struct qcom_cc_desc ipq9574_desc = gcc_ipq9574_desc;
->> +
->> +    regmap = qcom_cc_map(pdev, &ipq9574_desc);
->> +    if (IS_ERR(regmap))
->> +        return PTR_ERR(regmap);
->> +
->> +    return qcom_cc_really_probe(pdev, &ipq9574_desc, regmap);
-> 
-> 
-> can we use qcom_cc_probe as suggested here https://lore.kernel.org/linux-arm-msm/84f68577f5629e6ef6d6b14357a79f84.sboyd@kernel.org/ ?
-Yes we can.
-
-When you're answering a long long long long email, please cut off
-parts that you aren't replying to, I had to scroll and scroll and
-scroll and scroll to get to this sentence and I'm not even sure if
-you said something inbetween that I missed..
-
-Konrad
-> 
-> 
->> +}
->> +
->> +static struct platform_driver gcc_ipq9574_driver = {
->> +    .probe = gcc_ipq9574_probe,
->> +    .driver = {
->> +        .name   = "qcom,gcc-ipq9574",
->> +        .of_match_table = gcc_ipq9574_match_table,
->> +    },
->> +};
->> +
->> +static int __init gcc_ipq9574_init(void)
->> +{
->> +    return platform_driver_register(&gcc_ipq9574_driver);
->> +}
->> +core_initcall(gcc_ipq9574_init);
->> +
->> +static void __exit gcc_ipq9574_exit(void)
->> +{
->> +    platform_driver_unregister(&gcc_ipq9574_driver);
->> +}
->> +module_exit(gcc_ipq9574_exit);
->> +
->> +MODULE_DESCRIPTION("Qualcomm Technologies, Inc. GCC IPQ9574 Driver");
->> +MODULE_LICENSE("GPL");
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
