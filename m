@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4515AC61DA4
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Feb 2023 09:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7391CC636D6
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Feb 2023 09:20:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232461AbjBCJOc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Feb 2023 04:14:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35656 "EHLO
+        id S232775AbjBCJUz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Feb 2023 04:20:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232049AbjBCJOb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Feb 2023 04:14:31 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD61B8E49E
-        for <linux-clk@vger.kernel.org>; Fri,  3 Feb 2023 01:14:29 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id h12so4017265wrv.10
-        for <linux-clk@vger.kernel.org>; Fri, 03 Feb 2023 01:14:29 -0800 (PST)
+        with ESMTP id S232176AbjBCJUV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Feb 2023 04:20:21 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AC79991E9
+        for <linux-clk@vger.kernel.org>; Fri,  3 Feb 2023 01:18:58 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id t7so4051170wrp.5
+        for <linux-clk@vger.kernel.org>; Fri, 03 Feb 2023 01:18:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=zELjtTV++XT/mjyQzI4eKCIMRauhqYz1Nswt+m/xsqA=;
-        b=mmPR3kx7UEfHJC//Zhap+s1dXSy6OV3TOeDHh94XUTQQmu4a6MifB/hHb3+B8e+w4+
-         FSQ+OaXhK35emD0S85DCCQNyOnCLXlh/SA2IfHg6e3i3Gm8gdWaf1URBGcNqcEpe1j0u
-         RDNJ9N7srAEF3HAS7Q1E24mFyiuvLNQz2rZo98Z0nYFOwo4WZWCRbjM/T2Rwj7xPv8GP
-         7DMWL0hDOTs4pP9wYyvAlZ+r67eCt6+gluq+FHQ10g93KsCnJq5nKKBnie7uLrd9EWl4
-         LgkqktVSRK1hL/HmanJa0vVcUtiKy7rVFEaPbY+KhD9WOEOBJ749Q94G2Ln/ErGF0NKW
-         CcKA==
+        bh=kGBTcLqitg7YmyUuCVO5u5nfwFsdx7KfIVES4p41zJQ=;
+        b=a38sIkJzjv1+ks/NbAWxSeofwNPYSEhrzBKB+49fcu65mqsQdX0eUmst5rRlJlyFX0
+         KOtSe6mpucbck0SfuOmYcosiTEWtyA3iOuhpEYa/QvxI0w9KRdYNUIFbHq6/4Jo2SoDW
+         TlFm4t1XHnxZZKhujwfw9+3q73yLqUCqs5pudAHn4tBKY5v9TDY0BTKuX0CjhkdGEFD5
+         ImLoAsCk39cWN/t+HuxHnP0ugKUK1n0NgZyUzcrBTOO1gpqPgfdmyj/Nu9HAACj12rD5
+         sQYtQ24QpI4sNhrh7aTz1V4Gv4Vlu8I7RZSOq9nsSAOxhcxpOEDxzJj7SjFWD8AqaGW0
+         PVow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zELjtTV++XT/mjyQzI4eKCIMRauhqYz1Nswt+m/xsqA=;
-        b=3gmmIDFuKRs9FHsiSz/QBRSgy/r4epX3hnzm1jF8puvOOiNosLKbB1SS5WEWfgwl+s
-         /sL1RbS87c4R1Acjgm0CVl2ElOB8hSO4wooArzcH7fgb2JE7ubfg7XJQqet+8V3qI+6/
-         mzphwdlgxLNolFAmB/KZPvQd/Rl7xC/HrwfeB08cJ+yReEJj+0NC9YAkLD3JDU6SzFLv
-         lACZqFMqnlekSNuevM0oL+9kS1ZKDJdUF7isFA5A81wu83suewStqxDMP4wOs6z5XQjw
-         wTaojShl653RrA/KSAMgG5saNE8W78iukBYMNnjyW0mw7WmQdSc0pLM/C7CRspO9SguD
-         kMPA==
-X-Gm-Message-State: AO0yUKXSiV80dOhlFM5czv2w29oZHF4OpSVjni/SQi1ReAlBuP/uXAx+
-        oFGMOLPrLwH0ikXOc5zO9ZC6ig==
-X-Google-Smtp-Source: AK7set87oB2xxUxR9AcQ7XrTUysuuK4UHjaKNMwCvPHLV1g1gyq7Z417h5UXoUYnn80RIACYH+l6Iw==
-X-Received: by 2002:adf:fc88:0:b0:2bf:d940:29b6 with SMTP id g8-20020adffc88000000b002bfd94029b6mr8415191wrr.54.1675415668346;
-        Fri, 03 Feb 2023 01:14:28 -0800 (PST)
+        bh=kGBTcLqitg7YmyUuCVO5u5nfwFsdx7KfIVES4p41zJQ=;
+        b=P6fHgmBlPCNiKmsvXv1hRbii+0aEPIOvNrqzXW396kJqorT/2OYhwD4eml+JB4D8/G
+         Ro2ThlAao4hWngrGj+qG4oUYGxbu4tCwjLpjrC+iAmtjc4XaSnR5fPKQUxzIHCHVYEOI
+         DtruQeXuGVZj13SEaAHjd777zfFIWEAa16QTqrGnL5ZOi8uLS0ocR/KjLkhi6Uhc5eZV
+         jagYS8fBYiSu8/Vs8NlgifdWgHU2P+tWMM6n9b4k1eHp2hEQDwaNt20EpRVNW0MRcxgQ
+         cyOECVeoHl92lvJ1p0J0+oW86FCQiNTWQKVBTpFiqYFe23/CEZddShTiNelN0to0XFWN
+         l4bQ==
+X-Gm-Message-State: AO0yUKXJ2UjHwcQ3gB9lo9+xwuj+PEVojonJEuJ+bFlDWAHzZNtu1uZ0
+        OYCtqdHXMZbiDXB40TFaDDkbmQ==
+X-Google-Smtp-Source: AK7set/kXpqSOqXdv7TjryP4gMQtQIcy8LbSh0edPvZWLND6aqj2U7Rxl/+hb/Ojsnj9emLO1S9axg==
+X-Received: by 2002:adf:8912:0:b0:2bf:e692:2636 with SMTP id s18-20020adf8912000000b002bfe6922636mr8882294wrs.26.1675415935327;
+        Fri, 03 Feb 2023 01:18:55 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id d8-20020adfe2c8000000b002bfe08c566fsm1510325wrj.106.2023.02.03.01.14.26
+        by smtp.gmail.com with ESMTPSA id n18-20020adfe792000000b002238ea5750csm1484520wrm.72.2023.02.03.01.18.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Feb 2023 01:14:27 -0800 (PST)
-Message-ID: <03eeacfb-22ff-8224-30d7-6c187b179fd7@linaro.org>
-Date:   Fri, 3 Feb 2023 10:14:25 +0100
+        Fri, 03 Feb 2023 01:18:54 -0800 (PST)
+Message-ID: <59ff815b-baad-02c5-67df-e4d65f63afa3@linaro.org>
+Date:   Fri, 3 Feb 2023 10:18:53 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: [PATCH 5/6] clk: samsung: Extract parent clock enabling to common
- function
+Subject: Re: [PATCH 6/6] clk: samsung: exynos5433: Extract PM support to
+ common ARM64 layer
 Content-Language: en-US
 To:     Sam Protsenko <semen.protsenko@linaro.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -71,9 +71,9 @@ Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20230203060924.8257-1-semen.protsenko@linaro.org>
- <20230203060924.8257-6-semen.protsenko@linaro.org>
+ <20230203060924.8257-7-semen.protsenko@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230203060924.8257-6-semen.protsenko@linaro.org>
+In-Reply-To: <20230203060924.8257-7-semen.protsenko@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -81,64 +81,27 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 03/02/2023 07:09, Sam Protsenko wrote:
-> Extract parent clock enabling from exynos_arm64_register_cmu() to
-> dedicated function. No functional change.
-> 
-> No functional change.
+> Exynos5433 clock driver implements PM support internally, which might be
+> also useful for other Exynos clock drivers. Extract all PM related code
+> from clk-exynos5433 to common ARM64 functions.
 > 
 > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 > ---
->  drivers/clk/samsung/clk-exynos-arm64.c | 53 +++++++++++++++++---------
->  1 file changed, 36 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung/clk-exynos-arm64.c
-> index b921b9a1134a..361663223a24 100644
-> --- a/drivers/clk/samsung/clk-exynos-arm64.c
-> +++ b/drivers/clk/samsung/clk-exynos-arm64.c
-> @@ -56,6 +56,41 @@ static void __init exynos_arm64_init_clocks(struct device_node *np,
->  	iounmap(reg_base);
+
+
+>  
+>  	if (IS_ERR(parent_clk)) {
+>  		pr_err("%s: could not find bus clock %s; err = %ld\n",
+> @@ -91,6 +112,46 @@ static int __init exynos_arm64_enable_bus_clk(struct device *dev,
+>  	return 0;
 >  }
 >  
-> +/**
-> + * exynos_arm64_enable_bus_clk - Enable parent clock of specified CMU
-> + *
-> + * @dev:	Device object; may be NULL if this function is not being
-> + *		called from platform driver probe function
-> + * @np:		CMU device tree node
-> + * @cmu:	CMU data
-> + *
-> + * Keep CMU parent clock running (needed for CMU registers access).
-> + *
-> + * Return: 0 on success or negative error code on failure.
-> + */
-> +static int __init exynos_arm64_enable_bus_clk(struct device *dev,
-> +		struct device_node *np, const struct samsung_cmu_info *cmu)
+> +static int __init exynos_arm64_cmu_prepare_pm(struct device *dev,
+> +		const struct samsung_cmu_info *cmu)
 
 Align the arguments.
 
-> +{
-> +	struct clk *parent_clk;
-> +
-> +	if (!cmu->clk_name)
-> +		return 0;
-> +
-> +	if (dev)
-> +		parent_clk = clk_get(dev, cmu->clk_name);
-> +	else
-> +		parent_clk = of_clk_get_by_name(np, cmu->clk_name);
-> +
-> +	if (IS_ERR(parent_clk)) {
-> +		pr_err("%s: could not find bus clock %s; err = %ld\n",
-> +		       __func__, cmu->clk_name, PTR_ERR(parent_clk));
-> +		return PTR_ERR(parent_clk);
-> +	}
-> +
-> +	clk_prepare_enable(parent_clk);
-> +	return 0;
-
-You do not check the return value in exynos_arm64_register_cmu() below,
-so either make it a void or add the check.
-
+Rest looks good to me.
 
 Best regards,
 Krzysztof
