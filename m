@@ -2,107 +2,139 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7391CC636D6
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Feb 2023 09:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C469C636CC
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Feb 2023 10:26:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232775AbjBCJUz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Feb 2023 04:20:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39986 "EHLO
+        id S233505AbjBCK0L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Feb 2023 05:26:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232176AbjBCJUV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Feb 2023 04:20:21 -0500
+        with ESMTP id S233562AbjBCKZ5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Feb 2023 05:25:57 -0500
 Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AC79991E9
-        for <linux-clk@vger.kernel.org>; Fri,  3 Feb 2023 01:18:58 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id t7so4051170wrp.5
-        for <linux-clk@vger.kernel.org>; Fri, 03 Feb 2023 01:18:58 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4471A2BF00
+        for <linux-clk@vger.kernel.org>; Fri,  3 Feb 2023 02:25:42 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id h16so4178189wrz.12
+        for <linux-clk@vger.kernel.org>; Fri, 03 Feb 2023 02:25:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kGBTcLqitg7YmyUuCVO5u5nfwFsdx7KfIVES4p41zJQ=;
-        b=a38sIkJzjv1+ks/NbAWxSeofwNPYSEhrzBKB+49fcu65mqsQdX0eUmst5rRlJlyFX0
-         KOtSe6mpucbck0SfuOmYcosiTEWtyA3iOuhpEYa/QvxI0w9KRdYNUIFbHq6/4Jo2SoDW
-         TlFm4t1XHnxZZKhujwfw9+3q73yLqUCqs5pudAHn4tBKY5v9TDY0BTKuX0CjhkdGEFD5
-         ImLoAsCk39cWN/t+HuxHnP0ugKUK1n0NgZyUzcrBTOO1gpqPgfdmyj/Nu9HAACj12rD5
-         sQYtQ24QpI4sNhrh7aTz1V4Gv4Vlu8I7RZSOq9nsSAOxhcxpOEDxzJj7SjFWD8AqaGW0
-         PVow==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=O2li3zPs66adcFuU3w6fWPa4bvxMwh4iyFZN+IJWd18=;
+        b=cY8AAXxl/W0AIWwK+p3i0BhBUBx8hsUKfzyAvqrbRA1R+3I3m/XoisUiBjLlA8e0TN
+         PZ3FMeet5CcAl0LN9XE7ZukqM1FGtl5bddIM43tefWAOaZ3+h7EzTXM3vbd318SaWoBD
+         8jrpPyYacRzKrc+Ly8tLhzDsmN7Cy37objq5fT/HNz+oKmxUFa/NSAebg143Hb7JSdVN
+         fPYTynvCgaGYbf3PRYUp8QVExUSosSaYZ1Da999Q02wdDXTEtCyCA9UZmVGT/etT5kR5
+         nNqtwShPuw6zvRNBQowf1SR595vQNcR3860SIrFiE3wVbjOsSk2uATJKkbatTO4M3qt7
+         baGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kGBTcLqitg7YmyUuCVO5u5nfwFsdx7KfIVES4p41zJQ=;
-        b=P6fHgmBlPCNiKmsvXv1hRbii+0aEPIOvNrqzXW396kJqorT/2OYhwD4eml+JB4D8/G
-         Ro2ThlAao4hWngrGj+qG4oUYGxbu4tCwjLpjrC+iAmtjc4XaSnR5fPKQUxzIHCHVYEOI
-         DtruQeXuGVZj13SEaAHjd777zfFIWEAa16QTqrGnL5ZOi8uLS0ocR/KjLkhi6Uhc5eZV
-         jagYS8fBYiSu8/Vs8NlgifdWgHU2P+tWMM6n9b4k1eHp2hEQDwaNt20EpRVNW0MRcxgQ
-         cyOECVeoHl92lvJ1p0J0+oW86FCQiNTWQKVBTpFiqYFe23/CEZddShTiNelN0to0XFWN
-         l4bQ==
-X-Gm-Message-State: AO0yUKXJ2UjHwcQ3gB9lo9+xwuj+PEVojonJEuJ+bFlDWAHzZNtu1uZ0
-        OYCtqdHXMZbiDXB40TFaDDkbmQ==
-X-Google-Smtp-Source: AK7set/kXpqSOqXdv7TjryP4gMQtQIcy8LbSh0edPvZWLND6aqj2U7Rxl/+hb/Ojsnj9emLO1S9axg==
-X-Received: by 2002:adf:8912:0:b0:2bf:e692:2636 with SMTP id s18-20020adf8912000000b002bfe6922636mr8882294wrs.26.1675415935327;
-        Fri, 03 Feb 2023 01:18:55 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id n18-20020adfe792000000b002238ea5750csm1484520wrm.72.2023.02.03.01.18.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Feb 2023 01:18:54 -0800 (PST)
-Message-ID: <59ff815b-baad-02c5-67df-e4d65f63afa3@linaro.org>
-Date:   Fri, 3 Feb 2023 10:18:53 +0100
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O2li3zPs66adcFuU3w6fWPa4bvxMwh4iyFZN+IJWd18=;
+        b=3dQeXHFyCOyDtGFdO69ntyjx78BrAOtpiNvpl6iWgHS8ay49EGln6nlwB+KMmBEn4y
+         mhJP3Gi7Ta645fufYjJnug5/cVjw3aNSYFKzysaZUbfFL2CeLr+yfnePF/VAjYfLKhfS
+         qgyY7IikwByshjdwUv7/bmgMvEDEevoAzRXBXObDjYC7JYeP8fsedbyIkkI9IOwVm/l+
+         S/Mk0g9o+5isaMpjTLTCCSpXNXEzB9DbZe+LYpfAI7/p+R16+IvzmKV7WXtsmJCl+dGD
+         Bi9CQdpfknKD5Gtmn9+n3O3paHnDzVoqXpHnUbGyp6dAmhw8yaMSbaWbBrSioWvR9bG/
+         9/Ww==
+X-Gm-Message-State: AO0yUKWar6OLLPQMKEybjGyE8nYUCY57zm2lCLTXamPPWUqQDqGpmwR7
+        23GZxXcJ/+rO4EibWkeBicHmjyLZjXiwjkHM
+X-Google-Smtp-Source: AK7set8V1+xbY96zxhy8Zm0i5a2C/0NC27SxQwSLHyoXk+LdA6cNE1jUsXwgoQlCVht10bDofuW1aQ==
+X-Received: by 2002:a5d:4d85:0:b0:2be:3ccd:7f37 with SMTP id b5-20020a5d4d85000000b002be3ccd7f37mr8321268wru.52.1675419940784;
+        Fri, 03 Feb 2023 02:25:40 -0800 (PST)
+Received: from hackbox.lan ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id j8-20020a5d6048000000b002bfb02153d1sm1636938wrt.45.2023.02.03.02.25.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Feb 2023 02:25:40 -0800 (PST)
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] clk: imx: Updates for v6.3
+Date:   Fri,  3 Feb 2023 12:25:29 +0200
+Message-Id: <20230203102529.2662598-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 6/6] clk: samsung: exynos5433: Extract PM support to
- common ARM64 layer
-Content-Language: en-US
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20230203060924.8257-1-semen.protsenko@linaro.org>
- <20230203060924.8257-7-semen.protsenko@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230203060924.8257-7-semen.protsenko@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/02/2023 07:09, Sam Protsenko wrote:
-> Exynos5433 clock driver implements PM support internally, which might be
-> also useful for other Exynos clock drivers. Extract all PM related code
-> from clk-exynos5433 to common ARM64 functions.
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
+The following changes since commit 1b929c02afd37871d5afb9d498426f83432e71c2:
 
+  Linux 6.2-rc1 (2022-12-25 13:41:39 -0800)
 
->  
->  	if (IS_ERR(parent_clk)) {
->  		pr_err("%s: could not find bus clock %s; err = %ld\n",
-> @@ -91,6 +112,46 @@ static int __init exynos_arm64_enable_bus_clk(struct device *dev,
->  	return 0;
->  }
->  
-> +static int __init exynos_arm64_cmu_prepare_pm(struct device *dev,
-> +		const struct samsung_cmu_info *cmu)
+are available in the Git repository at:
 
-Align the arguments.
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.3
 
-Rest looks good to me.
+for you to fetch changes up to 4e197ee880c24ecb63f7fe17449b3653bc64b03c:
 
-Best regards,
-Krzysztof
+  clk: imx6ul: add ethernet refclock mux support (2023-01-31 14:45:17 +0200)
 
+----------------------------------------------------------------
+i.MX clocks changes for 6.3
+
+- Free the imx_uart_clocks even if imx_register_uart_clocks returns early.
+- Get the stdout clocks count from device tree.
+- Drop the clock count argument from imx_register_uart_clocks.
+- Keep the uart clocks on i.MX93 for when earlycon is used.
+- Fix SPDX comment in i.MX6SLL clocks bindings header.
+- Drop some unnecessary spaces from i.MX8ULP clocks bindings header.
+- Add a new clk-gpr-mux clock type and use it on i.MX6Q to add ENET ref
+  clocks.
+- Add the imx_obtain_fixed_of_clock for allowing to add a clock that is
+  not configured via devicetree.
+- Fix the ENET1 gate configuration for i.MX6UL according to the
+  reference manual.
+- Add ENET refclock mux support for i.MX6UL.
+
+----------------------------------------------------------------
+Marcel Ziswiler (2):
+      clk: imx6sll: add proper spdx license identifier
+      dt-bindings: imx8ulp: clock: no spaces before tabs
+
+Oleksij Rempel (5):
+      clk: imx: add clk-gpr-mux driver
+      clk: imx6q: add ethernet refclock mux support
+      clk: imx: add imx_obtain_fixed_of_clock()
+      clk: imx6ul: fix enet1 gate configuration
+      clk: imx6ul: add ethernet refclock mux support
+
+Peng Fan (4):
+      clk: imx: avoid memory leak
+      clk: imx: get stdout clk count from device tree
+      clk: imx: remove clk_count of imx_register_uart_clocks
+      clk: imx: imx93: invoke imx_register_uart_clocks
+
+ drivers/clk/imx/Makefile                    |   1 +
+ drivers/clk/imx/clk-gpr-mux.c               | 119 ++++++++++++++++++++++++++++
+ drivers/clk/imx/clk-imx25.c                 |   2 +-
+ drivers/clk/imx/clk-imx27.c                 |   2 +-
+ drivers/clk/imx/clk-imx35.c                 |   2 +-
+ drivers/clk/imx/clk-imx5.c                  |   6 +-
+ drivers/clk/imx/clk-imx6q.c                 |  15 +++-
+ drivers/clk/imx/clk-imx6sl.c                |   2 +-
+ drivers/clk/imx/clk-imx6sll.c               |   2 +-
+ drivers/clk/imx/clk-imx6sx.c                |   2 +-
+ drivers/clk/imx/clk-imx6ul.c                |  33 +++++++-
+ drivers/clk/imx/clk-imx7d.c                 |   2 +-
+ drivers/clk/imx/clk-imx7ulp.c               |   4 +-
+ drivers/clk/imx/clk-imx8mm.c                |   2 +-
+ drivers/clk/imx/clk-imx8mn.c                |   2 +-
+ drivers/clk/imx/clk-imx8mp.c                |   2 +-
+ drivers/clk/imx/clk-imx8mq.c                |   2 +-
+ drivers/clk/imx/clk-imx8ulp.c               |   2 +-
+ drivers/clk/imx/clk-imx93.c                 |   2 +
+ drivers/clk/imx/clk.c                       |  31 ++++++--
+ drivers/clk/imx/clk.h                       |  12 ++-
+ include/dt-bindings/clock/imx6qdl-clock.h   |   4 +-
+ include/dt-bindings/clock/imx6sll-clock.h   |   2 +-
+ include/dt-bindings/clock/imx6ul-clock.h    |   7 +-
+ include/dt-bindings/clock/imx8ulp-clock.h   |   4 +-
+ include/linux/mfd/syscon/imx6q-iomuxc-gpr.h |   6 +-
+ 26 files changed, 235 insertions(+), 35 deletions(-)
+ create mode 100644 drivers/clk/imx/clk-gpr-mux.c
