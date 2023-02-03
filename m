@@ -2,236 +2,144 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B45C636CC
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Feb 2023 07:44:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4515AC61DA4
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Feb 2023 09:14:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231821AbjBCHop (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Feb 2023 02:44:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60796 "EHLO
+        id S232461AbjBCJOc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Feb 2023 04:14:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231923AbjBCHop (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Feb 2023 02:44:45 -0500
-Received: from mail-vs1-xe30.google.com (mail-vs1-xe30.google.com [IPv6:2607:f8b0:4864:20::e30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE48E5C0C5
-        for <linux-clk@vger.kernel.org>; Thu,  2 Feb 2023 23:44:42 -0800 (PST)
-Received: by mail-vs1-xe30.google.com with SMTP id s24so4481465vsi.12
-        for <linux-clk@vger.kernel.org>; Thu, 02 Feb 2023 23:44:42 -0800 (PST)
+        with ESMTP id S232049AbjBCJOb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Feb 2023 04:14:31 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD61B8E49E
+        for <linux-clk@vger.kernel.org>; Fri,  3 Feb 2023 01:14:29 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id h12so4017265wrv.10
+        for <linux-clk@vger.kernel.org>; Fri, 03 Feb 2023 01:14:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vAOaUx7T7Cu+LAftmHHRVB4VKcZ+Xc3uW8+s1X+hVZw=;
-        b=gq5MUrSJ/9JtIgYyV4JN/4/n6VuMG6198scgG+JIkoi8kmWUXwxGjjSNARrolmvhZn
-         3IyjSgrRNP8+a511vwEdpLF2Gh4Q7HjwFowxQAGr6KXocKOdqJYeSA0U2Vx5YMzbANJb
-         gediuIB8q0cH3IN0PkzEhpxtvVA8Cu8H+WCUs=
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zELjtTV++XT/mjyQzI4eKCIMRauhqYz1Nswt+m/xsqA=;
+        b=mmPR3kx7UEfHJC//Zhap+s1dXSy6OV3TOeDHh94XUTQQmu4a6MifB/hHb3+B8e+w4+
+         FSQ+OaXhK35emD0S85DCCQNyOnCLXlh/SA2IfHg6e3i3Gm8gdWaf1URBGcNqcEpe1j0u
+         RDNJ9N7srAEF3HAS7Q1E24mFyiuvLNQz2rZo98Z0nYFOwo4WZWCRbjM/T2Rwj7xPv8GP
+         7DMWL0hDOTs4pP9wYyvAlZ+r67eCt6+gluq+FHQ10g93KsCnJq5nKKBnie7uLrd9EWl4
+         LgkqktVSRK1hL/HmanJa0vVcUtiKy7rVFEaPbY+KhD9WOEOBJ749Q94G2Ln/ErGF0NKW
+         CcKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vAOaUx7T7Cu+LAftmHHRVB4VKcZ+Xc3uW8+s1X+hVZw=;
-        b=UpDC0962phM0KuEZB5vyxZ4pNXl25sJJpzKKm3zetye6BgVAqHUjr7XcLIsgEtAWC9
-         UjWtjFUajCduHzK2acgLd7JuIooWSf9dvaw8E5khHvEOXCTY91ZWLM+pkECdYcNxvSFi
-         FBjDVu557gYb1+Q2dxEmD5zOl03cBfAug+gpHriNCALDYRM7QOE/L3Zp7XZrShjFXL5H
-         UXIj5Tl7nRg9gX+5qVunCccU1G0XfvT7r0Sw3tagY4ddMW/QBpyDRBaxxf5GiLhrwxtX
-         cvDtqQ276Tx6GJ9FN8Zg8RmR0pQ8fhOxXfEYx14GLGcpWC06uLB0jLrUftKzGp4TwlEk
-         nCqw==
-X-Gm-Message-State: AO0yUKVFeMv5SmDWRxlEAPZLc5Eur13RuuUvG88P3ile2O8nrny5rf2Z
-        TfBzezo/vukG2U40kQ9BnyW1OxkH+raLM+vcis8BDg==
-X-Google-Smtp-Source: AK7set9CUantc+6n4V8N9/P3Re52vaOGFzASoC6rAwLJRywAMVfCLbAqy5Q1tFyIRU7hq97adRki14ON3Yk4OLLgar4=
-X-Received: by 2002:a05:6102:23f2:b0:3ed:89c7:4bd2 with SMTP id
- p18-20020a05610223f200b003ed89c74bd2mr1682282vsc.26.1675410282031; Thu, 02
- Feb 2023 23:44:42 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zELjtTV++XT/mjyQzI4eKCIMRauhqYz1Nswt+m/xsqA=;
+        b=3gmmIDFuKRs9FHsiSz/QBRSgy/r4epX3hnzm1jF8puvOOiNosLKbB1SS5WEWfgwl+s
+         /sL1RbS87c4R1Acjgm0CVl2ElOB8hSO4wooArzcH7fgb2JE7ubfg7XJQqet+8V3qI+6/
+         mzphwdlgxLNolFAmB/KZPvQd/Rl7xC/HrwfeB08cJ+yReEJj+0NC9YAkLD3JDU6SzFLv
+         lACZqFMqnlekSNuevM0oL+9kS1ZKDJdUF7isFA5A81wu83suewStqxDMP4wOs6z5XQjw
+         wTaojShl653RrA/KSAMgG5saNE8W78iukBYMNnjyW0mw7WmQdSc0pLM/C7CRspO9SguD
+         kMPA==
+X-Gm-Message-State: AO0yUKXSiV80dOhlFM5czv2w29oZHF4OpSVjni/SQi1ReAlBuP/uXAx+
+        oFGMOLPrLwH0ikXOc5zO9ZC6ig==
+X-Google-Smtp-Source: AK7set87oB2xxUxR9AcQ7XrTUysuuK4UHjaKNMwCvPHLV1g1gyq7Z417h5UXoUYnn80RIACYH+l6Iw==
+X-Received: by 2002:adf:fc88:0:b0:2bf:d940:29b6 with SMTP id g8-20020adffc88000000b002bfd94029b6mr8415191wrr.54.1675415668346;
+        Fri, 03 Feb 2023 01:14:28 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id d8-20020adfe2c8000000b002bfe08c566fsm1510325wrj.106.2023.02.03.01.14.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Feb 2023 01:14:27 -0800 (PST)
+Message-ID: <03eeacfb-22ff-8224-30d7-6c187b179fd7@linaro.org>
+Date:   Fri, 3 Feb 2023 10:14:25 +0100
 MIME-Version: 1.0
-References: <20230119124848.26364-1-Garmin.Chang@mediatek.com> <20230119124848.26364-3-Garmin.Chang@mediatek.com>
-In-Reply-To: <20230119124848.26364-3-Garmin.Chang@mediatek.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Fri, 3 Feb 2023 15:44:31 +0800
-Message-ID: <CAGXv+5FwJ-bO760bd=dz4K60KUsKV6M66MGribg_B9T0pcb0cQ@mail.gmail.com>
-Subject: Re: [PATCH v5 02/19] clk: mediatek: Add MT8188 apmixedsys clock support
-To:     "Garmin.Chang" <Garmin.Chang@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 5/6] clk: samsung: Extract parent clock enabling to common
+ function
+Content-Language: en-US
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-clk@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20230203060924.8257-1-semen.protsenko@linaro.org>
+ <20230203060924.8257-6-semen.protsenko@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230203060924.8257-6-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jan 19, 2023 at 8:54 PM Garmin.Chang <Garmin.Chang@mediatek.com> wrote:
->
-> Add MT8188 apmixedsys clock controller which provides Plls
-> generated from SoC 26m and ssusb clock gate control.
->
-> Signed-off-by: Garmin.Chang <Garmin.Chang@mediatek.com>
+On 03/02/2023 07:09, Sam Protsenko wrote:
+> Extract parent clock enabling from exynos_arm64_register_cmu() to
+> dedicated function. No functional change.
+> 
+> No functional change.
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 > ---
->  drivers/clk/mediatek/Kconfig                 |  11 ++
->  drivers/clk/mediatek/Makefile                |   1 +
->  drivers/clk/mediatek/clk-mt8188-apmixedsys.c | 154 +++++++++++++++++++
->  3 files changed, 166 insertions(+)
->  create mode 100644 drivers/clk/mediatek/clk-mt8188-apmixedsys.c
->
-> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-> index 22e8e79475ee..f02b679f71d0 100644
-> --- a/drivers/clk/mediatek/Kconfig
-> +++ b/drivers/clk/mediatek/Kconfig
-> @@ -565,6 +565,17 @@ config COMMON_CLK_MT8186
->         help
->           This driver supports MediaTek MT8186 clocks.
->
-> +config COMMON_CLK_MT8188
-> +       bool "Clock driver for MediaTek MT8188"
-> +       depends on ARM64 || COMPILE_TEST
-> +       select COMMON_CLK_MEDIATEK
-> +       default ARCH_MEDIATEK
-> +       help
-> +         This driver supports MediaTek MT8188 basic clocks and clocks
-> +         required for various peripheral found on MediaTek. Choose
-> +         M or Y here if you want to use clocks such as peri_ao,
-> +         infra_ao, etc.
-> +
->  config COMMON_CLK_MT8192
->         bool "Clock driver for MediaTek MT8192"
->         depends on ARM64 || COMPILE_TEST
-> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-> index e24080fd6e7f..13ab8deb362c 100644
-> --- a/drivers/clk/mediatek/Makefile
-> +++ b/drivers/clk/mediatek/Makefile
-> @@ -83,6 +83,7 @@ obj-$(CONFIG_COMMON_CLK_MT8186) += clk-mt8186-mcu.o clk-mt8186-topckgen.o clk-mt
->                                    clk-mt8186-mfg.o clk-mt8186-mm.o clk-mt8186-wpe.o \
->                                    clk-mt8186-img.o clk-mt8186-vdec.o clk-mt8186-venc.o \
->                                    clk-mt8186-cam.o clk-mt8186-mdp.o clk-mt8186-ipe.o
-> +obj-$(CONFIG_COMMON_CLK_MT8188) += clk-mt8188-apmixedsys.o
->  obj-$(CONFIG_COMMON_CLK_MT8192) += clk-mt8192.o
->  obj-$(CONFIG_COMMON_CLK_MT8192_AUDSYS) += clk-mt8192-aud.o
->  obj-$(CONFIG_COMMON_CLK_MT8192_CAMSYS) += clk-mt8192-cam.o
-> diff --git a/drivers/clk/mediatek/clk-mt8188-apmixedsys.c b/drivers/clk/mediatek/clk-mt8188-apmixedsys.c
-> new file mode 100644
-> index 000000000000..8d73ae3a0da8
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt8188-apmixedsys.c
-> @@ -0,0 +1,154 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +//
-> +// Copyright (c) 2022 MediaTek Inc.
-> +// Author: Garmin Chang <garmin.chang@mediatek.com>
-> +
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <dt-bindings/clock/mediatek,mt8188-clk.h>
-> +
-> +#include "clk-gate.h"
-> +#include "clk-mtk.h"
-> +#include "clk-pll.h"
-> +
-> +static const struct mtk_gate_regs apmixed_cg_regs = {
-> +       .set_ofs = 0x8,
-> +       .clr_ofs = 0x8,
-> +       .sta_ofs = 0x8,
-> +};
-> +
-> +#define GATE_APMIXED(_id, _name, _parent, _shift)                      \
-> +       GATE_MTK(_id, _name, _parent, &apmixed_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr_inv)
-> +
-> +static const struct mtk_gate apmixed_clks[] = {
-> +       GATE_APMIXED(CLK_APMIXED_PLL_SSUSB26M_EN, "pll_ssusb26m_en", "clk26m", 1),
-> +};
-> +
-> +#define MT8188_PLL_FMAX                (3800UL * MHZ)
-> +#define MT8188_PLL_FMIN                (1500UL * MHZ)
-> +#define MT8188_INTEGER_BITS    8
-> +
-> +#define PLL(_id, _name, _reg, _pwr_reg, _en_mask, _flags,              \
-> +           _rst_bar_mask, _pcwbits, _pd_reg, _pd_shift,                \
-> +           _tuner_reg, _tuner_en_reg, _tuner_en_bit,                   \
-> +           _pcw_reg, _pcw_shift, _pcw_chg_reg,                         \
-> +           _en_reg, _pll_en_bit) {                                     \
-> +               .id = _id,                                              \
-> +               .name = _name,                                          \
-> +               .reg = _reg,                                            \
-> +               .pwr_reg = _pwr_reg,                                    \
-> +               .en_mask = _en_mask,                                    \
-> +               .flags = _flags,                                        \
-> +               .rst_bar_mask = _rst_bar_mask,                          \
-> +               .fmax = MT8188_PLL_FMAX,                                \
-> +               .fmin = MT8188_PLL_FMIN,                                \
-> +               .pcwbits = _pcwbits,                                    \
-> +               .pcwibits = MT8188_INTEGER_BITS,                        \
-> +               .pd_reg = _pd_reg,                                      \
-> +               .pd_shift = _pd_shift,                                  \
-> +               .tuner_reg = _tuner_reg,                                \
-> +               .tuner_en_reg = _tuner_en_reg,                          \
-> +               .tuner_en_bit = _tuner_en_bit,                          \
-> +               .pcw_reg = _pcw_reg,                                    \
-> +               .pcw_shift = _pcw_shift,                                \
-> +               .pcw_chg_reg = _pcw_chg_reg,                            \
-> +               .en_reg = _en_reg,                                      \
-> +               .pll_en_bit = _pll_en_bit,                              \
-> +       }
-> +
-> +static const struct mtk_pll_data plls[] = {
-> +       PLL(CLK_APMIXED_ETHPLL, "ethpll", 0x044C, 0x0458, 0,
-> +           0, 0, 22, 0x0450, 24, 0, 0, 0, 0x0450, 0, 0, 0, 9),
-> +       PLL(CLK_APMIXED_MSDCPLL, "msdcpll", 0x0514, 0x0520, 0,
-> +           0, 0, 22, 0x0518, 24, 0, 0, 0, 0x0518, 0, 0, 0, 9),
-> +       PLL(CLK_APMIXED_TVDPLL1, "tvdpll1", 0x0524, 0x0530, 0,
-> +           0, 0, 22, 0x0528, 24, 0, 0, 0, 0x0528, 0, 0, 0, 9),
-> +       PLL(CLK_APMIXED_TVDPLL2, "tvdpll2", 0x0534, 0x0540, 0,
-> +           0, 0, 22, 0x0538, 24, 0, 0, 0, 0x0538, 0, 0, 0, 9),
-> +       PLL(CLK_APMIXED_MMPLL, "mmpll", 0x0544, 0x0550, 0xff000000,
-> +           HAVE_RST_BAR, BIT(23), 22, 0x0548, 24, 0, 0, 0, 0x0548, 0, 0, 0, 9),
-> +       PLL(CLK_APMIXED_MAINPLL, "mainpll", 0x045C, 0x0468, 0xff000000,
-> +           HAVE_RST_BAR, BIT(23), 22, 0x0460, 24, 0, 0, 0, 0x0460, 0, 0, 0, 9),
-> +       PLL(CLK_APMIXED_IMGPLL, "imgpll", 0x0554, 0x0560, 0,
-> +           0, 0, 22, 0x0558, 24, 0, 0, 0, 0x0558, 0, 0, 0, 9),
-> +       PLL(CLK_APMIXED_UNIVPLL, "univpll", 0x0504, 0x0510, 0xff000000,
-> +           HAVE_RST_BAR, BIT(23), 22, 0x0508, 24, 0, 0, 0, 0x0508, 0, 0, 0, 9),
-> +       PLL(CLK_APMIXED_ADSPPLL, "adsppll", 0x042C, 0x0438, 0,
-> +           0, 0, 22, 0x0430, 24, 0, 0, 0, 0x0430, 0, 0, 0, 9),
-> +       PLL(CLK_APMIXED_APLL1, "apll1", 0x0304, 0x0314, 0,
-> +           0, 0, 32, 0x0308, 24, 0x0034, 0x0000, 12, 0x030C, 0, 0, 0, 9),
-> +       PLL(CLK_APMIXED_APLL2, "apll2", 0x0318, 0x0328, 0,
-> +           0, 0, 32, 0x031C, 24, 0x0038, 0x0000, 13, 0x0320, 0, 0, 0, 9),
-> +       PLL(CLK_APMIXED_APLL3, "apll3", 0x032C, 0x033C, 0,
-> +           0, 0, 32, 0x0330, 24, 0x003C, 0x0000, 14, 0x0334, 0, 0, 0, 9),
-> +       PLL(CLK_APMIXED_APLL4, "apll4", 0x0404, 0x0414, 0,
-> +           0, 0, 32, 0x0408, 24, 0x0040, 0x0000, 15, 0x040C, 0, 0, 0, 9),
-> +       PLL(CLK_APMIXED_APLL5, "apll5", 0x0418, 0x0428, 0,
-> +           0, 0, 32, 0x041C, 24, 0x0044, 0x0000, 16, 0x0420, 0, 0, 0, 9),
-> +       PLL(CLK_APMIXED_MFGPLL, "mfgpll", 0x0340, 0x034C, 0,
-> +           0, 0, 22, 0x0344, 24, 0, 0, 0, 0x0344, 0, 0, 0, 9),
-> +};
-> +
-> +static const struct of_device_id of_match_clk_mt8188_apmixed[] = {
-> +       { .compatible = "mediatek,mt8188-apmixedsys", },
-> +       {}
-> +};
-> +
-> +static int clk_mt8188_apmixed_probe(struct platform_device *pdev)
+>  drivers/clk/samsung/clk-exynos-arm64.c | 53 +++++++++++++++++---------
+>  1 file changed, 36 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung/clk-exynos-arm64.c
+> index b921b9a1134a..361663223a24 100644
+> --- a/drivers/clk/samsung/clk-exynos-arm64.c
+> +++ b/drivers/clk/samsung/clk-exynos-arm64.c
+> @@ -56,6 +56,41 @@ static void __init exynos_arm64_init_clocks(struct device_node *np,
+>  	iounmap(reg_base);
+>  }
+>  
+> +/**
+> + * exynos_arm64_enable_bus_clk - Enable parent clock of specified CMU
+> + *
+> + * @dev:	Device object; may be NULL if this function is not being
+> + *		called from platform driver probe function
+> + * @np:		CMU device tree node
+> + * @cmu:	CMU data
+> + *
+> + * Keep CMU parent clock running (needed for CMU registers access).
+> + *
+> + * Return: 0 on success or negative error code on failure.
+> + */
+> +static int __init exynos_arm64_enable_bus_clk(struct device *dev,
+> +		struct device_node *np, const struct samsung_cmu_info *cmu)
+
+Align the arguments.
+
 > +{
-> +       struct clk_hw_onecell_data *clk_data;
-> +       struct device_node *node = pdev->dev.of_node;
-> +       int r;
+> +	struct clk *parent_clk;
 > +
-> +       clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
-> +       if (!clk_data)
-> +               return -ENOMEM;
+> +	if (!cmu->clk_name)
+> +		return 0;
 > +
-> +       r = mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
-> +       if (r)
-> +               goto free_apmixed_data;
+> +	if (dev)
+> +		parent_clk = clk_get(dev, cmu->clk_name);
+> +	else
+> +		parent_clk = of_clk_get_by_name(np, cmu->clk_name);
 > +
-> +       r = mtk_clk_register_gates_with_dev(node, apmixed_clks,
-> +               ARRAY_SIZE(apmixed_clks), clk_data, NULL);
+> +	if (IS_ERR(parent_clk)) {
+> +		pr_err("%s: could not find bus clock %s; err = %ld\n",
+> +		       __func__, cmu->clk_name, PTR_ERR(parent_clk));
+> +		return PTR_ERR(parent_clk);
+> +	}
+> +
+> +	clk_prepare_enable(parent_clk);
+> +	return 0;
 
-This API is gone. Please replace it with mtk_clk_register_clks. And please
-pass in the |struct device| pointer.
+You do not check the return value in exynos_arm64_register_cmu() below,
+so either make it a void or add the check.
 
-ChenYu
+
+Best regards,
+Krzysztof
+
