@@ -2,153 +2,211 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75949C05027
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Feb 2023 12:35:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B60C8C636D6
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Feb 2023 14:33:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233150AbjBCMfY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Feb 2023 07:35:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45752 "EHLO
+        id S233719AbjBCOdw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Feb 2023 09:33:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232491AbjBCMfS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Feb 2023 07:35:18 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 730B65FE5;
-        Fri,  3 Feb 2023 04:35:09 -0800 (PST)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 313ANVlV026075;
-        Fri, 3 Feb 2023 12:34:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=mMBR5w+q1boHomjumnwZghbt93c2LBQycWI9O28G1Bw=;
- b=CPsxI74jIauecLH2Bfc3VrcDLfN7OjDae+wtVjSmmp8fXtlDHVBw6r32krn0Bb4uilJN
- z6nCzRuI7sN9H+PRak9fH3GCnGhqHycuuKk5l7BPjFngnpt/0pwxK62cN4Q6FSY1gfo8
- EXBl0JBnhhIOnHzdlZQZxurjN0GFvno/iSAIbdt/ri7yBbDFeBJz6mBos4BOGV2D010S
- d2xP7MCzI/rcjO8bqT9W3Q0AttMSBUFykHbtQRWd5vy64DChEwGCf5TTyXjbBPegX+SP
- KxB6fLS9IcQBiDwXJzQLi31G2jq6DdokpGEzwaJutPqH3G2xFLFGesj5pLDXzJYGv+D3 Sw== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ngh1ka69c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 03 Feb 2023 12:34:47 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 313CYkvl012258
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 3 Feb 2023 12:34:46 GMT
-Received: from [10.50.53.202] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Fri, 3 Feb 2023
- 04:34:37 -0800
-Message-ID: <b3c1e629-179f-d2c3-d3eb-3556a7df10ae@quicinc.com>
-Date:   Fri, 3 Feb 2023 18:04:34 +0530
+        with ESMTP id S233702AbjBCOdn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Feb 2023 09:33:43 -0500
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2877E233C8
+        for <linux-clk@vger.kernel.org>; Fri,  3 Feb 2023 06:33:31 -0800 (PST)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230203143328euoutp028482ae5ddae0216145323f544747969b~AVxT3rj-T2352423524euoutp02q
+        for <linux-clk@vger.kernel.org>; Fri,  3 Feb 2023 14:33:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230203143328euoutp028482ae5ddae0216145323f544747969b~AVxT3rj-T2352423524euoutp02q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1675434808;
+        bh=OkEJRBh0JP6wqBS/M1cu6izGd5JAkmxdwpgVhRVYZF4=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=IrS3VlmNPpLD5e3lnzWKQm735Zyvv5lNcLF9qpc7uIjZikxyXa016C+2CmUC0HVSm
+         yAyjuWLN5QcxrfdM4CSJQGestsk90fBEC/x5QYCsSl5XmRsfwAFOTVessyuEOKlnuw
+         0mM0NOoKGorL+5e8F8x3lN19/a7juTivWmo1uU/w=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20230203143328eucas1p198a7b10670e5a2dd2c69e73bd5f8da17~AVxTjiH--2844028440eucas1p18;
+        Fri,  3 Feb 2023 14:33:28 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id D0.D1.13597.83B1DD36; Fri,  3
+        Feb 2023 14:33:28 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230203143328eucas1p1b6398762544f010e641f72c05444da70~AVxTHJ4lF3241032410eucas1p12;
+        Fri,  3 Feb 2023 14:33:28 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230203143328eusmtrp10b6f54a2e3a0023e7ea9254c880e8468~AVxTGR2_O0114901149eusmtrp1o;
+        Fri,  3 Feb 2023 14:33:28 +0000 (GMT)
+X-AuditID: cbfec7f4-1f1ff7000000351d-01-63dd1b3841e0
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id F8.86.02722.73B1DD36; Fri,  3
+        Feb 2023 14:33:28 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230203143327eusmtip15cee27af968567e61317c6912703ce13~AVxSYq4GT3048330483eusmtip1B;
+        Fri,  3 Feb 2023 14:33:27 +0000 (GMT)
+Message-ID: <cc9734eb-4157-eea3-90a2-4f7eb36de744@samsung.com>
+Date:   Fri, 3 Feb 2023 15:33:27 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH V6 2/7] clk: qcom: Add Global Clock Controller driver for
- IPQ9574
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Devi Priya <quic_devipriy@quicinc.com>, <agross@kernel.org>,
-        <andersson@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linus.walleij@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <p.zabel@pengutronix.de>, <shawnguo@kernel.org>, <arnd@arndb.de>,
-        <marcel.ziswiler@toradex.com>, <dmitry.baryshkov@linaro.org>,
-        <nfraprado@collabora.com>, <broonie@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_arajkuma@quicinc.com>,
-        <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
-References: <20230202150619.22425-1-quic_devipriy@quicinc.com>
- <20230202150619.22425-3-quic_devipriy@quicinc.com>
- <1d144aa4-6f0f-b10f-1d32-4acf4e06ae85@quicinc.com>
- <e34f36b0-35a8-0b77-e6ab-49851213108e@linaro.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0)
+        Gecko/20100101 Thunderbird/102.6.1
+Subject: Re: [PATCH 0/6] clk: samsung: Add PM support for ARM64 Exynos chips
 Content-Language: en-US
-From:   Kathiravan T <quic_kathirav@quicinc.com>
-In-Reply-To: <e34f36b0-35a8-0b77-e6ab-49851213108e@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: s73mYnFUxvt8OOjaVYgOTjdnQIb7LJA5
-X-Proofpoint-ORIG-GUID: s73mYnFUxvt8OOjaVYgOTjdnQIb7LJA5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-02-03_08,2023-02-03_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- suspectscore=0 spamscore=0 clxscore=1015 priorityscore=1501
- mlxlogscore=999 adultscore=0 malwarescore=0 bulkscore=0 impostorscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2302030115
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20230203060924.8257-1-semen.protsenko@linaro.org>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHKsWRmVeSWpSXmKPExsWy7djPc7oW0neTDfbfkLd4MG8bm8Xl/doW
+        1788Z7XY+3oru8Wmx9dYLT723GO1uLxrDpvFjPP7mCwunnK1OPymndXi37WNLBbP+4BCp+5+
+        ZrdYtesPo8Xx948ZHfg93t9oZffYOesuu8emVZ1sHneu7WHz2Lyk3qNvyypGj8+b5ALYo7hs
+        UlJzMstSi/TtErgyZu6YxVRwSLqi5+McpgbGCaJdjJwcEgImErOvTmXuYuTiEBJYwSgxc+Eb
+        NgjnC6NE06OjrBDOZ0aJz71XWWFa5tydxw6RWM4oMefcRSjnI6PEwfu9TCBVvAJ2EntnTWEE
+        sVkEVCS+9Z1nh4gLSpyc+YSli5GDQ1QgRWLTnzKQsLCAj8SkL0/BFjALiEvcejKfCWSmiMBu
+        RolXz16BHcgssJhZ4vaRNrBBbAKGEl1vu9hAbE4Be4nbW7YyQ3TLS2x/OwesQUJgMSfQRxtY
+        QbZJCLhI3H6XAfGCsMSr41vYIWwZidOTe1gg6tsZJRb8vs8E4UxglGh4fosRospa4s65X2wg
+        g5gFNCXW79KHCDtKfNszkR1iPp/EjbeCEDfwSUzaNp0ZIswr0dEmBFGtJjHr+Dq4tQcvXGKe
+        wKg0CylYZiH5fxaSb2Yh7F3AyLKKUTy1tDg3PbXYKC+1XK84Mbe4NC9dLzk/dxMjMMmd/nf8
+        yw7G5a8+6h1iZOJgPMQowcGsJMK7/PSdZCHelMTKqtSi/Pii0pzU4kOM0hwsSuK82rYnk4UE
+        0hNLUrNTUwtSi2CyTBycUg1MOVO6bvPvW7qv58aMfbt2X8460bRsd7q5ayDXp3iDP3b3t/kf
+        WuMRqmATw/S8ftG9GQ4sHzUE3ndEn1RyP/Mg9dzCLT28Z9LuPZ45V6lSSOdNvaU1139Ol8I1
+        tgnrORrZPjHc6/i84c2RtTnPk18Fu8ZN3Hp6+/au2/Yl34SOWlRs+HdU8eL8PmPhaSzFlxke
+        B1/rmXbeePWe/k0rC343Nl6xq/EQvBS6b8peh6i9Ty4fjK6Jn8bz813V0UMXpwZVSJukvUgS
+        TCg8nVIo+TXFRCyuN7L9RX6zn8j5YPl5NcHXNH9PKc/3OnBlXvuK2Cd6+s/ZG9kvLtxubVp3
+        xd1hlory/Z7XvywUQk9+OyYvqMRSnJFoqMVcVJwIALZnOmvhAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAIsWRmVeSWpSXmKPExsVy+t/xu7oW0neTDeYuYbZ4MG8bm8Xl/doW
+        1788Z7XY+3oru8Wmx9dYLT723GO1uLxrDpvFjPP7mCwunnK1OPymndXi37WNLBbP+4BCp+5+
+        ZrdYtesPo8Xx948ZHfg93t9oZffYOesuu8emVZ1sHneu7WHz2Lyk3qNvyypGj8+b5ALYo/Rs
+        ivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQyZu6YxVRw
+        SLqi5+McpgbGCaJdjJwcEgImEnPuzmMHsYUEljJKfJmWBBGXkTg5rYEVwhaW+HOtiw2i5j2j
+        xLm12iA2r4CdxN5ZUxhBbBYBFYlvfefZIeKCEidnPmEBsUUFUiSan58EmyMs4CMx6ctTMJtZ
+        QFzi1pP5TF2MXBwiAnsZJdaseswO4jALLGWW6N65hAXEERKYxCixZP4OsBY2AUOJrrcQZ3AK
+        2Evc3rKVGWKUmUTX1i5GCFteYvvbOcwTGIVmIblkFpKNs5C0zELSsoCRZRWjSGppcW56brGh
+        XnFibnFpXrpecn7uJkZgVG879nPzDsZ5rz7qHWJk4mA8xCjBwawkwrv89J1kId6UxMqq1KL8
+        +KLSnNTiQ4ymwOCYyCwlmpwPTCt5JfGGZgamhiZmlgamlmbGSuK8ngUdiUIC6YklqdmpqQWp
+        RTB9TBycUg1MO9yj8yKVp8024XqunKkrvmTiKz5J9efT5Wy50p+luC08xHsuXUZXO0N154nX
+        03PvWD2aMlW3oe7hBLs5dmlNi9jnlrGs3HE5j3kpqwCzmcXtSxtNHL82VnR3LNvximHtvCWP
+        buW6yfMW2dp76Z/93N41rydtsXVfw5+KnOlP3DU6T6c4bPk5r9x02VvrgvzdzpGL30+V2cLu
+        1lizmCPuSPMJ0y0r+2uEFt4u3bZdbQXzn3t+k2Z9KPq+j6HN5/o6tx+HpK5lnzeVuJVypUc5
+        eDr/1AsP9jM5in9Klqt9w9F9zH/7TO75/7M/fHAzmZoY6h2s4iMfum5mxI2K+2J1FT23Cxku
+        ejtM7HNg3p2gxFKckWioxVxUnAgAIRppmXMDAAA=
+X-CMS-MailID: 20230203143328eucas1p1b6398762544f010e641f72c05444da70
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20230203060905eucas1p20dc8b2dbf93ec2b0c604bd461afbae94
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230203060905eucas1p20dc8b2dbf93ec2b0c604bd461afbae94
+References: <CGME20230203060905eucas1p20dc8b2dbf93ec2b0c604bd461afbae94@eucas1p2.samsung.com>
+        <20230203060924.8257-1-semen.protsenko@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On 2/3/2023 4:25 PM, Konrad Dybcio wrote:
+On 03.02.2023 07:09, Sam Protsenko wrote:
+> In order to prepare for PM enablement in clk-exynos850, common PM code
+> was extracted from clk-exynos5433 to clk-exynos-arm64. Also some related
+> cleanups were done prior to that. More specifically:
 >
-> On 3.02.2023 06:47, Kathiravan T wrote:
->> On 2/2/2023 8:36 PM, Devi Priya wrote:
->>> Add Global Clock Controller (GCC) driver for ipq9574 based devices
->>>
->>> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
->>> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
->>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
->>> ---
-> [...]
+>    - patches #1..5: cleanups
+>    - patch #6: PM code extraction
 >
->>> +static int gcc_ipq9574_probe(struct platform_device *pdev)
->>> +{
->>> +    struct regmap *regmap;
->>> +    struct qcom_cc_desc ipq9574_desc = gcc_ipq9574_desc;
->>> +
->>> +    regmap = qcom_cc_map(pdev, &ipq9574_desc);
->>> +    if (IS_ERR(regmap))
->>> +        return PTR_ERR(regmap);
->>> +
->>> +    return qcom_cc_really_probe(pdev, &ipq9574_desc, regmap);
->>
->> can we use qcom_cc_probe as suggested here https://lore.kernel.org/linux-arm-msm/84f68577f5629e6ef6d6b14357a79f84.sboyd@kernel.org/ ?
-> Yes we can.
+> During the extraction of the exynos5433_cmu_probe() content to
+> exynos_arm64_register_cmu_pm() some code was reworked a bit, and also
+> split into smaller functions. In particular:
 >
-> When you're answering a long long long long email, please cut off
-> parts that you aren't replying to, I had to scroll and scroll and
-> scroll and scroll to get to this sentence and I'm not even sure if
-> you said something inbetween that I missed..
-
-
-Got it, Thanks.
-
-
+>    - cmu_data structure now contains a pointer to ctx, which is now
+>      allocated in samsung_clk_init()
+>    - cmu_data structure initialization was moved into separate function
+>    - code for configuring gate clocks was added (optional)
 >
-> Konrad
->>
->>> +}
->>> +
->>> +static struct platform_driver gcc_ipq9574_driver = {
->>> +    .probe = gcc_ipq9574_probe,
->>> +    .driver = {
->>> +        .name   = "qcom,gcc-ipq9574",
->>> +        .of_match_table = gcc_ipq9574_match_table,
->>> +    },
->>> +};
->>> +
->>> +static int __init gcc_ipq9574_init(void)
->>> +{
->>> +    return platform_driver_register(&gcc_ipq9574_driver);
->>> +}
->>> +core_initcall(gcc_ipq9574_init);
->>> +
->>> +static void __exit gcc_ipq9574_exit(void)
->>> +{
->>> +    platform_driver_unregister(&gcc_ipq9574_driver);
->>> +}
->>> +module_exit(gcc_ipq9574_exit);
->>> +
->>> +MODULE_DESCRIPTION("Qualcomm Technologies, Inc. GCC IPQ9574 Driver");
->>> +MODULE_LICENSE("GPL");
+> Which in turn resulted in somehow modified code of probe function:
+>
+>    Original
+>    --------
+>
+>      ...
+>      devm_platform_ioremap_resource(...);
+>      samsung_clk_init(...);
+>      exynos_arm64_cmu_prepare_pm(...);
+>      exynos_arm64_enable_bus_clk(...);
+>      platform_set_drvdata(...);
+>      ...
+>
+>    Modified
+>    --------
+>
+>      ...
+>      platform_set_drvdata(...);
+>      exynos_arm64_cmu_prepare_pm(...);
+>      exynos_arm64_enable_bus_clk(...);
+>      exynos_arm64_init_clocks(...);
+>      devm_platform_ioremap_resource(...);
+>      samsung_clk_init(...);
+>      ...
+>
+> That shouldn't really change the logic or mode of operation. It was
+> preliminary tested on Exynos850 based board, with some extra patches on
+> top of this series (will be submitted later).
+>
+> Marek, could you please test these patches on Exynos5433 platform, and
+> also review accordingly?
+
+I've tested and Exynos5433 still works fine after applying your changes. 
+Btw, you should probably rebase your changes onto arm-soc tree (or 
+recent linux-next), as there are some conflicts between your changes and 
+the s3c24xx removal merged there.
+
+Feel free to add:
+
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+I will try to review the individual patches on Monday though.
+
+
+> Thanks!
+>
+> Sam Protsenko (6):
+>    clk: samsung: Don't pass reg_base to samsung_clk_register_pll()
+>    clk: samsung: Remove np argument from samsung_clk_init()
+>    clk: samsung: Set dev in samsung_clk_init()
+>    clk: samsung: Extract clocks registration to common function
+>    clk: samsung: Extract parent clock enabling to common function
+>    clk: samsung: exynos5433: Extract PM support to common ARM64 layer
+>
+>   drivers/clk/samsung/clk-exynos-arm64.c   | 219 +++++++++++++++++++++--
+>   drivers/clk/samsung/clk-exynos-arm64.h   |   3 +
+>   drivers/clk/samsung/clk-exynos4.c        |   6 +-
+>   drivers/clk/samsung/clk-exynos4412-isp.c |   3 +-
+>   drivers/clk/samsung/clk-exynos5250.c     |   5 +-
+>   drivers/clk/samsung/clk-exynos5420.c     |   5 +-
+>   drivers/clk/samsung/clk-exynos5433.c     | 157 +---------------
+>   drivers/clk/samsung/clk-pll.c            |  11 +-
+>   drivers/clk/samsung/clk-s3c2410.c        |   6 +-
+>   drivers/clk/samsung/clk-s3c2412.c        |   5 +-
+>   drivers/clk/samsung/clk-s3c2443.c        |   6 +-
+>   drivers/clk/samsung/clk-s3c64xx.c        |   4 +-
+>   drivers/clk/samsung/clk-s5pv210.c        |   6 +-
+>   drivers/clk/samsung/clk.c                |  64 ++++---
+>   drivers/clk/samsung/clk.h                |  10 +-
+>   15 files changed, 282 insertions(+), 228 deletions(-)
+>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
