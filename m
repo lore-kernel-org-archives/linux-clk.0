@@ -2,84 +2,105 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05CCEC64EC4
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Feb 2023 04:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D5FC636CC
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Feb 2023 21:13:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229519AbjBEEQM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 4 Feb 2023 23:16:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60284 "EHLO
+        id S229513AbjBEVNX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 5 Feb 2023 16:13:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbjBEEQM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Feb 2023 23:16:12 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD8B06E93;
-        Sat,  4 Feb 2023 20:16:09 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id dr8so25587516ejc.12;
-        Sat, 04 Feb 2023 20:16:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pGmjAtSpm7T3NYEfTdl7rNgWicn+a5Oe3VNo+Eoz3Lw=;
-        b=MU+TGrCw1MEvbZ+QAC6jqR6MOQaR8PyyMr0RhYg3EKTVT8b2coqtS1GyEnQ/0zDjWX
-         PbrT9j7vMPNrPHiUnKwZB7gGyYHbrQvlI1DkF4ss4b8nKYLt4PubrWJj2aujM4gC26Yy
-         zX72cXs5xCD9rf9JKL6D3/hxzvoGV5Q2s4OGLXdasOb3wfv7u6ljXWnB3iPbljQerT0B
-         JH59fZyXEgO62k2RByu2DnWh0IpzckNI9UxswsE3YyUL1xAeh2LNnLpnjztnfZYHd0ft
-         R9fj0VL0N0bGNRxoH61Iz2OJ3YJF+Ad2NrufSAML4Sw/A1iMJIUwxSuMCy8HZSOwovkn
-         2cbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pGmjAtSpm7T3NYEfTdl7rNgWicn+a5Oe3VNo+Eoz3Lw=;
-        b=AFUok83iXGxqXYXk/0Cq5+hjG8aZxUBppWZiimypC0AnOFYRkwYH+aMmbwbsEekEwh
-         0wlea9U9PxGrtK8ilZqPwfv7651NNy6iqkoHi1ZHy6P2G2blxGbjNO+YikEUOmFy+Qzb
-         tuGTB6cA1wMpczSbtAp+0eKHVLXXf0u0c8sLV+rEpzfBi2P2SCNXKLP3sdkqwLI5mvf6
-         3Jrmxjyrv74WqsbMpmCcSEKSp8gu/sTNnM7R8PQjGpyfFBsJbReFOmFXcyaW7zFy6d7f
-         AvbcxvII1hw1E3pTQEbznK9+7oDS65go/BpOoQjj7JGZBWUQ2TBlwANM3d2ZysvFukjo
-         i0jA==
-X-Gm-Message-State: AO0yUKWhPNogVdD0vVyyIDtRvmlmjfY9ik4y5DaB01VvXnraQoZhCNjw
-        j900RF/NH2xVURT2mU+52hG/jut8YSZY/K4A3Bw=
-X-Google-Smtp-Source: AK7set/Phq0+sMz3EXPsbZ2Dwtggp95sagZP3NNxuR0p3KAlHS0KLI+JnJOts17T5uTN0oi6OC8KCse3Bq8AdieGaL4=
-X-Received: by 2002:a17:906:1781:b0:878:7d2c:6ba4 with SMTP id
- t1-20020a170906178100b008787d2c6ba4mr4606698eje.42.1675570568186; Sat, 04 Feb
- 2023 20:16:08 -0800 (PST)
+        with ESMTP id S229379AbjBEVNW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Feb 2023 16:13:22 -0500
+Received: from fallback20.mail.ru (fallback20.mail.ru [185.5.136.252])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E068114211;
+        Sun,  5 Feb 2023 13:13:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com; s=mailru;
+        h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=jImAqmi0+rCcWwya4e++ISC8KB4BelrTGzo3W+13GLc=;
+        t=1675631601;x=1675721601; 
+        b=qM0x6vf5LjlKSwLcgZx3fIqEofrcYWMpld7/B34zgxN5ZjSAD//Xdmq2ZE4YXUogoIldE0fEWpQQmzklr4H4g7dWzZ9OYd3UCdupwPcIu7NG0C8tgPGvYoyPlidQVAsQ1FksaS05JhoGBNmnjEf5YfsyCkZQspkhhlpNU3VVnDA=;
+Received: from [10.161.25.38] (port=40140 helo=smtp61.i.mail.ru)
+        by fallback20.m.smailru.net with esmtp (envelope-from <danila@jiaxyga.com>)
+        id 1pOmK5-0007Qh-Hz; Mon, 06 Feb 2023 00:13:17 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com; s=mailru;
+        h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=jImAqmi0+rCcWwya4e++ISC8KB4BelrTGzo3W+13GLc=;
+        t=1675631597;x=1675721597; 
+        b=ibUZSDELDTSkBfHAQqYRevR0NEhfPSpaNe8kJptXPNN9kpEXjTo3kTOS6QfIgM3BOm39Bq7Y6yb0YF7mZC9mjr5A01nLSecy+4Pc/107T1ObKDvJ8Z9gN6u0k15a/SCQrpehukQQJZ8CD8zqL64dA12Z4c/GQg8pmaAl+Gf5vZs=;
+Received: by smtp61.i.mail.ru with esmtpa (envelope-from <danila@jiaxyga.com>)
+        id 1pOmJo-0004eX-Bo; Mon, 06 Feb 2023 00:13:01 +0300
+From:   Danila Tikhonov <danila@jiaxyga.com>
+To:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Danila Tikhonov <danila@jiaxyga.com>
+Subject: [PATCH v3 0/2] clk: qcom: Add GCC support for SM7150
+Date:   Mon,  6 Feb 2023 00:12:55 +0300
+Message-Id: <20230205211257.285997-1-danila@jiaxyga.com>
+X-Mailer: git-send-email 2.39.1
 MIME-Version: 1.0
-References: <20230126230319.3977109-1-dmitry.baryshkov@linaro.org> <92240215-b336-48c8-d9f0-a33890f44907@linaro.org>
-In-Reply-To: <92240215-b336-48c8-d9f0-a33890f44907@linaro.org>
-From:   Jassi Brar <jassisinghbrar@gmail.com>
-Date:   Sat, 4 Feb 2023 22:15:56 -0600
-Message-ID: <CABb+yY3WXt0NBoh+spgYXj3L_72s_L-W+hqz+sbKNyD0HgU_vw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/7] clk: qcom: msm8996: add APCS clock driver
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Mailru-Src: smtp
+X-7564579A: EEAE043A70213CC8
+X-77F55803: 4F1203BC0FB41BD9100215ACCCAE6BED7294640152C00DDD2C3C9500F60304EE182A05F5380850404C228DA9ACA6FE2740AEFCAD8395FFABBCF89CBA0E5F125B3C56F885F6428426CADF818F26E279A3
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE759251087BE69EEF7EA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F790063786F1F539FBE87B778638F802B75D45FF36EB9D2243A4F8B5A6FCA7DBDB1FC311F39EFFDF887939037866D6147AF826D824699BAD20B5316CABC147901FF3588C117882F4460429724CE54428C33FAD305F5C1EE8F4F765FC0F49EF363AAD6E82A471835C12D1D9774AD6D5ED66289B52BA9C0B312567BB23117882F4460429728776938767073520902A1BE408319B29C26CFBAC0749D213D2E47CDBA5A96583BA9C0B312567BB2376E601842F6C81A19E625A9149C048EE7B96B19DC40933219735652A29929C6C4AD6D5ED66289B52698AB9A7B718F8C46E0066C2D8992A16725E5C173C3A84C39A2BE12F968E561CBA3038C0950A5D36B5C8C57E37DE458B330BD67F2E7D9AF16D1867E19FE14079C09775C1D3CA48CFE478A468B35FE7671DD303D21008E298D5E8D9A59859A8B6B372FE9A2E580EFC725E5C173C3A84C3D10145CD839B4E3635872C767BF85DA2F004C90652538430E4A6367B16DE6309
+X-C1DE0DAB: 0D63561A33F958A5BCF92E759FFD4C0211E8D3480825BEAB216597152BEC6D7B4EAF44D9B582CE87C8A4C02DF684249CC203C45FEA855C8F
+X-C8649E89: 4E36BF7865823D7055A7F0CF078B5EC49A30900B95165D34C0DDD40374D350170E9EDFBFE289DAEFB0ADDDC23B6C3581FDD15858B403BBACF0081CEDD1423E7A1D7E09C32AA3244C0ADBF3EF26946BE94951523F98B8CF0EC3B3ADDA61883BB5111969D93F5DC462
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojbL9S8ysBdXhaOnjUTNV53XhwMHRU3jq3
+X-Mailru-Sender: 9EB879F2C80682A09F26F806C73949812B488FA72D9D26A4D3F3C10C8F6693D5DBC91E654210EB0A643683D8C0F3ED1CA3C71A376745D86BBE86167304C7680C3980CE5AAA35C7CD60F22E8815EDE5EAEAB4BC95F72C04283CDA0F3B3F5B9367
+X-Mras: Ok
+X-7564579A: 646B95376F6C166E
+X-77F55803: 6242723A09DB00B4CF848BFCF0E6F430F1E17D0F5332DCF3E21FD34BD492FDF5049FFFDB7839CE9EE5C9C3F142B9F962D93CEC3002CA3796393164242F329D19539C915920B497B6
+X-7FA49CB5: 0D63561A33F958A552FB9D1859FAD7AC46EAD27EBF13993FF93498156F4636ED8941B15DA834481FA18204E546F3947CAD7F9107A29F15F9F6B57BC7E64490618DEB871D839B7333395957E7521B51C2DFABB839C843B9C08941B15DA834481F8AA50765F79006378EC9A23920962089389733CBF5DBD5E9B5C8C57E37DE458BD9DD9810294C998ED8FC6C240DEA76428AA50765F79006377263CA0F14EBD909D81D268191BDAD3DBD4B6F7A4D31EC0BEA7A3FFF5B025636AAAE862A0553A39223F8577A6DFFEA7C40D77AB7D53AE9AB43847C11F186F3C59DAA53EE0834AAEE
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2bioj6shc/GkzDh0lRo4WVlqlOw==
+X-Mailru-MI: 800
+X-Mras: Ok
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jan 27, 2023 at 12:15 PM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On 27/01/2023 01:03, Dmitry Baryshkov wrote:
-> > The sys_apcs_aux clock can be used by CPU and CBF clock drivers to drive
-> > those clocks from GPLL0 while doing initial setup. Add simple driver to
-> > setup and export this clock.
->
-> Jassi, please excuse me for this ping. Since the only questions are
-> related to the clock driver (and hopefully they all are resolved), do
-> you plan to merge the patches 1-6 for 6.3?
->
-They have the required acks, so yes I will pick 1-6 (not 7).
+Add the Global Clock Controller for SM7150.
 
-thanks
+Changes in v3:
+- Dropped entire property, it's coming from gcc.yaml
+- Included original work copyrights
+- Link to v2: https://lore.kernel.org/linux-clk/20230122192924.119636-1-danila@jiaxyga.com/
+
+Changes in v2:
+- Dropped redundant "binding" in subject
+- Fixed yamllint and dtschema errors
+- Replaced additionalProperties with unevaluatedProperties
+- Added Danila and David to maintainers
+- Added Konrad Reviewed-by on patch 2
+- Link to v1: https://lore.kernel.org/linux-clk/20230109193030.42764-1-danila@jiaxyga.com/
+
+To: Andy Gross <agross@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Rob Herring <robh+dt@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+
+Danila Tikhonov (2):
+  dt-bindings: clock: Add SM7150 GCC clocks
+  clk: qcom: Add Global Clock Controller (GCC) driver for SM7150
+
+ .../bindings/clock/qcom,sm7150-gcc.yaml       |   53 +
+ drivers/clk/qcom/Kconfig                      |    8 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/gcc-sm7150.c                 | 3160 +++++++++++++++++
+ include/dt-bindings/clock/qcom,sm7150-gcc.h   |  194 +
+ 5 files changed, 3416 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm7150-gcc.yaml
+ create mode 100644 drivers/clk/qcom/gcc-sm7150.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm7150-gcc.h
+
+-- 
+2.39.1
+
