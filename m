@@ -2,140 +2,97 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C7EC61DA4
-	for <linux-clk@archiver.kernel.org>; Sat,  4 Feb 2023 12:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54A23C636CC
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Feb 2023 03:02:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230314AbjBDMVu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 4 Feb 2023 07:21:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44924 "EHLO
+        id S229904AbjBEDCp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 4 Feb 2023 22:02:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229877AbjBDMVt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Feb 2023 07:21:49 -0500
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 123712695;
-        Sat,  4 Feb 2023 04:21:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1675513308; x=1707049308;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=J6/WHPwLYf2NNiKUv4H1tve+SuwKBjAJdENF3a4dPDI=;
-  b=IiE52I0WFznCUtfr1seTwMHU9AsBym0iAb4LFJEHy4Nthrs0TxqHDc0A
-   cJFkGIMw0/MA0LbU+ac51JtmBYk3iK4lyJDI9i3PnDgQouWs1SwXL7VvY
-   Xpt/ErxB0vYDemzXg78EzJaOQXEZZebl7fFvuStm+o9HX0V75RpZwYNNm
-   WiYF94rL0HNa8NQ4xm8z7+61SMca2aWLyNyWxsIoo/QeUjEOomlrNwYpg
-   sgHdWSBg5UqbMNEHZREWKz5nazyXEnhTo0kj/LM0ewqPKvj/vXvAfZDve
-   ys1jLgryl4/nzK02z65QcB6HQDcTqHKZmeddfB5+/x40xbI9sxDJ2Ltyl
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10610"; a="330230550"
-X-IronPort-AV: E=Sophos;i="5.97,272,1669104000"; 
-   d="scan'208";a="330230550"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2023 04:21:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10610"; a="839890077"
-X-IronPort-AV: E=Sophos;i="5.97,272,1669104000"; 
-   d="scan'208";a="839890077"
-Received: from lkp-server01.sh.intel.com (HELO 4455601a8d94) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 04 Feb 2023 04:21:44 -0800
-Received: from kbuild by 4455601a8d94 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pOHY7-0001Ic-1C;
-        Sat, 04 Feb 2023 12:21:43 +0000
-Date:   Sat, 4 Feb 2023 20:21:10 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm@vger.kernel.org, andersson@kernel.org,
-        agross@kernel.org, krzysztof.kozlowski@linaro.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        marijn.suijten@somainline.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 04/10] clk: qcom: branch: Clean up branch enable
- registers
-Message-ID: <202302042015.l7uhyaz9-lkp@intel.com>
-References: <20230201183626.351211-5-konrad.dybcio@linaro.org>
+        with ESMTP id S229653AbjBEDCo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Feb 2023 22:02:44 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 402904481
+        for <linux-clk@vger.kernel.org>; Sat,  4 Feb 2023 19:01:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1675566113;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Rc1Rh+5JjEe0b8phxZCvxG2nnz2wqGygUGi1H3bm4Pk=;
+        b=fpSAawGHXJ7BKDOstrTbQQT+MzsGjfACkJemozzrydZIJ3dVLT1jJjepNhLmuwDW78kwC9
+        CHcUuRpbSUV8feofwpyIjGoShA/5HNsE8UZfMTxVyZiCvHMKLrzsXCI7/MZAnpqFI6h4AD
+        uTeI5xQcYJZ/v7bpRyqxhNMd8PQCrto=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-450-7SzvpHWlN_uO186FrvIuOg-1; Sat, 04 Feb 2023 22:01:46 -0500
+X-MC-Unique: 7SzvpHWlN_uO186FrvIuOg-1
+Received: by mail-qv1-f70.google.com with SMTP id l6-20020ad44446000000b00537721bfd2dso4515855qvt.11
+        for <linux-clk@vger.kernel.org>; Sat, 04 Feb 2023 19:01:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rc1Rh+5JjEe0b8phxZCvxG2nnz2wqGygUGi1H3bm4Pk=;
+        b=An4t+nk0/xIGYXj9gtBbsBO+9sQuhByCXFrOpflupDToNBHy/WRCAx0q/3Rsu1u9Ue
+         yF+7fntxFsW5nwnmls7+ZMCDRfo+lNbzg6iDRxYhdPVllCk/f2a0Er/Ywjk+w8T/VV27
+         QXnYtTTg5JaaVhfhdQhbo58oNvOtaNPZVqILDnOlRXv3oo5TBX+LDlqnp4/eYqDSosWU
+         d/MYwx7NzzsmuF4Hi2ih7KOe36sCyAvDRjYtNSM3iGxzN7IO4W5iEG9qS7+tSnXrv5xV
+         HumqifMpMFIVXN/lFYK579zKcslGPX/M/rbRWLx1tmUiplMo9t48oah14Y4vWy4yjE0b
+         +ulQ==
+X-Gm-Message-State: AO0yUKWziA2kxFhsNrypZsE52i1EsR5PiASKHBsdjYKsJ0wXUNeyo/g6
+        Gi3vRvmywiE9Y8xKRnrW8bDMBq3aRirZWaFN0Scrx5COg1GAe2BORw8B1wrx8ojN0hPLZ7ulX7Y
+        iSCnWoGzfJmEiY3GoXCXT
+X-Received: by 2002:ad4:5191:0:b0:537:77b2:8aab with SMTP id b17-20020ad45191000000b0053777b28aabmr23430363qvp.27.1675566106438;
+        Sat, 04 Feb 2023 19:01:46 -0800 (PST)
+X-Google-Smtp-Source: AK7set8bN7F7Fny2DRi/DyfvIZwdVQGkpozPBd6lorCA4FvWU8tSytLGnd4Yc7/ZDZ6JBiU3+JXWnw==
+X-Received: by 2002:ad4:5191:0:b0:537:77b2:8aab with SMTP id b17-20020ad45191000000b0053777b28aabmr23430344qvp.27.1675566106180;
+        Sat, 04 Feb 2023 19:01:46 -0800 (PST)
+Received: from localhost.localdomain.com (024-205-208-113.res.spectrum.com. [24.205.208.113])
+        by smtp.gmail.com with ESMTPSA id b24-20020a05620a0f9800b0071ba3799334sm4791906qkn.58.2023.02.04.19.01.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 04 Feb 2023 19:01:45 -0800 (PST)
+From:   Tom Rix <trix@redhat.com>
+To:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Tom Rix <trix@redhat.com>
+Subject: [PATCH] clk: imx: set imx_clk_gpr_mux_ops storage-class-specifier to static
+Date:   Sat,  4 Feb 2023 19:01:38 -0800
+Message-Id: <20230205030138.1723614-1-trix@redhat.com>
+X-Mailer: git-send-email 2.26.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230201183626.351211-5-konrad.dybcio@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Konrad,
+smatch reports
+drivers/clk/imx/clk-gpr-mux.c:73:22: warning: symbol 'imx_clk_gpr_mux_ops' was not declared. Should it be static?
 
-I love your patch! Yet something to improve:
+imx_clk_gpr_mux_ops is only used in clk-gpr-mux.c, so it should be static.
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on linus/master v6.2-rc6]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Tom Rix <trix@redhat.com>
+---
+ drivers/clk/imx/clk-gpr-mux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Konrad-Dybcio/clk-qcom-branch-Add-helper-functions-for-setting-SLEEP-WAKE-bits/20230202-033712
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20230201183626.351211-5-konrad.dybcio%40linaro.org
-patch subject: [PATCH v5 04/10] clk: qcom: branch: Clean up branch enable registers
-config: arm-randconfig-r013-20230204 (https://download.01.org/0day-ci/archive/20230204/202302042015.l7uhyaz9-lkp@intel.com/config)
-compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 4196ca3278f78c6e19246e54ab0ecb364e37d66a)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install arm cross compiling tool for clang build
-        # apt-get install binutils-arm-linux-gnueabi
-        # https://github.com/intel-lab-lkp/linux/commit/07999d2b9b99df1dc626354c217da075c5c565cb
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Konrad-Dybcio/clk-qcom-branch-Add-helper-functions-for-setting-SLEEP-WAKE-bits/20230202-033712
-        git checkout 07999d2b9b99df1dc626354c217da075c5c565cb
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/clk/qcom/
-
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/clk/qcom/clk-branch.c:14:
-   drivers/clk/qcom/clk-branch.h:74:7: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-                              FIELD_PREP(CBCR_WAKEUP, val));
-                              ^
-   drivers/clk/qcom/clk-branch.h:80:7: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-                              FIELD_PREP(CBCR_SLEEP, val));
-                              ^
->> drivers/clk/qcom/clk-branch.c:55:4: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-                           FIELD_GET(CBCR_NOC_FSM_STATUS, val) == FSM_STATUS_ON;
-                           ^
-   3 errors generated.
-
-
-vim +/FIELD_GET +55 drivers/clk/qcom/clk-branch.c
-
-    41	
-    42	static bool clk_branch2_check_halt(const struct clk_branch *br, bool enabling)
-    43	{
-    44		u32 val;
-    45		u32 mask;
-    46	
-    47		mask = CBCR_NOC_FSM_STATUS;
-    48		mask |= CBCR_CLK_OFF;
-    49	
-    50		regmap_read(br->clkr.regmap, br->halt_reg, &val);
-    51	
-    52		if (enabling) {
-    53			val &= mask;
-    54			return (val & CBCR_CLK_OFF) == 0 ||
-  > 55				FIELD_GET(CBCR_NOC_FSM_STATUS, val) == FSM_STATUS_ON;
-    56		} else {
-    57			return val & CBCR_CLK_OFF;
-    58		}
-    59	}
-    60	
-
+diff --git a/drivers/clk/imx/clk-gpr-mux.c b/drivers/clk/imx/clk-gpr-mux.c
+index 47a3e3cdcc82..c8d6090f15d6 100644
+--- a/drivers/clk/imx/clk-gpr-mux.c
++++ b/drivers/clk/imx/clk-gpr-mux.c
+@@ -70,7 +70,7 @@ static int imx_clk_gpr_mux_determine_rate(struct clk_hw *hw,
+ 	return clk_mux_determine_rate_flags(hw, req, 0);
+ }
+ 
+-const struct clk_ops imx_clk_gpr_mux_ops = {
++static const struct clk_ops imx_clk_gpr_mux_ops = {
+ 	.get_parent = imx_clk_gpr_mux_get_parent,
+ 	.set_parent = imx_clk_gpr_mux_set_parent,
+ 	.determine_rate = imx_clk_gpr_mux_determine_rate,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+2.26.3
+
