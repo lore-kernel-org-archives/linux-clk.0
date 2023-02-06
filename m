@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B63C636D6
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 15:32:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A296C63797
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 15:32:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231516AbjBFPcp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Feb 2023 10:32:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33010 "EHLO
+        id S231440AbjBFPcq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Feb 2023 10:32:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231518AbjBFPbv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 10:31:51 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A696E2A17C;
-        Mon,  6 Feb 2023 07:30:43 -0800 (PST)
+        with ESMTP id S231441AbjBFPbw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 10:31:52 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1099610AB3;
+        Mon,  6 Feb 2023 07:30:46 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id B147F6602F9E;
-        Mon,  6 Feb 2023 15:30:29 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 1D08D6602F98;
+        Mon,  6 Feb 2023 15:30:38 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1675697430;
-        bh=CLknQX9SFUtoj2mggvrjYiI8IwHCqlwdtblptlQ1mvs=;
+        s=mail; t=1675697439;
+        bh=VKBrumrs2Sux84CcTsQzhD+nobtsdV7Rc1oS6rm0aLI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CUjEfutNPBNJn9kp6rdEDbgiQYmiYBqtDmuDrDsSbER2UHXD4DjTY6UA/qS+ogsLS
-         BH1601JSCas/+bNHskg/PU/Rodue62Ipgnw5O0V+111foZKtLmY5xnQ5OMolc/pKvG
-         FDSDIxVgXuGYfT3qQwN9laouzgxXRo2WQ+UjaJjSfCAoJU7eXWwn0AXk8WxpviIEy2
-         VyQB1N4pSvGFMdfw63Qafe5TzAmwzY0RgvOJzdXVpEe1CFG+CVWwkoueQomnnAeKFl
-         9mYvxaoMgUYx+FV+NDMB1fXCRv71/6wVkSxkvrOzfqttl07Uud/caN2UUa90sZjB2g
-         B+UtZ4pQyxuNg==
+        b=mvjBzPry8Mc5jKLD+lYSN1SqQ4zUXrjDVUTerOugSl1D4bZupwedM56rptHBWKMtN
+         IkJa5p0bx++xV3ihzl7tgvzfonwrZLCmEI73r2qt26YCcnO5QKnnbnp0Byz51Efye9
+         lU2+PQ7x8HZDfGoub74v6TEmtqNhc7Q3otJxE6XA5InoEmIOWoHuSoIGv+cTbQyzVP
+         LTEXs+ZBNWRLwJ0ce8WmpCLN8K8LixTExN2J8qBSqJsSvpzG1udpDndXpLCpJnb53S
+         gG1WDMvCy1fRNSeyxMAxH7BmNFcE5iCBuX8aL6mUZ/v15ctl/BcDquI48VjAnFkQmP
+         RBpIY4f3RrUpg==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v1 32/45] clk: mediatek: mt8186-mcu: Migrate to common probe mechanism
-Date:   Mon,  6 Feb 2023 16:29:15 +0100
-Message-Id: <20230206152928.918562-33-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v1 38/45] clk: mediatek: Allow all MT8167 clocks to be built as modules
+Date:   Mon,  6 Feb 2023 16:29:21 +0100
+Message-Id: <20230206152928.918562-39-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230206152928.918562-1-angelogioacchino.delregno@collabora.com>
 References: <20230206152928.918562-1-angelogioacchino.delregno@collabora.com>
@@ -58,98 +58,87 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert MT8186 MCUSYS clocks to the common mtk_clk_simple_probe().
+Almost all MT8167 clocks have been converted to use the common probe
+mechanism, moreover, now all of them are platform drivers: allow
+building as modules.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/clk/mediatek/clk-mt8186-mcu.c | 68 +++++----------------------
- 1 file changed, 13 insertions(+), 55 deletions(-)
+ drivers/clk/mediatek/Kconfig | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt8186-mcu.c b/drivers/clk/mediatek/clk-mt8186-mcu.c
-index e52a2d986c99..895856df95df 100644
---- a/drivers/clk/mediatek/clk-mt8186-mcu.c
-+++ b/drivers/clk/mediatek/clk-mt8186-mcu.c
-@@ -43,67 +43,25 @@ static struct mtk_composite mcu_muxes[] = {
- 	MUX(CLK_MCU_ARMPLL_BUS_SEL, "mcu_armpll_bus_sel", mcu_armpll_bus_parents, 0x2E0, 9, 2),
- };
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+index 55727889ebf5..54f59f4b2b1a 100644
+--- a/drivers/clk/mediatek/Kconfig
++++ b/drivers/clk/mediatek/Kconfig
+@@ -406,7 +406,7 @@ config COMMON_CLK_MT7981_ETHSYS
+ 	  required on MediaTek MT7981 SoC.
  
--static const struct of_device_id of_match_clk_mt8186_mcu[] = {
--	{ .compatible = "mediatek,mt8186-mcusys", },
--	{}
-+static const struct mtk_clk_desc mcu_desc = {
-+	.composite_clks = mcu_muxes,
-+	.num_composite_clks = ARRAY_SIZE(mcu_muxes),
- };
+ config COMMON_CLK_MT7986
+-	bool "Clock driver for MediaTek MT7986"
++	tristate "Clock driver for MediaTek MT7986"
+ 	depends on ARCH_MEDIATEK || COMPILE_TEST
+ 	select COMMON_CLK_MEDIATEK
+ 	default ARCH_MEDIATEK
+@@ -415,7 +415,7 @@ config COMMON_CLK_MT7986
+ 	  required for various peripherals found on MediaTek.
  
--static int clk_mt8186_mcu_probe(struct platform_device *pdev)
--{
--	struct clk_hw_onecell_data *clk_data;
--	struct device_node *node = pdev->dev.of_node;
--	int r;
--	void __iomem *base;
--
--	clk_data = mtk_alloc_clk_data(CLK_MCU_NR_CLK);
--	if (!clk_data)
--		return -ENOMEM;
--
--	base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(base)) {
--		r = PTR_ERR(base);
--		goto free_mcu_data;
--	}
--
--	r = mtk_clk_register_composites(&pdev->dev, mcu_muxes,
--					ARRAY_SIZE(mcu_muxes), base,
--					NULL, clk_data);
--	if (r)
--		goto free_mcu_data;
--
--	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--	if (r)
--		goto unregister_composite_muxes;
--
--	platform_set_drvdata(pdev, clk_data);
--
--	return r;
--
--unregister_composite_muxes:
--	mtk_clk_unregister_composites(mcu_muxes, ARRAY_SIZE(mcu_muxes), clk_data);
--free_mcu_data:
--	mtk_free_clk_data(clk_data);
--	return r;
--}
--
--static int clk_mt8186_mcu_remove(struct platform_device *pdev)
--{
--	struct clk_hw_onecell_data *clk_data = platform_get_drvdata(pdev);
--	struct device_node *node = pdev->dev.of_node;
--
--	of_clk_del_provider(node);
--	mtk_clk_unregister_composites(mcu_muxes, ARRAY_SIZE(mcu_muxes), clk_data);
--	mtk_free_clk_data(clk_data);
--
--	return 0;
--}
-+static const struct of_device_id of_match_clk_mt8186_mcu[] = {
-+	{ .compatible = "mediatek,mt8186-mcusys", .data = &mcu_desc },
-+	{ /* sentinel */}
-+};
+ config COMMON_CLK_MT7986_ETHSYS
+-	bool "Clock driver for MediaTek MT7986 ETHSYS"
++	tristate "Clock driver for MediaTek MT7986 ETHSYS"
+ 	depends on COMMON_CLK_MT7986
+ 	default COMMON_CLK_MT7986
+ 	help
+@@ -431,7 +431,7 @@ config COMMON_CLK_MT8135
+ 	  This driver supports MediaTek MT8135 clocks.
  
- static struct platform_driver clk_mt8186_mcu_drv = {
--	.probe = clk_mt8186_mcu_probe,
--	.remove = clk_mt8186_mcu_remove,
- 	.driver = {
- 		.name = "clk-mt8186-mcu",
- 		.of_match_table = of_match_clk_mt8186_mcu,
- 	},
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
- };
--builtin_platform_driver(clk_mt8186_mcu_drv);
-+module_platform_driver(clk_mt8186_mcu_drv);
-+
-+MODULE_DESCRIPTION("MediaTek MT8186 mcusys clocks driver");
-+MODULE_LICENSE("GPL");
+ config COMMON_CLK_MT8167
+-	bool "Clock driver for MediaTek MT8167"
++	tristate "Clock driver for MediaTek MT8167"
+ 	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
+ 	select COMMON_CLK_MEDIATEK
+ 	default ARCH_MEDIATEK
+@@ -439,35 +439,35 @@ config COMMON_CLK_MT8167
+ 	  This driver supports MediaTek MT8167 basic clocks.
+ 
+ config COMMON_CLK_MT8167_AUDSYS
+-	bool "Clock driver for MediaTek MT8167 audsys"
++	tristate "Clock driver for MediaTek MT8167 audsys"
+ 	depends on COMMON_CLK_MT8167
+ 	default COMMON_CLK_MT8167
+ 	help
+ 	  This driver supports MediaTek MT8167 audsys clocks.
+ 
+ config COMMON_CLK_MT8167_IMGSYS
+-	bool "Clock driver for MediaTek MT8167 imgsys"
++	tristate "Clock driver for MediaTek MT8167 imgsys"
+ 	depends on COMMON_CLK_MT8167
+ 	default COMMON_CLK_MT8167
+ 	help
+ 	  This driver supports MediaTek MT8167 imgsys clocks.
+ 
+ config COMMON_CLK_MT8167_MFGCFG
+-	bool "Clock driver for MediaTek MT8167 mfgcfg"
++	tristate "Clock driver for MediaTek MT8167 mfgcfg"
+ 	depends on COMMON_CLK_MT8167
+ 	default COMMON_CLK_MT8167
+ 	help
+ 	  This driver supports MediaTek MT8167 mfgcfg clocks.
+ 
+ config COMMON_CLK_MT8167_MMSYS
+-	bool "Clock driver for MediaTek MT8167 mmsys"
++	tristate "Clock driver for MediaTek MT8167 mmsys"
+ 	depends on COMMON_CLK_MT8167
+ 	default COMMON_CLK_MT8167
+ 	help
+ 	  This driver supports MediaTek MT8167 mmsys clocks.
+ 
+ config COMMON_CLK_MT8167_VDECSYS
+-	bool "Clock driver for MediaTek MT8167 vdecsys"
++	tristate "Clock driver for MediaTek MT8167 vdecsys"
+ 	depends on COMMON_CLK_MT8167
+ 	default COMMON_CLK_MT8167
+ 	help
 -- 
 2.39.1
 
