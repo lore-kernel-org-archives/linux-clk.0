@@ -2,234 +2,108 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94219C61DA4
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 14:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9876EC6379F
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 14:57:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231446AbjBFOMM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Feb 2023 09:12:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54630 "EHLO
+        id S230406AbjBFO5S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Feb 2023 09:57:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231514AbjBFOL3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 09:11:29 -0500
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26A19265B5
-        for <linux-clk@vger.kernel.org>; Mon,  6 Feb 2023 06:10:36 -0800 (PST)
-Received: by mail-ed1-f51.google.com with SMTP id v13so11726246eda.11
-        for <linux-clk@vger.kernel.org>; Mon, 06 Feb 2023 06:10:36 -0800 (PST)
+        with ESMTP id S230253AbjBFO5P (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 09:57:15 -0500
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 140E4244A7
+        for <linux-clk@vger.kernel.org>; Mon,  6 Feb 2023 06:57:11 -0800 (PST)
+Received: by mail-ej1-x630.google.com with SMTP id gr7so34929695ejb.5
+        for <linux-clk@vger.kernel.org>; Mon, 06 Feb 2023 06:57:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MV6XLW6L8RW/R5+2kFS4UxYTCoNjk3wANf/VdVgvmZQ=;
-        b=obrZxPMx4cCoF2qc7FG3fKEj4DDxkgrHCWDr7RlB6Oaxp5rEo5zKuXAPU1AmaKEeEh
-         EmZGBYes6wS0kfe4Qwsz2msSfFGjyQh7/YeC5skCU72siY0GFnjXK4U9DI5212hKSl5g
-         zyW7X80NdKh+zrtsBiRdrMLHP7HEUZAY9MFgMxGsbBBS+2rueZmRdbZt2qfl0r0irexz
-         gkZp4xZP3p2fHiHzSjvJlKg9Q+nGIv/5BZOjkgsFLubn2DQfhOOip5qyfv64Umai11YO
-         vkpd3VhbRkUMiQqik8FyLEBUjYLtfkEeSE6IJ7iOktAbzRaQKPtDENwTbxQwViA6dFTQ
-         AOAw==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cLuf1U+2WjifV8fnrslcwZDFA4TZvCGB2iPkwtWqNUI=;
+        b=oq9jViBl3HA8dQj59yZsQcWYKhAEvJWr1Mqzc1nDjWd3kRLMlEJmDIhfOc2l+p9NLd
+         sEyjvRaMXAsm/bYtTpQnIz65QqWwNZzD2ixnXeIv/n7h0wwjcYKGqo5UlUhhHj/+UxhN
+         Vjip+0N5Gcg9eBr6e9L2FgnlD02pMQtDmefHpu6L6q15uOGJwGLd6Q+iHLS5qDhwcnpv
+         jcH/BDXAdXafNKaM0EBgworEii3bTIRcz1nDLBmzdKEdZFuwosxwjqEO4W6y868kqLfD
+         btVyftrdECwXZvuYQTLDMsH366OL3edNWQJg4/Ues9yHsG8FHbMc5frF17qLpR6RVgFB
+         TLKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MV6XLW6L8RW/R5+2kFS4UxYTCoNjk3wANf/VdVgvmZQ=;
-        b=50M5uonUgyj2sVyVleDK1dPJ0qavnaVWiuDnuXNMlr0iYBhO/J8Y+6bnSNoh2WhjQV
-         2MSx2kl5dQMQn6ktaqdI1gzpo1GVr0PHHkI0iN6kGvcAy0j2RdZrzDgN3ZE2R1JrYVwv
-         Xb4gAiDcTO0f6wQGqsBZ+WMmMO7uj+x+Nuu9Pmqts7QUkoF7OU7hZnQx+2aNjhXaXNxR
-         tQzQQrrUWUVRqskxaXI4/e2ccKZogEBMxDq7HR33EHrB8jgtQUGCvpDQOZsWQUzkXYdR
-         760kyTdiHCtFePEfE/Ow6jvhxU0GTyVjZZ+7j5vWMh+bxqYMi7XketEUoDBvT9RYDFmw
-         kMnQ==
-X-Gm-Message-State: AO0yUKVg2ofTbQDF/JsAlOj4vN6qIIQDDSbZa8THrUrg2SQKaSvHOJv4
-        rfwpMtRN5nPcJ5C92I/2VAWX5A==
-X-Google-Smtp-Source: AK7set93k49Ql3FZZglKm5wgbtW71CXolFsNzmsS9eVK2BZe0KhoIkey+fpXQLvYvnx4gjmaF3Bu3A==
-X-Received: by 2002:a05:6402:500c:b0:49e:4254:60a9 with SMTP id p12-20020a056402500c00b0049e425460a9mr24946255eda.29.1675692479239;
-        Mon, 06 Feb 2023 06:07:59 -0800 (PST)
-Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id i5-20020a1709064ec500b00877e1bb54b0sm5536958ejv.53.2023.02.06.06.07.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Feb 2023 06:07:58 -0800 (PST)
-Message-ID: <94fc3698-3568-87d8-7263-68de9ca53eab@linaro.org>
-Date:   Mon, 6 Feb 2023 16:07:57 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH V7 2/7] clk: qcom: Add Global Clock Controller driver for
- IPQ9574
-Content-Language: en-GB
-To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linus.walleij@linaro.org,
-        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
-        shawnguo@kernel.org, arnd@arndb.de, marcel.ziswiler@toradex.com,
-        nfraprado@collabora.com, broonie@kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
-        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
-        quic_poovendh@quicinc.com
-References: <20230206103337.21000-1-quic_devipriy@quicinc.com>
- <20230206103337.21000-3-quic_devipriy@quicinc.com>
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cLuf1U+2WjifV8fnrslcwZDFA4TZvCGB2iPkwtWqNUI=;
+        b=AlAE9hmNuUOCB5o2EQsnUmuNd+O9eTLOMVzEMI5iuat9bLvzfBMPZRHPIJNedRl6UW
+         FpU1irUcPRKa4wYDgREWi8rNIEhF8Heoc6qsv9HN4nEknS1pwUMmp9/82oBTz/vXn/QM
+         JNPqi8rESDZHKBCS/Xs4vNdkx/4d3hblsP79MWFrZejemlfkWy/s1c58mCaHQIcgo5/A
+         U0f2YpIuDB3GGiEfYiKiPEjdQY4GV5CbMFEU1sdGfdhC8uMFv6iTWxTFzL4jfdHJ3NRL
+         /1838l0s009bA/khdrKpqG8Kar1So2y48qtxLzRoJpkvCQtGqOlNPgt1eXrgaAue32H0
+         z8YQ==
+X-Gm-Message-State: AO0yUKWSToSFvoto0CWb+68KYvz5jdGgwfi/YQamwDPmZSKWP/P37e9z
+        BuCDKvtodNTlpTpC3NWD6q6BK7Y/Hmy3LjWk
+X-Google-Smtp-Source: AK7set/oKvZyc+ZrfLJPgnfOVLJVKoAm0Z0SgsTUoA8rN3b3dRK6zhySANFVfe+x2ByyCb7N0W7vLw==
+X-Received: by 2002:a17:907:7ba9:b0:87b:d3dd:e0ca with SMTP id ne41-20020a1709077ba900b0087bd3dde0camr13140091ejc.26.1675695429234;
+        Mon, 06 Feb 2023 06:57:09 -0800 (PST)
+Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
+        by smtp.gmail.com with ESMTPSA id gw1-20020a170906f14100b0087bd4e34eb8sm5495533ejb.203.2023.02.06.06.57.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Feb 2023 06:57:08 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20230206103337.21000-3-quic_devipriy@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH v2 0/8] arm64: dts: qcom: sm8350: enable GPU on the HDK board
+Date:   Mon,  6 Feb 2023 16:56:59 +0200
+Message-Id: <20230206145707.122937-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.39.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/02/2023 12:33, Devi Priya wrote:
-> Add Global Clock Controller (GCC) driver for ipq9574 based devices
-> 
-> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> ---
->   Changes in V7:
-> 	- Used qcom_cc_probe instead of qcom_cc_really_probe in
-> 	  gcc_ipq9574_probe
-> 
->   drivers/clk/qcom/Kconfig       |    8 +
->   drivers/clk/qcom/Makefile      |    1 +
->   drivers/clk/qcom/gcc-ipq9574.c | 4295 ++++++++++++++++++++++++++++++++
->   3 files changed, 4304 insertions(+)
->   create mode 100644 drivers/clk/qcom/gcc-ipq9574.c
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 5ab4b7dfe3c2..a9f01d67a500 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -173,6 +173,14 @@ config IPQ_GCC_8074
->   	  i2c, USB, SD/eMMC, etc. Select this for the root clock
->   	  of ipq8074.
->   
-> +config IPQ_GCC_9574
-> +	tristate "IPQ9574 Global Clock Controller"
-> +	help
-> +	  Support for global clock controller on ipq9574 devices.
-> +	  Say Y if you want to use peripheral devices such as UART, SPI,
-> +	  i2c, USB, SD/eMMC, etc. Select this for the root clock
-> +	  of ipq9574.
-> +
->   config MSM_GCC_8660
->   	tristate "MSM8660 Global Clock Controller"
->   	help
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 3194465dd02c..51e6e5eb187b 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -27,6 +27,7 @@ obj-$(CONFIG_IPQ_GCC_4019) += gcc-ipq4019.o
->   obj-$(CONFIG_IPQ_GCC_6018) += gcc-ipq6018.o
->   obj-$(CONFIG_IPQ_GCC_806X) += gcc-ipq806x.o
->   obj-$(CONFIG_IPQ_GCC_8074) += gcc-ipq8074.o
-> +obj-$(CONFIG_IPQ_GCC_9574) += gcc-ipq9574.o
->   obj-$(CONFIG_IPQ_LCC_806X) += lcc-ipq806x.o
->   obj-$(CONFIG_MDM_GCC_9607) += gcc-mdm9607.o
->   obj-$(CONFIG_MDM_GCC_9615) += gcc-mdm9615.o
-> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
-> new file mode 100644
-> index 000000000000..718106a9ac7b
-> --- /dev/null
-> +++ b/drivers/clk/qcom/gcc-ipq9574.c
+Add A660 device to the Qualcomm SM8350 platform and enable it for the
+sm8350-hdk board. Unfortunately while adding the GPU & related devices I
+noticed that DT nodes on SM8350 are greatly out of the preagreed order,
+so patches 4-6 reorder DT nodes to follow the agreement.
 
-[skipped]
+Changes since v1:
+- Fixed the subject and commit message for patch 1
+- Fixed GMU's clocks to follow the vendor kernel
+- Marked Adreno SMMU as dma-coherent
+- Dropped comments targeting sm8350 v1, we do not support that chip
+  revision.
 
-> +static struct clk_branch gcc_snoc_pcie3_2lane_s_clk = {
-> +	.halt_reg = 0x2e054,
-> +	.clkr = {
-> +		.enable_reg = 0x2e054,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data) {
-> +			.name = "gcc_snoc_pcie3_2lane_s_clk",
-> +			.parent_hws = (const struct clk_hw *[]) {
-> +				&pcie3_axi_s_clk_src.clkr.hw
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_regmap_mux pcie0_pipe_clk_src = {
-> +	.reg = 0x28064,
-> +	.shift = 8,
-> +	.width = 2,
-> +	.parent_map = gcc_pcie30_phy0_pipe_clk_xo_map,
-> +	.clkr = {
-> +		.hw.init = &(struct clk_init_data) {
-> +			.name = "pcie0_pipe_clk_src",
-> +			.parent_data = gcc_pcie30_phy0_pipe_clk_xo,
-> +			.num_parents = ARRAY_SIZE(gcc_pcie30_phy0_pipe_clk_xo),
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_regmap_mux_closest_ops,
+Dmitry Baryshkov (8):
+  dt-bindings: clock: Merge qcom,gpucc-sm8350 into qcom,gpucc.yaml
+  dt-bindings: power: qcom,rpmpd: add RPMH_REGULATOR_LEVEL_LOW_SVS_L1
+  dt-bindings: display/msm/gmu: add Adreno 660 support
+  arm64: dts: qcom: sm8350: reorder device nodes
+  arm64: dts: qcom: sm8350: move more nodes to correct place
+  arm64: dts: qcom: sm8350: finish reordering nodes
+  arm64: dts: qcom: sm8350: add GPU, GMU, GPU CC and SMMU nodes
+  arm64: dts: qcom: sm8350-hdk: enable GPU
 
-
-clk_regmap_phy_mux_ops ?
-
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_regmap_mux pcie1_pipe_clk_src = {
-> +	.reg = 0x29064,
-> +	.shift = 8,
-> +	.width = 2,
-> +	.parent_map = gcc_pcie30_phy1_pipe_clk_xo_map,
-> +	.clkr = {
-> +		.hw.init = &(struct clk_init_data) {
-> +			.name = "pcie1_pipe_clk_src",
-> +			.parent_data = gcc_pcie30_phy1_pipe_clk_xo,
-> +			.num_parents = ARRAY_SIZE(gcc_pcie30_phy1_pipe_clk_xo),
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_regmap_mux_closest_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_regmap_mux pcie2_pipe_clk_src = {
-> +	.reg = 0x2a064,
-> +	.shift = 8,
-> +	.width = 2,
-> +	.parent_map = gcc_pcie30_phy2_pipe_clk_xo_map,
-> +	.clkr = {
-> +		.hw.init = &(struct clk_init_data) {
-> +			.name = "pcie2_pipe_clk_src",
-> +			.parent_data = gcc_pcie30_phy2_pipe_clk_xo,
-> +			.num_parents = ARRAY_SIZE(gcc_pcie30_phy2_pipe_clk_xo),
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_regmap_mux_closest_ops,
-
-clk_regmap_phy_mux_ops ?
-
-
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_regmap_mux pcie3_pipe_clk_src = {
-> +	.reg = 0x2b064,
-> +	.shift = 8,
-> +	.width = 2,
-> +	.parent_map = gcc_pcie30_phy3_pipe_clk_xo_map,
-> +	.clkr = {
-> +		.hw.init = &(struct clk_init_data) {
-> +			.name = "pcie3_pipe_clk_src",
-> +			.parent_data = gcc_pcie30_phy3_pipe_clk_xo,
-> +			.num_parents = ARRAY_SIZE(gcc_pcie30_phy3_pipe_clk_xo),
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_regmap_mux_closest_ops,
-
-clk_regmap_phy_mux_ops ?
-
-> +		},
-> +	},
-> +};
+ .../bindings/clock/qcom,gpucc-sm8350.yaml     |   71 -
+ .../devicetree/bindings/clock/qcom,gpucc.yaml |    2 +
+ .../devicetree/bindings/display/msm/gmu.yaml  |    1 +
+ arch/arm64/boot/dts/qcom/sm8350-hdk.dts       |    8 +
+ arch/arm64/boot/dts/qcom/sm8350.dtsi          | 2512 +++++++++--------
+ include/dt-bindings/power/qcom-rpmpd.h        |    1 +
+ 6 files changed, 1357 insertions(+), 1238 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc-sm8350.yaml
 
 -- 
-With best wishes
-Dmitry
+2.39.1
 
