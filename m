@@ -2,52 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9876EC6379F
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 14:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E91ECC63797
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 14:57:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230406AbjBFO5S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Feb 2023 09:57:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40282 "EHLO
+        id S230149AbjBFO5R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Feb 2023 09:57:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230253AbjBFO5P (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 09:57:15 -0500
+        with ESMTP id S230282AbjBFO5Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 09:57:16 -0500
 Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 140E4244A7
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C01682528D
         for <linux-clk@vger.kernel.org>; Mon,  6 Feb 2023 06:57:11 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id gr7so34929695ejb.5
+Received: by mail-ej1-x630.google.com with SMTP id ml19so35107273ejb.0
         for <linux-clk@vger.kernel.org>; Mon, 06 Feb 2023 06:57:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cLuf1U+2WjifV8fnrslcwZDFA4TZvCGB2iPkwtWqNUI=;
-        b=oq9jViBl3HA8dQj59yZsQcWYKhAEvJWr1Mqzc1nDjWd3kRLMlEJmDIhfOc2l+p9NLd
-         sEyjvRaMXAsm/bYtTpQnIz65QqWwNZzD2ixnXeIv/n7h0wwjcYKGqo5UlUhhHj/+UxhN
-         Vjip+0N5Gcg9eBr6e9L2FgnlD02pMQtDmefHpu6L6q15uOGJwGLd6Q+iHLS5qDhwcnpv
-         jcH/BDXAdXafNKaM0EBgworEii3bTIRcz1nDLBmzdKEdZFuwosxwjqEO4W6y868kqLfD
-         btVyftrdECwXZvuYQTLDMsH366OL3edNWQJg4/Ues9yHsG8FHbMc5frF17qLpR6RVgFB
-         TLKA==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lWJTTVfePORcPPcH6H13Fd3H36Ls8G0fdQpwh+iYVeU=;
+        b=fKTqMQIuB7WUG8GgXovc/jz52P/iOoabODFfhKXj0Q3U+SiQVfbNHEJnDxQYvikyFw
+         e4/g0Tp9Rpp/aDwOdkXTnhcBEhQpk8rTu4UvozcZEXJ0Pn+VKnVsLrqgSU/8x8e7sxkq
+         bbepctgsfpX2pCXluEa8ir6GtXae4nFUsByhlKqUFLiWU/uw6CX8i1aosy83vd1getti
+         rr0FcQSqHXvvKBk3GDm2+pYbnsqDJXHL93aywYZoRWKZrV+1F2/CNy357tFeB9BT9zgb
+         WQOI38iOyftOlvKzMdhxxFcASxqFP1vfmQQrG6ZSmLEuKPA6+vyZfnwJR/Csw0CJSj1r
+         1+bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cLuf1U+2WjifV8fnrslcwZDFA4TZvCGB2iPkwtWqNUI=;
-        b=AlAE9hmNuUOCB5o2EQsnUmuNd+O9eTLOMVzEMI5iuat9bLvzfBMPZRHPIJNedRl6UW
-         FpU1irUcPRKa4wYDgREWi8rNIEhF8Heoc6qsv9HN4nEknS1pwUMmp9/82oBTz/vXn/QM
-         JNPqi8rESDZHKBCS/Xs4vNdkx/4d3hblsP79MWFrZejemlfkWy/s1c58mCaHQIcgo5/A
-         U0f2YpIuDB3GGiEfYiKiPEjdQY4GV5CbMFEU1sdGfdhC8uMFv6iTWxTFzL4jfdHJ3NRL
-         /1838l0s009bA/khdrKpqG8Kar1So2y48qtxLzRoJpkvCQtGqOlNPgt1eXrgaAue32H0
-         z8YQ==
-X-Gm-Message-State: AO0yUKWSToSFvoto0CWb+68KYvz5jdGgwfi/YQamwDPmZSKWP/P37e9z
-        BuCDKvtodNTlpTpC3NWD6q6BK7Y/Hmy3LjWk
-X-Google-Smtp-Source: AK7set/oKvZyc+ZrfLJPgnfOVLJVKoAm0Z0SgsTUoA8rN3b3dRK6zhySANFVfe+x2ByyCb7N0W7vLw==
-X-Received: by 2002:a17:907:7ba9:b0:87b:d3dd:e0ca with SMTP id ne41-20020a1709077ba900b0087bd3dde0camr13140091ejc.26.1675695429234;
-        Mon, 06 Feb 2023 06:57:09 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lWJTTVfePORcPPcH6H13Fd3H36Ls8G0fdQpwh+iYVeU=;
+        b=MZjaRP1kwMKobDlpQ4gOpZhLWzmBDr4knyvwroa+uUN2UMbM/R9AQEHkpIL+tdPkM8
+         mQp/c72GTBrd5o8vnjbq/lFM04Kfg+3I9pnfg9DlnRzNC5nSEEG7lfxd1XeY7ykiuWJz
+         2UomwLUgU0omLjn46JQH3bq3RFxSR4gNtFbUFp4n9VvL8NeQeKmEK81w5nnVGQUC9UqV
+         QNxSIuAehb0x46KJq2iTxAOIAJOQyvUxC79mP5C8qhctT8S3zybbNvRb+unzx80KjMgk
+         MP/2bxpwu2bU9+IxvKpnd4tgB+zaCAYNaT4wrJ2lVB0oAJNPgv2opCgwLVTX9FCxsGsi
+         vGVg==
+X-Gm-Message-State: AO0yUKVQgYuLDYgL3aaruXZhn35z3Ts3BMBGjdhbYp73DB5T6rCPHAE5
+        XqBfJuZCSfr+AuXeMt+U+3+XRA==
+X-Google-Smtp-Source: AK7set+4HgFJiQjqoladQOeFPQZGQfugQ/vDao8Mt8Efd3ZTknqyhBJdCUmkYIanNZdlUssgTzzeiw==
+X-Received: by 2002:a17:907:c78a:b0:878:7349:5ce6 with SMTP id tz10-20020a170907c78a00b0087873495ce6mr21754698ejc.71.1675695430407;
+        Mon, 06 Feb 2023 06:57:10 -0800 (PST)
 Received: from eriador.lan (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id gw1-20020a170906f14100b0087bd4e34eb8sm5495533ejb.203.2023.02.06.06.57.07
+        by smtp.gmail.com with ESMTPSA id gw1-20020a170906f14100b0087bd4e34eb8sm5495533ejb.203.2023.02.06.06.57.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Feb 2023 06:57:08 -0800 (PST)
+        Mon, 06 Feb 2023 06:57:10 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -63,47 +64,129 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         Sean Paul <sean@poorly.run>, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
         Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH v2 0/8] arm64: dts: qcom: sm8350: enable GPU on the HDK board
-Date:   Mon,  6 Feb 2023 16:56:59 +0200
-Message-Id: <20230206145707.122937-1-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 1/8] dt-bindings: clock: Merge qcom,gpucc-sm8350 into qcom,gpucc.yaml
+Date:   Mon,  6 Feb 2023 16:57:00 +0200
+Message-Id: <20230206145707.122937-2-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230206145707.122937-1-dmitry.baryshkov@linaro.org>
+References: <20230206145707.122937-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add A660 device to the Qualcomm SM8350 platform and enable it for the
-sm8350-hdk board. Unfortunately while adding the GPU & related devices I
-noticed that DT nodes on SM8350 are greatly out of the preagreed order,
-so patches 4-6 reorder DT nodes to follow the agreement.
+The GPU clock controller bindings for the Qualcomm sm8350 platform are
+not correct. The driver uses .fw_name instead of using indices to bind
+parent clocks, thus demanding the clock-names usage. With the proper
+clock-names in place, the bindings becomes equal to the bindings defined
+by qcom,gpucc.yaml, so it is impractical to keep them in a separate
+file.
 
-Changes since v1:
-- Fixed the subject and commit message for patch 1
-- Fixed GMU's clocks to follow the vendor kernel
-- Marked Adreno SMMU as dma-coherent
-- Dropped comments targeting sm8350 v1, we do not support that chip
-  revision.
-
-Dmitry Baryshkov (8):
-  dt-bindings: clock: Merge qcom,gpucc-sm8350 into qcom,gpucc.yaml
-  dt-bindings: power: qcom,rpmpd: add RPMH_REGULATOR_LEVEL_LOW_SVS_L1
-  dt-bindings: display/msm/gmu: add Adreno 660 support
-  arm64: dts: qcom: sm8350: reorder device nodes
-  arm64: dts: qcom: sm8350: move more nodes to correct place
-  arm64: dts: qcom: sm8350: finish reordering nodes
-  arm64: dts: qcom: sm8350: add GPU, GMU, GPU CC and SMMU nodes
-  arm64: dts: qcom: sm8350-hdk: enable GPU
-
- .../bindings/clock/qcom,gpucc-sm8350.yaml     |   71 -
- .../devicetree/bindings/clock/qcom,gpucc.yaml |    2 +
- .../devicetree/bindings/display/msm/gmu.yaml  |    1 +
- arch/arm64/boot/dts/qcom/sm8350-hdk.dts       |    8 +
- arch/arm64/boot/dts/qcom/sm8350.dtsi          | 2512 +++++++++--------
- include/dt-bindings/power/qcom-rpmpd.h        |    1 +
- 6 files changed, 1357 insertions(+), 1238 deletions(-)
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ .../bindings/clock/qcom,gpucc-sm8350.yaml     | 71 -------------------
+ .../devicetree/bindings/clock/qcom,gpucc.yaml |  2 +
+ 2 files changed, 2 insertions(+), 71 deletions(-)
  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc-sm8350.yaml
 
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc-sm8350.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc-sm8350.yaml
+deleted file mode 100644
+index fb7ae3d18503..000000000000
+--- a/Documentation/devicetree/bindings/clock/qcom,gpucc-sm8350.yaml
++++ /dev/null
+@@ -1,71 +0,0 @@
+-# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+-%YAML 1.2
+----
+-$id: http://devicetree.org/schemas/clock/qcom,gpucc-sm8350.yaml#
+-$schema: http://devicetree.org/meta-schemas/core.yaml#
+-
+-title: Qualcomm Graphics Clock & Reset Controller on SM8350
+-
+-maintainers:
+-  - Robert Foss <robert.foss@linaro.org>
+-
+-description: |
+-  Qualcomm graphics clock control module provides the clocks, resets and power
+-  domains on Qualcomm SoCs.
+-
+-  See also:: include/dt-bindings/clock/qcom,gpucc-sm8350.h
+-
+-properties:
+-  compatible:
+-    enum:
+-      - qcom,sm8350-gpucc
+-
+-  clocks:
+-    items:
+-      - description: Board XO source
+-      - description: GPLL0 main branch source
+-      - description: GPLL0 div branch source
+-
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+-required:
+-  - compatible
+-  - reg
+-  - clocks
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+-
+-additionalProperties: false
+-
+-examples:
+-  - |
+-    #include <dt-bindings/clock/qcom,gcc-sm8350.h>
+-    #include <dt-bindings/clock/qcom,rpmh.h>
+-
+-    soc {
+-        #address-cells = <2>;
+-        #size-cells = <2>;
+-
+-        clock-controller@3d90000 {
+-            compatible = "qcom,sm8350-gpucc";
+-            reg = <0 0x03d90000 0 0x9000>;
+-            clocks = <&rpmhcc RPMH_CXO_CLK>,
+-                     <&gcc GCC_GPU_GPLL0_CLK_SRC>,
+-                     <&gcc GCC_GPU_GPLL0_DIV_CLK_SRC>;
+-            #clock-cells = <1>;
+-            #reset-cells = <1>;
+-            #power-domain-cells = <1>;
+-        };
+-    };
+-...
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+index 7256c438a4cf..db53eb288995 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+@@ -21,6 +21,7 @@ description: |
+     include/dt-bindings/clock/qcom,gpucc-sm6350.h
+     include/dt-bindings/clock/qcom,gpucc-sm8150.h
+     include/dt-bindings/clock/qcom,gpucc-sm8250.h
++    include/dt-bindings/clock/qcom,gpucc-sm8350.h
+ 
+ properties:
+   compatible:
+@@ -33,6 +34,7 @@ properties:
+       - qcom,sm6350-gpucc
+       - qcom,sm8150-gpucc
+       - qcom,sm8250-gpucc
++      - qcom,sm8350-gpucc
+ 
+   clocks:
+     items:
 -- 
 2.39.1
 
