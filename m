@@ -2,316 +2,232 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2234C636D6
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 13:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94219C61DA4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 14:12:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230512AbjBFNtR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Feb 2023 08:49:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54246 "EHLO
+        id S231446AbjBFOMM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Feb 2023 09:12:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230517AbjBFNtB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 08:49:01 -0500
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB1C21CF79
-        for <linux-clk@vger.kernel.org>; Mon,  6 Feb 2023 05:48:29 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id mc11so34288235ejb.10
-        for <linux-clk@vger.kernel.org>; Mon, 06 Feb 2023 05:48:29 -0800 (PST)
+        with ESMTP id S231514AbjBFOL3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 09:11:29 -0500
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26A19265B5
+        for <linux-clk@vger.kernel.org>; Mon,  6 Feb 2023 06:10:36 -0800 (PST)
+Received: by mail-ed1-f51.google.com with SMTP id v13so11726246eda.11
+        for <linux-clk@vger.kernel.org>; Mon, 06 Feb 2023 06:10:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=7DSYAfUXUUP4MIoOh4HHwy5x2f6nGWbivR5aX9CwOIg=;
-        b=tkfioc4Y+yOnqLeumSMurAzIDI/uOifUgODc/nZF2nVBnzdx5Tdjzz1sZqdhwNhtjv
-         D7dzLulsC+KKb95yJ2vodmX6GpuguI/3RB0wdsSqvYT8jK7RWOZiAo5CaF8T7bz/p3dn
-         US5bj6jML9eW0XGvvvfxUcz7Vd20PP1ZmKh1RYTRDo5lgZef4svVgBFcH4wNKlDaYHz/
-         9URZ/tG/ljJQfiKCDVX40CMItzKH8vd/phkxo8gPiTvaZDrOGGkpig6/em6uTn1MOhqZ
-         +EwYShnRqN95iMbgwg5F89rz8SwTG/FwJd/iLzyHGXws6ZH5MeSZZYvDSYnLPo9sr8nN
-         I2lw==
+        bh=MV6XLW6L8RW/R5+2kFS4UxYTCoNjk3wANf/VdVgvmZQ=;
+        b=obrZxPMx4cCoF2qc7FG3fKEj4DDxkgrHCWDr7RlB6Oaxp5rEo5zKuXAPU1AmaKEeEh
+         EmZGBYes6wS0kfe4Qwsz2msSfFGjyQh7/YeC5skCU72siY0GFnjXK4U9DI5212hKSl5g
+         zyW7X80NdKh+zrtsBiRdrMLHP7HEUZAY9MFgMxGsbBBS+2rueZmRdbZt2qfl0r0irexz
+         gkZp4xZP3p2fHiHzSjvJlKg9Q+nGIv/5BZOjkgsFLubn2DQfhOOip5qyfv64Umai11YO
+         vkpd3VhbRkUMiQqik8FyLEBUjYLtfkEeSE6IJ7iOktAbzRaQKPtDENwTbxQwViA6dFTQ
+         AOAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7DSYAfUXUUP4MIoOh4HHwy5x2f6nGWbivR5aX9CwOIg=;
-        b=rTxk3xaejIcWwovUST1Wfi3QgsKNl49IfxM1ROaZiiUkKZRXkcHPJZHS5xYCFHVkkw
-         dAq2Jqguf0UbTi/JmFc4Pzg8uAofwUbMcjQlHn+bBrW/UzMaL3qs8bKMrQGZgEBKC4KX
-         NUIcsGx48Oj8CtIIug9s2VQuKN7V61M3uMYHYlKi+2idzr3h+fQkajYxVR+tIBSEEoFG
-         ti7HBgBBK+5/VXiT9j7DOzTFhXqhyrQpsGYCbfXgZJx258+Zl2m3ETNdX0+Vb40OJovq
-         JridUeGz0Jap83OHSqjkfjVrZTf64KxFhjylmACJ62HLPOadgnUgVXUunUIf3j1DxRGz
-         dhZQ==
-X-Gm-Message-State: AO0yUKXhvYY94/F2/xL3KC2Ya2Zntdr4P/dJ3OlrG8b7cTA7ImNBlXrT
-        9VRbT1R1URjmCmtS9g2e0/6XPg==
-X-Google-Smtp-Source: AK7set+vDHCKTVSEKbuDNDGuSK63qztUjHGNlEofh2EyIQ6xcD/OXnr21hX3OgfgaHBDOV1cl/ibWA==
-X-Received: by 2002:a17:907:c26:b0:88d:ba89:1850 with SMTP id ga38-20020a1709070c2600b0088dba891850mr18023903ejc.33.1675691300895;
-        Mon, 06 Feb 2023 05:48:20 -0800 (PST)
+        bh=MV6XLW6L8RW/R5+2kFS4UxYTCoNjk3wANf/VdVgvmZQ=;
+        b=50M5uonUgyj2sVyVleDK1dPJ0qavnaVWiuDnuXNMlr0iYBhO/J8Y+6bnSNoh2WhjQV
+         2MSx2kl5dQMQn6ktaqdI1gzpo1GVr0PHHkI0iN6kGvcAy0j2RdZrzDgN3ZE2R1JrYVwv
+         Xb4gAiDcTO0f6wQGqsBZ+WMmMO7uj+x+Nuu9Pmqts7QUkoF7OU7hZnQx+2aNjhXaXNxR
+         tQzQQrrUWUVRqskxaXI4/e2ccKZogEBMxDq7HR33EHrB8jgtQUGCvpDQOZsWQUzkXYdR
+         760kyTdiHCtFePEfE/Ow6jvhxU0GTyVjZZ+7j5vWMh+bxqYMi7XketEUoDBvT9RYDFmw
+         kMnQ==
+X-Gm-Message-State: AO0yUKVg2ofTbQDF/JsAlOj4vN6qIIQDDSbZa8THrUrg2SQKaSvHOJv4
+        rfwpMtRN5nPcJ5C92I/2VAWX5A==
+X-Google-Smtp-Source: AK7set93k49Ql3FZZglKm5wgbtW71CXolFsNzmsS9eVK2BZe0KhoIkey+fpXQLvYvnx4gjmaF3Bu3A==
+X-Received: by 2002:a05:6402:500c:b0:49e:4254:60a9 with SMTP id p12-20020a056402500c00b0049e425460a9mr24946255eda.29.1675692479239;
+        Mon, 06 Feb 2023 06:07:59 -0800 (PST)
 Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id gz21-20020a170907a05500b0086a2e31d1c1sm5476676ejc.28.2023.02.06.05.48.19
+        by smtp.gmail.com with ESMTPSA id i5-20020a1709064ec500b00877e1bb54b0sm5536958ejv.53.2023.02.06.06.07.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Feb 2023 05:48:20 -0800 (PST)
-Message-ID: <fe79de89-f5bd-57d5-9048-3997b102d33d@linaro.org>
-Date:   Mon, 6 Feb 2023 15:48:19 +0200
+        Mon, 06 Feb 2023 06:07:58 -0800 (PST)
+Message-ID: <94fc3698-3568-87d8-7263-68de9ca53eab@linaro.org>
+Date:   Mon, 6 Feb 2023 16:07:57 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: [PATCH 7/8] arm64: dts: qcom: sm8350: add GPU, GMU, GPU CC and
- SMMU nodes
+Subject: Re: [PATCH V7 2/7] clk: qcom: Add Global Clock Controller driver for
+ IPQ9574
 Content-Language: en-GB
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, freedreno@lists.freedesktop.org,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-References: <20230206002735.2736935-1-dmitry.baryshkov@linaro.org>
- <20230206002735.2736935-9-dmitry.baryshkov@linaro.org>
- <a09a26cd-5b46-214e-90b3-a4388b8b2a5a@linaro.org>
+To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linus.walleij@linaro.org,
+        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
+        shawnguo@kernel.org, arnd@arndb.de, marcel.ziswiler@toradex.com,
+        nfraprado@collabora.com, broonie@kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
+        quic_poovendh@quicinc.com
+References: <20230206103337.21000-1-quic_devipriy@quicinc.com>
+ <20230206103337.21000-3-quic_devipriy@quicinc.com>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <a09a26cd-5b46-214e-90b3-a4388b8b2a5a@linaro.org>
+In-Reply-To: <20230206103337.21000-3-quic_devipriy@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/02/2023 12:51, Konrad Dybcio wrote:
+On 06/02/2023 12:33, Devi Priya wrote:
+> Add Global Clock Controller (GCC) driver for ipq9574 based devices
 > 
+> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+> ---
+>   Changes in V7:
+> 	- Used qcom_cc_probe instead of qcom_cc_really_probe in
+> 	  gcc_ipq9574_probe
 > 
-> On 6.02.2023 01:27, Dmitry Baryshkov wrote:
->> Add device nodes required to enable GPU on the SM8350 platform.
->>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
->>   arch/arm64/boot/dts/qcom/sm8350.dtsi | 179 +++++++++++++++++++++++++++
->>   1 file changed, 179 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sm8350.dtsi b/arch/arm64/boot/dts/qcom/sm8350.dtsi
->> index e5b308957f88..a73cd9eb63e0 100644
->> --- a/arch/arm64/boot/dts/qcom/sm8350.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sm8350.dtsi
->> @@ -7,6 +7,7 @@
->>   #include <dt-bindings/interrupt-controller/arm-gic.h>
->>   #include <dt-bindings/clock/qcom,dispcc-sm8350.h>
->>   #include <dt-bindings/clock/qcom,gcc-sm8350.h>
->> +#include <dt-bindings/clock/qcom,gpucc-sm8350.h>
->>   #include <dt-bindings/clock/qcom,rpmh.h>
->>   #include <dt-bindings/dma/qcom-gpi.h>
->>   #include <dt-bindings/gpio/gpio.h>
->> @@ -1767,6 +1768,184 @@ tcsr_mutex: hwlock@1f40000 {
->>   			#hwlock-cells = <1>;
->>   		};
->>   
->> +		gpu: gpu@3d00000 {
->> +			compatible = "qcom,adreno-660.1",
->> +				     "qcom,adreno";
-> No need to wrap this line.
+>   drivers/clk/qcom/Kconfig       |    8 +
+>   drivers/clk/qcom/Makefile      |    1 +
+>   drivers/clk/qcom/gcc-ipq9574.c | 4295 ++++++++++++++++++++++++++++++++
+>   3 files changed, 4304 insertions(+)
+>   create mode 100644 drivers/clk/qcom/gcc-ipq9574.c
 > 
->> +
->> +			reg = <0 0x03d00000 0 0x40000>,
->> +			      <0 0x03d9e000 0 0x1000>,
->> +			      <0 0x03d61000 0 0x800>;
->> +			reg-names = "kgsl_3d0_reg_memory",
->> +				    "cx_mem",
->> +				    "cx_dbgc";
->> +
->> +			interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>;
->> +
->> +			iommus = <&adreno_smmu 0 0x400>, <&adreno_smmu 1 0x400>;
->> +
->> +			operating-points-v2 = <&gpu_opp_table>;
->> +
->> +			qcom,gmu = <&gmu>;
->> +
->> +			status = "disabled";
->> +
->> +			zap-shader {
->> +				memory-region = <&pil_gpu_mem>;
->> +			};
->> +
->> +			/* note: downstream checks gpu binning for 670 Mhz */
->> +			gpu_opp_table: opp-table {
->> +				compatible = "operating-points-v2";
->> +
->> +				/* not for v1 */
-> The shipping version is v2.1 and you defined the 660.1 chipid,
-> which maps to lahaina(>=v2)
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 5ab4b7dfe3c2..a9f01d67a500 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -173,6 +173,14 @@ config IPQ_GCC_8074
+>   	  i2c, USB, SD/eMMC, etc. Select this for the root clock
+>   	  of ipq8074.
+>   
+> +config IPQ_GCC_9574
+> +	tristate "IPQ9574 Global Clock Controller"
+> +	help
+> +	  Support for global clock controller on ipq9574 devices.
+> +	  Say Y if you want to use peripheral devices such as UART, SPI,
+> +	  i2c, USB, SD/eMMC, etc. Select this for the root clock
+> +	  of ipq9574.
+> +
+>   config MSM_GCC_8660
+>   	tristate "MSM8660 Global Clock Controller"
+>   	help
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 3194465dd02c..51e6e5eb187b 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -27,6 +27,7 @@ obj-$(CONFIG_IPQ_GCC_4019) += gcc-ipq4019.o
+>   obj-$(CONFIG_IPQ_GCC_6018) += gcc-ipq6018.o
+>   obj-$(CONFIG_IPQ_GCC_806X) += gcc-ipq806x.o
+>   obj-$(CONFIG_IPQ_GCC_8074) += gcc-ipq8074.o
+> +obj-$(CONFIG_IPQ_GCC_9574) += gcc-ipq9574.o
+>   obj-$(CONFIG_IPQ_LCC_806X) += lcc-ipq806x.o
+>   obj-$(CONFIG_MDM_GCC_9607) += gcc-mdm9607.o
+>   obj-$(CONFIG_MDM_GCC_9615) += gcc-mdm9615.o
+> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
+> new file mode 100644
+> index 000000000000..718106a9ac7b
+> --- /dev/null
+> +++ b/drivers/clk/qcom/gcc-ipq9574.c
 
-Yes, let's drop these comments.
+[skipped]
 
-> 
->> +				opp-840000000 {
->> +					opp-hz = /bits/ 64 <840000000>;
->> +					opp-level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
->> +				};
->> +
->> +				/* not for v1 */
->> +				opp-778000000 {
->> +					opp-hz = /bits/ 64 <778000000>;
->> +					opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
->> +				};
->> +
->> +				/* not for v1 */
->> +				opp-738000000 {
->> +					opp-hz = /bits/ 64 <738000000>;
->> +					opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
->> +				};
->> +
->> +				/* for v1
->> +				opp-710000000 {
->> +					opp-hz = /bits/ 64 <710000000>;
->> +					opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
->> +				};
->> +				*/
->> +
->> +				opp-676000000 {
->> +					opp-hz = /bits/ 64 <676000000>;
->> +					opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
->> +				};
->> +
->> +				opp-608000000 {
->> +					opp-hz = /bits/ 64 <608000000>;
->> +					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L2>;
->> +				};
->> +
->> +				opp-540000000 {
->> +					opp-hz = /bits/ 64 <540000000>;
->> +					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
->> +				};
->> +
->> +				/* not for v1 */
->> +				opp-491000000 {
->> +					opp-hz = /bits/ 64 <491000000>;
->> +					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L0>;
->> +				};
->> +
->> +				opp-443000000 {
->> +					opp-hz = /bits/ 64 <443000000>;
->> +					opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
->> +				};
->> +
->> +				/* not for v1 */
->> +				opp-379000000 {
->> +					opp-hz = /bits/ 64 <379000000>;
->> +					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_L1>;
->> +				};
->> +
->> +				opp-315000000 {
->> +					opp-hz = /bits/ 64 <315000000>;
->> +					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
->> +				};
->> +			};
->> +		};
->> +
->> +		gmu: gmu@3d6a000 {
->> +			compatible = "qcom,adreno-gmu-660.1", "qcom,adreno-gmu";
->> +
->> +			reg = <0 0x03d6a000 0 0x34000>,
->> +			      <0 0x03de0000 0 0x10000>,
->> +			      <0 0x0b290000 0 0x10000>;
->> +			reg-names = "gmu", "rscc", "gmu_pdc";
->> +
->> +			interrupts = <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
->> +			interrupt-names = "hfi", "gmu";
->> +
->> +			clocks = <&gpucc GPU_CC_CX_GMU_CLK>,
->> +				 <&gpucc GPU_CC_CXO_CLK>,
->> +				 <&gcc GCC_DDRSS_GPU_AXI_CLK>,
->> +				 <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
->> +				 <&gpucc GPU_CC_AHB_CLK>,
->> +				 <&gpucc GPU_CC_HUB_CX_INT_CLK>,
->> +				 <&gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>;
-> Shouldn't this one belong to the smmu?
-
-The vendor kernel lists it both for the smmu and the gpu. SC7280 also 
-lists it for both devices. I'll take a look at the smmu clocks for the v2.
-
-> 
->> +			clock-names = "gmu",
->> +				      "cxo",
->> +				      "axi",
->> +				      "memnoc",
->> +				      "ahb",
->> +				      "hub",
->> +				      "smmu_vote";
->> +
->> +			power-domains = <&gpucc GPU_CX_GDSC>,
->> +					<&gpucc GPU_GX_GDSC>;
->> +			power-domain-names = "cx",
->> +					     "gx";
->> +
->> +			iommus = <&adreno_smmu 5 0x400>;
->> +
->> +			operating-points-v2 = <&gmu_opp_table>;
->> +
->> +			gmu_opp_table: opp-table {
->> +				compatible = "operating-points-v2";
->> +
->> +				opp-200000000 {
->> +					opp-hz = /bits/ 64 <200000000>;
->> +					opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
->> +				};
->> +			};
->> +		};
->> +
->> +		gpucc: clock-controller@3d90000 {
->> +			compatible = "qcom,sm8350-gpucc";
->> +			reg = <0 0x03d90000 0 0x9000>;
->> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
->> +				 <&gcc GCC_GPU_GPLL0_CLK_SRC>,
->> +				 <&gcc GCC_GPU_GPLL0_DIV_CLK_SRC>;
->> +			clock-names = "bi_tcxo",
->> +				      "gcc_gpu_gpll0_clk_src",
->> +				      "gcc_gpu_gpll0_div_clk_src";
->> +			#clock-cells = <1>;
->> +			#reset-cells = <1>;
->> +			#power-domain-cells = <1>;
->> +		};
->> +
->> +		adreno_smmu: iommu@3da0000 {
->> +			compatible = "qcom,sm8350-smmu-500", "qcom,adreno-smmu", "arm,mmu-500";
->> +			reg = <0 0x03da0000 0 0x20000>;
->> +			#iommu-cells = <2>;
->> +			#global-interrupts = <2>;
->> +			interrupts = <GIC_SPI 672 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 673 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 678 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 679 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 680 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 681 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 682 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 683 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 684 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 685 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 686 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 687 IRQ_TYPE_LEVEL_HIGH>;
->> +			clocks = <&gpucc GPU_CC_AHB_CLK>,
->> +				 <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
->> +				 <&gcc GCC_GPU_SNOC_DVM_GFX_CLK>;
->> +			clock-names = "ahb", "bus", "iface";
->> +
->> +			power-domains = <&gpucc GPU_CX_GDSC>;
-> Downstream marks this smmu dma-coherent
+> +static struct clk_branch gcc_snoc_pcie3_2lane_s_clk = {
+> +	.halt_reg = 0x2e054,
+> +	.clkr = {
+> +		.enable_reg = 0x2e054,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data) {
+> +			.name = "gcc_snoc_pcie3_2lane_s_clk",
+> +			.parent_hws = (const struct clk_hw *[]) {
+> +				&pcie3_axi_s_clk_src.clkr.hw
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_regmap_mux pcie0_pipe_clk_src = {
+> +	.reg = 0x28064,
+> +	.shift = 8,
+> +	.width = 2,
+> +	.parent_map = gcc_pcie30_phy0_pipe_clk_xo_map,
+> +	.clkr = {
+> +		.hw.init = &(struct clk_init_data) {
+> +			.name = "pcie0_pipe_clk_src",
+> +			.parent_data = gcc_pcie30_phy0_pipe_clk_xo,
+> +			.num_parents = ARRAY_SIZE(gcc_pcie30_phy0_pipe_clk_xo),
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_regmap_mux_closest_ops,
 
 
+clk_regmap_phy_mux_ops ?
 
-> 
-> Konrad
->> +		};
->> +
->>   		lpass_ag_noc: interconnect@3c40000 {
->>   			compatible = "qcom,sm8350-lpass-ag-noc";
->>   			reg = <0 0x03c40000 0 0xf080>;
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_regmap_mux pcie1_pipe_clk_src = {
+> +	.reg = 0x29064,
+> +	.shift = 8,
+> +	.width = 2,
+> +	.parent_map = gcc_pcie30_phy1_pipe_clk_xo_map,
+> +	.clkr = {
+> +		.hw.init = &(struct clk_init_data) {
+> +			.name = "pcie1_pipe_clk_src",
+> +			.parent_data = gcc_pcie30_phy1_pipe_clk_xo,
+> +			.num_parents = ARRAY_SIZE(gcc_pcie30_phy1_pipe_clk_xo),
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_regmap_mux_closest_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_regmap_mux pcie2_pipe_clk_src = {
+> +	.reg = 0x2a064,
+> +	.shift = 8,
+> +	.width = 2,
+> +	.parent_map = gcc_pcie30_phy2_pipe_clk_xo_map,
+> +	.clkr = {
+> +		.hw.init = &(struct clk_init_data) {
+> +			.name = "pcie2_pipe_clk_src",
+> +			.parent_data = gcc_pcie30_phy2_pipe_clk_xo,
+> +			.num_parents = ARRAY_SIZE(gcc_pcie30_phy2_pipe_clk_xo),
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_regmap_mux_closest_ops,
+
+clk_regmap_phy_mux_ops ?
+
+
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_regmap_mux pcie3_pipe_clk_src = {
+> +	.reg = 0x2b064,
+> +	.shift = 8,
+> +	.width = 2,
+> +	.parent_map = gcc_pcie30_phy3_pipe_clk_xo_map,
+> +	.clkr = {
+> +		.hw.init = &(struct clk_init_data) {
+> +			.name = "pcie3_pipe_clk_src",
+> +			.parent_data = gcc_pcie30_phy3_pipe_clk_xo,
+> +			.num_parents = ARRAY_SIZE(gcc_pcie30_phy3_pipe_clk_xo),
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_regmap_mux_closest_ops,
+
+clk_regmap_phy_mux_ops ?
+
+> +		},
+> +	},
+> +};
 
 -- 
 With best wishes
