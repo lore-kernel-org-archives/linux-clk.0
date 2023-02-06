@@ -2,110 +2,193 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B415FC61DA4
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 05:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2640C05027
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 05:35:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229593AbjBFFHc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Feb 2023 00:07:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40450 "EHLO
+        id S229547AbjBFFfO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Feb 2023 00:35:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbjBFFHb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 00:07:31 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EDB517CD4;
-        Sun,  5 Feb 2023 21:07:30 -0800 (PST)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3164uUNG006508;
-        Mon, 6 Feb 2023 05:07:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=vM7cUNMl2BC3t2I8Sxy4OM5Wwd/GdzfjJt0ki3w0oCA=;
- b=ggBR7wor2ls15Vp420tFKy8Z9Zs+RmT+soA0v/qm2GUarLHloVgPjFwrtacGJMRD0I5H
- MFQj5qMqBheKd16FhuNXYbIseEQWXyNmXlQof8aw4nwAB7jaDxgAu/SYRJc70y0cgPbu
- 0DDe6taDQR5f3TbNFexrIOhwiNBt0GmIs5jCQm12JbmcgI9Q8OZp+o27QWpRLG49ElRu
- 4wBLtexDb5ymG5oZqNJJGiCRDBq+QJpy56gcK+XtJvr3D6vEUXQ2QhaEZ3qA2vCGHtG3
- xzlQtuem+Xnl1tSJ6f33YVQct82hcvDDEOjmKeDFNBv7P5ciiF8xmMdRPfjL/a9p9VhH sg== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nhfretssq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Feb 2023 05:07:05 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3165746Q029409
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 6 Feb 2023 05:07:04 GMT
-Received: from [10.216.41.141] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Sun, 5 Feb 2023
- 21:06:45 -0800
-Message-ID: <bb3f584e-44de-4f81-cac5-fe47bcaeb16b@quicinc.com>
-Date:   Mon, 6 Feb 2023 10:36:32 +0530
+        with ESMTP id S229447AbjBFFfN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 00:35:13 -0500
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B5DC1350F;
+        Sun,  5 Feb 2023 21:35:11 -0800 (PST)
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 3165Z0hQ022404;
+        Sun, 5 Feb 2023 23:35:00 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1675661700;
+        bh=Y+l9iygICZNXALZiwdEq5SU+mZIFPX05uw2Y5eIQHdM=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=fb2+QeeHrzJmcesnbVuOCRiwZc3cKkbz9EWB75Yi2xlQyzWZGD4qvHcGnQ63Mf9Z4
+         r2O3etY2EwfODZZJKGhVZHzfGJ+S0P2aOo3mOOOU5+Q5b5qcUsS/KN6W3uiAJ5qV18
+         mLjFgHo/RA5SWpj9QakDMJSQWTfVqLs6AmlkX2js=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 3165Z0S4040280
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 5 Feb 2023 23:35:00 -0600
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Sun, 5
+ Feb 2023 23:34:59 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
+ Frontend Transport; Sun, 5 Feb 2023 23:34:59 -0600
+Received: from [172.24.222.47] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 3165YrXU086264;
+        Sun, 5 Feb 2023 23:34:54 -0600
+Message-ID: <2cfd99ac-a3fe-5014-1a51-19a0ee95eaa1@ti.com>
+Date:   Mon, 6 Feb 2023 11:04:53 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH V2 4/5] arm64: defconfig: Enable scm download mode config
- for IPQ9574 SoC.
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <lee@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <jassisinghbrar@gmail.com>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <shawnguo@kernel.org>, <arnd@arndb.de>,
-        <marcel.ziswiler@toradex.com>, <robimarko@gmail.com>,
-        <dmitry.baryshkov@linaro.org>, <nfraprado@collabora.com>,
-        <broonie@kernel.org>, <quic_gurus@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_devipriy@quicinc.com>
-References: <20230201090529.30446-1-quic_poovendh@quicinc.com>
- <20230201090529.30446-5-quic_poovendh@quicinc.com>
- <0186a2c9-35ba-a90d-360f-0f931dda7ed0@linaro.org>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: fixed-factor: Add TI AM62 SoC
+ OLDI clock
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+CC:     Samuel Holland <samuel@sholland.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Linux Clock List <linux-clk@vger.kernel.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        Linux Kernel List <linux-kernel@vger.kernel.org>,
+        Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Devarsh Thakkar <devarsht@ti.com>, Jai Luthra <j-luthra@ti.com>
+References: <20221226095745.19757-1-a-bhatia1@ti.com>
+ <20221226095745.19757-2-a-bhatia1@ti.com>
+ <8980856c1138571976f00413b94cfeb8.sboyd@kernel.org>
+ <1856e963-4514-92f3-5d43-d5b711083193@ti.com>
+ <367fba29-bc08-1f27-249c-09e406adfbbb@ideasonboard.com>
+ <f324c845f0d291d041a13046a349ae95.sboyd@kernel.org>
 Content-Language: en-US
-From:   POOVENDHAN SELVARAJ <quic_poovendh@quicinc.com>
-In-Reply-To: <0186a2c9-35ba-a90d-360f-0f931dda7ed0@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: R6azCj9-fQtyVyGM1ytJQm94BfOTbafJ
-X-Proofpoint-GUID: R6azCj9-fQtyVyGM1ytJQm94BfOTbafJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-02-06_02,2023-02-03_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- lowpriorityscore=0 spamscore=0 clxscore=1015 impostorscore=0 mlxscore=0
- malwarescore=0 priorityscore=1501 adultscore=0 mlxlogscore=675
- phishscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2212070000 definitions=main-2302060044
+From:   Aradhya Bhatia <a-bhatia1@ti.com>
+In-Reply-To: <f324c845f0d291d041a13046a349ae95.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Stephen,
 
-On 2/1/2023 3:00 PM, Krzysztof Kozlowski wrote:
-> On 01/02/2023 10:05, Poovendhan Selvaraj wrote:
->> Enables scm download mode config.
-> Subject: drop full stop.
->
-> This patch misses explanation why it is needed and why it should be
-> enabled for all SoCs.
+On 26-Jan-23 05:36, Stephen Boyd wrote:
+> Quoting Tomi Valkeinen (2023-01-17 01:40:24)
+>> On 16/01/2023 11:51, Aradhya Bhatia wrote:
+>>> Hi Stephen,
+>>>
+>>> Thanks for taking a look at the patch.
+>>>
+>>> On 12-Jan-23 01:14, Stephen Boyd wrote:
+>>>> Quoting Aradhya Bhatia (2022-12-26 01:57:44)
+>>>>> Add "ti,k3-am62-oldi-clk-div" to the fixed factor clock compatible enum
+>>>>> list.
+>>>>>
+>>>>> "ti,k3-am62-oldi-clk-div" is a fixed-factor clock that helps the TI
+>>>>> display subsystem request a pixel clock for itself and a corresponding
+>>>>> serial clock for its OLDI Transmitters. The serial clock is 7 times the
+>>>>> pixel clock. This clock needs the clock set rate request to be
+>>>>> propagated to the parent clock provider.
+>>>>>
+>>>>> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+>>>>> ---
+>>>>>   Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml | 1 +
+>>>>>   1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git 
+>>>>> a/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml 
+>>>>> b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
+>>>>> index 8f71ab300470..0696237530f7 100644
+>>>>> --- a/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
+>>>>> @@ -14,6 +14,7 @@ properties:
+>>>>>     compatible:
+>>>>>       enum:
+>>>>>         - fixed-factor-clock
+>>>>> +      - ti,k3-am62-oldi-clk-div
+>>>>
+>>>> I don't see this compatible anywhere in the kernel tree. Is there a
+>>>> patch that adds a node using this? I wonder why the display subsystem
+>>>> can't add this fixed factor clk directly in the driver. Does the OLDI
+>>>> Transmitter send a clk to the display subsystem?
+>>>>
+>>>> I'm asking all these questions because we got rid of vendor compatibles
+>>>> here in hopes of simplifying the logic. Maybe the problem can be
+>>>> approached differently, but I don't know all the details.
+>>>
+>>>
+>>> +--------+                       +------------------+
+>>> |        |                       |                  |
+>>> |  PLL   +---+----+------------->| OLDI Transmitter |
+>>> |        |   |    |              |                  |
+>>> +--------+   |    |              +------------------+
+>>>               |    |
+>>>               |    |              +------------------+
+>>>               |    |              |                  |
+>>>               |    +------------->| OLDI Transmitter |
+>>>               |                   |                  |
+>>>               |                   +------------------+
+>>>               |
+>>>               |                   +------------------+
+>>>               |   +----------+    |                  |
+>>>               |   |    /7    |    |      Display     |
+>>>               +-->|   Clock  +--->| Sub-System (DSS) |
+>>>                   |    Div   |    |                  |
+>>>                   +----------+    +------------------+
+>>>
+>>> This is how the the clock architecture for DSS looks like.
+>>>
+>>> The clock divider is not a part of DSS, but outside it.
+> 
+> The divider is fixed as well? And presumably inside the SoC?
+Yes, and yes!
 
-Sure, will address this in next patch series.
+> 
+>>>
+>>> The clock request flow is initiated by the DSS driver because it has the
+>>> required timing parameter information. It requests a certain pixel
+>>> frequency. But the frequency required by the OLDI TXes is 7 times
+>>> that pixel frequency.
+>>>
+>>> (Just for clarification, in some cases, the OLDI TX does require only
+>>> 3.5 times the pixel frequency, but in those situations there is another
+>>> divider in-front of OLDI TX that gets activated with a signal and
+>>> divides the incoming frequency by 2, thereby requiring the PLL to still
+>>> generate a 7x frequency.)
+>>>
+>>> Hence, the idea is that the clock divider is able to propagate the set
+>>> rate request back to PLL, asking for a frequency 7 times more than the
+>>> DSS's asking rate.
+> 
+> Got it. Can the PLL driver provide a pll_div_7 clk that is used for the
+> DSS pixel clk?
+> 
+The PLL driver can not map the clock divider and hence can't provide the
+pll_div_7 clock directly to DSS.
 
-Regards,
-Poovendhan S
+>>>
+>>> If this is something less than ideal and should not go up, then I can
+>>> implement a new clock device with a separate but similar clock driver.
+>>>
+>>> Let me know what you think!
+>>
+>> As a clarification I would also add to the above that on other TI SoCs 
+>> with DSS, and also for the second video port on AM62, the clock 
+>> framework provides DSS a clock using the pclk frequency.
+>>
+> 
+> Are you saying that adding a fixed div-7 clk in the DSS driver is wrong?
+Yes. All variants of DSS accept a pixel clock and it would be wrong to
+implement a fixed div-7 in the DSS driver.
 
->
->> Signed-off-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
->> ---
-> Best regards,
-> Krzysztof
->
+All that said, I now understand that the new compatible shouldn't go
+there. I will implement a new driver and post it. =)
+
+
+Regards
+Aradhya
