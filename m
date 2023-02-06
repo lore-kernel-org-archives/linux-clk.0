@@ -2,138 +2,121 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F433C05027
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 08:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC723C636D4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 09:11:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229517AbjBFIdO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Feb 2023 03:33:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53664 "EHLO
+        id S230093AbjBFJLZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Feb 2023 04:11:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229789AbjBFIdL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 03:33:11 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BF8E1A963;
-        Mon,  6 Feb 2023 00:33:09 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id bg13-20020a05600c3c8d00b003d9712b29d2so10168140wmb.2;
-        Mon, 06 Feb 2023 00:33:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cOx2/4K0b63ARwObYvrzcCP9XRW9IFsQlY4VWTcOG5U=;
-        b=pKXkHmDHCjcb0/s1uFpOROx/vVhdipvmXjnN8puTvbY4HH4HDcyRQqnmYvTIR6I/6v
-         xCDfT+YVgcdwI4zEe+4bE1GBQlneI7CB3PIB3UVAq1YaI36d+Z1IYZmwTXbqQH3JZsNm
-         37AowBzkmdnCuo4oEtryjP78layCg48IEiWFBp/0SSEe9s7iepcEhyzXWrNcNDOtCc4+
-         D3b4FO8gziOZFWDHkGIYHoa1GpeISzeZe1Cou6EGZxg0GaQ/YC3U/qFae/vm1HNak/Wf
-         8BO2yWJzgdDJiFT0TJPVlVfrgIilQjVVFvBJN1WvGCOZDffg47bJmKx91q1qR5f7ra5A
-         DfxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cOx2/4K0b63ARwObYvrzcCP9XRW9IFsQlY4VWTcOG5U=;
-        b=K0eiKaNaFMzk3dsaxCr3LEsU5zLbH7YeuYAz5yXYoVlGDrHWI6eS0i/vDalW6nVBPu
-         sOKGNrKdz83QWE7OpWPahBs4X0DmStOqNJw/PC6n9kCdLsmPApsDBMMtLQ8lwgfW6i82
-         2sNEpEBRIAIcQ54F4EJhhVngWBL7XZQUd/eRmbJqCxRjK0qbtFg23NTjwXJ0LesU3HqJ
-         zgfN98wpZEACMgJyFTsU+xnXXVS8SBQIwg2uie95B1flwcf9Mbk5RK9qgrwSlZY7p7A+
-         kFKAaup+u7QpiEvZD7ci6QSXj50qay04wgQehWkmDfFoB7RDkZ0w8az82IjcWHkPt3gz
-         Vlpg==
-X-Gm-Message-State: AO0yUKVi7YGgVDGYyI1JB0shapjiw4xm9WYE5eOsSEkUOI1e3Wto31hy
-        y54AScmgltE3RKwI29NilBK/vtII85k=
-X-Google-Smtp-Source: AK7set8zAb9HWB02uYReYweoYi7TDcerNXTAZGjycqUNfBrCvfWB2bU1gtIdQkLxrxHMLnPdY6O13Q==
-X-Received: by 2002:a05:600c:601b:b0:3dc:443e:4212 with SMTP id az27-20020a05600c601b00b003dc443e4212mr18964751wmb.1.1675672387276;
-        Mon, 06 Feb 2023 00:33:07 -0800 (PST)
-Received: from localhost.localdomain (23.red-88-10-60.dynamicip.rima-tde.net. [88.10.60.23])
-        by smtp.gmail.com with ESMTPSA id g42-20020a05600c4caa00b003de664d4c14sm10138862wmp.36.2023.02.06.00.33.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Feb 2023 00:33:06 -0800 (PST)
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, matthias.bgg@gmail.com
-Subject: [PATCH] clk: ralink: fix 'mt7621_gate_is_enabled()' function
-Date:   Mon,  6 Feb 2023 09:33:05 +0100
-Message-Id: <20230206083305.147582-1-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S229807AbjBFJLY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 04:11:24 -0500
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87E8540D2;
+        Mon,  6 Feb 2023 01:11:20 -0800 (PST)
+X-UUID: 330d3cfea5fe11ed945fc101203acc17-20230206
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=zkkGEptdcWzfg6Wo61o31AGU1sxDPuS2Rq0VohDQEDA=;
+        b=cyNYCtwXM0MDTqJZHdqNyYuCUXfjZ1bpVnfE3nGrP6Tt0K677k9DKb41e1RtGOrTI2lrWukPytIq14hJ9VvtbMgiC0zWe8fEZmnk/YOMBa/8sZytgyQqwEPLaz6udRiT+LNduv2OlgmLshUPBkRTiVjWQbmyHgVLagkm2u0QY6U=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.19,REQID:ec263648-de86-4b30-9024-41fe2ed2aece,IP:0,U
+        RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+        N:release,TS:-25
+X-CID-META: VersionHash:885ddb2,CLOUDID:da2499f7-ff42-4fb0-b929-626456a83c14,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:1,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0
+X-CID-BVR: 0,NGT
+X-UUID: 330d3cfea5fe11ed945fc101203acc17-20230206
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
+        (envelope-from <moudy.ho@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1324486426; Mon, 06 Feb 2023 17:11:11 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.792.15; Mon, 6 Feb 2023 17:11:10 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.792.15 via Frontend Transport; Mon, 6 Feb 2023 17:11:10 +0800
+From:   Moudy Ho <moudy.ho@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        Moudy Ho <moudy.ho@mediatek.com>
+Subject: [PATCH v7 0/6] add support for MT8195 VPPSYS on MMSYS and MUTEX
+Date:   Mon, 6 Feb 2023 17:11:03 +0800
+Message-ID: <20230206091109.1324-1-moudy.ho@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Compiling clock driver with CONFIG_UBSAN enabled shows the following trace:
+Changes since v6:
+- Rebase on linux-next.
+- For MMSYS api changes, fix corresponding functionality in [4/6] patch.
 
-UBSAN: shift-out-of-bounds in drivers/clk/ralink/clk-mt7621.c:121:15
-shift exponent 131072 is too large for 32-bit type 'long unsigned int'
-CPU: 1 PID: 1 Comm: swapper/0 Not tainted 5.15.86 #0
-Stack : ...
+Changes since v5:
+- Depend on :
+  [1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=713031
 
-Call Trace:
-[<80009a58>] show_stack+0x38/0x118
-[<8045ce04>] dump_stack_lvl+0x60/0x80
-[<80458868>] ubsan_epilogue+0x10/0x54
-[<804590e0>] __ubsan_handle_shift_out_of_bounds+0x118/0x190
-[<804c9a10>] mt7621_gate_is_enabled+0x98/0xa0
-[<804bb774>] clk_core_is_enabled+0x34/0x90
-[<80aad73c>] clk_disable_unused_subtree+0x98/0x1e4
-[<80aad6d4>] clk_disable_unused_subtree+0x30/0x1e4
-[<80aad6d4>] clk_disable_unused_subtree+0x30/0x1e4
-[<80aad900>] clk_disable_unused+0x78/0x120
-[<80002030>] do_one_initcall+0x54/0x1f0
-[<80a922a4>] kernel_init_freeable+0x280/0x31c
-[<808047c4>] kernel_init+0x20/0x118
-[<80003e58>] ret_from_kernel_thread+0x14/0x1c
+Changes since v4:
+- Rebase on linux-next.
+- Remove MMSYS fallback compatible.
+- Migrate MT8195 VPPSYS0/1 from clock to mtk-mmsys driver.
 
-Shifting a value (131032) larger than the type (32 bit unsigned integer)
-is undefined behaviour in C.
+Changes since v3:
+- Rebase on linux-next.
 
-The problem is in 'mt7621_gate_is_enabled()' function which is using the
-'BIT()' kernel macro with the bit index for the clock gate to check if the
-bit is set. When the clock gates structure is created driver is already
-setting 'bit_idx' using 'BIT()' macro, so we are wrongly applying an extra
-'BIT()' mask here. Removing it solve the problem and makes this function
-correct. However when clock gating is correctly working, the kernel starts
-disabling those clocks that are not requested. Some drivers for this SoC
-are older than this clock driver itself. So to avoid the kernel to disable
-clocks that have been enabled until now, we must apply 'CLK_IS_CRITICAL'
-flag on gates initialization code.
+Changes since v2:
+- Depend on :
+  [1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=681097
+- Split dts settings into two patches based on belonging to MMSYS or MUTEX.
 
-Fixes: 48df7a26f470 ("clk: ralink: add clock driver for mt7621 SoC")
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
----
- drivers/clk/ralink/clk-mt7621.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Changes since v1:
+- Depend on :
+  [1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=681097
+- Add compatible names to VPPSYS0 and VPPSYS1 in MMSYS binding file.
+- Fix VPPSYS's MMSYS and MUTEX dts to pass the dtsb_check.
+- Rename mtk_mmsys_merge_config() and mtk_mmsys_rsz_dcm_config() to
+  mtk_mmsys_vpp_rsz_merge_config() and mtk_mmsys_vpp_rsz_dcm_config().
+- Clean up mtk_mmsys_vpp_rsz_dcm_config().
+- Add a comment to mtk_mutex_write_mod() and clean it up for use in more
+  than 32 mods.
 
-diff --git a/drivers/clk/ralink/clk-mt7621.c b/drivers/clk/ralink/clk-mt7621.c
-index 99256659dd96..d95a33293b0a 100644
---- a/drivers/clk/ralink/clk-mt7621.c
-+++ b/drivers/clk/ralink/clk-mt7621.c
-@@ -121,7 +121,7 @@ static int mt7621_gate_is_enabled(struct clk_hw *hw)
- 	if (regmap_read(sysc, SYSC_REG_CLKCFG1, &val))
- 		return 0;
- 
--	return val & BIT(clk_gate->bit_idx);
-+	return val & clk_gate->bit_idx;
- }
- 
- static const struct clk_ops mt7621_gate_ops = {
-@@ -133,8 +133,14 @@ static const struct clk_ops mt7621_gate_ops = {
- static int mt7621_gate_ops_init(struct device *dev,
- 				struct mt7621_gate *sclk)
- {
-+	/*
-+	 * There are drivers for this SoC that are older
-+	 * than clock driver and are not prepared for the clock.
-+	 * We don't want the kernel to disable anything so we
-+	 * add CLK_IS_CRITICAL flag here.
-+	 */
- 	struct clk_init_data init = {
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 		.num_parents = 1,
- 		.parent_names = &sclk->parent_name,
- 		.ops = &mt7621_gate_ops,
+Hi,
+
+This series add support for MT8195's two VPPSYS(Video Processor Pipe Subsystem),
+under which there will be corresponding MMSYS and MUTEX settings that
+need to be configured.
+
+Moudy Ho (1):
+  arm64: dts: mediatek: mt8195: add MUTEX configuration for VPPSYS
+
+Roy-CW.Yeh (5):
+  dt-bindings: soc: mediatek: Add support for MT8195 VPPSYS
+  arm64: dts: mediatek: mt8195: add MMSYS configuration for VPPSYS
+  soc: mediatek: mmsys: add config api for RSZ switching and DCM
+  soc: mediatek: mutex: Add mtk_mutex_set_mod support to set MOD1
+  soc: mediatek: mutex: support MT8195 VPPSYS
+
+ .../bindings/soc/mediatek/mediatek,mutex.yaml |   1 +
+ arch/arm64/boot/dts/mediatek/mt8195.dtsi      |  26 +++-
+ drivers/soc/mediatek/mt8195-mmsys.h           |  13 ++
+ drivers/soc/mediatek/mtk-mmsys.c              |  44 ++++++
+ drivers/soc/mediatek/mtk-mutex.c              | 135 +++++++++++++++++-
+ include/linux/soc/mediatek/mtk-mmsys.h        |   6 +
+ include/linux/soc/mediatek/mtk-mutex.h        |  35 +++++
+ 7 files changed, 249 insertions(+), 11 deletions(-)
+
 -- 
-2.25.1
+2.18.0
 
