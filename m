@@ -2,83 +2,138 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D6AC05027
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 17:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 943FAC636D3
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 18:23:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230161AbjBFRB5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Feb 2023 12:01:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39034 "EHLO
+        id S229740AbjBFSXr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Feb 2023 13:23:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230333AbjBFRBw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 12:01:52 -0500
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AD912B2B1;
-        Mon,  6 Feb 2023 09:01:18 -0800 (PST)
-Received: by mail-ot1-f48.google.com with SMTP id d21-20020a056830005500b0068bd2e0b25bso3371037otp.1;
-        Mon, 06 Feb 2023 09:01:18 -0800 (PST)
+        with ESMTP id S229681AbjBFSXp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 13:23:45 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BACE298C6;
+        Mon,  6 Feb 2023 10:23:43 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id l14so2673889eds.4;
+        Mon, 06 Feb 2023 10:23:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TyC23soTfwOMq0a8LpZaJG0XUTHUqJMLxjJ6KOaCxeI=;
+        b=aEqv+a6iAek+Mh7PCPESa9s+6SwMxQM+pTfGfFLfwpk3nSxF3eyyjqsR0IENA6Gd9i
+         B7aupdYEeXz9avN23tbuoDGLWH/H+7zHGbI2GH6UGNjlwlUmkw92STPHWW96OBjX58io
+         Atbo+MaHimPqLYKdgBLjNFjyedJwvaDGAV88mNZnDJtQ3vM9hsanYFFDXgE8nsD7HqK8
+         4vHbCUSzBfSXpyQamGZm9kyQVIEQlJGT0hKPcgJYrnxQNO4ynGKEYe7+PnKpFwX1Evm6
+         F1gIUzceEwhQwM/cCTcY6DPQD0yAgfBqe2RQbmfRsi76egKGkqWU8tfKvVXfwlNsmPfo
+         6sEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ftsYnNwfAHRlDnIU3/2K9ANJVoP0nQzARnX/oV/Q5nE=;
-        b=z0/AsGqGuRk8r0b2Nxqs+9h5dajiWR/C/YHxGOJcM32p/RBSyhmeNeI1ii/FLFXpx8
-         IobJORO4HzFlYCxPy1JQo/OJRD2XMQkNUD29icMQBtmiZBasd01NpgtxTNMg39asebIt
-         GdpKP5cFPLaw2elp/W0MKFGeH9J9o+3JMC3GP4hVlZI91ovACxAE504R68XHoq+Tmgxp
-         IbVIRZnAq5HpxFrzs5Uu/+ImBPiiY4ntc5f4s4gmFEH81KW7MIbjYU4ovr8i6I1btz1h
-         S9J/+wgL5eeajSEoaBzcD2zp5Vf7yJ1u+epLwfVGq78fL/8L4S+rCC4jmVZcXHWn4Hs4
-         oriw==
-X-Gm-Message-State: AO0yUKXltncS/lBAl8a+LO4gwHLIxlnpxAeVoGTVqdaK6KW67N6/3bqG
-        3N3D+WzHp3UcaCBXT6o0qA==
-X-Google-Smtp-Source: AK7set8IlglwpH0WJv/MQ+9QnqEUE0o4e/FYzaxxqKBSSV+ySvVKlkQIAgWzXHjyv36wLGYY/XWAVQ==
-X-Received: by 2002:a9d:2af:0:b0:68b:d7cb:dd62 with SMTP id 44-20020a9d02af000000b0068bd7cbdd62mr160379otl.10.1675702877032;
-        Mon, 06 Feb 2023 09:01:17 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id a4-20020a9d74c4000000b0068be372babfsm5231719otl.47.2023.02.06.09.01.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Feb 2023 09:01:16 -0800 (PST)
-Received: (nullmailer pid 226818 invoked by uid 1000);
-        Mon, 06 Feb 2023 17:01:14 -0000
-Date:   Mon, 6 Feb 2023 11:01:14 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        David Airlie <airlied@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        dri-devel@lists.freedesktop.org, Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        devicetree@vger.kernel.org, freedreno@lists.freedesktop.org,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 3/8] dt-bindings: display/msm/gmu: add Adreno 660 support
-Message-ID: <167570287416.226763.12601295284493714271.robh@kernel.org>
-References: <20230206002735.2736935-1-dmitry.baryshkov@linaro.org>
- <20230206002735.2736935-5-dmitry.baryshkov@linaro.org>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TyC23soTfwOMq0a8LpZaJG0XUTHUqJMLxjJ6KOaCxeI=;
+        b=hUSTq2C6lWzkfWfangIr/J1INSy4Dos9oIvNcuIMOSKjJj4UW3WhNeFPmMvaUUV5ny
+         pqQcPaCBbdbPOXqe+f+NrGnUnXqoX6nfsTOCV9yqv+H53XnoLGXoEy007/V2i3Vt44jZ
+         2O6ZQcYwIM1eFSDCBjSpJEuLpBiC4pvxHzEDSD+ltfkhdh9o/ksxwIU72v7z7WU6hCSF
+         cfyFmZcjyQug9jrdaYbSg6XEjFlutpcAuoA8YVqfAW5AhBq4MLrJdCP58f0j4iXVkM6Z
+         Ev3OAaapN/ttfDMiM0q9s24XFV66bHo5jfcs7BlFnVazLV4C5A+cv7WXVSeKzb/pYJa6
+         0CjQ==
+X-Gm-Message-State: AO0yUKVLERjjsfigP0E4Dss6TUNj3rXf146IBa3EEpgp0ffRPhuARhI5
+        6uJ5yxu+dL0reVAjW3+lC+M=
+X-Google-Smtp-Source: AK7set/YLDaJsWv/fhKmEQXf6N5FPSdTQmFx20p81QkshxCM1jPONv6g7IJ9w1QtYiONvuux1hR6UA==
+X-Received: by 2002:a50:9b1c:0:b0:4aa:a172:6616 with SMTP id o28-20020a509b1c000000b004aaa1726616mr502027edi.24.1675707821725;
+        Mon, 06 Feb 2023 10:23:41 -0800 (PST)
+Received: from [192.168.2.177] ([207.188.167.132])
+        by smtp.gmail.com with ESMTPSA id m19-20020a1709061ed300b0088ed7de4821sm5792684ejj.158.2023.02.06.10.23.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Feb 2023 10:23:41 -0800 (PST)
+Message-ID: <a94c9b8c-d439-b633-d02a-09d36bc11ad9@gmail.com>
+Date:   Mon, 6 Feb 2023 19:23:39 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230206002735.2736935-5-dmitry.baryshkov@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH v7 0/6] add support for MT8195 VPPSYS on MMSYS and MUTEX
+Content-Language: en-US
+To:     Moudy Ho <moudy.ho@mediatek.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20230206091109.1324-1-moudy.ho@mediatek.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+In-Reply-To: <20230206091109.1324-1-moudy.ho@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Mon, 06 Feb 2023 02:27:30 +0200, Dmitry Baryshkov wrote:
-> Add Adreno A660 to the A635 clause to define all version-specific
-> properties. There is no need to add it to the top-level clause, since
-> top-level compatible uses pattern to define compatible strings.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  Documentation/devicetree/bindings/display/msm/gmu.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Whole series queued, thanks!
 
+Matthias
+
+On 06/02/2023 10:11, Moudy Ho wrote:
+> Changes since v6:
+> - Rebase on linux-next.
+> - For MMSYS api changes, fix corresponding functionality in [4/6] patch.
+> 
+> Changes since v5:
+> - Depend on :
+>    [1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=713031
+> 
+> Changes since v4:
+> - Rebase on linux-next.
+> - Remove MMSYS fallback compatible.
+> - Migrate MT8195 VPPSYS0/1 from clock to mtk-mmsys driver.
+> 
+> Changes since v3:
+> - Rebase on linux-next.
+> 
+> Changes since v2:
+> - Depend on :
+>    [1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=681097
+> - Split dts settings into two patches based on belonging to MMSYS or MUTEX.
+> 
+> Changes since v1:
+> - Depend on :
+>    [1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=681097
+> - Add compatible names to VPPSYS0 and VPPSYS1 in MMSYS binding file.
+> - Fix VPPSYS's MMSYS and MUTEX dts to pass the dtsb_check.
+> - Rename mtk_mmsys_merge_config() and mtk_mmsys_rsz_dcm_config() to
+>    mtk_mmsys_vpp_rsz_merge_config() and mtk_mmsys_vpp_rsz_dcm_config().
+> - Clean up mtk_mmsys_vpp_rsz_dcm_config().
+> - Add a comment to mtk_mutex_write_mod() and clean it up for use in more
+>    than 32 mods.
+> 
+> Hi,
+> 
+> This series add support for MT8195's two VPPSYS(Video Processor Pipe Subsystem),
+> under which there will be corresponding MMSYS and MUTEX settings that
+> need to be configured.
+> 
+> Moudy Ho (1):
+>    arm64: dts: mediatek: mt8195: add MUTEX configuration for VPPSYS
+> 
+> Roy-CW.Yeh (5):
+>    dt-bindings: soc: mediatek: Add support for MT8195 VPPSYS
+>    arm64: dts: mediatek: mt8195: add MMSYS configuration for VPPSYS
+>    soc: mediatek: mmsys: add config api for RSZ switching and DCM
+>    soc: mediatek: mutex: Add mtk_mutex_set_mod support to set MOD1
+>    soc: mediatek: mutex: support MT8195 VPPSYS
+> 
+>   .../bindings/soc/mediatek/mediatek,mutex.yaml |   1 +
+>   arch/arm64/boot/dts/mediatek/mt8195.dtsi      |  26 +++-
+>   drivers/soc/mediatek/mt8195-mmsys.h           |  13 ++
+>   drivers/soc/mediatek/mtk-mmsys.c              |  44 ++++++
+>   drivers/soc/mediatek/mtk-mutex.c              | 135 +++++++++++++++++-
+>   include/linux/soc/mediatek/mtk-mmsys.h        |   6 +
+>   include/linux/soc/mediatek/mtk-mutex.h        |  35 +++++
+>   7 files changed, 249 insertions(+), 11 deletions(-)
+> 
