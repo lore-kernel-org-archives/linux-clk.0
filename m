@@ -2,91 +2,138 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 193F4C64EC3
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 08:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F433C05027
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 08:33:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229742AbjBFI1M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Feb 2023 03:27:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48810 "EHLO
+        id S229517AbjBFIdO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Feb 2023 03:33:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229798AbjBFI1L (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 03:27:11 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3584166F9
-        for <linux-clk@vger.kernel.org>; Mon,  6 Feb 2023 00:27:09 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id bg13-20020a05600c3c8d00b003d9712b29d2so10157689wmb.2
-        for <linux-clk@vger.kernel.org>; Mon, 06 Feb 2023 00:27:09 -0800 (PST)
+        with ESMTP id S229789AbjBFIdL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 03:33:11 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BF8E1A963;
+        Mon,  6 Feb 2023 00:33:09 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id bg13-20020a05600c3c8d00b003d9712b29d2so10168140wmb.2;
+        Mon, 06 Feb 2023 00:33:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lRhRPXlz1dgromDCK1s2N7IY7bqqLSP4EsF8anTgRk4=;
-        b=cmQhN+tgVmBqVkIJ9VPP89ONCFVXmbRk+ybmZMiPCFpICUbwNAoh5fXYMim/tefXc4
-         /L1Svy6OI55UszeC5Kdc1GgHOUPVFurcgLwRDCwHKG+zlqrw1XFZyNQMkLWKAweDuhgo
-         7WkzCb4jK5XADZCxSN24MDvY0/tWenhtiwr+ZxYDs7YxJeUQ0FQtJ7gYmfVp4S4zPPps
-         pEinbdYmGLjrfIj+5NqVSRit7yABJZ5HP/JjhymtpYuReBlEvW0C2SRMJ13NJEsYPxvQ
-         718JJgy+ryjUd+YUaxymmNqMer2hGJRctCDNGDQE2YGMdRif9xjnzVOYuE51BLVWtkY3
-         jseg==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cOx2/4K0b63ARwObYvrzcCP9XRW9IFsQlY4VWTcOG5U=;
+        b=pKXkHmDHCjcb0/s1uFpOROx/vVhdipvmXjnN8puTvbY4HH4HDcyRQqnmYvTIR6I/6v
+         xCDfT+YVgcdwI4zEe+4bE1GBQlneI7CB3PIB3UVAq1YaI36d+Z1IYZmwTXbqQH3JZsNm
+         37AowBzkmdnCuo4oEtryjP78layCg48IEiWFBp/0SSEe9s7iepcEhyzXWrNcNDOtCc4+
+         D3b4FO8gziOZFWDHkGIYHoa1GpeISzeZe1Cou6EGZxg0GaQ/YC3U/qFae/vm1HNak/Wf
+         8BO2yWJzgdDJiFT0TJPVlVfrgIilQjVVFvBJN1WvGCOZDffg47bJmKx91q1qR5f7ra5A
+         DfxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lRhRPXlz1dgromDCK1s2N7IY7bqqLSP4EsF8anTgRk4=;
-        b=UzsoAeht6Lp7mzteuQBb6u+fLW2fPEbem1g27Upn9pkO4dHRk31lZ7x3ztaMv13aAM
-         sHBrI5Ui6IpEOk0qNgY4+Iw2YcxBrOTZcqZblLkD4F+isefVhAV53w9KW0T/VnuASJ9G
-         J48FnPJSa+JbPj91MZ7OwqAkU4wQDV5konuL4uR0AaUPQQAXmFGkDeWcJ+jGjPQEvXMY
-         g/8pl8j+TYWUBjgXf+Y0VzLTLtDlI92tpkVfEddatKuC+xQ8Fe9b7+xS/ZgY2yw+vmCI
-         5vmtzXLBkfjS2tfO/nx8OnxLIeQbzitVyrDPKPXBp3eqilmLjhXkRprrUglb29QFRfhP
-         +TOw==
-X-Gm-Message-State: AO0yUKWi7Zl0DIRp2SVakdK9Jp/qz5qvheizPy2nnpzzeQr+jzsW5EaF
-        W9QYsgSDMt/VFW7AgJhG5gptPw==
-X-Google-Smtp-Source: AK7set+Jgz8qWMe0cgC3Y67YXKAYW3XJd3uSW0UFZAOST+pdZaUIZPVIu7/v5YDcuacneIyaTWtXKw==
-X-Received: by 2002:a05:600c:5118:b0:3dc:1dc3:7a05 with SMTP id o24-20020a05600c511800b003dc1dc37a05mr17763671wms.10.1675672028539;
-        Mon, 06 Feb 2023 00:27:08 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id x20-20020a05600c21d400b003dff2b493c8sm6663445wmj.36.2023.02.06.00.27.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Feb 2023 00:27:08 -0800 (PST)
-Message-ID: <ab8e553b-41dc-513b-f5c1-2a1d712dd299@linaro.org>
-Date:   Mon, 6 Feb 2023 09:27:05 +0100
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cOx2/4K0b63ARwObYvrzcCP9XRW9IFsQlY4VWTcOG5U=;
+        b=K0eiKaNaFMzk3dsaxCr3LEsU5zLbH7YeuYAz5yXYoVlGDrHWI6eS0i/vDalW6nVBPu
+         sOKGNrKdz83QWE7OpWPahBs4X0DmStOqNJw/PC6n9kCdLsmPApsDBMMtLQ8lwgfW6i82
+         2sNEpEBRIAIcQ54F4EJhhVngWBL7XZQUd/eRmbJqCxRjK0qbtFg23NTjwXJ0LesU3HqJ
+         zgfN98wpZEACMgJyFTsU+xnXXVS8SBQIwg2uie95B1flwcf9Mbk5RK9qgrwSlZY7p7A+
+         kFKAaup+u7QpiEvZD7ci6QSXj50qay04wgQehWkmDfFoB7RDkZ0w8az82IjcWHkPt3gz
+         Vlpg==
+X-Gm-Message-State: AO0yUKVi7YGgVDGYyI1JB0shapjiw4xm9WYE5eOsSEkUOI1e3Wto31hy
+        y54AScmgltE3RKwI29NilBK/vtII85k=
+X-Google-Smtp-Source: AK7set8zAb9HWB02uYReYweoYi7TDcerNXTAZGjycqUNfBrCvfWB2bU1gtIdQkLxrxHMLnPdY6O13Q==
+X-Received: by 2002:a05:600c:601b:b0:3dc:443e:4212 with SMTP id az27-20020a05600c601b00b003dc443e4212mr18964751wmb.1.1675672387276;
+        Mon, 06 Feb 2023 00:33:07 -0800 (PST)
+Received: from localhost.localdomain (23.red-88-10-60.dynamicip.rima-tde.net. [88.10.60.23])
+        by smtp.gmail.com with ESMTPSA id g42-20020a05600c4caa00b003de664d4c14sm10138862wmp.36.2023.02.06.00.33.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Feb 2023 00:33:06 -0800 (PST)
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, matthias.bgg@gmail.com
+Subject: [PATCH] clk: ralink: fix 'mt7621_gate_is_enabled()' function
+Date:   Mon,  6 Feb 2023 09:33:05 +0100
+Message-Id: <20230206083305.147582-1-sergio.paracuellos@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH V3 6/9] dt-bindings: qcom: add ipq5332 boards
-Content-Language: en-US
-To:     Kathiravan T <quic_kathirav@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linus.walleij@linaro.org,
-        catalin.marinas@arm.com, will@kernel.org, shawnguo@kernel.org,
-        arnd@arndb.de, dmitry.baryshkov@linaro.org,
-        marcel.ziswiler@toradex.com, nfraprado@collabora.com,
-        robimarko@gmail.com, quic_gurus@quicinc.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     quic_varada@quicinc.com, quic_srichara@quicinc.com
-References: <20230206071217.29313-1-quic_kathirav@quicinc.com>
- <20230206071217.29313-7-quic_kathirav@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230206071217.29313-7-quic_kathirav@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/02/2023 08:12, Kathiravan T wrote:
-> Document the new ipq5332 SoC/board device tree bindings
-> 
-> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
-> ---
+Compiling clock driver with CONFIG_UBSAN enabled shows the following trace:
 
+UBSAN: shift-out-of-bounds in drivers/clk/ralink/clk-mt7621.c:121:15
+shift exponent 131072 is too large for 32-bit type 'long unsigned int'
+CPU: 1 PID: 1 Comm: swapper/0 Not tainted 5.15.86 #0
+Stack : ...
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Call Trace:
+[<80009a58>] show_stack+0x38/0x118
+[<8045ce04>] dump_stack_lvl+0x60/0x80
+[<80458868>] ubsan_epilogue+0x10/0x54
+[<804590e0>] __ubsan_handle_shift_out_of_bounds+0x118/0x190
+[<804c9a10>] mt7621_gate_is_enabled+0x98/0xa0
+[<804bb774>] clk_core_is_enabled+0x34/0x90
+[<80aad73c>] clk_disable_unused_subtree+0x98/0x1e4
+[<80aad6d4>] clk_disable_unused_subtree+0x30/0x1e4
+[<80aad6d4>] clk_disable_unused_subtree+0x30/0x1e4
+[<80aad900>] clk_disable_unused+0x78/0x120
+[<80002030>] do_one_initcall+0x54/0x1f0
+[<80a922a4>] kernel_init_freeable+0x280/0x31c
+[<808047c4>] kernel_init+0x20/0x118
+[<80003e58>] ret_from_kernel_thread+0x14/0x1c
 
-Best regards,
-Krzysztof
+Shifting a value (131032) larger than the type (32 bit unsigned integer)
+is undefined behaviour in C.
+
+The problem is in 'mt7621_gate_is_enabled()' function which is using the
+'BIT()' kernel macro with the bit index for the clock gate to check if the
+bit is set. When the clock gates structure is created driver is already
+setting 'bit_idx' using 'BIT()' macro, so we are wrongly applying an extra
+'BIT()' mask here. Removing it solve the problem and makes this function
+correct. However when clock gating is correctly working, the kernel starts
+disabling those clocks that are not requested. Some drivers for this SoC
+are older than this clock driver itself. So to avoid the kernel to disable
+clocks that have been enabled until now, we must apply 'CLK_IS_CRITICAL'
+flag on gates initialization code.
+
+Fixes: 48df7a26f470 ("clk: ralink: add clock driver for mt7621 SoC")
+Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+---
+ drivers/clk/ralink/clk-mt7621.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/ralink/clk-mt7621.c b/drivers/clk/ralink/clk-mt7621.c
+index 99256659dd96..d95a33293b0a 100644
+--- a/drivers/clk/ralink/clk-mt7621.c
++++ b/drivers/clk/ralink/clk-mt7621.c
+@@ -121,7 +121,7 @@ static int mt7621_gate_is_enabled(struct clk_hw *hw)
+ 	if (regmap_read(sysc, SYSC_REG_CLKCFG1, &val))
+ 		return 0;
+ 
+-	return val & BIT(clk_gate->bit_idx);
++	return val & clk_gate->bit_idx;
+ }
+ 
+ static const struct clk_ops mt7621_gate_ops = {
+@@ -133,8 +133,14 @@ static const struct clk_ops mt7621_gate_ops = {
+ static int mt7621_gate_ops_init(struct device *dev,
+ 				struct mt7621_gate *sclk)
+ {
++	/*
++	 * There are drivers for this SoC that are older
++	 * than clock driver and are not prepared for the clock.
++	 * We don't want the kernel to disable anything so we
++	 * add CLK_IS_CRITICAL flag here.
++	 */
+ 	struct clk_init_data init = {
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 		.num_parents = 1,
+ 		.parent_names = &sclk->parent_name,
+ 		.ops = &mt7621_gate_ops,
+-- 
+2.25.1
 
