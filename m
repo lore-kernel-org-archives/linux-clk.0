@@ -2,109 +2,134 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD5AC636D6
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 11:42:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 143CDC636D6
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 12:47:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229808AbjBFLml (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Feb 2023 06:42:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53908 "EHLO
+        id S230180AbjBFMry (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Feb 2023 07:47:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229561AbjBFLml (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 06:42:41 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3F3565B0;
-        Mon,  6 Feb 2023 03:42:38 -0800 (PST)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3166KBHh003454;
-        Mon, 6 Feb 2023 11:42:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=2AkN329K6J+91VYzBSNBGV3qS2/+ZXQLtTRYt0TZRG0=;
- b=YP6o5PT6XaAgW6lBHHMXOlQCramnKS0OKaQp05U3WakVK8Ze51EK+3YpqqDg0HOZa+V9
- dFddCWdfN1LTbB7tKNBNAYk8DjvxiUXdTODn2FG0wFuJpEVGq7EpikRVVjmXqYFfPgbV
- MH1xZPBmNQnJx0VBjkRKQY5S5nvEyCsK9IjE1w8+sPYpEm44tbm5bEqeJXwWwIN1BlAZ
- IhQy6zc1nG55WIHk886qaIHqkb6mE/pJNhyyKWTIq0acPaN9wscvST4HERYPSg1urSL6
- KFN2y5DSo3qQHrCUll1kU3uKE4xiFndGvA7XF8TP4uq8nuFokSQAhMfIeE4DdTx/E1FZ oA== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nhff2kjue-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Feb 2023 11:42:20 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 316BgIC1005857
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 6 Feb 2023 11:42:18 GMT
-Received: from [10.50.19.98] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 6 Feb 2023
- 03:42:11 -0800
-Message-ID: <b5f08d0b-6009-39bb-1819-322a8dc056c4@quicinc.com>
-Date:   Mon, 6 Feb 2023 17:12:08 +0530
+        with ESMTP id S230142AbjBFMrw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 07:47:52 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 678A95B8D
+        for <linux-clk@vger.kernel.org>; Mon,  6 Feb 2023 04:47:48 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id m8so11498498edd.10
+        for <linux-clk@vger.kernel.org>; Mon, 06 Feb 2023 04:47:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5DN2T+FoaYMxmg8TLDTDI4iU0ffTdNlMHvOCFsMyfhA=;
+        b=bRWUQ7N/qBN8LD8Ox+U8aeVwyNqwgsMc45xpBMm95v3bysYfdrEUWMA5+W7U+PUPhG
+         gIowsIi373/pWio6pbLv3yrLq7pyQAPqy6DxYwhWAbqSPKaZyyQxSO+u5EhJM6I3d1Zt
+         b3CToYrBNA9TbiXpbqg1xsMLchER1BqE9PBk0oGL2TBC6jGfpaaWuLkM1rhlOZ2/cmYT
+         gU4G4dE5GR1luTZipiv6h1gkqg6RyuLNA3r9duHOqXsbbdvw+UoeLjSaa2K3i6595o4c
+         JsRzpkFlQReaGVGl2c74QL+xRE+yzlV2No0FN98CclQoUaJ1BN2bY0v3bfO0RFnO+8oJ
+         Quog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5DN2T+FoaYMxmg8TLDTDI4iU0ffTdNlMHvOCFsMyfhA=;
+        b=QCVZhTvweShj6bjwRzeRTlQwKVUsVndd+kp77koxhBc+cXtIKcpbOyT5y/r8anGXFK
+         EeGBJVbWtdg+G55xUs90h78BwDiBuBwsUvQTqWQLXjdldbIwiOF/Io+u2ctk+IlMx7ux
+         Xv5PCCQs9pzUWSQkEGa4cT8pXfvWJCM3wk/19pp2f4qiRy+msia48DuXJsF0F0tG115i
+         Rgf9Gzw47My0qK+C0GoqfKGL16KZsCUxiIaZi5bd34GRHJVcvWIW/5ULjgTN21jKZgyz
+         QSi1VQ1H6em8r24vkVe+2WBQs83TdZ8ISxd4CZy8U0B45jysUFRo0wxPbCUzDnMavZnY
+         Z5RQ==
+X-Gm-Message-State: AO0yUKUsOHxGNTGOiqeQ7+dnvWP/oUKi4+Ejv75mFiLot6DPVeR8hhQq
+        xi7NM6Mib5XRxvczAJTbeO0pOg==
+X-Google-Smtp-Source: AK7set91Xx8O+vjtfnvt4DKIlfdRGhoXBCDphUZkeom5ObV5xo0u74vxuyVNATJOjkEiuj38tEYK6w==
+X-Received: by 2002:a50:aade:0:b0:4aa:b26f:1a0a with SMTP id r30-20020a50aade000000b004aab26f1a0amr4560602edc.27.1675687667457;
+        Mon, 06 Feb 2023 04:47:47 -0800 (PST)
+Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
+        by smtp.gmail.com with ESMTPSA id t1-20020a056402020100b004615f7495e0sm5092328edv.8.2023.02.06.04.47.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Feb 2023 04:47:47 -0800 (PST)
+Message-ID: <45084181-966a-3d5b-3cc5-3170f2d404b8@linaro.org>
+Date:   Mon, 6 Feb 2023 14:47:45 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH V3 0/9] Add minimal boot support for IPQ5332
-To:     Linus Walleij <linus.walleij@linaro.org>
-CC:     <krzysztof.kozlowski@linaro.org>, <agross@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <shawnguo@kernel.org>, <arnd@arndb.de>,
-        <dmitry.baryshkov@linaro.org>, <marcel.ziswiler@toradex.com>,
-        <nfraprado@collabora.com>, <robimarko@gmail.com>,
-        <quic_gurus@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_varada@quicinc.com>,
-        <quic_srichara@quicinc.com>
-References: <20230206071217.29313-1-quic_kathirav@quicinc.com>
- <CACRpkdbtEFCSKX8VcD9bAZLy-PYfwVCRKYwXJmh0hnK2Nroq0A@mail.gmail.com>
-Content-Language: en-US
-From:   Kathiravan T <quic_kathirav@quicinc.com>
-In-Reply-To: <CACRpkdbtEFCSKX8VcD9bAZLy-PYfwVCRKYwXJmh0hnK2Nroq0A@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: iWipT9JYFiain5QlH-cLgyurHdlkRwe6
-X-Proofpoint-GUID: iWipT9JYFiain5QlH-cLgyurHdlkRwe6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-02-06_05,2023-02-06_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- spamscore=0 impostorscore=0 priorityscore=1501 bulkscore=0 mlxlogscore=900
- suspectscore=0 lowpriorityscore=0 mlxscore=0 phishscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
- definitions=main-2302060100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 2/8] arm64: dts: qcom: sm8350: add
+ RPMH_REGULATOR_LEVEL_LOW_SVS_L1
+Content-Language: en-GB
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, freedreno@lists.freedesktop.org,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+References: <20230206002735.2736935-1-dmitry.baryshkov@linaro.org>
+ <20230206002735.2736935-3-dmitry.baryshkov@linaro.org>
+ <f563f3e9-2c50-4509-a44d-9406bc725a95@linaro.org>
+ <a5635503-2d03-3996-a60f-f6255e407ca1@linaro.org>
+ <20b91f29-b47d-3051-a84a-744b8b44f4e0@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <20b91f29-b47d-3051-a84a-744b8b44f4e0@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 06/02/2023 13:23, Konrad Dybcio wrote:
+> 
+> 
+> On 6.02.2023 12:22, Dmitry Baryshkov wrote:
+>> On 06/02/2023 12:44, Konrad Dybcio wrote:
+>>>
+>>>
+>>> On 6.02.2023 01:27, Dmitry Baryshkov wrote:
+>>>> Add another power saving state used on SM8350.
+>>>>
+>>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>> ---
+>>>>    include/dt-bindings/power/qcom-rpmpd.h | 1 +
+>>> Wrong patch?
+>>
+>> And this patch is correct. sm8350 GPU OPP table uses this value (but as doesn't reference the rpmh's opp states, we don't have to add one there).
+> Okay, but it's *just* a header entry, so the subject is
+> misleading and you're not adding the dt part here.
 
-On 2/6/2023 4:55 PM, Linus Walleij wrote:
-> Hi Kathiravan,
->
-> thanks for your patches!
->
-> On Mon, Feb 6, 2023 at 8:12 AM Kathiravan T <quic_kathirav@quicinc.com> wrote:
->
->> Kathiravan T (9):
->>    dt-bindings: pinctrl: qcom: add IPQ5332 pinctrl
->>    pinctrl: qcom: Introduce IPQ5332 TLMM driver
-> I have applied these two patches to the pin control tree for v6.3.
+Ack, I got your point now. Yes, it should be `dt-bindings: add 
+RPMH_REGULATOR_LEVEL_LOW_SVS_L1'.
 
+> 
+> Konrad
+>>
+>>>
+>>> Konrad
+>>>>    1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/include/dt-bindings/power/qcom-rpmpd.h b/include/dt-bindings/power/qcom-rpmpd.h
+>>>> index 4a30d10e6b7d..1bf8e87ecd7e 100644
+>>>> --- a/include/dt-bindings/power/qcom-rpmpd.h
+>>>> +++ b/include/dt-bindings/power/qcom-rpmpd.h
+>>>> @@ -211,6 +211,7 @@
+>>>>    #define RPMH_REGULATOR_LEVEL_MIN_SVS    48
+>>>>    #define RPMH_REGULATOR_LEVEL_LOW_SVS_D1    56
+>>>>    #define RPMH_REGULATOR_LEVEL_LOW_SVS    64
+>>>> +#define RPMH_REGULATOR_LEVEL_LOW_SVS_L1    80
+>>>>    #define RPMH_REGULATOR_LEVEL_SVS    128
+>>>>    #define RPMH_REGULATOR_LEVEL_SVS_L0    144
+>>>>    #define RPMH_REGULATOR_LEVEL_SVS_L1    192
+>>
 
-Thanks a lot Linus!
+-- 
+With best wishes
+Dmitry
 
-
->
-> I see no reason to wait for more review since Krzysztof acked the
-> bindings and the driver isn't invasive at all, any problems can certainly
-> be fixed up in-tree.
->
-> Yours,
-> Linus Walleij
