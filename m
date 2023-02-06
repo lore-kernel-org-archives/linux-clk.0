@@ -2,114 +2,121 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA9CC636D4
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 09:11:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B61E2C05027
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 09:12:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229590AbjBFJL2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Feb 2023 04:11:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51698 "EHLO
+        id S229694AbjBFJMw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Feb 2023 04:12:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230001AbjBFJLY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 04:11:24 -0500
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 102F646BC;
-        Mon,  6 Feb 2023 01:11:20 -0800 (PST)
-X-UUID: 33306b98a5fe11eda06fc9ecc4dadd91-20230206
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=zKrcHq1RH7vXZiYx8/L8KIQi6d51DIHCx1EYCn36Oq8=;
-        b=CyfIjN5gnieERMV90ZtupKpnHrcsf4w1zWX/sgIFOi5toFTvFq96pAP9SLbyXUdHGBrDyOFIUFTdsi+uKUImz5No3BeKr1jIt5If9pm56jVhIgcULUB3dqdpKnebeo5WzSkDxOMeGb/MXJHXFUqTH5Ya6h+3iGSe9FoYvdH2W/8=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.19,REQID:cf9574c8-d092-4b39-a37b-2983fa29aabd,IP:0,U
-        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-        release,TS:0
-X-CID-META: VersionHash:885ddb2,CLOUDID:0f2599f7-ff42-4fb0-b929-626456a83c14,B
-        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0
-X-CID-BVR: 0
-X-UUID: 33306b98a5fe11eda06fc9ecc4dadd91-20230206
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
-        (envelope-from <moudy.ho@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1495617755; Mon, 06 Feb 2023 17:11:11 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.792.15; Mon, 6 Feb 2023 17:11:10 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.792.15 via Frontend Transport; Mon, 6 Feb 2023 17:11:10 +0800
-From:   Moudy Ho <moudy.ho@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        Moudy Ho <moudy.ho@mediatek.com>
-Subject: [PATCH v7 3/6] arm64: dts: mediatek: mt8195: add MUTEX configuration for VPPSYS
-Date:   Mon, 6 Feb 2023 17:11:06 +0800
-Message-ID: <20230206091109.1324-4-moudy.ho@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20230206091109.1324-1-moudy.ho@mediatek.com>
-References: <20230206091109.1324-1-moudy.ho@mediatek.com>
+        with ESMTP id S229735AbjBFJMu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 04:12:50 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD5872738;
+        Mon,  6 Feb 2023 01:12:47 -0800 (PST)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3168wI3P023613;
+        Mon, 6 Feb 2023 09:12:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=kPU4LanfrxPAVcvEHDqTZjjEa6nsK0fd0Y86O7cOPEE=;
+ b=I0J+4W2JXAvplValyVxgvI14IrvSX+wXsYwC7dT6KziQvorYoqeXg+KByLl6HWel3EJr
+ sdosU0IjGkyePGrlPJ0FLPiFW2NKtfWI7yL/IZxX17iksU9tjrKir0eWmzjfIo8jN6FY
+ zsaKZblTQKRCWdG9fWfa5W9rFjSK55BZL+fnwStaqHC+EGyCUjvUpxxurfTwqqaIF6f6
+ oda5r/eMvQCqiIU4I3QNH6CbF+KZEUmotWuTl0bYdtxWWYgIc2pRWA2R0zC10YG16bad
+ eJWJJ45xz1xmBKbo/jQsPIqyymPP1mnrDLQH8rUFR+42FEJg6SML/VFgOUc3/S8Ls83q xg== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nhfreu9f7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Feb 2023 09:12:43 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3169CgPi000927
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 6 Feb 2023 09:12:42 GMT
+Received: from [10.50.19.98] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 6 Feb 2023
+ 01:12:38 -0800
+Message-ID: <eea6beee-7867-137c-2124-08d81b2ec989@quicinc.com>
+Date:   Mon, 6 Feb 2023 14:42:35 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH 4/6] dt-bindings: mailbox: qcom: add compatible for the
+ IPQ5332 SoC
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20230202145208.2328032-1-quic_kathirav@quicinc.com>
+ <20230202145208.2328032-5-quic_kathirav@quicinc.com>
+ <3a346606-576b-ab89-78f5-5bbaca729090@linaro.org>
+From:   Kathiravan T <quic_kathirav@quicinc.com>
+In-Reply-To: <3a346606-576b-ab89-78f5-5bbaca729090@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: NLlgrOX80IamRhbfQX-QKQ3--HDFHR6u
+X-Proofpoint-GUID: NLlgrOX80IamRhbfQX-QKQ3--HDFHR6u
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-02-06_03,2023-02-03_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 spamscore=0 clxscore=1015 impostorscore=0 mlxscore=0
+ malwarescore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
+ phishscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2212070000 definitions=main-2302060081
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In MT8195, the MMSYS has two Video Processor Pipepline Subsystems
-named VPPSYS0 and VPPSYS1, each with specific MUTEX to control
-Start of Frame(SOF) and End of Frame (EOF) signals.
-Before working with them, the addresses, interrupts, clocks and power
-domains need to be set up in dts.
 
-Signed-off-by: Moudy Ho <moudy.ho@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- arch/arm64/boot/dts/mediatek/mt8195.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+On 2/2/2023 9:05 PM, Krzysztof Kozlowski wrote:
+> On 02/02/2023 15:52, Kathiravan T wrote:
+>> Add the mailbox compatible for the IPQ5332 SoC.
+>>
+>> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+>> ---
+>>   .../devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml     | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
+>> index 943f9472ae10..8d8cd1bbe67e 100644
+>> --- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
+>> +++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
+>> @@ -18,6 +18,7 @@ properties:
+>>       oneOf:
+> - items:
+>      - enum:
+>          - qcom,ipq5332-apcs-apps-global
+>      - const: qcom,ipq6018-apcs-apps-global
+>
+> and drop the next patch
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-index 526136703142..8fc527570791 100644
---- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-@@ -1801,6 +1801,15 @@
- 			#clock-cells = <1>;
- 		};
- 
-+		mutex@1400f000 {
-+			compatible = "mediatek,mt8195-vpp-mutex";
-+			reg = <0 0x1400f000 0 0x1000>;
-+			interrupts = <GIC_SPI 592 IRQ_TYPE_LEVEL_HIGH 0>;
-+			mediatek,gce-client-reg = <&gce1 SUBSYS_1400XXXX 0xf000 0x1000>;
-+			clocks = <&vppsys0 CLK_VPP0_MUTEX>;
-+			power-domains = <&spm MT8195_POWER_DOMAIN_VPPSYS0>;
-+		};
-+
- 		smi_sub_common_vpp0_vpp1_2x1: smi@14010000 {
- 			compatible = "mediatek,mt8195-smi-sub-common";
- 			reg = <0 0x14010000 0 0x1000>;
-@@ -1906,6 +1915,15 @@
- 			#clock-cells = <1>;
- 		};
- 
-+		mutex@14f01000 {
-+			compatible = "mediatek,mt8195-vpp-mutex";
-+			reg = <0 0x14f01000 0 0x1000>;
-+			interrupts = <GIC_SPI 635 IRQ_TYPE_LEVEL_HIGH 0>;
-+			mediatek,gce-client-reg = <&gce1 SUBSYS_14f0XXXX 0x1000 0x1000>;
-+			clocks = <&vppsys1 CLK_VPP1_DISP_MUTEX>;
-+			power-domains = <&spm MT8195_POWER_DOMAIN_VPPSYS1>;
-+		};
-+
- 		larb5: larb@14f02000 {
- 			compatible = "mediatek,mt8195-smi-larb";
- 			reg = <0 0x14f02000 0 0x1000>;
--- 
-2.18.0
 
+Hi Krzysztof,
+
+I'm planning to post the V2 of this series. How do you want me to 
+proceed? I see you posted separate series[1]. May be I can follow the 
+suggestion which you shared above, starting with IPQ?
+
+[1] 
+https://lore.kernel.org/linux-arm-msm/20230202161856.385825-1-krzysztof.kozlowski@linaro.org/
+
+
+Thanks,
+
+>
+>
+> Best regards,
+> Krzysztof
+>
