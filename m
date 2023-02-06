@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B7F6C05027
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 11:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD783C636D6
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 11:14:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229577AbjBFLMo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Feb 2023 06:12:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60872 "EHLO
+        id S229573AbjBFLOx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Feb 2023 06:14:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229628AbjBFLMm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 06:12:42 -0500
-Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22D9D1EBE8
-        for <linux-clk@vger.kernel.org>; Mon,  6 Feb 2023 03:12:40 -0800 (PST)
-Received: by mail-vs1-xe35.google.com with SMTP id e9so12257448vsj.3
-        for <linux-clk@vger.kernel.org>; Mon, 06 Feb 2023 03:12:40 -0800 (PST)
+        with ESMTP id S229701AbjBFLOr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 06:14:47 -0500
+Received: from mail-vk1-xa2f.google.com (mail-vk1-xa2f.google.com [IPv6:2607:f8b0:4864:20::a2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 034D91F5D8
+        for <linux-clk@vger.kernel.org>; Mon,  6 Feb 2023 03:14:46 -0800 (PST)
+Received: by mail-vk1-xa2f.google.com with SMTP id i38so5937999vkd.0
+        for <linux-clk@vger.kernel.org>; Mon, 06 Feb 2023 03:14:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dx0rL/jZPMLeHFNkdGq3B0lHEAtTAwxRwYVBdLrzGf4=;
-        b=RpSQ3qkKIePil2cxOGelPztIhxlANWmbbwU9RhBul5avvUPj+q0M4uLMEDT1sHKyEz
-         mjG/rfEWMAlTbf8tcDgE3qtg1IZh5leZoM6yiEzP+c3SziJCoQzPCVrZT7H7+zBMiFqf
-         B7aDf+yrPUXxtDA7GvjM0Qk87Haq0JB4MmbXw=
+        bh=NGHFyTcXjv8iNfdtTbr4AjszKwZaLlLqNsZLgUMcwgg=;
+        b=fJi7xo7rAQpGc5beT3G6uxHlyPXbm8EBAmZGqtAxOIkhN+KOdSG+tU5L1XQLpQEo5W
+         MU/qSaKWCv6/mJnTd8Izbda1mbNB6ORd4LaZFSGNNZztZ9EBnAVAqNxYm+jWsdMctk6k
+         KoeLvLO9FA6MlmGsQCJPGDYJrC/aIx0cYMytQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Dx0rL/jZPMLeHFNkdGq3B0lHEAtTAwxRwYVBdLrzGf4=;
-        b=cGih1PSgivlSVsIezv7LujX4WwqKHRhpSYRgai+9KYCJy3zFuzdH854E0koY7RT3q0
-         bog2Bq1LIfHtUv3juSe7ssAHHiqTMts7dmttyHSuiroWI/Wf57uomHTF4Ee6CBpRSCtx
-         FV9P+f7Ca/D+e7bRIiYQ4NRKpb3ptXwiZ4Puog6i0HlqdfgH/Opva2ulyK7qDe/qep4H
-         mdYECmg+Vhv0iKd8VdhFZv09Ll0s9j+oti14zSruqM6gp11Snfqm78PpIo/FsArMVORA
-         2Ysg1PbM+6G+wHDAoNAjvzVNG3LPiGrJ8iv/GYMXjPO/sKyX3Cqfxe/knprfP3xtpXbI
-         FzSg==
-X-Gm-Message-State: AO0yUKVz9Bu8e9WtxUh1mGL3GiK8Hhygz8GthLWraEDkNRGEIN5gL8pT
-        yb05Pj/as50c+Hfu2BNm59FvJZIT9LklZSC/h7Wqdg==
-X-Google-Smtp-Source: AK7set9deAUpwZvkISTP2kzU9X7LTaqj94p/drhOTgA6z/VsK90cwJfx1qsalSnu41+dWRZbIWESyD/aiCDW4pwFflw=
-X-Received: by 2002:a05:6102:322a:b0:3fe:ae88:d22 with SMTP id
- x10-20020a056102322a00b003feae880d22mr2920661vsf.65.1675681959294; Mon, 06
- Feb 2023 03:12:39 -0800 (PST)
+        bh=NGHFyTcXjv8iNfdtTbr4AjszKwZaLlLqNsZLgUMcwgg=;
+        b=mryt8zd7CU4tF+9Fh+kaWns0CU43eI7QWZuJNUNM3mfFCsdy6EQsgag4mSBdlBbDLT
+         K77whhI8+QrEYt0ROTNodbTtmMpNJi8fS/B1FZPUS0Fh6tzLDeRKZvZUrJ0Z0flbr83c
+         MvhZsj+W/ogRTj/dW9KFimRVrOcV11NVWDBDJrt6gmrghX6dK5eWYk80uoMN63jMxMbN
+         ZR3ltHzbGHjD0soKJsmP6rjeJ4tkn9gkj8vkX6fyPqGsRHsvbN9TQEmoqt04sw0NBKlN
+         tnYRrMCo83drdSx1V+lloyZNa3WwA6DJgeRZEFR3KS4mHlOzLsSxhsMLYn/TqVUFW8lc
+         avAA==
+X-Gm-Message-State: AO0yUKUrnaWAzp6yqysjxisi2ayZbG7z1vJy7u5U9gBHgtplHQXXPCGu
+        oas7ssVWwoPSj9FX3pLWPPjb7u10WsuBqZyYN0urBQ==
+X-Google-Smtp-Source: AK7set8Q/DuqU17rY4kMXr59FonOJqAzSVrz1tGjeFvBuiw+sVUO7B//FvH662hX89b8oClO3AoUxF7YZY9Z+PrN6Ac=
+X-Received: by 2002:ac5:c744:0:b0:3ea:94ea:110b with SMTP id
+ b4-20020ac5c744000000b003ea94ea110bmr2750821vkn.22.1675682085091; Mon, 06 Feb
+ 2023 03:14:45 -0800 (PST)
 MIME-Version: 1.0
-References: <20230206091109.1324-1-moudy.ho@mediatek.com> <20230206091109.1324-3-moudy.ho@mediatek.com>
-In-Reply-To: <20230206091109.1324-3-moudy.ho@mediatek.com>
+References: <20230206091109.1324-1-moudy.ho@mediatek.com> <20230206091109.1324-4-moudy.ho@mediatek.com>
+In-Reply-To: <20230206091109.1324-4-moudy.ho@mediatek.com>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Mon, 6 Feb 2023 19:12:28 +0800
-Message-ID: <CAGXv+5G+VSV=NLF9-+Z88JR+Cr6t=RGweZ88DA6VJN7-aoAqVg@mail.gmail.com>
-Subject: Re: [PATCH v7 2/6] arm64: dts: mediatek: mt8195: add MMSYS
+Date:   Mon, 6 Feb 2023 19:14:34 +0800
+Message-ID: <CAGXv+5E2U+vu4ZCwUxP5zTxSrV=H9JEL5+UB6LokGcjeH+roOQ@mail.gmail.com>
+Subject: Re: [PATCH v7 3/6] arm64: dts: mediatek: mt8195: add MUTEX
  configuration for VPPSYS
 To:     Moudy Ho <moudy.ho@mediatek.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -58,8 +58,7 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        "Roy-CW.Yeh" <roy-cw.yeh@mediatek.com>
+        Project_Global_Chrome_Upstream_Group@mediatek.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -67,13 +66,16 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Mon, Feb 6, 2023 at 5:11 PM Moudy Ho <moudy.ho@mediatek.com> wrote:
 >
-> From: "Roy-CW.Yeh" <roy-cw.yeh@mediatek.com>
+> In MT8195, the MMSYS has two Video Processor Pipepline Subsystems
+> named VPPSYS0 and VPPSYS1, each with specific MUTEX to control
+> Start of Frame(SOF) and End of Frame (EOF) signals.
+> Before working with them, the addresses, interrupts, clocks and power
+> domains need to be set up in dts.
 >
-> With the change of the MMSYS binding file for MT8195, the compatible
-> name of VPPSYS in dts need to be fixed to match the definition.
->
-> Signed-off-by: Roy-CW.Yeh <roy-cw.yeh@mediatek.com>
 > Signed-off-by: Moudy Ho <moudy.ho@mediatek.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 Tested-by: Chen-Yu Tsai <wenst@chromium.org>
+
+Probe tested only. I assume further testing requires the MDP3 driver.
