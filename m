@@ -2,193 +2,141 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2640C05027
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 05:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EAC1C61DA4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Feb 2023 07:13:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229547AbjBFFfO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Feb 2023 00:35:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45558 "EHLO
+        id S229719AbjBFHNK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Feb 2023 02:13:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbjBFFfN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 00:35:13 -0500
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B5DC1350F;
-        Sun,  5 Feb 2023 21:35:11 -0800 (PST)
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 3165Z0hQ022404;
-        Sun, 5 Feb 2023 23:35:00 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1675661700;
-        bh=Y+l9iygICZNXALZiwdEq5SU+mZIFPX05uw2Y5eIQHdM=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=fb2+QeeHrzJmcesnbVuOCRiwZc3cKkbz9EWB75Yi2xlQyzWZGD4qvHcGnQ63Mf9Z4
-         r2O3etY2EwfODZZJKGhVZHzfGJ+S0P2aOo3mOOOU5+Q5b5qcUsS/KN6W3uiAJ5qV18
-         mLjFgHo/RA5SWpj9QakDMJSQWTfVqLs6AmlkX2js=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 3165Z0S4040280
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 5 Feb 2023 23:35:00 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Sun, 5
- Feb 2023 23:34:59 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Sun, 5 Feb 2023 23:34:59 -0600
-Received: from [172.24.222.47] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 3165YrXU086264;
-        Sun, 5 Feb 2023 23:34:54 -0600
-Message-ID: <2cfd99ac-a3fe-5014-1a51-19a0ee95eaa1@ti.com>
-Date:   Mon, 6 Feb 2023 11:04:53 +0530
+        with ESMTP id S229566AbjBFHNJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 02:13:09 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 670DC12875;
+        Sun,  5 Feb 2023 23:13:07 -0800 (PST)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3165vlDF003536;
+        Mon, 6 Feb 2023 07:12:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=DmFiP85FP/vxcQ0rmFb24P05jX+s/4Cj7aPv9HsHrH0=;
+ b=bbz58a6WMyExPkRLrXvGY+byeVObWLL4+xXm9dEhxQre9CyYbHd+AL8kveR9pNBypvyY
+ rZt4LuQ0lpfaZfYDSqOVHZjioCgM1UfBOiyyMnNqXFyM8kag4nvM1VOIzFWlqbIwN+RT
+ /CpoK4kU2uu82XtDYq6fOuPMk/l+owv2+xmYzO+p9WXgQR2peUVlH3AssgycokfWS7jh
+ +oFaVTb5g/CEHCDztzRwGL83JGdjzMzGWkUwTqI37jb2n7k+X9Rg78BhZt0nXZhcHI/f
+ AluWMAAOpkhdksch135YAFQGTrN/jpfeDUnCJXKcavDvS3KzLC3M/3IItVoJv1pufm1y Sg== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nhghv2uhk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Feb 2023 07:12:45 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3167CiMZ006914
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 6 Feb 2023 07:12:44 GMT
+Received: from kathirav-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Sun, 5 Feb 2023 23:12:36 -0800
+From:   Kathiravan T <quic_kathirav@quicinc.com>
+To:     <krzysztof.kozlowski@linaro.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <shawnguo@kernel.org>, <arnd@arndb.de>,
+        <dmitry.baryshkov@linaro.org>, <marcel.ziswiler@toradex.com>,
+        <nfraprado@collabora.com>, <robimarko@gmail.com>,
+        <quic_gurus@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>,
+        Kathiravan T <quic_kathirav@quicinc.com>
+Subject: [PATCH V3 0/9] Add minimal boot support for IPQ5332
+Date:   Mon, 6 Feb 2023 12:42:08 +0530
+Message-ID: <20230206071217.29313-1-quic_kathirav@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH 1/2] dt-bindings: clock: fixed-factor: Add TI AM62 SoC
- OLDI clock
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-CC:     Samuel Holland <samuel@sholland.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Linux Clock List <linux-clk@vger.kernel.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        Linux Kernel List <linux-kernel@vger.kernel.org>,
-        Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Devarsh Thakkar <devarsht@ti.com>, Jai Luthra <j-luthra@ti.com>
-References: <20221226095745.19757-1-a-bhatia1@ti.com>
- <20221226095745.19757-2-a-bhatia1@ti.com>
- <8980856c1138571976f00413b94cfeb8.sboyd@kernel.org>
- <1856e963-4514-92f3-5d43-d5b711083193@ti.com>
- <367fba29-bc08-1f27-249c-09e406adfbbb@ideasonboard.com>
- <f324c845f0d291d041a13046a349ae95.sboyd@kernel.org>
-Content-Language: en-US
-From:   Aradhya Bhatia <a-bhatia1@ti.com>
-In-Reply-To: <f324c845f0d291d041a13046a349ae95.sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: xExxf9W8ishTxxW-UyPeNRgMXrY_liy7
+X-Proofpoint-ORIG-GUID: xExxf9W8ishTxxW-UyPeNRgMXrY_liy7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-02-06_03,2023-02-03_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ bulkscore=0 impostorscore=0 spamscore=0 suspectscore=0 malwarescore=0
+ mlxlogscore=526 lowpriorityscore=0 mlxscore=0 priorityscore=1501
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302060061
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+The IPQ5332 is Qualcomm's 802.11ax SoC for Routers, Gateways and
+Access Points.
 
-On 26-Jan-23 05:36, Stephen Boyd wrote:
-> Quoting Tomi Valkeinen (2023-01-17 01:40:24)
->> On 16/01/2023 11:51, Aradhya Bhatia wrote:
->>> Hi Stephen,
->>>
->>> Thanks for taking a look at the patch.
->>>
->>> On 12-Jan-23 01:14, Stephen Boyd wrote:
->>>> Quoting Aradhya Bhatia (2022-12-26 01:57:44)
->>>>> Add "ti,k3-am62-oldi-clk-div" to the fixed factor clock compatible enum
->>>>> list.
->>>>>
->>>>> "ti,k3-am62-oldi-clk-div" is a fixed-factor clock that helps the TI
->>>>> display subsystem request a pixel clock for itself and a corresponding
->>>>> serial clock for its OLDI Transmitters. The serial clock is 7 times the
->>>>> pixel clock. This clock needs the clock set rate request to be
->>>>> propagated to the parent clock provider.
->>>>>
->>>>> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
->>>>> ---
->>>>>   Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml | 1 +
->>>>>   1 file changed, 1 insertion(+)
->>>>>
->>>>> diff --git 
->>>>> a/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml 
->>>>> b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
->>>>> index 8f71ab300470..0696237530f7 100644
->>>>> --- a/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
->>>>> +++ b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
->>>>> @@ -14,6 +14,7 @@ properties:
->>>>>     compatible:
->>>>>       enum:
->>>>>         - fixed-factor-clock
->>>>> +      - ti,k3-am62-oldi-clk-div
->>>>
->>>> I don't see this compatible anywhere in the kernel tree. Is there a
->>>> patch that adds a node using this? I wonder why the display subsystem
->>>> can't add this fixed factor clk directly in the driver. Does the OLDI
->>>> Transmitter send a clk to the display subsystem?
->>>>
->>>> I'm asking all these questions because we got rid of vendor compatibles
->>>> here in hopes of simplifying the logic. Maybe the problem can be
->>>> approached differently, but I don't know all the details.
->>>
->>>
->>> +--------+                       +------------------+
->>> |        |                       |                  |
->>> |  PLL   +---+----+------------->| OLDI Transmitter |
->>> |        |   |    |              |                  |
->>> +--------+   |    |              +------------------+
->>>               |    |
->>>               |    |              +------------------+
->>>               |    |              |                  |
->>>               |    +------------->| OLDI Transmitter |
->>>               |                   |                  |
->>>               |                   +------------------+
->>>               |
->>>               |                   +------------------+
->>>               |   +----------+    |                  |
->>>               |   |    /7    |    |      Display     |
->>>               +-->|   Clock  +--->| Sub-System (DSS) |
->>>                   |    Div   |    |                  |
->>>                   +----------+    +------------------+
->>>
->>> This is how the the clock architecture for DSS looks like.
->>>
->>> The clock divider is not a part of DSS, but outside it.
-> 
-> The divider is fixed as well? And presumably inside the SoC?
-Yes, and yes!
+This series adds minimal board boot support for ipq5332-mi01.2 board.
 
-> 
->>>
->>> The clock request flow is initiated by the DSS driver because it has the
->>> required timing parameter information. It requests a certain pixel
->>> frequency. But the frequency required by the OLDI TXes is 7 times
->>> that pixel frequency.
->>>
->>> (Just for clarification, in some cases, the OLDI TX does require only
->>> 3.5 times the pixel frequency, but in those situations there is another
->>> divider in-front of OLDI TX that gets activated with a signal and
->>> divides the incoming frequency by 2, thereby requiring the PLL to still
->>> generate a 7x frequency.)
->>>
->>> Hence, the idea is that the clock divider is able to propagate the set
->>> rate request back to PLL, asking for a frequency 7 times more than the
->>> DSS's asking rate.
-> 
-> Got it. Can the PLL driver provide a pll_div_7 clk that is used for the
-> DSS pixel clk?
-> 
-The PLL driver can not map the clock divider and hence can't provide the
-pll_div_7 clock directly to DSS.
+Also, this series depends on the below patch
+https://lore.kernel.org/linux-arm-msm/20230120082631.22053-1-quic_kathirav@quicinc.com/
 
->>>
->>> If this is something less than ideal and should not go up, then I can
->>> implement a new clock device with a separate but similar clock driver.
->>>
->>> Let me know what you think!
->>
->> As a clarification I would also add to the above that on other TI SoCs 
->> with DSS, and also for the second video port on AM62, the clock 
->> framework provides DSS a clock using the pclk frequency.
->>
-> 
-> Are you saying that adding a fixed div-7 clk in the DSS driver is wrong?
-Yes. All variants of DSS accept a pixel clock and it would be wrong to
-implement a fixed div-7 in the DSS driver.
+Changes in V3:
+	- Detailed change log is present in respective patches
+	- V2 can be found at
+	  https://lore.kernel.org/linux-arm-msm/20230130114702.20606-1-quic_kathirav@quicinc.com/
 
-All that said, I now understand that the new compatible shouldn't go
-there. I will implement a new driver and post it. =)
+Changes in V2:
+	- Rebased on linux-next/master
+	- Dropped the 'dt-bindings: mmc: sdhci-msm: add IPQ5332 compatible',
+	  since it is already part of linux-next/master
+	- Added a new patch 'clk: qcom: ipq5332: mark GPLL4 as critical temporarily'
+	- Detailed change log is present in respective patches
+	- V1 can be found at
+	  https://lore.kernel.org/linux-arm-msm/20230125104520.89684-1-quic_kathirav@quicinc.com/
 
 
-Regards
-Aradhya
+Kathiravan T (9):
+  dt-bindings: pinctrl: qcom: add IPQ5332 pinctrl
+  pinctrl: qcom: Introduce IPQ5332 TLMM driver
+  clk: qcom: Add STROMER PLUS PLL type for IPQ5332
+  dt-bindings: clock: Add Qualcomm IPQ5332 GCC
+  clk: qcom: add Global Clock controller (GCC) driver for IPQ5332 SoC
+  dt-bindings: qcom: add ipq5332 boards
+  dt-bindings: firmware: qcom,scm: document IPQ5332 SCM
+  arm64: dts: qcom: add IPQ5332 SoC and MI01.2 board support
+  arm64: defconfig: Enable IPQ5332 SoC base configs
+
+ .../devicetree/bindings/arm/qcom.yaml         |    7 +
+ .../bindings/clock/qcom,ipq5332-gcc.yaml      |   61 +
+ .../bindings/firmware/qcom,scm.yaml           |    1 +
+ .../bindings/pinctrl/qcom,ipq5332-tlmm.yaml   |  134 +
+ arch/arm64/boot/dts/qcom/Makefile             |    1 +
+ arch/arm64/boot/dts/qcom/ipq5332-mi01.2.dts   |   75 +
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi         |  268 ++
+ arch/arm64/configs/defconfig                  |    2 +
+ drivers/clk/qcom/Kconfig                      |    8 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/clk-alpha-pll.c              |   11 +
+ drivers/clk/qcom/clk-alpha-pll.h              |    1 +
+ drivers/clk/qcom/gcc-ipq5332.c                | 3850 +++++++++++++++++
+ drivers/pinctrl/qcom/Kconfig                  |   10 +
+ drivers/pinctrl/qcom/Makefile                 |    1 +
+ drivers/pinctrl/qcom/pinctrl-ipq5332.c        |  861 ++++
+ include/dt-bindings/clock/qcom,ipq5332-gcc.h  |  356 ++
+ 17 files changed, 5648 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq5332-tlmm.yaml
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq5332-mi01.2.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq5332.dtsi
+ create mode 100644 drivers/clk/qcom/gcc-ipq5332.c
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq5332.c
+ create mode 100644 include/dt-bindings/clock/qcom,ipq5332-gcc.h
+
+-- 
+2.17.1
+
