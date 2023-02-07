@@ -2,120 +2,90 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F6FC636CC
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Feb 2023 15:22:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C4DC636CC
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Feb 2023 20:39:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232466AbjBGPWz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Feb 2023 10:22:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34236 "EHLO
+        id S231470AbjBGUjz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Feb 2023 15:39:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232069AbjBGPWv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Feb 2023 10:22:51 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A8F610E6;
-        Tue,  7 Feb 2023 07:22:50 -0800 (PST)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id C28736602077;
-        Tue,  7 Feb 2023 15:22:47 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1675783368;
-        bh=TZepTjo3+nkX5BEQbUyUdwEN1gV6gBz2EQ1M2bKFwnY=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=jOCPgYCsbXt8gQDxCDqMhk3LT2l7kUUGjjAmcqFWgHpsSrmi+eBZyju608AbpEQTS
-         JwfANqNaoiogWq7GX08/8RSeiYYaduBrfqaXic04dQ9iipkVgU/w/5iWq+5NSkXAV4
-         iO+Zo/PRQw/f7eDgoFKi5Df6Kt2AjflDk6+jLZTeLy1DyWqQ3AF+yh2hPrx7f3sGPc
-         BWhyiyXKZC3Be5GoQUVEM8Y8seq4EvVIxCMHwxDVCvVYbixGXt2JPynse5fgXpBTUk
-         fKQANB/aulkoAye/QTiUzhNN3vzsR3bBwBTIBTRdImfcYsmScYov9hdCjo4PswTTrQ
-         bOttbVgsizukw==
-Message-ID: <326154c5-0a78-31c0-2d70-1ef4a8a0c1bb@collabora.com>
-Date:   Tue, 7 Feb 2023 16:22:45 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v1 29/45] clk: mediatek: mt7986-apmixed: Use PLL_AO flag
- to set critical clock
-Content-Language: en-US
-To:     Daniel Golle <daniel@makrotopia.org>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
-        wenst@chromium.org, johnson.wang@mediatek.com,
-        miles.chen@mediatek.com, chun-jie.chen@mediatek.com,
-        fparent@baylibre.com, msp@baylibre.com, nfraprado@collabora.com,
-        rex-bc.chen@mediatek.com, zhaojh329@gmail.com,
-        sam.shih@mediatek.com, edward-jw.yang@mediatek.com,
-        yangyingliang@huawei.com, granquet@baylibre.com,
-        pablo.sun@mediatek.com, sean.wang@mediatek.com,
-        chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <20230206152928.918562-1-angelogioacchino.delregno@collabora.com>
- <20230206152928.918562-30-angelogioacchino.delregno@collabora.com>
- <Y+JjjLLYoOgSlG55@makrotopia.org>
-From:   AngeloGioacchino Del Regno 
+        with ESMTP id S230078AbjBGUjz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Feb 2023 15:39:55 -0500
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3D793CE39;
+        Tue,  7 Feb 2023 12:39:53 -0800 (PST)
+Received: by mail-ot1-f46.google.com with SMTP id g21-20020a9d6495000000b0068bb336141dso4607804otl.11;
+        Tue, 07 Feb 2023 12:39:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2+MMAdZlfw/9O4oUybbbQ4cVQfeOgnkULR9gIWh8BDo=;
+        b=f24Qm1NClOVqveEkCJSlOiYgvcNRW3tdpA5Rs9HSBJA3Siu1AJZWPG46g0EqjiyY7w
+         NwTswCLR0j7Spv9cGthu03jV2YBYFn3mp0IE4QgInPLua6bSQZS8sefiMt0I06V9eicq
+         oWIm8hvgd97L3SSWpZgpNvJekTMaHnLGwFqkraGEAyyvcR4XnTl0kk8KBdTv0O+N0tVI
+         YHLh9otndB9Lklxkyz6cqU974idgoSnr0+Vc5FdtKayF5SJXc/pE5pl5pjcVy3pxA20K
+         4woMy1EahXKUKUV2YsQSBcJVQEu8Tl5FQ0qvDyfMIYqzrw7/6bnTcSZ7VTNIxnr29xBb
+         OnMg==
+X-Gm-Message-State: AO0yUKXURid3PxJaojXiNRX3P/JHniGw1q9pFjUFreDYoBPQRcqzcNWl
+        wF8yzVhlzfPbmmYwBdfu+w==
+X-Google-Smtp-Source: AK7set+Xb8y1929C/3ir/6OF+cXnTSlLAjlNzMxZ14b7jdJhUthzb5BwWTe/EnSQGuz0NzYLhHXWMA==
+X-Received: by 2002:a9d:4681:0:b0:68a:ed8b:caf3 with SMTP id z1-20020a9d4681000000b0068aed8bcaf3mr2591459ote.33.1675802393043;
+        Tue, 07 Feb 2023 12:39:53 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id cp23-20020a056830661700b0068bdd78f763sm7083449otb.29.2023.02.07.12.39.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Feb 2023 12:39:52 -0800 (PST)
+Received: (nullmailer pid 4117410 invoked by uid 1000);
+        Tue, 07 Feb 2023 20:39:51 -0000
+Date:   Tue, 7 Feb 2023 14:39:51 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <Y+JjjLLYoOgSlG55@makrotopia.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Cc:     chun-jie.chen@mediatek.com, miles.chen@mediatek.com,
+        wenst@chromium.org, linux-mediatek@lists.infradead.org,
+        rex-bc.chen@mediatek.com, mturquette@baylibre.com,
+        edward-jw.yang@mediatek.com, linux-kernel@vger.kernel.org,
+        matthias.bgg@gmail.com, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org, johnson.wang@mediatek.com,
+        jose.exposito89@gmail.com, linux-clk@vger.kernel.org,
+        kernel@collabora.com, krzysztof.kozlowski+dt@linaro.org
+Subject: Re: [PATCH v3 3/7] dt-bindings: clock: mediatek,mt8186-fhctl:
+ Support MT6795, MT8173/92/95
+Message-ID: <167580232739.4115577.9212468332187095949.robh@kernel.org>
+References: <20230206100105.861720-1-angelogioacchino.delregno@collabora.com>
+ <20230206100105.861720-4-angelogioacchino.delregno@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230206100105.861720-4-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 07/02/23 15:43, Daniel Golle ha scritto:
+
+On Mon, 06 Feb 2023 11:01:01 +0100, AngeloGioacchino Del Regno wrote:
+> MT6795, MT8173, MT8192 and MT8195 support Frequency Hopping: add the
+> compatibles for them.
 > 
-> On Mon, Feb 06, 2023 at 04:29:12PM +0100, AngeloGioacchino Del Regno wrote:
->> Instead of calling clk_prepare_enable() at probe time, add the PLL_AO
->> flag to CLK_APMIXED_ARMPLL clock: this will set CLK_IS_CRITICAL.
-> 
-> I've been preparing a similar change, but also splitting-off the
-> apmixed part from dt headers into a file of its own, so that one of now
-> identical drivers for MT7986 and MT7981 can be removed in favor of a
-> shared driver.
-> Should I propose this on top of this series or can you make this change?
-> 
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  .../devicetree/bindings/clock/mediatek,mt8186-fhctl.yaml   | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
 
-That's cool!!! I'm not comfortable in stealing the idea, that's all yours.
-Please go on with basing it on top of my series, but wait a couple of days
-before doing that, as I have to send a v2 of this one and that'll happen
-in the next one..or two days.
 
-Cheers!
-Angelo
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
 
->>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
->>   drivers/clk/mediatek/clk-mt7986-apmixed.c | 4 +---
->>   1 file changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/drivers/clk/mediatek/clk-mt7986-apmixed.c b/drivers/clk/mediatek/clk-mt7986-apmixed.c
->> index 62080ee4dbe3..227ca572056e 100644
->> --- a/drivers/clk/mediatek/clk-mt7986-apmixed.c
->> +++ b/drivers/clk/mediatek/clk-mt7986-apmixed.c
->> @@ -42,7 +42,7 @@
->>   		 "clkxtal")
->>   
->>   static const struct mtk_pll_data plls[] = {
->> -	PLL(CLK_APMIXED_ARMPLL, "armpll", 0x0200, 0x020C, 0x0, 0, 32,
->> +	PLL(CLK_APMIXED_ARMPLL, "armpll", 0x0200, 0x020C, 0x0, PLL_AO, 32,
->>   	    0x0200, 4, 0, 0x0204, 0),
->>   	PLL(CLK_APMIXED_NET2PLL, "net2pll", 0x0210, 0x021C, 0x0, 0, 32,
->>   	    0x0210, 4, 0, 0x0214, 0),
->> @@ -77,8 +77,6 @@ static int clk_mt7986_apmixed_probe(struct platform_device *pdev)
->>   
->>   	mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
->>   
->> -	clk_prepare_enable(clk_data->hws[CLK_APMIXED_ARMPLL]->clk);
->> -
->>   	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
->>   	if (r) {
->>   		pr_err("%s(): could not register clock provider: %d\n",
->> -- 
->> 2.39.1
->>
->>
+If a tag was not added on purpose, please state why and what changed.
+
+Missing tags:
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
 
