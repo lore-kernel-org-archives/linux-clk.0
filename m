@@ -2,54 +2,55 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DADEC636CC
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Feb 2023 09:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BDFBC636CC
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Feb 2023 09:49:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231672AbjBGJlY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Feb 2023 04:41:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49110 "EHLO
+        id S231419AbjBGJto (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Feb 2023 04:49:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231646AbjBGJlX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Feb 2023 04:41:23 -0500
-Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A3E65FC1
-        for <linux-clk@vger.kernel.org>; Tue,  7 Feb 2023 01:41:22 -0800 (PST)
-Received: by mail-vs1-xe33.google.com with SMTP id t20so1357300vsa.12
-        for <linux-clk@vger.kernel.org>; Tue, 07 Feb 2023 01:41:21 -0800 (PST)
+        with ESMTP id S231204AbjBGJtn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Feb 2023 04:49:43 -0500
+Received: from mail-vk1-xa35.google.com (mail-vk1-xa35.google.com [IPv6:2607:f8b0:4864:20::a35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F5122E0F9
+        for <linux-clk@vger.kernel.org>; Tue,  7 Feb 2023 01:49:42 -0800 (PST)
+Received: by mail-vk1-xa35.google.com with SMTP id g25so3980vkk.11
+        for <linux-clk@vger.kernel.org>; Tue, 07 Feb 2023 01:49:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=z47jquheaISlmvaf1FVEcgmJUQJ8XYLvl0oKGBE77is=;
-        b=aYa9zIdLtif0FwTqlAZxpxZYrEurh8AKhOhMK3XToKB/QecPRTMdA1Fflvep/53b3L
-         yvOUUxfWyt0mZhjXkWfy3hFC+RT/zoBQT/eEZXazsNpTqtgMvvgnkSS3490OHqoyahU+
-         Y/grwzdCpJbh9rW94SKE1TcKDpHzazlb3HUHw=
+        bh=YoW3sjlSzqH6ySQMRZbQRxMotG8FJyB7q2pV+SeilrM=;
+        b=g2IUWbA4gGq0AVgEaJMonDk+PY1GyDAWQ1luMTjMLAlvh/+9cE/NrqaQj1S0Y/IMJM
+         VQUkPzq0sY7z0gCgMS5B6nczHQ/c4a5W/imV0oP6cAIiBbRncsWLULqSd7GyoRZcb3OK
+         zzDmyfFZl05yo1SHwisn1V5xitiF52XUzoNQk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=z47jquheaISlmvaf1FVEcgmJUQJ8XYLvl0oKGBE77is=;
-        b=rn6RDPNp+qtnfK+64Vbg4dVG3MWep38p0JmpM/I31ds2ds+XKGz9sZt/ER5IyxtOHi
-         uwp91p0Tf2liUmf5/b2q531hhq3B9rabYJjgHI5jLPN6U9qCTjEsGKT/LLUVSCP4Rs92
-         +sMuDIJFpUk4a1n4J31Q3AISSEhiGgenU75GhRgS37bFzqLKSmBDVbn4dg0uMX4ppNKE
-         SAlH8KJ+P42q6YpqQyM+UPdw5jLYln1fSpZj5x4YYgMBMtyMJRiLpxRa4W4ydwP2c9X3
-         WXJZuwLwtP9992w9DbpUB+oQ+hXrbpk6lSkAf6I+mKh0xYDofVK12c7T7wvpjEUYL4ui
-         pq7A==
-X-Gm-Message-State: AO0yUKVQhhxOlCy5vYWwm0YduZg1r6e/ly9Qsn7de8djG1kX3xUFozj0
-        IZEVje3hBMOA+XRT/rWQUCgvQdomUP12uEKVrlvAdw==
-X-Google-Smtp-Source: AK7set/0Pocl3IQY+0CFHfoLLcC5bZPmOMEhu0z0xP0ngcuSbBnObUD0C6IFTIgXY/RCiQll0BfBa+K/EcxnU37xCoU=
-X-Received: by 2002:a67:d206:0:b0:3ed:2cd6:deed with SMTP id
- y6-20020a67d206000000b003ed2cd6deedmr644186vsi.65.1675762881149; Tue, 07 Feb
- 2023 01:41:21 -0800 (PST)
+        bh=YoW3sjlSzqH6ySQMRZbQRxMotG8FJyB7q2pV+SeilrM=;
+        b=HDSDRyUFlDhoGLj4X6ULeq1v2Puls76Qv6I5xzCnKG+LIWeNc73jw4JEKoc/u7zPoS
+         H0Vh5gbtAeZCRuVbsd2ToBB0yY6di+++a/wsX+ZTIuKaJvjKWE0Pd2QrS/iDtEq55S/d
+         m75U1622YFzDdRH7kvM2eDnJdvGNWDxZBJeOV71sVg/uUZ++oAArXXZMIRtoXYCjy7t3
+         8jo19RU5G5fqgIbcxIDVKY1+cJ4oOrGbbzjsMRuWKsy/ogvJWDBlc28o04vK7MbCnO55
+         AEBKvkqoGC4bHoaaC1WVZmWuoRXdjpSQjP9yr5V6wGBUe2l55wJ8IUoTuUd6vRgsHtU8
+         hGWA==
+X-Gm-Message-State: AO0yUKWInORYHaG+h+eOEM1fpg8rZLpcfY0hysPYOoADeHpgjg40loYJ
+        RP6b2y2qfGNCB4CFRhc+MmWu3UbzYkICcYYTmtZWZg==
+X-Google-Smtp-Source: AK7set8D6nY7w9ShU5K2U8eRiHiDa9ibytJS0Wv6eY0rGBr0MJsKEKzmlFXTcfeZomR8j6SmMRYHpsgb6aDQlDYucJs=
+X-Received: by 2002:a1f:9493:0:b0:3ea:7394:e9ef with SMTP id
+ w141-20020a1f9493000000b003ea7394e9efmr317423vkd.11.1675763381226; Tue, 07
+ Feb 2023 01:49:41 -0800 (PST)
 MIME-Version: 1.0
-References: <20230206152928.918562-1-angelogioacchino.delregno@collabora.com> <20230206152928.918562-19-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230206152928.918562-19-angelogioacchino.delregno@collabora.com>
+References: <20230206152928.918562-1-angelogioacchino.delregno@collabora.com>
+ <847332fb-5f10-a8dd-4203-a1906973d0ff@collabora.com> <CAGXv+5GUaWzoPZuO3ZUX60exZeg2S=91u-i1bGOraV1AcWP9Og@mail.gmail.com>
+ <ea5b8fd0-579e-12e1-d9ca-775b6db30f69@collabora.com>
+In-Reply-To: <ea5b8fd0-579e-12e1-d9ca-775b6db30f69@collabora.com>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Tue, 7 Feb 2023 17:41:10 +0800
-Message-ID: <CAGXv+5GYFv_Eqzbv9w4T6XWjuC-wnSp6Djj74dymChfXj6UXCw@mail.gmail.com>
-Subject: Re: [PATCH v1 18/45] clk: mediatek: mt8183: Compress clocks arrays
- entries where possible
+Date:   Tue, 7 Feb 2023 17:49:30 +0800
+Message-ID: <CAGXv+5F3eReSDY2ZLVSg4RoT-H9uA9G1zboN5e_8x-beuZC9sA@mail.gmail.com>
+Subject: Re: [PATCH v1 00/45] MediaTek clocks: full module build and cleanups
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
@@ -68,16 +69,39 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Feb 6, 2023 at 11:30 PM AngeloGioacchino Del Regno
+On Tue, Feb 7, 2023 at 5:19 PM AngeloGioacchino Del Regno
 <angelogioacchino.delregno@collabora.com> wrote:
 >
-> Increase human readability and decrease number of lines by compressing
-> the clock array entries where possible, to a maximum of ~90 columns.
+> Il 07/02/23 10:04, Chen-Yu Tsai ha scritto:
+> > On Mon, Feb 6, 2023 at 11:38 PM AngeloGioacchino Del Regno
+> > <angelogioacchino.delregno@collabora.com> wrote:
+> >>
+> >> Il 06/02/23 16:28, AngeloGioacchino Del Regno ha scritto:
+> >>> This is part 2 of the "MediaTek clocks cleanups and improvements" series,
+> >>> which was already picked.
+> >>>
+> >>> If reading this full cover letter is too boring for you, here's a short
+> >>> summary of the changes of this series:
+> >>>    - Added mtk_clk_pdev_probe() for mtk-mmsys probed clocks;
+> >>>    - Added divider clock support to common probe mechanism;
+> >>>    - Various cleanups here and there;
+> >>>    - Converted most clock drivers to platform_driver;
+> >>>    - MediaTek clocks can now be built as modules.
+> >>>
+> >>> NOTE: Applies on top of [1].
+> >>>
+> >>>
+> >
+> > Something broke on MT8183 Juniper, though I'm not sure what. It ended up
+> > crashing in mtk-cpufreq in a badly written error path. Once that was fixed
+> > it was endlessly looping through deferred probe. Seems like mtk-cpufreq
+> > was not able to get all its resources.
+> >
 >
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  drivers/clk/mediatek/clk-mt8183.c | 432 ++++++++++--------------------
->  1 file changed, 144 insertions(+), 288 deletions(-)
+> I would be silly to expect everything to go alright in v1, wouldn't I? :-)
+> I'll recheck and try to understand what went wrong here.
 
-wdiff agrees. I'd go up to 100 columns though. Should be able to squeeze
-out a couple more lines.
+"clk: mediatek: mt8183: Convert all remaining clocks to common probe" is
+the first patch that breaks things.
+
+ChenYu
