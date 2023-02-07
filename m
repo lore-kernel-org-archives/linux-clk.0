@@ -2,167 +2,79 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D05F7C636D4
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Feb 2023 04:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5176AC636CD
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Feb 2023 05:02:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230283AbjBGEc1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Feb 2023 23:32:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44734 "EHLO
+        id S230200AbjBGFCH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Feb 2023 00:02:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230294AbjBGEcZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2023 23:32:25 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7012613DDB;
-        Mon,  6 Feb 2023 20:32:23 -0800 (PST)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3174I1Y0011209;
-        Tue, 7 Feb 2023 04:32:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=dDG9jZi8NNGifa3TxlUih9e+cN+KpyacXCMrVoKssXg=;
- b=lNwz7D2zT1rFRpY478YJOQa8zHWEVL+Cs5VF6mb5WY80JfjiJYqBSz20tYCY0nEIdIQb
- WmaxscjV+2I0uwjqAAPEO1GMM8GsTKrWa1QDT6w3/9/1UDfocKzZuR4+OKmu4+aIsJuq
- NXrxruv2en17P16s/rGLTZjJphVu/kZ9a49Y7JtOo67/bHb5hy4y2f/l3qNXchezoSMW
- 3QHmKTCFQ1pNSko+6xxg7tV/kj9TSzV8NtCMA9dtCiyHJo1HHyQkQLTuZmXbxFeYNLHE
- CrBDOzh8a4Qvj6rRtK9lmAQoz17RadjU7KCVhIX1AsCCVwWwvj7ZGfoQJOUWPNkjxv6X Bw== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nhgng5aar-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Feb 2023 04:32:07 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3174W60P006581
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 7 Feb 2023 04:32:06 GMT
-Received: from [10.201.2.96] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 6 Feb 2023
- 20:31:58 -0800
-Message-ID: <e59d133e-40a9-0dae-b272-20d82e8c9b76@quicinc.com>
-Date:   Tue, 7 Feb 2023 10:01:55 +0530
+        with ESMTP id S230145AbjBGFBx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Feb 2023 00:01:53 -0500
+Received: from mail-vs1-xe30.google.com (mail-vs1-xe30.google.com [IPv6:2607:f8b0:4864:20::e30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA96746A0
+        for <linux-clk@vger.kernel.org>; Mon,  6 Feb 2023 21:01:47 -0800 (PST)
+Received: by mail-vs1-xe30.google.com with SMTP id e9so15088382vsj.3
+        for <linux-clk@vger.kernel.org>; Mon, 06 Feb 2023 21:01:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JzZxhqIK8VhysJ5sWFrp6HBP0d2gguK8lzGF96oeeJY=;
+        b=k9hUTA70o7Pv03Fw+mhKWYoNw4WzoTEgJU4opObsu/oieKz2vo8+0EzrZdclvkFM2l
+         34zZdwyIUTed5eK+R6GWFBJhpEEHuBGkRvbui8S+7SDPNd5UnjVpL7aV5gN3N7DzoBx8
+         H03d53epQkYi81+4qHff9il0/LWAUGelm3NRc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JzZxhqIK8VhysJ5sWFrp6HBP0d2gguK8lzGF96oeeJY=;
+        b=VuA4piVVz7I8cjpEJEQXanBJnuZF9hlnTLA0yXbGFo9O3DFzW0BguPYNQACdTQK7qv
+         5RaO6x+hhKoZjIw1Z2USjijLzu8qBH7Q2kuGiffQZhWOTeR43bv3zKos18pcLCFS09zZ
+         eWcp+HSAT5Sug0kMAxRl/YnwwFQE72Jcfe3+9era86cURa91vjklfAYjYrhXLpTN1P7K
+         tBgJ8qTXeR8MKjnk2wURMTR5qg1AVVkmK94J8Ar2dTJHrXiQguvImAU9KCHeD7HmQtwh
+         hgEKuWi6ridtg8JDLcfXJ2MJDRyTEwmx+QSJ+HBV92RUhE+/GWqiVq5hcg+ESNnNVypZ
+         J5pw==
+X-Gm-Message-State: AO0yUKWCisj3xYQXqFOstU4vBysCqTY1w0b58PLn/cPBORFJE8XykFux
+        gb+lCaRkFSZRzHYQQd5Vk9XjB9VfsmZkZliUg18xhg==
+X-Google-Smtp-Source: AK7set9Z70LfNVS6WrBF5dXe2VuLYtlYTHr8qqFya8+8Mty35+VW4+2UeSbTXwSsqJOqw6PJvuPi/t/tzMePg+eAeOg=
+X-Received: by 2002:a67:d206:0:b0:3ed:2cd6:deed with SMTP id
+ y6-20020a67d206000000b003ed2cd6deedmr501277vsi.65.1675746106739; Mon, 06 Feb
+ 2023 21:01:46 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH V3 5/9] clk: qcom: add Global Clock controller (GCC)
- driver for IPQ5332 SoC
-Content-Language: en-US
-To:     Bjorn Andersson <andersson@kernel.org>
-CC:     <krzysztof.kozlowski@linaro.org>, <agross@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linus.walleij@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <shawnguo@kernel.org>, <arnd@arndb.de>,
-        <dmitry.baryshkov@linaro.org>, <marcel.ziswiler@toradex.com>,
-        <nfraprado@collabora.com>, <robimarko@gmail.com>,
-        <quic_gurus@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_varada@quicinc.com>,
-        <quic_srichara@quicinc.com>
-References: <20230206071217.29313-1-quic_kathirav@quicinc.com>
- <20230206071217.29313-6-quic_kathirav@quicinc.com>
- <20230207034108.bypitlfxicpz6wqb@ripper>
-From:   Kathiravan T <quic_kathirav@quicinc.com>
-In-Reply-To: <20230207034108.bypitlfxicpz6wqb@ripper>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4VfyI-KjiMDmNKzm7rj--9gij9Vn1Nna
-X-Proofpoint-ORIG-GUID: 4VfyI-KjiMDmNKzm7rj--9gij9Vn1Nna
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-02-06_07,2023-02-06_03,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=999
- bulkscore=0 malwarescore=0 spamscore=0 mlxscore=0 suspectscore=0
- phishscore=0 impostorscore=0 adultscore=0 lowpriorityscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2302070039
+References: <20230206152928.918562-1-angelogioacchino.delregno@collabora.com> <20230206152928.918562-2-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230206152928.918562-2-angelogioacchino.delregno@collabora.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Tue, 7 Feb 2023 13:01:35 +0800
+Message-ID: <CAGXv+5H+dFdrXB1dWRwzU+CsBe6rE+ge1T7St08kueSgepA-kg@mail.gmail.com>
+Subject: Re: [PATCH v1 01/45] clk: mediatek: clk-mtk: Switch to device_get_match_data()
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        johnson.wang@mediatek.com, miles.chen@mediatek.com,
+        chun-jie.chen@mediatek.com, daniel@makrotopia.org,
+        fparent@baylibre.com, msp@baylibre.com, nfraprado@collabora.com,
+        rex-bc.chen@mediatek.com, zhaojh329@gmail.com,
+        sam.shih@mediatek.com, edward-jw.yang@mediatek.com,
+        yangyingliang@huawei.com, granquet@baylibre.com,
+        pablo.sun@mediatek.com, sean.wang@mediatek.com,
+        chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thanks Bjorn for the review!
-
-
-On 2/7/2023 9:11 AM, Bjorn Andersson wrote:
-> On Mon, Feb 06, 2023 at 12:42:13PM +0530, Kathiravan T wrote:
->> diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
-> [..]
->> +
->> +enum {
->> +	DT_SLEEP_CLK,
->> +	DT_XO,
->> +	DT_PCIE_2LANE_PHY_PIPE_CLK,
->> +	DT_PCIE_2LANE_PHY_PIPE_X1_CLK,
->> +	DT_USB_PCIE_WRAPPER_PIPE_CLK,
-> This list does not match the clocks as defined in the binding.
-
-
-Ack. will fix this in next spin.
-
-
+On Mon, Feb 6, 2023 at 11:29 PM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
 >
->> +};
->> +
->> +enum {
->> +	P_PCIE3X2_PIPE,
->> +	P_PCIE3X1_0_PIPE,
->> +	P_PCIE3X1_1_PIPE,
->> +	P_USB3PHY_0_PIPE,
->> +	P_CORE_BI_PLL_TEST_SE,
->> +	P_GCC_GPLL0_OUT_MAIN_DIV_CLK_SRC,
->> +	P_GPLL0_OUT_AUX,
->> +	P_GPLL0_OUT_MAIN,
->> +	P_GPLL2_OUT_AUX,
->> +	P_GPLL2_OUT_MAIN,
->> +	P_GPLL4_OUT_AUX,
->> +	P_GPLL4_OUT_MAIN,
->> +	P_SLEEP_CLK,
->> +	P_XO,
->> +};
->> +
->> +static const struct clk_parent_data gcc_parent_data_xo = { .index = DT_XO };
->> +
->> +static struct clk_alpha_pll gpll0_main = {
->> +	.offset = 0x20000,
->> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_STROMER_PLUS],
->> +	.clkr = {
->> +		.enable_reg = 0xb000,
->> +		.enable_mask = BIT(0),
->> +		.hw.init = &(const struct clk_init_data){
-> Please add a space between ')' and '{ on all these.
-
-
-Ack.
-
-
+> Instead of using of_device_get_match_data(), switch to the generic
+> device_get_match_data().
 >
->> +			.name = "gpll0_main",
->> +			.parent_data = &gcc_parent_data_xo,
->> +			.num_parents = 1,
->> +			.ops = &clk_alpha_pll_stromer_ops,
->> +		},
->> +	},
->> +};
-> [..]
->> +static const struct qcom_cc_desc gcc_ipq5332_desc = {
->> +	.config = &gcc_ipq5332_regmap_config,
->> +	.clks = gcc_ipq5332_clocks,
->> +	.num_clks = ARRAY_SIZE(gcc_ipq5332_clocks),
->> +	.resets = gcc_ipq5332_resets,
->> +	.num_resets = ARRAY_SIZE(gcc_ipq5332_resets),
->> +	.clk_hws = gcc_ipq5332_hws,
->> +	.num_clk_hws = ARRAY_SIZE(gcc_ipq5332_hws),
-> No GDSCs?
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-No, there is no GDSC support.
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 
-
->
-> Regards,
-> Bjorn
+though I don't think this does anything for the MediaTek platform lol
