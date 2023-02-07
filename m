@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C7FC636CD
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Feb 2023 11:51:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C120C636CC
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Feb 2023 12:14:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229607AbjBGLvy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Feb 2023 06:51:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36276 "EHLO
+        id S229460AbjBGMO4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Feb 2023 07:14:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229685AbjBGLvv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Feb 2023 06:51:51 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7886A93EA;
-        Tue,  7 Feb 2023 03:51:50 -0800 (PST)
+        with ESMTP id S229447AbjBGMOz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Feb 2023 07:14:55 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B03F913DEF;
+        Tue,  7 Feb 2023 04:14:54 -0800 (PST)
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 66DF86602065;
-        Tue,  7 Feb 2023 11:51:47 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 04B8C660207F;
+        Tue,  7 Feb 2023 12:14:51 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1675770708;
-        bh=MWr1vOqArgCsUOmneGrQYdT5d7VoYOD70EsSHjzp9K8=;
+        s=mail; t=1675772093;
+        bh=L0/T/7mYU2a6r4txVoxLosoJmH3FkDFA5tvP+rxF8Og=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=TsgF/WNw7qo5dn46OkfZHT1D/q98kQkrCN5//xeC/347i9WPKGpRsO66puk+834UZ
-         IOb2B2a5Na7D8UZdCBJ4GNW8w0qxRGwtef0wygCM5NPNBF6daxUT3jr9YjXOkZo7Xd
-         ricB4Aym84ZyzlOjQCSRZKG8CD1OlSa9mGV/XY5ZsYlDVwa4s1KkYqTQ+Pbc4oGABo
-         wEnptoVnb2DAfQEVhY1lC5Pwrr6GIp2rZ4vadHkZB0dR38wk4EBhPPR4aBAk145Ulb
-         agCj9zoeViupOp+lyYRfARikgOjDBKQpJm7CTl1pqp9e4Qei6G83bMUJeWygYjhli/
-         LxU8P4ykTe3kQ==
-Message-ID: <0713672c-37fe-663b-11a4-0baf02c11e6b@collabora.com>
-Date:   Tue, 7 Feb 2023 12:51:44 +0100
+        b=dEZE2vT4OwG3P66WvrYpMwfdRchqT1Jr+WhxHIsiCd39pm2a4RjvzZD24pxPJ4rE+
+         /Xvjd/808xPFiInZQJmEogEzuTH9ysPUglGpbeLzor2NG5zpfLtr8wy7eGjUzQ98fv
+         yysRHQEfyeeBELhOgVAd96UlVhUyLWXimKS5OEfrUcZUPI5KPkDYWoIy45sDDnpwkp
+         BJv2Dzpf5Ecu7Ogfs329O9WJpaA5YqHj7BYr1FdMO6fmiDOTsW61XZWdNtplnPplai
+         4vNkmCKxibbdISVZz+ChIknChQ6xfHdA7LGPIURUx/5A086izgAFPcsZ7hizyyR8Mm
+         iAv89b9DCwDkg==
+Message-ID: <7adadf24-c14f-6eb4-edfd-265dca93e907@collabora.com>
+Date:   Tue, 7 Feb 2023 13:14:49 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH v1 16/45] clk: mediatek: mt8167: Convert to
- mtk_clk_simple_{probe,remove}()
+Subject: Re: [PATCH v1 19/45] clk: mediatek: mt8183: Convert all remaining
+ clocks to common probe
 Content-Language: en-US
 To:     Chen-Yu Tsai <wenst@chromium.org>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
@@ -52,37 +52,92 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
 References: <20230206152928.918562-1-angelogioacchino.delregno@collabora.com>
- <20230206152928.918562-17-angelogioacchino.delregno@collabora.com>
- <CAGXv+5Gb5S0k1c5EqPKoiBBHFyf7QBqyeWZkdAjQDCcTLYU_bw@mail.gmail.com>
+ <20230206152928.918562-20-angelogioacchino.delregno@collabora.com>
+ <CAGXv+5G0ksgGMXUGk-=CXUANtGQa2M5RLY+wG7c-0cMSKS5DJQ@mail.gmail.com>
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <CAGXv+5Gb5S0k1c5EqPKoiBBHFyf7QBqyeWZkdAjQDCcTLYU_bw@mail.gmail.com>
+In-Reply-To: <CAGXv+5G0ksgGMXUGk-=CXUANtGQa2M5RLY+wG7c-0cMSKS5DJQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 07/02/23 09:07, Chen-Yu Tsai ha scritto:
+Il 07/02/23 10:58, Chen-Yu Tsai ha scritto:
 > On Mon, Feb 6, 2023 at 11:30 PM AngeloGioacchino Del Regno
 > <angelogioacchino.delregno@collabora.com> wrote:
 >>
->> Convert topckgen and infracfg clock drivers to use the common
->> mtk_clk_simple_probe() mechanism and change this from the old
->> "static" CLK_OF_DECLARE to be a platform driver, allowing it
->> to eventually be built as a module.
+>> Switch to mtk_clk_simple_{probe,remove}() for infracfg and topckgen
+>> clocks on MT8183 to allow full module build for clock drivers.
+>> In order to do this, like done for other MediaTek clock drivers, it
+>> was necessary to join top_early_divs with top_divs and to stop
+>> registering the `clk13m` clock early.
 >>
 >> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>   drivers/clk/mediatek/clk-mt8183.c | 160 ++++++------------------------
+>>   1 file changed, 28 insertions(+), 132 deletions(-)
+>>
+>> diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
+>> index 0fad2cf7f41b..035fdd02f0be 100644
+>> --- a/drivers/clk/mediatek/clk-mt8183.c
+>> +++ b/drivers/clk/mediatek/clk-mt8183.c
+>> @@ -25,11 +25,8 @@ static const struct mtk_fixed_clk top_fixed_clks[] = {
+>>          FIXED_CLK(CLK_TOP_UNIVP_192M, "univpll_192m", "univpll", 192000000),
+>>   };
+>>
+>> -static const struct mtk_fixed_factor top_early_divs[] = {
+>> -       FACTOR(CLK_TOP_CLK13M, "clk13m", "clk26m", 1, 2),
+>> -};
+>> -
+>>   static const struct mtk_fixed_factor top_divs[] = {
+>> +       FACTOR(CLK_TOP_CLK13M, "clk13m", "clk26m", 1, 2),
 > 
-> Code looks OK, but vdecsys converted to builtin_platform_driver() while
-> the others to module_platform_driver(). This deserves an explanation.
+> A clock with the same name is now present in the DT, and so this clock
+> would fail to register. We should drop this one completely and point
+> any references to it internally to "csw_f26m_ck_d2".
+> 
+>>          FACTOR(CLK_TOP_F26M_CK_D2, "csw_f26m_ck_d2", "clk26m", 1, 2),
+> 
+> MT8192 and MT8195 aren't affected because they only have "csw_f26m_ck_d2",
+> which systimer was referencing.
+> 
+>>          FACTOR_FLAGS(CLK_TOP_SYSPLL_CK, "syspll_ck", "mainpll", 1, 1, 0),
+>>          FACTOR_FLAGS(CLK_TOP_SYSPLL_D2, "syspll_d2", "syspll_ck", 1, 2, 0),
+>> @@ -809,26 +806,6 @@ static const struct mtk_clk_rst_desc clk_rst_desc = {
+>>          .rst_bank_nr = ARRAY_SIZE(infra_rst_ofs),
+>>   };
+>>
+>> -static struct clk_hw_onecell_data *top_clk_data;
+>> -
+>> -static void clk_mt8183_top_init_early(struct device_node *node)
+>> -{
+>> -       int i;
+>> -
+>> -       top_clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
+>> -
+>> -       for (i = 0; i < CLK_TOP_NR_CLK; i++)
+>> -               top_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
+>> -
+>> -       mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs),
+>> -                       top_clk_data);
+> 
+> And since we used to not do error checking, the name conflict was OK.
+> With the new common probe, it's not.
 > 
 
-There's nothing to be explained, other than this being a big overlook... :-P
+That makes me proud of my changes to extend the new common probe mechanism,
+as this is one of (hopefully not) many wrongs that slipped through without
+any apparent issue.
+Anyway, there was no reference to this clk13m (nor CLK_TOP_CLK13M) anywhere
+so I changed this commit to just "forget about this clock" (advertising the
+reason in the commit description, of course).
 
-Fixed that for v2, vdec deserves the module_platform_driver() treatment too!
+Is MT8183's cpufreq working after this change, or is it still not behaving?
 
-Cheers,
+If not, can you please provide a log for me to check?
+I don't have any MT8183 device locally, for now at least.
+
+Thanks,
 Angelo
-
 
