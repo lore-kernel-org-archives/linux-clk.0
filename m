@@ -2,90 +2,89 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C4DC636CC
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Feb 2023 20:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CEABC636D3
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Feb 2023 20:41:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231470AbjBGUjz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Feb 2023 15:39:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36038 "EHLO
+        id S229462AbjBGUld (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Feb 2023 15:41:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230078AbjBGUjz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Feb 2023 15:39:55 -0500
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3D793CE39;
-        Tue,  7 Feb 2023 12:39:53 -0800 (PST)
-Received: by mail-ot1-f46.google.com with SMTP id g21-20020a9d6495000000b0068bb336141dso4607804otl.11;
-        Tue, 07 Feb 2023 12:39:53 -0800 (PST)
+        with ESMTP id S229574AbjBGUlJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Feb 2023 15:41:09 -0500
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 851863A5BD;
+        Tue,  7 Feb 2023 12:40:55 -0800 (PST)
+Received: by mail-ot1-f43.google.com with SMTP id g21-20020a9d6495000000b0068bb336141dso4608640otl.11;
+        Tue, 07 Feb 2023 12:40:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2+MMAdZlfw/9O4oUybbbQ4cVQfeOgnkULR9gIWh8BDo=;
-        b=f24Qm1NClOVqveEkCJSlOiYgvcNRW3tdpA5Rs9HSBJA3Siu1AJZWPG46g0EqjiyY7w
-         NwTswCLR0j7Spv9cGthu03jV2YBYFn3mp0IE4QgInPLua6bSQZS8sefiMt0I06V9eicq
-         oWIm8hvgd97L3SSWpZgpNvJekTMaHnLGwFqkraGEAyyvcR4XnTl0kk8KBdTv0O+N0tVI
-         YHLh9otndB9Lklxkyz6cqU974idgoSnr0+Vc5FdtKayF5SJXc/pE5pl5pjcVy3pxA20K
-         4woMy1EahXKUKUV2YsQSBcJVQEu8Tl5FQ0qvDyfMIYqzrw7/6bnTcSZ7VTNIxnr29xBb
-         OnMg==
-X-Gm-Message-State: AO0yUKXURid3PxJaojXiNRX3P/JHniGw1q9pFjUFreDYoBPQRcqzcNWl
-        wF8yzVhlzfPbmmYwBdfu+w==
-X-Google-Smtp-Source: AK7set+Xb8y1929C/3ir/6OF+cXnTSlLAjlNzMxZ14b7jdJhUthzb5BwWTe/EnSQGuz0NzYLhHXWMA==
-X-Received: by 2002:a9d:4681:0:b0:68a:ed8b:caf3 with SMTP id z1-20020a9d4681000000b0068aed8bcaf3mr2591459ote.33.1675802393043;
-        Tue, 07 Feb 2023 12:39:53 -0800 (PST)
+        bh=3VTa7BOK0RGbDUdbwHDssuk11doisGgMTd26GS9ZN/k=;
+        b=0GYUevbygndN95dhy9kVKeoYyxq3bRNVoUVaOWq2v0XKDBhELU0VFNAdAh5mtyl2JM
+         pCYP6hoIlhg+tv3wjDHwPIvPXul0rnMThncAx5mGiYpIavWPdBNB0mYGgaXg3MmwVUBv
+         ctMOoyM/cAGst2p2Pt0NdG29/vryd2eud3Z2ETVCFsW9paUFFL1HQXQelHV6K3pv4Gbc
+         y7qg6vR7jZiw6Mi45WXABhzkR1gEDwueV04T4sAxtNcKpQrsHbiX7XNPk0QIsd+tVFpl
+         BIjyhCAJlVdv4JAQAUGDa8nS1lIwMqXSPjT+C5isTdVic7RbG18Nc+nsBnfzhIgiCJz6
+         zBcA==
+X-Gm-Message-State: AO0yUKVXjWkJVOcW9yRHv/rRH43Ro7ZoZ4bM4YTBfG59AfPq7n7LbU8o
+        QNlzYPDopuf9bucBF6dd9Q==
+X-Google-Smtp-Source: AK7set+HkyW9Hc3hWn26BhUdyJq8BIOVGjQyzpdrWQDGylxdn5msvGvfvq/OEieGD00dsYnNZ8LJkw==
+X-Received: by 2002:a9d:4e06:0:b0:68b:d889:8b78 with SMTP id p6-20020a9d4e06000000b0068bd8898b78mr2336052otf.32.1675802454808;
+        Tue, 07 Feb 2023 12:40:54 -0800 (PST)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id cp23-20020a056830661700b0068bdd78f763sm7083449otb.29.2023.02.07.12.39.52
+        by smtp.gmail.com with ESMTPSA id cy22-20020a056830699600b0066b9a6bf3bcsm7081447otb.12.2023.02.07.12.40.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Feb 2023 12:39:52 -0800 (PST)
-Received: (nullmailer pid 4117410 invoked by uid 1000);
-        Tue, 07 Feb 2023 20:39:51 -0000
-Date:   Tue, 7 Feb 2023 14:39:51 -0600
+        Tue, 07 Feb 2023 12:40:54 -0800 (PST)
+Received: (nullmailer pid 4118999 invoked by uid 1000);
+        Tue, 07 Feb 2023 20:40:53 -0000
+Date:   Tue, 7 Feb 2023 14:40:53 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     chun-jie.chen@mediatek.com, miles.chen@mediatek.com,
-        wenst@chromium.org, linux-mediatek@lists.infradead.org,
-        rex-bc.chen@mediatek.com, mturquette@baylibre.com,
-        edward-jw.yang@mediatek.com, linux-kernel@vger.kernel.org,
-        matthias.bgg@gmail.com, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org, johnson.wang@mediatek.com,
-        jose.exposito89@gmail.com, linux-clk@vger.kernel.org,
-        kernel@collabora.com, krzysztof.kozlowski+dt@linaro.org
-Subject: Re: [PATCH v3 3/7] dt-bindings: clock: mediatek,mt8186-fhctl:
- Support MT6795, MT8173/92/95
-Message-ID: <167580232739.4115577.9212468332187095949.robh@kernel.org>
-References: <20230206100105.861720-1-angelogioacchino.delregno@collabora.com>
- <20230206100105.861720-4-angelogioacchino.delregno@collabora.com>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     dri-devel@lists.freedesktop.org, Stephen Boyd <sboyd@kernel.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        devicetree@vger.kernel.org, freedreno@lists.freedesktop.org,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Rob Clark <robdclark@gmail.com>, linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v2 1/8] dt-bindings: clock: Merge qcom,gpucc-sm8350 into
+ qcom,gpucc.yaml
+Message-ID: <167580245306.4118943.6938671659588578951.robh@kernel.org>
+References: <20230206145707.122937-1-dmitry.baryshkov@linaro.org>
+ <20230206145707.122937-2-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230206100105.861720-4-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230206145707.122937-2-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Mon, 06 Feb 2023 11:01:01 +0100, AngeloGioacchino Del Regno wrote:
-> MT6795, MT8173, MT8192 and MT8195 support Frequency Hopping: add the
-> compatibles for them.
+On Mon, 06 Feb 2023 16:57:00 +0200, Dmitry Baryshkov wrote:
+> The GPU clock controller bindings for the Qualcomm sm8350 platform are
+> not correct. The driver uses .fw_name instead of using indices to bind
+> parent clocks, thus demanding the clock-names usage. With the proper
+> clock-names in place, the bindings becomes equal to the bindings defined
+> by qcom,gpucc.yaml, so it is impractical to keep them in a separate
+> file.
 > 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->  .../devicetree/bindings/clock/mediatek,mt8186-fhctl.yaml   | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+>  .../bindings/clock/qcom,gpucc-sm8350.yaml     | 71 -------------------
+>  .../devicetree/bindings/clock/qcom,gpucc.yaml |  2 +
+>  2 files changed, 2 insertions(+), 71 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc-sm8350.yaml
 > 
 
-
-Please add Acked-by/Reviewed-by tags when posting new versions. However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for acks received on the version they apply.
-
-If a tag was not added on purpose, please state why and what changed.
-
-Missing tags:
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-
+Acked-by: Rob Herring <robh@kernel.org>
 
