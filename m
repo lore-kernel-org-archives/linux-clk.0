@@ -2,101 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B762FC05027
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Feb 2023 09:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 644D7C636D3
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Feb 2023 09:15:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229512AbjBHJAH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Feb 2023 04:00:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47546 "EHLO
+        id S231332AbjBHJPk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Feb 2023 04:15:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230075AbjBHJAG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Feb 2023 04:00:06 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ED693609C;
-        Wed,  8 Feb 2023 01:00:03 -0800 (PST)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 79BC5660208E;
-        Wed,  8 Feb 2023 09:00:00 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1675846801;
-        bh=11ktIaV2fDGiz0UeBz/ISfzVWABGbiyyfbya63PwGMs=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=T9RV5qmD60LiRDwyUp39R43ZgRCBtA6FigFe30IE9fUCoDKiE1RRPyeOlOJRAjOCR
-         0xXLDap3/7wiCWeks9aHIsRWxfCTmSUG95o/RC6bvlHUAZQu4LXULvsQXdgY330NoR
-         /4sMdFT3+vfrtGAPYTpCzM5FGtzz0nUhegRqPC79DirjtyJfsPp1Qf/pC5WJvrai54
-         O/4vWOarHvZ/fCosB1Ej9uBoam2d8OSEPk4R+CHOkdEbqQ1P+EHw1dJlp7flivDUny
-         M19DaQL6g/+gdGiZnIRpyDakEE7YtCwgz5FJJiO3NHNt33Nqi/nC/gBu0i3qgfKTDm
-         Ff95/Pqy2FIsA==
-Message-ID: <45f8e284-8d56-898b-0897-94c576e09c2c@collabora.com>
-Date:   Wed, 8 Feb 2023 09:59:57 +0100
+        with ESMTP id S231574AbjBHJPK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Feb 2023 04:15:10 -0500
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5563845F4B
+        for <linux-clk@vger.kernel.org>; Wed,  8 Feb 2023 01:13:49 -0800 (PST)
+Received: by mail-ej1-x62e.google.com with SMTP id dr8so49495318ejc.12
+        for <linux-clk@vger.kernel.org>; Wed, 08 Feb 2023 01:13:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DuUic+i1U7Wq2FP3EF4of24nNHQpKF/wijqQmHWITsc=;
+        b=nDFpFjJi+KCbO6IFRe32xwArDhZIPitZ6Y96CW/FKiA5ymoAy+yjpJvOBtX/RwweKI
+         FaWjGlDj8jwi8Wm2Bg6GWr8+ohC3KiZnhlxvbLiSDWkCqqOggWAI9kL/OjSPNc2lwInh
+         258UyqHnbEFEsrq1hJjVTC6/e8bThS442mGvY8u7jwed66xz3vrVoX9PNGd3DjB/j3oA
+         EB7u+ZIIDIR5Hjg421QkT77lCVnv2TXUAoVKgD0TGfSXorqb4XI/W3mg8SaSD2uKCklO
+         K7cK/Y3U2+IQduHLnY+GV8q6dZrON1N4hS6VcnM/UTW3P+CxPKR9Q69DdQS3++/1a0cE
+         AFsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DuUic+i1U7Wq2FP3EF4of24nNHQpKF/wijqQmHWITsc=;
+        b=NT8iDnuV2u3xiYLKliMy9/11VZJlgw8WyHme2cOQqQa55QiitlR4cQ6HYGKEiU84FX
+         Cr32qFwovRkCIqbahzzsKz+a0GFQV7wvlFtyfnScFeYpbQorjsJ3dKRViuCY3S5eN72+
+         uoGixpQZ9A2bK92EEAA9rXX93nZqc9lOEsLaImU9J5qXZP7aODqIsr5Fk4KgQn0v/9dl
+         UQIuZW1qSKCumImhHhu/aZsuH8SYM8N8dh/j9oAY1QFGTDPEmvje6h9nLnCFi1NCMXpT
+         McQf/nEnsgPcar9pRzigjwH6HrIs+oRWh6jsqLV7TksktLRkmf/21wDXDoWlURX21F3i
+         +Ogg==
+X-Gm-Message-State: AO0yUKXYvGuydVk4SZQxP3i51Y3bfTTXpWTQjF9AXqAJOIsNk0CpVP7/
+        cuBCBGhDv0J6Jxw5CWI+csKE78m2IgoQyXKy
+X-Google-Smtp-Source: AK7set98G9vNhInMtInU3tZjeGD3eVHTPFfFB2IIwKOg8kwNUoKVef+wYxPQ9KycOilQpaUf5cVtqw==
+X-Received: by 2002:a17:907:2da6:b0:8ae:f73e:233f with SMTP id gt38-20020a1709072da600b008aef73e233fmr490317ejc.32.1675847626017;
+        Wed, 08 Feb 2023 01:13:46 -0800 (PST)
+Received: from localhost.localdomain (abxh117.neoplus.adsl.tpnet.pl. [83.9.1.117])
+        by smtp.gmail.com with ESMTPSA id z2-20020a1709064e0200b00887a23bab85sm7987279eju.220.2023.02.08.01.13.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Feb 2023 01:13:45 -0800 (PST)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+To:     linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        agross@kernel.org, krzysztof.kozlowski@linaro.org
+Cc:     marijn.suijten@somainline.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 01/10] clk: qcom: branch: Add helper functions for setting retain bits
+Date:   Wed,  8 Feb 2023 10:13:31 +0100
+Message-Id: <20230208091340.124641-2-konrad.dybcio@linaro.org>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230208091340.124641-1-konrad.dybcio@linaro.org>
+References: <20230208091340.124641-1-konrad.dybcio@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v1 35/45] clk: mediatek: Split MT8195 clock drivers and
- allow module build
-To:     Chen-Yu Tsai <wenst@chromium.org>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
-        johnson.wang@mediatek.com, miles.chen@mediatek.com,
-        chun-jie.chen@mediatek.com, daniel@makrotopia.org,
-        fparent@baylibre.com, msp@baylibre.com, nfraprado@collabora.com,
-        rex-bc.chen@mediatek.com, zhaojh329@gmail.com,
-        sam.shih@mediatek.com, edward-jw.yang@mediatek.com,
-        yangyingliang@huawei.com, granquet@baylibre.com,
-        pablo.sun@mediatek.com, sean.wang@mediatek.com,
-        chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <20230206152928.918562-1-angelogioacchino.delregno@collabora.com>
- <20230206152928.918562-36-angelogioacchino.delregno@collabora.com>
- <CAGXv+5HTP0cLGEQ+qkAt8nsOp5DqCOgPyAOJ66fF91SKX=hZvw@mail.gmail.com>
-Content-Language: en-US
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <CAGXv+5HTP0cLGEQ+qkAt8nsOp5DqCOgPyAOJ66fF91SKX=hZvw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 08/02/23 09:28, Chen-Yu Tsai ha scritto:
-> On Mon, Feb 6, 2023 at 11:30 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> MT8195 clock drivers were encapsulated in one single (and big) Kconfig
->> option: there's no reason to do that, as it is totally unnecessary to
->> build in all or none of them.
->>
->> Split them out: keep boot-critical clocks as bool and allow choosing
->> non critical clocks as tristate.
-> 
-> The power domain controller references vppsys*, vdecsys*, vdosys*, wpesys,
-> imgsys and camsys. I'd argue that this makes these clock drivers
-> semi-boot-critical. Maybe mfgcfg as well when we add the GPU?
+Most Qualcomm branch clocks come with a pretty usual set of bits that
+can enable memory retention by means of not turning off parts of the
+memory logic. Add them to the common header file and introduce helper
+functions for setting them instead of using magic writes.
 
-You don't need to power on additional power domains if you want to load modules
-from a ramdisk! :-)
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+ drivers/clk/qcom/clk-branch.h | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-Besides, you caught me: mtk-pm-domains will be my next target after clocks...
-I don't like how it behaves in regard to probe deferrals. Specifically,
-I dislike the fact that you either register *all domains* or *none at all*
-(unless instantiating two different driver instances and that's ugly).
-
-
-Angelo
-
-> 
-> They should be bundled together at the very least. The power domain
-> controller not probing disables all display and multimedia capabilities.
-> 
-> Also wondering if we should have "default COMMON_CLK_MT8195" ...
-> 
-> I suppose the same questions apply to other SoCs.
-> 
-> ChenYu
-
+diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
+index 17a58119165e..55b3a2c3afed 100644
+--- a/drivers/clk/qcom/clk-branch.h
++++ b/drivers/clk/qcom/clk-branch.h
+@@ -37,6 +37,32 @@ struct clk_branch {
+ 	struct clk_regmap clkr;
+ };
+ 
++/* Branch clock common bits for HLOS-owned clocks */
++#define CBCR_FORCE_MEM_CORE_ON		BIT(14)
++#define CBCR_FORCE_MEM_PERIPH_ON	BIT(13)
++#define CBCR_FORCE_MEM_PERIPH_OFF	BIT(12)
++
++static inline void qcom_branch_set_force_mem_core(struct regmap *regmap,
++						  struct clk_branch clk, bool on)
++{
++	regmap_update_bits(regmap, clk.halt_reg, CBCR_FORCE_MEM_CORE_ON,
++			   on ? CBCR_FORCE_MEM_CORE_ON : 0);
++}
++
++static inline void qcom_branch_set_force_periph_on(struct regmap *regmap,
++						   struct clk_branch clk, bool on)
++{
++	regmap_update_bits(regmap, clk.halt_reg, CBCR_FORCE_MEM_PERIPH_ON,
++			   on ? CBCR_FORCE_MEM_PERIPH_ON : 0);
++}
++
++static inline void qcom_branch_set_force_periph_off(struct regmap *regmap,
++						    struct clk_branch clk, bool on)
++{
++	regmap_update_bits(regmap, clk.halt_reg, CBCR_FORCE_MEM_PERIPH_OFF,
++			   on ? CBCR_FORCE_MEM_PERIPH_OFF : 0);
++}
++
+ extern const struct clk_ops clk_branch_ops;
+ extern const struct clk_ops clk_branch2_ops;
+ extern const struct clk_ops clk_branch_simple_ops;
+-- 
+2.39.1
 
