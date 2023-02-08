@@ -2,90 +2,156 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F0A3C05027
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Feb 2023 08:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AEC3C636CC
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Feb 2023 08:18:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229457AbjBHICi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Feb 2023 03:02:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47542 "EHLO
+        id S229632AbjBHISI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Feb 2023 03:18:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229700AbjBHICi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Feb 2023 03:02:38 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CEF73B656
-        for <linux-clk@vger.kernel.org>; Wed,  8 Feb 2023 00:02:36 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id z13so5244509wmp.2
-        for <linux-clk@vger.kernel.org>; Wed, 08 Feb 2023 00:02:36 -0800 (PST)
+        with ESMTP id S230062AbjBHISH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Feb 2023 03:18:07 -0500
+Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6011642BED
+        for <linux-clk@vger.kernel.org>; Wed,  8 Feb 2023 00:18:01 -0800 (PST)
+Received: by mail-vs1-xe33.google.com with SMTP id d66so19001118vsd.9
+        for <linux-clk@vger.kernel.org>; Wed, 08 Feb 2023 00:18:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4pVmXav81pfLtiXP44XbehuhQ9TZgefQnc5YIUQ+J6E=;
-        b=c6t4uou8yx25E88Jrt3w04mCTLJGSqXyH8adQhprx2ssoyLli11Ja+BWpNHDy//Q5q
-         hbDxV1Bi/slcnupy6yXHSibp1hVuYbVVj5Z0IBVI56EfxZr81asSMl+58HORhxv8Pck+
-         2/2ymRN/Ry+kA1W0jUaHJux+XXWuCLX+v+S6i6aGGYUnKw0o/trbYEJ3FNepsr7USInu
-         viRqR6n/dx1E+PYkJoFIHzlLGQnZ1NZ+b24XY+MnWL0nUr+95nhhIJTR1TfEhf8A/uyo
-         c1SHa+1W6BQukp4A2R0R4ArcLIFajXNjhJljPZQVYj0bgmP+RibUWZPIhxOjqCHkmMfe
-         Gz2w==
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+tHCOo8sJZFp5flt13By50o4tNKKdblBZ0IURhBoSow=;
+        b=DWoNKb7tfi9icZU4oIKLPqnab+Sj0mZeDxOTR23zSyVv7NUeoHIV9jah/FfcehBZT3
+         IvIRbnr6y0oAMomfg/Vi3ZeAh9tQS087u25cYyphjBfXSXgI1shgp9tVmT72JbqiP0dp
+         l87j3oZbJaWOEfU9eE25Kttipo2uV6TJwUUHA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4pVmXav81pfLtiXP44XbehuhQ9TZgefQnc5YIUQ+J6E=;
-        b=WufhOnNGiEPzMLZdtz3TjBqw5g5BaIXNO2HNVrXZ4JExeUBIg7NSacNp5cYmTlQ2Vi
-         vp65UXXbVl8tcsF3xiRwkCyxG1aRNx0hO2M61QUqa1rEHLqSdjVLxWFVGeIY3iq665HO
-         gz9bt1Aq0jbNasC4osj5Q2J42t9DPUuqCZNORq/jTvvUbXpF+rPNYEODLZEWc7eJBau0
-         p9ErW75LIFqa0yeqMuCP0gF+LCOJ8XmvDEoABEqGvgPtDYTVPqeOBW9hrlvjJPTIZ/dE
-         OsZwse1R9f7kg8j1pX8j097TovdN5igDnTR0QhlebSQvHv1zs88GdJumI/3XzmQnZ202
-         UmtA==
-X-Gm-Message-State: AO0yUKUrlEnPq694g8I8gJ/8dHonKomWthTrYIP+UasdT5EDwzT7xaSX
-        Fsr7x5LIBGzxRJ1bZXaFYdWGVg==
-X-Google-Smtp-Source: AK7set/SZ2FNcYFFs2R31aNIpbtF+Y0jd0Sie+f4EwomceFk3zaHZLdPh2kn/l70TGbCD4ctPqMkNw==
-X-Received: by 2002:a05:600c:43c4:b0:3dc:5302:ad9 with SMTP id f4-20020a05600c43c400b003dc53020ad9mr7688573wmn.27.1675843355020;
-        Wed, 08 Feb 2023 00:02:35 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id o27-20020a05600c511b00b003e0238d9101sm1196294wms.31.2023.02.08.00.02.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Feb 2023 00:02:34 -0800 (PST)
-Message-ID: <7a3c2cf9-728f-0287-a4ef-d9645c78dfec@linaro.org>
-Date:   Wed, 8 Feb 2023 09:02:33 +0100
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+tHCOo8sJZFp5flt13By50o4tNKKdblBZ0IURhBoSow=;
+        b=02pqvXX+pLtLanitu8R00fQqMTqxnpLv1u6l1zNRg9ixAVsM/lHRsGWv5E8uREthOE
+         jSUYgpI2Hooz2yKXlD4dSfds+sumrEMCSYVSKWoYfNp7/3/kgd5DGTSQ2AJe7SNQOhSH
+         2P9h9+kZaEHnjAfgRuYHAcsl11+WPcrLpAL74QMZgr7DH2ehjnZyZLF4bFjOLJfBlc7C
+         b0PU+FFFRA6Zenl1LmPNKDxayV5SsfVxYJrw2VlHoS2PrZhc4Ist+7eczxlPRilV3zOr
+         NxhyEKrCN2eSlOKtnxguEufolLh34wXJC6Y/DKdr8CYjoi8KalO8Kzg+GiCk9e6XWZ8u
+         qxng==
+X-Gm-Message-State: AO0yUKW45RUAJx/OUjXzpt68FiSNF/ykkYJTVvlIZcmQsea7bTjogRBY
+        G1/HxMh+pk7kb49P6U120DIl7kOBJUlQEMigJdpFfQ==
+X-Google-Smtp-Source: AK7set/N9Zr6zqMMbyyTI+mcr75A04f7/sCiIHNtPyBlQMz3Kxdbrzdom/HO0bm0zxky0AHBLxotaH+PXfBWROHsdto=
+X-Received: by 2002:a67:1904:0:b0:3e8:d5a8:3fbe with SMTP id
+ 4-20020a671904000000b003e8d5a83fbemr1650981vsz.9.1675844280469; Wed, 08 Feb
+ 2023 00:18:00 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH V2 4/5] dt-bindings: mailbox: qcom: add compatible for the
- IPQ5332 SoC
-Content-Language: en-US
-To:     Kathiravan T <quic_kathirav@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, jassisinghbrar@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     quic_varada@quicinc.com, quic_srichara@quicinc.com
-References: <20230208042850.1687-1-quic_kathirav@quicinc.com>
- <20230208042850.1687-5-quic_kathirav@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230208042850.1687-5-quic_kathirav@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230206152928.918562-1-angelogioacchino.delregno@collabora.com>
+ <20230206152928.918562-20-angelogioacchino.delregno@collabora.com>
+ <CAGXv+5G0ksgGMXUGk-=CXUANtGQa2M5RLY+wG7c-0cMSKS5DJQ@mail.gmail.com> <7adadf24-c14f-6eb4-edfd-265dca93e907@collabora.com>
+In-Reply-To: <7adadf24-c14f-6eb4-edfd-265dca93e907@collabora.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Wed, 8 Feb 2023 16:17:49 +0800
+Message-ID: <CAGXv+5Ftq6RfAHkF3KxZNPx17MMFBtpDWqg=DLVDWo1pJwVijg@mail.gmail.com>
+Subject: Re: [PATCH v1 19/45] clk: mediatek: mt8183: Convert all remaining
+ clocks to common probe
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        johnson.wang@mediatek.com, miles.chen@mediatek.com,
+        chun-jie.chen@mediatek.com, daniel@makrotopia.org,
+        fparent@baylibre.com, msp@baylibre.com, nfraprado@collabora.com,
+        rex-bc.chen@mediatek.com, zhaojh329@gmail.com,
+        sam.shih@mediatek.com, edward-jw.yang@mediatek.com,
+        yangyingliang@huawei.com, granquet@baylibre.com,
+        pablo.sun@mediatek.com, sean.wang@mediatek.com,
+        chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08/02/2023 05:28, Kathiravan T wrote:
-> Add the mailbox compatible for the IPQ5332 SoC.
-> 
-> Since the IPQ5332 mailbox is compatible with the IPQ6018, lets create the
-> fallback to ipq6018 compatible, so that we don't bloat the of_device_id
-> table in the driver.
-> 
-> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+On Tue, Feb 7, 2023 at 8:14 PM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+> Il 07/02/23 10:58, Chen-Yu Tsai ha scritto:
+> > On Mon, Feb 6, 2023 at 11:30 PM AngeloGioacchino Del Regno
+> > <angelogioacchino.delregno@collabora.com> wrote:
+> >>
+> >> Switch to mtk_clk_simple_{probe,remove}() for infracfg and topckgen
+> >> clocks on MT8183 to allow full module build for clock drivers.
+> >> In order to do this, like done for other MediaTek clock drivers, it
+> >> was necessary to join top_early_divs with top_divs and to stop
+> >> registering the `clk13m` clock early.
+> >>
+> >> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> >> ---
+> >>   drivers/clk/mediatek/clk-mt8183.c | 160 ++++++------------------------
+> >>   1 file changed, 28 insertions(+), 132 deletions(-)
+> >>
+> >> diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
+> >> index 0fad2cf7f41b..035fdd02f0be 100644
+> >> --- a/drivers/clk/mediatek/clk-mt8183.c
+> >> +++ b/drivers/clk/mediatek/clk-mt8183.c
+> >> @@ -25,11 +25,8 @@ static const struct mtk_fixed_clk top_fixed_clks[] = {
+> >>          FIXED_CLK(CLK_TOP_UNIVP_192M, "univpll_192m", "univpll", 192000000),
+> >>   };
+> >>
+> >> -static const struct mtk_fixed_factor top_early_divs[] = {
+> >> -       FACTOR(CLK_TOP_CLK13M, "clk13m", "clk26m", 1, 2),
+> >> -};
+> >> -
+> >>   static const struct mtk_fixed_factor top_divs[] = {
+> >> +       FACTOR(CLK_TOP_CLK13M, "clk13m", "clk26m", 1, 2),
+> >
+> > A clock with the same name is now present in the DT, and so this clock
+> > would fail to register. We should drop this one completely and point
+> > any references to it internally to "csw_f26m_ck_d2".
+> >
+> >>          FACTOR(CLK_TOP_F26M_CK_D2, "csw_f26m_ck_d2", "clk26m", 1, 2),
+> >
+> > MT8192 and MT8195 aren't affected because they only have "csw_f26m_ck_d2",
+> > which systimer was referencing.
+> >
+> >>          FACTOR_FLAGS(CLK_TOP_SYSPLL_CK, "syspll_ck", "mainpll", 1, 1, 0),
+> >>          FACTOR_FLAGS(CLK_TOP_SYSPLL_D2, "syspll_d2", "syspll_ck", 1, 2, 0),
+> >> @@ -809,26 +806,6 @@ static const struct mtk_clk_rst_desc clk_rst_desc = {
+> >>          .rst_bank_nr = ARRAY_SIZE(infra_rst_ofs),
+> >>   };
+> >>
+> >> -static struct clk_hw_onecell_data *top_clk_data;
+> >> -
+> >> -static void clk_mt8183_top_init_early(struct device_node *node)
+> >> -{
+> >> -       int i;
+> >> -
+> >> -       top_clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
+> >> -
+> >> -       for (i = 0; i < CLK_TOP_NR_CLK; i++)
+> >> -               top_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
+> >> -
+> >> -       mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs),
+> >> -                       top_clk_data);
+> >
+> > And since we used to not do error checking, the name conflict was OK.
+> > With the new common probe, it's not.
+> >
+>
+> That makes me proud of my changes to extend the new common probe mechanism,
+> as this is one of (hopefully not) many wrongs that slipped through without
+> any apparent issue.
+> Anyway, there was no reference to this clk13m (nor CLK_TOP_CLK13M) anywhere
+> so I changed this commit to just "forget about this clock" (advertising the
+> reason in the commit description, of course).
 
+I think I should send this as a separate patch as a follow-up to the systimer
+changes. And we should keep the CLK_TOP_CLK13M entry valid, since that's
+the entry referenced in old DTs, but change its name to "csw_f26m_ck_d2".
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In short we are actually merging CLK_TOP_CLK13M and CLK_TOP_F26M_CK_D2,
+with the former surviving but with a name change. CLK_TOP_F26M_CK_D2
+is only referenced internally in TOPCKGEN.
 
-Best regards,
-Krzysztof
+> Is MT8183's cpufreq working after this change, or is it still not behaving?
 
+Yes it's back.
+
+ChenYu
