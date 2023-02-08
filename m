@@ -2,105 +2,141 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B97EC636CC
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Feb 2023 09:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B9AC636CC
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Feb 2023 10:27:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230362AbjBHJrH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Feb 2023 04:47:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37146 "EHLO
+        id S230480AbjBHK12 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Feb 2023 05:27:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230310AbjBHJrG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Feb 2023 04:47:06 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCE6AE3BC
-        for <linux-clk@vger.kernel.org>; Wed,  8 Feb 2023 01:47:04 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id n28-20020a05600c3b9c00b003ddca7a2bcbso1003700wms.3
-        for <linux-clk@vger.kernel.org>; Wed, 08 Feb 2023 01:47:04 -0800 (PST)
+        with ESMTP id S230392AbjBHK12 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Feb 2023 05:27:28 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27C744615C
+        for <linux-clk@vger.kernel.org>; Wed,  8 Feb 2023 02:27:25 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id n13so12970712wmr.4
+        for <linux-clk@vger.kernel.org>; Wed, 08 Feb 2023 02:27:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=sKWqqdCURAlapoO/zHZWEUEDu0sAlPmjm8qcDQuj3/o=;
-        b=AFNOTmmNdAi4x/iq0lW+2oa3/iowxBepitKje/bk2kk6yjnAWpmUgP0MxfcniCjMxL
-         cLVfAlnvmWE1JOFK+8cRNKB9+jnZPN/Sf1bAwNmd2DXnENBFmaxqXe89MujccTCkMjRX
-         IA9ExMtJqnxPKYjrRlhRKRu9d2T6d1TyhYDVvkBsnZKjCn16fglpcS8NgLgbqBs/MrBk
-         6Nn+1J85dwESa8fl0Wpw5IubPMiiJ80dniqqtFCMdOgeDFjUFU2cCnpyECRe2lAtbUzB
-         Q/+5V9F8RD666Uv4wNDwe5gSu8XLVXf+jVKFoZN/mHwN5GyHTvmMo++vW7ic6HPqKT6p
-         to2g==
+        bh=qNlwtYEZjLANMp/AP7c3hByeovMdMuVM3EFC+uWhNo4=;
+        b=y25OptXtltvh6MB4sqwW9x1mc3nKSfDjytjnTyqQno0VuI8wq4t3VafZ4xPhLLbU5m
+         Am83uM3NAbFbil1fiCUKtIXR/Sz4jgH6maPn2yp0k02VxemxIF2xDEhbKNWmWYzpe6tU
+         Vlg3tpvEyhgFGR1pgu8NiBGrGUykScOKVZwxIv2jTJXZEhSFoNWOvLt9Szg2JmU+V7Jm
+         zoZhdMQfSPRFvwPfkoWSyp5U0Mob504FwdojuNfSPT+rdm3f8ysj0hLhTeJ2Zagk5SDS
+         PFKwfeluD/nLAnyBbG/viwLb1ldCFZqeWAuXtMuBKAJQJUb3k4/gPUbXkCGG/287CYzO
+         BzIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sKWqqdCURAlapoO/zHZWEUEDu0sAlPmjm8qcDQuj3/o=;
-        b=VqsZSNHjRbmFGZU2ijuR40cDi6WGXV4ELH3boxciB+ouQDwKuEO7QCHfJNp8L9MGmL
-         F3OoULHGiSqOxRojhj3hpPeg3JxYfrmSyWuD3dSTno2W01hSAg6IBkSDdkLfQrvdhzaw
-         uWhD9f4/2QQx1mF8huTrU3C3ySFDrQMcyLp84xGHcBZJw6RGpFTCF1iJMLE3MDwZ7a/n
-         sLEINRMM0FFYc+716Moc7JUVBqbFFIlKiT/p6qF//EAk55ySn8EYuhbnxWyLCbTcD2z0
-         vbMLwHQrWUm14xLn07waRCysV2M6ptgZYT1NP6a0fPMndPWPEoQPOmSvaFuj8wSBBwMw
-         xdLA==
-X-Gm-Message-State: AO0yUKUo50dp0dpFFglyqCwQSwAv5uh/Hgyj61K+b2iQIQT4YqoHiAF5
-        cI0THKJtbUqfYscxE5kwWfEhDg==
-X-Google-Smtp-Source: AK7set+ZZUFlxV399UI0n/SVY7Of+MZ69YbRTQXn/l8hvQlxCOmoVOKCL1/Tu0HKM2KpvYZ47j80mg==
-X-Received: by 2002:a05:600c:a291:b0:3e0:1a9:b1e0 with SMTP id hu17-20020a05600ca29100b003e001a9b1e0mr7956771wmb.25.1675849623242;
-        Wed, 08 Feb 2023 01:47:03 -0800 (PST)
+        bh=qNlwtYEZjLANMp/AP7c3hByeovMdMuVM3EFC+uWhNo4=;
+        b=jriv4T6yoOP+P+wKFiv3b+3a4Mm7BCOEr7bUNrzav97gPqtWWHKPF36+G6QH1OT4eI
+         a7ikIf91h0/h6YFZpJ3haFpwapziwkkFfLWS7u8jhfGs/HTLXF449r6XD++XAIZrcA+c
+         c6meyJajGS0LgvZvGW9mN4Hvew9lVaBF5iQnzndX/bjNNaiXRtIH5QydxINMzNHq07YE
+         KpsN3s+Uicb8HV+YYZbGpp9yBoRBTYzuGNk/Ze6Btex6A84i4o2osf3s+K+OJjb1vnDX
+         cQRVeegsLaXa9Itcd/+2nam1yqmOueSJEaIhaA2GoA62i7YRuBZgKp84iFqIlXtYrFu/
+         MCUA==
+X-Gm-Message-State: AO0yUKVjpLv/QZiBC+r4QBUaY8s2++0ZSt8Ez2wQnVh2dX3DhAo+H4Gy
+        3ubBPrOnQnPzOK5l7R+yIMjhmw==
+X-Google-Smtp-Source: AK7set+/7ikTlR7eB0N9rz7Gn66qLVFhWVzYy3+NRSQ9K4SSEaJnnT9MI7w2Lllxd1gAOm/3ryO3vw==
+X-Received: by 2002:a05:600c:16d6:b0:3e1:541:2b55 with SMTP id l22-20020a05600c16d600b003e105412b55mr1761902wmn.16.1675852043773;
+        Wed, 08 Feb 2023 02:27:23 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id g10-20020a05600c310a00b003dd19baf45asm1434879wmo.40.2023.02.08.01.47.01
+        by smtp.gmail.com with ESMTPSA id bd6-20020a05600c1f0600b003e0015c8618sm1545407wmb.6.2023.02.08.02.27.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Feb 2023 01:47:02 -0800 (PST)
-Message-ID: <045f1afa-f442-0f4c-7dd2-292ac472b12f@linaro.org>
-Date:   Wed, 8 Feb 2023 10:47:00 +0100
+        Wed, 08 Feb 2023 02:27:23 -0800 (PST)
+Message-ID: <8b41827a-605a-3a65-5384-130fb0555b33@linaro.org>
+Date:   Wed, 8 Feb 2023 11:27:21 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: [PATCH V7 4/7] pinctrl: qcom: Add IPQ9574 pinctrl driver
+Subject: Re: [PATCH 07/15] dt-bindings: clock: Add Ambarella clock bindings
 Content-Language: en-US
-To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linus.walleij@linaro.org,
-        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
-        shawnguo@kernel.org, arnd@arndb.de, marcel.ziswiler@toradex.com,
-        dmitry.baryshkov@linaro.org, nfraprado@collabora.com,
-        broonie@kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
-        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
-        quic_poovendh@quicinc.com
-References: <20230206103337.21000-1-quic_devipriy@quicinc.com>
- <20230206103337.21000-5-quic_devipriy@quicinc.com>
+To:     Li Chen <me@linux.beauty>
+Cc:     li chen <lchen@ambarella.com>,
+        michael turquette <mturquette@baylibre.com>,
+        stephen boyd <sboyd@kernel.org>,
+        rob herring <robh+dt@kernel.org>,
+        krzysztof kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        "moderated list:arm/ambarella soc support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:common clk framework" <linux-clk@vger.kernel.org>,
+        "open list:open firmware and flattened device tree bindings" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        arnd bergmann <arnd@arndb.de>
+References: <20230123073305.149940-1-lchen@ambarella.com>
+ <20230123073305.149940-8-lchen@ambarella.com>
+ <0c19efb4-3bca-f500-ca24-14b9d24369ef@linaro.org>
+ <87y1prgdyu.wl-me@linux.beauty>
+ <b26a52ff-6b8a-8a64-7189-346cd2b0d705@linaro.org>
+ <87tu0ehl88.wl-me@linux.beauty>
+ <ec9fc589-2612-3315-3550-83b68bead926@linaro.org>
+ <87sffyhgvw.wl-me@linux.beauty>
+ <f70def8e-b148-616f-a93e-c2a8fb85be03@linaro.org>
+ <185f3b3a330.11c135c37327076.6300919877819761183@linux.beauty>
+ <33c2038b-5e06-4eb2-82b8-007bb735bfb1@linaro.org>
+ <186267bd495.c0d336602542450.72693939722996463@linux.beauty>
+ <8b164c2f-b7b9-c5df-3b9c-ea39bd3eb424@linaro.org>
+ <186273b85d1.e6e326dd2609909.4901324458297607618@linux.beauty>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230206103337.21000-5-quic_devipriy@quicinc.com>
+In-Reply-To: <186273b85d1.e6e326dd2609909.4901324458297607618@linux.beauty>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/02/2023 11:33, Devi Priya wrote:
-> Add pinctrl definitions for the TLMM of IPQ9574
+On 06/02/2023 15:57, Li Chen wrote:
+> Hi Krzysztof,
+>  ---- On Mon, 06 Feb 2023 21:41:44 +0800  Krzysztof Kozlowski  wrote --- 
+>  > On 06/02/2023 12:28, Li Chen wrote:
+>  > > Hi Krzysztof ,
+>  > > 
+>  > >  ---- On Fri, 27 Jan 2023 23:08:09 +0800  Krzysztof Kozlowski  wrote --- 
+>  > >  > On 27/01/2023 15:48, Li Chen wrote:
+>  > >  > >  > 
+>  > >  > >  > but what you are saying is that there is no separate clock controller
+>  > >  > >  > device with its own IO address but these clocks are part of rct_syscon.
+>  > >  > >  > Then model it that way in DTS. The rct_syscon is then your clock
+>  > >  > >  > controller and all these fake gclk-core and gclk-ddr nodes should be gone.
+>  > >  > > 
+>  > >  > > Ok, I will remove these fake nodes, and model the hardware as:
+>  > >  > > 
+>  > >  > > rct_syscon node
+>  > >  > > | clock node(pll, div, mux, composite  clocks live in the same driver)
+>  > >  > > | other periphal nodes
+>  > >  > 
+>  > >  > You need clock node if it takes any resources. If it doesn't, you do not
+>  > >  > need it.
+>  > > 
+>  > > If the only hardware resource the clock node can take is its parent clock(clocks = &osc;),
+>  > > then can I have this clock node?
+>  > 
+>  > I am not sure if I understand. osc does not look like parent device, so
+>  > this part of comment confuses me.
 > 
-> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> ---
->  Changes in V7:
-> 	- Corrected the indentation in the Makefile
-> 	- Unwrapped the lines in ipq9574_groups wherever applicable
+> Sorry for the confusion. I mean osc is the root of clock tree:
 > 
->  drivers/pinctrl/qcom/Kconfig           |  11 +
->  drivers/pinctrl/qcom/Makefile          |   1 +
->  drivers/pinctrl/qcom/pinctrl-ipq9574.c | 828 +++++++++++++++++++++++++
->  3 files changed, 840 insertions(+)
->  create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq9574.c
+> osc
+>   | pll A
+>   | pll B
+>   | ...
 > 
+> So if I have a clock node under rct_syscon node, I think it should take osc as the parent(node) clock:
+> rct_syscon {
+>     ......
+>     clock_controller {
+>           clocks = <&osc>;
+>           ......
+> 
+> You have said "You need clock node if it takes any resources. ", do you think osc here can be counted as a used resource?
 
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Yes, in that matter osc should be the input to this clock controller.
 
 Best regards,
 Krzysztof
