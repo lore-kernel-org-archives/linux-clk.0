@@ -2,131 +2,118 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF00C61DA4
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Feb 2023 17:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 215DAC61DA4
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Feb 2023 21:49:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229907AbjBIRAK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Feb 2023 12:00:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33574 "EHLO
+        id S230324AbjBIVtj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Feb 2023 16:49:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229501AbjBIRAJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Feb 2023 12:00:09 -0500
-Received: from mr85p00im-zteg06011501.me.com (mr85p00im-zteg06011501.me.com [17.58.23.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB06064660
-        for <linux-clk@vger.kernel.org>; Thu,  9 Feb 2023 09:00:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
-        t=1675962007; bh=9SoWufoa6fwEHefnS455/PdhOj3uOv+LruSHJSZAeo0=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=Y0LVhzxwcxTUXeuOG+WPP808SpDz9YN7KU0OQqehLsJ/IWgraQr6ZBe12MrVaNpXk
-         xDCU8/UvTAA/7UvsuUf51uISmYF3VxhQjK+FQPA5Vp+MkzHnwXmp3gkFP00shTcQ5n
-         TUByWfyEIO51w3D+2eA9Vyp7QpaC7Rhwp1tAPpkUQH3MQeRo4WNKT0+baUPdO2klh0
-         rDrioDKaRw7xtk4MVl93HnPL2PIyDv3zQ9kXVKEwrTh3wO9W0NCPXAQNmhRJZLU0qt
-         qksUqNbX+YBwFgi6yD/HOsx6xZ46Kf3QubMQr78mb7yu750Uuq2fau3RyOsjHMbdvD
-         3ESU6hKU79q2Q==
-Received: from imac101 (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
-        by mr85p00im-zteg06011501.me.com (Postfix) with ESMTPSA id 1A9284805C8;
-        Thu,  9 Feb 2023 17:00:01 +0000 (UTC)
-Date:   Thu, 9 Feb 2023 17:59:58 +0100
-From:   Alain Volmat <avolmat@me.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 09/11] dt-bindings: reset: remove stih415/stih416 reset
- bindings
-Message-ID: <Y+Umjs66mx7LCr8y@imac101>
-Mail-Followup-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20230209091659.1409-1-avolmat@me.com>
- <20230209091659.1409-10-avolmat@me.com>
- <a7bbc64d-1b16-490a-5424-4a2f08aba111@linaro.org>
+        with ESMTP id S229571AbjBIVti (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Feb 2023 16:49:38 -0500
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C74025298
+        for <linux-clk@vger.kernel.org>; Thu,  9 Feb 2023 13:49:37 -0800 (PST)
+Received: by mail-lj1-x230.google.com with SMTP id h4so3754276lja.2
+        for <linux-clk@vger.kernel.org>; Thu, 09 Feb 2023 13:49:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=to:subject:message-id:date:user-agent:from:references:in-reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+hWz7mZJWvEqZkUNY9rF0NUfKN5FMSK3bvphPb5LMAY=;
+        b=EIX9B2h+69ulth/0KTEV/dCBE9jDolM6Be0Vb7N+iyFVGKlPpIW4++6lmWvYSMesqg
+         6Hb9jLVe3JuSh8gjyMpBgBKv7PmyM+4cmbUy8K+DYNdSeVRWKt/y2lwA3Y4shSvuh9MW
+         igPiu8k3NgCn79X/mq9u5plZ1v45LiC4Hcc14=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:subject:message-id:date:user-agent:from:references:in-reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+hWz7mZJWvEqZkUNY9rF0NUfKN5FMSK3bvphPb5LMAY=;
+        b=AgK0uLaIBPCsSWLJUlTS0ZYNaoY1pIt7Fhmmg2V4oGSF0ddW7ULrFzKN2gmRW04dGe
+         bDs9kCQACeKESvL47FcQO6Ka/7XLokp9Y10n+VSMzSNnp/q0I10cyJZlJfJAf6DBrOLh
+         1Hb9400Tf3F8TN2TA5j35cLBvawndwk4DEjkIPGMLKdyuOpD3cCjkOup9h0brF7BAZSE
+         e+QE3MoLdujoAkpsJka4L3suLs3pD9DDuCMv+AEuhXkfBHXQXAfGd616HLdM6FmLAjxv
+         F2aqGkw/rQjS+AmG/FUX0pfjYHY0ydjswU5NsJWWinIfW+VeKP4iV9DOc4pOquJsfkgy
+         qjPA==
+X-Gm-Message-State: AO0yUKXChoUzDNcxF76H+kK0mtZ2eGmP5wezvZJyGNG+vMcJusBkyvFM
+        aLdK3bCgtNmBblEp4LGGkGSi6GipiTncpNj/ln0hpZ9d6Bli4w==
+X-Google-Smtp-Source: AK7set/tVvpInH7kCsORem0GFcmD6Wk69koafv46VGU3LB9YCuQKKMGUPBRjHwNpXv1kUB636LjDVAbrQaSJNhoYAes=
+X-Received: by 2002:a2e:8e6c:0:b0:28e:bba7:22dc with SMTP id
+ t12-20020a2e8e6c000000b0028ebba722dcmr2252599ljk.56.1675979375448; Thu, 09
+ Feb 2023 13:49:35 -0800 (PST)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 9 Feb 2023 16:49:34 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a7bbc64d-1b16-490a-5424-4a2f08aba111@linaro.org>
-X-Proofpoint-GUID: FDo7WBUMFrvgJQVoLgvu_j1-qoz2I80w
-X-Proofpoint-ORIG-GUID: FDo7WBUMFrvgJQVoLgvu_j1-qoz2I80w
-X-Proofpoint-Virus-Version: =?UTF-8?Q?vendor=3Dfsecure_engine=3D1.1.170-22c6f66c430a71ce266a39bfe25bc?=
- =?UTF-8?Q?2903e8d5c8f:6.0.425,18.0.816,17.11.62.513.0000000_definitions?=
- =?UTF-8?Q?=3D2022-01-18=5F01:2022-01-14=5F01,2022-01-18=5F01,2021-12-02?=
- =?UTF-8?Q?=5F01_signatures=3D0?=
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 suspectscore=0 bulkscore=0
- adultscore=0 clxscore=1011 spamscore=0 phishscore=0 mlxlogscore=999
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2302090161
+In-Reply-To: <1675318653-28352-5-git-send-email-quic_srivasam@quicinc.com>
+References: <1675318653-28352-1-git-send-email-quic_srivasam@quicinc.com> <1675318653-28352-5-git-send-email-quic_srivasam@quicinc.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date:   Thu, 9 Feb 2023 16:49:34 -0500
+Message-ID: <CAE-0n510UAMzGovJrQtAgtaxEeoPM9VgPHghCeouKvJ9gjrf_w@mail.gmail.com>
+Subject: Re: [PATCH v7 4/5] clk: qcom: lpassaudiocc-sc7280: Merge AHB clocks
+ into lpass_aon
+To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
+        agross@kernel.org, andersson@kernel.org, broonie@kernel.org,
+        konrad.dybcio@somainline.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        quic_plai@quicinc.com, quic_rohkumar@quicinc.com,
+        robh+dt@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Feb 09, 2023 at 10:32:04AM +0100, Krzysztof Kozlowski wrote:
-> On 09/02/2023 10:16, Alain Volmat wrote:
-> > Remove the stih415 and stih416 reset dt-bindings since those
-> > two platforms are no more supported.
-> 
-> Subject: drop second/last, redundant "bindings". The "dt-bindings"
-> prefix is already stating that these are bindings.
-> 
-> This applies to your other patches as well.
+Quoting Srinivasa Rao Mandadapu (2023-02-01 22:17:32)
+> Merge AHBM and AHBS clocks into lpass_aon clk_regmap structure as they
+> are using same register space.
+> Add conditional check for doing Q6 AHB clocks registration only
+> if regname specified in device tree node.
+> In existing implementation, Q6 AHB clocks and lpass_aon clocks are
+> being registered exclusively and overlapping if both of them are
+> to be used.The regmap region used by Q6 AHB clocks is <0x03389000 0x24>
 
-Thanks for the review.  I corrected that and will push a v2 once
-I got further comments about the overall serie.
+Add space   ^
 
-> 
-> > 
-> > Signed-off-by: Alain Volmat <avolmat@me.com>
-> > ---
-> >  include/dt-bindings/reset/stih415-resets.h | 28 ------------
-> >  include/dt-bindings/reset/stih416-resets.h | 52 ----------------------
-> >  2 files changed, 80 deletions(-)
-> >  delete mode 100644 include/dt-bindings/reset/stih415-resets.h
-> 
-> 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> Best regards,
-> Krzysztof
-> 
+> and of lpass_aon clocks is <0x03380000 0x30000>.
+> This is required to avoid such overlapping and to register
+> Q6 AHB clocks and lpass_aon clocks simultaneously.
+
+The commit text is still really hard to read and understand what's going
+on. Hopefully a binding update makes it clearer. It could also be
+clarified by indicating the compatible string so we know what "Q6 AHB"
+means or what "lpass_aon" means. Then we can grep the dtsi files for
+those compatibles to better understand what is intended.
+
+>
+> Fixes: 4ab43d171181 ("clk: qcom: Add lpass clock controller driver for SC7280")
+> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+> Tested-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+> ---
+>  drivers/clk/qcom/lpassaudiocc-sc7280.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+> index 1339f92..8e2f433 100644
+> --- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
+> +++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+> @@ -826,10 +829,12 @@ static int lpass_aon_cc_sc7280_probe(struct platform_device *pdev)
+>                 return ret;
+>
+>         if (of_property_read_bool(pdev->dev.of_node, "qcom,adsp-pil-mode")) {
+> -               lpass_audio_cc_sc7280_regmap_config.name = "cc";
+> -               desc = &lpass_cc_sc7280_desc;
+> -               ret = qcom_cc_probe(pdev, desc);
+> -               goto exit;
+> +               res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cc");
+
+This should be index based and not reg-name based. Can you point me to
+the binding update for "qcom,sc7280-lpassaoncc" compatible that supports
+this?
+
+> +               if (res) {
+> +                       lpass_audio_cc_sc7280_regmap_config.name = "cc";
+> +                       desc = &lpass_cc_sc7280_desc;
+> +                       return qcom_cc_probe(pdev, desc);
+> +               }
