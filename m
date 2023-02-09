@@ -2,131 +2,95 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F294DC636D6
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Feb 2023 13:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1076C61DA4
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Feb 2023 15:57:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230426AbjBINmN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Feb 2023 08:42:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42546 "EHLO
+        id S231240AbjBIP5Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Feb 2023 10:57:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230365AbjBINl6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Feb 2023 08:41:58 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 246B32D61
-        for <linux-clk@vger.kernel.org>; Thu,  9 Feb 2023 05:41:47 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id bg5-20020a05600c3c8500b003e00c739ce4so1533074wmb.5
-        for <linux-clk@vger.kernel.org>; Thu, 09 Feb 2023 05:41:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SwVQYGDJxIHxSzhFFyXo6DVH/Gg58TP+SeHZlEpYtaE=;
-        b=G8dQmklTOh+/FvxQUB0Gk5udClxwmsyEKDn7Rp2hrIpRgrY/EeEEmKKoam3xtYneHC
-         wfJPDL5CBU87tibavUNzoPSTcJ2Qk9IegXRWalEqNxsXdz33oTSKFA5qiQYh9SJVmGFQ
-         gsDwoumaVa2S543zVbMQcsIOwaB6bwsHXYRUvyH3rhjRepG4FYbRmRnPAT71wJKyH0WV
-         qV7LBhGK5ouyZUTngAaoXEruf/qZgT+m+YACGoBzOj4im80IXnMvY3AojsAlF3ErNqVA
-         culMEdkUa4YT9uGHDzZ111BX2gho2+jhjJbkJyZTN6m2gJS7BuSUwnSDQCvUf/VWQgyf
-         WrUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SwVQYGDJxIHxSzhFFyXo6DVH/Gg58TP+SeHZlEpYtaE=;
-        b=iEib564ZI41waKItzazPD4w5La/CHz0Uh/vlFVlYVQNG3rTNbpUTz6eYg7Cxzs+GUA
-         QoSMglFwTmuvMecStBZKMOKKiNSr+qyH0V5zM/XoauW/htZXLgHo0UZx8Eoagpg1HpAd
-         xGspd6ML5whzv+ltqvvlQXITnw61gfTza8wgat70Yi8+AHWeGnWO6xz8Q78FadR5qWrG
-         I42qzLMq2p9gJRGKqb/NT8C4Hv5UIog/RqFQ+p89vqqp2fhz6U8NlGWMalGpEFIV3Ljc
-         awIOBxqzlHAi2we9Ga70Jeci1B08Oi5a0qFYbi8g2eNMfEHK8sOrNouu+NjtVA5qTGql
-         ppmw==
-X-Gm-Message-State: AO0yUKV7BQGQDefvVBvSKarXzGkrMyq+nDefRkxfIkEund3NXjt4LK5X
-        e4joy//DzFuVCPEw5rVNGnp7XQ==
-X-Google-Smtp-Source: AK7set+E0AI0A+CBa5LewIRNFwdZw77cSx29mVZd6Uam4cfv7UMTtK6R4/ZdsEbQkl5Go57ylXr77g==
-X-Received: by 2002:a05:600c:4b1d:b0:3de:3ee3:4f6f with SMTP id i29-20020a05600c4b1d00b003de3ee34f6fmr10371624wmp.8.1675950105625;
-        Thu, 09 Feb 2023 05:41:45 -0800 (PST)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id k12-20020a7bc40c000000b003dfe549da4fsm4946991wmi.18.2023.02.09.05.41.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Feb 2023 05:41:45 -0800 (PST)
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Thu, 09 Feb 2023 14:41:42 +0100
-Subject: [PATCH 6/6] dt-bindings: soc: amlogic: update sysctrl
- clock-controller subnode type
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230209-b4-amlogic-bindings-convert-take2-v1-6-c4fe9049def9@linaro.org>
-References: <20230209-b4-amlogic-bindings-convert-take2-v1-0-c4fe9049def9@linaro.org>
-In-Reply-To: <20230209-b4-amlogic-bindings-convert-take2-v1-0-c4fe9049def9@linaro.org>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        with ESMTP id S229574AbjBIP5Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Feb 2023 10:57:24 -0500
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B175B752
+        for <linux-clk@vger.kernel.org>; Thu,  9 Feb 2023 07:57:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=iSqOzdJJ0FYbR5JO2Yqp/mGJlYxdV5XSTAO49T8KKvg=; b=xqCbfU9/JD8ghPUy2dK/FlG9zW
+        eAFL4SK58IhoZH56DNYvDjl26UkUFJyTEIYgT3k5ulrV3+j0bcPqSFBB6KSeiXQ5g15Uhbn4WIO0w
+        wTcNeriZYQ31CIJv7IsPy5Egc9FGpuL4qw/lMAvP0Ne22GpWk2JcNKSnlRMlRXv1WykgS6/TL/nGc
+        Nghr8kopLU+mVT1YeawKymZ9OqAhvmLLJ5v34oyz6KPRxUhjnwFR+4zm36uAlORLlT5A0BjOFRuZI
+        bMzAopZDJH6j8b3RZUOf1gOLQYxPTE4mDgHY9WgI3rcKhQbY39WDmixWhGkfaGgZac5EhWOl0A5oj
+        dI+T5bng==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36478)
+        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1pQ9IT-00083h-0j; Thu, 09 Feb 2023 15:57:16 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1pQ9IR-0004i8-29; Thu, 09 Feb 2023 15:57:15 +0000
+Date:   Thu, 9 Feb 2023 15:57:15 +0000
+From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.12.0
+        kernel@pengutronix.de, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: Disambiguate comment about clk_get_rate() for
+ disabled clocks
+Message-ID: <Y+UX2ysd1B5/cHpk@shell.armlinux.org.uk>
+References: <20230201082309.233348-1-u.kleine-koenig@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230201082309.233348-1-u.kleine-koenig@pengutronix.de>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Since the clock controllers are now documented define the right ref
-for the clock-controller subnodes and fill up the example node.
+On Wed, Feb 01, 2023 at 09:23:09AM +0100, Uwe Kleine-König wrote:
+> The sentence "[clk_get_rate()] is only valid once the clock source has
+> been enabled." can be understood in two ways:
+> 
+> a) When called for a disabled clock the return value might be wrong; or
+> b) The disabled clock must be enabled before it runs at the returned
+> rate.
+> 
+> It's hard to find evidence what is actually meant, but given that the
+> clock tree can change between the call to clk_get_rate() and the return
+> of a later clk_enable() call, it's prudent to assume a).
+> 
+> Adapt the comment accordingly to be unambiguous.
 
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- .../soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml         | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+Sorry for the late reply, I've been suffering with Covid for the last
+nine days.
 
-diff --git a/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml
-index 672eabd90c09..57eae355f1b9 100644
---- a/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml
-+++ b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml
-@@ -43,6 +43,10 @@ allOf:
-             - amlogic,meson-gx-hhi-sysctrl
-             - amlogic,meson-axg-hhi-sysctrl
-     then:
-+      properties:
-+        clock-controller:
-+          $ref: /schemas/clock/amlogic,gxbb-clkc.yaml#
-+
-       required:
-         - power-controller
- 
-@@ -53,6 +57,10 @@ allOf:
-             - amlogic,meson-gx-ao-sysctrl
-             - amlogic,meson-axg-ao-sysctrl
-     then:
-+      properties:
-+        clock-controller:
-+          $ref: /schemas/clock/amlogic,gxbb-aoclkc.yaml#
-+
-       required:
-         - pinctrl
- 
-@@ -81,7 +89,12 @@ examples:
-         compatible = "amlogic,meson-gx-hhi-sysctrl", "simple-mfd", "syscon";
-         reg = <0 0x400>;
- 
--        clock-controller { };
-+        clock-controller {
-+            compatible = "amlogic,gxbb-clkc";
-+            #clock-cells = <1>;
-+            clocks = <&xtal>;
-+            clock-names = "xtal";
-+        };
- 
-         power-controller {
-             compatible = "amlogic,meson-gxbb-pwrc";
+From the API perspective, it's both. Essentially, if the clock isn't
+enabled, then the return value is completely undefined by the API and
+no one should trust it.
+
+It's one of the reasons why:
+
+	clk_set_rate(clk, r);
+	v = clk_get_rate(clk);
+
+should not be used when what is actually required is:
+
+	v = clk_round_rate(clk, r);
+
+	...
+
+	clk_set_rate(clk, r);
+
+Note: r to clk_set_rate() not v.
 
 -- 
-2.34.1
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
