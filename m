@@ -2,95 +2,88 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F599C636D6
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Feb 2023 16:23:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F254C61DA4
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Feb 2023 16:27:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229508AbjBIQXp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Feb 2023 11:23:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40124 "EHLO
+        id S229574AbjBIQ1o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Feb 2023 11:27:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbjBIQXp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Feb 2023 11:23:45 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DC6B29413;
-        Thu,  9 Feb 2023 08:23:44 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E8251B821AC;
-        Thu,  9 Feb 2023 16:23:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29682C433EF;
-        Thu,  9 Feb 2023 16:23:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675959820;
-        bh=NxzszLiFJrlfv7frmHCuQ/KXw3wkxnOtKCKx+C5wsnc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uXD0JcFQejh95A3qdTjuihZ83eLqmksaXpCKAfCQ8S3+uG8ZlLvFMjUC8czonD50c
-         7gKVvhhgeb//J+4M3mLb13zJaDT1QH2uiTxt1upK/XSC4I23CbcshOdrO3ndvSnwv+
-         PcsNTe2b5Bes9zTSPtAR7CLEARrQAFhUzEevsR5wv2LdFcVdUekNpg8iLrjsB9F8DP
-         oljcrL/kldl07yHE9GGSahiv5xtITG4JgabaTVtwimCpvbrdXv53TmyZMNsIpSkJiZ
-         hKBY01fYUMFNu1vVy0u5bhxlsLXdZKwix4PCIm9BROTNXPTNVPP3w/1Y8ojSDNr7kv
-         fiFRWEoCWb1Yw==
-Date:   Thu, 9 Feb 2023 17:23:37 +0100
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
+        with ESMTP id S229482AbjBIQ1o (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Feb 2023 11:27:44 -0500
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A17BB5C8A2;
+        Thu,  9 Feb 2023 08:27:42 -0800 (PST)
+Received: by mail-qt1-f169.google.com with SMTP id 5so2509705qtp.9;
+        Thu, 09 Feb 2023 08:27:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e1tmcGPfgBqwmSMisPm12Dql/d+jNcJgFXbFklszrS4=;
+        b=KOKZ5DlKvS8XdqLSq2i6FQKOvXNjUWh0enOHKv7F/dM/5Bw2yRLYCQjhXGmxgptp4o
+         jkZY2ooMz9KPh+AQT7MgzJU4nlD+yUNHRarL/g5VV8Bziqw194TphnE58iveL1c87/kd
+         9oZokuLmop1GslXJA8HnM6mQI+b76IaPUKizUxvOfjV/gnRyHQKRw4E+f3VZZN2FpYXx
+         kDZqJ4OVed7X81/HPMwbC+Q4w+IapjLnLTI2t5kne59tFAaNvhQQrhgqzjp3JgQEN0UY
+         Tct9D4iPgvzxFUx6wKf2KIO3lCf90oYDzhrkT8tsxHpyFSGdhXPEmpvI4JVucs46/FSD
+         ys+w==
+X-Gm-Message-State: AO0yUKVlhbNcJ+uOtYH+W05ga6rx5rIxmSxVVSDWbp+WmDVmepTuZLSW
+        yCvYWwT9uliicX2uc8nOOvBJ5l32SNEkHqDO
+X-Google-Smtp-Source: AK7set8jnnxAYqIfcQz7An0JXM/3cIWEsU3lt+Ug6ZEbgoQ79M92+pRS0wuNC8K/XJcdldSSyF8hOg==
+X-Received: by 2002:a05:622a:589:b0:3bb:7c6b:9cb5 with SMTP id c9-20020a05622a058900b003bb7c6b9cb5mr8503989qtb.27.1675960061621;
+        Thu, 09 Feb 2023 08:27:41 -0800 (PST)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
+        by smtp.gmail.com with ESMTPSA id 194-20020a3707cb000000b007090f7a4f2asm1630188qkh.82.2023.02.09.08.27.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Feb 2023 08:27:41 -0800 (PST)
+Received: by mail-yb1-f182.google.com with SMTP id 184so2985227ybw.5;
+        Thu, 09 Feb 2023 08:27:41 -0800 (PST)
+X-Received: by 2002:a25:5d11:0:b0:839:c329:be37 with SMTP id
+ r17-20020a255d11000000b00839c329be37mr1292454ybb.89.1675960061232; Thu, 09
+ Feb 2023 08:27:41 -0800 (PST)
+MIME-Version: 1.0
+References: <59461effd0d9f7a39e0c91352c87f2b7071b1891.1675958536.git.geert+renesas@glider.be>
+ <Y+UeCSo7y7nYkkB8@ninjato>
+In-Reply-To: <Y+UeCSo7y7nYkkB8@ninjato>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 9 Feb 2023 17:27:28 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWPTMBD=BoEF7Comx4s_4V+ZGEk4ywiMDDtSzhg3sS5aQ@mail.gmail.com>
+Message-ID: <CAMuHMdWPTMBD=BoEF7Comx4s_4V+ZGEk4ywiMDDtSzhg3sS5aQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a779g0: Add thermal clock
+To:     Wolfram Sang <wsa@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: r8a779g0: Add thermal clock
-Message-ID: <Y+UeCSo7y7nYkkB8@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <59461effd0d9f7a39e0c91352c87f2b7071b1891.1675958536.git.geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="lagcHRSotVOUkzti"
-Content-Disposition: inline
-In-Reply-To: <59461effd0d9f7a39e0c91352c87f2b7071b1891.1675958536.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Wolfram,
 
---lagcHRSotVOUkzti
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Feb 9, 2023 at 5:23 PM Wolfram Sang <wsa@kernel.org> wrote:
+> > make the new value fit.
+>
+> ^ leftover?
 
+Indeed. Consider it gone.
 
-> make the new value fit.
+> > Based on a large patch in the BSP by Kazuya Mizuguchi.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-^ leftover?
+Thanks!
 
->=20
-> Based on a large patch in the BSP by Kazuya Mizuguchi.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Gr{oetje,eeting}s,
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---lagcHRSotVOUkzti
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmPlHgUACgkQFA3kzBSg
-KbbR5g/7B8U07CumByMno8Tf2TDi07xfstRRdszAPTO0xq6n9QAf5gzD0dSTtiS/
-B1bsWx977wKidgSajaGHhEKrHNFFr4ijk/x2+tazhas/9CEtDXCCgT8bNgCK8cX4
-c2LJht0zl/rJV886VPV7mu8ToYUNevMPpUVyhL+GjNnKE/A8CqVbo17nh8ofQkyt
-s34qkitdi2loBHEpZl87dH4L+zCElP7h30E8fizwyO4jnZ1orxjhmu87TiQNjodV
-nPAlkgGeERTnDWdD+dgnDhBHyxikaoJi9uZPCRgpU96+918scHrWsdO67TichDue
-NcFC+hN1v1wH+Dlxg8WAT7jj5dpw05lfCvo3chfA8y2D1AiW07tQYEOo6YhQC5Ev
-3EBKk4+ki2TwNc//zxVcjwoCKApj6mA18FKhH6UTUL8P1KPb/5NL9tZdlsYKg+v4
-nTcKCOOdlq+XwlP076ve5wwU1b9tykvtNvi4+iQOdO6D4SgI1CIrlxuymgm0aznp
-R+HvJYyWXydKJ60khUEi5fVr5xwXUOCc05/SdzP5qhAzuWIKjO/VOzyvZnXqC7g3
-Q33gbx4cf2MwWXmtAXY5ra88yankKBEtSSOX0IoHwtDuBlleP/nXmB34oNbUTh6S
-jWMukyqVJYSzqpJFrcLM3RpJZfZJPD3cTR9BsXi3vmCFR1kFj6s=
-=LSKL
------END PGP SIGNATURE-----
-
---lagcHRSotVOUkzti--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
