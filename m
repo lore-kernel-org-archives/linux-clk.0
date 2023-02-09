@@ -2,103 +2,144 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2217DC61DA4
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Feb 2023 13:40:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A8DC636D7
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Feb 2023 13:41:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230269AbjBINkb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Feb 2023 08:40:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41432 "EHLO
+        id S230305AbjBINlq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Feb 2023 08:41:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230022AbjBINkY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Feb 2023 08:40:24 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AE844740A
-        for <linux-clk@vger.kernel.org>; Thu,  9 Feb 2023 05:40:23 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id dr8so6343892ejc.12
-        for <linux-clk@vger.kernel.org>; Thu, 09 Feb 2023 05:40:23 -0800 (PST)
+        with ESMTP id S229752AbjBINlo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Feb 2023 08:41:44 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A45872E80F
+        for <linux-clk@vger.kernel.org>; Thu,  9 Feb 2023 05:41:40 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id y1so1819292wru.2
+        for <linux-clk@vger.kernel.org>; Thu, 09 Feb 2023 05:41:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=G/9XwFYeUJst3WJ5sHdQjwXF4qwQvevEf5WU7yUqIXY=;
-        b=OMw/A+V2/U2vAN546ixC6VrsB9usPnMiYZ1EGlPxuAOxWOMjTiKzuwiUruCmZ+0HlE
-         5Sp63S1ZpYZVQTOqaN6t6gUA9o3xy9nImsCREWI5h3iMStvajaS1JjKUqPM6JkYgBpDE
-         3+mnH2e1S1uHxCl553jXTY8nl0pus4Iln/TAoKk9arW14IzuDP4UvjXFPbUF/Pzn89id
-         I8d/W49sVknCcIiL9D3riigh6YM0A6B/IjMwxl0l5IIhVgen/+gv8HChuEeE6vZI6rOV
-         TnZmKKE8Ubb9EQcOZ1R5lTkJprUk20Ju7BsDrM92K7bamJBLiPFipfOn9InyaQ2UjivK
-         IK/g==
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UH1FxS+Al9Ybgi+KxNoTC8ETohhFHsXFP4JFZVHRAP0=;
+        b=vxbXh9gBJBoppO3MqpRAXQW/7ZH+O8sim9MSobZQaBaFondUXzPawxgSuBPQaN2wrb
+         RgH6EIGOf+5RYo1trbIsCz1pDvu+vSRZs4qUsxruNAnFAb6q8wQfqBWVEC8zrKuDKsuD
+         03Y73sP1G7tUJdPTgpWHlzswtkdal8lR0UKzEHdGsq3pifb3SO6jd1PQKiHb+sp5jYy+
+         Jmi2BgzO8OVnP7CqjE3tgtW4miPWHhEqWwY9kCtbqUu9vFIX683v0LfT1xsMe6QT3PJv
+         ncsXvwALgD02ttdiaWIuwMFe30kUIT11tRKmG9XEHX6FzRGq2kcikxGQCGlG4fqWxfx/
+         xXIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G/9XwFYeUJst3WJ5sHdQjwXF4qwQvevEf5WU7yUqIXY=;
-        b=3FYlaJ7v2zFi33MHFFpI6WqJt/vrGbLP58KepsbGjcyA4ekFPnjRytUw5x0b618QmM
-         MP7uWKCCB53bq0q0lfvLfv2p4INDpzum4imuDQoo81NuiRLWa+0KdajkY67FJbsfnQr8
-         E7j7nAg2GdZFOq+AMCrH+4s+xAP3twSorJj3xzoWirxEDnFcdDDlHrv2XNxIFzVXBESo
-         8WHGfQw/yGnpiFweRMM/RsdNOqaQJlLnhnAsdIL4tqYM+Xx94vK27H3FIlsu/Dv/5BIQ
-         bviWSVxt+02sVCrCO8GFzkil7YpyjK69vndj2kOVCv9T0yNPOPLIj8fenJ14WtElC+uR
-         WQYg==
-X-Gm-Message-State: AO0yUKWaDRix5+yvs/faQte/FcI9SO5Bz6W8T5OLaDzGUHWTOAXGuayL
-        PophLCLXUeqCvo9ZDsInP1S+jg==
-X-Google-Smtp-Source: AK7set/izK6rzb2b5i3ycv/Vv8MsWMV7WDdfIFo7kARlIFT3ylMk6KZs8PsO+wT3uFrG2bxHo8cvmw==
-X-Received: by 2002:a17:906:4f99:b0:887:981:5f7c with SMTP id o25-20020a1709064f9900b0088709815f7cmr11967561eju.11.1675950021723;
-        Thu, 09 Feb 2023 05:40:21 -0800 (PST)
-Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id b5-20020a170906d10500b008784bc1dd05sm877502ejz.76.2023.02.09.05.40.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Feb 2023 05:40:20 -0800 (PST)
-Message-ID: <dea3c40e-bdd8-1276-409d-3ddb35b004bc@linaro.org>
-Date:   Thu, 9 Feb 2023 15:40:19 +0200
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UH1FxS+Al9Ybgi+KxNoTC8ETohhFHsXFP4JFZVHRAP0=;
+        b=j4QkGktGg/hPw+IAeMvddGOe9V7nLRBdPjpz1FbQEKYolpOI6bJLollfbaleBX8SVy
+         50SZQT8JeMDJIyI23eTUuNwzXl6YqYu0gggVkq4Zfqc/lMBtCj2Dnc1epYmR21c0FTal
+         V1mPM0D8YNwLf8KhUI3b9ElmkOmQ5aqxftT/ZmMElHDJwnlnepExqJjRK7PuxrK+3/HZ
+         WW81eN5gkGjinsNIdEsnlPGQVqOGY3TyBmIPjc9AcR3sW08WFc1V1yBW/yRVSTqGXm5H
+         4NJVre/mmF4E8LQuo/zvAzb2JLTVD35c8RJ6L0PvrNCTuSURzEAiUfdtbMrTFHGLzGYM
+         sYJg==
+X-Gm-Message-State: AO0yUKXEhVoHas/6hXFHMd7KLKKXdS+ThH3UycTsaAx/LIJOQmGJ/KyR
+        3ZWugNixvgdPJlzB55dQuFHw1w==
+X-Google-Smtp-Source: AK7set/L6y9JA47P+Wg2ntnqmghlLGsbHSVJ+ZSuNq1ygPmrpHcbyzAjgS0I/MTMc7LZME9xNa9X/A==
+X-Received: by 2002:adf:f212:0:b0:2c3:ebc1:30a9 with SMTP id p18-20020adff212000000b002c3ebc130a9mr11324485wro.23.1675950099211;
+        Thu, 09 Feb 2023 05:41:39 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id k12-20020a7bc40c000000b003dfe549da4fsm4946991wmi.18.2023.02.09.05.41.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Feb 2023 05:41:38 -0800 (PST)
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH 0/6] dt-bindings: second batch of dt-schema conversions for
+ Amlogic Meson bindings
+Date:   Thu, 09 Feb 2023 14:41:36 +0100
+Message-Id: <20230209-b4-amlogic-bindings-convert-take2-v1-0-c4fe9049def9@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH v2 4/8] arm64: dts: qcom: sm8350: reorder device nodes
-Content-Language: en-GB
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABD45GMC/x2NMQ7CMAwAv1J5xlKSMgBfQQyO66QWwUVJqZCq/
+ p2I8W6426FJVWlwG3aosmnTxTr40wA8k2VBnTpDcGF0wV0xnpFeZcnKGNUmtdyQF9ukrrjSUwJ
+ KYEoX8ezHBL0TqQnGSsZzL9mnlC7fVZJ+/+P74zh+xut8logAAAA=
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-References: <20230206145707.122937-1-dmitry.baryshkov@linaro.org>
- <20230206145707.122937-5-dmitry.baryshkov@linaro.org>
- <20230209032841.ybqveepeyjqo63ql@ripper>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20230209032841.ybqveepeyjqo63ql@ripper>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.12.0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/02/2023 05:28, Bjorn Andersson wrote:
-> On Mon, Feb 06, 2023 at 04:57:03PM +0200, Dmitry Baryshkov wrote:
->> Start ordering DT nodes according to agreed order. Move apps SMMU, GIC,
->> timer, apps RSC, cpufreq ADSP and cDSP nodes to the end to the proper
->> position at the end of /soc/.
->>
-> 
-> I think "according to agreed order" means "sorted by address", but it
-> would be nice to have that expressed in the message. If nothing else for
-> others to know what such agreed order might be.
-> 
-> 
-> Unfortunately this doesn't apply to my tree, and it's not clear where it
-> failed. Could you please rebase this?
+Batch conversion of the following bindings:
+- rtc-meson-vrtc.txt
+- amlogic,gxbb-clkc.txt
+- amlogic,gxbb-aoclkc.txt
+- clk-measure.txt
 
-Done
+And in addition document the System Control registers top node.
 
+DT fixups will be posted once those conversion are fully reviewed.
+
+With this serie, the in-review and applied bindings documentation, the
+the following arm64 compatible are yet to be documented in dt-schema:
+ ['amlogic,axg-audio-clkc']
+ ['amlogic,g12a-audio-clkc']
+ ['amlogic,sm1-audio-clkc']
+ ['amlogic,g12a-tohdmitx']
+ ['amlogic,sm1-tohdmitx', 'amlogic,g12a-tohdmitx']
+ ['everest,es7154']
+ ['everest,es7241']
+ ['ti,tas5707']
+ ['linux,spdif-dir']
+ ['gpio-fan']
+ ['pwm-fan']
+
+For reference, the following bindings conversion patches are taken in account on top
+of next-20230208 tag :
+- https://lore.kernel.org/r/20230208093520.52843-2-jbrunet@baylibre.com
+- https://lore.kernel.org/r/3ffd1889-1966-47a8-9504-d44e452d5a31@gmail.com
+- https://lore.kernel.org/r/20221117-b4-amlogic-bindings-convert-v3-7-e28dd31e3bed@linaro.org
+- https://lore.kernel.org/r/20221117-b4-amlogic-bindings-convert-v3-5-e28dd31e3bed@linaro.org
+- https://lore.kernel.org/r/20221117-b4-amlogic-bindings-convert-v3-4-e28dd31e3bed@linaro.org
+- https://lore.kernel.org/r/20221117-b4-amlogic-bindings-convert-v3-3-e28dd31e3bed@linaro.org
+- https://lore.kernel.org/r/20221117-b4-amlogic-bindings-convert-v3-2-e28dd31e3bed@linaro.org
+- https://lore.kernel.org/r/20221117-b4-amlogic-bindings-convert-v3-1-e28dd31e3bed@linaro.org
+- https://lore.kernel.org/r/8cae0b08-8040-ef7b-da0e-92d9b3695249@gmail.com
+- https://lore.kernel.org/r/5b83767e-c53d-316f-df10-45a39dbd9c88@gmail.com
+
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Neil Armstrong (6):
+      dt-bindings: rtc: convert rtc-meson-vrtc.txt to dt-schema
+      dt-bindings: soc: amlogic: convert clk-measure.txt to dt-schema
+      dt-bindings: soc: amlogic: document System Control registers
+      dt-bindings: soc: amlogic: convert amlogic,gxbb-clkc.txt to dt-schema
+      dt-bindings: soc: amlogic: convert amlogic,gxbb-aoclkc.txt to dt-schema
+      dt-bindings: soc: amlogic: update sysctrl clock-controller subnode type
+
+ .../bindings/clock/amlogic,gxbb-aoclkc.txt         |  64 -----------
+ .../bindings/clock/amlogic,gxbb-aoclkc.yaml        | 120 ++++++++++++++++++++
+ .../bindings/clock/amlogic,gxbb-clkc.txt           |  53 ---------
+ .../bindings/clock/amlogic,gxbb-clkc.yaml          |  51 +++++++++
+ .../bindings/rtc/amlogic,meson-vrtc.yaml           |  42 +++++++
+ .../devicetree/bindings/rtc/rtc-meson-vrtc.txt     |  22 ----
+ .../soc/amlogic/amlogic,meson-gx-clk-measure.yaml  |  40 +++++++
+ .../soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml  | 122 +++++++++++++++++++++
+ .../bindings/soc/amlogic/clk-measure.txt           |  21 ----
+ 9 files changed, 375 insertions(+), 160 deletions(-)
+---
+base-commit: 5b1c3cf237da1dec2945694a6b7e5a0b66272d53
+change-id: 20230209-b4-amlogic-bindings-convert-take2-e2caf8e1c13f
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Neil Armstrong <neil.armstrong@linaro.org>
 
