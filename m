@@ -2,158 +2,101 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA9BC61DA4
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Feb 2023 09:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6746C61DA4
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Feb 2023 13:28:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229592AbjBIJkH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Feb 2023 04:40:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43874 "EHLO
+        id S229740AbjBIN2I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Feb 2023 08:28:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbjBIJkG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Feb 2023 04:40:06 -0500
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E843E171A;
-        Thu,  9 Feb 2023 01:40:04 -0800 (PST)
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3199HVrD002242;
-        Thu, 9 Feb 2023 10:38:23 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=Ol2FAil1EFrxD0YCoc4RaKOOMiU4+0QQ6K3rmBBavMY=;
- b=zS8kOrt2KVewz+s3mnOTmo7LU9Cc3ORYz7IBRYT5OTjObo1pyepsY+qE5HXkKKN66gpG
- zziMaf9H7EmROzlrcyjB0I/xViLvFeWfY0cF8425FsZYoM9nFJAJX2fEaDPmtS/Gyvvt
- ygEnpE96nP1nW3A6JaIGJmXFtnNXCmlCuPgLFYG+AYuMX+O4UU0oi0e8PfMtjQHqLffQ
- 0NFpsXsAIv4nFggJogS6uMTO44x4AaNU8fit5z0y6zKZavsSTVjeqSaHilzCnUWgR/Df
- V3NqFFGOR/JrE9YP4YSbYw41TTjdH+tR6aDFUumn17mklQS7fkLD1sxaTZSpAwowrWL+ dw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3nhdcg18v0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Feb 2023 10:38:23 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1C17210002A;
-        Thu,  9 Feb 2023 10:38:19 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EF17D210F8F;
-        Thu,  9 Feb 2023 10:38:18 +0100 (CET)
-Received: from [10.201.21.26] (10.201.21.26) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.16; Thu, 9 Feb
- 2023 10:38:16 +0100
-Message-ID: <c1d361d1-1599-230c-3609-88cd9f455114@foss.st.com>
-Date:   Thu, 9 Feb 2023 10:38:15 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH 02/11] ARM: sti: removal of stih415/stih416 related
- entries
-Content-Language: en-US
-To:     Alain Volmat <avolmat@me.com>, Jonathan Corbet <corbet@lwn.net>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        "Eric Dumazet" <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        "Daniel Lezcano" <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        "Zhang Rui" <rui.zhang@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S229615AbjBIN2H (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Feb 2023 08:28:07 -0500
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2CA61353E;
+        Thu,  9 Feb 2023 05:28:06 -0800 (PST)
+Received: by mail-pj1-x1032.google.com with SMTP id e10-20020a17090a630a00b0022bedd66e6dso6156153pjj.1;
+        Thu, 09 Feb 2023 05:28:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fKJeIkQPmPvNELUnpuNCjkP+d7TniKcEEa9IYeFIV9A=;
+        b=Un5fpHvY6EVneqRDvudHbShvDyHSipODAdhzSaRq60zxsxA1oMo0x9Gx6QpAEIOYDI
+         iXA8MlLZvpsJBxaROHLOJJgeGARx0Z35vedemaWhNUCx9hiKoN7FL0MUbCwCbGs5uzlm
+         zwiMzxtSycRdh07+ss3ECr98PSw9ZCtATDDFW0DyNJkxHo/G8yuiYpI2+EjRQoK6YcmA
+         vezAwQiYVGPYZOEsmY4f9gQnUDl5KkcUaoHzHS9cUt5ut8NRJXLkl5H4+jphd1riV3Eu
+         qi9LP69gH3MTINMoRn0jKfbB1PeqRDC2tfLBcGPBKCBBcqsYnUedzhUQCYDxpXVBgkHm
+         4f0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fKJeIkQPmPvNELUnpuNCjkP+d7TniKcEEa9IYeFIV9A=;
+        b=cxRgsc1hV3otfCDA2wGOWEsQ8iQy488iH2Bf4J6GdSdTlFeJUeZW5VCmb17il9wCYr
+         qUQP0emeMDc5ORbvLCajIDwsip4eMCvH1s7QfChiimO84MceOG8jpmwZnqF3kafguSOF
+         UIw0PH9C0H7Fn3/cmcm7QLM8Li59b6XN5Q10lppMjIlLH/Vhuj8ImhXt7pofxWK5mW+n
+         V1xhKXiskYdjAy/NWDIeVDHkTSrliDiWJYq6z17yGWRX7/4Rv3b7kK9Lh2qSer3OzLjc
+         tK9vBiFSXTv280DMH7dUyloZd3gFlY/ozgRcEfl/vW3SHIbka0mQApi2YD+zVHE12bAn
+         eF6A==
+X-Gm-Message-State: AO0yUKUxmcJCPRnz1I7OYU7Zyn9E4Zz3nwy5vbcoQwVbMqqsn4BzP5LQ
+        XwevDwRz5gAD4e/eybb7foEBHhr2MdmfXw==
+X-Google-Smtp-Source: AK7set+T6Ls486DuRpDWFZHI1qWa7oWBjY6q/v3XGIe/sUcyK/8SpxbKZFaWHcasq96wZLLZko23vg==
+X-Received: by 2002:a17:902:f355:b0:198:f0f2:81e1 with SMTP id q21-20020a170902f35500b00198f0f281e1mr8461200ple.27.1675949286092;
+        Thu, 09 Feb 2023 05:28:06 -0800 (PST)
+Received: from kelvin-ThinkPad-L14-Gen-1.. (ec2-18-163-35-77.ap-east-1.compute.amazonaws.com. [18.163.35.77])
+        by smtp.gmail.com with ESMTPSA id v12-20020a1709029a0c00b0019339f3368asm1493972plp.3.2023.02.09.05.28.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Feb 2023 05:28:05 -0800 (PST)
+From:   Keguang Zhang <keguang.zhang@gmail.com>
+To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <20230209091659.1409-1-avolmat@me.com>
- <20230209091659.1409-3-avolmat@me.com>
-From:   Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <20230209091659.1409-3-avolmat@me.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.201.21.26]
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-02-09_05,2023-02-08_02,2022-06-22_01
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Keguang Zhang <keguang.zhang@gmail.com>
+Subject: [PATCH V2 0/3] Devicetree support for Loongson-1 clock
+Date:   Thu,  9 Feb 2023 21:26:11 +0800
+Message-Id: <20230209132614.1079198-1-keguang.zhang@gmail.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Removes the old Loongson-1 clock driver mainly because of
+no DT support and outdated implementation.
+Then, re-implement it to solve the above issues,
+along with the devicetree binding document.
+
+Keguang Zhang (3):
+  dt-bindings: clock: Add Loongson-1 clock
+  clk: loongson1: Remove the outdated driver
+  clk: loongson1: Re-implement the clock driver
+
+ .../bindings/clock/loongson,ls1x-clk.yaml     |  49 +++
+ drivers/clk/Makefile                          |   2 +-
+ drivers/clk/clk-loongson1.c                   | 298 ++++++++++++++++++
+ drivers/clk/loongson1/Makefile                |   4 -
+ drivers/clk/loongson1/clk-loongson1b.c        | 118 -------
+ drivers/clk/loongson1/clk-loongson1c.c        |  95 ------
+ drivers/clk/loongson1/clk.c                   |  41 ---
+ drivers/clk/loongson1/clk.h                   |  15 -
+ include/dt-bindings/clock/loongson,ls1x-clk.h |  19 ++
+ 9 files changed, 367 insertions(+), 274 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/loongson,ls1x-clk.yaml
+ create mode 100644 drivers/clk/clk-loongson1.c
+ delete mode 100644 drivers/clk/loongson1/Makefile
+ delete mode 100644 drivers/clk/loongson1/clk-loongson1b.c
+ delete mode 100644 drivers/clk/loongson1/clk-loongson1c.c
+ delete mode 100644 drivers/clk/loongson1/clk.c
+ delete mode 100644 drivers/clk/loongson1/clk.h
+ create mode 100644 include/dt-bindings/clock/loongson,ls1x-clk.h
 
 
-On 2/9/23 10:16, Alain Volmat wrote:
-> ST's STiH415 and STiH416 platforms have already been removed since
-> a while.  Remove some remaining bits within the mach-sti.
-> 
-> Signed-off-by: Alain Volmat <avolmat@me.com>
-> ---
->  arch/arm/mach-sti/Kconfig    | 20 +-------------------
->  arch/arm/mach-sti/board-dt.c |  2 --
->  2 files changed, 1 insertion(+), 21 deletions(-)
-> 
-> diff --git a/arch/arm/mach-sti/Kconfig b/arch/arm/mach-sti/Kconfig
-> index b2d45cf10a3c..609957dead98 100644
-> --- a/arch/arm/mach-sti/Kconfig
-> +++ b/arch/arm/mach-sti/Kconfig
-> @@ -19,31 +19,13 @@ menuconfig ARCH_STI
->  	select PL310_ERRATA_769419 if CACHE_L2X0
->  	select RESET_CONTROLLER
->  	help
-> -	  Include support for STMicroelectronics' STiH415/416, STiH407/10 and
-> +	  Include support for STMicroelectronics' STiH407/10 and
->  	  STiH418 family SoCs using the Device Tree for discovery.  More
->  	  information can be found in Documentation/arm/sti/ and
->  	  Documentation/devicetree.
->  
->  if ARCH_STI
->  
-> -config SOC_STIH415
-> -	bool "STiH415 STMicroelectronics Consumer Electronics family"
-> -	default y
-> -	help
-> -	  This enables support for STMicroelectronics Digital Consumer
-> -	  Electronics family StiH415 parts, primarily targeted at set-top-box
-> -	  and other digital audio/video applications using Flattned Device
-> -	  Trees.
-> -
-> -config SOC_STIH416
-> -	bool "STiH416 STMicroelectronics Consumer Electronics family"
-> -	default y
-> -	help
-> -	  This enables support for STMicroelectronics Digital Consumer
-> -	  Electronics family StiH416 parts, primarily targeted at set-top-box
-> -	  and other digital audio/video applications using Flattened Device
-> -	  Trees.
-> -
->  config SOC_STIH407
->  	bool "STiH407 STMicroelectronics Consumer Electronics family"
->  	default y
-> diff --git a/arch/arm/mach-sti/board-dt.c b/arch/arm/mach-sti/board-dt.c
-> index ffecbf29646f..8c313f07bd02 100644
-> --- a/arch/arm/mach-sti/board-dt.c
-> +++ b/arch/arm/mach-sti/board-dt.c
-> @@ -12,8 +12,6 @@
->  #include "smp.h"
->  
->  static const char *const stih41x_dt_match[] __initconst = {
-> -	"st,stih415",
-> -	"st,stih416",
->  	"st,stih407",
->  	"st,stih410",
->  	"st,stih418",
+base-commit: 623880b500338017e010d76f31a41f0c0fe5c8ab
+-- 
+2.34.1
 
-Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
-
-Thanks
-Patrice
