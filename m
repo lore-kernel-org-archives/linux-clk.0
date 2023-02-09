@@ -2,49 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD73C64EC6
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Feb 2023 04:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E1FC64EC5
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Feb 2023 04:35:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230127AbjBIEcG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Feb 2023 23:32:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46488 "EHLO
+        id S229984AbjBIEfA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Feb 2023 23:35:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229935AbjBIEbd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Feb 2023 23:31:33 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFB133F2B3;
-        Wed,  8 Feb 2023 20:31:08 -0800 (PST)
+        with ESMTP id S230060AbjBIEd7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Feb 2023 23:33:59 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B1D94DE13;
+        Wed,  8 Feb 2023 20:32:53 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BC7A9B81FFE;
-        Thu,  9 Feb 2023 04:21:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C34B2C433D2;
-        Thu,  9 Feb 2023 04:21:34 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0A5AD6188C;
+        Thu,  9 Feb 2023 04:21:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A6D5C4339C;
+        Thu,  9 Feb 2023 04:21:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1675916495;
-        bh=cmAAlaggc8+dInkzVG1qeauvQxpytHMiQu8/X/ywRuw=;
+        s=k20201202; t=1675916498;
+        bh=1YP27iiprCubd1EXcNa/psOqvMoP0fjUFoWdzqvlI+U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bMGQHqq5+pqC1jX4yBL4KMgoKi8xdk6oQ/4Zl/tGr1zqRBi6q2WmCvqU/UJroJPxG
-         x9g4jmsgoU66v+AwonJpOmzAzcECJNvg5OM/8SEySlBNV4xxiOeNf/TL3nECKGFcXL
-         5Klx/PVFfsc1gay2v7lPOQa7ucGWAb+ChxBJgAVZ6QxGTSXtyb7/tvcz2W1r4uMF0g
-         Pdj/Qf1yia6ud7hLHVhl03VnJm2rdCGe8dI+xmh6c6SKFeiE4+9C2xeKqhesg8Yf2h
-         kYbE+AXdsS5Usr7rsJauN/vSCBhWz3Hq2oxZzuUuwlN0MKMwenzDLJkIh966HYMuZH
-         c1D9wQwxbi17w==
+        b=KVxKA9MrIdGcJsiLCF1Zbb0bbcBTJ7Z0bJ+fHGKesnLw3cz7gy7G12OE6ZfJ69mWV
+         +rieaQMB9NFDVyjunLgkheS5weCmhwcpqCYkIuphKp5FHslnI/MgpDocyUJt1R8H/O
+         pRmwxfJTaAflD4DyYI+3nO3SJI8SWjwCvQPPOquORRlEiv8EcSmwjaR002oL4AxKfN
+         7BaIY6nvs1I/eN8/3Q76pVOnVMfgivrELU3uFqBxtoJJhtH1REyRyLP8b9p9vRhdB8
+         GCQVBHmO7QsBftwGV5E2GJldiyH+dDfDyGA0GennZ+/vmEu1BW11OSeVNJ29i8yzkH
+         DsNB52UdvQ82w==
 From:   Bjorn Andersson <andersson@kernel.org>
 To:     Andy Gross <agross@kernel.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: (subset) [PATCH v2 1/2] clk: qcom: gpucc-sc7180: fix clk_dis_wait being programmed for CX GDSC
-Date:   Wed,  8 Feb 2023 20:22:51 -0800
-Message-Id: <167591660370.1230100.9603650327967651533.b4-ty@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: (subset) [PATCH v5 0/7] clk: qcom: msm8996: add APCS clock driver
+Date:   Wed,  8 Feb 2023 20:22:54 -0800
+Message-Id: <167591660365.1230100.12792933034952529675.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230201172305.993146-1-dmitry.baryshkov@linaro.org>
-References: <20230201172305.993146-1-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20230126230319.3977109-1-dmitry.baryshkov@linaro.org>
+References: <20230126230319.3977109-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -52,22 +56,22 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 1 Feb 2023 19:23:04 +0200, Dmitry Baryshkov wrote:
-> The gdsc_init() function will rewrite the CLK_DIS_WAIT field while
-> registering the GDSC (writing the value 0x2 by default). This will
-> override the setting done in the driver's probe function.
+On Fri, 27 Jan 2023 01:03:12 +0200, Dmitry Baryshkov wrote:
+> The sys_apcs_aux clock can be used by CPU and CBF clock drivers to drive
+> those clocks from GPLL0 while doing initial setup. Add simple driver to
+> setup and export this clock.
 > 
-> Set cx_gdsc.clk_dis_wait_val to 8 to follow the intention of the probe
-> function.
+> Changes since v4:
+> - Expand comments in the apcs-msm8996 driver describing the delay and
+>   the reason for setting up the sys_apcs_aux clock as a fixed rate
+>   rather than a fixed factor clock.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] clk: qcom: gpucc-sc7180: fix clk_dis_wait being programmed for CX GDSC
-      commit: 658c82caffa042b351f5a1b6325819297a951a04
-[2/2] clk: qcom: gpucc-sdm845: fix clk_dis_wait being programmed for CX GDSC
-      commit: cb81719e3c1165ef1bc33137dc628f750eed8ea4
+[7/7] clk: qcom: add the driver for the MSM8996 APCS clocks
+      commit: 027726365906fc863265635e545d063a45807fe8
 
 Best regards,
 -- 
