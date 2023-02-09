@@ -2,95 +2,71 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1076C61DA4
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Feb 2023 15:57:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 185F4C61DA4
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Feb 2023 16:03:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231240AbjBIP5Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Feb 2023 10:57:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44754 "EHLO
+        id S230289AbjBIQDI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Feb 2023 11:03:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229574AbjBIP5Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Feb 2023 10:57:24 -0500
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B175B752
-        for <linux-clk@vger.kernel.org>; Thu,  9 Feb 2023 07:57:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=iSqOzdJJ0FYbR5JO2Yqp/mGJlYxdV5XSTAO49T8KKvg=; b=xqCbfU9/JD8ghPUy2dK/FlG9zW
-        eAFL4SK58IhoZH56DNYvDjl26UkUFJyTEIYgT3k5ulrV3+j0bcPqSFBB6KSeiXQ5g15Uhbn4WIO0w
-        wTcNeriZYQ31CIJv7IsPy5Egc9FGpuL4qw/lMAvP0Ne22GpWk2JcNKSnlRMlRXv1WykgS6/TL/nGc
-        Nghr8kopLU+mVT1YeawKymZ9OqAhvmLLJ5v34oyz6KPRxUhjnwFR+4zm36uAlORLlT5A0BjOFRuZI
-        bMzAopZDJH6j8b3RZUOf1gOLQYxPTE4mDgHY9WgI3rcKhQbY39WDmixWhGkfaGgZac5EhWOl0A5oj
-        dI+T5bng==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36478)
-        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1pQ9IT-00083h-0j; Thu, 09 Feb 2023 15:57:16 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1pQ9IR-0004i8-29; Thu, 09 Feb 2023 15:57:15 +0000
-Date:   Thu, 9 Feb 2023 15:57:15 +0000
-From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        kernel@pengutronix.de, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: Disambiguate comment about clk_get_rate() for
- disabled clocks
-Message-ID: <Y+UX2ysd1B5/cHpk@shell.armlinux.org.uk>
-References: <20230201082309.233348-1-u.kleine-koenig@pengutronix.de>
+        with ESMTP id S230457AbjBIQDH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Feb 2023 11:03:07 -0500
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2112660B99
+        for <linux-clk@vger.kernel.org>; Thu,  9 Feb 2023 08:03:04 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:eeed:e695:5a2f:fc6d])
+        by baptiste.telenet-ops.be with bizsmtp
+        id K432290034vi5L701432B0; Thu, 09 Feb 2023 17:03:02 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1pQ9Nj-008RCu-R1;
+        Thu, 09 Feb 2023 17:03:02 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1pQ9O1-007aMO-Tk;
+        Thu, 09 Feb 2023 17:03:01 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a779g0: Add thermal clock
+Date:   Thu,  9 Feb 2023 17:03:00 +0100
+Message-Id: <59461effd0d9f7a39e0c91352c87f2b7071b1891.1675958536.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230201082309.233348-1-u.kleine-koenig@pengutronix.de>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 01, 2023 at 09:23:09AM +0100, Uwe Kleine-König wrote:
-> The sentence "[clk_get_rate()] is only valid once the clock source has
-> been enabled." can be understood in two ways:
-> 
-> a) When called for a disabled clock the return value might be wrong; or
-> b) The disabled clock must be enabled before it runs at the returned
-> rate.
-> 
-> It's hard to find evidence what is actually meant, but given that the
-> clock tree can change between the call to clk_get_rate() and the return
-> of a later clk_enable() call, it's prudent to assume a).
-> 
-> Adapt the comment accordingly to be unambiguous.
+Add the module clock used by the Thermal Sensor/Chip Internal Voltage
+Monitor/Core Voltage Monitor (THS/CIVM/CVM) on the Renesas R-Car V4H
+(R8A779G0) SoC.
+make the new value fit.
 
-Sorry for the late reply, I've been suffering with Covid for the last
-nine days.
+Based on a large patch in the BSP by Kazuya Mizuguchi.
 
-From the API perspective, it's both. Essentially, if the clock isn't
-enabled, then the return value is completely undefined by the API and
-no one should trust it.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in renesas-clk-for-v6.4.
 
-It's one of the reasons why:
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-	clk_set_rate(clk, r);
-	v = clk_get_rate(clk);
-
-should not be used when what is actually required is:
-
-	v = clk_round_rate(clk, r);
-
-	...
-
-	clk_set_rate(clk, r);
-
-Note: r to clk_set_rate() not v.
-
+diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+index 7fca11204f74a50f..0daa7bbbb51cdc16 100644
+--- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+@@ -213,6 +213,7 @@ static const struct mssr_mod_clk r8a779g0_mod_clks[] __initconst = {
+ 	DEF_MOD("pfc1",		916,	R8A779G0_CLK_CL16M),
+ 	DEF_MOD("pfc2",		917,	R8A779G0_CLK_CL16M),
+ 	DEF_MOD("pfc3",		918,	R8A779G0_CLK_CL16M),
++	DEF_MOD("tsc",		919,	R8A779G0_CLK_CL16M),
+ };
+ 
+ /*
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
+2.34.1
+
