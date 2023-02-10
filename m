@@ -2,122 +2,84 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F55EC636D4
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Feb 2023 22:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D3FDC636D4
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Feb 2023 22:59:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233662AbjBJWtX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Feb 2023 17:49:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43894 "EHLO
+        id S229584AbjBJW7i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Feb 2023 17:59:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233606AbjBJWtW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 17:49:22 -0500
+        with ESMTP id S229629AbjBJW7h (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 17:59:37 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E3DA32CDE;
-        Fri, 10 Feb 2023 14:49:21 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0883721E2;
+        Fri, 10 Feb 2023 14:59:26 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1192BB825E3;
-        Fri, 10 Feb 2023 22:49:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E317C433D2;
-        Fri, 10 Feb 2023 22:49:18 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4EFB7B825E3;
+        Fri, 10 Feb 2023 22:59:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6FCEC433EF;
+        Fri, 10 Feb 2023 22:59:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676069358;
-        bh=SaVWEZqi6FK5RZrvwlP3inTyWF9/jTYSLZIuA+RQlOY=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Fjsc41PSUvuYhRh/p0FRD7O8YG83EbFsky6WgGPSPQj4me6aOpo/Fu5UKT0XpT5OH
-         BsJp9v8VLp64Nm6UIcXN+q8KNJNkwLpz6ikFjQqEQoT7fKL2d7aPBB9plkgu4PhYhg
-         EjW/bDmSSV5ALnQMklISKwzbg/PtN6IBGHXD+v9xkjCKkqfoI+R43SMw4qAonK55gT
-         eilyYyzi/i10qxnuwqrRzTACU0gZuVzCxpd6XFxPGTAAmY8E55PFcV5bFXrMpkLuxl
-         3O+lMjm8g83o0N9gcRJfHmiTOmtkaTUCFmN8vb1+MTNm8RPpB/obE2Shu9z7dRN8mV
-         wmwjutvgTLw7w==
-Message-ID: <83a3c8d0abf217369f045df0217b1f64.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAOf5uwkMRSc7q1xUv4D=hc4w0HL=+x1_J60yyru_hGSuf5m0bA@mail.gmail.com>
-References: <20230101175740.1010258-1-dario.binacchi@amarulasolutions.com> <1fc8686b0b66c3b3ff80c044ecf1add6.sboyd@kernel.org> <CAOf5uwkMRSc7q1xUv4D=hc4w0HL=+x1_J60yyru_hGSuf5m0bA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 00/11] clk: imx8mn: setup clocks from the device tree
+        s=k20201202; t=1676069963;
+        bh=nJ9w43ZNSEdM7bB/hKQ5PLGfCPCy5lSq1hXBEIrSTBE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=IPOekhtPUsx7HRmfJ+UgN+l7Dwzoyx23AhGLLEjeeABlZjLZB4rcBvimNf2Gk9lZN
+         ErSkKt+0rWUN1EgvQtWcyHFrkkj1u/kscKvw4U4Zq4wg4LLz3fx+xiId7SH40zo0db
+         bIILfp46rUvnlG/9N4Rvko9nNkrK/347e2J/Nb/HM78aKB4OSMjRZ6BTRzbkcCW+3O
+         xm9VV3Eloz11d7Um8rf33YqD5DRUlrKolrDdGjpPJFHe9mIwzeQ4TP4mrm8mCTUMl0
+         sx6fQSx0nKyvImyDevu8HV4E5JpFHMExl4RUiI9QmUq+hcUJ2zAnFGAqM2rf1iuynF
+         VpW8bYU08rOxg==
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        linux-kernel@vger.kernel.org, angelo@amarulasolutions.com,
-        tommaso.merciai@amarulasolutions.com,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        linux-amarula@amarulasolutions.com, anthony@amarulasolutions.com,
-        jagan@amarulasolutions.com, Abel Vesa <abelvesa@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Li Jun <jun.li@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
-        Marek Vasut <marex@denx.de>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-To:     Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date:   Fri, 10 Feb 2023 14:49:16 -0800
-User-Agent: alot/0.10
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v6.2-rc7
+Date:   Fri, 10 Feb 2023 14:59:22 -0800
+Message-Id: <20230210225922.1958397-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.39.1.581.gbfd45094c4-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Michael Nazzareno Trimarchi (2023-01-26 02:49:54)
-> Hi
->=20
-> On Wed, Jan 25, 2023 at 10:11 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Dario Binacchi (2023-01-01 09:57:29)
-> > > The idea for this series was born back from Dublin (ELCE 2022) after
-> > > having attended the talk entitled "Updating and Modernizing Clock
-> > > Drivers" held by Chen-Yu Tsai and the availability of a board with
-> > > imx8mn SOC.
-> >
-> > Interesting. I didn't see any mention of putting clks into DT in that
-> > presentation.
-> >
-> > >
-> > > This series aims to setup all imx8mn's clocks from the device tree and
-> > > remove the legacy setup code with hardwired parameters.
-> >
-> > Please, no! We don't want one node per clk style of bindings.
->=20
-> I think the idea behind is:
-> - create a way from silicon vendor to export their clock mapping with
-> automatic exportation
+The following changes since commit 1b929c02afd37871d5afb9d498426f83432e71c2:
 
-I suspect silicon vendors automatically generate their clk drivers
-today.
+  Linux 6.2-rc1 (2022-12-25 13:41:39 -0800)
 
-> - reduce the copy and paste code across the drivers
-> - avoid code duplication
+are available in the Git repository at:
 
-Code duplication should be avoided. Surely the clk_ops is shared? Data
-duplication is the real problem here. The status quo has been to have
-data descriptions of clks in drivers so that drivers can turn them on.
-If we're trying to avoid bloat then we only enable the drivers that we
-care about, or make them modular so they don't waste kernel memory.
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-If you have ideas on how to avoid duplication there then by all means
-implement them. Don't move the data duplication problem to devicetree
-though.
+for you to fetch changes up to ecfb9f404771dde909ce7743df954370933c3be2:
 
-I've been wondering if we can tag drivers that are compiled into the
-kernel as freeable if they aren't ever going to probe because they're
-for some SoC that isn't present. That would allow us to shed various
-builtin clk drivers on systems instead of forcing us to make everything
-a module.
+  clk: ingenic: jz4760: Update M/N/OD calculation algorithm (2023-01-25 16:08:27 -0800)
 
->=20
-> Is the binding a way to solve this problem?
+----------------------------------------------------------------
+Two clk driver fixes
 
-Don't think so.
+ - Use devm_kasprintf() to avoid overflows when forming clk names
+   in the Microchip PolarFire driver
 
-> If you don't want one node
-> per clk style bindings, did you still think that the way
-> to go is totally wrong?
+ - Fix the pretty broken Ingenic JZ4760 M/N/OD calculation to actually
+   work and find proper divisors
 
-Yes.
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      clk: microchip: mpfs-ccc: Use devm_kasprintf() for allocating formatted strings
+
+Paul Cercueil (1):
+      clk: ingenic: jz4760: Update M/N/OD calculation algorithm
+
+Stephen Boyd (1):
+      Merge tag 'clk-microchip-fixes-6.2' of https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux into clk-fixes
+
+ drivers/clk/ingenic/jz4760-cgu.c     | 18 ++++++++----------
+ drivers/clk/microchip/clk-mpfs-ccc.c | 10 ++++------
+ 2 files changed, 12 insertions(+), 16 deletions(-)
+
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
