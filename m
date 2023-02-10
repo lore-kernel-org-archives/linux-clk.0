@@ -2,85 +2,97 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27EA5C636D4
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Feb 2023 22:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A4C7C636D4
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Feb 2023 22:32:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232505AbjBJWOx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Feb 2023 17:14:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48830 "EHLO
+        id S233799AbjBJWca (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Feb 2023 17:32:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229624AbjBJWOw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 17:14:52 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39BB168AD7;
-        Fri, 10 Feb 2023 14:14:51 -0800 (PST)
+        with ESMTP id S233604AbjBJWc3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 17:32:29 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16284B746;
+        Fri, 10 Feb 2023 14:32:21 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BF26061EB5;
-        Fri, 10 Feb 2023 22:14:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 172AFC433EF;
-        Fri, 10 Feb 2023 22:14:50 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 731DBB82607;
+        Fri, 10 Feb 2023 22:32:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 383E8C433EF;
+        Fri, 10 Feb 2023 22:32:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676067290;
-        bh=ghsvSRGZgVlNPpv147xscv46Fev0smcGbeevNCTC204=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=tSuU+Zd/H8MpF+kyXmRqB2uMIvcVIqC0Ndnl3PE2XKAPIslHYIJ6XgpKdmv85VJoP
-         28o5Zfpsl/TXFnFeLau/GQ9rYkVNfFatuiiOu77m+2msROYPHZ5QdOA00wOv2z2f6y
-         fDHzUZDG9lvO+UCvN/SwWyl7BPuohLptcc06cZt4HGRhEf8se5M4fciivyQ0cqUz1Q
-         VYLanXCctALvihJkdiqIxgNjcETowoIm6dMXH8JQBy5T5zhicl6shdoJFZXcQiv9tm
-         lvJjpP48WA16sXyNf6XOhvRL3HcFjFesYvTjaQxPI1DeBVmTu+pGCNGb4XPkCABo9f
-         CctL9IETvPx6A==
-Message-ID: <6fa247b53740ca760a608e1446f95c95.sboyd@kernel.org>
+        s=k20201202; t=1676068338;
+        bh=2NQDPgACS8xj+77ibaZP4zKWlf6IXR9HA3KiWyN/oTg=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=lMS8aROoD3ffESkMofzGNmAthSTy++eZx24c9pCK/JVHbO3UWpZHKbKxgFVBDONOP
+         8nahBhN0obUkvQr83CgdQqeG6rUpruk6gMHexwuMguo6wsG1V1KmxVZBALUsXsvKLD
+         0XWmuS5U+tPmNZJDoRhfBzAMvcK7lg5kWeOaIR7cbO4etlNZTDu7e0tDIulAny6oz+
+         RtpTYP7VoFpfuy3OYY944CEU94K3fLDoTbZPVO41NWpCj7ZSScc0OO4G0zXQCiI7s6
+         CUAPRpCjRzzFy6+riLxkXBkEsvRUo15X3G1NE4vdigte0zggGBGsGpv42fS6HL1cJG
+         l55AEeCq+J4rw==
+Message-ID: <350b296b62a982f83e273f0f385f2b6f.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230206073101.14796-1-quic_kathirav@quicinc.com>
-References: <20230206073101.14796-1-quic_kathirav@quicinc.com>
-Subject: Re: [PATCH V2] clk: qcom: ipq5332: mark GPLL4 as critical temporarily
+In-Reply-To: <bced492e-08f3-90d9-4ca0-41ab0e4cca9d@linaro.org>
+References: <20230123094925.54824-1-krzysztof.kozlowski@linaro.org> <20230123094925.54824-2-krzysztof.kozlowski@linaro.org> <7ddf5c74de84c5dc291996423cb1eb46.sboyd@kernel.org> <febd59ed-ff7b-ffc4-5568-d856703c9123@linaro.org> <9367139a425dc7e4811c757b62f33a4e.sboyd@kernel.org> <bced492e-08f3-90d9-4ca0-41ab0e4cca9d@linaro.org>
+Subject: Re: [PATCH 2/2] clk: qcom: restrict drivers per ARM/ARM64
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     quic_varada@quicinc.com, quic_srichara@quicinc.com,
-        Kathiravan T <quic_kathirav@quicinc.com>
-To:     Kathiravan T <quic_kathirav@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org,
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com
-Date:   Fri, 10 Feb 2023 14:14:47 -0800
+        linux-kernel@vger.kernel.org
+Date:   Fri, 10 Feb 2023 14:32:14 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Kathiravan T (2023-02-05 23:31:01)
-> diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq533=
-2.c
-> index c8a5fa1bafca..2e043d2d0598 100644
-> --- a/drivers/clk/qcom/gcc-ipq5332.c
-> +++ b/drivers/clk/qcom/gcc-ipq5332.c
-> @@ -127,6 +127,16 @@ static struct clk_alpha_pll gpll4_main =3D {
->                         .parent_data =3D &gcc_parent_data_xo,
->                         .num_parents =3D 1,
->                         .ops =3D &clk_alpha_pll_stromer_ops,
-> +                       /*
-> +                        * There are no consumers for this GPLL in kernel=
- yet,
-> +                        * (will be added soon), so the clock framework
-> +                        * disables this source. But some of the clocks
-> +                        * initialized by boot loaders uses this source. =
-So we
-> +                        * need to keep this clock ON. Add the CRITICAL f=
-lag
-> +                        * so the clock will not be disabled. Once the co=
-nsumer
-> +                        * in kernel is added, we can get rid off this fl=
-ag.
+Quoting Krzysztof Kozlowski (2023-01-31 23:12:53)
+> On 31/01/2023 00:30, Stephen Boyd wrote:
+> > Quoting Krzysztof Kozlowski (2023-01-26 01:31:55)
+> >> On 25/01/2023 21:44, Stephen Boyd wrote:
+> >>> Quoting Krzysztof Kozlowski (2023-01-23 01:49:25)
+> >>>> There is no point to allow selecting pin-controller drivers for Qual=
+comm
+> >>>
+> >>> pin controllers?
+> >>
+> >> Copy-paste, I'll fix it.
+> >>
+> >>>
+> >>>> ARMv7 SoCs when building ARM64 kernel, and vice versa.  This makes
+> >>>> kernel configuration more difficult as many do not remember the Qual=
+comm
+> >>>> SoCs model names/numbers.  There won't be a single image for ARMv7 a=
+nd
+> >>>> ARMv8/9 SoCs, so no features/options are lost.
+> >>>
+> >>> Are the drivers used in arm32 emulation mode on these SoCs? I recall
+> >>> there are some SoCs they run with the arm architecture.
+> >>
+> >> I did not add it to the few SoCs which have upstream DTS in ARM and
+> >> ARM64. I added only to the ones which are in one specific folder. Also
+> >> my patch does not affect defconfigs (qcom_defconfig and arm64/defconfi=
+g).
+> >=20
+> > Cool, thanks for checking. Is it possible to take a dtb from arm64 dts
+> > directory and boot it on an armv8 CPU running in 32-bit mode? Just
+> > wondering if even having the dts file exist in the arm64 architecture
+> > really matters here.
+>=20
+> If DTSI (and/or board DTS) is in arm64, you still need DTS or a link in
+> arm directory. If such one is added, then the restrictions here can be
+> removed. Have in mind that I did the same already for pinctrl.
+>=20
 
-s/off/of/
+I'm saying that you put the dts file in arch/arm64/boot/dts/, compile
+the dts to a dtb and stick it on a board that boots the kernel in arm32
+mode. If it is possible to boot the dtb on a CPU running in arm32 mode
+then this restriction should be loosened to=20
 
-Does CLK_IGNORE_UNUSED work the same? It doesn't sound like a critical
-clk from the description of the comment.
-
-> +                        */
-> +                       .flags =3D CLK_IS_CRITICAL,
->                 },
->         },
+	depends on ARM || ARM64 || COMPILE_TEST
