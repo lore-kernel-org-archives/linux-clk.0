@@ -2,37 +2,55 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FE9C636D4
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Feb 2023 06:54:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1198DC636D3
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Feb 2023 09:05:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231164AbjBJGyt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Feb 2023 01:54:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39164 "EHLO
+        id S231476AbjBJJFO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Feb 2023 04:05:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230161AbjBJGys (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 01:54:48 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF3BD20064;
-        Thu,  9 Feb 2023 22:54:47 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8A70DB823F3;
-        Fri, 10 Feb 2023 06:54:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E85EFC433EF;
-        Fri, 10 Feb 2023 06:54:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676012085;
-        bh=09gUWptY/BbuIMzWbqSjyJe1S02IFSMhcohNYddSSgE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=HSjTpTzHZoFbipoV+LpZdBskzS/ag4uT/3oIszVu/2F4J6ovVwdhbhvM7ZWZcNhnf
-         71p5YVrmag22+n4US6k+AKoVfrFd6m4VNYkD+/UZEcDlbW/t6ACJCnJgEOUf3V7qiL
-         pO4yHMrftBz3KSgbYVmnn+hWKl0L62j73X05vtBsf3v7+6EV1NvXwMPHtHi85Y2jrN
-         ru/O3Bf5vplzMRPzY3tz4wtPhm88zw1uAF7cy8eb2gt6R1/fO7Mjt65UpbT2oAzse6
-         N+cGe9UED6Nnz89BlkwjfHIpW5oWivWZSNoTYh60vdl2OVleV/wLWkbaGd/umoeUhE
-         2Vny6amTJCmSg==
-Date:   Thu, 9 Feb 2023 22:54:42 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
+        with ESMTP id S231603AbjBJJEy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 04:04:54 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C06843755A
+        for <linux-clk@vger.kernel.org>; Fri, 10 Feb 2023 01:04:25 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id j25so4339481wrc.4
+        for <linux-clk@vger.kernel.org>; Fri, 10 Feb 2023 01:04:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=K7VIxGHRdprRV/LqkHIT4VXtM2nS0UlK2A3+S/yfPzU=;
+        b=ruHL2ggkOLZrj/A1ju7AHyTWEpcP61OVgpgRcz6Ynbv3U4ENy0MTGWzkmzDKT0FKa+
+         kxwheHnLfTF19VQElv5b7C1kTerLXF/Sm9dn8flXSppWr4feiaBjnIUZKoFuS3sq+aeG
+         rTLF9/sYd300Yo+5rZHVLSIgWopIqp+Bib9SXMRFD+AxVmDzLKc5jP5o0blmC9/xXJ68
+         H1y9bzuV045QH/lUvvffzQrH4bcqNX6nNfbco4wRboCCzBMKaV4X2OvFG+FlXVfgQ5O1
+         hSuRClDFUoh8MethGF6L1kH1HmskaeVE64M+bpEuqtFF3Dn2UZYAtw+RNdd+ONTY+db4
+         UZng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K7VIxGHRdprRV/LqkHIT4VXtM2nS0UlK2A3+S/yfPzU=;
+        b=nJv2U5qJBzU6mc9Nx6apiiAWNVng71sR2B7buZg+xHdCgjQhowt45tVfqU2nApf2nk
+         n7npNwEM1U4RifO3otgg2P8NbawRxKHeOSFaOApG5osMGGgeqWU2bAcNr3YHiYs87MWq
+         O0XRthMsafKR2aY4u22e2+FxtBdF/7URgdK5gtlyg01KG/CAEnFmnt65Wu58WZSLo629
+         FDbSuZt49YA2xts8y2G4RjTUdAHIXnVi+3yv+hpl8zzlNGeiz1B/f6gXwFj+PhB5WGwk
+         Fj5k8tCbGxYerNrpBol8WGqa5XjRL+efcTaWK+6VaNamTQpWiPuz6Wh4kFSY5Vyc5ax2
+         ACag==
+X-Gm-Message-State: AO0yUKXMrEfWiT5mYSu5037DJw8FSu4Id0ccpRcnLUeMJhkvRcN3KD64
+        OjRU1wgNmXVqFjEQ7A9glwyJAQ==
+X-Google-Smtp-Source: AK7set83noZf3enDbMTsBZDwxEicf2PTn9Yq7G9YrGZxZuCfxXPH0i2MIcZmQZROagL9Bdp3MbW7bg==
+X-Received: by 2002:adf:f708:0:b0:2c5:3cd6:4fdf with SMTP id r8-20020adff708000000b002c53cd64fdfmr4285892wrp.39.1676019864173;
+        Fri, 10 Feb 2023 01:04:24 -0800 (PST)
+Received: from linaro.org (wifi-eduroam-trans.univ-tlse3.fr. [195.220.58.237])
+        by smtp.gmail.com with ESMTPSA id c13-20020adfef4d000000b002c3db0eec5fsm3075177wrp.62.2023.02.10.01.04.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Feb 2023 01:04:23 -0800 (PST)
+Date:   Fri, 10 Feb 2023 10:04:20 +0100
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     Alain Volmat <avolmat@me.com>
 Cc:     Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -40,6 +58,7 @@ Cc:     Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
         Marc Zyngier <maz@kernel.org>,
         "David S . Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
         Russell King <linux@armlinux.org.uk>,
         Patrice Chotard <patrice.chotard@foss.st.com>,
@@ -48,7 +67,6 @@ Cc:     Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
         Jose Abreu <joabreu@synopsys.com>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         "Rafael J . Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Amit Kucheria <amitk@kernel.org>,
         Zhang Rui <rui.zhang@intel.com>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -59,24 +77,36 @@ Cc:     Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-stm32@st-md-mailman.stormreply.com, linux-pm@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: Re: [PATCH 07/11] net: ethernet: stmmac: dwmac-sti: remove
- stih415/stih416/stid127
-Message-ID: <20230209225442.2b11878e@kernel.org>
-In-Reply-To: <20230209091659.1409-8-avolmat@me.com>
+Subject: Re: [PATCH 00/11] ARM: removal of STiH415/STiH416 remainings bits
+Message-ID: <20230210090420.GB175687@linaro.org>
 References: <20230209091659.1409-1-avolmat@me.com>
-        <20230209091659.1409-8-avolmat@me.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230209091659.1409-1-avolmat@me.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu,  9 Feb 2023 10:16:55 +0100 Alain Volmat wrote:
-> Remove no more supported platforms (stih415/stih416 and stid127)
-> 
-> Signed-off-by: Alain Volmat <avolmat@me.com>
+On Thu, Feb 09, 2023 at 10:16:48AM +0100, Alain Volmat wrote:
+> Most of code in order to support STiH415 and STiH416 have already
+> been removed from the kernel in 2016, however few bits are still
+> remainings.
+> This serie removes the last pieces of support for STiH415, STiH416
+> and STiD127.
 
-No idea who's gonna take these, but FWIW:
+How would like to have the patches applied ?
 
-Acked-by: Jakub Kicinski <kuba@kernel.org>
+Ack from the different maintainers or each maintainer apply the relevant patches ?
+
+Thanks
+  -- Daniel
+
+-- 
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
