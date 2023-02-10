@@ -2,64 +2,66 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B498C636D7
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Feb 2023 23:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 736BBC636D4
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Feb 2023 23:34:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229698AbjBJXb0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Feb 2023 18:31:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38072 "EHLO
+        id S229918AbjBJXeh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Feb 2023 18:34:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229476AbjBJXb0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 18:31:26 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7505A1B564;
-        Fri, 10 Feb 2023 15:31:25 -0800 (PST)
+        with ESMTP id S229850AbjBJXe2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 18:34:28 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54A31880E6;
+        Fri, 10 Feb 2023 15:34:02 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 19EBA61ECC;
-        Fri, 10 Feb 2023 23:31:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C4A1C433EF;
-        Fri, 10 Feb 2023 23:31:24 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EBB74B8261B;
+        Fri, 10 Feb 2023 23:34:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFCE9C433D2;
+        Fri, 10 Feb 2023 23:33:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676071884;
-        bh=mkYfiQ9LU4J5ZjN+xX5Qj4vIXs5RujxS8HqKfLejwME=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ZdeGqePetOd0LEKTv3yuN/8JUUDeAFwXxdbHzvaRU+L+LZscS9OxRGq3/dcTONTOD
-         F+FC4TVu2f2K49RWWM9Fmwn5mO3BUF1xKJwfxo6TzOrYEqBmNlAwPCXifTKvyZzYNf
-         7kTwuTSC3i9E/78oNEhMBVSdVW6Yo21eng+ijIosK7coWzRl9orL4teZ7AQqzBZhNp
-         JKIMX0bgdFbFMH1AaDVSkaoGCGoyhm0wx4jrkdlpoiyFdSjSmJJytcx6FsNwLUlmsq
-         onRDUH6UUdYpgGegCkoV8gVrYE3TLgEbIxGw16bPZTl3LrW8PWmVo5CEnjV+Bl0OCZ
-         frpr4//2VANKQ==
-Message-ID: <a3e6f6038511ad48258627dbf4c335e2.sboyd@kernel.org>
+        s=k20201202; t=1676072039;
+        bh=iAF9W38J7qGv/XEwwo3TiiIU8PezgQlEmj3/XKmrSQ8=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=Jn6Iq4aFz6eNIuuI7xIfmLfDhBmXy1ZOkQuVayhTHUMm6np+AlRirqORoIFtypmMu
+         7pOW/+G3W6C3JZOCVztUK6lYFKZmqGexApDnuBR3/iq+gKKCWdpr0/ThnHQTnmI8On
+         PRN7qFSav1FxeGeQ4zbbV0LdoR4Gric/r1okGkChrTcYSTOpE3gE0POB1oZuB6m5Ll
+         em4b34NkGszK8lKLckAdAi4LGRv5cqqDRPJ1CV6komN+migumCiAkOeYAnAp/8313c
+         /h91rclNHHmpkbMTfmv55DaUbMJ4nGoy818tjywa9dz2U86b4bOX3QqXRkZEkwosxM
+         s5UFp5E9IkW2g==
+Message-ID: <44842ac43c23c9cebfdb3b94ff3760d8.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230210111141.1379645-1-keguang.zhang@gmail.com>
-References: <20230210111141.1379645-1-keguang.zhang@gmail.com>
-Subject: Re: [PATCH] MIPS: loongson32: Update the clock initialization
+In-Reply-To: <20221129034157.15036-3-zhuyinbo@loongson.cn>
+References: <20221129034157.15036-1-zhuyinbo@loongson.cn> <20221129034157.15036-3-zhuyinbo@loongson.cn>
+Subject: Re: [PATCH v10 3/4] LoongArch: time: add of_clk_init in time_init
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Keguang Zhang <keguang.zhang@gmail.com>
-To:     Keguang Zhang <keguang.zhang@gmail.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-Date:   Fri, 10 Feb 2023 15:31:22 -0800
+To:     Huacai Chen <chenhuacai@kernel.org>,
+        Jianmin Lv <lvjianmin@loongson.cn>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        Yinbo Zhu <zhuyinbo@loongson.cn>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        loongarch@lists.linux.dev
+Date:   Fri, 10 Feb 2023 15:33:57 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Keguang Zhang (2023-02-10 03:11:41)
-> The Loongson-1 clock driver is under re-implementation
-> to add DT support. As a result, ls1x_clk_init() will be dropped soon.
-> Therefore, call of_clk_init() for clock initialization instead.
+Quoting Yinbo Zhu (2022-11-28 19:41:56)
+> The Loongson-2 clock controller driver used CLK_OF_DECLARE to
+> register clock subsystem that ask of_clk_init was called in
+> time_init and this patch was to addd such support.
 >=20
-> Link: https://lore.kernel.org/all/20230209132614.1079198-3-keguang.zhang@=
-gmail.com
-> Link: https://lore.kernel.org/all/20230209132614.1079198-4-keguang.zhang@=
-gmail.com
-> Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
+> Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
 > ---
 
 Acked-by: Stephen Boyd <sboyd@kernel.org>
