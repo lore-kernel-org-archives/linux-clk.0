@@ -2,93 +2,116 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3ACC636D3
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Feb 2023 09:14:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36557C636D3
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Feb 2023 11:13:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231889AbjBJJOf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Feb 2023 04:14:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49580 "EHLO
+        id S231500AbjBJLNQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Feb 2023 06:13:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231898AbjBJJO3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 04:14:29 -0500
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C8E87166E;
-        Fri, 10 Feb 2023 01:14:06 -0800 (PST)
-Received: by mail-qt1-f170.google.com with SMTP id w3so5045515qts.7;
-        Fri, 10 Feb 2023 01:14:06 -0800 (PST)
+        with ESMTP id S231724AbjBJLNP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 06:13:15 -0500
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A330772DEB;
+        Fri, 10 Feb 2023 03:12:34 -0800 (PST)
+Received: by mail-pl1-x630.google.com with SMTP id k13so6173995plg.0;
+        Fri, 10 Feb 2023 03:12:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4V9spyiEwfehqA2gEWTBlez2WNzN4xeTbha22bMXzas=;
+        b=duaPPcn1vtiqWc2seQlgLf+6XBvC259l5kfLfhuox3u6Szpziiv0VMuEP8dPqJ4Uip
+         gc128eNCgFyiNKfwtWbTISSdWV9W2mWkMHjyh2zy6Yvlo3GuZlsAY0p4G+YH7kVQpqX4
+         9B+DitvhRX+YsGxPiQEyq//7nbVp33ckG92XfQmBua04OwssH6/o3Rn8yAy0z8oYx8Yl
+         2mh6a9hoOw6Lnx4S7aXFQgjrExoCWMGjsp0kYmhdim5JWSzqgTyLlL11UkqfQriZQkZs
+         p1kZWAQDhTGkrbLAlcIYPGUIdUBXkRdWHb9kEpo/d5rQDuuA1I3FUQwei9M19e6JJ1c5
+         P+hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=w8GFHwVww8oer0oGvyL00kwNGTL9qnx5RyHX6+suopg=;
-        b=eBWiksFzU8hB30K2NyTxzd1xb55VNwR2DD1MMrvW5ZtYxGLjc24Q3FMEgizl13pYQf
-         LFac23YueM1648hnlIXMxAoBynjnnDLxmorgz5ZhPHQQfnsLqQsaYxN6ddGA2R3EWe2c
-         r+buVvZRHR8T2KAI85jUA97q+vg6Wo5g83pGF3TJbC4w1848TmzPEZ/a6YQMkdKOGOkf
-         TmZHUvmgNaNJlWSKpJ/WlYtGkkcSeB928WgpjC70KmlDujyBoh9eLt+wkdgIAzn0MwlE
-         QXSQpFjTJTVLiUcS5JFPceSUm+Ldtgkfw14q1kaQ9uhpqmimJ/UBt5iYVgWKTZQuZfO2
-         bFEQ==
-X-Gm-Message-State: AO0yUKVbq5ygx3BepsuDVjTrRovANeyof11dDLk9SeaFULYIJ88YtmRH
-        kPQf+DCVT+DatT1v+WL1xALamjsJ6EsA4TO2
-X-Google-Smtp-Source: AK7set/8dSmexyQ4I8SYauMPhySFpnz2b2LwP8vM/6C/ptYdMfruxjM9fszR1dgvbgpvUKVSTJsmNg==
-X-Received: by 2002:a05:622a:11d6:b0:3b8:4729:8239 with SMTP id n22-20020a05622a11d600b003b847298239mr10642600qtk.12.1676020445065;
-        Fri, 10 Feb 2023 01:14:05 -0800 (PST)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
-        by smtp.gmail.com with ESMTPSA id fp41-20020a05622a50a900b003b9a73cd120sm3021682qtb.17.2023.02.10.01.14.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Feb 2023 01:14:04 -0800 (PST)
-Received: by mail-yb1-f173.google.com with SMTP id a1so5574748ybj.9;
-        Fri, 10 Feb 2023 01:14:04 -0800 (PST)
-X-Received: by 2002:a5b:24c:0:b0:87a:68fd:181a with SMTP id
- g12-20020a5b024c000000b0087a68fd181amr1770542ybp.36.1676020444431; Fri, 10
- Feb 2023 01:14:04 -0800 (PST)
-MIME-Version: 1.0
-References: <20230202092332.2504-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20230202092332.2504-1-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 10 Feb 2023 10:13:50 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWGd3=vZER4bArO34zyJ2pjhXrViNp8x+8wVfNpKCZqaA@mail.gmail.com>
-Message-ID: <CAMuHMdWGd3=vZER4bArO34zyJ2pjhXrViNp8x+8wVfNpKCZqaA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: rcar-gen3: disable R-Car H3 ES1.*
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        bh=4V9spyiEwfehqA2gEWTBlez2WNzN4xeTbha22bMXzas=;
+        b=dcH8V7xHwFzqklZkCJi/xf9oGlEBQoQ3xsHij6agn2tWJ/XPdC9BcbOzhetAOlsvCF
+         WBejJg7OcsnqUPFZ/OY3rmoV4sB3gAyIFnGse26gHCSPDO84kLiF123COuA63Gv9fqa3
+         kI8inDE0ZKaOMJ4378r/bvIcWxHhuBFl+2VFLf2a+mV5msw+V5mWjWYTnClw8yE3fJEk
+         ByVEWbbafMQA2OPCyy4jg64IPolm3VpAPcoWcmHpBsZMeYsmL2PJ+pt3+B4k2ADgQf6V
+         v/+byouGsVt06bX4l4AMmnwxrPjQt4iPxvNL6RA1PPRcHyggrPOcKhJdSaRzEJqXJNrT
+         5lfw==
+X-Gm-Message-State: AO0yUKUvCigDSZ8bWVXK0Phx8zvTgGOjzgPdQQFe7IbMD5jUGI//lfeB
+        qXYp5oJEI0ik3U+mlG66juVLWuamv4yHvQ==
+X-Google-Smtp-Source: AK7set8RAS551R5LFayDhHImXHHMj5qqQ9IxGdmdZoYBKJm7B2BgpygY9dxXkQlYzXbtSxLVikzJag==
+X-Received: by 2002:a17:90a:195a:b0:231:284:ea4d with SMTP id 26-20020a17090a195a00b002310284ea4dmr11934030pjh.22.1676027550879;
+        Fri, 10 Feb 2023 03:12:30 -0800 (PST)
+Received: from kelvin-ThinkPad-L14-Gen-1.. (ec2-18-163-35-77.ap-east-1.compute.amazonaws.com. [18.163.35.77])
+        by smtp.gmail.com with ESMTPSA id z8-20020a17090a66c800b00232e9ff80acsm2518524pjl.56.2023.02.10.03.12.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Feb 2023 03:12:30 -0800 (PST)
+From:   Keguang Zhang <keguang.zhang@gmail.com>
+To:     linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Keguang Zhang <keguang.zhang@gmail.com>
+Subject: [PATCH] MIPS: loongson32: Update the clock initialization
+Date:   Fri, 10 Feb 2023 19:11:41 +0800
+Message-Id: <20230210111141.1379645-1-keguang.zhang@gmail.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Wolfram,
+The Loongson-1 clock driver is under re-implementation
+to add DT support. As a result, ls1x_clk_init() will be dropped soon.
+Therefore, call of_clk_init() for clock initialization instead.
 
-On Thu, Feb 2, 2023 at 10:23 AM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> R-Car H3 ES1.* was only available to an internal development group and
-> needed a lot of quirks and workarounds. These become a maintenance
-> burden now, so our development group decided to remove upstream support
-> for this SoC. Public users only have ES2 onwards.
->
-> In addition to the ES1 specific removals, a check for it was added
-> preventing the machine to boot further. It may otherwise inherit wrong
-> clock settings from ES2 which could damage the hardware.
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Link: https://lore.kernel.org/all/20230209132614.1079198-3-keguang.zhang@gmail.com
+Link: https://lore.kernel.org/all/20230209132614.1079198-4-keguang.zhang@gmail.com
+Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
+---
+ arch/mips/include/asm/mach-loongson32/platform.h | 1 -
+ arch/mips/loongson32/common/time.c               | 3 ++-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Thank you, queuing in renesas-clk-for-v6.3, as this serves as the
-main gatekeeper for preventing booting on R-Car H3 ES1.x.  Hence
-it should go upstream before any of the other R-Car H3 ES1.x quirk
-handling is removed (in v6.4).
+diff --git a/arch/mips/include/asm/mach-loongson32/platform.h b/arch/mips/include/asm/mach-loongson32/platform.h
+index 86e1a6aab4e5..2cdcfb5f6012 100644
+--- a/arch/mips/include/asm/mach-loongson32/platform.h
++++ b/arch/mips/include/asm/mach-loongson32/platform.h
+@@ -20,7 +20,6 @@ extern struct platform_device ls1x_gpio1_pdev;
+ extern struct platform_device ls1x_rtc_pdev;
+ extern struct platform_device ls1x_wdt_pdev;
+ 
+-void __init ls1x_clk_init(void);
+ void __init ls1x_rtc_set_extclk(struct platform_device *pdev);
+ void __init ls1x_serial_set_uartclk(struct platform_device *pdev);
+ 
+diff --git a/arch/mips/loongson32/common/time.c b/arch/mips/loongson32/common/time.c
+index 459b15c96d3b..965c04aa56fd 100644
+--- a/arch/mips/loongson32/common/time.c
++++ b/arch/mips/loongson32/common/time.c
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <linux/clk.h>
++#include <linux/of_clk.h>
+ #include <linux/interrupt.h>
+ #include <linux/sizes.h>
+ #include <asm/time.h>
+@@ -211,7 +212,7 @@ void __init plat_time_init(void)
+ 	struct clk *clk = NULL;
+ 
+ 	/* initialize LS1X clocks */
+-	ls1x_clk_init();
++	of_clk_init(NULL);
+ 
+ #ifdef CONFIG_CEVT_CSRC_LS1X
+ 	/* setup LS1X PWM timer */
 
-Gr{oetje,eeting}s,
+base-commit: 159c610af8cdf2b3c915e59162fc867b557cbe7e
+prerequisite-patch-id: 6a8c8d604fca8bce5d9e35cac080b87a33be2b5c
+-- 
+2.34.1
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
