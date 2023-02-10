@@ -2,106 +2,86 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A288AC636CD
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Feb 2023 11:38:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BEC7C636D4
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Feb 2023 18:13:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232143AbjBJLiQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Feb 2023 06:38:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49128 "EHLO
+        id S232696AbjBJSNZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Feb 2023 13:13:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232103AbjBJLiP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 06:38:15 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A271E72DD5
-        for <linux-clk@vger.kernel.org>; Fri, 10 Feb 2023 03:38:13 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id k8-20020a05600c1c8800b003dc57ea0dfeso6096640wms.0
-        for <linux-clk@vger.kernel.org>; Fri, 10 Feb 2023 03:38:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=I3AfScb5eZBvuleQTKe5gvMdffqFNjAeOX6lI523hQE=;
-        b=asmkAOnSBKcu3XreoHNmILuUKNc/O5vXcAx16D9bRMvAcqlhx5cTBBNm0tKvQ3rgex
-         f0Bq51Uwmmx0s2dB9RyO9NLeHrxNYWJEK76BNaNLyDrKXfcj4Ynfyrh3Ub0+64672wtg
-         c6s1fETV3nNjhgs/ccwSbzsIRS2caC4jhGyMb+VDouBbN6h+WBm991X8M95leA0HmRmr
-         Omwu2BxnUDZhaXzWKfIh5jIODy5gV1lacSU9icmnYnaq0KryF4K0Npk9zx7F4QCMME25
-         Mu5itB1MRcVrMLpHB448z1asKPcl6ZIdJ5ZtaZZ00JLN/ldWkhxpEUMBefWWL5lHbXtO
-         r0qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I3AfScb5eZBvuleQTKe5gvMdffqFNjAeOX6lI523hQE=;
-        b=egWMT9u44J6MkzBUeccvCevPvkIjCq2j7+cOdY8rtVQX1tW7sQYQAxIfbox3kWCKAS
-         XkGqlZBB6V2tS4ADt68B6qLTcHxUPJ6zoTgte++1tgP96oe5XH0wWTMObUSGuhiegwIQ
-         1A4IIhUQ1yZEGk7npMle9vjq1Eq7A/cc4E9f962uEu0kmwFtkkwD0QhiG9x+/5bZmr1H
-         l5E3M48Ss5DTPdaNDIYzBWYuakJVR7zb7Xu/3FbI6CiFv5/LQoZdiyqYtj7xXhHMHxJQ
-         YTscVXtnG7G/PMv4nM38cAtIFd1T91t38OLUCUzpIbHewnauTH8dq7GifsEoADSe1dt+
-         JMhg==
-X-Gm-Message-State: AO0yUKV7SUmGOF9U5hWz4xm2NMifvGwW21g5DGZCVemrTk2SWqoVc/Wp
-        6hc2OuA60HWtPHcXLgC4OriE90VzbOebydAs
-X-Google-Smtp-Source: AK7set+uEknYw9udTW1kl3Txp9GCn0dwLcAHml7YyNdx8cs9cBLJqKM2WD3mlV1dCTNf8dW4llZy/A==
-X-Received: by 2002:a05:600c:ccd:b0:3df:e1d8:cd8f with SMTP id fk13-20020a05600c0ccd00b003dfe1d8cd8fmr9580566wmb.6.1676029092269;
-        Fri, 10 Feb 2023 03:38:12 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id j6-20020a05600c42c600b003df245cd853sm4408871wme.44.2023.02.10.03.38.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Feb 2023 03:38:11 -0800 (PST)
-Message-ID: <c06f5b63-2667-2a01-fa1f-7efe4c6f3867@linaro.org>
-Date:   Fri, 10 Feb 2023 12:38:09 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH V2 1/3] dt-bindings: clock: Add Loongson-1 clock
-Content-Language: en-US
-To:     Keguang Zhang <keguang.zhang@gmail.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S231970AbjBJSNY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 13:13:24 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 180433A0AC;
+        Fri, 10 Feb 2023 10:13:24 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A5E2D61E7A;
+        Fri, 10 Feb 2023 18:13:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90E21C433EF;
+        Fri, 10 Feb 2023 18:13:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676052803;
+        bh=6FLDH++aUj095WH9otN0bkobiJlSDQziX4LlJjA4wS4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OBeovfgBitTlBAxZHZpmc5RTctjYTaEPJRtQRt9AvYMQm79B2inSL2GCVqGCNRThH
+         uv6ZV5NIrYKBg1+2+8prF8TmMOpdfezRGuXAkz8fEki6YKNfYEgQsrVy4DcI/tlxqp
+         BjPhcwp6vQgLawKj8Ly+E/Ov7p2zGAok4V94flhRydi9R2Egj6Sf6g/jAVQJW0ZVo5
+         cJoC2H2enzXbF7VRM7BZfUXTIjCQRtMOzFdO1qG+m5YKLLg6dWRjl1YKw05SSM+Ew4
+         JgenQnvyNc+qu3vklc1eq/zqASHpAUXRSN8u5zXM1BZ+wZosIxSXf1FRTcsMOiXuz9
+         xuTk5ILD8DMEg==
+Date:   Fri, 10 Feb 2023 10:13:20 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Alain Volmat <avolmat@me.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-References: <20230209132614.1079198-1-keguang.zhang@gmail.com>
- <20230209132614.1079198-2-keguang.zhang@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230209132614.1079198-2-keguang.zhang@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 00/11] ARM: removal of STiH415/STiH416 remainings bits
+Message-ID: <20230210101320.331c1d95@kernel.org>
+In-Reply-To: <Y+YKeVoq91/mtlo2@imac101>
+References: <20230209091659.1409-1-avolmat@me.com>
+        <20230210090420.GB175687@linaro.org>
+        <Y+YKeVoq91/mtlo2@imac101>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/02/2023 14:26, Keguang Zhang wrote:
-> Add devicetree binding document and related header file
-> for the Loongson-1 clock.
+On Fri, 10 Feb 2023 10:12:25 +0100 Alain Volmat wrote:
+> Having seen situations like that for some other series I was guessing
+> that each maintainer would apply the relevant patches on his side.
+> Those two platforms being no more used, there is no specific patch
+> ordering to keep.
 > 
-> Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
-> ---
-> V1 -> V2: Change to one clock controller
->           Add clock-related dt-binding header file
->           Fix the warning of dt_binding_check
-> ---
+> I've actually been wondering at the beginning how should I post those
+> patches.  If another way is preferrable I can post again differently
+> if that helps.
 
-Thank you for your patch. There is something to discuss/improve.
-
-> diff --git a/include/dt-bindings/clock/loongson,ls1x-clk.h b/include/dt-bindings/clock/loongson,ls1x-clk.h
-> new file mode 100644
-> index 000000000000..579552c5f14b
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/loongson,ls1x-clk.h
-> @@ -0,0 +1,19 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-
-Same license as binding please.
-
-> +/*
-> + * Loongson-1 clock tree IDs
-> + *
-> + * Copyright (C) 2023 Keguang Zhang <keguang.zhang@gmail.com>
-> + */
-
-Best regards,
-Krzysztof
-
+You'd have most luck getting the changes accepted for 6.3 if you split
+this up and resend to individual maintainers.
