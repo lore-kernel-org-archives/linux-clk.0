@@ -2,116 +2,106 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36557C636D3
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Feb 2023 11:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A288AC636CD
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Feb 2023 11:38:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231500AbjBJLNQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Feb 2023 06:13:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53518 "EHLO
+        id S232143AbjBJLiQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Feb 2023 06:38:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231724AbjBJLNP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 06:13:15 -0500
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A330772DEB;
-        Fri, 10 Feb 2023 03:12:34 -0800 (PST)
-Received: by mail-pl1-x630.google.com with SMTP id k13so6173995plg.0;
-        Fri, 10 Feb 2023 03:12:34 -0800 (PST)
+        with ESMTP id S232103AbjBJLiP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 06:38:15 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A271E72DD5
+        for <linux-clk@vger.kernel.org>; Fri, 10 Feb 2023 03:38:13 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id k8-20020a05600c1c8800b003dc57ea0dfeso6096640wms.0
+        for <linux-clk@vger.kernel.org>; Fri, 10 Feb 2023 03:38:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4V9spyiEwfehqA2gEWTBlez2WNzN4xeTbha22bMXzas=;
-        b=duaPPcn1vtiqWc2seQlgLf+6XBvC259l5kfLfhuox3u6Szpziiv0VMuEP8dPqJ4Uip
-         gc128eNCgFyiNKfwtWbTISSdWV9W2mWkMHjyh2zy6Yvlo3GuZlsAY0p4G+YH7kVQpqX4
-         9B+DitvhRX+YsGxPiQEyq//7nbVp33ckG92XfQmBua04OwssH6/o3Rn8yAy0z8oYx8Yl
-         2mh6a9hoOw6Lnx4S7aXFQgjrExoCWMGjsp0kYmhdim5JWSzqgTyLlL11UkqfQriZQkZs
-         p1kZWAQDhTGkrbLAlcIYPGUIdUBXkRdWHb9kEpo/d5rQDuuA1I3FUQwei9M19e6JJ1c5
-         P+hw==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I3AfScb5eZBvuleQTKe5gvMdffqFNjAeOX6lI523hQE=;
+        b=asmkAOnSBKcu3XreoHNmILuUKNc/O5vXcAx16D9bRMvAcqlhx5cTBBNm0tKvQ3rgex
+         f0Bq51Uwmmx0s2dB9RyO9NLeHrxNYWJEK76BNaNLyDrKXfcj4Ynfyrh3Ub0+64672wtg
+         c6s1fETV3nNjhgs/ccwSbzsIRS2caC4jhGyMb+VDouBbN6h+WBm991X8M95leA0HmRmr
+         Omwu2BxnUDZhaXzWKfIh5jIODy5gV1lacSU9icmnYnaq0KryF4K0Npk9zx7F4QCMME25
+         Mu5itB1MRcVrMLpHB448z1asKPcl6ZIdJ5ZtaZZ00JLN/ldWkhxpEUMBefWWL5lHbXtO
+         r0qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4V9spyiEwfehqA2gEWTBlez2WNzN4xeTbha22bMXzas=;
-        b=dcH8V7xHwFzqklZkCJi/xf9oGlEBQoQ3xsHij6agn2tWJ/XPdC9BcbOzhetAOlsvCF
-         WBejJg7OcsnqUPFZ/OY3rmoV4sB3gAyIFnGse26gHCSPDO84kLiF123COuA63Gv9fqa3
-         kI8inDE0ZKaOMJ4378r/bvIcWxHhuBFl+2VFLf2a+mV5msw+V5mWjWYTnClw8yE3fJEk
-         ByVEWbbafMQA2OPCyy4jg64IPolm3VpAPcoWcmHpBsZMeYsmL2PJ+pt3+B4k2ADgQf6V
-         v/+byouGsVt06bX4l4AMmnwxrPjQt4iPxvNL6RA1PPRcHyggrPOcKhJdSaRzEJqXJNrT
-         5lfw==
-X-Gm-Message-State: AO0yUKUvCigDSZ8bWVXK0Phx8zvTgGOjzgPdQQFe7IbMD5jUGI//lfeB
-        qXYp5oJEI0ik3U+mlG66juVLWuamv4yHvQ==
-X-Google-Smtp-Source: AK7set8RAS551R5LFayDhHImXHHMj5qqQ9IxGdmdZoYBKJm7B2BgpygY9dxXkQlYzXbtSxLVikzJag==
-X-Received: by 2002:a17:90a:195a:b0:231:284:ea4d with SMTP id 26-20020a17090a195a00b002310284ea4dmr11934030pjh.22.1676027550879;
-        Fri, 10 Feb 2023 03:12:30 -0800 (PST)
-Received: from kelvin-ThinkPad-L14-Gen-1.. (ec2-18-163-35-77.ap-east-1.compute.amazonaws.com. [18.163.35.77])
-        by smtp.gmail.com with ESMTPSA id z8-20020a17090a66c800b00232e9ff80acsm2518524pjl.56.2023.02.10.03.12.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Feb 2023 03:12:30 -0800 (PST)
-From:   Keguang Zhang <keguang.zhang@gmail.com>
-To:     linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Keguang Zhang <keguang.zhang@gmail.com>
-Subject: [PATCH] MIPS: loongson32: Update the clock initialization
-Date:   Fri, 10 Feb 2023 19:11:41 +0800
-Message-Id: <20230210111141.1379645-1-keguang.zhang@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I3AfScb5eZBvuleQTKe5gvMdffqFNjAeOX6lI523hQE=;
+        b=egWMT9u44J6MkzBUeccvCevPvkIjCq2j7+cOdY8rtVQX1tW7sQYQAxIfbox3kWCKAS
+         XkGqlZBB6V2tS4ADt68B6qLTcHxUPJ6zoTgte++1tgP96oe5XH0wWTMObUSGuhiegwIQ
+         1A4IIhUQ1yZEGk7npMle9vjq1Eq7A/cc4E9f962uEu0kmwFtkkwD0QhiG9x+/5bZmr1H
+         l5E3M48Ss5DTPdaNDIYzBWYuakJVR7zb7Xu/3FbI6CiFv5/LQoZdiyqYtj7xXhHMHxJQ
+         YTscVXtnG7G/PMv4nM38cAtIFd1T91t38OLUCUzpIbHewnauTH8dq7GifsEoADSe1dt+
+         JMhg==
+X-Gm-Message-State: AO0yUKV7SUmGOF9U5hWz4xm2NMifvGwW21g5DGZCVemrTk2SWqoVc/Wp
+        6hc2OuA60HWtPHcXLgC4OriE90VzbOebydAs
+X-Google-Smtp-Source: AK7set+uEknYw9udTW1kl3Txp9GCn0dwLcAHml7YyNdx8cs9cBLJqKM2WD3mlV1dCTNf8dW4llZy/A==
+X-Received: by 2002:a05:600c:ccd:b0:3df:e1d8:cd8f with SMTP id fk13-20020a05600c0ccd00b003dfe1d8cd8fmr9580566wmb.6.1676029092269;
+        Fri, 10 Feb 2023 03:38:12 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id j6-20020a05600c42c600b003df245cd853sm4408871wme.44.2023.02.10.03.38.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Feb 2023 03:38:11 -0800 (PST)
+Message-ID: <c06f5b63-2667-2a01-fa1f-7efe4c6f3867@linaro.org>
+Date:   Fri, 10 Feb 2023 12:38:09 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH V2 1/3] dt-bindings: clock: Add Loongson-1 clock
+Content-Language: en-US
+To:     Keguang Zhang <keguang.zhang@gmail.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+References: <20230209132614.1079198-1-keguang.zhang@gmail.com>
+ <20230209132614.1079198-2-keguang.zhang@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230209132614.1079198-2-keguang.zhang@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Loongson-1 clock driver is under re-implementation
-to add DT support. As a result, ls1x_clk_init() will be dropped soon.
-Therefore, call of_clk_init() for clock initialization instead.
+On 09/02/2023 14:26, Keguang Zhang wrote:
+> Add devicetree binding document and related header file
+> for the Loongson-1 clock.
+> 
+> Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
+> ---
+> V1 -> V2: Change to one clock controller
+>           Add clock-related dt-binding header file
+>           Fix the warning of dt_binding_check
+> ---
 
-Link: https://lore.kernel.org/all/20230209132614.1079198-3-keguang.zhang@gmail.com
-Link: https://lore.kernel.org/all/20230209132614.1079198-4-keguang.zhang@gmail.com
-Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
----
- arch/mips/include/asm/mach-loongson32/platform.h | 1 -
- arch/mips/loongson32/common/time.c               | 3 ++-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Thank you for your patch. There is something to discuss/improve.
 
-diff --git a/arch/mips/include/asm/mach-loongson32/platform.h b/arch/mips/include/asm/mach-loongson32/platform.h
-index 86e1a6aab4e5..2cdcfb5f6012 100644
---- a/arch/mips/include/asm/mach-loongson32/platform.h
-+++ b/arch/mips/include/asm/mach-loongson32/platform.h
-@@ -20,7 +20,6 @@ extern struct platform_device ls1x_gpio1_pdev;
- extern struct platform_device ls1x_rtc_pdev;
- extern struct platform_device ls1x_wdt_pdev;
- 
--void __init ls1x_clk_init(void);
- void __init ls1x_rtc_set_extclk(struct platform_device *pdev);
- void __init ls1x_serial_set_uartclk(struct platform_device *pdev);
- 
-diff --git a/arch/mips/loongson32/common/time.c b/arch/mips/loongson32/common/time.c
-index 459b15c96d3b..965c04aa56fd 100644
---- a/arch/mips/loongson32/common/time.c
-+++ b/arch/mips/loongson32/common/time.c
-@@ -4,6 +4,7 @@
-  */
- 
- #include <linux/clk.h>
-+#include <linux/of_clk.h>
- #include <linux/interrupt.h>
- #include <linux/sizes.h>
- #include <asm/time.h>
-@@ -211,7 +212,7 @@ void __init plat_time_init(void)
- 	struct clk *clk = NULL;
- 
- 	/* initialize LS1X clocks */
--	ls1x_clk_init();
-+	of_clk_init(NULL);
- 
- #ifdef CONFIG_CEVT_CSRC_LS1X
- 	/* setup LS1X PWM timer */
+> diff --git a/include/dt-bindings/clock/loongson,ls1x-clk.h b/include/dt-bindings/clock/loongson,ls1x-clk.h
+> new file mode 100644
+> index 000000000000..579552c5f14b
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/loongson,ls1x-clk.h
+> @@ -0,0 +1,19 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
 
-base-commit: 159c610af8cdf2b3c915e59162fc867b557cbe7e
-prerequisite-patch-id: 6a8c8d604fca8bce5d9e35cac080b87a33be2b5c
--- 
-2.34.1
+Same license as binding please.
+
+> +/*
+> + * Loongson-1 clock tree IDs
+> + *
+> + * Copyright (C) 2023 Keguang Zhang <keguang.zhang@gmail.com>
+> + */
+
+Best regards,
+Krzysztof
 
