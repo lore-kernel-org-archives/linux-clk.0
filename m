@@ -2,97 +2,122 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A4C7C636D4
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Feb 2023 22:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F55EC636D4
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Feb 2023 22:49:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233799AbjBJWca (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Feb 2023 17:32:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58736 "EHLO
+        id S233662AbjBJWtX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Feb 2023 17:49:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233604AbjBJWc3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 17:32:29 -0500
+        with ESMTP id S233606AbjBJWtW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 17:49:22 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16284B746;
-        Fri, 10 Feb 2023 14:32:21 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E3DA32CDE;
+        Fri, 10 Feb 2023 14:49:21 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 731DBB82607;
-        Fri, 10 Feb 2023 22:32:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 383E8C433EF;
-        Fri, 10 Feb 2023 22:32:18 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1192BB825E3;
+        Fri, 10 Feb 2023 22:49:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E317C433D2;
+        Fri, 10 Feb 2023 22:49:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676068338;
-        bh=2NQDPgACS8xj+77ibaZP4zKWlf6IXR9HA3KiWyN/oTg=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=lMS8aROoD3ffESkMofzGNmAthSTy++eZx24c9pCK/JVHbO3UWpZHKbKxgFVBDONOP
-         8nahBhN0obUkvQr83CgdQqeG6rUpruk6gMHexwuMguo6wsG1V1KmxVZBALUsXsvKLD
-         0XWmuS5U+tPmNZJDoRhfBzAMvcK7lg5kWeOaIR7cbO4etlNZTDu7e0tDIulAny6oz+
-         RtpTYP7VoFpfuy3OYY944CEU94K3fLDoTbZPVO41NWpCj7ZSScc0OO4G0zXQCiI7s6
-         CUAPRpCjRzzFy6+riLxkXBkEsvRUo15X3G1NE4vdigte0zggGBGsGpv42fS6HL1cJG
-         l55AEeCq+J4rw==
-Message-ID: <350b296b62a982f83e273f0f385f2b6f.sboyd@kernel.org>
+        s=k20201202; t=1676069358;
+        bh=SaVWEZqi6FK5RZrvwlP3inTyWF9/jTYSLZIuA+RQlOY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=Fjsc41PSUvuYhRh/p0FRD7O8YG83EbFsky6WgGPSPQj4me6aOpo/Fu5UKT0XpT5OH
+         BsJp9v8VLp64Nm6UIcXN+q8KNJNkwLpz6ikFjQqEQoT7fKL2d7aPBB9plkgu4PhYhg
+         EjW/bDmSSV5ALnQMklISKwzbg/PtN6IBGHXD+v9xkjCKkqfoI+R43SMw4qAonK55gT
+         eilyYyzi/i10qxnuwqrRzTACU0gZuVzCxpd6XFxPGTAAmY8E55PFcV5bFXrMpkLuxl
+         3O+lMjm8g83o0N9gcRJfHmiTOmtkaTUCFmN8vb1+MTNm8RPpB/obE2Shu9z7dRN8mV
+         wmwjutvgTLw7w==
+Message-ID: <83a3c8d0abf217369f045df0217b1f64.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <bced492e-08f3-90d9-4ca0-41ab0e4cca9d@linaro.org>
-References: <20230123094925.54824-1-krzysztof.kozlowski@linaro.org> <20230123094925.54824-2-krzysztof.kozlowski@linaro.org> <7ddf5c74de84c5dc291996423cb1eb46.sboyd@kernel.org> <febd59ed-ff7b-ffc4-5568-d856703c9123@linaro.org> <9367139a425dc7e4811c757b62f33a4e.sboyd@kernel.org> <bced492e-08f3-90d9-4ca0-41ab0e4cca9d@linaro.org>
-Subject: Re: [PATCH 2/2] clk: qcom: restrict drivers per ARM/ARM64
+In-Reply-To: <CAOf5uwkMRSc7q1xUv4D=hc4w0HL=+x1_J60yyru_hGSuf5m0bA@mail.gmail.com>
+References: <20230101175740.1010258-1-dario.binacchi@amarulasolutions.com> <1fc8686b0b66c3b3ff80c044ecf1add6.sboyd@kernel.org> <CAOf5uwkMRSc7q1xUv4D=hc4w0HL=+x1_J60yyru_hGSuf5m0bA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 00/11] clk: imx8mn: setup clocks from the device tree
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+Cc:     Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        linux-kernel@vger.kernel.org, angelo@amarulasolutions.com,
+        tommaso.merciai@amarulasolutions.com,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        linux-amarula@amarulasolutions.com, anthony@amarulasolutions.com,
+        jagan@amarulasolutions.com, Abel Vesa <abelvesa@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Li Jun <jun.li@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
+        Marek Vasut <marex@denx.de>,
+        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 10 Feb 2023 14:32:14 -0800
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+To:     Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Date:   Fri, 10 Feb 2023 14:49:16 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2023-01-31 23:12:53)
-> On 31/01/2023 00:30, Stephen Boyd wrote:
-> > Quoting Krzysztof Kozlowski (2023-01-26 01:31:55)
-> >> On 25/01/2023 21:44, Stephen Boyd wrote:
-> >>> Quoting Krzysztof Kozlowski (2023-01-23 01:49:25)
-> >>>> There is no point to allow selecting pin-controller drivers for Qual=
-comm
-> >>>
-> >>> pin controllers?
-> >>
-> >> Copy-paste, I'll fix it.
-> >>
-> >>>
-> >>>> ARMv7 SoCs when building ARM64 kernel, and vice versa.  This makes
-> >>>> kernel configuration more difficult as many do not remember the Qual=
-comm
-> >>>> SoCs model names/numbers.  There won't be a single image for ARMv7 a=
-nd
-> >>>> ARMv8/9 SoCs, so no features/options are lost.
-> >>>
-> >>> Are the drivers used in arm32 emulation mode on these SoCs? I recall
-> >>> there are some SoCs they run with the arm architecture.
-> >>
-> >> I did not add it to the few SoCs which have upstream DTS in ARM and
-> >> ARM64. I added only to the ones which are in one specific folder. Also
-> >> my patch does not affect defconfigs (qcom_defconfig and arm64/defconfi=
-g).
-> >=20
-> > Cool, thanks for checking. Is it possible to take a dtb from arm64 dts
-> > directory and boot it on an armv8 CPU running in 32-bit mode? Just
-> > wondering if even having the dts file exist in the arm64 architecture
-> > really matters here.
+Quoting Michael Nazzareno Trimarchi (2023-01-26 02:49:54)
+> Hi
 >=20
-> If DTSI (and/or board DTS) is in arm64, you still need DTS or a link in
-> arm directory. If such one is added, then the restrictions here can be
-> removed. Have in mind that I did the same already for pinctrl.
+> On Wed, Jan 25, 2023 at 10:11 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Dario Binacchi (2023-01-01 09:57:29)
+> > > The idea for this series was born back from Dublin (ELCE 2022) after
+> > > having attended the talk entitled "Updating and Modernizing Clock
+> > > Drivers" held by Chen-Yu Tsai and the availability of a board with
+> > > imx8mn SOC.
+> >
+> > Interesting. I didn't see any mention of putting clks into DT in that
+> > presentation.
+> >
+> > >
+> > > This series aims to setup all imx8mn's clocks from the device tree and
+> > > remove the legacy setup code with hardwired parameters.
+> >
+> > Please, no! We don't want one node per clk style of bindings.
 >=20
+> I think the idea behind is:
+> - create a way from silicon vendor to export their clock mapping with
+> automatic exportation
 
-I'm saying that you put the dts file in arch/arm64/boot/dts/, compile
-the dts to a dtb and stick it on a board that boots the kernel in arm32
-mode. If it is possible to boot the dtb on a CPU running in arm32 mode
-then this restriction should be loosened to=20
+I suspect silicon vendors automatically generate their clk drivers
+today.
 
-	depends on ARM || ARM64 || COMPILE_TEST
+> - reduce the copy and paste code across the drivers
+> - avoid code duplication
+
+Code duplication should be avoided. Surely the clk_ops is shared? Data
+duplication is the real problem here. The status quo has been to have
+data descriptions of clks in drivers so that drivers can turn them on.
+If we're trying to avoid bloat then we only enable the drivers that we
+care about, or make them modular so they don't waste kernel memory.
+
+If you have ideas on how to avoid duplication there then by all means
+implement them. Don't move the data duplication problem to devicetree
+though.
+
+I've been wondering if we can tag drivers that are compiled into the
+kernel as freeable if they aren't ever going to probe because they're
+for some SoC that isn't present. That would allow us to shed various
+builtin clk drivers on systems instead of forcing us to make everything
+a module.
+
+>=20
+> Is the binding a way to solve this problem?
+
+Don't think so.
+
+> If you don't want one node
+> per clk style bindings, did you still think that the way
+> to go is totally wrong?
+
+Yes.
