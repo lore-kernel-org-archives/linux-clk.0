@@ -2,62 +2,92 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E4A5C636D4
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Feb 2023 00:15:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3BD1C05027
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Feb 2023 00:40:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229487AbjBKAPF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Feb 2023 19:15:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43364 "EHLO
+        id S229447AbjBKAkh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Feb 2023 19:40:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbjBKAPE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 19:15:04 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A680882190;
-        Fri, 10 Feb 2023 16:15:01 -0800 (PST)
+        with ESMTP id S229576AbjBKAkg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 19:40:36 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01171BBB2;
+        Fri, 10 Feb 2023 16:40:33 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3F92861EC3;
-        Sat, 11 Feb 2023 00:15:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92FB7C433D2;
-        Sat, 11 Feb 2023 00:15:00 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A8BD2B825B8;
+        Sat, 11 Feb 2023 00:40:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DB74C433D2;
+        Sat, 11 Feb 2023 00:40:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676074500;
-        bh=3Gu16sVpeG91r2zL5sJBxTx6RouftcrivaZx9fWn6MM=;
+        s=k20201202; t=1676076031;
+        bh=UKSvG2H35RhhTGJLlKDF+4pw8O05L9n2GRROzIg/SU4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=PEgy2c3f444YbEc7JeGNKRiplYtKiEeaWczWaOjJgiseSWGe/4gz6+rup4mZ6eKjv
-         k7KbeUVlxY+ex32xFFetO0VfF00pz7mM34K6RKNgNdpWHZST3NB2x/K0mwvf968chn
-         pNoKRPJdEW7hDk+4bwIOYmB1LOjZE4IWJbyk6Iq8IVnydE/y2iwtjK2+GJc8cCmxXd
-         vuvX1V2GF+JYKdDMe5zjS5y+lD3DHqGC3ZVvbjISzZSVoqoFPOSq3FgnkhZoIcNsTG
-         t+sQQtMW2HK5QeQqORWwvV74BuRde+jI+j15KyGhJQGlryyisBZPHO960vf1mPCPrE
-         HX51laDojwxxQ==
-Message-ID: <2b64e860005caf58b238582362c30b46.sboyd@kernel.org>
+        b=e/A6yRDirseqEyazzRzQcgQUZMWhiGudcK3a6oqPZTePBlvqjCEBVO5+OXijS8cJA
+         KT+HzgYgGAkw3DxOTQPB9mxWTE/nuJOnwzpyeIw9hH8xCfflKSJzAjynvorbjr69DF
+         1q9ZsesHdXrAgGAatGVSbj8XYcT9/Bko8kTBl7/n9/Nnpu3JvoSaBFAesPjIV5iMdC
+         gmXf9qbb8UPFbqqbrOSW1W4w8u634Zi8h1JRx6f75ylOmQd7vUGZHee6zJtOMYW7kP
+         WUcNUbYReSEdGNwPORhbgC/rKY6JrtI4nQcSQDh2RKPC/JC8/xOCli6Y5zAdZactYQ
+         OI6qcFPtyJtGA==
+Message-ID: <e5b71c243022d341022b4f172060268b.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230201091300.3201-1-cixi.geng@linux.dev>
-References: <20230201091300.3201-1-cixi.geng@linux.dev>
-Subject: Re: [PATCH] clk: sprd: Add dependency for SPRD_UMS512_CLK
+In-Reply-To: <20230131160829.23369-1-ansuelsmth@gmail.com>
+References: <20230131160829.23369-1-ansuelsmth@gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: Warn and add workaround on misuse of .parent_data with .name only
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        cixi.geng1@unisoc.com
-To:     Cixi Geng <cixi.geng@linux.dev>, baolin.wang@linux.alibaba.com,
-        mturquette@baylibre.com, orsonzhai@gmail.com, zhang.lyra@gmail.com
-Date:   Fri, 10 Feb 2023 16:14:58 -0800
+Cc:     Christian Marangi <ansuelsmth@gmail.com>
+To:     Christian Marangi <ansuelsmth@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 10 Feb 2023 16:40:29 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Cixi Geng (2023-02-01 01:13:00)
-> From: Cixi Geng <cixi.geng1@unisoc.com>
->=20
-> Add depends on and default for ums512 clk config.
->=20
-> Signed-off-by: Cixi Geng <cixi.geng1@unisoc.com>
-> ---
+Quoting Christian Marangi (2023-01-31 08:08:28)
+> By a simple mistake in a .parent_names to .parent_data conversion it was
+> found that clk core assume fw_name is always provided with a parent_data
+> struct for each parent and never fallback to .name to get parent name even
+> if declared.
 
-Applied to clk-next
+It sounds like you have clk_parent_data and the .index member is 0? Can
+you show an example structure? I'm guessing it is like this:
 
-The ARM64 dependency is redundant though so maybe you should remove that
-too in another patch.
+	struct clk_parent_data pdata =3D { .name =3D "global_name" };
+
+>=20
+> This is caused by clk_core_get that only checks for parent .fw_name and
+> doesn't handle .name.
+
+clk_core_get() is not supposed to operate on the .name member. It is a
+firmware based lookup with clkdev as a fallback because clkdev is a
+psudeo-firmware interface to assign a name to a clk when some device
+pointer is used in conjunction with it.
+
+>=20
+> While it's sane to request the dev to correctly do the conversion and
+> add both .fw_name and .name in a parent_data struct, it's not sane to
+> silently drop parents without a warning.
+
+I suppose we can do
+
+	WARN(parent->index >=3D 0 && !parent_data[i].fw_name && parent_data[i].nam=
+e, ...);
+
+or maybe better would be to make the clk registration fail if there's a
+.name field and the index is non-negative and the fw_name is NULL.
+
+Can you grep the code and see if anyone is assigning a .name without a
+.fw_name or .index?
+
+>=20
+> Fix this in 2 ways. Add a kernel warning when a wrong implementation is
+> used and copy .name in .fw_name in parent map populate function to
+> handle clk problems and malfunctions.
+
+We shouldn't be copying .name to .fw_name. They're different things.
