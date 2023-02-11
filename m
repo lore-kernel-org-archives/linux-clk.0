@@ -2,177 +2,101 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41782C636CC
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Feb 2023 09:20:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF37FC636D7
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Feb 2023 11:19:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229460AbjBKJUI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 11 Feb 2023 04:20:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57038 "EHLO
+        id S230034AbjBKLTb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 11 Feb 2023 06:19:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbjBKJUH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Feb 2023 04:20:07 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8CBF2FCC8
-        for <linux-clk@vger.kernel.org>; Sat, 11 Feb 2023 01:20:04 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id qw12so21345896ejc.2
-        for <linux-clk@vger.kernel.org>; Sat, 11 Feb 2023 01:20:04 -0800 (PST)
+        with ESMTP id S229768AbjBKLTa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Feb 2023 06:19:30 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9213E2E817
+        for <linux-clk@vger.kernel.org>; Sat, 11 Feb 2023 03:19:28 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id bk16so7601963wrb.11
+        for <linux-clk@vger.kernel.org>; Sat, 11 Feb 2023 03:19:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Ay7GopDhxpUWXvFU/Desi3ncPwaICJKEa+mMLgmlAI=;
-        b=O7wHkho8aDQgo94UfFVY9X+XG/U+2SPSmWJ435T0PJxK0wOCnONbmuwo8viMsiCcuO
-         buC/rLfDgF+j3xQ2VEwC1njKqtZTtDbzXNbVE3KUkhlgYxpdXWNLq62thnYyW0bTgI3V
-         KJRwLI6WpGbUbgf2gxyHIO5uEXXwlSuiYb23U=
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=/HedU73Py85YegRJs77VEOjTv5q8omvTRRWTMaFvNQA=;
+        b=MYkR5vF6yGnszA8nbuYP3kxKErFCUnn8Dw1Mvfo09R/YEBjmbexC9nu+qFisn8LATT
+         A3rMGgqAPHmO2+acYIUei2ZYOguNc6ADiwvNmdR+IhCEA55lyXGoGIr6bEkMEbHP3E6P
+         F7a38XypmaqwT56mLY5HuEB9LCXvPPNxasj9SP4kIFTfS7gFFwQMebRj1v6RgWapG3ro
+         HHhtPixUeHIVIQJUZRxZGOQeuKfcLml/KvnkoJwAbDHt0I1WXua7/3Kruc7f5erMUtcc
+         E6OaFYbbHr9fdwWvv/Tt61UomZb/oHqbWJn1fQDQR7qpyKGWAYMloAJJrYNV9stGUvC/
+         mNUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6Ay7GopDhxpUWXvFU/Desi3ncPwaICJKEa+mMLgmlAI=;
-        b=W2gMISldnwoiURJA25YItCJFsxun9ivRnih79iVHyYuo5QEzE9yTGvPGJhdZ4WeAyT
-         e7RgtNNtyuu/GmMtnqp5YtK7RaZVQp7/v3m4hh1vK71ZqzE39Lc7UxKnRqMNY+HMKG1N
-         cwDlc2jmS31+JHi5CLBXunfgnBM1KECrs8s9NW8LLvBtz19M/zqHSciFAISB9b8tDnit
-         btVHGRM00SvlsVHQvZZFpihr0sxmdvalDX/vid8dPOqbdKg0A9hZhObdpeVVifUln+JJ
-         GtzYJ1BMINr5tOx8OJEswdP2Agol8MnziI7WBOWa7wl10OyYaNFiKj8sXX7dvzk4s6Bw
-         Ipew==
-X-Gm-Message-State: AO0yUKWHhJKHA7zF2XiVkHoVGy6PR3PvfIR7jrD7MGj+LX3BdBLrmY1k
-        3PB3ZYUNUef3/ibkVRejDS7pjM2qOGhiPpyrrW3sUA==
-X-Google-Smtp-Source: AK7set+jZ705IMIDjL87PKlafwfn4leLVjN6W0uPB/ZG04XFihgIOINn7gMrXMHNl3mnPgeREDPQ8Or/gVMTa8GMDfY=
-X-Received: by 2002:a17:906:69d1:b0:886:4fe9:1d51 with SMTP id
- g17-20020a17090669d100b008864fe91d51mr2131922ejs.12.1676107203273; Sat, 11
- Feb 2023 01:20:03 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/HedU73Py85YegRJs77VEOjTv5q8omvTRRWTMaFvNQA=;
+        b=UzrBo8CbQ41nmWPcvUkHylOTgUzibFZErYp5AwkwxMAlb2k+4r4R1vBbGBhM1ej/9R
+         CW/ueAOIJioqaKW83y1PEhJFXx44j5r6nRMfAzsSNqitk52TUz/C18ywlDi+VwNUAoEJ
+         xPed+O9ZDvAr7inau2aRwOtS42AoihOQ81N0DlhPxjZvmQsXHEfRyIvcsug5O3oqnfIF
+         pyDwL0SdRnDH0zl+ZesuFNg6mv6e6qmQxx5/zwAZTDwt0+i6IcmMYIz1RBZMEH5k4BqV
+         UkD/tTZGfBjBuvTj0hmUVgKZs5eIGo90RaDq8nOW+xJ+VFPxHglzceDQQtnlvvn3rU2B
+         VOQg==
+X-Gm-Message-State: AO0yUKXovxm3DuZSUcqV6BY9jjUOjSmCrtmW2P0tSFNH1YDOOTpOg6o6
+        2pVK9WLHst+hkUAaIvnHfuv7Bg==
+X-Google-Smtp-Source: AK7set9A1FV9nulqq7N/n39ZSMXAsD8ZyMhcZZU8zMMkclO8C65gPePOsAPDWiLZTfplPNHDkPCskg==
+X-Received: by 2002:a5d:6c64:0:b0:2c3:be89:7c1e with SMTP id r4-20020a5d6c64000000b002c3be897c1emr12394725wrz.1.1676114367094;
+        Sat, 11 Feb 2023 03:19:27 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id a7-20020a056000050700b002c3e3ee7d1asm5873863wrf.79.2023.02.11.03.19.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 11 Feb 2023 03:19:26 -0800 (PST)
+Message-ID: <8ddf54eb-6971-aed7-3067-f66393a40b44@linaro.org>
+Date:   Sat, 11 Feb 2023 12:19:25 +0100
 MIME-Version: 1.0
-References: <20230101175740.1010258-1-dario.binacchi@amarulasolutions.com>
- <1fc8686b0b66c3b3ff80c044ecf1add6.sboyd@kernel.org> <CAOf5uwkMRSc7q1xUv4D=hc4w0HL=+x1_J60yyru_hGSuf5m0bA@mail.gmail.com>
- <83a3c8d0abf217369f045df0217b1f64.sboyd@kernel.org>
-In-Reply-To: <83a3c8d0abf217369f045df0217b1f64.sboyd@kernel.org>
-From:   Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date:   Sat, 11 Feb 2023 10:19:52 +0100
-Message-ID: <CAOf5uwk_ZtmuzUv9GNxOo0zmMnYVskBKfzm+9n3XO2U7j7C0Sw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 00/11] clk: imx8mn: setup clocks from the device tree
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        linux-kernel@vger.kernel.org, angelo@amarulasolutions.com,
-        tommaso.merciai@amarulasolutions.com,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        linux-amarula@amarulasolutions.com, anthony@amarulasolutions.com,
-        jagan@amarulasolutions.com, Abel Vesa <abelvesa@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Li Jun <jun.li@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
-        Marek Vasut <marex@denx.de>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 2/2] clk: qcom: restrict drivers per ARM/ARM64
+To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230123094925.54824-1-krzysztof.kozlowski@linaro.org>
+ <20230123094925.54824-2-krzysztof.kozlowski@linaro.org>
+ <7ddf5c74de84c5dc291996423cb1eb46.sboyd@kernel.org>
+ <febd59ed-ff7b-ffc4-5568-d856703c9123@linaro.org>
+ <9367139a425dc7e4811c757b62f33a4e.sboyd@kernel.org>
+ <bced492e-08f3-90d9-4ca0-41ab0e4cca9d@linaro.org>
+ <350b296b62a982f83e273f0f385f2b6f.sboyd@kernel.org>
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <350b296b62a982f83e273f0f385f2b6f.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi
+On 10/02/2023 23:32, Stephen Boyd wrote:
+>>
+>> If DTSI (and/or board DTS) is in arm64, you still need DTS or a link in
+>> arm directory. If such one is added, then the restrictions here can be
+>> removed. Have in mind that I did the same already for pinctrl.
+>>
+> 
+> I'm saying that you put the dts file in arch/arm64/boot/dts/, compile
+> the dts to a dtb and stick it on a board that boots the kernel in arm32
+> mode. If it is possible to boot the dtb on a CPU running in arm32 mode
+> then this restriction should be loosened to 
+> 
+> 	depends on ARM || ARM64 || COMPILE_TEST
 
-On Fri, Feb 10, 2023 at 11:49 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Michael Nazzareno Trimarchi (2023-01-26 02:49:54)
-> > Hi
-> >
-> > On Wed, Jan 25, 2023 at 10:11 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > >
-> > > Quoting Dario Binacchi (2023-01-01 09:57:29)
-> > > > The idea for this series was born back from Dublin (ELCE 2022) after
-> > > > having attended the talk entitled "Updating and Modernizing Clock
-> > > > Drivers" held by Chen-Yu Tsai and the availability of a board with
-> > > > imx8mn SOC.
-> > >
-> > > Interesting. I didn't see any mention of putting clks into DT in that
-> > > presentation.
-> > >
-> > > >
-> > > > This series aims to setup all imx8mn's clocks from the device tree and
-> > > > remove the legacy setup code with hardwired parameters.
-> > >
-> > > Please, no! We don't want one node per clk style of bindings.
-> >
-> > I think the idea behind is:
-> > - create a way from silicon vendor to export their clock mapping with
-> > automatic exportation
->
-> I suspect silicon vendors automatically generate their clk drivers
-> today.
->
+I get your point. I don't think we consider this as use case at all,
+especially that we are changing some of the boards from address-cells=1
+to 2. Also whatever is happening out-of-tree it's out-of-tree problem.
+If we want to support such case, then the DTS would have to be in
+arch/arm directory (like we do for few boards).
 
-Was easy to think that creating tools for dts generation was easy to
-have because
-they don't depend on the internal linux kernel and they are formally
-described. Export
-clk drivers considering kernel internal change I don't think that can work.
+Best regards,
+Krzysztof
 
-> > - reduce the copy and paste code across the drivers
-> > - avoid code duplication
->
-> Code duplication should be avoided. Surely the clk_ops is shared? Data
-> duplication is the real problem here. The status quo has been to have
-
-The idea to have in dts was to have much less code by the end to handle
-different SoC vendors but as you pointed me seems that you are more
-concerned about data duplication.
-
-> data descriptions of clks in drivers so that drivers can turn them on.
-> If we're trying to avoid bloat then we only enable the drivers that we
-> care about, or make them modular so they don't waste kernel memory.
->
-
-I'm not an expert of the dtc compiler but, is that possible that some
-optimization
-can happen there in the feature?
-
-> If you have ideas on how to avoid duplication there then by all means
-> implement them. Don't move the data duplication problem to devicetree
-> though.
->
-
-We will sit together again ;) after your comments here
-
-> I've been wondering if we can tag drivers that are compiled into the
-> kernel as freeable if they aren't ever going to probe because they're
-> for some SoC that isn't present. That would allow us to shed various
-> builtin clk drivers on systems instead of forcing us to make everything
-> a module.
-
-This is general on the driver level but sounds like a good idea.
-
-Michael
-
->
-> >
-> > Is the binding a way to solve this problem?
->
-> Don't think so.
->
-> > If you don't want one node
-> > per clk style bindings, did you still think that the way
-> > to go is totally wrong?
->
-> Yes.
-
-
-
--- 
-Michael Nazzareno Trimarchi
-Co-Founder & Chief Executive Officer
-M. +39 347 913 2170
-michael@amarulasolutions.com
-__________________________________
-
-Amarula Solutions BV
-Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
-T. +31 (0)85 111 9172
-info@amarulasolutions.com
-www.amarulasolutions.com
