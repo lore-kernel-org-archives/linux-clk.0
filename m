@@ -2,52 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE125C61DA4
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Feb 2023 06:40:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ECC0C6FA9D
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Feb 2023 06:40:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229625AbjBKGkC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 11 Feb 2023 01:40:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45852 "EHLO
+        id S229647AbjBKGkD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 11 Feb 2023 01:40:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229647AbjBKGjw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Feb 2023 01:39:52 -0500
-Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F0EF35B1
-        for <linux-clk@vger.kernel.org>; Fri, 10 Feb 2023 22:39:50 -0800 (PST)
-Received: by mail-oi1-x22a.google.com with SMTP id cz14so6249732oib.12
-        for <linux-clk@vger.kernel.org>; Fri, 10 Feb 2023 22:39:50 -0800 (PST)
+        with ESMTP id S229711AbjBKGjx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Feb 2023 01:39:53 -0500
+Received: from mail-oo1-xc30.google.com (mail-oo1-xc30.google.com [IPv6:2607:f8b0:4864:20::c30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DB041350C
+        for <linux-clk@vger.kernel.org>; Fri, 10 Feb 2023 22:39:51 -0800 (PST)
+Received: by mail-oo1-xc30.google.com with SMTP id x15-20020a4ab90f000000b004e64a0a967fso757496ooo.2
+        for <linux-clk@vger.kernel.org>; Fri, 10 Feb 2023 22:39:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zOL/t5qBo5/69OTBXU9K1Tb25sSUsXIonQCXIzPu+54=;
-        b=tHzsDq4HNF/rGckcDAHo6fj26lDoOoe8KuraYxDcWmx6Ab6WvmFZNUpMBfyQiBvqgI
-         btoJcI59TQYSEby+Gk2LMtpPuYRtCCTyxoAwIEFrHLQYqOWlRBjSBY/JpZPDgVWVm/Gx
-         bU9nioRCt9gDLYDPfdFzAVX8za0DNIsaDYU1T/wVrbTpaAeVEcZXDu6FzlKZgE+ONwfz
-         Pb1gwRd/I6CPVImHkEIyt/+J8QRcvHsXKZ/2NNStdJMfOitEAq46X8PYgw3ERHh0n3KB
-         jiD+fo6MciNYEau+57gvTTE6VfzQ8mRs099+rIlIuDXN7U2x51xcAivUl+qhuMhWx5u5
-         59pQ==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hGLpsx3x56F4XExqZ+3YmAAyi85mUU1waCg5Al37KCU=;
+        b=DDvBzjnkWpfUdwY/rg3cZnOUu1yzoDogUfZAj9PKlDg0d+bi2iRJAwo2/I8L4waloa
+         yV8JoGtGvWKxVnUzAssHNflp2tHJBLPi0IVuB3pAozjIalNI+HoqJIWNum80Rg1yjxar
+         uU5zIg3lHzWWvcs94fsLWAuaFrUu9pkKj4Av8LojcpFgiAZrbW8WntBJiqUT5mlen3oi
+         a4fSEnlqpah0R3RIiXmq3QEfIy2m68z69lPe9/t44ZG0HnfsV4HBZN4tsmjWuGD/DN7m
+         Cz5fESsBqIyKnykITNB2UmYZX1XDdohSMBLkxDp4zNV35FBx3HE/hMgeD7XKIHBPFq9r
+         acBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zOL/t5qBo5/69OTBXU9K1Tb25sSUsXIonQCXIzPu+54=;
-        b=u+AKcCcDTTgFCJ7nB+o7Q0oZmdrnvx3N692tHSOrljdlP9IUnYI+VRNwTaevsJEYmu
-         CN/8Jhb0+vLQHG8758nijMOhhD6gVJLtI08G0abeX+L9pbz8W/rOeZpQ0/U85NhPwG6F
-         M90Zm9dnYXyBjBiNQX+MY1Fx7xPrHanXYQZsnVvqm2XGrYNSDOiuRbH8LSyXUAqhx/3l
-         kUV7xSH9JkOtzv8Yg6Rv7hWhBFZtMKCma+Iq3T1pYEZxu/uloboDG7buUubBiO3p5Ru1
-         f9gLV7BYWwNnDoiZikpiL8RkIagWfT6IMYvb61j9D0kmPcMvMq9jsI9C3SQf7hrRpbSJ
-         pG0w==
-X-Gm-Message-State: AO0yUKVtquGpYgx0gRABdyThADtLIZrqG9KjjeoovZRp2PipbovTuo5j
-        2sdC/bCJPMW9mf0q3xirT9QVdA==
-X-Google-Smtp-Source: AK7set+HnpNlRcQyXbCbbLqOkb0wDhIY0ti/vlL9ybU+Qhg2C9bTqXY/4LfABv+YVA51snNn1EpSTg==
-X-Received: by 2002:a05:6808:b13:b0:35e:d30c:e918 with SMTP id s19-20020a0568080b1300b0035ed30ce918mr8027850oij.39.1676097589646;
-        Fri, 10 Feb 2023 22:39:49 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hGLpsx3x56F4XExqZ+3YmAAyi85mUU1waCg5Al37KCU=;
+        b=lkmeZGBIsboeiFibygNFmZQ+y9W7dvoezYxjjGuBQAYA5Arit1b/zLi6hPIx6RcTab
+         gUK+kJWHU+Uj0WtnosQWKGrpspaPSHNkUE6vTd6d2LxFuGZh/z8D1sVn50u9wUHn7BQx
+         QVlUkwhLbJAk4YdwYWpSPGz1doOME4465JCGyDkYEYww5dW5NgDWXDDfMFm8Wi7WKCJG
+         R6ZeXcEeJ2aGwxDJVM1JKniqlz2fNXuTx19fxKY1owO7TjA5MR/aIHJWf4TheS0TeLxx
+         7pni9BlHIzTARVJSaRk8dWWvrjqryT32tIduX1PRDQlLWfVKwlAQt05MvF836grIPcNL
+         MsHw==
+X-Gm-Message-State: AO0yUKURx406jmm9Yc+2qvwOf+xYxm77v8dEhqefNNEYuIehUbr/Tr41
+        slAx7jcjR6px3MVl+NkLp8agvQ==
+X-Google-Smtp-Source: AK7set/tShNgs95dQGGgbp9uDcpeqJIp3+i5sf5DZ8B+fDZhqHh5W/Si7avk5AdyR0qt4zd2I/7Y+A==
+X-Received: by 2002:a4a:e841:0:b0:51a:6572:152 with SMTP id m1-20020a4ae841000000b0051a65720152mr9616288oom.3.1676097590615;
+        Fri, 10 Feb 2023 22:39:50 -0800 (PST)
 Received: from localhost ([136.49.140.41])
-        by smtp.gmail.com with ESMTPSA id w8-20020aca6208000000b0037832f60518sm2977541oib.14.2023.02.10.22.39.49
+        by smtp.gmail.com with ESMTPSA id t5-20020a4adbc5000000b00511e01623bbsm2808013oou.7.2023.02.10.22.39.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Feb 2023 22:39:49 -0800 (PST)
+        Fri, 10 Feb 2023 22:39:50 -0800 (PST)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Chanwoo Choi <cw00.choi@samsung.com>,
@@ -63,37 +64,102 @@ Cc:     David Virag <virag.david003@gmail.com>,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 0/6] clk: samsung: exynos850: Add missing clocks for PM
-Date:   Sat, 11 Feb 2023 00:40:00 -0600
-Message-Id: <20230211064006.14981-1-semen.protsenko@linaro.org>
+Subject: [PATCH 1/6] dt-bindings: clock: exynos850: Add Exynos850 CMU_G3D
+Date:   Sat, 11 Feb 2023 00:40:01 -0600
+Message-Id: <20230211064006.14981-2-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230211064006.14981-1-semen.protsenko@linaro.org>
+References: <20230211064006.14981-1-semen.protsenko@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As a part of preparation for PM enablement in Exynos850 clock driver,
-this patch series implements CMU_G3D, and also main gate clocks for AUD
-and HSI CMUs. The series brings corresponding changes to bindings, the
-driver and SoC dts file.
+CMU_G3D generates Gondul GPU and bus clocks for BLK_G3D.
+Add clock indices and binding documentation for CMU_G3D.
 
-Sam Protsenko (6):
-  dt-bindings: clock: exynos850: Add Exynos850 CMU_G3D
-  dt-bindings: clock: exynos850: Add AUD and HSI main gate clocks
-  clk: samsung: clk-pll: Implement pll0818x PLL type
-  clk: samsung: exynos850: Implement CMU_G3D domain
-  clk: samsung: exynos850: Add AUD and HSI main gate clocks
-  arm64: dts: exynos: Add CMU_G3D node for Exynos850 SoC
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+---
+ .../clock/samsung,exynos850-clock.yaml        | 19 ++++++++++++++++++
+ include/dt-bindings/clock/exynos850.h         | 20 ++++++++++++++++++-
+ 2 files changed, 38 insertions(+), 1 deletion(-)
 
- .../clock/samsung,exynos850-clock.yaml        |  19 +++
- arch/arm64/boot/dts/exynos/exynos850.dtsi     |   9 ++
- drivers/clk/samsung/clk-exynos850.c           | 139 ++++++++++++++++++
- drivers/clk/samsung/clk-pll.c                 |   1 +
- drivers/clk/samsung/clk-pll.h                 |   1 +
- include/dt-bindings/clock/exynos850.h         |  28 +++-
- 6 files changed, 194 insertions(+), 3 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+index 141cf173f87d..8aa87b8c1b33 100644
+--- a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+@@ -37,6 +37,7 @@ properties:
+       - samsung,exynos850-cmu-cmgp
+       - samsung,exynos850-cmu-core
+       - samsung,exynos850-cmu-dpu
++      - samsung,exynos850-cmu-g3d
+       - samsung,exynos850-cmu-hsi
+       - samsung,exynos850-cmu-is
+       - samsung,exynos850-cmu-mfcmscl
+@@ -169,6 +170,24 @@ allOf:
+             - const: oscclk
+             - const: dout_dpu
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynos850-cmu-g3d
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: G3D clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: dout_g3d_switch
++
+   - if:
+       properties:
+         compatible:
+diff --git a/include/dt-bindings/clock/exynos850.h b/include/dt-bindings/clock/exynos850.h
+index 88d5289883d3..8bb62e43fd60 100644
+--- a/include/dt-bindings/clock/exynos850.h
++++ b/include/dt-bindings/clock/exynos850.h
+@@ -85,7 +85,10 @@
+ #define CLK_DOUT_MFCMSCL_M2M		73
+ #define CLK_DOUT_MFCMSCL_MCSC		74
+ #define CLK_DOUT_MFCMSCL_JPEG		75
+-#define TOP_NR_CLK			76
++#define CLK_MOUT_G3D_SWITCH		76
++#define CLK_GOUT_G3D_SWITCH		77
++#define CLK_DOUT_G3D_SWITCH		78
++#define TOP_NR_CLK			79
+ 
+ /* CMU_APM */
+ #define CLK_RCO_I3C_PMIC		1
+@@ -195,6 +198,21 @@
+ #define CLK_GOUT_SYSREG_CMGP_PCLK	15
+ #define CMGP_NR_CLK			16
+ 
++/* CMU_G3D */
++#define CLK_FOUT_G3D_PLL		1
++#define CLK_MOUT_G3D_PLL		2
++#define CLK_MOUT_G3D_SWITCH_USER	3
++#define CLK_MOUT_G3D_BUSD		4
++#define CLK_DOUT_G3D_BUSP		5
++#define CLK_GOUT_G3D_CMU_G3D_PCLK	6
++#define CLK_GOUT_G3D_GPU_CLK		7
++#define CLK_GOUT_G3D_TZPC_PCLK		8
++#define CLK_GOUT_G3D_GRAY2BIN_CLK	9
++#define CLK_GOUT_G3D_BUSD_CLK		10
++#define CLK_GOUT_G3D_BUSP_CLK		11
++#define CLK_GOUT_G3D_SYSREG_PCLK	12
++#define G3D_NR_CLK			13
++
+ /* CMU_HSI */
+ #define CLK_MOUT_HSI_BUS_USER		1
+ #define CLK_MOUT_HSI_MMC_CARD_USER	2
 -- 
 2.39.1
 
