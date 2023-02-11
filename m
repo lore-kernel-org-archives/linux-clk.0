@@ -2,124 +2,178 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE502C05027
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Feb 2023 01:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDBDC61DA4
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Feb 2023 06:40:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229762AbjBKBCZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Feb 2023 20:02:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40680 "EHLO
+        id S229740AbjBKGkA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 11 Feb 2023 01:40:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229455AbjBKBCW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 20:02:22 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B18E75F52;
-        Fri, 10 Feb 2023 17:02:21 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id by3so5539794wrb.10;
-        Fri, 10 Feb 2023 17:02:21 -0800 (PST)
+        with ESMTP id S229785AbjBKGj5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Feb 2023 01:39:57 -0500
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D78913D53
+        for <linux-clk@vger.kernel.org>; Fri, 10 Feb 2023 22:39:55 -0800 (PST)
+Received: by mail-oi1-x233.google.com with SMTP id bh15so6268855oib.4
+        for <linux-clk@vger.kernel.org>; Fri, 10 Feb 2023 22:39:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=2hmU167TsLSJ0D5985lF6+WQ0nnKX9IYBooX0KRJnaU=;
-        b=XnJCsibpYSf3oJib4tnZKcuOa1t/DxwZrMEEQWmVwbm9d+H4OKDUiC6FndBrIoCMKj
-         zczDQ22YWI5BBZrwTXN4sJ/rK/vYsexAp3QJvyumJkPK7GaRhMch3V7p6Zd63yXOpXOI
-         kajDAIAtFc6yLXk1YRgh5jZBR4p5utnz6fNMmFSNUWnObTuW2cJm3KsfksOhI9CwotSj
-         U4I0SeABSZSiO787vl1RgWjAmEaF7lE6IlvW7DeMvuT9ghyR25ofDvtehHB2rdbI3k93
-         DcrKWBMAGwTzU5G+RjhNsLB3L+E6/i8aEl4ZkxyWgIP4cMjNWTH8roKCoDvc9xLOHwJO
-         PHcA==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F77cVAHOLN946EiQXgu7pUkEqGi9qC3ggnneOj2DPRg=;
+        b=MuHnGp8BGgTKrl7rHQxeweKPBZ0Rd0U/h+CHceRfFq6GO6xVEYCLyo4nf3L3Ma39C5
+         LfJyty3nt99zu2tjh8VCq1PmPVba8WklvbZJCyxsCrnWEDEi47u5JJvHXJOSoMdwOFG7
+         ibxu7I/XZo10eL8opyDOS3G7NUShjy8UvMsYGFUF6RbchiqJpfek8GMrLEfKKKfYmyNR
+         3ZGCN8P7CoEKFAtHG0v2hKb4DjYerYLU2wbLnxObqDsHp/E/8Euwj5p00xRYFLFy6zNk
+         tHJFbKw1bwNFAC+wQpcfWDh54GQMFqHt3g6vz+MRBjNajELEARczcxCShwZyWfry47w6
+         pBYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2hmU167TsLSJ0D5985lF6+WQ0nnKX9IYBooX0KRJnaU=;
-        b=tiAubio4EZUxc/pgpNm22K1iGSj7jGVlKkx8khGDDcsOoxulVxSj0BIuXN0gupvL48
-         LhAM5hr/NyTnqoCny0njf34p9AE8vZa9hlR63sQ3FdWZ4DNFunV8RFjluIhxuEqHYZHv
-         LLyJI0tUDKMLLQkNbMOcZwVFPx0g5h2Fn6a72VfBJ+o8h4Y8G6gvCwVqAog5p1EXUk0C
-         SVzlq4OGTfEaGcWurpaKuTAzM8r6f9aQ6FPu5+iRwxGoWcg2+pFs/ypgN1tF3MB8FPOg
-         SpcL2u8EsMj62Ulyhk4gM3drJ3Dm051xsZ7NJacEqv+gAlz1QDGZC7eWYGF6a88gABad
-         0zoA==
-X-Gm-Message-State: AO0yUKWqTM2XnAz8HMxIcuif3k0iI5NthQn+kMCdhASbBF/q2m6gzzWr
-        GUyk1iOqN6d8sRjskcGv0yk=
-X-Google-Smtp-Source: AK7set8Ie/b3gl1B4RIkzMj7sctRlJ0HFO4iGaPG6AMMjKsA1OogsICeqy8h8udqh0PzJQQlrIZ/Qg==
-X-Received: by 2002:a5d:61cb:0:b0:2c3:dc62:e682 with SMTP id q11-20020a5d61cb000000b002c3dc62e682mr14931867wrv.10.1676077339706;
-        Fri, 10 Feb 2023 17:02:19 -0800 (PST)
-Received: from Ansuel-xps. (93-34-91-73.ip49.fastwebnet.it. [93.34.91.73])
-        by smtp.gmail.com with ESMTPSA id d2-20020adfe2c2000000b002c3f7dfd15csm4818532wrj.32.2023.02.10.17.02.19
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F77cVAHOLN946EiQXgu7pUkEqGi9qC3ggnneOj2DPRg=;
+        b=UUqjWFSriMDMN/XPCOPhK2KLUF2TLxJzCW58uAmiUlWwWcXciKzpbfsWB3cR+pDN3q
+         Rj/t7KZThiJpYBDFXTjZSJGo5zchYRjbnXaKz76FS3RXdL5Ovk0UvCkWHUq/KFEGzPpf
+         r4+qI3cskbQo3R2iudSkvL49hqQPedT7zZJ2jPJZCVogVBU24wKuJwa4xmm/KULe3p+d
+         hrqjdR8lJI6TNyAtXXk/FjjkDqyknGb9M6tr2XRCvsmko6UIYSloL6Pshj4l9nf2xnKV
+         Mtv2Kdk773n1aEwHLuIIWxZugaMnzUYTFoxRloq7meP5NXCQdmHSPEqDOIa5OoAgTq/m
+         y2IA==
+X-Gm-Message-State: AO0yUKXEdoI1fT0aD37R0EHMCqVK25V/yYfmlJ3PT2BOpyovxJmiBNuH
+        5a1S7Bax2A8QZT7YpKohBQFz2w==
+X-Google-Smtp-Source: AK7set8cLiDOOtHA7+YE7bblkQb5MmgAo0tbtORA9Eqovmdrn5zmNPV68XupaumVsRRCkp6C/RalWg==
+X-Received: by 2002:a05:6808:b3a:b0:378:974b:4fe6 with SMTP id t26-20020a0568080b3a00b00378974b4fe6mr8628625oij.8.1676097594521;
+        Fri, 10 Feb 2023 22:39:54 -0800 (PST)
+Received: from localhost ([136.49.140.41])
+        by smtp.gmail.com with ESMTPSA id b13-20020aca220d000000b0037d743b5cb7sm798651oic.17.2023.02.10.22.39.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Feb 2023 17:02:19 -0800 (PST)
-Message-ID: <63e6e91b.df0a0220.417f9.3a7b@mx.google.com>
-X-Google-Original-Message-ID: <Y+aPS4FPzhM3uPLo@Ansuel-xps.>
-Date:   Fri, 10 Feb 2023 19:39:07 +0100
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel test robot <oliver.sang@intel.com>
-Subject: Re: [PATCH v2 2/2] clk: gate: Add missing fw_name for
- clk_gate_register_test_parent_data_legacy
-References: <20230131160829.23369-1-ansuelsmth@gmail.com>
- <20230131160829.23369-2-ansuelsmth@gmail.com>
- <47e7fa4c103d08374d071fdf6de3b8ca.sboyd@kernel.org>
+        Fri, 10 Feb 2023 22:39:54 -0800 (PST)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     David Virag <virag.david003@gmail.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 5/6] clk: samsung: exynos850: Add AUD and HSI main gate clocks
+Date:   Sat, 11 Feb 2023 00:40:05 -0600
+Message-Id: <20230211064006.14981-6-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230211064006.14981-1-semen.protsenko@linaro.org>
+References: <20230211064006.14981-1-semen.protsenko@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <47e7fa4c103d08374d071fdf6de3b8ca.sboyd@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Feb 10, 2023 at 04:52:36PM -0800, Stephen Boyd wrote:
-> Quoting Christian Marangi (2023-01-31 08:08:29)
-> > Fix warning for missing .fw_name in parent_data based on names.
-> > It's wrong to define only .name since clk core expect always .fw_name to
-> > be defined.
-> > 
-> > Reported-by: kernel test robot <oliver.sang@intel.com>
-> 
-> What was the report?
->
+Add main gate clocks for controlling AUD and HSI CMUs:
+  - gout_aud_cmu_aud_pclk
+  - gout_hsi_cmu_hsi_pclk
 
-With the previous patch applied kernel test robot report the WARN for
-declaring a parent_data with .name but no .fw_name.
+Those clocks were marked as CLK_IGNORE_UNUSED, as system hangs on
+boot otherwise.
 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> >  drivers/clk/clk-gate_test.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/clk/clk-gate_test.c b/drivers/clk/clk-gate_test.c
-> > index e136aaad48bf..a0a63cd4ce0b 100644
-> > --- a/drivers/clk/clk-gate_test.c
-> > +++ b/drivers/clk/clk-gate_test.c
-> > @@ -74,6 +74,7 @@ static void clk_gate_register_test_parent_data_legacy(struct kunit *test)
-> >                                             1000000);
-> >         KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
-> >         pdata.name = "test_parent";
-> > +       pdata.fw_name = "test_parent";
-> >  
-> >         ret = clk_hw_register_gate_parent_data(NULL, "test_gate", &pdata, 0,
-> 
-> We don't pass a 'dev' here, so the pdata.index isn't looked at. I
-> suppose we can assign .index to -1 to be more explicit, but because
-> there isn't a device used for registering, we won't try to use the
-> .index. Instead we'll try to use .fw_name for clkdev, of which there
-> won't be a clkdev lookup either. Eventually we'll fallback to the .name
-> lookup, and it will be fine.
+While at it, add missing PPMU (Performance Profiling Monitor Unit)
+clocks for CMU_HSI.
 
-Problem is that from what we observed, it won't fallback to .name if
-.fw_name is not declared.
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+---
+ drivers/clk/samsung/clk-exynos850.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-But it will work if .fw_name is declared but not exposed by DT. (and
-will correctly fallback to .name as .fw_name is not found)
-(but this is to explain why the change in the other patch is needed so I
-may be OT here)
-
-> 
-> We need tests that exercises the 'dev' path and also the DT path and the
-> clkdev path. I was thinking about working on that outside of the gate
-> test though, and just having a generic clk test for that with simple
-> clk_ops that do basically nothing.
-
+diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
+index a24eff42baae..3d776d57cc8f 100644
+--- a/drivers/clk/samsung/clk-exynos850.c
++++ b/drivers/clk/samsung/clk-exynos850.c
+@@ -674,6 +674,7 @@ static const struct samsung_cmu_info apm_cmu_info __initconst = {
+ #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF4	0x2014
+ #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF5	0x2018
+ #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF6	0x201c
++#define CLK_CON_GAT_CLK_AUD_CMU_AUD_PCLK	0x2020
+ #define CLK_CON_GAT_GOUT_AUD_ABOX_ACLK		0x2048
+ #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_SPDY	0x204c
+ #define CLK_CON_GAT_GOUT_AUD_ABOX_CCLK_ASB	0x2050
+@@ -729,6 +730,7 @@ static const unsigned long aud_clk_regs[] __initconst = {
+ 	CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF4,
+ 	CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF5,
+ 	CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF6,
++	CLK_CON_GAT_CLK_AUD_CMU_AUD_PCLK,
+ 	CLK_CON_GAT_GOUT_AUD_ABOX_ACLK,
+ 	CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_SPDY,
+ 	CLK_CON_GAT_GOUT_AUD_ABOX_CCLK_ASB,
+@@ -848,6 +850,9 @@ static const struct samsung_div_clock aud_div_clks[] __initconst = {
+ };
+ 
+ static const struct samsung_gate_clock aud_gate_clks[] __initconst = {
++	GATE(CLK_GOUT_AUD_CMU_AUD_PCLK, "gout_aud_cmu_aud_pclk",
++	     "dout_aud_busd",
++	     CLK_CON_GAT_CLK_AUD_CMU_AUD_PCLK, 21, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_GOUT_AUD_CA32_CCLK, "gout_aud_ca32_cclk", "mout_aud_cpu_hch",
+ 	     CLK_CON_GAT_GOUT_AUD_ABOX_CCLK_CA32, 21, 0, 0),
+ 	GATE(CLK_GOUT_AUD_ASB_CCLK, "gout_aud_asb_cclk", "dout_aud_cpu_aclk",
+@@ -1117,12 +1122,15 @@ static const struct samsung_cmu_info g3d_cmu_info __initconst = {
+ #define PLL_CON0_MUX_CLKCMU_HSI_MMC_CARD_USER			0x0610
+ #define PLL_CON0_MUX_CLKCMU_HSI_USB20DRD_USER			0x0620
+ #define CLK_CON_MUX_MUX_CLK_HSI_RTC				0x1000
++#define CLK_CON_GAT_CLK_HSI_CMU_HSI_PCLK			0x2000
+ #define CLK_CON_GAT_HSI_USB20DRD_TOP_I_RTC_CLK__ALV		0x2008
+ #define CLK_CON_GAT_HSI_USB20DRD_TOP_I_REF_CLK_50		0x200c
+ #define CLK_CON_GAT_HSI_USB20DRD_TOP_I_PHY_REFCLK_26		0x2010
+ #define CLK_CON_GAT_GOUT_HSI_GPIO_HSI_PCLK			0x2018
+ #define CLK_CON_GAT_GOUT_HSI_MMC_CARD_I_ACLK			0x2024
+ #define CLK_CON_GAT_GOUT_HSI_MMC_CARD_SDCLKIN			0x2028
++#define CLK_CON_GAT_GOUT_HSI_PPMU_ACLK				0x202c
++#define CLK_CON_GAT_GOUT_HSI_PPMU_PCLK				0x2030
+ #define CLK_CON_GAT_GOUT_HSI_SYSREG_HSI_PCLK			0x2038
+ #define CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_ACLK_PHYCTRL_20	0x203c
+ #define CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_BUS_CLK_EARLY		0x2040
+@@ -1132,12 +1140,15 @@ static const unsigned long hsi_clk_regs[] __initconst = {
+ 	PLL_CON0_MUX_CLKCMU_HSI_MMC_CARD_USER,
+ 	PLL_CON0_MUX_CLKCMU_HSI_USB20DRD_USER,
+ 	CLK_CON_MUX_MUX_CLK_HSI_RTC,
++	CLK_CON_GAT_CLK_HSI_CMU_HSI_PCLK,
+ 	CLK_CON_GAT_HSI_USB20DRD_TOP_I_RTC_CLK__ALV,
+ 	CLK_CON_GAT_HSI_USB20DRD_TOP_I_REF_CLK_50,
+ 	CLK_CON_GAT_HSI_USB20DRD_TOP_I_PHY_REFCLK_26,
+ 	CLK_CON_GAT_GOUT_HSI_GPIO_HSI_PCLK,
+ 	CLK_CON_GAT_GOUT_HSI_MMC_CARD_I_ACLK,
+ 	CLK_CON_GAT_GOUT_HSI_MMC_CARD_SDCLKIN,
++	CLK_CON_GAT_GOUT_HSI_PPMU_ACLK,
++	CLK_CON_GAT_GOUT_HSI_PPMU_PCLK,
+ 	CLK_CON_GAT_GOUT_HSI_SYSREG_HSI_PCLK,
+ 	CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_ACLK_PHYCTRL_20,
+ 	CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_BUS_CLK_EARLY,
+@@ -1163,6 +1174,9 @@ static const struct samsung_mux_clock hsi_mux_clks[] __initconst = {
+ };
+ 
+ static const struct samsung_gate_clock hsi_gate_clks[] __initconst = {
++	GATE(CLK_GOUT_HSI_CMU_HSI_PCLK, "gout_hsi_cmu_hsi_pclk",
++	     "mout_hsi_bus_user",
++	     CLK_CON_GAT_CLK_HSI_CMU_HSI_PCLK, 21, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_GOUT_USB_RTC_CLK, "gout_usb_rtc", "mout_hsi_rtc",
+ 	     CLK_CON_GAT_HSI_USB20DRD_TOP_I_RTC_CLK__ALV, 21, 0, 0),
+ 	GATE(CLK_GOUT_USB_REF_CLK, "gout_usb_ref", "mout_hsi_usb20drd_user",
+@@ -1177,6 +1191,10 @@ static const struct samsung_gate_clock hsi_gate_clks[] __initconst = {
+ 	GATE(CLK_GOUT_MMC_CARD_SDCLKIN, "gout_mmc_card_sdclkin",
+ 	     "mout_hsi_mmc_card_user",
+ 	     CLK_CON_GAT_GOUT_HSI_MMC_CARD_SDCLKIN, 21, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_GOUT_HSI_PPMU_ACLK, "gout_hsi_ppmu_aclk", "mout_hsi_bus_user",
++	     CLK_CON_GAT_GOUT_HSI_PPMU_ACLK, 21, 0, 0),
++	GATE(CLK_GOUT_HSI_PPMU_PCLK, "gout_hsi_ppmu_pclk", "mout_hsi_bus_user",
++	     CLK_CON_GAT_GOUT_HSI_PPMU_PCLK, 21, 0, 0),
+ 	GATE(CLK_GOUT_SYSREG_HSI_PCLK, "gout_sysreg_hsi_pclk",
+ 	     "mout_hsi_bus_user",
+ 	     CLK_CON_GAT_GOUT_HSI_SYSREG_HSI_PCLK, 21, 0, 0),
 -- 
-	Ansuel
+2.39.1
+
