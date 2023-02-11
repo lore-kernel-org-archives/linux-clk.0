@@ -2,92 +2,90 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3BD1C05027
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Feb 2023 00:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6591CC05027
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Feb 2023 00:52:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229447AbjBKAkh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Feb 2023 19:40:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59796 "EHLO
+        id S229647AbjBKAwm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Feb 2023 19:52:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229576AbjBKAkg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 19:40:36 -0500
+        with ESMTP id S229589AbjBKAwm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Feb 2023 19:52:42 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01171BBB2;
-        Fri, 10 Feb 2023 16:40:33 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AB567E8C0;
+        Fri, 10 Feb 2023 16:52:41 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A8BD2B825B8;
-        Sat, 11 Feb 2023 00:40:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DB74C433D2;
-        Sat, 11 Feb 2023 00:40:31 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 075DCB82657;
+        Sat, 11 Feb 2023 00:52:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A137C433D2;
+        Sat, 11 Feb 2023 00:52:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676076031;
-        bh=UKSvG2H35RhhTGJLlKDF+4pw8O05L9n2GRROzIg/SU4=;
+        s=k20201202; t=1676076758;
+        bh=D49sgUgNLNWlzLq20NRbDWd+naxD5xg3/gh6XeOqQdQ=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=e/A6yRDirseqEyazzRzQcgQUZMWhiGudcK3a6oqPZTePBlvqjCEBVO5+OXijS8cJA
-         KT+HzgYgGAkw3DxOTQPB9mxWTE/nuJOnwzpyeIw9hH8xCfflKSJzAjynvorbjr69DF
-         1q9ZsesHdXrAgGAatGVSbj8XYcT9/Bko8kTBl7/n9/Nnpu3JvoSaBFAesPjIV5iMdC
-         gmXf9qbb8UPFbqqbrOSW1W4w8u634Zi8h1JRx6f75ylOmQd7vUGZHee6zJtOMYW7kP
-         WUcNUbYReSEdGNwPORhbgC/rKY6JrtI4nQcSQDh2RKPC/JC8/xOCli6Y5zAdZactYQ
-         OI6qcFPtyJtGA==
-Message-ID: <e5b71c243022d341022b4f172060268b.sboyd@kernel.org>
+        b=ezIYBNWxvGlxjgjxs6/gVS9z7elFP9vZFoz9LoYnRMQhJHmBjmp4XbP+um4OtooER
+         obAOz7AYif362RhprGvM2PUwT0ik2CCn4ebZ6WG48xGYbDu1FX1Gko8n/ISXVhxXU8
+         4aW49heEjAvg1ubW2yvuUcT1PBS8R3INHp3SLHRyxjsIBL9SaB9PD2ZzAxwpMMyC92
+         2HrNMn83EkZ5tPsqyvNri1XT40YQfGEn4jcoiocftUM+FZpmQlKSzxOpv3j0sFKiCP
+         oh8wUqsfsD9fl0y2FoqRVxCmOiikYKTOASRYVz8ue2ENW3C+CqTRukg3H1iDLAkhu+
+         jMnwZLQjsQx6g==
+Message-ID: <47e7fa4c103d08374d071fdf6de3b8ca.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230131160829.23369-1-ansuelsmth@gmail.com>
-References: <20230131160829.23369-1-ansuelsmth@gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: Warn and add workaround on misuse of .parent_data with .name only
+In-Reply-To: <20230131160829.23369-2-ansuelsmth@gmail.com>
+References: <20230131160829.23369-1-ansuelsmth@gmail.com> <20230131160829.23369-2-ansuelsmth@gmail.com>
+Subject: Re: [PATCH v2 2/2] clk: gate: Add missing fw_name for clk_gate_register_test_parent_data_legacy
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Christian Marangi <ansuelsmth@gmail.com>
+Cc:     Christian Marangi <ansuelsmth@gmail.com>,
+        kernel test robot <oliver.sang@intel.com>
 To:     Christian Marangi <ansuelsmth@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 10 Feb 2023 16:40:29 -0800
+Date:   Fri, 10 Feb 2023 16:52:36 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Christian Marangi (2023-01-31 08:08:28)
-> By a simple mistake in a .parent_names to .parent_data conversion it was
-> found that clk core assume fw_name is always provided with a parent_data
-> struct for each parent and never fallback to .name to get parent name even
-> if declared.
-
-It sounds like you have clk_parent_data and the .index member is 0? Can
-you show an example structure? I'm guessing it is like this:
-
-	struct clk_parent_data pdata =3D { .name =3D "global_name" };
-
+Quoting Christian Marangi (2023-01-31 08:08:29)
+> Fix warning for missing .fw_name in parent_data based on names.
+> It's wrong to define only .name since clk core expect always .fw_name to
+> be defined.
 >=20
-> This is caused by clk_core_get that only checks for parent .fw_name and
-> doesn't handle .name.
+> Reported-by: kernel test robot <oliver.sang@intel.com>
 
-clk_core_get() is not supposed to operate on the .name member. It is a
-firmware based lookup with clkdev as a fallback because clkdev is a
-psudeo-firmware interface to assign a name to a clk when some device
-pointer is used in conjunction with it.
+What was the report?
 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  drivers/clk/clk-gate_test.c | 1 +
+>  1 file changed, 1 insertion(+)
 >=20
-> While it's sane to request the dev to correctly do the conversion and
-> add both .fw_name and .name in a parent_data struct, it's not sane to
-> silently drop parents without a warning.
+> diff --git a/drivers/clk/clk-gate_test.c b/drivers/clk/clk-gate_test.c
+> index e136aaad48bf..a0a63cd4ce0b 100644
+> --- a/drivers/clk/clk-gate_test.c
+> +++ b/drivers/clk/clk-gate_test.c
+> @@ -74,6 +74,7 @@ static void clk_gate_register_test_parent_data_legacy(s=
+truct kunit *test)
+>                                             1000000);
+>         KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
+>         pdata.name =3D "test_parent";
+> +       pdata.fw_name =3D "test_parent";
+> =20
+>         ret =3D clk_hw_register_gate_parent_data(NULL, "test_gate", &pdat=
+a, 0,
 
-I suppose we can do
+We don't pass a 'dev' here, so the pdata.index isn't looked at. I
+suppose we can assign .index to -1 to be more explicit, but because
+there isn't a device used for registering, we won't try to use the
+.index. Instead we'll try to use .fw_name for clkdev, of which there
+won't be a clkdev lookup either. Eventually we'll fallback to the .name
+lookup, and it will be fine.
 
-	WARN(parent->index >=3D 0 && !parent_data[i].fw_name && parent_data[i].nam=
-e, ...);
-
-or maybe better would be to make the clk registration fail if there's a
-.name field and the index is non-negative and the fw_name is NULL.
-
-Can you grep the code and see if anyone is assigning a .name without a
-.fw_name or .index?
-
->=20
-> Fix this in 2 ways. Add a kernel warning when a wrong implementation is
-> used and copy .name in .fw_name in parent map populate function to
-> handle clk problems and malfunctions.
-
-We shouldn't be copying .name to .fw_name. They're different things.
+We need tests that exercises the 'dev' path and also the DT path and the
+clkdev path. I was thinking about working on that outside of the gate
+test though, and just having a generic clk test for that with simple
+clk_ops that do basically nothing.
