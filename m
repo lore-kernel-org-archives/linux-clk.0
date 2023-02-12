@@ -2,114 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB7FC61DA4
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Feb 2023 20:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B253C636D3
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Feb 2023 14:11:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229560AbjBKUZo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 11 Feb 2023 15:25:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51154 "EHLO
+        id S229589AbjBLOLd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Feb 2023 09:11:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbjBKUZo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Feb 2023 15:25:44 -0500
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 931DE125BE;
-        Sat, 11 Feb 2023 12:25:42 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id qb15so21341380ejc.1;
-        Sat, 11 Feb 2023 12:25:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lLacBBRlz93H3GiKKvSQD2qZJYcpqiTjyuyAIXkHfUk=;
-        b=HnvlPd2wCVKP1vEA5oBzN09Hm7YBjsJX5upx2hujewee0OEBtMeFDjUN0pNfY1qNzj
-         /6e+ChM9OpYSHEHTVo/d5JN4LCYMYeMvjzMpTmh5pZ+FbQjTSiarXOl3fsp3LN3r5lrU
-         uVDbJHNlzEbGRXVmnwYdZ+4BdMeKqhSrmF7yAiLEgDHQOfQsGAU1ESNHG4p1GZ/FBk8C
-         PYnUrj+WyW5jtbwdj9wyGMdBbTO10UXCDDg9EzsoEbicsFM6IuGG6OOIQre7nLz3vyNV
-         Rx/nB7kR/S5q71duUSyDIiXocP70Q2eDFgGyiBMVG3XXFeN6BUnMsH1/O0MgRKRhZ9v1
-         peQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lLacBBRlz93H3GiKKvSQD2qZJYcpqiTjyuyAIXkHfUk=;
-        b=fhCtsIjS0Fm7/2hQo9u6KS71nPy6U8935uc98VX26SOATUoPWtaJYh0OxxO0wD8lL8
-         LVYISUqJRGkttHkgi+AqCLxx4Ud1DbqEKN2uYj7cxhs1dYk246DIlHgWbyEt7oxNl/GI
-         hHNdGr6q3ll7MkaBp6SNzZxV6R/9wtKE0pMg44EIBXdTpHe+umlNyg1p/2BAKouUo8TA
-         j0HsUOLt+KqfN9ub7OK1N9VUxEH3P8O0k4Rns+xwqAJMfgeinZSsM3UjmarDcVnLhFqa
-         aB07YzhlLkkuNxp+6lBMo7JicLati4uD/cPHn0pEK0KVxCo4t0kgzIa1dK3dUGhE/BEI
-         Fffw==
-X-Gm-Message-State: AO0yUKWZItBUq8Ps+OmOAobMdtj3H5Pw68Msn+RxwKUyUxZNe+zBWm8i
-        89MgpIYA2tNEAHDYQRG/qyv5MS1NXw/lEVj4lUM=
-X-Google-Smtp-Source: AK7set+r8/isemvwKFykUdz65hr3VaRSbzbkw3mFuod0hK8/niYyuljq/yGDoa19MVZw3qAcXd7psXWFNbni52Mh3LI=
-X-Received: by 2002:a17:906:c44e:b0:8af:341c:1f82 with SMTP id
- ck14-20020a170906c44e00b008af341c1f82mr2622125ejb.4.1676147141118; Sat, 11
- Feb 2023 12:25:41 -0800 (PST)
+        with ESMTP id S229496AbjBLOLc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Feb 2023 09:11:32 -0500
+Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF20BEFA6;
+        Sun, 12 Feb 2023 06:11:31 -0800 (PST)
+Received: from [192.168.178.23] (unknown [62.108.10.64])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id E3777D38CE;
+        Sun, 12 Feb 2023 14:11:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1676211090; bh=zgU9o39Da84lHLJi0IKg+G0/E6H+7pf3Yl35nbVnhXM=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc;
+        b=l4GcRgRTaw5gtb36Y/l+6sEP23S71FBY0Nl34dDdZt928O1Jdt87HB8yqnXNPAm6z
+         43ShmMzd0wTZYz7sJCs/jUcXLSAdckLpXehdJGL4FblVF9K18jCex54TjNHJ3asF/9
+         6rx+sZpRD3CRxZ6c6ZRNZ6cHkVXEBHvKwD/0vGMU=
+From:   Luca Weiss <luca@z3ntu.xyz>
+Date:   Sun, 12 Feb 2023 15:11:08 +0100
+Subject: [PATCH 1/2] clk: qcom: clk-krait: switch to .determine_rate
 MIME-Version: 1.0
-References: <20230209-b4-amlogic-bindings-convert-take2-v1-0-c4fe9049def9@linaro.org>
- <20230209-b4-amlogic-bindings-convert-take2-v1-3-c4fe9049def9@linaro.org>
-In-Reply-To: <20230209-b4-amlogic-bindings-convert-take2-v1-3-c4fe9049def9@linaro.org>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sat, 11 Feb 2023 21:25:30 +0100
-Message-ID: <CAFBinCCACzEDaa2Z+h5JzXRjEcQ9QH0R+=_UXOKHe7zX02im=Q@mail.gmail.com>
-Subject: Re: [PATCH 3/6] dt-bindings: soc: amlogic: document System Control registers
-To:     Neil Armstrong <neil.armstrong@linaro.org>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230212-clk-qcom-determine_rate-v1-1-b4e447d4926e@z3ntu.xyz>
+References: <20230212-clk-qcom-determine_rate-v1-0-b4e447d4926e@z3ntu.xyz>
+In-Reply-To: <20230212-clk-qcom-determine_rate-v1-0-b4e447d4926e@z3ntu.xyz>
+To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>,
+        Christian Marangi <ansuelsmth@gmail.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Luca Weiss <luca@z3ntu.xyz>
+X-Mailer: b4 0.12.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1744; i=luca@z3ntu.xyz;
+ h=from:subject:message-id; bh=zgU9o39Da84lHLJi0IKg+G0/E6H+7pf3Yl35nbVnhXM=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBj6POPcdsS/gifaIu4UFZa8WGjK78dpkq1QvZwa
+ 8ON314kV/uJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCY+jzjwAKCRBy2EO4nU3X
+ VtA2D/99YPIAtzECC44BWhqCo45QGJjoJ4lpLfbFdGVWFeF+7Fbc+L0x+OkkABTb7SJpM8I+Z18
+ Stqw5u9D9i00t9piOAC/DsMuwFWV0XkXLsGFZ68tk9RRvQ9FNJIBvUn+kgdge+yS7IWHhkwLM9f
+ 4mkF9dHrDtX/77CfAe0LPW6npvSvHO589Qn2yHW6bYjAlS4hzmIs/xaHo9T7k7Js9vz0xozoMkU
+ JcXh4nwtTF1Ik17YmWwYMTIuntHG48eCuX41J9MSh8AhftILIyVKkiITjn+WdD9/d0VSdoz7nRS
+ 3P+ZPzajx7KZocYItw5XH2ywMfD24W3vKKG0yBIFAJfBWai0FFugTJv48SUn2tKWPH5AiV5cN5l
+ VoGMpElwv0MH0EPNHqRiPNhMi1CkCuYUJZyioSdPSEsMgX03VxdMaiLTC7ZWBk7rjvqX3VElPYZ
+ CW37nQyxle5X5+x6/+1gnISofaEghd5HSUCDmxGGYOHQAx6Yj5wUgyhClmuX5uLYsHJUj96ay89
+ YK6Gi2AAPWpxMz8SFhOjZXSZrF4HPUsuclC54eCwwS16V+ROrJPxSwGu0IWaoAhwlfumloOxFaX
+ ENXdG7QuzKhCxW0xleWXsjEqFiIXp6ObMxHNZJwT7Ibo1LkygovQtV30vFeDxkaNQGT5Dl8mGV4
+ hKmrQS0EtwT/hhw==
+X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
+ fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Neil,
+.determine_rate is meant to replace .round_rate. The former comes with a
+benefit which is especially relevant on 32-bit systems: since
+.determine_rate uses an "unsigned long" (compared to a "signed long"
+which is used by .round_rate) the maximum value on 32-bit systems
+increases from 2^31 (or approx. 2.14GHz) to 2^32 (or approx. 4.29GHz).
 
-On Thu, Feb 9, 2023 at 2:41 PM Neil Armstrong <neil.armstrong@linaro.org> wrote:
->
-> Document the System Control registers regions found on all Amlogic
-> SoC families and it's clock, power, pinctrl and phy subnodes.
-I understand clock (main clock controller) power (power domain
-controller) and PHY (HDMI and CVBS PHYs). Are you sure about pinctrl?
+Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+---
+ drivers/clk/qcom/clk-krait.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-[...]
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - amlogic,meson-gx-hhi-sysctrl
-> +          - amlogic,meson-gx-ao-sysctrl
-> +          - amlogic,meson-axg-hhi-sysctrl
-> +          - amlogic,meson-axg-ao-sysctrl
-If you have to re-send this then it would be great if you could add:
-          - amlogic,meson-hhi-sysctrl
-because we already have that in arch/arm/boot/dts/meson.dtsi for the
-32-bit SoCs.
+diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
+index 293a9dfa7151..f5ce403e1e27 100644
+--- a/drivers/clk/qcom/clk-krait.c
++++ b/drivers/clk/qcom/clk-krait.c
+@@ -97,11 +97,11 @@ const struct clk_ops krait_mux_clk_ops = {
+ EXPORT_SYMBOL_GPL(krait_mux_clk_ops);
+ 
+ /* The divider can divide by 2, 4, 6 and 8. But we only really need div-2. */
+-static long krait_div2_round_rate(struct clk_hw *hw, unsigned long rate,
+-				  unsigned long *parent_rate)
++static int krait_div2_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+ {
+-	*parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), rate * 2);
+-	return DIV_ROUND_UP(*parent_rate, 2);
++	req->best_parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), req->rate * 2);
++	req->rate = DIV_ROUND_UP(req->best_parent_rate, 2);
++	return 0;
+ }
+ 
+ static int krait_div2_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -142,7 +142,7 @@ krait_div2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ }
+ 
+ const struct clk_ops krait_div2_clk_ops = {
+-	.round_rate = krait_div2_round_rate,
++	.determine_rate = krait_div2_determine_rate,
+ 	.set_rate = krait_div2_set_rate,
+ 	.recalc_rate = krait_div2_recalc_rate,
+ };
 
-[...]
-> +        power-controller {
-> +            compatible = "amlogic,meson-gxbb-pwrc";
-> +            #power-domain-cells = <1>;
-> +            amlogic,ao-sysctrl = <&sysctrl_AO>;
-For this node (and similar ones) I have a question to the device-tree
-maintainers:
-The power controller has a dedicated sub-range of registers. This also
-applies to the CVBS and HDMI PHYs.
-But the clock controller does not (it has its registers all over the
-place - unfortunately that's how the hardware is).
-I have been asked to add a "reg" property to child nodes with a
-sub-register space.
-Does this mean we need to add a reg property here as well (regardless
-of whether we're using it in the driver or not)? And what to do in
-case of the clock controller though?
+-- 
+2.39.1
 
-
-Best regards,
-Martin
