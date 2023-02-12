@@ -2,127 +2,126 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD0DC636D4
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Feb 2023 22:31:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC456C636D4
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Feb 2023 22:44:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229889AbjBMWbJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Feb 2023 17:31:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41406 "EHLO
+        id S229947AbjBMWoE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Feb 2023 17:44:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229978AbjBMWbI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Feb 2023 17:31:08 -0500
-Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBD1C1CF7C;
-        Mon, 13 Feb 2023 14:31:00 -0800 (PST)
-Received: from g550jk.localnet (unknown [62.108.10.64])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id B93E1CDFDF;
-        Mon, 13 Feb 2023 22:30:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1676327428; bh=W5e6SYUWX17zrMB98W//q9HU+zE0DKgEBiyUmTDCQWo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=KU+C4uBtvCf7rgcT20qCwmxXtxu8zgGNHy3EKJ1DQiSulaQIKrqnk82aM79i9n/7C
-         uKY3XYez7l8aY/5Rfj1ZFKgLZK41EA0ahbCPgxZdCR9N11/M4hBjhj5Tph6hi2Rc1F
-         o85Xk6aza9AHxMVOT+L0589qUlC51FciJ0xoKG1I=
-From:   Luca Weiss <luca@z3ntu.xyz>
-To:     Andy Gross <agross@kernel.org>,
+        with ESMTP id S229489AbjBMWoD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Feb 2023 17:44:03 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB3441D91C;
+        Mon, 13 Feb 2023 14:44:02 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id l21-20020a05600c1d1500b003dfe462b7e4so208722wms.0;
+        Mon, 13 Feb 2023 14:44:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=WK3CCMhTv1GBa53IQokrxcydq2BCBlwEvGGs6eZBnZQ=;
+        b=guDzE+zf9N3feKFCNFoXyN6ujn6wcUusuHUjZV1LJdznmyIGxpjCXSiDaYVilNLTdS
+         RrV8AtBcYgbKAtRt7dmrFNv0ehSqEKQkBWWnc6viUeGYKJ3wacKRF4f5k4ErLANRaYGg
+         rrQEjOFpL2jaDgLt4Km/l7IL1CH2VIKvxSjuZPRd3xAO7xb273A16Cm9R2VeXg9PNl1J
+         712+auMWnqzGDF1DlQlurkHAtC01JdWP/xzY0PNJ9Hiuf5FEHEq0HGuXxI4tYW2DhWua
+         qJHh8/NBBUCl1rsguR2slNzpMVs3Fppu/LBmR8Y/MDrIQq7TK8mY/F1qlXYIqXgISy8G
+         3E0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WK3CCMhTv1GBa53IQokrxcydq2BCBlwEvGGs6eZBnZQ=;
+        b=2Lfr8FkAv4NvcUyDv0YJZU/7DtzB52r2iwhQqTFusLZGdlaGqB9xObbLn8qXQ71+6e
+         3MzOx4YHXlNpWo7qs0Ay+dzPPJWJUPDur/qbSAngT3CJmSANWZW6dPg+eRy5CMcZnvzS
+         b98fyi8MVdZurduRE5irVm7nz5AlnLMNCdslGY+jodwq8Y1IDN+WRAvcuIgd89fu9DH+
+         CpQIBNzYnKSZfjeQ0sWtwFJMJ1rEYVI9U9rGQoOFuRIGqXr2dB6MFFR20DAdQd71Gv/Y
+         cdYJV+1PBkeqmDTuSWIDYPrqnVkMkJjd+MQ35yPEwXk4TxxSbu3zS+sONQ1AYYs3G15a
+         7uxg==
+X-Gm-Message-State: AO0yUKVcu3ILmNpFGuP95ODk9os4ly2Fs2iAJWw+jk7uDOvzCLFOLqNh
+        d8LSrUmAIL8FKdU8D+wWp2o=
+X-Google-Smtp-Source: AK7set+DTUTNOO5Ndml0G+wORfDkXiSCJ7KOkP7cHwxjKz1l+ukW479vuLVMZrDaJPBCgsSReuEJTQ==
+X-Received: by 2002:a05:600c:4d15:b0:3dc:443e:420e with SMTP id u21-20020a05600c4d1500b003dc443e420emr230589wmp.2.1676328240975;
+        Mon, 13 Feb 2023 14:44:00 -0800 (PST)
+Received: from Ansuel-xps. (93-34-91-73.ip49.fastwebnet.it. [93.34.91.73])
+        by smtp.gmail.com with ESMTPSA id h28-20020a05600c2cbc00b003dc3f3d77e3sm15872602wmc.7.2023.02.13.14.43.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Feb 2023 14:44:00 -0800 (PST)
+Message-ID: <63eabd30.050a0220.7ac8f.d6d2@mx.google.com>
+X-Google-Original-Message-ID: <Y+isyb4DFabVmzBk@Ansuel-xps.>
+Date:   Sun, 12 Feb 2023 10:09:29 +0100
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Luca Weiss <luca@z3ntu.xyz>
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
         Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Luca Weiss <luca.weiss@fairphone.com>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] clk: qcom: camcc-sm6350: add pm_runtime support
-Date:   Mon, 13 Feb 2023 23:30:27 +0100
-Message-ID: <4777254.GXAFRqVoOG@z3ntu.xyz>
-In-Reply-To: <20230213-sm6350-camcc-runtime_pm-v2-1-60a507bf3e68@z3ntu.xyz>
-References: <20230213-sm6350-camcc-runtime_pm-v2-0-60a507bf3e68@z3ntu.xyz>
- <20230213-sm6350-camcc-runtime_pm-v2-1-60a507bf3e68@z3ntu.xyz>
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: qcom: clk-krait: switch to .determine_rate
+References: <20230212-clk-qcom-determine_rate-v1-0-b4e447d4926e@z3ntu.xyz>
+ <20230212-clk-qcom-determine_rate-v1-1-b4e447d4926e@z3ntu.xyz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230212-clk-qcom-determine_rate-v1-1-b4e447d4926e@z3ntu.xyz>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Montag, 13. Februar 2023 14:08:06 CET Luca Weiss wrote:
-> Make sure that we can enable and disable the power domains used for
-> camcc when the clocks are and aren't used.
+On Sun, Feb 12, 2023 at 03:11:08PM +0100, Luca Weiss wrote:
+> .determine_rate is meant to replace .round_rate. The former comes with a
+> benefit which is especially relevant on 32-bit systems: since
+> .determine_rate uses an "unsigned long" (compared to a "signed long"
+> which is used by .round_rate) the maximum value on 32-bit systems
+> increases from 2^31 (or approx. 2.14GHz) to 2^32 (or approx. 4.29GHz).
 > 
 > Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
 
-Apparently I messed up v2 too and had the wrong email in my git config. Will 
-send a v3 to fix that as well...
+Hi, found time to test this on ipq806x and seems to work correctly by
+scaling to each freq and checking the hfpll reported freq.
+
+Tested-by: Christian Marangi <ansuelsmth@gmail.com>
 
 > ---
->  drivers/clk/qcom/camcc-sm6350.c | 29 ++++++++++++++++++++++++++++-
->  1 file changed, 28 insertions(+), 1 deletion(-)
+>  drivers/clk/qcom/clk-krait.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/clk/qcom/camcc-sm6350.c
-> b/drivers/clk/qcom/camcc-sm6350.c index acba9f99d960..dd65f3ef0857 100644
-> --- a/drivers/clk/qcom/camcc-sm6350.c
-> +++ b/drivers/clk/qcom/camcc-sm6350.c
-> @@ -7,6 +7,8 @@
->  #include <linux/clk-provider.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pm_clock.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/regmap.h>
-> 
->  #include <dt-bindings/clock/qcom,sm6350-camcc.h>
-> @@ -1869,6 +1871,19 @@ MODULE_DEVICE_TABLE(of, camcc_sm6350_match_table);
->  static int camcc_sm6350_probe(struct platform_device *pdev)
+> diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
+> index 293a9dfa7151..f5ce403e1e27 100644
+> --- a/drivers/clk/qcom/clk-krait.c
+> +++ b/drivers/clk/qcom/clk-krait.c
+> @@ -97,11 +97,11 @@ const struct clk_ops krait_mux_clk_ops = {
+>  EXPORT_SYMBOL_GPL(krait_mux_clk_ops);
+>  
+>  /* The divider can divide by 2, 4, 6 and 8. But we only really need div-2. */
+> -static long krait_div2_round_rate(struct clk_hw *hw, unsigned long rate,
+> -				  unsigned long *parent_rate)
+> +static int krait_div2_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
 >  {
->  	struct regmap *regmap;
-> +	int ret;
-> +
-> +	ret = devm_pm_runtime_enable(&pdev->dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = devm_pm_clk_create(&pdev->dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = pm_runtime_get(&pdev->dev);
-> +	if (ret)
-> +		return ret;
-> 
->  	regmap = qcom_cc_map(pdev, &camcc_sm6350_desc);
->  	if (IS_ERR(regmap))
-> @@ -1879,14 +1894,26 @@ static int camcc_sm6350_probe(struct platform_device
-> *pdev) clk_agera_pll_configure(&camcc_pll2, regmap, &camcc_pll2_config);
-> clk_fabia_pll_configure(&camcc_pll3, regmap, &camcc_pll3_config);
-> 
-> -	return qcom_cc_really_probe(pdev, &camcc_sm6350_desc, regmap);
-> +	ret = qcom_cc_really_probe(pdev, &camcc_sm6350_desc, regmap);
-> +	pm_runtime_put(&pdev->dev);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "Failed to register CAM CC 
-clocks\n");
-> +		return ret;
-> +	}
-> +
+> -	*parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), rate * 2);
+> -	return DIV_ROUND_UP(*parent_rate, 2);
+> +	req->best_parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), req->rate * 2);
+> +	req->rate = DIV_ROUND_UP(req->best_parent_rate, 2);
 > +	return 0;
 >  }
-> 
-> +static const struct dev_pm_ops camcc_pm_ops = {
-> +	SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
-> +};
-> +
->  static struct platform_driver camcc_sm6350_driver = {
->  	.probe = camcc_sm6350_probe,
->  	.driver = {
->  		.name = "sm6350-camcc",
->  		.of_match_table = camcc_sm6350_match_table,
-> +		.pm = &camcc_pm_ops,
->  	},
+>  
+>  static int krait_div2_set_rate(struct clk_hw *hw, unsigned long rate,
+> @@ -142,7 +142,7 @@ krait_div2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+>  }
+>  
+>  const struct clk_ops krait_div2_clk_ops = {
+> -	.round_rate = krait_div2_round_rate,
+> +	.determine_rate = krait_div2_determine_rate,
+>  	.set_rate = krait_div2_set_rate,
+>  	.recalc_rate = krait_div2_recalc_rate,
 >  };
+> 
+> -- 
+> 2.39.1
+> 
 
-
-
-
+-- 
+	Ansuel
