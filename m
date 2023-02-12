@@ -2,117 +2,74 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C703DC64EC7
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Feb 2023 14:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A24FC6379F
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Feb 2023 15:41:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229625AbjBLOMD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Feb 2023 09:12:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41386 "EHLO
+        id S229754AbjBLPlp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Feb 2023 10:41:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbjBLOMC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Feb 2023 09:12:02 -0500
-Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 056B6F77D;
-        Sun, 12 Feb 2023 06:12:02 -0800 (PST)
-Received: from [192.168.178.23] (unknown [62.108.10.64])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 3BA1DD38CF;
-        Sun, 12 Feb 2023 14:11:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1676211090; bh=qFK6KiGkL2Ya37v4r7g08gVdvQ3WQ3Zqy1iFF42jPdE=;
-        h=From:Date:Subject:References:In-Reply-To:To:Cc;
-        b=HC5VzDU/7oVhktaUl5K/8a0J1ijbpNVD36QUZjlqGNHwGD5jKpZujIwxf1Bm3V+Xu
-         GsF/PYnLzj0JrFvC4NC6wGuSi60h48B5/brIGiOhitoBxifK911M4jgenPxFp/jabf
-         t+mcd1cC4pC0WiAL9t5FyqGwG3YzGAFprjPoCMe4=
-From:   Luca Weiss <luca@z3ntu.xyz>
-Date:   Sun, 12 Feb 2023 15:11:09 +0100
-Subject: [PATCH 2/2] clk: qcom: clk-hfpll: switch to .determine_rate
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230212-clk-qcom-determine_rate-v1-2-b4e447d4926e@z3ntu.xyz>
-References: <20230212-clk-qcom-determine_rate-v1-0-b4e447d4926e@z3ntu.xyz>
-In-Reply-To: <20230212-clk-qcom-determine_rate-v1-0-b4e447d4926e@z3ntu.xyz>
-To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        with ESMTP id S229733AbjBLPlh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Feb 2023 10:41:37 -0500
+Received: from soltyk.jannau.net (soltyk.jannau.net [144.76.91.90])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A591612588;
+        Sun, 12 Feb 2023 07:41:36 -0800 (PST)
+Received: from robin.home.jannau.net (p579ad32f.dip0.t-ipconnect.de [87.154.211.47])
+        by soltyk.jannau.net (Postfix) with ESMTPSA id 45D4C26F788;
+        Sun, 12 Feb 2023 16:41:35 +0100 (CET)
+From:   Janne Grunau <j@jannau.net>
+To:     Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Mark Kettenis <kettenis@openbsd.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Christian Marangi <ansuelsmth@gmail.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luca Weiss <luca@z3ntu.xyz>
+        =?UTF-8?q?=A1er?= <povik+lin@cutebit.org>
+Cc:     asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH 13/17] dt-bindings: clock: apple,nco: Add t8112-nco compatible
+Date:   Sun, 12 Feb 2023 16:41:23 +0100
+Message-Id: <20230202-asahi-t8112-dt-v1-13-cb5442d1c229@jannau.net>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230202-asahi-t8112-dt-v1-0-cb5442d1c229@jannau.net>
+References: <20230202-asahi-t8112-dt-v1-0-cb5442d1c229@jannau.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 X-Mailer: b4 0.12.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1899; i=luca@z3ntu.xyz;
- h=from:subject:message-id; bh=qFK6KiGkL2Ya37v4r7g08gVdvQ3WQ3Zqy1iFF42jPdE=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBj6POQHw2eHpO2tucbsPLIsE0wWtIoMbeD9jIxo
- SytZgYbKcOJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCY+jzkAAKCRBy2EO4nU3X
- Vi4rD/9aHBRishQyFuZrmzfeCFOYgln9UKcBbsJrygK4Vbwnqb4xslopUl9KlyBR58kEWbD0Xc/
- RKvsoc9Szll8iLmYrEvsiJsLTiDHwqQFXjvyq54Sawq7W40gTPKeI4ziM0SPr5TBrDpEVT+1aDj
- FMbOXk0KpnkFdCcnxvmz6kYx/Q47Afqnd73nwJsIqd64CEZhPtSzKbIXOuOgkRZiY8BzCsYSHA4
- hmguo8kbjK86zg3qia6SEPKX0QnwuV+fL1LCLhk2RORfA0zA0BU2h8xkJt0JVRYTvw5xOscoOES
- Xniy6uLAWFETt9e5kr5npADuAJYGjYWHcc22nc9a0To5vR+EnqwR9ipLW8TCC3ol0V5H1ueyWyX
- 7itGwlOR9WKAJgwAKvlUUHZN4hu1+XMkDu53gFPXl0zJLUcr4mt9Zz7iEouhqykV+lK347Y0gFZ
- +Zm83dRyrn6PmHg2pMgJP/eusBBOwWeREVPz3qurX2QRXcMKS1Fpr7KDWACeTa8xX1H/CVD9AVq
- c9ALLqnTW5SyUfPNuuc8bKFYWQPGxfteAAgEmfFmFyapK4Av+UNO8r7IJiT3YCOCsgrK2LUA1Hw
- s2WIT5czzWQqvIzHbtWyqNuA3g5YBEnxoUW8vOdQkkshCVUfPyfaS8szTNerLFtAzt6Xbv9+A2I
- c05/x4oM7rXP0Nw==
-X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
- fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
+X-Developer-Signature: v=1; a=openpgp-sha256; l=899; i=j@jannau.net; h=from:subject:message-id; bh=guQoP4sTJ6J0hvW04dgo+MfAOGedfXRIgUStRwklrig=; b=owGbwMvMwCG2UNrmdq9+ahrjabUkhuSX7Cdmzdm4cvfPzkT7S7f/Td73YFm/q9f11hkiCczba pqWSG5q6ShlYRDjYJAVU2RJ0n7ZwbC6RjGm9kEYzBxWJpAhDFycAjCRdUqMDBP4hOfF2UxsvX+7 uHJx+I1rxsHhz3k56tpulZkZPbObOZfhf3SHwizzmt/LuC2PB8/eNOu7u/rW1ur48O8RJaHvn1i 3MwAA
+X-Developer-Key: i=j@jannau.net; a=openpgp; fpr=8B336A6BE4E5695E89B8532B81E806F586338419
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-.determine_rate is meant to replace .round_rate. The former comes with a
-benefit which is especially relevant on 32-bit systems: since
-.determine_rate uses an "unsigned long" (compared to a "signed long"
-which is used by .round_rate) the maximum value on 32-bit systems
-increases from 2^31 (or approx. 2.14GHz) to 2^32 (or approx. 4.29GHz).
+The block found on Apple's M2 SoC is compatible with the existing driver
+so add its per-SoC compatible.
 
-Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+Signed-off-by: Janne Grunau <j@jannau.net>
+
 ---
- drivers/clk/qcom/clk-hfpll.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+This trivial dt-bindings update should be merged through the asahi-soc
+tree to ensure validation of the Apple M2 (t8112) devicetrees in this
+series.
+---
+ Documentation/devicetree/bindings/clock/apple,nco.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/qcom/clk-hfpll.c b/drivers/clk/qcom/clk-hfpll.c
-index 7dd17c184b69..86f728dc69e5 100644
---- a/drivers/clk/qcom/clk-hfpll.c
-+++ b/drivers/clk/qcom/clk-hfpll.c
-@@ -128,20 +128,20 @@ static void clk_hfpll_disable(struct clk_hw *hw)
- 	spin_unlock_irqrestore(&h->lock, flags);
- }
+diff --git a/Documentation/devicetree/bindings/clock/apple,nco.yaml b/Documentation/devicetree/bindings/clock/apple,nco.yaml
+index 74eab5c0d24a..8b8411dc42f6 100644
+--- a/Documentation/devicetree/bindings/clock/apple,nco.yaml
++++ b/Documentation/devicetree/bindings/clock/apple,nco.yaml
+@@ -23,6 +23,7 @@ properties:
+       - enum:
+           - apple,t6000-nco
+           - apple,t8103-nco
++          - apple,t8112-nco
+       - const: apple,nco
  
--static long clk_hfpll_round_rate(struct clk_hw *hw, unsigned long rate,
--				 unsigned long *parent_rate)
-+static int clk_hfpll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
- {
- 	struct clk_hfpll *h = to_clk_hfpll(hw);
- 	struct hfpll_data const *hd = h->d;
- 	unsigned long rrate;
- 
--	rate = clamp(rate, hd->min_rate, hd->max_rate);
-+	req->rate = clamp(req->rate, hd->min_rate, hd->max_rate);
- 
--	rrate = DIV_ROUND_UP(rate, *parent_rate) * *parent_rate;
-+	rrate = DIV_ROUND_UP(req->rate, req->best_parent_rate) * req->best_parent_rate;
- 	if (rrate > hd->max_rate)
--		rrate -= *parent_rate;
-+		rrate -= req->best_parent_rate;
- 
--	return rrate;
-+	req->rate = rrate;
-+	return 0;
- }
- 
- /*
-@@ -241,7 +241,7 @@ const struct clk_ops clk_ops_hfpll = {
- 	.enable = clk_hfpll_enable,
- 	.disable = clk_hfpll_disable,
- 	.is_enabled = hfpll_is_enabled,
--	.round_rate = clk_hfpll_round_rate,
-+	.determine_rate = clk_hfpll_determine_rate,
- 	.set_rate = clk_hfpll_set_rate,
- 	.recalc_rate = clk_hfpll_recalc_rate,
- 	.init = clk_hfpll_init,
+   clocks:
 
 -- 
 2.39.1
