@@ -2,37 +2,36 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4290AC636D3
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Feb 2023 14:12:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C703DC64EC7
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Feb 2023 14:12:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229607AbjBLOMD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S229625AbjBLOMD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Sun, 12 Feb 2023 09:12:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41384 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbjBLOMC (ORCPT
+        with ESMTP id S229496AbjBLOMC (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Feb 2023 09:12:02 -0500
 Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89B01F777;
-        Sun, 12 Feb 2023 06:12:01 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 056B6F77D;
+        Sun, 12 Feb 2023 06:12:02 -0800 (PST)
 Received: from [192.168.178.23] (unknown [62.108.10.64])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 949C1CB387;
-        Sun, 12 Feb 2023 14:11:29 +0000 (UTC)
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 3BA1DD38CF;
+        Sun, 12 Feb 2023 14:11:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1676211089; bh=GtVlAJJGWKH1DMq2uvY3B25xRTilkMFb5G+MaWHNQ00=;
-        h=From:Subject:Date:To:Cc;
-        b=BVwrjgMhKVGXhXktn5kXGXS8vJ49qG3I/QTKJSFUwHAtwLSEBjXdJKdRtnpz/R6DE
-         m7da1ZzkStgWwxLMYlm2cmxiBkY86AVg0qIlD68LnTB9U6SF0AomYT6ye2ftSjG+Tp
-         zbbL4z3gI2LyEVzcbTeAq7PdwUa9EP1KO2a5wBx0=
+        t=1676211090; bh=qFK6KiGkL2Ya37v4r7g08gVdvQ3WQ3Zqy1iFF42jPdE=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc;
+        b=HC5VzDU/7oVhktaUl5K/8a0J1ijbpNVD36QUZjlqGNHwGD5jKpZujIwxf1Bm3V+Xu
+         GsF/PYnLzj0JrFvC4NC6wGuSi60h48B5/brIGiOhitoBxifK911M4jgenPxFp/jabf
+         t+mcd1cC4pC0WiAL9t5FyqGwG3YzGAFprjPoCMe4=
 From:   Luca Weiss <luca@z3ntu.xyz>
-Subject: [PATCH 0/2] Switch hfpll & krait clock drivers to .determine_rate
-Date:   Sun, 12 Feb 2023 15:11:07 +0100
-Message-Id: <20230212-clk-qcom-determine_rate-v1-0-b4e447d4926e@z3ntu.xyz>
+Date:   Sun, 12 Feb 2023 15:11:09 +0100
+Subject: [PATCH 2/2] clk: qcom: clk-hfpll: switch to .determine_rate
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHvz6GMC/x3OWwqDMBCF4a1InjslxlJrtyKlJONYhzYxTuwFx
- L03+vjD+eAsKpEwJXUtFiX04cRjyFEeCoWDDQ8C7nIro02lTWkAX0+YcPTQ0UziOdBd7EyAjcb
- GdtpVVa2ydjYROLEBh83vxCd/aeoTnI8GvhwB47sXmrZ5FOr5tx9pb+v6B/tUR1SYAAAA
+Message-Id: <20230212-clk-qcom-determine_rate-v1-2-b4e447d4926e@z3ntu.xyz>
+References: <20230212-clk-qcom-determine_rate-v1-0-b4e447d4926e@z3ntu.xyz>
+In-Reply-To: <20230212-clk-qcom-determine_rate-v1-0-b4e447d4926e@z3ntu.xyz>
 To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
         Bjorn Andersson <andersson@kernel.org>,
         Andy Gross <agross@kernel.org>,
@@ -43,59 +42,78 @@ To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, Luca Weiss <luca@z3ntu.xyz>
 X-Mailer: b4 0.12.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1481; i=luca@z3ntu.xyz;
- h=from:subject:message-id; bh=GtVlAJJGWKH1DMq2uvY3B25xRTilkMFb5G+MaWHNQ00=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBj6POL0FcBRnJRg5OOLiZVechUBSHFx2CiinKGu
- 1UgPJxIcQaJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCY+jziwAKCRBy2EO4nU3X
- VhR5EACESDkC6WWZ4QmLaNEeVzf2uD2Osg9trtmoEK2pOxi67tK20lz7A9HOtrKfNezpVBleH2R
- 5nyax5rEQmVIpjXVG1dt2sf0q+KAPmUGsNCeFy5oKaqkjDilXr2zQCLI6q7/U2QaSivYeft2ku9
- 0xI3sRn4TgywtcfIwCGqGBLb8rhpJggLchR0SmMNwCKydCZOHnz7Fb41GMmD/WfBQXVVMifUJNu
- Phc9+u4nANrMQHe274dOYUvf6/m9vrDtzJpKYTbbg2HjD+VTeyOZzheLdSKwxtti+YXmanda8Ii
- TxyVMhoanMNeALbMCU+NcSHxRQhEDJcp3g2HRXydMnQxAT92K9Jg2HNkvfU7miV5m3XmNLoy6dX
- mSryfgGwRX4JORJxf/w8KtgkBOsPWEPG0/2HTfxDgopgmhd1dzf81hVG6zzFoPOM9sY5LGvTcbr
- dHF9pYDZr8tQ+lybTgFzJntPIkKHpAzpfUPuxSrY82FOMEk+ayv8zLOeCoAun2ueYG4Rb09y3Zb
- 7AFufKdgUnKONRx1eaeNQJJHWZUpXtempOar2cbPHy4npbPvTUCJss17SuVJ6HznSCSHCGKf9nh
- f/aCPBEtiIR9Qsj/sOJY+2oKI4Bh+p/+APLNseiPVvL5rTmILrUv5Aa3q26uRUMt+fgi9+xCqfr
- VZ+YKWvUoGZGUtw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1899; i=luca@z3ntu.xyz;
+ h=from:subject:message-id; bh=qFK6KiGkL2Ya37v4r7g08gVdvQ3WQ3Zqy1iFF42jPdE=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBj6POQHw2eHpO2tucbsPLIsE0wWtIoMbeD9jIxo
+ SytZgYbKcOJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCY+jzkAAKCRBy2EO4nU3X
+ Vi4rD/9aHBRishQyFuZrmzfeCFOYgln9UKcBbsJrygK4Vbwnqb4xslopUl9KlyBR58kEWbD0Xc/
+ RKvsoc9Szll8iLmYrEvsiJsLTiDHwqQFXjvyq54Sawq7W40gTPKeI4ziM0SPr5TBrDpEVT+1aDj
+ FMbOXk0KpnkFdCcnxvmz6kYx/Q47Afqnd73nwJsIqd64CEZhPtSzKbIXOuOgkRZiY8BzCsYSHA4
+ hmguo8kbjK86zg3qia6SEPKX0QnwuV+fL1LCLhk2RORfA0zA0BU2h8xkJt0JVRYTvw5xOscoOES
+ Xniy6uLAWFETt9e5kr5npADuAJYGjYWHcc22nc9a0To5vR+EnqwR9ipLW8TCC3ol0V5H1ueyWyX
+ 7itGwlOR9WKAJgwAKvlUUHZN4hu1+XMkDu53gFPXl0zJLUcr4mt9Zz7iEouhqykV+lK347Y0gFZ
+ +Zm83dRyrn6PmHg2pMgJP/eusBBOwWeREVPz3qurX2QRXcMKS1Fpr7KDWACeTa8xX1H/CVD9AVq
+ c9ALLqnTW5SyUfPNuuc8bKFYWQPGxfteAAgEmfFmFyapK4Av+UNO8r7IJiT3YCOCsgrK2LUA1Hw
+ s2WIT5czzWQqvIzHbtWyqNuA3g5YBEnxoUW8vOdQkkshCVUfPyfaS8szTNerLFtAzt6Xbv9+A2I
+ c05/x4oM7rXP0Nw==
 X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
  fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-While trying to get cpufreq working on msm8974 I've found an issue with
-clock rates above 2.11GHz (e.g. 2.15GHz). When a rate above this
-threshold gets requested the lowest possible frequency will be selected.
-
-This is caused by an overflow of the "long" return type of .round_rate
-which has a maximum value of 2147483647 (2.14GHz) on 32-bit systems,
-which msm8974 is.
-
-We can switch the drivers to determine_rate so we can use the full
-"unsigned long" type which lets us go up to 4294967295 (4.29GHz) before
-an overflow happens which is significantly below the maximum frequency
-of any msm8974 which is around 2.45GHz.
-
-Note, that while setting the main hfpll now works correctly, the code
-setting the div2 is still sort of broken, since it's requesting
-"req->rate * 2" which will still overflow the unsigned long maximum
-value, but it seems this doesn't actually break anything since the div2
-doesn't use the calculated value. That's my understanding at least.
+.determine_rate is meant to replace .round_rate. The former comes with a
+benefit which is especially relevant on 32-bit systems: since
+.determine_rate uses an "unsigned long" (compared to a "signed long"
+which is used by .round_rate) the maximum value on 32-bit systems
+increases from 2^31 (or approx. 2.14GHz) to 2^32 (or approx. 4.29GHz).
 
 Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
 ---
-Luca Weiss (2):
-      clk: qcom: clk-krait: switch to .determine_rate
-      clk: qcom: clk-hfpll: switch to .determine_rate
-
  drivers/clk/qcom/clk-hfpll.c | 14 +++++++-------
- drivers/clk/qcom/clk-krait.c | 10 +++++-----
- 2 files changed, 12 insertions(+), 12 deletions(-)
----
-base-commit: 6ba8a227fd19d19779005fb66ad7562608e1df83
-change-id: 20230212-clk-qcom-determine_rate-c90c9ad0b337
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Best regards,
+diff --git a/drivers/clk/qcom/clk-hfpll.c b/drivers/clk/qcom/clk-hfpll.c
+index 7dd17c184b69..86f728dc69e5 100644
+--- a/drivers/clk/qcom/clk-hfpll.c
++++ b/drivers/clk/qcom/clk-hfpll.c
+@@ -128,20 +128,20 @@ static void clk_hfpll_disable(struct clk_hw *hw)
+ 	spin_unlock_irqrestore(&h->lock, flags);
+ }
+ 
+-static long clk_hfpll_round_rate(struct clk_hw *hw, unsigned long rate,
+-				 unsigned long *parent_rate)
++static int clk_hfpll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+ {
+ 	struct clk_hfpll *h = to_clk_hfpll(hw);
+ 	struct hfpll_data const *hd = h->d;
+ 	unsigned long rrate;
+ 
+-	rate = clamp(rate, hd->min_rate, hd->max_rate);
++	req->rate = clamp(req->rate, hd->min_rate, hd->max_rate);
+ 
+-	rrate = DIV_ROUND_UP(rate, *parent_rate) * *parent_rate;
++	rrate = DIV_ROUND_UP(req->rate, req->best_parent_rate) * req->best_parent_rate;
+ 	if (rrate > hd->max_rate)
+-		rrate -= *parent_rate;
++		rrate -= req->best_parent_rate;
+ 
+-	return rrate;
++	req->rate = rrate;
++	return 0;
+ }
+ 
+ /*
+@@ -241,7 +241,7 @@ const struct clk_ops clk_ops_hfpll = {
+ 	.enable = clk_hfpll_enable,
+ 	.disable = clk_hfpll_disable,
+ 	.is_enabled = hfpll_is_enabled,
+-	.round_rate = clk_hfpll_round_rate,
++	.determine_rate = clk_hfpll_determine_rate,
+ 	.set_rate = clk_hfpll_set_rate,
+ 	.recalc_rate = clk_hfpll_recalc_rate,
+ 	.init = clk_hfpll_init,
+
 -- 
-Luca Weiss <luca@z3ntu.xyz>
+2.39.1
 
