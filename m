@@ -2,30 +2,33 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6390DC64ED9
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Feb 2023 03:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C26F7C636CC
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Feb 2023 03:54:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229560AbjBMDt2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Feb 2023 22:49:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58512 "EHLO
+        id S229472AbjBMDyg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Feb 2023 22:54:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229584AbjBMDt1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Feb 2023 22:49:27 -0500
+        with ESMTP id S229457AbjBMDyg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Feb 2023 22:54:36 -0500
 Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D854CDFE;
-        Sun, 12 Feb 2023 19:49:26 -0800 (PST)
-Received: by codeconstruct.com.au (Postfix, from userid 10000)
-        id 0409C2024A; Mon, 13 Feb 2023 11:49:21 +0800 (AWST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFE02D50F;
+        Sun, 12 Feb 2023 19:54:34 -0800 (PST)
+Received: from [172.16.71.140] (unknown [49.255.141.98])
+        by mail.codeconstruct.com.au (Postfix) with ESMTPSA id EF8332003E;
+        Mon, 13 Feb 2023 11:54:32 +0800 (AWST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=codeconstruct.com.au; s=2022a; t=1676260161;
-        bh=bRYDN+0y9hBrkSK2zI/xhDItslW6pityFIvZxFnL8v4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=azm6IyEcWo1rbtzHB1qQ2KJ4VvmVAyEysQ8/2LQDgvvrDwf0+rcX4OGkZO1OZ2j4P
-         +9zgcquWY0pYgfk+Ep7mXq9wezxx5f4GIaF93xjzKXOwd9ki5kEokrqkF9XHBmiky7
-         QwK8P5tC5z8TqFL/UVE6QF6CyH9cKvM7wz2UDpesrB7SyQziYsVkYteleWMeJ4+1ce
-         +IjTUbiMoQ0fZY5iKhMx7bNbNQ76VZGm+bUkXt1EixTEwxImosn75n+Ma8IrjSsuwn
-         wxWP22XRNNlyUQGkrqtH74F82GJ7b5SyskDUrO2vmH19dlv9HI+guE1BfJ5MeheHwq
-         6Qe58aYw9rSCw==
+        d=codeconstruct.com.au; s=2022a; t=1676260473;
+        bh=mUfFYcXZpoqiWPyS7snd3gAYhXm4wWJgRfkE2yTX8pA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References;
+        b=PUObLmv5nRKC+i6HNjXqn82vFp4X4/cgfM9luCZm0CYPnWBDo5pk0/6T9muxgWfpq
+         MG7hbRrVjnGI/BSOGyM0idC3vPipFjH9PekiH+CO/GS0+c5J68eZSwy+WLMZdM5JR1
+         2FDZnjBCHp5vrcLPo9/gkhsdgB05QIsp31ipaaIr+br/hiMxq8AQp6A/ULqv+zx4Fm
+         hjKrJG+8Ql+d9wRnMPyTdz1WwQCXQtQXQxGXRHMDVvSV6CkSZ6CsZ+/CAAyNF8qRVH
+         XNpbI7lQuNugFjuEa4WoHe9qw+Fk+7/e+1b30SBWixeCK6p+St7yXlQyEjbLrg5EgU
+         FS10HRY2OUskA==
+Message-ID: <7b98182e6ebbfe63aa327f363bd288b9e1736a6d.camel@codeconstruct.com.au>
+Subject: Re: [PATCH 0/2] Add definitions for AST2600 i3c clocks and resets
 From:   Jeremy Kerr <jk@codeconstruct.com.au>
 To:     linux-aspeed@lists.ozlabs.org, linux-clk@vger.kernel.org
 Cc:     devicetree@vger.kernel.org,
@@ -34,132 +37,30 @@ Cc:     devicetree@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Dylan Hung <dylan_hung@aspeedtech.com>,
-        Joel Stanley <jms@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>
-Subject: [PATCH 1/2] clk: aspeed: Add full configs for i3c clocks
-Date:   Mon, 13 Feb 2023 11:48:32 +0800
-Message-Id: <68e306d262841a5435d1a7145764b64f524a2352.1676259904.git.jk@codeconstruct.com.au>
-X-Mailer: git-send-email 2.39.1
+        Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>
+Date:   Mon, 13 Feb 2023 11:54:32 +0800
 In-Reply-To: <cover.1676259904.git.jk@codeconstruct.com.au>
 References: <cover.1676259904.git.jk@codeconstruct.com.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.3-1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The current ast2600 i3c clock definitions are top-level, and include a
-couple of definitions for (non-existent) i3c6 and i3c7.
+Hi all,
 
-This change re-parents these to the main i3c clock, sourced from the
-APLL. We also remove the i3c6 and i3c7 definitions and mark those entries
-in the gates array as reserved - all entries in the array must be
-contiguous.
+> This series adds some base configuration for the i3c controllers on
+> ast2600 hardware. We'll use the reset and clock definitions in the
+> proposed dt binding example, hence sending these first.
 
-This change is a partial cherry-pick and rework of ed44b8cdfdb and
-1a35eb926d7 from Aspeed's own tree, originally by Dylan Hung
-<dylan_hung@aspeedtech.com>.
+Looks like I had Joel's address incorrect there; fixed in this reply.
 
-Signed-off-by: Jeremy Kerr <jk@codeconstruct.com.au>
----
- drivers/clk/clk-ast2600.c                 | 39 ++++++++++++++++++-----
- include/dt-bindings/clock/ast2600-clock.h |  6 ++--
- 2 files changed, 34 insertions(+), 11 deletions(-)
+Joel, let me know if you'd like a re-send (but you should also have a
+copy through linux-aspeed?).
 
-diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
-index 9c3305bcb27a..24ad34440e1e 100644
---- a/drivers/clk/clk-ast2600.c
-+++ b/drivers/clk/clk-ast2600.c
-@@ -4,6 +4,7 @@
- 
- #define pr_fmt(fmt) "clk-ast2600: " fmt
- 
-+#include <linux/bitfield.h>
- #include <linux/mfd/syscon.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-@@ -32,6 +33,18 @@
- #define ASPEED_G6_CLK_SELECTION1	0x300
- #define ASPEED_G6_CLK_SELECTION2	0x304
- #define ASPEED_G6_CLK_SELECTION4	0x310
-+#define ASPEED_G6_CLK_SELECTION5	0x314
-+#define   I3C_CLK_SELECTION		BIT(31)
-+#define     I3C_CLK_SELECT_HCLK		0
-+#define     I3C_CLK_SELECT_APLL_DIV	1
-+#define   APLL_DIV_SELECTION		GENMASK(30, 28)
-+#define     APLL_DIV_2			0b001
-+#define     APLL_DIV_3			0b010
-+#define     APLL_DIV_4			0b011
-+#define     APLL_DIV_5			0b100
-+#define     APLL_DIV_6			0b101
-+#define     APLL_DIV_7			0b110
-+#define     APLL_DIV_8			0b111
- 
- #define ASPEED_HPLL_PARAM		0x200
- #define ASPEED_APLL_PARAM		0x210
-@@ -97,14 +110,14 @@ static const struct aspeed_gate_data aspeed_g6_gates[] = {
- 	[ASPEED_CLK_GATE_LHCCLK]	= { 37, -1, "lhclk-gate",	"lhclk", 0 },	/* LPC master/LPC+ */
- 	/* Reserved 38 RSA: no longer used */
- 	/* Reserved 39 */
--	[ASPEED_CLK_GATE_I3C0CLK]	= { 40,  40, "i3c0clk-gate",	NULL,	 0 },	/* I3C0 */
--	[ASPEED_CLK_GATE_I3C1CLK]	= { 41,  41, "i3c1clk-gate",	NULL,	 0 },	/* I3C1 */
--	[ASPEED_CLK_GATE_I3C2CLK]	= { 42,  42, "i3c2clk-gate",	NULL,	 0 },	/* I3C2 */
--	[ASPEED_CLK_GATE_I3C3CLK]	= { 43,  43, "i3c3clk-gate",	NULL,	 0 },	/* I3C3 */
--	[ASPEED_CLK_GATE_I3C4CLK]	= { 44,  44, "i3c4clk-gate",	NULL,	 0 },	/* I3C4 */
--	[ASPEED_CLK_GATE_I3C5CLK]	= { 45,  45, "i3c5clk-gate",	NULL,	 0 },	/* I3C5 */
--	[ASPEED_CLK_GATE_I3C6CLK]	= { 46,  46, "i3c6clk-gate",	NULL,	 0 },	/* I3C6 */
--	[ASPEED_CLK_GATE_I3C7CLK]	= { 47,  47, "i3c7clk-gate",	NULL,	 0 },	/* I3C7 */
-+	[ASPEED_CLK_GATE_I3C0CLK]	= { 40,  40, "i3c0clk-gate",	"i3cclk", 0 }, /* I3C0 */
-+	[ASPEED_CLK_GATE_I3C1CLK]	= { 41,  41, "i3c1clk-gate",	"i3cclk", 0 }, /* I3C1 */
-+	[ASPEED_CLK_GATE_I3C2CLK]	= { 42,  42, "i3c2clk-gate",	"i3cclk", 0 }, /* I3C2 */
-+	[ASPEED_CLK_GATE_I3C3CLK]	= { 43,  43, "i3c3clk-gate",	"i3cclk", 0 }, /* I3C3 */
-+	[ASPEED_CLK_GATE_I3C4CLK]	= { 44,  44, "i3c4clk-gate",	"i3cclk", 0 }, /* I3C4 */
-+	[ASPEED_CLK_GATE_I3C5CLK]	= { 45,  45, "i3c5clk-gate",	"i3cclk", 0 }, /* I3C5 */
-+	[ASPEED_CLK_GATE_RESERVED43]	= { 46,  46, "reserved-43",	NULL,	0 },
-+	[ASPEED_CLK_GATE_RESERVED44]	= { 47,  47, "reserved-44",	NULL,	0 },
- 	[ASPEED_CLK_GATE_UART1CLK]	= { 48,  -1, "uart1clk-gate",	"uart",	 0 },	/* UART1 */
- 	[ASPEED_CLK_GATE_UART2CLK]	= { 49,  -1, "uart2clk-gate",	"uart",	 0 },	/* UART2 */
- 	[ASPEED_CLK_GATE_UART3CLK]	= { 50,  -1, "uart3clk-gate",	"uart",  0 },	/* UART3 */
-@@ -772,6 +785,16 @@ static void __init aspeed_g6_cc(struct regmap *map)
- 	/* USB 2.0 port1 phy 40MHz clock */
- 	hw = clk_hw_register_fixed_rate(NULL, "usb-phy-40m", NULL, 0, 40000000);
- 	aspeed_g6_clk_data->hws[ASPEED_CLK_USBPHY_40M] = hw;
-+
-+	/* i3c clock: source from apll, divide by 8 */
-+	regmap_read(map, ASPEED_G6_CLK_SELECTION5, &val);
-+	val &= ~(I3C_CLK_SELECTION | APLL_DIV_SELECTION);
-+	val |= FIELD_PREP(I3C_CLK_SELECTION, I3C_CLK_SELECT_APLL_DIV);
-+	val |= FIELD_PREP(APLL_DIV_SELECTION, APLL_DIV_8);
-+	regmap_write(map, ASPEED_G6_CLK_SELECTION5, val);
-+
-+	hw = clk_hw_register_fixed_factor(NULL, "i3cclk", "apll", 0, 1, 8);
-+	aspeed_g6_clk_data->hws[ASPEED_CLK_I3C] = hw;
- };
- 
- static void __init aspeed_g6_cc_init(struct device_node *np)
-diff --git a/include/dt-bindings/clock/ast2600-clock.h b/include/dt-bindings/clock/ast2600-clock.h
-index d8b0db2f7a7d..98dc82702755 100644
---- a/include/dt-bindings/clock/ast2600-clock.h
-+++ b/include/dt-bindings/clock/ast2600-clock.h
-@@ -57,9 +57,8 @@
- #define ASPEED_CLK_GATE_I3C3CLK		40
- #define ASPEED_CLK_GATE_I3C4CLK		41
- #define ASPEED_CLK_GATE_I3C5CLK		42
--#define ASPEED_CLK_GATE_I3C6CLK		43
--#define ASPEED_CLK_GATE_I3C7CLK		44
--
-+#define ASPEED_CLK_GATE_RESERVED43	43
-+#define ASPEED_CLK_GATE_RESERVED44	44
- #define ASPEED_CLK_GATE_FSICLK		45
- 
- #define ASPEED_CLK_HPLL			46
-@@ -87,6 +86,7 @@
- #define ASPEED_CLK_MAC2RCLK		68
- #define ASPEED_CLK_MAC3RCLK		69
- #define ASPEED_CLK_MAC4RCLK		70
-+#define ASPEED_CLK_I3C			74
- 
- /* Only list resets here that are not part of a gate */
- #define ASPEED_RESET_ADC		55
--- 
-2.39.1
+Cheers,
 
+
+Jeremy
