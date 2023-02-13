@@ -2,55 +2,55 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3536C636D4
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Feb 2023 16:19:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFBCC6379F
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Feb 2023 16:33:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230508AbjBMQTW convert rfc822-to-8bit (ORCPT
+        id S229941AbjBMQdm convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Feb 2023 11:19:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36968 "EHLO
+        Mon, 13 Feb 2023 11:33:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230372AbjBMQTF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Feb 2023 11:19:05 -0500
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 914F51E2A2;
-        Mon, 13 Feb 2023 08:19:00 -0800 (PST)
-Received: by mail-qt1-f178.google.com with SMTP id h24so14367987qtr.0;
-        Mon, 13 Feb 2023 08:19:00 -0800 (PST)
+        with ESMTP id S230149AbjBMQdl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Feb 2023 11:33:41 -0500
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F380CCC1F;
+        Mon, 13 Feb 2023 08:33:10 -0800 (PST)
+Received: by mail-qt1-f182.google.com with SMTP id g18so14332781qtb.6;
+        Mon, 13 Feb 2023 08:33:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZWx8ZwfXpULN6D+/6e9VXzLYc5EL57Ok1IH7lc8/M6Q=;
-        b=LpgDd7yLgxxzttTl6HmB3anNl3CIvepC9Naq0lL4Utg/FtOspBToU5XW7Mh+gGNL7R
-         +BBGimaFyBgaUDGJ6ALsrfJb17zR+nobxSSBKun9MEsCN0QdxxD0X4/jQy+yjWe8Lem+
-         6uYkCL4XwEdSLtogIZjJyaP5YCRFvGCE0OJ6uhG9eis88i7UJIyoy6gMUhG6/KVjzfqy
-         NgML1Pccb/fJpjhUvaAu736Z6nEdpgKbYiYx8rFlUTVb8gTTjIdjJyz4xDs1Rl1FxK2c
-         Pyia5Cw9j1kXq3OhlGWOeAdMiuKKeT/v/GH2mCDq8gcY8HLRSCs2Q8lB4AtCQWsrcjou
-         qQeg==
-X-Gm-Message-State: AO0yUKV798lKKGYGEua+QENXbc7ZuG9VHiPsfeF9sUkMf4bn6X+qe/g8
-        a6TMAS0f9RzqrdjFZAI1f2AtVG5RJezUfQ==
-X-Google-Smtp-Source: AK7set9D1mdUEBoWInIMKd25+ooxPr9z3PpK3JwaMa0T1IKwPwkX38NXjcnNfHCACLnJ3R9dglUxdQ==
-X-Received: by 2002:ac8:5aca:0:b0:3b8:2ea9:a08d with SMTP id d10-20020ac85aca000000b003b82ea9a08dmr47518108qtd.52.1676305139473;
-        Mon, 13 Feb 2023 08:18:59 -0800 (PST)
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
-        by smtp.gmail.com with ESMTPSA id x21-20020ac87a95000000b003b869f71eedsm9382138qtr.66.2023.02.13.08.18.59
+        bh=5EWXIT4tZBYyYPCqmQRMCpsTOOU4dDNBYtC4FWjtudU=;
+        b=4P8DNQJ+J4r1GAS0okX4s/npuT0Ukvt06bNi3XDEDiwcQIMyPzFD7+XrOuiNABCJ4F
+         af7kzYWPOkr+uHnHY0d8CEwSSS56pQlji4VKEvRFYGJqMj0bYXH3ujlgTvaXsr2LGeu9
+         I0OdBXaQthcId4+FCbT+dz2PH8PMiHqvTJ2IGhoAUUI3SSBCH5EEXINR7RPIETwcUBgG
+         q8oBZJsTvGLVrTjBRD0cK9VMSS7rWh7wig/vvUO45OAxk55fdunVoFZ8VCLA/oOnof1x
+         ZZQUcEZixO956vFwkbPjh5zMCYT3/SjUHwpQvYgDp4QuOV7TyWasqehuMPw4Ioc/11FT
+         UPBw==
+X-Gm-Message-State: AO0yUKU2FPr65V2CWycj6IW7memeEoKL75WP4woMyoJwswAfe7rQk/LV
+        6a1ySr0cRe27DiQeEHNGY76CCZETEDp1dQ==
+X-Google-Smtp-Source: AK7set8YaHsyhQdsDiR55Y3EI5ybpxf6fK0jKKnEYJ3BHdrPP5uRNgzDl0tnYqp9MAnOqihBjd/gsA==
+X-Received: by 2002:ac8:7d4a:0:b0:3b4:a6af:a2f2 with SMTP id h10-20020ac87d4a000000b003b4a6afa2f2mr46130881qtb.34.1676305946480;
+        Mon, 13 Feb 2023 08:32:26 -0800 (PST)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
+        by smtp.gmail.com with ESMTPSA id u123-20020a379281000000b0073b4d9e2e8dsm880808qkd.43.2023.02.13.08.32.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Feb 2023 08:18:59 -0800 (PST)
-Received: by mail-yb1-f172.google.com with SMTP id x4so15041265ybp.1;
-        Mon, 13 Feb 2023 08:18:59 -0800 (PST)
-X-Received: by 2002:a25:9348:0:b0:8ba:81cd:a7b7 with SMTP id
- g8-20020a259348000000b008ba81cda7b7mr1482738ybo.270.1676305139081; Mon, 13
- Feb 2023 08:18:59 -0800 (PST)
+        Mon, 13 Feb 2023 08:32:26 -0800 (PST)
+Received: by mail-yb1-f175.google.com with SMTP id x71so14132818ybg.6;
+        Mon, 13 Feb 2023 08:32:26 -0800 (PST)
+X-Received: by 2002:a05:6902:385:b0:8ec:43b3:83fc with SMTP id
+ f5-20020a056902038500b008ec43b383fcmr1061904ybs.128.1676305945849; Mon, 13
+ Feb 2023 08:32:25 -0800 (PST)
 MIME-Version: 1.0
-References: <20230211143655.3809756-1-niklas.soderlund+renesas@ragnatech.se> <20230211143655.3809756-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20230211143655.3809756-2-niklas.soderlund+renesas@ragnatech.se>
+References: <20230211143655.3809756-1-niklas.soderlund+renesas@ragnatech.se> <20230211143655.3809756-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20230211143655.3809756-3-niklas.soderlund+renesas@ragnatech.se>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 13 Feb 2023 17:18:47 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdU71MMWt5nvS+h8n_6TYs-EBDMQYn=oqj428F+VMkEOQQ@mail.gmail.com>
-Message-ID: <CAMuHMdU71MMWt5nvS+h8n_6TYs-EBDMQYn=oqj428F+VMkEOQQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: renesas: r8a779g0: Add CSI-2 clocks
+Date:   Mon, 13 Feb 2023 17:32:14 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUr0WkV-=Nm9cYo5eRpfPxjbNTjftpwUMq-uOcg4Jj1rg@mail.gmail.com>
+Message-ID: <CAMuHMdUr0WkV-=Nm9cYo5eRpfPxjbNTjftpwUMq-uOcg4Jj1rg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: renesas: r8a779g0: Add ISPCS clocks
 To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
@@ -60,40 +60,12 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Niklas,
-
 On Sat, Feb 11, 2023 at 3:37 PM Niklas Söderlund
 <niklas.soderlund+renesas@ragnatech.se> wrote:
-> Add the CSI core clock and the CSI40 and CSI41 module clocks, which are
-> used by the CSI-2 Interfaces on the Renesas R-Car V4H (R8A779G0) SoC.
+> Add the ISPCS0 and ISPCS1  module clocks, which are used by the ISPCS
+> modules on the Renesas R-Car V4H (R8A779G0) SoC.
 >
 > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-Thanks for your patch!
-
-> --- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-> @@ -146,6 +146,7 @@ static const struct cpg_core_clk r8a779g0_core_clks[] __initconst = {
->         DEF_FIXED("vcbus",      R8A779G0_CLK_VCBUS,     CLK_VC,         1, 1),
->         DEF_FIXED("vcbusd2",    R8A779G0_CLK_VCBUSD2,   CLK_VC,         2, 1),
->         DEF_DIV6P1("canfd",     R8A779G0_CLK_CANFD,     CLK_PLL5_DIV4,  0x878),
-> +       DEF_DIV6P1("csi",       R8A779G0_CLK_CSI,       CLK_PLL5_DIV4,  0x880),
->         DEF_FIXED("dsiref",     R8A779G0_CLK_DSIREF,    CLK_PLL5_DIV4,  48, 1),
->         DEF_DIV6P1("dsiext",    R8A779G0_CLK_DSIEXT,    CLK_PLL5_DIV4,  0x884),
->
-> @@ -164,7 +165,9 @@ static const struct mssr_mod_clk r8a779g0_mod_clks[] __initconst = {
->         DEF_MOD("avb0",         211,    R8A779G0_CLK_S0D4_HSC),
->         DEF_MOD("avb1",         212,    R8A779G0_CLK_S0D4_HSC),
->         DEF_MOD("avb2",         213,    R8A779G0_CLK_S0D4_HSC),
-> +       DEF_MOD("csi40",        331,    R8A779G0_CLK_CSI),
-
-I will move this one one line down while applying, to preserve sort order.
-
->         DEF_MOD("canfd0",       328,    R8A779G0_CLK_SASYNCPERD2),
-> +       DEF_MOD("csi41",        400,    R8A779G0_CLK_CSI),
->         DEF_MOD("dis0",         411,    R8A779G0_CLK_VIOBUSD2),
->         DEF_MOD("dsitxlink0",   415,    R8A779G0_CLK_VIOBUSD2),
->         DEF_MOD("dsitxlink1",   416,    R8A779G0_CLK_VIOBUSD2),
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 i.e. will queue in renesas-clk-for-v6.4.
