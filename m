@@ -2,89 +2,121 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABEF6C636D4
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Feb 2023 13:44:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F84C636CC
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Feb 2023 14:19:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229931AbjBMNoO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Feb 2023 08:44:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48374 "EHLO
+        id S230231AbjBMOTv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Feb 2023 09:19:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229831AbjBMNoN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Feb 2023 08:44:13 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C98683D3
-        for <linux-clk@vger.kernel.org>; Mon, 13 Feb 2023 05:44:12 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id a2so12277628wrd.6
-        for <linux-clk@vger.kernel.org>; Mon, 13 Feb 2023 05:44:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8YndzVf3v6/PsLB4xK8l0Uo2uF+AS5qRQ1VgyuaYEtU=;
-        b=ytH2NJkcPta5r4EPLRm4775bH0r5ADtnJOIFsbPl09/9KNCMgIaz0PZV0BfJeqrnlU
-         quS+NGLbT99F2JIBYG6vbpD5/cKVtpifXUqqS6600N+5wH2H9WhF/teI/24Zaf+X8QEN
-         1+d7xqvzZ2KsizaauuzRc6Vo7o4hmEjWJcvVM7uvFnTF9lc9mz/nmdDKPJDiKPXpDSZu
-         JTVTTi4EJWM1HaPisNF4f4NwI+nv4CUWrfPs3S0TUqz8qUCRcmAoaJgba3NdZyv77XEu
-         ede5e4NixFfzGxYTtC6a63WsB2CZDBQhBdoDz3zzOr/XTMYKKSHT4raPwz6A6MLgQAF2
-         k0Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8YndzVf3v6/PsLB4xK8l0Uo2uF+AS5qRQ1VgyuaYEtU=;
-        b=iM0tNYDzl3z14IePSxdtN2xogJ/i5HLWkQqWv9bXct9C39H7f4jlaMs4RU8IT0tib5
-         YY6KDEDGi+8ceI31yc+7ER0tlGY3gLj6m11MeIKk6aqyYapuKxSRDweSaZyQ6/oWBbNr
-         p2rwTX03tTQ2psDkkkE0yiGJKRQAD48IPYBds2XELOB4W0QDJknD+qpf+hq9Z6nSaaEZ
-         qyYvkxR2C8P//ft+sxMX790t2rK8srTTgSh+u5L/F9p8ulvWGfTHN12UBzQHTx5sM3pb
-         VotOBvfUw0yrAdyqBmQsqIhAKFr7aaGGvCL1SXdGjYuPQkXfBIugwjrw8fvSTeivl9CF
-         J+wA==
-X-Gm-Message-State: AO0yUKWh5WNe0FBsLOmhr2IpdUrpqBZPw65LPDjIDx2toL1yC5KFu8OZ
-        +VJ6nwhSnvKkn1//eBAjIOzSzw==
-X-Google-Smtp-Source: AK7set/17SJjnCRcpQIPGHx+EFyoU4FpCGw43e1kOiXX79UznQPjL3PPfrqHr+skXbFC8GK1Qch8Mg==
-X-Received: by 2002:a05:6000:1808:b0:2c5:5929:4bcf with SMTP id m8-20020a056000180800b002c559294bcfmr2854910wrh.28.1676295850679;
-        Mon, 13 Feb 2023 05:44:10 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id v17-20020a5d43d1000000b002c54bf0e9f7sm7801758wrr.117.2023.02.13.05.44.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Feb 2023 05:44:10 -0800 (PST)
-Message-ID: <eb0fa8ee-9c14-c8a4-2d3e-6180f5d875b6@linaro.org>
-Date:   Mon, 13 Feb 2023 14:44:09 +0100
+        with ESMTP id S229743AbjBMOTo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Feb 2023 09:19:44 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F307BBA0;
+        Mon, 13 Feb 2023 06:19:43 -0800 (PST)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31DE3CMn017464;
+        Mon, 13 Feb 2023 14:19:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=1afekj1atS6B7HHZ4RVIl8IvPNbTbmPEAs1NhaFYRLM=;
+ b=S6zEKUguj8+EXZUxYQDBgvSB9dGCEe5CnaQPFFt/NrNLaovcGyi/9oBqXrFK48mw04Jy
+ nVRIJ87P7GLabD5rBnUDetzijCmwN421neKvQxI8J/zMF0dfQR/Nn0ZUceXVm+iWqlQv
+ LPr7/qRVu5+vOmev520NNFuOzikKVAIWHLHrkr0SvNbUuSJ25MG21if6nzNoOyLp6OzD
+ 9GgOAxeL8EIC/g+auLaQpeGF6cpCV5XoEF5OtHrEG9kujgDNVZyRa0y4qtiyixu3iI8r
+ oJwvPNNTAjrXFs7wvOA7kZYAvmhddSC4S8ZpekHHfCJF0fgHxH7CC5t3bGRxzQiKRgYO hg== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nqpmmg11w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 13 Feb 2023 14:19:12 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31DEJBI5012083
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 13 Feb 2023 14:19:11 GMT
+Received: from [10.50.58.188] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 13 Feb
+ 2023 06:19:02 -0800
+Message-ID: <ed3637e4-7a5a-55be-be49-cdb0ec978752@quicinc.com>
+Date:   Mon, 13 Feb 2023 19:48:54 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH v3 5/5] dt-bindings: clock: ast2600: Add reset config for
- I3C
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH V3 4/7] pinctrl: qcom: Add IPQ9574 pinctrl driver
+To:     Bjorn Andersson <andersson@kernel.org>
+CC:     <agross@kernel.org>, <konrad.dybcio@linaro.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <p.zabel@pengutronix.de>, <shawnguo@kernel.org>,
+        <arnd@arndb.de>, <marcel.ziswiler@toradex.com>,
+        <dmitry.baryshkov@linaro.org>, <nfraprado@collabora.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>
+References: <20230130125528.11509-1-quic_devipriy@quicinc.com>
+ <20230130125528.11509-5-quic_devipriy@quicinc.com>
+ <20230208231412.yqp3rvokvmbb7ixi@ripper>
 Content-Language: en-US
-To:     Jeremy Kerr <jk@codeconstruct.com.au>,
-        linux-aspeed@lists.ozlabs.org, linux-clk@vger.kernel.org
-Cc:     devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dylan Hung <dylan_hung@aspeedtech.com>,
-        Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>
-References: <cover.1676294433.git.jk@codeconstruct.com.au>
- <3aad8dc671a65e65f0cced648847c504514f5b0e.1676294433.git.jk@codeconstruct.com.au>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <3aad8dc671a65e65f0cced648847c504514f5b0e.1676294433.git.jk@codeconstruct.com.au>
-Content-Type: text/plain; charset=UTF-8
+From:   Devi Priya <quic_devipriy@quicinc.com>
+In-Reply-To: <20230208231412.yqp3rvokvmbb7ixi@ripper>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: kGUNY5cHUYA7GmZTQqdqsb8JBsXsBBvo
+X-Proofpoint-GUID: kGUNY5cHUYA7GmZTQqdqsb8JBsXsBBvo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-13_09,2023-02-13_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 priorityscore=1501 suspectscore=0 adultscore=0 impostorscore=0
+ bulkscore=0 clxscore=1015 mlxscore=0 mlxlogscore=606 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302130129
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/02/2023 14:24, Jeremy Kerr wrote:
-> Add reset line definitions for the AST2600 I3C block's reset inputs.
+Thanks Bjorn for taking time to review the patch
+
+On 2/9/2023 4:44 AM, Bjorn Andersson wrote:
+> On Mon, Jan 30, 2023 at 06:25:25PM +0530, devi priya wrote:
+>> +static const struct msm_pingroup ipq9574_groups[] = {
+>> +	PINGROUP(0, sdc_data, qspi_data, qdss_traceclk_b, _, _, _, _, _, _),
+>> +	PINGROUP(1, sdc_data, qspi_data, qdss_tracectl_b, _, _, _, _, _, _),
+>> +	PINGROUP(2, sdc_data, qspi_data, qdss_tracedata_b, _, _, _, _, _, _),
+>> +	PINGROUP(3, sdc_data, qspi_data, qdss_tracedata_b, _, _, _, _, _, _),
+>> +	PINGROUP(4, sdc_cmd, qspi_cs, qdss_tracedata_b, _, _, _, _, _, _),
+>> +	PINGROUP(5, sdc_clk, qspi_clk, qdss_tracedata_b, _, _, _, _, _,
+>> +		 _),
 > 
-> Signed-off-by: Jeremy Kerr <jk@codeconstruct.com.au>
+> Please avoid line wrapping these, it just makes it hard to read.
+Yes, we have addressed this comment part of V7 series
+https://lore.kernel.org/linux-arm-kernel/20230206103337.21000-5-quic_devipriy@quicinc.com/
 > 
-
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+> [..]
+>> +};
+>> +
+>> +/* Reserving GPIO59 for controlling the QFPROM LDO regulator */
+> 
+> This seems like a property of the board, please use gpio-reserved-ranges
+> in the DT node instead.
+As the GPIO is forbidden on SoC IPQ9574,
+we have moved it to the pinctrl driver based on the suggestions received
+in V1 series
+https://lore.kernel.org/linux-arm-kernel/675ed9f7-da31-6206-5089-1db22025ef4b@linaro.org/
+> 
+> Thanks,
+> Bjorn
+Best Regards,
+Devi Priya
