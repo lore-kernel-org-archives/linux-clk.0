@@ -2,97 +2,70 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 342C4C6379F
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Feb 2023 12:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE72C636D4
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Feb 2023 12:34:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230350AbjBMMU3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Feb 2023 07:20:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35952 "EHLO
+        id S230417AbjBMMeZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Feb 2023 07:34:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230331AbjBMMU2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Feb 2023 07:20:28 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 866CB901D
-        for <linux-clk@vger.kernel.org>; Mon, 13 Feb 2023 04:20:27 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id by3so10669389wrb.10
-        for <linux-clk@vger.kernel.org>; Mon, 13 Feb 2023 04:20:27 -0800 (PST)
+        with ESMTP id S229758AbjBMMeZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Feb 2023 07:34:25 -0500
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CAEB14EB0;
+        Mon, 13 Feb 2023 04:34:20 -0800 (PST)
+Received: from rico.lan (unknown [159.196.93.152])
+        by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 276EB20034;
+        Mon, 13 Feb 2023 20:34:15 +0800 (AWST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1RUiDD3BHhlqCpOjKjv9whKB2P06JmlcSFZbd1kJnhM=;
-        b=KhuztlcTg/PMm11aZvBlHcjpnHotQ9xLJ0zvA3pdempjme4Cs9VrJ39GH/ZONlRhOZ
-         YGn2xod2W6mNkXqUbxLTAgm9yl/vnbk9tr0HoSt2+szHVad7q3fC3JORUEzQlwV3R2zz
-         NwY+Yb+V7MHbDwg8YLg5Ut1gQ3CNyn1Povpw3MaGNMnw/joRIOylGnAnAWHRamvRmUKn
-         IQh0Uiint3viHFDkBgmV8k4pXle1gJVvRFKPSVNJMssvu5u2Iz+Yzqyv2nfVmFmBgHdn
-         PRc2aK3ynQJIG4lGPW5MsXrXmfajX9t/R3YL/IGR78FVs4NGmbbpsMzRW/fw9krJqrCa
-         DVDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1RUiDD3BHhlqCpOjKjv9whKB2P06JmlcSFZbd1kJnhM=;
-        b=1MndfnxOFrAvYkyXipkTHTu2a8KYQ1qeFd2V2saNsJ6ITBOc4uJt0a5TGdzr/PMY3n
-         k5ILvipEINfZ+rTaqkrOqIlVwK7TCiuI6QkrXYT0r66q1HxAaF+bKbqwSmIJvGe/0wPS
-         bIg3AmnbHalzpgiUEKfYppd35TH1VjWoHnN9QVpsuIp1LnozSAvEuBqq32THGoTnq+/V
-         pTc3lzTYPqln7qUt7WR+RQL2b+wy7t+dgbidHNCiOv3v0TP3or5pgaUfExqtzMgsbxZu
-         9j6qTIrgdN8K7DbziS862tInOFWtdnVk1k6JPH+FNTZwBFpDHE5ZmbQ+bEuYFc0cXSeW
-         rw5w==
-X-Gm-Message-State: AO0yUKUvdQcKADMHW6xe9rkAibNnu7bAsI3ToMjt17mMxUwg/JH6YjmY
-        Pp0xTDNxMgb5kgW3HixzCLgKrA==
-X-Google-Smtp-Source: AK7set89FkNhiCPxpnkK76tQM5xvvbrWbUVea99QXLeZbhluUfzetqGrin/ar/FHc4nSnKUMHRV/Fw==
-X-Received: by 2002:a5d:624a:0:b0:2c3:f8b8:87 with SMTP id m10-20020a5d624a000000b002c3f8b80087mr18069188wrv.25.1676290826133;
-        Mon, 13 Feb 2023 04:20:26 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id l22-20020a05600c089600b003dc59081603sm12856722wmp.48.2023.02.13.04.20.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Feb 2023 04:20:25 -0800 (PST)
-Message-ID: <4e13868d-4263-9e30-e832-6dff25900fce@linaro.org>
-Date:   Mon, 13 Feb 2023 13:20:24 +0100
+        d=codeconstruct.com.au; s=2022a; t=1676291657;
+        bh=AbnhUf2jT5hj7p6JuOOwz4CzqTHAGtxv9hk5Xq/6WcY=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References;
+        b=P8VDGGOKUiSD67DyMS7WJOrKGYv7fbslE37MxTCXoA3mP9AbvXTkkzWpIG0yMzi3Z
+         Ud2V4L7/dIl52TaAoNr8aK4BOCLf9LV3MMb3qnW+UfvOjOHKfl7xk73RtrHuy9pdrY
+         peP0UHqjNmXZpiAVxodOtScW9D3c7bvx02AZJmQK6ogccIHvOcLkuENcy/LZ8slEJ+
+         Lkwdu30c+XMRQ8C6pojEKfbdWFXKZsLv33/IbfQtJC66KWAwrTU2jhZib2f0GZNQML
+         1d0rXke/b2Ghys8ftaIxr7hSCQIS1M1/vZ/RlM0e/xSrjBE8+V5pShompsXpqdX8ic
+         ivfasQXyH6g0w==
+Message-ID: <d58b6170427c9d1414118a0376e98d40f2579b20.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v2 2/3] clk: aspeed: Add full configs for i3c clocks
+From:   Jeremy Kerr <jk@codeconstruct.com.au>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-aspeed@lists.ozlabs.org, linux-clk@vger.kernel.org
+Cc:     devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Dylan Hung <dylan_hung@aspeedtech.com>,
+        Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>
+Date:   Mon, 13 Feb 2023 20:34:14 +0800
+In-Reply-To: <45ce9e62-2620-b959-985d-ae00b071e350@linaro.org>
+References: <cover.1676267865.git.jk@codeconstruct.com.au>
+         <5ee4ade6820a9db8dc9c20bb39fd8a4c4cd7c2a6.1676267865.git.jk@codeconstruct.com.au>
+         <45ce9e62-2620-b959-985d-ae00b071e350@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.46.3-1 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH v8 1/5] dt-bindings: clock: qcom,sc7280-lpasscc: Add
- qcom,adsp-pil-mode property
-Content-Language: en-US
-To:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>, swboyd@chromium.org,
-        krzysztof.kozlowski+dt@linaro.org, agross@kernel.org,
-        andersson@kernel.org, robh+dt@kernel.org, broonie@kernel.org,
-        quic_plai@quicinc.com, konrad.dybcio@somainline.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com,
-        quic_visr@quicinc.com
-Cc:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-References: <20230213094528.3733509-1-quic_mohs@quicinc.com>
- <20230213094528.3733509-2-quic_mohs@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230213094528.3733509-2-quic_mohs@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/02/2023 10:45, Mohammad Rafi Shaik wrote:
-> From: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-> 
-> When this property is set, the remoteproc is used to boot the
-> LPASS and therefore qdsp6ss clocks would be used to bring LPASS
-> out of reset, hence they are directly controlled by the remoteproc.
-> 
-> This is a cleanup done to handle overlap of regmap of lpasscc
-> and adsp remoteproc blocks.
-> 
-> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-
-SoB chain looks not correct. Your should be after Srinivasa.
-
-
-
-Best regards,
-Krzysztof
+SGkgS3J6eXN6dG9mLAoKPiBCaW5kaW5ncyBhcmUgYWx3YXlzIHNlcGFyYXRlIHBhdGNoZXMuCgpP
+SywgSSdsbCBzcGxpdCB0aGVzZSB1cCBpbnRvIHRoZSBkdC1iaW5kaW5ncyBhbmQgdGhlIGNsayBj
+aGFuZ2VzLgoKPiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL2FzdDI2
+MDAtY2xvY2suaCBiL2luY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svYXN0MjYwMC1jbG9jay5oCj4g
+PiBpbmRleCBkOGIwZGIyZjdhN2QuLjYwMDU0OWQ3YmVlOCAxMDA2NDQKPiA+IC0tLSBhL2luY2x1
+ZGUvZHQtYmluZGluZ3MvY2xvY2svYXN0MjYwMC1jbG9jay5oCj4gPiArKysgYi9pbmNsdWRlL2R0
+LWJpbmRpbmdzL2Nsb2NrL2FzdDI2MDAtY2xvY2suaAo+ID4gQEAgLTU3LDggKzU3LDYgQEAKPiA+
+IMKgI2RlZmluZSBBU1BFRURfQ0xLX0dBVEVfSTNDM0NMS8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgNDAKPiA+IMKgI2RlZmluZSBBU1BFRURfQ0xLX0dBVEVfSTNDNENMS8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgNDEKPiA+IMKgI2RlZmluZSBBU1BFRURfQ0xLX0dBVEVf
+STNDNUNMS8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgNDIKPiA+IC0jZGVmaW5lIEFT
+UEVFRF9DTEtfR0FURV9JM0M2Q0xLwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqA0Mwo+
+ID4gLSNkZWZpbmUgQVNQRUVEX0NMS19HQVRFX0kzQzdDTEvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoDQ0Cj4gCj4gVGhpcyBpcyBhbiBBQkkgYnJlYWsgYW5kIGNvbW1pdCBtc2cgZG9l
+cyBub3QgcmVhbGx5IGp1c3RpZnkgaXQuCgpJJ2xsIGFkZCBtb3JlIHJhdGlvbmFsZSB0aGVyZS4K
+CkNoZWVycywKCgpKZXJlbXkKCg==
 
