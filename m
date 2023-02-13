@@ -2,285 +2,97 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B87A1C64ED8
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Feb 2023 12:00:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 342C4C6379F
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Feb 2023 12:20:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229812AbjBMMAP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Feb 2023 07:00:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36436 "EHLO
+        id S230350AbjBMMU3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Feb 2023 07:20:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229800AbjBMMAI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Feb 2023 07:00:08 -0500
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB76118AA6;
-        Mon, 13 Feb 2023 04:00:04 -0800 (PST)
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 31DBxwCZ124580;
-        Mon, 13 Feb 2023 05:59:58 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1676289598;
-        bh=+HZAOdrDmkXz7cerDG2MTsBjz2lXq2xdUsMnIIjLfRM=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=iVKcruqycmOrnZvhKu+jV8pRCGdy2cZMfN5SS85bBP0a6vffik3KFKFzRXLjX2rno
-         VhOV07vIp327qSkQwC63dRxSkzDCpmY8yKlYNqrHpQcs9Iee+qB0IyI0MJ9pRSmEZp
-         dIiibafHJ9RM0A+R/r5DZLBLI5ZdYYSk51MVDn7Q=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 31DBxwQa021365
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 13 Feb 2023 05:59:58 -0600
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Mon, 13
- Feb 2023 05:59:58 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Mon, 13 Feb 2023 05:59:58 -0600
-Received: from localhost (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 31DBxvfa056766;
-        Mon, 13 Feb 2023 05:59:57 -0600
-From:   Aradhya Bhatia <a-bhatia1@ti.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-CC:     Tomi Valkeinen <tomba@kernel.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Linux Clock List <linux-clk@vger.kernel.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        Linux Kernel List <linux-kernel@vger.kernel.org>,
-        Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Devarsh Thakkar <devarsht@ti.com>,
-        Jai Luthra <j-luthra@ti.com>, Aradhya Bhatia <a-bhatia1@ti.com>
-Subject: [PATCH v2 2/2] clk: keystone: Add support AM62 DSS clock divider
-Date:   Mon, 13 Feb 2023 17:29:54 +0530
-Message-ID: <20230213115954.553-3-a-bhatia1@ti.com>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230213115954.553-1-a-bhatia1@ti.com>
-References: <20230213115954.553-1-a-bhatia1@ti.com>
+        with ESMTP id S230331AbjBMMU2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Feb 2023 07:20:28 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 866CB901D
+        for <linux-clk@vger.kernel.org>; Mon, 13 Feb 2023 04:20:27 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id by3so10669389wrb.10
+        for <linux-clk@vger.kernel.org>; Mon, 13 Feb 2023 04:20:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1RUiDD3BHhlqCpOjKjv9whKB2P06JmlcSFZbd1kJnhM=;
+        b=KhuztlcTg/PMm11aZvBlHcjpnHotQ9xLJ0zvA3pdempjme4Cs9VrJ39GH/ZONlRhOZ
+         YGn2xod2W6mNkXqUbxLTAgm9yl/vnbk9tr0HoSt2+szHVad7q3fC3JORUEzQlwV3R2zz
+         NwY+Yb+V7MHbDwg8YLg5Ut1gQ3CNyn1Povpw3MaGNMnw/joRIOylGnAnAWHRamvRmUKn
+         IQh0Uiint3viHFDkBgmV8k4pXle1gJVvRFKPSVNJMssvu5u2Iz+Yzqyv2nfVmFmBgHdn
+         PRc2aK3ynQJIG4lGPW5MsXrXmfajX9t/R3YL/IGR78FVs4NGmbbpsMzRW/fw9krJqrCa
+         DVDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1RUiDD3BHhlqCpOjKjv9whKB2P06JmlcSFZbd1kJnhM=;
+        b=1MndfnxOFrAvYkyXipkTHTu2a8KYQ1qeFd2V2saNsJ6ITBOc4uJt0a5TGdzr/PMY3n
+         k5ILvipEINfZ+rTaqkrOqIlVwK7TCiuI6QkrXYT0r66q1HxAaF+bKbqwSmIJvGe/0wPS
+         bIg3AmnbHalzpgiUEKfYppd35TH1VjWoHnN9QVpsuIp1LnozSAvEuBqq32THGoTnq+/V
+         pTc3lzTYPqln7qUt7WR+RQL2b+wy7t+dgbidHNCiOv3v0TP3or5pgaUfExqtzMgsbxZu
+         9j6qTIrgdN8K7DbziS862tInOFWtdnVk1k6JPH+FNTZwBFpDHE5ZmbQ+bEuYFc0cXSeW
+         rw5w==
+X-Gm-Message-State: AO0yUKUvdQcKADMHW6xe9rkAibNnu7bAsI3ToMjt17mMxUwg/JH6YjmY
+        Pp0xTDNxMgb5kgW3HixzCLgKrA==
+X-Google-Smtp-Source: AK7set89FkNhiCPxpnkK76tQM5xvvbrWbUVea99QXLeZbhluUfzetqGrin/ar/FHc4nSnKUMHRV/Fw==
+X-Received: by 2002:a5d:624a:0:b0:2c3:f8b8:87 with SMTP id m10-20020a5d624a000000b002c3f8b80087mr18069188wrv.25.1676290826133;
+        Mon, 13 Feb 2023 04:20:26 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id l22-20020a05600c089600b003dc59081603sm12856722wmp.48.2023.02.13.04.20.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Feb 2023 04:20:25 -0800 (PST)
+Message-ID: <4e13868d-4263-9e30-e832-6dff25900fce@linaro.org>
+Date:   Mon, 13 Feb 2023 13:20:24 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH v8 1/5] dt-bindings: clock: qcom,sc7280-lpasscc: Add
+ qcom,adsp-pil-mode property
+Content-Language: en-US
+To:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>, swboyd@chromium.org,
+        krzysztof.kozlowski+dt@linaro.org, agross@kernel.org,
+        andersson@kernel.org, robh+dt@kernel.org, broonie@kernel.org,
+        quic_plai@quicinc.com, konrad.dybcio@somainline.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com,
+        quic_visr@quicinc.com
+Cc:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+References: <20230213094528.3733509-1-quic_mohs@quicinc.com>
+ <20230213094528.3733509-2-quic_mohs@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230213094528.3733509-2-quic_mohs@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On TI's AM62 Family of SoCs, the pixel frequency of the DSS Video Port 0
-comes from a by-7 clock divider. This is done to support the clock for
-OLDI transmitters that need serial clock 7 times the pixel frequency.
+On 13/02/2023 10:45, Mohammad Rafi Shaik wrote:
+> From: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+> 
+> When this property is set, the remoteproc is used to boot the
+> LPASS and therefore qdsp6ss clocks would be used to bring LPASS
+> out of reset, hence they are directly controlled by the remoteproc.
+> 
+> This is a cleanup done to handle overlap of regmap of lpasscc
+> and adsp remoteproc blocks.
+> 
+> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 
-A clock set request on this clock, is forwarded to its parent clock by
-default, using the SET_RATE_PARENT flag. The PLL (in this case the
-parent) generates serial clock for OLDI, which is then also fed to DSS
-using this clock divider.
+SoB chain looks not correct. Your should be after Srinivasa.
 
-Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
----
- drivers/clk/keystone/Kconfig        |   9 ++
- drivers/clk/keystone/Makefile       |   1 +
- drivers/clk/keystone/clk-am62-dss.c | 164 ++++++++++++++++++++++++++++
- 3 files changed, 174 insertions(+)
- create mode 100644 drivers/clk/keystone/clk-am62-dss.c
 
-diff --git a/drivers/clk/keystone/Kconfig b/drivers/clk/keystone/Kconfig
-index e64d6726048f..543314ddfd2c 100644
---- a/drivers/clk/keystone/Kconfig
-+++ b/drivers/clk/keystone/Kconfig
-@@ -34,3 +34,12 @@ config TI_SYSCON_CLK
- 	help
- 	  This adds clock driver support for syscon based gate
- 	  clocks on TI's K2 and K3 SoCs.
-+
-+config TI_AM62_DSS_CLK
-+	tristate "Clock Divider for DSS VP0 of AM62 Family of SoCs"
-+	depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
-+	default TI_SCI_CLK
-+	help
-+	  This adds clock divider driver support for Video Port 0 of Display
-+	  SubSystems (DSS) under AM62 Family of SoCs. This clock divider
-+	  forwards a seventh (1/7) of the incoming clock.
-diff --git a/drivers/clk/keystone/Makefile b/drivers/clk/keystone/Makefile
-index 0e426e648f7c..3a683d622a60 100644
---- a/drivers/clk/keystone/Makefile
-+++ b/drivers/clk/keystone/Makefile
-@@ -2,3 +2,4 @@
- obj-$(CONFIG_COMMON_CLK_KEYSTONE)	+= pll.o gate.o
- obj-$(CONFIG_TI_SCI_CLK)		+= sci-clk.o
- obj-$(CONFIG_TI_SYSCON_CLK)		+= syscon-clk.o
-+obj-$(CONFIG_TI_AM62_DSS_CLK)		+= clk-am62-dss.o
-diff --git a/drivers/clk/keystone/clk-am62-dss.c b/drivers/clk/keystone/clk-am62-dss.c
-new file mode 100644
-index 000000000000..2c9fc4bc89e3
---- /dev/null
-+++ b/drivers/clk/keystone/clk-am62-dss.c
-@@ -0,0 +1,164 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2023 Texas Instruments Incorporated - https://www.ti.com/
-+ */
-+#include <linux/module.h>
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+
-+struct ti_am62_dss_clk {
-+	struct clk_hw	hw;
-+	unsigned int	div;
-+};
-+
-+#define to_ti_am62_dss_clk(_hw) \
-+	container_of(_hw, struct ti_am62_dss_clk, hw)
-+
-+static unsigned long ti_am62_dss_clk_recalc_rate(struct clk_hw *hw,
-+						 unsigned long parent_rate)
-+{
-+	struct ti_am62_dss_clk *priv = to_ti_am62_dss_clk(hw);
-+	unsigned long rate;
-+
-+	rate = parent_rate;
-+	do_div(rate, priv->div);
-+	return (unsigned long)rate;
-+}
-+
-+static long ti_am62_dss_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+				       unsigned long *prate)
-+{
-+	struct ti_am62_dss_clk *priv = to_ti_am62_dss_clk(hw);
-+
-+	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
-+		unsigned long best_parent;
-+
-+		best_parent = rate * priv->div;
-+		*prate = clk_hw_round_rate(clk_hw_get_parent(hw), best_parent);
-+	}
-+
-+	return (*prate / priv->div);
-+}
-+
-+static int ti_am62_dss_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long parent_rate)
-+{
-+	/*
-+	 * We must report success but we can do so unconditionally because
-+	 * ti_am62_dss_clk_round_rate returns values that ensure this call is a
-+	 * nop.
-+	 */
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops ti_am62_dss_clk_ops = {
-+	.round_rate = ti_am62_dss_clk_round_rate,
-+	.set_rate = ti_am62_dss_clk_set_rate,
-+	.recalc_rate = ti_am62_dss_clk_recalc_rate,
-+};
-+
-+static struct clk_hw *
-+clk_hw_register_am62_dss_clk(struct device *dev, const char *name,
-+			     unsigned long flags, unsigned int div)
-+{
-+	struct ti_am62_dss_clk *priv;
-+	struct clk_init_data init = { };
-+	struct clk_parent_data pdata = { .index = 0 };
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return ERR_PTR(-ENOMEM);
-+
-+	/* struct ti_am62_dss_clk assignments */
-+	priv->div = div;
-+	priv->hw.init = &init;
-+
-+	init.name = name;
-+	init.ops = &ti_am62_dss_clk_ops;
-+	init.flags = flags;
-+	init.parent_names = NULL;
-+	init.parent_data = &pdata;
-+	init.num_parents = 1;
-+
-+	ret = devm_clk_hw_register(dev, &priv->hw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return &priv->hw;
-+}
-+
-+static void clk_hw_unregister_am62_dss_clk(struct clk_hw *hw)
-+{
-+	struct ti_am62_dss_clk *priv;
-+
-+	priv = to_ti_am62_dss_clk(hw);
-+
-+	clk_hw_unregister(hw);
-+	kfree(priv);
-+}
-+
-+static int ti_am62_dss_clk_remove(struct platform_device *pdev)
-+{
-+	struct clk_hw *hw = platform_get_drvdata(pdev);
-+
-+	of_clk_del_provider(pdev->dev.of_node);
-+	clk_hw_unregister_am62_dss_clk(hw);
-+
-+	return 0;
-+}
-+
-+static int ti_am62_dss_clk_probe(struct platform_device *pdev)
-+{
-+	struct clk_hw *hw;
-+	const char *clk_name = pdev->name;
-+	struct device *dev = &pdev->dev;
-+	unsigned long flags = 0;
-+	u32 div;
-+	int ret;
-+
-+	if (of_property_read_u32(dev->of_node, "clock-div", &div)) {
-+		dev_err(dev, "%s: TI AM62 DSS clock must have a clock-div property.\n",
-+			__func__);
-+		return -EIO;
-+	}
-+
-+	flags |= CLK_SET_RATE_PARENT;
-+
-+	hw = clk_hw_register_am62_dss_clk(dev, clk_name, flags, div);
-+	if (IS_ERR(hw)) {
-+		dev_err(dev, "%s: failed to register %s\n", __func__, clk_name);
-+		return PTR_ERR(hw);
-+	}
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, hw);
-+	if (ret) {
-+		clk_hw_unregister_am62_dss_clk(hw);
-+		return ret;
-+	}
-+
-+	platform_set_drvdata(pdev, hw);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id ti_am62_dss_clk_ids[] = {
-+	{ .compatible = "ti,am62-dss-vp0-div-clk" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, ti_am62_dss_clk_ids);
-+
-+static struct platform_driver ti_am62_dss_clk_driver = {
-+	.driver = {
-+		.name = "ti_am62_dss_clk",
-+		.of_match_table = ti_am62_dss_clk_ids,
-+	},
-+	.probe = ti_am62_dss_clk_probe,
-+	.remove = ti_am62_dss_clk_remove,
-+};
-+module_platform_driver(ti_am62_dss_clk_driver);
-+
-+MODULE_AUTHOR("Aradhya Bhatia <a-bhatia1@ti.com>");
-+MODULE_DESCRIPTION("TI AM62 DSS - OLDI Fixed Clock Divider driver");
-+MODULE_LICENSE("GPL");
--- 
-2.39.1
+
+Best regards,
+Krzysztof
 
