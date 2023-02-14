@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1E8AC6379F
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Feb 2023 13:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7E3C64ED8
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Feb 2023 13:43:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232918AbjBNNnb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Feb 2023 08:43:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46828 "EHLO
+        id S232586AbjBNNnd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Feb 2023 08:43:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232564AbjBNNmy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 08:42:54 -0500
+        with ESMTP id S232844AbjBNNmz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 08:42:55 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B459229166;
-        Tue, 14 Feb 2023 05:42:24 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04F7F28217;
+        Tue, 14 Feb 2023 05:42:27 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id F062C6602195;
-        Tue, 14 Feb 2023 13:42:21 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 9A7CF660216D;
+        Tue, 14 Feb 2023 13:42:24 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676382143;
-        bh=hwCP7gm11+c1NQhko4awCeTIivbanjlzLRr2jrAHrXE=;
+        s=mail; t=1676382145;
+        bh=CLknQX9SFUtoj2mggvrjYiI8IwHCqlwdtblptlQ1mvs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D4mY2Sx7hZX5CA8+15VgIubyaonje1tb+p3X1n7G0XaZ5CVkxDQ6au7lI99fIA2b/
-         Ff1E8vnLdh1y5k5ciCsFxnez9lwMbsgr4StUxmuWcH8hHxMvbNCihkztiQ25ebSCog
-         DHqzDX+c//JPD4Gyoo16q8CDJu9arokUp6uYqPTTm3NZXC5CKumX0EsSDVKACjGjhB
-         gfu460IyTbFAq+boOtQdnWfm6TDMsfs6pKfR1XNppsQOqZ0Mw0Muk+YHmbjFKyPvUV
-         t2Y+2icZ/3xmxT2BTmBwE2TyKFqrF3g2gsQ/WuNOtQafx/vWNbDPJhz8UnRqsouHS5
-         suuxPTrAx0j5g==
+        b=bkkyxXUAHf240CD5sveUJDrpTcPBN7PfFNzCoYtbG+PsrtUCWuqdcYMaJAilJPhq4
+         mbe97bC0NaZbR5JHLmNDlp3AMJeRBt5wBv9jpoCltE7sfCLY06VYwwtUdQ0duZOrNV
+         KZa8TiqqNimpnucYyJvd6yV16OMZNOMk4EllGKtmDun0+DUxFlhEqXLF/AeTHk7Abl
+         hepzKobZy2/zJpQl+NC7akG1Od8BhefkJ/sAK5ouCo/VKxP5e66wdAxTfLtLqp5asX
+         ZdnVHQn8jW/irlUx1MbWB0BDq6YMlGV/io//e9/5y8fa0Ro4+eI8aXGN6qrZSdzMyS
+         jq1I0L8Byv1VQ==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, kernel@collabora.com
-Subject: [PATCH v2 31/47] clk: mediatek: mt7986-infracfg: Migrate to common probe mechanism
-Date:   Tue, 14 Feb 2023 14:41:11 +0100
-Message-Id: <20230214134127.59273-32-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v2 33/47] clk: mediatek: mt8186-mcu: Migrate to common probe mechanism
+Date:   Tue, 14 Feb 2023 14:41:13 +0100
+Message-Id: <20230214134127.59273-34-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com>
 References: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com>
@@ -58,93 +58,97 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert this driver to use the common mtk_clk_simple_probe() mechanism.
-While at it, also use module_platform_driver() instead, as this driver
-just gained a .remove() callback during the conversion.
+Convert MT8186 MCUSYS clocks to the common mtk_clk_simple_probe().
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/clk/mediatek/clk-mt7986-infracfg.c | 61 ++++++----------------
- 1 file changed, 17 insertions(+), 44 deletions(-)
+ drivers/clk/mediatek/clk-mt8186-mcu.c | 68 +++++----------------------
+ 1 file changed, 13 insertions(+), 55 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt7986-infracfg.c b/drivers/clk/mediatek/clk-mt7986-infracfg.c
-index 0a4bf87ee160..0299faad0733 100644
---- a/drivers/clk/mediatek/clk-mt7986-infracfg.c
-+++ b/drivers/clk/mediatek/clk-mt7986-infracfg.c
-@@ -157,57 +157,30 @@ static const struct mtk_gate infra_clks[] = {
- 	GATE_INFRA2(CLK_INFRA_IPCIEB_CK, "infra_ipcieb", "sysaxi_sel", 15),
+diff --git a/drivers/clk/mediatek/clk-mt8186-mcu.c b/drivers/clk/mediatek/clk-mt8186-mcu.c
+index e52a2d986c99..895856df95df 100644
+--- a/drivers/clk/mediatek/clk-mt8186-mcu.c
++++ b/drivers/clk/mediatek/clk-mt8186-mcu.c
+@@ -43,67 +43,25 @@ static struct mtk_composite mcu_muxes[] = {
+ 	MUX(CLK_MCU_ARMPLL_BUS_SEL, "mcu_armpll_bus_sel", mcu_armpll_bus_parents, 0x2E0, 9, 2),
  };
  
--static int clk_mt7986_infracfg_probe(struct platform_device *pdev)
+-static const struct of_device_id of_match_clk_mt8186_mcu[] = {
+-	{ .compatible = "mediatek,mt8186-mcusys", },
+-	{}
++static const struct mtk_clk_desc mcu_desc = {
++	.composite_clks = mcu_muxes,
++	.num_composite_clks = ARRAY_SIZE(mcu_muxes),
+ };
+ 
+-static int clk_mt8186_mcu_probe(struct platform_device *pdev)
 -{
 -	struct clk_hw_onecell_data *clk_data;
 -	struct device_node *node = pdev->dev.of_node;
 -	int r;
 -	void __iomem *base;
--	int nr = ARRAY_SIZE(infra_divs) + ARRAY_SIZE(infra_muxes) +
--		 ARRAY_SIZE(infra_clks);
 -
--	base = of_iomap(node, 0);
--	if (!base) {
--		pr_err("%s(): ioremap failed\n", __func__);
--		return -ENOMEM;
--	}
--
--	clk_data = mtk_alloc_clk_data(nr);
--
+-	clk_data = mtk_alloc_clk_data(CLK_MCU_NR_CLK);
 -	if (!clk_data)
 -		return -ENOMEM;
 -
--	mtk_clk_register_factors(infra_divs, ARRAY_SIZE(infra_divs), clk_data);
--	mtk_clk_register_muxes(&pdev->dev, infra_muxes,
--			       ARRAY_SIZE(infra_muxes), node,
--			       &mt7986_clk_lock, clk_data);
--	mtk_clk_register_gates(&pdev->dev, node, infra_clks,
--			       ARRAY_SIZE(infra_clks), clk_data);
+-	base = devm_platform_ioremap_resource(pdev, 0);
+-	if (IS_ERR(base)) {
+-		r = PTR_ERR(base);
+-		goto free_mcu_data;
+-	}
+-
+-	r = mtk_clk_register_composites(&pdev->dev, mcu_muxes,
+-					ARRAY_SIZE(mcu_muxes), base,
+-					NULL, clk_data);
+-	if (r)
+-		goto free_mcu_data;
 -
 -	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--	if (r) {
--		pr_err("%s(): could not register clock provider: %d\n",
--		       __func__, r);
--		goto free_infracfg_data;
--	}
+-	if (r)
+-		goto unregister_composite_muxes;
+-
+-	platform_set_drvdata(pdev, clk_data);
+-
 -	return r;
 -
--free_infracfg_data:
+-unregister_composite_muxes:
+-	mtk_clk_unregister_composites(mcu_muxes, ARRAY_SIZE(mcu_muxes), clk_data);
+-free_mcu_data:
 -	mtk_free_clk_data(clk_data);
 -	return r;
--
 -}
-+static const struct mtk_clk_desc infra_desc = {
-+	.clks = infra_clks,
-+	.num_clks = ARRAY_SIZE(infra_clks),
-+	.factor_clks = infra_divs,
-+	.num_factor_clks = ARRAY_SIZE(infra_divs),
-+	.mux_clks = infra_muxes,
-+	.num_mux_clks = ARRAY_SIZE(infra_muxes),
-+	.clk_lock = &mt7986_clk_lock,
+-
+-static int clk_mt8186_mcu_remove(struct platform_device *pdev)
+-{
+-	struct clk_hw_onecell_data *clk_data = platform_get_drvdata(pdev);
+-	struct device_node *node = pdev->dev.of_node;
+-
+-	of_clk_del_provider(node);
+-	mtk_clk_unregister_composites(mcu_muxes, ARRAY_SIZE(mcu_muxes), clk_data);
+-	mtk_free_clk_data(clk_data);
+-
+-	return 0;
+-}
++static const struct of_device_id of_match_clk_mt8186_mcu[] = {
++	{ .compatible = "mediatek,mt8186-mcusys", .data = &mcu_desc },
++	{ /* sentinel */}
 +};
  
- static const struct of_device_id of_match_clk_mt7986_infracfg[] = {
--	{ .compatible = "mediatek,mt7986-infracfg", },
--	{}
-+	{ .compatible = "mediatek,mt7986-infracfg", .data = &infra_desc },
-+	{ /* sentinel */ }
- };
- 
- static struct platform_driver clk_mt7986_infracfg_drv = {
--	.probe = clk_mt7986_infracfg_probe,
+ static struct platform_driver clk_mt8186_mcu_drv = {
+-	.probe = clk_mt8186_mcu_probe,
+-	.remove = clk_mt8186_mcu_remove,
  	.driver = {
- 		.name = "clk-mt7986-infracfg",
- 		.of_match_table = of_match_clk_mt7986_infracfg,
+ 		.name = "clk-mt8186-mcu",
+ 		.of_match_table = of_match_clk_mt8186_mcu,
  	},
 +	.probe = mtk_clk_simple_probe,
 +	.remove = mtk_clk_simple_remove,
  };
--builtin_platform_driver(clk_mt7986_infracfg_drv);
-+module_platform_driver(clk_mt7986_infracfg_drv);
+-builtin_platform_driver(clk_mt8186_mcu_drv);
++module_platform_driver(clk_mt8186_mcu_drv);
 +
-+MODULE_DESCRIPTION("MediaTek MT7986 infracfg clocks driver");
++MODULE_DESCRIPTION("MediaTek MT8186 mcusys clocks driver");
 +MODULE_LICENSE("GPL");
 -- 
 2.39.1
