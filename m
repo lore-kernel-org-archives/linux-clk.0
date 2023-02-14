@@ -2,106 +2,111 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FECEC61DA4
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Feb 2023 11:03:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8641C61DA4
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Feb 2023 11:40:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229661AbjBNLDo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Feb 2023 06:03:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42652 "EHLO
+        id S230492AbjBNLkZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Feb 2023 06:40:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbjBNLDn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 06:03:43 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50A72113E2
-        for <linux-clk@vger.kernel.org>; Tue, 14 Feb 2023 03:03:40 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id l37-20020a05600c1d2500b003dfe46a9801so11284491wms.0
-        for <linux-clk@vger.kernel.org>; Tue, 14 Feb 2023 03:03:40 -0800 (PST)
+        with ESMTP id S229604AbjBNLkZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 06:40:25 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB4F5227A1
+        for <linux-clk@vger.kernel.org>; Tue, 14 Feb 2023 03:40:22 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id qb15so37254751ejc.1
+        for <linux-clk@vger.kernel.org>; Tue, 14 Feb 2023 03:40:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JOM3CPZuCbZR0lhVymV8+GULNDOaWi8QToMxaRMMdmA=;
-        b=xe8dIVaq3d4Ucivu0Wo6j5i77pzOnavSz8szQx5dlpj4lZYMlS1Cp9XW/iSzhVqmVt
-         VNKZshEyKn9+M9YTAXX8GXd8lfE/AdJZ3vN6N1/mTzuduy8HHdfuam9hj5gm5KYN8v6f
-         vWCjwf6xSBomhiBBj07larllzuDkruDeckb8pMPP9f1owrjxT8726fMXfkrze77mqaLu
-         aEbo5/qpF4sImWZSApoj3Qm2yLQodjatgO7yEUNISueAhoCy8EDlWk5DgP2s6dwLqTXi
-         Wc0mOjfpuRuOwhp1bPhyB+K+yUXxsU26JHcmFeIuESV108HkmkUqIzbaKLC0UXykJgEJ
-         n62Q==
+        d=ragnatech-se.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=FPG8OJVJ0csSf4Rc1GcY+mEqG5u9bgOvlOo4MpOz4O0=;
+        b=j9MCVaenphPaj9mPD0h+wONuloGrEkr9qvcZ/5PV44ycw6O3JZgX6gtXZSxJqlC09z
+         xZ9GeXjOHaDx4mcrDE9kR/zy4XwBeL70S8AXFJAOt0S3cYiSXyzkDtneFByVudqsCJXc
+         BaqaFDtyJX1Oe+DsvN8kkFamrXDmbUbgWMTvMSCJDOSQDabXBj0XvqwiZ7ijYgTljVE9
+         +AwDDacgwdv9QIcbdtK1yjY04i7wlbKM4HQZqfRu0qJ+ej/9Xvw5ntBNFlljU/3g4nqY
+         NQOhgQ3chMktAjr4hhZntppsZ2GAbfjVEn1F5XuOS85NtNYVR2Q9/CK3xkvaGvgO8dgs
+         h93w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JOM3CPZuCbZR0lhVymV8+GULNDOaWi8QToMxaRMMdmA=;
-        b=YYmV9mZ/R/HkgKYSPL1aa+eK8OTZh4XSkueC2Lzs3L2G2INk35khJ1I3S7kGZ5B79k
-         jy5UU6MKkHSeKoeFJtvryX8Enc6Ltb96f4hytC6gnYuB92G4Ulh6DHhuwF8vpBJHRj0c
-         Atx8yALEuMv5eQkvnHnAv6CQk5Dx87ygAGQVRQYntmM4/GtmTAJNryH+jgWuUtfw7HZp
-         Ta3INaLsVBUmlJAEDDcWYhnpo9BEpMj1w4NDv1EmLw2d4DZkpZf7kzMVbVgJ3bvyN7/s
-         KfqugP705X28PhJBSmPiuGj4l24o6ra7SKOOIXhMnF1OdtkBkRfnAjJ0PWEHcjXbr0DV
-         2l8g==
-X-Gm-Message-State: AO0yUKWP6cd04nDjFBUxxCi4B2LlTY9RiU/98jy4bwhtzpxGrXaIjc6u
-        XK64nNUULjVONK/7WyrhMwJ5BA==
-X-Google-Smtp-Source: AK7set/KyeFjRnmHgnn3gWuPfhM+h5w3KI8G9HiR61pgvWGdhLErkIsTE/954hofgST1+mcgbF8uFQ==
-X-Received: by 2002:a05:600c:2208:b0:3df:9858:c038 with SMTP id z8-20020a05600c220800b003df9858c038mr9401100wml.13.1676372618878;
-        Tue, 14 Feb 2023 03:03:38 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id j16-20020adfff90000000b002c55efa9cbesm3263069wrr.39.2023.02.14.03.03.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Feb 2023 03:03:38 -0800 (PST)
-Message-ID: <20508eea-859b-ffa3-0ebe-0ca2e48090b9@linaro.org>
-Date:   Tue, 14 Feb 2023 12:03:36 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: sm6350: add power domain to
- camcc
-Content-Language: en-US
-To:     Luca Weiss <luca.weiss@fairphone.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        bh=FPG8OJVJ0csSf4Rc1GcY+mEqG5u9bgOvlOo4MpOz4O0=;
+        b=y/GdwQgJlnrOVmdBP/wGRZdn9N81C+6941qXXHwguzDGva6YODoqyXH0HP3P/x0RyX
+         NWNfqrUdn02OXRRVQF38mmohiZEO89uT35NNcgQAR9bab+Dj2qIAn1BVFflER6SEbuQ/
+         D1N5c0OrKXCkrxlPgKAfIQb6K8xGR73+dOR9IFdf0fGPbnN9H9Q4YwdzDfITVtPKJLFc
+         yTHT2fzJjuDYfVFFTkB0rODeL5D9PuaDUh1JsC6WibEBlRN+0apIYPeYHn4Z14Ugdc9z
+         BLrLN//IMLy36VODC1cSsFE/EdNQ+LCV8iSlamr0R3tkxw3+YX3/vHljGbNFZuGgMESh
+         51HQ==
+X-Gm-Message-State: AO0yUKUCsu26i4ZV5QUT1w6bgaEc2ZmXPFWFPX9AQciA72MNoCj0Un8w
+        PamsIFWEsTcZve2Vmbwg8He62dA7EnXeI0E/fGc=
+X-Google-Smtp-Source: AK7set/SHNdtjfNV92i9uHdt5wf+uVNLNUUwxB7fk5m9C6JvbZ3UQUv/bDH+dIqvKZNg3IkKeRndRA==
+X-Received: by 2002:a17:907:98ee:b0:879:43d5:3832 with SMTP id ke14-20020a17090798ee00b0087943d53832mr1537760ejc.14.1676374821388;
+        Tue, 14 Feb 2023 03:40:21 -0800 (PST)
+Received: from localhost (h-46-59-89-207.A463.priv.bahnhof.se. [46.59.89.207])
+        by smtp.gmail.com with ESMTPSA id v1-20020a170906b00100b0087862f45a29sm8158675ejy.174.2023.02.14.03.40.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Feb 2023 03:40:20 -0800 (PST)
+Date:   Tue, 14 Feb 2023 12:40:19 +0100
+From:   Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20230213-sm6350-camcc-runtime_pm-v3-0-d35e0d833cc4@fairphone.com>
- <20230213-sm6350-camcc-runtime_pm-v3-2-d35e0d833cc4@fairphone.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230213-sm6350-camcc-runtime_pm-v3-2-d35e0d833cc4@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: r8a77995: Fix VIN parent clock
+Message-ID: <Y+tzI303JienDXNm@oden.dyn.berto.se>
+References: <9b655843a260e06fa6f3349cdafac180e2bf38a5.1676368776.git.geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9b655843a260e06fa6f3349cdafac180e2bf38a5.1676368776.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14/02/2023 12:01, Luca Weiss wrote:
-> Add the CX power domain to the camcc node so the power domain gets
-> marked as in-use when camcc is used.
+Hi Geert,
+
+Thanks for your work.
+
+On 2023-02-14 11:02:07 +0100, Geert Uytterhoeven wrote:
+> According to the R-Car Series, 3rd Generation Hardware User’s Manual
+> Rev. 2.30, the parent clock of the Video Input Module (VIN) on R-Car D3
+> is S3D1.  Update the driver to match the documentation.
 > 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> This has no functional impact, as both S1D2 and S3D1 have the same clock
+> rate, and are always-on clocks.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
 > ---
->  arch/arm64/boot/dts/qcom/sm6350.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
+> To be queued in renesas-clk-for-v6.4.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-> index 1e1d366c92c1..62d6dcd8d1fe 100644
-> --- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-> @@ -1507,6 +1507,8 @@ camcc: clock-controller@ad00000 {
->  			compatible = "qcom,sm6350-camcc";
->  			reg = <0 0x0ad00000 0 0x16000>;
->  			clocks = <&rpmhcc RPMH_CXO_CLK>;
-> +			power-domains = <&rpmhpd SM6350_CX>;
-> +			required-opps = <&rpmhpd_opp_low_svs>;
+>  drivers/clk/renesas/r8a77995-cpg-mssr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/renesas/r8a77995-cpg-mssr.c b/drivers/clk/renesas/r8a77995-cpg-mssr.c
+> index 24ba9093a72f7341..3a73f6f911dd5160 100644
+> --- a/drivers/clk/renesas/r8a77995-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a77995-cpg-mssr.c
+> @@ -167,7 +167,7 @@ static const struct mssr_mod_clk r8a77995_mod_clks[] __initconst = {
+>  	DEF_MOD("du0",			 724,	R8A77995_CLK_S1D1),
+>  	DEF_MOD("lvds",			 727,	R8A77995_CLK_S2D1),
+>  	DEF_MOD("mlp",			 802,	R8A77995_CLK_S2D1),
+> -	DEF_MOD("vin4",			 807,	R8A77995_CLK_S1D2),
+> +	DEF_MOD("vin4",			 807,	R8A77995_CLK_S3D1),
+>  	DEF_MOD("etheravb",		 812,	R8A77995_CLK_S3D2),
+>  	DEF_MOD("imr0",			 823,	R8A77995_CLK_S1D2),
+>  	DEF_MOD("gpio6",		 906,	R8A77995_CLK_S3D4),
+> -- 
+> 2.34.1
+> 
 
-Does not look like you tested the DTS against bindings. Please run `make
-dtbs_check` (see Documentation/devicetree/bindings/writing-schema.rst
-for instructions).
-
-Best regards,
-Krzysztof
-
+-- 
+Kind Regards,
+Niklas Söderlund
