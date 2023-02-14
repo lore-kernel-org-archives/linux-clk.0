@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA645C05027
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Feb 2023 13:49:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B505EC6379F
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Feb 2023 13:55:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232964AbjBNNtg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Feb 2023 08:49:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56854 "EHLO
+        id S232805AbjBNNzf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Feb 2023 08:55:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232785AbjBNNta (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 08:49:30 -0500
+        with ESMTP id S232868AbjBNNzd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 08:55:33 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FE7229E0E;
-        Tue, 14 Feb 2023 05:49:04 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0F0828858;
+        Tue, 14 Feb 2023 05:55:01 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 53EE6660217F;
-        Tue, 14 Feb 2023 13:42:36 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id A91ED6602171;
+        Tue, 14 Feb 2023 13:42:16 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676382157;
-        bh=Fj6wRRRqEs8IY2MV0RP2l4XtY1i3b2reHY98Krc418s=;
+        s=mail; t=1676382137;
+        bh=ZKQUkviCIe14DWtYqRN5l1Its7pOWT7mbgicOkjgtd4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZjdGz7tIf6aSQBHvt0SuvBCv4104vJXKZjJfmHyHS/qGmAJseb9JnwKIdJeDpvubK
-         j1nz7aNBAxzq+81MMpdKenric234GVk8IHXXxAzMyKZKlEGGNGzb9kBKdkr9hlO/B0
-         +VGzwSh4EINA8w9/5j7gbqhWwQhVnM1Sq2xGecqt/dC4KoI5uE/KqGQ0gy0S0JVoOw
-         txzVINjlJpsg5hVvNhbOoh1EqHz6leYQUb6cVyX2AsAPTM3u9FF1XkiXfDqj0+HMyn
-         /ejPOQzPu4KrS4mejA52TWGdNXMydP9lyZbIuLUTerzsYmxdKycZ/GYaEhoPZuJNh/
-         tL/FoYaRu1/qA==
+        b=N51Y36i1dxM3KfOd8OfwBw3Nu7DruFdzfbtjMGZB/RPDZinkS5l/jGwKvrm9c3nDb
+         6RJAFYh2KAZP1fUp8ZLbwHQZitVmnMhWHowCf8cprH7ASNZTPFpSX9r9aY58g5o9vZ
+         +IKI0ZHfNL6CqxZWTXft9QLMlPSVJA+XR/dJOvvF3Wh7/STbfAA7JmbbyjgJN+0Jh7
+         KrtKixukgi67XICYMdrLsNr9eZwbw4+LCP6QRNpY2qdvx8/4z4fhN8mINBY49pcmFQ
+         hMzL+lnn60bV8140Z3DDDwuqQlpbmdbHKsQYMZs3Tz/J3Bcy5FppViJetBVc3YbmNg
+         NCOvTCkZ8wL2A==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, kernel@collabora.com
-Subject: [PATCH v2 42/47] clk: mediatek: Allow building most MT6765 clock drivers as modules
-Date:   Tue, 14 Feb 2023 14:41:22 +0100
-Message-Id: <20230214134127.59273-43-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v2 27/47] clk: mediatek: mt8516: Convert to platform driver and simple probe
+Date:   Tue, 14 Feb 2023 14:41:07 +0100
+Message-Id: <20230214134127.59273-28-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com>
 References: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com>
@@ -58,111 +58,189 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Most of the MT6765 clock drivers can be built as modules: change them
-to tristate to allow that.
+Convert the MT8516 clock drivers to be platform drivers and use the
+common probe mechanism.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/clk/mediatek/Kconfig | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ drivers/clk/mediatek/clk-mt8516-aud.c | 35 ++++++-----
+ drivers/clk/mediatek/clk-mt8516.c     | 88 +++++++++++----------------
+ 2 files changed, 57 insertions(+), 66 deletions(-)
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 4a05b210624d..5444af1570ae 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -133,79 +133,79 @@ config COMMON_CLK_MT6765
-          This driver supports MediaTek MT6765 basic clocks.
+diff --git a/drivers/clk/mediatek/clk-mt8516-aud.c b/drivers/clk/mediatek/clk-mt8516-aud.c
+index a6ae8003b9ff..119dbbd0c3e0 100644
+--- a/drivers/clk/mediatek/clk-mt8516-aud.c
++++ b/drivers/clk/mediatek/clk-mt8516-aud.c
+@@ -3,6 +3,7 @@
+  * Copyright (c) 2019 MediaTek Inc.
+  * Author: James Liao <jamesjj.liao@mediatek.com>
+  *         Fabien Parent <fparent@baylibre.com>
++ * Copyright (c) 2023 Collabora Ltd.
+  */
  
- config COMMON_CLK_MT6765_AUDIOSYS
--       bool "Clock driver for MediaTek MT6765 audiosys"
-+       tristate "Clock driver for MediaTek MT6765 audiosys"
-        depends on COMMON_CLK_MT6765
-        help
-          This driver supports MediaTek MT6765 audiosys clocks.
+ #include <linux/clk-provider.h>
+@@ -25,7 +26,7 @@ static const struct mtk_gate_regs aud_cg_regs = {
+ #define GATE_AUD(_id, _name, _parent, _shift)			\
+ 	GATE_MTK(_id, _name, _parent, &aud_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr)
  
- config COMMON_CLK_MT6765_CAMSYS
--       bool "Clock driver for MediaTek MT6765 camsys"
-+       tristate "Clock driver for MediaTek MT6765 camsys"
-        depends on COMMON_CLK_MT6765
-        help
-          This driver supports MediaTek MT6765 camsys clocks.
+-static const struct mtk_gate aud_clks[] __initconst = {
++static const struct mtk_gate aud_clks[] = {
+ 	GATE_AUD(CLK_AUD_AFE, "aud_afe", "clk26m_ck", 2),
+ 	GATE_AUD(CLK_AUD_I2S, "aud_i2s", "i2s_infra_bck", 6),
+ 	GATE_AUD(CLK_AUD_22M, "aud_22m", "rg_aud_engen1", 8),
+@@ -41,19 +42,25 @@ static const struct mtk_gate aud_clks[] __initconst = {
+ 	GATE_AUD(CLK_AUD_TML, "aud_tml", "aud_afe", 27),
+ };
  
- config COMMON_CLK_MT6765_GCESYS
--       bool "Clock driver for MediaTek MT6765 gcesys"
-+       tristate "Clock driver for MediaTek MT6765 gcesys"
-        depends on COMMON_CLK_MT6765
-        help
-          This driver supports MediaTek MT6765 gcesys clocks.
+-static void __init mtk_audsys_init(struct device_node *node)
+-{
+-	struct clk_hw_onecell_data *clk_data;
+-	int r;
+-
+-	clk_data = mtk_alloc_clk_data(CLK_AUD_NR_CLK);
++static const struct mtk_clk_desc aud_desc = {
++	.clks = aud_clks,
++	.num_clks = ARRAY_SIZE(aud_clks),
++};
  
- config COMMON_CLK_MT6765_MMSYS
--       bool "Clock driver for MediaTek MT6765 mmsys"
-+       tristate "Clock driver for MediaTek MT6765 mmsys"
-        depends on COMMON_CLK_MT6765
-        help
-          This driver supports MediaTek MT6765 mmsys clocks.
+-	mtk_clk_register_gates(NULL, node, aud_clks, ARRAY_SIZE(aud_clks), clk_data);
++static const struct of_device_id of_match_clk_mt8516_aud[] = {
++	{ .compatible = "mediatek,mt8516-audsys", .data = &aud_desc },
++	{ /* sentinel */ }
++};
  
- config COMMON_CLK_MT6765_IMGSYS
--       bool "Clock driver for MediaTek MT6765 imgsys"
-+       tristate "Clock driver for MediaTek MT6765 imgsys"
-        depends on COMMON_CLK_MT6765
-        help
-          This driver supports MediaTek MT6765 imgsys clocks.
+-	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+-	if (r)
+-		pr_err("%s(): could not register clock provider: %d\n",
+-			__func__, r);
++static struct platform_driver clk_mt8516_aud_drv = {
++	.probe = mtk_clk_simple_probe,
++	.remove = mtk_clk_simple_remove,
++	.driver = {
++		.name = "clk-mt8516-aud",
++		.of_match_table = of_match_clk_mt8516_aud,
++	},
++};
++builtin_platform_driver(clk_mt8516_aud_drv);
  
- config COMMON_CLK_MT6765_VCODECSYS
--       bool "Clock driver for MediaTek MT6765 vcodecsys"
-+       tristate "Clock driver for MediaTek MT6765 vcodecsys"
-        depends on COMMON_CLK_MT6765
-        help
-          This driver supports MediaTek MT6765 vcodecsys clocks.
+-}
+-CLK_OF_DECLARE(mtk_audsys, "mediatek,mt8516-audsys", mtk_audsys_init);
++MODULE_DESCRIPTION("MediaTek MT8516 audiosys clocks driver");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/mediatek/clk-mt8516.c b/drivers/clk/mediatek/clk-mt8516.c
+index 51e6948cb54b..ad59e932d4aa 100644
+--- a/drivers/clk/mediatek/clk-mt8516.c
++++ b/drivers/clk/mediatek/clk-mt8516.c
+@@ -3,6 +3,7 @@
+  * Copyright (c) 2019 MediaTek Inc.
+  * Author: James Liao <jamesjj.liao@mediatek.com>
+  *         Fabien Parent <fparent@baylibre.com>
++ * Copyright (c) 2023 Collabora Ltd.
+  */
  
- config COMMON_CLK_MT6765_MFGSYS
--       bool "Clock driver for MediaTek MT6765 mfgsys"
-+       tristate "Clock driver for MediaTek MT6765 mfgsys"
-        depends on COMMON_CLK_MT6765
-        help
-          This driver supports MediaTek MT6765 mfgsys clocks.
+ #include <linux/delay.h>
+@@ -10,6 +11,7 @@
+ #include <linux/of_address.h>
+ #include <linux/slab.h>
+ #include <linux/mfd/syscon.h>
++#include <linux/platform_device.h>
  
- config COMMON_CLK_MT6765_MIPI0ASYS
--       bool "Clock driver for MediaTek MT6765 mipi0asys"
-+       tristate "Clock driver for MediaTek MT6765 mipi0asys"
-        depends on COMMON_CLK_MT6765
-        help
-          This driver supports MediaTek MT6765 mipi0asys clocks.
+ #include "clk-gate.h"
+ #include "clk-mtk.h"
+@@ -638,59 +640,41 @@ static const struct mtk_gate top_clks[] __initconst = {
+ 	GATE_TOP5(CLK_TOP_APLL12_DIV6, "apll12_div6", "apll12_ck_div6", 8),
+ };
  
- config COMMON_CLK_MT6765_MIPI0BSYS
--       bool "Clock driver for MediaTek MT6765 mipi0bsys"
-+       tristate "Clock driver for MediaTek MT6765 mipi0bsys"
-        depends on COMMON_CLK_MT6765
-        help
-          This driver supports MediaTek MT6765 mipi0bsys clocks.
+-static void __init mtk_topckgen_init(struct device_node *node)
+-{
+-	struct clk_hw_onecell_data *clk_data;
+-	int r;
+-	void __iomem *base;
+-
+-	base = of_iomap(node, 0);
+-	if (!base) {
+-		pr_err("%s(): ioremap failed\n", __func__);
+-		return;
+-	}
++static const struct mtk_clk_desc topck_desc = {
++	.clks = top_clks,
++	.num_clks = ARRAY_SIZE(top_clks),
++	.fixed_clks = fixed_clks,
++	.num_fixed_clks = ARRAY_SIZE(fixed_clks),
++	.factor_clks = top_divs,
++	.num_factor_clks = ARRAY_SIZE(top_divs),
++	.composite_clks = top_muxes,
++	.num_composite_clks = ARRAY_SIZE(top_muxes),
++	.divider_clks = top_adj_divs,
++	.num_divider_clks = ARRAY_SIZE(top_adj_divs),
++	.clk_lock = &mt8516_clk_lock,
++};
  
- config COMMON_CLK_MT6765_MIPI1ASYS
--       bool "Clock driver for MediaTek MT6765 mipi1asys"
-+       tristate "Clock driver for MediaTek MT6765 mipi1asys"
-        depends on COMMON_CLK_MT6765
-        help
-          This driver supports MediaTek MT6765 mipi1asys clocks.
+-	clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
++static const struct mtk_clk_desc infra_desc = {
++	.composite_clks = ifr_muxes,
++	.num_composite_clks = ARRAY_SIZE(ifr_muxes),
++	.clk_lock = &mt8516_clk_lock,
++};
  
- config COMMON_CLK_MT6765_MIPI1BSYS
--       bool "Clock driver for MediaTek MT6765 mipi1bsys"
-+       tristate "Clock driver for MediaTek MT6765 mipi1bsys"
-        depends on COMMON_CLK_MT6765
-        help
-          This driver supports MediaTek MT6765 mipi1bsys clocks.
+-	mtk_clk_register_fixed_clks(fixed_clks, ARRAY_SIZE(fixed_clks),
+-				    clk_data);
+-	mtk_clk_register_gates(NULL, node, top_clks, ARRAY_SIZE(top_clks), clk_data);
++static const struct of_device_id of_match_clk_mt8516[] = {
++	{ .compatible = "mediatek,mt8516-topckgen", .data = &topck_desc },
++	{ .compatible = "mediatek,mt8516-infracfg", .data = &infra_desc },
++	{ /* sentinel */ }
++};
  
- config COMMON_CLK_MT6765_MIPI2ASYS
--       bool "Clock driver for MediaTek MT6765 mipi2asys"
-+       tristate "Clock driver for MediaTek MT6765 mipi2asys"
-        depends on COMMON_CLK_MT6765
-       help
-          This driver supports MediaTek MT6765 mipi2asys clocks.
+-	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), clk_data);
+-	mtk_clk_register_composites(NULL, top_muxes,
+-				    ARRAY_SIZE(top_muxes), base,
+-				    &mt8516_clk_lock, clk_data);
+-	mtk_clk_register_dividers(top_adj_divs, ARRAY_SIZE(top_adj_divs),
+-				base, &mt8516_clk_lock, clk_data);
++static struct platform_driver clk_mt8516_drv = {
++	.probe = mtk_clk_simple_probe,
++	.remove = mtk_clk_simple_remove,
++	.driver = {
++		.name = "clk-mt8516",
++		.of_match_table = of_match_clk_mt8516,
++	},
++};
++module_platform_driver(clk_mt8516_drv);
  
- config COMMON_CLK_MT6765_MIPI2BSYS
--       bool "Clock driver for MediaTek MT6765 mipi2bsys"
-+       tristate "Clock driver for MediaTek MT6765 mipi2bsys"
-        depends on COMMON_CLK_MT6765
-        help
-          This driver supports MediaTek MT6765 mipi2bsys clocks.
+-	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+-	if (r)
+-		pr_err("%s(): could not register clock provider: %d\n",
+-			__func__, r);
+-}
+-CLK_OF_DECLARE(mtk_topckgen, "mediatek,mt8516-topckgen", mtk_topckgen_init);
+-
+-static void __init mtk_infracfg_init(struct device_node *node)
+-{
+-	struct clk_hw_onecell_data *clk_data;
+-	int r;
+-	void __iomem *base;
+-
+-	base = of_iomap(node, 0);
+-	if (!base) {
+-		pr_err("%s(): ioremap failed\n", __func__);
+-		return;
+-	}
+-
+-	clk_data = mtk_alloc_clk_data(CLK_IFR_NR_CLK);
+-
+-	mtk_clk_register_composites(NULL, ifr_muxes,
+-				    ARRAY_SIZE(ifr_muxes), base,
+-				    &mt8516_clk_lock, clk_data);
+-
+-	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+-	if (r)
+-		pr_err("%s(): could not register clock provider: %d\n",
+-			__func__, r);
+-}
+-CLK_OF_DECLARE(mtk_infracfg, "mediatek,mt8516-infracfg", mtk_infracfg_init);
++MODULE_DESCRIPTION("MediaTek MT8516 clocks driver");
++MODULE_LICENSE("GPL");
 -- 
 2.39.1
 
