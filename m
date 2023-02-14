@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65EBBC61DA4
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Feb 2023 13:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30241C05027
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Feb 2023 13:49:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232949AbjBNNt3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Feb 2023 08:49:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56242 "EHLO
+        id S232882AbjBNNta (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Feb 2023 08:49:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232588AbjBNNtW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 08:49:22 -0500
+        with ESMTP id S232868AbjBNNtX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 08:49:23 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F26B29E1A;
-        Tue, 14 Feb 2023 05:48:59 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43BA029E21;
+        Tue, 14 Feb 2023 05:49:00 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 871C9660217E;
-        Tue, 14 Feb 2023 13:42:28 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 02D7B6602179;
+        Tue, 14 Feb 2023 13:42:17 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676382149;
-        bh=sNb4igxxWI/mSJ+IRuoMTOS7GxC6yqGEwaxMpEg3gFc=;
+        s=mail; t=1676382139;
+        bh=FCq5Bo9iPa8AC39enueVwnHRq2BszhLUWyH5oJeg0OM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BdF8OSlQ3aUkEH7gw33RL/OYT4e4p/A2PYCNXB3BJ5HxH9E1I3jFgj0j8p0uDRu50
-         33U1fvA2mqIL3KrmgT1OMwzPz10GJhvRVrvcoJHn7yOh/0/jch//CcDiQxUB0MxT6v
-         +Im34DJxfDNtqNWgJCxZ0m4uBXBTrSOGrY/1zCROGq2tlq+QRKt23UQJN7aR+A+4fM
-         4IaqCekWs9ODY/VU0vqp3ZCk24q/sfDlrHvGkR8tdQOXZQhf4mnlaUO9sWOlKfjc6u
-         oXq4evcwNpCw9CAbrMNLWo6LNVxHIjvhlRk1UUc2JEl8eV8Sb0DLtEu40xIE0oYE0G
-         o9V5kuReGOq4g==
+        b=iWObgizQ3mW4VoHMOBodGUsb/YPqZ/4c2M82iEv8XCe0Bza9b6RayNyoyJ86Y6ReN
+         s//tj7QtVGe6C32uRTGA8HLoJEMpKAVFTRgi/yHooqzoKhILo0MyDtzIdjezfqE0ao
+         lbMUdPckU92DqoqPrqFN68kxHTvQD0K+0XUcAaAwGrgFB0FykHKkyA4eLc/cDsOHRW
+         Bj3iBxLFcy/+EC5uLkV47JDxVlVcQImbIIPg3tB6Y5pwd1vjz/57mQROHYNa9xwUda
+         Ao4eVqVCseQAZeN88eWt0OAUMaKD2PLYwS9TqluGYMlNVxMz1OIE4BEpiHqj6oo6DJ
+         J/L7mcmQ/ElXw==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, kernel@collabora.com
-Subject: [PATCH v2 36/47] clk: mediatek: mt2712: Change Kconfig options to allow module build
-Date:   Tue, 14 Feb 2023 14:41:16 +0100
-Message-Id: <20230214134127.59273-37-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v2 28/47] clk: mediatek: mt8516: Allow building clock drivers as modules
+Date:   Tue, 14 Feb 2023 14:41:08 +0100
+Message-Id: <20230214134127.59273-29-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com>
 References: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com>
@@ -58,79 +58,36 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-All of the mt2712 drivers have been converted to platform drivers!
-Change the Kconfig options for all MT2712 clocks to tristate to allow
-building all clock drivers as modules.
+Now that all MT8516 drivers have been converted to platform driver,
+change the configuration options to tristate.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/clk/mediatek/Kconfig | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/clk/mediatek/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index b9c0a9e21cf1..45b7aea7648d 100644
+index 2d14855dd37e..b9c0a9e21cf1 100644
 --- a/drivers/clk/mediatek/Kconfig
 +++ b/drivers/clk/mediatek/Kconfig
-@@ -75,7 +75,7 @@ config COMMON_CLK_MT2701_G3DSYS
- 	  This driver supports MediaTek MT2701 g3dsys clocks.
+@@ -743,7 +743,7 @@ config COMMON_CLK_MT8365_VENC
+ 	  This driver supports MediaTek MT8365 venc clocks.
  
- config COMMON_CLK_MT2712
--	bool "Clock driver for MediaTek MT2712"
-+	tristate "Clock driver for MediaTek MT2712"
- 	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
+ config COMMON_CLK_MT8516
+-	bool "Clock driver for MediaTek MT8516"
++	tristate "Clock driver for MediaTek MT8516"
+ 	depends on ARCH_MEDIATEK || COMPILE_TEST
  	select COMMON_CLK_MEDIATEK
- 	default ARCH_MEDIATEK && ARM64
-@@ -83,43 +83,43 @@ config COMMON_CLK_MT2712
- 	  This driver supports MediaTek MT2712 basic clocks.
+ 	default ARCH_MEDIATEK
+@@ -751,7 +751,7 @@ config COMMON_CLK_MT8516
+ 	  This driver supports MediaTek MT8516 clocks.
  
- config COMMON_CLK_MT2712_BDPSYS
--	bool "Clock driver for MediaTek MT2712 bdpsys"
-+	tristate "Clock driver for MediaTek MT2712 bdpsys"
- 	depends on COMMON_CLK_MT2712
+ config COMMON_CLK_MT8516_AUDSYS
+-	bool "Clock driver for MediaTek MT8516 audsys"
++	tristate "Clock driver for MediaTek MT8516 audsys"
+ 	depends on COMMON_CLK_MT8516
  	help
- 	  This driver supports MediaTek MT2712 bdpsys clocks.
- 
- config COMMON_CLK_MT2712_IMGSYS
--	bool "Clock driver for MediaTek MT2712 imgsys"
-+	tristate "Clock driver for MediaTek MT2712 imgsys"
- 	depends on COMMON_CLK_MT2712
- 	help
- 	  This driver supports MediaTek MT2712 imgsys clocks.
- 
- config COMMON_CLK_MT2712_JPGDECSYS
--	bool "Clock driver for MediaTek MT2712 jpgdecsys"
-+	tristate "Clock driver for MediaTek MT2712 jpgdecsys"
- 	depends on COMMON_CLK_MT2712
- 	help
- 	  This driver supports MediaTek MT2712 jpgdecsys clocks.
- 
- config COMMON_CLK_MT2712_MFGCFG
--	bool "Clock driver for MediaTek MT2712 mfgcfg"
-+	tristate "Clock driver for MediaTek MT2712 mfgcfg"
- 	depends on COMMON_CLK_MT2712
- 	help
- 	  This driver supports MediaTek MT2712 mfgcfg clocks.
- 
- config COMMON_CLK_MT2712_MMSYS
--	bool "Clock driver for MediaTek MT2712 mmsys"
-+	tristate "Clock driver for MediaTek MT2712 mmsys"
- 	depends on COMMON_CLK_MT2712
- 	help
- 	  This driver supports MediaTek MT2712 mmsys clocks.
- 
- config COMMON_CLK_MT2712_VDECSYS
--	bool "Clock driver for MediaTek MT2712 vdecsys"
-+	tristate "Clock driver for MediaTek MT2712 vdecsys"
- 	depends on COMMON_CLK_MT2712
- 	help
- 	  This driver supports MediaTek MT2712 vdecsys clocks.
- 
- config COMMON_CLK_MT2712_VENCSYS
--	bool "Clock driver for MediaTek MT2712 vencsys"
-+	tristate "Clock driver for MediaTek MT2712 vencsys"
- 	depends on COMMON_CLK_MT2712
- 	help
- 	  This driver supports MediaTek MT2712 vencsys clocks.
+ 	  This driver supports MediaTek MT8516 audsys clocks.
 -- 
 2.39.1
 
