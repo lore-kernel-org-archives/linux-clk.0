@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 059B0C61DA4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D13C3C05027
 	for <linux-clk@archiver.kernel.org>; Tue, 14 Feb 2023 13:44:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231960AbjBNNod (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Feb 2023 08:44:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46624 "EHLO
+        id S232588AbjBNNof (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Feb 2023 08:44:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233005AbjBNNn7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 08:43:59 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7773D4EE2;
-        Tue, 14 Feb 2023 05:43:02 -0800 (PST)
+        with ESMTP id S232819AbjBNNoA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 08:44:00 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E63B59D3;
+        Tue, 14 Feb 2023 05:43:06 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 0CF3B6602175;
-        Tue, 14 Feb 2023 13:42:14 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id EA451660217B;
+        Tue, 14 Feb 2023 13:42:38 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676382135;
-        bh=HS+75ThwZ7BguyKPJsdT2HgQ+Y5XXwVsQvcvJfoU1ow=;
+        s=mail; t=1676382160;
+        bh=x+QRoWiULJ/XHNjgH1N2qNqUs/540iuVlloPm/BTi94=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H6okWA6gPnD9FexFdjZ3ErFATmMqmoiTFTqZja6Pqk8MLWTcbrtDsh3W0o+aTHW2J
-         c3feWyBDC0KC+kID6y7ja3LBX8UJddDSD8QQmC+DYesWaGfIRq38joDP6bYRsaA6WF
-         bWTdBzwU4+4NK6Z1e1yskljge6D6Zd98SDTfbV4sK7/JeBjiOjzt0N+hqta1tt68Rw
-         OfeMyyKZwmdtaq9af3rEXW1PN1eZv95w9FdTMCT2Yv03Pc/cM6vzGfamzbE3nyl/iA
-         4opA7wMyfs6Cy+6VCfkEUgp9jBOfVrbjrS9UCJtQmCptYEHQqd1K6Rr6DhhIMmHb6S
-         13TJlw1Sk9epQ==
+        b=RokkhU3heQj6RcEccZsZbCogmyQsZnIXyxzCrJ4UkLnBwEA43NOe0giBVTNof4Ud+
+         Q7kpd5jPTJrJiHEBlGbqIBimo2EgjCgSzGhr0hk6/7xsL+5KHtkP1daz48/khHZYHH
+         RRm9I+MOSIq+mZEAKAoVMbOPBOBD3W47XuHuPj9iu/Gi8FZv59ArcBFS5XzO37fI2D
+         KboImsQzWt7bSnnCE0Jx+iPNRieqFjVJsmyCLwZzITcwUHebu3sqJOiNCfZF47mtqS
+         tNBq0CKyZ7ZfwNwayINXWtEZ7kDU9FnDIhvHEkb9yW3U7MpeWMzCdiEo3kWOqr9k8m
+         MKAkhtCIPmAHg==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, kernel@collabora.com
-Subject: [PATCH v2 25/47] clk: mediatek: mt7622: Convert to platform driver and simple probe
-Date:   Tue, 14 Feb 2023 14:41:05 +0100
-Message-Id: <20230214134127.59273-26-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v2 44/47] clk: mediatek: Split configuration options for MT8186 clock drivers
+Date:   Tue, 14 Feb 2023 14:41:24 +0100
+Message-Id: <20230214134127.59273-45-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com>
 References: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com>
@@ -58,158 +58,139 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert the MT7622 topckgen and pericfg clock drivers to platform
-drivers and use the simple probe mechanism. This also allows to
-build these clocks as modules.
+When building clock drivers for MT8186, some may want to build in only
+some of them to, for example, get CPUFreq up faster, and some may want
+to leave out some clock drivers entirely as a machine may not need the
+Warp Engine or the camera ISP (hence, their clock drivers).
+
+Split the various clock drivers in their own configuration options,
+keeping MT8186 configuration options consistent with other MediaTek
+SoCs.
+
+While at it, also allow building the remaining clock drivers as modules
+by switching COMMON_CLK_MT8186 to tristate.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/clk/mediatek/clk-mt7622.c | 125 ++++++++----------------------
- 1 file changed, 31 insertions(+), 94 deletions(-)
+ drivers/clk/mediatek/Kconfig  | 68 ++++++++++++++++++++++++++++++++++-
+ drivers/clk/mediatek/Makefile | 18 +++++++---
+ 2 files changed, 80 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt7622.c b/drivers/clk/mediatek/clk-mt7622.c
-index fb813f8d3a7d..7a002b73fcaa 100644
---- a/drivers/clk/mediatek/clk-mt7622.c
-+++ b/drivers/clk/mediatek/clk-mt7622.c
-@@ -490,107 +490,44 @@ static const struct mtk_clk_rst_desc clk_rst_desc = {
- 	.rst_bank_nr = ARRAY_SIZE(pericfg_rst_ofs),
- };
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+index 1497171a65ef..706a7cf86ce0 100644
+--- a/drivers/clk/mediatek/Kconfig
++++ b/drivers/clk/mediatek/Kconfig
+@@ -596,7 +596,7 @@ config COMMON_CLK_MT8183_VENCSYS
+ 	  This driver supports MediaTek MT8183 vencsys clocks.
  
--static int mtk_topckgen_init(struct platform_device *pdev)
--{
--	struct clk_hw_onecell_data *clk_data;
--	void __iomem *base;
--	struct device_node *node = pdev->dev.of_node;
--
--	base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(base))
--		return PTR_ERR(base);
--
--	clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
--
--	mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
--				    clk_data);
--
--	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs),
--				 clk_data);
--
--	mtk_clk_register_composites(&pdev->dev, top_muxes,
--				    ARRAY_SIZE(top_muxes), base,
--				    &mt7622_clk_lock, clk_data);
--
--	mtk_clk_register_dividers(top_adj_divs, ARRAY_SIZE(top_adj_divs),
--				  base, &mt7622_clk_lock, clk_data);
--
--	mtk_clk_register_gates(&pdev->dev, node, top_clks,
--			       ARRAY_SIZE(top_clks), clk_data);
--
--	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--}
--
--static int mtk_pericfg_init(struct platform_device *pdev)
--{
--	struct clk_hw_onecell_data *clk_data;
--	void __iomem *base;
--	int r;
--	struct device_node *node = pdev->dev.of_node;
--
--	base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(base))
--		return PTR_ERR(base);
--
--	clk_data = mtk_alloc_clk_data(CLK_PERI_NR_CLK);
--
--	mtk_clk_register_gates(&pdev->dev, node, peri_clks,
--			       ARRAY_SIZE(peri_clks), clk_data);
--
--	mtk_clk_register_composites(&pdev->dev, peri_muxes,
--				    ARRAY_SIZE(peri_muxes), base,
--				    &mt7622_clk_lock, clk_data);
--
--	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--	if (r)
--		return r;
--
--	mtk_register_reset_controller_with_dev(&pdev->dev, &clk_rst_desc);
--
--	return 0;
--}
-+static const struct mtk_clk_desc topck_desc = {
-+	.clks = top_clks,
-+	.num_clks = ARRAY_SIZE(top_clks),
-+	.fixed_clks = top_fixed_clks,
-+	.num_fixed_clks = ARRAY_SIZE(top_fixed_clks),
-+	.factor_clks = top_divs,
-+	.num_factor_clks = ARRAY_SIZE(top_divs),
-+	.composite_clks = top_muxes,
-+	.num_composite_clks = ARRAY_SIZE(top_muxes),
-+	.divider_clks = top_adj_divs,
-+	.num_divider_clks = ARRAY_SIZE(top_adj_divs),
-+	.clk_lock = &mt7622_clk_lock,
-+};
+ config COMMON_CLK_MT8186
+-	bool "Clock driver for MediaTek MT8186"
++	tristate "Clock driver for MediaTek MT8186"
+ 	depends on ARM64 || COMPILE_TEST
+ 	select COMMON_CLK_MEDIATEK
+ 	select COMMON_CLK_MEDIATEK_FHCTL
+@@ -604,6 +604,72 @@ config COMMON_CLK_MT8186
+ 	help
+ 	  This driver supports MediaTek MT8186 clocks.
+ 
++config COMMON_CLK_MT8186_CAMSYS
++	tristate "Clock driver for MediaTek MT8186 camsys"
++	depends on COMMON_CLK_MT8186
++	help
++	  This driver supports MediaTek MT8186 camsys and camsys_raw clocks.
 +
-+static const struct mtk_clk_desc peri_desc = {
-+	.clks = peri_clks,
-+	.num_clks = ARRAY_SIZE(peri_clks),
-+	.composite_clks = peri_muxes,
-+	.num_composite_clks = ARRAY_SIZE(peri_muxes),
-+	.rst_desc = &clk_rst_desc,
-+	.clk_lock = &mt7622_clk_lock,
-+};
- 
- static const struct of_device_id of_match_clk_mt7622[] = {
--	{
--		.compatible = "mediatek,mt7622-topckgen",
--		.data = mtk_topckgen_init,
--	}, {
--		.compatible = "mediatek,mt7622-pericfg",
--		.data = mtk_pericfg_init,
--	}, {
--		/* sentinel */
--	}
--};
--
--static int clk_mt7622_probe(struct platform_device *pdev)
--{
--	int (*clk_init)(struct platform_device *);
--	int r;
--
--	clk_init = of_device_get_match_data(&pdev->dev);
--	if (!clk_init)
--		return -EINVAL;
--
--	r = clk_init(pdev);
--	if (r)
--		dev_err(&pdev->dev,
--			"could not register clock provider: %s: %d\n",
--			pdev->name, r);
--
--	return r;
--}
-+	{ .compatible = "mediatek,mt7622-topckgen", .data = &topck_desc },
-+	{ .compatible = "mediatek,mt7622-pericfg", .data = &peri_desc },
-+	{ /* sentinel */ }
-+};
- 
- static struct platform_driver clk_mt7622_drv = {
--	.probe = clk_mt7622_probe,
- 	.driver = {
- 		.name = "clk-mt7622",
- 		.of_match_table = of_match_clk_mt7622,
- 	},
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
- };
-+module_platform_driver(clk_mt7622_drv)
- 
--static int clk_mt7622_init(void)
--{
--	return platform_driver_register(&clk_mt7622_drv);
--}
--
--arch_initcall(clk_mt7622_init);
-+MODULE_DESCRIPTION("MediaTek MT7622 clocks driver");
-+MODULE_LICENSE("GPL");
++config COMMON_CLK_MT8186_IMGSYS
++	tristate "Clock driver for MediaTek MT8186 imgsys"
++	depends on COMMON_CLK_MT8186
++	help
++	  This driver supports MediaTek MT8186 imgsys and imgsys2 clocks.
++
++config COMMON_CLK_MT8186_IMP_IIC_WRAP
++	tristate "Clock driver for MediaTek MT8186 imp_iic_wrap"
++	depends on COMMON_CLK_MT8186
++	help
++	  This driver supports MediaTek MT8186 imp_iic_wrap clocks.
++
++config COMMON_CLK_MT8186_IPESYS
++	tristate "Clock driver for MediaTek MT8186 ipesys"
++	depends on COMMON_CLK_MT8186_IMGSYS
++	help
++	  This driver supports MediaTek MT8186 ipesys clocks.
++
++config COMMON_CLK_MT8186_MCUSYS
++	tristate "Clock driver for MediaTek MT8186 mcusys"
++	depends on COMMON_CLK_MT8186
++	help
++	  This driver supports MediaTek MT8186 mcusys clocks.
++
++config COMMON_CLK_MT8186_MDPSYS
++	tristate "Clock driver for MediaTek MT8186 mdpsys"
++	depends on COMMON_CLK_MT8186
++	help
++	  This driver supports MediaTek MT8186 mdpsys clocks.
++
++config COMMON_CLK_MT8186_MFGCFG
++	tristate "Clock driver for MediaTek MT8186 mfgcfg"
++	depends on COMMON_CLK_MT8186
++	help
++	  This driver supports MediaTek MT8186 mfgcfg clocks.
++
++config COMMON_CLK_MT8186_MMSYS
++	tristate "Clock driver for MediaTek MT8186 mmsys"
++	depends on COMMON_CLK_MT8186
++	help
++	  This driver supports MediaTek MT8186 mmsys clocks.
++
++config COMMON_CLK_MT8186_VDECSYS
++	tristate "Clock driver for MediaTek MT8186 vdecsys"
++	depends on COMMON_CLK_MT8186
++	help
++	  This driver supports MediaTek MT8186 vdecsys and vdecsys_soc clocks.
++
++config COMMON_CLK_MT8186_VENCSYS
++	tristate "Clock driver for MediaTek MT8186 vencsys"
++	depends on COMMON_CLK_MT8186
++	help
++	  This driver supports MediaTek MT8186 vencsys clocks.
++
++config COMMON_CLK_MT8186_WPESYS
++	tristate "Clock driver for MediaTek MT8186 wpesys"
++	depends on COMMON_CLK_MT8186_IMGSYS
++	help
++	  This driver supports MediaTek MT8186 Warp Engine clocks.
++
+ config COMMON_CLK_MT8192
+ 	bool "Clock driver for MediaTek MT8192"
+ 	depends on ARM64 || COMPILE_TEST
+diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+index 63351957f862..6204ad17b7ca 100644
+--- a/drivers/clk/mediatek/Makefile
++++ b/drivers/clk/mediatek/Makefile
+@@ -87,11 +87,19 @@ obj-$(CONFIG_COMMON_CLK_MT8183_MFGCFG) += clk-mt8183-mfgcfg.o
+ obj-$(CONFIG_COMMON_CLK_MT8183_MMSYS) += clk-mt8183-mm.o
+ obj-$(CONFIG_COMMON_CLK_MT8183_VDECSYS) += clk-mt8183-vdec.o
+ obj-$(CONFIG_COMMON_CLK_MT8183_VENCSYS) += clk-mt8183-venc.o
+-obj-$(CONFIG_COMMON_CLK_MT8186) += clk-mt8186-mcu.o clk-mt8186-topckgen.o clk-mt8186-infra_ao.o \
+-				   clk-mt8186-apmixedsys.o clk-mt8186-imp_iic_wrap.o \
+-				   clk-mt8186-mfg.o clk-mt8186-mm.o clk-mt8186-wpe.o \
+-				   clk-mt8186-img.o clk-mt8186-vdec.o clk-mt8186-venc.o \
+-				   clk-mt8186-cam.o clk-mt8186-mdp.o clk-mt8186-ipe.o
++obj-$(CONFIG_COMMON_CLK_MT8186) += clk-mt8186-apmixedsys.o clk-mt8186-infra_ao.o \
++				   clk-mt8186-topckgen.o
++obj-$(CONFIG_COMMON_CLK_MT8186_CAMSYS) += clk-mt8186-cam.o
++obj-$(CONFIG_COMMON_CLK_MT8186_IMGSYS) += clk-mt8186-img.o
++obj-$(CONFIG_COMMON_CLK_MT8186_IMP_IIC_WRAP) += clk-mt8186-imp_iic_wrap.o
++obj-$(CONFIG_COMMON_CLK_MT8186_IPESYS) += clk-mt8186-ipe.o
++obj-$(CONFIG_COMMON_CLK_MT8186_MCUSYS) += clk-mt8186-mcu.o
++obj-$(CONFIG_COMMON_CLK_MT8186_MDPSYS) += clk-mt8186-mdp.o
++obj-$(CONFIG_COMMON_CLK_MT8186_MFGCFG) += clk-mt8186-mfg.o
++obj-$(CONFIG_COMMON_CLK_MT8186_MMSYS) += clk-mt8186-mm.o
++obj-$(CONFIG_COMMON_CLK_MT8186_VDECSYS) += clk-mt8186-vdec.o
++obj-$(CONFIG_COMMON_CLK_MT8186_VENCSYS) += clk-mt8186-venc.o
++obj-$(CONFIG_COMMON_CLK_MT8186_WPESYS) += clk-mt8186-wpe.o
+ obj-$(CONFIG_COMMON_CLK_MT8192) += clk-mt8192.o
+ obj-$(CONFIG_COMMON_CLK_MT8192_AUDSYS) += clk-mt8192-aud.o
+ obj-$(CONFIG_COMMON_CLK_MT8192_CAMSYS) += clk-mt8192-cam.o
 -- 
 2.39.1
 
