@@ -2,245 +2,160 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B505EC6379F
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Feb 2023 13:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0942C61DA4
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Feb 2023 14:52:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232805AbjBNNzf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Feb 2023 08:55:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36962 "EHLO
+        id S233495AbjBNOwG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Feb 2023 09:52:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232868AbjBNNzd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 08:55:33 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0F0828858;
-        Tue, 14 Feb 2023 05:55:01 -0800 (PST)
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id A91ED6602171;
-        Tue, 14 Feb 2023 13:42:16 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676382137;
-        bh=ZKQUkviCIe14DWtYqRN5l1Its7pOWT7mbgicOkjgtd4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N51Y36i1dxM3KfOd8OfwBw3Nu7DruFdzfbtjMGZB/RPDZinkS5l/jGwKvrm9c3nDb
-         6RJAFYh2KAZP1fUp8ZLbwHQZitVmnMhWHowCf8cprH7ASNZTPFpSX9r9aY58g5o9vZ
-         +IKI0ZHfNL6CqxZWTXft9QLMlPSVJA+XR/dJOvvF3Wh7/STbfAA7JmbbyjgJN+0Jh7
-         KrtKixukgi67XICYMdrLsNr9eZwbw4+LCP6QRNpY2qdvx8/4z4fhN8mINBY49pcmFQ
-         hMzL+lnn60bV8140Z3DDDwuqQlpbmdbHKsQYMZs3Tz/J3Bcy5FppViJetBVc3YbmNg
-         NCOvTCkZ8wL2A==
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-To:     mturquette@baylibre.com
-Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
-        angelogioacchino.delregno@collabora.com, wenst@chromium.org,
-        johnson.wang@mediatek.com, miles.chen@mediatek.com,
-        chun-jie.chen@mediatek.com, daniel@makrotopia.org,
-        fparent@baylibre.com, msp@baylibre.com, nfraprado@collabora.com,
-        rex-bc.chen@mediatek.com, zhaojh329@gmail.com,
-        sam.shih@mediatek.com, edward-jw.yang@mediatek.com,
-        yangyingliang@huawei.com, granquet@baylibre.com,
-        pablo.sun@mediatek.com, sean.wang@mediatek.com,
-        chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel@collabora.com
-Subject: [PATCH v2 27/47] clk: mediatek: mt8516: Convert to platform driver and simple probe
-Date:   Tue, 14 Feb 2023 14:41:07 +0100
-Message-Id: <20230214134127.59273-28-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com>
-References: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com>
-MIME-Version: 1.0
+        with ESMTP id S231714AbjBNOwE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 09:52:04 -0500
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2125.outbound.protection.outlook.com [40.107.237.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9FB22A141;
+        Tue, 14 Feb 2023 06:52:01 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CRlqaKzt9kA4XRJl4snSzGK5e9MQ0N6lhkbdjdpKvuofLMQboADcZOKqpSQDIKld0ErgUdPAw6IssnxSKx6PF83vfyXd13ipFVzEaWxlfkHPjHKiPbT4wzPXkswLzf6SNLqXK1BdkUV1mf1ip1PFhg0fOnx7wrgJCjeAMBEtUD5IT2rDj5DhFKa8hPQ4otRIwyhYWHxmWUEBJPF4mXUFfKd7cDNGV5enlf3cXqDSNYKYLjh28kK6utC5ezbLcS3qnZ2GQ44mHInoPF2JGmqp0Vr4qinYXbex9vi8d8Wuo4Iilv+v5wV5rkMRZmv/34yIrvEt8lhl+lrpEeMfTRd09w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CCp6qTQMGE/o+fvRqXhNvtp4hxMet2rgnOgvfOp/6kg=;
+ b=bwQm3ezvLlCYJN6XEzQH2I6ZfWjIToekhqq9qNB3cLQHQbmqjspSq8TGLcOrs01tzSHGRY4czvXecxPMTNPdFKH1L6TZnUa3Vgrw/ieGJDhmKPj+6BHKSCAJt6RyWicbbuIAvZUBNj+MhB0nBLT3CV9F69uoRfYrjw8L/UUrZ8mwHxxsjgvKK5Q2SJVoZtOzAOX91+CucZzRz6+aTfG9CF6k3611cMTYGGVo5ovA2G0F1TKXC5nHDdKOEy7VhL8UnHRvT1DuyE0qTeWZiRFeRTcqqWlNBRyaB4z0Xqwgl4+peDodYahXf+h0jBdcYPbnMrbvccfcIQbzfeymwlyaBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=lenbrook.com; dmarc=pass action=none header.from=lenbrook.com;
+ dkim=pass header.d=lenbrook.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lenbrook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CCp6qTQMGE/o+fvRqXhNvtp4hxMet2rgnOgvfOp/6kg=;
+ b=UBJRDP9vWqB5caiwFN4CCBmyEwvyFXUuaJR/31uId0Od949Rgb/qF5yR9n2PBbZ/YGZZwWOT1I9sW0SE+1+wb3uR56FbYn7J1VlaAFjVy1C2lju8xznezIkfaqrRcrKGPkxfeFIHeaDV9tkFQJ/S01bks2QUlyU2fkwaja8jDf0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=lenbrook.com;
+Received: from YT4PR01MB9670.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:e8::12)
+ by YT1PR01MB9209.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:cd::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.24; Tue, 14 Feb
+ 2023 14:51:59 +0000
+Received: from YT4PR01MB9670.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::2d78:f682:1d5a:863e]) by YT4PR01MB9670.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::2d78:f682:1d5a:863e%7]) with mapi id 15.20.6086.024; Tue, 14 Feb 2023
+ 14:51:59 +0000
+Message-ID: <3693d66b-801e-dc31-15ee-e010f2577655@lenbrook.com>
+Date:   Tue, 14 Feb 2023 09:51:24 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH] clk: imx: pll14xx: fix recalc_rate for negative kdiv
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20221210203835.9714-1-kgroeneveld@lenbrook.com>
+ <21e4cb835f678faa911ef97d28931246.sboyd@kernel.org>
+From:   Kevin Groeneveld <kgroeneveld@lenbrook.com>
+In-Reply-To: <21e4cb835f678faa911ef97d28931246.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: YT3PR01CA0051.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:82::22) To YT4PR01MB9670.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:e8::12)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT4PR01MB9670:EE_|YT1PR01MB9209:EE_
+X-MS-Office365-Filtering-Correlation-Id: d321b4fd-2263-401a-549a-08db0e9b0624
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Zf/xMFZF9BOUryVhLGKOLK+1qwAGDlZO62wjmlIjiLsY4YhG5NyrR/9QuN5c50ooW/82z9PEB0Y0bS+W/wxTO1nxdCSFrnMHiuhsGGaTm+VzQHXB+MRLFNqaTHv5UpDagdVZ0h/emqArySRr8s1bDM0it8HBUhUVMhcppBst/VYvsbTTOadq8HEtEVZh38fiBYJeTzYgL1W4ayLXBBJGvbPmWUlIu4Lt/GPq7Iw0+0TTdsD8YyYxn8GS9iRsU8Do7MRvLxCtbXdV7BJoSYFI0cjWRvU6gh/6WxGtAySDy+uRtV09ysi4hV7QHaK8pPbBn+L5GY+8H0giNunX5SZXjQbJVymPa+6wH/2kqekNOiaWZYO7ktAo5FbQntFSHpvC06s5SLNGzbDc3qzqxlEEYzxu6Q0sK7YMXAJzWOWtIsR8Dk1eqfwJPwXS4zY/lvYq5XgR0TqJSkhWiyxQItBBCW5J2T6k0GbANdyEFWR+3SuS75620V6LmtaXyNGKMdrYGgPFzoGKihx4EoQR30h+jBZ+SRJrkqBXMrWKcdp3Wqt6jzC1DvmJ274Mx+X6uelU/+xCXqQdbUYI8651FD8byp3/b54UsZlOUFapvDam4Et1/eepU6Jh+nN2ThMiZAx+kfNd5Tlz6xQGaPX2TbyreO6mN29zN/qgi/EUMFs1fJKDcTXm06EEF4elfPjBv58Yd90oGffc/B9XmXB8m9Fth17/3rMSpmf3kGifB76490YC9+uUd+XF7Q1q9W1ek17X
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT4PR01MB9670.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230025)(346002)(136003)(39850400004)(376002)(366004)(396003)(451199018)(110136005)(2616005)(6486002)(36756003)(38100700002)(53546011)(6512007)(6666004)(6506007)(186003)(26005)(478600001)(921005)(31696002)(8676002)(66556008)(66476007)(66946007)(41300700001)(2906002)(4001150100001)(86362001)(316002)(31686004)(5660300002)(8936002)(7416002)(43740500002)(45980500001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NVhHaGdoYkxDbjJ5VnNaOGdCZzAzdkZpYi9Qb1VhMUZ6b2szRFFyU1A0a3BC?=
+ =?utf-8?B?UHdwK3ZzTit2YXBtdVVDUExGOUlabGRIWDJXSXVGWFFtcG85dWlWMVAvT0d4?=
+ =?utf-8?B?aFV0WTJsckloVU9OWi9KSVlnRWcvYUx0UUxPVVNBN0RYK1NZUW4rcDRaUWtx?=
+ =?utf-8?B?eU5Od0dYVFhvNkJ0VU16YWdiNWZEK1VlYlBqMFdIT0RxZWI3ZCtuZ3pqOW5u?=
+ =?utf-8?B?aFJXTDZQQm9Jc1RrRmVXZUlTd2dtYkJudUFwcmpmemtrd2ZCU0NVeTRpdVNB?=
+ =?utf-8?B?dk13LzU1QkZYWUh5TDkrWENZcGtxVllOSXc5Uzl0RHYremJkckVBV3UwcnhC?=
+ =?utf-8?B?aVFFUUY1Qi9uTWRLZUcxTEJEQUxKby9lNXB0M1FZejQ0RGIwSTRzdDFKckxL?=
+ =?utf-8?B?VmVZMjUvNkprU0xXT0tLWW02TlJMeXNiVU5GREY0NnNickluQjQ3bFYweVNL?=
+ =?utf-8?B?d1o0YnoyUHE3OWFnUGZ2WUwrN1cxcXFQVDFIZXhadDNpRlRycCttN3k0NUdL?=
+ =?utf-8?B?MHF2U243dU1OYU01aW56TmphMEJhako3YXNOOHRmeCtybkFuSG44RWpMazBS?=
+ =?utf-8?B?TTZFYjJWT3pjWE8zaVBXOC84VmZEa3JqRUN6Rk1YZ0JJTWhTOGVyVXpDMGhW?=
+ =?utf-8?B?THh2VjM5bGY3c0dVU3djbms2MGYzWnhOTEVWMlViUWNjWkVKbVpVdzRsTnJH?=
+ =?utf-8?B?UnBZc09mak52dFJ3WnhCY1hXVnJtcENqYU5KMHFnN2dvMFFEdzhLaFp4SFl3?=
+ =?utf-8?B?ZHdvVEJrRGM4Vi9Yb0MvNXRtL2xBZ1UyZzlJVVlVUjNyVitiZHd4NHg2bTJt?=
+ =?utf-8?B?SDB5bGN3WjVKamF0RGpQeW5tSDhMZWwvekVQYVU5MXRqZW1aajExTFVNK2tY?=
+ =?utf-8?B?ckpjWnlheTRSQjJmZzROZ1BzbTJWT3dBQ0tQUUdSTW93a1NHbkdlL3g0TExJ?=
+ =?utf-8?B?ZnNLVHdYaXVPMTBmSDluQk5xaFZlSm1POGRTOTQrbmU5aGhucjlmWnRnYXZN?=
+ =?utf-8?B?dXJ3QWJXWWNtY3MwOUgwckhscFUvaUxzbHdHUTlwekppNlhWL3dxcGVEWkY3?=
+ =?utf-8?B?Uy9WMjg0VUtNTTRBTmw3emdGU3Izazc4dlAvMVVNZFJZRDBib0NsNXV0TUtX?=
+ =?utf-8?B?TWtxQ3VvbTVWb09XTjdDTnhGWmFZdFZ4ZytndXRGMnY3Y2dwUlE1QkZKUkIw?=
+ =?utf-8?B?T3JIbm40azRNVGZuUjFacm5DWmxQK3lQdytyOFJMMEVHQjFaWVRkSzFxTTky?=
+ =?utf-8?B?RUVRRnlHUjZ6U0F4YnpXV1ZMQm9YL2tybUx1VzArRWMrZlZXMnJGRTU1aHFF?=
+ =?utf-8?B?SGxuRVcvYmxkR2xkRDZJYUhEOUZ3eGJtT0k1QXhEKzUram5JS1BQRnhBVkli?=
+ =?utf-8?B?QTNXVkllM21Cb2pwSkkvTFRya2hBeWRZdEVuNzFYV0FwVnc1YmRocUM4SlZD?=
+ =?utf-8?B?QVRXMmU5M0gwUHJxYnZMOGNHTTh6Mk5xc0NGWUtDcEZqd0ZhQWJYRmNSWFZh?=
+ =?utf-8?B?ckk0RkwyMTBBbWd3NXRtMFFMUVY3M2FxZEl3R2FYUUJwYzZ5RHpIcXpYV1R6?=
+ =?utf-8?B?VEJ0RHNadmU2aXlMbFNqTzlzdlpFbEVmTGJhZ0xjWmZSMEZhczZvYzV3ZFZm?=
+ =?utf-8?B?L2xaMWtFeFpPQThLL2JWV1lXZ3VEcFVsUkhWeVpYTm9rOExTVXlOc3hVL3Ny?=
+ =?utf-8?B?anBmL2ZCVXBNTy91UVg1QTkxc2o2MU1zOGtEbWk0QUpOZmt1RGJzOEJLanJ3?=
+ =?utf-8?B?TzByZ2pnVVFJelBtbEdrRlptc0ZkakdEQWl5OHlhMGliclpQNGdaQmJSem1O?=
+ =?utf-8?B?T3BlVHBNY2thVGdleWZId2k4eVIrSVQ2M1NyT1dHMVNRNDNBem1McGFHQWRR?=
+ =?utf-8?B?SjdYVGhtZVl2eW5zSU9FVzlNcCtvTmZRKy92MEdXcWtyYStzcW1rREVucTlM?=
+ =?utf-8?B?cEpjanllNis4SHRRcXN1c0lqQlRERHlGam5Sd0FxdnRONmtrUExMTTJuTVJN?=
+ =?utf-8?B?NDBHQUJqZ1ZvbUI5K3dKaXdTb2Y4MlJNUGRpUkh2ODdiNzNDVjJYamFBQi9B?=
+ =?utf-8?B?b1E5VDF6S1FqWFV6R2ZOYk11Z0RsM0s1WXNHbzd0eHYydWorUWhWUEYrb3hi?=
+ =?utf-8?B?Q2owVnJNZkpHYTM5WFlvWVJBcW1EenBBZ3hST28zMmZ6ZFFDM0ZhcnNNN0R4?=
+ =?utf-8?B?R1E9PQ==?=
+X-OriginatorOrg: lenbrook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d321b4fd-2263-401a-549a-08db0e9b0624
+X-MS-Exchange-CrossTenant-AuthSource: YT4PR01MB9670.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2023 14:51:58.9914
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3089fb55-f9f3-4ac8-ba44-52ac0e467cb6
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Az81y49N+Uah/lfUpDOEhyeS4suyVUraXEejuTsodzbOHYLjLemkaV+l7BuLPnZsJY5ixHAHJScUVObPV9xJPuzS+0k86bTxcOWzXeH7Ehk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT1PR01MB9209
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert the MT8516 clock drivers to be platform drivers and use the
-common probe mechanism.
+On 2023-02-10 18:24, Stephen Boyd wrote:
+> Quoting Kevin Groeneveld (2022-12-10 12:38:35)
+>> kdiv is a signed 16 bit value in the DEV_CTL1 register. Commit
+>> 53990cf9d5b4 ("clk: imx: pll14xx: consolidate rate calculation") changed
+>> the kdiv variable from a short int to just int. When the value read from
+>> the DIV_CTL1 register is assigned directly to an int the sign of the value
+>> is lost resulting in incorrect results when the value is negative. Adding
+> 
+> Can the field be negative?
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/clk/mediatek/clk-mt8516-aud.c | 35 ++++++-----
- drivers/clk/mediatek/clk-mt8516.c     | 88 +++++++++++----------------
- 2 files changed, 57 insertions(+), 66 deletions(-)
+Yes it can be. That is how I found the issue as I had a negative value 
+in imx_pll14xx_rate_table which used to work but broke with the above 
+mentioned commit.
 
-diff --git a/drivers/clk/mediatek/clk-mt8516-aud.c b/drivers/clk/mediatek/clk-mt8516-aud.c
-index a6ae8003b9ff..119dbbd0c3e0 100644
---- a/drivers/clk/mediatek/clk-mt8516-aud.c
-+++ b/drivers/clk/mediatek/clk-mt8516-aud.c
-@@ -3,6 +3,7 @@
-  * Copyright (c) 2019 MediaTek Inc.
-  * Author: James Liao <jamesjj.liao@mediatek.com>
-  *         Fabien Parent <fparent@baylibre.com>
-+ * Copyright (c) 2023 Collabora Ltd.
-  */
- 
- #include <linux/clk-provider.h>
-@@ -25,7 +26,7 @@ static const struct mtk_gate_regs aud_cg_regs = {
- #define GATE_AUD(_id, _name, _parent, _shift)			\
- 	GATE_MTK(_id, _name, _parent, &aud_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr)
- 
--static const struct mtk_gate aud_clks[] __initconst = {
-+static const struct mtk_gate aud_clks[] = {
- 	GATE_AUD(CLK_AUD_AFE, "aud_afe", "clk26m_ck", 2),
- 	GATE_AUD(CLK_AUD_I2S, "aud_i2s", "i2s_infra_bck", 6),
- 	GATE_AUD(CLK_AUD_22M, "aud_22m", "rg_aud_engen1", 8),
-@@ -41,19 +42,25 @@ static const struct mtk_gate aud_clks[] __initconst = {
- 	GATE_AUD(CLK_AUD_TML, "aud_tml", "aud_afe", 27),
- };
- 
--static void __init mtk_audsys_init(struct device_node *node)
--{
--	struct clk_hw_onecell_data *clk_data;
--	int r;
--
--	clk_data = mtk_alloc_clk_data(CLK_AUD_NR_CLK);
-+static const struct mtk_clk_desc aud_desc = {
-+	.clks = aud_clks,
-+	.num_clks = ARRAY_SIZE(aud_clks),
-+};
- 
--	mtk_clk_register_gates(NULL, node, aud_clks, ARRAY_SIZE(aud_clks), clk_data);
-+static const struct of_device_id of_match_clk_mt8516_aud[] = {
-+	{ .compatible = "mediatek,mt8516-audsys", .data = &aud_desc },
-+	{ /* sentinel */ }
-+};
- 
--	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--	if (r)
--		pr_err("%s(): could not register clock provider: %d\n",
--			__func__, r);
-+static struct platform_driver clk_mt8516_aud_drv = {
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
-+	.driver = {
-+		.name = "clk-mt8516-aud",
-+		.of_match_table = of_match_clk_mt8516_aud,
-+	},
-+};
-+builtin_platform_driver(clk_mt8516_aud_drv);
- 
--}
--CLK_OF_DECLARE(mtk_audsys, "mediatek,mt8516-audsys", mtk_audsys_init);
-+MODULE_DESCRIPTION("MediaTek MT8516 audiosys clocks driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8516.c b/drivers/clk/mediatek/clk-mt8516.c
-index 51e6948cb54b..ad59e932d4aa 100644
---- a/drivers/clk/mediatek/clk-mt8516.c
-+++ b/drivers/clk/mediatek/clk-mt8516.c
-@@ -3,6 +3,7 @@
-  * Copyright (c) 2019 MediaTek Inc.
-  * Author: James Liao <jamesjj.liao@mediatek.com>
-  *         Fabien Parent <fparent@baylibre.com>
-+ * Copyright (c) 2023 Collabora Ltd.
-  */
- 
- #include <linux/delay.h>
-@@ -10,6 +11,7 @@
- #include <linux/of_address.h>
- #include <linux/slab.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/platform_device.h>
- 
- #include "clk-gate.h"
- #include "clk-mtk.h"
-@@ -638,59 +640,41 @@ static const struct mtk_gate top_clks[] __initconst = {
- 	GATE_TOP5(CLK_TOP_APLL12_DIV6, "apll12_div6", "apll12_ck_div6", 8),
- };
- 
--static void __init mtk_topckgen_init(struct device_node *node)
--{
--	struct clk_hw_onecell_data *clk_data;
--	int r;
--	void __iomem *base;
--
--	base = of_iomap(node, 0);
--	if (!base) {
--		pr_err("%s(): ioremap failed\n", __func__);
--		return;
--	}
-+static const struct mtk_clk_desc topck_desc = {
-+	.clks = top_clks,
-+	.num_clks = ARRAY_SIZE(top_clks),
-+	.fixed_clks = fixed_clks,
-+	.num_fixed_clks = ARRAY_SIZE(fixed_clks),
-+	.factor_clks = top_divs,
-+	.num_factor_clks = ARRAY_SIZE(top_divs),
-+	.composite_clks = top_muxes,
-+	.num_composite_clks = ARRAY_SIZE(top_muxes),
-+	.divider_clks = top_adj_divs,
-+	.num_divider_clks = ARRAY_SIZE(top_adj_divs),
-+	.clk_lock = &mt8516_clk_lock,
-+};
- 
--	clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
-+static const struct mtk_clk_desc infra_desc = {
-+	.composite_clks = ifr_muxes,
-+	.num_composite_clks = ARRAY_SIZE(ifr_muxes),
-+	.clk_lock = &mt8516_clk_lock,
-+};
- 
--	mtk_clk_register_fixed_clks(fixed_clks, ARRAY_SIZE(fixed_clks),
--				    clk_data);
--	mtk_clk_register_gates(NULL, node, top_clks, ARRAY_SIZE(top_clks), clk_data);
-+static const struct of_device_id of_match_clk_mt8516[] = {
-+	{ .compatible = "mediatek,mt8516-topckgen", .data = &topck_desc },
-+	{ .compatible = "mediatek,mt8516-infracfg", .data = &infra_desc },
-+	{ /* sentinel */ }
-+};
- 
--	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), clk_data);
--	mtk_clk_register_composites(NULL, top_muxes,
--				    ARRAY_SIZE(top_muxes), base,
--				    &mt8516_clk_lock, clk_data);
--	mtk_clk_register_dividers(top_adj_divs, ARRAY_SIZE(top_adj_divs),
--				base, &mt8516_clk_lock, clk_data);
-+static struct platform_driver clk_mt8516_drv = {
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
-+	.driver = {
-+		.name = "clk-mt8516",
-+		.of_match_table = of_match_clk_mt8516,
-+	},
-+};
-+module_platform_driver(clk_mt8516_drv);
- 
--	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--	if (r)
--		pr_err("%s(): could not register clock provider: %d\n",
--			__func__, r);
--}
--CLK_OF_DECLARE(mtk_topckgen, "mediatek,mt8516-topckgen", mtk_topckgen_init);
--
--static void __init mtk_infracfg_init(struct device_node *node)
--{
--	struct clk_hw_onecell_data *clk_data;
--	int r;
--	void __iomem *base;
--
--	base = of_iomap(node, 0);
--	if (!base) {
--		pr_err("%s(): ioremap failed\n", __func__);
--		return;
--	}
--
--	clk_data = mtk_alloc_clk_data(CLK_IFR_NR_CLK);
--
--	mtk_clk_register_composites(NULL, ifr_muxes,
--				    ARRAY_SIZE(ifr_muxes), base,
--				    &mt8516_clk_lock, clk_data);
--
--	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--	if (r)
--		pr_err("%s(): could not register clock provider: %d\n",
--			__func__, r);
--}
--CLK_OF_DECLARE(mtk_infracfg, "mediatek,mt8516-infracfg", mtk_infracfg_init);
-+MODULE_DESCRIPTION("MediaTek MT8516 clocks driver");
-+MODULE_LICENSE("GPL");
--- 
-2.39.1
+The i.MX8MM reference manual states:
+ >Formula for Fraction PLLOUT:
+ >* FOUT=((m+k/65536) x FIN) /(p x 2s)
+ >* Where, 1 ≤ p ≤ 63, 64 ≤ m ≤ 1023, 0 ≤ s ≤ 6, -32768 ≤ k ≤ 32767
+ >* p, m, and s are unsigned integers. k is a two's complement integer.
 
+The comments in the imx_pll14xx_calc_settings function also mention the 
+same range for kdiv. And this function also uses negative values. For 
+example:
+
+ >/* Then see if we can get the desired rate by only adjusting kdiv 
+(glitch free) */
+ >rate_min = pll14xx_calc_rate(pll, mdiv, pdiv, sdiv, KDIV_MIN, prate);
+ >rate_max = pll14xx_calc_rate(pll, mdiv, pdiv, sdiv, KDIV_MAX, prate);
+
+Where KDIV_MIN is defined as SHRT_MIN which is negative.
+
+
+Kevin
