@@ -2,63 +2,62 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF87C6379F
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Feb 2023 11:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0472BC6FA8E
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Feb 2023 11:01:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232688AbjBNLBm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Feb 2023 06:01:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40092 "EHLO
+        id S232566AbjBNLBq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Feb 2023 06:01:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231515AbjBNLBj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 06:01:39 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6679222C6
-        for <linux-clk@vger.kernel.org>; Tue, 14 Feb 2023 03:01:35 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id sa10so39012780ejc.9
-        for <linux-clk@vger.kernel.org>; Tue, 14 Feb 2023 03:01:35 -0800 (PST)
+        with ESMTP id S232734AbjBNLBm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 06:01:42 -0500
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C96824C8F
+        for <linux-clk@vger.kernel.org>; Tue, 14 Feb 2023 03:01:37 -0800 (PST)
+Received: by mail-ej1-x632.google.com with SMTP id sa10so39012979ejc.9
+        for <linux-clk@vger.kernel.org>; Tue, 14 Feb 2023 03:01:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=fairphone.com; s=fair;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=e62fN1MhbeUOHVVjTCBAKKz2knPWJHqUGgFc+Eioq+E=;
-        b=OU4sNRRszHNGyV2q8ipjYsmsp71SJ7C3TNg1i4DJ3xKvrhHs86jteng5yCu0khNskx
-         UrKPLflutrNJcy0O9CeaIHNjTq+OKdxaaGQ2ElsAVeAeC6UXw+L/BL6WIIpdNOcVHrPK
-         aJ1FVxP+8wS9a9XpjEqis+T4fhagovggT0VQb7nd9U/myfPNDnOHWwIGcLPJKiqy1LO1
-         ThTTMin58QLto6+WgAUcd8pxGZJ+FHQNIZiJxHN411GzHlnT23YFXbwpvd7RfPNJb7pN
-         Rj9P6H7bXnqbIIe1FnpPl9ars2RKbu43JucgypL2CemeDjvstj43NmuRvIo8QkqTKVs3
-         J37A==
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LhcKoN5ST7xXXL4advBn9C/NLBwyPeRYvlSSmMsZVTc=;
+        b=Ec1aAWyfr5zWmwwLyROj7VgyT5uAT/F121zLh/UypO4SjLMz1qnhCaEfZcTxRaYIjG
+         7bW2G1R4M7R5QB/bLSqspAsBZPFTFLOyLCDGiZzpVTbe3sMeMbSOrKcrizVqYkrTf5GN
+         GZZQQ9sgwtsUxD3DdEdeCOB2ajV7mTibD7hs+R0eJF7BlIiq+nXu7KtJvMeSbjAEX9Vd
+         TfBsGdyhAy4GtzqKztS2K+RzAnOSqAp8ZETVNwBGnVdz6sgEHv3TTQTS+H8fE3pSjx4G
+         6lNhWUrtpXyryIWY+/cNBgrIzcck18xTtArwgp7Ixfcdz4X7V3KWCGTRf20RgLNyVsMn
+         xXcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e62fN1MhbeUOHVVjTCBAKKz2knPWJHqUGgFc+Eioq+E=;
-        b=SPC3vxz+GSVM2hUG8pW4NMwgtfK6oeMS2HYzmEOK/gM4WoYY39RDZfCS8folRtR61y
-         iF5nGY7MFi9mXIrjlQyiWfknD9BXD/8kd+hU0EdVwSL+HR9LDenrexT2+phKiOxI5MH9
-         oSojXPEcufOSXB72iyUv8jFgXd2yrdE/1UJ7oVVUje29HEMS/kzzWsgheKflLB2sbT69
-         G7ciAwR/DQ6EfWYUei2iKJJJFhkYYwWmX2DjjdhOkFVhKbXPZvRkXj/hNxk2NS3QoiFj
-         8e1+EmmpL/ANf29bAgLpGrkzotLYAvRcaj8hqHOLPGcnuewd6uD5tishnRZZt7+vVLqr
-         JyiA==
-X-Gm-Message-State: AO0yUKWoA2wUFgB2ckigvbXRJVevpyUN9C45ofuA8ccHfmoSE/feJIXo
-        oD+4ehRuwOJiSVNZao+DRLTohw==
-X-Google-Smtp-Source: AK7set8UN3gUOYP807cpBkrxkjxHgNA/mxAjfjdMGbkgNnpuMPKd/w19fzBVALxbauqhlG3dRexbwg==
-X-Received: by 2002:a17:906:1747:b0:88e:e6ee:feab with SMTP id d7-20020a170906174700b0088ee6eefeabmr2249288eje.62.1676372494443;
-        Tue, 14 Feb 2023 03:01:34 -0800 (PST)
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LhcKoN5ST7xXXL4advBn9C/NLBwyPeRYvlSSmMsZVTc=;
+        b=ehGSbsN6NasxS04vK+EcyOqEdTMRxLMF/gE7IhRRkiRXWmjPhj76vH+Kg8ePvCxu99
+         o+g2KEDoZQnYLvyFjf5CxgBSnOMioIv0aUwp3t5vzQkkhxK1RYp97A3md3+uxgDw9ulz
+         shfDoWBXJt88LzQJ0BBZEGemn2OdFUYUy5DNndhVY356ACWKx2Z9/hEUPEOpNIWlH8Br
+         svt9UNtm4fHmAig+UKjhdQ3+0GvtjiN3P9yljEmgD0xpoEcuE/EV4XPHGy229RIyL5u1
+         c49g0oFp18NVJOVbTcp4LNhoC46X2fMNcsRd4P1PYPaN9cDTzxwFUsacAtvfXgHN3rNu
+         2yhQ==
+X-Gm-Message-State: AO0yUKUoAob+KnYqfYQWazbhCTJ+AGMi4tB0aH2HobZDlQl4vqzVjBHf
+        eONUcSLlT3V4QrhTrUlwhsiL0A==
+X-Google-Smtp-Source: AK7set95TCpJ1aPe+yuVK1lRMxdTbn+xO25lkd43tCJDJnxUuu3PgC0uFoLRfzSWRLDb9RbTO0ZD8Q==
+X-Received: by 2002:a17:906:1354:b0:888:a72f:1599 with SMTP id x20-20020a170906135400b00888a72f1599mr2791543ejb.11.1676372496015;
+        Tue, 14 Feb 2023 03:01:36 -0800 (PST)
 Received: from [172.16.220.87] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id i21-20020a170906115500b008711cab8875sm7959596eja.216.2023.02.14.03.01.33
+        by smtp.gmail.com with ESMTPSA id i21-20020a170906115500b008711cab8875sm7959596eja.216.2023.02.14.03.01.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Feb 2023 03:01:34 -0800 (PST)
+        Tue, 14 Feb 2023 03:01:35 -0800 (PST)
 From:   Luca Weiss <luca.weiss@fairphone.com>
-Subject: [PATCH v3 0/2] Add pm_runtime support to SM6350 camcc
-Date:   Tue, 14 Feb 2023 12:01:31 +0100
-Message-Id: <20230213-sm6350-camcc-runtime_pm-v3-0-d35e0d833cc4@fairphone.com>
+Date:   Tue, 14 Feb 2023 12:01:33 +0100
+Subject: [PATCH v3 2/2] arm64: dts: qcom: sm6350: add power domain to camcc
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAtq62MC/42Oyw6DIBBFf8Ww7hgeitpV/6NpGkCoLEQDan3Ef
- y+66q5dnju5586GgvZWB3RNNuT1ZIPtXAR2SZBqhHtpsHVkRDFlmBIGoeUsx6BEqxT40Q221c+
- +Bc4qWeSK1ZkkKLalCBqkF041R9/0GfCUwtv2x7X32tj53L0/Ijc2DJ1fzjcmcqS/FycCGApOj
- OKVKUSJbytzw5jOy4oO50T/9NDo4VjkuJCGaV5+e/Z9/wDjyeJRJAEAAA==
+Message-Id: <20230213-sm6350-camcc-runtime_pm-v3-2-d35e0d833cc4@fairphone.com>
+References: <20230213-sm6350-camcc-runtime_pm-v3-0-d35e0d833cc4@fairphone.com>
+In-Reply-To: <20230213-sm6350-camcc-runtime_pm-v3-0-d35e0d833cc4@fairphone.com>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -75,38 +74,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As pointed out during patch review, we should make sure that we turn on
-the CX power domain when camcc is in use, and also disable it (or remove
-our vote on it) when camcc is not in use.
-
-For this add pm_runtime support to the driver and stick the power-domain
-in the devicetree.
+Add the CX power domain to the camcc node so the power domain gets
+marked as in-use when camcc is used.
 
 Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 ---
-Changes in v3:
-- Remove extra error print for qcom_cc_really_probe since driver core
-  already prints the error anyways
-- Fix From: and Sign-offs email address confusion, sorry about that...
-- Link to v2: https://lore.kernel.org/r/20230213-sm6350-camcc-runtime_pm-v2-0-60a507bf3e68@z3ntu.xyz
+ arch/arm64/boot/dts/qcom/sm6350.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Changes in v2:
-- no change resend since I messed up To/CC in the initial submission
-- Link to v1: https://lore.kernel.org/r/20230213-sm6350-camcc-runtime_pm-v1-0-761fc69f7a80@z3ntu.xyz
+diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dts/qcom/sm6350.dtsi
+index 1e1d366c92c1..62d6dcd8d1fe 100644
+--- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
+@@ -1507,6 +1507,8 @@ camcc: clock-controller@ad00000 {
+ 			compatible = "qcom,sm6350-camcc";
+ 			reg = <0 0x0ad00000 0 0x16000>;
+ 			clocks = <&rpmhcc RPMH_CXO_CLK>;
++			power-domains = <&rpmhpd SM6350_CX>;
++			required-opps = <&rpmhpd_opp_low_svs>;
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
 
----
-Luca Weiss (2):
-      clk: qcom: camcc-sm6350: add pm_runtime support
-      arm64: dts: qcom: sm6350: add power domain to camcc
-
- arch/arm64/boot/dts/qcom/sm6350.dtsi |  2 ++
- drivers/clk/qcom/camcc-sm6350.c      | 25 ++++++++++++++++++++++++-
- 2 files changed, 26 insertions(+), 1 deletion(-)
----
-base-commit: 09e41676e35ab06e4bce8870ea3bf1f191c3cb90
-change-id: 20230213-sm6350-camcc-runtime_pm-639b75c3d4b1
-
-Best regards,
 -- 
-Luca Weiss <luca.weiss@fairphone.com>
+2.39.1
 
