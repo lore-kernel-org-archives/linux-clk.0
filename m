@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D13C3C05027
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Feb 2023 13:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E09C61DA4
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Feb 2023 13:45:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232588AbjBNNof (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Feb 2023 08:44:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46472 "EHLO
+        id S232948AbjBNNpJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Feb 2023 08:45:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232819AbjBNNoA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 08:44:00 -0500
+        with ESMTP id S233029AbjBNNoW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 08:44:22 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E63B59D3;
-        Tue, 14 Feb 2023 05:43:06 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C7442823F;
+        Tue, 14 Feb 2023 05:43:21 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id EA451660217B;
-        Tue, 14 Feb 2023 13:42:38 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8EAA966021B6;
+        Tue, 14 Feb 2023 13:42:41 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676382160;
-        bh=x+QRoWiULJ/XHNjgH1N2qNqUs/540iuVlloPm/BTi94=;
+        s=mail; t=1676382162;
+        bh=7LnucdGUqjfNzMUJ9Y/GzXml6UH8wcuJkaRBmRWmx+g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RokkhU3heQj6RcEccZsZbCogmyQsZnIXyxzCrJ4UkLnBwEA43NOe0giBVTNof4Ud+
-         Q7kpd5jPTJrJiHEBlGbqIBimo2EgjCgSzGhr0hk6/7xsL+5KHtkP1daz48/khHZYHH
-         RRm9I+MOSIq+mZEAKAoVMbOPBOBD3W47XuHuPj9iu/Gi8FZv59ArcBFS5XzO37fI2D
-         KboImsQzWt7bSnnCE0Jx+iPNRieqFjVJsmyCLwZzITcwUHebu3sqJOiNCfZF47mtqS
-         tNBq0CKyZ7ZfwNwayINXWtEZ7kDU9FnDIhvHEkb9yW3U7MpeWMzCdiEo3kWOqr9k8m
-         MKAkhtCIPmAHg==
+        b=IJPCNR62a1TyRfn5c2f+fqNQtrzSZdz4sqaIMQddCGA6aa3AxGfiNpaK6YZgV7uxt
+         XaHodfCd8e9NduIvn8JiFX4mG6h833oktVaL5jk0XuAdC7svkhc/Y4urRO+yRv0nhH
+         aus6nnQ9E05f9/O9AYwjy+QIztrAd8JIIvumKzDINTz/utippH4LChLfjEWpBV8B0k
+         WsOH3CKPQ2CtgBkstCHU2wGkIext6DOPAIIlfCaSPdRElgBTHZBGXRiZanmt6Cwzh0
+         YLcQ6bd3HLLNfkfkAmQvTvyZ26EIBWSqV4ArPtJHfdLzWQkhYA7+LbheC0kvptAhjr
+         a+IZpzKUgwlMQ==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, kernel@collabora.com
-Subject: [PATCH v2 44/47] clk: mediatek: Split configuration options for MT8186 clock drivers
-Date:   Tue, 14 Feb 2023 14:41:24 +0100
-Message-Id: <20230214134127.59273-45-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v2 46/47] clk: mediatek: Kconfig: Allow module build for core mt8192 clocks
+Date:   Tue, 14 Feb 2023 14:41:26 +0100
+Message-Id: <20230214134127.59273-47-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com>
 References: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com>
@@ -58,139 +58,29 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When building clock drivers for MT8186, some may want to build in only
-some of them to, for example, get CPUFreq up faster, and some may want
-to leave out some clock drivers entirely as a machine may not need the
-Warp Engine or the camera ISP (hence, their clock drivers).
-
-Split the various clock drivers in their own configuration options,
-keeping MT8186 configuration options consistent with other MediaTek
-SoCs.
-
-While at it, also allow building the remaining clock drivers as modules
-by switching COMMON_CLK_MT8186 to tristate.
+Bootloaders must in a way setup the SoC to boot Linux: this means
+that it will be possible to decompress a ramdisk and eventually
+insert the core clock driver module from there.
+Allow module build for all MT8192 clocks by switching to tristate.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/clk/mediatek/Kconfig  | 68 ++++++++++++++++++++++++++++++++++-
- drivers/clk/mediatek/Makefile | 18 +++++++---
- 2 files changed, 80 insertions(+), 6 deletions(-)
+ drivers/clk/mediatek/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 1497171a65ef..706a7cf86ce0 100644
+index 706a7cf86ce0..e8034cbbe169 100644
 --- a/drivers/clk/mediatek/Kconfig
 +++ b/drivers/clk/mediatek/Kconfig
-@@ -596,7 +596,7 @@ config COMMON_CLK_MT8183_VENCSYS
- 	  This driver supports MediaTek MT8183 vencsys clocks.
+@@ -671,7 +671,7 @@ config COMMON_CLK_MT8186_WPESYS
+ 	  This driver supports MediaTek MT8186 Warp Engine clocks.
  
- config COMMON_CLK_MT8186
--	bool "Clock driver for MediaTek MT8186"
-+	tristate "Clock driver for MediaTek MT8186"
+ config COMMON_CLK_MT8192
+-	bool "Clock driver for MediaTek MT8192"
++	tristate "Clock driver for MediaTek MT8192"
  	depends on ARM64 || COMPILE_TEST
  	select COMMON_CLK_MEDIATEK
- 	select COMMON_CLK_MEDIATEK_FHCTL
-@@ -604,6 +604,72 @@ config COMMON_CLK_MT8186
- 	help
- 	  This driver supports MediaTek MT8186 clocks.
- 
-+config COMMON_CLK_MT8186_CAMSYS
-+	tristate "Clock driver for MediaTek MT8186 camsys"
-+	depends on COMMON_CLK_MT8186
-+	help
-+	  This driver supports MediaTek MT8186 camsys and camsys_raw clocks.
-+
-+config COMMON_CLK_MT8186_IMGSYS
-+	tristate "Clock driver for MediaTek MT8186 imgsys"
-+	depends on COMMON_CLK_MT8186
-+	help
-+	  This driver supports MediaTek MT8186 imgsys and imgsys2 clocks.
-+
-+config COMMON_CLK_MT8186_IMP_IIC_WRAP
-+	tristate "Clock driver for MediaTek MT8186 imp_iic_wrap"
-+	depends on COMMON_CLK_MT8186
-+	help
-+	  This driver supports MediaTek MT8186 imp_iic_wrap clocks.
-+
-+config COMMON_CLK_MT8186_IPESYS
-+	tristate "Clock driver for MediaTek MT8186 ipesys"
-+	depends on COMMON_CLK_MT8186_IMGSYS
-+	help
-+	  This driver supports MediaTek MT8186 ipesys clocks.
-+
-+config COMMON_CLK_MT8186_MCUSYS
-+	tristate "Clock driver for MediaTek MT8186 mcusys"
-+	depends on COMMON_CLK_MT8186
-+	help
-+	  This driver supports MediaTek MT8186 mcusys clocks.
-+
-+config COMMON_CLK_MT8186_MDPSYS
-+	tristate "Clock driver for MediaTek MT8186 mdpsys"
-+	depends on COMMON_CLK_MT8186
-+	help
-+	  This driver supports MediaTek MT8186 mdpsys clocks.
-+
-+config COMMON_CLK_MT8186_MFGCFG
-+	tristate "Clock driver for MediaTek MT8186 mfgcfg"
-+	depends on COMMON_CLK_MT8186
-+	help
-+	  This driver supports MediaTek MT8186 mfgcfg clocks.
-+
-+config COMMON_CLK_MT8186_MMSYS
-+	tristate "Clock driver for MediaTek MT8186 mmsys"
-+	depends on COMMON_CLK_MT8186
-+	help
-+	  This driver supports MediaTek MT8186 mmsys clocks.
-+
-+config COMMON_CLK_MT8186_VDECSYS
-+	tristate "Clock driver for MediaTek MT8186 vdecsys"
-+	depends on COMMON_CLK_MT8186
-+	help
-+	  This driver supports MediaTek MT8186 vdecsys and vdecsys_soc clocks.
-+
-+config COMMON_CLK_MT8186_VENCSYS
-+	tristate "Clock driver for MediaTek MT8186 vencsys"
-+	depends on COMMON_CLK_MT8186
-+	help
-+	  This driver supports MediaTek MT8186 vencsys clocks.
-+
-+config COMMON_CLK_MT8186_WPESYS
-+	tristate "Clock driver for MediaTek MT8186 wpesys"
-+	depends on COMMON_CLK_MT8186_IMGSYS
-+	help
-+	  This driver supports MediaTek MT8186 Warp Engine clocks.
-+
- config COMMON_CLK_MT8192
- 	bool "Clock driver for MediaTek MT8192"
- 	depends on ARM64 || COMPILE_TEST
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 63351957f862..6204ad17b7ca 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -87,11 +87,19 @@ obj-$(CONFIG_COMMON_CLK_MT8183_MFGCFG) += clk-mt8183-mfgcfg.o
- obj-$(CONFIG_COMMON_CLK_MT8183_MMSYS) += clk-mt8183-mm.o
- obj-$(CONFIG_COMMON_CLK_MT8183_VDECSYS) += clk-mt8183-vdec.o
- obj-$(CONFIG_COMMON_CLK_MT8183_VENCSYS) += clk-mt8183-venc.o
--obj-$(CONFIG_COMMON_CLK_MT8186) += clk-mt8186-mcu.o clk-mt8186-topckgen.o clk-mt8186-infra_ao.o \
--				   clk-mt8186-apmixedsys.o clk-mt8186-imp_iic_wrap.o \
--				   clk-mt8186-mfg.o clk-mt8186-mm.o clk-mt8186-wpe.o \
--				   clk-mt8186-img.o clk-mt8186-vdec.o clk-mt8186-venc.o \
--				   clk-mt8186-cam.o clk-mt8186-mdp.o clk-mt8186-ipe.o
-+obj-$(CONFIG_COMMON_CLK_MT8186) += clk-mt8186-apmixedsys.o clk-mt8186-infra_ao.o \
-+				   clk-mt8186-topckgen.o
-+obj-$(CONFIG_COMMON_CLK_MT8186_CAMSYS) += clk-mt8186-cam.o
-+obj-$(CONFIG_COMMON_CLK_MT8186_IMGSYS) += clk-mt8186-img.o
-+obj-$(CONFIG_COMMON_CLK_MT8186_IMP_IIC_WRAP) += clk-mt8186-imp_iic_wrap.o
-+obj-$(CONFIG_COMMON_CLK_MT8186_IPESYS) += clk-mt8186-ipe.o
-+obj-$(CONFIG_COMMON_CLK_MT8186_MCUSYS) += clk-mt8186-mcu.o
-+obj-$(CONFIG_COMMON_CLK_MT8186_MDPSYS) += clk-mt8186-mdp.o
-+obj-$(CONFIG_COMMON_CLK_MT8186_MFGCFG) += clk-mt8186-mfg.o
-+obj-$(CONFIG_COMMON_CLK_MT8186_MMSYS) += clk-mt8186-mm.o
-+obj-$(CONFIG_COMMON_CLK_MT8186_VDECSYS) += clk-mt8186-vdec.o
-+obj-$(CONFIG_COMMON_CLK_MT8186_VENCSYS) += clk-mt8186-venc.o
-+obj-$(CONFIG_COMMON_CLK_MT8186_WPESYS) += clk-mt8186-wpe.o
- obj-$(CONFIG_COMMON_CLK_MT8192) += clk-mt8192.o
- obj-$(CONFIG_COMMON_CLK_MT8192_AUDSYS) += clk-mt8192-aud.o
- obj-$(CONFIG_COMMON_CLK_MT8192_CAMSYS) += clk-mt8192-cam.o
+ 	default ARM64
 -- 
 2.39.1
 
