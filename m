@@ -2,86 +2,85 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0083CC6FA8E
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Feb 2023 23:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18ECBC61DA4
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Feb 2023 02:30:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233084AbjBNX6A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Feb 2023 18:58:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41474 "EHLO
+        id S229579AbjBOCay (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Feb 2023 21:30:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232289AbjBNX5a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 18:57:30 -0500
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03BA625E2B;
-        Tue, 14 Feb 2023 15:57:30 -0800 (PST)
-Received: by mail-il1-f170.google.com with SMTP id i26so560181ila.11;
-        Tue, 14 Feb 2023 15:57:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gr6HZKX7pjiuziPVOneWNF06CjtvUt+mOQvGio5Mzq4=;
-        b=h+okRSBj7GE/h/jmgOGmrp6vpSlm6U/7kVSsm/0qxwx1bDwI8Bg0G6GPHVaNGFgy/8
-         Eg+tVHYaJMkikVPctNSg8qDYJemlHXuuN5Lsx9A/GT+LtAlU02Ff2Ej3hDYZ7zYAI9GX
-         6TGf/6FOFJV41+EMiqKsM+tEVBSNbi7mgaam1U222m0HpgmV2WwWYxywRA187e9QnJX0
-         uS+R8w/8wLDd0OZws9gZuAHOaf/9XLWMzRqNUOgAzPzChQ2VE9ECLzFsU1tx7CktT25h
-         4Qzk8mJyQ/4u0dD/zwgE7by0AZW+h9DLSpQEKv578LxxdDQhsu0qNOklyjDXdD+hCLsE
-         I7cQ==
-X-Gm-Message-State: AO0yUKX3wXE54AGaxyKLFLkvViGvQy3I/CcrpYHseYdsCYsRQqCvvyil
-        HDIThevJ5aaenjbOZlnXZQ==
-X-Google-Smtp-Source: AK7set9lck2hHxTIM5TfDtimi7UFcfyNl7Vv33Ckn5Za5ontwwdQnwe8lgIAVfz8/w29KcKEYxmHug==
-X-Received: by 2002:a05:6e02:b2f:b0:313:ee3f:2b2b with SMTP id e15-20020a056e020b2f00b00313ee3f2b2bmr529025ilu.8.1676419049253;
-        Tue, 14 Feb 2023 15:57:29 -0800 (PST)
-Received: from robh_at_kernel.org ([65.158.198.3])
-        by smtp.gmail.com with ESMTPSA id n1-20020a92d9c1000000b003139668e844sm5140215ilq.13.2023.02.14.15.57.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Feb 2023 15:57:28 -0800 (PST)
-Received: (nullmailer pid 55945 invoked by uid 1000);
-        Tue, 14 Feb 2023 23:57:26 -0000
-Date:   Tue, 14 Feb 2023 17:57:26 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        devicetree@vger.kernel.org, David Virag <virag.david003@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Chanho Park <chanho61.park@samsung.com>
-Subject: Re: [PATCH 2/6] dt-bindings: clock: exynos850: Add AUD and HSI main
- gate clocks
-Message-ID: <167641902471.55444.5418510814778598189.robh@kernel.org>
-References: <20230211064006.14981-1-semen.protsenko@linaro.org>
- <20230211064006.14981-3-semen.protsenko@linaro.org>
+        with ESMTP id S229546AbjBOCax (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 21:30:53 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36C7E3018A;
+        Tue, 14 Feb 2023 18:30:52 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D61F1B81EC2;
+        Wed, 15 Feb 2023 02:30:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C412C433D2;
+        Wed, 15 Feb 2023 02:30:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676428249;
+        bh=AGKHwaWB4r2pf6OIJmuGGiQ7u++qJmgJ46AI7QfoCnY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=piHYo2QCCVPxHHcUu0D4PnDLzWPeCK132mCT+sFpVriDNYEPDwdRFa2norYqX4k1a
+         TzozbbBPfOPqeDQuhxFqNWxsdYrjDI1KZor2ix8EvqMFHtg40MQcBaASYzCvOXGSsp
+         rOGDC9jkx/3vBtL40K9iLS5KliBRMBrOKljPVHU2vTcL3DuPv0etld6jlGJp1Ax896
+         9NXQW9uc/EhusGN+MX1ZtfXpXaRZVdStLsHA5wqEDpW+dpxOdOEnw1+b8IqGsQGLZC
+         WaYv9ZkBPZk12BV2TynueyDaMHHznXmQ73q795w9RIBmGvBPJpdtxzY1keQ6xf/KK/
+         qFtqKXfSM8pvg==
+Message-ID: <f439f476121a5624b5243b0b340bd9a4.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230211064006.14981-3-semen.protsenko@linaro.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230214164135.17039-6-quic_devipriy@quicinc.com>
+References: <20230214164135.17039-1-quic_devipriy@quicinc.com> <20230214164135.17039-6-quic_devipriy@quicinc.com>
+Subject: Re: [PATCH 5/7] dt-bindings: clock: Add PCIe pipe clock definitions
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com
+To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, bhelgaas@google.com,
+        devicetree@vger.kernel.org, kishon@kernel.org,
+        konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org,
+        kw@linux.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+        lpieralisi@kernel.org, mani@kernel.org, mturquette@baylibre.com,
+        p.zabel@pengutronix.de, robh@kernel.org, svarbanov@mm-sol.com,
+        vkoul@kernel.org
+Date:   Tue, 14 Feb 2023 18:30:47 -0800
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Sat, 11 Feb 2023 00:40:02 -0600, Sam Protsenko wrote:
-> Add main gate clocks for controlling AUD and HSI CMUs:
->   - gout_aud_cmu_aud_pclk
->   - gout_hsi_cmu_hsi_pclk
-> 
-> While at it, add missing PPMU (Performance Profiling Monitor Unit)
-> clocks for CMU_HSI.
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+Quoting Devi Priya (2023-02-14 08:41:33)
+> Add PCIe clock definitions for IPQ9574 SoC
+>=20
+> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
 > ---
->  include/dt-bindings/clock/exynos850.h | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
+>  include/dt-bindings/clock/qcom,ipq9574-gcc.h | 276 ++++++++++---------
+>  1 file changed, 140 insertions(+), 136 deletions(-)
+>=20
+> diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bi=
+ndings/clock/qcom,ipq9574-gcc.h
+> index feedfdd5e00a..c89e96d568c6 100644
+> --- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+> +++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+> @@ -74,140 +74,144 @@
+>  #define GCC_PCIE3_AXI_S_BRIDGE_CLK                     65
+>  #define GCC_PCIE3_AXI_S_CLK                            66
+>  #define PCIE0_PIPE_CLK_SRC                             67
+> -#define PCIE1_PIPE_CLK_SRC                             68
 
-Acked-by: Rob Herring <robh@kernel.org>
+Just add the new define at the end. This number and define is ABI
+forever and shouldn't change.
 
+> -#define PCIE2_PIPE_CLK_SRC                             69
+> -#define PCIE3_PIPE_CLK_SRC                             70
