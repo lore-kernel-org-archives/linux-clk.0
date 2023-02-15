@@ -2,79 +2,149 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02224C6379F
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Feb 2023 02:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7838C61DA4
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Feb 2023 02:38:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231481AbjBOCem (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Feb 2023 21:34:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56886 "EHLO
+        id S232514AbjBOCiS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Feb 2023 21:38:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230410AbjBOCel (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 21:34:41 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D424E30E93;
-        Tue, 14 Feb 2023 18:34:40 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 62A2AB81EC2;
-        Wed, 15 Feb 2023 02:34:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8577C433D2;
-        Wed, 15 Feb 2023 02:34:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676428478;
-        bh=nS4FEIZ70Fqh0a7Kg7Qs8IIchUr/qi4qC2vzbs5RozY=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=RDfSC9pgTWZ4/TaD4H6sRAMS3MY9hMlFASa8EVhiX43JMrPgmWBhUfSSQCobiN/DN
-         qH7pSdOwQxDpfYXwqmHY+4DpzRiNdaeA5eMnNba9iIZircPsGojE1TBvMw/Xridgjw
-         zecA2of1t3QC0x7kb3kmGU8DxJNl5LeMZFmYQSRkpx4QM5oteOHSy4tlaIlB95ggji
-         g2AW8JkEBSmbgOissWrL0NYgkJ9e24AzRwOnaag8Ue1fFwMMXpHiFORqv7ECARqOuS
-         4igbNBs2Qi//72BFnqhaBgoCiBcIKIXm9DezPoYsUpbYFD4q8RZpjen8z4yiOefmzW
-         4Y2XLZg0ypbZA==
-Message-ID: <d36c3b7cf315a766a9bf1a4425fea607.sboyd@kernel.org>
+        with ESMTP id S229927AbjBOCiR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Feb 2023 21:38:17 -0500
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC27F234F0
+        for <linux-clk@vger.kernel.org>; Tue, 14 Feb 2023 18:38:14 -0800 (PST)
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230215023811epoutp045ce8099f3e54f248429b90ce6a94fe3b~D3wM5p1Xd1310813108epoutp04a
+        for <linux-clk@vger.kernel.org>; Wed, 15 Feb 2023 02:38:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230215023811epoutp045ce8099f3e54f248429b90ce6a94fe3b~D3wM5p1Xd1310813108epoutp04a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1676428691;
+        bh=MYrK5odi8ehuumCYTygtU8F4voyDIDpU6cypwIrWmZI=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=nM8vPXGvsvfzTY71W2OT/0CJhCGt8Gf50kGYxAOKw77EwrCqxtgedW7YSPOuejQ36
+         RCHIBBoNwmVqHB8LmuNq2mWpR1q8JGfE1oRAnuItmsFK/ftLprfh7hZR+twAKd+JXQ
+         +/pg5hxzXZv5POcKPeeKC8cBHrUupa4MP0gs30W0=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+        20230215023810epcas2p21582246aa3ce83804095ab293fe34ce6~D3wMVwthm2340523405epcas2p2F;
+        Wed, 15 Feb 2023 02:38:10 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.99]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4PGj1G26Bbz4x9Pv; Wed, 15 Feb
+        2023 02:38:10 +0000 (GMT)
+X-AuditID: b6c32a47-ab7ff7000000e044-63-63ec4592337d
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        06.AE.57412.2954CE36; Wed, 15 Feb 2023 11:38:10 +0900 (KST)
+Mime-Version: 1.0
+Subject: RE: [PATCH 3/6] clk: samsung: clk-pll: Implement pll0818x PLL type
+Reply-To: chanho61.park@samsung.com
+Sender: CHANHO PARK <chanho61.park@samsung.com>
+From:   CHANHO PARK <chanho61.park@samsung.com>
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     David Virag <virag.david003@gmail.com>,
+        ALIM AKHTAR <alim.akhtar@samsung.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20230211064006.14981-4-semen.protsenko@linaro.org>
+X-CPGS-Detection: blocking_info_exchange
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20230215023809epcms2p37b9e2cb4c9ca136849a1accf526aa7ad@epcms2p3>
+Date:   Wed, 15 Feb 2023 11:38:09 +0900
+X-CMS-MailID: 20230215023809epcms2p37b9e2cb4c9ca136849a1accf526aa7ad
+Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230214051414.10740-1-quic_poovendh@quicinc.com>
-References: <20230214051414.10740-1-quic_poovendh@quicinc.com>
-Subject: Re: [PATCH V4 0/5] Enable crashdump collection support for IPQ9574
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
-        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
-        quic_devipriy@quicinc.com
-To:     Poovendhan Selvaraj <quic_poovendh@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, arnd@arndb.de, broonie@kernel.org,
-        catalin.marinas@arm.com, devicetree@vger.kernel.org,
-        dmitry.baryshkov@linaro.org, jassisinghbrar@gmail.com,
-        konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org,
-        lee@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, marcel.ziswiler@toradex.com,
-        mturquette@baylibre.com, nfraprado@collabora.com,
-        quic_gurus@quicinc.com, robh+dt@kernel.org, robimarko@gmail.com,
-        shawnguo@kernel.org, will@kernel.org
-Date:   Tue, 14 Feb 2023 18:34:35 -0800
-User-Agent: alot/0.10
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJJsWRmVeSWpSXmKPExsWy7bCmue4k1zfJBq0f+CwezNvGZnH9y3NW
+        i/lHzrFa7H29ld1i0+NrrBYfe+6xWlzeNYfNYsb5fUwWF0+5WrTuPcJucfhNO6vFv2sbWSye
+        9wHFT939zG6xatcfRovj7x8zOgh4vL/Ryu6xc9Zddo9NqzrZPO5c28PmsXlJvUffllWMHp83
+        yQWwR2XbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl5gDd
+        rqRQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpMC/QK07MLS7NS9fLSy2xMjQwMDIF
+        KkzIzli/yaagkafi/rN3bA2MLzm7GDk5JARMJG7Pn8XexcjFISSwg1Hi7t/PLF2MHBy8AoIS
+        f3cIg9QIC3hLrDw8ixUkLCSgLLFxWyxEWF/ie38TC4jNJqArMf/DJ1aQMSIC9xkldj/9ygji
+        MAscZ5GYdfM4I8QyXokZ7U9ZIGxpie3Lt4LFOQUcJC6tfwxVoyHxY1kvM4QtKnFz9Vt2GPv9
+        sflQNSISrffOQtUISjz4uZsR5DgJAUmJSW8iIMIBEk33QQ4CsXMkNhycxAZhm0t8fzofrJVX
+        wFdi4b4JTCA2i4CqxM0dS6FGukgs3rUIrJdZQF5i+9s5zCDjmQU0Jdbv0ofYpCxx5BYLRAWf
+        RMfhv+wwD+6Y94QJwlaXOLB9OtSzshLdcz5DXeMhsejOepYJjIqzEOE8C8muWQi7FjAyr2IU
+        Sy0ozk1PLTYqMIbHbHJ+7iZGcBrWct/BOOPtB71DjEwcjIcYJTiYlUR4hZ++SBbiTUmsrEot
+        yo8vKs1JLT7EaAr05URmKdHkfGAmyCuJNzSxNDAxMzM0NzI1MFcS55W2PZksJJCeWJKanZpa
+        kFoE08fEwSnVwFTe8SDct45FfdOPRYofT2WonLfQ/BjqXfti64uw20fKC37Pmv1dMvDezNAN
+        9cy11RWHdq+OKBSY+cJn3c5fF+26Kn7q3Fz1ZdXffaFZjpv/uve4NF8WsEsS/vDiq4v36lnf
+        Vz2aeeFD5MINATaSPxb17v295/B6rV82dq1lad95Dng6JZ8q2XVy8f1pM+fvikl8/F4j+fmf
+        CYlXc5fuKjvRIswf9+SO1u89DoHH5r8RenY+cErFcRf+53McNFfKnZi9YeUX1mNLrwZM51e0
+        rklIC/gVx9UxtclyzoPLIZJ7Xkp9EtzEPnlKdl7ojszdaXPi2w2teA82lBeIBgr+8VnLpPt+
+        8p6EKX2WYauqqo73KrEUZyQaajEXFScCAAtItWxMBAAA
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230211063955epcas2p177f52416ffb66cffa368fde02ee40411
+References: <20230211064006.14981-4-semen.protsenko@linaro.org>
+        <20230211064006.14981-1-semen.protsenko@linaro.org>
+        <CGME20230211063955epcas2p177f52416ffb66cffa368fde02ee40411@epcms2p3>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Poovendhan Selvaraj (2023-02-13 21:14:09)
->=20
-> Poovendhan Selvaraj (5):
->   dt-bindings: scm: Add compatible for IPQ9574
->   dt-bindings: mfd: Add the tcsr compatible for IPQ9574
->   arm64: dts: qcom: ipq9574: Enable the download mode support
->   arm64: dts: qcom: ipq9574: Add SMEM support
->   firmware: scm: Modify only the DLOAD bit in TCSR register for download
->     mode
->=20
->  .../bindings/firmware/qcom,scm.yaml           |  1 +
->  .../devicetree/bindings/mfd/qcom,tcsr.yaml    |  1 +
->  arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 26 ++++++++++++++++++-
->  drivers/firmware/qcom_scm.c                   | 15 +++++++----
->  4 files changed, 37 insertions(+), 6 deletions(-)
+> Subject: [PATCH 3/6] clk: samsung: clk-pll: Implement pll0818x PLL type
+> 
+> pll0818x PLL is used in Exynos850 SoC for CMU_G3D PLL. Operation-wise,
+> pll0818x is the same as pll0822x. The only difference is:
+>   - pl0822x is integer PLL with Middle FVCO (950 to 2400 MHz)
+>   - pl0818x is integer PLL with Low FVCO (600 to 1200 MHz)
+> 
+> Add pll0818x type as an alias to pll0822x.
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-I don't see any clk driver changes. Please stop Ccing linux-clk and clk
-maintainers on this series.
+Reviewed-by: Chanho Park <chanho61.park@samsung.com>
+
+> ---
+>  drivers/clk/samsung/clk-pll.c | 1 +
+>  drivers/clk/samsung/clk-pll.h | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+> index 5ceac4c25c1c..74934c6182ce 100644
+> --- a/drivers/clk/samsung/clk-pll.c
+> +++ b/drivers/clk/samsung/clk-pll.c
+> @@ -1314,6 +1314,7 @@ static void __init _samsung_clk_register_pll(struct
+> samsung_clk_provider *ctx,
+>  			init.ops = &samsung_pll35xx_clk_ops;
+>  		break;
+>  	case pll_1417x:
+> +	case pll_0818x:
+>  	case pll_0822x:
+>  		pll->enable_offs = PLL0822X_ENABLE_SHIFT;
+>  		pll->lock_offs = PLL0822X_LOCK_STAT_SHIFT; diff --git
+> a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h index
+> 5d5a58d40e7e..0725d485c6ee 100644
+> --- a/drivers/clk/samsung/clk-pll.h
+> +++ b/drivers/clk/samsung/clk-pll.h
+> @@ -34,6 +34,7 @@ enum samsung_pll_type {
+>  	pll_1451x,
+>  	pll_1452x,
+>  	pll_1460x,
+> +	pll_0818x,
+>  	pll_0822x,
+>  	pll_0831x,
+>  	pll_142xx,
+> --
+> 2.39.1
