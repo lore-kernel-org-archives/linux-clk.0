@@ -2,107 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC22CC636D4
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Feb 2023 12:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A610C636D4
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Feb 2023 15:14:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233197AbjBOMYV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Feb 2023 07:24:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45328 "EHLO
+        id S230070AbjBOPOu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Feb 2023 10:14:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231750AbjBOMYU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Feb 2023 07:24:20 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20459360BE
-        for <linux-clk@vger.kernel.org>; Wed, 15 Feb 2023 04:24:19 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id o36so13220665wms.1
-        for <linux-clk@vger.kernel.org>; Wed, 15 Feb 2023 04:24:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7YwajgLw5rpCnjJ1GWX04nnYlZlCptWHJUsJ8npJmLw=;
-        b=EMjtc5RoiZo7/FdVE1g8hyZrIFQZ6Pti6NqqN3Afza5mwQrjdmUMhW7oJtZF1QmELz
-         oAl8uB6JoRkG1XzRtPHSc6Im8vh/q9bRWUcS5LR24+HJDTVN287VuyriNrJ/vM2PKfsK
-         wg/hmVdfamOQhb1OjDckMPXoioKdrbGTVxbsWUy3JeYCkMsfvrubkomN/kfmV03/65TX
-         36uEjBo9DX1pxqE8vjyThVrCuGLeJFFZ2A4x8v2VZdoI6GMe5JtKGBM4+YST8cio5Mb2
-         1d/0KtmvkhvY76BSL0CBhb7vPg38pwtaIhbuIS8xv5IbuWCeo9zki1CSaERK2oDnz+Xs
-         j54w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7YwajgLw5rpCnjJ1GWX04nnYlZlCptWHJUsJ8npJmLw=;
-        b=j4LKvoVxC5Kbd5kxR2wGVwOpyGh4Oq8l9gvW99kcWjwozYAUxv76U3CcvjJK0pzFqx
-         vV4Gd24ME9gL9Pi/gQt4E4V47DpyXziR1BeDIGw75C5GJNAJYFacKmYy5TM9LwN0zXVD
-         qSpkJ1R4+V8Qvrz7X8A59n7KKWB7kBIoDICSNLjmYFW86xP0ILrBvTyZ+RESDmFgk+JD
-         vBa03oE499xrmqeV/9JI1BJU61FBIbOwX+slVxoIMLb0GVkD+rSjf56fs0NH8exKoGHx
-         M4Li7xXsZ9w4EMyWc4WuIlYThTKrUlF3jQB26DwQ1pRtIgMgP0N4d8lwzu2U3e5gmYCu
-         wW1g==
-X-Gm-Message-State: AO0yUKU6b50ij59A0QA49lROrxBPYPJnjvvwSth2KYExEZZk3byBlNtP
-        4ywwNBB75Njz8qO9mveea8F1IQ==
-X-Google-Smtp-Source: AK7set+AhG1msf0SDthK44D5NExgEp0Wr5rtPccuuoGRlUviAuaA3sd3k1qgdVUDkbL5OHclJRzWAg==
-X-Received: by 2002:a05:600c:5386:b0:3df:9858:c039 with SMTP id hg6-20020a05600c538600b003df9858c039mr3047558wmb.14.1676463857583;
-        Wed, 15 Feb 2023 04:24:17 -0800 (PST)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id k21-20020a05600c1c9500b003dc492e4430sm2015269wms.28.2023.02.15.04.24.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Feb 2023 04:24:17 -0800 (PST)
-Date:   Wed, 15 Feb 2023 14:24:15 +0200
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Kevin Groeneveld <kgroeneveld@lenbrook.com>
-Cc:     Abel Vesa <abelvesa@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: imx: pll14xx: fix recalc_rate for negative kdiv
-Message-ID: <Y+zO7/GBurZwihOJ@linaro.org>
-References: <20221210203835.9714-1-kgroeneveld@lenbrook.com>
+        with ESMTP id S230016AbjBOPOt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Feb 2023 10:14:49 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64A8F83F7;
+        Wed, 15 Feb 2023 07:14:48 -0800 (PST)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31FF7JSU009096;
+        Wed, 15 Feb 2023 15:14:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=og6EfHPhWk0c/cGRG5aYCGGmctUJxAFh5Ec+L4vdgdo=;
+ b=plLaL8/lIvbwd9rS1DNyP37C4aFfLUSYsdAnhUiR+Ko2gtpTbAk4EJ/w18vlbyO7FPmy
+ 4gfVjH8yQ180W/IHqf+czl1Muqw0rVzDUd5V38NID0X05onDcxI22Klrrot2fJ+ES6rB
+ gakkMdPeqgkU/6BJPGws07cU7OJ64s0fxSWiuYExxAsjn52LuuezUcxYi+Enka1TnsRE
+ Ho+TQkeaOi+FLPRvO5m3Dag7bPh8a65e2XX0eVnloAhv/uH6YfmrYU+ayX/JyB7DYFaJ
+ vMK/sDEZqhKOvKoWipr8aGHdWKEAITAgq+qUgUWgk97/hHq6kFscWrbi0W0IsYNgsWG8 Kw== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nrtmuh54a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Feb 2023 15:14:40 +0000
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31FFEd4j003134
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Feb 2023 15:14:39 GMT
+Received: from hu-mohs-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Wed, 15 Feb 2023 07:14:34 -0800
+From:   Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+To:     <swboyd@chromium.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>, <robh+dt@kernel.org>,
+        <broonie@kernel.org>, <quic_plai@quicinc.com>,
+        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_rohkumar@quicinc.com>, <quic_visr@quicinc.com>
+CC:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Subject: [RESEND v8 0/5] Add resets for ADSP based audio clock controller driver
+Date:   Wed, 15 Feb 2023 20:43:25 +0530
+Message-ID: <20230215151330.539885-1-quic_mohs@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221210203835.9714-1-kgroeneveld@lenbrook.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: p2pEsP-j0QBYFu_47Pb64Cg1EjITvJQj
+X-Proofpoint-GUID: p2pEsP-j0QBYFu_47Pb64Cg1EjITvJQj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-15_06,2023-02-15_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ suspectscore=0 mlxlogscore=652 priorityscore=1501 impostorscore=0
+ adultscore=0 spamscore=0 clxscore=1015 phishscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302150136
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-12-10 15:38:35, Kevin Groeneveld wrote:
-> kdiv is a signed 16 bit value in the DEV_CTL1 register. Commit
-> 53990cf9d5b4 ("clk: imx: pll14xx: consolidate rate calculation") changed
-> the kdiv variable from a short int to just int. When the value read from
-> the DIV_CTL1 register is assigned directly to an int the sign of the value
-> is lost resulting in incorrect results when the value is negative. Adding
-> a s16 cast to the register value fixes the issue.
-> 
-> Fixes: 53990cf9d5b4 ("clk: imx: pll14xx: consolidate rate calculation")
-> Signed-off-by: Kevin Groeneveld <kgroeneveld@lenbrook.com>
+Add resets and remove qdsp6ss clcok controller for audioreach based platforms. 
+Changes since v7:
+    -- Modiy AHB clock probing method in "Merge lpasscc into lpass_aon patch".
+    -- Fix Typo errors in "Merge lpasscc into lpass_aon patch".
+    -- Update commit message in "Merge lpasscc into lpass_aon patch" 
+Changes since v6:
+    -- Update commit message in "Merge lpasscc into lpass_aon patch" patch.
+    -- Drop "Skip lpasscorecc registration" patch.
+    -- Add comment in the code in "Skip lpass_aon_cc_pll config" patch.
+Changes since v5:
+    -- Fix compilation issue.
+Changes since v4:
+    -- Update Fixes tag in Merge lpasscc into lpass_aon patch.
+    -- Revert removal of clk_regmap structure in Merge lpasscc into lpass_aon patch.
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Changes since v3:
+    -- Remove duplicate clock resets patch.
+    -- Add binding headers for q6 clocks.
+    -- Create new patch for merging lpasscc q6 clocks into lpass_aon.
+    -- Create new patches for handling conflicts of ADSP and bypass solution.
 
-Stephen, can you pick this up through fixes?
-> ---
->  drivers/clk/imx/clk-pll14xx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-> index 1d0f79e9c346..d12194d17b10 100644
-> --- a/drivers/clk/imx/clk-pll14xx.c
-> +++ b/drivers/clk/imx/clk-pll14xx.c
-> @@ -254,7 +254,7 @@ static unsigned long clk_pll14xx_recalc_rate(struct clk_hw *hw,
->  
->  	if (pll->type == PLL_1443X) {
->  		pll_div_ctl1 = readl_relaxed(pll->base + DIV_CTL1);
-> -		kdiv = FIELD_GET(KDIV_MASK, pll_div_ctl1);
-> +		kdiv = (s16)FIELD_GET(KDIV_MASK, pll_div_ctl1);
->  	} else {
->  		kdiv = 0;
->  	}
-> -- 
-> 2.17.1
-> 
+Changes since v2:
+    -- Revert removing qdsp6ss clock control.
+    -- Add Conditional check for qdsp6ss clock registration.
+Changes since v1:
+    -- Update commit message.
+    -- Remove qdsp6ss clock control.
+
+Srinivasa Rao Mandadapu (5):
+  dt-bindings: clock: qcom,sc7280-lpasscc: Add qcom,adsp-pil-mode
+    property
+  dt-bindings: clock: lpassaudiocc-sc7280: Add binding headers for
+    lpasscc
+  clk: qcom: lpasscc-sc7280: Skip qdsp6ss clock registration
+  clk: qcom: lpassaudiocc-sc7280: Merge AHB clocks into lpass_aon
+  clk: qcom: lpassaudiocc-sc7280: Skip lpass_aon_cc_pll config
+
+ .../bindings/clock/qcom,sc7280-lpasscc.yaml       |  7 +++++++
+ drivers/clk/qcom/lpassaudiocc-sc7280.c            | 15 ++++++++++++---
+ drivers/clk/qcom/lpasscc-sc7280.c                 | 12 +++++++-----
+ .../dt-bindings/clock/qcom,lpassaudiocc-sc7280.h  |  2 ++
+ 4 files changed, 28 insertions(+), 8 deletions(-)
+
+-- 
+2.25.1
+
