@@ -2,79 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D73C636CC
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Feb 2023 10:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C8CFC64ED6
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Feb 2023 10:49:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230194AbjBPKqM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Feb 2023 05:46:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34192 "EHLO
+        id S229568AbjBPKtS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Feb 2023 05:49:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230131AbjBPKqI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Feb 2023 05:46:08 -0500
-Received: from mail-vs1-xe30.google.com (mail-vs1-xe30.google.com [IPv6:2607:f8b0:4864:20::e30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F9C855E5A
-        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:45:41 -0800 (PST)
-Received: by mail-vs1-xe30.google.com with SMTP id v16so341909vss.5
-        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:45:41 -0800 (PST)
+        with ESMTP id S230092AbjBPKtQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Feb 2023 05:49:16 -0500
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86A00518F2
+        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:49:01 -0800 (PST)
+Received: by mail-pl1-x62c.google.com with SMTP id jk14so1617120plb.8
+        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:49:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=linaro.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OikyZqRmoD0C+GYQ1KT5tc2T2n1ELXXRZ8rYdWGUuJk=;
-        b=RrQPWJV+c8IYzi438eFajsT0qqU5972irIrlYlC+toscyWM63GRyvTL2iUyy2NnSmv
-         8bNPm7/rdH8yqPmCLipD3iwwKr7YDXiLOYe08og59qJqL+hurOB73DB3AJqMqS0CTZX3
-         BkwxDqvs7v7rYRkRl51UkdXSinlG7mblKQuLM=
+        bh=p6+xi2ME8ZX2lb6ot9Rsw+Ht+BNOAfGS96KosqYuxn8=;
+        b=eYVCCu/R+7i18PIF6WHGGVYA67YPCk4fHm3eavzS4L73+VYTt48nVESZg3MOhmf4ho
+         8+hqRWB8N3G/TaxbQ8cOf89OI3QlgTDkLAotGfm1su3fBe8y+51mDrTeLdrmAU1rUO81
+         dhDL9v65NSFU9d+FCA2uRmw+/rQ8kJYQ83bocUk3d1XXgbltSqdYeTbeVzIX9hSozXNq
+         qaln9IeQm5BMA+w9iDosmMbwZ+g4qsy0NLVyCLX/g5zYhYxdaXF2t9aFu1vvCjk6Fo1u
+         8Fh+X2dGaqjJpTQHsCRYk7uCjqS/Xn/RhCrizyxwMgzRl33fJZpMgsTjB42e6Dk61Kyh
+         L4Sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OikyZqRmoD0C+GYQ1KT5tc2T2n1ELXXRZ8rYdWGUuJk=;
-        b=sxQwvzQXLj7O2jjpq5oCHhEIjQ4YYvQdodLsmM9tumBIEp0fK9kILSezHrd8qA8VJw
-         ohCOCz6+c/5JlkGP0huqYeCvVAmceyyr4Gkt114MUmfDIn6ILBBM597X/GTgrN9q9uVz
-         3lEOSWV95LPruq2PFt9dJ8GsnrhC//8iOJpE2crGwYUKIEDv7HE52yRfWBWUxES6/P+h
-         ekdKSmcPzoUg/66FyVl8SON8hcACh1Oo1ZEY437donb1w47c2cUWo17wVvbe8rp4t9/i
-         HZqz/etxC0yQrto1BlgGNzok/E8ZKZlvlDqwiy6dYZMQ7m62o/LLNCxrA769cxmAOXiR
-         miHw==
-X-Gm-Message-State: AO0yUKVzK/MgK+W7YM1FfwhjUbVG29O7vX7Z4cQLKKvQ/tf7/TOPLgOD
-        lycIkEbR5k4Y+Ou1o2sHIkBux0s7r0LKIe9fioUpuA==
-X-Google-Smtp-Source: AK7set9oX9ednFxOPyR1C2ACJClKhPaeGavzOb7y1NTEL3RKv/WKFcHuJe8veNw15alFWHK4vAigihyINbLkC/m5MLU=
-X-Received: by 2002:a67:f749:0:b0:3fc:58d:f90f with SMTP id
- w9-20020a67f749000000b003fc058df90fmr1008836vso.60.1676544338052; Thu, 16 Feb
- 2023 02:45:38 -0800 (PST)
+        bh=p6+xi2ME8ZX2lb6ot9Rsw+Ht+BNOAfGS96KosqYuxn8=;
+        b=DZsg/KomTl3JY6oApipej3jeu9qhT7uIAEmCY8ZPTy1/vRL+OVXv4qUfzTLeCw7aqg
+         zsAlsROZixQ02VbNTxgWx9IDTYDjriEXTUpYuK1Ne4krp7y/fuPS/6yE53oq0nl1c4ni
+         xypu7x725itEicOKmxkeH5TB5pTrL0s5swCYePeC1B7RBPByf5DT91RIzQZQ7vyGKhxI
+         VIvdehC5Vq0bHqF2NEiRfvsNHsvthFlYVNzgN2jiU7uBeE2rZuFKLEjxiUiQFXOs/2A/
+         gRKlCRSRjnSwstbJRlimo/rE3Llzpxs4kRhhq5KT/QkOuwBbXtzoiTOgBVUniE915tZu
+         CFkg==
+X-Gm-Message-State: AO0yUKV/baWUhC9GUmVFhbcXkEh+IOE1IPPtw0Sv9r0ikpp0FFQhZuMg
+        vF1F2pa8znQU7JbJ3n/1rcbYaFrjPtVHcPmiJ63jXQ==
+X-Google-Smtp-Source: AK7set+Um+pSF64uUoc2CSXdSt/T59upWjiP7tjnsX9rT/J3jSz7hvPvYo2xapIh3vPjsQsNJYsC8Lo0O15i7BZF0AQ=
+X-Received: by 2002:a17:903:268a:b0:19b:68e:47df with SMTP id
+ jf10-20020a170903268a00b0019b068e47dfmr36637plb.6.1676544540214; Thu, 16 Feb
+ 2023 02:49:00 -0800 (PST)
 MIME-Version: 1.0
-References: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com> <20230214134127.59273-23-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230214134127.59273-23-angelogioacchino.delregno@collabora.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Thu, 16 Feb 2023 18:45:27 +0800
-Message-ID: <CAGXv+5FcBHur0sS7aS5TQ8jDLbAXKk36BC=GMQ6Y0-NmsQQ5wg@mail.gmail.com>
-Subject: Re: [PATCH v2 22/47] clk: mediatek: mt7622: Properly use
- CLK_IS_CRITICAL flag
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
-        johnson.wang@mediatek.com, miles.chen@mediatek.com,
-        chun-jie.chen@mediatek.com, daniel@makrotopia.org,
-        fparent@baylibre.com, msp@baylibre.com, nfraprado@collabora.com,
-        rex-bc.chen@mediatek.com, zhaojh329@gmail.com,
-        sam.shih@mediatek.com, edward-jw.yang@mediatek.com,
-        yangyingliang@huawei.com, granquet@baylibre.com,
-        pablo.sun@mediatek.com, sean.wang@mediatek.com,
-        chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel@collabora.com
+References: <20221108013517.749665-1-marex@denx.de> <CAPDyKFoUdfUjZMgzU-3SS0gVstj-04FbTSjxihdar2wxu5c97w@mail.gmail.com>
+ <52578b45-cf4c-e949-b2b1-a0f251815337@denx.de> <CAPDyKFrQ0Uvhsa2AXwTdzOC1xhQ6qjRP=1TzVXC3StLv5FOoBA@mail.gmail.com>
+ <cf304d09c26416eb286f03bfe1e292aa8399b349.camel@pengutronix.de>
+ <CAPDyKFqONWFj86FbhhGXmxVTMvdwdwWUNLDqEK5gg2-bDitmxg@mail.gmail.com>
+ <6d1f2a1a-437e-01b7-cf25-af1a09ce7f3f@oss.nxp.com> <CAPDyKFo8ekN3e8kzbtftKuyYY1wv0=gn3L=oz5zBjTebRT84+w@mail.gmail.com>
+ <d04c9522-ee19-ec8f-5614-c0a805b8964e@oss.nxp.com>
+In-Reply-To: <d04c9522-ee19-ec8f-5614-c0a805b8964e@oss.nxp.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 16 Feb 2023 11:48:24 +0100
+Message-ID: <CAPDyKFrzbpF-F2Quxh4QH_HwGc5MbJ=qOcWb-yGQo+WHYNK6PQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] [RFC] PM: domains: Introduce .power_pre/post_on/off callbacks
+To:     Peng Fan <peng.fan@oss.nxp.com>
+Cc:     Lucas Stach <l.stach@pengutronix.de>, Marek Vasut <marex@denx.de>,
+        linux-pm@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        Fabio Estevam <festevam@denx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Len Brown <len.brown@intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Martin Kepplinger <martink@posteo.de>,
+        Pavel Machek <pavel@ucw.cz>, Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-imx@nxp.com, Stephen Boyd <swboyd@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 14, 2023 at 9:42 PM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
+On Thu, 16 Feb 2023 at 02:47, Peng Fan <peng.fan@oss.nxp.com> wrote:
 >
-> Instead of calling clk_prepare_enable() for clocks that shall stay
-> enabled, use the CLK_IS_CRITICAL flag, which purpose is exactly that.
+> Hi Ulf,
 >
-> Fixes: 2fc0a509e4ee ("clk: mediatek: add clock support for MT7622 SoC")
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> On 1/18/2023 8:55 PM, Ulf Hansson wrote:
+> ...
+> >>
+> >> Honestly I not have idea on how to rework the clk part to avoid holding
+> >> the clk-prepare lock when power on the phy and its power domain.
+> >
+> > I understand. Let me try to prepare a hackish patch that we can use to
+> > run some tests.
+> >
+> > Unfortunately, I can't make any promises for when, but I will do my best.
+> >
+>
+> Have you got time to give a look on this part? Or do you have any
+> suggestions that I could help with?
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+I have looked closer at this, but haven't yet got the time to actually
+post a patch. Let me see if I can do some re-prioritization of things
+at my side...
+
+Anyway, my plan is to post a "hackish" patch that we should use solely
+for testing, to make sure that the approach works. Then, I intend to
+continue to work on the complete solution, which seems to be requiring
+some reworks of locking parts in the clock framework. Although, it's
+too early for me, to say exactly how, so I can't really give you any
+pointers in this regard, sorry.
+
+>
+> Thanks,
+> Peng.
+>
+> >>
+> >> [1]https://github.com/nxp-imx/linux-imx/commit/c85126180a10439a8c7db1800529b4857d91c609
+> >>
+
+Kind regards
+Uffe
