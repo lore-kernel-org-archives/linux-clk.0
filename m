@@ -2,53 +2,54 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A73C636CC
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Feb 2023 08:01:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20876C636CC
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Feb 2023 08:12:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229681AbjBPIBk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Feb 2023 03:01:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33944 "EHLO
+        id S229506AbjBPIMM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Feb 2023 03:12:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229747AbjBPIBj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Feb 2023 03:01:39 -0500
-Received: from mail-vk1-xa31.google.com (mail-vk1-xa31.google.com [IPv6:2607:f8b0:4864:20::a31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 437B940F8
-        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 00:01:38 -0800 (PST)
-Received: by mail-vk1-xa31.google.com with SMTP id m65so781543vkh.10
-        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 00:01:38 -0800 (PST)
+        with ESMTP id S229436AbjBPIML (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Feb 2023 03:12:11 -0500
+Received: from mail-vs1-xe30.google.com (mail-vs1-xe30.google.com [IPv6:2607:f8b0:4864:20::e30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41FE123863
+        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 00:12:07 -0800 (PST)
+Received: by mail-vs1-xe30.google.com with SMTP id d66so1103136vsd.9
+        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 00:12:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yeus9HGhMFXg91Mu8k0KRBkqLS/oz0WZH65lxIAAuJ4=;
-        b=fTLKg5kLU68Zmml8hKrfx4b3q25rkw8FQ3LD2kEO+bvOdm5i9zCH+LVNaofNI86K/b
-         44ssSWiBlkNTF0SFpRSG0JfsJXnR8OWbE0Dsp+JZ5IAa4kN5/OoxHKZFg4DNSwMvFkxd
-         W2NPydnU3jvW614Q+PZI0H+NpYLfDLZ/L0TeI=
+        bh=dfTtDbofkY1pATTMEv/SAf76IfaGsSIyYJtG+jJyho8=;
+        b=lySNA01DIQWkgwtRvj/X6Ob8tzm+Mn+oE9MXXNMKCbzvD9/ImDRgbys0KYR05gATMg
+         LzjYmu0MdtH7jHJ/j02SeRJC7YJcrsh+Yc/RdgaLqqNjaRmafziWbucC1pGdMsO/eK1K
+         Py/e5RdiSHfWAh/qPd2tLOt2MiqOxsRoiL19Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Yeus9HGhMFXg91Mu8k0KRBkqLS/oz0WZH65lxIAAuJ4=;
-        b=DcjOb/rjWwmGMg8250Sfb6NLyhGRtgoBkrXXP4LRcUfWwp32s9RObhAtkc7vojrlo7
-         vZU1xGHRA8vlC6a33gVILGJQQV9wHcTlLzQ2KIwzBHtTZ/tjSjm7FwaQic5VxREPHes0
-         PksBBUrLiVCyLUqTLv3vC+9djYJOeJosS7y53i0qjbkXuplB8JajJXPjCyxvPAYxccWO
-         H5CqVQv9bfkXox5VwV1pmMQhpD90IT7TM3A37bKh534rYDb5XnODVovgFFeaN1uRAKyD
-         W6E7tRLaVWQ5AuAKc4ci5KBv3WZFDtJMHpP10XQ8uQyRBbmtV9FTueQs+++YVV+sbQF5
-         CRXA==
-X-Gm-Message-State: AO0yUKV7bmXGKN5qFf77l2R4pj+ddZOhMNgPxDe1h9mb3c4hhC/OrisD
-        /NztdSbUHlEg6kG30AiMERcXBM8N6KnfnCUqt9ug8Q==
-X-Google-Smtp-Source: AK7set8MjxO55yFgtHWdPlTTau1K5AmbjLybjRWoEF/cRynJ0TSRLk4s+xuSxJmb3mqmZlt+EtAJ2do0nFQHLfogWFE=
-X-Received: by 2002:a1f:a447:0:b0:3e8:66ce:a639 with SMTP id
- n68-20020a1fa447000000b003e866cea639mr782890vke.2.1676534497366; Thu, 16 Feb
- 2023 00:01:37 -0800 (PST)
+        bh=dfTtDbofkY1pATTMEv/SAf76IfaGsSIyYJtG+jJyho8=;
+        b=NudpmGQ0lMAgWR57NCTt6HsQskJ9WinoujyhuZGyvSb6Veh+MhYGLZ1ZG+SEb0dhSz
+         n5zU8SU+6Tu6BEqivPLmM90xRWse6hyXaNyG01Q7WYzNdDbaJdCTLJWZgKuM21gZynbZ
+         2wJ15YJp73lq0jEgrY1ZZJmXtx1ZCaVzM/v0XHurLhLRGrTGXf35XJIXkhg6wH3b8Vvo
+         DD/fh28Lmq81JqEPN3SXbhxuDMAvD/IwdwVGWY5Q2pLHMP4VaU7LbNO87Zu41DzbYowd
+         MFxScBTOgDs0xHI2brPzlHUSL3Lq7P/ggGp2ckAGPhezFn9nvO7Mj2DEepEMSvps8LV2
+         ZA1g==
+X-Gm-Message-State: AO0yUKVTc72TvlhrIVLPF1sJ3fQEwfYmUB0F98J8+4gfaKw7UM1g9FIL
+        7m/Yx6livGbr8Mnb0bKnjE285+NT7gCON6a8wXJyGw==
+X-Google-Smtp-Source: AK7set9GLZD9CV/33MRERq3c7/9G84mUxES45gMMthrTTkVHz/fhYLvw9tN1hgVZOMakIs5IYmKdncbES1i/ffC40Zg=
+X-Received: by 2002:a67:f749:0:b0:3fc:58d:f90f with SMTP id
+ w9-20020a67f749000000b003fc058df90fmr948306vso.60.1676535126416; Thu, 16 Feb
+ 2023 00:12:06 -0800 (PST)
 MIME-Version: 1.0
-References: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com> <20230214134127.59273-18-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230214134127.59273-18-angelogioacchino.delregno@collabora.com>
+References: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com> <20230214134127.59273-19-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230214134127.59273-19-angelogioacchino.delregno@collabora.com>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Thu, 16 Feb 2023 16:01:26 +0800
-Message-ID: <CAGXv+5H1Nz6Z4h4qbiuxxZEQJwDjMw4JykbDoNRGEkN3LS69Cg@mail.gmail.com>
-Subject: Re: [PATCH v2 17/47] clk: mediatek: mt8167: Convert to mtk_clk_simple_{probe,remove}()
+Date:   Thu, 16 Feb 2023 16:11:55 +0800
+Message-ID: <CAGXv+5EVLKwf8F9SxauWP4O61wxdEFwk7hhir16r82Xp-pDe7A@mail.gmail.com>
+Subject: Re: [PATCH v2 18/47] clk: mediatek: mt8183: Move apmixedsys clock
+ driver to its own file
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
@@ -70,11 +71,12 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On Tue, Feb 14, 2023 at 9:42 PM AngeloGioacchino Del Regno
 <angelogioacchino.delregno@collabora.com> wrote:
 >
-> Convert topckgen and infracfg clock drivers to use the common
-> mtk_clk_simple_probe() mechanism and change this from the old
-> "static" CLK_OF_DECLARE to be a platform driver, allowing it
-> to eventually be built as a module.
->
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> In preparation for migrating all other mt8183 clocks to the common
+> mtk_clk_simple_probe(), move apmixedsys clocks to a different file.
+> While at it, use the builtin_platform_driver() macro for it and fix
+> some indentation issues in the PLLs table.
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+You also implemented error handling. That probably deserves a separate
+patch with a Fixes tag.
+
+ChenYu
