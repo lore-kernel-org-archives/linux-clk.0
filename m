@@ -2,81 +2,155 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9092BC636CC
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Feb 2023 10:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FD7BC61DA4
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Feb 2023 10:29:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229734AbjBPK2E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Feb 2023 05:28:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34536 "EHLO
+        id S230001AbjBPK3e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Feb 2023 05:29:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbjBPK2E (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Feb 2023 05:28:04 -0500
-Received: from mail-vs1-xe36.google.com (mail-vs1-xe36.google.com [IPv6:2607:f8b0:4864:20::e36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A0801C7D0
-        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:28:03 -0800 (PST)
-Received: by mail-vs1-xe36.google.com with SMTP id v16so300137vss.5
-        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:28:03 -0800 (PST)
+        with ESMTP id S229983AbjBPK3c (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Feb 2023 05:29:32 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D435518CB
+        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:29:30 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id my5so4004305ejc.7
+        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:29:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aC0UZCTaZwODqWa60Uyhp4WnMR7OWFiD7msBoAVkJA4=;
-        b=htrWahqkdR7BI3F8kB0NkYMgKTrwmwm96JkeJku5UN773iiC76dr1Vuj3h+k3wxLuJ
-         mlVpcoxw28S9V9xkApmJxmAkvQREJCSwGQYT37ZrSVK2YtqP2fiqSDkcD6iOkLcYHRl9
-         oNWuBqSjy5fEClLHgaynPefkng2WmdqVsXmMo=
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=a9siJVZPOFvTKH6qbA3a38sGnlXPDe1LlTNA0o2LihA=;
+        b=AOvDsJeMQqZAscWrOwd++yaSB5pWNZLC1DGXNJLb/EmImWJhlUMZh/QkrYMOlg3y/I
+         oEXtb+SGVQnabDf8ii3/Tn7mSwJ3zPd0kR1SLHubef7tJuVLg0e3tcxfaY0JiQ4Ipy3H
+         uakQnIYX1URDOmbeigKL/+zcyZYnovZNVdeMUVr2oMBRDjuwEqSHOoAdUr1EkIEdTK0C
+         kJ7N3abgfqkV/8QjHokp1cHgPeOE2uRrEB5DcrmKkZ6kFO1zmpLU74ch+PrPiBXh8PlH
+         qqMHG7SNU0S+sHMEfAmRlKVYLVk0wZsqWSDDGxaRgfcAD4Hz/k1coir4sAMlAOX0atXN
+         Ry0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aC0UZCTaZwODqWa60Uyhp4WnMR7OWFiD7msBoAVkJA4=;
-        b=UyK+WDmqfqKQypxPLOuP9AYeLAgTVloMxA0OaEoawGnRDgAQlJjnmTQXSk3zJOZ/6Y
-         L3gju4Q1s/+uwGhb64FKkVa32ozDeSrZWKMfe4b+u2OcSibWqW4Z/KqLACOt0LQA91OC
-         Y4tJm7ArhtCtayPLjLbUuzbJ6zCaHqm7DtcciTKqPPWeVPPXa36idqgpynK+Y3wugez8
-         +nfgKpRgB1gl0bdk8jubmJYaD4k2PaLYSHo8msCnWSvkdcSSW/3IBXpns59wpLauwYRo
-         TJ0nKArtJ2U+Z7yQn5ZVKGKdav4hVTVL91JcUQsQ8cNO6iwyfN1VrQDaj3YUHBMp6+E4
-         GGHA==
-X-Gm-Message-State: AO0yUKUeCFGgqoRWv7vkMZReoY0bNOzcAhC7kizYyVGVjcnuXbDM1s5X
-        Wq47B7clADdBqZn2lSoubddCbKYvJSU6L+TpTeQphg==
-X-Google-Smtp-Source: AK7set9S1a9PnO5AlC0aIUcyuYB4GoqrIa5JQM3cAhXe6/vzdJZfyC8Ugb35qpq0pzDqN3S8b4loTS4XI5MfTKfgMT8=
-X-Received: by 2002:a67:f749:0:b0:3fc:58d:f90f with SMTP id
- w9-20020a67f749000000b003fc058df90fmr1001620vso.60.1676543282237; Thu, 16 Feb
- 2023 02:28:02 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a9siJVZPOFvTKH6qbA3a38sGnlXPDe1LlTNA0o2LihA=;
+        b=jqZlrd4BnGKaeZZmDMNi/MALntgZU5FKagBarNGWP4/NVjPqn76ddclOp6+niX+jlB
+         Mzrjn6w9TZUzS/BevTCpoa2Oi7GgXTLPq8DETAALczpE9uRchRmNQf/a1y/+LSLyxF2s
+         H2thoiks3jPANvnsYk+n7MDj6xfPg53CgVkCWUeS/o/hSMlUqDX2yIe6NIlJUkWvOD/j
+         ++9gAY8aHZRpwcseuRGO6w6uwyw/2o7zySNHoPIFKXmbwKPxfr+Rh+5Ff7qDHkqWx/p7
+         dpGf5V1JKTTrnKj4vf8GewTm6V+gz9j8wqJFCUnMrd4I6q37ghZdXi19QdZ8pC4bpRjR
+         3jug==
+X-Gm-Message-State: AO0yUKVni0+tHOC8yGyFS1UBRe5HNXuyg5aWxj+amxm5d/ZGOU3A+Rxi
+        1V162Fr3+ea/PKVD0PGwooY9Ng==
+X-Google-Smtp-Source: AK7set8Py/urVAnDtSVqOAA45n+CZn4wecDP3p27sIw8OB/YpmZIlVwbIdd7aUzHO+JP4miZ6M97dQ==
+X-Received: by 2002:a17:906:9f25:b0:8b1:2eef:154c with SMTP id fy37-20020a1709069f2500b008b12eef154cmr1592559ejc.0.1676543368620;
+        Thu, 16 Feb 2023 02:29:28 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id lf18-20020a170906ae5200b008af2b5cc1a2sm630463ejb.69.2023.02.16.02.29.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Feb 2023 02:29:28 -0800 (PST)
+Message-ID: <f883e857-1281-ceae-74ac-72a1f07d6413@linaro.org>
+Date:   Thu, 16 Feb 2023 11:29:24 +0100
 MIME-Version: 1.0
-References: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com> <20230214134127.59273-22-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230214134127.59273-22-angelogioacchino.delregno@collabora.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Thu, 16 Feb 2023 18:27:51 +0800
-Message-ID: <CAGXv+5GqF=PN_ZTLAHtpbOQG7VhsGJmVu8x8zVMWSn5X7uQ93g@mail.gmail.com>
-Subject: Re: [PATCH v2 21/47] clk: mediatek: Consistently use GATE_MTK() macro
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
-        johnson.wang@mediatek.com, miles.chen@mediatek.com,
-        chun-jie.chen@mediatek.com, daniel@makrotopia.org,
-        fparent@baylibre.com, msp@baylibre.com, nfraprado@collabora.com,
-        rex-bc.chen@mediatek.com, zhaojh329@gmail.com,
-        sam.shih@mediatek.com, edward-jw.yang@mediatek.com,
-        yangyingliang@huawei.com, granquet@baylibre.com,
-        pablo.sun@mediatek.com, sean.wang@mediatek.com,
-        chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 1/7] dt-bindings: PCI: qcom: Add IPQ9574 specific
+ compatible
+Content-Language: en-US
+To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org,
+        lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+        bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
+        vkoul@kernel.org, kishon@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, mani@kernel.org, p.zabel@pengutronix.de,
+        svarbanov@mm-sol.com, linux-arm-msm@vger.kernel.org,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com
+References: <20230214164135.17039-1-quic_devipriy@quicinc.com>
+ <20230214164135.17039-2-quic_devipriy@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230214164135.17039-2-quic_devipriy@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 14, 2023 at 9:42 PM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> All the various MediaTek clock drivers are, in a way or another,
-> redefining the GATE_MTK() macro with different names: while some
-> are doing that by actually using GATE_MTK(), others are copying
-> it entirely (hence, entirely redefining it).
->
-> Change all clock drivers to always and consistently use this macro.
->
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+On 14/02/2023 17:41, Devi Priya wrote:
+> Document the compatible for IPQ9574
+> 
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+> ---
+>  .../devicetree/bindings/pci/qcom,pcie.yaml    | 72 ++++++++++++++++++-
+>  1 file changed, 70 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
+> index 872817d6d2bd..dabdf2684e2d 100644
+> --- a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
+> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
+> @@ -26,6 +26,7 @@ properties:
+>            - qcom,pcie-ipq8064-v2
+>            - qcom,pcie-ipq8074
+>            - qcom,pcie-ipq8074-gen3
+> +          - qcom,pcie-ipq9574
+>            - qcom,pcie-msm8996
+>            - qcom,pcie-qcs404
+>            - qcom,pcie-sa8540p
+> @@ -44,11 +45,11 @@ properties:
+>  
+>    reg:
+>      minItems: 4
+> -    maxItems: 5
+> +    maxItems: 6
+>  
+>    reg-names:
+>      minItems: 4
+> -    maxItems: 5
+> +    maxItems: 6
+>  
+>    interrupts:
+>      minItems: 1
+> @@ -105,6 +106,8 @@ properties:
+>      items:
+>        - const: pciephy
+>  
+> +  msi-parent: true
+> +
+>    power-domains:
+>      maxItems: 1
+>  
+> @@ -173,6 +176,27 @@ allOf:
+>              - const: parf # Qualcomm specific registers
+>              - const: config # PCIe configuration space
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,pcie-ipq9574
+> +    then:
+> +      properties:
+> +        reg:
+> +          minItems: 5
+> +          maxItems: 6
+> +        reg-names:
+> +          minItems: 5
+> +          items:
+> +            - const: dbi # DesignWare PCIe registers
+> +            - const: elbi # External local bus interface registers
+> +            - const: atu # ATU address space
+> +            - const: parf # Qualcomm specific registers
+> +            - const: config # PCIe configuration space
+> +            - const: aggr_noc #PCIe aggr_noc
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+Why last one is optional? I would assume device either has it or has not.
+
+
+Best regards,
+Krzysztof
+
