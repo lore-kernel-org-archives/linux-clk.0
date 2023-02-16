@@ -2,53 +2,54 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C56C636CC
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Feb 2023 10:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45EF2C636D6
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Feb 2023 10:56:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229751AbjBPKxx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Feb 2023 05:53:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45014 "EHLO
+        id S229620AbjBPK4b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Feb 2023 05:56:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229772AbjBPKxw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Feb 2023 05:53:52 -0500
-Received: from mail-vk1-xa33.google.com (mail-vk1-xa33.google.com [IPv6:2607:f8b0:4864:20::a33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAB48A24C
-        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:53:50 -0800 (PST)
-Received: by mail-vk1-xa33.google.com with SMTP id m65so971853vkh.10
-        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:53:50 -0800 (PST)
+        with ESMTP id S229572AbjBPK4b (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Feb 2023 05:56:31 -0500
+Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1806857746
+        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:55:47 -0800 (PST)
+Received: by mail-vs1-xe29.google.com with SMTP id z7so195050vsq.6
+        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:55:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ZZSbDFZdEfEaPyBSTQ15cgo/opqxszYeJsFt/XNG7M=;
-        b=QDeUzI9Je50AAgNQq2xsr6jwaIdXh/sg9XnfmLstxf8PruPDgJBxlYv9Ps8Sk/ysOz
-         hWe77FiSlo0d1waoUne9N+N6ir/Bwa4x0vtDDfk6A713G+TNc9Di8o4NP9NXnDkn9zdV
-         Pf2QGG9/CT0qZkX05DsPCbTRAnOsS76jIhReM=
+        bh=zwzrytKcGK6J02tRdTcyqtWr69LMQ1V040meAEqQm/k=;
+        b=FqZCf6BIpw8mQzSkpFjZJU+ChtW8JK4Q4m1K9wKTgdR6oqnvR084AUnCAual8LqGmt
+         ojESksxzlOI7nXXoWAUvxR0mNEGpYu52c9hzYIFv5TLu6DN4PlAa0gs9OQMWGgj2XdEu
+         8EPu1VNHlZ4tjLfAkdPbbId6oz2M9aYW/lGIc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9ZZSbDFZdEfEaPyBSTQ15cgo/opqxszYeJsFt/XNG7M=;
-        b=DM+KR33a4GyQZMXWkRz9lrGYXg2rM8l5GJtGLRWSQ+nrulg0X3AesFobFTwUFGn0aO
-         WSF5Nbwz05zogXm6M4knCT11oBibYZp19E2SjH/rMNjaM5mx1H5yTwnqtElU/uPXwxIv
-         3HWwdnlUFY2iDVjrIGPhE0ZHuVlpKhKDPVAHylytzd6unrXBRYetzgNNwnvWYDgSdc58
-         /MkKDXWvHTMZTUnAMJGcpixKyqI8Se1F6H73wChLzAFtBXmKmSH7n28GJYJcQoVgaJEX
-         6Do0UBNtR0oHoAVWRd3wuwgBPZmV0iwfKPJ2RjcVM97bMua4DA+ksIrRjOh4IJv5MjBu
-         fOCg==
-X-Gm-Message-State: AO0yUKV/JVRx/TlNCxZ1U8igDOQU4YYB2z1AD2RMg70uH66oqTyWCroL
-        70ITWMKbv2z3wT5bNHoLPOxTagDaMxioWO2jsB+txw==
-X-Google-Smtp-Source: AK7set+4875E+RvNe3i179TDI8aAI5xqgZHcUPIULqYbeKtQL2Yp7FSemOSYazgMxk92BeQAouA2zQrE2am+d8QiTxI=
-X-Received: by 2002:a1f:a447:0:b0:3e8:66ce:a639 with SMTP id
- n68-20020a1fa447000000b003e866cea639mr840320vke.2.1676544829970; Thu, 16 Feb
- 2023 02:53:49 -0800 (PST)
+        bh=zwzrytKcGK6J02tRdTcyqtWr69LMQ1V040meAEqQm/k=;
+        b=c8x8wK+TDMGrNIawUWLaoZpCcmLicJRD5ITOJCh/c7vCsiEHPxiIVrR4mF0K7hYm/h
+         rlLf4Z5zmJ5FbOnk+3qww8Dyk95cbCS4VmIu8ZJIaNAUsSqSb2JK4XBc5TFs+zjD+bYE
+         XYtFHVkorR1wVksnpYH0LEd7B5TgZHwzUSgokHpmWkkOgBx3v5aklx509rTLcQX24PcR
+         QXnyyYa2IYWuT/1aY+d9wTBQqKPVyBzeoi8sk0FPzi0vc9edmklXGoBRDH1vBrMpp5uk
+         I9ydAqz8tv2C5YnpDsyUfeTXs5kRhL17lf/HSsi4FzqW1xmTRu6Oxj03bhsy3UIugPQg
+         ZtqQ==
+X-Gm-Message-State: AO0yUKVofzsX6Zk66OvJBdkxZJEdl29PJPKsEVgg0uB8lHsYHzHOflei
+        d2IpYKKnod5/LRoA2JuHJgdNFgPAvNdVstYXXTiR4A==
+X-Google-Smtp-Source: AK7set+wt7rp+1cILEpIFwYvVl4saH+TpOxvH8a7hVqFk6+SLeAtwsmJrkP7H1j1ZOkGe5o5irDI97UoijSEBGRRa70=
+X-Received: by 2002:a67:f749:0:b0:3fc:58d:f90f with SMTP id
+ w9-20020a67f749000000b003fc058df90fmr1013119vso.60.1676544946210; Thu, 16 Feb
+ 2023 02:55:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com> <20230214134127.59273-25-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230214134127.59273-25-angelogioacchino.delregno@collabora.com>
+References: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com> <20230214134127.59273-26-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230214134127.59273-26-angelogioacchino.delregno@collabora.com>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Thu, 16 Feb 2023 18:53:39 +0800
-Message-ID: <CAGXv+5EOQbZWrCZNf4qtxytDC=HdcZCxpkXb_Y=QFaW_g8urfQ@mail.gmail.com>
-Subject: Re: [PATCH v2 24/47] clk: mediatek: mt7622: Move infracfg to clk-mt7622-infracfg.c
+Date:   Thu, 16 Feb 2023 18:55:34 +0800
+Message-ID: <CAGXv+5GSTD+9_VwL+PniBGZ1gjt4TrNK3EOpjxeSFiMMmTjzbA@mail.gmail.com>
+Subject: Re: [PATCH v2 25/47] clk: mediatek: mt7622: Convert to platform
+ driver and simple probe
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
@@ -70,140 +71,10 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On Tue, Feb 14, 2023 at 9:42 PM AngeloGioacchino Del Regno
 <angelogioacchino.delregno@collabora.com> wrote:
 >
-> The infracfg driver cannot be converted to clk_mtk_simple_probe() as
-> it registers cpumuxes, which is not supported on the common probing
-> mechanism: for this reason, move it to its own file.
->
-> While at it, also convert it to be a platform driver instead.
+> Convert the MT7622 topckgen and pericfg clock drivers to platform
+> drivers and use the simple probe mechanism. This also allows to
+> build these clocks as modules.
 >
 > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  drivers/clk/mediatek/Makefile              |   3 +-
->  drivers/clk/mediatek/clk-mt7622-infracfg.c | 127 +++++++++++++++++++++
->  drivers/clk/mediatek/clk-mt7622.c          |  78 +------------
->  3 files changed, 134 insertions(+), 74 deletions(-)
->  create mode 100644 drivers/clk/mediatek/clk-mt7622-infracfg.c
->
-> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-> index c1bee331eebf..0f2cd735d9fd 100644
-> --- a/drivers/clk/mediatek/Makefile
-> +++ b/drivers/clk/mediatek/Makefile
-> @@ -46,7 +46,8 @@ obj-$(CONFIG_COMMON_CLK_MT2712_MFGCFG) += clk-mt2712-mfg.o
->  obj-$(CONFIG_COMMON_CLK_MT2712_MMSYS) += clk-mt2712-mm.o
->  obj-$(CONFIG_COMMON_CLK_MT2712_VDECSYS) += clk-mt2712-vdec.o
->  obj-$(CONFIG_COMMON_CLK_MT2712_VENCSYS) += clk-mt2712-venc.o
-> -obj-$(CONFIG_COMMON_CLK_MT7622) += clk-mt7622.o clk-mt7622-apmixedsys.o
-> +obj-$(CONFIG_COMMON_CLK_MT7622) += clk-mt7622.o clk-mt7622-apmixedsys.o \
-> +                                  clk-mt7622-infracfg.o
->  obj-$(CONFIG_COMMON_CLK_MT7622_ETHSYS) += clk-mt7622-eth.o
->  obj-$(CONFIG_COMMON_CLK_MT7622_HIFSYS) += clk-mt7622-hif.o
->  obj-$(CONFIG_COMMON_CLK_MT7622_AUDSYS) += clk-mt7622-aud.o
-> diff --git a/drivers/clk/mediatek/clk-mt7622-infracfg.c b/drivers/clk/mediatek/clk-mt7622-infracfg.c
-> new file mode 100644
-> index 000000000000..09d8ac4d483a
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt7622-infracfg.c
-> @@ -0,0 +1,127 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2017 MediaTek Inc.
-> + * Copyright (c) 2023 Collabora, Ltd.
-> + *               AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> + */
-> +
-> +#include <dt-bindings/clock/mt7622-clk.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include "clk-cpumux.h"
-> +#include "clk-gate.h"
-> +#include "clk-mtk.h"
-> +#include "reset.h"
-> +
-> +#define GATE_INFRA(_id, _name, _parent, _shift)                                \
-> +       GATE_MTK(_id, _name, _parent, &infra_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-> +
-> +static const struct mtk_gate_regs infra_cg_regs = {
-> +       .set_ofs = 0x40,
-> +       .clr_ofs = 0x44,
-> +       .sta_ofs = 0x48,
-> +};
-> +
-> +static const char * const infra_mux1_parents[] = {
-> +       "clkxtal",
-> +       "armpll",
-> +       "main_core_en",
-> +       "armpll"
-> +};
-> +
-> +static const struct mtk_composite cpu_muxes[] = {
-> +       MUX(CLK_INFRA_MUX1_SEL, "infra_mux1_sel", infra_mux1_parents, 0x000, 2, 2),
-> +};
-> +
-> +static const struct mtk_gate infra_clks[] = {
-> +       GATE_INFRA(CLK_INFRA_DBGCLK_PD, "infra_dbgclk_pd", "axi_sel", 0),
-> +       GATE_INFRA(CLK_INFRA_TRNG, "trng_ck", "axi_sel", 2),
-> +       GATE_INFRA(CLK_INFRA_AUDIO_PD, "infra_audio_pd", "aud_intbus_sel", 5),
-> +       GATE_INFRA(CLK_INFRA_IRRX_PD, "infra_irrx_pd", "irrx_sel", 16),
-> +       GATE_INFRA(CLK_INFRA_APXGPT_PD, "infra_apxgpt_pd", "f10m_ref_sel", 18),
-> +       GATE_INFRA(CLK_INFRA_PMIC_PD, "infra_pmic_pd", "pmicspi_sel", 22),
-> +};
-> +
-> +static u16 infrasys_rst_ofs[] = { 0x30 };
-> +
-> +static const struct mtk_clk_rst_desc clk_rst_desc = {
-> +       .version = MTK_RST_SIMPLE,
-> +       .rst_bank_ofs = infrasys_rst_ofs,
-> +       .rst_bank_nr = ARRAY_SIZE(infrasys_rst_ofs),
-> +};
-> +
-> +static const struct of_device_id of_match_clk_mt7622_infracfg[] = {
-> +       { .compatible = "mediatek,mt7622-infracfg" },
-> +       { /* sentinel */ }
-> +};
-> +
-> +static int clk_mt7622_infracfg_probe(struct platform_device *pdev)
-> +{
-> +       struct clk_hw_onecell_data *clk_data;
-> +       struct device_node *node = pdev->dev.of_node;
-> +       void __iomem *base;
-> +       int ret;
-> +
-> +       base = devm_platform_ioremap_resource(pdev, 0);
-> +       if (IS_ERR(base))
-> +               return PTR_ERR(base);
-> +
-> +       clk_data = mtk_alloc_clk_data(CLK_INFRA_NR_CLK);
-> +       if (!clk_data)
-> +               return -ENOMEM;
-> +
-> +       ret = mtk_register_reset_controller_with_dev(&pdev->dev, &clk_rst_desc);
-> +       if (ret)
-> +               goto free_clk_data;
-> +
-> +       ret = mtk_clk_register_gates(&pdev->dev, node, infra_clks,
-> +                                    ARRAY_SIZE(infra_clks), clk_data);
-> +       if (ret)
-> +               goto free_clk_data;
-> +
-> +       ret = mtk_clk_register_cpumuxes(&pdev->dev, node, cpu_muxes,
-> +                                       ARRAY_SIZE(cpu_muxes), clk_data);
-> +       if (ret)
-> +               goto unregister_gates;
-> +
-> +       ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
-> +       if (ret)
-> +               goto unregister_cpumuxes;
-> +
-> +       return 0;
-> +
-> +unregister_cpumuxes:
-> +       mtk_clk_unregister_cpumuxes(cpu_muxes, ARRAY_SIZE(cpu_muxes), clk_data);
-> +unregister_gates:
-> +       mtk_clk_unregister_gates(infra_clks, ARRAY_SIZE(infra_clks), clk_data);
-> +free_clk_data:
-> +       mtk_free_clk_data(clk_data);
 
-Implementing error handling deserves a separate commit, or at least a mention.
-
-ChenYu
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
