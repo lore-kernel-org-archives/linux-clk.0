@@ -2,279 +2,155 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 132E5C64EC4
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Feb 2023 10:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F42EC636D6
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Feb 2023 10:44:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229970AbjBPKoR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Feb 2023 05:44:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59416 "EHLO
+        id S229819AbjBPKoW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Feb 2023 05:44:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229964AbjBPKoP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Feb 2023 05:44:15 -0500
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1F4553564
-        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:43:40 -0800 (PST)
-Received: by mail-lj1-x22f.google.com with SMTP id y19so1468661ljq.7
-        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:43:40 -0800 (PST)
+        with ESMTP id S229964AbjBPKoV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Feb 2023 05:44:21 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F179E552B1
+        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:43:48 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id lf10so4109357ejc.5
+        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:43:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=cZWqD5+WE0vrCCkyQYAi5Itl0WLBYNnpAUebfznpchw=;
-        b=XsGW7R9d/2Q+oKYkodE2NHc+oan5E0D8orpefxvOcQuDLVq/UVhnOvA10Y6sB62atk
-         bWNtLmKUR0ZWDcHF7/+TgEUFx1jQMMUO3UfJ6f07/Arahjc0RtVEevgQo1RXp4RCHRKy
-         3x/MnjOX2HfLzdyaUU9FXp+Fjvr2+M1hkaxGT8FdzkSvAtEfeAPiqDBR7JX+zEtcHVqm
-         ZxJiSHXQmO8LVRHmjpEp4fSIEhcOaXZxsT214O3ALIovamNypCyUO+FnaCQxRxgmM7fl
-         3RoafX5eTNnWN7gPy2ashe+2uqJ8g1yqlv3QHQDYbCi4Cu+QdATWMtVXrKDwgBlYobMv
-         Gg2A==
+        bh=9tmGKKfjVIBTMe/d8Q3K3B9sQlvKc2r/WPRmBl0j3Rg=;
+        b=onoMjrN1fBlNr/ewi7C0X97B0C0HX9kB5Cf/ZFZMHmYwn0d9DCcS8OlDTB8BkFUbPA
+         4oilebj57DPFl5EiQqOdBa4rNQbVk4Tkef4QNpR0XzDHatNmHdsEMJryKOqVz90CThSK
+         6H807FxbWmzH1W2yYAJsJOccJzUC/JkE1W+21Hknw8snYRhXZZIZ5Z9NNJRNoDqHiqgp
+         Bnhxlu68d/euV+l4geG+44OmG134ckuwzaP4P4LrcDM9DIxnoPjF7H1bzM12TXd+NoKV
+         dv1ypqyMz3lJNBhxh7B7Wvhg+kQlcMdBbqL3HMvWqVwwqYxM5kcdV/Bq9jlYgLY99tgA
+         C+4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cZWqD5+WE0vrCCkyQYAi5Itl0WLBYNnpAUebfznpchw=;
-        b=zfMxKOQKHCRM7q55MQAZRMdTWsASH5TA2/NG6eajmZeCoNisKg7emOco1brLPpE949
-         wgEXL7gMWyG4w8t1o7UmTWMLHNz73crxnOdJSfN3RnUrqgjbGPopyya74csOogaowPmK
-         3kkTGEwbQ8uFTZ9VkRzCANFkKtaDkVaY1B2Ci6r0EL2SYp2l7ih4rjLwHlEkVNAev9BA
-         SGOSFwb/rOrtioGTYV6iQZypnXSCDeK21mDXM3y8x02X5Ee5JYdIDFAEAsIU6ZjiEmgi
-         hfiUxhig266dqfQ7SmnRtePRIcMiWzdsKvAIHyAJ2oCGeMt7WK4GFR+5rizJJI/6mJhc
-         GN+g==
-X-Gm-Message-State: AO0yUKU870e14/IOWAewfB1rt615LJNaeMz4+Tof0jFcjqIt4e70SMO/
-        VGf62ducQIvJuiJFVRW6afCA/A==
-X-Google-Smtp-Source: AK7set9DL004w9AngVNOTXPCqSXVlgWn30BcgRZQHUXpy+fzRHg2cK5ClDsZ/9Y3mjUrLQoo8dGujg==
-X-Received: by 2002:a05:651c:4c9:b0:293:4ba1:c014 with SMTP id e9-20020a05651c04c900b002934ba1c014mr2425002lji.25.1676544194404;
-        Thu, 16 Feb 2023 02:43:14 -0800 (PST)
-Received: from [192.168.1.101] (abxh117.neoplus.adsl.tpnet.pl. [83.9.1.117])
-        by smtp.gmail.com with ESMTPSA id x20-20020a2e9dd4000000b00292b759af81sm140835ljj.92.2023.02.16.02.43.13
+        bh=9tmGKKfjVIBTMe/d8Q3K3B9sQlvKc2r/WPRmBl0j3Rg=;
+        b=Bt9zbuBt2m4OB3Q04pawMpgwAdjN4IDA2BcrTv+JYHylo1iDROfWI92OhyAS1w8C43
+         59Csfafo2DmPDGwrmpEKn4ml69uLyrnTdt5vPni+myej7uMTgUz4KR8DD4FDUQQdy8vK
+         lHFtCN5o1Oh1ySAkzKIXglkZjUgse2WipZ/5LX4ag1/HM6sx/+6d0SoIBndNAVL+hEsQ
+         Ft/Neu/OOJYqSoUuBozSrzF4zH77PLh2J03X7mJBA9eRuShyQ905ouP1DZi+USgkKQGo
+         Lu4KvqWN8cuQN5anAovy1vAzuHxoyWOkZUqkPAYAhRD5GspIBdX1kBNIBIgMd58oWsl6
+         oHPw==
+X-Gm-Message-State: AO0yUKV/8HyL8vcggzeoBDZslGgvFg7G60eKzzzVaaQAttcsyT6U32NH
+        gr6lrtg4ozuY03Ne88lI3xo3Eg==
+X-Google-Smtp-Source: AK7set+zAOPDXoym9X0HJWJ3l2oohe7BBFTuWjfmepeqDdLC5b0Q9buCYCxc0feUynlvyuvDy/6l7w==
+X-Received: by 2002:a17:906:a40f:b0:873:7108:c6a9 with SMTP id l15-20020a170906a40f00b008737108c6a9mr5864023ejz.32.1676544206460;
+        Thu, 16 Feb 2023 02:43:26 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id k21-20020a170906579500b0087bd2ebe474sm630213ejq.208.2023.02.16.02.43.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Feb 2023 02:43:14 -0800 (PST)
-Message-ID: <77c66b89-ff06-3440-380f-4ef8046b945c@linaro.org>
-Date:   Thu, 16 Feb 2023 11:43:12 +0100
+        Thu, 16 Feb 2023 02:43:16 -0800 (PST)
+Message-ID: <dff2c160-faab-96c9-e37a-182cb47dc01c@linaro.org>
+Date:   Thu, 16 Feb 2023 11:43:14 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH 2/7] clk: qcom: gcc-ipq4019: convert XO and sleep clk to
- parent_data
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 1/7] dt-bindings: clock: split qcom,gcc-ipq4019 to
+ separate file
 Content-Language: en-US
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-To:     Robert Marko <robert.marko@sartura.hr>, andersson@kernel.org,
-        agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     luka.perkov@sartura.hr
+To:     Robert Marko <robert.marko@sartura.hr>
+Cc:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, luka.perkov@sartura.hr
 References: <20230214162325.312057-1-robert.marko@sartura.hr>
- <20230214162325.312057-2-robert.marko@sartura.hr>
- <bf7fc793-d12d-5a01-e3ab-d81e9059d792@linaro.org>
-In-Reply-To: <bf7fc793-d12d-5a01-e3ab-d81e9059d792@linaro.org>
+ <dcdd0a62-8d1f-d9b1-6137-34d9e68313a1@linaro.org>
+ <CA+HBbNHmDeBBBc31OayTjegi4KrAgqOiRLQscorENjqg3dEa3Q@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <CA+HBbNHmDeBBBc31OayTjegi4KrAgqOiRLQscorENjqg3dEa3Q@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 16.02.2023 11:42, Konrad Dybcio wrote:
-> 
-> 
-> On 14.02.2023 17:23, Robert Marko wrote:
->> Start off IPQ4019 GCC conversion by converting XO and sleep clks to
->> parent data in order to directly pass them.
+On 16/02/2023 11:41, Robert Marko wrote:
+> On Thu, Feb 16, 2023 at 11:16 AM Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
 >>
->> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
->> ---
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> 
-> Konrad
-Actually, any reason not to use .index?
-
-Konrad
->>  drivers/clk/qcom/gcc-ipq4019.c | 75 ++++++++++++++++++++--------------
->>  1 file changed, 45 insertions(+), 30 deletions(-)
+>> On 14/02/2023 17:23, Robert Marko wrote:
+>>> Move schema for the GCC on IPQ4019 platform to a separate file to be able
+>>> to allow passing XO and sleep clks directly to GCC.
+>>>
+>>> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+>>> ---
+>>>  .../bindings/clock/qcom,gcc-ipq4019.yaml      | 53 +++++++++++++++++++
+>>>  .../bindings/clock/qcom,gcc-other.yaml        |  2 -
+>>>  2 files changed, 53 insertions(+), 2 deletions(-)
+>>>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-ipq4019.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-ipq4019.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq4019.yaml
+>>> new file mode 100644
+>>> index 0000000000000..6ebaef2288fa3
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq4019.yaml
+>>> @@ -0,0 +1,53 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/clock/qcom,gcc-ipq4019.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Qualcomm Global Clock & Reset Controller on IPQ4019
+>>> +
+>>> +maintainers:
+>>> +  - Stephen Boyd <sboyd@kernel.org>
+>>> +  - Taniya Das <tdas@codeaurora.org>
+>>> +  - Robert Marko <robert.markoo@sartura.hr>
+>>> +
+>>> +description: |
+>>> +  Qualcomm global clock control module provides the clocks, resets and power
+>>> +  domains on IPQ4019.
+>>> +
+>>> +  See also:: include/dt-bindings/clock/qcom,gcc-ipq4019.h
+>>> +
+>>> +allOf:
+>>> +  - $ref: qcom,gcc.yaml#
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: qcom,gcc-ipq4019
+>>> +
+>>> +  clocks:
+>>> +    items:
+>>> +      - description: board XO clock
+>>> +      - description: sleep clock
+>>> +
+>>> +  clock-names:
+>>> +    items:
+>>> +      - const: xo
+>>> +      - const: sleep_clk
+>>> +
+>>> +required:
+>>> +  - compatible
 >>
->> diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
->> index 362c732536cd3..a50887d3626f7 100644
->> --- a/drivers/clk/qcom/gcc-ipq4019.c
->> +++ b/drivers/clk/qcom/gcc-ipq4019.c
->> @@ -657,8 +657,9 @@ static struct clk_branch gcc_dcd_xo_clk = {
->>  		.enable_mask = BIT(0),
->>  		.hw.init = &(struct clk_init_data){
->>  			.name = "gcc_dcd_xo_clk",
->> -			.parent_names = (const char *[]){
->> -				"xo",
->> +			.parent_data = &(const struct clk_parent_data){
->> +				.fw_name = "xo",
->> +				.name = "xo",
->>  			},
->>  			.num_parents = 1,
->>  			.ops = &clk_branch2_ops,
->> @@ -954,8 +955,9 @@ static struct clk_branch gcc_usb2_sleep_clk = {
->>  		.enable_mask = BIT(0),
->>  		.hw.init = &(struct clk_init_data){
->>  			.name = "gcc_usb2_sleep_clk",
->> -			.parent_names = (const char *[]){
->> -				"gcc_sleep_clk_src",
->> +			.parent_data = &(const struct clk_parent_data){
->> +				.fw_name = "sleep_clk",
->> +				.name = "gcc_sleep_clk_src",
->>  			},
->>  			.num_parents = 1,
->>  			.ops = &clk_branch2_ops,
->> @@ -1021,8 +1023,9 @@ static struct clk_branch gcc_usb3_sleep_clk = {
->>  		.enable_mask = BIT(0),
->>  		.hw.init = &(struct clk_init_data){
->>  			.name = "gcc_usb3_sleep_clk",
->> -			.parent_names = (const char *[]){
->> -				"gcc_sleep_clk_src",
->> +			.parent_data = &(const struct clk_parent_data){
->> +				.fw_name = "sleep_clk",
->> +				.name = "gcc_sleep_clk_src",
->>  			},
->>  			.num_parents = 1,
->>  			.ops = &clk_branch2_ops,
->> @@ -1110,8 +1113,9 @@ static struct clk_branch gcc_wcss2g_ref_clk = {
->>  		.enable_mask = BIT(0),
->>  		.hw.init = &(struct clk_init_data){
->>  			.name = "gcc_wcss2g_ref_clk",
->> -			.parent_names = (const char *[]){
->> -				"xo",
->> +			.parent_data = &(const struct clk_parent_data){
->> +				.fw_name = "xo",
->> +				.name = "xo",
->>  			},
->>  			.num_parents = 1,
->>  			.ops = &clk_branch2_ops,
->> @@ -1127,8 +1131,9 @@ static struct clk_branch gcc_wcss2g_rtc_clk = {
->>  		.enable_mask = BIT(0),
->>  		.hw.init = &(struct clk_init_data){
->>  			.name = "gcc_wcss2g_rtc_clk",
->> -			.parent_names = (const char *[]){
->> -				"gcc_sleep_clk_src",
->> +			.parent_data = &(const struct clk_parent_data){
->> +				.fw_name = "sleep_clk",
->> +				.name = "gcc_sleep_clk_src",
->>  			},
->>  			.num_parents = 1,
->>  			.ops = &clk_branch2_ops,
->> @@ -1179,8 +1184,9 @@ static struct clk_branch gcc_wcss5g_ref_clk = {
->>  		.enable_mask = BIT(0),
->>  		.hw.init = &(struct clk_init_data){
->>  			.name = "gcc_wcss5g_ref_clk",
->> -			.parent_names = (const char *[]){
->> -				"xo",
->> +			.parent_data = &(const struct clk_parent_data){
->> +				.fw_name = "xo",
->> +				.name = "xo",
->>  			},
->>  			.num_parents = 1,
->>  			.ops = &clk_branch2_ops,
->> @@ -1196,8 +1202,9 @@ static struct clk_branch gcc_wcss5g_rtc_clk = {
->>  		.enable_mask = BIT(0),
->>  		.hw.init = &(struct clk_init_data){
->>  			.name = "gcc_wcss5g_rtc_clk",
->> -			.parent_names = (const char *[]){
->> -				"gcc_sleep_clk_src",
->> +			.parent_data = &(const struct clk_parent_data){
->> +				.fw_name = "sleep_clk",
->> +				.name = "gcc_sleep_clk_src",
->>  			},
->>  			.num_parents = 1,
->>  			.ops = &clk_branch2_ops,
->> @@ -1360,8 +1367,9 @@ static struct clk_fepll gcc_apss_cpu_plldiv_clk = {
->>  		.enable_mask = BIT(0),
->>  		.hw.init = &(struct clk_init_data){
->>  			.name = "ddrpllapss",
->> -			.parent_names = (const char *[]){
->> -				"xo",
->> +			.parent_data = &(const struct clk_parent_data){
->> +				.fw_name = "xo",
->> +				.name = "xo",
->>  			},
->>  			.num_parents = 1,
->>  			.ops = &clk_regmap_cpu_div_ops,
->> @@ -1412,8 +1420,9 @@ static struct clk_fepll gcc_apss_sdcc_clk = {
->>  	.cdiv.clkr = {
->>  		.hw.init = &(struct clk_init_data){
->>  			.name = "ddrpllsdcc",
->> -			.parent_names = (const char *[]){
->> -				"xo",
->> +			.parent_data = &(const struct clk_parent_data){
->> +				.fw_name = "xo",
->> +				.name = "xo",
->>  			},
->>  			.num_parents = 1,
->>  			.ops = &clk_fepll_div_ops,
->> @@ -1427,8 +1436,9 @@ static struct clk_fepll gcc_fepll125_clk = {
->>  	.cdiv.clkr = {
->>  		.hw.init = &(struct clk_init_data){
->>  			.name = "fepll125",
->> -			.parent_names = (const char *[]){
->> -				"xo",
->> +			.parent_data = &(const struct clk_parent_data){
->> +				.fw_name = "xo",
->> +				.name = "xo",
->>  			},
->>  			.num_parents = 1,
->>  			.ops = &clk_fepll_div_ops,
->> @@ -1442,8 +1452,9 @@ static struct clk_fepll gcc_fepll125dly_clk = {
->>  	.cdiv.clkr = {
->>  		.hw.init = &(struct clk_init_data){
->>  			.name = "fepll125dly",
->> -			.parent_names = (const char *[]){
->> -				"xo",
->> +			.parent_data = &(const struct clk_parent_data){
->> +				.fw_name = "xo",
->> +				.name = "xo",
->>  			},
->>  			.num_parents = 1,
->>  			.ops = &clk_fepll_div_ops,
->> @@ -1457,8 +1468,9 @@ static struct clk_fepll gcc_fepll200_clk = {
->>  	.cdiv.clkr = {
->>  		.hw.init = &(struct clk_init_data){
->>  			.name = "fepll200",
->> -			.parent_names = (const char *[]){
->> -				"xo",
->> +			.parent_data = &(const struct clk_parent_data){
->> +				.fw_name = "xo",
->> +				.name = "xo",
->>  			},
->>  			.num_parents = 1,
->>  			.ops = &clk_fepll_div_ops,
->> @@ -1472,8 +1484,9 @@ static struct clk_fepll gcc_fepll500_clk = {
->>  	.cdiv.clkr = {
->>  		.hw.init = &(struct clk_init_data){
->>  			.name = "fepll500",
->> -			.parent_names = (const char *[]){
->> -				"xo",
->> +			.parent_data = &(const struct clk_parent_data){
->> +				.fw_name = "xo",
->> +				.name = "xo",
->>  			},
->>  			.num_parents = 1,
->>  			.ops = &clk_fepll_div_ops,
->> @@ -1497,8 +1510,9 @@ static struct clk_fepll gcc_fepllwcss2g_clk = {
->>  	.cdiv.clkr = {
->>  		.hw.init = &(struct clk_init_data){
->>  			.name = "fepllwcss2g",
->> -			.parent_names = (const char *[]){
->> -				"xo",
->> +			.parent_data = &(const struct clk_parent_data){
->> +				.fw_name = "xo",
->> +				.name = "xo",
->>  			},
->>  			.num_parents = 1,
->>  			.ops = &clk_fepll_div_ops,
->> @@ -1515,8 +1529,9 @@ static struct clk_fepll gcc_fepllwcss5g_clk = {
->>  	.cdiv.clkr = {
->>  		.hw.init = &(struct clk_init_data){
->>  			.name = "fepllwcss5g",
->> -			.parent_names = (const char *[]){
->> -				"xo",
->> +			.parent_data = &(const struct clk_parent_data){
->> +				.fw_name = "xo",
->> +				.name = "xo",
->>  			},
->>  			.num_parents = 1,
->>  			.ops = &clk_fepll_div_ops,
+>> Aren't the clocks now required? Will it keep working without them?
+> 
+> There are not required, this just allows passing them but the driver is
+> still using global matching until in patch 2 XO and sleep clocks are converted
+> to use parent data and in patch 3 they are passed via phandles to GCC,
+> however, even then global matching by name is preserved in the driver
+> as a fallback
+> to keep backward compatibility.
+> 
+> However, I see your point, after parent data conversion they should be
+> required by
+> schema as that is preferred over global matching.
+
+Yes. Especially that these clock inputs must be there for the device to
+operate, so regardless of how Linux implements this, the hardware
+requires them, I think.
+
+Best regards,
+Krzysztof
+
