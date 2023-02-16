@@ -2,155 +2,79 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F42EC636D6
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Feb 2023 10:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D73C636CC
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Feb 2023 10:46:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229819AbjBPKoW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Feb 2023 05:44:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59646 "EHLO
+        id S230194AbjBPKqM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Feb 2023 05:46:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229964AbjBPKoV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Feb 2023 05:44:21 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F179E552B1
-        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:43:48 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id lf10so4109357ejc.5
-        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:43:48 -0800 (PST)
+        with ESMTP id S230131AbjBPKqI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Feb 2023 05:46:08 -0500
+Received: from mail-vs1-xe30.google.com (mail-vs1-xe30.google.com [IPv6:2607:f8b0:4864:20::e30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F9C855E5A
+        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:45:41 -0800 (PST)
+Received: by mail-vs1-xe30.google.com with SMTP id v16so341909vss.5
+        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 02:45:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9tmGKKfjVIBTMe/d8Q3K3B9sQlvKc2r/WPRmBl0j3Rg=;
-        b=onoMjrN1fBlNr/ewi7C0X97B0C0HX9kB5Cf/ZFZMHmYwn0d9DCcS8OlDTB8BkFUbPA
-         4oilebj57DPFl5EiQqOdBa4rNQbVk4Tkef4QNpR0XzDHatNmHdsEMJryKOqVz90CThSK
-         6H807FxbWmzH1W2yYAJsJOccJzUC/JkE1W+21Hknw8snYRhXZZIZ5Z9NNJRNoDqHiqgp
-         Bnhxlu68d/euV+l4geG+44OmG134ckuwzaP4P4LrcDM9DIxnoPjF7H1bzM12TXd+NoKV
-         dv1ypqyMz3lJNBhxh7B7Wvhg+kQlcMdBbqL3HMvWqVwwqYxM5kcdV/Bq9jlYgLY99tgA
-         C+4g==
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OikyZqRmoD0C+GYQ1KT5tc2T2n1ELXXRZ8rYdWGUuJk=;
+        b=RrQPWJV+c8IYzi438eFajsT0qqU5972irIrlYlC+toscyWM63GRyvTL2iUyy2NnSmv
+         8bNPm7/rdH8yqPmCLipD3iwwKr7YDXiLOYe08og59qJqL+hurOB73DB3AJqMqS0CTZX3
+         BkwxDqvs7v7rYRkRl51UkdXSinlG7mblKQuLM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9tmGKKfjVIBTMe/d8Q3K3B9sQlvKc2r/WPRmBl0j3Rg=;
-        b=Bt9zbuBt2m4OB3Q04pawMpgwAdjN4IDA2BcrTv+JYHylo1iDROfWI92OhyAS1w8C43
-         59Csfafo2DmPDGwrmpEKn4ml69uLyrnTdt5vPni+myej7uMTgUz4KR8DD4FDUQQdy8vK
-         lHFtCN5o1Oh1ySAkzKIXglkZjUgse2WipZ/5LX4ag1/HM6sx/+6d0SoIBndNAVL+hEsQ
-         Ft/Neu/OOJYqSoUuBozSrzF4zH77PLh2J03X7mJBA9eRuShyQ905ouP1DZi+USgkKQGo
-         Lu4KvqWN8cuQN5anAovy1vAzuHxoyWOkZUqkPAYAhRD5GspIBdX1kBNIBIgMd58oWsl6
-         oHPw==
-X-Gm-Message-State: AO0yUKV/8HyL8vcggzeoBDZslGgvFg7G60eKzzzVaaQAttcsyT6U32NH
-        gr6lrtg4ozuY03Ne88lI3xo3Eg==
-X-Google-Smtp-Source: AK7set+zAOPDXoym9X0HJWJ3l2oohe7BBFTuWjfmepeqDdLC5b0Q9buCYCxc0feUynlvyuvDy/6l7w==
-X-Received: by 2002:a17:906:a40f:b0:873:7108:c6a9 with SMTP id l15-20020a170906a40f00b008737108c6a9mr5864023ejz.32.1676544206460;
-        Thu, 16 Feb 2023 02:43:26 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id k21-20020a170906579500b0087bd2ebe474sm630213ejq.208.2023.02.16.02.43.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Feb 2023 02:43:16 -0800 (PST)
-Message-ID: <dff2c160-faab-96c9-e37a-182cb47dc01c@linaro.org>
-Date:   Thu, 16 Feb 2023 11:43:14 +0100
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OikyZqRmoD0C+GYQ1KT5tc2T2n1ELXXRZ8rYdWGUuJk=;
+        b=sxQwvzQXLj7O2jjpq5oCHhEIjQ4YYvQdodLsmM9tumBIEp0fK9kILSezHrd8qA8VJw
+         ohCOCz6+c/5JlkGP0huqYeCvVAmceyyr4Gkt114MUmfDIn6ILBBM597X/GTgrN9q9uVz
+         3lEOSWV95LPruq2PFt9dJ8GsnrhC//8iOJpE2crGwYUKIEDv7HE52yRfWBWUxES6/P+h
+         ekdKSmcPzoUg/66FyVl8SON8hcACh1Oo1ZEY437donb1w47c2cUWo17wVvbe8rp4t9/i
+         HZqz/etxC0yQrto1BlgGNzok/E8ZKZlvlDqwiy6dYZMQ7m62o/LLNCxrA769cxmAOXiR
+         miHw==
+X-Gm-Message-State: AO0yUKVzK/MgK+W7YM1FfwhjUbVG29O7vX7Z4cQLKKvQ/tf7/TOPLgOD
+        lycIkEbR5k4Y+Ou1o2sHIkBux0s7r0LKIe9fioUpuA==
+X-Google-Smtp-Source: AK7set9oX9ednFxOPyR1C2ACJClKhPaeGavzOb7y1NTEL3RKv/WKFcHuJe8veNw15alFWHK4vAigihyINbLkC/m5MLU=
+X-Received: by 2002:a67:f749:0:b0:3fc:58d:f90f with SMTP id
+ w9-20020a67f749000000b003fc058df90fmr1008836vso.60.1676544338052; Thu, 16 Feb
+ 2023 02:45:38 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 1/7] dt-bindings: clock: split qcom,gcc-ipq4019 to
- separate file
-Content-Language: en-US
-To:     Robert Marko <robert.marko@sartura.hr>
-Cc:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, luka.perkov@sartura.hr
-References: <20230214162325.312057-1-robert.marko@sartura.hr>
- <dcdd0a62-8d1f-d9b1-6137-34d9e68313a1@linaro.org>
- <CA+HBbNHmDeBBBc31OayTjegi4KrAgqOiRLQscorENjqg3dEa3Q@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CA+HBbNHmDeBBBc31OayTjegi4KrAgqOiRLQscorENjqg3dEa3Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com> <20230214134127.59273-23-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230214134127.59273-23-angelogioacchino.delregno@collabora.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Thu, 16 Feb 2023 18:45:27 +0800
+Message-ID: <CAGXv+5FcBHur0sS7aS5TQ8jDLbAXKk36BC=GMQ6Y0-NmsQQ5wg@mail.gmail.com>
+Subject: Re: [PATCH v2 22/47] clk: mediatek: mt7622: Properly use
+ CLK_IS_CRITICAL flag
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        johnson.wang@mediatek.com, miles.chen@mediatek.com,
+        chun-jie.chen@mediatek.com, daniel@makrotopia.org,
+        fparent@baylibre.com, msp@baylibre.com, nfraprado@collabora.com,
+        rex-bc.chen@mediatek.com, zhaojh329@gmail.com,
+        sam.shih@mediatek.com, edward-jw.yang@mediatek.com,
+        yangyingliang@huawei.com, granquet@baylibre.com,
+        pablo.sun@mediatek.com, sean.wang@mediatek.com,
+        chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16/02/2023 11:41, Robert Marko wrote:
-> On Thu, Feb 16, 2023 at 11:16 AM Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->>
->> On 14/02/2023 17:23, Robert Marko wrote:
->>> Move schema for the GCC on IPQ4019 platform to a separate file to be able
->>> to allow passing XO and sleep clks directly to GCC.
->>>
->>> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
->>> ---
->>>  .../bindings/clock/qcom,gcc-ipq4019.yaml      | 53 +++++++++++++++++++
->>>  .../bindings/clock/qcom,gcc-other.yaml        |  2 -
->>>  2 files changed, 53 insertions(+), 2 deletions(-)
->>>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-ipq4019.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-ipq4019.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq4019.yaml
->>> new file mode 100644
->>> index 0000000000000..6ebaef2288fa3
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq4019.yaml
->>> @@ -0,0 +1,53 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/clock/qcom,gcc-ipq4019.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Qualcomm Global Clock & Reset Controller on IPQ4019
->>> +
->>> +maintainers:
->>> +  - Stephen Boyd <sboyd@kernel.org>
->>> +  - Taniya Das <tdas@codeaurora.org>
->>> +  - Robert Marko <robert.markoo@sartura.hr>
->>> +
->>> +description: |
->>> +  Qualcomm global clock control module provides the clocks, resets and power
->>> +  domains on IPQ4019.
->>> +
->>> +  See also:: include/dt-bindings/clock/qcom,gcc-ipq4019.h
->>> +
->>> +allOf:
->>> +  - $ref: qcom,gcc.yaml#
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: qcom,gcc-ipq4019
->>> +
->>> +  clocks:
->>> +    items:
->>> +      - description: board XO clock
->>> +      - description: sleep clock
->>> +
->>> +  clock-names:
->>> +    items:
->>> +      - const: xo
->>> +      - const: sleep_clk
->>> +
->>> +required:
->>> +  - compatible
->>
->> Aren't the clocks now required? Will it keep working without them?
-> 
-> There are not required, this just allows passing them but the driver is
-> still using global matching until in patch 2 XO and sleep clocks are converted
-> to use parent data and in patch 3 they are passed via phandles to GCC,
-> however, even then global matching by name is preserved in the driver
-> as a fallback
-> to keep backward compatibility.
-> 
-> However, I see your point, after parent data conversion they should be
-> required by
-> schema as that is preferred over global matching.
+On Tue, Feb 14, 2023 at 9:42 PM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Instead of calling clk_prepare_enable() for clocks that shall stay
+> enabled, use the CLK_IS_CRITICAL flag, which purpose is exactly that.
+>
+> Fixes: 2fc0a509e4ee ("clk: mediatek: add clock support for MT7622 SoC")
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Yes. Especially that these clock inputs must be there for the device to
-operate, so regardless of how Linux implements this, the hardware
-requires them, I think.
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
