@@ -2,39 +2,41 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6725DC64EC4
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Feb 2023 15:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26110C64ED6
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Feb 2023 15:20:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229462AbjBPPUc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Feb 2023 10:20:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53690 "EHLO
+        id S229612AbjBPPUd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Feb 2023 10:20:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229714AbjBPPUb (ORCPT
+        with ESMTP id S229836AbjBPPUb (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Feb 2023 10:20:31 -0500
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E08993FA
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E4B2C660
         for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 07:20:28 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:4605:3635:9491:c6bc])
-        by xavier.telenet-ops.be with bizsmtp
-        id MrLR2900J3wKl5501rLRBu; Thu, 16 Feb 2023 16:20:25 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id MrLR2900C3wKl5506rLR1z; Thu, 16 Feb 2023 16:20:25 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pSg3F-009BUr-T8;
+        id 1pSg3F-009BUs-TS;
         Thu, 16 Feb 2023 16:20:24 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1pSg3c-005tX6-Jw;
+        id 1pSg3c-005tXC-Le;
         Thu, 16 Feb 2023 16:20:24 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] clk: renesas: R-Car V3M/V3H: Add Z2 clocks
-Date:   Thu, 16 Feb 2023 16:20:17 +0100
-Message-Id: <cover.1676560357.git.geert+renesas@glider.be>
+Subject: [PATCH 2/2] clk: renesas: r8a77980: Add Z2 clock
+Date:   Thu, 16 Feb 2023 16:20:19 +0100
+Message-Id: <aad9eaa57acf65cbe43e4d374066a72d760d54d8.1676560357.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1676560357.git.geert+renesas@glider.be>
+References: <cover.1676560357.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -42,46 +44,38 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi all,
+Add support for the Z2 (Cortex-A53 System CPU) clock on R-Car V3H, which
+uses a fixed SYS-CPU divider.
 
-This patch series adds support for the Z2 (Cortex-A53 System CPU) clocks
-on the Renesas R-Car V3M and V3H SoCs.  These clocks use a fixed SYS-CPU
-divider.
-
-Note that the BSP went to great lengths to describe them as programmable
-Z clocks, like on most other R-Car Gen3 SoCs, but add quirks to the Z
-clock driver to use a fixed divider when running on R-Car V3M or V3H.
-I chose the simpler way...
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Note that the BSP went to great lengths to describe this clock as a
+programmable Z clock, like on most other R-Car Gen3 SoCs, but add a
+quirk to the Z clock driver to use a fixed divider when running on
+R-Car V3H.
 
 According to R-Car Series, 3rd Generation Hardware User’s Manual Rev.
-2.30 and earlier, the SYS-CPU dividers on R-Car V3M and V3H are fixed
-dividers.  Furthermore, the Frequency control register C, which is used
-on other SoCs to control the SYS-CPU divider, is documented not to exist
-on these SoCs (but empirical evidence shows that it does exist, and that
-the Z2FC field works as expected (tested on Eagle and Condor)).
-
-I intend to queue this series in renesas-clk-for-v6.4.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (2):
-  clk: renesas: r8a77970: Add Z2 clock
-  clk: renesas: r8a77980: Add Z2 clock
-
- drivers/clk/renesas/r8a77970-cpg-mssr.c | 1 +
+2.30 and earlier, the SYS-CPU divider on R-Car V3H is a fixed divider.
+Furthermore, the Frequency control register C, which is used on other
+SoCs to control the SYS-CPU divider, is documented not to exist (but
+empirical evidence shows that it does exist, and that the Z2FC field
+works as expected).
+---
  drivers/clk/renesas/r8a77980-cpg-mssr.c | 1 +
- 2 files changed, 2 insertions(+)
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/clk/renesas/r8a77980-cpg-mssr.c b/drivers/clk/renesas/r8a77980-cpg-mssr.c
+index 6dc63eaf115566f9..bac92c606d0bf808 100644
+--- a/drivers/clk/renesas/r8a77980-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77980-cpg-mssr.c
+@@ -72,6 +72,7 @@ static const struct cpg_core_clk r8a77980_core_clks[] __initconst = {
+ 	DEF_RATE(".oco",	CLK_OCO,           32768),
+ 
+ 	/* Core Clock Outputs */
++	DEF_FIXED("z2",		R8A77980_CLK_Z2,    CLK_PLL2,       4, 1),
+ 	DEF_FIXED("ztr",	R8A77980_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
+ 	DEF_FIXED("ztrd2",	R8A77980_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
+ 	DEF_FIXED("zt",		R8A77980_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
 -- 
 2.34.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
