@@ -2,125 +2,138 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18135C05027
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 16:28:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA59C64ED8
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 18:01:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229966AbjBQQ2B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Feb 2023 11:28:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37108 "EHLO
+        id S229605AbjBQSBU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Feb 2023 13:01:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230039AbjBQQ2A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 11:28:00 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03F7714993;
-        Fri, 17 Feb 2023 08:27:40 -0800 (PST)
+        with ESMTP id S229516AbjBQSBT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 13:01:19 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3FD029E3A;
+        Fri, 17 Feb 2023 10:01:17 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8E41561E5D;
-        Fri, 17 Feb 2023 16:27:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 319E9C433EF;
-        Fri, 17 Feb 2023 16:27:37 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F0C9D61F1E;
+        Fri, 17 Feb 2023 18:01:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74A06C433D2;
+        Fri, 17 Feb 2023 18:01:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676651259;
-        bh=/7n/cDvLrD1MXgANvvSLbsLrYC+ZynSXWqXQNtEzktE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JQHjgKLShFCu5HAbOO1K5ZDvuKqqVeT7xE/idx4eN0YIW/K0UasNEHeI3XABJC7I9
-         Vf5wgVsQzkFPIwCfpt3c9eZdigzQg4aNmrJZSGmmiK2lz0UfEvfR/4jjdedtkYDNE1
-         EypnzsRRkRIINmCxlBMRnv6LLfYPj113Outk3HAZifmYM3D12C/SBUJ5jGrsmzmuRp
-         5D3t+Meu4JZbcHIdsLu31iFzIpa4tIukVg3SJZsGOWHlAWdOliy4k4XYnv+Ndj+JYF
-         8+b169D7idvuqlNoQvr5zKdjwlJL5jGkL26fSVg6/dFJtlAOC3MEaUN/ilmSWruiIA
-         xBJgpKnd6Lnsw==
-Date:   Fri, 17 Feb 2023 16:27:34 +0000
+        s=k20201202; t=1676656876;
+        bh=9IlSeuq9CAxECTILWyWm/AaYhbpQX8KMl7DQW/S45fw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TtYfXVs6f4cTXtZTzgxFox8eqLBulwVarNzV1junGS9C2DGYyVh0Hz53t+jB1QyQ3
+         sRAU4BxlcMiG/9LYJNWVvMK9mAletuA2L0ilRmtd2xBEKCAlBHtYhJRxUlMY9/8s4N
+         Z9TORfvYJ/D4SZlOuk+5mRk6ysWMc4kCsdREvV6hwTnl9UzGaQyBAAvcvksIgQkIt2
+         gUBtaK33ITjlLRX0yMpcz/fvNMdfF4t1cBe5d0UjsNn41uIBFqP4vLmNSDDQqR9t2/
+         YXbkb+Ixqk3ReB98w6Jb9Qgr1y4wSlnPRfEvDSj9+EikmGiuoUTy58OPYuHaVLRLs8
+         c9QIsfgtfJAgQ==
 From:   Conor Dooley <conor@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Conor Dooley <conor.dooley@microchip.com>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>
+Cc:     conor@kernel.org, Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 07/11] dt-bindings: clock: Add StarFive JH7110 system
- clock and reset generator
-Message-ID: <Y++q9ln8P3XegqfN@spud>
-References: <Y6JB37Pd5TZoGMy4@spud>
- <7a7bccb1-4d47-3d32-36e6-4aab7b5b8dad@starfivetech.com>
- <Y6tSWB2+98a8k9Qw@spud>
- <5cf0fe71-fd17-fb28-c01e-28356081ba76@starfivetech.com>
- <Y+5z8skN2DuvxDEL@spud>
- <68e61f28-daec-ce72-726a-1fffe8e94829@starfivetech.com>
- <Y+8x/KSujhgNLAd6@wendy>
- <d3b06d0b-ff17-ebab-bae5-e1ec836fe667@starfivetech.com>
- <Y++B43uCnPQlRYFi@wendy>
- <dcba75b5-7b62-35aa-6836-5d5edd785002@linaro.org>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Albert Ou <aou@eecs.berkeley.edu>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Sagar Kadam <sagar.kadam@openfive.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>
+Subject: [PATCH] dt-bindings: drop Sagar Kadam from SiFive binding maintainership
+Date:   Fri, 17 Feb 2023 18:00:36 +0000
+Message-Id: <20230217180035.39658-1-conor@kernel.org>
+X-Mailer: git-send-email 2.39.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="SyOFsqOpDx+l/Uu8"
-Content-Disposition: inline
-In-Reply-To: <dcba75b5-7b62-35aa-6836-5d5edd785002@linaro.org>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3439; i=conor.dooley@microchip.com; h=from:subject; bh=nhdSMpAMHcDxZQ/G9fKc2bxint/gSH+fhiDQTwTY+dM=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDMnvDxxet0Qq9OYUtjIF+YPbTy3dWHe3ct2aXeseJXkoXMuv PK43p6OUhUGMg0FWTJEl8XZfi9T6Py47nHvewsxhZQIZwsDFKQATmanO8M8w4umr3fe2nJj14Cj37f ZaJhuGY/fWH3z9stbvZJ76XuvLDP/rJrNI3zpvpvzw3kyDnHedXx5O3uehJr2z9fcau0/51Tl8AA==
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Conor Dooley <conor.dooley@microchip.com>
 
---SyOFsqOpDx+l/Uu8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sagar's email listed in maintainers is bouncing as his division was sold
+off by the company. I attempted to contact him some days ago on what the
+bounce email told me was his new contact information, but am yet to
+receive a response.
 
-On Fri, Feb 17, 2023 at 04:47:48PM +0100, Krzysztof Kozlowski wrote:
-> On 17/02/2023 14:32, Conor Dooley wrote:
-> >>>> Yes, it is.
-> >>>
-> >>> Which would then make GMAC1 RGMII RX optional, rather than required?
-> >>
-> >> If thinking in this way, I must say yes, it is optional. But actually
-> >> GMAC1 RGMII RX feeds gmac1_rx by default.=20
-> >> For a mux, it usually works if you populate only one input to it.
-> >> Does it mean all the other inputs are optional? And how can we define
-> >> which input is required?
-> >=20
-> > I'm not sure, that is a question for Krzysztof and/or Rob.
->=20
-> That's a long thread, please summarize what you ask. Otherwise I have no
-> clue what is the question.
+Paul and Palmer are listed on each of the bindings, both of whom were
+alive & well as of Wednesday so the bindings remain maintained.
 
-Sorry. I tried to preserve the context of the conversation the last time
-I cropped it so that things would be contained on one email.
+CC: Sagar Kadam <sagar.kadam@openfive.com>
+CC: Sagar Kadam <sagar.kadam@sifive.com>
+Link: https://lore.kernel.org/all/785425ca-4000-a7e4-16d6-4d68c91b158d@kernel.org/
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+Palmer/Paul, as mentioned Wednesday, here you go!
+---
+ Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml | 1 -
+ .../bindings/interrupt-controller/sifive,plic-1.0.0.yaml       | 1 -
+ Documentation/devicetree/bindings/pwm/pwm-sifive.yaml          | 1 -
+ Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml    | 3 +--
+ 4 files changed, 1 insertion(+), 5 deletions(-)
 
-For me at least, I am wondering how you convey that out of a list of
-clock inputs (for example a, b, c, d) that two of the clocks are inputs
-to a mux and it is only required to provide one of the two (say b & c).
+diff --git a/Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml b/Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml
+index c3be1b600007..c79e752283aa 100644
+--- a/Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml
++++ b/Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml
+@@ -8,7 +8,6 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: SiFive FU540 Power Reset Clock Interrupt Controller (PRCI)
+ 
+ maintainers:
+-  - Sagar Kadam <sagar.kadam@sifive.com>
+   - Paul Walmsley  <paul.walmsley@sifive.com>
+ 
+ description:
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+index 99e01f4d0a69..63bc89e13480 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+@@ -45,7 +45,6 @@ description:
+   from S-mode. So add thead,c900-plic to distinguish them.
+ 
+ maintainers:
+-  - Sagar Kadam <sagar.kadam@sifive.com>
+   - Paul Walmsley  <paul.walmsley@sifive.com>
+   - Palmer Dabbelt <palmer@dabbelt.com>
+ 
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml b/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
+index 605c1766dba8..bae993128981 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
++++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
+@@ -8,7 +8,6 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: SiFive PWM controller
+ 
+ maintainers:
+-  - Sagar Kadam <sagar.kadam@sifive.com>
+   - Paul Walmsley <paul.walmsley@sifive.com>
+ 
+ description:
+diff --git a/Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml b/Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml
+index bf3f07421f7e..0551a0d1b3df 100644
+--- a/Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml
++++ b/Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml
+@@ -8,8 +8,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: SiFive Composable Cache Controller
+ 
+ maintainers:
+-  - Sagar Kadam <sagar.kadam@sifive.com>
+-  - Paul Walmsley  <paul.walmsley@sifive.com>
++  - Paul Walmsley <paul.walmsley@sifive.com>
+ 
+ description:
+   The SiFive Composable Cache Controller is used to provide access to fast copies
+-- 
+2.39.1
 
-> Does the mux works correctly if clock input is not connected? I mean,
-> are you now talking about real hardware or some simplification from SW
-> point of view?
-
-I'm coming at this from an angle of "is a StarFive customer going to show
-up with a devicetree containing dummy fixed-clocks to satisfy dtbs_check
-because they opted to only populate one input to the mux".
-I don't really care about implications for the driver, just about
-whether the hardware allows for inputs to the mux to be left
-un-populated.
-
-Cheers,
-Conor.
-
-
---SyOFsqOpDx+l/Uu8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY++q5AAKCRB4tDGHoIJi
-0of0AP9b4nngiPS2EpyTXEZ+/C7SPEoZpvSl1nRB1hqHGRePTgD/e/wC+yu8sTRR
-cTy0Wvob6bxyC4j38a5p5UnXb+ZTtgw=
-=Wk+p
------END PGP SIGNATURE-----
-
---SyOFsqOpDx+l/Uu8--
