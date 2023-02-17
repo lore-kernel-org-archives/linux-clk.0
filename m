@@ -2,130 +2,125 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7AA3C05027
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 16:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18135C05027
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 16:28:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229563AbjBQQEY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Feb 2023 11:04:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33586 "EHLO
+        id S229966AbjBQQ2B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Feb 2023 11:28:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229729AbjBQQEX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 11:04:23 -0500
-X-Greylist: delayed 451 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 17 Feb 2023 08:04:22 PST
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A1B2768E75
-        for <linux-clk@vger.kernel.org>; Fri, 17 Feb 2023 08:04:22 -0800 (PST)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id T35cpSuxkFOC9T35cp2ZIu; Fri, 17 Feb 2023 16:56:01 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 17 Feb 2023 16:56:01 +0100
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-clk@vger.kernel.org
-Subject: [PATCH] clk: Reorder fields in 'struct clk_fractional_divider'
-Date:   Fri, 17 Feb 2023 16:55:55 +0100
-Message-Id: <d1874eb8848d5f97f87337011188640a1463a666.1676649335.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S230039AbjBQQ2A (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 11:28:00 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03F7714993;
+        Fri, 17 Feb 2023 08:27:40 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8E41561E5D;
+        Fri, 17 Feb 2023 16:27:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 319E9C433EF;
+        Fri, 17 Feb 2023 16:27:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676651259;
+        bh=/7n/cDvLrD1MXgANvvSLbsLrYC+ZynSXWqXQNtEzktE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JQHjgKLShFCu5HAbOO1K5ZDvuKqqVeT7xE/idx4eN0YIW/K0UasNEHeI3XABJC7I9
+         Vf5wgVsQzkFPIwCfpt3c9eZdigzQg4aNmrJZSGmmiK2lz0UfEvfR/4jjdedtkYDNE1
+         EypnzsRRkRIINmCxlBMRnv6LLfYPj113Outk3HAZifmYM3D12C/SBUJ5jGrsmzmuRp
+         5D3t+Meu4JZbcHIdsLu31iFzIpa4tIukVg3SJZsGOWHlAWdOliy4k4XYnv+Ndj+JYF
+         8+b169D7idvuqlNoQvr5zKdjwlJL5jGkL26fSVg6/dFJtlAOC3MEaUN/ilmSWruiIA
+         xBJgpKnd6Lnsw==
+Date:   Fri, 17 Feb 2023 16:27:34 +0000
+From:   Conor Dooley <conor@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Conor Dooley <conor.dooley@microchip.com>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 07/11] dt-bindings: clock: Add StarFive JH7110 system
+ clock and reset generator
+Message-ID: <Y++q9ln8P3XegqfN@spud>
+References: <Y6JB37Pd5TZoGMy4@spud>
+ <7a7bccb1-4d47-3d32-36e6-4aab7b5b8dad@starfivetech.com>
+ <Y6tSWB2+98a8k9Qw@spud>
+ <5cf0fe71-fd17-fb28-c01e-28356081ba76@starfivetech.com>
+ <Y+5z8skN2DuvxDEL@spud>
+ <68e61f28-daec-ce72-726a-1fffe8e94829@starfivetech.com>
+ <Y+8x/KSujhgNLAd6@wendy>
+ <d3b06d0b-ff17-ebab-bae5-e1ec836fe667@starfivetech.com>
+ <Y++B43uCnPQlRYFi@wendy>
+ <dcba75b5-7b62-35aa-6836-5d5edd785002@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="SyOFsqOpDx+l/Uu8"
+Content-Disposition: inline
+In-Reply-To: <dcba75b5-7b62-35aa-6836-5d5edd785002@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Group some variables based on their sizes to reduce hole and avoid padding.
-On x86_64, this shrinks the size of 'struct clk_fractional_divider'
-from 72 to 64 bytes.
 
-It saves a few bytes of memory when the structure is kzalloc()'ed.
+--SyOFsqOpDx+l/Uu8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Using pahole
+On Fri, Feb 17, 2023 at 04:47:48PM +0100, Krzysztof Kozlowski wrote:
+> On 17/02/2023 14:32, Conor Dooley wrote:
+> >>>> Yes, it is.
+> >>>
+> >>> Which would then make GMAC1 RGMII RX optional, rather than required?
+> >>
+> >> If thinking in this way, I must say yes, it is optional. But actually
+> >> GMAC1 RGMII RX feeds gmac1_rx by default.=20
+> >> For a mux, it usually works if you populate only one input to it.
+> >> Does it mean all the other inputs are optional? And how can we define
+> >> which input is required?
+> >=20
+> > I'm not sure, that is a question for Krzysztof and/or Rob.
+>=20
+> That's a long thread, please summarize what you ask. Otherwise I have no
+> clue what is the question.
 
-Before:
-======
-struct clk_fractional_divider {
-	struct clk_hw              hw;                   /*     0    24 */
-	void *                     reg;                  /*    24     8 */
-	u8                         mshift;               /*    32     1 */
-	u8                         mwidth;               /*    33     1 */
+Sorry. I tried to preserve the context of the conversation the last time
+I cropped it so that things would be contained on one email.
 
-	/* XXX 2 bytes hole, try to pack */
+For me at least, I am wondering how you convey that out of a list of
+clock inputs (for example a, b, c, d) that two of the clocks are inputs
+to a mux and it is only required to provide one of the two (say b & c).
 
-	u32                        mmask;                /*    36     4 */
-	u8                         nshift;               /*    40     1 */
-	u8                         nwidth;               /*    41     1 */
+> Does the mux works correctly if clock input is not connected? I mean,
+> are you now talking about real hardware or some simplification from SW
+> point of view?
 
-	/* XXX 2 bytes hole, try to pack */
+I'm coming at this from an angle of "is a StarFive customer going to show
+up with a devicetree containing dummy fixed-clocks to satisfy dtbs_check
+because they opted to only populate one input to the mux".
+I don't really care about implications for the driver, just about
+whether the hardware allows for inputs to the mux to be left
+un-populated.
 
-	u32                        nmask;                /*    44     4 */
-	u8                         flags;                /*    48     1 */
-
-	/* XXX 7 bytes hole, try to pack */
-
-	void                       (*approximation)(struct clk_hw *, long unsigned int, long unsigned int *, long unsigned int *, long unsigned int *); /*    56     8 */
-	/* --- cacheline 1 boundary (64 bytes) --- */
-	spinlock_t *               lock;                 /*    64     8 */
-
-	/* size: 72, cachelines: 2, members: 11 */
-	/* sum members: 61, holes: 3, sum holes: 11 */
-	/* last cacheline: 8 bytes */
-};
+Cheers,
+Conor.
 
 
-After:
-=====
-struct clk_fractional_divider {
-	struct clk_hw              hw;                   /*     0    24 */
-	void *                     reg;                  /*    24     8 */
-	u8                         flags;                /*    32     1 */
-	u8                         mshift;               /*    33     1 */
-	u8                         mwidth;               /*    34     1 */
+--SyOFsqOpDx+l/Uu8
+Content-Type: application/pgp-signature; name="signature.asc"
 
-	/* XXX 1 byte hole, try to pack */
+-----BEGIN PGP SIGNATURE-----
 
-	u32                        mmask;                /*    36     4 */
-	u8                         nshift;               /*    40     1 */
-	u8                         nwidth;               /*    41     1 */
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY++q5AAKCRB4tDGHoIJi
+0of0AP9b4nngiPS2EpyTXEZ+/C7SPEoZpvSl1nRB1hqHGRePTgD/e/wC+yu8sTRR
+cTy0Wvob6bxyC4j38a5p5UnXb+ZTtgw=
+=Wk+p
+-----END PGP SIGNATURE-----
 
-	/* XXX 2 bytes hole, try to pack */
-
-	u32                        nmask;                /*    44     4 */
-	void                       (*approximation)(struct clk_hw *, long unsigned int, long unsigned int *, long unsigned int *, long unsigned int *); /*    48     8 */
-	spinlock_t *               lock;                 /*    56     8 */
-
-	/* size: 64, cachelines: 1, members: 11 */
-	/* sum members: 61, holes: 2, sum holes: 3 */
-};
----
- include/linux/clk-provider.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index cf1adfeaf257..8cec844f5dde 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -1134,13 +1134,13 @@ struct clk_hw *clk_hw_register_fixed_factor_parent_hw(struct device *dev,
- struct clk_fractional_divider {
- 	struct clk_hw	hw;
- 	void __iomem	*reg;
-+	u8		flags;
- 	u8		mshift;
- 	u8		mwidth;
- 	u32		mmask;
- 	u8		nshift;
- 	u8		nwidth;
- 	u32		nmask;
--	u8		flags;
- 	void		(*approximation)(struct clk_hw *hw,
- 				unsigned long rate, unsigned long *parent_rate,
- 				unsigned long *m, unsigned long *n);
--- 
-2.34.1
-
+--SyOFsqOpDx+l/Uu8--
