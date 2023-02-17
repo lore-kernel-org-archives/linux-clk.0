@@ -2,148 +2,246 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 998D5C636D6
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 22:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 719D1C05027
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 22:32:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229716AbjBQWUe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Feb 2023 17:20:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48626 "EHLO
+        id S229813AbjBQWcR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Feb 2023 17:32:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229854AbjBQWUd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 17:20:33 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCFE86664F;
-        Fri, 17 Feb 2023 14:20:31 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id r11so2423598wru.1;
-        Fri, 17 Feb 2023 14:20:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=1i9LuC5d4vZMEjYcLaTDdxYBMP8JELhgLW32Lccsw8U=;
-        b=dE3LmgLpmjeY+DmAATb3i1XnQ1jyDGNp4fRaFnX2YVVZFjjNdGsEDtmGrxMtfVM7a1
-         +8W1YzKvMdQUMaYYW7ZGhQUGrePfoOTVnajA7C8s4i5ZkbewOE0qXQz/0ZMXh+avqepZ
-         IN7tU/4rTisczW5751ZNVVsgVnK06QP9fmPqiuOuDiNHgtVq/aXNzi8hkyGjXSr9UykV
-         g6R1XE0q2l7aGhd8TJMSbGKefUDCI/IeubTdmsxDqUdfvYS4rwUEgbYyPXvLEGvosUp0
-         wESXlRQDOX2gDy2g1kcSzwRAGZ5I+wDffIDDKfRZQ0OuFKBJFgvgPalMN+A8PX4W2y/g
-         /wNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1i9LuC5d4vZMEjYcLaTDdxYBMP8JELhgLW32Lccsw8U=;
-        b=0w/rp8JqjkONQh8LJTmM24mDOT1rEqH4Uuj3KdJG/nUMhmxG6hgWs2l0HpYYiLsNQI
-         5bf5cCUR1vkAxbOTCizMLfWNIE4bTEMK+c3xp7WLzn59KCh1Qq+8JS+UKXvxvk4BFAn1
-         l/Zo7xXnwwPiwIWzQ9MEM0QEt6yXrZ5wbvLLyqvI6pn8iKqp139NYR2gw45SGUqZCXQa
-         B+NzuUY7o6YiPYFOeJCVh0NVIuUfh9BaOzXD+GOWwtVWcVOtmu3BVklXpHK5KUfOvedj
-         nxljmwZhZgXZ2++8BspWs8sYxbO/0Y+VfYkIvWiiUPJAWHiIH4frR02Osys018+dYZGB
-         7yvw==
-X-Gm-Message-State: AO0yUKVWeD042jWc6ERGwC/ti+U5AzyhK+xvn1IcnkQznG4g7R4Ynv8X
-        Lk2BjOGk0vb272JUMJeo6gc=
-X-Google-Smtp-Source: AK7set+uHhngYpSmVrvC/pgYx28HXmftNTpLC75+bTJkM9v8lzwviIbSj4gtCTGaM4J8T/kkosKgsA==
-X-Received: by 2002:a5d:48d0:0:b0:2c4:503:7afc with SMTP id p16-20020a5d48d0000000b002c405037afcmr1104857wrs.7.1676672429782;
-        Fri, 17 Feb 2023 14:20:29 -0800 (PST)
-Received: from Ansuel-xps. (93-34-91-73.ip49.fastwebnet.it. [93.34.91.73])
-        by smtp.gmail.com with ESMTPSA id j28-20020a5d453c000000b002c6eaf53bcdsm1141798wra.28.2023.02.17.14.20.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Feb 2023 14:20:29 -0800 (PST)
-Message-ID: <63effdad.5d0a0220.28f2a.4738@mx.google.com>
-X-Google-Original-Message-ID: <Y+8MEMI/BLy46EmQ@Ansuel-xps.>
-Date:   Fri, 17 Feb 2023 06:09:36 +0100
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH] clk: Fix wrong clock returned in parent_data with .name
- and no .index
-References: <20230215232712.17072-1-ansuelsmth@gmail.com>
- <6dcb55104d5065d30a9dab4bca878922.sboyd@kernel.org>
+        with ESMTP id S229506AbjBQWcQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 17:32:16 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C3D35F82F;
+        Fri, 17 Feb 2023 14:32:15 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DB84562079;
+        Fri, 17 Feb 2023 22:32:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CD74C433EF;
+        Fri, 17 Feb 2023 22:32:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676673134;
+        bh=ljIRf4v/2Lck45BTBTKuuhmK3+RkCe6yFCOyrKX7H3I=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=R13VLdJsuoHYn0xU8tfr9mc13V7jn7ydQx+MIweScZeogkDB132Jv3B8bp86RCvRW
+         uMWku/J8hS8vdLDuQOBQ3UYFETswKyLpNHvhBwXypGSlEkFY9INAbyrUq0X59XKnUJ
+         Zmmrl5N1qMQQyvLQzDEJP5TRPlPwL1StkzuYz/bGFDsKvULYaj9XxlmBW+E1IQrARV
+         r8ySbb9uHqTXGVfM8nq+JLqfa/K7Kyhtt4G/CF/5BsaYOKgm830t7zXG8D2xN3HY91
+         GOnXe6QxpCAd3ujDY3SgT0yz1GfKB8+jKT3WxunNBBygBHlzR5TBb41UewvzvDhlfC
+         xYJWgqyjCghzg==
+Message-ID: <3601c73df55dd9d9756869817420f368.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6dcb55104d5065d30a9dab4bca878922.sboyd@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <2cfd99ac-a3fe-5014-1a51-19a0ee95eaa1@ti.com>
+References: <20221226095745.19757-1-a-bhatia1@ti.com> <20221226095745.19757-2-a-bhatia1@ti.com> <8980856c1138571976f00413b94cfeb8.sboyd@kernel.org> <1856e963-4514-92f3-5d43-d5b711083193@ti.com> <367fba29-bc08-1f27-249c-09e406adfbbb@ideasonboard.com> <f324c845f0d291d041a13046a349ae95.sboyd@kernel.org> <2cfd99ac-a3fe-5014-1a51-19a0ee95eaa1@ti.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: fixed-factor: Add TI AM62 SoC OLDI clock
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Samuel Holland <samuel@sholland.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Linux Clock List <linux-clk@vger.kernel.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        Linux Kernel List <linux-kernel@vger.kernel.org>,
+        Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Devarsh Thakkar <devarsht@ti.com>, Jai Luthra <j-luthra@ti.com>
+To:     Aradhya Bhatia <a-bhatia1@ti.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Date:   Fri, 17 Feb 2023 14:32:11 -0800
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Feb 17, 2023 at 02:11:20PM -0800, Stephen Boyd wrote:
-> Quoting Christian Marangi (2023-02-15 15:27:12)
-> > Commit 601b6e93304a ("clk: Allow parents to be specified via clkspec index")
-> > introduced a regression due to a "fragile" implementation present in some very
-> > corner case.
-> > 
-> > Such commit introduced the support for parents to be specified using
-> > clkspec index. The index is an int and should be -1 if the feature
-> > should not be used. This is the case with parent_hws or legacy
-> > parent_names used and the index value is set to -1 by default.
-> > With parent_data the situation is different, since it's a struct that
-> > can have multiple value (.index, .name, .fw_name), it's init to all 0 by
-> > default. This cause the index value to be set to 0 everytime even if not
-> 
-> It's only initialized to all 0 because that's what you've decided to do.
-> It could be on the stack and have random stack junk values.
->
+Quoting Aradhya Bhatia (2023-02-05 21:34:53)
+> Hi Stephen,
+>=20
+> On 26-Jan-23 05:36, Stephen Boyd wrote:
+> > Quoting Tomi Valkeinen (2023-01-17 01:40:24)
+> >> On 16/01/2023 11:51, Aradhya Bhatia wrote:
+> >>> Hi Stephen,
+> >>>
+> >>> Thanks for taking a look at the patch.
+> >>>
+> >>> On 12-Jan-23 01:14, Stephen Boyd wrote:
+> >>>> Quoting Aradhya Bhatia (2022-12-26 01:57:44)
+> >>>>> Add "ti,k3-am62-oldi-clk-div" to the fixed factor clock compatible =
+enum
+> >>>>> list.
+> >>>>>
+> >>>>> "ti,k3-am62-oldi-clk-div" is a fixed-factor clock that helps the TI
+> >>>>> display subsystem request a pixel clock for itself and a correspond=
+ing
+> >>>>> serial clock for its OLDI Transmitters. The serial clock is 7 times=
+ the
+> >>>>> pixel clock. This clock needs the clock set rate request to be
+> >>>>> propagated to the parent clock provider.
+> >>>>>
+> >>>>> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+> >>>>> ---
+> >>>>> =C2=A0 Documentation/devicetree/bindings/clock/fixed-factor-clock.y=
+aml | 1 +
+> >>>>> =C2=A0 1 file changed, 1 insertion(+)
+> >>>>>
+> >>>>> diff --git=20
+> >>>>> a/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml=20
+> >>>>> b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
+> >>>>> index 8f71ab300470..0696237530f7 100644
+> >>>>> --- a/Documentation/devicetree/bindings/clock/fixed-factor-clock.ya=
+ml
+> >>>>> +++ b/Documentation/devicetree/bindings/clock/fixed-factor-clock.ya=
+ml
+> >>>>> @@ -14,6 +14,7 @@ properties:
+> >>>>> =C2=A0=C2=A0=C2=A0 compatible:
+> >>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum:
+> >>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - fixed-factor-clock
+> >>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ti,k3-am62-oldi-clk-div
+> >>>>
+> >>>> I don't see this compatible anywhere in the kernel tree. Is there a
+> >>>> patch that adds a node using this? I wonder why the display subsystem
+> >>>> can't add this fixed factor clk directly in the driver. Does the OLDI
+> >>>> Transmitter send a clk to the display subsystem?
+> >>>>
+> >>>> I'm asking all these questions because we got rid of vendor compatib=
+les
+> >>>> here in hopes of simplifying the logic. Maybe the problem can be
+> >>>> approached differently, but I don't know all the details.
+> >>>
+> >>>
+> >>> +--------+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ +------------------+
+> >>> |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+> >>> |=C2=A0 PLL=C2=A0=C2=A0 +---+----+------------->| OLDI Transmitter |
+> >>> |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 |=C2=A0=C2=
+=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+> >>> +--------+=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 +------------------+
+> >>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0=C2=A0=C2=A0 |
+> >>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 +------------------+
+> >>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+> >>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0=C2=A0=C2=A0 +------------->| OLDI Transmitter |
+> >>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+> >>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 +------------------+
+> >>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |
+> >>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 +------------------+
+> >>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0=C2=A0 +----------+=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |
+> >>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 /7=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=
+=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Display=C2=A0=C2=A0=C2=A0=C2=A0 |
+> >>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 +-->|=C2=A0=C2=A0 Clock=C2=A0 +--->| Sub-System (DSS) |
+> >>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 Div=C2=A0=C2=A0 |=C2=A0=
+=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+> >>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 +----------+=C2=A0=C2=A0=C2=A0 +------------=
+------+
+> >>>
+> >>> This is how the the clock architecture for DSS looks like.
+> >>>
+> >>> The clock divider is not a part of DSS, but outside it.
+> >=20
+> > The divider is fixed as well? And presumably inside the SoC?
+> Yes, and yes!
 
-Yes and that itself is problematic on his own. The index value may be
-set to an unintended value and we really can't update each parent_data
-to -1. And as you can see in the example index is used as an alternative
-source to search the parent.
+Ok.
 
-Hope it's clear what is the problem here.
+>=20
+> >=20
+> >>>
+> >>> The clock request flow is initiated by the DSS driver because it has =
+the
+> >>> required timing parameter information. It requests a certain pixel
+> >>> frequency. But the frequency required by the OLDI TXes is 7 times
+> >>> that pixel frequency.
+> >>>
+> >>> (Just for clarification, in some cases, the OLDI TX does require only
+> >>> 3.5 times the pixel frequency, but in those situations there is anoth=
+er
+> >>> divider in-front of OLDI TX that gets activated with a signal and
+> >>> divides the incoming frequency by 2, thereby requiring the PLL to sti=
+ll
+> >>> generate a 7x frequency.)
+> >>>
+> >>> Hence, the idea is that the clock divider is able to propagate the set
+> >>> rate request back to PLL, asking for a frequency 7 times more than the
+> >>> DSS's asking rate.
+> >=20
+> > Got it. Can the PLL driver provide a pll_div_7 clk that is used for the
+> > DSS pixel clk?
+> >=20
+> The PLL driver can not map the clock divider and hence can't provide the
+> pll_div_7 clock directly to DSS.
 
-> > intended to be defined and used.
-> > 
-> > This simple "fragile" implementation cause side-effect and unintended
-> > behaviour.
-> > 
-> > Assuming the following scenario (to repro the corner case and doesn't
-> > reflect real code):
-> > 
-> > In dt we have a node like this:
-> >                 acc1: clock-controller@2098000 {
-> >                         compatible = "qcom,kpss-acc-v1";
-> >                         reg = <0x02098000 0x1000>, <0x02008000 0x1000>;
-> >                         clock-output-names = "acpu1_aux";
-> >                         clocks = <&pxo_board>;
-> >                         clock-names = "pxo";
-> >                         #clock-cells = <0>;
-> >                 };
-> > 
-> > And on the relevant driver we have the parent data defined as such:
-> >                 static const struct clk_parent_data aux_parents[] = {
-> >                         { .name = "pll8_vote" },
-> >                         { .fw_name = "pxo", .name = "pxo_board" },
-> >                 };
-> > 
-> > Someone would expect the first parent to be globally searched and set to
-> > point to the clock named "pll8_vote".
-> > But this is not the case and instead under the hood, the parent point to
-> > the pxo clock. This happen without any warning and was discovered on
-> > another platform while the gcc driver was converted to parent_data and
-> > only .name was defined.
-> 
-> You didn't set .index explicitly to zero, but it is zero because of the
-> use of static struct initializers here. If the struct was on the stack
-> nobody knows what the value would be. Set -1 if you don't want to use
-> the index lookup path.
+Isn't the divider fixed? So what is there to map?
 
-There is at least one driver that use .name for global searching and
-it's clear that he didn't intend to use index lookup.
+>=20
+> >>>
+> >>> If this is something less than ideal and should not go up, then I can
+> >>> implement a new clock device with a separate but similar clock driver.
+> >>>
+> >>> Let me know what you think!
+> >>
+> >> As a clarification I would also add to the above that on other TI SoCs=
+=20
+> >> with DSS, and also for the second video port on AM62, the clock=20
+> >> framework provides DSS a clock using the pclk frequency.
+> >>
+> >=20
+> > Are you saying that adding a fixed div-7 clk in the DSS driver is wrong?
+> Yes. All variants of DSS accept a pixel clock and it would be wrong to
+> implement a fixed div-7 in the DSS driver.
 
-Are you totally against this or you are suggesting I should use a
-different word for this?
+The reason being that it has an input of a pixel clk divided by 7?
+That's why I suggested having the PLL provide a clk output that is
+divided by 7.
 
-To me this looks very sensible and something we should take care since
-sounds a bit fragile to me. (I know 99% of the time it would be a dev
-error but we could have case where things works by luck and for example
-someone starts adding an additional parent in later changes and regression
-happens.)
+>=20
+> All that said, I now understand that the new compatible shouldn't go
+> there. I will implement a new driver and post it. =3D)
+>=20
 
--- 
-	Ansuel
+The block diagram above shows the fixed divider living outside of the
+PLL or display subsystem or OLDI transmitter(s). It could just as well
+be drawn where the PLL has two outputs, one divided by 7 and sent as the
+pixel clk and the other not divided by 7. For all I know the PLL and the
+fixed divider are shipped by the same hardware engineer, so it looks
+totally arbitrary.
+
+Isn't it easier to _not_ create a struct device, _not_ create a
+different device node, and simply make the PLL have another output clk,
+so that we don't need to implement this as a new compatible string and
+update the basic clk type code? To clarify, I don't understand why this
+must be implemented through devicetree. We already have a driver for the
+PLL and that knows what SoC it is, so why can't we add the fixed divider
+there?
