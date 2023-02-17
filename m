@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B5BC636D4
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 07:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D1FC05027
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 07:26:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229534AbjBQH0a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Feb 2023 02:26:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42448 "EHLO
+        id S229666AbjBQH0s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Feb 2023 02:26:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229632AbjBQH03 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 02:26:29 -0500
-Received: from mail-vk1-xa30.google.com (mail-vk1-xa30.google.com [IPv6:2607:f8b0:4864:20::a30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37CD35970A
-        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 23:26:28 -0800 (PST)
-Received: by mail-vk1-xa30.google.com with SMTP id o136so511518vkc.12
-        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 23:26:28 -0800 (PST)
+        with ESMTP id S229664AbjBQH0r (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 02:26:47 -0500
+Received: from mail-vk1-xa32.google.com (mail-vk1-xa32.google.com [IPv6:2607:f8b0:4864:20::a32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 700DB5DE27
+        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 23:26:41 -0800 (PST)
+Received: by mail-vk1-xa32.google.com with SMTP id p9so49769vki.0
+        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 23:26:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Oid+aqBdw4K3Kog+gaRMquz6ngOAq47AZPlR5mwS954=;
-        b=Wpiq1msOSALxHslmO5r4oAi5zGjFqDjan08pBLo60zasY1WA4ImnzmVgS32qHyY4LO
-         FPqD22dSQlVp3GZnwcZx7aN5DffRJAYFAubMxsYv9B9vQYi+EC4vY9QfF8uomzhVj5I6
-         Np6kJyIIsRiDL/deUDh45nl6oRFARfEIdEHpQ=
+        bh=8fdxhdYgUrieRTHDHYg/VxkIsWyyrT4Lc3Lq1NP/cZ4=;
+        b=ZZ7ZJuigvVz5KfSje/MdYNtDmS91EC9g9+auzcOt2EDXKzg1pv92alpsJtnuGu7XPz
+         ySePv3EhuySbjAcK/wxIz3IiWls+IFVZgB7HmJUcKW/dIeZbAiHpIW9qE0P5vt3/OVFH
+         behyGp/qka25mpBkg7FLpJL2Qf05w8Jr8KxS4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Oid+aqBdw4K3Kog+gaRMquz6ngOAq47AZPlR5mwS954=;
-        b=cDCWHLwONTETaRTKq1kKJUnKaqUacDxfxuU1w2Aer13XSYK97awnKK8UN4Iz4L3Yk5
-         e0zMyuy58zLWTBfU7qob7gpLme2jiSV9j9B60CSySFw9emnwTncKIVJc8IqaPnuhjpGe
-         U1ldF0ccQtBRA08SLNpFIabxNA8o6xV4C9ZUWQEZsBzNQNMuNH0mZz4LWOko8MEdKpdO
-         CIxdmdNO6JUW9F3e3002j0bFf3agb+FR3cTnzpDQfOjyUfy7tDzVPlmVirIXKSmRyXlA
-         YJYJlO+oqdilw4EeyDChBRCM5wqT8SERcmS9rFJr0sH/aeIkIuV2I09BEzzgOiAEXWD6
-         C/Xg==
-X-Gm-Message-State: AO0yUKUDoyMG8iksmge5gdEMS0cITPMdHxNwsMKZGiy40lCUztAb2BhF
-        Km4/wcyO+PYVXIXv1ELD9ui4WmG+iKteT67rWRI7WA==
-X-Google-Smtp-Source: AK7set/dFOe+XmErTLWHyjvHjFKkrqaDezsomGj7d6EevRFgpJETrmfHwbshsqCN3BM9nIRDuhKixQ94pBVr0vBQtmo=
+        bh=8fdxhdYgUrieRTHDHYg/VxkIsWyyrT4Lc3Lq1NP/cZ4=;
+        b=TMJgoFRwZa/IXRpZPIoW4X0LUPinSEmi9Gp3Bqi9ybEhQymMPM88WIiefwnSJhakmr
+         MQxTHhTdUzLcnjppYzgl7cEMDRH52p+iYM5xOxDgpttcbYg6F/Fm9NJlA7V8kT1bfRo3
+         iH8xzgUJR7a3CenLiRKQZqs9QR46goomRzspcOwdiB+tvIY4WC0uASYdGG8GzkVgec19
+         mvI9YR2D31aH8NAYdlZkeKI8c6sXdBC6U8FdlCi5iO3V/NFMwrBnpO0FlaFWfrVIb1YO
+         LiyAo5cPtJVBhO9nLIyiGl+gdDsKvoAZfcuilS12qo97n3+uCOf7R+V76YFOqoQe6LH4
+         deLA==
+X-Gm-Message-State: AO0yUKVcffQc1L6XPHj5AHR1rA3Dt9xO+a3pdF1IQk+k98MyimifO55w
+        AVtKnmqgm4Yf9InONPtLwLAbrGZK9p4G0qcFMTHXrQ==
+X-Google-Smtp-Source: AK7set8jPjsh41skslVXvudRd5O1/mU3tyaEp+bhxmI9s0f0Gj25wehb+e9KPewhiMMtyVT6ouBXY2+DbtziPqkuqsY=
 X-Received: by 2002:a1f:a447:0:b0:3e8:66ce:a639 with SMTP id
- n68-20020a1fa447000000b003e866cea639mr1392918vke.2.1676618787321; Thu, 16 Feb
- 2023 23:26:27 -0800 (PST)
+ n68-20020a1fa447000000b003e866cea639mr1392988vke.2.1676618800587; Thu, 16 Feb
+ 2023 23:26:40 -0800 (PST)
 MIME-Version: 1.0
-References: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com> <20230214134127.59273-43-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230214134127.59273-43-angelogioacchino.delregno@collabora.com>
+References: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com> <20230214134127.59273-44-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230214134127.59273-44-angelogioacchino.delregno@collabora.com>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Fri, 17 Feb 2023 15:26:16 +0800
-Message-ID: <CAGXv+5Eh_4RXN+uvG0Cwq+GkJ7mYdhtGz04MMNDnXVU13BRdMg@mail.gmail.com>
-Subject: Re: [PATCH v2 42/47] clk: mediatek: Allow building most MT6765 clock
+Date:   Fri, 17 Feb 2023 15:26:29 +0800
+Message-ID: <CAGXv+5EWRJNhw86-pAduob4Yjy83tdZPpBFbj-13Tg4=_Vkucg@mail.gmail.com>
+Subject: Re: [PATCH v2 43/47] clk: mediatek: Allow building most MT6797 clock
  drivers as modules
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
@@ -71,7 +71,7 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On Tue, Feb 14, 2023 at 9:42 PM AngeloGioacchino Del Regno
 <angelogioacchino.delregno@collabora.com> wrote:
 >
-> Most of the MT6765 clock drivers can be built as modules: change them
+> Most of the MT6797 clock drivers can be built as modules: change them
 > to tristate to allow that.
 >
 > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
