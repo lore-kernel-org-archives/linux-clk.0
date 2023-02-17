@@ -2,54 +2,54 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62BC9C636D4
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 04:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37DF0C636D4
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 04:11:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229505AbjBQEKk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Feb 2023 23:10:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37442 "EHLO
+        id S230153AbjBQELI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Feb 2023 23:11:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230014AbjBQEKg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Feb 2023 23:10:36 -0500
-Received: from mail-vs1-xe30.google.com (mail-vs1-xe30.google.com [IPv6:2607:f8b0:4864:20::e30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C8044C3D5
-        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 20:10:35 -0800 (PST)
-Received: by mail-vs1-xe30.google.com with SMTP id v16so3176400vss.5
-        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 20:10:35 -0800 (PST)
+        with ESMTP id S229759AbjBQELH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Feb 2023 23:11:07 -0500
+Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E5B63BD9D
+        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 20:11:06 -0800 (PST)
+Received: by mail-ua1-x92c.google.com with SMTP id bx25so681555uab.9
+        for <linux-clk@vger.kernel.org>; Thu, 16 Feb 2023 20:11:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=biYLXd6zLKOEnttLE3/cOU8elHlE+31ZWmdhQJR3c0g=;
-        b=jXG1EnjySiZNlkImd2oRt2F05M1sX6iZ+1TAE3lOLJ18zaa8kVvrNECMIzjAeVEjdM
-         ewMQHA5biBEwJzBbqHS9+OtOnca2urVimkY1pRAtermRsdwgkAILk7H4tPYzM+c1u7+I
-         2lg2c1k2PE7GOjl4zEwclFgZOxcMG35sHFHIk=
+        bh=Tv51RN8ZPOSL8FQMrMpj33QZt/iLBJxo7WnaABcymgk=;
+        b=DYxHCc7b94d68sW0RoGk9gagBMyxtdDN6ZZy48NmvLaaHnt38gta0+CDNPAbYc3so4
+         /SgF9PF2nYjmkmh2zYbcPTz4Br7W9vvhQYszgRZqFtzcBwgio7+SC1kFTI/lLJAykPBk
+         OBk+xsO16aSE1VkdBd103+usgkctZt32pu9o8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=biYLXd6zLKOEnttLE3/cOU8elHlE+31ZWmdhQJR3c0g=;
-        b=inoMRt0WuRLff2DCnecyoEZt98wfB0llGERiz56IUDedxEYWaogVRunGy6QUN/MP/E
-         B77LgrzKOJ/VzC1BktOVGpLnn+lXzrvgCIRt1Jps71j1F13Bx7CkcLmqJFNBrxF3BEuS
-         QGMDzrO425S67Fj/dBphsyInmAt/vP3h4SWnEReackbCeK49mctaqoSo5Z6E2ZIUUcjO
-         xSV8hzAYo8Q00OHVgd85mGiX0D0htB6Ho5fI0dzVYpISVGv3c1MQ7cfG+DwOpZBogdu8
-         fbVyF4n30WInEJUnVSITNIiNxKWkKVp8116ZYoQY36rWyx/RKEZQAVyj5U1ROKyuyZK7
-         yvGg==
-X-Gm-Message-State: AO0yUKXYu36BdtAC8ZqCi8Z1gERLbU45A1OmKHLQ1m2lzgSJrJJIiNms
-        e4//YXB355YuXLhHVvwUcP364tcGUAH6ZZbWIqqm8g==
-X-Google-Smtp-Source: AK7set88DOusSbZcPo23P4TEtI/y5yijtupuoFWWF6867RetZ53dzqg0jKJ0+NELE4AX7JEyQJcRvQvZ7O2nrBwZax0=
-X-Received: by 2002:a67:f749:0:b0:3fc:58d:f90f with SMTP id
- w9-20020a67f749000000b003fc058df90fmr1524838vso.60.1676607034730; Thu, 16 Feb
- 2023 20:10:34 -0800 (PST)
+        bh=Tv51RN8ZPOSL8FQMrMpj33QZt/iLBJxo7WnaABcymgk=;
+        b=N/txNG00CWy05/lrMukVEXiNWhLWmMtLAe1cUgZ0lAas/+HKl0B3KcUeD9OQai+vyy
+         S8bKKpktmgszLa6gty0ys75feo4INnxU/aj4/m5coFR/k5fqxJpm14wTBLF4AbeOpMbi
+         yLnNqsRlE6vS+ZgfCbPIBHVG3hd8K+QKnLKxsLyLB8vLL1plhhGjZTcxoWGp0DRdNv6k
+         4EcvRBbZ0E+GQJUY49GAQUyANN/Dqu7rB5wisT05HfOxPdquruh2ZiY3KHcMoBkhuuVM
+         NJqX2+YKIr0Nf/b2ub4GQYImf8QLQZN4EKbCWz10LmT7rfrVqKw7zVdPnxc2Ei93fiGS
+         4TCw==
+X-Gm-Message-State: AO0yUKUaLSqRqC5Du7YkrmGXPzsPdRmRcs+mHRV/mD46Ot3pX0Q4rJtr
+        8xlMvQwT0EW0JgwD+9JH63wBIH2L8mBMP8SnKRIpwA==
+X-Google-Smtp-Source: AK7set9g5rkkJR+rAneFO6YGqzw7ZUvJlNsFBBbIlTyh1g8j02B0R2Ks5BYAGdkMReLp8trUMQdhXOpABSd7Re3e7rg=
+X-Received: by 2002:ab0:6f07:0:b0:67a:2833:5ceb with SMTP id
+ r7-20020ab06f07000000b0067a28335cebmr1346837uah.0.1676607065792; Thu, 16 Feb
+ 2023 20:11:05 -0800 (PST)
 MIME-Version: 1.0
-References: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com> <20230214134127.59273-31-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230214134127.59273-31-angelogioacchino.delregno@collabora.com>
+References: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com> <20230214134127.59273-32-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230214134127.59273-32-angelogioacchino.delregno@collabora.com>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Fri, 17 Feb 2023 12:10:23 +0800
-Message-ID: <CAGXv+5G+QXoG__8bSDcQxOUDThcQGpaVZoQy7h-BN_GASq8y+Q@mail.gmail.com>
-Subject: Re: [PATCH v2 30/47] clk: mediatek: mt7986-apmixed: Use PLL_AO flag
- to set critical clock
+Date:   Fri, 17 Feb 2023 12:10:54 +0800
+Message-ID: <CAGXv+5HUBj4v04zhqVgQApc+uq_7U7B7wrydACLHBBOmy2CVeQ@mail.gmail.com>
+Subject: Re: [PATCH v2 31/47] clk: mediatek: mt7986-infracfg: Migrate to
+ common probe mechanism
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
@@ -71,8 +71,9 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On Tue, Feb 14, 2023 at 9:42 PM AngeloGioacchino Del Regno
 <angelogioacchino.delregno@collabora.com> wrote:
 >
-> Instead of calling clk_prepare_enable() at probe time, add the PLL_AO
-> flag to CLK_APMIXED_ARMPLL clock: this will set CLK_IS_CRITICAL.
+> Convert this driver to use the common mtk_clk_simple_probe() mechanism.
+> While at it, also use module_platform_driver() instead, as this driver
+> just gained a .remove() callback during the conversion.
 >
 > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
