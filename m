@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AFA6C05027
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 11:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B856C636D4
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 11:31:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230165AbjBQL3n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Feb 2023 06:29:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44822 "EHLO
+        id S229611AbjBQLbd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Feb 2023 06:31:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230187AbjBQL3m (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 06:29:42 -0500
+        with ESMTP id S230093AbjBQLbc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 06:31:32 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9598E66649;
-        Fri, 17 Feb 2023 03:29:28 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8128627C6;
+        Fri, 17 Feb 2023 03:31:29 -0800 (PST)
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id E457A660212C;
-        Fri, 17 Feb 2023 11:29:25 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 406C0660212C;
+        Fri, 17 Feb 2023 11:31:27 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676633367;
-        bh=8erMMp/b3F39tRE2R/nCGBBfR4DFmaNqkX8xwNyUHvg=;
+        s=mail; t=1676633488;
+        bh=SjoZg9J5DHeU0Fb2G9tLSBCQbSBH0EoGQ5RPHtKFqvc=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Ad/BDNeLml9CtjYisoMhW31GApcs5Se7olS8xAvVAbfNdCx3xOjcsd3yKKGxAj3uH
-         +o37+8T2w6NHR7gCrRvK8l0XYX1s3JLL4rYsV6+86XXuFOg+Y48zPc4T3xcIBlWZHt
-         YcZwM81Gk41I5BOX54P3RBZcF92B7Bqbt8Egrqu7IYnmSXzl2t4PZMxpjkYOF/4Yeq
-         hqV3gz6IzBgVTh95pmd/P65bJrmTch+LFdDv3crW13kPBLVh74udPPQ1jsz4rIhFge
-         wHALU9fOsWUFXPynqCu4GjMVgM3vcbMsGOXZjLx8H8pFe4/cn0z51D1l+aFOyf9jHz
-         Kqb6cy7IbRs2Q==
-Message-ID: <c9bd53f9-7d5a-6e2d-4062-297158661422@collabora.com>
-Date:   Fri, 17 Feb 2023 12:29:22 +0100
+        b=FNWcnQXj0Qok59CkpqivO3INeptwaQZlf+oM0QpyHkfA7mXClbOPDqv2sk6sjRFoq
+         4vApNP8woYbx8XNIT5S7azLKzoIbJQfzZ6szC5YSIL0zl10TNe4+C7uwkoo60GJSqL
+         Zb8wPnT1HHsfpwbnzd6eIhpOSG9G8yjFS3JCyJqrYV89M71cF+2BqrK05Vp65u1MRy
+         a1UkqNnLwmyq0kjzMiRaa7F/R2VQGQDd66/kzTmqCWXOX+bc24/r03jMfOs47INfy2
+         srieZlcPiJYd1xN8t26P9tHdNJoAjA6sGUElOt/xUCBEch6WEObz8Ezsc3x9wvObbY
+         HpFgNONCK3RUg==
+Message-ID: <5d886462-5f65-16ee-c1cf-7c529ce5a439@collabora.com>
+Date:   Fri, 17 Feb 2023 12:31:24 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.2
-Subject: Re: [PATCH v2 37/47] clk: mediatek: Split MT8195 clock drivers and
- allow module build
+Subject: Re: [PATCH v2 39/47] clk: mediatek: Allow MT7622 clocks to be built
+ as modules
 Content-Language: en-US
 To:     Chen-Yu Tsai <wenst@chromium.org>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
@@ -52,70 +52,47 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, kernel@collabora.com
 References: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com>
- <20230214134127.59273-38-angelogioacchino.delregno@collabora.com>
- <CAGXv+5H7=rOwVK2SapqyeKHKnRJMwXFf1OSD-qhgjkbkoR=Zmw@mail.gmail.com>
+ <20230214134127.59273-40-angelogioacchino.delregno@collabora.com>
+ <CAGXv+5FtWp8BvLHJmJvXe=eXvM10-LTjQo9PkH1xKMvzY6YiHA@mail.gmail.com>
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <CAGXv+5H7=rOwVK2SapqyeKHKnRJMwXFf1OSD-qhgjkbkoR=Zmw@mail.gmail.com>
+In-Reply-To: <CAGXv+5FtWp8BvLHJmJvXe=eXvM10-LTjQo9PkH1xKMvzY6YiHA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 17/02/23 05:31, Chen-Yu Tsai ha scritto:
+Il 17/02/23 05:32, Chen-Yu Tsai ha scritto:
 > On Tue, Feb 14, 2023 at 9:42 PM AngeloGioacchino Del Regno
 > <angelogioacchino.delregno@collabora.com> wrote:
 >>
->> MT8195 clock drivers were encapsulated in one single (and big) Kconfig
->> option: there's no reason to do that, as it is totally unnecessary to
->> build in all or none of them.
->>
->> Split them out: keep boot-critical clocks as bool and allow choosing
->> non critical clocks as tristate.
+>> Now that all drivers are using the simple probe mechanism change the
+>> MT7622 clock drivers to tristate in Kconfig to allow module build.
 >>
 >> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 >> ---
->>   drivers/clk/mediatek/Kconfig  | 86 +++++++++++++++++++++++++++++++++++
->>   drivers/clk/mediatek/Makefile | 20 +++++---
->>   2 files changed, 99 insertions(+), 7 deletions(-)
+>>   drivers/clk/mediatek/Kconfig | 8 ++++----
+>>   1 file changed, 4 insertions(+), 4 deletions(-)
 >>
 >> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
->> index 45b7aea7648d..88937d111e98 100644
+>> index b5636b3225e8..55727889ebf5 100644
 >> --- a/drivers/clk/mediatek/Kconfig
 >> +++ b/drivers/clk/mediatek/Kconfig
->> @@ -692,6 +692,92 @@ config COMMON_CLK_MT8195
->>           help
->>             This driver supports MediaTek MT8195 clocks.
+>> @@ -336,7 +336,7 @@ config COMMON_CLK_MT6797_VENCSYS
+>>            This driver supports MediaTek MT6797 vencsys clocks.
 >>
->> +config COMMON_CLK_MT8195_APUSYS
->> +       tristate "Clock driver for MediaTek MT8195 apusys"
->> +       depends on COMMON_CLK_MT8195
+>>   config COMMON_CLK_MT7622
+>> -       bool "Clock driver for MediaTek MT7622"
+>> +       tristate "Clock driver for MediaTek MT7622"
 > 
-> Would something like
-> 
->            default COMMON_CLK_MT8195
-> 
-> help with the transition?
-> 
-> Otherwise we'd need to add a whole lot more stuff to arm64's defconfig,
-> and anyone running `make olddefconfig` would have many of their clock
-> drivers no longer available.
-> 
-> Same applies to the MT8186 split.
-> 
-> Seems like not all MediaTek SoCs apply this pattern, but at least MT7986,
-> MT8167, MT8173, MT8183 do this.
+> Same as MT2712, mt7622-apmixedsys is builtin_platform_driver.
 > 
 > ChenYu
 
-Right. Since MT8195 machines have been out in the wild for a bit of time now,
-I think it's worth following your advice and add `default COMMON_CLK_MT8195`
-to the new configuration options.
+Same as MT2712 - added remove callback, converted to module_platform_driver()
+for v3!
 
-As for MT8186, currently, there's only one board supported upstream, which
-is the "unobtainable" EVB so I would rather not do that for MT8186, unless
-you have any strong opinions on that.
-
-Regards,
+Thanks again!
 Angelo
+
