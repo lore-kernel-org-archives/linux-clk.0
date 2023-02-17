@@ -2,97 +2,97 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD5E1C64EC4
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 08:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D706C636D4
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 10:57:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229841AbjBQIsm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Feb 2023 03:48:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50060 "EHLO
+        id S229584AbjBQK5z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Feb 2023 05:57:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229913AbjBQIsj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 03:48:39 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A641F604F0;
-        Fri, 17 Feb 2023 00:48:26 -0800 (PST)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31H63KTZ014637;
-        Fri, 17 Feb 2023 08:48:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=33eDyuvYJVBHbnCO5NSYD6X2R8vEOym0xz2B1IWSiNg=;
- b=OIzwO8AxZ1YEu1WVQkroLorCRDoyjaojbAzbQTYgUPPpqLFaxp4ghkZ9IX/VogWDw7qH
- yTKGdlOVi6ylU2qBDFvH7PeLyo+QW7Xc2ss0akTBlH5SVw6c8EhiuCLsDXSwfm+S5M7T
- f5ph1fTyguTQKzyO3leW+qksSnT8+1VJubAYzrHZdRTrPcQBBcTXwUWsVP2fcGqyBdbB
- 83qiq7ls4+U69wb4NijORuMQQCt3u2KHt3zRewnZE2DTzCYw0SK9tUqyzW+aaQsjDyzf
- vyPvIo1Vgh15nhK5x9zYP83dh8+VEs4fDveRVNHW7kPuSiycyVJNbfcDw1jkBEbfci6K bg== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nt10u0v06-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Feb 2023 08:48:16 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31H8mFVp000693
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Feb 2023 08:48:15 GMT
-Received: from [10.216.47.237] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Fri, 17 Feb
- 2023 00:48:06 -0800
-Message-ID: <a987fc17-3924-7ece-59e2-3fa1d000afc1@quicinc.com>
-Date:   Fri, 17 Feb 2023 14:18:03 +0530
+        with ESMTP id S229512AbjBQK5y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 05:57:54 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05AA918AB2;
+        Fri, 17 Feb 2023 02:57:53 -0800 (PST)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 5DAE9660212C;
+        Fri, 17 Feb 2023 10:57:50 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1676631471;
+        bh=oWG8qB73mWU6tgSPCfIdc7ieSokgqJaXwrk6pTlekvU=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=cSAyNr/NSxAq0AEJXIj85+gwSmFRHcHrD4KlyyyQhu5yFrYMiTYh+AaSgCdw4Y2Z1
+         4oHiKZkMrVvStL0Y3dDeBduGDoBrSzL/IIKScQBMbX67wAQeChZZmP6fbylq+m0VxT
+         GFMBFAHkKKZIiETJg6e12D2qvwi7NErWooZIY0Oo5ECKzLyPm3wBq9i3GYpl/omJni
+         4s4oXWg1SMakWZi5sCIczrYlXJahcGFWMpz07tPIJ+ez+SUwU3lPgvAwKNr9YER13t
+         54N0eWVFPBPjcVUBzAVDZfr2FQnwyZWsKn6ZSaoUg95kQPdEBV8h/vMjFg6uDMR6Bc
+         u6pUbxi/i/eTw==
+Message-ID: <8a19a7b3-f047-3fc5-5002-ce07c1dbdf4a@collabora.com>
+Date:   Fri, 17 Feb 2023 11:57:47 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH 0/7] Add PCIe support for IPQ9574
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH v2 29/47] clk: mediatek: Propagate struct device with
+ mtk_clk_register_dividers()
+To:     Chen-Yu Tsai <wenst@chromium.org>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        johnson.wang@mediatek.com, miles.chen@mediatek.com,
+        chun-jie.chen@mediatek.com, daniel@makrotopia.org,
+        fparent@baylibre.com, msp@baylibre.com, nfraprado@collabora.com,
+        rex-bc.chen@mediatek.com, zhaojh329@gmail.com,
+        sam.shih@mediatek.com, edward-jw.yang@mediatek.com,
+        yangyingliang@huawei.com, granquet@baylibre.com,
+        pablo.sun@mediatek.com, sean.wang@mediatek.com,
+        chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel@collabora.com
+References: <20230214134127.59273-1-angelogioacchino.delregno@collabora.com>
+ <20230214134127.59273-30-angelogioacchino.delregno@collabora.com>
+ <CAGXv+5EEO2RMzwkknMEwYZmtO7PbDhOTj_=yRrU0UHeCdc==iw@mail.gmail.com>
 Content-Language: en-US
-To:     Devi Priya <quic_devipriy@quicinc.com>, <agross@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzysztof.kozlowski+dt@linaro.org>,
-        <vkoul@kernel.org>, <kishon@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <mani@kernel.org>, <p.zabel@pengutronix.de>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC:     <quic_gokulsri@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
-        <quic_anusha@quicinc.com>
-References: <20230214164135.17039-1-quic_devipriy@quicinc.com>
-From:   Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <20230214164135.17039-1-quic_devipriy@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <CAGXv+5EEO2RMzwkknMEwYZmtO7PbDhOTj_=yRrU0UHeCdc==iw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: SkGcIu3rfLWbX5OreuJ1hWeFzovxmJIH
-X-Proofpoint-GUID: SkGcIu3rfLWbX5OreuJ1hWeFzovxmJIH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
- definitions=2023-02-17_04,2023-02-16_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 malwarescore=0 mlxscore=0 impostorscore=0
- adultscore=0 mlxlogscore=693 phishscore=0 suspectscore=0 clxscore=1015
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2302170078
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 2/14/2023 10:11 PM, Devi Priya wrote:
-> PCIe0, PCIe1, PCIe2, PCIe3 (and corresponding PHY) devices
-> are found on IPQ9574 platform. The PCIe0 & PCIe1 are 1-lane
-> Gen3 host whereas PCIe2 & PCIe3 are 2-lane Gen3 host.
+Il 17/02/23 05:09, Chen-Yu Tsai ha scritto:
+> On Tue, Feb 14, 2023 at 9:42 PM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
+>>
+>> Propagate struct device for divider clocks registered through clk-mtk
+>> helpers to be able to get runtime PM support for MTK clocks.
 > 
-> This series adds support for enabling the same
+> Sidenote: I think we still need to call pm_runtime_enable() (or some other
+> function) on the underlying device before any clk_hw_register() calls are
+> made for the clk core to pick up runtime PM support?
 > 
 
+The clk_core checks...
 
-<svarbanov@mm-sol.com>  --> This is bouncing, please remove it
+	if (dev && pm_runtime_enabled(dev))
+		core->rpm_enabled = true;
 
-Regards,
-  Sricharan
+...at __clk_register() time, and there's no way to enable it *later*, which
+is something that may or may not be good for us.
+
+We could call pm_runtime_enable() on the clock driver itself (so, in simple_probe)
+but that's something I didn't want to do right now because this needs a rather big
+amount of testing on multiple SoCs.
+
+But yes I agree with you on that we still need to *flip the switch* to actually
+enable rpm support. These commits are meant to make us able to do that in one line,
+instead of one line per file :-P
+
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> 
+> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+
+Thanks! :-)
