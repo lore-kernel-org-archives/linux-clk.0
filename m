@@ -2,138 +2,108 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA59C64ED8
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 18:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 269EDC05027
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 22:11:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229605AbjBQSBU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Feb 2023 13:01:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54940 "EHLO
+        id S229619AbjBQWL0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Feb 2023 17:11:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229516AbjBQSBT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 13:01:19 -0500
+        with ESMTP id S229445AbjBQWLZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 17:11:25 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3FD029E3A;
-        Fri, 17 Feb 2023 10:01:17 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CD9A63BE0;
+        Fri, 17 Feb 2023 14:11:24 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F0C9D61F1E;
-        Fri, 17 Feb 2023 18:01:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74A06C433D2;
-        Fri, 17 Feb 2023 18:01:12 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BB90862072;
+        Fri, 17 Feb 2023 22:11:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E7CFC433EF;
+        Fri, 17 Feb 2023 22:11:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676656876;
-        bh=9IlSeuq9CAxECTILWyWm/AaYhbpQX8KMl7DQW/S45fw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=TtYfXVs6f4cTXtZTzgxFox8eqLBulwVarNzV1junGS9C2DGYyVh0Hz53t+jB1QyQ3
-         sRAU4BxlcMiG/9LYJNWVvMK9mAletuA2L0ilRmtd2xBEKCAlBHtYhJRxUlMY9/8s4N
-         Z9TORfvYJ/D4SZlOuk+5mRk6ysWMc4kCsdREvV6hwTnl9UzGaQyBAAvcvksIgQkIt2
-         gUBtaK33ITjlLRX0yMpcz/fvNMdfF4t1cBe5d0UjsNn41uIBFqP4vLmNSDDQqR9t2/
-         YXbkb+Ixqk3ReB98w6Jb9Qgr1y4wSlnPRfEvDSj9+EikmGiuoUTy58OPYuHaVLRLs8
-         c9QIsfgtfJAgQ==
-From:   Conor Dooley <conor@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>
-Cc:     conor@kernel.org, Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Albert Ou <aou@eecs.berkeley.edu>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Sagar Kadam <sagar.kadam@openfive.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>
-Subject: [PATCH] dt-bindings: drop Sagar Kadam from SiFive binding maintainership
-Date:   Fri, 17 Feb 2023 18:00:36 +0000
-Message-Id: <20230217180035.39658-1-conor@kernel.org>
-X-Mailer: git-send-email 2.39.1
+        s=k20201202; t=1676671883;
+        bh=+QcKL3+xQilDMC4OrD4cJ9owC31OgFTJ0bEwOKyJCIo=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=VMYRmmjH8IJJTo8tTxuuCf+ucYEjE0gEsaaXSzLbvdi7o7J1r9oLsRi+24TJXWavF
+         UfPXB+nrIbeJX1mEF+nwQmVlxukiaQ0K4aXKIIohoSMZkYm//hbHXQtNjkvDjyKEJk
+         NiJGAUhLbizzBsSsdWHZ8M1azccGQxYP4ZVKAUzOkmQGZAqgymrZk5E9EDKB4UD6d5
+         yHFqz9GZO57iDtOFWvJfKBrfEp/7CkXoointN5pCtTJ8NU9pboch7d4BMlNXbjxa9g
+         mw0B0xWv1sUvLeoOHLp2XkUytnmauqSfmgeZUKTlUKKPOWV7nc9BvPH7SnWcMM905Q
+         plr2NmYTHc3ZA==
+Message-ID: <6dcb55104d5065d30a9dab4bca878922.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3439; i=conor.dooley@microchip.com; h=from:subject; bh=nhdSMpAMHcDxZQ/G9fKc2bxint/gSH+fhiDQTwTY+dM=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDMnvDxxet0Qq9OYUtjIF+YPbTy3dWHe3ct2aXeseJXkoXMuv PK43p6OUhUGMg0FWTJEl8XZfi9T6Py47nHvewsxhZQIZwsDFKQATmanO8M8w4umr3fe2nJj14Cj37f ZaJhuGY/fWH3z9stbvZJ76XuvLDP/rJrNI3zpvpvzw3kyDnHedXx5O3uehJr2z9fcau0/51Tl8AA==
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230215232712.17072-1-ansuelsmth@gmail.com>
+References: <20230215232712.17072-1-ansuelsmth@gmail.com>
+Subject: Re: [PATCH] clk: Fix wrong clock returned in parent_data with .name and no .index
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Christian Marangi <ansuelsmth@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Chen-Yu Tsai <wens@csie.org>
+To:     Christian Marangi <ansuelsmth@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 17 Feb 2023 14:11:20 -0800
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Conor Dooley <conor.dooley@microchip.com>
+Quoting Christian Marangi (2023-02-15 15:27:12)
+> Commit 601b6e93304a ("clk: Allow parents to be specified via clkspec inde=
+x")
+> introduced a regression due to a "fragile" implementation present in some=
+ very
+> corner case.
+>=20
+> Such commit introduced the support for parents to be specified using
+> clkspec index. The index is an int and should be -1 if the feature
+> should not be used. This is the case with parent_hws or legacy
+> parent_names used and the index value is set to -1 by default.
+> With parent_data the situation is different, since it's a struct that
+> can have multiple value (.index, .name, .fw_name), it's init to all 0 by
+> default. This cause the index value to be set to 0 everytime even if not
 
-Sagar's email listed in maintainers is bouncing as his division was sold
-off by the company. I attempted to contact him some days ago on what the
-bounce email told me was his new contact information, but am yet to
-receive a response.
+It's only initialized to all 0 because that's what you've decided to do.
+It could be on the stack and have random stack junk values.
 
-Paul and Palmer are listed on each of the bindings, both of whom were
-alive & well as of Wednesday so the bindings remain maintained.
+> intended to be defined and used.
+>=20
+> This simple "fragile" implementation cause side-effect and unintended
+> behaviour.
+>=20
+> Assuming the following scenario (to repro the corner case and doesn't
+> reflect real code):
+>=20
+> In dt we have a node like this:
+>                 acc1: clock-controller@2098000 {
+>                         compatible =3D "qcom,kpss-acc-v1";
+>                         reg =3D <0x02098000 0x1000>, <0x02008000 0x1000>;
+>                         clock-output-names =3D "acpu1_aux";
+>                         clocks =3D <&pxo_board>;
+>                         clock-names =3D "pxo";
+>                         #clock-cells =3D <0>;
+>                 };
+>=20
+> And on the relevant driver we have the parent data defined as such:
+>                 static const struct clk_parent_data aux_parents[] =3D {
+>                         { .name =3D "pll8_vote" },
+>                         { .fw_name =3D "pxo", .name =3D "pxo_board" },
+>                 };
+>=20
+> Someone would expect the first parent to be globally searched and set to
+> point to the clock named "pll8_vote".
+> But this is not the case and instead under the hood, the parent point to
+> the pxo clock. This happen without any warning and was discovered on
+> another platform while the gcc driver was converted to parent_data and
+> only .name was defined.
 
-CC: Sagar Kadam <sagar.kadam@openfive.com>
-CC: Sagar Kadam <sagar.kadam@sifive.com>
-Link: https://lore.kernel.org/all/785425ca-4000-a7e4-16d6-4d68c91b158d@kernel.org/
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
-Palmer/Paul, as mentioned Wednesday, here you go!
----
- Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml | 1 -
- .../bindings/interrupt-controller/sifive,plic-1.0.0.yaml       | 1 -
- Documentation/devicetree/bindings/pwm/pwm-sifive.yaml          | 1 -
- Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml    | 3 +--
- 4 files changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml b/Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml
-index c3be1b600007..c79e752283aa 100644
---- a/Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml
-+++ b/Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml
-@@ -8,7 +8,6 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: SiFive FU540 Power Reset Clock Interrupt Controller (PRCI)
- 
- maintainers:
--  - Sagar Kadam <sagar.kadam@sifive.com>
-   - Paul Walmsley  <paul.walmsley@sifive.com>
- 
- description:
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-index 99e01f4d0a69..63bc89e13480 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-@@ -45,7 +45,6 @@ description:
-   from S-mode. So add thead,c900-plic to distinguish them.
- 
- maintainers:
--  - Sagar Kadam <sagar.kadam@sifive.com>
-   - Paul Walmsley  <paul.walmsley@sifive.com>
-   - Palmer Dabbelt <palmer@dabbelt.com>
- 
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml b/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
-index 605c1766dba8..bae993128981 100644
---- a/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
-+++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
-@@ -8,7 +8,6 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: SiFive PWM controller
- 
- maintainers:
--  - Sagar Kadam <sagar.kadam@sifive.com>
-   - Paul Walmsley <paul.walmsley@sifive.com>
- 
- description:
-diff --git a/Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml b/Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml
-index bf3f07421f7e..0551a0d1b3df 100644
---- a/Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml
-+++ b/Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml
-@@ -8,8 +8,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: SiFive Composable Cache Controller
- 
- maintainers:
--  - Sagar Kadam <sagar.kadam@sifive.com>
--  - Paul Walmsley  <paul.walmsley@sifive.com>
-+  - Paul Walmsley <paul.walmsley@sifive.com>
- 
- description:
-   The SiFive Composable Cache Controller is used to provide access to fast copies
--- 
-2.39.1
-
+You didn't set .index explicitly to zero, but it is zero because of the
+use of static struct initializers here. If the struct was on the stack
+nobody knows what the value would be. Set -1 if you don't want to use
+the index lookup path.
