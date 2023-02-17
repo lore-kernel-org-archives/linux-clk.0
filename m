@@ -2,42 +2,41 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEDCAC6379F
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 13:42:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC5EC6379F
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 13:42:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229854AbjBQNmH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Feb 2023 08:42:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35110 "EHLO
+        id S229891AbjBQNmN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Feb 2023 08:42:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229596AbjBQNmG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 08:42:06 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3108068ADF;
-        Fri, 17 Feb 2023 05:42:05 -0800 (PST)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31H7JQRL010284;
-        Fri, 17 Feb 2023 13:41:40 GMT
+        with ESMTP id S229561AbjBQNmK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 08:42:10 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B7BD69283;
+        Fri, 17 Feb 2023 05:42:09 -0800 (PST)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31HDMREM011616;
+        Fri, 17 Feb 2023 13:41:31 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=YR8uzAgGu23TnVSKLkRlcqL5lQHfoXTBdhcjkS8fgao=;
- b=TXG7NKk5WbJfTEy4a211dEEJQRZJuvEQXEiLnFzGjplwlNkInqVbGdcSYIkNfBTBc+Uh
- 7TDrE7J0H9UagXXTWRKD67aCX5yiJuWRd68cLXWOVQLYigX0nLDfXIfJrnxx91XJEI0O
- dpyFlb1/OccpbyQLHLOdz46vTRsuUgZbzgAmUYUdl/Kml3iGt1LDSMJZPgHPq/huN0ZW
- 1eK77cCrLszf08npeF9zMkhzzeOcl4a8srXy5d+kg43KXBXSdjxC+thYEb9By1jaqyTG
- ygYCQsPdnE8IhdH4Lo+uG8iVvstp7ew633mbYdy9X86yWFrg62RPZp1DWd6Ls5oX7vN3 /w== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nt53brttu-1
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=32hHrNwVdp3H+nkRDnFu0KDuuQaMByuR/fwbgNhhWQ8=;
+ b=ZSwzL1cItz/uhqsrOW7WVXnHnf+C7hu1HX1DSWBAUsDHZNcHHO1taRCud0goAXsFcJjf
+ HIkMax9iqmjez2NcQ32/ESYBp3SbrPgsUUUpjEvTtqcE/XnZ353u7BE6FJrXftlhAuIV
+ UgdxEaRqxBGlBJO9CCvxI5baoIYGiTB1ElZC7zLbLV25fpkMlUo74IwKAYARrgNntDNZ
+ mULDExah1M6obOoZpr45Mzv5UK+AJJDwxBvRu8Rmt+1wp2HfJ4IquugxCkek1Ob2f8N0
+ XYA22NLdyryeDrmF7DxrUCMM0fDtMRdLAWff8Af3UVZ+8rWt4Lr1pUnIGEi63XIWOsfV Ig== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nse3d4d6p-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Feb 2023 13:41:40 +0000
+        Fri, 17 Feb 2023 13:41:31 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31HDfdCc011409
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31HDfUnQ002868
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Feb 2023 13:41:39 GMT
+        Fri, 17 Feb 2023 13:41:30 GMT
 Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.41; Fri, 17 Feb 2023 05:41:30 -0800
+ 15.2.986.41; Fri, 17 Feb 2023 05:41:22 -0800
 From:   Devi Priya <quic_devipriy@quicinc.com>
 To:     <agross@kernel.org>, <andersson@kernel.org>,
         <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
@@ -53,12 +52,10 @@ To:     <agross@kernel.org>, <andersson@kernel.org>,
 CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
         <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
         <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>
-Subject: [PATCH V2 1/5] dt-bindings: clock: qcom,a53pll: add IPQ9574 compatible
-Date:   Fri, 17 Feb 2023 19:11:03 +0530
-Message-ID: <20230217134107.13946-2-quic_devipriy@quicinc.com>
+Subject: [PATCH V2 0/5] Add APSS clock controller support for IPQ9574
+Date:   Fri, 17 Feb 2023 19:11:02 +0530
+Message-ID: <20230217134107.13946-1-quic_devipriy@quicinc.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230217134107.13946-1-quic_devipriy@quicinc.com>
-References: <20230217134107.13946-1-quic_devipriy@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.80.80.8]
@@ -66,45 +63,54 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: U6ResctxxMrA8ZjaIH5wAwEQvF9tdV8A
-X-Proofpoint-GUID: U6ResctxxMrA8ZjaIH5wAwEQvF9tdV8A
+X-Proofpoint-GUID: 2NN81d_UwnOVUrlmIpuw929F8Y_JPtN6
+X-Proofpoint-ORIG-GUID: 2NN81d_UwnOVUrlmIpuw929F8Y_JPtN6
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
  definitions=2023-02-17_08,2023-02-17_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 malwarescore=0 suspectscore=0 adultscore=0 impostorscore=0
- priorityscore=1501 phishscore=0 mlxlogscore=991 spamscore=0 clxscore=1015
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2302170123
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=874
+ mlxscore=0 impostorscore=0 priorityscore=1501 adultscore=0 phishscore=0
+ malwarescore=0 clxscore=1011 lowpriorityscore=0 bulkscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
+ definitions=main-2302170123
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-IPQ9574 uses A73 PLL of type Huayra.
-Add the IPQ9574 A73 compatible to A53 bindings as the PLL
-properties match with that of A53
+APSS PLL found in IPQ9574 platform is of type Huayra.
+This series adds support for the APSS clock to bump the CPU frequency
+above 800MHz.
 
-Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
----
- Changes in V2:
-	- Dropped the qcom,a73pll.yaml and added the ipq9574
-	  compatible to qcom,a53pll.yaml as suggested by konrad
+This series depends on the below patch set
+https://lore.kernel.org/linux-arm-msm/20230217083308.12017-1-quic_kathirav@quicinc.com/
 
- Documentation/devicetree/bindings/clock/qcom,a53pll.yaml | 1 +
- 1 file changed, 1 insertion(+)
+DTS patch depends on the PCIe series
+https://lore.kernel.org/linux-arm-msm/20230214164135.17039-1-quic_devipriy@quicinc.com/
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml b/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
-index 3b6169f30154..476e81ad1a0c 100644
---- a/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
-@@ -19,6 +19,7 @@ properties:
-       - qcom,ipq5332-a53pll
-       - qcom,ipq6018-a53pll
-       - qcom,ipq8074-a53pll
-+      - qcom,ipq9574-a73pll
-       - qcom,msm8916-a53pll
-       - qcom,msm8939-a53pll
- 
+[V2]:
+	- Reordered the patches as suggested
+	- Dropped [PATCH 6/6] clk: qcom: Fix APSS PLL and RCG Configuration
+	  as it was unrelated
+	- Detailed Change logs are added to the respective patches
+[V1]:
+https://lore.kernel.org/linux-arm-kernel/20230113143647.14961-1-quic_devipriy@quicinc.com/
+
+Devi Priya (5):
+  dt-bindings: clock: qcom,a53pll: add IPQ9574 compatible
+  clk: qcom: apss-ipq-pll: Enable APSS clock driver in IPQ9574
+  dt-bindings: mailbox: qcom: add compatible for IPQ9574 SoC
+  arm64: dts: qcom: ipq9574: Add support for APSS clock controller
+  arm64: defconfig: Enable ipq6018 apss clock and PLL controller
+
+ .../bindings/clock/qcom,a53pll.yaml           |  1 +
+ .../mailbox/qcom,apcs-kpss-global.yaml        |  1 +
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 18 ++++++++++++++++++
+ arch/arm64/configs/defconfig                  |  1 +
+ drivers/clk/qcom/apss-ipq-pll.c               | 19 +++++++++++++++++++
+ 5 files changed, 40 insertions(+)
+
+
+base-commit: c068f40300a0eaa34f7105d137a5560b86951aa9
 -- 
 2.17.1
 
