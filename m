@@ -2,132 +2,148 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED774C05027
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 22:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 998D5C636D6
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Feb 2023 22:20:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229647AbjBQWPr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Feb 2023 17:15:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45250 "EHLO
+        id S229716AbjBQWUe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Feb 2023 17:20:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbjBQWPq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 17:15:46 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 306465A3B6;
-        Fri, 17 Feb 2023 14:15:46 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BFF7562071;
-        Fri, 17 Feb 2023 22:15:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14E96C4339C;
-        Fri, 17 Feb 2023 22:15:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676672145;
-        bh=CAwFwvxZLX8x0bqlIXBGrQ70JsVcL+a1viVjg97kZ+s=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=tqp5Xt/xckaqoCokZm2wkFFj0J4BPwv9TpLdmAqHOTievevAo8KOHXezOT+yolUyK
-         Q6z3qdkdgygS9IsafThKWWBqDrVlt8OuXOb7ObGSke2N+s1Tu6ybmfZ6eQ5VOkwUO5
-         2wUcvsFtDd2FMd0ZEBxLm2BHZ+sJUgE1rSTOC/pYt4vMdN4XhvvUBE+5CsyLiLCDAY
-         Bx0Lk8i7+JtwwjIXbJXg9vd0bF5CyX8g+zH9awUPe5Pj19zLF921jDoFEGHSEtJQCG
-         7bwEweqcXCl7pN2k8i23xLu0D9g4vHTPmKfBXhITnKuihKAoyEU4soTQVFw6bE6rgp
-         Lr9TmMNMQbIBA==
-Message-ID: <8332a1cf44b01f06bdd5db9dc5d7f387.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229854AbjBQWUd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 17:20:33 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCFE86664F;
+        Fri, 17 Feb 2023 14:20:31 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id r11so2423598wru.1;
+        Fri, 17 Feb 2023 14:20:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=1i9LuC5d4vZMEjYcLaTDdxYBMP8JELhgLW32Lccsw8U=;
+        b=dE3LmgLpmjeY+DmAATb3i1XnQ1jyDGNp4fRaFnX2YVVZFjjNdGsEDtmGrxMtfVM7a1
+         +8W1YzKvMdQUMaYYW7ZGhQUGrePfoOTVnajA7C8s4i5ZkbewOE0qXQz/0ZMXh+avqepZ
+         IN7tU/4rTisczW5751ZNVVsgVnK06QP9fmPqiuOuDiNHgtVq/aXNzi8hkyGjXSr9UykV
+         g6R1XE0q2l7aGhd8TJMSbGKefUDCI/IeubTdmsxDqUdfvYS4rwUEgbYyPXvLEGvosUp0
+         wESXlRQDOX2gDy2g1kcSzwRAGZ5I+wDffIDDKfRZQ0OuFKBJFgvgPalMN+A8PX4W2y/g
+         /wNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1i9LuC5d4vZMEjYcLaTDdxYBMP8JELhgLW32Lccsw8U=;
+        b=0w/rp8JqjkONQh8LJTmM24mDOT1rEqH4Uuj3KdJG/nUMhmxG6hgWs2l0HpYYiLsNQI
+         5bf5cCUR1vkAxbOTCizMLfWNIE4bTEMK+c3xp7WLzn59KCh1Qq+8JS+UKXvxvk4BFAn1
+         l/Zo7xXnwwPiwIWzQ9MEM0QEt6yXrZ5wbvLLyqvI6pn8iKqp139NYR2gw45SGUqZCXQa
+         B+NzuUY7o6YiPYFOeJCVh0NVIuUfh9BaOzXD+GOWwtVWcVOtmu3BVklXpHK5KUfOvedj
+         nxljmwZhZgXZ2++8BspWs8sYxbO/0Y+VfYkIvWiiUPJAWHiIH4frR02Osys018+dYZGB
+         7yvw==
+X-Gm-Message-State: AO0yUKVWeD042jWc6ERGwC/ti+U5AzyhK+xvn1IcnkQznG4g7R4Ynv8X
+        Lk2BjOGk0vb272JUMJeo6gc=
+X-Google-Smtp-Source: AK7set+uHhngYpSmVrvC/pgYx28HXmftNTpLC75+bTJkM9v8lzwviIbSj4gtCTGaM4J8T/kkosKgsA==
+X-Received: by 2002:a5d:48d0:0:b0:2c4:503:7afc with SMTP id p16-20020a5d48d0000000b002c405037afcmr1104857wrs.7.1676672429782;
+        Fri, 17 Feb 2023 14:20:29 -0800 (PST)
+Received: from Ansuel-xps. (93-34-91-73.ip49.fastwebnet.it. [93.34.91.73])
+        by smtp.gmail.com with ESMTPSA id j28-20020a5d453c000000b002c6eaf53bcdsm1141798wra.28.2023.02.17.14.20.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Feb 2023 14:20:29 -0800 (PST)
+Message-ID: <63effdad.5d0a0220.28f2a.4738@mx.google.com>
+X-Google-Original-Message-ID: <Y+8MEMI/BLy46EmQ@Ansuel-xps.>
+Date:   Fri, 17 Feb 2023 06:09:36 +0100
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH] clk: Fix wrong clock returned in parent_data with .name
+ and no .index
+References: <20230215232712.17072-1-ansuelsmth@gmail.com>
+ <6dcb55104d5065d30a9dab4bca878922.sboyd@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <4b5fd886-57ce-01ef-8224-432898b7fb1c@loongson.cn>
-References: <20221129034157.15036-1-zhuyinbo@loongson.cn> <20221129034157.15036-2-zhuyinbo@loongson.cn> <31c690a347f858a477bbba9c838984ed.sboyd@kernel.org> <4b5fd886-57ce-01ef-8224-432898b7fb1c@loongson.cn>
-Subject: Re: [PATCH v10 2/4] clk: clk-loongson2: add clock controller driver support
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Huacai Chen <chenhuacai@kernel.org>,
-        Jianmin Lv <lvjianmin@loongson.cn>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        WANG Xuerui <kernel@xen0n.name>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, liupeibao@loongson.cn,
-        loongarch@lists.linux.dev, wanghongliang@loongson.cn,
-        zhuyinbo@loongson.cn
-Date:   Fri, 17 Feb 2023 14:15:42 -0800
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6dcb55104d5065d30a9dab4bca878922.sboyd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting zhuyinbo (2023-02-14 23:35:22)
->=20
-> =E5=9C=A8 2023/2/11 =E4=B8=8A=E5=8D=887:42, Stephen Boyd =E5=86=99=E9=81=
-=93:
-> > Quoting Yinbo Zhu (2022-11-28 19:41:55)
-> >
-> >> +
-> >> +       mult =3D (val >> LOONGSON2_USB_FREQSCALE_SHIFT) &
-> >> +                       clk_div_mask(LOONGSON2_USB_FREQSCALE_WIDTH);
-> >> +
-> >> +       rate =3D parent_rate * (mult + 1);
-> >> +       do_div(rate, 8);
-> > Why is do_div() being used?
-> no expecial reason, I only want to get a result that rate divide 8.
+On Fri, Feb 17, 2023 at 02:11:20PM -0800, Stephen Boyd wrote:
+> Quoting Christian Marangi (2023-02-15 15:27:12)
+> > Commit 601b6e93304a ("clk: Allow parents to be specified via clkspec index")
+> > introduced a regression due to a "fragile" implementation present in some very
+> > corner case.
+> > 
+> > Such commit introduced the support for parents to be specified using
+> > clkspec index. The index is an int and should be -1 if the feature
+> > should not be used. This is the case with parent_hws or legacy
+> > parent_names used and the index value is set to -1 by default.
+> > With parent_data the situation is different, since it's a struct that
+> > can have multiple value (.index, .name, .fw_name), it's init to all 0 by
+> > default. This cause the index value to be set to 0 everytime even if not
+> 
+> It's only initialized to all 0 because that's what you've decided to do.
+> It could be on the stack and have random stack junk values.
+>
 
-Ok, you can use div_u64() here and simplify.
+Yes and that itself is problematic on his own. The index value may be
+set to an unintended value and we really can't update each parent_data
+to -1. And as you can see in the example index is used as an alternative
+source to search the parent.
 
-> >
->=20
-> you meaning is to use clk_parent_data to rework=20
-> loongson2_clk_pll_register=C2=A0 and drop
->=20
-> loongson2_obtain_fixed_clk_hw ?
+Hope it's clear what is the problem here.
 
-Yes
+> > intended to be defined and used.
+> > 
+> > This simple "fragile" implementation cause side-effect and unintended
+> > behaviour.
+> > 
+> > Assuming the following scenario (to repro the corner case and doesn't
+> > reflect real code):
+> > 
+> > In dt we have a node like this:
+> >                 acc1: clock-controller@2098000 {
+> >                         compatible = "qcom,kpss-acc-v1";
+> >                         reg = <0x02098000 0x1000>, <0x02008000 0x1000>;
+> >                         clock-output-names = "acpu1_aux";
+> >                         clocks = <&pxo_board>;
+> >                         clock-names = "pxo";
+> >                         #clock-cells = <0>;
+> >                 };
+> > 
+> > And on the relevant driver we have the parent data defined as such:
+> >                 static const struct clk_parent_data aux_parents[] = {
+> >                         { .name = "pll8_vote" },
+> >                         { .fw_name = "pxo", .name = "pxo_board" },
+> >                 };
+> > 
+> > Someone would expect the first parent to be globally searched and set to
+> > point to the clock named "pll8_vote".
+> > But this is not the case and instead under the hood, the parent point to
+> > the pxo clock. This happen without any warning and was discovered on
+> > another platform while the gcc driver was converted to parent_data and
+> > only .name was defined.
+> 
+> You didn't set .index explicitly to zero, but it is zero because of the
+> use of static struct initializers here. If the struct was on the stack
+> nobody knows what the value would be. Set -1 if you don't want to use
+> the index lookup path.
 
->=20
-> >
-> >> +}
-> >> +
-> >> +static void __init loongson2_clocks_init(struct device_node *np)
-> >> +{
-> >> +       struct clk_hw **hws;
-> >> +       struct clk_hw_onecell_data *clk_hw_data;
-> >> +       spinlock_t loongson2_clk_lock;
-> >> +
-> >> +       loongson2_pll_base =3D of_iomap(np, 0);
-> >> +
-> >> +       if (!loongson2_pll_base) {
-> >> +               pr_err("clk: unable to map loongson2 clk registers\n");
-> >> +               goto err;
-> > return?
-> sorry, I don't get it.=C2=A0 you meaning is that=C2=A0 remove "goto err".=
- Instead,=20
-> add a "return".
+There is at least one driver that use .name for global searching and
+it's clear that he didn't intend to use index lookup.
 
-Yes.
+Are you totally against this or you are suggesting I should use a
+different word for this?
 
-> >
-> >> +       }
-> >> +
-> >> +       clk_hw_data =3D kzalloc(struct_size(clk_hw_data, hws, LOONGSON=
-2_CLK_END),
-> >> +                                       GFP_KERNEL);
-> >> +       if (WARN_ON(!clk_hw_data))
-> >> +               goto err;
-[...]
-> >> +
-> >> +err:
-> >> +       iounmap(loongson2_pll_base);
-> >> +}
-> >> +
-> >> +CLK_OF_DECLARE(loongson2_clk, "loongson,ls2k-clk", loongson2_clocks_i=
-nit);
-> > Any reason this can't be a platform driver?
->=20
-> For the compatible consideration of other clock controllers of=20
-> Loongson-2 series in the future, the way of using dts can be
->=20
-> better compatible.
->=20
+To me this looks very sensible and something we should take care since
+sounds a bit fragile to me. (I know 99% of the time it would be a dev
+error but we could have case where things works by luck and for example
+someone starts adding an additional parent in later changes and regression
+happens.)
 
-Sorry that sentence doesn't make sense to me. The use of dts doesn't
-require the use of CLK_OF_DECLARE.
+-- 
+	Ansuel
