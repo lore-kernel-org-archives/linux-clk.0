@@ -2,127 +2,154 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB062C636CC
-	for <linux-clk@archiver.kernel.org>; Sat, 18 Feb 2023 16:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E1EC61DA4
+	for <linux-clk@archiver.kernel.org>; Sat, 18 Feb 2023 18:33:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229522AbjBRQEy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 18 Feb 2023 11:04:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43740 "EHLO
+        id S229656AbjBRSdj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 18 Feb 2023 13:33:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbjBRQEy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Feb 2023 11:04:54 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C820B12BF9;
-        Sat, 18 Feb 2023 08:04:52 -0800 (PST)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31IFivqp007898;
-        Sat, 18 Feb 2023 16:04:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=qcppdkim1;
- bh=Y0rTtoTMn6ZnNqDbDaUytNOP79PGCne+oIxzZUiwE68=;
- b=mFyjGfKI3LoVBLOM7b7gVT8irZy5ip5v4Lkb3Kl3GnNLIslmTi3X2erwXAC1OxfPbeCQ
- BjDQkbhS/PmXcHIMqyDVkq1RjloaIkcawj4s7xaqTbia1MgKBY3vFlW088Y2ocVSB4lg
- OdeF/RvsKIS2lON0tLrtmlukD/EdrQ9tJNi4+h3g4sOr8wiocsUmPfo1T+BB8E0cuqSe
- eUFQVurbz4bdSK4zi7uVzGZt+9lgakp9D4+tdeczLsLsTI2+KdmFdJgC2YRP0/apF7FH
- SRaL7pSUz8ZZAl/21oxpUy5sQ1I7E5c4FqY20AHdGjKoz9y+h1YG/TiMy6olp+TNFI2d Rw== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ntp9893mh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 18 Feb 2023 16:04:48 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31IG4lgN023058
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 18 Feb 2023 16:04:47 GMT
-Received: from kathirav-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.41; Sat, 18 Feb 2023 08:04:43 -0800
-From:   Kathiravan T <quic_kathirav@quicinc.com>
-To:     <andersson@kernel.org>, <agross@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>,
-        Kathiravan T <quic_kathirav@quicinc.com>
-Subject: [PATCH V5] clk: qcom: ipq5332: mark GPLL4 as ignore unused temporarily
-Date:   Sat, 18 Feb 2023 21:34:30 +0530
-Message-ID: <20230218160430.22055-1-quic_kathirav@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: JEfbt7SgZ2_Sw-BcKcjzQrKkNhaEZ3lA
-X-Proofpoint-ORIG-GUID: JEfbt7SgZ2_Sw-BcKcjzQrKkNhaEZ3lA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
- definitions=2023-02-18_11,2023-02-17_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=824 mlxscore=0
- adultscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
- lowpriorityscore=0 bulkscore=0 clxscore=1015 impostorscore=0 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2302180145
+        with ESMTP id S229638AbjBRSdi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Feb 2023 13:33:38 -0500
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0EA5CDF3
+        for <linux-clk@vger.kernel.org>; Sat, 18 Feb 2023 10:33:35 -0800 (PST)
+Received: by mail-pj1-x1032.google.com with SMTP id nb7-20020a17090b35c700b0023058bbd7b2so1160549pjb.0
+        for <linux-clk@vger.kernel.org>; Sat, 18 Feb 2023 10:33:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tdSlOABUXDOnyk+meHLPkKnSRDvSQB5azUWlVg5K0Ws=;
+        b=WR4G9LwTNYw3FsVROmx2f2szhqt+aMI/Fh0pXJqQjv95Cg9jGxtYHlWhp1CYy2rS3O
+         S++5vWov8xo0SYE1crAyxDqHnolbaCMzpWTVH9JIE/b0jkC7U73XIsWrzedZp43x8kLu
+         Y8Tho4N0wwsSRVAl3b+ejPhqzUDMYRAI7hVrDSHr8HGSIXQjH1m5/0iy3L5dWT1JcBqq
+         ypQQpO0zdqMOc1YDmP6qjFphv8031UpYLwBQAry59Oms6Xn6SYF5VFbwx+lk/p+Ag93P
+         W4Myo/pt8q8LFBMTIXGHgRIzCCi384i19yboiyWhCBJhg4LbCRTa7iK9v281/DfDX18A
+         3Ndg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tdSlOABUXDOnyk+meHLPkKnSRDvSQB5azUWlVg5K0Ws=;
+        b=2YprvzuwbA32AC6tH4t9RPARfFZ74XZMmlR4aa1MuRMve2CJGoKvDo/OPCTP1kClag
+         GvyDUGZ8RIZANgIYMggCdVhh2EbKOS6/82oDS4+2yOr3FxkeqEJZShqHxgJH2vKS282n
+         ybPXgkWY0r57f1LaunugDT+4qjZZ8JkjggVb2IigQrHJTvRpQ9FknSvXdJBiMFQMOjVM
+         j5Et+WFHkXvZS1IbtUSllb1x8B7fn2Rb+9kKkd43txQsFATaiFzij95+3ssJmyR1Zw7e
+         3IgGiG7zdgw92IodVucyHCsEnpGvovbNs4/xPgG9l04YTzruZGUG+TSoZ8ztRH+02ME9
+         fGGg==
+X-Gm-Message-State: AO0yUKW2RYH1h5/hY2UznAIb4PZciWxdefPIyStNbQCZW+72TDsBVR/t
+        pLDG2U29NC0rtWq/5qH7uKqW7g==
+X-Google-Smtp-Source: AK7set8mks9ATRjJPpov69mSHOUoLOQ6En2xElAg1qfskRkaUzRjvcvpky66JqrPGHFAvJ/KAvpztg==
+X-Received: by 2002:a17:902:f544:b0:196:6577:5a96 with SMTP id h4-20020a170902f54400b0019665775a96mr470313plf.30.1676745215107;
+        Sat, 18 Feb 2023 10:33:35 -0800 (PST)
+Received: from localhost ([50.221.140.188])
+        by smtp.gmail.com with ESMTPSA id u4-20020a170902b28400b00199481ac72fsm4939269plr.225.2023.02.18.10.33.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 Feb 2023 10:33:34 -0800 (PST)
+Date:   Sat, 18 Feb 2023 10:33:34 -0800 (PST)
+X-Google-Original-Date: Sat, 18 Feb 2023 10:32:53 PST (-0800)
+Subject:     Re: [PATCH] dt-bindings: drop Sagar Kadam from SiFive binding maintainership
+In-Reply-To: <20230217180035.39658-1-conor@kernel.org>
+CC:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Conor Dooley <conor@kernel.org>, mturquette@baylibre.com,
+        sboyd@kernel.org, tglx@linutronix.de,
+        Marc Zyngier <maz@kernel.org>, thierry.reding@gmail.com,
+        u.kleine-koenig@pengutronix.de, aou@eecs.berkeley.edu,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pwm@vger.kernel.org,
+        Conor Dooley <conor.dooley@microchip.com>,
+        sagar.kadam@openfive.com, sagar.kadam@sifive.com
+From:   Palmer Dabbelt <palmer@dabbelt.com>
+To:     Conor Dooley <conor@kernel.org>
+Message-ID: <mhng-5af14e38-3a1b-480b-be9f-922acbcad914@palmer-ri-x1c9a>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Clock framework disables the GPLL4 source since there are no active users
-for this source currently. Some of the clocks initialized by the
-bootloaders uses the GPLL4 as the source. Due to this, when the GPLL4 is
-disabled by the clock framework, system is going for the reboot.
+On Fri, 17 Feb 2023 10:00:36 PST (-0800), Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
+>
+> Sagar's email listed in maintainers is bouncing as his division was sold
+> off by the company. I attempted to contact him some days ago on what the
+> bounce email told me was his new contact information, but am yet to
+> receive a response.
+>
+> Paul and Palmer are listed on each of the bindings, both of whom were
+> alive & well as of Wednesday so the bindings remain maintained.
+>
+> CC: Sagar Kadam <sagar.kadam@openfive.com>
+> CC: Sagar Kadam <sagar.kadam@sifive.com>
+> Link: https://lore.kernel.org/all/785425ca-4000-a7e4-16d6-4d68c91b158d@kernel.org/
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+> Palmer/Paul, as mentioned Wednesday, here you go!
 
-To avoid this, mark the GPLL4 as ignore unused so that clock framework
-doesn't disable it. Once the users of this source is enabled, we can get
-rid of this flag.
+Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
 
-Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
----
-Changes in V5:
-	- Update the commit title to reflect CLK_IGNORE_UNUSED is used
-	- This patch depends on the IPQ5332 baseport patches
-	  https://lore.kernel.org/linux-arm-msm/20230217075835.460-1-quic_kathirav@quicinc.com/
+Thanks!
 
-Changes in V4:
-	- Updated the commit message and comment in driver that
-	  CLK_IGNORE_UNUSED is used
-	- This patch depends on the IPQ5332 baseport patches
-	  https://lore.kernel.org/linux-arm-msm/20230217075835.460-1-quic_kathirav@quicinc.com/
-
-Changes in V3:
-	- Fixed the typo in the comment
-	- Used CLK_IGNORE_UNUSED instead of CLK_IS_CRITICAL
-
-Changes in V2:
-	- Added a comment in driver explaining the need of the flag
-
- drivers/clk/qcom/gcc-ipq5332.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
-index 9e4baea33937..bdb4a0a11d07 100644
---- a/drivers/clk/qcom/gcc-ipq5332.c
-+++ b/drivers/clk/qcom/gcc-ipq5332.c
-@@ -128,6 +128,17 @@ static struct clk_alpha_pll gpll4_main = {
- 			.parent_data = &gcc_parent_data_xo,
- 			.num_parents = 1,
- 			.ops = &clk_alpha_pll_stromer_ops,
-+			/*
-+			 * There are no consumers for this GPLL in kernel yet,
-+			 * (will be added soon), so the clock framework
-+			 * disables this source. But some of the clocks
-+			 * initialized by boot loaders uses this source. So we
-+			 * need to keep this clock ON. Add the
-+			 * CLK_IGNORE_UNUSED flag so the clock will not be
-+			 * disabled. Once the consumer in kernel is added, we
-+			 * can get rid of this flag.
-+			 */
-+			.flags = CLK_IGNORE_UNUSED,
- 		},
- 	},
- };
--- 
-2.17.1
-
+> ---
+>  Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml | 1 -
+>  .../bindings/interrupt-controller/sifive,plic-1.0.0.yaml       | 1 -
+>  Documentation/devicetree/bindings/pwm/pwm-sifive.yaml          | 1 -
+>  Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml    | 3 +--
+>  4 files changed, 1 insertion(+), 5 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml b/Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml
+> index c3be1b600007..c79e752283aa 100644
+> --- a/Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml
+> +++ b/Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml
+> @@ -8,7 +8,6 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  title: SiFive FU540 Power Reset Clock Interrupt Controller (PRCI)
+>
+>  maintainers:
+> -  - Sagar Kadam <sagar.kadam@sifive.com>
+>    - Paul Walmsley  <paul.walmsley@sifive.com>
+>
+>  description:
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+> index 99e01f4d0a69..63bc89e13480 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+> @@ -45,7 +45,6 @@ description:
+>    from S-mode. So add thead,c900-plic to distinguish them.
+>
+>  maintainers:
+> -  - Sagar Kadam <sagar.kadam@sifive.com>
+>    - Paul Walmsley  <paul.walmsley@sifive.com>
+>    - Palmer Dabbelt <palmer@dabbelt.com>
+>
+> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml b/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
+> index 605c1766dba8..bae993128981 100644
+> --- a/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
+> +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
+> @@ -8,7 +8,6 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  title: SiFive PWM controller
+>
+>  maintainers:
+> -  - Sagar Kadam <sagar.kadam@sifive.com>
+>    - Paul Walmsley <paul.walmsley@sifive.com>
+>
+>  description:
+> diff --git a/Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml b/Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml
+> index bf3f07421f7e..0551a0d1b3df 100644
+> --- a/Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml
+> +++ b/Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml
+> @@ -8,8 +8,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  title: SiFive Composable Cache Controller
+>
+>  maintainers:
+> -  - Sagar Kadam <sagar.kadam@sifive.com>
+> -  - Paul Walmsley  <paul.walmsley@sifive.com>
+> +  - Paul Walmsley <paul.walmsley@sifive.com>
+>
+>  description:
+>    The SiFive Composable Cache Controller is used to provide access to fast copies
