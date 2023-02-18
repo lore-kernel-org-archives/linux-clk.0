@@ -2,70 +2,66 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6438C636D6
-	for <linux-clk@archiver.kernel.org>; Sat, 18 Feb 2023 01:44:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5848BC636D6
+	for <linux-clk@archiver.kernel.org>; Sat, 18 Feb 2023 02:06:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229551AbjBRBoL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Feb 2023 20:44:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47238 "EHLO
+        id S229506AbjBRCGV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Feb 2023 21:06:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjBRBoK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 20:44:10 -0500
+        with ESMTP id S229445AbjBRCGV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Feb 2023 21:06:21 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC3E16A06C;
-        Fri, 17 Feb 2023 17:44:09 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 207CF5F242;
+        Fri, 17 Feb 2023 18:06:20 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7ABB4B82D75;
-        Sat, 18 Feb 2023 01:44:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 158C3C433D2;
-        Sat, 18 Feb 2023 01:44:07 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B73F6B82D75;
+        Sat, 18 Feb 2023 02:06:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B5E7C433D2;
+        Sat, 18 Feb 2023 02:06:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676684647;
-        bh=8H3snZZWJSuvzo/06BSbGSgZEp2t4oYg6IRm6Obv9sE=;
+        s=k20201202; t=1676685977;
+        bh=5xIQ2dHhiBWicvk4sy4hb4AODy+qsSgLqKodHuCFD+M=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=AJdbqjAUjUVXrksYdPhkw0xnBzQqdWs7abpZ9z726Q02ndMtP7uxgu/6J+oC4tGCi
-         O6/1/zK2BQm74BduwI3xo6c79QEW9ePX97nxFDV8XOzrvadnEoAsJYSDiup5VKiP9N
-         xo0aQ8e2C76JxcnxFybqCecbuQGpWlHcFD30fRbIPV/3UwimY1ijaAM8dHGu268r+1
-         ybWHgSSxG6Zovc28iNdPlD7gIhqglMAD8NXuukqz85WSp96VXaGuTzQChj3bAzQ7aJ
-         Lw3nHR7lNF9p+moesgNAER7L1k8/5y16Yecqnk2FFM5ukzgjNxCan6GTQSiy5Ul+kT
-         RbScxCzSB8ixA==
-Message-ID: <25835181be099ba9b101d185eb5563d1.sboyd@kernel.org>
+        b=XczH8us6N2O/a4kQ00+R5STZqwpXbgzsZFhXpjsCkPnMhG7BTsRmR9SRi3eGz6X0m
+         sGzmltNIuo3un6GgNTsFrr5YhS0MQvwN6losC8vL4bAWIVgtIMbajdmIXklxKjECn6
+         7lFDBs+AUqY3f1vclm7nyZzAXyqANI99vvwClkYekhlwqOmDAMqpPSdTM06H1sIgXi
+         JxrxxAJxt4bRtC+uIgRTJEGQTFOxrgNxi2TQ6Tq6oglaMminiz/xWnVhTeX3Ct4LVH
+         6okSBjAkcbHsK0XCdzSnOJVJC+BuHCR9XO7v9Utf/tsdMGXFU5VtQuhfZnPTn0/izv
+         YKF1C0jQx/Peg==
+Message-ID: <734ae9592bfaef54223f74d17fb9dfd8.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221210203835.9714-1-kgroeneveld@lenbrook.com>
-References: <20221210203835.9714-1-kgroeneveld@lenbrook.com>
-Subject: Re: [PATCH] clk: imx: pll14xx: fix recalc_rate for negative kdiv
+In-Reply-To: <20230202-asahi-t8112-dt-v1-13-cb5442d1c229@jannau.net>
+References: <20230202-asahi-t8112-dt-v1-0-cb5442d1c229@jannau.net> <20230202-asahi-t8112-dt-v1-13-cb5442d1c229@jannau.net>
+Subject: Re: [PATCH 13/17] dt-bindings: clock: apple,nco: Add t8112-nco compatible
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Kevin Groeneveld <kgroeneveld@lenbrook.com>
-To:     Abel Vesa <abelvesa@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Kevin Groeneveld <kgroeneveld@lenbrook.com>,
+Cc:     asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+To:     Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Mark Kettenis <kettenis@openbsd.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 17 Feb 2023 17:44:04 -0800
+        Rob Herring <robh+dt@kernel.org>,
+        Sven Peter <sven@svenpeter.dev>,
+        =?utf-8?q?=EF=BF=BDer?= <povik+lin@cutebit.org>
+Date:   Fri, 17 Feb 2023 18:06:14 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Kevin Groeneveld (2022-12-10 12:38:35)
-> kdiv is a signed 16 bit value in the DEV_CTL1 register. Commit
-> 53990cf9d5b4 ("clk: imx: pll14xx: consolidate rate calculation") changed
-> the kdiv variable from a short int to just int. When the value read from
-> the DIV_CTL1 register is assigned directly to an int the sign of the value
-> is lost resulting in incorrect results when the value is negative. Adding
-> a s16 cast to the register value fixes the issue.
+Quoting Janne Grunau (2023-02-12 07:41:23)
+> The block found on Apple's M2 SoC is compatible with the existing driver
+> so add its per-SoC compatible.
 >=20
-> Fixes: 53990cf9d5b4 ("clk: imx: pll14xx: consolidate rate calculation")
-> Signed-off-by: Kevin Groeneveld <kgroeneveld@lenbrook.com>
+> Signed-off-by: Janne Grunau <j@jannau.net>
+>=20
 > ---
 
-Applied to clk-fixes
+Acked-by: Stephen Boyd <sboyd@kernel.org>
