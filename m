@@ -2,185 +2,127 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36706C61DA4
-	for <linux-clk@archiver.kernel.org>; Sat, 18 Feb 2023 15:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB062C636CC
+	for <linux-clk@archiver.kernel.org>; Sat, 18 Feb 2023 16:04:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229509AbjBRPIi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 18 Feb 2023 10:08:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49502 "EHLO
+        id S229522AbjBRQEy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 18 Feb 2023 11:04:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbjBRPIh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Feb 2023 10:08:37 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BB9814221;
-        Sat, 18 Feb 2023 07:08:36 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id ED20BB82297;
-        Sat, 18 Feb 2023 15:08:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5B55C433D2;
-        Sat, 18 Feb 2023 15:08:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676732913;
-        bh=sPa0pH2g0UXFbG2oKpJGFWnf16edjVekfceTCAy0iO0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DjCcLFyPtY4eX0lG4GQFGcPX/VgqDZI4nA14qNkjlygE9mU7Fs/8865bB6r+p0mgb
-         27juK2Yn9jCS5V0oTFwHevhsrkcirvCHLmaeOL7mIOQdI//baC3OfrKA1aJStZLrDM
-         ebGqXsKBwPrlsKFCd5YLynJNKZY5/8yv77Q73X7EMEJYxR6aKvL2XK5iBKXJmO6LSk
-         7Xt0u68wcWxDxtQIp9mPjJ44pdzMCNwMHaxUcHE90FrPT81nh145cOFrZddWkILOxS
-         8PmMHsOIDFXnNVC4XGcJCCfpDQwqqQRvqdQftTcDiDeNTd+ilp+ySckjbUgz1o1xhI
-         Y7kOpzhUxztig==
-Date:   Sat, 18 Feb 2023 15:08:28 +0000
-From:   Conor Dooley <conor@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Conor Dooley <conor.dooley@microchip.com>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 07/11] dt-bindings: clock: Add StarFive JH7110 system
- clock and reset generator
-Message-ID: <Y/Dp7OSNIAL39DSV@spud>
-References: <Y+5z8skN2DuvxDEL@spud>
- <68e61f28-daec-ce72-726a-1fffe8e94829@starfivetech.com>
- <Y+8x/KSujhgNLAd6@wendy>
- <d3b06d0b-ff17-ebab-bae5-e1ec836fe667@starfivetech.com>
- <Y++B43uCnPQlRYFi@wendy>
- <dcba75b5-7b62-35aa-6836-5d5edd785002@linaro.org>
- <Y++q9ln8P3XegqfN@spud>
- <41e4f293-99eb-f157-b4a9-3d00b15f4652@linaro.org>
- <Y/CztNs6laTzttrI@spud>
- <a3217699-7b23-35e6-84b2-fe9e52158481@linaro.org>
+        with ESMTP id S229441AbjBRQEy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Feb 2023 11:04:54 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C820B12BF9;
+        Sat, 18 Feb 2023 08:04:52 -0800 (PST)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31IFivqp007898;
+        Sat, 18 Feb 2023 16:04:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=Y0rTtoTMn6ZnNqDbDaUytNOP79PGCne+oIxzZUiwE68=;
+ b=mFyjGfKI3LoVBLOM7b7gVT8irZy5ip5v4Lkb3Kl3GnNLIslmTi3X2erwXAC1OxfPbeCQ
+ BjDQkbhS/PmXcHIMqyDVkq1RjloaIkcawj4s7xaqTbia1MgKBY3vFlW088Y2ocVSB4lg
+ OdeF/RvsKIS2lON0tLrtmlukD/EdrQ9tJNi4+h3g4sOr8wiocsUmPfo1T+BB8E0cuqSe
+ eUFQVurbz4bdSK4zi7uVzGZt+9lgakp9D4+tdeczLsLsTI2+KdmFdJgC2YRP0/apF7FH
+ SRaL7pSUz8ZZAl/21oxpUy5sQ1I7E5c4FqY20AHdGjKoz9y+h1YG/TiMy6olp+TNFI2d Rw== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ntp9893mh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 18 Feb 2023 16:04:48 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31IG4lgN023058
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 18 Feb 2023 16:04:47 GMT
+Received: from kathirav-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.41; Sat, 18 Feb 2023 08:04:43 -0800
+From:   Kathiravan T <quic_kathirav@quicinc.com>
+To:     <andersson@kernel.org>, <agross@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>,
+        Kathiravan T <quic_kathirav@quicinc.com>
+Subject: [PATCH V5] clk: qcom: ipq5332: mark GPLL4 as ignore unused temporarily
+Date:   Sat, 18 Feb 2023 21:34:30 +0530
+Message-ID: <20230218160430.22055-1-quic_kathirav@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="d3e604Nj3oEHKdcd"
-Content-Disposition: inline
-In-Reply-To: <a3217699-7b23-35e6-84b2-fe9e52158481@linaro.org>
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: JEfbt7SgZ2_Sw-BcKcjzQrKkNhaEZ3lA
+X-Proofpoint-ORIG-GUID: JEfbt7SgZ2_Sw-BcKcjzQrKkNhaEZ3lA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-18_11,2023-02-17_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=824 mlxscore=0
+ adultscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
+ lowpriorityscore=0 bulkscore=0 clxscore=1015 impostorscore=0 spamscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302180145
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Clock framework disables the GPLL4 source since there are no active users
+for this source currently. Some of the clocks initialized by the
+bootloaders uses the GPLL4 as the source. Due to this, when the GPLL4 is
+disabled by the clock framework, system is going for the reboot.
 
---d3e604Nj3oEHKdcd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+To avoid this, mark the GPLL4 as ignore unused so that clock framework
+doesn't disable it. Once the users of this source is enabled, we can get
+rid of this flag.
 
-On Sat, Feb 18, 2023 at 03:55:25PM +0100, Krzysztof Kozlowski wrote:
-> On 18/02/2023 12:17, Conor Dooley wrote:
-> > On Sat, Feb 18, 2023 at 11:20:30AM +0100, Krzysztof Kozlowski wrote:
+Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+---
+Changes in V5:
+	- Update the commit title to reflect CLK_IGNORE_UNUSED is used
+	- This patch depends on the IPQ5332 baseport patches
+	  https://lore.kernel.org/linux-arm-msm/20230217075835.460-1-quic_kathirav@quicinc.com/
 
-> >>>> That's a long thread, please summarize what you ask. Otherwise I hav=
-e no
-> >>>> clue what is the question.
-> >>>
-> >>> Sorry. I tried to preserve the context of the conversation the last t=
-ime
-> >>> I cropped it so that things would be contained on one email.
-> >>>
-> >>> For me at least, I am wondering how you convey that out of a list of
-> >>> clock inputs (for example a, b, c, d) that two of the clocks are inpu=
-ts
-> >>> to a mux and it is only required to provide one of the two (say b & c=
-).
-> >=20
-> > You skipped this part which was what I was trying to ask you about.
->=20
-> Yeah, I skipped a lot because there was one big thread with a question:
-> what do you think? Sorry, I will not dig 8 emails thread to figure out
-> which question is to me and which is not...
+Changes in V4:
+	- Updated the commit message and comment in driver that
+	  CLK_IGNORE_UNUSED is used
+	- This patch depends on the IPQ5332 baseport patches
+	  https://lore.kernel.org/linux-arm-msm/20230217075835.460-1-quic_kathirav@quicinc.com/
 
-This was in the cut-down message & a fake scenario to avoid you needing
-to understand the full thread.
-I kept the context originally so that you would not have to dig out the
-thread & provided the fake scenario this time for this very reason.
+Changes in V3:
+	- Fixed the typo in the comment
+	- Used CLK_IGNORE_UNUSED instead of CLK_IS_CRITICAL
 
-> > Do you know how to convey this situation, or is it even possible to
-> > express those rules?
->=20
-> oneOf:
->  - clock-names:
->      minItems: 3
->      items:
->        - a
->        - b
->        - c
->        - d
->  - clock-names:
->      items:
->        - a
->        - b
->        - d
->=20
-> or maybe:
->  - clock-names:
->      minItems: 3
->      items:
->        - a
->        - b
->        - enum: [c, d]
->        - d
+Changes in V2:
+	- Added a comment in driver explaining the need of the flag
 
-Thanks for the suggestions. Without actually going and playing with it,
-the first of those two looks like it may be the right fit for this
-situation, depending on what Hal says the hardware can do.
+ drivers/clk/qcom/gcc-ipq5332.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-> >>>> Does the mux works correctly if clock input is not connected? I mean,
-> >>>> are you now talking about real hardware or some simplification from =
-SW
-> >>>> point of view?
-> >>>
-> >>> I'm coming at this from an angle of "is a StarFive customer going to =
-show
-> >>> up with a devicetree containing dummy fixed-clocks to satisfy dtbs_ch=
-eck
-> >>> because they opted to only populate one input to the mux".
-> >>> I don't really care about implications for the driver, just about
-> >>> whether the hardware allows for inputs to the mux to be left
-> >>> un-populated.
-> >>
-> >> Whether hardware allows - not a question to me.
-> >=20
-> >> BTW, this is rather question coming from me...
-> >=20
-> > I don't understand what you mean by this, sorry.
->=20
-> You said to a letter addressed to me "whether the hardware allows for
-> ...". Why would you ask me about hardware I know nothing about? That was
-> my question - I am asking - whether hardware allows it or not. Then
-> write bindings depending on that.
+diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
+index 9e4baea33937..bdb4a0a11d07 100644
+--- a/drivers/clk/qcom/gcc-ipq5332.c
++++ b/drivers/clk/qcom/gcc-ipq5332.c
+@@ -128,6 +128,17 @@ static struct clk_alpha_pll gpll4_main = {
+ 			.parent_data = &gcc_parent_data_xo,
+ 			.num_parents = 1,
+ 			.ops = &clk_alpha_pll_stromer_ops,
++			/*
++			 * There are no consumers for this GPLL in kernel yet,
++			 * (will be added soon), so the clock framework
++			 * disables this source. But some of the clocks
++			 * initialized by boot loaders uses this source. So we
++			 * need to keep this clock ON. Add the
++			 * CLK_IGNORE_UNUSED flag so the clock will not be
++			 * disabled. Once the consumer in kernel is added, we
++			 * can get rid of this flag.
++			 */
++			.flags = CLK_IGNORE_UNUSED,
+ 		},
+ 	},
+ };
+-- 
+2.17.1
 
-There was no question here, instead it was an answer to this question of
-yours:
-> I mean,
-> are you now talking about real hardware or some simplification from SW
-> point of view?
-
-In which I was saying I cared about the "real hardware". For obvious
-reasons, I wouldn't ask you to explain whether the hardware is capable
-of it or not!
-Perhaps your original question here was misunderstood.
-
-Thanks for the suggestions,
-Conor.
-
-
---d3e604Nj3oEHKdcd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY/Dp2gAKCRB4tDGHoIJi
-0k8fAP9J1L6UC9WiKthxZyx3ScL304V9dCIoiKl7RfN3APwx8QEAtNgO+U4h/T3x
-XP94Chr0S+Ck/9gT1OENwU5YFD/x2QE=
-=O/TG
------END PGP SIGNATURE-----
-
---d3e604Nj3oEHKdcd--
