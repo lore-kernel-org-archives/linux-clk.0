@@ -2,142 +2,130 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1177C61DA4
-	for <linux-clk@archiver.kernel.org>; Sat, 18 Feb 2023 05:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A3F1C64EC4
+	for <linux-clk@archiver.kernel.org>; Sat, 18 Feb 2023 10:20:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229541AbjBRFib (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 18 Feb 2023 00:38:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48150 "EHLO
+        id S229848AbjBRKUh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 18 Feb 2023 05:20:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjBRFia (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Feb 2023 00:38:30 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F06D33A08F;
-        Fri, 17 Feb 2023 21:38:28 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 532A2CE22F6;
-        Sat, 18 Feb 2023 05:38:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20FA4C433D2;
-        Sat, 18 Feb 2023 05:38:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676698705;
-        bh=Oxt0iejN3V58EN6vZUzQan+IRypPIMXTdgAy3ihC6GM=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=L5dXVgrxLN/6Mm7rXvR8j0Ohg78CnHdjr05fWcd4Pa5PrYWpEtLV9DLBaExA097rG
-         ojJjwfySDiu0HNDC0vmbB8MXJ4nqoVKXs3SGGvAQSO3Vz2t7uCoEsYW1iN4c5T1DeC
-         i30flI/QOsOI0l2n98lzCJ32/nEFdDoj3BNaqMv9La0HSJyfKRFP3d7GLzDECka+0G
-         T/+IcPd/+vNM1KMgtJ/TxVN6maIvdD3BXHOtA3rY/1bqWzjZLowiD3lXElcFTe40ND
-         ORBVWA3mDyiOz/E8u1p8YQpurVdwNEpoyzJbU1HgUoYDhzJtz1pXSpnsnl6Xlr9xEe
-         vdXvQtkSazBiA==
-Message-ID: <ebc257025ebd641e624ef506ea09c800.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229804AbjBRKUg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Feb 2023 05:20:36 -0500
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 413A42196D
+        for <linux-clk@vger.kernel.org>; Sat, 18 Feb 2023 02:20:34 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id z10so1338316edc.6
+        for <linux-clk@vger.kernel.org>; Sat, 18 Feb 2023 02:20:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gXWBqPKJATEbQwMYn1AOi6oyN/FWqf7mF2sCGoJ9wDs=;
+        b=Ng5uo45ErLmboggTHebCdSpnwp3piawmsLsVVqlNi7RHFIXAsLnKY6k35oWiVl/TE7
+         xZcX5WoQM6voUzlj1B7sUJwCV4oK0kpVtJpKXvu7NAhqOBY4+7Z6oHQsbv7YUaZ0JRYt
+         GsuiDLRlhDomrxfJT51N6BsHl4LsBvTtIsK+ksat91OUnm0BItUjXTKtmDwYGiSLfPv9
+         fd7uiOASPoDC1BOBt+xnpIjj4PgXZWJ2iswOSpeJWzyqGedJT7XX8AX4wTbt+8yIFS8k
+         csNpzKMblJkNAgbIFAqsQKyPJ7LS7eJKucf1TPUgDwYJu9d/g8vmZb2y8heX5Er1td1G
+         NdiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gXWBqPKJATEbQwMYn1AOi6oyN/FWqf7mF2sCGoJ9wDs=;
+        b=EvNmQOjcq6KOSHjhEZver00nLmzDkNBZ20gN02YtlAhBk0h5gvlWgF+FKgZHyI//eW
+         XYl6iHmXKjXBGFTEYU3OxPYotwHMG96y39ZgbtDhdus7tCft1Z6k/IWFoUe5mslHUOmE
+         Ro7m58y8KYeLLC/Zolar+oc0yJyMnMg8pO1I2aIDSH3Hg504DTndmjxjkVec8dhW+575
+         WU6PoyZcghSlOaftuE0m0XqWQ//tTeIYY6eFUocRiHscJCCsQZSOCguUjYaRQqDjnotd
+         sg9ExH84BmNWTrlmnjybWUPCxjkbFCatuPfIeC5nERBsGEOWpLcxy/AmCvLmYrv+9Fbw
+         aRYg==
+X-Gm-Message-State: AO0yUKXSPaio8u3gahOC4yQFY7yEmE8Npy5T+9jcekgshV+toJLgQMBu
+        Mq7EJ3dy6H2+IYBfQ/U0DwGrOw==
+X-Google-Smtp-Source: AK7set8EH3WvOb4bGkAmEmqcxjuZE97vKew424/l2lcrLJnoJMro4k6GqKtZRnMJkCm4Qx3TKYnsAg==
+X-Received: by 2002:a17:906:b359:b0:8c2:d53c:377a with SMTP id cd25-20020a170906b35900b008c2d53c377amr624263ejb.51.1676715632769;
+        Sat, 18 Feb 2023 02:20:32 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id i1-20020a17090671c100b0087bdae9a1ebsm3225075ejk.94.2023.02.18.02.20.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 Feb 2023 02:20:32 -0800 (PST)
+Message-ID: <41e4f293-99eb-f157-b4a9-3d00b15f4652@linaro.org>
+Date:   Sat, 18 Feb 2023 11:20:30 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221227204528.1899863-1-abel.vesa@linaro.org>
-References: <20221227204528.1899863-1-abel.vesa@linaro.org>
-Subject: Re: [PATCH v3 1/2] clk: Add generic sync_state callback for disabling unused clocks
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, mka@chromium.org
-To:     Abel Vesa <abel.vesa@linaro.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>
-Date:   Fri, 17 Feb 2023 21:38:22 -0800
-User-Agent: alot/0.10
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH v3 07/11] dt-bindings: clock: Add StarFive JH7110 system
+ clock and reset generator
+Content-Language: en-US
+To:     Conor Dooley <conor@kernel.org>
+Cc:     Conor Dooley <conor.dooley@microchip.com>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        linux-kernel@vger.kernel.org
+References: <Y6JB37Pd5TZoGMy4@spud>
+ <7a7bccb1-4d47-3d32-36e6-4aab7b5b8dad@starfivetech.com>
+ <Y6tSWB2+98a8k9Qw@spud>
+ <5cf0fe71-fd17-fb28-c01e-28356081ba76@starfivetech.com>
+ <Y+5z8skN2DuvxDEL@spud>
+ <68e61f28-daec-ce72-726a-1fffe8e94829@starfivetech.com>
+ <Y+8x/KSujhgNLAd6@wendy>
+ <d3b06d0b-ff17-ebab-bae5-e1ec836fe667@starfivetech.com>
+ <Y++B43uCnPQlRYFi@wendy> <dcba75b5-7b62-35aa-6836-5d5edd785002@linaro.org>
+ <Y++q9ln8P3XegqfN@spud>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <Y++q9ln8P3XegqfN@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2022-12-27 12:45:27)
-> There are unused clocks that need to remain untouched by clk_disable_unus=
-ed,
-> and most likely could be disabled later on sync_state. So provide a gener=
-ic
-> sync_state callback for the clock providers that register such clocks.
-> Then, use the same mechanism as clk_disable_unused from that generic
-> callback, but pass the device to make sure only the clocks belonging to
-> the current clock provider get disabled, if unused. Also, during the
-> default clk_disable_unused, if the driver that registered the clock has
-> the generic clk_sync_state_disable_unused callback set for sync_state,
-> skip disabling its clocks.
+On 17/02/2023 17:27, Conor Dooley wrote:
+> On Fri, Feb 17, 2023 at 04:47:48PM +0100, Krzysztof Kozlowski wrote:
+>> On 17/02/2023 14:32, Conor Dooley wrote:
+>>>>>> Yes, it is.
+>>>>>
+>>>>> Which would then make GMAC1 RGMII RX optional, rather than required?
+>>>>
+>>>> If thinking in this way, I must say yes, it is optional. But actually
+>>>> GMAC1 RGMII RX feeds gmac1_rx by default. 
+>>>> For a mux, it usually works if you populate only one input to it.
+>>>> Does it mean all the other inputs are optional? And how can we define
+>>>> which input is required?
+>>>
+>>> I'm not sure, that is a question for Krzysztof and/or Rob.
+>>
+>> That's a long thread, please summarize what you ask. Otherwise I have no
+>> clue what is the question.
+> 
+> Sorry. I tried to preserve the context of the conversation the last time
+> I cropped it so that things would be contained on one email.
+> 
+> For me at least, I am wondering how you convey that out of a list of
+> clock inputs (for example a, b, c, d) that two of the clocks are inputs
+> to a mux and it is only required to provide one of the two (say b & c).
+> 
+>> Does the mux works correctly if clock input is not connected? I mean,
+>> are you now talking about real hardware or some simplification from SW
+>> point of view?
+> 
+> I'm coming at this from an angle of "is a StarFive customer going to show
+> up with a devicetree containing dummy fixed-clocks to satisfy dtbs_check
+> because they opted to only populate one input to the mux".
+> I don't really care about implications for the driver, just about
+> whether the hardware allows for inputs to the mux to be left
+> un-populated.
 
-How does that avoid disabling clks randomly in the clk tree? I'm
-concerned about disabling an unused clk in the middle of the tree
-because it doesn't have a driver using sync state, while the clk is the
-parent of an unused clk that is backed by sync state.
+Whether hardware allows - not a question to me. BTW, this is rather
+question coming from me...
 
-   clk A -->  clk B=20
+Best regards,
+Krzysztof
 
-clk A: No sync state
-clk B: sync state
-
-clk B is left on by the bootloader. __clk_disable_unused(NULL) is called
-from late init. Imagine clk A is the root of the tree.
-
-	clk_disable_unused_subtree(clk_core A)
-	  clk_disable_unused_subtree(clk_core B)
-	    if (from_sync_state && core->dev !=3D dev)
-	      return;
-	  ...
-	  clk core A->ops->disable()
-
-clk core B is off now?
-
-Also sync_state seems broken right now. I saw mka mentioned that if you
-have a device node enabled in your DT but never enable a driver for it
-in the kernel we'll never get sync_state called. This is another
-problem, but it concerns me that sync_state would make the unused clk
-disabling happen at some random time or not at all.
-
-Can the problem be approached more directly? If this is about fixing
-continuous splash screen, then I wonder why we can't list out the clks
-that we know are enabled by the bootloader in some new DT binding, e.g.:
-
-	clock-controller {
-		#clock-cells =3D <1>;
-		boot-handoff-clocks =3D <&consumer_device "clock cells for this clk provi=
-der">;
-	};
-
-Then mark those as "critical/don't turn off" all the way up the clk tree
-when the clk driver probes by essentially incrementing the
-prepare/enable count but not actually touching the hardware, and when
-the clks are acquired by clk_get() for that device that's using them
-from boot we make the first clk_prepare_enable() do nothing and not
-increment the count at all. We can probably stick some flag into the
-'struct clk' for this when we create the handle in clk_get() so that the
-prepare and enable functions can special case and skip over.
-
-The sync_state hook operates on a driver level, which is too large when
-you consider that a single clk driver may register hundreds of clks that
-are not related. We want to target a solution at the clk level so that
-any damage from keeping on all the clks provided by the controller is
-limited to just the drivers that aren't probed and ready to handle their
-clks. If sync_state could be called whenever a clk consumer consumes a
-clk it may work? Technically we already have that by the clk_hw_provider
-function but there isn't enough information being passed there, like the
-getting device.
-
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 842e72a5348f..cf1adfeaf257 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -720,6 +720,7 @@ struct clk *clk_register_divider_table(struct device =
-*dev, const char *name,
->                 void __iomem *reg, u8 shift, u8 width,
->                 u8 clk_divider_flags, const struct clk_div_table *table,
->                 spinlock_t *lock);
-> +void clk_sync_state_disable_unused(struct device *dev);
-
-This is a weird place to put this. Why not in the helper functions
-section?
-
->  /**
->   * clk_register_divider - register a divider clock with the clock framew=
-ork
->   * @dev: device registering this clock
