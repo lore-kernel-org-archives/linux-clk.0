@@ -2,154 +2,123 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E1EC61DA4
-	for <linux-clk@archiver.kernel.org>; Sat, 18 Feb 2023 18:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8177DC61DA4
+	for <linux-clk@archiver.kernel.org>; Sat, 18 Feb 2023 22:59:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229656AbjBRSdj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 18 Feb 2023 13:33:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39970 "EHLO
+        id S229572AbjBRW7H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 18 Feb 2023 17:59:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229638AbjBRSdi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Feb 2023 13:33:38 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0EA5CDF3
-        for <linux-clk@vger.kernel.org>; Sat, 18 Feb 2023 10:33:35 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id nb7-20020a17090b35c700b0023058bbd7b2so1160549pjb.0
-        for <linux-clk@vger.kernel.org>; Sat, 18 Feb 2023 10:33:35 -0800 (PST)
+        with ESMTP id S229489AbjBRW7H (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Feb 2023 17:59:07 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79FB713503
+        for <linux-clk@vger.kernel.org>; Sat, 18 Feb 2023 14:59:05 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id bh24-20020a05600c3d1800b003e00c739ce4so1043808wmb.5
+        for <linux-clk@vger.kernel.org>; Sat, 18 Feb 2023 14:59:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tdSlOABUXDOnyk+meHLPkKnSRDvSQB5azUWlVg5K0Ws=;
-        b=WR4G9LwTNYw3FsVROmx2f2szhqt+aMI/Fh0pXJqQjv95Cg9jGxtYHlWhp1CYy2rS3O
-         S++5vWov8xo0SYE1crAyxDqHnolbaCMzpWTVH9JIE/b0jkC7U73XIsWrzedZp43x8kLu
-         Y8Tho4N0wwsSRVAl3b+ejPhqzUDMYRAI7hVrDSHr8HGSIXQjH1m5/0iy3L5dWT1JcBqq
-         ypQQpO0zdqMOc1YDmP6qjFphv8031UpYLwBQAry59Oms6Xn6SYF5VFbwx+lk/p+Ag93P
-         W4Myo/pt8q8LFBMTIXGHgRIzCCi384i19yboiyWhCBJhg4LbCRTa7iK9v281/DfDX18A
-         3Ndg==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FTtgJ59N6itz1m4NV60RmlpVLeIrVGaG77XPqapX9nA=;
+        b=gAgq9URA1V4NnsrgAGmKlJL8i8DYVCotlCDZhm+0UJDpk8vBA7s4ie2Rxql0Hp1YKa
+         nMAeq1y3lS1OfnKpqN6UlqbV+PdtdATKUYCDW0inc2texTqehV4C6ofG2Ql41rMZFczi
+         GkZbW5+rAaUaEhKzxoxr/fcAwbOqIaTf/M0X8ktCmynojcrEfGLheFfp4jpXpf3TEpNv
+         dpxHwDeRGjVhD+ewFOXDSNB4vUJO5XyOogne2VhMhohgyokNhuE5n5Q3u2XOGxxYvo/I
+         WUuj6da2H1kzGbJ8N861e1OLlGKREdcbIe8Tf0inw6NSvzJocntQOOA7EylP1KD7/vLM
+         E8rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tdSlOABUXDOnyk+meHLPkKnSRDvSQB5azUWlVg5K0Ws=;
-        b=2YprvzuwbA32AC6tH4t9RPARfFZ74XZMmlR4aa1MuRMve2CJGoKvDo/OPCTP1kClag
-         GvyDUGZ8RIZANgIYMggCdVhh2EbKOS6/82oDS4+2yOr3FxkeqEJZShqHxgJH2vKS282n
-         ybPXgkWY0r57f1LaunugDT+4qjZZ8JkjggVb2IigQrHJTvRpQ9FknSvXdJBiMFQMOjVM
-         j5Et+WFHkXvZS1IbtUSllb1x8B7fn2Rb+9kKkd43txQsFATaiFzij95+3ssJmyR1Zw7e
-         3IgGiG7zdgw92IodVucyHCsEnpGvovbNs4/xPgG9l04YTzruZGUG+TSoZ8ztRH+02ME9
-         fGGg==
-X-Gm-Message-State: AO0yUKW2RYH1h5/hY2UznAIb4PZciWxdefPIyStNbQCZW+72TDsBVR/t
-        pLDG2U29NC0rtWq/5qH7uKqW7g==
-X-Google-Smtp-Source: AK7set8mks9ATRjJPpov69mSHOUoLOQ6En2xElAg1qfskRkaUzRjvcvpky66JqrPGHFAvJ/KAvpztg==
-X-Received: by 2002:a17:902:f544:b0:196:6577:5a96 with SMTP id h4-20020a170902f54400b0019665775a96mr470313plf.30.1676745215107;
-        Sat, 18 Feb 2023 10:33:35 -0800 (PST)
-Received: from localhost ([50.221.140.188])
-        by smtp.gmail.com with ESMTPSA id u4-20020a170902b28400b00199481ac72fsm4939269plr.225.2023.02.18.10.33.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Feb 2023 10:33:34 -0800 (PST)
-Date:   Sat, 18 Feb 2023 10:33:34 -0800 (PST)
-X-Google-Original-Date: Sat, 18 Feb 2023 10:32:53 PST (-0800)
-Subject:     Re: [PATCH] dt-bindings: drop Sagar Kadam from SiFive binding maintainership
-In-Reply-To: <20230217180035.39658-1-conor@kernel.org>
-CC:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Conor Dooley <conor@kernel.org>, mturquette@baylibre.com,
-        sboyd@kernel.org, tglx@linutronix.de,
-        Marc Zyngier <maz@kernel.org>, thierry.reding@gmail.com,
-        u.kleine-koenig@pengutronix.de, aou@eecs.berkeley.edu,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org,
-        Conor Dooley <conor.dooley@microchip.com>,
-        sagar.kadam@openfive.com, sagar.kadam@sifive.com
-From:   Palmer Dabbelt <palmer@dabbelt.com>
-To:     Conor Dooley <conor@kernel.org>
-Message-ID: <mhng-5af14e38-3a1b-480b-be9f-922acbcad914@palmer-ri-x1c9a>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=FTtgJ59N6itz1m4NV60RmlpVLeIrVGaG77XPqapX9nA=;
+        b=DaMAd+1mN3F+gfJdwDcgFgH8yFNo8o76wry/GNxLUNoCGOPKhIHiJ4XwOMXo/3SkS1
+         NnX/WNl/VCwqV37d4xpL/99RyJNL06XYYxcN5eVss+9m/+qk2PRwO0u3by2nbQOVREZ6
+         JXCuCPpMlaNkOsZ2SmT+M7ISAvRFHLRs/z14CqXn819fzz9fS6KiLc6tUVSVptK0LtdJ
+         LJYGeE6nh1EhaaM+DYe4cEkju+MRYBi6OoB55dxS1nce49ca8UGW9IR8ycGctAm0RDUi
+         E+Mr1JV40bOXDB3RGntIyrs9sDYCkv9sV/GCt88w5R0dsk6QZ/oIsMpIewVLePr0HzRU
+         i1Ug==
+X-Gm-Message-State: AO0yUKXFXtn5r1ZonKqbf4f5Oo8gImtpVSSSf2qTx06c7V94/RJ6kw8/
+        P2umkj2IJWqjUJFxGknmohk=
+X-Google-Smtp-Source: AK7set/AgQt6FCR1waBlPC/gYYghZ0+fn3R+jYJaWftIjV6Z6rAUTmfMCTbKhRKkOWX3tllDFkOgGA==
+X-Received: by 2002:a05:600c:1615:b0:3e2:662:ade6 with SMTP id m21-20020a05600c161500b003e20662ade6mr4807706wmn.26.1676761143694;
+        Sat, 18 Feb 2023 14:59:03 -0800 (PST)
+Received: from ?IPV6:2a01:c22:7b82:af00:2955:cfd1:cf55:9ea? (dynamic-2a01-0c22-7b82-af00-2955-cfd1-cf55-09ea.c22.pool.telefonica.de. [2a01:c22:7b82:af00:2955:cfd1:cf55:9ea])
+        by smtp.googlemail.com with ESMTPSA id k26-20020a05600c0b5a00b003e11f280b8bsm4594724wmr.44.2023.02.18.14.59.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 Feb 2023 14:59:03 -0800 (PST)
+Message-ID: <e5d7afd3-2e1a-ad5a-a455-8882fae9cc47@gmail.com>
+Date:   Sat, 18 Feb 2023 23:58:54 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Content-Language: en-US
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     linux-clk@vger.kernel.org
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH] clk: add devm_add_clk_disable_unprepare
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 17 Feb 2023 10:00:36 PST (-0800), Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
->
-> Sagar's email listed in maintainers is bouncing as his division was sold
-> off by the company. I attempted to contact him some days ago on what the
-> bounce email told me was his new contact information, but am yet to
-> receive a response.
->
-> Paul and Palmer are listed on each of the bindings, both of whom were
-> alive & well as of Wednesday so the bindings remain maintained.
->
-> CC: Sagar Kadam <sagar.kadam@openfive.com>
-> CC: Sagar Kadam <sagar.kadam@sifive.com>
-> Link: https://lore.kernel.org/all/785425ca-4000-a7e4-16d6-4d68c91b158d@kernel.org/
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
-> Palmer/Paul, as mentioned Wednesday, here you go!
+I'm aware that there have been numerous rejected attempts to add a
+devm_clk_prepare_enable(). The advice I've seen was:
+If you need this functionality, use devm_add_action_or_reset().
+As a result lots of callers implemented their own action wrapper for
+clk_disable_unprepare(). Just one example: dw8250_clk_disable_unprepare
+This can be avoided with a little bit of cast magic, as used by few
+drivers already.
+Helper devm_add_clk_disable_unprepare() is supposed to reduce the
+code duplication caused by all these individual wrappers.
 
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+---
+ drivers/clk/clk-devres.c |  6 ++++++
+ include/linux/clk.h      | 11 +++++++++++
+ 2 files changed, 17 insertions(+)
 
-Thanks!
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index 4fb4fd4b0..97e7c33b6 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -222,3 +222,9 @@ struct clk *devm_get_clk_from_child(struct device *dev,
+ 	return clk;
+ }
+ EXPORT_SYMBOL(devm_get_clk_from_child);
++
++int devm_add_clk_disable_unprepare(struct device *dev, struct clk *clk)
++{
++	return devm_add_action_or_reset(dev, (void (*)(void *))clk_disable_unprepare, clk);
++}
++EXPORT_SYMBOL_GPL(devm_add_clk_disable_unprepare);
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 1ef013324..c4d3b1cc0 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -732,6 +732,17 @@ void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks);
+  */
+ void devm_clk_put(struct device *dev, struct clk *clk);
+ 
++/**
++ * devm_add_clk_disable_unprepare - device-managed call to clk_disable_unprepare
++ * @dev: device used to acquire the clock
++ * @clk: clock source acquired with devm_clk_get() et al
++ *
++ * Notes:
++ * - should only be called if clock was acquired device-managed
++ * - should not be called from within interrupt context
++ */
++int devm_add_clk_disable_unprepare(struct device *dev, struct clk *clk);
++
+ /*
+  * The remaining APIs are optional for machine class support.
+  */
+-- 
+2.39.2
 
-> ---
->  Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml | 1 -
->  .../bindings/interrupt-controller/sifive,plic-1.0.0.yaml       | 1 -
->  Documentation/devicetree/bindings/pwm/pwm-sifive.yaml          | 1 -
->  Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml    | 3 +--
->  4 files changed, 1 insertion(+), 5 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml b/Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml
-> index c3be1b600007..c79e752283aa 100644
-> --- a/Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml
-> +++ b/Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml
-> @@ -8,7 +8,6 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
->  title: SiFive FU540 Power Reset Clock Interrupt Controller (PRCI)
->
->  maintainers:
-> -  - Sagar Kadam <sagar.kadam@sifive.com>
->    - Paul Walmsley  <paul.walmsley@sifive.com>
->
->  description:
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-> index 99e01f4d0a69..63bc89e13480 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-> @@ -45,7 +45,6 @@ description:
->    from S-mode. So add thead,c900-plic to distinguish them.
->
->  maintainers:
-> -  - Sagar Kadam <sagar.kadam@sifive.com>
->    - Paul Walmsley  <paul.walmsley@sifive.com>
->    - Palmer Dabbelt <palmer@dabbelt.com>
->
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml b/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
-> index 605c1766dba8..bae993128981 100644
-> --- a/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
-> @@ -8,7 +8,6 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
->  title: SiFive PWM controller
->
->  maintainers:
-> -  - Sagar Kadam <sagar.kadam@sifive.com>
->    - Paul Walmsley <paul.walmsley@sifive.com>
->
->  description:
-> diff --git a/Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml b/Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml
-> index bf3f07421f7e..0551a0d1b3df 100644
-> --- a/Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml
-> +++ b/Documentation/devicetree/bindings/riscv/sifive,ccache0.yaml
-> @@ -8,8 +8,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
->  title: SiFive Composable Cache Controller
->
->  maintainers:
-> -  - Sagar Kadam <sagar.kadam@sifive.com>
-> -  - Paul Walmsley  <paul.walmsley@sifive.com>
-> +  - Paul Walmsley <paul.walmsley@sifive.com>
->
->  description:
->    The SiFive Composable Cache Controller is used to provide access to fast copies
