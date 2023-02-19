@@ -2,427 +2,520 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C932CC64EC4
-	for <linux-clk@archiver.kernel.org>; Sun, 19 Feb 2023 04:49:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B579DC05027
+	for <linux-clk@archiver.kernel.org>; Sun, 19 Feb 2023 17:36:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229615AbjBSEtx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 18 Feb 2023 23:49:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50114 "EHLO
+        id S230241AbjBSRgm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 19 Feb 2023 12:36:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjBSEtw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Feb 2023 23:49:52 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69852125BE;
-        Sat, 18 Feb 2023 20:49:49 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BFEFFB8095C;
-        Sun, 19 Feb 2023 04:49:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCFC1C433D2;
-        Sun, 19 Feb 2023 04:49:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676782186;
-        bh=WTmJAWQFu+5I8t9STQBo6bYwCFJNpbE6str6hhj8D8w=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hZjVp2+9aUFvK8s9OYcRApG+02oCDrg6MvRWtZw7YemrEKRDJPSLsJbpZA1NiJ++E
-         9gJfDBBP756maQi2B1svcafRzvJetlQhIdx/aiIdqhyvy0QJLUFPjctAOiMSaUZMu9
-         cVim39NENxzectSoOzSt8jfjwd9tZ3iZHtC7kA/AiuW07L6NpnAo3Vl1StPRnFCrnJ
-         qPKjnlv1P4P1gXOUH7frYukmNZdXfjyfOfwQw3dRihb1V0Sb2ioHlrANrr291tyJ1U
-         kRhlPMZDef8a0l6V8AFwKgimvqF6FeAWrXRx0iC1WTaXXYzjIOnLPzktflwIXqDGKZ
-         rtSx9CUqR1DNA==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Andy Gross <agross@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Abel Vesa <abel.vesa@linaro.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Akhil P Oommen <quic_akhilpo@quicinc.com>,
-        Bjorn Andersson <quic_bjorande@quicinc.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        Robert Marko <robimarko@gmail.com>,
-        Shazad Hussain <quic_shazhuss@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Yang Yingliang <yangyingliang@huawei.com>
-Subject: [GIT PULL] Qualcomm clock driver updates for v6.3
-Date:   Sat, 18 Feb 2023 20:53:18 -0800
-Message-Id: <20230219045318.564342-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.39.1
+        with ESMTP id S230240AbjBSRgl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Feb 2023 12:36:41 -0500
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CA0F1166B
+        for <linux-clk@vger.kernel.org>; Sun, 19 Feb 2023 09:36:39 -0800 (PST)
+Received: by mail-pl1-x62e.google.com with SMTP id f14so988687plr.0
+        for <linux-clk@vger.kernel.org>; Sun, 19 Feb 2023 09:36:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NdBrIt6R5uMO1SfvNUG+3fIw1tL6ak2dx0Lq34Hsv2w=;
+        b=kLic6JR7L28WDfMeBQC4/AXzwe6L8d49Womb0Txl4i+M/8GvaWUjRgdVi3kJIGeC9/
+         xQJZGt1AHAfRYsf+47bPYvRpPI3jSx7nTCUE2E+6vKqC8+dkxECUAtgeBM7Ys6j1PCr1
+         N/gBF+lLUT1CEcDPAgalbfqqEc+hz11zAoaEWOiAaCVsuZoyYZCJVMaNK84yBEp4m9i7
+         RIFE9E1OX2KiJ6K56V9NSlTnx622MgFmvKtWiRUdUXxLWXbN7WPPR6o0tLUKPt+VbbjK
+         qvEoSUqGEEoiq+UiHsVNY8Y2TtJObGXsDwT9Vh6RhNxmezZUUaGj+zNsp2CJsuStJSkp
+         5inQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NdBrIt6R5uMO1SfvNUG+3fIw1tL6ak2dx0Lq34Hsv2w=;
+        b=Avmw9b6C4uEX963aXXnEeVDIi544CyBFcKheMk4i/VXG/fbbQV1NIChD+cfItc/5j8
+         8C2QLoWjl2SHicUPpZjgdLcrl35FgComDFGJRT5/KkkldvCDrwg/4zr9Aj53kDZmQ3yb
+         Z6zCsaV1YUBEsu88rEPmZUNvmqswEQCHDdRxaH4d/5xpvCM/CfzMTKpfDPao0nmYzZqd
+         RY496/E+joaxrGha061noOIXtEDseF2jgC1h+31jUW6SPYPg2cQmKIOTjuWaCrjD5KhY
+         JjEO2Mz+roJ0IuAZU6SDZNJmsV91Ewy6hz3cxhBbYD9hAeZ0nKEKtcs9ut49ZreEjS8b
+         OIPQ==
+X-Gm-Message-State: AO0yUKVXNoH+QDCVOiDwaLCFI7aQ0q6s686xCyvDnR/6a5F4cJJw65Mp
+        lCcEpCZD923flkVds/cl+PiH6oNRXIs4mFvsPp0e+g==
+X-Google-Smtp-Source: AK7set+QIzmCH+j8lNd5jfQKwDtfSkCC3bZg14mtrSwfqQgoJY+pTyXaVtJuoQCo1R9eQkZv8btgcn8gWK7VIGk1ftc=
+X-Received: by 2002:a17:90b:1d45:b0:236:7270:ddc6 with SMTP id
+ ok5-20020a17090b1d4500b002367270ddc6mr689729pjb.137.1676828198705; Sun, 19
+ Feb 2023 09:36:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230208234313.23863-1-semen.protsenko@linaro.org> <20230208234313.23863-7-semen.protsenko@linaro.org>
+In-Reply-To: <20230208234313.23863-7-semen.protsenko@linaro.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Sun, 19 Feb 2023 11:36:44 -0600
+Message-ID: <CAPLW+4=cOV8J+Ho1t8Tkg8X_3m4npyy3FUC2zcQAYywE12uEkw@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] clk: samsung: exynos5433: Extract PM support to
+ common ARM64 layer
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit 1b929c02afd37871d5afb9d498426f83432e71c2:
+On Wed, 8 Feb 2023 at 17:43, Sam Protsenko <semen.protsenko@linaro.org> wrote:
+>
+> Exynos5433 clock driver implements PM support internally, which might be
+> also useful for other Exynos clock drivers. Extract all PM related code
+> from clk-exynos5433 to common ARM64 functions.
+>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+> Changes in v2:
+>   - Rebased on top of latest soc/for-next tree
+>   - Included linux/slab.h for kfree (found by kernel test robot)
+>
+>  drivers/clk/samsung/clk-exynos-arm64.c | 171 ++++++++++++++++++++++++-
+>  drivers/clk/samsung/clk-exynos-arm64.h |   3 +
+>  drivers/clk/samsung/clk-exynos5433.c   | 157 +----------------------
+>  3 files changed, 175 insertions(+), 156 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung/clk-exynos-arm64.c
+> index 2aa3f0a5644e..7ad7fd353dda 100644
+> --- a/drivers/clk/samsung/clk-exynos-arm64.c
+> +++ b/drivers/clk/samsung/clk-exynos-arm64.c
+> @@ -10,6 +10,9 @@
+>   */
 
-  Linux 6.2-rc1 (2022-12-25 13:41:39 -0800)
+Hi Marek,
 
-are available in the Git repository at:
+It just occurred to me that as I'm pulling your code from
+clk-exynos5433.c here, I should've probably added you to this file's
+author list in the header comment. Does that sound right to you? If
+so, I can re-send v3 with fixes.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-for-6.3
+Also, could you please review this series, if possible? I'm working
+right now on PM_DOMAINS support for Exynos850, so along with this
+series that would bring the initial PM support for ARM64 Exynos chips.
 
-for you to fetch changes up to 7935b534d32a1823a7d5db449d340f56c201f284:
+Thanks!
 
-  dt-bindings: clock: Merge qcom,gpucc-sm8350 into qcom,gpucc.yaml (2023-02-08 19:29:25 -0800)
-
-----------------------------------------------------------------
-Qualcomm clock driver updates for v6.3
-
-Support for requesting the next power_off operation for a genpd to be
-synchronous is introduced, and implemented in the GDSC driver. To allow
-the GPU driver to request power_off to wait for the GDSC to actually
-collapse.
-
-clk_disable_unused() is altered, to not consider clocks which comes from
-a provider with sync_state defined. This makes it possible for
-individual clock drivers to invoke this process once all clients has
-been probed, avoiding the need for booting many systems with
-clk_ignore_unused.
-This is then enabled for SDM845 and SC8280XP clock controllers.
-
-Support for QDU1000/QRU1000 Global clock controller, SA8775P Global
-clock controller, SM8550 TCSR and display clock controller, SM6350 clock
-controller, nd MSM8996 CBF and APCS clock controllers is introduced..
-
-Parent references are updated across a large number of clock drivers, to
-align with the design changes since those drivers where introduced.
-Similarly, test clocks has been dropped from a range of drivers.
-
-A range of fixes for the MSM8996 CPU clock controller is introduced.
-
-MSM8974 GCC is transitioned off the externally defined sleep_clk.
-
-GDSC in the global clock controller for QCS404 is added, and various
-parent definitions are cleaned up.
-
-The SDCC core clocks on SM6115 are moved for floor_ops.
-
-Programming of clk_dis_wait for GPU CX GDSC on SC7180 and SDM845 are
-moved to use the recently introduced properties in the GDSC struct.
-
-The RPMh clock driver gains SM8550 and SA8775P clocks, and the IPA clock
-is added on a variety of platforms.
-
-The SMD RPM driver receives a big cleanup, in particular a move away
-from duplicating declaration of identical clocks between multiple
-platforms.
-A few missing clocks across msm8998, msm8992, msm8916, qcs404 are added
-as well.
-
-Using devm_pm_runtime_enable() to clean up some duplication is done
-across SM8250 display and video clock controllers, SM8450 display clock
-controller and SC7280 LPASS clock controller.
-
-Devicetree binding changes for above mentioned additions and changes are
-introduced.
-
-Lastly, a change to pad a few registers in the SM8250 DTS to 8 digits
-was picked up in the wrong tree and kept here, to avoid rebasing.
-
-----------------------------------------------------------------
-Abel Vesa (7):
-      dt-bindings: clock: Add SM8550 TCSR CC clocks
-      dt-bindings: clock: Add RPMHCC for SM8550
-      clk: qcom: rpmh: Add support for SM8550 rpmh clocks
-      clk: qcom: Add TCSR clock driver for SM8550
-      clk: Add generic sync_state callback for disabling unused clocks
-      clk: qcom: sdm845: Use generic clk_sync_state_disable_unused callback
-      dt-bindings: clock: Add SM8550 TCSR CC clocks
-
-Akhil P Oommen (1):
-      clk: qcom: gdsc: Support 'synced_poweroff' genpd flag
-
-Arnd Bergmann (2):
-      clk: qcom: rpmh: remove duplicate IPA clock reference
-      clk: qcom: gcc-qcs404: fix duplicate initializer warning
-
-Bartosz Golaszewski (5):
-      dt-bindings: clock: qcom-rpmhcc: document the clock for sa8775p
-      clk: qcom: rpmh: add clocks for sa8775p
-      dt-bindings: clock: Add Qualcomm SA8775P GCC
-      clk: qcom: gcc-sa8775p: remove unused variables
-      dt-bindings: clock: qcom,sa8775p-gcc: add the power-domains property
-
-Bjorn Andersson (5):
-      Merge tag '1672656511-1931-1-git-send-email-quic_akhilpo@quicinc.com' into clk-for-6.3
-      Merge branch '20230104093450.3150578-2-abel.vesa@linaro.org' into clk-for-6.3
-      clk: qcom: Remove need for clk_ignore_unused on sc8280xp
-      Merge branch '20230103-topic-sm8550-upstream-dispcc-v3-1-8a03d348c572@linaro.org' into clk-for-6.3
-      Merge branch '20230112204446.30236-2-quic_molvera@quicinc.com' into HEAD
-
-Bryan O'Donoghue (1):
-      clk: qcom: smd-rpm: msm8936: Add PMIC gated RPM_SMD_XO_*
-
-Dmitry Baryshkov (100):
-      dt-bindings: clock: qcom: gcc-qcs404: add two GDSC entries
-      dt-bindings: clock: qcom: gcc-qcs404: switch to gcc.yaml
-      dt-bindings: clock: qcom: gcc-qcs404: define clocks/clock-names for QCS404
-      clk: qcom: gcc-qcs404: use ARRAY_SIZE instead of specifying num_parents
-      clk: qcom: gcc-qcs404: disable gpll[04]_out_aux parents
-      clk: qcom: gcc-qcs404: fix names of the DSI clocks used as parents
-      clk: qcom: gcc-qcs404: fix the name of the HDMI PLL clock
-      clk: qcom: gcc-qcs404: get rid of the test clock
-      clk: qcom: gcc-qcs404: move PLL clocks up
-      clk: qcom: gcc-qcs404: use parent_hws/_data instead of parent_names
-      clk: qcom: gcc-qcs404: sort out the cxo clock
-      clk: qcom: gcc-qcs404: add support for GDSCs
-      dt-bindings: clocks: qcom: rpmcc: add LN_BB_CLK_PIN clocks
-      clk: qcom: smd-rpm: enable pin-controlled ln_bb_clk clocks on qcs404
-      clk: qcom: smd-rpm: remove duplication between MMXI and MMAXI defines
-      clk: qcom: smd-rpm: remove duplication between qcs404 and qcm2290 clocks
-      clk: qcom: smd-rpm: add missing ln_bb_clkN clocks
-      clk: qcom: smd-rpm: use msm8998_ln_bb_clk2 for qcm2290 SoC
-      clk: qcom: smd-rpm: rename msm8992_ln_bb_* clocks to qcs404_ln_bb_*
-      clk: qcom: smd-rpm: remove duplication between sm6375 and sm6125 clocks
-      clk: qcom: smd-rpm: add XO_BUFFER clock for each XO_BUFFER_PINCTRL clock
-      clk: qcom: smd-rpm: drop the rpm_status_id field
-      clk: qcom: smd-rpm: fix alignment of line breaking backslashes
-      clk: qcom: smd-rpm: move clock definitions together
-      clk: qcom: smd-rpm: rename some msm8974 active-only clocks
-      clk: qcom: smd-rpm: simplify XO_BUFFER clocks definitions
-      clk: qcom: smd-rpm: simplify SMD_RPM/_BRANCH/_QDSS clock definitions
-      clk: qcom: smd-rpm: rename SMD_RPM_BRANCH clock symbols
-      clk: qcom: smd-rpm: rename the qcm2290 rf_clk3 clocks
-      clk: qcom: smd-rpm: rename SMD_RPM_BUS clocks
-      clk: qcom: smd-rpm: remove usage of platform name
-      clk: qcom: dispcc-sm8450: switch to parent_hws
-      clk: qcom: dispcc-sc7180: switch to parent_hws
-      clk: qcom: dispcc-sm6375: switch to parent_hws
-      clk: qcom: camcc-sc7280: switch to parent_hws
-      clk: qcom: camcc-sm8450: switch to parent_hws
-      clk: qcom: gcc-msm8939: switch to parent_hws
-      clk: qcom: gcc-msm8976: switch to parent_hws
-      clk: qcom: gcc-sc7180: switch to parent_hws
-      clk: qcom: gcc-sc7280: switch to parent_hws
-      clk: qcom: gcc-sdx65: switch to parent_hws
-      clk: qcom: gcc-sm6375: switch to parent_hws
-      clk: qcom: gcc-sm8250: switch to parent_hws
-      clk: qcom: gcc-sm8450: switch to parent_hws
-      clk: qcom: gcc-sm8550: switch to parent_hws
-      clk: qcom: gpucc-msm8998: switch to parent_hws
-      clk: qcom: gpucc-sc7180: switch to parent_hws
-      clk: qcom: lpasscc-sc7180: switch to parent_hws
-      clk: qcom: dispcc-sm8250: switch to devm_pm_runtime_enable
-      clk: qcom: dispcc-sm8450: switch to devm_pm_runtime_enable
-      clk: qcom: lpasscc-sc7280: switch to devm_pm_runtime_enable
-      clk: qcom: videocc-sm8250: switch to devm_pm_runtime_enable
-      clk: qcom: dispcc-sm6115: use parent_hws for disp_cc_mdss_rot_clk
-      clk: qcom: gcc-sm6375: use parent_hws for gcc_disp_gpll0_div_clk_src
-      clk: qcom: clk-spmi-pmic-div: convert to use parent_data
-      dt-bindings: clock: qcom,gcc-msm8998: drop core_bi_pll_test_se
-      dt-bindings: clock: qcom,gcc-sdx55: drop core_bi_pll_test_se
-      dt-bindings: clock: qcom,gcc-sdx65: drop core_bi_pll_test_se
-      dt-bindings: clock: qcom,mmcc-msm8998: drop core_bi_pll_test_se
-      dt-bindings: clock: qcom: gcc-sm8350: drop test clock
-      dt-bindings: clock: qcom: gcc-sm8450: drop test clock
-      clk: qcom: dispcc-qcm2290: get rid of test clock
-      clk: qcom: gcc-msm8998: get rid of test clock
-      clk: qcom: gcc-sc7180: get rid of test clock
-      clk: qcom: gcc-sdx55: use ARRAY_SIZE instead of specifying num_parents
-      clk: qcom: gcc-sdx55: get rid of test clock
-      clk: qcom: mmcc-msm8998: get rid of test clock
-      clk: qcom: gcc-msm8974: switch from sleep_clk_src to sleep_clk
-      clk: qcom: rpmh: define IPA clocks where required
-      dt-bindings: clock: qcom,gcc-apq8084: define clocks/clock-names
-      dt-bindings: clock: qcom,gcc-apq8084: add GCC_MMSS_GPLL0_CLK_SRC
-      dt-bindings: clock: qcom,mmcc: define clocks/clock-names for APQ8084
-      clk: qcom: gcc-apq8084: use ARRAY_SIZE instead of specifying num_parents
-      clk: qcom: gcc-apq8084: move PLL clocks up
-      clk: qcom: gcc-apq8084: use parent_hws/_data instead of parent_names
-      clk: qcom: gcc-apq8084: add GCC_MMSS_GPLL0_CLK_SRC
-      clk: qcom: mmcc-apq8084: use ARRAY_SIZE instead of specifying num_parents
-      clk: qcom: mmcc-apq8084: move clock parent tables down
-      clk: qcom: mmcc-apq8084: remove spdm clocks
-      clk: qcom: mmcc-apq8084: use parent_hws/_data instead of parent_names
-      dt-bindings: clock: qcom,msm8996-apcc: add sys_apcs_aux clock
-      clk: qcom: clk-alpha-pll: program PLL_TEST/PLL_TEST_U if required
-      clk: qcom: cpu-8996: correct PLL programming
-      clk: qcom: cpu-8996: fix the init clock rate
-      clk: qcom: cpu-8996: support using GPLL0 as SMUX input
-      clk: qcom: cpu-8996: skip ACD init if the setup is valid
-      clk: qcom: cpu-8996: simplify the cpu_clk_notifier_cb
-      clk: qcom: cpu-8996: setup PLLs before registering clocks
-      clk: qcom: cpu-8996: move qcom_cpu_clk_msm8996_acd_init call
-      clk: qcom: cpu-8996: fix PLL configuration sequence
-      clk: qcom: cpu-8996: fix ACD initialization
-      clk: qcom: cpu-8996: fix PLL clock ops
-      clk: qcom: cpu-8996: change setup sequence to follow vendor kernel
-      clk: qcom: add the driver for the MSM8996 APCS clocks
-      dt-bindings: clock: qcom,msm8996-cbf: Describe the MSM8996 CBF clock controller
-      clk: qcom: add msm8996 Core Bus Framework (CBF) support
-      clk: qcom: smd-rpm: provide RPM_SMD_XO_CLK_SRC on MSM8996 platform
-      clk: qcom: gpucc-sc7180: fix clk_dis_wait being programmed for CX GDSC
-      clk: qcom: gpucc-sdm845: fix clk_dis_wait being programmed for CX GDSC
-      dt-bindings: clock: Merge qcom,gpucc-sm8350 into qcom,gpucc.yaml
-
-Konrad Dybcio (5):
-      clk: qcom: gcc-sm6115: Use floor_ops for SDCC1/2 core clk
-      dt-bindings: clock: add QCOM SM6350 camera clock bindings
-      clk: qcom: Add camera clock controller driver for SM6350
-      arm64: dts: qcom: sm8250: Pad addresses to 8 hex digits
-      clk: qcom: camcc-sm6350: Make camcc_sm6350_hws static
-
-Krzysztof Kozlowski (8):
-      dt-bindings: clock: qcom,gcc-sc8280xp: document power domain
-      dt-bindings: clock: qcom,spmi-clkdiv: convert to DT schema
-      dt-bindings: clock: qcom,gcc-sm8350: drop core_bi_pll_test_se input
-      clk: gcc-sm8150: drop PLL test clock
-      clk: gcc-sm8350: drop PLL test clock
-      dt-bindings: clock: qcom,videocc: correct clocks per variant
-      dt-bindings: clock: qcom,camcc-sm8250: extend clocks and power domains
-      clk: qcom: cpu-8996: add missing cputype include
-
-Marijn Suijten (1):
-      clk: qcom: dispcc-sm6125: Fix compatible string to match bindings
-
-Melody Olvera (1):
-      dt-bindings: clock: Add QDU1000 and QRU1000 GCC clocks
-
-Neil Armstrong (4):
-      dt-bindings: clock: document SM8550 DISPCC clock controller
-      clk: qcom: clk-alpha-pll: define alias of LUCID OLE reset ops to EVO reset ops
-      clk: qcom: add SM8550 DISPCC driver
-      dt-bindings: clock: document SM8550 DISPCC clock controller
-
-Robert Marko (1):
-      clk: qcom: ipq8074: populate fw_name for usb3phy-s
-
-Shazad Hussain (1):
-      clk: qcom: add the GCC driver for sa8775p
-
-Taniya Das (1):
-      clk: qcom: Add QDU1000 and QRU1000 GCC support
-
-Ulf Hansson (1):
-      PM: domains: Allow a genpd consumer to require a synced power off
-
-Yang Yingliang (1):
-      clk: qcom: krait-cc: fix wrong pointer passed to IS_ERR()
-
- .../bindings/clock/qcom,camcc-sm8250.yaml          |   20 +-
- .../bindings/clock/qcom,gcc-apq8084.yaml           |   44 +
- .../bindings/clock/qcom,gcc-msm8998.yaml           |    6 +-
- .../devicetree/bindings/clock/qcom,gcc-qcs404.yaml |   38 +-
- .../bindings/clock/qcom,gcc-sc8280xp.yaml          |    7 +
- .../devicetree/bindings/clock/qcom,gcc-sdx55.yaml  |    9 +-
- .../devicetree/bindings/clock/qcom,gcc-sdx65.yaml  |    8 +-
- .../devicetree/bindings/clock/qcom,gcc-sm8350.yaml |    2 -
- .../bindings/clock/qcom,gpucc-sm8350.yaml          |   71 -
- .../devicetree/bindings/clock/qcom,gpucc.yaml      |    2 +
- .../devicetree/bindings/clock/qcom,mmcc.yaml       |   46 +-
- .../bindings/clock/qcom,msm8996-apcc.yaml          |    6 +-
- .../bindings/clock/qcom,msm8996-cbf.yaml           |   53 +
- .../bindings/clock/qcom,qdu1000-gcc.yaml           |   51 +
- .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    2 +
- .../bindings/clock/qcom,sa8775p-gcc.yaml           |   84 +
- .../bindings/clock/qcom,sm6350-camcc.yaml          |   49 +
- .../bindings/clock/qcom,sm8550-dispcc.yaml         |  105 +
- .../bindings/clock/qcom,sm8550-tcsr.yaml           |   55 +
- .../devicetree/bindings/clock/qcom,spmi-clkdiv.txt |   59 -
- .../bindings/clock/qcom,spmi-clkdiv.yaml           |   71 +
- .../devicetree/bindings/clock/qcom,videocc.yaml    |   59 +-
- arch/arm64/boot/dts/qcom/sm8250.dtsi               |    8 +-
- drivers/base/power/domain.c                        |   26 +
- drivers/clk/clk.c                                  |   57 +-
- drivers/clk/qcom/Kconfig                           |   40 +
- drivers/clk/qcom/Makefile                          |    7 +-
- drivers/clk/qcom/apcs-msm8996.c                    |   88 +
- drivers/clk/qcom/camcc-sc7280.c                    |  268 +-
- drivers/clk/qcom/camcc-sdm845.c                    |    1 +
- drivers/clk/qcom/camcc-sm6350.c                    | 1906 ++++++++
- drivers/clk/qcom/camcc-sm8450.c                    |  324 +-
- drivers/clk/qcom/clk-alpha-pll.c                   |    5 +
- drivers/clk/qcom/clk-alpha-pll.h                   |    1 +
- drivers/clk/qcom/clk-cbf-8996.c                    |  315 ++
- drivers/clk/qcom/clk-cpu-8996.c                    |  146 +-
- drivers/clk/qcom/clk-rpmh.c                        |   56 +
- drivers/clk/qcom/clk-smd-rpm.c                     | 1445 +++---
- drivers/clk/qcom/clk-spmi-pmic-div.c               |   10 +-
- drivers/clk/qcom/dispcc-qcm2290.c                  |    6 -
- drivers/clk/qcom/dispcc-sc7180.c                   |    8 +-
- drivers/clk/qcom/dispcc-sc8280xp.c                 |    1 +
- drivers/clk/qcom/dispcc-sdm845.c                   |    1 +
- drivers/clk/qcom/dispcc-sm6115.c                   |    4 +-
- drivers/clk/qcom/dispcc-sm6125.c                   |    2 +-
- drivers/clk/qcom/dispcc-sm6375.c                   |    4 +-
- drivers/clk/qcom/dispcc-sm8250.c                   |    9 +-
- drivers/clk/qcom/dispcc-sm8450.c                   |  221 +-
- drivers/clk/qcom/dispcc-sm8550.c                   | 1807 ++++++++
- drivers/clk/qcom/gcc-apq8084.c                     | 1024 +++--
- drivers/clk/qcom/gcc-ipq8074.c                     |    4 +-
- drivers/clk/qcom/gcc-msm8939.c                     |   32 +-
- drivers/clk/qcom/gcc-msm8974.c                     |   10 +-
- drivers/clk/qcom/gcc-msm8976.c                     |   30 +-
- drivers/clk/qcom/gcc-msm8998.c                     |   13 -
- drivers/clk/qcom/gcc-qcs404.c                      |  842 ++--
- drivers/clk/qcom/gcc-qdu1000.c                     | 2653 +++++++++++
- drivers/clk/qcom/gcc-sa8775p.c                     | 4785 ++++++++++++++++++++
- drivers/clk/qcom/gcc-sc7180.c                      |   19 +-
- drivers/clk/qcom/gcc-sc7280.c                      |   10 +-
- drivers/clk/qcom/gcc-sc8280xp.c                    |    1 +
- drivers/clk/qcom/gcc-sdm845.c                      |    1 +
- drivers/clk/qcom/gcc-sdx55.c                       |   64 +-
- drivers/clk/qcom/gcc-sdx65.c                       |  109 +-
- drivers/clk/qcom/gcc-sm6115.c                      |    4 +-
- drivers/clk/qcom/gcc-sm6375.c                      |  257 +-
- drivers/clk/qcom/gcc-sm8150.c                      |   17 -
- drivers/clk/qcom/gcc-sm8250.c                      |   10 +-
- drivers/clk/qcom/gcc-sm8350.c                      |   15 -
- drivers/clk/qcom/gcc-sm8450.c                      |  236 +-
- drivers/clk/qcom/gcc-sm8550.c                      |  252 +-
- drivers/clk/qcom/gdsc.c                            |   11 +-
- drivers/clk/qcom/gpucc-msm8998.c                   |    8 +-
- drivers/clk/qcom/gpucc-sc7180.c                    |   11 +-
- drivers/clk/qcom/gpucc-sdm845.c                    |    8 +-
- drivers/clk/qcom/krait-cc.c                        |    4 +-
- drivers/clk/qcom/lpasscc-sc7280.c                  |   10 +-
- drivers/clk/qcom/lpasscorecc-sc7180.c              |   20 +-
- drivers/clk/qcom/mmcc-apq8084.c                    | 1189 ++---
- drivers/clk/qcom/mmcc-msm8998.c                    |   25 -
- drivers/clk/qcom/tcsrcc-sm8550.c                   |  192 +
- drivers/clk/qcom/videocc-sm8250.c                  |    9 +-
- include/dt-bindings/clock/qcom,gcc-apq8084.h       |    1 +
- include/dt-bindings/clock/qcom,gcc-qcs404.h        |    4 +
- include/dt-bindings/clock/qcom,gcc-sm8350.h        |    1 -
- include/dt-bindings/clock/qcom,gcc-sm8450.h        |    1 -
- include/dt-bindings/clock/qcom,qdu1000-gcc.h       |  175 +
- include/dt-bindings/clock/qcom,rpmcc.h             |    2 +
- include/dt-bindings/clock/qcom,sa8775p-gcc.h       |  320 ++
- include/dt-bindings/clock/qcom,sm6350-camcc.h      |  109 +
- include/dt-bindings/clock/qcom,sm8550-dispcc.h     |  101 +
- include/dt-bindings/clock/qcom,sm8550-tcsr.h       |   18 +
- include/linux/clk-provider.h                       |    1 +
- include/linux/pm_domain.h                          |    5 +
- include/linux/soc/qcom/smd-rpm.h                   |    1 -
- 95 files changed, 16528 insertions(+), 3699 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc-sm8350.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,msm8996-cbf.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,qdu1000-gcc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sa8775p-gcc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6350-camcc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,spmi-clkdiv.txt
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,spmi-clkdiv.yaml
- create mode 100644 drivers/clk/qcom/apcs-msm8996.c
- create mode 100644 drivers/clk/qcom/camcc-sm6350.c
- create mode 100644 drivers/clk/qcom/clk-cbf-8996.c
- create mode 100644 drivers/clk/qcom/dispcc-sm8550.c
- create mode 100644 drivers/clk/qcom/gcc-qdu1000.c
- create mode 100644 drivers/clk/qcom/gcc-sa8775p.c
- create mode 100644 drivers/clk/qcom/tcsrcc-sm8550.c
- create mode 100644 include/dt-bindings/clock/qcom,qdu1000-gcc.h
- create mode 100644 include/dt-bindings/clock/qcom,sa8775p-gcc.h
- create mode 100644 include/dt-bindings/clock/qcom,sm6350-camcc.h
- create mode 100644 include/dt-bindings/clock/qcom,sm8550-dispcc.h
- create mode 100644 include/dt-bindings/clock/qcom,sm8550-tcsr.h
+>  #include <linux/clk.h>
+>  #include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/slab.h>
+>
+>  #include "clk-exynos-arm64.h"
+>
+> @@ -21,6 +24,19 @@
+>  #define GATE_OFF_START         0x2000
+>  #define GATE_OFF_END           0x2fff
+>
+> +struct exynos_arm64_cmu_data {
+> +       struct samsung_clk_reg_dump *clk_save;
+> +       unsigned int nr_clk_save;
+> +       const struct samsung_clk_reg_dump *clk_suspend;
+> +       unsigned int nr_clk_suspend;
+> +
+> +       struct clk *clk;
+> +       struct clk **pclks;
+> +       int nr_pclks;
+> +
+> +       struct samsung_clk_provider *ctx;
+> +};
+> +
+>  /**
+>   * exynos_arm64_init_clocks - Set clocks initial configuration
+>   * @np:                        CMU device tree node with "reg" property (CMU addr)
+> @@ -76,10 +92,16 @@ static int __init exynos_arm64_enable_bus_clk(struct device *dev,
+>         if (!cmu->clk_name)
+>                 return 0;
+>
+> -       if (dev)
+> +       if (dev) {
+> +               struct exynos_arm64_cmu_data *data;
+> +
+>                 parent_clk = clk_get(dev, cmu->clk_name);
+> -       else
+> +               data = dev_get_drvdata(dev);
+> +               if (data)
+> +                       data->clk = parent_clk;
+> +       } else {
+>                 parent_clk = of_clk_get_by_name(np, cmu->clk_name);
+> +       }
+>
+>         if (IS_ERR(parent_clk))
+>                 return PTR_ERR(parent_clk);
+> @@ -87,6 +109,46 @@ static int __init exynos_arm64_enable_bus_clk(struct device *dev,
+>         return clk_prepare_enable(parent_clk);
+>  }
+>
+> +static int __init exynos_arm64_cmu_prepare_pm(struct device *dev,
+> +               const struct samsung_cmu_info *cmu)
+> +{
+> +       struct exynos_arm64_cmu_data *data = dev_get_drvdata(dev);
+> +       int i;
+> +
+> +       data->clk_save = samsung_clk_alloc_reg_dump(cmu->clk_regs,
+> +                                                   cmu->nr_clk_regs);
+> +       if (!data->clk_save)
+> +               return -ENOMEM;
+> +
+> +       data->nr_clk_save = cmu->nr_clk_regs;
+> +       data->clk_suspend = cmu->suspend_regs;
+> +       data->nr_clk_suspend = cmu->nr_suspend_regs;
+> +       data->nr_pclks = of_clk_get_parent_count(dev->of_node);
+> +       if (!data->nr_pclks)
+> +               return 0;
+> +
+> +       data->pclks = devm_kcalloc(dev, sizeof(struct clk *), data->nr_pclks,
+> +                                  GFP_KERNEL);
+> +       if (!data->pclks) {
+> +               kfree(data->clk_save);
+> +               return -ENOMEM;
+> +       }
+> +
+> +       for (i = 0; i < data->nr_pclks; i++) {
+> +               struct clk *clk = of_clk_get(dev->of_node, i);
+> +
+> +               if (IS_ERR(clk)) {
+> +                       kfree(data->clk_save);
+> +                       while (--i >= 0)
+> +                               clk_put(data->pclks[i]);
+> +                       return PTR_ERR(clk);
+> +               }
+> +               data->pclks[i] = clk;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>  /**
+>   * exynos_arm64_register_cmu - Register specified Exynos CMU domain
+>   * @dev:       Device object; may be NULL if this function is not being
+> @@ -111,3 +173,108 @@ void __init exynos_arm64_register_cmu(struct device *dev,
+>         exynos_arm64_init_clocks(np, cmu->clk_regs, cmu->nr_clk_regs);
+>         samsung_cmu_register_one(np, cmu);
+>  }
+> +
+> +/**
+> + * exynos_arm64_register_cmu_pm - Register Exynos CMU domain with PM support
+> + *
+> + * @pdev:      Platform device object
+> + * @set_manual:        If true, set gate clocks to manual mode
+> + *
+> + * It's a version of exynos_arm64_register_cmu() with PM support. Should be
+> + * called from probe function of platform driver.
+> + *
+> + * Return: 0 on success, or negative error code on error.
+> + */
+> +int __init exynos_arm64_register_cmu_pm(struct platform_device *pdev,
+> +                                       bool set_manual)
+> +{
+> +       const struct samsung_cmu_info *cmu;
+> +       struct device *dev = &pdev->dev;
+> +       struct device_node *np = dev->of_node;
+> +       struct exynos_arm64_cmu_data *data;
+> +       void __iomem *reg_base;
+> +       int ret;
+> +
+> +       cmu = of_device_get_match_data(dev);
+> +
+> +       data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> +       if (!data)
+> +               return -ENOMEM;
+> +
+> +       platform_set_drvdata(pdev, data);
+> +
+> +       ret = exynos_arm64_cmu_prepare_pm(dev, cmu);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret = exynos_arm64_enable_bus_clk(dev, NULL, cmu);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (set_manual)
+> +               exynos_arm64_init_clocks(np, cmu->clk_regs, cmu->nr_clk_regs);
+> +
+> +       reg_base = devm_platform_ioremap_resource(pdev, 0);
+> +       if (IS_ERR(reg_base))
+> +               return PTR_ERR(reg_base);
+> +
+> +       data->ctx = samsung_clk_init(dev, reg_base, cmu->nr_clk_ids);
+> +
+> +       /*
+> +        * Enable runtime PM here to allow the clock core using runtime PM
+> +        * for the registered clocks. Additionally, we increase the runtime
+> +        * PM usage count before registering the clocks, to prevent the
+> +        * clock core from runtime suspending the device.
+> +        */
+> +       pm_runtime_get_noresume(dev);
+> +       pm_runtime_set_active(dev);
+> +       pm_runtime_enable(dev);
+> +
+> +       samsung_cmu_register_clocks(data->ctx, cmu);
+> +       samsung_clk_of_add_provider(dev->of_node, data->ctx);
+> +       pm_runtime_put_sync(dev);
+> +
+> +       return 0;
+> +}
+> +
+> +int exynos_arm64_cmu_suspend(struct device *dev)
+> +{
+> +       struct exynos_arm64_cmu_data *data = dev_get_drvdata(dev);
+> +       int i;
+> +
+> +       samsung_clk_save(data->ctx->reg_base, data->clk_save,
+> +                        data->nr_clk_save);
+> +
+> +       for (i = 0; i < data->nr_pclks; i++)
+> +               clk_prepare_enable(data->pclks[i]);
+> +
+> +       /* For suspend some registers have to be set to certain values */
+> +       samsung_clk_restore(data->ctx->reg_base, data->clk_suspend,
+> +                           data->nr_clk_suspend);
+> +
+> +       for (i = 0; i < data->nr_pclks; i++)
+> +               clk_disable_unprepare(data->pclks[i]);
+> +
+> +       clk_disable_unprepare(data->clk);
+> +
+> +       return 0;
+> +}
+> +
+> +int exynos_arm64_cmu_resume(struct device *dev)
+> +{
+> +       struct exynos_arm64_cmu_data *data = dev_get_drvdata(dev);
+> +       int i;
+> +
+> +       clk_prepare_enable(data->clk);
+> +
+> +       for (i = 0; i < data->nr_pclks; i++)
+> +               clk_prepare_enable(data->pclks[i]);
+> +
+> +       samsung_clk_restore(data->ctx->reg_base, data->clk_save,
+> +                           data->nr_clk_save);
+> +
+> +       for (i = 0; i < data->nr_pclks; i++)
+> +               clk_disable_unprepare(data->pclks[i]);
+> +
+> +       return 0;
+> +}
+> diff --git a/drivers/clk/samsung/clk-exynos-arm64.h b/drivers/clk/samsung/clk-exynos-arm64.h
+> index 0dd174693935..969979e714bc 100644
+> --- a/drivers/clk/samsung/clk-exynos-arm64.h
+> +++ b/drivers/clk/samsung/clk-exynos-arm64.h
+> @@ -16,5 +16,8 @@
+>
+>  void exynos_arm64_register_cmu(struct device *dev,
+>                 struct device_node *np, const struct samsung_cmu_info *cmu);
+> +int exynos_arm64_register_cmu_pm(struct platform_device *pdev, bool set_manual);
+> +int exynos_arm64_cmu_suspend(struct device *dev);
+> +int exynos_arm64_cmu_resume(struct device *dev);
+>
+>  #endif /* __CLK_EXYNOS_ARM64_H */
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+> index eb72bf2aaee8..ed43233649ae 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -10,7 +10,6 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> -#include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/slab.h>
+> @@ -19,6 +18,7 @@
+>
+>  #include "clk.h"
+>  #include "clk-cpu.h"
+> +#include "clk-exynos-arm64.h"
+>  #include "clk-pll.h"
+>
+>  /*
+> @@ -5478,160 +5478,9 @@ static const struct samsung_cmu_info imem_cmu_info __initconst = {
+>         .clk_name               = "aclk_imem_200",
+>  };
+>
+> -struct exynos5433_cmu_data {
+> -       struct samsung_clk_reg_dump *clk_save;
+> -       unsigned int nr_clk_save;
+> -       const struct samsung_clk_reg_dump *clk_suspend;
+> -       unsigned int nr_clk_suspend;
+> -
+> -       struct clk *clk;
+> -       struct clk **pclks;
+> -       int nr_pclks;
+> -
+> -       /* must be the last entry */
+> -       struct samsung_clk_provider ctx;
+> -};
+> -
+> -static int __maybe_unused exynos5433_cmu_suspend(struct device *dev)
+> -{
+> -       struct exynos5433_cmu_data *data = dev_get_drvdata(dev);
+> -       int i;
+> -
+> -       samsung_clk_save(data->ctx.reg_base, data->clk_save,
+> -                        data->nr_clk_save);
+> -
+> -       for (i = 0; i < data->nr_pclks; i++)
+> -               clk_prepare_enable(data->pclks[i]);
+> -
+> -       /* for suspend some registers have to be set to certain values */
+> -       samsung_clk_restore(data->ctx.reg_base, data->clk_suspend,
+> -                           data->nr_clk_suspend);
+> -
+> -       for (i = 0; i < data->nr_pclks; i++)
+> -               clk_disable_unprepare(data->pclks[i]);
+> -
+> -       clk_disable_unprepare(data->clk);
+> -
+> -       return 0;
+> -}
+> -
+> -static int __maybe_unused exynos5433_cmu_resume(struct device *dev)
+> -{
+> -       struct exynos5433_cmu_data *data = dev_get_drvdata(dev);
+> -       int i;
+> -
+> -       clk_prepare_enable(data->clk);
+> -
+> -       for (i = 0; i < data->nr_pclks; i++)
+> -               clk_prepare_enable(data->pclks[i]);
+> -
+> -       samsung_clk_restore(data->ctx.reg_base, data->clk_save,
+> -                           data->nr_clk_save);
+> -
+> -       for (i = 0; i < data->nr_pclks; i++)
+> -               clk_disable_unprepare(data->pclks[i]);
+> -
+> -       return 0;
+> -}
+> -
+>  static int __init exynos5433_cmu_probe(struct platform_device *pdev)
+>  {
+> -       const struct samsung_cmu_info *info;
+> -       struct exynos5433_cmu_data *data;
+> -       struct samsung_clk_provider *ctx;
+> -       struct device *dev = &pdev->dev;
+> -       void __iomem *reg_base;
+> -       int i;
+> -
+> -       info = of_device_get_match_data(dev);
+> -
+> -       data = devm_kzalloc(dev,
+> -                           struct_size(data, ctx.clk_data.hws, info->nr_clk_ids),
+> -                           GFP_KERNEL);
+> -       if (!data)
+> -               return -ENOMEM;
+> -       ctx = &data->ctx;
+> -
+> -       reg_base = devm_platform_ioremap_resource(pdev, 0);
+> -       if (IS_ERR(reg_base))
+> -               return PTR_ERR(reg_base);
+> -
+> -       for (i = 0; i < info->nr_clk_ids; ++i)
+> -               ctx->clk_data.hws[i] = ERR_PTR(-ENOENT);
+> -
+> -       ctx->clk_data.num = info->nr_clk_ids;
+> -       ctx->reg_base = reg_base;
+> -       ctx->dev = dev;
+> -       spin_lock_init(&ctx->lock);
+> -
+> -       data->clk_save = samsung_clk_alloc_reg_dump(info->clk_regs,
+> -                                                   info->nr_clk_regs);
+> -       if (!data->clk_save)
+> -               return -ENOMEM;
+> -       data->nr_clk_save = info->nr_clk_regs;
+> -       data->clk_suspend = info->suspend_regs;
+> -       data->nr_clk_suspend = info->nr_suspend_regs;
+> -       data->nr_pclks = of_clk_get_parent_count(dev->of_node);
+> -
+> -       if (data->nr_pclks > 0) {
+> -               data->pclks = devm_kcalloc(dev, sizeof(struct clk *),
+> -                                          data->nr_pclks, GFP_KERNEL);
+> -               if (!data->pclks) {
+> -                       kfree(data->clk_save);
+> -                       return -ENOMEM;
+> -               }
+> -               for (i = 0; i < data->nr_pclks; i++) {
+> -                       struct clk *clk = of_clk_get(dev->of_node, i);
+> -
+> -                       if (IS_ERR(clk)) {
+> -                               kfree(data->clk_save);
+> -                               while (--i >= 0)
+> -                                       clk_put(data->pclks[i]);
+> -                               return PTR_ERR(clk);
+> -                       }
+> -                       data->pclks[i] = clk;
+> -               }
+> -       }
+> -
+> -       if (info->clk_name)
+> -               data->clk = clk_get(dev, info->clk_name);
+> -       clk_prepare_enable(data->clk);
+> -
+> -       platform_set_drvdata(pdev, data);
+> -
+> -       /*
+> -        * Enable runtime PM here to allow the clock core using runtime PM
+> -        * for the registered clocks. Additionally, we increase the runtime
+> -        * PM usage count before registering the clocks, to prevent the
+> -        * clock core from runtime suspending the device.
+> -        */
+> -       pm_runtime_get_noresume(dev);
+> -       pm_runtime_set_active(dev);
+> -       pm_runtime_enable(dev);
+> -
+> -       if (info->pll_clks)
+> -               samsung_clk_register_pll(ctx, info->pll_clks,
+> -                                        info->nr_pll_clks);
+> -       if (info->mux_clks)
+> -               samsung_clk_register_mux(ctx, info->mux_clks,
+> -                                        info->nr_mux_clks);
+> -       if (info->div_clks)
+> -               samsung_clk_register_div(ctx, info->div_clks,
+> -                                        info->nr_div_clks);
+> -       if (info->gate_clks)
+> -               samsung_clk_register_gate(ctx, info->gate_clks,
+> -                                         info->nr_gate_clks);
+> -       if (info->fixed_clks)
+> -               samsung_clk_register_fixed_rate(ctx, info->fixed_clks,
+> -                                               info->nr_fixed_clks);
+> -       if (info->fixed_factor_clks)
+> -               samsung_clk_register_fixed_factor(ctx, info->fixed_factor_clks,
+> -                                                 info->nr_fixed_factor_clks);
+> -
+> -       samsung_clk_of_add_provider(dev->of_node, ctx);
+> -       pm_runtime_put_sync(dev);
+> -
+> -       return 0;
+> +       return exynos_arm64_register_cmu_pm(pdev, false);
+>  }
+>
+>  static const struct of_device_id exynos5433_cmu_of_match[] = {
+> @@ -5679,7 +5528,7 @@ static const struct of_device_id exynos5433_cmu_of_match[] = {
+>  };
+>
+>  static const struct dev_pm_ops exynos5433_cmu_pm_ops = {
+> -       SET_RUNTIME_PM_OPS(exynos5433_cmu_suspend, exynos5433_cmu_resume,
+> +       SET_RUNTIME_PM_OPS(exynos_arm64_cmu_suspend, exynos_arm64_cmu_resume,
+>                            NULL)
+>         SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+>                                      pm_runtime_force_resume)
+> --
+> 2.39.1
+>
