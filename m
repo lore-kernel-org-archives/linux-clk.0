@@ -2,123 +2,114 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8177DC61DA4
-	for <linux-clk@archiver.kernel.org>; Sat, 18 Feb 2023 22:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C0AC61DA4
+	for <linux-clk@archiver.kernel.org>; Sun, 19 Feb 2023 02:32:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229572AbjBRW7H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 18 Feb 2023 17:59:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46708 "EHLO
+        id S229530AbjBSCc2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 18 Feb 2023 21:32:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbjBRW7H (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Feb 2023 17:59:07 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79FB713503
-        for <linux-clk@vger.kernel.org>; Sat, 18 Feb 2023 14:59:05 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id bh24-20020a05600c3d1800b003e00c739ce4so1043808wmb.5
-        for <linux-clk@vger.kernel.org>; Sat, 18 Feb 2023 14:59:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FTtgJ59N6itz1m4NV60RmlpVLeIrVGaG77XPqapX9nA=;
-        b=gAgq9URA1V4NnsrgAGmKlJL8i8DYVCotlCDZhm+0UJDpk8vBA7s4ie2Rxql0Hp1YKa
-         nMAeq1y3lS1OfnKpqN6UlqbV+PdtdATKUYCDW0inc2texTqehV4C6ofG2Ql41rMZFczi
-         GkZbW5+rAaUaEhKzxoxr/fcAwbOqIaTf/M0X8ktCmynojcrEfGLheFfp4jpXpf3TEpNv
-         dpxHwDeRGjVhD+ewFOXDSNB4vUJO5XyOogne2VhMhohgyokNhuE5n5Q3u2XOGxxYvo/I
-         WUuj6da2H1kzGbJ8N861e1OLlGKREdcbIe8Tf0inw6NSvzJocntQOOA7EylP1KD7/vLM
-         E8rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=FTtgJ59N6itz1m4NV60RmlpVLeIrVGaG77XPqapX9nA=;
-        b=DaMAd+1mN3F+gfJdwDcgFgH8yFNo8o76wry/GNxLUNoCGOPKhIHiJ4XwOMXo/3SkS1
-         NnX/WNl/VCwqV37d4xpL/99RyJNL06XYYxcN5eVss+9m/+qk2PRwO0u3by2nbQOVREZ6
-         JXCuCPpMlaNkOsZ2SmT+M7ISAvRFHLRs/z14CqXn819fzz9fS6KiLc6tUVSVptK0LtdJ
-         LJYGeE6nh1EhaaM+DYe4cEkju+MRYBi6OoB55dxS1nce49ca8UGW9IR8ycGctAm0RDUi
-         E+Mr1JV40bOXDB3RGntIyrs9sDYCkv9sV/GCt88w5R0dsk6QZ/oIsMpIewVLePr0HzRU
-         i1Ug==
-X-Gm-Message-State: AO0yUKXFXtn5r1ZonKqbf4f5Oo8gImtpVSSSf2qTx06c7V94/RJ6kw8/
-        P2umkj2IJWqjUJFxGknmohk=
-X-Google-Smtp-Source: AK7set/AgQt6FCR1waBlPC/gYYghZ0+fn3R+jYJaWftIjV6Z6rAUTmfMCTbKhRKkOWX3tllDFkOgGA==
-X-Received: by 2002:a05:600c:1615:b0:3e2:662:ade6 with SMTP id m21-20020a05600c161500b003e20662ade6mr4807706wmn.26.1676761143694;
-        Sat, 18 Feb 2023 14:59:03 -0800 (PST)
-Received: from ?IPV6:2a01:c22:7b82:af00:2955:cfd1:cf55:9ea? (dynamic-2a01-0c22-7b82-af00-2955-cfd1-cf55-09ea.c22.pool.telefonica.de. [2a01:c22:7b82:af00:2955:cfd1:cf55:9ea])
-        by smtp.googlemail.com with ESMTPSA id k26-20020a05600c0b5a00b003e11f280b8bsm4594724wmr.44.2023.02.18.14.59.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 Feb 2023 14:59:03 -0800 (PST)
-Message-ID: <e5d7afd3-2e1a-ad5a-a455-8882fae9cc47@gmail.com>
-Date:   Sat, 18 Feb 2023 23:58:54 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Content-Language: en-US
-To:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S229441AbjBSCc1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Feb 2023 21:32:27 -0500
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A989912863
+        for <linux-clk@vger.kernel.org>; Sat, 18 Feb 2023 18:32:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1676773945; x=1708309945;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RHNyUdAa5+H/vLBBw3zjDV1Tzi89Jy4ThXSGc7JElDk=;
+  b=Ik3AnRFd9GHlOqh+K3Hi66j0WELcLrCmrWfA0w1LB/eNUVpXqxxmusp6
+   oJpebHEFknHb0EsjpYJ6lZpyKh4zyKgFgOwspDeosTmCkDJ3el90RvARY
+   AppMBclQ8z97+0amTb8JmG1BxPMuzha19Jr4m6rkm0ZZzsFjk1gz8QQ/Z
+   tU7cFPo8OEPxe1bEbkdThLEW9s6c0op+4fut0Q3oWJ8W0MrUiNbtpitP8
+   4jAV7nqPUPU/FmoEjiA51AFw/f7uKJnGbNP7HIazoEZ3Venmusda5mukO
+   bGIQoqcd5zX4boT9ASI77UeeG50NwpMmJuf1fEFwi82R17sqfwub1AifY
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10625"; a="394704458"
+X-IronPort-AV: E=Sophos;i="5.97,309,1669104000"; 
+   d="scan'208";a="394704458"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2023 18:32:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10625"; a="916488102"
+X-IronPort-AV: E=Sophos;i="5.97,309,1669104000"; 
+   d="scan'208";a="916488102"
+Received: from lkp-server01.sh.intel.com (HELO 4455601a8d94) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 18 Feb 2023 18:32:22 -0800
+Received: from kbuild by 4455601a8d94 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pTZV0-000Cwq-0q;
+        Sun, 19 Feb 2023 02:32:22 +0000
+Date:   Sun, 19 Feb 2023 10:31:59 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Heiner Kallweit <hkallweit1@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Russell King <linux@armlinux.org.uk>
-Cc:     linux-clk@vger.kernel.org
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH] clk: add devm_add_clk_disable_unprepare
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: add devm_add_clk_disable_unprepare
+Message-ID: <202302191007.tgr4xPrA-lkp@intel.com>
+References: <e5d7afd3-2e1a-ad5a-a455-8882fae9cc47@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e5d7afd3-2e1a-ad5a-a455-8882fae9cc47@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-I'm aware that there have been numerous rejected attempts to add a
-devm_clk_prepare_enable(). The advice I've seen was:
-If you need this functionality, use devm_add_action_or_reset().
-As a result lots of callers implemented their own action wrapper for
-clk_disable_unprepare(). Just one example: dw8250_clk_disable_unprepare
-This can be avoided with a little bit of cast magic, as used by few
-drivers already.
-Helper devm_add_clk_disable_unprepare() is supposed to reduce the
-code duplication caused by all these individual wrappers.
+Hi Heiner,
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
- drivers/clk/clk-devres.c |  6 ++++++
- include/linux/clk.h      | 11 +++++++++++
- 2 files changed, 17 insertions(+)
+I love your patch! Perhaps something to improve:
 
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index 4fb4fd4b0..97e7c33b6 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -222,3 +222,9 @@ struct clk *devm_get_clk_from_child(struct device *dev,
- 	return clk;
- }
- EXPORT_SYMBOL(devm_get_clk_from_child);
-+
-+int devm_add_clk_disable_unprepare(struct device *dev, struct clk *clk)
-+{
-+	return devm_add_action_or_reset(dev, (void (*)(void *))clk_disable_unprepare, clk);
-+}
-+EXPORT_SYMBOL_GPL(devm_add_clk_disable_unprepare);
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 1ef013324..c4d3b1cc0 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -732,6 +732,17 @@ void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks);
-  */
- void devm_clk_put(struct device *dev, struct clk *clk);
- 
-+/**
-+ * devm_add_clk_disable_unprepare - device-managed call to clk_disable_unprepare
-+ * @dev: device used to acquire the clock
-+ * @clk: clock source acquired with devm_clk_get() et al
-+ *
-+ * Notes:
-+ * - should only be called if clock was acquired device-managed
-+ * - should not be called from within interrupt context
-+ */
-+int devm_add_clk_disable_unprepare(struct device *dev, struct clk *clk);
-+
- /*
-  * The remaining APIs are optional for machine class support.
-  */
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on linus/master v6.2-rc8]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Heiner-Kallweit/clk-add-devm_add_clk_disable_unprepare/20230219-070000
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/e5d7afd3-2e1a-ad5a-a455-8882fae9cc47%40gmail.com
+patch subject: [PATCH] clk: add devm_add_clk_disable_unprepare
+config: arm-buildonly-randconfig-r001-20230219 (https://download.01.org/0day-ci/archive/20230219/202302191007.tgr4xPrA-lkp@intel.com/config)
+compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project db89896bbbd2251fff457699635acbbedeead27f)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install arm cross compiling tool for clang build
+        # apt-get install binutils-arm-linux-gnueabi
+        # https://github.com/intel-lab-lkp/linux/commit/c4da42247f42760cecce516094595706f88f4bc9
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Heiner-Kallweit/clk-add-devm_add_clk_disable_unprepare/20230219-070000
+        git checkout c4da42247f42760cecce516094595706f88f4bc9
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/clk/
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202302191007.tgr4xPrA-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/clk/clk-devres.c:228:39: warning: cast from 'void (*)(struct clk *)' to 'void (*)(void *)' converts to incompatible function type [-Wcast-function-type-strict]
+           return devm_add_action_or_reset(dev, (void (*)(void *))clk_disable_unprepare, clk);
+                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 warning generated.
+
+
+vim +228 drivers/clk/clk-devres.c
+
+   225	
+   226	int devm_add_clk_disable_unprepare(struct device *dev, struct clk *clk)
+   227	{
+ > 228		return devm_add_action_or_reset(dev, (void (*)(void *))clk_disable_unprepare, clk);
+
 -- 
-2.39.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
