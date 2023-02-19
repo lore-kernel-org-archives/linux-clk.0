@@ -2,520 +2,686 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B579DC05027
-	for <linux-clk@archiver.kernel.org>; Sun, 19 Feb 2023 17:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3CBC636CC
+	for <linux-clk@archiver.kernel.org>; Sun, 19 Feb 2023 21:24:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230241AbjBSRgm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 19 Feb 2023 12:36:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54676 "EHLO
+        id S231511AbjBSVYE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 19 Feb 2023 16:24:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230240AbjBSRgl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Feb 2023 12:36:41 -0500
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CA0F1166B
-        for <linux-clk@vger.kernel.org>; Sun, 19 Feb 2023 09:36:39 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id f14so988687plr.0
-        for <linux-clk@vger.kernel.org>; Sun, 19 Feb 2023 09:36:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NdBrIt6R5uMO1SfvNUG+3fIw1tL6ak2dx0Lq34Hsv2w=;
-        b=kLic6JR7L28WDfMeBQC4/AXzwe6L8d49Womb0Txl4i+M/8GvaWUjRgdVi3kJIGeC9/
-         xQJZGt1AHAfRYsf+47bPYvRpPI3jSx7nTCUE2E+6vKqC8+dkxECUAtgeBM7Ys6j1PCr1
-         N/gBF+lLUT1CEcDPAgalbfqqEc+hz11zAoaEWOiAaCVsuZoyYZCJVMaNK84yBEp4m9i7
-         RIFE9E1OX2KiJ6K56V9NSlTnx622MgFmvKtWiRUdUXxLWXbN7WPPR6o0tLUKPt+VbbjK
-         qvEoSUqGEEoiq+UiHsVNY8Y2TtJObGXsDwT9Vh6RhNxmezZUUaGj+zNsp2CJsuStJSkp
-         5inQ==
+        with ESMTP id S231265AbjBSVYD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Feb 2023 16:24:03 -0500
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A81EA14491
+        for <linux-clk@vger.kernel.org>; Sun, 19 Feb 2023 13:23:59 -0800 (PST)
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 77DB53F212
+        for <linux-clk@vger.kernel.org>; Sun, 19 Feb 2023 21:23:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1676841837;
+        bh=/kUicKp44h8IZwjD7ZH8EOt+fWMByHoQqi0d8iuyIiI=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=j11Nfcq1Wq/ftJt7GhkoiRhk82PXFxJm9ROfWvFrDgQ5UmEAWaw28EGWqRdqwXOQL
+         TXjEJaAiGeoMHoc4g2yJGa15LWDVMaWWlVKbWhq95KLTqzEztJiEY586h5AY/qiaTQ
+         6aqLsco3jk3pxFYec2KhtK/aP7h5tYAcASBXy0W8OY++mv+DJ2KvQa+C/LdmxXFmLt
+         TEaSiK3MJGrKsvpOZzsTA5ukFrg3S9CsCfvWbIiKJA4/NyYCWCrNAyjPT9eC9EDHIq
+         b502dpTxsVJ3ddJVj8Tg52aV/ACWtCo3fO/2HP07PTidF1QDpIkRYAxy+qUkY8fi0i
+         ezHvMfXQijHrA==
+Received: by mail-lj1-f199.google.com with SMTP id e18-20020a2ea552000000b002934e8e57e2so399366ljn.10
+        for <linux-clk@vger.kernel.org>; Sun, 19 Feb 2023 13:23:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NdBrIt6R5uMO1SfvNUG+3fIw1tL6ak2dx0Lq34Hsv2w=;
-        b=Avmw9b6C4uEX963aXXnEeVDIi544CyBFcKheMk4i/VXG/fbbQV1NIChD+cfItc/5j8
-         8C2QLoWjl2SHicUPpZjgdLcrl35FgComDFGJRT5/KkkldvCDrwg/4zr9Aj53kDZmQ3yb
-         Z6zCsaV1YUBEsu88rEPmZUNvmqswEQCHDdRxaH4d/5xpvCM/CfzMTKpfDPao0nmYzZqd
-         RY496/E+joaxrGha061noOIXtEDseF2jgC1h+31jUW6SPYPg2cQmKIOTjuWaCrjD5KhY
-         JjEO2Mz+roJ0IuAZU6SDZNJmsV91Ewy6hz3cxhBbYD9hAeZ0nKEKtcs9ut49ZreEjS8b
-         OIPQ==
-X-Gm-Message-State: AO0yUKVXNoH+QDCVOiDwaLCFI7aQ0q6s686xCyvDnR/6a5F4cJJw65Mp
-        lCcEpCZD923flkVds/cl+PiH6oNRXIs4mFvsPp0e+g==
-X-Google-Smtp-Source: AK7set+QIzmCH+j8lNd5jfQKwDtfSkCC3bZg14mtrSwfqQgoJY+pTyXaVtJuoQCo1R9eQkZv8btgcn8gWK7VIGk1ftc=
-X-Received: by 2002:a17:90b:1d45:b0:236:7270:ddc6 with SMTP id
- ok5-20020a17090b1d4500b002367270ddc6mr689729pjb.137.1676828198705; Sun, 19
- Feb 2023 09:36:38 -0800 (PST)
+        bh=/kUicKp44h8IZwjD7ZH8EOt+fWMByHoQqi0d8iuyIiI=;
+        b=p8OP1cWb6I2ocsmbyxEhqJ9mxq+/60r7yOSG9D7aKwxF0YdLtj5RZO7qdpFgmm9a7S
+         fyZTyi9gHdMOXqTT8HuCi/xJWQKnNQc7wFcVMhdSKPQUOSOUH2tz1oYvExb5sEZeoTG0
+         BhbId8aJVD3QBIh6QcBNxOYZtSKcoGLFV1Gl6HxcNDZ01Gt+fgsQ1i7lDKhy3aWlXyn8
+         FOsF1nwwr4xwzFaRvfFh6wi0gz+IRYcFw47QJGOlJ9o/Cm8eMqWKyatTt5nzyBtgU8y8
+         LJpT1BGxf8mlZnCzeupIu2PY0Cv3v6gVGZKYtIRKeMDkixE9LCjDqD+iS+iQ0dBNBFkQ
+         6NsQ==
+X-Gm-Message-State: AO0yUKWYP3bKc3BOnFMV87KN7eeOiu/FYw5ge5Nm7FCGOgnVSmPQZe4/
+        ffQaxZO/3L+PiIZ1jILJ5jkbx7cB29Ml6b+ic5qwPJ68WhihuzAjZiyQqS36KdoTM5Gnnj884Yy
+        Sgp0mBL45RRh4dWulbJNG9qK2Ip11tWc9owlH2UdcjXMLsl8sqzAtZg==
+X-Received: by 2002:ac2:521b:0:b0:4db:1aa4:fe02 with SMTP id a27-20020ac2521b000000b004db1aa4fe02mr129482lfl.1.1676841836771;
+        Sun, 19 Feb 2023 13:23:56 -0800 (PST)
+X-Google-Smtp-Source: AK7set8nu+GFqIlFktXGHGYjQC7nqndMfeKYoadSGlLNK2DOJwH1S2aZKpEGpcgbHDcEcXPl0/jJ4cBDlret8rMBGUg=
+X-Received: by 2002:ac2:521b:0:b0:4db:1aa4:fe02 with SMTP id
+ a27-20020ac2521b000000b004db1aa4fe02mr129470lfl.1.1676841836322; Sun, 19 Feb
+ 2023 13:23:56 -0800 (PST)
 MIME-Version: 1.0
-References: <20230208234313.23863-1-semen.protsenko@linaro.org> <20230208234313.23863-7-semen.protsenko@linaro.org>
-In-Reply-To: <20230208234313.23863-7-semen.protsenko@linaro.org>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Sun, 19 Feb 2023 11:36:44 -0600
-Message-ID: <CAPLW+4=cOV8J+Ho1t8Tkg8X_3m4npyy3FUC2zcQAYywE12uEkw@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] clk: samsung: exynos5433: Extract PM support to
- common ARM64 layer
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+References: <20221220005054.34518-1-hal.feng@starfivetech.com> <20221220005054.34518-10-hal.feng@starfivetech.com>
+In-Reply-To: <20221220005054.34518-10-hal.feng@starfivetech.com>
+From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Date:   Sun, 19 Feb 2023 22:23:39 +0100
+Message-ID: <CAJM55Z-qpQkLjSFN33ELGE8DtoygY+vL6zi2raPh6POJ69pjbg@mail.gmail.com>
+Subject: Re: [PATCH v3 09/11] clk: starfive: Add StarFive JH7110 system clock driver
+To:     Hal Feng <hal.feng@starfivetech.com>
+Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, Conor Dooley <conor@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 8 Feb 2023 at 17:43, Sam Protsenko <semen.protsenko@linaro.org> wrote:
+On Tue, 20 Dec 2022 at 01:51, Hal Feng <hal.feng@starfivetech.com> wrote:
 >
-> Exynos5433 clock driver implements PM support internally, which might be
-> also useful for other Exynos clock drivers. Extract all PM related code
-> from clk-exynos5433 to common ARM64 functions.
+> From: Emil Renner Berthing <kernel@esmil.dk>
 >
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Add driver for the StarFive JH7110 system clock controller and
+> register an auxiliary device for system reset controller which
+> is named as "reset-sys".
+>
+> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> Co-developed-by: Hal Feng <hal.feng@starfivetech.com>
+> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 > ---
-> Changes in v2:
->   - Rebased on top of latest soc/for-next tree
->   - Included linux/slab.h for kfree (found by kernel test robot)
+>  drivers/clk/starfive/Kconfig                  |  11 +
+>  drivers/clk/starfive/Makefile                 |   2 +
+>  .../clk/starfive/clk-starfive-jh7110-sys.c    | 448 ++++++++++++++++++
+>  drivers/clk/starfive/clk-starfive-jh71x0.c    |  54 +++
+>  drivers/clk/starfive/clk-starfive-jh71x0.h    |   8 +
+>  5 files changed, 523 insertions(+)
+>  create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-sys.c
 >
->  drivers/clk/samsung/clk-exynos-arm64.c | 171 ++++++++++++++++++++++++-
->  drivers/clk/samsung/clk-exynos-arm64.h |   3 +
->  drivers/clk/samsung/clk-exynos5433.c   | 157 +----------------------
->  3 files changed, 175 insertions(+), 156 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung/clk-exynos-arm64.c
-> index 2aa3f0a5644e..7ad7fd353dda 100644
-> --- a/drivers/clk/samsung/clk-exynos-arm64.c
-> +++ b/drivers/clk/samsung/clk-exynos-arm64.c
-> @@ -10,6 +10,9 @@
->   */
-
-Hi Marek,
-
-It just occurred to me that as I'm pulling your code from
-clk-exynos5433.c here, I should've probably added you to this file's
-author list in the header comment. Does that sound right to you? If
-so, I can re-send v3 with fixes.
-
-Also, could you please review this series, if possible? I'm working
-right now on PM_DOMAINS support for Exynos850, so along with this
-series that would bring the initial PM support for ARM64 Exynos chips.
-
-Thanks!
-
->  #include <linux/clk.h>
->  #include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/slab.h>
->
->  #include "clk-exynos-arm64.h"
->
-> @@ -21,6 +24,19 @@
->  #define GATE_OFF_START         0x2000
->  #define GATE_OFF_END           0x2fff
->
-> +struct exynos_arm64_cmu_data {
-> +       struct samsung_clk_reg_dump *clk_save;
-> +       unsigned int nr_clk_save;
-> +       const struct samsung_clk_reg_dump *clk_suspend;
-> +       unsigned int nr_clk_suspend;
+> diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
+> index 594d516dcb38..4640d0665d1c 100644
+> --- a/drivers/clk/starfive/Kconfig
+> +++ b/drivers/clk/starfive/Kconfig
+> @@ -20,3 +20,14 @@ config CLK_STARFIVE_JH7100_AUDIO
+>         help
+>           Say Y or M here to support the audio clocks on the StarFive JH7100
+>           SoC.
 > +
-> +       struct clk *clk;
-> +       struct clk **pclks;
-> +       int nr_pclks;
+> +config CLK_STARFIVE_JH7110_SYS
+> +       bool "StarFive JH7110 system clock support"
+> +       depends on SOC_STARFIVE || COMPILE_TEST
+> +       select AUXILIARY_BUS
+> +       select CLK_STARFIVE_JH71X0
+> +       select RESET_STARFIVE_JH7110
+> +       default SOC_STARFIVE
+> +       help
+> +         Say yes here to support the system clock controller on the
+> +         StarFive JH7110 SoC.
+> diff --git a/drivers/clk/starfive/Makefile b/drivers/clk/starfive/Makefile
+> index 82edfa9f9cb8..5ca4e887fb9c 100644
+> --- a/drivers/clk/starfive/Makefile
+> +++ b/drivers/clk/starfive/Makefile
+> @@ -3,3 +3,5 @@ obj-$(CONFIG_CLK_STARFIVE_JH71X0)       += clk-starfive-jh71x0.o
+>
+>  obj-$(CONFIG_CLK_STARFIVE_JH7100)      += clk-starfive-jh7100.o
+>  obj-$(CONFIG_CLK_STARFIVE_JH7100_AUDIO)        += clk-starfive-jh7100-audio.o
 > +
-> +       struct samsung_clk_provider *ctx;
+> +obj-$(CONFIG_CLK_STARFIVE_JH7110_SYS)  += clk-starfive-jh7110-sys.o
+> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+> new file mode 100644
+> index 000000000000..abc1c280bbe3
+> --- /dev/null
+> +++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+> @@ -0,0 +1,448 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * StarFive JH7110 System Clock Driver
+> + *
+> + * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
+> + * Copyright (C) 2022 StarFive Technology Co., Ltd.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include <dt-bindings/clock/starfive,jh7110-crg.h>
+> +
+> +#include "clk-starfive-jh71x0.h"
+> +
+> +/* external clocks */
+> +#define JH7110_SYSCLK_OSC                      (JH7110_SYSCLK_END + 0)
+> +#define JH7110_SYSCLK_GMAC1_RMII_REFIN         (JH7110_SYSCLK_END + 1)
+> +#define JH7110_SYSCLK_GMAC1_RGMII_RXIN         (JH7110_SYSCLK_END + 2)
+> +#define JH7110_SYSCLK_I2STX_BCLK_EXT           (JH7110_SYSCLK_END + 3)
+> +#define JH7110_SYSCLK_I2STX_LRCK_EXT           (JH7110_SYSCLK_END + 4)
+> +#define JH7110_SYSCLK_I2SRX_BCLK_EXT           (JH7110_SYSCLK_END + 5)
+> +#define JH7110_SYSCLK_I2SRX_LRCK_EXT           (JH7110_SYSCLK_END + 6)
+> +#define JH7110_SYSCLK_TDM_EXT                  (JH7110_SYSCLK_END + 7)
+> +#define JH7110_SYSCLK_MCLK_EXT                 (JH7110_SYSCLK_END + 8)
+> +
+> +static const struct jh71x0_clk_data jh7110_sysclk_data[] __initconst = {
+> +       /* root */
+> +       JH71X0__MUX(JH7110_SYSCLK_CPU_ROOT, "cpu_root", 2,
+> +                   JH7110_SYSCLK_OSC,
+> +                   JH7110_SYSCLK_PLL0_OUT),
+> +       JH71X0__DIV(JH7110_SYSCLK_CPU_CORE, "cpu_core", 7, JH7110_SYSCLK_CPU_ROOT),
+> +       JH71X0__DIV(JH7110_SYSCLK_CPU_BUS, "cpu_bus", 2, JH7110_SYSCLK_CPU_CORE),
+> +       JH71X0__MUX(JH7110_SYSCLK_GPU_ROOT, "gpu_root", 2,
+> +                   JH7110_SYSCLK_PLL2_OUT,
+> +                   JH7110_SYSCLK_PLL1_OUT),
+> +       JH71X0_MDIV(JH7110_SYSCLK_PERH_ROOT, "perh_root", 2, 2,
+> +                   JH7110_SYSCLK_PLL0_OUT,
+> +                   JH7110_SYSCLK_PLL2_OUT),
+> +       JH71X0__MUX(JH7110_SYSCLK_BUS_ROOT, "bus_root", 2,
+> +                   JH7110_SYSCLK_OSC,
+> +                   JH7110_SYSCLK_PLL2_OUT),
+> +       JH71X0__DIV(JH7110_SYSCLK_NOCSTG_BUS, "nocstg_bus", 3, JH7110_SYSCLK_BUS_ROOT),
+> +       JH71X0__DIV(JH7110_SYSCLK_AXI_CFG0, "axi_cfg0", 3, JH7110_SYSCLK_BUS_ROOT),
+> +       JH71X0__DIV(JH7110_SYSCLK_STG_AXIAHB, "stg_axiahb", 2, JH7110_SYSCLK_AXI_CFG0),
+> +       JH71X0_GATE(JH7110_SYSCLK_AHB0, "ahb0", CLK_IS_CRITICAL, JH7110_SYSCLK_STG_AXIAHB),
+> +       JH71X0_GATE(JH7110_SYSCLK_AHB1, "ahb1", CLK_IS_CRITICAL, JH7110_SYSCLK_STG_AXIAHB),
+> +       JH71X0__DIV(JH7110_SYSCLK_APB_BUS, "apb_bus", 8, JH7110_SYSCLK_STG_AXIAHB),
+> +       JH71X0_GATE(JH7110_SYSCLK_APB0, "apb0", CLK_IS_CRITICAL, JH7110_SYSCLK_APB_BUS),
+> +       JH71X0__DIV(JH7110_SYSCLK_PLL0_DIV2, "pll0_div2", 2, JH7110_SYSCLK_PLL0_OUT),
+> +       JH71X0__DIV(JH7110_SYSCLK_PLL1_DIV2, "pll1_div2", 2, JH7110_SYSCLK_PLL1_OUT),
+> +       JH71X0__DIV(JH7110_SYSCLK_PLL2_DIV2, "pll2_div2", 2, JH7110_SYSCLK_PLL2_OUT),
+> +       JH71X0__DIV(JH7110_SYSCLK_AUDIO_ROOT, "audio_root", 8, JH7110_SYSCLK_PLL2_OUT),
+> +       JH71X0__DIV(JH7110_SYSCLK_MCLK_INNER, "mclk_inner", 64, JH7110_SYSCLK_AUDIO_ROOT),
+> +       JH71X0__MUX(JH7110_SYSCLK_MCLK, "mclk", 2,
+> +                   JH7110_SYSCLK_MCLK_INNER,
+> +                   JH7110_SYSCLK_MCLK_EXT),
+> +       JH71X0_GATE(JH7110_SYSCLK_MCLK_OUT, "mclk_out", 0, JH7110_SYSCLK_MCLK_INNER),
+> +       JH71X0_MDIV(JH7110_SYSCLK_ISP_2X, "isp_2x", 8, 2,
+> +                   JH7110_SYSCLK_PLL2_OUT,
+> +                   JH7110_SYSCLK_PLL1_OUT),
+> +       JH71X0__DIV(JH7110_SYSCLK_ISP_AXI, "isp_axi", 4, JH7110_SYSCLK_ISP_2X),
+> +       JH71X0_GDIV(JH7110_SYSCLK_GCLK0, "gclk0", 0, 62, JH7110_SYSCLK_PLL0_DIV2),
+> +       JH71X0_GDIV(JH7110_SYSCLK_GCLK1, "gclk1", 0, 62, JH7110_SYSCLK_PLL1_DIV2),
+> +       JH71X0_GDIV(JH7110_SYSCLK_GCLK2, "gclk2", 0, 62, JH7110_SYSCLK_PLL2_DIV2),
+> +       /* cores */
+> +       JH71X0_GATE(JH7110_SYSCLK_CORE, "core", CLK_IS_CRITICAL, JH7110_SYSCLK_CPU_CORE),
+> +       JH71X0_GATE(JH7110_SYSCLK_CORE1, "core1", CLK_IS_CRITICAL, JH7110_SYSCLK_CPU_CORE),
+> +       JH71X0_GATE(JH7110_SYSCLK_CORE2, "core2", CLK_IS_CRITICAL, JH7110_SYSCLK_CPU_CORE),
+> +       JH71X0_GATE(JH7110_SYSCLK_CORE3, "core3", CLK_IS_CRITICAL, JH7110_SYSCLK_CPU_CORE),
+> +       JH71X0_GATE(JH7110_SYSCLK_CORE4, "core4", CLK_IS_CRITICAL, JH7110_SYSCLK_CPU_CORE),
+> +       JH71X0_GATE(JH7110_SYSCLK_DEBUG, "debug", 0, JH7110_SYSCLK_CPU_BUS),
+> +       JH71X0__DIV(JH7110_SYSCLK_RTC_TOGGLE, "rtc_toggle", 6, JH7110_SYSCLK_OSC),
+> +       JH71X0_GATE(JH7110_SYSCLK_TRACE0, "trace0", 0, JH7110_SYSCLK_CPU_CORE),
+> +       JH71X0_GATE(JH7110_SYSCLK_TRACE1, "trace1", 0, JH7110_SYSCLK_CPU_CORE),
+> +       JH71X0_GATE(JH7110_SYSCLK_TRACE2, "trace2", 0, JH7110_SYSCLK_CPU_CORE),
+> +       JH71X0_GATE(JH7110_SYSCLK_TRACE3, "trace3", 0, JH7110_SYSCLK_CPU_CORE),
+> +       JH71X0_GATE(JH7110_SYSCLK_TRACE4, "trace4", 0, JH7110_SYSCLK_CPU_CORE),
+> +       JH71X0_GATE(JH7110_SYSCLK_TRACE_COM, "trace_com", 0, JH7110_SYSCLK_CPU_BUS),
+> +       /* noc */
+> +       JH71X0_GATE(JH7110_SYSCLK_NOC_BUS_CPU_AXI, "noc_bus_cpu_axi", CLK_IS_CRITICAL,
+> +                   JH7110_SYSCLK_CPU_BUS),
+> +       JH71X0_GATE(JH7110_SYSCLK_NOC_BUS_AXICFG0_AXI, "noc_bus_axicfg0_axi", CLK_IS_CRITICAL,
+> +                   JH7110_SYSCLK_AXI_CFG0),
+> +       /* ddr */
+> +       JH71X0__DIV(JH7110_SYSCLK_OSC_DIV2, "osc_div2", 2, JH7110_SYSCLK_OSC),
+> +       JH71X0__DIV(JH7110_SYSCLK_PLL1_DIV4, "pll1_div4", 2, JH7110_SYSCLK_PLL1_DIV2),
+> +       JH71X0__DIV(JH7110_SYSCLK_PLL1_DIV8, "pll1_div8", 2, JH7110_SYSCLK_PLL1_DIV4),
+> +       JH71X0__MUX(JH7110_SYSCLK_DDR_BUS, "ddr_bus", 4,
+> +                   JH7110_SYSCLK_OSC_DIV2,
+> +                   JH7110_SYSCLK_PLL1_DIV2,
+> +                   JH7110_SYSCLK_PLL1_DIV4,
+> +                   JH7110_SYSCLK_PLL1_DIV8),
+> +       JH71X0_GATE(JH7110_SYSCLK_DDR_AXI, "ddr_axi", CLK_IGNORE_UNUSED, JH7110_SYSCLK_DDR_BUS),
+> +       /* gpu */
+> +       JH71X0__DIV(JH7110_SYSCLK_GPU_CORE, "gpu_core", 7, JH7110_SYSCLK_GPU_ROOT),
+> +       JH71X0_GATE(JH7110_SYSCLK_GPU_CORE_CLK, "gpu_core_clk", 0, JH7110_SYSCLK_GPU_CORE),
+> +       JH71X0_GATE(JH7110_SYSCLK_GPU_SYS_CLK, "gpu_sys_clk", 0, JH7110_SYSCLK_ISP_AXI),
+> +       JH71X0_GATE(JH7110_SYSCLK_GPU_APB, "gpu_apb", 0, JH7110_SYSCLK_APB_BUS),
+> +       JH71X0_GDIV(JH7110_SYSCLK_GPU_RTC_TOGGLE, "gpu_rtc_toggle", 0, 12, JH7110_SYSCLK_OSC),
+> +       JH71X0_GATE(JH7110_SYSCLK_NOC_BUS_GPU_AXI, "noc_bus_gpu_axi", 0, JH7110_SYSCLK_GPU_CORE),
+> +       /* isp */
+> +       JH71X0_GATE(JH7110_SYSCLK_ISP_TOP_CORE, "isp_top_core", 0, JH7110_SYSCLK_ISP_2X),
+> +       JH71X0_GATE(JH7110_SYSCLK_ISP_TOP_AXI, "isp_top_axi", 0, JH7110_SYSCLK_ISP_AXI),
+> +       JH71X0_GATE(JH7110_SYSCLK_NOC_BUS_ISP_AXI, "noc_bus_isp_axi", CLK_IS_CRITICAL,
+> +                   JH7110_SYSCLK_ISP_AXI),
+> +       /* hifi4 */
+> +       JH71X0__DIV(JH7110_SYSCLK_HIFI4_CORE, "hifi4_core", 15, JH7110_SYSCLK_BUS_ROOT),
+> +       JH71X0__DIV(JH7110_SYSCLK_HIFI4_AXI, "hifi4_axi", 2, JH7110_SYSCLK_HIFI4_CORE),
+> +       /* axi_cfg1 */
+> +       JH71X0_GATE(JH7110_SYSCLK_AXI_CFG1_MAIN, "axi_cfg1_main", CLK_IGNORE_UNUSED,
+> +                   JH7110_SYSCLK_ISP_AXI),
+> +       JH71X0_GATE(JH7110_SYSCLK_AXI_CFG1_AHB, "axi_cfg1_ahb", CLK_IGNORE_UNUSED,
+> +                   JH7110_SYSCLK_AHB0),
+> +       /* vout */
+> +       JH71X0_GATE(JH7110_SYSCLK_VOUT_SRC, "vout_src", 0, JH7110_SYSCLK_PLL2_OUT),
+> +       JH71X0__DIV(JH7110_SYSCLK_VOUT_AXI, "vout_axi", 7, JH7110_SYSCLK_PLL2_OUT),
+> +       JH71X0_GATE(JH7110_SYSCLK_NOC_BUS_DISP_AXI, "noc_bus_disp_axi", 0, JH7110_SYSCLK_VOUT_AXI),
+> +       JH71X0_GATE(JH7110_SYSCLK_VOUT_TOP_AHB, "vout_top_ahb", 0, JH7110_SYSCLK_AHB1),
+> +       JH71X0_GATE(JH7110_SYSCLK_VOUT_TOP_AXI, "vout_top_axi", 0, JH7110_SYSCLK_VOUT_AXI),
+> +       JH71X0_GATE(JH7110_SYSCLK_VOUT_TOP_HDMITX0_MCLK, "vout_top_hdmitx0_mclk", 0,
+> +                   JH7110_SYSCLK_MCLK),
+> +       JH71X0__DIV(JH7110_SYSCLK_VOUT_TOP_MIPIPHY_REF, "vout_top_mipiphy_ref", 2,
+> +                   JH7110_SYSCLK_OSC),
+> +       /* jpegc */
+> +       JH71X0__DIV(JH7110_SYSCLK_JPEGC_AXI, "jpegc_axi", 16, JH7110_SYSCLK_PLL2_OUT),
+> +       JH71X0_GATE(JH7110_SYSCLK_CODAJ12_AXI, "codaj12_axi", 0, JH7110_SYSCLK_JPEGC_AXI),
+> +       JH71X0_GDIV(JH7110_SYSCLK_CODAJ12_CORE, "codaj12_core", 0, 16, JH7110_SYSCLK_PLL2_OUT),
+> +       JH71X0_GATE(JH7110_SYSCLK_CODAJ12_APB, "codaj12_apb", 0, JH7110_SYSCLK_APB_BUS),
+> +       /* vdec */
+> +       JH71X0__DIV(JH7110_SYSCLK_VDEC_AXI, "vdec_axi", 7, JH7110_SYSCLK_BUS_ROOT),
+> +       JH71X0_GATE(JH7110_SYSCLK_WAVE511_AXI, "wave511_axi", 0, JH7110_SYSCLK_VDEC_AXI),
+> +       JH71X0_GDIV(JH7110_SYSCLK_WAVE511_BPU, "wave511_bpu", 0, 7, JH7110_SYSCLK_BUS_ROOT),
+> +       JH71X0_GDIV(JH7110_SYSCLK_WAVE511_VCE, "wave511_vce", 0, 7, JH7110_SYSCLK_PLL0_OUT),
+> +       JH71X0_GATE(JH7110_SYSCLK_WAVE511_APB, "wave511_apb", 0, JH7110_SYSCLK_APB_BUS),
+> +       JH71X0_GATE(JH7110_SYSCLK_VDEC_JPG, "vdec_jpg", CLK_IGNORE_UNUSED,
+> +                   JH7110_SYSCLK_JPEGC_AXI),
+> +       JH71X0_GATE(JH7110_SYSCLK_VDEC_MAIN, "vdec_main", CLK_IGNORE_UNUSED,
+> +                   JH7110_SYSCLK_VDEC_AXI),
+> +       JH71X0_GATE(JH7110_SYSCLK_NOC_BUS_VDEC_AXI, "noc_bus_vdec_axi", 0, JH7110_SYSCLK_VDEC_AXI),
+> +       /* venc */
+> +       JH71X0__DIV(JH7110_SYSCLK_VENC_AXI, "venc_axi", 15, JH7110_SYSCLK_PLL2_OUT),
+> +       JH71X0_GATE(JH7110_SYSCLK_WAVE420L_AXI, "wave420l_axi", 0, JH7110_SYSCLK_VENC_AXI),
+> +       JH71X0_GDIV(JH7110_SYSCLK_WAVE420L_BPU, "wave420l_bpu", 0, 15, JH7110_SYSCLK_PLL2_OUT),
+> +       JH71X0_GDIV(JH7110_SYSCLK_WAVE420L_VCE, "wave420l_vce", 0, 15, JH7110_SYSCLK_PLL2_OUT),
+> +       JH71X0_GATE(JH7110_SYSCLK_WAVE420L_APB, "wave420l_apb", 0, JH7110_SYSCLK_APB_BUS),
+> +       JH71X0_GATE(JH7110_SYSCLK_NOC_BUS_VENC_AXI, "noc_bus_venc_axi", 0, JH7110_SYSCLK_VENC_AXI),
+> +       /* axi_cfg0 */
+> +       JH71X0_GATE(JH7110_SYSCLK_AXI_CFG0_MAIN_DIV, "axi_cfg0_main_div", CLK_IGNORE_UNUSED,
+> +                   JH7110_SYSCLK_AHB1),
+> +       JH71X0_GATE(JH7110_SYSCLK_AXI_CFG0_MAIN, "axi_cfg0_main", CLK_IGNORE_UNUSED,
+> +                   JH7110_SYSCLK_AXI_CFG0),
+> +       JH71X0_GATE(JH7110_SYSCLK_AXI_CFG0_HIFI4, "axi_cfg0_hifi4", CLK_IGNORE_UNUSED,
+> +                   JH7110_SYSCLK_HIFI4_AXI),
+> +       /* intmem */
+> +       JH71X0_GATE(JH7110_SYSCLK_AXIMEM2_AXI, "aximem2_axi", CLK_IGNORE_UNUSED,
+> +                   JH7110_SYSCLK_AXI_CFG0),
+> +       /* qspi */
+> +       JH71X0_GATE(JH7110_SYSCLK_QSPI_AHB, "qspi_ahb", CLK_IGNORE_UNUSED, JH7110_SYSCLK_AHB1),
+> +       JH71X0_GATE(JH7110_SYSCLK_QSPI_APB, "qspi_apb", CLK_IGNORE_UNUSED, JH7110_SYSCLK_APB_BUS),
+> +       JH71X0__DIV(JH7110_SYSCLK_QSPI_REF_SRC, "qspi_ref_src", 16, JH7110_SYSCLK_PLL0_OUT),
+> +       JH71X0_GMUX(JH7110_SYSCLK_QSPI_REF, "qspi_ref", CLK_IGNORE_UNUSED, 2,
+> +                   JH7110_SYSCLK_OSC,
+> +                   JH7110_SYSCLK_QSPI_REF_SRC),
+> +       /* sdio */
+> +       JH71X0_GATE(JH7110_SYSCLK_SDIO0_AHB, "sdio0_ahb", CLK_IGNORE_UNUSED, JH7110_SYSCLK_AHB0),
+> +       JH71X0_GATE(JH7110_SYSCLK_SDIO1_AHB, "sdio1_ahb", CLK_IGNORE_UNUSED, JH7110_SYSCLK_AHB0),
+> +       JH71X0_GDIV(JH7110_SYSCLK_SDIO0_SDCARD, "sdio0_sdcard", CLK_IGNORE_UNUSED, 15,
+> +                   JH7110_SYSCLK_AXI_CFG0),
+> +       JH71X0_GDIV(JH7110_SYSCLK_SDIO1_SDCARD, "sdio1_sdcard", CLK_IGNORE_UNUSED, 15,
+> +                   JH7110_SYSCLK_AXI_CFG0),
+> +       /* stg */
+> +       JH71X0__DIV(JH7110_SYSCLK_USB_125M, "usb_125m", 15, JH7110_SYSCLK_PLL0_OUT),
+> +       JH71X0_GATE(JH7110_SYSCLK_NOC_BUS_STG_AXI, "noc_bus_stg_axi", CLK_IGNORE_UNUSED,
+> +                   JH7110_SYSCLK_NOCSTG_BUS),
+> +       /* gmac1 */
+> +       JH71X0_GATE(JH7110_SYSCLK_GMAC1_AHB, "gmac1_ahb", 0, JH7110_SYSCLK_AHB0),
+> +       JH71X0_GATE(JH7110_SYSCLK_GMAC1_AXI, "gmac1_axi", 0, JH7110_SYSCLK_STG_AXIAHB),
+> +       JH71X0__DIV(JH7110_SYSCLK_GMAC_SRC, "gmac_src", 7, JH7110_SYSCLK_PLL0_OUT),
+> +       JH71X0__DIV(JH7110_SYSCLK_GMAC1_GTXCLK, "gmac1_gtxclk", 15, JH7110_SYSCLK_PLL0_OUT),
+> +       JH71X0__DIV(JH7110_SYSCLK_GMAC1_RMII_RTX, "gmac1_rmii_rtx", 30,
+> +                   JH7110_SYSCLK_GMAC1_RMII_REFIN),
+> +       JH71X0_GDIV(JH7110_SYSCLK_GMAC1_PTP, "gmac1_ptp", 0, 31, JH7110_SYSCLK_GMAC_SRC),
+> +       JH71X0__MUX(JH7110_SYSCLK_GMAC1_RX, "gmac1_rx", 2,
+> +                   JH7110_SYSCLK_GMAC1_RGMII_RXIN,
+> +                   JH7110_SYSCLK_GMAC1_RMII_RTX),
+> +       JH71X0__INV(JH7110_SYSCLK_GMAC1_RX_INV, "gmac1_rx_inv", JH7110_SYSCLK_GMAC1_RX),
+> +       JH71X0_GMUX(JH7110_SYSCLK_GMAC1_TX, "gmac1_tx", 0, 2,
+> +                   JH7110_SYSCLK_GMAC1_GTXCLK,
+> +                   JH7110_SYSCLK_GMAC1_RMII_RTX),
+> +       JH71X0__INV(JH7110_SYSCLK_GMAC1_TX_INV, "gmac1_tx_inv", JH7110_SYSCLK_GMAC1_TX),
+> +       JH71X0_GATE(JH7110_SYSCLK_GMAC1_GTXC, "gmac1_gtxc", 0, JH7110_SYSCLK_GMAC1_GTXCLK),
+> +       /* gmac0 */
+> +       JH71X0_GDIV(JH7110_SYSCLK_GMAC0_GTXCLK, "gmac0_gtxclk", 0, 15, JH7110_SYSCLK_PLL0_OUT),
+> +       JH71X0_GDIV(JH7110_SYSCLK_GMAC0_PTP, "gmac0_ptp", 0, 31, JH7110_SYSCLK_GMAC_SRC),
+> +       JH71X0_GDIV(JH7110_SYSCLK_GMAC_PHY, "gmac_phy", 0, 31, JH7110_SYSCLK_GMAC_SRC),
+> +       JH71X0_GATE(JH7110_SYSCLK_GMAC0_GTXC, "gmac0_gtxc", 0, JH7110_SYSCLK_GMAC0_GTXCLK),
+> +       /* apb misc */
+> +       JH71X0_GATE(JH7110_SYSCLK_IOMUX_APB, "iomux_apb", CLK_IGNORE_UNUSED,
+> +                   JH7110_SYSCLK_APB_BUS),
+> +       JH71X0_GATE(JH7110_SYSCLK_MAILBOX_APB, "mailbox_apb", CLK_IGNORE_UNUSED,
+> +                   JH7110_SYSCLK_APB_BUS),
+> +       JH71X0_GATE(JH7110_SYSCLK_INT_CTRL_APB, "int_ctrl_apb", CLK_IGNORE_UNUSED,
+> +                   JH7110_SYSCLK_APB_BUS),
+> +       /* can0 */
+> +       JH71X0_GATE(JH7110_SYSCLK_CAN0_APB, "can0_apb", 0, JH7110_SYSCLK_APB_BUS),
+> +       JH71X0_GDIV(JH7110_SYSCLK_CAN0_TIMER, "can0_timer", 0, 24, JH7110_SYSCLK_OSC),
+> +       JH71X0_GDIV(JH7110_SYSCLK_CAN0_CAN, "can0_can", 0, 63, JH7110_SYSCLK_PERH_ROOT),
+> +       /* can1 */
+> +       JH71X0_GATE(JH7110_SYSCLK_CAN1_APB, "can1_apb", 0, JH7110_SYSCLK_APB_BUS),
+> +       JH71X0_GDIV(JH7110_SYSCLK_CAN1_TIMER, "can1_timer", 0, 24, JH7110_SYSCLK_OSC),
+> +       JH71X0_GDIV(JH7110_SYSCLK_CAN1_CAN, "can1_can", 0, 63, JH7110_SYSCLK_PERH_ROOT),
+> +       /* pwm */
+> +       JH71X0_GATE(JH7110_SYSCLK_PWM_APB, "pwm_apb", 0, JH7110_SYSCLK_APB_BUS),
+> +       /* wdt */
+> +       JH71X0_GATE(JH7110_SYSCLK_WDT_APB, "wdt_apb", CLK_IGNORE_UNUSED, JH7110_SYSCLK_APB_BUS),
+> +       JH71X0_GATE(JH7110_SYSCLK_WDT_CORE, "wdt_core", CLK_IGNORE_UNUSED, JH7110_SYSCLK_OSC),
+> +       /* timer */
+> +       JH71X0_GATE(JH7110_SYSCLK_TIMER_APB, "timer_apb", CLK_IGNORE_UNUSED,
+> +                   JH7110_SYSCLK_APB_BUS),
+> +       JH71X0_GATE(JH7110_SYSCLK_TIMER0, "timer0", CLK_IGNORE_UNUSED, JH7110_SYSCLK_OSC),
+> +       JH71X0_GATE(JH7110_SYSCLK_TIMER1, "timer1", CLK_IGNORE_UNUSED, JH7110_SYSCLK_OSC),
+> +       JH71X0_GATE(JH7110_SYSCLK_TIMER2, "timer2", CLK_IGNORE_UNUSED, JH7110_SYSCLK_OSC),
+> +       JH71X0_GATE(JH7110_SYSCLK_TIMER3, "timer3", CLK_IGNORE_UNUSED, JH7110_SYSCLK_OSC),
+> +       /* temp sensor */
+> +       JH71X0_GATE(JH7110_SYSCLK_TEMP_APB, "temp_apb", 0, JH7110_SYSCLK_APB_BUS),
+> +       JH71X0_GDIV(JH7110_SYSCLK_TEMP_CORE, "temp_core", 0, 24, JH7110_SYSCLK_OSC),
+> +       /* spi */
+> +       JH71X0_GATE(JH7110_SYSCLK_SPI0_APB, "spi0_apb", 0, JH7110_SYSCLK_APB0),
+> +       JH71X0_GATE(JH7110_SYSCLK_SPI1_APB, "spi1_apb", 0, JH7110_SYSCLK_APB0),
+> +       JH71X0_GATE(JH7110_SYSCLK_SPI2_APB, "spi2_apb", 0, JH7110_SYSCLK_APB0),
+> +       JH71X0_GATE(JH7110_SYSCLK_SPI3_APB, "spi3_apb", 0, JH7110_SYSCLK_APB_BUS),
+> +       JH71X0_GATE(JH7110_SYSCLK_SPI4_APB, "spi4_apb", 0, JH7110_SYSCLK_APB_BUS),
+> +       JH71X0_GATE(JH7110_SYSCLK_SPI5_APB, "spi5_apb", 0, JH7110_SYSCLK_APB_BUS),
+> +       JH71X0_GATE(JH7110_SYSCLK_SPI6_APB, "spi6_apb", 0, JH7110_SYSCLK_APB_BUS),
+> +       /* i2c */
+> +       JH71X0_GATE(JH7110_SYSCLK_I2C0_APB, "i2c0_apb", 0, JH7110_SYSCLK_APB0),
+> +       JH71X0_GATE(JH7110_SYSCLK_I2C1_APB, "i2c1_apb", 0, JH7110_SYSCLK_APB0),
+> +       JH71X0_GATE(JH7110_SYSCLK_I2C2_APB, "i2c2_apb", 0, JH7110_SYSCLK_APB0),
+> +       JH71X0_GATE(JH7110_SYSCLK_I2C3_APB, "i2c3_apb", 0, JH7110_SYSCLK_APB_BUS),
+> +       JH71X0_GATE(JH7110_SYSCLK_I2C4_APB, "i2c4_apb", 0, JH7110_SYSCLK_APB_BUS),
+> +       JH71X0_GATE(JH7110_SYSCLK_I2C5_APB, "i2c5_apb", 0, JH7110_SYSCLK_APB_BUS),
+> +       JH71X0_GATE(JH7110_SYSCLK_I2C6_APB, "i2c6_apb", 0, JH7110_SYSCLK_APB_BUS),
+> +       /* uart */
+> +       JH71X0_GATE(JH7110_SYSCLK_UART0_APB, "uart0_apb", CLK_IGNORE_UNUSED, JH7110_SYSCLK_APB0),
+> +       JH71X0_GATE(JH7110_SYSCLK_UART0_CORE, "uart0_core", CLK_IGNORE_UNUSED, JH7110_SYSCLK_OSC),
+> +       JH71X0_GATE(JH7110_SYSCLK_UART1_APB, "uart1_apb", 0, JH7110_SYSCLK_APB0),
+> +       JH71X0_GATE(JH7110_SYSCLK_UART1_CORE, "uart1_core", 0, JH7110_SYSCLK_OSC),
+> +       JH71X0_GATE(JH7110_SYSCLK_UART2_APB, "uart2_apb", 0, JH7110_SYSCLK_APB0),
+> +       JH71X0_GATE(JH7110_SYSCLK_UART2_CORE, "uart2_core", 0, JH7110_SYSCLK_OSC),
+> +       JH71X0_GATE(JH7110_SYSCLK_UART3_APB, "uart3_apb", 0, JH7110_SYSCLK_APB0),
+> +       JH71X0_GDIV(JH7110_SYSCLK_UART3_CORE, "uart3_core", 0, 10, JH7110_SYSCLK_PERH_ROOT),
+> +       JH71X0_GATE(JH7110_SYSCLK_UART4_APB, "uart4_apb", 0, JH7110_SYSCLK_APB0),
+> +       JH71X0_GDIV(JH7110_SYSCLK_UART4_CORE, "uart4_core", 0, 10, JH7110_SYSCLK_PERH_ROOT),
+> +       JH71X0_GATE(JH7110_SYSCLK_UART5_APB, "uart5_apb", 0, JH7110_SYSCLK_APB0),
+> +       JH71X0_GDIV(JH7110_SYSCLK_UART5_CORE, "uart5_core", 0, 10, JH7110_SYSCLK_PERH_ROOT),
+> +       /* pwmdac */
+> +       JH71X0_GATE(JH7110_SYSCLK_PWMDAC_APB, "pwmdac_apb", 0, JH7110_SYSCLK_APB0),
+> +       JH71X0_GDIV(JH7110_SYSCLK_PWMDAC_CORE, "pwmdac_core", 0, 256, JH7110_SYSCLK_AUDIO_ROOT),
+> +       /* spdif */
+> +       JH71X0_GATE(JH7110_SYSCLK_SPDIF_APB, "spdif_apb", 0, JH7110_SYSCLK_APB0),
+> +       JH71X0_GATE(JH7110_SYSCLK_SPDIF_CORE, "spdif_core", 0, JH7110_SYSCLK_MCLK),
+> +       /* i2stx0 */
+> +       JH71X0_GATE(JH7110_SYSCLK_I2STX0_APB, "i2stx0_apb", 0, JH7110_SYSCLK_APB0),
+> +       JH71X0_GDIV(JH7110_SYSCLK_I2STX0_BCLK_MST, "i2stx0_bclk_mst", 0, 32, JH7110_SYSCLK_MCLK),
+> +       JH71X0__INV(JH7110_SYSCLK_I2STX0_BCLK_MST_INV, "i2stx0_bclk_mst_inv",
+> +                   JH7110_SYSCLK_I2STX0_BCLK_MST),
+> +       JH71X0_MDIV(JH7110_SYSCLK_I2STX0_LRCK_MST, "i2stx0_lrck_mst", 64, 2,
+> +                   JH7110_SYSCLK_I2STX0_BCLK_MST_INV,
+> +                   JH7110_SYSCLK_I2STX0_BCLK_MST),
+> +       JH71X0__MUX(JH7110_SYSCLK_I2STX0_BCLK, "i2stx0_bclk",   2,
+> +                   JH7110_SYSCLK_I2STX0_BCLK_MST,
+> +                   JH7110_SYSCLK_I2STX_BCLK_EXT),
+> +       JH71X0__INV(JH7110_SYSCLK_I2STX0_BCLK_INV, "i2stx0_bclk_inv", JH7110_SYSCLK_I2STX0_BCLK),
+> +       JH71X0__MUX(JH7110_SYSCLK_I2STX0_LRCK, "i2stx0_lrck", 2,
+> +                   JH7110_SYSCLK_I2STX0_LRCK_MST,
+> +                   JH7110_SYSCLK_I2STX_LRCK_EXT),
+> +       /* i2stx1 */
+> +       JH71X0_GATE(JH7110_SYSCLK_I2STX1_APB, "i2stx1_apb", 0, JH7110_SYSCLK_APB0),
+> +       JH71X0_GDIV(JH7110_SYSCLK_I2STX1_BCLK_MST, "i2stx1_bclk_mst", 0, 32, JH7110_SYSCLK_MCLK),
+> +       JH71X0__INV(JH7110_SYSCLK_I2STX1_BCLK_MST_INV, "i2stx1_bclk_mst_inv",
+> +                   JH7110_SYSCLK_I2STX1_BCLK_MST),
+> +       JH71X0_MDIV(JH7110_SYSCLK_I2STX1_LRCK_MST, "i2stx1_lrck_mst", 64, 2,
+> +                   JH7110_SYSCLK_I2STX1_BCLK_MST_INV,
+> +                   JH7110_SYSCLK_I2STX1_BCLK_MST),
+> +       JH71X0__MUX(JH7110_SYSCLK_I2STX1_BCLK, "i2stx1_bclk", 2,
+> +                   JH7110_SYSCLK_I2STX1_BCLK_MST,
+> +                   JH7110_SYSCLK_I2STX_BCLK_EXT),
+> +       JH71X0__INV(JH7110_SYSCLK_I2STX1_BCLK_INV, "i2stx1_bclk_inv", JH7110_SYSCLK_I2STX1_BCLK),
+> +       JH71X0__MUX(JH7110_SYSCLK_I2STX1_LRCK, "i2stx1_lrck", 2,
+> +                   JH7110_SYSCLK_I2STX1_LRCK_MST,
+> +                   JH7110_SYSCLK_I2STX_LRCK_EXT),
+> +       /* i2srx */
+> +       JH71X0_GATE(JH7110_SYSCLK_I2SRX_APB, "i2srx_apb", 0, JH7110_SYSCLK_APB0),
+> +       JH71X0_GDIV(JH7110_SYSCLK_I2SRX_BCLK_MST, "i2srx_bclk_mst", 0, 32, JH7110_SYSCLK_MCLK),
+> +       JH71X0__INV(JH7110_SYSCLK_I2SRX_BCLK_MST_INV, "i2srx_bclk_mst_inv",
+> +                   JH7110_SYSCLK_I2SRX_BCLK_MST),
+> +       JH71X0_MDIV(JH7110_SYSCLK_I2SRX_LRCK_MST, "i2srx_lrck_mst", 64, 2,
+> +                   JH7110_SYSCLK_I2SRX_BCLK_MST_INV,
+> +                   JH7110_SYSCLK_I2SRX_BCLK_MST),
+> +       JH71X0__MUX(JH7110_SYSCLK_I2SRX_BCLK, "i2srx_bclk", 2,
+> +                   JH7110_SYSCLK_I2SRX_BCLK_MST,
+> +                   JH7110_SYSCLK_I2SRX_BCLK_EXT),
+> +       JH71X0__INV(JH7110_SYSCLK_I2SRX_BCLK_INV, "i2srx_bclk_inv", JH7110_SYSCLK_I2SRX_BCLK),
+> +       JH71X0__MUX(JH7110_SYSCLK_I2SRX_LRCK, "i2srx_lrck", 2,
+> +                   JH7110_SYSCLK_I2SRX_LRCK_MST,
+> +                   JH7110_SYSCLK_I2SRX_LRCK_EXT),
+> +       /* pdm */
+> +       JH71X0_GDIV(JH7110_SYSCLK_PDM_DMIC, "pdm_dmic", 0, 64, JH7110_SYSCLK_MCLK),
+> +       JH71X0_GATE(JH7110_SYSCLK_PDM_APB, "pdm_apb", 0, JH7110_SYSCLK_APB0),
+> +       /* tdm */
+> +       JH71X0_GATE(JH7110_SYSCLK_TDM_AHB, "tdm_ahb", 0, JH7110_SYSCLK_AHB0),
+> +       JH71X0_GATE(JH7110_SYSCLK_TDM_APB, "tdm_apb", 0, JH7110_SYSCLK_APB0),
+> +       JH71X0_GDIV(JH7110_SYSCLK_TDM_INTERNAL, "tdm_internal", 0, 64, JH7110_SYSCLK_MCLK),
+> +       JH71X0__MUX(JH7110_SYSCLK_TDM_TDM, "tdm_tdm", 2,
+> +                   JH7110_SYSCLK_TDM_INTERNAL,
+> +                   JH7110_SYSCLK_TDM_EXT),
+> +       JH71X0__INV(JH7110_SYSCLK_TDM_TDM_INV, "tdm_tdm_inv", JH7110_SYSCLK_TDM_TDM),
+> +       /* jtag */
+> +       JH71X0__DIV(JH7110_SYSCLK_JTAG_CERTIFICATION_TRNG, "jtag_certification_trng", 4,
+> +                   JH7110_SYSCLK_OSC),
 > +};
 > +
->  /**
->   * exynos_arm64_init_clocks - Set clocks initial configuration
->   * @np:                        CMU device tree node with "reg" property (CMU addr)
-> @@ -76,10 +92,16 @@ static int __init exynos_arm64_enable_bus_clk(struct device *dev,
->         if (!cmu->clk_name)
->                 return 0;
->
-> -       if (dev)
-> +       if (dev) {
-> +               struct exynos_arm64_cmu_data *data;
-> +
->                 parent_clk = clk_get(dev, cmu->clk_name);
-> -       else
-> +               data = dev_get_drvdata(dev);
-> +               if (data)
-> +                       data->clk = parent_clk;
-> +       } else {
->                 parent_clk = of_clk_get_by_name(np, cmu->clk_name);
-> +       }
->
->         if (IS_ERR(parent_clk))
->                 return PTR_ERR(parent_clk);
-> @@ -87,6 +109,46 @@ static int __init exynos_arm64_enable_bus_clk(struct device *dev,
->         return clk_prepare_enable(parent_clk);
->  }
->
-> +static int __init exynos_arm64_cmu_prepare_pm(struct device *dev,
-> +               const struct samsung_cmu_info *cmu)
+> +static struct clk_hw *jh7110_sysclk_get(struct of_phandle_args *clkspec, void *data)
 > +{
-> +       struct exynos_arm64_cmu_data *data = dev_get_drvdata(dev);
-> +       int i;
+> +       struct jh71x0_clk_priv *priv = data;
+> +       unsigned int idx = clkspec->args[0];
 > +
-> +       data->clk_save = samsung_clk_alloc_reg_dump(cmu->clk_regs,
-> +                                                   cmu->nr_clk_regs);
-> +       if (!data->clk_save)
-> +               return -ENOMEM;
+> +       if (idx < JH7110_SYSCLK_PLL0_OUT)
+> +               return &priv->reg[idx].hw;
 > +
-> +       data->nr_clk_save = cmu->nr_clk_regs;
-> +       data->clk_suspend = cmu->suspend_regs;
-> +       data->nr_clk_suspend = cmu->nr_suspend_regs;
-> +       data->nr_pclks = of_clk_get_parent_count(dev->of_node);
-> +       if (!data->nr_pclks)
-> +               return 0;
+> +       if (idx < JH7110_SYSCLK_END)
+> +               return priv->pll[idx - JH7110_SYSCLK_PLL0_OUT];
 > +
-> +       data->pclks = devm_kcalloc(dev, sizeof(struct clk *), data->nr_pclks,
-> +                                  GFP_KERNEL);
-> +       if (!data->pclks) {
-> +               kfree(data->clk_save);
-> +               return -ENOMEM;
-> +       }
-> +
-> +       for (i = 0; i < data->nr_pclks; i++) {
-> +               struct clk *clk = of_clk_get(dev->of_node, i);
-> +
-> +               if (IS_ERR(clk)) {
-> +                       kfree(data->clk_save);
-> +                       while (--i >= 0)
-> +                               clk_put(data->pclks[i]);
-> +                       return PTR_ERR(clk);
-> +               }
-> +               data->pclks[i] = clk;
-> +       }
-> +
-> +       return 0;
+> +       return ERR_PTR(-EINVAL);
 > +}
 > +
->  /**
->   * exynos_arm64_register_cmu - Register specified Exynos CMU domain
->   * @dev:       Device object; may be NULL if this function is not being
-> @@ -111,3 +173,108 @@ void __init exynos_arm64_register_cmu(struct device *dev,
->         exynos_arm64_init_clocks(np, cmu->clk_regs, cmu->nr_clk_regs);
->         samsung_cmu_register_one(np, cmu);
->  }
-> +
-> +/**
-> + * exynos_arm64_register_cmu_pm - Register Exynos CMU domain with PM support
-> + *
-> + * @pdev:      Platform device object
-> + * @set_manual:        If true, set gate clocks to manual mode
-> + *
-> + * It's a version of exynos_arm64_register_cmu() with PM support. Should be
-> + * called from probe function of platform driver.
-> + *
-> + * Return: 0 on success, or negative error code on error.
-> + */
-> +int __init exynos_arm64_register_cmu_pm(struct platform_device *pdev,
-> +                                       bool set_manual)
+> +static int __init jh7110_syscrg_probe(struct platform_device *pdev)
 > +{
-> +       const struct samsung_cmu_info *cmu;
-> +       struct device *dev = &pdev->dev;
-> +       struct device_node *np = dev->of_node;
-> +       struct exynos_arm64_cmu_data *data;
-> +       void __iomem *reg_base;
+> +       struct jh71x0_clk_priv *priv;
+> +       unsigned int idx;
 > +       int ret;
 > +
-> +       cmu = of_device_get_match_data(dev);
-> +
-> +       data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> +       if (!data)
+> +       priv = devm_kzalloc(&pdev->dev,
+> +                           struct_size(priv, reg, JH7110_SYSCLK_PLL0_OUT),
+> +                           GFP_KERNEL);
+> +       if (!priv)
 > +               return -ENOMEM;
 > +
-> +       platform_set_drvdata(pdev, data);
+> +       spin_lock_init(&priv->rmw_lock);
+> +       priv->dev = &pdev->dev;
+> +       priv->base = devm_platform_ioremap_resource(pdev, 0);
+> +       if (IS_ERR(priv->base))
+> +               return PTR_ERR(priv->base);
 > +
-> +       ret = exynos_arm64_cmu_prepare_pm(dev, cmu);
+> +       dev_set_drvdata(priv->dev, priv->base);
+> +
+> +       /* 24MHz -> 1250.0MHz */
+> +       priv->pll[0] = devm_clk_hw_register_fixed_factor(priv->dev, "pll0_out",
+> +                                                        "osc", 0, 625, 12);
+> +       if (IS_ERR(priv->pll[0]))
+> +               return PTR_ERR(priv->pll[0]);
+
+Hi Hal,
+
+Are you sure this should be 1.25GHz and not 1GHz? I can't seem to make
+the ethernet driver work unless I set it to 1GHz. This also makes
+other derived clocks that should be 125MHz show up as such in the
+clock tree. Eg. "usb_125m".
+
+Perhaps it's because I updated my board to the latest u-boot
+release[1]. I know these PLLs are just placeholders until you add
+proper code to control them, but until then it's important that these
+values match the defaults or whatever the latest u-boot sets them to.
+Please check the PLLs below with the latest u-boot too.
+
+/Emil
+
+[1]: https://github.com/starfive-tech/VisionFive2/releases
+
+> +       /* 24MHz -> 1066.0MHz */
+> +       priv->pll[1] = devm_clk_hw_register_fixed_factor(priv->dev, "pll1_out",
+> +                                                        "osc", 0, 533, 12);
+> +       if (IS_ERR(priv->pll[1]))
+> +               return PTR_ERR(priv->pll[1]);
+> +
+> +       /* 24MHz -> 1188.0MHz */
+> +       priv->pll[2] = devm_clk_hw_register_fixed_factor(priv->dev, "pll2_out",
+> +                                                        "osc", 0, 99, 2);
+> +       if (IS_ERR(priv->pll[2]))
+> +               return PTR_ERR(priv->pll[2]);
+> +
+> +       for (idx = 0; idx < JH7110_SYSCLK_PLL0_OUT; idx++) {
+> +               u32 max = jh7110_sysclk_data[idx].max;
+> +               struct clk_parent_data parents[4] = {};
+> +               struct clk_init_data init = {
+> +                       .name = jh7110_sysclk_data[idx].name,
+> +                       .ops = starfive_jh71x0_clk_ops(max),
+> +                       .parent_data = parents,
+> +                       .num_parents =
+> +                               ((max & JH71X0_CLK_MUX_MASK) >> JH71X0_CLK_MUX_SHIFT) + 1,
+> +                       .flags = jh7110_sysclk_data[idx].flags,
+> +               };
+> +               struct jh71x0_clk *clk = &priv->reg[idx];
+> +               unsigned int i;
+> +
+> +               for (i = 0; i < init.num_parents; i++) {
+> +                       unsigned int pidx = jh7110_sysclk_data[idx].parents[i];
+> +
+> +                       if (pidx < JH7110_SYSCLK_PLL0_OUT)
+> +                               parents[i].hw = &priv->reg[pidx].hw;
+> +                       else if (pidx < JH7110_SYSCLK_END)
+> +                               parents[i].hw = priv->pll[pidx - JH7110_SYSCLK_PLL0_OUT];
+> +                       else if (pidx == JH7110_SYSCLK_OSC)
+> +                               parents[i].fw_name = "osc";
+> +                       else if (pidx == JH7110_SYSCLK_GMAC1_RMII_REFIN)
+> +                               parents[i].fw_name = "gmac1_rmii_refin";
+> +                       else if (pidx == JH7110_SYSCLK_GMAC1_RGMII_RXIN)
+> +                               parents[i].fw_name = "gmac1_rgmii_rxin";
+> +                       else if (pidx == JH7110_SYSCLK_I2STX_BCLK_EXT)
+> +                               parents[i].fw_name = "i2stx_bclk_ext";
+> +                       else if (pidx == JH7110_SYSCLK_I2STX_LRCK_EXT)
+> +                               parents[i].fw_name = "i2stx_lrck_ext";
+> +                       else if (pidx == JH7110_SYSCLK_I2SRX_BCLK_EXT)
+> +                               parents[i].fw_name = "i2srx_bclk_ext";
+> +                       else if (pidx == JH7110_SYSCLK_I2SRX_LRCK_EXT)
+> +                               parents[i].fw_name = "i2srx_lrck_ext";
+> +                       else if (pidx == JH7110_SYSCLK_TDM_EXT)
+> +                               parents[i].fw_name = "tdm_ext";
+> +                       else if (pidx == JH7110_SYSCLK_MCLK_EXT)
+> +                               parents[i].fw_name = "mclk_ext";
+> +               }
+> +
+> +               clk->hw.init = &init;
+> +               clk->idx = idx;
+> +               clk->max_div = max & JH71X0_CLK_DIV_MASK;
+> +
+> +               ret = devm_clk_hw_register(&pdev->dev, &clk->hw);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +
+> +       ret = devm_of_clk_add_hw_provider(&pdev->dev, jh7110_sysclk_get, priv);
 > +       if (ret)
 > +               return ret;
 > +
-> +       ret = exynos_arm64_enable_bus_clk(dev, NULL, cmu);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (set_manual)
-> +               exynos_arm64_init_clocks(np, cmu->clk_regs, cmu->nr_clk_regs);
-> +
-> +       reg_base = devm_platform_ioremap_resource(pdev, 0);
-> +       if (IS_ERR(reg_base))
-> +               return PTR_ERR(reg_base);
-> +
-> +       data->ctx = samsung_clk_init(dev, reg_base, cmu->nr_clk_ids);
-> +
-> +       /*
-> +        * Enable runtime PM here to allow the clock core using runtime PM
-> +        * for the registered clocks. Additionally, we increase the runtime
-> +        * PM usage count before registering the clocks, to prevent the
-> +        * clock core from runtime suspending the device.
-> +        */
-> +       pm_runtime_get_noresume(dev);
-> +       pm_runtime_set_active(dev);
-> +       pm_runtime_enable(dev);
-> +
-> +       samsung_cmu_register_clocks(data->ctx, cmu);
-> +       samsung_clk_of_add_provider(dev->of_node, data->ctx);
-> +       pm_runtime_put_sync(dev);
-> +
-> +       return 0;
+> +       return jh7110_reset_controller_register(priv, "reset-sys", 0);
 > +}
 > +
-> +int exynos_arm64_cmu_suspend(struct device *dev)
-> +{
-> +       struct exynos_arm64_cmu_data *data = dev_get_drvdata(dev);
-> +       int i;
+> +static const struct of_device_id jh7110_syscrg_match[] = {
+> +       { .compatible = "starfive,jh7110-syscrg" },
+> +       { /* sentinel */ }
+> +};
 > +
-> +       samsung_clk_save(data->ctx->reg_base, data->clk_save,
-> +                        data->nr_clk_save);
-> +
-> +       for (i = 0; i < data->nr_pclks; i++)
-> +               clk_prepare_enable(data->pclks[i]);
-> +
-> +       /* For suspend some registers have to be set to certain values */
-> +       samsung_clk_restore(data->ctx->reg_base, data->clk_suspend,
-> +                           data->nr_clk_suspend);
-> +
-> +       for (i = 0; i < data->nr_pclks; i++)
-> +               clk_disable_unprepare(data->pclks[i]);
-> +
-> +       clk_disable_unprepare(data->clk);
-> +
-> +       return 0;
-> +}
-> +
-> +int exynos_arm64_cmu_resume(struct device *dev)
-> +{
-> +       struct exynos_arm64_cmu_data *data = dev_get_drvdata(dev);
-> +       int i;
-> +
-> +       clk_prepare_enable(data->clk);
-> +
-> +       for (i = 0; i < data->nr_pclks; i++)
-> +               clk_prepare_enable(data->pclks[i]);
-> +
-> +       samsung_clk_restore(data->ctx->reg_base, data->clk_save,
-> +                           data->nr_clk_save);
-> +
-> +       for (i = 0; i < data->nr_pclks; i++)
-> +               clk_disable_unprepare(data->pclks[i]);
-> +
-> +       return 0;
-> +}
-> diff --git a/drivers/clk/samsung/clk-exynos-arm64.h b/drivers/clk/samsung/clk-exynos-arm64.h
-> index 0dd174693935..969979e714bc 100644
-> --- a/drivers/clk/samsung/clk-exynos-arm64.h
-> +++ b/drivers/clk/samsung/clk-exynos-arm64.h
-> @@ -16,5 +16,8 @@
+> +static struct platform_driver jh7110_syscrg_driver = {
+> +       .driver = {
+> +               .name = "clk-starfive-jh7110-sys",
+> +               .of_match_table = jh7110_syscrg_match,
+> +               .suppress_bind_attrs = true,
+> +       },
+> +};
+> +builtin_platform_driver_probe(jh7110_syscrg_driver, jh7110_syscrg_probe);
+> diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.c b/drivers/clk/starfive/clk-starfive-jh71x0.c
+> index b372083d11c3..dda19c6937cb 100644
+> --- a/drivers/clk/starfive/clk-starfive-jh71x0.c
+> +++ b/drivers/clk/starfive/clk-starfive-jh71x0.c
+> @@ -5,6 +5,7 @@
+>   * Copyright (C) 2021-2022 Emil Renner Berthing <kernel@esmil.dk>
+>   */
 >
->  void exynos_arm64_register_cmu(struct device *dev,
->                 struct device_node *np, const struct samsung_cmu_info *cmu);
-> +int exynos_arm64_register_cmu_pm(struct platform_device *pdev, bool set_manual);
-> +int exynos_arm64_cmu_suspend(struct device *dev);
-> +int exynos_arm64_cmu_resume(struct device *dev);
->
->  #endif /* __CLK_EXYNOS_ARM64_H */
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index eb72bf2aaee8..ed43233649ae 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -10,7 +10,6 @@
+> +#include <linux/auxiliary_bus.h>
 >  #include <linux/clk-provider.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> -#include <linux/of_device.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/slab.h>
-> @@ -19,6 +18,7 @@
->
->  #include "clk.h"
->  #include "clk-cpu.h"
-> +#include "clk-exynos-arm64.h"
->  #include "clk-pll.h"
->
->  /*
-> @@ -5478,160 +5478,9 @@ static const struct samsung_cmu_info imem_cmu_info __initconst = {
->         .clk_name               = "aclk_imem_200",
->  };
->
-> -struct exynos5433_cmu_data {
-> -       struct samsung_clk_reg_dump *clk_save;
-> -       unsigned int nr_clk_save;
-> -       const struct samsung_clk_reg_dump *clk_suspend;
-> -       unsigned int nr_clk_suspend;
-> -
-> -       struct clk *clk;
-> -       struct clk **pclks;
-> -       int nr_pclks;
-> -
-> -       /* must be the last entry */
-> -       struct samsung_clk_provider ctx;
-> -};
-> -
-> -static int __maybe_unused exynos5433_cmu_suspend(struct device *dev)
-> -{
-> -       struct exynos5433_cmu_data *data = dev_get_drvdata(dev);
-> -       int i;
-> -
-> -       samsung_clk_save(data->ctx.reg_base, data->clk_save,
-> -                        data->nr_clk_save);
-> -
-> -       for (i = 0; i < data->nr_pclks; i++)
-> -               clk_prepare_enable(data->pclks[i]);
-> -
-> -       /* for suspend some registers have to be set to certain values */
-> -       samsung_clk_restore(data->ctx.reg_base, data->clk_suspend,
-> -                           data->nr_clk_suspend);
-> -
-> -       for (i = 0; i < data->nr_pclks; i++)
-> -               clk_disable_unprepare(data->pclks[i]);
-> -
-> -       clk_disable_unprepare(data->clk);
-> -
-> -       return 0;
-> -}
-> -
-> -static int __maybe_unused exynos5433_cmu_resume(struct device *dev)
-> -{
-> -       struct exynos5433_cmu_data *data = dev_get_drvdata(dev);
-> -       int i;
-> -
-> -       clk_prepare_enable(data->clk);
-> -
-> -       for (i = 0; i < data->nr_pclks; i++)
-> -               clk_prepare_enable(data->pclks[i]);
-> -
-> -       samsung_clk_restore(data->ctx.reg_base, data->clk_save,
-> -                           data->nr_clk_save);
-> -
-> -       for (i = 0; i < data->nr_pclks; i++)
-> -               clk_disable_unprepare(data->pclks[i]);
-> -
-> -       return 0;
-> -}
-> -
->  static int __init exynos5433_cmu_probe(struct platform_device *pdev)
->  {
-> -       const struct samsung_cmu_info *info;
-> -       struct exynos5433_cmu_data *data;
-> -       struct samsung_clk_provider *ctx;
-> -       struct device *dev = &pdev->dev;
-> -       void __iomem *reg_base;
-> -       int i;
-> -
-> -       info = of_device_get_match_data(dev);
-> -
-> -       data = devm_kzalloc(dev,
-> -                           struct_size(data, ctx.clk_data.hws, info->nr_clk_ids),
-> -                           GFP_KERNEL);
-> -       if (!data)
-> -               return -ENOMEM;
-> -       ctx = &data->ctx;
-> -
-> -       reg_base = devm_platform_ioremap_resource(pdev, 0);
-> -       if (IS_ERR(reg_base))
-> -               return PTR_ERR(reg_base);
-> -
-> -       for (i = 0; i < info->nr_clk_ids; ++i)
-> -               ctx->clk_data.hws[i] = ERR_PTR(-ENOENT);
-> -
-> -       ctx->clk_data.num = info->nr_clk_ids;
-> -       ctx->reg_base = reg_base;
-> -       ctx->dev = dev;
-> -       spin_lock_init(&ctx->lock);
-> -
-> -       data->clk_save = samsung_clk_alloc_reg_dump(info->clk_regs,
-> -                                                   info->nr_clk_regs);
-> -       if (!data->clk_save)
-> -               return -ENOMEM;
-> -       data->nr_clk_save = info->nr_clk_regs;
-> -       data->clk_suspend = info->suspend_regs;
-> -       data->nr_clk_suspend = info->nr_suspend_regs;
-> -       data->nr_pclks = of_clk_get_parent_count(dev->of_node);
-> -
-> -       if (data->nr_pclks > 0) {
-> -               data->pclks = devm_kcalloc(dev, sizeof(struct clk *),
-> -                                          data->nr_pclks, GFP_KERNEL);
-> -               if (!data->pclks) {
-> -                       kfree(data->clk_save);
-> -                       return -ENOMEM;
-> -               }
-> -               for (i = 0; i < data->nr_pclks; i++) {
-> -                       struct clk *clk = of_clk_get(dev->of_node, i);
-> -
-> -                       if (IS_ERR(clk)) {
-> -                               kfree(data->clk_save);
-> -                               while (--i >= 0)
-> -                                       clk_put(data->pclks[i]);
-> -                               return PTR_ERR(clk);
-> -                       }
-> -                       data->pclks[i] = clk;
-> -               }
-> -       }
-> -
-> -       if (info->clk_name)
-> -               data->clk = clk_get(dev, info->clk_name);
-> -       clk_prepare_enable(data->clk);
-> -
-> -       platform_set_drvdata(pdev, data);
-> -
-> -       /*
-> -        * Enable runtime PM here to allow the clock core using runtime PM
-> -        * for the registered clocks. Additionally, we increase the runtime
-> -        * PM usage count before registering the clocks, to prevent the
-> -        * clock core from runtime suspending the device.
-> -        */
-> -       pm_runtime_get_noresume(dev);
-> -       pm_runtime_set_active(dev);
-> -       pm_runtime_enable(dev);
-> -
-> -       if (info->pll_clks)
-> -               samsung_clk_register_pll(ctx, info->pll_clks,
-> -                                        info->nr_pll_clks);
-> -       if (info->mux_clks)
-> -               samsung_clk_register_mux(ctx, info->mux_clks,
-> -                                        info->nr_mux_clks);
-> -       if (info->div_clks)
-> -               samsung_clk_register_div(ctx, info->div_clks,
-> -                                        info->nr_div_clks);
-> -       if (info->gate_clks)
-> -               samsung_clk_register_gate(ctx, info->gate_clks,
-> -                                         info->nr_gate_clks);
-> -       if (info->fixed_clks)
-> -               samsung_clk_register_fixed_rate(ctx, info->fixed_clks,
-> -                                               info->nr_fixed_clks);
-> -       if (info->fixed_factor_clks)
-> -               samsung_clk_register_fixed_factor(ctx, info->fixed_factor_clks,
-> -                                                 info->nr_fixed_factor_clks);
-> -
-> -       samsung_clk_of_add_provider(dev->of_node, ctx);
-> -       pm_runtime_put_sync(dev);
-> -
-> -       return 0;
-> +       return exynos_arm64_register_cmu_pm(pdev, false);
+>  #include <linux/debugfs.h>
+>  #include <linux/device.h>
+> @@ -331,3 +332,56 @@ const struct clk_ops *starfive_jh71x0_clk_ops(u32 max)
+>         return &jh71x0_clk_inv_ops;
 >  }
+>  EXPORT_SYMBOL_GPL(starfive_jh71x0_clk_ops);
+> +
+> +#if IS_ENABLED(CONFIG_CLK_STARFIVE_JH7110_SYS)
+> +
+> +static void jh7110_reset_unregister_adev(void *_adev)
+> +{
+> +       struct auxiliary_device *adev = _adev;
+> +
+> +       auxiliary_device_delete(adev);
+> +}
+> +
+> +static void jh7110_reset_adev_release(struct device *dev)
+> +{
+> +       struct auxiliary_device *adev = to_auxiliary_dev(dev);
+> +
+> +       auxiliary_device_uninit(adev);
+> +
+> +       kfree(adev);
+> +}
+> +
+> +int jh7110_reset_controller_register(struct jh71x0_clk_priv *priv,
+> +                                    const char *adev_name,
+> +                                    u32 adev_id)
+> +{
+> +       struct auxiliary_device *adev;
+> +       int ret;
+> +
+> +       adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+> +       if (!adev)
+> +               return -ENOMEM;
+> +
+> +       adev->name = adev_name;
+> +       adev->dev.parent = priv->dev;
+> +       adev->dev.release = jh7110_reset_adev_release;
+> +       adev->id = adev_id;
+> +
+> +       ret = auxiliary_device_init(adev);
+> +       if (ret) {
+> +               kfree(adev);
+> +               return ret;
+> +       }
+> +
+> +       ret = auxiliary_device_add(adev);
+> +       if (ret) {
+> +               auxiliary_device_uninit(adev);
+> +               return ret;
+> +       }
+> +
+> +       return devm_add_action_or_reset(priv->dev,
+> +                                       jh7110_reset_unregister_adev, adev);
+> +}
+> +EXPORT_SYMBOL_GPL(jh7110_reset_controller_register);
+> +
+> +#endif
+> diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.h b/drivers/clk/starfive/clk-starfive-jh71x0.h
+> index baf4b5cb4b8a..0cbf9d94257a 100644
+> --- a/drivers/clk/starfive/clk-starfive-jh71x0.h
+> +++ b/drivers/clk/starfive/clk-starfive-jh71x0.h
+> @@ -111,4 +111,12 @@ struct jh71x0_clk_priv {
 >
->  static const struct of_device_id exynos5433_cmu_of_match[] = {
-> @@ -5679,7 +5528,7 @@ static const struct of_device_id exynos5433_cmu_of_match[] = {
->  };
+>  const struct clk_ops *starfive_jh71x0_clk_ops(u32 max);
 >
->  static const struct dev_pm_ops exynos5433_cmu_pm_ops = {
-> -       SET_RUNTIME_PM_OPS(exynos5433_cmu_suspend, exynos5433_cmu_resume,
-> +       SET_RUNTIME_PM_OPS(exynos_arm64_cmu_suspend, exynos_arm64_cmu_resume,
->                            NULL)
->         SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
->                                      pm_runtime_force_resume)
+> +#if IS_ENABLED(CONFIG_CLK_STARFIVE_JH7110_SYS)
+> +
+> +int jh7110_reset_controller_register(struct jh71x0_clk_priv *priv,
+> +                                    const char *adev_name,
+> +                                    u32 adev_id);
+> +
+> +#endif
+> +
+>  #endif
 > --
-> 2.39.1
+> 2.38.1
 >
