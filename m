@@ -2,127 +2,176 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 997A1C636CC
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Feb 2023 11:41:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5604EC05027
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Feb 2023 11:48:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230107AbjBTLlx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Feb 2023 06:41:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35242 "EHLO
+        id S231586AbjBTLsS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Feb 2023 06:48:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231733AbjBTLlx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Feb 2023 06:41:53 -0500
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 925781040A;
-        Mon, 20 Feb 2023 03:41:50 -0800 (PST)
-Received: (Authenticated sender: clement.leger@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 8CE3C20003;
-        Mon, 20 Feb 2023 11:41:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1676893308;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jY7+m1T4iK7eneAS7by4Sgyb4VAUahP14Dhi2ddZYA4=;
-        b=FCFNl1vpj7/nLGwcGSnwVMPbgC+DNQp1hpgREPU1kVSgBRRIWCE937LK3HswkU3HIhXsnb
-        faOtZ0WhnqilEsk+CUkssYuqRk02Ki3Q+4paMPjgGIgmwwBeLJgmZ+97UOmaVd19QvBlCt
-        9pQiTEBXIzgv9uaQ6zYeAU6HKuc9Zp5xc79KwsT7DMJfxQrvgrygT3knpG2Q2dPU9Qzi1v
-        P36VxLAx5cCk88bubNCDY8p92vgVS4CYyhxwLlwBvBZvTEVB1DxH/eDYtqsw0AsFcA2XnI
-        ma3lTVVDY7GHJzjFmLr2t9xV473wjsjsYXdxU/2kQmzqbGn7rz1KJGtXeOhh+A==
-Date:   Mon, 20 Feb 2023 12:44:20 +0100
-From:   =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: add missing of_node_put() in "assigned-clocks"
- property parsing
-Message-ID: <20230220124420.4150c767@fixe.home>
-In-Reply-To: <20230131083227.10990-1-clement.leger@bootlin.com>
-References: <20230131083227.10990-1-clement.leger@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.36; x86_64-pc-linux-gnu)
+        with ESMTP id S231830AbjBTLsR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Feb 2023 06:48:17 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7745310C1;
+        Mon, 20 Feb 2023 03:48:14 -0800 (PST)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31K8RBRX001696;
+        Mon, 20 Feb 2023 11:47:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=ce/k/Dzu7N/ZGvvYU/3umunZo8GKLRIbak+8C25Kgis=;
+ b=lf0mva7XlF5JkRjrG4gfeuyeKwftNmB90KfcdqiCGnBF5/k/g/7rOEhVL5nLLFtxPiL1
+ LR8FjvpbQAAcCZuAXhnLa4ybPy45GUfO35vIQFeRN24Nd+FrMAzSQp/e1KuSCB/ja+hU
+ Iy4H8ag2i0vctNCesVwC780iTENyVMo9nehLhnLHtkob5jmX9sy+uvOUZeIUpepwhCxk
+ 1dNe19S+RiURRfi0JyjA6gPG+0kUCzJ3hYZyUTMB5iHF7oc5G6Ub4uHw0EjzEAR1roXe
+ a5nsTivZfyBX9CMWk/Yir37gzxogsAFV7HI8qqr5bCDUl7esoxxsCPZrFda/0x7SxQwE 8Q== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ntp0t51ft-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 20 Feb 2023 11:47:53 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31KBlq1E030454
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 20 Feb 2023 11:47:52 GMT
+Received: from [10.50.18.222] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Mon, 20 Feb
+ 2023 03:47:43 -0800
+Message-ID: <6d5eb527-7e1c-29bb-e13c-e48c989bf8cd@quicinc.com>
+Date:   Mon, 20 Feb 2023 17:17:39 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [GIT PULL] Qualcomm clock driver updates for v6.3
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Andy Gross <agross@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        "Arnd Bergmann" <arnd@arndb.de>,
+        Akhil P Oommen <quic_akhilpo@quicinc.com>,
+        "Bjorn Andersson" <quic_bjorande@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Robert Marko <robimarko@gmail.com>,
+        Shazad Hussain <quic_shazhuss@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        Sricharan R <quic_srichara@quicinc.com>,
+        Varadarajan Narayanan <quic_varada@quicinc.com>
+References: <20230219045318.564342-1-andersson@kernel.org>
+Content-Language: en-US
+From:   Kathiravan T <quic_kathirav@quicinc.com>
+In-Reply-To: <20230219045318.564342-1-andersson@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 7JiFu4XUWsGqM91UDbjNx_V57QnT1OpS
+X-Proofpoint-ORIG-GUID: 7JiFu4XUWsGqM91UDbjNx_V57QnT1OpS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-20_08,2023-02-20_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ malwarescore=0 mlxscore=0 bulkscore=0 mlxlogscore=999 priorityscore=1501
+ lowpriorityscore=0 impostorscore=0 clxscore=1011 adultscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302200106
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Le Tue, 31 Jan 2023 09:32:27 +0100,
-Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com> a =C3=A9crit :
+On 2/19/2023 10:23 AM, Bjorn Andersson wrote:
+> The following changes since commit 1b929c02afd37871d5afb9d498426f83432e71c2:
+>
+>    Linux 6.2-rc1 (2022-12-25 13:41:39 -0800)
+>
+> are available in the Git repository at:
+>
+>    https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-for-6.3
+>
+> for you to fetch changes up to 7935b534d32a1823a7d5db449d340f56c201f284:
+>
+>    dt-bindings: clock: Merge qcom,gpucc-sm8350 into qcom,gpucc.yaml (2023-02-08 19:29:25 -0800)
+>
+> ----------------------------------------------------------------
+> Qualcomm clock driver updates for v6.3
+>
+> Support for requesting the next power_off operation for a genpd to be
+> synchronous is introduced, and implemented in the GDSC driver. To allow
+> the GPU driver to request power_off to wait for the GDSC to actually
+> collapse.
+>
+> clk_disable_unused() is altered, to not consider clocks which comes from
+> a provider with sync_state defined. This makes it possible for
+> individual clock drivers to invoke this process once all clients has
+> been probed, avoiding the need for booting many systems with
+> clk_ignore_unused.
+> This is then enabled for SDM845 and SC8280XP clock controllers.
+>
+> Support for QDU1000/QRU1000 Global clock controller, SA8775P Global
+> clock controller, SM8550 TCSR and display clock controller, SM6350 clock
+> controller, nd MSM8996 CBF and APCS clock controllers is introduced..
+>
+> Parent references are updated across a large number of clock drivers, to
+> align with the design changes since those drivers where introduced.
+> Similarly, test clocks has been dropped from a range of drivers.
+>
+> A range of fixes for the MSM8996 CPU clock controller is introduced.
+>
+> MSM8974 GCC is transitioned off the externally defined sleep_clk.
+>
+> GDSC in the global clock controller for QCS404 is added, and various
+> parent definitions are cleaned up.
+>
+> The SDCC core clocks on SM6115 are moved for floor_ops.
+>
+> Programming of clk_dis_wait for GPU CX GDSC on SC7180 and SDM845 are
+> moved to use the recently introduced properties in the GDSC struct.
+>
+> The RPMh clock driver gains SM8550 and SA8775P clocks, and the IPA clock
+> is added on a variety of platforms.
+>
+> The SMD RPM driver receives a big cleanup, in particular a move away
+> from duplicating declaration of identical clocks between multiple
+> platforms.
+> A few missing clocks across msm8998, msm8992, msm8916, qcs404 are added
+> as well.
+>
+> Using devm_pm_runtime_enable() to clean up some duplication is done
+> across SM8250 display and video clock controllers, SM8450 display clock
+> controller and SC7280 LPASS clock controller.
+>
+> Devicetree binding changes for above mentioned additions and changes are
+> introduced.
+>
+> Lastly, a change to pad a few registers in the SM8250 DTS to 8 digits
+> was picked up in the wrong tree and kept here, to avoid rebasing.
+>
+> ----------------------------------------------------------------
 
-Ping ?
+<snip>
 
-> When returning from of_parse_phandle_with_args(), the np member of the
-> of_phandle_args structure should be put after usage. Add missing
-> of_node_put() calls in both __set_clk_parents() and __set_clk_rates().
->=20
-> Fixes: 86be408bfbd8 ("clk: Support for clock parents and rates assigned f=
-rom device tree")
-> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
-> ---
-> v2:
->  - Add "Fixes"
->=20
->  drivers/clk/clk-conf.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
-> index 2ef819606c41..1a4e6340f95c 100644
-> --- a/drivers/clk/clk-conf.c
-> +++ b/drivers/clk/clk-conf.c
-> @@ -33,9 +33,12 @@ static int __set_clk_parents(struct device_node *node,=
- bool clk_supplier)
->  			else
->  				return rc;
->  		}
-> -		if (clkspec.np =3D=3D node && !clk_supplier)
-> +		if (clkspec.np =3D=3D node && !clk_supplier) {
-> +			of_node_put(clkspec.np);
->  			return 0;
-> +		}
->  		pclk =3D of_clk_get_from_provider(&clkspec);
-> +		of_node_put(clkspec.np);
->  		if (IS_ERR(pclk)) {
->  			if (PTR_ERR(pclk) !=3D -EPROBE_DEFER)
->  				pr_warn("clk: couldn't get parent clock %d for %pOF\n",
-> @@ -48,10 +51,12 @@ static int __set_clk_parents(struct device_node *node=
-, bool clk_supplier)
->  		if (rc < 0)
->  			goto err;
->  		if (clkspec.np =3D=3D node && !clk_supplier) {
-> +			of_node_put(clkspec.np);
->  			rc =3D 0;
->  			goto err;
->  		}
->  		clk =3D of_clk_get_from_provider(&clkspec);
-> +		of_node_put(clkspec.np);
->  		if (IS_ERR(clk)) {
->  			if (PTR_ERR(clk) !=3D -EPROBE_DEFER)
->  				pr_warn("clk: couldn't get assigned clock %d for %pOF\n",
-> @@ -93,10 +98,13 @@ static int __set_clk_rates(struct device_node *node, =
-bool clk_supplier)
->  				else
->  					return rc;
->  			}
-> -			if (clkspec.np =3D=3D node && !clk_supplier)
-> +			if (clkspec.np =3D=3D node && !clk_supplier) {
-> +				of_node_put(clkspec.np);
->  				return 0;
-> +			}
-> =20
->  			clk =3D of_clk_get_from_provider(&clkspec);
-> +			of_node_put(clkspec.np);
->  			if (IS_ERR(clk)) {
->  				if (PTR_ERR(clk) !=3D -EPROBE_DEFER)
->  					pr_warn("clk: couldn't get clock %d for %pOF\n",
+Bjorn,
 
 
+I don't see the change got picked up v6.3 
+https://lore.kernel.org/linux-arm-msm/20230120082631.22053-1-quic_kathirav@quicinc.com/. 
+Please help to understand what is missing to get it picked up?
 
---=20
-Cl=C3=A9ment L=C3=A9ger,
-Embedded Linux and Kernel engineer at Bootlin
-https://bootlin.com
+
+Thanks,
+
+
