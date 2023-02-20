@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D70EC05027
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Feb 2023 15:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E70C636D6
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Feb 2023 15:04:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231585AbjBTPEX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Feb 2023 10:04:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47872 "EHLO
+        id S232927AbjBTPEY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Feb 2023 10:04:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231881AbjBTPD2 (ORCPT
+        with ESMTP id S232241AbjBTPD2 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Feb 2023 10:03:28 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93110206AA;
-        Mon, 20 Feb 2023 07:02:22 -0800 (PST)
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 275E8206BB;
+        Mon, 20 Feb 2023 07:02:23 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 233BC66021C4;
-        Mon, 20 Feb 2023 15:02:11 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id BB0AC6602192;
+        Mon, 20 Feb 2023 15:01:55 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676905332;
-        bh=23yRTeVWUXmnOiJrCv3GdiTdq7Ghlfk/tGRYNluEPEY=;
+        s=mail; t=1676905316;
+        bh=mBi2vu9zK6J7OK8kzMEo2QXJSnqtMODi1D3E+PXa/E0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SQbLEipwdnCYWFpB/zc0yqk/jGqQqC4N8qPlq0fND8mPOvKMlX37XdG0AMlV3/hnl
-         DBBAbiAgRCxOVlfSzJrXvZMXHF0wJwzqYa/w+roJqUbfDQI8H9bMJiqvZY1kd16dZA
-         rKEwTwFA0bVHmV2qoYi4FwgmajqCGW/0KjjyR0d/JJcZp+uVFZZiM5/tohl/9ofgph
-         LEOu3o8kDogRa2EC1Zx87ZuScaXs2Y5oRAlXrWll8+GJ1Ro+yVCJJvIFEKY8j8Mt0+
-         N24b7lleoA7qC4soht0dttef8zjnCboe7heDWn1gvFUC4+90xn9rxcHYXhBUv5Rw30
-         CyIkYqZyDC0Lg==
+        b=SLWgdIOtEVlDGLlEPmLGiHhaUaYAYccLWVn5Bt08yFnCo9c7P4ySQwaJwzHa6AKgN
+         doCQIWThnDzTemP/xFJPkNJtDY8/Y6eNw0/RjGpy19jCcrKcya1ZOpmYF330qIWQFv
+         Af1dJCl2q9oHbG5J2s5gZYTPsQ9pUnXu7O4JoZpCwKFRi/nX7ThXpqZLoVvKnA7SGl
+         DOGhKVvkTbcwEr/lBcvA5TXUstOa9p6etD4mC7XXtCZ6T5WpYISPStrE+lJyfVUWeI
+         eb3IFmRZoettsgqSk/Mg5uCPwNcAnMchCKznbW35ntVWDLMubSGgq80uQpn4OKKZaK
+         PfVBq6cPkEpEA==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 40/55] clk: mediatek: Allow building MT8192 non-critical clocks as modules
-Date:   Mon, 20 Feb 2023 16:00:56 +0100
-Message-Id: <20230220150111.77897-41-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v3 29/55] clk: mediatek: mt8516: Convert to platform driver and simple probe
+Date:   Mon, 20 Feb 2023 16:00:45 +0100
+Message-Id: <20230220150111.77897-30-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230220150111.77897-1-angelogioacchino.delregno@collabora.com>
 References: <20230220150111.77897-1-angelogioacchino.delregno@collabora.com>
@@ -58,105 +58,193 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Allow building non boot critical clocks for MT8192 SoC as modules by
-changing them to tristate.
+Convert the MT8516 clock drivers to be platform drivers and use the
+common probe mechanism.
+
+Thanks to the conversion, more error handling was added to the clocks
+registration.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/clk/mediatek/Kconfig | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/clk/mediatek/clk-mt8516-aud.c | 35 ++++++-----
+ drivers/clk/mediatek/clk-mt8516.c     | 88 +++++++++++----------------
+ 2 files changed, 57 insertions(+), 66 deletions(-)
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 49919da2be26..ac90b304d422 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -613,73 +613,73 @@ config COMMON_CLK_MT8192
- 	  This driver supports MediaTek MT8192 basic clocks.
+diff --git a/drivers/clk/mediatek/clk-mt8516-aud.c b/drivers/clk/mediatek/clk-mt8516-aud.c
+index a6ae8003b9ff..119dbbd0c3e0 100644
+--- a/drivers/clk/mediatek/clk-mt8516-aud.c
++++ b/drivers/clk/mediatek/clk-mt8516-aud.c
+@@ -3,6 +3,7 @@
+  * Copyright (c) 2019 MediaTek Inc.
+  * Author: James Liao <jamesjj.liao@mediatek.com>
+  *         Fabien Parent <fparent@baylibre.com>
++ * Copyright (c) 2023 Collabora Ltd.
+  */
  
- config COMMON_CLK_MT8192_AUDSYS
--	bool "Clock driver for MediaTek MT8192 audsys"
-+	tristate "Clock driver for MediaTek MT8192 audsys"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 audsys clocks.
+ #include <linux/clk-provider.h>
+@@ -25,7 +26,7 @@ static const struct mtk_gate_regs aud_cg_regs = {
+ #define GATE_AUD(_id, _name, _parent, _shift)			\
+ 	GATE_MTK(_id, _name, _parent, &aud_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr)
  
- config COMMON_CLK_MT8192_CAMSYS
--	bool "Clock driver for MediaTek MT8192 camsys"
-+	tristate "Clock driver for MediaTek MT8192 camsys"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 camsys and camsys_raw clocks.
+-static const struct mtk_gate aud_clks[] __initconst = {
++static const struct mtk_gate aud_clks[] = {
+ 	GATE_AUD(CLK_AUD_AFE, "aud_afe", "clk26m_ck", 2),
+ 	GATE_AUD(CLK_AUD_I2S, "aud_i2s", "i2s_infra_bck", 6),
+ 	GATE_AUD(CLK_AUD_22M, "aud_22m", "rg_aud_engen1", 8),
+@@ -41,19 +42,25 @@ static const struct mtk_gate aud_clks[] __initconst = {
+ 	GATE_AUD(CLK_AUD_TML, "aud_tml", "aud_afe", 27),
+ };
  
- config COMMON_CLK_MT8192_IMGSYS
--	bool "Clock driver for MediaTek MT8192 imgsys"
-+	tristate "Clock driver for MediaTek MT8192 imgsys"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 imgsys and imgsys2 clocks.
+-static void __init mtk_audsys_init(struct device_node *node)
+-{
+-	struct clk_hw_onecell_data *clk_data;
+-	int r;
+-
+-	clk_data = mtk_alloc_clk_data(CLK_AUD_NR_CLK);
++static const struct mtk_clk_desc aud_desc = {
++	.clks = aud_clks,
++	.num_clks = ARRAY_SIZE(aud_clks),
++};
  
- config COMMON_CLK_MT8192_IMP_IIC_WRAP
--	bool "Clock driver for MediaTek MT8192 imp_iic_wrap"
-+	tristate "Clock driver for MediaTek MT8192 imp_iic_wrap"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 imp_iic_wrap clocks.
+-	mtk_clk_register_gates(NULL, node, aud_clks, ARRAY_SIZE(aud_clks), clk_data);
++static const struct of_device_id of_match_clk_mt8516_aud[] = {
++	{ .compatible = "mediatek,mt8516-audsys", .data = &aud_desc },
++	{ /* sentinel */ }
++};
  
- config COMMON_CLK_MT8192_IPESYS
--	bool "Clock driver for MediaTek MT8192 ipesys"
-+	tristate "Clock driver for MediaTek MT8192 ipesys"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 ipesys clocks.
+-	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+-	if (r)
+-		pr_err("%s(): could not register clock provider: %d\n",
+-			__func__, r);
++static struct platform_driver clk_mt8516_aud_drv = {
++	.probe = mtk_clk_simple_probe,
++	.remove = mtk_clk_simple_remove,
++	.driver = {
++		.name = "clk-mt8516-aud",
++		.of_match_table = of_match_clk_mt8516_aud,
++	},
++};
++builtin_platform_driver(clk_mt8516_aud_drv);
  
- config COMMON_CLK_MT8192_MDPSYS
--	bool "Clock driver for MediaTek MT8192 mdpsys"
-+	tristate "Clock driver for MediaTek MT8192 mdpsys"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 mdpsys clocks.
+-}
+-CLK_OF_DECLARE(mtk_audsys, "mediatek,mt8516-audsys", mtk_audsys_init);
++MODULE_DESCRIPTION("MediaTek MT8516 audiosys clocks driver");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/mediatek/clk-mt8516.c b/drivers/clk/mediatek/clk-mt8516.c
+index 51e6948cb54b..ad59e932d4aa 100644
+--- a/drivers/clk/mediatek/clk-mt8516.c
++++ b/drivers/clk/mediatek/clk-mt8516.c
+@@ -3,6 +3,7 @@
+  * Copyright (c) 2019 MediaTek Inc.
+  * Author: James Liao <jamesjj.liao@mediatek.com>
+  *         Fabien Parent <fparent@baylibre.com>
++ * Copyright (c) 2023 Collabora Ltd.
+  */
  
- config COMMON_CLK_MT8192_MFGCFG
--	bool "Clock driver for MediaTek MT8192 mfgcfg"
-+	tristate "Clock driver for MediaTek MT8192 mfgcfg"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 mfgcfg clocks.
+ #include <linux/delay.h>
+@@ -10,6 +11,7 @@
+ #include <linux/of_address.h>
+ #include <linux/slab.h>
+ #include <linux/mfd/syscon.h>
++#include <linux/platform_device.h>
  
- config COMMON_CLK_MT8192_MMSYS
--	bool "Clock driver for MediaTek MT8192 mmsys"
-+	tristate "Clock driver for MediaTek MT8192 mmsys"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 mmsys clocks.
+ #include "clk-gate.h"
+ #include "clk-mtk.h"
+@@ -638,59 +640,41 @@ static const struct mtk_gate top_clks[] __initconst = {
+ 	GATE_TOP5(CLK_TOP_APLL12_DIV6, "apll12_div6", "apll12_ck_div6", 8),
+ };
  
- config COMMON_CLK_MT8192_MSDC
--	bool "Clock driver for MediaTek MT8192 msdc"
-+	tristate "Clock driver for MediaTek MT8192 msdc"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 msdc and msdc_top clocks.
+-static void __init mtk_topckgen_init(struct device_node *node)
+-{
+-	struct clk_hw_onecell_data *clk_data;
+-	int r;
+-	void __iomem *base;
+-
+-	base = of_iomap(node, 0);
+-	if (!base) {
+-		pr_err("%s(): ioremap failed\n", __func__);
+-		return;
+-	}
++static const struct mtk_clk_desc topck_desc = {
++	.clks = top_clks,
++	.num_clks = ARRAY_SIZE(top_clks),
++	.fixed_clks = fixed_clks,
++	.num_fixed_clks = ARRAY_SIZE(fixed_clks),
++	.factor_clks = top_divs,
++	.num_factor_clks = ARRAY_SIZE(top_divs),
++	.composite_clks = top_muxes,
++	.num_composite_clks = ARRAY_SIZE(top_muxes),
++	.divider_clks = top_adj_divs,
++	.num_divider_clks = ARRAY_SIZE(top_adj_divs),
++	.clk_lock = &mt8516_clk_lock,
++};
  
- config COMMON_CLK_MT8192_SCP_ADSP
--	bool "Clock driver for MediaTek MT8192 scp_adsp"
-+	tristate "Clock driver for MediaTek MT8192 scp_adsp"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 scp_adsp clocks.
+-	clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
++static const struct mtk_clk_desc infra_desc = {
++	.composite_clks = ifr_muxes,
++	.num_composite_clks = ARRAY_SIZE(ifr_muxes),
++	.clk_lock = &mt8516_clk_lock,
++};
  
- config COMMON_CLK_MT8192_VDECSYS
--	bool "Clock driver for MediaTek MT8192 vdecsys"
-+	tristate "Clock driver for MediaTek MT8192 vdecsys"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 vdecsys and vdecsys_soc clocks.
+-	mtk_clk_register_fixed_clks(fixed_clks, ARRAY_SIZE(fixed_clks),
+-				    clk_data);
+-	mtk_clk_register_gates(NULL, node, top_clks, ARRAY_SIZE(top_clks), clk_data);
++static const struct of_device_id of_match_clk_mt8516[] = {
++	{ .compatible = "mediatek,mt8516-topckgen", .data = &topck_desc },
++	{ .compatible = "mediatek,mt8516-infracfg", .data = &infra_desc },
++	{ /* sentinel */ }
++};
  
- config COMMON_CLK_MT8192_VENCSYS
--	bool "Clock driver for MediaTek MT8192 vencsys"
-+	tristate "Clock driver for MediaTek MT8192 vencsys"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 vencsys clocks.
+-	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), clk_data);
+-	mtk_clk_register_composites(NULL, top_muxes,
+-				    ARRAY_SIZE(top_muxes), base,
+-				    &mt8516_clk_lock, clk_data);
+-	mtk_clk_register_dividers(top_adj_divs, ARRAY_SIZE(top_adj_divs),
+-				base, &mt8516_clk_lock, clk_data);
++static struct platform_driver clk_mt8516_drv = {
++	.probe = mtk_clk_simple_probe,
++	.remove = mtk_clk_simple_remove,
++	.driver = {
++		.name = "clk-mt8516",
++		.of_match_table = of_match_clk_mt8516,
++	},
++};
++module_platform_driver(clk_mt8516_drv);
+ 
+-	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+-	if (r)
+-		pr_err("%s(): could not register clock provider: %d\n",
+-			__func__, r);
+-}
+-CLK_OF_DECLARE(mtk_topckgen, "mediatek,mt8516-topckgen", mtk_topckgen_init);
+-
+-static void __init mtk_infracfg_init(struct device_node *node)
+-{
+-	struct clk_hw_onecell_data *clk_data;
+-	int r;
+-	void __iomem *base;
+-
+-	base = of_iomap(node, 0);
+-	if (!base) {
+-		pr_err("%s(): ioremap failed\n", __func__);
+-		return;
+-	}
+-
+-	clk_data = mtk_alloc_clk_data(CLK_IFR_NR_CLK);
+-
+-	mtk_clk_register_composites(NULL, ifr_muxes,
+-				    ARRAY_SIZE(ifr_muxes), base,
+-				    &mt8516_clk_lock, clk_data);
+-
+-	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+-	if (r)
+-		pr_err("%s(): could not register clock provider: %d\n",
+-			__func__, r);
+-}
+-CLK_OF_DECLARE(mtk_infracfg, "mediatek,mt8516-infracfg", mtk_infracfg_init);
++MODULE_DESCRIPTION("MediaTek MT8516 clocks driver");
++MODULE_LICENSE("GPL");
 -- 
 2.39.1
 
