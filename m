@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD5BC64EC4
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Feb 2023 15:03:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB73C636CC
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Feb 2023 15:03:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229869AbjBTPDd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Feb 2023 10:03:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48440 "EHLO
+        id S232039AbjBTPDn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Feb 2023 10:03:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231366AbjBTPDJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Feb 2023 10:03:09 -0500
+        with ESMTP id S231839AbjBTPDL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Feb 2023 10:03:11 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B3FF2056F;
-        Mon, 20 Feb 2023 07:02:00 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51E6E1DBBC;
+        Mon, 20 Feb 2023 07:02:06 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 247566602169;
-        Mon, 20 Feb 2023 15:01:57 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id DEDE3660216A;
+        Mon, 20 Feb 2023 15:01:59 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676905318;
-        bh=xhH2n5XmogkvcmxqMIc1jv/49UOL0BNOcn3TahthPEQ=;
+        s=mail; t=1676905321;
+        bh=TVcQKRssdAc9o2ZUajNdAkJkyh364bF8fOa6lB5Z2tE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SD2itfCWdRnDqBZ21k4ppPSVXMDmvQJvvQF2dlNYAN27aVsNgYAyrgv/e5Nwl328t
-         uczMzQsb1aGogzvk6dVIzR3X4msY8DrS1XdbDpQVDBwUkpfq1b8d/f57bEnlP0tHxe
-         0h9IqMO8g5dC2O/Y7VcTtCYUONUAyenAXDa3ZrN0+OSixdaC9/rnsBNq0mgOyzbqNb
-         q4/OY/wSa4AhTbyhadM/xLZ05qywfgFwM7mqhiiO0W1q/wl47hY40CTCL57FXQMno0
-         AV6A3VaTxr39Xy27vUFNXPAd3tfwfv0Zs0NDAobA9SOE77n2BW/NwgIlc2wzc2CHDO
-         29DUB7Fe61SPA==
+        b=P4BwsqZ98UmXU7C5jgu1fXk5B6wVJFJExMfeTa9u1C/Auv2vDycXxcHbCli8cjfNZ
+         MV4efjnqCQclipqwM6Af+KWoaaDSSmaHqhrfESFHD19pFIpXAuJyI+qc3WY9qRFm4l
+         zVGUzscQDpe8EMGqNGLGo9NVwdAxs+HMe6PXwZ7lmfyirtVreh4GWZL0IGbAVKVDA1
+         Wx0FCgL792SQin4x4/wfJXdl+pX5d9rN+48fQXZvC2kWHfEzL7Si7AjUT/xdb8hevH
+         5y+zQiitmOGXkQuZsReXnDuX56KFJM89TI9F4oFa33T2kHDMWsFWIJpnwXjBSAsuc6
+         nDSHFb6j2bqRA==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 30/55] clk: mediatek: mt8516: Allow building clock drivers as modules
-Date:   Mon, 20 Feb 2023 16:00:46 +0100
-Message-Id: <20230220150111.77897-31-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v3 32/55] clk: mediatek: mt7986-apmixed: Use PLL_AO flag to set critical clock
+Date:   Mon, 20 Feb 2023 16:00:48 +0100
+Message-Id: <20230220150111.77897-33-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230220150111.77897-1-angelogioacchino.delregno@collabora.com>
 References: <20230220150111.77897-1-angelogioacchino.delregno@collabora.com>
@@ -58,37 +58,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now that all MT8516 drivers have been converted to platform driver,
-change the configuration options to tristate.
+Instead of calling clk_prepare_enable() at probe time, add the PLL_AO
+flag to CLK_APMIXED_ARMPLL clock: this will set CLK_IS_CRITICAL.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/clk/mediatek/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/mediatek/clk-mt7986-apmixed.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 2d14855dd37e..b9c0a9e21cf1 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -743,7 +743,7 @@ config COMMON_CLK_MT8365_VENC
- 	  This driver supports MediaTek MT8365 venc clocks.
+diff --git a/drivers/clk/mediatek/clk-mt7986-apmixed.c b/drivers/clk/mediatek/clk-mt7986-apmixed.c
+index 62080ee4dbe3..227ca572056e 100644
+--- a/drivers/clk/mediatek/clk-mt7986-apmixed.c
++++ b/drivers/clk/mediatek/clk-mt7986-apmixed.c
+@@ -42,7 +42,7 @@
+ 		 "clkxtal")
  
- config COMMON_CLK_MT8516
--	bool "Clock driver for MediaTek MT8516"
-+	tristate "Clock driver for MediaTek MT8516"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
- 	select COMMON_CLK_MEDIATEK
- 	default ARCH_MEDIATEK
-@@ -751,7 +751,7 @@ config COMMON_CLK_MT8516
- 	  This driver supports MediaTek MT8516 clocks.
+ static const struct mtk_pll_data plls[] = {
+-	PLL(CLK_APMIXED_ARMPLL, "armpll", 0x0200, 0x020C, 0x0, 0, 32,
++	PLL(CLK_APMIXED_ARMPLL, "armpll", 0x0200, 0x020C, 0x0, PLL_AO, 32,
+ 	    0x0200, 4, 0, 0x0204, 0),
+ 	PLL(CLK_APMIXED_NET2PLL, "net2pll", 0x0210, 0x021C, 0x0, 0, 32,
+ 	    0x0210, 4, 0, 0x0214, 0),
+@@ -77,8 +77,6 @@ static int clk_mt7986_apmixed_probe(struct platform_device *pdev)
  
- config COMMON_CLK_MT8516_AUDSYS
--	bool "Clock driver for MediaTek MT8516 audsys"
-+	tristate "Clock driver for MediaTek MT8516 audsys"
- 	depends on COMMON_CLK_MT8516
- 	help
- 	  This driver supports MediaTek MT8516 audsys clocks.
+ 	mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
+ 
+-	clk_prepare_enable(clk_data->hws[CLK_APMIXED_ARMPLL]->clk);
+-
+ 	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+ 	if (r) {
+ 		pr_err("%s(): could not register clock provider: %d\n",
 -- 
 2.39.1
 
