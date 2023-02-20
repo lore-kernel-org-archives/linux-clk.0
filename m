@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9634DC636CC
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Feb 2023 15:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D70EC05027
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Feb 2023 15:04:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232847AbjBTPER (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Feb 2023 10:04:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48394 "EHLO
+        id S231585AbjBTPEX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Feb 2023 10:04:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232830AbjBTPD1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Feb 2023 10:03:27 -0500
+        with ESMTP id S231881AbjBTPD2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Feb 2023 10:03:28 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B205D206B7;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93110206AA;
         Mon, 20 Feb 2023 07:02:22 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id ECED36602176;
-        Mon, 20 Feb 2023 15:02:13 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 233BC66021C4;
+        Mon, 20 Feb 2023 15:02:11 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676905335;
-        bh=MjQrecKRreRZSY+0h+AnsA7DFOSdZygxphASeOcJGt8=;
+        s=mail; t=1676905332;
+        bh=23yRTeVWUXmnOiJrCv3GdiTdq7Ghlfk/tGRYNluEPEY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hYxi9f35ISdPhkxOEi8qxEd2nYMjFVnf6LqlRytSNDuGw5+JqRGDhqVRtX2hsbd7i
-         W4eAMMlcbuwJQroHlMfJ8LISJngYoHB4yOdYPEKCrVWZO+v7E2KzsIqe5tCtBx+zoQ
-         X1KCsYHpLPTeZh7aXXvIou+MJhHAk2rebauv81kPTW4W4YTsnbyv/bi6gVu3iq3PG4
-         HA8NANos0sNP4PHmWL8RsIUBTN1TJVOLUmm4CZEtld6o8RnaVSfNCK7DD0v8VdJ2A3
-         w3Imxcq9KsVWE+kPVIKRVjgwSTLJ+O1OIH6IsZ6p4d/SWYeRctyeJozum97E9f656m
-         TiPPFyDjKCfVg==
+        b=SQbLEipwdnCYWFpB/zc0yqk/jGqQqC4N8qPlq0fND8mPOvKMlX37XdG0AMlV3/hnl
+         DBBAbiAgRCxOVlfSzJrXvZMXHF0wJwzqYa/w+roJqUbfDQI8H9bMJiqvZY1kd16dZA
+         rKEwTwFA0bVHmV2qoYi4FwgmajqCGW/0KjjyR0d/JJcZp+uVFZZiM5/tohl/9ofgph
+         LEOu3o8kDogRa2EC1Zx87ZuScaXs2Y5oRAlXrWll8+GJ1Ro+yVCJJvIFEKY8j8Mt0+
+         N24b7lleoA7qC4soht0dttef8zjnCboe7heDWn1gvFUC4+90xn9rxcHYXhBUv5Rw30
+         CyIkYqZyDC0Lg==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 42/55] clk: mediatek: Allow all MT8167 clocks to be built as modules
-Date:   Mon, 20 Feb 2023 16:00:58 +0100
-Message-Id: <20230220150111.77897-43-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v3 40/55] clk: mediatek: Allow building MT8192 non-critical clocks as modules
+Date:   Mon, 20 Feb 2023 16:00:56 +0100
+Message-Id: <20230220150111.77897-41-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230220150111.77897-1-angelogioacchino.delregno@collabora.com>
 References: <20230220150111.77897-1-angelogioacchino.delregno@collabora.com>
@@ -58,88 +58,105 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Almost all MT8167 clocks have been converted to use the common probe
-mechanism, moreover, now all of them are platform drivers: allow
-building as modules.
+Allow building non boot critical clocks for MT8192 SoC as modules by
+changing them to tristate.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/clk/mediatek/Kconfig | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/clk/mediatek/Kconfig | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 5f3894ce2418..6cbc69e713dd 100644
+index 49919da2be26..ac90b304d422 100644
 --- a/drivers/clk/mediatek/Kconfig
 +++ b/drivers/clk/mediatek/Kconfig
-@@ -406,7 +406,7 @@ config COMMON_CLK_MT7981_ETHSYS
- 	  required on MediaTek MT7981 SoC.
+@@ -613,73 +613,73 @@ config COMMON_CLK_MT8192
+ 	  This driver supports MediaTek MT8192 basic clocks.
  
- config COMMON_CLK_MT7986
--	bool "Clock driver for MediaTek MT7986"
-+	tristate "Clock driver for MediaTek MT7986"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
- 	select COMMON_CLK_MEDIATEK
- 	default ARCH_MEDIATEK
-@@ -415,7 +415,7 @@ config COMMON_CLK_MT7986
- 	  required for various peripherals found on MediaTek.
- 
- config COMMON_CLK_MT7986_ETHSYS
--	bool "Clock driver for MediaTek MT7986 ETHSYS"
-+	tristate "Clock driver for MediaTek MT7986 ETHSYS"
- 	depends on COMMON_CLK_MT7986
- 	default COMMON_CLK_MT7986
+ config COMMON_CLK_MT8192_AUDSYS
+-	bool "Clock driver for MediaTek MT8192 audsys"
++	tristate "Clock driver for MediaTek MT8192 audsys"
+ 	depends on COMMON_CLK_MT8192
  	help
-@@ -431,7 +431,7 @@ config COMMON_CLK_MT8135
- 	  This driver supports MediaTek MT8135 clocks.
+ 	  This driver supports MediaTek MT8192 audsys clocks.
  
- config COMMON_CLK_MT8167
--	bool "Clock driver for MediaTek MT8167"
-+	tristate "Clock driver for MediaTek MT8167"
- 	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
- 	select COMMON_CLK_MEDIATEK
- 	default ARCH_MEDIATEK
-@@ -439,35 +439,35 @@ config COMMON_CLK_MT8167
- 	  This driver supports MediaTek MT8167 basic clocks.
- 
- config COMMON_CLK_MT8167_AUDSYS
--	bool "Clock driver for MediaTek MT8167 audsys"
-+	tristate "Clock driver for MediaTek MT8167 audsys"
- 	depends on COMMON_CLK_MT8167
- 	default COMMON_CLK_MT8167
+ config COMMON_CLK_MT8192_CAMSYS
+-	bool "Clock driver for MediaTek MT8192 camsys"
++	tristate "Clock driver for MediaTek MT8192 camsys"
+ 	depends on COMMON_CLK_MT8192
  	help
- 	  This driver supports MediaTek MT8167 audsys clocks.
+ 	  This driver supports MediaTek MT8192 camsys and camsys_raw clocks.
  
- config COMMON_CLK_MT8167_IMGSYS
--	bool "Clock driver for MediaTek MT8167 imgsys"
-+	tristate "Clock driver for MediaTek MT8167 imgsys"
- 	depends on COMMON_CLK_MT8167
- 	default COMMON_CLK_MT8167
+ config COMMON_CLK_MT8192_IMGSYS
+-	bool "Clock driver for MediaTek MT8192 imgsys"
++	tristate "Clock driver for MediaTek MT8192 imgsys"
+ 	depends on COMMON_CLK_MT8192
  	help
- 	  This driver supports MediaTek MT8167 imgsys clocks.
+ 	  This driver supports MediaTek MT8192 imgsys and imgsys2 clocks.
  
- config COMMON_CLK_MT8167_MFGCFG
--	bool "Clock driver for MediaTek MT8167 mfgcfg"
-+	tristate "Clock driver for MediaTek MT8167 mfgcfg"
- 	depends on COMMON_CLK_MT8167
- 	default COMMON_CLK_MT8167
+ config COMMON_CLK_MT8192_IMP_IIC_WRAP
+-	bool "Clock driver for MediaTek MT8192 imp_iic_wrap"
++	tristate "Clock driver for MediaTek MT8192 imp_iic_wrap"
+ 	depends on COMMON_CLK_MT8192
  	help
- 	  This driver supports MediaTek MT8167 mfgcfg clocks.
+ 	  This driver supports MediaTek MT8192 imp_iic_wrap clocks.
  
- config COMMON_CLK_MT8167_MMSYS
--	bool "Clock driver for MediaTek MT8167 mmsys"
-+	tristate "Clock driver for MediaTek MT8167 mmsys"
- 	depends on COMMON_CLK_MT8167
- 	default COMMON_CLK_MT8167
+ config COMMON_CLK_MT8192_IPESYS
+-	bool "Clock driver for MediaTek MT8192 ipesys"
++	tristate "Clock driver for MediaTek MT8192 ipesys"
+ 	depends on COMMON_CLK_MT8192
  	help
- 	  This driver supports MediaTek MT8167 mmsys clocks.
+ 	  This driver supports MediaTek MT8192 ipesys clocks.
  
- config COMMON_CLK_MT8167_VDECSYS
--	bool "Clock driver for MediaTek MT8167 vdecsys"
-+	tristate "Clock driver for MediaTek MT8167 vdecsys"
- 	depends on COMMON_CLK_MT8167
- 	default COMMON_CLK_MT8167
+ config COMMON_CLK_MT8192_MDPSYS
+-	bool "Clock driver for MediaTek MT8192 mdpsys"
++	tristate "Clock driver for MediaTek MT8192 mdpsys"
+ 	depends on COMMON_CLK_MT8192
  	help
+ 	  This driver supports MediaTek MT8192 mdpsys clocks.
+ 
+ config COMMON_CLK_MT8192_MFGCFG
+-	bool "Clock driver for MediaTek MT8192 mfgcfg"
++	tristate "Clock driver for MediaTek MT8192 mfgcfg"
+ 	depends on COMMON_CLK_MT8192
+ 	help
+ 	  This driver supports MediaTek MT8192 mfgcfg clocks.
+ 
+ config COMMON_CLK_MT8192_MMSYS
+-	bool "Clock driver for MediaTek MT8192 mmsys"
++	tristate "Clock driver for MediaTek MT8192 mmsys"
+ 	depends on COMMON_CLK_MT8192
+ 	help
+ 	  This driver supports MediaTek MT8192 mmsys clocks.
+ 
+ config COMMON_CLK_MT8192_MSDC
+-	bool "Clock driver for MediaTek MT8192 msdc"
++	tristate "Clock driver for MediaTek MT8192 msdc"
+ 	depends on COMMON_CLK_MT8192
+ 	help
+ 	  This driver supports MediaTek MT8192 msdc and msdc_top clocks.
+ 
+ config COMMON_CLK_MT8192_SCP_ADSP
+-	bool "Clock driver for MediaTek MT8192 scp_adsp"
++	tristate "Clock driver for MediaTek MT8192 scp_adsp"
+ 	depends on COMMON_CLK_MT8192
+ 	help
+ 	  This driver supports MediaTek MT8192 scp_adsp clocks.
+ 
+ config COMMON_CLK_MT8192_VDECSYS
+-	bool "Clock driver for MediaTek MT8192 vdecsys"
++	tristate "Clock driver for MediaTek MT8192 vdecsys"
+ 	depends on COMMON_CLK_MT8192
+ 	help
+ 	  This driver supports MediaTek MT8192 vdecsys and vdecsys_soc clocks.
+ 
+ config COMMON_CLK_MT8192_VENCSYS
+-	bool "Clock driver for MediaTek MT8192 vencsys"
++	tristate "Clock driver for MediaTek MT8192 vencsys"
+ 	depends on COMMON_CLK_MT8192
+ 	help
+ 	  This driver supports MediaTek MT8192 vencsys clocks.
 -- 
 2.39.1
 
