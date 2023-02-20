@@ -2,176 +2,294 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C806AC636CC
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Feb 2023 13:56:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8E5C64EC4
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Feb 2023 14:52:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232588AbjBTN4B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Feb 2023 08:56:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45050 "EHLO
+        id S231817AbjBTOwa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Feb 2023 09:52:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232577AbjBTN4A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Feb 2023 08:56:00 -0500
+        with ESMTP id S229671AbjBTOwa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Feb 2023 09:52:30 -0500
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FF951E9E7;
-        Mon, 20 Feb 2023 05:55:55 -0800 (PST)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31K5l5lm027414;
-        Mon, 20 Feb 2023 13:55:32 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FD521C5A4;
+        Mon, 20 Feb 2023 06:52:28 -0800 (PST)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31KDVO6m028002;
+        Mon, 20 Feb 2023 14:52:08 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=B/rlVhJvUxZCNcI3JwfDGsrkVkQ6lvojO9Mkp8yABVM=;
- b=iqS9JmgVnKzbkJBcTkNmi87ZI2l6l9XKg0hnsGIJJy9xityKR0UIUCu3bPXSFKgCfND5
- VdGY/4vAwKuvImrGj33yFQ/HyLxRfBebvosnWiJunGwpfpsSUdy4w7p8mBquAF9KKlqi
- oFONiO+kf/drRO942jC7DxEEgmDhJl2eBGvppGbHnvrgO1Ewl2+BPYiYvqgvah+Ie3u9
- 4n28K5s52FCS+DrLGT0gjC5XWiNioSQgrneC+OzcMPWM1+ekLCYTIhwU5/FtgWyg9Ap9
- JLuHGhF1KGgFb1sHJ2s8jWOfpe09osgxZMOQ+C7yExVzVb84jxb32JK8CrdC78v36H5P bw== 
+ bh=GxL44HibsOb/aqsssO8yBpFiepI9D0VQUTJB74dPhmA=;
+ b=clwle24F9z5zbcXfRhZdWDmEHAmwvCYZmZu57WAU+KcEY8YYFvVZ18xQB+OyxiZlb85/
+ bXMFRhJ3eyjXiCxn0bgcOTFrACBuNVgcwAPSC7qbuJAEK0UENQmxRJveVEtb40mjj9EQ
+ WdbnetxGGIdh6j/f3/+1zdufwW/7ZmNV/jCKh4J91QXxjH+HfB2KvQAR48M10f11bYSu
+ 7a2Ma1XRQKLW8xHpe9/DTxgjLIowPJXblvqV6nUeyohw3nhV4rcEcAs5gq/mxY7fP0YS
+ /4AH8cU7ug/FZ8ojM7DrT0aNCwSGHIWUZbjNLDbIdtqJwEGLY0tX4zMUNZbILLrH64kf uA== 
 Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ntp98d9ph-1
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ntm1vdncx-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 20 Feb 2023 13:55:32 +0000
+        Mon, 20 Feb 2023 14:52:08 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31KDtUhh022362
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31KEq617023258
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 20 Feb 2023 13:55:30 GMT
-Received: from [10.216.11.20] (10.80.80.8) by nalasex01a.na.qualcomm.com
+        Mon, 20 Feb 2023 14:52:06 GMT
+Received: from [10.50.13.218] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Mon, 20 Feb
- 2023 05:55:22 -0800
-Message-ID: <1d1cdd40-8bc8-c6e2-bc80-961e6aa2328d@quicinc.com>
-Date:   Mon, 20 Feb 2023 19:25:19 +0530
+ 2023 06:51:56 -0800
+Message-ID: <184a38a0-f2de-dd63-a8af-f4784c61365a@quicinc.com>
+Date:   Mon, 20 Feb 2023 20:21:53 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH V2 2/5] clk: qcom: apss-ipq-pll: Enable APSS clock driver
- in IPQ9574
+ Thunderbird/102.7.0
+Subject: Re: [PATCH 2/7] PCI: qcom: Add IPQ9574 PCIe support
 Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>, <agross@kernel.org>,
-        <andersson@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <dmitry.baryshkov@linaro.org>, <arnd@arndb.de>,
-        <geert+renesas@glider.be>, <nfraprado@collabora.com>,
-        <broonie@kernel.org>, <rafal@milecki.pl>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+To:     Devi Priya <quic_devipriy@quicinc.com>,
+        Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <lpieralisi@kernel.org>,
+        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
+        <krzysztof.kozlowski+dt@linaro.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <mani@kernel.org>, <p.zabel@pengutronix.de>,
+        <svarbanov@mm-sol.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>
+CC:     <quic_gokulsri@quicinc.com>, <quic_sjaganat@quicinc.com>,
         <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>
-References: <20230217134107.13946-1-quic_devipriy@quicinc.com>
- <20230217134107.13946-3-quic_devipriy@quicinc.com>
- <3bc2f33d-163c-1f26-1d05-e3056f852bcd@linaro.org>
-From:   Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <3bc2f33d-163c-1f26-1d05-e3056f852bcd@linaro.org>
+References: <20230214164135.17039-1-quic_devipriy@quicinc.com>
+ <20230214164135.17039-3-quic_devipriy@quicinc.com>
+ <6ea43d8d-7b9c-5a11-097f-906e10ac3627@quicinc.com>
+ <c766648f-c3a5-b842-2164-c3f480dee129@quicinc.com>
+From:   Kathiravan T <quic_kathirav@quicinc.com>
+In-Reply-To: <c766648f-c3a5-b842-2164-c3f480dee129@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: KcHRkWijTEaaPkxVEN3h_y81VGaMb_r3
-X-Proofpoint-ORIG-GUID: KcHRkWijTEaaPkxVEN3h_y81VGaMb_r3
+X-Proofpoint-ORIG-GUID: dPgA47UCWpdMvfRaaHia2A8PgwjyOqZg
+X-Proofpoint-GUID: dPgA47UCWpdMvfRaaHia2A8PgwjyOqZg
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
- definitions=2023-02-20_11,2023-02-20_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
- adultscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
- lowpriorityscore=0 bulkscore=0 clxscore=1015 impostorscore=0 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2302200126
+ definitions=2023-02-20_12,2023-02-20_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 phishscore=0
+ bulkscore=0 malwarescore=0 mlxscore=0 lowpriorityscore=0 mlxlogscore=999
+ suspectscore=0 adultscore=0 impostorscore=0 priorityscore=1501 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
+ definitions=main-2302200136
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+On 2/20/2023 7:11 PM, Devi Priya wrote:
+> Hi Sri,
+> Thanks for taking time to review the patch!
+>
+> On 2/16/2023 5:08 PM, Sricharan Ramabadhran wrote:
+>> Hi Devi,
+>>
+>> On 2/14/2023 10:11 PM, Devi Priya wrote:
+>>> Adding PCIe support for IPQ9574 SoC
+>>>
+>>> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+>>> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+>>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+>>> ---
+>>>   drivers/pci/controller/dwc/pcie-qcom.c | 119 
+>>> +++++++++++++++++++++++++
+>>>   1 file changed, 119 insertions(+)
+>>>
+>>> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c 
+>>> b/drivers/pci/controller/dwc/pcie-qcom.c
+>>> index a232b04af048..57606c113d45 100644
+>>> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+>>> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+>>> @@ -193,6 +193,12 @@ struct qcom_pcie_resources_2_9_0 {
+>>>       struct reset_control *rst;
+>>>   };
+>>> +struct qcom_pcie_resources_1_27_0 {
+>>> +    struct clk_bulk_data *clks;
+>>> +    struct reset_control *rst;
+>>> +    int num_clks;
+>>> +};
+>>> +
+>>>   union qcom_pcie_resources {
+>>>       struct qcom_pcie_resources_1_0_0 v1_0_0;
+>>>       struct qcom_pcie_resources_2_1_0 v2_1_0;
+>>> @@ -201,6 +207,7 @@ union qcom_pcie_resources {
+>>>       struct qcom_pcie_resources_2_4_0 v2_4_0;
+>>>       struct qcom_pcie_resources_2_7_0 v2_7_0;
+>>>       struct qcom_pcie_resources_2_9_0 v2_9_0;
+>>> +    struct qcom_pcie_resources_1_27_0 v1_27_0;
+>>>   };
+>>>   struct qcom_pcie;
+>>> @@ -1409,6 +1416,104 @@ static int qcom_pcie_post_init_2_9_0(struct 
+>>> qcom_pcie *pcie)
+>>>       return 0;
+>>>   }
+>>> +static int qcom_pcie_get_resources_1_27_0(struct qcom_pcie *pcie)
+>>> +{
+>>> +    struct qcom_pcie_resources_1_27_0 *res = &pcie->res.v1_27_0;
+>>> +    struct dw_pcie *pci = pcie->pci;
+>>> +    struct device *dev = pci->dev;
+>>> +
+>>> +    res->num_clks = devm_clk_bulk_get_all(dev, &res->clks);
+>>> +    if (res->clks < 0)
+>>> +        return res->num_clks;
+>>> +
+>>> +    res->rst = devm_reset_control_array_get_exclusive(dev);
+>>> +    if (IS_ERR(res->rst))
+>>> +        return PTR_ERR(res->rst);
+>>> +
+>>> +    return 0;
+>>> +}
+>>> +
+>>> +static void qcom_pcie_deinit_1_27_0(struct qcom_pcie *pcie)
+>>> +{
+>>> +    struct qcom_pcie_resources_1_27_0 *res = &pcie->res.v1_27_0;
+>>> +
+>>> +    clk_bulk_disable_unprepare(res->num_clks, res->clks);
+>>> +}
+>>> +
+>>> +static int qcom_pcie_init_1_27_0(struct qcom_pcie *pcie)
+>>> +{
+>>> +    struct qcom_pcie_resources_1_27_0 *res = &pcie->res.v1_27_0;
+>>> +    struct device *dev = pcie->pci->dev;
+>>> +    int ret;
+>>> +
+>>> +    ret = reset_control_assert(res->rst);
+>>> +    if (ret) {
+>>> +        dev_err(dev, "reset assert failed (%d)\n", ret);
+>>> +        return ret;
+>>> +    }
+>>> +
+>>> +    /*
+>>> +     * Delay periods before and after reset deassert are working 
+>>> values
+>>> +     * from downstream Codeaurora kernel
+>>> +     */
+>>> +    usleep_range(2000, 2500);
+>>> +
+>>> +    ret = reset_control_deassert(res->rst);
+>>> +    if (ret) {
+>>> +        dev_err(dev, "reset deassert failed (%d)\n", ret);
+>>> +        return ret;
+>>> +    }
+>>> +
+>>> +    usleep_range(2000, 2500);
+>>> +
+>>> +    return clk_bulk_prepare_enable(res->num_clks, res->clks);
+>>> +}
+>>> +
+>>> +static int qcom_pcie_post_init_1_27_0(struct qcom_pcie *pcie)
+>>> +{
+>>> +    struct dw_pcie *pci = pcie->pci;
+>>> +    u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>>> +    u32 val;
+>>> +    int i;
+>>> +
+>>> +    writel(0x8000000, pcie->parf + 
+>>> PCIE20_v3_PARF_SLV_ADDR_SPACE_SIZE);
 
-On 2/17/2023 7:43 PM, Konrad Dybcio wrote:
-> 
-> 
-> On 17.02.2023 14:41, Devi Priya wrote:
-> The subject is.. weird.. something like:
-> 
-> clk: qcom: apss-ipq-pll: add support for IPQ9574
-> 
-> would have made more sense, as you're not enabling the clock
-> driver, and certainly not *in* the SoC.
-Yes agreed. Will update this in V3
-> 
->> Add the compatible and configuration values
-> Generally the lines in commit messages should be broken at 70-75
-> chars, not 40.
-> 
-Okay
->> for A73 Huayra PLL found on IPQ9574
+
+Devi,
+
+
+Above statement also differs. You need to consider this also when you 
+use the 2_9_0 ops.
+
+
+Thanks,
+
+
+>>> +
+>>> +    val = readl(pcie->parf + PCIE20_PARF_PHY_CTRL);
+>>> +    val &= ~BIT(0);
+>>> +    writel(val, pcie->parf + PCIE20_PARF_PHY_CTRL);
+>>> +
+>>> +    writel(0, pcie->parf + PCIE20_PARF_DBI_BASE_ADDR);
+>>> +
+>>> +    writel(DEVICE_TYPE_RC, pcie->parf + PCIE20_PARF_DEVICE_TYPE);
+>>> +    writel(BYPASS | MSTR_AXI_CLK_EN | AHB_CLK_EN,
+>>> +           pcie->parf + PCIE20_PARF_MHI_CLOCK_RESET_CTRL);
+>>> +    writel(GEN3_RELATED_OFF_RXEQ_RGRDLESS_RXTS |
+>>> +           GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL,
+>>> +           pci->dbi_base + GEN3_RELATED_OFF);
+>>> +
+>>> +    writel(MST_WAKEUP_EN | SLV_WAKEUP_EN | MSTR_ACLK_CGC_DIS |
+>>> +           SLV_ACLK_CGC_DIS | CORE_CLK_CGC_DIS |
+>>> +           AUX_PWR_DET | L23_CLK_RMV_DIS | L1_CLK_RMV_DIS,
+>>> +           pcie->parf + PCIE20_PARF_SYS_CTRL);
+>>> +
+>>> +    writel(0, pcie->parf + PCIE20_PARF_Q2A_FLUSH);
+>>> +
+>>> +    dw_pcie_dbi_ro_wr_en(pci);
+>>> +    writel(PCIE_CAP_SLOT_VAL, pci->dbi_base + offset + 
+>>> PCI_EXP_SLTCAP);
+>>> +
+>>> +    val = readl(pci->dbi_base + offset + PCI_EXP_LNKCAP);
+>>> +    val &= ~PCI_EXP_LNKCAP_ASPMS;
+>>> +    writel(val, pci->dbi_base + offset + PCI_EXP_LNKCAP);
+>>> +
+>>> +    writel(PCI_EXP_DEVCTL2_COMP_TMOUT_DIS, pci->dbi_base + offset +
+>>> +           PCI_EXP_DEVCTL2);
+>>> +
+>>> +    for (i = 0; i < 256; i++)
+>>> +        writel(0, pcie->parf + PCIE20_PARF_BDF_TO_SID_TABLE_N + (4 
+>>> * i));
+>>> +
+>>> +    return 0;
+>>> +}
+>>> +
+>>>   static int qcom_pcie_link_up(struct dw_pcie *pci)
+>>>   {
+>>>       u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>>> @@ -1620,6 +1725,15 @@ static const struct qcom_pcie_ops ops_2_9_0 = {
+>>>       .ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+>>>   };
+>>> +/* Qcom IP rev.: 1.27.0 Synopsys IP rev.: 5.80a */
+>>> +static const struct qcom_pcie_ops ops_1_27_0 = {
+>>> +    .get_resources = qcom_pcie_get_resources_1_27_0,
+>>> +    .init = qcom_pcie_init_1_27_0,
+>>> +    .post_init = qcom_pcie_post_init_1_27_0,
+>>> +    .deinit = qcom_pcie_deinit_1_27_0,
+>>> +    .ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+>>> +};
+>>> +
+>>>   static const struct qcom_pcie_cfg cfg_1_0_0 = {
+>>>       .ops = &ops_1_0_0,
+>>>   };
+>>> @@ -1652,6 +1766,10 @@ static const struct qcom_pcie_cfg cfg_2_9_0 = {
+>>>       .ops = &ops_2_9_0,
+>>>   };
+>>> +static const struct qcom_pcie_cfg cfg_1_27_0 = {
+>>> +    .ops = &ops_1_27_0,
+>>> +};
+>>> +
+>>>   static const struct dw_pcie_ops dw_pcie_ops = {
+>>>       .link_up = qcom_pcie_link_up,
+>>>       .start_link = qcom_pcie_start_link,
+>>> @@ -1829,6 +1947,7 @@ static const struct of_device_id 
+>>> qcom_pcie_match[] = {
+>>>       { .compatible = "qcom,pcie-ipq8064-v2", .data = &cfg_2_1_0 },
+>>>       { .compatible = "qcom,pcie-ipq8074", .data = &cfg_2_3_3 },
+>>>       { .compatible = "qcom,pcie-ipq8074-gen3", .data = &cfg_2_9_0 },
+>>> +    { .compatible = "qcom,pcie-ipq9574", .data = &cfg_1_27_0 },
 >>
->> Co-developed-by: Praveenkumar I <quic_ipkumar@quicinc.com>
->> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
-> Is Praveenkumar's last name "I"?
-yes, it is
-> 
->> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
->> ---
-> Otherwise the code looks good, I think.
-Sure, thanks
-> 
-> Konrad
->>   Changes in V2:
->> 	- Rebased the changes on the below series which refactors the
->> 	  driver to accommodate Huayra & Stromer Plus PLLs
->> 	  https://lore.kernel.org/linux-arm-msm/20230217083308.12017-2-quic_kathirav@quicinc.com/
->> 	- Changed the hex value in ipq9574_pll_config to lowercase
->> 	- Dropped the mailbox driver changes as ipq9574 mailbox is
->> 	  compatible with ipq6018
+>>    I do not see much difference between 2_9_0 and 1_27_0. Is this patch
+>>    really required. Can you check if it works with 2_9_0 itself ?
+> Yes right Sri, Only the clocks seem to differ between 2_9_0 and 1_27_0.
+> Will update 2_9_0 ops to get the clocks from the DT and use the same 
+> for ipq9574 in the next spin.
+>
+> Best Regards,
+> Devi Priya
 >>
->>   drivers/clk/qcom/apss-ipq-pll.c | 19 +++++++++++++++++++
->>   1 file changed, 19 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/apss-ipq-pll.c b/drivers/clk/qcom/apss-ipq-pll.c
->> index cf4f0d340cbf..ce28d882ee78 100644
->> --- a/drivers/clk/qcom/apss-ipq-pll.c
->> +++ b/drivers/clk/qcom/apss-ipq-pll.c
->> @@ -111,6 +111,18 @@ static const struct alpha_pll_config ipq8074_pll_config = {
->>   	.test_ctl_hi_val = 0x4000,
->>   };
->>   
->> +static const struct alpha_pll_config ipq9574_pll_config = {
->> +	.l = 0x3b,
->> +	.config_ctl_val = 0x200d4828,
->> +	.config_ctl_hi_val = 0x6,
->> +	.early_output_mask = BIT(3),
->> +	.aux2_output_mask = BIT(2),
->> +	.aux_output_mask = BIT(1),
->> +	.main_output_mask = BIT(0),
->> +	.test_ctl_val = 0x0,
->> +	.test_ctl_hi_val = 0x4000,
->> +};
->> +
->>   struct apss_pll_data {
->>   	int pll_type;
->>   	struct clk_alpha_pll *pll;
->> @@ -135,6 +147,12 @@ static struct apss_pll_data ipq6018_pll_data = {
->>   	.pll_config = &ipq6018_pll_config,
->>   };
->>   
->> +static struct apss_pll_data ipq9574_pll_data = {
->> +	.pll_type = CLK_ALPHA_PLL_TYPE_HUAYRA,
->> +	.pll = &ipq_pll_huayra,
->> +	.pll_config = &ipq9574_pll_config,
->> +};
->> +
->>   static const struct regmap_config ipq_pll_regmap_config = {
->>   	.reg_bits		= 32,
->>   	.reg_stride		= 4,
->> @@ -180,6 +198,7 @@ static const struct of_device_id apss_ipq_pll_match_table[] = {
->>   	{ .compatible = "qcom,ipq5332-a53pll", .data = &ipq5332_pll_data },
->>   	{ .compatible = "qcom,ipq6018-a53pll", .data = &ipq6018_pll_data },
->>   	{ .compatible = "qcom,ipq8074-a53pll", .data = &ipq8074_pll_data },
->> +	{ .compatible = "qcom,ipq9574-a73pll", .data = &ipq9574_pll_data },
->>   	{ }
->>   };
->>   MODULE_DEVICE_TABLE(of, apss_ipq_pll_match_table);
-Best Regards,
-Devi Priya
+>> Regards,
+>>   Sricharan
