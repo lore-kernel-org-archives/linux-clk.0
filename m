@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E01C742A7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4693AC74A44
 	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 11:58:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234558AbjBUL6P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 06:58:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35252 "EHLO
+        id S234551AbjBUL6N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Feb 2023 06:58:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234613AbjBUL54 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 06:57:56 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D80728D1D;
-        Tue, 21 Feb 2023 03:57:24 -0800 (PST)
+        with ESMTP id S234590AbjBUL5t (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 06:57:49 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A47828879;
+        Tue, 21 Feb 2023 03:57:21 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 96E4E66021CE;
-        Tue, 21 Feb 2023 11:56:45 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id C9CC366021D7;
+        Tue, 21 Feb 2023 11:56:24 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676980606;
-        bh=DH2A/qvYdrLnvqYgaqCPxD51KBMJ8ctJ5JWdFYQCl3M=;
+        s=mail; t=1676980585;
+        bh=qEBrgGdbulqzhtfUdPsw3k5Qo9gj6LPHE51E64is1Uk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hXyqAjKOptHKhouspQ8/4j0S/jU/sVtmmRss6iKzeOGSuOcxaZWLPyzyaKY+8tT8z
-         RKKmEFz//xGRxi9sVB4jNSMNMulEaYMpSR3TFheGaQC+TIXg+X5QK8tTov+ug5QZMw
-         MEn+7PCfyhjMwsUiMh5o/H/Ec7yaNkK1DuGgXzYzXPjk+QXsEeL3whmRXzkiGTxHGL
-         QT+gC6dn2ZgMsdxyRHT7o7/WldmHwmNKpKdlAVc92S3Q3zE68YHZRtRugm6GsgmY50
-         fbFUURhg6C6jXFlBAFStuRtKDvBsqdVrowXdmep/LeQYGD4fwATCxXghRrUYesCGAc
-         BX836wejgqJPg==
+        b=bZj0h4H6u7qbHiAFHH4onCF/9D/IlEDGM/tSjpzya/RC6pNq3SFunzsTRsuWRbFvi
+         gH3OaItkrk7NvH/d9F5kZ/X/3GFJ+6k8yw4Z3FYjjVUcv6mGHP8rwNEHglJxoW/iO1
+         1bxqYxBZomAyKjkvVSoc19/s2tmAf52orTLn9le3erez43RDz5ARmt2Jp3NUVYzWpU
+         VJbixtGiFeQKrms3Nz2vmQcMVTPkUAdiydEPF3/A3Il8QxvtFvEpoQtQr2fJ1y7gEa
+         etEcAeEG8cpSMazLRds4tJohk1ys4S8E2o41S2SY8Dsh9yp2avzPSMYMjv+t7Kq/kz
+         BrZkPoJpXvuFw==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v4 39/54] clk: mediatek: Split MT8195 clock drivers and allow module build
-Date:   Tue, 21 Feb 2023 12:55:34 +0100
-Message-Id: <20230221115549.360132-40-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v4 23/54] clk: mediatek: mt7622: Properly use CLK_IS_CRITICAL flag
+Date:   Tue, 21 Feb 2023 12:55:18 +0100
+Message-Id: <20230221115549.360132-24-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230221115549.360132-1-angelogioacchino.delregno@collabora.com>
 References: <20230221115549.360132-1-angelogioacchino.delregno@collabora.com>
@@ -58,166 +58,111 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-MT8195 clock drivers were encapsulated in one single (and big) Kconfig
-option: there's no reason to do that, as it is totally unnecessary to
-build in all or none of them.
+Instead of calling clk_prepare_enable() for clocks that shall stay
+enabled, use the CLK_IS_CRITICAL flag, which purpose is exactly that.
 
-Split them out: keep boot-critical clocks as bool and allow choosing
-non critical clocks as tristate.
-
-As a note, the dependencies of VDEC/VENCSYS and CAM/IMG/IPE/WPESYS
-are not for build-time but rather for runtime, as clocks registered
-by those have runtime dependencies on either or both VPP and IMGSYS.
-
+Fixes: 2fc0a509e4ee ("clk: mediatek: add clock support for MT7622 SoC")
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/clk/mediatek/Kconfig  | 100 ++++++++++++++++++++++++++++++++++
- drivers/clk/mediatek/Makefile |  20 ++++---
- 2 files changed, 113 insertions(+), 7 deletions(-)
+ drivers/clk/mediatek/clk-mt7622.c | 35 +++++++++++++------------------
+ 1 file changed, 15 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 45b7aea7648d..ab47b9ec64af 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -692,6 +692,106 @@ config COMMON_CLK_MT8195
-         help
-           This driver supports MediaTek MT8195 clocks.
+diff --git a/drivers/clk/mediatek/clk-mt7622.c b/drivers/clk/mediatek/clk-mt7622.c
+index 41af8d420bbf..1c0049fbeb69 100644
+--- a/drivers/clk/mediatek/clk-mt7622.c
++++ b/drivers/clk/mediatek/clk-mt7622.c
+@@ -50,9 +50,9 @@
+ 		 _pd_reg, _pd_shift, _tuner_reg, _pcw_reg, _pcw_shift,  \
+ 		 NULL, "clkxtal")
  
-+config COMMON_CLK_MT8195_APUSYS
-+	tristate "Clock driver for MediaTek MT8195 apusys"
-+	depends on COMMON_CLK_MT8195
-+	default COMMON_CLK_MT8195
-+	help
-+	  This driver supports MediaTek MT8195 AI Processor Unit System clocks.
+-#define GATE_APMIXED(_id, _name, _parent, _shift)			\
+-	GATE_MTK(_id, _name, _parent, &apmixed_cg_regs, _shift,		\
+-		 &mtk_clk_gate_ops_no_setclr_inv)
++#define GATE_APMIXED_AO(_id, _name, _parent, _shift)			\
++	GATE_MTK_FLAGS(_id, _name, _parent, &apmixed_cg_regs, _shift,	\
++		 &mtk_clk_gate_ops_no_setclr_inv, CLK_IS_CRITICAL)
+ 
+ #define GATE_INFRA(_id, _name, _parent, _shift)				\
+ 	GATE_MTK(_id, _name, _parent, &infra_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
+@@ -66,6 +66,10 @@
+ #define GATE_PERI0(_id, _name, _parent, _shift)				\
+ 	GATE_MTK(_id, _name, _parent, &peri0_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
+ 
++#define GATE_PERI0_AO(_id, _name, _parent, _shift)			\
++	GATE_MTK_FLAGS(_id, _name, _parent, &peri0_cg_regs, _shift,	\
++		 &mtk_clk_gate_ops_setclr, CLK_IS_CRITICAL)
 +
-+config COMMON_CLK_MT8195_AUDSYS
-+	tristate "Clock driver for MediaTek MT8195 audsys"
-+	depends on COMMON_CLK_MT8195
-+	default COMMON_CLK_MT8195
-+	help
-+	  This driver supports MediaTek MT8195 audsys clocks.
-+
-+config COMMON_CLK_MT8195_IMP_IIC_WRAP
-+	tristate "Clock driver for MediaTek MT8195 imp_iic_wrap"
-+	depends on COMMON_CLK_MT8195
-+	default COMMON_CLK_MT8195
-+	help
-+	  This driver supports MediaTek MT8195 I2C/I3C clocks.
-+
-+config COMMON_CLK_MT8195_MFGCFG
-+	tristate "Clock driver for MediaTek MT8195 mfgcfg"
-+	depends on COMMON_CLK_MT8195
-+	default COMMON_CLK_MT8195
-+	help
-+	  This driver supports MediaTek MT8195 mfgcfg clocks.
-+
-+config COMMON_CLK_MT8195_MSDC
-+	tristate "Clock driver for MediaTek MT8195 msdc"
-+	depends on COMMON_CLK_MT8195
-+	default COMMON_CLK_MT8195
-+	help
-+	  This driver supports MediaTek MT8195 MMC and SD Controller's
-+	  msdc and msdc_top clocks.
-+
-+config COMMON_CLK_MT8195_SCP_ADSP
-+	tristate "Clock driver for MediaTek MT8195 scp_adsp"
-+	depends on COMMON_CLK_MT8195
-+	default COMMON_CLK_MT8195
-+	help
-+	  This driver supports MediaTek MT8195 System Companion Processor
-+	  Audio DSP clocks.
-+
-+config COMMON_CLK_MT8195_VDOSYS
-+	tristate "Clock driver for MediaTek MT8195 vdosys"
-+	depends on COMMON_CLK_MT8195
-+	default COMMON_CLK_MT8195
-+	help
-+	  This driver supports MediaTek MT8195 vdosys0/1 (multimedia) clocks.
-+
-+config COMMON_CLK_MT8195_VPPSYS
-+	tristate "Clock driver for MediaTek MT8195 vppsys"
-+	depends on COMMON_CLK_MT8195
-+	default COMMON_CLK_MT8195
-+	help
-+	  This driver supports MediaTek MT8195 vppsys0/1 clocks.
-+
-+config COMMON_CLK_MT8195_CAMSYS
-+	tristate "Clock driver for MediaTek MT8195 camsys"
-+	depends on COMMON_CLK_MT8195_VPPSYS
-+	default COMMON_CLK_MT8195_VPPSYS
-+	help
-+	  This driver supports MediaTek MT8195 camsys and camsys_raw clocks.
-+
-+config COMMON_CLK_MT8195_IMGSYS
-+	tristate "Clock driver for MediaTek MT8195 imgsys"
-+	depends on COMMON_CLK_MT8195_VPPSYS
-+	default COMMON_CLK_MT8195_VPPSYS
-+	help
-+	  This driver supports MediaTek MT8195 imgsys and imgsys2 clocks.
-+
-+config COMMON_CLK_MT8195_IPESYS
-+	tristate "Clock driver for MediaTek MT8195 ipesys"
-+	depends on COMMON_CLK_MT8195_IMGSYS
-+	default COMMON_CLK_MT8195_IMGSYS
-+	help
-+	  This driver supports MediaTek MT8195 ipesys clocks.
-+
-+config COMMON_CLK_MT8195_WPESYS
-+	tristate "Clock driver for MediaTek MT8195 wpesys"
-+	depends on COMMON_CLK_MT8195_IMGSYS
-+	default COMMON_CLK_MT8195_IMGSYS
-+	help
-+	  This driver supports MediaTek MT8195 Warp Engine clocks.
-+
-+config COMMON_CLK_MT8195_VDECSYS
-+	tristate "Clock driver for MediaTek MT8195 vdecsys"
-+	depends on COMMON_CLK_MT8195_VPPSYS
-+	default COMMON_CLK_MT8195_VPPSYS
-+	help
-+	  This driver supports MediaTek MT8195 vdecsys and vdecsys_soc clocks.
-+
-+config COMMON_CLK_MT8195_VENCSYS
-+	tristate "Clock driver for MediaTek MT8195 vencsys"
-+	depends on COMMON_CLK_MT8195_VPPSYS
-+	default COMMON_CLK_MT8195_VPPSYS
-+	help
-+	  This driver supports MediaTek MT8195 vencsys clocks.
-+
- config COMMON_CLK_MT8365
- 	tristate "Clock driver for MediaTek MT8365"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 3133ad8c2028..63351957f862 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -106,13 +106,19 @@ obj-$(CONFIG_COMMON_CLK_MT8192_SCP_ADSP) += clk-mt8192-scp_adsp.o
- obj-$(CONFIG_COMMON_CLK_MT8192_VDECSYS) += clk-mt8192-vdec.o
- obj-$(CONFIG_COMMON_CLK_MT8192_VENCSYS) += clk-mt8192-venc.o
- obj-$(CONFIG_COMMON_CLK_MT8195) += clk-mt8195-apmixedsys.o clk-mt8195-topckgen.o \
--				   clk-mt8195-peri_ao.o clk-mt8195-infra_ao.o \
--				   clk-mt8195-cam.o clk-mt8195-ccu.o clk-mt8195-img.o \
--				   clk-mt8195-ipe.o clk-mt8195-mfg.o clk-mt8195-scp_adsp.o \
--				   clk-mt8195-vdec.o clk-mt8195-vdo0.o clk-mt8195-vdo1.o \
--				   clk-mt8195-venc.o clk-mt8195-vpp0.o clk-mt8195-vpp1.o \
--				   clk-mt8195-wpe.o clk-mt8195-imp_iic_wrap.o \
--				   clk-mt8195-apusys_pll.o
-+				   clk-mt8195-peri_ao.o clk-mt8195-infra_ao.o
-+obj-$(CONFIG_COMMON_CLK_MT8195_APUSYS) += clk-mt8195-apusys_pll.o
-+obj-$(CONFIG_COMMON_CLK_MT8195_CAMSYS) += clk-mt8195-cam.o clk-mt8195-ccu.o
-+obj-$(CONFIG_COMMON_CLK_MT8195_IMGSYS) += clk-mt8195-img.o
-+obj-$(CONFIG_COMMON_CLK_MT8195_IMP_IIC_WRAP) += clk-mt8195-imp_iic_wrap.o
-+obj-$(CONFIG_COMMON_CLK_MT8195_IPESYS) += clk-mt8195-ipe.o
-+obj-$(CONFIG_COMMON_CLK_MT8195_MFGCFG) += clk-mt8195-mfg.o
-+obj-$(CONFIG_COMMON_CLK_MT8195_SCP_ADSP) += clk-mt8195-scp_adsp.o
-+obj-$(CONFIG_COMMON_CLK_MT8195_VDECSYS) += clk-mt8195-vdec.o
-+obj-$(CONFIG_COMMON_CLK_MT8195_VDOSYS) += clk-mt8195-vdo0.o clk-mt8195-vdo1.o
-+obj-$(CONFIG_COMMON_CLK_MT8195_VENCSYS) += clk-mt8195-venc.o
-+obj-$(CONFIG_COMMON_CLK_MT8195_VPPSYS) += clk-mt8195-vpp0.o clk-mt8195-vpp1.o
-+obj-$(CONFIG_COMMON_CLK_MT8195_WPESYS) += clk-mt8195-wpe.o
- obj-$(CONFIG_COMMON_CLK_MT8365) += clk-mt8365.o clk-mt8365-apmixedsys.o
- obj-$(CONFIG_COMMON_CLK_MT8365_APU) += clk-mt8365-apu.o
- obj-$(CONFIG_COMMON_CLK_MT8365_CAM) += clk-mt8365-cam.o
+ #define GATE_PERI1(_id, _name, _parent, _shift)				\
+ 	GATE_MTK(_id, _name, _parent, &peri1_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
+ 
+@@ -315,7 +319,7 @@ static const struct mtk_pll_data plls[] = {
+ };
+ 
+ static const struct mtk_gate apmixed_clks[] = {
+-	GATE_APMIXED(CLK_APMIXED_MAIN_CORE_EN, "main_core_en", "mainpll", 5),
++	GATE_APMIXED_AO(CLK_APMIXED_MAIN_CORE_EN, "main_core_en", "mainpll", 5),
+ };
+ 
+ static const struct mtk_gate infra_clks[] = {
+@@ -450,7 +454,7 @@ static const struct mtk_gate peri_clks[] = {
+ 	GATE_PERI0(CLK_PERI_AP_DMA_PD, "peri_ap_dma_pd", "axi_sel", 12),
+ 	GATE_PERI0(CLK_PERI_MSDC30_0_PD, "peri_msdc30_0", "msdc30_0_sel", 13),
+ 	GATE_PERI0(CLK_PERI_MSDC30_1_PD, "peri_msdc30_1", "msdc30_1_sel", 14),
+-	GATE_PERI0(CLK_PERI_UART0_PD, "peri_uart0_pd", "axi_sel", 17),
++	GATE_PERI0_AO(CLK_PERI_UART0_PD, "peri_uart0_pd", "axi_sel", 17),
+ 	GATE_PERI0(CLK_PERI_UART1_PD, "peri_uart1_pd", "axi_sel", 18),
+ 	GATE_PERI0(CLK_PERI_UART2_PD, "peri_uart2_pd", "axi_sel", 19),
+ 	GATE_PERI0(CLK_PERI_UART3_PD, "peri_uart3_pd", "axi_sel", 20),
+@@ -478,12 +482,12 @@ static struct mtk_composite infra_muxes[] = {
+ 
+ static struct mtk_composite top_muxes[] = {
+ 	/* CLK_CFG_0 */
+-	MUX_GATE(CLK_TOP_AXI_SEL, "axi_sel", axi_parents,
+-		 0x040, 0, 3, 7),
+-	MUX_GATE(CLK_TOP_MEM_SEL, "mem_sel", mem_parents,
+-		 0x040, 8, 1, 15),
+-	MUX_GATE(CLK_TOP_DDRPHYCFG_SEL, "ddrphycfg_sel", ddrphycfg_parents,
+-		 0x040, 16, 1, 23),
++	MUX_GATE_FLAGS(CLK_TOP_AXI_SEL, "axi_sel", axi_parents,
++		       0x040, 0, 3, 7, CLK_IS_CRITICAL),
++	MUX_GATE_FLAGS(CLK_TOP_MEM_SEL, "mem_sel", mem_parents,
++		       0x040, 8, 1, 15, CLK_IS_CRITICAL),
++	MUX_GATE_FLAGS(CLK_TOP_DDRPHYCFG_SEL, "ddrphycfg_sel", ddrphycfg_parents,
++		       0x040, 16, 1, 23, CLK_IS_CRITICAL),
+ 	MUX_GATE(CLK_TOP_ETH_SEL, "eth_sel", eth_parents,
+ 		 0x040, 24, 3, 31),
+ 
+@@ -621,10 +625,6 @@ static int mtk_topckgen_init(struct platform_device *pdev)
+ 	mtk_clk_register_gates(&pdev->dev, node, top_clks,
+ 			       ARRAY_SIZE(top_clks), clk_data);
+ 
+-	clk_prepare_enable(clk_data->hws[CLK_TOP_AXI_SEL]->clk);
+-	clk_prepare_enable(clk_data->hws[CLK_TOP_MEM_SEL]->clk);
+-	clk_prepare_enable(clk_data->hws[CLK_TOP_DDRPHYCFG_SEL]->clk);
+-
+ 	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+ }
+ 
+@@ -667,9 +667,6 @@ static int mtk_apmixedsys_init(struct platform_device *pdev)
+ 	mtk_clk_register_gates(&pdev->dev, node, apmixed_clks,
+ 			       ARRAY_SIZE(apmixed_clks), clk_data);
+ 
+-	clk_prepare_enable(clk_data->hws[CLK_APMIXED_ARMPLL]->clk);
+-	clk_prepare_enable(clk_data->hws[CLK_APMIXED_MAIN_CORE_EN]->clk);
+-
+ 	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+ }
+ 
+@@ -697,8 +694,6 @@ static int mtk_pericfg_init(struct platform_device *pdev)
+ 	if (r)
+ 		return r;
+ 
+-	clk_prepare_enable(clk_data->hws[CLK_PERI_UART0_PD]->clk);
+-
+ 	mtk_register_reset_controller_with_dev(&pdev->dev, &clk_rst_desc[1]);
+ 
+ 	return 0;
 -- 
 2.39.1
 
