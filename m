@@ -2,173 +2,65 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF929C61DA3
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 22:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9F7C636D7
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 22:39:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229567AbjBUWRY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 17:17:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44122 "EHLO
+        id S229628AbjBUWjN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Feb 2023 17:39:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229462AbjBUWRX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 17:17:23 -0500
+        with ESMTP id S229672AbjBUWjM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 17:39:12 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6600730B25;
-        Tue, 21 Feb 2023 14:17:22 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B0ED32E7B
+        for <linux-clk@vger.kernel.org>; Tue, 21 Feb 2023 14:38:49 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 18FA8B80EF7;
-        Tue, 21 Feb 2023 22:17:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABDBFC433EF;
-        Tue, 21 Feb 2023 22:17:19 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B7434B80F01
+        for <linux-clk@vger.kernel.org>; Tue, 21 Feb 2023 22:37:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70001C433D2;
+        Tue, 21 Feb 2023 22:37:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677017839;
-        bh=bs1akhKjv3J4NmgD6apUPLidQ9TEW782FUgeyLThyxA=;
+        s=k20201202; t=1677019037;
+        bh=//oNQAJ0v8bPCZUQEbAdD/q93hvPwkCNsqrz6uPqInc=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=C+6QWIYGa1uLXRUxWQg7WY9brhFOOPrRR8c9ih5Y6tzBubrze2OOYnpKlCp45vK4d
-         kFhnNQqNod0heMGMtlamwIfY1Q33DssADqtXcAOYAc/O7iyaaRmwZIb/Fxvi0utuy1
-         DkE2dL29TGy9GA80R9+GfHrQNeviPT8NQBNYrh1iWissJtOgff5AMtLpGsUl/sXZch
-         HRJz51hvEv0wqVF+gTuD/lrmw/z/eCLzNLt7BFxJD5r5TncYdKrgfNG2tyi2Re2SIz
-         ytkMmDBiJx62wHzB6DFj6r0ptT+huSMbu370vRq6dqKcZadSpCVaD/ChCte0A4ivVE
-         4tuolzr56XuJw==
-Message-ID: <72953dc9371b87da8d03c63633d7d9dd.sboyd@kernel.org>
+        b=BiBSeZfrPmVMx9krG+QIjpu1a47FtgLlatsAyNyWkv4XKpdsqZhA7SdOmSlfjWNNC
+         6EhyaGb8FJCoDFktdkg0cZMZTXdEDYFJio5jxriWGR78Lb1XT3ZKuaaZvIqM/x0FPN
+         trR1vMEPeuDgxMy0QWwF1Mctk8gBPwvoqw0JjGrn67F33Jlvilc4vjmhWvB38u4pZD
+         2lLK3K+7voY96UM40DVfFVTLzXD99+G9fdbh9YGW6/Up4gAxwdlXjWuKbzRPNWyLi2
+         jxHhDecAbFXD8gmRNqsP+RwMfXFLaWja4HCJbI2wdBIIZugsm4ncvK97/WcgsIWB7y
+         iTZixRv7mVdKQ==
+Message-ID: <502c532ed6dfa9da0fbe3760f3e90eb8.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <Y+5z8skN2DuvxDEL@spud>
-References: <20221220005054.34518-1-hal.feng@starfivetech.com> <20221220005054.34518-8-hal.feng@starfivetech.com> <Y6JB37Pd5TZoGMy4@spud> <7a7bccb1-4d47-3d32-36e6-4aab7b5b8dad@starfivetech.com> <Y6tSWB2+98a8k9Qw@spud> <5cf0fe71-fd17-fb28-c01e-28356081ba76@starfivetech.com> <Y+5z8skN2DuvxDEL@spud>
-Subject: Re: [PATCH v3 07/11] dt-bindings: clock: Add StarFive JH7110 system clock and reset generator
+In-Reply-To: <e5d7afd3-2e1a-ad5a-a455-8882fae9cc47@gmail.com>
+References: <e5d7afd3-2e1a-ad5a-a455-8882fae9cc47@gmail.com>
+Subject: Re: [PATCH] clk: add devm_add_clk_disable_unprepare
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+Cc:     linux-clk@vger.kernel.org
+To:     Heiner Kallweit <hkallweit1@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        linux-kernel@vger.kernel.org
-To:     Conor Dooley <conor@kernel.org>,
-        Hal Feng <hal.feng@starfivetech.com>
-Date:   Tue, 21 Feb 2023 14:17:17 -0800
+        Russell King <linux@armlinux.org.uk>
+Date:   Tue, 21 Feb 2023 14:37:15 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Conor Dooley (2023-02-16 10:20:34)
-> Hey Hal!
->=20
-> On Thu, Feb 16, 2023 at 10:42:20PM +0800, Hal Feng wrote:
-> > On Tue, 27 Dec 2022 20:15:20 +0000, Conor Dooley wrote:
-> > > On Mon, Dec 26, 2022 at 12:26:32AM +0800, Hal Feng wrote:
-> > >> On Tue, 20 Dec 2022 23:14:39 +0000, Conor Dooley wrote:
-> > >> > On Tue, Dec 20, 2022 at 08:50:50AM +0800, Hal Feng wrote:
-> > >> > > From: Emil Renner Berthing <kernel@esmil.dk>
-> > >> > >=20
-> > >> > > Add bindings for the system clock and reset generator (SYSCRG) o=
-n the
-> > >> > > JH7110 RISC-V SoC by StarFive Ltd.
-> > >> > >=20
-> > >> > > Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> > >> > > Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
-> > >=20
-> > >> > > +  clocks:
-> > >> > > +    items:
-> > >> > > +      - description: Main Oscillator (24 MHz)
-> > >> > > +      - description: GMAC1 RMII reference
-> > >> > > +      - description: GMAC1 RGMII RX
-> > >> > > +      - description: External I2S TX bit clock
-> > >> > > +      - description: External I2S TX left/right channel clock
-> > >> > > +      - description: External I2S RX bit clock
-> > >> > > +      - description: External I2S RX left/right channel clock
-> > >> > > +      - description: External TDM clock
-> > >> > > +      - description: External audio master clock
-> > >> >=20
-> > >> > So, from peeking at the clock driver & the dt - it looks like a bu=
-nch of
-> > >> > these are not actually required?
-> > >>=20
-> > >> These clocks are used as root clocks or optional parent clocks in cl=
-ock tree.
-> > >> Some of them are optional, but they are required if we want to descr=
-ibe the
-> > >> complete clock tree of JH7110 SoC.
-> > >=20
-> > > Perhaps I have a misunderstand of what required means. To me, required
-> > > means "you must provide this clock for the SoC to operate in all
-> > > configurations".
-> > > Optional therefore would be for things that are needed only for some
-> > > configurations and may be omitted if not required.
-> > >=20
-> > > From your comment below, boards with a JH7110 may choose not to popul=
-ate
-> > > both external clock inputs to a mux. In that case, "dummy" clocks sho=
-uld
-> > > not have to be provided in the DT of such boards to satisfy this bind=
-ing
-> > > which seems wrong to me..
+Quoting Heiner Kallweit (2023-02-18 14:58:54)
+> I'm aware that there have been numerous rejected attempts to add a
+> devm_clk_prepare_enable(). The advice I've seen was:
 
-I agree. We don't want there to be "dummy" clks in DT. It should never
-be required.
+See devm_clk_get_optional_enabled()
 
-> >=20
-> > Please see the picture of these external clocks in clock tree.
-> >=20
-> > # mount -t debugfs none /mnt
-> > # cat /mnt/clk/clk_summary
-> >                                  enable  prepare  protect              =
-                  duty  hardware
-> >    clock                          count    count    count        rate  =
- accuracy phase  cycle    enable
-> > -----------------------------------------------------------------------=
---------------------------------
-> >  *mclk_ext*                             0        0        0    12288000=
-          0     0  50000         Y
-> >  *tdm_ext*                              0        0        0    49152000=
-          0     0  50000         Y
-> >  *i2srx_lrck_ext*                       0        0        0      192000=
-          0     0  50000         Y
-> >  *i2srx_bclk_ext*                       0        0        0    12288000=
-          0     0  50000         Y
-> >  *i2stx_lrck_ext*                       0        0        0      192000=
-          0     0  50000         Y
-> >  *i2stx_bclk_ext*                       0        0        0    12288000=
-          0     0  50000         Y
-> >  *gmac1_rgmii_rxin*                     0        0        0   125000000=
-          0     0  50000         Y
-> >     gmac1_rx                          0        0        0   125000000  =
-        0     0  50000         Y
-> >        gmac1_rx_inv                   0        0        0   125000000  =
-        0   180  50000         Y
-> >  *gmac1_rmii_refin*                     0        0        0    50000000=
-          0     0  50000         Y
-> >     gmac1_rmii_rtx                    0        0        0    50000000  =
-        0     0  50000         Y
-> >        gmac1_tx                       0        0        0    50000000  =
-        0     0  50000         N
-> >           gmac1_tx_inv                0        0        0    50000000  =
-        0   180  50000         Y
-> >  *osc*                                  4        4        0    24000000=
-          0     0  50000         Y
-> >     apb_func                          0        0        0    24000000  =
-        0     0  50000         Y
-> >  ...
-> >=20
-> > The clock "gmac1_rgmii_rxin" and the clock "gmac1_rmii_refin" are
-> > actually used as the parent of other clocks.
+> If you need this functionality, use devm_add_action_or_reset().
+> As a result lots of callers implemented their own action wrapper for
+> clk_disable_unprepare(). Just one example: dw8250_clk_disable_unprepare
+> This can be avoided with a little bit of cast magic, as used by few
+> drivers already.
+> Helper devm_add_clk_disable_unprepare() is supposed to reduce the
+> code duplication caused by all these individual wrappers.
 >=20
-> > The "dummy" clocks
-> > you said are all internal clocks.
->=20
-> No, what I meant by "dummy" clocks is that if you make clocks "required"
-> in the binding that are not needed by the hardware for operation a
-> customer of yours might have to add "dummy" clocks to their devicetree
-> to pass dtbs_check.
-
-They can set the phandle specifier to '<0>' to fill in the required
-property when there isn't anything there. If this is inside an SoC, it
-is always connected because silicon can't change after it is made
-(unless this is an FPGA). Therefore, any and all input clocks should be
-listed as required. If the clk controller has inputs that are
-pads/balls/pins on the SoC then they can be optional if a valid design
-can leave those pins not connected.
+> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
