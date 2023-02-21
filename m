@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0176C74A5B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6EEEC6379F
 	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 11:58:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234569AbjBUL6P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 06:58:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34516 "EHLO
+        id S234552AbjBUL6O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Feb 2023 06:58:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233922AbjBUL54 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 06:57:56 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2453828858;
-        Tue, 21 Feb 2023 03:57:25 -0800 (PST)
+        with ESMTP id S234606AbjBUL5z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 06:57:55 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D10E528857;
+        Tue, 21 Feb 2023 03:57:23 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 385A166021D0;
-        Tue, 21 Feb 2023 11:56:48 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 6362366021C5;
+        Tue, 21 Feb 2023 11:56:27 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676980609;
-        bh=eeiHEsUa1T8pazV6udb38+IWdGn7nYU56qZHrE+N45Q=;
+        s=mail; t=1676980588;
+        bh=5lsWTL44Y3yaPQVQKBeDRjlBN2RQ9pIDlAdrKv46Dog=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j/jlV4xs/k//ZP/tw49TU44HqshlekYTU4Z7nLRwfnpCX2s3M/0/KHJa0dFpH7t0a
-         Av6HJhjbeWGMnIG9LhkeZroWqTlqVsE5EN7H6WuKGBn3Fw3I5sFC3k9xtFtT3d0lUG
-         UTzw1F1yZBdRsyPXv6Wz5QsLNVt5SFeb0CyezLldaa4/NJb6SJkYTHyy6gd0oSuE8v
-         JqPip7JJvGXgbrNSHF+F28jx0QfWMnRWVMTlgna3Lm4PA1ZuTZvXcrd+ZE/uXXZPJ1
-         oD+PNdstQJW/vX/ObVzWZNLWnhcF3fvvAVRIdwdoBHdQiyHoh/xg2uJZL1unQ237df
-         r23tAW+lku+tA==
+        b=CnG9StYFUGqzQMAUL91GdKOZ3kDvHtG0QdET45TXZpSeLekOWDqzB2yP4fsL1t7pW
+         A9VLdzmluEw9Zd0kIMUEK4lZ+prE/Inl7T2yEjVREjdsEcYQEj5MaDDasc5E0AyWoZ
+         EjD3hv9tpNp9stJs4zsfboYkOsptmC/yf8wpO7A50K2oOACR4LI/MGWmVrXmv74lXU
+         3ymky/CF0IBNKNjQSW2DCY2JLGAjQK4OFup4APrbGYAD0HQ90jRxgf44mrYY1THuLa
+         6zoU5+iEMQldaAOpt2OZdnnCmjO0l8DPRIrxr+NY5XlyLJVQIOkol1sV3QuXpTSMqX
+         R0N6FvbKtN35w==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v4 41/54] clk: mediatek: Allow MT7622 clocks to be built as modules
-Date:   Tue, 21 Feb 2023 12:55:36 +0100
-Message-Id: <20230221115549.360132-42-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v4 25/54] clk: mediatek: mt7622-apmixedsys: Add .remove() callback for module build
+Date:   Tue, 21 Feb 2023 12:55:20 +0100
+Message-Id: <20230221115549.360132-26-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230221115549.360132-1-angelogioacchino.delregno@collabora.com>
 References: <20230221115549.360132-1-angelogioacchino.delregno@collabora.com>
@@ -58,53 +58,55 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now that all drivers are using the simple probe mechanism change the
-MT7622 clock drivers to tristate in Kconfig to allow module build.
+Add a .remove() callback to the apmixedsys driver to allow full module
+build; while at it, also change the usage of builtin_platform_driver()
+to module_platform_driver() to actually make use of the new callback.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/clk/mediatek/Kconfig | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/mediatek/clk-mt7622-apmixedsys.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index fc073e5be4eb..d089806789ee 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -336,7 +336,7 @@ config COMMON_CLK_MT6797_VENCSYS
- 	  This driver supports MediaTek MT6797 vencsys clocks.
+diff --git a/drivers/clk/mediatek/clk-mt7622-apmixedsys.c b/drivers/clk/mediatek/clk-mt7622-apmixedsys.c
+index 497fada797b9..a9f3057d7080 100644
+--- a/drivers/clk/mediatek/clk-mt7622-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt7622-apmixedsys.c
+@@ -119,6 +119,19 @@ static int clk_mt7622_apmixed_probe(struct platform_device *pdev)
+ 	return ret;
+ }
  
- config COMMON_CLK_MT7622
--	bool "Clock driver for MediaTek MT7622"
-+	tristate "Clock driver for MediaTek MT7622"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
- 	select COMMON_CLK_MEDIATEK
- 	default ARCH_MEDIATEK
-@@ -345,21 +345,21 @@ config COMMON_CLK_MT7622
- 	  required for various periperals found on MediaTek.
++static int clk_mt7622_apmixed_remove(struct platform_device *pdev)
++{
++	struct device_node *node = pdev->dev.of_node;
++	struct clk_hw_onecell_data *clk_data = platform_get_drvdata(pdev);
++
++	of_clk_del_provider(node);
++	mtk_clk_unregister_gates(apmixed_clks, ARRAY_SIZE(apmixed_clks), clk_data);
++	mtk_clk_unregister_plls(plls, ARRAY_SIZE(plls), clk_data);
++	mtk_free_clk_data(clk_data);
++
++	return 0;
++}
++
+ static const struct of_device_id of_match_clk_mt7622_apmixed[] = {
+ 	{ .compatible = "mediatek,mt7622-apmixedsys" },
+ 	{ /* sentinel */ }
+@@ -126,12 +139,13 @@ static const struct of_device_id of_match_clk_mt7622_apmixed[] = {
  
- config COMMON_CLK_MT7622_ETHSYS
--	bool "Clock driver for MediaTek MT7622 ETHSYS"
-+	tristate "Clock driver for MediaTek MT7622 ETHSYS"
- 	depends on COMMON_CLK_MT7622
- 	help
- 	  This driver add support for clocks for Ethernet and SGMII
- 	  required on MediaTek MT7622 SoC.
+ static struct platform_driver clk_mt7622_apmixed_drv = {
+ 	.probe = clk_mt7622_apmixed_probe,
++	.remove = clk_mt7622_apmixed_remove,
+ 	.driver = {
+ 		.name = "clk-mt7622-apmixed",
+ 		.of_match_table = of_match_clk_mt7622_apmixed,
+ 	},
+ };
+-builtin_platform_driver(clk_mt7622_apmixed_drv)
++module_platform_driver(clk_mt7622_apmixed_drv)
  
- config COMMON_CLK_MT7622_HIFSYS
--	bool "Clock driver for MediaTek MT7622 HIFSYS"
-+	tristate "Clock driver for MediaTek MT7622 HIFSYS"
- 	depends on COMMON_CLK_MT7622
- 	help
- 	  This driver supports MediaTek MT7622 HIFSYS clocks providing
- 	  to PCI-E and USB.
- 
- config COMMON_CLK_MT7622_AUDSYS
--	bool "Clock driver for MediaTek MT7622 AUDSYS"
-+	tristate "Clock driver for MediaTek MT7622 AUDSYS"
- 	depends on COMMON_CLK_MT7622
- 	help
- 	  This driver supports MediaTek MT7622 AUDSYS clocks providing
+ MODULE_DESCRIPTION("MediaTek MT7622 apmixedsys clocks driver");
+ MODULE_LICENSE("GPL");
 -- 
 2.39.1
 
