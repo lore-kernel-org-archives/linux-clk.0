@@ -2,36 +2,36 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20676C64EC7
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 17:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C99AC636D7
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 17:10:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233464AbjBUREe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 12:04:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41726 "EHLO
+        id S233996AbjBURK4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Feb 2023 12:10:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233889AbjBUREd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 12:04:33 -0500
+        with ESMTP id S234265AbjBURKz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 12:10:55 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 091AA469B;
-        Tue, 21 Feb 2023 09:04:00 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 758C286A8;
+        Tue, 21 Feb 2023 09:10:49 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 66A41B80E96;
-        Tue, 21 Feb 2023 17:03:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF9B2C433EF;
-        Tue, 21 Feb 2023 17:03:54 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3039CB8101C;
+        Tue, 21 Feb 2023 17:10:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 860EEC433D2;
+        Tue, 21 Feb 2023 17:10:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676999038;
-        bh=Qnh0EERUxpKQwR06nwCqwR4x3GBsbnbkgHVMUazIAAA=;
+        s=k20201202; t=1676999447;
+        bh=8u6YDNc9yy+b2FhC1l0g6cqoBb6ZINj+1i2P4m3Xzwk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NqqMNO1k/8gwXWzWHds8Y5Po1S3dNJqT9piZAYj/t3hMItxadAHciBBsvngEh8wfF
-         K4zdR070NAa0r5sMuo4yZmbGwoMz5T25KrNJZQzpZ0FaG1NhsuzkrWA9IvlVz3c8+w
-         YO6SwRMYwu52FkDDaoj4P06YI9dPtnqgO89sxQw4SDO4p8fUWxBLPYGV5RfxWVn1ju
-         I+JHmtzqn4x2qjpiauoG4yDJnVoLOVv49Yln7YYYC4NCLoK3i+JPceMY1F3xAjiRyd
-         70hCQVYEcXSxyNKQ2xND2n5eCo6olbo6+ubQq21e3VB9hIHk+vg2PE530SxdHHR41Q
-         zrH/8dRfRbmOQ==
-Date:   Tue, 21 Feb 2023 17:03:52 +0000
+        b=kdYFftk+6mfKGKJOCRNmPo/FcmGyA9bUoIxhDwtbpO8mD5Z38jIc1eRd64veNMbiK
+         lNUU4+PQ0XYkBokC+bcklQeI9R7e+ij34o7+JiegYT/bSs0SFiZclzUYdV8LIbEnli
+         FRiS2oMShuJkRrprJDKLsopsp2csI/rtQYFRbqW3vIbBOIPb2T3CcH9UyxGSiJzD4q
+         pqXQy7aaFCsThi6oSqUwJMzXaj0UZlxdoLaEZRBBQ/0hHD2BKiD1B05mqC+wBhw5Ka
+         yvpPjBq7HanEGeDORkJmLQB1ZAgZhGRlAzBZzJ0e05WHq1ZHHRlRfk/BdGqpizXFAG
+         0oSb8FfW1ZfyQ==
+Date:   Tue, 21 Feb 2023 17:10:41 +0000
 From:   Conor Dooley <conor@kernel.org>
 To:     Hal Feng <hal.feng@starfivetech.com>
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
@@ -49,71 +49,48 @@ Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Marc Zyngier <maz@kernel.org>,
         Emil Renner Berthing <emil.renner.berthing@canonical.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 17/19] riscv: dts: starfive: Add initial StarFive
- JH7110 device tree
-Message-ID: <Y/T5eL4s8FSlbgQh@spud>
+Subject: Re: [PATCH v4 05/19] reset: starfive: Factor out common JH71X0 reset
+ code
+Message-ID: <Y/T7EYISh0Zx9xWY@spud>
 References: <20230221024645.127922-1-hal.feng@starfivetech.com>
- <20230221024645.127922-18-hal.feng@starfivetech.com>
+ <20230221024645.127922-6-hal.feng@starfivetech.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zV97GbCkITlnNHaF"
+        protocol="application/pgp-signature"; boundary="j5HBhd3GwB1YKNyE"
 Content-Disposition: inline
-In-Reply-To: <20230221024645.127922-18-hal.feng@starfivetech.com>
+In-Reply-To: <20230221024645.127922-6-hal.feng@starfivetech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---zV97GbCkITlnNHaF
+--j5HBhd3GwB1YKNyE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 21, 2023 at 10:46:43AM +0800, Hal Feng wrote:
+On Tue, Feb 21, 2023 at 10:46:31AM +0800, Hal Feng wrote:
+> From: Emil Renner Berthing <kernel@esmil.dk>
+>=20
+> The StarFive JH7100 SoC has additional reset controllers for audio and
+> video, but the registers follow the same structure. On the JH7110 the
+> reset registers don't get their own memory range, but instead follow the
+> clock control registers. The registers still follow the same structure
+> though, so let's factor out the common code to handle all these cases.
 
-> +		S7_0: cpu@0 {
-> +			compatible = "sifive,s7", "riscv";
-> +			reg = <0>;
-> +			d-cache-block-size = <64>;
-> +			d-cache-sets = <64>;
-> +			d-cache-size = <8192>;
-> +			d-tlb-sets = <1>;
-> +			d-tlb-size = <40>;
-> +			device_type = "cpu";
-> +			i-cache-block-size = <64>;
-> +			i-cache-sets = <64>;
-> +			i-cache-size = <16384>;
-> +			i-tlb-sets = <1>;
-> +			i-tlb-size = <40>;
-> +			mmu-type = "riscv,sv39";
-> +			next-level-cache = <&ccache>;
-> +			riscv,isa = "rv64imac_zicsr_zba_zbb";
+I think you split this out compared to the previous version of t he
+series, and does look as described.
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-I still think that adding just zicsr here is pointless. If you're going
-to be specific, why not also mention that you have zifencei too?
-
-> +			tlb-split;
-> +			status = "disabled";
-> +
-> +			cpu0_intc: interrupt-controller {
-> +				compatible = "riscv,cpu-intc";
-> +				interrupt-controller;
-> +				#interrupt-cells = <1>;
-> +			};
-> +		};
-
-Rest of this looks fine to me though, thanks for adding the s7
-compatible and zba/zbb :)
-
-
---zV97GbCkITlnNHaF
+--j5HBhd3GwB1YKNyE
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY/T5eAAKCRB4tDGHoIJi
-0krCAP0WvomVWVTumjltZETdZGiWXtffg+jVhmIVSy7BtSwvZAD/erv0jRnX/bvF
-4+QnC46U7EwjU++x1eOoHA1kJnAbNgE=
-=k2Zd
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY/T7EAAKCRB4tDGHoIJi
+0rVDAQCw3IZVbliwp83FiyQgHXpcHyUxrgL7eMvpDar3M4hgrwD/Vm55fmaYja6Y
+OJb164Udw7J1FW02H+ccQHNJXHsUdQs=
+=UY4d
 -----END PGP SIGNATURE-----
 
---zV97GbCkITlnNHaF--
+--j5HBhd3GwB1YKNyE--
