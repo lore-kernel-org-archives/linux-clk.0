@@ -2,77 +2,112 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0336C636D7
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 22:50:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B5C7C636D7
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 23:08:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229567AbjBUWu2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 17:50:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45538 "EHLO
+        id S229639AbjBUXIF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Feb 2023 18:08:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbjBUWu1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 17:50:27 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 697ED2ED74;
-        Tue, 21 Feb 2023 14:50:25 -0800 (PST)
+        with ESMTP id S229547AbjBUXIF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 18:08:05 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07CEC13DF4;
+        Tue, 21 Feb 2023 15:08:01 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B76A5B80F01;
-        Tue, 21 Feb 2023 22:50:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F856C433EF;
-        Tue, 21 Feb 2023 22:50:22 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 89FE261208;
+        Tue, 21 Feb 2023 23:08:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6B04C433EF;
+        Tue, 21 Feb 2023 23:08:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677019822;
-        bh=IffyvW5Atm7oajpsNnP6gCiCgyMk3+5BS2IJKL3o0MA=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=AsQX+GUgyy7zRxcMuAfCdV8miYVviuAgxpZ2zzQ2eWm+uSB/a+b6K+2riRB2NoPqU
-         fY1TzpdSHX4PwzWioynKgI6bUzD68K95To239UJcR/Bfp2frBiu5aEUEjG9rp2kc+I
-         OeTKnTnxy3MQI2WpmT6PvlMP0vmWmltP+AqHT90Oy5zVUnI+WOsUPHd21LXI6dib6F
-         FZ0fFhAa27uB3Dp+fMPjiPyvt2ZloPfli4fdnsAjpvjodhU+Tmtw5ksjJjpjk1XxKl
-         snMK30wXygF04U8XaCY7Dl+YkuhfLw2lC7MgPy54Ry2SsAgQomE9EsqXFZ2PXCgVL7
-         jnyasCashMzkg==
-Message-ID: <1e05156120fdfd79ed267f44fe7f3491.sboyd@kernel.org>
+        s=k20201202; t=1677020881;
+        bh=g8YnvXSDdiBcJGkbnJUwhw1gZuR5pUkf8INqeaTaD20=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=tbgTptyIePR25r5jm0JW9KfWwmX6OyBxf4W62CcasLfpu27xEn87gaGhiK5VvxSqz
+         2bHAuMq/JFEKm5fsP9+TtRPOhCdzmyM9LwNDEZKhTDNWPQy4aoR1DRD6QUnzARUNQu
+         4rAEhcD3+501LmEJ0PHdzfe44NFwVvjAO9m83BPqp/hoJyXBjl0bTZ1bHSV8uRKG5H
+         c4nhdthU+doAe34dtum7/fH78bXCJ+nAhzEUJxJuc3mg7eAWyqQIFstkmjbELt2TRG
+         3lwmBkl8YIkDQzVlRi4iho5B+wmsxhRzAfguzMPILnS9EtzPt+nxke8EHy2Us3AlH/
+         e1xxZ3rntDwxQ==
+Message-ID: <9e8952c9415973dc7276185e3cdf5ae7.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230222215834.3507-1-zeming@nfschina.com>
-References: <20230222215834.3507-1-zeming@nfschina.com>
-Subject: Re: [PATCH] zynq: clkc: Add kmalloc allocation flag
+In-Reply-To: <01ee3dc6-a868-fd2b-93aa-11e6bdfcc9df@loongson.cn>
+References: <20221129034157.15036-1-zhuyinbo@loongson.cn> <20221129034157.15036-2-zhuyinbo@loongson.cn> <31c690a347f858a477bbba9c838984ed.sboyd@kernel.org> <4b5fd886-57ce-01ef-8224-432898b7fb1c@loongson.cn> <8332a1cf44b01f06bdd5db9dc5d7f387.sboyd@kernel.org> <01ee3dc6-a868-fd2b-93aa-11e6bdfcc9df@loongson.cn>
+Subject: Re: [PATCH v10 2/4] clk: clk-loongson2: add clock controller driver support
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Li zeming <zeming@nfschina.com>
-To:     Li zeming <zeming@nfschina.com>, michal.simek@xilinx.com,
-        mturquette@baylibre.com
-Date:   Tue, 21 Feb 2023 14:50:20 -0800
+To:     Huacai Chen <chenhuacai@kernel.org>,
+        Jianmin Lv <lvjianmin@loongson.cn>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, liupeibao@loongson.cn,
+        loongarch@lists.linux.dev, wanghongliang@loongson.cn,
+        zhuyinbo <zhuyinbo@loongson.cn>
+Date:   Tue, 21 Feb 2023 15:07:58 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Li zeming (2023-02-22 13:58:34)
-> The kmalloc could crash if allocation fails. Add the __GFP_NOFAIL flag
-> to ensure that allocation succeeds every time.
+Quoting zhuyinbo (2023-02-19 21:44:51)
 >=20
-> Signed-off-by: Li zeming <zeming@nfschina.com>
-> ---
->  drivers/clk/zynq/clkc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> =E5=9C=A8 2023/2/18 =E4=B8=8A=E5=8D=886:15, Stephen Boyd =E5=86=99=E9=81=
+=93:
+> > Quoting zhuyinbo (2023-02-14 23:35:22)
+> >> =E5=9C=A8 2023/2/11 =E4=B8=8A=E5=8D=887:42, Stephen Boyd =E5=86=99=E9=
+=81=93:
+> >>>> +
+> >>>> +err:
+> >>>> +       iounmap(loongson2_pll_base);
+> >>>> +}
+> >>>> +
+> >>>> +CLK_OF_DECLARE(loongson2_clk, "loongson,ls2k-clk", loongson2_clocks=
+_init);
+> >>> Any reason this can't be a platform driver?
 >=20
-> diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
-> index 7bdeaff2bfd6..7621c2f00468 100644
-> --- a/drivers/clk/zynq/clkc.c
-> +++ b/drivers/clk/zynq/clkc.c
-> @@ -427,7 +427,7 @@ static void __init zynq_clk_setup(struct device_node =
-*np)
->                         SLCR_GEM1_CLK_CTRL, 0, 0, &gem1clk_lock);
-> =20
->         tmp =3D strlen("mio_clk_00x");
-> -       clk_name =3D kmalloc(tmp, GFP_KERNEL);
-> +       clk_name =3D kmalloc(tmp, GFP_KERNEL | __GFP_NOFAIL);
+> Your question is that=C2=A0 why I don't use the platform_driver_register =
+to=20
+> register=C2=A0 clk and use CLK_OF_DECLARE ?
 
-There are so many more allocations happening in this function and they
-aren't marked nofail. Why is this one special?
+Yes.
 
-I could see a patch moving mio_clk_00x to the stack and then printing to
-it. But it is also fine like this, so I don't see any reason to change
-this.
+>=20
+> I was=C2=A0 consider other clock controllers of Loongson-2 series may be =
+
+> different with 2k1000 and I can add a line
+>=20
+> CLK_OF_DECLARE() for compatible other platform in the future. eg.
+>=20
+> CLK_OF_DECLARE(loongson2_clk, "loongson,ls2k-clk", loongson2_clocks_init);
+>=20
+> +=C2=A0 CLK_OF_DECLARE(xxx1, xxx2,=C2=A0 xxx3);=C2=A0 // for other clock =
+controllers of=20
+> Loongson-2 series
+>=20
+> >> For the compatible consideration of other clock controllers of
+> >> Loongson-2 series in the future, the way of using dts can be
+> >>
+> >> better compatible.
+> >>
+> > Sorry that sentence doesn't make sense to me. The use of dts doesn't
+> > require the use of CLK_OF_DECLARE.
+>=20
+> yes, the use of dts doesn't require the use of CLK_OF_DECLARE and can=20
+> use platform_driver_register
+>=20
+> but my drvier not use platform_driver_register to register=C2=A0 clk and =
+use=20
+> CLK_OF_DECLARE to match of_clk_init.
+
+of_clk_init() is there to register clks that are needed for early init,
+i.e. the clockevent/clocksource or the root interrupt controller
+(irqchip). Otherwise, it isn't necessary to register clks via
+of_clk_init().
