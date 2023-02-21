@@ -2,250 +2,354 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8CDDC27C7C
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Feb 2023 18:47:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3298C636D6
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 02:46:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231806AbjBTSrl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Feb 2023 13:47:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56982 "EHLO
+        id S233184AbjBUCqz convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Feb 2023 21:46:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231643AbjBTSrk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Feb 2023 13:47:40 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DC50212B3
-        for <linux-clk@vger.kernel.org>; Mon, 20 Feb 2023 10:47:15 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id h32so8458008eda.2
-        for <linux-clk@vger.kernel.org>; Mon, 20 Feb 2023 10:47:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rjVTDW/zD2s+Le91B3zCBcs1rv4t2mfbtUqgQyN4xts=;
-        b=DjXc52Nzn6MngjJkSE1dattHfMIzovliD8QjPQ1i78i3yb0YlX/F83C9fH5pUstGCw
-         xzy62HCQhnz2L9aopqkNY+I/m+nDP6RS+eVtmZhShf8tNBTF6x2R6biBUPI56dwZka5B
-         /r2tMJd/bWfC6CZbMy+11ZRKZ17k9Yo/GcCv0VzdRuaCvH0o67LwdEBRC/IKoBBE5LGh
-         yYZk9OJJnIhjFGFNTNcBMhs4EltPKDh3U0BGmhQkmw4k1BD9y8Y+P3m+a7cCFW1KP+b4
-         q0kqWh+WhBGZI2jppeLbi0CUJk9QAmMmYLXVsPnPb491mVUnzCcPp0DOxHZk6XuM4l8a
-         ANmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rjVTDW/zD2s+Le91B3zCBcs1rv4t2mfbtUqgQyN4xts=;
-        b=nflTt9JVpDGdnIF3npXN3blYa24L285HQYi9a4JICtMEhyC+YsAWH8Cf1nAKYRKS1r
-         R6djGhrEDa14EefvE9IWYfxoVjdiKuf6187HwrhLeTxvzZHOGzUWUhFZ3SQiFSpdBLOV
-         Ps6RiuPd/vI1HtrlwUtsAI7Yjq9Lqy/RwhmOH8bWdAJZiHH0wVAd3ic/mu2kCVTJVGrq
-         km4mobt8duIcSscxCQy9ZvCtNHgMun4l9yA2+HlKW3ud+AG6BM97/0+Qz5AokrZtKQ5N
-         AWpV+CuHNedcYxDAVaMO6CJzLImId72tRJ04Rrku+hl1Y6Sg+XgDpodH+11GaQbXEswA
-         5OGQ==
-X-Gm-Message-State: AO0yUKXpaDkuy/LoQYxUkBjHX5ohneqAT1dbDm4Y4WTmIBeTEG2tcqW0
-        T3BKvVzGrevkLFptQeYcQsowAg==
-X-Google-Smtp-Source: AK7set9pFo7WrK0AsV8Av41VVO8NOqdVMwUh9LSsQGItzjI7Q2VPS8iiVbo+lyWlwjSWpNnV4HNpkQ==
-X-Received: by 2002:a17:906:13d7:b0:88d:f759:15ae with SMTP id g23-20020a17090613d700b0088df75915aemr11304021ejc.42.1676918832732;
-        Mon, 20 Feb 2023 10:47:12 -0800 (PST)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id v6-20020a17090651c600b008b175c46867sm5643361ejk.116.2023.02.20.10.47.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Feb 2023 10:47:12 -0800 (PST)
-Date:   Mon, 20 Feb 2023 20:47:10 +0200
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, mka@chromium.org
-Subject: Re: [PATCH v3 1/2] clk: Add generic sync_state callback for
- disabling unused clocks
-Message-ID: <Y/PALlrQpwPlum9M@linaro.org>
-References: <20221227204528.1899863-1-abel.vesa@linaro.org>
- <ebc257025ebd641e624ef506ea09c800.sboyd@kernel.org>
- <Y/OV3CF0ootyooDJ@linaro.org>
- <Y/OfjbxI1tHYJHNv@linaro.org>
- <CAGETcx_mD3pbAmT5FDZaVAsKb_2PAnrHL8B_6gSR=+a0O4kHfQ@mail.gmail.com>
+        with ESMTP id S233074AbjBUCqz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Feb 2023 21:46:55 -0500
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A539B40D9;
+        Mon, 20 Feb 2023 18:46:52 -0800 (PST)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 74F8224E305;
+        Tue, 21 Feb 2023 10:46:51 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 21 Feb
+ 2023 10:46:51 +0800
+Received: from localhost.localdomain (183.27.98.67) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 21 Feb
+ 2023 10:46:50 +0800
+From:   Hal Feng <hal.feng@starfivetech.com>
+To:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>
+CC:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor@kernel.org>,
+        "Palmer Dabbelt" <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 00/19] Basic clock, reset & device tree support for StarFive JH7110 RISC-V SoC
+Date:   Tue, 21 Feb 2023 10:46:26 +0800
+Message-ID: <20230221024645.127922-1-hal.feng@starfivetech.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGETcx_mD3pbAmT5FDZaVAsKb_2PAnrHL8B_6gSR=+a0O4kHfQ@mail.gmail.com>
+Content-Type: text/plain
+X-Originating-IP: [183.27.98.67]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-02-20 09:51:55, Saravana Kannan wrote:
-> On Mon, Feb 20, 2023 at 8:28 AM Abel Vesa <abel.vesa@linaro.org> wrote:
-> >
-> > On 23-02-20 17:46:36, Abel Vesa wrote:
-> > > On 23-02-17 21:38:22, Stephen Boyd wrote:
-> > > > Quoting Abel Vesa (2022-12-27 12:45:27)
-> > > > > There are unused clocks that need to remain untouched by clk_disable_unused,
-> > > > > and most likely could be disabled later on sync_state. So provide a generic
-> > > > > sync_state callback for the clock providers that register such clocks.
-> > > > > Then, use the same mechanism as clk_disable_unused from that generic
-> > > > > callback, but pass the device to make sure only the clocks belonging to
-> > > > > the current clock provider get disabled, if unused. Also, during the
-> > > > > default clk_disable_unused, if the driver that registered the clock has
-> > > > > the generic clk_sync_state_disable_unused callback set for sync_state,
-> > > > > skip disabling its clocks.
-> 
-> Hi Abel,
-> 
-> We have the day off today, so I'll respond more later. Also, please cc
-> me on all sync_state() related patches in the future.
-> 
+This patch series adds basic clock, reset & DT support for StarFive
+JH7110 SoC. Patch 17 depends on series [1] which provides pinctrl
+dt-bindings. Patch 19 depends on series [2] which provides dt-bindings
+of VisionFive 2 board and JH7110 SoC.
 
-Sure thing.
+You can simply review or test the patches at the link [3].
 
-> I haven't taken a close look at your series yet, but at a glance it
-> seems incomplete.
-> 
-> Any reason you didn't just try to revive my series[1] or nudge me?
-> [1]- https://lore.kernel.org/lkml/20210407034456.516204-3-saravanak@google.com/
+[1]: https://lore.kernel.org/all/20230209143702.44408-1-hal.feng@starfivetech.com/
+[2]: https://lore.kernel.org/all/20230216131511.3327943-1-conor.dooley@microchip.com/
+[3]: https://github.com/hal-feng/linux/commits/visionfive2-minimal
 
-This patchset is heavily reworked and much more simpler as it relies
-strictly on the sync_state being registered by the clock provider.
+Changes since v3:
+- Suggested by Conor, Merged clock & reset series and DT series together
+  so that they could go via the same tree as the dt-binding headers are
+  required by both driver & devicetree.
+- Rebased on tag v6.2.
 
-I saw your patchset a few months ago but then forgot about its
-existence. That's also why I forgot to nudge you. Sorry about that.
+[Clock & reset]
+Patch 2:
+- Split patch 2 into two. One for renaming file and one for renaming
+  variables. (by Conor)
+Patch 4:
+- Split patch 4 into two. One for code movement and one for
+  extraction. (by Conor)
+Patch 5 & 9 & 10 & 11:
+- Fixed the issues reported by kernel test robot.
+Patch 9:
+- Set (&priv->base) as driver data instead of (priv->base).
+- Set the frequency of clock PLL0 as 1000MHz for Synchronizing with the
+  lastest u-boot setting from StarFive. (by Emil)
+- Used devm_kzalloc() instead of kzalloc() when registering aux device.
+Patch 10:
+- Set (&priv->base) as driver data instead of (priv->base).
+Patch 11:
+- Used (*base) to get the register base address instead of (base).
 
-> 
-> At the least, I know [1] works on all Android devices (including
-> Qualcomm SoCs) released in the past 2-3 years or more. If [1] works
-> for you, I'd rather land that after addressing Stephen's comments
-> there (I remember them being fairly easy to address comments) instead
-> of whipping up a new series that's not as well used. I just got busy
-> with other things and addressing more fundamental fw_devlink TODOs
-> before getting back to this.
-> 
-> Hi Bjorn,
-> 
-> I see in another reply you've said:
-> 
-> Applied, thanks!
-> 
-> [1/2] clk: Add generic sync_state callback for disabling unused clocks
->       commit: 26b36df7516692292312063ca6fd19e73c06d4e7
-> [2/2] clk: qcom: sdm845: Use generic clk_sync_state_disable_unused callback
->       commit: 99c0f7d35c4b204dd95ba50e155f32c99695b445
-> 
-> Where exactly have you applied them? I hope you haven't applied the
-> clk.c changes to some tree that goes into 6.3.
+[Device tree]
+- Dropped patch 1, 4, 5 because they were accepted.
+- Added a new patch to add SiFive S7 compatible. (by Conor)
+- Added a new patch to add JH7110 pin function definitions.
+Patch 6:
+- Changed the label "S76_0" to "S7_0" and used compatible "sifive,s7"
+  for core 0.
+- Updated ISA of each cores. (by Conor)
+- Made the node names generic. (by Krzysztof)
+- Added clock-output-names for all external clocks.
+- Added i2c0~6 nodes.
+- Changed the node name "gpio" to "pinctrl". Changed the label "gpio"
+  and "gpioa" to "sysgpio" and "aongpio". (by Conor)
+Patch 7:
+- Separated the long lines into more lines in Makefile. (by Conor)
+- Renamed jh7110-starfive-visionfive-2-va.dts and
+  jh7110-starfive-visionfive-2-vb.dts to
+  jh7110-starfive-visionfive-2-v1.2a.dts and
+  jh7110-starfive-visionfive-2-v1.3b.dts.
+  Changed the model and compatible to match v1.2A and v1.3B which
+  are printed on the silkscreen of VisionFive 2 board. (by Emil)
+- Configured pins for i2c0/2/5/6 and enabled them.
 
-I think it is already part of Bjorn's Qualcomm clocks pull request.
+  clock & reset v3: https://lore.kernel.org/all/20221220005054.34518-1-hal.feng@starfivetech.com/
+  DT v3: https://lore.kernel.org/all/20221220011247.35560-1-hal.feng@starfivetech.com/
 
-> 
-> -Saravana
-> 
-> > > >
-> > > > How does that avoid disabling clks randomly in the clk tree? I'm
-> > > > concerned about disabling an unused clk in the middle of the tree
-> > > > because it doesn't have a driver using sync state, while the clk is the
-> > > > parent of an unused clk that is backed by sync state.
-> > > >
-> > > >    clk A -->  clk B
-> > > >
-> > > > clk A: No sync state
-> > > > clk B: sync state
-> > > >
-> > > > clk B is left on by the bootloader. __clk_disable_unused(NULL) is called
-> > > > from late init. Imagine clk A is the root of the tree.
-> > > >
-> > > >     clk_disable_unused_subtree(clk_core A)
-> > > >       clk_disable_unused_subtree(clk_core B)
-> > > >         if (from_sync_state && core->dev != dev)
-> > > >           return;
-> > > >       ...
-> > > >       clk core A->ops->disable()
-> > > >
-> > > > clk core B is off now?
-> > >
-> > > Yes, that is correct. But the same thing is happening currently if the
-> > > clk_ignore_unused in not specified. At least with this new approach, we
-> > > get to leave unused clocks enabled either until sync_state is called or forever.
-> > > All the provider has to do is to implement a sync_state callback (or use
-> > > the generic one provided). So the provider of clk A would obviously need
-> > > a sync state callback registered.
-> > >
-> > > >
-> > > > Also sync_state seems broken right now. I saw mka mentioned that if you
-> > > > have a device node enabled in your DT but never enable a driver for it
-> > > > in the kernel we'll never get sync_state called. This is another
-> > > > problem, but it concerns me that sync_state would make the unused clk
-> > > > disabling happen at some random time or not at all.
-> > >
-> > > Well, the fact that the sync state not being called because a driver for
-> > > a consumer device doesn't probe does not really mean it is broken. Just
-> > > because the consumer driver hasn't probed yet, doesn't mean it will
-> > > not probe later on.
-> > >
-> >
-> > CC'ed Saravana
-> >
-> > > That aside, rather than going with clk_ignore_unused all the time on
-> > > qcom platforms, at least in a perfect scenario (where sync state is
-> > > reached for all providers) the clocks get disabled.
-> > >
-> > > >
-> > > > Can the problem be approached more directly? If this is about fixing
-> > > > continuous splash screen, then I wonder why we can't list out the clks
-> > > > that we know are enabled by the bootloader in some new DT binding, e.g.:
-> > > >
-> > > >     clock-controller {
-> > > >             #clock-cells = <1>;
-> > > >             boot-handoff-clocks = <&consumer_device "clock cells for this clk provider">;
-> > > >     };
-> > > >
-> > > > Then mark those as "critical/don't turn off" all the way up the clk tree
-> > > > when the clk driver probes by essentially incrementing the
-> > > > prepare/enable count but not actually touching the hardware, and when
-> > > > the clks are acquired by clk_get() for that device that's using them
-> > > > from boot we make the first clk_prepare_enable() do nothing and not
-> > > > increment the count at all. We can probably stick some flag into the
-> > > > 'struct clk' for this when we create the handle in clk_get() so that the
-> > > > prepare and enable functions can special case and skip over.
-> > >
-> > > Well, that means we need to play whack-a-mole by alsways adding such clocks to
-> > > devicetree.
-> > >
-> > > >
-> > > > The sync_state hook operates on a driver level, which is too large when
-> > > > you consider that a single clk driver may register hundreds of clks that
-> > > > are not related. We want to target a solution at the clk level so that
-> > > > any damage from keeping on all the clks provided by the controller is
-> > > > limited to just the drivers that aren't probed and ready to handle their
-> > > > clks. If sync_state could be called whenever a clk consumer consumes a
-> > > > clk it may work? Technically we already have that by the clk_hw_provider
-> > > > function but there isn't enough information being passed there, like the
-> > > > getting device.
-> > >
-> > > Actually, from the multitude of clocks registered by one provider, the
-> > > ones already explicitely enabled (and obvisously their parents) by thier
-> > > consumer are safe. The only ones we need to worry about are the ones that
-> > > might be enabled by bootloader and need to remain on. With the sync state
-> > > approach, the latter mentioned clocks will either remain on indefinitely
-> > > or will be disabled on sync state. The provider driver is the only level
-> > > that has a registered sync state callback.
-> > >
-> > > >
-> > > > > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> > > > > index 842e72a5348f..cf1adfeaf257 100644
-> > > > > --- a/include/linux/clk-provider.h
-> > > > > +++ b/include/linux/clk-provider.h
-> > > > > @@ -720,6 +720,7 @@ struct clk *clk_register_divider_table(struct device *dev, const char *name,
-> > > > >                 void __iomem *reg, u8 shift, u8 width,
-> > > > >                 u8 clk_divider_flags, const struct clk_div_table *table,
-> > > > >                 spinlock_t *lock);
-> > > > > +void clk_sync_state_disable_unused(struct device *dev);
-> > > >
-> > > > This is a weird place to put this. Why not in the helper functions
-> > > > section?
-> > >
-> > > Sure this can be moved.
-> > >
-> > > >
-> > > > >  /**
-> > > > >   * clk_register_divider - register a divider clock with the clock framework
-> > > > >   * @dev: device registering this clock
+Changes since v2:
+[Clock & reset]
+- Rebased on tag v6.1.
+- Added "JH71X0" to the StarFive driver headers in MAINTAINERS.
+- Removed Co-developed-by tag of Hal in patch 1 and patch 4.
+- Changed the commit author from Hal to Emil in patch 2 and patch 5.
+  Removed Co-developed-by tag of Emil in patch 2 and patch 5. (by Emil)
+- Improved the coding style of patch 11, 12 and 13.
+- Dropped patch 14. (by Emil)
+Patch 4:
+- Passed the "owner" member of reset_controller_dev structure
+  directly in reset_starfive_jh7100_register(). (by Emil)
+- Added MAINTAINERS changes.
+Patch 7:
+- Split patch 7 into sys part and aon part. Merged them into patch 9 and
+  patch 10 respectively. (by Krzysztof)
+- Renamed include/dt-bindings/clock/starfive-jh7110.h to
+  include/dt-bindings/clock/starfive,jh7110-crg.h. (by Krzysztof)
+- Synchronized the definitions with the latest changes from Emil.
+Patch 8:
+- Split patch 8 into sys part and aon part. Merged them into patch 9 and
+  patch 10 respectively. (by Krzysztof)
+- Renamed include/dt-bindings/reset/starfive-jh7110.h to
+  include/dt-bindings/reset/starfive,jh7110-crg.h. (by Krzysztof)
+- Fixed the date of Copyright. (by Emil)
+- Dropped weird indentations. (by Krzysztof)
+- Synchronized the definitions with the latest changes from Emil.
+Patch 9:
+- Improved the description of clocks. (by Emil and Krzysztof)
+- Added MAINTAINERS changes.
+Patch 10:
+- Improved the description of clocks. (by Emil and Krzysztof)
+- Changed the clock-name "clk_rtc" to "rtc_osc" and  "apb_bus_func" to
+  "apb_bus".
+Patch 11:
+- Removed the flags of trace/debug clocks and set the flags of core clocks
+  as CLK_IS_CRITICAL. (by Emil)
+- Deleted the extra 1-1 clocks and synchronized the clock tree with the
+  latest changes from Emil. (by Emil)
+- Selected RESET_STARFIVE_JH7110 in Kconfig option CLK_STARFIVE_JH7110_SYS.
+Patch 12:
+- Changed the macro JH7110_AONCLK_RTC to JH7110_AONCLK_RTC_OSC and
+  JH7110_AONCLK_APB_BUS_FUNC to JH7110_AONCLK_APB_BUS.
+- Synchronized the clock tree with the latest changes from Emil.
+- Set the MODULE_LICENSE as "GPL" according to commit bf7fbeeae6db.
+Patch 13:
+- Removed the "asserted" member in reset_info structure and always pass
+  NULL when calling reset_starfive_jh71x0_register(). (by Emil)
+
+[Device tree]
+- Rebased on tag v6.1.
+- Dropped patch 8 because it was merged.
+Patch 1:
+- Made the links into "Link:" tags. (by Conor)
+- Corrected the board name to "VisionFive 2" instead of
+  "VisionFive V2" and added compatibles for version A and
+  version B of VisionFive 2. (by Emil)
+Patch 4:
+- Used "sifive,ccache0" compatible string to match. (by Conor)
+Patch 5:
+- Dropped "select SIFIVE_CCACHE" in config SOC_STARFIVE. (by Conor)
+- Dropped "starfive,jh7110-ccache" compatible in
+  drivers/soc/sifive/sifive_ccache.c.
+Patch 6:
+- Removed all "clock-frequency = <0>". (by Conor)
+- Sorted the nodes after their addresses. (by Emil)
+- Renamed "clk_rtc" to "rtc_osc".
+- Added "sifive,ccache0" compatible in the cache-controller node.
+- Renamed "JH7110_SYSCLK_APB_BUS_FUNC" to "JH7110_SYSCLK_APB_BUS" and
+  renamed "apb_bus_func" to "apb_bus".
+  Renamed "JH7110_SYSCLK_IOMUX" to "JH7110_SYSCLK_IOMUX_APB".
+  Renamed "JH7110_SYSRST_IOMUX" to "JH7110_SYSRST_IOMUX_APB".
+  Renamed "JH7110_AONRST_AON_IOMUX" to "JH7110_AONRST_IOMUX".
+- Removed "reg-names" in gpio nodes.
+Patch 7:
+- Corrected the board name to "VisionFive 2" instead of "VisionFive V2".
+- Renamed jh7110-starfive-visionfive-v2.dts to
+  jh7110-starfive-visionfive-2.dtsi.
+- Added dts for VisionFive 2 version A and version B boards.
+- In the chosen node, deleted "linux,initrd-start" and "linux,initrd-end"
+  and changed the value of "stdout-path" to "serial0:115200n8".
+- Changed the bias of uart0 "rx-pins" to
+  "bias-disable; /* external pull-up */".
+- Renamed "clk_rtc" to "rtc_osc".
+- Moved the gpio node behind the uart0 node.
+
+  clock & reset v2: https://lore.kernel.org/all/20221118010627.70576-1-hal.feng@starfivetech.com/
+  DT v2: https://lore.kernel.org/all/20221118011714.70877-1-hal.feng@starfivetech.com/
+
+Changes since v1:
+[Clock & reset]
+- Rebased on tag v6.1-rc5.
+- Rewrote the clock and reset drivers using auxiliary bus framework, so
+  patch 8, 9, 15 were dropped and all patches changed a lot. (by Stephen)
+- Split Patch 14 into two patches. One is for factoring out the common
+  JH71X0 code, the another one is for renaming. (by Stephen)
+- Created a subdirectory for StarFive reset drivers.
+- Factored out common JH71X0 reset code.
+- Renamed the common clock and reset code from "*starfive*" or
+  "*STARFIVE*" to "*jh71x0*" or "*JH71X0*".
+- Combined JH7110 system and always-on clock DT binding headers in one
+  file named "include/dt-bindings/clock/starfive-jh7110.h".
+- Renamed clock definitions "JH7110_SYSCLK_PCLK2_MUX_FUNC_PCLK" and
+  "JH7110_SYSCLK_U2_PCLK_MUX_PCLK" to "JH7110_SYSCLK_PCLK2_MUX_FUNC" and
+  "JH7110_SYSCLK_PCLK2_MUX".
+- Rewrote the DT bindings of clock and reset for using auxiliary bus.
+- Registered an auxiliary device for reset controller in clock drivers.
+- Changed clock names "CODAJ*" and "WAVE*" to "codaj*" and "wave*".
+  Changed clock names "u2_pclk_mux_func_pclk" and "u2_pclk_mux_pclk" to
+  "pclk2_mux_func" and "pclk2_mux".
+- Changed the flags of clock apb0 and noc_bus_isp_axi to CLK_IS_CRITICAL
+  as suggested by StarFive SDK group.
+- Registered clock gmac0_gtxc as a gate clock instead of a div clock
+  as suggested by StarFive SDK group.
+- Changed the frequency of clock pll2_out to 1188MHz as suggested by
+  StarFive SDK group.
+- Fixed the bug that the clock JH7110_AONCLK_GMAC0_GTXCLK was not handled
+  in JH7110 always-on clock driver.
+- Registered the reset driver as an auxiliary driver.
+- Reworded the commit messages.
+
+[Device tree]
+- Rebased on tag v6.1-rc5.
+- Added blank line in patch 1. (by Krzysztof)
+- Rebased patch 4 and 6 on the newest code. (by Conor)
+- Dropped patch 5. (by Conor)
+- Removed the quirk of JH7100 in patch 6, considering this patch series
+  should only add support for JH7110.
+- For patch 27, added Co-developed-by tag for Jianlong and me. Renamed
+  cpu labels to "S76_0", "U74_*" instead of "cpu*" following the style
+  of jh7100.dtsi. Moved all "clock-frequency" properties to the board dts.
+  Rewrote clock-controller nodes and deleted reset-controller nodes for
+  using auxiliary bus. Rewrote gpio nodes following generic pinctrl
+  bindings. Removed the redundant second reset entry of uart nodes.
+- For patch 28, added Co-developed-by tag for Jianlong and me. Added a
+  chosen node. Removed reserved-memory node. Added fixed frequency clock
+  nodes for overriding the "clock-frequency" properties. Rewrote the gpio
+  nodes following generic pinctrl bindings.
+- Dropped patch 30. (by Conor)
+- Reworded the commit messages.
+
+  v1: https://lore.kernel.org/all/20220929143225.17907-1-hal.feng@linux.starfivetech.com/
+
+Emil Renner Berthing (16):
+  clk: starfive: Factor out common JH7100 and JH7110 code
+  clk: starfive: Rename clk-starfive-jh7100.h to clk-starfive-jh71x0.h
+  clk: starfive: Rename "jh7100" to "jh71x0" for the common code
+  reset: Create subdirectory for StarFive drivers
+  reset: starfive: Factor out common JH71X0 reset code
+  reset: starfive: Extract the common JH71X0 reset code
+  reset: starfive: Rename "jh7100" to "jh71x0" for the common code
+  reset: starfive: jh71x0: Use 32bit I/O on 32bit registers
+  dt-bindings: clock: Add StarFive JH7110 system clock and reset
+    generator
+  dt-bindings: clock: Add StarFive JH7110 always-on clock and reset
+    generator
+  clk: starfive: Add StarFive JH7110 system clock driver
+  clk: starfive: Add StarFive JH7110 always-on clock driver
+  dt-bindings: timer: Add StarFive JH7110 clint
+  dt-bindings: interrupt-controller: Add StarFive JH7110 plic
+  riscv: dts: starfive: Add initial StarFive JH7110 device tree
+  riscv: dts: starfive: Add StarFive JH7110 VisionFive 2 board device
+    tree
+
+Hal Feng (2):
+  reset: starfive: Add StarFive JH7110 reset driver
+  dt-bindings: riscv: Add SiFive S7 compatible
+
+Jianlong Huang (1):
+  riscv: dts: starfive: Add StarFive JH7110 pin function definitions
+
+ .../clock/starfive,jh7110-aoncrg.yaml         |  76 ++
+ .../clock/starfive,jh7110-syscrg.yaml         |  80 ++
+ .../sifive,plic-1.0.0.yaml                    |   1 +
+ .../devicetree/bindings/riscv/cpus.yaml       |   1 +
+ .../bindings/timer/sifive,clint.yaml          |   1 +
+ MAINTAINERS                                   |  16 +-
+ arch/riscv/boot/dts/starfive/Makefile         |   6 +-
+ arch/riscv/boot/dts/starfive/jh7110-pinfunc.h | 308 ++++++++
+ .../jh7110-starfive-visionfive-2-v1.2a.dts    |  13 +
+ .../jh7110-starfive-visionfive-2-v1.3b.dts    |  13 +
+ .../jh7110-starfive-visionfive-2.dtsi         | 215 ++++++
+ arch/riscv/boot/dts/starfive/jh7110.dtsi      | 507 +++++++++++++
+ drivers/clk/starfive/Kconfig                  |  27 +
+ drivers/clk/starfive/Makefile                 |   6 +-
+ .../clk/starfive/clk-starfive-jh7100-audio.c  |  74 +-
+ drivers/clk/starfive/clk-starfive-jh7100.c    | 713 +++++-------------
+ drivers/clk/starfive/clk-starfive-jh7100.h    | 112 ---
+ .../clk/starfive/clk-starfive-jh7110-aon.c    | 156 ++++
+ .../clk/starfive/clk-starfive-jh7110-sys.c    | 448 +++++++++++
+ drivers/clk/starfive/clk-starfive-jh71x0.c    | 383 ++++++++++
+ drivers/clk/starfive/clk-starfive-jh71x0.h    | 122 +++
+ drivers/reset/Kconfig                         |   8 +-
+ drivers/reset/Makefile                        |   2 +-
+ drivers/reset/reset-starfive-jh7100.c         | 173 -----
+ drivers/reset/starfive/Kconfig                |  20 +
+ drivers/reset/starfive/Makefile               |   5 +
+ .../reset/starfive/reset-starfive-jh7100.c    |  74 ++
+ .../reset/starfive/reset-starfive-jh7110.c    |  64 ++
+ .../reset/starfive/reset-starfive-jh71x0.c    | 131 ++++
+ .../reset/starfive/reset-starfive-jh71x0.h    |  20 +
+ .../dt-bindings/clock/starfive,jh7110-crg.h   | 225 ++++++
+ .../dt-bindings/reset/starfive,jh7110-crg.h   | 154 ++++
+ 32 files changed, 3296 insertions(+), 858 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-aoncrg.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+ create mode 100644 arch/riscv/boot/dts/starfive/jh7110-pinfunc.h
+ create mode 100644 arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.2a.dts
+ create mode 100644 arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.3b.dts
+ create mode 100644 arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+ create mode 100644 arch/riscv/boot/dts/starfive/jh7110.dtsi
+ delete mode 100644 drivers/clk/starfive/clk-starfive-jh7100.h
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-aon.c
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-sys.c
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh71x0.c
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh71x0.h
+ delete mode 100644 drivers/reset/reset-starfive-jh7100.c
+ create mode 100644 drivers/reset/starfive/Kconfig
+ create mode 100644 drivers/reset/starfive/Makefile
+ create mode 100644 drivers/reset/starfive/reset-starfive-jh7100.c
+ create mode 100644 drivers/reset/starfive/reset-starfive-jh7110.c
+ create mode 100644 drivers/reset/starfive/reset-starfive-jh71x0.c
+ create mode 100644 drivers/reset/starfive/reset-starfive-jh71x0.h
+ create mode 100644 include/dt-bindings/clock/starfive,jh7110-crg.h
+ create mode 100644 include/dt-bindings/reset/starfive,jh7110-crg.h
+
+
+base-commit: c9c3395d5e3dcc6daee66c6908354d47bf98cb0c
+-- 
+2.38.1
+
