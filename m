@@ -2,124 +2,125 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2ED3C61DA3
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 13:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB15C61DA3
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 14:11:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233865AbjBUNiJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 08:38:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55640 "EHLO
+        id S233751AbjBUOL6 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Feb 2023 09:11:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233829AbjBUNiI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 08:38:08 -0500
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3896FD525
-        for <linux-clk@vger.kernel.org>; Tue, 21 Feb 2023 05:38:03 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id g1so17076357edz.7
-        for <linux-clk@vger.kernel.org>; Tue, 21 Feb 2023 05:38:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jEKp5jxwSSp5xv1BprgYnfrSsvOH2oqVyu+hm71G5FA=;
-        b=rF//HoJWLXcJthbLa7TIgEu0wOI//lZV5cE0z6TSi9Y6/DlAjSo5YbZr7OY6zwoYLz
-         qeVptqcYvdbsYz9VXWMyaE5v36tGYKkcZjB5uL9EuLDgLa6Vr1jag1FrA2l/5wfHliSy
-         fKD+js2T48YSBcQHmUBandzjMDsgwrKygnlgcS253My4hKbaGrb06xcDmE73J/tTaSox
-         k4DtJkZNxsCpBBQJkbhClsEBwnEdUgJkeKhIBg+7bH2VlgjMNNAEGolcGw+OWIo3kOrI
-         imH0de/B61hXN7ngislSUdcsfLHyaDfXDs75LxdH05EeRdZgVtz3a2i5XV3eNVBopREu
-         A8AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jEKp5jxwSSp5xv1BprgYnfrSsvOH2oqVyu+hm71G5FA=;
-        b=ZDNCv/GwXVBFy2zmZmpX3vdTf6UhXlf6E46RPSS/Alx4h94VBmARyX6N/TnrG6tMMT
-         qZiSfwqPsDQTOsMjqwrWwmmdN48s+fjAgU8TqQcOGjJzMAFR+zYE3oKQci4WEarQXOK2
-         Cj5vPZNEhN7woZ7ePEztCNtWS/yfUPz/lcqPMZs+M22EVnsQvdYvCOQyBksiBqjvVQKX
-         Rpkm+5NvJtW+rYFzw7FoVE6RkzLv65X90cYNYXcOhpr1tQnixAzWjcR1YnvRoMm+lOse
-         2x+wi/W2JPSU5yIAmLaC4wCnebGjqKINm57A5S04YsvyRvuzwmxVKmXPANVOnFKOqy4J
-         HDhw==
-X-Gm-Message-State: AO0yUKWdIP2qEOcd/2lDaqQiiDUEcr3ZHkvQK0u311Jfu/9KU6uQZjAS
-        KCszYh8FbuUR5K4/RFzNFy2gNA==
-X-Google-Smtp-Source: AK7set8b68dqxaiVXuJPBrEAexAK6vPXVsKEK7Ugt5Ougrz5aWPm3HYk/qg14MA5JIqtzCnZml+91Q==
-X-Received: by 2002:a17:906:490b:b0:8b1:3a8f:a51 with SMTP id b11-20020a170906490b00b008b13a8f0a51mr9970495ejq.15.1676986681679;
-        Tue, 21 Feb 2023 05:38:01 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id r27-20020a50d69b000000b004acd14ab4dfsm2262994edi.41.2023.02.21.05.38.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Feb 2023 05:38:01 -0800 (PST)
-Message-ID: <ae468e63-d8d3-dbfb-64da-75a147e1cd2d@linaro.org>
-Date:   Tue, 21 Feb 2023 14:37:59 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v2 01/11] dt-bindings: clock: Add StarFive JH7110
- System-Top-Group clock and reset generator
-To:     Xingyu Wu <xingyu.wu@starfivetech.com>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S233346AbjBUOL5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 09:11:57 -0500
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25659279B7;
+        Tue, 21 Feb 2023 06:11:53 -0800 (PST)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id F0ADC24E01A;
+        Tue, 21 Feb 2023 22:11:51 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 21 Feb
+ 2023 22:11:51 +0800
+Received: from localhost.localdomain (183.27.98.67) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 21 Feb
+ 2023 22:11:50 +0800
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+To:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
+        Emil Renner Berthing <kernel@esmil.dk>
+CC:     Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+        "Paul Walmsley" <paul.walmsley@sifive.com>,
         Palmer Dabbelt <palmer@dabbelt.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
         Hal Feng <hal.feng@starfivetech.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20230221083323.302471-1-xingyu.wu@starfivetech.com>
- <20230221083323.302471-2-xingyu.wu@starfivetech.com>
- <430318ed-5b30-e549-a5ce-df83aa18adf9@linaro.org>
- <43d00fd9-ab24-442e-3f82-208edaf399d0@starfivetech.com>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <43d00fd9-ab24-442e-3f82-208edaf399d0@starfivetech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Xingyu Wu <xingyu.wu@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH v1 0/3] Add PLL clocks driver for StarFive JH7110
+Date:   Tue, 21 Feb 2023 22:11:44 +0800
+Message-ID: <20230221141147.303642-1-xingyu.wu@starfivetech.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [183.27.98.67]
+X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/02/2023 14:01, Xingyu Wu wrote:
-> On 2023/2/21 19:25, Krzysztof Kozlowski wrote:
->> On 21/02/2023 09:33, Xingyu Wu wrote:
->>> Add bindings for the System-Top-Group clock and reset generator (STGCRG)
->>> on the JH7110 RISC-V SoC by StarFive Ltd.
->>>
->>> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
->>
->>
->>> +    };
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index 93eb504c3b21..2e70c9f21989 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -19914,6 +19914,7 @@ F:	arch/riscv/boot/dts/starfive/
->>>  STARFIVE JH71X0 CLOCK DRIVERS
->>>  M:	Emil Renner Berthing <kernel@esmil.dk>
->>>  M:	Hal Feng <hal.feng@starfivetech.com>
->>> +M:	Xingyu Wu <xingyu.wu@starfivetech.com>
->>
->> No improvements here. You add here new bindings for one device and then
->> - without explanation - add yourself to all Starfive clock bindings.
->> Either explain it or drop it or move it to separate patch.
->>
->> You already got comment for this.
->>
-> 
-> Sorry, I didn't understand what you meant before. Now my understanding is that, 
-> If I improvements JH71X0 driver no JH7110 driver, I could add this here. Right?
-> 
-> Is it OK if I do it this way to move it to separate patch like this?:
-> +STARFIVE JH7110 STG CLOCK DRIVERS
-> +M:	Xingyu Wu <xingyu.wu@starfivetech.com>
+This patch serises are to add PLL clocks driver and modify
+the system clock driver to depend on PLL clocks driver for the 
+StarFive JH7110 RISC-V SoC.
 
-If you want to be the maintainer of all drivers, add separate commit for
-this, so this is obvious. Or at least explain this change in commit msg.
+PLL are high speed, low jitter frequency synthesizers in JH7110.
+Each PLL clocks work in integer mode or fraction mode by some dividers,
+and the dividers are set in several syscon registers.
+The formula for calculating frequency is: 
+Fvco = Fref * (NI + NF) / M / Q1
 
-Best regards,
-Krzysztof
+The first patch adds docunmentation to describe PLL clock bindings,
+and the second patch adds driver to support PLL clocks for JH7110 and 
+modifies the system clock driver.
+
+This patchset should be applied after this patchset about JH71x0 clock
+driver:
+https://lore.kernel.org/all/20230221024645.127922-1-hal.feng@starfivetech.com/
+
+Xingyu Wu (3):
+  dt-bindings: clock: Add StarFive JH7110 PLL clock generator
+  clk: starfive: Add StarFive JH7110 PLL clock driver
+  riscv: dts: starfive: jh7110: Add PLL clock node
+
+ .../bindings/clock/starfive,jh7110-pll.yaml   |  45 ++
+ arch/riscv/boot/dts/starfive/jh7110.dtsi      |  15 +-
+ drivers/clk/starfive/Kconfig                  |   9 +
+ drivers/clk/starfive/Makefile                 |   1 +
+ .../clk/starfive/clk-starfive-jh7110-pll.c    | 433 ++++++++++++++++++
+ .../clk/starfive/clk-starfive-jh7110-pll.h    | 286 ++++++++++++
+ .../clk/starfive/clk-starfive-jh7110-sys.c    |  40 +-
+ .../dt-bindings/clock/starfive,jh7110-crg.h   |  12 +-
+ 8 files changed, 807 insertions(+), 34 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-pll.c
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-pll.h
+
+
+base-commit: c9c3395d5e3dcc6daee66c6908354d47bf98cb0c
+prerequisite-patch-id: 4dc515731ce237184553c1606ffb3afaeb51c3d8
+prerequisite-patch-id: ac150a8c622e858e088df8121093d448df49c245
+prerequisite-patch-id: a4255724d4698f1238663443024de56de38d717b
+prerequisite-patch-id: a798370d170dc2bcc79ed86f741c21c1e6d87c78
+prerequisite-patch-id: 203d2500cadc112bd20fefc56eabf1470d3d2d2d
+prerequisite-patch-id: 315303931e4b6499de7127a88113763f86e97e16
+prerequisite-patch-id: 40cb8212ddb024c20593f73d8b87d9894877e172
+prerequisite-patch-id: a1673a9e9f19d6fab5a51abb721e54e36636f067
+prerequisite-patch-id: 94860423c7acc9025249d4bb36652a585bd0a797
+prerequisite-patch-id: b5084253283929d9a6d0e66c350400c7c85d034d
+prerequisite-patch-id: a428ed7a2aa45abab86923dc467e1e6b08427e85
+prerequisite-patch-id: d4f80829fca7ce370a6fad766593cdcb502fa245
+prerequisite-patch-id: e3490e19e089fe284334db300ee189b619a61628
+prerequisite-patch-id: 34298e3882261bc2d72955b1570cc9612ab7d662
+prerequisite-patch-id: 377c5c282a0776feee9acd10b565adbd5275a67e
+prerequisite-patch-id: 3ccee718de0750adbf8d0b77d553a2778a344f64
+prerequisite-patch-id: 4710f2ac22dca0bdd9ff5d744d2c37cab3c74515
+prerequisite-patch-id: 65f2aed865d88e6fa468d2923527b523d4313857
+prerequisite-patch-id: 258ea5f9b8bf41b6981345dcc81795f25865d38f
+prerequisite-patch-id: 8b6f2c9660c0ac0ee4e73e4c21aca8e6b75e81b9
+prerequisite-patch-id: e3b986b9c60b2b93b7812ec174c9e1b4cfb14c97
+prerequisite-patch-id: a2b3a9cff8a683422eb0ccf3a0850091401812d4
+prerequisite-patch-id: dbb0c0151b8bdf093e6ce79fd2fe3f60791a6e0b
+prerequisite-patch-id: ea9a6d0313dd3936c8de0239dc2072c3360a2f6b
+prerequisite-patch-id: d57e95d31686772abc4c4d5aa1cadc344dc293cd
+prerequisite-patch-id: 29aab7148bf56a20acddcb8a11f290705fcc97f6
+prerequisite-patch-id: 8adbb4af2c71fde6b8c795bde028157a69c51c31
+prerequisite-patch-id: a4689a8a4cc56984b5845b59f5a84e5214d91543
+-- 
+2.25.1
 
