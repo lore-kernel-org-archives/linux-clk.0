@@ -2,126 +2,108 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E91BC61DA3
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 11:07:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 707B2C6379F
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 11:25:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233908AbjBULHG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 06:07:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34540 "EHLO
+        id S233781AbjBULZr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Feb 2023 06:25:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234016AbjBULGz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 06:06:55 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFC2D2685D;
-        Tue, 21 Feb 2023 03:06:49 -0800 (PST)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 20996660087C;
-        Tue, 21 Feb 2023 11:06:47 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676977608;
-        bh=PMnNGjPvWftnPBnMRvQt50qzmTHbAhshh3s2urxuXwc=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=eUyminmoBQKwOMgFYfsku8UgYGtzivSZAatwk2TUILx4JcfaZCGhc9o/vMpZD/uUu
-         P5/ZsGU8+WXaDz4WVXyjFr2ytyStSTvgGq5050n7D++vPdPp2RwVLRyjKLWdrTl4k+
-         pclKrO6otdKc6mx56gLFJDKIgSNMiuHOHOO8TxdKljbgieN5bAEfyC3l9Q8oGiFCeH
-         RpffElpyxAmTirjQdKcgNkOJLL2vYm35JfuyhACyLbTZhFtSmNxCONKq9gGTfkHUYp
-         mOivYiessym9uWjAv4UrGs3otnsTxfdxBKCeVyyPn6MOihSEKvPXcnNtmyTpOuZQdq
-         d8v63Rz/MocTQ==
-Message-ID: <6dd97011-9ea1-6276-6589-9dd97ccff8d6@collabora.com>
-Date:   Tue, 21 Feb 2023 12:06:44 +0100
+        with ESMTP id S233557AbjBULZq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 06:25:46 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6711024488
+        for <linux-clk@vger.kernel.org>; Tue, 21 Feb 2023 03:25:45 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id ee7so698076edb.2
+        for <linux-clk@vger.kernel.org>; Tue, 21 Feb 2023 03:25:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GS/FuJCPhQ1uOLyGjkR0iAM8SEKwfPpWzwME5MLPJhM=;
+        b=e7Loni/yJXd48Da9Dl6Q0CN99QB8bdYlsJD9tqOTTTgROY9tjFa+mhRq4YeAqspbmh
+         1UcUCGn9b283dP37/+guJd1qaK1O+5ojvaIHvB4vIL3rK2Rc0fdR3rblSSO+BTAvv8Zc
+         dFoTk/29lWYc+RuNNuJzSoYizvCuYLZMg7EehNrJXDD0Vb3mk52amkM5DbQsUkrYI3Wh
+         TpJNHS8s1EQEo0vhBvuuVDguD46CYhOnQ3fj5/ReU4+7VgKymiF5PSe2YkuC/vVdGBfA
+         9/BtrpQQZ9TutamhoSH6bn2CqdHy3FR+1pIp3tfsBxw1gkqyu5DAsTN4MqONTlmaBjhZ
+         f0ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GS/FuJCPhQ1uOLyGjkR0iAM8SEKwfPpWzwME5MLPJhM=;
+        b=pwsur4F9p+Q5jppXpRTlT0JadI+eih2TDsXx//8Q+Ii+TM6mPyjF87Ii2a1cxqG/dG
+         Ev+c4Dm6KyDRLQsaymBEAnAHigNHERFl+p/MYcFsZL/wsLjyO4hgQdLZUV357PHRyZug
+         o/mGgohIyaiRp/wis5Bcgk1CmPJTeKfQDHx9fDsFRKusKSrxQRvQ18avISKGzpF9PgAU
+         blh8XE+vMTgPn+qriQC4sQQgQaNpbm8cG0ccgDNjXUxXijj8CQbFJz2IAIjcV8EsMNcl
+         Nh1afgwTKid7L/D9/0OTFlDeuYi1NbOj2lvP2yeCu9h7CshDQ+Rl4X74IfDnrf0Uh6/P
+         A1Xw==
+X-Gm-Message-State: AO0yUKUC7LmpoHc5VSZ4k0CYI36FAuq7Rjz/dzyDlbHB5qahm5XIQWKw
+        yf6VZCAqt+ZWORMGdEKTRtXrNQ==
+X-Google-Smtp-Source: AK7set9i7iCdrmNLxS44tLm4Cod1bYIxstYUo7G3Yv7gMOYC2J4cFKB4FWle3mr9SoLL129HeBZZlg==
+X-Received: by 2002:a50:ee01:0:b0:4ae:eb0f:892e with SMTP id g1-20020a50ee01000000b004aeeb0f892emr4242179eds.20.1676978743932;
+        Tue, 21 Feb 2023 03:25:43 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id t10-20020a50c24a000000b004aeeb476c5bsm2040071edf.24.2023.02.21.03.25.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Feb 2023 03:25:43 -0800 (PST)
+Message-ID: <430318ed-5b30-e549-a5ce-df83aa18adf9@linaro.org>
+Date:   Tue, 21 Feb 2023 12:25:41 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH v3 39/55] clk: mediatek: Split MT8195 clock drivers and
- allow module build
-To:     Chen-Yu Tsai <wenst@chromium.org>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
-        johnson.wang@mediatek.com, miles.chen@mediatek.com,
-        chun-jie.chen@mediatek.com, daniel@makrotopia.org,
-        fparent@baylibre.com, msp@baylibre.com, nfraprado@collabora.com,
-        rex-bc.chen@mediatek.com, zhaojh329@gmail.com,
-        sam.shih@mediatek.com, edward-jw.yang@mediatek.com,
-        yangyingliang@huawei.com, granquet@baylibre.com,
-        pablo.sun@mediatek.com, sean.wang@mediatek.com,
-        chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <20230220150111.77897-1-angelogioacchino.delregno@collabora.com>
- <20230220150111.77897-40-angelogioacchino.delregno@collabora.com>
- <CAGXv+5Eztv3RuXPXSYFd2qH_Wd18OcLNaqO+Lcp4hytjkBarfA@mail.gmail.com>
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v2 01/11] dt-bindings: clock: Add StarFive JH7110
+ System-Top-Group clock and reset generator
 Content-Language: en-US
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <CAGXv+5Eztv3RuXPXSYFd2qH_Wd18OcLNaqO+Lcp4hytjkBarfA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Xingyu Wu <xingyu.wu@starfivetech.com>,
+        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Emil Renner Berthing <kernel@esmil.dk>
+Cc:     Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20230221083323.302471-1-xingyu.wu@starfivetech.com>
+ <20230221083323.302471-2-xingyu.wu@starfivetech.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230221083323.302471-2-xingyu.wu@starfivetech.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 21/02/23 04:53, Chen-Yu Tsai ha scritto:
-> On Mon, Feb 20, 2023 at 11:02 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> MT8195 clock drivers were encapsulated in one single (and big) Kconfig
->> option: there's no reason to do that, as it is totally unnecessary to
->> build in all or none of them.
->>
->> Split them out: keep boot-critical clocks as bool and allow choosing
->> non critical clocks as tristate.
->>
->> As a note, the dependencies of VDEC/VENCSYS and CAM/IMG/IPE/WPESYS
->> are not for build-time but rather for runtime, as clocks registered
->> by those have runtime dependencies on either or both VPP and IMGSYS.
->>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
->>   drivers/clk/mediatek/Kconfig  | 100 ++++++++++++++++++++++++++++++++++
->>   drivers/clk/mediatek/Makefile |  20 ++++---
->>   2 files changed, 113 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
->> index 45b7aea7648d..49919da2be26 100644
->> --- a/drivers/clk/mediatek/Kconfig
->> +++ b/drivers/clk/mediatek/Kconfig
->> @@ -692,6 +692,106 @@ config COMMON_CLK_MT8195
->>           help
->>             This driver supports MediaTek MT8195 clocks.
->>
->> +config COMMON_CLK_MT8195_APUSYS
->> +       tristate "Clock driver for MediaTek MT8195 apusys"
->> +       depends on COMMON_CLK_MT8195
->> +       default COMMON_CLK_MT8195
->> +       help
->> +         This driver supports MediaTek MT8195 AI Processor Unit System clocks.
->> +
->> +config COMMON_CLK_MT8195_AUDSYS
->> +       tristate "Clock driver for MediaTek MT8195 audsys"
->> +       depends on COMMON_CLK_MT8195
->> +       default COMMON_CLK_MT8195
->> +       help
->> +         This driver supports MediaTek MT8195 audsys clocks.
->> +
->> +config COMMON_CLK_MT8195_IMP_IIC_WRAP
->> +       tristate "Clock driver for MediaTek MT8195 imp_iic_wrap"
->> +       depends on COMMON_CLK_MT8195
->> +       default COMMON_CLK_MT8195
->> +       help
->> +         This driver supports MediaTek MT8195 I2C/I3C clocks.
->> +
->> +config COMMON_CLK_MT8195_IPESYS
->> +       tristate "Clock driver for MediaTek MT8195 ipesys"
->> +       depends on COMMON_CLK_MT8195_IMGSYS
+On 21/02/2023 09:33, Xingyu Wu wrote:
+> Add bindings for the System-Top-Group clock and reset generator (STGCRG)
+> on the JH7110 RISC-V SoC by StarFive Ltd.
 > 
-> This should also be moved to just after IMGSYS.
-> This is the only one that is not ordered right, so after it is fixed,
-> 
+> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
 
-Big embarassing oops. Done for v4.
 
-> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-Thanks!
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 93eb504c3b21..2e70c9f21989 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -19914,6 +19914,7 @@ F:	arch/riscv/boot/dts/starfive/
+>  STARFIVE JH71X0 CLOCK DRIVERS
+>  M:	Emil Renner Berthing <kernel@esmil.dk>
+>  M:	Hal Feng <hal.feng@starfivetech.com>
+> +M:	Xingyu Wu <xingyu.wu@starfivetech.com>
+
+No improvements here. You add here new bindings for one device and then
+- without explanation - add yourself to all Starfive clock bindings.
+Either explain it or drop it or move it to separate patch.
+
+You already got comment for this.
+
+Best regards,
+Krzysztof
+
