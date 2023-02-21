@@ -2,36 +2,36 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 798CEC61DA3
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 17:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25CE5C636D7
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 17:17:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233776AbjBURN5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 12:13:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53034 "EHLO
+        id S233899AbjBURRU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Feb 2023 12:17:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234644AbjBURN5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 12:13:57 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C4DEDBD2;
-        Tue, 21 Feb 2023 09:13:54 -0800 (PST)
+        with ESMTP id S234265AbjBURRT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 12:17:19 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D27B1DB9E;
+        Tue, 21 Feb 2023 09:17:18 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C910DB81025;
-        Tue, 21 Feb 2023 17:13:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0598AC433EF;
-        Tue, 21 Feb 2023 17:13:47 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 528F4B8101B;
+        Tue, 21 Feb 2023 17:17:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A867DC433D2;
+        Tue, 21 Feb 2023 17:17:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676999631;
-        bh=UTWxdc56Bg+YO8XilIbhRusXF7346//1k4aqaSaRM1U=;
+        s=k20201202; t=1676999836;
+        bh=u/EX2EEQLLbGyZmnT1nRhHzcrS5k9v/S2qzFSwI8ijw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hP96ZN9UTZzYGWST0dk16C5FXdoBfma6+G541tCU9g3TeAa/+C3jXPvTUmrkL0JRP
-         jvDubqdRNPKR9UzaB5eeRgyRV48363T5k/9dGI63InzzBdoc5lcvzeCxlJt6Cuic8u
-         QgB4k8wmrEimyeZy3WiCAxO5F8Zbz95yucNyhtpvSb3w+hs3M3qMQfeWxAdO8B+DwA
-         w4CUO8CKCuJ7hEPg5kZYwGQS7YQr8QcYVSXgHRWhSD/tRA7u43xcIYOyMD6HocuuvU
-         4/5fu9X7jBAT+6388bZfC4zRc4q/2fFiMAoSD/VGzyLbnhTwQTCysKeziPxmCC9jKH
-         z16n1MbpmQJGQ==
-Date:   Tue, 21 Feb 2023 17:13:45 +0000
+        b=qL5sKm4UG9apubmZQOMu+2H8s1iMRxk332jvTjBXjj6XbrbSLqgbaCUlVG2jmFGU6
+         q7xcC7/tKWXfiidzwA3hh4+tFnEc5zq6b1b5DzJbSV7J2IXDmdMdTg0kfLCLIfVq89
+         jF232yre1YArVaxORYLJbJnO6/pcoU9FcYBYuCbgOYDbPi8zdM8zp0AUimBRIU84Ds
+         jIUHErPXVmgewD1QMa0I6VmaxB3hrHVVraG1sbW/rudjSAa2USIZ7cGpgrknyqSqIY
+         Tyk8GnXvpDmkFvFRnmdzQgMsOre3awurR2jWbCVCF67hnK37Mc8simqIe21HHyGYI0
+         ixruPVbrFDspw==
+Date:   Tue, 21 Feb 2023 17:17:10 +0000
 From:   Conor Dooley <conor@kernel.org>
 To:     Hal Feng <hal.feng@starfivetech.com>
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
@@ -49,47 +49,45 @@ Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Marc Zyngier <maz@kernel.org>,
         Emil Renner Berthing <emil.renner.berthing@canonical.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 06/19] reset: starfive: Extract the common JH71X0
- reset code
-Message-ID: <Y/T7yVD1mHLxoQ1a@spud>
+Subject: Re: [PATCH v4 07/19] reset: starfive: Rename "jh7100" to "jh71x0"
+ for the common code
+Message-ID: <Y/T8lu07JEc7diPs@spud>
 References: <20230221024645.127922-1-hal.feng@starfivetech.com>
- <20230221024645.127922-7-hal.feng@starfivetech.com>
+ <20230221024645.127922-8-hal.feng@starfivetech.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="aqcjb486AUxWSCDg"
+        protocol="application/pgp-signature"; boundary="fU6grjyUvyTM1/0x"
 Content-Disposition: inline
-In-Reply-To: <20230221024645.127922-7-hal.feng@starfivetech.com>
+In-Reply-To: <20230221024645.127922-8-hal.feng@starfivetech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---aqcjb486AUxWSCDg
+--fU6grjyUvyTM1/0x
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 21, 2023 at 10:46:32AM +0800, Hal Feng wrote:
+On Tue, Feb 21, 2023 at 10:46:33AM +0800, Hal Feng wrote:
 > From: Emil Renner Berthing <kernel@esmil.dk>
 >=20
-> Extract the common JH71X0 reset code for reusing them to
-> support JH7110 SoC.
+> For the common code will be shared with the StarFive JH7110 SoC.
 >=20
-> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+> Reported-by: kernel test robot <lkp@intel.com>
 
-Split out makes it easier to follow, thanks.
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+And here too ;)
 
---aqcjb486AUxWSCDg
+
+--fU6grjyUvyTM1/0x
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY/T7yQAKCRB4tDGHoIJi
-0mzCAQCzNX7ciETyNNPQvAwhWFyXvywt5DtH5jI3CcjZGeLMvgEAqU7NT1fMnV3w
-9ZxpB97C+S6RTgF9h6k1xLAmeb9rswA=
-=XwAV
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY/T8lgAKCRB4tDGHoIJi
+0qXhAP94QqAsDlyOI5fHCgHZs6qx2RXiYS6SxH6gymSLvkvA1wD+IQEXOwyELVes
+GPlcOEKTxiMv4SmHMsUhmgV7V77l3gs=
+=m9Wi
 -----END PGP SIGNATURE-----
 
---aqcjb486AUxWSCDg--
+--fU6grjyUvyTM1/0x--
