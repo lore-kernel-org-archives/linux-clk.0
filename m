@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C79C6FD18
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 08:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F0FC6FD1A
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 08:33:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233758AbjBUIdn convert rfc822-to-8bit (ORCPT
+        id S233767AbjBUIdp convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 03:33:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49320 "EHLO
+        Tue, 21 Feb 2023 03:33:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233745AbjBUIdl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 03:33:41 -0500
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A08FE86A1;
-        Tue, 21 Feb 2023 00:33:34 -0800 (PST)
+        with ESMTP id S233754AbjBUIdm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 03:33:42 -0500
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 131B8233CF;
+        Tue, 21 Feb 2023 00:33:38 -0800 (PST)
 Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 67DE724DC13;
-        Tue, 21 Feb 2023 16:33:33 +0800 (CST)
+        by ex01.ufhost.com (Postfix) with ESMTP id E002424E214;
+        Tue, 21 Feb 2023 16:33:36 +0800 (CST)
 Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
  (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 21 Feb
- 2023 16:33:33 +0800
+ 2023 16:33:36 +0800
 Received: from localhost.localdomain (183.27.98.67) by EXMBX061.cuchost.com
  (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 21 Feb
- 2023 16:33:31 +0800
+ 2023 16:33:35 +0800
 From:   Xingyu Wu <xingyu.wu@starfivetech.com>
 To:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
         "Michael Turquette" <mturquette@baylibre.com>,
@@ -40,9 +40,9 @@ CC:     Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
         Hal Feng <hal.feng@starfivetech.com>,
         Xingyu Wu <xingyu.wu@starfivetech.com>,
         <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH v2 04/11] dt-bindings: clock: Add StarFive JH7110 Image-Signal-Process clock and reset generator
-Date:   Tue, 21 Feb 2023 16:33:16 +0800
-Message-ID: <20230221083323.302471-5-xingyu.wu@starfivetech.com>
+Subject: [PATCH v2 08/11] reset: starfive: jh7110: Add StarFive Video-Output reset support
+Date:   Tue, 21 Feb 2023 16:33:20 +0800
+Message-ID: <20230221083323.302471-9-xingyu.wu@starfivetech.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230221083323.302471-1-xingyu.wu@starfivetech.com>
 References: <20230221083323.302471-1-xingyu.wu@starfivetech.com>
@@ -57,172 +57,42 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add bindings for the Image-Signal-Process clock and reset
-generator (ISPCRG) on the JH7110 RISC-V SoC by StarFive Ltd.
+Add auxiliary_device_id to support StarFive JH7110 Video-Output resets
+of which the auxiliary device name is "clk_starfive_jh71x0.reset-vout".
 
 Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
 ---
- .../clock/starfive,jh7110-ispcrg.yaml         | 97 +++++++++++++++++++
- .../dt-bindings/clock/starfive,jh7110-crg.h   | 18 ++++
- .../dt-bindings/reset/starfive,jh7110-crg.h   | 16 +++
- 3 files changed, 131 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-ispcrg.yaml
+ drivers/reset/starfive/reset-starfive-jh7110.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-ispcrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-ispcrg.yaml
-new file mode 100644
-index 000000000000..32794f809364
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-ispcrg.yaml
-@@ -0,0 +1,97 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/starfive,jh7110-ispcrg.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: StarFive JH7110 Image-Signal-Process Clock and Reset Generator
-+
-+maintainers:
-+  - Xingyu Wu <xingyu.wu@starfivetech.com>
-+
-+properties:
-+  compatible:
-+    const: starfive,jh7110-ispcrg
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: ISP Top core
-+      - description: ISP Top Axi
-+      - description: NOC ISP Bus
-+      - description: external DVP
-+
-+  clock-names:
-+    items:
-+      - const: isp_top_core
-+      - const: isp_top_axi
-+      - const: noc_bus_isp_axi
-+      - const: dvp_clk
-+
-+  resets:
-+    items:
-+      - description: ISP Top core
-+      - description: ISP Top Axi
-+      - description: NOC ISP Bus
-+
-+  reset-names:
-+    items:
-+      - const: isp_top_core
-+      - const: isp_top_axi
-+      - const: noc_bus_isp_axi
-+
-+  '#clock-cells':
-+    const: 1
-+    description:
-+      See <dt-bindings/clock/starfive,jh7110-crg.h> for valid indices.
-+
-+  '#reset-cells':
-+    const: 1
-+    description:
-+      See <dt-bindings/reset/starfive,jh7110-crg.h> for valid indices.
-+
-+  power-domains:
-+    maxItems: 1
-+    description:
-+      ISP domain power
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - resets
-+  - reset-names
-+  - '#clock-cells'
-+  - '#reset-cells'
-+  - power-domains
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/starfive,jh7110-crg.h>
-+    #include <dt-bindings/power/starfive,jh7110-pmu.h>
-+    #include <dt-bindings/reset/starfive,jh7110-crg.h>
-+
-+    ispcrg: clock-controller@19810000 {
-+        compatible = "starfive,jh7110-ispcrg";
-+        reg = <0x19810000 0x10000>;
-+        clocks = <&syscrg JH7110_SYSCLK_ISP_TOP_CORE>,
-+                 <&syscrg JH7110_SYSCLK_ISP_TOP_AXI>,
-+                 <&syscrg JH7110_SYSCLK_NOC_BUS_ISP_AXI>,
-+                 <&dvp_clk>;
-+        clock-names = "isp_top_core", "isp_top_axi",
-+                      "noc_bus_isp_axi", "dvp_clk";
-+        resets = <&syscrg JH7110_SYSRST_ISP_TOP>,
-+                 <&syscrg JH7110_SYSRST_ISP_TOP_AXI>,
-+                 <&syscrg JH7110_SYSRST_NOC_BUS_ISP_AXI>;
-+        reset-names = "isp_top_core",
-+                      "isp_top_axi",
-+                      "noc_bus_isp_axi";
-+        #clock-cells = <1>;
-+        #reset-cells = <1>;
-+        power-domains = <&pwrc JH7110_PD_ISP>;
-+    };
-diff --git a/include/dt-bindings/clock/starfive,jh7110-crg.h b/include/dt-bindings/clock/starfive,jh7110-crg.h
-index 5ac8a4d90a7a..91ee589809c3 100644
---- a/include/dt-bindings/clock/starfive,jh7110-crg.h
-+++ b/include/dt-bindings/clock/starfive,jh7110-crg.h
-@@ -256,4 +256,22 @@
+diff --git a/drivers/reset/starfive/reset-starfive-jh7110.c b/drivers/reset/starfive/reset-starfive-jh7110.c
+index e3b7b6941217..ad967398f227 100644
+--- a/drivers/reset/starfive/reset-starfive-jh7110.c
++++ b/drivers/reset/starfive/reset-starfive-jh7110.c
+@@ -52,6 +52,12 @@ static const struct reset_info jh7110_isp_info = {
+ 	.status_offset = 0x3C,
+ };
  
- #define JH7110_STGCLK_END			29
- 
-+/* ISPCRG clocks */
-+#define JH7110_ISPCLK_DOM4_APB_FUNC		0
-+#define JH7110_ISPCLK_MIPI_RX0_PXL		1
-+#define JH7110_ISPCLK_DVP_INV			2
-+#define JH7110_ISPCLK_M31DPHY_CFGCLK_IN		3
-+#define JH7110_ISPCLK_M31DPHY_REFCLK_IN		4
-+#define JH7110_ISPCLK_M31DPHY_TXCLKESC_LAN0	5
-+#define JH7110_ISPCLK_VIN_PCLK			6
-+#define JH7110_ISPCLK_VIN_SYS_CLK		7
-+#define JH7110_ISPCLK_VIN_PIXEL_CLK_IF0		8
-+#define JH7110_ISPCLK_VIN_PIXEL_CLK_IF1		9
-+#define JH7110_ISPCLK_VIN_PIXEL_CLK_IF2		10
-+#define JH7110_ISPCLK_VIN_PIXEL_CLK_IF3		11
-+#define JH7110_ISPCLK_VIN_CLK_P_AXIWR		12
-+#define JH7110_ISPCLK_ISPV2_TOP_WRAPPER_CLK_C	13
++static const struct reset_info jh7110_vout_info = {
++	.nr_resets = JH7110_VOUTRST_END,
++	.assert_offset = 0x48,
++	.status_offset = 0x4C,
++};
 +
-+#define JH7110_ISPCLK_END			14
-+
- #endif /* __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__ */
-diff --git a/include/dt-bindings/reset/starfive,jh7110-crg.h b/include/dt-bindings/reset/starfive,jh7110-crg.h
-index 4a865ded78b8..f23c160ec538 100644
---- a/include/dt-bindings/reset/starfive,jh7110-crg.h
-+++ b/include/dt-bindings/reset/starfive,jh7110-crg.h
-@@ -179,4 +179,20 @@
- 
- #define JH7110_STGRST_END			23
- 
-+/* ISPCRG resets */
-+#define JH7110_ISPRST_ISPV2_TOP_WRAPPER_P	0
-+#define JH7110_ISPRST_ISPV2_TOP_WRAPPER_C	1
-+#define JH7110_ISPRST_M31DPHY_HW		2
-+#define JH7110_ISPRST_M31DPHY_B09_ALWAYS_ON	3
-+#define JH7110_ISPRST_VIN_PCLK			4
-+#define JH7110_ISPRST_VIN_PIXEL_CLK_IF0		5
-+#define JH7110_ISPRST_VIN_PIXEL_CLK_IF1		6
-+#define JH7110_ISPRST_VIN_PIXEL_CLK_IF2		7
-+#define JH7110_ISPRST_VIN_PIXEL_CLK_IF3		8
-+#define JH7110_ISPRST_VIN_SYS_CLK		9
-+#define JH7110_ISPRST_VIN_P_AXIRD		10
-+#define JH7110_ISPRST_VIN_P_AXIWR		11
-+
-+#define JH7110_ISPRST_END			12
-+
- #endif /* __DT_BINDINGS_RESET_STARFIVE_JH7110_CRG_H__ */
+ static const struct auxiliary_device_id jh7110_reset_ids[] = {
+ 	{
+ 		.name = "clk_starfive_jh71x0.reset-sys",
+@@ -69,6 +75,10 @@ static const struct auxiliary_device_id jh7110_reset_ids[] = {
+ 		.name = "clk_starfive_jh71x0.reset-isp",
+ 		.driver_data = (kernel_ulong_t)&jh7110_isp_info,
+ 	},
++	{
++		.name = "clk_starfive_jh71x0.reset-vout",
++		.driver_data = (kernel_ulong_t)&jh7110_vout_info,
++	},
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(auxiliary, jh7110_reset_ids);
 -- 
 2.25.1
 
