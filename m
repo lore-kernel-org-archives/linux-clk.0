@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 170F5C6379F
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 08:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30824C6FA99
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 08:33:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233724AbjBUIdl convert rfc822-to-8bit (ORCPT
+        id S233735AbjBUIdn convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 03:33:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49282 "EHLO
+        Tue, 21 Feb 2023 03:33:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233735AbjBUIdk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 03:33:40 -0500
+        with ESMTP id S233741AbjBUIdl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 03:33:41 -0500
 Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B22F483DF;
-        Tue, 21 Feb 2023 00:33:32 -0800 (PST)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6690786BE;
+        Tue, 21 Feb 2023 00:33:35 -0800 (PST)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id 92A9124E208;
-        Tue, 21 Feb 2023 16:33:31 +0800 (CST)
-Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 21 Feb
- 2023 16:33:31 +0800
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id 4F3CD24E212;
+        Tue, 21 Feb 2023 16:33:34 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 21 Feb
+ 2023 16:33:34 +0800
 Received: from localhost.localdomain (183.27.98.67) by EXMBX061.cuchost.com
  (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 21 Feb
- 2023 16:33:30 +0800
+ 2023 16:33:32 +0800
 From:   Xingyu Wu <xingyu.wu@starfivetech.com>
 To:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
         "Michael Turquette" <mturquette@baylibre.com>,
@@ -40,9 +40,9 @@ CC:     Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
         Hal Feng <hal.feng@starfivetech.com>,
         Xingyu Wu <xingyu.wu@starfivetech.com>,
         <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH v2 02/11] reset: starfive: jh7110: Add StarFive System-Top-Group reset support
-Date:   Tue, 21 Feb 2023 16:33:14 +0800
-Message-ID: <20230221083323.302471-3-xingyu.wu@starfivetech.com>
+Subject: [PATCH v2 05/11] reset: starfive: jh7110: Add StarFive Image-Signal-Process reset support
+Date:   Tue, 21 Feb 2023 16:33:17 +0800
+Message-ID: <20230221083323.302471-6-xingyu.wu@starfivetech.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230221083323.302471-1-xingyu.wu@starfivetech.com>
 References: <20230221083323.302471-1-xingyu.wu@starfivetech.com>
@@ -57,8 +57,9 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add auxiliary_device_id to support StarFive JH7110 System-Top-Group resets
-of which the auxiliary device name is "clk_starfive_jh71x0.reset-stg".
+Add auxiliary_device_id to support StarFive JH7110 Image-Signal-Process
+resets of which the auxiliary device name is
+"clk_starfive_jh71x0.reset-isp".
 
 Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
 ---
@@ -66,29 +67,29 @@ Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
  1 file changed, 10 insertions(+)
 
 diff --git a/drivers/reset/starfive/reset-starfive-jh7110.c b/drivers/reset/starfive/reset-starfive-jh7110.c
-index 83577d1b7fc6..94ebb363c6bc 100644
+index 94ebb363c6bc..e3b7b6941217 100644
 --- a/drivers/reset/starfive/reset-starfive-jh7110.c
 +++ b/drivers/reset/starfive/reset-starfive-jh7110.c
-@@ -40,6 +40,12 @@ static const struct reset_info jh7110_aon_info = {
- 	.status_offset = 0x3C,
+@@ -46,6 +46,12 @@ static const struct reset_info jh7110_stg_info = {
+ 	.status_offset = 0x78,
  };
  
-+static const struct reset_info jh7110_stg_info = {
-+	.nr_resets = JH7110_STGRST_END,
-+	.assert_offset = 0x74,
-+	.status_offset = 0x78,
++static const struct reset_info jh7110_isp_info = {
++	.nr_resets = JH7110_ISPRST_END,
++	.assert_offset = 0x38,
++	.status_offset = 0x3C,
 +};
 +
  static const struct auxiliary_device_id jh7110_reset_ids[] = {
  	{
  		.name = "clk_starfive_jh71x0.reset-sys",
-@@ -49,6 +55,10 @@ static const struct auxiliary_device_id jh7110_reset_ids[] = {
- 		.name = "clk_starfive_jh71x0.reset-aon",
- 		.driver_data = (kernel_ulong_t)&jh7110_aon_info,
+@@ -59,6 +65,10 @@ static const struct auxiliary_device_id jh7110_reset_ids[] = {
+ 		.name = "clk_starfive_jh71x0.reset-stg",
+ 		.driver_data = (kernel_ulong_t)&jh7110_stg_info,
  	},
 +	{
-+		.name = "clk_starfive_jh71x0.reset-stg",
-+		.driver_data = (kernel_ulong_t)&jh7110_stg_info,
++		.name = "clk_starfive_jh71x0.reset-isp",
++		.driver_data = (kernel_ulong_t)&jh7110_isp_info,
 +	},
  	{ /* sentinel */ }
  };
