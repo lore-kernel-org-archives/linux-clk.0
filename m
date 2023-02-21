@@ -2,60 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D89CEC64EC7
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 18:12:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F41E4C636D7
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 18:13:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229664AbjBUSME (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 13:12:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36388 "EHLO
+        id S230007AbjBUSNa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Feb 2023 13:13:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229550AbjBUSMD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 13:12:03 -0500
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41ADD30188
-        for <linux-clk@vger.kernel.org>; Tue, 21 Feb 2023 10:11:33 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id s20so6576291lfb.11
-        for <linux-clk@vger.kernel.org>; Tue, 21 Feb 2023 10:11:33 -0800 (PST)
+        with ESMTP id S229867AbjBUSN3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 13:13:29 -0500
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 369432CC5A
+        for <linux-clk@vger.kernel.org>; Tue, 21 Feb 2023 10:13:11 -0800 (PST)
+Received: by mail-lj1-x22a.google.com with SMTP id by8so405649ljb.7
+        for <linux-clk@vger.kernel.org>; Tue, 21 Feb 2023 10:13:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=g9l35INoDfUDk0IuqXZaCgRGRY7dxuPgfajlmx6iWoY=;
-        b=bBlJkYc52rUmJbh9l+/+eL8BPRA/Tcf60XxsFxAPreABYRbwngQHk4HJOMZxaPW6B3
-         O+r9sc1CAdUOZ4RztHgwf3/mHI619zen+4HgxmYdyKdYe3UIbfCBlc+YiTKgrBoYtkT8
-         8279ZDo5JeFgYrhWoKmuavX+md3lCFrXS6L7whPNWzFtGQOiCWo7OWZQY/uIMi+qxY6A
-         MD8dclBXLOIA3VBs/T5gQFqYgX/IN4uXNaXnmD+yILR6PLXF621K7FotjmXSUJFAqH+c
-         Lth/c8XTVvX9a+ggYlBtLWeE93bxHGtKRv0o8co5AbkyVvqSTdV70KNLjMHs4+opV59w
-         382w==
+        bh=oXFB1ToLiLOsDJMDgKAuDm5MOLci1wrrick0YVwQiJc=;
+        b=NjUU6gRBlv2TilWVZfYaP5EBPvIcGZSwgW+TBylRo6mmWfx4+T4ezlltBKE4Bqgk4C
+         4RsuMouFIsuQCGrpNq+sOeoFVfyuM5c1FMA3rJNjvMY2mBidwcmODpu6T6rMj39JdJM2
+         0Juhps+AmCvjqRHVAAgfPq2JwrLN4zlW+Oj+sUqMTcoKIteLtB53nU0xAnTM6Fyv/RuP
+         3T+G9vQxxlWCqOOBRaMp6rCUYTym6pTv0kPzm1VQTctbEyy80s4yV4znnPcqdPvvfwHs
+         MOWpBNSLzN64ns7ceObRw9i5ziZ6NNZTQupZxDMU/BmzjonDldZLYhdtkIxkAq+sCuU0
+         /QhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g9l35INoDfUDk0IuqXZaCgRGRY7dxuPgfajlmx6iWoY=;
-        b=lHnoKt1RtupW3jJjU8FX2JpyJblNKvelC5f8EFFgF4rZIqYRHTCKba6BPonVoivfeV
-         6ZXH+1/IlFmulz8JAFbJjRUBJZ0WaoHpL6oDokQ4CGjVP/Rc3x5uWkYgaGMtTtBxPPC8
-         dBdnOu6Sl6lTDMKQ2Hcfmj/Mz/XyXzCtmgirAIlmTx7YJD6LWQHS+0K4Db7OumWYSjrn
-         uZm9Q8Kr/HLWisgq93ZIm09DDbErxNyy/gzQ7fg+oZj2+ckl/VOi3pbw3phjXkrpvU8d
-         frnGRUbzMy8+ksa3U9YBGVCFG0NxZh4BBM3nzEnIcx2mvtLTRA8bf8/K7mTZ1pfoN5aC
-         kbpQ==
-X-Gm-Message-State: AO0yUKVLxlNn841UcQZ4b+PoFY0o7amKyd4Vbp6taOfYEZbSh497LUdS
-        8SIJCg9qkvgyBpIzNDZohNLqLA==
-X-Google-Smtp-Source: AK7set/lYk44gi0NBjJmIAUFh1HMRhdisJ6K6VhAs2zjAHruCJj30THCA2nJGiGge5kAsIQHxmNXHA==
-X-Received: by 2002:a05:6512:203:b0:4d7:b818:788d with SMTP id a3-20020a056512020300b004d7b818788dmr2095444lfo.23.1677003065980;
-        Tue, 21 Feb 2023 10:11:05 -0800 (PST)
+        bh=oXFB1ToLiLOsDJMDgKAuDm5MOLci1wrrick0YVwQiJc=;
+        b=KINrMJhxHVYh9vivWrg4qZMvWOMEHm/0YmGF0tw1dXK3KFsIRNojN95h1Lg8ObnL1x
+         F2p7G4Z2OzbCcVSO7QIDs/B0KLWNQoS7jeZQVE+y9dKvkxeIJesqIKhIJVKWjeaPXfY3
+         Crma9SBXJv77rO/BwbZkCPFZ4vgWuRtBPQduso5K0qrNBj+jrYCw92iw2pqejMK8z0o3
+         LqE5FQQ9MH++b1juIZWjoxAjcdQT8yCjsWTTgB7uyBwljkzAxiOYe5E2OpypBHfAXtC6
+         mHMSXKXP63vRJ7VmG9kR+iBklIxQGZvYnJSYms2ZZ0gaqcXLf5VpuYnNDKI7uhgGF4WW
+         ZcYw==
+X-Gm-Message-State: AO0yUKXY/dPcp5LxJhYSZJpoAXvSmCB4Hl4DxymPYDUjqrJgmF30MIyu
+        maVMp/KNs6vFHWNIrIJ5+NgOYA==
+X-Google-Smtp-Source: AK7set9yU/LbJ9XKViRJMa7U9bqS5w3dJFuc/kNh33HC4Bqa8++9D8ijVzUljlBoHTL2htF8gQ+9wg==
+X-Received: by 2002:a05:651c:11c1:b0:290:5d54:fedb with SMTP id z1-20020a05651c11c100b002905d54fedbmr2126296ljo.31.1677003141226;
+        Tue, 21 Feb 2023 10:12:21 -0800 (PST)
 Received: from [192.168.1.101] (abxi151.neoplus.adsl.tpnet.pl. [83.9.2.151])
-        by smtp.gmail.com with ESMTPSA id b17-20020ac25e91000000b004b6f00832cesm1899856lfq.166.2023.02.21.10.11.04
+        by smtp.gmail.com with ESMTPSA id i15-20020a2e940f000000b00295744b701esm422489ljh.66.2023.02.21.10.12.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Feb 2023 10:11:05 -0800 (PST)
-Message-ID: <98ee82b3-ff8f-b21d-8cc3-169b62e50ebf@linaro.org>
-Date:   Tue, 21 Feb 2023 19:11:04 +0100
+        Tue, 21 Feb 2023 10:12:20 -0800 (PST)
+Message-ID: <aa2643b3-f973-6d15-de61-96d4aa9302fb@linaro.org>
+Date:   Tue, 21 Feb 2023 19:12:19 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
-Subject: Re: [PATCH 2/4] clk: qcom: Add global clock controller driver for
- MSM8917
+Subject: Re: [PATCH 4/4] clk: qcom: smd-rpm: Add clocks for MSM8917
 Content-Language: en-US
 To:     =?UTF-8?Q?Otto_Pfl=c3=bcger?= <otto.pflueger@abscue.de>,
         Bjorn Andersson <andersson@kernel.org>
@@ -68,9 +67,9 @@ Cc:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
 References: <20230221174909.164029-1-otto.pflueger@abscue.de>
- <20230221174909.164029-3-otto.pflueger@abscue.de>
+ <20230221174909.164029-5-otto.pflueger@abscue.de>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230221174909.164029-3-otto.pflueger@abscue.de>
+In-Reply-To: <20230221174909.164029-5-otto.pflueger@abscue.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -80,164 +79,70 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 21.02.2023 18:49, Otto Pflüger wrote:
-> This driver provides clocks, resets and power domains needed for various
-> components of the MSM8917 SoC and the very similar QM215 SoC.
-> 
-> According to [1] in the downstream kernel, the GPU clock has a different
-> source mapping on QM215 (gcc_gfx3d_map vs gcc_gfx3d_map_qm215).
-> 
-> [1]: https://git.codelinaro.org/clo/la/kernel/msm-4.9/-/blob/LF.UM.8.6.2-28000-89xx.0/include/dt-bindings/clock/msm-clocks-hwio-8952.h#L298
+> MSM8917 has mostly the same rpm clocks as MSM8953, but lacks RF_CLK3 and
+> additionally has the BIMC_GPU clock.
 > 
 > Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
 > ---
-Thanks for working on reviving old and affordable devices!
+This is based on an old Linux tree, the names you're referencing
+no longer exist.
 
->  drivers/clk/qcom/Kconfig       |    8 +
->  drivers/clk/qcom/Makefile      |    1 +
->  drivers/clk/qcom/gcc-msm8917.c | 3283 ++++++++++++++++++++++++++++++++
->  3 files changed, 3292 insertions(+)
->  create mode 100644 drivers/clk/qcom/gcc-msm8917.c
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 70d43f0a8919..3ef58b09385a 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -196,6 +196,14 @@ config MSM_GCC_8916
->  	  Say Y if you want to use devices such as UART, SPI i2c, USB,
->  	  SD/eMMC, display, graphics, camera etc.
->  
-> +config MSM_GCC_8917
-> +	tristate "MSM8917 Global Clock Controller"
-Please also mention QM215
-
-> +	select QCOM_GDSC
-> +	help
-> +	  Support for the global clock controller on msm8917 devices.
-> +	  Say Y if you want to use devices such as UART, SPI i2c, USB,
-> +	  SD/eMMC, display, graphics, camera etc.
-> +
->  config MSM_GCC_8939
->  	tristate "MSM8939 Global Clock Controller"
->  	select QCOM_GDSC
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index f18c446a97ea..ff5f2c4127a9 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -34,6 +34,7 @@ obj-$(CONFIG_MDM_LCC_9615) += lcc-mdm9615.o
->  obj-$(CONFIG_MSM_GCC_8660) += gcc-msm8660.o
->  obj-$(CONFIG_MSM_GCC_8909) += gcc-msm8909.o
->  obj-$(CONFIG_MSM_GCC_8916) += gcc-msm8916.o
-> +obj-$(CONFIG_MSM_GCC_8917) += gcc-msm8917.o
->  obj-$(CONFIG_MSM_GCC_8939) += gcc-msm8939.o
->  obj-$(CONFIG_MSM_GCC_8953) += gcc-msm8953.o
->  obj-$(CONFIG_MSM_GCC_8960) += gcc-msm8960.o
-> diff --git a/drivers/clk/qcom/gcc-msm8917.c b/drivers/clk/qcom/gcc-msm8917.c
-> new file mode 100644
-> index 000000000000..a2f4ffca18dc
-> --- /dev/null
-> +++ b/drivers/clk/qcom/gcc-msm8917.c
-> @@ -0,0 +1,3283 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2023 Otto Pflüger
-> + *
-> + * Based on gcc-msm8953.c:
-> + *   Copyright 2021, The Linux Foundation. All rights reserved.
-> + * with parts taken from gcc-qcs404.c:
-> + *   Copyright 2018, The Linux Foundation. All rights reserved.
-> + * and gcc-msm8939.c:
-> + *   Copyright 2020 Linaro Limited
-> + * adapted with data from clock-gcc-8952.c in Qualcomm's msm-4.9 release:
-> + *   Copyright (c) 2014-2020, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/bitops.h>
-> +#include <linux/err.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/regmap.h>
-> +#include <linux/reset-controller.h>
-Please sort these
-> +
-> +#include <dt-bindings/clock/qcom,gcc-msm8917.h>
-> +
-> +#include "clk-alpha-pll.h"
-> +#include "clk-branch.h"
-> +#include "clk-pll.h"
-> +#include "clk-rcg.h"
-> +#include "common.h"
-> +#include "gdsc.h"
-> +#include "reset.h"
-
-> +
-> +enum {
-> +	P_XO,
-> +	P_SLEEP_CLK,
-> +	P_GPLL0,
-> +	P_GPLL3,
-> +	P_GPLL4,
-> +	P_GPLL6,
-> +	P_DSI0PLL,
-> +	P_DSI0PLL_BYTE,
-> +};
-> +
-> +static struct clk_alpha_pll gpll0_sleep_clk_src = {
-> +	.offset = 0x21000,
-> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
-> +	.clkr = {
-> +		.enable_reg = 0x45008,
-> +		.enable_mask = BIT(23),
-> +		.enable_is_inverted = true,
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gpll0_sleep_clk_src",
-> +			.parent_data = &(const struct clk_parent_data) {
-> +				.fw_name = "xo",
-Please switch to .index (check sm8550 drivers for reference)
-
-> +			},
-> +			.num_parents = 1,
-> +			.ops = &clk_alpha_pll_ops,
-> +		},
-> +	},
-> +};
-[...]
-
-> +
-> +static struct clk_pll gpll6_early = {
-> +	.l_reg = 0x37004,
-> +	.m_reg = 0x37008,
-> +	.n_reg = 0x3700C,
-> +	.config_reg = 0x37014,
-> +	.mode_reg = 0x37000,
-> +	.status_reg = 0x3701C,
-Please use lowercase hex everywhere except for preprocessor
-defines.
-
-> +	.status_bit = 17,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "gpll6_early",
-> +		.parent_data = &(const struct clk_parent_data) {
-> +			.fw_name = "xo",
-> +		},
-> +		.num_parents = 1,
-> +		.ops = &clk_pll_ops,
-> +	},
-> +};
-> +
-[...]
-
-> +
-> +static const struct clk_parent_data gcc_pclk_data[] = {
-> +	{ .fw_name = "xo" },
-> +	{ .fw_name = "dsi0pll", .name = "dsi0pll" },
-Since this is a new driver with no legacy leftovers, one
-lookup method is enough.
-
-(and .index would be preferred)
-
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/clk/qcom/clk-smd-rpm.c?h=next-20230221
 
 Konrad
+>  drivers/clk/qcom/clk-smd-rpm.c | 35 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+> index fea505876855..616f3a1bcad8 100644
+> --- a/drivers/clk/qcom/clk-smd-rpm.c
+> +++ b/drivers/clk/qcom/clk-smd-rpm.c
+> @@ -850,6 +850,40 @@ static const struct rpm_smd_clk_desc rpm_clk_qcs404 = {
+>  	.num_clks = ARRAY_SIZE(qcs404_clks),
+>  };
+>  
+> +static struct clk_smd_rpm *msm8917_clks[] = {
+> +	[RPM_SMD_XO_CLK_SRC]		= &sdm660_bi_tcxo,
+> +	[RPM_SMD_XO_A_CLK_SRC]		= &sdm660_bi_tcxo_a,
+> +	[RPM_SMD_PCNOC_CLK]		= &msm8916_pcnoc_clk,
+> +	[RPM_SMD_PCNOC_A_CLK]		= &msm8916_pcnoc_a_clk,
+> +	[RPM_SMD_SNOC_CLK]		= &msm8916_snoc_clk,
+> +	[RPM_SMD_SNOC_A_CLK]		= &msm8916_snoc_a_clk,
+> +	[RPM_SMD_BIMC_CLK]		= &msm8916_bimc_clk,
+> +	[RPM_SMD_BIMC_A_CLK]		= &msm8916_bimc_a_clk,
+> +	[RPM_SMD_BIMC_GPU_CLK]		= &qcs404_bimc_gpu_clk,
+> +	[RPM_SMD_BIMC_GPU_A_CLK]	= &qcs404_bimc_gpu_a_clk,
+> +	[RPM_SMD_SYSMMNOC_CLK]		= &msm8936_sysmmnoc_clk,
+> +	[RPM_SMD_SYSMMNOC_A_CLK]	= &msm8936_sysmmnoc_a_clk,
+> +	[RPM_SMD_QDSS_CLK]		= &msm8916_qdss_clk,
+> +	[RPM_SMD_QDSS_A_CLK]		= &msm8916_qdss_a_clk,
+> +	[RPM_SMD_BB_CLK1]		= &msm8916_bb_clk1,
+> +	[RPM_SMD_BB_CLK1_A]		= &msm8916_bb_clk1_a,
+> +	[RPM_SMD_BB_CLK2]		= &msm8916_bb_clk2,
+> +	[RPM_SMD_BB_CLK2_A]		= &msm8916_bb_clk2_a,
+> +	[RPM_SMD_RF_CLK2]		= &msm8916_rf_clk2,
+> +	[RPM_SMD_RF_CLK2_A]		= &msm8916_rf_clk2_a,
+> +	[RPM_SMD_DIV_CLK2]		= &msm8974_div_clk2,
+> +	[RPM_SMD_DIV_A_CLK2]		= &msm8974_div_a_clk2,
+> +	[RPM_SMD_BB_CLK1_PIN]		= &msm8916_bb_clk1_pin,
+> +	[RPM_SMD_BB_CLK1_A_PIN]		= &msm8916_bb_clk1_a_pin,
+> +	[RPM_SMD_BB_CLK2_PIN]		= &msm8916_bb_clk2_pin,
+> +	[RPM_SMD_BB_CLK2_A_PIN]		= &msm8916_bb_clk2_a_pin,
+> +};
+> +
+> +static const struct rpm_smd_clk_desc rpm_clk_msm8917 = {
+> +	.clks = msm8917_clks,
+> +	.num_clks = ARRAY_SIZE(msm8917_clks),
+> +};
+> +
+>  DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, ln_bb_clk3, ln_bb_clk3_a, 3, 19200000);
+>  DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, ln_bb_clk3_pin, ln_bb_clk3_a_pin, 3, 19200000);
+>  DEFINE_CLK_SMD_RPM(msm8998, aggre1_noc_clk, aggre1_noc_a_clk,
+> @@ -1223,6 +1257,7 @@ static const struct of_device_id rpm_smd_clk_match_table[] = {
+>  	{ .compatible = "qcom,rpmcc-msm8226", .data = &rpm_clk_msm8974 },
+>  	{ .compatible = "qcom,rpmcc-msm8909", .data = &rpm_clk_msm8909 },
+>  	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
+> +	{ .compatible = "qcom,rpmcc-msm8917", .data = &rpm_clk_msm8917 },
+>  	{ .compatible = "qcom,rpmcc-msm8936", .data = &rpm_clk_msm8936 },
+>  	{ .compatible = "qcom,rpmcc-msm8953", .data = &rpm_clk_msm8953 },
+>  	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
