@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DABCC636D6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDEDC6FA99
 	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 02:47:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233282AbjBUCrM convert rfc822-to-8bit (ORCPT
+        id S233288AbjBUCrM convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 20 Feb 2023 21:47:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50580 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233242AbjBUCrJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Feb 2023 21:47:09 -0500
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A41A72387D;
-        Mon, 20 Feb 2023 18:46:58 -0800 (PST)
+        with ESMTP id S233247AbjBUCrK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Feb 2023 21:47:10 -0500
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AE6E2366E;
+        Mon, 20 Feb 2023 18:47:00 -0800 (PST)
 Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 690F724E322;
-        Tue, 21 Feb 2023 10:46:57 +0800 (CST)
+        by ex01.ufhost.com (Postfix) with ESMTP id 56C8024E1FC;
+        Tue, 21 Feb 2023 10:46:59 +0800 (CST)
 Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
  (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 21 Feb
- 2023 10:46:57 +0800
+ 2023 10:46:59 +0800
 Received: from localhost.localdomain (183.27.98.67) by EXMBX172.cuchost.com
  (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 21 Feb
- 2023 10:46:56 +0800
+ 2023 10:46:58 +0800
 From:   Hal Feng <hal.feng@starfivetech.com>
 To:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-riscv@lists.infradead.org>
@@ -45,9 +45,9 @@ CC:     Stephen Boyd <sboyd@kernel.org>,
         Emil Renner Berthing <emil.renner.berthing@canonical.com>,
         Hal Feng <hal.feng@starfivetech.com>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 06/19] reset: starfive: Extract the common JH71X0 reset code
-Date:   Tue, 21 Feb 2023 10:46:32 +0800
-Message-ID: <20230221024645.127922-7-hal.feng@starfivetech.com>
+Subject: [PATCH v4 08/19] reset: starfive: jh71x0: Use 32bit I/O on 32bit registers
+Date:   Tue, 21 Feb 2023 10:46:34 +0800
+Message-ID: <20230221024645.127922-9-hal.feng@starfivetech.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20230221024645.127922-1-hal.feng@starfivetech.com>
 References: <20230221024645.127922-1-hal.feng@starfivetech.com>
@@ -64,216 +64,147 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Emil Renner Berthing <kernel@esmil.dk>
 
-Extract the common JH71X0 reset code for reusing them to
-support JH7110 SoC.
+We currently use 64bit I/O on the 32bit registers. This works because
+there are an even number of assert and status registers, so they're only
+ever accessed in pairs on 64bit boundaries.
 
+There are however other reset controllers for audio and video on the
+JH7100 SoC with only one status register that isn't 64bit aligned so
+64bit I/O results in an unaligned access exception.
+
+Switch to 32bit I/O in preparation for supporting these resets too.
+
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 ---
- .../reset/starfive/reset-starfive-jh7100.c    | 49 ++++++++++++
- .../reset/starfive/reset-starfive-jh71x0.c    | 76 ++++++-------------
- .../reset/starfive/reset-starfive-jh71x0.h    |  5 +-
- 3 files changed, 76 insertions(+), 54 deletions(-)
+ .../reset/starfive/reset-starfive-jh7100.c    | 14 ++++-----
+ .../reset/starfive/reset-starfive-jh71x0.c    | 31 +++++++++----------
+ .../reset/starfive/reset-starfive-jh71x0.h    |  2 +-
+ 3 files changed, 23 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/reset/starfive/reset-starfive-jh7100.c b/drivers/reset/starfive/reset-starfive-jh7100.c
-index 5a68327c1f6a..9d7cb4ed8869 100644
+index 5f06e5ae3346..2a56f7fd4ba7 100644
 --- a/drivers/reset/starfive/reset-starfive-jh7100.c
 +++ b/drivers/reset/starfive/reset-starfive-jh7100.c
-@@ -10,6 +10,55 @@
- 
- #include "reset-starfive-jh71x0.h"
- 
-+#include <dt-bindings/reset/starfive-jh7100.h>
-+
-+/* register offsets */
-+#define JH7100_RESET_ASSERT0	0x00
-+#define JH7100_RESET_ASSERT1	0x04
-+#define JH7100_RESET_ASSERT2	0x08
-+#define JH7100_RESET_ASSERT3	0x0c
-+#define JH7100_RESET_STATUS0	0x10
-+#define JH7100_RESET_STATUS1	0x14
-+#define JH7100_RESET_STATUS2	0x18
-+#define JH7100_RESET_STATUS3	0x1c
-+
-+/*
-+ * Writing a 1 to the n'th bit of the m'th ASSERT register asserts
-+ * line 32m + n, and writing a 0 deasserts the same line.
-+ * Most reset lines have their status inverted so a 0 bit in the STATUS
-+ * register means the line is asserted and a 1 means it's deasserted. A few
-+ * lines don't though, so store the expected value of the status registers when
-+ * all lines are asserted.
-+ */
-+static const u64 jh7100_reset_asserted[2] = {
-+	/* STATUS0 */
-+	BIT_ULL_MASK(JH7100_RST_U74) |
-+	BIT_ULL_MASK(JH7100_RST_VP6_DRESET) |
-+	BIT_ULL_MASK(JH7100_RST_VP6_BRESET) |
-+	/* STATUS1 */
-+	BIT_ULL_MASK(JH7100_RST_HIFI4_DRESET) |
-+	BIT_ULL_MASK(JH7100_RST_HIFI4_BRESET),
-+	/* STATUS2 */
-+	BIT_ULL_MASK(JH7100_RST_E24) |
-+	/* STATUS3 */
-+	0,
-+};
-+
-+static int __init jh7100_reset_probe(struct platform_device *pdev)
-+{
-+	void __iomem *base = devm_platform_ioremap_resource(pdev, 0);
-+
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	return reset_starfive_jh7100_register(&pdev->dev, pdev->dev.of_node,
-+					      base + JH7100_RESET_ASSERT0,
-+					      base + JH7100_RESET_STATUS0,
-+					      jh7100_reset_asserted,
-+					      JH7100_RSTN_END,
-+					      THIS_MODULE);
-+}
-+
- static const struct of_device_id jh7100_reset_dt_ids[] = {
- 	{ .compatible = "starfive,jh7100-reset" },
- 	{ /* sentinel */ }
-diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.c b/drivers/reset/starfive/reset-starfive-jh71x0.c
-index 114a13c4b8a6..3577444a89c6 100644
---- a/drivers/reset/starfive/reset-starfive-jh71x0.c
-+++ b/drivers/reset/starfive/reset-starfive-jh71x0.c
-@@ -10,51 +10,18 @@
- #include <linux/io.h>
- #include <linux/io-64-nonatomic-lo-hi.h>
- #include <linux/iopoll.h>
--#include <linux/platform_device.h>
- #include <linux/reset-controller.h>
- #include <linux/spinlock.h>
- 
- #include "reset-starfive-jh71x0.h"
- 
--#include <dt-bindings/reset/starfive-jh7100.h>
--
--/* register offsets */
--#define JH7100_RESET_ASSERT0	0x00
--#define JH7100_RESET_ASSERT1	0x04
--#define JH7100_RESET_ASSERT2	0x08
--#define JH7100_RESET_ASSERT3	0x0c
--#define JH7100_RESET_STATUS0	0x10
--#define JH7100_RESET_STATUS1	0x14
--#define JH7100_RESET_STATUS2	0x18
--#define JH7100_RESET_STATUS3	0x1c
--
--/*
-- * Writing a 1 to the n'th bit of the m'th ASSERT register asserts
-- * line 32m + n, and writing a 0 deasserts the same line.
-- * Most reset lines have their status inverted so a 0 bit in the STATUS
-- * register means the line is asserted and a 1 means it's deasserted. A few
-- * lines don't though, so store the expected value of the status registers when
-- * all lines are asserted.
-- */
+@@ -30,16 +30,16 @@
+  * lines don't though, so store the expected value of the status registers when
+  * all lines are asserted.
+  */
 -static const u64 jh7100_reset_asserted[2] = {
--	/* STATUS0 */
++static const u32 jh7100_reset_asserted[4] = {
+ 	/* STATUS0 */
 -	BIT_ULL_MASK(JH7100_RST_U74) |
 -	BIT_ULL_MASK(JH7100_RST_VP6_DRESET) |
 -	BIT_ULL_MASK(JH7100_RST_VP6_BRESET) |
--	/* STATUS1 */
++	BIT(JH7100_RST_U74 % 32) |
++	BIT(JH7100_RST_VP6_DRESET % 32) |
++	BIT(JH7100_RST_VP6_BRESET % 32),
+ 	/* STATUS1 */
 -	BIT_ULL_MASK(JH7100_RST_HIFI4_DRESET) |
 -	BIT_ULL_MASK(JH7100_RST_HIFI4_BRESET),
--	/* STATUS2 */
++	BIT(JH7100_RST_HIFI4_DRESET % 32) |
++	BIT(JH7100_RST_HIFI4_BRESET % 32),
+ 	/* STATUS2 */
 -	BIT_ULL_MASK(JH7100_RST_E24) |
--	/* STATUS3 */
--	0,
--};
--
- struct jh7100_reset {
- 	struct reset_controller_dev rcdev;
- 	/* protect registers against concurrent read-modify-write */
++	BIT(JH7100_RST_E24 % 32),
+ 	/* STATUS3 */
+ 	0,
+ };
+diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.c b/drivers/reset/starfive/reset-starfive-jh71x0.c
+index a689f4730ed7..55bbbd2de52c 100644
+--- a/drivers/reset/starfive/reset-starfive-jh71x0.c
++++ b/drivers/reset/starfive/reset-starfive-jh71x0.c
+@@ -8,7 +8,6 @@
+ #include <linux/bitmap.h>
+ #include <linux/device.h>
+ #include <linux/io.h>
+-#include <linux/io-64-nonatomic-lo-hi.h>
+ #include <linux/iopoll.h>
+ #include <linux/reset-controller.h>
+ #include <linux/spinlock.h>
+@@ -21,7 +20,7 @@ struct jh71x0_reset {
  	spinlock_t lock;
--	void __iomem *base;
-+	void __iomem *assert;
-+	void __iomem *status;
-+	const u64 *asserted;
+ 	void __iomem *assert;
+ 	void __iomem *status;
+-	const u64 *asserted;
++	const u32 *asserted;
  };
  
- static inline struct jh7100_reset *
-@@ -69,9 +36,9 @@ static int jh7100_reset_update(struct reset_controller_dev *rcdev,
- 	struct jh7100_reset *data = jh7100_reset_from(rcdev);
- 	unsigned long offset = BIT_ULL_WORD(id);
- 	u64 mask = BIT_ULL_MASK(id);
--	void __iomem *reg_assert = data->base + JH7100_RESET_ASSERT0 + offset * sizeof(u64);
--	void __iomem *reg_status = data->base + JH7100_RESET_STATUS0 + offset * sizeof(u64);
--	u64 done = jh7100_reset_asserted[offset] & mask;
-+	void __iomem *reg_assert = data->assert + offset * sizeof(u64);
-+	void __iomem *reg_status = data->status + offset * sizeof(u64);
-+	u64 done = data->asserted ? data->asserted[offset] & mask : 0;
- 	u64 value;
+ static inline struct jh71x0_reset *
+@@ -34,12 +33,12 @@ static int jh71x0_reset_update(struct reset_controller_dev *rcdev,
+ 			       unsigned long id, bool assert)
+ {
+ 	struct jh71x0_reset *data = jh71x0_reset_from(rcdev);
+-	unsigned long offset = BIT_ULL_WORD(id);
+-	u64 mask = BIT_ULL_MASK(id);
+-	void __iomem *reg_assert = data->assert + offset * sizeof(u64);
+-	void __iomem *reg_status = data->status + offset * sizeof(u64);
+-	u64 done = data->asserted ? data->asserted[offset] & mask : 0;
+-	u64 value;
++	unsigned long offset = id / 32;
++	u32 mask = BIT(id % 32);
++	void __iomem *reg_assert = data->assert + offset * sizeof(u32);
++	void __iomem *reg_status = data->status + offset * sizeof(u32);
++	u32 done = data->asserted ? data->asserted[offset] & mask : 0;
++	u32 value;
  	unsigned long flags;
  	int ret;
-@@ -125,10 +92,10 @@ static int jh7100_reset_status(struct reset_controller_dev *rcdev,
- 	struct jh7100_reset *data = jh7100_reset_from(rcdev);
- 	unsigned long offset = BIT_ULL_WORD(id);
- 	u64 mask = BIT_ULL_MASK(id);
--	void __iomem *reg_status = data->base + JH7100_RESET_STATUS0 + offset * sizeof(u64);
-+	void __iomem *reg_status = data->status + offset * sizeof(u64);
- 	u64 value = readq(reg_status);
  
--	return !((value ^ jh7100_reset_asserted[offset]) & mask);
-+	return !((value ^ data->asserted[offset]) & mask);
- }
+@@ -48,15 +47,15 @@ static int jh71x0_reset_update(struct reset_controller_dev *rcdev,
  
- static const struct reset_control_ops jh7100_reset_ops = {
-@@ -138,25 +105,28 @@ static const struct reset_control_ops jh7100_reset_ops = {
- 	.status		= jh7100_reset_status,
- };
+ 	spin_lock_irqsave(&data->lock, flags);
  
--int jh7100_reset_probe(struct platform_device *pdev)
-+int reset_starfive_jh7100_register(struct device *dev, struct device_node *of_node,
-+				   void __iomem *assert, void __iomem *status,
-+				   const u64 *asserted, unsigned int nr_resets,
-+				   struct module *owner)
+-	value = readq(reg_assert);
++	value = readl(reg_assert);
+ 	if (assert)
+ 		value |= mask;
+ 	else
+ 		value &= ~mask;
+-	writeq(value, reg_assert);
++	writel(value, reg_assert);
+ 
+ 	/* if the associated clock is gated, deasserting might otherwise hang forever */
+-	ret = readq_poll_timeout_atomic(reg_status, value, (value & mask) == done, 0, 1000);
++	ret = readl_poll_timeout_atomic(reg_status, value, (value & mask) == done, 0, 1000);
+ 
+ 	spin_unlock_irqrestore(&data->lock, flags);
+ 	return ret;
+@@ -90,10 +89,10 @@ static int jh71x0_reset_status(struct reset_controller_dev *rcdev,
+ 			       unsigned long id)
  {
- 	struct jh7100_reset *data;
+ 	struct jh71x0_reset *data = jh71x0_reset_from(rcdev);
+-	unsigned long offset = BIT_ULL_WORD(id);
+-	u64 mask = BIT_ULL_MASK(id);
+-	void __iomem *reg_status = data->status + offset * sizeof(u64);
+-	u64 value = readq(reg_status);
++	unsigned long offset = id / 32;
++	u32 mask = BIT(id % 32);
++	void __iomem *reg_status = data->status + offset * sizeof(u32);
++	u32 value = readl(reg_status);
  
--	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
- 
--	data->base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(data->base))
--		return PTR_ERR(data->base);
--
- 	data->rcdev.ops = &jh7100_reset_ops;
--	data->rcdev.owner = THIS_MODULE;
--	data->rcdev.nr_resets = JH7100_RSTN_END;
--	data->rcdev.dev = &pdev->dev;
--	data->rcdev.of_node = pdev->dev.of_node;
-+	data->rcdev.owner = owner;
-+	data->rcdev.nr_resets = nr_resets;
-+	data->rcdev.dev = dev;
-+	data->rcdev.of_node = of_node;
-+
- 	spin_lock_init(&data->lock);
-+	data->assert = assert;
-+	data->status = status;
-+	data->asserted = asserted;
- 
--	return devm_reset_controller_register(&pdev->dev, &data->rcdev);
-+	return devm_reset_controller_register(dev, &data->rcdev);
+ 	return !((value ^ data->asserted[offset]) & mask);
  }
--EXPORT_SYMBOL_GPL(jh7100_reset_probe);
-+EXPORT_SYMBOL_GPL(reset_starfive_jh7100_register);
+@@ -107,7 +106,7 @@ static const struct reset_control_ops jh71x0_reset_ops = {
+ 
+ int reset_starfive_jh71x0_register(struct device *dev, struct device_node *of_node,
+ 				   void __iomem *assert, void __iomem *status,
+-				   const u64 *asserted, unsigned int nr_resets,
++				   const u32 *asserted, unsigned int nr_resets,
+ 				   struct module *owner)
+ {
+ 	struct jh71x0_reset *data;
 diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.h b/drivers/reset/starfive/reset-starfive-jh71x0.h
-index 318d7a0e096a..1fc5a648c8d8 100644
+index ac9e80dd3f59..db7d39a87f87 100644
 --- a/drivers/reset/starfive/reset-starfive-jh71x0.h
 +++ b/drivers/reset/starfive/reset-starfive-jh71x0.h
-@@ -6,6 +6,9 @@
- #ifndef __RESET_STARFIVE_JH71X0_H
- #define __RESET_STARFIVE_JH71X0_H
+@@ -8,7 +8,7 @@
  
--int jh7100_reset_probe(struct platform_device *pdev);
-+int reset_starfive_jh7100_register(struct device *dev, struct device_node *of_node,
-+				   void __iomem *assert, void __iomem *status,
-+				   const u64 *asserted, unsigned int nr_resets,
-+				   struct module *owner);
+ int reset_starfive_jh71x0_register(struct device *dev, struct device_node *of_node,
+ 				   void __iomem *assert, void __iomem *status,
+-				   const u64 *asserted, unsigned int nr_resets,
++				   const u32 *asserted, unsigned int nr_resets,
+ 				   struct module *owner);
  
  #endif /* __RESET_STARFIVE_JH71X0_H */
 -- 
