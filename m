@@ -2,54 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CEA6C61DA3
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 03:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B28A3C61DA3
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 03:55:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232923AbjBUDyL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Feb 2023 22:54:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51972 "EHLO
+        id S232995AbjBUDz4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Feb 2023 22:55:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232875AbjBUDyL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Feb 2023 22:54:11 -0500
-Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD0C32068F
-        for <linux-clk@vger.kernel.org>; Mon, 20 Feb 2023 19:54:09 -0800 (PST)
-Received: by mail-ua1-x932.google.com with SMTP id f20so165890uam.3
-        for <linux-clk@vger.kernel.org>; Mon, 20 Feb 2023 19:54:09 -0800 (PST)
+        with ESMTP id S232930AbjBUDz4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Feb 2023 22:55:56 -0500
+Received: from mail-vk1-xa32.google.com (mail-vk1-xa32.google.com [IPv6:2607:f8b0:4864:20::a32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 008AD2068F
+        for <linux-clk@vger.kernel.org>; Mon, 20 Feb 2023 19:55:54 -0800 (PST)
+Received: by mail-vk1-xa32.google.com with SMTP id w126so1732913vkb.1
+        for <linux-clk@vger.kernel.org>; Mon, 20 Feb 2023 19:55:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4HqN3egQulWxDOUwNgXIKkCpD9Uq1nJcsXGny14J0gE=;
-        b=nz9jUt8OFkg3LTE5XyHfvNLcLPEcdH+d2oKGyNiF8DBCPym8hQLkx8EO+jIyirTxLb
-         JQ/SnkiLoxAq6+NSOFkr77vfbqJtU3e7UoUJHdb9pYYS6sLnoaQfv78wz24lauqjgpDN
-         vC6tBvAmTrWYgtJYP8ZcLof3pEFpu2eH34PBk=
+        bh=yTTUfpY5FBze/ZdJsTMclUwYRTvL4mC8YWDC0HHBaDo=;
+        b=LdWHnd2Swi3aDPIeLDYDnQy/SdWrk5WWezojEhx3GNTFL/Z3ampZ38AUjhpG7kOPLh
+         a2zMHNXGNT59i9PFUvBYLBzBWZKMsmXxWEjLKmjLWdGY0KyrntMpaqMf/pB1xiF1gfwU
+         Sjsi5pSdY2BAlMpDKBiPt/GxCIuqAPEGEqQZE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4HqN3egQulWxDOUwNgXIKkCpD9Uq1nJcsXGny14J0gE=;
-        b=7mocpR9dC9M3G2hYeEKhjjQe/1wEb4X8V3qJkDPGM5VOa53aLzdxv2mW/Npjq0jkOy
-         ++aXdK5UZm3opCdLqOaM7ljzltY2DtUsVqshwzbu2BBKu/twGfv7yw+A3WCFMi0WikGJ
-         y1XGIe0Ygwy2zEuvq6ZTTf+bSif88Z/gEnyO6kwRTJM/1AoXI8KFfiFrVRk5b/1myYEh
-         MDYcpoga5GgLbZpfT+HM4o8beo7oMulqtl+J51KC4lCd2BcBwXWm9n1k1FM2af0CYNi+
-         YXacBm3lH6+VhYkJOsrlXiFZcYBbe6wHa+R19XZaf+8VaGdiL+fvDWFd9tu3Kk+DSQkc
-         fQmw==
-X-Gm-Message-State: AO0yUKX0c4b3PzzmgHrdmmfNSHz3QEIde3YeSUpyqRtasabB5Jyp79Az
-        qCxuBjIZNiBgK00/9cDkjjrYtseMrQ/A4963BRTsAQ==
-X-Google-Smtp-Source: AK7set9VIEmauTPBD0SMjR0QxGvm+9nNLdQn9B6VZ+5eVqn4o4DG2LcQLdFEh2mEqFdkXQe+mLUs2kvbeIH7LU5AouI=
-X-Received: by 2002:ab0:1014:0:b0:68b:90f4:1d8c with SMTP id
- f20-20020ab01014000000b0068b90f41d8cmr663799uab.1.1676951648551; Mon, 20 Feb
- 2023 19:54:08 -0800 (PST)
+        bh=yTTUfpY5FBze/ZdJsTMclUwYRTvL4mC8YWDC0HHBaDo=;
+        b=WngwfJYJqCUoZbbmxxfcmwHggHGVxnQ47zZIH6KtCt8GAHktQSx36geump7RBFLxjA
+         Kx9ukshly0se5N7zko8gOzyUrjJvPpmVVPKBgQv3TPLzoSMIAeD+MA3T4fgLTQQeQLhh
+         zPFgT2BCUKKE+HVWCF2f7D7A9GerxrC1fxTcsp33Eg6TGv/K6qtXXzNy7ni9KHpUxXYK
+         Aoomadsp1pfn95C5K5X7dAJ815RjXe1EvS78kZ+D3pw8CnrOXPUqfCnpzBoJs4kZaocz
+         kk21DWNTWyhL5JY0t1RD7+DPYFkpZX4746LaTOYokhA0aZYuEcj4alyidF08eaUVkcxC
+         tTpQ==
+X-Gm-Message-State: AO0yUKWMob95xfZx9kkEnkjQ82sce92E5T6kynq5rhB9TSmjZyL6xEnn
+        J1iubsHI32z7fKVDDIIANvszjPrimZzC5+XsEr5j6Q==
+X-Google-Smtp-Source: AK7set8Jj9rIJ0M1z0qzvgZyXsHbOHSifaxMAF2WDRHnciHO2wQ0GHx1+ow3JKQ1jckTrglgegfQO/AUz+jddSbN0Vw=
+X-Received: by 2002:a1f:a3c8:0:b0:40b:9:82fd with SMTP id m191-20020a1fa3c8000000b0040b000982fdmr813692vke.18.1676951754153;
+ Mon, 20 Feb 2023 19:55:54 -0800 (PST)
 MIME-Version: 1.0
-References: <20230220150111.77897-1-angelogioacchino.delregno@collabora.com> <20230220150111.77897-40-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230220150111.77897-40-angelogioacchino.delregno@collabora.com>
+References: <20230220150111.77897-1-angelogioacchino.delregno@collabora.com> <20230220150111.77897-47-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230220150111.77897-47-angelogioacchino.delregno@collabora.com>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Tue, 21 Feb 2023 11:53:57 +0800
-Message-ID: <CAGXv+5Eztv3RuXPXSYFd2qH_Wd18OcLNaqO+Lcp4hytjkBarfA@mail.gmail.com>
-Subject: Re: [PATCH v3 39/55] clk: mediatek: Split MT8195 clock drivers and
- allow module build
+Date:   Tue, 21 Feb 2023 11:55:43 +0800
+Message-ID: <CAGXv+5FHQG6CBcRVUYdNXdxRQVRpmnVN_EiQ=knm48B_7ugHqA@mail.gmail.com>
+Subject: Re: [PATCH v3 46/55] clk: mediatek: Split configuration options for
+ MT8186 clock drivers
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
@@ -71,57 +70,18 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On Mon, Feb 20, 2023 at 11:02 PM AngeloGioacchino Del Regno
 <angelogioacchino.delregno@collabora.com> wrote:
 >
-> MT8195 clock drivers were encapsulated in one single (and big) Kconfig
-> option: there's no reason to do that, as it is totally unnecessary to
-> build in all or none of them.
+> When building clock drivers for MT8186, some may want to build in only
+> some of them to, for example, get CPUFreq up faster, and some may want
+> to leave out some clock drivers entirely as a machine may not need the
+> Warp Engine or the camera ISP (hence, their clock drivers).
 >
-> Split them out: keep boot-critical clocks as bool and allow choosing
-> non critical clocks as tristate.
+> Split the various clock drivers in their own configuration options,
+> keeping MT8186 configuration options consistent with other MediaTek
+> SoCs.
 >
-> As a note, the dependencies of VDEC/VENCSYS and CAM/IMG/IPE/WPESYS
-> are not for build-time but rather for runtime, as clocks registered
-> by those have runtime dependencies on either or both VPP and IMGSYS.
+> While at it, also allow building the remaining clock drivers as modules
+> by switching COMMON_CLK_MT8186 to tristate.
 >
 > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  drivers/clk/mediatek/Kconfig  | 100 ++++++++++++++++++++++++++++++++++
->  drivers/clk/mediatek/Makefile |  20 ++++---
->  2 files changed, 113 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-> index 45b7aea7648d..49919da2be26 100644
-> --- a/drivers/clk/mediatek/Kconfig
-> +++ b/drivers/clk/mediatek/Kconfig
-> @@ -692,6 +692,106 @@ config COMMON_CLK_MT8195
->          help
->            This driver supports MediaTek MT8195 clocks.
->
-> +config COMMON_CLK_MT8195_APUSYS
-> +       tristate "Clock driver for MediaTek MT8195 apusys"
-> +       depends on COMMON_CLK_MT8195
-> +       default COMMON_CLK_MT8195
-> +       help
-> +         This driver supports MediaTek MT8195 AI Processor Unit System clocks.
-> +
-> +config COMMON_CLK_MT8195_AUDSYS
-> +       tristate "Clock driver for MediaTek MT8195 audsys"
-> +       depends on COMMON_CLK_MT8195
-> +       default COMMON_CLK_MT8195
-> +       help
-> +         This driver supports MediaTek MT8195 audsys clocks.
-> +
-> +config COMMON_CLK_MT8195_IMP_IIC_WRAP
-> +       tristate "Clock driver for MediaTek MT8195 imp_iic_wrap"
-> +       depends on COMMON_CLK_MT8195
-> +       default COMMON_CLK_MT8195
-> +       help
-> +         This driver supports MediaTek MT8195 I2C/I3C clocks.
-> +
-> +config COMMON_CLK_MT8195_IPESYS
-> +       tristate "Clock driver for MediaTek MT8195 ipesys"
-> +       depends on COMMON_CLK_MT8195_IMGSYS
-
-This should also be moved to just after IMGSYS.
-This is the only one that is not ordered right, so after it is fixed,
 
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
