@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD02C64EC4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE55AC64ED9
 	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 11:58:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233964AbjBUL6F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 06:58:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35220 "EHLO
+        id S233249AbjBUL6G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Feb 2023 06:58:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234546AbjBUL5V (ORCPT
+        with ESMTP id S234481AbjBUL5V (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 06:57:21 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D9B628223;
-        Tue, 21 Feb 2023 03:56:51 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 125AA28218;
+        Tue, 21 Feb 2023 03:56:50 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id D6C4D66021E3;
-        Tue, 21 Feb 2023 11:56:33 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id BA8D966021CA;
+        Tue, 21 Feb 2023 11:56:37 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676980595;
-        bh=xhH2n5XmogkvcmxqMIc1jv/49UOL0BNOcn3TahthPEQ=;
+        s=mail; t=1676980598;
+        bh=nMAANSk/UU2xOIRce888SbMKzruYSYk/80xNpYz3QzM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WyAxRrYfivG5Ofwl9YHj2bkOqcFSuVICCa2nj8wHfmpg3F2fe7fxRQ0K09lZE5ot9
-         wBkkyYAjRCetcAwFCXb9GbYcQJKSgPN3SU3BwXMT64Oo+UDb9ZmQmgJv6faZ8drn79
-         UtDGn09GXzT4NYJ7v5Ar+a2NfBGQkPg6f+aVTsHCuJtWFUxRWYOnGpVl2Aw6GSo6dy
-         l+TmtHk+j/coHSMVoJlaWFx15Bg94Hmx3uVcZK26ynA9WF3r2ELOH2cOKhTRRJOXO0
-         AcPhkwE3dvLoD0xutf2HC/Hpa8jGsthI7pvYuRbe6rC1O2DnuIKjFEG8ZRBW/v4vT/
-         PWWxhTAP7DkbA==
+        b=H3LXGkjDgm9OV/lkJcSVtxKuq+WwKvR1sd1UiAE7tHZeVSuyt6A0Y+QqyHVr4urWm
+         u+wXNF/WlaBqPvSJKdp1DUBkAj04ziJRKJpZqZMoSwEJfhwLZ/sgEZm/eT8RxezDES
+         qs077N4dHA0MCpMJTQOlPVvr5sZ3uoAgnXlzdQv7oJX1FLEkqexF/ArWYjmGLKyb7c
+         rj4o2EeukGJ5m7+jdYexIgphnjswNW978ymUovRkcGtIHURgg6bAhEbkPO/kr6BWCD
+         ebXPZSJNeXM7ukHn8KfXfb9HVffGMVD2XP6beC/m0KWxxjyC7Z0xJVmkekckQzOxNz
+         7iofcn8iqMkhQ==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v4 30/54] clk: mediatek: mt8516: Allow building clock drivers as modules
-Date:   Tue, 21 Feb 2023 12:55:25 +0100
-Message-Id: <20230221115549.360132-31-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v4 33/54] clk: mediatek: mt7986-infracfg: Migrate to common probe mechanism
+Date:   Tue, 21 Feb 2023 12:55:28 +0100
+Message-Id: <20230221115549.360132-34-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230221115549.360132-1-angelogioacchino.delregno@collabora.com>
 References: <20230221115549.360132-1-angelogioacchino.delregno@collabora.com>
@@ -58,37 +58,95 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now that all MT8516 drivers have been converted to platform driver,
-change the configuration options to tristate.
+Convert this driver to use the common mtk_clk_simple_probe() mechanism.
+While at it, also use module_platform_driver() instead, as this driver
+just gained a .remove() callback during the conversion.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/clk/mediatek/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/mediatek/clk-mt7986-infracfg.c | 61 ++++++----------------
+ 1 file changed, 17 insertions(+), 44 deletions(-)
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 2d14855dd37e..b9c0a9e21cf1 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -743,7 +743,7 @@ config COMMON_CLK_MT8365_VENC
- 	  This driver supports MediaTek MT8365 venc clocks.
+diff --git a/drivers/clk/mediatek/clk-mt7986-infracfg.c b/drivers/clk/mediatek/clk-mt7986-infracfg.c
+index 0a4bf87ee160..0299faad0733 100644
+--- a/drivers/clk/mediatek/clk-mt7986-infracfg.c
++++ b/drivers/clk/mediatek/clk-mt7986-infracfg.c
+@@ -157,57 +157,30 @@ static const struct mtk_gate infra_clks[] = {
+ 	GATE_INFRA2(CLK_INFRA_IPCIEB_CK, "infra_ipcieb", "sysaxi_sel", 15),
+ };
  
- config COMMON_CLK_MT8516
--	bool "Clock driver for MediaTek MT8516"
-+	tristate "Clock driver for MediaTek MT8516"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
- 	select COMMON_CLK_MEDIATEK
- 	default ARCH_MEDIATEK
-@@ -751,7 +751,7 @@ config COMMON_CLK_MT8516
- 	  This driver supports MediaTek MT8516 clocks.
+-static int clk_mt7986_infracfg_probe(struct platform_device *pdev)
+-{
+-	struct clk_hw_onecell_data *clk_data;
+-	struct device_node *node = pdev->dev.of_node;
+-	int r;
+-	void __iomem *base;
+-	int nr = ARRAY_SIZE(infra_divs) + ARRAY_SIZE(infra_muxes) +
+-		 ARRAY_SIZE(infra_clks);
+-
+-	base = of_iomap(node, 0);
+-	if (!base) {
+-		pr_err("%s(): ioremap failed\n", __func__);
+-		return -ENOMEM;
+-	}
+-
+-	clk_data = mtk_alloc_clk_data(nr);
+-
+-	if (!clk_data)
+-		return -ENOMEM;
+-
+-	mtk_clk_register_factors(infra_divs, ARRAY_SIZE(infra_divs), clk_data);
+-	mtk_clk_register_muxes(&pdev->dev, infra_muxes,
+-			       ARRAY_SIZE(infra_muxes), node,
+-			       &mt7986_clk_lock, clk_data);
+-	mtk_clk_register_gates(&pdev->dev, node, infra_clks,
+-			       ARRAY_SIZE(infra_clks), clk_data);
+-
+-	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+-	if (r) {
+-		pr_err("%s(): could not register clock provider: %d\n",
+-		       __func__, r);
+-		goto free_infracfg_data;
+-	}
+-	return r;
+-
+-free_infracfg_data:
+-	mtk_free_clk_data(clk_data);
+-	return r;
+-
+-}
++static const struct mtk_clk_desc infra_desc = {
++	.clks = infra_clks,
++	.num_clks = ARRAY_SIZE(infra_clks),
++	.factor_clks = infra_divs,
++	.num_factor_clks = ARRAY_SIZE(infra_divs),
++	.mux_clks = infra_muxes,
++	.num_mux_clks = ARRAY_SIZE(infra_muxes),
++	.clk_lock = &mt7986_clk_lock,
++};
  
- config COMMON_CLK_MT8516_AUDSYS
--	bool "Clock driver for MediaTek MT8516 audsys"
-+	tristate "Clock driver for MediaTek MT8516 audsys"
- 	depends on COMMON_CLK_MT8516
- 	help
- 	  This driver supports MediaTek MT8516 audsys clocks.
+ static const struct of_device_id of_match_clk_mt7986_infracfg[] = {
+-	{ .compatible = "mediatek,mt7986-infracfg", },
+-	{}
++	{ .compatible = "mediatek,mt7986-infracfg", .data = &infra_desc },
++	{ /* sentinel */ }
+ };
+ 
+ static struct platform_driver clk_mt7986_infracfg_drv = {
+-	.probe = clk_mt7986_infracfg_probe,
+ 	.driver = {
+ 		.name = "clk-mt7986-infracfg",
+ 		.of_match_table = of_match_clk_mt7986_infracfg,
+ 	},
++	.probe = mtk_clk_simple_probe,
++	.remove = mtk_clk_simple_remove,
+ };
+-builtin_platform_driver(clk_mt7986_infracfg_drv);
++module_platform_driver(clk_mt7986_infracfg_drv);
++
++MODULE_DESCRIPTION("MediaTek MT7986 infracfg clocks driver");
++MODULE_LICENSE("GPL");
 -- 
 2.39.1
 
