@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA09C64EC4
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 11:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD73C64ED9
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 11:59:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233617AbjBUL6k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 06:58:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36748 "EHLO
+        id S234152AbjBUL6m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Feb 2023 06:58:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234451AbjBUL6J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 06:58:09 -0500
+        with ESMTP id S234592AbjBUL6W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 06:58:22 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33E8E28221;
-        Tue, 21 Feb 2023 03:57:39 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5078D1714;
+        Tue, 21 Feb 2023 03:57:48 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 70C1966021C6;
-        Tue, 21 Feb 2023 11:56:36 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id F276A66021D8;
+        Tue, 21 Feb 2023 11:56:29 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676980597;
-        bh=TVcQKRssdAc9o2ZUajNdAkJkyh364bF8fOa6lB5Z2tE=;
+        s=mail; t=1676980591;
+        bh=hWZRDGal3GNmdFtLS5t4q03/QmGR1D89Es46OeyDZNc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NA3rOW1hGiPTmA6wq6XcQX9Igsbu097Od+igvm0r6hmcOD5VEzla+0zyBP7LNZpXS
-         8ZOA1icFqG1Wt29Wqu4E4xC8es4t1ZAblg3OtRN9nsT1lB5roF0u4tLO3MVC9Z01G0
-         JtUdPIZpmoPzNTwtx5xu+sj1MstnxBLLbQ2ptYCWWq8O4zbU8EpCFVYbtfa9B4cMoT
-         Rspiajegiu7XZAUK1qv2QbbqoX0piogV/gkjxuNXNStlh+FvpAYrotxxI+YGRSdd4z
-         gLARvD1OZTJEmWYeNf9uGneEnH9YmSttmNBatDcHKBxLGzI7ts5gq8vGM5sYWUhqs6
-         IEmgYBWJlZhCw==
+        b=FPLBzLKZsu5eOsh71IrnMbFEM1apZRIDua9LJF1zo/quzTmH+GniniteupIZXOhNP
+         Qry9z9By+DesgSgpFG1gfw4oVOeWMsTp1zTh03yWtffJ0B8dmL/kkhlNfD7j1g5dCG
+         8rGOHZ5+yyxn+mRYf09RLfWSNqN+291YiHXiS8DzAAeA5ulmByv1BhiWREaoppSrNW
+         XhrIgibVikyjcIzuFFRp0Y5wdTGtrTSGiimw2YWoUDSe92k+HQNPsIePQSmIuq6Kro
+         4RDK8iNkMwSEqBzI3oM6/2aXYQtNCEWpFs/88Bm1dXfM23w6FvaFEbKHPs2e7lIdG2
+         w4q3DWQ19evpQ==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v4 32/54] clk: mediatek: mt7986-apmixed: Use PLL_AO flag to set critical clock
-Date:   Tue, 21 Feb 2023 12:55:27 +0100
-Message-Id: <20230221115549.360132-33-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v4 27/54] clk: mediatek: mt7622: Convert to platform driver and simple probe
+Date:   Tue, 21 Feb 2023 12:55:22 +0100
+Message-Id: <20230221115549.360132-28-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230221115549.360132-1-angelogioacchino.delregno@collabora.com>
 References: <20230221115549.360132-1-angelogioacchino.delregno@collabora.com>
@@ -58,37 +58,162 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Instead of calling clk_prepare_enable() at probe time, add the PLL_AO
-flag to CLK_APMIXED_ARMPLL clock: this will set CLK_IS_CRITICAL.
+Convert the MT7622 topckgen and pericfg clock drivers to platform
+drivers and use the simple probe mechanism. This also allows to
+build these clocks as modules.
+
+Thanks to the conversion, more error handling was added to the clocks
+registration.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/clk/mediatek/clk-mt7986-apmixed.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/clk/mediatek/clk-mt7622.c | 125 ++++++++----------------------
+ 1 file changed, 31 insertions(+), 94 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt7986-apmixed.c b/drivers/clk/mediatek/clk-mt7986-apmixed.c
-index 62080ee4dbe3..227ca572056e 100644
---- a/drivers/clk/mediatek/clk-mt7986-apmixed.c
-+++ b/drivers/clk/mediatek/clk-mt7986-apmixed.c
-@@ -42,7 +42,7 @@
- 		 "clkxtal")
+diff --git a/drivers/clk/mediatek/clk-mt7622.c b/drivers/clk/mediatek/clk-mt7622.c
+index fb813f8d3a7d..7a002b73fcaa 100644
+--- a/drivers/clk/mediatek/clk-mt7622.c
++++ b/drivers/clk/mediatek/clk-mt7622.c
+@@ -490,107 +490,44 @@ static const struct mtk_clk_rst_desc clk_rst_desc = {
+ 	.rst_bank_nr = ARRAY_SIZE(pericfg_rst_ofs),
+ };
  
- static const struct mtk_pll_data plls[] = {
--	PLL(CLK_APMIXED_ARMPLL, "armpll", 0x0200, 0x020C, 0x0, 0, 32,
-+	PLL(CLK_APMIXED_ARMPLL, "armpll", 0x0200, 0x020C, 0x0, PLL_AO, 32,
- 	    0x0200, 4, 0, 0x0204, 0),
- 	PLL(CLK_APMIXED_NET2PLL, "net2pll", 0x0210, 0x021C, 0x0, 0, 32,
- 	    0x0210, 4, 0, 0x0214, 0),
-@@ -77,8 +77,6 @@ static int clk_mt7986_apmixed_probe(struct platform_device *pdev)
- 
- 	mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
- 
--	clk_prepare_enable(clk_data->hws[CLK_APMIXED_ARMPLL]->clk);
+-static int mtk_topckgen_init(struct platform_device *pdev)
+-{
+-	struct clk_hw_onecell_data *clk_data;
+-	void __iomem *base;
+-	struct device_node *node = pdev->dev.of_node;
 -
- 	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
- 	if (r) {
- 		pr_err("%s(): could not register clock provider: %d\n",
+-	base = devm_platform_ioremap_resource(pdev, 0);
+-	if (IS_ERR(base))
+-		return PTR_ERR(base);
+-
+-	clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
+-
+-	mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
+-				    clk_data);
+-
+-	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs),
+-				 clk_data);
+-
+-	mtk_clk_register_composites(&pdev->dev, top_muxes,
+-				    ARRAY_SIZE(top_muxes), base,
+-				    &mt7622_clk_lock, clk_data);
+-
+-	mtk_clk_register_dividers(top_adj_divs, ARRAY_SIZE(top_adj_divs),
+-				  base, &mt7622_clk_lock, clk_data);
+-
+-	mtk_clk_register_gates(&pdev->dev, node, top_clks,
+-			       ARRAY_SIZE(top_clks), clk_data);
+-
+-	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+-}
+-
+-static int mtk_pericfg_init(struct platform_device *pdev)
+-{
+-	struct clk_hw_onecell_data *clk_data;
+-	void __iomem *base;
+-	int r;
+-	struct device_node *node = pdev->dev.of_node;
+-
+-	base = devm_platform_ioremap_resource(pdev, 0);
+-	if (IS_ERR(base))
+-		return PTR_ERR(base);
+-
+-	clk_data = mtk_alloc_clk_data(CLK_PERI_NR_CLK);
+-
+-	mtk_clk_register_gates(&pdev->dev, node, peri_clks,
+-			       ARRAY_SIZE(peri_clks), clk_data);
+-
+-	mtk_clk_register_composites(&pdev->dev, peri_muxes,
+-				    ARRAY_SIZE(peri_muxes), base,
+-				    &mt7622_clk_lock, clk_data);
+-
+-	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+-	if (r)
+-		return r;
+-
+-	mtk_register_reset_controller_with_dev(&pdev->dev, &clk_rst_desc);
+-
+-	return 0;
+-}
++static const struct mtk_clk_desc topck_desc = {
++	.clks = top_clks,
++	.num_clks = ARRAY_SIZE(top_clks),
++	.fixed_clks = top_fixed_clks,
++	.num_fixed_clks = ARRAY_SIZE(top_fixed_clks),
++	.factor_clks = top_divs,
++	.num_factor_clks = ARRAY_SIZE(top_divs),
++	.composite_clks = top_muxes,
++	.num_composite_clks = ARRAY_SIZE(top_muxes),
++	.divider_clks = top_adj_divs,
++	.num_divider_clks = ARRAY_SIZE(top_adj_divs),
++	.clk_lock = &mt7622_clk_lock,
++};
++
++static const struct mtk_clk_desc peri_desc = {
++	.clks = peri_clks,
++	.num_clks = ARRAY_SIZE(peri_clks),
++	.composite_clks = peri_muxes,
++	.num_composite_clks = ARRAY_SIZE(peri_muxes),
++	.rst_desc = &clk_rst_desc,
++	.clk_lock = &mt7622_clk_lock,
++};
+ 
+ static const struct of_device_id of_match_clk_mt7622[] = {
+-	{
+-		.compatible = "mediatek,mt7622-topckgen",
+-		.data = mtk_topckgen_init,
+-	}, {
+-		.compatible = "mediatek,mt7622-pericfg",
+-		.data = mtk_pericfg_init,
+-	}, {
+-		/* sentinel */
+-	}
+-};
+-
+-static int clk_mt7622_probe(struct platform_device *pdev)
+-{
+-	int (*clk_init)(struct platform_device *);
+-	int r;
+-
+-	clk_init = of_device_get_match_data(&pdev->dev);
+-	if (!clk_init)
+-		return -EINVAL;
+-
+-	r = clk_init(pdev);
+-	if (r)
+-		dev_err(&pdev->dev,
+-			"could not register clock provider: %s: %d\n",
+-			pdev->name, r);
+-
+-	return r;
+-}
++	{ .compatible = "mediatek,mt7622-topckgen", .data = &topck_desc },
++	{ .compatible = "mediatek,mt7622-pericfg", .data = &peri_desc },
++	{ /* sentinel */ }
++};
+ 
+ static struct platform_driver clk_mt7622_drv = {
+-	.probe = clk_mt7622_probe,
+ 	.driver = {
+ 		.name = "clk-mt7622",
+ 		.of_match_table = of_match_clk_mt7622,
+ 	},
++	.probe = mtk_clk_simple_probe,
++	.remove = mtk_clk_simple_remove,
+ };
++module_platform_driver(clk_mt7622_drv)
+ 
+-static int clk_mt7622_init(void)
+-{
+-	return platform_driver_register(&clk_mt7622_drv);
+-}
+-
+-arch_initcall(clk_mt7622_init);
++MODULE_DESCRIPTION("MediaTek MT7622 clocks driver");
++MODULE_LICENSE("GPL");
 -- 
 2.39.1
 
