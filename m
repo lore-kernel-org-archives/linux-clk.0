@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 625F5C678D5
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 14:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE4E7C64ED6
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 14:12:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234069AbjBUOMA convert rfc822-to-8bit (ORCPT
+        id S234017AbjBUOL7 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 09:12:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35058 "EHLO
+        Tue, 21 Feb 2023 09:11:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233587AbjBUOL5 (ORCPT
+        with ESMTP id S229696AbjBUOL5 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 09:11:57 -0500
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38333279BE;
-        Tue, 21 Feb 2023 06:11:54 -0800 (PST)
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1EB9279AD;
+        Tue, 21 Feb 2023 06:11:55 -0800 (PST)
 Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id DE73724E1C7;
-        Tue, 21 Feb 2023 22:11:52 +0800 (CST)
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 6D2D224E287;
+        Tue, 21 Feb 2023 22:11:54 +0800 (CST)
 Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
  (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 21 Feb
- 2023 22:11:52 +0800
+ 2023 22:11:54 +0800
 Received: from localhost.localdomain (183.27.98.67) by EXMBX061.cuchost.com
  (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 21 Feb
- 2023 22:11:51 +0800
+ 2023 22:11:53 +0800
 From:   Xingyu Wu <xingyu.wu@starfivetech.com>
 To:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
         "Michael Turquette" <mturquette@baylibre.com>,
@@ -40,9 +40,9 @@ CC:     Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
         Hal Feng <hal.feng@starfivetech.com>,
         Xingyu Wu <xingyu.wu@starfivetech.com>,
         <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH v1 1/3] dt-bindings: clock: Add StarFive JH7110 PLL clock generator
-Date:   Tue, 21 Feb 2023 22:11:45 +0800
-Message-ID: <20230221141147.303642-2-xingyu.wu@starfivetech.com>
+Subject: [PATCH v1 3/3] riscv: dts: starfive: jh7110: Add PLL clock node
+Date:   Tue, 21 Feb 2023 22:11:47 +0800
+Message-ID: <20230221141147.303642-4-xingyu.wu@starfivetech.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230221141147.303642-1-xingyu.wu@starfivetech.com>
 References: <20230221141147.303642-1-xingyu.wu@starfivetech.com>
@@ -57,96 +57,51 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add bindings for the PLL clock generator on the JH7110 RISC-V SoC.
+Add the PLL clock node for the Starfive JH7110 SoC and
+modify the SYSCRG node to add PLL clocks.
 
 Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
 ---
- .../bindings/clock/starfive,jh7110-pll.yaml   | 45 +++++++++++++++++++
- .../dt-bindings/clock/starfive,jh7110-crg.h   | 12 ++---
- 2 files changed, 52 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml
+ arch/riscv/boot/dts/starfive/jh7110.dtsi | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml
-new file mode 100644
-index 000000000000..8fd18e6c2e9b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml
-@@ -0,0 +1,45 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/starfive,jh7110-pll.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: StarFive JH7110 PLL Clock Generator
-+
-+maintainers:
-+  - Xingyu Wu <xingyu.wu@starfivetech.com>
-+
-+properties:
-+  compatible:
-+    const: starfive,jh7110-pll
-+
-+  clocks:
-+    maxItems: 1
-+      - description: Main Oscillator (24 MHz)
-+
-+  '#clock-cells':
-+    const: 1
-+    description:
-+      See <dt-bindings/clock/starfive,jh7110-crg.h> for valid indices.
-+
-+  starfive,sysreg:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description:
-+      the phandle to System Register Controller syscon node.
-+
-+required:
-+  - compatible
-+  - clocks
-+  - '#clock-cells'
-+  - starfive,sysreg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pllclk: pll-clock-controller {
-+      compatible = "starfive,jh7110-pll";
-+      clocks = <&osc>;
-+      #clock-cells = <1>;
-+      starfive,sysreg = <&sys_syscon>;
-+    };
-diff --git a/include/dt-bindings/clock/starfive,jh7110-crg.h b/include/dt-bindings/clock/starfive,jh7110-crg.h
-index 5e4f21ca0642..086a6ddcf380 100644
---- a/include/dt-bindings/clock/starfive,jh7110-crg.h
-+++ b/include/dt-bindings/clock/starfive,jh7110-crg.h
-@@ -6,6 +6,12 @@
- #ifndef __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
- #define __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
+diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+index b6612c53d0d2..0cb8d86ebce5 100644
+--- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+@@ -461,12 +461,16 @@ syscrg: clock-controller@13020000 {
+ 				 <&gmac1_rgmii_rxin>,
+ 				 <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
+ 				 <&i2srx_bclk_ext>, <&i2srx_lrck_ext>,
+-				 <&tdm_ext>, <&mclk_ext>;
++				 <&tdm_ext>, <&mclk_ext>,
++				 <&pllclk JH7110_CLK_PLL0_OUT>,
++				 <&pllclk JH7110_CLK_PLL1_OUT>,
++				 <&pllclk JH7110_CLK_PLL2_OUT>;
+ 			clock-names = "osc", "gmac1_rmii_refin",
+ 				      "gmac1_rgmii_rxin",
+ 				      "i2stx_bclk_ext", "i2stx_lrck_ext",
+ 				      "i2srx_bclk_ext", "i2srx_lrck_ext",
+-				      "tdm_ext", "mclk_ext";
++				      "tdm_ext", "mclk_ext",
++				      "pll0_out", "pll1_out", "pll2_out";
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+ 		};
+@@ -476,6 +480,13 @@ sys_syscon: syscon@13030000 {
+ 			reg = <0x0 0x13030000 0x0 0x1000>;
+ 		};
  
-+/* PLL clocks */
-+#define JH7110_CLK_PLL0_OUT			0
-+#define JH7110_CLK_PLL1_OUT			1
-+#define JH7110_CLK_PLL2_OUT			2
-+#define JH7110_PLLCLK_END			3
++		pllclk: pll-clock-controller {
++			compatible = "starfive,jh7110-pll";
++			clocks = <&osc>;
++			#clock-cells = <1>;
++			starfive,sysreg = <&sys_syscon>;
++		};
 +
- /* SYSCRG clocks */
- #define JH7110_SYSCLK_CPU_ROOT			0
- #define JH7110_SYSCLK_CPU_CORE			1
-@@ -198,11 +204,7 @@
- #define JH7110_SYSCLK_TDM_TDM_INV		188
- #define JH7110_SYSCLK_JTAG_CERTIFICATION_TRNG	189
- 
--#define JH7110_SYSCLK_PLL0_OUT			190
--#define JH7110_SYSCLK_PLL1_OUT			191
--#define JH7110_SYSCLK_PLL2_OUT			192
--
--#define JH7110_SYSCLK_END			193
-+#define JH7110_SYSCLK_END			190
- 
- /* AONCRG clocks */
- #define JH7110_AONCLK_OSC_DIV4			0
+ 		sysgpio: pinctrl@13040000 {
+ 			compatible = "starfive,jh7110-sys-pinctrl";
+ 			reg = <0x0 0x13040000 0x0 0x10000>;
 -- 
 2.25.1
 
