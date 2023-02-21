@@ -2,54 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F97C61DA3
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 03:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C23B2C636D7
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 03:57:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233336AbjBUD4p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Feb 2023 22:56:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53634 "EHLO
+        id S233276AbjBUD50 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Feb 2023 22:57:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233280AbjBUD4o (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Feb 2023 22:56:44 -0500
-Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73C6D24100
-        for <linux-clk@vger.kernel.org>; Mon, 20 Feb 2023 19:56:43 -0800 (PST)
-Received: by mail-vs1-xe33.google.com with SMTP id f31so2888253vsv.1
-        for <linux-clk@vger.kernel.org>; Mon, 20 Feb 2023 19:56:43 -0800 (PST)
+        with ESMTP id S232888AbjBUD5Z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Feb 2023 22:57:25 -0500
+Received: from mail-vk1-xa2d.google.com (mail-vk1-xa2d.google.com [IPv6:2607:f8b0:4864:20::a2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A314323117
+        for <linux-clk@vger.kernel.org>; Mon, 20 Feb 2023 19:57:18 -0800 (PST)
+Received: by mail-vk1-xa2d.google.com with SMTP id g35so2035398vkd.6
+        for <linux-clk@vger.kernel.org>; Mon, 20 Feb 2023 19:57:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1676951802;
+        d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZqDsQXq0wgsqsnlCPzEpWrmYSd40mlSm295kuBDRUBs=;
-        b=a576ZMtkJ7Wv2NTnDHOI0gLegs2OTwTRw4jOexe5dLNmAaNjOHVJCF6pwYBJdUh9n1
-         9nmKmtWLiYerZd0TvGBHPGhtTZYDfvJ7zxaF3ByekVS2R5KmfaU/VQyD5BCLZy+3bWIl
-         VPiSIzzUTNFLEz8Y922qFV56bcbGdxdV5iqCY=
+        bh=abwOXxZAy2IWA1v+hcnlmlYBnF3pC1N5e091p0+kqCY=;
+        b=EYsbi0WbjzmeajfB7FkE1Sjn42SiG07kszNQeO4bmzmFEM3nEblatl6GYqTtXZrNeM
+         bGN+diyzDKyYVX7EBpeM8lWiVi+dOB1tlZgN6uuGW5FwTN8nabv/nGbnH9xBGZxzq3Lv
+         H7hOty45Ro/kRV081gCkzdrR+rBqxUA+gBDiU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1676951802;
+        d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ZqDsQXq0wgsqsnlCPzEpWrmYSd40mlSm295kuBDRUBs=;
-        b=lzhTPv6OOq9mGXhzxTMjDnDnpRiWqYxkHwVAl0IV782odpi6mA0rFR+JiDniC+T7k5
-         yCFdaJxhjeakyEzEFk8x2fHI++oANWz7f3Pd7tzu+xot5QD9cnMxREg370Fs5LW8EDBN
-         KJSMOp4ga0GaBP6ioGhFgeOXry5N8JS7QBz63LfWb2iSTa5AuLa6h4Aj13cBDiDHlqWX
-         mql68FgLgDH46mmTFFeZpZIcg0e7Rb002MNXiZuw6L+I/E6AjWzD1jiW8zpU4P9DBEKT
-         h8PzXT6ao/GI6kyCJaiK1S+2SLpLFQkO1JeqP/nzg/OhN5sdYwPjj5hiOBWieD2tNUsw
-         PrQg==
-X-Gm-Message-State: AO0yUKU3d1H1id7eoUThPZ36bv6vWWhUwfFWany93vBAqCTn95i3MLp+
-        VvM0pCA4dWnNNO69PVpB1o4usAlbyPzNTvCGCF3/cA==
-X-Google-Smtp-Source: AK7set+5W/3qgD0aWYJFtRSK5l93LCmMajQHrsK61PYbkZspKKT1iGGlN/4NpN2NHg4rJwn/ADLh9XJz8DmljXjQSmc=
-X-Received: by 2002:a67:f6c1:0:b0:411:a14d:6bac with SMTP id
- v1-20020a67f6c1000000b00411a14d6bacmr833727vso.44.1676951802590; Mon, 20 Feb
- 2023 19:56:42 -0800 (PST)
+        bh=abwOXxZAy2IWA1v+hcnlmlYBnF3pC1N5e091p0+kqCY=;
+        b=KL13v8cawwcosK0jQcC19nzZBuj8UXoLM6B9pmSoJlNz0zfsjan64jQBKyzXKa3l7z
+         bTB9vqsrAP8QqiSxYcJALAGqiR9HQAGvtZAMLLkTqxe7BAPnweiGzOhuAUL3bVQWktL9
+         qLEhxxH/ASb7FAXO+CCOtEDYUqcKQ5ZbVSLtW93gMlSSR+KRjIR107gVrC9R6IINesu4
+         GkOp3uXQ39XGSmr6xcplX9qnHBgoEGDYphi5ePFJC6QwWWd85G3JNRNwdI8qayK1cB/o
+         RywIt+WyPCRIaTJjtyKHiomuwkaiPzRYbDOo54qc5Ed29g6xX4JdmJe757z5Y69YwfWW
+         NGLQ==
+X-Gm-Message-State: AO0yUKXsW3ZEMFNuldS/vom2EysPKVy3Ka2lOhbBIQOQSmlqbeSDLuUt
+        PpNMHpPLt/732/ZM1Zf7xiXJGirOoCRCsvKb57zYpA==
+X-Google-Smtp-Source: AK7set85+8uGYvX/31NEkS0PijJj9uGf3ECBO7SgPA+DVMmlvxh5qtMlrAAK6g4OzKVTncAREBChRQihS9f3vpZC++0=
+X-Received: by 2002:a1f:a3c8:0:b0:40b:9:82fd with SMTP id m191-20020a1fa3c8000000b0040b000982fdmr814221vke.18.1676951837787;
+ Mon, 20 Feb 2023 19:57:17 -0800 (PST)
 MIME-Version: 1.0
-References: <20230220150111.77897-1-angelogioacchino.delregno@collabora.com> <20230220150111.77897-51-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230220150111.77897-51-angelogioacchino.delregno@collabora.com>
+References: <20230220150111.77897-1-angelogioacchino.delregno@collabora.com> <20230220150111.77897-52-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230220150111.77897-52-angelogioacchino.delregno@collabora.com>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Tue, 21 Feb 2023 11:56:31 +0800
-Message-ID: <CAGXv+5Eh0FQOVM1kgDKCTYQvmEXtwCVov8ZjqMn1n1diuvam7w@mail.gmail.com>
-Subject: Re: [PATCH v3 50/55] clk: mediatek: mt8135: Move apmixedsys to its
- own file
+Date:   Tue, 21 Feb 2023 11:57:06 +0800
+Message-ID: <CAGXv+5HjKuNLYtieHO4T1MXN7Uovz4oALqcP1DVAowY=h2c0Lg@mail.gmail.com>
+Subject: Re: [PATCH v3 51/55] clk: mediatek: mt8135: Properly use
+ CLK_IS_CRITICAL flag
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
@@ -71,9 +70,10 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On Mon, Feb 20, 2023 at 11:02 PM AngeloGioacchino Del Regno
 <angelogioacchino.delregno@collabora.com> wrote:
 >
-> In preparation for migrating mt8135 clocks to the common simple
-> probe mechanism, move the apmixedsys clocks to a different file.
+> Instead of calling clk_prepare_enable() for clocks that shall stay
+> enabled, use the CLK_IS_CRITICAL flag, which purpose is exactly that.
 >
+> Fixes: a8aede794843 ("clk: mediatek: Add basic clocks for Mediatek MT8135.")
 > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
