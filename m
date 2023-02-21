@@ -2,65 +2,77 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9F7C636D7
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 22:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0336C636D7
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 22:50:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229628AbjBUWjN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 17:39:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34780 "EHLO
+        id S229567AbjBUWu2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Feb 2023 17:50:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229672AbjBUWjM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 17:39:12 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B0ED32E7B
-        for <linux-clk@vger.kernel.org>; Tue, 21 Feb 2023 14:38:49 -0800 (PST)
+        with ESMTP id S229503AbjBUWu1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 17:50:27 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 697ED2ED74;
+        Tue, 21 Feb 2023 14:50:25 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B7434B80F01
-        for <linux-clk@vger.kernel.org>; Tue, 21 Feb 2023 22:37:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70001C433D2;
-        Tue, 21 Feb 2023 22:37:17 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B76A5B80F01;
+        Tue, 21 Feb 2023 22:50:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F856C433EF;
+        Tue, 21 Feb 2023 22:50:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677019037;
-        bh=//oNQAJ0v8bPCZUQEbAdD/q93hvPwkCNsqrz6uPqInc=;
+        s=k20201202; t=1677019822;
+        bh=IffyvW5Atm7oajpsNnP6gCiCgyMk3+5BS2IJKL3o0MA=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=BiBSeZfrPmVMx9krG+QIjpu1a47FtgLlatsAyNyWkv4XKpdsqZhA7SdOmSlfjWNNC
-         6EhyaGb8FJCoDFktdkg0cZMZTXdEDYFJio5jxriWGR78Lb1XT3ZKuaaZvIqM/x0FPN
-         trR1vMEPeuDgxMy0QWwF1Mctk8gBPwvoqw0JjGrn67F33Jlvilc4vjmhWvB38u4pZD
-         2lLK3K+7voY96UM40DVfFVTLzXD99+G9fdbh9YGW6/Up4gAxwdlXjWuKbzRPNWyLi2
-         jxHhDecAbFXD8gmRNqsP+RwMfXFLaWja4HCJbI2wdBIIZugsm4ncvK97/WcgsIWB7y
-         iTZixRv7mVdKQ==
-Message-ID: <502c532ed6dfa9da0fbe3760f3e90eb8.sboyd@kernel.org>
+        b=AsQX+GUgyy7zRxcMuAfCdV8miYVviuAgxpZ2zzQ2eWm+uSB/a+b6K+2riRB2NoPqU
+         fY1TzpdSHX4PwzWioynKgI6bUzD68K95To239UJcR/Bfp2frBiu5aEUEjG9rp2kc+I
+         OeTKnTnxy3MQI2WpmT6PvlMP0vmWmltP+AqHT90Oy5zVUnI+WOsUPHd21LXI6dib6F
+         FZ0fFhAa27uB3Dp+fMPjiPyvt2ZloPfli4fdnsAjpvjodhU+Tmtw5ksjJjpjk1XxKl
+         snMK30wXygF04U8XaCY7Dl+YkuhfLw2lC7MgPy54Ry2SsAgQomE9EsqXFZ2PXCgVL7
+         jnyasCashMzkg==
+Message-ID: <1e05156120fdfd79ed267f44fe7f3491.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <e5d7afd3-2e1a-ad5a-a455-8882fae9cc47@gmail.com>
-References: <e5d7afd3-2e1a-ad5a-a455-8882fae9cc47@gmail.com>
-Subject: Re: [PATCH] clk: add devm_add_clk_disable_unprepare
+In-Reply-To: <20230222215834.3507-1-zeming@nfschina.com>
+References: <20230222215834.3507-1-zeming@nfschina.com>
+Subject: Re: [PATCH] zynq: clkc: Add kmalloc allocation flag
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org
-To:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>
-Date:   Tue, 21 Feb 2023 14:37:15 -0800
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Li zeming <zeming@nfschina.com>
+To:     Li zeming <zeming@nfschina.com>, michal.simek@xilinx.com,
+        mturquette@baylibre.com
+Date:   Tue, 21 Feb 2023 14:50:20 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Heiner Kallweit (2023-02-18 14:58:54)
-> I'm aware that there have been numerous rejected attempts to add a
-> devm_clk_prepare_enable(). The advice I've seen was:
-
-See devm_clk_get_optional_enabled()
-
-> If you need this functionality, use devm_add_action_or_reset().
-> As a result lots of callers implemented their own action wrapper for
-> clk_disable_unprepare(). Just one example: dw8250_clk_disable_unprepare
-> This can be avoided with a little bit of cast magic, as used by few
-> drivers already.
-> Helper devm_add_clk_disable_unprepare() is supposed to reduce the
-> code duplication caused by all these individual wrappers.
+Quoting Li zeming (2023-02-22 13:58:34)
+> The kmalloc could crash if allocation fails. Add the __GFP_NOFAIL flag
+> to ensure that allocation succeeds every time.
 >=20
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> Signed-off-by: Li zeming <zeming@nfschina.com>
+> ---
+>  drivers/clk/zynq/clkc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
+> index 7bdeaff2bfd6..7621c2f00468 100644
+> --- a/drivers/clk/zynq/clkc.c
+> +++ b/drivers/clk/zynq/clkc.c
+> @@ -427,7 +427,7 @@ static void __init zynq_clk_setup(struct device_node =
+*np)
+>                         SLCR_GEM1_CLK_CTRL, 0, 0, &gem1clk_lock);
+> =20
+>         tmp =3D strlen("mio_clk_00x");
+> -       clk_name =3D kmalloc(tmp, GFP_KERNEL);
+> +       clk_name =3D kmalloc(tmp, GFP_KERNEL | __GFP_NOFAIL);
+
+There are so many more allocations happening in this function and they
+aren't marked nofail. Why is this one special?
+
+I could see a patch moving mio_clk_00x to the stack and then printing to
+it. But it is also fine like this, so I don't see any reason to change
+this.
