@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 259C3C6FD20
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 11:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D87A9C6FD1E
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 11:58:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234503AbjBUL6M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S234533AbjBUL6M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Tue, 21 Feb 2023 06:58:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35222 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234573AbjBUL5k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 06:57:40 -0500
+        with ESMTP id S234541AbjBUL5e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 06:57:34 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80CE328D24;
-        Tue, 21 Feb 2023 03:57:10 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5BA71DB9C;
+        Tue, 21 Feb 2023 03:57:05 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 08D8666021CC;
-        Tue, 21 Feb 2023 11:56:42 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id A699D66021CB;
+        Tue, 21 Feb 2023 11:56:41 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676980604;
-        bh=Mkgrrgp5OJfj1mFuBasfSq43monk36jg7zxHABuNMMA=;
+        s=mail; t=1676980602;
+        bh=NQIu58BhXDSGHJI5hLUmXsNhUn4ugKnsnKkt1hMwk+Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ntbv8IG9I29/KvCglrPMoePtV/ibJaDIUB69M0DQAHDDuTt8AqAnfjOoF4+4mVOX9
-         SKJHGdetzWtWk5urvuYpT7JOzYX8KpcLC3sCxxyAXdj7VXFGuKi7SofKbkw+9EOL3N
-         rYyuq6hxPfiWv6Z/oiltlFu/pgN0KAmQ4yHbPe0tjRPWE4lZCJgVK9c1/Ivu27Sjey
-         Cr0wpxhOIZ+l9Jf1XiS2/MFxPbnNwSqOO7s3p27Fn9EmRN1UbYXwEGxJbOBIefQd4A
-         ebLagRbk1xsZnClD/g3g+EO1/TqsHpD1vnSODGUKHy+cpbzD6J/48BJ0RjKo6uw727
-         55YIIQvJ/SXmg==
+        b=YpMoNLsW7v/xm7WXH2ZSPDLLztEzautpzQBpkRymTY02qlkzL4bHyhNONbxmbum7K
+         lIFgWAIO0cSzz/6hGOow3OyBjRmWX1BATsrhadLXbTfpba9LkQWQcBiAS00nEesZgx
+         513mL0d84xdacFLp/dWKLuW1uS/LJqwEwZUgC+fYJi/Zg9rshVKKU5bhSzf1PY0HQP
+         jrr4ziHBot9jlxdIq60MEFkl9AuCv1MK0u099VORWyRNlND7gnhv8FVI3V1WLcIVEZ
+         +3giagf7eIWRWrKldrfUdTOAW3TVhqpc8m4yC04f7eJOZsad/a5F/ZsP0Y5Lo2aHZN
+         ZApc0wqPNPjow==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v4 37/54] clk: mediatek: Add MODULE_LICENSE() where missing
-Date:   Tue, 21 Feb 2023 12:55:32 +0100
-Message-Id: <20230221115549.360132-38-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v4 36/54] clk: mediatek: Switch to module_platform_driver() where possible
+Date:   Tue, 21 Feb 2023 12:55:31 +0100
+Message-Id: <20230221115549.360132-37-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230221115549.360132-1-angelogioacchino.delregno@collabora.com>
 References: <20230221115549.360132-1-angelogioacchino.delregno@collabora.com>
@@ -58,1107 +58,1152 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In order to successfully build clock drivers as modules it is required
-to declare a module license: add it where missing.
-While at it, also change the MODULE_LICENSE text from "GPL v2" to
-"GPL" (which means the same) on clk-mt7981-eth.c.
+Lots of clock drivers have got both .probe() and a .remove() callbacks:
+switch from builtin_platform_driver() to module_platform_driver() so
+that we actually register the .remove() callback.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/clk/mediatek/clk-mt2701-aud.c          | 1 +
- drivers/clk/mediatek/clk-mt2701-bdp.c          | 1 +
- drivers/clk/mediatek/clk-mt2701-eth.c          | 1 +
- drivers/clk/mediatek/clk-mt2701-g3d.c          | 1 +
- drivers/clk/mediatek/clk-mt2701-hif.c          | 1 +
- drivers/clk/mediatek/clk-mt2701-img.c          | 1 +
- drivers/clk/mediatek/clk-mt2701-mm.c           | 1 +
- drivers/clk/mediatek/clk-mt2701-vdec.c         | 1 +
- drivers/clk/mediatek/clk-mt2701.c              | 1 +
- drivers/clk/mediatek/clk-mt2712-apmixedsys.c   | 1 +
- drivers/clk/mediatek/clk-mt2712-bdp.c          | 1 +
- drivers/clk/mediatek/clk-mt2712-img.c          | 1 +
- drivers/clk/mediatek/clk-mt2712-jpgdec.c       | 1 +
- drivers/clk/mediatek/clk-mt2712-mfg.c          | 1 +
- drivers/clk/mediatek/clk-mt2712-mm.c           | 1 +
- drivers/clk/mediatek/clk-mt2712-vdec.c         | 1 +
- drivers/clk/mediatek/clk-mt2712-venc.c         | 1 +
- drivers/clk/mediatek/clk-mt2712.c              | 1 +
- drivers/clk/mediatek/clk-mt6765-audio.c        | 1 +
- drivers/clk/mediatek/clk-mt6765-cam.c          | 1 +
- drivers/clk/mediatek/clk-mt6765-img.c          | 1 +
- drivers/clk/mediatek/clk-mt6765-mipi0a.c       | 1 +
- drivers/clk/mediatek/clk-mt6765-mm.c           | 1 +
- drivers/clk/mediatek/clk-mt6765-vcodec.c       | 1 +
- drivers/clk/mediatek/clk-mt6765.c              | 1 +
- drivers/clk/mediatek/clk-mt6797-img.c          | 1 +
- drivers/clk/mediatek/clk-mt6797-mm.c           | 1 +
- drivers/clk/mediatek/clk-mt6797-vdec.c         | 1 +
- drivers/clk/mediatek/clk-mt6797-venc.c         | 1 +
- drivers/clk/mediatek/clk-mt6797.c              | 1 +
- drivers/clk/mediatek/clk-mt7622-aud.c          | 1 +
- drivers/clk/mediatek/clk-mt7622-eth.c          | 1 +
- drivers/clk/mediatek/clk-mt7622-hif.c          | 1 +
- drivers/clk/mediatek/clk-mt7629-eth.c          | 1 +
- drivers/clk/mediatek/clk-mt7629-hif.c          | 1 +
- drivers/clk/mediatek/clk-mt7629.c              | 1 +
- drivers/clk/mediatek/clk-mt7981-apmixed.c      | 1 +
- drivers/clk/mediatek/clk-mt7981-eth.c          | 2 +-
- drivers/clk/mediatek/clk-mt7981-infracfg.c     | 1 +
- drivers/clk/mediatek/clk-mt7981-topckgen.c     | 1 +
- drivers/clk/mediatek/clk-mt7986-apmixed.c      | 1 +
- drivers/clk/mediatek/clk-mt7986-topckgen.c     | 1 +
- drivers/clk/mediatek/clk-mt8135.c              | 1 +
- drivers/clk/mediatek/clk-mt8167-apmixedsys.c   | 1 +
- drivers/clk/mediatek/clk-mt8167-aud.c          | 1 +
- drivers/clk/mediatek/clk-mt8167-img.c          | 1 +
- drivers/clk/mediatek/clk-mt8167-mfgcfg.c       | 1 +
- drivers/clk/mediatek/clk-mt8167-mm.c           | 1 +
- drivers/clk/mediatek/clk-mt8167-vdec.c         | 1 +
- drivers/clk/mediatek/clk-mt8167.c              | 1 +
- drivers/clk/mediatek/clk-mt8183-apmixedsys.c   | 1 +
- drivers/clk/mediatek/clk-mt8183-audio.c        | 1 +
- drivers/clk/mediatek/clk-mt8183-cam.c          | 1 +
- drivers/clk/mediatek/clk-mt8183-img.c          | 1 +
- drivers/clk/mediatek/clk-mt8183-ipu0.c         | 1 +
- drivers/clk/mediatek/clk-mt8183-ipu1.c         | 1 +
- drivers/clk/mediatek/clk-mt8183-ipu_adl.c      | 1 +
- drivers/clk/mediatek/clk-mt8183-ipu_conn.c     | 1 +
- drivers/clk/mediatek/clk-mt8183-mfgcfg.c       | 1 +
- drivers/clk/mediatek/clk-mt8183-mm.c           | 1 +
- drivers/clk/mediatek/clk-mt8183-vdec.c         | 1 +
- drivers/clk/mediatek/clk-mt8183-venc.c         | 1 +
- drivers/clk/mediatek/clk-mt8183.c              | 1 +
- drivers/clk/mediatek/clk-mt8186-apmixedsys.c   | 1 +
- drivers/clk/mediatek/clk-mt8186-cam.c          | 1 +
- drivers/clk/mediatek/clk-mt8186-img.c          | 1 +
- drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c | 1 +
- drivers/clk/mediatek/clk-mt8186-infra_ao.c     | 1 +
- drivers/clk/mediatek/clk-mt8186-ipe.c          | 1 +
- drivers/clk/mediatek/clk-mt8186-mdp.c          | 1 +
- drivers/clk/mediatek/clk-mt8186-mfg.c          | 1 +
- drivers/clk/mediatek/clk-mt8186-mm.c           | 1 +
- drivers/clk/mediatek/clk-mt8186-topckgen.c     | 1 +
- drivers/clk/mediatek/clk-mt8186-vdec.c         | 1 +
- drivers/clk/mediatek/clk-mt8186-venc.c         | 1 +
- drivers/clk/mediatek/clk-mt8186-wpe.c          | 1 +
- drivers/clk/mediatek/clk-mt8192-aud.c          | 1 +
- drivers/clk/mediatek/clk-mt8192-cam.c          | 1 +
- drivers/clk/mediatek/clk-mt8192-img.c          | 1 +
- drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c | 1 +
- drivers/clk/mediatek/clk-mt8192-ipe.c          | 1 +
- drivers/clk/mediatek/clk-mt8192-mdp.c          | 1 +
- drivers/clk/mediatek/clk-mt8192-mfg.c          | 1 +
- drivers/clk/mediatek/clk-mt8192-mm.c           | 1 +
- drivers/clk/mediatek/clk-mt8192-msdc.c         | 1 +
- drivers/clk/mediatek/clk-mt8192-scp_adsp.c     | 1 +
- drivers/clk/mediatek/clk-mt8192-vdec.c         | 1 +
- drivers/clk/mediatek/clk-mt8192-venc.c         | 1 +
- drivers/clk/mediatek/clk-mt8192.c              | 1 +
- drivers/clk/mediatek/clk-mt8195-apmixedsys.c   | 1 +
- drivers/clk/mediatek/clk-mt8195-apusys_pll.c   | 1 +
- drivers/clk/mediatek/clk-mt8195-cam.c          | 1 +
- drivers/clk/mediatek/clk-mt8195-ccu.c          | 1 +
- drivers/clk/mediatek/clk-mt8195-img.c          | 1 +
- drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c | 1 +
- drivers/clk/mediatek/clk-mt8195-infra_ao.c     | 1 +
- drivers/clk/mediatek/clk-mt8195-ipe.c          | 1 +
- drivers/clk/mediatek/clk-mt8195-mfg.c          | 1 +
- drivers/clk/mediatek/clk-mt8195-peri_ao.c      | 1 +
- drivers/clk/mediatek/clk-mt8195-scp_adsp.c     | 1 +
- drivers/clk/mediatek/clk-mt8195-topckgen.c     | 1 +
- drivers/clk/mediatek/clk-mt8195-vdec.c         | 1 +
- drivers/clk/mediatek/clk-mt8195-vdo0.c         | 1 +
- drivers/clk/mediatek/clk-mt8195-vdo1.c         | 1 +
- drivers/clk/mediatek/clk-mt8195-venc.c         | 1 +
- drivers/clk/mediatek/clk-mt8195-vpp0.c         | 1 +
- drivers/clk/mediatek/clk-mt8195-vpp1.c         | 1 +
- drivers/clk/mediatek/clk-mt8195-wpe.c          | 1 +
- drivers/clk/mediatek/clk-mt8365-apmixedsys.c   | 1 +
- 109 files changed, 109 insertions(+), 1 deletion(-)
+ drivers/clk/mediatek/clk-mt2701-aud.c          | 3 +--
+ drivers/clk/mediatek/clk-mt2701-bdp.c          | 3 +--
+ drivers/clk/mediatek/clk-mt2701-eth.c          | 3 +--
+ drivers/clk/mediatek/clk-mt2701-g3d.c          | 3 +--
+ drivers/clk/mediatek/clk-mt2701-hif.c          | 3 +--
+ drivers/clk/mediatek/clk-mt2701-img.c          | 3 +--
+ drivers/clk/mediatek/clk-mt2701-mm.c           | 3 +--
+ drivers/clk/mediatek/clk-mt2701-vdec.c         | 3 +--
+ drivers/clk/mediatek/clk-mt2712-bdp.c          | 3 +--
+ drivers/clk/mediatek/clk-mt2712-img.c          | 3 +--
+ drivers/clk/mediatek/clk-mt2712-jpgdec.c       | 3 +--
+ drivers/clk/mediatek/clk-mt2712-mfg.c          | 3 +--
+ drivers/clk/mediatek/clk-mt2712-mm.c           | 3 +--
+ drivers/clk/mediatek/clk-mt2712-vdec.c         | 3 +--
+ drivers/clk/mediatek/clk-mt2712-venc.c         | 3 +--
+ drivers/clk/mediatek/clk-mt6765-audio.c        | 3 +--
+ drivers/clk/mediatek/clk-mt6765-cam.c          | 3 +--
+ drivers/clk/mediatek/clk-mt6765-img.c          | 3 +--
+ drivers/clk/mediatek/clk-mt6765-mipi0a.c       | 3 +--
+ drivers/clk/mediatek/clk-mt6765-mm.c           | 3 +--
+ drivers/clk/mediatek/clk-mt6765-vcodec.c       | 3 +--
+ drivers/clk/mediatek/clk-mt6797-img.c          | 3 +--
+ drivers/clk/mediatek/clk-mt6797-mm.c           | 3 +--
+ drivers/clk/mediatek/clk-mt6797-vdec.c         | 3 +--
+ drivers/clk/mediatek/clk-mt6797-venc.c         | 3 +--
+ drivers/clk/mediatek/clk-mt7622-aud.c          | 3 +--
+ drivers/clk/mediatek/clk-mt7622-eth.c          | 3 +--
+ drivers/clk/mediatek/clk-mt7622-hif.c          | 3 +--
+ drivers/clk/mediatek/clk-mt7629-hif.c          | 3 +--
+ drivers/clk/mediatek/clk-mt7981-infracfg.c     | 2 +-
+ drivers/clk/mediatek/clk-mt7981-topckgen.c     | 2 +-
+ drivers/clk/mediatek/clk-mt7986-topckgen.c     | 2 +-
+ drivers/clk/mediatek/clk-mt8167-mm.c           | 2 +-
+ drivers/clk/mediatek/clk-mt8173-mm.c           | 3 +--
+ drivers/clk/mediatek/clk-mt8183-audio.c        | 3 +--
+ drivers/clk/mediatek/clk-mt8183-cam.c          | 3 +--
+ drivers/clk/mediatek/clk-mt8183-img.c          | 3 +--
+ drivers/clk/mediatek/clk-mt8183-ipu0.c         | 3 +--
+ drivers/clk/mediatek/clk-mt8183-ipu1.c         | 3 +--
+ drivers/clk/mediatek/clk-mt8183-ipu_adl.c      | 3 +--
+ drivers/clk/mediatek/clk-mt8183-ipu_conn.c     | 3 +--
+ drivers/clk/mediatek/clk-mt8183-mfgcfg.c       | 3 +--
+ drivers/clk/mediatek/clk-mt8183-mm.c           | 3 +--
+ drivers/clk/mediatek/clk-mt8183-vdec.c         | 3 +--
+ drivers/clk/mediatek/clk-mt8183-venc.c         | 3 +--
+ drivers/clk/mediatek/clk-mt8186-apmixedsys.c   | 2 +-
+ drivers/clk/mediatek/clk-mt8186-cam.c          | 2 +-
+ drivers/clk/mediatek/clk-mt8186-img.c          | 2 +-
+ drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c | 2 +-
+ drivers/clk/mediatek/clk-mt8186-infra_ao.c     | 2 +-
+ drivers/clk/mediatek/clk-mt8186-ipe.c          | 2 +-
+ drivers/clk/mediatek/clk-mt8186-mdp.c          | 2 +-
+ drivers/clk/mediatek/clk-mt8186-mfg.c          | 2 +-
+ drivers/clk/mediatek/clk-mt8186-mm.c           | 2 +-
+ drivers/clk/mediatek/clk-mt8186-topckgen.c     | 2 +-
+ drivers/clk/mediatek/clk-mt8186-vdec.c         | 2 +-
+ drivers/clk/mediatek/clk-mt8186-venc.c         | 2 +-
+ drivers/clk/mediatek/clk-mt8186-wpe.c          | 2 +-
+ drivers/clk/mediatek/clk-mt8192-aud.c          | 3 +--
+ drivers/clk/mediatek/clk-mt8192-cam.c          | 3 +--
+ drivers/clk/mediatek/clk-mt8192-img.c          | 3 +--
+ drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c | 3 +--
+ drivers/clk/mediatek/clk-mt8192-ipe.c          | 3 +--
+ drivers/clk/mediatek/clk-mt8192-mdp.c          | 3 +--
+ drivers/clk/mediatek/clk-mt8192-mfg.c          | 3 +--
+ drivers/clk/mediatek/clk-mt8192-mm.c           | 3 +--
+ drivers/clk/mediatek/clk-mt8192-msdc.c         | 3 +--
+ drivers/clk/mediatek/clk-mt8192-scp_adsp.c     | 3 +--
+ drivers/clk/mediatek/clk-mt8192-vdec.c         | 3 +--
+ drivers/clk/mediatek/clk-mt8192-venc.c         | 3 +--
+ drivers/clk/mediatek/clk-mt8195-apmixedsys.c   | 2 +-
+ drivers/clk/mediatek/clk-mt8195-apusys_pll.c   | 2 +-
+ drivers/clk/mediatek/clk-mt8195-cam.c          | 2 +-
+ drivers/clk/mediatek/clk-mt8195-ccu.c          | 2 +-
+ drivers/clk/mediatek/clk-mt8195-img.c          | 2 +-
+ drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c | 2 +-
+ drivers/clk/mediatek/clk-mt8195-infra_ao.c     | 2 +-
+ drivers/clk/mediatek/clk-mt8195-ipe.c          | 2 +-
+ drivers/clk/mediatek/clk-mt8195-mfg.c          | 2 +-
+ drivers/clk/mediatek/clk-mt8195-peri_ao.c      | 2 +-
+ drivers/clk/mediatek/clk-mt8195-scp_adsp.c     | 2 +-
+ drivers/clk/mediatek/clk-mt8195-topckgen.c     | 2 +-
+ drivers/clk/mediatek/clk-mt8195-vdec.c         | 2 +-
+ drivers/clk/mediatek/clk-mt8195-vdo0.c         | 3 ++-
+ drivers/clk/mediatek/clk-mt8195-vdo1.c         | 3 ++-
+ drivers/clk/mediatek/clk-mt8195-venc.c         | 2 +-
+ drivers/clk/mediatek/clk-mt8195-vpp0.c         | 2 +-
+ drivers/clk/mediatek/clk-mt8195-vpp1.c         | 2 +-
+ drivers/clk/mediatek/clk-mt8195-wpe.c          | 2 +-
+ drivers/clk/mediatek/clk-mt8365-apu.c          | 2 +-
+ drivers/clk/mediatek/clk-mt8365-cam.c          | 2 +-
+ drivers/clk/mediatek/clk-mt8365-mfg.c          | 2 +-
+ drivers/clk/mediatek/clk-mt8365-mm.c           | 2 +-
+ drivers/clk/mediatek/clk-mt8365-vdec.c         | 2 +-
+ drivers/clk/mediatek/clk-mt8365-venc.c         | 2 +-
+ drivers/clk/mediatek/clk-mt8516-aud.c          | 2 +-
+ 96 files changed, 98 insertions(+), 149 deletions(-)
 
 diff --git a/drivers/clk/mediatek/clk-mt2701-aud.c b/drivers/clk/mediatek/clk-mt2701-aud.c
-index cff6c3b8896f..113ab5b0bf8d 100644
+index 21f7cc106bbe..cff6c3b8896f 100644
 --- a/drivers/clk/mediatek/clk-mt2701-aud.c
 +++ b/drivers/clk/mediatek/clk-mt2701-aud.c
-@@ -164,3 +164,4 @@ static struct platform_driver clk_mt2701_aud_drv = {
+@@ -163,5 +163,4 @@ static struct platform_driver clk_mt2701_aud_drv = {
+ 		.of_match_table = of_match_clk_mt2701_aud,
  	},
  };
- module_platform_driver(clk_mt2701_aud_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt2701_aud_drv);
++module_platform_driver(clk_mt2701_aud_drv);
 diff --git a/drivers/clk/mediatek/clk-mt2701-bdp.c b/drivers/clk/mediatek/clk-mt2701-bdp.c
-index dad9a35e9310..e7b43329d305 100644
+index b0f057207945..dad9a35e9310 100644
 --- a/drivers/clk/mediatek/clk-mt2701-bdp.c
 +++ b/drivers/clk/mediatek/clk-mt2701-bdp.c
-@@ -105,3 +105,4 @@ static struct platform_driver clk_mt2701_bdp_drv = {
+@@ -104,5 +104,4 @@ static struct platform_driver clk_mt2701_bdp_drv = {
+ 		.of_match_table = of_match_clk_mt2701_bdp,
  	},
  };
- module_platform_driver(clk_mt2701_bdp_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt2701_bdp_drv);
++module_platform_driver(clk_mt2701_bdp_drv);
 diff --git a/drivers/clk/mediatek/clk-mt2701-eth.c b/drivers/clk/mediatek/clk-mt2701-eth.c
-index 2c4781f9141a..d30567ac4ff1 100644
+index 4c830ebdd761..2c4781f9141a 100644
 --- a/drivers/clk/mediatek/clk-mt2701-eth.c
 +++ b/drivers/clk/mediatek/clk-mt2701-eth.c
-@@ -59,3 +59,4 @@ static struct platform_driver clk_mt2701_eth_drv = {
+@@ -58,5 +58,4 @@ static struct platform_driver clk_mt2701_eth_drv = {
+ 		.of_match_table = of_match_clk_mt2701_eth,
  	},
  };
- module_platform_driver(clk_mt2701_eth_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt2701_eth_drv);
++module_platform_driver(clk_mt2701_eth_drv);
 diff --git a/drivers/clk/mediatek/clk-mt2701-g3d.c b/drivers/clk/mediatek/clk-mt2701-g3d.c
-index 2fed9f96d1e5..6f881eabdc67 100644
+index ae094046890a..2fed9f96d1e5 100644
 --- a/drivers/clk/mediatek/clk-mt2701-g3d.c
 +++ b/drivers/clk/mediatek/clk-mt2701-g3d.c
-@@ -58,3 +58,4 @@ static struct platform_driver clk_mt2701_g3d_drv = {
+@@ -57,5 +57,4 @@ static struct platform_driver clk_mt2701_g3d_drv = {
+ 		.of_match_table = of_match_clk_mt2701_g3d,
  	},
  };
- module_platform_driver(clk_mt2701_g3d_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt2701_g3d_drv);
++module_platform_driver(clk_mt2701_g3d_drv);
 diff --git a/drivers/clk/mediatek/clk-mt2701-hif.c b/drivers/clk/mediatek/clk-mt2701-hif.c
-index ac47a20047da..b2ee73c4de4e 100644
+index 3583bd1240d5..ac47a20047da 100644
 --- a/drivers/clk/mediatek/clk-mt2701-hif.c
 +++ b/drivers/clk/mediatek/clk-mt2701-hif.c
-@@ -56,3 +56,4 @@ static struct platform_driver clk_mt2701_hif_drv = {
+@@ -55,5 +55,4 @@ static struct platform_driver clk_mt2701_hif_drv = {
+ 		.of_match_table = of_match_clk_mt2701_hif,
  	},
  };
- module_platform_driver(clk_mt2701_hif_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt2701_hif_drv);
++module_platform_driver(clk_mt2701_hif_drv);
 diff --git a/drivers/clk/mediatek/clk-mt2701-img.c b/drivers/clk/mediatek/clk-mt2701-img.c
-index 776f470623ca..35a5fd938a6e 100644
+index eb172473f075..776f470623ca 100644
 --- a/drivers/clk/mediatek/clk-mt2701-img.c
 +++ b/drivers/clk/mediatek/clk-mt2701-img.c
-@@ -53,3 +53,4 @@ static struct platform_driver clk_mt2701_img_drv = {
+@@ -52,5 +52,4 @@ static struct platform_driver clk_mt2701_img_drv = {
+ 		.of_match_table = of_match_clk_mt2701_img,
  	},
  };
- module_platform_driver(clk_mt2701_img_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt2701_img_drv);
++module_platform_driver(clk_mt2701_img_drv);
 diff --git a/drivers/clk/mediatek/clk-mt2701-mm.c b/drivers/clk/mediatek/clk-mt2701-mm.c
-index f23208b8dcba..75611d0ab865 100644
+index 993d904d619f..f23208b8dcba 100644
 --- a/drivers/clk/mediatek/clk-mt2701-mm.c
 +++ b/drivers/clk/mediatek/clk-mt2701-mm.c
-@@ -86,3 +86,4 @@ static struct platform_driver clk_mt2701_mm_drv = {
+@@ -85,5 +85,4 @@ static struct platform_driver clk_mt2701_mm_drv = {
+ 	},
  	.id_table = clk_mt2701_mm_id_table,
  };
- module_platform_driver(clk_mt2701_mm_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt2701_mm_drv);
++module_platform_driver(clk_mt2701_mm_drv);
 diff --git a/drivers/clk/mediatek/clk-mt2701-vdec.c b/drivers/clk/mediatek/clk-mt2701-vdec.c
-index 57e7020aaab5..dca4335a52a7 100644
+index 0f07c5d731df..57e7020aaab5 100644
 --- a/drivers/clk/mediatek/clk-mt2701-vdec.c
 +++ b/drivers/clk/mediatek/clk-mt2701-vdec.c
-@@ -58,3 +58,4 @@ static struct platform_driver clk_mt2701_vdec_drv = {
+@@ -57,5 +57,4 @@ static struct platform_driver clk_mt2701_vdec_drv = {
+ 		.of_match_table = of_match_clk_mt2701_vdec,
  	},
  };
- module_platform_driver(clk_mt2701_vdec_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-index e9c27b1364b6..d3097d9f0c7a 100644
---- a/drivers/clk/mediatek/clk-mt2701.c
-+++ b/drivers/clk/mediatek/clk-mt2701.c
-@@ -1032,3 +1032,4 @@ static int __init clk_mt2701_init(void)
- }
- 
- arch_initcall(clk_mt2701_init);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt2712-apmixedsys.c b/drivers/clk/mediatek/clk-mt2712-apmixedsys.c
-index 2f4061c9a59e..eade747d2812 100644
---- a/drivers/clk/mediatek/clk-mt2712-apmixedsys.c
-+++ b/drivers/clk/mediatek/clk-mt2712-apmixedsys.c
-@@ -164,3 +164,4 @@ static struct platform_driver clk_mt2712_apmixed_drv = {
- 	},
- };
- module_platform_driver(clk_mt2712_apmixed_drv)
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt2701_vdec_drv);
++module_platform_driver(clk_mt2701_vdec_drv);
 diff --git a/drivers/clk/mediatek/clk-mt2712-bdp.c b/drivers/clk/mediatek/clk-mt2712-bdp.c
-index 5324544039b3..d4979f2fb1d3 100644
+index 5e668651dd90..5324544039b3 100644
 --- a/drivers/clk/mediatek/clk-mt2712-bdp.c
 +++ b/drivers/clk/mediatek/clk-mt2712-bdp.c
-@@ -75,3 +75,4 @@ static struct platform_driver clk_mt2712_bdp_drv = {
+@@ -74,5 +74,4 @@ static struct platform_driver clk_mt2712_bdp_drv = {
+ 		.of_match_table = of_match_clk_mt2712_bdp,
  	},
  };
- module_platform_driver(clk_mt2712_bdp_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt2712_bdp_drv);
++module_platform_driver(clk_mt2712_bdp_drv);
 diff --git a/drivers/clk/mediatek/clk-mt2712-img.c b/drivers/clk/mediatek/clk-mt2712-img.c
-index c16453c6b421..cd2d2af6bd56 100644
+index 3ffa51384e6b..c16453c6b421 100644
 --- a/drivers/clk/mediatek/clk-mt2712-img.c
 +++ b/drivers/clk/mediatek/clk-mt2712-img.c
-@@ -53,3 +53,4 @@ static struct platform_driver clk_mt2712_img_drv = {
+@@ -52,5 +52,4 @@ static struct platform_driver clk_mt2712_img_drv = {
+ 		.of_match_table = of_match_clk_mt2712_img,
  	},
  };
- module_platform_driver(clk_mt2712_img_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt2712_img_drv);
++module_platform_driver(clk_mt2712_img_drv);
 diff --git a/drivers/clk/mediatek/clk-mt2712-jpgdec.c b/drivers/clk/mediatek/clk-mt2712-jpgdec.c
-index c1363eb5d893..815be759e7c9 100644
+index 8c768d5ce24d..c1363eb5d893 100644
 --- a/drivers/clk/mediatek/clk-mt2712-jpgdec.c
 +++ b/drivers/clk/mediatek/clk-mt2712-jpgdec.c
-@@ -49,3 +49,4 @@ static struct platform_driver clk_mt2712_jpgdec_drv = {
+@@ -48,5 +48,4 @@ static struct platform_driver clk_mt2712_jpgdec_drv = {
+ 		.of_match_table = of_match_clk_mt2712_jpgdec,
  	},
  };
- module_platform_driver(clk_mt2712_jpgdec_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt2712_jpgdec_drv);
++module_platform_driver(clk_mt2712_jpgdec_drv);
 diff --git a/drivers/clk/mediatek/clk-mt2712-mfg.c b/drivers/clk/mediatek/clk-mt2712-mfg.c
-index d91d788babcf..9f958fadca86 100644
+index 8949315c2dd2..d91d788babcf 100644
 --- a/drivers/clk/mediatek/clk-mt2712-mfg.c
 +++ b/drivers/clk/mediatek/clk-mt2712-mfg.c
-@@ -48,3 +48,4 @@ static struct platform_driver clk_mt2712_mfg_drv = {
+@@ -47,5 +47,4 @@ static struct platform_driver clk_mt2712_mfg_drv = {
+ 		.of_match_table = of_match_clk_mt2712_mfg,
  	},
  };
- module_platform_driver(clk_mt2712_mfg_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt2712_mfg_drv);
++module_platform_driver(clk_mt2712_mfg_drv);
 diff --git a/drivers/clk/mediatek/clk-mt2712-mm.c b/drivers/clk/mediatek/clk-mt2712-mm.c
-index 6245b79bab90..2649d67f2a56 100644
+index 850cef9f2009..6245b79bab90 100644
 --- a/drivers/clk/mediatek/clk-mt2712-mm.c
 +++ b/drivers/clk/mediatek/clk-mt2712-mm.c
-@@ -127,3 +127,4 @@ static struct platform_driver clk_mt2712_mm_drv = {
+@@ -126,5 +126,4 @@ static struct platform_driver clk_mt2712_mm_drv = {
+ 	},
  	.id_table = clk_mt2712_mm_id_table,
  };
- module_platform_driver(clk_mt2712_mm_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt2712_mm_drv);
++module_platform_driver(clk_mt2712_mm_drv);
 diff --git a/drivers/clk/mediatek/clk-mt2712-vdec.c b/drivers/clk/mediatek/clk-mt2712-vdec.c
-index 1d3e65f60808..1cb150fa7ab4 100644
+index 572290dd43c8..1d3e65f60808 100644
 --- a/drivers/clk/mediatek/clk-mt2712-vdec.c
 +++ b/drivers/clk/mediatek/clk-mt2712-vdec.c
-@@ -61,3 +61,4 @@ static struct platform_driver clk_mt2712_vdec_drv = {
+@@ -60,5 +60,4 @@ static struct platform_driver clk_mt2712_vdec_drv = {
+ 		.of_match_table = of_match_clk_mt2712_vdec,
  	},
  };
- module_platform_driver(clk_mt2712_vdec_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt2712_vdec_drv);
++module_platform_driver(clk_mt2712_vdec_drv);
 diff --git a/drivers/clk/mediatek/clk-mt2712-venc.c b/drivers/clk/mediatek/clk-mt2712-venc.c
-index 09f2683f0f13..4073fa6c040f 100644
+index 9588eb03016e..09f2683f0f13 100644
 --- a/drivers/clk/mediatek/clk-mt2712-venc.c
 +++ b/drivers/clk/mediatek/clk-mt2712-venc.c
-@@ -50,3 +50,4 @@ static struct platform_driver clk_mt2712_venc_drv = {
+@@ -49,5 +49,4 @@ static struct platform_driver clk_mt2712_venc_drv = {
+ 		.of_match_table = of_match_clk_mt2712_venc,
  	},
  };
- module_platform_driver(clk_mt2712_venc_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt2712.c b/drivers/clk/mediatek/clk-mt2712.c
-index d0e6a4fbfa99..b2cf91622ebf 100644
---- a/drivers/clk/mediatek/clk-mt2712.c
-+++ b/drivers/clk/mediatek/clk-mt2712.c
-@@ -1001,3 +1001,4 @@ static struct platform_driver clk_mt2712_drv = {
- 	},
- };
- module_platform_driver(clk_mt2712_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt2712_venc_drv);
++module_platform_driver(clk_mt2712_venc_drv);
 diff --git a/drivers/clk/mediatek/clk-mt6765-audio.c b/drivers/clk/mediatek/clk-mt6765-audio.c
-index 712e0da78b4b..c1fecf22f8ad 100644
+index 5682e0302eee..712e0da78b4b 100644
 --- a/drivers/clk/mediatek/clk-mt6765-audio.c
 +++ b/drivers/clk/mediatek/clk-mt6765-audio.c
-@@ -75,3 +75,4 @@ static struct platform_driver clk_mt6765_audio_drv = {
+@@ -74,5 +74,4 @@ static struct platform_driver clk_mt6765_audio_drv = {
+ 		.of_match_table = of_match_clk_mt6765_audio,
  	},
  };
- module_platform_driver(clk_mt6765_audio_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt6765_audio_drv);
++module_platform_driver(clk_mt6765_audio_drv);
 diff --git a/drivers/clk/mediatek/clk-mt6765-cam.c b/drivers/clk/mediatek/clk-mt6765-cam.c
-index 0581a1f3971e..15737c8f6b69 100644
+index 6e7d192c19cb..0581a1f3971e 100644
 --- a/drivers/clk/mediatek/clk-mt6765-cam.c
 +++ b/drivers/clk/mediatek/clk-mt6765-cam.c
-@@ -56,3 +56,4 @@ static struct platform_driver clk_mt6765_cam_drv = {
+@@ -55,5 +55,4 @@ static struct platform_driver clk_mt6765_cam_drv = {
+ 		.of_match_table = of_match_clk_mt6765_cam,
  	},
  };
- module_platform_driver(clk_mt6765_cam_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt6765_cam_drv);
++module_platform_driver(clk_mt6765_cam_drv);
 diff --git a/drivers/clk/mediatek/clk-mt6765-img.c b/drivers/clk/mediatek/clk-mt6765-img.c
-index 7c605dc155eb..7e421f4d01b8 100644
+index cfbc907988af..7c605dc155eb 100644
 --- a/drivers/clk/mediatek/clk-mt6765-img.c
 +++ b/drivers/clk/mediatek/clk-mt6765-img.c
-@@ -52,3 +52,4 @@ static struct platform_driver clk_mt6765_img_drv = {
+@@ -51,5 +51,4 @@ static struct platform_driver clk_mt6765_img_drv = {
+ 		.of_match_table = of_match_clk_mt6765_img,
  	},
  };
- module_platform_driver(clk_mt6765_img_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt6765_img_drv);
++module_platform_driver(clk_mt6765_img_drv);
 diff --git a/drivers/clk/mediatek/clk-mt6765-mipi0a.c b/drivers/clk/mediatek/clk-mt6765-mipi0a.c
-index b299db047138..17186a308e94 100644
+index f2b9dc808480..b299db047138 100644
 --- a/drivers/clk/mediatek/clk-mt6765-mipi0a.c
 +++ b/drivers/clk/mediatek/clk-mt6765-mipi0a.c
-@@ -49,3 +49,4 @@ static struct platform_driver clk_mt6765_mipi0a_drv = {
+@@ -48,5 +48,4 @@ static struct platform_driver clk_mt6765_mipi0a_drv = {
+ 		.of_match_table = of_match_clk_mt6765_mipi0a,
  	},
  };
- module_platform_driver(clk_mt6765_mipi0a_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt6765_mipi0a_drv);
++module_platform_driver(clk_mt6765_mipi0a_drv);
 diff --git a/drivers/clk/mediatek/clk-mt6765-mm.c b/drivers/clk/mediatek/clk-mt6765-mm.c
-index ec2b287cf1a3..af2213db17cb 100644
+index a4570c9dbefa..ec2b287cf1a3 100644
 --- a/drivers/clk/mediatek/clk-mt6765-mm.c
 +++ b/drivers/clk/mediatek/clk-mt6765-mm.c
-@@ -78,3 +78,4 @@ static struct platform_driver clk_mt6765_mm_drv = {
+@@ -77,5 +77,4 @@ static struct platform_driver clk_mt6765_mm_drv = {
+ 		.of_match_table = of_match_clk_mt6765_mm,
  	},
  };
- module_platform_driver(clk_mt6765_mm_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt6765_mm_drv);
++module_platform_driver(clk_mt6765_mm_drv);
 diff --git a/drivers/clk/mediatek/clk-mt6765-vcodec.c b/drivers/clk/mediatek/clk-mt6765-vcodec.c
-index 17355923325e..48014cc71d9f 100644
+index 75d72b9b4032..17355923325e 100644
 --- a/drivers/clk/mediatek/clk-mt6765-vcodec.c
 +++ b/drivers/clk/mediatek/clk-mt6765-vcodec.c
-@@ -51,3 +51,4 @@ static struct platform_driver clk_mt6765_vcodec_drv = {
+@@ -50,5 +50,4 @@ static struct platform_driver clk_mt6765_vcodec_drv = {
+ 		.of_match_table = of_match_clk_mt6765_vcodec,
  	},
  };
- module_platform_driver(clk_mt6765_vcodec_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt6765.c b/drivers/clk/mediatek/clk-mt6765.c
-index 0c20ce678350..61f93b6fdf8b 100644
---- a/drivers/clk/mediatek/clk-mt6765.c
-+++ b/drivers/clk/mediatek/clk-mt6765.c
-@@ -873,3 +873,4 @@ static int __init clk_mt6765_init(void)
- }
- 
- arch_initcall(clk_mt6765_init);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt6765_vcodec_drv);
++module_platform_driver(clk_mt6765_vcodec_drv);
 diff --git a/drivers/clk/mediatek/clk-mt6797-img.c b/drivers/clk/mediatek/clk-mt6797-img.c
-index d46a3a3ac3ad..22779829370f 100644
+index 06441393478f..d46a3a3ac3ad 100644
 --- a/drivers/clk/mediatek/clk-mt6797-img.c
 +++ b/drivers/clk/mediatek/clk-mt6797-img.c
-@@ -49,3 +49,4 @@ static struct platform_driver clk_mt6797_img_drv = {
+@@ -48,5 +48,4 @@ static struct platform_driver clk_mt6797_img_drv = {
+ 		.of_match_table = of_match_clk_mt6797_img,
  	},
  };
- module_platform_driver(clk_mt6797_img_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt6797_img_drv);
++module_platform_driver(clk_mt6797_img_drv);
 diff --git a/drivers/clk/mediatek/clk-mt6797-mm.c b/drivers/clk/mediatek/clk-mt6797-mm.c
-index 899a0e6fa988..8722fae10de9 100644
+index e7a5a43f91f1..899a0e6fa988 100644
 --- a/drivers/clk/mediatek/clk-mt6797-mm.c
 +++ b/drivers/clk/mediatek/clk-mt6797-mm.c
-@@ -99,3 +99,4 @@ static struct platform_driver clk_mt6797_mm_drv = {
+@@ -98,5 +98,4 @@ static struct platform_driver clk_mt6797_mm_drv = {
+ 	},
  	.id_table = clk_mt6797_mm_id_table,
  };
- module_platform_driver(clk_mt6797_mm_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt6797_mm_drv);
++module_platform_driver(clk_mt6797_mm_drv);
 diff --git a/drivers/clk/mediatek/clk-mt6797-vdec.c b/drivers/clk/mediatek/clk-mt6797-vdec.c
-index f2b979b1ea19..c5a82d4a958b 100644
+index 8622ddd87a5b..f2b979b1ea19 100644
 --- a/drivers/clk/mediatek/clk-mt6797-vdec.c
 +++ b/drivers/clk/mediatek/clk-mt6797-vdec.c
-@@ -60,3 +60,4 @@ static struct platform_driver clk_mt6797_vdec_drv = {
+@@ -59,5 +59,4 @@ static struct platform_driver clk_mt6797_vdec_drv = {
+ 		.of_match_table = of_match_clk_mt6797_vdec,
  	},
  };
- module_platform_driver(clk_mt6797_vdec_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt6797_vdec_drv);
++module_platform_driver(clk_mt6797_vdec_drv);
 diff --git a/drivers/clk/mediatek/clk-mt6797-venc.c b/drivers/clk/mediatek/clk-mt6797-venc.c
-index 9fbf4cd5160e..afdd288d313a 100644
+index 928d611a476e..9fbf4cd5160e 100644
 --- a/drivers/clk/mediatek/clk-mt6797-venc.c
 +++ b/drivers/clk/mediatek/clk-mt6797-venc.c
-@@ -51,3 +51,4 @@ static struct platform_driver clk_mt6797_venc_drv = {
+@@ -50,5 +50,4 @@ static struct platform_driver clk_mt6797_venc_drv = {
+ 		.of_match_table = of_match_clk_mt6797_venc,
  	},
  };
- module_platform_driver(clk_mt6797_venc_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt6797.c b/drivers/clk/mediatek/clk-mt6797.c
-index 17b23ee4faee..4094fd75d16e 100644
---- a/drivers/clk/mediatek/clk-mt6797.c
-+++ b/drivers/clk/mediatek/clk-mt6797.c
-@@ -703,3 +703,4 @@ static int __init clk_mt6797_init(void)
- }
- 
- arch_initcall(clk_mt6797_init);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt6797_venc_drv);
++module_platform_driver(clk_mt6797_venc_drv);
 diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
-index 7cca52693a3f..4e14a4ff465a 100644
+index 27c543759f2a..7cca52693a3f 100644
 --- a/drivers/clk/mediatek/clk-mt7622-aud.c
 +++ b/drivers/clk/mediatek/clk-mt7622-aud.c
-@@ -155,3 +155,4 @@ static struct platform_driver clk_mt7622_aud_drv = {
+@@ -154,5 +154,4 @@ static struct platform_driver clk_mt7622_aud_drv = {
+ 		.of_match_table = of_match_clk_mt7622_aud,
  	},
  };
- module_platform_driver(clk_mt7622_aud_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt7622_aud_drv);
++module_platform_driver(clk_mt7622_aud_drv);
 diff --git a/drivers/clk/mediatek/clk-mt7622-eth.c b/drivers/clk/mediatek/clk-mt7622-eth.c
-index 89e68c836d40..4475d0846176 100644
+index 66b163cc1633..89e68c836d40 100644
 --- a/drivers/clk/mediatek/clk-mt7622-eth.c
 +++ b/drivers/clk/mediatek/clk-mt7622-eth.c
-@@ -87,3 +87,4 @@ static struct platform_driver clk_mt7622_eth_drv = {
+@@ -86,5 +86,4 @@ static struct platform_driver clk_mt7622_eth_drv = {
+ 		.of_match_table = of_match_clk_mt7622_eth,
  	},
  };
- module_platform_driver(clk_mt7622_eth_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt7622_eth_drv);
++module_platform_driver(clk_mt7622_eth_drv);
 diff --git a/drivers/clk/mediatek/clk-mt7622-hif.c b/drivers/clk/mediatek/clk-mt7622-hif.c
-index 06ade985dfe2..19f394af1132 100644
+index bcd1dfc6e8e0..06ade985dfe2 100644
 --- a/drivers/clk/mediatek/clk-mt7622-hif.c
 +++ b/drivers/clk/mediatek/clk-mt7622-hif.c
-@@ -99,3 +99,4 @@ static struct platform_driver clk_mt7622_hif_drv = {
+@@ -98,5 +98,4 @@ static struct platform_driver clk_mt7622_hif_drv = {
+ 		.of_match_table = of_match_clk_mt7622_hif,
  	},
  };
- module_platform_driver(clk_mt7622_hif_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt7629-eth.c b/drivers/clk/mediatek/clk-mt7629-eth.c
-index 719a47fef798..ee84a3de7f2c 100644
---- a/drivers/clk/mediatek/clk-mt7629-eth.c
-+++ b/drivers/clk/mediatek/clk-mt7629-eth.c
-@@ -154,3 +154,4 @@ static struct platform_driver clk_mt7629_eth_drv = {
- };
- 
- builtin_platform_driver(clk_mt7629_eth_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt7622_hif_drv);
++module_platform_driver(clk_mt7622_hif_drv);
 diff --git a/drivers/clk/mediatek/clk-mt7629-hif.c b/drivers/clk/mediatek/clk-mt7629-hif.c
-index 79bcd91386fc..464c4131d98a 100644
+index 78d85542e4f1..79bcd91386fc 100644
 --- a/drivers/clk/mediatek/clk-mt7629-hif.c
 +++ b/drivers/clk/mediatek/clk-mt7629-hif.c
-@@ -94,3 +94,4 @@ static struct platform_driver clk_mt7629_hif_drv = {
+@@ -93,5 +93,4 @@ static struct platform_driver clk_mt7629_hif_drv = {
+ 		.of_match_table = of_match_clk_mt7629_hif,
  	},
  };
- module_platform_driver(clk_mt7629_hif_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt7629.c b/drivers/clk/mediatek/clk-mt7629.c
-index 09c85fda43d8..f3279f002e93 100644
---- a/drivers/clk/mediatek/clk-mt7629.c
-+++ b/drivers/clk/mediatek/clk-mt7629.c
-@@ -693,3 +693,4 @@ static int clk_mt7629_init(void)
- }
- 
- arch_initcall(clk_mt7629_init);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt7981-apmixed.c b/drivers/clk/mediatek/clk-mt7981-apmixed.c
-index 52b7123232bf..53c974c66f89 100644
---- a/drivers/clk/mediatek/clk-mt7981-apmixed.c
-+++ b/drivers/clk/mediatek/clk-mt7981-apmixed.c
-@@ -100,3 +100,4 @@ static struct platform_driver clk_mt7981_apmixed_drv = {
- 	},
- };
- builtin_platform_driver(clk_mt7981_apmixed_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt7981-eth.c b/drivers/clk/mediatek/clk-mt7981-eth.c
-index 773350911be2..f27fadd6bf94 100644
---- a/drivers/clk/mediatek/clk-mt7981-eth.c
-+++ b/drivers/clk/mediatek/clk-mt7981-eth.c
-@@ -115,4 +115,4 @@ static struct platform_driver clk_mt7981_eth_drv = {
- 	},
- };
- module_platform_driver(clk_mt7981_eth_drv);
--MODULE_LICENSE("GPL v2");
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt7629_hif_drv);
++module_platform_driver(clk_mt7629_hif_drv);
 diff --git a/drivers/clk/mediatek/clk-mt7981-infracfg.c b/drivers/clk/mediatek/clk-mt7981-infracfg.c
-index 35cd126408b6..d1709323d34e 100644
+index 8cf5057419e8..35cd126408b6 100644
 --- a/drivers/clk/mediatek/clk-mt7981-infracfg.c
 +++ b/drivers/clk/mediatek/clk-mt7981-infracfg.c
-@@ -205,3 +205,4 @@ static struct platform_driver clk_mt7981_infracfg_drv = {
+@@ -204,4 +204,4 @@ static struct platform_driver clk_mt7981_infracfg_drv = {
+ 		.of_match_table = of_match_clk_mt7981_infracfg,
  	},
  };
- module_platform_driver(clk_mt7981_infracfg_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt7981_infracfg_drv);
++module_platform_driver(clk_mt7981_infracfg_drv);
 diff --git a/drivers/clk/mediatek/clk-mt7981-topckgen.c b/drivers/clk/mediatek/clk-mt7981-topckgen.c
-index f4c31cb1c74e..e09ffc22b13a 100644
+index 74634d65f5f6..f4c31cb1c74e 100644
 --- a/drivers/clk/mediatek/clk-mt7981-topckgen.c
 +++ b/drivers/clk/mediatek/clk-mt7981-topckgen.c
-@@ -420,3 +420,4 @@ static struct platform_driver clk_mt7981_topckgen_drv = {
+@@ -419,4 +419,4 @@ static struct platform_driver clk_mt7981_topckgen_drv = {
+ 		.of_match_table = of_match_clk_mt7981_topckgen,
  	},
  };
- module_platform_driver(clk_mt7981_topckgen_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt7986-apmixed.c b/drivers/clk/mediatek/clk-mt7986-apmixed.c
-index 227ca572056e..dc949ed1b587 100644
---- a/drivers/clk/mediatek/clk-mt7986-apmixed.c
-+++ b/drivers/clk/mediatek/clk-mt7986-apmixed.c
-@@ -98,3 +98,4 @@ static struct platform_driver clk_mt7986_apmixed_drv = {
- 	},
- };
- builtin_platform_driver(clk_mt7986_apmixed_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt7981_topckgen_drv);
++module_platform_driver(clk_mt7981_topckgen_drv);
 diff --git a/drivers/clk/mediatek/clk-mt7986-topckgen.c b/drivers/clk/mediatek/clk-mt7986-topckgen.c
-index dacaf5492286..af9df453d6d7 100644
+index dff9976fa689..dacaf5492286 100644
 --- a/drivers/clk/mediatek/clk-mt7986-topckgen.c
 +++ b/drivers/clk/mediatek/clk-mt7986-topckgen.c
-@@ -314,3 +314,4 @@ static struct platform_driver clk_mt7986_topckgen_drv = {
+@@ -313,4 +313,4 @@ static struct platform_driver clk_mt7986_topckgen_drv = {
+ 		.of_match_table = of_match_clk_mt7986_topckgen,
  	},
  };
- module_platform_driver(clk_mt7986_topckgen_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8135.c b/drivers/clk/mediatek/clk-mt8135.c
-index 97a115d2c3da..98165b1f7c97 100644
---- a/drivers/clk/mediatek/clk-mt8135.c
-+++ b/drivers/clk/mediatek/clk-mt8135.c
-@@ -638,3 +638,4 @@ static void __init mtk_apmixedsys_init(struct device_node *node)
- }
- CLK_OF_DECLARE(mtk_apmixedsys, "mediatek,mt8135-apmixedsys",
- 		mtk_apmixedsys_init);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8167-apmixedsys.c b/drivers/clk/mediatek/clk-mt8167-apmixedsys.c
-index 27597fdeb6e9..5d8b5093ed02 100644
---- a/drivers/clk/mediatek/clk-mt8167-apmixedsys.c
-+++ b/drivers/clk/mediatek/clk-mt8167-apmixedsys.c
-@@ -141,3 +141,4 @@ static struct platform_driver clk_mt8167_apmixed_drv = {
- 	},
- };
- builtin_platform_driver(clk_mt8167_apmixed_drv)
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8167-aud.c b/drivers/clk/mediatek/clk-mt8167-aud.c
-index 8869c53da79c..63736642f383 100644
---- a/drivers/clk/mediatek/clk-mt8167-aud.c
-+++ b/drivers/clk/mediatek/clk-mt8167-aud.c
-@@ -62,3 +62,4 @@ static struct platform_driver clk_mt8167_audsys_drv = {
- 	},
- };
- module_platform_driver(clk_mt8167_audsys_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8167-img.c b/drivers/clk/mediatek/clk-mt8167-img.c
-index 6a068f2a9dce..c2537e149aa8 100644
---- a/drivers/clk/mediatek/clk-mt8167-img.c
-+++ b/drivers/clk/mediatek/clk-mt8167-img.c
-@@ -54,3 +54,4 @@ static struct platform_driver clk_mt8167_imgsys_drv = {
- 	},
- };
- module_platform_driver(clk_mt8167_imgsys_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8167-mfgcfg.c b/drivers/clk/mediatek/clk-mt8167-mfgcfg.c
-index 7fcb944134b6..340c608e7ddb 100644
---- a/drivers/clk/mediatek/clk-mt8167-mfgcfg.c
-+++ b/drivers/clk/mediatek/clk-mt8167-mfgcfg.c
-@@ -52,3 +52,4 @@ static struct platform_driver clk_mt8167_mfgcfg_drv = {
- 	},
- };
- module_platform_driver(clk_mt8167_mfgcfg_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt7986_topckgen_drv);
++module_platform_driver(clk_mt7986_topckgen_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8167-mm.c b/drivers/clk/mediatek/clk-mt8167-mm.c
-index de6c2283b695..0344f9c98d36 100644
+index 5a5192d0dc45..de6c2283b695 100644
 --- a/drivers/clk/mediatek/clk-mt8167-mm.c
 +++ b/drivers/clk/mediatek/clk-mt8167-mm.c
-@@ -93,3 +93,4 @@ static struct platform_driver clk_mt8167_mm_drv = {
+@@ -92,4 +92,4 @@ static struct platform_driver clk_mt8167_mm_drv = {
+ 	},
  	.id_table = clk_mt8167_mm_id_table,
  };
- module_platform_driver(clk_mt8167_mm_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8167-vdec.c b/drivers/clk/mediatek/clk-mt8167-vdec.c
-index b3eccc2eca58..35b0380f22dc 100644
---- a/drivers/clk/mediatek/clk-mt8167-vdec.c
-+++ b/drivers/clk/mediatek/clk-mt8167-vdec.c
-@@ -61,3 +61,4 @@ static struct platform_driver clk_mt8167_vdec_drv = {
- 	},
+-builtin_platform_driver(clk_mt8167_mm_drv);
++module_platform_driver(clk_mt8167_mm_drv);
+diff --git a/drivers/clk/mediatek/clk-mt8173-mm.c b/drivers/clk/mediatek/clk-mt8173-mm.c
+index 435cfae25492..ba51c22cbe7a 100644
+--- a/drivers/clk/mediatek/clk-mt8173-mm.c
++++ b/drivers/clk/mediatek/clk-mt8173-mm.c
+@@ -107,8 +107,7 @@ static struct platform_driver clk_mt8173_mm_drv = {
+ 	.probe = mtk_clk_pdev_probe,
+ 	.remove = mtk_clk_pdev_remove,
  };
- module_platform_driver(clk_mt8167_vdec_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8167.c b/drivers/clk/mediatek/clk-mt8167.c
-index 507e1ebe3ba8..d9a837686865 100644
---- a/drivers/clk/mediatek/clk-mt8167.c
-+++ b/drivers/clk/mediatek/clk-mt8167.c
-@@ -893,3 +893,4 @@ static struct platform_driver clk_mt8167_drv = {
- 	},
- };
- module_platform_driver(clk_mt8167_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8183-apmixedsys.c b/drivers/clk/mediatek/clk-mt8183-apmixedsys.c
-index e66e90163bb4..5addda17211f 100644
---- a/drivers/clk/mediatek/clk-mt8183-apmixedsys.c
-+++ b/drivers/clk/mediatek/clk-mt8183-apmixedsys.c
-@@ -191,3 +191,4 @@ static struct platform_driver clk_mt8183_apmixed_drv = {
- 	},
- };
- builtin_platform_driver(clk_mt8183_apmixed_drv)
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8173_mm_drv);
++module_platform_driver(clk_mt8173_mm_drv);
+ 
+ MODULE_DESCRIPTION("MediaTek MT8173 MultiMedia clocks driver");
+ MODULE_LICENSE("GPL");
 diff --git a/drivers/clk/mediatek/clk-mt8183-audio.c b/drivers/clk/mediatek/clk-mt8183-audio.c
-index 24cc2178c769..fe510f02dadb 100644
+index 3f1630290b93..24cc2178c769 100644
 --- a/drivers/clk/mediatek/clk-mt8183-audio.c
 +++ b/drivers/clk/mediatek/clk-mt8183-audio.c
-@@ -107,3 +107,4 @@ static struct platform_driver clk_mt8183_audio_drv = {
+@@ -106,5 +106,4 @@ static struct platform_driver clk_mt8183_audio_drv = {
+ 		.of_match_table = of_match_clk_mt8183_audio,
  	},
  };
- module_platform_driver(clk_mt8183_audio_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8183_audio_drv);
++module_platform_driver(clk_mt8183_audio_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8183-cam.c b/drivers/clk/mediatek/clk-mt8183-cam.c
-index 7ff183da0075..7ecbfc50e8fe 100644
+index 6907b1a6a824..7ff183da0075 100644
 --- a/drivers/clk/mediatek/clk-mt8183-cam.c
 +++ b/drivers/clk/mediatek/clk-mt8183-cam.c
-@@ -57,3 +57,4 @@ static struct platform_driver clk_mt8183_cam_drv = {
+@@ -56,5 +56,4 @@ static struct platform_driver clk_mt8183_cam_drv = {
+ 		.of_match_table = of_match_clk_mt8183_cam,
  	},
  };
- module_platform_driver(clk_mt8183_cam_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8183_cam_drv);
++module_platform_driver(clk_mt8183_cam_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8183-img.c b/drivers/clk/mediatek/clk-mt8183-img.c
-index e4a9d3201e33..e75d6e6205f9 100644
+index 8d884425d79f..e4a9d3201e33 100644
 --- a/drivers/clk/mediatek/clk-mt8183-img.c
 +++ b/drivers/clk/mediatek/clk-mt8183-img.c
-@@ -57,3 +57,4 @@ static struct platform_driver clk_mt8183_img_drv = {
+@@ -56,5 +56,4 @@ static struct platform_driver clk_mt8183_img_drv = {
+ 		.of_match_table = of_match_clk_mt8183_img,
  	},
  };
- module_platform_driver(clk_mt8183_img_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8183_img_drv);
++module_platform_driver(clk_mt8183_img_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8183-ipu0.c b/drivers/clk/mediatek/clk-mt8183-ipu0.c
-index 68d4cda89d6f..d1dd76e7eafd 100644
+index 953a8a33d048..68d4cda89d6f 100644
 --- a/drivers/clk/mediatek/clk-mt8183-ipu0.c
 +++ b/drivers/clk/mediatek/clk-mt8183-ipu0.c
-@@ -50,3 +50,4 @@ static struct platform_driver clk_mt8183_ipu_core0_drv = {
+@@ -49,5 +49,4 @@ static struct platform_driver clk_mt8183_ipu_core0_drv = {
+ 		.of_match_table = of_match_clk_mt8183_ipu_core0,
  	},
  };
- module_platform_driver(clk_mt8183_ipu_core0_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8183_ipu_core0_drv);
++module_platform_driver(clk_mt8183_ipu_core0_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8183-ipu1.c b/drivers/clk/mediatek/clk-mt8183-ipu1.c
-index 50950bed9226..0b4906cca119 100644
+index 221d12265974..50950bed9226 100644
 --- a/drivers/clk/mediatek/clk-mt8183-ipu1.c
 +++ b/drivers/clk/mediatek/clk-mt8183-ipu1.c
-@@ -50,3 +50,4 @@ static struct platform_driver clk_mt8183_ipu_core1_drv = {
+@@ -49,5 +49,4 @@ static struct platform_driver clk_mt8183_ipu_core1_drv = {
+ 		.of_match_table = of_match_clk_mt8183_ipu_core1,
  	},
  };
- module_platform_driver(clk_mt8183_ipu_core1_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8183_ipu_core1_drv);
++module_platform_driver(clk_mt8183_ipu_core1_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8183-ipu_adl.c b/drivers/clk/mediatek/clk-mt8183-ipu_adl.c
-index 2044d5c664b8..32a82ec965ef 100644
+index 8c4fd96df821..2044d5c664b8 100644
 --- a/drivers/clk/mediatek/clk-mt8183-ipu_adl.c
 +++ b/drivers/clk/mediatek/clk-mt8183-ipu_adl.c
-@@ -48,3 +48,4 @@ static struct platform_driver clk_mt8183_ipu_adl_drv = {
+@@ -47,5 +47,4 @@ static struct platform_driver clk_mt8183_ipu_adl_drv = {
+ 		.of_match_table = of_match_clk_mt8183_ipu_adl,
  	},
  };
- module_platform_driver(clk_mt8183_ipu_adl_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8183_ipu_adl_drv);
++module_platform_driver(clk_mt8183_ipu_adl_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8183-ipu_conn.c b/drivers/clk/mediatek/clk-mt8183-ipu_conn.c
-index 6e7833656c9a..1e2ebc0eab8b 100644
+index 14a4c3ff82a1..6e7833656c9a 100644
 --- a/drivers/clk/mediatek/clk-mt8183-ipu_conn.c
 +++ b/drivers/clk/mediatek/clk-mt8183-ipu_conn.c
-@@ -117,3 +117,4 @@ static struct platform_driver clk_mt8183_ipu_conn_drv = {
+@@ -116,5 +116,4 @@ static struct platform_driver clk_mt8183_ipu_conn_drv = {
+ 		.of_match_table = of_match_clk_mt8183_ipu_conn,
  	},
  };
- module_platform_driver(clk_mt8183_ipu_conn_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8183_ipu_conn_drv);
++module_platform_driver(clk_mt8183_ipu_conn_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8183-mfgcfg.c b/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-index 5a71ef094e03..20cdbd74817f 100644
+index 730c9ae5ea12..5a71ef094e03 100644
 --- a/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
 +++ b/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-@@ -49,3 +49,4 @@ static struct platform_driver clk_mt8183_mfg_drv = {
+@@ -48,5 +48,4 @@ static struct platform_driver clk_mt8183_mfg_drv = {
+ 		.of_match_table = of_match_clk_mt8183_mfg,
  	},
  };
- module_platform_driver(clk_mt8183_mfg_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8183_mfg_drv);
++module_platform_driver(clk_mt8183_mfg_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8183-mm.c b/drivers/clk/mediatek/clk-mt8183-mm.c
-index 25a04f311dc3..a76e44ebf322 100644
+index 669dcdd66efb..25a04f311dc3 100644
 --- a/drivers/clk/mediatek/clk-mt8183-mm.c
 +++ b/drivers/clk/mediatek/clk-mt8183-mm.c
-@@ -101,3 +101,4 @@ static struct platform_driver clk_mt8183_mm_drv = {
+@@ -100,5 +100,4 @@ static struct platform_driver clk_mt8183_mm_drv = {
+ 	},
  	.id_table = clk_mt8183_mm_id_table,
  };
- module_platform_driver(clk_mt8183_mm_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8183_mm_drv);
++module_platform_driver(clk_mt8183_mm_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8183-vdec.c b/drivers/clk/mediatek/clk-mt8183-vdec.c
-index 4c56d02a9d34..0182745e2a18 100644
+index c294e50b96b7..4c56d02a9d34 100644
 --- a/drivers/clk/mediatek/clk-mt8183-vdec.c
 +++ b/drivers/clk/mediatek/clk-mt8183-vdec.c
-@@ -61,3 +61,4 @@ static struct platform_driver clk_mt8183_vdec_drv = {
+@@ -60,5 +60,4 @@ static struct platform_driver clk_mt8183_vdec_drv = {
+ 		.of_match_table = of_match_clk_mt8183_vdec,
  	},
  };
- module_platform_driver(clk_mt8183_vdec_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8183_vdec_drv);
++module_platform_driver(clk_mt8183_vdec_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8183-venc.c b/drivers/clk/mediatek/clk-mt8183-venc.c
-index 5b86d7d42613..c840e6ebe375 100644
+index 0051c5d92fc5..5b86d7d42613 100644
 --- a/drivers/clk/mediatek/clk-mt8183-venc.c
 +++ b/drivers/clk/mediatek/clk-mt8183-venc.c
-@@ -53,3 +53,4 @@ static struct platform_driver clk_mt8183_venc_drv = {
+@@ -52,5 +52,4 @@ static struct platform_driver clk_mt8183_venc_drv = {
+ 		.of_match_table = of_match_clk_mt8183_venc,
  	},
  };
- module_platform_driver(clk_mt8183_venc_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
-index 02176ee97cd2..5ae0f1f9ca0a 100644
---- a/drivers/clk/mediatek/clk-mt8183.c
-+++ b/drivers/clk/mediatek/clk-mt8183.c
-@@ -878,3 +878,4 @@ static struct platform_driver clk_mt8183_drv = {
- 	},
- };
- module_platform_driver(clk_mt8183_drv)
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8183_venc_drv);
++module_platform_driver(clk_mt8183_venc_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8186-apmixedsys.c b/drivers/clk/mediatek/clk-mt8186-apmixedsys.c
-index ab500b985900..e429d2cdc84a 100644
+index 9fded5020ca4..ab500b985900 100644
 --- a/drivers/clk/mediatek/clk-mt8186-apmixedsys.c
 +++ b/drivers/clk/mediatek/clk-mt8186-apmixedsys.c
-@@ -193,3 +193,4 @@ static struct platform_driver clk_mt8186_apmixed_drv = {
+@@ -192,4 +192,4 @@ static struct platform_driver clk_mt8186_apmixed_drv = {
+ 		.of_match_table = of_match_clk_mt8186_apmixed,
  	},
  };
- module_platform_driver(clk_mt8186_apmixed_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8186_apmixed_drv);
++module_platform_driver(clk_mt8186_apmixed_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8186-cam.c b/drivers/clk/mediatek/clk-mt8186-cam.c
-index 220c8af7848e..90d91d045909 100644
+index 9ec345a2ce66..220c8af7848e 100644
 --- a/drivers/clk/mediatek/clk-mt8186-cam.c
 +++ b/drivers/clk/mediatek/clk-mt8186-cam.c
-@@ -88,3 +88,4 @@ static struct platform_driver clk_mt8186_cam_drv = {
+@@ -87,4 +87,4 @@ static struct platform_driver clk_mt8186_cam_drv = {
+ 		.of_match_table = of_match_clk_mt8186_cam,
  	},
  };
- module_platform_driver(clk_mt8186_cam_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8186_cam_drv);
++module_platform_driver(clk_mt8186_cam_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8186-img.c b/drivers/clk/mediatek/clk-mt8186-img.c
-index bac0e52bd51c..11314dba4e41 100644
+index 08a625475aee..bac0e52bd51c 100644
 --- a/drivers/clk/mediatek/clk-mt8186-img.c
 +++ b/drivers/clk/mediatek/clk-mt8186-img.c
-@@ -66,3 +66,4 @@ static struct platform_driver clk_mt8186_img_drv = {
+@@ -65,4 +65,4 @@ static struct platform_driver clk_mt8186_img_drv = {
+ 		.of_match_table = of_match_clk_mt8186_img,
  	},
  };
- module_platform_driver(clk_mt8186_img_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8186_img_drv);
++module_platform_driver(clk_mt8186_img_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c b/drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c
-index 9301dc3e86fb..f8d1ee294f09 100644
+index 47f2e480a05e..9301dc3e86fb 100644
 --- a/drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c
 +++ b/drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c
-@@ -65,3 +65,4 @@ static struct platform_driver clk_mt8186_imp_iic_wrap_drv = {
+@@ -64,4 +64,4 @@ static struct platform_driver clk_mt8186_imp_iic_wrap_drv = {
+ 		.of_match_table = of_match_clk_mt8186_imp_iic_wrap,
  	},
  };
- module_platform_driver(clk_mt8186_imp_iic_wrap_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8186_imp_iic_wrap_drv);
++module_platform_driver(clk_mt8186_imp_iic_wrap_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8186-infra_ao.c b/drivers/clk/mediatek/clk-mt8186-infra_ao.c
-index e705d57032a6..766c8e6bcf8d 100644
+index df2a6bd1aefa..e705d57032a6 100644
 --- a/drivers/clk/mediatek/clk-mt8186-infra_ao.c
 +++ b/drivers/clk/mediatek/clk-mt8186-infra_ao.c
-@@ -237,3 +237,4 @@ static struct platform_driver clk_mt8186_infra_ao_drv = {
+@@ -236,4 +236,4 @@ static struct platform_driver clk_mt8186_infra_ao_drv = {
+ 		.of_match_table = of_match_clk_mt8186_infra_ao,
  	},
  };
- module_platform_driver(clk_mt8186_infra_ao_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8186_infra_ao_drv);
++module_platform_driver(clk_mt8186_infra_ao_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8186-ipe.c b/drivers/clk/mediatek/clk-mt8186-ipe.c
-index 36f6338f8237..0876440839df 100644
+index 8fca148effa6..36f6338f8237 100644
 --- a/drivers/clk/mediatek/clk-mt8186-ipe.c
 +++ b/drivers/clk/mediatek/clk-mt8186-ipe.c
-@@ -53,3 +53,4 @@ static struct platform_driver clk_mt8186_ipe_drv = {
+@@ -52,4 +52,4 @@ static struct platform_driver clk_mt8186_ipe_drv = {
+ 		.of_match_table = of_match_clk_mt8186_ipe,
  	},
  };
- module_platform_driver(clk_mt8186_ipe_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8186_ipe_drv);
++module_platform_driver(clk_mt8186_ipe_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8186-mdp.c b/drivers/clk/mediatek/clk-mt8186-mdp.c
-index faf5cdc7523f..194f20f16f8c 100644
+index 05174088ef20..faf5cdc7523f 100644
 --- a/drivers/clk/mediatek/clk-mt8186-mdp.c
 +++ b/drivers/clk/mediatek/clk-mt8186-mdp.c
-@@ -78,3 +78,4 @@ static struct platform_driver clk_mt8186_mdp_drv = {
+@@ -77,4 +77,4 @@ static struct platform_driver clk_mt8186_mdp_drv = {
+ 		.of_match_table = of_match_clk_mt8186_mdp,
  	},
  };
- module_platform_driver(clk_mt8186_mdp_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8186_mdp_drv);
++module_platform_driver(clk_mt8186_mdp_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8186-mfg.c b/drivers/clk/mediatek/clk-mt8186-mfg.c
-index 468fa7e37074..f16d3c44ef41 100644
+index 0142d741053a..468fa7e37074 100644
 --- a/drivers/clk/mediatek/clk-mt8186-mfg.c
 +++ b/drivers/clk/mediatek/clk-mt8186-mfg.c
-@@ -47,3 +47,4 @@ static struct platform_driver clk_mt8186_mfg_drv = {
+@@ -46,4 +46,4 @@ static struct platform_driver clk_mt8186_mfg_drv = {
+ 		.of_match_table = of_match_clk_mt8186_mfg,
  	},
  };
- module_platform_driver(clk_mt8186_mfg_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8186_mfg_drv);
++module_platform_driver(clk_mt8186_mfg_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8186-mm.c b/drivers/clk/mediatek/clk-mt8186-mm.c
-index 03dfb4d99930..9e9853a2ea91 100644
+index 6506a8b848a9..03dfb4d99930 100644
 --- a/drivers/clk/mediatek/clk-mt8186-mm.c
 +++ b/drivers/clk/mediatek/clk-mt8186-mm.c
-@@ -76,3 +76,4 @@ static struct platform_driver clk_mt8186_mm_drv = {
+@@ -75,4 +75,4 @@ static struct platform_driver clk_mt8186_mm_drv = {
+ 	},
  	.id_table = clk_mt8186_mm_id_table,
  };
- module_platform_driver(clk_mt8186_mm_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8186_mm_drv);
++module_platform_driver(clk_mt8186_mm_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8186-topckgen.c b/drivers/clk/mediatek/clk-mt8186-topckgen.c
-index 7f2a59347166..a48172d9c5ab 100644
+index c6786c8b315f..7f2a59347166 100644
 --- a/drivers/clk/mediatek/clk-mt8186-topckgen.c
 +++ b/drivers/clk/mediatek/clk-mt8186-topckgen.c
-@@ -731,3 +731,4 @@ static struct platform_driver clk_mt8186_topck_drv = {
+@@ -730,4 +730,4 @@ static struct platform_driver clk_mt8186_topck_drv = {
+ 		.of_match_table = of_match_clk_mt8186_topck,
  	},
  };
- module_platform_driver(clk_mt8186_topck_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8186_topck_drv);
++module_platform_driver(clk_mt8186_topck_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8186-vdec.c b/drivers/clk/mediatek/clk-mt8186-vdec.c
-index 76e226be8f72..877ca9d8ff65 100644
+index 5ad7e1ae0bac..76e226be8f72 100644
 --- a/drivers/clk/mediatek/clk-mt8186-vdec.c
 +++ b/drivers/clk/mediatek/clk-mt8186-vdec.c
-@@ -86,3 +86,4 @@ static struct platform_driver clk_mt8186_vdec_drv = {
+@@ -85,4 +85,4 @@ static struct platform_driver clk_mt8186_vdec_drv = {
+ 		.of_match_table = of_match_clk_mt8186_vdec,
  	},
  };
- module_platform_driver(clk_mt8186_vdec_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8186_vdec_drv);
++module_platform_driver(clk_mt8186_vdec_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8186-venc.c b/drivers/clk/mediatek/clk-mt8186-venc.c
-index 96c15b859e37..a89e82285d4c 100644
+index f5519f794c45..96c15b859e37 100644
 --- a/drivers/clk/mediatek/clk-mt8186-venc.c
 +++ b/drivers/clk/mediatek/clk-mt8186-venc.c
-@@ -49,3 +49,4 @@ static struct platform_driver clk_mt8186_venc_drv = {
+@@ -48,4 +48,4 @@ static struct platform_driver clk_mt8186_venc_drv = {
+ 		.of_match_table = of_match_clk_mt8186_venc,
  	},
  };
- module_platform_driver(clk_mt8186_venc_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8186_venc_drv);
++module_platform_driver(clk_mt8186_venc_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8186-wpe.c b/drivers/clk/mediatek/clk-mt8186-wpe.c
-index dbd8a81b170d..fba55f08129c 100644
+index 8db3e9178a1e..dbd8a81b170d 100644
 --- a/drivers/clk/mediatek/clk-mt8186-wpe.c
 +++ b/drivers/clk/mediatek/clk-mt8186-wpe.c
-@@ -49,3 +49,4 @@ static struct platform_driver clk_mt8186_wpe_drv = {
+@@ -48,4 +48,4 @@ static struct platform_driver clk_mt8186_wpe_drv = {
+ 		.of_match_table = of_match_clk_mt8186_wpe,
  	},
  };
- module_platform_driver(clk_mt8186_wpe_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8186_wpe_drv);
++module_platform_driver(clk_mt8186_wpe_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8192-aud.c b/drivers/clk/mediatek/clk-mt8192-aud.c
-index deb292cc9da1..9b14d8514b4f 100644
+index 29affb68e854..deb292cc9da1 100644
 --- a/drivers/clk/mediatek/clk-mt8192-aud.c
 +++ b/drivers/clk/mediatek/clk-mt8192-aud.c
-@@ -117,3 +117,4 @@ static struct platform_driver clk_mt8192_aud_drv = {
+@@ -116,5 +116,4 @@ static struct platform_driver clk_mt8192_aud_drv = {
+ 		.of_match_table = of_match_clk_mt8192_aud,
  	},
  };
- module_platform_driver(clk_mt8192_aud_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8192_aud_drv);
++module_platform_driver(clk_mt8192_aud_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8192-cam.c b/drivers/clk/mediatek/clk-mt8192-cam.c
-index 00dbd0d27fbc..321693aff33f 100644
+index 90b57d46eef7..00dbd0d27fbc 100644
 --- a/drivers/clk/mediatek/clk-mt8192-cam.c
 +++ b/drivers/clk/mediatek/clk-mt8192-cam.c
-@@ -105,3 +105,4 @@ static struct platform_driver clk_mt8192_cam_drv = {
+@@ -104,5 +104,4 @@ static struct platform_driver clk_mt8192_cam_drv = {
+ 		.of_match_table = of_match_clk_mt8192_cam,
  	},
  };
- module_platform_driver(clk_mt8192_cam_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8192_cam_drv);
++module_platform_driver(clk_mt8192_cam_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8192-img.c b/drivers/clk/mediatek/clk-mt8192-img.c
-index 00abbec6c666..b2c148ead7f8 100644
+index da82d65a7650..00abbec6c666 100644
 --- a/drivers/clk/mediatek/clk-mt8192-img.c
 +++ b/drivers/clk/mediatek/clk-mt8192-img.c
-@@ -68,3 +68,4 @@ static struct platform_driver clk_mt8192_img_drv = {
+@@ -67,5 +67,4 @@ static struct platform_driver clk_mt8192_img_drv = {
+ 		.of_match_table = of_match_clk_mt8192_img,
  	},
  };
- module_platform_driver(clk_mt8192_img_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8192_img_drv);
++module_platform_driver(clk_mt8192_img_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c b/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c
-index 6663b70a5d47..fd731eb6d62e 100644
+index ff8e20bb44bb..6663b70a5d47 100644
 --- a/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c
 +++ b/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c
-@@ -117,3 +117,4 @@ static struct platform_driver clk_mt8192_imp_iic_wrap_drv = {
+@@ -116,5 +116,4 @@ static struct platform_driver clk_mt8192_imp_iic_wrap_drv = {
+ 		.of_match_table = of_match_clk_mt8192_imp_iic_wrap,
  	},
  };
- module_platform_driver(clk_mt8192_imp_iic_wrap_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8192_imp_iic_wrap_drv);
++module_platform_driver(clk_mt8192_imp_iic_wrap_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8192-ipe.c b/drivers/clk/mediatek/clk-mt8192-ipe.c
-index 6a8d3fb7e0c5..3fd37977ea16 100644
+index 0225abe4170a..6a8d3fb7e0c5 100644
 --- a/drivers/clk/mediatek/clk-mt8192-ipe.c
 +++ b/drivers/clk/mediatek/clk-mt8192-ipe.c
-@@ -55,3 +55,4 @@ static struct platform_driver clk_mt8192_ipe_drv = {
+@@ -54,5 +54,4 @@ static struct platform_driver clk_mt8192_ipe_drv = {
+ 		.of_match_table = of_match_clk_mt8192_ipe,
  	},
  };
- module_platform_driver(clk_mt8192_ipe_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8192_ipe_drv);
++module_platform_driver(clk_mt8192_ipe_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8192-mdp.c b/drivers/clk/mediatek/clk-mt8192-mdp.c
-index 782f83fbe97b..817e8bf4543b 100644
+index 4675788d7816..782f83fbe97b 100644
 --- a/drivers/clk/mediatek/clk-mt8192-mdp.c
 +++ b/drivers/clk/mediatek/clk-mt8192-mdp.c
-@@ -80,3 +80,4 @@ static struct platform_driver clk_mt8192_mdp_drv = {
+@@ -79,5 +79,4 @@ static struct platform_driver clk_mt8192_mdp_drv = {
+ 		.of_match_table = of_match_clk_mt8192_mdp,
  	},
  };
- module_platform_driver(clk_mt8192_mdp_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8192_mdp_drv);
++module_platform_driver(clk_mt8192_mdp_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8192-mfg.c b/drivers/clk/mediatek/clk-mt8192-mfg.c
-index c007e561f008..7f77e2d8b765 100644
+index ec5b44ffa458..c007e561f008 100644
 --- a/drivers/clk/mediatek/clk-mt8192-mfg.c
 +++ b/drivers/clk/mediatek/clk-mt8192-mfg.c
-@@ -50,3 +50,4 @@ static struct platform_driver clk_mt8192_mfg_drv = {
+@@ -49,5 +49,4 @@ static struct platform_driver clk_mt8192_mfg_drv = {
+ 		.of_match_table = of_match_clk_mt8192_mfg,
  	},
  };
- module_platform_driver(clk_mt8192_mfg_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8192_mfg_drv);
++module_platform_driver(clk_mt8192_mfg_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8192-mm.c b/drivers/clk/mediatek/clk-mt8192-mm.c
-index 184d7fb82abc..3e81018a038b 100644
+index 638e6faae84c..184d7fb82abc 100644
 --- a/drivers/clk/mediatek/clk-mt8192-mm.c
 +++ b/drivers/clk/mediatek/clk-mt8192-mm.c
-@@ -99,3 +99,4 @@ static struct platform_driver clk_mt8192_mm_drv = {
+@@ -98,5 +98,4 @@ static struct platform_driver clk_mt8192_mm_drv = {
+ 	},
  	.id_table = clk_mt8192_mm_id_table,
  };
- module_platform_driver(clk_mt8192_mm_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8192_mm_drv);
++module_platform_driver(clk_mt8192_mm_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8192-msdc.c b/drivers/clk/mediatek/clk-mt8192-msdc.c
-index cb21a40dfe83..cde8c88673e4 100644
+index a72e1b73fce8..cb21a40dfe83 100644
 --- a/drivers/clk/mediatek/clk-mt8192-msdc.c
 +++ b/drivers/clk/mediatek/clk-mt8192-msdc.c
-@@ -62,3 +62,4 @@ static struct platform_driver clk_mt8192_msdc_drv = {
+@@ -61,5 +61,4 @@ static struct platform_driver clk_mt8192_msdc_drv = {
+ 		.of_match_table = of_match_clk_mt8192_msdc,
  	},
  };
- module_platform_driver(clk_mt8192_msdc_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8192_msdc_drv);
++module_platform_driver(clk_mt8192_msdc_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8192-scp_adsp.c b/drivers/clk/mediatek/clk-mt8192-scp_adsp.c
-index b7aa68e6c555..df086b95d447 100644
+index 18a8679108b8..b7aa68e6c555 100644
 --- a/drivers/clk/mediatek/clk-mt8192-scp_adsp.c
 +++ b/drivers/clk/mediatek/clk-mt8192-scp_adsp.c
-@@ -48,3 +48,4 @@ static struct platform_driver clk_mt8192_scp_adsp_drv = {
+@@ -47,5 +47,4 @@ static struct platform_driver clk_mt8192_scp_adsp_drv = {
+ 		.of_match_table = of_match_clk_mt8192_scp_adsp,
  	},
  };
- module_platform_driver(clk_mt8192_scp_adsp_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8192_scp_adsp_drv);
++module_platform_driver(clk_mt8192_scp_adsp_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8192-vdec.c b/drivers/clk/mediatek/clk-mt8192-vdec.c
-index 9ddc6e99c8d7..2ea8b6d4d405 100644
+index e149962dbbf9..9ddc6e99c8d7 100644
 --- a/drivers/clk/mediatek/clk-mt8192-vdec.c
 +++ b/drivers/clk/mediatek/clk-mt8192-vdec.c
-@@ -92,3 +92,4 @@ static struct platform_driver clk_mt8192_vdec_drv = {
+@@ -91,5 +91,4 @@ static struct platform_driver clk_mt8192_vdec_drv = {
+ 		.of_match_table = of_match_clk_mt8192_vdec,
  	},
  };
- module_platform_driver(clk_mt8192_vdec_drv);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8192_vdec_drv);
++module_platform_driver(clk_mt8192_vdec_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8192-venc.c b/drivers/clk/mediatek/clk-mt8192-venc.c
-index 67136a341d77..d73c12bc2ae9 100644
+index 80b8bb170996..67136a341d77 100644
 --- a/drivers/clk/mediatek/clk-mt8192-venc.c
 +++ b/drivers/clk/mediatek/clk-mt8192-venc.c
-@@ -51,3 +51,4 @@ static struct platform_driver clk_mt8192_venc_drv = {
+@@ -50,5 +50,4 @@ static struct platform_driver clk_mt8192_venc_drv = {
+ 		.of_match_table = of_match_clk_mt8192_venc,
  	},
  };
- module_platform_driver(clk_mt8192_venc_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8192.c b/drivers/clk/mediatek/clk-mt8192.c
-index 0f9f10172148..35afe496b1c1 100644
---- a/drivers/clk/mediatek/clk-mt8192.c
-+++ b/drivers/clk/mediatek/clk-mt8192.c
-@@ -1242,3 +1242,4 @@ static int __init clk_mt8192_init(void)
- }
- 
- arch_initcall(clk_mt8192_init);
-+MODULE_LICENSE("GPL");
+-
+-builtin_platform_driver(clk_mt8192_venc_drv);
++module_platform_driver(clk_mt8192_venc_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8195-apmixedsys.c b/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
-index 29124ed9398b..75cc4d7a39f9 100644
+index c0db31ce0741..29124ed9398b 100644
 --- a/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
 +++ b/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
-@@ -231,3 +231,4 @@ static struct platform_driver clk_mt8195_apmixed_drv = {
+@@ -230,4 +230,4 @@ static struct platform_driver clk_mt8195_apmixed_drv = {
+ 		.of_match_table = of_match_clk_mt8195_apmixed,
  	},
  };
- module_platform_driver(clk_mt8195_apmixed_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8195_apmixed_drv);
++module_platform_driver(clk_mt8195_apmixed_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8195-apusys_pll.c b/drivers/clk/mediatek/clk-mt8195-apusys_pll.c
-index ca60d90e5257..b167b8d31bcc 100644
+index 0b52f6a009c4..ca60d90e5257 100644
 --- a/drivers/clk/mediatek/clk-mt8195-apusys_pll.c
 +++ b/drivers/clk/mediatek/clk-mt8195-apusys_pll.c
-@@ -111,3 +111,4 @@ static struct platform_driver clk_mt8195_apusys_pll_drv = {
+@@ -110,4 +110,4 @@ static struct platform_driver clk_mt8195_apusys_pll_drv = {
+ 		.of_match_table = of_match_clk_mt8195_apusys_pll,
  	},
  };
- module_platform_driver(clk_mt8195_apusys_pll_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8195_apusys_pll_drv);
++module_platform_driver(clk_mt8195_apusys_pll_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8195-cam.c b/drivers/clk/mediatek/clk-mt8195-cam.c
-index c0fd32270a8e..c515650214bd 100644
+index e4d00fe6e757..c0fd32270a8e 100644
 --- a/drivers/clk/mediatek/clk-mt8195-cam.c
 +++ b/drivers/clk/mediatek/clk-mt8195-cam.c
-@@ -141,3 +141,4 @@ static struct platform_driver clk_mt8195_cam_drv = {
+@@ -140,4 +140,4 @@ static struct platform_driver clk_mt8195_cam_drv = {
+ 		.of_match_table = of_match_clk_mt8195_cam,
  	},
  };
- module_platform_driver(clk_mt8195_cam_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8195_cam_drv);
++module_platform_driver(clk_mt8195_cam_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8195-ccu.c b/drivers/clk/mediatek/clk-mt8195-ccu.c
-index 9e8220bcdf9f..a86f848a785d 100644
+index 4e326b6301ba..9e8220bcdf9f 100644
 --- a/drivers/clk/mediatek/clk-mt8195-ccu.c
 +++ b/drivers/clk/mediatek/clk-mt8195-ccu.c
-@@ -49,3 +49,4 @@ static struct platform_driver clk_mt8195_ccu_drv = {
+@@ -48,4 +48,4 @@ static struct platform_driver clk_mt8195_ccu_drv = {
+ 		.of_match_table = of_match_clk_mt8195_ccu,
  	},
  };
- module_platform_driver(clk_mt8195_ccu_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8195_ccu_drv);
++module_platform_driver(clk_mt8195_ccu_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8195-img.c b/drivers/clk/mediatek/clk-mt8195-img.c
-index 822efce6f79b..214baa2bc974 100644
+index 12f5c436d075..822efce6f79b 100644
 --- a/drivers/clk/mediatek/clk-mt8195-img.c
 +++ b/drivers/clk/mediatek/clk-mt8195-img.c
-@@ -95,3 +95,4 @@ static struct platform_driver clk_mt8195_img_drv = {
+@@ -94,4 +94,4 @@ static struct platform_driver clk_mt8195_img_drv = {
+ 		.of_match_table = of_match_clk_mt8195_img,
  	},
  };
- module_platform_driver(clk_mt8195_img_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8195_img_drv);
++module_platform_driver(clk_mt8195_img_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c b/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
-index 01f8fab27c22..191f482186ae 100644
+index fbc809d05072..01f8fab27c22 100644
 --- a/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
 +++ b/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
-@@ -65,3 +65,4 @@ static struct platform_driver clk_mt8195_imp_iic_wrap_drv = {
+@@ -64,4 +64,4 @@ static struct platform_driver clk_mt8195_imp_iic_wrap_drv = {
+ 		.of_match_table = of_match_clk_mt8195_imp_iic_wrap,
  	},
  };
- module_platform_driver(clk_mt8195_imp_iic_wrap_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8195_imp_iic_wrap_drv);
++module_platform_driver(clk_mt8195_imp_iic_wrap_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8195-infra_ao.c b/drivers/clk/mediatek/clk-mt8195-infra_ao.c
-index 75084251ea74..6ad72a320d5e 100644
+index fcd410461d3b..75084251ea74 100644
 --- a/drivers/clk/mediatek/clk-mt8195-infra_ao.c
 +++ b/drivers/clk/mediatek/clk-mt8195-infra_ao.c
-@@ -239,3 +239,4 @@ static struct platform_driver clk_mt8195_infra_ao_drv = {
+@@ -238,4 +238,4 @@ static struct platform_driver clk_mt8195_infra_ao_drv = {
+ 		.of_match_table = of_match_clk_mt8195_infra_ao,
  	},
  };
- module_platform_driver(clk_mt8195_infra_ao_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8195_infra_ao_drv);
++module_platform_driver(clk_mt8195_infra_ao_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8195-ipe.c b/drivers/clk/mediatek/clk-mt8195-ipe.c
-index b713fea470dd..b547a99b4ad9 100644
+index b0d745cf7752..b713fea470dd 100644
 --- a/drivers/clk/mediatek/clk-mt8195-ipe.c
 +++ b/drivers/clk/mediatek/clk-mt8195-ipe.c
-@@ -50,3 +50,4 @@ static struct platform_driver clk_mt8195_ipe_drv = {
+@@ -49,4 +49,4 @@ static struct platform_driver clk_mt8195_ipe_drv = {
+ 		.of_match_table = of_match_clk_mt8195_ipe,
  	},
  };
- module_platform_driver(clk_mt8195_ipe_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8195_ipe_drv);
++module_platform_driver(clk_mt8195_ipe_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8195-mfg.c b/drivers/clk/mediatek/clk-mt8195-mfg.c
-index fcd2d0b7e3c9..75cf643ab885 100644
+index c94cb71bd9b9..fcd2d0b7e3c9 100644
 --- a/drivers/clk/mediatek/clk-mt8195-mfg.c
 +++ b/drivers/clk/mediatek/clk-mt8195-mfg.c
-@@ -48,3 +48,4 @@ static struct platform_driver clk_mt8195_mfg_drv = {
+@@ -47,4 +47,4 @@ static struct platform_driver clk_mt8195_mfg_drv = {
+ 		.of_match_table = of_match_clk_mt8195_mfg,
  	},
  };
- module_platform_driver(clk_mt8195_mfg_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8195_mfg_drv);
++module_platform_driver(clk_mt8195_mfg_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8195-peri_ao.c b/drivers/clk/mediatek/clk-mt8195-peri_ao.c
-index f66fbea2e080..7d65a478182d 100644
+index 2f6b3bb657db..f66fbea2e080 100644
 --- a/drivers/clk/mediatek/clk-mt8195-peri_ao.c
 +++ b/drivers/clk/mediatek/clk-mt8195-peri_ao.c
-@@ -61,3 +61,4 @@ static struct platform_driver clk_mt8195_peri_ao_drv = {
+@@ -60,4 +60,4 @@ static struct platform_driver clk_mt8195_peri_ao_drv = {
+ 		.of_match_table = of_match_clk_mt8195_peri_ao,
  	},
  };
- module_platform_driver(clk_mt8195_peri_ao_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8195_peri_ao_drv);
++module_platform_driver(clk_mt8195_peri_ao_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8195-scp_adsp.c b/drivers/clk/mediatek/clk-mt8195-scp_adsp.c
-index 1987172c98a4..24e09339ed7d 100644
+index e16c383f631b..1987172c98a4 100644
 --- a/drivers/clk/mediatek/clk-mt8195-scp_adsp.c
 +++ b/drivers/clk/mediatek/clk-mt8195-scp_adsp.c
-@@ -46,3 +46,4 @@ static struct platform_driver clk_mt8195_scp_adsp_drv = {
+@@ -45,4 +45,4 @@ static struct platform_driver clk_mt8195_scp_adsp_drv = {
+ 		.of_match_table = of_match_clk_mt8195_scp_adsp,
  	},
  };
- module_platform_driver(clk_mt8195_scp_adsp_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8195_scp_adsp_drv);
++module_platform_driver(clk_mt8195_scp_adsp_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8195-topckgen.c b/drivers/clk/mediatek/clk-mt8195-topckgen.c
-index a9bb7e4687ec..adc6bb7ce750 100644
+index cf520f85de73..a9bb7e4687ec 100644
 --- a/drivers/clk/mediatek/clk-mt8195-topckgen.c
 +++ b/drivers/clk/mediatek/clk-mt8195-topckgen.c
-@@ -1341,3 +1341,4 @@ static struct platform_driver clk_mt8195_topck_drv = {
+@@ -1340,4 +1340,4 @@ static struct platform_driver clk_mt8195_topck_drv = {
+ 		.of_match_table = of_match_clk_mt8195_topck,
  	},
  };
- module_platform_driver(clk_mt8195_topck_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8195_topck_drv);
++module_platform_driver(clk_mt8195_topck_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8195-vdec.c b/drivers/clk/mediatek/clk-mt8195-vdec.c
-index a75ea99a9a4c..f9e2bd402627 100644
+index a1446b666385..a75ea99a9a4c 100644
 --- a/drivers/clk/mediatek/clk-mt8195-vdec.c
 +++ b/drivers/clk/mediatek/clk-mt8195-vdec.c
-@@ -103,3 +103,4 @@ static struct platform_driver clk_mt8195_vdec_drv = {
+@@ -102,4 +102,4 @@ static struct platform_driver clk_mt8195_vdec_drv = {
+ 		.of_match_table = of_match_clk_mt8195_vdec,
  	},
  };
- module_platform_driver(clk_mt8195_vdec_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8195_vdec_drv);
++module_platform_driver(clk_mt8195_vdec_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8195-vdo0.c b/drivers/clk/mediatek/clk-mt8195-vdo0.c
-index 1ed152b072bd..509780750e43 100644
+index 492c1e133d0d..1ed152b072bd 100644
 --- a/drivers/clk/mediatek/clk-mt8195-vdo0.c
 +++ b/drivers/clk/mediatek/clk-mt8195-vdo0.c
-@@ -113,3 +113,4 @@ static struct platform_driver clk_mt8195_vdo0_drv = {
+@@ -102,6 +102,7 @@ static const struct platform_device_id clk_mt8195_vdo0_id_table[] = {
+ 	{ .name = "clk-mt8195-vdo0", .driver_data = (kernel_ulong_t)&vdo0_desc },
+ 	{ /* sentinel */ }
+ };
++MODULE_DEVICE_TABLE(platform, clk_mt8195_vdo0_id_table);
+ 
+ static struct platform_driver clk_mt8195_vdo0_drv = {
+ 	.probe = mtk_clk_pdev_probe,
+@@ -111,4 +112,4 @@ static struct platform_driver clk_mt8195_vdo0_drv = {
+ 	},
  	.id_table = clk_mt8195_vdo0_id_table,
  };
- module_platform_driver(clk_mt8195_vdo0_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8195_vdo0_drv);
++module_platform_driver(clk_mt8195_vdo0_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8195-vdo1.c b/drivers/clk/mediatek/clk-mt8195-vdo1.c
-index cbd0a34884c7..0a5214a1ed25 100644
+index 76e9f4496e43..cbd0a34884c7 100644
 --- a/drivers/clk/mediatek/clk-mt8195-vdo1.c
 +++ b/drivers/clk/mediatek/clk-mt8195-vdo1.c
-@@ -140,3 +140,4 @@ static struct platform_driver clk_mt8195_vdo1_drv = {
+@@ -129,6 +129,7 @@ static const struct platform_device_id clk_mt8195_vdo1_id_table[] = {
+ 	{ .name = "clk-mt8195-vdo1", .driver_data = (kernel_ulong_t)&vdo1_desc },
+ 	{ /* sentinel */ }
+ };
++MODULE_DEVICE_TABLE(platform, clk_mt8195_vdo1_id_table);
+ 
+ static struct platform_driver clk_mt8195_vdo1_drv = {
+ 	.probe = mtk_clk_pdev_probe,
+@@ -138,4 +139,4 @@ static struct platform_driver clk_mt8195_vdo1_drv = {
+ 	},
  	.id_table = clk_mt8195_vdo1_id_table,
  };
- module_platform_driver(clk_mt8195_vdo1_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8195_vdo1_drv);
++module_platform_driver(clk_mt8195_vdo1_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8195-venc.c b/drivers/clk/mediatek/clk-mt8195-venc.c
-index 8b46cbe9ce83..d050d87bb3f2 100644
+index 622f57804f96..8b46cbe9ce83 100644
 --- a/drivers/clk/mediatek/clk-mt8195-venc.c
 +++ b/drivers/clk/mediatek/clk-mt8195-venc.c
-@@ -68,3 +68,4 @@ static struct platform_driver clk_mt8195_venc_drv = {
+@@ -67,4 +67,4 @@ static struct platform_driver clk_mt8195_venc_drv = {
+ 		.of_match_table = of_match_clk_mt8195_venc,
  	},
  };
- module_platform_driver(clk_mt8195_venc_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8195_venc_drv);
++module_platform_driver(clk_mt8195_venc_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8195-vpp0.c b/drivers/clk/mediatek/clk-mt8195-vpp0.c
-index ca1288b76990..84805a114387 100644
+index 15f1a081358a..ca1288b76990 100644
 --- a/drivers/clk/mediatek/clk-mt8195-vpp0.c
 +++ b/drivers/clk/mediatek/clk-mt8195-vpp0.c
-@@ -105,3 +105,4 @@ static struct platform_driver clk_mt8195_vpp0_drv = {
+@@ -104,4 +104,4 @@ static struct platform_driver clk_mt8195_vpp0_drv = {
+ 	},
  	.id_table = clk_mt8195_vpp0_id_table,
  };
- module_platform_driver(clk_mt8195_vpp0_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8195_vpp0_drv);
++module_platform_driver(clk_mt8195_vpp0_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8195-vpp1.c b/drivers/clk/mediatek/clk-mt8195-vpp1.c
-index d9a260b6ee30..3e91dfed2996 100644
+index 794f21cf5e65..d9a260b6ee30 100644
 --- a/drivers/clk/mediatek/clk-mt8195-vpp1.c
 +++ b/drivers/clk/mediatek/clk-mt8195-vpp1.c
-@@ -103,3 +103,4 @@ static struct platform_driver clk_mt8195_vpp1_drv = {
+@@ -102,4 +102,4 @@ static struct platform_driver clk_mt8195_vpp1_drv = {
+ 	},
  	.id_table = clk_mt8195_vpp1_id_table,
  };
- module_platform_driver(clk_mt8195_vpp1_drv);
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8195_vpp1_drv);
++module_platform_driver(clk_mt8195_vpp1_drv);
 diff --git a/drivers/clk/mediatek/clk-mt8195-wpe.c b/drivers/clk/mediatek/clk-mt8195-wpe.c
-index 8878b5ef9e44..52cebe297abf 100644
+index b483fab10e18..8878b5ef9e44 100644
 --- a/drivers/clk/mediatek/clk-mt8195-wpe.c
 +++ b/drivers/clk/mediatek/clk-mt8195-wpe.c
-@@ -142,3 +142,4 @@ static struct platform_driver clk_mt8195_wpe_drv = {
+@@ -141,4 +141,4 @@ static struct platform_driver clk_mt8195_wpe_drv = {
+ 		.of_match_table = of_match_clk_mt8195_wpe,
  	},
  };
- module_platform_driver(clk_mt8195_wpe_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8365-apmixedsys.c b/drivers/clk/mediatek/clk-mt8365-apmixedsys.c
-index 6f0fdf92bbd2..55faa4e37116 100644
---- a/drivers/clk/mediatek/clk-mt8365-apmixedsys.c
-+++ b/drivers/clk/mediatek/clk-mt8365-apmixedsys.c
-@@ -162,3 +162,4 @@ static struct platform_driver clk_mt8365_apmixed_drv = {
+-builtin_platform_driver(clk_mt8195_wpe_drv);
++module_platform_driver(clk_mt8195_wpe_drv);
+diff --git a/drivers/clk/mediatek/clk-mt8365-apu.c b/drivers/clk/mediatek/clk-mt8365-apu.c
+index 91ffe89d9721..5a594f8eccdc 100644
+--- a/drivers/clk/mediatek/clk-mt8365-apu.c
++++ b/drivers/clk/mediatek/clk-mt8365-apu.c
+@@ -51,5 +51,5 @@ static struct platform_driver clk_mt8365_apu_drv = {
+ 		.of_match_table = of_match_clk_mt8365_apu,
  	},
  };
- builtin_platform_driver(clk_mt8365_apmixed_drv)
-+MODULE_LICENSE("GPL");
+-builtin_platform_driver(clk_mt8365_apu_drv);
++module_platform_driver(clk_mt8365_apu_drv);
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/mediatek/clk-mt8365-cam.c b/drivers/clk/mediatek/clk-mt8365-cam.c
+index 31d5b5cd6de1..ed1d8dd7043c 100644
+--- a/drivers/clk/mediatek/clk-mt8365-cam.c
++++ b/drivers/clk/mediatek/clk-mt8365-cam.c
+@@ -53,5 +53,5 @@ static struct platform_driver clk_mt8365_cam_drv = {
+ 		.of_match_table = of_match_clk_mt8365_cam,
+ 	},
+ };
+-builtin_platform_driver(clk_mt8365_cam_drv);
++module_platform_driver(clk_mt8365_cam_drv);
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/mediatek/clk-mt8365-mfg.c b/drivers/clk/mediatek/clk-mt8365-mfg.c
+index 587b49128b03..b3d10b017f0d 100644
+--- a/drivers/clk/mediatek/clk-mt8365-mfg.c
++++ b/drivers/clk/mediatek/clk-mt8365-mfg.c
+@@ -59,5 +59,5 @@ static struct platform_driver clk_mt8365_mfg_drv = {
+ 		.of_match_table = of_match_clk_mt8365_mfg,
+ 	},
+ };
+-builtin_platform_driver(clk_mt8365_mfg_drv);
++module_platform_driver(clk_mt8365_mfg_drv);
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/mediatek/clk-mt8365-mm.c b/drivers/clk/mediatek/clk-mt8365-mm.c
+index 9569be54127c..7ae33997ba86 100644
+--- a/drivers/clk/mediatek/clk-mt8365-mm.c
++++ b/drivers/clk/mediatek/clk-mt8365-mm.c
+@@ -90,5 +90,5 @@ static struct platform_driver clk_mt8365_mm_drv = {
+ 	},
+ 	.id_table = clk_mt8365_mm_id_table,
+ };
+-builtin_platform_driver(clk_mt8365_mm_drv);
++module_platform_driver(clk_mt8365_mm_drv);
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/mediatek/clk-mt8365-vdec.c b/drivers/clk/mediatek/clk-mt8365-vdec.c
+index cdc678e8941c..d5caddcc5932 100644
+--- a/drivers/clk/mediatek/clk-mt8365-vdec.c
++++ b/drivers/clk/mediatek/clk-mt8365-vdec.c
+@@ -59,5 +59,5 @@ static struct platform_driver clk_mt8365_vdec_drv = {
+ 		.of_match_table = of_match_clk_mt8365_vdec,
+ 	},
+ };
+-builtin_platform_driver(clk_mt8365_vdec_drv);
++module_platform_driver(clk_mt8365_vdec_drv);
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/mediatek/clk-mt8365-venc.c b/drivers/clk/mediatek/clk-mt8365-venc.c
+index 0e080c22119d..08b7c0ee52e7 100644
+--- a/drivers/clk/mediatek/clk-mt8365-venc.c
++++ b/drivers/clk/mediatek/clk-mt8365-venc.c
+@@ -48,5 +48,5 @@ static struct platform_driver clk_mt8365_venc_drv = {
+ 		.of_match_table = of_match_clk_mt8365_venc,
+ 	},
+ };
+-builtin_platform_driver(clk_mt8365_venc_drv);
++module_platform_driver(clk_mt8365_venc_drv);
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/mediatek/clk-mt8516-aud.c b/drivers/clk/mediatek/clk-mt8516-aud.c
+index 119dbbd0c3e0..5f34487aad7e 100644
+--- a/drivers/clk/mediatek/clk-mt8516-aud.c
++++ b/drivers/clk/mediatek/clk-mt8516-aud.c
+@@ -60,7 +60,7 @@ static struct platform_driver clk_mt8516_aud_drv = {
+ 		.of_match_table = of_match_clk_mt8516_aud,
+ 	},
+ };
+-builtin_platform_driver(clk_mt8516_aud_drv);
++module_platform_driver(clk_mt8516_aud_drv);
+ 
+ MODULE_DESCRIPTION("MediaTek MT8516 audiosys clocks driver");
+ MODULE_LICENSE("GPL");
 -- 
 2.39.1
 
