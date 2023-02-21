@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03942C64EC4
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 11:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A554C64ED6
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 11:56:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234159AbjBUL4s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 06:56:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34162 "EHLO
+        id S234240AbjBUL4u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Feb 2023 06:56:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234470AbjBUL4o (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 06:56:44 -0500
+        with ESMTP id S234431AbjBUL4p (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 06:56:45 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E2EF28221;
-        Tue, 21 Feb 2023 03:56:20 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B50B128239;
+        Tue, 21 Feb 2023 03:56:23 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id CE4AA66021CA;
-        Tue, 21 Feb 2023 11:56:03 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id BEE7A66021CD;
+        Tue, 21 Feb 2023 11:56:07 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676980565;
-        bh=hBKMIaocGmn56Ueun8XDpc5jewvKlJ1Bcnnlk9bLbIY=;
+        s=mail; t=1676980568;
+        bh=Jd0WSEgoMoiyLJ/JPwWzI6i2w8ARgz466SU1nHCnAdI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gOOg+8ewt+jQAM1BUEPjy31CsGclucBT7KyU3A5zaX6j6pJB5jrCiKtvYQQj6Qci4
-         WG8gFboBVO8UPANqEi14icikqPJLMC8v3TcoI5kplCFKHySKhsQa+1LDZ1LIkAlPlR
-         WTIfV3vgWw639zWCZmJqRyBXHXTTWKhNKWPtMngu3jJ5MDNFLBZqmF1i4LA82vHASZ
-         eBWKnfSZrjhba5FL7EC4QauqzLRVD2UghkWQpqUOmiTbcQBLbW/PnhrFWxMMXy1EW6
-         YuSs6VYnRIBrEEuh5t4G8y6USZHx7Skae5HtFZInwfV0K9aqSIVYJq59D86oCI5WOe
-         M2+fgrqHOR3Pw==
+        b=R3tnF3baCgW4SVj3GBw9hxjAJkiCcbUar2S7vEvGk0FoeK3ktsPG7Bfp3mGqcipvm
+         VJH4tL0CRDid/k/sIAF1/Ob52ZnXNlXYlQjU3UmsNOXj0aSlfoo2oF10eyD4wdvwRV
+         tHF3teRa1L2xj/Agdr/wmN/0aKO41xJM65s5m61sgpdsCeRXDEiUPUsHmfMoFE88oq
+         nzzDw/1Z8D3BdYnN2beVup3Xj06jn0ZDJ2/1ks6h9yuv5MCTa+CFDyOfhekpsvzkva
+         3LHR7PrFx0UANuIP3vjlyvNxldqOdh/mwR7rC4ZJUO4yvA7EXNJD2EYUBcediLELN3
+         guD+xrzS10vSg==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v4 07/54] clk: mediatek: mt2712: Add error handling to clk_mt2712_apmixed_probe()
-Date:   Tue, 21 Feb 2023 12:55:02 +0100
-Message-Id: <20230221115549.360132-8-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v4 10/54] clk: mediatek: mt2712: Change to use module_platform_driver macro
+Date:   Tue, 21 Feb 2023 12:55:05 +0100
+Message-Id: <20230221115549.360132-11-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230221115549.360132-1-angelogioacchino.delregno@collabora.com>
 References: <20230221115549.360132-1-angelogioacchino.delregno@collabora.com>
@@ -58,49 +58,55 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This function was completely missing error handling: add it.
+Now that all of the clocks in clk-mt2712.c are using the common
+mtk_clk_simple_{probe,remove}() callbacks we can safely migrate
+to module_platform_driver.
+While at it, also drop all references to `simple` in the specific
+context of mt2712 as that was used in the past only to allow us
+to have two platform_driver(s) in one file.
 
-Fixes: e2f744a82d72 ("clk: mediatek: Add MT2712 clock support")
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/clk/mediatek/clk-mt2712.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ drivers/clk/mediatek/clk-mt2712.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/clk/mediatek/clk-mt2712.c b/drivers/clk/mediatek/clk-mt2712.c
-index ce28ee47f5cf..8aa361f0fa13 100644
+index c5fd76d1b9df..937c370d6765 100644
 --- a/drivers/clk/mediatek/clk-mt2712.c
 +++ b/drivers/clk/mediatek/clk-mt2712.c
-@@ -1091,15 +1091,25 @@ static int clk_mt2712_apmixed_probe(struct platform_device *pdev)
- 	struct device_node *node = pdev->dev.of_node;
+@@ -1020,7 +1020,7 @@ static const struct mtk_clk_desc peri_desc = {
+ 	.rst_desc = &clk_rst_desc[1],
+ };
  
- 	clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
-+	if (!clk_data)
-+		return -ENOMEM;
+-static const struct of_device_id of_match_clk_mt2712_simple[] = {
++static const struct of_device_id of_match_clk_mt2712[] = {
+ 	{ .compatible = "mediatek,mt2712-infracfg", .data = &infra_desc },
+ 	{ .compatible = "mediatek,mt2712-mcucfg", .data = &mcu_desc },
+ 	{ .compatible = "mediatek,mt2712-pericfg", .data = &peri_desc, },
+@@ -1028,18 +1028,12 @@ static const struct of_device_id of_match_clk_mt2712_simple[] = {
+ 	{ /* sentinel */ }
+ };
  
--	mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
-+	r = mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
-+	if (r)
-+		goto free_clk_data;
- 
- 	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
-+	if (r) {
-+		dev_err(&pdev->dev, "Cannot register clock provider: %d\n", r);
-+		goto unregister_plls;
-+	}
- 
--	if (r != 0)
--		pr_err("%s(): could not register clock provider: %d\n",
--			__func__, r);
-+	return 0;
- 
-+unregister_plls:
-+	mtk_clk_unregister_plls(plls, ARRAY_SIZE(plls), clk_data);
-+free_clk_data:
-+	mtk_free_clk_data(clk_data);
- 	return r;
- }
- 
+-static struct platform_driver clk_mt2712_simple_drv = {
++static struct platform_driver clk_mt2712_drv = {
+ 	.probe = mtk_clk_simple_probe,
+ 	.remove = mtk_clk_simple_remove,
+ 	.driver = {
+-		.name = "clk-mt2712-simple",
+-		.of_match_table = of_match_clk_mt2712_simple,
++		.name = "clk-mt2712",
++		.of_match_table = of_match_clk_mt2712,
+ 	},
+ };
+-
+-static int __init clk_mt2712_init(void)
+-{
+-	return platform_driver_register(&clk_mt2712_simple_drv);
+-}
+-
+-arch_initcall(clk_mt2712_init);
++module_platform_driver(clk_mt2712_drv);
 -- 
 2.39.1
 
