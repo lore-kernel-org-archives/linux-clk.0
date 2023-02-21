@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD73C64ED9
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 11:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA941C61DA3
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 11:59:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234152AbjBUL6m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 06:58:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37072 "EHLO
+        id S233381AbjBUL6i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Feb 2023 06:58:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234592AbjBUL6W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 06:58:22 -0500
+        with ESMTP id S234054AbjBUL6I (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 06:58:08 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5078D1714;
-        Tue, 21 Feb 2023 03:57:48 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A117328D04;
+        Tue, 21 Feb 2023 03:57:38 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id F276A66021D8;
-        Tue, 21 Feb 2023 11:56:29 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 2ABEA66021E2;
+        Tue, 21 Feb 2023 11:56:35 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676980591;
-        bh=hWZRDGal3GNmdFtLS5t4q03/QmGR1D89Es46OeyDZNc=;
+        s=mail; t=1676980596;
+        bh=1YakjwGq+YZL7clOL4YsZ5ydzdoPF893Eh3JT3wYxho=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FPLBzLKZsu5eOsh71IrnMbFEM1apZRIDua9LJF1zo/quzTmH+GniniteupIZXOhNP
-         Qry9z9By+DesgSgpFG1gfw4oVOeWMsTp1zTh03yWtffJ0B8dmL/kkhlNfD7j1g5dCG
-         8rGOHZ5+yyxn+mRYf09RLfWSNqN+291YiHXiS8DzAAeA5ulmByv1BhiWREaoppSrNW
-         XhrIgibVikyjcIzuFFRp0Y5wdTGtrTSGiimw2YWoUDSe92k+HQNPsIePQSmIuq6Kro
-         4RDK8iNkMwSEqBzI3oM6/2aXYQtNCEWpFs/88Bm1dXfM23w6FvaFEbKHPs2e7lIdG2
-         w4q3DWQ19evpQ==
+        b=dIEyzdHTQgpmdiUE63UKRBQxk3BRnWeZkNUIa4bHPfunoX6W/nVa94TaT0oexf+VA
+         QGp5iu9QjZ3II1ZUOKvxppWfpqZHj4p2VEQpRFRUEd0RpZSo4/WRE3OdlziKe1NBl5
+         QC7lZVTIKz6Q1fQlSn2usy3+Ug1bBXKWSvMPaiy43Ofa8SOlTVDMaiqlByPOiD/ljI
+         Oazqqw/HXUGXCFBrn3rHkZC61PrbCowoP2nm6BJeZ4WaNXmexqmM2swcdfcRs/aOPz
+         FSWC8Y/xAbK8UOhLXLb5QrSNSMBag/ZYKI6MNC/56QQHcMh4u73TP/KAamoU4r98hN
+         aMLblGBU3fZAg==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v4 27/54] clk: mediatek: mt7622: Convert to platform driver and simple probe
-Date:   Tue, 21 Feb 2023 12:55:22 +0100
-Message-Id: <20230221115549.360132-28-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v4 31/54] clk: mediatek: Propagate struct device with mtk_clk_register_dividers()
+Date:   Tue, 21 Feb 2023 12:55:26 +0100
+Message-Id: <20230221115549.360132-32-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230221115549.360132-1-angelogioacchino.delregno@collabora.com>
 References: <20230221115549.360132-1-angelogioacchino.delregno@collabora.com>
@@ -58,162 +58,91 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert the MT7622 topckgen and pericfg clock drivers to platform
-drivers and use the simple probe mechanism. This also allows to
-build these clocks as modules.
-
-Thanks to the conversion, more error handling was added to the clocks
-registration.
+Propagate struct device for divider clocks registered through clk-mtk
+helpers to be able to get runtime PM support for MTK clocks.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/clk/mediatek/clk-mt7622.c | 125 ++++++++----------------------
- 1 file changed, 31 insertions(+), 94 deletions(-)
+ drivers/clk/mediatek/clk-mt2701.c            | 2 +-
+ drivers/clk/mediatek/clk-mt8167-apmixedsys.c | 2 +-
+ drivers/clk/mediatek/clk-mtk.c               | 8 +++++---
+ drivers/clk/mediatek/clk-mtk.h               | 3 ++-
+ 4 files changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt7622.c b/drivers/clk/mediatek/clk-mt7622.c
-index fb813f8d3a7d..7a002b73fcaa 100644
---- a/drivers/clk/mediatek/clk-mt7622.c
-+++ b/drivers/clk/mediatek/clk-mt7622.c
-@@ -490,107 +490,44 @@ static const struct mtk_clk_rst_desc clk_rst_desc = {
- 	.rst_bank_nr = ARRAY_SIZE(pericfg_rst_ofs),
- };
+diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
+index dfe328f7a44b..e9c27b1364b6 100644
+--- a/drivers/clk/mediatek/clk-mt2701.c
++++ b/drivers/clk/mediatek/clk-mt2701.c
+@@ -681,7 +681,7 @@ static int mtk_topckgen_init(struct platform_device *pdev)
+ 				    ARRAY_SIZE(top_muxes), base,
+ 				    &mt2701_clk_lock, clk_data);
  
--static int mtk_topckgen_init(struct platform_device *pdev)
--{
--	struct clk_hw_onecell_data *clk_data;
--	void __iomem *base;
--	struct device_node *node = pdev->dev.of_node;
--
--	base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(base))
--		return PTR_ERR(base);
--
--	clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
--
--	mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
--				    clk_data);
--
--	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs),
--				 clk_data);
--
--	mtk_clk_register_composites(&pdev->dev, top_muxes,
--				    ARRAY_SIZE(top_muxes), base,
--				    &mt7622_clk_lock, clk_data);
--
 -	mtk_clk_register_dividers(top_adj_divs, ARRAY_SIZE(top_adj_divs),
--				  base, &mt7622_clk_lock, clk_data);
--
--	mtk_clk_register_gates(&pdev->dev, node, top_clks,
--			       ARRAY_SIZE(top_clks), clk_data);
--
--	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--}
--
--static int mtk_pericfg_init(struct platform_device *pdev)
--{
--	struct clk_hw_onecell_data *clk_data;
--	void __iomem *base;
--	int r;
--	struct device_node *node = pdev->dev.of_node;
--
--	base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(base))
--		return PTR_ERR(base);
--
--	clk_data = mtk_alloc_clk_data(CLK_PERI_NR_CLK);
--
--	mtk_clk_register_gates(&pdev->dev, node, peri_clks,
--			       ARRAY_SIZE(peri_clks), clk_data);
--
--	mtk_clk_register_composites(&pdev->dev, peri_muxes,
--				    ARRAY_SIZE(peri_muxes), base,
--				    &mt7622_clk_lock, clk_data);
--
--	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--	if (r)
--		return r;
--
--	mtk_register_reset_controller_with_dev(&pdev->dev, &clk_rst_desc);
--
--	return 0;
--}
-+static const struct mtk_clk_desc topck_desc = {
-+	.clks = top_clks,
-+	.num_clks = ARRAY_SIZE(top_clks),
-+	.fixed_clks = top_fixed_clks,
-+	.num_fixed_clks = ARRAY_SIZE(top_fixed_clks),
-+	.factor_clks = top_divs,
-+	.num_factor_clks = ARRAY_SIZE(top_divs),
-+	.composite_clks = top_muxes,
-+	.num_composite_clks = ARRAY_SIZE(top_muxes),
-+	.divider_clks = top_adj_divs,
-+	.num_divider_clks = ARRAY_SIZE(top_adj_divs),
-+	.clk_lock = &mt7622_clk_lock,
-+};
-+
-+static const struct mtk_clk_desc peri_desc = {
-+	.clks = peri_clks,
-+	.num_clks = ARRAY_SIZE(peri_clks),
-+	.composite_clks = peri_muxes,
-+	.num_composite_clks = ARRAY_SIZE(peri_muxes),
-+	.rst_desc = &clk_rst_desc,
-+	.clk_lock = &mt7622_clk_lock,
-+};
++	mtk_clk_register_dividers(&pdev->dev, top_adj_divs, ARRAY_SIZE(top_adj_divs),
+ 				base, &mt2701_clk_lock, clk_data);
  
- static const struct of_device_id of_match_clk_mt7622[] = {
--	{
--		.compatible = "mediatek,mt7622-topckgen",
--		.data = mtk_topckgen_init,
--	}, {
--		.compatible = "mediatek,mt7622-pericfg",
--		.data = mtk_pericfg_init,
--	}, {
--		/* sentinel */
--	}
--};
--
--static int clk_mt7622_probe(struct platform_device *pdev)
--{
--	int (*clk_init)(struct platform_device *);
--	int r;
--
--	clk_init = of_device_get_match_data(&pdev->dev);
--	if (!clk_init)
--		return -EINVAL;
--
--	r = clk_init(pdev);
--	if (r)
--		dev_err(&pdev->dev,
--			"could not register clock provider: %s: %d\n",
--			pdev->name, r);
--
--	return r;
--}
-+	{ .compatible = "mediatek,mt7622-topckgen", .data = &topck_desc },
-+	{ .compatible = "mediatek,mt7622-pericfg", .data = &peri_desc },
-+	{ /* sentinel */ }
-+};
+ 	mtk_clk_register_gates(&pdev->dev, node, top_clks,
+diff --git a/drivers/clk/mediatek/clk-mt8167-apmixedsys.c b/drivers/clk/mediatek/clk-mt8167-apmixedsys.c
+index ebd90365be5f..27597fdeb6e9 100644
+--- a/drivers/clk/mediatek/clk-mt8167-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt8167-apmixedsys.c
+@@ -109,7 +109,7 @@ static int clk_mt8167_apmixed_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
  
- static struct platform_driver clk_mt7622_drv = {
--	.probe = clk_mt7622_probe,
- 	.driver = {
- 		.name = "clk-mt7622",
- 		.of_match_table = of_match_clk_mt7622,
- 	},
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
- };
-+module_platform_driver(clk_mt7622_drv)
+-	ret = mtk_clk_register_dividers(adj_divs, ARRAY_SIZE(adj_divs), base,
++	ret = mtk_clk_register_dividers(dev, adj_divs, ARRAY_SIZE(adj_divs), base,
+ 					&mt8167_apmixed_clk_lock, clk_data);
+ 	if (ret)
+ 		goto unregister_plls;
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index 01224cfbcc79..fd2214c3242f 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -393,7 +393,8 @@ void mtk_clk_unregister_composites(const struct mtk_composite *mcs, int num,
+ }
+ EXPORT_SYMBOL_GPL(mtk_clk_unregister_composites);
  
--static int clk_mt7622_init(void)
--{
--	return platform_driver_register(&clk_mt7622_drv);
--}
--
--arch_initcall(clk_mt7622_init);
-+MODULE_DESCRIPTION("MediaTek MT7622 clocks driver");
-+MODULE_LICENSE("GPL");
+-int mtk_clk_register_dividers(const struct mtk_clk_divider *mcds, int num,
++int mtk_clk_register_dividers(struct device *dev,
++			      const struct mtk_clk_divider *mcds, int num,
+ 			      void __iomem *base, spinlock_t *lock,
+ 			      struct clk_hw_onecell_data *clk_data)
+ {
+@@ -412,7 +413,7 @@ int mtk_clk_register_dividers(const struct mtk_clk_divider *mcds, int num,
+ 			continue;
+ 		}
+ 
+-		hw = clk_hw_register_divider(NULL, mcd->name, mcd->parent_name,
++		hw = clk_hw_register_divider(dev, mcd->name, mcd->parent_name,
+ 			mcd->flags, base +  mcd->div_reg, mcd->div_shift,
+ 			mcd->div_width, mcd->clk_divider_flags, lock);
+ 
+@@ -535,7 +536,8 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+ 	}
+ 
+ 	if (mcd->divider_clks) {
+-		r = mtk_clk_register_dividers(mcd->divider_clks,
++		r = mtk_clk_register_dividers(&pdev->dev,
++					      mcd->divider_clks,
+ 					      mcd->num_divider_clks,
+ 					      base, mcd->clk_lock, clk_data);
+ 		if (r)
+diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+index 554aecdc1015..b7a751861fce 100644
+--- a/drivers/clk/mediatek/clk-mtk.h
++++ b/drivers/clk/mediatek/clk-mtk.h
+@@ -202,7 +202,8 @@ struct mtk_clk_divider {
+ 		.div_width = _width,				\
+ }
+ 
+-int mtk_clk_register_dividers(const struct mtk_clk_divider *mcds, int num,
++int mtk_clk_register_dividers(struct device *dev,
++			      const struct mtk_clk_divider *mcds, int num,
+ 			      void __iomem *base, spinlock_t *lock,
+ 			      struct clk_hw_onecell_data *clk_data);
+ void mtk_clk_unregister_dividers(const struct mtk_clk_divider *mcds, int num,
 -- 
 2.39.1
 
