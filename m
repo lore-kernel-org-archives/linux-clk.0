@@ -2,138 +2,237 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B699C61DA3
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 16:34:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A06C61DA3
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 16:56:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234605AbjBUQeZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 11:34:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60664 "EHLO
+        id S234216AbjBUQ4D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Feb 2023 11:56:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234632AbjBUQeW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 11:34:22 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C81AC13DD6;
-        Tue, 21 Feb 2023 08:34:18 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 555C36112D;
-        Tue, 21 Feb 2023 16:34:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A406C433D2;
-        Tue, 21 Feb 2023 16:34:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676997257;
-        bh=rScjK5VMyCZR5Ghp9Xxc1QS4YiviN+AcyuGZCuMiRvk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vBMq8NWq57Shnjk1qmarEq628THtxn2i9weKpl5EIslwqdTn0RISvGrycnu0NMX7D
-         NX4jLf0LWPPdx+gVdgfq2CbeWU11SEWV2rGpC5nUGS6smzJSnoXTsK5RoLKstj5h1c
-         yGLQp/4NJ9ITBs+TsO+x2U6jANTN++82vMCXCWJ8W5pfaVpSco8GMcUghkq+btNfYk
-         LakAdK2joxng/PVW5RWh3Hp/vJdM1+/Jw1kgIVrGDscMmUCdYNYTxZJp3Mb7S38SP4
-         9nleouZkPbo0xCQrwJe/l9vr/bRnKNtZnPbir2/ULiUu7RvVGkVobN8DCZKYK1cUa0
-         +M0PKpVMOLAqA==
-Date:   Tue, 21 Feb 2023 16:34:11 +0000
-From:   Conor Dooley <conor@kernel.org>
-To:     Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc:     Hal Feng <hal.feng@starfivetech.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 13/19] reset: starfive: Add StarFive JH7110 reset
- driver
-Message-ID: <Y/TygwbxyuhbDooX@spud>
-References: <20230221024645.127922-1-hal.feng@starfivetech.com>
- <20230221024645.127922-14-hal.feng@starfivetech.com>
- <CAJM55Z_O9K=sCRXga9pMOXk9YjXc1v_V0e5S-8xN9Mi8gvHzvg@mail.gmail.com>
+        with ESMTP id S234143AbjBUQ4B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 11:56:01 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58FB42C642;
+        Tue, 21 Feb 2023 08:56:00 -0800 (PST)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31LCZbKG020637;
+        Tue, 21 Feb 2023 16:27:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=Z4x/bECX1Ge7EqLqtH9GZNuXP0+OgWex+15JNKUz2aE=;
+ b=oqFEaNJJzs0oa1tO9l81qh1Nj2SSSNJt0EVuZcSGCJdyl7eWUq95jrGap7WUzLr4R11O
+ cCxKyYLJLU5igQD7UH5sXvaPhz8aNErOc8QUbsC2K2Vub/hWgK9LF/WkdoS5xv2IHat5
+ YK+Yjduh+5ggCDmAfyJ78t2aLUnHpQLN7bgZDjD2MdVf24zofHbyMY4b+HwPAU/IDd3w
+ q2DYAvNixemiFa1iDR5EhTeVre2GI8mA8+V7X8bCBgda/0Vw2lomOa0HIjOJgg7ARFhD
+ OByYQUBoBe66fs3nIdQpkfS68c2iJlulg5IliTsRPjzLI1PVmqmAE+itRsJ7G7uHNdLT DA== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nvp4v1n3n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 Feb 2023 16:27:33 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31LGRVck031916
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 Feb 2023 16:27:31 GMT
+Received: from [10.50.52.163] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 21 Feb
+ 2023 08:27:22 -0800
+Message-ID: <71cbd918-4f93-e714-a2c3-14cb5b0d717e@quicinc.com>
+Date:   Tue, 21 Feb 2023 21:57:18 +0530
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="di8SMzK5TxlOLwpm"
-Content-Disposition: inline
-In-Reply-To: <CAJM55Z_O9K=sCRXga9pMOXk9YjXc1v_V0e5S-8xN9Mi8gvHzvg@mail.gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [GIT PULL] Qualcomm clock driver updates for v6.3
+To:     Bjorn Andersson <quic_bjorande@quicinc.com>
+CC:     Bjorn Andersson <andersson@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Andy Gross <agross@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        "Arnd Bergmann" <arnd@arndb.de>,
+        Akhil P Oommen <quic_akhilpo@quicinc.com>,
+        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Robert Marko <robimarko@gmail.com>,
+        Shazad Hussain <quic_shazhuss@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        Sricharan R <quic_srichara@quicinc.com>,
+        Varadarajan Narayanan <quic_varada@quicinc.com>
+References: <20230219045318.564342-1-andersson@kernel.org>
+ <6d5eb527-7e1c-29bb-e13c-e48c989bf8cd@quicinc.com>
+ <20230220153544.cda5uqnjnir6jrdx@ripper>
+ <a25a0ed5-ba9c-c669-def3-865dcb5072fc@quicinc.com>
+ <20230221154451.GA1092194@hu-bjorande-lv.qualcomm.com>
+Content-Language: en-US
+From:   Kathiravan T <quic_kathirav@quicinc.com>
+In-Reply-To: <20230221154451.GA1092194@hu-bjorande-lv.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: C7yHDY8hgxipZWKtjPg-a1NBl7O02HbP
+X-Proofpoint-GUID: C7yHDY8hgxipZWKtjPg-a1NBl7O02HbP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-21_09,2023-02-20_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=854
+ clxscore=1015 adultscore=0 spamscore=0 phishscore=0 suspectscore=0
+ bulkscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302210136
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---di8SMzK5TxlOLwpm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2/21/2023 9:14 PM, Bjorn Andersson wrote:
+> On Mon, Feb 20, 2023 at 10:10:07PM +0530, Kathiravan T wrote:
+>> On 2/20/2023 9:05 PM, Bjorn Andersson wrote:
+>>> On Mon, Feb 20, 2023 at 05:17:39PM +0530, Kathiravan T wrote:
+>>>> On 2/19/2023 10:23 AM, Bjorn Andersson wrote:
+>>>>> The following changes since commit 1b929c02afd37871d5afb9d498426f83432e71c2:
+>>>>>
+>>>>>      Linux 6.2-rc1 (2022-12-25 13:41:39 -0800)
+>>>>>
+>>>>> are available in the Git repository at:
+>>>>>
+>>>>>      https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-for-6.3
+>>>>>
+>>>>> for you to fetch changes up to 7935b534d32a1823a7d5db449d340f56c201f284:
+>>>>>
+>>>>>      dt-bindings: clock: Merge qcom,gpucc-sm8350 into qcom,gpucc.yaml (2023-02-08 19:29:25 -0800)
+>>>>>
+>>>>> ----------------------------------------------------------------
+>>>>> Qualcomm clock driver updates for v6.3
+>>>>>
+>>>>> Support for requesting the next power_off operation for a genpd to be
+>>>>> synchronous is introduced, and implemented in the GDSC driver. To allow
+>>>>> the GPU driver to request power_off to wait for the GDSC to actually
+>>>>> collapse.
+>>>>>
+>>>>> clk_disable_unused() is altered, to not consider clocks which comes from
+>>>>> a provider with sync_state defined. This makes it possible for
+>>>>> individual clock drivers to invoke this process once all clients has
+>>>>> been probed, avoiding the need for booting many systems with
+>>>>> clk_ignore_unused.
+>>>>> This is then enabled for SDM845 and SC8280XP clock controllers.
+>>>>>
+>>>>> Support for QDU1000/QRU1000 Global clock controller, SA8775P Global
+>>>>> clock controller, SM8550 TCSR and display clock controller, SM6350 clock
+>>>>> controller, nd MSM8996 CBF and APCS clock controllers is introduced..
+>>>>>
+>>>>> Parent references are updated across a large number of clock drivers, to
+>>>>> align with the design changes since those drivers where introduced.
+>>>>> Similarly, test clocks has been dropped from a range of drivers.
+>>>>>
+>>>>> A range of fixes for the MSM8996 CPU clock controller is introduced.
+>>>>>
+>>>>> MSM8974 GCC is transitioned off the externally defined sleep_clk.
+>>>>>
+>>>>> GDSC in the global clock controller for QCS404 is added, and various
+>>>>> parent definitions are cleaned up.
+>>>>>
+>>>>> The SDCC core clocks on SM6115 are moved for floor_ops.
+>>>>>
+>>>>> Programming of clk_dis_wait for GPU CX GDSC on SC7180 and SDM845 are
+>>>>> moved to use the recently introduced properties in the GDSC struct.
+>>>>>
+>>>>> The RPMh clock driver gains SM8550 and SA8775P clocks, and the IPA clock
+>>>>> is added on a variety of platforms.
+>>>>>
+>>>>> The SMD RPM driver receives a big cleanup, in particular a move away
+>>>>> from duplicating declaration of identical clocks between multiple
+>>>>> platforms.
+>>>>> A few missing clocks across msm8998, msm8992, msm8916, qcs404 are added
+>>>>> as well.
+>>>>>
+>>>>> Using devm_pm_runtime_enable() to clean up some duplication is done
+>>>>> across SM8250 display and video clock controllers, SM8450 display clock
+>>>>> controller and SC7280 LPASS clock controller.
+>>>>>
+>>>>> Devicetree binding changes for above mentioned additions and changes are
+>>>>> introduced.
+>>>>>
+>>>>> Lastly, a change to pad a few registers in the SM8250 DTS to 8 digits
+>>>>> was picked up in the wrong tree and kept here, to avoid rebasing.
+>>>>>
+>>>>> ----------------------------------------------------------------
+>>>> <snip>
+>>>>
+>>>> Bjorn,
+>>>>
+>>> Hi Kathiravan,
+>>>
+>>>> I don't see the change got picked up v6.3 https://lore.kernel.org/linux-arm-msm/20230120082631.22053-1-quic_kathirav@quicinc.com/.
+>>>> Please help to understand what is missing to get it picked up?
+>>>>
+>>> Afaict, this patch introduces support that doesn't have a user today,
+>>> and as such should be merged together with:
+>>> https://lore.kernel.org/linux-arm-msm/20230217083308.12017-4-quic_kathirav@quicinc.com/
+>>
+>> Thanks Bjorn. I got the point. This patch also needed for IPQ5332 Baseport
+>> patches https://lore.kernel.org/linux-gpio/20230217075835.460-1-quic_kathirav@quicinc.com/
+>>
+>>
+>>> Which hasn't yet been picked up...
+>>>
+>>> But please send such patches together in the future, to make it easier
+>>> for people to review and me to merge them.
+>>
+>> If I re-spin the IPQ5332 base port patches, shall I add this patch to the
+>> IPQ5332 series itself and send it or you are okay to pick it up as it is?
+>>
+> Doesn't:
+> https://lore.kernel.org/linux-gpio/20230217075835.460-1-quic_kathirav@quicinc.com/
+> depend on:
+> https://lore.kernel.org/linux-arm-msm/20230217083308.12017-4-quic_kathirav@quicinc.com/
+> being merged first?
 
-On Tue, Feb 21, 2023 at 04:33:09PM +0100, Emil Renner Berthing wrote:
-> On Tue, 21 Feb 2023 at 03:47, Hal Feng <hal.feng@starfivetech.com> wrote:
-> >
-> > Add auxiliary driver to support StarFive JH7110 system
-> > and always-on resets.
-> >
-> > Reported-by: kernel test robot <lkp@intel.com>
 
-Drop the reported-by here too please Hal.
+Both the baseport[1] and APSS clock driver[2] series depends on the 
+patch 
+https://lore.kernel.org/linux-arm-msm/20230120082631.22053-1-quic_kathirav@quicinc.com/. 
+GCC driver which is part of baseport uses the clk_alpha_pll_stromer_ops 
+which is introduced in the mentioned patch.  However there is no 
+dependency between baseport and APSS clock driver apart from DTS changes.
 
-> > Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 
-> > +static int jh7110_reset_probe(struct auxiliary_device *adev,
-> > +                             const struct auxiliary_device_id *id)
-> > +{
-> > +       struct reset_info *info =3D (struct reset_info *)(id->driver_da=
-ta);
-> > +       void __iomem **base =3D (void __iomem **)dev_get_drvdata(adev->=
-dev.parent);
->=20
-> Hi Hal,
->=20
-> I saw the kernel test robot complain about this, but I still wonder if
-> the extra level of indirection is really needed. Isn't it enough to
-> just add the explicit casts, so
->=20
-> dev_set_drvdata(priv->dev, (void *)priv->base);
->=20
-> in the clock drivers and here just
->=20
-> void __iomem *base =3D (void __iomem *)dev_get_drvdata(adev->dev.parent);
+[1] 
+https://lore.kernel.org/linux-gpio/20230217075835.460-1-quic_kathirav@quicinc.com/
 
-I *think* if you do that, sparse will complain that you cast away the
-__iomem. The complaint is something like "cast removes address space
-qualifier from expression".
+[2] 
+https://lore.kernel.org/linux-arm-msm/20230217083308.12017-1-quic_kathirav@quicinc.com/
 
-The other option is, rather than set the base as the drvdata, just pass
-the whole priv struct. That's what I did for mpfs at least & I thought I
-had suggested it on v3, but must not have.
-It looks prettier than the casting madness at least ;)
 
-> > +
-> > +       if (!info || !base)
-> > +               return -ENODEV;
-> > +
-> > +       return reset_starfive_jh71x0_register(&adev->dev, adev->dev.par=
-ent->of_node,
-> > +                                             *base + info->assert_offs=
-et,
-> > +                                             *base + info->status_offs=
-et,
-> > +                                             NULL,
-> > +                                             info->nr_resets,
-> > +                                             NULL);
-> > +}
+>
+> If you are going to resubmit the IPQ5332 baseport, please consider
+> sending one series with all the clock patches together.
+>
+> You may send the dts separately, mentioning the dependency on the clock
+> series - or any other independent driver series that you sent out. That
+> way you make it easy for each maintainer to pick the patches destined
+> for their tree.
 
---di8SMzK5TxlOLwpm
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Thanks got it. In the next re-spin let me include the mentioned patch 
+along with the baseport series.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY/TybAAKCRB4tDGHoIJi
-0pUxAQC1ZljYcv5/Q6mze0u0z96Oz5pkrLAITwYsm92VzYEYpAEAk6PbItP1RJvB
-MFzAwz5syZ6Y4U9Krg0CMdAnSOLNGQ8=
-=u5Rk
------END PGP SIGNATURE-----
 
---di8SMzK5TxlOLwpm--
+Thanks, Kathiravan T.
+
+
+> Regards,
+> Bjorn
