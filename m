@@ -2,111 +2,110 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5819DC61DA3
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 17:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7370C636D7
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Feb 2023 18:00:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233776AbjBUR1N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 12:27:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42146 "EHLO
+        id S231221AbjBUSAe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Feb 2023 13:00:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235070AbjBUR1C (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 12:27:02 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FD4B1DB88;
-        Tue, 21 Feb 2023 09:27:01 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 318B9B8101F;
-        Tue, 21 Feb 2023 17:27:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E370C433D2;
-        Tue, 21 Feb 2023 17:26:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677000418;
-        bh=cU3JZqMV8I3eS5IY8uyBVDPij+HEK0bbMqGZL/n+ibs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BBd6XKzZRC4zypG8/Sv9m1DgSz4NXl7JmiIuHWIdOoGLcVmFuqzGWIz8lLvasbrmt
-         OmUOGbn9LJUJN4DPV5G3c5OnfUoTQLc9dNe1lJJ1bJepKb5xd66OaYofBoS3C5Rg4G
-         OWRJmZ3CnCBdG8XWXsySLYKz3QqeF16N5EXUQpkzJyPtXp6ribvWPcfiDyBUaeV9Ze
-         8bqx8Zhjwvbvx1hDMrUGIXo92NL5iuUbhDXRVJqEyNhKnsaTpEjrBe/DxHm3phNFeg
-         pV1g/a14ODF7PXArEtZf35UTxyq8MAopmkMH8DvhvsAz/9p4+nAfgAyHcnrwTe1iwW
-         5KnBkidNZ01IQ==
-Date:   Tue, 21 Feb 2023 17:26:52 +0000
-From:   Conor Dooley <conor@kernel.org>
-To:     Hal Feng <hal.feng@starfivetech.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S230023AbjBUSAd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 13:00:33 -0500
+X-Greylist: delayed 604 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 21 Feb 2023 10:00:30 PST
+Received: from srv01.abscue.de (abscue.de [IPv6:2a03:4000:63:bf5:4817:8eff:feeb:8ac7])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EAD52ED78;
+        Tue, 21 Feb 2023 10:00:30 -0800 (PST)
+Received: from srv01.abscue.de (localhost [127.0.0.1])
+        by spamfilter.srv.local (Postfix) with ESMTP id D95D21C0070;
+        Tue, 21 Feb 2023 18:50:26 +0100 (CET)
+Received: from fluffy-mammal.fritz.box (dslb-092-072-008-248.092.072.pools.vodafone-ip.de [92.72.8.248])
+        by srv01.abscue.de (Postfix) with ESMTPSA id 707DE1C006F;
+        Tue, 21 Feb 2023 18:50:26 +0100 (CET)
+From:   =?UTF-8?q?Otto=20Pfl=C3=BCger?= <otto.pflueger@abscue.de>
+To:     Bjorn Andersson <andersson@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 10/19] dt-bindings: clock: Add StarFive JH7110
- always-on clock and reset generator
-Message-ID: <Y/T+3H8A7jrX+I9M@spud>
-References: <20230221024645.127922-1-hal.feng@starfivetech.com>
- <20230221024645.127922-11-hal.feng@starfivetech.com>
+        Stephan Gerhold <stephan@gerhold.net>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        =?UTF-8?q?Otto=20Pfl=C3=BCger?= <otto.pflueger@abscue.de>
+Subject: [PATCH 4/4] clk: qcom: smd-rpm: Add clocks for MSM8917
+Date:   Tue, 21 Feb 2023 18:49:09 +0100
+Message-Id: <20230221174909.164029-5-otto.pflueger@abscue.de>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230221174909.164029-1-otto.pflueger@abscue.de>
+References: <20230221174909.164029-1-otto.pflueger@abscue.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="uwaipNMKG/E3gxwR"
-Content-Disposition: inline
-In-Reply-To: <20230221024645.127922-11-hal.feng@starfivetech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+MSM8917 has mostly the same rpm clocks as MSM8953, but lacks RF_CLK3 and
+additionally has the BIMC_GPU clock.
 
---uwaipNMKG/E3gxwR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
+---
+ drivers/clk/qcom/clk-smd-rpm.c | 35 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-On Tue, Feb 21, 2023 at 10:46:36AM +0800, Hal Feng wrote:
-> From: Emil Renner Berthing <kernel@esmil.dk>
->=20
-> Add bindings for the always-on clock and reset generator (AONCRG) on the
-> JH7110 RISC-V SoC by StarFive Ltd.
-
-> +  clocks:
-> +    items:
-> +      - description: Main Oscillator (24 MHz)
-> +      - description: RTC Oscillator (32.768 kHz)
-> +      - description: GMAC0 RMII reference
-> +      - description: GMAC0 RGMII RX
-> +      - description: STG AXI/AHB
-> +      - description: APB Bus
-> +      - description: GMAC0 GTX
-
-Ditto here, are some of these clocks, especially gmac0, also optional?
-
-> +
-> +  clock-names:
-> +    items:
-> +      - const: osc
-> +      - const: rtc_osc
-> +      - const: gmac0_rmii_refin
-> +      - const: gmac0_rgmii_rxin
-> +      - const: stg_axiahb
-> +      - const: apb_bus
-> +      - const: gmac0_gtxclk
-
---uwaipNMKG/E3gxwR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY/T+3AAKCRB4tDGHoIJi
-0lMNAQDqgVssSvoD3wO1kWvaRRB+UiE+OxXFzbBA7J4AeUX9hgEA+XWwcgAbEcF4
-SWAUhBnnb6ev3bxrmG4+m7rCyVZ9og4=
-=Az7l
------END PGP SIGNATURE-----
-
---uwaipNMKG/E3gxwR--
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index fea505876855..616f3a1bcad8 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -850,6 +850,40 @@ static const struct rpm_smd_clk_desc rpm_clk_qcs404 = {
+ 	.num_clks = ARRAY_SIZE(qcs404_clks),
+ };
+ 
++static struct clk_smd_rpm *msm8917_clks[] = {
++	[RPM_SMD_XO_CLK_SRC]		= &sdm660_bi_tcxo,
++	[RPM_SMD_XO_A_CLK_SRC]		= &sdm660_bi_tcxo_a,
++	[RPM_SMD_PCNOC_CLK]		= &msm8916_pcnoc_clk,
++	[RPM_SMD_PCNOC_A_CLK]		= &msm8916_pcnoc_a_clk,
++	[RPM_SMD_SNOC_CLK]		= &msm8916_snoc_clk,
++	[RPM_SMD_SNOC_A_CLK]		= &msm8916_snoc_a_clk,
++	[RPM_SMD_BIMC_CLK]		= &msm8916_bimc_clk,
++	[RPM_SMD_BIMC_A_CLK]		= &msm8916_bimc_a_clk,
++	[RPM_SMD_BIMC_GPU_CLK]		= &qcs404_bimc_gpu_clk,
++	[RPM_SMD_BIMC_GPU_A_CLK]	= &qcs404_bimc_gpu_a_clk,
++	[RPM_SMD_SYSMMNOC_CLK]		= &msm8936_sysmmnoc_clk,
++	[RPM_SMD_SYSMMNOC_A_CLK]	= &msm8936_sysmmnoc_a_clk,
++	[RPM_SMD_QDSS_CLK]		= &msm8916_qdss_clk,
++	[RPM_SMD_QDSS_A_CLK]		= &msm8916_qdss_a_clk,
++	[RPM_SMD_BB_CLK1]		= &msm8916_bb_clk1,
++	[RPM_SMD_BB_CLK1_A]		= &msm8916_bb_clk1_a,
++	[RPM_SMD_BB_CLK2]		= &msm8916_bb_clk2,
++	[RPM_SMD_BB_CLK2_A]		= &msm8916_bb_clk2_a,
++	[RPM_SMD_RF_CLK2]		= &msm8916_rf_clk2,
++	[RPM_SMD_RF_CLK2_A]		= &msm8916_rf_clk2_a,
++	[RPM_SMD_DIV_CLK2]		= &msm8974_div_clk2,
++	[RPM_SMD_DIV_A_CLK2]		= &msm8974_div_a_clk2,
++	[RPM_SMD_BB_CLK1_PIN]		= &msm8916_bb_clk1_pin,
++	[RPM_SMD_BB_CLK1_A_PIN]		= &msm8916_bb_clk1_a_pin,
++	[RPM_SMD_BB_CLK2_PIN]		= &msm8916_bb_clk2_pin,
++	[RPM_SMD_BB_CLK2_A_PIN]		= &msm8916_bb_clk2_a_pin,
++};
++
++static const struct rpm_smd_clk_desc rpm_clk_msm8917 = {
++	.clks = msm8917_clks,
++	.num_clks = ARRAY_SIZE(msm8917_clks),
++};
++
+ DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, ln_bb_clk3, ln_bb_clk3_a, 3, 19200000);
+ DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, ln_bb_clk3_pin, ln_bb_clk3_a_pin, 3, 19200000);
+ DEFINE_CLK_SMD_RPM(msm8998, aggre1_noc_clk, aggre1_noc_a_clk,
+@@ -1223,6 +1257,7 @@ static const struct of_device_id rpm_smd_clk_match_table[] = {
+ 	{ .compatible = "qcom,rpmcc-msm8226", .data = &rpm_clk_msm8974 },
+ 	{ .compatible = "qcom,rpmcc-msm8909", .data = &rpm_clk_msm8909 },
+ 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
++	{ .compatible = "qcom,rpmcc-msm8917", .data = &rpm_clk_msm8917 },
+ 	{ .compatible = "qcom,rpmcc-msm8936", .data = &rpm_clk_msm8936 },
+ 	{ .compatible = "qcom,rpmcc-msm8953", .data = &rpm_clk_msm8953 },
+ 	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
+-- 
+2.39.1
