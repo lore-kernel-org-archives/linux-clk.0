@@ -2,107 +2,134 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F15C636D6
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 04:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F8FC64EC4
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 05:10:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230135AbjBVEOh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 23:14:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55644 "EHLO
+        id S229561AbjBVFKY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Feb 2023 00:10:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229550AbjBVEOg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 23:14:36 -0500
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 257701C7EF;
-        Tue, 21 Feb 2023 20:14:30 -0800 (PST)
-X-UUID: 635ff480b26711ed945fc101203acc17-20230222
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=DshSKXiXcq26A7KQ+aa3UgT2BGCnX15r04XpZzcKrtQ=;
-        b=eHOZ7f+bJQtDlQwD/XEhMpu5uL6s4p7ixCLbyck8u0HCskwB+02JLh9dH8ZIfkCqRLEVzbrBSH+DqebPqhSK2o4gxz5WTUAk1ClH5+YlUAEtMIWv+aw6xvWMY+W51l8fZ9NRWRhNEwV+dPJ5s9Qjqtwt2STICJ48NM95lQFHIOM=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.20,REQID:bac9ce62-d505-423f-b0a4-8cb0ff43a4ae,IP:0,U
-        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-        :release,TS:45
-X-CID-INFO: VERSION:1.1.20,REQID:bac9ce62-d505-423f-b0a4-8cb0ff43a4ae,IP:0,URL
-        :0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-        elease,TS:45
-X-CID-META: VersionHash:25b5999,CLOUDID:0f5ebff3-ddba-41c3-91d9-10eeade8eac7,B
-        ulkID:230222121424KKY906VX,BulkQuantity:0,Recheck:0,SF:29|28|17|19|48|102,
-        TC:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:
-        0,OSI:0,OSA:0,AV:0
-X-CID-BVR: 1,FCT
-X-UUID: 635ff480b26711ed945fc101203acc17-20230222
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 399368684; Wed, 22 Feb 2023 12:14:23 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.3;
- Wed, 22 Feb 2023 12:14:22 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.792.15 via Frontend Transport; Wed, 22 Feb 2023 12:14:22 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     <angelogioacchino.delregno@collabora.com>
-CC:     <chen.zhong@mediatek.com>, <chun-jie.chen@mediatek.com>,
-        <daniel@makrotopia.org>, <edward-jw.yang@mediatek.com>,
-        <fparent@baylibre.com>, <granquet@baylibre.com>,
-        <johnson.wang@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
-        <miles.chen@mediatek.com>, <msp@baylibre.com>,
-        <mturquette@baylibre.com>, <nfraprado@collabora.com>,
-        <pablo.sun@mediatek.com>, <rex-bc.chen@mediatek.com>,
-        <sam.shih@mediatek.com>, <sboyd@kernel.org>,
-        <sean.wang@mediatek.com>, <wenst@chromium.org>,
-        <yangyingliang@huawei.com>, <zhaojh329@gmail.com>
-Subject: Re: [PATCH v4 49/54] clk: mediatek: Add MODULE_DEVICE_TABLE() where appropriate
-Date:   Wed, 22 Feb 2023 12:14:22 +0800
-Message-ID: <20230222041422.4429-1-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20230221115549.360132-50-angelogioacchino.delregno@collabora.com>
-References: <20230221115549.360132-50-angelogioacchino.delregno@collabora.com>
+        with ESMTP id S230005AbjBVFKX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 00:10:23 -0500
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 21F8D30E8D;
+        Tue, 21 Feb 2023 21:10:19 -0800 (PST)
+Received: from loongson.cn (unknown [10.20.42.35])
+        by gateway (Coremail) with SMTP id _____8Cxf9u3o_VjSHcDAA--.1523S3;
+        Wed, 22 Feb 2023 13:10:15 +0800 (CST)
+Received: from [10.20.42.35] (unknown [10.20.42.35])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8CxWL22o_VjmHY4AA--.37752S3;
+        Wed, 22 Feb 2023 13:10:14 +0800 (CST)
+Subject: Re: [PATCH v10 2/4] clk: clk-loongson2: add clock controller driver
+ support
+From:   zhuyinbo <zhuyinbo@loongson.cn>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Jianmin Lv <lvjianmin@loongson.cn>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, liupeibao@loongson.cn,
+        loongarch@lists.linux.dev, wanghongliang@loongson.cn
+References: <20221129034157.15036-1-zhuyinbo@loongson.cn>
+ <20221129034157.15036-2-zhuyinbo@loongson.cn>
+ <31c690a347f858a477bbba9c838984ed.sboyd@kernel.org>
+ <4b5fd886-57ce-01ef-8224-432898b7fb1c@loongson.cn>
+ <8332a1cf44b01f06bdd5db9dc5d7f387.sboyd@kernel.org>
+ <01ee3dc6-a868-fd2b-93aa-11e6bdfcc9df@loongson.cn>
+ <9e8952c9415973dc7276185e3cdf5ae7.sboyd@kernel.org>
+ <d92223a0-6d4c-33ea-1473-3d40bdd0ad9e@loongson.cn>
+Message-ID: <834da7dc-bb5d-3427-43e5-938e40a2d180@loongson.cn>
+Date:   Wed, 22 Feb 2023 13:10:14 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+In-Reply-To: <d92223a0-6d4c-33ea-1473-3d40bdd0ad9e@loongson.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID: AQAAf8CxWL22o_VjmHY4AA--.37752S3
+X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjvJXoW7Zr4UJrW7tr4kAF1fJF4xWFg_yoW8uF1Upr
+        ZxCay7KF4Dtr40vr1qgw4UZas0ya1ftF17Xw4ftw1DCa4qk345ur4UXFn5CF93Jr45G3y0
+        qr18tw47CFyq9rJanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        bDAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28E
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26r1j6r4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
+        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY
+        6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrV
+        C2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE
+        7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14
+        v26r126r1DMxAIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_WwCFx2IqxVCFs4IE
+        7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I
+        0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAI
+        cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcV
+        CF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jYnmiUUUUU=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
 
-> static struct platform_driver clk_mt8195_venc_drv = {
-> 	.probe = mtk_clk_simple_probe,
->diff --git a/drivers/clk/mediatek/clk-mt8195-vpp0.c b/drivers/clk/mediatek/clk-mt8195-vpp0.c
->index 84805a114387..3d1ad92b663e 100644
->--- a/drivers/clk/mediatek/clk-mt8195-vpp0.c
->+++ b/drivers/clk/mediatek/clk-mt8195-vpp0.c
->@@ -95,6 +95,7 @@ static const struct platform_device_id clk_mt8195_vpp0_id_table[] = {
-> 	{ .name = "clk-mt8195-vpp0", .driver_data = (kernel_ulong_t)&vpp0_desc },
-> 	{ /* sentinel */ }
-> };
->+MODULE_DEVICE_TABLE(platform, of_match_clk_mt8195_vpp0);
-> 
-> static struct platform_driver clk_mt8195_vpp0_drv = {
-> 	.probe = mtk_clk_pdev_probe,
->diff --git a/drivers/clk/mediatek/clk-mt8195-vpp1.c b/drivers/clk/mediatek/clk-mt8195-vpp1.c
->index 3e91dfed2996..b463f8e197c6 100644
->--- a/drivers/clk/mediatek/clk-mt8195-vpp1.c
->+++ b/drivers/clk/mediatek/clk-mt8195-vpp1.c
->@@ -93,6 +93,7 @@ static const struct platform_device_id clk_mt8195_vpp1_id_table[] = {
-> 	{ .name = "clk-mt8195-vpp1", .driver_data = (kernel_ulong_t)&vpp1_desc },
-> 	{ /* sentinel */ }
-> };
->+MODULE_DEVICE_TABLE(platform, of_match_clk_mt8195_vpp1);
+在 2023/2/22 上午10:02, zhuyinbo 写道:
+>
+> 在 2023/2/22 上午7:07, Stephen Boyd 写道:
+>> Quoting zhuyinbo (2023-02-19 21:44:51)
+>>> 在 2023/2/18 上午6:15, Stephen Boyd 写道:
+>>>> Quoting zhuyinbo (2023-02-14 23:35:22)
+>>>>> 在 2023/2/11 上午7:42, Stephen Boyd 写道:
+>>>>>>> +
+>>>>>>> +err:
+>>>>>>> +       iounmap(loongson2_pll_base);
+>>>>>>> +}
+>>>>>>> +
+>>>>>>> +CLK_OF_DECLARE(loongson2_clk, "loongson,ls2k-clk", 
+>>>>>>> loongson2_clocks_init);
+>>>>>> Any reason this can't be a platform driver?
+>>> Your question is that  why I don't use the platform_driver_register to
+>>> register  clk and use CLK_OF_DECLARE ?
+>> Yes.
+>>
+>>> I was  consider other clock controllers of Loongson-2 series may be
+>>> different with 2k1000 and I can add a line
+>>>
+>>> CLK_OF_DECLARE() for compatible other platform in the future. eg.
+>>>
+>>> CLK_OF_DECLARE(loongson2_clk, "loongson,ls2k-clk", 
+>>> loongson2_clocks_init);
+>>>
+>>> +  CLK_OF_DECLARE(xxx1, xxx2,  xxx3);  // for other clock 
+>>> controllers of
+>>> Loongson-2 series
+>>>
+>>>>> For the compatible consideration of other clock controllers of
+>>>>> Loongson-2 series in the future, the way of using dts can be
+>>>>>
+>>>>> better compatible.
+>>>>>
+>>>> Sorry that sentence doesn't make sense to me. The use of dts doesn't
+>>>> require the use of CLK_OF_DECLARE.
+>>> yes, the use of dts doesn't require the use of CLK_OF_DECLARE and can
+>>> use platform_driver_register
+>>>
+>>> but my drvier not use platform_driver_register to register clk and use
+>>> CLK_OF_DECLARE to match of_clk_init.
+>> of_clk_init() is there to register clks that are needed for early init,
+>> i.e. the clockevent/clocksource or the root interrupt controller
+>> (irqchip). Otherwise, it isn't necessary to register clks via
+>> of_clk_init().
+> okay, I got it.
 
-I got the following build break with ARCH=arm64 allmodconfig:
-Do I miss something?
+and,  the time driver  get clock by CCF that ask loongson2 clock driver 
+use CLK_OF_DECLARE
 
-linux-next/drivers/clk/mediatek/clk-mt8195-vpp0.c:98:31: error: 'of_match_clk_mt8195_vpp0' undeclared here (not in a function)
-linux-next/drivers/clk/mediatek/clk-mt8195-vpp1.c:96:31: error: 'of_match_clk_mt8195_vpp1' undeclared here (not in a function)
+to match of_clk_init.   because  the timer_probe  is very early and the 
+timer driver was use TIMER_OF_DECLARE
 
-ARCH=arm64 allyesconfig, defconfig: passed
+to match time_probe.
 
-thanks,
-Miles
