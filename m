@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 232B0C6379F
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 09:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC2FC6379F
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 09:31:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232093AbjBVJaR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Feb 2023 04:30:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46752 "EHLO
+        id S231979AbjBVJbT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Feb 2023 04:31:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232274AbjBVJaA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 04:30:00 -0500
+        with ESMTP id S231801AbjBVJax (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 04:30:53 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BC5037566;
-        Wed, 22 Feb 2023 01:28:11 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FC6D38655;
+        Wed, 22 Feb 2023 01:29:04 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id D2CCE66021E2;
-        Wed, 22 Feb 2023 09:26:50 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8013366021E9;
+        Wed, 22 Feb 2023 09:27:02 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1677058012;
-        bh=yTW2eSnn71Na/7I98kmx4iqeGvd4+zB+ttlXbmGA/7g=;
+        s=mail; t=1677058023;
+        bh=G39BkrHiy8UDI2+jdX1lg0zn/2dAssLXNfESAl+XYlU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jX/wb6FegYXmPPzPJdH41Rq5cQo5gIBOmEkp4+nW9nGF5+WcZ46DPQ3KKi1IN5taG
-         8YMVvAzvwc0FwJzOK9rge3mfkAb0DC52JXYfWsi0zfY8Pn0/8IUDKNgxAxYGVk55JI
-         2jFrQz1FYDSS1XvRVtQ3tnorNsDrRfMEsy+gld88SKxag0DlU24fMJPKiCp9w3GFXR
-         ZQOm7h6pACqRkf9UnJvR7dG868jUnPRSoi2N0YAUTfFZ6t1EDub3e3QXbxevGNyWUl
-         MUB4I+tqCWZnpeCEE7cpG6QCMTC776S4I8P2DmPihrfvytn8B77+ESrPotQ9ID+ZTO
-         s9u1xb6SJ2xvw==
+        b=g5AYqRBygUyPm3Y05igGdToRr37p4+IpDXf98PB3KlWU9jdUfvdQb/P5+RctkLe1c
+         BFhgVuBbjqfmSz1IyC0gkdb09sGuoI1WdbteLL40pSSbmmjh8SsO8uQqL+rNDojvaH
+         v1ISsfV0JTl1oqY5dhRnWFSfHuTI3DE+c6ntv62g+5F8ZUNTymqq1NfIV3siOt2uTD
+         x8c8DhH2nVtVONnvnxReiE3oULewZykP/LCSF7u+WNgwHzix8KgCzsFf8Q8rDOot48
+         9VgE4jZ2HGtyc0RCJ3y/W81Zud+nwzL5cwhszSlc83fhtkcE4Ub/LMvyYf4j9/FvPo
+         cE3JLrg5x3pOQ==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v5 43/54] clk: mediatek: Allow all MT8183 clocks to be built as modules
-Date:   Wed, 22 Feb 2023 10:25:32 +0100
-Message-Id: <20230222092543.19187-44-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v5 52/54] clk: mediatek: mt8135-apmixedsys: Convert to platform_driver and module
+Date:   Wed, 22 Feb 2023 10:25:41 +0100
+Message-Id: <20230222092543.19187-53-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230222092543.19187-1-angelogioacchino.delregno@collabora.com>
 References: <20230222092543.19187-1-angelogioacchino.delregno@collabora.com>
@@ -58,117 +58,87 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-All MT8183 clocks are platform drivers now! Allow module build for
-all of them.
+Convert apmixedsys clocks to be a platform driver; while at it, also
+add necessary error handling to the probe function, add a remove
+callback and provide a MODULE_DESCRIPTION().
+
+This driver is now compatible with an eventual module build.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/clk/mediatek/Kconfig | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/clk/mediatek/clk-mt8135-apmixedsys.c | 53 ++++++++++++++++++--
+ 1 file changed, 48 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 9f81ffc0876a..a8c2d4bace9a 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -511,7 +511,7 @@ config COMMON_CLK_MT8173_VENCSYS
- 	  This driver supports MediaTek MT8173 vencsys clocks.
+diff --git a/drivers/clk/mediatek/clk-mt8135-apmixedsys.c b/drivers/clk/mediatek/clk-mt8135-apmixedsys.c
+index 2b4d379300fc..744aae092281 100644
+--- a/drivers/clk/mediatek/clk-mt8135-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt8135-apmixedsys.c
+@@ -47,16 +47,59 @@ static const struct mtk_pll_data plls[] = {
+ 	PLL(CLK_APMIXED_VDECPLL, "vdecpll", 0x304, 0x31c, 0x80000000, 0, 21, 0x2b0, 6, 0x0, 0x308, 0),
+ };
  
- config COMMON_CLK_MT8183
--	bool "Clock driver for MediaTek MT8183"
-+	tristate "Clock driver for MediaTek MT8183"
- 	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
- 	select COMMON_CLK_MEDIATEK
- 	default ARCH_MEDIATEK && ARM64
-@@ -519,77 +519,77 @@ config COMMON_CLK_MT8183
- 	  This driver supports MediaTek MT8183 basic clocks.
+-static void __init mtk_apmixedsys_init(struct device_node *node)
++static int clk_mt8135_apmixed_probe(struct platform_device *pdev)
+ {
+ 	struct clk_hw_onecell_data *clk_data;
++	struct device_node *node = pdev->dev.of_node;
++	int ret;
  
- config COMMON_CLK_MT8183_AUDIOSYS
--	bool "Clock driver for MediaTek MT8183 audiosys"
-+	tristate "Clock driver for MediaTek MT8183 audiosys"
- 	depends on COMMON_CLK_MT8183
- 	default COMMON_CLK_MT8183
- 	help
- 	  This driver supports MediaTek MT8183 audiosys clocks.
+ 	clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
+ 	if (!clk_data)
+-		return;
++		return -ENOMEM;
  
- config COMMON_CLK_MT8183_CAMSYS
--	bool "Clock driver for MediaTek MT8183 camsys"
-+	tristate "Clock driver for MediaTek MT8183 camsys"
- 	depends on COMMON_CLK_MT8183
- 	default COMMON_CLK_MT8183
- 	help
- 	  This driver supports MediaTek MT8183 camsys clocks.
- 
- config COMMON_CLK_MT8183_IMGSYS
--	bool "Clock driver for MediaTek MT8183 imgsys"
-+	tristate "Clock driver for MediaTek MT8183 imgsys"
- 	depends on COMMON_CLK_MT8183
- 	default COMMON_CLK_MT8183
- 	help
- 	  This driver supports MediaTek MT8183 imgsys clocks.
- 
- config COMMON_CLK_MT8183_IPU_CORE0
--	bool "Clock driver for MediaTek MT8183 ipu_core0"
-+	tristate "Clock driver for MediaTek MT8183 ipu_core0"
- 	depends on COMMON_CLK_MT8183
- 	default COMMON_CLK_MT8183
- 	help
- 	  This driver supports MediaTek MT8183 ipu_core0 clocks.
- 
- config COMMON_CLK_MT8183_IPU_CORE1
--	bool "Clock driver for MediaTek MT8183 ipu_core1"
-+	tristate "Clock driver for MediaTek MT8183 ipu_core1"
- 	depends on COMMON_CLK_MT8183
- 	default COMMON_CLK_MT8183
- 	help
- 	  This driver supports MediaTek MT8183 ipu_core1 clocks.
- 
- config COMMON_CLK_MT8183_IPU_ADL
--	bool "Clock driver for MediaTek MT8183 ipu_adl"
-+	tristate "Clock driver for MediaTek MT8183 ipu_adl"
- 	depends on COMMON_CLK_MT8183
- 	default COMMON_CLK_MT8183
- 	help
- 	  This driver supports MediaTek MT8183 ipu_adl clocks.
- 
- config COMMON_CLK_MT8183_IPU_CONN
--	bool "Clock driver for MediaTek MT8183 ipu_conn"
-+	tristate "Clock driver for MediaTek MT8183 ipu_conn"
- 	depends on COMMON_CLK_MT8183
- 	default COMMON_CLK_MT8183
- 	help
- 	  This driver supports MediaTek MT8183 ipu_conn clocks.
- 
- config COMMON_CLK_MT8183_MFGCFG
--	bool "Clock driver for MediaTek MT8183 mfgcfg"
-+	tristate "Clock driver for MediaTek MT8183 mfgcfg"
- 	depends on COMMON_CLK_MT8183
- 	default COMMON_CLK_MT8183
- 	help
- 	  This driver supports MediaTek MT8183 mfgcfg clocks.
- 
- config COMMON_CLK_MT8183_MMSYS
--	bool "Clock driver for MediaTek MT8183 mmsys"
-+	tristate "Clock driver for MediaTek MT8183 mmsys"
- 	depends on COMMON_CLK_MT8183
- 	default COMMON_CLK_MT8183
- 	help
- 	  This driver supports MediaTek MT8183 mmsys clocks.
- 
- config COMMON_CLK_MT8183_VDECSYS
--	bool "Clock driver for MediaTek MT8183 vdecsys"
-+	tristate "Clock driver for MediaTek MT8183 vdecsys"
- 	depends on COMMON_CLK_MT8183
- 	default COMMON_CLK_MT8183
- 	help
- 	  This driver supports MediaTek MT8183 vdecsys clocks.
- 
- config COMMON_CLK_MT8183_VENCSYS
--	bool "Clock driver for MediaTek MT8183 vencsys"
-+	tristate "Clock driver for MediaTek MT8183 vencsys"
- 	depends on COMMON_CLK_MT8183
- 	default COMMON_CLK_MT8183
- 	help
+-	mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
++	ret = mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
++	if (ret)
++		return ret;
++
++	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
++	if (ret)
++		goto unregister_plls;
++
++	return 0;
++
++unregister_plls:
++	mtk_clk_unregister_plls(plls, ARRAY_SIZE(plls), clk_data);
++
++	return ret;
++}
++
++static int clk_mt8135_apmixed_remove(struct platform_device *pdev)
++{
++	struct device_node *node = pdev->dev.of_node;
++	struct clk_hw_onecell_data *clk_data = platform_get_drvdata(pdev);
++
++	of_clk_del_provider(node);
++	mtk_clk_unregister_plls(plls, ARRAY_SIZE(plls), clk_data);
++	mtk_free_clk_data(clk_data);
++
++	return 0;
+ }
+-CLK_OF_DECLARE(mtk_apmixedsys, "mediatek,mt8135-apmixedsys",
+-		mtk_apmixedsys_init);
++
++static const struct of_device_id of_match_clk_mt8135_apmixed[] = {
++	{ .compatible = "mediatek,mt8135-apmixedsys" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, of_match_clk_mt8135_apmixed);
++
++static struct platform_driver clk_mt8135_apmixed_drv = {
++	.probe = clk_mt8135_apmixed_probe,
++	.remove = clk_mt8135_apmixed_remove,
++	.driver = {
++		.name = "clk-mt8135-apmixed",
++		.of_match_table = of_match_clk_mt8135_apmixed,
++	},
++};
++module_platform_driver(clk_mt8135_apmixed_drv)
++
++MODULE_DESCRIPTION("MediaTek MT8135 apmixedsys clocks driver");
+ MODULE_LICENSE("GPL");
 -- 
 2.39.2
 
