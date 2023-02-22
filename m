@@ -2,107 +2,57 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB34C61DA4
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 09:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E35EC6379F
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 09:06:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231550AbjBVJFs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Feb 2023 04:05:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53420 "EHLO
+        id S231561AbjBVJGv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Feb 2023 04:06:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231548AbjBVJFr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 04:05:47 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A654E37B62;
-        Wed, 22 Feb 2023 01:05:46 -0800 (PST)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 465A9660215E;
-        Wed, 22 Feb 2023 09:05:44 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1677056745;
-        bh=zSRq4dEwuKW8nbx0nGY4kiZd4ygu6loLn9qrQqhjK1M=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Q8n9TNEao1QzWy8XNYJDyqpjHmpQg15INEmMs5cEbR3Ort6Ee4puYfk4YrBgvCdRg
-         OosK5dSlV0u+jNe3fahwPV7jgG/FhCE8+vEG4upzXy3BH0yMQC6CNNEQLoOhLq3Kc3
-         eLFknQG5p5rF9M0jqHpNEelhMa9ViQqcEIq7N08gL9+R+oOs/e1jbiT4wSF1pGinIA
-         qQYho581r95EBWh4UwPT/v/HXq398g6i5CQ0tqmTnwZjml+LFqB6wUWwIv9FIVWdPZ
-         6uBIcZxttpPdYdcDu1/U2zdoOTV/EUDAC5An+j86XJV32rMGQl2BtIk9gHQ6HpO/ba
-         zDmnj9tZTfOxQ==
-Message-ID: <5274b05e-194f-131c-bedd-6b879a8ff946@collabora.com>
-Date:   Wed, 22 Feb 2023 10:05:41 +0100
+        with ESMTP id S231538AbjBVJGv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 04:06:51 -0500
+Received: from mail.corrib.pl (mail.corrib.pl [185.58.226.145])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFCF437B42
+        for <linux-clk@vger.kernel.org>; Wed, 22 Feb 2023 01:06:49 -0800 (PST)
+Received: by mail.corrib.pl (Postfix, from userid 1001)
+        id C0F41A3C25; Wed, 22 Feb 2023 09:06:22 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=corrib.pl; s=mail;
+        t=1677056793; bh=X6IEpSISwJiYlJ3uA866lskXve3r+4o2hf4z7VM6m5o=;
+        h=Date:From:To:Subject:From;
+        b=xOOmI0XNqkH0K0c/dtljcjwvBBEHk3Axl+/q/YkmnIEIzX/0TNwTQ+fjgz585Mp3S
+         d5e22MSxA/6ZeYf7nVBYrvXM02Rp9W89K7qXfT/U3aIlX4v2xB2CQUt9HO7/LGfhwZ
+         lCPo4fmK7IhVfdf+gDjplRCf4bml2U/n8z8sB8fpcOaFHLWQW67KlpvKHUHshu6TLA
+         yv7L77/Zga8/RDgNG4lVlXQhNamQcJVcOWDvMho4APTSYMHYf/D6UdfmQMmNbPH+4+
+         RqgyYCBrgN3EJOTBHdPV3p7LY7XNRv5Ry0dVTqFeFj+DNSM/6oGZuMUKmmMYdEmhY5
+         scbShbTkb8MIw==
+Received: by mail.corrib.pl for <linux-clk@vger.kernel.org>; Wed, 22 Feb 2023 09:06:04 GMT
+Message-ID: <20230222074502-0.1.5n.hcfa.0.rml495115j@corrib.pl>
+Date:   Wed, 22 Feb 2023 09:06:04 GMT
+From:   =?UTF-8?Q? "Szczepan_Kie=C5=82basa" ?= 
+        <szczepan.kielbasa@corrib.pl>
+To:     <linux-clk@vger.kernel.org>
+Subject: Faktoring
+X-Mailer: mail.corrib.pl
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v4 49/54] clk: mediatek: Add MODULE_DEVICE_TABLE() where
- appropriate
-To:     Miles Chen <miles.chen@mediatek.com>
-Cc:     chen.zhong@mediatek.com, chun-jie.chen@mediatek.com,
-        daniel@makrotopia.org, edward-jw.yang@mediatek.com,
-        fparent@baylibre.com, granquet@baylibre.com,
-        johnson.wang@mediatek.com, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, matthias.bgg@gmail.com,
-        msp@baylibre.com, mturquette@baylibre.com, nfraprado@collabora.com,
-        pablo.sun@mediatek.com, rex-bc.chen@mediatek.com,
-        sam.shih@mediatek.com, sboyd@kernel.org, sean.wang@mediatek.com,
-        wenst@chromium.org, yangyingliang@huawei.com, zhaojh329@gmail.com
-References: <20230221115549.360132-50-angelogioacchino.delregno@collabora.com>
- <20230222041422.4429-1-miles.chen@mediatek.com>
-Content-Language: en-US
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230222041422.4429-1-miles.chen@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 22/02/23 05:14, Miles Chen ha scritto:
-> Hi,
-> 
->> static struct platform_driver clk_mt8195_venc_drv = {
->> 	.probe = mtk_clk_simple_probe,
->> diff --git a/drivers/clk/mediatek/clk-mt8195-vpp0.c b/drivers/clk/mediatek/clk-mt8195-vpp0.c
->> index 84805a114387..3d1ad92b663e 100644
->> --- a/drivers/clk/mediatek/clk-mt8195-vpp0.c
->> +++ b/drivers/clk/mediatek/clk-mt8195-vpp0.c
->> @@ -95,6 +95,7 @@ static const struct platform_device_id clk_mt8195_vpp0_id_table[] = {
->> 	{ .name = "clk-mt8195-vpp0", .driver_data = (kernel_ulong_t)&vpp0_desc },
->> 	{ /* sentinel */ }
->> };
->> +MODULE_DEVICE_TABLE(platform, of_match_clk_mt8195_vpp0);
->>
->> static struct platform_driver clk_mt8195_vpp0_drv = {
->> 	.probe = mtk_clk_pdev_probe,
->> diff --git a/drivers/clk/mediatek/clk-mt8195-vpp1.c b/drivers/clk/mediatek/clk-mt8195-vpp1.c
->> index 3e91dfed2996..b463f8e197c6 100644
->> --- a/drivers/clk/mediatek/clk-mt8195-vpp1.c
->> +++ b/drivers/clk/mediatek/clk-mt8195-vpp1.c
->> @@ -93,6 +93,7 @@ static const struct platform_device_id clk_mt8195_vpp1_id_table[] = {
->> 	{ .name = "clk-mt8195-vpp1", .driver_data = (kernel_ulong_t)&vpp1_desc },
->> 	{ /* sentinel */ }
->> };
->> +MODULE_DEVICE_TABLE(platform, of_match_clk_mt8195_vpp1);
-> 
-> I got the following build break with ARCH=arm64 allmodconfig:
-> Do I miss something?
-> 
-> linux-next/drivers/clk/mediatek/clk-mt8195-vpp0.c:98:31: error: 'of_match_clk_mt8195_vpp0' undeclared here (not in a function)
-> linux-next/drivers/clk/mediatek/clk-mt8195-vpp1.c:96:31: error: 'of_match_clk_mt8195_vpp1' undeclared here (not in a function)
-> 
-> ARCH=arm64 allyesconfig, defconfig: passed
-> 
-> thanks,
-> Miles
+Dzie=C5=84 dobry,
 
-Sorry, this one was meant to be `clk_mt8195_vpp1_id_table` instead of
-`of_match_clk_mt8195_vpp1`.... something went wrong with the rebase.
+rozwa=C5=BCali Pa=C5=84stwo wyb=C3=B3r finansowania, kt=C3=B3re spe=C5=82=
+ni potrzeby firmy, zapewniaj=C4=85c natychmiastowy dost=C4=99p do got=C3=B3=
+wki, bez zb=C4=99dnych przestoj=C3=B3w?=20
 
-I'll fix that asap.
+Przygotowali=C5=9Bmy rozwi=C4=85zania faktoringowe dopasowane do Pa=C5=84=
+stwa bran=C5=BCy i wielko=C5=9Bci firmy, dzi=C4=99ki kt=C3=B3rym, nie mus=
+z=C4=85 Pa=C5=84stwo martwi=C4=87 si=C4=99 o niewyp=C5=82acalno=C5=9B=C4=87=
+ kontrahent=C3=B3w, poniewa=C5=BC transakcje s=C4=85 zabezpieczone i posi=
+adaj=C4=85 gwarancj=C4=99 sp=C5=82aty.=20
+Chc=C4=85 Pa=C5=84stwo przeanalizowa=C4=87 dost=C4=99pne opcje?
 
-Thanks,
-Angelo
+
+Pozdrawiam
+Szczepan Kie=C5=82basa
