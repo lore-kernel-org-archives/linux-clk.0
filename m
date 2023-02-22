@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1374BC64EC4
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 09:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78447C61DA4
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 09:29:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232017AbjBVJ3A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Feb 2023 04:29:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46718 "EHLO
+        id S231887AbjBVJ3J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Feb 2023 04:29:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232020AbjBVJ2H (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 04:28:07 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18BE638655;
-        Wed, 22 Feb 2023 01:26:59 -0800 (PST)
+        with ESMTP id S231888AbjBVJ2P (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 04:28:15 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81CB7392AB;
+        Wed, 22 Feb 2023 01:27:01 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id C56F666021D0;
-        Wed, 22 Feb 2023 09:26:36 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 248A166021E3;
+        Wed, 22 Feb 2023 09:26:52 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1677057997;
-        bh=iSEv5bR9Lwk30HKEUROaokPeGCwxJtZBNLS/1Dgosa4=;
+        s=mail; t=1677058013;
+        bh=imns3KG82DPpClA/4Sp+ZeUEpTdWHVMKbPdKvfquv0s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iqpXUNVryosMgKCq3mOQU11ltrTV2aSc6s8X3LDv7/EO11Tn3bw9oo4d6otQqM1va
-         0ZJTRZeIRQeN62+wC4/jWQEdN/aRYvO9Bq2jxGVGyW56O7kk1A+vkrClP8ATyo9Fv5
-         6X/q/YQ5wKsR4Yai78MReg5W2M5wleZqLBSoI39575HDQGRqr5X9GIln9YgrH7jknq
-         UKa2tZrO6EIeKyqKswnoAX+mvPLC/dhCddhBnjpmSjEzXPqUPEKt3ra2VF5xcxp5FG
-         XTdNx2/6qX/BKLm+bcadRszKNqDY//XfhqU/JZYauIP/uWHJ4VaKOy2PSkdnbK0P4n
-         PGe8h1cpTCk9Q==
+        b=ZbblwMO3ht9GGxHUimsfEXVrjXpqgKVJFKwfXt4Mp7ulNtf0HQrZFkgiQOSXdTkMh
+         eivflfr4VCxrK26b0GHFEWw1AggPb3Lha+65JJZkPDVQ5eGs1swYPi3RoF3HdHhrvE
+         tXsSJ+i5Ek9TO1RAR9lHwQ7Lc+cL0Acyr0G9BoDNgPqvoelXUxox5PoYkwmLLrW0fv
+         TDdyukMkv8gXKeBm/E4st+yRIpXtljxnfOW3I5POtVi+e2hNm3Hl+RphsgLunqnALM
+         QxzyQ+Hve/+LU080pOls2F+oNRwDjY9iUJv2d7VAHoDs1x2HWWQNF/h4UBBKcr4vBI
+         D6LbkABsajNUQ==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v5 32/54] clk: mediatek: mt7986-apmixed: Use PLL_AO flag to set critical clock
-Date:   Wed, 22 Feb 2023 10:25:21 +0100
-Message-Id: <20230222092543.19187-33-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v5 44/54] clk: mediatek: Allow building most MT6765 clock drivers as modules
+Date:   Wed, 22 Feb 2023 10:25:33 +0100
+Message-Id: <20230222092543.19187-45-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230222092543.19187-1-angelogioacchino.delregno@collabora.com>
 References: <20230222092543.19187-1-angelogioacchino.delregno@collabora.com>
@@ -58,37 +58,112 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Instead of calling clk_prepare_enable() at probe time, add the PLL_AO
-flag to CLK_APMIXED_ARMPLL clock: this will set CLK_IS_CRITICAL.
+Most of the MT6765 clock drivers can be built as modules: change them
+to tristate to allow that.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/clk/mediatek/clk-mt7986-apmixed.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/clk/mediatek/Kconfig | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt7986-apmixed.c b/drivers/clk/mediatek/clk-mt7986-apmixed.c
-index 62080ee4dbe3..227ca572056e 100644
---- a/drivers/clk/mediatek/clk-mt7986-apmixed.c
-+++ b/drivers/clk/mediatek/clk-mt7986-apmixed.c
-@@ -42,7 +42,7 @@
- 		 "clkxtal")
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+index a8c2d4bace9a..a3260675cafc 100644
+--- a/drivers/clk/mediatek/Kconfig
++++ b/drivers/clk/mediatek/Kconfig
+@@ -133,79 +133,79 @@ config COMMON_CLK_MT6765
+          This driver supports MediaTek MT6765 basic clocks.
  
- static const struct mtk_pll_data plls[] = {
--	PLL(CLK_APMIXED_ARMPLL, "armpll", 0x0200, 0x020C, 0x0, 0, 32,
-+	PLL(CLK_APMIXED_ARMPLL, "armpll", 0x0200, 0x020C, 0x0, PLL_AO, 32,
- 	    0x0200, 4, 0, 0x0204, 0),
- 	PLL(CLK_APMIXED_NET2PLL, "net2pll", 0x0210, 0x021C, 0x0, 0, 32,
- 	    0x0210, 4, 0, 0x0214, 0),
-@@ -77,8 +77,6 @@ static int clk_mt7986_apmixed_probe(struct platform_device *pdev)
+ config COMMON_CLK_MT6765_AUDIOSYS
+-       bool "Clock driver for MediaTek MT6765 audiosys"
++       tristate "Clock driver for MediaTek MT6765 audiosys"
+        depends on COMMON_CLK_MT6765
+        help
+          This driver supports MediaTek MT6765 audiosys clocks.
  
- 	mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
+ config COMMON_CLK_MT6765_CAMSYS
+-       bool "Clock driver for MediaTek MT6765 camsys"
++       tristate "Clock driver for MediaTek MT6765 camsys"
+        depends on COMMON_CLK_MT6765
+        help
+          This driver supports MediaTek MT6765 camsys clocks.
  
--	clk_prepare_enable(clk_data->hws[CLK_APMIXED_ARMPLL]->clk);
--
- 	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
- 	if (r) {
- 		pr_err("%s(): could not register clock provider: %d\n",
+ config COMMON_CLK_MT6765_GCESYS
+-       bool "Clock driver for MediaTek MT6765 gcesys"
++       tristate "Clock driver for MediaTek MT6765 gcesys"
+        depends on COMMON_CLK_MT6765
+        help
+          This driver supports MediaTek MT6765 gcesys clocks.
+ 
+ config COMMON_CLK_MT6765_MMSYS
+-       bool "Clock driver for MediaTek MT6765 mmsys"
++       tristate "Clock driver for MediaTek MT6765 mmsys"
+        depends on COMMON_CLK_MT6765
+        help
+          This driver supports MediaTek MT6765 mmsys clocks.
+ 
+ config COMMON_CLK_MT6765_IMGSYS
+-       bool "Clock driver for MediaTek MT6765 imgsys"
++       tristate "Clock driver for MediaTek MT6765 imgsys"
+        depends on COMMON_CLK_MT6765
+        help
+          This driver supports MediaTek MT6765 imgsys clocks.
+ 
+ config COMMON_CLK_MT6765_VCODECSYS
+-       bool "Clock driver for MediaTek MT6765 vcodecsys"
++       tristate "Clock driver for MediaTek MT6765 vcodecsys"
+        depends on COMMON_CLK_MT6765
+        help
+          This driver supports MediaTek MT6765 vcodecsys clocks.
+ 
+ config COMMON_CLK_MT6765_MFGSYS
+-       bool "Clock driver for MediaTek MT6765 mfgsys"
++       tristate "Clock driver for MediaTek MT6765 mfgsys"
+        depends on COMMON_CLK_MT6765
+        help
+          This driver supports MediaTek MT6765 mfgsys clocks.
+ 
+ config COMMON_CLK_MT6765_MIPI0ASYS
+-       bool "Clock driver for MediaTek MT6765 mipi0asys"
++       tristate "Clock driver for MediaTek MT6765 mipi0asys"
+        depends on COMMON_CLK_MT6765
+        help
+          This driver supports MediaTek MT6765 mipi0asys clocks.
+ 
+ config COMMON_CLK_MT6765_MIPI0BSYS
+-       bool "Clock driver for MediaTek MT6765 mipi0bsys"
++       tristate "Clock driver for MediaTek MT6765 mipi0bsys"
+        depends on COMMON_CLK_MT6765
+        help
+          This driver supports MediaTek MT6765 mipi0bsys clocks.
+ 
+ config COMMON_CLK_MT6765_MIPI1ASYS
+-       bool "Clock driver for MediaTek MT6765 mipi1asys"
++       tristate "Clock driver for MediaTek MT6765 mipi1asys"
+        depends on COMMON_CLK_MT6765
+        help
+          This driver supports MediaTek MT6765 mipi1asys clocks.
+ 
+ config COMMON_CLK_MT6765_MIPI1BSYS
+-       bool "Clock driver for MediaTek MT6765 mipi1bsys"
++       tristate "Clock driver for MediaTek MT6765 mipi1bsys"
+        depends on COMMON_CLK_MT6765
+        help
+          This driver supports MediaTek MT6765 mipi1bsys clocks.
+ 
+ config COMMON_CLK_MT6765_MIPI2ASYS
+-       bool "Clock driver for MediaTek MT6765 mipi2asys"
++       tristate "Clock driver for MediaTek MT6765 mipi2asys"
+        depends on COMMON_CLK_MT6765
+       help
+          This driver supports MediaTek MT6765 mipi2asys clocks.
+ 
+ config COMMON_CLK_MT6765_MIPI2BSYS
+-       bool "Clock driver for MediaTek MT6765 mipi2bsys"
++       tristate "Clock driver for MediaTek MT6765 mipi2bsys"
+        depends on COMMON_CLK_MT6765
+        help
+          This driver supports MediaTek MT6765 mipi2bsys clocks.
 -- 
 2.39.2
 
