@@ -2,203 +2,234 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67FACC61DA4
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 15:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0F1C64EC7
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 16:26:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232462AbjBVPaw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Feb 2023 10:30:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49200 "EHLO
+        id S231602AbjBVQ04 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Feb 2023 11:26:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231272AbjBVPav (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 10:30:51 -0500
+        with ESMTP id S229887AbjBVQ04 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 11:26:56 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D7C837717;
-        Wed, 22 Feb 2023 07:30:50 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E4F360AD;
+        Wed, 22 Feb 2023 08:26:54 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3FB59B815C8;
-        Wed, 22 Feb 2023 15:30:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D24DC433EF;
-        Wed, 22 Feb 2023 15:30:47 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 37E19B815E9;
+        Wed, 22 Feb 2023 16:26:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78D61C433EF;
+        Wed, 22 Feb 2023 16:26:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677079848;
-        bh=sVA1o6wuZ1GuHVS6IClOur8oHR2t+TgMPfwchaZ/ukY=;
+        s=k20201202; t=1677083211;
+        bh=V5Qj3BTdP3PhytvonA7I6AsASvM8A2LRZyqqdt9K4kU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HFT/uVzgMAdaFzkRP6JDiqxxeeMAdaXOg08SZpb2Kd9YlbMkzwMySkFidRt1+4aNx
-         Z2s7XATzX5My3+jVmMjgjuczcRS+HQPIaK6LaD8Sno5ciT2jOH99IzqkUXuVhBMCMl
-         d9aD+jtLVyBOklarS2abWH0t4PkpfZx22wy/+oXSvCtCrr680zkghGjPFb7Iaxf/m7
-         O1ztmVAp8LXoc+evmDRcZ9iwTTxvS9/gNVe1VWDha7Spudl1Dv5IYOTJHMXwh0zwZI
-         UBj47MJ1y27tg1ZKQQCAkBrufe5moTGG4QJOTqJByenQlxPL09XLCBxmNZdL5NVqIm
-         p+M/lApgtcoRA==
-Date:   Wed, 22 Feb 2023 07:34:15 -0800
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Abel Vesa <abel.vesa@linaro.org>, Andy Gross <agross@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, mka@chromium.org,
-        Saravana Kannan <saravanak@google.com>
-Subject: Re: [PATCH v3 1/2] clk: Add generic sync_state callback for
- disabling unused clocks
-Message-ID: <20230222153415.5npe4axg4mupzvw4@ripper>
-References: <20221227204528.1899863-1-abel.vesa@linaro.org>
- <ebc257025ebd641e624ef506ea09c800.sboyd@kernel.org>
- <20230220162137.xjeowlc4qd3rtzc2@ripper>
- <6a3204bcd2a192c866c0fc66fed9786f.sboyd@kernel.org>
+        b=fPqJG/+MLNYT+twMDVYfCmUFo5DCqQrItwwMQo2SN1ejyT1qmdNHTL5HB53T2TGRl
+         yYF7jIyX+o+cHSKknXpJojo+5lpJLZyX98IYOu4NAbJLUTR7RIiG5xxW8TMhTb+OiX
+         ix6rNshsrVLKfLqRgmLxGwr51kKd4P8FfC0E1qPbGf6gfK6PPKH8HYl7NAq4UR4c2i
+         ltlerQlKfX04nSyouNeZlq1jGf1fPewCMcfNFoiMaEa5AiOSPXNLPHDNzhDvQOurn8
+         QHe1mCvRvC4Wuqegaz2XcxS0sPMPMP6PGfp/z+BZdzBR3k9GZIWa9F8YlbSIfMRdje
+         KELX91ruKNM5A==
+Date:   Wed, 22 Feb 2023 16:26:46 +0000
+From:   Conor Dooley <conor@kernel.org>
+To:     Hal Feng <hal.feng@starfivetech.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, linux-riscv@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 07/11] dt-bindings: clock: Add StarFive JH7110 system
+ clock and reset generator
+Message-ID: <Y/ZCRv3jHwFxN1Fo@spud>
+References: <20221220005054.34518-1-hal.feng@starfivetech.com>
+ <20221220005054.34518-8-hal.feng@starfivetech.com>
+ <Y6JB37Pd5TZoGMy4@spud>
+ <7a7bccb1-4d47-3d32-36e6-4aab7b5b8dad@starfivetech.com>
+ <Y6tSWB2+98a8k9Qw@spud>
+ <5cf0fe71-fd17-fb28-c01e-28356081ba76@starfivetech.com>
+ <Y+5z8skN2DuvxDEL@spud>
+ <72953dc9371b87da8d03c63633d7d9dd.sboyd@kernel.org>
+ <Y/VWNPfApsfm3/UD@spud>
+ <c0472d7f-56fe-3e91-e0a0-49ee51700b5d@starfivetech.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="JLW0UnSXv7FTiqD2"
 Content-Disposition: inline
-In-Reply-To: <6a3204bcd2a192c866c0fc66fed9786f.sboyd@kernel.org>
+In-Reply-To: <c0472d7f-56fe-3e91-e0a0-49ee51700b5d@starfivetech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 21, 2023 at 11:24:36AM -0800, Stephen Boyd wrote:
-> Quoting Bjorn Andersson (2023-02-20 08:21:37)
-> > On Fri, Feb 17, 2023 at 09:38:22PM -0800, Stephen Boyd wrote:
-> > > Quoting Abel Vesa (2022-12-27 12:45:27)
-> > > > There are unused clocks that need to remain untouched by clk_disable_unused,
-> > > > and most likely could be disabled later on sync_state. So provide a generic
-> > > > sync_state callback for the clock providers that register such clocks.
-> > > > Then, use the same mechanism as clk_disable_unused from that generic
-> > > > callback, but pass the device to make sure only the clocks belonging to
-> > > > the current clock provider get disabled, if unused. Also, during the
-> > > > default clk_disable_unused, if the driver that registered the clock has
-> > > > the generic clk_sync_state_disable_unused callback set for sync_state,
-> > > > skip disabling its clocks.
-> > > 
-> > > How does that avoid disabling clks randomly in the clk tree? I'm
-> > > concerned about disabling an unused clk in the middle of the tree
-> > > because it doesn't have a driver using sync state, while the clk is the
-> > > parent of an unused clk that is backed by sync state.
-> > > 
-> > >    clk A -->  clk B 
-> > > 
-> > > clk A: No sync state
-> > > clk B: sync state
-> > > 
-> > > clk B is left on by the bootloader. __clk_disable_unused(NULL) is called
-> > > from late init. Imagine clk A is the root of the tree.
-> > > 
-> > >       clk_disable_unused_subtree(clk_core A)
-> > >         clk_disable_unused_subtree(clk_core B)
-> > >           if (from_sync_state && core->dev != dev)
-> > >             return;
-> > >         ...
-> > >         clk core A->ops->disable()
-> > > 
-> > > clk core B is off now?
-> > > 
-> > 
-> > I will have to give this some more thought. But this is exactly what we
-> > have today; consider A being any builtin clock driver and B being any
-> > clock driver built as modules, with relationship to A.
-> > 
-> > clk_disable_unused() will take down A without waiting for B, possibly
-> > locking up parts of the clock hardware of B; or turning off the clocks
-> > to IP blocks that rely on those clocks (e.g. display).
-> 
-> Oh, thanks for clarifying! Yes, the disabling of unused clks with
-> respect to modules is broken in the same way. This makes that brokenness
-> equally apply to builtin drivers, making the situation worse, not better.
-> 
 
-It does indeed improve the situation, because it allow us to have clock
-drivers and consumers as modules without having their clocks disabled
-prematurely (or by chance not be disabled ever).
+--JLW0UnSXv7FTiqD2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-But it does come at the cost of disabling unused clocks later, or if the
-system doesn't probe all enabled devices, possibly never.
+On Wed, Feb 22, 2023 at 09:27:37PM +0800, Hal Feng wrote:
+> On Tue, 21 Feb 2023 23:39:32 +0000, Conor Dooley wrote:
+> > On Tue, Feb 21, 2023 at 02:17:17PM -0800, Stephen Boyd wrote:
+> >> Quoting Conor Dooley (2023-02-16 10:20:34)
+> >> > On Thu, Feb 16, 2023 at 10:42:20PM +0800, Hal Feng wrote:
+> >> > > On Tue, 27 Dec 2022 20:15:20 +0000, Conor Dooley wrote:
+> >> > > > On Mon, Dec 26, 2022 at 12:26:32AM +0800, Hal Feng wrote:
+> >> > > Please see the picture of these external clocks in clock tree.
+> >> > >=20
+> >> > > # mount -t debugfs none /mnt
+> >> > > # cat /mnt/clk/clk_summary
+> >> > >                                  enable  prepare  protect         =
+                       duty  hardware
+> >> > >    clock                          count    count    count        r=
+ate   accuracy phase  cycle    enable
+> >> > > ------------------------------------------------------------------=
+-------------------------------------
+> >> > >  *mclk_ext*                             0        0        0    122=
+88000          0     0  50000         Y
+> >> > >  *tdm_ext*                              0        0        0    491=
+52000          0     0  50000         Y
+> >> > >  *i2srx_lrck_ext*                       0        0        0      1=
+92000          0     0  50000         Y
+> >> > >  *i2srx_bclk_ext*                       0        0        0    122=
+88000          0     0  50000         Y
+> >> > >  *i2stx_lrck_ext*                       0        0        0      1=
+92000          0     0  50000         Y
+> >> > >  *i2stx_bclk_ext*                       0        0        0    122=
+88000          0     0  50000         Y
+> >> > >  *gmac1_rgmii_rxin*                     0        0        0   1250=
+00000          0     0  50000         Y
+> >> > >     gmac1_rx                          0        0        0   125000=
+000          0     0  50000         Y
+> >> > >        gmac1_rx_inv                   0        0        0   125000=
+000          0   180  50000         Y
+> >> > >  *gmac1_rmii_refin*                     0        0        0    500=
+00000          0     0  50000         Y
+> >> > >     gmac1_rmii_rtx                    0        0        0    50000=
+000          0     0  50000         Y
+> >> > >        gmac1_tx                       0        0        0    50000=
+000          0     0  50000         N
+> >> > >           gmac1_tx_inv                0        0        0    50000=
+000          0   180  50000         Y
+> >> > >  *osc*                                  4        4        0    240=
+00000          0     0  50000         Y
+> >> > >     apb_func                          0        0        0    24000=
+000          0     0  50000         Y
+> >> > >  ...
+> >> > >=20
+> >> > > The clock "gmac1_rgmii_rxin" and the clock "gmac1_rmii_refin" are
+> >> > > actually used as the parent of other clocks.
+> >> >=20
+> >> > > The "dummy" clocks
+> >> > > you said are all internal clocks.
+> >> >=20
+> >> > No, what I meant by "dummy" clocks is that if you make clocks "requi=
+red"
+> >> > in the binding that are not needed by the hardware for operation a
+> >> > customer of yours might have to add "dummy" clocks to their devicetr=
+ee
+> >> > to pass dtbs_check.
+> >>=20
+> >> They can set the phandle specifier to '<0>' to fill in the required
+> >> property when there isn't anything there. If this is inside an SoC, it
+> >> is always connected because silicon can't change after it is made
+> >> (unless this is an FPGA). Therefore, any and all input clocks should be
+> >> listed as required.
+> >=20
+> >> If the clk controller has inputs that are
+> >> pads/balls/pins on the SoC then they can be optional if a valid design
+> >> can leave those pins not connected.
+> >=20
+> > From the discussion on the dts patches, where the clocks have been put
+> > (intentionally) into board.dts, I've been under the impression that we
+> > are in this situation.
+>=20
+> For the system (sys) clock controller, we are in this situation.
+> For the always-on (aon) clock controller, we are not, because some input
+> clocks are inside the SoC.
+>=20
+> > Up to Hal to tell us if the hardware is capable of having those inputs
+> > left unfilled!
+>=20
+> The situation is different for v1.2A and v1.3B boards.
+>=20
+> For the v1.2A board,
+> gmac1 only requires "gmac1_rmii_refin", which support 100MHz
+> gmac0 only requires "gmac0_rgmii_rxin", which support 1000MHz
+>=20
+> For the v1.3B board,
+> gmac1 only requires "gmac1_rgmii_rxin", which support 1000MHz
+> gmac0 only requires "gmac0_rgmii_rxin", which support 1000MHz
+>=20
+> So we should set the "required" property depending on different
+> boards.
 
-[..]
-> > 
-> > Presumably this list should not be a manually maintained list of display
-> > clocks, and that means the bootloader would need to go in and  build
-> > this list of all enabled clocks. I don't think this is practical.
-> 
-> Why does the bootloader need to do that? The devicetree author can list
-> out the clks that they want to keep on for the display driver until the
-> display driver can acquire them.
-> 
+These were Krzk's suggestions:
+oneOf:
+ - clock-names:
+     minItems: 3
+     items:
+       - a
+       - b
+       - c
+       - d
+ - clock-names:
+     items:
+       - a
+       - b
+       - d
 
-I don't think maintaining this list is either necessary or the solution
-to our problem. But if we need it, I don't think the list of clock which
-happens to be needed for the author to boot his particular build of
-Linux is sufficient "hardware description".
+or maybe:
+ - clock-names:
+     minItems: 3
+     items:
+       - a
+       - b
+       - enum: [c, d]
+       - d
 
-We need to solve the ordering issue, because we do want as many clock
-drivers built as modules as possible, and anything shutting down
-seemingly unused clocks at late_initcall() is causing problems, beyond
-display.
+Might be making a mess here, but I think that becomes:
+  clock-names:
+    oneOf:
+      - items:
+          - const: osc
+          - enum:
+              - gmac1_rmii_refin
+              - gmac1_rgmii_rxin
+          - const: i2stx_bclk_ext
+          - const: i2stx_lrck_ext
+          - const: i2srx_bclk_ext
+          - const: i2srx_lrck_ext
+          - const: tdm_ext
+          - const: mclk_ext
 
-> > 
-> > > Then mark those as "critical/don't turn off" all the way up the clk tree
-> > > when the clk driver probes by essentially incrementing the
-> > > prepare/enable count but not actually touching the hardware, and when
-> > > the clks are acquired by clk_get() for that device that's using them
-> > > from boot we make the first clk_prepare_enable() do nothing and not
-> > > increment the count at all. We can probably stick some flag into the
-> > > 'struct clk' for this when we create the handle in clk_get() so that the
-> > > prepare and enable functions can special case and skip over.
-> > > 
-> > 
-> > The benefit of sync_state is that it kicks when the client drivers has
-> > probed. As such, you can have e.g. the display driver clk_get(), then
-> > probe defer on some other resource, and the clock state can remain
-> > untouched.
-> 
-> Ok. I think this spitball design would do that still. It's not like we
-> would go and disable the clks that are handed to the display driver even
-> if it probe defers. The clk would be marked as enabled until the display
-> driver enables the clk, and then it wouldn't be disabled during late
-> init (or later) because the clk would be enabled either by the core or
-> by the display driver. The point where we transfer ownership of the
-> enable state is when the consumer calls clk_enable().
-> 
+      - items:
+          - const: osc
+          - const: gmac1_rmii_refin
+          - const: gmac1_rgmii_rxin
+          - const: i2stx_bclk_ext
+          - const: i2stx_lrck_ext
+          - const: i2srx_bclk_ext
+          - const: i2srx_lrck_ext
+          - const: tdm_ext
+          - const: mclk_ext
 
-You're right, and if a driver where to acquire a clock enable/disable it
-and then probe defer, the sync_state mechanism wouldn't help us anyways.
+Cheers,
+Conor.
 
-But we need something that kicks in and disables unused clocks whenever
-there will be no more consumers. Regardless if the list of resources to
-do this with is defined my human, machine or derived from something.
 
-> > 
-> > > The sync_state hook operates on a driver level, which is too large when
-> > > you consider that a single clk driver may register hundreds of clks that
-> > > are not related. We want to target a solution at the clk level so that
-> > > any damage from keeping on all the clks provided by the controller is
-> > > limited to just the drivers that aren't probed and ready to handle their
-> > > clks. If sync_state could be called whenever a clk consumer consumes a
-> > > clk it may work? Technically we already have that by the clk_hw_provider
-> > > function but there isn't enough information being passed there, like the
-> > > getting device.
-> > > 
-> > 
-> > The current solution already operates on all clocks of all drivers, that
-> > happens to be probed at late_initcall(). This patch removes the
-> > subordinate clause from this, allowing clock drivers and their clients
-> > to be built as modules.
-> > 
-> > So while it still operates on all clocks of a driver, it moves that
-> > point to a later stage, where that is more reasonable to do.
-> > 
-> 
-> When we have clk drivers that provide clks to many different device
-> drivers, they all have to probe for any unused clks to be disabled.
-> 
+--JLW0UnSXv7FTiqD2
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I would prefer that we go to a mechanism where we disable all unused
-clocks per provider, based on sync_state, and then from there try to
-optimize that to disable subsets of those clocks a few seconds
-earlier. Because upstream is broken by design right now.
+-----BEGIN PGP SIGNATURE-----
 
-I've reverted the applies patches, and sent a new pull request. Let's
-try to make some progress on Saravana's proposal.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY/ZCRgAKCRB4tDGHoIJi
+0g4EAP0ROfBXRkOJiWSfjIAefdNTaTzOabSQlFUUWjU72aNGGwEAt7fEaK6NxvKg
+yJWAnP40qNL4gola77J0qA7O3ZIvxwk=
+=yabE
+-----END PGP SIGNATURE-----
 
-Regards,
-Bjorn
+--JLW0UnSXv7FTiqD2--
