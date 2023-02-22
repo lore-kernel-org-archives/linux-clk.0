@@ -2,88 +2,121 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56EF3C636D6
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 17:23:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76AB8C61DA4
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 17:57:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229564AbjBVRXO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Feb 2023 12:23:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37148 "EHLO
+        id S230182AbjBVR5V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Feb 2023 12:57:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232696AbjBVRXB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 12:23:01 -0500
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08DAD8A4E
-        for <linux-clk@vger.kernel.org>; Wed, 22 Feb 2023 09:22:56 -0800 (PST)
-Received: from booty (unknown [77.244.183.192])
-        (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 6C5D040002;
-        Wed, 22 Feb 2023 17:22:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1677086575;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3Xl5RikiACyYQxItKqWbCFrWkyMhwRXOlZGZbIyVlW0=;
-        b=afWsAyYAapONsnm2hqBUiR7m67tTtCbTNYs+4qQ8dlqLAhvDsCkQv0eMOHR0+3RUMRrIu9
-        4l9plu8rSArz2lqtCqOyRpk0FJgqoy3fPXOaMPisNcE7dBglN0zWIr1ZY0bwX0iSPARSsD
-        +oGRCfiYpM1SOqSAsyac0HTsAf7pBcCAW6//OqSA1Fx0hxKho5im6y7sdNg4V99SNtjSkE
-        Bf0pOuRC/8gCdXO+MkVHrRWUI3ipt6Z5INsDe2siRi8stVij+q68t5aC8V0fR4ZukHEsR2
-        XzyoAY/ld/lwvvNmuToO3zQRzPs9AVoRwnM94iT1FvXncfJPaAK/CQi+EpNfYA==
-Date:   Wed, 22 Feb 2023 18:22:52 +0100
-From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
-To:     Marek Vasut <marex@denx.de>
-Cc:     linux-clk@vger.kernel.org, Abel Vesa <abel.vesa@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
+        with ESMTP id S230048AbjBVR5U (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 12:57:20 -0500
+Received: from srv01.abscue.de (abscue.de [89.58.28.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1F893BDB8;
+        Wed, 22 Feb 2023 09:57:18 -0800 (PST)
+Received: from srv01.abscue.de (localhost [127.0.0.1])
+        by spamfilter.srv.local (Postfix) with ESMTP id 157F71C0048;
+        Wed, 22 Feb 2023 18:57:16 +0100 (CET)
+Received: from fluffy-mammal.metal.fwg-cag.de (dslb-092-073-092-061.092.073.pools.vodafone-ip.de [92.73.92.61])
+        by srv01.abscue.de (Postfix) with ESMTPSA id 8F7521C0046;
+        Wed, 22 Feb 2023 18:57:15 +0100 (CET)
+Date:   Wed, 22 Feb 2023 18:57:08 +0100
+From:   Otto =?iso-8859-1?Q?Pfl=FCger?= <otto.pflueger@abscue.de>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Otto =?iso-8859-1?Q?Pfl=FCger?= <otto.pflueger@abscue.de>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
-Subject: Re: [PATCH v3 6/6] arm64: dts: imx8mp: Add analog audio output on
- i.MX8MP EVK
-Message-ID: <20230222182252.2ad6d82b@booty>
-In-Reply-To: <20220625013235.710346-6-marex@denx.de>
-References: <20220625013235.710346-1-marex@denx.de>
-        <20220625013235.710346-6-marex@denx.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/4] clk: qcom: Add global clock controller driver for
+ MSM8917
+Message-ID: <Y/ZXdO67/9X5xabE@fluffy-mammal.metal.fwg-cag.de>
+References: <20230221174909.164029-1-otto.pflueger@abscue.de>
+ <20230221174909.164029-3-otto.pflueger@abscue.de>
+ <10b2ce9a-d838-6063-1646-90f91ce819e6@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <10b2ce9a-d838-6063-1646-90f91ce819e6@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Marek,
-
-On Sat, 25 Jun 2022 03:32:35 +0200
-Marek Vasut <marex@denx.de> wrote:
-
-> Enable SAI3 on i.MX8MP EVK, add WM8960 codec binding and regulator.
-> This is all that is needed to get analog audio output operational
-> on i.MX8MP EVK.
+On Wed, Feb 22, 2023 at 09:51:21AM +0100, Krzysztof Kozlowski wrote:
+> On 21/02/2023 18:49, Otto Pflüger wrote:
+> > This driver provides clocks, resets and power domains needed for various
+> > components of the MSM8917 SoC and the very similar QM215 SoC.
+> > 
+> > According to [1] in the downstream kernel, the GPU clock has a different
+> > source mapping on QM215 (gcc_gfx3d_map vs gcc_gfx3d_map_qm215).
+> > 
+> > [1]: https://git.codelinaro.org/clo/la/kernel/msm-4.9/-/blob/LF.UM.8.6.2-28000-89xx.0/include/dt-bindings/clock/msm-clocks-hwio-8952.h#L298
+> > 
+> > Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
+> > ---
+> >  drivers/clk/qcom/Kconfig       |    8 +
+> >  drivers/clk/qcom/Makefile      |    1 +
+> >  drivers/clk/qcom/gcc-msm8917.c | 3283 ++++++++++++++++++++++++++++++++
+> >  3 files changed, 3292 insertions(+)
+> >  create mode 100644 drivers/clk/qcom/gcc-msm8917.c
+> > 
+> > diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> > index 70d43f0a8919..3ef58b09385a 100644
+> > --- a/drivers/clk/qcom/Kconfig
+> > +++ b/drivers/clk/qcom/Kconfig
+> > @@ -196,6 +196,14 @@ config MSM_GCC_8916
+> >  	  Say Y if you want to use devices such as UART, SPI i2c, USB,
+> >  	  SD/eMMC, display, graphics, camera etc.
+> >  
+> > +config MSM_GCC_8917
+> > +	tristate "MSM8917 Global Clock Controller"
 > 
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> Cc: Abel Vesa <abel.vesa@nxp.com>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Jacky Bai <ping.bai@nxp.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-imx@nxp.com
+> I propose to add here:
+> 
+> depends on ARM64 || COMPILE_TEST
 
-I'm sending in reply to this e-mail the device tree patch I have used
-for my audio testing on the MSC SM2-MB-EP1 board. Feel free to add it to
-your series if you want, it obviously depends on it.
+Why should this driver only be enabled on ARM64 systems? In my opinion,
+this should also be supported on 32-bit ARM, just like the other clock
+drivers for the 64-bit SoCs. Users should be able to boot a 32-bit
+kernel if they have to, e.g. if their device has broken firmware that
+prohibits booting 64-bit kernels (there have been such cases with
+MSM8916) or if they think that 64-bit systems use too much memory (my
+QM215 device with 512MB RAM shipped with a 32-bit kernel for this very
+reason).
 
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> 
+> > +	select QCOM_GDSC
+> > +	help
+> > +	  Support for the global clock controller on msm8917 devices.
+> > +	  Say Y if you want to use devices such as UART, SPI i2c, USB,
+> > +	  SD/eMMC, display, graphics, camera etc.
+> > +
+> 
+> (...)
+> > +
+> > +static int gcc_msm8917_probe(struct platform_device *pdev)
+> > +{
+> > +	struct regmap *regmap;
+> > +
+> > +	regmap  = qcom_cc_map(pdev, &gcc_msm8917_desc);
+> > +	if (IS_ERR(regmap))
+> > +		return PTR_ERR(regmap);
+> > +
+> > +	if (of_device_is_compatible(pdev->dev.of_node, "qcom,gcc-qm215"))
+> 
+> Use data in of_device_id instead. This scales poorly if any new variant
+> is added here. Unless no new variants will be added? Ever?
+
+Thanks. There are a lot of other related SoCs (MSM8920, MSM8937, MSM8940,
+MSM8952, SDM429 and SDM439) which could get added here as variants, so
+I'll implement this using data in of_device_id.
+
+Regards,
+Otto Pflüger
