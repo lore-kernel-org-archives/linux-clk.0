@@ -2,108 +2,85 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB3F4C61DA4
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 12:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D56C61DA4
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 12:47:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232164AbjBVMl4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Feb 2023 07:41:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40406 "EHLO
+        id S229980AbjBVMrV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Feb 2023 07:47:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230440AbjBVMlz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 07:41:55 -0500
+        with ESMTP id S229557AbjBVMrU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 07:47:20 -0500
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 625FA38E97;
-        Wed, 22 Feb 2023 04:41:54 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D49E3403E
+        for <linux-clk@vger.kernel.org>; Wed, 22 Feb 2023 04:47:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1677069715; x=1708605715;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cv362uPUr3jCMhErDyLuuhUYC3pM4pKuPc2EB1jEUxY=;
-  b=PGKsOX4VorEbUx/aU+v/gFOqc3RHf6Z8FQ+/XIha/P/rihGcm7liokrJ
-   5jtaAvdPhUAvu9WGI4sTEcm8jiIRtDjyVvfeldDwZzi0cfaghwXvl/yuk
-   Iu5xgMebkbniJSFFBgaZ0C6n2BqT0Unr1NRwpqIPAdrZcQ+Yt/50mU1+q
-   gcompj6U4hUC8IHQHiFEgp672UPFMUzJ5n9910PBh0WYN7eRLEboRsuEQ
-   Zv4YRKedj8wVs5UD4dXMv1QJDIDV3ZCL5anltUu7Q+GaQPYU3sufw3B5X
-   f3ThQ04fWMnuv15qfMSGIyL7IAMy+8np6ghEK6lkM41Rr9Kk73ERWUYy1
-   Q==;
+  t=1677070039; x=1708606039;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=bz2YGtVOM/rE8m1sy9aAUJspjtnfkVan+svdZyu3YfQ=;
+  b=xRyaxH0TrJjjY43Z7VVLyH9qjvgrEf5GRkevEpRZtEA04v3TPRLHWZbl
+   MlQJnVmL5p11oM9OfuomeTZiK8mbLXlwsjdbvdP7IjUSiW2wkccV4Gfjn
+   Pmq3Os/tqda0G5ryKwex4kFcr7zSZJjvg8PQM2m1rldPUtsHBw+nmCfHh
+   59vZwgpudBm5S28NG1w7ai1931R36ze1Saxr+55A17hG0M11ndOr5QzR1
+   cpZk8kR5wQYHgd8mGfyZcsQ5FglyKEWuPnEMnf/4KPh1iPlUNxuJ+9XMd
+   sBH1/90JG8jTtyH+QVLp4PgenM6MMCgsGD9dKOL/sL3lIN7wv40Qr0SQg
+   w==;
 X-IronPort-AV: E=Sophos;i="5.97,318,1669100400"; 
-   d="asc'?scan'208";a="202069183"
+   d="scan'208";a="201759967"
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 22 Feb 2023 05:41:54 -0700
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 22 Feb 2023 05:47:19 -0700
 Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16; Wed, 22 Feb 2023 05:41:53 -0700
-Received: from wendy (10.10.115.15) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.16 via Frontend
- Transport; Wed, 22 Feb 2023 05:41:52 -0700
-Date:   Wed, 22 Feb 2023 12:41:25 +0000
+ 15.1.2507.16; Wed, 22 Feb 2023 05:47:18 -0700
+Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.16 via Frontend
+ Transport; Wed, 22 Feb 2023 05:47:17 -0700
 From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Nick Alcock <nick.alcock@oracle.com>
-CC:     <mcgrof@kernel.org>, <linux-modules@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 12/27] kbuild, clk: remove MODULE_LICENSE in non-modules
-Message-ID: <Y/YNdSkRnafr9Vg3@wendy>
-References: <20230222121453.91915-1-nick.alcock@oracle.com>
- <20230222121453.91915-13-nick.alcock@oracle.com>
+To:     Conor Dooley <conor@kernel.org>, <sboyd@kernel.org>
+CC:     Conor Dooley <conor.dooley@microchip.com>,
+        <linux-clk@vger.kernel.org>, <daire.mcnamara@microchip.com>,
+        <linux-riscv@lists.infradead.org>
+Subject: [PATCH] MAINTAINERS: add missing clock driver coverage for Microchip FPGAs
+Date:   Wed, 22 Feb 2023 12:46:11 +0000
+Message-ID: <20230222124610.257101-1-conor.dooley@microchip.com>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="A6MmvpIR+3s5tp96"
-Content-Disposition: inline
-In-Reply-To: <20230222121453.91915-13-nick.alcock@oracle.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1032; i=conor.dooley@microchip.com; h=from:subject; bh=bz2YGtVOM/rE8m1sy9aAUJspjtnfkVan+svdZyu3YfQ=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDMnf+Cb9NMhzeeVuyHiwd/ey8LjvDp8u6lzVD1e5laPwUuBI tuqJjlIWBjEOBlkxRZbE230tUuv/uOxw7nkLM4eVCWQIAxenAEzk0TeGn4y1/ydmh0hrO809w/C463 rLpQtFbfcSfUJ9ZA0Klp1MV2FkaLJp+nK5YdFyI/3XNhf19SQjY9Mtl0/6waL+cUPCxfd23AA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---A6MmvpIR+3s5tp96
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+When the CCC support was added, the clock binding coverage was
+converted to a regex in commit 71c8517e004b ("MAINTAINERS: update
+polarfire soc clock binding"), but the coverage for the clock drivers
+themselves was not updated. Rectify that now.
 
-On Wed, Feb 22, 2023 at 12:14:38PM +0000, Nick Alcock wrote:
-> Since commit 8b41fc4454e ("kbuild: create modules.builtin without
-> Makefile.modbuiltin or tristate.conf"), MODULE_LICENSE declarations
-> are used to identify modules. As a consequence, uses of the macro
-> in non-modules will cause modprobe to misidentify their containing
-> object file as a module when it is not (false positives), and modprobe
-> might succeed rather than failing with a suitable error message.
->=20
-> So remove it in the files in this commit, none of which can be built as
-> modules.
->=20
-> Signed-off-by: Nick Alcock <nick.alcock@oracle.com>
-> Suggested-by: Luis Chamberlain <mcgrof@kernel.org>
-> Cc: Luis Chamberlain <mcgrof@kernel.org>
-> Cc: linux-modules@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+Stephen, if you could take this via clk that'd be great, thanks.
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  drivers/clk/microchip/clk-mpfs-ccc.c | 1 -
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0abf3589423b..df3d195c1507 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17992,7 +17992,7 @@ F:	Documentation/devicetree/bindings/spi/microchip,mpfs-spi.yaml
+ F:	Documentation/devicetree/bindings/usb/microchip,mpfs-musb.yaml
+ F:	arch/riscv/boot/dts/microchip/
+ F:	drivers/char/hw_random/mpfs-rng.c
+-F:	drivers/clk/microchip/clk-mpfs.c
++F:	drivers/clk/microchip/clk-mpfs*.c
+ F:	drivers/i2c/busses/i2c-microchip-corei2c.c
+ F:	drivers/mailbox/mailbox-mpfs.c
+ F:	drivers/pci/controller/pcie-microchip-host.c
+-- 
+2.39.0
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-And since there's no reason to have this split via the at91 tree:
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
-Clearly there's a hole in my maintainers entry for this driver, I'll go
-fix that.
-
---A6MmvpIR+3s5tp96
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY/YNdQAKCRB4tDGHoIJi
-0uToAQDS4jBN3ip9omamYeZl5YP5ggkJm0CAeeoGkzKlh6wuogEAgAfej0BJ1oqM
-0zAVz7zCgpejdxMqS4X0dgrCRtMWLAM=
-=PLRl
------END PGP SIGNATURE-----
-
---A6MmvpIR+3s5tp96--
