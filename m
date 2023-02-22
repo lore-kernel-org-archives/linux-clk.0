@@ -2,121 +2,185 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76AB8C61DA4
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 17:57:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2595C636D6
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 18:03:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230182AbjBVR5V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Feb 2023 12:57:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36988 "EHLO
+        id S232133AbjBVSDJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Feb 2023 13:03:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230048AbjBVR5U (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 12:57:20 -0500
-Received: from srv01.abscue.de (abscue.de [89.58.28.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1F893BDB8;
-        Wed, 22 Feb 2023 09:57:18 -0800 (PST)
-Received: from srv01.abscue.de (localhost [127.0.0.1])
-        by spamfilter.srv.local (Postfix) with ESMTP id 157F71C0048;
-        Wed, 22 Feb 2023 18:57:16 +0100 (CET)
-Received: from fluffy-mammal.metal.fwg-cag.de (dslb-092-073-092-061.092.073.pools.vodafone-ip.de [92.73.92.61])
-        by srv01.abscue.de (Postfix) with ESMTPSA id 8F7521C0046;
-        Wed, 22 Feb 2023 18:57:15 +0100 (CET)
-Date:   Wed, 22 Feb 2023 18:57:08 +0100
-From:   Otto =?iso-8859-1?Q?Pfl=FCger?= <otto.pflueger@abscue.de>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Otto =?iso-8859-1?Q?Pfl=FCger?= <otto.pflueger@abscue.de>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/4] clk: qcom: Add global clock controller driver for
- MSM8917
-Message-ID: <Y/ZXdO67/9X5xabE@fluffy-mammal.metal.fwg-cag.de>
-References: <20230221174909.164029-1-otto.pflueger@abscue.de>
- <20230221174909.164029-3-otto.pflueger@abscue.de>
- <10b2ce9a-d838-6063-1646-90f91ce819e6@linaro.org>
+        with ESMTP id S231236AbjBVSDH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 13:03:07 -0500
+Received: from fudo.makrotopia.org (fudo.makrotopia.org [IPv6:2a07:2ec0:3002::71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDA85FF11;
+        Wed, 22 Feb 2023 10:03:04 -0800 (PST)
+Received: from local
+        by fudo.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+         (Exim 4.96)
+        (envelope-from <daniel@makrotopia.org>)
+        id 1pUtRz-0008DW-1e;
+        Wed, 22 Feb 2023 19:02:43 +0100
+Date:   Wed, 22 Feb 2023 18:02:40 +0000
+From:   Daniel Golle <daniel@makrotopia.org>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        wenst@chromium.org, johnson.wang@mediatek.com,
+        miles.chen@mediatek.com, chun-jie.chen@mediatek.com,
+        fparent@baylibre.com, msp@baylibre.com, nfraprado@collabora.com,
+        rex-bc.chen@mediatek.com, zhaojh329@gmail.com,
+        sam.shih@mediatek.com, edward-jw.yang@mediatek.com,
+        yangyingliang@huawei.com, granquet@baylibre.com,
+        pablo.sun@mediatek.com, sean.wang@mediatek.com,
+        chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v5 34/54] clk: mediatek: mt7986-eth: Migrate to common
+ probe mechanism
+Message-ID: <Y/ZYwOoHhO0328qY@makrotopia.org>
+References: <20230222092543.19187-1-angelogioacchino.delregno@collabora.com>
+ <20230222092543.19187-35-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <10b2ce9a-d838-6063-1646-90f91ce819e6@linaro.org>
+In-Reply-To: <20230222092543.19187-35-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 22, 2023 at 09:51:21AM +0100, Krzysztof Kozlowski wrote:
-> On 21/02/2023 18:49, Otto Pflüger wrote:
-> > This driver provides clocks, resets and power domains needed for various
-> > components of the MSM8917 SoC and the very similar QM215 SoC.
-> > 
-> > According to [1] in the downstream kernel, the GPU clock has a different
-> > source mapping on QM215 (gcc_gfx3d_map vs gcc_gfx3d_map_qm215).
-> > 
-> > [1]: https://git.codelinaro.org/clo/la/kernel/msm-4.9/-/blob/LF.UM.8.6.2-28000-89xx.0/include/dt-bindings/clock/msm-clocks-hwio-8952.h#L298
-> > 
-> > Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
-> > ---
-> >  drivers/clk/qcom/Kconfig       |    8 +
-> >  drivers/clk/qcom/Makefile      |    1 +
-> >  drivers/clk/qcom/gcc-msm8917.c | 3283 ++++++++++++++++++++++++++++++++
-> >  3 files changed, 3292 insertions(+)
-> >  create mode 100644 drivers/clk/qcom/gcc-msm8917.c
-> > 
-> > diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> > index 70d43f0a8919..3ef58b09385a 100644
-> > --- a/drivers/clk/qcom/Kconfig
-> > +++ b/drivers/clk/qcom/Kconfig
-> > @@ -196,6 +196,14 @@ config MSM_GCC_8916
-> >  	  Say Y if you want to use devices such as UART, SPI i2c, USB,
-> >  	  SD/eMMC, display, graphics, camera etc.
-> >  
-> > +config MSM_GCC_8917
-> > +	tristate "MSM8917 Global Clock Controller"
+On Wed, Feb 22, 2023 at 10:25:23AM +0100, AngeloGioacchino Del Regno wrote:
+> Convert this driver to use the common mtk_clk_simple_probe() mechanism.
+> While at it, also remove __initconst annotations (as these structures
+> are used also at runtime).
 > 
-> I propose to add here:
-> 
-> depends on ARM64 || COMPILE_TEST
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 
-Why should this driver only be enabled on ARM64 systems? In my opinion,
-this should also be supported on 32-bit ARM, just like the other clock
-drivers for the 64-bit SoCs. Users should be able to boot a 32-bit
-kernel if they have to, e.g. if their device has broken firmware that
-prohibits booting 64-bit kernels (there have been such cases with
-MSM8916) or if they think that 64-bit systems use too much memory (my
-QM215 device with 512MB RAM shipped with a 32-bit kernel for this very
-reason).
+Tested-by: Daniel Golle <daniel@makrotopia.org>
+(on BananaPi BPi-R3)
 
+> ---
+>  drivers/clk/mediatek/clk-mt7986-eth.c | 83 +++++++++++----------------
+>  1 file changed, 32 insertions(+), 51 deletions(-)
 > 
-> > +	select QCOM_GDSC
-> > +	help
-> > +	  Support for the global clock controller on msm8917 devices.
-> > +	  Say Y if you want to use devices such as UART, SPI i2c, USB,
-> > +	  SD/eMMC, display, graphics, camera etc.
-> > +
+> diff --git a/drivers/clk/mediatek/clk-mt7986-eth.c b/drivers/clk/mediatek/clk-mt7986-eth.c
+> index e04bc6845ea6..138ba0a47221 100644
+> --- a/drivers/clk/mediatek/clk-mt7986-eth.c
+> +++ b/drivers/clk/mediatek/clk-mt7986-eth.c
+> @@ -25,7 +25,7 @@ static const struct mtk_gate_regs sgmii0_cg_regs = {
+>  #define GATE_SGMII0(_id, _name, _parent, _shift)		\
+>  	GATE_MTK(_id, _name, _parent, &sgmii0_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr_inv)
+>  
+> -static const struct mtk_gate sgmii0_clks[] __initconst = {
+> +static const struct mtk_gate sgmii0_clks[] = {
+>  	GATE_SGMII0(CLK_SGMII0_TX250M_EN, "sgmii0_tx250m_en", "top_xtal", 2),
+>  	GATE_SGMII0(CLK_SGMII0_RX250M_EN, "sgmii0_rx250m_en", "top_xtal", 3),
+>  	GATE_SGMII0(CLK_SGMII0_CDR_REF, "sgmii0_cdr_ref", "top_xtal", 4),
+> @@ -41,7 +41,7 @@ static const struct mtk_gate_regs sgmii1_cg_regs = {
+>  #define GATE_SGMII1(_id, _name, _parent, _shift)		\
+>  	GATE_MTK(_id, _name, _parent, &sgmii1_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr_inv)
+>  
+> -static const struct mtk_gate sgmii1_clks[] __initconst = {
+> +static const struct mtk_gate sgmii1_clks[] = {
+>  	GATE_SGMII1(CLK_SGMII1_TX250M_EN, "sgmii1_tx250m_en", "top_xtal", 2),
+>  	GATE_SGMII1(CLK_SGMII1_RX250M_EN, "sgmii1_rx250m_en", "top_xtal", 3),
+>  	GATE_SGMII1(CLK_SGMII1_CDR_REF, "sgmii1_cdr_ref", "top_xtal", 4),
+> @@ -57,7 +57,7 @@ static const struct mtk_gate_regs eth_cg_regs = {
+>  #define GATE_ETH(_id, _name, _parent, _shift)			\
+>  	GATE_MTK(_id, _name, _parent, &eth_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr_inv)
+>  
+> -static const struct mtk_gate eth_clks[] __initconst = {
+> +static const struct mtk_gate eth_clks[] = {
+>  	GATE_ETH(CLK_ETH_FE_EN, "eth_fe_en", "netsys_2x_sel", 6),
+>  	GATE_ETH(CLK_ETH_GP2_EN, "eth_gp2_en", "sgm_325m_sel", 7),
+>  	GATE_ETH(CLK_ETH_GP1_EN, "eth_gp1_en", "sgm_325m_sel", 8),
+> @@ -65,56 +65,37 @@ static const struct mtk_gate eth_clks[] __initconst = {
+>  	GATE_ETH(CLK_ETH_WOCPU0_EN, "eth_wocpu0_en", "netsys_mcu_sel", 15),
+>  };
+>  
+> -static void __init mtk_sgmiisys_0_init(struct device_node *node)
+> -{
+> -	struct clk_hw_onecell_data *clk_data;
+> -	int r;
+> -
+> -	clk_data = mtk_alloc_clk_data(ARRAY_SIZE(sgmii0_clks));
+> -
+> -	mtk_clk_register_gates(NULL, node, sgmii0_clks,
+> -			       ARRAY_SIZE(sgmii0_clks), clk_data);
+> -
+> -	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+> -	if (r)
+> -		pr_err("%s(): could not register clock provider: %d\n",
+> -		       __func__, r);
+> -}
+> -CLK_OF_DECLARE(mtk_sgmiisys_0, "mediatek,mt7986-sgmiisys_0",
+> -	       mtk_sgmiisys_0_init);
+> -
+> -static void __init mtk_sgmiisys_1_init(struct device_node *node)
+> -{
+> -	struct clk_hw_onecell_data *clk_data;
+> -	int r;
+> -
+> -	clk_data = mtk_alloc_clk_data(ARRAY_SIZE(sgmii1_clks));
+> -
+> -	mtk_clk_register_gates(NULL, node, sgmii1_clks,
+> -			       ARRAY_SIZE(sgmii1_clks), clk_data);
+> -
+> -	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+> -
+> -	if (r)
+> -		pr_err("%s(): could not register clock provider: %d\n",
+> -		       __func__, r);
+> -}
+> -CLK_OF_DECLARE(mtk_sgmiisys_1, "mediatek,mt7986-sgmiisys_1",
+> -	       mtk_sgmiisys_1_init);
+> +static const struct mtk_clk_desc eth_desc = {
+> +	.clks = eth_clks,
+> +	.num_clks = ARRAY_SIZE(eth_clks),
+> +};
+>  
+> -static void __init mtk_ethsys_init(struct device_node *node)
+> -{
+> -	struct clk_hw_onecell_data *clk_data;
+> -	int r;
+> +static const struct mtk_clk_desc sgmii0_desc = {
+> +	.clks = sgmii0_clks,
+> +	.num_clks = ARRAY_SIZE(sgmii0_clks),
+> +};
+>  
+> -	clk_data = mtk_alloc_clk_data(ARRAY_SIZE(eth_clks));
+> +static const struct mtk_clk_desc sgmii1_desc = {
+> +	.clks = sgmii1_clks,
+> +	.num_clks = ARRAY_SIZE(sgmii1_clks),
+> +};
+>  
+> -	mtk_clk_register_gates(NULL, node, eth_clks, ARRAY_SIZE(eth_clks), clk_data);
+> +static const struct of_device_id of_match_clk_mt7986_eth[] = {
+> +	{ .compatible = "mediatek,mt7986-ethsys", .data = &eth_desc },
+> +	{ .compatible = "mediatek,mt7986-sgmiisys_0", .data = &sgmii0_desc },
+> +	{ .compatible = "mediatek,mt7986-sgmiisys_1", .data = &sgmii1_desc },
+> +	{ /* sentinel */ }
+> +};
+>  
+> -	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+> +static struct platform_driver clk_mt7986_eth_drv = {
+> +	.driver = {
+> +		.name = "clk-mt7986-eth",
+> +		.of_match_table = of_match_clk_mt7986_eth,
+> +	},
+> +	.probe = mtk_clk_simple_probe,
+> +	.remove = mtk_clk_simple_remove,
+> +};
+> +module_platform_driver(clk_mt7986_eth_drv);
+>  
+> -	if (r)
+> -		pr_err("%s(): could not register clock provider: %d\n",
+> -		       __func__, r);
+> -}
+> -CLK_OF_DECLARE(mtk_ethsys, "mediatek,mt7986-ethsys", mtk_ethsys_init);
+> +MODULE_DESCRIPTION("MediaTek MT7986 Ethernet clocks driver");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.39.2
 > 
-> (...)
-> > +
-> > +static int gcc_msm8917_probe(struct platform_device *pdev)
-> > +{
-> > +	struct regmap *regmap;
-> > +
-> > +	regmap  = qcom_cc_map(pdev, &gcc_msm8917_desc);
-> > +	if (IS_ERR(regmap))
-> > +		return PTR_ERR(regmap);
-> > +
-> > +	if (of_device_is_compatible(pdev->dev.of_node, "qcom,gcc-qm215"))
 > 
-> Use data in of_device_id instead. This scales poorly if any new variant
-> is added here. Unless no new variants will be added? Ever?
-
-Thanks. There are a lot of other related SoCs (MSM8920, MSM8937, MSM8940,
-MSM8952, SDM429 and SDM439) which could get added here as variants, so
-I'll implement this using data in of_device_id.
-
-Regards,
-Otto Pflüger
