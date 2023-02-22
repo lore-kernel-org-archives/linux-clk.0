@@ -2,292 +2,111 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65451C61DA4
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 09:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDCDC678DB
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 09:43:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231274AbjBVJj3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Feb 2023 04:39:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33936 "EHLO
+        id S230267AbjBVJnK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Feb 2023 04:43:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230527AbjBVJjH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 04:39:07 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC3873BD99
-        for <linux-clk@vger.kernel.org>; Wed, 22 Feb 2023 01:36:03 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id 6so6647075wrb.11
-        for <linux-clk@vger.kernel.org>; Wed, 22 Feb 2023 01:36:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QYSBNjZMUqqg3o3xKcoCzAQfKFWE704AcgxDUXOHQ9Y=;
-        b=lQ5ofJgulmki2D9dnrA9jEH4OTkQLUfJCFm3Jtj9oGwkFgOqzEKaQidbQSjDy/gywt
-         18NNq6yXLW0EvwBwQDf2A42UW7TjNh0T57dl4c3aAHMSjzYyMLCg4Z+KF5pB6f2xDAVz
-         NDWmmfHkialfRI2CZb1vYGx5q8F8GR80bAzu5iI3va3oiecWe3kFVmSgZRYBqH3VqnRq
-         gp0E4XGhuR3Tu20Gb3mRfb6ZxzAGHBQjyM4SqIQriMDnRHcxE8OPaV4WwlJJSFXzfyfm
-         jhmkTcghutcNWHPwn1xwXkVbjEX/vD1g5ByC3xJzbmnBnufEW6DrNVwhZCuZvf92WBJ5
-         HSnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QYSBNjZMUqqg3o3xKcoCzAQfKFWE704AcgxDUXOHQ9Y=;
-        b=TruygLD6iYHC6lO+fCbnWQ6jUIGETZFTyb0rpFOoFoowxnIhjNdB9Fv2NTtmbfAqK9
-         UpGlZMJjRhJYT/IPGT49ADZc0emOImmF/0diaO7tPgLG1QlKB1Grk4Tsu08hViZhve/P
-         bqI9hQ4p/ryY3EtMk6vu5EaT+NmIeyeM+SC8ytnZS88tv7qp8F7RCrqRPsaIve+6oLeh
-         2tuE+SUsy2f6VBWvh++x72gAwiW2GwR2x8PweeS2n6I9q+RSGfIx7SdASXCePAu12s0S
-         hV7n0lS0op2A0bVrusn0m1nQ5Jxh2UkY/+uwCYL/NjhEcRHVnL2vmL9nCqeQb+t/fRuK
-         es7w==
-X-Gm-Message-State: AO0yUKXSxhnkAdZrPK03qzF6IShFruwC379GuNzeTt4U4qDVR51ZMPEz
-        qv9T5JH4P7z1zKAj3MDNZRF6Uw==
-X-Google-Smtp-Source: AK7set/E4R6V6MKYdreloJzvGIbISJCF04gsNrCaalEmNNxojDMfP5ElNc2fg0ejzT6oCgNmOoEFcw==
-X-Received: by 2002:adf:ea92:0:b0:2c7:b51:65ce with SMTP id s18-20020adfea92000000b002c70b5165cemr1448134wrm.12.1677058511923;
-        Wed, 22 Feb 2023 01:35:11 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id e6-20020a5d5006000000b002c57384dfe0sm9006229wrt.113.2023.02.22.01.34.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Feb 2023 01:34:10 -0800 (PST)
-Message-ID: <e9e63c87-b491-b4d5-b226-0539ef0de2d0@linaro.org>
-Date:   Wed, 22 Feb 2023 10:34:09 +0100
+        with ESMTP id S229980AbjBVJmt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 04:42:49 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D50633B219;
+        Wed, 22 Feb 2023 01:40:07 -0800 (PST)
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id C790766021EA;
+        Wed, 22 Feb 2023 09:27:03 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1677058024;
+        bh=dv6Z4kavdozYHTEcXkNgUDi5pAIhynlNgpR6jA5eVf8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=L9L6nZ7T9GTICR0A864i9rEGc9M0Xxz8jd4isS04+5GVyLuM6/e8DKw7HmIDlv8BN
+         QWhbk9nZIqYDhi1vjot/W4yP7O/n1Me21xszQpSOuQf3tVIUbnCCP++pc2aZEr0ZnT
+         Xh+SVL2DzdXozrCtlMJ7GgRxbwdGExUcWYTDa2j+/KFE6TkLU7F+rvA9CU/PKVY9Zk
+         d2wkUx5v9a7YVEZsHTvU+JIuTf/sDdT2JXRNZKDzn77pUQ7wGcpDC3zB+pkWv91a5s
+         Xuxr+8wEtNXf6XFHy4d8QRIdDUfM7MZwGbH+YtyemyfFrW+956idpIwGZZo8BccaBq
+         0LngX71ngE4Ug==
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+To:     mturquette@baylibre.com
+Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
+        angelogioacchino.delregno@collabora.com, wenst@chromium.org,
+        johnson.wang@mediatek.com, miles.chen@mediatek.com,
+        chun-jie.chen@mediatek.com, daniel@makrotopia.org,
+        fparent@baylibre.com, msp@baylibre.com, nfraprado@collabora.com,
+        rex-bc.chen@mediatek.com, zhaojh329@gmail.com,
+        sam.shih@mediatek.com, edward-jw.yang@mediatek.com,
+        yangyingliang@huawei.com, granquet@baylibre.com,
+        pablo.sun@mediatek.com, sean.wang@mediatek.com,
+        chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH v5 53/54] clk: mediatek: mt8135: Join root_clk_alias and top_divs arrays
+Date:   Wed, 22 Feb 2023 10:25:42 +0100
+Message-Id: <20230222092543.19187-54-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230222092543.19187-1-angelogioacchino.delregno@collabora.com>
+References: <20230222092543.19187-1-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH RFC 1/3] dt-bindings: clock: Add Renesas versa3 clock
- generator bindings
-Content-Language: en-US
-To:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-References: <20230220131307.269100-1-biju.das.jz@bp.renesas.com>
- <20230220131307.269100-2-biju.das.jz@bp.renesas.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230220131307.269100-2-biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20/02/2023 14:13, Biju Das wrote:
-> Document Renesas versa3 clock generator(5P35023) bindings.
-> 
-> The 5P35023 is a VersaClock programmable clock generator and
-> is designed for low-power, consumer, and high-performance PCI
-> Express applications. The 5P35023 device is a three PLL
-> architecture design, and each PLL is individually programmable
-> and allowing for up to 6 unique frequency outputs.
-> 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
->  .../bindings/clock/renesas,versaclock3.yaml   | 135 ++++++++++++++++++
->  1 file changed, 135 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,versaclock3.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/renesas,versaclock3.yaml b/Documentation/devicetree/bindings/clock/renesas,versaclock3.yaml
-> new file mode 100644
-> index 000000000000..f45b8da73ec3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,versaclock3.yaml
+In preparation for converting this driver to the common simple probe
+mechanism, join the root_clk_alias and top_divs mtk_fixed_factor
+arrays.
 
-Filename usually is based on the compatible. Why these two are so different?
+This commit brings no functional change.
 
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+ drivers/clk/mediatek/clk-mt8135.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-> @@ -0,0 +1,135 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/renesas,versaclock3.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas VersaClock 3 programmable I2C clock generators
-> +
-> +description: |
-> +  The 5P35023 is a VersaClock programmable clock generator and
-> +  is designed for low-power, consumer, and high-performance PCI
-> +  express applications. The 5P35023 device is a three PLL
-> +  architecture design, and each PLL is individually programmable
-> +  and allowing for up to 6 unique frequency outputs.
-> +
-> +  An internal OTP memory allows the user to store the configuration
-> +  in the device. After power up, the user can change the device register
-> +  settings through the I2C interface when I2C mode is selected.
-> +
-> +  The driver can read a full register map from the DT, and will use that
-> +  register map to initialize the attached part (via I2C) when the system
-> +  boots. Any configuration not supported by the common clock framework
-> +  must be done via the full register map, including optimized settings.
-> +
-> +  Link to datasheet: https://www.renesas.com/us/en/products/clocks-timing/
-> +                     clock-generation/programmable-clocks/
-> +                     5p35023-versaclock-3s-programmable-clock-generator
-
-I think link should not be wrapped. Start in next line and just make it
-long.
-
-While touching this, please keep the same order of entries as in
-example-schema, so maintainers go after title.
-
-> +
-> +maintainers:
-> +  - Biju Das <biju.das.jz@bp.renesas.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - renesas,5p35023
-> +
-> +  reg:
-> +    description: I2C device address
-
-Drop description, it's obvious.
-
-> +    maxItems: 1
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  clock-names:
-> +    oneOf:
-> +      - items:
-> +          - const: x1
-> +      - items:
-> +          - const: clkin
-
-This should be specific, not one or another. Why do you have two
-entirely different clock inputs?
-
-(and if this stays, then just items: - enum: [])
-
-
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  renesas,settings:
-> +    description: Optional, complete register map of the device.
-> +      Optimized settings for the device must be provided in full
-> +      and are written during initialization.
-> +    $ref: /schemas/types.yaml#/definitions/uint8-array
-> +    minItems: 37
-
-maxItems instead... but I am not sure that we allow register settings in
-DT in general.
-
-> +
-> +  assigned-clocks:
-> +    minItems: 6
-
-Drop.
-
-> +
-> +  assigned-clock-rates:
-> +    minItems: 6
-
-Drop.
-
-> +
-> +  renesas,clock-divider-read-only:
-> +    description: Flag for setting divider in read only mode.
-
-Flag? Then type: boolean.
-
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 5
-
-This is broken...
-
-> +
-> +  renesas,clock-flags:
-> +    description: Flags used in common clock frame work for configuring
-> +      clk outputs. See include/linux/clk-provider.h
-
-These are not bindings, so why do you non-bindings constants as
-bindings? They can change anytime. Choose one:
-1. Drop entire property,
-2. Make it a proper binding property, so an ABI and explain why this is
-DT specific. None of clock providers have to do it, so you need here
-good explanation.
-
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 6
-
-maxItems instead
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#clock-cells'
-> +  - clocks
-> +  - clock-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    /* 24MHz crystal */
-> +    x1_x2: xtal {
-> +      compatible = "fixed-clock";
-> +      #clock-cells = <0>;
-> +      clock-frequency = <24000000>;
-> +    };
-
-Drop this part, obvious.
-
-> +
-> +    i2c@0 {
-> +        reg = <0x0 0x100>;
-
-Just i2c { and drop reg
-
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        versa3: clock-generator@68 {
-> +            compatible = "renesas,5p35023";
-> +            reg = <0x68>;
-> +            #clock-cells = <1>;
-> +
-> +            clocks = <&x1_x2>;
-> +            clock-names = "x1";
-> +
-> +            renesas,settings = [
-> +                80 00 11 19 4c 02 23 7f 83 19 08 a9 5f 25 24 bf
-> +                00 14 7a e1 00 00 00 00 01 55 59 bb 3f 30 90 b6
-> +                80 b0 45 c4 95
-> +            ];
-> +
-> +            assigned-clocks = <&versa3 0>,
-> +                              <&versa3 1>,
-> +                              <&versa3 2>,
-> +                              <&versa3 3>,
-> +                              <&versa3 4>,
-> +                              <&versa3 5>;
-> +            assigned-clock-rates = <12288000>, <25000000>,
-> +                                   <12000000>, <11289600>,
-> +                                   <11289600>, <24000000>;
-> +            renesas,clock-divider-read-only = <1>, <1>, <1>, <1>, <1>;
-> +            renesas,clock-flags = <2176>, <2176>, <2176>, <2052>,
-> +                                  <2176>, <2048>;
-> +        };
-> +    };
-> +
-> +    /* Consumer referencing the versa 3 */
-> +    consumer {
-> +        /* ... */
-> +        clocks = <&versa3 3>;
-> +        /* ... */
-
-Drop consumer. Do you see it anywhere else?
-
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/mediatek/clk-mt8135.c b/drivers/clk/mediatek/clk-mt8135.c
+index 1c76c0003f99..8785d58cb3a5 100644
+--- a/drivers/clk/mediatek/clk-mt8135.c
++++ b/drivers/clk/mediatek/clk-mt8135.c
+@@ -2,8 +2,6 @@
+ /*
+  * Copyright (c) 2014 MediaTek Inc.
+  * Author: James Liao <jamesjj.liao@mediatek.com>
+- * Copyright (c) 2023 Collabora, Ltd.
+- *               AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+  */
+ 
+ #include <linux/clk.h>
+@@ -19,14 +17,12 @@
+ 
+ static DEFINE_SPINLOCK(mt8135_clk_lock);
+ 
+-static const struct mtk_fixed_factor root_clk_alias[] __initconst = {
++static const struct mtk_fixed_factor top_divs[] __initconst = {
+ 	FACTOR(CLK_TOP_DSI0_LNTC_DSICLK, "dsi0_lntc_dsiclk", "clk_null", 1, 1),
+ 	FACTOR(CLK_TOP_HDMITX_CLKDIG_CTS, "hdmitx_clkdig_cts", "clk_null", 1, 1),
+ 	FACTOR(CLK_TOP_CLKPH_MCK, "clkph_mck", "clk_null", 1, 1),
+ 	FACTOR(CLK_TOP_CPUM_TCK_IN, "cpum_tck_in", "clk_null", 1, 1),
+-};
+ 
+-static const struct mtk_fixed_factor top_divs[] __initconst = {
+ 	FACTOR(CLK_TOP_MAINPLL_806M, "mainpll_806m", "mainpll", 1, 2),
+ 	FACTOR(CLK_TOP_MAINPLL_537P3M, "mainpll_537p3m", "mainpll", 1, 3),
+ 	FACTOR(CLK_TOP_MAINPLL_322P4M, "mainpll_322p4m", "mainpll", 1, 5),
+@@ -534,7 +530,6 @@ static void __init mtk_topckgen_init(struct device_node *node)
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
+ 
+-	mtk_clk_register_factors(root_clk_alias, ARRAY_SIZE(root_clk_alias), clk_data);
+ 	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), clk_data);
+ 	mtk_clk_register_composites(NULL, top_muxes,
+ 				    ARRAY_SIZE(top_muxes), base,
+-- 
+2.39.2
 
