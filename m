@@ -2,111 +2,159 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDCDC678DB
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 09:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 510F4C6379F
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 10:41:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230267AbjBVJnK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Feb 2023 04:43:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41812 "EHLO
+        id S231495AbjBVKld (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Feb 2023 05:41:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229980AbjBVJmt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 04:42:49 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D50633B219;
-        Wed, 22 Feb 2023 01:40:07 -0800 (PST)
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id C790766021EA;
-        Wed, 22 Feb 2023 09:27:03 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1677058024;
-        bh=dv6Z4kavdozYHTEcXkNgUDi5pAIhynlNgpR6jA5eVf8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L9L6nZ7T9GTICR0A864i9rEGc9M0Xxz8jd4isS04+5GVyLuM6/e8DKw7HmIDlv8BN
-         QWhbk9nZIqYDhi1vjot/W4yP7O/n1Me21xszQpSOuQf3tVIUbnCCP++pc2aZEr0ZnT
-         Xh+SVL2DzdXozrCtlMJ7GgRxbwdGExUcWYTDa2j+/KFE6TkLU7F+rvA9CU/PKVY9Zk
-         d2wkUx5v9a7YVEZsHTvU+JIuTf/sDdT2JXRNZKDzn77pUQ7wGcpDC3zB+pkWv91a5s
-         Xuxr+8wEtNXf6XFHy4d8QRIdDUfM7MZwGbH+YtyemyfFrW+956idpIwGZZo8BccaBq
-         0LngX71ngE4Ug==
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-To:     mturquette@baylibre.com
-Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
-        angelogioacchino.delregno@collabora.com, wenst@chromium.org,
-        johnson.wang@mediatek.com, miles.chen@mediatek.com,
-        chun-jie.chen@mediatek.com, daniel@makrotopia.org,
-        fparent@baylibre.com, msp@baylibre.com, nfraprado@collabora.com,
-        rex-bc.chen@mediatek.com, zhaojh329@gmail.com,
-        sam.shih@mediatek.com, edward-jw.yang@mediatek.com,
-        yangyingliang@huawei.com, granquet@baylibre.com,
-        pablo.sun@mediatek.com, sean.wang@mediatek.com,
-        chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH v5 53/54] clk: mediatek: mt8135: Join root_clk_alias and top_divs arrays
-Date:   Wed, 22 Feb 2023 10:25:42 +0100
-Message-Id: <20230222092543.19187-54-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230222092543.19187-1-angelogioacchino.delregno@collabora.com>
-References: <20230222092543.19187-1-angelogioacchino.delregno@collabora.com>
+        with ESMTP id S231218AbjBVKlc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 05:41:32 -0500
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32E693756E;
+        Wed, 22 Feb 2023 02:41:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1677062490; x=1708598490;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=og8oc3RuSx7isHJHsUxe9wkqbVmwchIzWVG+7PVsMs0=;
+  b=ot0euPjuqJzHLYsUGyy3nLXSphmj6hIdfqH0Ucz5UdDTevJyR/bYBF4M
+   XR0ohvH2Xx3Of5svmVIB+ZS6HwB5hyPsm3FI962RR9Su44WmwOFOO3zdV
+   3tGGr12vCncrvs8Tcci/wPG4LuKmKRNvayMueWgZCjPbPP1sPs0wUwWPN
+   dXfenECVMLZy4yp3xx8+7v7a1/oNah6qIge2lUtWbqARSA/IvBBqOfZim
+   JChrsP5/HqOnjxJ10eTs1lfzX5kY7PsNXNUzhGuu/bmqkYY04gjp6WHBo
+   4ekAmHHni/avINgmMKqi2XnY6QEwQhbgX+cZ9dQErpCjJ9ghcfxh+cION
+   g==;
+X-IronPort-AV: E=Sophos;i="5.97,318,1669100400"; 
+   d="asc'?scan'208";a="138452374"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 22 Feb 2023 03:41:29 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.16; Wed, 22 Feb 2023 03:41:28 -0700
+Received: from wendy (10.10.115.15) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.16 via Frontend
+ Transport; Wed, 22 Feb 2023 03:41:25 -0700
+Date:   Wed, 22 Feb 2023 10:40:59 +0000
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     Hal Feng <hal.feng@starfivetech.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 09/19] dt-bindings: clock: Add StarFive JH7110 system
+ clock and reset generator
+Message-ID: <Y/XxOw+T0WdYY7jP@wendy>
+References: <20230221024645.127922-1-hal.feng@starfivetech.com>
+ <20230221024645.127922-10-hal.feng@starfivetech.com>
+ <e4c2b711-7953-821b-4281-04e4b40154ea@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="A5GMe6d9NPNRqkf9"
+Content-Disposition: inline
+In-Reply-To: <e4c2b711-7953-821b-4281-04e4b40154ea@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In preparation for converting this driver to the common simple probe
-mechanism, join the root_clk_alias and top_divs mtk_fixed_factor
-arrays.
+--A5GMe6d9NPNRqkf9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This commit brings no functional change.
+On Wed, Feb 22, 2023 at 10:13:19AM +0100, Krzysztof Kozlowski wrote:
+> On 21/02/2023 03:46, Hal Feng wrote:
+> > From: Emil Renner Berthing <kernel@esmil.dk>
+> >=20
+> > Add bindings for the system clock and reset generator (SYSCRG) on the
+> > JH7110 RISC-V SoC by StarFive Ltd.
+> >=20
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> > Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+>=20
+> I don't know what is happening here as neither this nor other patchset
+> explains anything. Please stop writing what you do in the patches, but
+> explain why. What is easy to get.
+>=20
+> (...)
+>=20
+>=20
+> > +
+> > +#define JH7110_SYSCLK_PLL0_OUT			190
+> > +#define JH7110_SYSCLK_PLL1_OUT			191
+> > +#define JH7110_SYSCLK_PLL2_OUT			192
+>=20
+> NAK. Do not add incorrect bindings just to remove it THE SAME TIME.
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
----
- drivers/clk/mediatek/clk-mt8135.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+For some context, the PLL driver series [1] does the following, which is
+where this complaint stems from:
+> diff --git a/include/dt-bindings/clock/starfive,jh7110-crg.h b/include/dt=
+-bindings/clock/starfive,jh7110-crg.h
+> index 5e4f21ca0642..086a6ddcf380 100644
+> --- a/include/dt-bindings/clock/starfive,jh7110-crg.h
+> +++ b/include/dt-bindings/clock/starfive,jh7110-crg.h
+> @@ -6,6 +6,12 @@
+>  #ifndef __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
+>  #define __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
+> =20
+> +/* PLL clocks */
+> +#define JH7110_CLK_PLL0_OUT			0
+> +#define JH7110_CLK_PLL1_OUT			1
+> +#define JH7110_CLK_PLL2_OUT			2
+> +#define JH7110_PLLCLK_END			3
+> +
+>  /* SYSCRG clocks */
+>  #define JH7110_SYSCLK_CPU_ROOT			0
+>  #define JH7110_SYSCLK_CPU_CORE			1
+> @@ -198,11 +204,7 @@
+>  #define JH7110_SYSCLK_TDM_TDM_INV		188
+>  #define JH7110_SYSCLK_JTAG_CERTIFICATION_TRNG	189
+> =20
+> -#define JH7110_SYSCLK_PLL0_OUT			190
+> -#define JH7110_SYSCLK_PLL1_OUT			191
+> -#define JH7110_SYSCLK_PLL2_OUT			192
 
-diff --git a/drivers/clk/mediatek/clk-mt8135.c b/drivers/clk/mediatek/clk-mt8135.c
-index 1c76c0003f99..8785d58cb3a5 100644
---- a/drivers/clk/mediatek/clk-mt8135.c
-+++ b/drivers/clk/mediatek/clk-mt8135.c
-@@ -2,8 +2,6 @@
- /*
-  * Copyright (c) 2014 MediaTek Inc.
-  * Author: James Liao <jamesjj.liao@mediatek.com>
-- * Copyright (c) 2023 Collabora, Ltd.
-- *               AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-  */
- 
- #include <linux/clk.h>
-@@ -19,14 +17,12 @@
- 
- static DEFINE_SPINLOCK(mt8135_clk_lock);
- 
--static const struct mtk_fixed_factor root_clk_alias[] __initconst = {
-+static const struct mtk_fixed_factor top_divs[] __initconst = {
- 	FACTOR(CLK_TOP_DSI0_LNTC_DSICLK, "dsi0_lntc_dsiclk", "clk_null", 1, 1),
- 	FACTOR(CLK_TOP_HDMITX_CLKDIG_CTS, "hdmitx_clkdig_cts", "clk_null", 1, 1),
- 	FACTOR(CLK_TOP_CLKPH_MCK, "clkph_mck", "clk_null", 1, 1),
- 	FACTOR(CLK_TOP_CPUM_TCK_IN, "cpum_tck_in", "clk_null", 1, 1),
--};
- 
--static const struct mtk_fixed_factor top_divs[] __initconst = {
- 	FACTOR(CLK_TOP_MAINPLL_806M, "mainpll_806m", "mainpll", 1, 2),
- 	FACTOR(CLK_TOP_MAINPLL_537P3M, "mainpll_537p3m", "mainpll", 1, 3),
- 	FACTOR(CLK_TOP_MAINPLL_322P4M, "mainpll_322p4m", "mainpll", 1, 5),
-@@ -534,7 +530,6 @@ static void __init mtk_topckgen_init(struct device_node *node)
- 
- 	clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
- 
--	mtk_clk_register_factors(root_clk_alias, ARRAY_SIZE(root_clk_alias), clk_data);
- 	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), clk_data);
- 	mtk_clk_register_composites(NULL, top_muxes,
- 				    ARRAY_SIZE(top_muxes), base,
--- 
-2.39.2
+I was talking to Emil, who pointed out that these defines aren't
+actually ever used in the dts, so there's nothing really gained
+by adding them here in the first place.
+Seems like this series could simply move these defines into the driver
+(as the PLL addition series also does) and then we would not have to
+be worried about breaking the ABI in the future?
 
+Thanks,
+Conor.
+
+1 - https://patchwork.kernel.org/project/linux-riscv/patch/20230221141147.3=
+03642-3-xingyu.wu@starfivetech.com/
+
+
+--A5GMe6d9NPNRqkf9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY/XxOwAKCRB4tDGHoIJi
+0ouHAQD1J4/fzbT7Ija75eE1nauMe2czMcMbWAzQIL1nwqgxdAD9GIT1Ap0dMr5V
+1t1LqyevhjLJUO2GrLIxTX8k1p6Zqw8=
+=KcGW
+-----END PGP SIGNATURE-----
+
+--A5GMe6d9NPNRqkf9--
