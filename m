@@ -2,278 +2,123 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 539F1C64EC4
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 07:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56694C6379F
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 08:36:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229552AbjBVH5m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Feb 2023 02:57:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45274 "EHLO
+        id S231274AbjBVIf7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Feb 2023 03:35:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229560AbjBVH5l (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 02:57:41 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44DE4367F6
-        for <linux-clk@vger.kernel.org>; Tue, 21 Feb 2023 23:57:33 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id ec43so26321903edb.8
-        for <linux-clk@vger.kernel.org>; Tue, 21 Feb 2023 23:57:33 -0800 (PST)
+        with ESMTP id S230423AbjBVIfy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 03:35:54 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99BBF367EE
+        for <linux-clk@vger.kernel.org>; Wed, 22 Feb 2023 00:35:36 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id t15so7003151wrz.7
+        for <linux-clk@vger.kernel.org>; Wed, 22 Feb 2023 00:35:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lRvIvkf8yG2Yo7blwPcCDwUhc0kMdsUTbYCmySTrqm4=;
-        b=pf0c2/YZnz9aV/yEL191dmaMWJb/+PGs7Fx4ol+I8Lb84PeytIEbCla5CHXccrf2C3
-         +MW3V7Ywmf4oCYW7mWTw42NIgx3J2Z2Pp57NRKdRil1J8hyngxgnu5+n/w59xvA01vla
-         9+MTTimtrS/S9NLQqE8bbsZ0ig8sZXnBiQ0NBKUEq323j+1npgrFW/eJEdKEMVzi0Ytu
-         b0PqjL//A4raS6AHZ3TzJisQ5rEp8HRl3lTsH1jwoZ+QHXNmuyRD7PtSKp6+IT1lr/Y0
-         ziE6WHfAueHa2RFegMB/EgTAw3rdHoI6f0CYGKpH4DwT358NK7w2IgX2G8USkBSUTMsW
-         Wo0A==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PqLeqFtFWR7kaexVhVYdbucppafycoMX3HxsJln5QQM=;
+        b=BAU/BMflrsd71jY7Zmy3wd0a4qTln571RTTpXWhFuGHYxwkvkLbTTMkx+ioUthDrvT
+         Fu/R2R5Pp98GMtOFKCvFBPbUUU13+8JyZNUWGbv7u2OxGLbGfZCxoxfjnS4JmILjl3ZH
+         SPo8bug1dwrlw7YzVnW+Cw6WYZ2rlimj1jp4Y1lSMP8ME0bJg6Sl3nie235eUCJ1awg6
+         +a163sCHSJcXX9DL9EgyQDZHjIS9C86HLAvSB+wGse/fnjfGNnSPHK4ulbw/KFDbUeRi
+         FasbI5mTxIQPQD4INwTX7rmhT+7jpQMECP53hzp0e5j0CIHOUFeNEMKtb2lbnSATHXTV
+         QtHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lRvIvkf8yG2Yo7blwPcCDwUhc0kMdsUTbYCmySTrqm4=;
-        b=4Fx2ya2lrXKcvcmkKRvUXkXFUVv87jwBr3TWwLJah2j/8sB+NjCEnWE5KHzRi2OzIk
-         aZqVgt55cIEFuum3XrKhrxduVGdNFGAfyHmwEVq02HGg2z8choYcvmWyTEHqvgC0/o0M
-         kifR4mqgBvl+GNQLHswtVu7Noi7FVJQ+HDd6YpkDfSUAZIeWdcY2r8p9jXxFIi3WQ3Ml
-         ovBdMlPZK8yF4O2mLtLPLK3J25yxkQmeoEYBFsNjLQSHo3W33qUG8BGHYlu/XC7fFLqm
-         FCNajP/rpYqkp4urlD7wrVkjs+wrzmz+0f4RMGpS35EjaHLLNrtAQXONPH1Gs2dCjdHj
-         v6uA==
-X-Gm-Message-State: AO0yUKXrV5sc6NSwBrI+B4eLwt8b6WEvyEOuB18MN/4U5CAZic/ftxfR
-        YvOW3TU9i7bAR+U7kYPzgWeSzw==
-X-Google-Smtp-Source: AK7set97Ck1w5Q1ybSPB1uJIePA6zRy1nsuZainK6/a1QCnoBibRE0eKgj7xOsVxIhD7sWcdAwAyUw==
-X-Received: by 2002:a17:906:b746:b0:877:573d:e919 with SMTP id fx6-20020a170906b74600b00877573de919mr16520851ejb.20.1677052651590;
-        Tue, 21 Feb 2023 23:57:31 -0800 (PST)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id ca13-20020a170906a3cd00b008d02b6f3f41sm3894887ejb.211.2023.02.21.23.57.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Feb 2023 23:57:31 -0800 (PST)
-Date:   Wed, 22 Feb 2023 09:57:29 +0200
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, mka@chromium.org
-Subject: Re: [PATCH v3 1/2] clk: Add generic sync_state callback for
- disabling unused clocks
-Message-ID: <Y/XK6UBfA2JRQrAR@linaro.org>
-References: <20221227204528.1899863-1-abel.vesa@linaro.org>
- <ebc257025ebd641e624ef506ea09c800.sboyd@kernel.org>
- <Y/OV3CF0ootyooDJ@linaro.org>
- <Y/OfjbxI1tHYJHNv@linaro.org>
- <CAGETcx_mD3pbAmT5FDZaVAsKb_2PAnrHL8B_6gSR=+a0O4kHfQ@mail.gmail.com>
- <Y/PALlrQpwPlum9M@linaro.org>
- <CAGETcx_TZN3=GKrEf5fy_tA=JnOfw7m-N=+hD=qhe_yRRpngPw@mail.gmail.com>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PqLeqFtFWR7kaexVhVYdbucppafycoMX3HxsJln5QQM=;
+        b=THrX0SRVOuxvRpP9NhSa5k1A4eUuS1J/QiO4jcpgaV5gyDWP5A2t38V/YAywt6kPED
+         KW+R7qxS52+GuuTaMN1OavWE2KmWA7bdG4Am5gvCdn3kbIXadYmUUo4Rsj9KX34Zb68N
+         tiGT274/vHHaFIaQI57CVDO48o8l6I67R4A0UCsQo5qv6BPXPTtXy0ghs0XMW4/2nvsO
+         nM1F5wbrslcnrr8oOjifSiliNQISHWkKExZu9FEctSIZmQ0N79Fld2oBbRY2krQSiWsm
+         PUqzfACsrFnNMHA5YoCMFpiHZAkripU3RCgHxKPlrh4vZXczsy3IPTsJaR4uj2E0+ni9
+         hIJw==
+X-Gm-Message-State: AO0yUKVoS5susqjPT2MduQM24PX35zyP+FctJLdFOlo5RcJULbizCue2
+        0iJ7wS1Q/nZVKN9DWd0YJKiJzA==
+X-Google-Smtp-Source: AK7set8GLsJhTxHAyhh53R74Sa0dq3t8sxHEvLlHWZlORb30d+ZvUUNAXVBNiT7qWz/VfbI4AM9QZQ==
+X-Received: by 2002:adf:fb8f:0:b0:2c5:58fb:fa92 with SMTP id a15-20020adffb8f000000b002c558fbfa92mr6272938wrr.7.1677054934954;
+        Wed, 22 Feb 2023 00:35:34 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id n9-20020a5d4c49000000b002c54536c662sm6451624wrt.34.2023.02.22.00.35.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Feb 2023 00:35:34 -0800 (PST)
+Message-ID: <4aee9ad3-fe3b-7be3-ce71-df2365dd3482@linaro.org>
+Date:   Wed, 22 Feb 2023 09:35:31 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGETcx_TZN3=GKrEf5fy_tA=JnOfw7m-N=+hD=qhe_yRRpngPw@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [GIT PULL] Qualcomm clock driver updates for v6.3
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        linux-clk@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Andy Gross <agross@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Akhil P Oommen <quic_akhilpo@quicinc.com>,
+        Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Robert Marko <robimarko@gmail.com>,
+        Shazad Hussain <quic_shazhuss@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Yang Yingliang <yangyingliang@huawei.com>
+References: <20230219045318.564342-1-andersson@kernel.org>
+ <e62613b331da617d53515998a2c967d1.sboyd@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <e62613b331da617d53515998a2c967d1.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-02-21 11:58:24, Saravana Kannan wrote:
-> On Mon, Feb 20, 2023 at 10:47 AM Abel Vesa <abel.vesa@linaro.org> wrote:
-> >
-> > On 23-02-20 09:51:55, Saravana Kannan wrote:
-> > > On Mon, Feb 20, 2023 at 8:28 AM Abel Vesa <abel.vesa@linaro.org> wrote:
-> > > >
-> > > > On 23-02-20 17:46:36, Abel Vesa wrote:
-> > > > > On 23-02-17 21:38:22, Stephen Boyd wrote:
-> > > > > > Quoting Abel Vesa (2022-12-27 12:45:27)
-> > > > > > > There are unused clocks that need to remain untouched by clk_disable_unused,
-> > > > > > > and most likely could be disabled later on sync_state. So provide a generic
-> > > > > > > sync_state callback for the clock providers that register such clocks.
-> > > > > > > Then, use the same mechanism as clk_disable_unused from that generic
-> > > > > > > callback, but pass the device to make sure only the clocks belonging to
-> > > > > > > the current clock provider get disabled, if unused. Also, during the
-> > > > > > > default clk_disable_unused, if the driver that registered the clock has
-> > > > > > > the generic clk_sync_state_disable_unused callback set for sync_state,
-> > > > > > > skip disabling its clocks.
-> > >
-> > > Hi Abel,
-> > >
-> > > We have the day off today, so I'll respond more later. Also, please cc
-> > > me on all sync_state() related patches in the future.
-> > >
-> >
-> > Sure thing.
-> >
-> > > I haven't taken a close look at your series yet, but at a glance it
-> > > seems incomplete.
-> > >
-> > > Any reason you didn't just try to revive my series[1] or nudge me?
-> > > [1]- https://lore.kernel.org/lkml/20210407034456.516204-3-saravanak@google.com/
-> >
-> > This patchset is heavily reworked and much more simpler as it relies
-> > strictly on the sync_state being registered by the clock provider.
+On 21/02/2023 20:50, Stephen Boyd wrote:
+> Quoting Bjorn Andersson (2023-02-18 20:53:18)
+>> clk_disable_unused() is altered, to not consider clocks which comes from
+>> a provider with sync_state defined. This makes it possible for
+>> individual clock drivers to invoke this process once all clients has
+>> been probed, avoiding the need for booting many systems with
+>> clk_ignore_unused.
+>> This is then enabled for SDM845 and SC8280XP clock controllers.
 > 
-> It's simpler because it's not complete. It for sure doesn't handle
-> orphan-reparenting. It also doesn't make a lot of sense for only some
-> clock providers registering for sync_state(). If CC-A is feeding a
-> clock signal that's used as a root for clocks in CC-B, then what
-> happens if only CC-B implements sync_state() but CC-A doesn't. The
-> clocks from CC-B are still going to turn off when CC-A turns off its
-> PLL before CC-B registers.
+> This needs to be reverted. I'm not going to pull this until then.
 > 
-> Nack for this patch.
+>>
+>> Support for QDU1000/QRU1000 Global clock controller, SA8775P Global
+>> clock controller, SM8550 TCSR and display clock controller, SM6350 clock
+>> controller, nd MSM8996 CBF and APCS clock controllers is introduced..
+>>
+> [...]
+>>
+>> Bjorn Andersson (5):
+>>       Merge tag '1672656511-1931-1-git-send-email-quic_akhilpo@quicinc.com' into clk-for-6.3
+>>       Merge branch '20230104093450.3150578-2-abel.vesa@linaro.org' into clk-for-6.3
+>>       clk: qcom: Remove need for clk_ignore_unused on sc8280xp
+>>       Merge branch '20230103-topic-sm8550-upstream-dispcc-v3-1-8a03d348c572@linaro.org' into clk-for-6.3
+>>       Merge branch '20230112204446.30236-2-quic_molvera@quicinc.com' into HEAD
 > 
-> Also, unless there's a strong objection, let's go back to my patch
-> please. It's way more well tested and used across different SoCs than
-> this patch. Also, I'm pretty sure the orphan handling is needed for
-> qcom SoC's too.
+> When you make merges, please describe what they're for and put that in
+> the commit text. Also, reword things like 'into HEAD'.
 
-Fine. Will wait for a respin of your patchset. Please CC me on it.
+I think these are all merges of patchsets (eg. b4 shazam --merge
+<patchset_id>), thus it's the same as applying.
 
-Bjorn please drop this patchset from your tree/pull request.
+Best regards,
+Krzysztof
 
-> 
-> -Saravana
-> 
-> >
-> > I saw your patchset a few months ago but then forgot about its
-> > existence. That's also why I forgot to nudge you. Sorry about that.
-> >
-> > >
-> > > At the least, I know [1] works on all Android devices (including
-> > > Qualcomm SoCs) released in the past 2-3 years or more. If [1] works
-> > > for you, I'd rather land that after addressing Stephen's comments
-> > > there (I remember them being fairly easy to address comments) instead
-> > > of whipping up a new series that's not as well used. I just got busy
-> > > with other things and addressing more fundamental fw_devlink TODOs
-> > > before getting back to this.
-> > >
-> > > Hi Bjorn,
-> > >
-> > > I see in another reply you've said:
-> > >
-> > > Applied, thanks!
-> > >
-> > > [1/2] clk: Add generic sync_state callback for disabling unused clocks
-> > >       commit: 26b36df7516692292312063ca6fd19e73c06d4e7
-> > > [2/2] clk: qcom: sdm845: Use generic clk_sync_state_disable_unused callback
-> > >       commit: 99c0f7d35c4b204dd95ba50e155f32c99695b445
-> > >
-> > > Where exactly have you applied them? I hope you haven't applied the
-> > > clk.c changes to some tree that goes into 6.3.
-> >
-> > I think it is already part of Bjorn's Qualcomm clocks pull request.
-> >
-> > >
-> > > -Saravana
-> > >
-> > > > > >
-> > > > > > How does that avoid disabling clks randomly in the clk tree? I'm
-> > > > > > concerned about disabling an unused clk in the middle of the tree
-> > > > > > because it doesn't have a driver using sync state, while the clk is the
-> > > > > > parent of an unused clk that is backed by sync state.
-> > > > > >
-> > > > > >    clk A -->  clk B
-> > > > > >
-> > > > > > clk A: No sync state
-> > > > > > clk B: sync state
-> > > > > >
-> > > > > > clk B is left on by the bootloader. __clk_disable_unused(NULL) is called
-> > > > > > from late init. Imagine clk A is the root of the tree.
-> > > > > >
-> > > > > >     clk_disable_unused_subtree(clk_core A)
-> > > > > >       clk_disable_unused_subtree(clk_core B)
-> > > > > >         if (from_sync_state && core->dev != dev)
-> > > > > >           return;
-> > > > > >       ...
-> > > > > >       clk core A->ops->disable()
-> > > > > >
-> > > > > > clk core B is off now?
-> > > > >
-> > > > > Yes, that is correct. But the same thing is happening currently if the
-> > > > > clk_ignore_unused in not specified. At least with this new approach, we
-> > > > > get to leave unused clocks enabled either until sync_state is called or forever.
-> > > > > All the provider has to do is to implement a sync_state callback (or use
-> > > > > the generic one provided). So the provider of clk A would obviously need
-> > > > > a sync state callback registered.
-> > > > >
-> > > > > >
-> > > > > > Also sync_state seems broken right now. I saw mka mentioned that if you
-> > > > > > have a device node enabled in your DT but never enable a driver for it
-> > > > > > in the kernel we'll never get sync_state called. This is another
-> > > > > > problem, but it concerns me that sync_state would make the unused clk
-> > > > > > disabling happen at some random time or not at all.
-> > > > >
-> > > > > Well, the fact that the sync state not being called because a driver for
-> > > > > a consumer device doesn't probe does not really mean it is broken. Just
-> > > > > because the consumer driver hasn't probed yet, doesn't mean it will
-> > > > > not probe later on.
-> > > > >
-> > > >
-> > > > CC'ed Saravana
-> > > >
-> > > > > That aside, rather than going with clk_ignore_unused all the time on
-> > > > > qcom platforms, at least in a perfect scenario (where sync state is
-> > > > > reached for all providers) the clocks get disabled.
-> > > > >
-> > > > > >
-> > > > > > Can the problem be approached more directly? If this is about fixing
-> > > > > > continuous splash screen, then I wonder why we can't list out the clks
-> > > > > > that we know are enabled by the bootloader in some new DT binding, e.g.:
-> > > > > >
-> > > > > >     clock-controller {
-> > > > > >             #clock-cells = <1>;
-> > > > > >             boot-handoff-clocks = <&consumer_device "clock cells for this clk provider">;
-> > > > > >     };
-> > > > > >
-> > > > > > Then mark those as "critical/don't turn off" all the way up the clk tree
-> > > > > > when the clk driver probes by essentially incrementing the
-> > > > > > prepare/enable count but not actually touching the hardware, and when
-> > > > > > the clks are acquired by clk_get() for that device that's using them
-> > > > > > from boot we make the first clk_prepare_enable() do nothing and not
-> > > > > > increment the count at all. We can probably stick some flag into the
-> > > > > > 'struct clk' for this when we create the handle in clk_get() so that the
-> > > > > > prepare and enable functions can special case and skip over.
-> > > > >
-> > > > > Well, that means we need to play whack-a-mole by alsways adding such clocks to
-> > > > > devicetree.
-> > > > >
-> > > > > >
-> > > > > > The sync_state hook operates on a driver level, which is too large when
-> > > > > > you consider that a single clk driver may register hundreds of clks that
-> > > > > > are not related. We want to target a solution at the clk level so that
-> > > > > > any damage from keeping on all the clks provided by the controller is
-> > > > > > limited to just the drivers that aren't probed and ready to handle their
-> > > > > > clks. If sync_state could be called whenever a clk consumer consumes a
-> > > > > > clk it may work? Technically we already have that by the clk_hw_provider
-> > > > > > function but there isn't enough information being passed there, like the
-> > > > > > getting device.
-> > > > >
-> > > > > Actually, from the multitude of clocks registered by one provider, the
-> > > > > ones already explicitely enabled (and obvisously their parents) by thier
-> > > > > consumer are safe. The only ones we need to worry about are the ones that
-> > > > > might be enabled by bootloader and need to remain on. With the sync state
-> > > > > approach, the latter mentioned clocks will either remain on indefinitely
-> > > > > or will be disabled on sync state. The provider driver is the only level
-> > > > > that has a registered sync state callback.
-> > > > >
-> > > > > >
-> > > > > > > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> > > > > > > index 842e72a5348f..cf1adfeaf257 100644
-> > > > > > > --- a/include/linux/clk-provider.h
-> > > > > > > +++ b/include/linux/clk-provider.h
-> > > > > > > @@ -720,6 +720,7 @@ struct clk *clk_register_divider_table(struct device *dev, const char *name,
-> > > > > > >                 void __iomem *reg, u8 shift, u8 width,
-> > > > > > >                 u8 clk_divider_flags, const struct clk_div_table *table,
-> > > > > > >                 spinlock_t *lock);
-> > > > > > > +void clk_sync_state_disable_unused(struct device *dev);
-> > > > > >
-> > > > > > This is a weird place to put this. Why not in the helper functions
-> > > > > > section?
-> > > > >
-> > > > > Sure this can be moved.
-> > > > >
-> > > > > >
-> > > > > > >  /**
-> > > > > > >   * clk_register_divider - register a divider clock with the clock framework
-> > > > > > >   * @dev: device registering this clock
