@@ -2,120 +2,96 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 881C7C636D7
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 02:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6774AC61DA4
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 03:38:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229840AbjBVCCj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Feb 2023 21:02:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38450 "EHLO
+        id S230117AbjBVDiF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Feb 2023 22:38:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229779AbjBVCCi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 21:02:38 -0500
-Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 01C793345F;
-        Tue, 21 Feb 2023 18:02:33 -0800 (PST)
-Received: from loongson.cn (unknown [10.20.42.35])
-        by gateway (Coremail) with SMTP id _____8CxEZSzd_Vj+WgDAA--.1475S3;
-        Wed, 22 Feb 2023 10:02:27 +0800 (CST)
-Received: from [10.20.42.35] (unknown [10.20.42.35])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8Dxrb6cd_VjO1I4AA--.42644S3;
-        Wed, 22 Feb 2023 10:02:04 +0800 (CST)
-Subject: Re: [PATCH v10 2/4] clk: clk-loongson2: add clock controller driver
- support
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Jianmin Lv <lvjianmin@loongson.cn>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        WANG Xuerui <kernel@xen0n.name>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, liupeibao@loongson.cn,
-        loongarch@lists.linux.dev, wanghongliang@loongson.cn
-References: <20221129034157.15036-1-zhuyinbo@loongson.cn>
- <20221129034157.15036-2-zhuyinbo@loongson.cn>
- <31c690a347f858a477bbba9c838984ed.sboyd@kernel.org>
- <4b5fd886-57ce-01ef-8224-432898b7fb1c@loongson.cn>
- <8332a1cf44b01f06bdd5db9dc5d7f387.sboyd@kernel.org>
- <01ee3dc6-a868-fd2b-93aa-11e6bdfcc9df@loongson.cn>
- <9e8952c9415973dc7276185e3cdf5ae7.sboyd@kernel.org>
-From:   zhuyinbo <zhuyinbo@loongson.cn>
-Message-ID: <d92223a0-6d4c-33ea-1473-3d40bdd0ad9e@loongson.cn>
-Date:   Wed, 22 Feb 2023 10:02:04 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        with ESMTP id S229930AbjBVDiF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Feb 2023 22:38:05 -0500
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F78170F;
+        Tue, 21 Feb 2023 19:37:59 -0800 (PST)
+X-UUID: 4add3896b26211eda06fc9ecc4dadd91-20230222
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=LVJ+MOKpfbG3MQ+icsHJ+2fAEsTjRFnL15ooEJk+oSc=;
+        b=Flkq7wFKRBw3RR6mMBONH++2h5HYoVHWMb+TR+b+5NlPNDlvwrUfKJMwMoSFG1EU5Wa6jsY/akrWxjOqNZb5A6PrshSzJDgKWp4y7hfupfQZz7NPXpe5J6dJXOX4Qo0ygkXqfK5oD+deur9HpXpaSj9rrsCzP5oUSCHp+yb4SjE=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.20,REQID:bd4bb221-eaa0-450d-b706-c9965d95591c,IP:0,U
+        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+        release,TS:0
+X-CID-META: VersionHash:25b5999,CLOUDID:73f64f26-564d-42d9-9875-7c868ee415ec,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:1,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0
+X-CID-BVR: 1,FCT
+X-UUID: 4add3896b26211eda06fc9ecc4dadd91-20230222
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 271544970; Wed, 22 Feb 2023 11:37:55 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.792.15; Wed, 22 Feb 2023 11:37:53 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.792.15 via Frontend Transport; Wed, 22 Feb 2023 11:37:53 +0800
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     <angelogioacchino.delregno@collabora.com>
+CC:     <chen.zhong@mediatek.com>, <chun-jie.chen@mediatek.com>,
+        <daniel@makrotopia.org>, <edward-jw.yang@mediatek.com>,
+        <fparent@baylibre.com>, <granquet@baylibre.com>,
+        <johnson.wang@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
+        <miles.chen@mediatek.com>, <msp@baylibre.com>,
+        <mturquette@baylibre.com>, <nfraprado@collabora.com>,
+        <pablo.sun@mediatek.com>, <rex-bc.chen@mediatek.com>,
+        <sam.shih@mediatek.com>, <sboyd@kernel.org>,
+        <sean.wang@mediatek.com>, <wenst@chromium.org>,
+        <yangyingliang@huawei.com>, <zhaojh329@gmail.com>
+Subject: Re: [PATCH v4 00/54] MediaTek clocks: full module build and cleanups
+Date:   Wed, 22 Feb 2023 11:37:53 +0800
+Message-ID: <20230222033753.4128-1-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20230221115549.360132-1-angelogioacchino.delregno@collabora.com>
+References: <20230221115549.360132-1-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <9e8952c9415973dc7276185e3cdf5ae7.sboyd@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID: AQAAf8Dxrb6cd_VjO1I4AA--.42644S3
-X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjvJXoW7Kw4xtw45CF1DZw4xJry7ZFb_yoW8AF1Upr
-        ZxZay7KF4qqr42vwnFga1UAas09F43tF17Zw4ftw1DCa4qk345ur4UXFn5CF93Jr43W3yv
-        qr1kta17CFyq9rJanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        bDkFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
-        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28E
-        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM2
-        8EF7xvwVC2z280aVCY1x0267AKxVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE
-        52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I
-        80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCj
-        c4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI
-        0_JF0_Jw1l42xK82IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VWrMxC20s026xCaFVCj
-        c4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-        6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-        AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-        1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8FAp5UUUUU==
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Algele,
 
-在 2023/2/22 上午7:07, Stephen Boyd 写道:
-> Quoting zhuyinbo (2023-02-19 21:44:51)
->> 在 2023/2/18 上午6:15, Stephen Boyd 写道:
->>> Quoting zhuyinbo (2023-02-14 23:35:22)
->>>> 在 2023/2/11 上午7:42, Stephen Boyd 写道:
->>>>>> +
->>>>>> +err:
->>>>>> +       iounmap(loongson2_pll_base);
->>>>>> +}
->>>>>> +
->>>>>> +CLK_OF_DECLARE(loongson2_clk, "loongson,ls2k-clk", loongson2_clocks_init);
->>>>> Any reason this can't be a platform driver?
->> Your question is that  why I don't use the platform_driver_register to
->> register  clk and use CLK_OF_DECLARE ?
-> Yes.
+>Changes in v4:
+> - Rebased over clk-next branch as of 21/02/2023
+> - MT8135: Squashed removal of __initconst annotation with conversion
+>   to platform drivers as suggested by Chen-Yu
+> - MT8135: Added mention of the introduction of the dummy clock in
+>   the commit description of patch [54/54]
+> - Fixed Kconfig ordering issue for MT8195 IMGSYS dependant option
 >
->> I was  consider other clock controllers of Loongson-2 series may be
->> different with 2k1000 and I can add a line
->>
->> CLK_OF_DECLARE() for compatible other platform in the future. eg.
->>
->> CLK_OF_DECLARE(loongson2_clk, "loongson,ls2k-clk", loongson2_clocks_init);
->>
->> +  CLK_OF_DECLARE(xxx1, xxx2,  xxx3);  // for other clock controllers of
->> Loongson-2 series
->>
->>>> For the compatible consideration of other clock controllers of
->>>> Loongson-2 series in the future, the way of using dts can be
->>>>
->>>> better compatible.
->>>>
->>> Sorry that sentence doesn't make sense to me. The use of dts doesn't
->>> require the use of CLK_OF_DECLARE.
->> yes, the use of dts doesn't require the use of CLK_OF_DECLARE and can
->> use platform_driver_register
->>
->> but my drvier not use platform_driver_register to register  clk and use
->> CLK_OF_DECLARE to match of_clk_init.
-> of_clk_init() is there to register clks that are needed for early init,
-> i.e. the clockevent/clocksource or the root interrupt controller
-> (irqchip). Otherwise, it isn't necessary to register clks via
-> of_clk_init().
-okay, I got it.
+...snip
+>
+>NOTE: Applies on top of [1] and [2].
+>
+>
+...snip
+>This series was build-tested for all (both module and built-in build)
+>and was manually tested on MT6795, MT8173, MT8192, MT8195.
+>
+>[1]: https://patchwork.kernel.org/project/linux-mediatek/list/?series=719067
+>[2]: https://patchwork.kernel.org/project/linux-mediatek/patch/20230207014800.7619-2-moudy.ho@mediatek.com/
 
+I tested this series with linux-next and only [1] on MT6779 and MT8192.
+
+For this series:
+Tested-by: Miles Chen <miles.chen@mediatek.com> 
+
+thanks,
+Miles
