@@ -2,24 +2,24 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D61C4C678DB
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 18:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A547C6FD18
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 18:10:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231205AbjBWSKl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S230453AbjBWSKl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Thu, 23 Feb 2023 13:10:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54328 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229808AbjBWSKg (ORCPT
+        with ESMTP id S231180AbjBWSKg (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2023 13:10:36 -0500
-Received: from srv01.abscue.de (abscue.de [89.58.28.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AFDA58B6F;
-        Thu, 23 Feb 2023 10:10:23 -0800 (PST)
+Received: from srv01.abscue.de (abscue.de [IPv6:2a03:4000:63:bf5:4817:8eff:feeb:8ac7])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2943B5708C;
+        Thu, 23 Feb 2023 10:10:19 -0800 (PST)
 Received: from srv01.abscue.de (localhost [127.0.0.1])
-        by spamfilter.srv.local (Postfix) with ESMTP id E64AB1C006E;
-        Thu, 23 Feb 2023 19:10:21 +0100 (CET)
+        by spamfilter.srv.local (Postfix) with ESMTP id 93D6D1C0048;
+        Thu, 23 Feb 2023 19:10:17 +0100 (CET)
 Received: from fluffy-mammal.fritz.box (dslb-092-073-085-163.092.073.pools.vodafone-ip.de [92.73.85.163])
-        by srv01.abscue.de (Postfix) with ESMTPSA id 789431C006F;
-        Thu, 23 Feb 2023 19:10:21 +0100 (CET)
+        by srv01.abscue.de (Postfix) with ESMTPSA id 1FE431C0046;
+        Thu, 23 Feb 2023 19:10:17 +0100 (CET)
 From:   =?UTF-8?q?Otto=20Pfl=C3=BCger?= <otto.pflueger@abscue.de>
 To:     Bjorn Andersson <andersson@kernel.org>
 Cc:     Andy Gross <agross@kernel.org>,
@@ -32,12 +32,10 @@ Cc:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org,
         =?UTF-8?q?Otto=20Pfl=C3=BCger?= <otto.pflueger@abscue.de>
-Subject: [PATCH v2 4/4] clk: qcom: smd-rpm: Add clocks for MSM8917
-Date:   Thu, 23 Feb 2023 19:09:35 +0100
-Message-Id: <20230223180935.60546-5-otto.pflueger@abscue.de>
+Subject: [PATCH v2 0/4] clk: qcom: Add clocks for MSM8917 and QM215
+Date:   Thu, 23 Feb 2023 19:09:31 +0100
+Message-Id: <20230223180935.60546-1-otto.pflueger@abscue.de>
 X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230223180935.60546-1-otto.pflueger@abscue.de>
-References: <20230223180935.60546-1-otto.pflueger@abscue.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -45,69 +43,40 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-MSM8917 has mostly the same rpm clocks as MSM8953, but lacks RF_CLK3 and
-IPA_CLK and additionally has the BIMC_GPU clock.
+Add support for clocks, resets and power domains provided by the global
+clock controller (GCC) and clocks controlled by the RPM firmware on
+MSM8917/QM215 SoCs.
 
-Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
----
+The only clock configuration difference between QM215 and MSM8917
+is the source mapping of the GPU clock, so a single driver is used
+for both SoCs.
+
 Changes in v2:
+ - Added Krzysztof's Acked-by and Reviewed-by
  - Rebased onto linux-next-20230223
----
- drivers/clk/qcom/clk-smd-rpm.c | 35 ++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ - Fixed address in oxili_gx_gdsc
+ - Mentioned QM215 in Kconfig
+ - Switched to index-based device tree clock lookup
+ - Switched to of_device_get_match_data for determining the SoC variant
+ - Formatting fixes as suggested by Konrad
+ - Added depends on ARM64 || COMPILE_TEST as suggested by Krzysztof
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 198886c1b6c8..ae6559c7efab 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -573,6 +573,40 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8916 = {
- 	.num_clks = ARRAY_SIZE(msm8916_clks),
- };
- 
-+static struct clk_smd_rpm *msm8917_clks[] = {
-+	[RPM_SMD_XO_CLK_SRC]		= &clk_smd_rpm_branch_bi_tcxo,
-+	[RPM_SMD_XO_A_CLK_SRC]		= &clk_smd_rpm_branch_bi_tcxo_a,
-+	[RPM_SMD_PNOC_CLK]		= &clk_smd_rpm_bus_0_pcnoc_clk,
-+	[RPM_SMD_PNOC_A_CLK]		= &clk_smd_rpm_bus_0_pcnoc_a_clk,
-+	[RPM_SMD_SNOC_CLK]		= &clk_smd_rpm_bus_1_snoc_clk,
-+	[RPM_SMD_SNOC_A_CLK]		= &clk_smd_rpm_bus_1_snoc_a_clk,
-+	[RPM_SMD_BIMC_CLK]		= &clk_smd_rpm_bimc_clk,
-+	[RPM_SMD_BIMC_A_CLK]		= &clk_smd_rpm_bimc_a_clk,
-+	[RPM_SMD_BIMC_GPU_CLK]		= &clk_smd_rpm_bimc_gpu_clk,
-+	[RPM_SMD_BIMC_GPU_A_CLK]	= &clk_smd_rpm_bimc_gpu_a_clk,
-+	[RPM_SMD_SYSMMNOC_CLK]		= &clk_smd_rpm_bus_2_sysmmnoc_clk,
-+	[RPM_SMD_SYSMMNOC_A_CLK]	= &clk_smd_rpm_bus_2_sysmmnoc_a_clk,
-+	[RPM_SMD_QDSS_CLK]		= &clk_smd_rpm_qdss_clk,
-+	[RPM_SMD_QDSS_A_CLK]		= &clk_smd_rpm_qdss_a_clk,
-+	[RPM_SMD_BB_CLK1]		= &clk_smd_rpm_bb_clk1,
-+	[RPM_SMD_BB_CLK1_A]		= &clk_smd_rpm_bb_clk1_a,
-+	[RPM_SMD_BB_CLK2]		= &clk_smd_rpm_bb_clk2,
-+	[RPM_SMD_BB_CLK2_A]		= &clk_smd_rpm_bb_clk2_a,
-+	[RPM_SMD_RF_CLK2]		= &clk_smd_rpm_rf_clk2,
-+	[RPM_SMD_RF_CLK2_A]		= &clk_smd_rpm_rf_clk2_a,
-+	[RPM_SMD_DIV_CLK2]		= &clk_smd_rpm_div_clk2,
-+	[RPM_SMD_DIV_A_CLK2]		= &clk_smd_rpm_div_clk2_a,
-+	[RPM_SMD_BB_CLK1_PIN]		= &clk_smd_rpm_bb_clk1_pin,
-+	[RPM_SMD_BB_CLK1_A_PIN]		= &clk_smd_rpm_bb_clk1_a_pin,
-+	[RPM_SMD_BB_CLK2_PIN]		= &clk_smd_rpm_bb_clk2_pin,
-+	[RPM_SMD_BB_CLK2_A_PIN]		= &clk_smd_rpm_bb_clk2_a_pin,
-+};
-+
-+static const struct rpm_smd_clk_desc rpm_clk_msm8917 = {
-+	.clks = msm8917_clks,
-+	.num_clks = ARRAY_SIZE(msm8917_clks),
-+};
-+
- static struct clk_smd_rpm *msm8936_clks[] = {
- 	[RPM_SMD_XO_CLK_SRC]		= &clk_smd_rpm_branch_bi_tcxo,
- 	[RPM_SMD_XO_A_CLK_SRC]		= &clk_smd_rpm_branch_bi_tcxo_a,
-@@ -1228,6 +1262,7 @@ static const struct of_device_id rpm_smd_clk_match_table[] = {
- 	{ .compatible = "qcom,rpmcc-msm8226", .data = &rpm_clk_msm8974 },
- 	{ .compatible = "qcom,rpmcc-msm8909", .data = &rpm_clk_msm8909 },
- 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
-+	{ .compatible = "qcom,rpmcc-msm8917", .data = &rpm_clk_msm8917 },
- 	{ .compatible = "qcom,rpmcc-msm8936", .data = &rpm_clk_msm8936 },
- 	{ .compatible = "qcom,rpmcc-msm8953", .data = &rpm_clk_msm8953 },
- 	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
+Otto Pflüger (4):
+  dt-bindings: clock: Add MSM8917 global clock controller
+  clk: qcom: Add global clock controller driver for MSM8917
+  dt-bindings: clock: qcom,rpmcc: Add MSM8917
+  clk: qcom: smd-rpm: Add clocks for MSM8917
+
+ .../bindings/clock/qcom,gcc-msm8909.yaml      |   13 +-
+ .../devicetree/bindings/clock/qcom,rpmcc.yaml |    2 +
+ drivers/clk/qcom/Kconfig                      |   10 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/clk-smd-rpm.c                |   35 +
+ drivers/clk/qcom/gcc-msm8917.c                | 3303 +++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-msm8917.h  |  190 +
+ 7 files changed, 3550 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/clk/qcom/gcc-msm8917.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-msm8917.h
+
 -- 
 2.39.1
