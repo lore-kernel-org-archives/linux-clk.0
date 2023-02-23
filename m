@@ -2,112 +2,101 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 012F2C64ED6
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 04:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E61DC61DA4
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 05:52:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233357AbjBWEX2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Feb 2023 23:23:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36462 "EHLO
+        id S233224AbjBWFwc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Feb 2023 00:52:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233250AbjBWEWm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 23:22:42 -0500
-Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3D9848E0F
-        for <linux-clk@vger.kernel.org>; Wed, 22 Feb 2023 20:21:36 -0800 (PST)
-Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-1720600a5f0so13045900fac.11
-        for <linux-clk@vger.kernel.org>; Wed, 22 Feb 2023 20:21:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TGmInqCeyC0bjSGfaYON7cbBzHggVKyExnI0LnVwOZk=;
-        b=hNnuU66qswnxXZ0Idb5rbGFkzOFnNXYz5+rS69cLgSK2qhJnyOxCAb+a/K1ng7Ery+
-         Oiu7dlI07t0q88hPYgDmmCeSi8kWHhnKuxbnNGL+PfJKxIq7ZUREcEFotPM1VcW16BBQ
-         hJwbTgqdciscJUSHy3C4XS02LrgFopp3ZWV/LkqHleC1tfZ8XaWAaMu8C5v+0lpxJCUz
-         ea51+3BDeU2E+s2O/BSvcZ1xFqRIAcT0xI4H48+h+3oRFt3xlaLuk2FGpgRGm+qI2CD3
-         hYtNsp2YezZy9AGbfzSD7OnAAgcjdmZcQoG/73mtSjODuhXxLwWlCIULx3ciz80S4wyR
-         hRRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TGmInqCeyC0bjSGfaYON7cbBzHggVKyExnI0LnVwOZk=;
-        b=L66JkIg1/h/egEIT+A+n/t1GIcB4mD+Ar0mEH1PctX67C8MnTSxvvtqOg9HqPbHML7
-         nxRNUx3ovdTAdF30zvzbKayE5i+86uSAwyBi2n1tQYJL+E/s2oV63zawA2hjSP0B6N2V
-         Y2/8KrQz1t2QRxXlUb7FNmD8s0IpvyWBRcsLBSEs3YVx2YUbf0JpIjwZ4E0XC9sU4ExJ
-         AP46EWNfGj/XsdEFMDwyf3sa834ZfZBm1VVRs6YzxAK5ORG1IbKtzoqX82fWqUvi7VeD
-         izIQewuMb9J9eSwzHhXVwprQ6uvEihD2G86MPlryYI8KH10lXysGH9gYxtjqCYM+FbcP
-         bv0g==
-X-Gm-Message-State: AO0yUKX75c/EBI5iK9yeFGqTxlJ1+zsmFZcjBKd5irPdfvw/YKzv4a95
-        cWzYnla4/DLgNG/EXUfaf15VFw==
-X-Google-Smtp-Source: AK7set+Q+laDbcJvzvJZwI/eLi1W2mIUWl6/M4aafhL5u6VMJfb7rqnt2jDqGrEPu0Bqol5tlCb5pw==
-X-Received: by 2002:a05:6870:64ab:b0:172:5036:1dcc with SMTP id cz43-20020a05687064ab00b0017250361dccmr2606154oab.5.1677126085205;
-        Wed, 22 Feb 2023 20:21:25 -0800 (PST)
-Received: from localhost ([136.49.140.41])
-        by smtp.gmail.com with ESMTPSA id w130-20020aca6288000000b0037832f60518sm1154464oib.14.2023.02.22.20.21.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Feb 2023 20:21:24 -0800 (PST)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     David Virag <virag.david003@gmail.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/6] arm64: dts: exynos: Add CMU_G3D node for Exynos850 SoC
-Date:   Wed, 22 Feb 2023 22:21:33 -0600
-Message-Id: <20230223042133.26551-7-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230223042133.26551-1-semen.protsenko@linaro.org>
-References: <20230223042133.26551-1-semen.protsenko@linaro.org>
+        with ESMTP id S232470AbjBWFwb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2023 00:52:31 -0500
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BACA24A1C4;
+        Wed, 22 Feb 2023 21:52:29 -0800 (PST)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 4F5FA24E1C6;
+        Thu, 23 Feb 2023 13:52:22 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 23 Feb
+ 2023 13:52:22 +0800
+Received: from [192.168.125.82] (113.72.147.165) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 23 Feb
+ 2023 13:52:21 +0800
+Message-ID: <ef44a4c7-9fd9-5f33-a524-a91fb9ff793a@starfivetech.com>
+Date:   Thu, 23 Feb 2023 13:52:20 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v4 10/19] dt-bindings: clock: Add StarFive JH7110
+ always-on clock and reset generator
+Content-Language: en-US
+To:     Conor Dooley <conor@kernel.org>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>, Stephen Boyd <sboyd@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        "Emil Renner Berthing" <emil.renner.berthing@canonical.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20230221024645.127922-1-hal.feng@starfivetech.com>
+ <20230221024645.127922-11-hal.feng@starfivetech.com> <Y/T+3H8A7jrX+I9M@spud>
+From:   Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <Y/T+3H8A7jrX+I9M@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [113.72.147.165]
+X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add missing G3D clock domain to Exynos850 SoC device tree.
+On Tue, 21 Feb 2023 17:26:52 +0000, Conor Dooley wrote:
+> On Tue, Feb 21, 2023 at 10:46:36AM +0800, Hal Feng wrote:
+>> From: Emil Renner Berthing <kernel@esmil.dk>
+>> 
+>> Add bindings for the always-on clock and reset generator (AONCRG) on the
+>> JH7110 RISC-V SoC by StarFive Ltd.
+> 
+>> +  clocks:
+>> +    items:
+>> +      - description: Main Oscillator (24 MHz)
+>> +      - description: RTC Oscillator (32.768 kHz)
+>> +      - description: GMAC0 RMII reference
+>> +      - description: GMAC0 RGMII RX
+>> +      - description: STG AXI/AHB
+>> +      - description: APB Bus
+>> +      - description: GMAC0 GTX
+> 
+> Ditto here, are some of these clocks, especially gmac0, also optional?
 
-Reviewed-by: Chanho Park <chanho61.park@samsung.com>
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
-Changes in v2:
-  - Rebased on top of most recent soc/for-next tree
-  - Added Chanho Park Reviewed-by tag
+The clock "rtc_osc" and "gmac0_rmii_refin" are optional, the other
+clocks are required. I will modify accordingly. Thanks.
 
- arch/arm64/boot/dts/exynos/exynos850.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Best regards,
+Hal
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-index a38fe5129937..d67e98120313 100644
---- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-@@ -245,6 +245,15 @@ cmu_peri: clock-controller@10030000 {
- 				      "dout_peri_uart", "dout_peri_ip";
- 		};
- 
-+		cmu_g3d: clock-controller@11400000 {
-+			compatible = "samsung,exynos850-cmu-g3d";
-+			reg = <0x11400000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&oscclk>, <&cmu_top CLK_DOUT_G3D_SWITCH>;
-+			clock-names = "oscclk", "dout_g3d_switch";
-+		};
-+
- 		cmu_apm: clock-controller@11800000 {
- 			compatible = "samsung,exynos850-cmu-apm";
- 			reg = <0x11800000 0x8000>;
--- 
-2.39.1
+> 
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: osc
+>> +      - const: rtc_osc
+>> +      - const: gmac0_rmii_refin
+>> +      - const: gmac0_rgmii_rxin
+>> +      - const: stg_axiahb
+>> +      - const: apb_bus
+>> +      - const: gmac0_gtxclk
 
