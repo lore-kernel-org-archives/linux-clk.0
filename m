@@ -2,197 +2,93 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB160C636D6
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 10:31:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA44C636D6
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 16:24:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233363AbjBWKbA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Feb 2023 05:31:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37818 "EHLO
+        id S233421AbjBWQYg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Feb 2023 11:24:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233132AbjBWKbA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2023 05:31:00 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFE9451FA0
-        for <linux-clk@vger.kernel.org>; Thu, 23 Feb 2023 02:30:29 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id t13so10210080wrv.13
-        for <linux-clk@vger.kernel.org>; Thu, 23 Feb 2023 02:30:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=3/d1V97xfn1urp1yFSAFHB4bA8otMHdcMdq0yddMNFI=;
-        b=hcoIV/z8lyL+ysVNVs6Y6+yJCu00ToOB1RctbNGmzn6TVnVvxY7XobmvDx0cUkA2xQ
-         xfM4zr3AWE+b2Gtowo9aLR8xr2kvlYJfKxP9Itoq39971OTw4jDjtvXuJIaW6qUeofV5
-         EQWm9Hn8VbRrY4wbZjRT+ENuVYy9Veq5SwjN8cFj2tCHTSpNKWogtut2gHDMrwDsU5cZ
-         ZKqDIGyOhckxOd0wsydnj2kidFvup2vNd5mqGZHNZgcLygtgv2+azbCyRnBMohLbAGHA
-         LQxmw22JVxiWV5822JzZZs1rVzyf1J1uIGehZSU3KFmWDRLsvMPcd89e+agLiMmUJ+0h
-         ah3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3/d1V97xfn1urp1yFSAFHB4bA8otMHdcMdq0yddMNFI=;
-        b=qezLgHIZRUTOxy+wxQ7HBwgRz4fE8HaBU+LEc8wEFlEqPMY7qB5/oIOBJrrZbHyyO/
-         PJw0032gtwxO5zyTvWoQsODLycIjw2/RkxcNia/0ZGLfl89iYv6eY4RP/sTX57ktcELS
-         GsnETLsBvxXKbNB/k/KiRqnUP/eJjcrLeYW7ZzzmW/HNMobMf0HST2PMteBQ8dRIw3Ck
-         vn2xmBTnZmf2u5JgrBEeXtgsApsl7rwxyr3TDrdk7FuZqBjkGjht+G8waCYI9F/JdMz/
-         z8FArP8lGN/iqaCnLNYFAdyQ0t8nPEbBNYiWz1AXdbPWIKsUG4tE+5ZVCHfb8YQ4Wx5c
-         NK9g==
-X-Gm-Message-State: AO0yUKU5zId9xB6uqN4fk8PP2X8BEsTnQBr+oAfcyisMAMibUgAqFYhV
-        PVdnhsaf/+WDiay6Z7VC+s7voQ==
-X-Google-Smtp-Source: AK7set/AJ/sQ293L1C/QDJKZNG/kThSW0HregqvGRPQyAGhtGjSWliE7pQlcCpSYC0riIpZo4sB8jQ==
-X-Received: by 2002:a5d:6190:0:b0:2c7:a0b:e8d2 with SMTP id j16-20020a5d6190000000b002c70a0be8d2mr5185559wru.19.1677148226407;
-        Thu, 23 Feb 2023 02:30:26 -0800 (PST)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id t6-20020a5d4606000000b002c55306f6edsm13119455wrq.54.2023.02.23.02.30.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Feb 2023 02:30:25 -0800 (PST)
-References: <20230223062723.4770-1-yu.tu@amlogic.com>
-User-agent: mu4e 1.8.13; emacs 28.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     kelvin.zhang@amlogic.com, qi.duan@amlogic.com
-Subject: Re: [PATCH] clk: meson: vid-pll-div: added meson_vid_pll_div_ops
- support to enable vid_pll_div to meet clock setting requirements,
- especially for late chip
-Date:   Thu, 23 Feb 2023 11:11:29 +0100
-In-reply-to: <20230223062723.4770-1-yu.tu@amlogic.com>
-Message-ID: <1jv8jsoerm.fsf@starbuckisacylon.baylibre.com>
+        with ESMTP id S233240AbjBWQYg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2023 11:24:36 -0500
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4774B18155
+        for <linux-clk@vger.kernel.org>; Thu, 23 Feb 2023 08:24:35 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id E7D4E8573B;
+        Thu, 23 Feb 2023 17:24:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1677169473;
+        bh=qHoCgY1CenvXwJXW4zQHN5F30ppdmCRXgdneYtQV+Vo=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Qjt7pScawpQg1/YjTnvUzRuoDrxAasAMC68vh1mINBNQXCnx/ZngVWc5t0X/QkjpL
+         1BG0shXjPrZMJCar68xypdx8pJ+mL5+3p/Z4WXjw+iHVbVku4Hkimit344tRpsB29r
+         94Lfn2jNIBUXC7/8AXSBb3lICzqzWpfCAugbyP1z5BABrpZG7Mt8rzeo4Gr+EXxb3h
+         DcEP0UpaEqFMcjmUXhPFAO26YV56s4E+yNX8uyi05Gl5dfUEj/F8mMKSnhUV7RYb8c
+         dvHsAOEUwC5AOWAm52of/c+I+tt1xmOQ7kOvAsoDvGzfN/0s28OCv+lqeKL77tsm8X
+         0wNbc0SLchBsg==
+Message-ID: <9aa7d898-d3ba-2018-7f88-d8978e0e52a1@denx.de>
+Date:   Thu, 23 Feb 2023 17:24:32 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v3 6/6] arm64: dts: imx8mp: Add analog audio output on
+ i.MX8MP EVK
+Content-Language: en-US
+To:     Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc:     linux-clk@vger.kernel.org, Abel Vesa <abel.vesa@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
+References: <20220625013235.710346-1-marex@denx.de>
+ <20220625013235.710346-6-marex@denx.de> <20230222182252.2ad6d82b@booty>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <20230222182252.2ad6d82b@booty>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 2/22/23 18:22, Luca Ceresoli wrote:
+> Hello Marek,
 
-On Thu 23 Feb 2023 at 14:27, Yu Tu <yu.tu@amlogic.com> wrote:
+Hi,
 
-Title is way too long, 75 char max
+> On Sat, 25 Jun 2022 03:32:35 +0200
+> Marek Vasut <marex@denx.de> wrote:
+> 
+>> Enable SAI3 on i.MX8MP EVK, add WM8960 codec binding and regulator.
+>> This is all that is needed to get analog audio output operational
+>> on i.MX8MP EVK.
+>>
+>> Signed-off-by: Marek Vasut <marex@denx.de>
+>> Cc: Abel Vesa <abel.vesa@nxp.com>
+>> Cc: Fabio Estevam <festevam@gmail.com>
+>> Cc: Jacky Bai <ping.bai@nxp.com>
+>> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>> Cc: Lucas Stach <l.stach@pengutronix.de>
+>> Cc: Michael Turquette <mturquette@baylibre.com>
+>> Cc: Shawn Guo <shawnguo@kernel.org>
+>> Cc: Stephen Boyd <sboyd@kernel.org>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-clk@vger.kernel.org
+>> Cc: linux-imx@nxp.com
+> 
+> I'm sending in reply to this e-mail the device tree patch I have used
+> for my audio testing on the MSC SM2-MB-EP1 board. Feel free to add it to
+> your series if you want, it obviously depends on it.
 
-> The previous chip only provides "ro_ops" for the vid_pll_div clock,
-
-The driver does. Other chip could use RW ops I suppose.
-
-> which is not satisfied with the operation requirements of the later
-> chip for this clock, so the ops that can be set for the clock is added.
->
-
-What requirements ? What "late" chip ? all this is quite vague.
-
-> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
-> ---
->  drivers/clk/meson/vid-pll-div.c | 59 +++++++++++++++++++++++++++++++++
->  drivers/clk/meson/vid-pll-div.h |  1 +
->  2 files changed, 60 insertions(+)
->
-> diff --git a/drivers/clk/meson/vid-pll-div.c b/drivers/clk/meson/vid-pll-div.c
-> index daff235bc763..e75fa6f75efe 100644
-> --- a/drivers/clk/meson/vid-pll-div.c
-> +++ b/drivers/clk/meson/vid-pll-div.c
-> @@ -89,6 +89,65 @@ static unsigned long meson_vid_pll_div_recalc_rate(struct clk_hw *hw,
->  	return DIV_ROUND_UP_ULL(parent_rate * div->multiplier, div->divider);
->  }
->  
-> +static int meson_vid_pll_div_determine_rate(struct clk_hw *hw,
-> +					    struct clk_rate_request *req)
-> +{
-> +	unsigned long best = 0, now = 0;
-> +	unsigned int i, best_i = 0;
-> +
-> +	for (i = 0 ; i < ARRAY_SIZE(vid_pll_div_table) ; ++i) {
-
-It would be nice to actually describe how this vid pll work so we can
-stop using precompute "magic" values and actually use the IP to its full
-capacity.
-
-> +		now = DIV_ROUND_CLOSEST_ULL(req->best_parent_rate *
-
-This effectively stops rate propagation. That's not how determine_rate()
-call back should work. Have a look a clk-divider.c and how it calls
-clk_hw_round_rate().
-
-> +					    vid_pll_div_table[i].multiplier,
-> +					    vid_pll_div_table[i].divider);
-> +		if (req->rate == now) {
-> +			return 0;
-> +		} else if (abs(now - req->rate) < abs(best - req->rate)) {
-> +			best = now;
-> +			best_i = i;
-> +		}
-> +	}
-> +
-> +	if (best_i < ARRAY_SIZE(vid_pll_div_table))
-> +		req->rate = DIV_ROUND_CLOSEST_ULL(req->best_parent_rate *
-> +						  vid_pll_div_table[best_i].multiplier,
-> +						  vid_pll_div_table[best_i].divider);
-> +	else
-
-What is the point of this 'if' clause ?
-It looks like the 'else' part is dead code. 
-
-> +		req->rate = meson_vid_pll_div_recalc_rate(hw, req->best_parent_rate);
-> +
-> +	return 0;
-> +}
-> +
-> +static int meson_vid_pll_div_set_rate(struct clk_hw *hw, unsigned long rate,
-> +				      unsigned long parent_rate)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_vid_pll_div_data *pll_div = meson_vid_pll_div_data(clk);
-> +	int i;
-> +
-> +	for (i = 0 ; i < ARRAY_SIZE(vid_pll_div_table) ; ++i) {
-> +		if (DIV_ROUND_CLOSEST_ULL(parent_rate * vid_pll_div_table[i].multiplier,
-> +					  vid_pll_div_table[i].divider) == rate) {
-
-This assumes the set_rate() is going to have a perfect match and
-otherwise fail. You should not assume that. Have a look at clk-divider.c
-for examples.
-
-> +			meson_parm_write(clk->map, &pll_div->val, vid_pll_div_table[i].shift_val);
-> +			meson_parm_write(clk->map, &pll_div->sel, vid_pll_div_table[i].shift_sel);
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (i >= ARRAY_SIZE(vid_pll_div_table)) {
-> +		pr_debug("%s: Invalid rate value for vid_pll_div\n", __func__);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +const struct clk_ops meson_vid_pll_div_ops = {
-> +	.recalc_rate	= meson_vid_pll_div_recalc_rate,
-> +	.determine_rate	= meson_vid_pll_div_determine_rate,
-> +	.set_rate	= meson_vid_pll_div_set_rate,
-> +};
-> +EXPORT_SYMBOL_GPL(meson_vid_pll_div_ops);
-> +
->  const struct clk_ops meson_vid_pll_div_ro_ops = {
->  	.recalc_rate	= meson_vid_pll_div_recalc_rate,
->  };
-> diff --git a/drivers/clk/meson/vid-pll-div.h b/drivers/clk/meson/vid-pll-div.h
-> index c0128e33ccf9..3ab729b85fde 100644
-> --- a/drivers/clk/meson/vid-pll-div.h
-> +++ b/drivers/clk/meson/vid-pll-div.h
-> @@ -16,5 +16,6 @@ struct meson_vid_pll_div_data {
->  };
->  
->  extern const struct clk_ops meson_vid_pll_div_ro_ops;
-> +extern const struct clk_ops meson_vid_pll_div_ops;
->  
->  #endif /* __MESON_VID_PLL_DIV_H */
->
-> base-commit: 8a9fbf00acfeeeaac8efab8091bb464bd71b70ea
-
+Lemme just mark this email locally and start with the MX8MP EVK . If the 
+audio patches ever get upstream, then this one can be easily 
+resubmitted. Does that work ?
