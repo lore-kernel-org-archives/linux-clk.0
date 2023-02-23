@@ -2,97 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01414C61DA4
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 02:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41374C61DA4
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 02:16:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232814AbjBWCLD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Feb 2023 21:11:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42040 "EHLO
+        id S232565AbjBWCQz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Feb 2023 21:16:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232540AbjBWCLC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 21:11:02 -0500
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A37F836FD6
-        for <linux-clk@vger.kernel.org>; Wed, 22 Feb 2023 18:11:01 -0800 (PST)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-536c02eea4dso152191847b3.4
-        for <linux-clk@vger.kernel.org>; Wed, 22 Feb 2023 18:11:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=agmt99ERP4Lf0P7eQYv1KVKMj6iSmC6cQgnmN8jVaT8=;
-        b=WZvGVnb+n+YRSIPY+/CTmrPz91UCo3sqyZ/dznec+MC+i4V9cCWSWBlKW4EgoThebN
-         mW0X9hiTrUKd2Fl+aU0bKGMtGGV6/B97QZ3tL8iPlDkhLGoSVuEceCK6YWTGMVUY7IjD
-         MSK4XIDFJyizrXC5JbI2ZfvodH4EuwHJIwUn2RvCpgwTqRNz7oFc3f9mtaV1wfGYP6kS
-         tixxSoP9J7YsihVBzmRJ7y/pHmmjJf7LZNyqkYPoaJHLOb1Iu+lYdc5+PqJcE0Gggtdr
-         JgQ/816rR88V4fv/WPmnt+dfyAICVmDoRoDxZIAQFXRZVjjfz+WJwOpjx48Eiu6H9XDT
-         c2+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=agmt99ERP4Lf0P7eQYv1KVKMj6iSmC6cQgnmN8jVaT8=;
-        b=waAIQo+t5L+YHWHz63Ell2hNiFKqH14TAWFmKlgDLBVn+tRdp8W9x2VXxpUOygFWm2
-         F2rwjQlomct2UpXvmzNMMVkpw7Z8vOEGSeq+aRUr5uyrWmAT3fHApwQvzjbP4GrwgqCr
-         jMW5ZNQhXLx2SIHI6nZOGmMVgRs/9R9oHAQuoqPqlCdVpHpePL5IEVkRWrwUHrupy4Ab
-         8LwYsCHzowVFfP3A4bdUjg7UZUgj4ezm9dU7QEUNYJOtpQyimgdKbUiajZNiCxYXl5Sl
-         dDOfSAr7WCLC8E6oVfEIAvFFhv1IwFhoDihf+jO/Q+LriH0Kk02d22YVpVo9iBGvpNF2
-         SE8A==
-X-Gm-Message-State: AO0yUKV+sQpEXWRLJpPWgUVNyn3ZGcbnx3qFSdAd+sU2gnJloHEn07UV
-        Lz2tji/uKAUtj6dQ7pHrbzqL7khIin/QnNAufhcYqp+VO+ljWRIg
-X-Google-Smtp-Source: AK7set9EP5ZbyAm7ORU/z9pS5I6CjY2Um0I5400dATxt8qpJFvve4/pI0e0j9SmFqqpSXv14xyD8Sh6ke7po12y3ISQ=
-X-Received: by 2002:a25:f203:0:b0:9f8:119a:6f9a with SMTP id
- i3-20020a25f203000000b009f8119a6f9amr1055636ybe.10.1677118260856; Wed, 22 Feb
- 2023 18:11:00 -0800 (PST)
+        with ESMTP id S231952AbjBWCQy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 21:16:54 -0500
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E5F0E39CC1;
+        Wed, 22 Feb 2023 18:16:52 -0800 (PST)
+Received: from loongson.cn (unknown [10.20.42.35])
+        by gateway (Coremail) with SMTP id _____8DxE0yTzPZja_EDAA--.2445S3;
+        Thu, 23 Feb 2023 10:16:51 +0800 (CST)
+Received: from [10.20.42.35] (unknown [10.20.42.35])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8Ax97yRzPZjYl45AA--.38704S3;
+        Thu, 23 Feb 2023 10:16:49 +0800 (CST)
+Subject: Re: [PATCH v10 2/4] clk: clk-loongson2: add clock controller driver
+ support
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Jianmin Lv <lvjianmin@loongson.cn>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, liupeibao@loongson.cn,
+        loongarch@lists.linux.dev, wanghongliang@loongson.cn
+References: <20221129034157.15036-1-zhuyinbo@loongson.cn>
+ <20221129034157.15036-2-zhuyinbo@loongson.cn>
+ <31c690a347f858a477bbba9c838984ed.sboyd@kernel.org>
+ <4b5fd886-57ce-01ef-8224-432898b7fb1c@loongson.cn>
+ <8332a1cf44b01f06bdd5db9dc5d7f387.sboyd@kernel.org>
+ <01ee3dc6-a868-fd2b-93aa-11e6bdfcc9df@loongson.cn>
+ <9e8952c9415973dc7276185e3cdf5ae7.sboyd@kernel.org>
+ <d92223a0-6d4c-33ea-1473-3d40bdd0ad9e@loongson.cn>
+ <834da7dc-bb5d-3427-43e5-938e40a2d180@loongson.cn>
+ <6c497d2d70d215a86be178fc08546f4d.sboyd@kernel.org>
+From:   zhuyinbo <zhuyinbo@loongson.cn>
+Message-ID: <d2519ebc-8f71-1cf0-9ec8-a65a7f094853@loongson.cn>
+Date:   Thu, 23 Feb 2023 10:16:49 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-References: <20230223013847.1218900-1-sboyd@kernel.org>
-In-Reply-To: <20230223013847.1218900-1-sboyd@kernel.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Thu, 23 Feb 2023 04:10:50 +0200
-Message-ID: <CAA8EJppgarZnGHEAfNwi768B_wz1jF0WEbTE2W1sWcs2nYRFPg@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: apcs-msm8986: Include bitfield.h for FIELD_PREP
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <6c497d2d70d215a86be178fc08546f4d.sboyd@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID: AQAAf8Ax97yRzPZjYl45AA--.38704S3
+X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjvJXoW7Wr45Wry3Wr1kCryrCF1UAwb_yoW8JrW8pr
+        WrGay2yF4jqr4jvrsF9anrZFWjyw1xJF1j9w1rJw1Dua4DCrySkr4DWFs5uFZ8Jrs8Gw40
+        vr10ka18uFyUZrJanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        bDkFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28E
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
+        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY
+        6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrV
+        C2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
+        7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14
+        v26r126r1DMxAIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_WwCFx2IqxVCFs4IE
+        7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I
+        0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAI
+        cVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcV
+        CF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8FAp5UUUUU==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 23 Feb 2023 at 03:38, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Otherwise some configurations fail.
->
-> Fixes: 027726365906 ("clk: qcom: add the driver for the MSM8996 APCS clocks")
-> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+在 2023/2/23 上午5:00, Stephen Boyd 写道:
+> Quoting zhuyinbo (2023-02-21 21:10:14)
+>>>>> yes, the use of dts doesn't require the use of CLK_OF_DECLARE and can
+>>>>> use platform_driver_register
+>>>>>
+>>>>> but my drvier not use platform_driver_register to register clk and use
+>>>>> CLK_OF_DECLARE to match of_clk_init.
+>>>> of_clk_init() is there to register clks that are needed for early init,
+>>>> i.e. the clockevent/clocksource or the root interrupt controller
+>>>> (irqchip). Otherwise, it isn't necessary to register clks via
+>>>> of_clk_init().
+>>> okay, I got it.
+>> and,  the time driver  get clock by CCF that ask loongson2 clock driver
+>> use CLK_OF_DECLARE
+>>
+>> to match of_clk_init.   because  the timer_probe  is very early and the
+>> timer driver was use TIMER_OF_DECLARE
+>>
+>> to match time_probe.
+>>
+> If you have a time driver that gets clks, register those early with
+> CLK_OF_DECLARE_DRIVER() and then have a platform driver for the rest of
+> the clk tree that registers clks later.
 
-> ---
->  drivers/clk/qcom/apcs-msm8996.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/clk/qcom/apcs-msm8996.c b/drivers/clk/qcom/apcs-msm8996.c
-> index 7ec4022c5b43..3e91e9e6da74 100644
-> --- a/drivers/clk/qcom/apcs-msm8996.c
-> +++ b/drivers/clk/qcom/apcs-msm8996.c
-> @@ -7,6 +7,7 @@
->   */
->
->  #include <linux/bits.h>
-> +#include <linux/bitfield.h>
->  #include <linux/clk-provider.h>
->  #include <linux/delay.h>
->  #include <linux/module.h>
-> --
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-> https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
->
+okay, I got it.  and this series patch I will use platform driver. 
+later, if the loongson2 time driver use the
 
+CLK_OF_DECLARE style I will make a alone time clk driver for it that 
+use  CLK_OF_DECLARE_DRIVER()
 
--- 
-With best wishes
-Dmitry
