@@ -2,139 +2,145 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 939CEC61DA4
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 06:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C104AC6379F
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 06:48:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233328AbjBWGbp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Feb 2023 01:31:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57122 "EHLO
+        id S233326AbjBWGsW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Feb 2023 01:48:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232906AbjBWGbp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2023 01:31:45 -0500
-Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1BFA4A1D7;
-        Wed, 22 Feb 2023 22:30:57 -0800 (PST)
-Received: from droid06.amlogic.com (10.18.11.248) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.13; Thu, 23 Feb 2023
- 14:30:55 +0800
-From:   Yu Tu <yu.tu@amlogic.com>
-To:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Neil Armstrong" <neil.armstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>
-CC:     <kelvin.zhang@amlogic.com>, <qi.duan@amlogic.com>,
-        Yu Tu <yu.tu@amlogic.com>
-Subject: [PATCH] clk: meson: vid-pll-div: added meson_vid_pll_div_ops support to enable vid_pll_div to meet clock setting requirements, especially for late chip
-Date:   Thu, 23 Feb 2023 14:27:23 +0800
-Message-ID: <20230223062723.4770-1-yu.tu@amlogic.com>
-X-Mailer: git-send-email 2.33.1
+        with ESMTP id S233169AbjBWGsU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2023 01:48:20 -0500
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF6681C7EB;
+        Wed, 22 Feb 2023 22:48:05 -0800 (PST)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id B4B4B24DCBE;
+        Thu, 23 Feb 2023 14:48:04 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 23 Feb
+ 2023 14:48:04 +0800
+Received: from [192.168.125.82] (113.72.147.165) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 23 Feb
+ 2023 14:48:03 +0800
+Message-ID: <e0d8f9ba-5bf4-d7dd-5110-20d4196556f9@starfivetech.com>
+Date:   Thu, 23 Feb 2023 14:48:02 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.18.11.248]
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v4 13/19] reset: starfive: Add StarFive JH7110 reset
+ driver
+Content-Language: en-US
+To:     Conor Dooley <conor@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>, Stephen Boyd <sboyd@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20230221024645.127922-1-hal.feng@starfivetech.com>
+ <20230221024645.127922-14-hal.feng@starfivetech.com>
+ <CAJM55Z_O9K=sCRXga9pMOXk9YjXc1v_V0e5S-8xN9Mi8gvHzvg@mail.gmail.com>
+ <Y/TygwbxyuhbDooX@spud>
+From:   Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <Y/TygwbxyuhbDooX@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [113.72.147.165]
+X-ClientProxiedBy: EXCAS061.cuchost.com (172.16.6.21) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The previous chip only provides "ro_ops" for the vid_pll_div clock,
-which is not satisfied with the operation requirements of the later
-chip for this clock, so the ops that can be set for the clock is added.
+On Tue, 21 Feb 2023 16:34:11 +0000, Conor Dooley wrote:
+> On Tue, Feb 21, 2023 at 04:33:09PM +0100, Emil Renner Berthing wrote:
+>> On Tue, 21 Feb 2023 at 03:47, Hal Feng <hal.feng@starfivetech.com> wrote:
+>> >
+>> > Add auxiliary driver to support StarFive JH7110 system
+>> > and always-on resets.
+>> >
+>> > Reported-by: kernel test robot <lkp@intel.com>
+> 
+> Drop the reported-by here too please Hal.
 
-Signed-off-by: Yu Tu <yu.tu@amlogic.com>
----
- drivers/clk/meson/vid-pll-div.c | 59 +++++++++++++++++++++++++++++++++
- drivers/clk/meson/vid-pll-div.h |  1 +
- 2 files changed, 60 insertions(+)
+OK.
 
-diff --git a/drivers/clk/meson/vid-pll-div.c b/drivers/clk/meson/vid-pll-div.c
-index daff235bc763..e75fa6f75efe 100644
---- a/drivers/clk/meson/vid-pll-div.c
-+++ b/drivers/clk/meson/vid-pll-div.c
-@@ -89,6 +89,65 @@ static unsigned long meson_vid_pll_div_recalc_rate(struct clk_hw *hw,
- 	return DIV_ROUND_UP_ULL(parent_rate * div->multiplier, div->divider);
- }
- 
-+static int meson_vid_pll_div_determine_rate(struct clk_hw *hw,
-+					    struct clk_rate_request *req)
-+{
-+	unsigned long best = 0, now = 0;
-+	unsigned int i, best_i = 0;
-+
-+	for (i = 0 ; i < ARRAY_SIZE(vid_pll_div_table) ; ++i) {
-+		now = DIV_ROUND_CLOSEST_ULL(req->best_parent_rate *
-+					    vid_pll_div_table[i].multiplier,
-+					    vid_pll_div_table[i].divider);
-+		if (req->rate == now) {
-+			return 0;
-+		} else if (abs(now - req->rate) < abs(best - req->rate)) {
-+			best = now;
-+			best_i = i;
-+		}
-+	}
-+
-+	if (best_i < ARRAY_SIZE(vid_pll_div_table))
-+		req->rate = DIV_ROUND_CLOSEST_ULL(req->best_parent_rate *
-+						  vid_pll_div_table[best_i].multiplier,
-+						  vid_pll_div_table[best_i].divider);
-+	else
-+		req->rate = meson_vid_pll_div_recalc_rate(hw, req->best_parent_rate);
-+
-+	return 0;
-+}
-+
-+static int meson_vid_pll_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+				      unsigned long parent_rate)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_vid_pll_div_data *pll_div = meson_vid_pll_div_data(clk);
-+	int i;
-+
-+	for (i = 0 ; i < ARRAY_SIZE(vid_pll_div_table) ; ++i) {
-+		if (DIV_ROUND_CLOSEST_ULL(parent_rate * vid_pll_div_table[i].multiplier,
-+					  vid_pll_div_table[i].divider) == rate) {
-+			meson_parm_write(clk->map, &pll_div->val, vid_pll_div_table[i].shift_val);
-+			meson_parm_write(clk->map, &pll_div->sel, vid_pll_div_table[i].shift_sel);
-+			break;
-+		}
-+	}
-+
-+	if (i >= ARRAY_SIZE(vid_pll_div_table)) {
-+		pr_debug("%s: Invalid rate value for vid_pll_div\n", __func__);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+const struct clk_ops meson_vid_pll_div_ops = {
-+	.recalc_rate	= meson_vid_pll_div_recalc_rate,
-+	.determine_rate	= meson_vid_pll_div_determine_rate,
-+	.set_rate	= meson_vid_pll_div_set_rate,
+> 
+>> > Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+> 
+>> > +static int jh7110_reset_probe(struct auxiliary_device *adev,
+>> > +                             const struct auxiliary_device_id *id)
+>> > +{
+>> > +       struct reset_info *info = (struct reset_info *)(id->driver_data);
+>> > +       void __iomem **base = (void __iomem **)dev_get_drvdata(adev->dev.parent);
+>> 
+>> Hi Hal,
+>> 
+>> I saw the kernel test robot complain about this, but I still wonder if
+>> the extra level of indirection is really needed. Isn't it enough to
+>> just add the explicit casts, so
+>> 
+>> dev_set_drvdata(priv->dev, (void *)priv->base);
+>> 
+>> in the clock drivers and here just
+>> 
+>> void __iomem *base = (void __iomem *)dev_get_drvdata(adev->dev.parent);
+> 
+> I *think* if you do that, sparse will complain that you cast away the
+> __iomem. The complaint is something like "cast removes address space
+> qualifier from expression".
+> 
+> The other option is, rather than set the base as the drvdata, just pass
+> the whole priv struct. That's what I did for mpfs at least & I thought I
+> had suggested it on v3, but must not have.
+> It looks prettier than the casting madness at least ;)
+
+I modified this just because we need to use container_of() to get some
+struct in [1].
+
++struct isp_top_crg {
++	struct clk_bulk_data *top_clks;
++	struct reset_control *top_rsts;
++	int top_clks_num;
++	void __iomem *base;
 +};
-+EXPORT_SYMBOL_GPL(meson_vid_pll_div_ops);
-+
- const struct clk_ops meson_vid_pll_div_ro_ops = {
- 	.recalc_rate	= meson_vid_pll_div_recalc_rate,
- };
-diff --git a/drivers/clk/meson/vid-pll-div.h b/drivers/clk/meson/vid-pll-div.h
-index c0128e33ccf9..3ab729b85fde 100644
---- a/drivers/clk/meson/vid-pll-div.h
-+++ b/drivers/clk/meson/vid-pll-div.h
-@@ -16,5 +16,6 @@ struct meson_vid_pll_div_data {
- };
- 
- extern const struct clk_ops meson_vid_pll_div_ro_ops;
-+extern const struct clk_ops meson_vid_pll_div_ops;
- 
- #endif /* __MESON_VID_PLL_DIV_H */
 
-base-commit: 8a9fbf00acfeeeaac8efab8091bb464bd71b70ea
--- 
-2.33.1
++static struct isp_top_crg *top_crg_from(void __iomem **base)
++{
++	return container_of(base, struct isp_top_crg, base);
++}
+
+[1] https://lore.kernel.org/all/20230221083323.302471-7-xingyu.wu@starfivetech.com/
+
+If we pass the whole priv struct, we need to make the priv struct
+public. I think setting the address of "base" as the drvdata is
+enough and easier.
+
+Best regards,
+Hal
+
+> 
+>> > +
+>> > +       if (!info || !base)
+>> > +               return -ENODEV;
+>> > +
+>> > +       return reset_starfive_jh71x0_register(&adev->dev, adev->dev.parent->of_node,
+>> > +                                             *base + info->assert_offset,
+>> > +                                             *base + info->status_offset,
+>> > +                                             NULL,
+>> > +                                             info->nr_resets,
+>> > +                                             NULL);
+>> > +}
 
