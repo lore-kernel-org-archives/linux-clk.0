@@ -2,145 +2,81 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C104AC6379F
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 06:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD054C61DA4
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 07:14:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233326AbjBWGsW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Feb 2023 01:48:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38076 "EHLO
+        id S233278AbjBWHOQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Feb 2023 02:14:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233169AbjBWGsU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2023 01:48:20 -0500
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF6681C7EB;
-        Wed, 22 Feb 2023 22:48:05 -0800 (PST)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id B4B4B24DCBE;
-        Thu, 23 Feb 2023 14:48:04 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 23 Feb
- 2023 14:48:04 +0800
-Received: from [192.168.125.82] (113.72.147.165) by EXMBX172.cuchost.com
- (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 23 Feb
- 2023 14:48:03 +0800
-Message-ID: <e0d8f9ba-5bf4-d7dd-5110-20d4196556f9@starfivetech.com>
-Date:   Thu, 23 Feb 2023 14:48:02 +0800
+        with ESMTP id S229646AbjBWHOP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2023 02:14:15 -0500
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF86B1ADD5;
+        Wed, 22 Feb 2023 23:14:06 -0800 (PST)
+X-UUID: a5a49c82b34911eda06fc9ecc4dadd91-20230223
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=f+jFOqkoYWqSw1+0qeqxfa36Agj3gFvwn7anPXsJz5Q=;
+        b=NSnejEHK+VCv84h5IxK3Fb4UvsDXB8MNqgX0YW2dLd1RxLGi1mpegpbk6fkGEbWOD1nNPfmBF9kiOqJFE8IBE/bBWWEaE1u9FEoJQAfef6vUb1DjmwL6tLQbmeYrfkyN3fd/JlWnXRvrf6RkCDrBxZREgn/+nKPyHN7je+I50QY=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.20,REQID:691e27ed-de1f-4c82-aa09-d8c3c9df7311,IP:0,U
+        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+        release,TS:0
+X-CID-META: VersionHash:25b5999,CLOUDID:7d57e4f3-ddba-41c3-91d9-10eeade8eac7,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0
+X-CID-BVR: 1,FCT|NGT
+X-UUID: a5a49c82b34911eda06fc9ecc4dadd91-20230223
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1359225464; Thu, 23 Feb 2023 15:14:01 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.792.15; Thu, 23 Feb 2023 15:13:59 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.792.15 via Frontend Transport; Thu, 23 Feb 2023 15:13:59 +0800
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     <angelogioacchino.delregno@collabora.com>
+CC:     <chen.zhong@mediatek.com>, <chun-jie.chen@mediatek.com>,
+        <daniel@makrotopia.org>, <edward-jw.yang@mediatek.com>,
+        <fparent@baylibre.com>, <granquet@baylibre.com>,
+        <johnson.wang@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
+        <miles.chen@mediatek.com>, <msp@baylibre.com>,
+        <mturquette@baylibre.com>, <nfraprado@collabora.com>,
+        <pablo.sun@mediatek.com>, <rex-bc.chen@mediatek.com>,
+        <sam.shih@mediatek.com>, <sboyd@kernel.org>,
+        <sean.wang@mediatek.com>, <wenst@chromium.org>,
+        <yangyingliang@huawei.com>, <zhaojh329@gmail.com>
+Subject: Re: [PATCH v5 49/54] clk: mediatek: Add MODULE_DEVICE_TABLE() where appropriate
+Date:   Thu, 23 Feb 2023 15:13:59 +0800
+Message-ID: <20230223071359.14962-1-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20230222092543.19187-50-angelogioacchino.delregno@collabora.com>
+References: <20230222092543.19187-50-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v4 13/19] reset: starfive: Add StarFive JH7110 reset
- driver
-Content-Language: en-US
-To:     Conor Dooley <conor@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>, Stephen Boyd <sboyd@kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20230221024645.127922-1-hal.feng@starfivetech.com>
- <20230221024645.127922-14-hal.feng@starfivetech.com>
- <CAJM55Z_O9K=sCRXga9pMOXk9YjXc1v_V0e5S-8xN9Mi8gvHzvg@mail.gmail.com>
- <Y/TygwbxyuhbDooX@spud>
-From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <Y/TygwbxyuhbDooX@spud>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [113.72.147.165]
-X-ClientProxiedBy: EXCAS061.cuchost.com (172.16.6.21) To EXMBX172.cuchost.com
- (172.16.6.92)
-X-YovoleRuleAgent: yovoleflag
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 21 Feb 2023 16:34:11 +0000, Conor Dooley wrote:
-> On Tue, Feb 21, 2023 at 04:33:09PM +0100, Emil Renner Berthing wrote:
->> On Tue, 21 Feb 2023 at 03:47, Hal Feng <hal.feng@starfivetech.com> wrote:
->> >
->> > Add auxiliary driver to support StarFive JH7110 system
->> > and always-on resets.
->> >
->> > Reported-by: kernel test robot <lkp@intel.com>
+> Add a MODULE_DEVICE_TABLE() on all clocks that can be built as modules
+> to allow auto-load at boot.
 > 
-> Drop the reported-by here too please Hal.
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> Tested-by: Miles Chen <miles.chen@mediatek.com>
+>
 
-OK.
+update
 
-> 
->> > Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
-> 
->> > +static int jh7110_reset_probe(struct auxiliary_device *adev,
->> > +                             const struct auxiliary_device_id *id)
->> > +{
->> > +       struct reset_info *info = (struct reset_info *)(id->driver_data);
->> > +       void __iomem **base = (void __iomem **)dev_get_drvdata(adev->dev.parent);
->> 
->> Hi Hal,
->> 
->> I saw the kernel test robot complain about this, but I still wonder if
->> the extra level of indirection is really needed. Isn't it enough to
->> just add the explicit casts, so
->> 
->> dev_set_drvdata(priv->dev, (void *)priv->base);
->> 
->> in the clock drivers and here just
->> 
->> void __iomem *base = (void __iomem *)dev_get_drvdata(adev->dev.parent);
-> 
-> I *think* if you do that, sparse will complain that you cast away the
-> __iomem. The complaint is something like "cast removes address space
-> qualifier from expression".
-> 
-> The other option is, rather than set the base as the drvdata, just pass
-> the whole priv struct. That's what I did for mpfs at least & I thought I
-> had suggested it on v3, but must not have.
-> It looks prettier than the casting madness at least ;)
+ARCH=arm64 allmodconfig build pass
 
-I modified this just because we need to use container_of() to get some
-struct in [1].
-
-+struct isp_top_crg {
-+	struct clk_bulk_data *top_clks;
-+	struct reset_control *top_rsts;
-+	int top_clks_num;
-+	void __iomem *base;
-+};
-
-+static struct isp_top_crg *top_crg_from(void __iomem **base)
-+{
-+	return container_of(base, struct isp_top_crg, base);
-+}
-
-[1] https://lore.kernel.org/all/20230221083323.302471-7-xingyu.wu@starfivetech.com/
-
-If we pass the whole priv struct, we need to make the priv struct
-public. I think setting the address of "base" as the drvdata is
-enough and easier.
-
-Best regards,
-Hal
-
-> 
->> > +
->> > +       if (!info || !base)
->> > +               return -ENODEV;
->> > +
->> > +       return reset_starfive_jh71x0_register(&adev->dev, adev->dev.parent->of_node,
->> > +                                             *base + info->assert_offset,
->> > +                                             *base + info->status_offset,
->> > +                                             NULL,
->> > +                                             info->nr_resets,
->> > +                                             NULL);
->> > +}
-
+thanks,
+Miles
