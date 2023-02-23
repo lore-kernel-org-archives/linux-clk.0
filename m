@@ -2,37 +2,38 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF60C636D6
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 17:11:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93008C678D5
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 17:11:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229585AbjBWRLn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Feb 2023 12:11:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60180 "EHLO
+        id S229614AbjBWRLo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Feb 2023 12:11:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229586AbjBWRLm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2023 12:11:42 -0500
+        with ESMTP id S229605AbjBWRLo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2023 12:11:44 -0500
 Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F03DA570B0;
-        Thu, 23 Feb 2023 09:11:33 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EB5457D0A;
+        Thu, 23 Feb 2023 09:11:35 -0800 (PST)
 Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id BFBB0858FB;
-        Thu, 23 Feb 2023 18:11:30 +0100 (CET)
+        by phobos.denx.de (Postfix) with ESMTPSA id 9F886851EB;
+        Thu, 23 Feb 2023 18:11:32 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1677172291;
-        bh=m6MP9CmBZQwunrZW7sTvV5cM9OTNsJ2o1tNv0UfOKLg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hcQm2veTzjKdj9gk6AB5tY4QpY3IDZpetkB5PEdcWYfM+9G9lOaZDVaXbc8QQKSf+
-         mIxnBp7UqfpZ1AoRzjac0Ql8ASxNfySZ4WwOYxwEzakB56vJ06DLCFLBIMsQ0lLb1p
-         fGAIcp6Zm2lcVAVpFnT/iTEV9caCZCjw9mOt8BwB1/J4xpEWqnutSaONJfah++7QM0
-         S52kbwQDw0JobeFRIQ52J1fvUoidMPupRhJauq9gmoX9sp6sj1xiRs1y1RfTVczvAg
-         TWEmKsU/9rgLYZy+ZfSbxnrIoo3oskR9mpEWdhEUVqywT4Y40G5AEpaccnc2Oruzpk
-         1sBc6YC4s3LXg==
+        s=phobos-20191101; t=1677172293;
+        bh=/xDnETqyhk/EEex2/HLJ9Q6u98G7/ACjRKu84IsqDLM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Yk5nIQoe8iklaDLnKZPGiR4i1n7HsFHSG4ovude1ap6EwDh68+O2sj5CfbwSw8h/l
+         /1/H7SjaBmyWlQObR04aHwsXANNBqwxP3jYr2tK0g+E4KEbAiCGm0+eRYRFEk0ulDB
+         3p/jmymm20M/CyT1Xdvm9j5zPO1uyorLI9cUfjz7lWsw4lFDm1X9sb9+psVcq7dYCp
+         wVnW9NrcVHUkXmNULr9L5vJiXot5e9JZphqJ9vrU+R1HsHZ036b8/WOXIeLHIT8WwH
+         SpgTKqPeIjZ+2UwzcW4pOkKD2N4VXsIM4YyvTxnmA0vjxh8MvDOhuF4K280usoKLmL
+         zSnUJcrC8cZOw==
 From:   Marek Vasut <marex@denx.de>
 To:     linux-clk@vger.kernel.org
-Cc:     Marek Vasut <marex@denx.de>, Abel Vesa <abelvesa@kernel.org>,
+Cc:     Marek Vasut <marex@denx.de>, Rob Herring <robh@kernel.org>,
+        Abel Vesa <abelvesa@kernel.org>,
         Fabio Estevam <festevam@gmail.com>,
         Jacky Bai <ping.bai@nxp.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -49,10 +50,12 @@ Cc:     Marek Vasut <marex@denx.de>, Abel Vesa <abelvesa@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 1/5] clk: Introduce devm_clk_hw_register_gate_parent_data()
-Date:   Thu, 23 Feb 2023 18:11:10 +0100
-Message-Id: <20230223171114.59164-1-marex@denx.de>
+Subject: [PATCH v4 3/5] dt-bindings: clock: imx8mp: Add audiomix block control
+Date:   Thu, 23 Feb 2023 18:11:12 +0100
+Message-Id: <20230223171114.59164-3-marex@denx.de>
 X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230223171114.59164-1-marex@denx.de>
+References: <20230223171114.59164-1-marex@denx.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
@@ -61,9 +64,10 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add an API for clock gate that uses parent_data for the parent instead of
-a string parent_name.
+Unlike the other block control IPs in i.MX8M, the audiomix is mostly a
+series of clock gates and muxes. Add DT bindings for this IP.
 
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Marek Vasut <marex@denx.de>
 ---
 Cc: Abel Vesa <abelvesa@kernel.org>
@@ -86,42 +90,105 @@ Cc: devicetree@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-clk@vger.kernel.org
 ---
-V3: New patch
+V2: No change
+V3: - Add missed RB from Rob from V1
+    - Rename audio_ahb to plain ahb
 V4: - Rebase on next 20230223
 ---
- include/linux/clk-provider.h | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ .../bindings/clock/imx8mp-audiomix.yaml       | 84 +++++++++++++++++++
+ 1 file changed, 84 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 842e72a5348fa..92b7c794c6272 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -608,6 +608,25 @@ struct clk *clk_register_gate(struct device *dev, const char *name,
- 	__devm_clk_hw_register_gate((dev), NULL, (name), (parent_name), NULL, \
- 			       NULL, (flags), (reg), (bit_idx),		      \
- 			       (clk_gate_flags), (lock))
+diff --git a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+new file mode 100644
+index 0000000000000..01b4e1e311cef
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+@@ -0,0 +1,84 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/imx8mp-audiomix.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+/**
-+ * devm_clk_hw_register_gate - register a gate clock with the clock framework
-+ * @dev: device that is registering this clock
-+ * @name: name of this clock
-+ * @parent_data: parent clk data
-+ * @flags: framework-specific flags for this clock
-+ * @reg: register address to control gating of this clock
-+ * @bit_idx: which bit in the register controls gating of this clock
-+ * @clk_gate_flags: gate-specific flags for this clock
-+ * @lock: shared register lock for this clock
-+ */
-+#define devm_clk_hw_register_gate_parent_data(dev, name, parent_data, flags,  \
-+					      reg, bit_idx, clk_gate_flags,   \
-+					      lock)			      \
-+	__devm_clk_hw_register_gate((dev), NULL, (name), NULL, NULL,	      \
-+				    (parent_data), (flags), (reg), (bit_idx), \
-+				    (clk_gate_flags), (lock))
++title: NXP i.MX8MP AudioMIX Block Control Binding
 +
- void clk_unregister_gate(struct clk *clk);
- void clk_hw_unregister_gate(struct clk_hw *hw);
- int clk_gate_is_enabled(struct clk_hw *hw);
++maintainers:
++  - Marek Vasut <marex@denx.de>
++
++description: |
++  NXP i.MX8M Plus AudioMIX is dedicated clock muxing and gating IP
++  used to control Audio related clock on the SoC.
++
++properties:
++  compatible:
++    const: fsl,imx8mp-audio-blk-ctrl
++
++  reg:
++    maxItems: 1
++
++  power-domains:
++    maxItems: 1
++
++  power-domain-names:
++    const: audio
++
++  clocks:
++    minItems: 7
++    maxItems: 7
++
++  clock-names:
++    items:
++      - const: ahb
++      - const: sai1
++      - const: sai2
++      - const: sai3
++      - const: sai5
++      - const: sai6
++      - const: sai7
++
++  '#clock-cells':
++    const: 1
++    description:
++      The clock consumer should specify the desired clock by having the clock
++      ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8mp-clock.h
++      for the full list of i.MX8MP IMX8MP_CLK_AUDIOMIX_ clock IDs.
++
++required:
++  - compatible
++  - reg
++  - power-domains
++  - power-domain-names
++  - clocks
++  - clock-names
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  # Clock Control Module node:
++  - |
++    #include <dt-bindings/clock/imx8mp-clock.h>
++
++    clock-controller@30e20000 {
++        #clock-cells = <1>;
++        compatible = "fsl,imx8mp-audio-blk-ctrl";
++        clocks = <&clk IMX8MP_CLK_AUDIO_ROOT>,
++                 <&clk IMX8MP_CLK_SAI1>,
++                 <&clk IMX8MP_CLK_SAI2>,
++                 <&clk IMX8MP_CLK_SAI3>,
++                 <&clk IMX8MP_CLK_SAI5>,
++                 <&clk IMX8MP_CLK_SAI6>,
++                 <&clk IMX8MP_CLK_SAI7>;
++        clock-names = "ahb",
++                      "sai1", "sai2", "sai3",
++                      "sai5", "sai6", "sai7";
++        power-domains = <&pgc_audio>;
++        power-domain-names = "audio";
++        reg = <0x30e20000 0x10000>;
++    };
++
++...
 -- 
 2.39.1
 
