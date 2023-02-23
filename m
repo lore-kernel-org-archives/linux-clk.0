@@ -2,58 +2,43 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D0BC61DA4
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 17:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B32C636D6
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 17:39:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbjBWR3R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Feb 2023 12:29:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47500 "EHLO
+        id S229588AbjBWRj1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Feb 2023 12:39:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229938AbjBWR3M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2023 12:29:12 -0500
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A4CF2C669;
-        Thu, 23 Feb 2023 09:29:04 -0800 (PST)
-Received: by mail-pl1-x629.google.com with SMTP id e9so8838453plh.2;
-        Thu, 23 Feb 2023 09:29:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PqlmwnCysiJ0Lm/Yxgcirbk8z7suOlutmpcz689L3X0=;
-        b=FFNBNuDgQ5y8l30XWClTMTui6/A0bfyGQ8jb2eID96N/iubKQ7yvNRD71sDFMvsmyy
-         gWczjALeZZBeQIbOJJuMe2N0hvwYqO5Zcwf8x4T1mJ3wf9wwf3HR0Z555yyqkJfp8U64
-         KWLovaHeTy3gdv1KoozswjdVWP0ebUneH+013hHUQy+SCP+9mFmFZq1dE8Ga/xiXgHew
-         7ZOYaqwHy2A2g7asNIN6wTC17BqHpBzViEq8PIJ1NTqIWC2jQ0Z3hmv8lyi+Ml5DSeI4
-         oVyLmnUp7HJ4flR0t8vD8/hmLOFxHNJbzPdIoZ0L/j6yw4lr5c7AS3yy25SeSQRsBinr
-         3KXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PqlmwnCysiJ0Lm/Yxgcirbk8z7suOlutmpcz689L3X0=;
-        b=Kn57jdZ5VgwhdOEZvebDu6wg3J6dBIf4LCG1y2uN51D0ymSFnk3SfaQDjdfbc8gcn/
-         sXb6tMzCzkIksntWPUCY0bX3TtbfeOSuUtVBPlsIMcYvUMLPNzliMsnbniEp14E5BKwg
-         sFteqP6XtvikHcclOeEoZqx4ur4+fY2p7t7YAW2D/03X6tSSt7wUpUxUInV3IpjRjSif
-         +K8XbMyMf3UWQuWEvbgLGfSzivjLCD+uQmbOqu1je/+MX97J9LmwKZ1sU7CWquHcEuAT
-         MQSCuTIABUYUifqbW+sDYo95mW+jviZkcNUQ9PcVrZkaiPNiii2f8chlUOskV9LuDDXR
-         TyAQ==
-X-Gm-Message-State: AO0yUKV7pwbGZGYaJtvMABW/Vnt98UHsdjyXsTd6gyuCGl8TijwM3R98
-        CGaJFzkG9t6m7DnfTDKDN/LN7W83CaGmzHq2SDNV6V8gZiM=
-X-Google-Smtp-Source: AK7set/8g/9ng9RyoZUT0w0i8u0Qkv0M3n6u73jF3yC5x0yUgsMX5EkbT+Co6WUOCU91bzTZMPNxwdFji6l8xNdnnGA=
-X-Received: by 2002:a17:902:f782:b0:19c:b7da:d2ec with SMTP id
- q2-20020a170902f78200b0019cb7dad2ecmr805199pln.4.1677173344015; Thu, 23 Feb
- 2023 09:29:04 -0800 (PST)
+        with ESMTP id S229379AbjBWRj1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2023 12:39:27 -0500
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B11A215CA6;
+        Thu, 23 Feb 2023 09:39:24 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id D825080AE4;
+        Thu, 23 Feb 2023 18:39:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1677173963;
+        bh=O3IRV+shEDtZsoaALUQKrtNo9sDC2VLCvqXxuJK8bUQ=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Gyqof24y1xX0/Da9dgFTlfK4TWqU2HB3AiaJqSMsRuLJ8xZtWb83CjYuHqxUqhRp0
+         8zuqWw84XyUP3/7QkUMemeVZMJPKVmfuS6VLSVW1OtkbMOoQIEIcNbE9csulJXEVB5
+         NTDWsoegBjAx0Oj6WgCcAjWR6ybVH2L9OY1pF2CLEAWufNlBSEr4sN2EuIfsjKdIMl
+         uL/F4SZmqIj6mw+wKZDnPXo0oG8RJmZkZKIJNn04uatwyLBJNDdEGl4Lu4Vc1Qx3hk
+         157V6qkIDMc/lpV1Luf6QlhDb/xpeztpFlMiHWBXy/lUUX96PdAEqwGnR5bLogvb4w
+         FCkBf6MX4mAyg==
+Message-ID: <9bcaaa02-d9e6-1086-91bf-b94a10330577@denx.de>
+Date:   Thu, 23 Feb 2023 18:39:21 +0100
 MIME-Version: 1.0
-References: <20230223171114.59164-1-marex@denx.de> <20230223171114.59164-5-marex@denx.de>
-In-Reply-To: <20230223171114.59164-5-marex@denx.de>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 23 Feb 2023 14:28:52 -0300
-Message-ID: <CAOMZO5A5k0EdE9_VqXe5iJ5x+dPFse=jqjMaL-3ip3r0zDQ=5w@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
 Subject: Re: [PATCH v4 5/5] arm64: dts: imx8mp: Add analog audio output on
  i.MX8MP EVK
-To:     Marek Vasut <marex@denx.de>
+Content-Language: en-US
+To:     Fabio Estevam <festevam@gmail.com>
 Cc:     linux-clk@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>,
         Jacky Bai <ping.bai@nxp.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -69,26 +54,42 @@ Cc:     linux-clk@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Shawn Guo <shawnguo@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-kernel@lists.infradead.org,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>
+References: <20230223171114.59164-1-marex@denx.de>
+ <20230223171114.59164-5-marex@denx.de>
+ <CAOMZO5A5k0EdE9_VqXe5iJ5x+dPFse=jqjMaL-3ip3r0zDQ=5w@mail.gmail.com>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <CAOMZO5A5k0EdE9_VqXe5iJ5x+dPFse=jqjMaL-3ip3r0zDQ=5w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Marek,
+On 2/23/23 18:28, Fabio Estevam wrote:
+> Hi Marek,
 
-On Thu, Feb 23, 2023 at 2:11 PM Marek Vasut <marex@denx.de> wrote:
+Hi,
 
-> +       reg_audio_pwr: regulator-audio-pwr {
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "audio-pwr";
-> +               regulator-min-microvolt = <3300000>;
-> +               regulator-max-microvolt = <3300000>;
-> +               gpio = <&gpio4 29 GPIO_ACTIVE_HIGH>;
-> +               enable-active-high;
-> +               regulator-always-on;
+> On Thu, Feb 23, 2023 at 2:11 PM Marek Vasut <marex@denx.de> wrote:
+> 
+>> +       reg_audio_pwr: regulator-audio-pwr {
+>> +               compatible = "regulator-fixed";
+>> +               regulator-name = "audio-pwr";
+>> +               regulator-min-microvolt = <3300000>;
+>> +               regulator-max-microvolt = <3300000>;
+>> +               gpio = <&gpio4 29 GPIO_ACTIVE_HIGH>;
+>> +               enable-active-high;
+>> +               regulator-always-on;
+> 
+> It seems that "regulator-always-on" could be removed as the regulator
+> is controlled by the codec.
 
-It seems that "regulator-always-on" could be removed as the regulator
-is controlled by the codec.
+Ah yes
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+> Reviewed-by: Fabio Estevam <festevam@gmail.com>
+
+Thanks
