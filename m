@@ -2,143 +2,145 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99ACCC636D6
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 03:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F9EC61DA4
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 03:40:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233966AbjBWDHj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Feb 2023 22:07:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53674 "EHLO
+        id S231214AbjBWDkw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Feb 2023 22:40:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233465AbjBWDHd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 22:07:33 -0500
-Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D951747410
-        for <linux-clk@vger.kernel.org>; Wed, 22 Feb 2023 19:07:05 -0800 (PST)
-Received: by mail-oi1-x234.google.com with SMTP id q15so2122811oiw.11
-        for <linux-clk@vger.kernel.org>; Wed, 22 Feb 2023 19:07:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IsFwDXDFyAwgQgN7Ezx7sftsdxjHjlTMYKQ/wYMhb78=;
-        b=LYqxKMnouYu+dT0bW6p/08eh4jCaQkaoyhaFcxvkvtnTfzDxG1y2Z/9DRZX6i1GC7V
-         Cdo8AIq4N2MlbgqaTZ4cJj5JOtTyQ1fWn863StHyjchSiOPUFn/yONZHO8XPaatHM9sA
-         o7W0TFCDXXNN5gZ1QTuUh2Q+zuVH23qrK1ouMPYfCml5Y5DrhDrkr9nW+OBw71GHcsQu
-         OeEQmv1rKLoiknsFdQzFgJ59UZeqM8+7BfTfe1o8dYJl3mS0BZKD1+0K3weTVJ5YK0wF
-         X+E2lG5qS9EG8l09dAxn6SJd6b/piYWzZpBIPQ/Np0VY/oSY2Rin6QVLURQeSPAVKlmP
-         Pz7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IsFwDXDFyAwgQgN7Ezx7sftsdxjHjlTMYKQ/wYMhb78=;
-        b=wpmYyx+paaY/eNgHj7Dfyqp4m8yNBoAfsPGqkTOOKrtV09MtEvTBri2UBYNm+ven0U
-         0MIYkNptOz8iMAV1/v2Mj+7T3TLyrVOBCzLIklmwbMhoR8h2NISi3zj9nw9Nr3EOxNBu
-         bWb+BTK3EITBKvyib8jI1Wk1WINJpqIrklJlvCFIhnLjGwzyu7Ik/2OvoVMg+zZHm3Iw
-         W9hCej4h74BW62TYYq2dMj1Zw+Ipq9ApixEKh6wbFeHBziNswRH/xTCJ6qVL4P8USEJF
-         4kIGJaejqA8Tz22ZdnBtRoipXHrOErGUojqi8Wflgjk1X1Kea5KbIsy7fU4OLZzpkt6s
-         elOQ==
-X-Gm-Message-State: AO0yUKU3Wfqh2qpDpjM8ZYdvylcUgYKfs0NO6SuMMc0pQgj9wutmZiKM
-        sVxmiVxuzIkcG0Yz3q7BTBbKlzkCUisDWr8nnG7n/A==
-X-Google-Smtp-Source: AK7set/bRL8ou0SIq3OLr/c87FxzRtrMmLfqzNaV86gtbWiVwJCusOZBWjZSfPj1zOwVal0nGhV9hZTSLlo+b09gssU=
-X-Received: by 2002:a05:6808:20a5:b0:37f:9ac7:826e with SMTP id
- s37-20020a05680820a500b0037f9ac7826emr1361934oiw.62.1677121622447; Wed, 22
- Feb 2023 19:07:02 -0800 (PST)
+        with ESMTP id S229646AbjBWDkv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 22:40:51 -0500
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97DE628209;
+        Wed, 22 Feb 2023 19:40:49 -0800 (PST)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 2B77324E1D4;
+        Thu, 23 Feb 2023 11:40:42 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 23 Feb
+ 2023 11:40:41 +0800
+Received: from [192.168.125.82] (113.72.147.165) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 23 Feb
+ 2023 11:40:40 +0800
+Message-ID: <25c01857-8f59-02ed-062d-a5e619258204@starfivetech.com>
+Date:   Thu, 23 Feb 2023 11:40:40 +0800
 MIME-Version: 1.0
-References: <20230208234313.23863-1-semen.protsenko@linaro.org>
- <20230208234313.23863-7-semen.protsenko@linaro.org> <CGME20230219173642eucas1p1ddff7399223df763ff9fb48c4f7fc5f9@eucas1p1.samsung.com>
- <CAPLW+4=cOV8J+Ho1t8Tkg8X_3m4npyy3FUC2zcQAYywE12uEkw@mail.gmail.com> <ea0055c7-34d4-3da0-0d3a-52020a783922@samsung.com>
-In-Reply-To: <ea0055c7-34d4-3da0-0d3a-52020a783922@samsung.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Wed, 22 Feb 2023 21:07:06 -0600
-Message-ID: <CAPLW+4=pFb2HZ8bhAs9hfm_trXUUQCiS7zf8G+VBA-i0qpLJJQ@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] clk: samsung: exynos5433: Extract PM support to
- common ARM64 layer
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v4 09/19] dt-bindings: clock: Add StarFive JH7110 system
+ clock and reset generator
+Content-Language: en-US
+To:     Conor Dooley <conor@kernel.org>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>, Stephen Boyd <sboyd@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        "Emil Renner Berthing" <emil.renner.berthing@canonical.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20230221024645.127922-1-hal.feng@starfivetech.com>
+ <20230221024645.127922-10-hal.feng@starfivetech.com> <Y/T+GNQAXLGyUtCH@spud>
+From:   Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <Y/T+GNQAXLGyUtCH@spud>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [113.72.147.165]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 21 Feb 2023 at 01:22, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> On 19.02.2023 18:36, Sam Protsenko wrote:
-> > On Wed, 8 Feb 2023 at 17:43, Sam Protsenko <semen.protsenko@linaro.org> wrote:
-> >> Exynos5433 clock driver implements PM support internally, which might be
-> >> also useful for other Exynos clock drivers. Extract all PM related code
-> >> from clk-exynos5433 to common ARM64 functions.
-> >>
-> >> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> >> ---
-> >> Changes in v2:
-> >>    - Rebased on top of latest soc/for-next tree
-> >>    - Included linux/slab.h for kfree (found by kernel test robot)
-> >>
-> >>   drivers/clk/samsung/clk-exynos-arm64.c | 171 ++++++++++++++++++++++++-
-> >>   drivers/clk/samsung/clk-exynos-arm64.h |   3 +
-> >>   drivers/clk/samsung/clk-exynos5433.c   | 157 +----------------------
-> >>   3 files changed, 175 insertions(+), 156 deletions(-)
-> >>
-> >> diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung/clk-exynos-arm64.c
-> >> index 2aa3f0a5644e..7ad7fd353dda 100644
-> >> --- a/drivers/clk/samsung/clk-exynos-arm64.c
-> >> +++ b/drivers/clk/samsung/clk-exynos-arm64.c
-> >> @@ -10,6 +10,9 @@
-> >>    */
-> > Hi Marek,
-> >
-> > It just occurred to me that as I'm pulling your code from
-> > clk-exynos5433.c here, I should've probably added you to this file's
-> > author list in the header comment. Does that sound right to you? If
-> > so, I can re-send v3 with fixes.
->
-> Fine for me.
->
-> > Also, could you please review this series, if possible? I'm working
-> > right now on PM_DOMAINS support for Exynos850, so along with this
-> > series that would bring the initial PM support for ARM64 Exynos chips.
->
-> Well, feel free to add:
->
-> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
->
-> to v3 (the whole patchset).
->
+On Tue, 21 Feb 2023 17:23:36 +0000, Conor Dooley wrote:
+> Hey Hal,
+> 
+> On Tue, Feb 21, 2023 at 10:46:35AM +0800, Hal Feng wrote:
+>> From: Emil Renner Berthing <kernel@esmil.dk>
+>> 
+>> Add bindings for the system clock and reset generator (SYSCRG) on the
+>> JH7110 RISC-V SoC by StarFive Ltd.
+>> 
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+>> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+> 
+>> diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+>> new file mode 100644
+>> index 000000000000..ec81504dcb27
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+>> @@ -0,0 +1,80 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/starfive,jh7110-syscrg.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: StarFive JH7110 System Clock and Reset Generator
+>> +
+>> +maintainers:
+>> +  - Emil Renner Berthing <kernel@esmil.dk>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: starfive,jh7110-syscrg
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    items:
+>> +      - description: Main Oscillator (24 MHz)
+>> +      - description: GMAC1 RMII reference
+>> +      - description: GMAC1 RGMII RX
+>> +      - description: External I2S TX bit clock
+>> +      - description: External I2S TX left/right channel clock
+>> +      - description: External I2S RX bit clock
+>> +      - description: External I2S RX left/right channel clock
+>> +      - description: External TDM clock
+>> +      - description: External audio master clock
+> 
+> You didn't reply to the conversation I had with Krzysztof about how to
+> represent the optional nature of some of these clocks, contained in this
+> thread here:
+> https://lore.kernel.org/all/7a7bccb1-4d47-3d32-36e6-4aab7b5b8dad@starfivetech.com/
+> 
+> What happens to the gmac1 mux if only one of the input clocks is
+> provided?
+> And I mean what does the hardware do, not the software representation of
+> that mux in the driver.
 
-Thanks, Marek!
+In hardware, just providing the required input clocks is enough. Refer to the
+following link for the required clocks. Thanks.
 
-> The only remark I have is not strictly related to this patchset, but the
-> code that is already in drivers/clk/samsung/clk-exynos-arm64.c. Playing
-> with GATE_ENABLE_HWACG/GATE_MANUAL is not strictly specific to all
-> Exynos ARM64 SoCs. GATE_OFF_START/GATE_OFF_END and the enable register
-> bits are something specific to recent Exynos SoCs (like 7885/850/auto9)
-> and don't fit well into the generic arm64 clk PM code, but I don't have
-> a good idea how to move it to the respective clk drivers and keep it simple.
->
+https://lore.kernel.org/all/c0472d7f-56fe-3e91-e0a0-49ee51700b5d@starfivetech.com/
 
-Yeah, maybe having some sort of HW variants would be a better choice.
-That can be implemented later. I suggest we wait a bit first (after
-applying this series) and see if there going be any new users for that
-PM code. Once we gather more knowledge about current platforms (or
-no), the desired design decisions should become more obvious.
+Best regards,
+Hal
 
->
-> Best regards
-> --
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->
+> 
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: osc
+>> +      - const: gmac1_rmii_refin
+>> +      - const: gmac1_rgmii_rxin
+>> +      - const: i2stx_bclk_ext
+>> +      - const: i2stx_lrck_ext
+>> +      - const: i2srx_bclk_ext
+>> +      - const: i2srx_lrck_ext
+>> +      - const: tdm_ext
+>> +      - const: mclk_ext
+
