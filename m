@@ -2,137 +2,197 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4343FC636D6
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 10:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB160C636D6
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 10:31:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233669AbjBWKXK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Feb 2023 05:23:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55324 "EHLO
+        id S233363AbjBWKbA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Feb 2023 05:31:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234238AbjBWKXD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2023 05:23:03 -0500
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4905F3AB0;
-        Thu, 23 Feb 2023 02:23:00 -0800 (PST)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 1D09424E289;
-        Thu, 23 Feb 2023 18:22:59 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 23 Feb
- 2023 18:22:59 +0800
-Received: from [192.168.125.82] (113.72.147.165) by EXMBX172.cuchost.com
- (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 23 Feb
- 2023 18:22:57 +0800
-Message-ID: <04e071d8-3195-d065-d33f-ef81e3fcfb22@starfivetech.com>
-Date:   Thu, 23 Feb 2023 18:22:52 +0800
+        with ESMTP id S233132AbjBWKbA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2023 05:31:00 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFE9451FA0
+        for <linux-clk@vger.kernel.org>; Thu, 23 Feb 2023 02:30:29 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id t13so10210080wrv.13
+        for <linux-clk@vger.kernel.org>; Thu, 23 Feb 2023 02:30:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=3/d1V97xfn1urp1yFSAFHB4bA8otMHdcMdq0yddMNFI=;
+        b=hcoIV/z8lyL+ysVNVs6Y6+yJCu00ToOB1RctbNGmzn6TVnVvxY7XobmvDx0cUkA2xQ
+         xfM4zr3AWE+b2Gtowo9aLR8xr2kvlYJfKxP9Itoq39971OTw4jDjtvXuJIaW6qUeofV5
+         EQWm9Hn8VbRrY4wbZjRT+ENuVYy9Veq5SwjN8cFj2tCHTSpNKWogtut2gHDMrwDsU5cZ
+         ZKqDIGyOhckxOd0wsydnj2kidFvup2vNd5mqGZHNZgcLygtgv2+azbCyRnBMohLbAGHA
+         LQxmw22JVxiWV5822JzZZs1rVzyf1J1uIGehZSU3KFmWDRLsvMPcd89e+agLiMmUJ+0h
+         ah3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3/d1V97xfn1urp1yFSAFHB4bA8otMHdcMdq0yddMNFI=;
+        b=qezLgHIZRUTOxy+wxQ7HBwgRz4fE8HaBU+LEc8wEFlEqPMY7qB5/oIOBJrrZbHyyO/
+         PJw0032gtwxO5zyTvWoQsODLycIjw2/RkxcNia/0ZGLfl89iYv6eY4RP/sTX57ktcELS
+         GsnETLsBvxXKbNB/k/KiRqnUP/eJjcrLeYW7ZzzmW/HNMobMf0HST2PMteBQ8dRIw3Ck
+         vn2xmBTnZmf2u5JgrBEeXtgsApsl7rwxyr3TDrdk7FuZqBjkGjht+G8waCYI9F/JdMz/
+         z8FArP8lGN/iqaCnLNYFAdyQ0t8nPEbBNYiWz1AXdbPWIKsUG4tE+5ZVCHfb8YQ4Wx5c
+         NK9g==
+X-Gm-Message-State: AO0yUKU5zId9xB6uqN4fk8PP2X8BEsTnQBr+oAfcyisMAMibUgAqFYhV
+        PVdnhsaf/+WDiay6Z7VC+s7voQ==
+X-Google-Smtp-Source: AK7set/AJ/sQ293L1C/QDJKZNG/kThSW0HregqvGRPQyAGhtGjSWliE7pQlcCpSYC0riIpZo4sB8jQ==
+X-Received: by 2002:a5d:6190:0:b0:2c7:a0b:e8d2 with SMTP id j16-20020a5d6190000000b002c70a0be8d2mr5185559wru.19.1677148226407;
+        Thu, 23 Feb 2023 02:30:26 -0800 (PST)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id t6-20020a5d4606000000b002c55306f6edsm13119455wrq.54.2023.02.23.02.30.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Feb 2023 02:30:25 -0800 (PST)
+References: <20230223062723.4770-1-yu.tu@amlogic.com>
+User-agent: mu4e 1.8.13; emacs 28.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     kelvin.zhang@amlogic.com, qi.duan@amlogic.com
+Subject: Re: [PATCH] clk: meson: vid-pll-div: added meson_vid_pll_div_ops
+ support to enable vid_pll_div to meet clock setting requirements,
+ especially for late chip
+Date:   Thu, 23 Feb 2023 11:11:29 +0100
+In-reply-to: <20230223062723.4770-1-yu.tu@amlogic.com>
+Message-ID: <1jv8jsoerm.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v4 09/19] dt-bindings: clock: Add StarFive JH7110 system
- clock and reset generator
-Content-Language: en-US
-To:     Conor Dooley <conor.dooley@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>, Stephen Boyd <sboyd@kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor@kernel.org>,
-        "Palmer Dabbelt" <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        "Daniel Lezcano" <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        <linux-kernel@vger.kernel.org>
-References: <20230221024645.127922-1-hal.feng@starfivetech.com>
- <20230221024645.127922-10-hal.feng@starfivetech.com>
- <e4c2b711-7953-821b-4281-04e4b40154ea@linaro.org> <Y/XxOw+T0WdYY7jP@wendy>
-From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <Y/XxOw+T0WdYY7jP@wendy>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [113.72.147.165]
-X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
- (172.16.6.92)
-X-YovoleRuleAgent: yovoleflag
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 22 Feb 2023 10:40:59 +0000, Conor Dooley wrote:
-> On Wed, Feb 22, 2023 at 10:13:19AM +0100, Krzysztof Kozlowski wrote:
->> On 21/02/2023 03:46, Hal Feng wrote:
->> > From: Emil Renner Berthing <kernel@esmil.dk>
->> > 
->> > Add bindings for the system clock and reset generator (SYSCRG) on the
->> > JH7110 RISC-V SoC by StarFive Ltd.
->> > 
->> > Reviewed-by: Rob Herring <robh@kernel.org>
->> > Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
->> > Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
->> 
->> I don't know what is happening here as neither this nor other patchset
->> explains anything. Please stop writing what you do in the patches, but
->> explain why. What is easy to get.
->> 
->> (...)
->> 
->> 
->> > +
->> > +#define JH7110_SYSCLK_PLL0_OUT			190
->> > +#define JH7110_SYSCLK_PLL1_OUT			191
->> > +#define JH7110_SYSCLK_PLL2_OUT			192
->> 
->> NAK. Do not add incorrect bindings just to remove it THE SAME TIME.
-> 
-> For some context, the PLL driver series [1] does the following, which is
-> where this complaint stems from:
->> diff --git a/include/dt-bindings/clock/starfive,jh7110-crg.h b/include/dt-bindings/clock/starfive,jh7110-crg.h
->> index 5e4f21ca0642..086a6ddcf380 100644
->> --- a/include/dt-bindings/clock/starfive,jh7110-crg.h
->> +++ b/include/dt-bindings/clock/starfive,jh7110-crg.h
->> @@ -6,6 +6,12 @@
->>  #ifndef __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
->>  #define __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
->>  
->> +/* PLL clocks */
->> +#define JH7110_CLK_PLL0_OUT			0
->> +#define JH7110_CLK_PLL1_OUT			1
->> +#define JH7110_CLK_PLL2_OUT			2
->> +#define JH7110_PLLCLK_END			3
->> +
->>  /* SYSCRG clocks */
->>  #define JH7110_SYSCLK_CPU_ROOT			0
->>  #define JH7110_SYSCLK_CPU_CORE			1
->> @@ -198,11 +204,7 @@
->>  #define JH7110_SYSCLK_TDM_TDM_INV		188
->>  #define JH7110_SYSCLK_JTAG_CERTIFICATION_TRNG	189
->>  
->> -#define JH7110_SYSCLK_PLL0_OUT			190
->> -#define JH7110_SYSCLK_PLL1_OUT			191
->> -#define JH7110_SYSCLK_PLL2_OUT			192
-> 
-> I was talking to Emil, who pointed out that these defines aren't
-> actually ever used in the dts, so there's nothing really gained
-> by adding them here in the first place.
-> Seems like this series could simply move these defines into the driver
-> (as the PLL addition series also does) and then we would not have to
-> be worried about breaking the ABI in the future?
 
-Sorry for that I didn't synchronize this with Xingyu. I'll move these
-PLL definitions into the driver in the next version.
+On Thu 23 Feb 2023 at 14:27, Yu Tu <yu.tu@amlogic.com> wrote:
 
-Best regards,
-Hal
+Title is way too long, 75 char max
 
-> 
-> 1 - https://patchwork.kernel.org/project/linux-riscv/patch/20230221141147.303642-3-xingyu.wu@starfivetech.com/
-> 
+> The previous chip only provides "ro_ops" for the vid_pll_div clock,
+
+The driver does. Other chip could use RW ops I suppose.
+
+> which is not satisfied with the operation requirements of the later
+> chip for this clock, so the ops that can be set for the clock is added.
+>
+
+What requirements ? What "late" chip ? all this is quite vague.
+
+> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
+> ---
+>  drivers/clk/meson/vid-pll-div.c | 59 +++++++++++++++++++++++++++++++++
+>  drivers/clk/meson/vid-pll-div.h |  1 +
+>  2 files changed, 60 insertions(+)
+>
+> diff --git a/drivers/clk/meson/vid-pll-div.c b/drivers/clk/meson/vid-pll-div.c
+> index daff235bc763..e75fa6f75efe 100644
+> --- a/drivers/clk/meson/vid-pll-div.c
+> +++ b/drivers/clk/meson/vid-pll-div.c
+> @@ -89,6 +89,65 @@ static unsigned long meson_vid_pll_div_recalc_rate(struct clk_hw *hw,
+>  	return DIV_ROUND_UP_ULL(parent_rate * div->multiplier, div->divider);
+>  }
+>  
+> +static int meson_vid_pll_div_determine_rate(struct clk_hw *hw,
+> +					    struct clk_rate_request *req)
+> +{
+> +	unsigned long best = 0, now = 0;
+> +	unsigned int i, best_i = 0;
+> +
+> +	for (i = 0 ; i < ARRAY_SIZE(vid_pll_div_table) ; ++i) {
+
+It would be nice to actually describe how this vid pll work so we can
+stop using precompute "magic" values and actually use the IP to its full
+capacity.
+
+> +		now = DIV_ROUND_CLOSEST_ULL(req->best_parent_rate *
+
+This effectively stops rate propagation. That's not how determine_rate()
+call back should work. Have a look a clk-divider.c and how it calls
+clk_hw_round_rate().
+
+> +					    vid_pll_div_table[i].multiplier,
+> +					    vid_pll_div_table[i].divider);
+> +		if (req->rate == now) {
+> +			return 0;
+> +		} else if (abs(now - req->rate) < abs(best - req->rate)) {
+> +			best = now;
+> +			best_i = i;
+> +		}
+> +	}
+> +
+> +	if (best_i < ARRAY_SIZE(vid_pll_div_table))
+> +		req->rate = DIV_ROUND_CLOSEST_ULL(req->best_parent_rate *
+> +						  vid_pll_div_table[best_i].multiplier,
+> +						  vid_pll_div_table[best_i].divider);
+> +	else
+
+What is the point of this 'if' clause ?
+It looks like the 'else' part is dead code. 
+
+> +		req->rate = meson_vid_pll_div_recalc_rate(hw, req->best_parent_rate);
+> +
+> +	return 0;
+> +}
+> +
+> +static int meson_vid_pll_div_set_rate(struct clk_hw *hw, unsigned long rate,
+> +				      unsigned long parent_rate)
+> +{
+> +	struct clk_regmap *clk = to_clk_regmap(hw);
+> +	struct meson_vid_pll_div_data *pll_div = meson_vid_pll_div_data(clk);
+> +	int i;
+> +
+> +	for (i = 0 ; i < ARRAY_SIZE(vid_pll_div_table) ; ++i) {
+> +		if (DIV_ROUND_CLOSEST_ULL(parent_rate * vid_pll_div_table[i].multiplier,
+> +					  vid_pll_div_table[i].divider) == rate) {
+
+This assumes the set_rate() is going to have a perfect match and
+otherwise fail. You should not assume that. Have a look at clk-divider.c
+for examples.
+
+> +			meson_parm_write(clk->map, &pll_div->val, vid_pll_div_table[i].shift_val);
+> +			meson_parm_write(clk->map, &pll_div->sel, vid_pll_div_table[i].shift_sel);
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (i >= ARRAY_SIZE(vid_pll_div_table)) {
+> +		pr_debug("%s: Invalid rate value for vid_pll_div\n", __func__);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +const struct clk_ops meson_vid_pll_div_ops = {
+> +	.recalc_rate	= meson_vid_pll_div_recalc_rate,
+> +	.determine_rate	= meson_vid_pll_div_determine_rate,
+> +	.set_rate	= meson_vid_pll_div_set_rate,
+> +};
+> +EXPORT_SYMBOL_GPL(meson_vid_pll_div_ops);
+> +
+>  const struct clk_ops meson_vid_pll_div_ro_ops = {
+>  	.recalc_rate	= meson_vid_pll_div_recalc_rate,
+>  };
+> diff --git a/drivers/clk/meson/vid-pll-div.h b/drivers/clk/meson/vid-pll-div.h
+> index c0128e33ccf9..3ab729b85fde 100644
+> --- a/drivers/clk/meson/vid-pll-div.h
+> +++ b/drivers/clk/meson/vid-pll-div.h
+> @@ -16,5 +16,6 @@ struct meson_vid_pll_div_data {
+>  };
+>  
+>  extern const struct clk_ops meson_vid_pll_div_ro_ops;
+> +extern const struct clk_ops meson_vid_pll_div_ops;
+>  
+>  #endif /* __MESON_VID_PLL_DIV_H */
+>
+> base-commit: 8a9fbf00acfeeeaac8efab8091bb464bd71b70ea
 
