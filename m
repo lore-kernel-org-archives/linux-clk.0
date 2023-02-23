@@ -2,198 +2,143 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 659EEC64EC7
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 03:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99ACCC636D6
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 03:07:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233845AbjBWDDW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Feb 2023 22:03:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49360 "EHLO
+        id S233966AbjBWDHj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Feb 2023 22:07:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233841AbjBWDDV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 22:03:21 -0500
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E82E1AD08;
-        Wed, 22 Feb 2023 19:03:17 -0800 (PST)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id 3FB1D24E245;
-        Thu, 23 Feb 2023 11:03:15 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 23 Feb
- 2023 11:03:14 +0800
-Received: from [192.168.125.82] (113.72.147.165) by EXMBX172.cuchost.com
- (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 23 Feb
- 2023 11:03:14 +0800
-Message-ID: <63d0e2a9-84b9-6637-6bbf-dedb2527eaa5@starfivetech.com>
-Date:   Thu, 23 Feb 2023 11:03:04 +0800
+        with ESMTP id S233465AbjBWDHd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 22:07:33 -0500
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D951747410
+        for <linux-clk@vger.kernel.org>; Wed, 22 Feb 2023 19:07:05 -0800 (PST)
+Received: by mail-oi1-x234.google.com with SMTP id q15so2122811oiw.11
+        for <linux-clk@vger.kernel.org>; Wed, 22 Feb 2023 19:07:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IsFwDXDFyAwgQgN7Ezx7sftsdxjHjlTMYKQ/wYMhb78=;
+        b=LYqxKMnouYu+dT0bW6p/08eh4jCaQkaoyhaFcxvkvtnTfzDxG1y2Z/9DRZX6i1GC7V
+         Cdo8AIq4N2MlbgqaTZ4cJj5JOtTyQ1fWn863StHyjchSiOPUFn/yONZHO8XPaatHM9sA
+         o7W0TFCDXXNN5gZ1QTuUh2Q+zuVH23qrK1ouMPYfCml5Y5DrhDrkr9nW+OBw71GHcsQu
+         OeEQmv1rKLoiknsFdQzFgJ59UZeqM8+7BfTfe1o8dYJl3mS0BZKD1+0K3weTVJ5YK0wF
+         X+E2lG5qS9EG8l09dAxn6SJd6b/piYWzZpBIPQ/Np0VY/oSY2Rin6QVLURQeSPAVKlmP
+         Pz7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IsFwDXDFyAwgQgN7Ezx7sftsdxjHjlTMYKQ/wYMhb78=;
+        b=wpmYyx+paaY/eNgHj7Dfyqp4m8yNBoAfsPGqkTOOKrtV09MtEvTBri2UBYNm+ven0U
+         0MIYkNptOz8iMAV1/v2Mj+7T3TLyrVOBCzLIklmwbMhoR8h2NISi3zj9nw9Nr3EOxNBu
+         bWb+BTK3EITBKvyib8jI1Wk1WINJpqIrklJlvCFIhnLjGwzyu7Ik/2OvoVMg+zZHm3Iw
+         W9hCej4h74BW62TYYq2dMj1Zw+Ipq9ApixEKh6wbFeHBziNswRH/xTCJ6qVL4P8USEJF
+         4kIGJaejqA8Tz22ZdnBtRoipXHrOErGUojqi8Wflgjk1X1Kea5KbIsy7fU4OLZzpkt6s
+         elOQ==
+X-Gm-Message-State: AO0yUKU3Wfqh2qpDpjM8ZYdvylcUgYKfs0NO6SuMMc0pQgj9wutmZiKM
+        sVxmiVxuzIkcG0Yz3q7BTBbKlzkCUisDWr8nnG7n/A==
+X-Google-Smtp-Source: AK7set/bRL8ou0SIq3OLr/c87FxzRtrMmLfqzNaV86gtbWiVwJCusOZBWjZSfPj1zOwVal0nGhV9hZTSLlo+b09gssU=
+X-Received: by 2002:a05:6808:20a5:b0:37f:9ac7:826e with SMTP id
+ s37-20020a05680820a500b0037f9ac7826emr1361934oiw.62.1677121622447; Wed, 22
+ Feb 2023 19:07:02 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v3 07/11] dt-bindings: clock: Add StarFive JH7110 system
- clock and reset generator
-Content-Language: en-US
-To:     Conor Dooley <conor@kernel.org>
-CC:     Stephen Boyd <sboyd@kernel.org>, <linux-riscv@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+References: <20230208234313.23863-1-semen.protsenko@linaro.org>
+ <20230208234313.23863-7-semen.protsenko@linaro.org> <CGME20230219173642eucas1p1ddff7399223df763ff9fb48c4f7fc5f9@eucas1p1.samsung.com>
+ <CAPLW+4=cOV8J+Ho1t8Tkg8X_3m4npyy3FUC2zcQAYywE12uEkw@mail.gmail.com> <ea0055c7-34d4-3da0-0d3a-52020a783922@samsung.com>
+In-Reply-To: <ea0055c7-34d4-3da0-0d3a-52020a783922@samsung.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Wed, 22 Feb 2023 21:07:06 -0600
+Message-ID: <CAPLW+4=pFb2HZ8bhAs9hfm_trXUUQCiS7zf8G+VBA-i0qpLJJQ@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] clk: samsung: exynos5433: Extract PM support to
+ common ARM64 layer
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Emil Renner Berthing" <emil.renner.berthing@canonical.com>,
-        <linux-kernel@vger.kernel.org>
-References: <20221220005054.34518-1-hal.feng@starfivetech.com>
- <20221220005054.34518-8-hal.feng@starfivetech.com> <Y6JB37Pd5TZoGMy4@spud>
- <7a7bccb1-4d47-3d32-36e6-4aab7b5b8dad@starfivetech.com>
- <Y6tSWB2+98a8k9Qw@spud>
- <5cf0fe71-fd17-fb28-c01e-28356081ba76@starfivetech.com>
- <Y+5z8skN2DuvxDEL@spud> <72953dc9371b87da8d03c63633d7d9dd.sboyd@kernel.org>
- <Y/VWNPfApsfm3/UD@spud>
- <c0472d7f-56fe-3e91-e0a0-49ee51700b5d@starfivetech.com>
- <Y/ZCRv3jHwFxN1Fo@spud>
-From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <Y/ZCRv3jHwFxN1Fo@spud>
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [113.72.147.165]
-X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
- (172.16.6.92)
-X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 22 Feb 2023 16:26:46 +0000, Conor Dooley wrote:
-> On Wed, Feb 22, 2023 at 09:27:37PM +0800, Hal Feng wrote:
->> On Tue, 21 Feb 2023 23:39:32 +0000, Conor Dooley wrote:
->> > On Tue, Feb 21, 2023 at 02:17:17PM -0800, Stephen Boyd wrote:
->> >> Quoting Conor Dooley (2023-02-16 10:20:34)
->> >> > On Thu, Feb 16, 2023 at 10:42:20PM +0800, Hal Feng wrote:
->> >> > > On Tue, 27 Dec 2022 20:15:20 +0000, Conor Dooley wrote:
->> >> > > > On Mon, Dec 26, 2022 at 12:26:32AM +0800, Hal Feng wrote:
->> >> > > Please see the picture of these external clocks in clock tree.
->> >> > > 
->> >> > > # mount -t debugfs none /mnt
->> >> > > # cat /mnt/clk/clk_summary
->> >> > >                                  enable  prepare  protect                                duty  hardware
->> >> > >    clock                          count    count    count        rate   accuracy phase  cycle    enable
->> >> > > -------------------------------------------------------------------------------------------------------
->> >> > >  *mclk_ext*                             0        0        0    12288000          0     0  50000         Y
->> >> > >  *tdm_ext*                              0        0        0    49152000          0     0  50000         Y
->> >> > >  *i2srx_lrck_ext*                       0        0        0      192000          0     0  50000         Y
->> >> > >  *i2srx_bclk_ext*                       0        0        0    12288000          0     0  50000         Y
->> >> > >  *i2stx_lrck_ext*                       0        0        0      192000          0     0  50000         Y
->> >> > >  *i2stx_bclk_ext*                       0        0        0    12288000          0     0  50000         Y
->> >> > >  *gmac1_rgmii_rxin*                     0        0        0   125000000          0     0  50000         Y
->> >> > >     gmac1_rx                          0        0        0   125000000          0     0  50000         Y
->> >> > >        gmac1_rx_inv                   0        0        0   125000000          0   180  50000         Y
->> >> > >  *gmac1_rmii_refin*                     0        0        0    50000000          0     0  50000         Y
->> >> > >     gmac1_rmii_rtx                    0        0        0    50000000          0     0  50000         Y
->> >> > >        gmac1_tx                       0        0        0    50000000          0     0  50000         N
->> >> > >           gmac1_tx_inv                0        0        0    50000000          0   180  50000         Y
->> >> > >  *osc*                                  4        4        0    24000000          0     0  50000         Y
->> >> > >     apb_func                          0        0        0    24000000          0     0  50000         Y
->> >> > >  ...
->> >> > > 
->> >> > > The clock "gmac1_rgmii_rxin" and the clock "gmac1_rmii_refin" are
->> >> > > actually used as the parent of other clocks.
->> >> > 
->> >> > > The "dummy" clocks
->> >> > > you said are all internal clocks.
->> >> > 
->> >> > No, what I meant by "dummy" clocks is that if you make clocks "required"
->> >> > in the binding that are not needed by the hardware for operation a
->> >> > customer of yours might have to add "dummy" clocks to their devicetree
->> >> > to pass dtbs_check.
->> >> 
->> >> They can set the phandle specifier to '<0>' to fill in the required
->> >> property when there isn't anything there. If this is inside an SoC, it
->> >> is always connected because silicon can't change after it is made
->> >> (unless this is an FPGA). Therefore, any and all input clocks should be
->> >> listed as required.
->> > 
->> >> If the clk controller has inputs that are
->> >> pads/balls/pins on the SoC then they can be optional if a valid design
->> >> can leave those pins not connected.
->> > 
->> > From the discussion on the dts patches, where the clocks have been put
->> > (intentionally) into board.dts, I've been under the impression that we
->> > are in this situation.
->> 
->> For the system (sys) clock controller, we are in this situation.
->> For the always-on (aon) clock controller, we are not, because some input
->> clocks are inside the SoC.
->> 
->> > Up to Hal to tell us if the hardware is capable of having those inputs
->> > left unfilled!
->> 
->> The situation is different for v1.2A and v1.3B boards.
->> 
->> For the v1.2A board,
->> gmac1 only requires "gmac1_rmii_refin", which support 100MHz
->> gmac0 only requires "gmac0_rgmii_rxin", which support 1000MHz
->> 
->> For the v1.3B board,
->> gmac1 only requires "gmac1_rgmii_rxin", which support 1000MHz
->> gmac0 only requires "gmac0_rgmii_rxin", which support 1000MHz
->> 
->> So we should set the "required" property depending on different
->> boards.
-> 
-> These were Krzk's suggestions:
-> oneOf:
->  - clock-names:
->      minItems: 3
->      items:
->        - a
->        - b
->        - c
->        - d
->  - clock-names:
->      items:
->        - a
->        - b
->        - d
-> 
-> or maybe:
->  - clock-names:
->      minItems: 3
->      items:
->        - a
->        - b
->        - enum: [c, d]
->        - d
-> 
-> Might be making a mess here, but I think that becomes:
->   clock-names:
->     oneOf:
->       - items:
->           - const: osc
->           - enum:
->               - gmac1_rmii_refin
->               - gmac1_rgmii_rxin
->           - const: i2stx_bclk_ext
->           - const: i2stx_lrck_ext
->           - const: i2srx_bclk_ext
->           - const: i2srx_lrck_ext
->           - const: tdm_ext
->           - const: mclk_ext
-> 
->       - items:
->           - const: osc
->           - const: gmac1_rmii_refin
->           - const: gmac1_rgmii_rxin
->           - const: i2stx_bclk_ext
->           - const: i2stx_lrck_ext
->           - const: i2srx_bclk_ext
->           - const: i2srx_lrck_ext
->           - const: tdm_ext
->           - const: mclk_ext
+On Tue, 21 Feb 2023 at 01:22, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+> On 19.02.2023 18:36, Sam Protsenko wrote:
+> > On Wed, 8 Feb 2023 at 17:43, Sam Protsenko <semen.protsenko@linaro.org> wrote:
+> >> Exynos5433 clock driver implements PM support internally, which might be
+> >> also useful for other Exynos clock drivers. Extract all PM related code
+> >> from clk-exynos5433 to common ARM64 functions.
+> >>
+> >> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> >> ---
+> >> Changes in v2:
+> >>    - Rebased on top of latest soc/for-next tree
+> >>    - Included linux/slab.h for kfree (found by kernel test robot)
+> >>
+> >>   drivers/clk/samsung/clk-exynos-arm64.c | 171 ++++++++++++++++++++++++-
+> >>   drivers/clk/samsung/clk-exynos-arm64.h |   3 +
+> >>   drivers/clk/samsung/clk-exynos5433.c   | 157 +----------------------
+> >>   3 files changed, 175 insertions(+), 156 deletions(-)
+> >>
+> >> diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung/clk-exynos-arm64.c
+> >> index 2aa3f0a5644e..7ad7fd353dda 100644
+> >> --- a/drivers/clk/samsung/clk-exynos-arm64.c
+> >> +++ b/drivers/clk/samsung/clk-exynos-arm64.c
+> >> @@ -10,6 +10,9 @@
+> >>    */
+> > Hi Marek,
+> >
+> > It just occurred to me that as I'm pulling your code from
+> > clk-exynos5433.c here, I should've probably added you to this file's
+> > author list in the header comment. Does that sound right to you? If
+> > so, I can re-send v3 with fixes.
+>
+> Fine for me.
+>
+> > Also, could you please review this series, if possible? I'm working
+> > right now on PM_DOMAINS support for Exynos850, so along with this
+> > series that would bring the initial PM support for ARM64 Exynos chips.
+>
+> Well, feel free to add:
+>
+> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>
+> to v3 (the whole patchset).
+>
 
-Will modify it and improve the description of clock items for
-pointing out which clock is required on different boards.
-Thank you all for your helpful suggestions.
+Thanks, Marek!
 
-Best regards,
-Hal
+> The only remark I have is not strictly related to this patchset, but the
+> code that is already in drivers/clk/samsung/clk-exynos-arm64.c. Playing
+> with GATE_ENABLE_HWACG/GATE_MANUAL is not strictly specific to all
+> Exynos ARM64 SoCs. GATE_OFF_START/GATE_OFF_END and the enable register
+> bits are something specific to recent Exynos SoCs (like 7885/850/auto9)
+> and don't fit well into the generic arm64 clk PM code, but I don't have
+> a good idea how to move it to the respective clk drivers and keep it simple.
+>
+
+Yeah, maybe having some sort of HW variants would be a better choice.
+That can be implemented later. I suggest we wait a bit first (after
+applying this series) and see if there going be any new users for that
+PM code. Once we gather more knowledge about current platforms (or
+no), the desired design decisions should become more obvious.
+
+>
+> Best regards
+> --
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+>
