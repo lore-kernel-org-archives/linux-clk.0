@@ -2,108 +2,177 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49DF5C636D7
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 07:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F3E5C61DA4
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 08:35:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233354AbjBWHRA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Feb 2023 02:17:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60884 "EHLO
+        id S230435AbjBWIfK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Feb 2023 03:35:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233315AbjBWHQ7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2023 02:16:59 -0500
+        with ESMTP id S229745AbjBWIfK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2023 03:35:10 -0500
 Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D27E4AFE9;
-        Wed, 22 Feb 2023 23:16:55 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 261A54C04;
+        Thu, 23 Feb 2023 00:34:22 -0800 (PST)
 Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id CD53924E26F;
-        Thu, 23 Feb 2023 15:16:53 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
+        by ex01.ufhost.com (Postfix) with ESMTP id 24D1F24E277;
+        Thu, 23 Feb 2023 16:33:42 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
  (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 23 Feb
- 2023 15:16:53 +0800
-Received: from [192.168.125.82] (113.72.147.165) by EXMBX172.cuchost.com
- (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 23 Feb
- 2023 15:16:52 +0800
-Message-ID: <af029196-6ebe-aae1-af7e-fdb327c14c82@starfivetech.com>
-Date:   Thu, 23 Feb 2023 15:16:51 +0800
+ 2023 16:33:42 +0800
+Received: from [192.168.125.128] (113.72.147.165) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 23 Feb
+ 2023 16:33:41 +0800
+Message-ID: <1d215c21-ccad-742f-447b-4aa5e42a4d83@starfivetech.com>
+Date:   Thu, 23 Feb 2023 16:34:01 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v4 17/19] riscv: dts: starfive: Add initial StarFive
- JH7110 device tree
-Content-Language: en-US
-To:     Conor Dooley <conor@kernel.org>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>, Stephen Boyd <sboyd@kernel.org>,
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v1 1/3] dt-bindings: clock: Add StarFive JH7110 PLL clock
+ generator
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
         "Michael Turquette" <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Conor Dooley <conor@kernel.org>,
         Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        "Emil Renner Berthing" <emil.renner.berthing@canonical.com>,
-        <linux-kernel@vger.kernel.org>
-References: <20230221024645.127922-1-hal.feng@starfivetech.com>
- <20230221024645.127922-18-hal.feng@starfivetech.com> <Y/T5eL4s8FSlbgQh@spud>
-From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <Y/T5eL4s8FSlbgQh@spud>
+        Hal Feng <hal.feng@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20230221141147.303642-1-xingyu.wu@starfivetech.com>
+ <20230221141147.303642-2-xingyu.wu@starfivetech.com>
+ <c0df5685-d0ef-705c-9684-86928dd68ab5@linaro.org>
+Content-Language: en-US
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+In-Reply-To: <c0df5685-d0ef-705c-9684-86928dd68ab5@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [113.72.147.165]
-X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
- (172.16.6.92)
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX061.cuchost.com
+ (172.16.6.61)
 X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 21 Feb 2023 17:03:52 +0000, Conor Dooley wrote:
-> On Tue, Feb 21, 2023 at 10:46:43AM +0800, Hal Feng wrote:
+On 2023/2/22 17:11, Krzysztof Kozlowski wrote:
+> On 21/02/2023 15:11, Xingyu Wu wrote:
+>> Add bindings for the PLL clock generator on the JH7110 RISC-V SoC.
 > 
->> +		S7_0: cpu@0 {
->> +			compatible = "sifive,s7", "riscv";
->> +			reg = <0>;
->> +			d-cache-block-size = <64>;
->> +			d-cache-sets = <64>;
->> +			d-cache-size = <8192>;
->> +			d-tlb-sets = <1>;
->> +			d-tlb-size = <40>;
->> +			device_type = "cpu";
->> +			i-cache-block-size = <64>;
->> +			i-cache-sets = <64>;
->> +			i-cache-size = <16384>;
->> +			i-tlb-sets = <1>;
->> +			i-tlb-size = <40>;
->> +			mmu-type = "riscv,sv39";
->> +			next-level-cache = <&ccache>;
->> +			riscv,isa = "rv64imac_zicsr_zba_zbb";
+> Just one sentence... not explaining anything around ABI break. Nope.
 > 
-> I still think that adding just zicsr here is pointless. If you're going
-> to be specific, why not also mention that you have zifencei too?
-
-I would like to remove "_zicsr" in the next version. Thanks.
-
-> 
->> +			tlb-split;
->> +			status = "disabled";
+>> 
+>> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+>> ---
+>>  .../bindings/clock/starfive,jh7110-pll.yaml   | 45 +++++++++++++++++++
+>>  .../dt-bindings/clock/starfive,jh7110-crg.h   | 12 ++---
+>>  2 files changed, 52 insertions(+), 5 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml
+>> 
+>> diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml
+>> new file mode 100644
+>> index 000000000000..8fd18e6c2e9b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml
+>> @@ -0,0 +1,45 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/starfive,jh7110-pll.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 >> +
->> +			cpu0_intc: interrupt-controller {
->> +				compatible = "riscv,cpu-intc";
->> +				interrupt-controller;
->> +				#interrupt-cells = <1>;
->> +			};
->> +		};
+>> +title: StarFive JH7110 PLL Clock Generator
+>> +
+>> +maintainers:
+>> +  - Xingyu Wu <xingyu.wu@starfivetech.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: starfive,jh7110-pll
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +      - description: Main Oscillator (24 MHz)
 > 
-> Rest of this looks fine to me though, thanks for adding the s7
-> compatible and zba/zbb :)
+> Does not look like you tested the bindings. Please run `make
+> dt_binding_check` (see
+> Documentation/devicetree/bindings/writing-schema.rst for instructions).
 
-Thanks for your review. :)
+Remove the ' - ' before 'description' and pass the dt_binding_check.
+
+> 
+>> +
+>> +  '#clock-cells':
+>> +    const: 1
+>> +    description:
+>> +      See <dt-bindings/clock/starfive,jh7110-crg.h> for valid indices.
+>> +
+>> +  starfive,sysreg:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> 
+> That's not how the property is modeled... look at other code.
+
+Remove the '-array'.
+
+> 
+>> +    description:
+>> +      the phandle to System Register Controller syscon node.
+>> +
+>> +required:
+>> +  - compatible
+>> +  - clocks
+>> +  - '#clock-cells'
+>> +  - starfive,sysreg
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    pllclk: pll-clock-controller {
+>> +      compatible = "starfive,jh7110-pll";
+>> +      clocks = <&osc>;
+>> +      #clock-cells = <1>;
+>> +      starfive,sysreg = <&sys_syscon>;
+>> +    };
+>> diff --git a/include/dt-bindings/clock/starfive,jh7110-crg.h b/include/dt-bindings/clock/starfive,jh7110-crg.h
+>> index 5e4f21ca0642..086a6ddcf380 100644
+>> --- a/include/dt-bindings/clock/starfive,jh7110-crg.h
+>> +++ b/include/dt-bindings/clock/starfive,jh7110-crg.h
+>> @@ -6,6 +6,12 @@
+>>  #ifndef __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
+>>  #define __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
+>>  
+>> +/* PLL clocks */
+>> +#define JH7110_CLK_PLL0_OUT			0
+>> +#define JH7110_CLK_PLL1_OUT			1
+>> +#define JH7110_CLK_PLL2_OUT			2
+>> +#define JH7110_PLLCLK_END			3
+>> +
+>>  /* SYSCRG clocks */
+>>  #define JH7110_SYSCLK_CPU_ROOT			0
+>>  #define JH7110_SYSCLK_CPU_CORE			1
+>> @@ -198,11 +204,7 @@
+>>  #define JH7110_SYSCLK_TDM_TDM_INV		188
+>>  #define JH7110_SYSCLK_JTAG_CERTIFICATION_TRNG	189
+>>  
+>> -#define JH7110_SYSCLK_PLL0_OUT			190
+>> -#define JH7110_SYSCLK_PLL1_OUT			191
+>> -#define JH7110_SYSCLK_PLL2_OUT			192
+>> -
+> 
+> 
+> NAK. ABI break. You have entire commit msg to explain this and avoid
+> questions from reviewers.
+> 
+
+Discussed with Hal.Feng to delete this part and move it to driver in his next patch series.
 
 Best regards,
-Hal
+Xingyu Wu
+
