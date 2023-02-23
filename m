@@ -2,219 +2,198 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8168EC61DA4
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 02:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 659EEC64EC7
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Feb 2023 03:03:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232889AbjBWC1T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Feb 2023 21:27:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47394 "EHLO
+        id S233845AbjBWDDW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Feb 2023 22:03:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbjBWC1R (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 21:27:17 -0500
-Received: from mail-oa1-x2c.google.com (mail-oa1-x2c.google.com [IPv6:2001:4860:4864:20::2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5331F1165A
-        for <linux-clk@vger.kernel.org>; Wed, 22 Feb 2023 18:27:14 -0800 (PST)
-Received: by mail-oa1-x2c.google.com with SMTP id 586e51a60fabf-1724d65d002so5730161fac.4
-        for <linux-clk@vger.kernel.org>; Wed, 22 Feb 2023 18:27:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IAoLiHZonQ9yzf6exsyPnPMjat+DcttMudRnM/cvohQ=;
-        b=kGKiOU9lZXUiSbBzfPeN1n7CSuyBK30Czjq4ei6DrXfsvFtKf14DPWNt+9PC9S3cHR
-         XR249GLTqFWyDoy0IkR/4uBqwV+Pmpw0FJ1S6oy2ZBYIWntYJ1Xd+yUDSNuhjzsIRzvj
-         psGjtU7aTul4IEQyhe1iljYAHM0PUt2hDwMPpDafq7IOL7swa7lrIAvfC4SbSzPOWawx
-         qsPNag+kePk4okC/uBc8CsDsRi0lo1MuDhM0MyVpVsq6ekew54r7WivAbOkSutPrmzoY
-         s15g+3NqJ/xGXjzh96MfZnYNeuky1vTc+PRQjXWYlJ24M4HNw6NwVi2VMd9ZlqUEcjnZ
-         qipQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IAoLiHZonQ9yzf6exsyPnPMjat+DcttMudRnM/cvohQ=;
-        b=0W188SspJQbB1yAdTOwAlq/a195XWWNcRZl5noShuKfUcewjRymwqDkAggXpqeBoyC
-         8Lg/TqCvIgSKH8cwNru9HbxDeC3+j2TyuFITY6+lnSFhRnbw6/Z8wlixPvWz7ceORSHn
-         YnRPbgDlPQMk/ZuUEg5JrKJ9rs4AEPbaCwNs/ImbehGlByM2XTI/F7mHKnt14KUfygC7
-         Wxki442A/B1aXSoHksp6ps5sQDppnZdH4YeMHKn9vkGJsIRa7UwD6jXR8ehwRqHr4ft3
-         pAnZiFQQBsAh35kmVVnVaQj/F2WbrArl8rFLsFFtdlQk05Vem+SpJxJZ1ihss0UHi/kr
-         eH8g==
-X-Gm-Message-State: AO0yUKVWcqC57x3MKG0sX/DYr+qjiEt7g+YMh8EsC+k2356uusehC/ZS
-        u0kKns75uSkFB6qK5ZO1jkKy8MUHUtjqZD5sUNmVxA==
-X-Google-Smtp-Source: AK7set+h6QdDAN1HHNJ/ETPJpkHPuqATk5ZydfyUit0/Gt7f4augVb/rP3yqBsBk8d5tAAmUk9MZwkuSjop5xXR7v8g=
-X-Received: by 2002:a05:6870:678a:b0:16e:19a8:31d8 with SMTP id
- gc10-20020a056870678a00b0016e19a831d8mr1457846oab.62.1677119233386; Wed, 22
- Feb 2023 18:27:13 -0800 (PST)
+        with ESMTP id S233841AbjBWDDV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 22:03:21 -0500
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E82E1AD08;
+        Wed, 22 Feb 2023 19:03:17 -0800 (PST)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id 3FB1D24E245;
+        Thu, 23 Feb 2023 11:03:15 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 23 Feb
+ 2023 11:03:14 +0800
+Received: from [192.168.125.82] (113.72.147.165) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 23 Feb
+ 2023 11:03:14 +0800
+Message-ID: <63d0e2a9-84b9-6637-6bbf-dedb2527eaa5@starfivetech.com>
+Date:   Thu, 23 Feb 2023 11:03:04 +0800
 MIME-Version: 1.0
-References: <20230211064006.14981-1-semen.protsenko@linaro.org>
- <CGME20230211063956epcas2p423cb99655dcfdb34c6847bb228aa7324@epcms2p2>
- <20230211064006.14981-6-semen.protsenko@linaro.org> <20230215024056epcms2p28f04cf946f20343643faca944ea147ea@epcms2p2>
-In-Reply-To: <20230215024056epcms2p28f04cf946f20343643faca944ea147ea@epcms2p2>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Wed, 22 Feb 2023 20:27:18 -0600
-Message-ID: <CAPLW+4=rsUKkX+pYEdfXst2LsOOdhTDhE9kB-DROZOfweTGB-A@mail.gmail.com>
-Subject: Re: [PATCH 5/6] clk: samsung: exynos850: Add AUD and HSI main gate clocks
-To:     chanho61.park@samsung.com
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v3 07/11] dt-bindings: clock: Add StarFive JH7110 system
+ clock and reset generator
+Content-Language: en-US
+To:     Conor Dooley <conor@kernel.org>
+CC:     Stephen Boyd <sboyd@kernel.org>, <linux-riscv@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
         Rob Herring <robh+dt@kernel.org>,
-        David Virag <virag.david003@gmail.com>,
-        ALIM AKHTAR <alim.akhtar@samsung.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Emil Renner Berthing" <emil.renner.berthing@canonical.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20221220005054.34518-1-hal.feng@starfivetech.com>
+ <20221220005054.34518-8-hal.feng@starfivetech.com> <Y6JB37Pd5TZoGMy4@spud>
+ <7a7bccb1-4d47-3d32-36e6-4aab7b5b8dad@starfivetech.com>
+ <Y6tSWB2+98a8k9Qw@spud>
+ <5cf0fe71-fd17-fb28-c01e-28356081ba76@starfivetech.com>
+ <Y+5z8skN2DuvxDEL@spud> <72953dc9371b87da8d03c63633d7d9dd.sboyd@kernel.org>
+ <Y/VWNPfApsfm3/UD@spud>
+ <c0472d7f-56fe-3e91-e0a0-49ee51700b5d@starfivetech.com>
+ <Y/ZCRv3jHwFxN1Fo@spud>
+From:   Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <Y/ZCRv3jHwFxN1Fo@spud>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [113.72.147.165]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 14 Feb 2023 at 20:41, CHANHO PARK <chanho61.park@samsung.com> wrote:
->
-> > -----Original Message-----
-> > From: Sam Protsenko <semen.protsenko@linaro.org>
-> > Sent: Saturday, February 11, 2023 3:40 PM
-> > To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>; Chanwoo Choi
-> > <cw00.choi@samsung.com>; Sylwester Nawrocki <s.nawrocki@samsung.com>; Rob
-> > Herring <robh+dt@kernel.org>
-> > Cc: David Virag <virag.david003@gmail.com>; Chanho Park
-> > <chanho61.park@samsung.com>; Alim Akhtar <alim.akhtar@samsung.com>; Sumit
-> > Semwal <sumit.semwal@linaro.org>; Tomasz Figa <tomasz.figa@gmail.com>;
-> > Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
-> > <sboyd@kernel.org>; linux-samsung-soc@vger.kernel.org; linux-
-> > clk@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
-> > kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> > Subject: [PATCH 5/6] clk: samsung: exynos850: Add AUD and HSI main gate
-> > clocks
-> >
-> > Add main gate clocks for controlling AUD and HSI CMUs:
-> >   - gout_aud_cmu_aud_pclk
-> >   - gout_hsi_cmu_hsi_pclk
-> >
-> > Those clocks were marked as CLK_IGNORE_UNUSED, as system hangs on boot
-> > otherwise.
-> >
-> > While at it, add missing PPMU (Performance Profiling Monitor Unit) clocks
-> > for CMU_HSI.
-> >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > ---
-> >  drivers/clk/samsung/clk-exynos850.c | 18 ++++++++++++++++++
-> >  1 file changed, 18 insertions(+)
-> >
-> > diff --git a/drivers/clk/samsung/clk-exynos850.c
-> > b/drivers/clk/samsung/clk-exynos850.c
-> > index a24eff42baae..3d776d57cc8f 100644
-> > --- a/drivers/clk/samsung/clk-exynos850.c
-> > +++ b/drivers/clk/samsung/clk-exynos850.c
-> > @@ -674,6 +674,7 @@ static const struct samsung_cmu_info apm_cmu_info
-> > __initconst = {
-> >  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF4 0x2014
-> >  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF5 0x2018
-> >  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF6 0x201c
-> > +#define CLK_CON_GAT_CLK_AUD_CMU_AUD_PCLK     0x2020
-> >  #define CLK_CON_GAT_GOUT_AUD_ABOX_ACLK               0x2048
-> >  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_SPDY  0x204c
-> >  #define CLK_CON_GAT_GOUT_AUD_ABOX_CCLK_ASB   0x2050
-> > @@ -729,6 +730,7 @@ static const unsigned long aud_clk_regs[] __initconst
-> > = {
-> >       CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF4,
-> >       CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF5,
-> >       CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF6,
-> > +     CLK_CON_GAT_CLK_AUD_CMU_AUD_PCLK,
-> >       CLK_CON_GAT_GOUT_AUD_ABOX_ACLK,
-> >       CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_SPDY,
-> >       CLK_CON_GAT_GOUT_AUD_ABOX_CCLK_ASB,
-> > @@ -848,6 +850,9 @@ static const struct samsung_div_clock aud_div_clks[]
-> > __initconst = {  };
-> >
-> >  static const struct samsung_gate_clock aud_gate_clks[] __initconst = {
-> > +     GATE(CLK_GOUT_AUD_CMU_AUD_PCLK, "gout_aud_cmu_aud_pclk",
-> > +          "dout_aud_busd",
-> > +          CLK_CON_GAT_CLK_AUD_CMU_AUD_PCLK, 21, CLK_IGNORE_UNUSED, 0),
-> >       GATE(CLK_GOUT_AUD_CA32_CCLK, "gout_aud_ca32_cclk",
-> > "mout_aud_cpu_hch",
-> >            CLK_CON_GAT_GOUT_AUD_ABOX_CCLK_CA32, 21, 0, 0),
-> >       GATE(CLK_GOUT_AUD_ASB_CCLK, "gout_aud_asb_cclk",
-> > "dout_aud_cpu_aclk", @@ -1117,12 +1122,15 @@ static const struct
-> > samsung_cmu_info g3d_cmu_info __initconst = {
-> >  #define PLL_CON0_MUX_CLKCMU_HSI_MMC_CARD_USER                        0x0610
-> >  #define PLL_CON0_MUX_CLKCMU_HSI_USB20DRD_USER                        0x0620
-> >  #define CLK_CON_MUX_MUX_CLK_HSI_RTC                          0x1000
-> > +#define CLK_CON_GAT_CLK_HSI_CMU_HSI_PCLK                     0x2000
-> >  #define CLK_CON_GAT_HSI_USB20DRD_TOP_I_RTC_CLK__ALV          0x2008
-> >  #define CLK_CON_GAT_HSI_USB20DRD_TOP_I_REF_CLK_50            0x200c
-> >  #define CLK_CON_GAT_HSI_USB20DRD_TOP_I_PHY_REFCLK_26         0x2010
-> >  #define CLK_CON_GAT_GOUT_HSI_GPIO_HSI_PCLK                   0x2018
-> >  #define CLK_CON_GAT_GOUT_HSI_MMC_CARD_I_ACLK                 0x2024
-> >  #define CLK_CON_GAT_GOUT_HSI_MMC_CARD_SDCLKIN                        0x2028
-> > +#define CLK_CON_GAT_GOUT_HSI_PPMU_ACLK                               0x202c
-> > +#define CLK_CON_GAT_GOUT_HSI_PPMU_PCLK                               0x2030
-> >  #define CLK_CON_GAT_GOUT_HSI_SYSREG_HSI_PCLK                 0x2038
-> >  #define CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_ACLK_PHYCTRL_20    0x203c
-> >  #define CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_BUS_CLK_EARLY              0x2040
-> > @@ -1132,12 +1140,15 @@ static const unsigned long hsi_clk_regs[]
-> > __initconst = {
-> >       PLL_CON0_MUX_CLKCMU_HSI_MMC_CARD_USER,
-> >       PLL_CON0_MUX_CLKCMU_HSI_USB20DRD_USER,
-> >       CLK_CON_MUX_MUX_CLK_HSI_RTC,
-> > +     CLK_CON_GAT_CLK_HSI_CMU_HSI_PCLK,
-> >       CLK_CON_GAT_HSI_USB20DRD_TOP_I_RTC_CLK__ALV,
-> >       CLK_CON_GAT_HSI_USB20DRD_TOP_I_REF_CLK_50,
-> >       CLK_CON_GAT_HSI_USB20DRD_TOP_I_PHY_REFCLK_26,
-> >       CLK_CON_GAT_GOUT_HSI_GPIO_HSI_PCLK,
-> >       CLK_CON_GAT_GOUT_HSI_MMC_CARD_I_ACLK,
-> >       CLK_CON_GAT_GOUT_HSI_MMC_CARD_SDCLKIN,
-> > +     CLK_CON_GAT_GOUT_HSI_PPMU_ACLK,
-> > +     CLK_CON_GAT_GOUT_HSI_PPMU_PCLK,
-> >       CLK_CON_GAT_GOUT_HSI_SYSREG_HSI_PCLK,
-> >       CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_ACLK_PHYCTRL_20,
-> >       CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_BUS_CLK_EARLY,
-> > @@ -1163,6 +1174,9 @@ static const struct samsung_mux_clock hsi_mux_clks[]
-> > __initconst = {  };
-> >
-> >  static const struct samsung_gate_clock hsi_gate_clks[] __initconst = {
-> > +     GATE(CLK_GOUT_HSI_CMU_HSI_PCLK, "gout_hsi_cmu_hsi_pclk",
-> > +          "mout_hsi_bus_user",
-> > +          CLK_CON_GAT_CLK_HSI_CMU_HSI_PCLK, 21, CLK_IGNORE_UNUSED, 0),
->
-> You'll need to put /* TODO: */ tag or use CLK_IS_CRITICAL if you make sure it is the critical clock.
->
+On Wed, 22 Feb 2023 16:26:46 +0000, Conor Dooley wrote:
+> On Wed, Feb 22, 2023 at 09:27:37PM +0800, Hal Feng wrote:
+>> On Tue, 21 Feb 2023 23:39:32 +0000, Conor Dooley wrote:
+>> > On Tue, Feb 21, 2023 at 02:17:17PM -0800, Stephen Boyd wrote:
+>> >> Quoting Conor Dooley (2023-02-16 10:20:34)
+>> >> > On Thu, Feb 16, 2023 at 10:42:20PM +0800, Hal Feng wrote:
+>> >> > > On Tue, 27 Dec 2022 20:15:20 +0000, Conor Dooley wrote:
+>> >> > > > On Mon, Dec 26, 2022 at 12:26:32AM +0800, Hal Feng wrote:
+>> >> > > Please see the picture of these external clocks in clock tree.
+>> >> > > 
+>> >> > > # mount -t debugfs none /mnt
+>> >> > > # cat /mnt/clk/clk_summary
+>> >> > >                                  enable  prepare  protect                                duty  hardware
+>> >> > >    clock                          count    count    count        rate   accuracy phase  cycle    enable
+>> >> > > -------------------------------------------------------------------------------------------------------
+>> >> > >  *mclk_ext*                             0        0        0    12288000          0     0  50000         Y
+>> >> > >  *tdm_ext*                              0        0        0    49152000          0     0  50000         Y
+>> >> > >  *i2srx_lrck_ext*                       0        0        0      192000          0     0  50000         Y
+>> >> > >  *i2srx_bclk_ext*                       0        0        0    12288000          0     0  50000         Y
+>> >> > >  *i2stx_lrck_ext*                       0        0        0      192000          0     0  50000         Y
+>> >> > >  *i2stx_bclk_ext*                       0        0        0    12288000          0     0  50000         Y
+>> >> > >  *gmac1_rgmii_rxin*                     0        0        0   125000000          0     0  50000         Y
+>> >> > >     gmac1_rx                          0        0        0   125000000          0     0  50000         Y
+>> >> > >        gmac1_rx_inv                   0        0        0   125000000          0   180  50000         Y
+>> >> > >  *gmac1_rmii_refin*                     0        0        0    50000000          0     0  50000         Y
+>> >> > >     gmac1_rmii_rtx                    0        0        0    50000000          0     0  50000         Y
+>> >> > >        gmac1_tx                       0        0        0    50000000          0     0  50000         N
+>> >> > >           gmac1_tx_inv                0        0        0    50000000          0   180  50000         Y
+>> >> > >  *osc*                                  4        4        0    24000000          0     0  50000         Y
+>> >> > >     apb_func                          0        0        0    24000000          0     0  50000         Y
+>> >> > >  ...
+>> >> > > 
+>> >> > > The clock "gmac1_rgmii_rxin" and the clock "gmac1_rmii_refin" are
+>> >> > > actually used as the parent of other clocks.
+>> >> > 
+>> >> > > The "dummy" clocks
+>> >> > > you said are all internal clocks.
+>> >> > 
+>> >> > No, what I meant by "dummy" clocks is that if you make clocks "required"
+>> >> > in the binding that are not needed by the hardware for operation a
+>> >> > customer of yours might have to add "dummy" clocks to their devicetree
+>> >> > to pass dtbs_check.
+>> >> 
+>> >> They can set the phandle specifier to '<0>' to fill in the required
+>> >> property when there isn't anything there. If this is inside an SoC, it
+>> >> is always connected because silicon can't change after it is made
+>> >> (unless this is an FPGA). Therefore, any and all input clocks should be
+>> >> listed as required.
+>> > 
+>> >> If the clk controller has inputs that are
+>> >> pads/balls/pins on the SoC then they can be optional if a valid design
+>> >> can leave those pins not connected.
+>> > 
+>> > From the discussion on the dts patches, where the clocks have been put
+>> > (intentionally) into board.dts, I've been under the impression that we
+>> > are in this situation.
+>> 
+>> For the system (sys) clock controller, we are in this situation.
+>> For the always-on (aon) clock controller, we are not, because some input
+>> clocks are inside the SoC.
+>> 
+>> > Up to Hal to tell us if the hardware is capable of having those inputs
+>> > left unfilled!
+>> 
+>> The situation is different for v1.2A and v1.3B boards.
+>> 
+>> For the v1.2A board,
+>> gmac1 only requires "gmac1_rmii_refin", which support 100MHz
+>> gmac0 only requires "gmac0_rgmii_rxin", which support 1000MHz
+>> 
+>> For the v1.3B board,
+>> gmac1 only requires "gmac1_rgmii_rxin", which support 1000MHz
+>> gmac0 only requires "gmac0_rgmii_rxin", which support 1000MHz
+>> 
+>> So we should set the "required" property depending on different
+>> boards.
+> 
+> These were Krzk's suggestions:
+> oneOf:
+>  - clock-names:
+>      minItems: 3
+>      items:
+>        - a
+>        - b
+>        - c
+>        - d
+>  - clock-names:
+>      items:
+>        - a
+>        - b
+>        - d
+> 
+> or maybe:
+>  - clock-names:
+>      minItems: 3
+>      items:
+>        - a
+>        - b
+>        - enum: [c, d]
+>        - d
+> 
+> Might be making a mess here, but I think that becomes:
+>   clock-names:
+>     oneOf:
+>       - items:
+>           - const: osc
+>           - enum:
+>               - gmac1_rmii_refin
+>               - gmac1_rgmii_rxin
+>           - const: i2stx_bclk_ext
+>           - const: i2stx_lrck_ext
+>           - const: i2srx_bclk_ext
+>           - const: i2srx_lrck_ext
+>           - const: tdm_ext
+>           - const: mclk_ext
+> 
+>       - items:
+>           - const: osc
+>           - const: gmac1_rmii_refin
+>           - const: gmac1_rgmii_rxin
+>           - const: i2stx_bclk_ext
+>           - const: i2stx_lrck_ext
+>           - const: i2srx_bclk_ext
+>           - const: i2srx_lrck_ext
+>           - const: tdm_ext
+>           - const: mclk_ext
 
-Thanks for the review! I'll add the comment for now, as it's done in
-other CMUs for similar clocks. As for making it critical: maybe I'll
-do it as a part of PM enablement, which I'm working on right now (if
-it's needed). But in that case I'd like to provide a separate patch
-for making all similar clocks (XXX_CMU_XXX) critical, so not in this
-patch.
+Will modify it and improve the description of clock items for
+pointing out which clock is required on different boards.
+Thank you all for your helpful suggestions.
 
-Will send v2 soon.
-
-> >       GATE(CLK_GOUT_USB_RTC_CLK, "gout_usb_rtc", "mout_hsi_rtc",
-> >            CLK_CON_GAT_HSI_USB20DRD_TOP_I_RTC_CLK__ALV, 21, 0, 0),
-> >       GATE(CLK_GOUT_USB_REF_CLK, "gout_usb_ref", "mout_hsi_usb20drd_user",
-> > @@ -1177,6 +1191,10 @@ static const struct samsung_gate_clock
-> > hsi_gate_clks[] __initconst = {
-> >       GATE(CLK_GOUT_MMC_CARD_SDCLKIN, "gout_mmc_card_sdclkin",
-> >            "mout_hsi_mmc_card_user",
-> >            CLK_CON_GAT_GOUT_HSI_MMC_CARD_SDCLKIN, 21, CLK_SET_RATE_PARENT,
-> > 0),
-> > +     GATE(CLK_GOUT_HSI_PPMU_ACLK, "gout_hsi_ppmu_aclk",
-> > "mout_hsi_bus_user",
-> > +          CLK_CON_GAT_GOUT_HSI_PPMU_ACLK, 21, 0, 0),
-> > +     GATE(CLK_GOUT_HSI_PPMU_PCLK, "gout_hsi_ppmu_pclk",
-> > "mout_hsi_bus_user",
-> > +          CLK_CON_GAT_GOUT_HSI_PPMU_PCLK, 21, 0, 0),
-> >       GATE(CLK_GOUT_SYSREG_HSI_PCLK, "gout_sysreg_hsi_pclk",
-> >            "mout_hsi_bus_user",
-> >            CLK_CON_GAT_GOUT_HSI_SYSREG_HSI_PCLK, 21, 0, 0),
-> > --
-> > 2.39.1
+Best regards,
+Hal
