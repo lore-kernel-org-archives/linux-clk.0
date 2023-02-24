@@ -2,74 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA5EC61DA4
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Feb 2023 23:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 623DBC7EE23
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Feb 2023 16:16:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232869AbjBVXoX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Feb 2023 18:44:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54406 "EHLO
+        id S229507AbjBXQQc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Feb 2023 11:16:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232823AbjBVXoM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Feb 2023 18:44:12 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A34A8298CC;
-        Wed, 22 Feb 2023 15:43:59 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B8ECBB817C2;
-        Wed, 22 Feb 2023 23:43:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46B87C4339B;
-        Wed, 22 Feb 2023 23:43:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677109436;
-        bh=05zuIHUF2Jxq95BD3FXQmm8A1Va+9D4oc5j0eOsqeqA=;
-        h=In-Reply-To:References:From:Cc:To:Date:From;
-        b=GY9/KgHF+h9kBqfhUIkifXPZGMMzLXOxSO4GCaH+oCYE6msOoKyI7twbkamyiGU9w
-         kZOPaQvoReuQQL4+xjFyQE5CqsxEHz1HwYmFNxI2Yo0SES9cEpVez0gvGxXVtC0Ruj
-         vFNAiuoUu0kr3X0GJSTLfA/BwcMR5+SC8ia2t+Einn8H95x4rK/XesVSNh+yR/8Oow
-         73bmS5gIsRCqhTn3EiPN5IYnwBAsGpsqpfcnb+4+QsuE61mnYPSktf60AE4m6I0kO7
-         0l+3CzLlX55MgPpyUkttDKlAuryHIrdL2coPrJcrQOjR1FIfHoDbSTf9/vWBeGMs/H
-         1/29LHn56q+PA==
-Message-ID: <494290a9c80db9976fa8943210cd0cd5.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230222121453.91915-13-nick.alcock@oracle.com>
-References: <20230222121453.91915-1-nick.alcock@oracle.com> <20230222121453.91915-13-nick.alcock@oracle.com>
-@ubject: Re: [PATCH 12/27] kbuild, clk: remove MODULE_LICENSE in non-modules
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
+        with ESMTP id S229485AbjBXQQb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Feb 2023 11:16:31 -0500
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 149FE63DE7
+        for <linux-clk@vger.kernel.org>; Fri, 24 Feb 2023 08:16:16 -0800 (PST)
+Received: from booty (unknown [77.244.183.192])
+        (Authenticated sender: luca.ceresoli@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 945B4C000A;
+        Fri, 24 Feb 2023 16:16:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1677255375;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=CEcJzAt1Nz9tEOX4g5xEs4R3tREJCiS0mtbc0K3mvxI=;
+        b=fD3VsbT4BDR8SfSzuUnNJEGrGVDhDyEw/gJTS1KCKzVQDxY4/67AkUlPrYnhEqqB8Z8QlP
+        bQzOl5I6r5hB+GMi3aVFDZxyKognPth+TFYoZVOberRpqMRAq+fdhzs+E/vLe0e8yta03E
+        WyMzzGacOXIFKyobU4/KGwZBwdFhBXSYVvl4ZZ3nhgCvv/wJKNYzzGqdPbCD7EjUOSKdBZ
+        83BOtTWrAbrkwFVAqt/moszJH+PbOFxTpA/w7JyInvIpMiwS9BaNxRN3XHk9L6hqGY9iX+
+        z0HVKKoq2r0sj5RfCxRlX9ZTq31E7bkp88G4pWfPoNP7oZnKtJ/uHApaKxK09Q==
+Date:   Fri, 24 Feb 2023 17:16:11 +0100
+From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
+To:     Marek Vasut <marex@denx.de>
+Cc:     linux-clk@vger.kernel.org, Abel Vesa <abel.vesa@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-To:     Nick Alcock <nick.alcock@oracle.com>, mcgrof@kernel.org
-Date:   Wed, 22 Feb 2023 15:43:54 -0800
-User-Agent: alot/0.10
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
+Subject: Re: [PATCH v3 6/6] arm64: dts: imx8mp: Add analog audio output on
+ i.MX8MP EVK
+Message-ID: <20230224171611.42760f58@booty>
+In-Reply-To: <9aa7d898-d3ba-2018-7f88-d8978e0e52a1@denx.de>
+References: <20220625013235.710346-1-marex@denx.de>
+        <20220625013235.710346-6-marex@denx.de>
+        <20230222182252.2ad6d82b@booty>
+        <9aa7d898-d3ba-2018-7f88-d8978e0e52a1@denx.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Nick Alcock (2023-02-22 04:14:38)
-> Since commit 8b41fc4454e ("kbuild: create modules.builtin without
-> Makefile.modbuiltin or tristate.conf"), MODULE_LICENSE declarations
-> are used to identify modules. As a consequence, uses of the macro
-> in non-modules will cause modprobe to misidentify their containing
-> object file as a module when it is not (false positives), and modprobe
-> might succeed rather than failing with a suitable error message.
->=20
-> So remove it in the files in this commit, none of which can be built as
-> modules.
->=20
-> Signed-off-by: Nick Alcock <nick.alcock@oracle.com>
-> Suggested-by: Luis Chamberlain <mcgrof@kernel.org>
-> Cc: Luis Chamberlain <mcgrof@kernel.org>
-> Cc: linux-modules@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> ---
+Hi Marek,
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+On Thu, 23 Feb 2023 17:24:32 +0100
+Marek Vasut <marex@denx.de> wrote:
+
+> On 2/22/23 18:22, Luca Ceresoli wrote:
+> > Hello Marek,  
+> 
+> Hi,
+> 
+> > On Sat, 25 Jun 2022 03:32:35 +0200
+> > Marek Vasut <marex@denx.de> wrote:
+> >   
+> >> Enable SAI3 on i.MX8MP EVK, add WM8960 codec binding and regulator.
+> >> This is all that is needed to get analog audio output operational
+> >> on i.MX8MP EVK.
+> >>
+> >> Signed-off-by: Marek Vasut <marex@denx.de>
+> >> Cc: Abel Vesa <abel.vesa@nxp.com>
+> >> Cc: Fabio Estevam <festevam@gmail.com>
+> >> Cc: Jacky Bai <ping.bai@nxp.com>
+> >> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >> Cc: Lucas Stach <l.stach@pengutronix.de>
+> >> Cc: Michael Turquette <mturquette@baylibre.com>
+> >> Cc: Shawn Guo <shawnguo@kernel.org>
+> >> Cc: Stephen Boyd <sboyd@kernel.org>
+> >> Cc: linux-arm-kernel@lists.infradead.org
+> >> Cc: linux-clk@vger.kernel.org
+> >> Cc: linux-imx@nxp.com  
+> > 
+> > I'm sending in reply to this e-mail the device tree patch I have used
+> > for my audio testing on the MSC SM2-MB-EP1 board. Feel free to add it to
+> > your series if you want, it obviously depends on it.  
+> 
+> Lemme just mark this email locally and start with the MX8MP EVK . If the 
+> audio patches ever get upstream, then this one can be easily 
+> resubmitted. Does that work ?
+
+Sure.
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
