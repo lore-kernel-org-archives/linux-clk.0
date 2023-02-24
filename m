@@ -2,290 +2,427 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C15C64ED6
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Feb 2023 02:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F52CC678D5
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Feb 2023 06:58:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229534AbjBXCuC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Feb 2023 21:50:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32948 "EHLO
+        id S229639AbjBXG62 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Feb 2023 01:58:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbjBXCuB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2023 21:50:01 -0500
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2114.outbound.protection.outlook.com [40.107.117.114])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9535839CC7;
-        Thu, 23 Feb 2023 18:49:20 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Xk4PkDtl6w0D0kw45fFJigrjryhxiGSlIlCmOMqTuX4548S0ctLz6EtjvZ+TXCHB8bBIRlckRp0c/ijTqTSks2AamEzLre4VctP6G3B/0EPFAtO7bCkTMHRsm6EMF1BThLheZ90nbbPnWbA7lBl/VByR306SZTpwsTwabvrElT39W2FV7BB/WygbG5w6hUlE1ZUVibUUj5QkQ3HKGwGeuJseSqsb/fTpYiZN67PodaYzmJeUtkkYJTMBn/UT6oreDTMDMQ6RC4z2/xJsImVvZyEoR7TM33j6hCLKw3tBfyFyvFkSdsgph6SRAJG0ht3SoJGex48ZGJ2cW6DoUfD6HA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oCtGoQIfo10m6T50qM/hk3IgQOWrRcdBhUexp+R+X+Y=;
- b=NJVHDb45knuksmPhpdtEzNBikzdAdaPuMQmBXDgWedPXbenNEAiR/3LtCw7MYzz2iJ3R6/XcHqfXcP+8dUhEOmJRMSMXirEG/i+PD5o5gPSz52NP2XnErjdqvOFkilZUe7buEH7aghjlaCP8A47Ua3RdI7UhH66SMyreSqnq3gaG+ShlN+kygGHROgPg7fmZ9pi5DIoSljz1L8Y2q7DnQGBGWBywlJeFZbKg6mywucN64TvrhToc4ux7zZUBnlZdROrb+HZhLVNfZCP0Wygv71xqLnwbN55ObOsMgJ1Wsgc0tfQ/BdM+nZNfrW8f5/f0UBw0cna0bLvBWxW2vJpknw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from PSAPR03MB6329.apcprd03.prod.outlook.com (2603:1096:301:5a::9)
- by SI2PR03MB5241.apcprd03.prod.outlook.com (2603:1096:4:ed::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6134.21; Fri, 24 Feb 2023 02:49:14 +0000
-Received: from PSAPR03MB6329.apcprd03.prod.outlook.com
- ([fe80::f5b8:7820:4802:70fe]) by PSAPR03MB6329.apcprd03.prod.outlook.com
- ([fe80::f5b8:7820:4802:70fe%8]) with mapi id 15.20.6134.024; Fri, 24 Feb 2023
- 02:49:13 +0000
-Message-ID: <4deec176-135f-f49f-0b04-f5b45ec691cb@amlogic.com>
-Date:   Fri, 24 Feb 2023 10:49:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] clk: meson: vid-pll-div: added meson_vid_pll_div_ops
- support to enable vid_pll_div to meet clock setting requirements, especially
- for late chip
-Content-Language: en-US
-To:     Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     kelvin.zhang@amlogic.com, qi.duan@amlogic.com
-References: <20230223062723.4770-1-yu.tu@amlogic.com>
- <1jv8jsoerm.fsf@starbuckisacylon.baylibre.com>
-From:   Yu Tu <yu.tu@amlogic.com>
-In-Reply-To: <1jv8jsoerm.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SGXP274CA0019.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::31)
- To PSAPR03MB6329.apcprd03.prod.outlook.com (2603:1096:301:5a::9)
+        with ESMTP id S229498AbjBXG61 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Feb 2023 01:58:27 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 750B8410B8;
+        Thu, 23 Feb 2023 22:58:25 -0800 (PST)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31O2NUsO030509;
+        Fri, 24 Feb 2023 06:58:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=ExYGv7uD0WZzY2ho0BwFRS07UTaJZxj71lOvMF39JVY=;
+ b=V4YlBVnHKYYJ22OJV2cyL1Z6lKp9M60dmCWQtloQXFegllNUw3XnlYMXOebclvhA9oIT
+ RcZdTdy97hzk/AFiuUY/Z82xC8epjV+BNOEtC1ZQcCR08WZji6j0tz9QZTF5zOZZEkF2
+ +gBLPgVt/UwiFG7j2RG6qs+lVBaWVzsB94CFm52NLnDIG3pTfB8Fzs3VqydXAPh5uWeO
+ R7ViDH7lgJJv6ouy/q0NuMpvN9wahmerPu679mGrUkWbS3u0LaQ8ofIdpNiFlINqf9Ni
+ t/Trkl5wE2u9484Icz4MvgNw2bSWFCStCBWh6cSt10htnPwTlBEWxpdOCs+PlGP3Z5ot /w== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nwycnkqpr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 24 Feb 2023 06:58:05 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31O6w4dX002510
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 24 Feb 2023 06:58:04 GMT
+Received: from [10.50.30.238] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Thu, 23 Feb
+ 2023 22:57:55 -0800
+Message-ID: <d3403424-4adc-26d6-3a98-1807361fe0fc@quicinc.com>
+Date:   Fri, 24 Feb 2023 12:27:52 +0530
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PSAPR03MB6329:EE_|SI2PR03MB5241:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3ebcf4fc-5c4e-4fdf-e40f-08db1611b5a2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Ka0qC7skySaSxl93oQSmGyRmTZu6YZGHHr0LFQUTV8ASyaXKFSofAxebRoncn88kO6f8oHgvhagOeDMKokFpvc8Ku4nKb9KNHdgVGIY2T0mrTqQnAkBId3moM6VJESbvW6r8ULBasmdSG8qjQnrGqlnSwCVw5gNDUplheuGU1GVhpGyFcKEG6sV/xuI1QpiI/kYn8svax5vfWp/4AQyzRcDRPKSUKG8ehzAHoVAaj9+69jp58jnloY+UJTEQEEKPCY6oZt7rR4A+HygY4IlN3zhTpYcd6jyEb1mznkZ2ambf6alXzfbCqWOzO8aC/lM6QByu+v2n3NjVDg167JS4n+blVdRu3/Q5c0pD5vnQ+L6jUI8LeYGu5FSqVb65cKudxXBa0wsjjva+oIG7dStqrs5scewIFvKlpapEZ7eSgz1zNRrJdmRJjhV5DrUag9OZxKXIRkl/VKMYUg497F5edJfNOM9OfI722fyCtraRADH73E8UEGR5sPODjnK2Zj1xuGpRWrXxSEkkJSTJ4i2UFernkzwp94neE+Hx4OjVyB/PoKEyulqdetVEnM2f6Pa9Mqm6SO8I58mDS+OvmgmMiFaxl3ipQz4FDCFxce9Ls0OlNw31wPnHezfcQVWsSdrsIW4Ljn936wyMqX6koe8A7rCBzqhhqgAYTvpXoOeT+fNgCucLyYw+X9SdNCS0wgoTvrQKIL31dQBL6bYFqegfK+AE7dZsDCDqVKMgb9fKB+11nV5AchEl1ECXZZKCQqpg
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR03MB6329.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(366004)(136003)(346002)(396003)(39850400004)(376002)(451199018)(6506007)(6512007)(53546011)(86362001)(316002)(44832011)(31696002)(5660300002)(66556008)(66946007)(66476007)(8936002)(7416002)(4326008)(8676002)(2906002)(6486002)(38100700002)(2616005)(478600001)(31686004)(6666004)(26005)(83380400001)(110136005)(107886003)(41300700001)(186003)(36756003)(921005)(43740500002)(45980500001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TUxRZGk2UUF2U3RZc3BIbjE2OU4vci9yeXFEakdGZUY3YTZsbE8zcDlpWXhN?=
- =?utf-8?B?eEs1ZWZnQmU4SERHWFNCdElwV1NFTm8vN0tCYUNlTW1LTlZwdkxXWUtTdTZ1?=
- =?utf-8?B?cnR5b2xxRkFQek8yN016TG1Vdkt5a281Z28ycHpZQ3U4b3NzZmFSb0UvRmYz?=
- =?utf-8?B?NDI2ZGI4dFFHTWk4ZDdFT2lkNHppRlZKVFJ6R1hNbHUrSVdOZEQ0dFViSGRq?=
- =?utf-8?B?L2Q5djY4RFhoSURPQkUyU1FFZ2xQcHYyRXF1NnpJTm1jZWFZWmdCU3Znc3Qz?=
- =?utf-8?B?a2EvMlgySEFnQU8veHc1MmlUYmYvOVIxdmF4L2Z0ckZWQ3Jab3V1ODA3U1Ey?=
- =?utf-8?B?c1FDV0ZEWW5mTHNrTmowU05zb0RGaUs1dHdEWUM0YmVNVkpxcElSMjFzc0tG?=
- =?utf-8?B?ald5anlFbzRSQ3JveEpXL0FXUkhCMlRvWHFXWjA3SUQ2TWFKS21JUXppYWlN?=
- =?utf-8?B?bXM4N0JvdFVBZUozeEU3LzZBRnZEVWtLeXhsNXYrdGUxaW9hOUUvcU16MEZr?=
- =?utf-8?B?UUJkem1vZ2VDcktUMlBoMnlOb2I3bUxYekVEaXkvTDJDQWo2Tk5sK0U0Sm8y?=
- =?utf-8?B?Z3IzSSt1VVdGNTNRd2prODhFYmRwVUlCTm1NR1F5SHJIVDB4dU5VMWZCZXJL?=
- =?utf-8?B?R3M1d0FSYUl1R0phU1ExcHcyN0ZoanhRY05vSjhBYmhKb2x0V0JRb2hHM0xM?=
- =?utf-8?B?UGFlaDEzbGZhUUUwcjN3WVV4SWgxY0RhRFlQUS9TTys3TFJnS2hkNnB4ZFlx?=
- =?utf-8?B?WUtCR3pkdFJ1R2hnWkh6VVVVVUVoSUg5K0x5N0xYVTlxNzBIbmsrQjNwOGFn?=
- =?utf-8?B?T3ZNWURZd25mM0F1RkQ0K0xlcVRtZWhwV044MDFzYjN1d2Y4TzZvNFZLUEVw?=
- =?utf-8?B?dFUzdzJLZUFnTm5zMkhHOU10RUEzM2cyY0NNSERWY3p0ajRxNDhRcjYwMGha?=
- =?utf-8?B?VXBONFNkeXJvTmZBOENrekdwRVhOdmNCaWlsNDlvNDZqNnVHVlZENDdOVEox?=
- =?utf-8?B?eUtia2djcU1aaXZEcWwwcVVTM0RrVkJHRXByVVZ4NmFmK2xhZ0ROOG9lYXJD?=
- =?utf-8?B?ZUlKaGFaRytVNllYRjRhS3R2UUV4ZHFxdERWdjNLUXNVK010enFnalVhd3l6?=
- =?utf-8?B?eDVTcTdaU2Q0SkVVdWRENWlMM245SGJmMVFWNlFRU3pia202N1hKajlXclVi?=
- =?utf-8?B?UGkwV0VxUlhHaUJPbThiaFkzQllLaEIvU1Zzakx0SjlKMERvOGJCT2lodmd3?=
- =?utf-8?B?VXhaYWxva05sUEdoeGU5eHgrc3FBZDdyaWdFZlJadnIvZ2JzL01CbGZlYnJW?=
- =?utf-8?B?RzlLNS9jRGFqUFJRa3pmbVJ3UExhVFhYTklQelZKOXNUSzdTeVJuckh2SGdw?=
- =?utf-8?B?SkR5TE9qZTBmNkQ4cXNndHYveUVKdzA5MVF4UXFkcnFsSFpTczJoQzd5NGlJ?=
- =?utf-8?B?UjFDcFQ2UnVpdnkrYjhHc0xNMnpVb2JzN1MrNDRQZDdzSmZDdG80c3RGMVdE?=
- =?utf-8?B?Lzdkc1hUek9ZYkszQUJFRGpHRWFjcHAwYnRSUXpmS2l1YzgvMmJuVDBMMldl?=
- =?utf-8?B?VDFnclg0LzFUa0FYREtNazIyQllWWFMzYkJDbC9qa0lUY3JCM3ZqdGJKSHJW?=
- =?utf-8?B?Z3RwSXpwQmI2NkZRNzZWVEdnb1lVNXpjQlkrdldaaTJMN0w1YWpxelBlZ2JO?=
- =?utf-8?B?ZE1ZYmJpd3hnUnhDb2RBWFY3RUdQaTgzZGZ4SFoydE4zZEZOcEUrbzRHT0l6?=
- =?utf-8?B?RzVhTWQ3dUNteVhPV2EyTXU0b3N4UmtSL2lmK0VVL05jT2FLdHpCOTUzbzhh?=
- =?utf-8?B?VDVBUllHWFdFZGQxQXpodEpMS0R2Q0tsMG9TenlKRzZEdjhwVW95ZGZXRkE0?=
- =?utf-8?B?V2k1OUNtU3pLQTJ3Z0lxaDJsdi9ScFZ1dkk2N3lNMWgvSXROSXhGVHhMeFBM?=
- =?utf-8?B?NDA3Rkd4SGJiTzdETGNjNmx6Nm1pbTBzK21iZitYS2JlZnl5cGhQMUdSQTdt?=
- =?utf-8?B?Mi9aQ0szMUxjTHBzcnp0eGFlbmJXbGJyTGkwcTFhY3FKTHltWlNRQitWR3lI?=
- =?utf-8?B?MTN6ZzV0OHVYQnBSbGtiTDhWNFdUc2RGakxEYkJzNEx3c3QwUjZYYWo1Uk5y?=
- =?utf-8?Q?37xR473m3TlwSl7EbZ9pkBM/P?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ebcf4fc-5c4e-4fdf-e40f-08db1611b5a2
-X-MS-Exchange-CrossTenant-AuthSource: PSAPR03MB6329.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2023 02:49:12.7693
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ATmiwDVAAJoFzSoIDb0WDBDknIlT+prp+dOOZPyFs6kb/iHC+yQ17IL0GimeOh82WvWbB9+KmAzC5/El6930ZQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR03MB5241
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH 7/7] arm64: dts: qcom: ipq9574: Add PCIe PHYs and
+ controller nodes
+To:     Devi Priya <quic_devipriy@quicinc.com>, <agross@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <krzysztof.kozlowski+dt@linaro.org>,
+        <vkoul@kernel.org>, <kishon@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <mani@kernel.org>, <p.zabel@pengutronix.de>,
+        <svarbanov@mm-sol.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_arajkuma@quicinc.com>,
+        <quic_anusha@quicinc.com>
+References: <20230214164135.17039-1-quic_devipriy@quicinc.com>
+ <20230214164135.17039-8-quic_devipriy@quicinc.com>
+Content-Language: en-US
+From:   Kathiravan T <quic_kathirav@quicinc.com>
+In-Reply-To: <20230214164135.17039-8-quic_devipriy@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: zEjx_kquJH8OKG_6ysX1stIhuddtfRsj
+X-Proofpoint-GUID: zEjx_kquJH8OKG_6ysX1stIhuddtfRsj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-24_03,2023-02-23_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ suspectscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 spamscore=0
+ clxscore=1015 mlxlogscore=999 priorityscore=1501 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302240057
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+On 2/14/2023 10:11 PM, Devi Priya wrote:
+> Add PCIe0, PCIe1, PCIe2, PCIe3 (and corresponding PHY) devices
+> found on IPQ9574 platform. The PCIe0 & PCIe1 are 1-lane Gen3
+> host whereas PCIe2 & PCIe3 are 2-lane Gen3 host.
+>
+> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+> ---
+>   arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts |  28 ++
+>   arch/arm64/boot/dts/qcom/ipq9574.dtsi        | 477 ++++++++++++++++++-
+>   2 files changed, 499 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts b/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts
+> index 2c8430197ec0..21b53f34ce84 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts
+> +++ b/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts
+> @@ -8,6 +8,7 @@
+>   
+>   /dts-v1/;
+>   
+> +#include <dt-bindings/gpio/gpio.h>
+>   #include "ipq9574.dtsi"
+>   
+>   / {
+> @@ -29,6 +30,33 @@
+>   	status = "okay";
+>   };
+>   
+> +&pcie1_phy {
+> +	status = "okay";
+> +};
+> +
+> +&pcie1_x1 {
+> +	perst-gpios = <&tlmm 26 GPIO_ACTIVE_LOW>;
+> +	status = "okay";
+> +};
+> +
+> +&pcie2_phy {
+> +	status = "okay";
+> +};
+> +
+> +&pcie2_x2 {
+> +	perst-gpios = <&tlmm 29 GPIO_ACTIVE_LOW>;
+> +	status = "okay";
+> +};
+> +
+> +&pcie3_phy {
+> +	status = "okay";
+> +};
+> +
+> +&pcie3_x2 {
+> +	perst-gpios = <&tlmm 32 GPIO_ACTIVE_LOW>;
+> +	status = "okay";
+> +};
+> +
+>   &sdhc_1 {
+>   	pinctrl-0 = <&sdc_default_state>;
+>   	pinctrl-names = "default";
+> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> index 062f80798ebb..a32dbdeb5bed 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> @@ -6,8 +6,8 @@
+>    * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+>    */
+>   
+> -#include <dt-bindings/interrupt-controller/arm-gic.h>
+>   #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>   #include <dt-bindings/reset/qcom,ipq9574-gcc.h>
+>   
+>   / {
+> @@ -22,11 +22,41 @@
+>   			#clock-cells = <0>;
+>   		};
+>   
+> +		pcie30_phy0_pipe_clk: pcie30_phy0_pipe_clk {
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <250000000>;
+> +			#clock-cells = <0>;
+> +		};
+> +
+> +		pcie30_phy1_pipe_clk: pcie30_phy1_pipe_clk {
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <250000000>;
+> +			#clock-cells = <0>;
+> +		};
+> +
+> +		pcie30_phy2_pipe_clk: pcie30_phy2_pipe_clk {
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <250000000>;
+> +			#clock-cells = <0>;
+> +		};
+> +
+> +		pcie30_phy3_pipe_clk: pcie30_phy3_pipe_clk {
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <250000000>;
+> +			#clock-cells = <0>;
+> +		};
+> +
+>   		sleep_clk: sleep-clk {
+>   			compatible = "fixed-clock";
+>   			#clock-cells = <0>;
+>   		};
+>   
+> +		usb3phy_0_cc_pipe_clk: usb3phy_0_cc_pipe_clk {
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <125000000>;
+> +			#clock-cells = <0>;
+> +		};
+> +
+>   		xo_board_clk: xo-board-clk {
+>   			compatible = "fixed-clock";
+>   			#clock-cells = <0>;
+> @@ -121,6 +151,155 @@
+>   		#size-cells = <1>;
+>   		ranges = <0 0 0 0xffffffff>;
+>   
+> +		pcie0_phy: phy@84000 {
+> +			compatible = "qcom,ipq9574-qmp-gen3x1-pcie-phy";
+> +			reg = <0x00084000 0x1bc>; /* Serdes PLL */
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges;
+> +			clocks = <&gcc GCC_PCIE0_AUX_CLK>,
+> +				 <&gcc GCC_PCIE0_AHB_CLK>,
+> +				 <&gcc GCC_ANOC_PCIE0_1LANE_M_CLK>,
+> +				 <&gcc GCC_SNOC_PCIE0_1LANE_S_CLK>;
+> +			clock-names = "aux", "cfg_ahb", "anoc_lane", "snoc_lane";
+> +
+> +			assigned-clocks = <&gcc GCC_PCIE0_AUX_CLK>;
+> +			assigned-clock-rates = <20000000>;
+> +
+> +			resets = <&gcc GCC_PCIE0_PHY_BCR>,
+> +				 <&gcc GCC_PCIE0PHY_PHY_BCR>;
+> +			reset-names = "phy", "common";
+> +
+> +			status = "disabled";
+> +
+> +			pcie0_lane: phy@84200 {
+> +				reg = <0x00084200 0x16c>, /* Serdes Tx */
+> +				      <0x00084400 0x200>, /* Serdes Rx */
+> +				      <0x00084800 0x1f0>, /* PCS: Lane0, COM, PCIE */
+> +				      <0x00084c00 0xf4>;  /* pcs_misc */
+> +				#phy-cells = <0>;
+> +
+> +				clocks = <&gcc GCC_PCIE0_PIPE_CLK>;
+> +				clock-names = "pipe0";
+> +				clock-output-names = "gcc_pcie0_pipe_clk_src";
+> +				#clock-cells = <0>;
+> +			};
+> +		};
+> +
+> +		pcie2_phy: phy@8c000 {
+> +			compatible = "qcom,ipq9574-qmp-gen3x2-pcie-phy";
+> +			reg = <0x0008c000 0x1bc>; /* Serdes PLL */
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges;
+> +
+> +			clocks = <&gcc GCC_PCIE2_AUX_CLK>,
+> +				 <&gcc GCC_PCIE2_AHB_CLK>,
+> +				 <&gcc GCC_ANOC_PCIE2_2LANE_M_CLK>,
+> +				 <&gcc GCC_SNOC_PCIE2_2LANE_S_CLK>;
+> +			clock-names = "aux", "cfg_ahb", "anoc_lane", "snoc_lane";
+> +
+> +			assigned-clocks = <&gcc GCC_PCIE2_AUX_CLK>;
+> +			assigned-clock-rates = <20000000>;
+> +
+> +			resets = <&gcc GCC_PCIE2_PHY_BCR>,
+> +				 <&gcc GCC_PCIE2PHY_PHY_BCR>;
+> +			reset-names = "phy", "common";
+> +
+> +			status = "disabled";
+> +
+> +			pcie2_lanes: phy@8c200 {
+> +				reg = <0x0008c200 0x16c>, /* Serdes Tx0 */
+> +				      <0x0008c400 0x200>, /* Serdes Rx0 */
+> +				      <0x0008d000 0x1f0>, /* PCS: Lane0, COM, PCIE */
+> +				      <0x0008c600 0x16c>, /* Serdes Tx1 */
+> +				      <0x0008c800 0x200>, /* Serdes Rx1 */
+> +				      <0x0008d400 0x0f8>; /* pcs_misc */
+> +
+> +				#phy-cells = <0>;
+> +
+> +				clocks = <&gcc GCC_PCIE2_PIPE_CLK>;
+> +				clock-names = "pipe0";
+> +				clock-output-names = "gcc_pcie2_pipe_clk_src";
+> +				#clock-cells = <0>;
+> +			};
+> +		};
+> +
+> +		pcie3_phy: phy@f4000 {
+> +			compatible = "qcom,ipq9574-qmp-gen3x2-pcie-phy";
+> +			reg = <0x000f4000 0x1bc>; /* Serdes PLL */
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges;
+> +
+> +			clocks = <&gcc GCC_PCIE3_AUX_CLK>,
+> +				 <&gcc GCC_PCIE3_AHB_CLK>,
+> +				 <&gcc GCC_ANOC_PCIE3_2LANE_M_CLK>,
+> +				 <&gcc GCC_SNOC_PCIE3_2LANE_S_CLK>;
+> +			clock-names = "aux", "cfg_ahb", "anoc_lane", "snoc_lane";
+> +
+> +			assigned-clocks = <&gcc GCC_PCIE3_AUX_CLK>;
+> +			assigned-clock-rates = <20000000>;
+> +
+> +			resets = <&gcc GCC_PCIE3_PHY_BCR>,
+> +				 <&gcc GCC_PCIE3PHY_PHY_BCR>;
+> +			reset-names = "phy", "common";
+> +
+> +			status = "disabled";
+> +
+> +			pcie3_lanes: phy@f4200 {
+> +				reg = <0x000f4200 0x16c>, /* Serdes Tx0 */
+> +				      <0x000f4400 0x200>, /* Serdes Rx0 */
+> +				      <0x000f5000 0x1f0>, /* PCS: Lane0, COM, PCIE */
+> +				      <0x000f4600 0x16c>, /* Serdes Tx1 */
+> +				      <0x000f4800 0x200>, /* Serdes Rx1 */
+> +				      <0x000f5400 0x0f8>; /* pcs_misc */
+> +
+> +				#phy-cells = <0>;
+> +
+> +				clocks = <&gcc GCC_PCIE3_PIPE_CLK>;
+> +				clock-names = "pipe0";
+> +				clock-output-names = "gcc_pcie3_pipe_clk_src";
+> +				#clock-cells = <0>;
+> +			};
+> +		};
+> +
+> +		pcie1_phy: phy@fc000 {
+> +			compatible = "qcom,ipq9574-qmp-gen3x1-pcie-phy";
+> +			reg = <0x000fc000 0x1bc>; /* Serdes PLL */
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges;
+> +
+> +			clocks = <&gcc GCC_PCIE1_AUX_CLK>,
+> +				 <&gcc GCC_PCIE1_AHB_CLK>,
+> +				 <&gcc GCC_ANOC_PCIE1_1LANE_M_CLK>,
+> +				 <&gcc GCC_SNOC_PCIE1_1LANE_S_CLK>;
+> +			clock-names = "aux", "cfg_ahb", "anoc_lane", "snoc_lane";
+> +
+> +			assigned-clocks = <&gcc GCC_PCIE1_AUX_CLK>;
+> +			assigned-clock-rates = <20000000>;
+> +
+> +			resets = <&gcc GCC_PCIE1_PHY_BCR>,
+> +				 <&gcc GCC_PCIE1PHY_PHY_BCR>;
+> +			reset-names = "phy", "common";
+> +
+> +			status = "disabled";
+> +
+> +			pcie1_lane: phy@fc200 {
+> +				reg = <0x000fc200 0x16c>, /* Serdes Tx */
+> +				      <0x000fc400 0x200>, /* Serdes Rx */
+> +				      <0x000fc800 0x1f0>, /* PCS: Lane0, COM, PCIE */
+> +				      <0x000fcc00 0xf4>;  /* pcs_misc */
+> +				#phy-cells = <0>;
+> +
+> +				clocks = <&gcc GCC_PCIE1_PIPE_CLK>;
+> +				clock-names = "pipe0";
+> +				clock-output-names = "gcc_pcie1_pipe_clk_src";
+> +				#clock-cells = <0>;
+> +			};
+> +		};
+> +
+>   		tlmm: pinctrl@1000000 {
+>   			compatible = "qcom,ipq9574-tlmm";
+>   			reg = <0x01000000 0x300000>;
+> @@ -145,11 +324,11 @@
+>   			clocks = <&xo_board_clk>,
+>   				 <&sleep_clk>,
+>   				 <&bias_pll_ubi_nc_clk>,
+> -				 <0>,
+> -				 <0>,
+> -				 <0>,
+> -				 <0>,
+> -				 <0>;
+> +				 <&pcie30_phy0_pipe_clk>,
+> +				 <&pcie30_phy1_pipe_clk>,
+> +				 <&pcie30_phy2_pipe_clk>,
+> +				 <&pcie30_phy3_pipe_clk>,
+> +				 <&usb3phy_0_cc_pipe_clk>;
 
-On 2023/2/23 18:11, Jerome Brunet wrote:
-> [ EXTERNAL EMAIL ]
-> 
 
-Hi Jerome,
+pipe clock source is PHY. So should we add the pcie_phy phandle here and 
+use it like how it is done in other targets, ex: sm8550.dtsi?
 
-> 
-> On Thu 23 Feb 2023 at 14:27, Yu Tu <yu.tu@amlogic.com> wrote:
-> 
-> Title is way too long, 75 char max
 
-I will change to "clk: meson: vid-pll-div: added meson_vid_pll_div_ops 
-support". I wonder if you have a better suggestion, please let me know 
-if you have.
+>   			#clock-cells = <1>;
+>   			#reset-cells = <1>;
+>   			#power-domain-cells = <1>;
+> @@ -282,6 +461,292 @@
+>   				status = "disabled";
+>   			};
+>   		};
+> +
+> +		pcie1_x1: pci@10000000 {
+> +			compatible = "qcom,pcie-ipq9574";
+> +			reg =  <0x10000000 0xf1d>,
+> +			       <0x10000F20 0xa8>,
+> +			       <0x10001000 0x1000>,
+> +			       <0x000F8000 0x4000>,
+> +			       <0x10100000 0x1000>,
+> +			       <0x00618108 0x4>;
+> +			reg-names = "dbi", "elbi", "atu", "parf", "config", "aggr_noc";
+> +			device_type = "pci";
+> +			linux,pci-domain = <2>;
+> +			bus-range = <0x00 0xff>;
+> +			num-lanes = <1>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			ranges = <0x81000000 0 0x10200000 0x10200000
+> +				  0 0x00100000   /* downstream I/O */
+> +				  0x82000000 0 0x10300000 0x10300000
+> +				  0 0x07d00000>; /* non-prefetchable memory */
+> +
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0 0 0 0x7>;
+> +			interrupt-map = <0 0 0 1 &intc 0 35
+> +					IRQ_TYPE_LEVEL_HIGH>, /* int_a */
+> +					<0 0 0 2 &intc 0 49
+> +					IRQ_TYPE_LEVEL_HIGH>, /* int_b */
+> +					<0 0 0 3 &intc 0 84
+> +					IRQ_TYPE_LEVEL_HIGH>, /* int_c */
+> +					<0 0 0 4 &intc 0 85
+> +					IRQ_TYPE_LEVEL_HIGH>; /* int_d */
+> +
+> +			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "global_irq";
 
-> 
->> The previous chip only provides "ro_ops" for the vid_pll_div clock,
-> 
-> The driver does. Other chip could use RW ops I suppose.
 
-Your suppose is right.
+Controller driver doesn't support the "global_irq" yet. Please correct 
+me If I am wrong.
 
-> 
->> which is not satisfied with the operation requirements of the later
->> chip for this clock, so the ops that can be set for the clock is added.
->>
-> 
-> What requirements ? What "late" chip ? all this is quite vague.
 
-I will change to "Since the previous code only provides "ro_ops" for the 
-vid_pll_div clock,In fact, the clock can be set. So add "ops" that can 
-set the clock, especially for later chips like S4 SOC and so on."
+Thanks, Kathiravan T.
 
-Is that ok with you?
-
-> 
->> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
->> ---
->>   drivers/clk/meson/vid-pll-div.c | 59 +++++++++++++++++++++++++++++++++
->>   drivers/clk/meson/vid-pll-div.h |  1 +
->>   2 files changed, 60 insertions(+)
->>
->> diff --git a/drivers/clk/meson/vid-pll-div.c b/drivers/clk/meson/vid-pll-div.c
->> index daff235bc763..e75fa6f75efe 100644
->> --- a/drivers/clk/meson/vid-pll-div.c
->> +++ b/drivers/clk/meson/vid-pll-div.c
->> @@ -89,6 +89,65 @@ static unsigned long meson_vid_pll_div_recalc_rate(struct clk_hw *hw,
->>   	return DIV_ROUND_UP_ULL(parent_rate * div->multiplier, div->divider);
->>   }
->>   
->> +static int meson_vid_pll_div_determine_rate(struct clk_hw *hw,
->> +					    struct clk_rate_request *req)
->> +{
->> +	unsigned long best = 0, now = 0;
->> +	unsigned int i, best_i = 0;
->> +
->> +	for (i = 0 ; i < ARRAY_SIZE(vid_pll_div_table) ; ++i) {
-> 
-> It would be nice to actually describe how this vid pll work so we can
-> stop using precompute "magic" values and actually use the IP to its full
-> capacity.
-
-Thank you for your advice. I'm going to define a macro to represent this 
-table size.
-
-> 
->> +		now = DIV_ROUND_CLOSEST_ULL(req->best_parent_rate *
-> 
-> This effectively stops rate propagation. That's not how determine_rate()
-> call back should work. Have a look a clk-divider.c and how it calls
-> clk_hw_round_rate().
-> 
-
-I understand that this should be changed to
-" parent_rate = clk_hw_round_rate(req->best_parent_hw,
-				 DIV_ROUND_CLOSEST_ULL(rate * vid_pll_div_table[i].divider, 
-vid_pll_div_table[i].multiplier));
-
-now = DIV_ROUND_CLOSEST_ULL(parent_rate * 
-vid_pll_div_table[i].multiplier, vid_pll_div_table[i].divider);"
-
-I don't know if it is correct, please give me a comment.
-
->> +					    vid_pll_div_table[i].multiplier,
->> +					    vid_pll_div_table[i].divider);
->> +		if (req->rate == now) {
->> +			return 0;
->> +		} else if (abs(now - req->rate) < abs(best - req->rate)) {
->> +			best = now;
->> +			best_i = i;
->> +		}
->> +	}
->> +
->> +	if (best_i < ARRAY_SIZE(vid_pll_div_table))
->> +		req->rate = DIV_ROUND_CLOSEST_ULL(req->best_parent_rate *
->> +						  vid_pll_div_table[best_i].multiplier,
->> +						  vid_pll_div_table[best_i].divider);
->> +	else
-> 
-> What is the point of this 'if' clause ?
-> It looks like the 'else' part is dead code.
-
-I'm going to delete these.
-
-> 
->> +		req->rate = meson_vid_pll_div_recalc_rate(hw, req->best_parent_rate);
->> +
->> +	return 0;
->> +}
->> +
->> +static int meson_vid_pll_div_set_rate(struct clk_hw *hw, unsigned long rate,
->> +				      unsigned long parent_rate)
->> +{
->> +	struct clk_regmap *clk = to_clk_regmap(hw);
->> +	struct meson_vid_pll_div_data *pll_div = meson_vid_pll_div_data(clk);
->> +	int i;
->> +
->> +	for (i = 0 ; i < ARRAY_SIZE(vid_pll_div_table) ; ++i) {
->> +		if (DIV_ROUND_CLOSEST_ULL(parent_rate * vid_pll_div_table[i].multiplier,
->> +					  vid_pll_div_table[i].divider) == rate) {
-> 
-> This assumes the set_rate() is going to have a perfect match and
-> otherwise fail. You should not assume that. Have a look at clk-divider.c
-> for examples.
-
-Thank you for your advice. I will do a bestdiv match like the 
-clk-divider.c file.
-
-> 
->> +			meson_parm_write(clk->map, &pll_div->val, vid_pll_div_table[i].shift_val);
->> +			meson_parm_write(clk->map, &pll_div->sel, vid_pll_div_table[i].shift_sel);
->> +			break;
->> +		}
->> +	}
->> +
->> +	if (i >= ARRAY_SIZE(vid_pll_div_table)) {
->> +		pr_debug("%s: Invalid rate value for vid_pll_div\n", __func__);
->> +		return -EINVAL;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +const struct clk_ops meson_vid_pll_div_ops = {
->> +	.recalc_rate	= meson_vid_pll_div_recalc_rate,
->> +	.determine_rate	= meson_vid_pll_div_determine_rate,
->> +	.set_rate	= meson_vid_pll_div_set_rate,
->> +};
->> +EXPORT_SYMBOL_GPL(meson_vid_pll_div_ops);
->> +
->>   const struct clk_ops meson_vid_pll_div_ro_ops = {
->>   	.recalc_rate	= meson_vid_pll_div_recalc_rate,
->>   };
->> diff --git a/drivers/clk/meson/vid-pll-div.h b/drivers/clk/meson/vid-pll-div.h
->> index c0128e33ccf9..3ab729b85fde 100644
->> --- a/drivers/clk/meson/vid-pll-div.h
->> +++ b/drivers/clk/meson/vid-pll-div.h
->> @@ -16,5 +16,6 @@ struct meson_vid_pll_div_data {
->>   };
->>   
->>   extern const struct clk_ops meson_vid_pll_div_ro_ops;
->> +extern const struct clk_ops meson_vid_pll_div_ops;
->>   
->>   #endif /* __MESON_VID_PLL_DIV_H */
->>
->> base-commit: 8a9fbf00acfeeeaac8efab8091bb464bd71b70ea
-> 
