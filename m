@@ -2,68 +2,78 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A26C64EC7
-	for <linux-clk@archiver.kernel.org>; Sat, 25 Feb 2023 23:22:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F51BC64ED6
+	for <linux-clk@archiver.kernel.org>; Sun, 26 Feb 2023 05:39:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230045AbjBYXWN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 25 Feb 2023 18:22:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41526 "EHLO
+        id S229566AbjBZFj6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 26 Feb 2023 00:39:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230044AbjBYXWM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 25 Feb 2023 18:22:12 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5DBD14229;
-        Sat, 25 Feb 2023 15:22:11 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9E145B80B46;
-        Sat, 25 Feb 2023 23:22:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3B2F2C433D2;
-        Sat, 25 Feb 2023 23:22:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677367329;
-        bh=laxUjxKUL1KdFBI5/DZLgXrZDWAz4MZtnAzUt4/SxLM=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=jYpgHvyMEpi0iMzSn6aUzcEi74EEbjbjD0IsZa7aNmLcU3T81w5uCpF1n4bh122Tp
-         B3+9sPO0CG3MY1vhPYegre10PnwXiA4st4NPJDGSv7w19xylQ6btRR7Tfg3h58rTH/
-         EMe88QR9GBK6GWYUR22gj4ZvyLbGZGAwo4hs0LOgSGLy7KNbT4SoKCcxxEvCHNgXfO
-         uss9Y2DV9NAzQ9njpWS9eqBBcXBiYdjQWwJWyycBa/AEg6bsEBxibtiKx7RpR8LpFx
-         IhfaTn0lpiO7tCKKpIpXNggDfejnUm9Fg7DeADF7k6m46uBNDJcmkmFIIT4lDGgsTQ
-         6GcLm66wYiVTQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2A0EBE68D26;
-        Sat, 25 Feb 2023 23:22:09 +0000 (UTC)
-Subject: Re: [GIT PULL] clk changes for the merge window
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20230225044543.502452-1-sboyd@kernel.org>
-References: <20230225044543.502452-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20230225044543.502452-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
-X-PR-Tracked-Commit-Id: b64baafa24d2c430513329daf5ebb821620d0c03
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1ec35eadc3b448c91a6b763371a7073444e95f9d
-Message-Id: <167736732916.9412.3213886750778915610.pr-tracker-bot@kernel.org>
-Date:   Sat, 25 Feb 2023 23:22:09 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        with ESMTP id S229510AbjBZFj6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Feb 2023 00:39:58 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D175136EA;
+        Sat, 25 Feb 2023 21:39:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=5EL3h3gDbv1fOup+zFv/dxa8dkjfhZsLYy7zEK7AZjE=; b=ZABGG7wnGOx6TcA9KINzaegqjD
+        4QUug6UACr1wdMOK5fTqdO/UKI6Xu2fJudekLhS/cibD6PMOw3lMho63cshMjB69n9jRskuCL6Pt+
+        e0UNJa0W/nZtnFX9/aVcZk89HYuHuYWXDoXEC91b2OlTtxaHYObY4uOxKiWgVszbJ5Tfh8SNenos7
+        ggbN7SJ7Baeh86xDSdW07MShRFdKAN1BEMx4u6g8kZLA7V3UaKZGEiGP0EEoBtjR5WAmh2NawhyyK
+        6Og6C2FYvTLO+Ouwkzrh8Xl7gGc7CxMgdOg6CMI61HfGQEZPktSfbVsoCotVBsdc1es39CVhaNY4O
+        JmxgZhgw==;
+Received: from [2601:1c2:980:9ec0::df2f] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pW9lL-006qYL-GS; Sun, 26 Feb 2023 05:39:55 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Riku Voipio <riku.voipio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        linux-clk@vger.kernel.org
+Subject: [PATCH 2/8] clk: HI655X: select REGMAP instead of depending on it
+Date:   Sat, 25 Feb 2023 21:39:47 -0800
+Message-Id: <20230226053953.4681-3-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230226053953.4681-1-rdunlap@infradead.org>
+References: <20230226053953.4681-1-rdunlap@infradead.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Fri, 24 Feb 2023 20:45:42 -0800:
+REGMAP is a hidden (not user visible) symbol. Users cannot set it
+directly thru "make *config", so drivers should select it instead of
+depending on it if they need it.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+Consistently using "select" or "depends on" can also help reduce
+Kconfig circular dependency issues.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1ec35eadc3b448c91a6b763371a7073444e95f9d
+Therefore, change the use of "depends on REGMAP" to "select REGMAP".
 
-Thank you!
+Fixes: 3a49afb84ca0 ("clk: enable hi655x common clk automatically")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Riku Voipio <riku.voipio@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org
+---
+ drivers/clk/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+diff -- a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -91,7 +91,7 @@ config COMMON_CLK_RK808
+ config COMMON_CLK_HI655X
+ 	tristate "Clock driver for Hi655x" if EXPERT
+ 	depends on (MFD_HI655X_PMIC || COMPILE_TEST)
+-	depends on REGMAP
++	select REGMAP
+ 	default MFD_HI655X_PMIC
+ 	help
+ 	  This driver supports the hi655x PMIC clock. This
