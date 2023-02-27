@@ -2,187 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BE8EC64ED6
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 09:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9F49C7EE2D
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 09:36:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229960AbjB0JcU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Feb 2023 04:32:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44160 "EHLO
+        id S229984AbjB0Jgw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Feb 2023 04:36:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229930AbjB0JcP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 04:32:15 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1ED4A255
-        for <linux-clk@vger.kernel.org>; Mon, 27 Feb 2023 01:31:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1677490287;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RZ7tgd2yMldNRnjyOaSsgByklv9W+sBvCfRkPHDmb94=;
-        b=gR45BAQoRRR7BQ4XcFbcUHwQ3FeiufoFMFx4RiGFo1SXaHCr3dj6a9Simf/n0Ms0zvOujC
-        Ubw7JpRvbCCPJ4S1rQZg4ovL1ED1AQZwmKZ5flSWigKOX1yJmANZHHrwRxOSsD/sRUDnYV
-        gl4YnA3YFImC5i35LzHZY8QMmS9gBHQ=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-532-ScAPaW6fO7OidjsRictGyg-1; Mon, 27 Feb 2023 04:31:25 -0500
-X-MC-Unique: ScAPaW6fO7OidjsRictGyg-1
-Received: by mail-ed1-f69.google.com with SMTP id dm14-20020a05640222ce00b0046790cd9082so7703957edb.21
-        for <linux-clk@vger.kernel.org>; Mon, 27 Feb 2023 01:31:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RZ7tgd2yMldNRnjyOaSsgByklv9W+sBvCfRkPHDmb94=;
-        b=40aUZqJw3HA1WVhmi2OQp4qFok/uM/P9lLeoSPK0oXPSgYkFow32ZcBXPEg+oYNO/U
-         iDr2b5fJh81B+Ah8jqxCSAotTs3NWVKHmYmoz8z2uf7wbr718ICL+c20GPP54qllBoq1
-         5uZOvAX7SFUWKztnyQjP9OAx8Qz34YHyiV3+op2JMAApbyeuIxTGjDPEXrjYBkhDA2es
-         y/20TsfYygQg9Log6WNEO/nT4ZY44c4VHcvjr2Yl00AEU83VEF9efvvy/o597hsf2S/Q
-         GBsCeAC7RFkTWxDf6GvHB9zekCi0Re1BC4dayl3CxSCLSpRGOvjQn8i7vDy2aIh+vbDL
-         QvFw==
-X-Gm-Message-State: AO0yUKWrOwnU4ZrZ7ZoKVvTjoVPvobzKOUzxL2DbwX4mMMRl4H2uB5QR
-        GK3jPDe7BgTCEIoyr0tfI5f1wlwZqLbBY/2e9BmsH6GY6IE5I53X+JxQkpY7rP31/HhPS0hLeRh
-        SNZaBGDAvzh/kKHq4jDdr
-X-Received: by 2002:a17:906:4d8c:b0:8ae:f73e:233f with SMTP id s12-20020a1709064d8c00b008aef73e233fmr36187966eju.32.1677490284511;
-        Mon, 27 Feb 2023 01:31:24 -0800 (PST)
-X-Google-Smtp-Source: AK7set+NbVSpt4yOAnECcpAr2/cCoG6u5mlrIrkJajmml4ubXI2EjR7IrG3eLzjCQWCzYYep+F5FNw==
-X-Received: by 2002:a17:906:4d8c:b0:8ae:f73e:233f with SMTP id s12-20020a1709064d8c00b008aef73e233fmr36187918eju.32.1677490284210;
-        Mon, 27 Feb 2023 01:31:24 -0800 (PST)
-Received: from [10.40.98.142] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id qq10-20020a17090720ca00b008e09deb6610sm2942505ejb.200.2023.02.27.01.31.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Feb 2023 01:31:23 -0800 (PST)
-Message-ID: <7dd27ec5-0619-128d-8407-6711a05ef271@redhat.com>
-Date:   Mon, 27 Feb 2023 10:31:22 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 0/8] drivers: select REGMAP instead of depending on it
-Content-Language: en-US
-To:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
-Cc:     Andrew Jeffery <andrew@aj.id.au>, Corey Minyard <minyard@acm.org>,
-        openipmi-developer@lists.sourceforge.net,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Riku Voipio <riku.voipio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Michael Walle <michael@walle.cc>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        linux-gpio@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
-        Darren Hart <dvhart@infradead.org>,
-        Michael Shych <michaelsh@nvidia.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        platform-driver-x86@vger.kernel.org,
-        Yegnesh S Iyer <yegnesh.s.iyer@intel.com>,
-        Bin Gao <bin.gao@intel.com>, Zhang Rui <rui.zhang@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>, linux-pm@vger.kernel.org,
-        Oskar Senft <osk@google.com>, linux-serial@vger.kernel.org
-References: <20230226053953.4681-1-rdunlap@infradead.org>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20230226053953.4681-1-rdunlap@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S229613AbjB0Jgv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 04:36:51 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF9D3CA2A;
+        Mon, 27 Feb 2023 01:36:48 -0800 (PST)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31R4sGgM007031;
+        Mon, 27 Feb 2023 09:36:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id; s=qcppdkim1;
+ bh=fFtKuRl7ltXe/gF9tHGWwksasGO5SrHc88zXuVbCr0M=;
+ b=QG9RDgamUYYP+MGFS6MBi7K2COX9/ePqTIyTM4+FhV8ERz+An29WiltxbahRaGYanhoj
+ Vh1VKBOzlyyeGQaIW/5OnqyqoIFHdWGPBdCfDpYjAqvK3hF/KFYKoN0n6q0o5kx0iuvc
+ fX467DJtujjcjTTUKGxJzsP0KHhQWW4pFDoEiohg/tQ+DIaI16ZNkY6lQT7elECR/VzO
+ y5pQdAYsH4ZGMTvi9vZFbty0Dv9StYEvmYgEPps2W6C+vd+gSk8jtZ75wT/X2NU1Cb4n
+ QD9CQHdwyBMho4rpJ0971DFbEgpp0qWeZJSiOpD7ngIzZQWjruq5nN9ezvTuIEusphhK aQ== 
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nyajavhgx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 27 Feb 2023 09:36:29 +0000
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+        by APBLRPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 31R9aOeS026273;
+        Mon, 27 Feb 2023 09:36:24 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 3nybdkafcc-1;
+        Mon, 27 Feb 2023 09:36:24 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 31R9aO1R026268;
+        Mon, 27 Feb 2023 09:36:24 GMT
+Received: from hu-sgudaval-hyd.qualcomm.com (hu-krichai-hyd.qualcomm.com [10.213.110.37])
+        by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 31R9aOMS026267;
+        Mon, 27 Feb 2023 09:36:24 +0000
+Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 4058933)
+        id 65E4147AF; Mon, 27 Feb 2023 15:06:23 +0530 (+0530)
+From:   Krishna chaitanya chundru <quic_krichai@quicinc.com>
+To:     helgaas@kernel.org
+Cc:     linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mka@chromium.org,
+        quic_vbadigan@quicinc.com, quic_hemantk@quicinc.com,
+        quic_nitegupt@quicinc.com, quic_skananth@quicinc.com,
+        quic_ramkri@quicinc.com, manivannan.sadhasivam@linaro.org,
+        swboyd@chromium.org, dmitry.baryshkov@linaro.org,
+        svarbanov@mm-sol.com, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@somainline.org, lpieralisi@kernel.org,
+        robh@kernel.org, kw@linux.com, bhelgaas@google.com,
+        linux-phy@lists.infradead.org, vkoul@kernel.org, kishon@ti.com,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS)
+Subject: [PATCH V1] arm64:dts:qcom:sc7280: mark memory of PCIe as cache coherent
+Date:   Mon, 27 Feb 2023 15:06:15 +0530
+Message-Id: <1677490575-29092-1-git-send-email-quic_krichai@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: hv5wk8APxsiR4odzxFP3I-ezSliRXOvh
+X-Proofpoint-ORIG-GUID: hv5wk8APxsiR4odzxFP3I-ezSliRXOvh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-26_22,2023-02-24_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ bulkscore=0 clxscore=1011 phishscore=0 mlxscore=0 mlxlogscore=653
+ priorityscore=1501 impostorscore=0 suspectscore=0 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302270074
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Randy,
+Mark the PCIe node as dma-coherent as the devices on PCIe bus are
+cache coherent.
 
-On 2/26/23 06:39, Randy Dunlap wrote:
-> REGMAP is a hidden (not user visible) symbol. Users cannot set it
-> directly thru "make *config", so drivers should select it instead of
-> depending on it if they need it.
-> 
-> Consistently using "select" or "depends on" can also help reduce
-> Kconfig circular dependency issues.
-> 
-> REGMAP is selected 94 times and is depended on 11 times in
-> current linux-next. Eliminate the uses of "depends on" by
-> converting them to "select".
+Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+---
+ arch/arm64/boot/dts/qcom/sc7280.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thank you for your work on this. Mixing of depends on vs select
-is a real problem with many Kconfig symbols.
-
->  [PATCH 1/8] ipmi: ASPEED_BT_IPMI_BMC: select REGMAP_MMIO instead of depending on it
->  [PATCH 2/8] clk: HI655X: select REGMAP instead of depending on it
->  [PATCH 3/8] gpio: GPIO_REGMAP: select REGMAP instead of depending on it
->  [PATCH 4/8] leds: TI_LMU_COMMON: select REGMAP instead of depending on it
->  [PATCH 5/8] platform: mellanox: select REGMAP instead of depending on it
->  [PATCH 6/8] platform: x86: MLX_PLATFORM: select REGMAP instead of depending on it
->  [PATCH 7/8] thermal: intel: BXT_PMIC: select REGMAP instead of depending on it
->  [PATCH 8/8] serial: 8250: ASPEED_VUART: select REGMAP instead of depending on it
-
-For patch 5/8 and 6/8, do you want me to merge them through the pdx86
-(platform-drivers-x86) tree, or do you plan to merge this whole series
-in one go through some other tree?
-
-If you plan to merge the whole series through some other tree,
-here is my acked by for doing so for 5/8 and 6/8:
-
-Acked-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-
-
-
-> 
-> diffstat:
->  drivers/char/ipmi/Kconfig         |    3 ++-
->  drivers/clk/Kconfig               |    2 +-
->  drivers/gpio/Kconfig              |    2 +-
->  drivers/leds/Kconfig              |    2 +-
->  drivers/platform/mellanox/Kconfig |    9 ++++-----
->  drivers/platform/x86/Kconfig      |    3 ++-
->  drivers/thermal/intel/Kconfig     |    3 ++-
->  drivers/tty/serial/8250/Kconfig   |    3 ++-
->  8 files changed, 15 insertions(+), 12 deletions(-)
-> 
-> Cc: Andrew Jeffery <andrew@aj.id.au>
-> Cc: Corey Minyard <minyard@acm.org>
-> Cc: openipmi-developer@lists.sourceforge.net
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Riku Voipio <riku.voipio@linaro.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: Michael Walle <michael@walle.cc>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: Dan Murphy <dmurphy@ti.com>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: Lee Jones <lee@kernel.org>
-> Cc: linux-leds@vger.kernel.org
-> Cc: Darren Hart <dvhart@infradead.org>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: Michael Shych <michaelsh@nvidia.com>
-> Cc: Mark Gross <markgross@kernel.org>
-> Cc: Vadim Pasternak <vadimp@nvidia.com>
-> Cc: platform-driver-x86@vger.kernel.org
-> Cc: Yegnesh S Iyer <yegnesh.s.iyer@intel.com>
-> Cc: Bin Gao <bin.gao@intel.com>
-> Cc: Zhang Rui <rui.zhang@intel.com>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Amit Kucheria <amitk@kernel.org>
-> Cc: linux-pm@vger.kernel.org
-> Cc: Oskar Senft <osk@google.com>
-> Cc: linux-serial@vger.kernel.org
-> 
+diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+index bdcb749..8f4ab6b 100644
+--- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+@@ -2131,6 +2131,8 @@
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&pcie1_clkreq_n>;
+ 
++			dma-coherent;
++
+ 			iommus = <&apps_smmu 0x1c80 0x1>;
+ 
+ 			iommu-map = <0x0 &apps_smmu 0x1c80 0x1>,
+-- 
+2.7.4
 
