@@ -2,308 +2,115 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E564EC6FA8E
-	for <linux-clk@archiver.kernel.org>; Sun, 26 Feb 2023 17:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFE0C64ED6
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 01:54:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229737AbjBZRfQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 26 Feb 2023 12:35:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60218 "EHLO
+        id S229516AbjB0ByN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 26 Feb 2023 20:54:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229620AbjBZRfQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Feb 2023 12:35:16 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6C1618B22
-        for <linux-clk@vger.kernel.org>; Sun, 26 Feb 2023 09:35:14 -0800 (PST)
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 047623F72D
-        for <linux-clk@vger.kernel.org>; Sun, 26 Feb 2023 17:35:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1677432910;
-        bh=YzJInT96pTA+ymOnmGE57Cqc0IdxWM9wsQYeSdM/SNk=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=FJ2rkQq9DupD1xqcO+8ncqMEPa7qI3KU9Vf4UPOWP7l9ejJWFqb8Qzy8T+biYt/5Q
-         abjWJ9yBJ8vBOxoi4zv8xENGvPddCXoWT5p/gxfPe9v7kT2nxSya7EWbEutl6nNg51
-         00tOpFSEvV9jZlBK/nXwxyOWq/C50iuLhx7M+7K9YZ2kGswVXb+4W2Abt9b19AF8oq
-         bm8UQjWDsPYvCTWkgFqkpjWA8WQugiM+RCJs35kePevnVA2t8KVC1ydsI3tYa72/56
-         BJapG9IpLRkZ41wcYG78Rx9cAKtGr28ffs+ZzR71PIoaUhdfWUmurxMWZYtHVXTbwP
-         i/xVCv4mQhzgw==
-Received: by mail-qv1-f70.google.com with SMTP id jy22-20020a0562142b5600b005710b856106so2286709qvb.0
-        for <linux-clk@vger.kernel.org>; Sun, 26 Feb 2023 09:35:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YzJInT96pTA+ymOnmGE57Cqc0IdxWM9wsQYeSdM/SNk=;
-        b=HTjCnBntF+gpPH2TlmN9FBL6L81ClPm4i5l7CSP8Jooym/arYrZY4BNbjb/plCNyKV
-         VTmrXuhTkDQSLJFsAnmFzKUakrTEBOGlQQZATQUcIElKxu0yhiigJZVRkqflBCXZUq6z
-         zMp97vHajI7uKQhGKyqVHFE49FcGXXDt2kE8tPflDp1jv+X5+TEhHGzmmspEz497n/Hf
-         rfDW5RzIGQbmsjrReiLrs01qnaWBksX8dlIgBVY60UtLHqd5QPa+iP+njp69J7su+BV5
-         7pdNGKthC/MiZdnLWMlsrVio/JfZyTERjLAPpS4CvtK3x/6z8y3nOU6RBwfcUBJaf/yf
-         BWIQ==
-X-Gm-Message-State: AO0yUKXg4ClwNCLlCr4FEPrpA/LtlqAFJmInt4vVSkjS5Gn+8LuXtEPg
-        8V8zD1dtxQA3VIP6e0dnfNm62/Jm4gZr7LcHCpkw+uLSHeRGp5bsm6kJvTjx7b0PsZzdxZ5RmX/
-        urTHtwEFslinROniTo9GjyngE8wRYfjcZOmnYeGak0ADDusXgVio1AA==
-X-Received: by 2002:ae9:e313:0:b0:742:8868:bfd1 with SMTP id v19-20020ae9e313000000b007428868bfd1mr1166142qkf.7.1677432908731;
-        Sun, 26 Feb 2023 09:35:08 -0800 (PST)
-X-Google-Smtp-Source: AK7set9BXYFSOOlk2zOJO6RrcT38DTR0BZk0TAwIX1vzvwZTnIkrIdaNkQp74wf07gDqRON2gxEvF2Ad+MAIDgNUu1g=
-X-Received: by 2002:ae9:e313:0:b0:742:8868:bfd1 with SMTP id
- v19-20020ae9e313000000b007428868bfd1mr1166127qkf.7.1677432908466; Sun, 26 Feb
- 2023 09:35:08 -0800 (PST)
-MIME-Version: 1.0
-References: <20230221024645.127922-1-hal.feng@starfivetech.com> <20230221024645.127922-13-hal.feng@starfivetech.com>
-In-Reply-To: <20230221024645.127922-13-hal.feng@starfivetech.com>
-From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Date:   Sun, 26 Feb 2023 18:34:52 +0100
-Message-ID: <CAJM55Z8H4qmy_BiD0SHW-w5ifzhzokdO-QxpUUz9aeUd+htrZg@mail.gmail.com>
-Subject: Re: [PATCH v4 12/19] clk: starfive: Add StarFive JH7110 always-on
- clock driver
-To:     Hal Feng <hal.feng@starfivetech.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S229486AbjB0ByM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Feb 2023 20:54:12 -0500
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3F37BE3A7;
+        Sun, 26 Feb 2023 17:54:11 -0800 (PST)
+Received: from loongson.cn (unknown [10.20.42.35])
+        by gateway (Coremail) with SMTP id _____8AxJPRCDfxjJ+oFAA--.5421S3;
+        Mon, 27 Feb 2023 09:54:10 +0800 (CST)
+Received: from [10.20.42.35] (unknown [10.20.42.35])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8BxC74+Dfxjqho+AA--.45347S3;
+        Mon, 27 Feb 2023 09:54:06 +0800 (CST)
+Subject: Re: [PATCH v10 2/4] clk: clk-loongson2: add clock controller driver
+ support
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Jianmin Lv <lvjianmin@loongson.cn>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, liupeibao@loongson.cn,
+        loongarch@lists.linux.dev, wanghongliang@loongson.cn
+References: <20221129034157.15036-1-zhuyinbo@loongson.cn>
+ <31c690a347f858a477bbba9c838984ed.sboyd@kernel.org>
+ <4b5fd886-57ce-01ef-8224-432898b7fb1c@loongson.cn>
+ <8332a1cf44b01f06bdd5db9dc5d7f387.sboyd@kernel.org>
+ <01ee3dc6-a868-fd2b-93aa-11e6bdfcc9df@loongson.cn>
+ <9e8952c9415973dc7276185e3cdf5ae7.sboyd@kernel.org>
+ <d92223a0-6d4c-33ea-1473-3d40bdd0ad9e@loongson.cn>
+ <834da7dc-bb5d-3427-43e5-938e40a2d180@loongson.cn>
+ <6c497d2d70d215a86be178fc08546f4d.sboyd@kernel.org>
+ <d2519ebc-8f71-1cf0-9ec8-a65a7f094853@loongson.cn>
+ <19ce51bd94685e2bed6cbc20467e5705.sboyd@kernel.org>
+From:   zhuyinbo <zhuyinbo@loongson.cn>
+Message-ID: <9c31d4a5-15ca-99fa-73c7-d764221f369d@loongson.cn>
+Date:   Mon, 27 Feb 2023 09:54:06 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <19ce51bd94685e2bed6cbc20467e5705.sboyd@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID: AQAAf8BxC74+Dfxjqho+AA--.45347S3
+X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjvJXoW7Zr4rGr43ArykCFyxAF4UXFb_yoW8XFyUpr
+        W8Cay2yF4Dtr4jvws293ZxZa4jyw1xJF1j9r1rJw1Dua4qkryxAr4DuF15uFZrJrsxGw40
+        qr40k3y7uFyjvrJanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        bDkFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28E
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM2
+        8EF7xvwVC2z280aVCY1x0267AKxVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE
+        52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I
+        80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCj
+        c4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI
+        0_JF0_Jw1l42xK82IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VWrMxC20s026xCaFVCj
+        c4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
+        6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
+        AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+        1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8FAp5UUUUU==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 21 Feb 2023 at 03:47, Hal Feng <hal.feng@starfivetech.com> wrote:
-> From: Emil Renner Berthing <kernel@esmil.dk>
->
-> Add driver for the StarFive JH7110 always-on clock controller
-> and register an auxiliary device for always-on reset controller
-> which is named as "reset-aon".
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> Co-developed-by: Hal Feng <hal.feng@starfivetech.com>
-> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
-> ---
->  drivers/clk/starfive/Kconfig                  |  11 ++
->  drivers/clk/starfive/Makefile                 |   1 +
->  .../clk/starfive/clk-starfive-jh7110-aon.c    | 156 ++++++++++++++++++
->  3 files changed, 168 insertions(+)
->  create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-aon.c
->
-> diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
-> index 4640d0665d1c..2aa664f2cdee 100644
-> --- a/drivers/clk/starfive/Kconfig
-> +++ b/drivers/clk/starfive/Kconfig
-> @@ -31,3 +31,14 @@ config CLK_STARFIVE_JH7110_SYS
->         help
->           Say yes here to support the system clock controller on the
->           StarFive JH7110 SoC.
-> +
-> +config CLK_STARFIVE_JH7110_AON
-> +       tristate "StarFive JH7110 always-on clock support"
-> +       depends on CLK_STARFIVE_JH7110_SYS
-> +       select AUXILIARY_BUS
-> +       select CLK_STARFIVE_JH71X0
-> +       select RESET_STARFIVE_JH7110
-> +       default CLK_STARFIVE_JH7110_SYS
 
-As far as I can tell the JH7110 boots fine without this driver and it
-already depends on the _SYS driver above, so please do
+在 2023/2/25 上午3:10, Stephen Boyd 写道:
+> Quoting zhuyinbo (2023-02-22 18:16:49)
+>> 在 2023/2/23 上午5:00, Stephen Boyd 写道:
+>>> Quoting zhuyinbo (2023-02-21 21:10:14)
+>>>>>>> yes, the use of dts doesn't require the use of CLK_OF_DECLARE and can
+>>>>>>> use platform_driver_register
+>>>>>>>
+>>>>>>> but my drvier not use platform_driver_register to register clk and use
+>>>>>>> CLK_OF_DECLARE to match of_clk_init.
+>>>>>> of_clk_init() is there to register clks that are needed for early init,
+>>>>>> i.e. the clockevent/clocksource or the root interrupt controller
+>>>>>> (irqchip). Otherwise, it isn't necessary to register clks via
+>>>>>> of_clk_init().
+>>>>> okay, I got it.
+>>>> and,  the time driver  get clock by CCF that ask loongson2 clock driver
+>>>> use CLK_OF_DECLARE
+>>>>
+>>>> to match of_clk_init.   because  the timer_probe  is very early and the
+>>>> timer driver was use TIMER_OF_DECLARE
+>>>>
+>>>> to match time_probe.
+>>>>
+>>> If you have a time driver that gets clks, register those early with
+>>> CLK_OF_DECLARE_DRIVER() and then have a platform driver for the rest of
+>>> the clk tree that registers clks later.
+>> okay, I got it.  and this series patch I will use platform driver.
+>> later, if the loongson2 time driver use the
+>>
+>> CLK_OF_DECLARE style I will make a alone time clk driver for it that
+>> use  CLK_OF_DECLARE_DRIVER()
+>>
+> It can be the same file if you want. But then it can't be a module. Up
+> to you what you want to do there.
+okay, I got it.
 
-default m if SOC_STARFIVE
-
-And consider helping Conor by changing all the SOC_STARFIVE instances
-to ARCH_STARFIVE for the next version.
-
-> +       help
-> +         Say yes here to support the always-on clock controller on the
-> +         StarFive JH7110 SoC.
-> diff --git a/drivers/clk/starfive/Makefile b/drivers/clk/starfive/Makefile
-> index 5ca4e887fb9c..f3df7d957b1e 100644
-> --- a/drivers/clk/starfive/Makefile
-> +++ b/drivers/clk/starfive/Makefile
-> @@ -5,3 +5,4 @@ obj-$(CONFIG_CLK_STARFIVE_JH7100)       += clk-starfive-jh7100.o
->  obj-$(CONFIG_CLK_STARFIVE_JH7100_AUDIO)        += clk-starfive-jh7100-audio.o
->
->  obj-$(CONFIG_CLK_STARFIVE_JH7110_SYS)  += clk-starfive-jh7110-sys.o
-> +obj-$(CONFIG_CLK_STARFIVE_JH7110_AON)  += clk-starfive-jh7110-aon.o
-> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-aon.c b/drivers/clk/starfive/clk-starfive-jh7110-aon.c
-> new file mode 100644
-> index 000000000000..da808dc93048
-> --- /dev/null
-> +++ b/drivers/clk/starfive/clk-starfive-jh7110-aon.c
-> @@ -0,0 +1,156 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * StarFive JH7110 Always-On Clock Driver
-> + *
-> + * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
-> + * Copyright (C) 2022 StarFive Technology Co., Ltd.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/io.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include <dt-bindings/clock/starfive,jh7110-crg.h>
-> +
-> +#include "clk-starfive-jh71x0.h"
-> +
-> +/* external clocks */
-> +#define JH7110_AONCLK_OSC              (JH7110_AONCLK_END + 0)
-> +#define JH7110_AONCLK_RTC_OSC          (JH7110_AONCLK_END + 1)
-> +#define JH7110_AONCLK_GMAC0_RMII_REFIN (JH7110_AONCLK_END + 2)
-> +#define JH7110_AONCLK_GMAC0_RGMII_RXIN (JH7110_AONCLK_END + 3)
-> +#define JH7110_AONCLK_STG_AXIAHB       (JH7110_AONCLK_END + 4)
-> +#define JH7110_AONCLK_APB_BUS          (JH7110_AONCLK_END + 5)
-> +#define JH7110_AONCLK_GMAC0_GTXCLK     (JH7110_AONCLK_END + 6)
-> +
-> +static const struct jh71x0_clk_data jh7110_aonclk_data[] = {
-> +       /* source */
-> +       JH71X0__DIV(JH7110_AONCLK_OSC_DIV4, "osc_div4", 4, JH7110_AONCLK_OSC),
-> +       JH71X0__MUX(JH7110_AONCLK_APB_FUNC, "apb_func", 2,
-> +                   JH7110_AONCLK_OSC_DIV4,
-> +                   JH7110_AONCLK_OSC),
-> +       /* gmac0 */
-> +       JH71X0_GATE(JH7110_AONCLK_GMAC0_AHB, "gmac0_ahb", 0, JH7110_AONCLK_STG_AXIAHB),
-> +       JH71X0_GATE(JH7110_AONCLK_GMAC0_AXI, "gmac0_axi", 0, JH7110_AONCLK_STG_AXIAHB),
-> +       JH71X0__DIV(JH7110_AONCLK_GMAC0_RMII_RTX, "gmac0_rmii_rtx", 30,
-> +                   JH7110_AONCLK_GMAC0_RMII_REFIN),
-> +       JH71X0_GMUX(JH7110_AONCLK_GMAC0_TX, "gmac0_tx", 0, 2,
-> +                   JH7110_AONCLK_GMAC0_GTXCLK,
-> +                   JH7110_AONCLK_GMAC0_RMII_RTX),
-> +       JH71X0__INV(JH7110_AONCLK_GMAC0_TX_INV, "gmac0_tx_inv", JH7110_AONCLK_GMAC0_TX),
-> +       JH71X0__MUX(JH7110_AONCLK_GMAC0_RX, "gmac0_rx", 2,
-> +                   JH7110_AONCLK_GMAC0_RGMII_RXIN,
-> +                   JH7110_AONCLK_GMAC0_RMII_RTX),
-> +       JH71X0__INV(JH7110_AONCLK_GMAC0_RX_INV, "gmac0_rx_inv", JH7110_AONCLK_GMAC0_RX),
-> +       /* otpc */
-> +       JH71X0_GATE(JH7110_AONCLK_OTPC_APB, "otpc_apb", CLK_IGNORE_UNUSED, JH7110_AONCLK_APB_BUS),
-> +       /* rtc */
-> +       JH71X0_GATE(JH7110_AONCLK_RTC_APB, "rtc_apb", CLK_IGNORE_UNUSED, JH7110_AONCLK_APB_BUS),
-> +       JH71X0__DIV(JH7110_AONCLK_RTC_INTERNAL, "rtc_internal", 1022, JH7110_AONCLK_OSC),
-> +       JH71X0__MUX(JH7110_AONCLK_RTC_32K, "rtc_32k", 2,
-> +                   JH7110_AONCLK_RTC_OSC,
-> +                   JH7110_AONCLK_RTC_INTERNAL),
-> +       JH71X0_GATE(JH7110_AONCLK_RTC_CAL, "rtc_cal", 0, JH7110_AONCLK_OSC),
-> +};
-
-This list also contains instances of the CLK_IGNORE_UNUSED flag. Again
-please go through them and figure out which clocks are critical and
-which are fine to turn off when not used.
-
-> +
-> +static struct clk_hw *jh7110_aonclk_get(struct of_phandle_args *clkspec, void *data)
-> +{
-> +       struct jh71x0_clk_priv *priv = data;
-> +       unsigned int idx = clkspec->args[0];
-> +
-> +       if (idx < JH7110_AONCLK_END)
-> +               return &priv->reg[idx].hw;
-> +
-> +       return ERR_PTR(-EINVAL);
-> +}
-> +
-> +static int jh7110_aoncrg_probe(struct platform_device *pdev)
-> +{
-> +       struct jh71x0_clk_priv *priv;
-> +       unsigned int idx;
-> +       int ret;
-> +
-> +       priv = devm_kzalloc(&pdev->dev,
-> +                           struct_size(priv, reg, JH7110_AONCLK_END),
-> +                           GFP_KERNEL);
-> +       if (!priv)
-> +               return -ENOMEM;
-> +
-> +       spin_lock_init(&priv->rmw_lock);
-> +       priv->dev = &pdev->dev;
-> +       priv->base = devm_platform_ioremap_resource(pdev, 0);
-> +       if (IS_ERR(priv->base))
-> +               return PTR_ERR(priv->base);
-> +
-> +       dev_set_drvdata(priv->dev, (void *)(&priv->base));
-> +
-> +       for (idx = 0; idx < JH7110_AONCLK_END; idx++) {
-> +               u32 max = jh7110_aonclk_data[idx].max;
-> +               struct clk_parent_data parents[4] = {};
-> +               struct clk_init_data init = {
-> +                       .name = jh7110_aonclk_data[idx].name,
-> +                       .ops = starfive_jh71x0_clk_ops(max),
-> +                       .parent_data = parents,
-> +                       .num_parents =
-> +                               ((max & JH71X0_CLK_MUX_MASK) >> JH71X0_CLK_MUX_SHIFT) + 1,
-> +                       .flags = jh7110_aonclk_data[idx].flags,
-> +               };
-> +               struct jh71x0_clk *clk = &priv->reg[idx];
-> +               unsigned int i;
-> +
-> +               for (i = 0; i < init.num_parents; i++) {
-> +                       unsigned int pidx = jh7110_aonclk_data[idx].parents[i];
-> +
-> +                       if (pidx < JH7110_AONCLK_END)
-> +                               parents[i].hw = &priv->reg[pidx].hw;
-> +                       else if (pidx == JH7110_AONCLK_OSC)
-> +                               parents[i].fw_name = "osc";
-> +                       else if (pidx == JH7110_AONCLK_RTC_OSC)
-> +                               parents[i].fw_name = "rtc_osc";
-> +                       else if (pidx == JH7110_AONCLK_GMAC0_RMII_REFIN)
-> +                               parents[i].fw_name = "gmac0_rmii_refin";
-> +                       else if (pidx == JH7110_AONCLK_GMAC0_RGMII_RXIN)
-> +                               parents[i].fw_name = "gmac0_rgmii_rxin";
-> +                       else if (pidx == JH7110_AONCLK_STG_AXIAHB)
-> +                               parents[i].fw_name = "stg_axiahb";
-> +                       else if (pidx == JH7110_AONCLK_APB_BUS)
-> +                               parents[i].fw_name = "apb_bus";
-> +                       else if (pidx == JH7110_AONCLK_GMAC0_GTXCLK)
-> +                               parents[i].fw_name = "gmac0_gtxclk";
-> +               }
-> +
-> +               clk->hw.init = &init;
-> +               clk->idx = idx;
-> +               clk->max_div = max & JH71X0_CLK_DIV_MASK;
-> +
-> +               ret = devm_clk_hw_register(&pdev->dev, &clk->hw);
-> +               if (ret)
-> +                       return ret;
-> +       }
-> +
-> +       ret = devm_of_clk_add_hw_provider(&pdev->dev, jh7110_aonclk_get, priv);
-> +       if (ret)
-> +               return ret;
-> +
-> +       return jh7110_reset_controller_register(priv, "reset-aon", 1);
-> +}
-> +
-> +static const struct of_device_id jh7110_aoncrg_match[] = {
-> +       { .compatible = "starfive,jh7110-aoncrg" },
-> +       { /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, jh7110_aoncrg_match);
-> +
-> +static struct platform_driver jh7110_aoncrg_driver = {
-> +       .probe = jh7110_aoncrg_probe,
-> +       .driver = {
-> +               .name = "clk-starfive-jh7110-aon",
-> +               .of_match_table = jh7110_aoncrg_match,
-> +       },
-> +};
-> +module_platform_driver(jh7110_aoncrg_driver);
-> +
-> +MODULE_AUTHOR("Emil Renner Berthing");
-> +MODULE_DESCRIPTION("StarFive JH7110 always-on clock driver");
-> +MODULE_LICENSE("GPL");
-> --
-> 2.38.1
->
