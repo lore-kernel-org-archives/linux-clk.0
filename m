@@ -2,36 +2,36 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE6B2C64ED6
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 19:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E50C7EE2D
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 19:56:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230381AbjB0Txy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Feb 2023 14:53:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38294 "EHLO
+        id S229771AbjB0T4V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Feb 2023 14:56:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229705AbjB0Txm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 14:53:42 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D69B926CEA;
-        Mon, 27 Feb 2023 11:53:14 -0800 (PST)
+        with ESMTP id S229613AbjB0T4T (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 14:56:19 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59C91265AB;
+        Mon, 27 Feb 2023 11:56:02 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3BCC560F1B;
-        Mon, 27 Feb 2023 19:53:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3AF4C433EF;
-        Mon, 27 Feb 2023 19:53:09 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B0CDAB80DB5;
+        Mon, 27 Feb 2023 19:56:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65DADC433EF;
+        Mon, 27 Feb 2023 19:55:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677527592;
-        bh=FN7q+7LSkEQEP880hk5AYmzKXSJvzUeUVUoebZQ16HA=;
+        s=k20201202; t=1677527759;
+        bh=DjIqsPnT/P7Nb9ik2W2lylfV6VqLezNxb1W9cXM7Lok=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tYj+uDZDne/XGQiIqDWNdSQzxsv/OBNbwggrKIK5fDT5AdGAdFlLg7n1KODd+NYf+
-         EV1Ne8D2msXpPrcqoSSSSy3os+Z0QHTf/KSQWv7RdFamOk16lGvZcGShDlqko/Rftm
-         1J9NTjHHxoAzBVROVwzTTvqxwX4ykZpGgjxd571UFCAZ+a7WyvJUBlWzQwjzN1nGdQ
-         Na6nld+VvRuyiOj2pQt2uIExSPPVE5JDc3ioC1axM5c3VHqmVmJbtE+J1k37rNYakU
-         HC0hpyzsdMk36kbPalLwJBHb9nM5yvEdz65WHE5FpHQjgr/8HJ6u7QVb2ORaXyTWB3
-         JiVsEeuo8RBXA==
-Date:   Mon, 27 Feb 2023 19:53:07 +0000
+        b=hTo7yHiyyI0Iy/gk4xwQhWsCnctsjKnYmAGkr3S4rZhc+RuLbBft/Wga1az1DY8Zy
+         21Bsjdmdcu5hUF2sH3sN72xRIAPgGqlsYLEKe0O7eDoL0DqfAvVSGYO28AZvGxWpFV
+         Ugn74Yf/7PWlP7ppFhVMxIpa61KispFq6koVNg385RN0iqw8MVo/ZqoFRVuBaZLfOQ
+         zdgSPR+nOaKc0sdUewRstc1fal75bStw+jVMt123XVsAiTXucWfe+fowhCRNQHTrX3
+         a4EJpS/i1tVheHQPiBFoZbn/DtDfyf7+FgbFvAgoriKrWSDfesTbJ+ZmCVS+1QAZvM
+         +LI1vycra9sCg==
+Date:   Mon, 27 Feb 2023 19:55:53 +0000
 From:   Conor Dooley <conor@kernel.org>
 To:     Xingyu Wu <xingyu.wu@starfivetech.com>
 Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
@@ -46,65 +46,93 @@ Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
         Albert Ou <aou@eecs.berkeley.edu>,
         Hal Feng <hal.feng@starfivetech.com>,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 11/11] riscv: dts: starfive: jh7110: Add
- STGCRG/ISPCRG/VOUTCRG nodes
-Message-ID: <Y/0KI0rgqjqMi1Db@spud>
+Subject: Re: [PATCH v2 10/11] riscv: dts: starfive: jh7110: Add DVP and HDMI
+ TX pixel external clocks
+Message-ID: <Y/0KyeK3DU8xtL2V@spud>
 References: <20230221083323.302471-1-xingyu.wu@starfivetech.com>
- <20230221083323.302471-12-xingyu.wu@starfivetech.com>
+ <20230221083323.302471-11-xingyu.wu@starfivetech.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zQa043iT/WKT54d9"
+        protocol="application/pgp-signature"; boundary="80O6WFjF/KFbBM/N"
 Content-Disposition: inline
-In-Reply-To: <20230221083323.302471-12-xingyu.wu@starfivetech.com>
+In-Reply-To: <20230221083323.302471-11-xingyu.wu@starfivetech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---zQa043iT/WKT54d9
+--80O6WFjF/KFbBM/N
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 21, 2023 at 04:33:23PM +0800, Xingyu Wu wrote:
-> Add STGCRG/ISPCRG/VOUTCRG new node to support JH7110
-> System-Top-Group, Image-Signal-Process and Video-Output
-> clock and reset drivers for the JH7110 RISC-V SoC.
+On Tue, Feb 21, 2023 at 04:33:22PM +0800, Xingyu Wu wrote:
+> Add DVP and HDMI TX pixel external fixed clocks and the rates are
+> 74.25MHz and 297MHz.
 >=20
 > Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
 > ---
->  arch/riscv/boot/dts/starfive/jh7110.dtsi | 59 ++++++++++++++++++++++++
->  1 file changed, 59 insertions(+)
+>  .../dts/starfive/jh7110-starfive-visionfive-2.dtsi   |  8 ++++++++
+>  arch/riscv/boot/dts/starfive/jh7110.dtsi             | 12 ++++++++++++
+>  2 files changed, 20 insertions(+)
 >=20
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dt=
+si b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> index c2aa8946a0f1..27af817a55aa 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> @@ -86,6 +86,14 @@ &mclk_ext {
+>  	clock-frequency =3D <12288000>;
+>  };
+> =20
+> +&dvp_clk {
+> +	clock-frequency =3D <74250000>;
+> +};
+> +
+> +&hdmitx0_pixelclk {
+> +	clock-frequency =3D <297000000>;
+> +};
+> +
+>  &uart0 {
+>  	pinctrl-names =3D "default";
+>  	pinctrl-0 =3D <&uart0_pins>;
 > diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/d=
 ts/starfive/jh7110.dtsi
-> index a5e6fb3ad188..697ab59191a1 100644
+> index 005ead2624d4..a5e6fb3ad188 100644
 > --- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
 > +++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-> @@ -6,6 +6,7 @@
+> @@ -245,6 +245,18 @@ mclk_ext: mclk-ext-clock {
+>  		#clock-cells =3D <0>;
+>  	};
 > =20
->  /dts-v1/;
->  #include <dt-bindings/clock/starfive,jh7110-crg.h>
-> +#include <dt-bindings/power/starfive,jh7110-pmu.h>
->  #include <dt-bindings/reset/starfive,jh7110-crg.h>
+> +	dvp_clk: dvp-clk-clock {
+> +		compatible =3D "fixed-clock";
+> +		clock-output-names =3D "dvp_clk";
+> +		#clock-cells =3D <0>;
+> +	};
+> +
+> +	hdmitx0_pixelclk: hdmitx0-pixelclk-clock {
+> +		compatible =3D "fixed-clock";
+> +		clock-output-names =3D "hdmitx0_pixelclk";
+> +		#clock-cells =3D <0>;
+> +	};
+> +
 
-Please keep these sorted alphabetically, otherwise this *looks* fine to
-me.
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Hmm, would you mind adding these entries with no unit addresses in
+alphanumerical order? Both in the soc & board dtsi files.
 
 Thanks,
 Conor.
 
-
---zQa043iT/WKT54d9
+--80O6WFjF/KFbBM/N
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY/0KIwAKCRB4tDGHoIJi
-0jvJAQDekG/U779L3Qjyj6JbBBmIo+FDgfYF3Uun3G4Hi9mw+AD/XmgxAMbFNf8a
-ktj4/8QaSfT2gPFgTUOnACOYIdRbDw0=
-=e2v5
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY/0KyQAKCRB4tDGHoIJi
+0knlAP4gxK3Mbjl2AkyLpBX/t9oBm8JZ4D9vjdv9xR18sXlfWAEAyd9ChdmJfaU+
+6uId/QPwKqq/N0jQBRejvZsi+pIjngA=
+=tSXU
 -----END PGP SIGNATURE-----
 
---zQa043iT/WKT54d9--
+--80O6WFjF/KFbBM/N--
