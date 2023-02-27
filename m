@@ -2,182 +2,135 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3239C64ED6
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 18:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D7FC64ED8
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 18:11:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229804AbjB0SFz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Feb 2023 13:05:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60942 "EHLO
+        id S229862AbjB0SLF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Feb 2023 13:11:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229841AbjB0SFr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 13:05:47 -0500
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDB357A80;
-        Mon, 27 Feb 2023 10:05:21 -0800 (PST)
-Received: by mail-pj1-x1035.google.com with SMTP id 6-20020a17090a190600b00237c5b6ecd7so6463138pjg.4;
-        Mon, 27 Feb 2023 10:05:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+mPlMXv9RJI8/oFUUFc+RfUGUZO2bZNQ4Ayc+xRFn3c=;
-        b=By1hdEB7xxxN2kWGRWBOcLI13i8RhANt8RWn6SuIg1ojFHi5c6fgGpexO3pl76ELqk
-         QVcFsvOc7BukBEpAK6SLjFt0QzjbjI5erzeQbNQnLVflQOCQbPOHBVfIiC26mS1ja/MX
-         ptKHaxNaxRoPblImFN0UlMllMbJhLhQOaIb4bdYxH7WquWObfSISh8SC5zo+Zeorfvi9
-         BGotYGwKraxBmQeTFNqIM2LtYVSROM31h5ynsdsV8oTPEw4c54B/dnObetZ9FlHqjboP
-         7FEwgtTDl0bhVBP2SaPly2rO86rSFlCqBcyFn969Qf9R8vFR+u2xA6NnM9qvaPZ9YBeT
-         jGTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+mPlMXv9RJI8/oFUUFc+RfUGUZO2bZNQ4Ayc+xRFn3c=;
-        b=pgMYQfJSE2A2Z+hW8RhXskZ3CuSab7C/3efCE0p8zrKh+rGhxByTyvSjBETRgmicmi
-         ssk8wLomEXKjjSS0GoMM9yVFpq4izb7LiGmcUgCevrf7jZIdNeC5swKs/UxxGkmowtPX
-         T6ovK2HOul16sVwWZ8oQAn+NdIPkGMqd2I4lxQdJoWaueVz6xhZ1HXDCOpPsC+DSH9Iq
-         vEgJz2t1c7RtgqWF2ohtf/h/8v+n8X0TRkjcDDz8Ati+zCrYoJTwt5glHecD7SvvIEcq
-         j2iuSN+0Raw6ikffi793OaDUMyazpPz6F1VYzkZKxmykK7YzYaNpMNJ6RaOSahsbXN/V
-         zAMA==
-X-Gm-Message-State: AO0yUKV03NyYWo0qLmUObwGOk0M+ZsUi0BYd/smktlhALIx9V7fpJtwQ
-        p0Swqzcnjih5vvLqf3dp1kkQJtERD0gaccSSg0Y=
-X-Google-Smtp-Source: AK7set/sCYYETNno69V+PDf7R8xKuDmVtnx/nlOmyfqZlwSRzv+JYCUVBsf8oPkLy4vfgwJq2pyQgzG6NsgK47Wrenc=
-X-Received: by 2002:a17:90a:578a:b0:234:bed1:1012 with SMTP id
- g10-20020a17090a578a00b00234bed11012mr48894pji.6.1677521120846; Mon, 27 Feb
- 2023 10:05:20 -0800 (PST)
-MIME-Version: 1.0
-References: <20230227174535.87657-1-marex@denx.de>
-In-Reply-To: <20230227174535.87657-1-marex@denx.de>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Mon, 27 Feb 2023 12:05:09 -0600
-Message-ID: <CAHCN7x+a-9pZFepD=543ri+TK2y-TDf9Nc44iRqpBnvf_qMk_A@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: imx8mn: specify #sound-dai-cells for SAI nodes
-To:     Marek Vasut <marex@denx.de>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Abel Vesa <abelvesa@kernel.org>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Marco Felsch <m.felsch@pengutronix.de>,
+        with ESMTP id S230308AbjB0SLE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 13:11:04 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EE1C234E0;
+        Mon, 27 Feb 2023 10:11:02 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1B7CDB80D9B;
+        Mon, 27 Feb 2023 18:11:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAFC2C433D2;
+        Mon, 27 Feb 2023 18:10:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677521459;
+        bh=DOHUe/rKd4Y5se+LG1sBl0aEKX8kJIlO/WrMBCDbdHQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nqfwDOSlaSp5BGPrGTKvNyP1z/82q2jPCl9GCkK0TE/mwKVwg4OVRMb5mqpmnKe1y
+         T1boAN57lDvG1V7nmVpu14zrcNZqR9gBvGGzs/hGRxeltb3R6QiXpFftkn4JTH4CqZ
+         W6g+0dCzNFx2giXVyVAxyvYxgUHUHHZcnY730nmic7gG1aRPXzYTwwU2Wm40cKoVmj
+         jPH6NNOg2gELeCg+Pb+uk/fOLFYyZSomCkD0zXUJ01nv/+DSzXUm9hJ61KRoIDmhmJ
+         k+jMyqF9dan2/HyBoAzPNhnB0FLYVJaLSf3HLra11CBnBq1cH5SGq5R6vcCecpWe8n
+         cF5PNLOJx93mQ==
+Date:   Mon, 27 Feb 2023 18:10:52 +0000
+From:   Conor Dooley <conor@kernel.org>
+To:     Hal Feng <hal.feng@starfivetech.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Richard Cochran <richardcochran@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 17/19] riscv: dts: starfive: Add initial StarFive
+ JH7110 device tree
+Message-ID: <Y/zyLLdpf4zTXISh@spud>
+References: <20230221024645.127922-1-hal.feng@starfivetech.com>
+ <20230221024645.127922-18-hal.feng@starfivetech.com>
+ <Y/T5eL4s8FSlbgQh@spud>
+ <af029196-6ebe-aae1-af7e-fdb327c14c82@starfivetech.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jchMPtDjeYaZT9S4"
+Content-Disposition: inline
+In-Reply-To: <af029196-6ebe-aae1-af7e-fdb327c14c82@starfivetech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Feb 27, 2023 at 11:58=E2=80=AFAM Marek Vasut <marex@denx.de> wrote:
->
-> Add #sound-dai-cells properties to SAI nodes.
->
 
-Should this have a fixes tag?
+--jchMPtDjeYaZT9S4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 9e9860069725 ("arm64: dts: imx8mn: Add SAI nodes")
+On Thu, Feb 23, 2023 at 03:16:51PM +0800, Hal Feng wrote:
+> On Tue, 21 Feb 2023 17:03:52 +0000, Conor Dooley wrote:
+> > On Tue, Feb 21, 2023 at 10:46:43AM +0800, Hal Feng wrote:
+> >=20
+> >> +		S7_0: cpu@0 {
+> >> +			compatible =3D "sifive,s7", "riscv";
+> >> +			reg =3D <0>;
+> >> +			d-cache-block-size =3D <64>;
+> >> +			d-cache-sets =3D <64>;
+> >> +			d-cache-size =3D <8192>;
+> >> +			d-tlb-sets =3D <1>;
+> >> +			d-tlb-size =3D <40>;
+> >> +			device_type =3D "cpu";
+> >> +			i-cache-block-size =3D <64>;
+> >> +			i-cache-sets =3D <64>;
+> >> +			i-cache-size =3D <16384>;
+> >> +			i-tlb-sets =3D <1>;
+> >> +			i-tlb-size =3D <40>;
+> >> +			mmu-type =3D "riscv,sv39";
+> >> +			next-level-cache =3D <&ccache>;
+> >> +			riscv,isa =3D "rv64imac_zicsr_zba_zbb";
+> >=20
+> > I still think that adding just zicsr here is pointless. If you're going
+> > to be specific, why not also mention that you have zifencei too?
+>=20
+> I would like to remove "_zicsr" in the next version. Thanks.
+>=20
+> >=20
+> >> +			tlb-split;
+> >> +			status =3D "disabled";
+> >> +
+> >> +			cpu0_intc: interrupt-controller {
+> >> +				compatible =3D "riscv,cpu-intc";
+> >> +				interrupt-controller;
+> >> +				#interrupt-cells =3D <1>;
+> >> +			};
+> >> +		};
+> >=20
+> > Rest of this looks fine to me though, thanks for adding the s7
+> > compatible and zba/zbb :)
+>=20
+> Thanks for your review. :)
 
-I don't know when these became required, and/or if this should be
-back-ported or not.
+I hadn't actually given you one yet ;)
 
-Reviewed-by: Adam Ford <aford173@gmail.com>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-adam
+Thanks,
+Conor.
 
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> ---
-> Cc: Abel Vesa <abelvesa@kernel.org>
-> Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Jacky Bai <ping.bai@nxp.com>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Marco Felsch <m.felsch@pengutronix.de>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: NXP Linux Team <linux-imx@nxp.com>
-> Cc: Peng Fan <peng.fan@nxp.com>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Cc: Richard Cochran <richardcochran@gmail.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Sascha Hauer <s.hauer@pengutronix.de>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-clk@vger.kernel.org
-> ---
->  arch/arm64/boot/dts/freescale/imx8mn.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mn.dtsi b/arch/arm64/boot/=
-dts/freescale/imx8mn.dtsi
-> index ed9ac6c5047c0..bbec860ef8548 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-> @@ -294,6 +294,7 @@ spba2: spba-bus@30000000 {
->                                 ranges;
->
->                                 sai2: sai@30020000 {
-> +                                       #sound-dai-cells =3D <0>;
->                                         compatible =3D "fsl,imx8mn-sai", =
-"fsl,imx8mq-sai";
->                                         reg =3D <0x30020000 0x10000>;
->                                         interrupts =3D <GIC_SPI 96 IRQ_TY=
-PE_LEVEL_HIGH>;
-> @@ -308,6 +309,7 @@ sai2: sai@30020000 {
->                                 };
->
->                                 sai3: sai@30030000 {
-> +                                       #sound-dai-cells =3D <0>;
->                                         compatible =3D "fsl,imx8mn-sai", =
-"fsl,imx8mq-sai";
->                                         reg =3D <0x30030000 0x10000>;
->                                         interrupts =3D <GIC_SPI 50 IRQ_TY=
-PE_LEVEL_HIGH>;
-> @@ -322,6 +324,7 @@ sai3: sai@30030000 {
->                                 };
->
->                                 sai5: sai@30050000 {
-> +                                       #sound-dai-cells =3D <0>;
->                                         compatible =3D "fsl,imx8mn-sai", =
-"fsl,imx8mq-sai";
->                                         reg =3D <0x30050000 0x10000>;
->                                         interrupts =3D <GIC_SPI 90 IRQ_TY=
-PE_LEVEL_HIGH>;
-> @@ -338,6 +341,7 @@ sai5: sai@30050000 {
->                                 };
->
->                                 sai6: sai@30060000 {
-> +                                       #sound-dai-cells =3D <0>;
->                                         compatible =3D "fsl,imx8mn-sai", =
-"fsl,imx8mq-sai";
->                                         reg =3D <0x30060000  0x10000>;
->                                         interrupts =3D <GIC_SPI 90 IRQ_TY=
-PE_LEVEL_HIGH>;
-> @@ -395,6 +399,7 @@ spdif1: spdif@30090000 {
->                                 };
->
->                                 sai7: sai@300b0000 {
-> +                                       #sound-dai-cells =3D <0>;
->                                         compatible =3D "fsl,imx8mn-sai", =
-"fsl,imx8mq-sai";
->                                         reg =3D <0x300b0000 0x10000>;
->                                         interrupts =3D <GIC_SPI 111 IRQ_T=
-YPE_LEVEL_HIGH>;
-> --
-> 2.39.2
->
+
+--jchMPtDjeYaZT9S4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY/zyFQAKCRB4tDGHoIJi
+0uCOAP0RG8BuWjiHLKsk9Ta/tG1NUylVpgAZoi/pMyqsZdEj3AEA6Oh4RV2oBS2o
+sASwV0YiwNzQ/L/MsZJwES9WoODoXQ4=
+=WQDI
+-----END PGP SIGNATURE-----
+
+--jchMPtDjeYaZT9S4--
