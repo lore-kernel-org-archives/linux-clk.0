@@ -2,169 +2,128 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EFE0C64ED8
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 20:00:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A9D4C7EE2E
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 20:01:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230113AbjB0UAn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Feb 2023 15:00:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49488 "EHLO
+        id S229653AbjB0UBG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Feb 2023 15:01:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229653AbjB0UAm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 15:00:42 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBD0D23D85;
-        Mon, 27 Feb 2023 12:00:40 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6A81B60F19;
-        Mon, 27 Feb 2023 20:00:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47520C433D2;
-        Mon, 27 Feb 2023 20:00:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677528039;
-        bh=nIYRAsxkz1v+ws6bi8EI0HS1rSe3IrjqOcAGXmBmfvk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oRGsMbLuyZPLSAbz4jorliDG0dEsvZIpvrMYkGkNcp2vH/PoICuXPGrt54SV2I/No
-         Ct+MT9H5cbHP5+3Tg4IMSdpVd3sX3qMQ4ZT2sbuSN30P0zvcDjOFPREif7TlgUoukw
-         pSMM+SaYIWy9hEFN7JniyEsj+iQjSVJ4I9TrLU/lxi4mmcOwizJJRrIyzz/qiJjKId
-         s1Gr9MLrz/BGBv1KLz4v1K+2FM6eueSNbuwe3Wu/mOJSth73/paDJBoY4uqWJy0Cnc
-         QBzJZF1KQ9FuBZV1fVpwc/vDr61Tsv0VSpQbHNx5Y5fXI1dpFCjF82PIferw66R1sM
-         K3+3Ac+OtKOOA==
-Date:   Mon, 27 Feb 2023 20:00:33 +0000
-From:   Conor Dooley <conor@kernel.org>
-To:     Hal Feng <hal.feng@starfivetech.com>
-Cc:     Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S230337AbjB0UBE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 15:01:04 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B3672917B
+        for <linux-clk@vger.kernel.org>; Mon, 27 Feb 2023 12:00:59 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1pWjft-00049g-4x; Mon, 27 Feb 2023 21:00:41 +0100
+Received: from mfe by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1pWjfr-0002JA-Od; Mon, 27 Feb 2023 21:00:39 +0100
+Date:   Mon, 27 Feb 2023 21:00:39 +0100
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Marek Vasut <marex@denx.de>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Abel Vesa <abelvesa@kernel.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jacky Bai <ping.bai@nxp.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 19/19] riscv: dts: starfive: Add StarFive JH7110
- VisionFive 2 board device tree
-Message-ID: <Y/0L4SKKtl49C95j@spud>
-References: <20230221024645.127922-1-hal.feng@starfivetech.com>
- <20230221024645.127922-20-hal.feng@starfivetech.com>
- <CAJM55Z_QMtzKeRFN1iGf498z4+vga6RBgwybCQi6aOUYCr_P-Q@mail.gmail.com>
- <2af3f84b-2c2b-dc79-c76c-9411fcbcf7ca@starfivetech.com>
- <Y/zykfydb+bJ7G2l@spud>
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: imx8mn: specify #sound-dai-cells for SAI
+ nodes
+Message-ID: <20230227200039.ugmtvpli6gvux3fi@pengutronix.de>
+References: <20230227174535.87657-1-marex@denx.de>
+ <20230227190123.znifdqympsantpt6@pengutronix.de>
+ <a519eb0b-dc40-deec-03d3-676648a52f15@denx.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="B8EZkuBv+mrJ7yYe"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y/zykfydb+bJ7G2l@spud>
+In-Reply-To: <a519eb0b-dc40-deec-03d3-676648a52f15@denx.de>
+User-Agent: NeoMutt/20180716
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 23-02-27, Marek Vasut wrote:
+> On 2/27/23 20:01, Marco Felsch wrote:
+> > Hi Marek,
+> > 
+> > On 23-02-27, Marek Vasut wrote:
+> > > Add #sound-dai-cells properties to SAI nodes.
+> > > 
+> > > Signed-off-by: Marek Vasut <marex@denx.de>
+> > > ---
+> > > Cc: Abel Vesa <abelvesa@kernel.org>
+> > > Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
+> > > Cc: Fabio Estevam <festevam@gmail.com>
+> > > Cc: Jacky Bai <ping.bai@nxp.com>
+> > > Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+> > > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> > > Cc: Lucas Stach <l.stach@pengutronix.de>
+> > > Cc: Marco Felsch <m.felsch@pengutronix.de>
+> > > Cc: Michael Turquette <mturquette@baylibre.com>
+> > > Cc: NXP Linux Team <linux-imx@nxp.com>
+> > > Cc: Peng Fan <peng.fan@nxp.com>
+> > > Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> > > Cc: Richard Cochran <richardcochran@gmail.com>
+> > > Cc: Rob Herring <robh+dt@kernel.org>
+> > > Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> > > Cc: Shawn Guo <shawnguo@kernel.org>
+> > > Cc: Stephen Boyd <sboyd@kernel.org>
+> > > Cc: devicetree@vger.kernel.org
+> > > Cc: linux-arm-kernel@lists.infradead.org
+> > > Cc: linux-clk@vger.kernel.org
+> > > ---
+> > >   arch/arm64/boot/dts/freescale/imx8mn.dtsi | 5 +++++
+> > >   1 file changed, 5 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/freescale/imx8mn.dtsi b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
+> > > index ed9ac6c5047c0..bbec860ef8548 100644
+> > > --- a/arch/arm64/boot/dts/freescale/imx8mn.dtsi
+> > > +++ b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
+> > > @@ -294,6 +294,7 @@ spba2: spba-bus@30000000 {
+> > >   				ranges;
+> > >   				sai2: sai@30020000 {
+> > > +					#sound-dai-cells = <0>;
+> > 
+> > Please don't add it in front of the compatible and the reg property.
+> 
+> The #address-cells and #size-cells are also always on top, why should the
+> #sound-dai-cells be any different ? Where should they be ?
 
---B8EZkuBv+mrJ7yYe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As of now my understanding of specifying a devicetree node was:
 
-On Mon, Feb 27, 2023 at 06:12:40PM +0000, Conor Dooley wrote:
-> On Thu, Feb 23, 2023 at 04:50:20PM +0800, Hal Feng wrote:
-> > On Tue, 21 Feb 2023 16:03:08 +0100, Emil Renner Berthing wrote:
-> > > On Tue, 21 Feb 2023 at 03:47, Hal Feng <hal.feng@starfivetech.com> wr=
-ote:
-> > >> From: Emil Renner Berthing <kernel@esmil.dk>
-> > >>
-> > >> Add a minimal device tree for StarFive JH7110 VisionFive 2 board
-> > >> which has version A and version B. Support booting and basic
-> > >> clock/reset/pinctrl/uart drivers.
-> > >>
-> > >> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > >> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> > >> Co-developed-by: Jianlong Huang <jianlong.huang@starfivetech.com>
-> > >> Signed-off-by: Jianlong Huang <jianlong.huang@starfivetech.com>
-> > >> Co-developed-by: Hal Feng <hal.feng@starfivetech.com>
-> > >> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
-> > >> ---
-> > >>  arch/riscv/boot/dts/starfive/Makefile         |   6 +-
-> > >>  .../jh7110-starfive-visionfive-2-v1.2a.dts    |  13 ++
-> > >>  .../jh7110-starfive-visionfive-2-v1.3b.dts    |  13 ++
-> > >>  .../jh7110-starfive-visionfive-2.dtsi         | 215 +++++++++++++++=
-+++
-> > >>  4 files changed, 246 insertions(+), 1 deletion(-)
-> > >>  create mode 100644 arch/riscv/boot/dts/starfive/jh7110-starfive-vis=
-ionfive-2-v1.2a.dts
-> > >>  create mode 100644 arch/riscv/boot/dts/starfive/jh7110-starfive-vis=
-ionfive-2-v1.3b.dts
-> > >>  create mode 100644 arch/riscv/boot/dts/starfive/jh7110-starfive-vis=
-ionfive-2.dtsi
-> > >>
-> > >> diff --git a/arch/riscv/boot/dts/starfive/Makefile b/arch/riscv/boot=
-/dts/starfive/Makefile
-> > >> index 039c143cba33..cd73519b907b 100644
-> > >> --- a/arch/riscv/boot/dts/starfive/Makefile
-> > >> +++ b/arch/riscv/boot/dts/starfive/Makefile
-> > >> @@ -1,2 +1,6 @@
-> > >>  # SPDX-License-Identifier: GPL-2.0
-> > >> -dtb-$(CONFIG_SOC_STARFIVE) +=3D jh7100-beaglev-starlight.dtb jh7100=
--starfive-visionfive-v1.dtb
-> > >> +dtb-$(CONFIG_SOC_STARFIVE) +=3D jh7100-beaglev-starlight.dtb
-> > >> +dtb-$(CONFIG_SOC_STARFIVE) +=3D jh7100-starfive-visionfive-v1.dtb
-> > >> +
-> > >> +dtb-$(CONFIG_SOC_STARFIVE) +=3D jh7110-starfive-visionfive-2-v1.2a.=
-dtb
-> > >> +dtb-$(CONFIG_SOC_STARFIVE) +=3D jh7110-starfive-visionfive-2-v1.3b.=
-dtb
->=20
-> If you could rebase on top of v6.3-rc1 for the next version & use ARCH_
-> not SOC_ here that'd be great.
->=20
-> > >> +/ {
-> > >> +       aliases {
-> > >> +               serial0 =3D &uart0;
-> > >> +               i2c0 =3D &i2c0;
-> > >> +               i2c2 =3D &i2c2;
-> > >> +               i2c5 =3D &i2c5;
-> > >> +               i2c6 =3D &i2c6;
-> > >=20
-> > > Let's keep these sorted alphabetically.
-> >=20
-> > OK, will fix it.
-> >=20
->=20
-> > > It would be great to have some sort of order to this file so it's
-> > > obvious where to add new nodes. I suggest we do
-> > > - root node
-> > > - external clocks
-> > > - other node references in alphabetical order
-> > >=20
-> > > You're almost there with this patch except the uart0 node is out of p=
-lace.
-> >=20
-> > Will fix accordingly. Thanks for your suggestions.
->=20
-> With Emil's suggestions implemented:
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+node-name@reg-nr {
+	compatible = "";
+	reg = <>;
+	// all pending properties below
+	...
+};
 
-Actually, there's one thing that I don't think was (explicitly?) mentioned,
-could you sort the external clocks alphanumerically too?
+@Rob, @Krzysztof:
+Is this a (unwritten) rule/policy?
 
-Cheers,
-Conor.
+Marekt please ignore my comment if this is not the case.
 
-
---B8EZkuBv+mrJ7yYe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY/0L4QAKCRB4tDGHoIJi
-0nXJAP4hYlkGws9Z9BDo3Zh/bnJEjDLHBMPp6+W/6GLJrhOJ3wD+ILqazBj8LQ78
-52UY1mFT5kiamfu0N2L8qR1Q/5KWPAw=
-=EYae
------END PGP SIGNATURE-----
-
---B8EZkuBv+mrJ7yYe--
+Regards,
+  Marco
