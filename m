@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37FDBC7EE32
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A80C64ED6
 	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 18:40:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229953AbjB0SkE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S229934AbjB0SkE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 27 Feb 2023 13:40:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48268 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229854AbjB0SkD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 13:40:03 -0500
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13A702196B
-        for <linux-clk@vger.kernel.org>; Mon, 27 Feb 2023 10:40:02 -0800 (PST)
-Received: by mail-il1-x133.google.com with SMTP id u6so4487503ilk.12
-        for <linux-clk@vger.kernel.org>; Mon, 27 Feb 2023 10:40:02 -0800 (PST)
+        with ESMTP id S229958AbjB0SkE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 13:40:04 -0500
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CB1923C6F
+        for <linux-clk@vger.kernel.org>; Mon, 27 Feb 2023 10:40:03 -0800 (PST)
+Received: by mail-il1-x135.google.com with SMTP id 4so4496353ilz.6
+        for <linux-clk@vger.kernel.org>; Mon, 27 Feb 2023 10:40:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bVRZ9O/xeg4wvwaNlAos7VzArnRbqSw6RvITnKjvv3o=;
-        b=OCf1tJpoZBimcQbIcNpDBt/mvRM6YLDEVQ+vNB2XgrlMV1TUJyD6z4NFxQPO3wD11E
-         TtD2Lazai5TYeiokozdyymD0ge+a+06FSh8ZYKB2LQDDjsiafWLi9Qnn8JoOGGkRMwvB
-         F6QrRCzKjEm6JulYpxblbcLOcC4Qq4yNonJRISV/988jadh/PMOZTClBLNhGbMytLqel
-         PYPIn3+NRWNgDzx8sIJFcQhPP8H0EGMPLkuHfjJqRehy/ooApr3rz0BASB3yg4uZ/Zxb
-         TS4d2IFDKv7iNXRH/lQYExn9iud1qxC6MYwn7klEjp7NtENCf2lJMKtAWJG3D9jw5fPO
-         Yz2A==
+        bh=vvRZcEOjpe84dNHKtipeodTpG65ip8Z5+VIUJM53Jnk=;
+        b=x5aTwF4R4NrRQJ3i1d3pJwKl3bgA+x4MqL8jbeJf/LZNER2Y8xoZbjAmJaw7ThIB6O
+         RyAzzhqAXLvzvftBpzsw4MoNdmY7v/OXZgYwSNnPCgzOqAcWWNDyinjGlI1RwfQfDyr9
+         0A0gJ1IbJJpIqjMgMGI9/Nr4BMk84M9F944RU4yakoPKRBjR8rzHv9a6LmQxmi9TKJMq
+         JgaSCLN2NO8pAsjMy5CRZgNn9MZtoPo3+NGAHG8bckZsmjesdUJC/UyMdhDaOjHeBpmC
+         2bsNev/QGzal8DMnuGzS6tfUgEroIlBH6dpM/slZC20IOU4+56/juVtz6k+80AigObsi
+         8gaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bVRZ9O/xeg4wvwaNlAos7VzArnRbqSw6RvITnKjvv3o=;
-        b=Zw+TaY28/Z9lJVDvXnC2R0jT8Bd8nmyGTkHfYFLikc/vojGLQSmwhydv/ZN4Eo/EUj
-         i6LKMEJ3zwe6HtOZX3txmGjGAUjP5Jy8dYul9h93gjt2ku/VLQF76iFylPE4351ZBA4D
-         hh+6WXhDoBwOX1txjgR1C7RRmkrfm/CZt7C2ekAu8xs4IEOEB0iHuCe2moTtSkjSKyeT
-         aSveF9pCQfj5k4nUf9wpLhgO5vhFQ3AZB9yzFpvX04a5bs1PYj+UbQHnPHctax/ubQZ8
-         pVE+bSNrDUFfDZtAzCdUZq9y9l9LIgspHObbNUFSo2hpiWzvUseNDqdIaI5Ojb0qdmu4
-         DPvQ==
-X-Gm-Message-State: AO0yUKUCkq1tg/BWb3CAuLz1L8k74pFVO7KNzEyAORZJCNOlU85tcoOX
-        gsHyOYGBqXE8CLgKy0Lmc4r9Gw==
-X-Google-Smtp-Source: AK7set+xvC4SuSCk/6xKyfNThoKXIM58aHFlkB3JprMaUJb+RkHI9w3pcDJaAbTJpeRSDXmBPLJLMw==
-X-Received: by 2002:a05:6e02:1a07:b0:315:554e:e73b with SMTP id s7-20020a056e021a0700b00315554ee73bmr362875ild.21.1677523201466;
-        Mon, 27 Feb 2023 10:40:01 -0800 (PST)
+        bh=vvRZcEOjpe84dNHKtipeodTpG65ip8Z5+VIUJM53Jnk=;
+        b=2T4m6tadNePlIH26pEz/Tlh0TSWA3iWKw2p3d9gkXQLVcTEFmxytPDsqUcelr2OfQc
+         quZinLT0DwQfzMEdKwOe2rGAvcuDzunPR6LDqmvQWp51tfYwkiM9tEb4Z761WESqlF7G
+         KKuULCFtYridCshEZFtZ+pRSFs3G8Gu+EXnohGQFfMuIH1nKs0HxuvNzASgzV25qeda+
+         ZO1gGjb/uiwS5MkUQoGClTEjyw9JzQOUBV8ZK87j9xvn2noi66MTLs4WqP62LdmHxYJ8
+         RXlj6SZhRzZWhA7fJKiPBdp801BoI7a6F1dfYApapwjSBZ4ykJxFU6qp8JhuejOFC3II
+         jMfQ==
+X-Gm-Message-State: AO0yUKXph4S675MyCBAnvrXioZjcq8plTUEakN1szUix7fpwSEsth/af
+        qZX40Lv1Gkq803Vyb4aOv1tjgw==
+X-Google-Smtp-Source: AK7set8Uji/FBNwHP7Vis5mB5oTajfS7wig9uiZpdZN8vphuCCqnSZCL1nYkHS5NuwRS6m90ld3kzw==
+X-Received: by 2002:a05:6e02:17c9:b0:315:2b7c:3bcd with SMTP id z9-20020a056e0217c900b003152b7c3bcdmr393139ilu.23.1677523202503;
+        Mon, 27 Feb 2023 10:40:02 -0800 (PST)
 Received: from maple.netwinder.org (rfs.netwinder.org. [206.248.184.2])
-        by smtp.gmail.com with ESMTPSA id t5-20020a02ab85000000b003ab21c8fa84sm2331202jan.121.2023.02.27.10.40.00
+        by smtp.gmail.com with ESMTPSA id t5-20020a02ab85000000b003ab21c8fa84sm2331202jan.121.2023.02.27.10.40.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Feb 2023 10:40:01 -0800 (PST)
+        Mon, 27 Feb 2023 10:40:02 -0800 (PST)
 From:   Ralph Siemsen <ralph.siemsen@linaro.org>
 To:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
 Cc:     Stephen Boyd <sboyd@kernel.org>,
@@ -56,9 +56,9 @@ Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Ralph Siemsen <ralph.siemsen@linaro.org>
-Subject: [PATCH 2/4] clk: renesas: r9a06g032: drop unused fields
-Date:   Mon, 27 Feb 2023 13:39:34 -0500
-Message-Id: <20230227183937.377612-3-ralph.siemsen@linaro.org>
+Subject: [PATCH 3/4] clk: renesas: r9a06g032: document structs
+Date:   Mon, 27 Feb 2023 13:39:35 -0500
+Message-Id: <20230227183937.377612-4-ralph.siemsen@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230227183937.377612-1-ralph.siemsen@linaro.org>
 References: <20230227183937.377612-1-ralph.siemsen@linaro.org>
@@ -68,56 +68,68 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Drop three unused fields from the clock descriptor structure, and update
-the macros for filling such structures accordingly.
-
-The values for such fields are kept in the source code, now unused, in
-case they are needed later.
+Add some kerneldoc comments for the structures.
 
 Signed-off-by: Ralph Siemsen <ralph.siemsen@linaro.org>
 ---
 
- drivers/clk/renesas/r9a06g032-clocks.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/clk/renesas/r9a06g032-clocks.c | 36 +++++++++++++++++++++++++-
+ 1 file changed, 35 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-index 75a095a15c03..8a1ab9da19ae 100644
+index 8a1ab9da19ae..1b7801f14c8c 100644
 --- a/drivers/clk/renesas/r9a06g032-clocks.c
 +++ b/drivers/clk/renesas/r9a06g032-clocks.c
-@@ -28,8 +28,9 @@
+@@ -27,6 +27,26 @@
+ 
  #define R9A06G032_SYSCTRL_DMAMUX 0xA0
  
- struct r9a06g032_gate {
--	u16 gate, reset, ready, midle,
--		scon, mirack, mistat;
-+	u16 gate, reset, ready, midle;
-+	/* Unused fields omitted to save space */
-+	/* u16 scon, mirack, mistat; */
- };
- 
- enum gate_type {
-@@ -67,14 +68,18 @@ struct r9a06g032_clkdesc {
- 	};
- };
- 
-+/*
-+ * The last three arguments are not currently used,
-+ * but are kept in the r9a06g032_clocks table below.
++/**
++ * struct r9a06g032_gate - clock gate control bits
++ * @gate:   bit which enables/disables the clock
++ * @reset:  bit which controls module reset (active low)
++ * @ready:  bit which indicates device is ready for access
++ * @midle:  bit which requests to idle the NoC interconnect
++ *
++ * Each of these fields describes a single bit in a register,
++ * which controls some aspect of clock gating. The @gate field
++ * is mandatory, this one enables/disables the clock. The
++ * other fields are optional, with zero indicating "not used".
++ *
++ * In most cases there is a @reset bit which needs to be
++ * de-asserted to bring the module out of reset.
++ *
++ * Modules may also need to signal when the are @ready to
++ * handle requests (read/writes) from the NoC interconnect.
++ *
++ * Similarly, the @midle bit is used to idle the master.
 + */
- #define I_GATE(_clk, _rst, _rdy, _midle, _scon, _mirack, _mistat) { \
- 	.gate = _clk, \
- 	.reset = _rst, \
- 	.ready = _rdy, \
- 	.midle = _midle, \
--	.scon = _scon, \
--	.mirack = _mirack, \
--	.mistat = _mistat \
-+	/* .scon = _scon, */ \
-+	/* .mirack = _mirack, */ \
-+	/* .mistat = _mistat */ \
- }
- #define D_GATE(_idx, _n, _src, ...) { \
- 	.type = K_GATE, \
+ struct r9a06g032_gate {
+ 	u16 gate, reset, ready, midle;
+ 	/* Unused fields omitted to save space */
+@@ -41,7 +61,21 @@ enum gate_type {
+ 	K_DUALGATE	/* special for UARTs */
+ };
+ 
+-/* This is used to describe a clock for instantiation */
++/**
++ * struct r9a06g032_clkdesc - describe a single clock
++ * @name:    string describing this clock
++ * @managed: boolan indicating if this clock should be
++ *           start/stop as part of power management
++ * @type:   see enum gate_type
++ * @index:  the ID of this clock element
++ * @source: the ID+1 of the parent clock element.
++ *          Root clock uses ID of ~0 (PARENT_ID);
++ * @gate:   describes the bits which control clock gate
++ *
++ * Describes a single element in the clock tree hierarchy.
++ * As there are quite a large number of clock elements, this
++ * structure is packed tightly to conserve space.
++ */
+ struct r9a06g032_clkdesc {
+ 	const char *name;
+ 	uint32_t managed:1;
 -- 
 2.25.1
 
