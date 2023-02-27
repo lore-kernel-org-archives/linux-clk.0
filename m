@@ -2,172 +2,187 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1094C64ED6
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 09:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BE8EC64ED6
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 09:32:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229731AbjB0J2O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Feb 2023 04:28:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39844 "EHLO
+        id S229960AbjB0JcU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Feb 2023 04:32:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229558AbjB0J2N (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 04:28:13 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6F4B76B1;
-        Mon, 27 Feb 2023 01:28:11 -0800 (PST)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 19B066602216;
-        Mon, 27 Feb 2023 09:28:08 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1677490090;
-        bh=fldeCQ2T3yK2LbLkV58DiP2FN50W9J7zlsxRxl8CG0c=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=muSvg7U/qWbXs3L1PUQ0RBl7Rh8gbjl/8NqkagVl/L6OHTx6O+uEE0zle6Dpcs0Sd
-         7H1akkLBKCE49h6FPNpktm05EhzY06VyX8aJb8qIacgtyNkQF+AELASrpc1pH8GflM
-         On7KLALIWvNE4mJKEIQ7H5juaCiwWcXqtIOxw00wmdKiosEGpDqeQAGpuv2AaJkgRj
-         rJ8z9U9hLl7YICyqQrGPjFYqly73XNk73Nr+K+8zAbWkrEbqEjZ40+ylR4kXE3XoLS
-         OZTOdSSBjAVbVUeCvAmX1OnX90fR4yK+BSpyrQvekroyt9fffedVtq0BE00XP9G5ny
-         KyIS9miksZX+g==
-Message-ID: <cd634833-b28e-d6d3-692d-5a391b85ad34@collabora.com>
-Date:   Mon, 27 Feb 2023 10:28:06 +0100
+        with ESMTP id S229930AbjB0JcP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 04:32:15 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1ED4A255
+        for <linux-clk@vger.kernel.org>; Mon, 27 Feb 2023 01:31:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1677490287;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RZ7tgd2yMldNRnjyOaSsgByklv9W+sBvCfRkPHDmb94=;
+        b=gR45BAQoRRR7BQ4XcFbcUHwQ3FeiufoFMFx4RiGFo1SXaHCr3dj6a9Simf/n0Ms0zvOujC
+        Ubw7JpRvbCCPJ4S1rQZg4ovL1ED1AQZwmKZ5flSWigKOX1yJmANZHHrwRxOSsD/sRUDnYV
+        gl4YnA3YFImC5i35LzHZY8QMmS9gBHQ=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-532-ScAPaW6fO7OidjsRictGyg-1; Mon, 27 Feb 2023 04:31:25 -0500
+X-MC-Unique: ScAPaW6fO7OidjsRictGyg-1
+Received: by mail-ed1-f69.google.com with SMTP id dm14-20020a05640222ce00b0046790cd9082so7703957edb.21
+        for <linux-clk@vger.kernel.org>; Mon, 27 Feb 2023 01:31:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RZ7tgd2yMldNRnjyOaSsgByklv9W+sBvCfRkPHDmb94=;
+        b=40aUZqJw3HA1WVhmi2OQp4qFok/uM/P9lLeoSPK0oXPSgYkFow32ZcBXPEg+oYNO/U
+         iDr2b5fJh81B+Ah8jqxCSAotTs3NWVKHmYmoz8z2uf7wbr718ICL+c20GPP54qllBoq1
+         5uZOvAX7SFUWKztnyQjP9OAx8Qz34YHyiV3+op2JMAApbyeuIxTGjDPEXrjYBkhDA2es
+         y/20TsfYygQg9Log6WNEO/nT4ZY44c4VHcvjr2Yl00AEU83VEF9efvvy/o597hsf2S/Q
+         GBsCeAC7RFkTWxDf6GvHB9zekCi0Re1BC4dayl3CxSCLSpRGOvjQn8i7vDy2aIh+vbDL
+         QvFw==
+X-Gm-Message-State: AO0yUKWrOwnU4ZrZ7ZoKVvTjoVPvobzKOUzxL2DbwX4mMMRl4H2uB5QR
+        GK3jPDe7BgTCEIoyr0tfI5f1wlwZqLbBY/2e9BmsH6GY6IE5I53X+JxQkpY7rP31/HhPS0hLeRh
+        SNZaBGDAvzh/kKHq4jDdr
+X-Received: by 2002:a17:906:4d8c:b0:8ae:f73e:233f with SMTP id s12-20020a1709064d8c00b008aef73e233fmr36187966eju.32.1677490284511;
+        Mon, 27 Feb 2023 01:31:24 -0800 (PST)
+X-Google-Smtp-Source: AK7set+NbVSpt4yOAnECcpAr2/cCoG6u5mlrIrkJajmml4ubXI2EjR7IrG3eLzjCQWCzYYep+F5FNw==
+X-Received: by 2002:a17:906:4d8c:b0:8ae:f73e:233f with SMTP id s12-20020a1709064d8c00b008aef73e233fmr36187918eju.32.1677490284210;
+        Mon, 27 Feb 2023 01:31:24 -0800 (PST)
+Received: from [10.40.98.142] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id qq10-20020a17090720ca00b008e09deb6610sm2942505ejb.200.2023.02.27.01.31.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Feb 2023 01:31:23 -0800 (PST)
+Message-ID: <7dd27ec5-0619-128d-8407-6711a05ef271@redhat.com>
+Date:   Mon, 27 Feb 2023 10:31:22 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v3 4/4] clk: mediatek: Add drivers for MediaTek MT6735
- main clock and reset drivers
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 0/8] drivers: select REGMAP instead of depending on it
 Content-Language: en-US
-To:     Yassine Oudjana <yassine.oudjana@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Cc:     Andrew Jeffery <andrew@aj.id.au>, Corey Minyard <minyard@acm.org>,
+        openipmi-developer@lists.sourceforge.net,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Riku Voipio <riku.voipio@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Daniel Golle <daniel@makrotopia.org>,
-        Allen-KH Cheng <allen-kh.cheng@mediatek.com>,
-        Tinghan Shen <tinghan.shen@mediatek.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Edward-JW Yang <edward-jw.yang@mediatek.com>,
-        Johnson Wang <johnson.wang@mediatek.com>,
-        Fabien Parent <fparent@baylibre.com>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20230225094246.261697-1-y.oudjana@protonmail.com>
- <20230225094246.261697-5-y.oudjana@protonmail.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230225094246.261697-5-y.oudjana@protonmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Michael Walle <michael@walle.cc>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        linux-gpio@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
+        Darren Hart <dvhart@infradead.org>,
+        Michael Shych <michaelsh@nvidia.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        platform-driver-x86@vger.kernel.org,
+        Yegnesh S Iyer <yegnesh.s.iyer@intel.com>,
+        Bin Gao <bin.gao@intel.com>, Zhang Rui <rui.zhang@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>, linux-pm@vger.kernel.org,
+        Oskar Senft <osk@google.com>, linux-serial@vger.kernel.org
+References: <20230226053953.4681-1-rdunlap@infradead.org>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20230226053953.4681-1-rdunlap@infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 25/02/23 10:42, Yassine Oudjana ha scritto:
-> From: Yassine Oudjana <y.oudjana@protonmail.com>
+Hi Randy,
+
+On 2/26/23 06:39, Randy Dunlap wrote:
+> REGMAP is a hidden (not user visible) symbol. Users cannot set it
+> directly thru "make *config", so drivers should select it instead of
+> depending on it if they need it.
 > 
-> Add drivers for MT6735 apmixedsys, topckgen, infracfg and pericfg
-> clock and reset controllers. These provide the base clocks and resets
-> on the platform, and should be enough to bring up all essential blocks
-> including PWRAP, MSDC and peripherals (UART, I2C, SPI).
+> Consistently using "select" or "depends on" can also help reduce
+> Kconfig circular dependency issues.
 > 
-> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
-> ---
->   MAINTAINERS                                  |   4 +
->   drivers/clk/mediatek/Kconfig                 |   9 +
->   drivers/clk/mediatek/Makefile                |   1 +
->   drivers/clk/mediatek/clk-mt6735-apmixedsys.c | 139 ++++++
->   drivers/clk/mediatek/clk-mt6735-infracfg.c   |  78 ++++
->   drivers/clk/mediatek/clk-mt6735-pericfg.c    |  91 ++++
->   drivers/clk/mediatek/clk-mt6735-topckgen.c   | 450 +++++++++++++++++++
->   7 files changed, 772 insertions(+)
->   create mode 100644 drivers/clk/mediatek/clk-mt6735-apmixedsys.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6735-infracfg.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6735-pericfg.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6735-topckgen.c
+> REGMAP is selected 94 times and is depended on 11 times in
+> current linux-next. Eliminate the uses of "depends on" by
+> converting them to "select".
+
+Thank you for your work on this. Mixing of depends on vs select
+is a real problem with many Kconfig symbols.
+
+>  [PATCH 1/8] ipmi: ASPEED_BT_IPMI_BMC: select REGMAP_MMIO instead of depending on it
+>  [PATCH 2/8] clk: HI655X: select REGMAP instead of depending on it
+>  [PATCH 3/8] gpio: GPIO_REGMAP: select REGMAP instead of depending on it
+>  [PATCH 4/8] leds: TI_LMU_COMMON: select REGMAP instead of depending on it
+>  [PATCH 5/8] platform: mellanox: select REGMAP instead of depending on it
+>  [PATCH 6/8] platform: x86: MLX_PLATFORM: select REGMAP instead of depending on it
+>  [PATCH 7/8] thermal: intel: BXT_PMIC: select REGMAP instead of depending on it
+>  [PATCH 8/8] serial: 8250: ASPEED_VUART: select REGMAP instead of depending on it
+
+For patch 5/8 and 6/8, do you want me to merge them through the pdx86
+(platform-drivers-x86) tree, or do you plan to merge this whole series
+in one go through some other tree?
+
+If you plan to merge the whole series through some other tree,
+here is my acked by for doing so for 5/8 and 6/8:
+
+Acked-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
+
+
+
+> 
+> diffstat:
+>  drivers/char/ipmi/Kconfig         |    3 ++-
+>  drivers/clk/Kconfig               |    2 +-
+>  drivers/gpio/Kconfig              |    2 +-
+>  drivers/leds/Kconfig              |    2 +-
+>  drivers/platform/mellanox/Kconfig |    9 ++++-----
+>  drivers/platform/x86/Kconfig      |    3 ++-
+>  drivers/thermal/intel/Kconfig     |    3 ++-
+>  drivers/tty/serial/8250/Kconfig   |    3 ++-
+>  8 files changed, 15 insertions(+), 12 deletions(-)
+> 
+> Cc: Andrew Jeffery <andrew@aj.id.au>
+> Cc: Corey Minyard <minyard@acm.org>
+> Cc: openipmi-developer@lists.sourceforge.net
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Riku Voipio <riku.voipio@linaro.org>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: Michael Walle <michael@walle.cc>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: Dan Murphy <dmurphy@ti.com>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Lee Jones <lee@kernel.org>
+> Cc: linux-leds@vger.kernel.org
+> Cc: Darren Hart <dvhart@infradead.org>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Cc: Michael Shych <michaelsh@nvidia.com>
+> Cc: Mark Gross <markgross@kernel.org>
+> Cc: Vadim Pasternak <vadimp@nvidia.com>
+> Cc: platform-driver-x86@vger.kernel.org
+> Cc: Yegnesh S Iyer <yegnesh.s.iyer@intel.com>
+> Cc: Bin Gao <bin.gao@intel.com>
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Amit Kucheria <amitk@kernel.org>
+> Cc: linux-pm@vger.kernel.org
+> Cc: Oskar Senft <osk@google.com>
+> Cc: linux-serial@vger.kernel.org
 > 
 
-..snip..
-
-> diff --git a/drivers/clk/mediatek/clk-mt6735-topckgen.c b/drivers/clk/mediatek/clk-mt6735-topckgen.c
-> new file mode 100644
-> index 000000000000..5fa743e4b0fc
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt6735-topckgen.c
-> @@ -0,0 +1,450 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2022 Yassine Oudjana <y.oudjana@protonmail.com>
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include "clk-mtk.h"
-> +#include "clk-mux.h"
-> +
-> +#include <dt-bindings/clock/mediatek,mt6735-topckgen.h>
-> +
-
-..snip..
-
-> +
-> +int clk_mt6735_topckgen_probe(struct platform_device *pdev)
-
-It gets *even easier* than that!
-
-Check out this one:
-https://patchwork.kernel.org/project/linux-mediatek/patch/20230222092543.19187-5-angelogioacchino.delregno@collabora.com/
-
-...being part of:
-https://patchwork.kernel.org/project/linux-mediatek/list/?series=724004
-
-So you can use simple_probe for MT6735's topckgen too!
-
-In this case, it would be...
-
-static const struct mtk_clk_desc topck_desc = {
-	.clks = topckgen_muxes,
-	.num_clks = ARRAY_SIZE(topckgen_muxes),
-	.fixed_clks = topckgen_fixed_clks,
-	.num_fixed_clks = ARRAY_SIZE(topckgen_fixed_clks),
-	.factor_clks = topckgen_factors,
-	.num_factor_clks = ARRAY_SIZE(topckgen_factors),
-	.clk_lock = &mt6735_topckgen_lock,
-};
-
-static const struct of_device_id of_match_mt6735_topckgen[] = {
-	{ .compatible = "mediatek,mt6735-topckgen", .data = &topck_desc },
-	{ /* sentinel */ }
-};
-
-MODULE_DEVICE_TABLE(of, of_match_mt6735_topckgen)
-     ^^^^^
-You're missing that on multiple clock drivers ;-)
-
-...And you're replacing .probe(), .remove() callbacks with
-
-static struct platform_driver clk_mt6735_topckgen = {
-	.probe = mtk_clk_simple_probe,
-	.remove = mtk_clk_simple_remove,
-
-	......
-
-Other than that, good job!
-
-After performing these changes, please make sure to mention the dependency on
-my last cleanup series on your cover letter for v4, so that maintainers will
-be aware of what to do.
-
-Your v4 smells like Reviewed-by tags all over. Keep up the great work!
-
-Cheers,
-Angelo
