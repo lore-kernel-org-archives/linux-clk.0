@@ -2,41 +2,39 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9541C64ED6
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 17:44:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B14C7EE31
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 17:44:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229786AbjB0RoK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Feb 2023 12:44:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60334 "EHLO
+        id S229886AbjB0RoM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Feb 2023 12:44:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229684AbjB0RoI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 12:44:08 -0500
+        with ESMTP id S229657AbjB0RoM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 12:44:12 -0500
 Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9D221E1E4;
-        Mon, 27 Feb 2023 09:43:44 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F49F24103;
+        Mon, 27 Feb 2023 09:43:47 -0800 (PST)
 Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id E852185A35;
-        Mon, 27 Feb 2023 18:43:22 +0100 (CET)
+        by phobos.denx.de (Postfix) with ESMTPSA id 0378385A93;
+        Mon, 27 Feb 2023 18:43:24 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1677519803;
-        bh=CkpgNQCLwGaTqyGzklmwPiiCD2YF0gu59MmCpEMTvJk=;
+        s=phobos-20191101; t=1677519805;
+        bh=NTsgrGLliJfK/j37fo50GEJx/FB8wqgwmBJdsybnJa0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y4tNp1gOtXUijZ9QFKVZgmJlWJ8/pWfqyP7ykhUwTU0U82dGPaor8X4nJvowuGsdD
-         rxM8Fc9sWJDDSFiIYgiy3q8M22eZmwFfcawQQ9dEJrVGirWXYDKb1/4cDHWmC7rP9y
-         aylE+4dzqALp3QXkakoXWXkm4ek8nmOps4wdknfU6R8sed2Tkc9jVzWdkho8ZrETQL
-         OENcE8rzZeX7zbJ3zO4MyLkhns4I1qmt+yIXiEPFnlPkTfI+Tyzu2L5B+T5/erPfGu
-         I+Xh7IIMLQDX1ZMFxzvOvzjCv/8qgoG6M3hLiMM0L2Y6SsvuJ47iZpj+lfEg/UX2pW
-         UzmslAW3fDicQ==
+        b=vLzbXCJzhJrZL+P5RJi+Cogbtua8zwVCIPJ+0cvRfZ04JN2eRacfyWQ5r2X5eQJXr
+         FZfadWZ3LmXMCZkfVnxbhKrzcTHpe8jy0j8zvKNPRFqQz4dmlqWSqEfiFoB+Za1JpT
+         pC7BA+zpLlAfFlwT/08+hn9lVePGnH0A73gGVAevUd0D/4S/Tr0G91YkoU+19bGYQP
+         H0mRbh4sqFRqzvnOzuDmWfpNatgwuQoKSfE3JGibA9v3cvnHWCYmaIxf2ByI+tqgX1
+         besELehh+UxDrZ5dOB997/lzb6ooDTulkKFeI1Ci/s614iQ21Jt2KxR7bJBkr8/WSA
+         8chdbtYhqaFbw==
 From:   Marek Vasut <marex@denx.de>
 To:     linux-clk@vger.kernel.org
-Cc:     Marek Vasut <marex@denx.de>, Rob Herring <robh@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
+Cc:     Marek Vasut <marex@denx.de>, Fabio Estevam <festevam@gmail.com>,
         Abel Vesa <abelvesa@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
         Jacky Bai <ping.bai@nxp.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -53,9 +51,9 @@ Cc:     Marek Vasut <marex@denx.de>, Rob Herring <robh@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 3/5] dt-bindings: clock: imx8mp: Add audiomix block control
-Date:   Mon, 27 Feb 2023 18:43:06 +0100
-Message-Id: <20230227174308.87286-3-marex@denx.de>
+Subject: [PATCH v5 5/5] arm64: dts: imx8mp: Add analog audio output on i.MX8MP EVK
+Date:   Mon, 27 Feb 2023 18:43:08 +0100
+Message-Id: <20230227174308.87286-5-marex@denx.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230227174308.87286-1-marex@denx.de>
 References: <20230227174308.87286-1-marex@denx.de>
@@ -67,12 +65,11 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Unlike the other block control IPs in i.MX8M, the audiomix is mostly a
-series of clock gates and muxes. Add DT bindings for this IP.
+Enable SAI3 on i.MX8MP EVK, add WM8960 codec binding and regulator.
+This is all that is needed to get analog audio output operational
+on i.MX8MP EVK.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Tested-by: Adam Ford <aford173@gmail.com> #imx8mp-beacon-kit
-Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
 Signed-off-by: Marek Vasut <marex@denx.de>
 ---
 Cc: Abel Vesa <abelvesa@kernel.org>
@@ -98,105 +95,132 @@ Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-clk@vger.kernel.org
 ---
 V2: No change
-V3: - Add missed RB from Rob from V1
-    - Rename audio_ahb to plain ahb
-V4: - Rebase on next 20230223
-V5: Add TB from Adam and Alexander
+V3: No change
+V4: - Update codec node name and phandle label
+    - Use just sound for the sound node name
+    - Rebase on next 20230223
+V5: - Drop regulator-always-on from codec regulator
+    - Add RB from Fabio
+    - TB by Alexander added and removed again, since the patch was reworked
+    - Switch to simple-audio-card
+    - Add sound-dai-cells to codec node
 ---
- .../bindings/clock/imx8mp-audiomix.yaml       | 84 +++++++++++++++++++
- 1 file changed, 84 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+ arch/arm64/boot/dts/freescale/imx8mp-evk.dts | 74 ++++++++++++++++++++
+ 1 file changed, 74 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-new file mode 100644
-index 0000000000000..01b4e1e311cef
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-@@ -0,0 +1,84 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/imx8mp-audiomix.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+index 7816853162b3f..f2285ed9f70b1 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+@@ -40,6 +40,15 @@ pcie0_refclk: pcie0-refclk {
+ 		clock-frequency = <100000000>;
+ 	};
+ 
++	reg_audio_pwr: regulator-audio-pwr {
++		compatible = "regulator-fixed";
++		regulator-name = "audio-pwr";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&gpio4 29 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
 +
-+title: NXP i.MX8MP AudioMIX Block Control Binding
+ 	reg_can1_stby: regulator-can1-stby {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "can1-stby";
+@@ -83,6 +92,37 @@ reg_usdhc2_vmmc: regulator-usdhc2 {
+ 		gpio = <&gpio2 19 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
 +
-+maintainers:
-+  - Marek Vasut <marex@denx.de>
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "wm8960-audio";
++		simple-audio-card,format = "i2s";
++		simple-audio-card,frame-master = <&cpudai>;
++		simple-audio-card,bitclock-master = <&cpudai>;
++		simple-audio-card,widgets =
++			"Headphone", "Headphone Jack",
++			"Speaker", "External Speaker",
++			"Microphone", "Mic Jack";
++		simple-audio-card,routing =
++			"Headphone Jack", "HP_L",
++			"Headphone Jack", "HP_R",
++			"External Speaker", "SPK_LP",
++			"External Speaker", "SPK_LN",
++			"External Speaker", "SPK_RP",
++			"External Speaker", "SPK_RN",
++			"LINPUT1", "Mic Jack",
++			"LINPUT3", "Mic Jack",
++			"Mic Jack", "MICB";
 +
-+description: |
-+  NXP i.MX8M Plus AudioMIX is dedicated clock muxing and gating IP
-+  used to control Audio related clock on the SoC.
++		cpudai: simple-audio-card,cpu {
++			sound-dai = <&sai3>;
++		};
 +
-+properties:
-+  compatible:
-+    const: fsl,imx8mp-audio-blk-ctrl
++		simple-audio-card,codec {
++			sound-dai = <&wm8960>;
++		};
 +
-+  reg:
-+    maxItems: 1
++	};
+ };
+ 
+ &flexspi {
+@@ -344,6 +384,18 @@ &i2c3 {
+ 	pinctrl-0 = <&pinctrl_i2c3>;
+ 	status = "okay";
+ 
++	wm8960: codec@1a {
++		#sound-dai-cells = <0>;
++		compatible = "wlf,wm8960";
++		reg = <0x1a>;
++		clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SAI3_MCLK1>;
++		clock-names = "mclk";
++		wlf,shared-lrclk;
++		wlf,hp-cfg = <3 2 3>;
++		wlf,gpio-cfg = <1 3>;
++		SPKVDD1-supply = <&reg_audio_pwr>;
++	};
 +
-+  power-domains:
-+    maxItems: 1
+ 	pca6416: gpio@20 {
+ 		compatible = "ti,tca6416";
+ 		reg = <0x20>;
+@@ -422,6 +474,16 @@ &pwm4 {
+ 	status = "okay";
+ };
+ 
++&sai3 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_sai3>;
++	assigned-clocks = <&clk IMX8MP_CLK_SAI3>;
++	assigned-clock-parents = <&clk IMX8MP_AUDIO_PLL1_OUT>;
++	assigned-clock-rates = <12288000>;
++	fsl,sai-mclk-direction-output;
++	status = "okay";
++};
 +
-+  power-domain-names:
-+    const: audio
+ &snvs_pwrkey {
+ 	status = "okay";
+ };
+@@ -668,6 +730,18 @@ MX8MP_IOMUXC_UART3_TXD__UART1_DCE_RTS	0x140
+ 		>;
+ 	};
+ 
++	pinctrl_sai3: sai3grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_SAI3_TXFS__AUDIOMIX_SAI3_TX_SYNC	0xd6
++			MX8MP_IOMUXC_SAI3_TXC__AUDIOMIX_SAI3_TX_BCLK	0xd6
++			MX8MP_IOMUXC_SAI3_RXD__AUDIOMIX_SAI3_RX_DATA00	0xd6
++			MX8MP_IOMUXC_SAI3_TXD__AUDIOMIX_SAI3_TX_DATA00	0xd6
++			MX8MP_IOMUXC_SAI3_MCLK__AUDIOMIX_SAI3_MCLK	0xd6
++			MX8MP_IOMUXC_SAI3_RXFS__GPIO4_IO28		0xd6
++			MX8MP_IOMUXC_SAI3_RXC__GPIO4_IO29		0xd6
++		>;
++	};
 +
-+  clocks:
-+    minItems: 7
-+    maxItems: 7
-+
-+  clock-names:
-+    items:
-+      - const: ahb
-+      - const: sai1
-+      - const: sai2
-+      - const: sai3
-+      - const: sai5
-+      - const: sai6
-+      - const: sai7
-+
-+  '#clock-cells':
-+    const: 1
-+    description:
-+      The clock consumer should specify the desired clock by having the clock
-+      ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8mp-clock.h
-+      for the full list of i.MX8MP IMX8MP_CLK_AUDIOMIX_ clock IDs.
-+
-+required:
-+  - compatible
-+  - reg
-+  - power-domains
-+  - power-domain-names
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  # Clock Control Module node:
-+  - |
-+    #include <dt-bindings/clock/imx8mp-clock.h>
-+
-+    clock-controller@30e20000 {
-+        #clock-cells = <1>;
-+        compatible = "fsl,imx8mp-audio-blk-ctrl";
-+        clocks = <&clk IMX8MP_CLK_AUDIO_ROOT>,
-+                 <&clk IMX8MP_CLK_SAI1>,
-+                 <&clk IMX8MP_CLK_SAI2>,
-+                 <&clk IMX8MP_CLK_SAI3>,
-+                 <&clk IMX8MP_CLK_SAI5>,
-+                 <&clk IMX8MP_CLK_SAI6>,
-+                 <&clk IMX8MP_CLK_SAI7>;
-+        clock-names = "ahb",
-+                      "sai1", "sai2", "sai3",
-+                      "sai5", "sai6", "sai7";
-+        power-domains = <&pgc_audio>;
-+        power-domain-names = "audio";
-+        reg = <0x30e20000 0x10000>;
-+    };
-+
-+...
+ 	pinctrl_uart2: uart2grp {
+ 		fsl,pins = <
+ 			MX8MP_IOMUXC_UART2_RXD__UART2_DCE_RX	0x140
 -- 
 2.39.2
 
