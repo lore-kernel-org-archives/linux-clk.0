@@ -2,239 +2,506 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75610C7EE23
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 03:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B90FC64ED8
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 06:46:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229815AbjB0D5O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 26 Feb 2023 22:57:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33170 "EHLO
+        id S229685AbjB0Gqi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Feb 2023 01:46:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230227AbjB0D5B (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Feb 2023 22:57:01 -0500
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 083EE1E1FC
-        for <linux-clk@vger.kernel.org>; Sun, 26 Feb 2023 19:56:29 -0800 (PST)
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20230227035620epoutp02d39fd6980503a6ce42a8791d73160d74~Hkj3zuVX_1561715617epoutp02i
-        for <linux-clk@vger.kernel.org>; Mon, 27 Feb 2023 03:56:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20230227035620epoutp02d39fd6980503a6ce42a8791d73160d74~Hkj3zuVX_1561715617epoutp02i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1677470181;
-        bh=O3yMs7/UanLc4TbZp0s6QYMPIuSJFIHEjD7r8qj2KRA=;
-        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-        b=n4KrTTC19hbbfgaGqZwXPt/5BU00hdNGyG06aS9GGgMPILSOCyD5k4K0v7wtdjxHn
-         mcUwU67ck569AMJnrFlNqyURG78C3A7A6gJLoMN2A6U7/eDR0txzQr9gXWAq2lDpTC
-         L7dHPNiFr3+kY27MU0PCuBMCYfRqbLg7vtXsYiJA=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20230227035620epcas2p3ad969b5b279ce460ef1b2084bebf696d~Hkj3Wl5UL2802828028epcas2p3R;
-        Mon, 27 Feb 2023 03:56:20 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.90]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4PQ69v5tKxz4x9Q1; Mon, 27 Feb
-        2023 03:56:19 +0000 (GMT)
-X-AuditID: b6c32a48-1f7ff70000021624-5f-63fc29e3c67c
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        34.78.05668.3E92CF36; Mon, 27 Feb 2023 12:56:19 +0900 (KST)
-Mime-Version: 1.0
-Subject: RE: [PATCH v2 5/6] clk: samsung: exynos850: Add AUD and HSI main
- gate clocks
-Reply-To: chanho61.park@samsung.com
-Sender: CHANHO PARK <chanho61.park@samsung.com>
-From:   CHANHO PARK <chanho61.park@samsung.com>
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     David Virag <virag.david003@gmail.com>,
-        ALIM AKHTAR <alim.akhtar@samsung.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S229451AbjB0Gqh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 01:46:37 -0500
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2084610AB1;
+        Sun, 26 Feb 2023 22:46:34 -0800 (PST)
+Received: from loongson.cn (unknown [10.20.42.35])
+        by gateway (Coremail) with SMTP id _____8BxMI_IUfxjqP8FAA--.5616S3;
+        Mon, 27 Feb 2023 14:46:32 +0800 (CST)
+Received: from user-pc.202.106.0.20 (unknown [10.20.42.35])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8DxD7_AUfxj14I+AA--.9411S2;
+        Mon, 27 Feb 2023 14:46:31 +0800 (CST)
+From:   Yinbo Zhu <zhuyinbo@loongson.cn>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <20230223042133.26551-6-semen.protsenko@linaro.org>
-X-CPGS-Detection: blocking_info_exchange
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20230227035619epcms2p5aeb63759aa2c9fd40eabf6dd70f2e95f@epcms2p5>
-Date:   Mon, 27 Feb 2023 12:56:19 +0900
-X-CMS-MailID: 20230227035619epcms2p5aeb63759aa2c9fd40eabf6dd70f2e95f
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFJsWRmVeSWpSXmKPExsWy7bCmhe5jzT/JBhMO6Fg8mLeNzeL6l+es
-        FvOPnGO12Pt6K7vFpsfXWC0+9txjtbi8aw6bxYzz+5gsLp5ytWjde4Td4vCbdlaLf9c2slg8
-        7wOKn7r7md1i1a4/jBbH3z9mdBDweH+jld1j56y77B6bVnWyedy5tofNY/OSeo++LasYPT5v
-        kgtgj8q2yUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAG6
-        XUmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYF6gV5yYW1yal66Xl1piZWhgYGQK
-        VJiQnfF0ax9LwQGDivvrFrI2MB7X7GLk5JAQMJFYuOsOWxcjF4eQwA5GickzG1m7GDk4eAUE
-        Jf7uEAapERYIl5h7ZDo7SFhIQFli47ZYiLC+xPf+JhYQm01AV2L+h0+sIGNEBO4zSux++pUR
-        xGEWOM4iMevmcUaIZbwSM9qfskDY0hLbl28Fi3MKOEjc7VnMBBHXkPixrJcZwhaVuLn6LTuM
-        /f7YfKg5IhKt985C1QhKPPi5mxHkOAkBSYlJbyIgwgESTfdBDgKxcyQ2HJzEBmGbS3x/Oh+s
-        lVfAV+LJg5Ng57AIqEq8+XIDaryLxLzHv8DWMgvIS2x/O4cZZDyzgKbE+l36EJuUJY7cYoGo
-        4JPoOPyXHebBHfOeQD2iLnFg+3SoZ2Uluud8hrrGQ6Lr7WWmCYyKsxDhPAvJrlkIuxYwMq9i
-        FEstKM5NTy02KjCBR21yfu4mRnAi1vLYwTj77Qe9Q4xMHIyHGCU4mJVEeO+c/JEsxJuSWFmV
-        WpQfX1Sak1p8iNEU6MuJzFKiyfnAXJBXEm9oYmlgYmZmaG5kamCuJM4rbXsyWUggPbEkNTs1
-        tSC1CKaPiYNTqoFprqWY/dnL9e9NpjMtST8jdO+dX1S8tcQ7uUXnUyxXsqco//6x77nOpGOx
-        YQb7f35dvWnbrGma3+ViVuT2Sx968bFF9c6labJGp5n3rtnadbrZ1+Byxdxlf5ZeTl7i+WLv
-        xb8Suw81urAsPZm2/0sUg6K857S/O+5XKd+WKdPdfy+wdKbqUdvjtYzJK0/zX+2ftEExsPmy
-        nZ36n20bhdae3Trr5apbgiqHC97VNicmrJ7Jv7f5ds6daQ0e1y1t1CqaHgdcVZ5oEJN7acEM
-        56XHjm4PvXjIpHrttb1/BC93fDskeT8y9duJf3WfIj89+GiYP2FStdvW69V/eNbx9BX4Bgrv
-        msmnnCwYLbTkovuOO/FKLMUZiYZazEXFiQAo096ITQQAAA==
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230223042126epcas2p11c50a7be714a7f305d743faa68dee3ca
-References: <20230223042133.26551-6-semen.protsenko@linaro.org>
-        <20230223042133.26551-1-semen.protsenko@linaro.org>
-        <CGME20230223042126epcas2p11c50a7be714a7f305d743faa68dee3ca@epcms2p5>
+        Rob Herring <robh+dt@kernel.org>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Yang Li <yang.lee@linux.alibaba.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        loongarch@lists.linux.dev
+Cc:     Jianmin Lv <lvjianmin@loongson.cn>,
+        Liu Peibao <liupeibao@loongson.cn>, wanghongliang@loongson.cn,
+        Yinbo Zhu <zhuyinbo@loongson.cn>
+Subject: [PATCH v12 2/4] clk: clk-loongson2: add clock controller driver support
+Date:   Mon, 27 Feb 2023 14:46:20 +0800
+Message-Id: <20230227064620.29468-1-zhuyinbo@loongson.cn>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQAAf8DxD7_AUfxj14I+AA--.9411S2
+X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjvAXoW3Kr45Wr1xGF4rXF13Gry3Jwb_yoW8Jw18uo
+        W3uFn8Jr4fJ348XFWIvw15tr47XFsIvFsIyF1fArn8GayY9r98XrW8A3W3GFn7ZFyrKFnx
+        AryrKayrJr4Iqr47n29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXasCq-sGcSsGvf
+        J3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnRJU
+        UU9j1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFV
+        AK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2
+        z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr
+        1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJVWxJr1ln4kS14v26r1Y6r17M2AIxVAIcxkE
+        cVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F4
+        0Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC
+        6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l42xK82IY6x8Erc
+        xFaVAv8VWrMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E
+        5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtV
+        W8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY
+        1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
+        0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7I
+        U8kR67UUUUU==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> -----Original Message-----
-> From: Sam Protsenko <semen.protsenko@linaro.org>
-> Sent: Thursday, February 23, 2023 1:22 PM
-> To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>; Chanwoo Choi
-> <cw00.choi@samsung.com>; Sylwester Nawrocki <s.nawrocki@samsung.com>; Rob
-> Herring <robh+dt@kernel.org>
-> Cc: David Virag <virag.david003@gmail.com>; Chanho Park
-> <chanho61.park@samsung.com>; Alim Akhtar <alim.akhtar@samsung.com>; Sumit
-> Semwal <sumit.semwal@linaro.org>; Tomasz Figa <tomasz.figa@gmail.com>;
-> Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
-> <sboyd@kernel.org>; linux-samsung-soc@vger.kernel.org; linux-
-> clk@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> Subject: [PATCH v2 5/6] clk: samsung: exynos850: Add AUD and HSI main gate
-> clocks
-> 
-> Add main gate clocks for controlling AUD and HSI CMUs:
->   - gout_aud_cmu_aud_pclk
->   - gout_hsi_cmu_hsi_pclk
-> 
-> Those clocks were marked as CLK_IGNORE_UNUSED, as system hangs on boot
-> otherwise.
-> 
-> While at it, add missing PPMU (Performance Profiling Monitor Unit) clocks
-> for CMU_HSI.
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+This driver provides support for clock controller on Loongson-2 SoC,
+the Loongson-2 SoC uses a 100MHz clock as the PLL reference clock,
+there are five independent PLLs inside, each of which PLL can
+provide up to three sets of frequency dependent clock outputs.
 
-Reviewed-by: Chanho Park <chanho61.park@samsung.com>
+Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+---
+Change in v12:
+		1. Change driver register way that use platform driver register.
+Change in v11:
+		1. Remove the repetitive COMMON_CLK config in loongarch Kconfig.
+		2. Fixup the help paragraph descprition in COMMON_CLK_LOONGSON2.
+		3. Drop the <linux/clkdev.h>.
+		4. Drop the cast in clock driver.
+		5. Use div_u64() replace do_div().
+		6. Inline this function for loongson2_check_clk_hws.
+		7. Fixup the comma deposition on the loongson2_check_clk_hws.
+		8. Drop the loongson2_obtain_fixed_clk_hw and rework this driver
+		   use clk_parent_data and the 'fw_name'.
+Change in v10:
+		1. Detach of_clk_init to another patch. 
+Change in v9:
+		1. Add all history changelog information.
+Change in v8:
+		1. Remove the flag "CLK_IS_BASIC".
+Change in v7:
+		1. Adjust position alphabetically in Kconfig and Makefile.
+		2. Add static for loongson2_pll_base.
+		3. Move other file-scope variables in probe.
+Change in v6:
+		1. NO change, but other patch in this series of patches has
+		   changes.
+Change in v5:
+		1. Replace loongson2 with Loongson-2 in commit info.
+		2. Replace Loongson2 with Loongson-2 in binding and
+		   Kconfig file.
+		3. Replace soc with SoC.
+Change in v4:
+		1. Fixup clock-names that replace "xxx-clk" with "xxx".
+Change in v3:
+		1. NO change, but other patch in this series of patches has
+		   changes.
+Change in v2:
+		1. Update the include filename.
+		2. Change string from refclk/REFCLK to ref/REF.
 
-> ---
-> Changes in v2:
->   - Rebased on top of most recent soc/for-next tree
->   - Added comment for CLK_IGNORE_UNUSED flag usage
-> 
->  drivers/clk/samsung/clk-exynos850.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos850.c
-> b/drivers/clk/samsung/clk-exynos850.c
-> index 601fe05e8555..6ab5fa8c2ef3 100644
-> --- a/drivers/clk/samsung/clk-exynos850.c
-> +++ b/drivers/clk/samsung/clk-exynos850.c
-> @@ -674,6 +674,7 @@ static const struct samsung_cmu_info apm_cmu_info
-> __initconst = {
->  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF4	0x2014
->  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF5	0x2018
->  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF6	0x201c
-> +#define CLK_CON_GAT_CLK_AUD_CMU_AUD_PCLK	0x2020
->  #define CLK_CON_GAT_GOUT_AUD_ABOX_ACLK		0x2048
->  #define CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_SPDY	0x204c
->  #define CLK_CON_GAT_GOUT_AUD_ABOX_CCLK_ASB	0x2050
-> @@ -729,6 +730,7 @@ static const unsigned long aud_clk_regs[] __initconst
-> = {
->  	CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF4,
->  	CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF5,
->  	CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_UAIF6,
-> +	CLK_CON_GAT_CLK_AUD_CMU_AUD_PCLK,
->  	CLK_CON_GAT_GOUT_AUD_ABOX_ACLK,
->  	CLK_CON_GAT_GOUT_AUD_ABOX_BCLK_SPDY,
->  	CLK_CON_GAT_GOUT_AUD_ABOX_CCLK_ASB,
-> @@ -848,6 +850,9 @@ static const struct samsung_div_clock aud_div_clks[]
-> __initconst = {  };
-> 
->  static const struct samsung_gate_clock aud_gate_clks[] __initconst = {
-> +	GATE(CLK_GOUT_AUD_CMU_AUD_PCLK, "gout_aud_cmu_aud_pclk",
-> +	     "dout_aud_busd",
-> +	     CLK_CON_GAT_CLK_AUD_CMU_AUD_PCLK, 21, CLK_IGNORE_UNUSED, 0),
->  	GATE(CLK_GOUT_AUD_CA32_CCLK, "gout_aud_ca32_cclk",
-> "mout_aud_cpu_hch",
->  	     CLK_CON_GAT_GOUT_AUD_ABOX_CCLK_CA32, 21, 0, 0),
->  	GATE(CLK_GOUT_AUD_ASB_CCLK, "gout_aud_asb_cclk",
-> "dout_aud_cpu_aclk", @@ -1116,12 +1121,15 @@ static const struct
-> samsung_cmu_info g3d_cmu_info __initconst = {
->  #define PLL_CON0_MUX_CLKCMU_HSI_MMC_CARD_USER			0x0610
->  #define PLL_CON0_MUX_CLKCMU_HSI_USB20DRD_USER			0x0620
->  #define CLK_CON_MUX_MUX_CLK_HSI_RTC				0x1000
-> +#define CLK_CON_GAT_CLK_HSI_CMU_HSI_PCLK			0x2000
->  #define CLK_CON_GAT_HSI_USB20DRD_TOP_I_RTC_CLK__ALV		0x2008
->  #define CLK_CON_GAT_HSI_USB20DRD_TOP_I_REF_CLK_50		0x200c
->  #define CLK_CON_GAT_HSI_USB20DRD_TOP_I_PHY_REFCLK_26		0x2010
->  #define CLK_CON_GAT_GOUT_HSI_GPIO_HSI_PCLK			0x2018
->  #define CLK_CON_GAT_GOUT_HSI_MMC_CARD_I_ACLK			0x2024
->  #define CLK_CON_GAT_GOUT_HSI_MMC_CARD_SDCLKIN			0x2028
-> +#define CLK_CON_GAT_GOUT_HSI_PPMU_ACLK				0x202c
-> +#define CLK_CON_GAT_GOUT_HSI_PPMU_PCLK				0x2030
->  #define CLK_CON_GAT_GOUT_HSI_SYSREG_HSI_PCLK			0x2038
->  #define CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_ACLK_PHYCTRL_20	0x203c
->  #define CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_BUS_CLK_EARLY		0x2040
-> @@ -1131,12 +1139,15 @@ static const unsigned long hsi_clk_regs[]
-> __initconst = {
->  	PLL_CON0_MUX_CLKCMU_HSI_MMC_CARD_USER,
->  	PLL_CON0_MUX_CLKCMU_HSI_USB20DRD_USER,
->  	CLK_CON_MUX_MUX_CLK_HSI_RTC,
-> +	CLK_CON_GAT_CLK_HSI_CMU_HSI_PCLK,
->  	CLK_CON_GAT_HSI_USB20DRD_TOP_I_RTC_CLK__ALV,
->  	CLK_CON_GAT_HSI_USB20DRD_TOP_I_REF_CLK_50,
->  	CLK_CON_GAT_HSI_USB20DRD_TOP_I_PHY_REFCLK_26,
->  	CLK_CON_GAT_GOUT_HSI_GPIO_HSI_PCLK,
->  	CLK_CON_GAT_GOUT_HSI_MMC_CARD_I_ACLK,
->  	CLK_CON_GAT_GOUT_HSI_MMC_CARD_SDCLKIN,
-> +	CLK_CON_GAT_GOUT_HSI_PPMU_ACLK,
-> +	CLK_CON_GAT_GOUT_HSI_PPMU_PCLK,
->  	CLK_CON_GAT_GOUT_HSI_SYSREG_HSI_PCLK,
->  	CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_ACLK_PHYCTRL_20,
->  	CLK_CON_GAT_GOUT_HSI_USB20DRD_TOP_BUS_CLK_EARLY,
-> @@ -1162,6 +1173,10 @@ static const struct samsung_mux_clock hsi_mux_clks[]
-> __initconst = {  };
-> 
->  static const struct samsung_gate_clock hsi_gate_clks[] __initconst = {
-> +	/* TODO: Should be enabled in corresponding driver */
-> +	GATE(CLK_GOUT_HSI_CMU_HSI_PCLK, "gout_hsi_cmu_hsi_pclk",
-> +	     "mout_hsi_bus_user",
-> +	     CLK_CON_GAT_CLK_HSI_CMU_HSI_PCLK, 21, CLK_IGNORE_UNUSED, 0),
->  	GATE(CLK_GOUT_USB_RTC_CLK, "gout_usb_rtc", "mout_hsi_rtc",
->  	     CLK_CON_GAT_HSI_USB20DRD_TOP_I_RTC_CLK__ALV, 21, 0, 0),
->  	GATE(CLK_GOUT_USB_REF_CLK, "gout_usb_ref", "mout_hsi_usb20drd_user",
-> @@ -1176,6 +1191,10 @@ static const struct samsung_gate_clock
-> hsi_gate_clks[] __initconst = {
->  	GATE(CLK_GOUT_MMC_CARD_SDCLKIN, "gout_mmc_card_sdclkin",
->  	     "mout_hsi_mmc_card_user",
->  	     CLK_CON_GAT_GOUT_HSI_MMC_CARD_SDCLKIN, 21, CLK_SET_RATE_PARENT,
-> 0),
-> +	GATE(CLK_GOUT_HSI_PPMU_ACLK, "gout_hsi_ppmu_aclk",
-> "mout_hsi_bus_user",
-> +	     CLK_CON_GAT_GOUT_HSI_PPMU_ACLK, 21, 0, 0),
-> +	GATE(CLK_GOUT_HSI_PPMU_PCLK, "gout_hsi_ppmu_pclk",
-> "mout_hsi_bus_user",
-> +	     CLK_CON_GAT_GOUT_HSI_PPMU_PCLK, 21, 0, 0),
->  	GATE(CLK_GOUT_SYSREG_HSI_PCLK, "gout_sysreg_hsi_pclk",
->  	     "mout_hsi_bus_user",
->  	     CLK_CON_GAT_GOUT_HSI_SYSREG_HSI_PCLK, 21, 0, 0),
-> --
-> 2.39.1
+ MAINTAINERS                 |   1 +
+ drivers/clk/Kconfig         |   9 +
+ drivers/clk/Makefile        |   1 +
+ drivers/clk/clk-loongson2.c | 337 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 348 insertions(+)
+ create mode 100644 drivers/clk/clk-loongson2.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6147c2742563..1901c3230bc0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12090,6 +12090,7 @@ LOONGSON-2 SOC SERIES CLOCK DRIVER
+ M:	Yinbo Zhu <zhuyinbo@loongson.cn>
+ L:	linux-clk@vger.kernel.org
+ S:	Maintained
++F:	drivers/clk/clk-loongson2.c
+ F:	include/dt-bindings/clock/loongson,ls2k-clk.h
+ 
+ LOONGSON GPIO DRIVER
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index b6c5bf69a2b2..27c5fa02916a 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -325,6 +325,15 @@ config COMMON_CLK_LOCHNAGAR
+ 	  This driver supports the clocking features of the Cirrus Logic
+ 	  Lochnagar audio development board.
+ 
++config COMMON_CLK_LOONGSON2
++	bool "Clock driver for Loongson-2 SoC"
++	depends on COMMON_CLK && OF
++	help
++          This driver provides support for clock controller on Loongson-2 SoC.
++          The clock controller can generates and supplies clock to various
++          peripherals within the SoC.
++          Say Y here to support Loongson-2 SoC clock driver.
++
+ config COMMON_CLK_NXP
+ 	def_bool COMMON_CLK && (ARCH_LPC18XX || ARCH_LPC32XX)
+ 	select REGMAP_MMIO if ARCH_LPC32XX
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index e3ca0d058a25..b298c5dabc1a 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -43,6 +43,7 @@ obj-$(CONFIG_COMMON_CLK_K210)		+= clk-k210.o
+ obj-$(CONFIG_LMK04832)			+= clk-lmk04832.o
+ obj-$(CONFIG_COMMON_CLK_LAN966X)	+= clk-lan966x.o
+ obj-$(CONFIG_COMMON_CLK_LOCHNAGAR)	+= clk-lochnagar.o
++obj-$(CONFIG_COMMON_CLK_LOONGSON2)	+= clk-loongson2.o
+ obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
+ obj-$(CONFIG_COMMON_CLK_MAX9485)	+= clk-max9485.o
+ obj-$(CONFIG_ARCH_MILBEAUT_M10V)	+= clk-milbeaut.o
+diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
+new file mode 100644
+index 000000000000..e0f269994327
+--- /dev/null
++++ b/drivers/clk/clk-loongson2.c
+@@ -0,0 +1,337 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Author: Yinbo Zhu <zhuyinbo@loongson.cn>
++ * Copyright (C) 2022-2023 Loongson Technology Corporation Limited
++ */
++
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/clk-provider.h>
++#include <linux/slab.h>
++#include <linux/clk.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <dt-bindings/clock/loongson,ls2k-clk.h>
++
++#define LOONGSON2_PLL_MULT_SHIFT		32
++#define LOONGSON2_PLL_MULT_WIDTH		10
++#define LOONGSON2_PLL_DIV_SHIFT			26
++#define LOONGSON2_PLL_DIV_WIDTH			6
++#define LOONGSON2_APB_FREQSCALE_SHIFT		20
++#define LOONGSON2_APB_FREQSCALE_WIDTH		3
++#define LOONGSON2_USB_FREQSCALE_SHIFT		16
++#define LOONGSON2_USB_FREQSCALE_WIDTH		3
++#define LOONGSON2_SATA_FREQSCALE_SHIFT		12
++#define LOONGSON2_SATA_FREQSCALE_WIDTH		3
++
++static void __iomem *loongson2_pll_base;
++
++static const struct clk_parent_data pdata[] = {
++	{ .fw_name = "ref_100m", .name = "ref_clk", },
++};
++
++static struct clk_hw *loongson2_clk_register(struct device_node *np,
++					  const char *name,
++					  const char *parent_name,
++					  const struct clk_ops *ops,
++					  unsigned long flags)
++{
++	int ret;
++	struct clk_hw *hw;
++	struct clk_init_data init;
++
++	/* allocate the divider */
++	hw = kzalloc(sizeof(*hw), GFP_KERNEL);
++	if (!hw)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = ops;
++	init.flags = flags;
++	init.num_parents = 1;
++
++	if (!parent_name)
++		init.parent_data = pdata;
++	else
++		init.parent_names = &parent_name;
++
++	hw->init = &init;
++
++	/* register the clock */
++	ret = of_clk_hw_register(np, hw);
++	if (ret) {
++		kfree(hw);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
++
++static unsigned long loongson2_calc_pll_rate(int offset, unsigned long rate)
++{
++	u64 val;
++	u32 mult = 1, div = 1;
++
++	val = readq(loongson2_pll_base + offset);
++
++	mult = (val >> LOONGSON2_PLL_MULT_SHIFT) &
++			clk_div_mask(LOONGSON2_PLL_MULT_WIDTH);
++	div = (val >> LOONGSON2_PLL_DIV_SHIFT) &
++			clk_div_mask(LOONGSON2_PLL_DIV_WIDTH);
++
++	return div_u64((u64)rate * mult, div);
++}
++
++static unsigned long loongson2_node_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	return loongson2_calc_pll_rate(0x0, parent_rate);
++}
++
++static const struct clk_ops loongson2_node_clk_ops = {
++	.recalc_rate = loongson2_node_recalc_rate,
++};
++
++static unsigned long loongson2_ddr_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	return loongson2_calc_pll_rate(0x10, parent_rate);
++}
++
++static const struct clk_ops loongson2_ddr_clk_ops = {
++	.recalc_rate = loongson2_ddr_recalc_rate,
++};
++
++static unsigned long loongson2_dc_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	return loongson2_calc_pll_rate(0x20, parent_rate);
++}
++
++static const struct clk_ops loongson2_dc_clk_ops = {
++	.recalc_rate = loongson2_dc_recalc_rate,
++};
++
++static unsigned long loongson2_pix0_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	return loongson2_calc_pll_rate(0x30, parent_rate);
++}
++
++static const struct clk_ops loongson2_pix0_clk_ops = {
++	.recalc_rate = loongson2_pix0_recalc_rate,
++};
++
++static unsigned long loongson2_pix1_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	return loongson2_calc_pll_rate(0x40, parent_rate);
++}
++
++static const struct clk_ops loongson2_pix1_clk_ops = {
++	.recalc_rate = loongson2_pix1_recalc_rate,
++};
++
++static unsigned long loongson2_calc_rate(unsigned long rate,
++					 int shift, int width)
++{
++	u64 val;
++	u32 mult;
++
++	val = readq(loongson2_pll_base + 0x50);
++
++	mult = (val >> shift) & clk_div_mask(width);
++
++	return div_u64((u64)rate * (mult + 1), 8);
++}
++
++static unsigned long loongson2_apb_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	return loongson2_calc_rate(parent_rate,
++				   LOONGSON2_APB_FREQSCALE_SHIFT,
++				   LOONGSON2_APB_FREQSCALE_WIDTH);
++}
++
++static const struct clk_ops loongson2_apb_clk_ops = {
++	.recalc_rate = loongson2_apb_recalc_rate,
++};
++
++static unsigned long loongson2_usb_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	return loongson2_calc_rate(parent_rate,
++				   LOONGSON2_USB_FREQSCALE_SHIFT,
++				   LOONGSON2_USB_FREQSCALE_WIDTH);
++}
++
++static const struct clk_ops loongson2_usb_clk_ops = {
++	.recalc_rate = loongson2_usb_recalc_rate,
++};
++
++static unsigned long loongson2_sata_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	return loongson2_calc_rate(parent_rate,
++				   LOONGSON2_SATA_FREQSCALE_SHIFT,
++				   LOONGSON2_SATA_FREQSCALE_WIDTH);
++}
++
++static const struct clk_ops loongson2_sata_clk_ops = {
++	.recalc_rate = loongson2_sata_recalc_rate,
++};
++
++static inline void loongson2_check_clk_hws(struct clk_hw *clks[], unsigned int count)
++{
++	unsigned int i;
++
++	for (i = 0; i < count; i++)
++		if (IS_ERR(clks[i]))
++			pr_err("Loongson2 clk %u: register failed with %ld\n",
++				i, PTR_ERR(clks[i]));
++}
++
++static void loongson2_clocks_init(struct device_node *np)
++{
++	struct clk_hw **hws;
++	struct clk_hw_onecell_data *clk_hw_data;
++	spinlock_t loongson2_clk_lock;
++
++	loongson2_pll_base = of_iomap(np, 0);
++
++	if (!loongson2_pll_base) {
++		pr_err("clk: unable to map loongson2 clk registers\n");
++		return;
++	}
++
++	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws, LOONGSON2_CLK_END),
++					GFP_KERNEL);
++	if (WARN_ON(!clk_hw_data))
++		goto err;
++
++	clk_hw_data->num = LOONGSON2_CLK_END;
++	hws = clk_hw_data->hws;
++
++	hws[LOONGSON2_NODE_PLL] = loongson2_clk_register(np, "node_pll",
++						NULL,
++						&loongson2_node_clk_ops, 0);
++
++	hws[LOONGSON2_DDR_PLL] = loongson2_clk_register(np, "ddr_pll",
++						NULL,
++						&loongson2_ddr_clk_ops, 0);
++
++	hws[LOONGSON2_DC_PLL] = loongson2_clk_register(np, "dc_pll",
++						NULL,
++						&loongson2_dc_clk_ops, 0);
++
++	hws[LOONGSON2_PIX0_PLL] = loongson2_clk_register(np, "pix0_pll",
++						NULL,
++						&loongson2_pix0_clk_ops, 0);
++
++	hws[LOONGSON2_PIX1_PLL] = loongson2_clk_register(np, "pix1_pll",
++						NULL,
++						&loongson2_pix1_clk_ops, 0);
++
++	hws[LOONGSON2_NODE_CLK] = clk_hw_register_divider(NULL, "node",
++						"node_pll", 0,
++						loongson2_pll_base + 0x8, 0,
++						6, CLK_DIVIDER_ONE_BASED,
++						&loongson2_clk_lock);
++
++	/*
++	 * The hda clk divisor in the upper 32bits and the clk-prodiver
++	 * layer code doesn't support 64bit io operation thus a conversion
++	 * is required that subtract shift by 32 and add 4byte to the hda
++	 * address
++	 */
++	hws[LOONGSON2_HDA_CLK] = clk_hw_register_divider(NULL, "hda",
++						"ddr_pll", 0,
++						loongson2_pll_base + 0x22, 12,
++						7, CLK_DIVIDER_ONE_BASED,
++						&loongson2_clk_lock);
++
++	hws[LOONGSON2_GPU_CLK] = clk_hw_register_divider(NULL, "gpu",
++						"ddr_pll", 0,
++						loongson2_pll_base + 0x18, 22,
++						6, CLK_DIVIDER_ONE_BASED,
++						&loongson2_clk_lock);
++
++	hws[LOONGSON2_DDR_CLK] = clk_hw_register_divider(NULL, "ddr",
++						"ddr_pll", 0,
++						loongson2_pll_base + 0x18, 0,
++						6, CLK_DIVIDER_ONE_BASED,
++						&loongson2_clk_lock);
++
++	hws[LOONGSON2_GMAC_CLK] = clk_hw_register_divider(NULL, "gmac",
++						"dc_pll", 0,
++						loongson2_pll_base + 0x28, 22,
++						6, CLK_DIVIDER_ONE_BASED,
++						&loongson2_clk_lock);
++
++	hws[LOONGSON2_DC_CLK] = clk_hw_register_divider(NULL, "dc",
++						"dc_pll", 0,
++						loongson2_pll_base + 0x28, 0,
++						6, CLK_DIVIDER_ONE_BASED,
++						&loongson2_clk_lock);
++
++	hws[LOONGSON2_APB_CLK] = loongson2_clk_register(NULL, "apb",
++						"gmac",
++						&loongson2_apb_clk_ops, 0);
++
++	hws[LOONGSON2_USB_CLK] = loongson2_clk_register(NULL, "usb",
++						"gmac",
++						&loongson2_usb_clk_ops, 0);
++
++	hws[LOONGSON2_SATA_CLK] = loongson2_clk_register(NULL, "sata",
++						"gmac",
++						&loongson2_sata_clk_ops, 0);
++
++	hws[LOONGSON2_PIX0_CLK] = clk_hw_register_divider(NULL, "pix0",
++						"pix0_pll", 0,
++						loongson2_pll_base + 0x38, 0, 6,
++						CLK_DIVIDER_ONE_BASED,
++						&loongson2_clk_lock);
++
++	hws[LOONGSON2_PIX1_CLK] = clk_hw_register_divider(NULL, "pix1",
++						"pix1_pll", 0,
++						loongson2_pll_base + 0x48, 0, 6,
++						CLK_DIVIDER_ONE_BASED,
++						&loongson2_clk_lock);
++
++	loongson2_check_clk_hws(hws, LOONGSON2_CLK_END);
++
++	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
++
++err:
++	iounmap(loongson2_pll_base);
++}
++
++static const struct of_device_id loongson2_clk_match_table[] = {
++	{ .compatible = "loongson,ls2k-clk" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, loongson2_clk_match_table);
++
++static int loongson2_clk_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
++
++	loongson2_clocks_init(np);
++
++	return 0;
++}
++
++static struct platform_driver loongson2_clk_driver = {
++	.probe	= loongson2_clk_probe,
++	.driver	= {
++		.name	= "loongson2-clk",
++		.of_match_table	= loongson2_clk_match_table,
++	},
++};
++module_platform_driver(loongson2_clk_driver);
++
++MODULE_DESCRIPTION("Loongson2 clock driver");
++MODULE_LICENSE("GPL");
+-- 
+2.31.1
+
