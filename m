@@ -2,197 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5541FC64ED8
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 12:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B98C64ED6
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 13:33:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229562AbjB0Mm2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Feb 2023 07:42:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55666 "EHLO
+        id S230187AbjB0NdU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Feb 2023 08:33:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbjB0Mm2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 07:42:28 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 840AB1E286;
-        Mon, 27 Feb 2023 04:42:26 -0800 (PST)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 16DEB66021A2;
-        Mon, 27 Feb 2023 12:42:23 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1677501744;
-        bh=iW9qUjoYU5TcTSIT7TSX2TjEtgvMi1cEDF94UKbSCnY=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=DTPALC+RftSqebkYk9e80kG+mMwiz9bKRVpVWHD9oK99dVz0sJ2D42LNo8Eme/C1l
-         +4Pr+7FXrZ0HLSP4QsgI3pzcAzj/gwdYlFzBH3K5yeYOr7iJtu81RuxvBPEL0p3uFS
-         Tn9J9GceWMMCmkiC91zh57lEXJgbHDjsTo/DHFWgCsFQ6s4PSZ6idPk6+T/tTvM0xl
-         4AMaBRJzCcouZx5WUD5VhRChz763W6cbqBrqlNYnp/K5HHaOhW6WsYRsqApygFlD1M
-         vJBVA/7MSKBPS+YwvDkuybwIWxatvY/OYFbQ/EDej5FR48TdreKLJw7tI5L7kv/f1G
-         EbIrgVYnNGZvw==
-Message-ID: <04acf661-06b5-22b5-ca5d-50078495f7e8@collabora.com>
-Date:   Mon, 27 Feb 2023 13:42:20 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v3 4/4] clk: mediatek: Add drivers for MediaTek MT6735
- main clock and reset drivers
-Content-Language: en-US
-To:     Yassine Oudjana <yassine.oudjana@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S229708AbjB0NdG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 08:33:06 -0500
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DD779014
+        for <linux-clk@vger.kernel.org>; Mon, 27 Feb 2023 05:32:54 -0800 (PST)
+Received: by mail-pl1-x629.google.com with SMTP id n6so5305870plf.5
+        for <linux-clk@vger.kernel.org>; Mon, 27 Feb 2023 05:32:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=URqe1dE6GDBSL5K5ua0uDBAeYqEkfW5tE/SYJGuf82k=;
+        b=PkMX2eaV/wlZmoA2f7yuF/Ra7MJy1jAaZT4S/fDagDYogeDasuZ3BFjIyRu0zm7x0c
+         2pPlxI0hxZWnsTx0RjwaGA8YRdpxI3MuVbxWGbSj6kCUaozZ7yHsXc49l51G2bPAq0gZ
+         3zsmdI2q8QB+wy0gUnJ3d7hpjNBiOrkyS3TmF2cWzBiCPXXIqYDsdI+gTTmPl6ZHGDIt
+         +AAB29AlsBwcyh3tNtr2cPMf5AtZYPiG5/Eas9Xn620NoZLqldG1SrgORz6PCluTAmrs
+         xHSKrMiv9zmATs4ATLXsSFES61Yn9C2DPtwpjNjUzom1QKizcFD4blU0CmQkg3jnvQcK
+         mVIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=URqe1dE6GDBSL5K5ua0uDBAeYqEkfW5tE/SYJGuf82k=;
+        b=17WtI34Jlyc2Fv7IodA/8YYOmL9yvKlCh3MKQ3dLcsIOR4uIiWScyv2yfei7jT2WE3
+         7MqopXQE2bu17Xlyx1KVG2L9WvGcADyKeHFzztN44LZV164gndr5I1p1pe67dIR7qH5M
+         gjPtFNgIr6nofAPIrlqWr0pnkt8iFKVgTWX7KbALO7AyUT/xq5ioyccZh7nrzgJzcB8r
+         IhZvappThxR5AV/x1GdLzNr1/9uO/0jgkAwAbw5kWzbupQLUZyauJId7XlyESY7NUm83
+         Pp3uaJDIIIi5/cMfGnm1GTqalWdsI8CvunVcEBwisGasy1reqbd/aLoOb6M/UXTB10Tb
+         snmQ==
+X-Gm-Message-State: AO0yUKXoIA6R33/qCoUESOU5u6R8+NESNK+4wnjpcSRBpkNfsNoz80m4
+        yq5tCNp3RW1ukTv9RM0h+a8/
+X-Google-Smtp-Source: AK7set/e+a2DpEFO/UgnY5ozJ1GeqDmYcpR84mWWJJPHxN9/B6VO9HajCRnMjQAz6FOHPiW3MI/LdQ==
+X-Received: by 2002:a05:6a20:4b1c:b0:cd:36a3:3beb with SMTP id fp28-20020a056a204b1c00b000cd36a33bebmr3479100pzb.30.1677504774385;
+        Mon, 27 Feb 2023 05:32:54 -0800 (PST)
+Received: from thinkpad ([117.202.191.60])
+        by smtp.gmail.com with ESMTPSA id x26-20020aa784da000000b005a8f1187112sm4239936pfn.58.2023.02.27.05.32.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Feb 2023 05:32:52 -0800 (PST)
+Date:   Mon, 27 Feb 2023 19:02:41 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc:     helgaas@kernel.org, linux-pci@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mka@chromium.org, quic_vbadigan@quicinc.com,
+        quic_hemantk@quicinc.com, quic_nitegupt@quicinc.com,
+        quic_skananth@quicinc.com, quic_ramkri@quicinc.com,
+        swboyd@chromium.org, dmitry.baryshkov@linaro.org,
+        svarbanov@mm-sol.com, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@somainline.org, lpieralisi@kernel.org,
+        robh@kernel.org, kw@linux.com, bhelgaas@google.com,
+        linux-phy@lists.infradead.org, vkoul@kernel.org, kishon@ti.com,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Daniel Golle <daniel@makrotopia.org>,
-        Allen-KH Cheng <allen-kh.cheng@mediatek.com>,
-        Tinghan Shen <tinghan.shen@mediatek.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Edward-JW Yang <edward-jw.yang@mediatek.com>,
-        Johnson Wang <johnson.wang@mediatek.com>,
-        Fabien Parent <fparent@baylibre.com>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Yassine Oudjana <y.oudjana@protonmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20230225094246.261697-1-y.oudjana@protonmail.com>
- <20230225094246.261697-5-y.oudjana@protonmail.com>
- <cd634833-b28e-d6d3-692d-5a391b85ad34@collabora.com>
- <AYIQQR.5R1644EUJNRV2@gmail.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <AYIQQR.5R1644EUJNRV2@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH V1] arm64:dts:qcom:sc7280: mark memory of PCIe as cache
+ coherent
+Message-ID: <20230227133241.GA3647@thinkpad>
+References: <1677490575-29092-1-git-send-email-quic_krichai@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1677490575-29092-1-git-send-email-quic_krichai@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 27/02/23 11:39, Yassine Oudjana ha scritto:
-> 
-> On Mon, Feb 27 2023 at 10:28:06 AM +01:00:00, AngeloGioacchino Del Regno 
-> <angelogioacchino.delregno@collabora.com> wrote:
->> Il 25/02/23 10:42, Yassine Oudjana ha scritto:
->>> From: Yassine Oudjana <y.oudjana@protonmail.com>
->>>
->>> Add drivers for MT6735 apmixedsys, topckgen, infracfg and pericfg
->>> clock and reset controllers. These provide the base clocks and resets
->>> on the platform, and should be enough to bring up all essential blocks
->>> including PWRAP, MSDC and peripherals (UART, I2C, SPI).
->>>
->>> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
->>> ---
->>>   MAINTAINERS                                  |   4 +
->>>   drivers/clk/mediatek/Kconfig                 |   9 +
->>>   drivers/clk/mediatek/Makefile                |   1 +
->>>   drivers/clk/mediatek/clk-mt6735-apmixedsys.c | 139 ++++++
->>>   drivers/clk/mediatek/clk-mt6735-infracfg.c   |  78 ++++
->>>   drivers/clk/mediatek/clk-mt6735-pericfg.c    |  91 ++++
->>>   drivers/clk/mediatek/clk-mt6735-topckgen.c   | 450 +++++++++++++++++++
->>>   7 files changed, 772 insertions(+)
->>>   create mode 100644 drivers/clk/mediatek/clk-mt6735-apmixedsys.c
->>>   create mode 100644 drivers/clk/mediatek/clk-mt6735-infracfg.c
->>>   create mode 100644 drivers/clk/mediatek/clk-mt6735-pericfg.c
->>>   create mode 100644 drivers/clk/mediatek/clk-mt6735-topckgen.c
->>>
->>
->> ..snip..
->>
->>> diff --git a/drivers/clk/mediatek/clk-mt6735-topckgen.c 
->>> b/drivers/clk/mediatek/clk-mt6735-topckgen.c
->>> new file mode 100644
->>> index 000000000000..5fa743e4b0fc
->>> --- /dev/null
->>> +++ b/drivers/clk/mediatek/clk-mt6735-topckgen.c
->>> @@ -0,0 +1,450 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * Copyright (c) 2022 Yassine Oudjana <y.oudjana@protonmail.com>
->>> + */
->>> +
->>> +#include <linux/clk-provider.h>
->>> +#include <linux/platform_device.h>
->>> +
->>> +#include "clk-mtk.h"
->>> +#include "clk-mux.h"
->>> +
->>> +#include <dt-bindings/clock/mediatek,mt6735-topckgen.h>
->>> +
->>
->> ..snip..
->>
->>> +
->>> +int clk_mt6735_topckgen_probe(struct platform_device *pdev)
->>
->> It gets *even easier* than that!
->>
->> Check out this one:
->> https://patchwork.kernel.org/project/linux-mediatek/patch/20230222092543.19187-5-angelogioacchino.delregno@collabora.com/
->>
->> ...being part of:
->> https://patchwork.kernel.org/project/linux-mediatek/list/?series=724004
->>
->> So you can use simple_probe for MT6735's topckgen too!
-> 
-> Isn't this basically what I did in v2[1][2]? What changed now?
+Please fix the subject as:
+
+arm64: dts: qcom: sc7280: Mark PCIe controller as cache coherent
+
+On Mon, Feb 27, 2023 at 03:06:15PM +0530, Krishna chaitanya chundru wrote:
+> Mark the PCIe node as dma-coherent as the devices on PCIe bus are
+> cache coherent.
 > 
 
-*Basically*, yes. *Practically*, no.
+But this is a bug fix actually. If the controller is not marked as cache
+coherent, then kernel will try to ensure coherency during dma-ops and that may
+cause data corruption.
 
-To answer all your questions about that, please read my part 1 series that already
-landed. The part 2 adds the factor clocks to the mix and performs a full migration
-to platform_driver and modularity to 99% of MediaTek clock drivers.
+So please add fixes tag and CC stable.
 
->>
->> In this case, it would be...
->>
->> static const struct mtk_clk_desc topck_desc = {
->>     .clks = topckgen_muxes,
->>     .num_clks = ARRAY_SIZE(topckgen_muxes),
->>     .fixed_clks = topckgen_fixed_clks,
->>     .num_fixed_clks = ARRAY_SIZE(topckgen_fixed_clks),
->>     .factor_clks = topckgen_factors,
->>     .num_factor_clks = ARRAY_SIZE(topckgen_factors),
->>     .clk_lock = &mt6735_topckgen_lock,
->> };
->>
->> static const struct of_device_id of_match_mt6735_topckgen[] = {
->>     { .compatible = "mediatek,mt6735-topckgen", .data = &topck_desc },
->>     { /* sentinel */ }
->> };
->>
->> MODULE_DEVICE_TABLE(of, of_match_mt6735_topckgen)
->>     ^^^^^
->> You're missing that on multiple clock drivers ;-)
->>
->> ...And you're replacing .probe(), .remove() callbacks with
->>
->> static struct platform_driver clk_mt6735_topckgen = {
->>     .probe = mtk_clk_simple_probe,
->>     .remove = mtk_clk_simple_remove,
->>
->>     ......
->>
->> Other than that, good job!
->>
->> After performing these changes, please make sure to mention the dependency on
->> my last cleanup series on your cover letter for v4, so that maintainers will
->> be aware of what to do.
->>
->> Your v4 smells like Reviewed-by tags all over. Keep up the great work!
->>
->> Cheers,
->> Angelo
+Thanks,
+Mani
+
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> [1] 
-> https://lore.kernel.org/linux-mediatek/20220519142211.458336-5-y.oudjana@protonmail.com/
-> [2] 
-> https://patchwork.kernel.org/project/linux-clk/patch/20220519134728.456643-7-y.oudjana@protonmail.com/
+> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> index bdcb749..8f4ab6b 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> @@ -2131,6 +2131,8 @@
+>  			pinctrl-names = "default";
+>  			pinctrl-0 = <&pcie1_clkreq_n>;
+>  
+> +			dma-coherent;
+> +
+>  			iommus = <&apps_smmu 0x1c80 0x1>;
+>  
+>  			iommu-map = <0x0 &apps_smmu 0x1c80 0x1>,
+> -- 
+> 2.7.4
 > 
-> 
-> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
