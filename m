@@ -2,47 +2,46 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0647C64ED6
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 19:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F4E4C64ED8
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 19:33:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229693AbjB0THm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Feb 2023 14:07:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45826 "EHLO
+        id S229557AbjB0TdY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Feb 2023 14:33:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229572AbjB0THl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 14:07:41 -0500
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47CA91EBE9;
-        Mon, 27 Feb 2023 11:07:40 -0800 (PST)
+        with ESMTP id S229644AbjB0TdX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 14:33:23 -0500
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B4E8241C1;
+        Mon, 27 Feb 2023 11:33:17 -0800 (PST)
 Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 1E5AF8523A;
-        Mon, 27 Feb 2023 20:07:37 +0100 (CET)
+        by phobos.denx.de (Postfix) with ESMTPSA id 53ED085953;
+        Mon, 27 Feb 2023 20:33:13 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1677524858;
-        bh=dFI/7CCpAWueCC4kuEJtvFEp73Lo2xdOMG6CMLK9GJA=;
+        s=phobos-20191101; t=1677526394;
+        bh=tAq/oWaLSxjTJ16/lxY5fm0Xqd7KMhlxK9xncHr2Qfo=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=hUcwQC9nG2f58SNXn8EC8tdv/rRWwWdDjgw4ZNjfZ8TL2df1ew4uIetxogVB2KHvu
-         +s1iVVk7DTBmSOrU8FO+EruUmj8EWCXrkHTZUN4CeDkTzEPiGtYS/xJ9mZWopOG9YK
-         Gr14/xkDvA0TSXYQpK2Lq5LENK3gfQAbIRYoN/EYQV52YUSPtjRc0GojjuJROLHybU
-         m47Rnuo1aVd/JkviR7rvi91kFJ6gmX7+7wNPKxG0m5/JFrOFS5REiRC9JC+Q+1m8K2
-         NqKFK1hb3TMi3pGXY5xIqyfsz8pkGuANRXqBzZad6OVmxzu7qXWbZOCtDtTxPz1B/T
-         xohjxoxf56nSw==
-Message-ID: <a519eb0b-dc40-deec-03d3-676648a52f15@denx.de>
-Date:   Mon, 27 Feb 2023 20:07:35 +0100
+        b=ygeFcHgcAEMrXSq0/A663qlz9Pm5mTdEPRcIO4YY8DzChz61eMRPivv1uKRE4ESpI
+         c5ClaOKGMMduVYX80kkhNS8VpbMoWlSb6HaJDJDPzY9OaYhW4hUetonsr0smVUVizv
+         2pa3A+heh56oVmvlu88DkHZjjzs/RMdguWE1JNpxcIPjYSvvlvJjuxM+mMQGb/9gKv
+         4kn3aUqDDzVUFrK3g9RPWG+6W4FifudGfJoqfAjyYHjBEU/ZxoN5jsnLOLA1JVD8Gt
+         C/cOQllnx4eV813b7FPKpO7JnDvSw8WsUeEVJ4yrlt58qS8awinSyh76KaIs/szP/R
+         OxSiwEdZ/b1tQ==
+Message-ID: <c3b3c08c-989b-3868-c74f-426b8f1733a5@denx.de>
+Date:   Mon, 27 Feb 2023 20:33:12 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
-Subject: Re: [PATCH] arm64: dts: imx8mn: specify #sound-dai-cells for SAI
- nodes
+Subject: Re: [PATCH v5 5/5] arm64: dts: imx8mp: Add analog audio output on
+ i.MX8MP EVK
 Content-Language: en-US
 To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     linux-arm-kernel@lists.infradead.org,
+Cc:     linux-clk@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
         Abel Vesa <abelvesa@kernel.org>,
         Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Fabio Estevam <festevam@gmail.com>,
         Jacky Bai <ping.bai@nxp.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -57,11 +56,12 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Shawn Guo <shawnguo@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20230227174535.87657-1-marex@denx.de>
- <20230227190123.znifdqympsantpt6@pengutronix.de>
+        linux-arm-kernel@lists.infradead.org
+References: <20230227174308.87286-1-marex@denx.de>
+ <20230227174308.87286-5-marex@denx.de>
+ <20230227185949.xaxltai4ksgrczmc@pengutronix.de>
 From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <20230227190123.znifdqympsantpt6@pengutronix.de>
+In-Reply-To: <20230227185949.xaxltai4ksgrczmc@pengutronix.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
@@ -70,50 +70,51 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2/27/23 20:01, Marco Felsch wrote:
-> Hi Marek,
-> 
-> On 23-02-27, Marek Vasut wrote:
->> Add #sound-dai-cells properties to SAI nodes.
->>
->> Signed-off-by: Marek Vasut <marex@denx.de>
->> ---
->> Cc: Abel Vesa <abelvesa@kernel.org>
->> Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
->> Cc: Fabio Estevam <festevam@gmail.com>
->> Cc: Jacky Bai <ping.bai@nxp.com>
->> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
->> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->> Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
->> Cc: Lucas Stach <l.stach@pengutronix.de>
->> Cc: Marco Felsch <m.felsch@pengutronix.de>
->> Cc: Michael Turquette <mturquette@baylibre.com>
->> Cc: NXP Linux Team <linux-imx@nxp.com>
->> Cc: Peng Fan <peng.fan@nxp.com>
->> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
->> Cc: Richard Cochran <richardcochran@gmail.com>
->> Cc: Rob Herring <robh+dt@kernel.org>
->> Cc: Sascha Hauer <s.hauer@pengutronix.de>
->> Cc: Shawn Guo <shawnguo@kernel.org>
->> Cc: Stephen Boyd <sboyd@kernel.org>
->> Cc: devicetree@vger.kernel.org
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linux-clk@vger.kernel.org
->> ---
->>   arch/arm64/boot/dts/freescale/imx8mn.dtsi | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/freescale/imx8mn.dtsi b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
->> index ed9ac6c5047c0..bbec860ef8548 100644
->> --- a/arch/arm64/boot/dts/freescale/imx8mn.dtsi
->> +++ b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
->> @@ -294,6 +294,7 @@ spba2: spba-bus@30000000 {
->>   				ranges;
->>   
->>   				sai2: sai@30020000 {
->> +					#sound-dai-cells = <0>;
-> 
-> Please don't add it in front of the compatible and the reg property.
+On 2/27/23 19:59, Marco Felsch wrote:
+[...]
 
-The #address-cells and #size-cells are also always on top, why should 
-the #sound-dai-cells be any different ? Where should they be ?
+>> @@ -344,6 +384,18 @@ &i2c3 {
+>>   	pinctrl-0 = <&pinctrl_i2c3>;
+>>   	status = "okay";
+>>   
+>> +	wm8960: codec@1a {
+>> +		#sound-dai-cells = <0>;
+>> +		compatible = "wlf,wm8960";
+>> +		reg = <0x1a>;
+> 
+> The compatible should be the first property followed by the reg
+> property.
+
+See my reply to the mx8mn sound-sai-cells patch , I am not sure here.
+The rest is fixed in V6.
+
+>> +		clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SAI3_MCLK1>;
+>> +		clock-names = "mclk";
+>> +		wlf,shared-lrclk;
+>> +		wlf,hp-cfg = <3 2 3>;
+>> +		wlf,gpio-cfg = <1 3>;
+>> +		SPKVDD1-supply = <&reg_audio_pwr>;
+>> +	};
+>> +
+>>   	pca6416: gpio@20 {
+>>   		compatible = "ti,tca6416";
+>>   		reg = <0x20>;
+
+[...]
+
+>> @@ -668,6 +730,18 @@ MX8MP_IOMUXC_UART3_TXD__UART1_DCE_RTS	0x140
+>>   		>;
+>>   	};
+>>   
+>> +	pinctrl_sai3: sai3grp {
+>> +		fsl,pins = <
+>> +			MX8MP_IOMUXC_SAI3_TXFS__AUDIOMIX_SAI3_TX_SYNC	0xd6
+>> +			MX8MP_IOMUXC_SAI3_TXC__AUDIOMIX_SAI3_TX_BCLK	0xd6
+>> +			MX8MP_IOMUXC_SAI3_RXD__AUDIOMIX_SAI3_RX_DATA00	0xd6
+>> +			MX8MP_IOMUXC_SAI3_TXD__AUDIOMIX_SAI3_TX_DATA00	0xd6
+>> +			MX8MP_IOMUXC_SAI3_MCLK__AUDIOMIX_SAI3_MCLK	0xd6
+>> +			MX8MP_IOMUXC_SAI3_RXFS__GPIO4_IO28		0xd6
+> 
+> What is gpio04-io28 used for?
+
+Apparently unused, dropped.
