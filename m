@@ -2,98 +2,171 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A91C64ED6
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 14:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D69C7EE23
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 16:07:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229968AbjB0O6j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Feb 2023 09:58:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41786 "EHLO
+        id S230029AbjB0QHN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Feb 2023 11:07:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229962AbjB0O6h (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 09:58:37 -0500
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6958C5262;
-        Mon, 27 Feb 2023 06:58:36 -0800 (PST)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id B2CBF8339E;
-        Mon, 27 Feb 2023 15:58:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1677509914;
-        bh=r/XTzrYSTfxQc9R6KeDw695Bi854lHCpElV1s8nh8zI=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=B61E42Rlo4Qbn6uODr49/NrHqZtDV6G2b4N5nZEpnn2AW4+IbG8wgrr/hxciTsicb
-         NlAQ9q5LW+JKbq1Q+qLwAmFrX894HlPPcbUri5KCfBhcf0GT5KYh1dRxjaXGKo9RMi
-         R8p2MoyhFHPHU1hwYnB4xK+aZy1D78LtNPFw3fdsid+MLAhXpiWOLqXWKht8n4lE6K
-         VndDJMufqNL8k5pXKMHEfM3ah2gL3tSoPg78bsubhW1k+8SCZKOvdQHCBAh0RbieuN
-         cyvq3JqauOs6gZSnqiIoqy6vCp/bi2IzDHb0gsqScKVGD5Z07g/SOxjZd7kAsbconp
-         h86Hx7j3fmLcA==
-Message-ID: <f4fd60db-9924-cb2c-71bb-1ac3b53305e8@denx.de>
-Date:   Mon, 27 Feb 2023 14:53:08 +0100
+        with ESMTP id S230027AbjB0QHM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 11:07:12 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B62F233C8;
+        Mon, 27 Feb 2023 08:07:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+        bh=1vz2UEdjmQXWhUlE3HWzfK6c4UyQl3yd4RAPwcSJ89A=; b=ZTBfsGzw1Zz25agNHtP5dojHJj
+        SbvBw4DWjkluj57TGsurxGKn7gq5utVt4Xo3T87VCnghOCjxsyOzwSFD6p9BzQA8dzP6aFzroou/G
+        joiJ2HyB6hVfZie38EcUmBZtP13momINHbb8XT2j4fAjqp3Qy2L7cV8ty1o0CBQL9ZEmrBFPas6B9
+        hCyor6yF7a5nzuuNCJo+8LQbNEfALDGwi0FHT3YgblTzpvR0rVQfzjEzd6ZPJeDq7FdCg+eKyKAY4
+        1TARqq1Vn1SRIuIhwDqKPV3mwmE+gt26RF978mC3zR66Misshi/Y8AiXx1BjQTKxkLcfITK3b0m8i
+        s73G6E1w==;
+Received: from [2601:1c2:980:9ec0::df2f]
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pWg1q-00AItm-J2; Mon, 27 Feb 2023 16:07:06 +0000
+Message-ID: <6a95a337-2972-427f-635d-5ef4e91a82fa@infradead.org>
+Date:   Mon, 27 Feb 2023 08:07:04 -0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v4 4/5] arm64: dts: imx8mp: Add SAI, SDMA, AudioMIX
+ Thunderbird/102.7.2
+Subject: Re: [PATCH 0/8] drivers: select REGMAP instead of depending on it
 Content-Language: en-US
-To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        linux-clk@vger.kernel.org
-Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Marco Felsch <m.felsch@pengutronix.de>,
+To:     Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     Andrew Jeffery <andrew@aj.id.au>, Corey Minyard <minyard@acm.org>,
+        openipmi-developer@lists.sourceforge.net,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Riku Voipio <riku.voipio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20230223171114.59164-1-marex@denx.de>
- <20230223171114.59164-4-marex@denx.de> <3160821.5fSG56mABF@steina-w>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <3160821.5fSG56mABF@steina-w>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        linux-clk@vger.kernel.org, Michael Walle <michael@walle.cc>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        linux-gpio@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
+        Darren Hart <dvhart@infradead.org>,
+        Michael Shych <michaelsh@nvidia.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        platform-driver-x86@vger.kernel.org,
+        Yegnesh S Iyer <yegnesh.s.iyer@intel.com>,
+        Bin Gao <bin.gao@intel.com>, Zhang Rui <rui.zhang@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>, linux-pm@vger.kernel.org,
+        Oskar Senft <osk@google.com>, linux-serial@vger.kernel.org
+References: <20230226053953.4681-1-rdunlap@infradead.org>
+ <7dd27ec5-0619-128d-8407-6711a05ef271@redhat.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <7dd27ec5-0619-128d-8407-6711a05ef271@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2/27/23 10:08, Alexander Stein wrote:
 
-[...]
 
->> +			sdma2: dma-controller@30e10000 {
->> +				compatible = "fsl,imx8mp-sdma",
-> "fsl,imx8mq-sdma";
->> +				reg = <0x30e10000 0x10000>;
->> +				interrupts = <GIC_SPI 103
-> IRQ_TYPE_LEVEL_HIGH>;
->> +				clocks = <&audio_blk_ctrl
-> IMX8MP_CLK_AUDIOMIX_SDMA2_ROOT>,
->> +					 <&clk
-> IMX8MP_CLK_AUDIO_ROOT>;
->> +				clock-names = "ipg", "ahb";
->> +				#dma-cells = <3>;
->> +				fsl,sdma-ram-script-name = "imx/sdma/
-> sdma-imx7d.bin";
->> +			};
->> +
->> +			audio_blk_ctrl: blk-ctrl@30e20000 {
+On 2/27/23 01:31, Hans de Goede wrote:
+> Hi Randy,
 > 
-> Shouldn't the node name be 'clock-controller@30e20000' as mentioned in the
-> bindings?
-> But for the whole series:
-> Testes-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> On 2/26/23 06:39, Randy Dunlap wrote:
+>> REGMAP is a hidden (not user visible) symbol. Users cannot set it
+>> directly thru "make *config", so drivers should select it instead of
+>> depending on it if they need it.
+>>
+>> Consistently using "select" or "depends on" can also help reduce
+>> Kconfig circular dependency issues.
+>>
+>> REGMAP is selected 94 times and is depended on 11 times in
+>> current linux-next. Eliminate the uses of "depends on" by
+>> converting them to "select".
+> 
+> Thank you for your work on this. Mixing of depends on vs select
+> is a real problem with many Kconfig symbols.
+> 
+>>  [PATCH 1/8] ipmi: ASPEED_BT_IPMI_BMC: select REGMAP_MMIO instead of depending on it
+>>  [PATCH 2/8] clk: HI655X: select REGMAP instead of depending on it
+>>  [PATCH 3/8] gpio: GPIO_REGMAP: select REGMAP instead of depending on it
+>>  [PATCH 4/8] leds: TI_LMU_COMMON: select REGMAP instead of depending on it
+>>  [PATCH 5/8] platform: mellanox: select REGMAP instead of depending on it
+>>  [PATCH 6/8] platform: x86: MLX_PLATFORM: select REGMAP instead of depending on it
+>>  [PATCH 7/8] thermal: intel: BXT_PMIC: select REGMAP instead of depending on it
+>>  [PATCH 8/8] serial: 8250: ASPEED_VUART: select REGMAP instead of depending on it
+> 
+> For patch 5/8 and 6/8, do you want me to merge them through the pdx86
+> (platform-drivers-x86) tree, or do you plan to merge this whole series
+> in one go through some other tree?
 
-It should be clock-controller indeed, fixed in V5, thanks.
+Hi Hans,
+Please merge them thru the pdx86 tree.
+
+Thanks.
+
+> If you plan to merge the whole series through some other tree,
+> here is my acked by for doing so for 5/8 and 6/8:
+> 
+> Acked-by: Hans de Goede <hdegoede@redhat.com>
+> 
+> Regards,
+> 
+> Hans
+> 
+> 
+> 
+> 
+>>
+>> diffstat:
+>>  drivers/char/ipmi/Kconfig         |    3 ++-
+>>  drivers/clk/Kconfig               |    2 +-
+>>  drivers/gpio/Kconfig              |    2 +-
+>>  drivers/leds/Kconfig              |    2 +-
+>>  drivers/platform/mellanox/Kconfig |    9 ++++-----
+>>  drivers/platform/x86/Kconfig      |    3 ++-
+>>  drivers/thermal/intel/Kconfig     |    3 ++-
+>>  drivers/tty/serial/8250/Kconfig   |    3 ++-
+>>  8 files changed, 15 insertions(+), 12 deletions(-)
+>>
+>> Cc: Andrew Jeffery <andrew@aj.id.au>
+>> Cc: Corey Minyard <minyard@acm.org>
+>> Cc: openipmi-developer@lists.sourceforge.net
+>> Cc: Arnd Bergmann <arnd@arndb.de>
+>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Cc: Riku Voipio <riku.voipio@linaro.org>
+>> Cc: Stephen Boyd <sboyd@kernel.org>
+>> Cc: Michael Turquette <mturquette@baylibre.com>
+>> Cc: linux-clk@vger.kernel.org
+>> Cc: Michael Walle <michael@walle.cc>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+>> Cc: linux-gpio@vger.kernel.org
+>> Cc: Dan Murphy <dmurphy@ti.com>
+>> Cc: Pavel Machek <pavel@ucw.cz>
+>> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>> Cc: Lee Jones <lee@kernel.org>
+>> Cc: linux-leds@vger.kernel.org
+>> Cc: Darren Hart <dvhart@infradead.org>
+>> Cc: Hans de Goede <hdegoede@redhat.com>
+>> Cc: Michael Shych <michaelsh@nvidia.com>
+>> Cc: Mark Gross <markgross@kernel.org>
+>> Cc: Vadim Pasternak <vadimp@nvidia.com>
+>> Cc: platform-driver-x86@vger.kernel.org
+>> Cc: Yegnesh S Iyer <yegnesh.s.iyer@intel.com>
+>> Cc: Bin Gao <bin.gao@intel.com>
+>> Cc: Zhang Rui <rui.zhang@intel.com>
+>> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> Cc: Amit Kucheria <amitk@kernel.org>
+>> Cc: linux-pm@vger.kernel.org
+>> Cc: Oskar Senft <osk@google.com>
+>> Cc: linux-serial@vger.kernel.org
+>>
+> 
+
+-- 
+~Randy
