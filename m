@@ -2,110 +2,105 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7466C64ED6
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 14:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A6BEC64ED8
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 14:58:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230003AbjB0OiS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Feb 2023 09:38:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48632 "EHLO
+        id S229890AbjB0O6h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Feb 2023 09:58:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229996AbjB0OiQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 09:38:16 -0500
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2069.outbound.protection.outlook.com [40.107.220.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8792961BE;
-        Mon, 27 Feb 2023 06:38:09 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WPByUsdmGj6MOhXk9e35akPdOEhMYcvBbeQ0A62JMQBTAk363RiCYh7g6fkFEWpIDeqtmHEjDIKrOTzaOQuK+KUYXBx1gWX0U8WMDuIK5dvfK5I+TR2Cx8i7BFT+rBo5E/mKsorKrU8ZIrHwARvY+xdmdiHiruCB5kcyHu7ul4I2Maoin3cZ/KWVZDeCjS5zJAkUoxsbUJtuyf/ex5lkeUW984ML4/ZRLo/1QfJAq0xuS/+vNeFnhytLPCfygftOBxIPgfqz9rFnM3+l3WWi/iKBgWftv4N15B2s6BX2MZ9ijaEd44EQ4zcdACWP3nSwbYCQ0u64wImQCM10I68TLQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7dG1dUqhRZr/AfxEjuULFBBCHcpe2VVE2H5k4iqCJmM=;
- b=goInBmK0FYXj34y90wqRZCEZOW7dEHwe2zI9FI+Gy2nXZjjXVAOrTfnmR+hfIOCgXo8tjIGFLUsdmWw2wHTeA6UxJjII5SCEm8jYnuIuobKlMpzwUA5Slf1c7zaR8eGjYIzVOXJmUMUazYowm4XV09v4q69sRecVf+7RTOJiHPgyGx/0EM8nGsTUnmzP2ozgHayH7xESHkIkurubQseY1+6NpxUHd5PT6NO3q0/Q8kcOUYUdg1FysGF0OIYOrtxPvkME4PhhOEzkXSdIu/sFeZTrZdLDlZL7+z7ncnyy3WU3dfPCW1tLSsst5ZH+JJ0vFcz1lBmhx00ETUy6ObYunw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=nfschina.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7dG1dUqhRZr/AfxEjuULFBBCHcpe2VVE2H5k4iqCJmM=;
- b=VpDEEhT3h4fbi0ezguPV3AJBXG7f9YE2XRcxqdiMUms1xiLyCV19kiSFKr+iIwHTGENtFCjigPla4548LwPxNCjy30iciE/VuLgXQj7eEgRKLGkJ3PM+XsHpAjMcm/RSPNYbj6R80UrBMhCRBMvmRDfMKFpi/mcg52lFumQOLJk=
-Received: from DM5PR07CA0078.namprd07.prod.outlook.com (2603:10b6:4:ad::43) by
- SJ1PR12MB6242.namprd12.prod.outlook.com (2603:10b6:a03:457::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6134.25; Mon, 27 Feb 2023 14:38:06 +0000
-Received: from DM6NAM11FT036.eop-nam11.prod.protection.outlook.com
- (2603:10b6:4:ad:cafe::56) by DM5PR07CA0078.outlook.office365.com
- (2603:10b6:4:ad::43) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6134.29 via Frontend
- Transport; Mon, 27 Feb 2023 14:38:06 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DM6NAM11FT036.mail.protection.outlook.com (10.13.172.64) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6156.16 via Frontend Transport; Mon, 27 Feb 2023 14:38:06 +0000
-Received: from [10.254.241.51] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Mon, 27 Feb
- 2023 08:38:03 -0600
-Message-ID: <1dcfd6e7-fd9d-d091-0eee-87fa71218396@amd.com>
-Date:   Mon, 27 Feb 2023 15:38:00 +0100
+        with ESMTP id S229794AbjB0O6f (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 09:58:35 -0500
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 916455262;
+        Mon, 27 Feb 2023 06:58:34 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id A9DBB80ADF;
+        Mon, 27 Feb 2023 15:58:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1677509911;
+        bh=xGYDGL1ihg6Ce/sNZWfhcSbVleeZf4hHm/9S/wA1Mr8=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=nvkpsLCGCvVSFxM2R65guX5RgTdZm9cMnrFgIPo1+FM9BIiiNKkjiCFHFUGcTITgm
+         D+Ilk7NeOoBMQUZD47gyDvZZ2OPIkxli2mEVpfyBhISTvr4jrLlIAEAl4XvkfRzX1Z
+         iR0TJkVa0mdWR4CUsBhzNf7/YT+ds14WB71XltMW6JQuiq7nXJt0Q1SBPuhDcYsVe3
+         gWn+iMPN4O+Bsz5S6QM2qN9Hzgzz4kosIhYeu7tt6z+mD6ww6hg6eeQwMkWz6VQqO8
+         WCspR19qNIOoQlWFQn/XTrgXgWgRRf+uzOr1x0E/6Tg/H7Zb5zVYz/kvPRFhc4ymWX
+         IYZWXQ0/Mwecg==
+Message-ID: <5073f78d-1c14-ce51-2f77-a94cda38e5f6@denx.de>
+Date:   Mon, 27 Feb 2023 14:47:56 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
-Subject: Re: [PATCH] zynq: clkc: Add kmalloc allocation flag
+Subject: Re: [PATCH v4 1/5] clk: Introduce
+ devm_clk_hw_register_gate_parent_data()
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        linux-clk@vger.kernel.org
+Cc:     Abel Vesa <abelvesa@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20230223171114.59164-1-marex@denx.de>
+ <8196426.T7Z3S40VBb@steina-w>
 Content-Language: en-US
-To:     Li zeming <zeming@nfschina.com>, <sboyd@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <michal.simek@xilinx.com>, <mturquette@baylibre.com>
-References: <1e05156120fdfd79ed267f44fe7f3491.sboyd@kernel.org>
- <20230223183312.2759-1-zeming@nfschina.com>
-From:   Michal Simek <michal.simek@amd.com>
-In-Reply-To: <20230223183312.2759-1-zeming@nfschina.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <8196426.T7Z3S40VBb@steina-w>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT036:EE_|SJ1PR12MB6242:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3e61f2cd-2be0-4c0d-59b4-08db18d03d2c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 7l5UMrEePpc4+Mb/B0wmGPqB2tz0Ztu7byCra0aiNW5zQqz1ajUhqvMGI8yM/QEu0KgwCBRb5jtgYIpTxEsSUJk9kvUriSfvVjZ1SJtG5BFRuf1cCGmViaSWVzIGNabryYgFGGhTXiojgyRkWLhF3GO144dncLVLXNO5PD+V+dZouMmIxxyjoMBltQjDu65YC4dh9o08zuEpEZDThItlJZcD7XPaLJon0vvsxSLRDKpaPYeTDfEzxmiCgO2GnS9ghpFP8r5xoGlV9xuxPzW280qzCw77eH+84RcSfvqMstp9GDZZpBoPaB0URCUjboWSkfNtXLWq4yK10Ap5e2xYL1TvxMZJ6GOYNVai/6Pm0IrnrAdRtSeMi3Uqrshd16y82Fkua6G8knn8WXBqB8IpB0ugZJ4addGbCtqE5GW7XBeua94dvRC89BpI199S2SX1rZIjiFv4++f0EsK5+vY70NzyhO6Pz+OTkUwErWbLewEtOsMXcusvLeew6v9fgeZky22es6y/Eg6a32q5xmKHsvSsQtX4dYgHr8xcYggGINyMY1dfi59Z1dFNqVcO+H9O1hMI/AEtg1GqRggv4OqBsMewGgUFLnKSGz18zifmkkkd3SgO5SHzCbQ+/8x1nmj18Lu24Kw+uag+8ULtWS70EU0zTuY799FQx0iDPOrTvmh+/w0neHwJ4nH5yfSB2bjUNcP3vY1vrqmL60TNqvHfbJbMbrwIzu79p+h8TQUIZ/RFz+tIVy/cKPZRdEPDhbCO7rcWDKAD7XgdTUSZZhBDIg==
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230025)(4636009)(396003)(136003)(39860400002)(346002)(376002)(451199018)(40470700004)(46966006)(36840700001)(31686004)(478600001)(110136005)(8676002)(70586007)(70206006)(82310400005)(356005)(41300700001)(2616005)(8936002)(4326008)(40460700003)(86362001)(36756003)(40480700001)(31696002)(26005)(47076005)(16526019)(53546011)(82740400003)(81166007)(336012)(426003)(186003)(2906002)(44832011)(5660300002)(54906003)(316002)(16576012)(4744005)(36860700001)(36900700001)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2023 14:38:06.0700
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e61f2cd-2be0-4c0d-59b4-08db18d03d2c
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT036.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6242
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On 2/27/23 09:38, Alexander Stein wrote:
 
-On 2/23/23 19:33, Li zeming wrote:
+[...]
+
+>> +/**
+>> + * devm_clk_hw_register_gate - register a gate clock with the clock
+>> framework + * @dev: device that is registering this clock
+>> + * @name: name of this clock
+>> + * @parent_data: parent clk data
+>> + * @flags: framework-specific flags for this clock
+>> + * @reg: register address to control gating of this clock
+>> + * @bit_idx: which bit in the register controls gating of this clock
+>> + * @clk_gate_flags: gate-specific flags for this clock
+>> + * @lock: shared register lock for this clock
+>> + */
+>> +#define devm_clk_hw_register_gate_parent_data(dev, name, parent_data,
+>> flags,  \ +					      reg,
+> bit_idx, clk_gate_flags,   \
+>> +					      lock)		
+> 	      \
+>> +	__devm_clk_hw_register_gate((dev), NULL, (name), NULL, NULL,	      \
+>> +				    (parent_data), (flags), (reg),
+> (bit_idx), \
+>> +				    (clk_gate_flags), (lock))
+>> +
+>>   void clk_unregister_gate(struct clk *clk);
+>>   void clk_hw_unregister_gate(struct clk_hw *hw);
+>>   int clk_gate_is_enabled(struct clk_hw *hw);
 > 
-> hello senior:
->    I observed that some other variable assignments in this function are basically judged by the if statement, while clk_name does not make an if branch statement, and I think clk_name is also relatively important, increasing __GFP_NOFAIL flag ensures that the assignment can succeed under any circumstances.
-> 
+> Is it worth to add the parent_data paremeter into existing
+> devm_clk_hw_register_gate macro? Just adding this new macro for setting
+> parent_data instead of parent_name seems a bit too much. What if someone wants
+> to set parent_hw? Add another macro?
 
-I think that solution with array on stack would be better choice.
-It will be faster and you can completely skip the whole allocation code for it.
-
-Thanks,
-Michal
-
+Yes, another macro seems to be the accepted practice here.
