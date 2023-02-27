@@ -2,161 +2,90 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E5CC64ED6
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 18:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15BFAC64ED6
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 18:40:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229925AbjB0SMo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Feb 2023 13:12:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41698 "EHLO
+        id S229939AbjB0SkC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Feb 2023 13:40:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230410AbjB0SMo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 13:12:44 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CC98234F7;
-        Mon, 27 Feb 2023 10:12:42 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 15492B80D6D;
-        Mon, 27 Feb 2023 18:12:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67D79C433D2;
-        Mon, 27 Feb 2023 18:12:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677521559;
-        bh=zMhMn8aAWF1yij6h/z2ZQ66w5ISBOOImdqMr7vAIcJ0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UByeI1j6YFGybIKdXAkZNElk4G3cms0EW3kzf4qqXkGQHebKNAbLiygzTKQH9WdA/
-         ROmOZ9Vx2kidAqUwx/OK7IB2t3jEVKLDFHk2zxx0BymR3xCsTRgbaJD+qUW6wX2a7z
-         zCcEzcw8idFMHhowAGyfWHFPt8JZ8+IUTR7JEQLZFRTDKPp6tVDi8du4Mnk7Rjal5D
-         pQD01wOZb07LIWDU4Ji6t9RKZ/0oSxUxgQQtD6jwbUlin5OiCi9G/kz/hPebpRXWNq
-         7JzTw8ofrp9V+lgBkwP1F+DgKofx5TeyV1oYwz5J2U++r0WgDdjqd5LtCHaLzFO60i
-         1ZjN6FQyN9oCg==
-Date:   Mon, 27 Feb 2023 18:12:33 +0000
-From:   Conor Dooley <conor@kernel.org>
-To:     Hal Feng <hal.feng@starfivetech.com>
-Cc:     Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S229900AbjB0SkB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 13:40:01 -0500
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 897E121A3F
+        for <linux-clk@vger.kernel.org>; Mon, 27 Feb 2023 10:40:00 -0800 (PST)
+Received: by mail-il1-x129.google.com with SMTP id i4so4529371ils.1
+        for <linux-clk@vger.kernel.org>; Mon, 27 Feb 2023 10:40:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EgE9qSydDheMGrlJYkywgbek+AYCNeYBDtX4hsvjRoM=;
+        b=r9U+kkmdAAMTzyGiw0WfIn3mFX8/Fv6eu/sCzY0s2HgqKd2Oh/QJl83amEs/YCFEoU
+         tDUMa1KBu+Thu/4Bityga9xGL1ESNCUAmuFJslh61bRO6qSes/+FSakwFLbgoIl85iI6
+         j/cHqyVn8+aSC9Mn2TNDR26CFLJJpeMlGSsCm98Qtvailm0k6CrSAxyvjQa7LPUDg0Pg
+         TTI6q1rHL+VVEaaLKIZFUbgUnppI69Jgw9kV93YWGGTmK8X9biG+LbfPASuqsLzIsiVS
+         UqLTw2Xwmd+Z94zaxaP0ubLICqgL5XwBBPaSRPd5oEQq1JLBepEy5WVHiM4wtVlYP5Fl
+         lrYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EgE9qSydDheMGrlJYkywgbek+AYCNeYBDtX4hsvjRoM=;
+        b=5UTUGrJJBMSF/mXbqBXXgBHIng4JU7+dqfMNeVsRLtomveYKIxHzu/8XbuXVJX2fh3
+         Iq5IH2063nJ+ytA1/HfjkIQMU/knIS5AJuTs1NI36oI54+i5vx3bnPhLsuhzn6wgSB3U
+         Q10ffo/Licxm9NG9PG+5NHJeKCdIKF+R/qG12m30karQOhlFQd/IFqGJowBs4tv+DyOC
+         C8nOY7yhLymBujh/3mx4KdfwLlG8XzSge+MEm58xW9SlFD0FeLHGgQKa32EVxTMBwzRK
+         MrzUIIKc/yn9abUqpkyAIqFS1HDfV2heg+DFIhDCWPygcRl2NlG1ZaBJpmVw1SraD45g
+         mfBg==
+X-Gm-Message-State: AO0yUKUYeW+bZILgNFkeEVKLATQyt2O89JNu7at3j0RA5BpSWQKeprgJ
+        k/c2uazOaU1expzTwexOE7arWQ==
+X-Google-Smtp-Source: AK7set+j6wPqEfZtDGucRfe92F3iAh+zNqa2TtXxaHNg67XyTY2jvlX3zhMZqbce6bPnkc4hhdI3mQ==
+X-Received: by 2002:a05:6e02:1b89:b0:315:7911:748a with SMTP id h9-20020a056e021b8900b003157911748amr9306938ili.1.1677523199742;
+        Mon, 27 Feb 2023 10:39:59 -0800 (PST)
+Received: from maple.netwinder.org (rfs.netwinder.org. [206.248.184.2])
+        by smtp.gmail.com with ESMTPSA id t5-20020a02ab85000000b003ab21c8fa84sm2331202jan.121.2023.02.27.10.39.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Feb 2023 10:39:59 -0800 (PST)
+From:   Ralph Siemsen <ralph.siemsen@linaro.org>
+To:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 19/19] riscv: dts: starfive: Add StarFive JH7110
- VisionFive 2 board device tree
-Message-ID: <Y/zykfydb+bJ7G2l@spud>
-References: <20230221024645.127922-1-hal.feng@starfivetech.com>
- <20230221024645.127922-20-hal.feng@starfivetech.com>
- <CAJM55Z_QMtzKeRFN1iGf498z4+vga6RBgwybCQi6aOUYCr_P-Q@mail.gmail.com>
- <2af3f84b-2c2b-dc79-c76c-9411fcbcf7ca@starfivetech.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Ralph Siemsen <ralph.siemsen@linaro.org>
+Subject: [PATCH 0/4] Renesas r9a06g032 clock table improvements
+Date:   Mon, 27 Feb 2023 13:39:32 -0500
+Message-Id: <20230227183937.377612-1-ralph.siemsen@linaro.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qQDklUlJ7jtziWjT"
-Content-Disposition: inline
-In-Reply-To: <2af3f84b-2c2b-dc79-c76c-9411fcbcf7ca@starfivetech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+This patch series makes several mostly-cosmetic changes to improve the clock
+tables for the r9a06g032 (RZ/N1). They could all be squashed into a single
+commit, though I kept them separate to make review easier.
 
---qQDklUlJ7jtziWjT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The motivation for this change is to make the register/bit numbers more
+explicit in the clock tables. With the existing format, these values are packed
+into a u16 value, which is difficult to understand. After this patch, the
+memory format remains the same, but the tables now list the register and bit
+numbers explicitly. The logic which accesses these has also been made a
+bit simpler to understand.
 
-On Thu, Feb 23, 2023 at 04:50:20PM +0800, Hal Feng wrote:
-> On Tue, 21 Feb 2023 16:03:08 +0100, Emil Renner Berthing wrote:
-> > On Tue, 21 Feb 2023 at 03:47, Hal Feng <hal.feng@starfivetech.com> wrot=
-e:
-> >> From: Emil Renner Berthing <kernel@esmil.dk>
-> >>
-> >> Add a minimal device tree for StarFive JH7110 VisionFive 2 board
-> >> which has version A and version B. Support booting and basic
-> >> clock/reset/pinctrl/uart drivers.
-> >>
-> >> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> >> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> >> Co-developed-by: Jianlong Huang <jianlong.huang@starfivetech.com>
-> >> Signed-off-by: Jianlong Huang <jianlong.huang@starfivetech.com>
-> >> Co-developed-by: Hal Feng <hal.feng@starfivetech.com>
-> >> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
-> >> ---
-> >>  arch/riscv/boot/dts/starfive/Makefile         |   6 +-
-> >>  .../jh7110-starfive-visionfive-2-v1.2a.dts    |  13 ++
-> >>  .../jh7110-starfive-visionfive-2-v1.3b.dts    |  13 ++
-> >>  .../jh7110-starfive-visionfive-2.dtsi         | 215 ++++++++++++++++++
-> >>  4 files changed, 246 insertions(+), 1 deletion(-)
-> >>  create mode 100644 arch/riscv/boot/dts/starfive/jh7110-starfive-visio=
-nfive-2-v1.2a.dts
-> >>  create mode 100644 arch/riscv/boot/dts/starfive/jh7110-starfive-visio=
-nfive-2-v1.3b.dts
-> >>  create mode 100644 arch/riscv/boot/dts/starfive/jh7110-starfive-visio=
-nfive-2.dtsi
-> >>
-> >> diff --git a/arch/riscv/boot/dts/starfive/Makefile b/arch/riscv/boot/d=
-ts/starfive/Makefile
-> >> index 039c143cba33..cd73519b907b 100644
-> >> --- a/arch/riscv/boot/dts/starfive/Makefile
-> >> +++ b/arch/riscv/boot/dts/starfive/Makefile
-> >> @@ -1,2 +1,6 @@
-> >>  # SPDX-License-Identifier: GPL-2.0
-> >> -dtb-$(CONFIG_SOC_STARFIVE) +=3D jh7100-beaglev-starlight.dtb jh7100-s=
-tarfive-visionfive-v1.dtb
-> >> +dtb-$(CONFIG_SOC_STARFIVE) +=3D jh7100-beaglev-starlight.dtb
-> >> +dtb-$(CONFIG_SOC_STARFIVE) +=3D jh7100-starfive-visionfive-v1.dtb
-> >> +
-> >> +dtb-$(CONFIG_SOC_STARFIVE) +=3D jh7110-starfive-visionfive-2-v1.2a.dtb
-> >> +dtb-$(CONFIG_SOC_STARFIVE) +=3D jh7110-starfive-visionfive-2-v1.3b.dtb
+Ralph Siemsen (4):
+  clk: renesas: r9a06g032: improve readability
+  clk: renesas: r9a06g032: drop unused fields
+  clk: renesas: r9a06g032: document structs
+  clk: renesas: r9a06g032: improve clock tables
 
-If you could rebase on top of v6.3-rc1 for the next version & use ARCH_
-not SOC_ here that'd be great.
+ drivers/clk/renesas/r9a06g032-clocks.c | 726 ++++++++++++++++++-------
+ 1 file changed, 530 insertions(+), 196 deletions(-)
 
-> >> +/ {
-> >> +       aliases {
-> >> +               serial0 =3D &uart0;
-> >> +               i2c0 =3D &i2c0;
-> >> +               i2c2 =3D &i2c2;
-> >> +               i2c5 =3D &i2c5;
-> >> +               i2c6 =3D &i2c6;
-> >=20
-> > Let's keep these sorted alphabetically.
->=20
-> OK, will fix it.
->=20
+-- 
+2.25.1
 
-> > It would be great to have some sort of order to this file so it's
-> > obvious where to add new nodes. I suggest we do
-> > - root node
-> > - external clocks
-> > - other node references in alphabetical order
-> >=20
-> > You're almost there with this patch except the uart0 node is out of pla=
-ce.
->=20
-> Will fix accordingly. Thanks for your suggestions.
-
-With Emil's suggestions implemented:
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
-Thanks,
-Conor.
-
-
---qQDklUlJ7jtziWjT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY/zykQAKCRB4tDGHoIJi
-0rQPAPkBDZJoRNk6lCcj0ANg8faGvHfRWGdaYyYaWI+YfboLwAD+PN28woxpivfc
-IvPNVwHix48qqNSe6XV1YTMwD50HggM=
-=0cCt
------END PGP SIGNATURE-----
-
---qQDklUlJ7jtziWjT--
