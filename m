@@ -2,119 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F4E4C64ED8
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 19:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE6B2C64ED6
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 19:53:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229557AbjB0TdY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Feb 2023 14:33:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38404 "EHLO
+        id S230381AbjB0Txy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Feb 2023 14:53:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229644AbjB0TdX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 14:33:23 -0500
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B4E8241C1;
-        Mon, 27 Feb 2023 11:33:17 -0800 (PST)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        with ESMTP id S229705AbjB0Txm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 14:53:42 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D69B926CEA;
+        Mon, 27 Feb 2023 11:53:14 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 53ED085953;
-        Mon, 27 Feb 2023 20:33:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1677526394;
-        bh=tAq/oWaLSxjTJ16/lxY5fm0Xqd7KMhlxK9xncHr2Qfo=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ygeFcHgcAEMrXSq0/A663qlz9Pm5mTdEPRcIO4YY8DzChz61eMRPivv1uKRE4ESpI
-         c5ClaOKGMMduVYX80kkhNS8VpbMoWlSb6HaJDJDPzY9OaYhW4hUetonsr0smVUVizv
-         2pa3A+heh56oVmvlu88DkHZjjzs/RMdguWE1JNpxcIPjYSvvlvJjuxM+mMQGb/9gKv
-         4kn3aUqDDzVUFrK3g9RPWG+6W4FifudGfJoqfAjyYHjBEU/ZxoN5jsnLOLA1JVD8Gt
-         C/cOQllnx4eV813b7FPKpO7JnDvSw8WsUeEVJ4yrlt58qS8awinSyh76KaIs/szP/R
-         OxSiwEdZ/b1tQ==
-Message-ID: <c3b3c08c-989b-3868-c74f-426b8f1733a5@denx.de>
-Date:   Mon, 27 Feb 2023 20:33:12 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v5 5/5] arm64: dts: imx8mp: Add analog audio output on
- i.MX8MP EVK
-Content-Language: en-US
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     linux-clk@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3BCC560F1B;
+        Mon, 27 Feb 2023 19:53:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3AF4C433EF;
+        Mon, 27 Feb 2023 19:53:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677527592;
+        bh=FN7q+7LSkEQEP880hk5AYmzKXSJvzUeUVUoebZQ16HA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tYj+uDZDne/XGQiIqDWNdSQzxsv/OBNbwggrKIK5fDT5AdGAdFlLg7n1KODd+NYf+
+         EV1Ne8D2msXpPrcqoSSSSy3os+Z0QHTf/KSQWv7RdFamOk16lGvZcGShDlqko/Rftm
+         1J9NTjHHxoAzBVROVwzTTvqxwX4ykZpGgjxd571UFCAZ+a7WyvJUBlWzQwjzN1nGdQ
+         Na6nld+VvRuyiOj2pQt2uIExSPPVE5JDc3ioC1axM5c3VHqmVmJbtE+J1k37rNYakU
+         HC0hpyzsdMk36kbPalLwJBHb9nM5yvEdz65WHE5FpHQjgr/8HJ6u7QVb2ORaXyTWB3
+         JiVsEeuo8RBXA==
+Date:   Mon, 27 Feb 2023 19:53:07 +0000
+From:   Conor Dooley <conor@kernel.org>
+To:     Xingyu Wu <xingyu.wu@starfivetech.com>
+Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Richard Cochran <richardcochran@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Emil Renner Berthing <kernel@esmil.dk>,
         Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20230227174308.87286-1-marex@denx.de>
- <20230227174308.87286-5-marex@denx.de>
- <20230227185949.xaxltai4ksgrczmc@pengutronix.de>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <20230227185949.xaxltai4ksgrczmc@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 11/11] riscv: dts: starfive: jh7110: Add
+ STGCRG/ISPCRG/VOUTCRG nodes
+Message-ID: <Y/0KI0rgqjqMi1Db@spud>
+References: <20230221083323.302471-1-xingyu.wu@starfivetech.com>
+ <20230221083323.302471-12-xingyu.wu@starfivetech.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zQa043iT/WKT54d9"
+Content-Disposition: inline
+In-Reply-To: <20230221083323.302471-12-xingyu.wu@starfivetech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2/27/23 19:59, Marco Felsch wrote:
-[...]
 
->> @@ -344,6 +384,18 @@ &i2c3 {
->>   	pinctrl-0 = <&pinctrl_i2c3>;
->>   	status = "okay";
->>   
->> +	wm8960: codec@1a {
->> +		#sound-dai-cells = <0>;
->> +		compatible = "wlf,wm8960";
->> +		reg = <0x1a>;
-> 
-> The compatible should be the first property followed by the reg
-> property.
+--zQa043iT/WKT54d9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-See my reply to the mx8mn sound-sai-cells patch , I am not sure here.
-The rest is fixed in V6.
+On Tue, Feb 21, 2023 at 04:33:23PM +0800, Xingyu Wu wrote:
+> Add STGCRG/ISPCRG/VOUTCRG new node to support JH7110
+> System-Top-Group, Image-Signal-Process and Video-Output
+> clock and reset drivers for the JH7110 RISC-V SoC.
+>=20
+> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+> ---
+>  arch/riscv/boot/dts/starfive/jh7110.dtsi | 59 ++++++++++++++++++++++++
+>  1 file changed, 59 insertions(+)
+>=20
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/d=
+ts/starfive/jh7110.dtsi
+> index a5e6fb3ad188..697ab59191a1 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> @@ -6,6 +6,7 @@
+> =20
+>  /dts-v1/;
+>  #include <dt-bindings/clock/starfive,jh7110-crg.h>
+> +#include <dt-bindings/power/starfive,jh7110-pmu.h>
+>  #include <dt-bindings/reset/starfive,jh7110-crg.h>
 
->> +		clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SAI3_MCLK1>;
->> +		clock-names = "mclk";
->> +		wlf,shared-lrclk;
->> +		wlf,hp-cfg = <3 2 3>;
->> +		wlf,gpio-cfg = <1 3>;
->> +		SPKVDD1-supply = <&reg_audio_pwr>;
->> +	};
->> +
->>   	pca6416: gpio@20 {
->>   		compatible = "ti,tca6416";
->>   		reg = <0x20>;
+Please keep these sorted alphabetically, otherwise this *looks* fine to
+me.
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-[...]
+Thanks,
+Conor.
 
->> @@ -668,6 +730,18 @@ MX8MP_IOMUXC_UART3_TXD__UART1_DCE_RTS	0x140
->>   		>;
->>   	};
->>   
->> +	pinctrl_sai3: sai3grp {
->> +		fsl,pins = <
->> +			MX8MP_IOMUXC_SAI3_TXFS__AUDIOMIX_SAI3_TX_SYNC	0xd6
->> +			MX8MP_IOMUXC_SAI3_TXC__AUDIOMIX_SAI3_TX_BCLK	0xd6
->> +			MX8MP_IOMUXC_SAI3_RXD__AUDIOMIX_SAI3_RX_DATA00	0xd6
->> +			MX8MP_IOMUXC_SAI3_TXD__AUDIOMIX_SAI3_TX_DATA00	0xd6
->> +			MX8MP_IOMUXC_SAI3_MCLK__AUDIOMIX_SAI3_MCLK	0xd6
->> +			MX8MP_IOMUXC_SAI3_RXFS__GPIO4_IO28		0xd6
-> 
-> What is gpio04-io28 used for?
 
-Apparently unused, dropped.
+--zQa043iT/WKT54d9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY/0KIwAKCRB4tDGHoIJi
+0jvJAQDekG/U779L3Qjyj6JbBBmIo+FDgfYF3Uun3G4Hi9mw+AD/XmgxAMbFNf8a
+ktj4/8QaSfT2gPFgTUOnACOYIdRbDw0=
+=e2v5
+-----END PGP SIGNATURE-----
+
+--zQa043iT/WKT54d9--
