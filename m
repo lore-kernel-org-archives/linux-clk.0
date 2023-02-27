@@ -2,112 +2,126 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F36C64ED8
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 07:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F52C64ED6
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 08:17:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230002AbjB0HiB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Feb 2023 02:38:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50964 "EHLO
+        id S230085AbjB0IRb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Feb 2023 03:17:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230000AbjB0HiA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 02:38:00 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A093783F0
-        for <linux-clk@vger.kernel.org>; Sun, 26 Feb 2023 23:37:59 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id bx12so1972618wrb.11
-        for <linux-clk@vger.kernel.org>; Sun, 26 Feb 2023 23:37:59 -0800 (PST)
+        with ESMTP id S229953AbjB0IRa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 03:17:30 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 687941C5B0
+        for <linux-clk@vger.kernel.org>; Mon, 27 Feb 2023 00:17:28 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id bw19so5190688wrb.13
+        for <linux-clk@vger.kernel.org>; Mon, 27 Feb 2023 00:17:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ueXbSBiMti51dIYdOz+r11JNrl9KN2K8qIRcNuF9l80=;
-        b=KJcIkUAmFDZ2c5PVNUscdRYrHU/NCc2aI6IriXwnntAiesMShzZWsqmcoAnr1aRhqZ
-         INooPS8hyaebHPr1bkNi2jO6aj+yd85PXMm60lnTUht9h5wsFgXaEjKEDx6fcWu6nejF
-         k2lQmxlVVeKP+tc0w+peMqmzomWpyi5kOJHkZAkeEKD4G/CyVzMX9xiorgDhPeqmY/+N
-         kzmefrERPVjpoaXFeEiNuVnDfINVvkj99g1dC1PhznIGFYCvXTC3LSrjDW3mTPyXkiRm
-         YA/3lgBncR4sB84Vk99b16aSkPbhoKCRvkq+EgEpndcwo6UicHWNDl/DwTKtcAXT+znm
-         te6Q==
+        bh=SXjvdSe0Xoy2F99alaan33seTEDoFO78h4PoWaqWgOY=;
+        b=Lz4+9beKVbWGlNZ6JCP58x/xj/5GDQnJ5jCtQqyk+1Udl9BuMfMaqAUXJVrX2gGAWA
+         H22mr9hUSs6gxP/dkX1KUIEXR3e6LG214vFsWVbuboi5zufMdpFYmshF4cwGF2NV4H0z
+         qvRYWIvNKBbfobB6eeUdLDOkT0LAjGmu4KvfNxDHTvEse8d28/WUysicQIdl0aApCADF
+         7J5mfxUFaThBrPciFhRLWq5t5tVGNN5vOglz34rOh4yJx5jBo9GxMZZyWytU9fihJRsn
+         kOaZr0OIMAaAjnSkR9viY0q+ix5LePgu5IImhO7Rk0mYSW/eBZNbsSAZBts88SH9xCWR
+         xHnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ueXbSBiMti51dIYdOz+r11JNrl9KN2K8qIRcNuF9l80=;
-        b=R6yByAkboODh7x/PSddTKH0ZE3P67LX2SQgutbkC7JHJU66DCB48xv2qdzlskJHvem
-         0yZQx89tJTqdEBzGYbUhOgdyBbjNvTuGSXLpJXvdJ5OPE/QLAwpdU97r2Y5YsL0ntY7g
-         x6WOk/I6k24Ec28jhkYEoCsdskNhGiP/HCJNr1utJNp8XNrEJxoRNYbM/EgBhV9J//H/
-         TF7SlgzrmZ6bN7j2HZ22Ihp8Ay5Dj84sRmeamSDauP1koGzf0O0xs/lkPe/NCLqlkVKc
-         BpD6y1taqGQcnVpAOP+w+KPSGlnVOIIZwX//aIXqwV7fDuqG8kDLAbEy3Y3Tfq3eGpj+
-         kNSg==
-X-Gm-Message-State: AO0yUKVrfeiLGTMQkt3R3qd6asv7U3Hj4cbZlh733eUpMOxG3uT+nFyp
-        6eiRIcJGwGenIjFnP4X0ajEK8zDk4qM=
-X-Google-Smtp-Source: AK7set8Hy59SjUckywUT/3gRy7Duk+9EmJ27c7Nv8NmlKF8xi00Ha71aQnXUwtXRqY0EZx2sGvVxRA==
-X-Received: by 2002:adf:f5c9:0:b0:2c5:5886:850d with SMTP id k9-20020adff5c9000000b002c55886850dmr23378350wrp.5.1677483478081;
-        Sun, 26 Feb 2023 23:37:58 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id v14-20020adfedce000000b002c7b229b1basm6302409wro.15.2023.02.26.23.37.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Feb 2023 23:37:57 -0800 (PST)
-Date:   Mon, 27 Feb 2023 10:37:53 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     claudiu.beznea@microchip.com
-Cc:     linux-clk@vger.kernel.org
-Subject: [bug report] clk: at91: clk-sam9x60-pll: re-factor to support plls
- with multiple outputs
-Message-ID: <Y/xd0XWhhp/bBkwY@kili>
+        bh=SXjvdSe0Xoy2F99alaan33seTEDoFO78h4PoWaqWgOY=;
+        b=eaYt8b554Pc4cyFlwHNecoie9LEGl4vTYRTxxm5wR4DSdqzMfP23/mqv1lUyDyzfCW
+         0jdomo1im1yEAoqR5pqYAWdWsNFyIhr+aIWJxWMvb6iUii50rjXzUSSKguA2GNXX5erO
+         pPEYwYcj793bEw/rm0dyWU75RaHpNozJH0497f39bCIEHkLNg0DftaU6qik3JlIwoxds
+         yMcp66sGpEG3hyOt2ntfCsEHVU3nXmi/8MbjgQHRq4/tfqKAnuufFvVYAJSCGmiRdPEz
+         nIsGOsnjzCjrg4TiyXWMoR1EP3otQB/+X1lBE4kYaD5BySGe2hGSApFzQ29eFQX2EogG
+         kH/Q==
+X-Gm-Message-State: AO0yUKUL4aYK530yjryqWb9l3ialR+UvuTi0gf/TYj5djzKYzWvpFnmh
+        YoS8vukVK3Z81dYPbs8LCPzZ0g==
+X-Google-Smtp-Source: AK7set+LGhJeW/YV/Plyh6BkEVwsi5ztKVwgCyYUJRw0gktnM8wdTkBmFtmQU+S6gcfBUUuXp8EDLg==
+X-Received: by 2002:a5d:58ea:0:b0:2c7:d56:7d72 with SMTP id f10-20020a5d58ea000000b002c70d567d72mr13130426wrd.19.1677485846867;
+        Mon, 27 Feb 2023 00:17:26 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id c4-20020adffb04000000b002c70bfe505esm6324326wrr.82.2023.02.27.00.17.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Feb 2023 00:17:26 -0800 (PST)
+Message-ID: <481a732d-8867-b811-e96c-caf43d08e9f9@linaro.org>
+Date:   Mon, 27 Feb 2023 09:17:22 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v3 2/4] dt-bindings: reset: Add MediaTek MT6735 reset
+ bindings
+Content-Language: en-US
+To:     Yassine Oudjana <yassine.oudjana@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Daniel Golle <daniel@makrotopia.org>,
+        Allen-KH Cheng <allen-kh.cheng@mediatek.com>,
+        Tinghan Shen <tinghan.shen@mediatek.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Edward-JW Yang <edward-jw.yang@mediatek.com>,
+        Johnson Wang <johnson.wang@mediatek.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>
+References: <20230225094246.261697-1-y.oudjana@protonmail.com>
+ <20230225094246.261697-3-y.oudjana@protonmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230225094246.261697-3-y.oudjana@protonmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Claudiu Beznea,
+On 25/02/2023 10:42, Yassine Oudjana wrote:
+> From: Yassine Oudjana <y.oudjana@protonmail.com>
+> 
+> Add reset definitions for the main reset controllers of MT6735 (infracfg
+> and pericfg).
+> 
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+>  MAINTAINERS                                   |  4 ++-
+>  .../reset/mediatek,mt6735-infracfg.h          | 31 +++++++++++++++++++
+>  .../reset/mediatek,mt6735-pericfg.h           | 31 +++++++++++++++++++
+>  3 files changed, 65 insertions(+), 1 deletion(-)
+>  create mode 100644 include/dt-bindings/reset/mediatek,mt6735-infracfg.h
+>  create mode 100644 include/dt-bindings/reset/mediatek,mt6735-pericfg.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 5323f71c48fb..f617042790ee 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13101,7 +13101,7 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/mmc/mtk-sd.yaml
+>  F:	drivers/mmc/host/mtk-sd.c
+>  
+> -MEDIATEK MT6735 CLOCK DRIVERS
+> +MEDIATEK MT6735 CLOCK & RESET DRIVERS
 
-The patch 43b1bb4a9b3e: "clk: at91: clk-sam9x60-pll: re-factor to
-support plls with multiple outputs" from Jul 22, 2020, leads to the
-following Smatch static checker warning:
+You just added this line in previous patch. Don't add code which
+immediately you fix.
 
-	drivers/clk/at91/clk-sam9x60-pll.c:672 sam9x60_clk_register_frac_pll()
-	warn: passing zero to 'ERR_PTR'
 
-drivers/clk/at91/clk-sam9x60-pll.c
-    663                 parent_rate = clk_hw_get_rate(parent_hw);
-    664                 if (!parent_rate) {
-    665                         hw = ERR_PTR(-EINVAL);
-    666                         goto free;
-    667                 }
-    668 
-    669                 ret = sam9x60_frac_pll_compute_mul_frac(&frac->core, FCORE_MIN,
-    670                                                         parent_rate, true);
-    671                 if (ret <= 0) {
-                            ^^^^^^^^
 
---> 672                         hw = ERR_PTR(ret);
-                                ^^^^^^^^^^^^^^^^^
+Best regards,
+Krzysztof
 
-ret can't be zero.  I don't know how this is called, but my guess is
-that if "ret" were zero then "hw" would be NULL and that results in a
-NULL dereference in the caller.
-
-    673                         goto free;
-    674                 }
-    675         }
-    676         spin_unlock_irqrestore(frac->core.lock, irqflags);
-    677 
-    678         hw = &frac->core.hw;
-    679         ret = clk_hw_register(NULL, hw);
-    680         if (ret) {
-    681                 kfree(frac);
-    682                 hw = ERR_PTR(ret);
-    683         }
-    684 
-    685         return hw;
-    686 
-    687 free:
-    688         spin_unlock_irqrestore(frac->core.lock, irqflags);
-    689         kfree(frac);
-    690         return hw;
-    691 }
-
-regards,
-dan carpenter
