@@ -2,123 +2,121 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 214EEC6FA8E
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Feb 2023 19:19:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 590BCC64EC4
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Feb 2023 20:13:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229886AbjB1TTk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Feb 2023 14:19:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51944 "EHLO
+        id S229610AbjB1UNg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Feb 2023 15:13:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229873AbjB1TTj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Feb 2023 14:19:39 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65EDE12F11;
-        Tue, 28 Feb 2023 11:19:38 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S229544AbjB1UNf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Feb 2023 15:13:35 -0500
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 277F015881;
+        Tue, 28 Feb 2023 12:13:33 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F342061180;
-        Tue, 28 Feb 2023 19:19:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31FAEC433EF;
-        Tue, 28 Feb 2023 19:19:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677611977;
-        bh=fo0jm9LIFRTBLWMyXrRtWlqKUsGki35LZNiy0Ybfk6g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=V/vEXAL6MEcX2zrFrn1ooCXm/U/Qvczx09vMgM+M51u/u6WOmi+A6bhT5b7D6inYF
-         MBn9Q68VHUvJxbUZ2QtxMtTgY+YgZ4FD4t2PUQPUp5H++zCRuimzwcbwqNpNbOI0pC
-         dU4uIFCCYgCLTGD3JNY2dhgTaXmrDWUMS552KY74nI5wggf8xgHOGLAjcp4FuKcAG2
-         gvdmjM4V95xI9eGgfu3ppqxpJwMXPVR4Qh3o/Lc3UdBSfRka0I8hO880mm33eesT5i
-         c7z6fAT9VzZ5h61c1E12YjEiUKKC1kvjvv83RjfmrsTIdgAhR8NdAjt5JPX9dApvP0
-         n5zbALL3o+Afw==
-Date:   Tue, 28 Feb 2023 19:19:32 +0000
-From:   Conor Dooley <conor@kernel.org>
-To:     Nick Alcock <nick.alcock@oracle.com>
-Cc:     mcgrof@kernel.org, linux-modules@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 12/20] clk: microchip: mpfs: remove MODULE_LICENSE in
- non-modules
-Message-ID: <Y/5TxBLcTDIdv2eM@spud>
-References: <20230228130215.289081-1-nick.alcock@oracle.com>
- <20230228130215.289081-13-nick.alcock@oracle.com>
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id ABCF985BB7;
+        Tue, 28 Feb 2023 21:13:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1677615210;
+        bh=ptYR2MjL1HwjwaBhA1+eQmVpWLTCrAMkvLx0Qg6cnSM=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=es3WGoolE3P4jPH3+SO8d66+nRfcLsPQU3oVS7Sh8zYiYTWTdbGa6+Icec9fmQ1/G
+         gS9nHeINtyjyeMr51+lE+XnEd+YwCPR6Xy9Oa5wFhBvRyE1BMA19wqx8hnRd5EE+mb
+         jTWFVN5mW74L8fnJK39R4YhgcEs+GCSul824tDZMYo17oM3pdfMoW0JsPDjajH5akI
+         OXBbX1brJyle2TLoZJh9N0DWlHEWtG9cJvefjPxIZJKTUZdC7MSdYRnmmWow4PnQBy
+         znX4QA2Ehp7AkcGj/+HzKFDCD5jUUokLz05J55R9VAFvdQ6QfONwiLqQeR7xdDngIb
+         AByiR7q2x4JIg==
+Message-ID: <5aa6d956-f00b-faa2-e189-12cf1274962b@denx.de>
+Date:   Tue, 28 Feb 2023 21:13:28 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="J9YrWK5U4Nxh9aHS"
-Content-Disposition: inline
-In-Reply-To: <20230228130215.289081-13-nick.alcock@oracle.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH] arm64: dts: imx8mn: specify #sound-dai-cells for SAI
+ nodes
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Marco Felsch <m.felsch@pengutronix.de>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Abel Vesa <abelvesa@kernel.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20230227174535.87657-1-marex@denx.de>
+ <20230227190123.znifdqympsantpt6@pengutronix.de>
+ <a519eb0b-dc40-deec-03d3-676648a52f15@denx.de>
+ <20230227200039.ugmtvpli6gvux3fi@pengutronix.de>
+ <947af937-3178-48ad-998f-b048245f3ffe@linaro.org>
+Content-Language: en-US
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <947af937-3178-48ad-998f-b048245f3ffe@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 2/28/23 09:10, Krzysztof Kozlowski wrote:
+> On 27/02/2023 21:00, Marco Felsch wrote:
+>>>>> +					#sound-dai-cells = <0>;
+>>>>
+>>>> Please don't add it in front of the compatible and the reg property.
+>>>
+>>> The #address-cells and #size-cells are also always on top, why should the
+>>> #sound-dai-cells be any different ? Where should they be ?
+>>
+>> As of now my understanding of specifying a devicetree node was:
+>>
+>> node-name@reg-nr {
+>> 	compatible = "";
+>> 	reg = <>;
+>> 	// all pending properties below
+>> 	...
+>> };
+>>
+>> @Rob, @Krzysztof:
+>> Is this a (unwritten) rule/policy?
+>>
+> 
+> Each platform has its own coding style around this but I am not aware of
+> a coding style which puts address and size cells at the top.
 
---J9YrWK5U4Nxh9aHS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+DTspec 0.3 and 0.4-rc agrees with the below.
 
-On Tue, Feb 28, 2023 at 01:02:07PM +0000, Nick Alcock wrote:
-> Since commit 8b41fc4454e ("kbuild: create modules.builtin without
-> Makefile.modbuiltin or tristate.conf"), MODULE_LICENSE declarations
-> are used to identify modules. As a consequence, uses of the macro
-> in non-modules will cause modprobe to misidentify their containing
-> object file as a module when it is not (false positives), and modprobe
-> might succeed rather than failing with a suitable error message.
->=20
-> So remove it in the files in this commit, none of which can be built as
-> modules.
->=20
-> Signed-off-by: Nick Alcock <nick.alcock@oracle.com>
-> Suggested-by: Luis Chamberlain <mcgrof@kernel.org>
-> Cc: Luis Chamberlain <mcgrof@kernel.org>
-> Cc: linux-modules@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>
-> Cc: Conor Dooley <conor.dooley@microchip.com>
-> Cc: Daire McNamara <daire.mcnamara@microchip.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-riscv@lists.infradead.org
-> Cc: linux-clk@vger.kernel.org
-> ---
->  drivers/clk/microchip/clk-mpfs.c | 1 -
->  1 file changed, 1 deletion(-)
->=20
-> diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk=
--mpfs.c
-> index 4f0a19db7ed74..d85b345f4c08d 100644
-> --- a/drivers/clk/microchip/clk-mpfs.c
-> +++ b/drivers/clk/microchip/clk-mpfs.c
-> @@ -513,4 +513,3 @@ MODULE_DESCRIPTION("Microchip PolarFire SoC Clock Dri=
-ver");
->  MODULE_AUTHOR("Padmarao Begari <padmarao.begari@microchip.com>");
->  MODULE_AUTHOR("Daire McNamara <daire.mcnamara@microchip.com>");
->  MODULE_AUTHOR("Conor Dooley <conor.dooley@microchip.com>");
-> -MODULE_LICENSE("GPL");
+Linux seems to be full of counter-examples though:
+$ git grep -A 1 ' {$' arch/*/boot/dts/ | grep -B 1 cells
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> To me it is
+> really odd placement. First property is always "compatible", as the most
+> important. Then for most platforms second is "reg", as the one easiest
+> to compare with unit address. Some platforms put status as last property.
 
-I'll take this via the microchip/at91 clock tree after v6.3-rc1 has been
-released.
+All right, so:
 
-Thanks,
-Conor.
+- compatible
+- reg
+- #whatever-cells
+- properties
+- status
 
+Does that order look right ?
 
---J9YrWK5U4Nxh9aHS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY/5TxAAKCRB4tDGHoIJi
-0qRYAP4hAGmSiUtr+YIBtvnpss72NXfOb3W3G/mOzk1iYpD5WwEAqOGVxkikgTDE
-dmyRBIRrLaGFnutuZJDaqnQBnAUB6QQ=
-=p4yC
------END PGP SIGNATURE-----
-
---J9YrWK5U4Nxh9aHS--
+[...]
