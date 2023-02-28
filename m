@@ -2,167 +2,123 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C7E3C64ED6
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Feb 2023 14:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 214EEC6FA8E
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Feb 2023 19:19:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229496AbjB1OHf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Feb 2023 09:07:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37344 "EHLO
+        id S229886AbjB1TTk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Feb 2023 14:19:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbjB1OHe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Feb 2023 09:07:34 -0500
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BA232B62F;
-        Tue, 28 Feb 2023 06:07:33 -0800 (PST)
-Received: by mail-pg1-x52c.google.com with SMTP id y19so5730129pgk.5;
-        Tue, 28 Feb 2023 06:07:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EGXSekdrp8g7zN92T4Fa+/JgB01svrkzjIIvtpETtVA=;
-        b=qNVJe5/A6zOiD+AUsXFWAKqDNH3NNnKLi18vVrwp0+zcmjR7m/pnqrr+xj0pJIS2Uz
-         3Lw1d3nU8IqOA/ebWBNpTuZD2FybCCQlWBlf9oj+TobnKN+vnx1maN8e4TV7Wd8prQja
-         Em88pIPTEq5lBom7Lwv0BQQvV2ZK587s3VOkANaiy5jqwQCZNlKpb/+UP8CLFMu+Gycu
-         cN+cLmCFK9dVrdxTZ4KLdv37xPgGkYLAF8yd1W8Y83vzsDxkxk31At07BVFitiIcJ9x/
-         MhkZNpYlCXkl6qEedPy7GKXGoTAHLX4quDNf1DKMnXU+j+j+ATtnIWmx1o2ZGP150gve
-         TVpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EGXSekdrp8g7zN92T4Fa+/JgB01svrkzjIIvtpETtVA=;
-        b=LwzjpdsMCy6nGTk6srYo6XnHH3XUX+GM42psTa3TTm5s0g9bdk1Kne4seDmpk8bYul
-         hj3okjOQpeJJ2a8d8Q4Zr6dQVSu36cttMS9FTpfzOolu1z6k0Ndwf4KreKDiUn5SkRj7
-         CIQjQ8C7AaSK+9m/4XK8XWMrWfMvQcUSanVITsZgjlz7xg+QSyoUDgFxjciTCNB4xTgL
-         vO2shiSOsZHDTOwb7f6sYyS8PtnrJdWhHLdtdhFjYP1+jjIbLM72Dmz1WwV7AMhFHDMv
-         DRErDVHBXJttz4KF72VH/1lOqIpvK9/0yskkrHM42B5t534TofW9Z+otNJLXsN2GzPxD
-         TOVw==
-X-Gm-Message-State: AO0yUKWGZfwIlW3nCIu9PVaXN+8GNg/noUJZ4XFmfPUVV8NEThJNEdcX
-        qXqkZJH5ymtBfO2+AEK6abogYetU3dEy8HPutpM=
-X-Google-Smtp-Source: AK7set8j/6l+jbx2LPhyRYrp/J6I+uqco+blmrGdJMWFUTjBCu0YReNhNAwlaCL5EKIQAzqm8RvL5jlU/32MVUHATUg=
-X-Received: by 2002:a63:3508:0:b0:4fc:2058:fa2b with SMTP id
- c8-20020a633508000000b004fc2058fa2bmr844532pga.3.1677593252542; Tue, 28 Feb
- 2023 06:07:32 -0800 (PST)
-MIME-Version: 1.0
-References: <20230228130215.289081-1-nick.alcock@oracle.com>
- <20230228130215.289081-10-nick.alcock@oracle.com> <CAMuHMdUFePvbBk7ELH3s8QrTiqEoC0xwQN_YCr9brSaFede-ig@mail.gmail.com>
-In-Reply-To: <CAMuHMdUFePvbBk7ELH3s8QrTiqEoC0xwQN_YCr9brSaFede-ig@mail.gmail.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Tue, 28 Feb 2023 08:07:21 -0600
-Message-ID: <CAHCN7xJHXbmBoSv6eHoqc3e_GJpCjY+nQPWNG7-56VfypCEmJQ@mail.gmail.com>
-Subject: Re: [PATCH 09/20] clk: renesas: remove MODULE_LICENSE in non-modules
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Nick Alcock <nick.alcock@oracle.com>, mcgrof@kernel.org,
-        linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
+        with ESMTP id S229873AbjB1TTj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Feb 2023 14:19:39 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65EDE12F11;
+        Tue, 28 Feb 2023 11:19:38 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F342061180;
+        Tue, 28 Feb 2023 19:19:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31FAEC433EF;
+        Tue, 28 Feb 2023 19:19:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677611977;
+        bh=fo0jm9LIFRTBLWMyXrRtWlqKUsGki35LZNiy0Ybfk6g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=V/vEXAL6MEcX2zrFrn1ooCXm/U/Qvczx09vMgM+M51u/u6WOmi+A6bhT5b7D6inYF
+         MBn9Q68VHUvJxbUZ2QtxMtTgY+YgZ4FD4t2PUQPUp5H++zCRuimzwcbwqNpNbOI0pC
+         dU4uIFCCYgCLTGD3JNY2dhgTaXmrDWUMS552KY74nI5wggf8xgHOGLAjcp4FuKcAG2
+         gvdmjM4V95xI9eGgfu3ppqxpJwMXPVR4Qh3o/Lc3UdBSfRka0I8hO880mm33eesT5i
+         c7z6fAT9VzZ5h61c1E12YjEiUKKC1kvjvv83RjfmrsTIdgAhR8NdAjt5JPX9dApvP0
+         n5zbALL3o+Afw==
+Date:   Tue, 28 Feb 2023 19:19:32 +0000
+From:   Conor Dooley <conor@kernel.org>
+To:     Nick Alcock <nick.alcock@oracle.com>
+Cc:     mcgrof@kernel.org, linux-modules@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 12/20] clk: microchip: mpfs: remove MODULE_LICENSE in
+ non-modules
+Message-ID: <Y/5TxBLcTDIdv2eM@spud>
+References: <20230228130215.289081-1-nick.alcock@oracle.com>
+ <20230228130215.289081-13-nick.alcock@oracle.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="J9YrWK5U4Nxh9aHS"
+Content-Disposition: inline
+In-Reply-To: <20230228130215.289081-13-nick.alcock@oracle.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 28, 2023 at 7:46=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Nick,
->
-> On Tue, Feb 28, 2023 at 2:03 PM Nick Alcock <nick.alcock@oracle.com> wrot=
-e:
-> > Since commit 8b41fc4454e ("kbuild: create modules.builtin without
-> > Makefile.modbuiltin or tristate.conf"), MODULE_LICENSE declarations
-> > are used to identify modules. As a consequence, uses of the macro
-> > in non-modules will cause modprobe to misidentify their containing
-> > object file as a module when it is not (false positives), and modprobe
-> > might succeed rather than failing with a suitable error message.
-> >
-> > So remove it in the files in this commit, none of which can be built as
-> > modules.
-> >
-> > Signed-off-by: Nick Alcock <nick.alcock@oracle.com>
-> > Suggested-by: Luis Chamberlain <mcgrof@kernel.org>
->
-> Thanks for your patch!
->
-> >  drivers/clk/renesas/rcar-usb2-clock-sel.c | 1 -
->
-> I think it would make sense to make CLK_RCAR_USB2_CLOCK_SEL
-> tristate. Shimoda-san?
-> The Beacon Renesom seems to be the only board where this
-> is wired up, Adam?
 
-The CLK_RCAR_USB2_CLOCK_SEL is basically glue that lets the user
-select between an external oscillator or a crystal oscillator.  The
-Beacon board uses an external clock instead of a crystal, so this
-driver is plumbed in to make sure the external clock is enabled on
-demand and the SoC isn't trying to excite the crystal.
+--J9YrWK5U4Nxh9aHS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The CLK_RCAR_USB2_CLOCK_SEL is currently set to 'y' in the defconfig,
-but it looks like the USB_RENESAS_USB3 and USB_RENESAS_USBHS drivers
-are all modules.  I am not an expert in this area, but it seems to me
-like the CLK_RCAR_USB2_CLOCK_SEL could likely be tri-state as well.  I
-am not sure how the dependency and/or loading order would be
-established.
+On Tue, Feb 28, 2023 at 01:02:07PM +0000, Nick Alcock wrote:
+> Since commit 8b41fc4454e ("kbuild: create modules.builtin without
+> Makefile.modbuiltin or tristate.conf"), MODULE_LICENSE declarations
+> are used to identify modules. As a consequence, uses of the macro
+> in non-modules will cause modprobe to misidentify their containing
+> object file as a module when it is not (false positives), and modprobe
+> might succeed rather than failing with a suitable error message.
+>=20
+> So remove it in the files in this commit, none of which can be built as
+> modules.
+>=20
+> Signed-off-by: Nick Alcock <nick.alcock@oracle.com>
+> Suggested-by: Luis Chamberlain <mcgrof@kernel.org>
+> Cc: Luis Chamberlain <mcgrof@kernel.org>
+> Cc: linux-modules@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>
+> Cc: Conor Dooley <conor.dooley@microchip.com>
+> Cc: Daire McNamara <daire.mcnamara@microchip.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-riscv@lists.infradead.org
+> Cc: linux-clk@vger.kernel.org
+> ---
+>  drivers/clk/microchip/clk-mpfs.c | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk=
+-mpfs.c
+> index 4f0a19db7ed74..d85b345f4c08d 100644
+> --- a/drivers/clk/microchip/clk-mpfs.c
+> +++ b/drivers/clk/microchip/clk-mpfs.c
+> @@ -513,4 +513,3 @@ MODULE_DESCRIPTION("Microchip PolarFire SoC Clock Dri=
+ver");
+>  MODULE_AUTHOR("Padmarao Begari <padmarao.begari@microchip.com>");
+>  MODULE_AUTHOR("Daire McNamara <daire.mcnamara@microchip.com>");
+>  MODULE_AUTHOR("Conor Dooley <conor.dooley@microchip.com>");
+> -MODULE_LICENSE("GPL");
 
-adam
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
->
-> >  drivers/clk/renesas/renesas-cpg-mssr.c    | 1 -
-> >  drivers/clk/renesas/rzg2l-cpg.c           | 1 -
-> >  3 files changed, 3 deletions(-)
-> >
-> > diff --git a/drivers/clk/renesas/rcar-usb2-clock-sel.c b/drivers/clk/re=
-nesas/rcar-usb2-clock-sel.c
-> > index 684d8937965e0..ba6b5bd67786f 100644
-> > --- a/drivers/clk/renesas/rcar-usb2-clock-sel.c
-> > +++ b/drivers/clk/renesas/rcar-usb2-clock-sel.c
-> > @@ -220,4 +220,3 @@ static struct platform_driver rcar_usb2_clock_sel_d=
-river =3D {
-> >  builtin_platform_driver(rcar_usb2_clock_sel_driver);
-> >
-> >  MODULE_DESCRIPTION("Renesas R-Car USB2 clock selector Driver");
-> > -MODULE_LICENSE("GPL v2");
-> > diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renes=
-as/renesas-cpg-mssr.c
-> > index 1a0cdf001b2f2..bfe5dc9a2e36b 100644
-> > --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> > +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> > @@ -1154,4 +1154,3 @@ void __init mssr_mod_reparent(struct mssr_mod_clk=
- *mod_clks,
-> >  }
-> >
-> >  MODULE_DESCRIPTION("Renesas CPG/MSSR Driver");
-> > -MODULE_LICENSE("GPL v2");
-> > diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2=
-l-cpg.c
-> > index 4bf40f6ccd1d1..93b02cdc98c25 100644
-> > --- a/drivers/clk/renesas/rzg2l-cpg.c
-> > +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> > @@ -1440,4 +1440,3 @@ static int __init rzg2l_cpg_init(void)
-> >  subsys_initcall(rzg2l_cpg_init);
-> >
-> >  MODULE_DESCRIPTION("Renesas RZ/G2L CPG Driver");
-> > -MODULE_LICENSE("GPL v2");
-> > --
-> > 2.39.1.268.g9de2f9a303
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
+I'll take this via the microchip/at91 clock tree after v6.3-rc1 has been
+released.
+
+Thanks,
+Conor.
+
+
+--J9YrWK5U4Nxh9aHS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCY/5TxAAKCRB4tDGHoIJi
+0qRYAP4hAGmSiUtr+YIBtvnpss72NXfOb3W3G/mOzk1iYpD5WwEAqOGVxkikgTDE
+dmyRBIRrLaGFnutuZJDaqnQBnAUB6QQ=
+=p4yC
+-----END PGP SIGNATURE-----
+
+--J9YrWK5U4Nxh9aHS--
