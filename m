@@ -2,137 +2,121 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F25DFC64ED8
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Feb 2023 20:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A88BC7EE2E
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Feb 2023 01:40:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229619AbjB0ULr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Feb 2023 15:11:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58596 "EHLO
+        id S229759AbjB1Bkh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Feb 2023 20:40:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229574AbjB0ULq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 15:11:46 -0500
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EBB286B9;
-        Mon, 27 Feb 2023 12:11:45 -0800 (PST)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 214B280EB1;
-        Mon, 27 Feb 2023 21:11:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1677528703;
-        bh=HHhhNiiFFM6pJEYBbaLex7pnt0KsSv9LmdqUwbAIwk0=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=TXb/yCiVJLpdxJy2Qpl4WNlF0PnqG3X3ZT7PAabeoF2fWRAn+RIgU553qDJjNCz4T
-         ev8EmLQU7nMZtjkxyY81lXB3MKZrKJ3lN9YIDtsGtNtMcMY1Xl6zljshZ9IK17DnlV
-         lAGaqFPO8CbeUI2Hcmi8Rea9QxYR/2gKyJBqYFY1r0yy0EBS0jEEhhKdIA7cl6LDMQ
-         KDryQy7OeWSMzFyJY4WWAAnfmmZpPdj//63p5GLtkaJo0pghwyT3Wou7K+lfHZnB2X
-         mkNmf3fnyxA9CxHMlq9CEGxEeGx9BgHPC8/3EJPoXr9ow0J6UCctorfaz/9QGGhi0F
-         nda7zZ9jzwfTA==
-Message-ID: <be5edd33-31e4-695b-ff72-7a0dca3470e7@denx.de>
-Date:   Mon, 27 Feb 2023 21:11:41 +0100
+        with ESMTP id S229511AbjB1Bkh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 20:40:37 -0500
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E1B01E1FE;
+        Mon, 27 Feb 2023 17:40:35 -0800 (PST)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 169A824E392;
+        Tue, 28 Feb 2023 09:40:34 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 28 Feb
+ 2023 09:40:33 +0800
+Received: from [192.168.125.128] (113.72.145.171) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 28 Feb
+ 2023 09:40:32 +0800
+Message-ID: <f943857c-f3ee-c521-ca84-51942e463d05@starfivetech.com>
+Date:   Tue, 28 Feb 2023 09:40:49 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
-Subject: Re: [PATCH] arm64: dts: imx8mn: specify #sound-dai-cells for SAI
- nodes
+Subject: Re: [PATCH v2 10/11] riscv: dts: starfive: jh7110: Add DVP and HDMI
+ TX pixel external clocks
 Content-Language: en-US
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Abel Vesa <abelvesa@kernel.org>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jacky Bai <ping.bai@nxp.com>,
+To:     Conor Dooley <conor@kernel.org>
+CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Richard Cochran <richardcochran@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Emil Renner Berthing <kernel@esmil.dk>,
         Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20230227174535.87657-1-marex@denx.de>
- <20230227190123.znifdqympsantpt6@pengutronix.de>
- <a519eb0b-dc40-deec-03d3-676648a52f15@denx.de>
- <20230227200039.ugmtvpli6gvux3fi@pengutronix.de>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <20230227200039.ugmtvpli6gvux3fi@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "Palmer Dabbelt" <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20230221083323.302471-1-xingyu.wu@starfivetech.com>
+ <20230221083323.302471-11-xingyu.wu@starfivetech.com> <Y/0KyeK3DU8xtL2V@spud>
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+In-Reply-To: <Y/0KyeK3DU8xtL2V@spud>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+X-Originating-IP: [113.72.145.171]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2/27/23 21:00, Marco Felsch wrote:
-> On 23-02-27, Marek Vasut wrote:
->> On 2/27/23 20:01, Marco Felsch wrote:
->>> Hi Marek,
->>>
->>> On 23-02-27, Marek Vasut wrote:
->>>> Add #sound-dai-cells properties to SAI nodes.
->>>>
->>>> Signed-off-by: Marek Vasut <marex@denx.de>
->>>> ---
->>>> Cc: Abel Vesa <abelvesa@kernel.org>
->>>> Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
->>>> Cc: Fabio Estevam <festevam@gmail.com>
->>>> Cc: Jacky Bai <ping.bai@nxp.com>
->>>> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
->>>> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>>> Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
->>>> Cc: Lucas Stach <l.stach@pengutronix.de>
->>>> Cc: Marco Felsch <m.felsch@pengutronix.de>
->>>> Cc: Michael Turquette <mturquette@baylibre.com>
->>>> Cc: NXP Linux Team <linux-imx@nxp.com>
->>>> Cc: Peng Fan <peng.fan@nxp.com>
->>>> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
->>>> Cc: Richard Cochran <richardcochran@gmail.com>
->>>> Cc: Rob Herring <robh+dt@kernel.org>
->>>> Cc: Sascha Hauer <s.hauer@pengutronix.de>
->>>> Cc: Shawn Guo <shawnguo@kernel.org>
->>>> Cc: Stephen Boyd <sboyd@kernel.org>
->>>> Cc: devicetree@vger.kernel.org
->>>> Cc: linux-arm-kernel@lists.infradead.org
->>>> Cc: linux-clk@vger.kernel.org
->>>> ---
->>>>    arch/arm64/boot/dts/freescale/imx8mn.dtsi | 5 +++++
->>>>    1 file changed, 5 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/freescale/imx8mn.dtsi b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
->>>> index ed9ac6c5047c0..bbec860ef8548 100644
->>>> --- a/arch/arm64/boot/dts/freescale/imx8mn.dtsi
->>>> +++ b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
->>>> @@ -294,6 +294,7 @@ spba2: spba-bus@30000000 {
->>>>    				ranges;
->>>>    				sai2: sai@30020000 {
->>>> +					#sound-dai-cells = <0>;
->>>
->>> Please don't add it in front of the compatible and the reg property.
->>
->> The #address-cells and #size-cells are also always on top, why should the
->> #sound-dai-cells be any different ? Where should they be ?
+On 2023/2/28 3:55, Conor Dooley wrote:
+> On Tue, Feb 21, 2023 at 04:33:22PM +0800, Xingyu Wu wrote:
+>> Add DVP and HDMI TX pixel external fixed clocks and the rates are
+>> 74.25MHz and 297MHz.
+>> 
+>> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+>> ---
+>>  .../dts/starfive/jh7110-starfive-visionfive-2.dtsi   |  8 ++++++++
+>>  arch/riscv/boot/dts/starfive/jh7110.dtsi             | 12 ++++++++++++
+>>  2 files changed, 20 insertions(+)
+>> 
+>> diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+>> index c2aa8946a0f1..27af817a55aa 100644
+>> --- a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+>> +++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+>> @@ -86,6 +86,14 @@ &mclk_ext {
+>>  	clock-frequency = <12288000>;
+>>  };
+>>  
+>> +&dvp_clk {
+>> +	clock-frequency = <74250000>;
+>> +};
+>> +
+>> +&hdmitx0_pixelclk {
+>> +	clock-frequency = <297000000>;
+>> +};
+>> +
+>>  &uart0 {
+>>  	pinctrl-names = "default";
+>>  	pinctrl-0 = <&uart0_pins>;
+>> diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+>> index 005ead2624d4..a5e6fb3ad188 100644
+>> --- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
+>> +++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+>> @@ -245,6 +245,18 @@ mclk_ext: mclk-ext-clock {
+>>  		#clock-cells = <0>;
+>>  	};
+>>  
+>> +	dvp_clk: dvp-clk-clock {
+>> +		compatible = "fixed-clock";
+>> +		clock-output-names = "dvp_clk";
+>> +		#clock-cells = <0>;
+>> +	};
+>> +
+>> +	hdmitx0_pixelclk: hdmitx0-pixelclk-clock {
+>> +		compatible = "fixed-clock";
+>> +		clock-output-names = "hdmitx0_pixelclk";
+>> +		#clock-cells = <0>;
+>> +	};
+>> +
 > 
-> As of now my understanding of specifying a devicetree node was:
+> Hmm, would you mind adding these entries with no unit addresses in
+> alphanumerical order? Both in the soc & board dtsi files.
 > 
-> node-name@reg-nr {
-> 	compatible = "";
-> 	reg = <>;
-> 	// all pending properties below
-> 	...
-> };
-> 
-> @Rob, @Krzysztof:
-> Is this a (unwritten) rule/policy?
-> 
-> Marekt please ignore my comment if this is not the case.
 
-Getting input from Rob/Krysztof is a good idea, thanks.
+Oh, It was my negligence. I will adjust it. Thanks.
+
+Best regards,
+Xingyu Wu
+
