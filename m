@@ -2,225 +2,132 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8237DC64EC7
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Feb 2023 06:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B6ADC64EC7
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Feb 2023 06:43:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230031AbjB1Ge0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Feb 2023 01:34:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57322 "EHLO
+        id S230101AbjB1GnK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Feb 2023 01:43:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229995AbjB1GeP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Feb 2023 01:34:15 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12F65BB;
-        Mon, 27 Feb 2023 22:34:12 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S229509AbjB1GnK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Feb 2023 01:43:10 -0500
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10509AD16;
+        Mon, 27 Feb 2023 22:43:07 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A0CC3B80DED;
-        Tue, 28 Feb 2023 06:34:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFEC7C433D2;
-        Tue, 28 Feb 2023 06:34:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677566050;
-        bh=Nc/tNHHbdZudxlnetoUB/Ahcg8UGlbT8CjlJknq5GZQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SOQLaHlKIFhSg2REjjo7JokZ31rtl+qdIP25T9GE4WtL335pDCx+3dSn6aNcafSEM
-         f6SBlJ8WU8PgpMRWnxgQhTUwOFy46puyoZvzH0HUTixO+WAEV+55itmCoKI2uxgTS4
-         qEgsXNZdEMFcZ37jIpMa/ARegBS8tpl9CBBnPUrK4uTR1TzMOmUSDgHwNnUGT+8eWv
-         vegFlfxxDxEnUZuBgSwOgGE5eR/1CHe2fRMcpGATGptXYE+0eJjs0Tp4sxIUqBlOBX
-         C+F4veJujCfKt3RXTOObOO33XWNh8Vdo5YD/IFEHHEd93UWwwjoIFqCWbXqwq1XHJQ
-         OKARpaN8Sx0ww==
-Date:   Tue, 28 Feb 2023 12:03:58 +0530
-From:   Manivannan Sadhasivam <mani@kernel.org>
-To:     Devi Priya <quic_devipriy@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-        bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
-        vkoul@kernel.org, kishon@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, p.zabel@pengutronix.de, svarbanov@mm-sol.com,
-        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-clk@vger.kernel.org,
-        quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
-        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com
-Subject: Re: [PATCH 1/7] dt-bindings: PCI: qcom: Add IPQ9574 specific
- compatible
-Message-ID: <20230228063358.GA4839@thinkpad>
-References: <20230214164135.17039-1-quic_devipriy@quicinc.com>
- <20230214164135.17039-2-quic_devipriy@quicinc.com>
- <20230224082332.GA5443@thinkpad>
- <bd153038-4427-1f11-1941-5f13fec01cf7@quicinc.com>
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 4D04B80BAC;
+        Tue, 28 Feb 2023 07:43:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1677566585;
+        bh=uWY85i4NtCl+3NrqoyVvBdxuJ1Cd+uTqzO7y3DAqNSY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=0SbeMTOdUqYnI6lj1i4YpZDg2pZLb8WqbP9ZigBOXFTq2ORKd+BeklIuwA8Kbqp16
+         qfciSJIe4DN7xbNvJeA3Fc4rK3YSmQC8TtZwONlBrUXjyfVsUNx0KFxJsXtwdb+Of3
+         FttG8HA7xVhjBC50Orm/xJxODZk3qpulkh3H0ZeFPxPllMtP/MNZ6pWB3Nci5WMBAN
+         fTY0wSprJqwnT8pJEQVZB6tluND8EyFEv1QMxKE/OYSDfYI3WDsiVfo8y1mTyrQDpr
+         B0hJLAtK06swguZMVwLxmZOrSI6NF+uy8oDcs3uZVZEpO5HKczX5yzN7/oNJTi44p+
+         o9H3kEQXWgwzQ==
+Message-ID: <3378fb83-d88d-4854-c096-b459672eef08@denx.de>
+Date:   Tue, 28 Feb 2023 07:43:03 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bd153038-4427-1f11-1941-5f13fec01cf7@quicinc.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v5 5/5] arm64: dts: imx8mp: Add analog audio output on
+ i.MX8MP EVK
+Content-Language: en-US
+To:     Adam Ford <aford173@gmail.com>
+Cc:     Marco Felsch <m.felsch@pengutronix.de>, linux-clk@vger.kernel.org,
+        Fabio Estevam <festevam@gmail.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20230227174308.87286-1-marex@denx.de>
+ <20230227174308.87286-5-marex@denx.de>
+ <20230227185949.xaxltai4ksgrczmc@pengutronix.de>
+ <c3b3c08c-989b-3868-c74f-426b8f1733a5@denx.de>
+ <CAHCN7x+Jd+C2B+-igv=Pk0Ab4Tj7ecxRrdV85u5CSZ5DjFs5kA@mail.gmail.com>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <CAHCN7x+Jd+C2B+-igv=Pk0Ab4Tj7ecxRrdV85u5CSZ5DjFs5kA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 28, 2023 at 10:56:53AM +0530, Devi Priya wrote:
+On 2/28/23 03:44, Adam Ford wrote:
+> On Mon, Feb 27, 2023 at 1:37 PM Marek Vasut <marex@denx.de> wrote:
+>>
+>> On 2/27/23 19:59, Marco Felsch wrote:
+>> [...]
+>>
+>>>> @@ -344,6 +384,18 @@ &i2c3 {
+>>>>       pinctrl-0 = <&pinctrl_i2c3>;
+>>>>       status = "okay";
+>>>>
+>>>> +    wm8960: codec@1a {
+>>>> +            #sound-dai-cells = <0>;
+>>>> +            compatible = "wlf,wm8960";
+>>>> +            reg = <0x1a>;
+>>>
+>>> The compatible should be the first property followed by the reg
+>>> property.
+>>
+>> See my reply to the mx8mn sound-sai-cells patch , I am not sure here.
+>> The rest is fixed in V6.
+>>
+>>>> +            clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SAI3_MCLK1>;
+>>>> +            clock-names = "mclk";
+>>>> +            wlf,shared-lrclk;
+>>>> +            wlf,hp-cfg = <3 2 3>;
+>>>> +            wlf,gpio-cfg = <1 3>;
+>>>> +            SPKVDD1-supply = <&reg_audio_pwr>;
+>>>> +    };
+>>>> +
+>>>>       pca6416: gpio@20 {
+>>>>               compatible = "ti,tca6416";
+>>>>               reg = <0x20>;
+>>
+>> [...]
+>>
+>>>> @@ -668,6 +730,18 @@ MX8MP_IOMUXC_UART3_TXD__UART1_DCE_RTS   0x140
+>>>>               >;
+>>>>       };
+>>>>
+>>>> +    pinctrl_sai3: sai3grp {
+>>>> +            fsl,pins = <
+>>>> +                    MX8MP_IOMUXC_SAI3_TXFS__AUDIOMIX_SAI3_TX_SYNC   0xd6
+>>>> +                    MX8MP_IOMUXC_SAI3_TXC__AUDIOMIX_SAI3_TX_BCLK    0xd6
+>>>> +                    MX8MP_IOMUXC_SAI3_RXD__AUDIOMIX_SAI3_RX_DATA00  0xd6
+>>>> +                    MX8MP_IOMUXC_SAI3_TXD__AUDIOMIX_SAI3_TX_DATA00  0xd6
+>>>> +                    MX8MP_IOMUXC_SAI3_MCLK__AUDIOMIX_SAI3_MCLK      0xd6
+>>>> +                    MX8MP_IOMUXC_SAI3_RXFS__GPIO4_IO28              0xd6
+>>>
+>>> What is gpio04-io28 used for?
+>>
+>> Apparently unused, dropped.
 > 
+> Isn't that the headphone detect GPIO?
 > 
-> On 2/24/2023 1:53 PM, Manivannan Sadhasivam wrote:
-> > On Tue, Feb 14, 2023 at 10:11:29PM +0530, Devi Priya wrote:
-> > > Document the compatible for IPQ9574
-> > > 
-> Hi Mani, Thanks for taking time to review the patch.
-> > 
-> > You didn't mention about the "msi-parent" property that is being added
-> > by this patch
-> Sure, will update the commit message in the next spin
-> > 
-> > > Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> > > ---
-> > >   .../devicetree/bindings/pci/qcom,pcie.yaml    | 72 ++++++++++++++++++-
-> > >   1 file changed, 70 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> > > index 872817d6d2bd..dabdf2684e2d 100644
-> > > --- a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> > > +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> > > @@ -26,6 +26,7 @@ properties:
-> > >             - qcom,pcie-ipq8064-v2
-> > >             - qcom,pcie-ipq8074
-> > >             - qcom,pcie-ipq8074-gen3
-> > > +          - qcom,pcie-ipq9574
-> > >             - qcom,pcie-msm8996
-> > >             - qcom,pcie-qcs404
-> > >             - qcom,pcie-sa8540p
-> > > @@ -44,11 +45,11 @@ properties:
-> > >     reg:
-> > >       minItems: 4
-> > > -    maxItems: 5
-> > > +    maxItems: 6
-> > >     reg-names:
-> > >       minItems: 4
-> > > -    maxItems: 5
-> > > +    maxItems: 6
-> > >     interrupts:
-> > >       minItems: 1
-> > > @@ -105,6 +106,8 @@ properties:
-> > >       items:
-> > >         - const: pciephy
-> > > +  msi-parent: true
-> > > +
-> > >     power-domains:
-> > >       maxItems: 1
-> > > @@ -173,6 +176,27 @@ allOf:
-> > >               - const: parf # Qualcomm specific registers
-> > >               - const: config # PCIe configuration space
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            enum:
-> > > +              - qcom,pcie-ipq9574
-> > > +    then:
-> > > +      properties:
-> > > +        reg:
-> > > +          minItems: 5
-> > > +          maxItems: 6
-> > > +        reg-names:
-> > > +          minItems: 5
-> > > +          items:
-> > > +            - const: dbi # DesignWare PCIe registers
-> > > +            - const: elbi # External local bus interface registers
-> > > +            - const: atu # ATU address space
-> > > +            - const: parf # Qualcomm specific registers
-> > > +            - const: config # PCIe configuration space
-> > > +            - const: aggr_noc #PCIe aggr_noc
-> > 
-> > Why do you need this region unlike other SoCs? Is the driver making use of it?
-> We have the aggr_noc region in ipq9574 to achieve higher throughput & to
-> handle multiple PCIe instances. The driver uses it to rate adapt 1-lane PCIe
-> clocks. My bad, missed it. Will add the driver changes in V2.
+> I think simple-audio-card,hp-det-gpio can reference it.
 
-Hmm, this is something new. How can you achieve higher throughput with this
-region? Can you explain more on how it is used?
-
-Thanks,
-Mani
-
-> > 
-> > Thanks,
-> > Mani
-> > 
-> > > +
-> > >     - if:
-> > >         properties:
-> > >           compatible:
-> > > @@ -365,6 +389,39 @@ allOf:
-> > >               - const: ahb # AHB Reset
-> > >               - const: axi_m_sticky # AXI Master Sticky reset
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            enum:
-> > > +              - qcom,pcie-ipq9574
-> > > +    then:
-> > > +      properties:
-> > > +        clocks:
-> > > +          minItems: 6
-> > > +          maxItems: 6
-> > > +        clock-names:
-> > > +          items:
-> > > +            - const: ahb  # AHB clock
-> > > +            - const: aux  # Auxiliary clock
-> > > +            - const: axi_m # AXI Master clock
-> > > +            - const: axi_s # AXI Slave clock
-> > > +            - const: axi_bridge # AXI bridge clock
-> > > +            - const: rchng
-> > > +        resets:
-> > > +          minItems: 8
-> > > +          maxItems: 8
-> > > +        reset-names:
-> > > +          items:
-> > > +            - const: pipe # PIPE reset
-> > > +            - const: sticky # Core Sticky reset
-> > > +            - const: axi_s_sticky # AXI Slave Sticky reset
-> > > +            - const: axi_s # AXI Slave reset
-> > > +            - const: axi_m_sticky # AXI Master Sticky reset
-> > > +            - const: axi_m # AXI Master reset
-> > > +            - const: aux # AUX Reset
-> > > +            - const: ahb # AHB Reset
-> > > +
-> > >     - if:
-> > >         properties:
-> > >           compatible:
-> > > @@ -681,6 +738,16 @@ allOf:
-> > >           - interconnects
-> > >           - interconnect-names
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            enum:
-> > > +              - qcom,pcie-ipq9574
-> > > +    then:
-> > > +      required:
-> > > +        - msi-parent
-> > > +
-> > >     - if:
-> > >         not:
-> > >           properties:
-> > > @@ -693,6 +760,7 @@ allOf:
-> > >                   - qcom,pcie-ipq8064v2
-> > >                   - qcom,pcie-ipq8074
-> > >                   - qcom,pcie-ipq8074-gen3
-> > > +                - qcom,pcie-ipq9574
-> > >                   - qcom,pcie-qcs404
-> > >       then:
-> > >         required:
-> > > -- 
-> > > 2.17.1
-> > > 
-> > 
-> Thanks,
-> Devi Priya
-
--- 
-மணிவண்ணன் சதாசிவம்
+Per the schematics of the MX8MP EVK, the pin is not connected on the 
+board-to-board connector EVK side, right ?
