@@ -2,197 +2,136 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CF5C7EE23
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Feb 2023 02:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF26BC64ED6
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Feb 2023 02:45:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229974AbjB1Cm4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Feb 2023 21:42:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59732 "EHLO
+        id S230082AbjB1CpF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Feb 2023 21:45:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230063AbjB1Cmy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 21:42:54 -0500
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0158E241CD;
-        Mon, 27 Feb 2023 18:42:39 -0800 (PST)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 9C1FC24E398;
-        Tue, 28 Feb 2023 10:42:37 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 28 Feb
- 2023 10:42:37 +0800
-Received: from [192.168.125.82] (113.72.145.171) by EXMBX172.cuchost.com
- (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 28 Feb
- 2023 10:42:36 +0800
-Message-ID: <8c30220a-abef-7518-cb44-abcea91408e2@starfivetech.com>
-Date:   Tue, 28 Feb 2023 10:42:35 +0800
+        with ESMTP id S229829AbjB1CpE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Feb 2023 21:45:04 -0500
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D9871CACB;
+        Mon, 27 Feb 2023 18:45:03 -0800 (PST)
+Received: by mail-pl1-x633.google.com with SMTP id p20so7730221plw.13;
+        Mon, 27 Feb 2023 18:45:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yp+cx5BFVXE61foSW4F34Ogh74kOmNMTmxNJN2cfT5Q=;
+        b=BQz+FnfWKpBNmYZICc7SMMec1z0Ldj2tkC9abE8eTiaTU2FVW5NLrdm4hXsE1Vq0Hy
+         vZ1Zz/Rr3d63/9dr6lexxY6ieM5UBwCUhiX2xNf/lmJ7ij6fGzHs95kj9lxa/jvziNUR
+         3fUjE7Wvqrn1Jhp8BkNyMRvSnmh9IwVagDdvjgH1isX7MY2CKbnXom6s7POeZTyaKVRS
+         YzT5hH/2DIGdpB1z6xlvZhBCSVC4MHaRbbHWQGSa/Bs6xtCS0i2RB4JV/EIUKWnkVB2y
+         qDnnOSbioNkdxjaTMXHGTiSnnRB4pN1xMaQV6tUOkoYl7skJMTx7dDpP0BKY+6MP3nuW
+         VnxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Yp+cx5BFVXE61foSW4F34Ogh74kOmNMTmxNJN2cfT5Q=;
+        b=dV9thzQczA11jAtam2gsBNYLm21ut2jk5zsMbT/DwYHAHubEtMmWUdG6Bfa3NZc8qB
+         iUkSr1BdtJU0ORfE6ph1YdcF93nLn7vkfenngmXl3FJg+txeDzTubsZmZuzBV7jVibb0
+         7dwL2Ud57P3gVGFtbdTtkBcb2U9sHzC+OGoztoFiKQ3bpq4QOp8k7X2bkvCp9mbilLf1
+         jc8u7TpRJf8DbSolzrClNtPLGZRbnoSjKS90KQFCEPRmVJZde6K1HKRTmEnaNkj4I4t8
+         6APukvu/fyQbWlYVUWTY+P3KgpIqkqFKX1qv2FKZk4mH0s27piSR5qVyUysrRTH0KEap
+         l+vA==
+X-Gm-Message-State: AO0yUKUttPeMb2gdahv69ydByvp+8ZU9SJY+AcBXaw49OEqVeZHNibjn
+        3qeguBskuL7ehYCnqYt6J9XcF9gC+vle1kJEw28=
+X-Google-Smtp-Source: AK7set/BXq9vpXNq1siAy5drrmiLTAQ574AKQS4/hXo9eMqASe+IMp4kQbtzlHHaTJXRDStPpn8tnZ099rjWvqlkaD4=
+X-Received: by 2002:a17:90a:8a04:b0:237:9ca5:4d5d with SMTP id
+ w4-20020a17090a8a0400b002379ca54d5dmr534185pjn.6.1677552302654; Mon, 27 Feb
+ 2023 18:45:02 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v4 12/19] clk: starfive: Add StarFive JH7110 always-on
- clock driver
-Content-Language: en-US
-To:     Emil Renner Berthing <emil.renner.berthing@canonical.com>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>, Stephen Boyd <sboyd@kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
+References: <20230227174308.87286-1-marex@denx.de> <20230227174308.87286-5-marex@denx.de>
+ <20230227185949.xaxltai4ksgrczmc@pengutronix.de> <c3b3c08c-989b-3868-c74f-426b8f1733a5@denx.de>
+In-Reply-To: <c3b3c08c-989b-3868-c74f-426b8f1733a5@denx.de>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Mon, 27 Feb 2023 20:44:51 -0600
+Message-ID: <CAHCN7x+Jd+C2B+-igv=Pk0Ab4Tj7ecxRrdV85u5CSZ5DjFs5kA@mail.gmail.com>
+Subject: Re: [PATCH v5 5/5] arm64: dts: imx8mp: Add analog audio output on
+ i.MX8MP EVK
+To:     Marek Vasut <marex@denx.de>
+Cc:     Marco Felsch <m.felsch@pengutronix.de>, linux-clk@vger.kernel.org,
+        Fabio Estevam <festevam@gmail.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Jacky Bai <ping.bai@nxp.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor@kernel.org>,
-        "Palmer Dabbelt" <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        "Daniel Lezcano" <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20230221024645.127922-1-hal.feng@starfivetech.com>
- <20230221024645.127922-13-hal.feng@starfivetech.com>
- <CAJM55Z8H4qmy_BiD0SHW-w5ifzhzokdO-QxpUUz9aeUd+htrZg@mail.gmail.com>
-From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <CAJM55Z8H4qmy_BiD0SHW-w5ifzhzokdO-QxpUUz9aeUd+htrZg@mail.gmail.com>
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [113.72.145.171]
-X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
- (172.16.6.92)
-X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 26 Feb 2023 18:34:52 +0100, Emil Renner Berthing wrote:
-> On Tue, 21 Feb 2023 at 03:47, Hal Feng <hal.feng@starfivetech.com> wrote:
->> From: Emil Renner Berthing <kernel@esmil.dk>
->>
->> Add driver for the StarFive JH7110 always-on clock controller
->> and register an auxiliary device for always-on reset controller
->> which is named as "reset-aon".
->>
->> Reported-by: kernel test robot <lkp@intel.com>
->> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
->> Co-developed-by: Hal Feng <hal.feng@starfivetech.com>
->> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
->> ---
->>  drivers/clk/starfive/Kconfig                  |  11 ++
->>  drivers/clk/starfive/Makefile                 |   1 +
->>  .../clk/starfive/clk-starfive-jh7110-aon.c    | 156 ++++++++++++++++++
->>  3 files changed, 168 insertions(+)
->>  create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-aon.c
->>
->> diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
->> index 4640d0665d1c..2aa664f2cdee 100644
->> --- a/drivers/clk/starfive/Kconfig
->> +++ b/drivers/clk/starfive/Kconfig
->> @@ -31,3 +31,14 @@ config CLK_STARFIVE_JH7110_SYS
->>         help
->>           Say yes here to support the system clock controller on the
->>           StarFive JH7110 SoC.
->> +
->> +config CLK_STARFIVE_JH7110_AON
->> +       tristate "StarFive JH7110 always-on clock support"
->> +       depends on CLK_STARFIVE_JH7110_SYS
->> +       select AUXILIARY_BUS
->> +       select CLK_STARFIVE_JH71X0
->> +       select RESET_STARFIVE_JH7110
->> +       default CLK_STARFIVE_JH7110_SYS
-> 
-> As far as I can tell the JH7110 boots fine without this driver and it
-> already depends on the _SYS driver above, so please do
-> 
-> default m if SOC_STARFIVE
+On Mon, Feb 27, 2023 at 1:37 PM Marek Vasut <marex@denx.de> wrote:
+>
+> On 2/27/23 19:59, Marco Felsch wrote:
+> [...]
+>
+> >> @@ -344,6 +384,18 @@ &i2c3 {
+> >>      pinctrl-0 = <&pinctrl_i2c3>;
+> >>      status = "okay";
+> >>
+> >> +    wm8960: codec@1a {
+> >> +            #sound-dai-cells = <0>;
+> >> +            compatible = "wlf,wm8960";
+> >> +            reg = <0x1a>;
+> >
+> > The compatible should be the first property followed by the reg
+> > property.
+>
+> See my reply to the mx8mn sound-sai-cells patch , I am not sure here.
+> The rest is fixed in V6.
+>
+> >> +            clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SAI3_MCLK1>;
+> >> +            clock-names = "mclk";
+> >> +            wlf,shared-lrclk;
+> >> +            wlf,hp-cfg = <3 2 3>;
+> >> +            wlf,gpio-cfg = <1 3>;
+> >> +            SPKVDD1-supply = <&reg_audio_pwr>;
+> >> +    };
+> >> +
+> >>      pca6416: gpio@20 {
+> >>              compatible = "ti,tca6416";
+> >>              reg = <0x20>;
+>
+> [...]
+>
+> >> @@ -668,6 +730,18 @@ MX8MP_IOMUXC_UART3_TXD__UART1_DCE_RTS   0x140
+> >>              >;
+> >>      };
+> >>
+> >> +    pinctrl_sai3: sai3grp {
+> >> +            fsl,pins = <
+> >> +                    MX8MP_IOMUXC_SAI3_TXFS__AUDIOMIX_SAI3_TX_SYNC   0xd6
+> >> +                    MX8MP_IOMUXC_SAI3_TXC__AUDIOMIX_SAI3_TX_BCLK    0xd6
+> >> +                    MX8MP_IOMUXC_SAI3_RXD__AUDIOMIX_SAI3_RX_DATA00  0xd6
+> >> +                    MX8MP_IOMUXC_SAI3_TXD__AUDIOMIX_SAI3_TX_DATA00  0xd6
+> >> +                    MX8MP_IOMUXC_SAI3_MCLK__AUDIOMIX_SAI3_MCLK      0xd6
+> >> +                    MX8MP_IOMUXC_SAI3_RXFS__GPIO4_IO28              0xd6
+> >
+> > What is gpio04-io28 used for?
+>
+> Apparently unused, dropped.
 
-OK. Will fix it.
+Isn't that the headphone detect GPIO?
 
-> 
-> And consider helping Conor by changing all the SOC_STARFIVE instances
-> to ARCH_STARFIVE for the next version.
+I think simple-audio-card,hp-det-gpio can reference it.
 
-OK, I see. Will use the ARCH_ symbol instead.
-
-> 
->> +       help
->> +         Say yes here to support the always-on clock controller on the
->> +         StarFive JH7110 SoC.
->> diff --git a/drivers/clk/starfive/Makefile b/drivers/clk/starfive/Makefile
->> index 5ca4e887fb9c..f3df7d957b1e 100644
->> --- a/drivers/clk/starfive/Makefile
->> +++ b/drivers/clk/starfive/Makefile
->> @@ -5,3 +5,4 @@ obj-$(CONFIG_CLK_STARFIVE_JH7100)       += clk-starfive-jh7100.o
->>  obj-$(CONFIG_CLK_STARFIVE_JH7100_AUDIO)        += clk-starfive-jh7100-audio.o
->>
->>  obj-$(CONFIG_CLK_STARFIVE_JH7110_SYS)  += clk-starfive-jh7110-sys.o
->> +obj-$(CONFIG_CLK_STARFIVE_JH7110_AON)  += clk-starfive-jh7110-aon.o
->> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-aon.c b/drivers/clk/starfive/clk-starfive-jh7110-aon.c
->> new file mode 100644
->> index 000000000000..da808dc93048
->> --- /dev/null
->> +++ b/drivers/clk/starfive/clk-starfive-jh7110-aon.c
->> @@ -0,0 +1,156 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * StarFive JH7110 Always-On Clock Driver
->> + *
->> + * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
->> + * Copyright (C) 2022 StarFive Technology Co., Ltd.
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/io.h>
->> +#include <linux/platform_device.h>
->> +
->> +#include <dt-bindings/clock/starfive,jh7110-crg.h>
->> +
->> +#include "clk-starfive-jh71x0.h"
->> +
->> +/* external clocks */
->> +#define JH7110_AONCLK_OSC              (JH7110_AONCLK_END + 0)
->> +#define JH7110_AONCLK_RTC_OSC          (JH7110_AONCLK_END + 1)
->> +#define JH7110_AONCLK_GMAC0_RMII_REFIN (JH7110_AONCLK_END + 2)
->> +#define JH7110_AONCLK_GMAC0_RGMII_RXIN (JH7110_AONCLK_END + 3)
->> +#define JH7110_AONCLK_STG_AXIAHB       (JH7110_AONCLK_END + 4)
->> +#define JH7110_AONCLK_APB_BUS          (JH7110_AONCLK_END + 5)
->> +#define JH7110_AONCLK_GMAC0_GTXCLK     (JH7110_AONCLK_END + 6)
->> +
->> +static const struct jh71x0_clk_data jh7110_aonclk_data[] = {
->> +       /* source */
->> +       JH71X0__DIV(JH7110_AONCLK_OSC_DIV4, "osc_div4", 4, JH7110_AONCLK_OSC),
->> +       JH71X0__MUX(JH7110_AONCLK_APB_FUNC, "apb_func", 2,
->> +                   JH7110_AONCLK_OSC_DIV4,
->> +                   JH7110_AONCLK_OSC),
->> +       /* gmac0 */
->> +       JH71X0_GATE(JH7110_AONCLK_GMAC0_AHB, "gmac0_ahb", 0, JH7110_AONCLK_STG_AXIAHB),
->> +       JH71X0_GATE(JH7110_AONCLK_GMAC0_AXI, "gmac0_axi", 0, JH7110_AONCLK_STG_AXIAHB),
->> +       JH71X0__DIV(JH7110_AONCLK_GMAC0_RMII_RTX, "gmac0_rmii_rtx", 30,
->> +                   JH7110_AONCLK_GMAC0_RMII_REFIN),
->> +       JH71X0_GMUX(JH7110_AONCLK_GMAC0_TX, "gmac0_tx", 0, 2,
->> +                   JH7110_AONCLK_GMAC0_GTXCLK,
->> +                   JH7110_AONCLK_GMAC0_RMII_RTX),
->> +       JH71X0__INV(JH7110_AONCLK_GMAC0_TX_INV, "gmac0_tx_inv", JH7110_AONCLK_GMAC0_TX),
->> +       JH71X0__MUX(JH7110_AONCLK_GMAC0_RX, "gmac0_rx", 2,
->> +                   JH7110_AONCLK_GMAC0_RGMII_RXIN,
->> +                   JH7110_AONCLK_GMAC0_RMII_RTX),
->> +       JH71X0__INV(JH7110_AONCLK_GMAC0_RX_INV, "gmac0_rx_inv", JH7110_AONCLK_GMAC0_RX),
->> +       /* otpc */
->> +       JH71X0_GATE(JH7110_AONCLK_OTPC_APB, "otpc_apb", CLK_IGNORE_UNUSED, JH7110_AONCLK_APB_BUS),
->> +       /* rtc */
->> +       JH71X0_GATE(JH7110_AONCLK_RTC_APB, "rtc_apb", CLK_IGNORE_UNUSED, JH7110_AONCLK_APB_BUS),
->> +       JH71X0__DIV(JH7110_AONCLK_RTC_INTERNAL, "rtc_internal", 1022, JH7110_AONCLK_OSC),
->> +       JH71X0__MUX(JH7110_AONCLK_RTC_32K, "rtc_32k", 2,
->> +                   JH7110_AONCLK_RTC_OSC,
->> +                   JH7110_AONCLK_RTC_INTERNAL),
->> +       JH71X0_GATE(JH7110_AONCLK_RTC_CAL, "rtc_cal", 0, JH7110_AONCLK_OSC),
->> +};
-> 
-> This list also contains instances of the CLK_IGNORE_UNUSED flag. Again
-> please go through them and figure out which clocks are critical and
-> which are fine to turn off when not used.
-
-I had synchronized these clock flags with JH7110 SDK before and I will
-recheck these flags. Thanks.
-
-Best regards,
-Hal
+adam
