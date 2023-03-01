@@ -2,394 +2,166 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C13C7EE23
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 23:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA49FC7EE23
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 23:53:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229792AbjCAXp1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Mar 2023 18:45:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46564 "EHLO
+        id S229819AbjCAXxU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Mar 2023 18:53:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbjCAXp0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Mar 2023 18:45:26 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43ECB2333A;
-        Wed,  1 Mar 2023 15:44:57 -0800 (PST)
-Received: from mercury (unknown [185.254.75.29])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 011E566023A1;
-        Wed,  1 Mar 2023 23:43:53 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1677714233;
-        bh=F+cZ+xDuekZhvpQI6VN6wkOdiaibL0XhB6hG3ryOj8E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dzCs/Tm9RSF8obSF20Si7kicthqzvDNKc0LEyZ/LT3XbIHWQZIVgfzN4ExOkzO8NJ
-         lWUfgMqSTjI9TkKkd040M1hY1jQDw4TxO6favlO1RPjGjfCPWRRLqk6aOslCKf6e3o
-         i2+/FqlsKmBk8NuTMrgB4hdqMg33alpN0gwEz7wtzNDNAFKJpjmnTvhJyVSnpSKzuu
-         hu4bn5l4fnOEMFIDMpShkAoNaJjXy1lU+1fV6CpYhB896ljnVwaJD69yd3bwEmZgek
-         kaBy3VsggBld0JJRhg8GtDkJJpjlysSQxCTVEJqJJXotG5InA+EG6D1sq97Kf2wxxz
-         gsB3GMOtnNeLQ==
-Received: by mercury (Postfix, from userid 1000)
-        id 30A9D1061E59; Thu,  2 Mar 2023 00:43:50 +0100 (CET)
-Date:   Thu, 2 Mar 2023 00:43:50 +0100
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Kalle Valo <kvalo@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-        netdev@vger.kernel.org, linux-can@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux-pm@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Fix SPI and I2C bus node names in examples
-Message-ID: <4c4b6904-69b8-4e33-9c35-a5a6a855528d@mercury.local>
-References: <20230228215433.3944508-1-robh@kernel.org>
+        with ESMTP id S229817AbjCAXxU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Mar 2023 18:53:20 -0500
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16A4A1986
+        for <linux-clk@vger.kernel.org>; Wed,  1 Mar 2023 15:53:19 -0800 (PST)
+Received: by mail-pj1-x102a.google.com with SMTP id cp7-20020a17090afb8700b0023756229427so1047793pjb.1
+        for <linux-clk@vger.kernel.org>; Wed, 01 Mar 2023 15:53:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112; t=1677714798;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4UxHdhijEmH2EyOtzBINRHdLM65Pg4RR1uX5oWHJrGs=;
+        b=iPAqlLP8wwKKO1WdZ9KFnFOEEXb3jqCD4xiFYMj8I5h7L2FZJFLV7XbQtWKWi0wZfP
+         k/ypbOQ8iABno+EV3MAX0pkXD23QER5kEgGQYCZHeMDKxWhflUNZ9haRkBXqGvn1IigX
+         DA8ipR0sGVFIlzUHEJiLhF+fcb6FtbqO3aZudsc7UXrMgeTb2V7PlwBXE38R4R68Dg88
+         CpMrqZ0bt5NSTvo1UQnuH5Do+9VHosSKNcDVOFB7nhRQsEXgqVl18Vez8Q9mRryQZv6N
+         2b2He5XXnDzDmZMCtLbH7py5tdRx51pi8rRl7+wT+eQpfxzSsAKoXFjRSdh/bXOhFJcW
+         tiig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677714798;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4UxHdhijEmH2EyOtzBINRHdLM65Pg4RR1uX5oWHJrGs=;
+        b=hn8Mn62XEg4E2XXpC/O7c/3BIWL4Zraamnvp27/vtqk/q/eJANjLJRXUPie8mQ/L4g
+         xOYuMBLBMGFqVgI0JcRaRhjorU2/diSmuV/Qd4nr6SoyyhXFkHR6GpzWW/5uCWPYKFtP
+         aC1P5p/9nq67eQvG55e96WT9lxEUqz7Gz8fGday9juIsVJYWW2p7D3ZnvpovT9WxAc/g
+         Uvg3/rSNuUsfewqz72IRkjJRwHwucwxty7Eg31d/fbkTzAfNW3o3Xgm/3iIn+FAwSOFK
+         uvZE81HMHicNdcvbdGuJJj7ScDNQHymgeqVu5GYR4txQpJZGFIlua0n9wA1xpTfItcWD
+         0ChQ==
+X-Gm-Message-State: AO0yUKVt38YXqFmpdaF5mSyrGq7BKpAFBx+Ms5z2lr5QY14g4q8EsWNF
+        5IHqzDb94G5evfOMy5z5IOJDxFVKSvDtdTKCQdIzaatNagranq1X
+X-Google-Smtp-Source: AK7set8OEP8qZ1fXhp8dBKMmkZESQT0zLW4ve3iPhJpUSUr5plbBBdGZeGBMNl9ORkTSS3FmOLJAAq3lrDXAhUnoAo0=
+X-Received: by 2002:a17:903:2601:b0:19a:fdca:e3e9 with SMTP id
+ jd1-20020a170903260100b0019afdcae3e9mr3055313plb.10.1677714798260; Wed, 01
+ Mar 2023 15:53:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="iicycb2qvy4rthvm"
-Content-Disposition: inline
-In-Reply-To: <20230228215433.3944508-1-robh@kernel.org>
+References: <20230301012506.1401883-1-saravanak@google.com>
+ <31ae9957edf319416d4551f14eba2071.sboyd@kernel.org> <7cca9a24b24d849565cd6a4f40ddbee9.sboyd@kernel.org>
+ <CAGETcx82r-YC7cBUY5xa57FCEOUP_BeGNp2zURG=HUJkUMSVPA@mail.gmail.com> <a3bde7aa1793c20638cbf2749f3209a2.sboyd@kernel.org>
+In-Reply-To: <a3bde7aa1793c20638cbf2749f3209a2.sboyd@kernel.org>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Wed, 1 Mar 2023 15:52:41 -0800
+Message-ID: <CAGETcx8w=Fi3QSw7+i6QoNeKF03O8seL+urhZBGZuodhUGgL7g@mail.gmail.com>
+Subject: Re: [PATCH v1] clk: Mark a fwnode as initialized when using
+ CLK_OF_DECLARE* macros
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        kernel-team@android.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Wed, Mar 1, 2023 at 2:45=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wrot=
+e:
+>
+> Quoting Saravana Kannan (2023-03-01 13:25:13)
+> > On Wed, Mar 1, 2023 at 12:48=E2=80=AFPM Stephen Boyd <sboyd@kernel.org>=
+ wrote:
+> > >
+> > > Quoting Stephen Boyd (2023-03-01 12:40:03)
+> > > > Quoting Saravana Kannan (2023-02-28 17:25:06)
+> > > > > The CLK_OF_DECLARE macros sometimes prevent the creation of struc=
+t
+> > > > > devices for the device node being handled. It does this by
+> > > > > setting/clearing OF_POPULATED flag. This can block the probing of=
+ some
+> > > > > devices because fw_devlink will block the consumers of this node =
+till a
+> > > > > struct device is created and probed.
+> > > >
+> > > > Why can't you use CLK_OF_DECLARE_DRIVER()?
+> > >
+> > > Ah I misunderstood. CLK_OF_DECLARE() _always_ prevents the creation o=
+f a
+> > > struct device for the device node being handled. The 'sometimes' thre=
+w
+> > > me off.
+> >
+> > The "sometimes" is because dependending on the macro we go back and
+> > clear the flag.
+>
+> Ok. Maybe instead of this paragraph you can explain the problem being
+> fixed, specifically ux500 container node not being marked as
+> "initialized" and that preventing consumer devices from probing. That
+> would help the reviewer understand the specific problem you're solving.
 
---iicycb2qvy4rthvm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ack
 
-Hi,
+>
+> >
+> > > >
+> > > > >
+> > > > > Set the appropriate fwnode flags when these device nodes are init=
+ialized
+> > > > > by the clock framework and when OF_POPULATED flag is set/cleared.=
+ This
+> > > > > will allow fw_devlink to handle the dependencies correctly.
+>
+> This is the "what" and not the "why".
+>
+> > >
+> > > How is this different from commit 3c9ea42802a1 ("clk: Mark fwnodes wh=
+en
+> > > their clock provider is added/removed")? Do you have some user of
+> > > CLK_OF_DECLARE() that isn't registering an OF clk provider?
+> >
+> > So it looks like drivers don't always register the same node used for
+> > CLK_OF_DECLARE() as the clock provider. So, this is covering for the
+> > case when that's not true.
+>
+> Please add this information to the commit text. Otherwise the patch
+> looks entirely unnecessary.
 
-On Tue, Feb 28, 2023 at 03:54:33PM -0600, Rob Herring wrote:
-> SPI and I2C bus node names are expected to be "spi" or "i2c",
-> respectively, with nothing else, a unit-address, or a '-N' index. A
-> pattern of 'spi0' or 'i2c0' or similar has crept in. Fix all these
-> cases. Mostly scripted with the following commands:
->=20
-> git grep -l '\si2c[0-9] {' Documentation/devicetree/ | xargs sed -i -e 's=
-/i2c[0-9] {/i2c {/'
-> git grep -l '\sspi[0-9] {' Documentation/devicetree/ | xargs sed -i -e 's=
-/spi[0-9] {/spi {/'
->=20
-> With this, a few errors in examples were exposed and fixed.
->=20
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
+Ack.
 
-Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com> # for power-s=
-upply
+> If the node used for CLK_OF_DECLARE() isn't the same as the node as the
+> clock provider then how are we certain that the CLK_OF_DECLARE() probe
+> function has actually registered a clk provider?
 
--- Sebastian
+Whether it's registered or not, we can't wait for a struct device to
+be created for it. That's what the flag is about. device link can't
+work without devices.
 
-=2E..
+> Should we simply remove the calls to fwnode_dev_initialized() in the OF
+> clk provider functions
 
->  .../devicetree/bindings/power/supply/bq2415x.yaml |  2 +-
->  .../devicetree/bindings/power/supply/bq24190.yaml |  2 +-
->  .../devicetree/bindings/power/supply/bq24257.yaml |  4 ++--
->  .../devicetree/bindings/power/supply/bq24735.yaml |  2 +-
->  .../devicetree/bindings/power/supply/bq2515x.yaml |  2 +-
->  .../devicetree/bindings/power/supply/bq25890.yaml |  2 +-
->  .../devicetree/bindings/power/supply/bq25980.yaml |  2 +-
->  .../devicetree/bindings/power/supply/bq27xxx.yaml | 15 ++++++++-------
->  .../bindings/power/supply/lltc,ltc294x.yaml       |  2 +-
->  .../bindings/power/supply/ltc4162-l.yaml          |  2 +-
->  .../bindings/power/supply/maxim,max14656.yaml     |  2 +-
->  .../bindings/power/supply/maxim,max17040.yaml     |  4 ++--
->  .../bindings/power/supply/maxim,max17042.yaml     |  2 +-
->  .../bindings/power/supply/richtek,rt9455.yaml     |  2 +-
->  .../bindings/power/supply/ti,lp8727.yaml          |  2 +-
+Not all clock providers are going through CLK_OF_DECLARE(). There are
+so many ways to register a clock provider. So it's good to cover all
+those cases and leave those existing calls in.
 
-=2E..
+> and put the call in CLK_OF_DECLARE() (and
+> specifically _not_ CLK_OF_DECLARE_DRIVER) as this patch does?
 
-> diff --git a/Documentation/devicetree/bindings/power/supply/bq2415x.yaml =
-b/Documentation/devicetree/bindings/power/supply/bq2415x.yaml
-> index f7287ffd4b12..13822346e708 100644
-> --- a/Documentation/devicetree/bindings/power/supply/bq2415x.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/bq2415x.yaml
-> @@ -77,7 +77,7 @@ additionalProperties: false
-> =20
->  examples:
->    - |
-> -    i2c0 {
-> +    i2c {
->        #address-cells =3D <1>;
->        #size-cells =3D <0>;
-> =20
-> diff --git a/Documentation/devicetree/bindings/power/supply/bq24190.yaml =
-b/Documentation/devicetree/bindings/power/supply/bq24190.yaml
-> index 001c0ffb408d..d3ebc9de8c0b 100644
-> --- a/Documentation/devicetree/bindings/power/supply/bq24190.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/bq24190.yaml
-> @@ -75,7 +75,7 @@ examples:
->        charge-term-current-microamp =3D <128000>;
->      };
-> =20
-> -    i2c0 {
-> +    i2c {
->        #address-cells =3D <1>;
->        #size-cells =3D <0>;
-> =20
-> diff --git a/Documentation/devicetree/bindings/power/supply/bq24257.yaml =
-b/Documentation/devicetree/bindings/power/supply/bq24257.yaml
-> index cc45939d385b..eb064bbf876c 100644
-> --- a/Documentation/devicetree/bindings/power/supply/bq24257.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/bq24257.yaml
-> @@ -84,7 +84,7 @@ examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
->      #include <dt-bindings/interrupt-controller/irq.h>
-> -    i2c0 {
-> +    i2c {
->        #address-cells =3D <1>;
->        #size-cells =3D <0>;
-> =20
-> @@ -104,7 +104,7 @@ examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
->      #include <dt-bindings/interrupt-controller/irq.h>
-> -    i2c0 {
-> +    i2c {
->        #address-cells =3D <1>;
->        #size-cells =3D <0>;
-> =20
-> diff --git a/Documentation/devicetree/bindings/power/supply/bq24735.yaml =
-b/Documentation/devicetree/bindings/power/supply/bq24735.yaml
-> index 388ee16f8a1e..af41e7ccd784 100644
-> --- a/Documentation/devicetree/bindings/power/supply/bq24735.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/bq24735.yaml
-> @@ -77,7 +77,7 @@ examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
-> =20
-> -    i2c0 {
-> +    i2c {
->        #address-cells =3D <1>;
->        #size-cells =3D <0>;
-> =20
-> diff --git a/Documentation/devicetree/bindings/power/supply/bq2515x.yaml =
-b/Documentation/devicetree/bindings/power/supply/bq2515x.yaml
-> index 1a1b240034ef..845822c87f2a 100644
-> --- a/Documentation/devicetree/bindings/power/supply/bq2515x.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/bq2515x.yaml
-> @@ -73,7 +73,7 @@ examples:
->        constant-charge-voltage-max-microvolt =3D <4000000>;
->      };
->      #include <dt-bindings/gpio/gpio.h>
-> -    i2c0 {
-> +    i2c {
->        #address-cells =3D <1>;
->        #size-cells =3D <0>;
-> =20
-> diff --git a/Documentation/devicetree/bindings/power/supply/bq25890.yaml =
-b/Documentation/devicetree/bindings/power/supply/bq25890.yaml
-> index dae27e93af09..0ad302ab2bcc 100644
-> --- a/Documentation/devicetree/bindings/power/supply/bq25890.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/bq25890.yaml
-> @@ -102,7 +102,7 @@ unevaluatedProperties: false
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/irq.h>
-> -    i2c0 {
-> +    i2c {
->        #address-cells =3D <1>;
->        #size-cells =3D <0>;
-> =20
-> diff --git a/Documentation/devicetree/bindings/power/supply/bq25980.yaml =
-b/Documentation/devicetree/bindings/power/supply/bq25980.yaml
-> index b687b8bcd705..b70ce8d7f86c 100644
-> --- a/Documentation/devicetree/bindings/power/supply/bq25980.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/bq25980.yaml
-> @@ -95,7 +95,7 @@ examples:
->      };
->      #include <dt-bindings/gpio/gpio.h>
->      #include <dt-bindings/interrupt-controller/irq.h>
-> -    i2c0 {
-> +    i2c {
->        #address-cells =3D <1>;
->        #size-cells =3D <0>;
-> =20
-> diff --git a/Documentation/devicetree/bindings/power/supply/bq27xxx.yaml =
-b/Documentation/devicetree/bindings/power/supply/bq27xxx.yaml
-> index 347d4433adc5..309ea33b5b25 100644
-> --- a/Documentation/devicetree/bindings/power/supply/bq27xxx.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/bq27xxx.yaml
-> @@ -75,15 +75,16 @@ additionalProperties: false
-> =20
->  examples:
->    - |
-> -    i2c0 {
-> +    bat: battery {
-> +      compatible =3D "simple-battery";
-> +      voltage-min-design-microvolt =3D <3200000>;
-> +      energy-full-design-microwatt-hours =3D <5290000>;
-> +      charge-full-design-microamp-hours =3D <1430000>;
-> +    };
-> +
-> +    i2c {
->        #address-cells =3D <1>;
->        #size-cells =3D <0>;
-> -      bat: battery {
-> -        compatible =3D "simple-battery";
-> -        voltage-min-design-microvolt =3D <3200000>;
-> -        energy-full-design-microwatt-hours =3D <5290000>;
-> -        charge-full-design-microamp-hours =3D <1430000>;
-> -      };
-> =20
->        bq27510g3: fuel-gauge@55 {
->          compatible =3D "ti,bq27510g3";
-> diff --git a/Documentation/devicetree/bindings/power/supply/lltc,ltc294x.=
-yaml b/Documentation/devicetree/bindings/power/supply/lltc,ltc294x.yaml
-> index 774582cd3a2c..e68a97cb49fe 100644
-> --- a/Documentation/devicetree/bindings/power/supply/lltc,ltc294x.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/lltc,ltc294x.yaml
-> @@ -54,7 +54,7 @@ additionalProperties: false
-> =20
->  examples:
->    - |
-> -    i2c0 {
-> +    i2c {
->        #address-cells =3D <1>;
->        #size-cells =3D <0>;
->        battery@64 {
-> diff --git a/Documentation/devicetree/bindings/power/supply/ltc4162-l.yam=
-l b/Documentation/devicetree/bindings/power/supply/ltc4162-l.yaml
-> index cfffaeef8b09..29d536541152 100644
-> --- a/Documentation/devicetree/bindings/power/supply/ltc4162-l.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/ltc4162-l.yaml
-> @@ -54,7 +54,7 @@ additionalProperties: false
-> =20
->  examples:
->    - |
-> -    i2c0 {
-> +    i2c {
->        #address-cells =3D <1>;
->        #size-cells =3D <0>;
->        charger: battery-charger@68 {
-> diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max1465=
-6.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max14656.yaml
-> index 711066b8cdb9..b444b799848e 100644
-> --- a/Documentation/devicetree/bindings/power/supply/maxim,max14656.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/maxim,max14656.yaml
-> @@ -32,7 +32,7 @@ additionalProperties: false
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/irq.h>
-> -    i2c0 {
-> +    i2c {
->        #address-cells =3D <1>;
->        #size-cells =3D <0>;
-> =20
-> diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max1704=
-0.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max17040.yaml
-> index 3a529326ecbd..2627cd3eed83 100644
-> --- a/Documentation/devicetree/bindings/power/supply/maxim,max17040.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/maxim,max17040.yaml
-> @@ -68,7 +68,7 @@ unevaluatedProperties: false
-> =20
->  examples:
->    - |
-> -    i2c0 {
-> +    i2c {
->        #address-cells =3D <1>;
->        #size-cells =3D <0>;
-> =20
-> @@ -82,7 +82,7 @@ examples:
->      };
->    - |
->      #include <dt-bindings/interrupt-controller/irq.h>
-> -    i2c0 {
-> +    i2c {
->        #address-cells =3D <1>;
->        #size-cells =3D <0>;
-> =20
-> diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max1704=
-2.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml
-> index 64a0edb7bc47..085e2504d0dc 100644
-> --- a/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml
-> @@ -69,7 +69,7 @@ additionalProperties: false
-> =20
->  examples:
->    - |
-> -    i2c0 {
-> +    i2c {
->        #address-cells =3D <1>;
->        #size-cells =3D <0>;
-> =20
-> diff --git a/Documentation/devicetree/bindings/power/supply/richtek,rt945=
-5.yaml b/Documentation/devicetree/bindings/power/supply/richtek,rt9455.yaml
-> index 27bebc1757ba..07e38be39f1b 100644
-> --- a/Documentation/devicetree/bindings/power/supply/richtek,rt9455.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/richtek,rt9455.yaml
-> @@ -68,7 +68,7 @@ additionalProperties: false
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/irq.h>
-> -    i2c0 {
-> +    i2c {
->        #address-cells =3D <1>;
->        #size-cells =3D <0>;
-> =20
-> diff --git a/Documentation/devicetree/bindings/power/supply/ti,lp8727.yam=
-l b/Documentation/devicetree/bindings/power/supply/ti,lp8727.yaml
-> index ce6fbdba8f6b..3a9e4310b433 100644
-> --- a/Documentation/devicetree/bindings/power/supply/ti,lp8727.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/ti,lp8727.yaml
-> @@ -61,7 +61,7 @@ additionalProperties: false
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/irq.h>
-> -    i2c0 {
-> +    i2c {
->        #address-cells =3D <1>;
->        #size-cells =3D <0>;
-> =20
+Between the time the clk provider is initialized and a new struct
+device being created, we still don't want to block consumers from
+probing because they might be dependent on the already registered
+early clocks. So, we should set the flag in the DRIVER case too. And
+then we clear it once it has been initialized because we allow the
+struct device to be populated and it's okay to wait for those.
 
-=2E..
+> What about
+> bindings that are registering clks early with CLK_OF_DECLARE_DRIVER()
+> and then probing something like a reset controller later with a platform
+> device created by an MFD matching the same compatible as the
+> CLK_OF_DECLARE_DRIVER() compatible?
 
---iicycb2qvy4rthvm
-Content-Type: application/pgp-signature; name="signature.asc"
+I think I answered it above?
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmP/4zIACgkQ2O7X88g7
-+pqxgBAAj3F4gb6RlI0Z6x4ZQhCWN+DLukelA2aUhkYhJyBC2UXCy5KWL1cNzB6P
-Y/hjl2FRmX0zNrcfRZ8kPynFwBHGbqcob8mgiAmOxCCFjczYKEIBMDbV3dZ6RDPA
-gz2uAVm2ioYkgXNjee6TC9knDQ34wmmkR1MwV2u7V4YVH/Xvxu164dQE1ZAeMs8I
-dXJByJltLKNqRQtOQabhGSP3+6//tZ3Cu/b+Zmdk+f+r+VTvvsWH+rJlxLKJbiE3
-znCN7kp3Ty1yvzd8PgM+MDt0o4mXlnfcfX5Vb+PtVTwMMJVtHvCFDYZL2Z71mwQr
-8R49nVhm4pkHMpI5nZz/eYXmrsU/hpRBSVbLhd+oSNI76YqPpm/+xGWKF5JZgMIm
-YAxRZjxs45EP2ST8nMa7/SYXygYCp9qekwcN39+IV2LSgRkjo1Iz+qJn5sOXvYMb
-dJ/q0IGA8cWQ4lG3LNzwAVkfQMzfw8OFFxbTVxDFDVBM/mAHr06M86TGcLyGEYxa
-r5YDSv8596Ep4y67xHrdzXCLASbYgQANlOBoNkX/ZMm3YcCGXsHSl/DQdGw5KSEr
-4zeoAsdANn6jGsLJurLrMFXTXcKMUEk9vHjE+N+bEjBxrMFQ9QyIk9d5MlCdp1Tn
-ptHuPPrunQ82d7+YC/fRCc28y/rDpEOlrFfdXej3Z3IJIkLQusE=
-=cMEP
------END PGP SIGNATURE-----
-
---iicycb2qvy4rthvm--
+-Saravana
