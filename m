@@ -2,203 +2,174 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7DA7C64EC7
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 12:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E564EC64EC7
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 12:58:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229793AbjCAMrw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Mar 2023 07:47:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50268 "EHLO
+        id S229563AbjCAM6O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Mar 2023 07:58:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229635AbjCAMrw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Mar 2023 07:47:52 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBD713D0A7
-        for <linux-clk@vger.kernel.org>; Wed,  1 Mar 2023 04:47:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1677674832;
+        with ESMTP id S229498AbjCAM6N (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Mar 2023 07:58:13 -0500
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C9581423A;
+        Wed,  1 Mar 2023 04:58:10 -0800 (PST)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 41E0F240006;
+        Wed,  1 Mar 2023 12:58:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1677675489;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=PrHWi0O3bp5TW073HxIoo2GqwQh60ydUW1vLbyoS8FU=;
-        b=VTPJg8i+eYq5rBgoF9XUbb1GuYajScIVeggUcrjkeI32WpQI3RS82/lBZAsq8oUj5cNyyU
-        E2AUqjrO63uzQlZ7H8293k4dZx2/xUL9PL/AcmBTEL52x7QfEweiguAlXhYCTO3FRE77fu
-        /vjPNFXUOAyeR/OFdTI+Hqjg1G4KFe4=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-578-lhaW2D_DOFiwwLDAl5MdLg-1; Wed, 01 Mar 2023 07:47:10 -0500
-X-MC-Unique: lhaW2D_DOFiwwLDAl5MdLg-1
-Received: by mail-ed1-f71.google.com with SMTP id c1-20020a0564021f8100b004acbe232c03so18750022edc.9
-        for <linux-clk@vger.kernel.org>; Wed, 01 Mar 2023 04:47:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PrHWi0O3bp5TW073HxIoo2GqwQh60ydUW1vLbyoS8FU=;
-        b=iZ2vtaU3GERBqsjE8xoQWEZiiCC0EYVsAQkW2fZcmR2iZmlcyVcPd5odK7dpIqsiAJ
-         FmajDLk+b+pswaGq4Nt/y/GBNotnxIj7gAqLdgJWLn/imAWY1fmgiXFvUKupX+WgWIbj
-         r96Wz0bn4qCNJSgxL1CSIYrTyoXnpG8W4HU1IeB2uOkfSoY4d3b+HFfeUM/PiDJFD9Rg
-         18lRZyF2/1ngLDoME2GBsayUk9A/d7pPcimW4e2uCOwumUSjqnekcY8pDBwfdu+NiMj3
-         tgVeK800thpl7gSkvdlWy48CokuqaMrQ8N+Xo8+g9SMlPwNCUQHWDoM7oETwIZjREXWb
-         eMPA==
-X-Gm-Message-State: AO0yUKVeKMxY36IALCGCQ2yKF8l90yj7XfmQaX0aoKmILSRqLf+A2UH4
-        GiA8Yuzzcv2/1vS7IqsQ79iH+6Q98yVShFjdTJNKiFcDIPUz2SObivq3cez4TAk3Jr7aoIJgxf1
-        gc/d1q5208D6UUERviYbw
-X-Received: by 2002:aa7:d6c4:0:b0:4af:59c0:744a with SMTP id x4-20020aa7d6c4000000b004af59c0744amr7757587edr.24.1677674829575;
-        Wed, 01 Mar 2023 04:47:09 -0800 (PST)
-X-Google-Smtp-Source: AK7set/gegt3wNPFIA5UaAFSkM0H/Cu2JETEa5VzADkRpzuOeLZLY8c4YHH4dVV9FidRJQJWbeU9sQ==
-X-Received: by 2002:aa7:d6c4:0:b0:4af:59c0:744a with SMTP id x4-20020aa7d6c4000000b004af59c0744amr7757547edr.24.1677674829268;
-        Wed, 01 Mar 2023 04:47:09 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id b18-20020a50b412000000b004bda465da32sm374934edh.1.2023.03.01.04.47.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Mar 2023 04:47:08 -0800 (PST)
-Message-ID: <5bb49015-0a9c-5b9d-b22c-38011439c984@redhat.com>
-Date:   Wed, 1 Mar 2023 13:47:07 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 0/8] drivers: select REGMAP instead of depending on it
-Content-Language: en-US, nl
-To:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
-Cc:     Andrew Jeffery <andrew@aj.id.au>, Corey Minyard <minyard@acm.org>,
-        openipmi-developer@lists.sourceforge.net,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Riku Voipio <riku.voipio@linaro.org>,
+        bh=2mQBBpt3PKubIpiBGD9ZENW/fR8oM7+9T5/Mly1KOjE=;
+        b=f2DY5eZ6lUEXFlR6KHZI6SHqf9DAdqtYFXhtJCvpvy2ub67E6g9q+jdesZqfY5C/rh1sQT
+        L0SDRBjd8gfAIhpF4SwTVD9++/4lVdQhi3vTc1nNWd2nUR/cO2rgxkrACmb6CaQwndOH0t
+        CpqLft0Ntb4BTu7PfkWd/McZe+R2UnbncI8NrMuPjNm9o1wENkDOmFd1XGCPx2QxEDLLh4
+        jowURkqGL0Os9NudWKac+Q60K0Q5f1gGQyV/bchg7elmaE40yROhGILh7Q2861b06ixZMx
+        Dscoz1P+Q6nTPaGP9A3JvMTie2C2gA+wkYsqBZwVv4VGFny4y21Ec03TJqblew==
+Date:   Wed, 1 Mar 2023 13:58:08 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Ralph Siemsen <ralph.siemsen@linaro.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Michael Walle <michael@walle.cc>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        linux-gpio@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
-        Darren Hart <dvhart@infradead.org>,
-        Michael Shych <michaelsh@nvidia.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        platform-driver-x86@vger.kernel.org,
-        Yegnesh S Iyer <yegnesh.s.iyer@intel.com>,
-        Bin Gao <bin.gao@intel.com>, Zhang Rui <rui.zhang@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>, linux-pm@vger.kernel.org,
-        Oskar Senft <osk@google.com>, linux-serial@vger.kernel.org
-References: <20230226053953.4681-1-rdunlap@infradead.org>
- <7dd27ec5-0619-128d-8407-6711a05ef271@redhat.com>
- <6a95a337-2972-427f-635d-5ef4e91a82fa@infradead.org>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <6a95a337-2972-427f-635d-5ef4e91a82fa@infradead.org>
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH 4/4] clk: renesas: r9a06g032: improve clock tables
+Message-ID: <20230301135808.6fefe5b9@xps-13>
+In-Reply-To: <20230227183937.377612-5-ralph.siemsen@linaro.org>
+References: <20230227183937.377612-1-ralph.siemsen@linaro.org>
+        <20230227183937.377612-5-ralph.siemsen@linaro.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hi Ralph,
 
-On 2/27/23 17:07, Randy Dunlap wrote:
-> 
-> 
-> On 2/27/23 01:31, Hans de Goede wrote:
->> Hi Randy,
->>
->> On 2/26/23 06:39, Randy Dunlap wrote:
->>> REGMAP is a hidden (not user visible) symbol. Users cannot set it
->>> directly thru "make *config", so drivers should select it instead of
->>> depending on it if they need it.
->>>
->>> Consistently using "select" or "depends on" can also help reduce
->>> Kconfig circular dependency issues.
->>>
->>> REGMAP is selected 94 times and is depended on 11 times in
->>> current linux-next. Eliminate the uses of "depends on" by
->>> converting them to "select".
->>
->> Thank you for your work on this. Mixing of depends on vs select
->> is a real problem with many Kconfig symbols.
->>
->>>  [PATCH 1/8] ipmi: ASPEED_BT_IPMI_BMC: select REGMAP_MMIO instead of depending on it
->>>  [PATCH 2/8] clk: HI655X: select REGMAP instead of depending on it
->>>  [PATCH 3/8] gpio: GPIO_REGMAP: select REGMAP instead of depending on it
->>>  [PATCH 4/8] leds: TI_LMU_COMMON: select REGMAP instead of depending on it
->>>  [PATCH 5/8] platform: mellanox: select REGMAP instead of depending on it
->>>  [PATCH 6/8] platform: x86: MLX_PLATFORM: select REGMAP instead of depending on it
->>>  [PATCH 7/8] thermal: intel: BXT_PMIC: select REGMAP instead of depending on it
->>>  [PATCH 8/8] serial: 8250: ASPEED_VUART: select REGMAP instead of depending on it
->>
->> For patch 5/8 and 6/8, do you want me to merge them through the pdx86
->> (platform-drivers-x86) tree, or do you plan to merge this whole series
->> in one go through some other tree?
-> 
-> Hi Hans,
-> Please merge them thru the pdx86 tree.
+ralph.siemsen@linaro.org wrote on Mon, 27 Feb 2023 13:39:36 -0500:
 
-Ok, I've applied patch 5/8 + 6/8 to my review-hans branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+> Each entry in the clock table specifies a number of individual bits in
+> registers, for contolling clock reset, gaiting, etc. These reg/bit were
+> packed into a u16 to save space. The combined value is difficult to
+> understand when reviewing the clock table entries.
 
-I'll rebase that branch once 6.3-rc1 is out and then push the rebased
-patch to the fixes branch and include it in my next 6.3 fixes pull-req
-to Linus.
+I totally agree.
 
-Regards,
+> Introduce a "struct regbit" which still occupies only 16 bits, but
+> allows the register and bit values to be specified explicitly. Convert
+> all previous uses of u16 for reg/bit into "struct regbit".
 
-Hans
+I was sure the structure would be bigger than 2B but yeah, gcc seems to
+keep it small. However if at some point we add another member, we
+might consider packing it.
 
+> The bulk of this patch converts the clock table to use struct regbit,
+> making use of the RB() helper macro. The conversion was automated by
+> script, and as a further verification, the compiled binary of the table
+> was compared before/after the change (with objdump -D).
 
+I will trust your tool on the conversion.
 
+> The clk_rdesc_set() function now checks for zero reg/bit internally.
+> This allows callers of that function to remove those checks.
+>=20
+> Signed-off-by: Ralph Siemsen <ralph.siemsen@linaro.org>
+> ---
+>=20
+>  drivers/clk/renesas/r9a06g032-clocks.c | 564 ++++++++++++++++++-------
+>  1 file changed, 410 insertions(+), 154 deletions(-)
+>=20
+> diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas=
+/r9a06g032-clocks.c
+> index 1b7801f14c8c..f5d12d8f1b22 100644
+> --- a/drivers/clk/renesas/r9a06g032-clocks.c
+> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
+> @@ -27,6 +27,34 @@
+> =20
+>  #define R9A06G032_SYSCTRL_DMAMUX 0xA0
+> =20
+> +/**
+> + * struct regbit - describe one bit in a register
+> + * @reg: offset of register relative to base address,
+> + *          expressed in units of 32-bit words (not bytes),
+> + * @bit: which bit (0 to 31) in the register
+> + *
+> + * This structure is used to compactly encode the location
+> + * of a single bit in a register. Five bits are needed to
+> + * encode the bit number. With uint16_t data type, this
+> + * leaves 11 bits to encode a register offset up to 2047.
+> + *
+> + * Since registers are aligned on 32-bit boundaries, the
+> + * offset will be specified in 32-bit words rather than bytes.
+> + * This allows encoding an offset up to 0x1FFC (8188) bytes.
+> + *
+> + * Helper macro RB() takes care of converting the register
+> + * offset from bytes to 32-bit words.
+> + */
+> +struct regbit {
+> +	u16 reg:11;
+> +	u16 bit:5;
+> +};
+> +
+> +#define RB(_reg, _bit) ((struct regbit) { \
+> +	.reg =3D (_reg) >> 2, \
 
+Here and below, I would really prefer a "* 4" and a "/ 4". IMHO
+shifts should stay reserved to bit operations. Here, what we want
+is to convert a 1-byte offset into a 4-byte offset, thus the operation
+is a multiplication. Even in -O0, all compilers would convert this into
+a shift operation in the end. I believe we shall not sacrifice
+readability in situations like that, were the optimization is trivial
+for the tools.
 
->>>
->>> diffstat:
->>>  drivers/char/ipmi/Kconfig         |    3 ++-
->>>  drivers/clk/Kconfig               |    2 +-
->>>  drivers/gpio/Kconfig              |    2 +-
->>>  drivers/leds/Kconfig              |    2 +-
->>>  drivers/platform/mellanox/Kconfig |    9 ++++-----
->>>  drivers/platform/x86/Kconfig      |    3 ++-
->>>  drivers/thermal/intel/Kconfig     |    3 ++-
->>>  drivers/tty/serial/8250/Kconfig   |    3 ++-
->>>  8 files changed, 15 insertions(+), 12 deletions(-)
->>>
->>> Cc: Andrew Jeffery <andrew@aj.id.au>
->>> Cc: Corey Minyard <minyard@acm.org>
->>> Cc: openipmi-developer@lists.sourceforge.net
->>> Cc: Arnd Bergmann <arnd@arndb.de>
->>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>> Cc: Riku Voipio <riku.voipio@linaro.org>
->>> Cc: Stephen Boyd <sboyd@kernel.org>
->>> Cc: Michael Turquette <mturquette@baylibre.com>
->>> Cc: linux-clk@vger.kernel.org
->>> Cc: Michael Walle <michael@walle.cc>
->>> Cc: Linus Walleij <linus.walleij@linaro.org>
->>> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
->>> Cc: linux-gpio@vger.kernel.org
->>> Cc: Dan Murphy <dmurphy@ti.com>
->>> Cc: Pavel Machek <pavel@ucw.cz>
->>> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->>> Cc: Lee Jones <lee@kernel.org>
->>> Cc: linux-leds@vger.kernel.org
->>> Cc: Darren Hart <dvhart@infradead.org>
->>> Cc: Hans de Goede <hdegoede@redhat.com>
->>> Cc: Michael Shych <michaelsh@nvidia.com>
->>> Cc: Mark Gross <markgross@kernel.org>
->>> Cc: Vadim Pasternak <vadimp@nvidia.com>
->>> Cc: platform-driver-x86@vger.kernel.org
->>> Cc: Yegnesh S Iyer <yegnesh.s.iyer@intel.com>
->>> Cc: Bin Gao <bin.gao@intel.com>
->>> Cc: Zhang Rui <rui.zhang@intel.com>
->>> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
->>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->>> Cc: Amit Kucheria <amitk@kernel.org>
->>> Cc: linux-pm@vger.kernel.org
->>> Cc: Oskar Senft <osk@google.com>
->>> Cc: linux-serial@vger.kernel.org
->>>
->>
-> 
+> +	.bit =3D (_bit) \
+> +})
 
+[...]
+
+> =20
+>  struct r9a06g032_priv {
+> @@ -419,26 +677,30 @@ int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val)
+>  }
+>  EXPORT_SYMBOL_GPL(r9a06g032_sysctrl_set_dmamux);
+> =20
+> -/* register/bit pairs are encoded as an uint16_t */
+> -static void
+> -clk_rdesc_set(struct r9a06g032_priv *clocks,
+> -	      u16 one, unsigned int on)
+> +static void clk_rdesc_set(struct r9a06g032_priv *clocks,
+> +			  struct regbit rb, unsigned int on)
+>  {
+> -	u32 __iomem *reg =3D clocks->reg + (4 * (one >> 5));
+> -	u32 val =3D readl(reg);
+> +	u32 offset =3D rb.reg << 2;
+
+Same here.
+
+> +	u32 bit =3D rb.bit;
+> +	u32 __iomem *reg;
+> +	u32 val;
+> =20
+> -	val =3D (val & ~(1U << (one & 0x1f))) | ((!!on) << (one & 0x1f));
+> +	if (!offset && !bit)
+
+'bit' being an offset, is it correct to refuse writing BIT(0) ?
+
+> +		return;
+> +
+> +	reg =3D clocks->reg + offset;
+> +	val =3D readl(reg);
+
+Could you unify the how reg is accessed here and below? I think I have
+a slight preference for:
+
+u32 __iomem *reg =3D clocks->reg + (rb.reg * 4);
+
+Thanks,
+Miqu=C3=A8l
