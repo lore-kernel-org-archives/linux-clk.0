@@ -2,88 +2,203 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5A7C64ED6
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 12:11:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7DA7C64EC7
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 12:47:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229561AbjCAMLN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Mar 2023 07:11:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48450 "EHLO
+        id S229793AbjCAMrw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Mar 2023 07:47:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229525AbjCAMLN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Mar 2023 07:11:13 -0500
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0210839CC6
-        for <linux-clk@vger.kernel.org>; Wed,  1 Mar 2023 04:11:12 -0800 (PST)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-536b7ffdd34so359824257b3.6
-        for <linux-clk@vger.kernel.org>; Wed, 01 Mar 2023 04:11:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gIjv8wTxws2tEgCoRyOLyxbnH/NFNqoZJZnY4FJxenU=;
-        b=Nf1ctbON/Xa+HGQqhkTja6yP7nrbZJxwW1ZEKkvtHotZ/zGBzwRlUj4+eIaCjelQ4O
-         NWXIry4I1qeSRin/7bhObDRaARldmmgXJSVEVPay5BqoT5GaF3hRNSEdK9UqlqX5iHD+
-         3EWVofJ6IJac3Y/iszjbgQwrweq6qI+BM8e8lZdjF/vEdfPqx7GDFSG8ypMrt2qL+b2D
-         pCTk9q1JKJ5yjda6FctUFUDAiDfG5mBTB1iF2T3DFhAlP+IHse3f+Wz4qFQOIrw1OF7V
-         vDviwWRecl7xI/Zxm6WDTDsVaSju+V5TybyBrNJeozBw++gJQUKkD9N62jflM312cvU1
-         H7sA==
+        with ESMTP id S229635AbjCAMrw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Mar 2023 07:47:52 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBD713D0A7
+        for <linux-clk@vger.kernel.org>; Wed,  1 Mar 2023 04:47:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1677674832;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=PrHWi0O3bp5TW073HxIoo2GqwQh60ydUW1vLbyoS8FU=;
+        b=VTPJg8i+eYq5rBgoF9XUbb1GuYajScIVeggUcrjkeI32WpQI3RS82/lBZAsq8oUj5cNyyU
+        E2AUqjrO63uzQlZ7H8293k4dZx2/xUL9PL/AcmBTEL52x7QfEweiguAlXhYCTO3FRE77fu
+        /vjPNFXUOAyeR/OFdTI+Hqjg1G4KFe4=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-578-lhaW2D_DOFiwwLDAl5MdLg-1; Wed, 01 Mar 2023 07:47:10 -0500
+X-MC-Unique: lhaW2D_DOFiwwLDAl5MdLg-1
+Received: by mail-ed1-f71.google.com with SMTP id c1-20020a0564021f8100b004acbe232c03so18750022edc.9
+        for <linux-clk@vger.kernel.org>; Wed, 01 Mar 2023 04:47:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gIjv8wTxws2tEgCoRyOLyxbnH/NFNqoZJZnY4FJxenU=;
-        b=ImCCkuDTr9FzfOJWYPymuTCSmF/k1NgUUp0xq7cLyac75aF2i0kK6FZGpNQMlOFCuE
-         njKCrdN0XVclfqfdy9c3l0jTsU2oPPgT/EE0vbx8QOHrh+VFlAq/NFa5jsyiMhPAh9RE
-         86S5Ye+iwKaow/rRaxodnAPP53ed2ylfd/dawnC+JKgA6TJyDcDlOfxaLQoO8dRkOlH4
-         sSgELMxx+8sk5GV7Hm2eqRSqk262ge8at0ryzmvW4RrMgxIzPb6GcBWQiKQCMStpmshf
-         Xrj/NKxrUvNfacxBSgKPIrjA6CKUd/cOWR812jhcwbE+ErJSux3G5K3087UCrUVwqe4a
-         jwqg==
-X-Gm-Message-State: AO0yUKW5/LEHDhK/mJ3aB+iwJoOXwSZZohpN1OI6kZ7xbukSyWxCQyDl
-        1K9P8ynhugBgeKNd5m1vRENdBA2fsn1bJQA0dPbCaw==
-X-Google-Smtp-Source: AK7set+Tu72vHlqdk+Utvb4jVZuScfGBW6iIUq7EkBuVeAuJvrgg2VHRkGymv+keK6qg6lrEzw1CAJ2PwjcxJ1uASN8=
-X-Received: by 2002:a81:4005:0:b0:52e:dddf:82b9 with SMTP id
- l5-20020a814005000000b0052edddf82b9mr3672453ywn.10.1677672670881; Wed, 01 Mar
- 2023 04:11:10 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PrHWi0O3bp5TW073HxIoo2GqwQh60ydUW1vLbyoS8FU=;
+        b=iZ2vtaU3GERBqsjE8xoQWEZiiCC0EYVsAQkW2fZcmR2iZmlcyVcPd5odK7dpIqsiAJ
+         FmajDLk+b+pswaGq4Nt/y/GBNotnxIj7gAqLdgJWLn/imAWY1fmgiXFvUKupX+WgWIbj
+         r96Wz0bn4qCNJSgxL1CSIYrTyoXnpG8W4HU1IeB2uOkfSoY4d3b+HFfeUM/PiDJFD9Rg
+         18lRZyF2/1ngLDoME2GBsayUk9A/d7pPcimW4e2uCOwumUSjqnekcY8pDBwfdu+NiMj3
+         tgVeK800thpl7gSkvdlWy48CokuqaMrQ8N+Xo8+g9SMlPwNCUQHWDoM7oETwIZjREXWb
+         eMPA==
+X-Gm-Message-State: AO0yUKVeKMxY36IALCGCQ2yKF8l90yj7XfmQaX0aoKmILSRqLf+A2UH4
+        GiA8Yuzzcv2/1vS7IqsQ79iH+6Q98yVShFjdTJNKiFcDIPUz2SObivq3cez4TAk3Jr7aoIJgxf1
+        gc/d1q5208D6UUERviYbw
+X-Received: by 2002:aa7:d6c4:0:b0:4af:59c0:744a with SMTP id x4-20020aa7d6c4000000b004af59c0744amr7757587edr.24.1677674829575;
+        Wed, 01 Mar 2023 04:47:09 -0800 (PST)
+X-Google-Smtp-Source: AK7set/gegt3wNPFIA5UaAFSkM0H/Cu2JETEa5VzADkRpzuOeLZLY8c4YHH4dVV9FidRJQJWbeU9sQ==
+X-Received: by 2002:aa7:d6c4:0:b0:4af:59c0:744a with SMTP id x4-20020aa7d6c4000000b004af59c0744amr7757547edr.24.1677674829268;
+        Wed, 01 Mar 2023 04:47:09 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id b18-20020a50b412000000b004bda465da32sm374934edh.1.2023.03.01.04.47.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Mar 2023 04:47:08 -0800 (PST)
+Message-ID: <5bb49015-0a9c-5b9d-b22c-38011439c984@redhat.com>
+Date:   Wed, 1 Mar 2023 13:47:07 +0100
 MIME-Version: 1.0
-References: <20230301012506.1401883-1-saravanak@google.com>
-In-Reply-To: <20230301012506.1401883-1-saravanak@google.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 1 Mar 2023 13:10:59 +0100
-Message-ID: <CACRpkdYvSv0=FcsPUpmiBT86ocJaEtZF=c=Qty6FzdVsSPggzw@mail.gmail.com>
-Subject: Re: [PATCH v1] clk: Mark a fwnode as initialized when using
- CLK_OF_DECLARE* macros
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 0/8] drivers: select REGMAP instead of depending on it
+Content-Language: en-US, nl
+To:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Cc:     Andrew Jeffery <andrew@aj.id.au>, Corey Minyard <minyard@acm.org>,
+        openipmi-developer@lists.sourceforge.net,
+        Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernel-team@android.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Riku Voipio <riku.voipio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Michael Walle <michael@walle.cc>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        linux-gpio@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
+        Darren Hart <dvhart@infradead.org>,
+        Michael Shych <michaelsh@nvidia.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        platform-driver-x86@vger.kernel.org,
+        Yegnesh S Iyer <yegnesh.s.iyer@intel.com>,
+        Bin Gao <bin.gao@intel.com>, Zhang Rui <rui.zhang@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>, linux-pm@vger.kernel.org,
+        Oskar Senft <osk@google.com>, linux-serial@vger.kernel.org
+References: <20230226053953.4681-1-rdunlap@infradead.org>
+ <7dd27ec5-0619-128d-8407-6711a05ef271@redhat.com>
+ <6a95a337-2972-427f-635d-5ef4e91a82fa@infradead.org>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <6a95a337-2972-427f-635d-5ef4e91a82fa@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 1, 2023 at 2:25 AM Saravana Kannan <saravanak@google.com> wrote:
+Hi,
 
-> The CLK_OF_DECLARE macros sometimes prevent the creation of struct
-> devices for the device node being handled. It does this by
-> setting/clearing OF_POPULATED flag. This can block the probing of some
-> devices because fw_devlink will block the consumers of this node till a
-> struct device is created and probed.
->
-> Set the appropriate fwnode flags when these device nodes are initialized
-> by the clock framework and when OF_POPULATED flag is set/cleared. This
-> will allow fw_devlink to handle the dependencies correctly.
->
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reported-by: Linus Walleij <linus.walleij@linaro.org>
-> Link: https://lore.kernel.org/lkml/CACRpkdamxDX6EBVjKX5=D3rkHp17f5pwGdBVhzFU90-0MHY6dQ@mail.gmail.com/
-> Fixes: 4a032827daa8 ("of: property: Simplify of_link_to_phandle()")
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
+On 2/27/23 17:07, Randy Dunlap wrote:
+> 
+> 
+> On 2/27/23 01:31, Hans de Goede wrote:
+>> Hi Randy,
+>>
+>> On 2/26/23 06:39, Randy Dunlap wrote:
+>>> REGMAP is a hidden (not user visible) symbol. Users cannot set it
+>>> directly thru "make *config", so drivers should select it instead of
+>>> depending on it if they need it.
+>>>
+>>> Consistently using "select" or "depends on" can also help reduce
+>>> Kconfig circular dependency issues.
+>>>
+>>> REGMAP is selected 94 times and is depended on 11 times in
+>>> current linux-next. Eliminate the uses of "depends on" by
+>>> converting them to "select".
+>>
+>> Thank you for your work on this. Mixing of depends on vs select
+>> is a real problem with many Kconfig symbols.
+>>
+>>>  [PATCH 1/8] ipmi: ASPEED_BT_IPMI_BMC: select REGMAP_MMIO instead of depending on it
+>>>  [PATCH 2/8] clk: HI655X: select REGMAP instead of depending on it
+>>>  [PATCH 3/8] gpio: GPIO_REGMAP: select REGMAP instead of depending on it
+>>>  [PATCH 4/8] leds: TI_LMU_COMMON: select REGMAP instead of depending on it
+>>>  [PATCH 5/8] platform: mellanox: select REGMAP instead of depending on it
+>>>  [PATCH 6/8] platform: x86: MLX_PLATFORM: select REGMAP instead of depending on it
+>>>  [PATCH 7/8] thermal: intel: BXT_PMIC: select REGMAP instead of depending on it
+>>>  [PATCH 8/8] serial: 8250: ASPEED_VUART: select REGMAP instead of depending on it
+>>
+>> For patch 5/8 and 6/8, do you want me to merge them through the pdx86
+>> (platform-drivers-x86) tree, or do you plan to merge this whole series
+>> in one go through some other tree?
+> 
+> Hi Hans,
+> Please merge them thru the pdx86 tree.
 
-Excellent Saravana, this fixes my issue!
-Tested-by: Linus Walleij <linus.walleij@linaro.org>
+Ok, I've applied patch 5/8 + 6/8 to my review-hans branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
 
-Yours,
-Linus Walleij
+I'll rebase that branch once 6.3-rc1 is out and then push the rebased
+patch to the fixes branch and include it in my next 6.3 fixes pull-req
+to Linus.
+
+Regards,
+
+Hans
+
+
+
+
+
+>>>
+>>> diffstat:
+>>>  drivers/char/ipmi/Kconfig         |    3 ++-
+>>>  drivers/clk/Kconfig               |    2 +-
+>>>  drivers/gpio/Kconfig              |    2 +-
+>>>  drivers/leds/Kconfig              |    2 +-
+>>>  drivers/platform/mellanox/Kconfig |    9 ++++-----
+>>>  drivers/platform/x86/Kconfig      |    3 ++-
+>>>  drivers/thermal/intel/Kconfig     |    3 ++-
+>>>  drivers/tty/serial/8250/Kconfig   |    3 ++-
+>>>  8 files changed, 15 insertions(+), 12 deletions(-)
+>>>
+>>> Cc: Andrew Jeffery <andrew@aj.id.au>
+>>> Cc: Corey Minyard <minyard@acm.org>
+>>> Cc: openipmi-developer@lists.sourceforge.net
+>>> Cc: Arnd Bergmann <arnd@arndb.de>
+>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>> Cc: Riku Voipio <riku.voipio@linaro.org>
+>>> Cc: Stephen Boyd <sboyd@kernel.org>
+>>> Cc: Michael Turquette <mturquette@baylibre.com>
+>>> Cc: linux-clk@vger.kernel.org
+>>> Cc: Michael Walle <michael@walle.cc>
+>>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>>> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+>>> Cc: linux-gpio@vger.kernel.org
+>>> Cc: Dan Murphy <dmurphy@ti.com>
+>>> Cc: Pavel Machek <pavel@ucw.cz>
+>>> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>>> Cc: Lee Jones <lee@kernel.org>
+>>> Cc: linux-leds@vger.kernel.org
+>>> Cc: Darren Hart <dvhart@infradead.org>
+>>> Cc: Hans de Goede <hdegoede@redhat.com>
+>>> Cc: Michael Shych <michaelsh@nvidia.com>
+>>> Cc: Mark Gross <markgross@kernel.org>
+>>> Cc: Vadim Pasternak <vadimp@nvidia.com>
+>>> Cc: platform-driver-x86@vger.kernel.org
+>>> Cc: Yegnesh S Iyer <yegnesh.s.iyer@intel.com>
+>>> Cc: Bin Gao <bin.gao@intel.com>
+>>> Cc: Zhang Rui <rui.zhang@intel.com>
+>>> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+>>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+>>> Cc: Amit Kucheria <amitk@kernel.org>
+>>> Cc: linux-pm@vger.kernel.org
+>>> Cc: Oskar Senft <osk@google.com>
+>>> Cc: linux-serial@vger.kernel.org
+>>>
+>>
+> 
+
