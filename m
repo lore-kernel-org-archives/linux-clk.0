@@ -2,107 +2,111 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 658D3C64EC7
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Feb 2023 21:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE5EC64EC4
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 00:27:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229816AbjB1V7H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Feb 2023 16:59:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50822 "EHLO
+        id S229602AbjCAA1C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Feb 2023 19:27:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229885AbjB1V7D (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Feb 2023 16:59:03 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C8E11E9E4;
-        Tue, 28 Feb 2023 13:59:01 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D907BB80DE7;
-        Tue, 28 Feb 2023 21:58:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AB95C4339B;
-        Tue, 28 Feb 2023 21:58:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677621538;
-        bh=EApezt/xrKSUqcwtPB/lYFfV3ScYq2GN1UtJeJ9Yc+c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cUYRfMKeK+p4AXiL2yRjGGOTvS01vXKugWnhKFkzYTZRH2viq9VagyHHpn9RYO06E
-         7161gTVDpaIwYbqDcrlmVPN0o/cugLq/+gDN1auuBxF/uZPh9OpMPhpNLHF+53h7/f
-         DoT1TtdWlebJgWhfw4OQoDjoiCvi0XiuNGbnLek0xsWC1Yu/OVJnYFJLHZprcXRPiC
-         7v5WbvF/tLxYWQO6MfSWwUmY8KP3GIJ8Wrz1RAHaWryhlvgwMlV6ERJb7McemY4aKl
-         vDe/gg3FPRtgYCN2VZVVoHhp+1BFL8FRLCFU2j+s5qzK8bnhmFkzpbIMlP6wDedOvJ
-         P7W07HuSh0APg==
-Date:   Tue, 28 Feb 2023 21:58:55 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
+        with ESMTP id S229480AbjCAA1B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Feb 2023 19:27:01 -0500
+Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FD3415880;
+        Tue, 28 Feb 2023 16:27:00 -0800 (PST)
+Received: by mail-qt1-x830.google.com with SMTP id w23so12621810qtn.6;
+        Tue, 28 Feb 2023 16:27:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1677630419;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C2e0ffjzBgpw/mSpMPgFDPU3Iu4DLibmhol76pOXRIs=;
+        b=JvUxM5yaXhG1yLskvHq/jdt/crTRoc2cpek2vwFU9tHZ8PWilIci1ft4Rv4MnUzyDS
+         DppkOAAsR7vaj4gBF+hd2iwr6YEqhwFVOypMzzR4Dsnho6g1kbRSLjOWH+JA4/dsJrSh
+         /DAD2n95qaAfNduS1P0nlcux57ipcj2cMnmRBtH7r3QHA/ZcAIFkqSAcEqBsYktlCGl3
+         EZgYPgVgRWSvfL2RXhVobMdiE8d4GH0VFB9GeoKO94NjgCIh15Lqq5wZZsloI6sldkGB
+         O9eMRe8AHzGTVhhRF83y55Hr6tR0BudvS7NPVmudLIY52p+T1+wK8kJoSn1kn5619SPI
+         ajZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677630419;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C2e0ffjzBgpw/mSpMPgFDPU3Iu4DLibmhol76pOXRIs=;
+        b=3BtXlvN/jM3BS0KZ/HVvGyWYEcJcBEkU3bm/JhNazmG7QRglVqzd8iw4fa0ghX38wg
+         SEDBTNrBkx+/CR2G1+oJbOlb12Z4RwtS4gTlouH/Y7hyYYGzWRFjoiu8z6Pn9zr6JUoY
+         P9/Ibr+gJaHVl68F/dv1pe47p4n4NGhqDx78U2xp/G1cggCDkSd14NuB4qkvtv2RHqa1
+         u6K138GBiNzPXfa03V5C4LLd7E6Mo82+QFHAbF9sHMAqQmJgj838RYneFxk30+vCco/p
+         dZufQQh4vAi4CBJ1FLPGG4obGXlvzHRxgUnjRlg63XJfFUCthnHeSbdpoS0tzSgK/ChW
+         NCDQ==
+X-Gm-Message-State: AO0yUKXfU5cC+6yAHD+nhTGsvsQiEXhet6dMaocIyD5//eFHhYf8xs0D
+        XjyjBzYEA0OyWtfSMemADZA=
+X-Google-Smtp-Source: AK7set8ZrXnrEKvBEmgZA3GMxTz87fkxaL3fF2SH5BuHhWPp6/NLV3fXU6uI2/NbwAoVDP0lMQf5BQ==
+X-Received: by 2002:ac8:7f16:0:b0:3b6:3995:2ec2 with SMTP id f22-20020ac87f16000000b003b639952ec2mr8856720qtk.19.1677630419223;
+        Tue, 28 Feb 2023 16:26:59 -0800 (PST)
+Received: from jesse-desktop.jtp-bos.lab (pool-108-26-182-112.bstnma.fios.verizon.net. [108.26.182.112])
+        by smtp.gmail.com with ESMTPSA id t8-20020ac85888000000b003bb8c60cdf1sm7576698qta.78.2023.02.28.16.26.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Feb 2023 16:26:58 -0800 (PST)
+From:   Jesse Taube <mr.bossman075@gmail.com>
+X-Google-Original-From: Jesse Taube <Mr.Bossman075@gmail.com>
+To:     linux-riscv@lists.infradead.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jesse Taube <Mr.Bossman075@gmail.com>,
+        Yimin Gu <ustcymgu@gmail.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-        netdev@vger.kernel.org, linux-can@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux-pm@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Fix SPI and I2C bus node names in examples
-Message-ID: <Y/55H2lZZf7a3Xbu@sirena.org.uk>
-References: <20230228215433.3944508-1-robh@kernel.org>
+        Michael Turquette <mturquette@baylibre.com>,
+        Waldemar Brodkorb <wbx@openadk.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Subject: [PATCH v3 0/3]  Add RISC-V 32 NOMMU support
+Date:   Tue, 28 Feb 2023 19:26:54 -0500
+Message-Id: <20230301002657.352637-1-Mr.Bossman075@gmail.com>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="MyLQObbLmZa89Gv8"
-Content-Disposition: inline
-In-Reply-To: <20230228215433.3944508-1-robh@kernel.org>
-X-Cookie: Single tasking: Just Say No.
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+This patch-set aims to add NOMMU support to RV32.
+Many people want to build simple emulators or HDL
+models of RISC-V this patch makes it possible to
+run linux on them.
 
---MyLQObbLmZa89Gv8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yimin Gu is the original author of this set.
+Submitted here:
+https://lists.buildroot.org/pipermail/buildroot/2022-November/656134.html
 
-On Tue, Feb 28, 2023 at 03:54:33PM -0600, Rob Herring wrote:
-> SPI and I2C bus node names are expected to be "spi" or "i2c",
-> respectively, with nothing else, a unit-address, or a '-N' index. A
-> pattern of 'spi0' or 'i2c0' or similar has crept in. Fix all these
-> cases. Mostly scripted with the following commands:
+Though Jesse T rewrote the Dconf.
 
-Acked-by: Mark Brown <broonie@kernel.org>
+The new set:
+https://lists.buildroot.org/pipermail/buildroot/2022-December/658258.html
+---
+V1->V2:
+ - Add Conor's clock patch for implicit div64
+ - Fix typo in commit title 3/3
+ - Fix typo in commit description 2/3
+V2->V3
+ - Change from defconfig file to a PHONY config
+---
 
---MyLQObbLmZa89Gv8
-Content-Type: application/pgp-signature; name="signature.asc"
+Conor Dooley (1):
+  clk: k210: remove an implicit 64-bit division
 
------BEGIN PGP SIGNATURE-----
+Jesse Taube (1):
+  riscv: configs: Add nommu PHONY defconfig for RV32
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmP+eR4ACgkQJNaLcl1U
-h9DqWQf/fzAqwVcR5vEvDlZIOyeJ93q74mz/Rl0dA1kXgtn8VCrgOTQv1BlYjrCE
-YSIOVaCA5NiKGfDp99bOWw61eY5vrMwgY1dL8JB2fdMVGhAnk4dN0ewMN2lc2Zxs
-/aZeYDxjeMRJOEv+9UinuEKROblNzSwDJFxyTFoOddlrYg7leB2icMBQRsd3m5+h
-Thr8sNClvv0OyNBx5LchcIvla+hu2AAQSAvLHe/Q0aUCOGooYIUsdfDeNqNJa6vF
-7wjeN3etYc7wp/PyeJKwrO9AhmkCXzazy4OwW4esqLUxQEO88PTJxkHJjNW+tvu3
-lFl5XDtQUMJ9ACGlaRM0sEP28dPf5w==
-=8se/
------END PGP SIGNATURE-----
+Yimin Gu (1):
+  riscv: Kconfig: Allow RV32 to build with no MMU
 
---MyLQObbLmZa89Gv8--
+ arch/riscv/Kconfig     | 5 ++---
+ arch/riscv/Makefile    | 4 ++++
+ drivers/clk/clk-k210.c | 2 +-
+ 3 files changed, 7 insertions(+), 4 deletions(-)
+
+-- 
+2.39.0
+
