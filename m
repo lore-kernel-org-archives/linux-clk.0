@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A11DC64EC4
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 00:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B84C7EE30
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 00:50:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229510AbjCAAtk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Feb 2023 19:49:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50836 "EHLO
+        id S229602AbjCAAuk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Feb 2023 19:50:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229565AbjCAAtj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Feb 2023 19:49:39 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 030853608F;
-        Tue, 28 Feb 2023 16:49:29 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id ck15so47713625edb.0;
-        Tue, 28 Feb 2023 16:49:29 -0800 (PST)
+        with ESMTP id S229565AbjCAAuj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Feb 2023 19:50:39 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8796F1F931;
+        Tue, 28 Feb 2023 16:50:38 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id d30so47516767eda.4;
+        Tue, 28 Feb 2023 16:50:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=jms.id.au; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kn741iAhWjnSvmrDZleHGNSeYwFm8STm5Ya4EwcTIQA=;
-        b=NVgStDPJRBmRlQZsmftDf8c4WCB2NVPYJ4id07IjmV94n5WTKVGkhCZ3Z/TAJu8hvx
-         Gd/nqzFKpS0FsiKOjn/z1Ab2x+xTTfj7AB0Q9f4t2oBvcB9qDldjXgLP+/cwEDz65C1K
-         2iiYuxr+OYj2OsJB1pFd7NQuGYZHBTKfxa0fk=
+        bh=ynnNEJ0OvCRhJyHXpVT5xLF+Y6XFOKfk2/bquuxHgOg=;
+        b=dyyWssqtEcqiKT7VoraJN8oiAk/zyVGRWxc5Rj4xO/OalLZ8gwyyvaGZIxRK8w3WTr
+         g5b9CL3uPhY6+FpgXgpCDQGHDmrA+AJ3TIoba7l4CcIF5DNl/JBawLLs33Zd7Nnt22Om
+         vh6StvCmQ86GV3oBklBuFUifqCkBlHSG99yVo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kn741iAhWjnSvmrDZleHGNSeYwFm8STm5Ya4EwcTIQA=;
-        b=Iuj4fuoVkp638YEo+0UnD0kk/s4BuG2JCASLlvgxketNwGBci8j6r64oK2nVqu09ID
-         CCU/C4hI1hmMAz4whpaCOea94q9Ghiz0yLhEa8Qh43QHQHQFu6FvvFgvwwaqTpgZhzv5
-         /Az0JYRtbwjcFpo5dO+x/EibXNNk0WepsE+DiPSieBJ/aie0zEzCxPTvajpC6su1mVNK
-         Vu6EMUeC7HwsE5Z+9ZdMIxVa4swCxCZi+AqhJ/Ms8IRsQ+LRGZxn2Kqq/IfY8f/IzIHA
-         BxEee/iy1k/RFNE95KZ80Bc8kFYQyNwAnEXF5rIu14TiEcOxcslbFeqYxvGX/G/627IY
-         wXMQ==
-X-Gm-Message-State: AO0yUKVWEVLBwif2geCifEVsf/FHbGwpjncjr25dHiiYbaSVGDdJ47ay
-        ONzILfvkKbwXPG2XrcRQJYhJ1h7V6QgwSp1yfnV5pPJR
-X-Google-Smtp-Source: AK7set/JIQ8zzJbyxKugXjghghYkMBYBiKLVjci91LtkFEbgS/XapeFpjr8GfHBFs5PDfoV0Lz8HToyONIKZkyGAEnc=
-X-Received: by 2002:a50:d548:0:b0:4ad:7439:cec7 with SMTP id
- f8-20020a50d548000000b004ad7439cec7mr2717158edj.7.1677631767973; Tue, 28 Feb
- 2023 16:49:27 -0800 (PST)
+        bh=ynnNEJ0OvCRhJyHXpVT5xLF+Y6XFOKfk2/bquuxHgOg=;
+        b=63SQBdlbXBbLM+mwnp1e6K/ed1RX/Gy+AsmF6296tj0vZpOPphy7HVSZS9CY7BueDc
+         /w4OwRaG+rKzy6HVphfJXGIQuemilrI17pmixcy8j2iayPH/69onCyxFotoMV5/1zFcp
+         rUvcJAyHX+Ek0n/IAnk0NhTknutiDCIRfE1TDfXNNKnnE6yoaQn+w+1maGIxrofRfm/t
+         V4l6sJvv3Jcu+y4YQ6jAl7bXSHKV5gLZj7Tj13q1bHRzqkuvnqC+glOGU2KHYirCQ/Fw
+         IY1Lj9cIB45LMjAUCiuy+JxMcOogWz/vc0yEelPsnW4Coxw7ELsmLA/6Ji4OXye5xR+f
+         Jg7Q==
+X-Gm-Message-State: AO0yUKXjU1oXDZ5UmZyrDGhgDnKicPFmfJ3mqwz8v3o66adXuwqON2Vl
+        uw4SXgNOdWl0T1UFpcIMfZ9RK+gkNhHpzWBoPquHM/fA
+X-Google-Smtp-Source: AK7set+7WDDBuXBGzo96ZtLI2wdyOJir2jdHhZzySjRCGEPwTLVIKS28KjoazkzNIINdilRJOZV0Xs8xUA3r2vgOdQ4=
+X-Received: by 2002:a50:c319:0:b0:4ad:7439:cec3 with SMTP id
+ a25-20020a50c319000000b004ad7439cec3mr2710135edb.7.1677631836974; Tue, 28 Feb
+ 2023 16:50:36 -0800 (PST)
 MIME-Version: 1.0
-References: <20230228091638.206569-1-jk@codeconstruct.com.au> <20230228091638.206569-6-jk@codeconstruct.com.au>
-In-Reply-To: <20230228091638.206569-6-jk@codeconstruct.com.au>
+References: <20230228091638.206569-1-jk@codeconstruct.com.au> <20230228091638.206569-2-jk@codeconstruct.com.au>
+In-Reply-To: <20230228091638.206569-2-jk@codeconstruct.com.au>
 From:   Joel Stanley <joel@jms.id.au>
-Date:   Wed, 1 Mar 2023 00:49:15 +0000
-Message-ID: <CACPK8XcA_SES=Wo7vuWEJ4U5kTizM5brmb=6ELXD-taCFJQwgA@mail.gmail.com>
-Subject: Re: [PATCH v4 5/5] dt-bindings: clock: ast2600: Add reset config for I3C
+Date:   Wed, 1 Mar 2023 00:50:24 +0000
+Message-ID: <CACPK8XffdV3YMy0eu4sZQhw-tS2g5kz_RHLD98Up9G0P9NAR4A@mail.gmail.com>
+Subject: Re: [PATCH v4 1/5] clk: ast2600: allow empty entries in aspeed_g6_gates
 To:     Jeremy Kerr <jk@codeconstruct.com.au>
 Cc:     linux-aspeed@lists.ozlabs.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org,
@@ -65,38 +65,52 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Tue, 28 Feb 2023 at 09:16, Jeremy Kerr <jk@codeconstruct.com.au> wrote:
 >
-> Add reset line definitions for the AST2600 I3C block's reset inputs.
+> We're about to remove an entry from aspeed_g6_gates, but we won't want
+> to alter/reorder existing entries. Allow empty entries in this array.
+
+Nice. So it's recorded somewhere: the gates array should be
+sequential, with the include/dt-bindings/clock/ast2600-clock.h defines
+starting at 0 and counting up. If a clock gets mistakenly added and
+needs to be removed, we can't have a "hole" in the array so instead we
+leave it NULL and skip over adding it.
+
+We could simply remove the bad entry but this would break the
+theoretical case of a device tree with an old header, so we leave the
+gaps in place :(
+
+Reviewed-by: Joel Stanley <joel@jms.id.au>
+
+Cheers,
+
+Joel
+
+
+
+
 >
 > Signed-off-by: Jeremy Kerr <jk@codeconstruct.com.au>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 >
 > ---
-> v2:
+> v3:
 >  - reword commit message
 > ---
->  include/dt-bindings/clock/ast2600-clock.h | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  drivers/clk/clk-ast2600.c | 3 +++
+>  1 file changed, 3 insertions(+)
 >
-> diff --git a/include/dt-bindings/clock/ast2600-clock.h b/include/dt-bindings/clock/ast2600-clock.h
-> index b4d69103d722..b1c129977910 100644
-> --- a/include/dt-bindings/clock/ast2600-clock.h
-> +++ b/include/dt-bindings/clock/ast2600-clock.h
-> @@ -90,6 +90,12 @@
->  /* Only list resets here that are not part of a gate */
-
-These definitions are part of a gate, yeah?
-
->  #define ASPEED_RESET_ADC               55
->  #define ASPEED_RESET_JTAG_MASTER2      54
-> +#define ASPEED_RESET_I3C5              45
-> +#define ASPEED_RESET_I3C4              44
-> +#define ASPEED_RESET_I3C3              43
-> +#define ASPEED_RESET_I3C2              42
-> +#define ASPEED_RESET_I3C1              41
-> +#define ASPEED_RESET_I3C0              40
->  #define ASPEED_RESET_I3C_DMA           39
->  #define ASPEED_RESET_PWM               37
->  #define ASPEED_RESET_PECI              36
+> diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
+> index 9c3305bcb27a..1f08ff3c60fa 100644
+> --- a/drivers/clk/clk-ast2600.c
+> +++ b/drivers/clk/clk-ast2600.c
+> @@ -652,6 +652,9 @@ static int aspeed_g6_clk_probe(struct platform_device *pdev)
+>                 const struct aspeed_gate_data *gd = &aspeed_g6_gates[i];
+>                 u32 gate_flags;
+>
+> +               if (!gd->name)
+> +                       continue;
+> +
+>                 /*
+>                  * Special case: the USB port 1 clock (bit 14) is always
+>                  * working the opposite way from the other ones.
 > --
 > 2.39.1
 >
