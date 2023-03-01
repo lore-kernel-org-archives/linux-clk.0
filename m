@@ -2,142 +2,137 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C55C7EE32
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 14:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F38C7EE33
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 16:35:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230238AbjCAOqK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Mar 2023 09:46:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42178 "EHLO
+        id S229923AbjCAQfR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Mar 2023 11:35:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229963AbjCAOqJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Mar 2023 09:46:09 -0500
-Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA2764393C
-        for <linux-clk@vger.kernel.org>; Wed,  1 Mar 2023 06:45:39 -0800 (PST)
-Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-536c02eea4dso368196107b3.4
-        for <linux-clk@vger.kernel.org>; Wed, 01 Mar 2023 06:45:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=c5fRwh/q88qnR4rLODR5aN06oeaTsbFFIXqxWtKoAdA=;
-        b=Skkgc1pJVdMg4lM3S/QvC70xPPr5jlTmvz4EOn+Pc6rF3VpQhVc4iGugen9Q06wzaW
-         YU5vBuwqleOCYoFdAyxRZHQORMrJn2alOT/fjacfQLA291X6YhVykyxziMNBllMvYuaY
-         rKWSJgX2G7dhiWsfoI33lKF5ZUW3nVjhcxCb4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=c5fRwh/q88qnR4rLODR5aN06oeaTsbFFIXqxWtKoAdA=;
-        b=ZfHNB8xJY2+1NyUT+A0T4358cCp5FKTnxVOoPU8uxmk0xWKtFot+RV8b0z9EVlYTFQ
-         affRtRrz8EOGfaAXk7uY5PWcGqzq+zBNpH/9cDmpqQBXnvOir9+IcMfxli54bFuOBAka
-         +JwgZkWNOI9aU1sadGqKc8cNKEEg9F9mY11Aef7pCHk6FqfeNq2c9cE+5HMz8ljbR0GZ
-         5+sqSi2zvxtirT6yny35YUPl2QwOY5OdwsjEU0VF64En4s/ySp/jBGDHljio1RhHJatp
-         EPwbl5jPym5ejpE3ThOPKUgkalMWI5yCgWC5Qf7oMO2WSyjj/aZr4vJeb0W7cWOQvcD9
-         41ag==
-X-Gm-Message-State: AO0yUKWUtxK50zvi1IImehWaed8Eh9YoGZrNPrRiKG3kfJYbLuwAUp1b
-        NAUSf/dd+cNuCGJDpvNebA3gqs8hfxD92OZBQbb3/g==
-X-Google-Smtp-Source: AK7set/9RgMm3XRu83JsW4Wbbsi1f43oJuRNJ4GJnMD9Ynj6+QG8QTN/H949zZF90kB3oY5EYLAgq26FWAoCc+/6F5A=
-X-Received: by 2002:a81:ae0e:0:b0:53c:7c33:9d25 with SMTP id
- m14-20020a81ae0e000000b0053c7c339d25mr726867ywh.8.1677681938671; Wed, 01 Mar
- 2023 06:45:38 -0800 (PST)
+        with ESMTP id S230042AbjCAQeo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Mar 2023 11:34:44 -0500
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E32C4741E;
+        Wed,  1 Mar 2023 08:33:58 -0800 (PST)
+Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 9F71B80AE5;
+        Wed,  1 Mar 2023 17:33:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1677688388;
+        bh=6kCuwUfxuT8CRN0hHIyxXlK4ZNkmCusoJml8YpXRQ78=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jnKlunVVpX7znjifAgfnJ7MZjl6CnLLj7zDyYR5+TT9vpCGyCAtMbPCZehg0Edv2M
+         dy6XOdqwP6HC7MsLMNcdTskYZ+VbcDGIlurYzDTnprVS/Y8sX5+EFQg2IN5fFgcwlf
+         3mCNKTbYVZylW5HvnBp9qBygTrDdGgGnpQ068uuL6o+upC1p/sPYTbB7NCNIhRJngJ
+         r5hvcAixrQqCM23wcnO3UN1BLPtzqBW9edri4Zn8GO+yVpXKWti9XslbzL3Afga6Wa
+         IIhYA4YTv6PQrzaN/VyyTkcl1Fy4sxDL4mauIe1+jsuJ84BGpMN5j+vvC9y9nZ8frM
+         L8uWjCC5BDkIg==
+From:   Marek Vasut <marex@denx.de>
+To:     linux-clk@vger.kernel.org
+Cc:     Marek Vasut <marex@denx.de>, Peng Fan <peng.fan@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Adam Ford <aford173@gmail.com>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Abel Vesa <abelvesa@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v7 1/5] clk: Introduce devm_clk_hw_register_gate_parent_data()
+Date:   Wed,  1 Mar 2023 17:32:53 +0100
+Message-Id: <20230301163257.49005-1-marex@denx.de>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-References: <20230228215433.3944508-1-robh@kernel.org>
-In-Reply-To: <20230228215433.3944508-1-robh@kernel.org>
-From:   Simon Glass <sjg@chromium.org>
-Date:   Wed, 1 Mar 2023 07:45:19 -0700
-Message-ID: <CAPnjgZ1=UPMf72JjejpdSvss5+d1tnMv=efYUgJcH6T09YAKTw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: Fix SPI and I2C bus node names in examples
-To:     Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-        netdev@vger.kernel.org, linux-can@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux-pm@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 28 Feb 2023 at 14:54, Rob Herring <robh@kernel.org> wrote:
->
-> SPI and I2C bus node names are expected to be "spi" or "i2c",
-> respectively, with nothing else, a unit-address, or a '-N' index. A
-> pattern of 'spi0' or 'i2c0' or similar has crept in. Fix all these
-> cases. Mostly scripted with the following commands:
->
-> git grep -l '\si2c[0-9] {' Documentation/devicetree/ | xargs sed -i -e 's/i2c[0-9] {/i2c {/'
-> git grep -l '\sspi[0-9] {' Documentation/devicetree/ | xargs sed -i -e 's/spi[0-9] {/spi {/'
->
-> With this, a few errors in examples were exposed and fixed.
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> Cc: Miguel Ojeda <ojeda@kernel.org>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-> Cc: Benson Leung <bleung@chromium.org>
-> Cc: Guenter Roeck <groeck@chromium.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Andrzej Hajda <andrzej.hajda@intel.com>
-> Cc: Neil Armstrong <neil.armstrong@linaro.org>
-> Cc: Robert Foss <rfoss@kernel.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Lee Jones <lee@kernel.org>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Paolo Abeni <pabeni@redhat.com>
-> Cc: Wolfgang Grandegger <wg@grandegger.com>
-> Cc: Kalle Valo <kvalo@kernel.org>
-> Cc: Sebastian Reichel <sre@kernel.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-i2c@vger.kernel.org
-> Cc: linux-leds@vger.kernel.org
-> Cc: linux-media@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Cc: linux-can@vger.kernel.org
-> Cc: linux-wireless@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> Cc: alsa-devel@alsa-project.org
-> Cc: linux-usb@vger.kernel.org
-> ---
+Add an API for clock gate that uses parent_data for the parent instead of
+a string parent_name.
 
-Reviewed-by: Simon Glass <sjg@chromium.org>
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Tested-by: Adam Ford <aford173@gmail.com> #imx8mp-beacon-kit
+Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+Signed-off-by: Marek Vasut <marex@denx.de>
+---
+Cc: Abel Vesa <abelvesa@kernel.org>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Jacky Bai <ping.bai@nxp.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: Peng Fan <peng.fan@nxp.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Richard Cochran <richardcochran@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-clk@vger.kernel.org
+---
+V3: New patch
+V4: - Rebase on next 20230223
+V5: Add TB from Adam and Alexander
+V6: Add RB from Fabio
+V7: Add RB from Peng
+---
+ include/linux/clk-provider.h | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 842e72a5348fa..92b7c794c6272 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -608,6 +608,25 @@ struct clk *clk_register_gate(struct device *dev, const char *name,
+ 	__devm_clk_hw_register_gate((dev), NULL, (name), (parent_name), NULL, \
+ 			       NULL, (flags), (reg), (bit_idx),		      \
+ 			       (clk_gate_flags), (lock))
++
++/**
++ * devm_clk_hw_register_gate - register a gate clock with the clock framework
++ * @dev: device that is registering this clock
++ * @name: name of this clock
++ * @parent_data: parent clk data
++ * @flags: framework-specific flags for this clock
++ * @reg: register address to control gating of this clock
++ * @bit_idx: which bit in the register controls gating of this clock
++ * @clk_gate_flags: gate-specific flags for this clock
++ * @lock: shared register lock for this clock
++ */
++#define devm_clk_hw_register_gate_parent_data(dev, name, parent_data, flags,  \
++					      reg, bit_idx, clk_gate_flags,   \
++					      lock)			      \
++	__devm_clk_hw_register_gate((dev), NULL, (name), NULL, NULL,	      \
++				    (parent_data), (flags), (reg), (bit_idx), \
++				    (clk_gate_flags), (lock))
++
+ void clk_unregister_gate(struct clk *clk);
+ void clk_hw_unregister_gate(struct clk_hw *hw);
+ int clk_gate_is_enabled(struct clk_hw *hw);
+-- 
+2.39.2
+
