@@ -2,34 +2,34 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1246C64ED6
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 18:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E049FC7EE33
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 18:38:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229960AbjCASi0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S229968AbjCASi0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Wed, 1 Mar 2023 13:38:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45278 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbjCASiZ (ORCPT
+        with ESMTP id S229914AbjCASiZ (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Mar 2023 13:38:25 -0500
 Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97EA57ABA;
-        Wed,  1 Mar 2023 10:38:23 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C70A46EB9;
+        Wed,  1 Mar 2023 10:38:22 -0800 (PST)
 Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id E9A245FD7B;
-        Wed,  1 Mar 2023 21:38:21 +0300 (MSK)
+        by mx.sberdevices.ru (Postfix) with ESMTP id EC8B05FD79;
+        Wed,  1 Mar 2023 21:38:19 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1677695902;
-        bh=4lzSSRDAueTokG7idMRN6V/pw7/JIu4u9zzIQC9zTX4=;
+        s=mail; t=1677695900;
+        bh=0kocuhoTDaz9h1jxIA/Jw2sp5SwkBuT+pW8CQZu+FkI=;
         h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-        b=pQqWLSxIV/7BWZpjAVSDayCrgqzpSsQT2+07DHiHUUgvhzT2lEN+3EFRsdAVVlMcJ
-         I95/9LfOvE19zAerE7bAaF33j2t2+1u8Bq+Kzc0oE8qJigbtFY59vvY3QCH2nnT1KL
-         Zk2Iq1yU6YSlEycQMtNzyZ7EivNDo44js/2A3pVo77bbGJV2NS1hQedx35aJkp1alj
-         eDpYyADlZV6YvsAOnLdiBml0H7/zcx5Zw7LaUSYCsVX+jxPVZL8L14EoxCfUJtOatr
-         j6+IT689Jj7skdRBMzQyiXb9j8zg366MPM7zxWv0LA+u98WxuQ6o8+rRmWp2rsQG2U
-         +gUeLXYTF25Gg==
+        b=NLO7KnkpUh18PTGTgGFBmQtwPZed+65GMfDM2dRjY8TUOpmDaU2B/majDIwnFiG/i
+         pp90tpA3cYOi2n06gpULFofjHqW5GE/3KwlGiQT6ZtsKVaOgqGzTMcyH0tnrWA5Lgi
+         ZkxIlYOChlznk7x4niHMaLq/XCmQ28lHNKn3mdSJSTZmfhZT5ye6jNoGhUl+e7wUp2
+         aI0B5GburZa3elK/mQdvO5VGq4sdQGLcK2DfEMWafRp+W5Yr/7ijztUxDCe79okzJA
+         fgXqbKwZKzZhW141636WQkWCVgm9h+wvOXYTBfqEMasJ/ac70eKNdPkWDhIC67meZk
+         hh4FMsZ3+1wIA==
 Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
         by mx.sberdevices.ru (Postfix) with ESMTP;
-        Wed,  1 Mar 2023 21:38:21 +0300 (MSK)
+        Wed,  1 Mar 2023 21:38:19 +0300 (MSK)
 From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
 To:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>,
@@ -41,9 +41,9 @@ CC:     <jian.hu@amlogic.com>, <kernel@sberdevices.ru>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Subject: [PATCH v9 3/5] dt-bindings: clock: meson: add A1 PLL clock controller bindings
-Date:   Wed, 1 Mar 2023 21:37:57 +0300
-Message-ID: <20230301183759.16163-4-ddrokosov@sberdevices.ru>
+Subject: [PATCH v9 1/5] clk: meson: add support for A1 PLL clock ops
+Date:   Wed, 1 Mar 2023 21:37:55 +0300
+Message-ID: <20230301183759.16163-2-ddrokosov@sberdevices.ru>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20230301183759.16163-1-ddrokosov@sberdevices.ru>
 References: <20230301183759.16163-1-ddrokosov@sberdevices.ru>
@@ -64,123 +64,126 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the documentation for Amlogic A1 PLL clock driver, and A1 PLL
-clock controller bindings.
-Also include new A1 clock controller dt bindings to MAINTAINERS.
+From: Jian Hu <jian.hu@amlogic.com>
+
+Modern meson PLL IPs are a little bit different from early known PLLs.
+The main difference is located in the init/enable/disable sequences; the
+rate logic is the same.
+Compared with the previous SoCs, self-adaption current module
+is newly added for A1, and there is no reset parameter except the
+fixed pll. In A1 PLL, the PLL enable sequence is different, using
+the new power-on sequence to enable the PLL.
 
 Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
 ---
- .../bindings/clock/amlogic,a1-pll-clkc.yaml   | 59 +++++++++++++++++++
- MAINTAINERS                                   |  1 +
- include/dt-bindings/clock/a1-pll-clkc.h       | 20 +++++++
- 3 files changed, 80 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
- create mode 100644 include/dt-bindings/clock/a1-pll-clkc.h
+ drivers/clk/meson/clk-pll.c | 47 +++++++++++++++++++++++++++++++------
+ drivers/clk/meson/clk-pll.h |  2 ++
+ 2 files changed, 42 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-new file mode 100644
-index 000000000000..8bd2c948df86
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-@@ -0,0 +1,59 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/amlogic,a1-pll-clkc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Amlogic Meson A/C serials PLL Clock Control Unit
-+
-+maintainers:
-+  - Neil Armstrong <neil.armstrong@linaro.org>
-+  - Jerome Brunet <jbrunet@baylibre.com>
-+  - Jian Hu <jian.hu@jian.hu.com>
-+  - Dmitry Rokosov <ddrokosov@sberdevices.ru>
-+
-+properties:
-+  compatible:
-+    const: amlogic,a1-pll-clkc
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: input fixpll_in
-+      - description: input hifipll_in
-+
-+  clock-names:
-+    items:
-+      - const: fixpll_in
-+      - const: hifipll_in
-+
-+required:
-+  - compatible
-+  - '#clock-cells'
-+  - reg
-+  - clocks
-+  - clock-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/a1-clkc.h>
-+    apb {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        clock-controller@7c80 {
-+            compatible = "amlogic,a1-pll-clkc";
-+            reg = <0 0x7c80 0 0x18c>;
-+            #clock-cells = <1>;
-+            clocks = <&clkc_periphs CLKID_FIXPLL_IN>,
-+                     <&clkc_periphs CLKID_HIFIPLL_IN>;
-+            clock-names = "fixpll_in", "hifipll_in";
-+        };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 39ff1a717625..8438bc9bd636 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1895,6 +1895,7 @@ L:	linux-amlogic@lists.infradead.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/clock/amlogic*
- F:	drivers/clk/meson/
-+F:	include/dt-bindings/clock/a1*
- F:	include/dt-bindings/clock/gxbb*
- F:	include/dt-bindings/clock/meson*
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index afefeba6e458..56ec2210f1ad 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -295,10 +295,14 @@ static int meson_clk_pll_init(struct clk_hw *hw)
+ 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
  
-diff --git a/include/dt-bindings/clock/a1-pll-clkc.h b/include/dt-bindings/clock/a1-pll-clkc.h
-new file mode 100644
-index 000000000000..3a559518c6e6
---- /dev/null
-+++ b/include/dt-bindings/clock/a1-pll-clkc.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/*
-+ * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
-+ * Author: Jian Hu <jian.hu@amlogic.com>
-+ *
-+ * Copyright (c) 2023, SberDevices. All Rights Reserved.
-+ * Author: Dmitry Rokosov <ddrokosov@sberdevices.ru>
-+ */
+ 	if (pll->init_count) {
+-		meson_parm_write(clk->map, &pll->rst, 1);
++		if (MESON_PARM_APPLICABLE(&pll->rst))
++			meson_parm_write(clk->map, &pll->rst, 1);
 +
-+#ifndef __A1_PLL_CLKC_H
-+#define __A1_PLL_CLKC_H
+ 		regmap_multi_reg_write(clk->map, pll->init_regs,
+ 				       pll->init_count);
+-		meson_parm_write(clk->map, &pll->rst, 0);
 +
-+#define CLKID_FIXED_PLL		1
-+#define CLKID_FCLK_DIV2		6
-+#define CLKID_FCLK_DIV3		7
-+#define CLKID_FCLK_DIV5		8
-+#define CLKID_FCLK_DIV7		9
-+#define CLKID_HIFI_PLL		10
++		if (MESON_PARM_APPLICABLE(&pll->rst))
++			meson_parm_write(clk->map, &pll->rst, 0);
+ 	}
+ 
+ 	return 0;
+@@ -309,8 +313,11 @@ static int meson_clk_pll_is_enabled(struct clk_hw *hw)
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+ 
+-	if (meson_parm_read(clk->map, &pll->rst) ||
+-	    !meson_parm_read(clk->map, &pll->en) ||
++	if (MESON_PARM_APPLICABLE(&pll->rst) &&
++	    meson_parm_read(clk->map, &pll->rst))
++		return 0;
 +
-+#endif /* __A1_PLL_CLKC_H */
++	if (!meson_parm_read(clk->map, &pll->en) ||
+ 	    !meson_parm_read(clk->map, &pll->l))
+ 		return 0;
+ 
+@@ -341,13 +348,34 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
+ 		return 0;
+ 
+ 	/* Make sure the pll is in reset */
+-	meson_parm_write(clk->map, &pll->rst, 1);
++	if (MESON_PARM_APPLICABLE(&pll->rst))
++		meson_parm_write(clk->map, &pll->rst, 1);
+ 
+ 	/* Enable the pll */
+ 	meson_parm_write(clk->map, &pll->en, 1);
+ 
+ 	/* Take the pll out reset */
+-	meson_parm_write(clk->map, &pll->rst, 0);
++	if (MESON_PARM_APPLICABLE(&pll->rst))
++		meson_parm_write(clk->map, &pll->rst, 0);
++
++	/*
++	 * Compared with the previous SoCs, self-adaption current module
++	 * is newly added for A1, keep the new power-on sequence to enable the
++	 * PLL. The sequence is:
++	 * 1. enable the pll, delay for 10us
++	 * 2. enable the pll self-adaption current module, delay for 40us
++	 * 3. enable the lock detect module
++	 */
++	if (MESON_PARM_APPLICABLE(&pll->current_en)) {
++		usleep_range(10, 20);
++		meson_parm_write(clk->map, &pll->current_en, 1);
++		usleep_range(40, 50);
++	};
++
++	if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
++		meson_parm_write(clk->map, &pll->l_detect, 1);
++		meson_parm_write(clk->map, &pll->l_detect, 0);
++	}
+ 
+ 	if (meson_clk_pll_wait_lock(hw))
+ 		return -EIO;
+@@ -361,10 +389,15 @@ static void meson_clk_pll_disable(struct clk_hw *hw)
+ 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+ 
+ 	/* Put the pll is in reset */
+-	meson_parm_write(clk->map, &pll->rst, 1);
++	if (MESON_PARM_APPLICABLE(&pll->rst))
++		meson_parm_write(clk->map, &pll->rst, 1);
+ 
+ 	/* Disable the pll */
+ 	meson_parm_write(clk->map, &pll->en, 0);
++
++	/* Disable PLL internal self-adaption current module */
++	if (MESON_PARM_APPLICABLE(&pll->current_en))
++		meson_parm_write(clk->map, &pll->current_en, 0);
+ }
+ 
+ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
+index 367efd0f6410..a2228c0fdce5 100644
+--- a/drivers/clk/meson/clk-pll.h
++++ b/drivers/clk/meson/clk-pll.h
+@@ -36,6 +36,8 @@ struct meson_clk_pll_data {
+ 	struct parm frac;
+ 	struct parm l;
+ 	struct parm rst;
++	struct parm current_en;
++	struct parm l_detect;
+ 	const struct reg_sequence *init_regs;
+ 	unsigned int init_count;
+ 	const struct pll_params_table *table;
 -- 
 2.36.0
 
