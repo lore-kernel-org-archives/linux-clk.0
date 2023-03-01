@@ -2,115 +2,154 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB1CC64EC7
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 06:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C3EC7EE23
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 06:51:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229511AbjCAGsi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Mar 2023 01:48:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38244 "EHLO
+        id S229535AbjCAGvL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Mar 2023 01:51:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbjCAGsh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Mar 2023 01:48:37 -0500
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA28314213;
-        Tue, 28 Feb 2023 22:48:34 -0800 (PST)
-Received: by mail-ed1-x533.google.com with SMTP id da10so49831312edb.3;
-        Tue, 28 Feb 2023 22:48:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rWiH/yfABzHL4ae4C9gVZIzveXFrF1P6maDicDxQmSQ=;
-        b=kOJ3Gvv1Fwzz4lmxNclGvUEqUbmXPw2lV8RuCp6rmdyVz52v2fvubX68lsvY9a6se1
-         lpheYla/yeWTYz/2IPSSE031pfmPaqRzDvHGSZ9nnXZKpVyMeULKrfmBG4DHP/FARC78
-         dCuj3MFioN7+kL1iD/UoYJUJlRoTuTDmJvV50=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rWiH/yfABzHL4ae4C9gVZIzveXFrF1P6maDicDxQmSQ=;
-        b=bvrM9/RUMa050xYZCGeK4xo1YRsQavxdDIu3PQKvfjxrXSs6/6KR+kcBIAkLTEuZlL
-         2ak9FTM19gwjeMb4c7xoiW0CZarlLUU4H1LUfEmiX0g9jxvQ/klsjFTlMjXUpGUZp0yo
-         xtWpF1OAmL9RhOiRUofG2S2tzbhnqaTLbSf4HYTmD20UWqLc6/5jKoOEWaQ7aGY2WN0L
-         CIWsnDXpbMddOsBWIWeb7W8NAd4ExS7y3lJDB5UGHh+XOR6rtkEDc27mhSNCCKVgM+Z3
-         exF81HbWJucrspzvlnyJDNTqJJ7UoAw2f2n0KLbh+CaGznkW1xNPItozTeftLKNApqnD
-         0dBA==
-X-Gm-Message-State: AO0yUKWipMRNyMvZ4Xbaq20WJvIbj5PqJVrYle7T5rx8fqHd9qYDnPMe
-        bm0WxfzXK3/is723/R+GMm7nAiMtIeHltKGzk84ENz+UbBk=
-X-Google-Smtp-Source: AK7set/sTCJJLaqc0euCySi7vIDxXxrcEU9jaXPxQQR98MSZuPX9L0zhE/D+G0o9T+Y7KVy4e9pW0TJe/EkRga64s74=
-X-Received: by 2002:a17:906:1751:b0:8e3:da0f:f9b7 with SMTP id
- d17-20020a170906175100b008e3da0ff9b7mr2749900eje.4.1677653313123; Tue, 28 Feb
- 2023 22:48:33 -0800 (PST)
-MIME-Version: 1.0
-References: <20230228091638.206569-1-jk@codeconstruct.com.au>
- <20230228091638.206569-6-jk@codeconstruct.com.au> <CACPK8XcA_SES=Wo7vuWEJ4U5kTizM5brmb=6ELXD-taCFJQwgA@mail.gmail.com>
- <cbbb99ce6125048667e4c41412710a61dc4d686f.camel@codeconstruct.com.au>
-In-Reply-To: <cbbb99ce6125048667e4c41412710a61dc4d686f.camel@codeconstruct.com.au>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Wed, 1 Mar 2023 06:48:20 +0000
-Message-ID: <CACPK8XfRg9vHYjC0rco4dr9pNY03vXTrmXaopOGBgdCq09LybQ@mail.gmail.com>
-Subject: Re: [PATCH v4 5/5] dt-bindings: clock: ast2600: Add reset config for I3C
-To:     Jeremy Kerr <jk@codeconstruct.com.au>
-Cc:     linux-aspeed@lists.ozlabs.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S229451AbjCAGvK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Mar 2023 01:51:10 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A38232BF0B;
+        Tue, 28 Feb 2023 22:51:07 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4181E6122A;
+        Wed,  1 Mar 2023 06:51:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13A05C4339C;
+        Wed,  1 Mar 2023 06:51:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677653466;
+        bh=wLkMLeYVg39jdoFtmeKF2FCB/B7Xc+Wq5sqDU7iNotE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=K6zPgqPXp0Y/xc6BNFauRluIJdCwb/LyhjQGczc8UAQjdfDrVq7TDLD8Z+JUpE8eZ
+         JauC8OTwrKIDBxyRnr+oJu5MBMqa3IE8Kv4Tnolf8trZ5HYoy5brjp4M0gUsz8EWpd
+         IB5MZ8KKWdzy9qaDY8/a4eknGirTNYqM5RBlLtHe0dLJ2oEskAoTXT2nGEkKQqLsmk
+         JBQaH3j5kWnD/uxWHykDuz3l41G1SHdOiFRZiY8CMJYwXotYYaDjYiIRPCfmGNj49C
+         PhTtdM0hG6W0TyYq75VzkwaRurIgKjI4kB0B9nqZq6LNgWLqEWQu7jkibtk8u7Nu41
+         XhgJmkSju5LVA==
+Date:   Wed, 1 Mar 2023 07:51:03 +0100
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Dylan Hung <dylan_hung@aspeedtech.com>,
-        Andrew Jeffery <andrew@aj.id.au>
-Content-Type: text/plain; charset="UTF-8"
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+        netdev@vger.kernel.org, linux-can@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-pm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Fix SPI and I2C bus node names in examples
+Message-ID: <Y/7112o60iSJKBmd@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Kalle Valo <kvalo@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+        netdev@vger.kernel.org, linux-can@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-pm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-usb@vger.kernel.org
+References: <20230228215433.3944508-1-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="YR5VkbtgaV6fwHXL"
+Content-Disposition: inline
+In-Reply-To: <20230228215433.3944508-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 1 Mar 2023 at 06:29, Jeremy Kerr <jk@codeconstruct.com.au> wrote:
->
-> Hi Joel,
->
-> > > diff --git a/include/dt-bindings/clock/ast2600-clock.h
-> > > b/include/dt-bindings/clock/ast2600-clock.h
-> > > index b4d69103d722..b1c129977910 100644
-> > > --- a/include/dt-bindings/clock/ast2600-clock.h
-> > > +++ b/include/dt-bindings/clock/ast2600-clock.h
-> > > @@ -90,6 +90,12 @@
-> > >  /* Only list resets here that are not part of a gate */
-> >
-> > These definitions are part of a gate, yeah?
->
-> Well, no more "part of a gate" than all of the other definitions :)
->
-> All the defines in this section are references to individual bits in
-> the reset register banks in SCU040 & SCU050; the i3c set are the same
-> as the others there.
->
-> So I'm not sure what that comment is supposed to signify as to what
-> qualifies as a "gate" in the context of a reset...
 
-This is poor documentation from the author of the clock driver, which is me.
+--YR5VkbtgaV6fwHXL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-We only expose the reset lines in the device tree for resets that are
-not associated with a clock line.
+4:33PM -0600, Rob Herring wrote:
+> SPI and I2C bus node names are expected to be "spi" or "i2c",
+> respectively, with nothing else, a unit-address, or a '-N' index. A
+> pattern of 'spi0' or 'i2c0' or similar has crept in. Fix all these
+> cases. Mostly scripted with the following commands:
+>=20
+> git grep -l '\si2c[0-9] {' Documentation/devicetree/ | xargs sed -i -e 's=
+/i2c[0-9] {/i2c {/'
+> git grep -l '\sspi[0-9] {' Documentation/devicetree/ | xargs sed -i -e 's=
+/spi[0-9] {/spi {/'
+>=20
+> With this, a few errors in examples were exposed and fixed.
+>=20
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-This is done because the aspeed docs specify we do a dance when enabling an IP:
+Acked-by: Wolfram Sang <wsa@kernel.org>
 
- 1. Place IP in reset
- 2. Enable clock
- 3. Delay
- 4. Release reset
 
-So we do this with the aspeed_g6_gates array. The rule is: any gate
-with a number in the rst column doesn't have that reset line exposed.
-That's what this cryptic comment in the header is warning about.
+--YR5VkbtgaV6fwHXL
+Content-Type: application/pgp-signature; name="signature.asc"
 
-This was documented to some extent in the original commit message for
-the 2400/2500 driver:
+-----BEGIN PGP SIGNATURE-----
 
- https://git.kernel.org/torvalds/c/15ed8ce5f84e2b
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmP+9dcACgkQFA3kzBSg
+KbarOQ//WCC+R6Fe2lHHwZbZ4vmS2d/Rlz7qLlnduMr+4h9rcgknAchlVnbv0OUy
+Fu8SgebyBTX19WTXbUTyILzN7IsxLxzvTesJDhfIB5n9o7uIe3V0ZiX1R1SWsyV8
+GVbUGpJFSmhar2duHPida9xvf98Cww8v3KSoWNPHSaea5+w2oXluLm6jhQPrA1pR
+1I5WdUeWduWgwX/xDPJ0eeCEW4UxRawpGgCeMo/Ip/JZRwixnNDX1BJZsNIqJBDU
+gcZq4glZHY/Gwlo9gHGZwG8Nn+pWo8dsv+zcytJfhGjqb/k3NqsZ9YUvkbGb/pQ1
+RvEGvrA/KichSvbyfcBv02QcG5e6Fo4wk4879wTK8EGIN7RCnZyQCPRNzDogCcG4
+nYyGcj22Fvv2lWoon/Gg2MGIBhGvYyZXttD185ZkCYWpRKKGFGIa6jdwuMexfNwx
+VyuM7+HONLuKvO4+l1plMFAqBLy1Ex6kQDN4iDuZVVYA4Vcy2NyaQndehGUVTfrn
+OXu+lKVm9gNAKSlXTGXVQE04Bb2nMfp0B9PSYxvGxX3P2IJ6f68m/1LYH+kG4vaM
+kuFXDcSwYXIp++xhlMhHdyTKm5VTE0MX6wm9PEKjJ+fri1lohTa3mdUvaMzcosho
+MT0d2HrmQMXy+rAJoc7GlgEV5vd4O2sx9hACz8tahPmILpAkHGg=
+=TVnc
+-----END PGP SIGNATURE-----
 
-We could hoist that out and put it in the source file(s).
-
-Cheers,
-
-Joel
+--YR5VkbtgaV6fwHXL--
