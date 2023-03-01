@@ -2,153 +2,88 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 994F5C64EC7
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 11:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5A7C64ED6
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 12:11:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229958AbjCALYe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Mar 2023 06:24:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36314 "EHLO
+        id S229561AbjCAMLN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Mar 2023 07:11:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229814AbjCALYe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Mar 2023 06:24:34 -0500
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA1562917B;
-        Wed,  1 Mar 2023 03:24:32 -0800 (PST)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id E8DAF40005;
-        Wed,  1 Mar 2023 11:24:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1677669871;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NdQUXNQz7IbKbhXXN1a6Wk3GfwZH/3fYGstEBPCsKN8=;
-        b=OJkh2y9Pltb71Qmi1Ef3tkgoFtdHwn3Vo7v+D0q4Tot/q1iG6imYWeWcq1lXA3MLSD9omk
-        wqa0K3BRWx5BS2XSg2cH6FRwHuMX9z6MmPkifJcC5z+SskmHHLqMBfW7CkXmLNAqAhM57O
-        9AZpQrDWNQFSpyshvJ7uDiBU7TFPCGILdUmalvey8g8IIP95QyHZPqcc/Qi1sQgKHsg8CA
-        oeP/IT5O6OUJBHsRhGucfLAEcBqBH4cZvElubWmWjJFGwxrO/K3XKgu3yNJoY6tDRUEJ1w
-        uvE7jU+51C9qWfb4ayC8rdjrZuckAOJQIUov8hbjVJkDwM1BxD6Ccx/1GI+o4A==
-Date:   Wed, 1 Mar 2023 12:24:30 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Ralph Siemsen <ralph.siemsen@linaro.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH 3/4] clk: renesas: r9a06g032: document structs
-Message-ID: <20230301122430.4317530f@xps-13>
-In-Reply-To: <20230227183937.377612-4-ralph.siemsen@linaro.org>
-References: <20230227183937.377612-1-ralph.siemsen@linaro.org>
-        <20230227183937.377612-4-ralph.siemsen@linaro.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        with ESMTP id S229525AbjCAMLN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Mar 2023 07:11:13 -0500
+Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0210839CC6
+        for <linux-clk@vger.kernel.org>; Wed,  1 Mar 2023 04:11:12 -0800 (PST)
+Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-536b7ffdd34so359824257b3.6
+        for <linux-clk@vger.kernel.org>; Wed, 01 Mar 2023 04:11:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gIjv8wTxws2tEgCoRyOLyxbnH/NFNqoZJZnY4FJxenU=;
+        b=Nf1ctbON/Xa+HGQqhkTja6yP7nrbZJxwW1ZEKkvtHotZ/zGBzwRlUj4+eIaCjelQ4O
+         NWXIry4I1qeSRin/7bhObDRaARldmmgXJSVEVPay5BqoT5GaF3hRNSEdK9UqlqX5iHD+
+         3EWVofJ6IJac3Y/iszjbgQwrweq6qI+BM8e8lZdjF/vEdfPqx7GDFSG8ypMrt2qL+b2D
+         pCTk9q1JKJ5yjda6FctUFUDAiDfG5mBTB1iF2T3DFhAlP+IHse3f+Wz4qFQOIrw1OF7V
+         vDviwWRecl7xI/Zxm6WDTDsVaSju+V5TybyBrNJeozBw++gJQUKkD9N62jflM312cvU1
+         H7sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gIjv8wTxws2tEgCoRyOLyxbnH/NFNqoZJZnY4FJxenU=;
+        b=ImCCkuDTr9FzfOJWYPymuTCSmF/k1NgUUp0xq7cLyac75aF2i0kK6FZGpNQMlOFCuE
+         njKCrdN0XVclfqfdy9c3l0jTsU2oPPgT/EE0vbx8QOHrh+VFlAq/NFa5jsyiMhPAh9RE
+         86S5Ye+iwKaow/rRaxodnAPP53ed2ylfd/dawnC+JKgA6TJyDcDlOfxaLQoO8dRkOlH4
+         sSgELMxx+8sk5GV7Hm2eqRSqk262ge8at0ryzmvW4RrMgxIzPb6GcBWQiKQCMStpmshf
+         Xrj/NKxrUvNfacxBSgKPIrjA6CKUd/cOWR812jhcwbE+ErJSux3G5K3087UCrUVwqe4a
+         jwqg==
+X-Gm-Message-State: AO0yUKW5/LEHDhK/mJ3aB+iwJoOXwSZZohpN1OI6kZ7xbukSyWxCQyDl
+        1K9P8ynhugBgeKNd5m1vRENdBA2fsn1bJQA0dPbCaw==
+X-Google-Smtp-Source: AK7set+Tu72vHlqdk+Utvb4jVZuScfGBW6iIUq7EkBuVeAuJvrgg2VHRkGymv+keK6qg6lrEzw1CAJ2PwjcxJ1uASN8=
+X-Received: by 2002:a81:4005:0:b0:52e:dddf:82b9 with SMTP id
+ l5-20020a814005000000b0052edddf82b9mr3672453ywn.10.1677672670881; Wed, 01 Mar
+ 2023 04:11:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <20230301012506.1401883-1-saravanak@google.com>
+In-Reply-To: <20230301012506.1401883-1-saravanak@google.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 1 Mar 2023 13:10:59 +0100
+Message-ID: <CACRpkdYvSv0=FcsPUpmiBT86ocJaEtZF=c=Qty6FzdVsSPggzw@mail.gmail.com>
+Subject: Re: [PATCH v1] clk: Mark a fwnode as initialized when using
+ CLK_OF_DECLARE* macros
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kernel-team@android.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Ralph,
+On Wed, Mar 1, 2023 at 2:25 AM Saravana Kannan <saravanak@google.com> wrote:
 
-ralph.siemsen@linaro.org wrote on Mon, 27 Feb 2023 13:39:35 -0500:
+> The CLK_OF_DECLARE macros sometimes prevent the creation of struct
+> devices for the device node being handled. It does this by
+> setting/clearing OF_POPULATED flag. This can block the probing of some
+> devices because fw_devlink will block the consumers of this node till a
+> struct device is created and probed.
+>
+> Set the appropriate fwnode flags when these device nodes are initialized
+> by the clock framework and when OF_POPULATED flag is set/cleared. This
+> will allow fw_devlink to handle the dependencies correctly.
+>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Reported-by: Linus Walleij <linus.walleij@linaro.org>
+> Link: https://lore.kernel.org/lkml/CACRpkdamxDX6EBVjKX5=D3rkHp17f5pwGdBVhzFU90-0MHY6dQ@mail.gmail.com/
+> Fixes: 4a032827daa8 ("of: property: Simplify of_link_to_phandle()")
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
 
-> Add some kerneldoc comments for the structures.
->=20
-> Signed-off-by: Ralph Siemsen <ralph.siemsen@linaro.org>
-> ---
->=20
->  drivers/clk/renesas/r9a06g032-clocks.c | 36 +++++++++++++++++++++++++-
->  1 file changed, 35 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas=
-/r9a06g032-clocks.c
-> index 8a1ab9da19ae..1b7801f14c8c 100644
-> --- a/drivers/clk/renesas/r9a06g032-clocks.c
-> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
-> @@ -27,6 +27,26 @@
-> =20
->  #define R9A06G032_SYSCTRL_DMAMUX 0xA0
-> =20
+Excellent Saravana, this fixes my issue!
+Tested-by: Linus Walleij <linus.walleij@linaro.org>
 
-Thanks for the change, I think it's always interesting to document a
-bit more the code and strucs, I would like to offer a few proposals,
-feel free to ignore if you disagree.
-
-> +/**
-> + * struct r9a06g032_gate - clock gate control bits
-> + * @gate:   bit which enables/disables the clock
-
-Is this really a bit? I see below you explain what each field means
-in terms of offset/bitmask, so maybe we could be vague here,
-something like:
-
-"configuration to enable/disable the clock"
-
-> + * @reset:  bit which controls module reset (active low)
-
-"clock module reset" ?
-
-> + * @ready:  bit which indicates device is ready for access
-
-"the clock is stacle and the device fed should be ready for access"
-(not sure about this one)
-
-> + * @midle:  bit which requests to idle the NoC interconnect
-> + *
-> + * Each of these fields describes a single bit in a register,
-> + * which controls some aspect of clock gating. The @gate field
-> + * is mandatory, this one enables/disables the clock. The
-> + * other fields are optional, with zero indicating "not used".
-> + *
-> + * In most cases there is a @reset bit which needs to be
-> + * de-asserted to bring the module out of reset.
-> + *
-> + * Modules may also need to signal when the are @ready to
-> + * handle requests (read/writes) from the NoC interconnect.
-> + *
-> + * Similarly, the @midle bit is used to idle the master.
-> + */
->  struct r9a06g032_gate {
->  	u16 gate, reset, ready, midle;
->  	/* Unused fields omitted to save space */
-> @@ -41,7 +61,21 @@ enum gate_type {
->  	K_DUALGATE	/* special for UARTs */
->  };
-> =20
-> -/* This is used to describe a clock for instantiation */
-> +/**
-> + * struct r9a06g032_clkdesc - describe a single clock
-> + * @name:    string describing this clock
-> + * @managed: boolan indicating if this clock should be
-
-typo: boolean
-
-> + *           start/stop as part of power management
-
-started/stopped?
-
-> + * @type:   see enum gate_type
-> + * @index:  the ID of this clock element
-> + * @source: the ID+1 of the parent clock element.
-> + *          Root clock uses ID of ~0 (PARENT_ID);
-> + * @gate:   describes the bits which control clock gate
-
-I would just refer to the structure above (like @type).
-
-No description of the following fields? :-) :-) It's okay, but while
-you're at it...
-
-> + *
-> + * Describes a single element in the clock tree hierarchy.
-> + * As there are quite a large number of clock elements, this
-> + * structure is packed tightly to conserve space.
-> + */
->  struct r9a06g032_clkdesc {
->  	const char *name;
->  	uint32_t managed:1;
-
-
-Thanks,
-Miqu=C3=A8l
+Yours,
+Linus Walleij
