@@ -2,119 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 508F8C64EC7
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 01:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2175C64EC7
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 01:25:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229801AbjCABXS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Feb 2023 20:23:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44730 "EHLO
+        id S229565AbjCABZS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Feb 2023 20:25:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229920AbjCABXK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Feb 2023 20:23:10 -0500
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A011E367DD
-        for <linux-clk@vger.kernel.org>; Tue, 28 Feb 2023 17:22:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1677633771; x=1709169771;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=DByreY2GJXdAGvq71tt9Fo41tXYu1N83vt1UZRvOcNg=;
-  b=DkaB9sQ2/r1An6iCcbUt72xjAUJ6GzYCOYaSqCck78pbmazwlSmEU59J
-   MtdfDpYs2AvXdXvIziesv1glRQFRwygaCkmP7JXECBPtzaEtJFkYYBk4A
-   FERZfN4iUkAcxdwma/10HvJj+nCYPl58TVyNZEXB5PQuVyQs/9bNCWWJS
-   X+JhYCE9+YRXV/NZxmiCJ9DkftEVKYSpzrd6+pZL2phQVp+ZNkROpW9gF
-   Ybb7Ub71uuy5iA42+q83PUo3+msp4ikLLlFOlN2tqakF9O7EkFfLG1ZLG
-   idkbv/xWUL/jUsLK573sy1e32wmL1NBcJQE3uS0G5s+35XEWVjH+fMUMq
-   g==;
-X-IronPort-AV: E=Sophos;i="5.98,223,1673884800"; 
-   d="scan'208";a="224259751"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 01 Mar 2023 09:22:13 +0800
-IronPort-SDR: JUNbgy2tLFnuLTLWZiygbZfSvuxLhHrC1TpGU+vqyF2A0rILIjEh/09Kt/amVYSGsbZwm2RTru
- H6e3shGQLEmtRHmVEEGjVi+/LkAGBNUOgGWgrsxRf5FKBahfa6j0QC4RGVSt96iHInqqoYVsir
- evA8+zP4+yCnrxz36a9JHuYCgxOzA+shBoAUc+/Ae0xB+YcbSyZURjkXJETPWrrZLigmckjpFw
- xcUlni9YR+VBoYtDTsIF4eMpmF/+S4Ibt8ZqwAnsnHNAh7Nna0BgvkyNhJd+1MaxZXjZtnKFM+
- hOU=
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Feb 2023 16:39:00 -0800
-IronPort-SDR: 8wQuFkOFa7xPgbzsHf78Bid3r6y55ioudQjLMruilO+jwRQxZuHwy5UfZIYYGy/icQ9v2fpuOJ
- uB1attBG7WIq2W9LG5KYdSv+d6sI/5VVjh8F/IGe9GC1bNYRXooUcSUt2/GYmvSWyBvCCxfgGl
- wv920JVwGtJhRh+P4ORVdWddRlGglbLMkvlOwK/a6WXy2F2v+utrIr0m7UHqoZUtrBrMiwUGMn
- PDZY9HthwkIVgSDJ46o3C6BqGTgWE4Y3Ztz0TYzlia4MGJbQ/6rqjgcGleRBnthMJ8T29O4JWY
- weU=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Feb 2023 17:22:09 -0800
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4PRGg56kXYz1Rwt8
-        for <linux-clk@vger.kernel.org>; Tue, 28 Feb 2023 17:22:09 -0800 (PST)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1677633729; x=1680225730; bh=DByreY2GJXdAGvq71tt9Fo41tXYu1N83vt1
-        UZRvOcNg=; b=aRZcjnIWzTDBFw+lwAK0yQ8I8bxlc+Ac1zRjAR1GywFhY4yN1yH
-        aI+zVMJ6Q0eG41nPwWDXNKq/hOWxeI01P52EdQGYIOYzXOkufeBRfJIy6NRF23nX
-        Mv/CsRYiuYhXA9RxOcnGN3cKK70ZZzHyVwwLeiPp4Q25wXt4ULnXNHNK/fyeKyA1
-        72yG9x6b5NEawCA8VtwAC4s21lnwzYOOwwPhvyEQomn5yv9NJmNTstMZIMVrGBKM
-        4gtrS+dFAyEVUXJQ5eCYv8E5ukl9iy2YrxwHKqzpEipCj7vPGQzjx2LdG3rpZiBz
-        7ie+6OMDK/aILh8Jql2vRDyQiwps+YPQ7Zw==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id wxnNuveIt7BE for <linux-clk@vger.kernel.org>;
-        Tue, 28 Feb 2023 17:22:09 -0800 (PST)
-Received: from [10.225.163.47] (unknown [10.225.163.47])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4PRGg32nyRz1RvLy;
-        Tue, 28 Feb 2023 17:22:07 -0800 (PST)
-Message-ID: <efe45f04-3a7a-3e94-ef79-4dcdd6029f44@opensource.wdc.com>
-Date:   Wed, 1 Mar 2023 10:22:06 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v3 2/3] riscv: Kconfig: Allow RV32 to build with no MMU
-Content-Language: en-US
-To:     Jesse Taube <mr.bossman075@gmail.com>,
-        linux-riscv@lists.infradead.org
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yimin Gu <ustcymgu@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Waldemar Brodkorb <wbx@openadk.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-References: <20230301002657.352637-1-Mr.Bossman075@gmail.com>
- <20230301002657.352637-3-Mr.Bossman075@gmail.com>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <20230301002657.352637-3-Mr.Bossman075@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S229727AbjCABZQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Feb 2023 20:25:16 -0500
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DB5034F45
+        for <linux-clk@vger.kernel.org>; Tue, 28 Feb 2023 17:25:10 -0800 (PST)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-536c525d470so251173407b3.18
+        for <linux-clk@vger.kernel.org>; Tue, 28 Feb 2023 17:25:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112; t=1677633910;
+        h=cc:to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZpTjGf5rdoQrgqg7m4j1olf7isTwZLPPEo4N4KGMcEs=;
+        b=hnTdUjyTCG1DL6zERdTUrA97PhKyOaq0DWq2c9TjFvgD03M+6Rz1RJ29eEhFtQ2K3x
+         ynq9A0MtP8Gpzq2Df51cg/lFNDyOOtaBU0mLfjOHN4XM3YELSr6JP3MthxlcVPHim8Ps
+         E5iZfA47Uk0nPAsBX3OeDyRXUuXnkdvPuhC2LchztHuptIc0238iaPA1EF/qGkZyV9sE
+         LFYa9AtV6FRPqwp3N28F+BrM9ZYnU3pL0mbXQ0KOcp3sL3BDHKk0GOvuaB88+dc+bv81
+         n5Nci47Cjga1UwbaLyH3vfE+EaYhv1VcuJ2GykLZvDUVHDazOLOtEXHUwzIeWbl1coR7
+         bveQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677633910;
+        h=cc:to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZpTjGf5rdoQrgqg7m4j1olf7isTwZLPPEo4N4KGMcEs=;
+        b=rfTh9Zfs9YVTahqSEl9AU8gmTp40zSvhbLi5E9hL4zCf4Wa7EWXRXGmEgJwXNZ2B9x
+         4D++sBY9JMWLWhVYmnl5Irpf1jNRApEu8hUK4qauXkj62wd82RtRZV1edgihUTw29190
+         ScOYgXp1ROSPupV1Y3ZoQkJo/SN51+Lr4AVQXb7fk0g1uVi9SxDCBVtxCH3Wgq+XUwEN
+         Gdjx5YpoV9rHn/i/37mQQuwZAU5u47nEqawg7XBh72RdTljhhrIIhKcMfUztxV8FKu+a
+         cFI1UgtIHEsom738CTn32VSESSB14sWEavVKuxmLAkCGxN3tGJeaMezdvsLvtuvo+OJO
+         izKQ==
+X-Gm-Message-State: AO0yUKV8mdSeWZkjCwucnopjK+3RBwpmdJEHW8smcwTsP/7NROceCckc
+        Z6mgUDr39Dc0Poq3G46n+SY6Buv2s/gfUnM=
+X-Google-Smtp-Source: AK7set8XzvTlY3Lelpk8wWvtM+smDcvIiIuFVaO7S/PpYpjk8CTakqtZKPi9Od/tLawpoxrRPPIDOdt1aEYwb+w=
+X-Received: from saravanak.san.corp.google.com ([2620:15c:2d:3:debf:1aed:5c45:c92])
+ (user=saravanak job=sendgmr) by 2002:a5b:50:0:b0:ab8:1ed9:cfc5 with SMTP id
+ e16-20020a5b0050000000b00ab81ed9cfc5mr1566210ybp.6.1677633909687; Tue, 28 Feb
+ 2023 17:25:09 -0800 (PST)
+Date:   Tue, 28 Feb 2023 17:25:06 -0800
+Message-Id: <20230301012506.1401883-1-saravanak@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.39.2.722.g9855ee24e9-goog
+Subject: [PATCH v1] clk: Mark a fwnode as initialized when using
+ CLK_OF_DECLARE* macros
+From:   Saravana Kannan <saravanak@google.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Saravana Kannan <saravanak@google.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>, kernel-team@android.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 3/1/23 09:26, Jesse Taube wrote:
-> From: Yimin Gu <ustcymgu@gmail.com>
-> 
-> Some RISC-V 32bit cores do not have an MMU, and the kernel should be
-> able to build for them. This patch enables the RV32 to be built with
-> no MMU support.
-> 
-> Signed-off-by: Yimin Gu <ustcymgu@gmail.com>
-> CC: Jesse Taube <Mr.Bossman075@gmail.com>
-> Tested-by: Waldemar Brodkorb <wbx@openadk.org>
-> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
+The CLK_OF_DECLARE macros sometimes prevent the creation of struct
+devices for the device node being handled. It does this by
+setting/clearing OF_POPULATED flag. This can block the probing of some
+devices because fw_devlink will block the consumers of this node till a
+struct device is created and probed.
 
-Looks OK.
+Set the appropriate fwnode flags when these device nodes are initialized
+by the clock framework and when OF_POPULATED flag is set/cleared. This
+will allow fw_devlink to handle the dependencies correctly.
 
-Reviewed-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Linus Walleij <linus.walleij@linaro.org>
+Link: https://lore.kernel.org/lkml/CACRpkdamxDX6EBVjKX5=D3rkHp17f5pwGdBVhzFU90-0MHY6dQ@mail.gmail.com/
+Fixes: 4a032827daa8 ("of: property: Simplify of_link_to_phandle()")
+Signed-off-by: Saravana Kannan <saravanak@google.com>
+---
 
+This is fixing a patch that landed through driver core. So, should Greg
+be pulling in this fix?
+
+-Saravana
+
+ drivers/clk/clk.c            | 4 ++++
+ include/linux/clk-provider.h | 1 +
+ 2 files changed, 5 insertions(+)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index ae07685c7588..8bd5b9841993 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -5361,6 +5361,10 @@ void __init of_clk_init(const struct of_device_id *matches)
+ 				clk_provider->clk_init_cb(clk_provider->np);
+ 				of_clk_set_defaults(clk_provider->np, true);
+ 
++				fwnode_dev_initialized(
++					of_fwnode_handle(clk_provider->np),
++					true);
++
+ 				list_del(&clk_provider->node);
+ 				of_node_put(clk_provider->np);
+ 				kfree(clk_provider);
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 842e72a5348f..93c0b06a0f2b 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -1373,6 +1373,7 @@ struct clk_hw_onecell_data {
+ 	static void __init name##_of_clk_init_driver(struct device_node *np) \
+ 	{								\
+ 		of_node_clear_flag(np, OF_POPULATED);			\
++		fwnode_dev_initialized(of_fwnode_handle(np), false);	\
+ 		fn(np);							\
+ 	}								\
+ 	OF_DECLARE_1(clk, name, compat, name##_of_clk_init_driver)
 -- 
-Damien Le Moal
-Western Digital Research
+2.39.2.722.g9855ee24e9-goog
 
