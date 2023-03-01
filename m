@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A12B3C7EE30
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 00:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0845C7EE31
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Mar 2023 00:27:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229637AbjCAA1C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Feb 2023 19:27:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60558 "EHLO
+        id S229668AbjCAA1E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Feb 2023 19:27:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229582AbjCAA1B (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Feb 2023 19:27:01 -0500
+        with ESMTP id S229662AbjCAA1D (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Feb 2023 19:27:03 -0500
 Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1416F166FE;
-        Tue, 28 Feb 2023 16:27:01 -0800 (PST)
-Received: by mail-qt1-x831.google.com with SMTP id cf14so12593034qtb.10;
-        Tue, 28 Feb 2023 16:27:01 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E83215880;
+        Tue, 28 Feb 2023 16:27:02 -0800 (PST)
+Received: by mail-qt1-x831.google.com with SMTP id cf14so12593100qtb.10;
+        Tue, 28 Feb 2023 16:27:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1677630420;
+        d=gmail.com; s=20210112; t=1677630422;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EJeL8n1akQBNQY4mRwitUTFXHR0Ml81lQFAgFs/9ooY=;
-        b=K7bv3zo7nkCzf6deBRp4Lg5YJiKpmZGrVVrcwX6fMe04PLGbmPyiZ1MfpMFJQ3gczk
-         PTyFy7vyLgLlx4rQsvY5iWzcRX3PiEerotSwO1e2S/uUms8G6rSLjchIcjEksVUEjiAm
-         lqxx6nLANTkqsDfT2GGi0AknUbNFldAXU+7lx+ghL7WHK+3w+CaZW0Jan14INQZhOML9
-         ojesxHzEYYczhj2+mxUoQOQVI0RHUXdx3ff+mDU8+OOYUEjKABkvjPah1T9R0sgtLfL1
-         JRbjxDw92oE/6vsQ929iWXZ7ucRImszCuaADlO3+M6lK9IL4xYmXkipZHIL1URAUffnO
-         DiVw==
+        bh=ah2e83PDoe/U6Gf57zepbByTh0n9RNpGO3gN23MY0Ho=;
+        b=Cjy/nNRu165SghzyRoqBtp+mon81oWgIkg4ZrARfae2E9Rsz8v/brGam+WmHVCrGm2
+         EJUFWKIkQnPjCIaJhSD3M9cWgX4rHCi9bdnX22p2poLAQyjNF6ayxZHO2a6bWB+6/uL9
+         vFcUd1bOjeoR07sXMzjbVsONZDxMQSC6t8rI7qaKrXNulpyuyU0TWec4hlrhRB7TF12X
+         NA/FZ+SvEA4uc1PklvT1POYrJ7bHPsBVAbfMsX2JkVP1tX8YwzePyfLbkuPpcZCb02f2
+         DvBphTVSgrLmolfoO4XAwdZ2o1VW68ULKkmOaSTw2Eyu8Qr5h5v8m4Qeus2AE10sERpl
+         m3vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677630420;
+        d=1e100.net; s=20210112; t=1677630422;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EJeL8n1akQBNQY4mRwitUTFXHR0Ml81lQFAgFs/9ooY=;
-        b=HG208m9fU3ciDls425w2tiUogZYUMWbUIOQCeRYakQUutMBUAzpJZgusb7lI35XXwr
-         D/Tjei465eEM0zkt2rMPlUEmq0Gze3rMdyy4JFn1x6pZ+CZBSe5rTZCwp8MHjaSive+/
-         tv3BrsUT+wEmFnfbp/0dsVNV0iIkOf60eYo+S/m3n9R2EgTolnBDOZGxIqM1rtNyi1N9
-         3N0BC6+TWoMk+hiYmnYT1kAVcASsLNaKlul7UnCsbX7P84kDGXAYaAbSdK+N/stCDiuJ
-         qUdy3v7tg7jwZyWFuYTxZgv03bnLcJr+gfvVP7Bm2RAfWlIZLeAi43NWWzEXE4tfraFA
-         IHfg==
-X-Gm-Message-State: AO0yUKW8YToiK82jw3Tm3H1ml+Wn+DMFD4itJ6m8BC9PmUU/37TFQYrD
-        /zcvITfm5Kg4e1QsfmBIiFQ=
-X-Google-Smtp-Source: AK7set8zokOxucIULtSs5zhdVozPV61o7zflDRvd+aPvYt9Y7AQE+0kZsw5WSyFy3Fvn+3de2l1rkQ==
-X-Received: by 2002:a05:622a:1746:b0:3bf:dbd3:a014 with SMTP id l6-20020a05622a174600b003bfdbd3a014mr8768717qtk.45.1677630420219;
-        Tue, 28 Feb 2023 16:27:00 -0800 (PST)
+        bh=ah2e83PDoe/U6Gf57zepbByTh0n9RNpGO3gN23MY0Ho=;
+        b=uPXH0BWrIbiLUGrktn5XSBOjj57LTWHhxXWL5OpzLKPCBD0HpNmW9upe8Im0x5eV/Y
+         WWSmJi1O8q+yku7Q6dxd27CZJEdpjZ7HGsyVMDTrhxpN3pSLa3wom9r+EhfqfRUtOyln
+         Ia18QO9y/dpng40/vlUtE9vbG/NEPNngsBgmKd6Y+71zBC+PVoA7tNIbb7ZY9QsJHFfq
+         jEJLVM6LF0Ert+tt4JB5s5PD0xfckSFCdNUt3NsVzm38ROHQ9mY+nuxBlPCtUfbqoT/y
+         7rci5q+XtW+j9tY/mpjfrWxJTgW9ETxMP/6AaMqmi+WWTYGJA2xhccVlgXd4+muhJ2gT
+         pGiA==
+X-Gm-Message-State: AO0yUKWcy8Klct20XLlV7y5Y3x3f5S2H23bNUk0lnyenlHZ2sPfp1Y4X
+        hKc8rh5JNxOEbDERhEyEVDM=
+X-Google-Smtp-Source: AK7set9iiLqJtrwPOOeLikPIZrT4VRpY2Bg6vQXeyHliiddZ31/ha/5MTwNUlgvr+61QjoyKXtwnIw==
+X-Received: by 2002:a05:622a:2c9:b0:3bd:155c:3ac8 with SMTP id a9-20020a05622a02c900b003bd155c3ac8mr8147019qtx.67.1677630422226;
+        Tue, 28 Feb 2023 16:27:02 -0800 (PST)
 Received: from jesse-desktop.jtp-bos.lab (pool-108-26-182-112.bstnma.fios.verizon.net. [108.26.182.112])
-        by smtp.gmail.com with ESMTPSA id t8-20020ac85888000000b003bb8c60cdf1sm7576698qta.78.2023.02.28.16.26.59
+        by smtp.gmail.com with ESMTPSA id t8-20020ac85888000000b003bb8c60cdf1sm7576698qta.78.2023.02.28.16.27.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Feb 2023 16:26:59 -0800 (PST)
+        Tue, 28 Feb 2023 16:27:01 -0800 (PST)
 From:   Jesse Taube <mr.bossman075@gmail.com>
 X-Google-Original-From: Jesse Taube <Mr.Bossman075@gmail.com>
 To:     linux-riscv@lists.infradead.org
@@ -62,11 +62,10 @@ Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Albert Ou <aou@eecs.berkeley.edu>,
         Palmer Dabbelt <palmer@dabbelt.com>,
         Paul Walmsley <paul.walmsley@sifive.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH v3 1/3] clk: k210: remove an implicit 64-bit division
-Date:   Tue, 28 Feb 2023 19:26:55 -0500
-Message-Id: <20230301002657.352637-2-Mr.Bossman075@gmail.com>
+        Conor Dooley <conor@kernel.org>
+Subject: [PATCH v3 3/3] riscv: configs: Add nommu PHONY defconfig for RV32
+Date:   Tue, 28 Feb 2023 19:26:57 -0500
+Message-Id: <20230301002657.352637-4-Mr.Bossman075@gmail.com>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230301002657.352637-1-Mr.Bossman075@gmail.com>
 References: <20230301002657.352637-1-Mr.Bossman075@gmail.com>
@@ -76,41 +75,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Conor Dooley <conor.dooley@microchip.com>
+32bit risc-v can be configured to run without MMU. Introduce
+rv32_nommu_virt_defconfig .PHONY target, that is based on
+nommu_virt_defconfig. This is similar to how rv32_defconfig
+is based on "defconfig".
 
-The K210 clock driver depends on SOC_CANAAN, which is only selectable
-when !MMU on RISC-V. !MMU is not possible on 32-bit yet, but patches
-have been sent for its enabling. The kernel test robot reported this
-implicit 64-bit division there.
-
-Replace the implicit division with an explicit one.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Link: https://lore.kernel.org/linux-riscv/202301201538.zNlqgE4L-lkp@intel.com/
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Suggested-by: Conor Dooley <conor@kernel.org>
 Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
+Cc: Yimin Gu <ustcymgu@gmail.com>
 ---
 V1->V2:
- - new commit
+ - Fix typo in commit title
 V2->V3:
- - No change
+ - Change from defconfig file to a PHONY config
 ---
- drivers/clk/clk-k210.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/riscv/Makefile | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/clk-k210.c b/drivers/clk/clk-k210.c
-index 67a7cb3503c3..4eed667eddaf 100644
---- a/drivers/clk/clk-k210.c
-+++ b/drivers/clk/clk-k210.c
-@@ -495,7 +495,7 @@ static unsigned long k210_pll_get_rate(struct clk_hw *hw,
- 	f = FIELD_GET(K210_PLL_CLKF, reg) + 1;
- 	od = FIELD_GET(K210_PLL_CLKOD, reg) + 1;
- 
--	return (u64)parent_rate * f / (r * od);
-+	return div_u64((u64)parent_rate * f, r * od);
- }
- 
- static const struct clk_ops k210_pll_ops = {
+diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+index 6203c3378922..1b276f62f22b 100644
+--- a/arch/riscv/Makefile
++++ b/arch/riscv/Makefile
+@@ -174,3 +174,7 @@ rv64_randconfig:
+ PHONY += rv32_defconfig
+ rv32_defconfig:
+ 	$(Q)$(MAKE) -f $(srctree)/Makefile defconfig 32-bit.config
++
++PHONY += rv32_nommu_virt_defconfig
++rv32_nommu_virt_defconfig:
++	$(Q)$(MAKE) -f $(srctree)/Makefile nommu_virt_defconfig 32-bit.config
 -- 
 2.39.0
 
