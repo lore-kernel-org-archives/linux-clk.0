@@ -2,128 +2,152 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CBB3C7EE2F
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Mar 2023 16:45:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F80C6FA8E
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Mar 2023 17:14:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230044AbjCBQpR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Mar 2023 11:45:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53588 "EHLO
+        id S229629AbjCBRO0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Mar 2023 12:14:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230017AbjCBQpN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Mar 2023 11:45:13 -0500
-Received: from mailrelay1-1.pub.mailoutpod2-cph3.one.com (mailrelay1-1.pub.mailoutpod2-cph3.one.com [IPv6:2a02:2350:5:400::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 075161EFCC
-        for <linux-clk@vger.kernel.org>; Thu,  2 Mar 2023 08:45:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ravnborg.org; s=rsa2;
-        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-         from:date:from;
-        bh=sAIc9DICHOwHXe3hoL0M1Cz46v91ph++acz6kjkneyk=;
-        b=kDFUay36skYmps2/wdqt4fAH3ooPZbYWVp4pqBqM961wiZduj7P0xLgJw2P+NpMGf7kg1DoicLT6s
-         g6l09K8HwL4RYQ8zGGoaFGn4km6zQYbAroP+EN+9HlyJrhV1W8t5cDqTAwscYUwdLDpYbIiHboO9rZ
-         aMzoAa0S/vUdoj1kf/OGdJTZUpW+MrjaNGUTQavNWIRuYfGMKTi7Tl3hROfbZVtoTWtbKeUCJQ2L0I
-         vgAjzdLxgJIXjLXCeRFb3ZpkshGAWy49N0muwOqA6SWUqwPx0aPY3DSGC5+6RFk99RSbDSFXHj01s6
-         xLMWjzebL84uGzeen8v31LzBEjuhwEg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
-        d=ravnborg.org; s=ed2;
-        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-         from:date:from;
-        bh=sAIc9DICHOwHXe3hoL0M1Cz46v91ph++acz6kjkneyk=;
-        b=dTZtzyqF/jIMi0Zr3bfFJbyk3/PAmHQdX/XPn81EeMGXIgD+hYOJ9q2VlxqlJBJy6Rr6S2UsHglzv
-         pur80rgBQ==
-X-HalOne-ID: 943971d9-b919-11ed-babc-11abd97b9443
-Received: from ravnborg.org (2-105-2-98-cable.dk.customer.tdc.net [2.105.2.98])
-        by mailrelay1 (Halon) with ESMTPSA
-        id 943971d9-b919-11ed-babc-11abd97b9443;
-        Thu, 02 Mar 2023 16:45:06 +0000 (UTC)
-Date:   Thu, 2 Mar 2023 17:45:04 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-        netdev@vger.kernel.org, linux-can@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux-pm@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Fix SPI and I2C bus node names in examples
-Message-ID: <ZADSkGa6dK4H9p75@ravnborg.org>
-References: <20230228215433.3944508-1-robh@kernel.org>
+        with ESMTP id S229626AbjCBROZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Mar 2023 12:14:25 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5596426878;
+        Thu,  2 Mar 2023 09:14:15 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 9D40ECE1F60;
+        Thu,  2 Mar 2023 17:14:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13B13C4339C;
+        Thu,  2 Mar 2023 17:14:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677777252;
+        bh=sxh36iZQRth6PcbEK8rBaNdhPJuIjt084P0tIKyNndg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=TAJj++imQypJWlswGfOoct5GpNWCJQsD7oCXqgQ+ZDG8uNTAaoEaYgHDCMmVXcK2X
+         jB2C7tAJYpWiuL6YafBBMtsMVUYOCQrRTkfpoH2WH0W3qjbUP53Vj0Fw8x928o5+H0
+         B3X0tkSkIQsoJKkhoOAQNwr3MaqnneespIRdTZKbtUtbpCq3wtLWfzBYaQCGuJznp5
+         +2+jmuUHw6CUofbdurXFfoqeC+3fpZ523uvG5P3p8jI8KoD8MZuo1DwBAtxlhXwW0M
+         i1AGLygTd9avSKC1IuYZNT7A91xL/Q075a1GwO/YFePebxenzP5rnDD7KFjGYoXuyQ
+         w+gk9vEAOiauQ==
+Received: by mail-ua1-f52.google.com with SMTP id n4so6667442ual.13;
+        Thu, 02 Mar 2023 09:14:12 -0800 (PST)
+X-Gm-Message-State: AO0yUKW35DVvKJjBldBaNEYrFwt4o8X496Y5l3to8M1KsFKZluJNM52c
+        gU4Z3mAPMRbjIjlwCFJIxbcUWGin6IltBU61Bw==
+X-Google-Smtp-Source: AK7set/cWK8giFKY8fRLWeGOHTziXVw5azzC2FP84wrmvxubHnP5GVl40pOdsWrs8+z15dRYvJSehk78bGu43zZqZQU=
+X-Received: by 2002:a05:6122:b55:b0:40f:2033:6994 with SMTP id
+ 21-20020a0561220b5500b0040f20336994mr6152564vko.2.1677777250943; Thu, 02 Mar
+ 2023 09:14:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230228215433.3944508-1-robh@kernel.org>
+References: <20230302013822.1808711-1-sboyd@kernel.org>
+In-Reply-To: <20230302013822.1808711-1-sboyd@kernel.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 2 Mar 2023 11:13:59 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLVQVZhYTSZgrvA-V-xOUbiBdyDxqPOZk=89YS33EahBQ@mail.gmail.com>
+Message-ID: <CAL_JsqLVQVZhYTSZgrvA-V-xOUbiBdyDxqPOZk=89YS33EahBQ@mail.gmail.com>
+Subject: Re: [PATCH 0/8] clk: Add kunit tests for fixed rate and parent data
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev,
+        Brendan Higgins <brendan.higgins@linux.dev>,
+        David Gow <davidgow@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rob.
+On Wed, Mar 1, 2023 at 7:38=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wrot=
+e:
+>
+> This patch series adds unit tests for the clk fixed rate basic type and
+> the clk registration functions that use struct clk_parent_data. To get
+> there, we add support for loading a DTB into the UML kernel that's
+> running the unit tests along with probing platform drivers to bind to
+> device nodes specified in DT.
+>
+> With this series, we're able to exercise some of the code in the common
+> clk framework that uses devicetree lookups to find parents and the fixed
+> rate clk code that scans devicetree directly and creates clks. Please
+> review.
+>
+> I Cced everyone to all the patches so they get the full context. I'm
+> hoping I can take the whole pile through the clk tree as they almost all
+> depend on each other. In the future I imagine it will be easy to add
+> more test nodes to the clk.dtsi file and not need to go across various
+> maintainer trees like this series does.
+>
+> Stephen Boyd (8):
+>   dt-bindings: Add linux,kunit binding
+>   of: Enable DTB loading on UML for KUnit tests
+>   kunit: Add test managed platform_device/driver APIs
+>   clk: Add test managed clk provider/consumer APIs
+>   dt-bindings: kunit: Add fixed rate clk consumer test
+>   clk: Add KUnit tests for clk fixed rate basic type
+>   dt-bindings: clk: Add KUnit clk_parent_data test
+>   clk: Add KUnit tests for clks registered with struct clk_parent_data
 
->  .../bindings/display/bridge/analogix,anx7625.yaml |  2 +-
->  .../bindings/display/bridge/anx6345.yaml          |  2 +-
->  .../bindings/display/bridge/lontium,lt8912b.yaml  |  2 +-
->  .../bindings/display/bridge/nxp,ptn3460.yaml      |  2 +-
->  .../bindings/display/bridge/ps8640.yaml           |  2 +-
->  .../bindings/display/bridge/sil,sii9234.yaml      |  2 +-
->  .../bindings/display/bridge/ti,dlpc3433.yaml      |  2 +-
->  .../bindings/display/bridge/toshiba,tc358762.yaml |  2 +-
->  .../bindings/display/bridge/toshiba,tc358768.yaml |  2 +-
->  .../bindings/display/panel/nec,nl8048hl11.yaml    |  2 +-
-Acked-by: Sam Ravnborg <sam@ravnborg.org>
+Good to see bindings for this. I've been meaning to do something about
+the DT unittest ones being undocumented, but I hadn't really decided
+whether it was worth writing schemas for them. The compatibles at
+least show up with 'make dt_compatible_check'. Perhaps we want to just
+define some vendor (not 'linux') that's an exception rather than
+requiring schemas (actually, that already works for 'foo'). It's
+likely that we want test DTs that fail normal checks and schemas get
+in the way of that as we don't have a way to turn off checks.
 
+We already have GPIO tests in the DT unittests, so why is clocks
+different? Or should the GPIO tests be moved out (yes, please!)?
 
+What happens when/if the DT unittest is converted to kunit? I think
+that would look confusing from the naming. My initial thought is
+'kunit' should be dropped from the naming of a lot of this. Note that
+the original kunit submission converted the DT unittests. I would
+still like to see that happen. Frank disagreed over what's a unit test
+or not, then agreed, then didn't... I don't really care. If there's a
+framework to use, then we should use it IMO.
 
-> index 669f70b1b4c4..8bd58913804a 100644
-> --- a/Documentation/devicetree/bindings/display/solomon,ssd1307fb.yaml
-> +++ b/Documentation/devicetree/bindings/display/solomon,ssd1307fb.yaml
-> @@ -226,7 +226,7 @@ unevaluatedProperties: false
->  
->  examples:
->    - |
-> -    i2c1 {
-> +    i2c {
->              #address-cells = <1>;
->              #size-cells = <0>;
->  
-> @@ -239,7 +239,7 @@ examples:
->  
->              ssd1306_i2c: oled@3d {
->                      compatible = "solomon,ssd1306";
-> -                    reg = <0x3c>;
-> +                    reg = <0x3d>;
->                      pwms = <&pwm 4 3000>;
->                      reset-gpios = <&gpio2 7>;
->                      solomon,com-lrremap;
+>
+>  .../clock/linux,clk-kunit-parent-data.yaml    |  47 ++
+>  .../kunit/linux,clk-kunit-fixed-rate.yaml     |  35 ++
+>  .../bindings/kunit/linux,kunit.yaml           |  24 +
+>  arch/um/kernel/dtb.c                          |  29 +-
+>  drivers/clk/.kunitconfig                      |   3 +
+>  drivers/clk/Kconfig                           |   7 +
+>  drivers/clk/Makefile                          |   6 +
+>  drivers/clk/clk-fixed-rate_test.c             | 296 ++++++++++++
+>  drivers/clk/clk-kunit.c                       | 204 ++++++++
+>  drivers/clk/clk-kunit.h                       |  28 ++
+>  drivers/clk/clk_test.c                        | 456 +++++++++++++++++-
+>  drivers/of/Kconfig                            |  26 +
+>  drivers/of/Makefile                           |   1 +
+>  drivers/of/kunit/.kunitconfig                 |   4 +
+>  drivers/of/kunit/Makefile                     |   4 +
+>  drivers/of/kunit/clk.dtsi                     |  30 ++
+>  drivers/of/kunit/kunit.dtsi                   |   9 +
+>  drivers/of/kunit/kunit.dtso                   |   4 +
+>  drivers/of/kunit/uml_dtb_test.c               |  55 +++
+>  include/kunit/platform_driver.h               |  15 +
+>  lib/kunit/Makefile                            |   6 +
+>  lib/kunit/platform_driver-test.c              | 107 ++++
+>  lib/kunit/platform_driver.c                   | 207 ++++++++
 
-I can see this align the example with i2c-mux-gpio.yaml so the change
-should be fine. I am just positive surprised the tooling caught it.
+Humm, we have DT platform driver unittests too. What's the difference?
 
-The change is
-Acked-by: Sam Ravnborg <sam@ravnborg.org>
+Anyways, that's all just my initial reaction from only halfway looking
+at this. :)
 
-the above was just me thinking loud.
-
-	Sam
+Rob
