@@ -2,154 +2,128 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24774C6FA8E
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Mar 2023 16:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CBB3C7EE2F
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Mar 2023 16:45:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229913AbjCBQZL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Mar 2023 11:25:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58076 "EHLO
+        id S230044AbjCBQpR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Mar 2023 11:45:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229892AbjCBQZL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Mar 2023 11:25:11 -0500
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B8B146148
-        for <linux-clk@vger.kernel.org>; Thu,  2 Mar 2023 08:25:03 -0800 (PST)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-536cd8f6034so436197327b3.10
-        for <linux-clk@vger.kernel.org>; Thu, 02 Mar 2023 08:25:03 -0800 (PST)
+        with ESMTP id S230017AbjCBQpN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Mar 2023 11:45:13 -0500
+Received: from mailrelay1-1.pub.mailoutpod2-cph3.one.com (mailrelay1-1.pub.mailoutpod2-cph3.one.com [IPv6:2a02:2350:5:400::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 075161EFCC
+        for <linux-clk@vger.kernel.org>; Thu,  2 Mar 2023 08:45:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=95kXsbImCUylIF+16am1BkTDL53tv2I3oCaAH9/VSv0=;
-        b=WIJB2kkSBt9817cj+lD5I32y72NkCXnMm64mwTgeKnk5eA8yYJSkSQTRYoiYj/SDNa
-         v1ECclvAZl7rnMO9QjQe41D5kQrIVZovTL8+JRr91bhXlKB0z62X2sBMjpSEaNt1uIHf
-         DtXDHK4y1ZpTubWLo56aThQlOsJWGc27CZH7WU1YGE86MK1xTFFyVKLlA5r9TY4gpIep
-         AZKJFPPRgivgMXmobwhK/r882rDeM9CJPM8xVPnJU+5OoNDJhoECkjVD4cbux2PGFbR/
-         zHDcY5P/j8rSc04he/C9aw9/mtEE4/SR+Vkszm2Oz4cD3b7IjtUDZGdkft07qJj6jmOv
-         NchA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=95kXsbImCUylIF+16am1BkTDL53tv2I3oCaAH9/VSv0=;
-        b=7BDBG+eS6Jzr84mSwFj9tN9+SGbyccd8rIs0dMxTbBdV3RspS2rBgAxAdUWR5Jya0L
-         5RTtQltbqfQ7u+7WMlU/181MX9OvH+DuNDWA19TMsWOBQrL0b+rnUvQAQqkPu5UoW8mQ
-         JokWrSwAHQiJ4e2YRFvH/WB3WmK+kgMl2vlioFCnh8SQXlvdKr/sB6qB7gZ6wRU1qovb
-         r49OMPmkBqLFq4mBTIobTynu2p1a3+VW1p4TOjO6o1bmhe0ivMG7NLg1eT37uPWCtEra
-         fUtbJvokOp5ha5LexBZK3M/8LdU0dQq2yFhNr5sGSsdDCbGA7nS4JigZvN0Dv7bso48+
-         yyUw==
-X-Gm-Message-State: AO0yUKUNprD3lwpnPn7MjX95DSk5oXTtCv2+L7jRoamdh8hPutBQK1ju
-        oB6qD/V4PQZbgr7Cf9KE11FcT+o5ytIORcVqQfNVfA==
-X-Google-Smtp-Source: AK7set99MlhrauH4ycn0PekzbRiYnxYmAgoI/3h5gI5swCDKuKmUDV1yidAWw/EI1UWpMlC1kcQ7+HxbX5RyTOA5UZk=
-X-Received: by 2002:a81:ae56:0:b0:52a:9eac:92b with SMTP id
- g22-20020a81ae56000000b0052a9eac092bmr1692059ywk.4.1677774302442; Thu, 02 Mar
- 2023 08:25:02 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1677749625.git.quic_varada@quicinc.com> <07ea204c6488e7e78956bca09f59bf9c49353780.1677749625.git.quic_varada@quicinc.com>
-In-Reply-To: <07ea204c6488e7e78956bca09f59bf9c49353780.1677749625.git.quic_varada@quicinc.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Thu, 2 Mar 2023 18:24:46 +0200
-Message-ID: <CAA8EJpoyKB3AqvA6R06L9K_dYc97+JK3SwY5TKR1FiC30w8=Yw@mail.gmail.com>
-Subject: Re: [PATCH 4/8] clk: qcom: gcc-ipq9574: Add USB related clocks
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        d=ravnborg.org; s=rsa2;
+        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+         from:date:from;
+        bh=sAIc9DICHOwHXe3hoL0M1Cz46v91ph++acz6kjkneyk=;
+        b=kDFUay36skYmps2/wdqt4fAH3ooPZbYWVp4pqBqM961wiZduj7P0xLgJw2P+NpMGf7kg1DoicLT6s
+         g6l09K8HwL4RYQ8zGGoaFGn4km6zQYbAroP+EN+9HlyJrhV1W8t5cDqTAwscYUwdLDpYbIiHboO9rZ
+         aMzoAa0S/vUdoj1kf/OGdJTZUpW+MrjaNGUTQavNWIRuYfGMKTi7Tl3hROfbZVtoTWtbKeUCJQ2L0I
+         vgAjzdLxgJIXjLXCeRFb3ZpkshGAWy49N0muwOqA6SWUqwPx0aPY3DSGC5+6RFk99RSbDSFXHj01s6
+         xLMWjzebL84uGzeen8v31LzBEjuhwEg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
+        d=ravnborg.org; s=ed2;
+        h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+         from:date:from;
+        bh=sAIc9DICHOwHXe3hoL0M1Cz46v91ph++acz6kjkneyk=;
+        b=dTZtzyqF/jIMi0Zr3bfFJbyk3/PAmHQdX/XPn81EeMGXIgD+hYOJ9q2VlxqlJBJy6Rr6S2UsHglzv
+         pur80rgBQ==
+X-HalOne-ID: 943971d9-b919-11ed-babc-11abd97b9443
+Received: from ravnborg.org (2-105-2-98-cable.dk.customer.tdc.net [2.105.2.98])
+        by mailrelay1 (Halon) with ESMTPSA
+        id 943971d9-b919-11ed-babc-11abd97b9443;
+        Thu, 02 Mar 2023 16:45:06 +0000 (UTC)
+Date:   Thu, 2 Mar 2023 17:45:04 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+        netdev@vger.kernel.org, linux-can@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-pm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Fix SPI and I2C bus node names in examples
+Message-ID: <ZADSkGa6dK4H9p75@ravnborg.org>
+References: <20230228215433.3944508-1-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230228215433.3944508-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 2 Mar 2023 at 11:56, Varadarajan Narayanan
-<quic_varada@quicinc.com> wrote:
->
-> Add the clocks needed for enabling USB in IPQ9574
->
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
->  drivers/clk/qcom/gcc-ipq9574.c               | 35 ++++++++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,ipq9574-gcc.h |  2 ++
->  2 files changed, 37 insertions(+)
->
-> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
-> index 1bf33d5..85cc6a5 100644
-> --- a/drivers/clk/qcom/gcc-ipq9574.c
-> +++ b/drivers/clk/qcom/gcc-ipq9574.c
-> @@ -2041,6 +2041,39 @@ static struct clk_regmap_mux usb0_pipe_clk_src = {
->         },
->  };
->
-> +static struct clk_branch gcc_usb0_pipe_clk = {
-> +       .halt_reg = 0x2c054,
-> +       .halt_check = BRANCH_HALT_DELAY,
-> +       .clkr = {
-> +               .enable_reg = 0x2c054,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(struct clk_init_data){
-> +                       .name = "gcc_usb0_pipe_clk",
-> +                       .parent_hws = (const struct clk_hw *[]){
-> +                               &usb0_pipe_clk_src.clkr.hw },
+Hi Rob.
 
-Please move the closing bracket to the next line.
-
-> +                       .num_parents = 1,
-> +                       .flags = CLK_SET_RATE_PARENT,
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch gcc_usb0_sleep_clk = {
-> +       .halt_reg = 0x2c058,
-> +       .clkr = {
-> +               .enable_reg = 0x2c058,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(struct clk_init_data){
-> +                       .name = "gcc_usb0_sleep_clk",
-> +                       .parent_hws = (const struct clk_hw *[]){
-> +                               &gcc_sleep_clk_src.clkr.hw },
-> +                       .num_parents = 1,
-> +                       .flags = CLK_SET_RATE_PARENT,
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
->  static const struct freq_tbl ftbl_sdcc_apps_clk_src[] = {
->         F(144000, P_XO, 16, 12, 125),
->         F(400000, P_XO, 12, 1, 5),
-> @@ -4008,6 +4041,8 @@ static struct clk_regmap *gcc_ipq9574_clks[] = {
->         [GCC_USB0_MOCK_UTMI_CLK] = &gcc_usb0_mock_utmi_clk.clkr,
->         [USB0_PIPE_CLK_SRC] = &usb0_pipe_clk_src.clkr,
->         [GCC_USB0_PHY_CFG_AHB_CLK] = &gcc_usb0_phy_cfg_ahb_clk.clkr,
-> +       [GCC_USB0_PIPE_CLK] = &gcc_usb0_pipe_clk.clkr,
-> +       [GCC_USB0_SLEEP_CLK] = &gcc_usb0_sleep_clk.clkr,
->         [SDCC1_APPS_CLK_SRC] = &sdcc1_apps_clk_src.clkr,
->         [GCC_SDCC1_APPS_CLK] = &gcc_sdcc1_apps_clk.clkr,
->         [SDCC1_ICE_CORE_CLK_SRC] = &sdcc1_ice_core_clk_src.clkr,
-> diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-> index c89e96d..96b7c0b 100644
-> --- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-> +++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-> @@ -214,4 +214,6 @@
->  #define GCC_SNOC_PCIE1_1LANE_S_CLK                     205
->  #define GCC_SNOC_PCIE2_2LANE_S_CLK                     206
->  #define GCC_SNOC_PCIE3_2LANE_S_CLK                     207
-> +#define GCC_USB0_PIPE_CLK                              208
-> +#define GCC_USB0_SLEEP_CLK                             209
->  #endif
-> --
-> 2.7.4
->
+>  .../bindings/display/bridge/analogix,anx7625.yaml |  2 +-
+>  .../bindings/display/bridge/anx6345.yaml          |  2 +-
+>  .../bindings/display/bridge/lontium,lt8912b.yaml  |  2 +-
+>  .../bindings/display/bridge/nxp,ptn3460.yaml      |  2 +-
+>  .../bindings/display/bridge/ps8640.yaml           |  2 +-
+>  .../bindings/display/bridge/sil,sii9234.yaml      |  2 +-
+>  .../bindings/display/bridge/ti,dlpc3433.yaml      |  2 +-
+>  .../bindings/display/bridge/toshiba,tc358762.yaml |  2 +-
+>  .../bindings/display/bridge/toshiba,tc358768.yaml |  2 +-
+>  .../bindings/display/panel/nec,nl8048hl11.yaml    |  2 +-
+Acked-by: Sam Ravnborg <sam@ravnborg.org>
 
 
--- 
-With best wishes
-Dmitry
+
+> index 669f70b1b4c4..8bd58913804a 100644
+> --- a/Documentation/devicetree/bindings/display/solomon,ssd1307fb.yaml
+> +++ b/Documentation/devicetree/bindings/display/solomon,ssd1307fb.yaml
+> @@ -226,7 +226,7 @@ unevaluatedProperties: false
+>  
+>  examples:
+>    - |
+> -    i2c1 {
+> +    i2c {
+>              #address-cells = <1>;
+>              #size-cells = <0>;
+>  
+> @@ -239,7 +239,7 @@ examples:
+>  
+>              ssd1306_i2c: oled@3d {
+>                      compatible = "solomon,ssd1306";
+> -                    reg = <0x3c>;
+> +                    reg = <0x3d>;
+>                      pwms = <&pwm 4 3000>;
+>                      reset-gpios = <&gpio2 7>;
+>                      solomon,com-lrremap;
+
+I can see this align the example with i2c-mux-gpio.yaml so the change
+should be fine. I am just positive surprised the tooling caught it.
+
+The change is
+Acked-by: Sam Ravnborg <sam@ravnborg.org>
+
+the above was just me thinking loud.
+
+	Sam
