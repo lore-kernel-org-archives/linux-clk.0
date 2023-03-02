@@ -2,72 +2,110 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9331DC7EE33
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Mar 2023 00:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55CABC7EE3A
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Mar 2023 01:38:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229620AbjCBA6w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Mar 2023 19:58:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41622 "EHLO
+        id S229509AbjCBBic (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Mar 2023 20:38:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229607AbjCBA6v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Mar 2023 19:58:51 -0500
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6A3325960;
-        Wed,  1 Mar 2023 16:58:49 -0800 (PST)
-Received: by codeconstruct.com.au (Postfix, from userid 10000)
-        id 9F3F7203F9; Thu,  2 Mar 2023 08:58:44 +0800 (AWST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=codeconstruct.com.au; s=2022a; t=1677718724;
-        bh=P2sKYF+UVnJfCwBMz5b/csD9Fw/yLMWPestEYUU2PLY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=WtO1rIic/nbBWB3idTxHeKjtfBT3WdNO6rg5lWEi5Xl4+R/JvfNXaQ+mz44UKe6J1
-         hfg+rier0wXdJKf2kyaHwTlNereve2DCCZe1HKEq+Dgy5whywxoug1fRKRae4nNAbk
-         lKQG86UmaAHyK4wpmkZTgmxxaW3jelvw9GPBdKkrH5QVN2DJy2uGQHd4g14+/yxLSH
-         ZLjmd6eD4KY5en3+OZBBtwts8hLfiQC3/qOlVNypQkKc60L9ASzqQAEbddgSYil/TS
-         AuQ0JXqs1Mnvxe5tcvoFn4CJKyBigoPqhIyBJJltTT4jyWEKg//2DVqh/dn9j6eV5z
-         2yH55iPWxo1kw==
-From:   Jeremy Kerr <jk@codeconstruct.com.au>
-To:     devicetree@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        linux-clk@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S229699AbjCBBia (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Mar 2023 20:38:30 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAF8929E14;
+        Wed,  1 Mar 2023 17:38:25 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1E12C61542;
+        Thu,  2 Mar 2023 01:38:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE626C43442;
+        Thu,  2 Mar 2023 01:38:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677721104;
+        bh=xlmggg4SwPHgsUHI5EKsdomiaUIjY1b7gCCFhpuQ1f0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=QX5VMEDWKzXOvBrh3s5n8VNsk9WCy+BA9LU0FftVmXQFxnx9N4tmGdqqJbt4HBNC/
+         /Qlpzm4VHNwG1upxQs/3iAv3kEvXMUcNPICy2unmITpgwI27wshbBkaYelU99Og3/X
+         p5YKr67RY+XlVu88alwK46oCYJX2sz1t55xB+CborNapRC+fVCStkxZLrs4vbUVQp8
+         VkGBUpBi7nyiEcrDtkNgaz+3/+D2JOiC74nqF8N0t5IIQy6bc7yL9zxQMfRoYpZZcU
+         f28hGP1XZakglVR91gvvQt0gH03SKVUs98uG1rm/CYB0ImCiuK9S8Hxa9KyjMIIN1F
+         k/5ExXHAciHDA==
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev,
+        Brendan Higgins <brendan.higgins@linux.dev>,
+        David Gow <davidgow@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dylan Hung <dylan_hung@aspeedtech.com>,
-        Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>
-Subject: [PATCH v5 6/6] dt-bindings: clock: ast2600: Expand comment on reset definitions
-Date:   Thu,  2 Mar 2023 08:58:34 +0800
-Message-Id: <20230302005834.13171-7-jk@codeconstruct.com.au>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230302005834.13171-1-jk@codeconstruct.com.au>
-References: <20230302005834.13171-1-jk@codeconstruct.com.au>
+        Frank Rowand <frowand.list@gmail.com>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+Subject: [PATCH 1/8] dt-bindings: Add linux,kunit binding
+Date:   Wed,  1 Mar 2023 17:38:14 -0800
+Message-Id: <20230302013822.1808711-2-sboyd@kernel.org>
+X-Mailer: git-send-email 2.39.2.722.g9855ee24e9-goog
+In-Reply-To: <20230302013822.1808711-1-sboyd@kernel.org>
+References: <20230302013822.1808711-1-sboyd@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The current "not part of a gate" is a little ambiguous. Expand this a
-little to clarify the reference to the paired clock + reset control.
+Document the linux,kunit board compatible string. This board is loaded
+into the Linux kernel when KUnit is testing devicetree dependent code.
 
-Signed-off-by: Jeremy Kerr <jk@codeconstruct.com.au>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>
+Cc: David Gow <davidgow@google.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- include/dt-bindings/clock/ast2600-clock.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/kunit/linux,kunit.yaml           | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/kunit/linux,kunit.yaml
 
-diff --git a/include/dt-bindings/clock/ast2600-clock.h b/include/dt-bindings/clock/ast2600-clock.h
-index b4d69103d722..e149eee61588 100644
---- a/include/dt-bindings/clock/ast2600-clock.h
-+++ b/include/dt-bindings/clock/ast2600-clock.h
-@@ -87,7 +87,7 @@
- #define ASPEED_CLK_MAC4RCLK		70
- #define ASPEED_CLK_I3C			71
- 
--/* Only list resets here that are not part of a gate */
-+/* Only list resets here that are not part of a clock gate + reset pair */
- #define ASPEED_RESET_ADC		55
- #define ASPEED_RESET_JTAG_MASTER2	54
- #define ASPEED_RESET_I3C_DMA		39
+diff --git a/Documentation/devicetree/bindings/kunit/linux,kunit.yaml b/Documentation/devicetree/bindings/kunit/linux,kunit.yaml
+new file mode 100644
+index 000000000000..dfe6da4796e8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/kunit/linux,kunit.yaml
+@@ -0,0 +1,24 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/kunit/linux,kunit.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: KUnit
++
++maintainers:
++  - Brendan Higgins <brendanhiggins@google.com>
++  - David Gow <davidgow@google.com>
++
++description:
++  KUnit board used to unit test the Linux kernel in User Mode Linux (UML).
++
++properties:
++  $nodename:
++    const: "/"
++  compatible:
++    const: linux,kunit
++
++additionalProperties: true
++
++...
 -- 
-2.39.1
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
 
