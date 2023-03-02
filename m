@@ -2,267 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D92DEC6FA8E
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Mar 2023 08:14:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89A62C678D4
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Mar 2023 08:23:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229437AbjCBIOL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Mar 2023 03:14:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50952 "EHLO
+        id S229579AbjCBIXW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Mar 2023 03:23:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjCBIOJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Mar 2023 03:14:09 -0500
-Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53D8F1B2E4
-        for <linux-clk@vger.kernel.org>; Thu,  2 Mar 2023 00:14:08 -0800 (PST)
-Received: by mail-vs1-xe2b.google.com with SMTP id o6so21622321vsq.10
-        for <linux-clk@vger.kernel.org>; Thu, 02 Mar 2023 00:14:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1677744847;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7dz+Im1JptJooDRwo5l9SHA5vvSLvcChu+L5/144x6I=;
-        b=MURNc7t4gC/95voZwHkVqTEdWv5KpCNTj9CZlIX7Encncm9llvY5+sX7T59yR+3588
-         3lPPbZTUYk58Xeq5Mrj3jC18NF+JQsUnAbELbxlZrvbcznPeSVNCzwaTRSDhSAEvs+98
-         rbvUz+8hx/P1AWY/XTijQJfBYtVAnIHHmhGWzQkqU6AeiiAcjnZXIZBvLnW8dBlhh78t
-         uhD4CQO6WX76ZeehByAv6sCy0PyXYld+ONQiv+hwCEDaDdR2J/ImaBgt6VB4W/vwM3B3
-         4AesI23bzjdrqor6fSXlIPhjjBHnxhI9D3iNc0DQXZII5fqW8Y3jNsgRod3krLtWavoQ
-         DzVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677744847;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7dz+Im1JptJooDRwo5l9SHA5vvSLvcChu+L5/144x6I=;
-        b=5NUd7IS3SpT0hELXS6ZclOgIB+H90Ig2tMfFl2vld61J1AbVNCf/nwFV7syV7eIDCi
-         wXP+gUyu9ImUIIjW1H05EybZh4L/fdQljeJebCkphtUvcbHy3db9lYG7u+HQm8kJPSTu
-         0Pn+ykTHLTwSgEAaSvVEyN7KGy9W5zOgxCvCFr1IyFAJYx/Q448v/51nbGaC9kJDG7ZC
-         vfExIiI4GsVwWgw8QxBVIiFpCgxZ3QpMbCx6KK6m/T+JB3kESa0wm/h1+Rb86/BQPw22
-         1dws0yR6HUzrlMQc5+dXJcFiZeQDIvGeEkiuDSifCoLvIXizpsjEMM1aWQAbcq92EMMH
-         RxXw==
-X-Gm-Message-State: AO0yUKV6bFPa3ws6uONZNcmxm3OCAwR32uFbmkOv73IPB9G8V97JqXqr
-        CIjC9iIUMrMTJRiCwCF5ORZQYKAP7Yu1lD0YfKAnXQ==
-X-Google-Smtp-Source: AK7set+eo05sdidE0iL7vRNRctC8Kzb5aINrjn8iUyRsSTBfKC7KHzh5BN+ZIpYkcfrr9iEzBzhiQG+RzBhvC94luMg=
-X-Received: by 2002:a67:cd05:0:b0:414:2d02:6c96 with SMTP id
- u5-20020a67cd05000000b004142d026c96mr6109677vsl.7.1677744847283; Thu, 02 Mar
- 2023 00:14:07 -0800 (PST)
+        with ESMTP id S229681AbjCBIXU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Mar 2023 03:23:20 -0500
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::225])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43412EC46;
+        Thu,  2 Mar 2023 00:23:12 -0800 (PST)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 275471C0002;
+        Thu,  2 Mar 2023 08:23:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1677745390;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=e0TPMdu3lJujwE1hK/YIyo6osAvtcMRM4DqvClnEmJc=;
+        b=Xr2H28/1CFwgoyvtzNCPGcNIU/Dg57Td+kKfO4UYRJ0eYDauuLfW0phSAhl3YbrrxK3mVz
+        DUYEBpLl0j9DGzGfSTSLr04NYrkPO4fxLm1VAqf00VLa1++OWwL+ja8jIZD0yQq1kmVo7p
+        ICkrDIpPTZi1I41rpni1Zbx8y/LkiAE9g9vMx/AGkeR2kvrN7Dmrk2klAg+QEs+8J4GL/p
+        lVb9svwnWtyxJI4XgbB21NJUN6cl1Ieewhy3FMcwRuD9IYHTFTrW7Q5siaEcXX5o4iclPj
+        67HSMUWom1yDn22wMSAivLlPPEaw+p3CzfYibhSwA+dV1P3wIHtiNiciUQWR6w==
+Date:   Thu, 2 Mar 2023 09:23:08 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Ralph Siemsen <ralph.siemsen@linaro.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH v2 3/4] clk: renesas: r9a06g032: document structs
+Message-ID: <20230302092308.5eaedec3@xps-13>
+In-Reply-To: <20230301215520.828455-4-ralph.siemsen@linaro.org>
+References: <20230301215520.828455-1-ralph.siemsen@linaro.org>
+        <20230301215520.828455-4-ralph.siemsen@linaro.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20230302013822.1808711-1-sboyd@kernel.org>
-In-Reply-To: <20230302013822.1808711-1-sboyd@kernel.org>
-From:   David Gow <davidgow@google.com>
-Date:   Thu, 2 Mar 2023 16:13:55 +0800
-Message-ID: <CABVgOSnpMNCtEEsJV28OzUoxdDuiT4a2T0avP0AYf9xFW1jxrw@mail.gmail.com>
-Subject: Re: [PATCH 0/8] clk: Add kunit tests for fixed rate and parent data
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        patches@lists.linux.dev,
-        Brendan Higgins <brendan.higgins@linux.dev>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-        boundary="000000000000ab2bba05f5e6693b"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---000000000000ab2bba05f5e6693b
-Content-Type: text/plain; charset="UTF-8"
+Hi Ralph,
 
-On Thu, 2 Mar 2023 at 09:38, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> This patch series adds unit tests for the clk fixed rate basic type and
-> the clk registration functions that use struct clk_parent_data. To get
-> there, we add support for loading a DTB into the UML kernel that's
-> running the unit tests along with probing platform drivers to bind to
-> device nodes specified in DT.
->
-> With this series, we're able to exercise some of the code in the common
-> clk framework that uses devicetree lookups to find parents and the fixed
-> rate clk code that scans devicetree directly and creates clks. Please
-> review.
->
+ralph.siemsen@linaro.org wrote on Wed,  1 Mar 2023 16:55:19 -0500:
 
-Thanks Stephen -- this is really neat!
+> Add some kerneldoc comments for the structures.
+>=20
+> Signed-off-by: Ralph Siemsen <ralph.siemsen@linaro.org>
 
-This works well here, and I love all of the tests for the
-KUnit/device-tree integration as well.
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
-I'm still looking through the details of it (alas, I've mostly lived
-in x86-land, so my device-tree knowledge is, uh, spotty to say the
-least), but apart from possibly renaming some things or similarly
-minor tweaks, I've not got any real suggestions thus far.
-
-I do wonder whether we'll want, on the KUnit side, to have some way of
-supporting KUnit device trees on non-UML architecctures (e.g., if we
-need to test something architecture-specific, or on a big-endian
-platform, etc), but I think that's a question for the future, rather
-than something that affects this series.
-
-Similarly, I wonder if there's something we could do with device tree
-overlays, in order to make it possible for tests to swap nodes in and
-out for testing.
-
-I don't think either of those ideas should block this from getting in though.
-
-> I Cced everyone to all the patches so they get the full context. I'm
-> hoping I can take the whole pile through the clk tree as they almost all
-> depend on each other. In the future I imagine it will be easy to add
-> more test nodes to the clk.dtsi file and not need to go across various
-> maintainer trees like this series does.
-
-That seems pretty sensible to me. I expect there'll be a few minor
-conflicts on the KUnit side (there are a bunch of small
-lib/kunit/Makefile changes in 6.3, and there's a plan to do some more
-serious changes to the kunit_resource API at some point, though I have
-my doubts they'll all hit in 6.4), but I doubt they'll cause too much
-strife.
-
-Cheers,
--- David
-
->
-> Stephen Boyd (8):
->   dt-bindings: Add linux,kunit binding
->   of: Enable DTB loading on UML for KUnit tests
->   kunit: Add test managed platform_device/driver APIs
->   clk: Add test managed clk provider/consumer APIs
->   dt-bindings: kunit: Add fixed rate clk consumer test
->   clk: Add KUnit tests for clk fixed rate basic type
->   dt-bindings: clk: Add KUnit clk_parent_data test
->   clk: Add KUnit tests for clks registered with struct clk_parent_data
->
->  .../clock/linux,clk-kunit-parent-data.yaml    |  47 ++
->  .../kunit/linux,clk-kunit-fixed-rate.yaml     |  35 ++
->  .../bindings/kunit/linux,kunit.yaml           |  24 +
->  arch/um/kernel/dtb.c                          |  29 +-
->  drivers/clk/.kunitconfig                      |   3 +
->  drivers/clk/Kconfig                           |   7 +
->  drivers/clk/Makefile                          |   6 +
->  drivers/clk/clk-fixed-rate_test.c             | 296 ++++++++++++
->  drivers/clk/clk-kunit.c                       | 204 ++++++++
->  drivers/clk/clk-kunit.h                       |  28 ++
->  drivers/clk/clk_test.c                        | 456 +++++++++++++++++-
->  drivers/of/Kconfig                            |  26 +
->  drivers/of/Makefile                           |   1 +
->  drivers/of/kunit/.kunitconfig                 |   4 +
->  drivers/of/kunit/Makefile                     |   4 +
->  drivers/of/kunit/clk.dtsi                     |  30 ++
->  drivers/of/kunit/kunit.dtsi                   |   9 +
->  drivers/of/kunit/kunit.dtso                   |   4 +
->  drivers/of/kunit/uml_dtb_test.c               |  55 +++
->  include/kunit/platform_driver.h               |  15 +
->  lib/kunit/Makefile                            |   6 +
->  lib/kunit/platform_driver-test.c              | 107 ++++
->  lib/kunit/platform_driver.c                   | 207 ++++++++
->  23 files changed, 1599 insertions(+), 4 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/linux,clk-kunit-parent-data.yaml
->  create mode 100644 Documentation/devicetree/bindings/kunit/linux,clk-kunit-fixed-rate.yaml
->  create mode 100644 Documentation/devicetree/bindings/kunit/linux,kunit.yaml
->  create mode 100644 drivers/clk/clk-fixed-rate_test.c
->  create mode 100644 drivers/clk/clk-kunit.c
->  create mode 100644 drivers/clk/clk-kunit.h
->  create mode 100644 drivers/of/kunit/.kunitconfig
->  create mode 100644 drivers/of/kunit/Makefile
->  create mode 100644 drivers/of/kunit/clk.dtsi
->  create mode 100644 drivers/of/kunit/kunit.dtsi
->  create mode 100644 drivers/of/kunit/kunit.dtso
->  create mode 100644 drivers/of/kunit/uml_dtb_test.c
->  create mode 100644 include/kunit/platform_driver.h
->  create mode 100644 lib/kunit/platform_driver-test.c
->  create mode 100644 lib/kunit/platform_driver.c
->
->
-> base-commit: c9c3395d5e3dcc6daee66c6908354d47bf98cb0c
-> --
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-> https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
->
-
---000000000000ab2bba05f5e6693b
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIIPnwYJKoZIhvcNAQcCoIIPkDCCD4wCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ggz5MIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
-IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
-dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
-6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
-c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
-I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
-AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
-BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
-CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
-AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
-MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
-My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
-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
-64VRg2IjDI2fJVE9RD6aMEwGA1UdIARFMEMwQQYJKwYBBAGgMgEoMDQwMgYIKwYBBQUHAgEWJmh0
-dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQCMAAwgZoGCCsG
-AQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9jYS9n
-c2F0bGFzcjNzbWltZWNhMjAyMDBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5nbG9iYWxzaWdu
-LmNvbS9jYWNlcnQvZ3NhdGxhc3Izc21pbWVjYTIwMjAuY3J0MB8GA1UdIwQYMBaAFHzMCmjXouse
-LHIb0c1dlW+N+/JjMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20v
-Y2EvZ3NhdGxhc3Izc21pbWVjYTIwMjAuY3JsMA0GCSqGSIb3DQEBCwUAA4IBAQA2lZLYRLu7foeR
-cHo1VeNA974FZBiCm08Kd44/aCMEzdTJvxAE9xbUJf7hS1i6eW49qxuSp3/YLn6U7uatwAcmZcwp
-Zma19ftf3LH+9Hvffk+X8fbPKe6uHkJhR2LktrhRzF159jj67NvXyGQv8J4n7UNeEVP0d5ByvRwv
-tF2bJwlOwRGLoxasKSyDHIyUpwTfWYPq7XvjoGqQ/tDS7Khcc5WncJl0/ZEj7EKjtoGbsDbLdXEF
-m/6vdcYKJzF9ghHewtV3YIU4RE3pEM4aCWWRtJwbExzeue6fI7RqURbNCAyQuSpWv0YQvzsX3ZX3
-c1otrs50n1N0Sf8/rfJxq7sWMYICajCCAmYCAQEwaDBUMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQ
-R2xvYmFsU2lnbiBudi1zYTEqMCgGA1UEAxMhR2xvYmFsU2lnbiBBdGxhcyBSMyBTTUlNRSBDQSAy
-MDIwAhABxy1wm0tAmHKHFkLS9RWPMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCCZ
-WaucD0NMjqOIX/IMKoUJSNguWt3ohrR3VskZhSO4ozAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcB
-MBwGCSqGSIb3DQEJBTEPFw0yMzAzMDIwODE0MDdaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUD
-BAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsG
-CSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAkKhR147ibw/Y/5t4aVdv
-my6ZP/2qL+aRhFp2DDXIclXZkiNm74sswMSGVhENlYvOsqDQueHA9q2WWlCc1hRhZPjqinBrASq2
-1F9kkWUfRoS1xqb32Fq21cfC49mPWJc/dBzS8mf0DuzIoFhlW6uR9uAA+94sUo7DisSGAiffY5Oi
-eWDSCPbnbwH1K0XA3lrV9mnLy5X2JsqN5LWdwUfL12zmRIvsJhgrZlvOzuVfwQNlrHV7Jf4SR9y3
-DPhbhHhZA+uczwPIz1UuPg9Sg+0Sa0JTPk4L+0cJcfIdPVo+YUODIDqdeoRuT5jtjoM2DJp5EGBD
-EDhF2YHampLaXjk6Dw==
---000000000000ab2bba05f5e6693b--
+Thanks,
+Miqu=C3=A8l
