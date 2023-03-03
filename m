@@ -2,108 +2,171 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6405AC678D4
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Mar 2023 09:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B1DC64EC4
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Mar 2023 09:18:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229918AbjCCJOt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Mar 2023 04:14:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45664 "EHLO
+        id S229852AbjCCJSp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Mar 2023 04:18:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229959AbjCCJOn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Mar 2023 04:14:43 -0500
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4D7317154;
-        Fri,  3 Mar 2023 01:14:27 -0800 (PST)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 043C55FD24;
-        Fri,  3 Mar 2023 12:14:26 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1677834866;
-        bh=kUxnEfhf3DSq+AgIFhAXjSbGolPo+vWxyTE1tXzicTs=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=U2VsBqbdmuVXpFEsA05fb/bTexuln481h/mtvOffQH2yTwXz3QJY7qX5PV6+1Czrk
-         l+k76WjTHxc/aK4/m8x45QT0CiD1xChznaxX8xBlNOtRdmeoknKpxMj4k93xuJen6+
-         eMA5sU5LIHyxaTu62/SErXhprUKXI/S5OHmTXBvYI+C46YhuysLFTSKhyA6Zu1F03o
-         KC6cS7e8avRwYkcUfPo+CdlQzYl8AR11MKO48/7VL00he81fzjUVES0Ypk8MVAMpr4
-         /sYhMebpSjITGl5z0Ti9088UBqtWmCaMhm6Pzum+XG+NoZAjF/JWSDwzZhph8/RO9o
-         R7XRxD/dbSu0Q==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Fri,  3 Mar 2023 12:14:25 +0300 (MSK)
-Date:   Fri, 3 Mar 2023 12:14:25 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <khilman@baylibre.com>, <martin.blumenstingl@googlemail.com>,
-        <jian.hu@amlogic.com>, <kernel@sberdevices.ru>,
-        <rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v9 5/5] dt-bindings: clock: meson: add A1 Peripherals
- clock controller bindings
-Message-ID: <20230303091425.hwn5ihu4et4oviee@CAB-WSD-L081021>
-References: <20230301183759.16163-1-ddrokosov@sberdevices.ru>
- <20230301183759.16163-6-ddrokosov@sberdevices.ru>
- <d5c93a9f-4a66-f884-a4d1-68cf47bcd7d4@linaro.org>
+        with ESMTP id S229840AbjCCJSo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Mar 2023 04:18:44 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDE24EB50;
+        Fri,  3 Mar 2023 01:18:43 -0800 (PST)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3236akCa013897;
+        Fri, 3 Mar 2023 09:18:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=gUI1yC+uuduVJlDVD0QE0jzuVzJYjKZBctyZzQ2MU0M=;
+ b=h9g22qFZ7VGeHOHwEIPQVx0ZtZofd9KwsZxXCqkFECpBy+6oZbChAcWwR8/O11Kgt4ti
+ m6qv9gRYE0iPHURJ2/Ealb5j03P3WsaXsZqBnpwdFEC8qsIbL99F7vhh9q43zZw/9Ksq
+ o1xtCVSa2N1kgkkBbyJLBXc9pnCuqt7U6T1DTQyOBcUdO2GJ2h60GVITyPAXZsZ9UpLX
+ E6NpTF5MO4zIyNQdVNJBsxgUdkwqo47Qx1Dx6kamRY7z35m0phbgZEPkIU4h7ha3wMqT
+ Nb+8b3l6IJamgMzYRBcGMPpXEZYq6Zxl5XMKgJfqg7o3mmud+8kgu4ZfgfcEELMvVXFQ IA== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3p3bry8c0k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 03 Mar 2023 09:18:40 +0000
+Received: from nasanex01a.na.qualcomm.com ([10.52.223.231])
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3239Id78008215
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 3 Mar 2023 09:18:39 GMT
+Received: from [10.50.35.127] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Fri, 3 Mar 2023
+ 01:18:35 -0800
+Message-ID: <72a83822-b2e1-eac8-4e0d-54e34a405867@quicinc.com>
+Date:   Fri, 3 Mar 2023 14:48:32 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <d5c93a9f-4a66-f884-a4d1-68cf47bcd7d4@linaro.org>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
- S-MS-EXCH01.sberdevices.ru (172.16.1.4)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/03/03 05:33:00 #20911335
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 4/8] clk: qcom: gcc-ipq9574: Add USB related clocks
+Content-Language: en-US
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <cover.1677749625.git.quic_varada@quicinc.com>
+ <07ea204c6488e7e78956bca09f59bf9c49353780.1677749625.git.quic_varada@quicinc.com>
+ <CAA8EJpoyKB3AqvA6R06L9K_dYc97+JK3SwY5TKR1FiC30w8=Yw@mail.gmail.com>
+From:   Varadarajan Narayanan <quic_varada@quicinc.com>
+In-Reply-To: <CAA8EJpoyKB3AqvA6R06L9K_dYc97+JK3SwY5TKR1FiC30w8=Yw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: eAC7hBEXw49TSXVOr879JPj-4oQOMTXZ
+X-Proofpoint-ORIG-GUID: eAC7hBEXw49TSXVOr879JPj-4oQOMTXZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-03_01,2023-03-02_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ impostorscore=0 mlxlogscore=999 spamscore=0 priorityscore=1501
+ suspectscore=0 lowpriorityscore=0 clxscore=1015 phishscore=0 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2303030082
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Mar 03, 2023 at 09:29:59AM +0100, Krzysztof Kozlowski wrote:
-> On 01/03/2023 19:37, Dmitry Rokosov wrote:
-> > Add the documentation for Amlogic A1 Peripherals clock driver,
-> > and A1 Peripherals clock controller bindings.
-> > 
-> > Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> > Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
-> > ---
-> >  .../bindings/clock/amlogic,a1-clkc.yaml       |  73 +++++++++++++
-> >  include/dt-bindings/clock/a1-clkc.h           | 102 ++++++++++++++++++
-> >  2 files changed, 175 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
-> >  create mode 100644 include/dt-bindings/clock/a1-clkc.h
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
-> > new file mode 100644
-> > index 000000000000..3dc86e912dea
 
-[...]
+On 3/2/2023 9:54 PM, Dmitry Baryshkov wrote:
+> On Thu, 2 Mar 2023 at 11:56, Varadarajan Narayanan
+> <quic_varada@quicinc.com> wrote:
+>> Add the clocks needed for enabling USB in IPQ9574
+>>
+>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/gcc-ipq9574.c               | 35 ++++++++++++++++++++++++++++
+>>   include/dt-bindings/clock/qcom,ipq9574-gcc.h |  2 ++
+>>   2 files changed, 37 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
+>> index 1bf33d5..85cc6a5 100644
+>> --- a/drivers/clk/qcom/gcc-ipq9574.c
+>> +++ b/drivers/clk/qcom/gcc-ipq9574.c
+>> @@ -2041,6 +2041,39 @@ static struct clk_regmap_mux usb0_pipe_clk_src = {
+>>          },
+>>   };
+>>
+>> +static struct clk_branch gcc_usb0_pipe_clk = {
+>> +       .halt_reg = 0x2c054,
+>> +       .halt_check = BRANCH_HALT_DELAY,
+>> +       .clkr = {
+>> +               .enable_reg = 0x2c054,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "gcc_usb0_pipe_clk",
+>> +                       .parent_hws = (const struct clk_hw *[]){
+>> +                               &usb0_pipe_clk_src.clkr.hw },
+> Please move the closing bracket to the next line.
 
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/a1-pll-clkc.h>
-> 
-> Eh, this explains bisectability problem.
-> 
-> Please do not sent patchets which are not bisectable. You can hard-code
-> the IDs in the example, they don't really matter.
-> 
+Sure. Will post a revised patch.
 
-Yep, my fault. As I mentioned in the other patchset, I've executed dt bindings
-checkers on the total patch series, not on each patchset. Sorry for
-that.
+Thanks
 
-[...]
+Varada
 
--- 
-Thank you,
-Dmitry
+>
+>> +                       .num_parents = 1,
+>> +                       .flags = CLK_SET_RATE_PARENT,
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>> +static struct clk_branch gcc_usb0_sleep_clk = {
+>> +       .halt_reg = 0x2c058,
+>> +       .clkr = {
+>> +               .enable_reg = 0x2c058,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "gcc_usb0_sleep_clk",
+>> +                       .parent_hws = (const struct clk_hw *[]){
+>> +                               &gcc_sleep_clk_src.clkr.hw },
+>> +                       .num_parents = 1,
+>> +                       .flags = CLK_SET_RATE_PARENT,
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>>   static const struct freq_tbl ftbl_sdcc_apps_clk_src[] = {
+>>          F(144000, P_XO, 16, 12, 125),
+>>          F(400000, P_XO, 12, 1, 5),
+>> @@ -4008,6 +4041,8 @@ static struct clk_regmap *gcc_ipq9574_clks[] = {
+>>          [GCC_USB0_MOCK_UTMI_CLK] = &gcc_usb0_mock_utmi_clk.clkr,
+>>          [USB0_PIPE_CLK_SRC] = &usb0_pipe_clk_src.clkr,
+>>          [GCC_USB0_PHY_CFG_AHB_CLK] = &gcc_usb0_phy_cfg_ahb_clk.clkr,
+>> +       [GCC_USB0_PIPE_CLK] = &gcc_usb0_pipe_clk.clkr,
+>> +       [GCC_USB0_SLEEP_CLK] = &gcc_usb0_sleep_clk.clkr,
+>>          [SDCC1_APPS_CLK_SRC] = &sdcc1_apps_clk_src.clkr,
+>>          [GCC_SDCC1_APPS_CLK] = &gcc_sdcc1_apps_clk.clkr,
+>>          [SDCC1_ICE_CORE_CLK_SRC] = &sdcc1_ice_core_clk_src.clkr,
+>> diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+>> index c89e96d..96b7c0b 100644
+>> --- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+>> +++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+>> @@ -214,4 +214,6 @@
+>>   #define GCC_SNOC_PCIE1_1LANE_S_CLK                     205
+>>   #define GCC_SNOC_PCIE2_2LANE_S_CLK                     206
+>>   #define GCC_SNOC_PCIE3_2LANE_S_CLK                     207
+>> +#define GCC_USB0_PIPE_CLK                              208
+>> +#define GCC_USB0_SLEEP_CLK                             209
+>>   #endif
+>> --
+>> 2.7.4
+>>
+>
