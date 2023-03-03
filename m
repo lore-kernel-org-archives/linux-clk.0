@@ -2,132 +2,125 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB4D5C7EE30
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Mar 2023 21:24:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC0ABC64EC4
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Mar 2023 22:17:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231314AbjCCVYm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Mar 2023 16:24:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34816 "EHLO
+        id S233609AbjCCWRi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Mar 2023 17:17:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231626AbjCCVYj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Mar 2023 16:24:39 -0500
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DFD962333
-        for <linux-clk@vger.kernel.org>; Fri,  3 Mar 2023 13:24:37 -0800 (PST)
-Received: by mail-pg1-x535.google.com with SMTP id y19so2286043pgk.5
-        for <linux-clk@vger.kernel.org>; Fri, 03 Mar 2023 13:24:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1677878676;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1mdoExm51Pf5mwwZ4Mi9krVz9vq+ZuMYZbUHrj+6+MY=;
-        b=VsZLaCA1o7PfS/2uqkfBMQhBxAqtr9smxIr3yTAhLFKnRjgIbkVVKQyYH4eI+QISau
-         SMlTDUfaqmuVN8fJuzP0XkURXKBvYZN6GhPxbn1LVAbUgwR9wdRdBGgn75IGF8zYcTPu
-         cCKXh/ycFb9Hm7/Va2frtYvkwF+TEP05vTvas0DWtdDPJloTFYt5TCF/F4yzxd+EjJwl
-         A0Ogahl6bKYqAmt55kOn8k+m7W9vCuFRlet6cNYuZpHtH/TBv4/+gnEo66vgqqww+XM+
-         E/mZRIMGDWr1JhLSNEnmCAJRVl2Cy2TvwmZZtnSmWagcQOBQKA4iZfdn+ut8f6vEMtr9
-         tNQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677878676;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1mdoExm51Pf5mwwZ4Mi9krVz9vq+ZuMYZbUHrj+6+MY=;
-        b=4Mjl7VdFwJGwKsMfrU+7VqMSXCFlzhUCyjjxYC5fZ8TY22DDGZvJBIm19+kdkQNLGQ
-         kGPub+L+9QjWxMwt4w6dXBeRL9IEOVZVPn1+MJ5M/jo4gOZYJJ8iBpLVyhFc2zpGBaXa
-         lShK+wV3JAJCdCKctfVbNYbHJQAVtXRSU1I3TBVebYoIQ/3rS3LKNpmHQZCd4RUtfgnf
-         qcrKYaE6mn+mD57DV40hVm1O5Q4xKNViubZPd3KKo4fDRnViMhH4v10vSb781EkUBr8t
-         DhkoJ+16nulPsQye0vPqhaEwySzBQW9cERz5k0f9OTSsh3+/ftVgC3cHnR946mUg/kfD
-         /7uw==
-X-Gm-Message-State: AO0yUKWd5P4VRqfTWNGfxlYcucfmrNh7EeqR+1mPoeziVQUBqsxSETgf
-        XN0ux2f/SqjZayP64SlInDUSgXaP+carOV9ZONwnMA==
-X-Google-Smtp-Source: AK7set+MVxx0iNuzwlpdMu16Mkge9Tq/RihIUOuYeBOSH7pw7kgWv7dpM3a776BxyD0/Qm6OkWL4oT3m673kmPWOHpU=
-X-Received: by 2002:a62:cdc8:0:b0:5a8:dc92:109f with SMTP id
- o191-20020a62cdc8000000b005a8dc92109fmr1477278pfg.3.1677878676371; Fri, 03
- Mar 2023 13:24:36 -0800 (PST)
-MIME-Version: 1.0
-References: <20230302014639.297514-1-saravanak@google.com> <CACRpkdacG4yxtZqwG5hKRY_8nY9qWeNPb-ZttMCnFH7ojZ3kCA@mail.gmail.com>
-In-Reply-To: <CACRpkdacG4yxtZqwG5hKRY_8nY9qWeNPb-ZttMCnFH7ojZ3kCA@mail.gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Fri, 3 Mar 2023 13:24:00 -0800
-Message-ID: <CAGETcx-W3o=rQoVLnKkvk=oTAMiwEcqAZ_trcMPBuune-7Hoiw@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: Mark a fwnode as initialized when using
- CLK_OF_DECLARE() macro
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S233621AbjCCWRX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Mar 2023 17:17:23 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EDA43D09E;
+        Fri,  3 Mar 2023 14:08:21 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 026D261912;
+        Fri,  3 Mar 2023 21:51:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5195C433EF;
+        Fri,  3 Mar 2023 21:51:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677880281;
+        bh=Br50V+ZnNhKeUVmf1H88XflaSYA3zbjNUSaOrfbHpWM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=L0Wgj2qDMYr7AQFFunxAnGexnwRXj41XfheavwO4sQNH9ThQWN7YWlj2Dp73Ahdw/
+         2uXKlv/22ez+DVr7ejBSi69+v/MiAkOp+L5BIU6bdV3QorAgVbad15r3DUWG3n/DEN
+         M10p5eVyq7bMRTBYHiwIAV7dwH08VMMfs8aaRdkMd/hoae6WtB50Y8/GEMWE9hfPsr
+         X7GJJ+ZO9cmyRf0HO7C4myHQ+bm9TdwZkTHEpy9iYruGmrWIunUXZc3w5CkIZpxxYi
+         kXKl6tYBhJNPTsNy5u9kGPM7Uf/kIR6xDR/XGWpONnVXpZwWkjJ02fE/UU6YbDF9O8
+         LSMB76p+PtvfA==
+Date:   Fri, 3 Mar 2023 21:51:12 +0000
+From:   Conor Dooley <conor@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernel-team@android.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-media@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-riscv@lists.infradead.org,
+        linux-spi@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: yamllint: Require a space after a comment
+ '#'
+Message-ID: <cdad5aa0-bd94-4137-9063-af45e94a25b7@spud>
+References: <20230303214223.49451-1-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mffVr3k4EP4yfp2t"
+Content-Disposition: inline
+In-Reply-To: <20230303214223.49451-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Mar 2, 2023 at 5:14=E2=80=AFAM Linus Walleij <linus.walleij@linaro.=
-org> wrote:
->
-> On Thu, Mar 2, 2023 at 2:46 AM Saravana Kannan <saravanak@google.com> wro=
-te:
->
-> > We already mark fwnodes as initialized when they are registered as cloc=
-k
-> > providers. We do this so that fw_devlink can tell when a clock driver
-> > doesn't use the driver core framework to probe/initialize its device.
-> > This ensures fw_devlink doesn't block the consumers of such a clock
-> > provider indefinitely.
-> >
-> > However, some users of CLK_OF_DECLARE() macros don't use the same node
-> > that matches the macro as the node for the clock provider, but they
-> > initialize the entire node. To cover these cases, also mark the nodes
-> > that match the macros as initialized when the init callback function is
-> > called.
-> >
-> > An example of this is "stericsson,u8500-clks" that's handled using
-> > CLK_OF_DECLARE() and looks something like this:
-> >
-> > clocks {
-> >         compatible =3D "stericsson,u8500-clks";
-> >
-> >         prcmu_clk: prcmu-clock {
-> >                 #clock-cells =3D <1>;
-> >         };
-> >
-> >         prcc_pclk: prcc-periph-clock {
-> >                 #clock-cells =3D <2>;
-> >         };
-> >
-> >         prcc_kclk: prcc-kernel-clock {
-> >                 #clock-cells =3D <2>;
-> >         };
-> >
-> >         prcc_reset: prcc-reset-controller {
-> >                 #reset-cells =3D <2>;
-> >         };
-> >         ...
-> >         ...
-> > };
-> >
-> > This patch makes sure that "clocks" is marked as initialized so that
-> > fw_devlink knows that all nodes under it have been initialized.
-> >
-> > If the driver creates struct devices for some of the subnodes,
-> > fw_devlink is smart enough to know to wait for those devices to probe.
-> > So, no special handling is required for those cases.
-> >
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Reported-by: Linus Walleij <linus.walleij@linaro.org>
-> > Link: https://lore.kernel.org/lkml/CACRpkdamxDX6EBVjKX5=3DD3rkHp17f5pwG=
-dBVhzFU90-0MHY6dQ@mail.gmail.com/
-> > Fixes: 4a032827daa8 ("of: property: Simplify of_link_to_phandle()")
-> > Signed-off-by: Saravana Kannan <saravanak@google.com>
->
-> Works like a charm on U8500!
-> Tested-by: Linus Walleij <linus.walleij@linaro.org>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Stephen, Does this look good? Can we have Greg pull this in?
+--mffVr3k4EP4yfp2t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--Saravana
+On Fri, Mar 03, 2023 at 03:42:23PM -0600, Rob Herring wrote:
+> Enable yamllint to check the prefered commenting style of requiring a
+> space after a comment character '#'. Fix the cases in the tree which
+> have a warning with this enabled. Most cases just need a space after the
+> '#'. A couple of cases with comments which were not intended to be
+> comments are revealed. Those were in ti,sa2ul.yaml, ti,cal.yaml, and
+> brcm,bcmgenet.yaml.
+>=20
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+
+> Cc: Conor Dooley <conor.dooley@microchip.com>
+
+> diff --git a/Documentation/devicetree/bindings/spi/microchip,mpfs-spi.yam=
+l b/Documentation/devicetree/bindings/spi/microchip,mpfs-spi.yaml
+> index 1051690e3753..74a817cc7d94 100644
+> --- a/Documentation/devicetree/bindings/spi/microchip,mpfs-spi.yaml
+> +++ b/Documentation/devicetree/bindings/spi/microchip,mpfs-spi.yaml
+> @@ -22,7 +22,7 @@ properties:
+>        - items:
+>            - const: microchip,mpfs-qspi
+>            - const: microchip,coreqspi-rtl-v2
+> -      - const: microchip,coreqspi-rtl-v2 #FPGA QSPI
+> +      - const: microchip,coreqspi-rtl-v2 # FPGA QSPI
+>        - const: microchip,mpfs-spi
+
+I had to think for a minute as to what that comment even meant...
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+Thanks,
+Conor.
+
+--mffVr3k4EP4yfp2t
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZAJr0AAKCRB4tDGHoIJi
+0rHgAP9euC+7Ztk0BIMgxdrJzAjogpoZQH6UzawtcdI6SIq2nQD/d5Bvci5DVqMV
+DWn8X2un+KM/vLbl8yUpHlGFB4QKwQY=
+=v1U9
+-----END PGP SIGNATURE-----
+
+--mffVr3k4EP4yfp2t--
