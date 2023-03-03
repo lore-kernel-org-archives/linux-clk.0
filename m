@@ -2,394 +2,219 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7121DC64EC4
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Mar 2023 03:59:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A58C678D4
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Mar 2023 07:15:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229445AbjCCD7c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Mar 2023 22:59:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33332 "EHLO
+        id S229749AbjCCHPK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Mar 2023 02:15:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjCCD7c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Mar 2023 22:59:32 -0500
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3C2C1114C;
-        Thu,  2 Mar 2023 19:59:28 -0800 (PST)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 5F17D24E409;
-        Fri,  3 Mar 2023 11:59:27 +0800 (CST)
-Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 3 Mar
- 2023 11:59:27 +0800
-Received: from [192.168.125.128] (113.72.145.171) by EXMBX061.cuchost.com
- (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 3 Mar
- 2023 11:59:26 +0800
-Message-ID: <7d78d2a1-d552-f25d-557b-c90e6a33eccd@starfivetech.com>
-Date:   Fri, 3 Mar 2023 11:59:40 +0800
+        with ESMTP id S229714AbjCCHPK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Mar 2023 02:15:10 -0500
+Received: from mail-ua1-x929.google.com (mail-ua1-x929.google.com [IPv6:2607:f8b0:4864:20::929])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1135536446
+        for <linux-clk@vger.kernel.org>; Thu,  2 Mar 2023 23:15:08 -0800 (PST)
+Received: by mail-ua1-x929.google.com with SMTP id s23so1024323uae.5
+        for <linux-clk@vger.kernel.org>; Thu, 02 Mar 2023 23:15:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112; t=1677827707;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+34ji5+3tn7Q1fKbgmpaVN1sIQ45meSkeWZTIDj0/I4=;
+        b=CFcY6fGuujs45CtrmDkVAPCkPjHLBqa507LfWL9AiXlI+IWCHWV4BX90XE2+KYjsAr
+         k7nLEA+oxbmF4AgLTRrL0OxyWRyAtoIIsIdIkVxHHAvOlywbGQC9NLVq47RXBGCm0tSy
+         KV8iEsrGaO4jEsC0piBxUEdx25pqocQDbXQ0eCfgvD7fdrxaJAxx/PAhe//VmwWVR8Gi
+         i4qxgLofpUbofeZiiZqpwso8jqqoq24cWtfulrGYd9mm91l8qizbEt5SAidxwtgITXP3
+         PAVzF9Qi+LMuhoQxYSk7uBgDsE/VSQptMdWs4vx006ftSgIJmUH6eDeMZNS8E9Uvc6l0
+         E61Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677827707;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+34ji5+3tn7Q1fKbgmpaVN1sIQ45meSkeWZTIDj0/I4=;
+        b=2sXp6/YRMzWcxBVdzawoAMaLzf7kpNHik9cLjpP/Ejnznr7B0aQIdiJW0SCmLUzGVk
+         gA4rOx+9Q/JC0NBMzMxF/Gz/IgLmHlKbFud+ww/URWiONz2BU4Bd9DOIthYiyOWWG5fb
+         gXN+GCJT8jjiqkiYkQ3jxcKlnvHsaI3RIURo2kbxWJfEJ3+ft2xWysEGchjUQ8zNJl0h
+         0Ht9PHxslJfTNAtVb1Jz1Mu8LyMYYkJTrhUMjJmC+A33/OqVmcbwMNp4TuDWGLv1y+X2
+         Qx62R8SlE3l2KgVNWIqSD1bzdvJfR60Pab+2aDLgZ31q0l1moomWmcay/YGkiPXm8cY0
+         8e0A==
+X-Gm-Message-State: AO0yUKVKX6t1DIWcfD/+ztuefGAY5N8V+731GQySGG5GLxrzDgEB8xfA
+        zWvneMc6Q0yq1++eARSlLsKOlRAg1z6sUHPSJW/14g==
+X-Google-Smtp-Source: AK7set8TolMdU86SOYcXBFVvGGoqEHdTSp18dB8blZWWucp5ieOP8ejPaNkC653AzURZYzsbwAn20wJ4gg+UERHbZEI=
+X-Received: by 2002:a9f:3017:0:b0:688:c23f:c22f with SMTP id
+ h23-20020a9f3017000000b00688c23fc22fmr265965uab.1.1677827707018; Thu, 02 Mar
+ 2023 23:15:07 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v2 06/11] clk: starfive: Add StarFive JH7110
- Image-Signal-Process clock driver
-Content-Language: en-US
-To:     Emil Renner Berthing <emil.renner.berthing@canonical.com>
-CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Emil Renner Berthing <kernel@esmil.dk>,
+References: <20230302013822.1808711-1-sboyd@kernel.org> <20230302013822.1808711-2-sboyd@kernel.org>
+In-Reply-To: <20230302013822.1808711-2-sboyd@kernel.org>
+From:   David Gow <davidgow@google.com>
+Date:   Fri, 3 Mar 2023 15:14:55 +0800
+Message-ID: <CABVgOSkxOxpaHVtq1YpvNEshTZ3nic1p7NjV5DPdz066=tiS-A@mail.gmail.com>
+Subject: Re: [PATCH 1/8] dt-bindings: Add linux,kunit binding
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev,
+        Brendan Higgins <brendan.higgins@linux.dev>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Conor Dooley <conor@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <20230221083323.302471-1-xingyu.wu@starfivetech.com>
- <20230221083323.302471-7-xingyu.wu@starfivetech.com>
- <CAJM55Z-D2s6FkQiR4_KSNkQ-QNHu3mLO_A8GBEY5XwVU5=VXAA@mail.gmail.com>
-From:   Xingyu Wu <xingyu.wu@starfivetech.com>
-In-Reply-To: <CAJM55Z-D2s6FkQiR4_KSNkQ-QNHu3mLO_A8GBEY5XwVU5=VXAA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [113.72.145.171]
-X-ClientProxiedBy: EXCAS061.cuchost.com (172.16.6.21) To EXMBX061.cuchost.com
- (172.16.6.61)
-X-YovoleRuleAgent: yovoleflag
+        Frank Rowand <frowand.list@gmail.com>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="0000000000007e0d6f05f5f9b472"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023/3/2 23:39, Emil Renner Berthing wrote:
-> On Tue, 21 Feb 2023 at 09:36, Xingyu Wu <xingyu.wu@starfivetech.com> wrote:
->>
->> Add driver for the StarFive JH7110 Image-Signal-Process clock controller.
->>
->> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
->> ---
->>  drivers/clk/starfive/Kconfig                  |  11 +
->>  drivers/clk/starfive/Makefile                 |   1 +
->>  .../clk/starfive/clk-starfive-jh7110-isp.c    | 254 ++++++++++++++++++
->>  3 files changed, 266 insertions(+)
->>  create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-isp.c
->>
->> diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
->> index a462b6e53543..59499acb95f7 100644
->> --- a/drivers/clk/starfive/Kconfig
->> +++ b/drivers/clk/starfive/Kconfig
->> @@ -53,3 +53,14 @@ config CLK_STARFIVE_JH7110_STG
->>         help
->>           Say yes here to support the System-Top-Group clock controller
->>           on the StarFive JH7110 SoC.
->> +
->> +config CLK_STARFIVE_JH7110_ISP
->> +       tristate "StarFive JH7110 Image-Signal-Process clock support"
->> +       depends on CLK_STARFIVE_JH7110_SYS && JH71XX_PMU
->> +       select AUXILIARY_BUS
->> +       select CLK_STARFIVE_JH71X0
->> +       select RESET_STARFIVE_JH7110
->> +       default CLK_STARFIVE_JH7110_SYS
-> 
-> default m if ARCH_STARFIVE
+--0000000000007e0d6f05f5f9b472
+Content-Type: text/plain; charset="UTF-8"
 
-Oh, the ISPCRG and VOUTCRG depend on SYSCRG because it need to enable core clock.
-So I should modify that:
+On Thu, 2 Mar 2023 at 09:38, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Document the linux,kunit board compatible string. This board is loaded
+> into the Linux kernel when KUnit is testing devicetree dependent code.
 
-default m if CLK_STARFIVE_JH7110_SYS
+As with the series as a whole, this might need to change a little bit
+if we want to either use devicetree overlays and/or other
+architectures.
 
-It that OK?
+That being said, I'm okay with having this until then: the only real
+topic for bikeshedding is the name.
+- Is KUnit best as a board name, or part of the vendor name?
+- Do we want to include the architecture in the name?
+Should it be "linux,kunit", "linux-kunit,uml", "linux,kunit-uml", etc?
 
-> 
->> +       help
->> +         Say yes here to support the Image-Signal-Process clock controller
->> +         on the StarFive JH7110 SoC.
->> diff --git a/drivers/clk/starfive/Makefile b/drivers/clk/starfive/Makefile
->> index b81e97ee2659..76fb9f8d628b 100644
->> --- a/drivers/clk/starfive/Makefile
->> +++ b/drivers/clk/starfive/Makefile
->> @@ -7,3 +7,4 @@ obj-$(CONFIG_CLK_STARFIVE_JH7100_AUDIO) += clk-starfive-jh7100-audio.o
->>  obj-$(CONFIG_CLK_STARFIVE_JH7110_SYS)  += clk-starfive-jh7110-sys.o
->>  obj-$(CONFIG_CLK_STARFIVE_JH7110_AON)  += clk-starfive-jh7110-aon.o
->>  obj-$(CONFIG_CLK_STARFIVE_JH7110_STG)  += clk-starfive-jh7110-stg.o
->> +obj-$(CONFIG_CLK_STARFIVE_JH7110_ISP)  += clk-starfive-jh7110-isp.o
->> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-isp.c b/drivers/clk/starfive/clk-starfive-jh7110-isp.c
->> new file mode 100644
->> index 000000000000..b5bce1ac22e0
->> --- /dev/null
->> +++ b/drivers/clk/starfive/clk-starfive-jh7110-isp.c
->> @@ -0,0 +1,254 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * StarFive JH7110 Image-Signal-Process Clock Driver
->> + *
->> + * Copyright (C) 2022 StarFive Technology Co., Ltd.
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/io.h>
->> +#include <linux/of.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/pm_runtime.h>
->> +#include <linux/reset.h>
->> +
->> +#include <dt-bindings/clock/starfive,jh7110-crg.h>
->> +
->> +#include "clk-starfive-jh71x0.h"
->> +
->> +/* external clocks */
->> +#define JH7110_ISPCLK_ISP_TOP_CORE             (JH7110_ISPCLK_END + 0)
->> +#define JH7110_ISPCLK_ISP_TOP_AXI              (JH7110_ISPCLK_END + 1)
->> +#define JH7110_ISPCLK_NOC_BUS_ISP_AXI          (JH7110_ISPCLK_END + 2)
->> +#define JH7110_ISPCLK_DVP_CLK                  (JH7110_ISPCLK_END + 3)
->> +#define JH7110_ISPCLK_EXT_END                  (JH7110_ISPCLK_END + 4)
->> +
->> +static const struct jh71x0_clk_data jh7110_ispclk_data[] = {
->> +       /* syscon */
->> +       JH71X0__DIV(JH7110_ISPCLK_DOM4_APB_FUNC, "dom4_apb_func", 15,
->> +                   JH7110_ISPCLK_ISP_TOP_AXI),
->> +       JH71X0__DIV(JH7110_ISPCLK_MIPI_RX0_PXL, "mipi_rx0_pxl", 8,
->> +                   JH7110_ISPCLK_ISP_TOP_CORE),
->> +       JH71X0__INV(JH7110_ISPCLK_DVP_INV, "dvp_inv", JH7110_ISPCLK_DVP_CLK),
->> +       /* vin */
->> +       JH71X0__DIV(JH7110_ISPCLK_M31DPHY_CFGCLK_IN, "m31dphy_cfgclk_in", 16,
->> +                   JH7110_ISPCLK_ISP_TOP_CORE),
->> +       JH71X0__DIV(JH7110_ISPCLK_M31DPHY_REFCLK_IN, "m31dphy_refclk_in", 16,
->> +                   JH7110_ISPCLK_ISP_TOP_CORE),
->> +       JH71X0__DIV(JH7110_ISPCLK_M31DPHY_TXCLKESC_LAN0, "m31dphy_txclkesc_lan0", 60,
->> +                   JH7110_ISPCLK_ISP_TOP_CORE),
->> +       JH71X0_GATE(JH7110_ISPCLK_VIN_PCLK, "vin_pclk", CLK_IGNORE_UNUSED,
->> +                   JH7110_ISPCLK_DOM4_APB_FUNC),
->> +       JH71X0__DIV(JH7110_ISPCLK_VIN_SYS_CLK, "vin_sys_clk", 8, JH7110_ISPCLK_ISP_TOP_CORE),
->> +       JH71X0_GATE(JH7110_ISPCLK_VIN_PIXEL_CLK_IF0, "vin_pixel_clk_if0", CLK_IGNORE_UNUSED,
->> +                   JH7110_ISPCLK_MIPI_RX0_PXL),
->> +       JH71X0_GATE(JH7110_ISPCLK_VIN_PIXEL_CLK_IF1, "vin_pixel_clk_if1", CLK_IGNORE_UNUSED,
->> +                   JH7110_ISPCLK_MIPI_RX0_PXL),
->> +       JH71X0_GATE(JH7110_ISPCLK_VIN_PIXEL_CLK_IF2, "vin_pixel_clk_if2", CLK_IGNORE_UNUSED,
->> +                   JH7110_ISPCLK_MIPI_RX0_PXL),
->> +       JH71X0_GATE(JH7110_ISPCLK_VIN_PIXEL_CLK_IF3, "vin_pixel_clk_if3", CLK_IGNORE_UNUSED,
->> +                   JH7110_ISPCLK_MIPI_RX0_PXL),
->> +       JH71X0__MUX(JH7110_ISPCLK_VIN_CLK_P_AXIWR, "vin_clk_p_axiwr", 2,
->> +                   JH7110_ISPCLK_MIPI_RX0_PXL,
->> +                   JH7110_ISPCLK_DVP_INV),
->> +       /* ispv2_top_wrapper */
->> +       JH71X0_GMUX(JH7110_ISPCLK_ISPV2_TOP_WRAPPER_CLK_C, "ispv2_top_wrapper_clk_c",
->> +                   CLK_IGNORE_UNUSED, 2,
->> +                   JH7110_ISPCLK_MIPI_RX0_PXL,
->> +                   JH7110_ISPCLK_DVP_INV),
->> +};
-> 
-> Are all the clocks marked CLK_IGNORE_UNUSED here critical or are they
-> just marked like so because the corresponding drivers don't yet claim
-> the clocks they need? Please mark the clocks that can never be turned
-> off CLK_IS_CRITICAL and remove the flag from the rest of the clocks.
 
-Thanks, I will test it carefully and modify it.
+>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+> Cc: Brendan Higgins <brendan.higgins@linux.dev>
+> Cc: David Gow <davidgow@google.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  .../bindings/kunit/linux,kunit.yaml           | 24 +++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/kunit/linux,kunit.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/kunit/linux,kunit.yaml b/Documentation/devicetree/bindings/kunit/linux,kunit.yaml
+> new file mode 100644
+> index 000000000000..dfe6da4796e8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/kunit/linux,kunit.yaml
+> @@ -0,0 +1,24 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/kunit/linux,kunit.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: KUnit
+> +
+> +maintainers:
+> +  - Brendan Higgins <brendanhiggins@google.com>
+> +  - David Gow <davidgow@google.com>
+> +
+> +description:
+> +  KUnit board used to unit test the Linux kernel in User Mode Linux (UML).
+> +
+> +properties:
+> +  $nodename:
+> +    const: "/"
+> +  compatible:
+> +    const: linux,kunit
+> +
+> +additionalProperties: true
+> +
+> +...
+> --
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+> https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+>
 
-> 
->> +struct isp_top_crg {
->> +       struct clk_bulk_data *top_clks;
->> +       struct reset_control *top_rsts;
->> +       int top_clks_num;
->> +       void __iomem *base;
->> +};
->> +
->> +static struct clk_bulk_data jh7110_isp_top_clks[] = {
->> +       { .id = "isp_top_core" },
->> +       { .id = "isp_top_axi" }
->> +};
->> +
->> +static struct isp_top_crg *top_crg_from(void __iomem **base)
->> +{
->> +       return container_of(base, struct isp_top_crg, base);
->> +}
->> +
->> +static int jh7110_isp_top_crg_get(struct jh71x0_clk_priv *priv, struct isp_top_crg *top)
->> +{
->> +       int ret;
->> +
->> +       top->top_clks = jh7110_isp_top_clks;
->> +       top->top_clks_num = ARRAY_SIZE(jh7110_isp_top_clks);
->> +       ret = devm_clk_bulk_get(priv->dev, top->top_clks_num, top->top_clks);
->> +       if (ret) {
->> +               dev_err(priv->dev, "top clks get failed: %d\n", ret);
->> +               return ret;
->> +       }
->> +
->> +       /* The resets should be shared and other ISP modules will use its. */
->> +       top->top_rsts = devm_reset_control_array_get_shared(priv->dev);
->> +       if (IS_ERR(top->top_rsts)) {
->> +               dev_err(priv->dev, "top rsts get failed\n");
->> +               return PTR_ERR(top->top_rsts);
->> +       }
->> +
->> +       return 0;
->> +}
->> +
->> +static int jh7110_isp_top_crg_enable(struct isp_top_crg *top)
->> +{
->> +       int ret;
->> +
->> +       ret = clk_bulk_prepare_enable(top->top_clks_num, top->top_clks);
->> +       if (ret)
->> +               return ret;
->> +
->> +       return reset_control_deassert(top->top_rsts);
->> +}
->> +
->> +static void jh7110_isp_top_crg_disable(struct isp_top_crg *top)
->> +{
->> +       clk_bulk_disable_unprepare(top->top_clks_num, top->top_clks);
->> +}
->> +
->> +static struct clk_hw *jh7110_ispclk_get(struct of_phandle_args *clkspec, void *data)
->> +{
->> +       struct jh71x0_clk_priv *priv = data;
->> +       unsigned int idx = clkspec->args[0];
->> +
->> +       if (idx < JH7110_ISPCLK_END)
->> +               return &priv->reg[idx].hw;
->> +
->> +       return ERR_PTR(-EINVAL);
->> +}
->> +
->> +static int jh7110_ispcrg_probe(struct platform_device *pdev)
->> +{
->> +       struct jh71x0_clk_priv *priv;
->> +       struct isp_top_crg *top;
->> +       unsigned int idx;
->> +       int ret;
->> +
->> +       priv = devm_kzalloc(&pdev->dev,
->> +                           struct_size(priv, reg, JH7110_ISPCLK_END),
->> +                           GFP_KERNEL);
->> +       if (!priv)
->> +               return -ENOMEM;
->> +
->> +       top = devm_kzalloc(&pdev->dev, sizeof(*top), GFP_KERNEL);
->> +       if (!top)
->> +               return -ENOMEM;
->> +
->> +       spin_lock_init(&priv->rmw_lock);
->> +       priv->dev = &pdev->dev;
->> +       priv->base = devm_platform_ioremap_resource(pdev, 0);
->> +       if (IS_ERR(priv->base))
->> +               return PTR_ERR(priv->base);
->> +
->> +       top->base = priv->base;
->> +       dev_set_drvdata(priv->dev, (void *)(&top->base));
->> +
->> +       pm_runtime_enable(priv->dev);
->> +       ret = pm_runtime_get_sync(priv->dev);
->> +       if (ret < 0) {
->> +               dev_err(priv->dev, "failed to turn on power: %d\n", ret);
->> +               return ret;
->> +       }
->> +
->> +       ret = jh7110_isp_top_crg_get(priv, top);
->> +       if (ret)
->> +               goto err_clk;
->> +
->> +       ret = jh7110_isp_top_crg_enable(top);
->> +       if (ret)
->> +               goto err_clk;
->> +
->> +       for (idx = 0; idx < JH7110_ISPCLK_END; idx++) {
->> +               u32 max = jh7110_ispclk_data[idx].max;
->> +               struct clk_parent_data parents[4] = {};
->> +               struct clk_init_data init = {
->> +                       .name = jh7110_ispclk_data[idx].name,
->> +                       .ops = starfive_jh71x0_clk_ops(max),
->> +                       .parent_data = parents,
->> +                       .num_parents =
->> +                               ((max & JH71X0_CLK_MUX_MASK) >> JH71X0_CLK_MUX_SHIFT) + 1,
->> +                       .flags = jh7110_ispclk_data[idx].flags,
->> +               };
->> +               struct jh71x0_clk *clk = &priv->reg[idx];
->> +               unsigned int i;
->> +               char *fw_name[JH7110_ISPCLK_EXT_END - JH7110_ISPCLK_END] = {
->> +                       "isp_top_core",
->> +                       "isp_top_axi",
->> +                       "noc_bus_isp_axi",
->> +                       "dvp_clk"
->> +               };
->> +
->> +               for (i = 0; i < init.num_parents; i++) {
->> +                       unsigned int pidx = jh7110_ispclk_data[idx].parents[i];
->> +
->> +                       if (pidx < JH7110_ISPCLK_END)
->> +                               parents[i].hw = &priv->reg[pidx].hw;
->> +                       else
->> +                               parents[i].fw_name = fw_name[pidx - JH7110_ISPCLK_END];
->> +               }
->> +
->> +               clk->hw.init = &init;
->> +               clk->idx = idx;
->> +               clk->max_div = max & JH71X0_CLK_DIV_MASK;
->> +
->> +               ret = devm_clk_hw_register(&pdev->dev, &clk->hw);
->> +               if (ret)
->> +                       goto err_exit;
->> +       }
->> +
->> +       ret = devm_of_clk_add_hw_provider(&pdev->dev, jh7110_ispclk_get, priv);
->> +       if (ret)
->> +               goto err_exit;
->> +
->> +       ret = jh7110_reset_controller_register(priv, "reset-isp", 3);
->> +       if (ret)
->> +               goto err_exit;
->> +
->> +       return 0;
->> +
->> +err_exit:
->> +       jh7110_isp_top_crg_disable(top);
->> +err_clk:
->> +       pm_runtime_put_sync(priv->dev);
->> +       pm_runtime_disable(priv->dev);
->> +       return ret;
->> +}
->> +
->> +static int jh7110_ispcrg_remove(struct platform_device *pdev)
->> +{
->> +       void __iomem **base = dev_get_drvdata(&pdev->dev);
->> +       struct isp_top_crg *top = top_crg_from(base);
->> +
->> +       jh7110_isp_top_crg_disable(top);
->> +       pm_runtime_disable(&pdev->dev);
->> +
->> +       return 0;
->> +}
->> +
->> +static const struct of_device_id jh7110_ispcrg_match[] = {
->> +       { .compatible = "starfive,jh7110-ispcrg" },
->> +       { /* sentinel */ }
->> +};
->> +MODULE_DEVICE_TABLE(of, jh7110_ispcrg_match);
->> +
->> +static struct platform_driver jh7110_ispcrg_driver = {
->> +       .probe = jh7110_ispcrg_probe,
->> +       .remove = jh7110_ispcrg_remove,
->> +       .driver = {
->> +               .name = "clk-starfive-jh7110-isp",
->> +               .of_match_table = jh7110_ispcrg_match,
->> +       },
->> +};
->> +module_platform_driver(jh7110_ispcrg_driver);
->> +
->> +MODULE_AUTHOR("Xingyu Wu <xingyu.wu@starfivetech.com>");
->> +MODULE_DESCRIPTION("StarFive JH7110 Image-Signal-Process clock driver");
->> +MODULE_LICENSE("GPL");
->> --
->> 2.25.1
->>
->>
->> _______________________________________________
->> linux-riscv mailing list
->> linux-riscv@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-riscv
+--0000000000007e0d6f05f5f9b472
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-Best regards,
-Xingyu Wu
+MIIPnwYJKoZIhvcNAQcCoIIPkDCCD4wCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ggz5MIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
+dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
+6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
+c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
+I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
+AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
+BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
+CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
+AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
+MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
+My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
+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
+64VRg2IjDI2fJVE9RD6aMEwGA1UdIARFMEMwQQYJKwYBBAGgMgEoMDQwMgYIKwYBBQUHAgEWJmh0
+dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQCMAAwgZoGCCsG
+AQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9jYS9n
+c2F0bGFzcjNzbWltZWNhMjAyMDBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5nbG9iYWxzaWdu
+LmNvbS9jYWNlcnQvZ3NhdGxhc3Izc21pbWVjYTIwMjAuY3J0MB8GA1UdIwQYMBaAFHzMCmjXouse
+LHIb0c1dlW+N+/JjMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20v
+Y2EvZ3NhdGxhc3Izc21pbWVjYTIwMjAuY3JsMA0GCSqGSIb3DQEBCwUAA4IBAQA2lZLYRLu7foeR
+cHo1VeNA974FZBiCm08Kd44/aCMEzdTJvxAE9xbUJf7hS1i6eW49qxuSp3/YLn6U7uatwAcmZcwp
+Zma19ftf3LH+9Hvffk+X8fbPKe6uHkJhR2LktrhRzF159jj67NvXyGQv8J4n7UNeEVP0d5ByvRwv
+tF2bJwlOwRGLoxasKSyDHIyUpwTfWYPq7XvjoGqQ/tDS7Khcc5WncJl0/ZEj7EKjtoGbsDbLdXEF
+m/6vdcYKJzF9ghHewtV3YIU4RE3pEM4aCWWRtJwbExzeue6fI7RqURbNCAyQuSpWv0YQvzsX3ZX3
+c1otrs50n1N0Sf8/rfJxq7sWMYICajCCAmYCAQEwaDBUMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQ
+R2xvYmFsU2lnbiBudi1zYTEqMCgGA1UEAxMhR2xvYmFsU2lnbiBBdGxhcyBSMyBTTUlNRSBDQSAy
+MDIwAhABxy1wm0tAmHKHFkLS9RWPMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCAN
+Gn9wwn7/iyo7392BuZcmGaRNzPxkjMguHPzhZibVgzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcB
+MBwGCSqGSIb3DQEJBTEPFw0yMzAzMDMwNzE1MDdaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUD
+BAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsG
+CSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEActIxaogsjhUHr/AZvEzf
+cgf3waXazmYuGqMW+Ma9nz+ycFzWmhzykCR/jdrCR0QmkJLFJ64z0V7wDd0sEOI4+xrSKPTKZtHE
+ahfk93QtkzeGQb/dmIqv9S3FEwxzefEUh67rKLf42qQI3nQ49vDWqA9kID9q/L5wFLw2ANjyt2/e
+5cTB3JQ6UyYOWoRPGRi9DWxeRSo47IloRftZ/W9LZ8ZKhFpVxhP0btyFZXZ6+mt9KX2mrmDWsTOP
+DUQ7KngLyWJvhXuoCvRhHkNt3LhVIM80bYdsFwD6FtwYo9AsbpcvOSjLEHuEiAiqTxTcJuSE7pju
+KpPiM7N7Jfmd/hDtew==
+--0000000000007e0d6f05f5f9b472--
