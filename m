@@ -2,319 +2,258 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF809C64EC4
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Mar 2023 17:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10FB2C7EE32
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Mar 2023 17:31:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230353AbjCCR0C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Mar 2023 12:26:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45096 "EHLO
+        id S230246AbjCCRbt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Mar 2023 12:31:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231482AbjCCRZx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Mar 2023 12:25:53 -0500
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05hn2242.outbound.protection.outlook.com [52.100.175.242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3AF110A95;
-        Fri,  3 Mar 2023 09:25:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=X/kEATn0Ar9CSfTVtmPcx8yrAUVQgXGEKMY3ZFxRv3I=;
- b=iB6EyCn8udL1ECLZdsvtLBnTYme3y8f7pAiDXrux5CBpm7gvZaijXVug4QFucU7+UjUSL7lUripLwRvTZtKCZwVO4bRFqMWp2qeNVbimZHu9bloU3EhFF6j3ypj42I+M2ZM5Q7R2oWiyDIJm2c1DJqS6UIt9FbL8RJ6jdpJPggkMMFB6p4RoW/xKPWf5iW8I2ow74EHnjVxbmLdJJrT1e/cm6EYeDtOwxIH/KHwOWc7YTW34UjUV5upmkLkj8bl7UwtBgb+BD1YPMtlqQyVcdcufjH4EdL2N1pQZeiwQIDcXLyKQwdW+mwresNdxSnDAsEwpcQ9AO0bEcyZXoNnkwQ==
-Received: from DB6P195CA0022.EURP195.PROD.OUTLOOK.COM (2603:10a6:4:cb::32) by
- AS1PR03MB8285.eurprd03.prod.outlook.com (2603:10a6:20b:474::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6156.19; Fri, 3 Mar 2023 17:25:48 +0000
-Received: from DB8EUR05FT043.eop-eur05.prod.protection.outlook.com
- (2603:10a6:4:cb:cafe::c) by DB6P195CA0022.outlook.office365.com
- (2603:10a6:4:cb::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.22 via Frontend
- Transport; Fri, 3 Mar 2023 17:25:48 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 20.160.56.85)
- smtp.mailfrom=seco.com; dkim=pass (signature was verified)
- header.d=seco.com;dmarc=pass action=none header.from=seco.com;
-Received-SPF: Fail (protection.outlook.com: domain of seco.com does not
- designate 20.160.56.85 as permitted sender) receiver=protection.outlook.com;
- client-ip=20.160.56.85; helo=inpost-eu.tmcas.trendmicro.com;
-Received: from inpost-eu.tmcas.trendmicro.com (20.160.56.85) by
- DB8EUR05FT043.mail.protection.outlook.com (10.233.239.63) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6156.22 via Frontend Transport; Fri, 3 Mar 2023 17:25:47 +0000
-Received: from outmta (unknown [192.168.82.135])
-        by inpost-eu.tmcas.trendmicro.com (Trend Micro CAS) with ESMTP id 5B87B2008088D;
-        Fri,  3 Mar 2023 17:25:47 +0000 (UTC)
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (unknown [104.47.30.107])
-        by repre.tmcas.trendmicro.com (Trend Micro CAS) with ESMTPS id E169520080075;
-        Fri,  3 Mar 2023 17:17:49 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FSmNupRd6KugV8cVEFlPx8d2Ls/MPcQUPfyXyUXba5kqXZoKIOj1e6jU8ll1jEnbkgNGh5Ug85f8coFFGW2a+iCta4miBeHQGx48Y1KOmM5jl3D56zY85taM/bT+zsuQMSPGHRwqVoVqLTbgaYhZSwIaoY95CmjCARgUXZ+nD38PdNTzIEqNVfh/sn7OVsWN7ojae7oWHg88e4q5H+GwvmVGaedijIJMPB9zx9hWhNG0fb9gsyu0SxeCsf2i3NAYqrVAMeKi91t8dYPfhwa1vbVrPg6ltWraRbp3+JXv61m8v/CaKDCiMOLQLkW2fI0kjaus8LOtsDJoItYcaalp/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=X/kEATn0Ar9CSfTVtmPcx8yrAUVQgXGEKMY3ZFxRv3I=;
- b=Le5GIBZH9PF3x+Jz/BeyTG401ToJeuC7e4/fKDua0FOlcohHdx5IkLIKBoxLPLlGXAlLoUfCcUPTCitVzW9vgBq0D5d6o3V0AwjC+GxZeaoxJfpThZLLw8y05zpZGXnZFJSY7VN+1TGnsWgsrHxXg3mpHPIpcfqd6wPLX66R4fIOZN0CE0B1kyTOqmX+iHwPv6zKe8GRtul6CEw2UbH+3F5NoN3o+snpmaLyqChY6glHnyCVslX4KehryKz1peiyFVzZXF1VOXsFl24cQpAy+ZZnr6qswxPpSgbsLWc4kA0Ym9eHpJXdfcjyJ62od9jd0XPRwCCVO/0zcKnJjBGIWQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=seco.com; dmarc=pass action=none header.from=seco.com;
- dkim=pass header.d=seco.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=X/kEATn0Ar9CSfTVtmPcx8yrAUVQgXGEKMY3ZFxRv3I=;
- b=iB6EyCn8udL1ECLZdsvtLBnTYme3y8f7pAiDXrux5CBpm7gvZaijXVug4QFucU7+UjUSL7lUripLwRvTZtKCZwVO4bRFqMWp2qeNVbimZHu9bloU3EhFF6j3ypj42I+M2ZM5Q7R2oWiyDIJm2c1DJqS6UIt9FbL8RJ6jdpJPggkMMFB6p4RoW/xKPWf5iW8I2ow74EHnjVxbmLdJJrT1e/cm6EYeDtOwxIH/KHwOWc7YTW34UjUV5upmkLkj8bl7UwtBgb+BD1YPMtlqQyVcdcufjH4EdL2N1pQZeiwQIDcXLyKQwdW+mwresNdxSnDAsEwpcQ9AO0bEcyZXoNnkwQ==
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=seco.com;
-Received: from DB9PR03MB8847.eurprd03.prod.outlook.com (2603:10a6:10:3dd::13)
- by AS8PR03MB7842.eurprd03.prod.outlook.com (2603:10a6:20b:341::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.22; Fri, 3 Mar
- 2023 17:25:39 +0000
-Received: from DB9PR03MB8847.eurprd03.prod.outlook.com
- ([fe80::dbcf:1089:3242:614e]) by DB9PR03MB8847.eurprd03.prod.outlook.com
- ([fe80::dbcf:1089:3242:614e%5]) with mapi id 15.20.6156.022; Fri, 3 Mar 2023
- 17:25:38 +0000
-Message-ID: <60415225-df2a-ad94-224d-f5cab9d2e8c9@seco.com>
-Date:   Fri, 3 Mar 2023 12:25:33 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH v9 04/10] clk: Add Lynx 10G SerDes PLL driver
-Content-Language: en-US
-From:   Sean Anderson <sean.anderson@seco.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-phy@lists.infradead.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Camelia Alexandra Groza <camelia.groza@nxp.com>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-References: <20221230000139.2846763-1-sean.anderson@seco.com>
- <20221230000139.2846763-5-sean.anderson@seco.com>
- <1abf9cb3e1fb1f01976c903cd8723b0f.sboyd@kernel.org>
- <363e3221-721b-6547-0955-f964e2ef17b1@seco.com>
-In-Reply-To: <363e3221-721b-6547-0955-f964e2ef17b1@seco.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL1PR13CA0313.namprd13.prod.outlook.com
- (2603:10b6:208:2c1::18) To DB9PR03MB8847.eurprd03.prod.outlook.com
- (2603:10a6:10:3dd::13)
+        with ESMTP id S231203AbjCCRbs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Mar 2023 12:31:48 -0500
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFDD45A6E3
+        for <linux-clk@vger.kernel.org>; Fri,  3 Mar 2023 09:31:45 -0800 (PST)
+Received: by mail-lj1-x236.google.com with SMTP id i20so3020746lja.11
+        for <linux-clk@vger.kernel.org>; Fri, 03 Mar 2023 09:31:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Lulx79GyAFA+P6dFOCo5Azji9mlKR6wcVUynCnl38KE=;
+        b=JITNzhiSKTtjoAwF8+7ZzK3BFkI2QL7n7qvc8NL4tf2TdDiB42bCjsYe/izBt4P+9P
+         lczExnj88Gk6EJnFrpd+rDJqpJLXZrFWJejHE/41SNNpPSOPSMY/t+ka4b5SsJVrPLHS
+         yP8QlZ4A7u0QnpLqepfRRA6oRNAfFlMSLg9RFndTA4G2xf3m6mlZCv7MgAmlGP0c8oWl
+         i8wFp/FD38t10Lcua1M5QYwo/GKeCH7BrCeFC0Qg6KOLMCMSWiBQE04bFJRqxsde4oFG
+         7xr+53mwxla2EbiKtNRjabsAbACLLZZ8qk5BGu7Xf1wCkEqYOCB87CCuHWnFs7PFvCvc
+         ilNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Lulx79GyAFA+P6dFOCo5Azji9mlKR6wcVUynCnl38KE=;
+        b=APv7y+i2v/KUMv7x3qYXMdVCgmcbhic/h/Xj+NT940d+cxPZvWbWtqiR8lYfcCug6W
+         XWPQ6/YsmyhZ0a1XipanSKoSY0nqspegkfscqBAgRrXcnpDOont3PhRGbiTn+JJ6RmGO
+         Oan9AKuA49waF6keYrOQ961VzIIU/hUikLivCKy2ph/oAFg8fXrNxlAqAKe1vO3cSpRR
+         mO8WSA75K4Cxp/rCTGuwBPetJjQo9wtZxyVK8XNAuUbtOlN3QitT20A6KgfHVTlliKXZ
+         wqw6XC8bHxV6gx7VRtTkpNkhKxRMw3BwwqbAASAXx8zgTZWIhKFkmf1lYFpg7JJUgIfl
+         2+xg==
+X-Gm-Message-State: AO0yUKVASgA9xH0Vx6ge4x/nE9+nmcmLlM3WgclwAZaw8+qLK6rxN4n4
+        7iVeSrXWMgEIeaDEgoMEu++56Q==
+X-Google-Smtp-Source: AK7set+TY6SCuyHzL+clUmus/vGmZ+jVnXAk/MpTCOHfN+mCHX0WkFtQ6gXt+GN97vVUzr2U7gu7/g==
+X-Received: by 2002:a2e:b019:0:b0:295:a3a9:a3e4 with SMTP id y25-20020a2eb019000000b00295a3a9a3e4mr848742ljk.45.1677864703905;
+        Fri, 03 Mar 2023 09:31:43 -0800 (PST)
+Received: from [127.0.0.1] (85-76-129-102-nat.elisa-mobile.fi. [85.76.129.102])
+        by smtp.gmail.com with ESMTPSA id f8-20020a2e6a08000000b0029571d2226bsm402252ljc.11.2023.03.03.09.31.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Mar 2023 09:31:43 -0800 (PST)
+Date:   Fri, 03 Mar 2023 17:16:58 +0200
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Manivannan Sadhasivam <mani@kernel.org>,
+        Devi Priya <quic_devipriy@quicinc.com>
+CC:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+        bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
+        vkoul@kernel.org, kishon@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, p.zabel@pengutronix.de, svarbanov@mm-sol.com,
+        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-clk@vger.kernel.org,
+        quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_1/7=5D_dt-bindings=3A_PCI=3A_q?= =?US-ASCII?Q?com=3A_Add_IPQ9574_specific_compatible?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20230228063358.GA4839@thinkpad>
+References: <20230214164135.17039-1-quic_devipriy@quicinc.com> <20230214164135.17039-2-quic_devipriy@quicinc.com> <20230224082332.GA5443@thinkpad> <bd153038-4427-1f11-1941-5f13fec01cf7@quicinc.com> <20230228063358.GA4839@thinkpad>
+Message-ID: <9BD62D8E-4E14-4269-B72D-C83EF4D43040@linaro.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic: DB9PR03MB8847:EE_|AS8PR03MB7842:EE_|DB8EUR05FT043:EE_|AS1PR03MB8285:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ae2c251-d683-43d9-d453-08db1c0c53f6
-X-TrendMicro-CAS-OUT-LOOP-IDENTIFIER: 656f966764b7fb185830381c646b41a1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: mJ0lS+UBrElB8I+3Z2HnmXmfVMHJsJd9x5uVQ2LGIoztVvkUTmIWK2o65NAuWabEQImJ3VZNpIrjP4vdWnzN8kCn8a9YM0t9US7SkDIBkfxM2VzmA9HzY7DyoAr91JOgyKJ9/bQDqOj+hJqiTgqRNs6W3Pib5/qc2Fi5kNAQAWqXIZIVCzqCVqO2Jqgj8IwHbf9WNPYQkAbT//YG2Y/wLPBz8DKDIazCy7zCfU/lvEtZ7QXtmQpCaNMZBUcIfB/VQ56FLZ3wTFl3EMNG5fej4hH0APIm5SgOLdDAwUkUjtY8C1BWX8K8qebq+FKMHwH8YEb/XMNITisGKr9uM9NfcuxVxVp/8NWMaxNN+ZdjJar2wCd2FoD6mFIKyCsASQ8w7hiAiI8H//9Jdlg0flFj+lguHtVouWOGWlvC6AKcW55ND8aV5jcosseDcKTrnLyKhxPCBAKbvMGEXkEI984s3krwU+2n9DziZ43mA1ubY47tn8uQC//mnI6z3ROnMwNvCK1uv7Qhn1oK6QJsGogjyiBuigNuOZ5X8SDtZRx7dWzyB7llx1cPx5M0DTR6dhmWGRo/XG9WYQ66feKuW1htA6AoRD7zj60Nv7xMIT4WV4Pn/IJWFIiyMrwe8RJUwejrFfynJvgL7c9stvMhBHzlC+AQ58IW1pfdFCejkmz4GDZp/sQQ9yLabG3xVvlwjc/fRZcp5AJb3o8WuolZTyfDKuuZWUzLXozaMASDZQ32CePXavGu39W9683EpOiWKFoky1KWOPSwh+ZNsLMx7MjACnuwSzoMAVl6avcN5rwQjpw=
-X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR03MB8847.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(376002)(39850400004)(136003)(366004)(396003)(346002)(451199018)(36756003)(6666004)(6512007)(53546011)(26005)(6486002)(6506007)(2616005)(186003)(8676002)(4326008)(110136005)(41300700001)(66556008)(66476007)(54906003)(52116002)(44832011)(316002)(2906002)(4001150100001)(38100700002)(8936002)(5660300002)(7416002)(478600001)(38350700002)(31696002)(86362001)(66946007)(83380400001)(66899018)(31686004)(21314003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR03MB7842
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB8EUR05FT043.eop-eur05.prod.protection.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs: 619bc9cc-2d8c-419b-e5c4-08db1c0c4e78
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: zeF/LTz5R/bmAsHxwlIMCcXKZuAJzatHwANkwo+XE3w4zoTW2m0FkfzowjJMwoiwAJxEI0m1Vy2HnVdzhMQxUo9XWQ5DL2AmvdzWbmSqNBn6R8Ssnd/TnxjfHzyhT9AD/E3nlZJ786lwuAFDMdeJ3BVpNkfoKeuArzz0TiU90SOcNEtNEqnCiOsViAyJnaVyt1v+JtjU0qgFXDMcnqfeElv07yCvp8fBBPl+PJ2d01KNATufEhUduu9Rv/4wcOpFt+rJrjyOTn4esuOnrDJ0icveiTZuAAZh5REjFxJQsTPhsD/G3FyuPIt5GYw3lZWt8V7IL/IcWr3kZmBhkfKLjwfZVsFZmqai3kOH2yUeZdeYnOwp4F//HrYXrLtjLftUH0bu9BoWpppZLBIR59VbC/R4I4GajW4zcoze04AnHejjsnRSPvarpZDUbrzJor7wOBfAh7+E8/dCOwP6dNTpRnZE3bSPUqN4Zk3i1L8Idgf+FxhizrHFoNG53aCCZoisNDaryp/k1G9wIZ5zXSuQIfFZNL3zXPsy+eCYDag/YOSuNqD8vaOCEKthpugEYPPIKXmWjckg8HmLPXi8+kenI7x7pXbCrOXL8SF9H2it8yOavhpXSSXZ1XAPsQV9dRw3wq07UwOB1L1aR4bNhGov9/VGMEqZGlP/ybh9LQbIwBXZPQl8Bdkiz1ycCSzwIqUVAJPKVuwj65Ahqo7cNhUB62zqRpFe0tQ9Ar1EM1a55G053I3Llu78oSu0YfRkFbH5qdh/s/8Nj4lauwtM6hvKXD+k/F68Qc07VTozoZtbaz5l3VeahafIByc/MZlnlDIE
-X-Forefront-Antispam-Report: CIP:20.160.56.85;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:inpost-eu.tmcas.trendmicro.com;PTR:inpost-eu.tmcas.trendmicro.com;CAT:NONE;SFS:(13230025)(39850400004)(396003)(346002)(136003)(376002)(451199018)(5400799012)(46966006)(36840700001)(31696002)(86362001)(36756003)(82310400005)(2616005)(54906003)(336012)(53546011)(40480700001)(186003)(70206006)(70586007)(8936002)(8676002)(6512007)(41300700001)(110136005)(316002)(478600001)(6486002)(5660300002)(6666004)(6506007)(82740400003)(26005)(7596003)(4001150100001)(7636003)(2906002)(47076005)(7416002)(34070700002)(4326008)(44832011)(36860700001)(356005)(83380400001)(66899018)(31686004)(21314003)(45980500001)(43740500002)(12100799021);DIR:OUT;SFP:1501;
-X-OriginatorOrg: seco.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2023 17:25:47.5990
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ae2c251-d683-43d9-d453-08db1c0c53f6
-X-MS-Exchange-CrossTenant-Id: bebe97c3-6438-442e-ade3-ff17aa50e733
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bebe97c3-6438-442e-ade3-ff17aa50e733;Ip=[20.160.56.85];Helo=[inpost-eu.tmcas.trendmicro.com]
-X-MS-Exchange-CrossTenant-AuthSource: DB8EUR05FT043.eop-eur05.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR03MB8285
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+28 =D1=84=D0=B5=D0=B2=D1=80=D0=B0=D0=BB=D1=8F 2023 =D0=B3=2E 08:33:58 GMT+0=
+2:00, Manivannan Sadhasivam <mani@kernel=2Eorg> =D0=BF=D0=B8=D1=88=D0=B5=D1=
+=82:
+>On Tue, Feb 28, 2023 at 10:56:53AM +0530, Devi Priya wrote:
+>>=20
+>>=20
+>> On 2/24/2023 1:53 PM, Manivannan Sadhasivam wrote:
+>> > On Tue, Feb 14, 2023 at 10:11:29PM +0530, Devi Priya wrote:
+>> > > Document the compatible for IPQ9574
+>> > >=20
+>> Hi Mani, Thanks for taking time to review the patch=2E
+>> >=20
+>> > You didn't mention about the "msi-parent" property that is being adde=
+d
+>> > by this patch
+>> Sure, will update the commit message in the next spin
+>> >=20
+>> > > Signed-off-by: Devi Priya <quic_devipriy@quicinc=2Ecom>
+>> > > ---
+>> > >   =2E=2E=2E/devicetree/bindings/pci/qcom,pcie=2Eyaml    | 72 ++++++=
+++++++++++++-
+>> > >   1 file changed, 70 insertions(+), 2 deletions(-)
+>> > >=20
+>> > > diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie=2Eyaml=
+ b/Documentation/devicetree/bindings/pci/qcom,pcie=2Eyaml
+>> > > index 872817d6d2bd=2E=2Edabdf2684e2d 100644
+>> > > --- a/Documentation/devicetree/bindings/pci/qcom,pcie=2Eyaml
+>> > > +++ b/Documentation/devicetree/bindings/pci/qcom,pcie=2Eyaml
+>> > > @@ -26,6 +26,7 @@ properties:
+>> > >             - qcom,pcie-ipq8064-v2
+>> > >             - qcom,pcie-ipq8074
+>> > >             - qcom,pcie-ipq8074-gen3
+>> > > +          - qcom,pcie-ipq9574
+>> > >             - qcom,pcie-msm8996
+>> > >             - qcom,pcie-qcs404
+>> > >             - qcom,pcie-sa8540p
+>> > > @@ -44,11 +45,11 @@ properties:
+>> > >     reg:
+>> > >       minItems: 4
+>> > > -    maxItems: 5
+>> > > +    maxItems: 6
+>> > >     reg-names:
+>> > >       minItems: 4
+>> > > -    maxItems: 5
+>> > > +    maxItems: 6
+>> > >     interrupts:
+>> > >       minItems: 1
+>> > > @@ -105,6 +106,8 @@ properties:
+>> > >       items:
+>> > >         - const: pciephy
+>> > > +  msi-parent: true
+>> > > +
+>> > >     power-domains:
+>> > >       maxItems: 1
+>> > > @@ -173,6 +176,27 @@ allOf:
+>> > >               - const: parf # Qualcomm specific registers
+>> > >               - const: config # PCIe configuration space
+>> > > +  - if:
+>> > > +      properties:
+>> > > +        compatible:
+>> > > +          contains:
+>> > > +            enum:
+>> > > +              - qcom,pcie-ipq9574
+>> > > +    then:
+>> > > +      properties:
+>> > > +        reg:
+>> > > +          minItems: 5
+>> > > +          maxItems: 6
+>> > > +        reg-names:
+>> > > +          minItems: 5
+>> > > +          items:
+>> > > +            - const: dbi # DesignWare PCIe registers
+>> > > +            - const: elbi # External local bus interface registers
+>> > > +            - const: atu # ATU address space
+>> > > +            - const: parf # Qualcomm specific registers
+>> > > +            - const: config # PCIe configuration space
+>> > > +            - const: aggr_noc #PCIe aggr_noc
+>> >=20
+>> > Why do you need this region unlike other SoCs? Is the driver making u=
+se of it?
+>> We have the aggr_noc region in ipq9574 to achieve higher throughput & t=
+o
+>> handle multiple PCIe instances=2E The driver uses it to rate adapt 1-la=
+ne PCIe
+>> clocks=2E My bad, missed it=2E Will add the driver changes in V2=2E
+>
+>Hmm, this is something new=2E How can you achieve higher throughput with =
+this
+>region? Can you explain more on how it is used?
 
-On 1/27/23 16:51, Sean Anderson wrote:
-> On 1/27/23 15:59, Stephen Boyd wrote:
->> Quoting Sean Anderson (2022-12-29 16:01:33)
->>> This adds support for the PLLs found in Lynx 10G "SerDes" devices found on
->>> various NXP QorIQ SoCs. There are two PLLs in each SerDes. This driver has
->>> been split from the main PHY driver to allow for better review, even though
->>> these PLLs are not present anywhere else besides the SerDes. An auxiliary
->>> device is not used as it offers no benefits over a function call (and there
->>> is no need to have a separate device).
->>> 
->>> The PLLs are modeled as clocks proper to let us take advantage of the
->>> existing clock infrastructure.
->> 
->> What advantage do we gain?
-> 
-> The handling of rate changes, locking, etc is all done by the clock
-> subsystem. We can use the existing debugfs stuff as well. And everything
-> is organized by existing API boundaries.
-> 
->>> I have not given the same treatment to the
->>> per-lane clocks because they need to be programmed in-concert with the rest
->>> of the lane settings. One tricky thing is that the VCO (PLL) rate exceeds
->>> 2^32 (maxing out at around 5GHz). This will be a problem on 32-bit
->>> platforms, since clock rates are stored as unsigned longs. To work around
->>> this, the pll clock rate is generally treated in units of kHz.
->> 
->> This looks like a disadvantage. Are we reporting the frequency in kHz to
->> the clk framework?
-> 
-> It is, and yes.
-> 
->>> 
->>> The PLLs are configured rather interestingly. Instead of the usual direct
->>> programming of the appropriate divisors, the input and output clock rates
->>> are selected directly. Generally, the only restriction is that the input
->>> and output must be integer multiples of each other. This suggests some kind
->>> of internal look-up table. The datasheets generally list out the supported
->>> combinations explicitly, and not all input/output combinations are
->>> documented. I'm not sure if this is due to lack of support, or due to an
->>> oversight. If this becomes an issue, then some combinations can be
->>> blacklisted (or whitelisted). This may also be necessary for other SoCs
->>> which have more stringent clock requirements.
->> 
->> I'm wondering if a clk provider should be created at all here. Who is
->> the consumer of the clk? The phy driver itself? Does the clk provided
->> need to interact with other clks in the system? Or is the clk tree
->> wholly self-contained?
-> 
-> It's wholly self-contained, aside from an undocumented mode where you
-> can output a fixed frequency (for testing). The provider exists so you
-> can use assigned-clocks to ensure a particular PLL is used for a
-> particular frequency. This prevents a problem where e.g. you have
-> reference clocks for 100 Hz and 156.25 Hz, one lane requests 5 GHz and
-> the PLL with the 156.25 Hz clock gets used. Then, later another lane
-> requests 5.15625 GHz and the remaining 100 Hz PLL can't provide it. To
-> prevent this, you can assign the PLLs their rates up front and the lanes
-> will use the existing rates. Most of the time this should be done by the
-> RCW, but there are cases where the RCW can't set up the clocks properly.
-> 
->> Can the phy consumer configure the output frequency directly via
->> phy_configure() or when the phy is enabled? I'm thinking the phy driver
->> can call clk_set_rate() on the parent 'rfclk' before or after setting
->> the bits to control the output rate,
-> 
-> This is what currently happens. See lynx_set_mode in the next patch.
-> 
->> and use clk_round_rate() to figure
->> out what input frequencies are supported for the output frequency
->> desired. This would avoid kHz overflowing 32-bits, and the big clk lock
->> getting blocked on some other clk in the system changing rates.
-> 
-> Can you describe this in a bit more detail? Are you suggesting to skip
-> the clock framework?
-> 
->> BTW, what sort of phy is this? Some networking device?
-> 
-> From the Kconfig in the next commit:
-> 
-> This adds support for the Lynx "SerDes" devices found on various QorIQ
-> SoCs. There may be up to four SerDes devices on each SoC, and each
-> device supports up to eight lanes. The SerDes is configured by
-> default by the RCW, but this module is necessary in order to support
-> some modes (such as 2.5G SGMII or 1000BASE-KX), or clock setups (as
-> only as subset of clock configurations are supported by the RCW).
-> The hardware supports a variety of protocols, including Ethernet,
-> SATA, PCIe, and more exotic links such as Interlaken and Aurora. This
-> driver only supports Ethernet, but it will try not to touch lanes
-> configured for other protocols.
-> 
->>> 
->>> diff --git a/drivers/clk/clk-fsl-lynx-10g.c b/drivers/clk/clk-fsl-lynx-10g.c
->>> new file mode 100644
->>> index 000000000000..61f68b5ae675
->>> --- /dev/null
->>> +++ b/drivers/clk/clk-fsl-lynx-10g.c
->>> @@ -0,0 +1,509 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * Copyright (C) 2022 Sean Anderson <sean.anderson@seco.com>
->>> + *
->>> + * This file contains the implementation for the PLLs found on Lynx 10G phys.
->>> + *
->>> + * XXX: The VCO rate of the PLLs can exceed ~4GHz, which is the maximum rate
->>> + * expressable in an unsigned long. To work around this, rates are specified in
->>> + * kHz. This is as if there was a division by 1000 in the PLL.
->>> + */
->>> +
->>> +#include <linux/clk.h>
->> 
->> Is this include used? If not, please remove.
-> 
-> OK
-> 
->>> +#include <linux/clk-provider.h>
->>> +#include <linux/device.h>
->>> +#include <linux/bitfield.h>
->>> +#include <linux/math64.h>
->>> +#include <linux/phy/lynx-10g.h>
->>> +#include <linux/regmap.h>
->>> +#include <linux/slab.h>
->>> +#include <linux/units.h>
->>> +#include <dt-bindings/clock/fsl,lynx-10g.h>
->>> +
->>> +#define PLL_STRIDE     0x20
->>> +#define PLLa(a, off)   ((a) * PLL_STRIDE + (off))
->>> +#define PLLaRSTCTL(a)  PLLa(a, 0x00)
->>> +#define PLLaCR0(a)     PLLa(a, 0x04)
->>> +
->>> +#define PLLaRSTCTL_RSTREQ      BIT(31)
->>> +#define PLLaRSTCTL_RST_DONE    BIT(30)
->>> +#define PLLaRSTCTL_RST_ERR     BIT(29)
->> [...]
->>> +
->>> +static int lynx_clk_init(struct clk_hw_onecell_data *hw_data,
->>> +                        struct device *dev, struct regmap *regmap,
->>> +                        unsigned int index)
->>> +{
->>> +       const struct clk_hw *ex_dly_parents;
->>> +       struct clk_parent_data pll_parents[1] = { };
->>> +       struct clk_init_data pll_init = {
->>> +               .ops = &lynx_pll_clk_ops,
->>> +               .parent_data = pll_parents,
->>> +               .num_parents = 1,
->>> +               .flags = CLK_GET_RATE_NOCACHE | CLK_SET_RATE_PARENT |
->> 
->> Why is the nocache flag used?
-> 
-> PCIe rate selection can automatically modify the frequency of the
-> PLL. From the reference manual:
-> 
-> | For PCIe 8 Gbaud, the auto-negotiation also involves a combination of
-> | switching PLL selects, and/or reconfiguring a PLL. There are two
-> | scenarios for PLL reconfiguration:
-> |
-> | * PCIe starts on any PLL which runs at 5GHz, and the other PLL is off.
-> | PHY wrapper will switch to the other PLL as part of Gen 3 speed
-> | switch. In this case, both PLLs must be supplied with valid reference
-> | clocks.
-> | * PCIe starts on any PLL which runs at 5GHz, and the other PLL is
-> | being used for other protocols. PHY wrapper will reconfigure the
-> | current 5GHz PLL as part of Gen 3 speed switch. PCIe stays on the same
-> | PLL in this case. This also applies to the scenario where one PCIe
-> | port runs on all lanes.
-> 
-> As far as I know there's no way to configure or disable this. PCIe isn't
-> implemented yet, but it would likely need some way to mark PLLs for
-> exclusive use (not just exclusive rate). I figured it would be better
-> not to cache the rate so that things like the above would get detected
-> properly.
-> 
-> --Sean
-> 
->>> +                        CLK_OPS_PARENT_ENABLE,
->>> +       };
->>> +       struct clk_init_data ex_dly_init = {
->>> +               .ops = &lynx_ex_dly_clk_ops,
->>> +               .parent_hws = &ex_dly_parents,
->>> +               .num_parents = 1,
->>> +       };
->>> +       struct lynx_clk *clk;
->>> +       int ret;
+Based on the name of the region, it looks like it is an interconnect regio=
+n=2E=20
 
-I am going to try and send out v10 soon. Do you have any comments on my
-reply here? At the moment the only change I am planning to make is to
-remove the clk.h include.
+Devi, if this is the case, then you have to handle it through the intercon=
+nect driver, rather than poking directly into these registers=2E
 
---Sean
+
+>
+>Thanks,
+>Mani
+>
+>> >=20
+>> > Thanks,
+>> > Mani
+>> >=20
+>> > > +
+>> > >     - if:
+>> > >         properties:
+>> > >           compatible:
+>> > > @@ -365,6 +389,39 @@ allOf:
+>> > >               - const: ahb # AHB Reset
+>> > >               - const: axi_m_sticky # AXI Master Sticky reset
+>> > > +  - if:
+>> > > +      properties:
+>> > > +        compatible:
+>> > > +          contains:
+>> > > +            enum:
+>> > > +              - qcom,pcie-ipq9574
+>> > > +    then:
+>> > > +      properties:
+>> > > +        clocks:
+>> > > +          minItems: 6
+>> > > +          maxItems: 6
+>> > > +        clock-names:
+>> > > +          items:
+>> > > +            - const: ahb  # AHB clock
+>> > > +            - const: aux  # Auxiliary clock
+>> > > +            - const: axi_m # AXI Master clock
+>> > > +            - const: axi_s # AXI Slave clock
+>> > > +            - const: axi_bridge # AXI bridge clock
+>> > > +            - const: rchng
+>> > > +        resets:
+>> > > +          minItems: 8
+>> > > +          maxItems: 8
+>> > > +        reset-names:
+>> > > +          items:
+>> > > +            - const: pipe # PIPE reset
+>> > > +            - const: sticky # Core Sticky reset
+>> > > +            - const: axi_s_sticky # AXI Slave Sticky reset
+>> > > +            - const: axi_s # AXI Slave reset
+>> > > +            - const: axi_m_sticky # AXI Master Sticky reset
+>> > > +            - const: axi_m # AXI Master reset
+>> > > +            - const: aux # AUX Reset
+>> > > +            - const: ahb # AHB Reset
+>> > > +
+>> > >     - if:
+>> > >         properties:
+>> > >           compatible:
+>> > > @@ -681,6 +738,16 @@ allOf:
+>> > >           - interconnects
+>> > >           - interconnect-names
+>> > > +  - if:
+>> > > +      properties:
+>> > > +        compatible:
+>> > > +          contains:
+>> > > +            enum:
+>> > > +              - qcom,pcie-ipq9574
+>> > > +    then:
+>> > > +      required:
+>> > > +        - msi-parent
+>> > > +
+>> > >     - if:
+>> > >         not:
+>> > >           properties:
+>> > > @@ -693,6 +760,7 @@ allOf:
+>> > >                   - qcom,pcie-ipq8064v2
+>> > >                   - qcom,pcie-ipq8074
+>> > >                   - qcom,pcie-ipq8074-gen3
+>> > > +                - qcom,pcie-ipq9574
+>> > >                   - qcom,pcie-qcs404
+>> > >       then:
+>> > >         required:
+>> > > --=20
+>> > > 2=2E17=2E1
+>> > >=20
+>> >=20
+>> Thanks,
+>> Devi Priya
+>
+
