@@ -2,252 +2,167 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C50C7EE2F
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Mar 2023 17:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 318F1C7EE2D
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Mar 2023 18:04:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231309AbjCCRkw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Mar 2023 12:40:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58748 "EHLO
+        id S230443AbjCCSE0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Mar 2023 13:04:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230220AbjCCRkv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Mar 2023 12:40:51 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FA5A1B55B;
-        Fri,  3 Mar 2023 09:40:50 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CF70C618B0;
-        Fri,  3 Mar 2023 17:40:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D23E4C4339C;
-        Fri,  3 Mar 2023 17:40:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677865249;
-        bh=z/rHLZz/0hkO+xtkjFB3n0wD+uJunnsmtzF3M+39Xao=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HZ+6phsdT8C1M8DaZ/UHcrcw2rnOepaj/Dwo1ZXPNO49+Jo0PeXI7WeclV6K7pp3O
-         vxOuBLYgJlSM5ylSQ2WxVdMZtzB75JeTd6x7aq2JD7crEVDBqT4gHY3QAypE7FTkEa
-         RAOgYBRR+rXOCsfx7vmZl0FaY8SP8XnStYa3pfYgmzV6ad/VKyrgn4HI+SpSZ5QUD9
-         Czmtoae2gseMWNI1p36kGBfVgGtpluGo63UEZNAy7zkxIcsMniQ0B2DWFqX+jh1TjJ
-         dB9a3oo4HWwOtDY5lcVY907g4Sk0egabZ0KnCVsRF1AwKm9mSsh7J2lEfss5vMKYDC
-         WY5d74vo6PJew==
-Date:   Fri, 3 Mar 2023 23:10:36 +0530
-From:   Manivannan Sadhasivam <mani@kernel.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Manivannan Sadhasivam <mani@kernel.org>,
-        Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org,
-        lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-        bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
-        vkoul@kernel.org, kishon@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, p.zabel@pengutronix.de, svarbanov@mm-sol.com,
-        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-clk@vger.kernel.org,
-        quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
-        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com
-Subject: Re: [PATCH 1/7] dt-bindings: PCI: qcom: Add IPQ9574 specific
- compatible
-Message-ID: <20230303174036.GB6782@thinkpad>
-References: <20230214164135.17039-1-quic_devipriy@quicinc.com>
- <20230214164135.17039-2-quic_devipriy@quicinc.com>
- <20230224082332.GA5443@thinkpad>
- <bd153038-4427-1f11-1941-5f13fec01cf7@quicinc.com>
- <20230228063358.GA4839@thinkpad>
- <9BD62D8E-4E14-4269-B72D-C83EF4D43040@linaro.org>
+        with ESMTP id S231268AbjCCSEZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Mar 2023 13:04:25 -0500
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA6CD29E1D;
+        Fri,  3 Mar 2023 10:04:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1677866655; x=1709402655;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=31fthH7gaoN87g1RZvRQ3R3Y0eJR3PQNczHJsxv31eI=;
+  b=Hd1IryWZbcy/wfS4EcArfDmHWlh8cZyuUgRjOlCIsFAaKnRNoCRenVgk
+   P2lbwQ9ooJaNcKK4Pl7XDR0fjRbIAkUshPK6k9fBzPH8nwHzg2wDNHTdv
+   oXyXknibzw22KUKJ91zW6zWI704zHHIVWB6wKkY2f3V9UguGTyrCIyWjs
+   rhjOQtmiJzGVvVqmbO1pTvTUKqgZYxXGXtPeqZqHxCV7tMFtH/0xDicpB
+   NC4wzhskf4REdNHag9n2heu+/8yFlXHllkp6KP6Ls5ZUROqeCsnhANg+4
+   hRLkkR2zDTYi2MIVeIuS2Gjy22QKZdCbK+reOKww7x7gGP/+tSIHi4jbY
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10638"; a="421381396"
+X-IronPort-AV: E=Sophos;i="5.98,231,1673942400"; 
+   d="scan'208";a="421381396"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2023 10:03:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10638"; a="707926473"
+X-IronPort-AV: E=Sophos;i="5.98,231,1673942400"; 
+   d="scan'208";a="707926473"
+Received: from lkp-server01.sh.intel.com (HELO 776573491cc5) ([10.239.97.150])
+  by orsmga001.jf.intel.com with ESMTP; 03 Mar 2023 10:03:22 -0800
+Received: from kbuild by 776573491cc5 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pY9kX-0001ak-1X;
+        Fri, 03 Mar 2023 18:03:21 +0000
+Date:   Sat, 4 Mar 2023 02:02:59 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Aradhya Bhatia <a-bhatia1@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     oe-kbuild-all@lists.linux.dev, Tomi Valkeinen <tomba@kernel.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Linux Clock List <linux-clk@vger.kernel.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        Linux Kernel List <linux-kernel@vger.kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Devarsh Thakkar <devarsht@ti.com>,
+        Jai Luthra <j-luthra@ti.com>, Aradhya Bhatia <a-bhatia1@ti.com>
+Subject: Re: [PATCH v2 2/2] clk: keystone: Add support AM62 DSS clock divider
+Message-ID: <202303040131.k7AUxAg5-lkp@intel.com>
+References: <20230213115954.553-3-a-bhatia1@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9BD62D8E-4E14-4269-B72D-C83EF4D43040@linaro.org>
+In-Reply-To: <20230213115954.553-3-a-bhatia1@ti.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Mar 03, 2023 at 05:16:58PM +0200, Dmitry Baryshkov wrote:
-> 28 февраля 2023 г. 08:33:58 GMT+02:00, Manivannan Sadhasivam <mani@kernel.org> пишет:
-> >On Tue, Feb 28, 2023 at 10:56:53AM +0530, Devi Priya wrote:
-> >> 
-> >> 
-> >> On 2/24/2023 1:53 PM, Manivannan Sadhasivam wrote:
-> >> > On Tue, Feb 14, 2023 at 10:11:29PM +0530, Devi Priya wrote:
-> >> > > Document the compatible for IPQ9574
-> >> > > 
-> >> Hi Mani, Thanks for taking time to review the patch.
-> >> > 
-> >> > You didn't mention about the "msi-parent" property that is being added
-> >> > by this patch
-> >> Sure, will update the commit message in the next spin
-> >> > 
-> >> > > Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> >> > > ---
-> >> > >   .../devicetree/bindings/pci/qcom,pcie.yaml    | 72 ++++++++++++++++++-
-> >> > >   1 file changed, 70 insertions(+), 2 deletions(-)
-> >> > > 
-> >> > > diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> >> > > index 872817d6d2bd..dabdf2684e2d 100644
-> >> > > --- a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> >> > > +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> >> > > @@ -26,6 +26,7 @@ properties:
-> >> > >             - qcom,pcie-ipq8064-v2
-> >> > >             - qcom,pcie-ipq8074
-> >> > >             - qcom,pcie-ipq8074-gen3
-> >> > > +          - qcom,pcie-ipq9574
-> >> > >             - qcom,pcie-msm8996
-> >> > >             - qcom,pcie-qcs404
-> >> > >             - qcom,pcie-sa8540p
-> >> > > @@ -44,11 +45,11 @@ properties:
-> >> > >     reg:
-> >> > >       minItems: 4
-> >> > > -    maxItems: 5
-> >> > > +    maxItems: 6
-> >> > >     reg-names:
-> >> > >       minItems: 4
-> >> > > -    maxItems: 5
-> >> > > +    maxItems: 6
-> >> > >     interrupts:
-> >> > >       minItems: 1
-> >> > > @@ -105,6 +106,8 @@ properties:
-> >> > >       items:
-> >> > >         - const: pciephy
-> >> > > +  msi-parent: true
-> >> > > +
-> >> > >     power-domains:
-> >> > >       maxItems: 1
-> >> > > @@ -173,6 +176,27 @@ allOf:
-> >> > >               - const: parf # Qualcomm specific registers
-> >> > >               - const: config # PCIe configuration space
-> >> > > +  - if:
-> >> > > +      properties:
-> >> > > +        compatible:
-> >> > > +          contains:
-> >> > > +            enum:
-> >> > > +              - qcom,pcie-ipq9574
-> >> > > +    then:
-> >> > > +      properties:
-> >> > > +        reg:
-> >> > > +          minItems: 5
-> >> > > +          maxItems: 6
-> >> > > +        reg-names:
-> >> > > +          minItems: 5
-> >> > > +          items:
-> >> > > +            - const: dbi # DesignWare PCIe registers
-> >> > > +            - const: elbi # External local bus interface registers
-> >> > > +            - const: atu # ATU address space
-> >> > > +            - const: parf # Qualcomm specific registers
-> >> > > +            - const: config # PCIe configuration space
-> >> > > +            - const: aggr_noc #PCIe aggr_noc
-> >> > 
-> >> > Why do you need this region unlike other SoCs? Is the driver making use of it?
-> >> We have the aggr_noc region in ipq9574 to achieve higher throughput & to
-> >> handle multiple PCIe instances. The driver uses it to rate adapt 1-lane PCIe
-> >> clocks. My bad, missed it. Will add the driver changes in V2.
-> >
-> >Hmm, this is something new. How can you achieve higher throughput with this
-> >region? Can you explain more on how it is used?
-> 
-> Based on the name of the region, it looks like it is an interconnect region. 
-> 
+Hi Aradhya,
 
-Well, we only have BCM based interconnects so far. That's why I was curious
-about this region and its purpose.
+Thank you for the patch! Yet something to improve:
 
-> Devi, if this is the case, then you have to handle it through the interconnect driver, rather than poking directly into these registers.
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on linus/master v6.2 next-20230303]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-If that so, it doesn't need to be added in this series itself. I believe that
-without aggr_noc region, the PCIe controller can still function properly with
-reduced performance. But you can add the interconnect support later as a
-separate series.
+url:    https://github.com/intel-lab-lkp/linux/commits/Aradhya-Bhatia/dt-bindings-clock-Add-binding-documentation-for-TI-AM62-DSS-Clock/20230213-200203
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20230213115954.553-3-a-bhatia1%40ti.com
+patch subject: [PATCH v2 2/2] clk: keystone: Add support AM62 DSS clock divider
+config: arm-randconfig-r046-20230302 (https://download.01.org/0day-ci/archive/20230304/202303040131.k7AUxAg5-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/2ddb7301b11092b73d4a16af06362954f3d5f714
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Aradhya-Bhatia/dt-bindings-clock-Add-binding-documentation-for-TI-AM62-DSS-Clock/20230213-200203
+        git checkout 2ddb7301b11092b73d4a16af06362954f3d5f714
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/clk/ mm// net/
 
-Thanks,
-Mani
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202303040131.k7AUxAg5-lkp@intel.com/
 
-> 
-> 
-> >
-> >Thanks,
-> >Mani
-> >
-> >> > 
-> >> > Thanks,
-> >> > Mani
-> >> > 
-> >> > > +
-> >> > >     - if:
-> >> > >         properties:
-> >> > >           compatible:
-> >> > > @@ -365,6 +389,39 @@ allOf:
-> >> > >               - const: ahb # AHB Reset
-> >> > >               - const: axi_m_sticky # AXI Master Sticky reset
-> >> > > +  - if:
-> >> > > +      properties:
-> >> > > +        compatible:
-> >> > > +          contains:
-> >> > > +            enum:
-> >> > > +              - qcom,pcie-ipq9574
-> >> > > +    then:
-> >> > > +      properties:
-> >> > > +        clocks:
-> >> > > +          minItems: 6
-> >> > > +          maxItems: 6
-> >> > > +        clock-names:
-> >> > > +          items:
-> >> > > +            - const: ahb  # AHB clock
-> >> > > +            - const: aux  # Auxiliary clock
-> >> > > +            - const: axi_m # AXI Master clock
-> >> > > +            - const: axi_s # AXI Slave clock
-> >> > > +            - const: axi_bridge # AXI bridge clock
-> >> > > +            - const: rchng
-> >> > > +        resets:
-> >> > > +          minItems: 8
-> >> > > +          maxItems: 8
-> >> > > +        reset-names:
-> >> > > +          items:
-> >> > > +            - const: pipe # PIPE reset
-> >> > > +            - const: sticky # Core Sticky reset
-> >> > > +            - const: axi_s_sticky # AXI Slave Sticky reset
-> >> > > +            - const: axi_s # AXI Slave reset
-> >> > > +            - const: axi_m_sticky # AXI Master Sticky reset
-> >> > > +            - const: axi_m # AXI Master reset
-> >> > > +            - const: aux # AUX Reset
-> >> > > +            - const: ahb # AHB Reset
-> >> > > +
-> >> > >     - if:
-> >> > >         properties:
-> >> > >           compatible:
-> >> > > @@ -681,6 +738,16 @@ allOf:
-> >> > >           - interconnects
-> >> > >           - interconnect-names
-> >> > > +  - if:
-> >> > > +      properties:
-> >> > > +        compatible:
-> >> > > +          contains:
-> >> > > +            enum:
-> >> > > +              - qcom,pcie-ipq9574
-> >> > > +    then:
-> >> > > +      required:
-> >> > > +        - msi-parent
-> >> > > +
-> >> > >     - if:
-> >> > >         not:
-> >> > >           properties:
-> >> > > @@ -693,6 +760,7 @@ allOf:
-> >> > >                   - qcom,pcie-ipq8064v2
-> >> > >                   - qcom,pcie-ipq8074
-> >> > >                   - qcom,pcie-ipq8074-gen3
-> >> > > +                - qcom,pcie-ipq9574
-> >> > >                   - qcom,pcie-qcs404
-> >> > >       then:
-> >> > >         required:
-> >> > > -- 
-> >> > > 2.17.1
-> >> > > 
-> >> > 
-> >> Thanks,
-> >> Devi Priya
-> >
-> 
+All errors (new ones prefixed by >>):
+
+   In file included from arch/arm/include/asm/div64.h:107,
+                    from include/linux/math.h:6,
+                    from include/linux/math64.h:6,
+                    from include/linux/time.h:6,
+                    from include/linux/stat.h:19,
+                    from include/linux/module.h:13,
+                    from drivers/clk/keystone/clk-am62-dss.c:5:
+   drivers/clk/keystone/clk-am62-dss.c: In function 'ti_am62_dss_clk_recalc_rate':
+   include/asm-generic/div64.h:222:35: warning: comparison of distinct pointer types lacks a cast
+     222 |         (void)(((typeof((n)) *)0) == ((uint64_t *)0));  \
+         |                                   ^~
+   drivers/clk/keystone/clk-am62-dss.c:24:9: note: in expansion of macro 'do_div'
+      24 |         do_div(rate, priv->div);
+         |         ^~~~~~
+   In file included from include/linux/build_bug.h:5,
+                    from include/linux/container_of.h:5,
+                    from include/linux/list.h:5,
+                    from include/linux/module.h:12:
+   include/asm-generic/div64.h:234:32: warning: right shift count >= width of type [-Wshift-count-overflow]
+     234 |         } else if (likely(((n) >> 32) == 0)) {          \
+         |                                ^~
+   include/linux/compiler.h:77:45: note: in definition of macro 'likely'
+      77 | # define likely(x)      __builtin_expect(!!(x), 1)
+         |                                             ^
+   drivers/clk/keystone/clk-am62-dss.c:24:9: note: in expansion of macro 'do_div'
+      24 |         do_div(rate, priv->div);
+         |         ^~~~~~
+   include/asm-generic/div64.h:238:36: error: passing argument 1 of '__div64_32' from incompatible pointer type [-Werror=incompatible-pointer-types]
+     238 |                 __rem = __div64_32(&(n), __base);       \
+         |                                    ^~~~
+         |                                    |
+         |                                    long unsigned int *
+   drivers/clk/keystone/clk-am62-dss.c:24:9: note: in expansion of macro 'do_div'
+      24 |         do_div(rate, priv->div);
+         |         ^~~~~~
+   arch/arm/include/asm/div64.h:24:45: note: expected 'uint64_t *' {aka 'long long unsigned int *'} but argument is of type 'long unsigned int *'
+      24 | static inline uint32_t __div64_32(uint64_t *n, uint32_t base)
+         |                                   ~~~~~~~~~~^
+   drivers/clk/keystone/clk-am62-dss.c: In function 'clk_hw_unregister_am62_dss_clk':
+>> drivers/clk/keystone/clk-am62-dss.c:99:9: error: implicit declaration of function 'kfree'; did you mean 'kvfree'? [-Werror=implicit-function-declaration]
+      99 |         kfree(priv);
+         |         ^~~~~
+         |         kvfree
+   cc1: some warnings being treated as errors
+
+
+vim +99 drivers/clk/keystone/clk-am62-dss.c
+
+    91	
+    92	static void clk_hw_unregister_am62_dss_clk(struct clk_hw *hw)
+    93	{
+    94		struct ti_am62_dss_clk *priv;
+    95	
+    96		priv = to_ti_am62_dss_clk(hw);
+    97	
+    98		clk_hw_unregister(hw);
+  > 99		kfree(priv);
+   100	}
+   101	
 
 -- 
-மணிவண்ணன் சதாசிவம்
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
