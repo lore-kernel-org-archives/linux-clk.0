@@ -2,317 +2,127 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B9CC6FA8E
-	for <linux-clk@archiver.kernel.org>; Sat,  4 Mar 2023 06:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6826C6FD18
+	for <linux-clk@archiver.kernel.org>; Sat,  4 Mar 2023 13:27:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229701AbjCDGgn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 4 Mar 2023 01:36:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39712 "EHLO
+        id S229712AbjCDN1r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 4 Mar 2023 08:27:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229691AbjCDGgl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Mar 2023 01:36:41 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6787F3CE07;
-        Fri,  3 Mar 2023 22:36:16 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id me6-20020a17090b17c600b0023816b0c7ceso8309925pjb.2;
-        Fri, 03 Mar 2023 22:36:16 -0800 (PST)
+        with ESMTP id S229666AbjCDN1q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Mar 2023 08:27:46 -0500
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10E4316AE9
+        for <linux-clk@vger.kernel.org>; Sat,  4 Mar 2023 05:27:45 -0800 (PST)
+Received: by mail-lf1-x133.google.com with SMTP id i9so7025065lfc.6
+        for <linux-clk@vger.kernel.org>; Sat, 04 Mar 2023 05:27:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1677911773;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xlS1x5ugqI61CHsnNZzsArkipQ0NY+s3OWzFbmJs1Kg=;
-        b=OXZ7FX6kjkE2alofUDvNYIYfED+vwLu1lmnLDqp7BaHhtxiv3oljB26s57DRT7zCyn
-         wf/DHiNxBJbpDEAHnYyadWPmvRNzxyk0k0ZPV2m8c1SPXCx4FzzpILiUQQR+1z3RhXWB
-         uMKQgEt+kr3p2q51XT7eJnaXCFhrz18QIzB0AlFdlFSPmLLB84egrPyS5bt4zKuUDLOy
-         BfHnFn1qr20rK90ndEIeQFBTU3zGgJ6SDlhYLpoC3Q7Hix+ObYnk6/3HVbVhzf9mkQQR
-         Ic03AQcxHO6mb6GR0o28yVBcl954jhSgGeBLURF0RcmS5/qejYXbS+gt5O3zkj8Laip5
-         GxEg==
+        d=linaro.org; s=google; t=1677936463;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XgZ4hZqUy+tdTMafR0Y1NpglWZ1Uga2EatLNEtTwC9Q=;
+        b=L3XkohyhqWwukysfGvq18Qbo7HlBdn9yyiJGEp66AYu+WhhTh+APIUjvZcd5TLhs4a
+         p+oORRAdIc08RHTYBs75K6zJYKxAQcYM4+IeYvv12NiAri226p/PzobZlY6+bVs0YZSS
+         VAo3Gfd2luL/gKYxI869wsBXNwxHPaa7asoEMdWMpB0FfJ0kq6PLd4M450jTk7Up8P8f
+         blKX1DTnKYldTSFTb/im7wDu5k4GasIKBKVhxa0DvajyDteIwqTthwcMZ7lO4Z6Hhf+7
+         pV3VMm1btZ4sOJVZuJUoSL9SXAEm5kQWy/ziKL3y2l7QsdE+BrBQB/aEJR2xO4klrQMO
+         EtXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677911773;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xlS1x5ugqI61CHsnNZzsArkipQ0NY+s3OWzFbmJs1Kg=;
-        b=jYg8ERgHsQDjZqPylgML+ivcVToX1OkWHIJaWCRU7IlIx0dtbXPfxtUgMwRscEzUsb
-         /KVkfj9GdqoOSWum16mJrJ+/UIwS6lQZ5Cir6O3GVmIEnELgvK/YaOea/nEvH0hvFcHw
-         OEt7mTRpY5l84GqMum6WnXSeE26ljpZAR+JV9dGs2Z4joWtMftnxrM7714PYmalPUexd
-         AFOsgI3UECj9xwPRzVyKY9IR0G8XL/5kfOoUADh7cEMWoH2yPANA4n5b3Besy6bN3qBI
-         /sha/M0T5w71EAN27Z4ZQD2EOAtU0j6DoUK5s9/p6yDOidxWO3u2F4Rbk0oS9m5+3ONm
-         HnqQ==
-X-Gm-Message-State: AO0yUKV+xmbR/gk2yNhKo7AMBIDvnyieflup8COUGXP7Vv8WbEltVnYP
-        za1Z05/UZSTcfLSGV4JGyK/lgYdMfH0w4Sb/Ok8=
-X-Google-Smtp-Source: AK7set8ostLc2Xa8zMKrmA0s7Z5oLf/kk4RW7qX9E0Ov1hfrkc5+dXY22CisjS4iQe6PZrB6T/3oCw==
-X-Received: by 2002:a17:902:7d88:b0:19d:1d32:fc7 with SMTP id a8-20020a1709027d8800b0019d1d320fc7mr3541263plm.51.1677911773145;
-        Fri, 03 Mar 2023 22:36:13 -0800 (PST)
-Received: from y.ha.lan ([104.28.245.199])
-        by smtp.gmail.com with ESMTPSA id t5-20020a170902e84500b0019aa6bf4450sm2520938plg.188.2023.03.03.22.36.08
+        d=1e100.net; s=20210112; t=1677936463;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XgZ4hZqUy+tdTMafR0Y1NpglWZ1Uga2EatLNEtTwC9Q=;
+        b=AeDKrbBmvrGBQROdFbUgg8rm1pDVNirCcmI+veT68aBqbtS46qaLogyBW7ICa9AyoY
+         Bpz+zoY/FAh8Rn7Oojr+Mu9j3gQLNqT+CX2Vea3vG+5fy7ho1x6bAtdKrxRzC5TJNXZp
+         5ok8Wxnx3b9ABufdaCEtAHGOvaOZuSf27SHhYZnuDIJXmFgZ4jX5h87wYTNq/JTljbzl
+         ORSu7NwZbszRriL/PhKHdZ577KnRRlTWS3da0wrNq/xIQB8ffWiVntdIWqdinqp3aVuS
+         NuoPCIVNSJ2PyK5nXwFbwMmC1rBWBTiGsjHRCZN60uobAjA9dg7VqmWn6RXhjQMEfgDO
+         hPFg==
+X-Gm-Message-State: AO0yUKWXQd8a44IZLeypFRzNFCEhi4fn1kvB3GQ00B/oYQ9ASEwik3wc
+        KBUixjmxidsXll/u/wAXeEAK5bm5WGKuGry2zkY=
+X-Google-Smtp-Source: AK7set96p3e5eNUS0iELkOj3cIo7vkqtrQ+7naW1utqtFe42t0csa80IFs8GW3hrAko3ZC0q7B0MjA==
+X-Received: by 2002:ac2:5633:0:b0:4dd:9f86:859d with SMTP id b19-20020ac25633000000b004dd9f86859dmr1350094lff.13.1677936463369;
+        Sat, 04 Mar 2023 05:27:43 -0800 (PST)
+Received: from [192.168.1.101] (abym99.neoplus.adsl.tpnet.pl. [83.9.32.99])
+        by smtp.gmail.com with ESMTPSA id j15-20020a19f50f000000b004e7fa99f2b5sm342975lfb.186.2023.03.04.05.27.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Mar 2023 22:36:12 -0800 (PST)
-From:   David Yang <mmyangfl@gmail.com>
-To:     mmyangfl@gmail.com
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/6] clk: hisilicon: Add CRG driver for Hi3798MV100 SoC
-Date:   Sat,  4 Mar 2023 14:33:29 +0800
-Message-Id: <20230304063333.162309-8-mmyangfl@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230304063333.162309-1-mmyangfl@gmail.com>
-References: <20230304063333.162309-1-mmyangfl@gmail.com>
+        Sat, 04 Mar 2023 05:27:42 -0800 (PST)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH RFT 00/20] SMD RPMCC sleep preparations
+Date:   Sat, 04 Mar 2023 14:27:35 +0100
+Message-Id: <20230303-topic-rpmcc_sleep-v1-0-d9cfaf9b27a7@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEdHA2QC/x2NQQrCMBBFr1Jm7UCagqIH8ADiroikk6kdiGnI2
+ CKU3t1B/up9eLwNlKuwwqXZoPIqKnM2aA8N0BTyi1GiMXjnO2fDz1yEsJY30VMTc8F4PIUQz2P
+ nWg/mDUEZhxoyTWbmJSU7S+VRvv9QD7frHR77/gM5DpYNfQAAAA==
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+X-Mailer: b4 0.12.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1677936461; l=2001;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=XWLgT1bwHF7eV8z8nCWgSR4obUXZ6NlsDIoxUnshn8g=;
+ b=ZpizBgFMCTab1JVuT1rFMghCLQTENq7h2AK8wg7kkO10M9OSJBsWi5jjB//iVCA1xdsfodARzfd5
+ Bqdx4uysDag7+z4hjr582qNssUwRcnoLXuDe1Wd6c2ugkec298bi
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add CRG driver for Hi3798MV100 SoC. CRG (Clock and Reset Generator) module
-generates clock and reset signals used by other module blocks on SoC.
+This series brings support for a couple of things necessary for the full
+system idle on SMD RPM SoCs, namely unused clk shutdown and keepalive
+votes (permanent active votes that are required on certain clocks for the
+platform to function).
 
-Signed-off-by: David Yang <mmyangfl@gmail.com>
+Tested on MSM8996 and SM6375, does not seem to introduce any additional
+regressions.
+
+Keepalive clocks for other platforms were gathered by digging in old
+downstream kernels, please give them a test.
+
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/clk/hisilicon/crg-hi3798.c | 197 +++++++++++++++++++++++++++--
- 1 file changed, 183 insertions(+), 14 deletions(-)
+Konrad Dybcio (18):
+      clk: qcom: smd-rpm: Add support for keepalive votes
+      clk: qcom: smd-rpm: Add keepalive_clks for SM6375
+      clk: qcom: smd-rpm: Add keepalive_clks for MSM8996
+      clk: qcom: smd-rpm: Add keepalive_clks for MSM8909
+      clk: qcom: smd-rpm: Add keepalive_clks for MSM8916
+      clk: qcom: smd-rpm: Add keepalive_clks for MSM8936
+      clk: qcom: smd-rpm: Add keepalive_clks for MSM8974
+      clk: qcom: smd-rpm: Add keepalive_clks for MSM8976
+      clk: qcom: smd-rpm: Add keepalive_clks for MSM8992
+      clk: qcom: smd-rpm: Add keepalive_clks for MSM8994
+      clk: qcom: smd-rpm: Add keepalive_clks for MSM8998
+      clk: qcom: smd-rpm: Add keepalive_clks for SDM660
+      clk: qcom: smd-rpm: Add keepalive_clks for MDM9607
+      clk: qcom: smd-rpm: Add keepalive_clks for MSM8953
+      clk: qcom: smd-rpm: Add keepalive_clks for SM6125
+      clk: qcom: smd-rpm: Add keepalive_clks for SM6115
+      clk: qcom: smd-rpm: Add keepalive_clks for QCM2290
+      clk: qcom: smd-rpm: Add keepalive_clks for QCS404
 
-diff --git a/drivers/clk/hisilicon/crg-hi3798.c b/drivers/clk/hisilicon/crg-hi3798.c
-index 8a6e978f3..ad10b3bb5 100644
---- a/drivers/clk/hisilicon/crg-hi3798.c
-+++ b/drivers/clk/hisilicon/crg-hi3798.c
-@@ -41,6 +41,7 @@
- #define HI3798_FIXED_3M				87
- #define HI3798_FIXED_15M			88
- #define HI3798_FIXED_83P3M			89
-+#define HI3798_ETH_MUX			90
- 
- #define HI3798_CRG_NR_CLKS			128
- 
-@@ -181,6 +182,182 @@ static void hi3798_sysctrl_clk_unregister(
- 	hisi_clk_unregister_gate(clks->gate_clks, clks->gate_clks_nums, crg->clk_data);
- }
- 
-+/* hi3798MV100 */
-+
-+static const char *const hi3798mv100_mmc_mux_p[] = {
-+		"75m", "100m", "50m", "15m" };
-+static u32 hi3798mv100_mmc_mux_table[] = {0, 1, 2, 3};
-+
-+static const char *const hi3798mv100_eth_mux_p[] = {
-+		"83p3m" };
-+static u32 hi3798mv100_eth_mux_table[] = {2};
-+
-+static struct hisi_mux_clock hi3798mv100_mux_clks[] = {
-+	{ HI3798_MMC_MUX, "mmc_mux", hi3798mv100_mmc_mux_p,
-+		ARRAY_SIZE(hi3798mv100_mmc_mux_p), CLK_SET_RATE_PARENT,
-+		0xa0, 8, 2, 0, hi3798mv100_mmc_mux_table, },
-+	{ HI3798_SDIO0_MUX, "sdio0_mux", hi3798mv100_mmc_mux_p,
-+		ARRAY_SIZE(hi3798mv100_mmc_mux_p), CLK_SET_RATE_PARENT,
-+		0x9c, 8, 2, 0, hi3798mv100_mmc_mux_table, },
-+	{ HI3798_ETH_MUX, "eth_mux", hi3798mv100_eth_mux_p,
-+		ARRAY_SIZE(hi3798mv100_eth_mux_p), CLK_SET_RATE_PARENT,
-+		0xcc, 2, 2, 0, hi3798mv100_eth_mux_table, },
-+};
-+
-+static u32 mmc_phase_regvals[] = {0, 1, 2, 3, 4, 5, 6, 7};
-+static u32 mmc_phase_degrees[] = {0, 45, 90, 135, 180, 225, 270, 315};
-+
-+static struct hisi_phase_clock hi3798mv100_phase_clks[] = {
-+	{ HISTB_MMC_SAMPLE_CLK, "mmc_sample", "clk_mmc_ciu",
-+		CLK_SET_RATE_PARENT, 0xa0, 12, 3, mmc_phase_degrees,
-+		mmc_phase_regvals, ARRAY_SIZE(mmc_phase_regvals) },
-+	{ HISTB_MMC_DRV_CLK, "mmc_drive", "clk_mmc_ciu",
-+		CLK_SET_RATE_PARENT, 0xa0, 16, 3, mmc_phase_degrees,
-+		mmc_phase_regvals, ARRAY_SIZE(mmc_phase_regvals) },
-+};
-+
-+static const struct hisi_gate_clock hi3798mv100_gate_clks[] = {
-+	/* NAND */
-+	/* hi3798MV100 NAND driver does not get into mainline yet,
-+	 * expose these clocks when it gets ready */
-+	/* { HISTB_NAND_CLK, "clk_nand", "clk_apb",
-+		CLK_SET_RATE_PARENT, 0x60, 0, 0, }, */
-+	/* UART */
-+	{ HISTB_UART1_CLK, "clk_uart1", "3m",
-+		CLK_SET_RATE_PARENT, 0x68, 0, 0, },
-+	{ HISTB_UART2_CLK, "clk_uart2", "83p3m",
-+		CLK_SET_RATE_PARENT, 0x68, 4, 0, },
-+	/* I2C */
-+	{ HISTB_I2C0_CLK, "clk_i2c0", "clk_apb",
-+		CLK_SET_RATE_PARENT, 0x6C, 4, 0, },
-+	{ HISTB_I2C1_CLK, "clk_i2c1", "clk_apb",
-+		CLK_SET_RATE_PARENT, 0x6C, 8, 0, },
-+	{ HISTB_I2C2_CLK, "clk_i2c2", "clk_apb",
-+		CLK_SET_RATE_PARENT, 0x6C, 12, 0, },
-+	/* SPI */
-+	{ HISTB_SPI0_CLK, "clk_spi0", "clk_apb",
-+		CLK_SET_RATE_PARENT, 0x70, 0, 0, },
-+	/* SDIO */
-+	{ HISTB_SDIO0_BIU_CLK, "clk_sdio0_biu", "200m",
-+		CLK_SET_RATE_PARENT, 0x9c, 0, 0, },
-+	{ HISTB_SDIO0_CIU_CLK, "clk_sdio0_ciu", "sdio0_mux",
-+		CLK_SET_RATE_PARENT, 0x9c, 1, 0, },
-+	/* EMMC */
-+	{ HISTB_MMC_BIU_CLK, "clk_mmc_biu", "200m",
-+		CLK_SET_RATE_PARENT, 0xa0, 0, 0, },
-+	{ HISTB_MMC_CIU_CLK, "clk_mmc_ciu", "mmc_mux",
-+		CLK_SET_RATE_PARENT, 0xa0, 1, 0, },
-+	/* Ethernet */
-+	/* hi3798MV100 Ethernet driver does not get into mainline yet,
-+	 * expose these clocks when it gets ready */
-+	{ HI3798_ETH_BUS_CLK, "clk_bus", NULL,
-+		CLK_SET_RATE_PARENT, 0xcc, 0, 0, },
-+	{ HI3798_ETH_PUB_CLK, "clk_pub", "eth_mux",
-+		CLK_SET_RATE_PARENT, 0xcc, 1, 0, },
-+	/* USB2 */
-+	{ HISTB_USB2_BUS_CLK, "clk_u2_bus", "clk_ahb",
-+		CLK_SET_RATE_PARENT, 0xb8, 0, 0, },
-+	{ HISTB_USB2_PHY_CLK, "clk_u2_phy", "60m",
-+		CLK_SET_RATE_PARENT, 0xb8, 4, 0, },
-+	{ HISTB_USB2_12M_CLK, "clk_u2_12m", "12m",
-+		CLK_SET_RATE_PARENT, 0xb8, 2, 0 },
-+	{ HISTB_USB2_48M_CLK, "clk_u2_48m", "48m",
-+		CLK_SET_RATE_PARENT, 0xb8, 1, 0 },
-+	{ HISTB_USB2_UTMI_CLK, "clk_u2_utmi", "60m",
-+		CLK_SET_RATE_PARENT, 0xb8, 5, 0 },
-+	{ HISTB_USB2_UTMI_CLK1, "clk_u2_utmi1", "60m",
-+		CLK_SET_RATE_PARENT, 0xb8, 6, 0 },
-+	{ HISTB_USB2_OTG_UTMI_CLK, "clk_u2_otg_utmi", "60m",
-+		CLK_SET_RATE_PARENT, 0xb8, 3, 0 },
-+	{ HISTB_USB2_PHY1_REF_CLK, "clk_u2_phy1_ref", "24m",
-+		CLK_SET_RATE_PARENT, 0xbc, 0, 0 },
-+	{ HISTB_USB2_PHY2_REF_CLK, "clk_u2_phy2_ref", "24m",
-+		CLK_SET_RATE_PARENT, 0xbc, 2, 0 },
-+	/* USB2 2 */
-+	{ HISTB_USB2_2_BUS_CLK, "clk_u2_2_bus", "clk_ahb",
-+		CLK_SET_RATE_PARENT, 0x198, 0, 0, },
-+	{ HISTB_USB2_2_PHY_CLK, "clk_u2_2_phy", "60m",
-+		CLK_SET_RATE_PARENT, 0x198, 4, 0, },
-+	{ HISTB_USB2_2_12M_CLK, "clk_u2_2_12m", "12m",
-+		CLK_SET_RATE_PARENT, 0x198, 2, 0 },
-+	{ HISTB_USB2_2_48M_CLK, "clk_u2_2_48m", "48m",
-+		CLK_SET_RATE_PARENT, 0x198, 1, 0 },
-+	{ HISTB_USB2_2_UTMI_CLK, "clk_u2_2_utmi", "60m",
-+		CLK_SET_RATE_PARENT, 0x198, 5, 0 },
-+	{ HISTB_USB2_2_UTMI_CLK1, "clk_u2_2_utmi1", "60m",
-+		CLK_SET_RATE_PARENT, 0x198, 6, 0 },
-+	{ HISTB_USB2_2_OTG_UTMI_CLK, "clk_u2_2_otg_utmi", "60m",
-+		CLK_SET_RATE_PARENT, 0x198, 3, 0 },
-+	{ HISTB_USB2_2_PHY1_REF_CLK, "clk_u2_2_phy1_ref", "24m",
-+		CLK_SET_RATE_PARENT, 0x190, 0, 0 },
-+	{ HISTB_USB2_2_PHY2_REF_CLK, "clk_u2_2_phy2_ref", "24m",
-+		CLK_SET_RATE_PARENT, 0x190, 2, 0 },
-+	/* USB3 */
-+	{ HISTB_USB3_BUS_CLK, "clk_u3_bus", NULL,
-+		CLK_SET_RATE_PARENT, 0xb0, 0, 0 },
-+	{ HISTB_USB3_UTMI_CLK, "clk_u3_utmi", NULL,
-+		CLK_SET_RATE_PARENT, 0xb0, 4, 0 },
-+	{ HISTB_USB3_PIPE_CLK, "clk_u3_pipe", NULL,
-+		CLK_SET_RATE_PARENT, 0xb0, 3, 0 },
-+	{ HISTB_USB3_SUSPEND_CLK, "clk_u3_suspend", NULL,
-+		CLK_SET_RATE_PARENT, 0xb0, 2, 0 },
-+};
-+
-+static const struct hi3798_crg_clks hi3798mv100_crg_clks_data = {
-+	.phase_clks = hi3798mv100_phase_clks,
-+	.phase_clks_nums = ARRAY_SIZE(hi3798mv100_phase_clks),
-+	.mux_clks = hi3798mv100_mux_clks,
-+	.mux_clks_nums = ARRAY_SIZE(hi3798mv100_mux_clks),
-+	.gate_clks = hi3798mv100_gate_clks,
-+	.gate_clks_nums = ARRAY_SIZE(hi3798mv100_gate_clks),
-+};
-+
-+static struct hisi_clock_data *hi3798mv100_clk_register(
-+				struct platform_device *pdev)
-+{
-+	return hi3798_clk_register(pdev, &hi3798mv100_crg_clks_data);
-+}
-+
-+static void hi3798mv100_clk_unregister(struct platform_device *pdev)
-+{
-+	hi3798_clk_unregister(pdev, &hi3798mv100_crg_clks_data);
-+}
-+
-+static const struct hisi_crg_funcs hi3798mv100_crg_funcs = {
-+	.register_clks = hi3798mv100_clk_register,
-+	.unregister_clks = hi3798mv100_clk_unregister,
-+};
-+
-+static const struct hisi_gate_clock hi3798mv100_sysctrl_gate_clks[] = {
-+	{ HISTB_IR_CLK, "clk_ir", "24m",
-+		CLK_SET_RATE_PARENT, 0x48, 4, 0, },
-+	{ HISTB_TIMER01_CLK, "clk_timer01", "24m",
-+		CLK_SET_RATE_PARENT, 0x48, 6, 0, },
-+	{ HISTB_UART0_CLK, "clk_uart0", "83p3m",
-+		CLK_SET_RATE_PARENT, 0x48, 12, 0, },
-+};
-+
-+static const struct hi3798_sysctrl_clks hi3798mv100_sysctrl_clks_data = {
-+	.gate_clks = hi3798mv100_sysctrl_gate_clks,
-+	.gate_clks_nums = ARRAY_SIZE(hi3798mv100_sysctrl_gate_clks),
-+};
-+
-+static struct hisi_clock_data *hi3798mv100_sysctrl_clk_register(
-+					struct platform_device *pdev)
-+{
-+	return hi3798_sysctrl_clk_register(pdev, &hi3798mv100_sysctrl_clks_data);
-+}
-+
-+static void hi3798mv100_sysctrl_clk_unregister(struct platform_device *pdev)
-+{
-+	hi3798_sysctrl_clk_unregister(pdev, &hi3798mv100_sysctrl_clks_data);
-+}
-+
-+static const struct hisi_crg_funcs hi3798mv100_sysctrl_funcs = {
-+	.register_clks = hi3798mv100_sysctrl_clk_register,
-+	.unregister_clks = hi3798mv100_sysctrl_clk_unregister,
-+};
-+
- /* hi3798CV200 */
- 
- static const char *const hi3798cv200_mmc_mux_p[] = {
-@@ -210,18 +387,6 @@ static struct hisi_mux_clock hi3798cv200_mux_clks[] = {
- 		0x9c, 8, 2, 0, hi3798cv200_sdio_mux_table, },
- };
- 
--static u32 mmc_phase_regvals[] = {0, 1, 2, 3, 4, 5, 6, 7};
--static u32 mmc_phase_degrees[] = {0, 45, 90, 135, 180, 225, 270, 315};
--
--static struct hisi_phase_clock hi3798cv200_phase_clks[] = {
--	{ HISTB_MMC_SAMPLE_CLK, "mmc_sample", "clk_mmc_ciu",
--		CLK_SET_RATE_PARENT, 0xa0, 12, 3, mmc_phase_degrees,
--		mmc_phase_regvals, ARRAY_SIZE(mmc_phase_regvals) },
--	{ HISTB_MMC_DRV_CLK, "mmc_drive", "clk_mmc_ciu",
--		CLK_SET_RATE_PARENT, 0xa0, 16, 3, mmc_phase_degrees,
--		mmc_phase_regvals, ARRAY_SIZE(mmc_phase_regvals) },
--};
--
- static const struct hisi_gate_clock hi3798cv200_gate_clks[] = {
- 	/* UART */
- 	{ HISTB_UART2_CLK, "clk_uart2", "75m",
-@@ -319,8 +484,8 @@ static const struct hisi_gate_clock hi3798cv200_gate_clks[] = {
- };
- 
- static const struct hi3798_crg_clks hi3798cv200_crg_clks_data = {
--	.phase_clks = hi3798cv200_phase_clks,
--	.phase_clks_nums = ARRAY_SIZE(hi3798cv200_phase_clks),
-+	.phase_clks = hi3798mv100_phase_clks,
-+	.phase_clks_nums = ARRAY_SIZE(hi3798mv100_phase_clks),
- 	.mux_clks = hi3798cv200_mux_clks,
- 	.mux_clks_nums = ARRAY_SIZE(hi3798cv200_mux_clks),
- 	.gate_clks = hi3798cv200_gate_clks,
-@@ -374,6 +539,10 @@ static const struct hisi_crg_funcs hi3798cv200_sysctrl_funcs = {
- };
- 
- static const struct of_device_id hi3798_crg_match_table[] = {
-+	{ .compatible = "hisilicon,hi3798mv100-crg",
-+		.data = &hi3798mv100_crg_funcs },
-+	{ .compatible = "hisilicon,hi3798mv100-sysctrl",
-+		.data = &hi3798mv100_sysctrl_funcs },
- 	{ .compatible = "hisilicon,hi3798cv200-crg",
- 		.data = &hi3798cv200_crg_funcs },
- 	{ .compatible = "hisilicon,hi3798cv200-sysctrl",
+Shawn Guo (2):
+      clk: qcom: smd-rpm: Add .is_enabled hook
+      clk: qcom: smd-rpm: Add .is_prepared hook
+
+ drivers/clk/qcom/clk-smd-rpm.c | 85 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 83 insertions(+), 2 deletions(-)
+---
+base-commit: 1acf39ef8f1425cd105f630dc2c7c1d8fff27ed1
+change-id: 20230303-topic-rpmcc_sleep-d67aad9f3012
+
+Best regards,
 -- 
-2.39.2
+Konrad Dybcio <konrad.dybcio@linaro.org>
 
