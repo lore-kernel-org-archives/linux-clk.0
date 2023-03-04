@@ -2,84 +2,92 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF0FC61DA3
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Mar 2023 23:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC36C678D5
+	for <linux-clk@archiver.kernel.org>; Sat,  4 Mar 2023 06:35:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229745AbjCCXx1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Mar 2023 18:53:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57788 "EHLO
+        id S229559AbjCDGfC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 4 Mar 2023 01:35:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229668AbjCCXx1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Mar 2023 18:53:27 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9396C93E0;
-        Fri,  3 Mar 2023 15:53:23 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 20EF761950;
-        Fri,  3 Mar 2023 23:53:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4363BC433EF;
-        Fri,  3 Mar 2023 23:53:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1677887602;
-        bh=f0VZGTA8oOnAaMkfwB2QB6pLFSy4sdHSrlgXIOshidI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=pPg3aquMyk8quzI4S98uu90F22x1h3GOUJkYSghdVqGCJWF1TcwvUvWST3RzZWK8w
-         rCHK+YOBvoipN8b1QlvOUPK4vO5E/mokaSvQZlqqbSQfxWi4p8/N8sCxNVmAKrrdaq
-         L+h0LZD50TpI9OyO6nPzyLw7uPq/6Cx03FTFrpn19RzgmE50c7c89ik0FdARIV8cMi
-         B0WVX0zjm5XxcDVW0ukFs/6w+rp0DSh3l+3DzO5WLU6q9CluToYJP5DDIEiJz6y69+
-         oV+Adjksmu9f6MgqJwE49S/CHR61kap4SKD/E7xE5SEzkMpjz6rvoI+mZwuszZRkkE
-         5pyD+qJFcUj2w==
-Date:   Fri, 3 Mar 2023 15:53:20 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        with ESMTP id S229437AbjCDGfB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Mar 2023 01:35:01 -0500
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2685A14206;
+        Fri,  3 Mar 2023 22:35:01 -0800 (PST)
+Received: by mail-pj1-x1031.google.com with SMTP id y15-20020a17090aa40f00b00237ad8ee3a0so4348714pjp.2;
+        Fri, 03 Mar 2023 22:35:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1677911700;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=T048gzoendUKibWZ/X4Bm8MewyYs5DGrcTS2K/kI5RM=;
+        b=mMIKequIHtyoUjxlB2vJ53dSAHvde+tQxQDdv9453hMKFzvYUuPhfY5mQXiQt4eO81
+         9Mqq2t26NXyYPwYC1NI4y4QrcA/kN5kMzaLqlHQDh5HqIvtU0TMnVKQ3XafAKNxtHvEL
+         hlgBBGamRp0G4irRa1IwSGtlpVbeJ6Sidy4dDgWC3eI6viS2Qu1WfaBWccszAtK2EvzF
+         ghjB1812x1fLdCAJAAfBkiqgB+k+DbNooKKwbGYNmLnb9MQPkh8KzlA9UblqJ0XXxO8S
+         COZ/NZXfTmlpvn0Z7wQyCduOsbxt5/XssMxWkKicuUIr+2L1cDcRFJsqTKbaJr7JTU3e
+         asaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677911700;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T048gzoendUKibWZ/X4Bm8MewyYs5DGrcTS2K/kI5RM=;
+        b=gZhZN4HRBrij4Y9baeVH+NFtzF3g6YYXtL0xpNOI9tg0TvQyToU326EgporN16a0EP
+         PEmZdWPY6nYncHjvsPriBykLvI8zYZy2RtUDgxqRvX4DnoBjayHQq2hbwNSqh2a4gpKa
+         2iqrwkzeRp/+m6Bnc5mIUSnlMJBCFwWdAeUYrpCRvJECRU5aua38O3YS0OfArX57TYy+
+         XqfzbWfwdRMRL7RKvGAny8ElAejlQvQKxVDnoxQmEqg9F59LZH+v+gE1IKvy6kr+KSK8
+         cnaeggqOK91K1r0GLUw+rmmvov2U3vF5LcjrCktyg4/5Y9OuvgZy1EcDCVpWh4+rLmOs
+         ZxjA==
+X-Gm-Message-State: AO0yUKXUHROLNwfdPIkm6zG/9mYfBzimQlZrEm9Oo9y7jS4wKUrJgDN9
+        wg0D0Bw4LAxjLSaQaRLeV5SKKH/wkoZKtqSYFxs=
+X-Google-Smtp-Source: AK7set9cG9ev50caKlxkvaeq+6LssDjwP6FKoLXGJLBQo2DEG1KhoeSr0XAUOj56LdEYPXFW3duQBg==
+X-Received: by 2002:a17:903:18d:b0:19a:eb93:6165 with SMTP id z13-20020a170903018d00b0019aeb936165mr6196097plg.22.1677911700543;
+        Fri, 03 Mar 2023 22:35:00 -0800 (PST)
+Received: from y.ha.lan ([104.28.245.199])
+        by smtp.gmail.com with ESMTPSA id t5-20020a170902e84500b0019aa6bf4450sm2520938plg.188.2023.03.03.22.34.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Mar 2023 22:35:00 -0800 (PST)
+From:   David Yang <mmyangfl@gmail.com>
+To:     mmyangfl@gmail.com
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-media@vger.kernel.org, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-riscv@lists.infradead.org,
-        linux-spi@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: yamllint: Require a space after a comment
- '#'
-Message-ID: <20230303155320.5e394431@kernel.org>
-In-Reply-To: <20230303214223.49451-1-robh@kernel.org>
-References: <20230303214223.49451-1-robh@kernel.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/6] Add CRG driver for Hi3798MV100 SoC
+Date:   Sat,  4 Mar 2023 14:33:22 +0800
+Message-Id: <20230304063333.162309-1-mmyangfl@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri,  3 Mar 2023 15:42:23 -0600 Rob Herring wrote:
-> Enable yamllint to check the prefered commenting style of requiring a
-> space after a comment character '#'. Fix the cases in the tree which
-> have a warning with this enabled. Most cases just need a space after the
-> '#'. A couple of cases with comments which were not intended to be
-> comments are revealed. Those were in ti,sa2ul.yaml, ti,cal.yaml, and
-> brcm,bcmgenet.yaml.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
+This series adds CRG driver for Hi3798MV100 SoC.
 
-Acked-by: Jakub Kicinski <kuba@kernel.org>
+v2: move bindings to a separate patch
+
+David Yang (6):
+  clk: hisilicon: Rename Hi3798CV200 to Hi3798
+  clk: hisilicon: Extract common functions
+  dt-bindings: clock: Add Hi3798MV100 CRG driver binding
+  clk: hisilicon: Rename some symbols for Hi3798CV200
+  clk: hisilicon: Add inner clocks for Hi3798MV100
+  clk: hisilicon: Add CRG driver for Hi3798MV100 SoC
+
+ .../devicetree/bindings/clock/hisi-crg.txt    |   2 +
+ drivers/clk/hisilicon/Kconfig                 |   6 +-
+ drivers/clk/hisilicon/Makefile                |   2 +-
+ drivers/clk/hisilicon/crg-hi3798.c            | 612 ++++++++++++++++++
+ drivers/clk/hisilicon/crg-hi3798cv200.c       | 401 ------------
+ include/dt-bindings/clock/histb-clock.h       |  10 +
+ 6 files changed, 628 insertions(+), 405 deletions(-)
+ create mode 100644 drivers/clk/hisilicon/crg-hi3798.c
+ delete mode 100644 drivers/clk/hisilicon/crg-hi3798cv200.c
+
+-- 
+2.39.2
+
