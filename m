@@ -2,49 +2,48 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A59EDC6FD1A
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Mar 2023 13:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A192C6FA9E
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Mar 2023 13:55:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229981AbjCENxq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 5 Mar 2023 08:53:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40196 "EHLO
+        id S230176AbjCENzk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 5 Mar 2023 08:55:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229947AbjCENxg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Mar 2023 08:53:36 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C643786BB;
-        Sun,  5 Mar 2023 05:53:11 -0800 (PST)
+        with ESMTP id S230090AbjCENzI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Mar 2023 08:55:08 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40C4418AAC;
+        Sun,  5 Mar 2023 05:54:44 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6F8FA60B04;
-        Sun,  5 Mar 2023 13:53:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC9C0C433D2;
-        Sun,  5 Mar 2023 13:53:08 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BEC4B60B19;
+        Sun,  5 Mar 2023 13:53:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48216C4339B;
+        Sun,  5 Mar 2023 13:53:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678024389;
-        bh=GD7bRPnmKLbCghxsUKpSfGGru8Lwm80DFDBP/5YwPmo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=kvRHq0Hq7mQwW9t1yRfWnOGb4ILvaVCZxLlXvvYe19zsxA0MqD1tZdG49mt9HPGTh
-         MCXWFr6q+ol7wTya2+2h5AIQ4axztGvCMvb2AmdkUUtLoXxujiueaVsfYViQbI55PT
-         jivOrWQKKvn4E74eE0RThN91H/D4dvr+GYiZcxy1MEfzyksHszQChGd9fk2IzR5FsK
-         VkgeXcqUz0eRpcFj0smWsyW1qsaJ5CG9/10fm+penn0y8O27zw6BPnSHNPI+Hlp9nd
-         ByO9DatYtru19LmkKMraFxB/EqFaHj5vks7E3XsQ/SEq0t2rFBAhz8bpWgsvH4hBNm
-         GaNe4o51/PVwQ==
+        s=k20201202; t=1678024411;
+        bh=WaLyygKzcLUsP0WL87bEOYjetQ+Pi0VfdOzKWcE/IzE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=s0PFAplW+aBOoZ/TwTR9bQG6OTyAZB9SGwbfdyaopo6/F84zExX6YYhq0jG6NHDKZ
+         8rIPQoXaGrJPMlPs6WGDsrsVnbimqe/aU8iTjFEznIvjQNZUxHM/qZblcecai2s5aD
+         FOXTzWCm9vpE/bWe8sFq12mL2V1NozOCHng6DA/LZMOAeBGyl+etSlX+1HrHaQMjel
+         s3V0gjUyb6c7aCb/dfRIl0RkZXTxoiMh8s/J9O8vWHCzONPJMXnNfKi8xOCUF2pVlx
+         jgDYkKTfLZbLAyIIaj+aOTvGI084iinuxKJp45okP1JV+dlvUt6G3bQv85CAIPXp4L
+         2nv6hpLchsrMQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, agross@kernel.org,
-        mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sasha Levin <sashal@kernel.org>, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 01/15] clk: qcom: mmcc-apq8084: remove spdm clocks
-Date:   Sun,  5 Mar 2023 08:52:52 -0500
-Message-Id: <20230305135306.1793564-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 07/15] clk: renesas: rcar-gen3: Disable R-Car H3 ES1.*
+Date:   Sun,  5 Mar 2023 08:52:58 -0500
+Message-Id: <20230305135306.1793564-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230305135306.1793564-1-sashal@kernel.org>
+References: <20230305135306.1793564-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -53,313 +52,367 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-[ Upstream commit 7b347f4b677b6d84687e67d82b6b17c6f55ea2b4 ]
+[ Upstream commit b1dec4e78599a2ce5bf8557056cd6dd72e1096b0 ]
 
-SPDM is used for debug/profiling and does not have any other
-functionality. These clocks can safely be removed.
+R-Car H3 ES1.* was only available to an internal development group and
+needed a lot of quirks and workarounds. These become a maintenance
+burden now, so our development group decided to remove upstream support
+for this SoC. Public users only have ES2 onwards.
 
-Suggested-by: Stephen Boyd <sboyd@kernel.org>
-Suggested-by: Georgi Djakov <djakov@kernel.org>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Bjorn Andersson <andersson@kernel.org>
-Link: https://lore.kernel.org/r/20230111060402.1168726-11-dmitry.baryshkov@linaro.org
+In addition to the ES1 specific removals, a check for it was added
+preventing the machine to boot further. It may otherwise inherit wrong
+clock settings from ES2 which could damage the hardware.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20230202092332.2504-1-wsa+renesas@sang-engineering.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/mmcc-apq8084.c | 271 --------------------------------
- 1 file changed, 271 deletions(-)
+ drivers/clk/renesas/Kconfig            |   2 +-
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 126 ++-----------------------
+ drivers/clk/renesas/rcar-gen3-cpg.c    |  17 +---
+ drivers/clk/renesas/renesas-cpg-mssr.c |  27 ------
+ drivers/clk/renesas/renesas-cpg-mssr.h |  14 ---
+ 5 files changed, 13 insertions(+), 173 deletions(-)
 
-diff --git a/drivers/clk/qcom/mmcc-apq8084.c b/drivers/clk/qcom/mmcc-apq8084.c
-index e9f9713591558..025e21793b3c4 100644
---- a/drivers/clk/qcom/mmcc-apq8084.c
-+++ b/drivers/clk/qcom/mmcc-apq8084.c
-@@ -2364,262 +2364,6 @@ static struct clk_branch mmss_rbcpr_clk = {
- 	},
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index cacaf9b87d264..37632a0659d82 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -22,7 +22,7 @@ config CLK_RENESAS
+ 	select CLK_R8A7791 if ARCH_R8A7791 || ARCH_R8A7793
+ 	select CLK_R8A7792 if ARCH_R8A7792
+ 	select CLK_R8A7794 if ARCH_R8A7794
+-	select CLK_R8A7795 if ARCH_R8A77950 || ARCH_R8A77951
++	select CLK_R8A7795 if ARCH_R8A77951
+ 	select CLK_R8A77960 if ARCH_R8A77960
+ 	select CLK_R8A77961 if ARCH_R8A77961
+ 	select CLK_R8A77965 if ARCH_R8A77965
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index 301475c74f500..7a585a777d387 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -128,7 +128,6 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
  };
  
--static struct clk_branch mmss_spdm_ahb_clk = {
--	.halt_reg = 0x0230,
--	.clkr = {
--		.enable_reg = 0x0230,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "mmss_spdm_ahb_clk",
--			.parent_names = (const char *[]){
--				"mmss_spdm_ahb_div_clk",
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
+ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
+-	DEF_MOD("fdp1-2",		 117,	R8A7795_CLK_S2D1), /* ES1.x */
+ 	DEF_MOD("fdp1-1",		 118,	R8A7795_CLK_S0D1),
+ 	DEF_MOD("fdp1-0",		 119,	R8A7795_CLK_S0D1),
+ 	DEF_MOD("tmu4",			 121,	R8A7795_CLK_S0D6),
+@@ -162,7 +161,6 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
+ 	DEF_MOD("pcie1",		 318,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("pcie0",		 319,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("usb-dmac30",		 326,	R8A7795_CLK_S3D1),
+-	DEF_MOD("usb3-if1",		 327,	R8A7795_CLK_S3D1), /* ES1.x */
+ 	DEF_MOD("usb3-if0",		 328,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("usb-dmac31",		 329,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("usb-dmac0",		 330,	R8A7795_CLK_S3D1),
+@@ -187,28 +185,21 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
+ 	DEF_MOD("hscif0",		 520,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("thermal",		 522,	R8A7795_CLK_CP),
+ 	DEF_MOD("pwm",			 523,	R8A7795_CLK_S0D12),
+-	DEF_MOD("fcpvd3",		 600,	R8A7795_CLK_S2D1), /* ES1.x */
+ 	DEF_MOD("fcpvd2",		 601,	R8A7795_CLK_S0D2),
+ 	DEF_MOD("fcpvd1",		 602,	R8A7795_CLK_S0D2),
+ 	DEF_MOD("fcpvd0",		 603,	R8A7795_CLK_S0D2),
+ 	DEF_MOD("fcpvb1",		 606,	R8A7795_CLK_S0D1),
+ 	DEF_MOD("fcpvb0",		 607,	R8A7795_CLK_S0D1),
+-	DEF_MOD("fcpvi2",		 609,	R8A7795_CLK_S2D1), /* ES1.x */
+ 	DEF_MOD("fcpvi1",		 610,	R8A7795_CLK_S0D1),
+ 	DEF_MOD("fcpvi0",		 611,	R8A7795_CLK_S0D1),
+-	DEF_MOD("fcpf2",		 613,	R8A7795_CLK_S2D1), /* ES1.x */
+ 	DEF_MOD("fcpf1",		 614,	R8A7795_CLK_S0D1),
+ 	DEF_MOD("fcpf0",		 615,	R8A7795_CLK_S0D1),
+-	DEF_MOD("fcpci1",		 616,	R8A7795_CLK_S2D1), /* ES1.x */
+-	DEF_MOD("fcpci0",		 617,	R8A7795_CLK_S2D1), /* ES1.x */
+ 	DEF_MOD("fcpcs",		 619,	R8A7795_CLK_S0D1),
+-	DEF_MOD("vspd3",		 620,	R8A7795_CLK_S2D1), /* ES1.x */
+ 	DEF_MOD("vspd2",		 621,	R8A7795_CLK_S0D2),
+ 	DEF_MOD("vspd1",		 622,	R8A7795_CLK_S0D2),
+ 	DEF_MOD("vspd0",		 623,	R8A7795_CLK_S0D2),
+ 	DEF_MOD("vspbc",		 624,	R8A7795_CLK_S0D1),
+ 	DEF_MOD("vspbd",		 626,	R8A7795_CLK_S0D1),
+-	DEF_MOD("vspi2",		 629,	R8A7795_CLK_S2D1), /* ES1.x */
+ 	DEF_MOD("vspi1",		 630,	R8A7795_CLK_S0D1),
+ 	DEF_MOD("vspi0",		 631,	R8A7795_CLK_S0D1),
+ 	DEF_MOD("ehci3",		 700,	R8A7795_CLK_S3D2),
+@@ -221,7 +212,6 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
+ 	DEF_MOD("cmm2",			 709,	R8A7795_CLK_S2D1),
+ 	DEF_MOD("cmm1",			 710,	R8A7795_CLK_S2D1),
+ 	DEF_MOD("cmm0",			 711,	R8A7795_CLK_S2D1),
+-	DEF_MOD("csi21",		 713,	R8A7795_CLK_CSI0), /* ES1.x */
+ 	DEF_MOD("csi20",		 714,	R8A7795_CLK_CSI0),
+ 	DEF_MOD("csi41",		 715,	R8A7795_CLK_CSI0),
+ 	DEF_MOD("csi40",		 716,	R8A7795_CLK_CSI0),
+@@ -350,103 +340,26 @@ static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
+ 	{ 2,		192,	1,	192,	1,	32,	},
+ };
+ 
+-static const struct soc_device_attribute r8a7795es1[] __initconst = {
++static const struct soc_device_attribute r8a7795_denylist[] __initconst = {
+ 	{ .soc_id = "r8a7795", .revision = "ES1.*" },
+ 	{ /* sentinel */ }
+ };
+ 
+-
+-	/*
+-	 * Fixups for R-Car H3 ES1.x
+-	 */
+-
+-static const unsigned int r8a7795es1_mod_nullify[] __initconst = {
+-	MOD_CLK_ID(326),			/* USB-DMAC3-0 */
+-	MOD_CLK_ID(329),			/* USB-DMAC3-1 */
+-	MOD_CLK_ID(700),			/* EHCI/OHCI3 */
+-	MOD_CLK_ID(705),			/* HS-USB-IF3 */
+-
 -};
 -
--static struct clk_branch mmss_spdm_axi_clk = {
--	.halt_reg = 0x0210,
--	.clkr = {
--		.enable_reg = 0x0210,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "mmss_spdm_axi_clk",
--			.parent_names = (const char *[]){
--				"mmss_spdm_axi_div_clk",
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch mmss_spdm_csi0_clk = {
--	.halt_reg = 0x023c,
--	.clkr = {
--		.enable_reg = 0x023c,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "mmss_spdm_csi0_clk",
--			.parent_names = (const char *[]){
--				"mmss_spdm_csi0_div_clk",
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch mmss_spdm_gfx3d_clk = {
--	.halt_reg = 0x022c,
--	.clkr = {
--		.enable_reg = 0x022c,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "mmss_spdm_gfx3d_clk",
--			.parent_names = (const char *[]){
--				"mmss_spdm_gfx3d_div_clk",
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch mmss_spdm_jpeg0_clk = {
--	.halt_reg = 0x0204,
--	.clkr = {
--		.enable_reg = 0x0204,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "mmss_spdm_jpeg0_clk",
--			.parent_names = (const char *[]){
--				"mmss_spdm_jpeg0_div_clk",
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch mmss_spdm_jpeg1_clk = {
--	.halt_reg = 0x0208,
--	.clkr = {
--		.enable_reg = 0x0208,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "mmss_spdm_jpeg1_clk",
--			.parent_names = (const char *[]){
--				"mmss_spdm_jpeg1_div_clk",
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch mmss_spdm_jpeg2_clk = {
--	.halt_reg = 0x0224,
--	.clkr = {
--		.enable_reg = 0x0224,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "mmss_spdm_jpeg2_clk",
--			.parent_names = (const char *[]){
--				"mmss_spdm_jpeg2_div_clk",
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch mmss_spdm_mdp_clk = {
--	.halt_reg = 0x020c,
--	.clkr = {
--		.enable_reg = 0x020c,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "mmss_spdm_mdp_clk",
--			.parent_names = (const char *[]){
--				"mmss_spdm_mdp_div_clk",
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch mmss_spdm_pclk0_clk = {
--	.halt_reg = 0x0234,
--	.clkr = {
--		.enable_reg = 0x0234,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "mmss_spdm_pclk0_clk",
--			.parent_names = (const char *[]){
--				"mmss_spdm_pclk0_div_clk",
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch mmss_spdm_pclk1_clk = {
--	.halt_reg = 0x0228,
--	.clkr = {
--		.enable_reg = 0x0228,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "mmss_spdm_pclk1_clk",
--			.parent_names = (const char *[]){
--				"mmss_spdm_pclk1_div_clk",
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch mmss_spdm_vcodec0_clk = {
--	.halt_reg = 0x0214,
--	.clkr = {
--		.enable_reg = 0x0214,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "mmss_spdm_vcodec0_clk",
--			.parent_names = (const char *[]){
--				"mmss_spdm_vcodec0_div_clk",
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch mmss_spdm_vfe0_clk = {
--	.halt_reg = 0x0218,
--	.clkr = {
--		.enable_reg = 0x0218,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "mmss_spdm_vfe0_clk",
--			.parent_names = (const char *[]){
--				"mmss_spdm_vfe0_div_clk",
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch mmss_spdm_vfe1_clk = {
--	.halt_reg = 0x021c,
--	.clkr = {
--		.enable_reg = 0x021c,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "mmss_spdm_vfe1_clk",
--			.parent_names = (const char *[]){
--				"mmss_spdm_vfe1_div_clk",
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch mmss_spdm_rm_axi_clk = {
--	.halt_reg = 0x0304,
--	.clkr = {
--		.enable_reg = 0x0304,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "mmss_spdm_rm_axi_clk",
--			.parent_names = (const char *[]){
--				"mmss_axi_clk_src",
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch mmss_spdm_rm_ocmemnoc_clk = {
--	.halt_reg = 0x0308,
--	.clkr = {
--		.enable_reg = 0x0308,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "mmss_spdm_rm_ocmemnoc_clk",
--			.parent_names = (const char *[]){
--				"ocmemnoc_clk_src",
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
+-static const struct mssr_mod_reparent r8a7795es1_mod_reparent[] __initconst = {
+-	{ MOD_CLK_ID(118), R8A7795_CLK_S2D1 },	/* FDP1-1 */
+-	{ MOD_CLK_ID(119), R8A7795_CLK_S2D1 },	/* FDP1-0 */
+-	{ MOD_CLK_ID(121), R8A7795_CLK_S3D2 },	/* TMU4 */
+-	{ MOD_CLK_ID(217), R8A7795_CLK_S3D1 },	/* SYS-DMAC2 */
+-	{ MOD_CLK_ID(218), R8A7795_CLK_S3D1 },	/* SYS-DMAC1 */
+-	{ MOD_CLK_ID(219), R8A7795_CLK_S3D1 },	/* SYS-DMAC0 */
+-	{ MOD_CLK_ID(408), R8A7795_CLK_S3D1 },	/* INTC-AP */
+-	{ MOD_CLK_ID(501), R8A7795_CLK_S3D1 },	/* AUDMAC1 */
+-	{ MOD_CLK_ID(502), R8A7795_CLK_S3D1 },	/* AUDMAC0 */
+-	{ MOD_CLK_ID(523), R8A7795_CLK_S3D4 },	/* PWM */
+-	{ MOD_CLK_ID(601), R8A7795_CLK_S2D1 },	/* FCPVD2 */
+-	{ MOD_CLK_ID(602), R8A7795_CLK_S2D1 },	/* FCPVD1 */
+-	{ MOD_CLK_ID(603), R8A7795_CLK_S2D1 },	/* FCPVD0 */
+-	{ MOD_CLK_ID(606), R8A7795_CLK_S2D1 },	/* FCPVB1 */
+-	{ MOD_CLK_ID(607), R8A7795_CLK_S2D1 },	/* FCPVB0 */
+-	{ MOD_CLK_ID(610), R8A7795_CLK_S2D1 },	/* FCPVI1 */
+-	{ MOD_CLK_ID(611), R8A7795_CLK_S2D1 },	/* FCPVI0 */
+-	{ MOD_CLK_ID(614), R8A7795_CLK_S2D1 },	/* FCPF1 */
+-	{ MOD_CLK_ID(615), R8A7795_CLK_S2D1 },	/* FCPF0 */
+-	{ MOD_CLK_ID(619), R8A7795_CLK_S2D1 },	/* FCPCS */
+-	{ MOD_CLK_ID(621), R8A7795_CLK_S2D1 },	/* VSPD2 */
+-	{ MOD_CLK_ID(622), R8A7795_CLK_S2D1 },	/* VSPD1 */
+-	{ MOD_CLK_ID(623), R8A7795_CLK_S2D1 },	/* VSPD0 */
+-	{ MOD_CLK_ID(624), R8A7795_CLK_S2D1 },	/* VSPBC */
+-	{ MOD_CLK_ID(626), R8A7795_CLK_S2D1 },	/* VSPBD */
+-	{ MOD_CLK_ID(630), R8A7795_CLK_S2D1 },	/* VSPI1 */
+-	{ MOD_CLK_ID(631), R8A7795_CLK_S2D1 },	/* VSPI0 */
+-	{ MOD_CLK_ID(804), R8A7795_CLK_S2D1 },	/* VIN7 */
+-	{ MOD_CLK_ID(805), R8A7795_CLK_S2D1 },	/* VIN6 */
+-	{ MOD_CLK_ID(806), R8A7795_CLK_S2D1 },	/* VIN5 */
+-	{ MOD_CLK_ID(807), R8A7795_CLK_S2D1 },	/* VIN4 */
+-	{ MOD_CLK_ID(808), R8A7795_CLK_S2D1 },	/* VIN3 */
+-	{ MOD_CLK_ID(809), R8A7795_CLK_S2D1 },	/* VIN2 */
+-	{ MOD_CLK_ID(810), R8A7795_CLK_S2D1 },	/* VIN1 */
+-	{ MOD_CLK_ID(811), R8A7795_CLK_S2D1 },	/* VIN0 */
+-	{ MOD_CLK_ID(812), R8A7795_CLK_S3D2 },	/* EAVB-IF */
+-	{ MOD_CLK_ID(820), R8A7795_CLK_S2D1 },	/* IMR3 */
+-	{ MOD_CLK_ID(821), R8A7795_CLK_S2D1 },	/* IMR2 */
+-	{ MOD_CLK_ID(822), R8A7795_CLK_S2D1 },	/* IMR1 */
+-	{ MOD_CLK_ID(823), R8A7795_CLK_S2D1 },	/* IMR0 */
+-	{ MOD_CLK_ID(905), R8A7795_CLK_CP },	/* GPIO7 */
+-	{ MOD_CLK_ID(906), R8A7795_CLK_CP },	/* GPIO6 */
+-	{ MOD_CLK_ID(907), R8A7795_CLK_CP },	/* GPIO5 */
+-	{ MOD_CLK_ID(908), R8A7795_CLK_CP },	/* GPIO4 */
+-	{ MOD_CLK_ID(909), R8A7795_CLK_CP },	/* GPIO3 */
+-	{ MOD_CLK_ID(910), R8A7795_CLK_CP },	/* GPIO2 */
+-	{ MOD_CLK_ID(911), R8A7795_CLK_CP },	/* GPIO1 */
+-	{ MOD_CLK_ID(912), R8A7795_CLK_CP },	/* GPIO0 */
+-	{ MOD_CLK_ID(918), R8A7795_CLK_S3D2 },	/* I2C6 */
+-	{ MOD_CLK_ID(919), R8A7795_CLK_S3D2 },	/* I2C5 */
+-	{ MOD_CLK_ID(927), R8A7795_CLK_S3D2 },	/* I2C4 */
+-	{ MOD_CLK_ID(928), R8A7795_CLK_S3D2 },	/* I2C3 */
 -};
 -
 -
- static struct clk_branch mmss_misc_ahb_clk = {
- 	.halt_reg = 0x502c,
- 	.clkr = {
-@@ -3252,21 +2996,6 @@ static struct clk_regmap *mmcc_apq8084_clocks[] = {
- 	[MDSS_VSYNC_CLK] = &mdss_vsync_clk.clkr,
- 	[MMSS_RBCPR_AHB_CLK] = &mmss_rbcpr_ahb_clk.clkr,
- 	[MMSS_RBCPR_CLK] = &mmss_rbcpr_clk.clkr,
--	[MMSS_SPDM_AHB_CLK] = &mmss_spdm_ahb_clk.clkr,
--	[MMSS_SPDM_AXI_CLK] = &mmss_spdm_axi_clk.clkr,
--	[MMSS_SPDM_CSI0_CLK] = &mmss_spdm_csi0_clk.clkr,
--	[MMSS_SPDM_GFX3D_CLK] = &mmss_spdm_gfx3d_clk.clkr,
--	[MMSS_SPDM_JPEG0_CLK] = &mmss_spdm_jpeg0_clk.clkr,
--	[MMSS_SPDM_JPEG1_CLK] = &mmss_spdm_jpeg1_clk.clkr,
--	[MMSS_SPDM_JPEG2_CLK] = &mmss_spdm_jpeg2_clk.clkr,
--	[MMSS_SPDM_MDP_CLK] = &mmss_spdm_mdp_clk.clkr,
--	[MMSS_SPDM_PCLK0_CLK] = &mmss_spdm_pclk0_clk.clkr,
--	[MMSS_SPDM_PCLK1_CLK] = &mmss_spdm_pclk1_clk.clkr,
--	[MMSS_SPDM_VCODEC0_CLK] = &mmss_spdm_vcodec0_clk.clkr,
--	[MMSS_SPDM_VFE0_CLK] = &mmss_spdm_vfe0_clk.clkr,
--	[MMSS_SPDM_VFE1_CLK] = &mmss_spdm_vfe1_clk.clkr,
--	[MMSS_SPDM_RM_AXI_CLK] = &mmss_spdm_rm_axi_clk.clkr,
--	[MMSS_SPDM_RM_OCMEMNOC_CLK] = &mmss_spdm_rm_ocmemnoc_clk.clkr,
- 	[MMSS_MISC_AHB_CLK] = &mmss_misc_ahb_clk.clkr,
- 	[MMSS_MMSSNOC_AHB_CLK] = &mmss_mmssnoc_ahb_clk.clkr,
- 	[MMSS_MMSSNOC_BTO_AHB_CLK] = &mmss_mmssnoc_bto_ahb_clk.clkr,
+-	/*
+-	 * Fixups for R-Car H3 ES2.x
+-	 */
+-
+-static const unsigned int r8a7795es2_mod_nullify[] __initconst = {
+-	MOD_CLK_ID(117),			/* FDP1-2 */
+-	MOD_CLK_ID(327),			/* USB3-IF1 */
+-	MOD_CLK_ID(600),			/* FCPVD3 */
+-	MOD_CLK_ID(609),			/* FCPVI2 */
+-	MOD_CLK_ID(613),			/* FCPF2 */
+-	MOD_CLK_ID(616),			/* FCPCI1 */
+-	MOD_CLK_ID(617),			/* FCPCI0 */
+-	MOD_CLK_ID(620),			/* VSPD3 */
+-	MOD_CLK_ID(629),			/* VSPI2 */
+-	MOD_CLK_ID(713),			/* CSI21 */
+-};
+-
+ static int __init r8a7795_cpg_mssr_init(struct device *dev)
+ {
+ 	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
+ 	u32 cpg_mode;
+ 	int error;
+ 
++	/*
++	 * We panic here to ensure removed SoCs and clk updates are always in
++	 * sync to avoid overclocking damages. The panic can only be seen with
++	 * commandline args 'earlycon keep_bootcon'. But these SoCs were for
++	 * developers only anyhow.
++	 */
++	if (soc_device_match(r8a7795_denylist))
++		panic("SoC not supported anymore!\n");
++
+ 	error = rcar_rst_read_mode_pins(&cpg_mode);
+ 	if (error)
+ 		return error;
+@@ -457,25 +370,6 @@ static int __init r8a7795_cpg_mssr_init(struct device *dev)
+ 		return -EINVAL;
+ 	}
+ 
+-	if (soc_device_match(r8a7795es1)) {
+-		cpg_core_nullify_range(r8a7795_core_clks,
+-				       ARRAY_SIZE(r8a7795_core_clks),
+-				       R8A7795_CLK_S0D2, R8A7795_CLK_S0D12);
+-		mssr_mod_nullify(r8a7795_mod_clks,
+-				 ARRAY_SIZE(r8a7795_mod_clks),
+-				 r8a7795es1_mod_nullify,
+-				 ARRAY_SIZE(r8a7795es1_mod_nullify));
+-		mssr_mod_reparent(r8a7795_mod_clks,
+-				  ARRAY_SIZE(r8a7795_mod_clks),
+-				  r8a7795es1_mod_reparent,
+-				  ARRAY_SIZE(r8a7795es1_mod_reparent));
+-	} else {
+-		mssr_mod_nullify(r8a7795_mod_clks,
+-				 ARRAY_SIZE(r8a7795_mod_clks),
+-				 r8a7795es2_mod_nullify,
+-				 ARRAY_SIZE(r8a7795es2_mod_nullify));
+-	}
+-
+ 	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR, cpg_mode);
+ }
+ 
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index e668f23c75e7d..b3ef62fa612e3 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -310,19 +310,10 @@ static unsigned int cpg_clk_extalr __initdata;
+ static u32 cpg_mode __initdata;
+ static u32 cpg_quirks __initdata;
+ 
+-#define PLL_ERRATA	BIT(0)		/* Missing PLL0/2/4 post-divider */
+ #define RCKCR_CKSEL	BIT(1)		/* Manual RCLK parent selection */
+ 
+ 
+ static const struct soc_device_attribute cpg_quirks_match[] __initconst = {
+-	{
+-		.soc_id = "r8a7795", .revision = "ES1.0",
+-		.data = (void *)(PLL_ERRATA | RCKCR_CKSEL),
+-	},
+-	{
+-		.soc_id = "r8a7795", .revision = "ES1.*",
+-		.data = (void *)(RCKCR_CKSEL),
+-	},
+ 	{
+ 		.soc_id = "r8a7796", .revision = "ES1.0",
+ 		.data = (void *)(RCKCR_CKSEL),
+@@ -355,9 +346,8 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 		 * multiplier when cpufreq changes between normal and boost
+ 		 * modes.
+ 		 */
+-		mult = (cpg_quirks & PLL_ERRATA) ? 4 : 2;
+ 		return cpg_pll_clk_register(core->name, __clk_get_name(parent),
+-					    base, mult, CPG_PLL0CR, 0);
++					    base, 2, CPG_PLL0CR, 0);
+ 
+ 	case CLK_TYPE_GEN3_PLL1:
+ 		mult = cpg_pll_config->pll1_mult;
+@@ -370,9 +360,8 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 		 * multiplier when cpufreq changes between normal and boost
+ 		 * modes.
+ 		 */
+-		mult = (cpg_quirks & PLL_ERRATA) ? 4 : 2;
+ 		return cpg_pll_clk_register(core->name, __clk_get_name(parent),
+-					    base, mult, CPG_PLL2CR, 2);
++					    base, 2, CPG_PLL2CR, 2);
+ 
+ 	case CLK_TYPE_GEN3_PLL3:
+ 		mult = cpg_pll_config->pll3_mult;
+@@ -388,8 +377,6 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 		 */
+ 		value = readl(base + CPG_PLL4CR);
+ 		mult = (((value >> 24) & 0x7f) + 1) * 2;
+-		if (cpg_quirks & PLL_ERRATA)
+-			mult *= 2;
+ 		break;
+ 
+ 	case CLK_TYPE_GEN3_SDH:
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 1a0cdf001b2f2..523fd45231571 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -1113,19 +1113,6 @@ static int __init cpg_mssr_init(void)
+ 
+ subsys_initcall(cpg_mssr_init);
+ 
+-void __init cpg_core_nullify_range(struct cpg_core_clk *core_clks,
+-				   unsigned int num_core_clks,
+-				   unsigned int first_clk,
+-				   unsigned int last_clk)
+-{
+-	unsigned int i;
+-
+-	for (i = 0; i < num_core_clks; i++)
+-		if (core_clks[i].id >= first_clk &&
+-		    core_clks[i].id <= last_clk)
+-			core_clks[i].name = NULL;
+-}
+-
+ void __init mssr_mod_nullify(struct mssr_mod_clk *mod_clks,
+ 			     unsigned int num_mod_clks,
+ 			     const unsigned int *clks, unsigned int n)
+@@ -1139,19 +1126,5 @@ void __init mssr_mod_nullify(struct mssr_mod_clk *mod_clks,
+ 		}
+ }
+ 
+-void __init mssr_mod_reparent(struct mssr_mod_clk *mod_clks,
+-			      unsigned int num_mod_clks,
+-			      const struct mssr_mod_reparent *clks,
+-			      unsigned int n)
+-{
+-	unsigned int i, j;
+-
+-	for (i = 0, j = 0; i < num_mod_clks && j < n; i++)
+-		if (mod_clks[i].id == clks[j].clk) {
+-			mod_clks[i].parent = clks[j].parent;
+-			j++;
+-		}
+-}
+-
+ MODULE_DESCRIPTION("Renesas CPG/MSSR Driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
+index 1c3c057d17f53..80c5b462924ac 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.h
++++ b/drivers/clk/renesas/renesas-cpg-mssr.h
+@@ -187,21 +187,7 @@ void __init cpg_mssr_early_init(struct device_node *np,
+     /*
+      * Helpers for fixing up clock tables depending on SoC revision
+      */
+-
+-struct mssr_mod_reparent {
+-	unsigned int clk, parent;
+-};
+-
+-
+-extern void cpg_core_nullify_range(struct cpg_core_clk *core_clks,
+-				   unsigned int num_core_clks,
+-				   unsigned int first_clk,
+-				   unsigned int last_clk);
+ extern void mssr_mod_nullify(struct mssr_mod_clk *mod_clks,
+ 			     unsigned int num_mod_clks,
+ 			     const unsigned int *clks, unsigned int n);
+-extern void mssr_mod_reparent(struct mssr_mod_clk *mod_clks,
+-			      unsigned int num_mod_clks,
+-			      const struct mssr_mod_reparent *clks,
+-			      unsigned int n);
+ #endif
 -- 
 2.39.2
 
