@@ -2,89 +2,364 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0482C6FA9E
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Mar 2023 09:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B36EAC61DA4
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Mar 2023 13:52:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229754AbjCEJzy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 5 Mar 2023 04:55:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47606 "EHLO
+        id S229771AbjCENwN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 5 Mar 2023 08:52:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229746AbjCEJzw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Mar 2023 04:55:52 -0500
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 177CB14233
-        for <linux-clk@vger.kernel.org>; Sun,  5 Mar 2023 01:55:51 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id i34so26963319eda.7
-        for <linux-clk@vger.kernel.org>; Sun, 05 Mar 2023 01:55:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678010149;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SaiCZo/+1YA/uk2vyGLpxGSRliJ9pY9vxuYVZhWCjpI=;
-        b=TWvwQKWi6F9tRrBcDHcjKZmTm+Z+ZXiASZY0ROOG1pH+G4cghvi8fiOawjrbjK3JjT
-         BRs/SuxOVbnt/3N7pjqy92tlpjlf7AEpYXUHBB+Mw/BQwVqRJ7UrHyIAPKQWJ7GeGADg
-         T+UU5BdbruMktGDrtxCNVWzHxBmuaP3KQxM990WkMvgoVJrZNclMuH5qUFy73n4A1nwD
-         0PDKTrVuL5FlsSc4vjFnv2QcxbqxNrLFscDN2gzwksXVqWZu8blco6hMA48sHwWwIIxd
-         Pz4WgstQhAOx+Q2l2yR/DeKp5CrDMPNmSVwLibfhWWOLf9XEKuEA7JnsKIA7nnSr6hjf
-         5Gjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678010149;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SaiCZo/+1YA/uk2vyGLpxGSRliJ9pY9vxuYVZhWCjpI=;
-        b=fDMRsAUA6+igMgKjGeksQkek4WKAkR/pCb0s58BdAz+s72DZB2kQaI2mXzbU0lpZLG
-         GymIqxYKwJWYIHvPjE+OZZXtcKyApb9k6aNFv+ZjNV4mJhhsNVlz3lqiYrulXH5f5QH6
-         wGDop9tP5VbMcaKBz5N2W0eyyiGDn5667k9ETCnLKjAnemnap0S4wWiR+NmeMm9Tsxwa
-         Oz3v9vD9o9+N3SE0+5IpLYOCr81NLp/eKKk54sF7zH/0Y9aclhiDOP/K4c21Rp+MHWKp
-         LireOrgJR5dqD2v8HJ17nZLa0XFnEnDfHuOauQ3eYreBUc0REFqu4fpVvQwYmOXa+YA4
-         YDHw==
-X-Gm-Message-State: AO0yUKV31nMK6oJpvQr/DwtK9YbSSCKLw41cwX/xcpW3Oy7mWNfJ0f1M
-        0eHNuygafcY7Z2pRZ16ptgCrXw==
-X-Google-Smtp-Source: AK7set+C3D5+JtstYgkM4mOMlB7yc0ER4V44acEGOOuTGZ8p3QsibWZ+oyRvCVhN7MQ3TVZ+2e7DFw==
-X-Received: by 2002:a17:906:29c:b0:8b1:7274:1a72 with SMTP id 28-20020a170906029c00b008b172741a72mr11376470ejf.6.1678010149625;
-        Sun, 05 Mar 2023 01:55:49 -0800 (PST)
-Received: from ?IPV6:2a02:810d:15c0:828:71e7:13d:1c29:505f? ([2a02:810d:15c0:828:71e7:13d:1c29:505f])
-        by smtp.gmail.com with ESMTPSA id d5-20020a1709063ec500b008b1797a53b4sm3015368ejj.215.2023.03.05.01.55.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Mar 2023 01:55:49 -0800 (PST)
-Message-ID: <4f6b5931-e023-07a7-d593-d7a0b12499bb@linaro.org>
-Date:   Sun, 5 Mar 2023 10:55:48 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v2 3/6] dt-bindings: clock: Add Hi3798MV100 CRG driver
- binding
-Content-Language: en-US
-To:     David Yang <mmyangfl@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S229495AbjCENwN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Mar 2023 08:52:13 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B078C6EAE;
+        Sun,  5 Mar 2023 05:52:11 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2C99660A54;
+        Sun,  5 Mar 2023 13:52:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D83AC433D2;
+        Sun,  5 Mar 2023 13:52:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678024330;
+        bh=GD7bRPnmKLbCghxsUKpSfGGru8Lwm80DFDBP/5YwPmo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=rFR/DWnLWlUVMsy6NTvekkzTcDVFaVcEkelmz80581gJwB+3LLPNT3Yw4u+NF+Y/p
+         L3yq9iegOwhWNQDHpOtXxuccO+hFGAGYo45p8f6koiAs2LlFMyAG+nD/abXVR/FMs5
+         ptFtymr/ntHAs1EX30kTnIsXcxZULfr89qVXdUsUdFvnRyZDx5rEdqlmXAgCd0QyXf
+         Tc2bYFGTPBEl3FKNl9O/rM4k1kc4c8f6txZPpl4YFh+Xd0VsYvy5jQ6tDpwTjRVr3b
+         I/nGLHTf1EGh8F7ZDhFQKq6mRfR/vpO1tvBmXfWNBctTzziF2c+Sco2r2XLEdCLEI7
+         4dxTdKzP2x7Gw==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230304063333.162309-1-mmyangfl@gmail.com>
- <20230304063333.162309-5-mmyangfl@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230304063333.162309-5-mmyangfl@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Georgi Djakov <djakov@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, agross@kernel.org,
+        mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.2 01/16] clk: qcom: mmcc-apq8084: remove spdm clocks
+Date:   Sun,  5 Mar 2023 08:51:52 -0500
+Message-Id: <20230305135207.1793266-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.2
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 04/03/2023 07:33, David Yang wrote:
-> Add CRG driver for Hi3798MV100 SoC. CRG (Clock and Reset Generator) module
-> generates clock and reset signals used by other module blocks on SoC.
-> 
-> Signed-off-by: David Yang <mmyangfl@gmail.com>
-> ---
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Same comments for subject as for previous patch. With fixes:
+[ Upstream commit 7b347f4b677b6d84687e67d82b6b17c6f55ea2b4 ]
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+SPDM is used for debug/profiling and does not have any other
+functionality. These clocks can safely be removed.
 
-Best regards,
-Krzysztof
+Suggested-by: Stephen Boyd <sboyd@kernel.org>
+Suggested-by: Georgi Djakov <djakov@kernel.org>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Bjorn Andersson <andersson@kernel.org>
+Link: https://lore.kernel.org/r/20230111060402.1168726-11-dmitry.baryshkov@linaro.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/qcom/mmcc-apq8084.c | 271 --------------------------------
+ 1 file changed, 271 deletions(-)
+
+diff --git a/drivers/clk/qcom/mmcc-apq8084.c b/drivers/clk/qcom/mmcc-apq8084.c
+index e9f9713591558..025e21793b3c4 100644
+--- a/drivers/clk/qcom/mmcc-apq8084.c
++++ b/drivers/clk/qcom/mmcc-apq8084.c
+@@ -2364,262 +2364,6 @@ static struct clk_branch mmss_rbcpr_clk = {
+ 	},
+ };
+ 
+-static struct clk_branch mmss_spdm_ahb_clk = {
+-	.halt_reg = 0x0230,
+-	.clkr = {
+-		.enable_reg = 0x0230,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "mmss_spdm_ahb_clk",
+-			.parent_names = (const char *[]){
+-				"mmss_spdm_ahb_div_clk",
+-			},
+-			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+-static struct clk_branch mmss_spdm_axi_clk = {
+-	.halt_reg = 0x0210,
+-	.clkr = {
+-		.enable_reg = 0x0210,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "mmss_spdm_axi_clk",
+-			.parent_names = (const char *[]){
+-				"mmss_spdm_axi_div_clk",
+-			},
+-			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+-static struct clk_branch mmss_spdm_csi0_clk = {
+-	.halt_reg = 0x023c,
+-	.clkr = {
+-		.enable_reg = 0x023c,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "mmss_spdm_csi0_clk",
+-			.parent_names = (const char *[]){
+-				"mmss_spdm_csi0_div_clk",
+-			},
+-			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+-static struct clk_branch mmss_spdm_gfx3d_clk = {
+-	.halt_reg = 0x022c,
+-	.clkr = {
+-		.enable_reg = 0x022c,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "mmss_spdm_gfx3d_clk",
+-			.parent_names = (const char *[]){
+-				"mmss_spdm_gfx3d_div_clk",
+-			},
+-			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+-static struct clk_branch mmss_spdm_jpeg0_clk = {
+-	.halt_reg = 0x0204,
+-	.clkr = {
+-		.enable_reg = 0x0204,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "mmss_spdm_jpeg0_clk",
+-			.parent_names = (const char *[]){
+-				"mmss_spdm_jpeg0_div_clk",
+-			},
+-			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+-static struct clk_branch mmss_spdm_jpeg1_clk = {
+-	.halt_reg = 0x0208,
+-	.clkr = {
+-		.enable_reg = 0x0208,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "mmss_spdm_jpeg1_clk",
+-			.parent_names = (const char *[]){
+-				"mmss_spdm_jpeg1_div_clk",
+-			},
+-			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+-static struct clk_branch mmss_spdm_jpeg2_clk = {
+-	.halt_reg = 0x0224,
+-	.clkr = {
+-		.enable_reg = 0x0224,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "mmss_spdm_jpeg2_clk",
+-			.parent_names = (const char *[]){
+-				"mmss_spdm_jpeg2_div_clk",
+-			},
+-			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+-static struct clk_branch mmss_spdm_mdp_clk = {
+-	.halt_reg = 0x020c,
+-	.clkr = {
+-		.enable_reg = 0x020c,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "mmss_spdm_mdp_clk",
+-			.parent_names = (const char *[]){
+-				"mmss_spdm_mdp_div_clk",
+-			},
+-			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+-static struct clk_branch mmss_spdm_pclk0_clk = {
+-	.halt_reg = 0x0234,
+-	.clkr = {
+-		.enable_reg = 0x0234,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "mmss_spdm_pclk0_clk",
+-			.parent_names = (const char *[]){
+-				"mmss_spdm_pclk0_div_clk",
+-			},
+-			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+-static struct clk_branch mmss_spdm_pclk1_clk = {
+-	.halt_reg = 0x0228,
+-	.clkr = {
+-		.enable_reg = 0x0228,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "mmss_spdm_pclk1_clk",
+-			.parent_names = (const char *[]){
+-				"mmss_spdm_pclk1_div_clk",
+-			},
+-			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+-static struct clk_branch mmss_spdm_vcodec0_clk = {
+-	.halt_reg = 0x0214,
+-	.clkr = {
+-		.enable_reg = 0x0214,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "mmss_spdm_vcodec0_clk",
+-			.parent_names = (const char *[]){
+-				"mmss_spdm_vcodec0_div_clk",
+-			},
+-			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+-static struct clk_branch mmss_spdm_vfe0_clk = {
+-	.halt_reg = 0x0218,
+-	.clkr = {
+-		.enable_reg = 0x0218,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "mmss_spdm_vfe0_clk",
+-			.parent_names = (const char *[]){
+-				"mmss_spdm_vfe0_div_clk",
+-			},
+-			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+-static struct clk_branch mmss_spdm_vfe1_clk = {
+-	.halt_reg = 0x021c,
+-	.clkr = {
+-		.enable_reg = 0x021c,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "mmss_spdm_vfe1_clk",
+-			.parent_names = (const char *[]){
+-				"mmss_spdm_vfe1_div_clk",
+-			},
+-			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+-static struct clk_branch mmss_spdm_rm_axi_clk = {
+-	.halt_reg = 0x0304,
+-	.clkr = {
+-		.enable_reg = 0x0304,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "mmss_spdm_rm_axi_clk",
+-			.parent_names = (const char *[]){
+-				"mmss_axi_clk_src",
+-			},
+-			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+-static struct clk_branch mmss_spdm_rm_ocmemnoc_clk = {
+-	.halt_reg = 0x0308,
+-	.clkr = {
+-		.enable_reg = 0x0308,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "mmss_spdm_rm_ocmemnoc_clk",
+-			.parent_names = (const char *[]){
+-				"ocmemnoc_clk_src",
+-			},
+-			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+-
+ static struct clk_branch mmss_misc_ahb_clk = {
+ 	.halt_reg = 0x502c,
+ 	.clkr = {
+@@ -3252,21 +2996,6 @@ static struct clk_regmap *mmcc_apq8084_clocks[] = {
+ 	[MDSS_VSYNC_CLK] = &mdss_vsync_clk.clkr,
+ 	[MMSS_RBCPR_AHB_CLK] = &mmss_rbcpr_ahb_clk.clkr,
+ 	[MMSS_RBCPR_CLK] = &mmss_rbcpr_clk.clkr,
+-	[MMSS_SPDM_AHB_CLK] = &mmss_spdm_ahb_clk.clkr,
+-	[MMSS_SPDM_AXI_CLK] = &mmss_spdm_axi_clk.clkr,
+-	[MMSS_SPDM_CSI0_CLK] = &mmss_spdm_csi0_clk.clkr,
+-	[MMSS_SPDM_GFX3D_CLK] = &mmss_spdm_gfx3d_clk.clkr,
+-	[MMSS_SPDM_JPEG0_CLK] = &mmss_spdm_jpeg0_clk.clkr,
+-	[MMSS_SPDM_JPEG1_CLK] = &mmss_spdm_jpeg1_clk.clkr,
+-	[MMSS_SPDM_JPEG2_CLK] = &mmss_spdm_jpeg2_clk.clkr,
+-	[MMSS_SPDM_MDP_CLK] = &mmss_spdm_mdp_clk.clkr,
+-	[MMSS_SPDM_PCLK0_CLK] = &mmss_spdm_pclk0_clk.clkr,
+-	[MMSS_SPDM_PCLK1_CLK] = &mmss_spdm_pclk1_clk.clkr,
+-	[MMSS_SPDM_VCODEC0_CLK] = &mmss_spdm_vcodec0_clk.clkr,
+-	[MMSS_SPDM_VFE0_CLK] = &mmss_spdm_vfe0_clk.clkr,
+-	[MMSS_SPDM_VFE1_CLK] = &mmss_spdm_vfe1_clk.clkr,
+-	[MMSS_SPDM_RM_AXI_CLK] = &mmss_spdm_rm_axi_clk.clkr,
+-	[MMSS_SPDM_RM_OCMEMNOC_CLK] = &mmss_spdm_rm_ocmemnoc_clk.clkr,
+ 	[MMSS_MISC_AHB_CLK] = &mmss_misc_ahb_clk.clkr,
+ 	[MMSS_MMSSNOC_AHB_CLK] = &mmss_mmssnoc_ahb_clk.clkr,
+ 	[MMSS_MMSSNOC_BTO_AHB_CLK] = &mmss_mmssnoc_bto_ahb_clk.clkr,
+-- 
+2.39.2
 
