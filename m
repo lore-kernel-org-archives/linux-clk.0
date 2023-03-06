@@ -2,185 +2,130 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 474CDC61DA4
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Mar 2023 22:16:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B3CC678DB
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 00:21:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229536AbjCEWQj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 5 Mar 2023 17:16:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44828 "EHLO
+        id S229437AbjCFAVv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 5 Mar 2023 19:21:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbjCEWQi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Mar 2023 17:16:38 -0500
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E0531992
-        for <linux-clk@vger.kernel.org>; Sun,  5 Mar 2023 14:16:36 -0800 (PST)
-Received: from [192.168.1.141] ([37.4.248.41]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1N2BQM-1qaRC82h1K-013cQj; Sun, 05 Mar 2023 23:16:18 +0100
-Message-ID: <3ceda169-de1b-2c1f-9ee8-bc8fdb547433@i2se.com>
-Date:   Sun, 5 Mar 2023 23:16:17 +0100
+        with ESMTP id S229543AbjCFAVu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Mar 2023 19:21:50 -0500
+Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2EEFCC02
+        for <linux-clk@vger.kernel.org>; Sun,  5 Mar 2023 16:21:47 -0800 (PST)
+Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-536c2a1cc07so154446967b3.5
+        for <linux-clk@vger.kernel.org>; Sun, 05 Mar 2023 16:21:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cIwIoeOB/kwbnehi/L3e43G0Q5FkI8t0NeQUKQG9Xgs=;
+        b=JKvOQ6mAv6pvgUlFVEal8ztFeylFDVRq7ekNJMEzKpKXBDIi+Y1gjz0GQN8LbMaW5i
+         As8RYbdSBNDR5RSTFDeqPKQSgDrBp4WCsWSGtNFe0VY97fXlFlQk6vXWb71ItN61Lrty
+         V2AKAHTmYpjgM8hK/uFZYbl6gzGWXtEKqJpfK8WNR06YMHp0aYmvRuoANBpqACWbl5uW
+         q6AJx8sv2vQXVydkHfIzJGQuedrhnZXoGvy/u3kRY24Fv5fAwDtOFb1PkKxjsfFiPD/N
+         9toUwUpvaykzk2vFaBAjCTpXJkys2q+0Dk1u4C271iK2TG2MmD7lPbn09L6M/2o1t6ST
+         hkbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cIwIoeOB/kwbnehi/L3e43G0Q5FkI8t0NeQUKQG9Xgs=;
+        b=T6uvBoPb11GOlneOfNDE1eNsbjwvFVw9NMgP5UBCYJMNrEvTloMY93MkkT3/4waH++
+         fo4wg2mUg8cNUaSFAw4q0jlxCJIAKbtoqvLw3EyCg3+fYFKRQgdLvdoRU9jktRQEp1Eq
+         j1TFoDP625y6/5J/91NuXUfVQ65IQOUTTX2ZhcUqydbLPzoq0KqGSjqKHLXC4+cj6DRv
+         IxyLATh8gtmbTB86YPLjr0wTIpdRGFtQtCmdl+w52rTfjBfXaAcVZW4j4bRSXP5iN1ZK
+         33o41B2OO7IQfSZQQc+QSe7OdR34dnt/eDv3Qg47iE0p5KVWxAF85Nl+VNhvIiPsMQZx
+         AM+Q==
+X-Gm-Message-State: AO0yUKXRFgzG8UDKCfrfy4N6J5IAK2ll/RupUyJdJ/V0pl4p6Lik1EnK
+        0B2SD8NwOVlYzSbXH8I4a+dbl9r5kFaseffK4e1BRHKd7Oxiwx0ZFFU=
+X-Google-Smtp-Source: AK7set/rf91xYCdke17B/OtEw1/wGZDAvKJICeLyGYBXBzIySXfpr9elc4A1WrNk8EMthhUIEuvRNcCc5Egb0UNjhCY=
+X-Received: by 2002:a81:4318:0:b0:534:7429:2eb4 with SMTP id
+ q24-20020a814318000000b0053474292eb4mr5364022ywa.3.1678062106453; Sun, 05 Mar
+ 2023 16:21:46 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Content-Language: en-US
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michael Heimpold <mhei@heimpold.de>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-Subject: imx6ul: Recent enet refclock changes breaks custom i.mx6ull board
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Lpjy4rrfrpGhL5tT8b86UbsZIxMhzqsnhmYO7Os/JXk9ufGEYeo
- zZS7Xnw8osZtxjCVBlirvs1VBtG10goXB9p1/fjwUSh33/zP6mqbUCqPrFPrt61SAqufydR
- p8k6lDdWGr5NdQ1gT9paz2GXKFBE/zLtgcaT/ohQ3j7Q+J4oFi49EfjMiNkL6HV2e/U357a
- ib2IG2BMo59no3cbNHKIg==
-UI-OutboundReport: notjunk:1;M01:P0:xshUyO2MIcE=;KeuZmFrfEnER5d3FE4MpfEYwKkc
- zA/Vq1D75LKSDb8mYHHEB3DrY7nmgoxfMXXETdPKxX/jWe3WPIecgdmmdOXl1NqD5drxb8xGj
- lSJYZo1L/0s+TcHRTc/6GoruyaKwxGCpnSrc23Ovmwr0UIL2k345Wt9yq/2I3z6l6CBPhMV9Q
- qkvAWQ2NKrQyDvh4ZQa5GFQgL+hSVDtjJb+vZtrhc88CFVwedtMFIA2QxYxkMRH4Pkam5oJ71
- D3YEl/YZTYNPAj23Xxbb11Q1cjhW8cHiJpJDXmmT9dwkJLzdQHr7plzddx/no2CSGPhwARhsV
- V6xwD+q2HkfpVcHO1hVbTc4iBugUxlPU7+oaOjmGmdWGA/QbgrkfJER+4bLlPHZ2+zQc51Odh
- P4vx58Uvnyd6wUrqgKAJIqqwBiPSKwWkjlQj9vYhyvgfqd3iV4EfL8iVWS/p6Z9wbVDoTcs0z
- AIW+XBFOQ93hoS855G2zklB29022G+M49m3aKRPie+iufuu+/4bwtmREiyBYKw/O+Axwyc0S/
- Laz91D2C1+gsi25BuHE2oz0jSYIb8mfgfePbQi1ZfBp1aViBoW/DmYBtJqImhsqIcVGBQsA3N
- 7zWY2LzZTeoB8hbWK/0ABYIAsEhcsnMApt0ZQ57FbWWEh/xLZuSpbB4ePSnitt+umovlYvU6H
- o3B1F3TtBH2eGepKD9geKC3PDllFUtikyThD13QSyg==
+References: <20230303-topic-rpmcc_sleep-v1-0-d9cfaf9b27a7@linaro.org> <20230303-topic-rpmcc_sleep-v1-1-d9cfaf9b27a7@linaro.org>
+In-Reply-To: <20230303-topic-rpmcc_sleep-v1-1-d9cfaf9b27a7@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Mon, 6 Mar 2023 02:21:39 +0200
+Message-ID: <CAA8EJpq4tkOKOkaCPwr6nggzJQm3ubRAVgEF1pK38wzmmXizRA@mail.gmail.com>
+Subject: Re: [PATCH RFT 01/20] clk: qcom: smd-rpm: Add .is_enabled hook
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shawn Guo <shawn.guo@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Sat, 4 Mar 2023 at 15:27, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>
+> From: Shawn Guo <shawn.guo@linaro.org>
+>
+> The RPM clock enabling state can be found with 'enabled' in struct
+> clk_smd_rpm.  Add .is_enabled hook so that clk_summary in debugfs can
+> show a correct enabling state for RPM clocks.
 
-we planned to submit our custom i.MX6ULL board [1] to mainline after 
-release of Linux 6.3-rc1, but the recent enet refclock changes breaks 
-our Ethernet phy:
+There is a small problem with this patch: now if the bootloader leaves
+a clock enabled for some reason and there are no Linux users for that
+clock, clk_disable_unused_subtree() will consider this clock disabled
+and will not disable the clock on its own.
+And at this stage of smd-rpm platforms support I think we better off
+finding missing clock consumers rather than depending on the
+bootloader for some of the setup.
 
-[    0.000000] imx:clk-gpr-mux: failed to get parent (-EINVAL)
-
-...
-
-[   18.574595] SMSC LAN8710/LAN8720 2188000.ethernet-1:00: 
-phy_poll_reset failed: -110
-[   18.581064] fec 2188000.ethernet eth0: Unable to connect to phy
-
-I narrow down the PHY issue to this first bad commit:
-
-5f82bfced611 ("clk: imx6ul: fix enet1 gate configuration")
-
-The clock issues seems to be cause by the following commit. If i revert 
-5f82bfced611 and 4e197ee880c24 or use Linux 6.2 everything is fine.
-
-Maybe this helps for further analyse:
-
---- clk_summary.good    2023-03-05 22:41:52.607392458 +0100
-+++ clk_summary.bad    2023-03-05 22:41:52.587391697 +0100
-@@ -46,12 +46,13 @@
-               usbphy2                  0        0        0 
-480000000          0     0  50000         N
-      pll6                              1        1        0 
-500000000          0     0  50000         Y
-         pll6_bypass                    1        1        0 
-500000000          0     0  50000         Y
--          pll6_enet                   2        2        0 
-500000000          0     0  50000         Y
--             enet_ptp_ref             1        1        0 
-25000000          0     0  50000         Y
--                enet_ptp              1        1        0 
-25000000          0     0  50000         Y
-+          pll6_enet                   1        1        0 
-500000000          0     0  50000         Y
-+             enet_ptp_ref             0        0        0 
-25000000          0     0  50000         Y
-+                enet_ptp              0        0        0 
-25000000          0     0  50000         N
-               enet2_ref                0        0        0 
-50000000          0     0  50000         Y
--                enet_ref_125m         0        0        0 
-50000000          0     0  50000         N
--             enet_ref                 3        3        0 
-50000000          0     0  50000         Y
-+                enet2_ref_125m        0        0        0 
-50000000          0     0  50000         N
-+             enet1_ref                1        1        0 
-50000000          0     0  50000         Y
-+                enet1_ref_125m        0        0        0 
-50000000          0     0  50000         N
-      pll5                              0        0        0 
-296600000          0     0  50000         Y
-         pll5_bypass                    0        0        0 
-296600000          0     0  50000         Y
-            pll5_video                  0        0        0 
-296600000          0     0  50000         N
-@@ -137,19 +138,19 @@
-                  step                  0        0        0 
-528000000          0     0  50000         Y
-               periph_pre               1        1        0 
-528000000          0     0  50000         Y
-                  periph                3        3        0 
-528000000          0     0  50000         Y
--                   ahb                9        9        0 
-132000000          0     0  50000         Y
-+                   ahb                8        8        0 
-132000000          0     0  50000         Y
-                        sdma            4        1        0 
-132000000          0     0  50000         Y
-                        rom             1        1        0 
-132000000          0     0  50000         Y
-                        esai_mem        0        0        0 
-132000000          0     0  50000         N
-                        esai_ipg        0        0        0 
-132000000          0     0  50000         N
-                        aips_tz3        1        1        0 
-132000000          0     0  50000         Y
--                      enet_ahb        1        1        0 
-132000000          0     0  50000         Y
-+                      enet_ahb        0        0        0 
-132000000          0     0  50000         N
-                        dcp             1        1        0 
-132000000          0     0  50000         Y
-                        asrc_mem        0        0        0 
-132000000          0     0  50000         N
-                        asrc_ipg        0        0        0 
-132000000          0     0  50000         N
-                        aips_tz2        1        1        0 
-132000000          0     0  50000         Y
-                        aips_tz1        1        1        0 
-132000000          0     0  50000         Y
--                      ipg            15       13        0 
-66000000          0     0  50000         Y
-+                      ipg            14       12        0 
-66000000          0     0  50000         Y
-                           wdog3        0        0        0 
-66000000          0     0  50000         N
-                           uart8_ipg       0        0        0 
-66000000          0     0  50000         N
-                           usboh3       0        0        0 
-66000000          0     0  50000         N
-@@ -180,7 +181,7 @@
-                           uart2_ipg       0        0        0 
-66000000          0     0  50000         N
-                           can2_ipg       0        0        0 
-66000000          0     0  50000         N
-                           can1_ipg       0        0        0 
-66000000          0     0  50000         N
--                         enet         1        1        0 
-66000000          0     0  50000         Y
-+                         enet         0        0        0 
-66000000          0     0  50000         N
-                     axi_sel            1        1        0 
-528000000          0     0  50000         Y
-                        axi_podf        2        2        0 
-264000000          0     0  50000         Y
-                           axi          1        1        0 
-264000000          0     0  50000         Y
-
-[1] - 
-https://github.com/chargebyte/linux/commit/5f47f1b029d34391a4b24d4a30105f517126363e#diff-a3def31334aa0f3b641ed5b21a60b462a9cbdda064e7276770be22d9860f2ae7R137
+>
+> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+> [Konrad: rebase]
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>  drivers/clk/qcom/clk-smd-rpm.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+> index 198886c1b6c8..ecacfbc4a16c 100644
+> --- a/drivers/clk/qcom/clk-smd-rpm.c
+> +++ b/drivers/clk/qcom/clk-smd-rpm.c
+> @@ -424,18 +424,27 @@ static int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm)
+>         return 0;
+>  }
+>
+> +static int clk_smd_rpm_is_enabled(struct clk_hw *hw)
+> +{
+> +       struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
+> +
+> +       return r->enabled;
+> +}
+> +
+>  static const struct clk_ops clk_smd_rpm_ops = {
+>         .prepare        = clk_smd_rpm_prepare,
+>         .unprepare      = clk_smd_rpm_unprepare,
+>         .set_rate       = clk_smd_rpm_set_rate,
+>         .round_rate     = clk_smd_rpm_round_rate,
+>         .recalc_rate    = clk_smd_rpm_recalc_rate,
+> +       .is_enabled     = clk_smd_rpm_is_enabled,
+>  };
+>
+>  static const struct clk_ops clk_smd_rpm_branch_ops = {
+>         .prepare        = clk_smd_rpm_prepare,
+>         .unprepare      = clk_smd_rpm_unprepare,
+>         .recalc_rate    = clk_smd_rpm_recalc_rate,
+> +       .is_enabled     = clk_smd_rpm_is_enabled,
+>  };
+>
+>  DEFINE_CLK_SMD_RPM_BRANCH_A(bi_tcxo, QCOM_SMD_RPM_MISC_CLK, 0, 19200000);
+>
+> --
+> 2.39.2
+>
 
 
+-- 
+With best wishes
+Dmitry
