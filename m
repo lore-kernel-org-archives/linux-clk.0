@@ -2,56 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B3CC678DB
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 00:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E278AC61DA4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 00:27:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229437AbjCFAVv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 5 Mar 2023 19:21:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47202 "EHLO
+        id S229520AbjCFA1J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 5 Mar 2023 19:27:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229543AbjCFAVu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Mar 2023 19:21:50 -0500
-Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2EEFCC02
-        for <linux-clk@vger.kernel.org>; Sun,  5 Mar 2023 16:21:47 -0800 (PST)
-Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-536c2a1cc07so154446967b3.5
-        for <linux-clk@vger.kernel.org>; Sun, 05 Mar 2023 16:21:47 -0800 (PST)
+        with ESMTP id S229543AbjCFA1I (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Mar 2023 19:27:08 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A269611171
+        for <linux-clk@vger.kernel.org>; Sun,  5 Mar 2023 16:27:06 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id cw28so32007112edb.5
+        for <linux-clk@vger.kernel.org>; Sun, 05 Mar 2023 16:27:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cIwIoeOB/kwbnehi/L3e43G0Q5FkI8t0NeQUKQG9Xgs=;
-        b=JKvOQ6mAv6pvgUlFVEal8ztFeylFDVRq7ekNJMEzKpKXBDIi+Y1gjz0GQN8LbMaW5i
-         As8RYbdSBNDR5RSTFDeqPKQSgDrBp4WCsWSGtNFe0VY97fXlFlQk6vXWb71ItN61Lrty
-         V2AKAHTmYpjgM8hK/uFZYbl6gzGWXtEKqJpfK8WNR06YMHp0aYmvRuoANBpqACWbl5uW
-         q6AJx8sv2vQXVydkHfIzJGQuedrhnZXoGvy/u3kRY24Fv5fAwDtOFb1PkKxjsfFiPD/N
-         9toUwUpvaykzk2vFaBAjCTpXJkys2q+0Dk1u4C271iK2TG2MmD7lPbn09L6M/2o1t6ST
-         hkbg==
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=UqGQIswusbX1+IzXDd2bRK/LnduXXQOEOgtMhwl5Wlg=;
+        b=UX2CHZiIi6pGHy88xWA/XlAZk/opFkJbEZxlSGe6AaGbW4bwr/EZ7BoyZvyVzKlNJe
+         zAydwlciy2P7Nsh5Gkq/RcunYLbynzkSrdtJihMe8uuEGRGLGsXxid6UDF1zsU8Y3roE
+         HSWdq4bCLkvsxduJ79auB4G/94SxFgSni7mlxM5ROq+jiEIcYu+5SWUnbDz8K0ize85r
+         QUhXZF2OVLIK6fErNnJ1aidqYGlb77vfWVH0zo5y6iXJAfCjXKe6Bzn6cm0TcvARRGGd
+         N1TiOd+NTw95/SCR+GFhFi3xlkhl6YWEauTAPyq+KImtQ5cLObwHnCIjEZ8t5gCDOgSd
+         qLfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cIwIoeOB/kwbnehi/L3e43G0Q5FkI8t0NeQUKQG9Xgs=;
-        b=T6uvBoPb11GOlneOfNDE1eNsbjwvFVw9NMgP5UBCYJMNrEvTloMY93MkkT3/4waH++
-         fo4wg2mUg8cNUaSFAw4q0jlxCJIAKbtoqvLw3EyCg3+fYFKRQgdLvdoRU9jktRQEp1Eq
-         j1TFoDP625y6/5J/91NuXUfVQ65IQOUTTX2ZhcUqydbLPzoq0KqGSjqKHLXC4+cj6DRv
-         IxyLATh8gtmbTB86YPLjr0wTIpdRGFtQtCmdl+w52rTfjBfXaAcVZW4j4bRSXP5iN1ZK
-         33o41B2OO7IQfSZQQc+QSe7OdR34dnt/eDv3Qg47iE0p5KVWxAF85Nl+VNhvIiPsMQZx
-         AM+Q==
-X-Gm-Message-State: AO0yUKXRFgzG8UDKCfrfy4N6J5IAK2ll/RupUyJdJ/V0pl4p6Lik1EnK
-        0B2SD8NwOVlYzSbXH8I4a+dbl9r5kFaseffK4e1BRHKd7Oxiwx0ZFFU=
-X-Google-Smtp-Source: AK7set/rf91xYCdke17B/OtEw1/wGZDAvKJICeLyGYBXBzIySXfpr9elc4A1WrNk8EMthhUIEuvRNcCc5Egb0UNjhCY=
-X-Received: by 2002:a81:4318:0:b0:534:7429:2eb4 with SMTP id
- q24-20020a814318000000b0053474292eb4mr5364022ywa.3.1678062106453; Sun, 05 Mar
- 2023 16:21:46 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UqGQIswusbX1+IzXDd2bRK/LnduXXQOEOgtMhwl5Wlg=;
+        b=shL35KD90QFLpHKiwntGnp+0cZX/gdj6cW5A3gsLCSFGE85ErCNhEREXwxie5p1moR
+         VM8pZuVLvC20hqVcyTH3b6ZutrKPcSjNSNrPV0y1q8n2ChAoTqZ4+IUp3t3DpGO233wo
+         0/wVx1PCuspEpJc+BY+vZRMvrqyj1NDZLxXI/Rl249O9opgmfaGiu3xY7Xzek509xrvv
+         Wy9fFx4X8giwPusJTBQrC4jTPnjL9TQG4AfeIEyDYATcEJGVJHohBmV/zwjfGadokU9u
+         eB9/E+QLIKACLLaD8ayqfZpTalJ3O5eKGu6X4Pv5Y4foBynzHiAst51T9/UfTIiKzSzA
+         6WJA==
+X-Gm-Message-State: AO0yUKUFGlXx7BWxm0rUvnCJXNt3eZmK5eKJ4rIhAkK83VSzl4sTup7N
+        k8HH6ahnMhn4DGyPFc0z5RDVVA==
+X-Google-Smtp-Source: AK7set/Y0bMWzeij9P4IUe9ITLEEryvEsf4976fwFOF2+jK6GXHhgzHlrNkzgPKxoASS1zcx7XLr2w==
+X-Received: by 2002:a17:907:3e0e:b0:8b2:a42:5c3a with SMTP id hp14-20020a1709073e0e00b008b20a425c3amr11471846ejc.70.1678062425132;
+        Sun, 05 Mar 2023 16:27:05 -0800 (PST)
+Received: from [10.203.3.194] ([185.202.34.81])
+        by smtp.gmail.com with ESMTPSA id 22-20020a508756000000b004c0ac1df341sm4364649edv.50.2023.03.05.16.27.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 Mar 2023 16:27:04 -0800 (PST)
+Message-ID: <ab663641-8bef-b9c6-27fa-0097c564ca36@linaro.org>
+Date:   Mon, 6 Mar 2023 02:27:07 +0200
 MIME-Version: 1.0
-References: <20230303-topic-rpmcc_sleep-v1-0-d9cfaf9b27a7@linaro.org> <20230303-topic-rpmcc_sleep-v1-1-d9cfaf9b27a7@linaro.org>
-In-Reply-To: <20230303-topic-rpmcc_sleep-v1-1-d9cfaf9b27a7@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Mon, 6 Mar 2023 02:21:39 +0200
-Message-ID: <CAA8EJpq4tkOKOkaCPwr6nggzJQm3ubRAVgEF1pK38wzmmXizRA@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
 Subject: Re: [PATCH RFT 01/20] clk: qcom: smd-rpm: Add .is_enabled hook
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Konrad Dybcio <konrad.dybcio@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -59,73 +63,44 @@ Cc:     Andy Gross <agross@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Shawn Guo <shawn.guo@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20230303-topic-rpmcc_sleep-v1-0-d9cfaf9b27a7@linaro.org>
+ <20230303-topic-rpmcc_sleep-v1-1-d9cfaf9b27a7@linaro.org>
+ <CAA8EJpq4tkOKOkaCPwr6nggzJQm3ubRAVgEF1pK38wzmmXizRA@mail.gmail.com>
+Content-Language: en-GB
+In-Reply-To: <CAA8EJpq4tkOKOkaCPwr6nggzJQm3ubRAVgEF1pK38wzmmXizRA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 4 Mar 2023 at 15:27, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->
-> From: Shawn Guo <shawn.guo@linaro.org>
->
-> The RPM clock enabling state can be found with 'enabled' in struct
-> clk_smd_rpm.  Add .is_enabled hook so that clk_summary in debugfs can
-> show a correct enabling state for RPM clocks.
+On 06/03/2023 02:21, Dmitry Baryshkov wrote:
+> On Sat, 4 Mar 2023 at 15:27, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>
+>> From: Shawn Guo <shawn.guo@linaro.org>
+>>
+>> The RPM clock enabling state can be found with 'enabled' in struct
+>> clk_smd_rpm.  Add .is_enabled hook so that clk_summary in debugfs can
+>> show a correct enabling state for RPM clocks.
+> 
+> There is a small problem with this patch: now if the bootloader leaves
+> a clock enabled for some reason and there are no Linux users for that
+> clock, clk_disable_unused_subtree() will consider this clock disabled
+> and will not disable the clock on its own.
+> And at this stage of smd-rpm platforms support I think we better off
+> finding missing clock consumers rather than depending on the
+> bootloader for some of the setup.
 
-There is a small problem with this patch: now if the bootloader leaves
-a clock enabled for some reason and there are no Linux users for that
-clock, clk_disable_unused_subtree() will consider this clock disabled
-and will not disable the clock on its own.
-And at this stage of smd-rpm platforms support I think we better off
-finding missing clock consumers rather than depending on the
-bootloader for some of the setup.
+Argh. And then I understood that without the patch clk_core_is_enabled 
+will shortcut to core->enable_count, which also means that the clock 
+will be skipped.
 
->
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> [Konrad: rebase]
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->  drivers/clk/qcom/clk-smd-rpm.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-> index 198886c1b6c8..ecacfbc4a16c 100644
-> --- a/drivers/clk/qcom/clk-smd-rpm.c
-> +++ b/drivers/clk/qcom/clk-smd-rpm.c
-> @@ -424,18 +424,27 @@ static int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm)
->         return 0;
->  }
->
-> +static int clk_smd_rpm_is_enabled(struct clk_hw *hw)
-> +{
-> +       struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
-> +
-> +       return r->enabled;
-> +}
-> +
->  static const struct clk_ops clk_smd_rpm_ops = {
->         .prepare        = clk_smd_rpm_prepare,
->         .unprepare      = clk_smd_rpm_unprepare,
->         .set_rate       = clk_smd_rpm_set_rate,
->         .round_rate     = clk_smd_rpm_round_rate,
->         .recalc_rate    = clk_smd_rpm_recalc_rate,
-> +       .is_enabled     = clk_smd_rpm_is_enabled,
->  };
->
->  static const struct clk_ops clk_smd_rpm_branch_ops = {
->         .prepare        = clk_smd_rpm_prepare,
->         .unprepare      = clk_smd_rpm_unprepare,
->         .recalc_rate    = clk_smd_rpm_recalc_rate,
-> +       .is_enabled     = clk_smd_rpm_is_enabled,
->  };
->
->  DEFINE_CLK_SMD_RPM_BRANCH_A(bi_tcxo, QCOM_SMD_RPM_MISC_CLK, 0, 19200000);
->
-> --
-> 2.39.2
->
-
+But now I have another question: since r->enabled follows 
+core->enabled_count, can we get rid of r->enabled and switch to 
+core->enable_count? This might mean adding clk_software_is_enabled() 
+function for your patch.
 
 -- 
 With best wishes
 Dmitry
+
