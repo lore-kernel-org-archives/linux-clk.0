@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F86C61DA4
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 14:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF04C61DA4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 14:07:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230393AbjCFOHE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Mar 2023 09:07:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35700 "EHLO
+        id S230257AbjCFOHW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Mar 2023 09:07:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230263AbjCFOGw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 09:06:52 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DA33303FC;
-        Mon,  6 Mar 2023 06:06:26 -0800 (PST)
+        with ESMTP id S230410AbjCFOHH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 09:07:07 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F89A30B27;
+        Mon,  6 Mar 2023 06:06:41 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 064CF6602FCD;
-        Mon,  6 Mar 2023 14:06:08 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 305116602EE4;
+        Mon,  6 Mar 2023 14:05:55 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1678111570;
-        bh=g/jvPtx1Vs2whSVmVXS3wwQv4A05imyIVOO05+/tAaw=;
+        s=mail; t=1678111556;
+        bh=op8NGiC4mCc8OttiZfVKxYJjou9svW4e8fQKxfR3sSo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EG/MLMwA+HWiK0ln5AxMiI/H750Trc/hCLDX3sR9pCxGO8waJY8gNgmD1kAU1BhZ9
-         2BxpqYrTVF+UM6dM1xNp10ncHbQ98rPX1RMJaI1P1CWh7kX+LYRo7Oe7advi2VbL9G
-         hHeSaTR0edWSuvv0Yhl6c3JayftlCIwr14tWh0Is5HWAY3NI+2Xg6kbR60vu8BJXkN
-         HYR8PCRytGcXL80hgFLZODetznXz52odtyuwhJDQXuQaV/4GHiNGGPL/1slaRWFJj5
-         PzwYpTrcj0xOjJI3bZzAqmYpljoyAFWPe2dOIbPWGe0b8QxMYKhGAU559l3MGsf41Q
-         /MDuN3a+uE9VQ==
+        b=n3Q6+efDQuuuvDg+uY9eJpO4B1++uDBJr6yZohSU8V0TSWQxhbBeqb1LOXez//0UD
+         7qVc/jlchzdlOYu9hJ3WFUrQaLsdejV5gS32Qv+MqY4fhaRhEG3TeBRIvKOoUGsmz1
+         +GoZ1SWZXqiaUarq1iw6zrf9lupPM1RNlMuowqmImeZBHdC+F+HRF1lkmRO0LMbku2
+         XMJnpTmXZau3q8c0TsJgILMSXeL6lS2qwiwkS41K89Czb9r/HlzISXcPJugJ0LceR0
+         NTjFNgLS5waegMhd9DbzKEPmEHEpA/dYJYTvOsHON/3bl2DDNR6OYTgopTl04qK6Sl
+         bIRlViIe5bRsg==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, kernel@collabora.com
-Subject: [PATCH v6 14/54] clk: mediatek: mt8365: Convert to mtk_clk_simple_{probe,remove}()
-Date:   Mon,  6 Mar 2023 15:05:03 +0100
-Message-Id: <20230306140543.1813621-15-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v6 05/54] clk: mediatek: mt2712: Migrate topckgen/mcucfg to mtk_clk_simple_probe()
+Date:   Mon,  6 Mar 2023 15:04:54 +0100
+Message-Id: <20230306140543.1813621-6-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230306140543.1813621-1-angelogioacchino.delregno@collabora.com>
 References: <20230306140543.1813621-1-angelogioacchino.delregno@collabora.com>
@@ -58,279 +58,183 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-All clocks in this driver are supported by the common simple probe
-mechanism and it's now possible to migrate to it.
+Now that the common mtk_clk_simple_{probe,remove}() functions can deal
+with divider clocks it is possible to migrate more clock drivers to it:
+in this case, it's about topckgen.
+While at it, also perform a fast migration for mcucfg.
 
-While at it, also switch to using the module_platform_driver() macro.
+Thanks to the conversion, more error handling was added to the clocks
+registration.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/clk/mediatek/clk-mt8365.c | 241 +++++-------------------------
- 1 file changed, 37 insertions(+), 204 deletions(-)
+ drivers/clk/mediatek/clk-mt2712.c | 127 +++++-------------------------
+ 1 file changed, 21 insertions(+), 106 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt8365.c b/drivers/clk/mediatek/clk-mt8365.c
-index fef6c653c9ce..208cdc157918 100644
---- a/drivers/clk/mediatek/clk-mt8365.c
-+++ b/drivers/clk/mediatek/clk-mt8365.c
-@@ -752,220 +752,53 @@ static const struct mtk_gate peri_clks[] = {
- 		 &mtk_clk_gate_ops_no_setclr),
+diff --git a/drivers/clk/mediatek/clk-mt2712.c b/drivers/clk/mediatek/clk-mt2712.c
+index 94f8fc2a4f7b..db20c46e088b 100644
+--- a/drivers/clk/mediatek/clk-mt2712.c
++++ b/drivers/clk/mediatek/clk-mt2712.c
+@@ -36,14 +36,11 @@ static const struct mtk_fixed_clk top_fixed_clks[] = {
+ 	FIXED_CLK(CLK_TOP_CVBSPLL, "cvbspll", NULL, 108000000),
  };
  
--static int clk_mt8365_top_probe(struct platform_device *pdev)
+-static const struct mtk_fixed_factor top_early_divs[] = {
++static const struct mtk_fixed_factor top_divs[] = {
+ 	FACTOR(CLK_TOP_SYS_26M, "sys_26m", "clk26m", 1,
+ 		1),
+ 	FACTOR(CLK_TOP_CLK26M_D2, "clk26m_d2", "sys_26m", 1,
+ 		2),
+-};
+-
+-static const struct mtk_fixed_factor top_divs[] = {
+ 	FACTOR(CLK_TOP_ARMCA35PLL, "armca35pll_ck", "armca35pll", 1,
+ 		1),
+ 	FACTOR(CLK_TOP_ARMCA35PLL_600M, "armca35pll_600m", "armca35pll_ck", 1,
+@@ -1295,114 +1292,30 @@ static int clk_mt2712_apmixed_probe(struct platform_device *pdev)
+ 	return r;
+ }
+ 
+-static struct clk_hw_onecell_data *top_clk_data;
+-
+-static void clk_mt2712_top_init_early(struct device_node *node)
 -{
--	void __iomem *base;
--	struct clk_hw_onecell_data *clk_data;
--	struct device_node *node = pdev->dev.of_node;
--	struct device *dev = &pdev->dev;
--	int ret;
--	int i;
+-	int r, i;
 -
--	base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(base))
--		return PTR_ERR(base);
+-	if (!top_clk_data) {
+-		top_clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
 -
--	clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
--	if (!clk_data)
--		return -ENOMEM;
+-		for (i = 0; i < CLK_TOP_NR_CLK; i++)
+-			top_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
+-	}
 -
--	ret = mtk_clk_register_fixed_clks(top_fixed_clks,
--					  ARRAY_SIZE(top_fixed_clks), clk_data);
--	if (ret)
--		goto free_clk_data;
+-	mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs),
+-			top_clk_data);
 -
--	ret = mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs),
--				       clk_data);
--	if (ret)
--		goto unregister_fixed_clks;
--
--	ret = mtk_clk_register_muxes(&pdev->dev, top_muxes,
--				     ARRAY_SIZE(top_muxes), node,
--				     &mt8365_clk_lock, clk_data);
--	if (ret)
--		goto unregister_factors;
--
--	ret = mtk_clk_register_composites(&pdev->dev, top_misc_muxes,
--					  ARRAY_SIZE(top_misc_muxes), base,
--					  &mt8365_clk_lock, clk_data);
--	if (ret)
--		goto unregister_muxes;
--
--	ret = mtk_clk_register_dividers(top_adj_divs, ARRAY_SIZE(top_adj_divs),
--					base, &mt8365_clk_lock, clk_data);
--	if (ret)
--		goto unregister_composites;
--
--	ret = mtk_clk_register_gates(&pdev->dev, node, top_clk_gates,
--				     ARRAY_SIZE(top_clk_gates), clk_data);
--	if (ret)
--		goto unregister_dividers;
--
--	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--	if (ret)
--		goto unregister_gates;
--
--	return 0;
--unregister_gates:
--	mtk_clk_unregister_gates(top_clk_gates, ARRAY_SIZE(top_clk_gates), clk_data);
--unregister_dividers:
--	mtk_clk_unregister_dividers(top_adj_divs, ARRAY_SIZE(top_adj_divs),
--				    clk_data);
--unregister_composites:
--	mtk_clk_unregister_composites(top_misc_muxes,
--				      ARRAY_SIZE(top_misc_muxes), clk_data);
--unregister_muxes:
--	mtk_clk_unregister_muxes(top_muxes, ARRAY_SIZE(top_muxes), clk_data);
--unregister_factors:
--	mtk_clk_unregister_factors(top_divs, ARRAY_SIZE(top_divs), clk_data);
--unregister_fixed_clks:
--	mtk_clk_unregister_fixed_clks(top_fixed_clks,
--				      ARRAY_SIZE(top_fixed_clks), clk_data);
--free_clk_data:
--	mtk_free_clk_data(clk_data);
--
--	return ret;
+-	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, top_clk_data);
+-	if (r)
+-		pr_err("%s(): could not register clock provider: %d\n",
+-			__func__, r);
 -}
 -
--static int clk_mt8365_infra_probe(struct platform_device *pdev)
+-CLK_OF_DECLARE_DRIVER(mt2712_topckgen, "mediatek,mt2712-topckgen",
+-			clk_mt2712_top_init_early);
+-
+-static int clk_mt2712_top_probe(struct platform_device *pdev)
 -{
--	struct clk_hw_onecell_data *clk_data;
--	struct device_node *node = pdev->dev.of_node;
--	int ret;
--
--	clk_data = mtk_alloc_clk_data(CLK_IFR_NR_CLK);
--	if (!clk_data)
--		return -ENOMEM;
--
--	ret = mtk_clk_register_gates(&pdev->dev, node, ifr_clks,
--				     ARRAY_SIZE(ifr_clks), clk_data);
--	if (ret)
--		goto free_clk_data;
--
--	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--	if (ret)
--		goto unregister_gates;
--
--	return 0;
--
--unregister_gates:
--	mtk_clk_unregister_gates(ifr_clks, ARRAY_SIZE(ifr_clks), clk_data);
--free_clk_data:
--	mtk_free_clk_data(clk_data);
--
--	return ret;
--}
--
--static int clk_mt8365_peri_probe(struct platform_device *pdev)
--{
--	void __iomem *base;
--	struct clk_hw_onecell_data *clk_data;
--	struct device *dev = &pdev->dev;
--	struct device_node *node = dev->of_node;
--	int ret;
--
--	base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(base))
--		return PTR_ERR(base);
--
--	clk_data = mtk_devm_alloc_clk_data(dev, CLK_PERI_NR_CLK);
--	if (!clk_data)
--		return -ENOMEM;
--
--
--	ret = mtk_clk_register_gates(&pdev->dev, node, peri_clks,
--				     ARRAY_SIZE(peri_clks), clk_data);
--	if (ret)
--		return ret;
--
--	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--
--	return ret;
--}
--
--static int clk_mt8365_mcu_probe(struct platform_device *pdev)
--{
--	struct clk_hw_onecell_data *clk_data;
+-	int r, i;
 -	struct device_node *node = pdev->dev.of_node;
 -	void __iomem *base;
--	int ret;
 -
 -	base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(base))
+-	if (IS_ERR(base)) {
+-		pr_err("%s(): ioremap failed\n", __func__);
 -		return PTR_ERR(base);
+-	}
+-
+-	if (!top_clk_data) {
+-		top_clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
+-	} else {
+-		for (i = 0; i < CLK_TOP_NR_CLK; i++) {
+-			if (top_clk_data->hws[i] == ERR_PTR(-EPROBE_DEFER))
+-				top_clk_data->hws[i] = ERR_PTR(-ENOENT);
+-		}
+-	}
+-
+-	mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
+-			top_clk_data);
+-	mtk_clk_register_factors(top_early_divs, ARRAY_SIZE(top_early_divs),
+-			top_clk_data);
+-	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), top_clk_data);
+-	mtk_clk_register_composites(&pdev->dev, top_muxes,
+-				    ARRAY_SIZE(top_muxes), base,
+-				    &mt2712_clk_lock, top_clk_data);
+-	mtk_clk_register_dividers(top_adj_divs, ARRAY_SIZE(top_adj_divs), base,
+-			&mt2712_clk_lock, top_clk_data);
+-	mtk_clk_register_gates(&pdev->dev, node, top_clks,
+-			       ARRAY_SIZE(top_clks), top_clk_data);
+-
+-	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, top_clk_data);
+-
+-	if (r != 0)
+-		pr_err("%s(): could not register clock provider: %d\n",
+-			__func__, r);
+-
+-	return r;
+-}
+-
+-static int clk_mt2712_mcu_probe(struct platform_device *pdev)
+-{
+-	struct clk_hw_onecell_data *clk_data;
+-	int r;
+-	struct device_node *node = pdev->dev.of_node;
+-	void __iomem *base;
+-
+-	base = devm_platform_ioremap_resource(pdev, 0);
+-	if (IS_ERR(base)) {
+-		pr_err("%s(): ioremap failed\n", __func__);
+-		return PTR_ERR(base);
+-	}
 -
 -	clk_data = mtk_alloc_clk_data(CLK_MCU_NR_CLK);
--	if (!clk_data)
--		return -ENOMEM;
 -
--	ret = mtk_clk_register_composites(&pdev->dev, mcu_muxes,
--					  ARRAY_SIZE(mcu_muxes), base,
--					  &mt8365_clk_lock, clk_data);
--	if (ret)
--		goto free_clk_data;
+-	r = mtk_clk_register_composites(&pdev->dev, mcu_muxes,
+-					ARRAY_SIZE(mcu_muxes), base,
+-					&mt2712_clk_lock, clk_data);
+-	if (r)
+-		dev_err(&pdev->dev, "Could not register composites: %d\n", r);
 -
--	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--	if (ret)
--		goto unregister_composites;
+-	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+-
+-	if (r != 0)
+-		pr_err("%s(): could not register clock provider: %d\n",
+-			__func__, r);
 +static const struct mtk_clk_desc topck_desc = {
-+	.clks = top_clk_gates,
-+	.num_clks = ARRAY_SIZE(top_clk_gates),
++	.clks = top_clks,
++	.num_clks = ARRAY_SIZE(top_clks),
 +	.fixed_clks = top_fixed_clks,
 +	.num_fixed_clks = ARRAY_SIZE(top_fixed_clks),
 +	.factor_clks = top_divs,
 +	.num_factor_clks = ARRAY_SIZE(top_divs),
-+	.mux_clks = top_muxes,
-+	.num_mux_clks = ARRAY_SIZE(top_muxes),
-+	.composite_clks = top_misc_muxes,
-+	.num_composite_clks = ARRAY_SIZE(top_misc_muxes),
++	.composite_clks = top_muxes,
++	.num_composite_clks = ARRAY_SIZE(top_muxes),
 +	.divider_clks = top_adj_divs,
 +	.num_divider_clks = ARRAY_SIZE(top_adj_divs),
-+	.clk_lock = &mt8365_clk_lock,
++	.clk_lock = &mt2712_clk_lock,
 +};
  
--	return 0;
-+static const struct mtk_clk_desc infra_desc = {
-+	.clks = ifr_clks,
-+	.num_clks = ARRAY_SIZE(ifr_clks),
-+};
- 
--unregister_composites:
--	mtk_clk_unregister_composites(mcu_muxes, ARRAY_SIZE(mcu_muxes),
--				      clk_data);
--free_clk_data:
--	mtk_free_clk_data(clk_data);
-+static const struct mtk_clk_desc peri_desc = {
-+	.clks = peri_clks,
-+	.num_clks = ARRAY_SIZE(peri_clks),
-+};
- 
--	return ret;
+-	return r;
 -}
 +static const struct mtk_clk_desc mcu_desc = {
 +	.composite_clks = mcu_muxes,
 +	.num_composite_clks = ARRAY_SIZE(mcu_muxes),
-+	.clk_lock = &mt8365_clk_lock,
++	.clk_lock = &mt2712_clk_lock,
 +};
  
- static const struct of_device_id of_match_clk_mt8365[] = {
--	{
--		.compatible = "mediatek,mt8365-topckgen",
--		.data = clk_mt8365_top_probe,
+ static const struct of_device_id of_match_clk_mt2712[] = {
+ 	{
+ 		.compatible = "mediatek,mt2712-apmixedsys",
+ 		.data = clk_mt2712_apmixed_probe,
 -	}, {
--		.compatible = "mediatek,mt8365-infracfg",
--		.data = clk_mt8365_infra_probe,
+-		.compatible = "mediatek,mt2712-topckgen",
+-		.data = clk_mt2712_top_probe,
 -	}, {
--		.compatible = "mediatek,mt8365-pericfg",
--		.data = clk_mt8365_peri_probe,
--	}, {
--		.compatible = "mediatek,mt8365-mcucfg",
--		.data = clk_mt8365_mcu_probe,
--	}, {
--		/* sentinel */
--	}
--};
--
--static int clk_mt8365_probe(struct platform_device *pdev)
--{
--	int (*clk_probe)(struct platform_device *pdev);
--	int ret;
--
--	clk_probe = of_device_get_match_data(&pdev->dev);
--	if (!clk_probe)
--		return -EINVAL;
--
--	ret = clk_probe(pdev);
--	if (ret)
--		dev_err(&pdev->dev,
--			"%s: could not register clock provider: %d\n",
--			pdev->name, ret);
--
--	return ret;
--}
-+	{ .compatible = "mediatek,mt8365-topckgen", .data = &topck_desc },
-+	{ .compatible = "mediatek,mt8365-infracfg", .data = &infra_desc },
-+	{ .compatible = "mediatek,mt8365-pericfg", .data = &peri_desc },
-+	{ .compatible = "mediatek,mt8365-mcucfg", .data = &mcu_desc },
-+	{ /* sentinel */ }
-+};
+-		.compatible = "mediatek,mt2712-mcucfg",
+-		.data = clk_mt2712_mcu_probe,
+ 	}, {
+ 		/* sentinel */
+ 	}
+@@ -1440,7 +1353,9 @@ static const struct mtk_clk_desc peri_desc = {
  
- static struct platform_driver clk_mt8365_drv = {
--	.probe = clk_mt8365_probe,
- 	.driver = {
- 		.name = "clk-mt8365",
- 		.of_match_table = of_match_clk_mt8365,
- 	},
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
+ static const struct of_device_id of_match_clk_mt2712_simple[] = {
+ 	{ .compatible = "mediatek,mt2712-infracfg", .data = &infra_desc },
++	{ .compatible = "mediatek,mt2712-mcucfg", .data = &mcu_desc },
+ 	{ .compatible = "mediatek,mt2712-pericfg", .data = &peri_desc, },
++	{ .compatible = "mediatek,mt2712-topckgen", .data = &topck_desc },
+ 	{ /* sentinel */ }
  };
--
--static int __init clk_mt8365_init(void)
--{
--	return platform_driver_register(&clk_mt8365_drv);
--}
--arch_initcall(clk_mt8365_init);
-+module_platform_driver(clk_mt8365_drv);
- MODULE_LICENSE("GPL");
+ 
 -- 
 2.39.2
 
