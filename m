@@ -2,110 +2,117 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8587AC61DA4
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 02:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97042C61DA4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 03:30:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229570AbjCFCCj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 5 Mar 2023 21:02:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45576 "EHLO
+        id S229600AbjCFDaA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 5 Mar 2023 22:30:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229540AbjCFCCi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Mar 2023 21:02:38 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56C0212853;
-        Sun,  5 Mar 2023 18:02:36 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7155860B67;
-        Mon,  6 Mar 2023 02:02:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34FC7C433D2;
-        Mon,  6 Mar 2023 02:02:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678068155;
-        bh=Z/pfCgpFoEEHv7JcHJ6XnWQ3ENGLr+0L1mCke+Jm2IQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=h1qn3Qnq9ADu9N5IFa3vlUdv+8/g8WhMnFTZ0mkEx/YORQUtbGCzGpwUUxsouVJM7
-         JHCM38DmbjZWOmy4AZjo5nvWw32qJaYF/8uT11+Ksa2VYAbofgRpjt3O9T0WnEzi+k
-         bG7MaoDj9shn7Wc/bZ/4hpyjR3YWQTGfI9Hwvt3RZhiji27G7Ex/ywiAwNo4CaDWM2
-         OhBbQM7xPgatwh2lY6CLsiNHoovMflRhW+f6C8QhPP17AHUsw25uNx7Poqx3G+8pFy
-         qspD/tG3xiuZ8Lh3+A6aYfOqFIE1ZrIH1gP0i6qBmbe0W7UFBeib2XvCxHcFUmLwQG
-         LMimPrjLJfVdA==
-Date:   Mon, 6 Mar 2023 10:02:26 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        kernel@pengutronix.de, Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Russell King <linux@armlinux.org.uk>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v3 00/19] ARM: imx: make Ethernet refclock configurable
-Message-ID: <20230306020226.GC143566@dragon>
-References: <20230131084642.709385-1-o.rempel@pengutronix.de>
+        with ESMTP id S229457AbjCFD37 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Mar 2023 22:29:59 -0500
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 237F7EF9C;
+        Sun,  5 Mar 2023 19:29:58 -0800 (PST)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id ADF7324E194;
+        Mon,  6 Mar 2023 11:29:50 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 6 Mar
+ 2023 11:29:50 +0800
+Received: from [192.168.125.110] (183.27.97.46) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 6 Mar
+ 2023 11:29:49 +0800
+Message-ID: <ae6ddeeb-81d3-81e5-c6ab-5d728007817d@starfivetech.com>
+Date:   Mon, 6 Mar 2023 11:29:48 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230131084642.709385-1-o.rempel@pengutronix.de>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v4 00/19] Basic clock, reset & device tree support for
+ StarFive JH7110 RISC-V SoC
+Content-Language: en-US
+To:     Tommaso Merciai <tomm.merciai@gmail.com>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>, Stephen Boyd <sboyd@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor@kernel.org>,
+        "Palmer Dabbelt" <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20230221024645.127922-1-hal.feng@starfivetech.com>
+ <ZAJFpKlXPM+riuSa@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+From:   Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <ZAJFpKlXPM+riuSa@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [183.27.97.46]
+X-ClientProxiedBy: EXCAS063.cuchost.com (172.16.6.23) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 31, 2023 at 09:46:23AM +0100, Oleksij Rempel wrote:
-> changes v3:
-> - add Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
-> - rebase on top of abelvesa/for-next
+On Fri, 3 Mar 2023 20:08:20 +0100, Tommaso Merciai wrote:
+> Hello Hal,
+> I start to play with jh7110-starfive-visionfive-2-v1.3b I have collect
+> your series [3]. Now I'm trying to boot the image with the following
+> cmds:
 > 
-> changes v2:
-> - remove "ARM: imx6q: use of_clk_get_by_name() instead of_clk_get() to
->   get ptp clock" patch
-> - fix build warnings
-> - add "Acked-by: Lee Jones <lee@kernel.org>"
-> - reword some commits as suggested by Fabio
-> 
-> Most of i.MX SoC variants have configurable FEC/Ethernet reference
-> lock
-> used by RMII specification. This functionality is located in the
-> general purpose registers (GRPx) and till now was not implemented as
-> part of SoC clock tree.
-> 
-> With this patch set, we move forward and add this missing functionality
-> to some of i.MX clk drivers. So, we will be able to configure clock
-> opology
-> by using devicetree and be able to troubleshoot clock dependencies
-> by using clk_summary etc.
-> 
-> Currently implemented and tested i.MX6Q, i.MX6DL and i.MX6UL variants.
+> setenv bootfile vmlinuz;
+> setenv fileaddr a0000000;
+> setenv fdtcontroladdr 0xffffffffffffffff;
+> setenv ipaddr 10.0.0.100;
+> setenv serverip 10.0.0.1;
+> setenv kernel_comp_addr_r 0xb0000000;
+> setenv kernel_comp_size 0x10000000;
+> tftpboot ${fdt_addr_r} jh7110-starfive-visionfive-2-v1.3b.dtb;
+> tftpboot ${kernel_addr_r} Image.gz;
+> run chipa_set_linux;
+> booti ${kernel_addr_r} - ${fdt_addr_r}
 > 
 > 
-> Oleksij Rempel (19):
->   clk: imx: add clk-gpr-mux driver
->   clk: imx6q: add ethernet refclock mux support
->   ARM: imx6q: skip ethernet refclock reconfiguration if enet_clk_ref is
->     present
->   ARM: dts: imx6qdl: use enet_clk_ref instead of enet_out for the FEC
->     node
->   ARM: dts: imx6dl-lanmcu: configure ethernet reference clock parent
->   ARM: dts: imx6dl-alti6p: configure ethernet reference clock parent
->   ARM: dts: imx6dl-plybas: configure ethernet reference clock parent
->   ARM: dts: imx6dl-plym2m: configure ethernet reference clock parent
->   ARM: dts: imx6dl-prtmvt: configure ethernet reference clock parent
->   ARM: dts: imx6dl-victgo: configure ethernet reference clock parent
->   ARM: dts: imx6q-prtwd2: configure ethernet reference clock parent
->   ARM: dts: imx6qdl-skov-cpu: configure ethernet reference clock parent
->   ARM: dts: imx6dl-eckelmann-ci4x10: configure ethernet reference clock
->     parent
->   clk: imx: add imx_obtain_fixed_of_clock()
->   clk: imx6ul: fix enet1 gate configuration
->   clk: imx6ul: add ethernet refclock mux support
->   ARM: dts: imx6ul: set enet_clk_ref to CLK_ENETx_REF_SEL
->   ARM: mach-imx: imx6ul: remove not optional ethernet refclock overwrite
->   ARM: dts: imx6ul-prti6g: configure ethernet reference clock parent
+> This the result:
+> 
+> Bytes transferred = 109443584 (685fa00 hex)
+> StarFive # run chipa_set_linux;
+> StarFive # printenv file
+>   fileaddr filesize
+> StarFive # printenv filesize
+> filesize=685fa00
+> StarFive # booti ${kernel_addr_r} - ${fdt_addr_r}
+>    Uncompressing Kernel Image
+> ## Flattened Device Tree blob at 46000000
+>    Booting using the fdt blob at 0x46000000
+>    Using Device Tree in place at 0000000046000000, end 0000000046005c14
+> 
+> Starting kernel ...
+> 
+> clk u5_dw_i2c_clk_core already disabled
+> clk u5_dw_i2c_clk_apb already disabled
+> 
+> ---------------------------------------------
+> 
+> I'm missing something? Any hints?
+> Many thanks in advance! :)
 
-Applied all mach-imx and DTS ones, thanks!
+You can try the instructions at the link [1]. The branch [1] is
+based on v2 of this series, so you need to change the dtb name
+to "jh7110-starfive-visionfive-2-v1.3b.dtb" when using tftpboot.
+I will send v5 and update it to [1] this week.
+
+[1] https://github.com/starfive-tech/linux/tree/JH7110_VisionFive2_upstream
+
+Best regards,
+Hal
