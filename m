@@ -2,92 +2,182 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8181C64EC4
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 22:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E130C61DA4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 23:48:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229627AbjCFWsm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Mar 2023 17:48:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55728 "EHLO
+        id S229700AbjCFXsK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Mar 2023 18:48:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbjCFWsl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 17:48:41 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C4502D6C
-        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 14:48:34 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id y2so11403116pjg.3
-        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2023 14:48:34 -0800 (PST)
+        with ESMTP id S229483AbjCFXsK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 18:48:10 -0500
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9457E2ED72
+        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 15:48:08 -0800 (PST)
+Received: by mail-pg1-x52f.google.com with SMTP id 132so6591843pgh.13
+        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2023 15:48:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20210112.gappssmtp.com; s=20210112; t=1678142914;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m2PUC/BxoB7qwCAPqVN+Ej42oH74nlkoVsCW1qtw7mc=;
-        b=aw7Rhz9g02YjhDdZ3BLd6m67ejXVqnj6ruaIXalqGoAqsY+L/qOM0AgUMiAB4kITVO
-         z+RMoPZp6kcx03oOi95k5TCh9/V9dWSC4OWQ/ah2tSx9T5GjrvTTUalvgbtgyKHQpdNH
-         ilsi7B88apqw1MKBjEdlfO55p9nlciV0IlmxKyV0M+7qv9l+x6aSJJ3Fj5JKhjLhIY2I
-         xjEtS/RTyX3gkIor+K6By8X2qS+skygRcTKu9JexRNFMyCnfirXn8+TMKKQL3Fvyl/1q
-         pO1T22Ag2fvH6ZEdceWdMyStDC+kgeB4/frB9NmpUImsZnSPncD9c2B8I7DAM7khdzLW
-         qklA==
+        d=linaro.org; s=google; t=1678146488;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=h3kkgg9fvW84t4TwLFt0X1S06pfPd/zAbyRMZdL/mL8=;
+        b=aANztpaAr4HagG84ZHDlR9fWP07UAofgO/cRUUbIzExKpx5u2uLQJID6cHtCUpScjP
+         Qq7WwEOVZsQzp/yUDYTCSrYIm102wDb8xU18xDo5KiZTb6GdVlIAfj0GUr1FEtg/JO2i
+         HBx+zE78JUcenfWTVTY+BUAGXHR/YehXkQP24Br+US1apjvAD1HoTAWtdtfttxMCULmV
+         RWHFGqIa2Y0GApYO/mPpgP/qxnI8Hp2oIicVp5DKlhuB/Q7cXlcOStws94DWhOC5Agd0
+         UOw04TlA5PCE3WIbx5gDGgIcKadkD7XyDsmj2/j8orbQMWZIB6t0lTtIIM1gQgqg4wsr
+         vVoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678142914;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m2PUC/BxoB7qwCAPqVN+Ej42oH74nlkoVsCW1qtw7mc=;
-        b=cUyQ6b/y1okE1WaT95r4aJp2vlE9zSBF7MN1E9zc60l00GWUYiD+hza6kuEWYsYm8X
-         VeB48gI7DcvFnG4pcqqogo13v58/WAlWKOsLmv2t4eS6UlWkwBXTQleVHnrMrgQDqxtU
-         h3M2xjIjbvI0fxRqI0e50ZHN++qFvPZSQDNGz1Uu5DAiIhH5BsRFcleovKzUeU2viN+Z
-         22nYeUbV7RzmHccyerspOgy+KDXuc/GwW17YB23dWzJ6pAiuJzTqUEO5kE4W1Q1u7+Vz
-         5R07bGNUOdiIS1eI98S2/EB8JvhKDk3AWiLGs/zt6lMbhXdbZX8PnAA9iVu1cGXxenH0
-         dB/g==
-X-Gm-Message-State: AO0yUKVlgxh6QQiQX4x0Ocqc1Hk/+1J7GGhE66ztGFsxaZE2cEz5bei/
-        jHkgDnfEB4YBu3L5b+NXZPCu/w==
-X-Google-Smtp-Source: AK7set8pvRV+c4zoKVLszD+Hz59GPB9xs1KAx+cphhOhNNBx1YnJ3bEiCT45YT2mB2awAX9GfnLsug==
-X-Received: by 2002:a17:902:f54c:b0:19a:8304:21eb with SMTP id h12-20020a170902f54c00b0019a830421ebmr18203598plf.6.1678142913951;
-        Mon, 06 Mar 2023 14:48:33 -0800 (PST)
-Received: from localhost ([50.221.140.188])
-        by smtp.gmail.com with ESMTPSA id y8-20020a655a08000000b00502e48db9aesm6660230pgs.53.2023.03.06.14.48.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Mar 2023 14:48:33 -0800 (PST)
-Date:   Mon, 06 Mar 2023 14:48:33 -0800 (PST)
-X-Google-Original-Date: Mon, 06 Mar 2023 14:47:45 PST (-0800)
-Subject:     Re: [PATCH v3 1/3] clk: k210: remove an implicit 64-bit division
-In-Reply-To: <774cb6d15fef0e0b41e7a071eedef980.sboyd@kernel.org>
-CC:     mr.bossman075@gmail.com, linux-riscv@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mr.Bossman075@gmail.com, ustcymgu@gmail.com, damien.lemoal@wdc.com,
-        mturquette@baylibre.com, wbx@openadk.org, aou@eecs.berkeley.edu,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Conor Dooley <conor.dooley@microchip.com>, lkp@intel.com
-From:   Palmer Dabbelt <palmer@dabbelt.com>
-To:     sboyd@kernel.org
-Message-ID: <mhng-8b4fc148-76c1-4dae-b5ab-34f218e7ffe6@palmer-ri-x1c9a>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        d=1e100.net; s=20210112; t=1678146488;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h3kkgg9fvW84t4TwLFt0X1S06pfPd/zAbyRMZdL/mL8=;
+        b=lqa/jxGkWylfniS1gOSABn4UluEo4I/70iioyWonsPO3oPLKMtK1SpzBs5ZcRU44x4
+         8mm4xdJUPj4MiIrycEnaR65Ze70pUQ+B66IBd9QpgmkfkRPbHepu/rSLm431jDTnd/bd
+         PccYN5EDGAhJIXHEJE9yaIZPXZfgjl0slXh7v1jLpQGRUElgjcRdT4TFlMtPSqcfifvN
+         d0gBgfBlTDZpJk5LVzhxUcF47rsD8vOmrePqFWS0WJEjaTm7bdJD1DOSbQ+C1tg/GXD+
+         zGK2c9U4VTPdgQJa7NMnInk1YamIQi5egbqxBkXPBTEE3S9goe+UmzkKQg8A5XLcWQRp
+         yF/Q==
+X-Gm-Message-State: AO0yUKXJZaDB2VQjBthWwR9nCXObjrOjdFbS/l0MvhfKqF6cryB9dULp
+        cK6myxB10FHLKcni1GKZQ+gaoR5sAsST33TJmGLb/g==
+X-Google-Smtp-Source: AK7set+vAfWX9ZIid0tGfwy4xAfCKD4BGmpA0o9O7v4ol+4wj+rB16NMXMXewUOK31R/IlO+jqnFcWsHoaCcgk8QyHA=
+X-Received: by 2002:a62:ce49:0:b0:5a8:ac30:80bf with SMTP id
+ y70-20020a62ce49000000b005a8ac3080bfmr5501983pfg.6.1678146487961; Mon, 06 Mar
+ 2023 15:48:07 -0800 (PST)
+MIME-Version: 1.0
+References: <20230223041938.22732-1-semen.protsenko@linaro.org>
+ <20230223041938.22732-6-semen.protsenko@linaro.org> <7cbc24bf-6920-c75f-effc-fd9d827ca324@linaro.org>
+In-Reply-To: <7cbc24bf-6920-c75f-effc-fd9d827ca324@linaro.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Mon, 6 Mar 2023 17:47:56 -0600
+Message-ID: <CAPLW+4md2BTVecTfNx0ATG4LXy-Q+4Bgb7z8GGizv4aBJ8od_g@mail.gmail.com>
+Subject: Re: [PATCH v3 5/6] clk: samsung: Extract parent clock enabling to
+ common function
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 06 Mar 2023 14:41:11 PST (-0800), sboyd@kernel.org wrote:
-> Quoting Jesse Taube (2023-02-28 16:26:55)
->> From: Conor Dooley <conor.dooley@microchip.com>
->> 
->> The K210 clock driver depends on SOC_CANAAN, which is only selectable
->> when !MMU on RISC-V. !MMU is not possible on 32-bit yet, but patches
->> have been sent for its enabling. The kernel test robot reported this
->> implicit 64-bit division there.
->> 
->> Replace the implicit division with an explicit one.
->> 
->> Reported-by: kernel test robot <lkp@intel.com>
->> Link: https://lore.kernel.org/linux-riscv/202301201538.zNlqgE4L-lkp@intel.com/
->> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
->> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
->> ---
+On Mon, 6 Mar 2023 at 08:35, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 >
-> Seems better to merge this one-liner earlier to unblock 32-bit.
+> On 23/02/2023 05:19, Sam Protsenko wrote:
+> > Extract parent clock enabling from exynos_arm64_register_cmu() to
+> > dedicated function.
+> >
+> > Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> > Changes in v3:
+> >   - Rebased on top of latest soc/for-next tree
+> >   - Added Marek's Acked-by tag
+> >
+> > Changes in v2:
+> >   - Rebased on top of latest soc/for-next tree
+> >   - Improved English in kernel doc comment
+> >   - Added clk_prepare_enable() return value check
+> >   - Added exynos_arm64_enable_bus_clk() check in
+> >     exynos_arm64_register_cmu()
+> >   - Changed the commit message to reflect code changes
+> >
+> >  drivers/clk/samsung/clk-exynos-arm64.c | 51 ++++++++++++++++++--------
+> >  1 file changed, 35 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung/clk-exynos-arm64.c
+> > index b921b9a1134a..2aa3f0a5644e 100644
+> > --- a/drivers/clk/samsung/clk-exynos-arm64.c
+> > +++ b/drivers/clk/samsung/clk-exynos-arm64.c
+> > @@ -56,6 +56,37 @@ static void __init exynos_arm64_init_clocks(struct device_node *np,
+> >       iounmap(reg_base);
+> >  }
+> >
+> > +/**
+> > + * exynos_arm64_enable_bus_clk - Enable parent clock of specified CMU
+> > + *
+> > + * @dev:     Device object; may be NULL if this function is not being
+> > + *           called from platform driver probe function
+> > + * @np:              CMU device tree node
+> > + * @cmu:     CMU data
+> > + *
+> > + * Keep CMU parent clock running (needed for CMU registers access).
+> > + *
+> > + * Return: 0 on success or a negative error code on failure.
+> > + */
+> > +static int __init exynos_arm64_enable_bus_clk(struct device *dev,
+> > +             struct device_node *np, const struct samsung_cmu_info *cmu)
+> > +{
+> > +     struct clk *parent_clk;
+> > +
+> > +     if (!cmu->clk_name)
+> > +             return 0;
+> > +
+> > +     if (dev)
+> > +             parent_clk = clk_get(dev, cmu->clk_name);
+> > +     else
+> > +             parent_clk = of_clk_get_by_name(np, cmu->clk_name);
+> > +
+> > +     if (IS_ERR(parent_clk))
+> > +             return PTR_ERR(parent_clk);
+> > +
+> > +     return clk_prepare_enable(parent_clk);
+> > +}
+> > +
+> >  /**
+> >   * exynos_arm64_register_cmu - Register specified Exynos CMU domain
+> >   * @dev:     Device object; may be NULL if this function is not being
+> > @@ -72,23 +103,11 @@ static void __init exynos_arm64_init_clocks(struct device_node *np,
+> >  void __init exynos_arm64_register_cmu(struct device *dev,
+> >               struct device_node *np, const struct samsung_cmu_info *cmu)
+> >  {
+> > -     /* Keep CMU parent clock running (needed for CMU registers access) */
+> > -     if (cmu->clk_name) {
+> > -             struct clk *parent_clk;
+> > -
+> > -             if (dev)
+> > -                     parent_clk = clk_get(dev, cmu->clk_name);
+> > -             else
+> > -                     parent_clk = of_clk_get_by_name(np, cmu->clk_name);
+> > -
+> > -             if (IS_ERR(parent_clk)) {
+> > -                     pr_err("%s: could not find bus clock %s; err = %ld\n",
+> > -                            __func__, cmu->clk_name, PTR_ERR(parent_clk));
+> > -             } else {
+> > -                     clk_prepare_enable(parent_clk);
+> > -             }
+> > -     }
+> > +     int err;
+> >
+> > +     err = exynos_arm64_enable_bus_clk(dev, np, cmu);
+> > +     if (err)
+> > +             panic("%s: could not enable bus clock\n", __func__);
 >
-> Applied to clk-fixes
+> The error handling is changed and not equivalent. I would say that we
+> could still try to boot even if this failed, so kernel should not panic.
+> Maybe the parent clock is enabled by bootloader.
+>
+
+Agreed, I've probably overlooked that one when making all the
+refactoring. The same stands for the patch #6. Will rework and send
+out those two separately soon, as the rest of patches you already
+applied.
 
 Thanks!
+
+> Best regards,
+> Krzysztof
+>
