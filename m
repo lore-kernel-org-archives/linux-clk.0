@@ -2,109 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E5AC6FD1B
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 20:13:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D19C61DA4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 20:18:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229685AbjCFUNN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Mar 2023 15:13:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55368 "EHLO
+        id S229726AbjCFUSD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Mar 2023 15:18:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229726AbjCFUNJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 15:13:09 -0500
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EA4255B9;
-        Mon,  6 Mar 2023 12:12:57 -0800 (PST)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 7A1975FD0A;
-        Mon,  6 Mar 2023 23:12:55 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1678133575;
-        bh=7YzJ4n0LkJWTv0y1sIUu/5QnS+qJKq/YOM7rUrZOA3w=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=C151YZQdAz0Bz88TQsdKRRQ0Bf6gR1nZebxKGqwlCIMWMryZvEOVrlcAyu/0kWtsQ
-         KWVpxd1sSKOhnwz/IaeHXJXrUcSd5+QZppEzlnJwX0LZBd9fMtrutXtjkgFfVERjNt
-         WzFe0t5sQi2qzyRbpTYKNTPFiuB0eOGqv5tFrSGXzofGmLGpTGUm69+131FsJ+5iIS
-         kefGqyvq33eeK4KbSlGSFX26UVjFxpJEOsrVvWT19vVdjiZt5wO6RCF70Vl4I6UXDQ
-         r444maPrAip2nDeqAzyk1lXJb3Tcz16Ra5BOAOIWZSwhs/q63JXqqXYFK8r0Ax1vs4
-         5UsF+GcdIcCug==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Mon,  6 Mar 2023 23:12:55 +0300 (MSK)
-Date:   Mon, 6 Mar 2023 23:12:54 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-CC:     <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-        <martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
-        <kernel@sberdevices.ru>, <rockosov@gmail.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v9 1/5] clk: meson: add support for A1 PLL clock ops
-Message-ID: <20230306201254.tgyfztzqukzzeaqi@CAB-WSD-L081021>
-References: <20230301183759.16163-1-ddrokosov@sberdevices.ru>
- <20230301183759.16163-2-ddrokosov@sberdevices.ru>
- <1jy1oab06v.fsf@starbuckisacylon.baylibre.com>
+        with ESMTP id S229734AbjCFUSB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 15:18:01 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB7771ADF1
+        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 12:17:58 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0F8F560F31
+        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 20:17:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AE70C4339E;
+        Mon,  6 Mar 2023 20:17:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678133877;
+        bh=ovaisSO9ZlCn6dh9S+udG+WRrE7AKHP3BafUX8BrrPo=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=Ah7Ecli74vrlB34dEIVxVHICsXEet2SnJBv+SdUOYtPZ/cgcruoAmn9dNai7YCl/p
+         NahoL79aeJpxxe/rcQWPv6wxGPneZWGK4RIFXixY7yb/Ac15lR8pbj8cgBYub/SCKJ
+         65vLvgqZAg3bTjO8JweRm/EUCxqbbLUzd4FcG668nvVHx25Glv2D73y9mKpp6Yn2Xi
+         7DNlG7c1WlRpGHMDR4Gb22cfOFr8DI7QZTV09i97SR+LNuzfXF6ql4Tu47gHI7B7o6
+         /eVBClPmN0oKQP9gPPcH82jNpEdMyMvcKcfKdscCeUacDSWunCAiLlwOa4HOfCqVek
+         et5vySU3s+hXg==
+Message-ID: <aeb088d8b7bec8929c7c9e9539a0b187.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1jy1oab06v.fsf@starbuckisacylon.baylibre.com>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
- S-MS-EXCH01.sberdevices.ru (172.16.1.4)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/03/06 16:19:00 #20919562
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230222124610.257101-1-conor.dooley@microchip.com>
+References: <20230222124610.257101-1-conor.dooley@microchip.com>
+Subject: Re: [PATCH] MAINTAINERS: add missing clock driver coverage for Microchip FPGAs
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Conor Dooley <conor.dooley@microchip.com>,
+        linux-clk@vger.kernel.org, daire.mcnamara@microchip.com,
+        linux-riscv@lists.infradead.org
+To:     Conor Dooley <conor.dooley@microchip.com>,
+        Conor Dooley <conor@kernel.org>
+Date:   Mon, 06 Mar 2023 12:17:53 -0800
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Mar 06, 2023 at 12:09:35PM +0100, Jerome Brunet wrote:
-> 
-> On Wed 01 Mar 2023 at 21:37, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
-> 
-> > From: Jian Hu <jian.hu@amlogic.com>
-> >
-> > Modern meson PLL IPs are a little bit different from early known PLLs.
-> > The main difference is located in the init/enable/disable sequences; the
-> > rate logic is the same.
-> 
-> For the record, I find very odd that PLLs used to have an 'rst' bit in
-> CTRL0:29 (see g12 for example), this bit goes un-documented in the a1
-> datasheet, and following SoCs like s4 still have a rst bit, still in
-> CTRL0:29
-> 
-> I would not be surpized if the rst is actually still there in the a1.
-> It is just my guess ...
-> 
+Quoting Conor Dooley (2023-02-22 04:46:11)
+> When the CCC support was added, the clock binding coverage was
+> converted to a regex in commit 71c8517e004b ("MAINTAINERS: update
+> polarfire soc clock binding"), but the coverage for the clock drivers
+> themselves was not updated. Rectify that now.
+>=20
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
 
-We don't know it for sure. Datasheet doesn't have any information about
-CTRL0:29 bit, CTRL0:28 (enable) bit is last one I see.
-Vendor Amlogic driver doesn't have it in the init sequence as well.
-BTW, vendor driver doesn't use clk_pll common logic, it achieves PLL
-power-on goals using init_regs sequence.
-
-> > Compared with the previous SoCs, self-adaption current module
-> > is newly added for A1, and there is no reset parameter except the
-> > fixed pll. In A1 PLL, the PLL enable sequence is different, using
-> > the new power-on sequence to enable the PLL.
-> 
-> Please split this patch:
-> #1 make the rst optional (if you must)
-> #2 add the self current adapt param.
-> 
-> Apart from this, it looks good
-> 
-
-Thank you, I'll split it in the next version!
-
-[...]
--- 
-Thank you,
-Dmitry
+Applied to clk-fixes
