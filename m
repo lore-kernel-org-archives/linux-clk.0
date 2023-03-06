@@ -2,156 +2,181 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54C88C61DA4
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 09:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C210C61DA4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 10:22:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229634AbjCFJrq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Mar 2023 04:47:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33862 "EHLO
+        id S229880AbjCFKWK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Mar 2023 05:22:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229582AbjCFJrq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 04:47:46 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 890343ABF
-        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 01:47:44 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1pZ7RS-00047V-0Q; Mon, 06 Mar 2023 10:47:38 +0100
-Received: from ore by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1pZ7RR-0002Rp-4f; Mon, 06 Mar 2023 10:47:37 +0100
-Date:   Mon, 6 Mar 2023 10:47:37 +0100
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michael Heimpold <mhei@heimpold.de>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: imx6ul: Recent enet refclock changes breaks custom i.mx6ull board
-Message-ID: <20230306094737.GA11506@pengutronix.de>
-References: <3ceda169-de1b-2c1f-9ee8-bc8fdb547433@i2se.com>
- <20230306052531.GA30081@pengutronix.de>
- <8a178040-ef52-d9ab-e704-69208d34f915@i2se.com>
+        with ESMTP id S229593AbjCFKWJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 05:22:09 -0500
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2479BA3;
+        Mon,  6 Mar 2023 02:22:08 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id s11so36277871edy.8;
+        Mon, 06 Mar 2023 02:22:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678098126;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hNrtJRsE6dABDiGSx7TOq0l2sTmEuXcCBgXcO3kg+/w=;
+        b=ezBMnHU7JH5JcFgDBHtf0mxNurKzwBRsUBybb11stGQgX3lSqbWsCFXKg2tTP6LJ3F
+         UDRS3i/R8NEnxKLFuij+qhSK8oL2k6lPZAzEb4NOa2CPjuhNgJaF6J3Zff+hbNRvVOo4
+         kre+grebg40q5JqzhxZ+Wv+5lAukx1xzRS39xm8fNIZM/uJ2BCy5Ia/cojoJvanvaxCW
+         rkuqiBaBCWwFyIBaCLTZr8mGqx5jeIq43mLo28v9D0mItwXl2LyF85+Sq23FS+m3whUl
+         RBmErGq5/D+HCJGqu7sIlbhzDXSYT4IH5ZHxjukkIfzUXJIlpu9mGVlNf5zZEd+PqNZ8
+         2PwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678098126;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hNrtJRsE6dABDiGSx7TOq0l2sTmEuXcCBgXcO3kg+/w=;
+        b=bb/tZYOr4Jamy+H8t/oqkkrvwmCTgPChu8M5zRnAcbtu9H0ZxTqoEsu3MMA1XD5CDk
+         X8COz8AfuyRfRBuFrJrZOAZDWCmy2M48jgR23R8ZC4eRAd7w7HPpz6Nhgfucpx8NRMdB
+         MeLboeoP1M1Ej61ca0LMYlLvJuI0dzBO2VS0n0naMdT4tYkQkuxhzOD9mWCBBYKXQO/6
+         kndsGCKMmv610vnltPXQjkrSnNs65bbLaQmV7NMRWFrfejaKgf+Bp0WvZmo7qLwV/ODj
+         JKTCrTVos9ZYfEgk9u2lMThLN1zgt4G4qFjtk4731J1CGrjNkJrtQwKGSZH9ZDECRBXU
+         2L+Q==
+X-Gm-Message-State: AO0yUKVYLJT8aIQn6noANvGeX8LbHC6wK+tCWQ8gI8cXD/yhiJ0QdsNa
+        t1VswoXc3aqK+Fz3q20RANo=
+X-Google-Smtp-Source: AK7set+wUbFY7M3phB1lHjhvXIcWTL9OvRGQa7H3Z9KE8O9kqk1OJeI8bwA6WpZZUNlsMFGzAfmjhQ==
+X-Received: by 2002:aa7:c1c4:0:b0:4af:62af:460a with SMTP id d4-20020aa7c1c4000000b004af62af460amr11197692edp.8.1678098126517;
+        Mon, 06 Mar 2023 02:22:06 -0800 (PST)
+Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation (net-188-217-49-172.cust.vodafonedsl.it. [188.217.49.172])
+        by smtp.gmail.com with ESMTPSA id se18-20020a170906ce5200b008d6e551e1bcsm4366449ejb.2.2023.03.06.02.22.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Mar 2023 02:22:06 -0800 (PST)
+Date:   Mon, 6 Mar 2023 11:22:03 +0100
+From:   Tommaso Merciai <tomm.merciai@gmail.com>
+To:     Hal Feng <hal.feng@starfivetech.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 00/19] Basic clock, reset & device tree support for
+ StarFive JH7110 RISC-V SoC
+Message-ID: <ZAW+y1CLMV7cJT+p@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+References: <20230221024645.127922-1-hal.feng@starfivetech.com>
+ <ZAJFpKlXPM+riuSa@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+ <ae6ddeeb-81d3-81e5-c6ab-5d728007817d@starfivetech.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8a178040-ef52-d9ab-e704-69208d34f915@i2se.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+In-Reply-To: <ae6ddeeb-81d3-81e5-c6ab-5d728007817d@starfivetech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Mar 06, 2023 at 10:13:57AM +0100, Stefan Wahren wrote:
-> Hi Oleksij,
-> 
-> Am 06.03.23 um 06:25 schrieb Oleksij Rempel:
-> > Hi Stefan,
+Hi Hal,
+
+On Mon, Mar 06, 2023 at 11:29:48AM +0800, Hal Feng wrote:
+> On Fri, 3 Mar 2023 20:08:20 +0100, Tommaso Merciai wrote:
+> > Hello Hal,
+> > I start to play with jh7110-starfive-visionfive-2-v1.3b I have collect
+> > your series [3]. Now I'm trying to boot the image with the following
+> > cmds:
 > > 
-> > On Sun, Mar 05, 2023 at 11:16:17PM +0100, Stefan Wahren wrote:
-> > > Hi,
-> > > 
-> > > we planned to submit our custom i.MX6ULL board [1] to mainline after release
-> > > of Linux 6.3-rc1, but the recent enet refclock changes breaks our Ethernet
-> > > phy:
-> > > 
-> > > [    0.000000] imx:clk-gpr-mux: failed to get parent (-EINVAL)
-> > > 
-> > > ...
-> > > 
-> > > [   18.574595] SMSC LAN8710/LAN8720 2188000.ethernet-1:00: phy_poll_reset
-> > > failed: -110
-> > > [   18.581064] fec 2188000.ethernet eth0: Unable to connect to phy
-> > > 
-> > > I narrow down the PHY issue to this first bad commit:
-> > > 
-> > > 5f82bfced611 ("clk: imx6ul: fix enet1 gate configuration")
-> > > 
-> > > The clock issues seems to be cause by the following commit. If i revert
-> > > 5f82bfced611 and 4e197ee880c24 or use Linux 6.2 everything is fine.
-> > It looks like in your kernel version are some missing patches. Can you please
-> > rebase your patches on top of this branch:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git/log/?h=for-next
+> > setenv bootfile vmlinuz;
+> > setenv fileaddr a0000000;
+> > setenv fdtcontroladdr 0xffffffffffffffff;
+> > setenv ipaddr 10.0.0.100;
+> > setenv serverip 10.0.0.1;
+> > setenv kernel_comp_addr_r 0xb0000000;
+> > setenv kernel_comp_size 0x10000000;
+> > tftpboot ${fdt_addr_r} jh7110-starfive-visionfive-2-v1.3b.dtb;
+> > tftpboot ${kernel_addr_r} Image.gz;
+> > run chipa_set_linux;
+> > booti ${kernel_addr_r} - ${fdt_addr_r}
+> > 
+> > 
+> > This the result:
+> > 
+> > Bytes transferred = 109443584 (685fa00 hex)
+> > StarFive # run chipa_set_linux;
+> > StarFive # printenv file
+> >   fileaddr filesize
+> > StarFive # printenv filesize
+> > filesize=685fa00
+> > StarFive # booti ${kernel_addr_r} - ${fdt_addr_r}
+> >    Uncompressing Kernel Image
+> > ## Flattened Device Tree blob at 46000000
+> >    Booting using the fdt blob at 0x46000000
+> >    Using Device Tree in place at 0000000046000000, end 0000000046005c14
+> > 
+> > Starting kernel ...
+> > 
+> > clk u5_dw_i2c_clk_core already disabled
+> > clk u5_dw_i2c_clk_apb already disabled
+> > 
+> > ---------------------------------------------
+> > 
+> > I'm missing something? Any hints?
+> > Many thanks in advance! :)
 > 
-> thanks for your fast reply. But i rebased my patches against Linux v6.3-rc1
-> since this was released yesterday and should contain all patches from Shawn.
-
-No, it is not. Related DTS changes are not included in to v6.3-rc1.
-
-> I also changed the clockref in my DTSI file:
+> You can try the instructions at the link [1]. The branch [1] is
+> based on v2 of this series, so you need to change the dtb name
+> to "jh7110-starfive-visionfive-2-v1.3b.dtb" when using tftpboot.
+> I will send v5 and update it to [1] this week.
 > 
-> https://github.com/chargebyte/linux/commits/v6.3-tarragon-v3
-> 
-> Now the PHY issue disappeared and ethernet is working, but the
-> 
-> imx:clk-gpr-mux: failed to get parent (-EINVAL)
+> [1] https://github.com/starfive-tech/linux/tree/JH7110_VisionFive2_upstream
 
-I need to take a look at it. It should not be critical.
+Thanks for your help!
+Collecting your latest 26 patches from [1] I'm able to boot the board
+using cmds suggested in your link [2].
 
-> 
-> is still there.
-> 
-> > and please rename IMX6UL_CLK_ENET_REF to IMX6UL_CLK_ENET1_REF_SEL in
-> > your dtsi.
-> 
-> Yes, this seems to be the issue in my case.
-> 
-> Does this mean a Linux 6.3 kernel doesn't work with a i.MX6ULL Linux 6.2
-> devicetree?
+In particular I pick the following patches from your repo:
 
-If I see it correctly. Since you do not have patch [1] related clock is not
-enabled by the fec controller. Since this PHY is not addressable without
-running rmii clock, the PHY can't be probed.
+11934a315b67 (HEAD -> visionfive2-minimal, tag: visionfive2-minimal-v4, origin/visionfive2-minimal) riscv: dts: starfive: Add StarFive JH7110 VisionFive 2 board device tree
+c246291ed2d0 riscv: dts: starfive: Add StarFive JH7110 pin function definitions
+53c360e87ee8 riscv: dts: starfive: Add initial StarFive JH7110 device tree
+e769528b7cd8 dt-bindings: riscv: Add SiFive S7 compatible
+1f4c7408d02a soc: sifive: ccache: Add StarFive JH7110 support
+cd1a430b56db dt-bindings: sifive,ccache0: Support StarFive JH7110 SoC
+96fcf2e390d3 dt-bindings: interrupt-controller: Add StarFive JH7110 plic
+542c43452e08 dt-bindings: timer: Add StarFive JH7110 clint
+2b1bb27b0cff dt-bindings: riscv: Add StarFive JH7110 SoC and VisionFive 2 board
+328cac9205d2 pinctrl: starfive: Add StarFive JH7110 aon controller driver
+dd082f89c4fb pinctrl: starfive: Add StarFive JH7110 sys controller driver
+aabf6ba76b81 dt-bindings: pinctrl: Add StarFive JH7110 aon pinctrl
+f2c5025c54f9 dt-bindings: pinctrl: Add StarFive JH7110 sys pinctrl
+7601624bdde0 reset: starfive: Add StarFive JH7110 reset driver
+b1a2db0b97f4 clk: starfive: Add StarFive JH7110 always-on clock driver
+0b2aaa26d5c8 clk: starfive: Add StarFive JH7110 system clock driver
+2959b29a7d80 dt-bindings: clock: Add StarFive JH7110 always-on clock and reset generator
+cfb65ad0957a dt-bindings: clock: Add StarFive JH7110 system clock and reset generator
+f9df80901f49 reset: starfive: jh71x0: Use 32bit I/O on 32bit registers
+c9400fc69d3a reset: starfive: Rename "jh7100" to "jh71x0" for the common code
+8f05fdea85cd reset: starfive: Extract the common JH71X0 reset code
+28f5efaa3b06 reset: starfive: Factor out common JH71X0 reset code
+aa82ce33f593 reset: Create subdirectory for StarFive drivers
+fb87b93f6aa8 clk: starfive: Rename "jh7100" to "jh71x0" for the common code
+d73e36277d5f clk: starfive: Rename clk-starfive-jh7100.h to clk-starfive-jh71x0.h
+04611bf6db16 clk: starfive: Factor out common JH7100 and JH7110 code
 
-> So there is no fallback?
-
-With [1] it should not be needed.
-
-> 
-> What about these other dtsi in Linux 6.3rc-1?
-> 
-> $ grep IMX6UL_CLK_ENET_REF *
-> imx6ul-14x14-evk.dtsi:            clocks = <&clks IMX6UL_CLK_ENET_REF>;
-> ..
-> imx6ul-kontron-bl-common.dtsi:            clocks = <&clks
-> IMX6UL_CLK_ENET_REF>;
-> imx6ul-kontron-sl-common.dtsi:            clocks = <&clks
-> IMX6UL_CLK_ENET_REF>;
-> imx6ull-dhcom-picoitx.dts:            clocks = <&clks IMX6UL_CLK_ENET_REF>;
-> imx6ull-dhcom-som.dtsi:            clocks = <&clks IMX6UL_CLK_ENET_REF>;
-> imx6ull-jozacp.dts:            clocks = <&clks IMX6UL_CLK_ENET_REF>;
-> imx6ull-myir-mys-6ulx.dtsi:            clocks = <&clks IMX6UL_CLK_ENET_REF>;
-> imx6ul-phytec-phycore-som.dtsi:            clocks = <&clks
-> IMX6UL_CLK_ENET_REF>;
-> mba6ulx.dtsi:            clocks = <&clks IMX6UL_CLK_ENET_REF>;
-
-It is nice to convert all of them to proper clock. But all of them are
-expected to work with [1].
-
-Can you please confirm it? Revert yourdtsi back to IMX6UL_CLK_ENET_REF
-and include [1]?
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git/commit/?h=for-next&id=8940c105273fcde00a60023f68f8a5b75e1df0cc
+Hope this can help other peoples that start to play with
+jh7110-starfive-visionfive-2-v1.3b :)
+Thanks for your work!
 
 Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Tommaso
+
+[1] https://github.com/hal-feng/linux/commits/visionfive2-minimal
+[2] https://github.com/starfive-tech/linux/tree/JH7110_VisionFive2_upstream
+
+> 
+> Best regards,
+> Hal
