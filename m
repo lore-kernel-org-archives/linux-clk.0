@@ -2,207 +2,121 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F615C61DA3
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 05:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA4AC678D4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 08:39:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229576AbjCFFcb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Mar 2023 00:32:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38664 "EHLO
+        id S229749AbjCFIje (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Mar 2023 03:39:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbjCFFc3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 00:32:29 -0500
-Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0785319F1A;
-        Sun,  5 Mar 2023 21:32:28 -0800 (PST)
-Received: by mail-qv1-xf33.google.com with SMTP id jo29so5940277qvb.0;
-        Sun, 05 Mar 2023 21:32:27 -0800 (PST)
+        with ESMTP id S229457AbjCFIjc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 03:39:32 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E84CD1CAF6
+        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 00:39:30 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id p16so5074140wmq.5
+        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2023 00:39:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678080747;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MiPKMsiLMYcbxYp4rynCMsLu6OEagFUTtrUpOTm5FG4=;
-        b=fFeQ+3l0U1qzYT1ysduN2sP0GdfNjC+8AF0rG6ywGf9vi6SrINzCLoPFKmgBsRRkYK
-         gOLbqqCx7O2dWpJJL+GA27+EcmZ5ooeWJUGzHkk+3XL0hjGw6mxdUIGB6NbiKXeWxz4B
-         wilnFH3qr/uU8kNpWYJG1BIL5c/UWzMAZX95L2u4fAji7ifhqlysAwg5bFQ9AWnWRXAB
-         turO4Xhctv2S+cLzKLTrKZXxAQRcHPeosedXwn0aw8Sbhdunndq3E62VAllOlVKn+V6K
-         +UimW74g+P8uXesrSOMIUKy++dFWpcc//YvdriqaMThusqA5kcjAvOVMN4CmPnNNBarE
-         W40w==
+        d=linaro.org; s=google; t=1678091969;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mdXHSSzFb0wf4Z5ebFpbSvGWzd8D68jDgoc9WISe18M=;
+        b=L/xCTT9oGeZPl+49XiWu7haaTjDD4Czfx7sdxvdImv6E0n4BYBAn3D4PuTH6iu1EfT
+         Qc+MRFZRe1qydY49icg8KJFQ51W7cm3Rxef7sE2j1vhiQUa4J11pURkUFQGRsIpom2Ys
+         Aa9qUv1vtAj+Mrxe/aA2EeDG+Uw8FMt2DE+kag/IMs6L4wFKz1Js3mmfscN1/k4JzxDD
+         pnP/u0qTCwjArowyXg0pmVt94fig6sxuZYh8GMOu+48+IsQwkeUxUvKMeT/A+R1NjqUi
+         umfU76E9s2VN2ERxo3ELDHjmiebm1GYGa+K4XsHT0v05y9chlfiMhOLeTgOM2hRtKM23
+         4k1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678080747;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MiPKMsiLMYcbxYp4rynCMsLu6OEagFUTtrUpOTm5FG4=;
-        b=MDG+YXcW9OhySRUZS8KyEynK2gyRl0lYyOmGj1S0xJAQfljkDO2wSYttlrgbMTESJQ
-         L+OSQqb4XACvLGIZR5eXytw5V1iW82H60ChhHi7Ohu6z74iRDP8fI95YZ8KlMbk2vw8p
-         pbQXYHYbPexTf7es1wPBD/1Qyb/m1xr5dIF7LNGdNzVpWX9O1xhGavkg8yScsvAMim5W
-         d6qLaU9Sj/qKWTTnkl94JCJiyhx0yyKEv9Ru2o0hWn9wbF4fEqxEiIR+4F+6w5MUfOgm
-         MjTo+NfOH9i+GC90Dv3LmVPmdPfR/HedYkZgnAaSqzDP2l7Eg8u8t9ZNjhIdGHDyQsa/
-         wRvA==
-X-Gm-Message-State: AO0yUKUabQw7D8v2oPJXS6IQUawINNRKdZWbafWk37RkUNzq82YyaJ7y
-        HFG7dqT5kNkk+j4jRZ+ldmEemjXS01M=
-X-Google-Smtp-Source: AK7set8x6C04G7U2rQVgc1T5sV7S1ZXKsemoJPLSenK3Bh4gKMTRpKktDP6kENr18uH4v3IYHuBG3w==
-X-Received: by 2002:ad4:5de8:0:b0:571:d69:da8c with SMTP id jn8-20020ad45de8000000b005710d69da8cmr15359208qvb.19.1678080747037;
-        Sun, 05 Mar 2023 21:32:27 -0800 (PST)
-Received: from ?IPV6:2600:1700:2442:6db0:64c7:9450:aac2:7f08? ([2600:1700:2442:6db0:64c7:9450:aac2:7f08])
-        by smtp.gmail.com with ESMTPSA id x184-20020a3763c1000000b00738e8e81dc9sm6021908qkb.75.2023.03.05.21.32.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Mar 2023 21:32:26 -0800 (PST)
-Message-ID: <3d64ed75-c9f7-391a-e125-7a7bf6a28bf6@gmail.com>
-Date:   Sun, 5 Mar 2023 23:32:25 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 0/8] clk: Add kunit tests for fixed rate and parent data
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, David Gow <davidgow@google.com>,
+        d=1e100.net; s=20210112; t=1678091969;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mdXHSSzFb0wf4Z5ebFpbSvGWzd8D68jDgoc9WISe18M=;
+        b=W98j6wg2mFMxeNNtdKmhOeLzNabT48h60ottiDCrwl0wz+VKb6FJ0o5wJLFpqzMzC1
+         E+WsbU+l3qjvnw0iUQaBejmQkqB6IAQ4MjArlWPhsUn84YDwDJpsaB0/dYsJD8OgZAH4
+         bMfhnsM3V0hS6h1AL4POoZxiaHvHYMXCeOp1eM2/14h0MFK4RYMqIqw4nUDtDuyzr28v
+         WleKrju3pw95a42pK8UKM4oJu2nri1yGQVZHH1s9TzHGxBI3LmiMoPEGQoy7IWhjT5V0
+         +9EvWvSprUPUZ7OB6PldL1WjDHJ0PBgAxZvP0pj3b9yeahzrLK07TA+Yb3lII5wH2JAM
+         JjdA==
+X-Gm-Message-State: AO0yUKURm/PpPRRozGHtoIcoAap/LUB5n0gk+AJFJ0+oC7tHSvRZT0Fw
+        70dEM6bwZPvvv+S5XQZ9bkWphg==
+X-Google-Smtp-Source: AK7set+ZWZw+hQJ/2sk3ResOt44ySPYhF3lJa5MGYX4FLkyMzo9GSQeeqZSK5eB9zmeofrYdEnx6Gw==
+X-Received: by 2002:a05:600c:350c:b0:3dc:40a0:3853 with SMTP id h12-20020a05600c350c00b003dc40a03853mr6535425wmq.11.1678091969437;
+        Mon, 06 Mar 2023 00:39:29 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id d1-20020a5d4f81000000b002c54e26bca5sm9190736wru.49.2023.03.06.00.39.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Mar 2023 00:39:29 -0800 (PST)
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        patches@lists.linux.dev,
-        Brendan Higgins <brendan.higgins@linux.dev>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Christian Marangi <ansuelsmth@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-References: <20230302013822.1808711-1-sboyd@kernel.org>
- <CABVgOSnpMNCtEEsJV28OzUoxdDuiT4a2T0avP0AYf9xFW1jxrw@mail.gmail.com>
- <CAL_JsqJMd3Fi0ZBObdyE1VDKTH1_+smuGDymHnKOkVH2HB3jJQ@mail.gmail.com>
- <3759b28cca7ab751296d4dd83f2dcc51.sboyd@kernel.org>
- <CAMuHMdXDx6ChRj4xvWbQgcdJd0CGFi-RXySXr=M8QhBkA7YiGw@mail.gmail.com>
- <a2fdbd70-ca44-0d13-5b6f-4177761ecc18@gmail.com>
- <CAMuHMdUMrG9yuXDhDRd+mAUGo5_A6ONjAXXZkJTPXQsO_0C41A@mail.gmail.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-In-Reply-To: <CAMuHMdUMrG9yuXDhDRd+mAUGo5_A6ONjAXXZkJTPXQsO_0C41A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+Cc:     linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+In-Reply-To: <20230209-b4-amlogic-bindings-convert-take2-v1-0-c4fe9049def9@linaro.org>
+References: <20230209-b4-amlogic-bindings-convert-take2-v1-0-c4fe9049def9@linaro.org>
+Subject: Re: (subset) [PATCH 0/6] dt-bindings: second batch of dt-schema
+ conversions for Amlogic Meson bindings
+Message-Id: <167809196860.10551.9031776722379367022.b4-ty@linaro.org>
+Date:   Mon, 06 Mar 2023 09:39:28 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 3/5/23 03:26, Geert Uytterhoeven wrote:
-> Hi Frank,
-> 
-> On Sun, Mar 5, 2023 at 4:33 AM Frank Rowand <frowand.list@gmail.com> wrote:
->> On 3/2/23 13:47, Geert Uytterhoeven wrote:
->>> On Thu, Mar 2, 2023 at 8:28 PM Stephen Boyd <sboyd@kernel.org> wrote:
->>>> Quoting Rob Herring (2023-03-02 09:32:09)
->>>>> On Thu, Mar 2, 2023 at 2:14 AM David Gow <davidgow@google.com> wrote:
->>>>>> On Thu, 2 Mar 2023 at 09:38, Stephen Boyd <sboyd@kernel.org> wrote:
->>>>>>> This patch series adds unit tests for the clk fixed rate basic type and
->>>>>>> the clk registration functions that use struct clk_parent_data. To get
->>>>>>> there, we add support for loading a DTB into the UML kernel that's
->>>>>>> running the unit tests along with probing platform drivers to bind to
->>>>>>> device nodes specified in DT.
->>>>>>>
->>>>>>> With this series, we're able to exercise some of the code in the common
->>>>>>> clk framework that uses devicetree lookups to find parents and the fixed
->>>>>>> rate clk code that scans devicetree directly and creates clks. Please
->>>>>>> review.
->>>>>>>
->>>>>>
->>>>>> Thanks Stephen -- this is really neat!
->>>>>>
->>>>>> This works well here, and I love all of the tests for the
->>>>>> KUnit/device-tree integration as well.
->>>>>>
->>>>>> I'm still looking through the details of it (alas, I've mostly lived
->>>>>> in x86-land, so my device-tree knowledge is, uh, spotty to say the
->>>>>> least), but apart from possibly renaming some things or similarly
->>>>>> minor tweaks, I've not got any real suggestions thus far.
->>>>>>
->>>>>> I do wonder whether we'll want, on the KUnit side, to have some way of
->>>>>> supporting KUnit device trees on non-UML architecctures (e.g., if we
->>>>>> need to test something architecture-specific, or on a big-endian
->>>>>> platform, etc), but I think that's a question for the future, rather
->>>>>> than something that affects this series.
->>>>>
->>>>> I'll say that's a requirement. We should be able to structure the
->>>>> tests to not interfere with the running system's DT. The DT unittest
->>>>> does that.
->>>>
->>>> That could be another choice in the unit test choice menu.
->>>> CONFIG_OF_KUNIT_NOT_UML that injects some built-in DTB overlay on an
->>>> architecture that wants to run tests.
->>>
->>> As long as you use compatible values that don't exist elsewhere,
->>> and don't overwrite anything, you can load your kunit test overlays
->>> on any running system that has DT support.
->>>
->>>>> As a side topic, Is anyone looking at getting UML to work on arm64?
->>>>> It's surprising how much x86 stuff there is which is I guess one
->>>>> reason it hasn't happened.
->>>>
->>>> I've no idea but it would be nice indeed.
->>>
->>> I believe that's non-trivial. At least for arm32 (I didn't have any arm64
->>> systems last time I asked the experts).
->>>
->>>>>> Similarly, I wonder if there's something we could do with device tree
->>>>>> overlays, in order to make it possible for tests to swap nodes in and
->>>>>> out for testing.
->>>>>
->>>>> Yes, that's how the DT unittest works. But it is pretty much one big
->>>>> overlay (ignoring the overlay tests). It could probably be more
->>>>> modular where it is apply overlay, test, remove overlay, repeat.
->>>>
->>>> I didn't want to rely on the overlay code to inject DT nodes. Having
->>>> tests written for the fake KUnit machine is simple. It closely matches
->>>> how clk code probes the DTB and how nodes are created and populated on
->>>> the platform bus as devices. CLK_OF_DECLARE() would need the overlay to
->>>> be applied early too, which doesn't happen otherwise as far as I know.
->>>
->>> Don't all generic clock drivers also create a platform driver?
->>> At least drivers/clk/clk-fixed-factor.c does.
->>>
->>>> But perhaps this design is too much of an end-to-end test and not a unit
->>>> test? In the spirit of unit testing we shouldn't care about how the node
->>>> is added to the live devicetree, just that there is a devicetree at all.
->>>>
->>>> Supporting overlays to more easily test combinations sounds like a good
->>>> idea. Probably some kunit_*() prefixed functions could be used to
->>>> apply a test managed overlay and automatically remove it when the test
->>>> is over would work. The clk registration tests could use this API to
->>>> inject an overlay and then manually call the of_platform_populate()
->>>> function to create the platform device(s). The overlay could be built in
->>>> drivers/clk/ too and then probably some macroish function can find the
->>>> blob and apply it.
->>>
->>> No need to manually call of_platform_populate() to create the
->>> platform devices. That is taken care of automatically when applying
->>> an overlay.
->>>
->>>> Is there some way to delete the platform devices that we populate from
->>>> the overlay? I'd like the tests to be hermetic.
->>
->>> Removing the overlay will delete the platform devices.
->>
->> I _think_ that is incorrect.  Do you have a pointer to the overlay code that
->> deletes the device?  (If I remember correctly, the overlay remove code does not
->> even check whether the device exists and whether a driver is bound to it -- but
->> this is on my todo list to look into.)
-> 
-> https://elixir.bootlin.com/linux/latest/source/drivers/of/platform.c#L769
+Hi,
 
-Thanks!  That is precisely what I failed to remember.
+On Thu, 09 Feb 2023 14:41:36 +0100, Neil Armstrong wrote:
+> Batch conversion of the following bindings:
+> - rtc-meson-vrtc.txt
+> - amlogic,gxbb-clkc.txt
+> - amlogic,gxbb-aoclkc.txt
+> - clk-measure.txt
+> 
+> And in addition document the System Control registers top node.
+> 
+> [...]
 
--Frank
+Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.4/drivers)
 
-> 
->>> All of that works if you have your own code to apply a DT overlay.
->>> The recent fw_devlinks patches did cause some regressions, cfr.
->>> https://lore.kernel.org/all/CAMuHMdXEnSD4rRJ-o90x4OprUacN_rJgyo8x6=9F9rZ+-KzjOg@mail.gmail.com
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+[2/6] dt-bindings: soc: amlogic: convert clk-measure.txt to dt-schema
+      https://git.kernel.org/amlogic/c/2227e738b30bf20380a48391a73752c52f5f5c6a
+
+These changes has been applied on the intermediate git tree [1].
+
+The v6.4/drivers branch will then be sent via a formal Pull Request to the Linux SoC maintainers
+for inclusion in their intermediate git branches in order to be sent to Linus during
+the next merge window, or sooner if it's a set of fixes.
+
+In the cases of fixes, those will be merged in the current release candidate
+kernel and as soon they appear on the Linux master branch they will be
+backported to the previous Stable and Long-Stable kernels [2].
+
+The intermediate git branches are merged daily in the linux-next tree [3],
+people are encouraged testing these pre-release kernels and report issues on the
+relevant mailing-lists.
+
+If problems are discovered on those changes, please submit a signed-off-by revert
+patch followed by a corrective changeset.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+
+-- 
+Neil
 
