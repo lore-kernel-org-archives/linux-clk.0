@@ -2,106 +2,96 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 724B1C6FD1A
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 22:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C65C64EC4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 22:36:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229998AbjCFWfK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Mar 2023 17:35:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35686 "EHLO
+        id S229875AbjCFWgl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Mar 2023 17:36:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229892AbjCFWfJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 17:35:09 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ADF72D76;
-        Mon,  6 Mar 2023 14:35:09 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id F0FEEB80EB9;
-        Mon,  6 Mar 2023 22:35:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4E32C433D2;
-        Mon,  6 Mar 2023 22:35:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678142106;
-        bh=AaKFvPAhK4yNUKY1AwEa3TApIy5qdHabYFMN/Z1jxYs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DtKUhs85+91yUOeihxb6gOzKdl1rkMoYVdtYwI7zGwtFFDeGyXL4prr0/l7muZp/b
-         7Ac9RVU46iJ8TXSUyDHFoNgw4XLHlwNp3mgwysLRV0ubOyKhUeGk3jJXErmQUDRvKq
-         HbvFeGkpNWVIqXQZfBL6erQOoTwwl2RpmdKVKDPagDLDLiyUHAb4LiwjKi8LbuEPPL
-         UWrNuJUdtOfFdxb4l12Y92R9yHrNlzxadMQ8/Q6VQmW5P+7aHQbEfUP3QWmIQutMZe
-         bSVv9TRYF+MCkSTQL4LXMmqW7eAJkOGQ6x1ebovw6Qo78c6rT2HOB4rcO0PcZHyHgX
-         EAG/2yWzXOdzQ==
-Date:   Mon, 6 Mar 2023 22:35:01 +0000
-From:   Conor Dooley <conor@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Jesse Taube <mr.bossman075@gmail.com>,
-        linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yimin Gu <ustcymgu@gmail.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Waldemar Brodkorb <wbx@openadk.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v3 1/3] clk: k210: remove an implicit 64-bit division
-Message-ID: <be589843-dfc1-47dc-a488-a4fad645c638@spud>
-References: <20230301002657.352637-1-Mr.Bossman075@gmail.com>
- <20230301002657.352637-2-Mr.Bossman075@gmail.com>
- <3b0a1481873a2a7c26015fcedcc673b3.sboyd@kernel.org>
+        with ESMTP id S229776AbjCFWgk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 17:36:40 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14ED02D56
+        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 14:36:39 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id j11so14752237lfg.13
+        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2023 14:36:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678142197;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iRKu4v9KZZKcH41d8kbmcTc0ySWe5P8FlK/G+cjkahg=;
+        b=l+3+2SwZgi6US76HhdieyvtH/y2ZGGj+fxs/NEaPAkSXTUwyjabn1n8SWEiLWn47Q5
+         IJG/1w5l8kC6Vuu/0Ynl4hCmzmWR/heP0C+W2AIAXooodzCa2wg0CQt15zgWFEG5I45n
+         0gfZ+BiKQAu2OUam4uvMmpOjU6NI192GO1azVomYat4/1VtlXtPjjQ7zmsk2bbRgdwxe
+         ZY5Kp2qKDySuGgIszA9IkJrTDYgFgJ1uctN8fl1y/5gJ0KvUmrXV74ZQBzltpetX7bn8
+         E98uPtUpJKptwWeYD1ITzKDECjkCP4gjZHhtDTWWQYwfRwe+mZkJXmSTcwTO/EPRHsc7
+         jsFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678142197;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iRKu4v9KZZKcH41d8kbmcTc0ySWe5P8FlK/G+cjkahg=;
+        b=8QllW6rTLazwRXDbzJ7Yyka/TbkYhMh6rYaS+c3a3TKKknxgu69vSj1fy7qyE8Wq9J
+         1lHBZMNwnxm/iwAW3W3CZBUo2J9K1sc7d4m11pTgZsP5G7SXDwd4QK+KudHW2tEnEdP7
+         QRla/sH+QyZriLGdpjCdvWcbW1H+jVp7O4K+H3B5JzFtsR9rJwhgpjE1hFlE5FeGW/48
+         Wg5HL3fYK0zQvx0LEAgkQf/3z6g4e2XCTkVr/H2Xys3avb5gdFsPJkX7+nXefxiwNoQR
+         uLtIxSXKBynJ4fSvxY0A5SLt8iValms3IUwYTs8vhqR/KA0KMODvsqmCu42k2lOtH6bo
+         CZ4w==
+X-Gm-Message-State: AO0yUKUtrn1WJlAGQiL2fnt4GieH9LrlKAYjcD5eZIKAVwiXUcLVPnW4
+        oUZExTGeEBX99Dvg1BQKsKYRgQ==
+X-Google-Smtp-Source: AK7set/6PFEk3mybNHtJmIiIp1XVVjPPyLOVzK/Epk1sPy0t7J30f5KGbBbKXFZ5AM6wqDWX0cLGKg==
+X-Received: by 2002:a05:6512:110a:b0:4db:5123:c271 with SMTP id l10-20020a056512110a00b004db5123c271mr3590200lfg.29.1678142197209;
+        Mon, 06 Mar 2023 14:36:37 -0800 (PST)
+Received: from [192.168.1.101] (abym99.neoplus.adsl.tpnet.pl. [83.9.32.99])
+        by smtp.gmail.com with ESMTPSA id a12-20020ac2520c000000b004db4f2f08f7sm1788399lfl.28.2023.03.06.14.36.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Mar 2023 14:36:36 -0800 (PST)
+Message-ID: <e9ee054b-279d-3007-58b4-14dab904a54f@linaro.org>
+Date:   Mon, 6 Mar 2023 23:36:35 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ERan6PsFUqxi69zE"
-Content-Disposition: inline
-In-Reply-To: <3b0a1481873a2a7c26015fcedcc673b3.sboyd@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH 1/2] clk: qcom: gcc-sm6375: Update the .pwrsts for usb
+ gdsc
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>, agross@kernel.org,
+        andersson@kernel.org, linux-arm-msm@vger.kernel.org
+Cc:     marijn.suijten@somainline.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230303022912.2171177-1-konrad.dybcio@linaro.org>
+ <e04a406045121aa31762cacc02b2300d.sboyd@kernel.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <e04a406045121aa31762cacc02b2300d.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---ERan6PsFUqxi69zE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 06, 2023 at 02:31:00PM -0800, Stephen Boyd wrote:
-> Quoting Jesse Taube (2023-02-28 16:26:55)
-> > diff --git a/drivers/clk/clk-k210.c b/drivers/clk/clk-k210.c
-> > index 67a7cb3503c3..4eed667eddaf 100644
-> > --- a/drivers/clk/clk-k210.c
-> > +++ b/drivers/clk/clk-k210.c
-> > @@ -495,7 +495,7 @@ static unsigned long k210_pll_get_rate(struct clk_h=
-w *hw,
-> >         f =3D FIELD_GET(K210_PLL_CLKF, reg) + 1;
-> >         od =3D FIELD_GET(K210_PLL_CLKOD, reg) + 1;
-> > =20
-> > -       return (u64)parent_rate * f / (r * od);
-> > +       return div_u64((u64)parent_rate * f, r * od);
->=20
-> The equation 'r * od' can't overflow 32-bits, right?
+On 6.03.2023 20:35, Stephen Boyd wrote:
+> Quoting Konrad Dybcio (2023-03-02 18:29:11)
+>> The USB controller on sm6375 doesn't retain its state when the system
+>> goes into low power state and the GDSCs are turned off.
+>>
+>> This can be observed by the USB connection not coming back alive after
+>> putting the device into suspend, essentially breaking USB.
+>>
+>> Fix this by updating the .pwrsts for the USB GDSCs so they only
+>> transition to retention state in low power.
+> 
+> Is this a temporary fix? Is that why there isn't a Fixes tag?
+Yeah AFAIU the upstream dwc3-qcom driver is not fully implemented
+on the suspend front.
 
-Yah, I checked that when writing the patch. They're 4-bit fields:
-> /*
->  * PLL control register bits.
->  */
-> #define K210_PLL_CLKR		GENMASK(3, 0)
-> #define K210_PLL_CLKF		GENMASK(9, 4)
-> #define K210_PLL_CLKOD		GENMASK(13, 10)
+If it's a
+> workaround then please add a TODO comment indicating the USB driver
+> doesn't work properly.
+Will do!
 
-Cheers,
-Conor.
-
-
---ERan6PsFUqxi69zE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZAZqlQAKCRB4tDGHoIJi
-0iy3AQDEyhSWt9luWK3hsRaGF9IFqJJ5Zv5go86VrRKa8gRWBAEAsE83tegQ4VhX
-XtAnn+tuUHde9besO1Nnwd7yn9BQ2AE=
-=cLk4
------END PGP SIGNATURE-----
-
---ERan6PsFUqxi69zE--
+Konrad
