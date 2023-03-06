@@ -2,89 +2,105 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD5E5C61DA4
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 19:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C455C64EC4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 19:14:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229927AbjCFTHW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Mar 2023 14:07:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55724 "EHLO
+        id S229587AbjCFTOq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Mar 2023 14:14:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229582AbjCFTHU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 14:07:20 -0500
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EED13B0F6;
-        Mon,  6 Mar 2023 11:07:14 -0800 (PST)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id BEC795FD0A;
-        Mon,  6 Mar 2023 22:07:12 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1678129632;
-        bh=NCUnwGZBy5amnKE42xeiDjRu/asqJxD6kfl0v1O6JII=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=O3VAcuh+1ndOXCy+v/Y+8pIdSKyJvwKzfZs9MYM7qxJ87U8MwTkMxe2tvycvVpsUr
-         GiA7q/pffV2qC30pfkA3iQyxuR5LjSwwKhZ83OrJRCqOR/NDGWeTASsXOVlSwmI9Sl
-         7ecm2L8DnaGCEIQv3MysY/veylsqd0wM+PXFd5Lz+426uPm/lqQmHQTFjviYeOYbAq
-         dGDujwi9OxtJDvrijfEkk0MaKWhpgD+aYkJ8RMop3ciC4rYb+RPkLOy50LvyrPvd4O
-         /45bhVNU3/fRsqRjP8LOzzWHeTB/F4P4WtHl4MKF8YhLs/RGjOxACFP8ven6dvHwKm
-         +uTaAWnJ/WKGA==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Mon,  6 Mar 2023 22:07:12 +0300 (MSK)
-Date:   Mon, 6 Mar 2023 22:07:11 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-CC:     <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-        <martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
-        <kernel@sberdevices.ru>, <rockosov@gmail.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v9 3/5] dt-bindings: clock: meson: add A1 PLL clock
- controller bindings
-Message-ID: <20230306190711.dl7rozpd57ilfjqy@CAB-WSD-L081021>
-References: <20230301183759.16163-1-ddrokosov@sberdevices.ru>
- <20230301183759.16163-4-ddrokosov@sberdevices.ru>
- <1jmt4qazb3.fsf@starbuckisacylon.baylibre.com>
+        with ESMTP id S229528AbjCFTOp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 14:14:45 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A403FA5F6;
+        Mon,  6 Mar 2023 11:14:44 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 46C0861083;
+        Mon,  6 Mar 2023 19:14:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94C55C433D2;
+        Mon,  6 Mar 2023 19:14:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678130083;
+        bh=F9tNbM7t9Vpm0Rv/1V+KNmg6eSO1TudR1o7MzfIZ02E=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=RdRvJa4STP0SwyOHFUZhxCjebUQmMwak5Xr8mkWzE8Iks9FQMGMbzeQde9hueRspR
+         6Mi37iYAxCDZiYiNr4/X9h3/0GLQAZktNxN1doPXdjbmaIH6RCdepqW/x23BgtV/tY
+         sYacQbOhFP6LsMg44pZasCqgyZHJNKq2lG9vlfudpO9aPCAjJcyB6vq3WLa4rhcHmd
+         BwcESKVQZhoFPu2jGzRTzcXiF7jC9XQeeuISJnIvTPhbmG6nD8ZIDcvY7MYsfOO/Bk
+         yZc6ZILubeBk6ejMG2OMC3UTSoUV/NK30FgiqTJ1AUUg9LQnAbN5kuC7bQMtzpL905
+         G34s6VXYSa+fg==
+Message-ID: <7e28fb6ea6c1f646b02cd166c9782539.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1jmt4qazb3.fsf@starbuckisacylon.baylibre.com>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
- S-MS-EXCH01.sberdevices.ru (172.16.1.4)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/03/06 16:19:00 #20919562
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230302014639.297514-1-saravanak@google.com>
+References: <20230302014639.297514-1-saravanak@google.com>
+Subject: Re: [PATCH v2] clk: Mark a fwnode as initialized when using CLK_OF_DECLARE() macro
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>, kernel-team@android.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Saravana Kannan <saravanak@google.com>
+Date:   Mon, 06 Mar 2023 11:14:41 -0800
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Mar 06, 2023 at 12:33:48PM +0100, Jerome Brunet wrote:
-> 
-> On Wed 01 Mar 2023 at 21:37, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
-> 
-> > Add the documentation for Amlogic A1 PLL clock driver, and A1 PLL
-> > clock controller bindings.
-> > Also include new A1 clock controller dt bindings to MAINTAINERS.
-> >
-> > Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> > Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
-> 
-> patch order is wrong.
-> Bindings before drivers please.
+Quoting Saravana Kannan (2023-03-01 17:46:38)
+> We already mark fwnodes as initialized when they are registered as clock
+> providers. We do this so that fw_devlink can tell when a clock driver
+> doesn't use the driver core framework to probe/initialize its device.
+> This ensures fw_devlink doesn't block the consumers of such a clock
+> provider indefinitely.
+>=20
+> However, some users of CLK_OF_DECLARE() macros don't use the same node
+> that matches the macro as the node for the clock provider, but they
+> initialize the entire node. To cover these cases, also mark the nodes
+> that match the macros as initialized when the init callback function is
+> called.
+>=20
+> An example of this is "stericsson,u8500-clks" that's handled using
+> CLK_OF_DECLARE() and looks something like this:
+>=20
+> clocks {
+>         compatible =3D "stericsson,u8500-clks";
+>=20
+>         prcmu_clk: prcmu-clock {
+>                 #clock-cells =3D <1>;
+>         };
+>=20
+>         prcc_pclk: prcc-periph-clock {
+>                 #clock-cells =3D <2>;
+>         };
+>=20
+>         prcc_kclk: prcc-kernel-clock {
+>                 #clock-cells =3D <2>;
+>         };
+>=20
+>         prcc_reset: prcc-reset-controller {
+>                 #reset-cells =3D <2>;
+>         };
+>         ...
+>         ...
+> };
+>=20
+> This patch makes sure that "clocks" is marked as initialized so that
+> fw_devlink knows that all nodes under it have been initialized.
+>=20
+> If the driver creates struct devices for some of the subnodes,
+> fw_devlink is smart enough to know to wait for those devices to probe.
+> So, no special handling is required for those cases.
+>=20
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Reported-by: Linus Walleij <linus.walleij@linaro.org>
+> Link: https://lore.kernel.org/lkml/CACRpkdamxDX6EBVjKX5=3DD3rkHp17f5pwGdB=
+VhzFU90-0MHY6dQ@mail.gmail.com/
+> Fixes: 4a032827daa8 ("of: property: Simplify of_link_to_phandle()")
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> ---
 
-Totally agreed with you. That's why I see Rob's kernel robot errors.
-Will be rebased in the next version.
-
-[...]
-
--- 
-Thank you,
-Dmitry
+Applied to clk-fixes
