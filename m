@@ -2,181 +2,212 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C210C61DA4
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 10:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8CF5C6FD1B
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 11:16:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229880AbjCFKWK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Mar 2023 05:22:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51874 "EHLO
+        id S230137AbjCFLQI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Mar 2023 06:16:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbjCFKWJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 05:22:09 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2479BA3;
-        Mon,  6 Mar 2023 02:22:08 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id s11so36277871edy.8;
-        Mon, 06 Mar 2023 02:22:08 -0800 (PST)
+        with ESMTP id S230267AbjCFLPm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 06:15:42 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED14923DB8
+        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 03:15:22 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id h11so8392085wrm.5
+        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2023 03:15:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678098126;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hNrtJRsE6dABDiGSx7TOq0l2sTmEuXcCBgXcO3kg+/w=;
-        b=ezBMnHU7JH5JcFgDBHtf0mxNurKzwBRsUBybb11stGQgX3lSqbWsCFXKg2tTP6LJ3F
-         UDRS3i/R8NEnxKLFuij+qhSK8oL2k6lPZAzEb4NOa2CPjuhNgJaF6J3Zff+hbNRvVOo4
-         kre+grebg40q5JqzhxZ+Wv+5lAukx1xzRS39xm8fNIZM/uJ2BCy5Ia/cojoJvanvaxCW
-         rkuqiBaBCWwFyIBaCLTZr8mGqx5jeIq43mLo28v9D0mItwXl2LyF85+Sq23FS+m3whUl
-         RBmErGq5/D+HCJGqu7sIlbhzDXSYT4IH5ZHxjukkIfzUXJIlpu9mGVlNf5zZEd+PqNZ8
-         2PwA==
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1678101321;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=PyTn9tJm20fW8pZYDIuyfcLC54XHP85ntZPqOJKtjIk=;
+        b=4BUdLMw4Bzkp0FX7tdK0VT+WAV4PbmaJREU+/qlrti7Mm9ppJ4BNW4rhhx5ekAwLmK
+         MlaafUzNslF3E0996vg4leNMf/vFLgEi1ZJKUffZzUWka5kYu5Svj7a+SCFFmrjH+T6z
+         ID0Pa8KfL6GmK+N+j7j3GRTuZut+IOq2s9J7QgNILbuIWteZ7j26tWHoYTTzJLJkG9dN
+         m/tWaqOrZHTOOfJZXU6pzK9AQBe03s/qgrbci/hB1wXnYD9im54wLGtg8yTewYU8f5WR
+         G9avbdlB4QskIIns4vg5MU6e2tP+Sb9iSoEls2JXF4+jPDTPugLESC08gzn4Sbf2dIIZ
+         K6iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678098126;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20210112; t=1678101321;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hNrtJRsE6dABDiGSx7TOq0l2sTmEuXcCBgXcO3kg+/w=;
-        b=bb/tZYOr4Jamy+H8t/oqkkrvwmCTgPChu8M5zRnAcbtu9H0ZxTqoEsu3MMA1XD5CDk
-         X8COz8AfuyRfRBuFrJrZOAZDWCmy2M48jgR23R8ZC4eRAd7w7HPpz6Nhgfucpx8NRMdB
-         MeLboeoP1M1Ej61ca0LMYlLvJuI0dzBO2VS0n0naMdT4tYkQkuxhzOD9mWCBBYKXQO/6
-         kndsGCKMmv610vnltPXQjkrSnNs65bbLaQmV7NMRWFrfejaKgf+Bp0WvZmo7qLwV/ODj
-         JKTCrTVos9ZYfEgk9u2lMThLN1zgt4G4qFjtk4731J1CGrjNkJrtQwKGSZH9ZDECRBXU
-         2L+Q==
-X-Gm-Message-State: AO0yUKVYLJT8aIQn6noANvGeX8LbHC6wK+tCWQ8gI8cXD/yhiJ0QdsNa
-        t1VswoXc3aqK+Fz3q20RANo=
-X-Google-Smtp-Source: AK7set+wUbFY7M3phB1lHjhvXIcWTL9OvRGQa7H3Z9KE8O9kqk1OJeI8bwA6WpZZUNlsMFGzAfmjhQ==
-X-Received: by 2002:aa7:c1c4:0:b0:4af:62af:460a with SMTP id d4-20020aa7c1c4000000b004af62af460amr11197692edp.8.1678098126517;
-        Mon, 06 Mar 2023 02:22:06 -0800 (PST)
-Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation (net-188-217-49-172.cust.vodafonedsl.it. [188.217.49.172])
-        by smtp.gmail.com with ESMTPSA id se18-20020a170906ce5200b008d6e551e1bcsm4366449ejb.2.2023.03.06.02.22.05
+        bh=PyTn9tJm20fW8pZYDIuyfcLC54XHP85ntZPqOJKtjIk=;
+        b=hj1Ql8UvYu4iDd6m43zufm8pwaWz29pw5QCtaII0Gcn826ajOwYFvdIaU5MUx+3AMc
+         kQ/uD7J8XkZ6pS4HPtw5VyfCqBeoVakib+WEyDj+zt7UsJ0xj7neDYotoeliK771uQis
+         dB58Da2HziNJUuAmbyShPCKVeeve4/EnQHyfUf6zxPWaliykEOhZ/uOyVmmYBln9eqCv
+         OVoo2U83zs+2XLuRlB8A7BRcogjg/3vQkM6LRMprw5c29nzF7EFAFACEzvA0CqWKLhg0
+         S9CelU/4JTw6nRTutIKsXoMQwdISWYoBneoYxi5vZMNXzan64dC4NXFSNjvNoL+IgNus
+         j35g==
+X-Gm-Message-State: AO0yUKVNPATBkxi2zn7z8mA3/Oz69bdo9kdZ15sCDc4Jb+q5Su9GvEpP
+        jyYADTC48ZwgN49mcynuAi5tIg==
+X-Google-Smtp-Source: AK7set/9jsOhwv0D69Mil0vNvlkr+TK2jem1ThlpPjH+LdY5wwwBq/ex5iKyHi1KYshz4sZacWcocw==
+X-Received: by 2002:a5d:4b41:0:b0:2c5:58fb:fa92 with SMTP id w1-20020a5d4b41000000b002c558fbfa92mr6235081wrs.7.1678101321400;
+        Mon, 06 Mar 2023 03:15:21 -0800 (PST)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id f2-20020adfdb42000000b002c54fb024b2sm9456658wrj.61.2023.03.06.03.15.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Mar 2023 02:22:06 -0800 (PST)
-Date:   Mon, 6 Mar 2023 11:22:03 +0100
-From:   Tommaso Merciai <tomm.merciai@gmail.com>
-To:     Hal Feng <hal.feng@starfivetech.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 00/19] Basic clock, reset & device tree support for
- StarFive JH7110 RISC-V SoC
-Message-ID: <ZAW+y1CLMV7cJT+p@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
-References: <20230221024645.127922-1-hal.feng@starfivetech.com>
- <ZAJFpKlXPM+riuSa@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
- <ae6ddeeb-81d3-81e5-c6ab-5d728007817d@starfivetech.com>
+        Mon, 06 Mar 2023 03:15:20 -0800 (PST)
+References: <20230301183759.16163-1-ddrokosov@sberdevices.ru>
+ <20230301183759.16163-2-ddrokosov@sberdevices.ru>
+User-agent: mu4e 1.8.13; emacs 28.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>,
+        neil.armstrong@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
+        martin.blumenstingl@googlemail.com
+Cc:     jian.hu@amlogic.com, kernel@sberdevices.ru, rockosov@gmail.com,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v9 1/5] clk: meson: add support for A1 PLL clock ops
+Date:   Mon, 06 Mar 2023 12:09:35 +0100
+In-reply-to: <20230301183759.16163-2-ddrokosov@sberdevices.ru>
+Message-ID: <1jy1oab06v.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ae6ddeeb-81d3-81e5-c6ab-5d728007817d@starfivetech.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Hal,
 
-On Mon, Mar 06, 2023 at 11:29:48AM +0800, Hal Feng wrote:
-> On Fri, 3 Mar 2023 20:08:20 +0100, Tommaso Merciai wrote:
-> > Hello Hal,
-> > I start to play with jh7110-starfive-visionfive-2-v1.3b I have collect
-> > your series [3]. Now I'm trying to boot the image with the following
-> > cmds:
-> > 
-> > setenv bootfile vmlinuz;
-> > setenv fileaddr a0000000;
-> > setenv fdtcontroladdr 0xffffffffffffffff;
-> > setenv ipaddr 10.0.0.100;
-> > setenv serverip 10.0.0.1;
-> > setenv kernel_comp_addr_r 0xb0000000;
-> > setenv kernel_comp_size 0x10000000;
-> > tftpboot ${fdt_addr_r} jh7110-starfive-visionfive-2-v1.3b.dtb;
-> > tftpboot ${kernel_addr_r} Image.gz;
-> > run chipa_set_linux;
-> > booti ${kernel_addr_r} - ${fdt_addr_r}
-> > 
-> > 
-> > This the result:
-> > 
-> > Bytes transferred = 109443584 (685fa00 hex)
-> > StarFive # run chipa_set_linux;
-> > StarFive # printenv file
-> >   fileaddr filesize
-> > StarFive # printenv filesize
-> > filesize=685fa00
-> > StarFive # booti ${kernel_addr_r} - ${fdt_addr_r}
-> >    Uncompressing Kernel Image
-> > ## Flattened Device Tree blob at 46000000
-> >    Booting using the fdt blob at 0x46000000
-> >    Using Device Tree in place at 0000000046000000, end 0000000046005c14
-> > 
-> > Starting kernel ...
-> > 
-> > clk u5_dw_i2c_clk_core already disabled
-> > clk u5_dw_i2c_clk_apb already disabled
-> > 
-> > ---------------------------------------------
-> > 
-> > I'm missing something? Any hints?
-> > Many thanks in advance! :)
-> 
-> You can try the instructions at the link [1]. The branch [1] is
-> based on v2 of this series, so you need to change the dtb name
-> to "jh7110-starfive-visionfive-2-v1.3b.dtb" when using tftpboot.
-> I will send v5 and update it to [1] this week.
-> 
-> [1] https://github.com/starfive-tech/linux/tree/JH7110_VisionFive2_upstream
+On Wed 01 Mar 2023 at 21:37, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
 
-Thanks for your help!
-Collecting your latest 26 patches from [1] I'm able to boot the board
-using cmds suggested in your link [2].
+> From: Jian Hu <jian.hu@amlogic.com>
+>
+> Modern meson PLL IPs are a little bit different from early known PLLs.
+> The main difference is located in the init/enable/disable sequences; the
+> rate logic is the same.
 
-In particular I pick the following patches from your repo:
+For the record, I find very odd that PLLs used to have an 'rst' bit in
+CTRL0:29 (see g12 for example), this bit goes un-documented in the a1
+datasheet, and following SoCs like s4 still have a rst bit, still in
+CTRL0:29
 
-11934a315b67 (HEAD -> visionfive2-minimal, tag: visionfive2-minimal-v4, origin/visionfive2-minimal) riscv: dts: starfive: Add StarFive JH7110 VisionFive 2 board device tree
-c246291ed2d0 riscv: dts: starfive: Add StarFive JH7110 pin function definitions
-53c360e87ee8 riscv: dts: starfive: Add initial StarFive JH7110 device tree
-e769528b7cd8 dt-bindings: riscv: Add SiFive S7 compatible
-1f4c7408d02a soc: sifive: ccache: Add StarFive JH7110 support
-cd1a430b56db dt-bindings: sifive,ccache0: Support StarFive JH7110 SoC
-96fcf2e390d3 dt-bindings: interrupt-controller: Add StarFive JH7110 plic
-542c43452e08 dt-bindings: timer: Add StarFive JH7110 clint
-2b1bb27b0cff dt-bindings: riscv: Add StarFive JH7110 SoC and VisionFive 2 board
-328cac9205d2 pinctrl: starfive: Add StarFive JH7110 aon controller driver
-dd082f89c4fb pinctrl: starfive: Add StarFive JH7110 sys controller driver
-aabf6ba76b81 dt-bindings: pinctrl: Add StarFive JH7110 aon pinctrl
-f2c5025c54f9 dt-bindings: pinctrl: Add StarFive JH7110 sys pinctrl
-7601624bdde0 reset: starfive: Add StarFive JH7110 reset driver
-b1a2db0b97f4 clk: starfive: Add StarFive JH7110 always-on clock driver
-0b2aaa26d5c8 clk: starfive: Add StarFive JH7110 system clock driver
-2959b29a7d80 dt-bindings: clock: Add StarFive JH7110 always-on clock and reset generator
-cfb65ad0957a dt-bindings: clock: Add StarFive JH7110 system clock and reset generator
-f9df80901f49 reset: starfive: jh71x0: Use 32bit I/O on 32bit registers
-c9400fc69d3a reset: starfive: Rename "jh7100" to "jh71x0" for the common code
-8f05fdea85cd reset: starfive: Extract the common JH71X0 reset code
-28f5efaa3b06 reset: starfive: Factor out common JH71X0 reset code
-aa82ce33f593 reset: Create subdirectory for StarFive drivers
-fb87b93f6aa8 clk: starfive: Rename "jh7100" to "jh71x0" for the common code
-d73e36277d5f clk: starfive: Rename clk-starfive-jh7100.h to clk-starfive-jh71x0.h
-04611bf6db16 clk: starfive: Factor out common JH7100 and JH7110 code
+I would not be surpized if the rst is actually still there in the a1.
+It is just my guess ...
 
-Hope this can help other peoples that start to play with
-jh7110-starfive-visionfive-2-v1.3b :)
-Thanks for your work!
+> Compared with the previous SoCs, self-adaption current module
+> is newly added for A1, and there is no reset parameter except the
+> fixed pll. In A1 PLL, the PLL enable sequence is different, using
+> the new power-on sequence to enable the PLL.
 
-Regards,
-Tommaso
+Please split this patch:
+#1 make the rst optional (if you must)
+#2 add the self current adapt param.
 
-[1] https://github.com/hal-feng/linux/commits/visionfive2-minimal
-[2] https://github.com/starfive-tech/linux/tree/JH7110_VisionFive2_upstream
+Apart from this, it looks good
 
-> 
-> Best regards,
-> Hal
+>
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+> ---
+>  drivers/clk/meson/clk-pll.c | 47 +++++++++++++++++++++++++++++++------
+>  drivers/clk/meson/clk-pll.h |  2 ++
+>  2 files changed, 42 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+> index afefeba6e458..56ec2210f1ad 100644
+> --- a/drivers/clk/meson/clk-pll.c
+> +++ b/drivers/clk/meson/clk-pll.c
+> @@ -295,10 +295,14 @@ static int meson_clk_pll_init(struct clk_hw *hw)
+>  	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+>  
+>  	if (pll->init_count) {
+> -		meson_parm_write(clk->map, &pll->rst, 1);
+> +		if (MESON_PARM_APPLICABLE(&pll->rst))
+> +			meson_parm_write(clk->map, &pll->rst, 1);
+> +
+>  		regmap_multi_reg_write(clk->map, pll->init_regs,
+>  				       pll->init_count);
+> -		meson_parm_write(clk->map, &pll->rst, 0);
+> +
+> +		if (MESON_PARM_APPLICABLE(&pll->rst))
+> +			meson_parm_write(clk->map, &pll->rst, 0);
+>  	}
+>  
+>  	return 0;
+> @@ -309,8 +313,11 @@ static int meson_clk_pll_is_enabled(struct clk_hw *hw)
+>  	struct clk_regmap *clk = to_clk_regmap(hw);
+>  	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+>  
+> -	if (meson_parm_read(clk->map, &pll->rst) ||
+> -	    !meson_parm_read(clk->map, &pll->en) ||
+> +	if (MESON_PARM_APPLICABLE(&pll->rst) &&
+> +	    meson_parm_read(clk->map, &pll->rst))
+> +		return 0;
+> +
+> +	if (!meson_parm_read(clk->map, &pll->en) ||
+>  	    !meson_parm_read(clk->map, &pll->l))
+>  		return 0;
+>  
+> @@ -341,13 +348,34 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
+>  		return 0;
+>  
+>  	/* Make sure the pll is in reset */
+> -	meson_parm_write(clk->map, &pll->rst, 1);
+> +	if (MESON_PARM_APPLICABLE(&pll->rst))
+> +		meson_parm_write(clk->map, &pll->rst, 1);
+>  
+>  	/* Enable the pll */
+>  	meson_parm_write(clk->map, &pll->en, 1);
+>  
+>  	/* Take the pll out reset */
+> -	meson_parm_write(clk->map, &pll->rst, 0);
+> +	if (MESON_PARM_APPLICABLE(&pll->rst))
+> +		meson_parm_write(clk->map, &pll->rst, 0);
+> +
+> +	/*
+> +	 * Compared with the previous SoCs, self-adaption current module
+> +	 * is newly added for A1, keep the new power-on sequence to enable the
+> +	 * PLL. The sequence is:
+> +	 * 1. enable the pll, delay for 10us
+> +	 * 2. enable the pll self-adaption current module, delay for 40us
+> +	 * 3. enable the lock detect module
+> +	 */
+> +	if (MESON_PARM_APPLICABLE(&pll->current_en)) {
+> +		usleep_range(10, 20);
+> +		meson_parm_write(clk->map, &pll->current_en, 1);
+> +		usleep_range(40, 50);
+> +	};
+> +
+> +	if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
+> +		meson_parm_write(clk->map, &pll->l_detect, 1);
+> +		meson_parm_write(clk->map, &pll->l_detect, 0);
+> +	}
+>  
+>  	if (meson_clk_pll_wait_lock(hw))
+>  		return -EIO;
+> @@ -361,10 +389,15 @@ static void meson_clk_pll_disable(struct clk_hw *hw)
+>  	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+>  
+>  	/* Put the pll is in reset */
+> -	meson_parm_write(clk->map, &pll->rst, 1);
+> +	if (MESON_PARM_APPLICABLE(&pll->rst))
+> +		meson_parm_write(clk->map, &pll->rst, 1);
+>  
+>  	/* Disable the pll */
+>  	meson_parm_write(clk->map, &pll->en, 0);
+> +
+> +	/* Disable PLL internal self-adaption current module */
+> +	if (MESON_PARM_APPLICABLE(&pll->current_en))
+> +		meson_parm_write(clk->map, &pll->current_en, 0);
+>  }
+>  
+>  static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+> diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
+> index 367efd0f6410..a2228c0fdce5 100644
+> --- a/drivers/clk/meson/clk-pll.h
+> +++ b/drivers/clk/meson/clk-pll.h
+> @@ -36,6 +36,8 @@ struct meson_clk_pll_data {
+>  	struct parm frac;
+>  	struct parm l;
+>  	struct parm rst;
+> +	struct parm current_en;
+> +	struct parm l_detect;
+>  	const struct reg_sequence *init_regs;
+>  	unsigned int init_count;
+>  	const struct pll_params_table *table;
+
