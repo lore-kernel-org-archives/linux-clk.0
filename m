@@ -2,167 +2,110 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A7D3C61DA4
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 01:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8587AC61DA4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 02:02:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229593AbjCFBVf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 5 Mar 2023 20:21:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51648 "EHLO
+        id S229570AbjCFCCj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 5 Mar 2023 21:02:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbjCFBVe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Mar 2023 20:21:34 -0500
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6819C168
-        for <linux-clk@vger.kernel.org>; Sun,  5 Mar 2023 17:21:31 -0800 (PST)
-Received: by mail-yb1-xb29.google.com with SMTP id y144so6619010yby.12
-        for <linux-clk@vger.kernel.org>; Sun, 05 Mar 2023 17:21:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=t4EaRQ3PQLnaSbIzJ1xDrG/yiuAekyCN/l27BB6BVow=;
-        b=hng/kQMZutgEdyE/gzZW30gqgQ7LhVkUP++nEdIxm37bN7/TPqJpom5c9XZhaF3KC3
-         C65H1wvNutb3l5fwFHyYHsqQAf+OoAgW8AAmWiweaxAbQWCCDuLArB73Wtifyx7rIi0X
-         GtV6s26Fvb2bfmz2QF9XXBCnfCA+TXvz8+/5yLs2b1gJGCgRvzZS9zrdLRwNZwxo9EGB
-         J4NZ1Y/lzgYfkpoQ1SZabVD3GOCw0vIfOZfN8lUwwKW0e77Xcn13T6TPNDscFNd2xWWA
-         BiFSyTmzY/GahaEP2InsRI+5MWzJ1B3eBOC/CdeuydrgLVpbtgOa8YkOF/pFrY+5btI/
-         2mNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t4EaRQ3PQLnaSbIzJ1xDrG/yiuAekyCN/l27BB6BVow=;
-        b=G2hUno+H5YmLPWjk3G5cp2AgZ48Gfv1WTxMQS7ZjWnDtqHBfCFD/EgNM0EG/5wi0ck
-         Zv2JABA8hbhsfBCdqc7ANLKaCeTakzFazC3wnICiIm7TTSp6o4/C7pM0D9TJxnFjhqsJ
-         itbzZ/rjxA0Xt96lcw2bXPmb0XikPb76htccOWDIlF8KTggc8hGxcSe7QRZPeeKF6Pgk
-         W+UvROpCkLNjSQUaY7I0Gsi+vAmRa4mJYGfsWTdSouvV81XpE+9RVx2Q0QQbkD/ruRuQ
-         r+MoA46ijC8t+hJDIEKZ1KQMlxpzRIOXBV/KuSd78sfArVYXlRq7mvSd/rWbgDlhoiP8
-         IEyw==
-X-Gm-Message-State: AO0yUKU3y8er/P6yU2qKNyrPWIcGBCwxCi+Vw4eZeksTVDSUrtRyThsA
-        3Grk3fjiT1pawXF/V6dZjF6N/jQut1Mc+/wggjsJ7A==
-X-Google-Smtp-Source: AK7set/GU8d4vjOxKd9fbYvSIG9uMb8Ul4SqQMbcOJrl45wmlirEe13RLR166rNZVHUvwShRO6tBgScmojzDuTIO1CU=
-X-Received: by 2002:a25:9b48:0:b0:a8a:a652:2a69 with SMTP id
- u8-20020a259b48000000b00a8aa6522a69mr4075875ybo.10.1678065690998; Sun, 05 Mar
- 2023 17:21:30 -0800 (PST)
-MIME-Version: 1.0
-References: <20230303-topic-rpmcc_sleep-v1-0-d9cfaf9b27a7@linaro.org> <20230303-topic-rpmcc_sleep-v1-3-d9cfaf9b27a7@linaro.org>
-In-Reply-To: <20230303-topic-rpmcc_sleep-v1-3-d9cfaf9b27a7@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Mon, 6 Mar 2023 03:21:24 +0200
-Message-ID: <CAA8EJpp6cxY5+L28qsTeXCmA31e4dv21u1Tz9SquAugaV+EqfQ@mail.gmail.com>
-Subject: Re: [PATCH RFT 03/20] clk: qcom: smd-rpm: Add support for keepalive votes
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        with ESMTP id S229540AbjCFCCi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Mar 2023 21:02:38 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56C0212853;
+        Sun,  5 Mar 2023 18:02:36 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7155860B67;
+        Mon,  6 Mar 2023 02:02:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34FC7C433D2;
+        Mon,  6 Mar 2023 02:02:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678068155;
+        bh=Z/pfCgpFoEEHv7JcHJ6XnWQ3ENGLr+0L1mCke+Jm2IQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=h1qn3Qnq9ADu9N5IFa3vlUdv+8/g8WhMnFTZ0mkEx/YORQUtbGCzGpwUUxsouVJM7
+         JHCM38DmbjZWOmy4AZjo5nvWw32qJaYF/8uT11+Ksa2VYAbofgRpjt3O9T0WnEzi+k
+         bG7MaoDj9shn7Wc/bZ/4hpyjR3YWQTGfI9Hwvt3RZhiji27G7Ex/ywiAwNo4CaDWM2
+         OhBbQM7xPgatwh2lY6CLsiNHoovMflRhW+f6C8QhPP17AHUsw25uNx7Poqx3G+8pFy
+         qspD/tG3xiuZ8Lh3+A6aYfOqFIE1ZrIH1gP0i6qBmbe0W7UFBeib2XvCxHcFUmLwQG
+         LMimPrjLJfVdA==
+Date:   Mon, 6 Mar 2023 10:02:26 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Abel Vesa <abelvesa@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        kernel@pengutronix.de, Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v3 00/19] ARM: imx: make Ethernet refclock configurable
+Message-ID: <20230306020226.GC143566@dragon>
+References: <20230131084642.709385-1-o.rempel@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230131084642.709385-1-o.rempel@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 4 Mar 2023 at 15:27, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->
-> Some bus clock should always have a minimum (19.2 MHz) vote cast on
-> them, otherwise the platform will fall apart, hang and reboot.
->
-> Add support for specifying which clocks should be kept alive and
-> always keep a vote on XO_A to make sure the clock tree doesn't
-> collapse. This removes the need to keep a maximum vote that was
-> previously guaranteed by clk_smd_rpm_handoff.
->
-> This commit is a combination of existing (not-exactly-upstream) work
-> by Taniya Das, Shawn Guo and myself.
->
-> Co-developed-by: Shawn Guo <shawn.guo@linaro.org>
-> Co-developed-by: Taniya Das <quic_tdas@quicinc.com>
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->  drivers/clk/qcom/clk-smd-rpm.c | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
->
-> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-> index cce7daa97c1e..8e017c575361 100644
-> --- a/drivers/clk/qcom/clk-smd-rpm.c
-> +++ b/drivers/clk/qcom/clk-smd-rpm.c
-> @@ -4,6 +4,7 @@
->   * Copyright (c) 2014, The Linux Foundation. All rights reserved.
->   */
->
-> +#include <linux/clk.h>
->  #include <linux/clk-provider.h>
->  #include <linux/err.h>
->  #include <linux/export.h>
-> @@ -178,6 +179,8 @@ struct clk_smd_rpm_req {
->  struct rpm_smd_clk_desc {
->         struct clk_smd_rpm **clks;
->         size_t num_clks;
-> +       struct clk_hw **keepalive_clks;
-> +       size_t num_keepalive_clks;
->  };
->
->  static DEFINE_MUTEX(rpm_smd_clk_lock);
-> @@ -1278,6 +1281,7 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
->         struct qcom_smd_rpm *rpm;
->         struct clk_smd_rpm **rpm_smd_clks;
->         const struct rpm_smd_clk_desc *desc;
-> +       struct clk_hw **keepalive_clks;
->
->         rpm = dev_get_drvdata(pdev->dev.parent);
->         if (!rpm) {
-> @@ -1291,6 +1295,7 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
->
->         rpm_smd_clks = desc->clks;
->         num_clks = desc->num_clks;
-> +       keepalive_clks = desc->keepalive_clks;
->
->         for (i = 0; i < num_clks; i++) {
->                 if (!rpm_smd_clks[i])
-> @@ -1321,6 +1326,24 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
->         if (ret)
->                 goto err;
->
-> +       /* Leave a permanent active vote on clocks that require it. */
-> +       for (i = 0; i < desc->num_keepalive_clks; i++) {
-> +               if (WARN_ON(!keepalive_clks[i]))
-> +                       continue;
-> +
-> +               ret = clk_prepare_enable(keepalive_clks[i]->clk);
-> +               if (ret)
-> +                       return ret;
+On Tue, Jan 31, 2023 at 09:46:23AM +0100, Oleksij Rempel wrote:
+> changes v3:
+> - add Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+> - rebase on top of abelvesa/for-next
+> 
+> changes v2:
+> - remove "ARM: imx6q: use of_clk_get_by_name() instead of_clk_get() to
+>   get ptp clock" patch
+> - fix build warnings
+> - add "Acked-by: Lee Jones <lee@kernel.org>"
+> - reword some commits as suggested by Fabio
+> 
+> Most of i.MX SoC variants have configurable FEC/Ethernet reference
+> lock
+> used by RMII specification. This functionality is located in the
+> general purpose registers (GRPx) and till now was not implemented as
+> part of SoC clock tree.
+> 
+> With this patch set, we move forward and add this missing functionality
+> to some of i.MX clk drivers. So, we will be able to configure clock
+> opology
+> by using devicetree and be able to troubleshoot clock dependencies
+> by using clk_summary etc.
+> 
+> Currently implemented and tested i.MX6Q, i.MX6DL and i.MX6UL variants.
+> 
+> 
+> Oleksij Rempel (19):
+>   clk: imx: add clk-gpr-mux driver
+>   clk: imx6q: add ethernet refclock mux support
+>   ARM: imx6q: skip ethernet refclock reconfiguration if enet_clk_ref is
+>     present
+>   ARM: dts: imx6qdl: use enet_clk_ref instead of enet_out for the FEC
+>     node
+>   ARM: dts: imx6dl-lanmcu: configure ethernet reference clock parent
+>   ARM: dts: imx6dl-alti6p: configure ethernet reference clock parent
+>   ARM: dts: imx6dl-plybas: configure ethernet reference clock parent
+>   ARM: dts: imx6dl-plym2m: configure ethernet reference clock parent
+>   ARM: dts: imx6dl-prtmvt: configure ethernet reference clock parent
+>   ARM: dts: imx6dl-victgo: configure ethernet reference clock parent
+>   ARM: dts: imx6q-prtwd2: configure ethernet reference clock parent
+>   ARM: dts: imx6qdl-skov-cpu: configure ethernet reference clock parent
+>   ARM: dts: imx6dl-eckelmann-ci4x10: configure ethernet reference clock
+>     parent
+>   clk: imx: add imx_obtain_fixed_of_clock()
+>   clk: imx6ul: fix enet1 gate configuration
+>   clk: imx6ul: add ethernet refclock mux support
+>   ARM: dts: imx6ul: set enet_clk_ref to CLK_ENETx_REF_SEL
+>   ARM: mach-imx: imx6ul: remove not optional ethernet refclock overwrite
+>   ARM: dts: imx6ul-prti6g: configure ethernet reference clock parent
 
-Would it be better to use CLK_IS_CRITICAL instead? Using the existing
-API has a bonus that it is more visible compared to the ad-hoc
-solutions.
-
-> +
-> +               ret = clk_set_rate(keepalive_clks[i]->clk, 19200000);
-
-Don't we also need to provide a determine_rate() that will not allow
-one to set clock frequency below 19.2 MHz?
-
-> +               if (ret)
-> +                       return ret;
-> +       }
-> +
-> +       /* Keep an active vote on CXO in case no other driver votes for it. */
-> +       if (rpm_smd_clks[RPM_SMD_XO_A_CLK_SRC])
-> +               return clk_prepare_enable(rpm_smd_clks[RPM_SMD_XO_A_CLK_SRC]->hw.clk);
-> +
->         return 0;
->  err:
->         dev_err(&pdev->dev, "Error registering SMD clock driver (%d)\n", ret);
-
-
-I have mixed feelings towards this patch (and the rest of the
-patchset). It looks to me like we are trying to patch an issue of the
-interconnect drivers (or in kernel configuration).
-
-
---
-With best wishes
-Dmitry
+Applied all mach-imx and DTS ones, thanks!
