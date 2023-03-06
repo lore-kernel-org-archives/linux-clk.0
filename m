@@ -2,116 +2,80 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D57C61DA4
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 15:51:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59EF4C64EC4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 17:25:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229911AbjCFPvk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Mar 2023 10:51:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60384 "EHLO
+        id S229600AbjCFRZs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Mar 2023 12:25:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230154AbjCFPvk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 10:51:40 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 882DF36476
-        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 07:51:37 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id s11so40488047edy.8
-        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2023 07:51:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678117896;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=t5WKaU91nJ+P694TRYOMgx3cq+DGCFPwL6ikgUxC3C8=;
-        b=ESjcJLj063dMnQZWJplGSMwup2iaf+HjpoquiqJhkDgqe+Bwe6KLmnVVMs75iGiqRx
-         Vr7OqpYnid1HjGlasFK+9AhAlB5S4IHdRaeE/MWdSmSHDascJfwiIIieyVNjC3qXv56F
-         cbaFPprTTejA/Ub9UwI0JUHkt+6AktbMoISxFB9Dm4DzWvxl/s9nj4l1nVolAUlQNaeq
-         NRcq0O1+qSCYXKjQcUioybt/B+ExBG9Qdq+9ayEOYY0NnfidFsmtP6dFJ6uZ7ch/mSL7
-         W5subhoHbAsx1NXexaN2YeqvF7Fv6QOC7RFeQQlenvKCZcVsvUJCf9r/K/FrhKb2+BS0
-         yyFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678117896;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t5WKaU91nJ+P694TRYOMgx3cq+DGCFPwL6ikgUxC3C8=;
-        b=xaaRX2cZ+Qj8b1Omv6zn6b5nCxH7/cPwfnIL8LnhH8UYBeEL8GtSzLtGY8Ad1OqjUr
-         g+UTNKX2i+Eh1oh5IUb7ti9zHgUgPm+YguboSq3JEZq/vRRUSIt82LthlvIT5Rr3xdaO
-         K19pV/jFBor+1b/SOcuCXYXhrcp4xuPXkENFPmZJ0m8FYphWzIIJf9v5JjFzFDiv07HH
-         UmdnSyxWaXhVbY2LcoadH3mApeRVP6DOYyvUwjAzfrnAK5Kdt4OCzYM3WTpHNIko8tsi
-         MkPTP1Llols+2bdwn0hLixAj7HdDDjQNz9kJeu6RCkb5l4cB4iLOGkIQyJwrniVE/MWL
-         6zeg==
-X-Gm-Message-State: AO0yUKVSQPIlWuwWonTDiQPfgb3dHfwU+HGYHscO10/M38yIFjX0b/+Z
-        7NR1Nsqhe+hsUt02dEJKMdDDYA==
-X-Google-Smtp-Source: AK7set9lwg+x+76RsWJ6nVbbLxkGydKTP4r6kdOcHarLbeeJ9W9GJHfsJJMd5ctUdgw3OxunMd+uEA==
-X-Received: by 2002:aa7:c2d4:0:b0:4ae:eab6:9ff8 with SMTP id m20-20020aa7c2d4000000b004aeeab69ff8mr11998310edp.13.1678117896054;
-        Mon, 06 Mar 2023 07:51:36 -0800 (PST)
-Received: from ?IPV6:2a02:810d:15c0:828:c1e7:5006:98ac:f57? ([2a02:810d:15c0:828:c1e7:5006:98ac:f57])
-        by smtp.gmail.com with ESMTPSA id n26-20020a50c21a000000b004a27046b7a7sm5320836edf.73.2023.03.06.07.51.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Mar 2023 07:51:35 -0800 (PST)
-Message-ID: <48c8a0cf-08dc-a831-33ef-3b8e32eef2d3@linaro.org>
-Date:   Mon, 6 Mar 2023 16:51:34 +0100
+        with ESMTP id S229636AbjCFRZr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 12:25:47 -0500
+X-Greylist: delayed 431 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 06 Mar 2023 09:25:05 PST
+Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [IPv6:2001:4b7a:2000:18::167])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38CD567037
+        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 09:25:05 -0800 (PST)
+Received: from SoMainline.org (unknown [89.205.226.44])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id D0A763EBA5;
+        Mon,  6 Mar 2023 18:11:58 +0100 (CET)
+Date:   Mon, 6 Mar 2023 18:11:55 +0100
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        agross@kernel.org, Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: Print an info line before disabling unused clocks
+Message-ID: <20230306171155.nry43s42l3rtdojo@SoMainline.org>
+References: <20230306134108.3099396-1-konrad.dybcio@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v2 0/6] clk: samsung: exynos850: Add missing clocks for PM
-Content-Language: en-US
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Chanho Park <chanho61.park@samsung.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        David Virag <virag.david003@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>
-References: <20230223042133.26551-1-semen.protsenko@linaro.org>
- <167811290503.11716.15730246749418548221.b4-ty@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <167811290503.11716.15730246749418548221.b4-ty@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230306134108.3099396-1-konrad.dybcio@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/03/2023 15:28, Krzysztof Kozlowski wrote:
-> On Wed, 22 Feb 2023 22:21:27 -0600, Sam Protsenko wrote:
->> As a part of preparation for PM enablement in Exynos850 clock driver,
->> this patch series implements CMU_G3D, and also main gate clocks for AUD
->> and HSI CMUs. The series brings corresponding changes to bindings, the
->> driver and SoC dts file.
->>
->> Changes in v2:
->>   - Rebased all patches on top of the most recent soc/for-next tree
->>   - Added A-b and R-b tags
->>   - Minor fixes
->>
->> [...]
+On 2023-03-06 14:41:08, Konrad Dybcio wrote:
+> Currently, the regulator framework informs us before calling into
+> their unused cleanup paths, which eases at least some debugging. The
+> same could be beneficial for clocks, so that random shutdowns shortly
+> after most initcalls are done can be less of a guess.
 > 
-> Applied, thanks!
+> Add a pr_info before disabling unused clocks to do so.
 > 
-> [1/6] dt-bindings: clock: exynos850: Add Exynos850 CMU_G3D
->       https://git.kernel.org/krzk/linux/c/067ba1605806e52118bb598afb357718df9f0e19
-> [2/6] dt-bindings: clock: exynos850: Add AUD and HSI main gate clocks
->       https://git.kernel.org/krzk/linux/c/e289665ed0d6df9fca3ebc128f1232d305e4600b
-> [3/6] clk: samsung: clk-pll: Implement pll0818x PLL type
->       https://git.kernel.org/krzk/linux/c/a6feedab8ab9a9e4483deb0bcc87919d92c88b7e
-> [4/6] clk: samsung: exynos850: Implement CMU_G3D domain
->       https://git.kernel.org/krzk/linux/c/c5704a56893b4e77e434597c7c53d878bb3073b0
-> [5/6] clk: samsung: exynos850: Add AUD and HSI main gate clocks
->       https://git.kernel.org/krzk/linux/c/d8d12e0d079aff4b1d8079a0a55944c0596f1d67
-> [6/6] arm64: dts: exynos: Add CMU_G3D node for Exynos850 SoC
->       https://git.kernel.org/krzk/linux/c/ad8f6ad9a4f219950df65731a8ff91baa022c4b0
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>  drivers/clk/clk.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index ae07685c7588..827a51fe6653 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1404,7 +1404,8 @@ static int __init clk_disable_unused(void)
+>  	if (clk_ignore_unused) {
+>  		pr_warn("clk: Not disabling unused clocks\n");
+>  		return 0;
+> -	}
+> +	} else
 
-And builds are broken. Please mention in cover letter or commit
-dependencies and ordering...
+You shouldn't need an else here, as the if body above returns.  That
+also aligns this pr_info with the actual code that performs the clk
+disablement.
 
-Best regards,
-Krzysztof
+With that fxed, thanks a lot for this useful info in dmesg! Feel free to
+add my r-b.
 
+- Marijn
+
+> +		pr_info("clk: Disabling unused clocks\n");
+>  
+>  	clk_prepare_lock();
+>  
+> -- 
+> 2.39.2
+> 
