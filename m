@@ -2,150 +2,103 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E5FC678D4
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 14:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91EA6C678D4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 14:06:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230190AbjCFOEc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Mar 2023 09:04:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60060 "EHLO
+        id S230011AbjCFOGR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Mar 2023 09:06:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229483AbjCFOE2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 09:04:28 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB41F1A947
-        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 06:04:20 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id s22so12840854lfi.9
-        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2023 06:04:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678111459;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KWRTdlHpgyAnKLxEj2H9HwDl4XdQfL0+b/sTa7A8fK8=;
-        b=uN3BUmzqfupm/CDaSHZwd6ACmy1ANEZaPp9pOx2vZF2LkQe2wjp4ZmiQ/CnLVAt6zS
-         B+Yggzdf3CXnsuw0JB9r6qOKTjsS2rL9KIjOgxQGGCZRN+CdshwozPPSWFOOT+08V86+
-         1c0G8/wo5k2k0jkV7X1rbLmmI3v3a+ycD7olk5PqsKByQfQS0C2iafE9lbKi1Nhq2OH/
-         CVzjGHR6n/CTs4osYqFcqEiWC27jZXfehdm6RJtetsi3x5yxfNEBSB1wpoT3UE4aumlM
-         Pii2ZnfawDOKe/A40ld/1+j3euA/KtAZ/K2UTpvg1vleHq/Dr61ffs3drDRR0R9wScTv
-         aqHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678111459;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KWRTdlHpgyAnKLxEj2H9HwDl4XdQfL0+b/sTa7A8fK8=;
-        b=klpsPqKR44M7UcUDehx/IJL/yhWO0wN2faWZokz1GGOqBdrF/AudUARCkapjED9B3U
-         SL8hFfMOnuC/2Q0QpoNRuV6THe3vWlnl43EBuzXF08CXYfbPgbU2iBhgW0RixkH8LV1F
-         Memt+znFUtbxlzNf5P4geNmUx60uN5nDuAL30CxPHyGMIlyli4gJ2m+e3Ix69hh8iD9n
-         iZQ3oV9+M83Juei//lJLNhB2txsk7S2Wj154YSbijfq5wOjqrA2DGXfhCWYhZf9T5BE4
-         XGhAUHOM+ivZYDkum04UVBC/Ge7N4ymBBj/CyuuTWSmn/FF8o9YJlwHzSAJES0AF6Ic9
-         lSTw==
-X-Gm-Message-State: AO0yUKUji93Qwid6mrGkgb+HizOdSZlX/X04PMT2o2ehkLEzHqdgrykC
-        6NnEpTNkrShzx0+tx2yMvy5oJg==
-X-Google-Smtp-Source: AK7set/OkOOsUmXuVK4imZlLDP1IyOB1m4u5y1VSrI+UbKHeFhKm5a+6WSZulwmwUQHUv3ET1yzvYA==
-X-Received: by 2002:a19:5519:0:b0:4db:3847:12f0 with SMTP id n25-20020a195519000000b004db384712f0mr3452173lfe.50.1678111458925;
-        Mon, 06 Mar 2023 06:04:18 -0800 (PST)
-Received: from [192.168.1.101] (abym99.neoplus.adsl.tpnet.pl. [83.9.32.99])
-        by smtp.gmail.com with ESMTPSA id q8-20020ac246e8000000b004b6efcb7bb5sm1651026lfo.169.2023.03.06.06.04.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Mar 2023 06:04:18 -0800 (PST)
-Message-ID: <27109715-ffda-2a4a-ee67-886713103d49@linaro.org>
-Date:   Mon, 6 Mar 2023 15:04:16 +0100
+        with ESMTP id S230034AbjCFOGQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 09:06:16 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D839730B04;
+        Mon,  6 Mar 2023 06:05:51 -0800 (PST)
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id BC9606602E18;
+        Mon,  6 Mar 2023 14:05:48 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1678111550;
+        bh=qfTxwFXUn9HQN99XyeVLlxQ4VDRENP6/4omtVDPugdo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Pr2gkVlH0mS9pM9Vj4kg9qG05SSrjka+vIYCzYST0PRjnzQjUh/92y/rSiw4Y86Kt
+         1gAbdOB/a+lvv+vR+earTjYmABcxDyQYxaKy0hyQ7WE7Up9ubMZRCYUKm57LOnpOk5
+         3DdEDq+HKAajqhSZS2JjfjzqXxT/OhEMzY+niKma/J5oCYc+LtTmCog1P2W4eRXfzv
+         q2ivwDuIb6W5jxy/6Qscimm1NCJx5JumiH+53yqDYdt1wLDB1WMHF0Pi2qCerPmUMW
+         eQqXPzNjqXEm3Pp5BNbSmG7qC4aLB0GWJyc6G07XT5RpMO+WWF7uUBemX/BmF1KloD
+         DTcfzLWcXb9Ew==
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+To:     mturquette@baylibre.com
+Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
+        angelogioacchino.delregno@collabora.com, wenst@chromium.org,
+        johnson.wang@mediatek.com, miles.chen@mediatek.com,
+        chun-jie.chen@mediatek.com, daniel@makrotopia.org,
+        fparent@baylibre.com, msp@baylibre.com, nfraprado@collabora.com,
+        rex-bc.chen@mediatek.com, zhaojh329@gmail.com,
+        sam.shih@mediatek.com, edward-jw.yang@mediatek.com,
+        yangyingliang@huawei.com, granquet@baylibre.com,
+        pablo.sun@mediatek.com, sean.wang@mediatek.com,
+        chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel@collabora.com
+Subject: [PATCH v6 01/54] clk: mediatek: clk-mtk: Switch to device_get_match_data()
+Date:   Mon,  6 Mar 2023 15:04:50 +0100
+Message-Id: <20230306140543.1813621-2-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230306140543.1813621-1-angelogioacchino.delregno@collabora.com>
+References: <20230306140543.1813621-1-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH RFT 03/20] clk: qcom: smd-rpm: Add support for keepalive
- votes
-Content-Language: en-US
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-References: <20230303-topic-rpmcc_sleep-v1-0-d9cfaf9b27a7@linaro.org>
- <20230303-topic-rpmcc_sleep-v1-3-d9cfaf9b27a7@linaro.org>
- <CAA8EJpp6cxY5+L28qsTeXCmA31e4dv21u1Tz9SquAugaV+EqfQ@mail.gmail.com>
- <afa95a2d-dbf3-621e-a1ed-fa484d288432@linaro.org>
-In-Reply-To: <afa95a2d-dbf3-621e-a1ed-fa484d288432@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Instead of using of_device_get_match_data(), switch to the generic
+device_get_match_data().
 
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+Tested-by: Miles Chen <miles.chen@mediatek.com>
+Tested-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+ drivers/clk/mediatek/clk-mtk.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-On 6.03.2023 12:28, Konrad Dybcio wrote:
-> 
-> 
-> On 6.03.2023 02:21, Dmitry Baryshkov wrote:
->> On Sat, 4 Mar 2023 at 15:27, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->>>
->>> Some bus clock should always have a minimum (19.2 MHz) vote cast on
->>> them, otherwise the platform will fall apart, hang and reboot.
->>>
->>> Add support for specifying which clocks should be kept alive and
->>> always keep a vote on XO_A to make sure the clock tree doesn't
->>> collapse. This removes the need to keep a maximum vote that was
->>> previously guaranteed by clk_smd_rpm_handoff.
->>>
->>> This commit is a combination of existing (not-exactly-upstream) work
->>> by Taniya Das, Shawn Guo and myself.
->>>
->>> Co-developed-by: Shawn Guo <shawn.guo@linaro.org>
->>> Co-developed-by: Taniya Das <quic_tdas@quicinc.com>
->>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->>> ---
-[...]
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index 14e8b64a32a3..f0b723372b52 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -12,7 +12,6 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ 
+@@ -471,7 +470,7 @@ int mtk_clk_simple_probe(struct platform_device *pdev)
+ 	void __iomem *base;
+ 	int num_clks, r;
+ 
+-	mcd = of_device_get_match_data(&pdev->dev);
++	mcd = device_get_match_data(&pdev->dev);
+ 	if (!mcd)
+ 		return -EINVAL;
+ 
+@@ -586,7 +585,7 @@ EXPORT_SYMBOL_GPL(mtk_clk_simple_probe);
+ 
+ int mtk_clk_simple_remove(struct platform_device *pdev)
+ {
+-	const struct mtk_clk_desc *mcd = of_device_get_match_data(&pdev->dev);
++	const struct mtk_clk_desc *mcd = device_get_match_data(&pdev->dev);
+ 	struct clk_hw_onecell_data *clk_data = platform_get_drvdata(pdev);
+ 	struct device_node *node = pdev->dev.of_node;
+ 
+-- 
+2.39.2
 
->>
->>> +
->>> +               ret = clk_set_rate(keepalive_clks[i]->clk, 19200000);
->>
->> Don't we also need to provide a determine_rate() that will not allow
->> one to set clock frequency below 19.2 MHz?
-> Hm, sounds like a good idea..
-Thinking about it again, I'd have to do it before the clocks are registered
-and we'd either end up with 2 loops, one assigning the CLK_IS_CRITICAL flag
-and the other one setting the rate.. Will that not be too hacky?
-
-Konrad
-
-> 
->>
->>> +               if (ret)
->>> +                       return ret;
->>> +       }
->>> +
->>> +       /* Keep an active vote on CXO in case no other driver votes for it. */
->>> +       if (rpm_smd_clks[RPM_SMD_XO_A_CLK_SRC])
->>> +               return clk_prepare_enable(rpm_smd_clks[RPM_SMD_XO_A_CLK_SRC]->hw.clk);
->>> +
->>>         return 0;
->>>  err:
->>>         dev_err(&pdev->dev, "Error registering SMD clock driver (%d)\n", ret);
->>
->>
->> I have mixed feelings towards this patch (and the rest of the
->> patchset). It looks to me like we are trying to patch an issue of the
->> interconnect drivers (or in kernel configuration).
-> Well, as you noticed, this patch tries to address a situation where a
-> critical clock could be disabled. The interconnect driver (as per my
-> other recent patchset) also has a concept of "keepalive", but:
-> 
-> 1. not very many SoCs already have a functional icc driver
-> 2. devices with an existing interconnect driver should also be
->    testable without one (through painful ripping out everything-icc
->    from the dts) for regression tracking
-> 
-> Konrad
-> 
->>
->>
->> --
->> With best wishes
->> Dmitry
