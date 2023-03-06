@@ -2,181 +2,96 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D666EC678D4
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 13:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95432C678D4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 13:41:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231175AbjCFNjJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Mar 2023 08:39:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54696 "EHLO
+        id S229695AbjCFNlS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Mar 2023 08:41:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229494AbjCFNjH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 08:39:07 -0500
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B38D624CA7
-        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 05:39:05 -0800 (PST)
-Received: from [192.168.1.141] ([37.4.248.41]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1M9qYn-1pcDlx3J3d-005s3b; Mon, 06 Mar 2023 14:33:24 +0100
-Message-ID: <953ee705-47a7-3f6b-408e-9d74f3bc30b4@i2se.com>
-Date:   Mon, 6 Mar 2023 14:33:24 +0100
+        with ESMTP id S229764AbjCFNlS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 08:41:18 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AF312FCDC
+        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 05:41:12 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id bi9so12803260lfb.2
+        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2023 05:41:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678110071;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=demFJEUEpJvdhO0WfS6d2haBUZGb3Sc0QF/0m+krW4o=;
+        b=SqlmKiqV1vvIob8AbIAmc6V0U38ABCSpa4IH6mKnNa4t68QesWeBXA6TjMGMTwLooI
+         ui/ym4oTLhGUKS6elVsQxoAMGuRbRAOGWIW+ZN5ermjOq9+Fgp8RHFJMfphta1fTLXQL
+         QuouQkkMhWdASN4Ub7qYR0j9sio0ezffv4YWGXlgpzquCvUoUBiIyBont+lzUrEYH2yf
+         Bn53vF3yPhVS/nCR8zEKJ85ap0XK56WdgtnNXtSBAClf4nfrJZ78IKOGIdbEI5rtjPdy
+         g6hz1BDA+VV7Dvkx7+x6YMcWRCUfodwSzrBlQ057vpwB/l7xM28lfAdKWxi1HGuo4yPu
+         mH5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678110071;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=demFJEUEpJvdhO0WfS6d2haBUZGb3Sc0QF/0m+krW4o=;
+        b=j6YyLBf8OVGhxxbL6EJtEpfCgSMlicTDclhLtPiB/bUIn/xJhl7ktwUnypNKIfNSwR
+         An9rXW4XYe8eNwkqjW//7JIdCL6Xz1YCnNdhWi+jkqQIz+viNH6rfpGTdgnoxSEt4IBc
+         0uXM8hvh6Vn/Kl1FjUM8be1qd+OpDe9oLUz4v43hJeN5ntaqUerWGrpJGTtSmgCyv6Zg
+         lKzmHdzkAaRrq1TqY2m7Nrtc5N25H9nNKf7ZTx6KeB5susM+Jk/RUNr/pK8u6x5EdbXU
+         TSUDYHK46HeW1L7qwZCVHxtOdehoDHUX9tFxRTFKYu4+mhaFTcuhRWJKaQ2fDcWxQNwY
+         Ra6g==
+X-Gm-Message-State: AO0yUKVHmdEg1Ju0P2mlS7gBNx01PqcDnvloHfMA+20sIAyjuXcrv+KL
+        lDRAtPwatI9wRNjyYy/uzrb16w==
+X-Google-Smtp-Source: AK7set8OrayqTzgpgTAhV1JC15aJbJTBqVjr8AdBh/+c/wGSrcmEqdJ27+6wwIgCBa+OOEWMbJwA5w==
+X-Received: by 2002:ac2:522f:0:b0:4d8:58a7:6d90 with SMTP id i15-20020ac2522f000000b004d858a76d90mr2766511lfl.42.1678110070773;
+        Mon, 06 Mar 2023 05:41:10 -0800 (PST)
+Received: from localhost.localdomain (abym99.neoplus.adsl.tpnet.pl. [83.9.32.99])
+        by smtp.gmail.com with ESMTPSA id d11-20020ac244cb000000b004e792045b3dsm1574505lfm.106.2023.03.06.05.41.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Mar 2023 05:41:10 -0800 (PST)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+To:     linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        agross@kernel.org
+Cc:     marijn.suijten@somainline.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: Print an info line before disabling unused clocks
+Date:   Mon,  6 Mar 2023 14:41:08 +0100
+Message-Id: <20230306134108.3099396-1-konrad.dybcio@linaro.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: imx6ul: Recent enet refclock changes breaks custom i.mx6ull board
-Content-Language: en-US
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michael Heimpold <mhei@heimpold.de>,
-        Arnd Bergmann <arnd@arndb.de>
-References: <3ceda169-de1b-2c1f-9ee8-bc8fdb547433@i2se.com>
- <20230306052531.GA30081@pengutronix.de>
- <8a178040-ef52-d9ab-e704-69208d34f915@i2se.com>
- <20230306094737.GA11506@pengutronix.de>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-In-Reply-To: <20230306094737.GA11506@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:0W3sw1z7hR7zMY3nDxSeNqFIQs/DI1wASwfPSs9FgxoOG7qbZfL
- j4d0HAxGmqAw4os11f1Z5uvSYHLM7XpV96dnliRXZ0cpX2aY/RdXPwbxsBX7JAxbeeWcrvX
- GiyCkbSOBJ/mXM83HKQ2DY8x8aJLFDaB27G91YExh8rTdtNch9mUOoK6re1uLyN+3u5J7QD
- /UKbtKA3uK1l1OT8pZhxg==
-UI-OutboundReport: notjunk:1;M01:P0:QB0qtwZxuLA=;PFWn/ffXLmW4UUXCQtLlhCZ0QJ2
- UWB1iSYaxjknR3bWPiZFL3ugo+M1VTikEKdsAPKk5Y0KGuGmlGQ31vN/EvBRP4iS/NTdyjA/U
- /VNkVfuCdwC9Sq7y7YEvs0DgfBjAFnF7NUZrVqMJnicChAr74y0J9/UPcjoycFwkZ36OGlVh5
- /owvU+pbzd/ncVyAzXszz7KNi5Cp0I76mBL47Ty4CX69KQiEc4OqrhvEraJZrPsV/yVSlhb1k
- MjUjxoCtsq4QxToH9fNAdZWTIBDsShlJPDNfdFIt6Q6b2gItn/vnb29h3BwILXgviQ4XOO67k
- B2s7uF3QjrSIBjTgOscRNKPBcl9AG1PmLhh/7yC+b6hLKiqmemTtE151Iqw5BTggFfKAz7l8q
- TK3xdl8LeonhoANX11jLHYH4R6wf9QTHLLFHUZuzCi6f5H85mrtMeR98L2HuNn6W+zFuo0I2u
- SYKkwoN9/ry5N9deVACdOaffQjQZDgL+7XBm9avHfciMa42FkIAIe4RX3x37C47fGSfzzr1+G
- AGv1+HV5oUPepKf7ayUh80Vg47dBFPz8vqoIdJbkU/tXjXXhsDhDDT8M+mPouQF/agh88RKDF
- VQIEYpkW9n3Dt/I/TUSnxj8tztxdVHfDKuuo35IpbeggMprUgSFwkPdWZUOv55LLGosQPjvwJ
- lNr+8Y/5pENPZd5RLO5TbHrnmghm1JosXQ8EDCRiFw==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Oleksij,
+Currently, the regulator framework informs us before calling into
+their unused cleanup paths, which eases at least some debugging. The
+same could be beneficial for clocks, so that random shutdowns shortly
+after most initcalls are done can be less of a guess.
 
-Am 06.03.23 um 10:47 schrieb Oleksij Rempel:
-> On Mon, Mar 06, 2023 at 10:13:57AM +0100, Stefan Wahren wrote:
->> Hi Oleksij,
->>
->> Am 06.03.23 um 06:25 schrieb Oleksij Rempel:
->>> Hi Stefan,
->>>
->>> On Sun, Mar 05, 2023 at 11:16:17PM +0100, Stefan Wahren wrote:
->>>> Hi,
->>>>
->>>> we planned to submit our custom i.MX6ULL board [1] to mainline after release
->>>> of Linux 6.3-rc1, but the recent enet refclock changes breaks our Ethernet
->>>> phy:
->>>>
->>>> [    0.000000] imx:clk-gpr-mux: failed to get parent (-EINVAL)
->>>>
->>>> ...
->>>>
->>>> [   18.574595] SMSC LAN8710/LAN8720 2188000.ethernet-1:00: phy_poll_reset
->>>> failed: -110
->>>> [   18.581064] fec 2188000.ethernet eth0: Unable to connect to phy
->>>>
->>>> I narrow down the PHY issue to this first bad commit:
->>>>
->>>> 5f82bfced611 ("clk: imx6ul: fix enet1 gate configuration")
->>>>
->>>> The clock issues seems to be cause by the following commit. If i revert
->>>> 5f82bfced611 and 4e197ee880c24 or use Linux 6.2 everything is fine.
->>> It looks like in your kernel version are some missing patches. Can you please
->>> rebase your patches on top of this branch:
->>> https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git/log/?h=for-next
->> thanks for your fast reply. But i rebased my patches against Linux v6.3-rc1
->> since this was released yesterday and should contain all patches from Shawn.
-> No, it is not. Related DTS changes are not included in to v6.3-rc1.
+Add a pr_info before disabling unused clocks to do so.
 
-Sorry, i didn't noticed that Shawn already rebased his for-next changes 
-on top of v6.3-rc1.
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+ drivers/clk/clk.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-So, the problem is that your clk changes has been applied for 6.3, but 
-the necessary arm changes will land in 6.4? :-(
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index ae07685c7588..827a51fe6653 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1404,7 +1404,8 @@ static int __init clk_disable_unused(void)
+ 	if (clk_ignore_unused) {
+ 		pr_warn("clk: Not disabling unused clocks\n");
+ 		return 0;
+-	}
++	} else
++		pr_info("clk: Disabling unused clocks\n");
+ 
+ 	clk_prepare_lock();
+ 
+-- 
+2.39.2
 
->
->> I also changed the clockref in my DTSI file:
->>
->> https://github.com/chargebyte/linux/commits/v6.3-tarragon-v3
->>
->> Now the PHY issue disappeared and ethernet is working, but the
->>
->> imx:clk-gpr-mux: failed to get parent (-EINVAL)
-> I need to take a look at it. It should not be critical.
-
-I prepared a patch [1] to improve the debugging here:
-
-[    0.000000] Entry 262144 != val 0
-[    0.000000] Entry 16384 != val 0
-[    0.000000] imx:clk-gpr-mux: val 0, num_parents 2
-[    0.000000] imx:clk-gpr-mux: failed to get parent of enet2_ref_sel 
-(-EINVAL)
-
-It seems that val 0 is unexpected for the driver. Maybe it's worth to 
-mention that we use an older U-Boot [2]. But Linux should make any 
-assumptions here.
-
->
->> is still there.
->>
->>> and please rename IMX6UL_CLK_ENET_REF to IMX6UL_CLK_ENET1_REF_SEL in
->>> your dtsi.
->> Yes, this seems to be the issue in my case.
->>
->> Does this mean a Linux 6.3 kernel doesn't work with a i.MX6ULL Linux 6.2
->> devicetree?
-> If I see it correctly. Since you do not have patch [1] related clock is not
-> enabled by the fec controller. Since this PHY is not addressable without
-> running rmii clock, the PHY can't be probed.
->
->> So there is no fallback?
-> With [1] it should not be needed.
-Maybe this patch comes too late (Linux 6.4) for some boards.
->
->> What about these other dtsi in Linux 6.3rc-1?
->>
->> $ grep IMX6UL_CLK_ENET_REF *
->> imx6ul-14x14-evk.dtsi:            clocks = <&clks IMX6UL_CLK_ENET_REF>;
->> ..
->> imx6ul-kontron-bl-common.dtsi:            clocks = <&clks
->> IMX6UL_CLK_ENET_REF>;
->> imx6ul-kontron-sl-common.dtsi:            clocks = <&clks
->> IMX6UL_CLK_ENET_REF>;
->> imx6ull-dhcom-picoitx.dts:            clocks = <&clks IMX6UL_CLK_ENET_REF>;
->> imx6ull-dhcom-som.dtsi:            clocks = <&clks IMX6UL_CLK_ENET_REF>;
->> imx6ull-jozacp.dts:            clocks = <&clks IMX6UL_CLK_ENET_REF>;
->> imx6ull-myir-mys-6ulx.dtsi:            clocks = <&clks IMX6UL_CLK_ENET_REF>;
->> imx6ul-phytec-phycore-som.dtsi:            clocks = <&clks
->> IMX6UL_CLK_ENET_REF>;
->> mba6ulx.dtsi:            clocks = <&clks IMX6UL_CLK_ENET_REF>;
-> It is nice to convert all of them to proper clock. But all of them are
-> expected to work with [1].
->
-> Can you please confirm it? Revert yourdtsi back to IMX6UL_CLK_ENET_REF
-> and include [1]?
-
-I rebased all changes on top of Shawn's branch and reverted to 
-IMX6UL_CLK_ENET_REF [3]. So yes, i confirm that Ethernet works in this case.
-
-Best regards
-
-[1] - 
-https://github.com/chargebyte/linux/commit/74a883d3ca4960a7d178d4a184daf9856600ca14
-[2] - https://github.com/chargebyte/U-Boot/tree/v2020.04-in-tech
-[3] - https://github.com/chargebyte/linux/tree/v6.4-shawnguo-tarragon
-
->
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git/commit/?h=for-next&id=8940c105273fcde00a60023f68f8a5b75e1df0cc
->
-> Regards,
-> Oleksij
