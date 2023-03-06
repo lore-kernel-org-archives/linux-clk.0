@@ -2,121 +2,131 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA4AC678D4
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 08:39:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FDCCC678D4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 09:14:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229749AbjCFIje (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Mar 2023 03:39:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41234 "EHLO
+        id S229911AbjCFJOc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Mar 2023 04:14:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbjCFIjc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 03:39:32 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E84CD1CAF6
-        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 00:39:30 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id p16so5074140wmq.5
-        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2023 00:39:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678091969;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mdXHSSzFb0wf4Z5ebFpbSvGWzd8D68jDgoc9WISe18M=;
-        b=L/xCTT9oGeZPl+49XiWu7haaTjDD4Czfx7sdxvdImv6E0n4BYBAn3D4PuTH6iu1EfT
-         Qc+MRFZRe1qydY49icg8KJFQ51W7cm3Rxef7sE2j1vhiQUa4J11pURkUFQGRsIpom2Ys
-         Aa9qUv1vtAj+Mrxe/aA2EeDG+Uw8FMt2DE+kag/IMs6L4wFKz1Js3mmfscN1/k4JzxDD
-         pnP/u0qTCwjArowyXg0pmVt94fig6sxuZYh8GMOu+48+IsQwkeUxUvKMeT/A+R1NjqUi
-         umfU76E9s2VN2ERxo3ELDHjmiebm1GYGa+K4XsHT0v05y9chlfiMhOLeTgOM2hRtKM23
-         4k1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678091969;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mdXHSSzFb0wf4Z5ebFpbSvGWzd8D68jDgoc9WISe18M=;
-        b=W98j6wg2mFMxeNNtdKmhOeLzNabT48h60ottiDCrwl0wz+VKb6FJ0o5wJLFpqzMzC1
-         E+WsbU+l3qjvnw0iUQaBejmQkqB6IAQ4MjArlWPhsUn84YDwDJpsaB0/dYsJD8OgZAH4
-         bMfhnsM3V0hS6h1AL4POoZxiaHvHYMXCeOp1eM2/14h0MFK4RYMqIqw4nUDtDuyzr28v
-         WleKrju3pw95a42pK8UKM4oJu2nri1yGQVZHH1s9TzHGxBI3LmiMoPEGQoy7IWhjT5V0
-         +9EvWvSprUPUZ7OB6PldL1WjDHJ0PBgAxZvP0pj3b9yeahzrLK07TA+Yb3lII5wH2JAM
-         JjdA==
-X-Gm-Message-State: AO0yUKURm/PpPRRozGHtoIcoAap/LUB5n0gk+AJFJ0+oC7tHSvRZT0Fw
-        70dEM6bwZPvvv+S5XQZ9bkWphg==
-X-Google-Smtp-Source: AK7set+ZWZw+hQJ/2sk3ResOt44ySPYhF3lJa5MGYX4FLkyMzo9GSQeeqZSK5eB9zmeofrYdEnx6Gw==
-X-Received: by 2002:a05:600c:350c:b0:3dc:40a0:3853 with SMTP id h12-20020a05600c350c00b003dc40a03853mr6535425wmq.11.1678091969437;
-        Mon, 06 Mar 2023 00:39:29 -0800 (PST)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id d1-20020a5d4f81000000b002c54e26bca5sm9190736wru.49.2023.03.06.00.39.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Mar 2023 00:39:29 -0800 (PST)
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>
-Cc:     linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-In-Reply-To: <20230209-b4-amlogic-bindings-convert-take2-v1-0-c4fe9049def9@linaro.org>
-References: <20230209-b4-amlogic-bindings-convert-take2-v1-0-c4fe9049def9@linaro.org>
-Subject: Re: (subset) [PATCH 0/6] dt-bindings: second batch of dt-schema
- conversions for Amlogic Meson bindings
-Message-Id: <167809196860.10551.9031776722379367022.b4-ty@linaro.org>
-Date:   Mon, 06 Mar 2023 09:39:28 +0100
+        with ESMTP id S229792AbjCFJOW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 04:14:22 -0500
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A647921A2D
+        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 01:14:19 -0800 (PST)
+Received: from [192.168.1.141] ([37.4.248.41]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1Macf4-1qAuRY07A2-00c624; Mon, 06 Mar 2023 10:13:58 +0100
+Message-ID: <8a178040-ef52-d9ab-e704-69208d34f915@i2se.com>
+Date:   Mon, 6 Mar 2023 10:13:57 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.1
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: imx6ul: Recent enet refclock changes breaks custom i.mx6ull board
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Michael Heimpold <mhei@heimpold.de>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <3ceda169-de1b-2c1f-9ee8-bc8fdb547433@i2se.com>
+ <20230306052531.GA30081@pengutronix.de>
+Content-Language: en-US
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+In-Reply-To: <20230306052531.GA30081@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:v6UMNjBJ1FGTsQz/a26W/FdNJtKJ8IXY5AuqEDRKbsvujIhB55H
+ 5aBoHMdDl/zNzGX7R5NMrDIHUG8cYpj9deXWvzMEc4uKPNQYuCBpQmXYxxA2x33mxOHK3jq
+ BQu4fndHKVrOy4eVzqA2uUuT+wSaKi4sUdQ+i+afOh0722UA/xTGJpdKWhJWcjWV6JZp+Vo
+ 3vvGUZ/QvOyqGshWkQ26A==
+UI-OutboundReport: notjunk:1;M01:P0:XzQJOGQx7iA=;El/u2yAirY5ZayMwiyKgTFhuUL6
+ Pi/wk1tPOPPhUhPeAu34aD1pYMLXvjMDs4+7MHwqNR+4VfW0GRIRax99Wg5jfpOjBocBAvUNS
+ pgBBBQQWCEEjsVPt8FOTm4Og+tI62/UhokKdMWzKZzSUaybSx98VSFhmICD+BnH+2ks6Knegx
+ gJWpa7bD6EdufNDPbNqMA3Zn4zYjXp6M6X9lZb83ROS//CBfYXqPW1wYtEzZfvj62ZvcSvY9G
+ zCDM1yFEIykO6oyiTB9xPLL8gIwo0q9hA6cUbTu9PhSk35K5WMOjoeQCrQAMO1VucULEw9w3G
+ UeXnuLSiYBqDk0Gt/twlkHlIn9QK8NAyUd9jU8SNj9VCI3bvEp4jfcqIlMTcbsAZoeBhYsH7z
+ J/50tUwkvSU8TGZcYYU5x+NKIExo2lfzBc9WZqmHZDyDAFDX8lR0hKCufoHTT9H+w/IMhTOtI
+ orXC9+8xVNbITrYyYdPN7nSRTMkCLa93892GIZkxX08RZFr3G0miW3UXUKZ0tHSstYUUxZF79
+ GsTU5FfLQStmf+RUB0TSGViqBFYUgx2T8ZPw1Y3oiVUgpJjkeu6tdVYi3DWze3h3xNpxA2efL
+ ow1zB23WqlEkOCTKqAoamPH1p/rOh1EuOQD59dq9jtuaJKenhbtV5qOdZq6P7ryLRh9549T5V
+ DfxQ1wkgfpZ04YUWs5uErrPx0zuACSJYPY+m+kHwig==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hi Oleksij,
 
-On Thu, 09 Feb 2023 14:41:36 +0100, Neil Armstrong wrote:
-> Batch conversion of the following bindings:
-> - rtc-meson-vrtc.txt
-> - amlogic,gxbb-clkc.txt
-> - amlogic,gxbb-aoclkc.txt
-> - clk-measure.txt
-> 
-> And in addition document the System Control registers top node.
-> 
-> [...]
+Am 06.03.23 um 06:25 schrieb Oleksij Rempel:
+> Hi Stefan,
+>
+> On Sun, Mar 05, 2023 at 11:16:17PM +0100, Stefan Wahren wrote:
+>> Hi,
+>>
+>> we planned to submit our custom i.MX6ULL board [1] to mainline after release
+>> of Linux 6.3-rc1, but the recent enet refclock changes breaks our Ethernet
+>> phy:
+>>
+>> [    0.000000] imx:clk-gpr-mux: failed to get parent (-EINVAL)
+>>
+>> ...
+>>
+>> [   18.574595] SMSC LAN8710/LAN8720 2188000.ethernet-1:00: phy_poll_reset
+>> failed: -110
+>> [   18.581064] fec 2188000.ethernet eth0: Unable to connect to phy
+>>
+>> I narrow down the PHY issue to this first bad commit:
+>>
+>> 5f82bfced611 ("clk: imx6ul: fix enet1 gate configuration")
+>>
+>> The clock issues seems to be cause by the following commit. If i revert
+>> 5f82bfced611 and 4e197ee880c24 or use Linux 6.2 everything is fine.
+> It looks like in your kernel version are some missing patches. Can you please
+> rebase your patches on top of this branch:
+> https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git/log/?h=for-next
 
-Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.4/drivers)
+thanks for your fast reply. But i rebased my patches against Linux 
+v6.3-rc1 since this was released yesterday and should contain all 
+patches from Shawn. I also changed the clockref in my DTSI file:
 
-[2/6] dt-bindings: soc: amlogic: convert clk-measure.txt to dt-schema
-      https://git.kernel.org/amlogic/c/2227e738b30bf20380a48391a73752c52f5f5c6a
+https://github.com/chargebyte/linux/commits/v6.3-tarragon-v3
 
-These changes has been applied on the intermediate git tree [1].
+Now the PHY issue disappeared and ethernet is working, but the
 
-The v6.4/drivers branch will then be sent via a formal Pull Request to the Linux SoC maintainers
-for inclusion in their intermediate git branches in order to be sent to Linus during
-the next merge window, or sooner if it's a set of fixes.
+imx:clk-gpr-mux: failed to get parent (-EINVAL)
 
-In the cases of fixes, those will be merged in the current release candidate
-kernel and as soon they appear on the Linux master branch they will be
-backported to the previous Stable and Long-Stable kernels [2].
+is still there.
 
-The intermediate git branches are merged daily in the linux-next tree [3],
-people are encouraged testing these pre-release kernels and report issues on the
-relevant mailing-lists.
+> and please rename IMX6UL_CLK_ENET_REF to IMX6UL_CLK_ENET1_REF_SEL in
+> your dtsi.
 
-If problems are discovered on those changes, please submit a signed-off-by revert
-patch followed by a corrective changeset.
+Yes, this seems to be the issue in my case.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Does this mean a Linux 6.3 kernel doesn't work with a i.MX6ULL Linux 6.2 
+devicetree?
+So there is no fallback?
 
--- 
-Neil
+What about these other dtsi in Linux 6.3rc-1?
 
+$ grep IMX6UL_CLK_ENET_REF *
+imx6ul-14x14-evk.dtsi:            clocks = <&clks IMX6UL_CLK_ENET_REF>;
+..
+imx6ul-kontron-bl-common.dtsi:            clocks = <&clks 
+IMX6UL_CLK_ENET_REF>;
+imx6ul-kontron-sl-common.dtsi:            clocks = <&clks 
+IMX6UL_CLK_ENET_REF>;
+imx6ull-dhcom-picoitx.dts:            clocks = <&clks IMX6UL_CLK_ENET_REF>;
+imx6ull-dhcom-som.dtsi:            clocks = <&clks IMX6UL_CLK_ENET_REF>;
+imx6ull-jozacp.dts:            clocks = <&clks IMX6UL_CLK_ENET_REF>;
+imx6ull-myir-mys-6ulx.dtsi:            clocks = <&clks IMX6UL_CLK_ENET_REF>;
+imx6ul-phytec-phycore-som.dtsi:            clocks = <&clks 
+IMX6UL_CLK_ENET_REF>;
+mba6ulx.dtsi:            clocks = <&clks IMX6UL_CLK_ENET_REF>;
+
+>
+> Regards,
+> Oleksij
