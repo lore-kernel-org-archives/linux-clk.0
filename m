@@ -2,177 +2,116 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BC4C61DA4
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 15:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D57C61DA4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 15:51:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229893AbjCFPum (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Mar 2023 10:50:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59720 "EHLO
+        id S229911AbjCFPvk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Mar 2023 10:51:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229764AbjCFPul (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 10:50:41 -0500
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA28327998
-        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 07:50:39 -0800 (PST)
-Received: from [192.168.1.141] ([37.4.248.41]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1N14xe-1qagZl2w0I-012WWt; Mon, 06 Mar 2023 16:50:19 +0100
-Message-ID: <a1646cc8-0830-5add-2957-b9bdbb094b23@i2se.com>
-Date:   Mon, 6 Mar 2023 16:50:18 +0100
+        with ESMTP id S230154AbjCFPvk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 10:51:40 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 882DF36476
+        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 07:51:37 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id s11so40488047edy.8
+        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2023 07:51:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678117896;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=t5WKaU91nJ+P694TRYOMgx3cq+DGCFPwL6ikgUxC3C8=;
+        b=ESjcJLj063dMnQZWJplGSMwup2iaf+HjpoquiqJhkDgqe+Bwe6KLmnVVMs75iGiqRx
+         Vr7OqpYnid1HjGlasFK+9AhAlB5S4IHdRaeE/MWdSmSHDascJfwiIIieyVNjC3qXv56F
+         cbaFPprTTejA/Ub9UwI0JUHkt+6AktbMoISxFB9Dm4DzWvxl/s9nj4l1nVolAUlQNaeq
+         NRcq0O1+qSCYXKjQcUioybt/B+ExBG9Qdq+9ayEOYY0NnfidFsmtP6dFJ6uZ7ch/mSL7
+         W5subhoHbAsx1NXexaN2YeqvF7Fv6QOC7RFeQQlenvKCZcVsvUJCf9r/K/FrhKb2+BS0
+         yyFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678117896;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t5WKaU91nJ+P694TRYOMgx3cq+DGCFPwL6ikgUxC3C8=;
+        b=xaaRX2cZ+Qj8b1Omv6zn6b5nCxH7/cPwfnIL8LnhH8UYBeEL8GtSzLtGY8Ad1OqjUr
+         g+UTNKX2i+Eh1oh5IUb7ti9zHgUgPm+YguboSq3JEZq/vRRUSIt82LthlvIT5Rr3xdaO
+         K19pV/jFBor+1b/SOcuCXYXhrcp4xuPXkENFPmZJ0m8FYphWzIIJf9v5JjFzFDiv07HH
+         UmdnSyxWaXhVbY2LcoadH3mApeRVP6DOYyvUwjAzfrnAK5Kdt4OCzYM3WTpHNIko8tsi
+         MkPTP1Llols+2bdwn0hLixAj7HdDDjQNz9kJeu6RCkb5l4cB4iLOGkIQyJwrniVE/MWL
+         6zeg==
+X-Gm-Message-State: AO0yUKVSQPIlWuwWonTDiQPfgb3dHfwU+HGYHscO10/M38yIFjX0b/+Z
+        7NR1Nsqhe+hsUt02dEJKMdDDYA==
+X-Google-Smtp-Source: AK7set9lwg+x+76RsWJ6nVbbLxkGydKTP4r6kdOcHarLbeeJ9W9GJHfsJJMd5ctUdgw3OxunMd+uEA==
+X-Received: by 2002:aa7:c2d4:0:b0:4ae:eab6:9ff8 with SMTP id m20-20020aa7c2d4000000b004aeeab69ff8mr11998310edp.13.1678117896054;
+        Mon, 06 Mar 2023 07:51:36 -0800 (PST)
+Received: from ?IPV6:2a02:810d:15c0:828:c1e7:5006:98ac:f57? ([2a02:810d:15c0:828:c1e7:5006:98ac:f57])
+        by smtp.gmail.com with ESMTPSA id n26-20020a50c21a000000b004a27046b7a7sm5320836edf.73.2023.03.06.07.51.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Mar 2023 07:51:35 -0800 (PST)
+Message-ID: <48c8a0cf-08dc-a831-33ef-3b8e32eef2d3@linaro.org>
+Date:   Mon, 6 Mar 2023 16:51:34 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: imx6ul: Recent enet refclock changes breaks custom i.mx6ull board
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v2 0/6] clk: samsung: exynos850: Add missing clocks for PM
 Content-Language: en-US
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michael Heimpold <mhei@heimpold.de>,
-        Arnd Bergmann <arnd@arndb.de>
-References: <3ceda169-de1b-2c1f-9ee8-bc8fdb547433@i2se.com>
- <20230306052531.GA30081@pengutronix.de>
- <8a178040-ef52-d9ab-e704-69208d34f915@i2se.com>
- <20230306094737.GA11506@pengutronix.de>
- <953ee705-47a7-3f6b-408e-9d74f3bc30b4@i2se.com>
- <20230306140207.GA11936@pengutronix.de>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-In-Reply-To: <20230306140207.GA11936@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:FLUv7cjIn5jveb71t2XzbyWjVKFeytZDnhsXE+yf83Qwwu1nqzu
- qA5cVm2ouJ63meHUukgaXeHLVMuaWWz+Bzcw86cHuYKNWEM2bERyt/6jZMkiEqAvczy1coR
- 3q+vqrQGMqt65+BXVyZxYXquvn7DGxFO8Dg51j0j1p7fQP9PlQ8hxfg02Vi2Bd8OwLGLiSw
- A5OV/GvvQlioHwRQkjhPw==
-UI-OutboundReport: notjunk:1;M01:P0:13TQjyyw97M=;NAxZft78UCMdOwA+hkiRqfjs31H
- dcJivgbiIB65WZ6lx1GgrEGKCrsj7oVk7lIAOqKDPfFfRJ930Q7dv4Q8Y7AM2eWgMgx8Q2Ae8
- AI2W/tIHfwo29vEE9vY/4AogJFsMi7XWuP9BsJ6MRFid3HC8tctwB4vjKqHLfPz0Snl+oPgew
- Y2o8tc3P+g33RZuqpXQJVs6HWo4HGQh3CvEW+a8PE8btyL6AGxlWkOX7IXmAZoBNdGfY97uK8
- OZzW8+7uSgyRRwiu1usHvpmLoUF0YlPedXbzrsI6n0FsFuKga2sjrOY27aH8wnbvYDRfErM39
- pTjsLzF2xWLG7mSY4U22eFhMWPbK7kdOYpxIYV6JBv4qS4jaCfqFtx/DkL/vgu4v/n+N5aFBG
- t8oYKvmzAboi0nKiZ8xTUjYW1FTQEfT3z0COumMn3vD/BbQhv1o5jZX1MQ6alJao6F6lH8fUQ
- 6TxKAVfQOHZT7XB3P3MFlkx9KuimK3RzZNV8NJR3egV57JfW9F7F9KOe6Hh8u+QNvLq7Ftj7q
- LNahgG1t/AMV2oPX75Ued3kXZcFDKHFWxo8X7SCzm+SodnzEihhpiyQ6dBj1PcKFafrLPxo+V
- fscPCqvmSMyM570kisWW4KhTX29iBldXiYsbRh6hWqq+BUDbB48k2Wv/UAqLzWlX2teT0U7hv
- 4o9372A05Y7/y/4gq/VSFiyz3OEFIuOjqdELOpRVUw==
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Chanho Park <chanho61.park@samsung.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        David Virag <virag.david003@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>
+References: <20230223042133.26551-1-semen.protsenko@linaro.org>
+ <167811290503.11716.15730246749418548221.b4-ty@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <167811290503.11716.15730246749418548221.b4-ty@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Oleksij,
-
-Am 06.03.23 um 15:02 schrieb Oleksij Rempel:
-> On Mon, Mar 06, 2023 at 02:33:24PM +0100, Stefan Wahren wrote:
->> Hi Oleksij,
+On 06/03/2023 15:28, Krzysztof Kozlowski wrote:
+> On Wed, 22 Feb 2023 22:21:27 -0600, Sam Protsenko wrote:
+>> As a part of preparation for PM enablement in Exynos850 clock driver,
+>> this patch series implements CMU_G3D, and also main gate clocks for AUD
+>> and HSI CMUs. The series brings corresponding changes to bindings, the
+>> driver and SoC dts file.
 >>
->> Am 06.03.23 um 10:47 schrieb Oleksij Rempel:
->>> On Mon, Mar 06, 2023 at 10:13:57AM +0100, Stefan Wahren wrote:
->>>> Hi Oleksij,
->>>>
->>>> Am 06.03.23 um 06:25 schrieb Oleksij Rempel:
->>>>> Hi Stefan,
->>>>>
->>>>> On Sun, Mar 05, 2023 at 11:16:17PM +0100, Stefan Wahren wrote:
->>>>>> Hi,
->>>>>>
->>>>>> we planned to submit our custom i.MX6ULL board [1] to mainline after release
->>>>>> of Linux 6.3-rc1, but the recent enet refclock changes breaks our Ethernet
->>>>>> phy:
->>>>>>
->>>>>> [    0.000000] imx:clk-gpr-mux: failed to get parent (-EINVAL)
->>>>>>
->>>>>> ...
->>>>>>
->>>>>> [   18.574595] SMSC LAN8710/LAN8720 2188000.ethernet-1:00: phy_poll_reset
->>>>>> failed: -110
->>>>>> [   18.581064] fec 2188000.ethernet eth0: Unable to connect to phy
->>>>>>
->>>>>> I narrow down the PHY issue to this first bad commit:
->>>>>>
->>>>>> 5f82bfced611 ("clk: imx6ul: fix enet1 gate configuration")
->>>>>>
->>>>>> The clock issues seems to be cause by the following commit. If i revert
->>>>>> 5f82bfced611 and 4e197ee880c24 or use Linux 6.2 everything is fine.
->>>>> It looks like in your kernel version are some missing patches. Can you please
->>>>> rebase your patches on top of this branch:
->>>>> https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git/log/?h=for-next
->>>> thanks for your fast reply. But i rebased my patches against Linux v6.3-rc1
->>>> since this was released yesterday and should contain all patches from Shawn.
->>> No, it is not. Related DTS changes are not included in to v6.3-rc1.
->> Sorry, i didn't noticed that Shawn already rebased his for-next changes on
->> top of v6.3-rc1.
+>> Changes in v2:
+>>   - Rebased all patches on top of the most recent soc/for-next tree
+>>   - Added A-b and R-b tags
+>>   - Minor fixes
 >>
->> So, the problem is that your clk changes has been applied for 6.3, but the
->> necessary arm changes will land in 6.4? :-(
-> I hope it will go as fixes to 6.3-rcX. Shawn?
->
->>>> I also changed the clockref in my DTSI file:
->>>>
->>>> https://github.com/chargebyte/linux/commits/v6.3-tarragon-v3
->>>>
->>>> Now the PHY issue disappeared and ethernet is working, but the
->>>>
->>>> imx:clk-gpr-mux: failed to get parent (-EINVAL)
->>> I need to take a look at it. It should not be critical.
->> I prepared a patch [1] to improve the debugging here:
->>
->> [    0.000000] Entry 262144 != val 0
->> [    0.000000] Entry 16384 != val 0
->> [    0.000000] imx:clk-gpr-mux: val 0, num_parents 2
->> [    0.000000] imx:clk-gpr-mux: failed to get parent of enet2_ref_sel
->> (-EINVAL)
->>
->> It seems that val 0 is unexpected for the driver. Maybe it's worth to
->> mention that we use an older U-Boot [2]. But Linux should make any
->> assumptions here.
-> There are two configuration bits per Ethernet interface:
-> - BIT(17) ENET1_TX_CLK_DIR
-> - BIT(13) ENET1_CLK_SEL
+>> [...]
+> 
+> Applied, thanks!
+> 
+> [1/6] dt-bindings: clock: exynos850: Add Exynos850 CMU_G3D
+>       https://git.kernel.org/krzk/linux/c/067ba1605806e52118bb598afb357718df9f0e19
+> [2/6] dt-bindings: clock: exynos850: Add AUD and HSI main gate clocks
+>       https://git.kernel.org/krzk/linux/c/e289665ed0d6df9fca3ebc128f1232d305e4600b
+> [3/6] clk: samsung: clk-pll: Implement pll0818x PLL type
+>       https://git.kernel.org/krzk/linux/c/a6feedab8ab9a9e4483deb0bcc87919d92c88b7e
+> [4/6] clk: samsung: exynos850: Implement CMU_G3D domain
+>       https://git.kernel.org/krzk/linux/c/c5704a56893b4e77e434597c7c53d878bb3073b0
+> [5/6] clk: samsung: exynos850: Add AUD and HSI main gate clocks
+>       https://git.kernel.org/krzk/linux/c/d8d12e0d079aff4b1d8079a0a55944c0596f1d67
+> [6/6] arm64: dts: exynos: Add CMU_G3D node for Exynos850 SoC
+>       https://git.kernel.org/krzk/linux/c/ad8f6ad9a4f219950df65731a8ff91baa022c4b0
 
-Did you noticed that the error is caused for enet2_ref_sel?
+And builds are broken. Please mention in cover letter or commit
+dependencies and ordering...
 
-On our board variants master/slave/slaveXT only ENET1 is used, so ENET2 
-is kept to the defaults (ENET2_TX_CLK_DIR = 0, ENET2_CLK_SEL = 0) and 
-the bootloader won't touch those bits.
+Best regards,
+Krzysztof
 
-> With this bits we have following variants:
-> 1. internal clock source with output on ENET1_TX_CLK
-> 2. internal clock source without output on ENET1_TX_CLK. Are there any
->     use cases need to support this mode?
-After reading the reference manual, this mode refers to ENET1_TX_CLK_DIR 
-= 0, ENET1_CLK_SEL = 0. Is my understanding correct?
-> 3. external clock source without output on ENET1_TX_CLK
-> 4. external clock source with output on ENET1_TX_CLK, well ENET1_TX_CLK
->     is input it can't be out put on this case.
->
-> Current kernel supports modes 1 and 3. For mode 2 I do not have a use
-> case and mode 4 make no sense.
->
-> In your case, the boot loader configures clocks to mode 2 which is not
-> correct for this HW. It should be mode 1.
-As written above the bootloader doesn't touch this. It's the reset 
-default according to the reference manual. So i consider mode 2 as 
-disabled clock, which is the right mode for boards without using this 
-particular Ethernet interface. For EMC reasons we don't want to enable 
-ENET1 and ENET2 clock output unconditionally.
-> Probably, the way to go is do register dummy parents for not supported
-> modes. It would silent the kernel. Other ideas?
-
-Sorry, i don't have no idea how to properly achieve this.
-
-Best regards
-
->
->>> Can you please confirm it? Revert yourdtsi back to IMX6UL_CLK_ENET_REF
->>> and include [1]?
->> I rebased all changes on top of Shawn's branch and reverted to
->> IMX6UL_CLK_ENET_REF [3]. So yes, i confirm that Ethernet works in this case.
-> Thx! So, there should be no regressions if this patch will to as fix for
-> 6.3-rcX. Except of kernel warning wrong parent configuration.
->
-> Regards,
-> Oleksij
