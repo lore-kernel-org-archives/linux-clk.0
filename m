@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48F23C61DA4
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 14:10:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5854CC678D4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 14:10:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231167AbjCFOKE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Mar 2023 09:10:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36942 "EHLO
+        id S231371AbjCFOKa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Mar 2023 09:10:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230411AbjCFOJk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 09:09:40 -0500
+        with ESMTP id S231394AbjCFOJt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 09:09:49 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 116B232515;
-        Mon,  6 Mar 2023 06:08:06 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 181B23253A;
+        Mon,  6 Mar 2023 06:08:18 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 1DE706602FB7;
-        Mon,  6 Mar 2023 14:06:52 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id E410D6602FF0;
+        Mon,  6 Mar 2023 14:07:02 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1678111613;
-        bh=7FZEolUr6KyAj858oufGeSrFd4pByYVT6eDczeQoNE4=;
+        s=mail; t=1678111624;
+        bh=ziGH2zOiWjI+IoI+jWYiAA1anJ7BSP8mPNTuPdiSX6s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EF3e3lcIWm1wRyoA6nGgiQoo/MoOD8lFgYTYIZO299E4+P49wv0+YNoT8BP1Xnsey
-         X2lr0cyjkhyu49vU6nHIAPm70bgfa01rY6AwVKo47V+GReqLpUOr1Kjw3Q5xJfJzWT
-         F9w+p6Noaz8H0FdjxEgyXV9Ku5bDCPWuyNvVEWs6htLAZwk8xf2+BwKj54S4GdRyux
-         ymUlnYoAu/Wt3jCVWXg/vX2sOdfSOdwhwnsP+5xUV7cpyiVadyfUXEvr/FFrwN4AS4
-         9JmU2Z+N9IkqQgv9kUew3FOOIGv5xMwTCEKsD8ahqWAt1F5p6RFVNLksOjhVLoe05j
-         g9m5bQuXS5rBA==
+        b=aojRSbbkh7jvOgyMfoLo3ObnWAvZvh/WNRaT4wGm+r52gyCMy9Ts3GMDdAWuXhz16
+         gTKe5bVkJDmQPmKc7SaPtF/NoGQ86peBKMDIcP+48E5PmURQPMB3jZmFZ19GnjJF7R
+         /bpRrhaUsxAT96u+oalMbfN/go09DXUBmZEwB6RIdcQR+xb9fk/MjaJnqYVl78vbTp
+         2tQBS33+dX43B1wWGM0D3JPIxhkNv8Kansz5hXgLQTBBrM6mFWSGxoyUbkfQXPCk/v
+         9OU9sm9pst/Q5WzM6Cw4r02aq011sc9KVqwYuQ5DtRnLMBMBAlDG67E1f4idmgO3Lo
+         YiVrN8ki0hBIA==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, kernel@collabora.com
-Subject: [PATCH v6 41/54] clk: mediatek: Allow MT7622 clocks to be built as modules
-Date:   Mon,  6 Mar 2023 15:05:30 +0100
-Message-Id: <20230306140543.1813621-42-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v6 48/54] clk: mediatek: Kconfig: Allow module build for core mt8192 clocks
+Date:   Mon,  6 Mar 2023 15:05:37 +0100
+Message-Id: <20230306140543.1813621-49-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230306140543.1813621-1-angelogioacchino.delregno@collabora.com>
 References: <20230306140543.1813621-1-angelogioacchino.delregno@collabora.com>
@@ -58,53 +58,32 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now that all drivers are using the simple probe mechanism change the
-MT7622 clock drivers to tristate in Kconfig to allow module build.
+Bootloaders must in a way setup the SoC to boot Linux: this means
+that it will be possible to decompress a ramdisk and eventually
+insert the core clock driver module from there.
+Allow module build for all MT8192 clocks by switching to tristate.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+Tested-by: Miles Chen <miles.chen@mediatek.com>
+Tested-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/clk/mediatek/Kconfig | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/mediatek/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index fc073e5be4eb..d089806789ee 100644
+index 04b4be419bd0..02093996ccc3 100644
 --- a/drivers/clk/mediatek/Kconfig
 +++ b/drivers/clk/mediatek/Kconfig
-@@ -336,7 +336,7 @@ config COMMON_CLK_MT6797_VENCSYS
- 	  This driver supports MediaTek MT6797 vencsys clocks.
+@@ -682,7 +682,7 @@ config COMMON_CLK_MT8186_VENCSYS
+ 	  This driver supports MediaTek MT8186 vencsys clocks.
  
- config COMMON_CLK_MT7622
--	bool "Clock driver for MediaTek MT7622"
-+	tristate "Clock driver for MediaTek MT7622"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
+ config COMMON_CLK_MT8192
+-	bool "Clock driver for MediaTek MT8192"
++	tristate "Clock driver for MediaTek MT8192"
+ 	depends on ARM64 || COMPILE_TEST
  	select COMMON_CLK_MEDIATEK
- 	default ARCH_MEDIATEK
-@@ -345,21 +345,21 @@ config COMMON_CLK_MT7622
- 	  required for various periperals found on MediaTek.
- 
- config COMMON_CLK_MT7622_ETHSYS
--	bool "Clock driver for MediaTek MT7622 ETHSYS"
-+	tristate "Clock driver for MediaTek MT7622 ETHSYS"
- 	depends on COMMON_CLK_MT7622
- 	help
- 	  This driver add support for clocks for Ethernet and SGMII
- 	  required on MediaTek MT7622 SoC.
- 
- config COMMON_CLK_MT7622_HIFSYS
--	bool "Clock driver for MediaTek MT7622 HIFSYS"
-+	tristate "Clock driver for MediaTek MT7622 HIFSYS"
- 	depends on COMMON_CLK_MT7622
- 	help
- 	  This driver supports MediaTek MT7622 HIFSYS clocks providing
- 	  to PCI-E and USB.
- 
- config COMMON_CLK_MT7622_AUDSYS
--	bool "Clock driver for MediaTek MT7622 AUDSYS"
-+	tristate "Clock driver for MediaTek MT7622 AUDSYS"
- 	depends on COMMON_CLK_MT7622
- 	help
- 	  This driver supports MediaTek MT7622 AUDSYS clocks providing
+ 	default ARM64
 -- 
 2.39.2
 
