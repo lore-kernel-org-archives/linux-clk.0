@@ -2,212 +2,196 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8CF5C6FD1B
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 11:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C7E8C61DA4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 11:28:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230137AbjCFLQI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Mar 2023 06:16:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32834 "EHLO
+        id S229661AbjCFL2J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Mar 2023 06:28:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230267AbjCFLPm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 06:15:42 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED14923DB8
-        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 03:15:22 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id h11so8392085wrm.5
-        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2023 03:15:22 -0800 (PST)
+        with ESMTP id S229638AbjCFL2I (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 06:28:08 -0500
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88FE82006F
+        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 03:28:04 -0800 (PST)
+Received: by mail-lj1-x22d.google.com with SMTP id z42so9196684ljq.13
+        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2023 03:28:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1678101321;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=PyTn9tJm20fW8pZYDIuyfcLC54XHP85ntZPqOJKtjIk=;
-        b=4BUdLMw4Bzkp0FX7tdK0VT+WAV4PbmaJREU+/qlrti7Mm9ppJ4BNW4rhhx5ekAwLmK
-         MlaafUzNslF3E0996vg4leNMf/vFLgEi1ZJKUffZzUWka5kYu5Svj7a+SCFFmrjH+T6z
-         ID0Pa8KfL6GmK+N+j7j3GRTuZut+IOq2s9J7QgNILbuIWteZ7j26tWHoYTTzJLJkG9dN
-         m/tWaqOrZHTOOfJZXU6pzK9AQBe03s/qgrbci/hB1wXnYD9im54wLGtg8yTewYU8f5WR
-         G9avbdlB4QskIIns4vg5MU6e2tP+Sb9iSoEls2JXF4+jPDTPugLESC08gzn4Sbf2dIIZ
-         K6iw==
+        d=linaro.org; s=google; t=1678102083;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=205oYFe4/B3UC/X3qLrV4lWCFSwtZFx9u6zXNGXzdZg=;
+        b=tYxvsHkYitctMbDyn+0brKMs7h03vuc34++qTOgQCEXY0QOltjVFzavue7XOjwIBXz
+         LMKRO0A1xwNSzXZFnd0JnvqMD9VThgr+5mGucoUg14TXX2erPQBCSmP5U3Zv5gOQ65YF
+         aJr59vehRqEcPD2OJICJnlRAOPRS0o8Th0I/W50leAD4actrR0r66yCMpHZfK2W4QnVb
+         y2JpLiJKGSxhNvSnCXnVuO2CI3HaHH25c1zAjGpMDB/IfbeJY8iHeylBZssZHVRrvh0U
+         ZoIK374BF80gQZHCo+SjoxWz2s+K8KggfaBJCFuzAeZ4KmG3/3vlBTh6k7gY99yBx6HI
+         HjEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678101321;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PyTn9tJm20fW8pZYDIuyfcLC54XHP85ntZPqOJKtjIk=;
-        b=hj1Ql8UvYu4iDd6m43zufm8pwaWz29pw5QCtaII0Gcn826ajOwYFvdIaU5MUx+3AMc
-         kQ/uD7J8XkZ6pS4HPtw5VyfCqBeoVakib+WEyDj+zt7UsJ0xj7neDYotoeliK771uQis
-         dB58Da2HziNJUuAmbyShPCKVeeve4/EnQHyfUf6zxPWaliykEOhZ/uOyVmmYBln9eqCv
-         OVoo2U83zs+2XLuRlB8A7BRcogjg/3vQkM6LRMprw5c29nzF7EFAFACEzvA0CqWKLhg0
-         S9CelU/4JTw6nRTutIKsXoMQwdISWYoBneoYxi5vZMNXzan64dC4NXFSNjvNoL+IgNus
-         j35g==
-X-Gm-Message-State: AO0yUKVNPATBkxi2zn7z8mA3/Oz69bdo9kdZ15sCDc4Jb+q5Su9GvEpP
-        jyYADTC48ZwgN49mcynuAi5tIg==
-X-Google-Smtp-Source: AK7set/9jsOhwv0D69Mil0vNvlkr+TK2jem1ThlpPjH+LdY5wwwBq/ex5iKyHi1KYshz4sZacWcocw==
-X-Received: by 2002:a5d:4b41:0:b0:2c5:58fb:fa92 with SMTP id w1-20020a5d4b41000000b002c558fbfa92mr6235081wrs.7.1678101321400;
-        Mon, 06 Mar 2023 03:15:21 -0800 (PST)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id f2-20020adfdb42000000b002c54fb024b2sm9456658wrj.61.2023.03.06.03.15.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Mar 2023 03:15:20 -0800 (PST)
-References: <20230301183759.16163-1-ddrokosov@sberdevices.ru>
- <20230301183759.16163-2-ddrokosov@sberdevices.ru>
-User-agent: mu4e 1.8.13; emacs 28.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>,
-        neil.armstrong@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
-        martin.blumenstingl@googlemail.com
-Cc:     jian.hu@amlogic.com, kernel@sberdevices.ru, rockosov@gmail.com,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v9 1/5] clk: meson: add support for A1 PLL clock ops
-Date:   Mon, 06 Mar 2023 12:09:35 +0100
-In-reply-to: <20230301183759.16163-2-ddrokosov@sberdevices.ru>
-Message-ID: <1jy1oab06v.fsf@starbuckisacylon.baylibre.com>
+        d=1e100.net; s=20210112; t=1678102083;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=205oYFe4/B3UC/X3qLrV4lWCFSwtZFx9u6zXNGXzdZg=;
+        b=FOYH7vjN5UAuyqYt0EKA0m6HfvZYMlopo3Y2ECYzTgaBYzd5b6gEpXIUQFpUPTUN0k
+         3AY6xTfGogyXdpo1NF4joIoFfN8JIf09krNQp+XORkSDs+hsGMJmaubVWFIcaTX9X9IH
+         YSmze2uYM3qdJk+Jqpffyp8ltepdrt6fuoNfcQG4eDwFfXOSD9ASBxTHPjSCBFZMSxpS
+         8lTS48x6KwkzdtzfRSLklRMPGLJ8q8ozdqagvfe0eClYu5SCrb//9ZiwN6NWkS9MurIG
+         QDukM+c8ADvk2otYBYqf6eGfr/+R0ufuNLDZmFKkdWvpHTEa4lC0TBx7PdPrPAMgP6+t
+         DwNg==
+X-Gm-Message-State: AO0yUKXzbrMu1+tnT6es4He6o8c2lffqqiY93XrvoyDdfEkbZ058Js5s
+        AKgc8iWDmrfZn3vbQ0Y9b4avBg==
+X-Google-Smtp-Source: AK7set8aBql9IKQglXdI+C9VtpQK0WdlDEU+pVafNQuJJSo71a5RDLIA3RP28ZVtY1ImqHSRtfjaDw==
+X-Received: by 2002:a2e:86d5:0:b0:295:a932:8e40 with SMTP id n21-20020a2e86d5000000b00295a9328e40mr2943634ljj.17.1678102082812;
+        Mon, 06 Mar 2023 03:28:02 -0800 (PST)
+Received: from [192.168.1.101] (abym99.neoplus.adsl.tpnet.pl. [83.9.32.99])
+        by smtp.gmail.com with ESMTPSA id c14-20020ac2530e000000b004db51387ad6sm1588681lfh.129.2023.03.06.03.28.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Mar 2023 03:28:02 -0800 (PST)
+Message-ID: <afa95a2d-dbf3-621e-a1ed-fa484d288432@linaro.org>
+Date:   Mon, 6 Mar 2023 12:28:01 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH RFT 03/20] clk: qcom: smd-rpm: Add support for keepalive
+ votes
+Content-Language: en-US
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+References: <20230303-topic-rpmcc_sleep-v1-0-d9cfaf9b27a7@linaro.org>
+ <20230303-topic-rpmcc_sleep-v1-3-d9cfaf9b27a7@linaro.org>
+ <CAA8EJpp6cxY5+L28qsTeXCmA31e4dv21u1Tz9SquAugaV+EqfQ@mail.gmail.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <CAA8EJpp6cxY5+L28qsTeXCmA31e4dv21u1Tz9SquAugaV+EqfQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Wed 01 Mar 2023 at 21:37, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
 
-> From: Jian Hu <jian.hu@amlogic.com>
->
-> Modern meson PLL IPs are a little bit different from early known PLLs.
-> The main difference is located in the init/enable/disable sequences; the
-> rate logic is the same.
+On 6.03.2023 02:21, Dmitry Baryshkov wrote:
+> On Sat, 4 Mar 2023 at 15:27, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>
+>> Some bus clock should always have a minimum (19.2 MHz) vote cast on
+>> them, otherwise the platform will fall apart, hang and reboot.
+>>
+>> Add support for specifying which clocks should be kept alive and
+>> always keep a vote on XO_A to make sure the clock tree doesn't
+>> collapse. This removes the need to keep a maximum vote that was
+>> previously guaranteed by clk_smd_rpm_handoff.
+>>
+>> This commit is a combination of existing (not-exactly-upstream) work
+>> by Taniya Das, Shawn Guo and myself.
+>>
+>> Co-developed-by: Shawn Guo <shawn.guo@linaro.org>
+>> Co-developed-by: Taniya Das <quic_tdas@quicinc.com>
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> ---
+>>  drivers/clk/qcom/clk-smd-rpm.c | 23 +++++++++++++++++++++++
+>>  1 file changed, 23 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+>> index cce7daa97c1e..8e017c575361 100644
+>> --- a/drivers/clk/qcom/clk-smd-rpm.c
+>> +++ b/drivers/clk/qcom/clk-smd-rpm.c
+>> @@ -4,6 +4,7 @@
+>>   * Copyright (c) 2014, The Linux Foundation. All rights reserved.
+>>   */
+>>
+>> +#include <linux/clk.h>
+>>  #include <linux/clk-provider.h>
+>>  #include <linux/err.h>
+>>  #include <linux/export.h>
+>> @@ -178,6 +179,8 @@ struct clk_smd_rpm_req {
+>>  struct rpm_smd_clk_desc {
+>>         struct clk_smd_rpm **clks;
+>>         size_t num_clks;
+>> +       struct clk_hw **keepalive_clks;
+>> +       size_t num_keepalive_clks;
+>>  };
+>>
+>>  static DEFINE_MUTEX(rpm_smd_clk_lock);
+>> @@ -1278,6 +1281,7 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
+>>         struct qcom_smd_rpm *rpm;
+>>         struct clk_smd_rpm **rpm_smd_clks;
+>>         const struct rpm_smd_clk_desc *desc;
+>> +       struct clk_hw **keepalive_clks;
+>>
+>>         rpm = dev_get_drvdata(pdev->dev.parent);
+>>         if (!rpm) {
+>> @@ -1291,6 +1295,7 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
+>>
+>>         rpm_smd_clks = desc->clks;
+>>         num_clks = desc->num_clks;
+>> +       keepalive_clks = desc->keepalive_clks;
+>>
+>>         for (i = 0; i < num_clks; i++) {
+>>                 if (!rpm_smd_clks[i])
+>> @@ -1321,6 +1326,24 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
+>>         if (ret)
+>>                 goto err;
+>>
+>> +       /* Leave a permanent active vote on clocks that require it. */
+>> +       for (i = 0; i < desc->num_keepalive_clks; i++) {
+>> +               if (WARN_ON(!keepalive_clks[i]))
+>> +                       continue;
+>> +
+>> +               ret = clk_prepare_enable(keepalive_clks[i]->clk);
+>> +               if (ret)
+>> +                       return ret;
+> 
+> Would it be better to use CLK_IS_CRITICAL instead? Using the existing
+> API has a bonus that it is more visible compared to the ad-hoc
+> solutions.
+Yeah, I think that makes sense.
 
-For the record, I find very odd that PLLs used to have an 'rst' bit in
-CTRL0:29 (see g12 for example), this bit goes un-documented in the a1
-datasheet, and following SoCs like s4 still have a rst bit, still in
-CTRL0:29
+> 
+>> +
+>> +               ret = clk_set_rate(keepalive_clks[i]->clk, 19200000);
+> 
+> Don't we also need to provide a determine_rate() that will not allow
+> one to set clock frequency below 19.2 MHz?
+Hm, sounds like a good idea..
 
-I would not be surpized if the rst is actually still there in the a1.
-It is just my guess ...
+> 
+>> +               if (ret)
+>> +                       return ret;
+>> +       }
+>> +
+>> +       /* Keep an active vote on CXO in case no other driver votes for it. */
+>> +       if (rpm_smd_clks[RPM_SMD_XO_A_CLK_SRC])
+>> +               return clk_prepare_enable(rpm_smd_clks[RPM_SMD_XO_A_CLK_SRC]->hw.clk);
+>> +
+>>         return 0;
+>>  err:
+>>         dev_err(&pdev->dev, "Error registering SMD clock driver (%d)\n", ret);
+> 
+> 
+> I have mixed feelings towards this patch (and the rest of the
+> patchset). It looks to me like we are trying to patch an issue of the
+> interconnect drivers (or in kernel configuration).
+Well, as you noticed, this patch tries to address a situation where a
+critical clock could be disabled. The interconnect driver (as per my
+other recent patchset) also has a concept of "keepalive", but:
 
-> Compared with the previous SoCs, self-adaption current module
-> is newly added for A1, and there is no reset parameter except the
-> fixed pll. In A1 PLL, the PLL enable sequence is different, using
-> the new power-on sequence to enable the PLL.
+1. not very many SoCs already have a functional icc driver
+2. devices with an existing interconnect driver should also be
+   testable without one (through painful ripping out everything-icc
+   from the dts) for regression tracking
 
-Please split this patch:
-#1 make the rst optional (if you must)
-#2 add the self current adapt param.
+Konrad
 
-Apart from this, it looks good
-
->
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
-> ---
->  drivers/clk/meson/clk-pll.c | 47 +++++++++++++++++++++++++++++++------
->  drivers/clk/meson/clk-pll.h |  2 ++
->  2 files changed, 42 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-> index afefeba6e458..56ec2210f1ad 100644
-> --- a/drivers/clk/meson/clk-pll.c
-> +++ b/drivers/clk/meson/clk-pll.c
-> @@ -295,10 +295,14 @@ static int meson_clk_pll_init(struct clk_hw *hw)
->  	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
->  
->  	if (pll->init_count) {
-> -		meson_parm_write(clk->map, &pll->rst, 1);
-> +		if (MESON_PARM_APPLICABLE(&pll->rst))
-> +			meson_parm_write(clk->map, &pll->rst, 1);
-> +
->  		regmap_multi_reg_write(clk->map, pll->init_regs,
->  				       pll->init_count);
-> -		meson_parm_write(clk->map, &pll->rst, 0);
-> +
-> +		if (MESON_PARM_APPLICABLE(&pll->rst))
-> +			meson_parm_write(clk->map, &pll->rst, 0);
->  	}
->  
->  	return 0;
-> @@ -309,8 +313,11 @@ static int meson_clk_pll_is_enabled(struct clk_hw *hw)
->  	struct clk_regmap *clk = to_clk_regmap(hw);
->  	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
->  
-> -	if (meson_parm_read(clk->map, &pll->rst) ||
-> -	    !meson_parm_read(clk->map, &pll->en) ||
-> +	if (MESON_PARM_APPLICABLE(&pll->rst) &&
-> +	    meson_parm_read(clk->map, &pll->rst))
-> +		return 0;
-> +
-> +	if (!meson_parm_read(clk->map, &pll->en) ||
->  	    !meson_parm_read(clk->map, &pll->l))
->  		return 0;
->  
-> @@ -341,13 +348,34 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
->  		return 0;
->  
->  	/* Make sure the pll is in reset */
-> -	meson_parm_write(clk->map, &pll->rst, 1);
-> +	if (MESON_PARM_APPLICABLE(&pll->rst))
-> +		meson_parm_write(clk->map, &pll->rst, 1);
->  
->  	/* Enable the pll */
->  	meson_parm_write(clk->map, &pll->en, 1);
->  
->  	/* Take the pll out reset */
-> -	meson_parm_write(clk->map, &pll->rst, 0);
-> +	if (MESON_PARM_APPLICABLE(&pll->rst))
-> +		meson_parm_write(clk->map, &pll->rst, 0);
-> +
-> +	/*
-> +	 * Compared with the previous SoCs, self-adaption current module
-> +	 * is newly added for A1, keep the new power-on sequence to enable the
-> +	 * PLL. The sequence is:
-> +	 * 1. enable the pll, delay for 10us
-> +	 * 2. enable the pll self-adaption current module, delay for 40us
-> +	 * 3. enable the lock detect module
-> +	 */
-> +	if (MESON_PARM_APPLICABLE(&pll->current_en)) {
-> +		usleep_range(10, 20);
-> +		meson_parm_write(clk->map, &pll->current_en, 1);
-> +		usleep_range(40, 50);
-> +	};
-> +
-> +	if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
-> +		meson_parm_write(clk->map, &pll->l_detect, 1);
-> +		meson_parm_write(clk->map, &pll->l_detect, 0);
-> +	}
->  
->  	if (meson_clk_pll_wait_lock(hw))
->  		return -EIO;
-> @@ -361,10 +389,15 @@ static void meson_clk_pll_disable(struct clk_hw *hw)
->  	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
->  
->  	/* Put the pll is in reset */
-> -	meson_parm_write(clk->map, &pll->rst, 1);
-> +	if (MESON_PARM_APPLICABLE(&pll->rst))
-> +		meson_parm_write(clk->map, &pll->rst, 1);
->  
->  	/* Disable the pll */
->  	meson_parm_write(clk->map, &pll->en, 0);
-> +
-> +	/* Disable PLL internal self-adaption current module */
-> +	if (MESON_PARM_APPLICABLE(&pll->current_en))
-> +		meson_parm_write(clk->map, &pll->current_en, 0);
->  }
->  
->  static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-> diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
-> index 367efd0f6410..a2228c0fdce5 100644
-> --- a/drivers/clk/meson/clk-pll.h
-> +++ b/drivers/clk/meson/clk-pll.h
-> @@ -36,6 +36,8 @@ struct meson_clk_pll_data {
->  	struct parm frac;
->  	struct parm l;
->  	struct parm rst;
-> +	struct parm current_en;
-> +	struct parm l_detect;
->  	const struct reg_sequence *init_regs;
->  	unsigned int init_count;
->  	const struct pll_params_table *table;
-
+> 
+> 
+> --
+> With best wishes
+> Dmitry
