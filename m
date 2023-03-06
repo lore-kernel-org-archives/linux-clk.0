@@ -2,164 +2,150 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D60C678D4
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 14:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E5FC678D4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 14:04:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229854AbjCFOCT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Mar 2023 09:02:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56714 "EHLO
+        id S230190AbjCFOEc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Mar 2023 09:04:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229643AbjCFOCS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 09:02:18 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E344B1980
-        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 06:02:16 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1pZBPl-0003Iq-1w; Mon, 06 Mar 2023 15:02:09 +0100
-Received: from ore by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1pZBPj-0004cy-Hd; Mon, 06 Mar 2023 15:02:07 +0100
-Date:   Mon, 6 Mar 2023 15:02:07 +0100
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michael Heimpold <mhei@heimpold.de>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: imx6ul: Recent enet refclock changes breaks custom i.mx6ull board
-Message-ID: <20230306140207.GA11936@pengutronix.de>
-References: <3ceda169-de1b-2c1f-9ee8-bc8fdb547433@i2se.com>
- <20230306052531.GA30081@pengutronix.de>
- <8a178040-ef52-d9ab-e704-69208d34f915@i2se.com>
- <20230306094737.GA11506@pengutronix.de>
- <953ee705-47a7-3f6b-408e-9d74f3bc30b4@i2se.com>
+        with ESMTP id S229483AbjCFOE2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 09:04:28 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB41F1A947
+        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 06:04:20 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id s22so12840854lfi.9
+        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2023 06:04:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678111459;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KWRTdlHpgyAnKLxEj2H9HwDl4XdQfL0+b/sTa7A8fK8=;
+        b=uN3BUmzqfupm/CDaSHZwd6ACmy1ANEZaPp9pOx2vZF2LkQe2wjp4ZmiQ/CnLVAt6zS
+         B+Yggzdf3CXnsuw0JB9r6qOKTjsS2rL9KIjOgxQGGCZRN+CdshwozPPSWFOOT+08V86+
+         1c0G8/wo5k2k0jkV7X1rbLmmI3v3a+ycD7olk5PqsKByQfQS0C2iafE9lbKi1Nhq2OH/
+         CVzjGHR6n/CTs4osYqFcqEiWC27jZXfehdm6RJtetsi3x5yxfNEBSB1wpoT3UE4aumlM
+         Pii2ZnfawDOKe/A40ld/1+j3euA/KtAZ/K2UTpvg1vleHq/Dr61ffs3drDRR0R9wScTv
+         aqHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678111459;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KWRTdlHpgyAnKLxEj2H9HwDl4XdQfL0+b/sTa7A8fK8=;
+        b=klpsPqKR44M7UcUDehx/IJL/yhWO0wN2faWZokz1GGOqBdrF/AudUARCkapjED9B3U
+         SL8hFfMOnuC/2Q0QpoNRuV6THe3vWlnl43EBuzXF08CXYfbPgbU2iBhgW0RixkH8LV1F
+         Memt+znFUtbxlzNf5P4geNmUx60uN5nDuAL30CxPHyGMIlyli4gJ2m+e3Ix69hh8iD9n
+         iZQ3oV9+M83Juei//lJLNhB2txsk7S2Wj154YSbijfq5wOjqrA2DGXfhCWYhZf9T5BE4
+         XGhAUHOM+ivZYDkum04UVBC/Ge7N4ymBBj/CyuuTWSmn/FF8o9YJlwHzSAJES0AF6Ic9
+         lSTw==
+X-Gm-Message-State: AO0yUKUji93Qwid6mrGkgb+HizOdSZlX/X04PMT2o2ehkLEzHqdgrykC
+        6NnEpTNkrShzx0+tx2yMvy5oJg==
+X-Google-Smtp-Source: AK7set/OkOOsUmXuVK4imZlLDP1IyOB1m4u5y1VSrI+UbKHeFhKm5a+6WSZulwmwUQHUv3ET1yzvYA==
+X-Received: by 2002:a19:5519:0:b0:4db:3847:12f0 with SMTP id n25-20020a195519000000b004db384712f0mr3452173lfe.50.1678111458925;
+        Mon, 06 Mar 2023 06:04:18 -0800 (PST)
+Received: from [192.168.1.101] (abym99.neoplus.adsl.tpnet.pl. [83.9.32.99])
+        by smtp.gmail.com with ESMTPSA id q8-20020ac246e8000000b004b6efcb7bb5sm1651026lfo.169.2023.03.06.06.04.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Mar 2023 06:04:18 -0800 (PST)
+Message-ID: <27109715-ffda-2a4a-ee67-886713103d49@linaro.org>
+Date:   Mon, 6 Mar 2023 15:04:16 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <953ee705-47a7-3f6b-408e-9d74f3bc30b4@i2se.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH RFT 03/20] clk: qcom: smd-rpm: Add support for keepalive
+ votes
+Content-Language: en-US
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+References: <20230303-topic-rpmcc_sleep-v1-0-d9cfaf9b27a7@linaro.org>
+ <20230303-topic-rpmcc_sleep-v1-3-d9cfaf9b27a7@linaro.org>
+ <CAA8EJpp6cxY5+L28qsTeXCmA31e4dv21u1Tz9SquAugaV+EqfQ@mail.gmail.com>
+ <afa95a2d-dbf3-621e-a1ed-fa484d288432@linaro.org>
+In-Reply-To: <afa95a2d-dbf3-621e-a1ed-fa484d288432@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Mar 06, 2023 at 02:33:24PM +0100, Stefan Wahren wrote:
-> Hi Oleksij,
+
+
+On 6.03.2023 12:28, Konrad Dybcio wrote:
 > 
-> Am 06.03.23 um 10:47 schrieb Oleksij Rempel:
-> > On Mon, Mar 06, 2023 at 10:13:57AM +0100, Stefan Wahren wrote:
-> > > Hi Oleksij,
-> > > 
-> > > Am 06.03.23 um 06:25 schrieb Oleksij Rempel:
-> > > > Hi Stefan,
-> > > > 
-> > > > On Sun, Mar 05, 2023 at 11:16:17PM +0100, Stefan Wahren wrote:
-> > > > > Hi,
-> > > > > 
-> > > > > we planned to submit our custom i.MX6ULL board [1] to mainline after release
-> > > > > of Linux 6.3-rc1, but the recent enet refclock changes breaks our Ethernet
-> > > > > phy:
-> > > > > 
-> > > > > [    0.000000] imx:clk-gpr-mux: failed to get parent (-EINVAL)
-> > > > > 
-> > > > > ...
-> > > > > 
-> > > > > [   18.574595] SMSC LAN8710/LAN8720 2188000.ethernet-1:00: phy_poll_reset
-> > > > > failed: -110
-> > > > > [   18.581064] fec 2188000.ethernet eth0: Unable to connect to phy
-> > > > > 
-> > > > > I narrow down the PHY issue to this first bad commit:
-> > > > > 
-> > > > > 5f82bfced611 ("clk: imx6ul: fix enet1 gate configuration")
-> > > > > 
-> > > > > The clock issues seems to be cause by the following commit. If i revert
-> > > > > 5f82bfced611 and 4e197ee880c24 or use Linux 6.2 everything is fine.
-> > > > It looks like in your kernel version are some missing patches. Can you please
-> > > > rebase your patches on top of this branch:
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git/log/?h=for-next
-> > > thanks for your fast reply. But i rebased my patches against Linux v6.3-rc1
-> > > since this was released yesterday and should contain all patches from Shawn.
-> > No, it is not. Related DTS changes are not included in to v6.3-rc1.
 > 
-> Sorry, i didn't noticed that Shawn already rebased his for-next changes on
-> top of v6.3-rc1.
+> On 6.03.2023 02:21, Dmitry Baryshkov wrote:
+>> On Sat, 4 Mar 2023 at 15:27, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>>
+>>> Some bus clock should always have a minimum (19.2 MHz) vote cast on
+>>> them, otherwise the platform will fall apart, hang and reboot.
+>>>
+>>> Add support for specifying which clocks should be kept alive and
+>>> always keep a vote on XO_A to make sure the clock tree doesn't
+>>> collapse. This removes the need to keep a maximum vote that was
+>>> previously guaranteed by clk_smd_rpm_handoff.
+>>>
+>>> This commit is a combination of existing (not-exactly-upstream) work
+>>> by Taniya Das, Shawn Guo and myself.
+>>>
+>>> Co-developed-by: Shawn Guo <shawn.guo@linaro.org>
+>>> Co-developed-by: Taniya Das <quic_tdas@quicinc.com>
+>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>> ---
+[...]
+
+>>
+>>> +
+>>> +               ret = clk_set_rate(keepalive_clks[i]->clk, 19200000);
+>>
+>> Don't we also need to provide a determine_rate() that will not allow
+>> one to set clock frequency below 19.2 MHz?
+> Hm, sounds like a good idea..
+Thinking about it again, I'd have to do it before the clocks are registered
+and we'd either end up with 2 loops, one assigning the CLK_IS_CRITICAL flag
+and the other one setting the rate.. Will that not be too hacky?
+
+Konrad
+
 > 
-> So, the problem is that your clk changes has been applied for 6.3, but the
-> necessary arm changes will land in 6.4? :-(
-
-I hope it will go as fixes to 6.3-rcX. Shawn?
-
-> > > I also changed the clockref in my DTSI file:
-> > > 
-> > > https://github.com/chargebyte/linux/commits/v6.3-tarragon-v3
-> > > 
-> > > Now the PHY issue disappeared and ethernet is working, but the
-> > > 
-> > > imx:clk-gpr-mux: failed to get parent (-EINVAL)
-> > I need to take a look at it. It should not be critical.
+>>
+>>> +               if (ret)
+>>> +                       return ret;
+>>> +       }
+>>> +
+>>> +       /* Keep an active vote on CXO in case no other driver votes for it. */
+>>> +       if (rpm_smd_clks[RPM_SMD_XO_A_CLK_SRC])
+>>> +               return clk_prepare_enable(rpm_smd_clks[RPM_SMD_XO_A_CLK_SRC]->hw.clk);
+>>> +
+>>>         return 0;
+>>>  err:
+>>>         dev_err(&pdev->dev, "Error registering SMD clock driver (%d)\n", ret);
+>>
+>>
+>> I have mixed feelings towards this patch (and the rest of the
+>> patchset). It looks to me like we are trying to patch an issue of the
+>> interconnect drivers (or in kernel configuration).
+> Well, as you noticed, this patch tries to address a situation where a
+> critical clock could be disabled. The interconnect driver (as per my
+> other recent patchset) also has a concept of "keepalive", but:
 > 
-> I prepared a patch [1] to improve the debugging here:
+> 1. not very many SoCs already have a functional icc driver
+> 2. devices with an existing interconnect driver should also be
+>    testable without one (through painful ripping out everything-icc
+>    from the dts) for regression tracking
 > 
-> [    0.000000] Entry 262144 != val 0
-> [    0.000000] Entry 16384 != val 0
-> [    0.000000] imx:clk-gpr-mux: val 0, num_parents 2
-> [    0.000000] imx:clk-gpr-mux: failed to get parent of enet2_ref_sel
-> (-EINVAL)
+> Konrad
 > 
-> It seems that val 0 is unexpected for the driver. Maybe it's worth to
-> mention that we use an older U-Boot [2]. But Linux should make any
-> assumptions here.
-
-There are two configuration bits per Ethernet interface:
-- BIT(17) ENET1_TX_CLK_DIR
-- BIT(13) ENET1_CLK_SEL
-
-With this bits we have following variants:
-1. internal clock source with output on ENET1_TX_CLK
-2. internal clock source without output on ENET1_TX_CLK. Are there any
-   use cases need to support this mode?
-3. external clock source without output on ENET1_TX_CLK
-4. external clock source with output on ENET1_TX_CLK, well ENET1_TX_CLK
-   is input it can't be out put on this case.
-
-Current kernel supports modes 1 and 3. For mode 2 I do not have a use
-case and mode 4 make no sense.
-
-In your case, the boot loader configures clocks to mode 2 which is not
-correct for this HW. It should be mode 1.
-
-Probably, the way to go is do register dummy parents for not supported
-modes. It would silent the kernel. Other ideas?
-
-> > Can you please confirm it? Revert yourdtsi back to IMX6UL_CLK_ENET_REF
-> > and include [1]?
-> 
-> I rebased all changes on top of Shawn's branch and reverted to
-> IMX6UL_CLK_ENET_REF [3]. So yes, i confirm that Ethernet works in this case.
-
-Thx! So, there should be no regressions if this patch will to as fix for
-6.3-rcX. Except of kernel warning wrong parent configuration.
-
-Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+>>
+>>
+>> --
+>> With best wishes
+>> Dmitry
