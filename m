@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC9D3C678D4
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 14:09:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B028C6FA99
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 14:10:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231318AbjCFOJs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Mar 2023 09:09:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37066 "EHLO
+        id S230514AbjCFOJ7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Mar 2023 09:09:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231337AbjCFOJT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 09:09:19 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98367301B0;
-        Mon,  6 Mar 2023 06:07:45 -0800 (PST)
+        with ESMTP id S231340AbjCFOJU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 09:09:20 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A3EC31E38;
+        Mon,  6 Mar 2023 06:07:49 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 2AD2D6602ED8;
-        Mon,  6 Mar 2023 14:06:25 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 9A89C6602FDA;
+        Mon,  6 Mar 2023 14:06:13 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1678111586;
-        bh=RLvcsdPyJ8JYsSdcEjnX6tnAGY7D/7P+DqnvwYvYP3A=;
+        s=mail; t=1678111575;
+        bh=tkrg3n9YvwJE1myrWfbxatkH3eo6N7Vmucl9JZeyuaE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gah/UUiuK+93Pqxz19N1Lvxz6BU4kUNm9SdCornj/QWth1e+7suApsajCSnEeXgzm
-         M0zqJgESMRJjHKu2B1gRBFRKbsSo5DcnM7xmeVdn6FMCUIF6JY8WvR9VL1rj4wUhXN
-         FxYeH61BcN84O92G3wD48UFiy16kDwv1ZE6vKorhWI2Ubls9/BVwBPXa+2YW1p/G0U
-         dpGTKoun3IFTtDQwKgyIzbEgLw9XbYLJwjFoB5HcFcCqrdPNTp7TAeRM9uajmBgQIs
-         XJ556sDRmqlHVudoEapianm2u79y5ao7dPpysoUxNzKVShE1xNfL8qda6mvhutgLJr
-         o3oMTbITZK1YA==
+        b=MhUUkF/kKG1NifIg6Iswnb3ECbQPxJHQ9Na65jDVqJI5mCiP2469vIHQSYXHP/evk
+         WlvIJeQkSPtom2ld/DVWI3iybJk2QF8BU/OOJz2scDWtnko0RoVpviCUqgaTGs4czt
+         lR7IzQ9FXgIkctDbcyAPsAB7sbyGPwHQ7U73hgwlzJ8fkua/Oxk4wB7xybYPdRhMER
+         dVQ2LvncohZAcP7WDoZduHFz37v9OOJ0yR7rva3ZmuIgYTlDKjjdLmMC792wEwzok5
+         A+j8DDbZWWhWO4Gpyek7tavHmCxNliPyvPlBFxmXrr/095+tX4PgBpZ90kskwaqnQz
+         MHvQQXoacJtpQ==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     mturquette@baylibre.com
@@ -46,9 +46,9 @@ Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
         chen.zhong@mediatek.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, kernel@collabora.com
-Subject: [PATCH v6 24/54] clk: mediatek: mt7622: Move apmixedsys clock driver to its own file
-Date:   Mon,  6 Mar 2023 15:05:13 +0100
-Message-Id: <20230306140543.1813621-25-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v6 17/54] clk: mediatek: mt8167: Remove __initconst annotation from arrays
+Date:   Mon,  6 Mar 2023 15:05:06 +0100
+Message-Id: <20230306140543.1813621-18-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230306140543.1813621-1-angelogioacchino.delregno@collabora.com>
 References: <20230306140543.1813621-1-angelogioacchino.delregno@collabora.com>
@@ -58,308 +58,466 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In preparation for migrating mt7622 clocks to the common simple
-probe mechanism, move apmixedsys clocks to a different file.
-While at it, use the builtin_platform_driver() macro for it.
-
-During the conversion, error handling was added to the apmixedsys
-probe function.
+In preparation for converting the MT8167 clock drivers to be proper
+platform_driver(s), drop the __initconst annotation from all of the
+clock arrays since they will be used not only during init but also
+during runtime.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/clk/mediatek/Makefile                |   2 +-
- drivers/clk/mediatek/clk-mt7622-apmixedsys.c | 137 +++++++++++++++++++
- drivers/clk/mediatek/clk-mt7622.c            |  87 ------------
- 3 files changed, 138 insertions(+), 88 deletions(-)
- create mode 100644 drivers/clk/mediatek/clk-mt7622-apmixedsys.c
+ drivers/clk/mediatek/clk-mt8167-aud.c    |   2 +-
+ drivers/clk/mediatek/clk-mt8167-img.c    |   2 +-
+ drivers/clk/mediatek/clk-mt8167-mfgcfg.c |   2 +-
+ drivers/clk/mediatek/clk-mt8167-vdec.c   |   2 +-
+ drivers/clk/mediatek/clk-mt8167.c        | 100 +++++++++++------------
+ 5 files changed, 54 insertions(+), 54 deletions(-)
 
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 33f13b8399ce..4619091963a0 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -46,7 +46,7 @@ obj-$(CONFIG_COMMON_CLK_MT2712_MFGCFG) += clk-mt2712-mfg.o
- obj-$(CONFIG_COMMON_CLK_MT2712_MMSYS) += clk-mt2712-mm.o
- obj-$(CONFIG_COMMON_CLK_MT2712_VDECSYS) += clk-mt2712-vdec.o
- obj-$(CONFIG_COMMON_CLK_MT2712_VENCSYS) += clk-mt2712-venc.o
--obj-$(CONFIG_COMMON_CLK_MT7622) += clk-mt7622.o
-+obj-$(CONFIG_COMMON_CLK_MT7622) += clk-mt7622-apmixedsys.o clk-mt7622.o
- obj-$(CONFIG_COMMON_CLK_MT7622_ETHSYS) += clk-mt7622-eth.o
- obj-$(CONFIG_COMMON_CLK_MT7622_HIFSYS) += clk-mt7622-hif.o
- obj-$(CONFIG_COMMON_CLK_MT7622_AUDSYS) += clk-mt7622-aud.o
-diff --git a/drivers/clk/mediatek/clk-mt7622-apmixedsys.c b/drivers/clk/mediatek/clk-mt7622-apmixedsys.c
-new file mode 100644
-index 000000000000..497fada797b9
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt7622-apmixedsys.c
-@@ -0,0 +1,137 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2017 MediaTek Inc.
-+ * Copyright (c) 2023 Collabora, Ltd.
-+ *               AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-+ */
-+
-+#include <dt-bindings/clock/mt7622-clk.h>
-+#include <linux/clk.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-gate.h"
-+#include "clk-mtk.h"
-+#include "clk-pll.h"
-+
-+#define MT7622_PLL_FMAX		(2500UL * MHZ)
-+#define CON0_MT7622_RST_BAR	BIT(27)
-+
-+#define PLL_xtal(_id, _name, _reg, _pwr_reg, _en_mask, _flags, _pcwbits,\
-+			_pd_reg, _pd_shift, _tuner_reg, _pcw_reg,	\
-+			_pcw_shift, _div_table, _parent_name) {		\
-+		.id = _id,						\
-+		.name = _name,						\
-+		.reg = _reg,						\
-+		.pwr_reg = _pwr_reg,					\
-+		.en_mask = _en_mask,					\
-+		.flags = _flags,					\
-+		.rst_bar_mask = CON0_MT7622_RST_BAR,			\
-+		.fmax = MT7622_PLL_FMAX,				\
-+		.pcwbits = _pcwbits,					\
-+		.pd_reg = _pd_reg,					\
-+		.pd_shift = _pd_shift,					\
-+		.tuner_reg = _tuner_reg,				\
-+		.pcw_reg = _pcw_reg,					\
-+		.pcw_shift = _pcw_shift,				\
-+		.div_table = _div_table,				\
-+		.parent_name = _parent_name,				\
-+	}
-+
-+#define PLL(_id, _name, _reg, _pwr_reg, _en_mask, _flags, _pcwbits,	\
-+			_pd_reg, _pd_shift, _tuner_reg, _pcw_reg,	\
-+			_pcw_shift)					\
-+	PLL_xtal(_id, _name, _reg, _pwr_reg, _en_mask, _flags, _pcwbits,\
-+		 _pd_reg, _pd_shift, _tuner_reg, _pcw_reg, _pcw_shift,  \
-+		 NULL, "clkxtal")
-+
-+static const struct mtk_gate_regs apmixed_cg_regs = {
-+	.set_ofs = 0x8,
-+	.clr_ofs = 0x8,
-+	.sta_ofs = 0x8,
-+};
-+
-+#define GATE_APMIXED_AO(_id, _name, _parent, _shift)			\
-+	GATE_MTK_FLAGS(_id, _name, _parent, &apmixed_cg_regs, _shift,	\
-+		 &mtk_clk_gate_ops_no_setclr_inv, CLK_IS_CRITICAL)
-+
-+static const struct mtk_pll_data plls[] = {
-+	PLL(CLK_APMIXED_ARMPLL, "armpll", 0x0200, 0x020C, 0,
-+	    PLL_AO, 21, 0x0204, 24, 0, 0x0204, 0),
-+	PLL(CLK_APMIXED_MAINPLL, "mainpll", 0x0210, 0x021C, 0,
-+	    HAVE_RST_BAR, 21, 0x0214, 24, 0, 0x0214, 0),
-+	PLL(CLK_APMIXED_UNIV2PLL, "univ2pll", 0x0220, 0x022C, 0,
-+	    HAVE_RST_BAR, 7, 0x0224, 24, 0, 0x0224, 14),
-+	PLL(CLK_APMIXED_ETH1PLL, "eth1pll", 0x0300, 0x0310, 0,
-+	    0, 21, 0x0300, 1, 0, 0x0304, 0),
-+	PLL(CLK_APMIXED_ETH2PLL, "eth2pll", 0x0314, 0x0320, 0,
-+	    0, 21, 0x0314, 1, 0, 0x0318, 0),
-+	PLL(CLK_APMIXED_AUD1PLL, "aud1pll", 0x0324, 0x0330, 0,
-+	    0, 31, 0x0324, 1, 0, 0x0328, 0),
-+	PLL(CLK_APMIXED_AUD2PLL, "aud2pll", 0x0334, 0x0340, 0,
-+	    0, 31, 0x0334, 1, 0, 0x0338, 0),
-+	PLL(CLK_APMIXED_TRGPLL, "trgpll", 0x0344, 0x0354, 0,
-+	    0, 21, 0x0344, 1, 0, 0x0348, 0),
-+	PLL(CLK_APMIXED_SGMIPLL, "sgmipll", 0x0358, 0x0368, 0,
-+	    0, 21, 0x0358, 1, 0, 0x035C, 0),
-+};
-+
-+static const struct mtk_gate apmixed_clks[] = {
-+	GATE_APMIXED_AO(CLK_APMIXED_MAIN_CORE_EN, "main_core_en", "mainpll", 5),
-+};
-+
-+static int clk_mt7622_apmixed_probe(struct platform_device *pdev)
-+{
-+	void __iomem *base;
-+	struct clk_hw_onecell_data *clk_data;
-+	struct device_node *node = pdev->dev.of_node;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	clk_data = mtk_devm_alloc_clk_data(dev, CLK_APMIXED_NR_CLK);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	ret = mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
-+	if (ret)
-+		return ret;
-+
-+	ret = mtk_clk_register_gates(&pdev->dev, node, apmixed_clks,
-+				     ARRAY_SIZE(apmixed_clks), clk_data);
-+	if (ret)
-+		goto unregister_plls;
-+
-+	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
-+	if (ret)
-+		goto unregister_gates;
-+
-+	return 0;
-+
-+unregister_gates:
-+	mtk_clk_unregister_gates(apmixed_clks, ARRAY_SIZE(apmixed_clks), clk_data);
-+unregister_plls:
-+	mtk_clk_unregister_plls(plls, ARRAY_SIZE(plls), clk_data);
-+
-+	return ret;
-+}
-+
-+static const struct of_device_id of_match_clk_mt7622_apmixed[] = {
-+	{ .compatible = "mediatek,mt7622-apmixedsys" },
-+	{ /* sentinel */ }
-+};
-+
-+static struct platform_driver clk_mt7622_apmixed_drv = {
-+	.probe = clk_mt7622_apmixed_probe,
-+	.driver = {
-+		.name = "clk-mt7622-apmixed",
-+		.of_match_table = of_match_clk_mt7622_apmixed,
-+	},
-+};
-+builtin_platform_driver(clk_mt7622_apmixed_drv)
-+
-+MODULE_DESCRIPTION("MediaTek MT7622 apmixedsys clocks driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt7622.c b/drivers/clk/mediatek/clk-mt7622.c
-index 1c0049fbeb69..6cf74c948ac7 100644
---- a/drivers/clk/mediatek/clk-mt7622.c
-+++ b/drivers/clk/mediatek/clk-mt7622.c
-@@ -14,46 +14,10 @@
- #include "clk-cpumux.h"
- #include "clk-gate.h"
- #include "clk-mtk.h"
--#include "clk-pll.h"
+diff --git a/drivers/clk/mediatek/clk-mt8167-aud.c b/drivers/clk/mediatek/clk-mt8167-aud.c
+index f6bea6e9e6a4..2d890a440863 100644
+--- a/drivers/clk/mediatek/clk-mt8167-aud.c
++++ b/drivers/clk/mediatek/clk-mt8167-aud.c
+@@ -32,7 +32,7 @@ static const struct mtk_gate_regs aud_cg_regs = {
+ 		.ops = &mtk_clk_gate_ops_no_setclr,		\
+ 	}
  
- #include <dt-bindings/clock/mt7622-clk.h>
- #include <linux/clk.h> /* for consumer */
+-static const struct mtk_gate aud_clks[] __initconst = {
++static const struct mtk_gate aud_clks[] = {
+ 	GATE_AUD(CLK_AUD_AFE, "aud_afe", "clk26m_ck", 2),
+ 	GATE_AUD(CLK_AUD_I2S, "aud_i2s", "i2s_infra_bck", 6),
+ 	GATE_AUD(CLK_AUD_22M, "aud_22m", "rg_aud_engen1", 8),
+diff --git a/drivers/clk/mediatek/clk-mt8167-img.c b/drivers/clk/mediatek/clk-mt8167-img.c
+index 77db13b177fc..23950186ee02 100644
+--- a/drivers/clk/mediatek/clk-mt8167-img.c
++++ b/drivers/clk/mediatek/clk-mt8167-img.c
+@@ -32,7 +32,7 @@ static const struct mtk_gate_regs img_cg_regs = {
+ 		.ops = &mtk_clk_gate_ops_setclr,	\
+ 	}
  
--#define MT7622_PLL_FMAX		(2500UL * MHZ)
--#define CON0_MT7622_RST_BAR	BIT(27)
--
--#define PLL_xtal(_id, _name, _reg, _pwr_reg, _en_mask, _flags, _pcwbits,\
--			_pd_reg, _pd_shift, _tuner_reg, _pcw_reg,	\
--			_pcw_shift, _div_table, _parent_name) {		\
--		.id = _id,						\
--		.name = _name,						\
--		.reg = _reg,						\
--		.pwr_reg = _pwr_reg,					\
--		.en_mask = _en_mask,					\
--		.flags = _flags,					\
--		.rst_bar_mask = CON0_MT7622_RST_BAR,			\
--		.fmax = MT7622_PLL_FMAX,				\
--		.pcwbits = _pcwbits,					\
--		.pd_reg = _pd_reg,					\
--		.pd_shift = _pd_shift,					\
--		.tuner_reg = _tuner_reg,				\
--		.pcw_reg = _pcw_reg,					\
--		.pcw_shift = _pcw_shift,				\
--		.div_table = _div_table,				\
--		.parent_name = _parent_name,				\
--	}
--
--#define PLL(_id, _name, _reg, _pwr_reg, _en_mask, _flags, _pcwbits,	\
--			_pd_reg, _pd_shift, _tuner_reg, _pcw_reg,	\
--			_pcw_shift)					\
--	PLL_xtal(_id, _name, _reg, _pwr_reg, _en_mask, _flags, _pcwbits,\
--		 _pd_reg, _pd_shift, _tuner_reg, _pcw_reg, _pcw_shift,  \
--		 NULL, "clkxtal")
--
--#define GATE_APMIXED_AO(_id, _name, _parent, _shift)			\
--	GATE_MTK_FLAGS(_id, _name, _parent, &apmixed_cg_regs, _shift,	\
--		 &mtk_clk_gate_ops_no_setclr_inv, CLK_IS_CRITICAL)
--
- #define GATE_INFRA(_id, _name, _parent, _shift)				\
- 	GATE_MTK(_id, _name, _parent, &infra_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
+-static const struct mtk_gate img_clks[] __initconst = {
++static const struct mtk_gate img_clks[] = {
+ 	GATE_IMG(CLK_IMG_LARB1_SMI, "img_larb1_smi", "smi_mm", 0),
+ 	GATE_IMG(CLK_IMG_CAM_SMI, "img_cam_smi", "smi_mm", 5),
+ 	GATE_IMG(CLK_IMG_CAM_CAM, "img_cam_cam", "smi_mm", 6),
+diff --git a/drivers/clk/mediatek/clk-mt8167-mfgcfg.c b/drivers/clk/mediatek/clk-mt8167-mfgcfg.c
+index 3c23591b02f7..40b2d45f3fe3 100644
+--- a/drivers/clk/mediatek/clk-mt8167-mfgcfg.c
++++ b/drivers/clk/mediatek/clk-mt8167-mfgcfg.c
+@@ -32,7 +32,7 @@ static const struct mtk_gate_regs mfg_cg_regs = {
+ 		.ops = &mtk_clk_gate_ops_setclr,	\
+ 	}
  
-@@ -261,12 +225,6 @@ static const char * const peribus_ck_parents[] = {
- 	"syspll1_d4"
+-static const struct mtk_gate mfg_clks[] __initconst = {
++static const struct mtk_gate mfg_clks[] = {
+ 	GATE_MFG(CLK_MFG_BAXI, "mfg_baxi", "ahb_infra_sel", 0),
+ 	GATE_MFG(CLK_MFG_BMEM, "mfg_bmem", "gfmux_emi1x_sel", 1),
+ 	GATE_MFG(CLK_MFG_BG3D, "mfg_bg3d", "mfg_mm", 2),
+diff --git a/drivers/clk/mediatek/clk-mt8167-vdec.c b/drivers/clk/mediatek/clk-mt8167-vdec.c
+index 759e5791599f..905529789a7c 100644
+--- a/drivers/clk/mediatek/clk-mt8167-vdec.c
++++ b/drivers/clk/mediatek/clk-mt8167-vdec.c
+@@ -47,7 +47,7 @@ static const struct mtk_gate_regs vdec1_cg_regs = {
+ 		.ops = &mtk_clk_gate_ops_setclr_inv,	\
+ 	}
+ 
+-static const struct mtk_gate vdec_clks[] __initconst = {
++static const struct mtk_gate vdec_clks[] = {
+ 	/* VDEC0 */
+ 	GATE_VDEC0_I(CLK_VDEC_CKEN, "vdec_cken", "rg_vdec", 0),
+ 	/* VDEC1 */
+diff --git a/drivers/clk/mediatek/clk-mt8167.c b/drivers/clk/mediatek/clk-mt8167.c
+index a4ffdac6d94d..f604add9b546 100644
+--- a/drivers/clk/mediatek/clk-mt8167.c
++++ b/drivers/clk/mediatek/clk-mt8167.c
+@@ -19,7 +19,7 @@
+ 
+ static DEFINE_SPINLOCK(mt8167_clk_lock);
+ 
+-static const struct mtk_fixed_clk fixed_clks[] __initconst = {
++static const struct mtk_fixed_clk fixed_clks[] = {
+ 	FIXED_CLK(CLK_TOP_CLK_NULL, "clk_null", NULL, 0),
+ 	FIXED_CLK(CLK_TOP_I2S_INFRA_BCK, "i2s_infra_bck", "clk_null", 26000000),
+ 	FIXED_CLK(CLK_TOP_MEMPLL, "mempll", "clk26m", 800000000),
+@@ -28,7 +28,7 @@ static const struct mtk_fixed_clk fixed_clks[] __initconst = {
+ 	FIXED_CLK(CLK_TOP_LVDSTX_CLKDIG_CTS, "lvdstx_dig_cts", "clk26m", 52500000),
  };
  
--static const struct mtk_gate_regs apmixed_cg_regs = {
--	.set_ofs = 0x8,
--	.clr_ofs = 0x8,
--	.sta_ofs = 0x8,
--};
--
- static const struct mtk_gate_regs infra_cg_regs = {
- 	.set_ofs = 0x40,
- 	.clr_ofs = 0x44,
-@@ -297,31 +255,6 @@ static const struct mtk_gate_regs peri1_cg_regs = {
- 	.sta_ofs = 0x1C,
+-static const struct mtk_fixed_factor top_divs[] __initconst = {
++static const struct mtk_fixed_factor top_divs[] = {
+ 	FACTOR(CLK_TOP_DMPLL, "dmpll_ck", "mempll", 1, 1),
+ 	FACTOR(CLK_TOP_MAINPLL_D2, "mainpll_d2", "mainpll", 1, 2),
+ 	FACTOR(CLK_TOP_MAINPLL_D4, "mainpll_d4", "mainpll", 1, 4),
+@@ -84,22 +84,22 @@ static const struct mtk_fixed_factor top_divs[] __initconst = {
+ 	FACTOR(CLK_TOP_ETH_D2, "eth_d2_ck", "eth_sel", 1, 2),
  };
  
--static const struct mtk_pll_data plls[] = {
--	PLL(CLK_APMIXED_ARMPLL, "armpll", 0x0200, 0x020C, 0,
--	    PLL_AO, 21, 0x0204, 24, 0, 0x0204, 0),
--	PLL(CLK_APMIXED_MAINPLL, "mainpll", 0x0210, 0x021C, 0,
--	    HAVE_RST_BAR, 21, 0x0214, 24, 0, 0x0214, 0),
--	PLL(CLK_APMIXED_UNIV2PLL, "univ2pll", 0x0220, 0x022C, 0,
--	    HAVE_RST_BAR, 7, 0x0224, 24, 0, 0x0224, 14),
--	PLL(CLK_APMIXED_ETH1PLL, "eth1pll", 0x0300, 0x0310, 0,
--	    0, 21, 0x0300, 1, 0, 0x0304, 0),
--	PLL(CLK_APMIXED_ETH2PLL, "eth2pll", 0x0314, 0x0320, 0,
--	    0, 21, 0x0314, 1, 0, 0x0318, 0),
--	PLL(CLK_APMIXED_AUD1PLL, "aud1pll", 0x0324, 0x0330, 0,
--	    0, 31, 0x0324, 1, 0, 0x0328, 0),
--	PLL(CLK_APMIXED_AUD2PLL, "aud2pll", 0x0334, 0x0340, 0,
--	    0, 31, 0x0334, 1, 0, 0x0338, 0),
--	PLL(CLK_APMIXED_TRGPLL, "trgpll", 0x0344, 0x0354, 0,
--	    0, 21, 0x0344, 1, 0, 0x0348, 0),
--	PLL(CLK_APMIXED_SGMIPLL, "sgmipll", 0x0358, 0x0368, 0,
--	    0, 21, 0x0358, 1, 0, 0x035C, 0),
--};
--
--static const struct mtk_gate apmixed_clks[] = {
--	GATE_APMIXED_AO(CLK_APMIXED_MAIN_CORE_EN, "main_core_en", "mainpll", 5),
--};
--
- static const struct mtk_gate infra_clks[] = {
- 	GATE_INFRA(CLK_INFRA_DBGCLK_PD, "infra_dbgclk_pd", "axi_sel", 0),
- 	GATE_INFRA(CLK_INFRA_TRNG, "trng_ck", "axi_sel", 2),
-@@ -652,23 +585,6 @@ static int mtk_infrasys_init(struct platform_device *pdev)
- 	return 0;
- }
+-static const char * const uart0_parents[] __initconst = {
++static const char * const uart0_parents[] = {
+ 	"clk26m_ck",
+ 	"univpll_d24"
+ };
  
--static int mtk_apmixedsys_init(struct platform_device *pdev)
--{
--	struct clk_hw_onecell_data *clk_data;
--	struct device_node *node = pdev->dev.of_node;
--
--	clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
--	if (!clk_data)
--		return -ENOMEM;
--
--	mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls),
--			      clk_data);
--
--	mtk_clk_register_gates(&pdev->dev, node, apmixed_clks,
--			       ARRAY_SIZE(apmixed_clks), clk_data);
--
--	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--}
+-static const char * const gfmux_emi1x_parents[] __initconst = {
++static const char * const gfmux_emi1x_parents[] = {
+ 	"clk26m_ck",
+ 	"dmpll_ck"
+ };
  
- static int mtk_pericfg_init(struct platform_device *pdev)
- {
-@@ -701,9 +617,6 @@ static int mtk_pericfg_init(struct platform_device *pdev)
+-static const char * const emi_ddrphy_parents[] __initconst = {
++static const char * const emi_ddrphy_parents[] = {
+ 	"gfmux_emi1x_sel",
+ 	"gfmux_emi1x_sel"
+ };
  
- static const struct of_device_id of_match_clk_mt7622[] = {
- 	{
--		.compatible = "mediatek,mt7622-apmixedsys",
--		.data = mtk_apmixedsys_init,
--	}, {
- 		.compatible = "mediatek,mt7622-infracfg",
- 		.data = mtk_infrasys_init,
- 	}, {
+-static const char * const ahb_infra_parents[] __initconst = {
++static const char * const ahb_infra_parents[] = {
+ 	"clk_null",
+ 	"clk26m_ck",
+ 	"mainpll_d11",
+@@ -115,7 +115,7 @@ static const char * const ahb_infra_parents[] __initconst = {
+ 	"mainpll_d10"
+ };
+ 
+-static const char * const csw_mux_mfg_parents[] __initconst = {
++static const char * const csw_mux_mfg_parents[] = {
+ 	"clk_null",
+ 	"clk_null",
+ 	"univpll_d3",
+@@ -126,7 +126,7 @@ static const char * const csw_mux_mfg_parents[] __initconst = {
+ 	"mmpll380m"
+ };
+ 
+-static const char * const msdc0_parents[] __initconst = {
++static const char * const msdc0_parents[] = {
+ 	"clk26m_ck",
+ 	"univpll_d6",
+ 	"mainpll_d8",
+@@ -137,7 +137,7 @@ static const char * const msdc0_parents[] __initconst = {
+ 	"mmpll_d2"
+ };
+ 
+-static const char * const camtg_mm_parents[] __initconst = {
++static const char * const camtg_mm_parents[] = {
+ 	"clk_null",
+ 	"clk26m_ck",
+ 	"usb_phy48m_ck",
+@@ -145,17 +145,17 @@ static const char * const camtg_mm_parents[] __initconst = {
+ 	"univpll_d6"
+ };
+ 
+-static const char * const pwm_mm_parents[] __initconst = {
++static const char * const pwm_mm_parents[] = {
+ 	"clk26m_ck",
+ 	"univpll_d12"
+ };
+ 
+-static const char * const uart1_parents[] __initconst = {
++static const char * const uart1_parents[] = {
+ 	"clk26m_ck",
+ 	"univpll_d24"
+ };
+ 
+-static const char * const msdc1_parents[] __initconst = {
++static const char * const msdc1_parents[] = {
+ 	"clk26m_ck",
+ 	"univpll_d6",
+ 	"mainpll_d8",
+@@ -166,24 +166,24 @@ static const char * const msdc1_parents[] __initconst = {
+ 	"mmpll_d2"
+ };
+ 
+-static const char * const spm_52m_parents[] __initconst = {
++static const char * const spm_52m_parents[] = {
+ 	"clk26m_ck",
+ 	"univpll_d24"
+ };
+ 
+-static const char * const pmicspi_parents[] __initconst = {
++static const char * const pmicspi_parents[] = {
+ 	"univpll_d20",
+ 	"usb_phy48m_ck",
+ 	"univpll_d16",
+ 	"clk26m_ck"
+ };
+ 
+-static const char * const qaxi_aud26m_parents[] __initconst = {
++static const char * const qaxi_aud26m_parents[] = {
+ 	"clk26m_ck",
+ 	"ahb_infra_sel"
+ };
+ 
+-static const char * const aud_intbus_parents[] __initconst = {
++static const char * const aud_intbus_parents[] = {
+ 	"clk_null",
+ 	"clk26m_ck",
+ 	"mainpll_d22",
+@@ -191,7 +191,7 @@ static const char * const aud_intbus_parents[] __initconst = {
+ 	"mainpll_d11"
+ };
+ 
+-static const char * const nfi2x_pad_parents[] __initconst = {
++static const char * const nfi2x_pad_parents[] = {
+ 	"clk_null",
+ 	"clk_null",
+ 	"clk_null",
+@@ -279,12 +279,12 @@ static const char * const nfi2x_pad_parents[] __initconst = {
+ 	"mainpll_d5"
+ };
+ 
+-static const char * const nfi1x_pad_parents[] __initconst = {
++static const char * const nfi1x_pad_parents[] = {
+ 	"ahb_infra_sel",
+ 	"nfi1x_ck"
+ };
+ 
+-static const char * const mfg_mm_parents[] __initconst = {
++static const char * const mfg_mm_parents[] = {
+ 	"clk_null",
+ 	"clk_null",
+ 	"clk_null",
+@@ -324,12 +324,12 @@ static const char * const mfg_mm_parents[] __initconst = {
+ 	"mainpll_d14"
+ };
+ 
+-static const char * const ddrphycfg_parents[] __initconst = {
++static const char * const ddrphycfg_parents[] = {
+ 	"clk26m_ck",
+ 	"mainpll_d16"
+ };
+ 
+-static const char * const smi_mm_parents[] __initconst = {
++static const char * const smi_mm_parents[] = {
+ 	"clk26m_ck",
+ 	"clk_null",
+ 	"clk_null",
+@@ -345,7 +345,7 @@ static const char * const smi_mm_parents[] __initconst = {
+ 	"mainpll_d14"
+ };
+ 
+-static const char * const usb_78m_parents[] __initconst = {
++static const char * const usb_78m_parents[] = {
+ 	"clk_null",
+ 	"clk26m_ck",
+ 	"univpll_d16",
+@@ -353,7 +353,7 @@ static const char * const usb_78m_parents[] __initconst = {
+ 	"mainpll_d20"
+ };
+ 
+-static const char * const scam_mm_parents[] __initconst = {
++static const char * const scam_mm_parents[] = {
+ 	"clk_null",
+ 	"clk26m_ck",
+ 	"mainpll_d14",
+@@ -361,7 +361,7 @@ static const char * const scam_mm_parents[] __initconst = {
+ 	"mainpll_d12"
+ };
+ 
+-static const char * const spinor_parents[] __initconst = {
++static const char * const spinor_parents[] = {
+ 	"clk26m_d2",
+ 	"clk26m_ck",
+ 	"mainpll_d40",
+@@ -372,7 +372,7 @@ static const char * const spinor_parents[] __initconst = {
+ 	"univpll_d12"
+ };
+ 
+-static const char * const msdc2_parents[] __initconst = {
++static const char * const msdc2_parents[] = {
+ 	"clk26m_ck",
+ 	"univpll_d6",
+ 	"mainpll_d8",
+@@ -383,7 +383,7 @@ static const char * const msdc2_parents[] __initconst = {
+ 	"mmpll_d2"
+ };
+ 
+-static const char * const eth_parents[] __initconst = {
++static const char * const eth_parents[] = {
+ 	"clk26m_ck",
+ 	"mainpll_d40",
+ 	"univpll_d24",
+@@ -391,7 +391,7 @@ static const char * const eth_parents[] __initconst = {
+ 	"mainpll_d20"
+ };
+ 
+-static const char * const vdec_mm_parents[] __initconst = {
++static const char * const vdec_mm_parents[] = {
+ 	"clk26m_ck",
+ 	"univpll_d4",
+ 	"mainpll_d4",
+@@ -400,7 +400,7 @@ static const char * const vdec_mm_parents[] __initconst = {
+ 	"mainpll_d6"
+ };
+ 
+-static const char * const dpi0_mm_parents[] __initconst = {
++static const char * const dpi0_mm_parents[] = {
+ 	"clk26m_ck",
+ 	"lvdspll_ck",
+ 	"lvdspll_d2",
+@@ -408,7 +408,7 @@ static const char * const dpi0_mm_parents[] __initconst = {
+ 	"lvdspll_d8"
+ };
+ 
+-static const char * const dpi1_mm_parents[] __initconst = {
++static const char * const dpi1_mm_parents[] = {
+ 	"clk26m_ck",
+ 	"tvdpll_d2",
+ 	"tvdpll_d4",
+@@ -416,85 +416,85 @@ static const char * const dpi1_mm_parents[] __initconst = {
+ 	"tvdpll_d16"
+ };
+ 
+-static const char * const axi_mfg_in_parents[] __initconst = {
++static const char * const axi_mfg_in_parents[] = {
+ 	"clk26m_ck",
+ 	"mainpll_d11",
+ 	"univpll_d24",
+ 	"mmpll380m"
+ };
+ 
+-static const char * const slow_mfg_parents[] __initconst = {
++static const char * const slow_mfg_parents[] = {
+ 	"clk26m_ck",
+ 	"univpll_d12",
+ 	"univpll_d24"
+ };
+ 
+-static const char * const aud1_parents[] __initconst = {
++static const char * const aud1_parents[] = {
+ 	"clk26m_ck",
+ 	"apll1_ck"
+ };
+ 
+-static const char * const aud2_parents[] __initconst = {
++static const char * const aud2_parents[] = {
+ 	"clk26m_ck",
+ 	"apll2_ck"
+ };
+ 
+-static const char * const aud_engen1_parents[] __initconst = {
++static const char * const aud_engen1_parents[] = {
+ 	"clk26m_ck",
+ 	"rg_apll1_d2_en",
+ 	"rg_apll1_d4_en",
+ 	"rg_apll1_d8_en"
+ };
+ 
+-static const char * const aud_engen2_parents[] __initconst = {
++static const char * const aud_engen2_parents[] = {
+ 	"clk26m_ck",
+ 	"rg_apll2_d2_en",
+ 	"rg_apll2_d4_en",
+ 	"rg_apll2_d8_en"
+ };
+ 
+-static const char * const i2c_parents[] __initconst = {
++static const char * const i2c_parents[] = {
+ 	"clk26m_ck",
+ 	"univpll_d20",
+ 	"univpll_d16",
+ 	"univpll_d12"
+ };
+ 
+-static const char * const aud_i2s0_m_parents[] __initconst = {
++static const char * const aud_i2s0_m_parents[] = {
+ 	"rg_aud1",
+ 	"rg_aud2"
+ };
+ 
+-static const char * const pwm_parents[] __initconst = {
++static const char * const pwm_parents[] = {
+ 	"clk26m_ck",
+ 	"univpll_d12"
+ };
+ 
+-static const char * const spi_parents[] __initconst = {
++static const char * const spi_parents[] = {
+ 	"clk26m_ck",
+ 	"univpll_d12",
+ 	"univpll_d8",
+ 	"univpll_d6"
+ };
+ 
+-static const char * const aud_spdifin_parents[] __initconst = {
++static const char * const aud_spdifin_parents[] = {
+ 	"clk26m_ck",
+ 	"univpll_d2"
+ };
+ 
+-static const char * const uart2_parents[] __initconst = {
++static const char * const uart2_parents[] = {
+ 	"clk26m_ck",
+ 	"univpll_d24"
+ };
+ 
+-static const char * const bsi_parents[] __initconst = {
++static const char * const bsi_parents[] = {
+ 	"clk26m_ck",
+ 	"mainpll_d10",
+ 	"mainpll_d12",
+ 	"mainpll_d20"
+ };
+ 
+-static const char * const dbg_atclk_parents[] __initconst = {
++static const char * const dbg_atclk_parents[] = {
+ 	"clk_null",
+ 	"clk26m_ck",
+ 	"mainpll_d5",
+@@ -502,7 +502,7 @@ static const char * const dbg_atclk_parents[] __initconst = {
+ 	"univpll_d5"
+ };
+ 
+-static const char * const csw_nfiecc_parents[] __initconst = {
++static const char * const csw_nfiecc_parents[] = {
+ 	"clk_null",
+ 	"mainpll_d7",
+ 	"mainpll_d6",
+@@ -510,7 +510,7 @@ static const char * const csw_nfiecc_parents[] __initconst = {
+ 	"mainpll_d5"
+ };
+ 
+-static const char * const nfiecc_parents[] __initconst = {
++static const char * const nfiecc_parents[] = {
+ 	"clk_null",
+ 	"nfi2x_pad_sel",
+ 	"mainpll_d4",
+@@ -624,24 +624,24 @@ static struct mtk_composite top_muxes[] __initdata = {
+ 		0x07c, 13, 3),
+ };
+ 
+-static const char * const ifr_mux1_parents[] __initconst = {
++static const char * const ifr_mux1_parents[] = {
+ 	"clk26m_ck",
+ 	"armpll",
+ 	"univpll",
+ 	"mainpll_d2"
+ };
+ 
+-static const char * const ifr_eth_25m_parents[] __initconst = {
++static const char * const ifr_eth_25m_parents[] = {
+ 	"eth_d2_ck",
+ 	"rg_eth"
+ };
+ 
+-static const char * const ifr_i2c0_parents[] __initconst = {
++static const char * const ifr_i2c0_parents[] = {
+ 	"ahb_infra_d2",
+ 	"rg_i2c"
+ };
+ 
+-static const struct mtk_composite ifr_muxes[] __initconst = {
++static const struct mtk_composite ifr_muxes[] = {
+ 	MUX(CLK_IFR_MUX1_SEL, "ifr_mux1_sel", ifr_mux1_parents, 0x000,
+ 		2, 2),
+ 	MUX(CLK_IFR_ETH_25M_SEL, "ifr_eth_25m_sel", ifr_eth_25m_parents, 0x080,
+@@ -744,7 +744,7 @@ static const struct mtk_gate_regs top5_cg_regs = {
+ #define GATE_TOP5(_id, _name, _parent, _shift) \
+ 	GATE_MTK(_id, _name, _parent, &top5_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr)
+ 
+-static const struct mtk_gate top_clks[] __initconst = {
++static const struct mtk_gate top_clks[] = {
+ 	/* TOP0 */
+ 	GATE_TOP0(CLK_TOP_PWM_MM, "pwm_mm", "pwm_mm_sel", 0),
+ 	GATE_TOP0(CLK_TOP_CAM_MM, "cam_mm", "camtg_mm_sel", 1),
 -- 
 2.39.2
 
