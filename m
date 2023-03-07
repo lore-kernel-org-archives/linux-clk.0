@@ -2,142 +2,149 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FAE7C61DA4
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Mar 2023 23:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57263C64EC4
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 00:24:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229726AbjCFX7Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Mar 2023 18:59:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39862 "EHLO
+        id S229815AbjCGAYb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Mar 2023 19:24:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229609AbjCFX7Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 18:59:24 -0500
-X-Greylist: delayed 62 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 06 Mar 2023 15:59:23 PST
-Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D6972596C
-        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 15:59:23 -0800 (PST)
-Received: from localhost (88-113-24-128.elisa-laajakaista.fi [88.113.24.128])
-        by fgw22.mail.saunalahti.fi (Halon) with ESMTP
-        id c4170a49-bc7a-11ed-a9de-005056bdf889;
-        Tue, 07 Mar 2023 01:58:18 +0200 (EET)
-From:   andy.shevchenko@gmail.com
-Date:   Tue, 7 Mar 2023 01:58:17 +0200
-To:     Devi Priya <quic_devipriy@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, catalin.marinas@arm.com, will@kernel.org,
-        p.zabel@pengutronix.de, shawnguo@kernel.org, arnd@arndb.de,
-        marcel.ziswiler@toradex.com, dmitry.baryshkov@linaro.org,
-        nfraprado@collabora.com, broonie@kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
-        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
-        quic_poovendh@quicinc.com
-Subject: Re: [PATCH V8 4/7] pinctrl: qcom: Add IPQ9574 pinctrl driver
-Message-ID: <ZAZ+GeGu8mW1XqpG@surfacebook>
-References: <20230214163116.9924-1-quic_devipriy@quicinc.com>
- <20230214163116.9924-5-quic_devipriy@quicinc.com>
+        with ESMTP id S229780AbjCGAY2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2023 19:24:28 -0500
+Received: from mail-oa1-x32.google.com (mail-oa1-x32.google.com [IPv6:2001:4860:4864:20::32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 733563D0A3
+        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 16:24:25 -0800 (PST)
+Received: by mail-oa1-x32.google.com with SMTP id 586e51a60fabf-176b48a9a05so6032556fac.0
+        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2023 16:24:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678148665;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D4ip3sLglqlQ7E7789pVNb0z5WZUEnYuDewtkqp1id4=;
+        b=GdTih1HDlNXVA9H6OR/RW6m37uzRP3VKQX+ND1QSHcoLL9A1O2uIErkClZ3vIEDsGk
+         9j77xJmF9E00zrLSJGQbtuUIPCIctKSCY+4KgPgxagf8YCVevcRO5QbpPqox2pySrkNu
+         GCnSZ1re7/cUK98AwTGe7VPQbfFK6bWPwMn2vmxbxLn8UYy2seSyvU5YlGakbOZrwzxW
+         aotTntUdU6hMoVhvrSZyrEdx2kQqF3bKmjRocS25yXENF4hTCAIEEJz8j8qdKVgI61Ag
+         +G4XtTxLjSX3nRDWBfHATW95RTYv/n148choNo7Esl/CKLE16QkAqCEwOGz+s0ooxg2E
+         rkFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678148665;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D4ip3sLglqlQ7E7789pVNb0z5WZUEnYuDewtkqp1id4=;
+        b=oRfUf7uIxSywViSdz7lKpCSiK1K6Jnyp2R4D17M24qx40UTy2+7k21nmyaJa9msEf4
+         eTjRyeRjb6Gb9PEu6rMSvJHRKYh800ey2jDvVIGSbWUgL8fBlc28h8M3CDrcEFhJ5kzh
+         zUZLAAH39Cxn198mn/mfU9OSvCVFsJwBWVuzpGg2Y089uGHrX5tRVlzV0vdX844+JFPL
+         GBXdvNEUiy7SAnBG89/6H4CgR5iMgJ4OBOOl9i2aDA0RZUjYdFag7zdRwJIewMzIf14+
+         mdHMEly2EGMbYA6Y56mFooc2VP20neghlPt7A7AaibxHIatR4rC7UE5SPSDDpg7erlix
+         I38w==
+X-Gm-Message-State: AO0yUKUbZxdGXW6VBKGMfCJnofALC2jNxlcpywkt1a+H5dixnv1UHRiE
+        OBrbR3XQBKD8oHmD2DsnEs0LbA==
+X-Google-Smtp-Source: AK7set/55XNiVHEyI+5t+FJNuGNj6pwtNyPc2xIbVC1QIFUa9KMNTgq5WIEDx6T+IyxjBFyelih5kQ==
+X-Received: by 2002:a05:6870:c10c:b0:163:51eb:b577 with SMTP id f12-20020a056870c10c00b0016351ebb577mr9102897oad.46.1678148664749;
+        Mon, 06 Mar 2023 16:24:24 -0800 (PST)
+Received: from localhost ([136.49.140.41])
+        by smtp.gmail.com with ESMTPSA id x7-20020a9d3787000000b00690dd5e7345sm4783041otb.26.2023.03.06.16.24.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Mar 2023 16:24:24 -0800 (PST)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] clk: samsung: Add PM support for ARM64 Exynos chips
+Date:   Mon,  6 Mar 2023 18:24:20 -0600
+Message-Id: <20230307002423.24454-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230214163116.9924-5-quic_devipriy@quicinc.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Tue, Feb 14, 2023 at 10:01:13PM +0530, Devi Priya kirjoitti:
-> Add pinctrl definitions for the TLMM of IPQ9574
+In order to prepare for PM enablement in clk-exynos850, common PM code
+was extracted from clk-exynos5433 to clk-exynos-arm64. Also some related
+cleanups were done prior to that. More specifically:
 
-...
+  - patches #1..2: cleanups
+  - patch #3: PM code extraction
 
-> +	depends on OF
+During the extraction of the exynos5433_cmu_probe() content to
+exynos_arm64_register_cmu_pm() some code was reworked a bit, and also
+split into smaller functions. In particular:
 
-No compile test on non-OF configurations?
+  - cmu_data structure now contains a pointer to ctx, which is now
+    allocated in samsung_clk_init()
+  - cmu_data structure initialization was moved into separate function
+  - code for configuring gate clocks was added (optional)
 
-> +	depends on ARM64 || COMPILE_TEST
+Which in turn resulted in somehow modified code of probe function:
 
-...
+  Original
+  --------
 
-> +#define FUNCTION(fname)			                \
+    ...
+    devm_platform_ioremap_resource(...);
+    samsung_clk_init(...);
+    exynos_arm64_cmu_prepare_pm(...);
+    exynos_arm64_enable_bus_clk(...);
+    platform_set_drvdata(...);
+    ...
 
-PINCTRL_PINFUNCTION() ?
+  Modified
+  --------
 
-> +	[msm_mux_##fname] = {		                \
-> +		.name = #fname,				\
-> +		.groups = fname##_groups,               \
-> +		.ngroups = ARRAY_SIZE(fname##_groups),	\
-> +	}
+    ...
+    platform_set_drvdata(...);
+    exynos_arm64_cmu_prepare_pm(...);
+    exynos_arm64_enable_bus_clk(...);
+    exynos_arm64_init_clocks(...);
+    devm_platform_ioremap_resource(...);
+    samsung_clk_init(...);
+    ...
 
-...
+That shouldn't really change the logic or mode of operation. It was
+preliminary tested on Exynos850 based board, with some extra patches on
+top of this series (will be submitted later).
 
-> +#define REG_SIZE 0x1000
-> +#define PINGROUP(id, f1, f2, f3, f4, f5, f6, f7, f8, f9)	\
-> +	{					        \
-> +		.name = "gpio" #id,			\
-> +		.pins = gpio##id##_pins,		\
-> +		.npins = (unsigned int)ARRAY_SIZE(gpio##id##_pins),	\
+Changes in v4:
+  - Rebased on top of krzk/linux.git/for-next tree
+  - Reworked exynos_arm64_enable_bus_clk() users to only print an error
+    message if that function fails
+  - Removed already applied patches from this series
 
-Can you embed struct pingroup?
+Changes in v3:
+  - Rebased on the most recent soc/for-next tree
+  - Added A-b tags from Marek
+  - Added Marek's authorship to clk-exynos-arm64.c
 
-> +		.funcs = (int[]){			\
-> +			msm_mux_gpio, /* gpio mode */	\
-> +			msm_mux_##f1,			\
-> +			msm_mux_##f2,			\
-> +			msm_mux_##f3,			\
-> +			msm_mux_##f4,			\
-> +			msm_mux_##f5,			\
-> +			msm_mux_##f6,			\
-> +			msm_mux_##f7,			\
-> +			msm_mux_##f8,			\
-> +			msm_mux_##f9			\
-> +		},				        \
-> +		.nfuncs = 10,				\
-> +		.ctl_reg = REG_SIZE * id,			\
-> +		.io_reg = 0x4 + REG_SIZE * id,		\
-> +		.intr_cfg_reg = 0x8 + REG_SIZE * id,		\
-> +		.intr_status_reg = 0xc + REG_SIZE * id,	\
-> +		.intr_target_reg = 0x8 + REG_SIZE * id,	\
-> +		.mux_bit = 2,			\
-> +		.pull_bit = 0,			\
-> +		.drv_bit = 6,			\
-> +		.oe_bit = 9,			\
-> +		.in_bit = 0,			\
-> +		.out_bit = 1,			\
-> +		.intr_enable_bit = 0,		\
-> +		.intr_status_bit = 0,		\
-> +		.intr_target_bit = 5,		\
-> +		.intr_target_kpss_val = 3,	\
-> +		.intr_raw_status_bit = 4,	\
-> +		.intr_polarity_bit = 1,		\
-> +		.intr_detection_bit = 2,	\
-> +		.intr_detection_width = 2,	\
-> +	}
+Changes in v2:
+  - Rebased all patches on top of the latest soc/for-next tree
+  - Added Tested-by tag from Marek
+  - Addressed comments from the review
 
-...
+Sam Protsenko (3):
+  clk: samsung: Extract clocks registration to common function
+  clk: samsung: Extract parent clock enabling to common function
+  clk: samsung: exynos5433: Extract PM support to common ARM64 layer
 
-> +	PINGROUP(62, blsp1_spi, audio_sec, audio_pdm1, audio_sec, pta, prng_rosc2, gcc_plltest,
-> +		 _, _),
-
-Can be one line.
-
-...
-
-> +static const struct of_device_id ipq9574_pinctrl_of_match[] = {
-> +	{ .compatible = "qcom,ipq9574-tlmm", },
-
-> +	{ },
-
-No comma for terminator line.
-
-> +};
-
-No MODULE_DEVICE_TABLE()?
+ drivers/clk/samsung/clk-exynos-arm64.c | 229 +++++++++++++++++++++++--
+ drivers/clk/samsung/clk-exynos-arm64.h |   3 +
+ drivers/clk/samsung/clk-exynos5433.c   | 157 +----------------
+ drivers/clk/samsung/clk.c              |  46 +++--
+ drivers/clk/samsung/clk.h              |   2 +
+ 5 files changed, 249 insertions(+), 188 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.39.2
 
