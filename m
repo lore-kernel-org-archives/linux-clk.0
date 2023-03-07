@@ -2,107 +2,121 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE4DC6FD1F
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 12:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 449A7C678D5
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 12:48:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230267AbjCGMcL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Mar 2023 07:32:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52600 "EHLO
+        id S229527AbjCGMsE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Mar 2023 07:48:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230224AbjCGMcJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 07:32:09 -0500
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC63476F68
-        for <linux-clk@vger.kernel.org>; Tue,  7 Mar 2023 04:32:06 -0800 (PST)
-Received: by mail-lj1-x22f.google.com with SMTP id x6so12996726ljq.1
-        for <linux-clk@vger.kernel.org>; Tue, 07 Mar 2023 04:32:06 -0800 (PST)
+        with ESMTP id S229556AbjCGMrp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 07:47:45 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ECE579B01
+        for <linux-clk@vger.kernel.org>; Tue,  7 Mar 2023 04:47:44 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id s11so51714094edy.8
+        for <linux-clk@vger.kernel.org>; Tue, 07 Mar 2023 04:47:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678192325;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xoKKJZFHs/8MSrXZ3Q3rY87HaTCz1bnlS/tCHR2CSg8=;
-        b=iukR/+gr8EDtbfyWkLTmOTMQnMAsxA/0IeNzNwgq/dhuq9kO6YGSJosg68f368zs15
-         YstaY/Co/MOS3Qp3JiWxIWMuC21LDZWh03BFpQKUDWfdx3935xpOSs8fPXDwYAIkHcAg
-         CH/HQ3F8DMCCNRdR4VFlCJhmbLftuEpuioYs28eaX9BzZHmtDgl/8B9vuHe527AMUNrp
-         rt/fT+PhZJbUQKKPYrfjuhZ8oStjiQSkHtyRuHmK/f5NiuCQL9phOn70TJwUaZE5cG4z
-         HbdZHc35xbDUnRBrad5Rm5jt3Xau35GnjeMdzmSjIfJ4WjfD8OlEgUt1DqwTCfaFa6a9
-         P7ow==
+        d=linaro.org; s=google; t=1678193262;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MiOMw3LK/5OLzUtn41VD8A10+TPR+DMf9b3It0y1guw=;
+        b=GfvhCA4Tlxl2L4aX/6Sh6y/b6EtasmFOro5keWY86lAZ8++Xzo7zyqoqYHVHbsqAbE
+         HCw+aujjmrHB2hQHnb/dwbJFQPgbqy5MZMwtzcqnZJzYep5I23Vgep4oc6E8yOvcvg/c
+         /uqA1aDHO9KOeaEfa9G2pfPXZnIlgcAJuAUCt9H4ttYJyGfmvRubtqtAcleTbXZrHiD2
+         2kKhBmW4MoRUAQQ52RDzV//ERmEO7pdTWRW0ppS4SiWYyqpqnpdqYVYXoTshH9BhIK8j
+         qa/zfDeLY8nbuU4ZVbkOp7oNTz8wtYaauLFDZEZsihPBk4dNy2OJi/74Ef+xYbOkUI9N
+         X0wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678192325;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xoKKJZFHs/8MSrXZ3Q3rY87HaTCz1bnlS/tCHR2CSg8=;
-        b=L8/9Sxb5Zx6nlhT5wbS9KDWpgipYDJ0MDZUGGOEN6QIHTNAtxnyOneMZxLm4JG5/on
-         qvlk+dT7aeOP1XYOPT3O0bxZp4Oo+LuHshclnW2wKw1F5XmudW5rb+EoS0lrYLfiCaI7
-         476mchc+h/x1X3XabtRrnPVD603OfFrlbsd9wi/tdCNRcMTvaynDBU/9/sPhZubWRkHE
-         bBKpAFS68fButMKXe2RK1PgphAw2hEcHiErkK25qtmpy/vUp8HHDOlJPIhaQ42FZaaDm
-         2VDDjBFWRR+UGUe6z1tuuMB0P8khkYqOn+/d4mIQM9EKdQq+Jm3tv7WmHQ5GtVKXqXIp
-         eEKw==
-X-Gm-Message-State: AO0yUKULr1A/a3dkgNWFu7511oBN0C7+OA68hn0wWoifx8Csm2xOL3IR
-        hFineXjh7F0JKHJFs3LR++xsKw==
-X-Google-Smtp-Source: AK7set+Ki5rtSIjZoBN2OEjShpSzxH5VtETDwMehoUs+K6eVTYuj1qKSTqNDshEDr94AhMQdAdLsfQ==
-X-Received: by 2002:a2e:808e:0:b0:295:9ba2:8a78 with SMTP id i14-20020a2e808e000000b002959ba28a78mr4869643ljg.17.1678192325107;
-        Tue, 07 Mar 2023 04:32:05 -0800 (PST)
-Received: from localhost.localdomain (abyj16.neoplus.adsl.tpnet.pl. [83.9.29.16])
-        by smtp.gmail.com with ESMTPSA id t20-20020a2e7814000000b0029462e98c07sm2156501ljc.35.2023.03.07.04.32.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Mar 2023 04:32:04 -0800 (PST)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-To:     linux-arm-msm@vger.kernel.org, andersson@kernel.org,
-        agross@kernel.org
-Cc:     marijn.suijten@somainline.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] clk: qcom: gcc-msm8998: Update the .pwrsts for usb gdsc
-Date:   Tue,  7 Mar 2023 13:31:59 +0100
-Message-Id: <20230307123159.3797551-3-konrad.dybcio@linaro.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230307123159.3797551-1-konrad.dybcio@linaro.org>
-References: <20230307123159.3797551-1-konrad.dybcio@linaro.org>
+        d=1e100.net; s=20210112; t=1678193262;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MiOMw3LK/5OLzUtn41VD8A10+TPR+DMf9b3It0y1guw=;
+        b=VFkjuAagpsCDnuCKcWNSPUTr8B/J9tVcuYBZCO450WXmxKSmt1hOHzbv+igLqjblHw
+         TL4kIzy+r1XUP9l2OFQqeP5Ut++KPNerIxtty3e0lcqNA54NEr4wdJlHzpaLtQ6nDl5L
+         68LlqU6tDxDSDxKt0XEry3+Qf9VvR2vQ/yO39ENQZ7nRlEnTvJqX7JBJzt0vCUsaZio7
+         jMv400S3Ty2HOvbW+WE6KYTMwzG996GzLA/6TmcpaqFuyLuY9OVgyidllyo23toPgcQs
+         JDbDOq0sGlFMXH0WWmvvKioNhiLYnQdVMZfaNbnwLhN7pdA/1EAGiuHq2UUFyimBMRGG
+         St4w==
+X-Gm-Message-State: AO0yUKWkSPhsLPKF4Zo8DEec3Jasjm5ThmI9YuLfpdooW4FnYY3XDQqI
+        xosrozhnoUw3FA3/Sl8eCPOrqw==
+X-Google-Smtp-Source: AK7set+YuJPZN+mtGN0+4Lu5lpIp2vpZ1xwMAygXesjgftRMUQnfjD9C9uBPunnWrkl0dV+LGfhlaA==
+X-Received: by 2002:a05:6402:350:b0:4c0:eab4:af12 with SMTP id r16-20020a056402035000b004c0eab4af12mr12941292edw.12.1678193262693;
+        Tue, 07 Mar 2023 04:47:42 -0800 (PST)
+Received: from ?IPV6:2a02:810d:15c0:828:a60f:e604:c252:1f3d? ([2a02:810d:15c0:828:a60f:e604:c252:1f3d])
+        by smtp.gmail.com with ESMTPSA id x33-20020a50baa4000000b004af7191fe35sm6669195ede.22.2023.03.07.04.47.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Mar 2023 04:47:42 -0800 (PST)
+Message-ID: <692a62da-a9a1-fa23-6e24-723d73c3a423@linaro.org>
+Date:   Tue, 7 Mar 2023 13:47:40 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v13 1/2] dt-bindings: clock: add loongson-2 boot clock
+ index
+Content-Language: en-US
+To:     Yinbo Zhu <zhuyinbo@loongson.cn>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     Jianmin Lv <lvjianmin@loongson.cn>,
+        Liu Peibao <liupeibao@loongson.cn>, wanghongliang@loongson.cn,
+        loongson-kernel@lists.loongnix.cn
+References: <20230307115022.12846-1-zhuyinbo@loongson.cn>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230307115022.12846-1-zhuyinbo@loongson.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The USB controller on msm8998 doesn't retain its state when the system
-goes into low power state and the GDSCs are turned off.
+On 07/03/2023 12:50, Yinbo Zhu wrote:
+> The Loongson-2 boot clock was used to spi and lio peripheral and
+> this patch was to add boot clock index number.
+> 
+> Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+> ---
 
-This can be observed by the USB connection not coming back alive after
-putting the device into suspend, essentially breaking USB.
+This is v13? Where is the changelog then?
 
-Work around this by updating the .pwrsts for the USB GDSCs so they only
-transition to retention state in low power.
 
-This change should be reverted when a proper suspend sequence is
-implemented in the USB drivers.
+>  include/dt-bindings/clock/loongson,ls2k-clk.h | 25 ++++++++++---------
+>  1 file changed, 13 insertions(+), 12 deletions(-)
+> 
+> diff --git a/include/dt-bindings/clock/loongson,ls2k-clk.h b/include/dt-bindings/clock/loongson,ls2k-clk.h
+> index db1e27e792ff1..e86804365e506 100644
+> --- a/include/dt-bindings/clock/loongson,ls2k-clk.h
+> +++ b/include/dt-bindings/clock/loongson,ls2k-clk.h
+> @@ -13,17 +13,18 @@
+>  #define LOONGSON2_DC_PLL				3
+>  #define LOONGSON2_PIX0_PLL				4
+>  #define LOONGSON2_PIX1_PLL				5
+> -#define LOONGSON2_NODE_CLK				6
+> -#define LOONGSON2_HDA_CLK				7
+> -#define LOONGSON2_GPU_CLK				8
+> -#define LOONGSON2_DDR_CLK				9
+> -#define LOONGSON2_GMAC_CLK				10
+> -#define LOONGSON2_DC_CLK				11
+> -#define LOONGSON2_APB_CLK				12
+> -#define LOONGSON2_USB_CLK				13
+> -#define LOONGSON2_SATA_CLK				14
+> -#define LOONGSON2_PIX0_CLK				15
+> -#define LOONGSON2_PIX1_CLK				16
+> -#define LOONGSON2_CLK_END				17
+> +#define LOONGSON2_BOOT_CLK				6
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
-v1 -> v2:
-New patch
+That's an ABI break and commit msg does not explain it.
 
- drivers/clk/qcom/gcc-msm8998.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> +#define LOONGSON2_NODE_CLK				7
 
-diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
-index f1aacbfe6bb4..8790bbdcd2e2 100644
---- a/drivers/clk/qcom/gcc-msm8998.c
-+++ b/drivers/clk/qcom/gcc-msm8998.c
-@@ -2901,7 +2901,8 @@ static struct gdsc usb_30_gdsc = {
- 	.pd = {
- 		.name = "usb_30_gdsc",
- 	},
--	.pwrsts = PWRSTS_OFF_ON,
-+	/* TODO: Change to OFF_ON when USB drivers get proper suspend support */
-+	.pwrsts = PWRSTS_RET_ON,
- 	.flags = VOTABLE,
- };
- 
--- 
-2.39.2
+
+
+Best regards,
+Krzysztof
 
