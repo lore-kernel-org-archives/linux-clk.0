@@ -2,255 +2,139 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C750EC678D4
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 07:28:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C560C678D5
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 07:47:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230168AbjCGH2j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Mar 2023 02:28:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60038 "EHLO
+        id S230356AbjCGHrS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Mar 2023 02:47:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229582AbjCGH2i (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 02:28:38 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8219C1ABC7;
-        Mon,  6 Mar 2023 23:28:37 -0800 (PST)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3277IocE024564;
-        Tue, 7 Mar 2023 07:28:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=F6QABCKHWqbxtVM4XSn7cntHysY136Cm7OTjlv9CQ5g=;
- b=AD3pmUo3hlWH0V5NTY96aUvd8UVh/R+96zGFk89KQ1HGCdb+hLOzBPsxzJfvaIXcqbEb
- s7lQbGV6sRPHwBuirDSea+sun0kdxDCvNER91lrEr7Tyu+6+g/D0vD7eFVSTXBsG2PvY
- X4d6hli3uKYXaLsBNCOgC5EhtnMIk44xWRGN1sLyPNs5sMKasVdJJGDwfAzykkxuuQxZ
- gD6MqADDJ14LTugY0Wsnq/giQ6wz7Yc8yGm7nyx7bk1MzkEf5wdKDvt6cuLypUjvCBDJ
- uo3u1ZxYU6c/XTzJmhrxK7CpxIgmrJLK4YIUKdJEbkXAf3qLlJjBf9TQiw4eRaQMESMB kg== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3p5nkw9jj3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Mar 2023 07:28:32 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3277SVaO024116
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 7 Mar 2023 07:28:31 GMT
-Received: from [10.201.3.182] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Mon, 6 Mar 2023
- 23:28:23 -0800
-Message-ID: <3298e7f6-ec63-077e-7dc9-2243670bc026@quicinc.com>
-Date:   Tue, 7 Mar 2023 12:58:13 +0530
+        with ESMTP id S229591AbjCGHrQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 02:47:16 -0500
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F195A3D08E
+        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 23:47:14 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id s11so48712183edy.8
+        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2023 23:47:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678175233;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VmfI+nHnkEqaAvjTBCYnN1twlAqQaJgDbBXTUdXeeFQ=;
+        b=iu9fwHUW9JYA8hvS/oUJwEd4kEhdZsTVk6arW6P3La/Jgtxm2pkPWh1oX+8H2for8e
+         zmIJPmBNj2h5olU7KH69L2bPb2H6LSOFEBfXqoetxQ4h7iRKLeEFbcuGn17PgyG8YzqJ
+         CSTqVdyHp19RcgJ8PkbRAiq4tPHdpbqjt7Bwuw2TRDcez45jRYIkNtHh6OpPO+0juO4Q
+         GvxATuyVzfKTXaP/BkWMKzH9vDF57/LQyR04ZFmKg1aIYn2XJEucO1/Wu4p/BaUKNJBm
+         oV5fSOZLad6Uh/v+WtL4ugD7BxYara4n0qp/Nf6quOkSsctVBdcUJfs6eq/SItnovS1g
+         /i5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678175233;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VmfI+nHnkEqaAvjTBCYnN1twlAqQaJgDbBXTUdXeeFQ=;
+        b=Z3kgrhPzdFWewlPO8Zl8Qp0OOnzCtjG1fijHihk4XUfd6lrmPZrwGB9FAittjvoafY
+         h2zaT3ME9dBhPU8f2HGVIKJLDlciw+DeEXWB0obDezG5bn0vyHj6Prqaye9opC1FSk+5
+         Wib4hNApxKv5iAVEhLkxvLiuojnScuCP8pnTlVI+kC/QUfa4mcdTkrHKcWeRzZnbPbY9
+         gsqSEHgDDxJLDYBCOCt96KJCunNr+kxneB2HNAk9j7oYgbnjRUOVrX6B2QGjij817sdo
+         Yyc6j3R1HsOi3PNuWvvRrk9acU+zaa9IYiiQ+MFi5DxirKLVbAuVR+DWxvScOcOdynhY
+         2z0g==
+X-Gm-Message-State: AO0yUKXMjamrYpnMjmx162+qbDcR2sKPYEXfiK84kRUieKtttPlcuD1L
+        ufYIeDPrDVZ1qx2oSKasEsrhdQ==
+X-Google-Smtp-Source: AK7set8O4IoTTFwYSdQW8lhVj/770uCuSaTe+CetkZL4C7EpKVXb0/fviq7hgLA5AbL7mIIUBlFvvg==
+X-Received: by 2002:a17:906:af18:b0:8aa:c155:9233 with SMTP id lx24-20020a170906af1800b008aac1559233mr13332907ejb.26.1678175233466;
+        Mon, 06 Mar 2023 23:47:13 -0800 (PST)
+Received: from ?IPV6:2a02:810d:15c0:828:5310:35c7:6f9e:2cd3? ([2a02:810d:15c0:828:5310:35c7:6f9e:2cd3])
+        by smtp.gmail.com with ESMTPSA id y26-20020a170906071a00b008b2714f4d8asm5646123ejb.181.2023.03.06.23.47.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Mar 2023 23:47:13 -0800 (PST)
+Message-ID: <3a27febc-4d4e-1cfd-45dc-6ade4f25ca13@linaro.org>
+Date:   Tue, 7 Mar 2023 08:47:11 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH 06/11] clk: qcom: IPQ9574: Add q6/wcss clocks
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v2 0/6] clk: samsung: exynos850: Add missing clocks for PM
 Content-Language: en-US
-To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
-        <mathieu.poirier@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <quic_gurus@quicinc.com>,
-        <loic.poulain@linaro.org>, <quic_eberman@quicinc.com>,
-        <robimarko@gmail.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     <quic_gokulsri@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
-        <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
-References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
- <1678164097-13247-7-git-send-email-quic_mmanikan@quicinc.com>
-From:   Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <1678164097-13247-7-git-send-email-quic_mmanikan@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Chanho Park <chanho61.park@samsung.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        David Virag <virag.david003@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>
+References: <20230223042133.26551-1-semen.protsenko@linaro.org>
+ <167811290503.11716.15730246749418548221.b4-ty@linaro.org>
+ <48c8a0cf-08dc-a831-33ef-3b8e32eef2d3@linaro.org>
+ <CAPLW+4=9Vwxd4upa3j_cKtRrNyyx_XCz+TgOOziMguEonbHb0g@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <CAPLW+4=9Vwxd4upa3j_cKtRrNyyx_XCz+TgOOziMguEonbHb0g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ijw2X5OLzAv1OQ5dn1V7rR9QN-cvyVV1
-X-Proofpoint-ORIG-GUID: ijw2X5OLzAv1OQ5dn1V7rR9QN-cvyVV1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-07_02,2023-03-06_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- adultscore=0 malwarescore=0 mlxlogscore=900 lowpriorityscore=0
- suspectscore=0 mlxscore=0 phishscore=0 impostorscore=0 priorityscore=1501
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2303070066
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 3/7/2023 10:11 AM, Manikanta Mylavarapu wrote:
-> Some of the clocks required for q6/wcss bring up
-> are missing. So this patch adds clocks.
+On 06/03/2023 19:55, Sam Protsenko wrote:
+> On Mon, 6 Mar 2023 at 09:51, Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+>>
+>> On 06/03/2023 15:28, Krzysztof Kozlowski wrote:
+>>> On Wed, 22 Feb 2023 22:21:27 -0600, Sam Protsenko wrote:
+>>>> As a part of preparation for PM enablement in Exynos850 clock driver,
+>>>> this patch series implements CMU_G3D, and also main gate clocks for AUD
+>>>> and HSI CMUs. The series brings corresponding changes to bindings, the
+>>>> driver and SoC dts file.
+>>>>
+>>>> Changes in v2:
+>>>>   - Rebased all patches on top of the most recent soc/for-next tree
+>>>>   - Added A-b and R-b tags
+>>>>   - Minor fixes
+>>>>
+>>>> [...]
+>>>
+>>> Applied, thanks!
+>>>
+>>> [1/6] dt-bindings: clock: exynos850: Add Exynos850 CMU_G3D
+>>>       https://git.kernel.org/krzk/linux/c/067ba1605806e52118bb598afb357718df9f0e19
+>>> [2/6] dt-bindings: clock: exynos850: Add AUD and HSI main gate clocks
+>>>       https://git.kernel.org/krzk/linux/c/e289665ed0d6df9fca3ebc128f1232d305e4600b
+>>> [3/6] clk: samsung: clk-pll: Implement pll0818x PLL type
+>>>       https://git.kernel.org/krzk/linux/c/a6feedab8ab9a9e4483deb0bcc87919d92c88b7e
+>>> [4/6] clk: samsung: exynos850: Implement CMU_G3D domain
+>>>       https://git.kernel.org/krzk/linux/c/c5704a56893b4e77e434597c7c53d878bb3073b0
+>>> [5/6] clk: samsung: exynos850: Add AUD and HSI main gate clocks
+>>>       https://git.kernel.org/krzk/linux/c/d8d12e0d079aff4b1d8079a0a55944c0596f1d67
+>>> [6/6] arm64: dts: exynos: Add CMU_G3D node for Exynos850 SoC
+>>>       https://git.kernel.org/krzk/linux/c/ad8f6ad9a4f219950df65731a8ff91baa022c4b0
+>>
+>> And builds are broken. Please mention in cover letter or commit
+>> dependencies and ordering...
+>>
 > 
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> ---
->   drivers/clk/qcom/gcc-ipq9574.c | 119 +++++++++++++++++++++++++++++++++
->   1 file changed, 119 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
-> index 1bf33d582dc2..355f2e12d9c6 100644
-> --- a/drivers/clk/qcom/gcc-ipq9574.c
-> +++ b/drivers/clk/qcom/gcc-ipq9574.c
-> @@ -2697,6 +2697,22 @@ static struct clk_branch gcc_wcss_acmt_clk = {
->   	},
->   };
->   
-> +static struct clk_branch gcc_wcss_ahb_s_clk = {
-> +	.halt_reg = 0x25060,
-> +	.clkr = {
-> +		.enable_reg = 0x25060,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_wcss_ahb_s_clk",
-> +			.parent_hws = (const struct clk_hw *[]){
-> +					&wcss_ahb_clk_src.clkr.hw },
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
->   static struct clk_branch gcc_sys_noc_wcss_ahb_clk = {
->   	.halt_reg = 0x2e030,
->   	.clkr = {
-> @@ -2734,6 +2750,22 @@ static struct clk_rcg2 wcss_axi_m_clk_src = {
->   	},
->   };
->   
-> +static struct clk_branch gcc_wcss_axi_m_clk = {
-> +	.halt_reg = 0x25064,
-> +	.clkr = {
-> +		.enable_reg = 0x25064,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_wcss_axi_m_clk",
-> +			.parent_hws = (const struct clk_hw *[]){
-> +					&wcss_axi_m_clk_src.clkr.hw },
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
->   static struct clk_branch gcc_anoc_wcss_axi_m_clk = {
->   	.halt_reg = 0x2e0a8,
->   	.clkr = {
-> @@ -2803,6 +2835,22 @@ static struct clk_branch gcc_wcss_dbg_ifc_atb_clk = {
->   	},
->   };
->   
-> +static struct clk_branch gcc_wcss_dbg_ifc_atb_bdg_clk = {
-> +	.halt_reg = 0x2504C,
-> +	.clkr = {
-> +		.enable_reg = 0x2504C,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_wcss_dbg_ifc_atb_bdg_clk",
-> +			.parent_hws = (const struct clk_hw *[]){
-> +					&qdss_at_clk_src.clkr.hw },
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
->   static struct clk_branch gcc_nssnoc_atb_clk = {
->   	.halt_reg = 0x17014,
->   	.clkr = {
-> @@ -3073,6 +3121,22 @@ static struct clk_branch gcc_wcss_dbg_ifc_nts_clk = {
->   	},
->   };
->   
-> +static struct clk_branch gcc_wcss_dbg_ifc_nts_bdg_clk = {
-> +	.halt_reg = 0x25050,
-> +	.clkr = {
-> +		.enable_reg = 0x25050,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_wcss_dbg_ifc_nts_bdg_clk",
-> +			.parent_hws = (const struct clk_hw *[]){
-> +					&qdss_tsctr_div2_clk_src.hw },
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
->   static struct clk_branch gcc_qdss_tsctr_div2_clk = {
->   	.halt_reg = 0x2d044,
->   	.clkr = {
-> @@ -3315,6 +3379,38 @@ static struct clk_branch gcc_wcss_dbg_ifc_dapbus_clk = {
->   	},
->   };
->   
-> +static struct clk_branch gcc_wcss_dbg_ifc_apb_bdg_clk = {
-> +	.halt_reg = 0x25048,
-> +	.clkr = {
-> +		.enable_reg = 0x25048,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_wcss_dbg_ifc_apb_bdg_clk",
-> +			.parent_hws = (const struct clk_hw *[]){
-> +					&qdss_dap_sync_clk_src.hw },
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_wcss_dbg_ifc_dapbus_bdg_clk = {
-> +	.halt_reg = 0x25054,
-> +	.clkr = {
-> +		.enable_reg = 0x25054,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_wcss_dbg_ifc_dapbus_bdg_clk",
-> +			.parent_hws = (const struct clk_hw *[]){
-> +					&qdss_dap_sync_clk_src.hw },
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
->   static struct clk_branch gcc_qdss_dap_clk = {
->   	.halt_reg = 0x2d058,
->   	.clkr = {
-> @@ -3513,6 +3609,22 @@ static struct clk_rcg2 q6_axim2_clk_src = {
->   	},
->   };
->   
-> +static struct clk_branch gcc_q6_axim2_clk = {
-> +	.halt_reg = 0x25010,
-> +	.clkr = {
-> +		.enable_reg = 0x25010,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_q6_axim2_clk",
-> +			.parent_hws = (const struct clk_hw *[]){
-> +					&q6_axim2_clk_src.clkr.hw },
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
+> Just checked all most recent commits on your for-next and next/clk
+> branches. Seem to build fine for me. AFAIR I checked all patches in
+> that series, and I guess there shouldn't be any issues if you apply
+> those in the same order they are numbered inside the series. Or you
+> mean you have some clash between different series? Anyways, I'm glad
+> to help, but I'd need more details on where exactly the problem is (or
+> maybe you already fixed it?).
 
-These clocks does not seem to be used in the driver, where are they used ?
+The builds were failing after I applied everything to respective
+branches (so DTS separate). I did not notice that your DTS and driver
+(both) depend on bindings header constant. This requires special
+handling. It actually always required, because it was going through
+different trees. Now it goes through my tree, but I still need to handle
+it. I reworked the branches and force-pushed, thus you did not see the
+exact issue.
 
-Regards,
-  Sricharan
+Best regards,
+Krzysztof
+
