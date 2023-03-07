@@ -2,190 +2,170 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F40C678D5
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 10:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA396C678D4
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 10:09:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230411AbjCGKFc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Mar 2023 05:05:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41210 "EHLO
+        id S229976AbjCGKJO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Mar 2023 05:09:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230101AbjCGKF2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 05:05:28 -0500
-Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C58BA5073C
-        for <linux-clk@vger.kernel.org>; Tue,  7 Mar 2023 02:05:13 -0800 (PST)
-Received: by mail-ua1-x936.google.com with SMTP id p2so8474293uap.1
-        for <linux-clk@vger.kernel.org>; Tue, 07 Mar 2023 02:05:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678183512;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ZJQteWRnYzXph7B/Yag6wboM2N2GJr+YfQg8dgWg9fg=;
-        b=i8YkSnXonegkW6NuzrPQBnddeL5AYYykbpX7rf6mfB8qYXCajrksSX8+6x4H5APR+w
-         CyNC62BEdd3IYiqGt744W8UizLpcEOdhUiDZRYh/JcwTFH6rlLqr7g9s07erwqZcY7dp
-         q/F4VRUtobYOSrlJ7QIQWS6hZAgJzvST7krsB060SCJMGqiX21BS0uo1RLBt3V0qA+Cf
-         WT23cEsgXMPi/eZrq57WQU3qNvc/9+1vGZmbtzjWxUWi/VDuq4oxgV+Sg408FcGFZxpi
-         ft4GnPZVeN7MdoezfV5rJKQ0+V0oxD6qCplcauC3YCrpheLCf/aDfQi/OCF/2Gopx5U0
-         RQqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678183512;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZJQteWRnYzXph7B/Yag6wboM2N2GJr+YfQg8dgWg9fg=;
-        b=m0AqbNEDKYN+4VzllJeo5jn1cItOqP4B4RXSUY+9A7GJeEbxfi+awCtzxUcZtg4eCK
-         1A69UNKOgLPNU1oeC2P/sPOojK5egOXjPAMnfeocPmxn83jzZfr6M0/LJ8glrsDnuq+u
-         M+pgIR1WlvCMAtCtxIE+CKKAZMIN+vHvMgDAI9GZgh1cQv8uO2Nk+rWRwJ1Gp09ECGUO
-         fUTm5MAIVNYpXFNPodoiiyyiagIO6egDEMvC/VtrDNo4/BBJt0zcv1y0WqaOiRRA+Sdl
-         s9eHciGRdPmNfKt0AzxP0FtKGnxuVXcWpe7NQxpRIiyyNAZtyU9N/wLoaj8vYGoV2nQs
-         LvBQ==
-X-Gm-Message-State: AO0yUKUq7/7FbdYj+vXtdIEql8uvo78a6FHvzKsu3fv7mVQQJkRh7mKH
-        tI555mLrMd3obhB11+gfG17N6Pw40Sl/xVFbv4nNof42RoWE/cb7aSI=
-X-Google-Smtp-Source: AK7set8c+gLtppl3OV34UlpT2NVSBrBDOXjbBL6Qoi5a7s9uQCdvDonXutxUCPmrYcSLhl/Eg4gal+XbsMwFV15tygk=
-X-Received: by 2002:a1f:e483:0:b0:406:3e8d:92c8 with SMTP id
- b125-20020a1fe483000000b004063e8d92c8mr8898453vkh.1.1678183512529; Tue, 07
- Mar 2023 02:05:12 -0800 (PST)
+        with ESMTP id S229927AbjCGKJN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 05:09:13 -0500
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A35455073;
+        Tue,  7 Mar 2023 02:09:02 -0800 (PST)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id DE50924E332;
+        Tue,  7 Mar 2023 18:08:55 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 7 Mar
+ 2023 18:08:55 +0800
+Received: from [192.168.125.124] (183.27.97.46) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 7 Mar
+ 2023 18:08:54 +0800
+Message-ID: <2f03dfb2-5cf8-e954-913c-f0c27db6bcf5@starfivetech.com>
+Date:   Tue, 7 Mar 2023 18:08:53 +0800
 MIME-Version: 1.0
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 7 Mar 2023 15:35:01 +0530
-Message-ID: <CA+G9fYuJJySMY_6oLx_R_ebX9wDkwTLbDW7f7_CqF9UgFhSajg@mail.gmail.com>
-Subject: ftrace_regression01: qemu-i386: EIP: vm_area_free: Kernel panic - not
- syncing: Fatal exception in interrupt
-To:     linux-clk <linux-clk@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        lkft-triage@lists.linaro.org, linux-trace-kernel@vger.kernel.org,
-        LTP List <ltp@lists.linux.it>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Masami Hiramatsu <mhiramat@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v4 00/19] Basic clock, reset & device tree support for
+ StarFive JH7110 RISC-V SoC
+Content-Language: en-US
+To:     Conor Dooley <conor.dooley@microchip.com>
+CC:     Conor Dooley <conor@kernel.org>, <linux-riscv@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Marc Zyngier" <maz@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20230221024645.127922-1-hal.feng@starfivetech.com>
+ <3a605bc8-104e-0935-4fd8-2da16ab9053b@starfivetech.com>
+ <ZAb7JVghuiwZF1Q5@wendy>
+From:   Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <ZAb7JVghuiwZF1Q5@wendy>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [183.27.97.46]
+X-ClientProxiedBy: EXCAS061.cuchost.com (172.16.6.21) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following kernel panic noticed While running LTP tracing tests on
-qemu-i386.
+On Tue, 7 Mar 2023 08:51:49 +0000, Conor Dooley wrote:
+> On Tue, Mar 07, 2023 at 04:36:41PM +0800, Hal Feng wrote:
+>> On Tue, 21 Feb 2023 10:46:26 +0800, Hal Feng wrote:
+>> > This patch series adds basic clock, reset & DT support for StarFive
+>> > JH7110 SoC. Patch 17 depends on series [1] which provides pinctrl
+>> > dt-bindings. Patch 19 depends on series [2] which provides dt-bindings
+>> > of VisionFive 2 board and JH7110 SoC.
+>> > 
+>> > You can simply review or test the patches at the link [3].
+>> > 
+>> > [1]: https://lore.kernel.org/all/20230209143702.44408-1-hal.feng@starfivetech.com/
+>> > [2]: https://lore.kernel.org/all/20230216131511.3327943-1-conor.dooley@microchip.com/
+>> > [3]: https://github.com/hal-feng/linux/commits/visionfive2-minimal
+>> 
+>> Hi Conor,
+>> 
+>> When I tried to rebase these patches on v6.3-rc1, I found the kernel
+>> would crash on the VisionFive 2 board during startup. The logs are as
+>> below. I checkout the branch to the mainline and found that the kernel
+>> would also crash on the VisionFive board which is equipped with JH7100
+>> SoC.
+>> 
+>> --------------------------------
+>> Unable to handle kernel paging request at virtual address 0000004cccccccd4
+>> Oops [#1]
+>> Modules linked in:
+>> CPU: 3 PID: 87 Comm: udevd Not tainted 6.3.0-rc1-00019-g239e7809f291 #305
+>> Hardware name: StarFive VisionFive 2 v1.3B (DT)
+>> epc : enqueue_timer+0x18/0x90
+>>  ra : internal_add_timer+0x2c/0x38
+>> epc : ffffffff8006a714 ra : ffffffff8006a7b8 sp : ffffffc80443bc80
+>>  gp : ffffffff80eb5100 tp : ffffffd8c01db200 t0 : 0000000000000000
+>>  t1 : 000000000000000f t2 : 0000000038b3ea28 s0 : ffffffc80443bcb0
+>>  s1 : ffffffff80813940 a0 : ffffffff80813940 a1 : ffffffc80443bd48
+>>  a2 : 000000000000020b a3 : cccccccd0b000000 a4 : cccccccccccccccc
+>>  a5 : 000000000000020b a6 : ffffffff80814a08 a7 : 0000000000000001
+>>  s2 : ffffffc80443bd48 s3 : 0000000008400040 s4 : ffffffff80813940
+>>  s5 : ffffffff80eea0b8 s6 : ffffffff80eb7220 s7 : 0000000000000040
+>>  s8 : ffffffff80eb61e0 s9 : 0000002ac84a2548 s10: 0000002ad53e92c0
+>>  s11: 0000000000000001 t3 : 000000000000003f t4 : 0000000000000000
+>>  t5 : 0000000000000004 t6 : 0000000000000003
+>> status: 0000000200000100 badaddr: 0000004cccccccd4 cause: 000000000000000f
+>> [<ffffffff8006a714>] enqueue_timer+0x18/0x90
+>> [<ffffffff8006aa64>] add_timer_on+0xf0/0x134
+>> [<ffffffff80500f18>] try_to_generate_entropy+0x1ec/0x232
+>> [<ffffffff8035a636>] urandom_read_iter+0x42/0xc2
+>> [<ffffffff800fff16>] vfs_read+0x17c/0x1e4
+>> [<ffffffff801005b6>] ksys_read+0x78/0x98
+>> [<ffffffff801005e4>] sys_read+0xe/0x16
+>> [<ffffffff800035dc>] ret_from_syscall+0x0/0x2
+>> Code: 9381 9713 0037 0813 0705 983a 3703 0008 e198 c311 (e70c) d713 
+>> ---[ end trace 0000000000000000 ]---
+>> note: udevd[87] exited with irqs disabled
+>> Segmentation fault
+>> FAIL
+>> Saving random seed: 
+>> rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
+>> rcu: 	1-...0: (0 ticks this GP) idle=19c4/1/0x4000000000000000 softirq=42/42 fqs=7474
+>> rcu: 	(detected by 2, t=15005 jiffies, g=-195, q=35 ncpus=4)
+>> Task dump for CPU 1:
+>> task:dd              state:R  running task     stack:0     pid:92    ppid:88     flags:0x00000008
+>> Call Trace:
+>> [<ffffffff80003764>] ret_from_fork+0x0/0xc
+>> rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
+>> rcu: 	1-...0: (0 ticks this GP) idle=19c4/1/0x4000000000000000 softirq=42/42 fqs=29814
+>> rcu: 	(detected by 2, t=60018 jiffies, g=-195, q=35 ncpus=4)
+>> Task dump for CPU 1:
+>> task:dd              state:R  running task     stack:0     pid:92    ppid:88     flags:0x00000008
+>> Call Trace:
+>> [<ffffffff80003764>] ret_from_fork+0x0/0xc
+>> ...
+>> --------------------------------
+>> 
+>> I used 'git bisect' and found out the commit 9493e6f3ce02 is the
+>> cause. I tried to revert this commit on the tag v6.3-rc1, but it
+>> seems there is no improvement.
+> 
+> Hmm, I'm not entirely sure that that is a good bisect.
+> This is a fix for my stupidity in the commit you mention:
+> https://lore.kernel.org/linux-riscv/20230302174154.970746-1-conor@kernel.org/
+> 
+> But the main backtrace there is not from that patch at all, I think it
+> is Linus' fault.
+> The HEAD of Linus' tree is currently 8ca09d5fa3549 ("cpumask: fix
+> incorrect cpumask scanning result checks") should be a fix for the
+> backtrace that you are seeing above.
+> 
+>> Any options I am missing? Could you please give me some suggestions
+>> to adapt to the new changes between 6.2 and 6.3? Thank you in
+>> advance.
+> 
+> LMK if the above two things don't fix it for you & I'll go digging
+> tonight.
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+The above two methods can fix the problem. Here are my test results.
+The VisionFive board can boot up successfully if and only if all above
+two applied.
+The VisionFive 2 board can boot up successfully if I merge Linus's new
+changes.
 
+Hope your fix will be merged in rc2. Thank you for your reply.
 
-[    0.000000] Linux version 6.3.0-rc1 (tuxmake@tuxmake) (Debian clang
-version 16.0.0 (++20230228093516+60692a66ced6-1~exp1~20230228093525.41),
-Debian LLD 16.0.0) #1 SMP PREEMPT_DYNAMIC @1678136838
-...
-LTP tracing tests
-Running tests.......
-<6>[   35.957375] traps: systemd-network[287] trap invalid opcode
-ip:b7d99bef sp:bfcf8e20 error:0 in
-libsystemd-shared-250.so[b7c33000+1c0000]
-<6>[   39.887678] traps: systemd-network[330] trap invalid opcode
-ip:b7db0bef sp:bfb6ab00 error:0 in
-libsystemd-shared-250.so[b7c4a000+1c0000]
-<4>[   41.883172] clocksource: timekeeping watchdog on CPU0: Marking
-clocksource 'tsc' as unstable because the skew is too large:
-<4>[   41.885195] clocksource:                       'acpi_pm'
-wd_nsec: 633206175 wd_now: 13fe92 wd_last: f168b4 mask: ffffff
-<4>[   41.886363] clocksource:                       'tsc' cs_nsec:
-5320282620 cs_now: 1cbab6bece cs_last: 19231a48ea mask:
-ffffffffffffffff
-<4>[   41.887503] clocksource:                       Clocksource 'tsc'
-skewed 4687076445 ns (4687 ms) over watchdog 'acpi_pm' interval of
-633206175 ns (633 ms)
-<4>[   41.888583] clocksource:                       'tsc' is current
-clocksource.
-<6>[   41.889615] tsc: Marking TSC unstable due to clocksource watchdog
-<4>[   41.894933] TSC found unstable after boot, most likely due to
-broken BIOS. Use 'tsc=unstable'.
-<6>[   41.895623] sched_clock: Marking unstable (41348265135,
-546543322)<-(41919545028, -24729054)
-<4>[   41.905093] clocksource: Checking clocksource tsc
-synchronization from CPU 1 to CPUs 0.
-<6>[   41.921496] clocksource: Switched to clocksource acpi_pm
-<47>[   42.122074] systemd-journald[108]: Successfully sent stream
-file descriptor to service manager.
-
-ftrace_regression01 1 TPASS: Finished running the test
-
-<4>[   43.795642] int3: 0000 [#1] PREEMPT SMP
-<4>[   43.795642] CPU: 0 PID: 331 Comm: systemd-network Not tainted 6.3.0-rc1 #1
-<4>[   43.795642] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
-BIOS 1.14.0-2 04/01/2014
-<4>[   43.795642] EIP: vm_area_free+0x1/0x20
-<4>[   43.795642] Code: e5 85 1d 00 85 c0 74 14 b9 11 00 00 00 89 c7
-f3 a5 89 c1 83 c1 24 89 48 24 89 48 28 5e 5f 5d c3 90 90 90 90 90 90
-90 90 90 3e <8d> 74 26 00 55 89 e5 89 c2 a1 ac 99 82 d3 e8 fc 8f 1d 00
-5d c3 90
-<4>[   43.795642] EAX: c243bab0 EBX: c243bab0 ECX: 00000000 EDX: c23cb9c0
-<4>[   43.795642] ESI: 00000000 EDI: 000001c0 EBP: c25c1e24 ESP: c25c1dd0
-<4>[   43.795642] DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00000246
-<4>[   43.795642] CR0: 80050033 CR2: 081d764c CR3: 02ce1000 CR4: 000006d0
-<4>[   43.795642] Call Trace:
-<4>[   43.795642]  ? do_vmi_align_munmap+0x26e/0x380
-<4>[   43.795642]  mmap_region+0x26e/0x880
-<4>[   43.795642]  ? arch_ftrace_ops_list_func+0x20/0x1a0
-<4>[   43.795642]  ? ftrace_call+0x5/0x13
-<4>[   43.795642]  do_mmap+0x33f/0x4b0
-<4>[   43.795642]  ? do_mmap+0x3f6/0x4b0
-<4>[   43.795642]  vm_mmap_pgoff+0x9b/0x120
-<4>[   43.795642]  ksys_mmap_pgoff+0x15d/0x1b0
-<4>[   43.795642]  __ia32_sys_mmap_pgoff+0x21/0x30
-<4>[   43.795642]  do_int80_syscall_32+0x39/0x74
-<4>[   43.795642]  entry_INT80_32+0xf0/0xf0
-<4>[   43.795642] EIP: 0xb7f7d9c1
-<4>[   43.795642] Code: c3 8d b4 26 00 00 00 00 90 8b 5c 24 08 01 c3
-8b 6c 2b 40 89 2f eb b6 66 90 f3 0f 1e fb 53 57 55 8b 1f 8b 6f 08 8b
-7f 04 cd 80 <5d> 5f 5b c3 66 90 66 90 66 90 66 90 66 90 90 f3 0f 1e fb
-e8 5a 00
-<4>[   43.795642] EAX: ffffffda EBX: b7c94000 ECX: 001c0000 EDX: 00000005
-<4>[   43.795642] ESI: 00000812 EDI: 00000004 EBP: 0000003b ESP: bff393e0
-<4>[   43.795642] DS: 007b ES: 007b FS: 0000 GS: 0000 SS: 007b EFLAGS: 00000202
-<4>[   43.795642] Modules linked in:
-<4>[   43.795642]  \
- ---[ end trace 0000000000000000 ]---
-<4>[   43.795642] EIP: vm_area_free+0x1/0x20
-<4>[   43.795642] Code: e5 85 1d 00 85 c0 74 14 b9 11 00 00 00 89 c7
-f3 a5 89 c1 83 c1 24 89 48 24 89 48 28 5e 5f 5d c3 90 90 90 90 90 90
-90 90 90 3e <8d> 74 26 00 55 89 e5 89 c2 a1 ac 99 82 d3 e8 fc 8f 1d 00
-5d c3 90
-<4>[   43.795642] EAX: c243bab0 EBX: c243bab0 ECX: 00000000 EDX: c23cb9c0
-<4>[   43.795642] ESI: 00000000 EDI: 000001c0 EBP: c25c1e24 ESP: c25c1dd0
-<4>[   43.795642] DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00000246
-<4>[   43.795642] CR0: 80050033 CR2: 081d764c CR3: 02ce1000 CR4: 000006d0
-<0>[   43.795642] Kernel panic - not syncing: Fatal exception in interrupt
-<0>[   43.795642] Kernel Offset: disabled
-
-test log:
------
-  - https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.3-rc1-2-g8ca09d5fa354/testrun/15298979/suite/log-parser-test/test/check-kernel-panic/log
-  - https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.3-rc1-2-g8ca09d5fa354/testrun/15298979/suite/log-parser-test/tests/
-
-
-steps to reproduce:
---------------
-# To install tuxrun on your system globally:
-# sudo pip3 install -U tuxrun==0.37.2
-#
-# See https://tuxrun.org/ for complete documentation.
-
-tuxrun  \
- --runtime podman  \
- --device qemu-i386  \
- --kernel https://storage.tuxsuite.com/public/linaro/lkft/builds/2MemUurDShqDi3xoAvTknd2dbfd/bzImage
- \
- --modules https://storage.tuxsuite.com/public/linaro/lkft/builds/2MemUurDShqDi3xoAvTknd2dbfd/modules.tar.xz
- \
- --rootfs https://storage.tuxsuite.com/public/linaro/lkft/oebuilds/2MV9clY6B5uyK3SNAIPgiO5gCoP/images/intel-core2-32/lkft-tux-image-intel-core2-32-20230303113918.rootfs.ext4.gz
- \
- --parameters SKIPFILE=skipfile-lkft.yaml  \
- --parameters SHARD_NUMBER=4  \
- --parameters SHARD_INDEX=1  \
- --image docker.io/lavasoftware/lava-dispatcher:2023.01.0020.gc1598238f  \
- --tests ltp-tracing  \
- --timeouts boot=15 ltp-tracing=30
-
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Best regards,
+Hal
