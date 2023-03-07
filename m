@@ -2,138 +2,405 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C5A6C678DB
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 17:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88038C6FD20
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 18:19:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232033AbjCGRls (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Mar 2023 12:41:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53108 "EHLO
+        id S232645AbjCGSTm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Mar 2023 13:19:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232045AbjCGRla (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 12:41:30 -0500
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4EE8A6BF4
-        for <linux-clk@vger.kernel.org>; Tue,  7 Mar 2023 09:37:28 -0800 (PST)
-Received: by mail-pl1-x635.google.com with SMTP id p20so14883954plw.13
-        for <linux-clk@vger.kernel.org>; Tue, 07 Mar 2023 09:37:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678210648;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=o3zPHvN5mm4IalrCf6zpCmyS4kHEJ7HoGLzRUhQSOoA=;
-        b=o2ytZ6qS0PtfXoLYe5TafISzM6/h2NxL3pqfUqiGJeoJyjjcLmWruuJ3X0G/cQZI/Y
-         GA8IYvcfCRsdkKAPInrw3325Sv6gVIjQvQZMQxeDW96heslTnIO2xfDZjDmjHC8W6S8x
-         8Z/2W26QDYD+sh27LwKdicEwMxzzwNiKSCkfYYiyxDmhqDTlfyv/GgQVFNeN9y63ynUc
-         FJWQqXZIYzZfNoOQhPSUGyELPnY1YZET2qLKlry8+WtVnxDK6ZPqoUCsVZmIiYTHYfmu
-         AdbkopUuQy/vh3LicKLoQLp/1cN+bszEMZwG8pn13IbJ1xhfs2KAVC1bJolPRpetFKGQ
-         3vcw==
+        with ESMTP id S232646AbjCGSTS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 13:19:18 -0500
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 898739E67C;
+        Tue,  7 Mar 2023 10:13:40 -0800 (PST)
+Received: by mail-oo1-f50.google.com with SMTP id o19-20020a056820041300b005259de79accso2160817oou.9;
+        Tue, 07 Mar 2023 10:13:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678210648;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o3zPHvN5mm4IalrCf6zpCmyS4kHEJ7HoGLzRUhQSOoA=;
-        b=DDxYySzx4+83/b6fajb6IEmEWz1SjVYiogUqK58ppjJgacfC26owMpwy+zkxjwXKd/
-         AIEAIIJFCsjCx9Va+cjGskYnEvq2tIqmB5tYk0VW4AwK3pBXq0SsIy0qD09GuwtzTaGv
-         Bqi4qZeZtwFSLOdhVt4Scfo2i/Ai6pmYPwnlp+Gei47QWK8lNMA21iAUz171kluVlsYD
-         enwyTna1hsqe5jHuL3086vauioVbq+NJFoJGU+A3xF2s423A9ksaFOObJg1pEt/47+Zg
-         NImnflP/0n650fhvDrHr95IA1m9Cj/rDfeyZr6nV17KFXyWBXzpOnosffIqd5ZzKSxAL
-         BPZw==
-X-Gm-Message-State: AO0yUKXCW9XlIvW/hHscyuogCG3oxC8FE9/VqLZUFGXeoFF+9712rav8
-        V5wSgr8ACVq5yVl7nrjNxrvSrcRnJHAmRBnDwSUbDQ==
-X-Google-Smtp-Source: AK7set+Kh/juOXVGFGBZq6ZQe/2ECYCsr+2HZ6cR5iMeJ5OSD5b0x9Znktqaib7dBWyXbAGUvwFiALZMirOESQVRZNg=
-X-Received: by 2002:a17:90a:9295:b0:233:fa52:828e with SMTP id
- n21-20020a17090a929500b00233fa52828emr5658345pjo.1.1678210648212; Tue, 07 Mar
- 2023 09:37:28 -0800 (PST)
+        d=1e100.net; s=20210112; t=1678212819;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aVYR7iCf0Df+fEXPePrJvbhIP5bkr3lqWWb+w4AwRWk=;
+        b=IZfad8LvQwb8QHz6s8Hjs/vnZz8N0+8QkinO+X0iRaMYywru6SEs6bdQ8+u31xHCRp
+         YMWavxAonOR16PdwRLTohkXWRGbT2610fjHLYgxSVKOaHxxgku6QQD3LWQI96SvKicyk
+         LR4sztSHHeECdZJR6+mRkls03oj+t30zWtjuBlwY6/oR2ocqwmxTyd2J8lPdzZ4ppArh
+         b0u6XoItQ7TFSYAbitnaJ1py5Ak+drJ5yNNaJOJyIc0QaRIoRWZuh+gFckN6dakJnhFM
+         PGBReRAGQXyfBWcPI/Z8k0bzC1t/HtgpvTTMn4aDi/DPq0x0HCJGIWFlt2AWc4z3Ut5x
+         72VQ==
+X-Gm-Message-State: AO0yUKXemqGFqURFZMk/51NwkNKaMc2pJfbmgt0j2kUTsXWPoHtV8fI6
+        J10feE8HzBjJ5yxpEmLxTw==
+X-Google-Smtp-Source: AK7set8eLT156rIwA09j47KeETEgRAy4QOXPej01e007ZSnYi5Kuz2t5OdgI72EGvup7N2c453icNw==
+X-Received: by 2002:a4a:d1b1:0:b0:525:a9ad:e2b9 with SMTP id z17-20020a4ad1b1000000b00525a9ade2b9mr7501603oor.6.1678212819442;
+        Tue, 07 Mar 2023 10:13:39 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id j15-20020a4adf4f000000b0051fce47fd1bsm608094oou.25.2023.03.07.10.13.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Mar 2023 10:13:38 -0800 (PST)
+Received: (nullmailer pid 2797 invoked by uid 1000);
+        Tue, 07 Mar 2023 14:26:14 -0000
+Date:   Tue, 7 Mar 2023 08:26:14 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        krzysztof.kozlowski+dt@linaro.org, jassisinghbrar@gmail.com,
+        mathieu.poirier@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, quic_gurus@quicinc.com, loic.poulain@linaro.org,
+        quic_eberman@quicinc.com, robimarko@gmail.com,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-clk@vger.kernel.org, quic_srichara@quicinc.com,
+        quic_gokulsri@quicinc.com, quic_sjaganat@quicinc.com,
+        quic_kathirav@quicinc.com, quic_arajkuma@quicinc.com,
+        quic_anusha@quicinc.com, quic_poovendh@quicinc.com
+Subject: Re: [PATCH 01/11] dt-bindings: remoteproc: qcom: Add support for
+ multipd model
+Message-ID: <20230307142614.GA2742-robh@kernel.org>
+References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
+ <1678164097-13247-2-git-send-email-quic_mmanikan@quicinc.com>
 MIME-Version: 1.0
-References: <20230223042133.26551-1-semen.protsenko@linaro.org>
- <167811290503.11716.15730246749418548221.b4-ty@linaro.org>
- <48c8a0cf-08dc-a831-33ef-3b8e32eef2d3@linaro.org> <CAPLW+4=9Vwxd4upa3j_cKtRrNyyx_XCz+TgOOziMguEonbHb0g@mail.gmail.com>
- <3a27febc-4d4e-1cfd-45dc-6ade4f25ca13@linaro.org>
-In-Reply-To: <3a27febc-4d4e-1cfd-45dc-6ade4f25ca13@linaro.org>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Tue, 7 Mar 2023 11:37:17 -0600
-Message-ID: <CAPLW+4nZF2POmD1kRUDktn2_gUWH_e84Lnqx=8qhuqbSnrdJ2A@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] clk: samsung: exynos850: Add missing clocks for PM
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Chanho Park <chanho61.park@samsung.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        David Virag <virag.david003@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1678164097-13247-2-git-send-email-quic_mmanikan@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 7 Mar 2023 at 01:47, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 06/03/2023 19:55, Sam Protsenko wrote:
-> > On Mon, 6 Mar 2023 at 09:51, Krzysztof Kozlowski
-> > <krzysztof.kozlowski@linaro.org> wrote:
-> >>
-> >> On 06/03/2023 15:28, Krzysztof Kozlowski wrote:
-> >>> On Wed, 22 Feb 2023 22:21:27 -0600, Sam Protsenko wrote:
-> >>>> As a part of preparation for PM enablement in Exynos850 clock driver,
-> >>>> this patch series implements CMU_G3D, and also main gate clocks for AUD
-> >>>> and HSI CMUs. The series brings corresponding changes to bindings, the
-> >>>> driver and SoC dts file.
-> >>>>
-> >>>> Changes in v2:
-> >>>>   - Rebased all patches on top of the most recent soc/for-next tree
-> >>>>   - Added A-b and R-b tags
-> >>>>   - Minor fixes
-> >>>>
-> >>>> [...]
-> >>>
-> >>> Applied, thanks!
-> >>>
-> >>> [1/6] dt-bindings: clock: exynos850: Add Exynos850 CMU_G3D
-> >>>       https://git.kernel.org/krzk/linux/c/067ba1605806e52118bb598afb357718df9f0e19
-> >>> [2/6] dt-bindings: clock: exynos850: Add AUD and HSI main gate clocks
-> >>>       https://git.kernel.org/krzk/linux/c/e289665ed0d6df9fca3ebc128f1232d305e4600b
-> >>> [3/6] clk: samsung: clk-pll: Implement pll0818x PLL type
-> >>>       https://git.kernel.org/krzk/linux/c/a6feedab8ab9a9e4483deb0bcc87919d92c88b7e
-> >>> [4/6] clk: samsung: exynos850: Implement CMU_G3D domain
-> >>>       https://git.kernel.org/krzk/linux/c/c5704a56893b4e77e434597c7c53d878bb3073b0
-> >>> [5/6] clk: samsung: exynos850: Add AUD and HSI main gate clocks
-> >>>       https://git.kernel.org/krzk/linux/c/d8d12e0d079aff4b1d8079a0a55944c0596f1d67
-> >>> [6/6] arm64: dts: exynos: Add CMU_G3D node for Exynos850 SoC
-> >>>       https://git.kernel.org/krzk/linux/c/ad8f6ad9a4f219950df65731a8ff91baa022c4b0
-> >>
-> >> And builds are broken. Please mention in cover letter or commit
-> >> dependencies and ordering...
-> >>
-> >
-> > Just checked all most recent commits on your for-next and next/clk
-> > branches. Seem to build fine for me. AFAIR I checked all patches in
-> > that series, and I guess there shouldn't be any issues if you apply
-> > those in the same order they are numbered inside the series. Or you
-> > mean you have some clash between different series? Anyways, I'm glad
-> > to help, but I'd need more details on where exactly the problem is (or
-> > maybe you already fixed it?).
->
-> The builds were failing after I applied everything to respective
-> branches (so DTS separate). I did not notice that your DTS and driver
-> (both) depend on bindings header constant. This requires special
-> handling. It actually always required, because it was going through
-> different trees. Now it goes through my tree, but I still need to handle
-> it. I reworked the branches and force-pushed, thus you did not see the
-> exact issue.
->
+On Tue, Mar 07, 2023 at 10:11:27AM +0530, Manikanta Mylavarapu wrote:
+> Add new binding document for multipd model remoteproc.
+> IPQ5018, IPQ9574 follows multipd model.
+> 
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> ---
+>  .../bindings/remoteproc/qcom,multipd-pil.yaml | 282 ++++++++++++++++++
+>  1 file changed, 282 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
+> new file mode 100644
+> index 000000000000..b788607f5abd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
+> @@ -0,0 +1,282 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/qcom,multipd-pil.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Multipd Secure Peripheral Image Loader
+> +
+> +maintainers:
+> +  - Bjorn Andersson <andersson@kernel.org>
+> +  - Mathieu Poirier <mathieu.poirier@linaro.org>
+> +
+> +description:
+> +  Multipd Peripheral Image Loader loads firmware and boots Q6 pd, WCSS pd
+> +  remoteproc's on the Qualcomm IPQ5018, IPQ9574 SoC.
 
-Thanks for explaining this. Next time I'll provide the dependencies
-info in my patch #0.
+What is PD? I don't see it defined anywhere.
 
-> Best regards,
-> Krzysztof
->
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,ipq5018-q6-mpd
+> +      - qcom,ipq9574-q6-mpd
+> +
+> +  '#address-cells': true
+
+Need to define the size.
+
+> +
+> +  '#size-cells': true
+
+ditto
+
+> +
+> +  'ranges': true
+
+Don't need quotes
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts-extended:
+
+Just 'interrupts'. Both forms are always supported.
+
+> +    items:
+> +      - description: Watchdog interrupt
+> +      - description: Fatal interrupt
+> +      - description: Ready interrupt
+> +      - description: Handover interrupt
+> +      - description: Stop acknowledge interrupt
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: wdog
+> +      - const: fatal
+> +      - const: ready
+> +      - const: handover
+> +      - const: stop-ack
+> +
+> +  clocks:
+> +    minItems: 25
+> +    maxItems: 25
+
+You need to list out what the clocks are.
+
+> +
+> +  clock-names:
+> +    minItems: 25
+> +    maxItems: 25
+> +
+> +  assigned-clocks:
+
+You can drop this. Implicitly supported.
+
+> +    minItems: 13
+> +    maxItems: 13
+> +
+> +  assigned-clock-rates:
+> +    minItems: 13
+> +    maxItems: 13
+> +
+> +  qcom,smem-states:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+
+I believe this already has a type. It should be defined in a common 
+schema if not already and then included in this schema.
+
+> +    description: States used by the AP to signal the remoteprocessor
+> +    items:
+> +      - description: Shutdown Q6
+> +      - description: Stop Q6
+> +
+> +  qcom,smem-state-names:
+> +    description:
+> +      Names of the states used by the AP to signal the remoteprocessor
+> +    items:
+> +      - const: shutdown
+> +      - const: stop
+> +
+> +  memory-region:
+> +    items:
+> +      - description: Q6 pd reserved region
+> +
+> +  glink-edge:
+> +    $ref: /schemas/remoteproc/qcom,glink-edge.yaml#
+> +    description:
+> +      Qualcomm G-Link subnode which represents communication edge, channels
+> +      and devices related to the Modem.
+> +
+> +patternProperties:
+> +  "^remoteproc_pd1|remoteproc_pd2|remoteproc_pd3":
+> +    type: object
+> +    description:
+> +      In Multipd model, WCSS pd depends on Q6 pd i.e Q6 pd should be up before
+> +      WCSS. It can be achieved by keeping wcss pd node as subnode of Q6
+> +      device node.
+> +
+> +    properties:
+> +      compatible:
+> +        enum:
+> +          - "qcom,ipq5018-wcss-ahb-mpd"
+
+Don't need quotes.
+
+> +          - "qcom,ipq9574-wcss-ahb-mpd"
+> +          - "qcom,ipq5018-wcss-pcie-mpd"
+> +
+> +      interrupts-extended:
+
+Just interrupts
+
+> +        items:
+> +          - description: Fatal interrupt
+> +          - description: Ready interrupt
+> +          - description: Spawn acknowledge interrupt
+> +          - description: Stop acknowledge interrupt
+> +
+> +      interrupt-names:
+> +        items:
+> +          - const: fatal
+> +          - const: ready
+> +          - const: spawn-ack
+> +          - const: stop-ack
+> +
+> +      qcom,smem-states:
+> +        $ref: /schemas/types.yaml#/definitions/phandle-array
+> +        description: States used by the AP to signal the remoteprocessor
+> +        items:
+> +          - description: Shutdown WCSS pd
+> +          - description: Stop WCSS pd
+> +          - description: Spawn WCSS pd
+> +
+> +      qcom,smem-state-names:
+> +        description:
+> +          Names of the states used by the AP to signal the remoteprocessor
+> +        items:
+> +          - const: shutdown
+> +          - const: stop
+> +          - const: spawn
+> +
+> +    required:
+> +      - compatible
+> +
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts-extended
+> +  - interrupt-names
+> +  - qcom,smem-states
+> +  - qcom,smem-state-names
+> +  - memory-region
+> +
+> +additionalProperties: false
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - qcom,ipq9574-q6-mpd
+> +    then:
+> +      properties:
+> +        assigned-clocks:
+
+Don't need to define assigned-clocks
+
+> +          items:
+> +            - description: Phandle, clock specifier of GCC_ANOC_WCSS_AXI_M_CLK
+> +            - description: Phandle, clock specifier of GCC_WCSS_AHB_S_CLK
+> +            - description: Phandle, clock specifier of GCC_WCSS_ECAHB_CLK
+> +            - description: Phandle, clock specifier of GCC_WCSS_ACMT_CLK
+> +            - description: Phandle, clock specifier of GCC_WCSS_AXI_M_CLK
+> +            - description: Phandle, clock specifier of GCC_Q6_AXIM_CLK
+> +            - description: Phandle, clock specifier of GCC_Q6_AXIM2_CLK
+> +            - description: Phandle, clock specifier of GCC_Q6_AHB_CLK
+> +            - description: Phandle, clock specifier of GCC_Q6_AHB_S_CLK
+> +            - description: Phandle, clock specifier of GCC_Q6SS_BOOT_CLK
+> +            - description: Phandle, clock specifier of GCC_MEM_NOC_Q6_AXI_CLK
+> +            - description: Phandle, clock specifier of GCC_WCSS_Q6_TBU_CLK
+> +            - description: Phandle, clock specifier of GCC_SYS_NOC_WCSS_AHB_CLK
+> +        assigned-clock-rates:
+> +          items:
+> +            - description: Must be 266666667 HZ
+> +            - description: Must be 133333333 HZ
+> +            - description: Must be 133333333 HZ
+> +            - description: Must be 133333333 HZ
+> +            - description: Must be 266666667 HZ
+> +            - description: Must be 533000000 HZ
+> +            - description: Must be 342857143 HZ
+> +            - description: Must be 133333333 HZ
+> +            - description: Must be 133333333 HZ
+> +            - description: Must be 342857143 HZ
+> +            - description: Must be 533000000 HZ
+> +            - description: Must be 533000000 HZ
+> +            - description: Must be 133333333 HZ
+> +
+> +examples:
+> +  - |
+> +        #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +        #include <dt-bindings/clock/qcom,gcc-ipq5018.h>
+> +        #include <dt-bindings/reset/qcom,gcc-ipq5018.h>
+> +
+> +        q6v5_wcss: remoteproc@cd00000 {
+> +                compatible = "qcom,ipq5018-q6-mpd";
+> +                #address-cells = <1>;
+> +                #size-cells = <1>;
+> +                ranges;
+> +                reg = <0x0cd00000 0x4040>;
+> +                interrupts-extended = <&intc GIC_SPI 291 IRQ_TYPE_EDGE_RISING>,
+> +                                <&wcss_smp2p_in 0 0>,
+> +                                <&wcss_smp2p_in 1 0>,
+> +                                <&wcss_smp2p_in 2 0>,
+> +                                <&wcss_smp2p_in 3 0>;
+> +                interrupt-names = "wdog",
+> +                                  "fatal",
+> +                                  "ready",
+> +                                  "handover",
+> +                                  "stop-ack";
+> +
+> +                qcom,smem-states = <&wcss_smp2p_out 0>,
+> +                                   <&wcss_smp2p_out 1>;
+> +                qcom,smem-state-names = "shutdown",
+> +                                        "stop";
+> +
+> +                memory-region = <&q6_region>;
+> +
+> +                glink-edge {
+> +                        interrupts = <GIC_SPI 179 IRQ_TYPE_EDGE_RISING>;
+> +                        label = "rtr";
+> +                        qcom,remote-pid = <1>;
+> +                        mboxes = <&apcs_glb 8>;
+> +                };
+> +
+> +                q6_wcss_pd1: remoteproc_pd1 {
+> +                        compatible = "qcom,ipq5018-wcss-ahb-mpd";
+> +                        interrupts-extended = <&wcss_smp2p_in 8 0>,
+> +                                        <&wcss_smp2p_in 9 0>,
+> +                                        <&wcss_smp2p_in 12 0>,
+> +                                        <&wcss_smp2p_in 11 0>;
+> +                        interrupt-names = "fatal",
+> +                                          "ready",
+> +                                          "spawn-ack",
+> +                                          "stop-ack";
+> +                        qcom,smem-states = <&wcss_smp2p_out 8>,
+> +                                           <&wcss_smp2p_out 9>,
+> +                                           <&wcss_smp2p_out 10>;
+> +                        qcom,smem-state-names = "shutdown",
+> +                                                "stop",
+> +                                                "spawn";
+> +                };
+> +
+> +                q6_wcss_pd2: remoteproc_pd2 {
+> +                        compatible = "qcom,ipq5018-wcss-pcie-mpd";
+> +                        interrupts-extended = <&wcss_smp2p_in 16 0>,
+> +                                        <&wcss_smp2p_in 17 0>,
+> +                                        <&wcss_smp2p_in 20 0>,
+> +                                        <&wcss_smp2p_in 19 0>;
+> +                        interrupt-names = "fatal",
+> +                                          "ready",
+> +                                          "spawn-ack",
+> +                                          "stop-ack";
+> +
+> +                        qcom,smem-states = <&wcss_smp2p_out 16>,
+> +                                           <&wcss_smp2p_out 17>,
+> +                                           <&wcss_smp2p_out 18>;
+> +                        qcom,smem-state-names = "shutdown",
+> +                                                "stop",
+> +                                                "spawn";
+> +                        status = "okay";
+
+Don't need status in examples.
+
+> +                };
+> +
+> +                q6_wcss_pd3: remoteproc_pd3 {
+> +                        compatible = "qcom,ipq5018-wcss-pcie-mpd";
+> +                        interrupts-extended = <&wcss_smp2p_in 24 0>,
+> +                                        <&wcss_smp2p_in 25 0>,
+> +                                        <&wcss_smp2p_in 28 0>,
+> +                                        <&wcss_smp2p_in 27 0>;
+> +                        interrupt-names = "fatal",
+> +                                          "ready",
+> +                                          "spawn-ack",
+> +                                          "stop-ack";
+> +
+> +                        qcom,smem-states = <&wcss_smp2p_out 24>,
+> +                                           <&wcss_smp2p_out 25>,
+> +                                           <&wcss_smp2p_out 26>;
+> +                        qcom,smem-state-names = "shutdown",
+> +                                                "stop",
+> +                                                "spawn";
+> +                        status = "okay";
+> +                };
+> +        };
+> -- 
+> 2.34.1
+> 
