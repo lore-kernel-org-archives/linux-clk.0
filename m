@@ -2,101 +2,144 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 747E0C678DB
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 07:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF308C678D4
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 08:36:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230186AbjCGHru (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Mar 2023 02:47:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43022 "EHLO
+        id S229549AbjCGIgs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Mar 2023 03:36:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230317AbjCGHrt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 02:47:49 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 345723E0BF
-        for <linux-clk@vger.kernel.org>; Mon,  6 Mar 2023 23:47:48 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id k10so24825870edk.13
-        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2023 23:47:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678175266;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V3DhLATozJtMgPvFoqUY3SKZwNKda35qxdXt7pVBes0=;
-        b=AgOVd2Jshcd1P7nVmgyija6vx3o4lu2Tdx2fffUGqAq3MYn+VgEEfYyq2Whc1krruW
-         Ln1eakWHebJ0xe9w9thitxiPhbglfl/+FiRGEyo/MCCJnxT2g6izAsD8L7lAysP1uB4V
-         i6K7Y0x8DHKld88eP/aSJX3esPf7J974Rdqdf2cvpBqn09v6yFs9lIwrb+QKjfrH6m70
-         0NclLOuens30RbfFu5CSnZgOjl61uecmgNbfJmzy1jhg/A82nc/4WIjwQ2zuJEBymP7R
-         UfzAdP/oixccp/fq54xXc4E0TetwJmYI7kJKEhKM+2sbXvwHvS3llimIj2NIF9SCx3qA
-         AHvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678175266;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V3DhLATozJtMgPvFoqUY3SKZwNKda35qxdXt7pVBes0=;
-        b=AGXLal1ds/uYM3b0PnBThxL8dAOo9wJD5ho7g9v1UzWgLNaeB68UFe5GK2k/jgnni6
-         N2NCzO/oy1lp1uSwfI8ExPz0wmnxqMOLwALzr1kKPBAe0EfN5PZfhW5tP9rHcpL1mhbK
-         xonYMsn3ZZbTlOh+GeVe2AKnap8HC28jgoL40fpl/H4xFl9BzhXcIU/qDlBfR7oc/qjO
-         2wcQA56YjvUK+Aqlt+dyY8n5dxhwNZt0XBgsx+n/UoC2dOwul1xOG7o7KUqy09tQCs2o
-         b2NB47gxoFByHpM3SDrM9i02fGJQryF+2TYPcTaMDz/ZMY0wiGCU3ym7dxGYVfB3rKU+
-         JsZA==
-X-Gm-Message-State: AO0yUKWQKlvPfyOvGw/ndVdn1Y2dRcZvy3McIATglUgJl9dTSt7ctUfS
-        bT1rMOLEkElkWTfhayYJSFeROg==
-X-Google-Smtp-Source: AK7set9DV8c6V+0UvF/rPKB+JoZu2W8Fux9M3UTl8ASI9Ub72eM9wV6VrNXRM1/ge4sXzaw7R1WJpg==
-X-Received: by 2002:a17:907:a4c:b0:8b1:3d15:1e2c with SMTP id be12-20020a1709070a4c00b008b13d151e2cmr17935319ejc.9.1678175266708;
-        Mon, 06 Mar 2023 23:47:46 -0800 (PST)
-Received: from krzk-bin.. ([2a02:810d:15c0:828:5310:35c7:6f9e:2cd3])
-        by smtp.gmail.com with ESMTPSA id bl15-20020a170906c24f00b008d83ad86fe8sm5672808ejb.59.2023.03.06.23.47.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Mar 2023 23:47:46 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        David Virag <virag.david003@gmail.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Chanho Park <chanho61.park@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 0/3] clk: samsung: Add PM support for ARM64 Exynos chips
-Date:   Tue,  7 Mar 2023 08:47:42 +0100
-Message-Id: <167817525834.15038.16744450666463613247.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230307002423.24454-1-semen.protsenko@linaro.org>
-References: <20230307002423.24454-1-semen.protsenko@linaro.org>
+        with ESMTP id S229673AbjCGIgr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 03:36:47 -0500
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D35C4D62B;
+        Tue,  7 Mar 2023 00:36:45 -0800 (PST)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id 9648024E023;
+        Tue,  7 Mar 2023 16:36:43 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 7 Mar
+ 2023 16:36:43 +0800
+Received: from [192.168.125.124] (183.27.97.46) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 7 Mar
+ 2023 16:36:42 +0800
+Message-ID: <3a605bc8-104e-0935-4fd8-2da16ab9053b@starfivetech.com>
+Date:   Tue, 7 Mar 2023 16:36:41 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v4 00/19] Basic clock, reset & device tree support for
+ StarFive JH7110 RISC-V SoC
+Content-Language: en-US
+To:     Conor Dooley <conor@kernel.org>, <linux-riscv@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        "Emil Renner Berthing" <emil.renner.berthing@canonical.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20230221024645.127922-1-hal.feng@starfivetech.com>
+From:   Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <20230221024645.127922-1-hal.feng@starfivetech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [183.27.97.46]
+X-ClientProxiedBy: EXCAS061.cuchost.com (172.16.6.21) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 6 Mar 2023 18:24:20 -0600, Sam Protsenko wrote:
-> In order to prepare for PM enablement in clk-exynos850, common PM code
-> was extracted from clk-exynos5433 to clk-exynos-arm64. Also some related
-> cleanups were done prior to that. More specifically:
+On Tue, 21 Feb 2023 10:46:26 +0800, Hal Feng wrote:
+> This patch series adds basic clock, reset & DT support for StarFive
+> JH7110 SoC. Patch 17 depends on series [1] which provides pinctrl
+> dt-bindings. Patch 19 depends on series [2] which provides dt-bindings
+> of VisionFive 2 board and JH7110 SoC.
 > 
->   - patches #1..2: cleanups
->   - patch #3: PM code extraction
+> You can simply review or test the patches at the link [3].
 > 
-> [...]
+> [1]: https://lore.kernel.org/all/20230209143702.44408-1-hal.feng@starfivetech.com/
+> [2]: https://lore.kernel.org/all/20230216131511.3327943-1-conor.dooley@microchip.com/
+> [3]: https://github.com/hal-feng/linux/commits/visionfive2-minimal
 
-Applied, thanks!
+Hi Conor,
 
-[1/3] clk: samsung: Extract clocks registration to common function
-      https://git.kernel.org/krzk/linux/c/bed76f697a9adda26c40ce4a064f371d54e71331
-[2/3] clk: samsung: Extract parent clock enabling to common function
-      https://git.kernel.org/krzk/linux/c/454e8d296ce4267ca1728bf4f6fe6d41eabe080e
-[3/3] clk: samsung: exynos5433: Extract PM support to common ARM64 layer
-      https://git.kernel.org/krzk/linux/c/f05dc20243163d0218bbb258b6461681865cff5c
+When I tried to rebase these patches on v6.3-rc1, I found the kernel
+would crash on the VisionFive 2 board during startup. The logs are as
+below. I checkout the branch to the mainline and found that the kernel
+would also crash on the VisionFive board which is equipped with JH7100
+SoC.
+
+--------------------------------
+Unable to handle kernel paging request at virtual address 0000004cccccccd4
+Oops [#1]
+Modules linked in:
+CPU: 3 PID: 87 Comm: udevd Not tainted 6.3.0-rc1-00019-g239e7809f291 #305
+Hardware name: StarFive VisionFive 2 v1.3B (DT)
+epc : enqueue_timer+0x18/0x90
+ ra : internal_add_timer+0x2c/0x38
+epc : ffffffff8006a714 ra : ffffffff8006a7b8 sp : ffffffc80443bc80
+ gp : ffffffff80eb5100 tp : ffffffd8c01db200 t0 : 0000000000000000
+ t1 : 000000000000000f t2 : 0000000038b3ea28 s0 : ffffffc80443bcb0
+ s1 : ffffffff80813940 a0 : ffffffff80813940 a1 : ffffffc80443bd48
+ a2 : 000000000000020b a3 : cccccccd0b000000 a4 : cccccccccccccccc
+ a5 : 000000000000020b a6 : ffffffff80814a08 a7 : 0000000000000001
+ s2 : ffffffc80443bd48 s3 : 0000000008400040 s4 : ffffffff80813940
+ s5 : ffffffff80eea0b8 s6 : ffffffff80eb7220 s7 : 0000000000000040
+ s8 : ffffffff80eb61e0 s9 : 0000002ac84a2548 s10: 0000002ad53e92c0
+ s11: 0000000000000001 t3 : 000000000000003f t4 : 0000000000000000
+ t5 : 0000000000000004 t6 : 0000000000000003
+status: 0000000200000100 badaddr: 0000004cccccccd4 cause: 000000000000000f
+[<ffffffff8006a714>] enqueue_timer+0x18/0x90
+[<ffffffff8006aa64>] add_timer_on+0xf0/0x134
+[<ffffffff80500f18>] try_to_generate_entropy+0x1ec/0x232
+[<ffffffff8035a636>] urandom_read_iter+0x42/0xc2
+[<ffffffff800fff16>] vfs_read+0x17c/0x1e4
+[<ffffffff801005b6>] ksys_read+0x78/0x98
+[<ffffffff801005e4>] sys_read+0xe/0x16
+[<ffffffff800035dc>] ret_from_syscall+0x0/0x2
+Code: 9381 9713 0037 0813 0705 983a 3703 0008 e198 c311 (e70c) d713 
+---[ end trace 0000000000000000 ]---
+note: udevd[87] exited with irqs disabled
+Segmentation fault
+FAIL
+Saving random seed: 
+rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
+rcu: 	1-...0: (0 ticks this GP) idle=19c4/1/0x4000000000000000 softirq=42/42 fqs=7474
+rcu: 	(detected by 2, t=15005 jiffies, g=-195, q=35 ncpus=4)
+Task dump for CPU 1:
+task:dd              state:R  running task     stack:0     pid:92    ppid:88     flags:0x00000008
+Call Trace:
+[<ffffffff80003764>] ret_from_fork+0x0/0xc
+rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
+rcu: 	1-...0: (0 ticks this GP) idle=19c4/1/0x4000000000000000 softirq=42/42 fqs=29814
+rcu: 	(detected by 2, t=60018 jiffies, g=-195, q=35 ncpus=4)
+Task dump for CPU 1:
+task:dd              state:R  running task     stack:0     pid:92    ppid:88     flags:0x00000008
+Call Trace:
+[<ffffffff80003764>] ret_from_fork+0x0/0xc
+...
+--------------------------------
+
+I used 'git bisect' and found out the commit 9493e6f3ce02 is the
+cause. I tried to revert this commit on the tag v6.3-rc1, but it
+seems there is no improvement.
+
+Any options I am missing? Could you please give me some suggestions
+to adapt to the new changes between 6.2 and 6.3? Thank you in
+advance.
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Hal
