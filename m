@@ -2,138 +2,153 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F71C678D5
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 15:12:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D9EC678D5
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 15:19:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229955AbjCGPMs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Mar 2023 10:12:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54824 "EHLO
+        id S231232AbjCGPTs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Mar 2023 10:19:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229926AbjCGPM3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 10:12:29 -0500
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 305B83C13
-        for <linux-clk@vger.kernel.org>; Tue,  7 Mar 2023 07:07:09 -0800 (PST)
-Received: by mail-yb1-xb2d.google.com with SMTP id n18so11657186ybm.10
-        for <linux-clk@vger.kernel.org>; Tue, 07 Mar 2023 07:07:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678201627;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mZSPJH+f9oWHaxho+XViilCifY5cfExrCLjds8RGXCE=;
-        b=Zl1iwFTQ4MzHuEy5euVqmvX3rJVpoJHoWQ0T7JbQffO7j89sJ7HXBpmPIbJec7KGy+
-         dtliU7DYJmdu2PNcLBAugFyVpfwZbWFvVvvrz0WrJNeoZrRGAQApRxmyP7zgGLazGqqu
-         zZIDGWdH6d3ORb0YQx3OWMpGzwxpV0zZUNQXRo8Z//lGlF1XYhqfrMaNNvrC2CEqzEjO
-         Y77E8IQdxUNiYlFZIViCJANRIhM+7hohOtTPrOoRy8PPU/8Vs3oI70Xi1XyKylH8fJ3J
-         WGtfZMdTZyXtZWtzOeArMagz7fqB3MqplTkOgkeHlS9sHtypg4NbM76DLzciWbQoTiUr
-         liXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678201627;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mZSPJH+f9oWHaxho+XViilCifY5cfExrCLjds8RGXCE=;
-        b=oKmi2DMmlhvcsyRLYfKh1eCIPOMXLzzEPcKABl0sO0DbbgPfV+ModtZiUPr/Non4Yt
-         YtcNOrbvqvdyWnFKY7ytKu1Am+mz8gc5EBpC3+MGKdCrKpLggoUAYTX5H3js62JnsaF9
-         PNNZA1du4iySNOwutop4o25gCLgmd/ac6yAOoMKb8CXNdXl89wQazqUhokew+zmoGD06
-         PJYxXiFT8OBssYNS+ePxzzINLYB2v942E/IAbVuO7EYawcr2ZT+kAqznguyEdqSCZr8i
-         7geFSMNQTC98IDghgrAfPi3jmN4Lt3/Kv+4AySWMI1Edianuml3KwuYolQOaCGnrjjDv
-         phkA==
-X-Gm-Message-State: AO0yUKVfpVrM/kDdPNZ/mEET7nmmV1PAlNY2GPdlQEcA97qCI8BXui2+
-        8NM/AC87JzH1btSGSxdZnag6CdWo0Uxu9iMkJAdktq23783m/hk1JNN0MQ==
-X-Google-Smtp-Source: AK7set/szA9fTwEGq01jVWq5968zVv7nn5uZGXTMr6CPkT1icZCpZ6kYz52R9ayoCJb2TM4NvSgYXxgeNLdlOn66Dbw=
-X-Received: by 2002:a25:7808:0:b0:a4a:a708:2411 with SMTP id
- t8-20020a257808000000b00a4aa7082411mr8646562ybc.10.1678201627140; Tue, 07 Mar
- 2023 07:07:07 -0800 (PST)
-MIME-Version: 1.0
-References: <20230213-sm6350-camcc-runtime_pm-v3-0-d35e0d833cc4@fairphone.com>
- <20230213-sm6350-camcc-runtime_pm-v3-1-d35e0d833cc4@fairphone.com>
- <CAA8EJprzOLuLU8_tvRtQ9bX8M9xOqMFFnjuj-DwGz+24XPAQFg@mail.gmail.com> <CR08JR9XAIUO.3KF8TBTQ9UQP1@otso>
-In-Reply-To: <CR08JR9XAIUO.3KF8TBTQ9UQP1@otso>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Tue, 7 Mar 2023 17:06:56 +0200
-Message-ID: <CAA8EJpotZjNqo72xhNVS+Fq7gbdADVF+tq8Ph4+tnPyO3HyQoA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] clk: qcom: camcc-sm6350: add pm_runtime support
-To:     Luca Weiss <luca.weiss@fairphone.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S231204AbjCGPTQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 10:19:16 -0500
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E83CE7B9AF;
+        Tue,  7 Mar 2023 07:17:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1678202229; x=1709738229;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=j1UFQoVc1KhmUlZmmX46JsVapFdQK4AzDjQXMSFxCc8=;
+  b=KHcxtFuZDEL5+cEtcm4ewyg7+rsWFiod8iWRX4WnVALvHv5tL1xWolgT
+   Q3hJA7uGLQCyX3jR6kseke+oyF59KZ33HCA5dCaVvZ7RV8XdDol9WchcI
+   a0+ZajJV960SQ3RSecCTOM+7K9efwiPHfjD3OnhN4pS1iLPMUy6mrkgx3
+   ElsCaVbb5cwcq3lpFpfzUDCTYaMin1ijFrEE2hBCFZQWoOtyRj7sg97B5
+   OlM1TZQM1idqhSLR9VxyaDMfXkyiCzcBo09p5i0HI/+lKFuQk/dSzVbOH
+   Sjl1OCCGUFqqruB3MuXEKAKxRg9yr6HFsyJBR3A4JJCEpRSJ9HmfGgZFe
+   g==;
+X-IronPort-AV: E=Sophos;i="5.98,241,1673938800"; 
+   d="asc'?scan'208";a="140750219"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 07 Mar 2023 08:16:49 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.16; Tue, 7 Mar 2023 08:16:48 -0700
+Received: from wendy (10.10.115.15) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.16 via Frontend
+ Transport; Tue, 7 Mar 2023 08:16:46 -0700
+Date:   Tue, 7 Mar 2023 15:16:17 +0000
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>
+CC:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v5 07/14] riscv: dts: microchip: add mpfs specific macb
+ reset support
+Message-ID: <a1be181e-d09f-4640-97a4-a209527f71fc@spud>
+References: <20220909123123.2699583-1-conor.dooley@microchip.com>
+ <20220909123123.2699583-8-conor.dooley@microchip.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5b/Zg8OxUkflppoM"
+Content-Disposition: inline
+In-Reply-To: <20220909123123.2699583-8-conor.dooley@microchip.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 7 Mar 2023 at 16:54, Luca Weiss <luca.weiss@fairphone.com> wrote:
->
-> On Tue Feb 14, 2023 at 1:32 PM CET, Dmitry Baryshkov wrote:
-> > On Tue, 14 Feb 2023 at 13:01, Luca Weiss <luca.weiss@fairphone.com> wrote:
-> > >
-> > > Make sure that we can enable and disable the power domains used for
-> > > camcc when the clocks are and aren't used.
-> > >
-> > > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> > > ---
-> > >  drivers/clk/qcom/camcc-sm6350.c | 25 ++++++++++++++++++++++++-
-> > >  1 file changed, 24 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/clk/qcom/camcc-sm6350.c b/drivers/clk/qcom/camcc-sm6350.c
-> > > index acba9f99d960..fc5532e2ee5b 100644
-> > > --- a/drivers/clk/qcom/camcc-sm6350.c
-> > > +++ b/drivers/clk/qcom/camcc-sm6350.c
-> > > @@ -7,6 +7,8 @@
-> > >  #include <linux/clk-provider.h>
-> > >  #include <linux/module.h>
-> > >  #include <linux/platform_device.h>
-> > > +#include <linux/pm_clock.h>
-> > > +#include <linux/pm_runtime.h>
-> > >  #include <linux/regmap.h>
-> > >
-> > >  #include <dt-bindings/clock/qcom,sm6350-camcc.h>
-> > > @@ -1869,6 +1871,19 @@ MODULE_DEVICE_TABLE(of, camcc_sm6350_match_table);
-> > >  static int camcc_sm6350_probe(struct platform_device *pdev)
-> > >  {
-> > >         struct regmap *regmap;
-> > > +       int ret;
-> > > +
-> > > +       ret = devm_pm_runtime_enable(&pdev->dev);
-> > > +       if (ret < 0)
-> > > +               return ret;
-> > > +
-> > > +       ret = devm_pm_clk_create(&pdev->dev);
-> > > +       if (ret < 0)
-> > > +               return ret;
-> >
-> > This makes me wonder, what is the use for the pm_clk in your case? The
-> > driver doesn't seem to use of_pm_clk_add_clk(), of_pm_clk_add_clks()
-> > or pm_clk_add_clk(). So pm_clk_suspend() and pm_clk_resume() do
-> > nothing.
->
-> You're right that we're not using any of these functions in the driver.
-> However still when camcc is not used, the associated power domain turns
-> off correctly so that part works as expected.
->
-> Honestly these lines have been copied from a different driver and I'm
-> not familiar enough with the pm_runtime APIs to know what to use here
-> without using the pm_clk* and pm_clk_suspend.
+--5b/Zg8OxUkflppoM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please don't blindly C&P code.
+On Fri, Sep 09, 2022 at 01:31:16PM +0100, Conor Dooley wrote:
+> The macb on PolarFire SoC has reset support which the generic compatible
+> does not use. Add the newly introduced MPFS specific compatible as the
+> primary compatible to avail of this support & wire up the reset to the
+> clock controllers devicetree entry.
+>=20
+> Reviewed-by: Daire McNamara <daire.mcnamara@microchip.com>
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 
->
-> Basically we need, if any clock is being used in the driver, the
-> power-domain needs to be enabled as well, and if nothing is used the
-> power-domain can be disabled again.
+Somehow I lost my own patch between the cracks..
+I've gone and applied it now as v6.4 content:
+https://git.kernel.org/conor/c/0e9b70c1e3623fa110fb6be553e644524228ef60
 
-Adding power-domains to the camcc node and calling
-devm_pm_runtime_enable() should be enough. Please see how this is
-managed for dispcc on sm8250.
+Cheers,
+Conor.
 
--- 
-With best wishes
-Dmitry
+> ---
+>  arch/riscv/boot/dts/microchip/mpfs.dtsi | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/arch/riscv/boot/dts/microchip/mpfs.dtsi b/arch/riscv/boot/dt=
+s/microchip/mpfs.dtsi
+> index 499c2e63ad35..ae5839534d9c 100644
+> --- a/arch/riscv/boot/dts/microchip/mpfs.dtsi
+> +++ b/arch/riscv/boot/dts/microchip/mpfs.dtsi
+> @@ -234,6 +234,7 @@ clkcfg: clkcfg@20002000 {
+>  			reg =3D <0x0 0x20002000 0x0 0x1000>, <0x0 0x3E001000 0x0 0x1000>;
+>  			clocks =3D <&refclk>;
+>  			#clock-cells =3D <1>;
+> +			#reset-cells =3D <1>;
+>  		};
+> =20
+>  		mmuart0: serial@20000000 {
+> @@ -383,7 +384,7 @@ can1: can@2010d000 {
+>  		};
+> =20
+>  		mac0: ethernet@20110000 {
+> -			compatible =3D "cdns,macb";
+> +			compatible =3D "microchip,mpfs-macb", "cdns,macb";
+>  			reg =3D <0x0 0x20110000 0x0 0x2000>;
+>  			#address-cells =3D <1>;
+>  			#size-cells =3D <0>;
+> @@ -392,11 +393,12 @@ mac0: ethernet@20110000 {
+>  			local-mac-address =3D [00 00 00 00 00 00];
+>  			clocks =3D <&clkcfg CLK_MAC0>, <&clkcfg CLK_AHB>;
+>  			clock-names =3D "pclk", "hclk";
+> +			resets =3D <&clkcfg CLK_MAC0>;
+>  			status =3D "disabled";
+>  		};
+> =20
+>  		mac1: ethernet@20112000 {
+> -			compatible =3D "cdns,macb";
+> +			compatible =3D "microchip,mpfs-macb", "cdns,macb";
+>  			reg =3D <0x0 0x20112000 0x0 0x2000>;
+>  			#address-cells =3D <1>;
+>  			#size-cells =3D <0>;
+> @@ -405,6 +407,7 @@ mac1: ethernet@20112000 {
+>  			local-mac-address =3D [00 00 00 00 00 00];
+>  			clocks =3D <&clkcfg CLK_MAC1>, <&clkcfg CLK_AHB>;
+>  			clock-names =3D "pclk", "hclk";
+> +			resets =3D <&clkcfg CLK_MAC1>;
+>  			status =3D "disabled";
+>  		};
+> =20
+> --=20
+> 2.36.1
+>=20
+>=20
+
+--5b/Zg8OxUkflppoM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZAdVQQAKCRB4tDGHoIJi
+0g+qAP4qmdNBwd5h4ZXDqYoJdC/kw8z42IjJJaq/SKhaeExK+wEAzOK3Q5ORxwwE
+P5myq6oC1hbQBpIoExbGIu7lnEqJVwM=
+=ImiC
+-----END PGP SIGNATURE-----
+
+--5b/Zg8OxUkflppoM--
