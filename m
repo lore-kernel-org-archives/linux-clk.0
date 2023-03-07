@@ -2,233 +2,288 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F22C678D5
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 09:38:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D76C678D4
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 09:45:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229871AbjCGJiX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Mar 2023 04:38:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59256 "EHLO
+        id S229801AbjCGJpp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Mar 2023 04:45:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229718AbjCGJiW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 04:38:22 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A59262E0FE;
-        Tue,  7 Mar 2023 01:38:20 -0800 (PST)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 750CF6602FE5;
-        Tue,  7 Mar 2023 09:38:18 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1678181899;
-        bh=icWoP6hzgm6VUKbZn+U7oihEmJNV0OORJP3vHZ2iFKg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ofSt+lN3GCLZcEABdTws9WAHxf1t3aqh+oxk226stQwhkTWKxveBxHfjodG9Vkp0U
-         ZbwhmQlkxAs/Q8K8FAPPsbr1oXQ0AOk0DItuNK/KZRybAN+TBnJXKNV/IAWXY8/m52
-         QQm9mAOtb8ZtdBBZRxXOH2W7rNETbMgIS1CLQfVkvkqCeh98582+Uu3vTFPpCfTUcu
-         Rge60Uvw6jhLesI5JO/McMT8NBODxKXf1WVUP4PrvVNZc4Hr3nj8iPXUNGPb6n3NIE
-         sC9ShjYUpAGG2/rMYc2JrMtPjjR1fRzuu1d778p6LnJGvlWmGnB64Gekgl0F7ANeQB
-         1D4VX+mWin95Q==
-Message-ID: <50ce7c9b-bef1-d570-c8b3-74914fbb43d6@collabora.com>
-Date:   Tue, 7 Mar 2023 10:38:15 +0100
+        with ESMTP id S229815AbjCGJpo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 04:45:44 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 610B839CD3;
+        Tue,  7 Mar 2023 01:45:42 -0800 (PST)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3277IqHs017882;
+        Tue, 7 Mar 2023 09:45:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : from : subject : to : cc : references : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=Mhno23f9v3er4tDoxC2ORjmssJ3m2pYGBAvzXv7SrWk=;
+ b=oMws0QMgsjJuGR3VfFPkzXW4KYTBIZ8MrowdlxNTo/itd0EjkpyMtYRJg+FGS2IFrO4i
+ s4VWi0z8Kwc2igTmr8XoA8Iel1CdxvAIQ8boVKDLOtwzjulByN7VGl08ebq5J7fn2cG9
+ Y+qB0hTgzLMiUjq23bRLbK+oXLsOLjRoxYIyEkEzhniYVBW9Q/OJRwaAi2N9JWFxCdp6
+ YA0laUVW30A81DhOediRmP6sf1KDipgO2gy+ozbx1nkicUZaUHi2moyKclkKIec6T3bx
+ I03+Hwnratnz5hdXBzWqS5fmPJ5MR7ztzITQx1IsnBJrWhPpG2Y21iNmcaIZGpDitT48 Xg== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3p5wee8vu6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 07 Mar 2023 09:45:21 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3279jKjN002603
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 7 Mar 2023 09:45:20 GMT
+Received: from [10.216.11.93] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 7 Mar 2023
+ 01:45:11 -0800
+Message-ID: <30cf9717-dcca-e984-c506-c71b7f8e32cd@quicinc.com>
+Date:   Tue, 7 Mar 2023 15:15:08 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v3 7/7] clk: mediatek: mt8195: Add support for frequency
- hopping through FHCTL
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+From:   Devi Priya <quic_devipriy@quicinc.com>
+Subject: Re: [PATCH 1/7] dt-bindings: PCI: qcom: Add IPQ9574 specific
+ compatible
+To:     Manivannan Sadhasivam <mani@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <lpieralisi@kernel.org>,
+        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
+        <krzysztof.kozlowski+dt@linaro.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <p.zabel@pengutronix.de>, <svarbanov@mm-sol.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>
+References: <20230214164135.17039-1-quic_devipriy@quicinc.com>
+ <20230214164135.17039-2-quic_devipriy@quicinc.com>
+ <20230224082332.GA5443@thinkpad>
+ <bd153038-4427-1f11-1941-5f13fec01cf7@quicinc.com>
+ <20230228063358.GA4839@thinkpad>
+ <9BD62D8E-4E14-4269-B72D-C83EF4D43040@linaro.org>
+ <20230303174036.GB6782@thinkpad>
 Content-Language: en-US
-To:     Chen-Yu Tsai <wenst@chromium.org>
-Cc:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
-        edward-jw.yang@mediatek.com, johnson.wang@mediatek.com,
-        miles.chen@mediatek.com, chun-jie.chen@mediatek.com,
-        rex-bc.chen@mediatek.com, jose.exposito89@gmail.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-References: <20230206100105.861720-1-angelogioacchino.delregno@collabora.com>
- <20230206100105.861720-8-angelogioacchino.delregno@collabora.com>
- <CAGXv+5Ey02hzNQA2O2ussAt9sXxxy9mOjze2GH90Ko9HeoETXQ@mail.gmail.com>
- <a890fd4c-f15e-480a-64e3-c42c73584417@collabora.com>
- <CAGXv+5E_2iKH625PTRwo-qJONc2HqgHY5_+QJcuCmdZuEf7csw@mail.gmail.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <CAGXv+5E_2iKH625PTRwo-qJONc2HqgHY5_+QJcuCmdZuEf7csw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20230303174036.GB6782@thinkpad>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: acFhR0WU2dnQYcCltNuR2nn7AUBIs0Ft
+X-Proofpoint-ORIG-GUID: acFhR0WU2dnQYcCltNuR2nn7AUBIs0Ft
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-07_03,2023-03-06_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ spamscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0
+ mlxlogscore=999 priorityscore=1501 phishscore=0 clxscore=1015 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2303070087
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 07/03/23 10:29, Chen-Yu Tsai ha scritto:
-> On Tue, Mar 7, 2023 at 5:27 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> Il 07/03/23 05:43, Chen-Yu Tsai ha scritto:
->>> On Mon, Feb 6, 2023 at 6:01 PM AngeloGioacchino Del Regno
->>> <angelogioacchino.delregno@collabora.com> wrote:
->>>>
->>>> Add FHCTL parameters and register PLLs through FHCTL to add support
->>>> for frequency hopping and SSC. FHCTL will be enabled only on PLLs
->>>> specified in devicetree.
->>>>
->>>> This commit brings functional changes only upon addition of
->>>> devicetree configuration.
->>>>
->>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>>> ---
->>>>    drivers/clk/mediatek/clk-mt8195-apmixedsys.c | 69 +++++++++++++++++++-
->>>>    1 file changed, 66 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/clk/mediatek/clk-mt8195-apmixedsys.c b/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
->>>> index 1bc917f2667e..c0db31ce0741 100644
->>>> --- a/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
->>>> +++ b/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
->>>> @@ -3,9 +3,11 @@
->>>>    // Copyright (c) 2021 MediaTek Inc.
->>>>    // Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
->>>>
->>>> +#include "clk-fhctl.h"
->>>>    #include "clk-gate.h"
->>>>    #include "clk-mtk.h"
->>>>    #include "clk-pll.h"
->>>> +#include "clk-pllfh.h"
->>>>
->>>>    #include <dt-bindings/clock/mt8195-clk.h>
->>>>    #include <linux/of_device.h>
->>>> @@ -105,6 +107,61 @@ static const struct mtk_pll_data plls[] = {
->>>>               0, 0, 22, 0x0158, 24, 0, 0, 0, 0x0158, 0, 0x0158, 0, 9),
->>>>    };
->>>>
->>>> +enum fh_pll_id {
->>>> +       FH_ARMPLL_LL,
->>>> +       FH_ARMPLL_BL,
->>>> +       FH_MEMPLL,
->>>> +       FH_ADSPPLL,
->>>> +       FH_NNAPLL,
->>>> +       FH_CCIPLL,
->>>> +       FH_MFGPLL,
->>>> +       FH_TVDPLL2,
->>>> +       FH_MPLL,
->>>> +       FH_MMPLL,
->>>> +       FH_MAINPLL,
->>>> +       FH_MSDCPLL,
->>>> +       FH_IMGPLL,
->>>> +       FH_VDECPLL,
->>>> +       FH_TVDPLL1,
->>>> +       FH_NR_FH,
->>>> +};
->>>> +
->>>> +#define FH(_pllid, _fhid, _offset) {                                   \
->>>> +               .data = {                                               \
->>>> +                       .pll_id = _pllid,                               \
->>>> +                       .fh_id = _fhid,                                 \
->>>> +                       .fh_ver = FHCTL_PLLFH_V2,                       \
->>>> +                       .fhx_offset = _offset,                          \
->>>> +                       .dds_mask = GENMASK(21, 0),                     \
->>>
->>>> +                       .slope0_value = 0x6003c97,                      \
->>>> +                       .slope1_value = 0x6003c97,                      \
->>>
->>> Are these
->>>
->>>> +                       .sfstrx_en = BIT(2),                            \
->>>> +                       .frddsx_en = BIT(1),                            \
->>>> +                       .fhctlx_en = BIT(0),                            \
->>>> +                       .tgl_org = BIT(31),                             \
->>>> +                       .dvfs_tri = BIT(31),                            \
->>>> +                       .pcwchg = BIT(31),                              \
->>>
->>>> +                       .dt_val = 0x0,                                  \
->>>> +                       .df_val = 0x9,                                  \
->>>
->>> and these just copied from MT8186?
->>
->> Yes, and that's because they're really the same.
-> 
-> Just to be safe, I asked MediaTek to take a look at the parameters.
-> 
 
-Cool. Let's see what they say then!
 
->>>
->>>> +                       .updnlmt_shft = 16,                             \
->>>> +                       .msk_frddsx_dys = GENMASK(23, 20),              \
->>>> +                       .msk_frddsx_dts = GENMASK(19, 16),              \
->>>> +               },                                                      \
->>>> +       }
->>>> +
->>>> +static struct mtk_pllfh_data pllfhs[] = {
->>>> +       FH(CLK_APMIXED_ADSPPLL, FH_ADSPPLL, 0x78),
->>>> +       FH(CLK_APMIXED_NNAPLL, FH_NNAPLL, 0x8c),
->>>> +       FH(CLK_APMIXED_MFGPLL, FH_MFGPLL, 0xb4),
->>>> +       FH(CLK_APMIXED_TVDPLL2, FH_TVDPLL2, 0xc8),
->>>> +       FH(CLK_APMIXED_MMPLL, FH_MMPLL, 0xf0),
->>>> +       FH(CLK_APMIXED_MAINPLL, FH_MAINPLL, 0x104),
->>>> +       FH(CLK_APMIXED_MSDCPLL, FH_MSDCPLL, 0x118),
->>>> +       FH(CLK_APMIXED_IMGPLL, FH_IMGPLL, 0x12c),
->>>> +       FH(CLK_APMIXED_VDECPLL, FH_VDECPLL, 0x140),
->>>> +       FH(CLK_APMIXED_TVDPLL2, FH_TVDPLL1, 0x154),
->>>> +};
->>>> +
->>>>    static const struct of_device_id of_match_clk_mt8195_apmixed[] = {
->>>>           { .compatible = "mediatek,mt8195-apmixedsys", },
->>>>           {}
->>>> @@ -114,13 +171,17 @@ static int clk_mt8195_apmixed_probe(struct platform_device *pdev)
->>>>    {
->>>>           struct clk_hw_onecell_data *clk_data;
->>>>           struct device_node *node = pdev->dev.of_node;
->>>> +       const u8 *fhctl_node = "mediatek,mt8195-fhctl";
->>>>           int r;
+On 3/3/2023 11:10 PM, Manivannan Sadhasivam wrote:
+> On Fri, Mar 03, 2023 at 05:16:58PM +0200, Dmitry Baryshkov wrote:
+>> 28 февраля 2023 г. 08:33:58 GMT+02:00, Manivannan Sadhasivam <mani@kernel.org> пишет:
+>>> On Tue, Feb 28, 2023 at 10:56:53AM +0530, Devi Priya wrote:
 >>>>
->>>>           clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
->>>>           if (!clk_data)
->>>>                   return -ENOMEM;
 >>>>
->>>> -       r = mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
->>>> +       fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
->>>> +
->>>> +       r = mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
->>>> +                                   pllfhs, ARRAY_SIZE(pllfhs), clk_data);
->>>>           if (r)
->>>>                   goto free_apmixed_data;
->>>>
->>>> @@ -140,7 +201,8 @@ static int clk_mt8195_apmixed_probe(struct platform_device *pdev)
->>>>    unregister_gates:
->>>>           mtk_clk_unregister_gates(apmixed_clks, ARRAY_SIZE(apmixed_clks), clk_data);
->>>>    unregister_plls:
->>>> -       mtk_clk_unregister_plls(plls, ARRAY_SIZE(plls), clk_data);
->>>> +       mtk_clk_unregister_pllfhs(plls, ARRAY_SIZE(plls), pllfhs,
->>>> +                                 ARRAY_SIZE(pllfhs), clk_data);
+>>>> On 2/24/2023 1:53 PM, Manivannan Sadhasivam wrote:
+>>>>> On Tue, Feb 14, 2023 at 10:11:29PM +0530, Devi Priya wrote:
+>>>>>> Document the compatible for IPQ9574
+>>>>>>
+>>>> Hi Mani, Thanks for taking time to review the patch.
+>>>>>
+>>>>> You didn't mention about the "msi-parent" property that is being added
+>>>>> by this patch
+>>>> Sure, will update the commit message in the next spin
+>>>>>
+>>>>>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+>>>>>> ---
+>>>>>>    .../devicetree/bindings/pci/qcom,pcie.yaml    | 72 ++++++++++++++++++-
+>>>>>>    1 file changed, 70 insertions(+), 2 deletions(-)
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
+>>>>>> index 872817d6d2bd..dabdf2684e2d 100644
+>>>>>> --- a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
+>>>>>> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
+>>>>>> @@ -26,6 +26,7 @@ properties:
+>>>>>>              - qcom,pcie-ipq8064-v2
+>>>>>>              - qcom,pcie-ipq8074
+>>>>>>              - qcom,pcie-ipq8074-gen3
+>>>>>> +          - qcom,pcie-ipq9574
+>>>>>>              - qcom,pcie-msm8996
+>>>>>>              - qcom,pcie-qcs404
+>>>>>>              - qcom,pcie-sa8540p
+>>>>>> @@ -44,11 +45,11 @@ properties:
+>>>>>>      reg:
+>>>>>>        minItems: 4
+>>>>>> -    maxItems: 5
+>>>>>> +    maxItems: 6
+>>>>>>      reg-names:
+>>>>>>        minItems: 4
+>>>>>> -    maxItems: 5
+>>>>>> +    maxItems: 6
+>>>>>>      interrupts:
+>>>>>>        minItems: 1
+>>>>>> @@ -105,6 +106,8 @@ properties:
+>>>>>>        items:
+>>>>>>          - const: pciephy
+>>>>>> +  msi-parent: true
+>>>>>> +
+>>>>>>      power-domains:
+>>>>>>        maxItems: 1
+>>>>>> @@ -173,6 +176,27 @@ allOf:
+>>>>>>                - const: parf # Qualcomm specific registers
+>>>>>>                - const: config # PCIe configuration space
+>>>>>> +  - if:
+>>>>>> +      properties:
+>>>>>> +        compatible:
+>>>>>> +          contains:
+>>>>>> +            enum:
+>>>>>> +              - qcom,pcie-ipq9574
+>>>>>> +    then:
+>>>>>> +      properties:
+>>>>>> +        reg:
+>>>>>> +          minItems: 5
+>>>>>> +          maxItems: 6
+>>>>>> +        reg-names:
+>>>>>> +          minItems: 5
+>>>>>> +          items:
+>>>>>> +            - const: dbi # DesignWare PCIe registers
+>>>>>> +            - const: elbi # External local bus interface registers
+>>>>>> +            - const: atu # ATU address space
+>>>>>> +            - const: parf # Qualcomm specific registers
+>>>>>> +            - const: config # PCIe configuration space
+>>>>>> +            - const: aggr_noc #PCIe aggr_noc
+>>>>>
+>>>>> Why do you need this region unlike other SoCs? Is the driver making use of it?
+>>>> We have the aggr_noc region in ipq9574 to achieve higher throughput & to
+>>>> handle multiple PCIe instances. The driver uses it to rate adapt 1-lane PCIe
+>>>> clocks. My bad, missed it. Will add the driver changes in V2.
 >>>
->>> Nit: I think this could be squeezed into one line.
+>>> Hmm, this is something new. How can you achieve higher throughput with this
+>>> region? Can you explain more on how it is used?
+>>
+>> Based on the name of the region, it looks like it is an interconnect region.
+>>
+> 
+> Well, we only have BCM based interconnects so far. That's why I was curious
+> about this region and its purpose.
+For connected PCIe slave devices that are running at frequency lesser
+than the ANOC frequency (342MHz), the rate adapter of ANOC needs to be
+configured
+> 
+>> Devi, if this is the case, then you have to handle it through the interconnect driver, rather than poking directly into these registers.
+> 
+> If that so, it doesn't need to be added in this series itself. I believe that
+> without aggr_noc region, the PCIe controller can still function properly with
+> reduced performance. But you can add the interconnect support later as a
+> separate series.
+Sure, okay. The ANOC runs at a fixed frequency of 342MHz and the 
+interconnect clocks are not scaled. The aggr_noc register is just a 
+magic register for configuring it's rate adapter to ensure no wait 
+cycles are inserted.
+
+> 
+> Thanks,
+> Mani
+> 
+>>
+>>
 >>>
->>>>    free_apmixed_data:
->>>>           mtk_free_clk_data(clk_data);
->>>>           return r;
->>>> @@ -153,7 +215,8 @@ static int clk_mt8195_apmixed_remove(struct platform_device *pdev)
->>>>
->>>>           of_clk_del_provider(node);
->>>>           mtk_clk_unregister_gates(apmixed_clks, ARRAY_SIZE(apmixed_clks), clk_data);
->>>> -       mtk_clk_unregister_plls(plls, ARRAY_SIZE(plls), clk_data);
->>>> +       mtk_clk_unregister_pllfhs(plls, ARRAY_SIZE(plls), pllfhs,
->>>> +                                 ARRAY_SIZE(pllfhs), clk_data);
+>>> Thanks,
+>>> Mani
 >>>
->>> Same here.
+>>>>>
+>>>>> Thanks,
+>>>>> Mani
+>>>>>
+>>>>>> +
+>>>>>>      - if:
+>>>>>>          properties:
+>>>>>>            compatible:
+>>>>>> @@ -365,6 +389,39 @@ allOf:
+>>>>>>                - const: ahb # AHB Reset
+>>>>>>                - const: axi_m_sticky # AXI Master Sticky reset
+>>>>>> +  - if:
+>>>>>> +      properties:
+>>>>>> +        compatible:
+>>>>>> +          contains:
+>>>>>> +            enum:
+>>>>>> +              - qcom,pcie-ipq9574
+>>>>>> +    then:
+>>>>>> +      properties:
+>>>>>> +        clocks:
+>>>>>> +          minItems: 6
+>>>>>> +          maxItems: 6
+>>>>>> +        clock-names:
+>>>>>> +          items:
+>>>>>> +            - const: ahb  # AHB clock
+>>>>>> +            - const: aux  # Auxiliary clock
+>>>>>> +            - const: axi_m # AXI Master clock
+>>>>>> +            - const: axi_s # AXI Slave clock
+>>>>>> +            - const: axi_bridge # AXI bridge clock
+>>>>>> +            - const: rchng
+>>>>>> +        resets:
+>>>>>> +          minItems: 8
+>>>>>> +          maxItems: 8
+>>>>>> +        reset-names:
+>>>>>> +          items:
+>>>>>> +            - const: pipe # PIPE reset
+>>>>>> +            - const: sticky # Core Sticky reset
+>>>>>> +            - const: axi_s_sticky # AXI Slave Sticky reset
+>>>>>> +            - const: axi_s # AXI Slave reset
+>>>>>> +            - const: axi_m_sticky # AXI Master Sticky reset
+>>>>>> +            - const: axi_m # AXI Master reset
+>>>>>> +            - const: aux # AUX Reset
+>>>>>> +            - const: ahb # AHB Reset
+>>>>>> +
+>>>>>>      - if:
+>>>>>>          properties:
+>>>>>>            compatible:
+>>>>>> @@ -681,6 +738,16 @@ allOf:
+>>>>>>            - interconnects
+>>>>>>            - interconnect-names
+>>>>>> +  - if:
+>>>>>> +      properties:
+>>>>>> +        compatible:
+>>>>>> +          contains:
+>>>>>> +            enum:
+>>>>>> +              - qcom,pcie-ipq9574
+>>>>>> +    then:
+>>>>>> +      required:
+>>>>>> +        - msi-parent
+>>>>>> +
+>>>>>>      - if:
+>>>>>>          not:
+>>>>>>            properties:
+>>>>>> @@ -693,6 +760,7 @@ allOf:
+>>>>>>                    - qcom,pcie-ipq8064v2
+>>>>>>                    - qcom,pcie-ipq8074
+>>>>>>                    - qcom,pcie-ipq8074-gen3
+>>>>>> +                - qcom,pcie-ipq9574
+>>>>>>                    - qcom,pcie-qcs404
+>>>>>>        then:
+>>>>>>          required:
+>>>>>> -- 
+>>>>>> 2.17.1
+>>>>>>
+>>>>>
+>>>> Thanks,
+>>>> Devi Priya
 >>>
 >>
->> That's the same on the others as well, but if I compress those lines I will have
->> to rebase the clocks cleanup series again and send the 54 patches again.. I'd like
->> to avoid that noise.
->>
->> If you really want though, I can do that... what should I do?
 > 
-> I see. Let's keep it the way it is then.
-> 
-
-Great. We can always do a small cleanup later, if needed.
-
-Angelo
+Thanks,
+Devi Priya
