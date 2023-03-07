@@ -2,525 +2,829 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 089CEC6FA99
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 11:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76493C678D4
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 12:23:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231254AbjCGLvp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Mar 2023 06:51:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54788 "EHLO
+        id S229744AbjCGMXg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Mar 2023 07:23:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231415AbjCGLvX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 06:51:23 -0500
-Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D27CF32E55;
-        Tue,  7 Mar 2023 03:50:29 -0800 (PST)
-Received: from loongson.cn (unknown [10.20.42.35])
-        by gateway (Coremail) with SMTP id _____8AxUU8EJQdko1gJAA--.362S3;
-        Tue, 07 Mar 2023 19:50:28 +0800 (CST)
-Received: from user-pc.202.106.0.20 (unknown [10.20.42.35])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8AxHuT+JAdk6f9NAA--.33988S3;
-        Tue, 07 Mar 2023 19:50:27 +0800 (CST)
-From:   Yinbo Zhu <zhuyinbo@loongson.cn>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     Jianmin Lv <lvjianmin@loongson.cn>,
-        Liu Peibao <liupeibao@loongson.cn>, wanghongliang@loongson.cn,
-        loongson-kernel@lists.loongnix.cn, Yinbo Zhu <zhuyinbo@loongson.cn>
-Subject: [PATCH v13 2/2] clk: clk-loongson2: add clock controller driver support
-Date:   Tue,  7 Mar 2023 19:50:22 +0800
-Message-Id: <20230307115022.12846-2-zhuyinbo@loongson.cn>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20230307115022.12846-1-zhuyinbo@loongson.cn>
-References: <20230307115022.12846-1-zhuyinbo@loongson.cn>
+        with ESMTP id S229743AbjCGMXf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 07:23:35 -0500
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 883D937B51;
+        Tue,  7 Mar 2023 04:23:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678191812; x=1709727812;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=p5IZuyZe7iDWoRXD49pYIfXr0LLz5rIJEElnZWnKVmI=;
+  b=U102+e7rf8E30SG7WkXpDd8aNKCOaQITbEBP1Joux+pVJHidzae5f3lc
+   LPWJ+FJQmM7V4HJu0nYLh3CvO0nnsqSDj6TEbdkjJdZ5OI3krpbI3fHJ8
+   EpSfbVp85/r37oqhl6PnvCpDsTmCol9bvB2uT6YrRvqvn8iuiU0rtGMxj
+   27W3QX7rGXLVcKvBBDOU+PUQYJ482wpbwVWDJW8Zk0n7w4mnCXrFwhMSs
+   Fv4B2mAWmFWj37R4fykXOk9T4LRdGYMa135ySaocEguDLr4P7Tc9shcqK
+   R2aUtdCkNmkGYPtjbzh77epg4vGMQaezuGss2uBKscxWwjFL1GurQbGua
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10641"; a="335858886"
+X-IronPort-AV: E=Sophos;i="5.98,240,1673942400"; 
+   d="scan'208";a="335858886"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2023 04:23:31 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10641"; a="706783405"
+X-IronPort-AV: E=Sophos;i="5.98,240,1673942400"; 
+   d="scan'208";a="706783405"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orsmga008.jf.intel.com with ESMTP; 07 Mar 2023 04:23:31 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Tue, 7 Mar 2023 04:23:31 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21 via Frontend Transport; Tue, 7 Mar 2023 04:23:31 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.109)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.21; Tue, 7 Mar 2023 04:23:30 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LrgAhYQ6KWpKDFNSKXF8r2n7+DkqSHkCSaMc5qkVGeIqYPIqkTSOzG0Rla8sVveN9puLV0G0Hqhk4psymwuPT0XEGOH6sIr/MnsLjMHSJJyt+aoGTozVK55lLMEzDSUOOJcgSKhiNZ4bBNbqmz5hDeLryvjLrUruzrd4FostSNvRdEOhHufS2sJhtNrTIgfTOrWkK2wguNK40KNvkStpr47DwR94RUcsiPu0FJeV88ZAen514H9S5ZJ8VOMuLTacI6C67mO57xTtbkm5VbvhkihXJBKU/qu73Tg01KffVPHbwWaSqjRJn/C8AdG3aC6CpjgcFKnEF2FafoBhOA+Hcw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7m9h7stJamfLKCWoEjiV+4HCq4OR5h6qURUfvwfHb6M=;
+ b=ckEet2pfFupzr2NlY9x6koCfoO6OilCtS22OG7SouLWscV+3zGkLOOKa5tiMbLCD4FXlza0ooKKQLElqJ/MhHu+1iKequ/dQJPFCR1xosA3KpsFvrNUQIsX7+bXhSh8vLYU+xRxrV0k82xPdCaxfov+SksN3RD7WIrXxYK36MZFRrDT7mLYuDW2dggbL9cj36w5CEBiQAiYb0vEMQK1/JcljtVm5i+tVqV9v/5kuJ2X33rQVvcmWWracHVeZ3yBb3SxKI1hE+XIjMr3uVYtmrK0bNV+NjLwQgcR8Cqj+Gkq/xEQQyEGiMP3ByGBHNBeN2ibkX8b5d3SLJiccW1E6Fg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
+ PH7PR11MB7593.namprd11.prod.outlook.com (2603:10b6:510:27f::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6156.28; Tue, 7 Mar 2023 12:23:28 +0000
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::95e8:dde5:9afe:9946]) by DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::95e8:dde5:9afe:9946%9]) with mapi id 15.20.6156.027; Tue, 7 Mar 2023
+ 12:23:27 +0000
+From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+To:     Jiri Pirko <jiri@resnulli.us>
+CC:     Vadim Fedorenko <vadfed@meta.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: RE: [RFC PATCH v5 1/4] dpll: Add DPLL framework base functions
+Thread-Topic: [RFC PATCH v5 1/4] dpll: Add DPLL framework base functions
+Thread-Index: AQHZKp4K9cfIHTE4HkioJShQwVs1zK6l/jqAgAyiMiCABgMagIAIpJoQgAJf5oCAK+Gx0A==
+Date:   Tue, 7 Mar 2023 12:23:27 +0000
+Message-ID: <DM6PR11MB4657468307AD658AD2A763FB9BB79@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20230117180051.2983639-1-vadfed@meta.com>
+ <20230117180051.2983639-2-vadfed@meta.com> <Y8l63RF8DQz3i0LY@nanopsycho>
+ <DM6PR11MB46575F782A66620E1A2D04229BCC9@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <Y9ke/+0z3r6WOjWn@nanopsycho>
+ <DM6PR11MB46576B19A5DBA46C20AC26679BDA9@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <Y+JdAVZ5hPxrRgvT@nanopsycho>
+In-Reply-To: <Y+JdAVZ5hPxrRgvT@nanopsycho>
+Accept-Language: pl-PL, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|PH7PR11MB7593:EE_
+x-ms-office365-filtering-correlation-id: 3910683b-ee4d-45a2-0d0a-08db1f06c165
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: mvpuzGlVHsMGmPysCmblBzJoZAVNoAnyDiiOKix3ScxZgfhdXBmBaLbblWqbAGzEa4dMcBh8GrgJbtycdDCb6VNPmsKYKy/LP0OTcWojJJoYPYcD8PSnj+6fb7u7vut8in/p9CL9uNBPvLB2/HH0auUMV3wuJsbj7B2cZX3+xHxVMerGBcRohRUae4P1lg1sKvA1nRYSKARNmadzq63pAyAbVJMZNrs1FfS2Dl9cUMPZ2qRWAzALBReKudpUdNeBvc1lzPYMO790eEPU5RtSHqRer3qw6EY06eGJbox8eshiCSGbZeXOU+sv7X834wh9yKZE00J9EawzDiOEITqL6/qdggwdd6hFe0J72jgw4SEezXT62bE5J/MWz908ypUBgLkzUFdELkQIlEMgrShwr8ccHAfAU6jQ8TKvBwTuu6KoaP0Mwlxxau1RNsg2+XGcWj/pqJQGSaCSVznGIqX3RE07Zm9EDiTEHxrAJ4Eu7u9ZOqaCu0tCh7CLaiY4MH0bkFxWG0LVKyMOafOpTak4jw3a7XA5tqqYU2OX73NK9EaVbu/Rdc5OSKyBi3HrcL1M7sBl2/VYuMkl5XN0dGsiPGh7rE6kUv3Vy9nZANzsSuVgYNwt6w6Nj5qfg+sbsztaAV0w7k2KbHK/wSFqMivS3L3oncblDCQBG/GvWNDuFIRerYdtecJxCfO+DZfwQjfqKuSm4mk3zaJqc6pkByEVwQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(376002)(39860400002)(346002)(396003)(136003)(366004)(451199018)(316002)(83380400001)(54906003)(55016003)(86362001)(33656002)(64756008)(9686003)(186003)(30864003)(82960400001)(76116006)(5660300002)(26005)(478600001)(66946007)(66556008)(8936002)(66476007)(8676002)(2906002)(41300700001)(4326008)(6506007)(107886003)(66446008)(71200400001)(7696005)(6916009)(122000001)(38100700002)(52536014)(38070700005)(579004);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?XePmtxGYy6ReAnQcASc4wnngDdphbv026mvgaftT82u7oI4U2Z9joMCW02sk?=
+ =?us-ascii?Q?iqhwdJDl99AhNrFc3NC3g6XYlJxkcZ//iYMTk4tgMVzDOwfpPFZuKTkJEWrN?=
+ =?us-ascii?Q?uXX2fQpjDB2XM19dmzGGaH4E8y8R9u6vkCB7FnPmXShB0p/BPCiMJAFMkg26?=
+ =?us-ascii?Q?p/nIDxe1FnQxn9w1U1H7lOe29fnXqBZemdpfrM61J2j+NqsAf7Y/WH6NCelT?=
+ =?us-ascii?Q?RhRrSWU6TRxBQT6MXYcC9bnge4AD6lpUEzJRYikxvEiEY9BqsH9AD7esV49k?=
+ =?us-ascii?Q?xd5asFpQgy4pwh050rp9Ezqr5n2V1lg5A+ONh0D9gklCrWnWWLnwImhBy67d?=
+ =?us-ascii?Q?HpgnIKjzUlnjn0k52roIiSOdcbZOsZPxD/dA/nHXcnk+z9+gODpU+a8/KMEM?=
+ =?us-ascii?Q?DRLqMha5TEAnZkdMlCqz4t0+/dUNH+4nhFOPBGZcF9s/2LwWkjU2mwNjCTHo?=
+ =?us-ascii?Q?/ExZIyuTvag++Q9Lgh7ZYerWP5rxkhUC0atQkPVYclJ1WMbLmccnbp7GfSpp?=
+ =?us-ascii?Q?x6Dd1+3149laPTO2tGsjEgr7pxeBK3jregPwHkz3pTS8DSKuVa7//JcW9CGy?=
+ =?us-ascii?Q?dXTv1GFdLcAn/VRxN1NA3ahhPpPWdFKAUg4bmCdiqVFGPL4zq1V/To8C6XwC?=
+ =?us-ascii?Q?chuobrRIzKnHxKW17rD2gWFyUyvefStBVZavxV0HAYC5aKLL9M8BvPSzCDm/?=
+ =?us-ascii?Q?xM5OLOHtPi9Hv6nxPoKlKWI2DVPUI4XNWPOvnzzFUVXQAYbiKgXFtpD9KRnr?=
+ =?us-ascii?Q?wD4HUEH4mFlPnsLQmahVPAmzdarLbiOacjVuP7ok7NGFRlUvFZLXFCyQdAxd?=
+ =?us-ascii?Q?9QqvwTLSVuJDv8Li3LhTMTzLWMZoOz3c4thhNULYItcYdaDb2HPrQj43D1S7?=
+ =?us-ascii?Q?RWSjRtZcpS9yVpLTfv23XYNF844ew00j5lPuqW6Ikq+UNSxIg2h3pRDyR4+W?=
+ =?us-ascii?Q?KmeXKRXDh/+RS7AfbY/9Bp/+20Un/FpB06TI+RNUGzXDIzBMd77MVaCdUflN?=
+ =?us-ascii?Q?dY+Y+wFPNMxx4hhWBYelro4NfX22XELGaZfx03UwWKkhuKyoghIWdq2GaPlS?=
+ =?us-ascii?Q?h3okvkEshqKdlToBALiueyRdDiGDu1OJZfpaFEzcsX4Df2yAJlJJxqy27oqB?=
+ =?us-ascii?Q?mLCqHfxEYYvdGMW9GPpFavSfn6Hh7Zijay5Kv6Bww9tC1HGVkxQmSSEVi+FH?=
+ =?us-ascii?Q?W74e7MnwRPOchP0P217h1D2oADFc1FkvAAAb3VHCBeoUpvLfTcloOqHQnjb5?=
+ =?us-ascii?Q?sDV8MRzYm8n7V9InDrvowQAurgwAyjXzAwFse36B3zvYd6/gsvvtHAwu9IsI?=
+ =?us-ascii?Q?ZQxALBEA5oKgZDDHBNmZ0P3eB7c3X7D4m7m/doOzlVczf7p0y7vbwe5x8nS4?=
+ =?us-ascii?Q?E80CbsFLJ03yXCN9InUfUTL8Ivfwu0QK2lVBlXmSFNNohud3DPrP9LFCfrYP?=
+ =?us-ascii?Q?E8fggLcd4Ur3egmZjFwURmR1Lxa3NIkh6028r6N0kgV0JmGXjobtFSCR33bO?=
+ =?us-ascii?Q?D1S7IbErPn+sWiw3egi3P6Ei2ckzR6CYbr/BbDsTx41UheI3SCq2p8aGQCRC?=
+ =?us-ascii?Q?j8t0NPKldGH2Ogmwr7q0JkS6Mi7ElGvOQ3mToz9vMoCVCDx4UkFBMUDnEa6S?=
+ =?us-ascii?Q?Tw=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf8AxHuT+JAdk6f9NAA--.33988S3
-X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjvAXoW3Kr45Wr1xGF4rGFy5Gr18uFg_yoW8GrWDWo
-        W3uFn8Jr4fJ348XFWIvw15tr47XFsxZFsIyF1fArn8GayY9r98XrW8A3W3GFn7ZFyrKFnx
-        AryFgayrJF4Iqr47n29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXasCq-sGcSsGvf
-        J3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnRJU
-        UUBj1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFV
-        AK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2
-        z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0ow
-        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE
-        52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I
-        80ewAv7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCj
-        c4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7V
-        AKI48JMxAIw28IcVCjz48v1sIEY20_WwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C2
-        67AKxVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI
-        8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8
-        JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r
-        1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBI
-        daVFxhVjvjDU0xZFpf9x07jeksgUUUUU=
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3910683b-ee4d-45a2-0d0a-08db1f06c165
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2023 12:23:27.7478
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 6mdgKaLOVZwwfoc+hHPNVdiApCBvc/ZlO3fzKt69QCb0HiAM5VNqKfHZTJjhpDx8xFtb3hbiPDdvOIi8MGc3njmTxUwEgV+EvhzJiBfgg4o=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7593
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This driver provides support for clock controller on Loongson-2 SoC,
-the Loongson-2 SoC uses a 100MHz clock as the PLL reference clock,
-there are five independent PLLs inside, each of which PLL can
-provide up to three sets of frequency dependent clock outputs.
+>From: Jiri Pirko <jiri@resnulli.us>
+>Sent: Tuesday, February 7, 2023 3:15 PM
+>
+>Mon, Feb 06, 2023 at 03:00:09AM CET, arkadiusz.kubalewski@intel.com wrote:
+>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>Sent: Tuesday, January 31, 2023 3:01 PM
+>>>To: Kubalewski, Arkadiusz <arkadiusz.kubalewski@intel.com>
+>>>Cc: Vadim Fedorenko <vadfed@meta.com>; Jakub Kicinski
+>>><kuba@kernel.org>; Jonathan Lemon <jonathan.lemon@gmail.com>; Paolo
+>>>Abeni <pabeni@redhat.com>; netdev@vger.kernel.org;
+>>>linux-arm-kernel@lists.infradead.org; linux- clk@vger.kernel.org;
+>>>Olech, Milena <milena.olech@intel.com>; Michalik, Michal
+>>><michal.michalik@intel.com>
+>>>Subject: Re: [RFC PATCH v5 1/4] dpll: Add DPLL framework base
+>>>functions
+>>>
+>>>Fri, Jan 27, 2023 at 07:12:41PM CET, arkadiusz.kubalewski@intel.com
+>>wrote:
+>>>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>>>Sent: Thursday, January 19, 2023 6:16 PM
+>>>>>
+>>>>>Tue, Jan 17, 2023 at 07:00:48PM CET, vadfed@meta.com wrote:
+>
+>[...]
+>
+>
+>>>>>>+			 struct dpll_pin_ops *ops, void *priv) {
+>>>>>>+	struct dpll_pin *pin;
+>>>>>>+	int ret;
+>>>>>>+
+>>>>>>+	mutex_lock(&dpll_pin_owner->lock);
+>>>>>>+	pin =3D dpll_pin_get_by_description(dpll_pin_owner,
+>>>>>>+					  shared_pin_description);
+>>>>>>+	if (!pin) {
+>>>>>>+		ret =3D -EINVAL;
+>>>>>>+		goto unlock;
+>>>>>>+	}
+>>>>>>+	ret =3D dpll_pin_register(dpll, pin, ops, priv);
+>>>>>>+unlock:
+>>>>>>+	mutex_unlock(&dpll_pin_owner->lock);
+>>>>>>+
+>>>>>>+	return ret;
+>>>>>
+>>>>>I don't understand why there should be a separate function to
+>>>>>register the shared pin. As I see it, there is a pin object that
+>>>>>could be registered with 2 or more dpll devices. What about having:
+>>>>>
+>>>>>pin =3D dpll_pin_alloc(desc, type, ops, priv)
+>>>>>dpll_pin_register(dpll_1, pin); dpll_pin_register(dpll_2, pin);
+>>>>>dpll_pin_register(dpll_3, pin);
+>>>>>
+>>>>
+>>>>IMHO your example works already, but it would possible only if the
+>>>>same driver instance initializes all dplls.
+>>>
+>>>It should be only one instance of dpll to be shared between driver
+>>>instances as I wrote in the reply to the "ice" part. There might he
+>>>some pins created alongside with this.
+>>>
+>>
+>>pin =3D dpll_pin_alloc(desc, type, ops, priv) dpll_pin_register(dpll_1,
+>>pin); dpll_pin_register(dpll_2, pin); dpll_pin_register(dpll_3, pin); ^
+>>there is registration of a single pin by a 3 dpll instances, and a
+>>kernel module instance which registers them has a reference to the pin
+>>and all dplls, thus it can just register them all without any problems,
+>>don't need to call dpll_shared_pin_register(..).
+>>
+>>Now imagine 2 kernel module instances.
+>>One (#1) creates one dpll, registers pins with it.
+>>Second (#2) creates second dpll, and want to use/register pins of dpll
+>>registered by the first instance (#1).
+>
+>Sure, both instances should be available to both module instances, using
+>the suggested get/put create/reference system.
+>Whichever module instance does register shared pin can use
+>dpll_pin_register(), I see no problem with that.
+>
 
-Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
----
-Change in v13:
-		1. Add the Loongson-2 boot clk support.
-Change in v12:
-		1. Change driver register way that use platform driver register.
-Change in v11:
-		1. Remove the repetitive COMMON_CLK config in loongarch Kconfig.
-		2. Fixup the help paragraph descprition in COMMON_CLK_LOONGSON2.
-		3. Drop the <linux/clkdev.h>.
-		4. Drop the cast in clock driver.
-		5. Use div_u64() replace do_div().
-		6. Inline this function for loongson2_check_clk_hws.
-		7. Fixup the comma deposition on the loongson2_check_clk_hws.
-		8. Drop the loongson2_obtain_fixed_clk_hw and rework this driver
-		   use clk_parent_data and the 'fw_name'.
-Change in v10:
-		1. Detach of_clk_init to another patch. 
-Change in v9:
-		1. Add all history changelog information.
-Change in v8:
-		1. Remove the flag "CLK_IS_BASIC".
-Change in v7:
-		1. Adjust position alphabetically in Kconfig and Makefile.
-		2. Add static for loongson2_pll_base.
-		3. Move other file-scope variables in probe.
-Change in v6:
-		1. NO change, but other patch in this series of patches has
-		   changes.
-Change in v5:
-		1. Replace loongson2 with Loongson-2 in commit info.
-		2. Replace Loongson2 with Loongson-2 in binding and
-		   Kconfig file.
-		3. Replace soc with SoC.
-Change in v4:
-		1. Fixup clock-names that replace "xxx-clk" with "xxx".
-Change in v3:
-		1. NO change, but other patch in this series of patches has
-		   changes.
-Change in v2:
-		1. Update the include filename.
-		2. Change string from refclk/REFCLK to ref/REF.
+In v6 those suggestions are implemented.
+AFAIK Vadim shall send it soon.
 
- MAINTAINERS                 |   1 +
- drivers/clk/Kconfig         |   9 +
- drivers/clk/Makefile        |   1 +
- drivers/clk/clk-loongson2.c | 355 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 366 insertions(+)
- create mode 100644 drivers/clk/clk-loongson2.c
+>
+>>
+>>>My point is, the first driver instance which creates dpll registers
+>>>also the pins. The other driver instance does not do anything, just
+>>>gets reference to the dpll.
+>>>
+>>>On cleanup path, the last driver instance tearing down would
+>>>unregister dpll pins (Could be done automatically by dpll_device_put()).
+>>>
+>>>There might be some other pins (Synce) created per driver instance
+>>>(per-PF). You have to distinguish these 2 groups.
+>>>
+>>>
+>>>>dpll_shared_pin_register is designed for driver instances without the
+>>>>pin
+>>>
+>>>I think we need to make sure the terms are correct "sharing" is
+>>>between multiple dpll instances. However, if 2 driver instances are
+>>>sharing the same dpll instance, this instance has pins. There is no
+>>>sharing unless there is another dpll instance in picture. Correct?
+>>>
+>>
+>>Yes!
+>>If two kernel module intances sharing a dpll instance, the pins belong
+>>to the dpll instance, and yes each kernel module instance can register
+>>pins with that dpll instance just with: dpll_pin_register(dpll_1, pin);
+>>
+>>dpll_shared_pin_register(..) shall be used when separated kernel module
+>>instances are initializing separated dpll instances, and those
+>>instances are
+>
+>Why exacly would they do that? Could you please draw me an example?
+>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8d5bc223f3053..2334623052875 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12121,6 +12121,7 @@ M:	Yinbo Zhu <zhuyinbo@loongson.cn>
- L:	linux-clk@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-+F:	drivers/clk/clk-loongson2.c
- F:	include/dt-bindings/clock/loongson,ls2k-clk.h
- 
- LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index b6c5bf69a2b2c..27c5fa02916a6 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -325,6 +325,15 @@ config COMMON_CLK_LOCHNAGAR
- 	  This driver supports the clocking features of the Cirrus Logic
- 	  Lochnagar audio development board.
- 
-+config COMMON_CLK_LOONGSON2
-+	bool "Clock driver for Loongson-2 SoC"
-+	depends on COMMON_CLK && OF
-+	help
-+          This driver provides support for clock controller on Loongson-2 SoC.
-+          The clock controller can generates and supplies clock to various
-+          peripherals within the SoC.
-+          Say Y here to support Loongson-2 SoC clock driver.
-+
- config COMMON_CLK_NXP
- 	def_bool COMMON_CLK && (ARCH_LPC18XX || ARCH_LPC32XX)
- 	select REGMAP_MMIO if ARCH_LPC32XX
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index e3ca0d058a256..b298c5dabc1a4 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -43,6 +43,7 @@ obj-$(CONFIG_COMMON_CLK_K210)		+= clk-k210.o
- obj-$(CONFIG_LMK04832)			+= clk-lmk04832.o
- obj-$(CONFIG_COMMON_CLK_LAN966X)	+= clk-lan966x.o
- obj-$(CONFIG_COMMON_CLK_LOCHNAGAR)	+= clk-lochnagar.o
-+obj-$(CONFIG_COMMON_CLK_LOONGSON2)	+= clk-loongson2.o
- obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
- obj-$(CONFIG_COMMON_CLK_MAX9485)	+= clk-max9485.o
- obj-$(CONFIG_ARCH_MILBEAUT_M10V)	+= clk-milbeaut.o
-diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
-new file mode 100644
-index 0000000000000..c24334b19ea70
---- /dev/null
-+++ b/drivers/clk/clk-loongson2.c
-@@ -0,0 +1,355 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Author: Yinbo Zhu <zhuyinbo@loongson.cn>
-+ * Copyright (C) 2022-2023 Loongson Technology Corporation Limited
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/clk-provider.h>
-+#include <linux/slab.h>
-+#include <linux/clk.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <dt-bindings/clock/loongson,ls2k-clk.h>
-+
-+#define LOONGSON2_PLL_MULT_SHIFT		32
-+#define LOONGSON2_PLL_MULT_WIDTH		10
-+#define LOONGSON2_PLL_DIV_SHIFT			26
-+#define LOONGSON2_PLL_DIV_WIDTH			6
-+#define LOONGSON2_APB_FREQSCALE_SHIFT		20
-+#define LOONGSON2_APB_FREQSCALE_WIDTH		3
-+#define LOONGSON2_USB_FREQSCALE_SHIFT		16
-+#define LOONGSON2_USB_FREQSCALE_WIDTH		3
-+#define LOONGSON2_SATA_FREQSCALE_SHIFT		12
-+#define LOONGSON2_SATA_FREQSCALE_WIDTH		3
-+#define LOONGSON2_BOOT_FREQSCALE_SHIFT		8
-+#define LOONGSON2_BOOT_FREQSCALE_WIDTH		3
-+
-+static void __iomem *loongson2_pll_base;
-+
-+static const struct clk_parent_data pdata[] = {
-+	{ .fw_name = "ref_100m", .name = "ref_clk", },
-+};
-+
-+static struct clk_hw *loongson2_clk_register(struct device_node *np,
-+					  const char *name,
-+					  const char *parent_name,
-+					  const struct clk_ops *ops,
-+					  unsigned long flags)
-+{
-+	int ret;
-+	struct clk_hw *hw;
-+	struct clk_init_data init;
-+
-+	/* allocate the divider */
-+	hw = kzalloc(sizeof(*hw), GFP_KERNEL);
-+	if (!hw)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = ops;
-+	init.flags = flags;
-+	init.num_parents = 1;
-+
-+	if (!parent_name)
-+		init.parent_data = pdata;
-+	else
-+		init.parent_names = &parent_name;
-+
-+	hw->init = &init;
-+
-+	/* register the clock */
-+	ret = of_clk_hw_register(np, hw);
-+	if (ret) {
-+		kfree(hw);
-+		hw = ERR_PTR(ret);
-+	}
-+
-+	return hw;
-+}
-+
-+static unsigned long loongson2_calc_pll_rate(int offset, unsigned long rate)
-+{
-+	u64 val;
-+	u32 mult = 1, div = 1;
-+
-+	val = readq(loongson2_pll_base + offset);
-+
-+	mult = (val >> LOONGSON2_PLL_MULT_SHIFT) &
-+			clk_div_mask(LOONGSON2_PLL_MULT_WIDTH);
-+	div = (val >> LOONGSON2_PLL_DIV_SHIFT) &
-+			clk_div_mask(LOONGSON2_PLL_DIV_WIDTH);
-+
-+	return div_u64((u64)rate * mult, div);
-+}
-+
-+static unsigned long loongson2_node_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	return loongson2_calc_pll_rate(0x0, parent_rate);
-+}
-+
-+static const struct clk_ops loongson2_node_clk_ops = {
-+	.recalc_rate = loongson2_node_recalc_rate,
-+};
-+
-+static unsigned long loongson2_ddr_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	return loongson2_calc_pll_rate(0x10, parent_rate);
-+}
-+
-+static const struct clk_ops loongson2_ddr_clk_ops = {
-+	.recalc_rate = loongson2_ddr_recalc_rate,
-+};
-+
-+static unsigned long loongson2_dc_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	return loongson2_calc_pll_rate(0x20, parent_rate);
-+}
-+
-+static const struct clk_ops loongson2_dc_clk_ops = {
-+	.recalc_rate = loongson2_dc_recalc_rate,
-+};
-+
-+static unsigned long loongson2_pix0_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	return loongson2_calc_pll_rate(0x30, parent_rate);
-+}
-+
-+static const struct clk_ops loongson2_pix0_clk_ops = {
-+	.recalc_rate = loongson2_pix0_recalc_rate,
-+};
-+
-+static unsigned long loongson2_pix1_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	return loongson2_calc_pll_rate(0x40, parent_rate);
-+}
-+
-+static const struct clk_ops loongson2_pix1_clk_ops = {
-+	.recalc_rate = loongson2_pix1_recalc_rate,
-+};
-+
-+static unsigned long loongson2_calc_rate(unsigned long rate,
-+					 int shift, int width)
-+{
-+	u64 val;
-+	u32 mult;
-+
-+	val = readq(loongson2_pll_base + 0x50);
-+
-+	mult = (val >> shift) & clk_div_mask(width);
-+
-+	return div_u64((u64)rate * (mult + 1), 8);
-+}
-+
-+static unsigned long loongson2_boot_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	return loongson2_calc_rate(parent_rate,
-+				   LOONGSON2_BOOT_FREQSCALE_SHIFT,
-+				   LOONGSON2_BOOT_FREQSCALE_WIDTH);
-+}
-+
-+static const struct clk_ops loongson2_boot_clk_ops = {
-+	.recalc_rate = loongson2_boot_recalc_rate,
-+};
-+
-+static unsigned long loongson2_apb_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	return loongson2_calc_rate(parent_rate,
-+				   LOONGSON2_APB_FREQSCALE_SHIFT,
-+				   LOONGSON2_APB_FREQSCALE_WIDTH);
-+}
-+
-+static const struct clk_ops loongson2_apb_clk_ops = {
-+	.recalc_rate = loongson2_apb_recalc_rate,
-+};
-+
-+static unsigned long loongson2_usb_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	return loongson2_calc_rate(parent_rate,
-+				   LOONGSON2_USB_FREQSCALE_SHIFT,
-+				   LOONGSON2_USB_FREQSCALE_WIDTH);
-+}
-+
-+static const struct clk_ops loongson2_usb_clk_ops = {
-+	.recalc_rate = loongson2_usb_recalc_rate,
-+};
-+
-+static unsigned long loongson2_sata_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	return loongson2_calc_rate(parent_rate,
-+				   LOONGSON2_SATA_FREQSCALE_SHIFT,
-+				   LOONGSON2_SATA_FREQSCALE_WIDTH);
-+}
-+
-+static const struct clk_ops loongson2_sata_clk_ops = {
-+	.recalc_rate = loongson2_sata_recalc_rate,
-+};
-+
-+static inline void loongson2_check_clk_hws(struct clk_hw *clks[], unsigned int count)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < count; i++)
-+		if (IS_ERR(clks[i]))
-+			pr_err("Loongson2 clk %u: register failed with %ld\n",
-+				i, PTR_ERR(clks[i]));
-+}
-+
-+static void loongson2_clocks_init(struct device_node *np)
-+{
-+	struct clk_hw **hws;
-+	struct clk_hw_onecell_data *clk_hw_data;
-+	spinlock_t loongson2_clk_lock;
-+
-+	loongson2_pll_base = of_iomap(np, 0);
-+
-+	if (!loongson2_pll_base) {
-+		pr_err("clk: unable to map loongson2 clk registers\n");
-+		return;
-+	}
-+
-+	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws, LOONGSON2_CLK_END),
-+					GFP_KERNEL);
-+	if (WARN_ON(!clk_hw_data))
-+		goto err;
-+
-+	clk_hw_data->num = LOONGSON2_CLK_END;
-+	hws = clk_hw_data->hws;
-+
-+	hws[LOONGSON2_NODE_PLL] = loongson2_clk_register(np, "node_pll",
-+						NULL,
-+						&loongson2_node_clk_ops, 0);
-+
-+	hws[LOONGSON2_DDR_PLL] = loongson2_clk_register(np, "ddr_pll",
-+						NULL,
-+						&loongson2_ddr_clk_ops, 0);
-+
-+	hws[LOONGSON2_DC_PLL] = loongson2_clk_register(np, "dc_pll",
-+						NULL,
-+						&loongson2_dc_clk_ops, 0);
-+
-+	hws[LOONGSON2_PIX0_PLL] = loongson2_clk_register(np, "pix0_pll",
-+						NULL,
-+						&loongson2_pix0_clk_ops, 0);
-+
-+	hws[LOONGSON2_PIX1_PLL] = loongson2_clk_register(np, "pix1_pll",
-+						NULL,
-+						&loongson2_pix1_clk_ops, 0);
-+
-+	hws[LOONGSON2_BOOT_CLK] = loongson2_clk_register(np, "boot",
-+						NULL,
-+						&loongson2_boot_clk_ops, 0);
-+
-+	hws[LOONGSON2_NODE_CLK] = clk_hw_register_divider(NULL, "node",
-+						"node_pll", 0,
-+						loongson2_pll_base + 0x8, 0,
-+						6, CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	/*
-+	 * The hda clk divisor in the upper 32bits and the clk-prodiver
-+	 * layer code doesn't support 64bit io operation thus a conversion
-+	 * is required that subtract shift by 32 and add 4byte to the hda
-+	 * address
-+	 */
-+	hws[LOONGSON2_HDA_CLK] = clk_hw_register_divider(NULL, "hda",
-+						"ddr_pll", 0,
-+						loongson2_pll_base + 0x22, 12,
-+						7, CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	hws[LOONGSON2_GPU_CLK] = clk_hw_register_divider(NULL, "gpu",
-+						"ddr_pll", 0,
-+						loongson2_pll_base + 0x18, 22,
-+						6, CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	hws[LOONGSON2_DDR_CLK] = clk_hw_register_divider(NULL, "ddr",
-+						"ddr_pll", 0,
-+						loongson2_pll_base + 0x18, 0,
-+						6, CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	hws[LOONGSON2_GMAC_CLK] = clk_hw_register_divider(NULL, "gmac",
-+						"dc_pll", 0,
-+						loongson2_pll_base + 0x28, 22,
-+						6, CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	hws[LOONGSON2_DC_CLK] = clk_hw_register_divider(NULL, "dc",
-+						"dc_pll", 0,
-+						loongson2_pll_base + 0x28, 0,
-+						6, CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	hws[LOONGSON2_APB_CLK] = loongson2_clk_register(NULL, "apb",
-+						"gmac",
-+						&loongson2_apb_clk_ops, 0);
-+
-+	hws[LOONGSON2_USB_CLK] = loongson2_clk_register(NULL, "usb",
-+						"gmac",
-+						&loongson2_usb_clk_ops, 0);
-+
-+	hws[LOONGSON2_SATA_CLK] = loongson2_clk_register(NULL, "sata",
-+						"gmac",
-+						&loongson2_sata_clk_ops, 0);
-+
-+	hws[LOONGSON2_PIX0_CLK] = clk_hw_register_divider(NULL, "pix0",
-+						"pix0_pll", 0,
-+						loongson2_pll_base + 0x38, 0, 6,
-+						CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	hws[LOONGSON2_PIX1_CLK] = clk_hw_register_divider(NULL, "pix1",
-+						"pix1_pll", 0,
-+						loongson2_pll_base + 0x48, 0, 6,
-+						CLK_DIVIDER_ONE_BASED,
-+						&loongson2_clk_lock);
-+
-+	loongson2_check_clk_hws(hws, LOONGSON2_CLK_END);
-+
-+	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
-+
-+err:
-+	iounmap(loongson2_pll_base);
-+}
-+
-+static const struct of_device_id loongson2_clk_match_table[] = {
-+	{ .compatible = "loongson,ls2k-clk" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, loongson2_clk_match_table);
-+
-+static int loongson2_clk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+
-+	loongson2_clocks_init(np);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver loongson2_clk_driver = {
-+	.probe	= loongson2_clk_probe,
-+	.driver	= {
-+		.name	= "loongson2-clk",
-+		.of_match_table	= loongson2_clk_match_table,
-+	},
-+};
-+module_platform_driver(loongson2_clk_driver);
-+
-+MODULE_DESCRIPTION("Loongson2 clock driver");
-+MODULE_LICENSE("GPL");
--- 
-2.31.1
+I think we shall not follow this discussion as in v6 we already
+have the mechanics you suggested, but sure:
++----------+                =20
+|i0 - GPS  |--------------\
++----------+              |
++----------+              |
+|i1 - SMA1 |------------\ |
++----------+            | |
++----------+            | |
+|i2 - SMA2 |----------\ | |
++----------+          | | |
+                      | | |
++---------------------|-|-|-------------------------------------------+
+| Channel A / FW0     | | |     +-------------+   +---+   +--------+  |
+|                     | | |-i0--|Synchronizer0|---|   |---| PHY0.0 |--|
+|         +---+       | | |     |             |   |   |   +--------+  |
+| PHY0.0--|   |       | |---i1--|             |---| M |---| PHY0.1 |--|
+|         |   |       | | |     | +-----+     |   | A |   +--------+  |
+| PHY0.1--| M |       |-----i2--| |DPLL0|     |   | C |---| PHY0.2 |--|
+|         | U |       | | |     | +-----+     |   | 0 |   +--------+  |
+| PHY0.2--| X |--+----------i3--| +-----+     |---|   |---| ...    |--|
+|         | 0 |  |    | | |     | |DPLL1|     |   |   |   +--------+  |
+| ...   --|   |  | /--------i4--| +-----+     |---|   |---| PHY0.7 |--|
+|         |   |  | |  | | |     +-------------+   +---+   +--------+  |
+| PHY0.7--|   |  | |  | | |                                           |
+|         +---+  | |  | | |                                           |
++----------------|-|--|-|-|-------------------------------------------+
+| Channel B / FW1| |  | | |     +-------------+   +---+   +--------+  |
+|                | |  | | \-i0--|Synchronizer1|---|   |---| PHY1.0 |--|
+|         +---+  | |  | |       |             |   |   |   +--------+  |
+| PHY1.0--|   |  | |  | \---i1--|             |---| M |---| PHY1.1 |--|
+|         |   |  | |  |         | +-----+     |   | A |   +--------+  |
+| PHY1.1--| M |  | |  \-----i2--| |DPLL0|     |   | C |---| PHY1.2 |--|
+|         | U |  | |            | +-----+     |   | 1 |   +--------+  |
+| PHY1.2--| X |  \-|--------i3--| +-----+     |---|   |---| ...    |--|
+|         | 1 |    |            | |DPLL1|     |   |   |   +--------+  |
+| ...   --|   |----+--------i4--| +-----+     |---|   |---| PHY1.7 |--|
+|         |   |                 +-------------+   +---+   +--------+  |
+| PHY1.7--|   |                                                       |
+|         +---+                                                       |
++---------------------------------------------------------------------+
 
+>
+>>physically sharing their pins.
+>>
+>>>
+>
+>[...]
+>
+>
+>>>>>>+static int dpll_msg_add_pin_modes(struct sk_buff *msg,
+>>>>>>+				   const struct dpll_device *dpll,
+>>>>>>+				   const struct dpll_pin *pin) {
+>>>>>>+	enum dpll_pin_mode i;
+>>>>>>+	bool active;
+>>>>>>+
+>>>>>>+	for (i =3D DPLL_PIN_MODE_UNSPEC + 1; i <=3D DPLL_PIN_MODE_MAX; i++)=
+ {
+>>>>>>+		if (dpll_pin_mode_active(dpll, pin, i, &active))
+>>>>>>+			return 0;
+>>>>>>+		if (active)
+>>>>>>+			if (nla_put_s32(msg, DPLLA_PIN_MODE, i))
+>>>>>
+>>>>>Why this is signed?
+>>>>>
+>>>>
+>>>>Because enums are signed.
+>>>
+>>>You use negative values in enums? Don't do that here. Have all netlink
+>>>atrributes unsigned please.
+>>>
+>>
+>>No, we don't use negative values, but enum is a signed type by itself.
+>>Doesn't seem right thing to do, put signed-type value into unsigned type =
+TLV.
+>>This smells very bad.
+>
+>Well, then all existing uses that carry enum over netlink attributes smell
+>bad. The enum values are all unsigned, I see no reason to use S*.
+>Please be consistent with the rest of the Netlink uAPI.
+>
+
+Yes, exactly, don't know why to follow bad practicies, saying "that's how i=
+t's
+done". Is there any reasoning behind this?
+
+>
+>[...]
+>
+>>>>>>+
+>>>>>>+/* dpll_pin_signal_type - signal types
+>>>>>>+ *
+>>>>>>+ * @DPLL_PIN_SIGNAL_TYPE_UNSPEC - unspecified value
+>>>>>>+ * @DPLL_PIN_SIGNAL_TYPE_1_PPS - a 1Hz signal
+>>>>>>+ * @DPLL_PIN_SIGNAL_TYPE_10_MHZ - a 10 MHz signal
+>>>>>
+>>>>>Why we need to have 1HZ and 10MHZ hardcoded as enums? Why can't we
+>>>>>work with HZ value directly? For example, supported freq:
+>>>>>1, 10000000
+>>>>>or:
+>>>>>1, 1000
+>>>>>
+>>>>>freq set 10000000
+>>>>>freq set 1
+>>>>>
+>>>>>Simple and easy.
+>>>>>
+>>>>
+>>>>AFAIR, we wanted to have most commonly used frequencies as enums +
+>>>>custom_freq for some exotic ones (please note that there is also
+>>>>possible 2PPS, which is
+>>>>0.5 Hz).
+>>>
+>>>In this exotic case, user might add divider netlink attribute to
+>>>divide the frequency pass in the attr. No problem.
+>>>
+>>>
+>>>>This was design decision we already agreed on.
+>>>>The userspace shall get definite list of comonly used frequencies
+>>>>that can be used with given HW, it clearly enums are good for this.
+>>>
+>>>I don't see why. Each instance supports a set of frequencies. It would
+>>>pass the values to the userspace.
+>>>
+>>>I fail to see the need to have some fixed values listed in enums.
+>>>Mixing approaches for a single attribute is wrong. In ethtool we also
+>>>don't have enum values for 10,100,1000mbits etc. It's just a number.
+>>>
+>>
+>>In ethtool there are defines for linkspeeds.
+>>There must be list of defines/enums to check the driver if it is supporte=
+d.
+>>Especially for ANY_FREQ we don't want to call driver 25 milions times or
+>>more.
+>
+>Any is not really *any* is it? A simple range wouldn't do then? It would b=
+e
+>much better to tell the user the boundaries.
+>
+
+In v6 those suggestions are implemented.
+
+>
+>>
+>>Also, we have to move supported frequencies to the dpll_pin_alloc as it
+>>is constant argument, supported frequencies shall not change @ runtime?
+>>In such case there seems to be only one way to pass in a nice way, as a
+>>bitmask?
+>
+>array of numbers (perhaps using defines for most common values), I don't
+>see any problem in that. But you are talking about in-kernel API. Does not
+>matter that much. What we are discussing is uAPI and that matters a lot.
+>
+>
+>>
+>>Back to the userspace part, do you suggest to have DPLLA_PIN_FREQ
+>>attribute and translate kernelspace enum values to userspace defines
+>>like DPLL_FREQ_1_HZ, etc? also with special define for supported ones
+>>ANY_FREQ?
+>
+>Whichever is convenient. My focus here is uAPI.
+>
+
+In v6 those suggestions are implemented.
+
+>
+>>
+>>>
+>>>>
+>>>>>
+>>>>>>+ * @DPLL_PIN_SIGNAL_TYPE_CUSTOM_FREQ - custom frequency signal,
+>>>>>>+ value
+>>>>>>defined
+>>>>>>+ *	with pin's DPLLA_PIN_SIGNAL_TYPE_CUSTOM_FREQ attribute
+>>>>>>+ **/
+>>>>>>+enum dpll_pin_signal_type {
+>>>>>>+	DPLL_PIN_SIGNAL_TYPE_UNSPEC,
+>>>>>>+	DPLL_PIN_SIGNAL_TYPE_1_PPS,
+>>>>>>+	DPLL_PIN_SIGNAL_TYPE_10_MHZ,
+>>>>>>+	DPLL_PIN_SIGNAL_TYPE_CUSTOM_FREQ,
+>>>>>>+
+>>>>>>+	__DPLL_PIN_SIGNAL_TYPE_MAX,
+>>>>>>+};
+>>>>>>+
+>>>>>>+#define DPLL_PIN_SIGNAL_TYPE_MAX (__DPLL_PIN_SIGNAL_TYPE_MAX - 1)
+>>>>>>+
+>>>>>>+/* dpll_pin_mode - available pin states
+>>>>>>+ *
+>>>>>>+ * @DPLL_PIN_MODE_UNSPEC - unspecified value
+>>>>>>+ * @DPLL_PIN_MODE_CONNECTED - pin connected
+>>>>>>+ * @DPLL_PIN_MODE_DISCONNECTED - pin disconnected
+>>>>>>+ * @DPLL_PIN_MODE_SOURCE - pin used as an input pin
+>>>>>>+ * @DPLL_PIN_MODE_OUTPUT - pin used as an output pin  **/ enum
+>>>>>>+dpll_pin_mode {
+>>>>>>+	DPLL_PIN_MODE_UNSPEC,
+>>>>>>+	DPLL_PIN_MODE_CONNECTED,
+>>>>>>+	DPLL_PIN_MODE_DISCONNECTED,
+>>>>>>+	DPLL_PIN_MODE_SOURCE,
+>>>>>>+	DPLL_PIN_MODE_OUTPUT,
+>>>>>
+>>>>>I don't follow. I see 2 enums:
+>>>>>CONNECTED/DISCONNECTED
+>>>>>SOURCE/OUTPUT
+>>>>>why this is mangled together? How is it supposed to be working. Like
+>>>>>a bitarray?
+>>>>>
+>>>>
+>>>>The userspace shouldn't worry about bits, it recieves a list of
+>>>attributes.
+>>>>For current/active mode: DPLLA_PIN_MODE, and for supported modes:
+>>>>DPLLA_PIN_MODE_SUPPORTED. I.e.
+>>>>
+>>>>	DPLLA_PIN_IDX			0
+>>>>	DPLLA_PIN_MODE			1,3
+>>>>	DPLLA_PIN_MODE_SUPPORTED	1,2,3,4
+>>>
+>>>I believe that mixing apples and oranges in a single attr is not correct=
+.
+>>>Could you please split to separate attrs as drafted below?
+>>>
+>>>>
+>>>>The reason for existance of both DPLL_PIN_MODE_CONNECTED and
+>>>>DPLL_PIN_MODE_DISCONNECTED, is that the user must request it somehow,
+>>>>and bitmask is not a way to go for userspace.
+>>>
+>>>What? See nla_bitmap.
+>>>
+>>
+>>AFAIK, nla_bitmap is not yet merged.
+>
+>NLA_BITFIELD32
+>
+>
+>>
+>>>Anyway, why can't you have:
+>>>DPLLA_PIN_CONNECTED     u8 1/0 (bool)
+>>>DPLLA_PIN_DIRECTION     enum { SOURCE/OUTPUT }
+>>
+>>Don't get it, why this shall be u8 with bool value, doesn't make much
+>>sense for userspace.
+>
+>Could be NLA_FLAG.
+>
+>
+>>All the other attributes have enum type, we can go with separated
+>>attribute:
+>>DPLLA_PIN_STATE		enum { CONNECTED/DISCONNECTED }
+>
+>Yeah, why not. I think this is probably better and more explicit than
+>NLA_FLAG.
+>
+>
+>>Just be consistent and clear, and yes u8 is enough it to keep it, as
+>>well as all of attribute enum values, so we can use u8 instead of u32 for
+>>all of them.
+>
+>Yes, that is what is done normally for attrs like this.
+>
+>
+
+In v6, there are enums and attributes:
+DPLL_A_PIN_STATE	enum { CONNECTED/DISCONNECTED }
+DPLL_A_PIN_DIRECTION	enum { SOURCE/OUTPUT }
+
+also new capabilities attributes DPLL_A_PIN_DPLL_CAPS
+a bitmap - implicit from u32 value.
+
+>>
+>>Actually for "connected/disconnected"-part there are 2 valid use-cases
+>>on my
+>>mind:
+>>- pin can be connected with a number of "parents" (dplls or muxed-pins)
+>>- pin is disconnected entirely
+>>Second case can be achieved with control over first one, thus not need
+>>for any special approach here. Proper control would be to let userspace
+>>connect or disconnect a pin per each node it can be connected with, right=
+?
+>>
+>>Then example dump of "get-pins" could look like this:
+>>DPLL_PIN	(nested)
+>>	DPLLA_PIN_IDX		0
+>>	DPLLA_PIN_TYPE		DPLL_PIN_TYPE_EXT
+>>	DPLLA_PIN_DIRECTION	SOURCE
+>>	...
+>>	DPLLA_DPLL			(nested)
+>>		DPLLA_ID		0
+>>		DPLLA_NAME		pci_0000:00:00.0
+>
+>Nit, make sure you have this as 2 attrs, busname, devname.
+
+Sure.
+
+>
+>
+>>		DPLLA_PIN_STATE		CONNECTED
+>>	DPLLA_DPLL			(nested)
+>>		DPLLA_ID		1
+>>		DPLLA_NAME		pci_0000:00:00.0
+>>		DPLLA_PIN_STATE		DISCONNECTED
+>>
+>>DPLL_PIN	(nested)
+>>	DPLLA_PIN_IDX		1
+>>	DPLLA_PIN_TYPE		DPLL_PIN_TYPE_MUX
+>>	DPLLA_PIN_DIRECTION	SOURCE
+>>	...
+>>	DPLLA_DPLL			(nested)
+>>		DPLLA_ID		0
+>>		DPLLA_NAME		pci_0000:00:00.0
+>>		DPLLA_PIN_STATE		DISCONNECTED
+>>	DPLLA_DPLL			(nested)
+>>		DPLLA_ID		1
+>>		DPLLA_NAME		pci_0000:00:00.0
+>>		DPLLA_PIN_STATE		CONNECTED
+>>
+>>DPLL_PIN	(nested)
+>>	DPLLA_PIN_IDX		2
+>>	DPLLA_PIN_TYPE		DPLL_PIN_TYPE_MUX
+>>	DPLLA_PIN_DIRECTION	SOURCE
+>>	...
+>>	DPLLA_DPLL			(nested)
+>>		DPLLA_ID		0
+>>		DPLLA_NAME		pci_0000:00:00.0
+>>		DPLLA_PIN_STATE		DISCONNECTED
+>>	DPLLA_DPLL			(nested)
+>>		DPLLA_ID		1
+>>		DPLLA_NAME		pci_0000:00:00.0
+>>		DPLLA_PIN_STATE		DISCONNECTED
+>
+>Okay.
+>
+>
+>>
+>>(similar for muxed pins)
+>>DPLL_PIN	(nested)
+>>	DPLLA_PIN_IDX		3
+>>	DPLLA_PIN_TYPE		DPLL_PIN_TYPE_SYNCE_ETH_PORT
+>>	DPLLA_PIN_DIRECTION	SOURCE
+>>	DPLLA_PIN_PARENT		(nested)
+>>		DPLLA_PIN_IDX		1
+>>		DPLLA_PIN_STATE		DISCONNECTED
+>>	DPLLA_PIN_PARENT		(nested)
+>>		DPLLA_PIN_IDX		2
+>>		DPLLA_PIN_STATE		CONNECTED
+>>
+>>DPLL_PIN	(nested)
+>>	DPLLA_PIN_IDX		4
+>>	DPLLA_PIN_TYPE		DPLL_PIN_TYPE_SYNCE_ETH_PORT
+>>	DPLLA_PIN_DIRECTION	SOURCE
+>>	DPLLA_PIN_PARENT		(nested)
+>>		DPLLA_PIN_IDX		1
+>>		DPLLA_PIN_STATE		CONNECTED
+>>	DPLLA_PIN_PARENT		(nested)
+>>		DPLLA_PIN_IDX		2
+>>		DPLLA_PIN_STATE		DISCONNECTED
+>
+>Looks fine.
+>
+>
+>>
+>>For DPLL_MODE_MANUAL a DPLLA_PIN_STATE would serve also as signal
+>>selector mechanism.
+>
+>Yep, I already make this point in earlier rfc review comment.
+>
+
+Thanks for that :)
+
+>
+>>In above example DPLL_ID=3D0 has only "connected" DPLL_PIN_IDX=3D0, now
+>>when different pin "connect" is requested:
+>>
+>>dpll-set request:
+>>DPLLA_DPLL	(nested)
+>>	DPLLA_ID=3D0
+>>	DPLLA_NAME=3Dpci_0000:00:00.0
+>>DPLLA_PIN
+>>	DPLLA_PIN_IDX=3D2
+>>	DPLLA_PIN_CONNECTED=3D1
+>>
+>>Former shall "disconnect"..
+>>And now, dump pin-get:
+>>DPLL_PIN	(nested)
+>>	DPLLA_PIN_IDX		0
+>>	...
+>>	DPLLA_DPLL			(nested)
+>>		DPLLA_ID		0
+>>		DPLLA_NAME		pci_0000:00:00.0
+>>		DPLLA_PIN_STATE		DISCONNECTED
+>>...
+>>DPLL_PIN	(nested)
+>>	DPLLA_PIN_IDX		2
+>>	...
+>>	DPLLA_DPLL			(nested)
+>>		DPLLA_ID		0
+>>		DPLLA_NAME		pci_0000:00:00.0
+>>		DPLLA_PIN_STATE		CONNECTED
+>>
+>>At least that shall happen on hardware level, right?
+>>
+>>As I can't find a use-case to have a pin "connected" but not "selected"
+>>in case of DPLL_MODE_MANUAL.
+>
+>Exactly.
+>
+>
+>>
+>>A bit different is with DPLL_MODE_AUTOMATIC, the pins that connects
+>>with dpll directly could be all connected, and their selection is
+>>auto-controlled with a DPLLA_PIN_PRIO.
+>>But still the user may also request to disconnect a pin - not use it at
+>>all (instead of configuring lowest priority - which allows to use it,
+>>if all other pins propagate invalid signal).
+>>
+>>Thus, for DPLL_MODE_AUTOMATIC all ablove is the same with a one
+>>difference, each pin/dpll pair would have a prio, like suggested in the
+>other email.
+>>DPLLA_PIN	(nested)
+>>	...
+>>	DPLLA_DPLL	(nested)
+>>		...
+>>		DPLLA_PIN_CONNECTED	<connected value>
+>>		DPLLA_PIN_STATE		<prio value>
+>
+>I think you made a mistake. Should it be:
+>		DPLLA_PIN_STATE		<connected value>
+>		DPLLA_PIN_PRIO		<prio value>
+>?
+>
+
+Yes, exactly.
+
+>
+>>
+>>Which basically means that both DPLL_A_PIN_PRIO and DPLLA_PIN_STATE
+>>shall be a property of a PIN-DPLL pair, and configured as such.
+>
+>Yes.
+>
+>
+>>
+>>
+>>>DPLLA_PIN_CAPS          nla_bitfield(CAN_CHANGE_CONNECTED,
+>>>CAN_CHANGE_DIRECTION)
+>>>
+>>>We can use the capabilitis bitfield eventually for other purposes as
+>>>well, it is going to be handy I'm sure.
+>>>
+>>
+>>Well, in general I like the idea, altough the details...
+>>We have 3 configuration levels:
+>>- DPLL
+>>- DPLL/PIN
+>>- PIN
+>>
+>>Considering that, there is space for 3 of such CAPABILITIES attributes, b=
+ut:
+>>- DPLL can only configure MODE for now, so we can only convert
+>>DPLL_A_MODE_SUPPORTED to a bitfield, and add DPLL_CAPS later if
+>>required
+>
+>Can't do that. It's uAPI, once you have ATTR there, it's there for
+>eternity...
+>
+
+I am not saying to remove something but add in the future.
+
+>
+>>- DPLL/PIN pair has configurable DPLLA_PIN_PRIO and DPLLA_PIN_STATE, so
+>>we could introduce DPLLA_PIN_DPLL_CAPS for them
+>
+>Yeah.
+>
+>
+>>- PIN has now configurable frequency (but this is done by providing
+>>list of supported ones - no need for extra attribute). We already know
+>>that pin shall also have optional features, like phase offset, embedded
+>>sync.
+>>For embedded sync if supported it shall also be a set of supported
+>>frequencies.
+>>Possibly for phase offset we could use similar CAPS field, but don't
+>>think will manage this into next version.
+>>
+>>>
+>>>
+>>>>
+>>>>
+>>>>>
+>>>>>>+
+>>>>>>+	__DPLL_PIN_MODE_MAX,
+>>>>>>+};
+>>>>>>+
+>>>
+>>>[...]
+>>>
+>>>
+>>>>>>+/**
+>>>>>>+ * dpll_mode - Working-modes a dpll can support. Modes
+>>>>>>+differentiate
+>>>>>>>how
+>>>>>>+ * dpll selects one of its sources to syntonize with a source.
+>>>>>>+ *
+>>>>>>+ * @DPLL_MODE_UNSPEC - invalid
+>>>>>>+ * @DPLL_MODE_MANUAL - source can be only selected by sending a
+>>>>>>+ request
+>>>>>>to dpll
+>>>>>>+ * @DPLL_MODE_AUTOMATIC - highest prio, valid source, auto
+>>>>>>+ selected by
+>>>>>>dpll
+>>>>>>+ * @DPLL_MODE_HOLDOVER - dpll forced into holdover mode
+>>>>>>+ * @DPLL_MODE_FREERUN - dpll driven on system clk, no holdover
+>>>>>>available
+>>>>>>+ * @DPLL_MODE_NCO - dpll driven by Numerically Controlled
+>>>>>>+ Oscillator
+>>>>>
+>>>>>Why does the user care which oscilator is run internally. It's
+>>>>>freerun, isn't it? If you want to expose oscilator type, you should
+>>>>>do it elsewhere.
+>>>>>
+>>>>
+>>>>In NCO user might change frequency of an output, in freerun cannot.
+>>>
+>>>How this could be done?
+>>>
+>>
+>>I guess by some internal synchronizer frequency dividers. Same as other
+>>output (different then input) frequencies are achievable there.
+>
+>I ment uAPI wise. Speak Netlink.
+>
+
+1. DPLL_MODE_NCO is returned with DPLL_A_MODE_SUPPORTED when HW supports it=
+.
+2. DPLL_MODE_NCO is requested by the user if user wants control output
+frequency or output frequency offset of a dpll.
+
+From the documentation of ZL80032:
+* Numerically controlled oscillator (NCO) behavior allows system software t=
+o=20
+steer DPLL frequency or synthesizer frequency with resolution better than 0=
+.005
+ppt
+* Similar to freerun mode, but with frequency control. The output clock is =
+the
+configured frequency with a frequency offset specified by the dpll_df_offse=
+t_x
+register. This write-only register changes the output frequency offset of t=
+he
+DPLL
+
+
+Thank you,
+Arkadiusz
+
+>>
+>>Thanks,
+>>Arkadiusz
+>>
+>>>
+>>>[...]
+>>
