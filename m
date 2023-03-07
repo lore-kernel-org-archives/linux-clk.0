@@ -2,492 +2,269 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3925EC678DB
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 06:25:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F40BDC6FD1A
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 06:42:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230499AbjCGGZM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Mar 2023 01:25:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58434 "EHLO
+        id S230225AbjCGGmi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Mar 2023 01:42:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230424AbjCGGZJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 01:25:09 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B67174ECFE;
-        Mon,  6 Mar 2023 22:24:28 -0800 (PST)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3276H9GP014814;
-        Tue, 7 Mar 2023 06:23:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=PXoASkF7RIaavr4P4tTcRaxRNXBC/DlsCfnqCMS4ilQ=;
- b=KTdVUN1xQ5O26+4kMuntRWfcfuvtgIZeYTeTwLZrdXoYUpr0tNiLs2XjSLHWhRPy3w/S
- PxnbUNqYL+v6B58TIqrngBDVTLPURcLa1UwT8l+egGkZDjJFixpLnl7P9iUhTgW03M2Q
- fb1uiBXX+XyOg1HvTWzmf3CIA3v4reHCCPdeVBKgVD/B3B08dsR5PfG+TnCKBz+Co/kN
- w/HiW8dqq06NMs3wDEOFeAhixaGoYuZ7/9izIydFooJjmVV5eL9yXTwpmE0iGMdsMnA5
- 2PmmKzI6AFF0LxTWSSBpQVxOAAOLj/1hVUini73REFgKQDiUDvL3Ep5Z3BpdkE14iNRL aQ== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3p419d726j-1
+        with ESMTP id S229517AbjCGGmh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 01:42:37 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1BDA53284;
+        Mon,  6 Mar 2023 22:42:35 -0800 (PST)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3274gPde010790;
+        Tue, 7 Mar 2023 06:42:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=sxMiXPCyv+zKi+wfgFFgSSVBSOygtp7z9V5QsQZ3bUQ=;
+ b=alM2pFmozG1cYCd/YP31scjZ0KZC5UH1ltOgWmx0ReP16Qlvkx1iNaCBX1yixcVrIOLJ
+ 0oTs+BZiTAK08Jfd5f2GP1w82asZ1KwUi1zxRk+5bYparhzEYuMOwnLEswcePdwX6TV5
+ mjGAL0CZPXfYIIulRB9/bRTZz82hwyNtEXY5yR2FluBagzeSXrcbbpBi/Wb92Z7rtytI
+ cUMPBCo1JqybGfFCqOGZOHBtSgXrf3dJi8sO8hdl4QllnIgHBz9bUVVASrC3TaSOPwWW
+ +8CIPdTCfFNYAS6iAy91QA42Ilv06+Y0gvKb8p7JoCEAf2O4e5/qT2mvZZ1uFiUeT5Ec Iw== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3p4g3mwywb-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Mar 2023 06:23:56 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3276NqtM023395
+        Tue, 07 Mar 2023 06:42:31 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3276gUnl032325
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 7 Mar 2023 06:23:52 GMT
-Received: from kathirav-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.41; Mon, 6 Mar 2023 22:23:45 -0800
-From:   Kathiravan T <quic_kathirav@quicinc.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
-        <arnd@arndb.de>, <dmitry.baryshkov@linaro.org>,
-        <geert+renesas@glider.be>, <nfraprado@collabora.com>,
-        <broonie@kernel.org>, <rafal@milecki.pl>, <robimarko@gmail.com>,
-        <quic_gurus@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC:     Kathiravan T <quic_kathirav@quicinc.com>
-Subject: [PATCH V6 8/9] arm64: dts: qcom: add IPQ5332 SoC and MI01.2 board support
-Date:   Tue, 7 Mar 2023 11:52:31 +0530
-Message-ID: <20230307062232.4889-9-quic_kathirav@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230307062232.4889-1-quic_kathirav@quicinc.com>
-References: <20230307062232.4889-1-quic_kathirav@quicinc.com>
+        Tue, 7 Mar 2023 06:42:30 GMT
+Received: from [10.201.3.182] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Mon, 6 Mar 2023
+ 22:42:22 -0800
+Message-ID: <f53b833f-bc1b-0323-c711-a009e9829910@quicinc.com>
+Date:   Tue, 7 Mar 2023 12:12:07 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH 05/11] dt-bindings: clock: qcom: gcc-ipq9574: Add Q6 gcc
+ clock control
+Content-Language: en-US
+To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
+        <mathieu.poirier@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <quic_gurus@quicinc.com>,
+        <loic.poulain@linaro.org>, <quic_eberman@quicinc.com>,
+        <robimarko@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <quic_gokulsri@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
+        <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
+References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
+ <1678164097-13247-6-git-send-email-quic_mmanikan@quicinc.com>
+From:   Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <1678164097-13247-6-git-send-email-quic_mmanikan@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 83UKsNSuxBADk5IdDWf3GgODUWjBavxT
-X-Proofpoint-GUID: 83UKsNSuxBADk5IdDWf3GgODUWjBavxT
+X-Proofpoint-ORIG-GUID: WzAAtbCkTOlls81xJDUcpoLDfLF400db
+X-Proofpoint-GUID: WzAAtbCkTOlls81xJDUcpoLDfLF400db
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-07_01,2023-03-06_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- phishscore=0 malwarescore=0 impostorscore=0 priorityscore=1501
- clxscore=1015 suspectscore=0 mlxlogscore=999 adultscore=0 bulkscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2303070057
+ definitions=2023-03-07_02,2023-03-06_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
+ suspectscore=0 mlxscore=0 clxscore=1011 adultscore=0 malwarescore=0
+ phishscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2212070000 definitions=main-2303070059
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add initial device tree support for the Qualcomm IPQ5332 SoC and
-MI01.2 board.
 
-Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
----
-Changes in V6:
-	- No changes
 
-Changes in V5:
-	- Dropped the clock-names property in GCC node
+On 3/7/2023 10:11 AM, Manikanta Mylavarapu wrote:
+> Add support for the QDSP6 gcc clock control used on IPQ9574
+> based devices. This would allow mpd remoteproc driver to control
+> the required gcc clocks to bring the subsystem out of reset.
+> 
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> ---
+>   include/dt-bindings/clock/qcom,ipq9574-gcc.h | 159 ++++++++++---------
+>   1 file changed, 83 insertions(+), 76 deletions(-)
+> 
+> diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+> index c89e96d568c6..8bd6350ecd56 100644
+> --- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+> +++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+> @@ -138,80 +138,87 @@
+>   #define WCSS_AHB_CLK_SRC				129
+>   #define GCC_Q6_AHB_CLK					130
+>   #define GCC_Q6_AHB_S_CLK				131
+> -#define GCC_WCSS_ECAHB_CLK				132
+> -#define GCC_WCSS_ACMT_CLK				133
+> -#define GCC_SYS_NOC_WCSS_AHB_CLK			134
+> -#define WCSS_AXI_M_CLK_SRC				135
+> -#define GCC_ANOC_WCSS_AXI_M_CLK				136
+> -#define QDSS_AT_CLK_SRC					137
+> -#define GCC_Q6SS_ATBM_CLK				138
+> -#define GCC_WCSS_DBG_IFC_ATB_CLK			139
+> -#define GCC_NSSNOC_ATB_CLK				140
+> -#define GCC_QDSS_AT_CLK					141
+> -#define GCC_SYS_NOC_AT_CLK				142
+> -#define GCC_PCNOC_AT_CLK				143
+> -#define GCC_USB0_EUD_AT_CLK				144
+> -#define GCC_QDSS_EUD_AT_CLK				145
+> -#define QDSS_STM_CLK_SRC				146
+> -#define GCC_QDSS_STM_CLK				147
+> -#define GCC_SYS_NOC_QDSS_STM_AXI_CLK			148
+> -#define QDSS_TRACECLKIN_CLK_SRC				149
+> -#define GCC_QDSS_TRACECLKIN_CLK				150
+> -#define QDSS_TSCTR_CLK_SRC				151
+> -#define GCC_Q6_TSCTR_1TO2_CLK				152
+> -#define GCC_WCSS_DBG_IFC_NTS_CLK			153
+> -#define GCC_QDSS_TSCTR_DIV2_CLK				154
+> -#define GCC_QDSS_TS_CLK					155
+> -#define GCC_QDSS_TSCTR_DIV4_CLK				156
+> -#define GCC_NSS_TS_CLK					157
+> -#define GCC_QDSS_TSCTR_DIV8_CLK				158
+> -#define GCC_QDSS_TSCTR_DIV16_CLK			159
+> -#define GCC_Q6SS_PCLKDBG_CLK				160
+> -#define GCC_Q6SS_TRIG_CLK				161
+> -#define GCC_WCSS_DBG_IFC_APB_CLK			162
+> -#define GCC_WCSS_DBG_IFC_DAPBUS_CLK			163
+> -#define GCC_QDSS_DAP_CLK				164
+> -#define GCC_QDSS_APB2JTAG_CLK				165
+> -#define GCC_QDSS_TSCTR_DIV3_CLK				166
+> -#define QPIC_IO_MACRO_CLK_SRC				167
+> -#define GCC_QPIC_IO_MACRO_CLK                           168
+> -#define Q6_AXI_CLK_SRC					169
+> -#define GCC_Q6_AXIM_CLK					170
+> -#define GCC_WCSS_Q6_TBU_CLK				171
+> -#define GCC_MEM_NOC_Q6_AXI_CLK				172
+> -#define Q6_AXIM2_CLK_SRC				173
+> -#define NSSNOC_MEMNOC_BFDCD_CLK_SRC			174
+> -#define GCC_NSSNOC_MEMNOC_CLK				175
+> -#define GCC_NSSNOC_MEM_NOC_1_CLK			176
+> -#define GCC_NSS_TBU_CLK					177
+> -#define GCC_MEM_NOC_NSSNOC_CLK				178
+> -#define LPASS_AXIM_CLK_SRC				179
+> -#define LPASS_SWAY_CLK_SRC				180
+> -#define ADSS_PWM_CLK_SRC				181
+> -#define GCC_ADSS_PWM_CLK				182
+> -#define GP1_CLK_SRC					183
+> -#define GP2_CLK_SRC					184
+> -#define GP3_CLK_SRC					185
+> -#define DDRSS_SMS_SLOW_CLK_SRC				186
+> -#define GCC_XO_CLK_SRC					187
+> -#define GCC_XO_CLK					188
+> -#define GCC_NSSNOC_QOSGEN_REF_CLK			189
+> -#define GCC_NSSNOC_TIMEOUT_REF_CLK			190
+> -#define GCC_XO_DIV4_CLK					191
+> -#define GCC_UNIPHY0_SYS_CLK				192
+> -#define GCC_UNIPHY1_SYS_CLK				193
+> -#define GCC_UNIPHY2_SYS_CLK				194
+> -#define GCC_CMN_12GPLL_SYS_CLK				195
+> -#define GCC_NSSNOC_XO_DCD_CLK				196
+> -#define GCC_Q6SS_BOOT_CLK				197
+> -#define UNIPHY_SYS_CLK_SRC				198
+> -#define NSS_TS_CLK_SRC					199
+> -#define GCC_ANOC_PCIE0_1LANE_M_CLK			200
+> -#define GCC_ANOC_PCIE1_1LANE_M_CLK			201
+> -#define GCC_ANOC_PCIE2_2LANE_M_CLK			202
+> -#define GCC_ANOC_PCIE3_2LANE_M_CLK			203
+> -#define GCC_SNOC_PCIE0_1LANE_S_CLK			204
+> -#define GCC_SNOC_PCIE1_1LANE_S_CLK			205
+> -#define GCC_SNOC_PCIE2_2LANE_S_CLK			206
+> -#define GCC_SNOC_PCIE3_2LANE_S_CLK			207
+> +#define GCC_WCSS_AHB_S_CLK				132
+> +#define GCC_WCSS_ECAHB_CLK				133
+> +#define GCC_WCSS_ACMT_CLK				134
+> +#define GCC_SYS_NOC_WCSS_AHB_CLK			135
+> +#define WCSS_AXI_M_CLK_SRC				136
+> +#define GCC_WCSS_AXI_M_CLK				137
+> +#define GCC_ANOC_WCSS_AXI_M_CLK				138
+> +#define QDSS_AT_CLK_SRC					139
+> +#define GCC_Q6SS_ATBM_CLK				140
+> +#define GCC_WCSS_DBG_IFC_ATB_CLK			141
+> +#define GCC_WCSS_DBG_IFC_ATB_BDG_CLK			142
+> +#define GCC_NSSNOC_ATB_CLK				143
+> +#define GCC_QDSS_AT_CLK					144
+> +#define GCC_SYS_NOC_AT_CLK				145
+> +#define GCC_PCNOC_AT_CLK				146
+> +#define GCC_USB0_EUD_AT_CLK				147
+> +#define GCC_QDSS_EUD_AT_CLK				148
+> +#define QDSS_STM_CLK_SRC				149
+> +#define GCC_QDSS_STM_CLK				150
+> +#define GCC_SYS_NOC_QDSS_STM_AXI_CLK			151
+> +#define QDSS_TRACECLKIN_CLK_SRC				152
+> +#define GCC_QDSS_TRACECLKIN_CLK				153
+> +#define QDSS_TSCTR_CLK_SRC				154
+> +#define GCC_Q6_TSCTR_1TO2_CLK				155
+> +#define GCC_WCSS_DBG_IFC_NTS_CLK			156
+> +#define GCC_WCSS_DBG_IFC_NTS_BDG_CLK			157
+> +#define GCC_QDSS_TSCTR_DIV2_CLK				158
+> +#define GCC_QDSS_TS_CLK					159
+> +#define GCC_QDSS_TSCTR_DIV4_CLK				160
+> +#define GCC_NSS_TS_CLK					161
+> +#define GCC_QDSS_TSCTR_DIV8_CLK				162
+> +#define GCC_QDSS_TSCTR_DIV16_CLK			163
+> +#define GCC_Q6SS_PCLKDBG_CLK				164
+> +#define GCC_Q6SS_TRIG_CLK				165
+> +#define GCC_WCSS_DBG_IFC_APB_CLK			166
+> +#define GCC_WCSS_DBG_IFC_APB_BDG_CLK			167
+> +#define GCC_WCSS_DBG_IFC_DAPBUS_CLK			168
+> +#define GCC_WCSS_DBG_IFC_DAPBUS_BDG_CLK			169
+> +#define GCC_QDSS_DAP_CLK				170
+> +#define GCC_QDSS_APB2JTAG_CLK				171
+> +#define GCC_QDSS_TSCTR_DIV3_CLK				172
+> +#define QPIC_IO_MACRO_CLK_SRC				173
+> +#define GCC_QPIC_IO_MACRO_CLK                           174
+> +#define Q6_AXI_CLK_SRC					175
+> +#define GCC_Q6_AXIM_CLK					176
+> +#define GCC_Q6_AXIM2_CLK				177
+> +#define GCC_WCSS_Q6_TBU_CLK				178
+> +#define GCC_MEM_NOC_Q6_AXI_CLK				179
+> +#define Q6_AXIM2_CLK_SRC				180
+> +#define NSSNOC_MEMNOC_BFDCD_CLK_SRC			181
+> +#define GCC_NSSNOC_MEMNOC_CLK				182
+> +#define GCC_NSSNOC_MEM_NOC_1_CLK			183
+> +#define GCC_NSS_TBU_CLK					184
+> +#define GCC_MEM_NOC_NSSNOC_CLK				185
+> +#define LPASS_AXIM_CLK_SRC				186
+> +#define LPASS_SWAY_CLK_SRC				187
+> +#define ADSS_PWM_CLK_SRC				188
+> +#define GCC_ADSS_PWM_CLK				189
+> +#define GP1_CLK_SRC					190
+> +#define GP2_CLK_SRC					191
+> +#define GP3_CLK_SRC					192
+> +#define DDRSS_SMS_SLOW_CLK_SRC				193
+> +#define GCC_XO_CLK_SRC					194
+> +#define GCC_XO_CLK					195
+> +#define GCC_NSSNOC_QOSGEN_REF_CLK			196
+> +#define GCC_NSSNOC_TIMEOUT_REF_CLK			197
+> +#define GCC_XO_DIV4_CLK					198
+> +#define GCC_UNIPHY0_SYS_CLK				199
+> +#define GCC_UNIPHY1_SYS_CLK				200
+> +#define GCC_UNIPHY2_SYS_CLK				201
+> +#define GCC_CMN_12GPLL_SYS_CLK				202
+> +#define GCC_NSSNOC_XO_DCD_CLK				203
+> +#define GCC_Q6SS_BOOT_CLK				204
+> +#define UNIPHY_SYS_CLK_SRC				205
+> +#define NSS_TS_CLK_SRC					206
+> +#define GCC_ANOC_PCIE0_1LANE_M_CLK			207
+> +#define GCC_ANOC_PCIE1_1LANE_M_CLK			208
+> +#define GCC_ANOC_PCIE2_2LANE_M_CLK			209
+> +#define GCC_ANOC_PCIE3_2LANE_M_CLK			210
+> +#define GCC_SNOC_PCIE0_1LANE_S_CLK			211
+> +#define GCC_SNOC_PCIE1_1LANE_S_CLK			212
+> +#define GCC_SNOC_PCIE2_2LANE_S_CLK			213
+> +#define GCC_SNOC_PCIE3_2LANE_S_CLK			214
 
-Changes in V4:
-	- No changes
+These should be added in the end as new entries.
 
-Changes in V3:
-	- Updated the V2M node name to reflect the proper address
-	- In reserved-memory node, changed the order of the 'reg' and
-	  'no-map' property
-	- Moved the below properties to the board DTS
-		bus-width = <4>;
-		max-frequency = <192000000>;
-		mmc-ddr-1_8v;
-		mmc-hs200-1_8v;
-
-Changes in V2:
-	- Changed the license to BSD3 in the file ipq5332-mi01.2.dts
-	- Updated the model name, not to include the foundry ID
-	- Used the decimal notation instead of hex for 'cache-level'
-	  property
-	- Dropped the blank line
-	- Updated the node name for the TZ reserved region
-	- Moved the 'compatible' property as first one in the node,
-	  wherever applicable
-	- Used the decimal notation for *-cells property insrtead of
-	  hex
-	- Reorganised the properties of memory mapped timer node as
-	  below
-		- reg
-		- interrupts
-		- frame-number
-	- Fixed the indentation in timer node
-
- arch/arm64/boot/dts/qcom/Makefile           |   1 +
- arch/arm64/boot/dts/qcom/ipq5332-mi01.2.dts |  75 ++++++
- arch/arm64/boot/dts/qcom/ipq5332.dtsi       | 263 ++++++++++++++++++++
- 3 files changed, 339 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/ipq5332-mi01.2.dts
- create mode 100644 arch/arm64/boot/dts/qcom/ipq5332.dtsi
-
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 31aa54f0428c..cfebb1b3c2a2 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -3,6 +3,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= apq8016-sbc.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= apq8094-sony-xperia-kitakami-karin_windy.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-db820c.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-ifc6640.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= ipq5332-mi01.2.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= ipq6018-cp01-c1.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk01.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk10-c1.dtb
-diff --git a/arch/arm64/boot/dts/qcom/ipq5332-mi01.2.dts b/arch/arm64/boot/dts/qcom/ipq5332-mi01.2.dts
-new file mode 100644
-index 000000000000..702013b867d7
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/ipq5332-mi01.2.dts
-@@ -0,0 +1,75 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * IPQ5332 AP-MI01.2 board device tree source
-+ *
-+ * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+/dts-v1/;
-+
-+#include "ipq5332.dtsi"
-+
-+/ {
-+	model = "Qualcomm Technologies, Inc. IPQ5332 MI01.2";
-+	compatible = "qcom,ipq5332-ap-mi01.2", "qcom,ipq5332";
-+
-+	aliases {
-+		serial0 = &blsp1_uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0";
-+	};
-+};
-+
-+&blsp1_uart0 {
-+	pinctrl-0 = <&serial_0_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&sdhc {
-+	bus-width = <4>;
-+	max-frequency = <192000000>;
-+	mmc-ddr-1_8v;
-+	mmc-hs200-1_8v;
-+	non-removable;
-+	pinctrl-0 = <&sdc_default_state>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&sleep_clk {
-+	clock-frequency = <32000>;
-+};
-+
-+&xo_board {
-+	clock-frequency = <24000000>;
-+};
-+
-+/* PINCTRL */
-+
-+&tlmm {
-+	sdc_default_state: sdc-default-state {
-+		clk-pins {
-+			pins = "gpio13";
-+			function = "sdc_clk";
-+			drive-strength = <8>;
-+			bias-disable;
-+		};
-+
-+		cmd-pins {
-+			pins = "gpio12";
-+			function = "sdc_cmd";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+
-+		data-pins {
-+			pins = "gpio8", "gpio9", "gpio10", "gpio11";
-+			function = "sdc_data";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-new file mode 100644
-index 000000000000..a2ed54264d5c
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-@@ -0,0 +1,263 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * IPQ5332 device tree source
-+ *
-+ * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#include <dt-bindings/clock/qcom,ipq5332-gcc.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	interrupt-parent = <&intc>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	clocks {
-+		sleep_clk: sleep-clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+		};
-+
-+		xo_board: xo-board-clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+		};
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		CPU0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0x0>;
-+			enable-method = "psci";
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		CPU1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0x1>;
-+			enable-method = "psci";
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		CPU2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0x2>;
-+			enable-method = "psci";
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		CPU3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0x3>;
-+			enable-method = "psci";
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		L2_0: l2-cache {
-+			compatible = "cache";
-+			cache-level = <2>;
-+		};
-+	};
-+
-+	firmware {
-+		scm {
-+			compatible = "qcom,scm-ipq5332", "qcom,scm";
-+		};
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		/* We expect the bootloader to fill in the size */
-+		reg = <0x0 0x40000000 0x0 0x0>;
-+	};
-+
-+	pmu {
-+		compatible = "arm,cortex-a53-pmu";
-+		interrupts = <GIC_PPI 7 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0";
-+		method = "smc";
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		tz_mem: tz@4a600000 {
-+			reg = <0x0 0x4a600000 0x0 0x200000>;
-+			no-map;
-+		};
-+	};
-+
-+	soc@0 {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0 0 0xffffffff>;
-+
-+		tlmm: pinctrl@1000000 {
-+			compatible = "qcom,ipq5332-tlmm";
-+			reg = <0x01000000 0x300000>;
-+			interrupts = <GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&tlmm 0 0 53>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+
-+			serial_0_pins: serial0-state {
-+				pins = "gpio18", "gpio19";
-+				function = "blsp0_uart0";
-+				drive-strength = <8>;
-+				bias-pull-up;
-+			};
-+		};
-+
-+		gcc: clock-controller@1800000 {
-+			compatible = "qcom,ipq5332-gcc";
-+			reg = <0x01800000 0x80000>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+			clocks = <&xo_board>,
-+				 <&sleep_clk>,
-+				 <0>,
-+				 <0>,
-+				 <0>;
-+		};
-+
-+		sdhc: mmc@7804000 {
-+			compatible = "qcom,ipq5332-sdhci", "qcom,sdhci-msm-v5";
-+			reg = <0x07804000 0x1000>, <0x07805000 0x1000>;
-+
-+			interrupts = <GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "hc_irq", "pwr_irq";
-+
-+			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
-+				 <&gcc GCC_SDCC1_APPS_CLK>,
-+				 <&xo_board>;
-+			clock-names = "iface", "core", "xo";
-+			status = "disabled";
-+		};
-+
-+		blsp1_uart0: serial@78af000 {
-+			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-+			reg = <0x078af000 0x200>;
-+			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_UART1_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			status = "disabled";
-+		};
-+
-+		intc: interrupt-controller@b000000 {
-+			compatible = "qcom,msm-qgic2";
-+			reg = <0x0b000000 0x1000>,	/* GICD */
-+			      <0x0b002000 0x1000>,	/* GICC */
-+			      <0x0b001000 0x1000>,	/* GICH */
-+			      <0x0b004000 0x1000>;	/* GICV */
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0x0b00c000 0x3000>;
-+
-+			v2m0: v2m@0 {
-+				compatible = "arm,gic-v2m-frame";
-+				reg = <0x00000000 0xffd>;
-+				msi-controller;
-+			};
-+
-+			v2m1: v2m@1000 {
-+				compatible = "arm,gic-v2m-frame";
-+				reg = <0x00001000 0xffd>;
-+				msi-controller;
-+			};
-+
-+			v2m2: v2m@2000 {
-+				compatible = "arm,gic-v2m-frame";
-+				reg = <0x00002000 0xffd>;
-+				msi-controller;
-+			};
-+		};
-+
-+		timer@b120000 {
-+			compatible = "arm,armv7-timer-mem";
-+			reg = <0x0b120000 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+
-+			frame@b120000 {
-+				reg = <0x0b121000 0x1000>,
-+				      <0x0b122000 0x1000>;
-+				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+				frame-number = <0>;
-+			};
-+
-+			frame@b123000 {
-+				reg = <0x0b123000 0x1000>;
-+				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+				frame-number = <1>;
-+				status = "disabled";
-+			};
-+
-+			frame@b124000 {
-+				reg = <0x0b124000 0x1000>;
-+				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+				frame-number = <2>;
-+				status = "disabled";
-+			};
-+
-+			frame@b125000 {
-+				reg = <0x0b125000 0x1000>;
-+				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+				frame-number = <3>;
-+				status = "disabled";
-+			};
-+
-+			frame@b126000 {
-+				reg = <0x0b126000 0x1000>;
-+				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+				frame-number = <4>;
-+				status = "disabled";
-+			};
-+
-+			frame@b127000 {
-+				reg = <0x0b127000 0x1000>;
-+				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+				frame-number = <5>;
-+				status = "disabled";
-+			};
-+
-+			frame@b128000 {
-+				reg = <0x0b128000 0x1000>;
-+				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+				frame-number = <6>;
-+				status = "disabled";
-+			};
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
--- 
-2.17.1
-
+Regards,
+  Sricharan
