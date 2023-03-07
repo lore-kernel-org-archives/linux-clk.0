@@ -2,216 +2,138 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C229C6FD1B
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 16:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C5A6C678DB
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 17:41:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230218AbjCGQnb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Mar 2023 11:43:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59754 "EHLO
+        id S232033AbjCGRls (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Mar 2023 12:41:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230322AbjCGQm7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 11:42:59 -0500
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E0181E2A2
-        for <linux-clk@vger.kernel.org>; Tue,  7 Mar 2023 08:40:36 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:614d:21b0:703:d0f9])
-        by albert.telenet-ops.be with bizsmtp
-        id VUg82900A3mNwr406Ug80J; Tue, 07 Mar 2023 17:40:24 +0100
-Received: from geert (helo=localhost)
-        by ramsan.of.borg with local-esmtp (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1pZaMC-00BCRZ-9r;
-        Tue, 07 Mar 2023 17:40:08 +0100
-Date:   Tue, 7 Mar 2023 17:40:08 +0100 (CET)
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     Frederic Weisbecker <frederic@kernel.org>,
-        Guo Ren <guoren@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Kajetan Puchalski <kajetan.puchalski@arm.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>, linux@armlinux.org.uk,
-        linux-imx@nxp.com, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
-        kasan-dev@googlegroups.com, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 07/51] cpuidle,psci: Push RCU-idle into driver
-In-Reply-To: <20230112195539.760296658@infradead.org>
-Message-ID: <ff338b9f-4ab0-741b-26ea-7b7351da156@linux-m68k.org>
-References: <20230112194314.845371875@infradead.org> <20230112195539.760296658@infradead.org>
+        with ESMTP id S232045AbjCGRla (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 12:41:30 -0500
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4EE8A6BF4
+        for <linux-clk@vger.kernel.org>; Tue,  7 Mar 2023 09:37:28 -0800 (PST)
+Received: by mail-pl1-x635.google.com with SMTP id p20so14883954plw.13
+        for <linux-clk@vger.kernel.org>; Tue, 07 Mar 2023 09:37:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678210648;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=o3zPHvN5mm4IalrCf6zpCmyS4kHEJ7HoGLzRUhQSOoA=;
+        b=o2ytZ6qS0PtfXoLYe5TafISzM6/h2NxL3pqfUqiGJeoJyjjcLmWruuJ3X0G/cQZI/Y
+         GA8IYvcfCRsdkKAPInrw3325Sv6gVIjQvQZMQxeDW96heslTnIO2xfDZjDmjHC8W6S8x
+         8Z/2W26QDYD+sh27LwKdicEwMxzzwNiKSCkfYYiyxDmhqDTlfyv/GgQVFNeN9y63ynUc
+         FJWQqXZIYzZfNoOQhPSUGyELPnY1YZET2qLKlry8+WtVnxDK6ZPqoUCsVZmIiYTHYfmu
+         AdbkopUuQy/vh3LicKLoQLp/1cN+bszEMZwG8pn13IbJ1xhfs2KAVC1bJolPRpetFKGQ
+         3vcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678210648;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o3zPHvN5mm4IalrCf6zpCmyS4kHEJ7HoGLzRUhQSOoA=;
+        b=DDxYySzx4+83/b6fajb6IEmEWz1SjVYiogUqK58ppjJgacfC26owMpwy+zkxjwXKd/
+         AIEAIIJFCsjCx9Va+cjGskYnEvq2tIqmB5tYk0VW4AwK3pBXq0SsIy0qD09GuwtzTaGv
+         Bqi4qZeZtwFSLOdhVt4Scfo2i/Ai6pmYPwnlp+Gei47QWK8lNMA21iAUz171kluVlsYD
+         enwyTna1hsqe5jHuL3086vauioVbq+NJFoJGU+A3xF2s423A9ksaFOObJg1pEt/47+Zg
+         NImnflP/0n650fhvDrHr95IA1m9Cj/rDfeyZr6nV17KFXyWBXzpOnosffIqd5ZzKSxAL
+         BPZw==
+X-Gm-Message-State: AO0yUKXCW9XlIvW/hHscyuogCG3oxC8FE9/VqLZUFGXeoFF+9712rav8
+        V5wSgr8ACVq5yVl7nrjNxrvSrcRnJHAmRBnDwSUbDQ==
+X-Google-Smtp-Source: AK7set+Kh/juOXVGFGBZq6ZQe/2ECYCsr+2HZ6cR5iMeJ5OSD5b0x9Znktqaib7dBWyXbAGUvwFiALZMirOESQVRZNg=
+X-Received: by 2002:a17:90a:9295:b0:233:fa52:828e with SMTP id
+ n21-20020a17090a929500b00233fa52828emr5658345pjo.1.1678210648212; Tue, 07 Mar
+ 2023 09:37:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+References: <20230223042133.26551-1-semen.protsenko@linaro.org>
+ <167811290503.11716.15730246749418548221.b4-ty@linaro.org>
+ <48c8a0cf-08dc-a831-33ef-3b8e32eef2d3@linaro.org> <CAPLW+4=9Vwxd4upa3j_cKtRrNyyx_XCz+TgOOziMguEonbHb0g@mail.gmail.com>
+ <3a27febc-4d4e-1cfd-45dc-6ade4f25ca13@linaro.org>
+In-Reply-To: <3a27febc-4d4e-1cfd-45dc-6ade4f25ca13@linaro.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Tue, 7 Mar 2023 11:37:17 -0600
+Message-ID: <CAPLW+4nZF2POmD1kRUDktn2_gUWH_e84Lnqx=8qhuqbSnrdJ2A@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] clk: samsung: exynos850: Add missing clocks for PM
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Chanho Park <chanho61.park@samsung.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        David Virag <virag.david003@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
- 	Hoi Peter,
-
-(reduced the insane CC list)
-
-On Thu, 12 Jan 2023, Peter Zijlstra wrote:
-> Doing RCU-idle outside the driver, only to then temporarily enable it
-> again, at least twice, before going idle is daft.
+On Tue, 7 Mar 2023 at 01:47, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 >
-> Notably once implicitly through the cpu_pm_*() calls and once
-> explicitly doing ct_irq_*_irqon().
+> On 06/03/2023 19:55, Sam Protsenko wrote:
+> > On Mon, 6 Mar 2023 at 09:51, Krzysztof Kozlowski
+> > <krzysztof.kozlowski@linaro.org> wrote:
+> >>
+> >> On 06/03/2023 15:28, Krzysztof Kozlowski wrote:
+> >>> On Wed, 22 Feb 2023 22:21:27 -0600, Sam Protsenko wrote:
+> >>>> As a part of preparation for PM enablement in Exynos850 clock driver,
+> >>>> this patch series implements CMU_G3D, and also main gate clocks for AUD
+> >>>> and HSI CMUs. The series brings corresponding changes to bindings, the
+> >>>> driver and SoC dts file.
+> >>>>
+> >>>> Changes in v2:
+> >>>>   - Rebased all patches on top of the most recent soc/for-next tree
+> >>>>   - Added A-b and R-b tags
+> >>>>   - Minor fixes
+> >>>>
+> >>>> [...]
+> >>>
+> >>> Applied, thanks!
+> >>>
+> >>> [1/6] dt-bindings: clock: exynos850: Add Exynos850 CMU_G3D
+> >>>       https://git.kernel.org/krzk/linux/c/067ba1605806e52118bb598afb357718df9f0e19
+> >>> [2/6] dt-bindings: clock: exynos850: Add AUD and HSI main gate clocks
+> >>>       https://git.kernel.org/krzk/linux/c/e289665ed0d6df9fca3ebc128f1232d305e4600b
+> >>> [3/6] clk: samsung: clk-pll: Implement pll0818x PLL type
+> >>>       https://git.kernel.org/krzk/linux/c/a6feedab8ab9a9e4483deb0bcc87919d92c88b7e
+> >>> [4/6] clk: samsung: exynos850: Implement CMU_G3D domain
+> >>>       https://git.kernel.org/krzk/linux/c/c5704a56893b4e77e434597c7c53d878bb3073b0
+> >>> [5/6] clk: samsung: exynos850: Add AUD and HSI main gate clocks
+> >>>       https://git.kernel.org/krzk/linux/c/d8d12e0d079aff4b1d8079a0a55944c0596f1d67
+> >>> [6/6] arm64: dts: exynos: Add CMU_G3D node for Exynos850 SoC
+> >>>       https://git.kernel.org/krzk/linux/c/ad8f6ad9a4f219950df65731a8ff91baa022c4b0
+> >>
+> >> And builds are broken. Please mention in cover letter or commit
+> >> dependencies and ordering...
+> >>
+> >
+> > Just checked all most recent commits on your for-next and next/clk
+> > branches. Seem to build fine for me. AFAIR I checked all patches in
+> > that series, and I guess there shouldn't be any issues if you apply
+> > those in the same order they are numbered inside the series. Or you
+> > mean you have some clash between different series? Anyways, I'm glad
+> > to help, but I'd need more details on where exactly the problem is (or
+> > maybe you already fixed it?).
 >
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-> Reviewed-by: Guo Ren <guoren@kernel.org>
-> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Tested-by: Kajetan Puchalski <kajetan.puchalski@arm.com>
-> Tested-by: Tony Lindgren <tony@atomide.com>
-> Tested-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-Thanks for your patch, which is now commit e038f7b8028a1d1b ("cpuidle,
-psci: Push RCU-idle into driver") in v6.3-rc1.
-
-I have bisected a PSCI checker regression on Renesas R-Car Gen3/4 SoCs
-to commit a01353cf1896ea5b ("cpuidle: Fix ct_idle_*() usage") (the 7
-commits before that do not compile):
-
-psci_checker: PSCI checker started using 2 CPUs
-psci_checker: Starting hotplug tests
-psci_checker: Trying to turn off and on again all CPUs
-psci: CPU0 killed (polled 0 ms)
-Detected PIPT I-cache on CPU0
-CPU0: Booted secondary processor 0x0000000000 [0x411fd073]
-psci_checker: Trying to turn off and on again group 0 (CPUs 0-1)
-psci: CPU0 killed (polled 0 ms)
-Detected PIPT I-cache on CPU0
-CPU0: Booted secondary processor 0x0000000000 [0x411fd073]
-psci_checker: Hotplug tests passed OK
-psci_checker: Starting suspend tests (10 cycles per state)
-psci_checker: CPU 0 entering suspend cycles, states 1 through 1
-psci_checker: CPU 1 entering suspend cycles, states 1 through 1
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 177 at kernel/context_tracking.c:141 ct_kernel_exit.constprop.0+0xd8/0xf4
-Modules linked in:
-CPU: 1 PID: 177 Comm: psci_suspend_te Not tainted 6.2.0-rc1-salvator-x-00052-ga01353cf1896 #1415
-Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
-pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : ct_kernel_exit.constprop.0+0xd8/0xf4
-lr : ct_kernel_exit.constprop.0+0xc8/0xf4
-sp : ffffffc00b73bd30
-x29: ffffffc00b73bd30 x28: ffffff807fbadc90 x27: 0000000000000000
-x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-x23: ffffff800981e140 x22: 0000000000000001 x21: 0000000000010000
-x20: ffffffc0086be1d8 x19: ffffff807fbac070 x18: 0000000000000000
-x17: ffffff80083d1000 x16: ffffffc00841fff8 x15: ffffffc00b73b990
-x14: ffffffc00895be78 x13: 0000000000000001 x12: 0000000000000000
-x11: 00000000000001aa x10: 00000000ffffffea x9 : 000000000000000f
-x8 : ffffffc00b73bb68 x7 : ffffffc00b73be18 x6 : ffffffc00815ff34
-x5 : ffffffc00a6a0c30 x4 : ffffffc00801ce00 x3 : 0000000000000000
-x2 : ffffffc008dc3070 x1 : ffffffc008dc3078 x0 : 0000000004208040
-Call trace:
-  ct_kernel_exit.constprop.0+0xd8/0xf4
-  ct_idle_enter+0x18/0x20
-  psci_enter_idle_state+0xa4/0xfc
-  suspend_test_thread+0x238/0x2f0
-  kthread+0xd8/0xe8
-  ret_from_fork+0x10/0x20
-irq event stamp: 0
-hardirqs last  enabled at (0): [<0000000000000000>] 0x0
-hardirqs last disabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
-softirqs last  enabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
-softirqs last disabled at (0): [<0000000000000000>] 0x0
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 177 at kernel/context_tracking.c:186 ct_kernel_enter.constprop.0+0x78/0xa4
-Modules linked in:
-CPU: 1 PID: 177 Comm: psci_suspend_te Tainted: G        W          6.2.0-rc1-salvator-x-00052-ga01353cf1896 #1415
-Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
-pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : ct_kernel_enter.constprop.0+0x78/0xa4
-lr : ct_kernel_enter.constprop.0+0x68/0xa4
-sp : ffffffc00b73bd30
-x29: ffffffc00b73bd30 x28: ffffff807fbadc90 x27: 0000000000000000
-x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-x23: ffffff800981e140 x22: 0000000000000001 x21: 00000000ffffffa1
-x20: ffffffc0086be1d8 x19: 00000000000000c0 x18: 0000000000000000
-x17: ffffff80083d1000 x16: ffffffc00841fff8 x15: ffffffc00b73b990
-x14: ffffffc00895be78 x13: ffffff800e325180 x12: ffffffc076de9000
-x11: 0000000034d4d91d x10: 0000000000000008 x9 : 0000000000001000
-x8 : ffffffc008012800 x7 : 0000000000000000 x6 : ffffff807fbac070
-x5 : ffffffc008dc3070 x4 : 0000000000000000 x3 : 000000000001a9fc
-x2 : 0000000000000003 x1 : ffffffc008dc3070 x0 : 0000000004208040
-Call trace:
-  ct_kernel_enter.constprop.0+0x78/0xa4
-  ct_idle_exit+0x18/0x38
-  psci_enter_idle_state+0xdc/0xfc
-  suspend_test_thread+0x238/0x2f0
-  kthread+0xd8/0xe8
-  ret_from_fork+0x10/0x20
-irq event stamp: 0
-hardirqs last  enabled at (0): [<0000000000000000>] 0x0
-hardirqs last disabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
-softirqs last  enabled at (0): [<ffffffc0080798b0>] copy_process+0x608/0x13dc
-softirqs last disabled at (0): [<0000000000000000>] 0x0
----[ end trace 0000000000000000 ]---
-psci_checker: Failed to suspend CPU 1: error -1 (requested state 1, cycle 0)
-psci_checker: CPU 0 suspend test results: success 0, shallow states 10, errors 0
-mmcblk0rpmb: mmc0:0001 BGSD3R 4.00 MiB, chardev (243:0)
-psci_checker: CPU 1 suspend test results: success 0, shallow states 9, errors 1
-psci_checker: 1 error(s) encountered in suspend tests
-psci_checker: PSCI checker completed
-
-> ---
-> drivers/cpuidle/cpuidle-psci.c |    9 +++++----
-> 1 file changed, 5 insertions(+), 4 deletions(-)
+> The builds were failing after I applied everything to respective
+> branches (so DTS separate). I did not notice that your DTS and driver
+> (both) depend on bindings header constant. This requires special
+> handling. It actually always required, because it was going through
+> different trees. Now it goes through my tree, but I still need to handle
+> it. I reworked the branches and force-pushed, thus you did not see the
+> exact issue.
 >
-> --- a/drivers/cpuidle/cpuidle-psci.c
-> +++ b/drivers/cpuidle/cpuidle-psci.c
-> @@ -69,12 +69,12 @@ static int __psci_enter_domain_idle_stat
-> 		return -1;
->
-> 	/* Do runtime PM to manage a hierarchical CPU toplogy. */
-> -	ct_irq_enter_irqson();
-> 	if (s2idle)
-> 		dev_pm_genpd_suspend(pd_dev);
-> 	else
-> 		pm_runtime_put_sync_suspend(pd_dev);
-> -	ct_irq_exit_irqson();
-> +
-> +	ct_idle_enter();
->
-> 	state = psci_get_domain_state();
-> 	if (!state)
-> @@ -82,12 +82,12 @@ static int __psci_enter_domain_idle_stat
->
-> 	ret = psci_cpu_suspend_enter(state) ? -1 : idx;
->
-> -	ct_irq_enter_irqson();
-> +	ct_idle_exit();
-> +
-> 	if (s2idle)
-> 		dev_pm_genpd_resume(pd_dev);
-> 	else
-> 		pm_runtime_get_sync(pd_dev);
-> -	ct_irq_exit_irqson();
->
-> 	cpu_pm_exit();
->
-> @@ -240,6 +240,7 @@ static int psci_dt_cpu_init_topology(str
-> 	 * of a shared state for the domain, assumes the domain states are all
-> 	 * deeper states.
-> 	 */
-> +	drv->states[state_count - 1].flags |= CPUIDLE_FLAG_RCU_IDLE;
-> 	drv->states[state_count - 1].enter = psci_enter_domain_idle_state;
-> 	drv->states[state_count - 1].enter_s2idle = psci_enter_s2idle_domain_idle_state;
-> 	psci_cpuidle_use_cpuhp = true;
 
-Gr{oetje,eeting}s,
+Thanks for explaining this. Next time I'll provide the dependencies
+info in my patch #0.
 
- 						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
- 							    -- Linus Torvalds
+> Best regards,
+> Krzysztof
+>
