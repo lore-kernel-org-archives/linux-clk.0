@@ -2,131 +2,190 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66BE9C678D4
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 10:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F40C678D5
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 10:05:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230054AbjCGKFV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Mar 2023 05:05:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40972 "EHLO
+        id S230411AbjCGKFc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Mar 2023 05:05:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229651AbjCGKFM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 05:05:12 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E060739CC
-        for <linux-clk@vger.kernel.org>; Tue,  7 Mar 2023 02:04:53 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1pZUBb-0005Gr-KS; Tue, 07 Mar 2023 11:04:47 +0100
-Received: from ore by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1pZQSz-00032U-0c; Tue, 07 Mar 2023 07:06:29 +0100
-Date:   Tue, 7 Mar 2023 07:06:28 +0100
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michael Heimpold <mhei@heimpold.de>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: imx6ul: Recent enet refclock changes breaks custom i.mx6ull board
-Message-ID: <20230307060628.GC11936@pengutronix.de>
-References: <3ceda169-de1b-2c1f-9ee8-bc8fdb547433@i2se.com>
- <20230306052531.GA30081@pengutronix.de>
- <8a178040-ef52-d9ab-e704-69208d34f915@i2se.com>
- <20230306094737.GA11506@pengutronix.de>
- <953ee705-47a7-3f6b-408e-9d74f3bc30b4@i2se.com>
- <20230306140207.GA11936@pengutronix.de>
- <a1646cc8-0830-5add-2957-b9bdbb094b23@i2se.com>
+        with ESMTP id S230101AbjCGKF2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 05:05:28 -0500
+Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C58BA5073C
+        for <linux-clk@vger.kernel.org>; Tue,  7 Mar 2023 02:05:13 -0800 (PST)
+Received: by mail-ua1-x936.google.com with SMTP id p2so8474293uap.1
+        for <linux-clk@vger.kernel.org>; Tue, 07 Mar 2023 02:05:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678183512;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZJQteWRnYzXph7B/Yag6wboM2N2GJr+YfQg8dgWg9fg=;
+        b=i8YkSnXonegkW6NuzrPQBnddeL5AYYykbpX7rf6mfB8qYXCajrksSX8+6x4H5APR+w
+         CyNC62BEdd3IYiqGt744W8UizLpcEOdhUiDZRYh/JcwTFH6rlLqr7g9s07erwqZcY7dp
+         q/F4VRUtobYOSrlJ7QIQWS6hZAgJzvST7krsB060SCJMGqiX21BS0uo1RLBt3V0qA+Cf
+         WT23cEsgXMPi/eZrq57WQU3qNvc/9+1vGZmbtzjWxUWi/VDuq4oxgV+Sg408FcGFZxpi
+         ft4GnPZVeN7MdoezfV5rJKQ0+V0oxD6qCplcauC3YCrpheLCf/aDfQi/OCF/2Gopx5U0
+         RQqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678183512;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZJQteWRnYzXph7B/Yag6wboM2N2GJr+YfQg8dgWg9fg=;
+        b=m0AqbNEDKYN+4VzllJeo5jn1cItOqP4B4RXSUY+9A7GJeEbxfi+awCtzxUcZtg4eCK
+         1A69UNKOgLPNU1oeC2P/sPOojK5egOXjPAMnfeocPmxn83jzZfr6M0/LJ8glrsDnuq+u
+         M+pgIR1WlvCMAtCtxIE+CKKAZMIN+vHvMgDAI9GZgh1cQv8uO2Nk+rWRwJ1Gp09ECGUO
+         fUTm5MAIVNYpXFNPodoiiyyiagIO6egDEMvC/VtrDNo4/BBJt0zcv1y0WqaOiRRA+Sdl
+         s9eHciGRdPmNfKt0AzxP0FtKGnxuVXcWpe7NQxpRIiyyNAZtyU9N/wLoaj8vYGoV2nQs
+         LvBQ==
+X-Gm-Message-State: AO0yUKUq7/7FbdYj+vXtdIEql8uvo78a6FHvzKsu3fv7mVQQJkRh7mKH
+        tI555mLrMd3obhB11+gfG17N6Pw40Sl/xVFbv4nNof42RoWE/cb7aSI=
+X-Google-Smtp-Source: AK7set8c+gLtppl3OV34UlpT2NVSBrBDOXjbBL6Qoi5a7s9uQCdvDonXutxUCPmrYcSLhl/Eg4gal+XbsMwFV15tygk=
+X-Received: by 2002:a1f:e483:0:b0:406:3e8d:92c8 with SMTP id
+ b125-20020a1fe483000000b004063e8d92c8mr8898453vkh.1.1678183512529; Tue, 07
+ Mar 2023 02:05:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <a1646cc8-0830-5add-2957-b9bdbb094b23@i2se.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 7 Mar 2023 15:35:01 +0530
+Message-ID: <CA+G9fYuJJySMY_6oLx_R_ebX9wDkwTLbDW7f7_CqF9UgFhSajg@mail.gmail.com>
+Subject: ftrace_regression01: qemu-i386: EIP: vm_area_free: Kernel panic - not
+ syncing: Fatal exception in interrupt
+To:     linux-clk <linux-clk@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        lkft-triage@lists.linaro.org, linux-trace-kernel@vger.kernel.org,
+        LTP List <ltp@lists.linux.it>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stefan,
+The following kernel panic noticed While running LTP tracing tests on
+qemu-i386.
 
-On Mon, Mar 06, 2023 at 04:50:18PM +0100, Stefan Wahren wrote:
-> Did you noticed that the error is caused for enet2_ref_sel?
-> 
-> On our board variants master/slave/slaveXT only ENET1 is used, so ENET2 is
-> kept to the defaults (ENET2_TX_CLK_DIR = 0, ENET2_CLK_SEL = 0) and the
-> bootloader won't touch those bits.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Ok, i see. It makes sense.
 
-> > With this bits we have following variants:
-> > 1. internal clock source with output on ENET1_TX_CLK
-> > 2. internal clock source without output on ENET1_TX_CLK. Are there any
-> >     use cases need to support this mode?
-> After reading the reference manual, this mode refers to ENET1_TX_CLK_DIR =
-> 0, ENET1_CLK_SEL = 0. Is my understanding correct?
-> > 3. external clock source without output on ENET1_TX_CLK
-> > 4. external clock source with output on ENET1_TX_CLK, well ENET1_TX_CLK
-> >     is input it can't be out put on this case.
-> > 
-> > Current kernel supports modes 1 and 3. For mode 2 I do not have a use
-> > case and mode 4 make no sense.
-> > 
-> > In your case, the boot loader configures clocks to mode 2 which is not
-> > correct for this HW. It should be mode 1.
-> As written above the bootloader doesn't touch this. It's the reset default
-> according to the reference manual. So i consider mode 2 as disabled clock,
-> which is the right mode for boards without using this particular Ethernet
-> interface. For EMC reasons we don't want to enable ENET1 and ENET2 clock
-> output unconditionally.
-> > Probably, the way to go is do register dummy parents for not supported
-> > modes. It would silent the kernel. Other ideas?
-> 
-> Sorry, i don't have no idea how to properly achieve this.
+[    0.000000] Linux version 6.3.0-rc1 (tuxmake@tuxmake) (Debian clang
+version 16.0.0 (++20230228093516+60692a66ced6-1~exp1~20230228093525.41),
+Debian LLD 16.0.0) #1 SMP PREEMPT_DYNAMIC @1678136838
+...
+LTP tracing tests
+Running tests.......
+<6>[   35.957375] traps: systemd-network[287] trap invalid opcode
+ip:b7d99bef sp:bfcf8e20 error:0 in
+libsystemd-shared-250.so[b7c33000+1c0000]
+<6>[   39.887678] traps: systemd-network[330] trap invalid opcode
+ip:b7db0bef sp:bfb6ab00 error:0 in
+libsystemd-shared-250.so[b7c4a000+1c0000]
+<4>[   41.883172] clocksource: timekeeping watchdog on CPU0: Marking
+clocksource 'tsc' as unstable because the skew is too large:
+<4>[   41.885195] clocksource:                       'acpi_pm'
+wd_nsec: 633206175 wd_now: 13fe92 wd_last: f168b4 mask: ffffff
+<4>[   41.886363] clocksource:                       'tsc' cs_nsec:
+5320282620 cs_now: 1cbab6bece cs_last: 19231a48ea mask:
+ffffffffffffffff
+<4>[   41.887503] clocksource:                       Clocksource 'tsc'
+skewed 4687076445 ns (4687 ms) over watchdog 'acpi_pm' interval of
+633206175 ns (633 ms)
+<4>[   41.888583] clocksource:                       'tsc' is current
+clocksource.
+<6>[   41.889615] tsc: Marking TSC unstable due to clocksource watchdog
+<4>[   41.894933] TSC found unstable after boot, most likely due to
+broken BIOS. Use 'tsc=unstable'.
+<6>[   41.895623] sched_clock: Marking unstable (41348265135,
+546543322)<-(41919545028, -24729054)
+<4>[   41.905093] clocksource: Checking clocksource tsc
+synchronization from CPU 1 to CPUs 0.
+<6>[   41.921496] clocksource: Switched to clocksource acpi_pm
+<47>[   42.122074] systemd-journald[108]: Successfully sent stream
+file descriptor to service manager.
 
-can you please test this patch:
+ftrace_regression01 1 TPASS: Finished running the test
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 2836adb817b7..e3696a88b5a3 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -95,14 +95,16 @@ static const struct clk_div_table video_div_table[] = {
- 	{ }
- };
- 
--static const char * enet1_ref_sels[] = { "enet1_ref_125m", "enet1_ref_pad", };
-+static const char * enet1_ref_sels[] = { "enet1_ref_125m", "enet1_ref_pad", "dummy", "dummy"};
- static const u32 enet1_ref_sels_table[] = { IMX6UL_GPR1_ENET1_TX_CLK_DIR,
--					    IMX6UL_GPR1_ENET1_CLK_SEL };
-+					    IMX6UL_GPR1_ENET1_CLK_SEL, 0,
-+					    IMX6UL_GPR1_ENET1_TX_CLK_DIR | IMX6UL_GPR1_ENET1_CLK_SEL };
- static const u32 enet1_ref_sels_table_mask = IMX6UL_GPR1_ENET1_TX_CLK_DIR |
- 					     IMX6UL_GPR1_ENET1_CLK_SEL;
--static const char * enet2_ref_sels[] = { "enet2_ref_125m", "enet2_ref_pad", };
-+static const char * enet2_ref_sels[] = { "enet2_ref_125m", "enet2_ref_pad", "dummy", "dummy"};
- static const u32 enet2_ref_sels_table[] = { IMX6UL_GPR1_ENET2_TX_CLK_DIR,
--					    IMX6UL_GPR1_ENET2_CLK_SEL };
-+					    IMX6UL_GPR1_ENET2_CLK_SEL, 0,
-+					    IMX6UL_GPR1_ENET2_TX_CLK_DIR | IMX6UL_GPR1_ENET2_CLK_SEL };
- static const u32 enet2_ref_sels_table_mask = IMX6UL_GPR1_ENET2_TX_CLK_DIR |
- 					     IMX6UL_GPR1_ENET2_CLK_SEL;
- 
-Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+<4>[   43.795642] int3: 0000 [#1] PREEMPT SMP
+<4>[   43.795642] CPU: 0 PID: 331 Comm: systemd-network Not tainted 6.3.0-rc1 #1
+<4>[   43.795642] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
+BIOS 1.14.0-2 04/01/2014
+<4>[   43.795642] EIP: vm_area_free+0x1/0x20
+<4>[   43.795642] Code: e5 85 1d 00 85 c0 74 14 b9 11 00 00 00 89 c7
+f3 a5 89 c1 83 c1 24 89 48 24 89 48 28 5e 5f 5d c3 90 90 90 90 90 90
+90 90 90 3e <8d> 74 26 00 55 89 e5 89 c2 a1 ac 99 82 d3 e8 fc 8f 1d 00
+5d c3 90
+<4>[   43.795642] EAX: c243bab0 EBX: c243bab0 ECX: 00000000 EDX: c23cb9c0
+<4>[   43.795642] ESI: 00000000 EDI: 000001c0 EBP: c25c1e24 ESP: c25c1dd0
+<4>[   43.795642] DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00000246
+<4>[   43.795642] CR0: 80050033 CR2: 081d764c CR3: 02ce1000 CR4: 000006d0
+<4>[   43.795642] Call Trace:
+<4>[   43.795642]  ? do_vmi_align_munmap+0x26e/0x380
+<4>[   43.795642]  mmap_region+0x26e/0x880
+<4>[   43.795642]  ? arch_ftrace_ops_list_func+0x20/0x1a0
+<4>[   43.795642]  ? ftrace_call+0x5/0x13
+<4>[   43.795642]  do_mmap+0x33f/0x4b0
+<4>[   43.795642]  ? do_mmap+0x3f6/0x4b0
+<4>[   43.795642]  vm_mmap_pgoff+0x9b/0x120
+<4>[   43.795642]  ksys_mmap_pgoff+0x15d/0x1b0
+<4>[   43.795642]  __ia32_sys_mmap_pgoff+0x21/0x30
+<4>[   43.795642]  do_int80_syscall_32+0x39/0x74
+<4>[   43.795642]  entry_INT80_32+0xf0/0xf0
+<4>[   43.795642] EIP: 0xb7f7d9c1
+<4>[   43.795642] Code: c3 8d b4 26 00 00 00 00 90 8b 5c 24 08 01 c3
+8b 6c 2b 40 89 2f eb b6 66 90 f3 0f 1e fb 53 57 55 8b 1f 8b 6f 08 8b
+7f 04 cd 80 <5d> 5f 5b c3 66 90 66 90 66 90 66 90 66 90 90 f3 0f 1e fb
+e8 5a 00
+<4>[   43.795642] EAX: ffffffda EBX: b7c94000 ECX: 001c0000 EDX: 00000005
+<4>[   43.795642] ESI: 00000812 EDI: 00000004 EBP: 0000003b ESP: bff393e0
+<4>[   43.795642] DS: 007b ES: 007b FS: 0000 GS: 0000 SS: 007b EFLAGS: 00000202
+<4>[   43.795642] Modules linked in:
+<4>[   43.795642]  \
+ ---[ end trace 0000000000000000 ]---
+<4>[   43.795642] EIP: vm_area_free+0x1/0x20
+<4>[   43.795642] Code: e5 85 1d 00 85 c0 74 14 b9 11 00 00 00 89 c7
+f3 a5 89 c1 83 c1 24 89 48 24 89 48 28 5e 5f 5d c3 90 90 90 90 90 90
+90 90 90 3e <8d> 74 26 00 55 89 e5 89 c2 a1 ac 99 82 d3 e8 fc 8f 1d 00
+5d c3 90
+<4>[   43.795642] EAX: c243bab0 EBX: c243bab0 ECX: 00000000 EDX: c23cb9c0
+<4>[   43.795642] ESI: 00000000 EDI: 000001c0 EBP: c25c1e24 ESP: c25c1dd0
+<4>[   43.795642] DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00000246
+<4>[   43.795642] CR0: 80050033 CR2: 081d764c CR3: 02ce1000 CR4: 000006d0
+<0>[   43.795642] Kernel panic - not syncing: Fatal exception in interrupt
+<0>[   43.795642] Kernel Offset: disabled
+
+test log:
+-----
+  - https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.3-rc1-2-g8ca09d5fa354/testrun/15298979/suite/log-parser-test/test/check-kernel-panic/log
+  - https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.3-rc1-2-g8ca09d5fa354/testrun/15298979/suite/log-parser-test/tests/
+
+
+steps to reproduce:
+--------------
+# To install tuxrun on your system globally:
+# sudo pip3 install -U tuxrun==0.37.2
+#
+# See https://tuxrun.org/ for complete documentation.
+
+tuxrun  \
+ --runtime podman  \
+ --device qemu-i386  \
+ --kernel https://storage.tuxsuite.com/public/linaro/lkft/builds/2MemUurDShqDi3xoAvTknd2dbfd/bzImage
+ \
+ --modules https://storage.tuxsuite.com/public/linaro/lkft/builds/2MemUurDShqDi3xoAvTknd2dbfd/modules.tar.xz
+ \
+ --rootfs https://storage.tuxsuite.com/public/linaro/lkft/oebuilds/2MV9clY6B5uyK3SNAIPgiO5gCoP/images/intel-core2-32/lkft-tux-image-intel-core2-32-20230303113918.rootfs.ext4.gz
+ \
+ --parameters SKIPFILE=skipfile-lkft.yaml  \
+ --parameters SHARD_NUMBER=4  \
+ --parameters SHARD_INDEX=1  \
+ --image docker.io/lavasoftware/lava-dispatcher:2023.01.0020.gc1598238f  \
+ --tests ltp-tracing  \
+ --timeouts boot=15 ltp-tracing=30
+
+
+--
+Linaro LKFT
+https://lkft.linaro.org
