@@ -2,157 +2,136 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA980C6FD1E
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Mar 2023 06:24:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6E6C6FD1F
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Mar 2023 08:38:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229870AbjCHGYP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Mar 2023 01:24:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41636 "EHLO
+        id S230168AbjCHIi3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Mar 2023 03:38:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229718AbjCHGYO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 01:24:14 -0500
-Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BD9A93E27
-        for <linux-clk@vger.kernel.org>; Tue,  7 Mar 2023 22:24:12 -0800 (PST)
-Received: by mail-ua1-x936.google.com with SMTP id f20so10555740uam.3
-        for <linux-clk@vger.kernel.org>; Tue, 07 Mar 2023 22:24:12 -0800 (PST)
+        with ESMTP id S230362AbjCHIiJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 03:38:09 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3AD37D98
+        for <linux-clk@vger.kernel.org>; Wed,  8 Mar 2023 00:37:43 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id j11so43013383edq.4
+        for <linux-clk@vger.kernel.org>; Wed, 08 Mar 2023 00:37:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678256651;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7iEsdmzySCAHETYroYPIVFn331WafPxHl+LoZueYXCE=;
-        b=s1pfimS8PsuNvnwnbXrIwD1a6+s8Q8xVAtoVmzs39BvDvmjChb3lvA8g9f4p6kzUQN
-         PYa0TrMi6CF5P4CF+NSjR3mzqEMvjkCgg7gaetmDcTBCNAj1telj4/4UWhDB6wKa0CPV
-         yFvvSyEFZU3QwGZoq3ukY9Y0lF07bG7GVf3YfSHY+w2c6XKb4pt+Figa0n6CQyLdycry
-         Z7e2rUYcQh+Pt7FLIDF2/k2uJSV3/qhZxZh8Q4xX4cJ+TWlLcvW4sp8P7luwmxinj8c4
-         LYGRsmaH6yVHlccV7wr+KozpXdxtZprNqhPkj4BicJgXz+8kutShpOtccavpZ4Fv7hzf
-         GRMA==
+        d=linaro.org; s=google; t=1678264662;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E/WzsZEhRWqesaA/VgihYCVlcuAuHDDmWjDn5s627q8=;
+        b=hkLM635i6PbEzvxaklVMhvnoyMxzoamNwWrBl9HRjPD1ixywfwQssDR/Fq0d56W/J5
+         ysP6gO+qTrOiwQltIacANsamOhN3sRFf3w8GIODKbgkNCQl/Aeok84B2diwhk00a+7bN
+         4vMszuLBYpz/SHYSsU9Ej3PLkKVv/nBZ2eBO15DxYaqo85ExNyFLZ9gpq3si3LieIXNt
+         7u2EeAKi52aDAte2DNGjPxVVSfWl4pj110+AbjWI9LDbgpi3mqKDeNDU2FK5778CaOIq
+         eCSRiw+F+hUfqJ06K8iSV9YyZHnkuQoGpmpPe5+sqJWuKyf0Fe3uXb2Dv7yCKud7duQL
+         bdFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678256651;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7iEsdmzySCAHETYroYPIVFn331WafPxHl+LoZueYXCE=;
-        b=F9azx2yEhifd/SEhfPxnQ1qAdxixZdYQThmDSiu+CRwuPFIYMRk1urRejOAmLqjV3S
-         1EKoQJ8+tKSMIZNwjidZSZlIEJrQ8b9otTDOLTjYx7AO2m2IzHPl4ui/cXkAzaqYBRLt
-         19Bf++koV3/HiuvZRyKdcT51xqwt4EOA5q9mipwbSV4Px7GRg6puqrUMy5SJvJhuAKuf
-         tJTMuCGOmN05oL7G2FseVth0qQQ7TtgyKVScOIFyjg0jPzK/UFPqTRSffrqEx0kfiyaH
-         ubln96Wbue6T7W7iVGDdQfQ1Jy6stOBDxO0h8KAOxmAx18xWw153WMxH9qtUE39ETwco
-         K/tQ==
-X-Gm-Message-State: AO0yUKXsUDqeNQxA361xJ1BzdIjzK0xKvMjRPzmX8Fk9O3Gh5vOpqiZX
-        twjwwshD6rdfh/NVpOV+nr+LQIdr7wJ4AukWvGnvIdPlZu/MZBrmbJg=
-X-Google-Smtp-Source: AK7set8A7ktAm+MaUEFVkop8QSnVHXif7b1sfffl7ZZNI3unrHh0vcS4Y4foM5hA5gVpoOaGfpTAB7xd6JrSDkGv7f0=
-X-Received: by 2002:ab0:4a12:0:b0:68b:b624:7b86 with SMTP id
- q18-20020ab04a12000000b0068bb6247b86mr11470456uae.2.1678256651091; Tue, 07
- Mar 2023 22:24:11 -0800 (PST)
+        d=1e100.net; s=20210112; t=1678264662;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E/WzsZEhRWqesaA/VgihYCVlcuAuHDDmWjDn5s627q8=;
+        b=C+vnIhdSLlMCv0Rw8aewYNty3uUD+f68DTept7VWiugLc723qcz+po8bIgCIOHeH0r
+         fO9bvg8br5pLw6USJ0p4c5LDYTQYnoof1wdWksm6EPv53FqhgTv3w7sxVlxZFvGMM7Lg
+         jqs3A1uD3tAQIGusJo/0zTN+WeFGi3U08vsm2qk2A++Nuu/XJl/xfZDbmRpXhVd9LD9m
+         Z9lXLFVlFf6SM3Fljm8puHVJ4zGuHzeT1zenK6FjS+aF1Bmwze/VwqStxORr6RnEcLCe
+         I8h3113FdS4vwwTBkY6yNoqsgcZBvEVZ/PWm6PMZpI/cV+ulbDGhlKca3PYXOMNezp5r
+         5srA==
+X-Gm-Message-State: AO0yUKXrSudwlZQ+tb4C311B33008/a3lOgKu1iWGa+ovw63sYdfQe4U
+        Q2NSujypr5mL4UuYygh7FQjKkg==
+X-Google-Smtp-Source: AK7set8FU50SUCDPOEAD3jF8EdZXMqpxg583cG8nktaaEmYKPV8Cb4xBm2pZXn2RjynHCuDiBRcqiQ==
+X-Received: by 2002:aa7:cfc2:0:b0:4bf:f9f4:9b1e with SMTP id r2-20020aa7cfc2000000b004bff9f49b1emr15578064edy.4.1678264662068;
+        Wed, 08 Mar 2023 00:37:42 -0800 (PST)
+Received: from ?IPV6:2a02:810d:15c0:828:bba:fbfa:8aec:a133? ([2a02:810d:15c0:828:bba:fbfa:8aec:a133])
+        by smtp.gmail.com with ESMTPSA id 20-20020a508e54000000b004d8d2735251sm5795219edx.43.2023.03.08.00.37.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Mar 2023 00:37:41 -0800 (PST)
+Message-ID: <31e2a67a-c046-9501-80de-e754ed450195@linaro.org>
+Date:   Wed, 8 Mar 2023 09:37:40 +0100
 MIME-Version: 1.0
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Wed, 8 Mar 2023 11:53:59 +0530
-Message-ID: <CA+G9fYvi5VHtAidNJMvXuAyutC+ByA9UL9uNnUYqtgKn8mPUiQ@mail.gmail.com>
-Subject: next: arm: multi_v5_defconfig : drivers/clk/mvebu/kirkwood.c:358:1:
- error: expected identifier or '('
-To:     linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        lkft-triage@lists.linaro.org,
-        open list <linux-kernel@vger.kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v13 1/2] dt-bindings: clock: add loongson-2 boot clock
+ index
+Content-Language: en-US
+To:     zhuyinbo <zhuyinbo@loongson.cn>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     Jianmin Lv <lvjianmin@loongson.cn>,
+        Liu Peibao <liupeibao@loongson.cn>, wanghongliang@loongson.cn,
+        loongson-kernel@lists.loongnix.cn
+References: <20230307115022.12846-1-zhuyinbo@loongson.cn>
+ <692a62da-a9a1-fa23-6e24-723d73c3a423@linaro.org>
+ <5e9b3bd5-d885-6237-5e14-2becb3c956cc@loongson.cn>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <5e9b3bd5-d885-6237-5e14-2becb3c956cc@loongson.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Results from Linaro=E2=80=99s test farm.
-The arm multi_v5_defconfig builds failed on Linux next-20230308 with
-gcc-12, gcc-8 and clang-16.
+On 08/03/2023 02:35, zhuyinbo wrote:
+> 
+> 在 2023/3/7 下午8:47, Krzysztof Kozlowski 写道:
+>> On 07/03/2023 12:50, Yinbo Zhu wrote:
+>>> The Loongson-2 boot clock was used to spi and lio peripheral and
+>>> this patch was to add boot clock index number.
+>>>
+>>> Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+>>> ---
+>> This is v13? Where is the changelog then?
+> 
+> in fact, this is a new patch(v1),   but another clock driver patch in 
+> this series had send as v13 and need depend on
+> 
+> this patch so set current patch as v13.
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+This should be explained in changelog.
 
-Regressions found on arm:
-  - arm-clang-16-multi_v5_defconfig
-  - arm-gcc-8-multi_v5_defconfig
-  - arm-clang-16-multi_v5_defconfig-65236a87
-  - arm-gcc-10-lkftconfig-perf
-  - arm-clang-nightly-multi_v5_defconfig
-  - arm-clang-nightly-multi_v5_defconfig-65236a87
-  - arm-gcc-12-multi_v5_defconfig
-  - arm-gcc-12-multi_v5_defconfig-65236a87
+> 
+>>
+>>
+>>>   include/dt-bindings/clock/loongson,ls2k-clk.h | 25 ++++++++++---------
+>>>   1 file changed, 13 insertions(+), 12 deletions(-)
+>>>
+>>> diff --git a/include/dt-bindings/clock/loongson,ls2k-clk.h b/include/dt-bindings/clock/loongson,ls2k-clk.h
+>>> index db1e27e792ff1..e86804365e506 100644
+>>> --- a/include/dt-bindings/clock/loongson,ls2k-clk.h
+>>> +++ b/include/dt-bindings/clock/loongson,ls2k-clk.h
+>>> @@ -13,17 +13,18 @@
+>>>   #define LOONGSON2_DC_PLL				3
+>>>   #define LOONGSON2_PIX0_PLL				4
+>>>   #define LOONGSON2_PIX1_PLL				5
+>>> -#define LOONGSON2_NODE_CLK				6
+>>> -#define LOONGSON2_HDA_CLK				7
+>>> -#define LOONGSON2_GPU_CLK				8
+>>> -#define LOONGSON2_DDR_CLK				9
+>>> -#define LOONGSON2_GMAC_CLK				10
+>>> -#define LOONGSON2_DC_CLK				11
+>>> -#define LOONGSON2_APB_CLK				12
+>>> -#define LOONGSON2_USB_CLK				13
+>>> -#define LOONGSON2_SATA_CLK				14
+>>> -#define LOONGSON2_PIX0_CLK				15
+>>> -#define LOONGSON2_PIX1_CLK				16
+>>> -#define LOONGSON2_CLK_END				17
+>>> +#define LOONGSON2_BOOT_CLK				6
+>> That's an ABI break and commit msg does not explain it.
+> you meaning is that need add a explanation in commit msg that why
+
+You need good explanation to break the ABI. I don't understand the
+commit msg, but anyway I could not find there justification for ABI
+break. If you do not have good justification, don't break the ABI,
 
 
-drivers/clk/mvebu/kirkwood.c:358:1: error: expected identifier or '('
-CLK_OF_DECLARE(98dx1135_clk, "marvell,mv98dx1135-core-clock",
-^
-include/linux/clk-provider.h:1367:21: note: expanded from macro 'CLK_OF_DEC=
-LARE'
-        static void __init name##_of_clk_init_declare(struct device_node *n=
-p) \
-                           ^
-<scratch space>:134:1: note: expanded from here
-98dx1135_clk_of_clk_init_declare
-^
-drivers/clk/mvebu/kirkwood.c:358:1: error: invalid digit 'd' in decimal con=
-stant
-include/linux/clk-provider.h:1372:34: note: expanded from macro 'CLK_OF_DEC=
-LARE'
-        OF_DECLARE_1(clk, name, compat, name##_of_clk_init_declare)
-                                        ^
-<scratch space>:135:3: note: expanded from here
-98dx1135_clk_of_clk_init_declare
-  ^
-drivers/clk/mvebu/kirkwood.c:358:1: error: invalid digit 'd' in decimal con=
-stant
-include/linux/clk-provider.h:1372:34: note: expanded from macro 'CLK_OF_DEC=
-LARE'
-        OF_DECLARE_1(clk, name, compat, name##_of_clk_init_declare)
-                                        ^
-<scratch space>:135:3: note: expanded from here
-98dx1135_clk_of_clk_init_declare
-  ^
-drivers/clk/mvebu/kirkwood.c:358:1: error: invalid digit 'd' in decimal con=
-stant
-include/linux/clk-provider.h:1372:34: note: expanded from macro 'CLK_OF_DEC=
-LARE'
-        OF_DECLARE_1(clk, name, compat, name##_of_clk_init_declare)
-                                        ^
-<scratch space>:135:3: note: expanded from here
-98dx1135_clk_of_clk_init_declare
-  ^
-4 errors generated.
-make[5]: *** [scripts/Makefile.build:252: drivers/clk/mvebu/kirkwood.o] Err=
-or 1
 
-Build details,
-https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20230308/te=
-strun/15340690/suite/build/test/gcc-12-multi_v5_defconfig/history/
-https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20230308/te=
-strun/15340737/suite/build/test/clang-16-multi_v5_defconfig/history/
+Best regards,
+Krzysztof
 
-Build details:
------------
-  build_name: gcc-12-multi_v5_defconfig
-  git_describe: next-20230308
-  git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
-  git_sha: fc31900c948610e7b5c2f15fb7795832c8325327
-  git_short_log: fc31900c9486 ("Add linux-next specific files for 20230308"=
-)
-  config: https://storage.tuxsuite.com/public/linaro/lkft/builds/2MiJgpcJnp=
-b5pXUw3zA2ZxRByOb/config
-
-Steps to reproduce:
-------------------
-# To install tuxmake on your system globally:
-# sudo pip3 install -U tuxmake
-#
-# See https://docs.tuxmake.org/ for complete documentation.
-# Original tuxmake command with fragments listed below.
-
-tuxmake --runtime podman --target-arch arm --toolchain gcc-12
---kconfig multi_v5_defconfig
-
---
-Linaro LKFT
-https://lkft.linaro.org
