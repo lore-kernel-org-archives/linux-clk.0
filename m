@@ -2,139 +2,194 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DDC7C678D5
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Mar 2023 09:25:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 318DAC742A7
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Mar 2023 09:53:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231128AbjCHJZN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Mar 2023 04:25:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56466 "EHLO
+        id S230134AbjCHJxh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Mar 2023 04:53:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231232AbjCHJYv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 04:24:51 -0500
-Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 384D79DE33;
-        Wed,  8 Mar 2023 01:24:30 -0800 (PST)
-Received: from loongson.cn (unknown [10.20.42.35])
-        by gateway (Coremail) with SMTP id _____8BxMI9NVAhk1c8JAA--.12949S3;
-        Wed, 08 Mar 2023 17:24:29 +0800 (CST)
-Received: from [10.20.42.35] (unknown [10.20.42.35])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8Ax+71KVAhkbDlPAA--.6030S3;
-        Wed, 08 Mar 2023 17:24:28 +0800 (CST)
-Subject: Re: [PATCH v13 1/2] dt-bindings: clock: add loongson-2 boot clock
- index
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, zhuyinbo@loongson.cn,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     Jianmin Lv <lvjianmin@loongson.cn>,
-        Liu Peibao <liupeibao@loongson.cn>, wanghongliang@loongson.cn,
-        loongson-kernel@lists.loongnix.cn
-References: <20230307115022.12846-1-zhuyinbo@loongson.cn>
- <692a62da-a9a1-fa23-6e24-723d73c3a423@linaro.org>
- <5e9b3bd5-d885-6237-5e14-2becb3c956cc@loongson.cn>
- <31e2a67a-c046-9501-80de-e754ed450195@linaro.org>
-From:   zhuyinbo <zhuyinbo@loongson.cn>
-Message-ID: <ace5159b-ebbd-7805-518c-ed3d39e4793e@loongson.cn>
-Date:   Wed, 8 Mar 2023 17:24:26 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        with ESMTP id S230145AbjCHJxU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 04:53:20 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCDB9559E0;
+        Wed,  8 Mar 2023 01:53:17 -0800 (PST)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3288d2LG022442;
+        Wed, 8 Mar 2023 09:52:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=8oebTeTKDyeaBIwyVQzKAe4CPmsTzGBPARq3wHx9ILY=;
+ b=U34dQPN/dCBvNBkesEbkglDTzuxIBFVQ5XQzfGtvKAyGDmbBnbVcbUspfblHrD9njYpy
+ haLpYqRoMnVRuTAzyJnrbiN+rTkuyclHNJss4RxXDYY+851FB+xLomGHO7xM/HuMhljl
+ gq+3Tuy7kuVeOEklKBLv6CtzV7v3jxAYxBbrbsyNIEWNEpq7Abdf14nJ6Wxko8pOH7rF
+ 8IafBtjRwPPxwL1tBDcsIEYw8qozJHa/3z8eOOJcGsuSF5ZpfR4EEcZ0OSxuajWNXVaE
+ AGVmoQVIEuHvln9cF8xMGay4ClEvrC4bMSqca6rkybwSn4FlB6iKpKDFb4b3VOEACGNe jg== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3p6fga168y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Mar 2023 09:52:45 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3289qiWj025606
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 8 Mar 2023 09:52:44 GMT
+Received: from [10.216.47.125] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 8 Mar 2023
+ 01:52:33 -0800
+Message-ID: <15d270ca-1068-b926-efc9-a14ddfc90a54@quicinc.com>
+Date:   Wed, 8 Mar 2023 15:22:30 +0530
 MIME-Version: 1.0
-In-Reply-To: <31e2a67a-c046-9501-80de-e754ed450195@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH V8 4/7] pinctrl: qcom: Add IPQ9574 pinctrl driver
 Content-Language: en-US
-X-CM-TRANSID: AQAAf8Ax+71KVAhkbDlPAA--.6030S3
-X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjvJXoWxAw48ArW7CFy7WF4kGr43trb_yoW5Gry8pr
-        4vgFsxKFW2yF4xKw4IqwnxKr1Y9w4xJr1UAF4Uur1UXr17Xwn5tFs7JF4fur90grWxJFyx
-        ZFWq9w4Fva1DZwUanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        bfxFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
-        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28E
-        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
-        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI0_Jrv_JF1le2I262IYc4CY
-        6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrV
-        C2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE
-        7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7V
-        AKI48JMxAIw28IcVCjz48v1sIEY20_WwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C2
-        67AKxVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI
-        8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWU
-        CwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r
-        1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBI
-        daVFxhVjvjDU0xZFpf9x07j5HUDUUUUU=
+To:     <andy.shevchenko@gmail.com>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linus.walleij@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <p.zabel@pengutronix.de>, <shawnguo@kernel.org>, <arnd@arndb.de>,
+        <marcel.ziswiler@toradex.com>, <dmitry.baryshkov@linaro.org>,
+        <nfraprado@collabora.com>, <broonie@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>
+References: <20230214163116.9924-1-quic_devipriy@quicinc.com>
+ <20230214163116.9924-5-quic_devipriy@quicinc.com>
+ <ZAZ+GeGu8mW1XqpG@surfacebook>
+From:   Devi Priya <quic_devipriy@quicinc.com>
+In-Reply-To: <ZAZ+GeGu8mW1XqpG@surfacebook>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: H6DlS9AVU91hcb93wXAT9V4qIem80vOV
+X-Proofpoint-ORIG-GUID: H6DlS9AVU91hcb93wXAT9V4qIem80vOV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-08_04,2023-03-08_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 malwarescore=0 priorityscore=1501 suspectscore=0
+ spamscore=0 mlxscore=0 clxscore=1011 mlxlogscore=999 impostorscore=0
+ bulkscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2303080085
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-在 2023/3/8 下午4:37, Krzysztof Kozlowski 写道:
-> On 08/03/2023 02:35, zhuyinbo wrote:
->> 在 2023/3/7 下午8:47, Krzysztof Kozlowski 写道:
->>> On 07/03/2023 12:50, Yinbo Zhu wrote:
->>>> The Loongson-2 boot clock was used to spi and lio peripheral and
->>>> this patch was to add boot clock index number.
->>>>
->>>> Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
->>>> ---
->>> This is v13? Where is the changelog then?
->> in fact, this is a new patch(v1),   but another clock driver patch in
->> this series had send as v13 and need depend on
->>
->> this patch so set current patch as v13.
-> This should be explained in changelog.
 
-okay I got it , and I whether need resend a v14 patch that in order to  
-add this explain in changelog ?
-
->
->>>
->>>>    include/dt-bindings/clock/loongson,ls2k-clk.h | 25 ++++++++++---------
->>>>    1 file changed, 13 insertions(+), 12 deletions(-)
->>>>
->>>> diff --git a/include/dt-bindings/clock/loongson,ls2k-clk.h b/include/dt-bindings/clock/loongson,ls2k-clk.h
->>>> index db1e27e792ff1..e86804365e506 100644
->>>> --- a/include/dt-bindings/clock/loongson,ls2k-clk.h
->>>> +++ b/include/dt-bindings/clock/loongson,ls2k-clk.h
->>>> @@ -13,17 +13,18 @@
->>>>    #define LOONGSON2_DC_PLL				3
->>>>    #define LOONGSON2_PIX0_PLL				4
->>>>    #define LOONGSON2_PIX1_PLL				5
->>>> -#define LOONGSON2_NODE_CLK				6
->>>> -#define LOONGSON2_HDA_CLK				7
->>>> -#define LOONGSON2_GPU_CLK				8
->>>> -#define LOONGSON2_DDR_CLK				9
->>>> -#define LOONGSON2_GMAC_CLK				10
->>>> -#define LOONGSON2_DC_CLK				11
->>>> -#define LOONGSON2_APB_CLK				12
->>>> -#define LOONGSON2_USB_CLK				13
->>>> -#define LOONGSON2_SATA_CLK				14
->>>> -#define LOONGSON2_PIX0_CLK				15
->>>> -#define LOONGSON2_PIX1_CLK				16
->>>> -#define LOONGSON2_CLK_END				17
->>>> +#define LOONGSON2_BOOT_CLK				6
->>> That's an ABI break and commit msg does not explain it.
->> you meaning is that need add a explanation in commit msg that why
-> You need good explanation to break the ABI. I don't understand the
-> commit msg, but anyway I could not find there justification for ABI
-> break. If you do not have good justification, don't break the ABI,
-
-The commit msg is the patch commit  log,  and I maybe not got it about 
-break the ABI.  You said about "break the ABI"
-
-is whether is location issue about "LOONGSON2_BOOT_CLK"?   if yes,   the 
-LOONGSON2_BOOT_CLK was placed
-
-after LOONGSON2_PIX1_PLL that is due to their clock parent is same.     
-and I whether need add this explanation
-
-in patch commit log description?
-
->
->
->
-> Best regards,
-> Krzysztof
-
+On 3/7/2023 5:28 AM, andy.shevchenko@gmail.com wrote:
+> Tue, Feb 14, 2023 at 10:01:13PM +0530, Devi Priya kirjoitti:
+>> Add pinctrl definitions for the TLMM of IPQ9574
+> 
+> ...
+> 
+>> +	depends on OF
+> 
+> No compile test on non-OF configurations?
+Hi Andy,
+As per the generic convention followed in other
+SoCs, we do not have compile test on non-OF configurations
+> 
+>> +	depends on ARM64 || COMPILE_TEST
+> 
+> ...
+> 
+>> +#define FUNCTION(fname)			                \
+> 
+> PINCTRL_PINFUNCTION() ?
+I see that there are quite a bunch of files that has to
+be modified for using the generic data type and
+macro for the pin function definition
+We shall post a separate series to accommodate the changes
+> 
+>> +	[msm_mux_##fname] = {		                \
+>> +		.name = #fname,				\
+>> +		.groups = fname##_groups,               \
+>> +		.ngroups = ARRAY_SIZE(fname##_groups),	\
+>> +	}
+> 
+> ...
+> 
+>> +#define REG_SIZE 0x1000
+>> +#define PINGROUP(id, f1, f2, f3, f4, f5, f6, f7, f8, f9)	\
+>> +	{					        \
+>> +		.name = "gpio" #id,			\
+>> +		.pins = gpio##id##_pins,		\
+>> +		.npins = (unsigned int)ARRAY_SIZE(gpio##id##_pins),	\
+> 
+> Can you embed struct pingroup?
+Will take care of this in a separate series
+> 
+>> +		.funcs = (int[]){			\
+>> +			msm_mux_gpio, /* gpio mode */	\
+>> +			msm_mux_##f1,			\
+>> +			msm_mux_##f2,			\
+>> +			msm_mux_##f3,			\
+>> +			msm_mux_##f4,			\
+>> +			msm_mux_##f5,			\
+>> +			msm_mux_##f6,			\
+>> +			msm_mux_##f7,			\
+>> +			msm_mux_##f8,			\
+>> +			msm_mux_##f9			\
+>> +		},				        \
+>> +		.nfuncs = 10,				\
+>> +		.ctl_reg = REG_SIZE * id,			\
+>> +		.io_reg = 0x4 + REG_SIZE * id,		\
+>> +		.intr_cfg_reg = 0x8 + REG_SIZE * id,		\
+>> +		.intr_status_reg = 0xc + REG_SIZE * id,	\
+>> +		.intr_target_reg = 0x8 + REG_SIZE * id,	\
+>> +		.mux_bit = 2,			\
+>> +		.pull_bit = 0,			\
+>> +		.drv_bit = 6,			\
+>> +		.oe_bit = 9,			\
+>> +		.in_bit = 0,			\
+>> +		.out_bit = 1,			\
+>> +		.intr_enable_bit = 0,		\
+>> +		.intr_status_bit = 0,		\
+>> +		.intr_target_bit = 5,		\
+>> +		.intr_target_kpss_val = 3,	\
+>> +		.intr_raw_status_bit = 4,	\
+>> +		.intr_polarity_bit = 1,		\
+>> +		.intr_detection_bit = 2,	\
+>> +		.intr_detection_width = 2,	\
+>> +	}
+> 
+> ...
+> 
+>> +	PINGROUP(62, blsp1_spi, audio_sec, audio_pdm1, audio_sec, pta, prng_rosc2, gcc_plltest,
+>> +		 _, _),
+> 
+> Can be one line.
+Okay
+> 
+> ...
+> 
+>> +static const struct of_device_id ipq9574_pinctrl_of_match[] = {
+>> +	{ .compatible = "qcom,ipq9574-tlmm", },
+> 
+>> +	{ },
+> 
+> No comma for terminator line.
+Okay
+> 
+>> +};
+> 
+> No MODULE_DEVICE_TABLE()?
+The MODULE_DEVICE_TABLE(of, ipq9574_pinctrl_of_match) entry has
+been added at the end of the file
+> 
+Best Regards,
+Devi Priya
