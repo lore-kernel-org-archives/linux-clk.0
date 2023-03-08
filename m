@@ -2,146 +2,101 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6852EC678D5
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Mar 2023 15:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E85E4C742A7
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Mar 2023 15:40:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231942AbjCHPLs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Mar 2023 10:11:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47368 "EHLO
+        id S230257AbjCHPkc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Mar 2023 10:40:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231977AbjCHPLi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 10:11:38 -0500
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27CFFCB658
-        for <linux-clk@vger.kernel.org>; Wed,  8 Mar 2023 07:11:30 -0800 (PST)
-Received: from [192.168.1.141] ([37.4.248.41]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MVubb-1q1jCu2EDN-00RsKD; Wed, 08 Mar 2023 16:11:05 +0100
-Message-ID: <e13c83f7-cb74-4353-9243-3ecd70be0fbf@i2se.com>
-Date:   Wed, 8 Mar 2023 16:11:04 +0100
+        with ESMTP id S232438AbjCHPkN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 10:40:13 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FE2D5F6D4;
+        Wed,  8 Mar 2023 07:39:53 -0800 (PST)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 328CkOQ7024262;
+        Wed, 8 Mar 2023 15:39:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=wsMjISGOQQMRy1FfKaAzLdVqMOJ5UvtspiE3r+kEdRw=;
+ b=QCXYR0nHC79J8J7Xrf/zW9fB9zRjkwCTA2goDWvtym/Xto7NozTIJ9r4+f4KM+mjfA2F
+ Tmpub8XbjNVR/j9mtgCx3DCewt1T/jSBSm1W1A5GjEzVU61BhTraKsFUuu+bZTsppIkj
+ 2vAuWZmnN+bejLnWjHKOAei5OpSzenApM4+CVfmRS6c6eTr45Zhcgr4SzhvRiCg6S29P
+ SQgMX/oMNQmVQ5to8EMtsLqiKmv8LnRtqQsxneO8GQ9PJxxj8Yg821brRJOroUg2cUec
+ hbpiKN7ehTUItx1JW9tGSueVg7G78A2U8t6KjMXBjuJWQI8++WQ1AgrR08io0CL1620R Rg== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3p6fgft2cj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Mar 2023 15:39:25 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 328FdOtp025042
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 8 Mar 2023 15:39:24 GMT
+Received: from [10.50.21.231] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 8 Mar 2023
+ 07:39:16 -0800
+Message-ID: <ab803e21-76bf-308c-9df0-8b7b45b472b2@quicinc.com>
+Date:   Wed, 8 Mar 2023 21:09:11 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: imx6ul: Recent enet refclock changes breaks custom i.mx6ull board
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michael Heimpold <mhei@heimpold.de>,
-        Arnd Bergmann <arnd@arndb.de>
-References: <3ceda169-de1b-2c1f-9ee8-bc8fdb547433@i2se.com>
- <20230306052531.GA30081@pengutronix.de>
- <8a178040-ef52-d9ab-e704-69208d34f915@i2se.com>
- <20230306094737.GA11506@pengutronix.de>
- <953ee705-47a7-3f6b-408e-9d74f3bc30b4@i2se.com>
- <20230306140207.GA11936@pengutronix.de>
- <a1646cc8-0830-5add-2957-b9bdbb094b23@i2se.com>
- <20230307060628.GC11936@pengutronix.de>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH V6 7/9] dt-bindings: firmware: qcom,scm: document IPQ5332
+ SCM
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
+        <arnd@arndb.de>, <dmitry.baryshkov@linaro.org>,
+        <geert+renesas@glider.be>, <nfraprado@collabora.com>,
+        <broonie@kernel.org>, <rafal@milecki.pl>, <robimarko@gmail.com>,
+        <quic_gurus@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20230307062232.4889-1-quic_kathirav@quicinc.com>
+ <20230307062232.4889-8-quic_kathirav@quicinc.com>
+ <754a2d38-dd7b-48b6-80e5-683ca193e0b1@linaro.org>
 Content-Language: en-US
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-In-Reply-To: <20230307060628.GC11936@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From:   Kathiravan T <quic_kathirav@quicinc.com>
+In-Reply-To: <754a2d38-dd7b-48b6-80e5-683ca193e0b1@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:Gsvg3rlDRaNmK3+wFDMMSdcl7AhSV1i3kwm3q7Zi3MDO+4zlGYz
- XI3fExCr+8i3xbjD3eHcwKhluR8tNWAHPLqN+x7HgYAheZhxlzcKK5WxTAxdzizhm9nUS7d
- 0ZD1SpKy2Uw9le2c1OkvsKKEV5zo7l/C4OKgCraXGxcfVDXZEXb7WiAsp4e6998nSUybaem
- zzdBt06N87GrELDLo9eWg==
-UI-OutboundReport: notjunk:1;M01:P0:aP+0FELXgf4=;2yUOlnCEqjlVP1hh9Lv4t0XWgt4
- lVq1u3TiA8DDDPcmGPbdhUa9MkJH/w3D8SdN6wsHsNrFfDANPbxWYk3KYcmLQ7aXc0R959Hos
- Srurz11iaE9VsPCmZslPnOVZaKOtMasmdsvGlnX+ULJOCjXP19Pyo7l4h4tdFw+VlSjkQ9nUB
- dwcUPf6jqeDCnWqEI+NiK86bbyjscWOXdwDGQTB96J8DKTdzOUtuF959iKzUaiC8JTKMpk3r5
- rFS7h0/g0WGGkDSSqsdyzyrwEwY5LlUxaWoj5HOdNI1afk9kBTFuupo7RTh11oN4EQsljCd4x
- pwLrmEK0aj1nhdFQWVNij+IXoW2NLi3VcRYJff27QMf5aXu17RZxhDK9wWtp3QbXy6q8+6Wfh
- yponJ5uPuWpeu+G9XI72d1l6S3MkxhRvMj9/XMCEYMjsGVFHzlMjJ6yoWf4LC/i/QHN3igbiw
- 2cYnJGL59KXWZmBX9clWKu8ZR6LcfmjSqA6/Q/bwwmU1wnzpMG04p5vZbTz2l1wLsDdTsIQ0D
- xI7UeiOteSsBE8mKvtadqPhuk0Qzk3RBd0lAgUKmALW1IkbUsM+4de/SGkZYNSHXtdk5CzYX+
- NPr+lYpfqat7oRDYjOQOEwEY6jMEGnjoWAt8syG8Bw0axjEE+KCHSf3Qd4pbhsxZLkb17a+yi
- yQIVzB2UxlinlrYG89RQklbWhFYF3CSbKNJwLT0JEg==
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 5qu3b1LRn2GCRGTi8U7WtYPrUuzDIKJo
+X-Proofpoint-ORIG-GUID: 5qu3b1LRn2GCRGTi8U7WtYPrUuzDIKJo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-08_08,2023-03-08_03,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ impostorscore=0 mlxscore=0 phishscore=0 adultscore=0 lowpriorityscore=0
+ suspectscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=973
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2303080132
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Oleksij,
 
-Am 07.03.23 um 07:06 schrieb Oleksij Rempel:
-> Hi Stefan,
+On 3/8/2023 4:31 PM, Konrad Dybcio wrote:
 >
-> On Mon, Mar 06, 2023 at 04:50:18PM +0100, Stefan Wahren wrote:
->> Did you noticed that the error is caused for enet2_ref_sel?
+> On 7.03.2023 07:22, Kathiravan T wrote:
+>> Document the compatible for IPQ5332 SCM.
 >>
->> On our board variants master/slave/slaveXT only ENET1 is used, so ENET2 is
->> kept to the defaults (ENET2_TX_CLK_DIR = 0, ENET2_CLK_SEL = 0) and the
->> bootloader won't touch those bits.
-> Ok, i see. It makes sense.
->
->>> With this bits we have following variants:
->>> 1. internal clock source with output on ENET1_TX_CLK
->>> 2. internal clock source without output on ENET1_TX_CLK. Are there any
->>>      use cases need to support this mode?
->> After reading the reference manual, this mode refers to ENET1_TX_CLK_DIR =
->> 0, ENET1_CLK_SEL = 0. Is my understanding correct?
->>> 3. external clock source without output on ENET1_TX_CLK
->>> 4. external clock source with output on ENET1_TX_CLK, well ENET1_TX_CLK
->>>      is input it can't be out put on this case.
->>>
->>> Current kernel supports modes 1 and 3. For mode 2 I do not have a use
->>> case and mode 4 make no sense.
->>>
->>> In your case, the boot loader configures clocks to mode 2 which is not
->>> correct for this HW. It should be mode 1.
->> As written above the bootloader doesn't touch this. It's the reset default
->> according to the reference manual. So i consider mode 2 as disabled clock,
->> which is the right mode for boards without using this particular Ethernet
->> interface. For EMC reasons we don't want to enable ENET1 and ENET2 clock
->> output unconditionally.
->>> Probably, the way to go is do register dummy parents for not supported
->>> modes. It would silent the kernel. Other ideas?
->> Sorry, i don't have no idea how to properly achieve this.
-> can you please test this patch:
->
-> diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-> index 2836adb817b7..e3696a88b5a3 100644
-> --- a/drivers/clk/imx/clk-imx6ul.c
-> +++ b/drivers/clk/imx/clk-imx6ul.c
-> @@ -95,14 +95,16 @@ static const struct clk_div_table video_div_table[] = {
->   	{ }
->   };
->   
-> -static const char * enet1_ref_sels[] = { "enet1_ref_125m", "enet1_ref_pad", };
-> +static const char * enet1_ref_sels[] = { "enet1_ref_125m", "enet1_ref_pad", "dummy", "dummy"};
->   static const u32 enet1_ref_sels_table[] = { IMX6UL_GPR1_ENET1_TX_CLK_DIR,
-> -					    IMX6UL_GPR1_ENET1_CLK_SEL };
-> +					    IMX6UL_GPR1_ENET1_CLK_SEL, 0,
-> +					    IMX6UL_GPR1_ENET1_TX_CLK_DIR | IMX6UL_GPR1_ENET1_CLK_SEL };
->   static const u32 enet1_ref_sels_table_mask = IMX6UL_GPR1_ENET1_TX_CLK_DIR |
->   					     IMX6UL_GPR1_ENET1_CLK_SEL;
-> -static const char * enet2_ref_sels[] = { "enet2_ref_125m", "enet2_ref_pad", };
-> +static const char * enet2_ref_sels[] = { "enet2_ref_125m", "enet2_ref_pad", "dummy", "dummy"};
->   static const u32 enet2_ref_sels_table[] = { IMX6UL_GPR1_ENET2_TX_CLK_DIR,
-> -					    IMX6UL_GPR1_ENET2_CLK_SEL };
-> +					    IMX6UL_GPR1_ENET2_CLK_SEL, 0,
-> +					    IMX6UL_GPR1_ENET2_TX_CLK_DIR | IMX6UL_GPR1_ENET2_CLK_SEL };
->   static const u32 enet2_ref_sels_table_mask = IMX6UL_GPR1_ENET2_TX_CLK_DIR |
->   					     IMX6UL_GPR1_ENET2_CLK_SEL;
+>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+>> ---
+> Does this board not have a crypto engine / CE1 clock exposed via
+> RPMCC? It will be enabled by default, but Linux should be aware
+> of it, so that we don't gate it by accident.
 
-i successful tested this patch on top of Shawn's for-next branch. The 
-error message went away.
 
-Just 2 ideas for a proper patch:
+IPQ5332 doesn't have the crypto engine and also it doesn't have RPMCC. 
+Sorry, could you please help to explain how it is related to SCM?
 
-- short explaining comment in clk-imx6ul about the dummies
-
-- instead of "dummy" for both interfaces, i suggest something like 
-"enet1_ref_dummy" which makes investigation at 
-/sys/kernel/debug/clk/clk_summary easier
-
-Thanks
-Stefan
-
->   
-> Regards,
-> Oleksij
+Thanks, Kathiravan T.
