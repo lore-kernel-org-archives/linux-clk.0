@@ -2,159 +2,156 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B44DC678DB
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Mar 2023 19:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33188C6FA99
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Mar 2023 01:26:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233968AbjCGT35 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Mar 2023 14:29:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37190 "EHLO
+        id S229692AbjCHB0U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Mar 2023 20:26:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231636AbjCGT3d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 14:29:33 -0500
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05hn2208.outbound.protection.outlook.com [52.100.20.208])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C893CB71A3;
-        Tue,  7 Mar 2023 11:15:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2Z19/KYxHJfZbjRC2u9g8OcNWWEVAHhKTVS+8o4WBBM=;
- b=c7U3X7QH8s9e6HHAtwKDuzUQEjUny9H9fOzXYGZjVEfaV58OXG9CdtHHy7GaQZVO3x9+5D1X2vdueibbvaMpeJwBR3f9dva+/DoGC1oxx4gXrd7Mq8APgwBVoad4OQYnjR1R0N8LuGegcwn3aGZP8qFkSAeVPlnCAGryoSxzhoKyOPJPjpWlhRWdefrxahMFAo0hbx/QlF9aEwzuuLtJ/xpOSdiqyDO8Cvd+/G6cniVRTM+8me7A8CUTNe04nWpUiMUaFtgTQoFbsPbwmh1rwnuw83x/no+5drvrxGyKWCiP7E65NBi2DNKSl5OSnBCVhqxxgpIFDz7rSo9hA9Y8Ew==
-Received: from DB6PR1001CA0030.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:4:55::16)
- by DB9PR03MB8399.eurprd03.prod.outlook.com (2603:10a6:10:396::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.16; Tue, 7 Mar
- 2023 19:14:48 +0000
-Received: from DB8EUR05FT029.eop-eur05.prod.protection.outlook.com
- (2603:10a6:4:55:cafe::5c) by DB6PR1001CA0030.outlook.office365.com
- (2603:10a6:4:55::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.27 via Frontend
- Transport; Tue, 7 Mar 2023 19:14:48 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 20.160.56.82)
- smtp.mailfrom=seco.com; dkim=pass (signature was verified)
- header.d=seco.com;dmarc=pass action=none header.from=seco.com;
-Received-SPF: Fail (protection.outlook.com: domain of seco.com does not
- designate 20.160.56.82 as permitted sender) receiver=protection.outlook.com;
- client-ip=20.160.56.82; helo=inpost-eu.tmcas.trendmicro.com;
-Received: from inpost-eu.tmcas.trendmicro.com (20.160.56.82) by
- DB8EUR05FT029.mail.protection.outlook.com (10.233.239.51) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6178.16 via Frontend Transport; Tue, 7 Mar 2023 19:14:47 +0000
-Received: from outmta (unknown [192.168.82.133])
-        by inpost-eu.tmcas.trendmicro.com (Trend Micro CAS) with ESMTP id 4772F2008088D;
-        Tue,  7 Mar 2023 19:14:47 +0000 (UTC)
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (unknown [104.47.18.106])
-        by repre.tmcas.trendmicro.com (Trend Micro CAS) with ESMTPS id EFCE72008006F;
-        Tue,  7 Mar 2023 19:13:04 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MAcXen+1Hh0nazcfvqWaEYc3s69fAQCqLe/UloQB2sSHnWgz4g4ijXPfjkl4MYQKo5YjnsE8ySc2kIoLBxLi5MeqV0ZEY0Lqstb1B7rH1EOTXCTtkWdyD3jhJizK6k+0p2d+oPX/LqsDd0skCPR1qf1AZmDaY5eJKQWnv3NpETBsv6ZIk4lC3FibccUX0DKC9E0GFlHnYg5INM3sT9VXgQyjVO7y9gwDLy8OXxEWEPD2tcNAonjv1Ni2PGzSAeTDl9/N+FZqIGN+dvqtCXKmKzjt6AaH86hBK0jjOwSUSmoA85IBv7j3C02FI0FxzWE4w+iQZkNLyWsHasNwotuFkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2Z19/KYxHJfZbjRC2u9g8OcNWWEVAHhKTVS+8o4WBBM=;
- b=atX0q3IGjx1S21OssRArlTYZ3jR7XkY0KkJxMPHjbcemFeqNVFKcdInMoQ3js1nPcB9zx7BwktfTBFTuSo4/+XJmkXjpfOuGwc1wqzlEPsCg111/uAGSEz1csPE66HSwHWOyx+CY+vKFuGmldmubCgO8SAe+gou48PRrnPYZLv9D88dTR9eHjYMaKyyMyuQPgIrjB6d4OmMpQVH9zES2cGwtSUW52+SsywximCvUuv2JwYvAa+I4uQKQQW5YcuNYUbFDqL5hcxYriAUtsRRYf1HzEDRbj+eFrNbPx6OP0LByv0vCTjZcOG8K2XrIbtG4KEW8vt4gHctm1qoyvhs4Tg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=seco.com; dmarc=pass action=none header.from=seco.com;
- dkim=pass header.d=seco.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2Z19/KYxHJfZbjRC2u9g8OcNWWEVAHhKTVS+8o4WBBM=;
- b=c7U3X7QH8s9e6HHAtwKDuzUQEjUny9H9fOzXYGZjVEfaV58OXG9CdtHHy7GaQZVO3x9+5D1X2vdueibbvaMpeJwBR3f9dva+/DoGC1oxx4gXrd7Mq8APgwBVoad4OQYnjR1R0N8LuGegcwn3aGZP8qFkSAeVPlnCAGryoSxzhoKyOPJPjpWlhRWdefrxahMFAo0hbx/QlF9aEwzuuLtJ/xpOSdiqyDO8Cvd+/G6cniVRTM+8me7A8CUTNe04nWpUiMUaFtgTQoFbsPbwmh1rwnuw83x/no+5drvrxGyKWCiP7E65NBi2DNKSl5OSnBCVhqxxgpIFDz7rSo9hA9Y8Ew==
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=seco.com;
-Received: from DB9PR03MB8847.eurprd03.prod.outlook.com (2603:10a6:10:3dd::13)
- by AS8PR03MB9024.eurprd03.prod.outlook.com (2603:10a6:20b:5b6::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.28; Tue, 7 Mar
- 2023 19:14:38 +0000
-Received: from DB9PR03MB8847.eurprd03.prod.outlook.com
- ([fe80::dbcf:1089:3242:614e]) by DB9PR03MB8847.eurprd03.prod.outlook.com
- ([fe80::dbcf:1089:3242:614e%5]) with mapi id 15.20.6156.027; Tue, 7 Mar 2023
- 19:14:38 +0000
-Message-ID: <91e59ee2-d686-1afb-e639-d260fe8111ac@seco.com>
-Date:   Tue, 7 Mar 2023 14:14:33 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH v10 02/13] dt-bindings: phy: Add Lynx 10G phy binding
-Content-Language: en-US
-To:     Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        linux-phy@lists.infradead.org
-Cc:     Madalin Bucur <madalin.bucur@nxp.com>,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Camelia Alexandra Groza <camelia.groza@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-References: <20230306191535.1917656-1-sean.anderson@seco.com>
- <20230306191535.1917656-3-sean.anderson@seco.com>
-From:   Sean Anderson <sean.anderson@seco.com>
-In-Reply-To: <20230306191535.1917656-3-sean.anderson@seco.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MN2PR15CA0024.namprd15.prod.outlook.com
- (2603:10b6:208:1b4::37) To DB9PR03MB8847.eurprd03.prod.outlook.com
- (2603:10a6:10:3dd::13)
+        with ESMTP id S229653AbjCHB0U (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Mar 2023 20:26:20 -0500
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1090B8235E;
+        Tue,  7 Mar 2023 17:26:19 -0800 (PST)
+Received: by mail-qt1-x829.google.com with SMTP id h19so16676105qtk.7;
+        Tue, 07 Mar 2023 17:26:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678238778;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HrGCJ5MSZDYIh72odbfCXv3OjB4aPWORM8fS9BuSe6U=;
+        b=V6/rzhlNCD4Os6IPrpRaMcKvSZkNbVv8YoB7DAg2rZNFKC/gq+qYQANoB5tjiqIuLE
+         aECdRlPQgor7Pln0eWGQxW47KU3XgYoWhkjeQ1QqHmzG+ZE1L79qaQh9nn7Zq92RmdSa
+         0lS3qBCvE3YFBkMInugQln3+6mkx0+NyqRGp5xna1rxdDh5mC0u4PpjnMkTFDXkhLFtN
+         LkgXd0+46L1ciRg4NOCNI+Owbmn9UjB0EIgqMthqbsIoRJOyo54tFotuUIFApzw1stLY
+         Lwqu/LPD+WEdJ5Mq5j7p/xH7ofwhdWPmESuesK4j80nHuZKXlLd+G2uc2l1dP0vb+MHF
+         FeMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678238778;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HrGCJ5MSZDYIh72odbfCXv3OjB4aPWORM8fS9BuSe6U=;
+        b=Kh5sbxq9hKUJMcC4aS+IvLefdoTUHoA8UOFjdorsP7hD6EeYMN9bRzEfiVu6ktbsYN
+         agzjnlBTNtJUQECxHom7ZouC8Yd8cTjJJyTqd2uHrqBsSQwAMfTARljs0HSBNVZ/BtRg
+         b+f1u2emo/ffIxIXH38xbM+U1Ei9oNhARhdubKus0B+8aLC6ZDCN04tGeHXMqVQZgOz2
+         dFS1ILiEmjcatsC2GPFV8giYb8ERk1IcC+gKr3Yl2Sv3lLstI9/6gZ5NUOXZ1BJZ4q2k
+         7s1d8OyJg6vZJDDtDIKQFhqrNUmsE85fr0Py7f50ahIchu6S9h2iSuj6EYJtdrjcThrm
+         wTow==
+X-Gm-Message-State: AO0yUKUU7Yj5bJ7ewaqOVs+JfUByyjMQabJ5rZBf55EL9Rs4Mw4fxcS0
+        kNQZYfFiItCFXFs6NYR4MWA=
+X-Google-Smtp-Source: AK7set+dLHC4u0TbTmIumEqq6CCL5QcowmU62gPkQsoL1ySasKdM1qxtjrlwpgd66H5jV9QMV/5sNQ==
+X-Received: by 2002:a05:622a:d1:b0:3bf:d372:a5bf with SMTP id p17-20020a05622a00d100b003bfd372a5bfmr29304085qtw.45.1678238778121;
+        Tue, 07 Mar 2023 17:26:18 -0800 (PST)
+Received: from [10.4.10.38] (pool-108-26-182-112.bstnma.fios.verizon.net. [108.26.182.112])
+        by smtp.gmail.com with ESMTPSA id r2-20020ac83b42000000b003c034837d8fsm3325676qtf.33.2023.03.07.17.26.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Mar 2023 17:26:17 -0800 (PST)
+Message-ID: <f8f291d9-2723-4ab8-3020-49018757d470@gmail.com>
+Date:   Tue, 7 Mar 2023 20:26:16 -0500
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic: DB9PR03MB8847:EE_|AS8PR03MB9024:EE_|DB8EUR05FT029:EE_|DB9PR03MB8399:EE_
-X-MS-Office365-Filtering-Correlation-Id: 007585cf-b159-4b74-8b4a-08db1f4037d5
-X-TrendMicro-CAS-OUT-LOOP-IDENTIFIER: 656f966764b7fb185830381c646b41a1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: 6H/lH7noXf8RQAyCyXbH8LaGIq5MqmLjXEVraGmxGFkM48E58JcscIW5ZODMAPm9hEW4s74TI0LAb04Hv0ovZjyLd5im58la7NXzW5XUaz6sOnTeFEA33tTM58LA1O7poi3v00D+3LL3kdihGWLJE0KAah0hFKxeInU6NIjgASlAmCpQPSOGEWROk5J3hEd/T/F1GYGvBPjb/eXAsgIP7fkh5+C8sMM/yLdr7N8prL7vhAUJljkFv5CVgcNqR4Eb+fHrs8Vzn7eGrd1wxjJZJ4rUVcjeDmD89DiQ8TAZjsZoZCdVpD7XhjEGA7fjSsxRe++cJXObROIiGlDGHRcqolDv5thl7haLWEW8dcKx4gMjaUf2CyDyWP+ooToY6qPiIlO1q72/jv3uCmqGZ36rXaoOnL2RyaN/q4X4UsvpJz377CTKbd1p266Tsr1TkfQ9612ahQrlp5Smr+SRAATZjpSZnwjb15/GrkbZQ4TLZz5KeH51UHy8CSLKwUFSz0uebAkHyjPsFHKb3WKOsYDGHkp1G2UeJFGaiJxTKBujHVHE68KnkdaVWMv97xYBxYXyfwq5Qbde9+VGePPdIWdPtGqQoeYOOBw3akHXTDGvAEIAeA6NLY463avJBLU/3WP0M84J3Ta6dq+2zzkUrls3Qy29nFRBFYTe68oamDcIshYwW1fzX1a6cbWD+E/4++ESGr6DLoK+Tzwx4RPwT3NMdFtiCH+RXMZtXpZ8qYvgIs2RknizjTS5WKwNZs9/CzT+pXgHx2rsnm/2JAL7eqEMhg==
-X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR03MB8847.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(346002)(396003)(376002)(366004)(136003)(39850400004)(451199018)(316002)(110136005)(54906003)(83380400001)(36756003)(86362001)(31696002)(6506007)(31686004)(6486002)(186003)(2906002)(4326008)(66476007)(66946007)(41300700001)(8676002)(7416002)(26005)(44832011)(66556008)(6512007)(52116002)(53546011)(478600001)(2616005)(8936002)(6666004)(5660300002)(38100700002)(38350700002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR03MB9024
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB8EUR05FT029.eop-eur05.prod.protection.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs: d3203212-0f43-48a7-dee4-08db1f40320c
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 5EOj/7HOzN0ke2dMDqYJgjKI4b2agwR2du0FprViJ6ibiWow8+ljDbC7agkSnpFZKlvas294Pdo78G8cIHx+lrRwVoIYolADbek2YPwaPWnsrzmXnO6xblLyzkpC/T/4toRaFh0M48rm1iWnryRlFz5Glta8jBniypA0FtJskkkIZM/wxlas1fjiAqDZyOiGiXm1QWr2H9A1NJ3fYDEIpcqsR79G+i98EbLICcw3zLLVHUMUmNerGRhyOcxEqWReU2l4ktHVAdXnfVcazrKxqn1x+FZzDF+b1hIyikdGvJJtAgDNTKh+ylDSwwgoGgwIsJqg+OKrB1Feb7U6HHUkwqy+cXmy3lpSYU0KCNBzudj09biNc8EiR8rgk7GCMDiUYPdC3Yle/ZCSIuwOxCECM1qyNgj4CpXqcyZ7GgP0s5GvUP1skGO15nw5uewjPLr7Jb60UdEAUHfovGXLuzJxpIXAYPdgSEEJe7lxIiVqg3viVdhlWCiQCGAlaamc0vR/INxma5Q+24eZz3Q/WrXOTphiGr67hF8kpzgeA2ofUC/rYQULylmdfHSsfEQ21bde8rMDCe7oJY+zqAjRFCK5pNQDM2K+9rRG95tv1gEcqJmR9PJdaPzrW4k00QfzQqC04v+KO0gMSKs6dkzWX4vBt/CAAEBvk9KbCND7oF8LV+one8d7Q8OoqGKjyaPQtuxK6DqLXAsuB58pselnjsWcxRrXWoSUulD2MrXP7NBwCiKjgZVoajah+aYpY3sg64m2Ql7X8RfxNSOsQnw0QGu9IdXpfMDuDU0d0lwIeCz8viFJOQoBJCVwqkdGggfQ5y96RCvqVXeXobnuMW4Uq+2yBnH/fr1iADPBW/AUq27jVWk=
-X-Forefront-Antispam-Report: CIP:20.160.56.82;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:inpost-eu.tmcas.trendmicro.com;PTR:inpost-eu.tmcas.trendmicro.com;CAT:NONE;SFS:(13230025)(39850400004)(136003)(346002)(376002)(396003)(451199018)(5400799012)(46966006)(36840700001)(40470700004)(31686004)(336012)(47076005)(54906003)(316002)(110136005)(40460700003)(36756003)(356005)(40480700001)(86362001)(31696002)(6512007)(7596003)(82740400003)(7636003)(34070700002)(34020700004)(36860700001)(6506007)(26005)(53546011)(82310400005)(83380400001)(186003)(2616005)(8936002)(5660300002)(7416002)(6486002)(478600001)(4326008)(41300700001)(6666004)(44832011)(2906002)(70586007)(70206006)(8676002)(45980500001)(43740500002)(12100799021);DIR:OUT;SFP:1501;
-X-OriginatorOrg: seco.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2023 19:14:47.7229
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 007585cf-b159-4b74-8b4a-08db1f4037d5
-X-MS-Exchange-CrossTenant-Id: bebe97c3-6438-442e-ade3-ff17aa50e733
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bebe97c3-6438-442e-ade3-ff17aa50e733;Ip=[20.160.56.82];Helo=[inpost-eu.tmcas.trendmicro.com]
-X-MS-Exchange-CrossTenant-AuthSource: DB8EUR05FT029.eop-eur05.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR03MB8399
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v3 0/3] Add RISC-V 32 NOMMU support
+Content-Language: en-US
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-riscv@lists.infradead.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yimin Gu <ustcymgu@gmail.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Waldemar Brodkorb <wbx@openadk.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+References: <20230301002657.352637-1-Mr.Bossman075@gmail.com>
+ <42446784-a88b-df09-41e9-5f685b4df6ee@infradead.org>
+ <556ce787-80eb-dc48-f8d6-83e415538e36@opensource.wdc.com>
+From:   Jesse Taube <mr.bossman075@gmail.com>
+In-Reply-To: <556ce787-80eb-dc48-f8d6-83e415538e36@opensource.wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 3/6/23 14:15, Sean Anderson wrote:
-> This adds a binding for the SerDes module found on QorIQ processors.
-> Each phy is a subnode of the top-level device, possibly supporting
-> multiple lanes and protocols. This "thick" #phy-cells is used due to
-> allow for better organization of parameters. Note that the particular
-> parameters necessary to select a protocol-controller/lane combination
-> vary across different SoCs, and even within different SerDes on the same
-> SoC.
-> 
-> The driver is designed to be able to completely reconfigure lanes at
-> runtime. Generally, the phy consumer can select the appropriate
-> protocol using set_mode.
-> 
-> There are two PLLs, each of which can be used as the master clock for
-> each lane. Each PLL has its own reference. For the moment they are
-> required, because it simplifies the driver implementation. Absent
-> reference clocks can be modeled by a fixed-clock with a rate of 0.
-> 
-> Signed-off-by: Sean Anderson <sean.anderson@seco.com>
-> ---
-> 
-> (no changes since v9)
 
-I forgot to add Rob's review from last time
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On 2/28/23 23:42, Damien Le Moal wrote:
+> On 3/1/23 13:07, Randy Dunlap wrote:
+>> Hi--
+>>
+>> On 2/28/23 16:26, Jesse Taube wrote:
+>>> This patch-set aims to add NOMMU support to RV32.
+>>> Many people want to build simple emulators or HDL
+>>> models of RISC-V this patch makes it possible to
+>>> run linux on them.
+>>>
+>>> Yimin Gu is the original author of this set.
+>>> Submitted here:
+>>> https://lists.buildroot.org/pipermail/buildroot/2022-November/656134.html
+>>>
+>>> Though Jesse T rewrote the Dconf.
+>>
+>> Dconf?
+>>
+>>>
+>>> The new set:
+>>> https://lists.buildroot.org/pipermail/buildroot/2022-December/658258.html
+>>> ---
+>>> V1->V2:
+>>>   - Add Conor's clock patch for implicit div64
+>>>   - Fix typo in commit title 3/3
+>>>   - Fix typo in commit description 2/3
+>>> V2->V3
+>>>   - Change from defconfig file to a PHONY config
+>>> ---
+>>
+>> Is this 'rv32_nommu_virt_defconfig' target the only build target
+>> that is supported?
+>>
+>> I ask because I applied the 3 patches and did 25 randconfig builds.
+>> 5 of them failed the same way:
+>>
+>> riscv32-linux-ld: drivers/soc/canaan/k210-sysctl.o: in function `k210_soc_early_init':
+>> k210-sysctl.c:(.init.text+0x78): undefined reference to `k210_clk_early_init'
+I can not recreate this error.
+can you send me the .config you used.
 
-If another revision is necessary, I will add this.
-
---Sean
+Thanks,
+Jesse Taube
+> 
+> Arg. Forgot about that. k210 is rv64 only and while the clk driver could still
+> compile test with rv32 (or any arch), that driver provides the
+> k210_clk_early_init() function which is called very early in the boot process
+> from k210_soc_early_init(), which is an SOC_EARLY_INIT_DECLARE() call. The
+> problem may be there. Probably should be disabled for rv32 if no SoC need that
+> sort of early init call.
+> 
+>>
+>> because
+>> # CONFIG_COMMON_CLK_K210 is not set
+>>
+>>
+>> Maybe SOC_CANAAN needs some more selects for required code?
+>>
+>>> Conor Dooley (1):
+>>>    clk: k210: remove an implicit 64-bit division
+>>>
+>>> Jesse Taube (1):
+>>>    riscv: configs: Add nommu PHONY defconfig for RV32
+>>>
+>>> Yimin Gu (1):
+>>>    riscv: Kconfig: Allow RV32 to build with no MMU
+>>>
+>>>   arch/riscv/Kconfig     | 5 ++---
+>>>   arch/riscv/Makefile    | 4 ++++
+>>>   drivers/clk/clk-k210.c | 2 +-
+>>>   3 files changed, 7 insertions(+), 4 deletions(-)
+>>>
+>>
+> 
