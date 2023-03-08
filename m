@@ -2,156 +2,180 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12610C742A7
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Mar 2023 18:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3487C678D5
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Mar 2023 18:47:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230018AbjCHSL6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Mar 2023 13:11:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52478 "EHLO
+        id S230181AbjCHSry (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Mar 2023 13:47:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229626AbjCHSL5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 13:11:57 -0500
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09410CE96E;
-        Wed,  8 Mar 2023 10:11:55 -0800 (PST)
-Received: by mail-ot1-f50.google.com with SMTP id e9-20020a056830200900b00694651d19f6so6569443otp.12;
-        Wed, 08 Mar 2023 10:11:55 -0800 (PST)
+        with ESMTP id S230071AbjCHSrw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 13:47:52 -0500
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DEA014EA1
+        for <linux-clk@vger.kernel.org>; Wed,  8 Mar 2023 10:47:51 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id s11so69618229edy.8
+        for <linux-clk@vger.kernel.org>; Wed, 08 Mar 2023 10:47:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678301269;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uA80yWA8eEWLznLMe4EE+8b9j50upIrt67T3ZZaG5tw=;
+        b=Mu0/F1thAC8UYbFL1s3V/1W4vLKwYBTCpsJhsYTzmCPnVu9w5LgaEEXyuot/SHwR/j
+         awJOH9Yit3V5z4Mcf0h4wUfVJoC9k61Ycw817b2/tZN40mWkiLfhQag4jf4N3AwJZrht
+         GMnuEg3svejoCXluiuWgtX//kUEq6tn8cPYIlR+sLlfLLTVC6O4m6FyagJ5FcWO6ftBX
+         k8kz76zoltbCEJly7coPkx3qtmyQntQAYd81r597Fwo0006pnpeQ0OS12Z0M4waHEb5r
+         wB1PYJHlgKaFeCnaAz4oETFp/HkQd8a2CJJ8HrturcZIwEzN89BW5sIxJb8lfQRisYvJ
+         Bpfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678299114;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SIxmU/QtppDrzLwRQM4/EQwwRkPiWGOq6+7u8fs1B9E=;
-        b=KIyuip82zCUZ3tJBEAdGR5DkYNQRqUvHETB03T4NSIDff0TZ7j0LLeGC0ZvsCHkVpO
-         GvJBnpLTNwMq83/0Q97eqj8cKhHM56QS0P0UioJdqeeP+QGVB5kYlysDCyJFGIt3nUwy
-         z2738obH1ONby9hp1Otqi1fpQ2KBm3e0H0urqmMVazligMQ3uvPXn/V1/aJ7+mUK/4dY
-         k65T2FaU0RXHLHK8n1XaZB2aRHy5vps0STG3Uz6Zwr1T4O9fveR5EP90SCuKbes3iNml
-         qRG2tZyapqo0fXYb9KWkbO5bvs/NmqQ+2N46pX0TPL/p0jYemuIQctyUhEkRfUNars3r
-         b0Fg==
-X-Gm-Message-State: AO0yUKWdmfc/jHC+sH+MEv0+HxemLfU3fdDt9d60yiayCrAmbZPoXboo
-        yHCHE95J7hfCY9PXMsrGmQ==
-X-Google-Smtp-Source: AK7set9H8k0goZQjGPEgNkkixy3gs3vd/sHKzFTM0Gx4xSIKWRHwsc1ffnNsJ1R+prua9m2CbtMAgg==
-X-Received: by 2002:a9d:7103:0:b0:690:d498:56d2 with SMTP id n3-20020a9d7103000000b00690d49856d2mr7763163otj.4.1678299114187;
-        Wed, 08 Mar 2023 10:11:54 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id d1-20020a056830138100b0068bb73bd95esm6636451otq.58.2023.03.08.10.11.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Mar 2023 10:11:53 -0800 (PST)
-Received: (nullmailer pid 3526245 invoked by uid 1000);
-        Wed, 08 Mar 2023 18:11:52 -0000
-Date:   Wed, 8 Mar 2023 12:11:52 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-crypto@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
-        linux-riscv@lists.infradead.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Eric Dumazet <edumazet@google.com>,
-        freedreno@lists.freedesktop.org, Paolo Abeni <pabeni@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>, Stephen Boyd <sboyd@kernel.org>,
-        Mark Brown <broonie@kernel.org>, Sean Paul <sean@poorly.run>,
-        netdev@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-spi@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Marc Zyngier <maz@kernel.org>, dri-devel@lists.freedesktop.org,
-        alsa-devel@alsa-project.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-clk@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: yamllint: Require a space after a comment
- '#'
-Message-ID: <167828471597.2730705.13533520056770041535.robh@kernel.org>
-References: <20230303214223.49451-1-robh@kernel.org>
+        d=1e100.net; s=20210112; t=1678301269;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uA80yWA8eEWLznLMe4EE+8b9j50upIrt67T3ZZaG5tw=;
+        b=hjMyCMsHKcMA/rz/aEg7Nt+3fWM6XBuUjX0ucgrrxsGdzwmd3ll1fjQPpbp+FdlDbO
+         S+56TWjRX7CfA7b3ujjQZG8lBd/0qF+slMqd9GOs0PjsPbaZZlkLzK6P2FhBHioi32Oa
+         0RMQRQKmlgEgrXgTKd1JO5X2cmKFr0vbp8xLv3qKvaWPQup1kTjEehcyAOcR+D48B+wl
+         tgG50olKdnkOSekOYbL2KJxi0u/Q5pnc0BWqPaMTOf5xBW8wokxLIi42rfXMS8qAKaV0
+         g/FMXcoP+kSNDhvdv+LBoE40C4w1P4s97p3TxCA5lMHNuwsa1k2OGu6jgtypmhEzQ6kM
+         t1MA==
+X-Gm-Message-State: AO0yUKU/sDwrO1f+KYJdjuDE8WC1YsBYOjF/E5n9MYDPsMPTKHfQ2S1R
+        XdfsZ4WbeRsNq9Iwxr/f9Sh9pw==
+X-Google-Smtp-Source: AK7set+DXq2QThKTdlFMUeySJzw8+Y3cNoFUCjWr17sjbq0QdQ42cbdhr/ceFs8uWvkiZjkQ/X2orw==
+X-Received: by 2002:a17:906:4911:b0:8b8:c04f:c5f9 with SMTP id b17-20020a170906491100b008b8c04fc5f9mr20538842ejq.73.1678301269734;
+        Wed, 08 Mar 2023 10:47:49 -0800 (PST)
+Received: from ?IPV6:2a02:810d:15c0:828:ff33:9b14:bdd2:a3da? ([2a02:810d:15c0:828:ff33:9b14:bdd2:a3da])
+        by smtp.gmail.com with ESMTPSA id lo2-20020a170906fa0200b008e09deb6610sm7774683ejb.200.2023.03.08.10.47.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Mar 2023 10:47:49 -0800 (PST)
+Message-ID: <36e06397-2189-4f1b-99cc-d39e720ebc71@linaro.org>
+Date:   Wed, 8 Mar 2023 19:47:48 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230303214223.49451-1-robh@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH RFC 1/3] dt-bindings: clock: Add Renesas versa3 clock
+ generator bindings
+Content-Language: en-US
+To:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+References: <20230220131307.269100-1-biju.das.jz@bp.renesas.com>
+ <20230220131307.269100-2-biju.das.jz@bp.renesas.com>
+ <e9e63c87-b491-b4d5-b226-0539ef0de2d0@linaro.org>
+ <OS0PR01MB59221C8C937EF20347149E4886B49@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <OS0PR01MB59221C8C937EF20347149E4886B49@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 08/03/2023 15:39, Biju Das wrote:
 
-On Fri, 03 Mar 2023 15:42:23 -0600, Rob Herring wrote:
-> Enable yamllint to check the prefered commenting style of requiring a
-> space after a comment character '#'. Fix the cases in the tree which
-> have a warning with this enabled. Most cases just need a space after the
-> '#'. A couple of cases with comments which were not intended to be
-> comments are revealed. Those were in ti,sa2ul.yaml, ti,cal.yaml, and
-> brcm,bcmgenet.yaml.
+>>> +++ b/Documentation/devicetree/bindings/clock/renesas,versaclock3.yaml
+>>
+>> Filename usually is based on the compatible. Why these two are so different?
 > 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Rob Clark <robdclark@gmail.com>
-> Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Cc: Sean Paul <sean@poorly.run>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Paolo Abeni <pabeni@redhat.com>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Heiner Kallweit <hkallweit1@gmail.com>
-> Cc: Vinod Koul <vkoul@kernel.org>
-> Cc: Kishon Vijay Abraham I <kishon@kernel.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Conor Dooley <conor.dooley@microchip.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-crypto@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: freedreno@lists.freedesktop.org
-> Cc: linux-media@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-phy@lists.infradead.org
-> Cc: linux-gpio@vger.kernel.org
-> Cc: alsa-devel@alsa-project.org
-> Cc: linux-riscv@lists.infradead.org
-> Cc: linux-spi@vger.kernel.org
-> ---
->  Documentation/devicetree/bindings/.yamllint   |  2 +-
->  .../bindings/clock/qcom,a53pll.yaml           |  4 ++--
->  .../devicetree/bindings/crypto/ti,sa2ul.yaml  |  4 ++--
->  .../bindings/display/msm/qcom,mdp5.yaml       |  2 +-
->  .../interrupt-controller/arm,gic.yaml         |  4 ++--
->  .../loongson,pch-msi.yaml                     |  2 +-
->  .../bindings/media/renesas,vin.yaml           |  4 ++--
->  .../devicetree/bindings/media/ti,cal.yaml     |  4 ++--
->  .../bindings/net/brcm,bcmgenet.yaml           |  2 --
->  .../bindings/net/cortina,gemini-ethernet.yaml |  6 ++---
->  .../devicetree/bindings/net/mdio-gpio.yaml    |  4 ++--
->  .../phy/marvell,armada-cp110-utmi-phy.yaml    |  2 +-
->  .../bindings/phy/phy-stm32-usbphyc.yaml       |  2 +-
->  .../phy/qcom,sc7180-qmp-usb3-dp-phy.yaml      |  2 +-
->  .../bindings/pinctrl/pinctrl-mt8192.yaml      |  2 +-
->  .../regulator/nxp,pca9450-regulator.yaml      |  8 +++----
->  .../regulator/rohm,bd71828-regulator.yaml     | 20 ++++++++--------
->  .../regulator/rohm,bd71837-regulator.yaml     |  6 ++---
->  .../regulator/rohm,bd71847-regulator.yaml     |  6 ++---
->  .../bindings/soc/renesas/renesas.yaml         |  2 +-
->  .../devicetree/bindings/soc/ti/ti,pruss.yaml  |  2 +-
->  .../bindings/sound/amlogic,axg-tdm-iface.yaml |  2 +-
->  .../bindings/sound/qcom,lpass-rx-macro.yaml   |  4 ++--
->  .../bindings/sound/qcom,lpass-tx-macro.yaml   |  4 ++--
->  .../bindings/sound/qcom,lpass-va-macro.yaml   |  4 ++--
->  .../sound/qcom,q6dsp-lpass-ports.yaml         |  2 +-
->  .../bindings/sound/simple-card.yaml           | 24 +++++++++----------
->  .../bindings/spi/microchip,mpfs-spi.yaml      |  2 +-
->  28 files changed, 65 insertions(+), 67 deletions(-)
+> Versa3 clock generator has the following variants.
 > 
+> 	5P35023, 5L35021, 5L35023 and 5P35021
+> 
+> RZ/G2L SMARC EVK uses 5P35023. So I used generic one as file name.
+> And added compatible for specific one.
 
-Applied, thanks!
+And what about other devices? Since you do not add them, just keep
+compatible as filename.
+
+>>
+>>> +
+>>> +  clocks:
+>>> +    maxItems: 1
+>>> +
+>>> +  renesas,settings:
+>>> +    description: Optional, complete register map of the device.
+>>> +      Optimized settings for the device must be provided in full
+>>> +      and are written during initialization.
+>>> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+>>> +    minItems: 37
+>>
+>> maxItems instead... but I am not sure that we allow register settings in DT
+>> in general.
+> 
+> Agreed. I guess it is allowed [1]
+> [1] https://lore.kernel.org/linux-renesas-soc/833d3837892f0879233695636291af97a746e584.1643968653.git.michal.simek@xilinx.com/
+
+I don't see Rob's review on this, so what do you prove exactly?
+
+> 
+>>
+>>> +
+>>> +  assigned-clocks:
+>>> +    minItems: 6
+>>
+>> Drop.
+> 
+> OK.
+> 
+>>
+>>> +
+>>> +  assigned-clock-rates:
+>>> +    minItems: 6
+>>
+>> Drop.
+> 
+> OK.
+> 
+>>
+>>> +
+>>> +  renesas,clock-divider-read-only:
+>>> +    description: Flag for setting divider in read only mode.
+>>
+>> Flag? Then type: boolean.
+> 
+> Agreed.
+>>
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>>> +    minItems: 5
+>>
+>> This is broken...
+> OK you mean maxItems. Based on Boolean type I will update this
+
+I mean, it does not match the description. Maybe I just don't understand
+here something, but flag is boolean. Anyway, minItems means you can have
+million of items, so was it intended?
+
+>>
+>>> +
+>>> +  renesas,clock-flags:
+>>> +    description: Flags used in common clock frame work for configuring
+>>> +      clk outputs. See include/linux/clk-provider.h
+>>
+>> These are not bindings, so why do you non-bindings constants as bindings?
+>> They can change anytime. Choose one:
+>> 1. Drop entire property,
+>> 2. Make it a proper binding property, so an ABI and explain why this is DT
+>> specific. None of clock providers have to do it, so you need here good
+>> explanation.
+> 
+> I will choose 2 and will explain as user should be allowed to
+> configure the output clock from clk generator, so that it has flexibility
+> for
+> 1) changing the rates (propagate rate change up one level)
+> 2) fixed always 
+> 3) don't gate the ouput clk at all.
+
+User's choice is task for user-space, so not a good explanation for DT.
+
+Best regards,
+Krzysztof
 
