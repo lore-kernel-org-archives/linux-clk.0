@@ -2,200 +2,137 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59496C6FD1F
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Mar 2023 12:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9EE9C678D5
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Mar 2023 13:27:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230166AbjCHM2f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Mar 2023 07:28:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51864 "EHLO
+        id S231586AbjCHN1n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Mar 2023 08:27:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231392AbjCHM20 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 07:28:26 -0500
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A39A22011;
-        Wed,  8 Mar 2023 04:28:07 -0800 (PST)
-Received: by mail-ed1-x536.google.com with SMTP id u9so65127859edd.2;
-        Wed, 08 Mar 2023 04:28:07 -0800 (PST)
+        with ESMTP id S230491AbjCHN1V (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 08:27:21 -0500
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A17DDC5ACD;
+        Wed,  8 Mar 2023 05:24:37 -0800 (PST)
+Received: by mail-qk1-x734.google.com with SMTP id a65so5638974qkg.13;
+        Wed, 08 Mar 2023 05:24:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678278485;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gSCuAP6P8YTu/53j/gxds9SIXomKAJvFFk8rnRS5RpE=;
-        b=cHgBvZvXJNoPxzR6LbX6Afmx+Unoh/gTRdgKyk3B/3PJEzZMKgW/dOLWAz4SjAhUNM
-         2At6OpURqkRoY8sUDLS+ztGJHx7lcl/AlNrAPuE0M6GuUeo8cwIIGDh9XYBZZFQj9dVi
-         QabON25DYBtAbOVOH9VBei4mHOxLyLMmVHJ3Xc+6+QR4JezQ0HYQsPc8juyC24+tnH5N
-         tRZmEbl2XZZ3aMhTdAlle+XU5cKj3WFM3JxHbjKgWMNiaHn6scPvEoiyF4Dnf4vRwSe5
-         3IMm1p52tGbCnpsFa1fLvVIeqRIpkk9up4CiDafkuzplzE+Gh/C4jB/3rFyv4v+A5JpR
-         4UbQ==
+        d=gmail.com; s=20210112; t=1678281876;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qZoP71+5c3FVKBx98Aqiaa+ZcAlza86aEyQCRu3z974=;
+        b=Q4QesLjAGlM42tRSwoI+HcvMCyjJlBF+MYJeMSF2XPXBTWsvyYPu6iekvSGCkG7K3M
+         ZU/XdVEunzvpxGOr7gUeUo1E/0qRwzJlaw/1f6N/4eBsyhkMDJA4cnshQDglSrFfkD4r
+         0OeYmtW6Y7gFIdTZBL+6yi9LiE+OSKDMe4d3Hj9AlkKZRWHbYKzqoLZTmfxSnoA0TQa9
+         zaVnSwD7KgYWnPg7f0VHzCVWaqRlF3btsJJBIrXNRxZ4M53M8TkkIRmE36Psy9CG6JQ5
+         chas3FBi7Bsd59EEdSKSCA3Xo/cZW2SzjqHNLdY0G/ZMywVBZSiQNu/la/6XNiavwvp0
+         BOng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678278485;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gSCuAP6P8YTu/53j/gxds9SIXomKAJvFFk8rnRS5RpE=;
-        b=nW3q/RqzdLMuf5wO5CFgsUwrwKHkFFle/36PhO5mwTTfp0XjN+ISEp/PTeYLda6rhQ
-         THEpJVkGigSxH5ZObYr7o1zmxMUWzVDJmoEGImFGz4AmeL8HSbV91J25tkNhTJRxOmMi
-         ja6JOK5NNpMpAADXlF/hxCo2F29KLkIiVdL5gF96uDxnelvPagu3b/16Qq0POUd/oUku
-         ukMl6BsBSflZBSogZ2K1u4vuhcM314gRSGRXW66T/f6cjKsaB/b58u3TDbjt+CDrLMRv
-         XVHC+6ijn5BPAuTa9nrjyvrkYoBIdwAXW6huVRao7ldwJazpk/jfki2z4iQz5DLkSlfw
-         fn4A==
-X-Gm-Message-State: AO0yUKWT2J1gZQTGQWfWSsgKI4Y5sk28u/RQtPOXQtpBKZ1lxlhQyizW
-        xzHv2dE5rF+fHDR3IfI4eng=
-X-Google-Smtp-Source: AK7set+Fw36qEn4YStNu0XIHdfohlZh1G3k9/fpJBWW1pQTPxlFJrIDPlVr9nMHDCbAGQuReHcCb7w==
-X-Received: by 2002:aa7:dd15:0:b0:4af:649d:da4e with SMTP id i21-20020aa7dd15000000b004af649dda4emr16396654edv.20.1678278485487;
-        Wed, 08 Mar 2023 04:28:05 -0800 (PST)
-Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation (mob-5-90-105-134.net.vodafone.it. [5.90.105.134])
-        by smtp.gmail.com with ESMTPSA id n2-20020a50c202000000b004f0e11e071dsm1833760edf.73.2023.03.08.04.28.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Mar 2023 04:28:04 -0800 (PST)
-Date:   Wed, 8 Mar 2023 13:28:01 +0100
-From:   Tommaso Merciai <tomm.merciai@gmail.com>
-To:     Hal Feng <hal.feng@starfivetech.com>
-Cc:     Conor Dooley <conor.dooley@microchip.com>,
-        Conor Dooley <conor@kernel.org>,
-        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 00/19] Basic clock, reset & device tree support for
- StarFive JH7110 RISC-V SoC
-Message-ID: <ZAh/UeSlUeGoKxki@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
-References: <20230221024645.127922-1-hal.feng@starfivetech.com>
- <3a605bc8-104e-0935-4fd8-2da16ab9053b@starfivetech.com>
- <ZAb7JVghuiwZF1Q5@wendy>
- <2f03dfb2-5cf8-e954-913c-f0c27db6bcf5@starfivetech.com>
+        d=1e100.net; s=20210112; t=1678281876;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qZoP71+5c3FVKBx98Aqiaa+ZcAlza86aEyQCRu3z974=;
+        b=bReBjz09RD1L5PK5pspcQ2ryeyaC/F/8rWQE269OBxZ/+PppEGsA7fx6hINnWJZ6Z+
+         h+vfRNyEbupHcdSfcQ3dUPYXEGHZafi3LjQu/orTmTYCYXXnr3i2zZgBAmERwmqi1gTj
+         8SQUbm39YSthUVT7YAj56rAoq4XVa0KwA+VUicMWg5eeXiVlWuEqwk9Mn+0viJQ/fhzF
+         1y8aifU3/OiogW4Gp0mLOwmdH1r3juK2o//FQRUURSLIqXlrE6hZLg72iQWxkvBRpiiW
+         pa6/gvxPFty8qnbGXci9trRWNlcDfy8VmCUiH1eH3G84iO+gjhpDnNL5WKRX7XJxQ6B1
+         I44A==
+X-Gm-Message-State: AO0yUKVtBNmwGE0kEpl8E2NDkbv0Tm4lYzKmxlKIViqCDhpzjB2g7jWZ
+        TZycdLIOOn3OAzk5kc1TaiJAE4N9/BiCzlXeZNU=
+X-Google-Smtp-Source: AK7set+3+KOGVmoTKCyVDclv+hazU63yGvn2mTBscxNnBRm23ESammya3zfhhVhmcnKROal6d062iEm7APHU+6r5cjY=
+X-Received: by 2002:a05:620a:713:b0:742:7e5a:4cee with SMTP id
+ 19-20020a05620a071300b007427e5a4ceemr5114611qkc.10.1678281876099; Wed, 08 Mar
+ 2023 05:24:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2f03dfb2-5cf8-e954-913c-f0c27db6bcf5@starfivetech.com>
+References: <20230214163116.9924-1-quic_devipriy@quicinc.com>
+ <20230214163116.9924-5-quic_devipriy@quicinc.com> <ZAZ+GeGu8mW1XqpG@surfacebook>
+ <15d270ca-1068-b926-efc9-a14ddfc90a54@quicinc.com>
+In-Reply-To: <15d270ca-1068-b926-efc9-a14ddfc90a54@quicinc.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 8 Mar 2023 15:24:00 +0200
+Message-ID: <CAHp75VfMae9M2R0Bw6-sYuHPPberakEzKct65SXV0XEaOFtXTg@mail.gmail.com>
+Subject: Re: [PATCH V8 4/7] pinctrl: qcom: Add IPQ9574 pinctrl driver
+To:     Devi Priya <quic_devipriy@quicinc.com>
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, catalin.marinas@arm.com, will@kernel.org,
+        p.zabel@pengutronix.de, shawnguo@kernel.org, arnd@arndb.de,
+        marcel.ziswiler@toradex.com, dmitry.baryshkov@linaro.org,
+        nfraprado@collabora.com, broonie@kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
+        quic_poovendh@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Hal/Conor,
+On Wed, Mar 8, 2023 at 11:52 AM Devi Priya <quic_devipriy@quicinc.com> wrote:
+> On 3/7/2023 5:28 AM, andy.shevchenko@gmail.com wrote:
 
-On Tue, Mar 07, 2023 at 06:08:53PM +0800, Hal Feng wrote:
-> On Tue, 7 Mar 2023 08:51:49 +0000, Conor Dooley wrote:
-> > On Tue, Mar 07, 2023 at 04:36:41PM +0800, Hal Feng wrote:
-> >> On Tue, 21 Feb 2023 10:46:26 +0800, Hal Feng wrote:
-> >> > This patch series adds basic clock, reset & DT support for StarFive
-> >> > JH7110 SoC. Patch 17 depends on series [1] which provides pinctrl
-> >> > dt-bindings. Patch 19 depends on series [2] which provides dt-bindings
-> >> > of VisionFive 2 board and JH7110 SoC.
-> >> > 
-> >> > You can simply review or test the patches at the link [3].
-> >> > 
-> >> > [1]: https://lore.kernel.org/all/20230209143702.44408-1-hal.feng@starfivetech.com/
-> >> > [2]: https://lore.kernel.org/all/20230216131511.3327943-1-conor.dooley@microchip.com/
-> >> > [3]: https://github.com/hal-feng/linux/commits/visionfive2-minimal
-> >> 
-> >> Hi Conor,
-> >> 
-> >> When I tried to rebase these patches on v6.3-rc1, I found the kernel
-> >> would crash on the VisionFive 2 board during startup. The logs are as
-> >> below. I checkout the branch to the mainline and found that the kernel
-> >> would also crash on the VisionFive board which is equipped with JH7100
-> >> SoC.
-> >> 
-> >> --------------------------------
-> >> Unable to handle kernel paging request at virtual address 0000004cccccccd4
-> >> Oops [#1]
-> >> Modules linked in:
-> >> CPU: 3 PID: 87 Comm: udevd Not tainted 6.3.0-rc1-00019-g239e7809f291 #305
-> >> Hardware name: StarFive VisionFive 2 v1.3B (DT)
-> >> epc : enqueue_timer+0x18/0x90
-> >>  ra : internal_add_timer+0x2c/0x38
-> >> epc : ffffffff8006a714 ra : ffffffff8006a7b8 sp : ffffffc80443bc80
-> >>  gp : ffffffff80eb5100 tp : ffffffd8c01db200 t0 : 0000000000000000
-> >>  t1 : 000000000000000f t2 : 0000000038b3ea28 s0 : ffffffc80443bcb0
-> >>  s1 : ffffffff80813940 a0 : ffffffff80813940 a1 : ffffffc80443bd48
-> >>  a2 : 000000000000020b a3 : cccccccd0b000000 a4 : cccccccccccccccc
-> >>  a5 : 000000000000020b a6 : ffffffff80814a08 a7 : 0000000000000001
-> >>  s2 : ffffffc80443bd48 s3 : 0000000008400040 s4 : ffffffff80813940
-> >>  s5 : ffffffff80eea0b8 s6 : ffffffff80eb7220 s7 : 0000000000000040
-> >>  s8 : ffffffff80eb61e0 s9 : 0000002ac84a2548 s10: 0000002ad53e92c0
-> >>  s11: 0000000000000001 t3 : 000000000000003f t4 : 0000000000000000
-> >>  t5 : 0000000000000004 t6 : 0000000000000003
-> >> status: 0000000200000100 badaddr: 0000004cccccccd4 cause: 000000000000000f
-> >> [<ffffffff8006a714>] enqueue_timer+0x18/0x90
-> >> [<ffffffff8006aa64>] add_timer_on+0xf0/0x134
-> >> [<ffffffff80500f18>] try_to_generate_entropy+0x1ec/0x232
-> >> [<ffffffff8035a636>] urandom_read_iter+0x42/0xc2
-> >> [<ffffffff800fff16>] vfs_read+0x17c/0x1e4
-> >> [<ffffffff801005b6>] ksys_read+0x78/0x98
-> >> [<ffffffff801005e4>] sys_read+0xe/0x16
-> >> [<ffffffff800035dc>] ret_from_syscall+0x0/0x2
-> >> Code: 9381 9713 0037 0813 0705 983a 3703 0008 e198 c311 (e70c) d713 
-> >> ---[ end trace 0000000000000000 ]---
-> >> note: udevd[87] exited with irqs disabled
-> >> Segmentation fault
-> >> FAIL
-> >> Saving random seed: 
-> >> rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
-> >> rcu: 	1-...0: (0 ticks this GP) idle=19c4/1/0x4000000000000000 softirq=42/42 fqs=7474
-> >> rcu: 	(detected by 2, t=15005 jiffies, g=-195, q=35 ncpus=4)
-> >> Task dump for CPU 1:
-> >> task:dd              state:R  running task     stack:0     pid:92    ppid:88     flags:0x00000008
-> >> Call Trace:
-> >> [<ffffffff80003764>] ret_from_fork+0x0/0xc
-> >> rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
-> >> rcu: 	1-...0: (0 ticks this GP) idle=19c4/1/0x4000000000000000 softirq=42/42 fqs=29814
-> >> rcu: 	(detected by 2, t=60018 jiffies, g=-195, q=35 ncpus=4)
-> >> Task dump for CPU 1:
-> >> task:dd              state:R  running task     stack:0     pid:92    ppid:88     flags:0x00000008
-> >> Call Trace:
-> >> [<ffffffff80003764>] ret_from_fork+0x0/0xc
-> >> ...
-> >> --------------------------------
-> >> 
-> >> I used 'git bisect' and found out the commit 9493e6f3ce02 is the
-> >> cause. I tried to revert this commit on the tag v6.3-rc1, but it
-> >> seems there is no improvement.
-> > 
-> > Hmm, I'm not entirely sure that that is a good bisect.
-> > This is a fix for my stupidity in the commit you mention:
-> > https://lore.kernel.org/linux-riscv/20230302174154.970746-1-conor@kernel.org/
-> > 
-> > But the main backtrace there is not from that patch at all, I think it
-> > is Linus' fault.
-> > The HEAD of Linus' tree is currently 8ca09d5fa3549 ("cpumask: fix
-> > incorrect cpumask scanning result checks") should be a fix for the
-> > backtrace that you are seeing above.
-> > 
-> >> Any options I am missing? Could you please give me some suggestions
-> >> to adapt to the new changes between 6.2 and 6.3? Thank you in
-> >> advance.
-> > 
-> > LMK if the above two things don't fix it for you & I'll go digging
-> > tonight.
-> 
-> The above two methods can fix the problem. Here are my test results.
-> The VisionFive board can boot up successfully if and only if all above
-> two applied.
-> The VisionFive 2 board can boot up successfully if I merge Linus's new
-> changes.
+...
 
-Tested also on my side. Hope this can be helpfull.
+> >> +    depends on OF
+> >
+> > No compile test on non-OF configurations?
 
-> 
-> Hope your fix will be merged in rc2. Thank you for your reply.
+> As per the generic convention followed in other
+> SoCs, we do not have compile test on non-OF configurations
 
-Fully agree.
+Why not? So, you have to explain the deliberate narrowing of the test coverage.
 
-Regards,
-Tommaso
+> >> +    depends on ARM64 || COMPILE_TEST
 
-> 
-> Best regards,
-> Hal
+...
+
+> >> +#define FUNCTION(fname)                                     \
+> >
+> > PINCTRL_PINFUNCTION() ?
+> I see that there are quite a bunch of files that has to
+> be modified for using the generic data type and
+> macro for the pin function definition
+> We shall post a separate series to accommodate the changes
+
+Sure, that's fine. Please do!
+
+> >> +    [msm_mux_##fname] = {                           \
+> >> +            .name = #fname,                         \
+> >> +            .groups = fname##_groups,               \
+> >> +            .ngroups = ARRAY_SIZE(fname##_groups),  \
+> >> +    }
+
+...
+
+> >> +#define PINGROUP(id, f1, f2, f3, f4, f5, f6, f7, f8, f9)    \
+> >> +    {                                               \
+> >> +            .name = "gpio" #id,                     \
+> >> +            .pins = gpio##id##_pins,                \
+> >> +            .npins = (unsigned int)ARRAY_SIZE(gpio##id##_pins),     \
+> >
+> > Can you embed struct pingroup?
+> Will take care of this in a separate series
+
+Ditto. Thanks!
+
+> >> +    }
+
+...
+
+> >> +};
+> >
+> > No MODULE_DEVICE_TABLE()?
+> The MODULE_DEVICE_TABLE(of, ipq9574_pinctrl_of_match) entry has
+> been added at the end of the file
+
+So, you know what to do then to address my comment :-)
+
+-- 
+With Best Regards,
+Andy Shevchenko
