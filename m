@@ -2,137 +2,113 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9EE9C678D5
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Mar 2023 13:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 688B9C64EC4
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Mar 2023 13:39:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231586AbjCHN1n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Mar 2023 08:27:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60184 "EHLO
+        id S231775AbjCHNjX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Mar 2023 08:39:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230491AbjCHN1V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 08:27:21 -0500
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A17DDC5ACD;
-        Wed,  8 Mar 2023 05:24:37 -0800 (PST)
-Received: by mail-qk1-x734.google.com with SMTP id a65so5638974qkg.13;
-        Wed, 08 Mar 2023 05:24:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678281876;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qZoP71+5c3FVKBx98Aqiaa+ZcAlza86aEyQCRu3z974=;
-        b=Q4QesLjAGlM42tRSwoI+HcvMCyjJlBF+MYJeMSF2XPXBTWsvyYPu6iekvSGCkG7K3M
-         ZU/XdVEunzvpxGOr7gUeUo1E/0qRwzJlaw/1f6N/4eBsyhkMDJA4cnshQDglSrFfkD4r
-         0OeYmtW6Y7gFIdTZBL+6yi9LiE+OSKDMe4d3Hj9AlkKZRWHbYKzqoLZTmfxSnoA0TQa9
-         zaVnSwD7KgYWnPg7f0VHzCVWaqRlF3btsJJBIrXNRxZ4M53M8TkkIRmE36Psy9CG6JQ5
-         chas3FBi7Bsd59EEdSKSCA3Xo/cZW2SzjqHNLdY0G/ZMywVBZSiQNu/la/6XNiavwvp0
-         BOng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678281876;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qZoP71+5c3FVKBx98Aqiaa+ZcAlza86aEyQCRu3z974=;
-        b=bReBjz09RD1L5PK5pspcQ2ryeyaC/F/8rWQE269OBxZ/+PppEGsA7fx6hINnWJZ6Z+
-         h+vfRNyEbupHcdSfcQ3dUPYXEGHZafi3LjQu/orTmTYCYXXnr3i2zZgBAmERwmqi1gTj
-         8SQUbm39YSthUVT7YAj56rAoq4XVa0KwA+VUicMWg5eeXiVlWuEqwk9Mn+0viJQ/fhzF
-         1y8aifU3/OiogW4Gp0mLOwmdH1r3juK2o//FQRUURSLIqXlrE6hZLg72iQWxkvBRpiiW
-         pa6/gvxPFty8qnbGXci9trRWNlcDfy8VmCUiH1eH3G84iO+gjhpDnNL5WKRX7XJxQ6B1
-         I44A==
-X-Gm-Message-State: AO0yUKVtBNmwGE0kEpl8E2NDkbv0Tm4lYzKmxlKIViqCDhpzjB2g7jWZ
-        TZycdLIOOn3OAzk5kc1TaiJAE4N9/BiCzlXeZNU=
-X-Google-Smtp-Source: AK7set+3+KOGVmoTKCyVDclv+hazU63yGvn2mTBscxNnBRm23ESammya3zfhhVhmcnKROal6d062iEm7APHU+6r5cjY=
-X-Received: by 2002:a05:620a:713:b0:742:7e5a:4cee with SMTP id
- 19-20020a05620a071300b007427e5a4ceemr5114611qkc.10.1678281876099; Wed, 08 Mar
- 2023 05:24:36 -0800 (PST)
+        with ESMTP id S230522AbjCHNiy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 08:38:54 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DC92515DF;
+        Wed,  8 Mar 2023 05:37:03 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EE588B81CB5;
+        Wed,  8 Mar 2023 13:36:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF0E1C433D2;
+        Wed,  8 Mar 2023 13:36:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678282607;
+        bh=OWt+d3tO5ov32xGG5qMASavRsXPbCxmg5AnjKjZWCQE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=l1+WSDpglc0KQHoGoeALrFnjtOEecp+1lZU/z1//Lcn5pU0D11ODzFYixZPHhO4s3
+         9wkMK/yg4dvTxbqvX2lyP8pLm/7d9PbjlWS13FReTUtQLlHwQYDUUuXs5Z4Gn17/uB
+         0O6fSaBNA8q2o5lFGKU8vsB0a/VzPd4EIW4Zv5HHzVRZEneGCCnR+k5ViVqS4ncGTx
+         V7dQtFyJcQw7DGz+7AdTpqJRdYEnwZ34J0WliqDc18fD8FOcBJMc9YyYXqvdnos0P2
+         ckAZaJMejCTT9jcTozelYzYnUmu8FKNsI5/jeP8+Ep/toXkl7Bhl00bhYQVKY5fjQD
+         HyBkHk7ruAvDA==
+Date:   Wed, 8 Mar 2023 13:36:41 +0000
+From:   Conor Dooley <conor@kernel.org>
+To:     Tommaso Merciai <tomm.merciai@gmail.com>
+Cc:     Hal Feng <hal.feng@starfivetech.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 00/19] Basic clock, reset & device tree support for
+ StarFive JH7110 RISC-V SoC
+Message-ID: <4c071642-e3c8-4716-a580-5b42e25efb1c@spud>
+References: <20230221024645.127922-1-hal.feng@starfivetech.com>
+ <3a605bc8-104e-0935-4fd8-2da16ab9053b@starfivetech.com>
+ <ZAb7JVghuiwZF1Q5@wendy>
+ <2f03dfb2-5cf8-e954-913c-f0c27db6bcf5@starfivetech.com>
+ <ZAh/UeSlUeGoKxki@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
 MIME-Version: 1.0
-References: <20230214163116.9924-1-quic_devipriy@quicinc.com>
- <20230214163116.9924-5-quic_devipriy@quicinc.com> <ZAZ+GeGu8mW1XqpG@surfacebook>
- <15d270ca-1068-b926-efc9-a14ddfc90a54@quicinc.com>
-In-Reply-To: <15d270ca-1068-b926-efc9-a14ddfc90a54@quicinc.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 8 Mar 2023 15:24:00 +0200
-Message-ID: <CAHp75VfMae9M2R0Bw6-sYuHPPberakEzKct65SXV0XEaOFtXTg@mail.gmail.com>
-Subject: Re: [PATCH V8 4/7] pinctrl: qcom: Add IPQ9574 pinctrl driver
-To:     Devi Priya <quic_devipriy@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, catalin.marinas@arm.com, will@kernel.org,
-        p.zabel@pengutronix.de, shawnguo@kernel.org, arnd@arndb.de,
-        marcel.ziswiler@toradex.com, dmitry.baryshkov@linaro.org,
-        nfraprado@collabora.com, broonie@kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
-        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
-        quic_poovendh@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="1Q9Amaw99NjcnKrY"
+Content-Disposition: inline
+In-Reply-To: <ZAh/UeSlUeGoKxki@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 8, 2023 at 11:52 AM Devi Priya <quic_devipriy@quicinc.com> wrote:
-> On 3/7/2023 5:28 AM, andy.shevchenko@gmail.com wrote:
 
-...
+--1Q9Amaw99NjcnKrY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> >> +    depends on OF
-> >
-> > No compile test on non-OF configurations?
+On Wed, Mar 08, 2023 at 01:28:01PM +0100, Tommaso Merciai wrote:
+> On Tue, Mar 07, 2023 at 06:08:53PM +0800, Hal Feng wrote:
 
-> As per the generic convention followed in other
-> SoCs, we do not have compile test on non-OF configurations
+> > The above two methods can fix the problem. Here are my test results.
+> > The VisionFive board can boot up successfully if and only if all above
+> > two applied.
+> > The VisionFive 2 board can boot up successfully if I merge Linus's new
+> > changes.
+>=20
+> Tested also on my side. Hope this can be helpfull.
+>=20
+> > Hope your fix will be merged in rc2. Thank you for your reply.
+>=20
+> Fully agree.
 
-Why not? So, you have to explain the deliberate narrowing of the test coverage.
+If you only have a VisionFive 2, it shouldn't matter to you, as you
+don't need to fix up any SiFive errata (at the moment at least).
+Linus' fix is already in his tree, so should be in -rc2!
+The fix for the VisionFive was applied to Palmer's RISC-V fixes tree
+last night:
+https://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git/commit/?h=
+=3Dfixes&id=3Dbf89b7ee52af5a5944fa3539e86089f72475055b
 
-> >> +    depends on ARM64 || COMPILE_TEST
+Thanks,
+Conor.
 
-...
+--1Q9Amaw99NjcnKrY
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> >> +#define FUNCTION(fname)                                     \
-> >
-> > PINCTRL_PINFUNCTION() ?
-> I see that there are quite a bunch of files that has to
-> be modified for using the generic data type and
-> macro for the pin function definition
-> We shall post a separate series to accommodate the changes
+-----BEGIN PGP SIGNATURE-----
 
-Sure, that's fine. Please do!
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZAiPVwAKCRB4tDGHoIJi
+0jkLAQDPFRsrm3jV2o7oZA41VzOVHxBFtUn0CPkVOzvVlHguFwD/eEMsCXuhUN65
+gD5cpKcLgiGCltbgB7imErj+jrsFrQg=
+=11W4
+-----END PGP SIGNATURE-----
 
-> >> +    [msm_mux_##fname] = {                           \
-> >> +            .name = #fname,                         \
-> >> +            .groups = fname##_groups,               \
-> >> +            .ngroups = ARRAY_SIZE(fname##_groups),  \
-> >> +    }
-
-...
-
-> >> +#define PINGROUP(id, f1, f2, f3, f4, f5, f6, f7, f8, f9)    \
-> >> +    {                                               \
-> >> +            .name = "gpio" #id,                     \
-> >> +            .pins = gpio##id##_pins,                \
-> >> +            .npins = (unsigned int)ARRAY_SIZE(gpio##id##_pins),     \
-> >
-> > Can you embed struct pingroup?
-> Will take care of this in a separate series
-
-Ditto. Thanks!
-
-> >> +    }
-
-...
-
-> >> +};
-> >
-> > No MODULE_DEVICE_TABLE()?
-> The MODULE_DEVICE_TABLE(of, ipq9574_pinctrl_of_match) entry has
-> been added at the end of the file
-
-So, you know what to do then to address my comment :-)
-
--- 
-With Best Regards,
-Andy Shevchenko
+--1Q9Amaw99NjcnKrY--
