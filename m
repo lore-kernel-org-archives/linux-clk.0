@@ -2,137 +2,187 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CADFC742A7
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Mar 2023 19:17:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E62C678D5
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Mar 2023 19:49:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230035AbjCHTRp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Mar 2023 14:17:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35470 "EHLO
+        id S229808AbjCHTtD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Mar 2023 14:49:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbjCHTRn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 14:17:43 -0500
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B35CC2213
-        for <linux-clk@vger.kernel.org>; Wed,  8 Mar 2023 11:17:35 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id cy23so69808864edb.12
-        for <linux-clk@vger.kernel.org>; Wed, 08 Mar 2023 11:17:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678303054;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+j1A5nq879FGymtJIOLfCFQYA850/WCrr7kXX+qHOEs=;
-        b=zeDS16/Gi9QUKLx1C5FpeQuIe+Zo3B/uvTM5nhSrXlAshjY4756tOpSY3Op1nqIaFX
-         K0y6bZeOOfg+1PT1us8/Bmt08yrbJ8dLSc/Mln0Rd7AhteySFz9zOQnWY/jxTxPyI0f8
-         2BWpEhuYeL6u5ruhFpiAMM97U7hgm8vs4ExjL7U76ewoF4aCKUc6Kw5L/hUNsUbMojG2
-         Bqs17OYPJc49E08mcRtYZ8DltLAj79JyxdVdTfmYKDthqrTEVXv4shIsbCCsAilI1pxy
-         qcbuc1a8pqrXhRAx/9fVcE+D0XuOwaAf5DLSuPZVKimPAu+ATMOqXtiMFNMpq6f8o86W
-         IAZA==
+        with ESMTP id S229994AbjCHTtA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 14:49:00 -0500
+Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A0145AB4E;
+        Wed,  8 Mar 2023 11:48:17 -0800 (PST)
+Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-1763e201bb4so19981973fac.1;
+        Wed, 08 Mar 2023 11:48:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678303054;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+j1A5nq879FGymtJIOLfCFQYA850/WCrr7kXX+qHOEs=;
-        b=k51CmFs4Twd2+XNGRfSQOUIuqdHERCed4RLYHnb/XTD029Z9mxxd5Ll6JGV2EPpngr
-         a3DS8RNO3kQ5vId72AAinTE8iKpdZoNCH7YRVMWBaqzb26lpFFYwlTBq+sPPkJWQe9ty
-         /vy+UA/35lezdZDwtBkG2Bmr3bhBXikTmO5YB3DH3YYek/MI9jgyVuDD4JfTQH+HCMN/
-         7aUwH1m0K1Pn345QVh9bteDH6fJfcLF5GIsrjVgkxUYS5l1XN9UmwjW4HqzZ8UNgZOSI
-         jWyhXS4GfClYjygvgG8voH4BdOmwfrxyZ3f2UzPoPVY5fi0QbDQKE65iUibLHGuRgiVy
-         7Q6A==
-X-Gm-Message-State: AO0yUKVTgWPScdcbsM3E9nc6/7gIe8+PiZf3f5jnD2xkbpgjk10mfENQ
-        zp6OXo8HY1RfC6uXdgJL3bR2MQ==
-X-Google-Smtp-Source: AK7set8nDlQWKilmK4zWDKyoqGuc9I13CYUVWS+rcxPqNRc2eW1ffTN01i4z+nPFgRiRZJlTA9wwXw==
-X-Received: by 2002:aa7:d782:0:b0:4ad:8fc5:3d2a with SMTP id s2-20020aa7d782000000b004ad8fc53d2amr16722112edq.11.1678303053834;
-        Wed, 08 Mar 2023 11:17:33 -0800 (PST)
-Received: from ?IPV6:2a02:810d:15c0:828:ff33:9b14:bdd2:a3da? ([2a02:810d:15c0:828:ff33:9b14:bdd2:a3da])
-        by smtp.gmail.com with ESMTPSA id d27-20020a50f69b000000b004acb696a0f6sm8592200edn.91.2023.03.08.11.17.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Mar 2023 11:17:33 -0800 (PST)
-Message-ID: <6cbe6c71-2d2d-0f79-1270-7f8ed2ddc1d6@linaro.org>
-Date:   Wed, 8 Mar 2023 20:17:32 +0100
+        d=1e100.net; s=20210112; t=1678304814;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yT0BopLRAw7O6/s7NS3/6EbNSMOzkcqRVPXIOE/BbPs=;
+        b=XpJs6TqzAZtKRJrENPxRX64lgzeOpP8XhZdk4oDV4VzUaSJg73bewQ0GX01Daywib3
+         kQh+kro7MAujIBO1UOgYrJ69eF6r1jArcMeI+zo26eCbnX3/QVA7DhgAIgJpfymQQyit
+         ufzmt/888m3AboKJYqfKwx7X28JeVwaQOTGwUg51VTBrt9dBUI7PBzylTTd+KWcPfgds
+         EN8CE/hiyoIEKTII3rFDyPsENHYuu9CeFo+WdJeDfYbfGJvXBERCpmEBPX/oqKQ1/8GL
+         bZESVbvE+8hK5ddRcLChxWHVWIlNwJnpaQmsQLEjm+uxVDv9X8oGP/E3SHR3CVhnU3W+
+         KYmg==
+X-Gm-Message-State: AO0yUKXg4FMAVC0PPpb5oRnPf+LgvBwo+1sO8v0JmjcysTNHZpwJ04+q
+        X0rGP1ILtjiSgYhcBY7Liw==
+X-Google-Smtp-Source: AK7set/j69mw8inZZ60owmutAs5i9vfN2brcSq4YY56sDxw/VEkhHwLkVFpgj9QDwqIthGRi/b/kpg==
+X-Received: by 2002:a05:6870:5490:b0:16e:84c5:7496 with SMTP id f16-20020a056870549000b0016e84c57496mr10085909oan.11.1678304814169;
+        Wed, 08 Mar 2023 11:46:54 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id zq41-20020a0568718ea900b0017703cd8ff6sm1904577oab.7.2023.03.08.11.46.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Mar 2023 11:46:53 -0800 (PST)
+Received: (nullmailer pid 3665063 invoked by uid 1000);
+        Wed, 08 Mar 2023 19:46:52 -0000
+Date:   Wed, 8 Mar 2023 13:46:52 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev,
+        Brendan Higgins <brendan.higgins@linux.dev>,
+        David Gow <davidgow@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+Subject: Re: [PATCH 2/8] of: Enable DTB loading on UML for KUnit tests
+Message-ID: <20230308194652.GA3656473-robh@kernel.org>
+References: <20230302013822.1808711-1-sboyd@kernel.org>
+ <20230302013822.1808711-3-sboyd@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH RFC 1/3] dt-bindings: clock: Add Renesas versa3 clock
- generator bindings
-Content-Language: en-US
-To:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-References: <20230220131307.269100-1-biju.das.jz@bp.renesas.com>
- <20230220131307.269100-2-biju.das.jz@bp.renesas.com>
- <e9e63c87-b491-b4d5-b226-0539ef0de2d0@linaro.org>
- <OS0PR01MB59221C8C937EF20347149E4886B49@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <36e06397-2189-4f1b-99cc-d39e720ebc71@linaro.org>
- <OS0PR01MB5922BDA0632ACCCC0100EEBD86B49@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <OS0PR01MB5922BDA0632ACCCC0100EEBD86B49@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230302013822.1808711-3-sboyd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08/03/2023 19:55, Biju Das wrote:
+On Wed, Mar 01, 2023 at 05:38:15PM -0800, Stephen Boyd wrote:
+> To fully exercise common clk framework code in KUnit we need to
+> associate 'struct device' pointers with 'struct device_node' pointers so
+> that things like clk_get() can parse DT nodes for 'clocks' and so that
+> clk providers can use DT to provide clks; the most common mode of
+> operation for clk providers.
 > 
-> Renesas 8T49N241 has 4 outputs, 1 integral and 3 fractional dividers.
-> The 8T49N241 accepts up to two differential or single-ended input clocks
-> and a fundamental-mode crystal input. The internal PLL can lock to either
-> of the input reference clocks or to the crystal to behave as a frequency
-> synthesizer.
+> Adding support to KUnit so that it loads a DTB is fairly simple after
+> commit b31297f04e86 ("um: Add devicetree support"). We can simply pass a
+> pre-compiled deviectree blob (DTB) on the kunit.py commandline and UML
+> will load it. The problem is that tests won't know that the commandline
+> has been modified, nor that a DTB has been loaded. Take a different
+> approach so that tests can skip if a DTB hasn't been loaded.
 > 
-> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-
-Ah, indeed, fine then.
-
->>
->>>>
->>>>> +
->>>>> +  renesas,clock-flags:
->>>>> +    description: Flags used in common clock frame work for configuring
->>>>> +      clk outputs. See include/linux/clk-provider.h
->>>>
->>>> These are not bindings, so why do you non-bindings constants as bindings?
->>>> They can change anytime. Choose one:
->>>> 1. Drop entire property,
->>>> 2. Make it a proper binding property, so an ABI and explain why this
->>>> is DT specific. None of clock providers have to do it, so you need
->>>> here good explanation.
->>>
->>> I will choose 2 and will explain as user should be allowed to
->>> configure the output clock from clk generator, so that it has
->>> flexibility for
->>> 1) changing the rates (propagate rate change up one level)
->>> 2) fixed always
->>> 3) don't gate the ouput clk at all.
->>
->> User's choice is task for user-space, so not a good explanation for DT.
+> Reuse the Makefile logic from the OF unittests to build a DTB into the
+> kernel. This DTB will be for the mythical machine "linux,kunit", i.e.
+> the devicetree for the KUnit "board". In practice, it is a dtsi file
+> that will gather includes for kunit tests that rely in part on a
+> devicetree being loaded. The devicetree should only be loaded if
+> CONFIG_OF_KUNIT=y. Make that a choice config parallel to the existing
+> CONFIG_OF_UNITTEST so that only one devicetree can be loaded in the
+> system at a time. Similarly, the kernel commandline option to load a
+> DTB is ignored if CONFIG_OF_KUNIT is enabled so that only one DTB is
+> loaded at a time.
 > 
-> I don't think clock generator HW has any business with user space.
+> Add a simple unit test to confirm that the DTB loading worked. Future
+> tests will add to the kunit.dtsi file to include their specific test
+> nodes.
 > 
-> It is clk generator HW specific. Clk generator is vital component which
-> provides clocks to the system. 
-
-Every clock controller is vital...
-
-> We are providing some hardware feature which
-> is exposed as dt properties.
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+> Cc: Johannes Berg <johannes@sipsolutions.net>
+> Cc: Vincent Whitchurch <vincent.whitchurch@axis.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Frank Rowand <frowand.list@gmail.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  arch/um/kernel/dtb.c            | 29 +++++++++++++++--
+>  drivers/of/Kconfig              | 26 ++++++++++++++++
+>  drivers/of/Makefile             |  1 +
+>  drivers/of/kunit/.kunitconfig   |  4 +++
+>  drivers/of/kunit/Makefile       |  4 +++
+>  drivers/of/kunit/kunit.dtsi     |  8 +++++
+>  drivers/of/kunit/kunit.dtso     |  4 +++
+>  drivers/of/kunit/uml_dtb_test.c | 55 +++++++++++++++++++++++++++++++++
+>  8 files changed, 128 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/of/kunit/.kunitconfig
+>  create mode 100644 drivers/of/kunit/Makefile
+>  create mode 100644 drivers/of/kunit/kunit.dtsi
+>  create mode 100644 drivers/of/kunit/kunit.dtso
+>  create mode 100644 drivers/of/kunit/uml_dtb_test.c
 > 
-> Like clock output is fixed rate clock or dynamic rate clock/
+> diff --git a/arch/um/kernel/dtb.c b/arch/um/kernel/dtb.c
+> index 484141b06938..ee63951b12df 100644
+> --- a/arch/um/kernel/dtb.c
+> +++ b/arch/um/kernel/dtb.c
+> @@ -15,9 +15,32 @@ void uml_dtb_init(void)
+>  	long long size;
+>  	void *area;
+>  
+> -	area = uml_load_file(dtb, &size);
+> -	if (!area)
+> -		return;
+> +	if (IS_ENABLED(CONFIG_OF_KUNIT)) {
+> +		/*
+> +		 * __dtbo_kunit_begin[] and __dtbo_kunit_end[] are magically
+> +		 * created by cmd_dt_S_dtbo in scripts/Makefile.lib from the
+> +		 * drivers/of/kunit/kunit.dtsi file.
+> +		 */
+> +		extern uint8_t __dtbo_kunit_begin[];
+> +		extern uint8_t __dtbo_kunit_end[];
+> +
+> +		size = __dtbo_kunit_end - __dtbo_kunit_begin;
+> +		if (!size) {
+> +			pr_warn("%s: kunit testcases is empty\n", __func__);
+> +			return;
+> +		}
+> +
+> +		/* creating copy */
+> +		area = memblock_alloc(size, 8);
+> +		if (!area)
+> +			return;
+> +
+> +		memcpy(area, __dtbo_kunit_begin, size);
+> +	} else {
+> +		area = uml_load_file(dtb, &size);
+> +		if (!area)
+> +			return;
+> +	}
+>  
+>  	if (!early_init_dt_scan(area)) {
+>  		pr_err("invalid DTB %s\n", dtb);
+> diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+> index 80b5fd44ab1c..1f968b6a3dde 100644
+> --- a/drivers/of/Kconfig
+> +++ b/drivers/of/Kconfig
+> @@ -12,6 +12,20 @@ menuconfig OF
+>  
+>  if OF
+>  
+> +choice
 
-OK, I wait then for proper description which will explain and justify this.
+No. This needs to be reworked such that a kernel rebuild is not needed 
+to run different tests. I suspect that the overlay approach will do that 
+for you.
 
+> +	prompt "Devicetree Runtime Tests"
+> +	default OF_UNITTEST
+> +
+> +config OF_KUNIT
+> +	bool "Devicetree KUnit support" if KUNIT
+> +	depends on UML
 
-Best regards,
-Krzysztof
+This is not a great dependency either...
 
+Rob
