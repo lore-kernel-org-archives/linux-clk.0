@@ -2,123 +2,156 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 317F7C64EC4
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Mar 2023 16:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12610C742A7
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Mar 2023 18:12:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232437AbjCHQEB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Mar 2023 11:04:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47986 "EHLO
+        id S230018AbjCHSL6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Mar 2023 13:11:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232450AbjCHQDo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 11:03:44 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2A9716ACF;
-        Wed,  8 Mar 2023 08:01:47 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 18519B81D50;
-        Wed,  8 Mar 2023 16:01:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 663D9C433EF;
-        Wed,  8 Mar 2023 16:01:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678291302;
-        bh=k/NR/Mngb8VfJOYI8XBPJ62M7b3AcBWHBox3rcvy9gk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NGvk7yJwPpliK7ycm9ReoXSp2YZNu1H6IZhoAI18KNFEaHMi9u2tLO+cbdIsh6tfC
-         cz7uAebUkNI7Nnd/a7FB4YiTA4hzTLxL5WhlRXTXub2EydKuxt4G8jSPdQBm9L50pM
-         bdH9KkrbTllg8sVS3Ug+pFpXbzcxcSk+yw6OdaRMGjdipe92Z/JxYP2sB/bVsuJhjj
-         /LRI7PutTRfjNAZUcOTBxGl3Tg+IG9iCmEdBo89dcYpsHAeENaRPzmA1UtUA/iwo9u
-         76MbquRMZTcFi009dUBa6Fcq/L/sNtCp7beXt706wrfijIyRa9tOJXx3BTHYDVX08K
-         zIszuRY6Ad/jw==
-Date:   Wed, 8 Mar 2023 09:01:40 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernel-team@android.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: Mark a fwnode as initialized when using
- CLK_OF_DECLARE() macro
-Message-ID: <20230308160140.GA2347814@dev-arch.thelio-3990X>
-References: <20230302014639.297514-1-saravanak@google.com>
- <CACRpkdacG4yxtZqwG5hKRY_8nY9qWeNPb-ZttMCnFH7ojZ3kCA@mail.gmail.com>
- <CAGETcx-W3o=rQoVLnKkvk=oTAMiwEcqAZ_trcMPBuune-7Hoiw@mail.gmail.com>
- <32edd2dd9557b7e3debbd8f1bccccd8d.sboyd@kernel.org>
+        with ESMTP id S229626AbjCHSL5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 13:11:57 -0500
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09410CE96E;
+        Wed,  8 Mar 2023 10:11:55 -0800 (PST)
+Received: by mail-ot1-f50.google.com with SMTP id e9-20020a056830200900b00694651d19f6so6569443otp.12;
+        Wed, 08 Mar 2023 10:11:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678299114;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SIxmU/QtppDrzLwRQM4/EQwwRkPiWGOq6+7u8fs1B9E=;
+        b=KIyuip82zCUZ3tJBEAdGR5DkYNQRqUvHETB03T4NSIDff0TZ7j0LLeGC0ZvsCHkVpO
+         GvJBnpLTNwMq83/0Q97eqj8cKhHM56QS0P0UioJdqeeP+QGVB5kYlysDCyJFGIt3nUwy
+         z2738obH1ONby9hp1Otqi1fpQ2KBm3e0H0urqmMVazligMQ3uvPXn/V1/aJ7+mUK/4dY
+         k65T2FaU0RXHLHK8n1XaZB2aRHy5vps0STG3Uz6Zwr1T4O9fveR5EP90SCuKbes3iNml
+         qRG2tZyapqo0fXYb9KWkbO5bvs/NmqQ+2N46pX0TPL/p0jYemuIQctyUhEkRfUNars3r
+         b0Fg==
+X-Gm-Message-State: AO0yUKWdmfc/jHC+sH+MEv0+HxemLfU3fdDt9d60yiayCrAmbZPoXboo
+        yHCHE95J7hfCY9PXMsrGmQ==
+X-Google-Smtp-Source: AK7set9H8k0goZQjGPEgNkkixy3gs3vd/sHKzFTM0Gx4xSIKWRHwsc1ffnNsJ1R+prua9m2CbtMAgg==
+X-Received: by 2002:a9d:7103:0:b0:690:d498:56d2 with SMTP id n3-20020a9d7103000000b00690d49856d2mr7763163otj.4.1678299114187;
+        Wed, 08 Mar 2023 10:11:54 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id d1-20020a056830138100b0068bb73bd95esm6636451otq.58.2023.03.08.10.11.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Mar 2023 10:11:53 -0800 (PST)
+Received: (nullmailer pid 3526245 invoked by uid 1000);
+        Wed, 08 Mar 2023 18:11:52 -0000
+Date:   Wed, 8 Mar 2023 12:11:52 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-crypto@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
+        linux-riscv@lists.infradead.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Eric Dumazet <edumazet@google.com>,
+        freedreno@lists.freedesktop.org, Paolo Abeni <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
+        Andrew Lunn <andrew@lunn.ch>, Stephen Boyd <sboyd@kernel.org>,
+        Mark Brown <broonie@kernel.org>, Sean Paul <sean@poorly.run>,
+        netdev@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-spi@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Marc Zyngier <maz@kernel.org>, dri-devel@lists.freedesktop.org,
+        alsa-devel@alsa-project.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-clk@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: yamllint: Require a space after a comment
+ '#'
+Message-ID: <167828471597.2730705.13533520056770041535.robh@kernel.org>
+References: <20230303214223.49451-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <32edd2dd9557b7e3debbd8f1bccccd8d.sboyd@kernel.org>
+In-Reply-To: <20230303214223.49451-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Mar 06, 2023 at 11:15:54AM -0800, Stephen Boyd wrote:
-> Quoting Saravana Kannan (2023-03-03 13:24:00)
-> > On Thu, Mar 2, 2023 at 5:14 AM Linus Walleij <linus.walleij@linaro.org> wrote:
-> > >
-> > > Works like a charm on U8500!
-> > > Tested-by: Linus Walleij <linus.walleij@linaro.org>
-> > > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > 
-> > Stephen, Does this look good? Can we have Greg pull this in?
-> > 
+
+On Fri, 03 Mar 2023 15:42:23 -0600, Rob Herring wrote:
+> Enable yamllint to check the prefered commenting style of requiring a
+> space after a comment character '#'. Fix the cases in the tree which
+> have a warning with this enabled. Most cases just need a space after the
+> '#'. A couple of cases with comments which were not intended to be
+> comments are revealed. Those were in ti,sa2ul.yaml, ti,cal.yaml, and
+> brcm,bcmgenet.yaml.
 > 
-> I picked it up for fixes. Will send it off later this week.
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Rob Clark <robdclark@gmail.com>
+> Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Cc: Sean Paul <sean@poorly.run>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Heiner Kallweit <hkallweit1@gmail.com>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: Kishon Vijay Abraham I <kishon@kernel.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Conor Dooley <conor.dooley@microchip.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-crypto@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: freedreno@lists.freedesktop.org
+> Cc: linux-media@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-phy@lists.infradead.org
+> Cc: linux-gpio@vger.kernel.org
+> Cc: alsa-devel@alsa-project.org
+> Cc: linux-riscv@lists.infradead.org
+> Cc: linux-spi@vger.kernel.org
+> ---
+>  Documentation/devicetree/bindings/.yamllint   |  2 +-
+>  .../bindings/clock/qcom,a53pll.yaml           |  4 ++--
+>  .../devicetree/bindings/crypto/ti,sa2ul.yaml  |  4 ++--
+>  .../bindings/display/msm/qcom,mdp5.yaml       |  2 +-
+>  .../interrupt-controller/arm,gic.yaml         |  4 ++--
+>  .../loongson,pch-msi.yaml                     |  2 +-
+>  .../bindings/media/renesas,vin.yaml           |  4 ++--
+>  .../devicetree/bindings/media/ti,cal.yaml     |  4 ++--
+>  .../bindings/net/brcm,bcmgenet.yaml           |  2 --
+>  .../bindings/net/cortina,gemini-ethernet.yaml |  6 ++---
+>  .../devicetree/bindings/net/mdio-gpio.yaml    |  4 ++--
+>  .../phy/marvell,armada-cp110-utmi-phy.yaml    |  2 +-
+>  .../bindings/phy/phy-stm32-usbphyc.yaml       |  2 +-
+>  .../phy/qcom,sc7180-qmp-usb3-dp-phy.yaml      |  2 +-
+>  .../bindings/pinctrl/pinctrl-mt8192.yaml      |  2 +-
+>  .../regulator/nxp,pca9450-regulator.yaml      |  8 +++----
+>  .../regulator/rohm,bd71828-regulator.yaml     | 20 ++++++++--------
+>  .../regulator/rohm,bd71837-regulator.yaml     |  6 ++---
+>  .../regulator/rohm,bd71847-regulator.yaml     |  6 ++---
+>  .../bindings/soc/renesas/renesas.yaml         |  2 +-
+>  .../devicetree/bindings/soc/ti/ti,pruss.yaml  |  2 +-
+>  .../bindings/sound/amlogic,axg-tdm-iface.yaml |  2 +-
+>  .../bindings/sound/qcom,lpass-rx-macro.yaml   |  4 ++--
+>  .../bindings/sound/qcom,lpass-tx-macro.yaml   |  4 ++--
+>  .../bindings/sound/qcom,lpass-va-macro.yaml   |  4 ++--
+>  .../sound/qcom,q6dsp-lpass-ports.yaml         |  2 +-
+>  .../bindings/sound/simple-card.yaml           | 24 +++++++++----------
+>  .../bindings/spi/microchip,mpfs-spi.yaml      |  2 +-
+>  28 files changed, 65 insertions(+), 67 deletions(-)
+> 
 
-This change causes a build regression:
+Applied, thanks!
 
-  drivers/clk/mvebu/kirkwood.c:358:1: error: expected identifier or '('
-  CLK_OF_DECLARE(98dx1135_clk, "marvell,mv98dx1135-core-clock",
-  ^
-  include/linux/clk-provider.h:1367:21: note: expanded from macro 'CLK_OF_DECLARE'
-          static void __init name##_of_clk_init_declare(struct device_node *np) \
-                             ^
-  <scratch space>:124:1: note: expanded from here
-  98dx1135_clk_of_clk_init_declare
-  ^
-  drivers/clk/mvebu/kirkwood.c:358:1: error: invalid digit 'd' in decimal constant
-  include/linux/clk-provider.h:1372:34: note: expanded from macro 'CLK_OF_DECLARE'
-          OF_DECLARE_1(clk, name, compat, name##_of_clk_init_declare)
-                                          ^
-  <scratch space>:125:3: note: expanded from here
-  98dx1135_clk_of_clk_init_declare
-    ^
-  drivers/clk/mvebu/kirkwood.c:358:1: error: invalid digit 'd' in decimal constant
-  include/linux/clk-provider.h:1372:34: note: expanded from macro 'CLK_OF_DECLARE'
-          OF_DECLARE_1(clk, name, compat, name##_of_clk_init_declare)
-                                          ^
-  <scratch space>:125:3: note: expanded from here
-  98dx1135_clk_of_clk_init_declare
-    ^
-  drivers/clk/mvebu/kirkwood.c:358:1: error: invalid digit 'd' in decimal constant
-  include/linux/clk-provider.h:1372:34: note: expanded from macro 'CLK_OF_DECLARE'
-          OF_DECLARE_1(clk, name, compat, name##_of_clk_init_declare)
-                                          ^
-  <scratch space>:125:3: note: expanded from here
-  98dx1135_clk_of_clk_init_declare
-    ^
-  4 errors generated.
-
-The clock's name starts with a number, resulting in an invalid C
-function name. Are clock names ABI? Should this be fixed by adjusting
-the name like so or adjusting where the name appears in the function
-defined by CLK_OF_DECLARE()?
-
-diff --git a/drivers/clk/mvebu/kirkwood.c b/drivers/clk/mvebu/kirkwood.c
-index 8bc893df4736..5d0a7e3bfde5 100644
---- a/drivers/clk/mvebu/kirkwood.c
-+++ b/drivers/clk/mvebu/kirkwood.c
-@@ -355,5 +355,5 @@ CLK_OF_DECLARE(kirkwood_clk, "marvell,kirkwood-core-clock",
- 	       kirkwood_clk_init);
- CLK_OF_DECLARE(mv88f6180_clk, "marvell,mv88f6180-core-clock",
- 	       kirkwood_clk_init);
--CLK_OF_DECLARE(98dx1135_clk, "marvell,mv98dx1135-core-clock",
-+CLK_OF_DECLARE(mv98dx1135_clk, "marvell,mv98dx1135-core-clock",
- 	       kirkwood_clk_init);
-
-Cheers,
-Nathan
