@@ -2,95 +2,115 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 012A8C742A7
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 01:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C64C678D5
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 01:43:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229926AbjCIBZg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Mar 2023 20:25:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35252 "EHLO
+        id S229722AbjCIBnQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Mar 2023 20:43:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229955AbjCIBZc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 20:25:32 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 402EA90086
-        for <linux-clk@vger.kernel.org>; Wed,  8 Mar 2023 17:25:27 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id s20so329076lfb.11
-        for <linux-clk@vger.kernel.org>; Wed, 08 Mar 2023 17:25:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678325125;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yqq4VEw4gc/dtr1bOgTdIY1FDWwPC01i6JuhT66K9Gs=;
-        b=WAsVz6H63rIudTmBhP8WrhBoyhPjw/4TCp6wfRCWAdEQ8gFpdr5ex4Y9/CIq0nG/kz
-         9fHkU9KsFJluewVg0Z32oudvSsBcxMcycJYyRfnwsWL3g6NtOolTl4+hG1Wnf65OwyIc
-         vY3+RD8LuJkCpCTT/dqWRGbZ72TyvXZFGaksH034CqU3CyfeMQsDgYn6HLbPxliIwIdq
-         ij6RYhnFWeq0uZ38VbRpNOYvq7N8Xt+qGQkYWECrFW3Ao/OA5vn7krtOKJ6aVWx6OL2T
-         6osopRW55lUYM59Y5TmbST5DMNkBcsBZXOcu8z3CsoOIujpfOaTwx6u169Y+aoqeqb1s
-         wKwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678325125;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yqq4VEw4gc/dtr1bOgTdIY1FDWwPC01i6JuhT66K9Gs=;
-        b=zPBMS659+lPZL5luwiX42kG/W4t//Z02A49epFfbmpQ7ah3urLwb8ijJHHwrAGbP4R
-         gfabU7VKSCyma53dmmZq03IQYmtlIS1mqEoYXqOpUCo816sCIBOJnDaCiDXag7WpOl+4
-         W3b5fOVqrvyGUp4r7n8Fd35zrTGsw0FrGH3ADWpFjeJQ50DePmjk9iO3E7q7fWjaBkjY
-         agF41lnvcYwOp5E1RazvoD3jP8wVKrdXdszyhog8AOcwXkderAKfkk7GSwcQSNRKHhYh
-         PnAqINNQ9a/fCr5/hftQuHzEpnjYR1QJFtEVf9XULIHR6O9bpViZ9uzeDgjo61xCWMR2
-         4ung==
-X-Gm-Message-State: AO0yUKUGqK+M2u6T2r1efJXEqCmPaZfn5YMzV9I5K0c3tSkvSOv9fNh8
-        s0945+WiyrmQ2LPIYuR+8YOkvw==
-X-Google-Smtp-Source: AK7set8IXnMjaPGHtH44O0AdjtLFWMJyDdhixh/ZWQXBS3NB2lcGP2OxccgWsKunXUZhKrMh8b+MJQ==
-X-Received: by 2002:a19:ae13:0:b0:4e1:13fa:bf07 with SMTP id f19-20020a19ae13000000b004e113fabf07mr6084681lfc.43.1678325125441;
-        Wed, 08 Mar 2023 17:25:25 -0800 (PST)
-Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id a28-20020a05651c031c00b002934b5657f2sm2754672ljp.29.2023.03.08.17.25.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Mar 2023 17:25:24 -0800 (PST)
-Message-ID: <6bccbd03-68c8-e9e0-1a12-595391246ae8@linaro.org>
-Date:   Thu, 9 Mar 2023 03:25:24 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH RFT v2 12/14] clk: qcom: smd-rpm: Hook up CNoC_1 and
- SNoC_2 keep_alive
-Content-Language: en-GB
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        with ESMTP id S229513AbjCIBnO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 20:43:14 -0500
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 034381F4A2;
+        Wed,  8 Mar 2023 17:43:09 -0800 (PST)
+Received: from loongson.cn (unknown [10.20.42.35])
+        by gateway (Coremail) with SMTP id _____8CxxtisOQlkIiwKAA--.13589S3;
+        Thu, 09 Mar 2023 09:43:08 +0800 (CST)
+Received: from [10.20.42.35] (unknown [10.20.42.35])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8CxG76pOQlkAgtQAA--.7026S3;
+        Thu, 09 Mar 2023 09:43:07 +0800 (CST)
+Subject: Re: [PATCH v13 1/2] dt-bindings: clock: add loongson-2 boot clock
+ index
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-References: <20230303-topic-rpmcc_sleep-v2-0-ae80a325fe94@linaro.org>
- <20230303-topic-rpmcc_sleep-v2-12-ae80a325fe94@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20230303-topic-rpmcc_sleep-v2-12-ae80a325fe94@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Cc:     Jianmin Lv <lvjianmin@loongson.cn>,
+        Liu Peibao <liupeibao@loongson.cn>, wanghongliang@loongson.cn,
+        loongson-kernel@lists.loongnix.cn, zhuyinbo@loongson.cn
+References: <20230307115022.12846-1-zhuyinbo@loongson.cn>
+ <692a62da-a9a1-fa23-6e24-723d73c3a423@linaro.org>
+ <5e9b3bd5-d885-6237-5e14-2becb3c956cc@loongson.cn>
+ <31e2a67a-c046-9501-80de-e754ed450195@linaro.org>
+ <ace5159b-ebbd-7805-518c-ed3d39e4793e@loongson.cn>
+ <b2f9cd15-b303-882a-d4e0-36d1f6d155a8@linaro.org>
+From:   zhuyinbo <zhuyinbo@loongson.cn>
+Message-ID: <eca81d44-2513-8002-980d-755af32f36c4@loongson.cn>
+Date:   Thu, 9 Mar 2023 09:43:04 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <b2f9cd15-b303-882a-d4e0-36d1f6d155a8@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID: AQAAf8CxG76pOQlkAgtQAA--.7026S3
+X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjvJXoW7tw17Aw13tF1kJFy7uFyxAFb_yoW8XFy7pw
+        4xt3WqgFWDJr4xZw1xt3Z5Wr95C3s7Gr15JFn5Gw4kXr1qv3WxKFs7tF4fCF98Aw4xC3ZF
+        gFWUua4kCa1Y9w7anT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        bf8Fc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28E
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
+        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI0_Jrv_JF1le2I262IYc4CY
+        6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrV
+        C2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
+        7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7V
+        AKI48JMxAIw28IcVCjz48v1sIEY20_WwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C2
+        67AKxVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI
+        8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWU
+        CwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r
+        1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsG
+        vfC2KfnxnUUI43ZEXa7IU8rnY7UUUUU==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08/03/2023 23:35, Konrad Dybcio wrote:
-> 4 of our 18 supported platforms need an active keepalive vote on
-> CNoC_1 and SNoC_2 so as not to cause havoc on the entire SoC.
-> Guarantee that.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->   drivers/clk/qcom/clk-smd-rpm.c | 18 ++++++++++--------
->   1 file changed, 10 insertions(+), 8 deletions(-)
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+在 2023/3/8 下午6:38, Krzysztof Kozlowski 写道:
+> On 08/03/2023 10:24, zhuyinbo wrote:
+>>>>> That's an ABI break and commit msg does not explain it.
+>>>> you meaning is that need add a explanation in commit msg that why
+>>> You need good explanation to break the ABI. I don't understand the
+>>> commit msg, but anyway I could not find there justification for ABI
+>>> break. If you do not have good justification, don't break the ABI,
+>> The commit msg is the patch commit  log,  and I maybe not got it about
+>> break the ABI.  You said about "break the ABI"
+>>
+>> is whether is location issue about "LOONGSON2_BOOT_CLK"?   if yes,   the
+>> LOONGSON2_BOOT_CLK was placed
+>>
+>> after LOONGSON2_PIX1_PLL that is due to their clock parent is same.
+>> and I whether need add this explanation
+>>
+>> in patch commit log description?
+> Unfortunately I do not understand single thing from this.
+>
+> Best regards,
+> Krzysztof
 
--- 
-With best wishes
-Dmitry
+The patch commit log description is patch desription.  as follows:
+
+
+commit 592bc2b4106d787ea166ba16bfde6b3101ab1a8a
+Author: Yinbo Zhu <zhuyinbo@loongson.cn>
+Date:   Tue Mar 7 17:18:32 2023 +0800
+
+     dt-bindings: clock: add loongson-2 boot clock index
+
+     The Loongson-2 boot clock was used to spi and lio peripheral and
+     this patch was to add boot clock index number.
+
+
+and your advice is "That's an ABI break and commit msg does not explain it."
+
+I got it  from your advice that was to add a explanation about 
+LOONGSON2_BOOT_CLK's
+
+location issue in patch description, right?
 
