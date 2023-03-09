@@ -2,355 +2,278 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 699F8C64EC4
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 14:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E3CC61DA4
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 15:12:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230153AbjCIOnN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Mar 2023 09:43:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48264 "EHLO
+        id S231472AbjCIPMm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Mar 2023 10:12:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230147AbjCIOnL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2023 09:43:11 -0500
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30AC82007D
-        for <linux-clk@vger.kernel.org>; Thu,  9 Mar 2023 06:43:09 -0800 (PST)
-Received: by mail-wm1-x334.google.com with SMTP id o38-20020a05600c512600b003e8320d1c11so3490138wms.1
-        for <linux-clk@vger.kernel.org>; Thu, 09 Mar 2023 06:43:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1678372987;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=q0gj1G9cUcUIZ/a+kpKcCgPzLsFmLDLjCJhAsi47XLs=;
-        b=1Fk4F6F3ag7qaE7C4ql023KSpas6Bbillm4A3fFYoeC2LDAhbH1mvC+A0Il9qt+W8J
-         fMfaPt7vIa0hkIwrBufZ2S/9rvV0H/Qanq+g8yDU8ZYJ6KapnNMuz9jP/7efmeTOE+bm
-         KogUqS5ZYnxpRQB2P6Scxcgbf1UfaxzDLGL16ip0URyTdFKdJ4Zg3eTPmlChi/qdB9FG
-         1zXH3/jPKnU4yAkVTIqb4o0/7wAg0ekrl6n+88Zg0Z5K1sD0w1eGlhb7Jf5cO5sDxUfe
-         +ss6tKMXJYuHuTcrpd1AJWCgR/roD5hMjm0MGmtOYqNiq8PGKjmcHPluO6JvddZEcCKp
-         aUAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678372987;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q0gj1G9cUcUIZ/a+kpKcCgPzLsFmLDLjCJhAsi47XLs=;
-        b=T34yvzWcfGiIgq/0ak+LiR13TRwmy2tKPwGBepMRupDdfO59mghEUK4a2juSFFNv0K
-         KWqu+gOqNTIP26QPqMrePIpRK/imVQjIU0pVodmO0BIRuoyICaaTEejQe/gQHZmewkNi
-         biRwNn4c+XoL0zulv/srQkjZyqKd2JGHPf9cDS6fFP62kXZDctVC92jUl0EN7NXfl8o9
-         vfxoTV0bEduDHKTQtEEbjyTzYUUpSK3D/dgRrjHLYtvIk4iexrhEBlywVA5uVwSPnw72
-         zx7ZWEhTqSTOWnZkAEE0rBoD7nmUnRTHTsQ3epyQJEnryKox/6OOP3qBZnBOrYl/jBpo
-         5Asw==
-X-Gm-Message-State: AO0yUKXtj24xpy6FO6MsiONy5Lt6gVP2nAwktTDpcavQINuRDMzeWw5c
-        sDyhTEBnCHUlIRC0PNfEoVZLOw==
-X-Google-Smtp-Source: AK7set8ArfCbj6486s273Ry+S4Gc7m3Z1lE13ELk+BWOmqUuT7//+LeeBL/rhwgneoZ9OZZK+JbCMQ==
-X-Received: by 2002:a05:600c:3544:b0:3e8:35a2:6abf with SMTP id i4-20020a05600c354400b003e835a26abfmr19132181wmq.23.1678372987571;
-        Thu, 09 Mar 2023 06:43:07 -0800 (PST)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id w17-20020adfd4d1000000b002c6d0462163sm18070580wrk.100.2023.03.09.06.43.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Mar 2023 06:43:07 -0800 (PST)
-References: <20230301183759.16163-1-ddrokosov@sberdevices.ru>
- <20230301183759.16163-5-ddrokosov@sberdevices.ru>
- <1jilfeaync.fsf@starbuckisacylon.baylibre.com>
- <20230306190539.kl6n347kev5pskz6@CAB-WSD-L081021>
-User-agent: mu4e 1.8.13; emacs 28.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Cc:     neil.armstrong@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
-        martin.blumenstingl@googlemail.com, jian.hu@amlogic.com,
-        kernel@sberdevices.ru, rockosov@gmail.com,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v9 4/5] clk: meson: a1: add Amlogic A1 Peripherals clock
- controller driver
-Date:   Thu, 09 Mar 2023 15:22:08 +0100
-In-reply-to: <20230306190539.kl6n347kev5pskz6@CAB-WSD-L081021>
-Message-ID: <1jedpy0yv9.fsf@starbuckisacylon.baylibre.com>
+        with ESMTP id S230162AbjCIPMH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2023 10:12:07 -0500
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DA9EF6B62;
+        Thu,  9 Mar 2023 07:08:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678374532; x=1709910532;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=+CEGkxWLU/S8mn45ZTds+4lIJE2/zfMR+AlnzPAxGdE=;
+  b=nfZcIlGoHy0KMB0VKvqpfZcGTZvsD8Hb1B7korJeviCcvaVBpVYI27GY
+   u122zjmTShp2ZU6khZTb6F3lNXQa4u8oVG7TmJ8ZSuZs8DIY/0+ErVbQP
+   o2miGl6yPSJ/Tsk4rJEcRrDdggv+EcRqf6zz5rJWBdaX/0yG2tDlAkh/y
+   Pu5NawkJxEZrACv23oCVmbQerhKnsQF4+XQCSHSp7rKLfEDNFXsO9DfRK
+   N0CipP2OUt8Sd+oRE32AWvXxOgOb6x1H7Ei0c2Y9zxTvsgfuJOuzioWfF
+   SpsXng5N80mv4Fp5KKoY+CZN6CprU+0XnU7kVpRzOcOxMLn9E+WKrvusS
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10643"; a="338006678"
+X-IronPort-AV: E=Sophos;i="5.98,246,1673942400"; 
+   d="scan'208";a="338006678"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2023 06:37:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10643"; a="707633256"
+X-IronPort-AV: E=Sophos;i="5.98,246,1673942400"; 
+   d="scan'208";a="707633256"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by orsmga008.jf.intel.com with ESMTP; 09 Mar 2023 06:37:27 -0800
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1paHOY-00031I-2n;
+        Thu, 09 Mar 2023 14:37:26 +0000
+Date:   Thu, 09 Mar 2023 22:36:55 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, asahi@lists.linux.dev,
+        amd-gfx@lists.freedesktop.org,
+        Linux Memory Management List <linux-mm@kvack.org>
+Subject: [linux-next:master] BUILD REGRESSION
+ 2c6433e9294b6d0f4d8f08c3c70a3eac434d3ec8
+Message-ID: <6409ef07.MijoGslGE1Kw16lB%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+branch HEAD: 2c6433e9294b6d0f4d8f08c3c70a3eac434d3ec8  Add linux-next specific files for 20230309
 
-On Mon 06 Mar 2023 at 22:05, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
+Error/Warning reports:
 
-> Hello Jerome,
->
-> Thanks a lot for such detailed review. Please find my comments and
-> thoughts below.
->
-> On Mon, Mar 06, 2023 at 12:38:22PM +0100, Jerome Brunet wrote:
->> 
->> On Wed 01 Mar 2023 at 21:37, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
->> 
->> > Introduce Peripherals clock controller for Amlogic A1 SoC family.
->> >
->> > Signed-off-by: Jian Hu <jian.hu@amlogic.com>
->> > Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
->
-> [...]
->
->> > +static struct clk_regmap dspa_a_sel = {
->> > +	.data = &(struct clk_regmap_mux_data){
->> > +		.offset = DSPA_CLK_CTRL0,
->> > +		.mask = 0x7,
->> > +		.shift = 10,
->> > +		.table = mux_table_dsp_ab,
->> > +	},
->> > +	.hw.init = &(struct clk_init_data){
->> > +		.name = "dspa_a_sel",
->> > +		.ops = &clk_regmap_mux_ops,
->> > +		.parent_data = dsp_ab_parent_data,
->> > +		.num_parents = ARRAY_SIZE(dsp_ab_parent_data),
->> > +		/* DSPA_A clk parent should be set statically from dt */
->> > +		.flags = CLK_SET_RATE_NO_REPARENT,
->> > +	},
->> > +};
->> > +
->> > +static struct clk_regmap dspa_a_div = {
->> > +	.data = &(struct clk_regmap_div_data){
->> > +		.offset = DSPA_CLK_CTRL0,
->> > +		.shift = 0,
->> > +		.width = 10,
->> > +	},
->> > +	.hw.init = &(struct clk_init_data){
->> > +		.name = "dspa_a_div",
->> > +		.ops = &clk_regmap_divider_ops,
->> > +		.parent_hws = (const struct clk_hw *[]) {
->> > +			&dspa_a_sel.hw
->> > +		},
->> > +		.num_parents = 1,
->> > +		.flags = CLK_SET_RATE_PARENT,
->> > +	},
->> > +};
->> > +
->> > +static struct clk_regmap dspa_a = {
->> > +	.data = &(struct clk_regmap_gate_data){
->> > +		.offset = DSPA_CLK_CTRL0,
->> > +		.bit_idx = 13,
->> > +	},
->> > +	.hw.init = &(struct clk_init_data) {
->> > +		.name = "dspa_a",
->> > +		.ops = &clk_regmap_gate_ops,
->> > +		.parent_hws = (const struct clk_hw *[]) {
->> > +			&dspa_a_div.hw
->> > +		},
->> > +		.num_parents = 1,
->> > +		/*
->> > +		 * DSPA_A accelerator clk, cannot be disabled by CCF if it
->> > +		 * has been set by bootloader
->> 
->> Then IGNORE_UNUSED is wrong. use RO ops with you must retain the
->> bootloader config.
->
-> I thought UNUSED logic will disable 'unused' clock during
-> initialization. Or do you mean it's not relevant for ro ops clock,
-> because disable() callback is not defined?
+https://lore.kernel.org/oe-kbuild-all/202302111601.jtY4lKrA-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202303081657.6Ble80UY-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202303081807.lBLWKmpX-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202303082135.NjdX1Bij-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202303091430.hbWEMt4b-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202303091435.ae36t8f6-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202303091548.VqmH7I6Q-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202303091711.howZNrIY-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202303091728.UUe6LWye-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202303092022.Jqy5pbvx-lkp@intel.com
 
-It does. It does no prevent a disable if the clock is enabled then
-disabled. So what is here works as long as no driver touches this
-clock. In such case you are better off with RO ops.
+Error/Warning: (recently discovered and may have been fixed)
 
->
->> 
->> Note that it is usually a bad idea to depend on the bootloader config.
->> Things tends to go bad when other bootloader version join the fun, like
->> upstream u-boot
->
-> To be honest, I don't have the ability to test such behavior on our side,
-> because in my hands I have SoC SKUs w/o DSP only.
+ERROR: modpost: "intel_soc_pmic_exec_mipi_pmic_seq_element" [drivers/platform/x86/x86-android-tablets/x86-android-tablets.ko] undefined!
+drivers/clk/mvebu/kirkwood.c:358:1: error: expected identifier or '('
+drivers/clk/mvebu/kirkwood.c:358:1: error: invalid digit 'd' in decimal constant
+drivers/gpu/drm/amd/amdgpu/../display/dc/dcn30/dcn30_optc.c:294:6: warning: no previous prototype for 'optc3_wait_drr_doublebuffer_pending_clear' [-Wmissing-prototypes]
+drivers/gpu/drm/amd/amdgpu/../display/dc/link/protocols/link_dp_capability.c:2184: warning: expecting prototype for Check if there is a native DP or passive DP(). Prototype was for dp_is_sink_present() instead
+drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu13/smu_v13_0_6_ppt.c:1146:3: warning: variable 'hotspotlimit' is uninitialized when used here [-Wuninitialized]
+drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu13/smu_v13_0_6_ppt.c:1149:24: warning: variable 'memlimit' is uninitialized when used here [-Wuninitialized]
+drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu13/smu_v13_0_6_ppt.c:1152:34: warning: variable 'software_shutdown_temp' is uninitialized when used here [-Wuninitialized]
+drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu13/smu_v13_0_6_ppt.c:315:17: sparse:    int
+drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu13/smu_v13_0_6_ppt.c:315:17: sparse:    void
+include/linux/dynamic_debug.h:307:14: error: implicit declaration of function 'strcmp' [-Werror=implicit-function-declaration]
+kismet: WARNING: unmet direct dependencies detected for GPIO_SYSCON when selected by GPIO_SAMA5D2_PIOBU
+kismet: WARNING: unmet direct dependencies detected for MFD_STMFX when selected by PINCTRL_STMFX
+kismet: WARNING: unmet direct dependencies detected for OF_GPIO when selected by GPIO_LOONGSON_64BIT
 
-Then maybe you should leave these clocks out for now.
+Unverified Error/Warning (likely false positive, please contact us if interested):
 
-> But theoretically DSP FW can be started already from the bootloader, and
-> then we shouldn't touch this clock.
+drivers/iommu/apple-dart.c:1281:1: sparse: sparse: symbol 'apple_dart_pm_ops' was not declared. Should it be static?
+include/linux/gpio/consumer.h: linux/err.h is included more than once.
+include/linux/gpio/driver.h: asm/bug.h is included more than once.
 
-In theory the bootloader can do it all, why bother booting linux ... :P
+Error/Warning ids grouped by kconfigs:
 
-> May be CCF has device tree tricks to solve such situations, don't know
-> actually. On the other hand, appropriate driver logic would be a nice
-> exit here.
+gcc_recent_errors
+|-- alpha-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- arc-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- arm-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- arm-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- arm-randconfig-r005-20230309
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- arm-randconfig-r013-20230308
+|   `-- include-linux-dynamic_debug.h:error:implicit-declaration-of-function-strcmp
+|-- arm64-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dcn30-dcn30_optc.c:warning:no-previous-prototype-for-optc3_wait_drr_doublebuffer_pending_clear
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- i386-allyesconfig
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dcn30-dcn30_optc.c:warning:no-previous-prototype-for-optc3_wait_drr_doublebuffer_pending_clear
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- i386-randconfig-a016-20230206
+|   `-- ERROR:intel_soc_pmic_exec_mipi_pmic_seq_element-drivers-platform-x86-x86-android-tablets-x86-android-tablets.ko-undefined
+|-- ia64-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- loongarch-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- loongarch-buildonly-randconfig-r004-20230308
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- loongarch-defconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- microblaze-randconfig-s041-20230309
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:sparse:int
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:sparse:sparse:incompatible-types-in-conditional-expression-(different-base-types):
+|   `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:sparse:void
+|-- mips-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- mips-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- powerpc-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- riscv-allmodconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- riscv-randconfig-s043-20230309
+|   `-- drivers-iommu-apple-dart.c:sparse:sparse:symbol-apple_dart_pm_ops-was-not-declared.-Should-it-be-static
+|-- s390-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- sparc-allyesconfig
+|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-protocols-link_dp_capability.c:warning:expecting-prototype-for-Check-if-there-is-a-native-DP-or-passive-DP().-Prototype-was-for-dp_is_sink_present()-inste
+|-- x86_64-allnoconfig
+|   |-- include-linux-gpio-consumer.h:linux-err.h-is-included-more-than-once.
+|   |-- include-linux-gpio-driver.h:asm-bug.h-is-included-more-than-once.
+clang_recent_errors
+|-- arm-mvebu_v5_defconfig
+|   |-- drivers-clk-mvebu-kirkwood.c:error:expected-identifier-or-(
+|   `-- drivers-clk-mvebu-kirkwood.c:error:invalid-digit-d-in-decimal-constant
+`-- s390-randconfig-r044-20230308
+    |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:variable-hotspotlimit-is-uninitialized-when-used-here
+    |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:variable-memlimit-is-uninitialized-when-used-here
+    `-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0_6_ppt.c:warning:variable-software_shutdown_temp-is-uninitialized-when-used-here
 
-If you have a DSP, it is likely to have something to communicate with
-the OS at some point, or at least monitor. Such driver would need to
-handle to clocks properly.
+elapsed time: 724m
 
-Since you can test this, I strongly suggest to leave this out for now.
+configs tested: 106
+configs skipped: 6
 
->
-> [...]
->
->> > +static struct clk_regmap dspa_en_nic = {
->> > +	.data = &(struct clk_regmap_gate_data){
->> > +		.offset = DSPA_CLK_EN,
->> > +		.bit_idx = 0,
->> > +	},
->> > +	.hw.init = &(struct clk_init_data) {
->> > +		.name = "dspa_en_nic",
->> > +		.ops = &clk_regmap_gate_ops,
->> > +		.parent_hws = (const struct clk_hw *[]) {
->> > +			&dspa_sel.hw
->> > +		},
->> > +		.num_parents = 1,
->> > +		/*
->> > +		 * DSPA_EN_NIC accelerator clk, cannot be disabled by CCF if it
->> > +		 * has been set by bootloader
->> > +		 */
->> > +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> 
->> All this just highlight the lack of proper drivers to handle the clock,
->> like remote proc one.
->> 
->
-> Okay, let's imagine we have such a driver. If DSP is already running,
-> we can skip the clock setup on this driver side. Hmmm. It looks like
-> a proper solution...
->
-> I would prefer to tag it with TODO and mark DSP clocks with ro_ops till
-> we don't have such a driver.
->
-> [...]
->
->> > +
->> > +static struct clk_regmap fclk_div2_divn = {
->> > +	.data = &(struct clk_regmap_gate_data){
->> > +		.offset = CLK12_24_CTRL,
->> > +		.bit_idx = 12,
->> > +	},
->> > +	.hw.init = &(struct clk_init_data){
->> > +		.name = "fclk_div2_divn",
->> > +		.ops = &clk_regmap_gate_ops,
->> > +		.parent_hws = (const struct clk_hw *[]) {
->> > +			&fclk_div2_divn_pre.hw
->> > +		},
->> > +		.num_parents = 1,
->> > +		.flags = CLK_SET_RATE_PARENT,
->> > +	},
->> > +};
->> > +
->> > +/*
->> > + * the index 2 is sys_pll_div16, it will be completed in the CPU clock ctrl,
->> 
->> I don't get this, what do you mean ? 
->> 
->
-> I mean, it will be implemented in the CPU clock controller driver in the
-> next patch series. Agree, I have to make a rephrase.
->
->> > + * the index 4 is the clock measurement source, it relies on
->> > + * the clock measurement register configuration.
->> 
->> Obviously ... What mean here is that clock measurement is a debug
->> feature and should be considered
->> 
+tested configs:
+alpha                            alldefconfig   gcc  
+alpha                            allyesconfig   gcc  
+alpha        buildonly-randconfig-r006-20230308   gcc  
+alpha                               defconfig   gcc  
+alpha                randconfig-r031-20230308   gcc  
+alpha                randconfig-r033-20230308   gcc  
+alpha                randconfig-r035-20230308   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arc                  randconfig-r015-20230308   gcc  
+arc                  randconfig-r016-20230308   gcc  
+arc                  randconfig-r021-20230308   gcc  
+arc                  randconfig-r022-20230308   gcc  
+arc                  randconfig-r034-20230308   gcc  
+arc                  randconfig-r043-20230308   gcc  
+arm                              allmodconfig   gcc  
+arm                              allyesconfig   gcc  
+arm                        clps711x_defconfig   gcc  
+arm                                 defconfig   gcc  
+arm                       omap2plus_defconfig   gcc  
+arm                  randconfig-r005-20230309   gcc  
+arm                  randconfig-r011-20230308   gcc  
+arm                  randconfig-r046-20230308   gcc  
+arm64                            allyesconfig   gcc  
+arm64        buildonly-randconfig-r001-20230308   gcc  
+arm64                               defconfig   gcc  
+csky                                defconfig   gcc  
+csky                 randconfig-r024-20230308   gcc  
+hexagon              randconfig-r036-20230308   clang
+hexagon              randconfig-r041-20230308   clang
+hexagon              randconfig-r045-20230308   clang
+i386                             allyesconfig   gcc  
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+i386                          randconfig-a001   gcc  
+i386                          randconfig-a002   clang
+i386                          randconfig-a003   gcc  
+i386                          randconfig-a004   clang
+i386                          randconfig-a005   gcc  
+i386                          randconfig-a006   clang
+i386                          randconfig-a011   clang
+i386                          randconfig-a012   gcc  
+i386                          randconfig-a013   clang
+i386                          randconfig-a014   gcc  
+i386                          randconfig-a015   clang
+i386                          randconfig-a016   gcc  
+ia64                             allmodconfig   gcc  
+ia64                         bigsur_defconfig   gcc  
+ia64                                defconfig   gcc  
+ia64                 randconfig-r002-20230309   gcc  
+ia64                 randconfig-r003-20230309   gcc  
+ia64                 randconfig-r026-20230308   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch    buildonly-randconfig-r004-20230308   gcc  
+loongarch                           defconfig   gcc  
+m68k                             allmodconfig   gcc  
+m68k                                defconfig   gcc  
+microblaze           randconfig-r032-20230308   gcc  
+mips                             allmodconfig   gcc  
+mips                             allyesconfig   gcc  
+mips                      bmips_stb_defconfig   clang
+mips                           rs90_defconfig   clang
+nios2                               defconfig   gcc  
+nios2                randconfig-r004-20230309   gcc  
+openrisc     buildonly-randconfig-r005-20230308   gcc  
+parisc                              defconfig   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc              randconfig-r001-20230309   clang
+riscv                            allmodconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv                               defconfig   gcc  
+riscv                randconfig-r042-20230308   clang
+riscv                          rv32_defconfig   gcc  
+s390                             allmodconfig   gcc  
+s390                             allyesconfig   gcc  
+s390                                defconfig   gcc  
+s390                 randconfig-r025-20230308   clang
+s390                 randconfig-r044-20230308   clang
+sh                               allmodconfig   gcc  
+sh                   randconfig-r014-20230308   gcc  
+sparc                               defconfig   gcc  
+sparc64              randconfig-r013-20230308   gcc  
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                            allnoconfig   gcc  
+x86_64                           allyesconfig   gcc  
+x86_64                              defconfig   gcc  
+x86_64                                  kexec   gcc  
+x86_64                        randconfig-a001   clang
+x86_64                        randconfig-a002   gcc  
+x86_64                        randconfig-a003   clang
+x86_64                        randconfig-a004   gcc  
+x86_64                        randconfig-a005   clang
+x86_64                        randconfig-a006   gcc  
+x86_64                        randconfig-a011   gcc  
+x86_64                        randconfig-a012   clang
+x86_64                        randconfig-a013   gcc  
+x86_64                        randconfig-a014   clang
+x86_64                        randconfig-a015   gcc  
+x86_64                        randconfig-a016   clang
+x86_64                               rhel-8.3   gcc  
+xtensa       buildonly-randconfig-r003-20230308   gcc  
+xtensa               randconfig-r023-20230308   gcc  
 
-Arff sorry, "should *NOT* be considered"
-
->
-> Should I mark it with TODO tag? I prefer to implement 'must have' logic
-> first. Clock measurement are optional from my point of view.
->
-> [...]
->
->> > +static struct clk_regmap pwm_a = {
->> > +	.data = &(struct clk_regmap_gate_data){
->> > +		.offset = PWM_CLK_AB_CTRL,
->> > +		.bit_idx = 8,
->> > +	},
->> > +	.hw.init = &(struct clk_init_data) {
->> > +		.name = "pwm_a",
->> > +		.ops = &clk_regmap_gate_ops,
->> > +		.parent_hws = (const struct clk_hw *[]) {
->> > +			&pwm_a_div.hw
->> > +		},
->> > +		.num_parents = 1,
->> > +		/*
->> > +		 * The CPU working voltage is controlled by pwm_a
->> > +		 * in BL2 firmware. The clock is required by the platform
->> > +		 * to operate correctly. Add the CLK_IS_CRITICAL flag to
->> > +		 * avoid changing at runtime.
->> > +		 * About critical, refer to sys
->> > +		 */
->> 
->> PWM_A required by the BL2 ... really ? Looks really fishy to me.
->> 
->> Is it possible it is used by regulator instead ?
->> 
->
-> Honestly, this comment's information was grabbed from Amlogic custom
-> driver. It has such words:
->
-> /*
->  * add CLK_IGNORE_UNUSED flag for pwm controller GATE
->  * clk core will disable unused clock, it may disable
->  * vddcore voltage which contrlled by one pwm in bl21.
->  * add the flag to avoid changing cpu voltage.
->  */
->
-> We don't have bl21 source code in the hands, so I can't check
-> unfortunately. But I have no reasons to don't trust Amlogic custom
-> clk driver decisions about low level bootloaders roles.
-
-So it is a regulator. Not the BL2(1)
-
-There are several reasons why this is wrong:
-* CLK_IGNORE_UNUSED would be wrong for reasons I already mentionned
-* CLK_SET_RATE_PARENT | CLK_IS_CRITICAL is not great either because
-  nothing prevents the rate to be changed to an absurdly low value, which
-  would not go well with a DVFS PWM.
-* This bakes power contraints specific to your board in the SoC clock
-  controller. Another board, another BL21 could have different
-  contraints. We can't lock all PWM clock sources. This is not
-  appropriate.
-
-You need to properly describe your regualtors in DT.
-
->
-> [...]
->
->> > +static int meson_a1_periphs_probe(struct platform_device *pdev)
->> > +{
->> > +	struct device *dev = &pdev->dev;
->> > +	struct clk_hw *hw;
->> > +	void __iomem *base;
->> > +	struct regmap *map;
->> > +	int clkid, i, err;
->> > +
->> > +	base = devm_platform_ioremap_resource(pdev, 0);
->> > +	if (IS_ERR(base))
->> > +		return dev_err_probe(dev, PTR_ERR(base),
->> > +				     "can't ioremap resource\n");
->> > +
->> > +	map = devm_regmap_init_mmio(dev, base, &a1_periphs_regmap_cfg);
->> > +	if (IS_ERR(map))
->> > +		return dev_err_probe(dev, PTR_ERR(map),
->> > +				     "can't init regmap mmio region\n");
->> > +
->> > +	/* Populate regmap for the regmap backed clocks */
->> > +	for (i = 0; i < ARRAY_SIZE(a1_periphs_regmaps); i++)
->> > +		a1_periphs_regmaps[i]->map = map;
->> > +
->> > +	for (clkid = 0; clkid < a1_periphs_hw_onecell_data.num; clkid++) {
->> > +		hw = a1_periphs_hw_onecell_data.hws[clkid];
->> > +		err = devm_clk_hw_register(dev, hw);
->> > +		if (err)
->> > +			return dev_err_probe(dev, err,
->> > +					     "clock registration failed\n");
->> > +	}
->> > +
->> > +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
->> > +					   &a1_periphs_hw_onecell_data);
->> > +}
->> > +
->> > +#ifdef CONFIG_OF
->> 
->> Same as the PLL driver
->> 
->
-> Sure, good point.
->
-> [...]
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
