@@ -2,104 +2,77 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D9FC61DA4
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 23:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7FB2C61DA4
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 23:47:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230171AbjCIXjN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Mar 2023 18:39:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40718 "EHLO
+        id S230445AbjCIXrz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Mar 2023 18:47:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230095AbjCIXjM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2023 18:39:12 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41251F366A;
-        Thu,  9 Mar 2023 15:39:11 -0800 (PST)
+        with ESMTP id S231299AbjCIXry (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2023 18:47:54 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24B2B10B1CF;
+        Thu,  9 Mar 2023 15:47:53 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DBC07B820C6;
-        Thu,  9 Mar 2023 23:39:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FBEEC433D2;
-        Thu,  9 Mar 2023 23:39:08 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E374BB820C6;
+        Thu,  9 Mar 2023 23:47:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90A80C433D2;
+        Thu,  9 Mar 2023 23:47:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678405148;
-        bh=1wMFil0QP+T2/FyaFVOMtx1T7V81zvH2ISpPAOZJtZs=;
+        s=k20201202; t=1678405670;
+        bh=NQ0z0vWRZKFSOsNta5bZXQwrrn+JWpr6q/3op/tZXNg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ApV8KN2IAaVyh9vF8VBhdlRtM3ypNj2RvkhKeSjrFeluHMO6HitLTk4jb8ArSIKeX
-         onrFzS9nlvqyX9bdh1/EvZISE/WlcU1/AZzXSuDNrzUVlLoir4uLRtcFKncf1wEEZM
-         JTAUgMuSdTs6xNGZI2mvCJs+KoWWonjDuyctOQ7W+d3bjs4paoS5wTEahYlYIVxe1K
-         YcCAiA+V2xgByOKBfTuLDJroM3Ws9t2OA7DDjU6sLxTrWk29kCvSCXkQ33vp3DlsuT
-         fPB1OmX3XErwQa+O+u7tQltlJnLUrN0eKp5JVOebrQrT5uJstD4J6OvGRxaeUohd9r
-         qItCT7yvY/HOw==
-Message-ID: <6b9cbb2be5ec087773290af9538f8488.sboyd@kernel.org>
+        b=KW0qaj+KdPT2EaWE5uLTvMsecdNBQIGz46H7UdCdVjDFKIb/RC/8X/LvZsIJTkbVP
+         +imQ8wEZlv7TgHnR2B8J0eH9OLup1A91rJAE7An5kjloxS15rX23HoHQEluuNQAqN7
+         pWzaMkSCxk7vRCl2nmTAT/EJ2C+4dMEjM1H76mCfQv15kmsQNAND6135yZseXe6ynt
+         3RyPKTbfdhjIKG8PfYPB4Cii18HOmTHGSOO9Snd/cwNcGvjVB1E+KS9PpwDtTJmU3w
+         TCw6BUC8Y7UJQdo1/uXNxjjTxyEc6InZGRWBe68H212c3pRU6f6i9LNpkVbI0eb/Hy
+         1Cf+KucTYznSA==
+Message-ID: <ec1fb4d134181a1b1859bcb884dcd494.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230308-clk_of_declare-fix-v1-1-317b741e2532@kernel.org>
-References: <20230308-clk_of_declare-fix-v1-1-317b741e2532@kernel.org>
-Subject: Re: [PATCH] clk: Avoid invalid function names in CLK_OF_DECLARE()
+In-Reply-To: <b94ee1d2-b224-f9d5-3f3c-0096634f4c93@loongson.cn>
+References: <20230307115022.12846-2-zhuyinbo@loongson.cn> <202303082037.QPfBP64A-lkp@intel.com> <b94ee1d2-b224-f9d5-3f3c-0096634f4c93@loongson.cn>
+Subject: Re: [PATCH v13 2/2] clk: clk-loongson2: add clock controller driver support
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linus.walleij@linaro.org, saravanak@google.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <nathan@kernel.org>
-To:     Nathan Chancellor <nathan@kernel.org>, mturquette@baylibre.com
-Date:   Thu, 09 Mar 2023 15:39:04 -0800
+Cc:     oe-kbuild-all@lists.linux.dev, Jianmin Lv <lvjianmin@loongson.cn>,
+        Liu Peibao <liupeibao@loongson.cn>, wanghongliang@loongson.cn,
+        loongson-kernel@lists.loongnix.cn
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        kernel test robot <lkp@intel.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zhuyinbo <zhuyinbo@loongson.cn>
+Date:   Thu, 09 Mar 2023 15:47:46 -0800
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Nathan Chancellor (2023-03-08 12:47:11)
-> After commit c28cd1f3433c ("clk: Mark a fwnode as initialized when using
-> CLK_OF_DECLARE() macro"), drivers/clk/mvebu/kirkwood.c fails to build:
+Quoting zhuyinbo (2023-03-08 18:58:02)
 >=20
->  drivers/clk/mvebu/kirkwood.c:358:1: error: expected identifier or '('
->  CLK_OF_DECLARE(98dx1135_clk, "marvell,mv98dx1135-core-clock",
->  ^
->  include/linux/clk-provider.h:1367:21: note: expanded from macro 'CLK_OF_=
-DECLARE'
->          static void __init name##_of_clk_init_declare(struct device_node=
- *np) \
->                             ^
->  <scratch space>:124:1: note: expanded from here
->  98dx1135_clk_of_clk_init_declare
->  ^
->  drivers/clk/mvebu/kirkwood.c:358:1: error: invalid digit 'd' in decimal =
-constant
->  include/linux/clk-provider.h:1372:34: note: expanded from macro 'CLK_OF_=
-DECLARE'
->          OF_DECLARE_1(clk, name, compat, name##_of_clk_init_declare)
->                                          ^
->  <scratch space>:125:3: note: expanded from here
->  98dx1135_clk_of_clk_init_declare
->    ^
->  drivers/clk/mvebu/kirkwood.c:358:1: error: invalid digit 'd' in decimal =
-constant
->  include/linux/clk-provider.h:1372:34: note: expanded from macro 'CLK_OF_=
-DECLARE'
->          OF_DECLARE_1(clk, name, compat, name##_of_clk_init_declare)
->                                          ^
->  <scratch space>:125:3: note: expanded from here
->  98dx1135_clk_of_clk_init_declare
->    ^
->  drivers/clk/mvebu/kirkwood.c:358:1: error: invalid digit 'd' in decimal =
-constant
->  include/linux/clk-provider.h:1372:34: note: expanded from macro 'CLK_OF_=
-DECLARE'
->          OF_DECLARE_1(clk, name, compat, name##_of_clk_init_declare)
->                                          ^
->  <scratch space>:125:3: note: expanded from here
->  98dx1135_clk_of_clk_init_declare
->    ^
+> =E5=9C=A8 2023/3/8 =E4=B8=8B=E5=8D=888:16, kernel test robot =E5=86=99=E9=
+=81=93:
+> > Hi Yinbo,
+> >
+[...]
+> >
+> >     drivers/clk/clk-loongson2.c: In function 'loongson2_calc_pll_rate':
+> >>> drivers/clk/clk-loongson2.c:79:15: error: implicit declaration of fun=
+ction 'readq'; did you mean 'readl'? [-Werror=3Dimplicit-function-declarati=
+on]
+> >        79 |         val =3D readq(loongson2_pll_base + offset);
+> >           |               ^~~~~
+> >           |               readl
+> >     cc1: some warnings being treated as errors
 >=20
-> C function names must start with either an alphabetic letter or an
-> underscore. To avoid generating invalid function names from clock names,
-> add two underscores to the beginning of the identifier.
->=20
-> Fixes: c28cd1f3433c ("clk: Mark a fwnode as initialized when using CLK_OF=
-_DECLARE() macro")
-> Suggested-by: Saravana Kannan <saravanak@google.com>
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> ---
+> The CONFIG_64BIT not enabled in your config file, I will add a depend on =
 
-Applied to clk-fixes
+> "CONFIG_64BIT" in my clock driver to fix this compile error.
+
+Do you need to use readq() here? Can you read two 32-bit registers with
+readl() and put them together for a 64-bit number?
