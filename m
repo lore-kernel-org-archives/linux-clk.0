@@ -2,216 +2,159 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88417C678D5
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 03:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A7AC678D5
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 03:18:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229692AbjCIDRw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Mar 2023 22:17:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33172 "EHLO
+        id S229817AbjCIDSc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Mar 2023 22:18:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbjCIDRv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 22:17:51 -0500
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C14FC99251;
-        Wed,  8 Mar 2023 19:17:48 -0800 (PST)
-X-UUID: f5ef8622be2811ed945fc101203acc17-20230309
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=6ekB0136q+AHaHDVCYN2MXJgbUOSslj7hxr+lbgi9rg=;
-        b=aTi5LF1Zw+jm80G4/9qK18XTsAMtkVgPLXLQGjR113Qw96TlqvqvnsNLJ//tVf67PicJyVXFTMWqXU7Mw2KhOf/ZlNRrXgeXoG9zIYgy+QlW9YP3ngzWeUEq04VU0JBYNe2F+U4UcoFQ+S/7YAcIGrhjHSpflAkE8GtlqR9cQj0=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.20,REQID:c9eb3614-35f3-4aaf-b38e-a814d6b2e9e7,IP:0,U
-        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-        release,TS:0
-X-CID-META: VersionHash:25b5999,CLOUDID:9a6a39f5-ddba-41c3-91d9-10eeade8eac7,B
-        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-        RL:1,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0
-X-CID-BVR: 0,NGT
-X-UUID: f5ef8622be2811ed945fc101203acc17-20230309
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw02.mediatek.com
-        (envelope-from <garmin.chang@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1829616159; Thu, 09 Mar 2023 11:17:45 +0800
-Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.25; Thu, 9 Mar 2023 11:17:44 +0800
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (172.21.101.239)
- by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
- 15.2.1118.25 via Frontend Transport; Thu, 9 Mar 2023 11:17:43 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Q3UQzXNBq9Oe80rLZS9HHtEEqBbrGQBkeDEI9Xu6R7NZnWijVGh/QWekkgHbOYalapOWvmq0GlOAjWZIjzp8dRZaontONqvDWCnQmNgL3LQSxMKe3dblQyJYLAacGGy+27L6wgSKsQdoDxfkCUB3vKlZJOO8Gtk7c4fCxVdsH36AUsU3+/jk3DMhl+mYFkMVHtHaoSaPokso780UEhRDwIMSmNliHbJ+q9mEBqEZ6qziRFc+J3yQSx9BhLDuKqoQivqt0svb2dvn6qcA7L4BTosGMMJPaI3T/CFJgmeju0eTKE57L9IVo/s50hwsHGJ481RU3muDjbDDB+yEA6srUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6ekB0136q+AHaHDVCYN2MXJgbUOSslj7hxr+lbgi9rg=;
- b=nneHP/qS3+GHAf06YfV92WfuXQS0NUxzhI0iCi12NmN/SgxIKA+0x4b0HnqqlhG3Mz//infNkSJ5MfTDsS4Twf5Xuq0kpMcsMeVPeGtFg+krXKyHX6JpEwa+vcfCRluUJdRxjF6fs7xhSYVOAE5fPBYU/J7vxzR1X1vH4tE3bOTUIiOvU6FE//OkL/bjAvWE6yI9fOQbOZN3ucqjo1n4Ywvit9JtF8onjt+1CIC7uX7nJKmeyO05XwwTwEOgrR8xGkLTyfo/nSNR1qzHtQm+M9ABG4ytRe++wvb4nZY8F5+rymvj+tV73GxmfYiG6xkwR60p5v1o1xIs35nA42bgYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6ekB0136q+AHaHDVCYN2MXJgbUOSslj7hxr+lbgi9rg=;
- b=ZLd9pKme7b3aNoi28yHh2k/iu/HEnjwJ4Eo+Pkj9hmtqbv5g4DdgRd3cLF+BJMFK6cK64Aea8pt8sftYLyk/fE+eW4jhQZz92B2Sp3HHuOnVM91vEJKg7K7IRuKDu8jxnqnMLsFwHV4mOqVQnPRERICsG2jj7XgSKRLY88UTnX8=
-Received: from PUZPR03MB5877.apcprd03.prod.outlook.com (2603:1096:301:a5::6)
- by TYZPR03MB6470.apcprd03.prod.outlook.com (2603:1096:400:1ca::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.28; Thu, 9 Mar
- 2023 03:17:41 +0000
-Received: from PUZPR03MB5877.apcprd03.prod.outlook.com
- ([fe80::cd32:5baf:ebd0:3eaa]) by PUZPR03MB5877.apcprd03.prod.outlook.com
- ([fe80::cd32:5baf:ebd0:3eaa%8]) with mapi id 15.20.6178.018; Thu, 9 Mar 2023
- 03:17:41 +0000
-From:   =?utf-8?B?R2FybWluIENoYW5nICjlvLXlrrbpipgp?= 
-        <Garmin.Chang@mediatek.com>
-To:     "wenst@chromium.org" <wenst@chromium.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        Project_Global_Chrome_Upstream_Group 
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        "richardcochran@gmail.com" <richardcochran@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH v5 19/19] clk: mediatek: Add MT8188 adsp clock support
-Thread-Topic: [PATCH v5 19/19] clk: mediatek: Add MT8188 adsp clock support
-Thread-Index: AQHZLAR6vSYJ4kvugU2KoZrR5FW8tK687UeAgDUmF4A=
-Date:   Thu, 9 Mar 2023 03:17:40 +0000
-Message-ID: <0a35db84279047ff4a6f000f80c9eed364ec1312.camel@mediatek.com>
-References: <20230119124848.26364-1-Garmin.Chang@mediatek.com>
-         <20230119124848.26364-20-Garmin.Chang@mediatek.com>
-         <CAGXv+5EW8DXXp+D_M1AU7ohrrbmU8e7eMwo5LpZb9FHWi7ELAw@mail.gmail.com>
-In-Reply-To: <CAGXv+5EW8DXXp+D_M1AU7ohrrbmU8e7eMwo5LpZb9FHWi7ELAw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PUZPR03MB5877:EE_|TYZPR03MB6470:EE_
-x-ms-office365-filtering-correlation-id: 2079d06e-cd71-4494-c164-08db204cd779
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 4itRWKxufRAtKreVvt5m0LM0Uk7is1GMBRKCqUmlVs5z1pETkF7TuM+Y+E3vIgGUg+UWybLVVZmu1oy7w06nnmw7+t8ernklhVRiiM5RuspxZ8gScaDjAmt7coP1HjCm2gQ80ueE14n6+fDp4eNiInTTFFb2P1MrDE2OOwuaYtXVfvaVt/mxcT5BKnhqacWYVJSoSHl+GOFPfq8XeYVNuZp1iKGknxHReh8Y1/jCeJfcCAGxiJ/lXOXVYD9736n12JQNg228+ILRlGwXls0yRrnq2H1Pyo0Gu7GtpynQtWbKNIKU48ztDCgcWsAZ1QtrENm/Ru8eKUk0o3iH62ECBvD/L17FUgtAHwBvaGK9XTWu3NsvXsGvcUE/e5aPJXyCJTPe0dAAmQXdj5tXtYhz+ACMUc6PsaXUN1mYSckMavgSaFHjX83ihSeKYPls3vdGcs/7WxDQo7wgvSGVHmYp2pEvhXMgXfIc7d3rX2imyOIaiT8sPChJ4CMXM2YMVFv+nHASu9zpqTdShgQorElw4Tl9qWdyQ4JjNj+3BsP4kPLWuoNhhwnR6ZFkt0PBZoycl7kuQ3yBHMDjSRcKmdzy3DpkTjaUue/am4SgcpyZT7Q5kduht/8yHYDRIA//XbqIiL++HQsYOmMIrZCyc+07KNDYTUlAAQprOhW02Gny6++7azZwxxqeW2rrMo32IrO/
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR03MB5877.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(376002)(39860400002)(346002)(396003)(366004)(136003)(451199018)(122000001)(5660300002)(86362001)(38070700005)(66476007)(85182001)(66946007)(36756003)(8936002)(4326008)(38100700002)(2906002)(41300700001)(7416002)(8676002)(66446008)(66556008)(64756008)(76116006)(6916009)(2616005)(53546011)(186003)(83380400001)(6512007)(26005)(91956017)(54906003)(478600001)(71200400001)(6506007)(6486002)(966005)(316002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?bnpCV0R1Rm9VNEJEN2RmeFVNemZrWkJ0dzAvY2tDVkhtK2R2NitYODdpcHhW?=
- =?utf-8?B?VlRVeXM5QjUzWis5ajlyaFR5UG9jUjVHWHdZa2FPbE5BQ2tYTUJ0QXoxOXhK?=
- =?utf-8?B?WDVHQVNZTldxZGh5RFFCeWtpbS9oOWwwakhwanVFcmk2MnU4N0MxeExwMkF1?=
- =?utf-8?B?TnNQRitRanIzcE1KY2JXT0lmd0d4bEtKeExiYVFyaXlLekRqRlc2WGxhb3hF?=
- =?utf-8?B?bEtvdnNkU3BoR1puVFdsRDBRRUtteXpMWkxrQU9sTmg5Y3RqUFpSTkExQVFv?=
- =?utf-8?B?QXBhUy9tUUxCTUUrRXE5bS9CNm5oQ2tlR1VNa2ZjVUZENzlTK2dLNDlseTFI?=
- =?utf-8?B?c0ZpQkdPMDQyaHlCcW1rNDl2UlMzTGt1QzdWaWlnWUV4VWFvL3lTTU0xb0py?=
- =?utf-8?B?U1JiT0dWdnE1eDVGbDZoUWpwRmlUa0ZhZDlhTVkxdmM5WEFtK2thSExmOUN6?=
- =?utf-8?B?R3l3d0kzclM0OFNxZXhjZXZ4WThkM2ZOVm5nK21QYm80NUZHUVR4Wmx4UXNz?=
- =?utf-8?B?TUMxNnp0SC9DWTFWZnRUOEdPMmNsZXhvcDZIbWpCZW1SZVoxNjVHUm1ZZE9N?=
- =?utf-8?B?ckk1b1RwVElVMVFRcVpXeVR0RGNabjkrZ1Arc2VVdVVqRkZHQlMrZHAwNENI?=
- =?utf-8?B?MTBwOUtlc1NIL2lIWEY1L3RuZWVISlQ0QW5VSFZ0dFN2V0daY3hiQmxTbEdU?=
- =?utf-8?B?VUN6NkNxSWFDdVk2a2JBK3dtbVhLMlZ0VVFVV2xiTEphL2gxN0RLOWp3Z25r?=
- =?utf-8?B?K0loM1ZDYXQzOENBYllabEJjZ0czaEVRN2NtM1ZQeGVaWDIzeXVnWWZ4alhC?=
- =?utf-8?B?U2cxZWdXTWRaZTdGcmxFNHR3eUF3ZW45VXgwaEZxMFlTZWhGSkgwR1ROTnox?=
- =?utf-8?B?Mys0djRCVmQzZ2YxSkc0djdrR1lFYkdhbjNFeG54bkJST29YZFJhUVQ3eVhy?=
- =?utf-8?B?dUgxcXlaekJIcG1QOU42dkZjZFNsOXFGYXFVRUUzSDZvQ3l2UFdYWDhIM1Nm?=
- =?utf-8?B?WFN5U05hMkNyWGJRWTVYMG8vNEtFdVdnU2h5VWdYeUgxWDI3aFBmY0JEek5U?=
- =?utf-8?B?VldRTEJXSmJSTWdGak1sQXZUTG1ac2pjRFBDSzFQcjdFWVY1UW9CSW43UTBB?=
- =?utf-8?B?dllTN1BROC9LL3pHQVcvR2ozU3dleTl4bndVYmpNbFNydzhlRUxaajMycGVs?=
- =?utf-8?B?MW8xS2FFcUlaNW5wWE9BV0d4RUVicjFlZW9YelFRaHZtSW9FdjJ6YkZlYWg1?=
- =?utf-8?B?YWx3dXpVUFF0dTU1NHNYR3ZUcnpTSUpTOFdXMGZVRi9LdzFJbUYwdUE2TFl5?=
- =?utf-8?B?NGluZnQ0ekU5YWZkeW8xRnJFSUdybkNTS0ltU1VrVEhDSnp3YlZON0hrV0d3?=
- =?utf-8?B?SDBmU21FTVNZaFVlc21OV2p3WW0rOEFuaGpsV090MWdWRG84ZTBIejlqSFFp?=
- =?utf-8?B?dENaUGVGbGhBajZrYTZuWkhuWGVUUGcrYzJiT1BvejdPRWtlc1JjWk1xWkM5?=
- =?utf-8?B?QXNBSGkyUWFoakg4V3lSWnNVZUd4azVXaHMyRjdkWi9oTmF6QzVvMUN3Z3hG?=
- =?utf-8?B?b1g0TjFlOGZra0I1NVdWZzg2QXdIckNORUUrbmpKVklhZFdqRmRReElUUUsz?=
- =?utf-8?B?MlJsbUJnS3BLOURRUFMzQWJmc1hsS0pvRHRMZW9GY2MzNVFhRVJMWk5NTWo5?=
- =?utf-8?B?UlpTTUFHN3pOZGtvTHR6Zi9ybWZBZkpUZGxGVEJjaXdNSlZXT1cxY29Uall3?=
- =?utf-8?B?emV0di9OTExab01kUzZ1NkZFV2VwbFdyRFBOWThqOUxkZ0g1NVFka3dZQ3R5?=
- =?utf-8?B?cU1rWW9SRm9IVTNvaU5rL281eU1WSTVMU2ptNEsreForU3RPK0lCcnNCSXpr?=
- =?utf-8?B?czd1a3JscXdwTnovN3g4MzhCeGJOM21hZlJHTmprbXVUZG0yV1h4Z2FWTytr?=
- =?utf-8?B?T1NoaC90cE9obVlZemQ2ejl1SWhEZmNsbnFPeEpNQitRR1dIRmRMd2h3STNG?=
- =?utf-8?B?WjkvaWlKclNpNVc0cnQzQ0pabFZ1dmFyY3hlV1NDaG4vc2xrbU5JTEV2QnVL?=
- =?utf-8?B?bjVldjRUNG1YU1FNMDFMMHJKT3hHZVgyOTlTMXdZY1o5QjlDM040cHBjSjBB?=
- =?utf-8?B?ekdQbGQ1M0k5R0RpcE5vVWFkVHBMclYyTGRuVnVUQytsMmlRdjJqNU93VUNC?=
- =?utf-8?B?bkE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <074D2E16DFF8EE49A59E0BF4740B90FB@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        with ESMTP id S229639AbjCIDSY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 22:18:24 -0500
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E84E113505;
+        Wed,  8 Mar 2023 19:18:09 -0800 (PST)
+Received: from loongson.cn (unknown [10.20.42.35])
+        by gateway (Coremail) with SMTP id _____8AxJMTwTwlkWTQKAA--.1921S3;
+        Thu, 09 Mar 2023 11:18:08 +0800 (CST)
+Received: from [10.20.42.35] (unknown [10.20.42.35])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8AxHuTpTwlkWhxQAA--.37414S3;
+        Thu, 09 Mar 2023 11:18:03 +0800 (CST)
+Subject: Re: [PATCH v13 2/2] clk: clk-loongson2: add clock controller driver
+ support
+From:   zhuyinbo <zhuyinbo@loongson.cn>
+To:     kernel test robot <lkp@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, Jianmin Lv <lvjianmin@loongson.cn>,
+        Liu Peibao <liupeibao@loongson.cn>, wanghongliang@loongson.cn,
+        loongson-kernel@lists.loongnix.cn
+References: <20230307115022.12846-2-zhuyinbo@loongson.cn>
+ <202303082037.QPfBP64A-lkp@intel.com>
+ <b94ee1d2-b224-f9d5-3f3c-0096634f4c93@loongson.cn>
+Message-ID: <a16ac33d-e313-2eeb-007d-20f61d670308@loongson.cn>
+Date:   Thu, 9 Mar 2023 11:18:01 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR03MB5877.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2079d06e-cd71-4494-c164-08db204cd779
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Mar 2023 03:17:40.7585
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 8MFSibRPa2ZMZX0p/VuuL+C4XZmUbIDLT1kb/7P/8j6BYw8Ye3t1yZRz+mf/+U/MRzDlqDr/oWnHhy/cEPdxlKuypH0HHhBKVyjPY+wc6OM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB6470
+In-Reply-To: <b94ee1d2-b224-f9d5-3f3c-0096634f4c93@loongson.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID: AQAAf8AxHuTpTwlkWhxQAA--.37414S3
+X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjvJXoWxWF18ur13tF17Gr15Wr1ftFb_yoWrAw4xpw
+        4ktryUJryFqr18Xr4UKryUXry5tr4DJ3WDJr1UJFyUZrWDZw1jqr4I9F1jgr1DJr4kGryU
+        Jr1DXrWxuF17JwUanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        bDAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28E
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
+        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI0_Jrv_JF1le2I262IYc4CY
+        6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrV
+        C2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE
+        7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14
+        v26r126r1DMxAIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_WwCFx2IqxVCFs4IE
+        7xkEbVWUJVW8JwCFI7km07C267AKxVWUtVW8ZwC20s026c02F40E14v26r1j6r18MI8I3I
+        0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAI
+        cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcV
+        CF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07joKZXUUUUU=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gRnJpLCAyMDIzLTAyLTAzIGF0IDE1OjM5ICswODAwLCBDaGVuLVl1IFRzYWkgd3JvdGU6DQo+
-IE9uIFRodSwgSmFuIDE5LCAyMDIzIGF0IDk6MDIgUE0gR2FybWluLkNoYW5nIDwNCj4gR2FybWlu
-LkNoYW5nQG1lZGlhdGVrLmNvbT4gd3JvdGU6DQo+ID4gDQo+ID4gQWRkIE1UODE4OCBhZHNwIGNs
-b2NrIGNvbnRyb2xsZXIgd2hpY2ggcHJvdmlkZXMgY2xvY2sgZ2F0ZQ0KPiA+IGNvbnRyb2wgZm9y
-IEF1ZGlvIERTUC4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBHYXJtaW4uQ2hhbmcgPEdhcm1p
-bi5DaGFuZ0BtZWRpYXRlay5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvY2xrL21lZGlhdGVr
-L01ha2VmaWxlICAgICAgICAgICAgICAgICB8ICAyICstDQo+ID4gIC4uLi9jbGsvbWVkaWF0ZWsv
-Y2xrLW10ODE4OC1hZHNwX2F1ZGlvMjZtLmMgICB8IDQ1DQo+ID4gKysrKysrKysrKysrKysrKysr
-Kw0KPiA+ICAyIGZpbGVzIGNoYW5nZWQsIDQ2IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkN
-Cj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdDgxODgt
-YWRzcF9hdWRpbzI2bS5jDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL21lZGlh
-dGVrL01ha2VmaWxlDQo+ID4gYi9kcml2ZXJzL2Nsay9tZWRpYXRlay9NYWtlZmlsZQ0KPiA+IGlu
-ZGV4IDhiZWZhZWRmZGQzZC4uYjU2YWU5YmVlMWQ4IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMv
-Y2xrL21lZGlhdGVrL01ha2VmaWxlDQo+ID4gKysrIGIvZHJpdmVycy9jbGsvbWVkaWF0ZWsvTWFr
-ZWZpbGUNCj4gPiBAQCAtODksNyArODksNyBAQCBvYmotJChDT05GSUdfQ09NTU9OX0NMS19NVDgx
-ODgpICs9IGNsay1tdDgxODgtDQo+ID4gYXBtaXhlZHN5cy5vIGNsay1tdDgxODgtdG9wY2tnZW4u
-bw0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY2xrLW10ODE4OC1pcGUu
-byBjbGstbXQ4MTg4LQ0KPiA+IG1mZy5vIGNsay1tdDgxODgtdmRlYy5vIFwNCj4gPiAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNsay1tdDgxODgtdmRvMC5vIGNsay1tdDgxODgt
-DQo+ID4gdmRvMS5vIGNsay1tdDgxODgtdmVuYy5vIFwNCj4gPiAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIGNsay1tdDgxODgtdnBwMC5vIGNsay1tdDgxODgtDQo+ID4gdnBwMS5v
-IGNsay1tdDgxODgtd3BlLm8gXA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgY2xrLW10ODE4OC1pbXBfaWljX3dyYXAubw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgY2xrLW10ODE4OC1pbXBfaWljX3dyYXAubyBjbGstDQo+ID4gbXQ4MTg4LWFk
-c3BfYXVkaW8yNm0ubw0KPiA+ICBvYmotJChDT05GSUdfQ09NTU9OX0NMS19NVDgxOTIpICs9IGNs
-ay1tdDgxOTIubw0KPiA+ICBvYmotJChDT05GSUdfQ09NTU9OX0NMS19NVDgxOTJfQVVEU1lTKSAr
-PSBjbGstbXQ4MTkyLWF1ZC5vDQo+ID4gIG9iai0kKENPTkZJR19DT01NT05fQ0xLX01UODE5Ml9D
-QU1TWVMpICs9IGNsay1tdDgxOTItY2FtLm8NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsv
-bWVkaWF0ZWsvY2xrLW10ODE4OC1hZHNwX2F1ZGlvMjZtLmMNCj4gPiBiL2RyaXZlcnMvY2xrL21l
-ZGlhdGVrL2Nsay1tdDgxODgtYWRzcF9hdWRpbzI2bS5jDQo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2
-NDQNCj4gPiBpbmRleCAwMDAwMDAwMDAwMDAuLmY5MTM4MWExMzE2Yw0KPiA+IC0tLSAvZGV2L251
-bGwNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ4MTg4LWFkc3BfYXVkaW8y
-Nm0uYw0KPiA+IEBAIC0wLDAgKzEsNDUgQEANCj4gPiArLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZp
-ZXI6IEdQTC0yLjAtb25seQ0KPiA+ICsvLw0KPiA+ICsvLyBDb3B5cmlnaHQgKGMpIDIwMjIgTWVk
-aWFUZWsgSW5jLg0KPiA+ICsvLyBBdXRob3I6IEdhcm1pbiBDaGFuZyA8Z2FybWluLmNoYW5nQG1l
-ZGlhdGVrLmNvbT4NCj4gPiArDQo+ID4gKyNpbmNsdWRlIDxsaW51eC9jbGstcHJvdmlkZXIuaD4N
-Cj4gPiArI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPg0KPiA+ICsjaW5jbHVkZSA8
-ZHQtYmluZGluZ3MvY2xvY2svbWVkaWF0ZWssbXQ4MTg4LWNsay5oPg0KPiA+ICsNCj4gPiArI2lu
-Y2x1ZGUgImNsay1nYXRlLmgiDQo+ID4gKyNpbmNsdWRlICJjbGstbXRrLmgiDQo+ID4gKw0KPiA+
-ICtzdGF0aWMgY29uc3Qgc3RydWN0IG10a19nYXRlX3JlZ3MgYWRzcF9hdWRpbzI2bV9jZ19yZWdz
-ID0gew0KPiA+ICsgICAgICAgLnNldF9vZnMgPSAweDgwLA0KPiA+ICsgICAgICAgLmNscl9vZnMg
-PSAweDgwLA0KPiA+ICsgICAgICAgLnN0YV9vZnMgPSAweDgwLA0KPiA+ICt9Ow0KPiA+ICsNCj4g
-PiArI2RlZmluZSBHQVRFX0FEU1BfRkxBR1MoX2lkLCBfbmFtZSwgX3BhcmVudCwgX3NoaWZ0KSAg
-ICAgICAgICAgXA0KPiA+ICsgICAgICAgR0FURV9NVEtfRkxBR1MoX2lkLCBfbmFtZSwgX3BhcmVu
-dCwgJmFkc3BfYXVkaW8yNm1fY2dfcmVncywNCj4gPiBfc2hpZnQsICAgICAgICAgICAgIFwNCj4g
-PiArICAgICAgICAgICAgICAgJm10a19jbGtfZ2F0ZV9vcHNfbm9fc2V0Y2xyLCBDTEtfSUdOT1JF
-X1VOVVNFRCkNCj4gDQo+IFdoeSBDTEtfSUdOT1JFX1VOVVNFRD8NCg0KVGhhbmsgeW91IGZvciB5
-b3VyIHJldmlldy4NCg0KQmVjYXVzZSBBRFNQX0lORlJBIGlzIGFsd2F5cyBvbiwgaXQgaXMgdW5u
-ZWNlc3NhcnkgdG8gYWRkDQpDTEtfSUdOT1JFX1VOVVNFRCBub3cuICBJIHdpaWwgcmVtb3ZlIGl0
-IGluIHY2LiBQbGVhc2Ugc2VlIGNvbW1pdA0KDQpodHRwczovL3BhdGNod29yay5rZXJuZWwub3Jn
-L3Byb2plY3QvbGludXgtbWVkaWF0ZWsvcGF0Y2gvMjAyMjEyMjMwODA1NTMuOTM5Ny0zLUdhcm1p
-bi5DaGFuZ0BtZWRpYXRlay5jb20vDQoNCkFkZCBpZ25vcmVfdW51c2VkIGJlZm9yZSB0byBhdm9p
-ZCAiQURTUF9JTkZSQSBpcyB0dXJuZWQgb2ZmIi4gSWYNCkFEU1BfSU5GUkEgaXMgdHVybmVkIG9m
-ZiwgYWNjZXNzaW5nIHJlZ2lzdGVycyB3aWxsIGNhdXNlIHRoZSBzeXN0ZW0gdG8NCmhhbmcuDQo=
+
+在 2023/3/9 上午10:58, zhuyinbo 写道:
+>
+> 在 2023/3/8 下午8:16, kernel test robot 写道:
+>> Hi Yinbo,
+>>
+>> I love your patch! Yet something to improve:
+>>
+>> [auto build test ERROR on clk/clk-next]
+>> [also build test ERROR on robh/for-next linus/master v6.3-rc1 
+>> next-20230308]
+>> [If your patch is applied to the wrong git tree, kindly drop us a note.
+>> And when submitting patch, we suggest to use '--base' as documented in
+>> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>>
+>> url: 
+>> https://github.com/intel-lab-lkp/linux/commits/Yinbo-Zhu/clk-clk-loongson2-add-clock-controller-driver-support/20230307-195252
+>> base: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git 
+>> clk-next
+>> patch link: 
+>> https://lore.kernel.org/r/20230307115022.12846-2-zhuyinbo%40loongson.cn
+>> patch subject: [PATCH v13 2/2] clk: clk-loongson2: add clock 
+>> controller driver support
+>> config: mips-allyesconfig 
+>> (https://download.01.org/0day-ci/archive/20230308/202303082037.QPfBP64A-lkp@intel.com/config)
+>> compiler: mips-linux-gcc (GCC) 12.1.0
+>> reproduce (this is a W=1 build):
+>>          wget 
+>> https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross 
+>> -O ~/bin/make.cross
+>>          chmod +x ~/bin/make.cross
+>>          # 
+>> https://github.com/intel-lab-lkp/linux/commit/391d6fc63ac65f5456e4755c9dd85232a6296285
+>>          git remote add linux-review 
+>> https://github.com/intel-lab-lkp/linux
+>>          git fetch --no-tags linux-review 
+>> Yinbo-Zhu/clk-clk-loongson2-add-clock-controller-driver-support/20230307-195252
+>>          git checkout 391d6fc63ac65f5456e4755c9dd85232a6296285
+>>          # save the config file
+>>          mkdir build_dir && cp config build_dir/.config
+>>          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 
+>> make.cross W=1 O=build_dir ARCH=mips olddefconfig
+>>          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 
+>> make.cross W=1 O=build_dir ARCH=mips SHELL=/bin/bash drivers/
+>>
+>> If you fix the issue, kindly add following tag where applicable
+>> | Reported-by: kernel test robot <lkp@intel.com>
+>> | Link: 
+>> https://lore.kernel.org/oe-kbuild-all/202303082037.QPfBP64A-lkp@intel.com/
+>>
+>> All errors (new ones prefixed by >>):
+>>
+>>     drivers/clk/clk-loongson2.c: In function 'loongson2_calc_pll_rate':
+>>>> drivers/clk/clk-loongson2.c:79:15: error: implicit declaration of 
+>>>> function 'readq'; did you mean 'readl'? 
+>>>> [-Werror=implicit-function-declaration]
+>>        79 |         val = readq(loongson2_pll_base + offset);
+>>           |               ^~~~~
+>>           |               readl
+>>     cc1: some warnings being treated as errors
+>
+> The CONFIG_64BIT not enabled in your config file, I will add a depend 
+> on "CONFIG_64BIT" in my clock driver to fix this compile error.
+My clock is for LoongArch platform, The LOONGARCH had select 
+"CONFIG_64BIT", I will add a depend on "LOONGARCH" in my clock driver to 
+fix this compile error.
+>
+>>
+>>
+>> vim +79 drivers/clk/clk-loongson2.c
+>>
+>>      73
+>>      74    static unsigned long loongson2_calc_pll_rate(int offset, 
+>> unsigned long rate)
+>>      75    {
+>>      76        u64 val;
+>>      77        u32 mult = 1, div = 1;
+>>      78
+>>    > 79        val = readq(loongson2_pll_base + offset);
+>>      80
+>>      81        mult = (val >> LOONGSON2_PLL_MULT_SHIFT) &
+>>      82                clk_div_mask(LOONGSON2_PLL_MULT_WIDTH);
+>>      83        div = (val >> LOONGSON2_PLL_DIV_SHIFT) &
+>>      84                clk_div_mask(LOONGSON2_PLL_DIV_WIDTH);
+>>      85
+>>      86        return div_u64((u64)rate * mult, div);
+>>      87    }
+>>      88
+>>
+
