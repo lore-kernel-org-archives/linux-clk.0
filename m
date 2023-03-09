@@ -2,349 +2,97 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6CF1C64EC4
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 14:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A20C64EC4
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 14:23:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231665AbjCIOWG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Mar 2023 09:22:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40234 "EHLO
+        id S231820AbjCIOXW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Mar 2023 09:23:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231495AbjCIOV6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2023 09:21:58 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D9B4B56FB
-        for <linux-clk@vger.kernel.org>; Thu,  9 Mar 2023 06:21:56 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id bx12so2019916wrb.11
-        for <linux-clk@vger.kernel.org>; Thu, 09 Mar 2023 06:21:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1678371714;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=AEHlRMi5Q2I80CZialyymAKTB782rTM8WKCpwZlq1o8=;
-        b=hcpQN/n+icfLdi79023NpowiwPnkzd6YL1WrFNyLc8oYHIQsBuUDpGUAahbYaLviym
-         ln31tKbSw7bs2TH8gTWfF1gchQ4Xd6Jk6XX4AkPt5Qtldrzu5ngCjwdnz1HI9/nhUFrF
-         67kNkh2+wKxd0c/WVsYRqYZWXjDbGgGOlfm1EIDEXrFEf75Z+4Nlq6OzXfWBe29nHii4
-         5wwvA/f7IdBAF5QrXAHxRd/RfXxHfoJ4YG5574mF/x5zFNF/FUVwDrm/kRksBTqTQN2G
-         GSMYCeKWDn5o0fQDC3uZZ0qej9VhA58dHOmWsnc79kGWxYZtoyyWXI++jbR/gv6zO2Ln
-         PWtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678371714;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AEHlRMi5Q2I80CZialyymAKTB782rTM8WKCpwZlq1o8=;
-        b=wwXh3VyQS57zj5junyW70BdeBC8B5WUB2Ylj4kHHOYz/BpeoaGWekfkfNN2AHfP0Fd
-         O+mtBZ+KFtU+8j41lK+bpguKCl5kfjDdvbxnK7QsVLVMHzFTr4USb49cHFyBhat0Cn52
-         9GI1q6ExIjgczx+zsD9RMZv5qzL1BkbSS9lT8m219ovt5EgLSvwdjzKiBjAEeRA5dfoL
-         qQNOUMLq+Qo0kVs63/gdRDN92qgzmFVLnfoKanuY8pZ6kFbFEWdYbHcScN8jrynr8E3h
-         VhpVu7WMgpkizKCTD9ASyeP1+sMABrZtceYsmRyaY8iZ/yUOH0ftR9uqhkSa4KqtzrFO
-         DODw==
-X-Gm-Message-State: AO0yUKUCn/fj7bc3YVWcEL+8vtZazLIl/wLEVlraYwG5supWdEkqJC45
-        97bL2O7g0+547iNMbsE/WdWAjQ==
-X-Google-Smtp-Source: AK7set+d7SR228BMsoIxKvezFbp4g82LTL4J61pq06eA7vMpP8G1ojBrn/NaLY8jkXnQlPBxLF+OoQ==
-X-Received: by 2002:adf:dd49:0:b0:2c7:1aaa:750 with SMTP id u9-20020adfdd49000000b002c71aaa0750mr14090260wrm.66.1678371714560;
-        Thu, 09 Mar 2023 06:21:54 -0800 (PST)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id a13-20020a5d508d000000b002c54536c662sm18204361wrt.34.2023.03.09.06.21.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Mar 2023 06:21:53 -0800 (PST)
-References: <20230301183759.16163-1-ddrokosov@sberdevices.ru>
- <20230301183759.16163-3-ddrokosov@sberdevices.ru>
- <1jr0u2azfi.fsf@starbuckisacylon.baylibre.com>
- <20230306200549.7iuedbl27ejfhf6b@CAB-WSD-L081021>
-User-agent: mu4e 1.8.13; emacs 28.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Cc:     neil.armstrong@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
-        martin.blumenstingl@googlemail.com, jian.hu@amlogic.com,
-        kernel@sberdevices.ru, rockosov@gmail.com,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v9 2/5] clk: meson: a1: add Amlogic A1 PLL clock
- controller driver
-Date:   Thu, 09 Mar 2023 15:20:23 +0100
-In-reply-to: <20230306200549.7iuedbl27ejfhf6b@CAB-WSD-L081021>
-Message-ID: <1jlek60zun.fsf@starbuckisacylon.baylibre.com>
+        with ESMTP id S231757AbjCIOXK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2023 09:23:10 -0500
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FECD38032
+        for <linux-clk@vger.kernel.org>; Thu,  9 Mar 2023 06:23:06 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed50:3a77:63e:b168:ae06])
+        by andre.telenet-ops.be with bizsmtp
+        id WENu2900l54Hw2A01ENuF8; Thu, 09 Mar 2023 15:23:05 +0100
+Received: from geert (helo=localhost)
+        by ramsan.of.borg with local-esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1paHAU-00BKv0-Lk;
+        Thu, 09 Mar 2023 15:22:54 +0100
+Date:   Thu, 9 Mar 2023 15:22:54 +0100 (CET)
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Hal Feng <hal.feng@starfivetech.com>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>
+cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 10/19] dt-bindings: clock: Add StarFive JH7110 always-on
+ clock and reset generator
+In-Reply-To: <20230221024645.127922-11-hal.feng@starfivetech.com>
+Message-ID: <dc88e0df-4e2f-d2b8-4ecb-514862d01c3c@linux-m68k.org>
+References: <20230221024645.127922-1-hal.feng@starfivetech.com> <20230221024645.127922-11-hal.feng@starfivetech.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+ 	Hi Hal, Esmil,
 
-On Mon 06 Mar 2023 at 23:05, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
+On Tue, 21 Feb 2023, Hal Feng wrote:
+> From: Emil Renner Berthing <kernel@esmil.dk>
+>
+> Add bindings for the always-on clock and reset generator (AONCRG) on the
+> JH7110 RISC-V SoC by StarFive Ltd.
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 
-> On Mon, Mar 06, 2023 at 12:17:23PM +0100, Jerome Brunet wrote:
->> 
->> On Wed 01 Mar 2023 at 21:37, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
->> 
->> > Introduce PLL clock controller for Amlogic A1 SoC family.
->> >
->> > Signed-off-by: Jian Hu <jian.hu@amlogic.com>
->> > Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
->> > ---
->> >  drivers/clk/meson/Kconfig  |  10 +
->> >  drivers/clk/meson/Makefile |   1 +
->> >  drivers/clk/meson/a1-pll.c | 365 +++++++++++++++++++++++++++++++++++++
->> >  drivers/clk/meson/a1-pll.h |  47 +++++
->> >  4 files changed, 423 insertions(+)
->> >  create mode 100644 drivers/clk/meson/a1-pll.c
->> >  create mode 100644 drivers/clk/meson/a1-pll.h
->> >
->
-> [...]
->
->> > diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
->> > new file mode 100644
->> > index 000000000000..c565f9b2a8dd
->> > --- /dev/null
->> > +++ b/drivers/clk/meson/a1-pll.c
->> > @@ -0,0 +1,365 @@
->> > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->> > +/*
->> > + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
->> > + * Author: Jian Hu <jian.hu@amlogic.com>
->> > + *
->> > + * Copyright (c) 2023, SberDevices. All Rights Reserved.
->> > + * Author: Dmitry Rokosov <ddrokosov@sberdevices.ru>
->> > + */
->> > +
->> > +#include <linux/clk-provider.h>
->> > +#include <linux/of_device.h>
->> > +#include <linux/platform_device.h>
->> > +#include "meson-a1-clkc.h"
->> 
->> As pointed out by the kernel robot, there is a problem here
->> 
->
-> My fault. Really sorry for that.
->
-> [...]
->
->> > +static struct clk_regmap fixed_pll = {
->> > +	.data = &(struct clk_regmap_gate_data){
->> > +		.offset = ANACTRL_FIXPLL_CTRL0,
->> > +		.bit_idx = 20,
->> > +	},
->> > +	.hw.init = &(struct clk_init_data) {
->> > +		.name = "fixed_pll",
->> > +		.ops = &clk_regmap_gate_ops,
->> > +		.parent_hws = (const struct clk_hw *[]) {
->> > +			&fixed_pll_dco.hw
->> > +		},
->> > +		.num_parents = 1,
->> > +		/*
->> > +		 * It is enough that the fdiv leaf has critical flag,
->> > +		 * No critical or unused flag here.
->> > +		 */
->> 
->> The comment is not useful
->> 
->
-> OK
->
->> > +	},
->> > +};
->> > +
->> > +static const struct pll_mult_range hifi_pll_mult_range = {
->> > +	.min = 32,
->> > +	.max = 64,
->> > +};
->> > +
->> > +static const struct reg_sequence hifi_init_regs[] = {
->> > +	{ .reg = ANACTRL_HIFIPLL_CTRL1, .def = 0x01800000 },
->> > +	{ .reg = ANACTRL_HIFIPLL_CTRL2, .def = 0x00001100 },
->> > +	{ .reg = ANACTRL_HIFIPLL_CTRL3, .def = 0x100a1100 },
->> > +	{ .reg = ANACTRL_HIFIPLL_CTRL4, .def = 0x00302000 },
->> > +	{ .reg = ANACTRL_HIFIPLL_CTRL0, .def = 0x01f18440 },
->> 
->> This last poke should not bits otherwise handled by parms.
->> This is a rate init in disguise.
->> 
->
-> I believe, you are talking about hifi_pll clk_regmap conflicts with
-> hifi_init_regs. The above init sequence shouldn't affect pll regmap setup,
-> it doesn't touch them (we assume that default bit values are all zero):
->
->     .en = {
->         .reg_off = ANACTRL_HIFIPLL_CTRL0,
->         .shift   = 28,
->         .width   = 1,
->     },
->     // init_value = 0x01f18440
->     // en_mask    = 0x10000000
->
->     .m = {
->         .reg_off = ANACTRL_HIFIPLL_CTRL0,
->         .shift   = 0,
->         .width   = 8,
->     },
->     // init_value = 0x01f18440
->     // m_mask     = 0x0000000f
+Thanks for your patch!
 
-mask is 0xff with width 8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-aoncrg.yaml
+> @@ -0,0 +1,76 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/starfive,jh7110-aoncrg.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: StarFive JH7110 Always-On Clock and Reset Generator
+> +
+> +maintainers:
+> +  - Emil Renner Berthing <kernel@esmil.dk>
+> +
 
->
->     .n = {
->         .reg_off = ANACTRL_HIFIPLL_CTRL0,
->         .shift   = 10,
->         .width   = 5,
->     },
->     // init_value = 0x01f18440
->     // n_mask     = 0x00007c00
->                            ^
->                     oops, one overlap
->                     but why we can't set init value for pre_sel?
->
->     .frac = {
->         .reg_off = ANACTRL_HIFIPLL_CTRL1,
->         .shift   = 0,
->         .width   = 19,
->     },
->     // init_value = 0x01800000
->     // frac_mask  = 0x0007ffff
->
->     .current_en = {
->         .reg_off = ANACTRL_HIFIPLL_CTRL0,
->         .shift   = 26,
->         .width   = 1,
->     },
->     // init_value      = 0x01f18440
->     // current_en_mask = 0x04000000
->
->     .l_detect = {
->         .reg_off = ANACTRL_HIFIPLL_CTRL2,
->         .shift   = 6,
->         .width   = 1,
->     },
->     // init_value    = 0x00001100
->     // l_detect_mask = 0x00000040
->
->> > +};
->> > +
->> > +static struct clk_regmap hifi_pll = {
->> > +	.data = &(struct meson_clk_pll_data){
->> > +		.en = {
->> > +			.reg_off = ANACTRL_HIFIPLL_CTRL0,
->> > +			.shift   = 28,
->> > +			.width   = 1,
->> > +		},
->> > +		.m = {
->> > +			.reg_off = ANACTRL_HIFIPLL_CTRL0,
->> > +			.shift   = 0,
->> > +			.width   = 8,
->> > +		},
->> > +		.n = {
->> > +			.reg_off = ANACTRL_HIFIPLL_CTRL0,
->> > +			.shift   = 10,
->> > +			.width   = 5,
->> > +		},
->> > +		.frac = {
->> > +			.reg_off = ANACTRL_HIFIPLL_CTRL1,
->> > +			.shift   = 0,
->> > +			.width   = 19,
->> > +		},
->> > +		.l = {
->> > +			.reg_off = ANACTRL_HIFIPLL_STS,
->> > +			.shift   = 31,
->> > +			.width   = 1,
->> > +		},
->> > +		.current_en = {
->> > +			.reg_off = ANACTRL_HIFIPLL_CTRL0,
->> > +			.shift   = 26,
->> > +			.width   = 1,
->> > +		},
->> > +		.l_detect = {
->> 
->> What is this ?
->> 
->
-> Lock detection module.
->
-> This is IP module included to new PLL power-on sequence. From clk-pll.c
-> patchset:
->
-> /*
->  * Compared with the previous SoCs, self-adaption current module
->  * is newly added for A1, keep the new power-on sequence to enable the
->  * PLL. The sequence is:
->  * 1. enable the pll, delay for 10us
->  * 2. enable the pll self-adaption current module, delay for 40us
->  * 3. enable the lock detect module
->  */
+This lacks a top-level "description" section, to anwer the question:
+What is an "Always-On Clock and Reset Generator"?
 
-Ok. I missed this is the PLL driver
+To me, "always-on" sounds like it's critical, and thus the driver
+must always be built-in?
 
->
-> [...]
->
->> > +static struct clk_regmap fclk_div3 = {
->> > +	.data = &(struct clk_regmap_gate_data){
->> > +		.offset = ANACTRL_FIXPLL_CTRL0,
->> > +		.bit_idx = 22,
->> > +	},
->> > +	.hw.init = &(struct clk_init_data){
->> > +		.name = "fclk_div3",
->> > +		.ops = &clk_regmap_gate_ops,
->> > +		.parent_hws = (const struct clk_hw *[]) {
->> > +			&fclk_div3_div.hw
->> > +		},
->> > +		.num_parents = 1,
->> > +		/*
->> > +		 * This clock is used by APB bus which is set in boot ROM code
->> > +		 * and is required by the platform to operate correctly.
->> > +		 * About critical, refer to fclk_div2.
->> 
->> This last line is not useful. Same for other occurences
->> 
->
-> Good point. Copy-paste detected :-)
->
-> [...]
->
->> > +static int meson_a1_pll_probe(struct platform_device *pdev)
->> > +{
->> > +	struct device *dev = &pdev->dev;
->> > +	struct clk_hw *hw;
->> > +	void __iomem *base;
->> > +	struct regmap *map;
->> > +	int clkid, i, err;
->> > +
->> > +	base = devm_platform_ioremap_resource(pdev, 0);
->> > +	if (IS_ERR(base))
->> > +		return dev_err_probe(dev, PTR_ERR(base),
->> > +				     "can't ioremap resource\n");
->> > +
->> > +	map = devm_regmap_init_mmio(dev, base, &a1_pll_regmap_cfg);
->> > +	if (IS_ERR(map))
->> > +		return dev_err_probe(dev, PTR_ERR(map),
->> > +				     "can't init regmap mmio region\n");
->> > +
->> > +	/* Populate regmap for the regmap backed clocks */
->> > +	for (i = 0; i < ARRAY_SIZE(a1_pll_regmaps); i++)
->> > +		a1_pll_regmaps[i]->map = map;
->> > +
->> > +	for (clkid = 0; clkid < a1_pll_hw_onecell_data.num; clkid++) {
->> > +		hw = a1_pll_hw_onecell_data.hws[clkid];
->> > +		err = devm_clk_hw_register(dev, hw);
->> > +		if (err)
->> > +			return dev_err_probe(dev, err,
->> > +					     "clock registration failed\n");
->> > +	}
->> > +
->> > +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
->> > +					   &a1_pll_hw_onecell_data);
->> > +}
->> > +
->> > +#ifdef CONFIG_OF
->> 
->> This config is selected by ARM64 which this driver depends on
->> 
->
-> Make sense, thanks a lot!
->
-> [...]
+Gr{oetje,eeting}s,
 
+ 						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+ 							    -- Linus Torvalds
