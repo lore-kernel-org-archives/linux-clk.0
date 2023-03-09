@@ -2,138 +2,163 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8386DC61DA4
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 06:25:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8477FC61DA4
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 06:27:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230064AbjCIGZn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Mar 2023 01:25:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49396 "EHLO
+        id S229876AbjCIG1x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Mar 2023 01:27:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230139AbjCIGZ0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2023 01:25:26 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0675FDC09D
-        for <linux-clk@vger.kernel.org>; Wed,  8 Mar 2023 22:25:12 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id j11so2867704edq.4
-        for <linux-clk@vger.kernel.org>; Wed, 08 Mar 2023 22:25:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678343110;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=obHvwV5aXqjiNUz9hYoyhrDzm/kScduQjw98xG7/KEs=;
-        b=jjyhv8k5K3ArwZK0nZZ/WsA/r/ggANnLRKe4kZsSNCrO3cFJan2faUjfdbjWNVwVYw
-         DO8tgjWkggxbGPjYKnJWoTxo9OTiNe5q3RIiHp/YyF9y0ECatGhOr3Fjfo4fTPGRquLN
-         mxVfdrENdtyJmcS0fl2ocCjw5u4btbxhAqhF4Gs6/nSpZPlnDZe6PzBa1bCCkQNF6qU2
-         Xun7gbAOeo1P2Ci2cZmPvfe/h5txObZT++E4wcyZfxDgFQ1oqIlyUGyNkWS+5i/IJAjR
-         d2Tpfi+2jRln1ACjO/lHp9s2celVf88pL9q3HptOyMC0hvlEyffh2a+3e52C1NuX59Q/
-         gZdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678343110;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=obHvwV5aXqjiNUz9hYoyhrDzm/kScduQjw98xG7/KEs=;
-        b=i5VmHmYIgg1oKTY2AVs/Y/IT0MOfCMpY4KAPO7vRJA6TqLHWRjVjAU50R94mMKyxeD
-         ymrGGKpI6pynfFCLaIxV96n5v7/k1asdItq9XOxSj3ZRd6n9JsSqQWGpTccs2N2gOMWZ
-         9Y5TMYltcJO5PGN/s84o6b0fiP3D3xUlBGbY4bJP/dY3B0Yt7eKsl6ZkKIv/5s2cPYmD
-         cjFn/ovG6dEBxSs0oM7x36tFAm9Cezg5ko5Sdk8xxOH1Ta+FIpgvRnDVfEKx05bWfhho
-         kGaJ0WtisvUL/O7+SLM0HMaj9l0HnQVRJPw1/jOi2rywkHfzh6NaPkSWmQljuzN/M+Ad
-         ll1w==
-X-Gm-Message-State: AO0yUKXfUm/Dq2q+3ke3xioZNLOyfNETudBqtRT8PuHl4OYTtKczNAGX
-        AtxYIj5kVENn800bRAFvXWMwxQ==
-X-Google-Smtp-Source: AK7set9zze89UeNZ2W90utNcsj+V/x1hzYimqzrNLO8URVxOR7jJOwBWfKNoQZyq2b4hy0kN7c27dw==
-X-Received: by 2002:a17:906:9f21:b0:884:3707:bd83 with SMTP id fy33-20020a1709069f2100b008843707bd83mr18666390ejc.69.1678343110512;
-        Wed, 08 Mar 2023 22:25:10 -0800 (PST)
-Received: from ?IPV6:2a02:810d:15c0:828:7ee2:e73e:802e:45c1? ([2a02:810d:15c0:828:7ee2:e73e:802e:45c1])
-        by smtp.gmail.com with ESMTPSA id x6-20020a1709064a8600b008be5b97ca49sm8377544eju.150.2023.03.08.22.25.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Mar 2023 22:25:10 -0800 (PST)
-Message-ID: <882bd054-9c3e-1b26-72a5-89ad92e21a79@linaro.org>
-Date:   Thu, 9 Mar 2023 07:25:08 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v13 1/2] dt-bindings: clock: add loongson-2 boot clock
- index
-Content-Language: en-US
-To:     zhuyinbo <zhuyinbo@loongson.cn>,
+        with ESMTP id S229887AbjCIG1s (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2023 01:27:48 -0500
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3AB87D886A;
+        Wed,  8 Mar 2023 22:27:41 -0800 (PST)
+Received: from loongson.cn (unknown [10.20.42.35])
+        by gateway (Coremail) with SMTP id _____8AxJIRcfAlkakMKAA--.13606S3;
+        Thu, 09 Mar 2023 14:27:40 +0800 (CST)
+Received: from [10.20.42.35] (unknown [10.20.42.35])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8CxPuRSfAlkbT1QAA--.39752S3;
+        Thu, 09 Mar 2023 14:27:35 +0800 (CST)
+Subject: Re: [PATCH v13 2/2] clk: clk-loongson2: add clock controller driver
+ support
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        kernel test robot <lkp@intel.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     Jianmin Lv <lvjianmin@loongson.cn>,
+        zhuyinbo@loongson.cn, Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, Jianmin Lv <lvjianmin@loongson.cn>,
         Liu Peibao <liupeibao@loongson.cn>, wanghongliang@loongson.cn,
         loongson-kernel@lists.loongnix.cn
-References: <20230307115022.12846-1-zhuyinbo@loongson.cn>
- <692a62da-a9a1-fa23-6e24-723d73c3a423@linaro.org>
- <5e9b3bd5-d885-6237-5e14-2becb3c956cc@loongson.cn>
- <31e2a67a-c046-9501-80de-e754ed450195@linaro.org>
- <ace5159b-ebbd-7805-518c-ed3d39e4793e@loongson.cn>
- <b2f9cd15-b303-882a-d4e0-36d1f6d155a8@linaro.org>
- <eca81d44-2513-8002-980d-755af32f36c4@loongson.cn>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <eca81d44-2513-8002-980d-755af32f36c4@loongson.cn>
-Content-Type: text/plain; charset=UTF-8
+References: <20230307115022.12846-2-zhuyinbo@loongson.cn>
+ <202303082037.QPfBP64A-lkp@intel.com>
+ <b94ee1d2-b224-f9d5-3f3c-0096634f4c93@loongson.cn>
+ <a16ac33d-e313-2eeb-007d-20f61d670308@loongson.cn>
+ <6180156d-109c-2f41-69ee-0a854dc3772e@kernel.org>
+From:   zhuyinbo <zhuyinbo@loongson.cn>
+Message-ID: <e51a23e5-ad69-d415-860f-3a9ab38bfbe9@loongson.cn>
+Date:   Thu, 9 Mar 2023 14:27:30 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <6180156d-109c-2f41-69ee-0a854dc3772e@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID: AQAAf8CxPuRSfAlkbT1QAA--.39752S3
+X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjvJXoWxCFWftF4DKF1kuw4rGFWxJFb_yoWrAry7pF
+        48JFZFyryrXr10qrW8Kr1DWryYqr4DJ3WUXr1DGF1xZFZFvw1Ygr409r1jgr1DWrs3GrWU
+        Jrn5XryxuF1UJrUanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        bDAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28E
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
+        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI0_Jrv_JF1le2I262IYc4CY
+        6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrV
+        C2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE
+        7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14
+        v26r126r1DMxAIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_WwCFx2IqxVCFs4IE
+        7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I
+        0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAI
+        cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcV
+        CF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07joKZXUUUUU=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/03/2023 02:43, zhuyinbo wrote:
-> 
-> 在 2023/3/8 下午6:38, Krzysztof Kozlowski 写道:
->> On 08/03/2023 10:24, zhuyinbo wrote:
->>>>>> That's an ABI break and commit msg does not explain it.
->>>>> you meaning is that need add a explanation in commit msg that why
->>>> You need good explanation to break the ABI. I don't understand the
->>>> commit msg, but anyway I could not find there justification for ABI
->>>> break. If you do not have good justification, don't break the ABI,
->>> The commit msg is the patch commit  log,  and I maybe not got it about
->>> break the ABI.  You said about "break the ABI"
->>>
->>> is whether is location issue about "LOONGSON2_BOOT_CLK"?   if yes,   the
->>> LOONGSON2_BOOT_CLK was placed
->>>
->>> after LOONGSON2_PIX1_PLL that is due to their clock parent is same.
->>> and I whether need add this explanation
->>>
->>> in patch commit log description?
->> Unfortunately I do not understand single thing from this.
->>
->> Best regards,
->> Krzysztof
-> 
-> The patch commit log description is patch desription.  as follows:
-> 
-> 
-> commit 592bc2b4106d787ea166ba16bfde6b3101ab1a8a
-> Author: Yinbo Zhu <zhuyinbo@loongson.cn>
-> Date:   Tue Mar 7 17:18:32 2023 +0800
-> 
->      dt-bindings: clock: add loongson-2 boot clock index
-> 
->      The Loongson-2 boot clock was used to spi and lio peripheral and
->      this patch was to add boot clock index number.
 
-I cannot understand this either.
+在 2023/3/9 下午2:09, Krzysztof Kozlowski 写道:
+> On 09/03/2023 04:18, zhuyinbo wrote:
+>> 在 2023/3/9 上午10:58, zhuyinbo 写道:
+>>> 在 2023/3/8 下午8:16, kernel test robot 写道:
+>>>> Hi Yinbo,
+>>>>
+>>>> I love your patch! Yet something to improve:
+>>>>
+>>>> [auto build test ERROR on clk/clk-next]
+>>>> [also build test ERROR on robh/for-next linus/master v6.3-rc1
+>>>> next-20230308]
+>>>> [If your patch is applied to the wrong git tree, kindly drop us a note.
+>>>> And when submitting patch, we suggest to use '--base' as documented in
+>>>> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>>>>
+>>>> url:
+>>>> https://github.com/intel-lab-lkp/linux/commits/Yinbo-Zhu/clk-clk-loongson2-add-clock-controller-driver-support/20230307-195252
+>>>> base: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+>>>> clk-next
+>>>> patch link:
+>>>> https://lore.kernel.org/r/20230307115022.12846-2-zhuyinbo%40loongson.cn
+>>>> patch subject: [PATCH v13 2/2] clk: clk-loongson2: add clock
+>>>> controller driver support
+>>>> config: mips-allyesconfig
+>>>> (https://download.01.org/0day-ci/archive/20230308/202303082037.QPfBP64A-lkp@intel.com/config)
+>>>> compiler: mips-linux-gcc (GCC) 12.1.0
+>>>> reproduce (this is a W=1 build):
+>>>>           wget
+>>>> https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross
+>>>> -O ~/bin/make.cross
+>>>>           chmod +x ~/bin/make.cross
+>>>>           #
+>>>> https://github.com/intel-lab-lkp/linux/commit/391d6fc63ac65f5456e4755c9dd85232a6296285
+>>>>           git remote add linux-review
+>>>> https://github.com/intel-lab-lkp/linux
+>>>>           git fetch --no-tags linux-review
+>>>> Yinbo-Zhu/clk-clk-loongson2-add-clock-controller-driver-support/20230307-195252
+>>>>           git checkout 391d6fc63ac65f5456e4755c9dd85232a6296285
+>>>>           # save the config file
+>>>>           mkdir build_dir && cp config build_dir/.config
+>>>>           COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0
+>>>> make.cross W=1 O=build_dir ARCH=mips olddefconfig
+>>>>           COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0
+>>>> make.cross W=1 O=build_dir ARCH=mips SHELL=/bin/bash drivers/
+>>>>
+>>>> If you fix the issue, kindly add following tag where applicable
+>>>> | Reported-by: kernel test robot <lkp@intel.com>
+>>>> | Link:
+>>>> https://lore.kernel.org/oe-kbuild-all/202303082037.QPfBP64A-lkp@intel.com/
+>>>>
+>>>> All errors (new ones prefixed by >>):
+>>>>
+>>>>      drivers/clk/clk-loongson2.c: In function 'loongson2_calc_pll_rate':
+>>>>>> drivers/clk/clk-loongson2.c:79:15: error: implicit declaration of
+>>>>>> function 'readq'; did you mean 'readl'?
+>>>>>> [-Werror=implicit-function-declaration]
+>>>>         79 |         val = readq(loongson2_pll_base + offset);
+>>>>            |               ^~~~~
+>>>>            |               readl
+>>>>      cc1: some warnings being treated as errors
+>>> The CONFIG_64BIT not enabled in your config file, I will add a depend
+>>> on "CONFIG_64BIT" in my clock driver to fix this compile error.
+>> My clock is for LoongArch platform, The LOONGARCH had select
+>> "CONFIG_64BIT", I will add a depend on "LOONGARCH" in my clock driver to
+>> fix this compile error.
+> No. Fix your code instead.
 
-> 
-> 
-> and your advice is "That's an ABI break and commit msg does not explain it."
-> 
-> I got it  from your advice that was to add a explanation about 
-> LOONGSON2_BOOT_CLK's
-> 
-> location issue in patch description, right?
+but the readq that ask CONFIG_64BIT is enabled,  definition in 
+include/asm-generic/io.h
 
-ABI break needs justification, why do you think it is fine or who
-is/isn't affected etc. Your commit msg does not explain why ABI break is
-okay. It doesn't even explain to me why you need it.
+so need enable CONFIG_64BIT for my clk driver.
 
 
-Best regards,
-Krzysztof
+#ifdef CONFIG_64BIT
+#ifndef readq
+#define readq readq
+static inline u64 readq(const volatile void __iomem *addr)
+{
+         u64 val;
+
+         __io_br();
+         val = __le64_to_cpu(__raw_readq(addr));
+         __io_ar();
+         return val;
+}
+#endif
+#endif /* CONFIG_64BIT */
+
+>
+> Best regards,
+> Krzysztof
 
