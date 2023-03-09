@@ -2,119 +2,240 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A319C6FD19
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 19:33:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0CA8C61DA4
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 19:44:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231148AbjCITdc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Mar 2023 14:33:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55912 "EHLO
+        id S229939AbjCIToh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Mar 2023 14:44:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231196AbjCITcy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2023 14:32:54 -0500
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97A0664221
-        for <linux-clk@vger.kernel.org>; Thu,  9 Mar 2023 11:32:03 -0800 (PST)
-Received: by mail-pl1-x62d.google.com with SMTP id v11so3104428plz.8
-        for <linux-clk@vger.kernel.org>; Thu, 09 Mar 2023 11:32:03 -0800 (PST)
+        with ESMTP id S229887AbjCITof (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2023 14:44:35 -0500
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2087.outbound.protection.outlook.com [40.107.255.87])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD450E6FE8;
+        Thu,  9 Mar 2023 11:44:13 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Jm6GLac0qJf17J7n5xonbE8KSGtfZRMboR7NVygPWuXZqYbCtWeYxEWpf73duJOgly0u8Z2uPlf9xDvnudoHEPHXVjWE8poml0E+jUhmTk7wezU51bu8D1EQ5vkdsKMA5p1gCxlcirzfl0ZGQSfONThc/WgMvQELhOvoiq9MJ68sMamC7OAHarBA8uvndsKNW+LyKVjrvLnNbwRMDCGRkQGeLR07Ys0ohAYBDRgm1+EDtpY/8Yci34/IAUB1yhjg+LnIyHm7voEi6KrkFFPtA7OGTMuY+C0RnN1fJAT+oUQJQ79qnLhRxJJanUNT8B3SLwleZ1GcZH7MH18QY5d+Sw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+cNJ6+qqP1dNogbazChbFz6FXbCy2cB/7zx+H744R80=;
+ b=djzke3lRbYyRB+rNXDyK9mPcykCN7LYIrEQ1zYgTKJu+wn2WFybLOWlSSiOgGhv4rjY/E081onURB7jJ8kJS3dpK6AujqP2Q9q2oCMiEKQiPNNsPiHNDiNzpukYayjgd1aQvpYqFNY+9JTm0hCVukIdwwDVBos4HkGDWL4X7n2a/lHm7ac0nV0hkrE/y1+D/S96mLP7sj7hSyTkF7EBHzR0rjxSimgPvEgPFiJevWTEeV3hklgqVC9RgOZlaadswq0nsn+L8us8WyDR//nHcurXat5POib4W7Sms/wvnru3H7OLdxWqsId2wImUYUVQNBL8/RUjX5VzJ9GfUsmTxvA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 175.98.123.7) smtp.rcpttodomain=baylibre.com smtp.mailfrom=nuvoton.com;
+ dmarc=fail (p=none sp=quarantine pct=100) action=none header.from=gmail.com;
+ dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20210112.gappssmtp.com; s=20210112; t=1678390323;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MlMbJ8RFUjqrNZ3nyQ3UxH3pIRl6kRtnRIdmgkJcEJU=;
-        b=dGwrQCXfmXHVpty9DfuY6vuVeC+fUW29D5SVOs5Qn2qZmiOZHtiqt2IbTfDZVgp8cR
-         24eVwxbOfjDMI36IcW+DwNypZChUZGOZwamdEAkqAzlYdz205bzwIUMTAegLK5N3SDF3
-         QNe42QKdIiByZvS9cEJEZgk/R2tVtnewn7Mk80K6ncmAdOE2xIlNqOD/Gti/187aYatH
-         XEYPd4dUDwdgl3ywvWf/gZv+9SAAT8iE5EYDzuubz+wjJwSdImHQPFj9LL87CxuMRiNg
-         s+1re28ikCD7xxABQRkjCBfILRXbFyIOxfH1ycRfatrkQtS1WXEcQ1dJcfGh7E6wpUMw
-         B9OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678390323;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MlMbJ8RFUjqrNZ3nyQ3UxH3pIRl6kRtnRIdmgkJcEJU=;
-        b=gEzN+NxNfyfDIzugG9F3QGjgXjhnPhS+d0iHM9/SshxSU/OZ23AUfYcodc13rro6V6
-         IVd6PRBY16gsxZMAoFkWoWHzg3dZDpH+GeoQQo//5XLq0vTkigUMXdbq5HW7xGdP4JOp
-         R0deDs3tFUPUu+T/mf/ncwb0Wp59cnaO6+Jgzx26dW0l3CDZEx1TEP/NrSCwAC+yxx2S
-         +8oNeAVe3Tsv1gGnHgeyDdckcmQY073IryWLQMh6CjSgQ8M2nrsyVGythAde1GnlWn2y
-         C2H/eBAwS3fBhsJtKWFVg7yq7qn7tFUu9WM85B/4n3KD1moWv5iVM8O2RsM32WdKaE4o
-         jdHg==
-X-Gm-Message-State: AO0yUKXxh/Ba17tk9CBDfcTU4T0y+jAfL+TuQJb/ZItUUXcTYYFgaUt6
-        MjNhUQ9N/BkRYPHxDIH5vKUYfw==
-X-Google-Smtp-Source: AK7set/Bw35pT/jjTQF3n73tY439qRrS10p0cjFW8L2W8KJUM41sEW/vQaXrR9/mwQZZvNmKbGEQFQ==
-X-Received: by 2002:a17:902:e752:b0:19e:748c:d419 with SMTP id p18-20020a170902e75200b0019e748cd419mr27236838plf.46.1678390322967;
-        Thu, 09 Mar 2023 11:32:02 -0800 (PST)
-Received: from localhost ([50.221.140.188])
-        by smtp.gmail.com with ESMTPSA id lh6-20020a170903290600b0019b0b6a1d5bsm17185plb.273.2023.03.09.11.32.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Mar 2023 11:32:02 -0800 (PST)
-Date:   Thu, 09 Mar 2023 11:32:02 -0800 (PST)
-X-Google-Original-Date: Thu, 09 Mar 2023 11:31:13 PST (-0800)
-Subject:     Re: [PATCH v4 12/19] clk: starfive: Add StarFive JH7110 always-on clock driver
-In-Reply-To: <CAJM55Z_HGt3iu=trv0v_VzyO3NkVo+aiEaT9vxRURz-MvrbCOg@mail.gmail.com>
-CC:     Conor Dooley <conor@kernel.org>, hal.feng@starfivetech.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, sboyd@kernel.org,
-        mturquette@baylibre.com, p.zabel@pengutronix.de,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        aou@eecs.berkeley.edu, ben.dooks@sifive.com,
-        daniel.lezcano@linaro.org, tglx@linutronix.de,
-        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org
-From:   Palmer Dabbelt <palmer@dabbelt.com>
-To:     emil.renner.berthing@canonical.com
-Message-ID: <mhng-2dfa0262-dc88-4256-bce9-d7d9bfbd2ba9@palmer-ri-x1c9a>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+ d=nuvoton.onmicrosoft.com; s=selector2-nuvoton-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+cNJ6+qqP1dNogbazChbFz6FXbCy2cB/7zx+H744R80=;
+ b=sQ+AXcdb+6ftAR+zHPDA/x/v080AsRnzKLIlitdNHSZEBse6ApTXvQDrF1vh7wvX5BFY5cC+VYNlBESrS4AC6WjNdQ/p8KMVvRe+3RXN0bay3l9MYQu2PNk63jGGgdk9T402a2cXCv3wxmuqMI3Kt4PLRl/+e3BLdxa/Q+Tjfsw=
+Received: from TYCPR01CA0157.jpnprd01.prod.outlook.com (2603:1096:400:2b1::10)
+ by SI2PR03MB5771.apcprd03.prod.outlook.com (2603:1096:4:150::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6134.26; Thu, 9 Mar
+ 2023 19:44:10 +0000
+Received: from TYZAPC01FT022.eop-APC01.prod.protection.outlook.com
+ (2603:1096:400:2b1:cafe::75) by TYCPR01CA0157.outlook.office365.com
+ (2603:1096:400:2b1::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.18 via Frontend
+ Transport; Thu, 9 Mar 2023 19:44:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 175.98.123.7)
+ smtp.mailfrom=nuvoton.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=gmail.com;
+Received-SPF: Pass (protection.outlook.com: domain of nuvoton.com designates
+ 175.98.123.7 as permitted sender) receiver=protection.outlook.com;
+ client-ip=175.98.123.7; helo=NTHCCAS04.nuvoton.com; pr=C
+Received: from NTHCCAS04.nuvoton.com (175.98.123.7) by
+ TYZAPC01FT022.mail.protection.outlook.com (10.118.152.106) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.20.6178.19 via Frontend Transport; Thu, 9 Mar 2023 19:44:09 +0000
+Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCCAS04.nuvoton.com
+ (10.1.8.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Fri, 10
+ Mar 2023 03:44:08 +0800
+Received: from taln60.nuvoton.co.il (10.191.1.180) by NTHCCAS01.nuvoton.com
+ (10.1.8.28) with Microsoft SMTP Server id 15.1.2375.7 via Frontend Transport;
+ Fri, 10 Mar 2023 03:44:08 +0800
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
+        id BC1126473B; Thu,  9 Mar 2023 21:44:07 +0200 (IST)
+From:   Tomer Maimon <tmaimon77@gmail.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <avifishman70@gmail.com>, <tali.perry1@gmail.com>,
+        <joel@jms.id.au>, <venture@google.com>, <yuenn@google.com>,
+        <benjaminfair@google.com>
+CC:     <openbmc@lists.ozlabs.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v15 0/1] Introduce Nuvoton Arbel NPCM8XX BMC SoC
+Date:   Thu, 9 Mar 2023 21:44:01 +0200
+Message-ID: <20230309194402.119562-1-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.33.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NotSetDelaration: True
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZAPC01FT022:EE_|SI2PR03MB5771:EE_
+X-MS-Office365-Filtering-Correlation-Id: ae2f820b-fe9f-4d2c-923a-08db20d6a6ca
+X-MS-Exchange-SenderADCheck: 0
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: uRJi+i8c90IezMt1Oe933aI10Djq2Dfn3lqYMkm2GEvtW4+rmIqC2hmRnGLLojWQmfLKALgewCJXY5KSmhSvTtbj3LYbcRxxA+eYa4XjoGimqh/1kLfOAcnwzFWEHWItdlOUnNaMZ7zkgC18n5KYV1kVcMeoFDMPivjIh0QFsOAdmwMoUfHgRLA1WnqIIvxdq9WqFWHPWYEJ9S2mTMXGJlSxiFli95Z74zN8Ey+jny5t2B874YfPahlBBb62zzf22PAdH1TlF7uhSTdolFxAtqdfIkAelSxUei5bsDq+BPGukHkLNfPKdUMVZoWkclCYTDaVxQxHji6cwtF+Yzu8P7vGSyby4moQKsQ7oe81nqmNzdBLcin6pzsHlWN0Yskb2LiZ/J1MIZ6kIU+CUjMEs7jToyhaJlz7mzb8OHzlT/65lAA7/NrPq6jb4edRw09cRejhMgsBzXecNU868pmHQ9yjFJxTFuwcXzNEqSznlFqw3gDOCssc+XaBIVMzq7Rx90f1k30ZzP/eZWzboA1tn4trC1XkTvTSv7v69qt33SgvRv94ySQ7ldGXXPX8xqcMHaWO1jrnObqO991v8QAiCJXf0sY3NUIJkEqUbLUQhSGYsPQiB2Ul7l4DIQ5pfmB5JeIkmQ26MDk0HaXkzMbBzo+nLQDqmFLSuC5ss700xhp9CoWLI7iiJFPxJNK/N7/uyj3QsSPcqVjuuckqywyPS1RQSSSJFcCGE5zOILFCG6A9S9mEj7ydG9s5qaW6dfy3z/LAnDNrrDadrmhZiH4fqQ==
+X-Forefront-Antispam-Report: CIP:175.98.123.7;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:NTHCCAS04.nuvoton.com;PTR:175-98-123-7.static.tfn.net.tw;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(396003)(346002)(136003)(376002)(451199018)(36840700001)(40470700004)(46966006)(2616005)(36860700001)(47076005)(42882007)(336012)(83380400001)(82310400005)(73392003)(54906003)(26005)(478600001)(42186006)(186003)(76482006)(110136005)(7416002)(82202003)(6266002)(1076003)(6666004)(316002)(966005)(8936002)(83170400001)(40460700003)(55446002)(40480700001)(356005)(81166007)(82740400003)(2906002)(5660300002)(70586007)(70206006)(41300700001)(8676002)(36756003)(4326008)(45356006)(32563001)(35450700002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: nuvoton.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2023 19:44:09.5660
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae2f820b-fe9f-4d2c-923a-08db20d6a6ca
+X-MS-Exchange-CrossTenant-Id: a3f24931-d403-4b4a-94f1-7d83ac638e07
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a3f24931-d403-4b4a-94f1-7d83ac638e07;Ip=[175.98.123.7];Helo=[NTHCCAS04.nuvoton.com]
+X-MS-Exchange-CrossTenant-AuthSource: TYZAPC01FT022.eop-APC01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR03MB5771
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 09 Mar 2023 10:19:06 PST (-0800), emil.renner.berthing@canonical.com wrote:
-> On Thu, 9 Mar 2023 at 19:11, Conor Dooley <conor@kernel.org> wrote:
->>
->> On Thu, Mar 09, 2023 at 03:06:13PM +0100, Emil Renner Berthing wrote:
->> >  On Thu, 9 Mar 2023 at 10:44, Hal Feng <hal.feng@starfivetech.com> wrote:
->>
->> > > The AON clock driver provides clocks for gmac0 which is used frequently.
->> > > So I think it would be more convenient if we set "default y" here.
->>
->> > You're right that if we default y for the ethernet driver then the aon
->> > clock/reset should also default y. Personally I don't think we should
->> > default y for every ethernet driver that might be used on some
->> > supported risc-v platform, but I see now that
->> > arch/riscv/config/defconfig already contains CONFIG_MACB=y,
->> > CONFIG_E1000E=y, CONFIG_R8169=y and CONFIG_MICROSEMI_PHY=y, so maybe
->> > I'm wrong or just too late.
->>
->> The defconfig really needs a good bit of cleanup (one of the many things
->> that I am telling myself I will do as part of kconfig.socs cleanup).
->>
->> w.r.t defconfig Palmer said it pretty well earlier on IRC: "defconfig
->> should be useful for kernel devs, which means it should boot on the
->> common dev boards".
->>
->> IMO, that means enough to boot an initramfs and poke the thing to see
->> that it is alive, so: ethernet & serial, and the clocks/resets/pinctrl
->> stuff required to get those going can all be set to y in defconfig.
->>
->> In the driver Kconfig entries, to me, it's more or less the same.
->> I guess, answer the question "Will your customer's board get to the
->> point where it can load a module ithout building this into the kernel?".
->> If the answer to that question is yes, then don't make it default y.
->>
->> That's my €0.02!
->
-> Cool. Defaulting to m in the Kconfig for anything that can be loaded
-> later is exactly what I was trying to say, except I mixed in the
-> defconfig for no good reason. That means both the aon clocks and
-> dwmac-starfive should default to m in Kconfig. The JH7110 (VisionFive
-> 2) boots just fine like that and brings up aon clocks and ethernet
-> after loading the modules.
+This patchset adds clock support for the Nuvoton 
+Arbel NPCM8XX Board Management controller (BMC) SoC family.
 
-That seems pretty reasonable to me.  It's not like defconfig or Kconfig 
-defaults or whatever are the only things we're going to test, but it's 
-way easier for folks trying poke around with these dev boards if they 
-boot defconfig.
+This patchset cover letter is based from the initial support for NPCM8xx BMC to
+keep tracking the version history.
+
+all the other initial support patches had been applied to Linux kernel 6.0.
+
+This patchset was tested on the Arbel NPCM8XX evaluation board.
+
+Addressed comments from:
+
+ - Stephen Boyd: https://www.spinics.net/lists/linux-clk/msg78406.html
+
+Changes since version 14:
+ - NPCM8XX clock driver
+	- Remove unnecessary register definitions.
+	- Remove the internal reference clock, instead use the external DT reference clock.
+	- rearrange the driver.
+	- using .names parameter in DT to define clock (refclk).
+
+Changes since version 13:
+ - NPCM8XX clock driver
+	- Remove unnecessary definitions and add module.h define
+	- Use in clk_parent_data struct.fw_name and .name.
+	- Add module_exit function.
+	- Add const to divider clock names.
+	- Add MODULE_DESCRIPTION and MODULE_LICENSE
+
+Changes since version 12:
+ - NPCM8XX clock driver
+	- Use clk_parent_data in mux and div clock structure.
+	- Add const to mux tables.
+	- Using devm_clk_hw_register_fixed_rate function.
+	- use only .name clk_parent_data instead .name and .fw_name.
+	- Modify mask values in mux clocks. 
+
+Changes since version 11:
+ - NPCM8XX clock driver
+	- Modify Kconfig help.
+	- Modify loop variable to unsigned int.
+
+Changes since version 11:
+ - NPCM8XX clock driver
+	- Modify Kconfig help.
+	- Modify loop variable to unsigned int.
+
+Changes since version 10:
+ - NPCM8XX clock driver
+	- Fix const warning.
+
+Changes since version 9:
+ - NPCM8XX clock driver
+	- Move configuration place.
+	- Using clk_parent_data instead of parent_name
+	- using devm_ioremap instead of ioremap. deeply sorry, I know we had
+	 a long discussion on what should the driver use, from other examples 
+	 (also in other clock drivers) I see the combination of 
+	 platform_get_resource and devm_ioremap are commonly used and it answer
+	 the reset and clock needs.
+
+Changes since version 8:
+ - NPCM8XX clock driver
+	- Move configuration place.
+	- Add space before and aftre '{' '}'.
+	- Handle devm_of_clk_add_hw_provider function error.
+
+Changes since version 7:
+ - NPCM8XX clock driver
+	- The clock and reset registers using the same memory region, 
+	  due to it the clock driver should claim the ioremap directly 
+	  without checking the memory region.
+
+Changes since version 6:
+ - NPCM reset driver
+	- Modify warning message.
+ - dt-bindings: serial: 8250: Add npcm845 compatible string patch accepted, due
+   to it the patch removed from the patchset.
+
+Changes since version 5:
+ - NPCM8XX clock driver
+	- Remove refclk if devm_of_clk_add_hw_provider function failed.
+ - NPCM8XX clock source driver
+	- Remove NPCM8XX TIMER_OF_DECLARE support, using the same as NPCM7XX.
+
+Changes since version 4:
+ - NPCM8XX clock driver
+	- Use the same quote in the dt-binding file.
+
+Changes since version 3:
+ - NPCM8XX clock driver
+	- Rename NPCM8xx clock dt-binding header file.
+	- Remove unused structures.
+	- Improve Handling the clocks registration.
+ - NPCM reset driver
+	- Add ref phandle to dt-binding.
+
+Changes since version 2:
+ - Remove NPCM8xx WDT compatible patch.
+ - Remove NPCM8xx UART compatible patch.
+ - NPCM8XX clock driver
+	- Add debug new line.
+	- Add 25M fixed rate clock.
+	- Remove unused clocks and clock name from dt-binding.
+ - NPCM reset driver
+	- Revert to npcm7xx dt-binding.
+	- Skip dt binding quotes.
+	- Adding DTS backward compatibility.
+	- Remove NPCM8xx binding include file.
+	- Warp commit message.
+- NPCM8XX device tree:
+	- Remove unused clock nodes (used in the clock driver)
+	- Modify gcr and rst node names.
+
+Changes since version 1:
+ - NPCM8XX clock driver
+	- Modify dt-binding.
+	- Remove unsed definition and include.
+	- Include alphabetically.
+	- Use clock devm.
+ - NPCM reset driver
+	- Modify dt-binding.
+	- Modify syscon name.
+	- Add syscon support to NPCM7XX dts reset node.
+	- use data structure.
+ - NPCM8XX device tree:
+	- Modify evb compatible name.
+	- Add NPCM7xx compatible.
+	- Remove disable nodes from the EVB DTS.
+
+Tomer Maimon (1):
+  clk: npcm8xx: add clock controller
+
+ drivers/clk/Kconfig       |   8 +
+ drivers/clk/Makefile      |   1 +
+ drivers/clk/clk-npcm8xx.c | 561 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 570 insertions(+)
+ create mode 100644 drivers/clk/clk-npcm8xx.c
+
+-- 
+2.33.0
+
