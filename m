@@ -2,113 +2,110 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E7CC64EC4
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 04:27:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 037E6C61DA4
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 04:48:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229525AbjCIE1O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Mar 2023 23:27:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55794 "EHLO
+        id S229501AbjCIEsA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Mar 2023 23:48:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229835AbjCIE1M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 23:27:12 -0500
-Received: from mail-ua1-x929.google.com (mail-ua1-x929.google.com [IPv6:2607:f8b0:4864:20::929])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA1FA90B57
-        for <linux-clk@vger.kernel.org>; Wed,  8 Mar 2023 20:27:10 -0800 (PST)
-Received: by mail-ua1-x929.google.com with SMTP id f17so321589uax.7
-        for <linux-clk@vger.kernel.org>; Wed, 08 Mar 2023 20:27:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1678336029;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ieOsjAqyzpAajCGC1a5mZjRKapEj1/IVvZ5C1bjX/7o=;
-        b=SmHOlIfvlICUpOY6DbOtEod/qcZ4atqdL5fcjKjl7+LbbYwTZjl5ZED7Dq4SEk59ap
-         ankUrwYHpFYkcIDvrBYd6LSIYXprJmtmR1CmFWk+oK01IPAe5jvSAteb1V3ZThU85Udw
-         qmtUiHOlBORl27jOCtUK6kvLCmwL1IRiHgksc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678336030;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ieOsjAqyzpAajCGC1a5mZjRKapEj1/IVvZ5C1bjX/7o=;
-        b=IkPINC2Yk6Q0G02ArGc7/2dkD81gNmni0ZBhd5jTIRH6QonFAjttUq+VgCAIZ9x84F
-         QXptJRa8GqsjFZXC9GdjgbX3wwLCi+Sc7FIPtT2bRxdwL3oNV+bPX/R05TSz/1obnJvO
-         4TvDfyXrIcjoE4NUKns3oPhihcfNRwWYAY+hQrSD34yMLlDEa6vbAVJhMbs2eYupH1Ur
-         qpxJsjWeputFNiRslwvDoev4W2Pf2v37o8tX882idMh9VMFqTOeIOfF8q0msWP9Pz2h2
-         bdNA/HjiAmiXRNd0AAqhSClErZfJJ/cls0KFLfj+rFxFMB3ZwB73razx3TD+d+iKiekg
-         sXPw==
-X-Gm-Message-State: AO0yUKVlQ1Cj6zPKO77It/0e/pJA4gf0rUYULkDRIy0EDFF6omzE6vLy
-        Z4aZ4yaD/Cb8nM61JvogCLie6El5+gBAVM4mVPownA==
-X-Google-Smtp-Source: AK7set/gee51c9AlWy0aEk/2rrxCvuyAgRAg2qGcJMrG0xU2avrdZyZgYSTGxy1emfR/hwcrDnyE7ZFHD9JuLjx4uVg=
-X-Received: by 2002:ab0:470b:0:b0:688:c23f:c22f with SMTP id
- h11-20020ab0470b000000b00688c23fc22fmr7754413uac.1.1678336029680; Wed, 08 Mar
- 2023 20:27:09 -0800 (PST)
+        with ESMTP id S229453AbjCIEr5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Mar 2023 23:47:57 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19CCD1FC6;
+        Wed,  8 Mar 2023 20:47:54 -0800 (PST)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 328NttiG018268;
+        Thu, 9 Mar 2023 04:47:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=2iD4qKrKVuTY9r+EQEmj3UNps1cWE5eVskoKOcWH9VI=;
+ b=Fq//dHoOyTJfoFZMUpjJN+Im6A4d8i8533j94YAhpcXmsY7inzogwGZ5l+jdeAoy1Qul
+ MyJFiRDppTjVJiFIXxv6vN3I4+shxKTsBqUM5fqS/cJQY4VAgCyqcqcy+TPi+GsZiGWq
+ MTz/bpla7x+A/wcW7K7mXoiIJshY6+2MlIGgyt/d8ptuNm6HP5r+ITwfmrPOk5PXnod+
+ o1sSuzMuNdV6iQRLSJCRvEV9H1ABOXnPRJHRbQgzkiSsNtrgInaMdxK+2rChLsJAAIdm
+ R/I43aD4juPoPTjJbC26pfG39t7hmfBv3YP0Chdt5KcDNKbzx+s/VmRPwrX+Ut9tu/83 Qg== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3p72qarsgf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 09 Mar 2023 04:47:29 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3294lRLA032394
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 9 Mar 2023 04:47:27 GMT
+Received: from [10.201.2.96] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 8 Mar 2023
+ 20:47:21 -0800
+Message-ID: <bc2680cb-e81f-4afb-5a8c-ac0f5a9aed78@quicinc.com>
+Date:   Thu, 9 Mar 2023 10:17:17 +0530
 MIME-Version: 1.0
-References: <20230206100105.861720-1-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230206100105.861720-1-angelogioacchino.delregno@collabora.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Thu, 9 Mar 2023 12:26:58 +0800
-Message-ID: <CAGXv+5H6jdWc0zKnW8LjsPYACoG1vRJHtTJUMHzY_8VYdX7g6g@mail.gmail.com>
-Subject: Re: [PATCH v3 0/7] MediaTek Frequency Hopping: MT6795/8173/92/95
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
-        edward-jw.yang@mediatek.com, johnson.wang@mediatek.com,
-        miles.chen@mediatek.com, chun-jie.chen@mediatek.com,
-        rex-bc.chen@mediatek.com, jose.exposito89@gmail.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH V6 7/9] dt-bindings: firmware: qcom,scm: document IPQ5332
+ SCM
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
+        <arnd@arndb.de>, <dmitry.baryshkov@linaro.org>,
+        <geert+renesas@glider.be>, <nfraprado@collabora.com>,
+        <broonie@kernel.org>, <rafal@milecki.pl>, <robimarko@gmail.com>,
+        <quic_gurus@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20230307062232.4889-1-quic_kathirav@quicinc.com>
+ <20230307062232.4889-8-quic_kathirav@quicinc.com>
+ <754a2d38-dd7b-48b6-80e5-683ca193e0b1@linaro.org>
+ <ab803e21-76bf-308c-9df0-8b7b45b472b2@quicinc.com>
+ <2d1661fe-92bd-a117-27a5-cf1803ce363f@linaro.org>
+Content-Language: en-US
+From:   Kathiravan T <quic_kathirav@quicinc.com>
+In-Reply-To: <2d1661fe-92bd-a117-27a5-cf1803ce363f@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: aDjSsLTmGoKWbN1wCRgxawY3sQscZdUM
+X-Proofpoint-ORIG-GUID: aDjSsLTmGoKWbN1wCRgxawY3sQscZdUM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-09_01,2023-03-08_03,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 impostorscore=0 suspectscore=0 clxscore=1015 bulkscore=0
+ mlxlogscore=912 spamscore=0 mlxscore=0 phishscore=0 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2303090036
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Feb 6, 2023 at 6:01=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> Changes in v3:
->  - Added commit to export register/unregister/parse FHCTL functions
->    to allow building clock drivers using FHCTL as modules
->
-> Changes in v2:
->  - Rebased over v4 of my clock drivers cleanups series [1]
->
-> This series adds support for Frequency Hopping (FHCTL) on more MediaTek
-> SoCs, specifically, MT6795, MT8173, MT8192 and MT8195.
->
-> In order to support older platforms like MT6795 and MT8173 it was
-> necessary to add a new register layout that is ever-so-slightly
-> different from the one that was previously introduced for MT8186.
->
-> Since the new layout refers to older SoCs, the one valid for MT8186
-> and newer SoCs was renamed to be a "v2" layout, while the new one
-> for older chips gets the "v1" name.
->
-> Note: These commits won't change any behavior unless FHCTL gets
->       explicitly enabled and configured in devicetrees.
->
-> [1]: https://patchwork.kernel.org/project/linux-mediatek/list/?series=3D7=
-14059
-> AngeloGioacchino Del Regno (7):
->   clk: mediatek: fhctl: Add support for older fhctl register layout
->   clk: mediatek: clk-pllfh: Export register/unregister/parse functions
->   dt-bindings: clock: mediatek,mt8186-fhctl: Support MT6795,
->     MT8173/92/95
->   clk: mediatek: mt6795: Add support for frequency hopping through FHCTL
->   clk: mediatek: mt8173: Add support for frequency hopping through FHCTL
->   clk: mediatek: mt8192: Add support for frequency hopping through FHCTL
->   clk: mediatek: mt8195: Add support for frequency hopping through FHCTL
 
-The changes look good to me overall. I've asked MediaTek to take a look
-at the various parameters used is this series, as I don't have the register
-definitions for the old version, and from what I've been told, the slope
-and other parameters depend on the chip design as well as manufacturing
-process used.
+On 3/8/2023 9:14 PM, Konrad Dybcio wrote:
+>
+> On 8.03.2023 16:39, Kathiravan T wrote:
+>> On 3/8/2023 4:31 PM, Konrad Dybcio wrote:
+>>> On 7.03.2023 07:22, Kathiravan T wrote:
+>>>> Document the compatible for IPQ5332 SCM.
+>>>>
+>>>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+>>>> ---
+>>> Does this board not have a crypto engine / CE1 clock exposed via
+>>> RPMCC? It will be enabled by default, but Linux should be aware
+>>> of it, so that we don't gate it by accident.
+>>
+>> IPQ5332 doesn't have the crypto engine and also it doesn't have RPMCC. Sorry, could you please help to explain how it is related to SCM?
+> SCM usually requires certain clocks to be up and that often includes
+> the CE1 clock on fairly recent designs.
 
-So, code wise this series is
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+Thanks for the explanation. I don't see such requirements for this SoC.
+
+
+> Konrad
+>> Thanks, Kathiravan T.
