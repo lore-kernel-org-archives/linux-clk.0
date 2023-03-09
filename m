@@ -2,100 +2,119 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31994C64EC4
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 19:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A319C6FD19
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 19:33:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230173AbjCITD4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Mar 2023 14:03:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52896 "EHLO
+        id S231148AbjCITdc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Mar 2023 14:33:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230027AbjCITDz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2023 14:03:55 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65CC1E503F;
-        Thu,  9 Mar 2023 11:03:54 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 01EE661CD0;
-        Thu,  9 Mar 2023 19:03:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80E3CC4339B;
-        Thu,  9 Mar 2023 19:03:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678388633;
-        bh=ev9ApdQFK9HxvCMF1QnE29vmlVWk2V34cqvfeT2lmfU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cviH78OvgsBynRidrNp7ft2hOZArdY02vmEf8L7DPyz8fFudbcjraleqFqpsdguV5
-         DLEkDrB74UfKEbwB38xqDoHOAFnCSIvpr2mC/kT7akdykxLwGpoIWLh1FGmR5kS3hg
-         88VKplnlLSESwFFRVP9GF4BEuzIaeaMo4zUhPBYU6EMSLEARHcFvSQSHbdvinY5Os5
-         cwGshD+rnD27ruM2KnHGl/hJQpRiixhydVz5KSZK9UVki1MbzMALenqqD3HbmkDbrn
-         D7pma45JR7Vmvmh8oIiHzw3EEgAFQCKwo6VIcctDskFlGvUEhJx5JkZF8JI2ycmnMW
-         8S4xbxD1EaCaw==
-Date:   Thu, 9 Mar 2023 19:03:47 +0000
-From:   Conor Dooley <conor@kernel.org>
-To:     Tommaso Merciai <tomm.merciai@gmail.com>
-Cc:     Hal Feng <hal.feng@starfivetech.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
+        with ESMTP id S231196AbjCITcy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2023 14:32:54 -0500
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97A0664221
+        for <linux-clk@vger.kernel.org>; Thu,  9 Mar 2023 11:32:03 -0800 (PST)
+Received: by mail-pl1-x62d.google.com with SMTP id v11so3104428plz.8
+        for <linux-clk@vger.kernel.org>; Thu, 09 Mar 2023 11:32:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20210112.gappssmtp.com; s=20210112; t=1678390323;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MlMbJ8RFUjqrNZ3nyQ3UxH3pIRl6kRtnRIdmgkJcEJU=;
+        b=dGwrQCXfmXHVpty9DfuY6vuVeC+fUW29D5SVOs5Qn2qZmiOZHtiqt2IbTfDZVgp8cR
+         24eVwxbOfjDMI36IcW+DwNypZChUZGOZwamdEAkqAzlYdz205bzwIUMTAegLK5N3SDF3
+         QNe42QKdIiByZvS9cEJEZgk/R2tVtnewn7Mk80K6ncmAdOE2xIlNqOD/Gti/187aYatH
+         XEYPd4dUDwdgl3ywvWf/gZv+9SAAT8iE5EYDzuubz+wjJwSdImHQPFj9LL87CxuMRiNg
+         s+1re28ikCD7xxABQRkjCBfILRXbFyIOxfH1ycRfatrkQtS1WXEcQ1dJcfGh7E6wpUMw
+         B9OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678390323;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MlMbJ8RFUjqrNZ3nyQ3UxH3pIRl6kRtnRIdmgkJcEJU=;
+        b=gEzN+NxNfyfDIzugG9F3QGjgXjhnPhS+d0iHM9/SshxSU/OZ23AUfYcodc13rro6V6
+         IVd6PRBY16gsxZMAoFkWoWHzg3dZDpH+GeoQQo//5XLq0vTkigUMXdbq5HW7xGdP4JOp
+         R0deDs3tFUPUu+T/mf/ncwb0Wp59cnaO6+Jgzx26dW0l3CDZEx1TEP/NrSCwAC+yxx2S
+         +8oNeAVe3Tsv1gGnHgeyDdckcmQY073IryWLQMh6CjSgQ8M2nrsyVGythAde1GnlWn2y
+         C2H/eBAwS3fBhsJtKWFVg7yq7qn7tFUu9WM85B/4n3KD1moWv5iVM8O2RsM32WdKaE4o
+         jdHg==
+X-Gm-Message-State: AO0yUKXxh/Ba17tk9CBDfcTU4T0y+jAfL+TuQJb/ZItUUXcTYYFgaUt6
+        MjNhUQ9N/BkRYPHxDIH5vKUYfw==
+X-Google-Smtp-Source: AK7set/Bw35pT/jjTQF3n73tY439qRrS10p0cjFW8L2W8KJUM41sEW/vQaXrR9/mwQZZvNmKbGEQFQ==
+X-Received: by 2002:a17:902:e752:b0:19e:748c:d419 with SMTP id p18-20020a170902e75200b0019e748cd419mr27236838plf.46.1678390322967;
+        Thu, 09 Mar 2023 11:32:02 -0800 (PST)
+Received: from localhost ([50.221.140.188])
+        by smtp.gmail.com with ESMTPSA id lh6-20020a170903290600b0019b0b6a1d5bsm17185plb.273.2023.03.09.11.32.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Mar 2023 11:32:02 -0800 (PST)
+Date:   Thu, 09 Mar 2023 11:32:02 -0800 (PST)
+X-Google-Original-Date: Thu, 09 Mar 2023 11:31:13 PST (-0800)
+Subject:     Re: [PATCH v4 12/19] clk: starfive: Add StarFive JH7110 always-on clock driver
+In-Reply-To: <CAJM55Z_HGt3iu=trv0v_VzyO3NkVo+aiEaT9vxRURz-MvrbCOg@mail.gmail.com>
+CC:     Conor Dooley <conor@kernel.org>, hal.feng@starfivetech.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, sboyd@kernel.org,
+        mturquette@baylibre.com, p.zabel@pengutronix.de,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 00/19] Basic clock, reset & device tree support for
- StarFive JH7110 RISC-V SoC
-Message-ID: <23111c4b-2bee-4f04-b0e6-bddea553d260@spud>
-References: <20230221024645.127922-1-hal.feng@starfivetech.com>
- <3a605bc8-104e-0935-4fd8-2da16ab9053b@starfivetech.com>
- <ZAb7JVghuiwZF1Q5@wendy>
- <2f03dfb2-5cf8-e954-913c-f0c27db6bcf5@starfivetech.com>
- <ZAh/UeSlUeGoKxki@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
- <4c071642-e3c8-4716-a580-5b42e25efb1c@spud>
- <ZAoOLIERMYI8UVlA@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
- <09630acb-f1ae-4dbd-9c9c-9adb1743bfe4@spud>
- <ZAosTc6VNco1okyR@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7VG2qaNb2wp6qtrg"
-Content-Disposition: inline
-In-Reply-To: <ZAosTc6VNco1okyR@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+        aou@eecs.berkeley.edu, ben.dooks@sifive.com,
+        daniel.lezcano@linaro.org, tglx@linutronix.de,
+        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org
+From:   Palmer Dabbelt <palmer@dabbelt.com>
+To:     emil.renner.berthing@canonical.com
+Message-ID: <mhng-2dfa0262-dc88-4256-bce9-d7d9bfbd2ba9@palmer-ri-x1c9a>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, 09 Mar 2023 10:19:06 PST (-0800), emil.renner.berthing@canonical.com wrote:
+> On Thu, 9 Mar 2023 at 19:11, Conor Dooley <conor@kernel.org> wrote:
+>>
+>> On Thu, Mar 09, 2023 at 03:06:13PM +0100, Emil Renner Berthing wrote:
+>> >  On Thu, 9 Mar 2023 at 10:44, Hal Feng <hal.feng@starfivetech.com> wrote:
+>>
+>> > > The AON clock driver provides clocks for gmac0 which is used frequently.
+>> > > So I think it would be more convenient if we set "default y" here.
+>>
+>> > You're right that if we default y for the ethernet driver then the aon
+>> > clock/reset should also default y. Personally I don't think we should
+>> > default y for every ethernet driver that might be used on some
+>> > supported risc-v platform, but I see now that
+>> > arch/riscv/config/defconfig already contains CONFIG_MACB=y,
+>> > CONFIG_E1000E=y, CONFIG_R8169=y and CONFIG_MICROSEMI_PHY=y, so maybe
+>> > I'm wrong or just too late.
+>>
+>> The defconfig really needs a good bit of cleanup (one of the many things
+>> that I am telling myself I will do as part of kconfig.socs cleanup).
+>>
+>> w.r.t defconfig Palmer said it pretty well earlier on IRC: "defconfig
+>> should be useful for kernel devs, which means it should boot on the
+>> common dev boards".
+>>
+>> IMO, that means enough to boot an initramfs and poke the thing to see
+>> that it is alive, so: ethernet & serial, and the clocks/resets/pinctrl
+>> stuff required to get those going can all be set to y in defconfig.
+>>
+>> In the driver Kconfig entries, to me, it's more or less the same.
+>> I guess, answer the question "Will your customer's board get to the
+>> point where it can load a module ithout building this into the kernel?".
+>> If the answer to that question is yes, then don't make it default y.
+>>
+>> That's my €0.02!
+>
+> Cool. Defaulting to m in the Kconfig for anything that can be loaded
+> later is exactly what I was trying to say, except I mixed in the
+> defconfig for no good reason. That means both the aon clocks and
+> dwmac-starfive should default to m in Kconfig. The JH7110 (VisionFive
+> 2) boots just fine like that and brings up aon clocks and ethernet
+> after loading the modules.
 
---7VG2qaNb2wp6qtrg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Mar 09, 2023 at 07:58:21PM +0100, Tommaso Merciai wrote:
-
-> I'm able to boot the board using nfs ;)
-> (without issue)
-
-Sweet, glad you got it working. If you'd like to provide a Tested-by:
-for the series that'd be wonderful too :) No pressure haha
-
-
-
---7VG2qaNb2wp6qtrg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZAotkgAKCRB4tDGHoIJi
-0qrYAQCoESXCeNmtpXU+5dNKYxyNusF7HGsBVqTMKuOe9O5fpgEA1LPxd5+mlff6
-egqx99j+fyCuoUTh9ATU0tJ3o9ZIDQo=
-=qK0s
------END PGP SIGNATURE-----
-
---7VG2qaNb2wp6qtrg--
+That seems pretty reasonable to me.  It's not like defconfig or Kconfig 
+defaults or whatever are the only things we're going to test, but it's 
+way easier for folks trying poke around with these dev boards if they 
+boot defconfig.
