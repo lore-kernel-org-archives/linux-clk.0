@@ -2,181 +2,145 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E7AC6FD1C
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 12:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF44C64EC4
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 14:08:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229873AbjCIMoL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Mar 2023 07:44:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42578 "EHLO
+        id S231252AbjCIOID (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Mar 2023 09:08:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229770AbjCIMoK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2023 07:44:10 -0500
-Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 102035DCAF;
-        Thu,  9 Mar 2023 04:44:07 -0800 (PST)
-Received: from loongson.cn (unknown [10.20.42.35])
-        by gateway (Coremail) with SMTP id _____8BxfdqV1AlkQmsKAA--.2354S3;
-        Thu, 09 Mar 2023 20:44:05 +0800 (CST)
-Received: from [10.20.42.35] (unknown [10.20.42.35])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8Ax+72S1Alk5J1QAA--.8149S3;
-        Thu, 09 Mar 2023 20:44:04 +0800 (CST)
-Subject: Re: [PATCH v13 1/2] dt-bindings: clock: add loongson-2 boot clock
- index
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        with ESMTP id S231318AbjCIOHj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2023 09:07:39 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79338A2C06
+        for <linux-clk@vger.kernel.org>; Thu,  9 Mar 2023 06:06:34 -0800 (PST)
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 16D62445B5
+        for <linux-clk@vger.kernel.org>; Thu,  9 Mar 2023 14:06:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1678370792;
+        bh=TgMelgrb/VLkpH6kwv9lPEQ4dt1XAT9+KiTGTm5i5/c=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=YJGXRjilLgc8bP6qril5wP5NswQaPR+vGxFgU4PzAtvCcuhbLvEtE7BazU4PxjEcY
+         K48CWoOXsqHvWq6QLvyWxzgO1eshd7vwOpy4PUde2qM7MKR/9Io5nL5cj5dsDF2qQI
+         xX1Oo6Zh2NuySfwpTQd57ZKxVt4b5tncXez3rfEfJgfjEak4H0Hvfzwzxo/J6wYyRR
+         Xw0rePDW8QdyMtHuBmILhTRJ/mdgQhNhS76JhOFFFgsDnE4cEvv+s62tRBXe3MjBPN
+         CK/w9sJewhhJeIoQt3mqyP+jGMGlk7yBqEerJsZWkT/ycI+E3r6HB3/9hrMrEjRtlw
+         R/GhRct1l1mwg==
+Received: by mail-qk1-f197.google.com with SMTP id dm13-20020a05620a1d4d00b00742a22c4239so1261210qkb.1
+        for <linux-clk@vger.kernel.org>; Thu, 09 Mar 2023 06:06:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678370790;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TgMelgrb/VLkpH6kwv9lPEQ4dt1XAT9+KiTGTm5i5/c=;
+        b=G9kgE935YU84ZEcecTslYsRClORLSjZwJBOBjQNS4wylm2ZhFTQGh87J7/2olLEs6Z
+         AC8WHvnIbBa/BUeG/QbB4F1T/x1AroAdsIKCezhJGn6GEidO0KTrAQWzZMXowMUuhqu8
+         qO7+iX4p62PFZshkmcCGK9tQdjiBKRl0cBh0sEXCB3bSak5cj7XFO6Q83mV/2fTdH3UO
+         hKjTbJVmXlVAspucB7AdZ5iyoRnORYnn1z+GsWGXpThocaW3Yy/0xXZre5DUzmJgG30h
+         oF6IVBt+QgObNKDSrs1uZi7fGYSEt4lSQJz76W9eb84dWv06OwnC70jBpa9cPbh9bcrs
+         WRAA==
+X-Gm-Message-State: AO0yUKUxlxZPbykmiDTH/45SZYQqAL7PY2EDU7sl1UK7k3i0KLEUGrol
+        gBQWxKfA9q8Skn8BOFaUVHduiv0L2kPZrlAxWNAKx8p4FNcM9Rq982DAk4xAAp5vHXC9p938Eqg
+        obEERy0tHZp39D74XDcwMxdMvKMn3q74gDwKyFwp9hNql1dfS6t0Puw==
+X-Received: by 2002:a05:620a:d4d:b0:742:83ee:f569 with SMTP id o13-20020a05620a0d4d00b0074283eef569mr4858490qkl.13.1678370789723;
+        Thu, 09 Mar 2023 06:06:29 -0800 (PST)
+X-Google-Smtp-Source: AK7set+ABJAfbsKbyBYTfNj8osraItDCdyOTOpNmYDJbKIB/zNyDVGBmaDT/KnGUKXMOamd6DWcbCpCildmbTpuYCcw=
+X-Received: by 2002:a05:620a:d4d:b0:742:83ee:f569 with SMTP id
+ o13-20020a05620a0d4d00b0074283eef569mr4858475qkl.13.1678370789479; Thu, 09
+ Mar 2023 06:06:29 -0800 (PST)
+MIME-Version: 1.0
+References: <20230221024645.127922-1-hal.feng@starfivetech.com>
+ <20230221024645.127922-13-hal.feng@starfivetech.com> <CAJM55Z8H4qmy_BiD0SHW-w5ifzhzokdO-QxpUUz9aeUd+htrZg@mail.gmail.com>
+ <8c30220a-abef-7518-cb44-abcea91408e2@starfivetech.com> <49ab1072-98ba-f364-9b66-68658566e732@starfivetech.com>
+In-Reply-To: <49ab1072-98ba-f364-9b66-68658566e732@starfivetech.com>
+From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Date:   Thu, 9 Mar 2023 15:06:13 +0100
+Message-ID: <CAJM55Z9YGjD+1haWcXEZNkHnWNRZckdBmTTykTt7QZV_LUohgQ@mail.gmail.com>
+Subject: Re: [PATCH v4 12/19] clk: starfive: Add StarFive JH7110 always-on
+ clock driver
+To:     Hal Feng <hal.feng@starfivetech.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     Jianmin Lv <lvjianmin@loongson.cn>,
-        Liu Peibao <liupeibao@loongson.cn>, wanghongliang@loongson.cn,
-        loongson-kernel@lists.loongnix.cn, zhuyinbo@loongson.cn
-References: <20230307115022.12846-1-zhuyinbo@loongson.cn>
- <692a62da-a9a1-fa23-6e24-723d73c3a423@linaro.org>
- <5e9b3bd5-d885-6237-5e14-2becb3c956cc@loongson.cn>
- <31e2a67a-c046-9501-80de-e754ed450195@linaro.org>
- <ace5159b-ebbd-7805-518c-ed3d39e4793e@loongson.cn>
- <b2f9cd15-b303-882a-d4e0-36d1f6d155a8@linaro.org>
- <eca81d44-2513-8002-980d-755af32f36c4@loongson.cn>
- <882bd054-9c3e-1b26-72a5-89ad92e21a79@linaro.org>
-From:   zhuyinbo <zhuyinbo@loongson.cn>
-Message-ID: <817a65e9-b605-4bc0-2ff5-fc7f5db8585c@loongson.cn>
-Date:   Thu, 9 Mar 2023 20:44:01 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
-MIME-Version: 1.0
-In-Reply-To: <882bd054-9c3e-1b26-72a5-89ad92e21a79@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID: AQAAf8Ax+72S1Alk5J1QAA--.8149S3
-X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjvJXoWxCFWDCw18try3Xw4xZw15CFg_yoWrKFWkpr
-        18JF1UJryUJr4xJr1jqr1UGryjkr1UJw1UJr1UGF1UJr1UJr10qr47Xr1FgryUJr48J3W7
-        Ar1DAr1UZF1UXwUanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        bTAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
-        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28E
-        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM2
-        8EF7xvwVC2z280aVCY1x0267AKxVWxJr0_GcWln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq
-        07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7
-        xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Y
-        z7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwI
-        xGrwCF04k20xvE74AGY7Cv6cx26rWl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAF
-        wI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zV
-        AF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4l
-        IxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCw
-        CI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnI
-        WIevJa73UjIFyTuYvjxUcOJ5UUUUU
+        Conor Dooley <conor@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-在 2023/3/9 下午2:25, Krzysztof Kozlowski 写道:
-> On 09/03/2023 02:43, zhuyinbo wrote:
->> 在 2023/3/8 下午6:38, Krzysztof Kozlowski 写道:
->>> On 08/03/2023 10:24, zhuyinbo wrote:
->>>>>>> That's an ABI break and commit msg does not explain it.
->>>>>> you meaning is that need add a explanation in commit msg that why
->>>>> You need good explanation to break the ABI. I don't understand the
->>>>> commit msg, but anyway I could not find there justification for ABI
->>>>> break. If you do not have good justification, don't break the ABI,
->>>> The commit msg is the patch commit  log,  and I maybe not got it about
->>>> break the ABI.  You said about "break the ABI"
->>>>
->>>> is whether is location issue about "LOONGSON2_BOOT_CLK"?   if yes,   the
->>>> LOONGSON2_BOOT_CLK was placed
->>>>
->>>> after LOONGSON2_PIX1_PLL that is due to their clock parent is same.
->>>> and I whether need add this explanation
->>>>
->>>> in patch commit log description?
->>> Unfortunately I do not understand single thing from this.
->>>
->>> Best regards,
->>> Krzysztof
->> The patch commit log description is patch desription.  as follows:
->>
->>
->> commit 592bc2b4106d787ea166ba16bfde6b3101ab1a8a
->> Author: Yinbo Zhu <zhuyinbo@loongson.cn>
->> Date:   Tue Mar 7 17:18:32 2023 +0800
->>
->>       dt-bindings: clock: add loongson-2 boot clock index
->>
->>       The Loongson-2 boot clock was used to spi and lio peripheral and
->>       this patch was to add boot clock index number.
-> I cannot understand this either.
-I will rework commit msg .
+ On Thu, 9 Mar 2023 at 10:44, Hal Feng <hal.feng@starfivetech.com> wrote:
+> On Tue, 28 Feb 2023 10:42:35 +0800, Hal Feng wrote:
+> > On Sun, 26 Feb 2023 18:34:52 +0100, Emil Renner Berthing wrote:
+> >> On Tue, 21 Feb 2023 at 03:47, Hal Feng <hal.feng@starfivetech.com> wrote:
+> >>> From: Emil Renner Berthing <kernel@esmil.dk>
+> >>>
+> >>> Add driver for the StarFive JH7110 always-on clock controller
+> >>> and register an auxiliary device for always-on reset controller
+> >>> which is named as "reset-aon".
+> >>>
+> >>> Reported-by: kernel test robot <lkp@intel.com>
+> >>> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> >>> Co-developed-by: Hal Feng <hal.feng@starfivetech.com>
+> >>> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+> >>> ---
+> >>>  drivers/clk/starfive/Kconfig                  |  11 ++
+> >>>  drivers/clk/starfive/Makefile                 |   1 +
+> >>>  .../clk/starfive/clk-starfive-jh7110-aon.c    | 156 ++++++++++++++++++
+> >>>  3 files changed, 168 insertions(+)
+> >>>  create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-aon.c
+> >>>
+> >>> diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
+> >>> index 4640d0665d1c..2aa664f2cdee 100644
+> >>> --- a/drivers/clk/starfive/Kconfig
+> >>> +++ b/drivers/clk/starfive/Kconfig
+> >>> @@ -31,3 +31,14 @@ config CLK_STARFIVE_JH7110_SYS
+> >>>         help
+> >>>           Say yes here to support the system clock controller on the
+> >>>           StarFive JH7110 SoC.
+> >>> +
+> >>> +config CLK_STARFIVE_JH7110_AON
+> >>> +       tristate "StarFive JH7110 always-on clock support"
+> >>> +       depends on CLK_STARFIVE_JH7110_SYS
+> >>> +       select AUXILIARY_BUS
+> >>> +       select CLK_STARFIVE_JH71X0
+> >>> +       select RESET_STARFIVE_JH7110
+> >>> +       default CLK_STARFIVE_JH7110_SYS
+> >>
+> >> As far as I can tell the JH7110 boots fine without this driver and it
+> >> already depends on the _SYS driver above, so please do
+> >>
+> >> default m if SOC_STARFIVE
+> >
+> > OK. Will fix it.
 >
->>
->> and your advice is "That's an ABI break and commit msg does not explain it."
->>
->> I got it  from your advice that was to add a explanation about
->> LOONGSON2_BOOT_CLK's
->>
->> location issue in patch description, right?
-> ABI break needs justification, why do you think it is fine or who
-> is/isn't affected etc. Your commit msg does not explain why ABI break is
-> okay. It doesn't even explain to me why you need it.
-  #define LOONGSON2_DC_PLL                               3
-  #define LOONGSON2_PIX0_PLL                             4
-  #define LOONGSON2_PIX1_PLL                             5
--#define LOONGSON2_NODE_CLK                             6
--#define LOONGSON2_HDA_CLK                              7
--#define LOONGSON2_GPU_CLK                              8
--#define LOONGSON2_DDR_CLK                              9
--#define LOONGSON2_GMAC_CLK                             10
--#define LOONGSON2_DC_CLK                               11
--#define LOONGSON2_APB_CLK                              12
--#define LOONGSON2_USB_CLK                              13
--#define LOONGSON2_SATA_CLK                             14
--#define LOONGSON2_PIX0_CLK                             15
--#define LOONGSON2_PIX1_CLK                             16
--#define LOONGSON2_CLK_END                              17
-+#define LOONGSON2_BOOT_CLK                             6
-+#define LOONGSON2_NODE_CLK                             7
-
-after add my patch, if dts still use above macro and not cause any 
-issue. but
-
-if dts not use macro rather than use original clk number index that will 
-cause a uncorrect clk,
-
-eg.
-
--#define LOONGSON2_NODE_CLK                             6
-
-+#define LOONGSON2_NODE_CLK                             7
-
-  this issue is that what you said about  "ABI break",  isn't it ?
-
-
-About your advice and question and I will use following description as 
-patch  commit msg,  what do you think?
-
-
-dt-bindings: clock: add loongson-2 boot clock index
-
-The spi need to use boot clock and this patch is to add a boot clock 
-index about  LOONGSON2_BOOT_CLK
-
-and the LOONGSON2_BOOT_CLK was placed in after LOONGSON2_PIX1_PLL that 
-due to
-
-LOONGSON2_PIX1_PLL,  LOONGSON2_PIX0_PLL , LOONGSON2_DC_PLL and 
-LOONGSON2_BOOT_CLK
-
-has same parent clock.  In addition, the Loongson  code of the community 
-is still in the development stage,
-
-so this patch modification will  not cause uncorrect clk quote issue at 
-present.
-
+> Hi, Emil,
 >
->
+> The AON clock driver provides clocks for gmac0 which is used frequently.
+> So I think it would be more convenient if we set "default y" here.
+
+You're right that if we default y for the ethernet driver then the aon
+clock/reset should also default y. Personally I don't think we should
+default y for every ethernet driver that might be used on some
+supported risc-v platform, but I see now that
+arch/riscv/config/defconfig already contains CONFIG_MACB=y,
+CONFIG_E1000E=y, CONFIG_R8169=y and CONFIG_MICROSEMI_PHY=y, so maybe
+I'm wrong or just too late.
+
 > Best regards,
-> Krzysztof
-
+> Hal
