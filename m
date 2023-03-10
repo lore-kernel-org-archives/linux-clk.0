@@ -2,113 +2,81 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B5C7C742A7
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Mar 2023 14:43:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3178C64EC4
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Mar 2023 14:47:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232874AbjCJOnt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Mar 2023 09:43:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60430 "EHLO
+        id S233112AbjCJOrx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Mar 2023 09:47:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232878AbjCJOnc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Mar 2023 09:43:32 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 297425BDBD
-        for <linux-clk@vger.kernel.org>; Fri, 10 Mar 2023 06:43:23 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id x3so21288926edb.10
-        for <linux-clk@vger.kernel.org>; Fri, 10 Mar 2023 06:43:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678459402;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JYMEdjeleSWWpXin+nV8OWvud5LsPZ8G/6AgyZ+yAwQ=;
-        b=dyVAJ7eu/3a4Va5UtYhwVcbyFbDZz+mUrkWue+/ZeULTxrL+HQcyDqTd5cix+XtfxF
-         SzBBDrIXZoFe/dqF/muPu05TUeNINPBMDlb1C7U/oQO2fB4cvy39qIkiYaiwMKiVxtlX
-         KFzS5UmjoQ0zAnBXuHyv083PXHcK3mno2vK9ZXLB1ekJuB90bnrXP1XYfbCRD3cB3aEG
-         eYSZqopzPKNIol8R4lp2C6fVDVjQloFSowH+Y+vum1zXMTECctTspaEABEl/fxcXYf/u
-         4OhR61yzeBveMA6G30JseUSfNyQubIrtmsUdHfG0XbC90zhJf9z+fWZ3tcSGrHzrfdYU
-         wxeg==
+        with ESMTP id S232984AbjCJOr0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Mar 2023 09:47:26 -0500
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9EFA122CE7;
+        Fri, 10 Mar 2023 06:47:09 -0800 (PST)
+Received: by mail-oo1-f54.google.com with SMTP id u3-20020a4ad0c3000000b0052541ef0bafso814695oor.5;
+        Fri, 10 Mar 2023 06:47:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678459402;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JYMEdjeleSWWpXin+nV8OWvud5LsPZ8G/6AgyZ+yAwQ=;
-        b=ROilp8OvfA/J4zf4S+72wzFvDaSZN4rJLZMqg97hauxxkx8jMTfb5aXS1d7BANf7WR
-         c65u/GAYoRuvUZZy+UeI+e2IMTE4hYDERA+dz3jzvKi8hsdxPGf3gNT4Rg/DeiKUgCu0
-         HxhunTy021Vi4TA1DXHVx724+5pH+UGPtS0VUg4Ah7uEn3xCwmsMaz0ypCqAAn3bEz24
-         R4R/IsuWsUaS3Zc5jYvgdcvHhqvPg9gcG851dEzJp+g86ptfMZzZ0Q4PeA545CzOkivm
-         PkyJ12QjF1ibXWx7JgI2Ee70Xy2wpMerWK6E9IR4EkXi+7b3NW4EVFAHn+I9w3OIY0z3
-         Tcqg==
-X-Gm-Message-State: AO0yUKVhcEVmPY6ZtI+Au5FaF8urC66IbWFd2clkyKVYe3ZfC6g9cIO4
-        rjvAfj0uIfe6IfudYFNWc/0XKA==
-X-Google-Smtp-Source: AK7set845QJSc/SjAXM6QM3dwBDS1eo1cerd3I4zY5AKmphjSWiUT+Tw3zhF0l6YLSy+ywhLwM2bfQ==
-X-Received: by 2002:aa7:d952:0:b0:4c6:f2cd:9d72 with SMTP id l18-20020aa7d952000000b004c6f2cd9d72mr24748846eds.5.1678459402436;
-        Fri, 10 Mar 2023 06:43:22 -0800 (PST)
-Received: from ?IPV6:2a02:810d:15c0:828:45c4:46be:ec71:4a51? ([2a02:810d:15c0:828:45c4:46be:ec71:4a51])
-        by smtp.gmail.com with ESMTPSA id 23-20020a170906319700b008c06de45e75sm1034415ejy.107.2023.03.10.06.43.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Mar 2023 06:43:22 -0800 (PST)
-Message-ID: <8caa7218-41c2-04b4-e7b3-ee0fb43079a3@linaro.org>
-Date:   Fri, 10 Mar 2023 15:43:20 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 1/7] dt-bindings: clock: exynos850: Add power-domains
- property
-Content-Language: en-US
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        d=1e100.net; s=20210112; t=1678459627;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ILWNY1eyaJenpJzny+CKLBX7/KrXnf6t+tVzPKNHAYc=;
+        b=5quM+J1JfIaZNm/jXL+CRZVS/m3rOsIwiN7M7mlnE6raEth4S/azuJ1/WDyVPoV9GK
+         CsMNrf1MXB1XsrrIRLfLxhn2Nh6GeHiRcQ/Ek8wVu7sByAWdmvGPRS+6YsSSHg3lpJ3q
+         WKj7dobOgWPfzm6ha+0wJmoCarwlUKlDZjuggPbdcOw9wkQsm4XZ2FeMr6z8xnIVOz0u
+         4CBp1l3NNgC8y3B1E4ehzB7QeluE6SSQ2ZF+CN1/J8UZw08kxXAwVJ9z/5an5LUEf7zS
+         TaPenX2k1PG+EnS2v3R30e6acS8DwFlzQ3qY28NW6a5mWPSw+GduoXi5z5z4NKaFefTD
+         sxYQ==
+X-Gm-Message-State: AO0yUKUM8tCCtv5a8FFS90jQatCqTVB3a/ZM9qnE/bskywMvPlcKpqPT
+        eeWvUNii1xewbURsDUh9K5i8H2Qlzg==
+X-Google-Smtp-Source: AK7set9FlOE+iISk22iFJf1vh3PJrLOesXIMld5q8UttYtQUUp7De/NGPPX4nvkgv41a1KZml6Fc7g==
+X-Received: by 2002:a05:6820:1048:b0:525:d9c:b1bb with SMTP id x8-20020a056820104800b005250d9cb1bbmr11363049oot.2.1678459627124;
+        Fri, 10 Mar 2023 06:47:07 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id r2-20020acada02000000b00383ef567cfdsm963361oig.21.2023.03.10.06.47.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Mar 2023 06:47:06 -0800 (PST)
+Received: (nullmailer pid 1541599 invoked by uid 1000);
+        Fri, 10 Mar 2023 14:47:01 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20230308233822.31180-1-semen.protsenko@linaro.org>
- <20230308233822.31180-2-semen.protsenko@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230308233822.31180-2-semen.protsenko@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] clk: microchip: Use of_property_read_bool() for boolean properties
+Date:   Fri, 10 Mar 2023 08:47:01 -0600
+Message-Id: <20230310144701.1541573-1-robh@kernel.org>
+X-Mailer: git-send-email 2.39.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/03/2023 00:38, Sam Protsenko wrote:
-> Document power-domains property in Exynos850 clock controller.
+It is preferred to use typed property access functions (i.e.
+of_property_read_<type> functions) rather than low-level
+of_get_property/of_find_property functions for reading properties.
+Convert reading boolean properties to to of_property_read_bool().
 
-This we see from the diff. You need to say why, e.g. "several clock
-controllers are part of their power domain and require domain to be on
-for operation."
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ drivers/clk/microchip/clk-pic32mzda.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
->  .../devicetree/bindings/clock/samsung,exynos850-clock.yaml     | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-> index 8aa87b8c1b33..cc1e9173b272 100644
-> --- a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-> @@ -54,6 +54,9 @@ properties:
->    "#clock-cells":
->      const: 1
->  
-> +  power-domains:
-> +    maxItems: 1
-> +
->    reg:
->      maxItems: 1
->  
-
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/microchip/clk-pic32mzda.c b/drivers/clk/microchip/clk-pic32mzda.c
+index b72c76f9ecd1..eabfc4931fe9 100644
+--- a/drivers/clk/microchip/clk-pic32mzda.c
++++ b/drivers/clk/microchip/clk-pic32mzda.c
+@@ -184,7 +184,7 @@ static int pic32mzda_clk_probe(struct platform_device *pdev)
+ 	clks[UPLLCLK] = clk_register_fixed_rate(&pdev->dev, "usbphy_clk", NULL,
+ 						0, 24000000);
+ 	/* fixed rate (optional) clock */
+-	if (of_find_property(np, "microchip,pic32mzda-sosc", NULL)) {
++	if (of_property_read_bool(np, "microchip,pic32mzda-sosc")) {
+ 		pr_info("pic32-clk: dt requests SOSC.\n");
+ 		clks[SOSCCLK] = pic32_sosc_clk_register(&sosc_clk, core);
+ 	}
+-- 
+2.39.2
 
