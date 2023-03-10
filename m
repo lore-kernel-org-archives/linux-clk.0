@@ -2,157 +2,157 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8B6C76186
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Mar 2023 07:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F35E5C6FD19
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Mar 2023 08:11:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230035AbjCJHz6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Mar 2023 02:55:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35778 "EHLO
+        id S230281AbjCJILM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Mar 2023 03:11:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229751AbjCJHz5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Mar 2023 02:55:57 -0500
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65F80E0624;
-        Thu,  9 Mar 2023 23:55:55 -0800 (PST)
+        with ESMTP id S230267AbjCJIKh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Mar 2023 03:10:37 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3BF25553E
+        for <linux-clk@vger.kernel.org>; Fri, 10 Mar 2023 00:10:01 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id l1so4197118wry.12
+        for <linux-clk@vger.kernel.org>; Fri, 10 Mar 2023 00:10:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1678434956; x=1709970956;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=x6fWEKzRp4EyH7sl18efFBbE9f9nwdcsdY/tosLvcNQ=;
-  b=VgOc33o2t4wPfgufSDMMxKjVk35gurlH59aTMufiHZXgBxvmSrenPhSL
-   wQhjr6Y0KNVOMRxSUIdNn+t7HlpsnzswKVpDhGb+aPLz8G9AdKc+oRPKM
-   SGMshzE72QdZxGd/KryaSPc6Csboj2/OXDbRKFfDqecGAb4Zhf029ymqr
-   mlcDV1aUrfGeRyfvg+3La1joVmsX+HCb8OqelRu+2M9QdOTwlyzSTCOo0
-   IwiMLf30fIpmittwl0Gn+t9suIb40ppUkHgAc0MqQCREZI4+KI933ctrf
-   o8I1iTZK32lQEPIKTbnW3zN0jL2A85shAlXt4Eh618h284YuqmF53LIRV
-   g==;
-X-IronPort-AV: E=Sophos;i="5.98,249,1673910000"; 
-   d="scan'208";a="29597128"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 10 Mar 2023 08:55:44 +0100
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Fri, 10 Mar 2023 08:55:44 +0100
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Fri, 10 Mar 2023 08:55:44 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1678434944; x=1709970944;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=x6fWEKzRp4EyH7sl18efFBbE9f9nwdcsdY/tosLvcNQ=;
-  b=h3av136E+ombsMsAEuE5/KMoV++uuVftswP9tZCtPCPIVqxh53qKvCXX
-   BF9gdWkb7Fu8oTjcaWa3nWUc808+P+IRKjNKdENKgDDr0bnaDqQMZeCMK
-   7XBvqAbw2h9ubXkHDvw+sfTBN2vzORNvgzv9kWAAtSyuM0ocYgmFvyMC/
-   uQ+flr729KnfrDxXjmei1fZKokd0nGp0gyZEGBz7wPdWO1YH4szb3yKVY
-   NPH52jnzKbQRSCO/jFwSJekKrg4i9xGs4COzWyMT6G1TyabtconaqRNGh
-   BSOhWBU5gUCVnEM1bPi8WxsrZp0tuvYDGKsiKwyQwZDGz2u8InmNg+y20
-   w==;
-X-IronPort-AV: E=Sophos;i="5.98,249,1673910000"; 
-   d="scan'208";a="29597127"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 10 Mar 2023 08:55:44 +0100
-Received: from steina-w.tq-net.de (unknown [10.123.53.21])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 15273280072;
-        Fri, 10 Mar 2023 08:55:44 +0100 (CET)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Marek Vasut <marex@denx.de>
-Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v3 4/4] clk: rs9: Add support for 9FGV0441
-Date:   Fri, 10 Mar 2023 08:55:35 +0100
-Message-Id: <20230310075535.3476580-4-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230310075535.3476580-1-alexander.stein@ew.tq-group.com>
-References: <20230310075535.3476580-1-alexander.stein@ew.tq-group.com>
+        d=google.com; s=20210112; t=1678435800;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wJVAKKHINtuSuDJu3EqDjp+q9iC1svWYPRp9peikZs8=;
+        b=rrydp6AieROjsxXxzjQcjhFOtXm2HtCj7wFPfwDH6X6Dwr9hmufph/O5n5yoqpDtcX
+         Q9rxhQtJ6Xoteqian3hzAPvqjJ5zI+GPGeG6QnPxBNEhHdIYiXCKmbTjphowwoPGs/BE
+         h+y7vUuFtFmUbpLOcKbFXH0nZndQ4Vt+q4arQ2In0Dc0KcscRW2fEsPpNqXd/DZ0FwUo
+         HCbr//Z1f5/BreIjLdVfHfHBjgC7TmXAcjbpSm0o+IgN1weY7pg1MxTLwcK44mf5Mg3W
+         DaGM5DhCE9n4t1PSfowfsvUh9dgyfDKpSNFH5dRnkb02Urmc7Zf/ywCDIWdEAAMG9dq4
+         mUwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678435800;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wJVAKKHINtuSuDJu3EqDjp+q9iC1svWYPRp9peikZs8=;
+        b=d6krgax4ltHoy6TeYsHWiX0D0GdY6Ihfyma4XeU0CeTIBxVNT/3C09bySXt7OikORU
+         CosJyeQcBRAqrLo6TFsdXXY7LcIBBzUtz/9VpwtMkrtu95aTha2VKmyaTDnI4nKRQBv5
+         LQZlCTA+OfEfLoSlqn8O50pbzNyZnfRumahK8RGFkXw3EcKqSb6KJxVbh8Wc6r834l3t
+         vcpvLSZ7XXFB4CpcWemfyJankG9knCEtEOhanMrvUtZlKNNRHqylx8N/7xmBrwstty+6
+         dR9Gy79vsMZOXbkEcEYUadU1enhFmWxjbWM63YL679Rdrj42dzT6aD1t5oetS0VScQRh
+         8BVw==
+X-Gm-Message-State: AO0yUKWYX1tfq5ZnOfECRGy5JJxBr1AQ7Jv2Ur10R2TZ99FKzVFOcMYA
+        lDHxvkLjqp2/4IiBWb313mA1zdGCMUAFQb+WsHB9dQ==
+X-Google-Smtp-Source: AK7set/oX+Ou8MHsmEa5YUMjHQpxJqSO/uHVuTi9gb3Gx6kcmU5e2McI3sFT9YkqQ1MIxlwwDDsmoLE8DYvex/r7MOE=
+X-Received: by 2002:a5d:4403:0:b0:2c6:ed0b:614e with SMTP id
+ z3-20020a5d4403000000b002c6ed0b614emr5436803wrq.2.1678435800053; Fri, 10 Mar
+ 2023 00:10:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230302013822.1808711-1-sboyd@kernel.org> <20230302013822.1808711-3-sboyd@kernel.org>
+ <CABVgOSkomwwgKZ9N0_0YMDL--QaZiTV7ONgSRABU2Ph1Z0CG-g@mail.gmail.com> <a97c9bb3a5addfb34af8ccabaa513026.sboyd@kernel.org>
+In-Reply-To: <a97c9bb3a5addfb34af8ccabaa513026.sboyd@kernel.org>
+From:   David Gow <davidgow@google.com>
+Date:   Fri, 10 Mar 2023 16:09:48 +0800
+Message-ID: <CABVgOSkJ4mw_DtFzn5EwcsuYixWY_j13YotxEYqWhO+ZCL1KPg@mail.gmail.com>
+Subject: Re: [PATCH 2/8] of: Enable DTB loading on UML for KUnit tests
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev,
+        Brendan Higgins <brendan.higgins@linux.dev>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This model is similar to 9FGV0241, but the DIFx bits start at bit 0.
+On Fri, 10 Mar 2023 at 07:19, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting David Gow (2023-03-02 23:15:04)
+> > On Thu, 2 Mar 2023 at 09:38, Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > To fully exercise common clk framework code in KUnit we need to
+> > > associate 'struct device' pointers with 'struct device_node' pointers so
+> > > that things like clk_get() can parse DT nodes for 'clocks' and so that
+> > > clk providers can use DT to provide clks; the most common mode of
+> > > operation for clk providers.
+> > >
+> > > Adding support to KUnit so that it loads a DTB is fairly simple after
+> > > commit b31297f04e86 ("um: Add devicetree support"). We can simply pass a
+> > > pre-compiled deviectree blob (DTB) on the kunit.py commandline and UML
+> > > will load it. The problem is that tests won't know that the commandline
+> > > has been modified, nor that a DTB has been loaded. Take a different
+> > > approach so that tests can skip if a DTB hasn't been loaded.
+> > >
+> > > Reuse the Makefile logic from the OF unittests to build a DTB into the
+> > > kernel. This DTB will be for the mythical machine "linux,kunit", i.e.
+> > > the devicetree for the KUnit "board". In practice, it is a dtsi file
+> > > that will gather includes for kunit tests that rely in part on a
+> > > devicetree being loaded. The devicetree should only be loaded if
+> > > CONFIG_OF_KUNIT=y. Make that a choice config parallel to the existing
+> > > CONFIG_OF_UNITTEST so that only one devicetree can be loaded in the
+> > > system at a time. Similarly, the kernel commandline option to load a
+> > > DTB is ignored if CONFIG_OF_KUNIT is enabled so that only one DTB is
+> > > loaded at a time.
+> >
+> > This feels a little bit like it's just papering over the real problem,
+> > which is that there's no way tests can skip themselves if no DTB is
+> > loaded.
+>
+> Hmm. I think you're suggesting that the unit test data be loaded
+> whenever CONFIG_OF=y and CONFIG_KUNIT=y. Then tests can check for
+> CONFIG_OF and skip if it isn't enabled?
+>
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-Reviewed-by: Marek Vasut <marex@denx.de>
----
-Changes in v3:
-* Rebased to current next branch
-* Added Marek's R-b
+More of the opposite: that we should have some way of supporting tests
+which might want to use a DTB other than the built-in one. Mostly for
+non-UML situations where an actual devicetree is needed to even boot
+far enough to get test output (so we wouldn't be able to override it
+with a compiled-in test one).
 
- drivers/clk/clk-renesas-pcie.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+I think moving to overlays probably will render this idea obsolete:
+but the thought was to give test code a way to check for the required
+devicetree nodes at runtime, and skip the test if they weren't found.
+That way, the failure mode for trying to boot this on something which
+required another device tree for, e.g., serial, would be "these tests
+are skipped because the wrong device tree is loaded", not "I get no
+output because serial isn't working".
 
-diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
-index 0036bd18c559..6799fb0fa2d3 100644
---- a/drivers/clk/clk-renesas-pcie.c
-+++ b/drivers/clk/clk-renesas-pcie.c
-@@ -6,6 +6,7 @@
-  *   - 9FGV/9DBV/9DMV/9FGL/9DML/9QXL/9SQ
-  * Currently supported:
-  *   - 9FGV0241
-+ *   - 9FGV0441
-  *
-  * Copyright (C) 2022 Marek Vasut <marex@denx.de>
-  */
-@@ -51,6 +52,7 @@
- /* Supported Renesas 9-series models. */
- enum rs9_model {
- 	RENESAS_9FGV0241,
-+	RENESAS_9FGV0441,
- };
- 
- /* Structure to describe features of a particular 9-series model */
-@@ -64,7 +66,7 @@ struct rs9_driver_data {
- 	struct i2c_client	*client;
- 	struct regmap		*regmap;
- 	const struct rs9_chip_info *chip_info;
--	struct clk_hw		*clk_dif[2];
-+	struct clk_hw		*clk_dif[4];
- 	u8			pll_amplitude;
- 	u8			pll_ssc;
- 	u8			clk_dif_sr;
-@@ -161,6 +163,8 @@ static u8 rs9_calc_dif(const struct rs9_driver_data *rs9, int idx)
- 
- 	if (model == RENESAS_9FGV0241)
- 		return BIT(idx) + 1;
-+	else if (model == RENESAS_9FGV0441)
-+		return BIT(idx);
- 
- 	return 0;
- }
-@@ -380,14 +384,22 @@ static const struct rs9_chip_info renesas_9fgv0241_info = {
- 	.did		= RS9_REG_DID_TYPE_FGV | 0x02,
- };
- 
-+static const struct rs9_chip_info renesas_9fgv0441_info = {
-+	.model		= RENESAS_9FGV0441,
-+	.num_clks	= 4,
-+	.did		= RS9_REG_DID_TYPE_FGV | 0x04,
-+};
-+
- static const struct i2c_device_id rs9_id[] = {
- 	{ "9fgv0241", .driver_data = RENESAS_9FGV0241 },
-+	{ "9fgv0441", .driver_data = RENESAS_9FGV0441 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, rs9_id);
- 
- static const struct of_device_id clk_rs9_of_match[] = {
- 	{ .compatible = "renesas,9fgv0241", .data = &renesas_9fgv0241_info },
-+	{ .compatible = "renesas,9fgv0441", .data = &renesas_9fgv0441_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, clk_rs9_of_match);
--- 
-2.34.1
+Again, though, it's only really needed for non-UML, and just loading
+overlays as needed should be much more sensible anyway.
 
+> >
+> > That being said, I do think that there's probably some sense in
+> > supporting the compiled-in DTB as well (it's definitely simpler than
+> > patching kunit.py to always pass the extra command-line option in, for
+> > example).
+> > But maybe it'd be nice to have the command-line option override the
+> > built-in one if present.
+>
+> Got it. I need to test loading another DTB on the commandline still, but
+> I think this won't be a problem. We'll load the unittest-data DTB even
+> with KUnit on UML, so assuming that works on UML right now it should be
+> unchanged by this series once I resend.
+
+Again, moving to overlays should render this mostly obsolete, no? Or
+am I misunderstanding how the overlay stuff will work?
+
+One possible future advantage of being able to test with custom DTs at
+boot time would be for fuzzing (provide random DT properties, see what
+happens in the test). We've got some vague plans to support a way of
+passing custom data to tests to support this kind of case (though, if
+we're using overlays, maybe the test could just patch those if we
+wanted to do that).
+
+
+Cheers,
+-- David
