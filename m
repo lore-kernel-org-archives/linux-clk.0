@@ -2,124 +2,113 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51108C64EC4
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Mar 2023 14:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B5C7C742A7
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Mar 2023 14:43:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231585AbjCJOCw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Mar 2023 09:02:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52488 "EHLO
+        id S232874AbjCJOnt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Mar 2023 09:43:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231607AbjCJOCh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Mar 2023 09:02:37 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAFD31165F7;
-        Fri, 10 Mar 2023 06:02:24 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 759EA617D5;
-        Fri, 10 Mar 2023 14:02:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF695C433A4;
-        Fri, 10 Mar 2023 14:02:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678456943;
-        bh=ErYVAbLVamYNt3qQNBRsX1S2V8QgsRXls6t6ttuYrlY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=p4YmYyE6q1EyqUqw/DTav8vWyakg1RfT7xytTEAcSgSFVydDWq5ZVeGXTGKwaH4hz
-         PloPMEPQtM16c6yw3gwaOT6DxVHSZznny+MlawvnFsI4Kh5PggNfOFF2+rTvqJLbqm
-         NDx6NK+r3Ovis4xS67Evbkt9L6AmWRTuC8eyXBf5WZpWF7/AQ7e6RqhOS9VcM/0f6j
-         FaVibUE+BpkdecLpo2wsd7PfuntYdlJ0SQC5Eo4f4TFESxjRrS4WRSBvH21BZ2qCkH
-         mOa/PFSu/iF/0wwghTVApq3oLNL5zVcPSLEd2Fgz3ZF2xnWcI8o8JkR3RKTHfC1Z3h
-         IQdLi0f6lSVjQ==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Ricardo Ribalda <ribalda@kernel.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Maxime Ripard <maxime@cerno.tech>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: avoid build failure on CLK_OF_DECLARE() with invalid name
-Date:   Fri, 10 Mar 2023 15:02:04 +0100
-Message-Id: <20230310140218.326626-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+        with ESMTP id S232878AbjCJOnc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Mar 2023 09:43:32 -0500
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 297425BDBD
+        for <linux-clk@vger.kernel.org>; Fri, 10 Mar 2023 06:43:23 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id x3so21288926edb.10
+        for <linux-clk@vger.kernel.org>; Fri, 10 Mar 2023 06:43:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678459402;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JYMEdjeleSWWpXin+nV8OWvud5LsPZ8G/6AgyZ+yAwQ=;
+        b=dyVAJ7eu/3a4Va5UtYhwVcbyFbDZz+mUrkWue+/ZeULTxrL+HQcyDqTd5cix+XtfxF
+         SzBBDrIXZoFe/dqF/muPu05TUeNINPBMDlb1C7U/oQO2fB4cvy39qIkiYaiwMKiVxtlX
+         KFzS5UmjoQ0zAnBXuHyv083PXHcK3mno2vK9ZXLB1ekJuB90bnrXP1XYfbCRD3cB3aEG
+         eYSZqopzPKNIol8R4lp2C6fVDVjQloFSowH+Y+vum1zXMTECctTspaEABEl/fxcXYf/u
+         4OhR61yzeBveMA6G30JseUSfNyQubIrtmsUdHfG0XbC90zhJf9z+fWZ3tcSGrHzrfdYU
+         wxeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678459402;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JYMEdjeleSWWpXin+nV8OWvud5LsPZ8G/6AgyZ+yAwQ=;
+        b=ROilp8OvfA/J4zf4S+72wzFvDaSZN4rJLZMqg97hauxxkx8jMTfb5aXS1d7BANf7WR
+         c65u/GAYoRuvUZZy+UeI+e2IMTE4hYDERA+dz3jzvKi8hsdxPGf3gNT4Rg/DeiKUgCu0
+         HxhunTy021Vi4TA1DXHVx724+5pH+UGPtS0VUg4Ah7uEn3xCwmsMaz0ypCqAAn3bEz24
+         R4R/IsuWsUaS3Zc5jYvgdcvHhqvPg9gcG851dEzJp+g86ptfMZzZ0Q4PeA545CzOkivm
+         PkyJ12QjF1ibXWx7JgI2Ee70Xy2wpMerWK6E9IR4EkXi+7b3NW4EVFAHn+I9w3OIY0z3
+         Tcqg==
+X-Gm-Message-State: AO0yUKVhcEVmPY6ZtI+Au5FaF8urC66IbWFd2clkyKVYe3ZfC6g9cIO4
+        rjvAfj0uIfe6IfudYFNWc/0XKA==
+X-Google-Smtp-Source: AK7set845QJSc/SjAXM6QM3dwBDS1eo1cerd3I4zY5AKmphjSWiUT+Tw3zhF0l6YLSy+ywhLwM2bfQ==
+X-Received: by 2002:aa7:d952:0:b0:4c6:f2cd:9d72 with SMTP id l18-20020aa7d952000000b004c6f2cd9d72mr24748846eds.5.1678459402436;
+        Fri, 10 Mar 2023 06:43:22 -0800 (PST)
+Received: from ?IPV6:2a02:810d:15c0:828:45c4:46be:ec71:4a51? ([2a02:810d:15c0:828:45c4:46be:ec71:4a51])
+        by smtp.gmail.com with ESMTPSA id 23-20020a170906319700b008c06de45e75sm1034415ejy.107.2023.03.10.06.43.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Mar 2023 06:43:22 -0800 (PST)
+Message-ID: <8caa7218-41c2-04b4-e7b3-ee0fb43079a3@linaro.org>
+Date:   Fri, 10 Mar 2023 15:43:20 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH 1/7] dt-bindings: clock: exynos850: Add power-domains
+ property
+Content-Language: en-US
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20230308233822.31180-1-semen.protsenko@linaro.org>
+ <20230308233822.31180-2-semen.protsenko@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230308233822.31180-2-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+On 09/03/2023 00:38, Sam Protsenko wrote:
+> Document power-domains property in Exynos850 clock controller.
 
-Generating an init function function from CLK_OF_DECLARE() broke for the
-98dx1135_clk declaration because that string starts with a digit and
-is not a valid C identifier:
+This we see from the diff. You need to say why, e.g. "several clock
+controllers are part of their power domain and require domain to be on
+for operation."
 
-In file included from drivers/clk/mvebu/kirkwood.c:15:
-drivers/clk/mvebu/kirkwood.c:358:16: error: invalid suffix "dx1135_clk_of_clk_init_declare" on integer constant
-  358 | CLK_OF_DECLARE(98dx1135_clk, "marvell,mv98dx1135-core-clock",
-      |                ^~~~~~~~~~~~
-include/linux/clk-provider.h:1367:28: note: in definition of macro 'CLK_OF_DECLARE'
- 1367 |         static void __init name##_of_clk_init_declare(struct device_node *np) \
-      |                            ^~~~
-drivers/clk/mvebu/kirkwood.c:358:16: error: expected identifier or '(' before numeric constant
-  358 | CLK_OF_DECLARE(98dx1135_clk, "marvell,mv98dx1135-core-clock",
-      |                ^~~~~~~~~~~~
-include/linux/clk-provider.h:1367:28: note: in definition of macro 'CLK_OF_DECLARE'
- 1367 |         static void __init name##_of_clk_init_declare(struct device_node *np) \
-      |                            ^~~~
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  .../devicetree/bindings/clock/samsung,exynos850-clock.yaml     | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+> index 8aa87b8c1b33..cc1e9173b272 100644
+> --- a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+> +++ b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+> @@ -54,6 +54,9 @@ properties:
+>    "#clock-cells":
+>      const: 1
+>  
+> +  power-domains:
+> +    maxItems: 1
+> +
+>    reg:
+>      maxItems: 1
+>  
 
-This could be fixed in the driver by renaming 98dx1135_clk to a valid
-C identifier, but it's easy enough to make the macro more robust by
-reversing the two parts of the name, which makes it work for other files
-that may have the same issue. Since CLK_OF_DECLARE_DRIVER() has a very
-similar definition, do the same change in both.
-
-Fixes: c7296c51ce5d ("clk: core: New macro CLK_OF_DECLARE_DRIVER")
-Fixes: c28cd1f3433c ("clk: Mark a fwnode as initialized when using CLK_OF_DECLARE() macro")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- include/linux/clk-provider.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index c9f5276006a0..3586a029db05 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -1364,24 +1364,24 @@ struct clk_hw_onecell_data {
- };
- 
- #define CLK_OF_DECLARE(name, compat, fn) \
--	static void __init name##_of_clk_init_declare(struct device_node *np) \
-+	static void __init of_clk_init_declare##name(struct device_node *np) \
- 	{								\
- 		fn(np);							\
- 		fwnode_dev_initialized(of_fwnode_handle(np), true);	\
- 	}								\
--	OF_DECLARE_1(clk, name, compat, name##_of_clk_init_declare)
-+	OF_DECLARE_1(clk, name, compat, of_clk_init_declare##name)
- 
- /*
-  * Use this macro when you have a driver that requires two initialization
-  * routines, one at of_clk_init(), and one at platform device probe
-  */
- #define CLK_OF_DECLARE_DRIVER(name, compat, fn) \
--	static void __init name##_of_clk_init_driver(struct device_node *np) \
-+	static void __init of_clk_init_driver##name(struct device_node *np) \
- 	{								\
- 		of_node_clear_flag(np, OF_POPULATED);			\
- 		fn(np);							\
- 	}								\
--	OF_DECLARE_1(clk, name, compat, name##_of_clk_init_driver)
-+	OF_DECLARE_1(clk, name, compat, of_clk_init_driver##name)
- 
- #define CLK_HW_INIT(_name, _parent, _ops, _flags)		\
- 	(&(struct clk_init_data) {				\
--- 
-2.39.2
+Best regards,
+Krzysztof
 
