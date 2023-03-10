@@ -2,103 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B748C6FA99
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Mar 2023 13:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51108C64EC4
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Mar 2023 14:02:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231343AbjCJN5f convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Mar 2023 08:57:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38766 "EHLO
+        id S231585AbjCJOCw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Mar 2023 09:02:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231281AbjCJN5e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Mar 2023 08:57:34 -0500
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAE18115DE2;
-        Fri, 10 Mar 2023 05:57:13 -0800 (PST)
-Received: by mail-qv1-f48.google.com with SMTP id ks17so3629161qvb.6;
-        Fri, 10 Mar 2023 05:57:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678456610;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GMiBlchoca/bQ8itqv1mwM/wqhgD5JDMVkrJoE0rrgg=;
-        b=6A7g0IodaW29IjfOTk9Ph26ZFa40oafmjLAZaTE+JC/kNbz+OUeC5aIECIbnA6GRKx
-         Qt6PnotidaAMW1MK4I/mozG1rdvh60Jr0jJEd7QWhkav40NryQK6y/zzR/jpqHpJMvxp
-         qTignE3aQJRyWMSrXcrHSSfEhaM/OgkmxZtbG2CPPp7Zt0ntQfnikQVRbKcyPtEeHocr
-         N4ZACJAbCHoqNQH1TJ9Gw/Zda6AvUaxwHBmoxecuEqLRs+M5HNLO1HsH1PeNqeM1SPk1
-         mh6CGQg258VwP1ffnbfUVUv56em6K/fMUzG46n0ATLft16p9WpeJdwtpeei4yV21PDif
-         z5QQ==
-X-Gm-Message-State: AO0yUKWrfh8m6A6SoSxgz3ehhfVFUtz8pSA5r9jQSxAdk6FLJK3Uy7jo
-        je2iLvHwOU/tVId7W6G/E7uVxMpwAJ8BWw==
-X-Google-Smtp-Source: AK7set+nmW6Czi0hBBbtQdBaQrHDmnmseEQAxywQ1EH8e59UBge7V0utRlvl+DDKH94by8yUvXTrRw==
-X-Received: by 2002:ad4:5fcd:0:b0:583:91b3:198a with SMTP id jq13-20020ad45fcd000000b0058391b3198amr11601071qvb.2.1678456609794;
-        Fri, 10 Mar 2023 05:56:49 -0800 (PST)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
-        by smtp.gmail.com with ESMTPSA id w7-20020a05620a444700b0073bb00eb0besm1396745qkp.22.2023.03.10.05.56.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Mar 2023 05:56:49 -0800 (PST)
-Received: by mail-yb1-f181.google.com with SMTP id e82so5297468ybh.9;
-        Fri, 10 Mar 2023 05:56:49 -0800 (PST)
-X-Received: by 2002:a5b:dc5:0:b0:b2f:bdc9:2cdc with SMTP id
- t5-20020a5b0dc5000000b00b2fbdc92cdcmr1331556ybr.7.1678456609077; Fri, 10 Mar
- 2023 05:56:49 -0800 (PST)
-MIME-Version: 1.0
-References: <20230301215520.828455-1-ralph.siemsen@linaro.org> <20230301215520.828455-5-ralph.siemsen@linaro.org>
-In-Reply-To: <20230301215520.828455-5-ralph.siemsen@linaro.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 10 Mar 2023 14:56:36 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVbF9MgqUtQp1htFoyTKTXbvv38b854qQPQ5O0+8O4MCw@mail.gmail.com>
-Message-ID: <CAMuHMdVbF9MgqUtQp1htFoyTKTXbvv38b854qQPQ5O0+8O4MCw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] clk: renesas: r9a06g032: improve clock tables
-To:     Ralph Siemsen <ralph.siemsen@linaro.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        with ESMTP id S231607AbjCJOCh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Mar 2023 09:02:37 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAFD31165F7;
+        Fri, 10 Mar 2023 06:02:24 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 759EA617D5;
+        Fri, 10 Mar 2023 14:02:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF695C433A4;
+        Fri, 10 Mar 2023 14:02:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678456943;
+        bh=ErYVAbLVamYNt3qQNBRsX1S2V8QgsRXls6t6ttuYrlY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=p4YmYyE6q1EyqUqw/DTav8vWyakg1RfT7xytTEAcSgSFVydDWq5ZVeGXTGKwaH4hz
+         PloPMEPQtM16c6yw3gwaOT6DxVHSZznny+MlawvnFsI4Kh5PggNfOFF2+rTvqJLbqm
+         NDx6NK+r3Ovis4xS67Evbkt9L6AmWRTuC8eyXBf5WZpWF7/AQ7e6RqhOS9VcM/0f6j
+         FaVibUE+BpkdecLpo2wsd7PfuntYdlJ0SQC5Eo4f4TFESxjRrS4WRSBvH21BZ2qCkH
+         mOa/PFSu/iF/0wwghTVApq3oLNL5zVcPSLEd2Fgz3ZF2xnWcI8o8JkR3RKTHfC1Z3h
+         IQdLi0f6lSVjQ==
+From:   Arnd Bergmann <arnd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Ricardo Ribalda <ribalda@kernel.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Maxime Ripard <maxime@cerno.tech>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: avoid build failure on CLK_OF_DECLARE() with invalid name
+Date:   Fri, 10 Mar 2023 15:02:04 +0100
+Message-Id: <20230310140218.326626-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 1, 2023 at 10:56 PM Ralph Siemsen <ralph.siemsen@linaro.org> wrote:
-> Each entry in the clock table specifies a number of individual bits in
-> registers, for contolling clock reset, gaiting, etc. These reg/bit were
-> packed into a u16 to save space. The combined value is difficult to
-> understand when reviewing the clock table entries.
->
-> Introduce a "struct regbit" which still occupies only 16 bits, but
-> allows the register and bit values to be specified explicitly. Convert
-> all previous uses of u16 for reg/bit into "struct regbit".
->
-> The bulk of this patch converts the clock table to use struct regbit,
-> making use of the RB() helper macro. The conversion was automated by
-> script, and as a further verification, the compiled binary of the table
-> was compared before/after the change (with objdump -D).
->
-> The clk_rdesc_set() function now checks for zero reg/bit internally.
-> This allows callers of that function to remove those checks.
->
-> Signed-off-by: Ralph Siemsen <ralph.siemsen@linaro.org>
-> ---
->
-> Changes in v2:
-> - Replace register shifts with multiply/divide
-> - Unify the reg access in clk_rdesc_{get,set}
-> - Restore the WARN_ON() check for clock gate
-> - Swap field order in struct regbit, to exactly match the u16 values
+From: Arnd Bergmann <arnd@arndb.de>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v6.4.
+Generating an init function function from CLK_OF_DECLARE() broke for the
+98dx1135_clk declaration because that string starts with a digit and
+is not a valid C identifier:
 
-Gr{oetje,eeting}s,
+In file included from drivers/clk/mvebu/kirkwood.c:15:
+drivers/clk/mvebu/kirkwood.c:358:16: error: invalid suffix "dx1135_clk_of_clk_init_declare" on integer constant
+  358 | CLK_OF_DECLARE(98dx1135_clk, "marvell,mv98dx1135-core-clock",
+      |                ^~~~~~~~~~~~
+include/linux/clk-provider.h:1367:28: note: in definition of macro 'CLK_OF_DECLARE'
+ 1367 |         static void __init name##_of_clk_init_declare(struct device_node *np) \
+      |                            ^~~~
+drivers/clk/mvebu/kirkwood.c:358:16: error: expected identifier or '(' before numeric constant
+  358 | CLK_OF_DECLARE(98dx1135_clk, "marvell,mv98dx1135-core-clock",
+      |                ^~~~~~~~~~~~
+include/linux/clk-provider.h:1367:28: note: in definition of macro 'CLK_OF_DECLARE'
+ 1367 |         static void __init name##_of_clk_init_declare(struct device_node *np) \
+      |                            ^~~~
 
-                        Geert
+This could be fixed in the driver by renaming 98dx1135_clk to a valid
+C identifier, but it's easy enough to make the macro more robust by
+reversing the two parts of the name, which makes it work for other files
+that may have the same issue. Since CLK_OF_DECLARE_DRIVER() has a very
+similar definition, do the same change in both.
 
+Fixes: c7296c51ce5d ("clk: core: New macro CLK_OF_DECLARE_DRIVER")
+Fixes: c28cd1f3433c ("clk: Mark a fwnode as initialized when using CLK_OF_DECLARE() macro")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ include/linux/clk-provider.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index c9f5276006a0..3586a029db05 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -1364,24 +1364,24 @@ struct clk_hw_onecell_data {
+ };
+ 
+ #define CLK_OF_DECLARE(name, compat, fn) \
+-	static void __init name##_of_clk_init_declare(struct device_node *np) \
++	static void __init of_clk_init_declare##name(struct device_node *np) \
+ 	{								\
+ 		fn(np);							\
+ 		fwnode_dev_initialized(of_fwnode_handle(np), true);	\
+ 	}								\
+-	OF_DECLARE_1(clk, name, compat, name##_of_clk_init_declare)
++	OF_DECLARE_1(clk, name, compat, of_clk_init_declare##name)
+ 
+ /*
+  * Use this macro when you have a driver that requires two initialization
+  * routines, one at of_clk_init(), and one at platform device probe
+  */
+ #define CLK_OF_DECLARE_DRIVER(name, compat, fn) \
+-	static void __init name##_of_clk_init_driver(struct device_node *np) \
++	static void __init of_clk_init_driver##name(struct device_node *np) \
+ 	{								\
+ 		of_node_clear_flag(np, OF_POPULATED);			\
+ 		fn(np);							\
+ 	}								\
+-	OF_DECLARE_1(clk, name, compat, name##_of_clk_init_driver)
++	OF_DECLARE_1(clk, name, compat, of_clk_init_driver##name)
+ 
+ #define CLK_HW_INIT(_name, _parent, _ops, _flags)		\
+ 	(&(struct clk_init_data) {				\
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.39.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
