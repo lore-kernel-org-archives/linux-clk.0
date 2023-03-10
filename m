@@ -2,165 +2,73 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 573AEC64EC4
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Mar 2023 17:23:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A48EAC74A4B
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Mar 2023 20:01:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229984AbjCJRXk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Mar 2023 12:23:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50216 "EHLO
+        id S229827AbjCJUBW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Mar 2023 15:01:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230183AbjCJRXS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Mar 2023 12:23:18 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 110B611CD5A
-        for <linux-clk@vger.kernel.org>; Fri, 10 Mar 2023 09:22:35 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id l1so6002943pjt.2
-        for <linux-clk@vger.kernel.org>; Fri, 10 Mar 2023 09:22:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1678468954;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8/DE4BbFE+cxAZN5gN/efxtiXFGQR5+c7FHCyJNvBW0=;
-        b=lBKfb9q0r7vkZYNRlLOjcEmf6VPf5rwijNxOF//+Xy4M3xBeF9HOtVh0eG819F2Sev
-         NnnbLf8PDG+ZdoYiUrAC2qeUDnwFEp8CQAfkuRHSPd2ovw5P26p7+2+CDJ70+tXr1/Eh
-         iLtwr5dZauN0iESvOyUcL+zgmCETUoyN6hTzAVjmTmKUtCBEEXURVcGEBAZEOA8QJXqg
-         XeZ+Z86HTwPiBDusp+t3f10kzftM+lNeJbQD88zibtEf47xAeWKTTGFe7PpZVYflLe3U
-         WJCL2BRMaurSlT14jx1hTDrzzQH7o+86mTNxfRkrCmSywPD9DkL1RUJ2GN0t/hd01bW5
-         PVgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678468954;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8/DE4BbFE+cxAZN5gN/efxtiXFGQR5+c7FHCyJNvBW0=;
-        b=NlcPfIy5/Lc2eNV6GA+eiMWKZozB3CCuXo4m0zKJ4yWitC8dZq5hugzMFZIJKhm/C0
-         ugkQEJefqcFQUymx2GTbQwdQY0kleeNHrKzCC6ay4+Hj5cqTqzkG9FN4kdCyGiBPK0xd
-         Fzgj6hDnUHMDN1zTnZJDHiqX9ljZwFX/HPuWwwpqulUoU4C4NPvaWcghhjxyC6bvwU9G
-         xbupAqQa69WElvz1DWFWxmyh/gNPahzkXntrPEjOaffYftNo70/v/+Oh2+UG469JLh5A
-         G2NX8vLaCdsHgzSvgM5B0TbACz+CM8XDeEmyQ/+gfsYizxgJFEV+Ek+Uyae26CDumOpA
-         eiVw==
-X-Gm-Message-State: AO0yUKVldm0b7qCJdpD/11w8z/Bl/cwSKRuJocLTvFTN/dHSxlvSgYCQ
-        zHGMCa6omcMX+kR7rpFneIzmj4IBsgHhIUYy/6oh9w==
-X-Google-Smtp-Source: AK7set9Hv6Hx+AVNj9NYlD3DaqMoPARFDlR4f7ayZ9t8PEJeytSyInKXiN8NL1CElZFLbGIGgLslyKMEbbMELLNtbOg=
-X-Received: by 2002:a17:90a:dc0d:b0:235:1fb7:393c with SMTP id
- i13-20020a17090adc0d00b002351fb7393cmr1198503pjv.1.1678468953481; Fri, 10 Mar
- 2023 09:22:33 -0800 (PST)
+        with ESMTP id S231235AbjCJUBP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Mar 2023 15:01:15 -0500
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CADE312D410;
+        Fri, 10 Mar 2023 12:01:05 -0800 (PST)
+Received: from [192.168.1.141] ([37.4.248.41]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MILru-1pp4O11Xue-00EPAk; Fri, 10 Mar 2023 21:00:45 +0100
+Message-ID: <a61562c7-f064-9d4d-961d-12e3f29c9f5e@i2se.com>
+Date:   Fri, 10 Mar 2023 21:00:44 +0100
 MIME-Version: 1.0
-References: <20230310140218.326626-1-arnd@kernel.org>
-In-Reply-To: <20230310140218.326626-1-arnd@kernel.org>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Fri, 10 Mar 2023 09:21:57 -0800
-Message-ID: <CAGETcx-9PDaWc7eFQ5ajk0BFY7HRhvf30R6uR0Mo1qb+6Af0jQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: avoid build failure on CLK_OF_DECLARE() with invalid name
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH v1] clk: imx6ul: fix "failed to get parent" error
+To:     Oleksij Rempel <o.rempel@pengutronix.de>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Ricardo Ribalda <ribalda@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20230310164523.534571-1-o.rempel@pengutronix.de>
+Content-Language: en-US
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+In-Reply-To: <20230310164523.534571-1-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:K4OSnDxed7xJFPDbaQDMyReZN+rcplt8amszQzVsF7kkqIwO2Yk
+ hf4CqPmjtsEGJmI0zDklnPx1Rbhh7vT09WjSdCqApmT22DbFY6dvtZW9kavQ/6MnfKxb7fM
+ nNhaz4Z7//CdwW/l9CDxvmxu8jewfIysMCFQq1qjNzTRNs0tPDpuH8FaETLWHB9qS+iucCo
+ lv2CZ51HoUttvX8oiEA4g==
+UI-OutboundReport: notjunk:1;M01:P0:8dkClVkVP4I=;3c917G4NR0QA/cp7oKckL/CioGR
+ UE3H4CrgX/c6oNHM1x58CX7sCAG2/PtlELn4BMUrkJfQXxopXfkVy3tA0GN2yJ1lXz6BgHCUo
+ O9s0s3UPmW3731HptfbyR3KJBGNjoOvhgatDLTKS13Ak5co1vPbSE+1l+iYNYGyjznxAwVmjX
+ gY9XUafbxdcWMwi7PCeGM/EFqvgb32pnSLvi9jKszHrUHtit+vBD+OSRwDzoWy8ioPAvvW9wv
+ LEOZWgiW9ZkvkC0WlMwKB6PasHXaDd+V1qMONShcfcutX2oWWXOS12uu6uCkm2vzGlLpX/vI3
+ /P3nuURh7oFzTqYIn+1k9uig1Q6zmHYaJ3HlMTlm2v6OI1y86zHg0f72uOwZ8868ZFecCikOB
+ A6erq8oOxCUuBAHY+yqqF1GzqMUlbw+io+lN4TAUUI0r6NGkalLY0SRWTZMorNbvz/tOLT700
+ XBuQt2qp5kapFnEpMhxcq0to5Mw3Gj9CMPmRF75+ON4HdlZg8swYcUlzbB2fXmkATOZeM2Gjz
+ pFD5yShUWQdH7QwyUPRRoaLA8DYRdpryzbj4BZ0oNF3bueRN+/VuFXQmTundJzy3/D0nZU1lz
+ tTLcHcT71ZiiMMpQ05NZD4ZlbZ8Hck3BzTQ8V4DoBBCUo3Q+jODF8d/r1Clq3i5vbo/P8Os8P
+ 6vzswekxeU5WV0zREKGAMIl4HYP25l46zXjq5vh2Yg==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Mar 10, 2023 at 6:02=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> wro=
-te:
+Am 10.03.23 um 17:45 schrieb Oleksij Rempel:
+> On some configuration we may get following error:
+> [    0.000000] imx:clk-gpr-mux: failed to get parent (-EINVAL)
 >
-> From: Arnd Bergmann <arnd@arndb.de>
+> This happens if selector is configured to not supported value. To avoid
+> this warnings add dummy parents for not supported values.
 >
-> Generating an init function function from CLK_OF_DECLARE() broke for the
-> 98dx1135_clk declaration because that string starts with a digit and
-> is not a valid C identifier:
+> Fixes: 4e197ee880c2 ("clk: imx6ul: add ethernet refclock mux support")
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Nathan already sent out a fix for this and it's been picked up.
+Reported-by: Stefan Wahren <stefan.wahren@i2se.com>
+Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
 
-https://lore.kernel.org/lkml/20230308-clk_of_declare-fix-v1-1-317b741e2532@=
-kernel.org/
-
--Saravana
-
->
-> In file included from drivers/clk/mvebu/kirkwood.c:15:
-> drivers/clk/mvebu/kirkwood.c:358:16: error: invalid suffix "dx1135_clk_of=
-_clk_init_declare" on integer constant
->   358 | CLK_OF_DECLARE(98dx1135_clk, "marvell,mv98dx1135-core-clock",
->       |                ^~~~~~~~~~~~
-> include/linux/clk-provider.h:1367:28: note: in definition of macro 'CLK_O=
-F_DECLARE'
->  1367 |         static void __init name##_of_clk_init_declare(struct devi=
-ce_node *np) \
->       |                            ^~~~
-> drivers/clk/mvebu/kirkwood.c:358:16: error: expected identifier or '(' be=
-fore numeric constant
->   358 | CLK_OF_DECLARE(98dx1135_clk, "marvell,mv98dx1135-core-clock",
->       |                ^~~~~~~~~~~~
-> include/linux/clk-provider.h:1367:28: note: in definition of macro 'CLK_O=
-F_DECLARE'
->  1367 |         static void __init name##_of_clk_init_declare(struct devi=
-ce_node *np) \
->       |                            ^~~~
->
-> This could be fixed in the driver by renaming 98dx1135_clk to a valid
-> C identifier, but it's easy enough to make the macro more robust by
-> reversing the two parts of the name, which makes it work for other files
-> that may have the same issue. Since CLK_OF_DECLARE_DRIVER() has a very
-> similar definition, do the same change in both.
->
-> Fixes: c7296c51ce5d ("clk: core: New macro CLK_OF_DECLARE_DRIVER")
-> Fixes: c28cd1f3433c ("clk: Mark a fwnode as initialized when using CLK_OF=
-_DECLARE() macro")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  include/linux/clk-provider.h | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index c9f5276006a0..3586a029db05 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -1364,24 +1364,24 @@ struct clk_hw_onecell_data {
->  };
->
->  #define CLK_OF_DECLARE(name, compat, fn) \
-> -       static void __init name##_of_clk_init_declare(struct device_node =
-*np) \
-> +       static void __init of_clk_init_declare##name(struct device_node *=
-np) \
->         {                                                               \
->                 fn(np);                                                 \
->                 fwnode_dev_initialized(of_fwnode_handle(np), true);     \
->         }                                                               \
-> -       OF_DECLARE_1(clk, name, compat, name##_of_clk_init_declare)
-> +       OF_DECLARE_1(clk, name, compat, of_clk_init_declare##name)
->
->  /*
->   * Use this macro when you have a driver that requires two initializatio=
-n
->   * routines, one at of_clk_init(), and one at platform device probe
->   */
->  #define CLK_OF_DECLARE_DRIVER(name, compat, fn) \
-> -       static void __init name##_of_clk_init_driver(struct device_node *=
-np) \
-> +       static void __init of_clk_init_driver##name(struct device_node *n=
-p) \
->         {                                                               \
->                 of_node_clear_flag(np, OF_POPULATED);                   \
->                 fn(np);                                                 \
->         }                                                               \
-> -       OF_DECLARE_1(clk, name, compat, name##_of_clk_init_driver)
-> +       OF_DECLARE_1(clk, name, compat, of_clk_init_driver##name)
->
->  #define CLK_HW_INIT(_name, _parent, _ops, _flags)              \
->         (&(struct clk_init_data) {                              \
-> --
-> 2.39.2
->
