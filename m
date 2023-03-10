@@ -2,102 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D8F2C64EC4
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Mar 2023 14:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA778C74A4B
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Mar 2023 15:15:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232918AbjCJOsV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Mar 2023 09:48:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42826 "EHLO
+        id S233232AbjCJPPR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Mar 2023 10:15:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232983AbjCJOrc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Mar 2023 09:47:32 -0500
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E47E812115F;
-        Fri, 10 Mar 2023 06:47:15 -0800 (PST)
-Received: by mail-oi1-f175.google.com with SMTP id bp19so4405843oib.4;
-        Fri, 10 Mar 2023 06:47:15 -0800 (PST)
+        with ESMTP id S234023AbjCJPOa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Mar 2023 10:14:30 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A677129700
+        for <linux-clk@vger.kernel.org>; Fri, 10 Mar 2023 07:05:50 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id g3so5332546wri.6
+        for <linux-clk@vger.kernel.org>; Fri, 10 Mar 2023 07:05:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678460694;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BdcQY2YGeyPPQy3gaq0qhGRWAP9H29xtuBXq8C1jl6M=;
+        b=c78Z0Z4nVEUM5ovmKStejCY4zuYv4UjhkFhuH97bktj7Wqr0iVP9MSXsS4djyWiWge
+         NY/sjHtmVM3sYk/q5T7UTdgmVTrQOJldvyyNVKsXLuu5SMFkcuGHEvQRJ811ZNi/FFjy
+         D8arARgu4Fn0S11np02J19d25G5g82955/gTNVozUUhqFhyaUI/8ZswPD/YCSv+RN9YR
+         bfRc7C0bSXJwc9+dFVVWnRCNwfT/AMN9NVY90CsTby9P9aC8VSnYR5/ASZjWZK6cKSsV
+         WbNssalQiOQZBvfjFc9x5seX4MZalkDKSq42QM7XllVjzrXV533t9ZmA0qdXoJbpX/NI
+         H3QA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678459632;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HLqzD8+2CF/pIUdlHHjjrK7T/hMwbjXYhuFmb1oAmEA=;
-        b=ggfOf9TUe/BXTPpUQ4T3LmlzGanGvSDcTdTSRRRu3ogPIT9V8ndT0GgA6pF7Vdq6qm
-         +d7xdE+HktoAkLPxsDQW9IMj6RK7Xp8bwh4zWsOcQa58lzQl7A/lD4jvyTNdsolWWNZh
-         EegtDMYlYQ9I64V1WAXtOHCKqKASvdxIuFjE+TbkEEhHuxylzyJtc9hLLuNDjgk6ZY3q
-         FmT0PJ0Unr5N29vqWxOK2g2uPEfaUhIh+ZPbBjhULOo3VDLdQMHzVOQR3VKdWIvbQLVA
-         r7RSIjRHeurYtuyW2Drj+rOve7M8pU7JloS4c2p+bTvXd7PyfpskIQUi9HAO0tUNlPUY
-         fhlA==
-X-Gm-Message-State: AO0yUKXV4NeUx+8TXwMV/8rMvY2NUbpIxuRh6AQdapzXorUBCnkOkEt4
-        yjZec97p/3euPGTll4vCnw==
-X-Google-Smtp-Source: AK7set8Bdag2GIi+kSg4D6nNSAv+XQoZMwETZaTM9ps5v4efL5Wq9sPuPAr6F34JwgVtxlFdO1tJEg==
-X-Received: by 2002:aca:2204:0:b0:35e:d286:232b with SMTP id b4-20020aca2204000000b0035ed286232bmr11451371oic.10.1678459632180;
-        Fri, 10 Mar 2023 06:47:12 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id e184-20020acab5c1000000b003847ca255fasm972035oif.30.2023.03.10.06.47.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Mar 2023 06:47:11 -0800 (PST)
-Received: (nullmailer pid 1541530 invoked by uid 1000);
-        Fri, 10 Mar 2023 14:47:01 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: Use of_property_present() for testing DT property presence
-Date:   Fri, 10 Mar 2023 08:47:01 -0600
-Message-Id: <20230310144701.1541504-1-robh@kernel.org>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20210112; t=1678460694;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BdcQY2YGeyPPQy3gaq0qhGRWAP9H29xtuBXq8C1jl6M=;
+        b=sV4CTs/U5mJX3IKP02sYAquBCtALv4YIMSlSPkqpUozk590MRY9G27Ni4CrRcgxMFl
+         fGp4LW8Lm5TO1sOcdKkp7IEVbEVw5GeDiJTLL7USCMQ7PzoFhDzB6TcVSRzVM59IhQnB
+         X+QzptW/sjJmx4AClKfX57cw3/U1QWh7Ode5WKpgL/OellwiMZCdG9gKZkcp2wNd5S1k
+         ZTlOtn6qTT/Pnc7257kSIXuo9xorSrc1sFJwyRebScUjxvTFjDIA3w/V6svz/AbI4+rA
+         VZc8HDhkrOMenmSes7SEb3A4VqBiAmHE042JBcuMPYDydQYOqugP8NALiEDekC2A+6Sf
+         rMDg==
+X-Gm-Message-State: AO0yUKWDjOzN/JeHUk79VwfVf/4Rq2XgKMDT3Ki1GWQCN8a22+GKdVs+
+        NinVFGtc15cK74ETc4G8e4afLG+4TRCRwm5Hg9A=
+X-Google-Smtp-Source: AK7set9N3trIQyBm2KMQV9Jy+uSYSg+mAaFAV8EfXjLeyi5NBrpk5ACECqHayrpTCwDFHZu1AoPRFw==
+X-Received: by 2002:aa7:dcd7:0:b0:4ab:49eb:a8ec with SMTP id w23-20020aa7dcd7000000b004ab49eba8ecmr22958818edu.26.1678459882763;
+        Fri, 10 Mar 2023 06:51:22 -0800 (PST)
+Received: from ?IPV6:2a02:810d:15c0:828:45c4:46be:ec71:4a51? ([2a02:810d:15c0:828:45c4:46be:ec71:4a51])
+        by smtp.gmail.com with ESMTPSA id y59-20020a50bb41000000b004f0de6d52fcsm102483ede.74.2023.03.10.06.51.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Mar 2023 06:51:22 -0800 (PST)
+Message-ID: <6b6b5dc2-43ab-5672-099f-505ab4543438@linaro.org>
+Date:   Fri, 10 Mar 2023 15:51:21 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH 2/7] dt-bindings: clock: exynos850: Add tzpc property
+Content-Language: en-US
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20230308233822.31180-1-semen.protsenko@linaro.org>
+ <20230308233822.31180-3-semen.protsenko@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230308233822.31180-3-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It is preferred to use typed property access functions (i.e.
-of_property_read_<type> functions) rather than low-level
-of_get_property/of_find_property functions for reading properties. As
-part of this, convert of_get_property/of_find_property calls to the
-recently added of_property_present() helper when we just want to test
-for presence of a property and nothing more.
+On 09/03/2023 00:38, Sam Protsenko wrote:
+> Exynos850 requires extra TZPC handling to keep CMU registers non-secure
+> (accessible from the kernel) after PM resume. It's done using a specific
+> SMC call to the EL3 monitor.
+> 
+> Describe "samsung,tzpc" property for Exynos850 clock controller which
+> allows one to specify the SMC call address for PD capable CMUs.
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  .../bindings/clock/samsung,exynos850-clock.yaml        | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+> index cc1e9173b272..5098dce5caf6 100644
+> --- a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+> +++ b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+> @@ -60,6 +60,16 @@ properties:
+>    reg:
+>      maxItems: 1
+>  
+> +  samsung,tzpc:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      The register address in corresponding Trust Zone Protection Control block
+> +      for setting the CMU registers access to non-secure. If provided, it'll be
+> +      used for issuing SMC calls to EL3 monitor during CMU's PM suspend and
+> +      resume operations, ensuring CMU registers are unprotected after waking up.
 
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- drivers/clk/clk.c         | 4 ++--
- drivers/clk/sprd/common.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Do not store register addresses of MMIO in some fields. If this is part
+of clock MMIO, then it could be address space in reg. If it is not, you
+cannot store someone's else address space here. If this is someone's
+else address space, then you either need syscon or phandle to dedicated
+device (something like qcom,scm or other secure monitor channel).
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index ae07685c7588..f7528d7f8256 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -4880,8 +4880,8 @@ static struct device_node *get_clk_provider_node(struct device *dev)
- 	np = dev->of_node;
- 	parent_np = dev->parent ? dev->parent->of_node : NULL;
- 
--	if (!of_find_property(np, "#clock-cells", NULL))
--		if (of_find_property(parent_np, "#clock-cells", NULL))
-+	if (!of_property_present(np, "#clock-cells"))
-+		if (of_property_present(parent_np, "#clock-cells"))
- 			np = parent_np;
- 
- 	return np;
-diff --git a/drivers/clk/sprd/common.c b/drivers/clk/sprd/common.c
-index ce81e4087a8f..1a3795a61f81 100644
---- a/drivers/clk/sprd/common.c
-+++ b/drivers/clk/sprd/common.c
-@@ -44,7 +44,7 @@ int sprd_clk_regmap_init(struct platform_device *pdev,
- 	struct device_node *node = dev->of_node, *np;
- 	struct regmap *regmap;
- 
--	if (of_find_property(node, "sprd,syscon", NULL)) {
-+	if (of_property_present(node, "sprd,syscon")) {
- 		regmap = syscon_regmap_lookup_by_phandle(node, "sprd,syscon");
- 		if (IS_ERR(regmap)) {
- 			pr_err("%s: failed to get syscon regmap\n", __func__);
--- 
-2.39.2
+> +
+> +      This property is optional.
+
+Drop, It's already optional if not required.
+
+Best regards,
+Krzysztof
 
