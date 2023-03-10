@@ -2,110 +2,101 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1142C6FA99
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Mar 2023 07:50:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DFA2C6FD19
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Mar 2023 07:55:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229613AbjCJHuF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Mar 2023 02:50:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54494 "EHLO
+        id S229743AbjCJHza (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Mar 2023 02:55:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230098AbjCJHts (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Mar 2023 02:49:48 -0500
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C07F13539
-        for <linux-clk@vger.kernel.org>; Thu,  9 Mar 2023 23:49:47 -0800 (PST)
+        with ESMTP id S229925AbjCJHz3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Mar 2023 02:55:29 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 650D6E191A
+        for <linux-clk@vger.kernel.org>; Thu,  9 Mar 2023 23:55:23 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id l1so4165424wry.12
+        for <linux-clk@vger.kernel.org>; Thu, 09 Mar 2023 23:55:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1678434587; x=1709970587;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=9EgvBIaAI2oCfJ+DzadicnJdaG1gei3k/C+WQD0AIcU=;
-  b=f5nlfhbR6Ceh+tE0KpE7v3ZdLkwuZ5jQGz1KSpzpgn8vWiTcbt+cM4Kx
-   BRn8vvpYSKvMBlyeiQbIytXgI0SQVSyapS9lZ3D6nAh1zP4sxrE9ZFEXn
-   fT+7gbgqTHyWDa+yNuvHGXKUXdEeZrAWhwljpEIEcJqQ8yA79b+ZNhgAE
-   roW3xz9gMzDKUxstMk8z+YEsYdT3gk23pSpdHIiJqnZc4ova5dIJvjGhs
-   ZnZxUx9nUjQgMiWVajxbU5X8D3R0n7OXqnmFX+FtVvqNMsuHmb7ulPqYg
-   d9A7JOYu8gwlztk7Lwc3goa/TqhoXlefDw/Cjtb9Rvf0EJZxRy8HD2q85
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.98,249,1673910000"; 
-   d="scan'208";a="29596922"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 10 Mar 2023 08:49:45 +0100
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Fri, 10 Mar 2023 08:49:45 +0100
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Fri, 10 Mar 2023 08:49:45 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1678434585; x=1709970585;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=9EgvBIaAI2oCfJ+DzadicnJdaG1gei3k/C+WQD0AIcU=;
-  b=SJudJ/hNLW8mgj7t+c70SYeeLv7+oQrBnB1r2ceRsrWOoJmryaPtgpJL
-   imAyBDZS9lFm0tsZgLP1fy7T4I+Rdg2t52EvAFdyF9NwrMeyJO3TUMUVI
-   a0KH5CUxm5fEkvckB+vNu800zZum3iT9u1Z4DWaWSGXktkFw+o7xfvlLb
-   4BdWji7Xfg1+JaZ/EjL41x2811nrPCat9CRR4AsB2hcUzGqttEiaGr2cr
-   F5ejptzFv8yIUhOmDLZsalViMsi9px+g+EYtS0K+QOAO8N1/MTCNT7fzl
-   LPZH4XCkx7+AUvPtAGpUT8yN9zpqPBMfFIqUYMczgAhImKyetFlCommDL
-   g==;
-X-IronPort-AV: E=Sophos;i="5.98,249,1673910000"; 
-   d="scan'208";a="29596921"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 10 Mar 2023 08:49:45 +0100
-Received: from steina-w.tq-net.de (unknown [10.123.53.21])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 73B1C280056;
-        Fri, 10 Mar 2023 08:49:45 +0100 (CET)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Marek Vasut <marex@denx.de>
-Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        linux-clk@vger.kernel.org
-Subject: [PATCH 1/1] clk: rs9: Fix suspend/resume
-Date:   Fri, 10 Mar 2023 08:49:40 +0100
-Message-Id: <20230310074940.3475703-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
+        d=google.com; s=20210112; t=1678434922;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hg8gm9UXcuofNWv7bFMURJvZUDWceYZ+g4VoqacHVTs=;
+        b=XcSpm5S1c3LTIpRC/qSv/wD4Phhsa4jCsOLrRowE6+YdUtdlMT2Koo4r4ka6wFxa4s
+         mtmwQTOSxubEKjDOJHdMhFnLsJGYGswUw+sr1KNk2NKS2T3JoyJ4tC2yQ7YMYIa1d3Mt
+         rHkS/x1f4mBTfXxgRjQzy3tmceUijtRWfxMuKBwmqxZWRKc7Z53+obu/JywSWMi4tQEc
+         vz5tAeb/V/iMQ9/rY/c15TPEilikvL592wkSLIgZUx2SfyPHnWmM/7/g3imS6vKW19yI
+         ym6Zc3ZpQIlu8g5Hy7T8VPCgf5PMVTYE/XTZxI225FdRPvGAKhPftedSSGQ2tCGKfR3b
+         I7dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678434922;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Hg8gm9UXcuofNWv7bFMURJvZUDWceYZ+g4VoqacHVTs=;
+        b=vHfOv7hXS4IzdPlcTtXdtEBMGwlvu/MynIwuVqwrLbOLxWF7hY8Sj/GCgsLC5eMy0s
+         L5Xv/cpaL2gQqnx5Ytsg7twtdWgkb/alxtkXJT9f5AOuQSxhz58h9oER3/edCZE1NCMk
+         B/XAPzF5dVjC6kGNNDT0HJecNBkKObsX2mZXTOBc2tcOlqYoZJgkSjQbk/Ibl5H4PQ3M
+         cMaQGdhgqS69Mm0KDOwY8OR/6zbaKM+RFCAgbMw9H4+E4RZGWs6DgQbmiLqUbhtluntc
+         emVy1GK/su2ZfqAITpzSB9wjXdbMbI4O9K0gFYU6iuWFrOc+qctWSRLjSuxeGI7RSLWz
+         +qZw==
+X-Gm-Message-State: AO0yUKXLXl81UTGj6RDZ4B/O7ivxKl+gvz0TGl4uKQIpBsMlcgnvFNqe
+        jqo/9yZoIPmm/DphcW6/ExU1z6JlQhkfb6+HpwWA3A==
+X-Google-Smtp-Source: AK7set8YJqVZRqtut+bMEQTqwl6r469KIAYC+a6PXbytDy5dL9Ft02+G7BXUCv4WmitzpSAnNx588vSN5VKBNG4uKa8=
+X-Received: by 2002:adf:fc0d:0:b0:2c5:8377:3eaf with SMTP id
+ i13-20020adffc0d000000b002c583773eafmr4846173wrr.2.1678434921777; Thu, 09 Mar
+ 2023 23:55:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230302013822.1808711-1-sboyd@kernel.org> <20230302013822.1808711-2-sboyd@kernel.org>
+ <CABVgOSkxOxpaHVtq1YpvNEshTZ3nic1p7NjV5DPdz066=tiS-A@mail.gmail.com> <377046f369227a11fbf9e67c3c122d79.sboyd@kernel.org>
+In-Reply-To: <377046f369227a11fbf9e67c3c122d79.sboyd@kernel.org>
+From:   David Gow <davidgow@google.com>
+Date:   Fri, 10 Mar 2023 15:55:09 +0800
+Message-ID: <CABVgOSm_yRjqKYegZeFkObkS9cgXaDfD2CTeoE1s7RRLo=RuEg@mail.gmail.com>
+Subject: Re: [PATCH 1/8] dt-bindings: Add linux,kunit binding
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev,
+        Brendan Higgins <brendan.higgins@linux.dev>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Disabling the cache in commit 2ff4ba9e3702 ("clk: rs9: Fix I2C accessors")
-without removing cache synchronization in resume path results in a
-kernel panic as map->cache_ops is unset, due to REGCACHE_NONE.
-Enable flat cache again to support resume again. num_reg_defaults_raw
-is necessary to read the cache defaults from hardware. Some registers
-are strapped in hardware and cannot be provided in software.
+On Fri, 10 Mar 2023 at 07:12, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting David Gow (2023-03-02 23:14:55)
+> > On Thu, 2 Mar 2023 at 09:38, Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Document the linux,kunit board compatible string. This board is loaded
+> > > into the Linux kernel when KUnit is testing devicetree dependent code.
+> >
+> > As with the series as a whole, this might need to change a little bit
+> > if we want to either use devicetree overlays and/or other
+> > architectures.
+> >
+> > That being said, I'm okay with having this until then: the only real
+> > topic for bikeshedding is the name.
+> > - Is KUnit best as a board name, or part of the vendor name?
+> > - Do we want to include the architecture in the name?
+> > Should it be "linux,kunit", "linux-kunit,uml", "linux,kunit-uml", etc?
+>
+> I think I will drop this patch. I have overlays working. I hijacked
+> of_core_init() to load the testcase data from drivers/of/unittest-data
+> and made a container node for kunit overlays to apply to.
 
-Fixes: 2ff4ba9e3702 ("clk: rs9: Fix I2C accessors")
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-There is also a series to not panic when using regcache_sync on
-REGCACHE_NONE maps at [1].
+Makes sense to me, thanks!
 
-[1] https://lore.kernel.org/lkml/20230310073911.3470892-1-alexander.stein@ew.tq-group.com/T/#u
-
- drivers/clk/clk-renesas-pcie.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
-index 1e8b196e36f3..3377ee55c4f0 100644
---- a/drivers/clk/clk-renesas-pcie.c
-+++ b/drivers/clk/clk-renesas-pcie.c
-@@ -149,8 +149,9 @@ static int rs9_regmap_i2c_read(void *context,
- static const struct regmap_config rs9_regmap_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
--	.cache_type = REGCACHE_NONE,
-+	.cache_type = REGCACHE_FLAT,
- 	.max_register = RS9_REG_BCP,
-+	.num_reg_defaults_raw = 0x8,
- 	.rd_table = &rs9_readable_table,
- 	.wr_table = &rs9_writeable_table,
- 	.reg_write = rs9_regmap_i2c_write,
--- 
-2.34.1
-
+Looking forward to seeing how the overlays work in practice!
