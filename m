@@ -2,201 +2,88 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F84C64EC4
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Mar 2023 08:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF36C64EC4
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Mar 2023 08:46:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230172AbjCJITY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Mar 2023 03:19:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47504 "EHLO
+        id S231400AbjCJIqQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Mar 2023 03:46:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230059AbjCJITX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Mar 2023 03:19:23 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE3469609B
-        for <linux-clk@vger.kernel.org>; Fri, 10 Mar 2023 00:19:21 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id fm20-20020a05600c0c1400b003ead37e6588so5369057wmb.5
-        for <linux-clk@vger.kernel.org>; Fri, 10 Mar 2023 00:19:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1678436360;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=e3+IejGerSkWVmYYthQksOk85z2qGIusABFoD8foBbU=;
-        b=WIyaXheqnXnNzAG3ZpDrMShk0xBME1mI7nZjH2KgOK59dTBG1gaB04q55SdmETCjvP
-         zMbKix1GeHqTX1SoM3+vrKysTljd2ZHbbNwZz0v1vCtTAgVPxsgQjQH1HDwzgEznIvTn
-         vOqZbsq/rEQlWkYl4tEZVoYrawpl+8Q7+4MvRV08RPemY6CFxk9a010PtG3zauuOJZUm
-         E0yLy45n6feN5/Q67wcYWHLvIYsvNVSDlwWHYiqJl4WHFpKX/zyAmqaZLppWbSAtuod/
-         LJdjpfux/3MjVbjaEtaDC09SvVu4W/NQJBXPborM5cL88zTu0Z0PqoIFmw0szevnBJAO
-         UXCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678436360;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e3+IejGerSkWVmYYthQksOk85z2qGIusABFoD8foBbU=;
-        b=xvl4oplHtxZyz6nrlqU73rViOGjBcTFXqvfBrzPXNPKApCHBn6Ryrl/GHnocH1kpcV
-         u4BJklJ3PteMmzZ3khs/1ycATJFJjnQKuGtwvAMcPdp0vpwXqBZF/gnsMTUC6bwGN1dV
-         0kzMCmEdXUiuGbAo8cEtB8yBNBDh02x4WNs26rfvjzfu+mPQTAy0uZb0VZCevrNHpIml
-         1C3LTiRA8Tm9vK9yrH2tdly4XeEj8L8xVE9P9cPQhP4EUa5LVq4o7PYUbGcgyPw3BLQ6
-         1ISFnCZ2SUXp04AEc0QY+/ggMTdPEkH7zMgDN5HIsNtvuWc/Va+g7WDp01nCdnqyMKj3
-         0Riw==
-X-Gm-Message-State: AO0yUKVO6So5q1G10EW7gSUIPCzn4fop/NoKuo+5IJcOUHBWYU9/MDQb
-        bhRZkVdGfNYMMPZDL76E5Vdb/SEZwTMDOAIddQ+qDQ==
-X-Google-Smtp-Source: AK7set9rSovQkv6G8/2uFWd8dZCJdhTjKOFXRnj4/glBjRHWFtuXEHSglc64lK3dRxU/gLKgbKiUpRiWGZkosiiA86U=
-X-Received: by 2002:a7b:c2a9:0:b0:3df:97b0:ba02 with SMTP id
- c9-20020a7bc2a9000000b003df97b0ba02mr578544wmk.3.1678436360078; Fri, 10 Mar
- 2023 00:19:20 -0800 (PST)
+        with ESMTP id S229876AbjCJIps (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Mar 2023 03:45:48 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EEB99EF3;
+        Fri, 10 Mar 2023 00:42:55 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EB67BB821F5;
+        Fri, 10 Mar 2023 08:42:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA57BC433D2;
+        Fri, 10 Mar 2023 08:42:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678437772;
+        bh=vyK0l8/7QBS4rIiFD7Hkw5agnLbdavaBpCLzBjba6RE=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=dsGWnk+n7nYa9XNJasSdXRAjbYKTJ/LTJ6rF+XpxCGZDPrauvNWjsJ00JJBvjKO1n
+         cYGN9vgkNtvM0jeOF2fIi0WujUrMEjLcPKicNidz56kxwqFgGBCxSnQ+3kmncH3vgC
+         T9XpXDTnAPx1y4tzri+avqVuHdESZ6IIEFv3BntEjvDF4EgtGCDD/ftTAiTWLpHW4X
+         t9T5FjeeQ0+ToBev+0s02jP9Lt6/qUhG3airgdq8V7SNHAZseD0jbLu2volXe2sS6O
+         JXWiGYkQYSfYycc4lKcajjsdqlVC0KFGsZva3wvLXCh8patiRTFE2F/FEQd4EQL5iq
+         GhNMeeP3egOoA==
+Message-ID: <c03e47f7-bb26-0114-b300-357634b0e581@kernel.org>
+Date:   Fri, 10 Mar 2023 09:42:47 +0100
 MIME-Version: 1.0
-References: <20230302013822.1808711-1-sboyd@kernel.org> <20230302013822.1808711-4-sboyd@kernel.org>
- <CABVgOSmR0_u8Tw0E8C1mRFxSiGKwdKG5ka_+X_36Hj4VNLdg2g@mail.gmail.com> <b0d4d450a7ad9b39336771b74b48f086.sboyd@kernel.org>
-In-Reply-To: <b0d4d450a7ad9b39336771b74b48f086.sboyd@kernel.org>
-From:   David Gow <davidgow@google.com>
-Date:   Fri, 10 Mar 2023 16:19:08 +0800
-Message-ID: <CABVgOSmVJyG2X6aPzWGe9G-hUy8C7nWAqUnNoh-a5DFou6rkQA@mail.gmail.com>
-Subject: Re: [PATCH 3/8] kunit: Add test managed platform_device/driver APIs
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        patches@lists.linux.dev,
-        Brendan Higgins <brendan.higgins@linux.dev>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v13 2/2] clk: clk-loongson2: add clock controller driver
+ support
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        kernel test robot <lkp@intel.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zhuyinbo <zhuyinbo@loongson.cn>
+Cc:     oe-kbuild-all@lists.linux.dev, Jianmin Lv <lvjianmin@loongson.cn>,
+        Liu Peibao <liupeibao@loongson.cn>, wanghongliang@loongson.cn,
+        loongson-kernel@lists.loongnix.cn
+References: <20230307115022.12846-2-zhuyinbo@loongson.cn>
+ <202303082037.QPfBP64A-lkp@intel.com>
+ <b94ee1d2-b224-f9d5-3f3c-0096634f4c93@loongson.cn>
+ <ec1fb4d134181a1b1859bcb884dcd494.sboyd@kernel.org>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <ec1fb4d134181a1b1859bcb884dcd494.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 10 Mar 2023 at 07:25, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting David Gow (2023-03-02 23:15:31)
-> > On Thu, 2 Mar 2023 at 09:38, Stephen Boyd <sboyd@kernel.org> wrote:
-> > >
-> > > Introduce KUnit resource wrappers around platform_driver_register(),
-> > > platform_device_alloc(), and platform_device_add() so that test authors
-> > > can register platform drivers/devices from their tests and have the
-> > > drivers/devices automatically be unregistered when the test is done.
-> > >
-> > > This makes test setup code simpler when a platform driver or platform
-> > > device is needed. Add a few test cases at the same time to make sure the
-> > > APIs work as intended.
-> > >
-> > > Cc: Brendan Higgins <brendan.higgins@linux.dev>
-> > > Cc: David Gow <davidgow@google.com>
-> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> > > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> > > ---
-> > >
-> > > Should this be moved to drivers/base/ and called platform_kunit.c?
-> > > The include/kunit/platform_driver.h could also be
-> > > kunit/platform_device.h to match linux/platform_device.h if that is more
-> > > familiar.
-> >
-> > DRM has a similar thing already (albeit with a root_device, which is
-> > more common with KUnit tests generally):
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/drm/drm_kunit_helpers.h
-> >
-> > But that's reasonably drm-specific, so it makes sense that it lives
-> > with DRM stuff. platform_device is a bit more generic.
-> >
-> > I'd probably personally err on the side of having these in
-> > drivers/base/, as I think we'll ultimately need similar things for a
-> > lot of different devices, and I'd rather not end up with things like
-> > USB device helpers living in the lib/kunit directory alongside the
-> > "core" KUnit code. But I could be persuaded otherwise.
->
-> Ok no problem. I'll move it.
->
-> >
-> > >
-> > > And I'm not super certain about allocating a driver structure and
-> > > embedding it in a wrapper struct. Maybe the code should just use
-> > > kunit_get_current_test() instead?
-> >
-> > I think there are enough cases througout the kernel where
-> > device/driver structs are needed that having this makes sense.
-> > Combined with the fact that, while kunit_get_current_test() can be
-> > used even when KUnit is not loaded, actually doing anything with the
-> > resulting struct kunit pointer will probably require (at least for the
-> > moment) KUnit functions to be reachable, so would break if
-> > CONFIG_KUNIT=m.
->
-> Wouldn't it still work in that case? The unit tests would be modular as
-> well because they depend on CONFIG_KUNIT.
->
+On 10/03/2023 00:47, Stephen Boyd wrote:
+> Quoting zhuyinbo (2023-03-08 18:58:02)
+>>
+>> 在 2023/3/8 下午8:16, kernel test robot 写道:
+>>> Hi Yinbo,
+>>>
+> [...]
+>>>
+>>>     drivers/clk/clk-loongson2.c: In function 'loongson2_calc_pll_rate':
+>>>>> drivers/clk/clk-loongson2.c:79:15: error: implicit declaration of function 'readq'; did you mean 'readl'? [-Werror=implicit-function-declaration]
+>>>        79 |         val = readq(loongson2_pll_base + offset);
+>>>           |               ^~~~~
+>>>           |               readl
+>>>     cc1: some warnings being treated as errors
+>>
+>> The CONFIG_64BIT not enabled in your config file, I will add a depend on 
+>> "CONFIG_64BIT" in my clock driver to fix this compile error.
+> 
+> Do you need to use readq() here? Can you read two 32-bit registers with
+> readl() and put them together for a 64-bit number?
 
-Yeah, the only case where this starts to get hairy is if the tests end
-up in the same module as the thing being tested (which sometimes
-happens to avoid having to export a bunch of symbols: see, e.g.
-thunderbolt and amdgpu), and then someone wants to build production
-kernels with CONFIG_KUNIT=m (alas, Red Hat and Android).
+If the platform supports 64-bit reads and these are actually one
+register, then readq makes sense - code is more readable, smaller, more
+efficient.
 
-So that's the only real place where you might need to avoid the
-non-'hook' KUnit functions, but those drivers are pretty few and far
-between, and most of the really useful functionality should be moving
-to 'hooks' which will be patched out cleanly at runtime.
+Best regards,
+Krzysztof
 
-> >
-> > So, unless you actually find kunit_get_current_test() and friends to
-> > be easier to work with, I'd probably stick with this.
-> >
->
-> Alright thanks.
->
-> > > diff --git a/lib/kunit/platform_driver.c b/lib/kunit/platform_driver.c
-> > > new file mode 100644
-> > > index 000000000000..11d155114936
-> > > --- /dev/null
-> > > +++ b/lib/kunit/platform_driver.c
-> > > @@ -0,0 +1,207 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * Test managed platform driver
-> > > + */
-> > > +
-> > > +#include <linux/device/driver.h>
-> > > +#include <linux/platform_device.h>
-> > > +
-> > > +#include <kunit/resource.h>
-> > > +
-> > > +struct kunit_platform_device_alloc_params {
-> > > +       const char *name;
-> > > +       int id;
-> > > +};
-> >
-> > FYI: It's my plan to eventually get rid of (or at least de-emphasize)
-> > the whole 'init' function aspect of KUnit resources so we don't need
-> > all of these extra structs and the like. It probably won't make it in
-> > for 6.4, but we'll see...
->
-> Will we be able to get the error values out of the init function? It's
-> annoying that the error values can't be returned as error pointers to
-> kunit_alloc_resource(). I end up skipping init, and doing it directly
-> before or after calling the kunit_alloc_resource() function. I'll try to
-> avoid init functions in the allocations.
-
-Yeah, that's largely why the plan is to get rid of them: it just made
-passing things around an enormous pain.
-Just doing your own initialisation before adding it as a resource is
-usually the right thing to do.
-
-There's also going to be a simpler kunit_defer() wrapper around it,
-which would just allow you to schedule a cleanup function to be called
-(without the need to keep kunit_resource pointers around, etc), for
-the cases where you don't need to look up resources elsewhere.
-
-But just doing your own thing and calling kunit_alloc_resource() is
-probably best for now, and should map well onto whatever this ends up
-evolving into.
-
-Cheers,
--- David
