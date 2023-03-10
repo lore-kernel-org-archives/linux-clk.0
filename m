@@ -2,77 +2,189 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7FB2C61DA4
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Mar 2023 23:47:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E39AC64EC4
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Mar 2023 02:07:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230445AbjCIXrz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Mar 2023 18:47:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51484 "EHLO
+        id S229751AbjCJCHS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Mar 2023 21:07:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231299AbjCIXry (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2023 18:47:54 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24B2B10B1CF;
-        Thu,  9 Mar 2023 15:47:53 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E374BB820C6;
-        Thu,  9 Mar 2023 23:47:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90A80C433D2;
-        Thu,  9 Mar 2023 23:47:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678405670;
-        bh=NQ0z0vWRZKFSOsNta5bZXQwrrn+JWpr6q/3op/tZXNg=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=KW0qaj+KdPT2EaWE5uLTvMsecdNBQIGz46H7UdCdVjDFKIb/RC/8X/LvZsIJTkbVP
-         +imQ8wEZlv7TgHnR2B8J0eH9OLup1A91rJAE7An5kjloxS15rX23HoHQEluuNQAqN7
-         pWzaMkSCxk7vRCl2nmTAT/EJ2C+4dMEjM1H76mCfQv15kmsQNAND6135yZseXe6ynt
-         3RyPKTbfdhjIKG8PfYPB4Cii18HOmTHGSOO9Snd/cwNcGvjVB1E+KS9PpwDtTJmU3w
-         TCw6BUC8Y7UJQdo1/uXNxjjTxyEc6InZGRWBe68H212c3pRU6f6i9LNpkVbI0eb/Hy
-         1Cf+KucTYznSA==
-Message-ID: <ec1fb4d134181a1b1859bcb884dcd494.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <b94ee1d2-b224-f9d5-3f3c-0096634f4c93@loongson.cn>
-References: <20230307115022.12846-2-zhuyinbo@loongson.cn> <202303082037.QPfBP64A-lkp@intel.com> <b94ee1d2-b224-f9d5-3f3c-0096634f4c93@loongson.cn>
-Subject: Re: [PATCH v13 2/2] clk: clk-loongson2: add clock controller driver support
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     oe-kbuild-all@lists.linux.dev, Jianmin Lv <lvjianmin@loongson.cn>,
-        Liu Peibao <liupeibao@loongson.cn>, wanghongliang@loongson.cn,
-        loongson-kernel@lists.loongnix.cn
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        with ESMTP id S229476AbjCJCHR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2023 21:07:17 -0500
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E8AE7FA8FF;
+        Thu,  9 Mar 2023 18:07:11 -0800 (PST)
+Received: from loongson.cn (unknown [10.20.42.35])
+        by gateway (Coremail) with SMTP id _____8Axz__OkApknMMKAA--.14593S3;
+        Fri, 10 Mar 2023 10:07:10 +0800 (CST)
+Received: from [10.20.42.35] (unknown [10.20.42.35])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8DxK77HkApku1lRAA--.9679S3;
+        Fri, 10 Mar 2023 10:07:10 +0800 (CST)
+Subject: Re: [PATCH v13 1/2] dt-bindings: clock: add loongson-2 boot clock
+ index
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        kernel test robot <lkp@intel.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zhuyinbo <zhuyinbo@loongson.cn>
-Date:   Thu, 09 Mar 2023 15:47:46 -0800
-User-Agent: alot/0.10
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     Jianmin Lv <lvjianmin@loongson.cn>,
+        Liu Peibao <liupeibao@loongson.cn>, wanghongliang@loongson.cn,
+        loongson-kernel@lists.loongnix.cn, zhuyinbo@loongson.cn
+References: <20230307115022.12846-1-zhuyinbo@loongson.cn>
+ <692a62da-a9a1-fa23-6e24-723d73c3a423@linaro.org>
+ <5e9b3bd5-d885-6237-5e14-2becb3c956cc@loongson.cn>
+ <31e2a67a-c046-9501-80de-e754ed450195@linaro.org>
+ <ace5159b-ebbd-7805-518c-ed3d39e4793e@loongson.cn>
+ <b2f9cd15-b303-882a-d4e0-36d1f6d155a8@linaro.org>
+ <eca81d44-2513-8002-980d-755af32f36c4@loongson.cn>
+ <882bd054-9c3e-1b26-72a5-89ad92e21a79@linaro.org>
+ <817a65e9-b605-4bc0-2ff5-fc7f5db8585c@loongson.cn>
+ <38b0c1f2-fb0e-722b-19f5-c94796ce0185@linaro.org>
+From:   zhuyinbo <zhuyinbo@loongson.cn>
+Message-ID: <97d4fe6f-d8fc-4ef3-c974-cc0c6f3d389b@loongson.cn>
+Date:   Fri, 10 Mar 2023 10:07:03 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <38b0c1f2-fb0e-722b-19f5-c94796ce0185@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID: AQAAf8DxK77HkApku1lRAA--.9679S3
+X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjvJXoW3Xry8ZryDtr1rXF4xXr1rtFb_yoW7Ar4xpr
+        18JF1UJryUJr48Jr1jqr1UJryjyr1UJw1UXr1UGF1UJr1Dtr10qr47Xr1FgryUJr48JF17
+        Ar1DAry7ZF4UXwUanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        bDAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28E
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr
+        1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJVWxJr1ln4kS14v26r1Y6r17M2AIxVAIcxkE
+        cVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F4
+        0Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC
+        6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7
+        AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26rWl4I8I3I0E4IkC
+        6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
+        026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF
+        0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0x
+        vE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
+        6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j0HqcUUUUU=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting zhuyinbo (2023-03-08 18:58:02)
->=20
-> =E5=9C=A8 2023/3/8 =E4=B8=8B=E5=8D=888:16, kernel test robot =E5=86=99=E9=
-=81=93:
-> > Hi Yinbo,
-> >
-[...]
-> >
-> >     drivers/clk/clk-loongson2.c: In function 'loongson2_calc_pll_rate':
-> >>> drivers/clk/clk-loongson2.c:79:15: error: implicit declaration of fun=
-ction 'readq'; did you mean 'readl'? [-Werror=3Dimplicit-function-declarati=
-on]
-> >        79 |         val =3D readq(loongson2_pll_base + offset);
-> >           |               ^~~~~
-> >           |               readl
-> >     cc1: some warnings being treated as errors
->=20
-> The CONFIG_64BIT not enabled in your config file, I will add a depend on =
 
-> "CONFIG_64BIT" in my clock driver to fix this compile error.
+在 2023/3/10 上午12:12, Krzysztof Kozlowski 写道:
+> On 09/03/2023 13:44, zhuyinbo wrote:
+>> 在 2023/3/9 下午2:25, Krzysztof Kozlowski 写道:
+>>> On 09/03/2023 02:43, zhuyinbo wrote:
+>>>> 在 2023/3/8 下午6:38, Krzysztof Kozlowski 写道:
+>>>>> On 08/03/2023 10:24, zhuyinbo wrote:
+>>>>>>>>> That's an ABI break and commit msg does not explain it.
+>>>>>>>> you meaning is that need add a explanation in commit msg that why
+>>>>>>> You need good explanation to break the ABI. I don't understand the
+>>>>>>> commit msg, but anyway I could not find there justification for ABI
+>>>>>>> break. If you do not have good justification, don't break the ABI,
+>>>>>> The commit msg is the patch commit  log,  and I maybe not got it about
+>>>>>> break the ABI.  You said about "break the ABI"
+>>>>>>
+>>>>>> is whether is location issue about "LOONGSON2_BOOT_CLK"?   if yes,   the
+>>>>>> LOONGSON2_BOOT_CLK was placed
+>>>>>>
+>>>>>> after LOONGSON2_PIX1_PLL that is due to their clock parent is same.
+>>>>>> and I whether need add this explanation
+>>>>>>
+>>>>>> in patch commit log description?
+>>>>> Unfortunately I do not understand single thing from this.
+>>>>>
+>>>>> Best regards,
+>>>>> Krzysztof
+>>>> The patch commit log description is patch desription.  as follows:
+>>>>
+>>>>
+>>>> commit 592bc2b4106d787ea166ba16bfde6b3101ab1a8a
+>>>> Author: Yinbo Zhu <zhuyinbo@loongson.cn>
+>>>> Date:   Tue Mar 7 17:18:32 2023 +0800
+>>>>
+>>>>        dt-bindings: clock: add loongson-2 boot clock index
+>>>>
+>>>>        The Loongson-2 boot clock was used to spi and lio peripheral and
+>>>>        this patch was to add boot clock index number.
+>>> I cannot understand this either.
+>> I will rework commit msg .
+>>>> and your advice is "That's an ABI break and commit msg does not explain it."
+>>>>
+>>>> I got it  from your advice that was to add a explanation about
+>>>> LOONGSON2_BOOT_CLK's
+>>>>
+>>>> location issue in patch description, right?
+>>> ABI break needs justification, why do you think it is fine or who
+>>> is/isn't affected etc. Your commit msg does not explain why ABI break is
+>>> okay. It doesn't even explain to me why you need it.
+>>    #define LOONGSON2_DC_PLL                               3
+>>    #define LOONGSON2_PIX0_PLL                             4
+>>    #define LOONGSON2_PIX1_PLL                             5
+>> -#define LOONGSON2_NODE_CLK                             6
+>> -#define LOONGSON2_HDA_CLK                              7
+>> -#define LOONGSON2_GPU_CLK                              8
+>> -#define LOONGSON2_DDR_CLK                              9
+>> -#define LOONGSON2_GMAC_CLK                             10
+>> -#define LOONGSON2_DC_CLK                               11
+>> -#define LOONGSON2_APB_CLK                              12
+>> -#define LOONGSON2_USB_CLK                              13
+>> -#define LOONGSON2_SATA_CLK                             14
+>> -#define LOONGSON2_PIX0_CLK                             15
+>> -#define LOONGSON2_PIX1_CLK                             16
+>> -#define LOONGSON2_CLK_END                              17
+>> +#define LOONGSON2_BOOT_CLK                             6
+>> +#define LOONGSON2_NODE_CLK                             7
+>>
+>> after add my patch, if dts still use above macro and not cause any
+>> issue. but
+>>
+>> if dts not use macro rather than use original clk number index that will
+>> cause a uncorrect clk,
+>>
+>> eg.
+>>
+>> -#define LOONGSON2_NODE_CLK                             6
+>>
+>> +#define LOONGSON2_NODE_CLK                             7
+>>
+>>    this issue is that what you said about  "ABI break",  isn't it ?
+>>
+>>
+>> About your advice and question and I will use following description as
+>> patch  commit msg,  what do you think?
+>>
+>>
+>> dt-bindings: clock: add loongson-2 boot clock index
+>>
+>> The spi need to use boot clock and this patch is to add a boot clock
+>> index about  LOONGSON2_BOOT_CLK
+>>
+>> and the LOONGSON2_BOOT_CLK was placed in after LOONGSON2_PIX1_PLL that
+>> due to
+>>
+>> LOONGSON2_PIX1_PLL,  LOONGSON2_PIX0_PLL , LOONGSON2_DC_PLL and
+>> LOONGSON2_BOOT_CLK
+>>
+>> has same parent clock.  In addition, the Loongson  code of the community
+>> is still in the development stage,
+>>
+>> so this patch modification will  not cause uncorrect clk quote issue at
+>> present.
+> So the reason is same parent clock...? That's not much. These are IDs
+> and parent clock do not matter. Drop the ID change.
 
-Do you need to use readq() here? Can you read two 32-bit registers with
-readl() and put them together for a 64-bit number?
+okay,  I will add this marcro  LOONGSON2_BOOT_CLK in ending.
+
+
+Thanks.
+
+>
+> Best regards,
+> Krzysztof
+
