@@ -2,93 +2,89 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C7AFC6FD1F
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Mar 2023 14:17:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A09A7C61DA4
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Mar 2023 14:20:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230146AbjCKORJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 11 Mar 2023 09:17:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35146 "EHLO
+        id S230346AbjCKOUi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 11 Mar 2023 09:20:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229821AbjCKORJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Mar 2023 09:17:09 -0500
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30331F6930;
-        Sat, 11 Mar 2023 06:17:07 -0800 (PST)
-Received: by mail-oo1-f43.google.com with SMTP id t5-20020a4ac885000000b005251f70a740so1215051ooq.8;
-        Sat, 11 Mar 2023 06:17:07 -0800 (PST)
+        with ESMTP id S230202AbjCKOUN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Mar 2023 09:20:13 -0500
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F096123C4B;
+        Sat, 11 Mar 2023 06:18:35 -0800 (PST)
+Received: by mail-ot1-f50.google.com with SMTP id l16-20020a9d4c10000000b006944b17058cso4504160otf.2;
+        Sat, 11 Mar 2023 06:18:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678544226;
+        d=1e100.net; s=20210112; t=1678544289;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WayWIOIzl168cFhbQy0mqxc8fj9xrbSB83RnDiz8R3k=;
-        b=FRE0qmpp7X+oKIlLW/puCl+smWwNkG2s+tNNTjVk+TLGRg1j2AjjUeOEtwlCDRGCR+
-         JtKGZiDzS4fRehDZ7PTG6TM19PTmCRd6UBw8UDxZeDe3+toMlDZigGBrWAEk36OYKixu
-         6w87nWnwQub8C3GkydvGR7iL2pbk+I/4kugEtvbnyGQYs+HTM9cRYrxyCg68A6K4hoIh
-         LqZj982CCn2N4zSHwtY0AXWN6mfgtNAmP2wCxMQut9RKJHn2ngzl2W5a3NMhWqZAw+XC
-         opmiKmpY8PP5aO9GvDNUE3CzDUkTVs6p8TcOZ4guMsd3xpGYRQqKgw+FHN6+8sBkeHqL
-         s0hg==
-X-Gm-Message-State: AO0yUKXIyWMduxepm3oCIh0GoK80lR+T+j1AKnBoDKzkMxFUpZipgox9
-        YfYDg2A/LFkidPGssImQOJSd2wZ9QQ==
-X-Google-Smtp-Source: AK7set8LV5pVOhq7euQWBiixs6oYxgiJUM68yu7tkDFISj8ddHnNo6RWeJD/0CThLBLiaIEVnWXbDw==
-X-Received: by 2002:a4a:d637:0:b0:525:4058:2fcd with SMTP id n23-20020a4ad637000000b0052540582fcdmr3201545oon.1.1678544226475;
-        Sat, 11 Mar 2023 06:17:06 -0800 (PST)
+        bh=XV/mrDBGKbRUqTXikDz3w8VFKTgqnuQ8vz5vXQLzCt4=;
+        b=4P3klQaTwaf9ODmnymteM51ga+ZgRjWDH21Frbwznu5jpf+1l4lZqRujsvKXBOUOmq
+         ttTn0uq1PTqBH+nXUTrxb/eJL7T6yIu1sDSkmBs2C49MoG+N+G66MzL+TnzEf4Rcf1Kj
+         QkqoFZwSMpCOvqHtJaNCNOvaffPpfgsZeu67czBPss7p7s+CJFh9s7dcRLvVt4CNrocl
+         QabAd3GCENwCFG6z+YoBRuqFSq0d1yN9Y+aiIuVeRl2Hg3laJBgWZ9OVVDIenvyk2iWV
+         7kn3wMVy9IvPjdqNp+jgWCOIs2SkegDfm7f8fn8jeXeDMuyzJmm18so0yM3qaAs7YH2I
+         F2vw==
+X-Gm-Message-State: AO0yUKWJi4bQhIA6+iEhRI0Hw/Q7JsM/EVjxKc8sTP/Al8BXrGOgvozr
+        hDCkQc0+6aMpdYnpuvrMXg==
+X-Google-Smtp-Source: AK7set/I2cIlMz9mjzMsoaRlf96D2re3kZv70KnZkmskujOeyOmASWokfFmrMBBd5MHvRaSiMvy+MQ==
+X-Received: by 2002:a05:6830:2b1e:b0:693:d8a3:1816 with SMTP id l30-20020a0568302b1e00b00693d8a31816mr18572913otv.16.1678544289266;
+        Sat, 11 Mar 2023 06:18:09 -0800 (PST)
 Received: from robh_at_kernel.org ([2605:ef80:80f1:6fdb:8060:4df8:4037:6d6f])
-        by smtp.gmail.com with ESMTPSA id a7-20020a4ab787000000b0051ffe0fe11bsm1090992oop.6.2023.03.11.06.17.02
+        by smtp.gmail.com with ESMTPSA id t9-20020a056830082900b0069452b2aa2dsm1172512ots.50.2023.03.11.06.18.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Mar 2023 06:17:05 -0800 (PST)
-Received: (nullmailer pid 140902 invoked by uid 1000);
-        Sat, 11 Mar 2023 14:17:00 -0000
-Date:   Sat, 11 Mar 2023 08:17:00 -0600
+        Sat, 11 Mar 2023 06:18:08 -0800 (PST)
+Received: (nullmailer pid 142278 invoked by uid 1000);
+        Sat, 11 Mar 2023 14:18:03 -0000
+Date:   Sat, 11 Mar 2023 08:18:03 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Hal Feng <hal.feng@starfivetech.com>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-riscv@lists.infradead.org, Conor Dooley <conor@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
+Cc:     Palmer Dabbelt <palmer@dabbelt.com>, devicetree@vger.kernel.org,
         Albert Ou <aou@eecs.berkeley.edu>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Conor Dooley <conor@kernel.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-clk@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Marc Zyngier <maz@kernel.org>, linux-riscv@lists.infradead.org,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>
-Subject: Re: [PATCH v5 11/21] dt-bindings: clock: Add StarFive JH7110 system
- clock and reset generator
-Message-ID: <167854282659.42837.5915012938593380363.robh@kernel.org>
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 12/21] dt-bindings: clock: Add StarFive JH7110
+ always-on clock and reset generator
+Message-ID: <167854426637.141815.17209731765325744156.robh@kernel.org>
 References: <20230311090733.56918-1-hal.feng@starfivetech.com>
- <20230311090733.56918-12-hal.feng@starfivetech.com>
+ <20230311090733.56918-13-hal.feng@starfivetech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230311090733.56918-12-hal.feng@starfivetech.com>
+In-Reply-To: <20230311090733.56918-13-hal.feng@starfivetech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Sat, 11 Mar 2023 17:07:23 +0800, Hal Feng wrote:
+On Sat, 11 Mar 2023 17:07:24 +0800, Hal Feng wrote:
 > From: Emil Renner Berthing <kernel@esmil.dk>
 > 
-> Add bindings for the system clock and reset generator (SYSCRG) on the
+> Add bindings for the always-on clock and reset generator (AONCRG) on the
 > JH7110 RISC-V SoC by StarFive Ltd.
 > 
 > Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 > Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 > ---
->  .../clock/starfive,jh7110-syscrg.yaml         | 104 +++++++++
->  MAINTAINERS                                   |   8 +-
->  .../dt-bindings/clock/starfive,jh7110-crg.h   | 203 ++++++++++++++++++
->  .../dt-bindings/reset/starfive,jh7110-crg.h   | 142 ++++++++++++
->  4 files changed, 454 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
->  create mode 100644 include/dt-bindings/clock/starfive,jh7110-crg.h
->  create mode 100644 include/dt-bindings/reset/starfive,jh7110-crg.h
+>  .../clock/starfive,jh7110-aoncrg.yaml         | 107 ++++++++++++++++++
+>  .../dt-bindings/clock/starfive,jh7110-crg.h   |  18 +++
+>  .../dt-bindings/reset/starfive,jh7110-crg.h   |  12 ++
+>  3 files changed, 137 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-aoncrg.yaml
 > 
 
 
