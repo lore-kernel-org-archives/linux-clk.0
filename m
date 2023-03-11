@@ -2,36 +2,36 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F0B7C6FD1C
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Mar 2023 12:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A70ADC61DA4
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Mar 2023 12:56:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230129AbjCKM4Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 11 Mar 2023 07:56:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52992 "EHLO
+        id S229809AbjCKM4r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 11 Mar 2023 07:56:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229703AbjCKM4X (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Mar 2023 07:56:23 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2583101F28;
-        Sat, 11 Mar 2023 04:56:20 -0800 (PST)
+        with ESMTP id S229703AbjCKM4q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Mar 2023 07:56:46 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2C35101F28;
+        Sat, 11 Mar 2023 04:56:45 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9533AB82548;
-        Sat, 11 Mar 2023 12:56:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC37EC433EF;
-        Sat, 11 Mar 2023 12:56:14 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 45C3860BC1;
+        Sat, 11 Mar 2023 12:56:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2387CC433D2;
+        Sat, 11 Mar 2023 12:56:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678539378;
-        bh=lvN0yuIvnifEoNBiQqRY/KIoJE7i2VIK9/VhGQSkFRc=;
+        s=k20201202; t=1678539404;
+        bh=SVKT2tlVgR4kmjgwkwYg/YZjMp5Rbrtwa0inqkDaNRI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OsTZJ3USu67MOp9ICl94yHSAvIxGgE20hndsrYUxAYHhR5XOMCsSx7e+wUFAaORGx
-         WcQHxz0H/JvdKxrEuYNefRNHFJEFEfXI7q/0jVGF3NAOAOD2FDOsWWNwPBQ4xZpp2j
-         b/mgBnzzTq8+tPA86WxmnFggbTsyButvdF0TY5YX6lbNnVBart+/RVXZNBIPD8uGim
-         pQCNxzNx/O05d4BYAWLa2BqTNRYKTrN5eIzAezAgXLJOg6BR/r/Q8qQQG36P6zjZEl
-         6d+S7hSAsNr27yFSDF43t52g3oHAgMKxqn0YehRmdhZI8VrW/UkBXd14Fj3Of4dr1e
-         bRr6Vg7ccbTQw==
-Date:   Sat, 11 Mar 2023 12:56:12 +0000
+        b=rVva0TiSi9gsfM702I1FOxZOyrelUaECsuxtKA3rd1puDDILnnv5BmF6x10QdXcmO
+         K0BczMuYtw0j8Qw998PxF4sT8g9+BfC46iG0QqQnheQc1z+6kD4rfnAQJPT8S7/mAh
+         1jE0rBRZI9BIhlAVdCCmkngQEwt+uk0tcVPWEdWW964u6nwLy7YlBnroIjMq4liU8K
+         sZc7cBw6ScDPj07X5RAs1Xqo+9UWr8p8RDRy1b2mMxcu1rQ/Wzdva+O0g7Gq4XNOLF
+         W5FhuLqINdqci6GSt5J3MbROMa1cejEhW0zQID+SIlgCCjRXbQmpu+N8n6sNQ0lzBB
+         gLghqDNUWpU8g==
+Date:   Sat, 11 Mar 2023 12:56:38 +0000
 From:   Conor Dooley <conor@kernel.org>
 To:     Hal Feng <hal.feng@starfivetech.com>
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
@@ -49,36 +49,36 @@ Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Marc Zyngier <maz@kernel.org>,
         Emil Renner Berthing <emil.renner.berthing@canonical.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 01/21] clk: starfive: Replace SOC_STARFIVE with
+Subject: Re: [PATCH v5 05/21] reset: starfive: Replace SOC_STARFIVE with
  ARCH_STARFIVE
-Message-ID: <44332121-08d2-4c6b-82d9-e2705d1639eb@spud>
+Message-ID: <d04e0c9c-9d78-4af6-b6c2-77129f6a9c44@spud>
 References: <20230311090733.56918-1-hal.feng@starfivetech.com>
- <20230311090733.56918-2-hal.feng@starfivetech.com>
+ <20230311090733.56918-6-hal.feng@starfivetech.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="b0T18N537+LiQ2PN"
+        protocol="application/pgp-signature"; boundary="HmUvBcXkJbp6emfl"
 Content-Disposition: inline
-In-Reply-To: <20230311090733.56918-2-hal.feng@starfivetech.com>
+In-Reply-To: <20230311090733.56918-6-hal.feng@starfivetech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---b0T18N537+LiQ2PN
+--HmUvBcXkJbp6emfl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
---b0T18N537+LiQ2PN
+--HmUvBcXkJbp6emfl
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZAx6bAAKCRB4tDGHoIJi
-0ukVAP9uHTogOnJzTa+CWWg06aCmxrDMMuIyPN7fXOdTwfC5vgD/UUaT54JZyhLs
-g65LOiTQi6ajUQ+iynSHbwQPBLMBdQA=
-=wSCk
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZAx6hgAKCRB4tDGHoIJi
+0oFOAPsHigDLYTOnkkGO1ybXlSMETKL/8Nw5hyNbCiX9/zkSygEAoKYeQK/IfApW
+XAbUiL3tMFSmJvxIwpXM3OlVX22EYAQ=
+=5l1P
 -----END PGP SIGNATURE-----
 
---b0T18N537+LiQ2PN--
+--HmUvBcXkJbp6emfl--
