@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 824A2C74A5B
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Mar 2023 09:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC867C6FD1F
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Mar 2023 09:09:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230508AbjCKJJD convert rfc822-to-8bit (ORCPT
+        id S230512AbjCKJJE convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 11 Mar 2023 04:09:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50932 "EHLO
+        Sat, 11 Mar 2023 04:09:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230262AbjCKJIJ (ORCPT
+        with ESMTP id S230280AbjCKJIJ (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Mar 2023 04:08:09 -0500
 Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 640A0E1AD;
-        Sat, 11 Mar 2023 01:08:00 -0800 (PST)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1B247ECF;
+        Sat, 11 Mar 2023 01:07:58 -0800 (PST)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id B468A24E22F;
-        Sat, 11 Mar 2023 17:07:55 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Sat, 11 Mar
- 2023 17:07:55 +0800
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id E42A324E1C6;
+        Sat, 11 Mar 2023 17:07:46 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Sat, 11 Mar
+ 2023 17:07:46 +0800
 Received: from ubuntu.localdomain (183.27.96.115) by EXMBX172.cuchost.com
  (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Sat, 11 Mar
- 2023 17:07:54 +0800
+ 2023 17:07:45 +0800
 From:   Hal Feng <hal.feng@starfivetech.com>
 To:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-riscv@lists.infradead.org>
@@ -45,9 +45,9 @@ CC:     Stephen Boyd <sboyd@kernel.org>,
         Emil Renner Berthing <emil.renner.berthing@canonical.com>,
         Hal Feng <hal.feng@starfivetech.com>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 21/21] riscv: dts: starfive: Add StarFive JH7110 VisionFive 2 board device tree
-Date:   Sat, 11 Mar 2023 17:07:33 +0800
-Message-ID: <20230311090733.56918-22-hal.feng@starfivetech.com>
+Subject: [PATCH v5 12/21] dt-bindings: clock: Add StarFive JH7110 always-on clock and reset generator
+Date:   Sat, 11 Mar 2023 17:07:24 +0800
+Message-ID: <20230311090733.56918-13-hal.feng@starfivetech.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20230311090733.56918-1-hal.feng@starfivetech.com>
 References: <20230311090733.56918-1-hal.feng@starfivetech.com>
@@ -64,299 +64,179 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Emil Renner Berthing <kernel@esmil.dk>
 
-Add a minimal device tree for StarFive JH7110 VisionFive 2 board
-which has version A and version B. Support booting and basic
-clock/reset/pinctrl/uart drivers.
+Add bindings for the always-on clock and reset generator (AONCRG) on the
+JH7110 RISC-V SoC by StarFive Ltd.
 
-Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-Co-developed-by: Jianlong Huang <jianlong.huang@starfivetech.com>
-Signed-off-by: Jianlong Huang <jianlong.huang@starfivetech.com>
-Co-developed-by: Hal Feng <hal.feng@starfivetech.com>
 Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 ---
- arch/riscv/boot/dts/starfive/Makefile         |   6 +-
- .../jh7110-starfive-visionfive-2-v1.2a.dts    |  13 ++
- .../jh7110-starfive-visionfive-2-v1.3b.dts    |  13 ++
- .../jh7110-starfive-visionfive-2.dtsi         | 215 ++++++++++++++++++
- 4 files changed, 246 insertions(+), 1 deletion(-)
- create mode 100644 arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.2a.dts
- create mode 100644 arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.3b.dts
- create mode 100644 arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+ .../clock/starfive,jh7110-aoncrg.yaml         | 107 ++++++++++++++++++
+ .../dt-bindings/clock/starfive,jh7110-crg.h   |  18 +++
+ .../dt-bindings/reset/starfive,jh7110-crg.h   |  12 ++
+ 3 files changed, 137 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-aoncrg.yaml
 
-diff --git a/arch/riscv/boot/dts/starfive/Makefile b/arch/riscv/boot/dts/starfive/Makefile
-index 7b00a48580ca..170956846d49 100644
---- a/arch/riscv/boot/dts/starfive/Makefile
-+++ b/arch/riscv/boot/dts/starfive/Makefile
-@@ -1,2 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
--dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-beaglev-starlight.dtb jh7100-starfive-visionfive-v1.dtb
-+dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-beaglev-starlight.dtb
-+dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-starfive-visionfive-v1.dtb
-+
-+dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.2a.dtb
-+dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.3b.dtb
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.2a.dts b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.2a.dts
+diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-aoncrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-aoncrg.yaml
 new file mode 100644
-index 000000000000..4af3300f3cf3
+index 000000000000..923680a44aef
 --- /dev/null
-+++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.2a.dts
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
-+/*
-+ * Copyright (C) 2022 StarFive Technology Co., Ltd.
-+ * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
-+ */
++++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-aoncrg.yaml
+@@ -0,0 +1,107 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/starfive,jh7110-aoncrg.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+/dts-v1/;
-+#include "jh7110-starfive-visionfive-2.dtsi"
++title: StarFive JH7110 Always-On Clock and Reset Generator
 +
-+/ {
-+	model = "StarFive VisionFive 2 v1.2A";
-+	compatible = "starfive,visionfive-2-v1.2a", "starfive,jh7110";
-+};
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.3b.dts b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.3b.dts
-new file mode 100644
-index 000000000000..9230cc3d8946
---- /dev/null
-+++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.3b.dts
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
-+/*
-+ * Copyright (C) 2022 StarFive Technology Co., Ltd.
-+ * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
-+ */
++maintainers:
++  - Emil Renner Berthing <kernel@esmil.dk>
 +
-+/dts-v1/;
-+#include "jh7110-starfive-visionfive-2.dtsi"
++properties:
++  compatible:
++    const: starfive,jh7110-aoncrg
 +
-+/ {
-+	model = "StarFive VisionFive 2 v1.3B";
-+	compatible = "starfive,visionfive-2-v1.3b", "starfive,jh7110";
-+};
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-new file mode 100644
-index 000000000000..2a6d81609284
---- /dev/null
-+++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-@@ -0,0 +1,215 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
-+/*
-+ * Copyright (C) 2022 StarFive Technology Co., Ltd.
-+ * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
-+ */
++  reg:
++    maxItems: 1
 +
-+/dts-v1/;
-+#include "jh7110.dtsi"
-+#include "jh7110-pinfunc.h"
-+#include <dt-bindings/gpio/gpio.h>
++  clocks:
++    oneOf:
++      - items:
++          - description: Main Oscillator (24 MHz)
++          - description: GMAC0 RMII reference or GMAC0 RGMII RX
++          - description: STG AXI/AHB
++          - description: APB Bus
++          - description: GMAC0 GTX
 +
-+/ {
-+	aliases {
-+		i2c0 = &i2c0;
-+		i2c2 = &i2c2;
-+		i2c5 = &i2c5;
-+		i2c6 = &i2c6;
-+		serial0 = &uart0;
-+	};
++      - items:
++          - description: Main Oscillator (24 MHz)
++          - description: GMAC0 RMII reference or GMAC0 RGMII RX
++          - description: STG AXI/AHB or GMAC0 RGMII RX
++          - description: APB Bus or STG AXI/AHB
++          - description: GMAC0 GTX or APB Bus
++          - description: RTC Oscillator (32.768 kHz) or GMAC0 GTX
 +
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
++      - items:
++          - description: Main Oscillator (24 MHz)
++          - description: GMAC0 RMII reference
++          - description: GMAC0 RGMII RX
++          - description: STG AXI/AHB
++          - description: APB Bus
++          - description: GMAC0 GTX
++          - description: RTC Oscillator (32.768 kHz)
 +
-+	cpus {
-+		timebase-frequency = <4000000>;
-+	};
++  clock-names:
++    oneOf:
++      - minItems: 5
++        items:
++          - const: osc
++          - enum:
++              - gmac0_rmii_refin
++              - gmac0_rgmii_rxin
++          - const: stg_axiahb
++          - const: apb_bus
++          - const: gmac0_gtxclk
++          - const: rtc_osc
 +
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x40000000 0x1 0x0>;
-+	};
++      - minItems: 6
++        items:
++          - const: osc
++          - const: gmac0_rmii_refin
++          - const: gmac0_rgmii_rxin
++          - const: stg_axiahb
++          - const: apb_bus
++          - const: gmac0_gtxclk
++          - const: rtc_osc
 +
-+	gpio-restart {
-+		compatible = "gpio-restart";
-+		gpios = <&sysgpio 35 GPIO_ACTIVE_HIGH>;
-+		priority = <224>;
-+	};
-+};
++  '#clock-cells':
++    const: 1
++    description:
++      See <dt-bindings/clock/starfive,jh7110-crg.h> for valid indices.
 +
-+&gmac0_rgmii_rxin {
-+	clock-frequency = <125000000>;
-+};
++  '#reset-cells':
++    const: 1
++    description:
++      See <dt-bindings/reset/starfive,jh7110-crg.h> for valid indices.
 +
-+&gmac0_rmii_refin {
-+	clock-frequency = <50000000>;
-+};
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#clock-cells'
++  - '#reset-cells'
 +
-+&gmac1_rgmii_rxin {
-+	clock-frequency = <125000000>;
-+};
++additionalProperties: false
 +
-+&gmac1_rmii_refin {
-+	clock-frequency = <50000000>;
-+};
++examples:
++  - |
++    #include <dt-bindings/clock/starfive,jh7110-crg.h>
 +
-+&i2srx_bclk_ext {
-+	clock-frequency = <12288000>;
-+};
++    clock-controller@17000000 {
++        compatible = "starfive,jh7110-aoncrg";
++        reg = <0x17000000 0x10000>;
++        clocks = <&osc>, <&gmac0_rmii_refin>,
++                 <&gmac0_rgmii_rxin>,
++                 <&syscrg JH7110_SYSCLK_STG_AXIAHB>,
++                 <&syscrg JH7110_SYSCLK_APB_BUS>,
++                 <&syscrg JH7110_SYSCLK_GMAC0_GTXCLK>,
++                 <&rtc_osc>;
++        clock-names = "osc", "gmac0_rmii_refin",
++                      "gmac0_rgmii_rxin", "stg_axiahb",
++                      "apb_bus", "gmac0_gtxclk",
++                      "rtc_osc";
++        #clock-cells = <1>;
++        #reset-cells = <1>;
++    };
+diff --git a/include/dt-bindings/clock/starfive,jh7110-crg.h b/include/dt-bindings/clock/starfive,jh7110-crg.h
+index fdd1852e34cc..06257bfd9ac1 100644
+--- a/include/dt-bindings/clock/starfive,jh7110-crg.h
++++ b/include/dt-bindings/clock/starfive,jh7110-crg.h
+@@ -200,4 +200,22 @@
+ 
+ #define JH7110_SYSCLK_END			190
+ 
++/* AONCRG clocks */
++#define JH7110_AONCLK_OSC_DIV4			0
++#define JH7110_AONCLK_APB_FUNC			1
++#define JH7110_AONCLK_GMAC0_AHB			2
++#define JH7110_AONCLK_GMAC0_AXI			3
++#define JH7110_AONCLK_GMAC0_RMII_RTX		4
++#define JH7110_AONCLK_GMAC0_TX			5
++#define JH7110_AONCLK_GMAC0_TX_INV		6
++#define JH7110_AONCLK_GMAC0_RX			7
++#define JH7110_AONCLK_GMAC0_RX_INV		8
++#define JH7110_AONCLK_OTPC_APB			9
++#define JH7110_AONCLK_RTC_APB			10
++#define JH7110_AONCLK_RTC_INTERNAL		11
++#define JH7110_AONCLK_RTC_32K			12
++#define JH7110_AONCLK_RTC_CAL			13
 +
-+&i2srx_lrck_ext {
-+	clock-frequency = <192000>;
-+};
++#define JH7110_AONCLK_END			14
 +
-+&i2stx_bclk_ext {
-+	clock-frequency = <12288000>;
-+};
+ #endif /* __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__ */
+diff --git a/include/dt-bindings/reset/starfive,jh7110-crg.h b/include/dt-bindings/reset/starfive,jh7110-crg.h
+index b88216a4fe40..d78e38690ceb 100644
+--- a/include/dt-bindings/reset/starfive,jh7110-crg.h
++++ b/include/dt-bindings/reset/starfive,jh7110-crg.h
+@@ -139,4 +139,16 @@
+ 
+ #define JH7110_SYSRST_END			126
+ 
++/* AONCRG resets */
++#define JH7110_AONRST_GMAC0_AXI			0
++#define JH7110_AONRST_GMAC0_AHB			1
++#define JH7110_AONRST_IOMUX			2
++#define JH7110_AONRST_PMU_APB			3
++#define JH7110_AONRST_PMU_WKUP			4
++#define JH7110_AONRST_RTC_APB			5
++#define JH7110_AONRST_RTC_CAL			6
++#define JH7110_AONRST_RTC_32K			7
 +
-+&i2stx_lrck_ext {
-+	clock-frequency = <192000>;
-+};
++#define JH7110_AONRST_END			8
 +
-+&mclk_ext {
-+	clock-frequency = <12288000>;
-+};
-+
-+&osc {
-+	clock-frequency = <24000000>;
-+};
-+
-+&rtc_osc {
-+	clock-frequency = <32768>;
-+};
-+
-+&tdm_ext {
-+	clock-frequency = <49152000>;
-+};
-+
-+&i2c0 {
-+	clock-frequency = <100000>;
-+	i2c-sda-hold-time-ns = <300>;
-+	i2c-sda-falling-time-ns = <510>;
-+	i2c-scl-falling-time-ns = <510>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c0_pins>;
-+	status = "okay";
-+};
-+
-+&i2c2 {
-+	clock-frequency = <100000>;
-+	i2c-sda-hold-time-ns = <300>;
-+	i2c-sda-falling-time-ns = <510>;
-+	i2c-scl-falling-time-ns = <510>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c2_pins>;
-+	status = "okay";
-+};
-+
-+&i2c5 {
-+	clock-frequency = <100000>;
-+	i2c-sda-hold-time-ns = <300>;
-+	i2c-sda-falling-time-ns = <510>;
-+	i2c-scl-falling-time-ns = <510>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c5_pins>;
-+	status = "okay";
-+};
-+
-+&i2c6 {
-+	clock-frequency = <100000>;
-+	i2c-sda-hold-time-ns = <300>;
-+	i2c-sda-falling-time-ns = <510>;
-+	i2c-scl-falling-time-ns = <510>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c6_pins>;
-+	status = "okay";
-+};
-+
-+&sysgpio {
-+	i2c0_pins: i2c0-0 {
-+		i2c-pins {
-+			pinmux = <GPIOMUX(57, GPOUT_LOW,
-+					      GPOEN_SYS_I2C0_CLK,
-+					      GPI_SYS_I2C0_CLK)>,
-+				 <GPIOMUX(58, GPOUT_LOW,
-+					      GPOEN_SYS_I2C0_DATA,
-+					      GPI_SYS_I2C0_DATA)>;
-+			bias-disable; /* external pull-up */
-+			input-enable;
-+			input-schmitt-enable;
-+		};
-+	};
-+
-+	i2c2_pins: i2c2-0 {
-+		i2c-pins {
-+			pinmux = <GPIOMUX(3, GPOUT_LOW,
-+					     GPOEN_SYS_I2C2_CLK,
-+					     GPI_SYS_I2C2_CLK)>,
-+				 <GPIOMUX(2, GPOUT_LOW,
-+					     GPOEN_SYS_I2C2_DATA,
-+					     GPI_SYS_I2C2_DATA)>;
-+			bias-disable; /* external pull-up */
-+			input-enable;
-+			input-schmitt-enable;
-+		};
-+	};
-+
-+	i2c5_pins: i2c5-0 {
-+		i2c-pins {
-+			pinmux = <GPIOMUX(19, GPOUT_LOW,
-+					      GPOEN_SYS_I2C5_CLK,
-+					      GPI_SYS_I2C5_CLK)>,
-+				 <GPIOMUX(20, GPOUT_LOW,
-+					      GPOEN_SYS_I2C5_DATA,
-+					      GPI_SYS_I2C5_DATA)>;
-+			bias-disable; /* external pull-up */
-+			input-enable;
-+			input-schmitt-enable;
-+		};
-+	};
-+
-+	i2c6_pins: i2c6-0 {
-+		i2c-pins {
-+			pinmux = <GPIOMUX(16, GPOUT_LOW,
-+					      GPOEN_SYS_I2C6_CLK,
-+					      GPI_SYS_I2C6_CLK)>,
-+				 <GPIOMUX(17, GPOUT_LOW,
-+					      GPOEN_SYS_I2C6_DATA,
-+					      GPI_SYS_I2C6_DATA)>;
-+			bias-disable; /* external pull-up */
-+			input-enable;
-+			input-schmitt-enable;
-+		};
-+	};
-+
-+	uart0_pins: uart0-0 {
-+		tx-pins {
-+			pinmux = <GPIOMUX(5, GPOUT_SYS_UART0_TX,
-+					     GPOEN_ENABLE,
-+					     GPI_NONE)>;
-+			bias-disable;
-+			drive-strength = <12>;
-+			input-disable;
-+			input-schmitt-disable;
-+			slew-rate = <0>;
-+		};
-+
-+		rx-pins {
-+			pinmux = <GPIOMUX(6, GPOUT_LOW,
-+					     GPOEN_DISABLE,
-+					     GPI_SYS_UART0_RX)>;
-+			bias-disable; /* external pull-up */
-+			drive-strength = <2>;
-+			input-enable;
-+			input-schmitt-enable;
-+			slew-rate = <0>;
-+		};
-+	};
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pins>;
-+	status = "okay";
-+};
+ #endif /* __DT_BINDINGS_RESET_STARFIVE_JH7110_CRG_H__ */
 -- 
 2.38.1
 
