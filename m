@@ -2,44 +2,49 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE7FFC7618A
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Mar 2023 16:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B0F2C7618D
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Mar 2023 16:15:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230182AbjCLQPh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Mar 2023 12:15:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38636 "EHLO
+        id S230114AbjCLQPj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Mar 2023 12:15:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230114AbjCLQP3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 12:15:29 -0400
+        with ESMTP id S230126AbjCLQPa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 12:15:30 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DA9334C14
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF5F436FFA
         for <linux-clk@vger.kernel.org>; Sun, 12 Mar 2023 09:15:28 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOM2-0007sp-4V; Sun, 12 Mar 2023 17:15:26 +0100
+        id 1pbOLw-0007nk-Ja; Sun, 12 Mar 2023 17:15:20 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOM1-003f3i-GL; Sun, 12 Mar 2023 17:15:25 +0100
+        id 1pbOLv-003f1W-CW; Sun, 12 Mar 2023 17:15:19 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOM0-004K9p-Ho; Sun, 12 Mar 2023 17:15:24 +0100
+        id 1pbOLu-004K88-HS; Sun, 12 Mar 2023 17:15:18 +0100
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 29/30] clk: x86: Convert to platform remove callback returning void
-Date:   Sun, 12 Mar 2023 17:15:11 +0100
-Message-Id: <20230312161512.2715500-30-u.kleine-koenig@pengutronix.de>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 02/30] clk: tegra: Don't warn three times about failure to unregister
+Date:   Sun, 12 Mar 2023 17:14:44 +0100
+Message-Id: <20230312161512.2715500-3-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
 References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2818; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=q67zyHKhevN1eKgcWpbwGQPFWUk3s3NN9pb+s0sov04=; b=owGbwMvMwMV48I9IxdpTbzgZT6slMaTw/uqwVSzYw13++7G/kdKUY+fuFzxWfdDJq8x+RSrcv zSw6AFvJ6MxCwMjF4OsmCJLXZGW2ASJNf/tSpZwwwxiZQKZwsDFKQATYb7M/ovp2ENt75Xxk3d/ sHvfmSt87N7bs6aihnoKX6cpht3WF1/p06r4TuLvwsTJ2vNvvrmkzZsvx+l+/4jJd+1g88T6R89 771Xc5075VnAj/hPfj1Mc6uoXvnOHtiosLE9o/Dd5pYndxVl1jofbFQIs083eeLxy7I2Z+t2kNs jyzVUh9T4ZVh1Z+YiNX6vPJgfvfbd+Ok/RtIxr6o8S2tY+5J4qmvmSTSSbc2rHv4AEpxOmAgwrb Bdc1mhtkrW3+R7/TNODUfnOUv4Qdkf1i2zrrQyMuG03NrXb2qtl7thSt2ZpqLPFDxnmiccPPDf8 /rxb2ECi6amlbfcSgQhHkdPP/2cfzjlx0PlvqvVUvr4QAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2287; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=+9AIxbdgygHscbuQBZ/9x7Mj2mdYT5CkFcqptrNLIzs=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkDfoZt+vEgQUzkC6DfJiC5nFmGIwE1dZDTropc hsVPMpXKMiJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZA36GQAKCRDB/BR4rcrs CdPQB/9x+RX5qdpP5p75qTQmrWsuZtOUtTbvdCLf6ap0jZk0ajXM6AZAQG6gldT5Dezfdk4nBEH nGaudn6KTmmM5kKwAVzSU9bMMGVViK7U/Ik1BX7d1S+UFXjYZ7DGhrbumaB53BLoNyvq0IrInHH mQFZaJ/aCe/2AelK7D18mVR0W3MtbZPtj6tAJ0GSvIWOtlxSyhx0E0UGpDL2EpAoCBYsGWw4rvT qGcQAaCpIB6ghHcsuSizmiCZXlJARky4QiZo+q9i0p8ujwSHwS2fb1qyBUIczJ04rQQJtq6pdRZ TzmvAMFpB+rrAhMgNatHs12yLJ3EaW/R1dDHKkX7RH5sUH6u
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -50,89 +55,64 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The .remove() callback for a platform driver returns an int which makes
-many driver authors wrongly assume it's possible to do error handling by
-returning an error code. However the value returned is (mostly) ignored
-and this typically results in resource leaks. To improve here there is a
-quest to make the remove callback return void. In the first step of this
-quest all drivers are converted to .remove_new() which already returns
-void.
+tegra124_dfll_fcpu_remove() calls tegra_dfll_unregister() and the former
+emits an error message if the latter fails. In that case
+tegra_dfll_unregister() already printed an error message. Additionally
+tegra124_dfll_fcpu_remove() returns an error code which results in yet
+another warning emitted by platform_remove().
 
-Trivially convert this driver from always returning zero in the remove
-callback to the void returning variant.
+So drop the error message from tegra124_dfll_fcpu_remove() and let it
+return 0. (Retuning 0 has no side effect but suppressing the error
+message in platform_remove().)
+
+Also add two comments about exiting early being wrong. This is something
+that needs fixing separately.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/clk/x86/clk-fch.c      | 7 +++----
- drivers/clk/x86/clk-pmc-atom.c | 5 ++---
- 2 files changed, 5 insertions(+), 7 deletions(-)
+ drivers/clk/tegra/clk-dfll.c               |  5 ++++-
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 11 ++++++-----
+ 2 files changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/x86/clk-fch.c b/drivers/clk/x86/clk-fch.c
-index fdc060e75839..aed7d22fae63 100644
---- a/drivers/clk/x86/clk-fch.c
-+++ b/drivers/clk/x86/clk-fch.c
-@@ -92,14 +92,14 @@ static int fch_clk_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int fch_clk_remove(struct platform_device *pdev)
-+static void fch_clk_remove(struct platform_device *pdev)
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index 41433927b55c..58fa5a59e0c7 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -2081,7 +2081,10 @@ struct tegra_dfll_soc_data *tegra_dfll_unregister(struct platform_device *pdev)
  {
- 	int i, clks;
- 	struct pci_dev *rdev;
+ 	struct tegra_dfll *td = platform_get_drvdata(pdev);
  
- 	rdev = pci_get_domain_bus_and_slot(0, 0, PCI_DEVFN(0, 0));
- 	if (!rdev)
--		return -ENODEV;
-+		return;
- 
- 	clks = pci_match_id(fch_pci_ids, rdev) ? CLK_MAX_FIXED : ST_MAX_CLKS;
- 
-@@ -107,7 +107,6 @@ static int fch_clk_remove(struct platform_device *pdev)
- 		clk_hw_unregister(hws[i]);
- 
- 	pci_dev_put(rdev);
--	return 0;
- }
- 
- static struct platform_driver fch_clk_driver = {
-@@ -116,6 +115,6 @@ static struct platform_driver fch_clk_driver = {
- 		.suppress_bind_attrs = true,
- 	},
- 	.probe = fch_clk_probe,
--	.remove = fch_clk_remove,
-+	.remove_new = fch_clk_remove,
- };
- builtin_platform_driver(fch_clk_driver);
-diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
-index e746e3f8d05a..2974dd0ec6f4 100644
---- a/drivers/clk/x86/clk-pmc-atom.c
-+++ b/drivers/clk/x86/clk-pmc-atom.c
-@@ -367,7 +367,7 @@ static int plt_clk_probe(struct platform_device *pdev)
- 	return err;
- }
- 
--static int plt_clk_remove(struct platform_device *pdev)
-+static void plt_clk_remove(struct platform_device *pdev)
+-	/* Try to prevent removal while the DFLL is active */
++	/*
++	 * Note that exiting early here doesn't prevent unbinding the driver.
++	 * Exiting early here only leaks some resources.
++	 */
+ 	if (td->mode != DFLL_DISABLED) {
+ 		dev_err(&pdev->dev,
+ 			"must disable DFLL before removing driver\n");
+diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+index 5e339ad0a97c..15c5e14dd82f 100644
+--- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
++++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+@@ -616,12 +616,13 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
  {
- 	struct clk_plt_data *data;
+ 	struct tegra_dfll_soc_data *soc;
  
-@@ -377,7 +377,6 @@ static int plt_clk_remove(struct platform_device *pdev)
- 	clkdev_drop(data->mclk_lookup);
- 	plt_clk_unregister_loop(data, PMC_CLK_NUM);
- 	plt_clk_unregister_parents(data);
--	return 0;
- }
++	/*
++	 * Note that exiting early here is dangerous as after this function
++	 * returns *soc is freed.
++	 */
+ 	soc = tegra_dfll_unregister(pdev);
+-	if (IS_ERR(soc)) {
+-		dev_err(&pdev->dev, "failed to unregister DFLL: %ld\n",
+-			PTR_ERR(soc));
+-		return PTR_ERR(soc);
+-	}
++	if (IS_ERR(soc))
++		return 0;
  
- static struct platform_driver plt_clk_driver = {
-@@ -385,6 +384,6 @@ static struct platform_driver plt_clk_driver = {
- 		.name = "clk-pmc-atom",
- 	},
- 	.probe = plt_clk_probe,
--	.remove = plt_clk_remove,
-+	.remove_new = plt_clk_remove,
- };
- builtin_platform_driver(plt_clk_driver);
+ 	tegra_cvb_remove_opp_table(soc->dev, soc->cvb, soc->max_freq);
+ 
 -- 
 2.39.1
 
