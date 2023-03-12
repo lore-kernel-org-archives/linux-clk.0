@@ -2,48 +2,46 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1777C7618B
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Mar 2023 16:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 164C3C6FD1F
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Mar 2023 16:15:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230005AbjCLQPn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Mar 2023 12:15:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38496 "EHLO
+        id S229437AbjCLQPo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Mar 2023 12:15:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230135AbjCLQPc (ORCPT
+        with ESMTP id S230139AbjCLQPc (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 12:15:32 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7408A3647E
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA91834C14
         for <linux-clk@vger.kernel.org>; Sun, 12 Mar 2023 09:15:30 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOLz-0007qH-Ia; Sun, 12 Mar 2023 17:15:23 +0100
+        id 1pbOM0-0007rd-Ux; Sun, 12 Mar 2023 17:15:24 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOLy-003f2l-Ts; Sun, 12 Mar 2023 17:15:22 +0100
+        id 1pbOM0-003f3E-8A; Sun, 12 Mar 2023 17:15:24 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOLx-004K91-IS; Sun, 12 Mar 2023 17:15:21 +0100
+        id 1pbOLz-004K9T-8F; Sun, 12 Mar 2023 17:15:23 +0100
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc:     linux-clk@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 16/30] clk: stm32mp1: Convert to platform remove callback returning void
-Date:   Sun, 12 Mar 2023 17:14:58 +0100
-Message-Id: <20230312161512.2715500-17-u.kleine-koenig@pengutronix.de>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 23/30] clk: renesas: Convert to platform remove callback returning void
+Date:   Sun, 12 Mar 2023 17:15:05 +0100
+Message-Id: <20230312161512.2715500-24-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
 References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1750; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=MogxSQmmNC/utpK5URpwGXRDdvqjCsNxmjM9To6NNPI=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkDfpVv4WC5SN8KRSwbPkT0MGYOp14+cdP+X83h 64BGa9EPMWJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZA36VQAKCRDB/BR4rcrs CRbaCACa7m2DRFNqbLtWO+lY/78L7saGvxHdMIkcXdeaeAiPFbpjFY4617uowoj4C6b5GnaPfyH Twy4Tx88ijQ4B6ZaK8/Mz6RwJNPoHdsqEfr6pP/J930vPyxyhsqKNiFHf52KT07QR8J+Y0Gysiw OoGJhxXhja8ITO6VbYIwWN1Ra8RTsimGgU31zVpFkeQXcsG4C+q/FSOi6vfs9NDYMOvjSn5UtaQ XsS55usZCJXzeO1JE7Vz5t5BKlsttxmu7cLhvviTfoitn6wzAwCXV6RQG3j69rMduNeVVKNbr9y rzmX+CXLNCzRAo7Kz2H1oFSCFofpB1kpGkANZUqNwRHuLw1s
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1779; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=tzqGylDHbl27wcUMOwx5LcyyO3qR6CT6GQOUrE4n8uI=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkDfpzhc9DGdlNQXDJPhSJsCsYs2TOV5jF1d5hw yu2lPbJe4aJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZA36cwAKCRDB/BR4rcrs CQ9cB/9knQE1XSI+voDSdAHXVAQAjkGufgnbJqy5Tl+3jY8fUIfJXz8TfLnQIuVUcTJxmNvAwOp gAmsnUWgkCCQotILcUr9AlqNtMZ0YWcVzFNlbisomip0eYlVVWvBfritzehTm8KVSk+knsI9/oh SBdar3Tp/pdV/5lvtEMAgDW/ypB97a6EmynYkyZU9XfXfXyWi+nJxgXhXMOY/dMADyK8An1AePT sHP/xpNQfK81hJcbTkFfTOTGyCBdH7ZAovgFYFdw62KeLasb/HpAyfQ4RpzuvwIlsVXHWiZjfte IpyatPMvkyjLphcuuD/THA+q+Dp2B4HvjcMXKNTZn2jb4L1u
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -67,39 +65,39 @@ callback to the void returning variant.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/clk/clk-stm32mp1.c | 6 ++----
+ drivers/clk/renesas/rcar-usb2-clock-sel.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 01e5a466897f..939779f66867 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -2434,15 +2434,13 @@ static int stm32mp1_rcc_clocks_probe(struct platform_device *pdev)
- 	return ret;
+diff --git a/drivers/clk/renesas/rcar-usb2-clock-sel.c b/drivers/clk/renesas/rcar-usb2-clock-sel.c
+index 684d8937965e..17c110978e33 100644
+--- a/drivers/clk/renesas/rcar-usb2-clock-sel.c
++++ b/drivers/clk/renesas/rcar-usb2-clock-sel.c
+@@ -125,15 +125,13 @@ static int rcar_usb2_clock_sel_resume(struct device *dev)
+ 	return 0;
  }
  
--static int stm32mp1_rcc_clocks_remove(struct platform_device *pdev)
-+static void stm32mp1_rcc_clocks_remove(struct platform_device *pdev)
+-static int rcar_usb2_clock_sel_remove(struct platform_device *pdev)
++static void rcar_usb2_clock_sel_remove(struct platform_device *pdev)
  {
  	struct device *dev = &pdev->dev;
- 	struct device_node *child, *np = dev_of_node(dev);
  
- 	for_each_available_child_of_node(np, child)
- 		of_clk_del_provider(child);
+ 	of_clk_del_provider(dev->of_node);
+ 	pm_runtime_put(dev);
+ 	pm_runtime_disable(dev);
 -
 -	return 0;
  }
  
- static struct platform_driver stm32mp1_rcc_clocks_driver = {
-@@ -2451,7 +2449,7 @@ static struct platform_driver stm32mp1_rcc_clocks_driver = {
- 		.of_match_table = stm32mp1_match_data,
+ static int rcar_usb2_clock_sel_probe(struct platform_device *pdev)
+@@ -215,7 +213,7 @@ static struct platform_driver rcar_usb2_clock_sel_driver = {
+ 		.pm	= &rcar_usb2_clock_sel_pm_ops,
  	},
- 	.probe = stm32mp1_rcc_clocks_probe,
--	.remove = stm32mp1_rcc_clocks_remove,
-+	.remove_new = stm32mp1_rcc_clocks_remove,
+ 	.probe		= rcar_usb2_clock_sel_probe,
+-	.remove		= rcar_usb2_clock_sel_remove,
++	.remove_new	= rcar_usb2_clock_sel_remove,
  };
+ builtin_platform_driver(rcar_usb2_clock_sel_driver);
  
- static int __init stm32mp1_clocks_init(void)
 -- 
 2.39.1
 
