@@ -2,105 +2,96 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2B6EC6FD19
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Mar 2023 14:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C12C6FA99
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Mar 2023 16:15:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229509AbjCLOAe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Mar 2023 10:00:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45990 "EHLO
+        id S230063AbjCLQPZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Mar 2023 12:15:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229957AbjCLOAd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 10:00:33 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 255C137F09;
-        Sun, 12 Mar 2023 07:00:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id AF02DB80B74;
-        Sun, 12 Mar 2023 14:00:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0531C433D2;
-        Sun, 12 Mar 2023 14:00:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678629629;
-        bh=wFICklcUPI9u10LmkC+Q32v0zLcHQBj1RUk9RVPheC4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FNSZvUlBwhDTbciaIRdrh2VcNDuAQhU39vfJX9Ds7rbIQaFekNjLpxEg8zoYYTv9V
-         J7MDgE6GkXe4hJk7yBJ3vqJvpg8A/4y+xj++a4cacYWb/p2hG1XLt9wA8h+BotdIbQ
-         XNx44pIH7SbR/3KnkheH/OvxtbYra9MtZhCsSDm9e2e8ebEIgCi2NKvldBXCP7hBs6
-         16BEm1V9gAYIocE0J6VG6NfVCLTJvNY0TlZlKYVY/h5qK5gPmuD9ubLaJL39HMEZL1
-         8cfNxAknrbH4TrFL3SjuDeR7vKWiVXBJG1LqVEIioM/DFY3OwhjTgY4zrULJfuY49u
-         TupX2N/e8u/JQ==
-Date:   Sun, 12 Mar 2023 14:00:23 +0000
-From:   Conor Dooley <conor@kernel.org>
-To:     Hal Feng <hal.feng@starfivetech.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 03/21] clk: starfive: Rename clk-starfive-jh7100.h to
- clk-starfive-jh71x0.h
-Message-ID: <c7e5a23a-16f9-4e30-adc7-a422abeb50ef@spud>
-References: <20230311090733.56918-1-hal.feng@starfivetech.com>
- <20230311090733.56918-4-hal.feng@starfivetech.com>
+        with ESMTP id S229585AbjCLQPX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 12:15:23 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEE5034C0D
+        for <linux-clk@vger.kernel.org>; Sun, 12 Mar 2023 09:15:22 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pbOLw-0007nt-Nu; Sun, 12 Mar 2023 17:15:20 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pbOLw-003f1m-33; Sun, 12 Mar 2023 17:15:20 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pbOLv-004K8L-D6; Sun, 12 Mar 2023 17:15:19 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 06/30] clk: axi-clkgen: Convert to platform remove callback returning void
+Date:   Sun, 12 Mar 2023 17:14:48 +0100
+Message-Id: <20230312161512.2715500-7-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
+References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5IeCIlJW+LRtrZaq"
-Content-Disposition: inline
-In-Reply-To: <20230311090733.56918-4-hal.feng@starfivetech.com>
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1568; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=mKWm1tXjLyBA2SWXj77lTJC97AAz8dVbbZwONWNxxz0=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkDfoprVMb78SIBnkb6CzMjA734MOUZDDgvGbwZ iDAVC4m6AKJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZA36KQAKCRDB/BR4rcrs CfaJB/wO+xJeQ+MI+rcZY8q1XbpVZNCqDaAxpY5G5GuX8GyvvTXAAE6TetfA3Zaafkvko1OZnLq rzDp8Wc9HBs0KmRsMszYvFd47Dl6vodmfWpP8glXmUBBL9oVG84wN4AZ5tbshg8td/c0UDVJrJZ 4WBx538jrqzK16N1yfy0BYjRe5lbo9MYRabT6N2Ig72yDB3q3gRIUgfvbtPs5JDj6vxvPJtWlkF COXbgaT5jILLhUfdS7CZsvKVjWejoCPAs0LNRagV0euUI5vJr+GYpWLieMU35HE8H9e/6YbxvPN mBsIeWtymULMR7xthHfoayeB4MarC7t/j5EbYS0CvsonZaHS
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is (mostly) ignored
+and this typically results in resource leaks. To improve here there is a
+quest to make the remove callback return void. In the first step of this
+quest all drivers are converted to .remove_new() which already returns
+void.
 
---5IeCIlJW+LRtrZaq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
-On Sat, Mar 11, 2023 at 05:07:15PM +0800, Hal Feng wrote:
-> From: Emil Renner Berthing <kernel@esmil.dk>
->=20
-> Rename clk-starfive-jh7100.h to clk-starfive-jh71x0.h for making
-> the code to be common.
->=20
-> Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
-> ---
->  .../clk/starfive/{clk-starfive-jh7100.h =3D> clk-starfive-jh71x0.h} | 0
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/clk/clk-axi-clkgen.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-So this patch has broken the build :(
-https://patchwork.kernel.org/project/linux-riscv/patch/20230311090733.56918=
--4-hal.feng@starfivetech.com/
+diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
+index ac6ff736ac8f..671bee55ceb3 100644
+--- a/drivers/clk/clk-axi-clkgen.c
++++ b/drivers/clk/clk-axi-clkgen.c
+@@ -557,11 +557,9 @@ static int axi_clkgen_probe(struct platform_device *pdev)
+ 				      &axi_clkgen->clk_hw);
+ }
+ 
+-static int axi_clkgen_remove(struct platform_device *pdev)
++static void axi_clkgen_remove(struct platform_device *pdev)
+ {
+ 	of_clk_del_provider(pdev->dev.of_node);
+-
+-	return 0;
+ }
+ 
+ static const struct of_device_id axi_clkgen_ids[] = {
+@@ -583,7 +581,7 @@ static struct platform_driver axi_clkgen_driver = {
+ 		.of_match_table = axi_clkgen_ids,
+ 	},
+ 	.probe = axi_clkgen_probe,
+-	.remove = axi_clkgen_remove,
++	.remove_new = axi_clkgen_remove,
+ };
+ module_platform_driver(axi_clkgen_driver);
+ 
+-- 
+2.39.1
 
-I would imagine it is because you can't rename the header without also
-changing the users of the header.
-
-Cheers,
-Conor.
-
---5IeCIlJW+LRtrZaq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZA3a9wAKCRB4tDGHoIJi
-0gBGAQCqn9Dop3s+ZM1ku4OZOOw18V5mmdfyZ6fqN4sUWFtnVQD8D7anScl1VOZH
-DBmBF/QCBa4RJq2bZCOK4qh28+oj/wQ=
-=VFFQ
------END PGP SIGNATURE-----
-
---5IeCIlJW+LRtrZaq--
