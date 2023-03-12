@@ -2,44 +2,44 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F9FAC6FD19
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Mar 2023 16:15:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 633EDC74A5B
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Mar 2023 16:15:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230107AbjCLQP2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Mar 2023 12:15:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38498 "EHLO
+        id S230121AbjCLQP3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Mar 2023 12:15:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230050AbjCLQPY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 12:15:24 -0400
+        with ESMTP id S230062AbjCLQPZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 12:15:25 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93AE234C14
-        for <linux-clk@vger.kernel.org>; Sun, 12 Mar 2023 09:15:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22ED934C0D
+        for <linux-clk@vger.kernel.org>; Sun, 12 Mar 2023 09:15:24 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOLx-0007oS-CL; Sun, 12 Mar 2023 17:15:21 +0100
+        id 1pbOLy-0007p5-1f; Sun, 12 Mar 2023 17:15:22 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOLw-003f22-Oq; Sun, 12 Mar 2023 17:15:20 +0100
+        id 1pbOLx-003f2I-Cf; Sun, 12 Mar 2023 17:15:21 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOLv-004K8T-Qs; Sun, 12 Mar 2023 17:15:19 +0100
+        id 1pbOLw-004K8d-88; Sun, 12 Mar 2023 17:15:20 +0100
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 08/30] clk: fixed-factor: Convert to platform remove callback returning void
-Date:   Sun, 12 Mar 2023 17:14:50 +0100
-Message-Id: <20230312161512.2715500-9-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH 10/30] clk: fixed-rate: Convert to platform remove callback returning void
+Date:   Sun, 12 Mar 2023 17:14:52 +0100
+Message-Id: <20230312161512.2715500-11-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
 References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1823; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=M5YJcNdD/5hndGzQS3LgoQpQyz7z0G0HAcs9i/Jf418=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkDfovHqWbj7JZFPDet7+eKJZmO9elyLEyrjbgw 0lSwq5jTPeJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZA36LwAKCRDB/BR4rcrs CUVjB/9hy8p80nnMmzUBJm4S9UNrcO1YO/GMo86/vZIOXLWwJ9PHfIMZjbYmALSvm+QmHEdthO/ a7N5QDv24kdHsLlDlLkxd9AvLh6nBsDchutGMwZM2EwELSSnlpoOoLyCX3eurEU3OM+BCiRSs7R RR5LSwCsTU86lEgjILzz1yk9miUoUowOdCvgSiiQUGx/jWPc/uBNgkZR/5K0jJm8WxNZTxbD1cV XkwfNa/inoEcx2l2cZUyn5FRLL2TtjjLJeQwplx9cShx1RDEH9cDT5574mFA1xPVywSb757Uv0c Y7F67O1JhKfy7VNTkrs1sXxGQv6HIj0h5fxIc5sV+UneSelm
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1718; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=po8EXvs+7kHg+zX81YA98XCvTJMed7ODKE0yUfz1NMA=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkDfo7HhZVAZ7xgnVadaKVWiVIjah3rnTnbXaAg kP/auTHxkWJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZA36OwAKCRDB/BR4rcrs CQBoB/970blcFnob82f3+cSBAU22kQDO9u+2fsoXotCRpnYOj8hZiZlU4Wu6W9SbSmJCwzSVbnQ p2Dp7GP3jfWchSOHVqCuLlUw16EEO2rMEHPxNWsP28CSow3Z4bGVM2rX5M4on/0VH+NQWg7rBu2 aKN3w1WCFLc6lwB9MfY63O7uOBov17HVfth8EqORFgvtHucvDczHepS6hT/ZZkrluu74Kk1GAIC Ye7ujDgMZt/eQx7R5iuzFoKrWKxzRm7OoSJ2yIbPw0pfSdrKTRgrKZpKojH+Z23GOfOYWGUR8pa 0rX+eMLhDZmVKxCbWeCtLxJ4F9HMELZJ6yNPKPIyfMuEk+fr
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -63,37 +63,37 @@ callback to the void returning variant.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/clk/clk-fixed-factor.c | 6 ++----
+ drivers/clk/clk-fixed-rate.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index f734e34735a9..b3e66202b942 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -297,14 +297,12 @@ void __init of_fixed_factor_clk_setup(struct device_node *node)
- CLK_OF_DECLARE(fixed_factor_clk, "fixed-factor-clock",
- 		of_fixed_factor_clk_setup);
+diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
+index 7d775954e26d..3481eb8cdeb3 100644
+--- a/drivers/clk/clk-fixed-rate.c
++++ b/drivers/clk/clk-fixed-rate.c
+@@ -196,14 +196,12 @@ void __init of_fixed_clk_setup(struct device_node *node)
+ }
+ CLK_OF_DECLARE(fixed_clk, "fixed-clock", of_fixed_clk_setup);
  
--static int of_fixed_factor_clk_remove(struct platform_device *pdev)
-+static void of_fixed_factor_clk_remove(struct platform_device *pdev)
+-static int of_fixed_clk_remove(struct platform_device *pdev)
++static void of_fixed_clk_remove(struct platform_device *pdev)
  {
- 	struct clk_hw *clk = platform_get_drvdata(pdev);
+ 	struct clk_hw *hw = platform_get_drvdata(pdev);
  
  	of_clk_del_provider(pdev->dev.of_node);
- 	clk_hw_unregister_fixed_factor(clk);
+ 	clk_hw_unregister_fixed_rate(hw);
 -
 -	return 0;
  }
  
- static int of_fixed_factor_clk_probe(struct platform_device *pdev)
-@@ -336,7 +334,7 @@ static struct platform_driver of_fixed_factor_clk_driver = {
- 		.of_match_table = of_fixed_factor_clk_ids,
+ static int of_fixed_clk_probe(struct platform_device *pdev)
+@@ -234,7 +232,7 @@ static struct platform_driver of_fixed_clk_driver = {
+ 		.of_match_table = of_fixed_clk_ids,
  	},
- 	.probe = of_fixed_factor_clk_probe,
--	.remove = of_fixed_factor_clk_remove,
-+	.remove_new = of_fixed_factor_clk_remove,
+ 	.probe = of_fixed_clk_probe,
+-	.remove = of_fixed_clk_remove,
++	.remove_new = of_fixed_clk_remove,
  };
- builtin_platform_driver(of_fixed_factor_clk_driver);
+ builtin_platform_driver(of_fixed_clk_driver);
  #endif
 -- 
 2.39.1
