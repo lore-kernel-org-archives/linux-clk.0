@@ -2,44 +2,44 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C12C6FA99
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD18CC6FD19
 	for <linux-clk@archiver.kernel.org>; Sun, 12 Mar 2023 16:15:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230063AbjCLQPZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S229796AbjCLQPZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Sun, 12 Mar 2023 12:15:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38472 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229585AbjCLQPX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 12:15:23 -0400
+        with ESMTP id S230047AbjCLQPY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 12:15:24 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEE5034C0D
-        for <linux-clk@vger.kernel.org>; Sun, 12 Mar 2023 09:15:22 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 563D234C05
+        for <linux-clk@vger.kernel.org>; Sun, 12 Mar 2023 09:15:23 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOLw-0007nt-Nu; Sun, 12 Mar 2023 17:15:20 +0100
+        id 1pbOLx-0007oG-9q; Sun, 12 Mar 2023 17:15:21 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOLw-003f1m-33; Sun, 12 Mar 2023 17:15:20 +0100
+        id 1pbOLw-003f1x-LO; Sun, 12 Mar 2023 17:15:20 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOLv-004K8L-D6; Sun, 12 Mar 2023 17:15:19 +0100
+        id 1pbOLw-004K8W-0w; Sun, 12 Mar 2023 17:15:20 +0100
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 06/30] clk: axi-clkgen: Convert to platform remove callback returning void
-Date:   Sun, 12 Mar 2023 17:14:48 +0100
-Message-Id: <20230312161512.2715500-7-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH 09/30] clk: fixed-mmio: Convert to platform remove callback returning void
+Date:   Sun, 12 Mar 2023 17:14:51 +0100
+Message-Id: <20230312161512.2715500-10-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
 References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1568; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=mKWm1tXjLyBA2SWXj77lTJC97AAz8dVbbZwONWNxxz0=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkDfoprVMb78SIBnkb6CzMjA734MOUZDDgvGbwZ iDAVC4m6AKJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZA36KQAKCRDB/BR4rcrs CfaJB/wO+xJeQ+MI+rcZY8q1XbpVZNCqDaAxpY5G5GuX8GyvvTXAAE6TetfA3Zaafkvko1OZnLq rzDp8Wc9HBs0KmRsMszYvFd47Dl6vodmfWpP8glXmUBBL9oVG84wN4AZ5tbshg8td/c0UDVJrJZ 4WBx538jrqzK16N1yfy0BYjRe5lbo9MYRabT6N2Ig72yDB3q3gRIUgfvbtPs5JDj6vxvPJtWlkF COXbgaT5jILLhUfdS7CZsvKVjWejoCPAs0LNRagV0euUI5vJr+GYpWLieMU35HE8H9e/6YbxvPN mBsIeWtymULMR7xthHfoayeB4MarC7t/j5EbYS0CvsonZaHS
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1707; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=O3BSffUzhF87lbhZq01hmKO4dRQjYInCIMfdlJqnSog=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkDfoz3U7OH8B0N7C8Lm3dEzQKgOrJB5nNt0941 k45EdSkZqOJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZA36MwAKCRDB/BR4rcrs CSh5B/92q6ddRUWfNxn8SXA3DJ5j/Um3zLfN4gOSGuKYxy2J13NUPww3p4QLMWNTWM2dP2muWee vkfO+duUem0jkgWH0poKrPyG06LSp4dWIIfLRvYI9DYAbZ/HsrfCnHny8OmDPKoPFlxFrSRuwWd 1If6FoEY7tvFudzmUekmY1Y9xdumwJzNR1m5diIVNDF7uK+9Sz7b47prh6cKR6LB4YRPfF3u9M7 0E5111dnP7z5pfkU25w31xuBlD6jnVoOveJ4NqgCChcD36spFvdxrMAthF10pGpgYnylhVHTvtC YU+ymau7Yg7s5NXLYS9SLssKd8qBAumQ4Hr5OPbYef+vbP9O
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -63,34 +63,37 @@ callback to the void returning variant.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/clk/clk-axi-clkgen.c | 6 ++----
+ drivers/clk/clk-fixed-mmio.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
-index ac6ff736ac8f..671bee55ceb3 100644
---- a/drivers/clk/clk-axi-clkgen.c
-+++ b/drivers/clk/clk-axi-clkgen.c
-@@ -557,11 +557,9 @@ static int axi_clkgen_probe(struct platform_device *pdev)
- 				      &axi_clkgen->clk_hw);
+diff --git a/drivers/clk/clk-fixed-mmio.c b/drivers/clk/clk-fixed-mmio.c
+index 5225d17d6b3f..7435055670d2 100644
+--- a/drivers/clk/clk-fixed-mmio.c
++++ b/drivers/clk/clk-fixed-mmio.c
+@@ -71,14 +71,12 @@ static int of_fixed_mmio_clk_probe(struct platform_device *pdev)
+ 	return 0;
  }
  
--static int axi_clkgen_remove(struct platform_device *pdev)
-+static void axi_clkgen_remove(struct platform_device *pdev)
+-static int of_fixed_mmio_clk_remove(struct platform_device *pdev)
++static void of_fixed_mmio_clk_remove(struct platform_device *pdev)
  {
+ 	struct clk_hw *clk = platform_get_drvdata(pdev);
+ 
  	of_clk_del_provider(pdev->dev.of_node);
+ 	clk_hw_unregister_fixed_rate(clk);
 -
 -	return 0;
  }
  
- static const struct of_device_id axi_clkgen_ids[] = {
-@@ -583,7 +581,7 @@ static struct platform_driver axi_clkgen_driver = {
- 		.of_match_table = axi_clkgen_ids,
+ static const struct of_device_id of_fixed_mmio_clk_ids[] = {
+@@ -93,7 +91,7 @@ static struct platform_driver of_fixed_mmio_clk_driver = {
+ 		.of_match_table = of_fixed_mmio_clk_ids,
  	},
- 	.probe = axi_clkgen_probe,
--	.remove = axi_clkgen_remove,
-+	.remove_new = axi_clkgen_remove,
+ 	.probe = of_fixed_mmio_clk_probe,
+-	.remove = of_fixed_mmio_clk_remove,
++	.remove_new = of_fixed_mmio_clk_remove,
  };
- module_platform_driver(axi_clkgen_driver);
+ module_platform_driver(of_fixed_mmio_clk_driver);
  
 -- 
 2.39.1
