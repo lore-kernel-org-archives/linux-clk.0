@@ -2,45 +2,44 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D90C2C6FD1F
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Mar 2023 16:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 686CEC74A5B
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Mar 2023 16:15:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229585AbjCLQPc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Mar 2023 12:15:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38552 "EHLO
+        id S230141AbjCLQPd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Mar 2023 12:15:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230084AbjCLQP0 (ORCPT
+        with ESMTP id S230086AbjCLQP0 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 12:15:26 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4462434C05
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C44A636084
         for <linux-clk@vger.kernel.org>; Sun, 12 Mar 2023 09:15:25 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOLx-0007ox-Tn; Sun, 12 Mar 2023 17:15:21 +0100
+        id 1pbOLz-0007qY-Qw; Sun, 12 Mar 2023 17:15:23 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOLx-003f2D-9E; Sun, 12 Mar 2023 17:15:21 +0100
+        id 1pbOLz-003f2x-7T; Sun, 12 Mar 2023 17:15:23 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOLw-004K8g-FP; Sun, 12 Mar 2023 17:15:20 +0100
+        id 1pbOLy-004K9F-G6; Sun, 12 Mar 2023 17:15:22 +0100
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
-To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 11/30] clk: hsdk-pll: Convert to platform remove callback returning void
-Date:   Sun, 12 Mar 2023 17:14:53 +0100
-Message-Id: <20230312161512.2715500-12-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH 20/30] clk: mmp: Convert to platform remove callback returning void
+Date:   Sun, 12 Mar 2023 17:15:02 +0100
+Message-Id: <20230312161512.2715500-21-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
 References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1568; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=9IIhWYLjDyIormTcpgttLaDidPj81RFP65xbAEWauvk=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkDfo/+yqn918kUn8pOgYbEqE+b5exqLyF9mW6r K75nsjTeQCJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZA36PwAKCRDB/BR4rcrs CWOJB/90DoAB++WezQIIJgaJ5BaqL/pdTJ1R4ILNlVPtCWVAmTviQRh4aivInV718Wwry0Rd9Lm FJ22ZEN9LGHv2TSjtQn+2VRRLAwwCTB75yk5+ccgvXUWKQL1aj+DQ8WDu7g2gc2+B3QJPWGaVqC r4wIhVoaN7fHexeAoucGc2xlJXji4gSs/krnj90gNtWjM+0KduYyZhHZTBohBEUgnXMrnXcxYz3 FKefheVYPdbmkC+9/QO1ZiHTILg+IDIRyN+oPEgG1HlRE2sK1jsVvepoKXQ0fMNUyNmGOonITn8 Zt6CkmpL3x5UtYvX83CWW8ozJBJhGgWJoQ8Vn5snkzpnT7nm
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1559; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=6pAH+UlQsJo/x5+z/AfP2hBEHoK8zvT2mO6fM4gHPEg=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkDfpnn7BYRo2cl59zcHVpqNtPyPhNPPM0EICc3 jglvKFMQeqJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZA36ZwAKCRDB/BR4rcrs CRT5B/9qBPDaix3jhVQTCAHH9a171DMXZmMx6Dmv1SYz3TpPt5iTVGA8iv7pBoL+6AfYjHaPIk6 EgnAwmQa+JvQOe37IxI2Av5oGTh3jtxzUQNdR6bocstqa34D443hb7BpGYy2w2MZX7vH6t5i9dw PcWC1AH16o00BAjfhD0J3CzXoptP9a29Y9UJve/bGd+KG0hlvzTCh9Z9ZN/QPm9LMX7A3JU1M/L eFCkCmZI8TF5vqA7B84+KabYxX7E+1zPm8YW96Q6yMOboUEikw31MbpG2/SDqycdDMw4wj1rLEl 9bYE5iSkGvO1f6OkjJKv2bSakUJhldvIlmVlyvbbxjfKLZQ0
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -64,33 +63,36 @@ callback to the void returning variant.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/clk/clk-hsdk-pll.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/clk/mmp/clk-audio.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk-hsdk-pll.c b/drivers/clk/clk-hsdk-pll.c
-index 60007b508590..766e139972fe 100644
---- a/drivers/clk/clk-hsdk-pll.c
-+++ b/drivers/clk/clk-hsdk-pll.c
-@@ -350,10 +350,9 @@ static int hsdk_pll_clk_probe(struct platform_device *pdev)
- 			&pll_clk->hw);
+diff --git a/drivers/clk/mmp/clk-audio.c b/drivers/clk/mmp/clk-audio.c
+index 7aa7f4a9564f..6fb1aa9487b5 100644
+--- a/drivers/clk/mmp/clk-audio.c
++++ b/drivers/clk/mmp/clk-audio.c
+@@ -384,12 +384,10 @@ static int mmp2_audio_clk_probe(struct platform_device *pdev)
+ 	return ret;
  }
  
--static int hsdk_pll_clk_remove(struct platform_device *pdev)
-+static void hsdk_pll_clk_remove(struct platform_device *pdev)
+-static int mmp2_audio_clk_remove(struct platform_device *pdev)
++static void mmp2_audio_clk_remove(struct platform_device *pdev)
  {
- 	of_clk_del_provider(pdev->dev.of_node);
+ 	pm_clk_destroy(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+-
 -	return 0;
  }
  
- static void __init of_hsdk_pll_clk_setup(struct device_node *node)
-@@ -432,6 +431,6 @@ static struct platform_driver hsdk_pll_clk_driver = {
- 		.of_match_table = hsdk_pll_clk_id,
+ #ifdef CONFIG_PM
+@@ -436,7 +434,7 @@ static struct platform_driver mmp2_audio_clk_driver = {
+ 		.pm = &mmp2_audio_clk_pm_ops,
  	},
- 	.probe = hsdk_pll_clk_probe,
--	.remove = hsdk_pll_clk_remove,
-+	.remove_new = hsdk_pll_clk_remove,
+ 	.probe = mmp2_audio_clk_probe,
+-	.remove = mmp2_audio_clk_remove,
++	.remove_new = mmp2_audio_clk_remove,
  };
- builtin_platform_driver(hsdk_pll_clk_driver);
+ module_platform_driver(mmp2_audio_clk_driver);
+ 
 -- 
 2.39.1
 
