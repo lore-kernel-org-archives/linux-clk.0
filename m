@@ -2,48 +2,46 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A38BC6FD1F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4C02C6FD19
 	for <linux-clk@archiver.kernel.org>; Sun, 12 Mar 2023 16:15:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230089AbjCLQPk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Mar 2023 12:15:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38634 "EHLO
+        id S230062AbjCLQPl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Mar 2023 12:15:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230062AbjCLQPa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 12:15:30 -0400
+        with ESMTP id S229919AbjCLQPb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 12:15:31 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4795334315
-        for <linux-clk@vger.kernel.org>; Sun, 12 Mar 2023 09:15:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A1423669A
+        for <linux-clk@vger.kernel.org>; Sun, 12 Mar 2023 09:15:30 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOLx-0007nu-KB; Sun, 12 Mar 2023 17:15:21 +0100
+        id 1pbOLz-0007pu-1m; Sun, 12 Mar 2023 17:15:23 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOLw-003f1n-3R; Sun, 12 Mar 2023 17:15:20 +0100
+        id 1pbOLy-003f2a-Cn; Sun, 12 Mar 2023 17:15:22 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOLv-004K8I-6o; Sun, 12 Mar 2023 17:15:19 +0100
+        id 1pbOLx-004K8s-5U; Sun, 12 Mar 2023 17:15:21 +0100
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 05/30] clk: bcm: Convert to platform remove callback returning void
-Date:   Sun, 12 Mar 2023 17:14:47 +0100
-Message-Id: <20230312161512.2715500-6-u.kleine-koenig@pengutronix.de>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH 14/30] clk: s2mps11: Convert to platform remove callback returning void
+Date:   Sun, 12 Mar 2023 17:14:56 +0100
+Message-Id: <20230312161512.2715500-15-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
 References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3859; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=IanNNGBHrcCJAmWf5mu1sRbucThqze61zMSvuzhO+qA=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkDfolS68+JWJsutAg1Dv7pxwQwnL0jcsu/Rm04 J5EwBXLLl6JATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZA36JQAKCRDB/BR4rcrs CSd1B/48w5+aiFjQRF5oReqowqPNI0mVBhXVuagj7eeGlaCXssUqUR9O72JSSo9M5NUJhnk7J0X aWFT4r8hyfXDjK8yzhCL77VqKK61akJEgQ8+qGINvBaHjaZ2kGjRhVAeQ4vKBrM7gWtMmitUt5m FlIGr5Jk4VHkGT9v9iaw8v1Nh0tR/Iz26z9LdIrBa5YNMb7Evf/95vH/+jzC6ijjzPdzMyiVjUQ BOXJdJttA381KWDF+4Tr4FW347AnNeBX2CAefe7T21KjPcagSb2iJZV9pRkDaMNsQjXp2XTtFy1 MbTvxyavrKFKwk0+xBj3JIRVzm31Yh+SDj08vadA4zdwKZSF
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1740; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=Xs0m+ONUFGBzpqo3SPbXN28Ib5a63TFdvYWV7zGlfsI=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkDfpJeN2QBtTOvNJ2F99zBqvIKWPabOgHyKqCE GHByGUriRyJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZA36SQAKCRDB/BR4rcrs CQtxCACghEFEdA2KmcHIGePbaODwj7iMAWEjhR/wD5aQJdtZ+QPkD7iWot+aOH6J2zc72h4xNiz klix6posKc6ApOT3ZNmySv5rOxBBGvEgYgXBlRFhh2tYTMJCNRX6gNcfGd8FXeE/tgeE6cwo2Fe XUt+if/1ZWQVkqGGnjmLkHeD9gddXgMXAS9hQOXJ/7Zp3aKk+OlZHkshhTYLfG06PtHlzUtvBgZ qDlfe7g9ie/Ad7ZUMMcPi5263EwpyuwfoDrHw/YQYPISTvG95md+OuDZm87SItQPHUda+2xH0Ym OVQTdsDDf88Xk31Zg028niO7pIfa+5aYI+hBKGq3Evy3axzm
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -67,100 +65,40 @@ callback to the void returning variant.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/clk/bcm/clk-bcm2711-dvp.c  | 6 ++----
- drivers/clk/bcm/clk-bcm63xx-gate.c | 6 ++----
- drivers/clk/bcm/clk-raspberrypi.c  | 6 ++----
- 3 files changed, 6 insertions(+), 12 deletions(-)
+ drivers/clk/clk-s2mps11.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm2711-dvp.c b/drivers/clk/bcm/clk-bcm2711-dvp.c
-index e63a42618ac2..e4fbbf3c40fe 100644
---- a/drivers/clk/bcm/clk-bcm2711-dvp.c
-+++ b/drivers/clk/bcm/clk-bcm2711-dvp.c
-@@ -92,15 +92,13 @@ static int clk_dvp_probe(struct platform_device *pdev)
- 	return ret;
- };
- 
--static int clk_dvp_remove(struct platform_device *pdev)
-+static void clk_dvp_remove(struct platform_device *pdev)
- {
- 	struct clk_dvp *dvp = platform_get_drvdata(pdev);
- 	struct clk_hw_onecell_data *data = dvp->data;
- 
- 	clk_hw_unregister_gate(data->hws[1]);
- 	clk_hw_unregister_gate(data->hws[0]);
--
--	return 0;
- }
- 
- static const struct of_device_id clk_dvp_dt_ids[] = {
-@@ -111,7 +109,7 @@ MODULE_DEVICE_TABLE(of, clk_dvp_dt_ids);
- 
- static struct platform_driver clk_dvp_driver = {
- 	.probe	= clk_dvp_probe,
--	.remove	= clk_dvp_remove,
-+	.remove_new = clk_dvp_remove,
- 	.driver	= {
- 		.name		= "brcm2711-dvp",
- 		.of_match_table	= clk_dvp_dt_ids,
-diff --git a/drivers/clk/bcm/clk-bcm63xx-gate.c b/drivers/clk/bcm/clk-bcm63xx-gate.c
-index 89297c57881e..0769f98767da 100644
---- a/drivers/clk/bcm/clk-bcm63xx-gate.c
-+++ b/drivers/clk/bcm/clk-bcm63xx-gate.c
-@@ -541,7 +541,7 @@ static int clk_bcm63xx_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index a3e883a9f406..38c456540d1b 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -202,7 +202,7 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
  	return ret;
  }
  
--static int clk_bcm63xx_remove(struct platform_device *pdev)
-+static void clk_bcm63xx_remove(struct platform_device *pdev)
+-static int s2mps11_clk_remove(struct platform_device *pdev)
++static void s2mps11_clk_remove(struct platform_device *pdev)
  {
- 	struct clk_bcm63xx_hw *hw = platform_get_drvdata(pdev);
+ 	struct s2mps11_clk *s2mps11_clks = platform_get_drvdata(pdev);
  	int i;
-@@ -552,8 +552,6 @@ static int clk_bcm63xx_remove(struct platform_device *pdev)
- 		if (!IS_ERR(hw->data.hws[i]))
- 			clk_hw_unregister_gate(hw->data.hws[i]);
+@@ -217,8 +217,6 @@ static int s2mps11_clk_remove(struct platform_device *pdev)
+ 			continue;
+ 		clkdev_drop(s2mps11_clks[i].lookup);
  	}
 -
 -	return 0;
  }
  
- static const struct of_device_id clk_bcm63xx_dt_ids[] = {
-@@ -570,7 +568,7 @@ static const struct of_device_id clk_bcm63xx_dt_ids[] = {
- 
- static struct platform_driver clk_bcm63xx = {
- 	.probe = clk_bcm63xx_probe,
--	.remove = clk_bcm63xx_remove,
-+	.remove_new = clk_bcm63xx_remove,
- 	.driver = {
- 		.name = "bcm63xx-clock",
- 		.of_match_table = clk_bcm63xx_dt_ids,
-diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-index ce2f93479736..eb399a4d141b 100644
---- a/drivers/clk/bcm/clk-raspberrypi.c
-+++ b/drivers/clk/bcm/clk-raspberrypi.c
-@@ -439,13 +439,11 @@ static int raspberrypi_clk_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int raspberrypi_clk_remove(struct platform_device *pdev)
-+static void raspberrypi_clk_remove(struct platform_device *pdev)
- {
- 	struct raspberrypi_clk *rpi = platform_get_drvdata(pdev);
- 
- 	platform_device_unregister(rpi->cpufreq);
--
--	return 0;
- }
- 
- static const struct of_device_id raspberrypi_clk_match[] = {
-@@ -460,7 +458,7 @@ static struct platform_driver raspberrypi_clk_driver = {
- 		.of_match_table = raspberrypi_clk_match,
+ static const struct platform_device_id s2mps11_clk_id[] = {
+@@ -265,7 +263,7 @@ static struct platform_driver s2mps11_clk_driver = {
+ 		.name  = "s2mps11-clk",
  	},
- 	.probe          = raspberrypi_clk_probe,
--	.remove		= raspberrypi_clk_remove,
-+	.remove_new	= raspberrypi_clk_remove,
+ 	.probe = s2mps11_clk_probe,
+-	.remove = s2mps11_clk_remove,
++	.remove_new = s2mps11_clk_remove,
+ 	.id_table = s2mps11_clk_id,
  };
- module_platform_driver(raspberrypi_clk_driver);
- 
+ module_platform_driver(s2mps11_clk_driver);
 -- 
 2.39.1
 
