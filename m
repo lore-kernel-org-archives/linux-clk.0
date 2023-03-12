@@ -2,41 +2,41 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A34C1C61DA4
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Mar 2023 02:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB4FC74A5B
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Mar 2023 02:28:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230021AbjCLC2t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 11 Mar 2023 21:28:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34954 "EHLO
+        id S229515AbjCLC2v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 11 Mar 2023 21:28:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229685AbjCLC2r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Mar 2023 21:28:47 -0500
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CCFF32CF3;
-        Sat, 11 Mar 2023 18:28:45 -0800 (PST)
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32C1iTBj005195;
-        Sat, 11 Mar 2023 18:28:27 -0800
+        with ESMTP id S230034AbjCLC2t (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Mar 2023 21:28:49 -0500
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 870C934327;
+        Sat, 11 Mar 2023 18:28:46 -0800 (PST)
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32BK7wL0004410;
+        Sat, 11 Mar 2023 18:28:31 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=s2048-2021-q4;
- bh=40EG+05Ne4+wO9JHpvJkSlvSYxtLLL5N/Vyh2Tdm8SU=;
- b=KqHVZQFo9urhBksEeGwQOiZRAry8HAuLx/tESNOBrzYyWgnY3KzqYn3mdTIvAyVYboQY
- lQ19nnaQKSQb8ggPTiaySDxdBFXeus5kfkvjrPpbZst119Meuc66yCgjg9DwyI7M0QDJ
- /jCE0v1nnVNV4rEYesHYegIHG8DjBmhixEJcrn+EaDdRTL0GotHQPXNyQnT5Dkd1vBpY
- JCH9EAtVOcG6LOqrEcGXzVcktrLzgnA2GiNnfiMEIqz3XMoPMmztZwkPtxqOjkXHBuHe
- EHMtamBnUNQH3rZbEAR6oiBfjfpkMYoBhoqq4QiBs2MssJfto+/xyHE89vqz94KWVMyY AQ== 
+ bh=ggbvdIb1jxpDfp7KaumFFjElGm6Nvg9XcVu+wvvPnlQ=;
+ b=SEoc4CB3+fNTGaIaWPpJVLU1m9ctfuLFAOcHJDnGNqyysDZr4DQHNv8H/Jiv0z7yIi2w
+ 61ipbKy0vhmY4OIapNuo467PAH6piZFNuc9pEhkp2QgOH+h/758n44TjJEhtdBdBiof/
+ UUcoODGL+/GTouGIWjlVxwvEEOnxXJwb0xD54hNKkapUF4XtLZWggIfvDhObUvvrwgVl
+ mtLy5cUhzALYU06TjVIGdQqv2JOqVr09YqjbvjBsACGmCy4JRkRD6l2tbR2CTVx8TlCs
+ //U0lo7RyaudzP4csRmUCe4JywrfgMIZS+SZ6TTD8gKqdIAdfRji1Putq7mVVGWAVFlN kA== 
 Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3p8nv0jjhu-1
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3p8r25h4bd-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Sat, 11 Mar 2023 18:28:27 -0800
+        Sat, 11 Mar 2023 18:28:31 -0800
 Received: from ash-exhub204.TheFacebook.com (2620:10d:c0a8:83::4) by
- ash-exhub203.TheFacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
+ ash-exhub102.TheFacebook.com (2620:10d:c0a8:82::f) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.17; Sat, 11 Mar 2023 18:28:26 -0800
+ 15.1.2507.17; Sat, 11 Mar 2023 18:28:30 -0800
 Received: from devvm1736.cln0.facebook.com (2620:10d:c0a8:1b::d) by
  mail.thefacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server id
- 15.1.2507.17; Sat, 11 Mar 2023 18:28:24 -0800
+ 15.1.2507.17; Sat, 11 Mar 2023 18:28:28 -0800
 From:   Vadim Fedorenko <vadfed@meta.com>
 To:     Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
         Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
@@ -46,9 +46,9 @@ CC:     Vadim Fedorenko <vadim.fedorenko@linux.dev>,
         Vadim Fedorenko <vadfed@meta.com>, <poros@redhat.com>,
         <mschmidt@redhat.com>, <netdev@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH RFC v6 3/6] dpll: documentation on DPLL subsystem interface
-Date:   Sat, 11 Mar 2023 18:28:04 -0800
-Message-ID: <20230312022807.278528-4-vadfed@meta.com>
+Subject: [PATCH RFC v6 6/6] ptp_ocp: implement DPLL ops
+Date:   Sat, 11 Mar 2023 18:28:07 -0800
+Message-ID: <20230312022807.278528-7-vadfed@meta.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230312022807.278528-1-vadfed@meta.com>
 References: <20230312022807.278528-1-vadfed@meta.com>
@@ -56,8 +56,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-Originating-IP: [2620:10d:c0a8:1b::d]
-X-Proofpoint-ORIG-GUID: CIhpIdyg_CL0rA2tEAY11SEF0nO36kHv
-X-Proofpoint-GUID: CIhpIdyg_CL0rA2tEAY11SEF0nO36kHv
+X-Proofpoint-GUID: LGcuQrBwPad_9xncnzpnhpW2xR2RN_Jf
+X-Proofpoint-ORIG-GUID: LGcuQrBwPad_9xncnzpnhpW2xR2RN_Jf
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
  definitions=2023-03-11_04,2023-03-10_01,2023-02-09_01
@@ -65,383 +65,304 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add documentation explaining common netlink interface to configure DPLL
-devices and monitoring events. Common way to implement DPLL device in
-a driver is also covered.
+Implement basic DPLL operations in ptp_ocp driver as the
+simplest example of using new subsystem.
 
 Signed-off-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
 ---
- Documentation/networking/dpll.rst  | 347 +++++++++++++++++++++++++++++
- Documentation/networking/index.rst |   1 +
- 2 files changed, 348 insertions(+)
- create mode 100644 Documentation/networking/dpll.rst
+ drivers/ptp/Kconfig   |   1 +
+ drivers/ptp/ptp_ocp.c | 209 ++++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 200 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/networking/dpll.rst b/Documentation/networking/dpll.rst
-new file mode 100644
-index 000000000000..25cd81edc73c
---- /dev/null
-+++ b/Documentation/networking/dpll.rst
-@@ -0,0 +1,347 @@
-+.. SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/ptp/Kconfig b/drivers/ptp/Kconfig
+index fe4971b65c64..8c4cfabc1bfa 100644
+--- a/drivers/ptp/Kconfig
++++ b/drivers/ptp/Kconfig
+@@ -177,6 +177,7 @@ config PTP_1588_CLOCK_OCP
+ 	depends on COMMON_CLK
+ 	select NET_DEVLINK
+ 	select CRC16
++	select DPLL
+ 	help
+ 	  This driver adds support for an OpenCompute time card.
+ 
+diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
+index 4bbaccd543ad..02c95e724ec8 100644
+--- a/drivers/ptp/ptp_ocp.c
++++ b/drivers/ptp/ptp_ocp.c
+@@ -23,6 +23,8 @@
+ #include <linux/mtd/mtd.h>
+ #include <linux/nvmem-consumer.h>
+ #include <linux/crc16.h>
++#include <linux/dpll.h>
++#include <uapi/linux/dpll.h>
+ 
+ #define PCI_VENDOR_ID_FACEBOOK			0x1d9b
+ #define PCI_DEVICE_ID_FACEBOOK_TIMECARD		0x0400
+@@ -267,6 +269,7 @@ struct ptp_ocp_sma_connector {
+ 	bool	fixed_dir;
+ 	bool	disabled;
+ 	u8	default_fcn;
++	struct dpll_pin *dpll_pin;
+ };
+ 
+ struct ocp_attr_group {
+@@ -353,6 +356,7 @@ struct ptp_ocp {
+ 	struct ptp_ocp_signal	signal[4];
+ 	struct ptp_ocp_sma_connector sma[4];
+ 	const struct ocp_sma_op *sma_op;
++	struct dpll_device *dpll;
+ };
+ 
+ #define OCP_REQ_TIMESTAMP	BIT(0)
+@@ -2689,16 +2693,9 @@ sma4_show(struct device *dev, struct device_attribute *attr, char *buf)
+ }
+ 
+ static int
+-ptp_ocp_sma_store(struct ptp_ocp *bp, const char *buf, int sma_nr)
++ptp_ocp_sma_store_val(struct ptp_ocp *bp, int val, enum ptp_ocp_sma_mode mode, int sma_nr)
+ {
+ 	struct ptp_ocp_sma_connector *sma = &bp->sma[sma_nr - 1];
+-	enum ptp_ocp_sma_mode mode;
+-	int val;
+-
+-	mode = sma->mode;
+-	val = sma_parse_inputs(bp->sma_op->tbl, buf, &mode);
+-	if (val < 0)
+-		return val;
+ 
+ 	if (sma->fixed_dir && (mode != sma->mode || val & SMA_DISABLE))
+ 		return -EOPNOTSUPP;
+@@ -2733,6 +2730,21 @@ ptp_ocp_sma_store(struct ptp_ocp *bp, const char *buf, int sma_nr)
+ 	return val;
+ }
+ 
++static int
++ptp_ocp_sma_store(struct ptp_ocp *bp, const char *buf, int sma_nr)
++{
++	struct ptp_ocp_sma_connector *sma = &bp->sma[sma_nr - 1];
++	enum ptp_ocp_sma_mode mode;
++	int val;
 +
-+===============================
-+The Linux kernel DPLL subsystem
-+===============================
++	mode = sma->mode;
++	val = sma_parse_inputs(bp->sma_op->tbl, buf, &mode);
++	if (val < 0)
++		return val;
 +
++	return ptp_ocp_sma_store_val(bp, val, mode, sma_nr);
++}
 +
-+The main purpose of DPLL subsystem is to provide general interface
-+to configure devices that use any kind of Digital PLL and could use
-+different sources of signal to synchronize to as well as different
-+types of outputs.
-+The main interface is NETLINK_GENERIC based protocol with an event
-+monitoring multicast group defined.
+ static ssize_t
+ sma1_store(struct device *dev, struct device_attribute *attr,
+ 	   const char *buf, size_t count)
+@@ -4171,12 +4183,151 @@ ptp_ocp_detach(struct ptp_ocp *bp)
+ 	device_unregister(&bp->dev);
+ }
+ 
++static int ptp_ocp_dpll_pin_to_sma(const struct ptp_ocp *bp, const struct dpll_pin *pin)
++{
++	int i;
 +
++	for (i = 0; i < 4; i++) {
++		if (bp->sma[i].dpll_pin == pin)
++			return i;
++	}
++	return -1;
++}
 +
-+Dpll object
-+===========
-+Single dpll device object means single Digital PLL circuit and bunch of
-+pins connected with it.
-+It provides its capablities and current status to the user in response
-+to the `do` request of netlink command ``DPLL_CMD_DEVICE_GET`` and list
-+of dplls registered in the subsystem with `dump` netlink request of same
-+command.
-+Requesting configuration of dpll device is done with `do` request of
-+netlink ``DPLL_CMD_DEVICE_SET`` command.
++static int ptp_ocp_dpll_lock_status_get(const struct dpll_device *dpll,
++				    enum dpll_lock_status *status,
++				    struct netlink_ext_ack *extack)
++{
++	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
++	int sync;
 +
++	sync = ioread32(&bp->reg->status) & OCP_STATUS_IN_SYNC;
++	*status = sync ? DPLL_LOCK_STATUS_LOCKED : DPLL_LOCK_STATUS_UNLOCKED;
 +
-+Pin object
-+==========
-+A pin is amorphic object which represents either input or output, it
-+could be internal component of the device, as well as externaly
-+connected.
-+The number of pins per dpll vary, but usually multiple pins shall be
-+provided for a single dpll device.
-+Pin's properities and capabilities are provided to the user in response
-+to `do` request of netlink ``DPLL_CMD_PIN_GET`` command.
-+It is also possible to list all the pins that were registered either
-+with dpll or different pin with `dump` request of ``DPLL_CMD_PIN_GET``
-+command.
-+Configuration of a pin can be changed by `do` request of netlink
-+``DPLL_CMD_PIN_SET`` command.
++	return 0;
++}
 +
++static int ptp_ocp_dpll_source_idx_get(const struct dpll_device *dpll,
++				    u32 *idx, struct netlink_ext_ack *extack)
++{
++	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
 +
-+Shared pins
-+===========
-+Pin can be shared by multiple dpll devices. Where configuration on one
-+pin can alter multiple dplls (i.e. PIN_FREQUENCY, PIN_DIRECTION),
-+or configure just one pin-dpll pair (i.e. PIN_PRIO, PIN_STATE).
++	if (bp->pps_select) {
++		*idx = ioread32(&bp->pps_select->gpio1);
++		return 0;
++	}
++	return -EINVAL;
++}
 +
++static int ptp_ocp_dpll_mode_get(const struct dpll_device *dpll,
++				    u32 *mode, struct netlink_ext_ack *extack)
++{
++	*mode = DPLL_MODE_AUTOMATIC;
 +
-+MUX-type pins
-+=============
-+A pin can be MUX-type, which aggregates child pins and serves as pin
-+multiplexer. One or more pins are attached to MUX-type instead of being
-+directly connected to a dpll device.
-+Pins registered with a MUX-type provides user with additional nested
-+attribute ``DPLL_A_PIN_PARENT`` for each parrent they were registered
-+with.
-+Only one child pin can provide it's signal to the parent MUX-type pin at
-+a time, the selection is done with requesting change of child pin state
-+to ``DPLL_PIN_STATE_CONNECTED`` and providing a target MUX-type pin
-+index value in ``DPLL_A_PARENT_PIN_IDX``
++	return 0;
++}
 +
++static bool ptp_ocp_dpll_mode_supported(const struct dpll_device *dpll,
++				    const enum dpll_mode mode,
++				    struct netlink_ext_ack *extack)
++{
++	if (mode == DPLL_MODE_AUTOMATIC)
++		return true;
 +
-+Pin priority
-+============
-+Some devices might offer a capability of automatic pin selection mode.
-+Usually such automatic selection is offloaded to the hardware,
-+which means only pins directly connected to the dpll are capable of
-+automatic source pin selection.
-+In automatic selection mode, the user cannot manually select a source
-+pin for the device, instead the user shall provide all directly
-+connected pins with a priority ``DPLL_A_PIN_PRIO``, the device would
-+pick a highest priority valid signal and connect with it.
-+Child pin of MUX-type are not capable of automatic source pin selection,
-+in order to configure a source of a MUX-type pin the user still needs
-+to request desired pin state.
++	return false;
++}
 +
++static int ptp_ocp_dpll_direction_get(const struct dpll_pin *pin,
++				     const struct dpll_device *dpll,
++				     enum dpll_pin_direction *direction,
++				     struct netlink_ext_ack *extack)
++{
++	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
++	int sma_nr = ptp_ocp_dpll_pin_to_sma(bp, pin);
 +
-+Configuration commands group
-+============================
++	if (sma_nr < 0)
++		return -EINVAL;
 +
-+Configuration commands are used to get or dump information about
-+registered DPLL devices (and pins), as well as set configuration of
-+device or pins. As DPLL device could not be abstract and reflects real
-+hardware, there is no way to add new DPLL device via netlink from user
-+space and each device should be registered by it's driver.
++	*direction = bp->sma[sma_nr].mode == SMA_MODE_IN ? DPLL_PIN_DIRECTION_SOURCE :
++							   DPLL_PIN_DIRECTION_OUTPUT;
++	return 0;
++}
 +
-+All netlink commands require ``GENL_ADMIN_PERM``. This is to prevent
-+any spamming/D.o.S. from unauthorized userspace applications.
++static int ptp_ocp_dpll_direction_set(const struct dpll_pin *pin,
++				     const struct dpll_device *dpll,
++				     enum dpll_pin_direction direction,
++				     struct netlink_ext_ack *extack)
++{
++	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
++	int sma_nr = ptp_ocp_dpll_pin_to_sma(bp, pin);
++	enum ptp_ocp_sma_mode mode;
 +
-+List of command with possible attributes
-+========================================
++	if (sma_nr < 0)
++		return -EINVAL;
 +
-+All constants identifying command types use ``DPLL_CMD_`` prefix and
-+suffix according to command purpose. All attributes use ``DPLL_A_``
-+prefix and suffix according to attribute purpose:
++	mode = direction == DPLL_PIN_DIRECTION_SOURCE ? SMA_MODE_IN : SMA_MODE_OUT;
++	return ptp_ocp_sma_store_val(bp, 0, mode, sma_nr);
++}
 +
-+  ============================  =======================================
-+  ``DEVICE_GET``                command to get device info or dump list
-+                                of available devices
-+    ``ID``                      attr internal dpll device ID
-+    ``DEV_NAME``                attr dpll device name
-+    ``BUS_NAME``                attr dpll device bus name
-+    ``MODE``                    attr selection mode
-+    ``MODE_SUPPORTED``          attr available selection modes
-+    ``SOURCE_PIN_IDX``          attr index of currently selected source
-+    ``LOCK_STATUS``             attr internal frequency-lock status
-+    ``TEMP``                    attr device temperature information
-+    ``CLOCK_ID``                attr Unique Clock Identifier (EUI-64),
-+                                as defined by the IEEE 1588 standard
-+    ``TYPE``                    attr type or purpose of dpll device
-+  ``DEVICE_SET``                command to set dpll device configuration
-+    ``ID``                      attr internal dpll device index
-+    ``NAME``                    attr dpll device name (not required if
-+                                dpll device index was provided)
-+    ``MODE``                    attr selection mode to configure
-+  ``PIN_GET``                   command to get pin info or dump list of
-+                                available pins
-+    ``DEVICE``                  nest attr for each dpll device pin is
-+                                connected with
-+      ``ID``                    attr internal dpll device ID
-+      ``DEV_NAME``              attr dpll device name
-+      ``BUS_NAME``              attr dpll device bus name
-+      ``PIN_PRIO``              attr priority of pin on the dpll device
-+      ``PIN_STATE``             attr state of pin on the dpll device
-+    ``PIN_IDX``                 attr index of a pin on the dpll device
-+    ``PIN_DESCRIPTION``         attr description provided by driver
-+    ``PIN_TYPE``                attr type of a pin
-+    ``PIN_DIRECTION``           attr direction of a pin
-+    ``PIN_FREQUENCY``           attr current frequency of a pin
-+    ``PIN_FREQUENCY_SUPPORTED`` attr provides supported frequencies
-+    ``PIN_ANY_FREQUENCY_MIN``   attr minimum value of frequency in case
-+                                pin/dpll supports any frequency
-+    ``PIN_ANY_FREQUENCY_MAX``   attr maximum value of frequency in case
-+                                pin/dpll supports any frequency
-+    ``PIN_PARENT``              nest attr for each MUX-type parent, that
-+                                pin is connected with
-+      ``PIN_PARENT_IDX``        attr index of a parent pin on the dpll
-+                                device
-+      ``PIN_STATE``             attr state of a pin on parent pin
-+    ``PIN_RCLK_DEVICE``         attr name of a device, where pin
-+                                recovers clock signal from
-+    ``PIN_DPLL_CAPS``           attr bitmask of pin-dpll capabilities
++static int ptp_ocp_dpll_frequency_set(const struct dpll_pin *pin,
++			      const struct dpll_device *dpll,
++			      const u32 frequency,
++			      struct netlink_ext_ack *extack)
++{
++	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
++	int sma_nr = ptp_ocp_dpll_pin_to_sma(bp, pin);
++	int val = frequency == 10000000 ? 0 : 1;
 +
-+  ``PIN_SET``                   command to set pins configuration
-+    ``ID``                      attr internal dpll device index
-+    ``BUS_NAME``                attr dpll device name (not required if
-+                                dpll device ID was provided)
-+    ``DEV_NAME``                attr dpll device name (not required if
-+                                dpll device ID was provided)
-+    ``PIN_IDX``                 attr index of a pin on the dpll device
-+    ``PIN_DIRECTION``           attr direction to be set
-+    ``PIN_FREQUENCY``           attr frequency to be set
-+    ``PIN_PRIO``                attr pin priority to be set
-+    ``PIN_STATE``               attr pin state to be set
-+    ``PIN_PRIO``                attr pin priority to be set
-+    ``PIN_PARENT_IDX``          attr if provided state is to be set with
-+                                parent pin instead of with dpll device
-+
-+Netlink dump requests
-+=====================
-+
-+The ``DEVICE_GET`` and ``PIN_GET`` commands are capable of dump type
-+netlink requests. Possible response message attributes for netlink dump
-+requests:
-+
-+  ==============================  =======================================
-+  ``PIN_GET``                     command to dump pins
-+    ``PIN``                       attr nested type contains single pin
-+      ``DEVICE``                  nest attr for each dpll device pin is
-+                                  connected with
-+        ``ID``                    attr internal dpll device ID
-+        ``DEV_NAME``              attr dpll device name
-+        ``BUS_NAME``              attr dpll device bus name
-+      ``PIN_IDX``                 attr index of dumped pin (on dplls)
-+      ``PIN_DESCRIPTION``         description of a pin provided by driver
-+      ``PIN_TYPE``                attr value of pin type
-+      ``PIN_FREQUENCY``           attr current frequency of a pin
-+      ``PIN_FREQUENCY_SUPPORTED`` attr provides supported frequencies
-+      ``PIN_RCLK_DEVICE``         attr name of a device, where pin
-+                                  recovers clock signal from
-+      ``PIN_DIRECTION``           attr direction of a pin
-+      ``PIN_PARENT``              nest attr for each MUX-type parent,
-+                                  that pin is connected with
-+        ``PIN_PARENT_IDX``        attr index of a parent pin on the dpll
-+                                  device
-+        ``PIN_STATE``             attr state of a pin on parent pin
-+
-+  ``DEVICE_GET``                  command to dump dplls
-+    ``DEVICE``                    attr nested type contatin a single
-+                                  dpll device
-+      ``ID``                      attr internal dpll device ID
-+      ``DEV_NAME``                attr dpll device name
-+      ``BUS_NAME``                attr dpll device bus name
++	if (sma_nr < 0)
++		return -EINVAL;
 +
 +
-+Dpll device level configuration pre-defined enums
-+=================================================
++	return ptp_ocp_sma_store_val(bp, val, bp->sma[sma_nr].mode, sma_nr);
++}
 +
-+For all below enum names used for configuration of dpll device use
-+the ``DPLL_`` prefix.
++static int ptp_ocp_dpll_frequency_get(const struct dpll_pin *pin,
++			      const struct dpll_device *dpll,
++			      u32 *frequency,
++			      struct netlink_ext_ack *extack)
++{
++	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
++	int sma_nr = ptp_ocp_dpll_pin_to_sma(bp, pin);
++	u32 val;
 +
-+Values for ``DPLL_A_LOCK_STATUS`` attribute:
++	if (sma_nr < 0)
++		return -EINVAL;
 +
-+  ============================= ======================================
-+  ``LOCK_STATUS_UNLOCKED``      DPLL is in freerun, not locked to any
-+                                source pin
-+  ``LOCK_STATUS_CALIBRATING``   DPLL device calibrates to lock to the
-+                                source pin signal
-+  ``LOCK_STATUS_LOCKED``        DPLL device is locked to the source
-+                                pin frequency
-+  ``LOCK_STATUS_HOLDOVER``      DPLL device lost a lock, using its
-+                                frequency holdover capabilities
++	val = bp->sma_op->get(bp, sma_nr);
++	if (!val)
++		*frequency = 1000000;
++	else
++		*frequency = 0;
++	return 0;
++}
 +
-+Values for ``DPLL_A_MODE`` attribute:
++static struct dpll_device_ops dpll_ops = {
++	.lock_status_get = ptp_ocp_dpll_lock_status_get,
++	.source_pin_idx_get = ptp_ocp_dpll_source_idx_get,
++	.mode_get = ptp_ocp_dpll_mode_get,
++	.mode_supported = ptp_ocp_dpll_mode_supported,
++};
 +
-+  =================== ================================================
-+  ``MODE_FORCED``     source pin is force-selected by setting pin
-+                      state to ``DPLL_PIN_STATE_CONNECTED`` on a dpll
-+  ``MODE_AUTOMATIC``  source pin is auto selected according to
-+                      configured pin priorities and source signal
-+                      validity
-+  ``MODE_HOLDOVER``   force holdover mode of DPLL
-+  ``MODE_FREERUN``    DPLL is driven by supplied system clock without
-+                      holdover capabilities
-+  ``MODE_NCO``        similar to FREERUN, with possibility to
-+                      numerically control frequency offset
++static struct dpll_pin_ops dpll_pins_ops = {
++	.frequency_get = ptp_ocp_dpll_frequency_get,
++	.frequency_set = ptp_ocp_dpll_frequency_set,
++	.direction_get = ptp_ocp_dpll_direction_get,
++	.direction_set = ptp_ocp_dpll_direction_set,
++};
 +
-+Values for ``DPLL_A_TYPE`` attribute:
+ static int
+ ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ {
++	struct dpll_pin_properties prop;
+ 	struct devlink *devlink;
++	char sma[4] = "SMA0";
+ 	struct ptp_ocp *bp;
+-	int err;
++	int err, i;
++	u64 clkid;
+ 
+ 	devlink = devlink_alloc(&ptp_ocp_devlink_ops, sizeof(*bp), &pdev->dev);
+ 	if (!devlink) {
+@@ -4226,8 +4377,44 @@ ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+ 	ptp_ocp_info(bp);
+ 	devlink_register(devlink);
+-	return 0;
+ 
++	clkid = pci_get_dsn(pdev);
++	bp->dpll = dpll_device_get(clkid, 0, THIS_MODULE);
++	if (!bp->dpll) {
++		dev_err(&pdev->dev, "dpll_device_alloc failed\n");
++		goto out;
++	}
 +
-+  ============= ================================================
-+  ``TYPE_PPS``  DPLL used to provide pulse-per-second output
-+  ``TYPE_EEC``  DPLL used to drive ethernet equipment clock
++	err = dpll_device_register(bp->dpll, DPLL_TYPE_PPS, &dpll_ops, bp, &pdev->dev);
++	if (err)
++		goto out;
 +
++	prop.description = &sma[0];
++	prop.freq_supported = DPLL_PIN_FREQ_SUPP_MAX;
++	prop.type = DPLL_PIN_TYPE_EXT;
++	prop.any_freq_max = 10000000;
++	prop.any_freq_min = 0;
++	prop.capabilities = DPLL_PIN_CAPS_DIRECTION_CAN_CHANGE;
 +
++	for (i = 0; i < 4; i++) {
++		sma[3] = 0x31 + i;
++		bp->sma[i].dpll_pin = dpll_pin_get(clkid, i, THIS_MODULE, &prop);
++		if (IS_ERR_OR_NULL(bp->sma[i].dpll_pin)) {
++			bp->sma[i].dpll_pin = NULL;
++			goto out_dpll;
++		}
++		err = dpll_pin_register(bp->dpll, bp->sma[i].dpll_pin, &dpll_pins_ops, bp, NULL);
++		if (err)
++			goto out_dpll;
++	}
 +
-+Pin level configuration pre-defined enums
-+=========================================
-+
-+For all below enum names used for configuration of pin use the
-+``DPLL_PIN`` prefix.
-+
-+Values for ``DPLL_A_PIN_STATE`` attribute:
-+
-+  ======================= ========================================
-+  ``STATE_CONNECTED``     Pin connected to a dpll or parent pin
-+  ``STATE_DISCONNECTED``  Pin disconnected from dpll or parent pin
-+
-+Values for ``DPLL_A_PIN_DIRECTION`` attribute:
-+
-+  ======================= ==============================
-+  ``DIRECTION_SOURCE``    Pin used as a source of signal
-+  ``DIRECTION_OUTPUT``    Pin used to output signal
-+
-+Values for ``DPLL_A_PIN_TYPE`` attributes:
-+
-+  ======================== ========================================
-+  ``TYPE_MUX``             MUX type pin, connected pins shall have
-+                           their own types
-+  ``TYPE_EXT``             External pin
-+  ``TYPE_SYNCE_ETH_PORT``  SyncE on Ethernet port
-+  ``TYPE_INT_OSCILLATOR``  Internal Oscillator (i.e. Holdover with
-+                           Atomic Clock as a Source)
-+  ``TYPE_GNSS``            GNSS 1PPS source
-+
-+Values for ``DPLL_A_PIN_DPLL_CAPS`` attributes:
-+
-+  ============================= ================================
-+  ``CAPS_DIRECTION_CAN_CHANGE`` Bit present if direction can change
-+  ``CAPS_PRIORITY_CAN_CHANGE``  Bit present if priority can change
-+  ``CAPS_STATE_CAN_CHANGE``     Bit present if state can change
-+
-+
-+Notifications
-+=============
-+
-+DPLL device can provide notifications regarding status changes of the
-+device, i.e. lock status changes, source/output type changes or alarms.
-+This is the multicast group that is used to notify user-space apps via
-+netlink socket: ``DPLL_MCGRP_MONITOR``
-+
-+Notifications messages (attrbiutes use ``DPLL_A`` prefix):
-+
-+  ========================= ==========================================
-+  ``EVENT_DEVICE_CREATE``   event value new DPLL device was created
-+    ``ID``                  attr internal dpll device ID
-+    ``DEV_NAME``            attr dpll device name
-+    ``BUS_NAME``            attr dpll device bus name
-+  ``EVENT_DEVICE_DELETE``   event value DPLL device was deleted
-+    ``ID``                  attr dpll device index
-+  ``EVENT_DEVICE_CHANGE``   event value DPLL device attribute has
-+                            changed
-+    ``ID``                  attr modified dpll device ID
-+    ``PIN_IDX``             attr the modified pin index
-+
-+Device change event shall consiste of the attribute and the value that
-+has changed.
-+
-+
-+Device driver implementation
-+============================
-+
-+Device is allocated by ``dpll_device_get`` call. Second call with the
-+same arguments doesn't create new object but provides pointer to
-+previously created device for given arguments, it also increase refcount
-+of that object.
-+Device is deallocated by ``dpll_device_put`` call, which first decreases
-+the refcount, once refcount is cleared the object is destroyed.
-+
-+Device should implement set of operations and register device via
-+``dpll_device_register`` at which point it becomes available to the
-+users. Only one driver can register a dpll device within dpll subsytem.
-+Multiple driver instances can obtain reference to it with
-+``dpll_device_get``.
-+
-+The pins are allocated separately with ``dpll_pin_get``, it works
-+similarly to ``dpll_device_get``. Creates object and the for each call
-+with the same arguments the object refcount increases.
-+
-+Once DPLL device is created, allocated pin can be registered with it
-+with 2 different methods, always providing implemented pin callbacks,
-+and private data pointer for calling them:
-+``dpll_pin_register`` - simple registration with a dpll device.
-+``dpll_pin_on_pin_register`` - register pin with another MUX type pin.
-+
-+For different instances of a device driver requiring to find already
-+registered DPLL (i.e. to connect its pins to id) use ``dpll_device_get``
-+to obtain proper dpll device pointer.
-+
-+The name od DPLL device is generated based on registerer provided device
-+struct pointer and dev_driver_id value.
-+Name is in format: ``%s_%u`` witch arguments:
-+``dev_name(struct device *)`` - syscall on parent device struct
-+``dev_driver_idx``            - registerer given id
-+
-+Notifications of adding or removing DPLL devices are created within
-+subsystem itself.
-+Notifications about registering/deregistering pins are also invoked by
-+the subsystem.
-+Notifications about dpll status changes shall be requested by device
-+driver with ``dpll_device_notify`` corresponding attribute as a reason.
-+
-+There is no strict requirement to implement all the operations for
-+each device, every operation handler is checked for existence and
-+ENOTSUPP is returned in case of absence of specific handler.
-+
-diff --git a/Documentation/networking/index.rst b/Documentation/networking/index.rst
-index 4ddcae33c336..6eb83a47cc2d 100644
---- a/Documentation/networking/index.rst
-+++ b/Documentation/networking/index.rst
-@@ -17,6 +17,7 @@ Contents:
-    dsa/index
-    devlink/index
-    caif/index
-+   dpll
-    ethtool-netlink
-    ieee802154
-    j1939
++	return 0;
++out_dpll:
++	for (i = 0; i < 4; i++) {
++		if (bp->sma[i].dpll_pin)
++			dpll_pin_put(bp->sma[i].dpll_pin);
++	}
++	dpll_device_put(bp->dpll);
+ out:
+ 	ptp_ocp_detach(bp);
+ out_disable:
+@@ -4243,6 +4430,8 @@ ptp_ocp_remove(struct pci_dev *pdev)
+ 	struct ptp_ocp *bp = pci_get_drvdata(pdev);
+ 	struct devlink *devlink = priv_to_devlink(bp);
+ 
++	dpll_device_unregister(bp->dpll);
++	dpll_device_put(bp->dpll);
+ 	devlink_unregister(devlink);
+ 	ptp_ocp_detach(bp);
+ 	pci_disable_device(pdev);
 -- 
 2.34.1
 
