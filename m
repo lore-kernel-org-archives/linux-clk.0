@@ -2,48 +2,46 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C175C6FA99
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Mar 2023 16:15:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B80FC74A5B
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Mar 2023 16:15:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230139AbjCLQPp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Mar 2023 12:15:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38658 "EHLO
+        id S229738AbjCLQPq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Mar 2023 12:15:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230110AbjCLQPd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 12:15:33 -0400
+        with ESMTP id S230157AbjCLQPe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 12:15:34 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDC9B37F25
-        for <linux-clk@vger.kernel.org>; Sun, 12 Mar 2023 09:15:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1817E38025
+        for <linux-clk@vger.kernel.org>; Sun, 12 Mar 2023 09:15:32 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOM1-0007s2-Bk; Sun, 12 Mar 2023 17:15:25 +0100
+        id 1pbOM2-0007sv-AH; Sun, 12 Mar 2023 17:15:26 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOM0-003f3O-Mu; Sun, 12 Mar 2023 17:15:24 +0100
+        id 1pbOM1-003f3l-Lj; Sun, 12 Mar 2023 17:15:25 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pbOLz-004K9a-MQ; Sun, 12 Mar 2023 17:15:23 +0100
+        id 1pbOM0-004K9s-OY; Sun, 12 Mar 2023 17:15:24 +0100
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc:     linux-clk@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 25/30] clk: stm32: Convert to platform remove callback returning void
-Date:   Sun, 12 Mar 2023 17:15:07 +0100
-Message-Id: <20230312161512.2715500-26-u.kleine-koenig@pengutronix.de>
+        Michal Simek <michal.simek@xilinx.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 30/30] clk: xilinx: Convert to platform remove callback returning void
+Date:   Sun, 12 Mar 2023 17:15:12 +0100
+Message-Id: <20230312161512.2715500-31-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
 References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1789; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=YSdgKydMUmqqeYG946UQat08kJ/q2KTOaGSGnm0gse0=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkDfp6xwsITcqTQd1LtV6bSmWobY11RcAQyBADL isAsR//OeaJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZA36egAKCRDB/BR4rcrs CS0HCACeU/irJ0xObgGaUABt1LhZ3HhEP2AcWllEyHGs4VYMe2fhsL6WkHa1Xb0Zm2QIOi4pOSU cIsBOQHJzzeKxQxycQxnZ+t+iPAhaaorEtHf6W0eBtCTEW2XWK0usG5SGO1Je1QzetwHujE4Zei FfIlcwx2jmvEZpNK9kQLzYxLKzy3Xwv3SRoCHMh0+ZLjHiMIktVPFK8UE/X6YT7cnzN+IJA/P34 01tCWyMZmvUw46b6Ghm/LyOqfyoS/dPFqLK1A4vjJuQkuDOwOJ/m7kIj5zhZ3M9rRxNt0Y5nYKY vao6Xw+ru12lquwaUV1yM5TyB9xaMilvr1ASZYLqoM39TwrS
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2836; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=/rDzIBzAtm47A0FxuDgmfod8dN7hBzvdh87gyR+Fj/4=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkDfqMeEK/Vobkf/pVhqxwG+ebhdSRP3oQMNj38 1vbndIn9E6JATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZA36jAAKCRDB/BR4rcrs CXpUCACNQrNswFWo36ck3lJDYrbCZWoN+NTLA8bb7Lnp5R518DWanFyN7Ob2xVR+cm7JbRBnUt6 +SHI2YkPMJhU4kyoqmKi6++mJNF4H+si9Za3s4K4b2Rc2QFf3dIPuXnJB7kBXdJ8f59WNcREX6Z bEnw7wr5DPw6HlsXs2nbPV7KfDYOQ8m9mygkhVfzBN4XFg1FDtP0WQUtJ8MkiY8I0bF5DpcR/Yl JJVrDMs3A5o2hV06M++8YQQgv7f0DY6F0yU8HMBDkT8+edEXBokTBP8btq11qqmd3cNLifEGvjz 7Z+UysCJaWNU0ym20N6wgFHIY+/7sNcT9HfT2+lEc05uAU8l
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -67,39 +65,72 @@ callback to the void returning variant.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/clk/stm32/clk-stm32mp13.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 6 ++----
+ drivers/clk/xilinx/xlnx_vcu.c              | 6 ++----
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/stm32/clk-stm32mp13.c b/drivers/clk/stm32/clk-stm32mp13.c
-index 1192eee8abe4..c4a737482fe5 100644
---- a/drivers/clk/stm32/clk-stm32mp13.c
-+++ b/drivers/clk/stm32/clk-stm32mp13.c
-@@ -1593,15 +1593,13 @@ static int stm32mp1_rcc_clocks_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+index eb1dfe7ecc1b..fa829c01a444 100644
+--- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
++++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+@@ -593,7 +593,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
  	return ret;
  }
  
--static int stm32mp1_rcc_clocks_remove(struct platform_device *pdev)
-+static void stm32mp1_rcc_clocks_remove(struct platform_device *pdev)
+-static int clk_wzrd_remove(struct platform_device *pdev)
++static void clk_wzrd_remove(struct platform_device *pdev)
  {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *child, *np = dev_of_node(dev);
+ 	int i;
+ 	struct clk_wzrd *clk_wzrd = platform_get_drvdata(pdev);
+@@ -611,8 +611,6 @@ static int clk_wzrd_remove(struct platform_device *pdev)
+ 	}
  
- 	for_each_available_child_of_node(np, child)
- 		of_clk_del_provider(child);
+ 	clk_disable_unprepare(clk_wzrd->axi_clk);
 -
 -	return 0;
  }
  
- static struct platform_driver stm32mp13_rcc_clocks_driver = {
-@@ -1610,7 +1608,7 @@ static struct platform_driver stm32mp13_rcc_clocks_driver = {
- 		.of_match_table = stm32mp13_match_data,
+ static const struct of_device_id clk_wzrd_ids[] = {
+@@ -630,7 +628,7 @@ static struct platform_driver clk_wzrd_driver = {
+ 		.pm = &clk_wzrd_dev_pm_ops,
  	},
- 	.probe = stm32mp1_rcc_clocks_probe,
--	.remove = stm32mp1_rcc_clocks_remove,
-+	.remove_new = stm32mp1_rcc_clocks_remove,
+ 	.probe = clk_wzrd_probe,
+-	.remove = clk_wzrd_remove,
++	.remove_new = clk_wzrd_remove,
+ };
+ module_platform_driver(clk_wzrd_driver);
+ 
+diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.c
+index 54b44debfd3e..0786f15ebbe8 100644
+--- a/drivers/clk/xilinx/xlnx_vcu.c
++++ b/drivers/clk/xilinx/xlnx_vcu.c
+@@ -702,7 +702,7 @@ static int xvcu_probe(struct platform_device *pdev)
+  * Return:	Returns 0 on success
+  *		Negative error code otherwise
+  */
+-static int xvcu_remove(struct platform_device *pdev)
++static void xvcu_remove(struct platform_device *pdev)
+ {
+ 	struct xvcu_device *xvcu;
+ 
+@@ -714,8 +714,6 @@ static int xvcu_remove(struct platform_device *pdev)
+ 	regmap_write(xvcu->logicore_reg_ba, VCU_GASKET_INIT, 0);
+ 
+ 	clk_disable_unprepare(xvcu->aclk);
+-
+-	return 0;
+ }
+ 
+ static const struct of_device_id xvcu_of_id_table[] = {
+@@ -731,7 +729,7 @@ static struct platform_driver xvcu_driver = {
+ 		.of_match_table = xvcu_of_id_table,
+ 	},
+ 	.probe                  = xvcu_probe,
+-	.remove                 = xvcu_remove,
++	.remove_new             = xvcu_remove,
  };
  
- static int __init stm32mp13_clocks_init(void)
+ module_platform_driver(xvcu_driver);
 -- 
 2.39.1
 
