@@ -2,34 +2,34 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 789E4C61DA4
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 20:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 514C8C6FD19
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 20:27:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229844AbjCMU1Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Mar 2023 16:27:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44838 "EHLO
+        id S229872AbjCMU1Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Mar 2023 16:27:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229861AbjCMU1O (ORCPT
+        with ESMTP id S229863AbjCMU1O (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 16:27:14 -0400
 Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51ABE89F2D;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BC5D89F19;
         Mon, 13 Mar 2023 13:27:03 -0700 (PDT)
 Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 3E4655FD3F;
-        Mon, 13 Mar 2023 23:13:15 +0300 (MSK)
+        by mx.sberdevices.ru (Postfix) with ESMTP id 71EE55FD13;
+        Mon, 13 Mar 2023 23:13:11 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1678738395;
-        bh=5OtviHviOJf8miZmcaUFRju12oDn9PE2dgu90jgemSs=;
+        s=mail; t=1678738391;
+        bh=Pt/rMVZVzjxdoqrvWivQZAPujmubQBrmNfuoW/GP36w=;
         h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-        b=rEryUKpxJPjGGxOv9TbCr+PROXagAoeBb/loPtSoVCfDbppAZmbZPIjBvDwhd+biD
-         SwVRb8Cas1lfKIksV0N5maBqghm0Tl/ggVZ8tUtKE3ozTpURRfjlbPR0LplfTAmySf
-         /Y+Fek5v/C8CEpAXukFtvtlf3tn8kf7x08DSTvol48t8jxm7tJzsf+Nb6MncOdpU0w
-         JMyFg4Ok2z9C0/j5COJym+TdNdv5EHXLngVkhWDZaERc1UWUkJke9Dyyc1HTMc0hFp
-         XtpptXY/YROQJBVfLlrnHfpCu7nZAKO1Av2uj+hnntUvDLvWbCJp82q2RxZciBbpAA
-         I2xQJMLDWI5eA==
+        b=pggFpvg5Ubo2d0XPAzbBoYGREaPkv64UR3bBf6Sv6C42zr99v/g/Cyj+FCUaCGgf+
+         3fFXoB7+V7uwHNng/3gLmxF+xMbyTUMehyrKHgUhBtmSbNcPOekeMlBWgJg4QQbX4y
+         9piPxH0rEENH8waWdov+OpeH+phv5OxbaFbLJoyIVxQSgu67SaIBhrOplskywj39fL
+         T2Hvoxnj+39rL5S3Q69oy5QF9GdCmnt6W5Jxc/JceiJ2dgsyoxDFtjgyIeNTHJflHJ
+         TUoptR3OyuTWOc2EWiz2uRSQqgaJoaW9D5Mu+Bvw0YoLo2EQD+25WoyhNMGZ0fs8zS
+         OXb4O969DbkIA==
 Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
         by mx.sberdevices.ru (Postfix) with ESMTP;
-        Mon, 13 Mar 2023 23:13:15 +0300 (MSK)
+        Mon, 13 Mar 2023 23:13:10 +0300 (MSK)
 From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
 To:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>,
@@ -41,12 +41,10 @@ CC:     <jian.hu@amlogic.com>, <kernel@sberdevices.ru>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Subject: [PATCH v10 4/5] clk: meson: a1: add Amlogic A1 PLL clock controller driver
-Date:   Mon, 13 Mar 2023 23:12:58 +0300
-Message-ID: <20230313201259.19998-5-ddrokosov@sberdevices.ru>
+Subject: [PATCH v10 0/5] add Amlogic A1 clock controller drivers
+Date:   Mon, 13 Mar 2023 23:12:54 +0300
+Message-ID: <20230313201259.19998-1-ddrokosov@sberdevices.ru>
 X-Mailer: git-send-email 2.36.0
-In-Reply-To: <20230313201259.19998-1-ddrokosov@sberdevices.ru>
-References: <20230313201259.19998-1-ddrokosov@sberdevices.ru>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -64,471 +62,207 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Introduce PLL clock controller for Amlogic A1 SoC family.
-The clock unit is an APB slave module that is designed for generating all
-of the internal and system clocks.
-The SoC uses an external 24MHz crystal; there are 4 internal PLLs:
-SYS_PLL/HIFI_PLL/USB_PLL/(FIXPLL), these PLLs generate 27 clock sources.
+A1 SoC has four clock controllers on the board: PLL, Peripherals, CPU,
+and Audio. The audio clock controller is different from others, but the
+rest are very similar from a functional and regmap point of view.
+This patch series add support for Amlogic A1 PLL and Peripherals clock
+drivers.
+It blocks all A1 peripherals mainline support and a couple of patch series,
+which were already reviewed and acked, but weren't merged due to pending
+clock controller drivers series, e.g.
+https://lore.kernel.org/linux-amlogic/7hd09cw9oh.fsf@baylibre.com/
 
-Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
----
- drivers/clk/meson/Kconfig  |  10 ++
- drivers/clk/meson/Makefile |   1 +
- drivers/clk/meson/a1-pll.c | 356 +++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/a1-pll.h |  47 +++++
- 4 files changed, 414 insertions(+)
+TODO: CPU and Audio clock controllers are not included in this patch
+series, it will be sent later. The following clks from these controllers
+are not supported for now:
+* Audio clks - vad, mclk_vad, mclk_d, resample_a, locker_in, mclk_b,
+   pdmdclk, pdmsysclk, eqdrc, spdifin, mclk_a, audio2_toaudiotop,
+   audio2_tovad, audio2_toddr_vad, audio2_tdmin_vad, audio2_pdm,
+   audio2_ddr_arb, audio_audiolocker, audio_eqdrc, audio_resamplea,
+   audio_spdifin, audio_toddrb, audio_toddra, audio_frddrb, audio_frddra,
+   audio_tdmoutb, audio_tdmouta, audio_loopbacka, audio_tdminlb,
+   audio_tdminb, audio_tdmina, audio_ddr_arb, mclk_c
+
+* CPU clks: cpu_fixed_source_sel0, cpu_fixed_source_div0,
+            cpu_fixed_source_sel1, cpu_fixed_source_div1, cpu_clk
+
+Validation:
+* to double check all clk flags run below helper script:
+    pushd /sys/kernel/debug/clk
+    for f in *; do
+        if [[ -f "$f/clk_flags" ]]; then
+            flags="$(cat $f/clk_flags | awk '{$1=$1};1' | sed ':a;N;$!ba;s/\n/ | /g')"
+            echo -e "$f: $flags"
+        fi
+    done
+    popd
+
+* to trace current clks state use '/sys/kernel/debug/clk/clk_dump' node
+  with jq post-processing:
+    $ cat /sys/kernel/debug/clk/clk_dump | jq '.' > clk_dump.json
+
+* to debug clk rate propagation, compile kernel with the following
+  definition:
+    $ sed -i "s/undef CLOCK_ALLOW_WRITE_DEBUGFS/define CLOCK_ALLOW_WRITE_DEBUGFS/g" drivers/clk/clk.c
+  after that, clk_rate debug node for each clock will be available for
+  write operation
+
+Changes v10 since v9 at [10]:
+    - split general clk-pll changes into two different patchsets:
+      optional rst usage and new power sequence
+    - squash dt bindings patchsets to avoid chicken-or-the-egg problem
+      during run dt binding check routines
+    - add vendor prefix to PLL and Peripherals clkcs bindings filenames
+    - clear managed hifi_pll fields from initial poke table
+    - move DSPA_SEL, DSPB_SEL and SARADC_SEL to private clkid table,
+      because it should not be opened for direct usage
+    - pwm_a clk used for voltage regulation is not critical anymore, it
+      must be included to the proper cpu voltage regulation setup (will
+      be available in the next patch series)
+    - as discussed with Jerome, dspX clks are simple clocks and it
+      should be enabled/disabled/ignored/anything else from appropriate
+      DSP driver, so remove CLK_IGNORE_UNUSED tags
+    - provide more understandable comments and remove irrelevant (I hope so)
+    - remove CONFIG_OF usage, because it's redundant
+    - fix license issue, it's GPL-2.0+ only in the current version
+    - some commit msgs rewording
+
+Changes v9 since v8 at [9]:
+    - remove common a1-clkc driver for the first version of a1 clock
+      controllers as Jerome suggested (it will be discussed after s4 and
+      a1 clks landed, hope so)
+    - replace inherited a1-pll clk_pll_ops with common ops and
+      introduce custom A1 PLL logic under MESON_PARM_APPLICABLE()
+      conditions
+    - rename xtal depended clocks in PLL and Peripherals domains
+    - remove 'a1_' prefix for all clocks, because they are already
+      inside A1 driver, it's redundant
+    - change udelay() to usleep_range() as preferred for small msec
+      amount
+    - purge all double quotes from the yaml schemas
+    - use proper dt node names following kernel guidelines
+      https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+    - use devm_platform_ioremap_resource() instead of simple
+      devm_ioremap_resource()
+    - mark all dspX clocks as CLK_IGNORE_UNUSED, because we do not want
+      to touch these clocks during CCF initialization due to possible
+      workload execution on it started from bootloader; in this case
+      bootloader already made all initialization stuff for dspX
+    - also mark all dspX with NO_REPARENT tag, because from dspX clocks
+      we want to select proper clk source from device tree
+
+Changes v8 since v7 at [8]:
+    - introduced a1-clkc common driver for all A1 clock controllers
+    - exported meson_clk_pll_wait_lock symbol
+    - supported meson-a1-clkc common driver in the a1-pll and a1 clkc
+    - inherited a1-pll from the base clk-pll driver, implemented own
+      version of init/enable/disable/enabled routines; rate calculating
+      logic is fully the same
+    - aligned CLKID-related definitions with CLKID list from order
+      perspective to remove holes and permutations
+    - corrected Kconfig dependencies and types
+    - provided correct MODULE_AUTHORs()
+    - optimized and fixed up some clock relationships
+    - removed unused register offset definitions
+    - fixed up A1 PLL and Peripherals clkc dtb_check errors
+    - fixed clk_summary kernel panic due to missing a1_pad_ctrl
+      clk_regmap definition
+    - included PLL and Peripherals clk controllers to the base a1 dts
+    - The previous v7 version [8] had several logic and style problems,
+      all of them are resolved in this version. Original Jian Hu v7 patches
+      are not touched, and all additional fixes are implemented in separate
+      patches. Patch "clk: meson: add support for A1 PLL clock ops" is
+      removed, because a1-pll clk driver inherits all stuff from clk-pll
+      base driver, just implements custom init/enable/disable/is_enabled
+      callbacks.
+
+Changes v7 since v6 at [7]:
+    - fix 'dt_binding_check' compiling error
+    - add acked-by
+
+Changes v6 since v5 at [6]:
+    - fix yaml file
+    - add rst/current_en/l_detect parm detection
+    - remove 'meson_eeclkc_data' in a1.c and a1-pll.c
+
+Changes v5 since v4 at [5]:
+    - change yaml GPL
+    - drop meson-eeclk.c patch, add probe function in each driver
+    - add CLK_IS_CRITICAL for sys_clk clock, drop the flag for sys_a
+      and sys_b
+    - add new parm for pll, add protection for rst parm
+    - drop flag for a1_fixed_pll
+    - remove the same comment for fclk_div, add "refer to"
+    - add critical flag for a1_sys_clk
+    - remove rtc table
+    - rename a1_dspa_en_dspa and a1_dspb_en_dspb
+    - remove useless comment
+
+Changes v4 since v3 at [3]:
+    - fix reparenting orphan failed, it depends on jerome's patch [4]
+    - fix changelist in v3 about reparenting orphan
+    - remove the dts patch 
+
+Changes v3 since v2 at [2]:
+    - add probe function for A1
+    - separate the clock driver into two patch
+    - change some clock flags and ops
+    - add support for a1 PLL ops
+    - add A1 clock node
+    - fix reparenting orphan clock failed, registering xtal_fixpll
+      and xtal_hifipll after the provider registration, it is not
+      a best way.
+
+Changes v2 since v1 at [1]:
+    - place A1 config alphabetically
+    - add actual reason for RO ops, CLK_IS_CRITICAL, CLK_IGNORE_UNUSED
+    - separate the driver into two driver: peripheral and pll driver
+    - delete CLK_IGNORE_UNUSED flag for pwm b/c/d/e/f clock, dsp clock
+    - delete the change in Kconfig.platforms, address to Kevin alone
+    - remove the useless comments
+    - modify the meson pll driver to support A1 PLLs
+
+[1] https://lkml.kernel.org/r/1569411888-98116-1-git-send-email-jian.hu@amlogic.com
+[2] https://lkml.kernel.org/r/1571382865-41978-1-git-send-email-jian.hu@amlogic.com
+[3] https://lkml.kernel.org/r/20191129144605.182774-1-jian.hu@amlogic.com
+[4] https://lkml.kernel.org/r/20191203080805.104628-1-jbrunet@baylibre.com
+[5] https://lkml.kernel.org/r/20191206074052.15557-1-jian.hu@amlogic.com
+[6] https://lkml.kernel.org/r/20191227094606.143637-1-jian.hu@amlogic.com
+[7] https://lkml.kernel.org/r/20200116080440.118679-1-jian.hu@amlogic.com
+[8] https://lore.kernel.org/linux-amlogic/20200120034937.128600-1-jian.hu@amlogic.com/
+[9] https://lore.kernel.org/linux-amlogic/20221201225703.6507-1-ddrokosov@sberdevices.ru/
+[10] https://lore.kernel.org/all/20230301183759.16163-1-ddrokosov@sberdevices.ru/
+
+Dmitry Rokosov (5):
+  clk: meson: make pll rst bit as optional
+  clk: meson: introduce new pll power-on sequence for A1 SoC family
+  dt-bindings: clock: meson: add A1 PLL and Peripherals clkcs bindings
+  clk: meson: a1: add Amlogic A1 PLL clock controller driver
+  clk: meson: a1: add Amlogic A1 Peripherals clock controller driver
+
+ .../bindings/clock/amlogic,a1-clkc.yaml       |   73 +
+ .../bindings/clock/amlogic,a1-pll-clkc.yaml   |   59 +
+ MAINTAINERS                                   |    1 +
+ drivers/clk/meson/Kconfig                     |   20 +
+ drivers/clk/meson/Makefile                    |    2 +
+ drivers/clk/meson/a1-pll.c                    |  356 +++
+ drivers/clk/meson/a1-pll.h                    |   47 +
+ drivers/clk/meson/a1.c                        | 2242 +++++++++++++++++
+ drivers/clk/meson/a1.h                        |  118 +
+ drivers/clk/meson/clk-pll.c                   |   47 +-
+ drivers/clk/meson/clk-pll.h                   |    2 +
+ include/dt-bindings/clock/amlogic,a1-clkc.h   |  100 +
+ .../dt-bindings/clock/amlogic,a1-pll-clkc.h   |   20 +
+ 13 files changed, 3080 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
  create mode 100644 drivers/clk/meson/a1-pll.c
  create mode 100644 drivers/clk/meson/a1-pll.h
+ create mode 100644 drivers/clk/meson/a1.c
+ create mode 100644 drivers/clk/meson/a1.h
+ create mode 100644 include/dt-bindings/clock/amlogic,a1-clkc.h
+ create mode 100644 include/dt-bindings/clock/amlogic,a1-pll-clkc.h
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index fc002c155bc3..f56da2a4b000 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -99,6 +99,16 @@ config COMMON_CLK_AXG_AUDIO
- 	  Support for the audio clock controller on AmLogic A113D devices,
- 	  aka axg, Say Y if you want audio subsystem to work.
- 
-+config COMMON_CLK_A1_PLL
-+	tristate "Meson A1 SoC PLL controller support"
-+	depends on ARM64
-+	select COMMON_CLK_MESON_REGMAP
-+	select COMMON_CLK_MESON_PLL
-+	help
-+	  Support for the PLL clock controller on Amlogic A113L based
-+	  device, A1 SoC Family. Say Y if you want A1 PLL clock controller
-+	  to work.
-+
- config COMMON_CLK_G12A
- 	tristate "G12 and SM1 SoC clock controllers support"
- 	depends on ARM64
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 6eca2a406ee3..2f17f475a48f 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -16,6 +16,7 @@ obj-$(CONFIG_COMMON_CLK_MESON_VID_PLL_DIV) += vid-pll-div.o
- 
- obj-$(CONFIG_COMMON_CLK_AXG) += axg.o axg-aoclk.o
- obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) += axg-audio.o
-+obj-$(CONFIG_COMMON_CLK_A1_PLL) += a1-pll.o
- obj-$(CONFIG_COMMON_CLK_GXBB) += gxbb.o gxbb-aoclk.o
- obj-$(CONFIG_COMMON_CLK_G12A) += g12a.o g12a-aoclk.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o meson8-ddr.o
-diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
-new file mode 100644
-index 000000000000..c2600defdb31
---- /dev/null
-+++ b/drivers/clk/meson/a1-pll.c
-@@ -0,0 +1,356 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
-+ * Author: Jian Hu <jian.hu@amlogic.com>
-+ *
-+ * Copyright (c) 2023, SberDevices. All Rights Reserved.
-+ * Author: Dmitry Rokosov <ddrokosov@sberdevices.ru>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include "a1-pll.h"
-+#include "clk-regmap.h"
-+
-+static struct clk_regmap fixed_pll_dco = {
-+	.data = &(struct meson_clk_pll_data){
-+		.en = {
-+			.reg_off = ANACTRL_FIXPLL_CTRL0,
-+			.shift   = 28,
-+			.width   = 1,
-+		},
-+		.m = {
-+			.reg_off = ANACTRL_FIXPLL_CTRL0,
-+			.shift   = 0,
-+			.width   = 8,
-+		},
-+		.n = {
-+			.reg_off = ANACTRL_FIXPLL_CTRL0,
-+			.shift   = 10,
-+			.width   = 5,
-+		},
-+		.frac = {
-+			.reg_off = ANACTRL_FIXPLL_CTRL1,
-+			.shift   = 0,
-+			.width   = 19,
-+		},
-+		.l = {
-+			.reg_off = ANACTRL_FIXPLL_STS,
-+			.shift   = 31,
-+			.width   = 1,
-+		},
-+		.rst = {
-+			.reg_off = ANACTRL_FIXPLL_CTRL0,
-+			.shift   = 29,
-+			.width   = 1,
-+		},
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "fixed_pll_dco",
-+		.ops = &meson_clk_pll_ro_ops,
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "fixpll_in",
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap fixed_pll = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = ANACTRL_FIXPLL_CTRL0,
-+		.bit_idx = 20,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "fixed_pll",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&fixed_pll_dco.hw
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static const struct pll_mult_range hifi_pll_mult_range = {
-+	.min = 32,
-+	.max = 64,
-+};
-+
-+static const struct reg_sequence hifi_init_regs[] = {
-+	{ .reg = ANACTRL_HIFIPLL_CTRL1, .def = 0x01800000 },
-+	{ .reg = ANACTRL_HIFIPLL_CTRL2, .def = 0x00001100 },
-+	{ .reg = ANACTRL_HIFIPLL_CTRL3, .def = 0x100a1100 },
-+	{ .reg = ANACTRL_HIFIPLL_CTRL4, .def = 0x00302000 },
-+	{ .reg = ANACTRL_HIFIPLL_CTRL0, .def = 0x01f18000 },
-+};
-+
-+static struct clk_regmap hifi_pll = {
-+	.data = &(struct meson_clk_pll_data){
-+		.en = {
-+			.reg_off = ANACTRL_HIFIPLL_CTRL0,
-+			.shift   = 28,
-+			.width   = 1,
-+		},
-+		.m = {
-+			.reg_off = ANACTRL_HIFIPLL_CTRL0,
-+			.shift   = 0,
-+			.width   = 8,
-+		},
-+		.n = {
-+			.reg_off = ANACTRL_HIFIPLL_CTRL0,
-+			.shift   = 10,
-+			.width   = 5,
-+		},
-+		.frac = {
-+			.reg_off = ANACTRL_HIFIPLL_CTRL1,
-+			.shift   = 0,
-+			.width   = 19,
-+		},
-+		.l = {
-+			.reg_off = ANACTRL_HIFIPLL_STS,
-+			.shift   = 31,
-+			.width   = 1,
-+		},
-+		.current_en = {
-+			.reg_off = ANACTRL_HIFIPLL_CTRL0,
-+			.shift   = 26,
-+			.width   = 1,
-+		},
-+		.l_detect = {
-+			.reg_off = ANACTRL_HIFIPLL_CTRL2,
-+			.shift   = 6,
-+			.width   = 1,
-+		},
-+		.range = &hifi_pll_mult_range,
-+		.init_regs = hifi_init_regs,
-+		.init_count = ARRAY_SIZE(hifi_init_regs),
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "hifi_pll",
-+		.ops = &meson_clk_pll_ops,
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "hifipll_in",
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_fixed_factor fclk_div2_div = {
-+	.mult = 1,
-+	.div = 2,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "fclk_div2_div",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&fixed_pll.hw
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap fclk_div2 = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = ANACTRL_FIXPLL_CTRL0,
-+		.bit_idx = 21,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "fclk_div2",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&fclk_div2_div.hw
-+		},
-+		.num_parents = 1,
-+		/*
-+		 * This clock is used by DDR clock in BL2 firmware
-+		 * and is required by the platform to operate correctly.
-+		 * Until the following condition are met, we need this clock to
-+		 * be marked as critical:
-+		 * a) Mark the clock used by a firmware resource, if possible
-+		 * b) CCF has a clock hand-off mechanism to make the sure the
-+		 *    clock stays on until the proper driver comes along
-+		 */
-+		.flags = CLK_IS_CRITICAL,
-+	},
-+};
-+
-+static struct clk_fixed_factor fclk_div3_div = {
-+	.mult = 1,
-+	.div = 3,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "fclk_div3_div",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&fixed_pll.hw
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap fclk_div3 = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = ANACTRL_FIXPLL_CTRL0,
-+		.bit_idx = 22,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "fclk_div3",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&fclk_div3_div.hw
-+		},
-+		.num_parents = 1,
-+		/*
-+		 * This clock is used by APB bus which is set in boot ROM code
-+		 * and is required by the platform to operate correctly.
-+		 */
-+		.flags = CLK_IS_CRITICAL,
-+	},
-+};
-+
-+static struct clk_fixed_factor fclk_div5_div = {
-+	.mult = 1,
-+	.div = 5,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "fclk_div5_div",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&fixed_pll.hw
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap fclk_div5 = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = ANACTRL_FIXPLL_CTRL0,
-+		.bit_idx = 23,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "fclk_div5",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&fclk_div5_div.hw
-+		},
-+		.num_parents = 1,
-+		/*
-+		 * This clock is used by AXI bus which setted in Romcode
-+		 * and is required by the platform to operate correctly.
-+		 */
-+		.flags = CLK_IS_CRITICAL,
-+	},
-+};
-+
-+static struct clk_fixed_factor fclk_div7_div = {
-+	.mult = 1,
-+	.div = 7,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "fclk_div7_div",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&fixed_pll.hw
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap fclk_div7 = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = ANACTRL_FIXPLL_CTRL0,
-+		.bit_idx = 24,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "fclk_div7",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&fclk_div7_div.hw
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+/* Array of all clocks provided by this provider */
-+static struct clk_hw_onecell_data a1_pll_hw_onecell_data = {
-+	.hws = {
-+		[CLKID_FIXED_PLL_DCO]	= &fixed_pll_dco.hw,
-+		[CLKID_FIXED_PLL]	= &fixed_pll.hw,
-+		[CLKID_FCLK_DIV2_DIV]	= &fclk_div2_div.hw,
-+		[CLKID_FCLK_DIV3_DIV]	= &fclk_div3_div.hw,
-+		[CLKID_FCLK_DIV5_DIV]	= &fclk_div5_div.hw,
-+		[CLKID_FCLK_DIV7_DIV]	= &fclk_div7_div.hw,
-+		[CLKID_FCLK_DIV2]	= &fclk_div2.hw,
-+		[CLKID_FCLK_DIV3]	= &fclk_div3.hw,
-+		[CLKID_FCLK_DIV5]	= &fclk_div5.hw,
-+		[CLKID_FCLK_DIV7]	= &fclk_div7.hw,
-+		[CLKID_HIFI_PLL]	= &hifi_pll.hw,
-+		[NR_PLL_CLKS]		= NULL,
-+	},
-+	.num = NR_PLL_CLKS,
-+};
-+
-+static struct clk_regmap *const a1_pll_regmaps[] = {
-+	&fixed_pll_dco,
-+	&fixed_pll,
-+	&fclk_div2,
-+	&fclk_div3,
-+	&fclk_div5,
-+	&fclk_div7,
-+	&hifi_pll,
-+};
-+
-+static struct regmap_config a1_pll_regmap_cfg = {
-+	.reg_bits   = 32,
-+	.val_bits   = 32,
-+	.reg_stride = 4,
-+};
-+
-+static int meson_a1_pll_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct clk_hw *hw;
-+	void __iomem *base;
-+	struct regmap *map;
-+	int clkid, i, err;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return dev_err_probe(dev, PTR_ERR(base),
-+				     "can't ioremap resource\n");
-+
-+	map = devm_regmap_init_mmio(dev, base, &a1_pll_regmap_cfg);
-+	if (IS_ERR(map))
-+		return dev_err_probe(dev, PTR_ERR(map),
-+				     "can't init regmap mmio region\n");
-+
-+	/* Populate regmap for the regmap backed clocks */
-+	for (i = 0; i < ARRAY_SIZE(a1_pll_regmaps); i++)
-+		a1_pll_regmaps[i]->map = map;
-+
-+	for (clkid = 0; clkid < a1_pll_hw_onecell_data.num; clkid++) {
-+		hw = a1_pll_hw_onecell_data.hws[clkid];
-+		err = devm_clk_hw_register(dev, hw);
-+		if (err)
-+			return dev_err_probe(dev, err,
-+					     "clock registration failed\n");
-+	}
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					   &a1_pll_hw_onecell_data);
-+}
-+
-+static const struct of_device_id a1_pll_clkc_match_table[] = {
-+	{ .compatible = "amlogic,a1-pll-clkc", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, a1_pll_clkc_match_table);
-+
-+static struct platform_driver a1_pll_clkc_driver = {
-+	.probe = meson_a1_pll_probe,
-+	.driver = {
-+		.name = "a1-pll-clkc",
-+		.of_match_table = of_match_ptr(a1_pll_clkc_match_table),
-+	},
-+};
-+
-+module_platform_driver(a1_pll_clkc_driver);
-+MODULE_AUTHOR("Jian Hu <jian.hu@amlogic.com>");
-+MODULE_AUTHOR("Dmitry Rokosov <ddrokosov@sberdevices.ru>");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/a1-pll.h b/drivers/clk/meson/a1-pll.h
-new file mode 100644
-index 000000000000..9f79afb8a58c
---- /dev/null
-+++ b/drivers/clk/meson/a1-pll.h
-@@ -0,0 +1,47 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Amlogic Meson-A1 PLL Clock Controller internals
-+ *
-+ * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
-+ * Author: Jian Hu <jian.hu@amlogic.com>
-+ *
-+ * Copyright (c) 2023, SberDevices. All Rights Reserved.
-+ * Author: Dmitry Rokosov <ddrokosov@sberdevices.ru>
-+ */
-+
-+#ifndef __A1_PLL_H
-+#define __A1_PLL_H
-+
-+#include "clk-pll.h"
-+
-+/* PLL register offset */
-+#define ANACTRL_FIXPLL_CTRL0	0x0
-+#define ANACTRL_FIXPLL_CTRL1	0x4
-+#define ANACTRL_FIXPLL_STS	0x14
-+#define ANACTRL_HIFIPLL_CTRL0	0xc0
-+#define ANACTRL_HIFIPLL_CTRL1	0xc4
-+#define ANACTRL_HIFIPLL_CTRL2	0xc8
-+#define ANACTRL_HIFIPLL_CTRL3	0xcc
-+#define ANACTRL_HIFIPLL_CTRL4	0xd0
-+#define ANACTRL_HIFIPLL_STS	0xd4
-+
-+/*
-+ * CLKID index values
-+ *
-+ * These indices are entirely contrived and do not map onto the hardware.
-+ * It has now been decided to expose everything by default in the DT header:
-+ * include/dt-bindings/clock/a1-pll-clkc.h. Only the clocks ids we don't want
-+ * to expose, such as the internal muxes and dividers of composite clocks,
-+ * will remain defined here.
-+ */
-+#define CLKID_FIXED_PLL_DCO	0
-+#define CLKID_FCLK_DIV2_DIV	2
-+#define CLKID_FCLK_DIV3_DIV	3
-+#define CLKID_FCLK_DIV5_DIV	4
-+#define CLKID_FCLK_DIV7_DIV	5
-+#define NR_PLL_CLKS		11
-+
-+/* include the CLKIDs that have been made part of the DT binding */
-+#include <dt-bindings/clock/amlogic,a1-pll-clkc.h>
-+
-+#endif /* __A1_PLL_H */
 -- 
 2.36.0
 
