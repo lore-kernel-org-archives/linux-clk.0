@@ -2,102 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC25C6FD19
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 02:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE538C6FD19
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 03:03:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229473AbjCMC75 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Mar 2023 22:59:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57930 "EHLO
+        id S229753AbjCMDDY convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Mar 2023 23:03:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbjCMC75 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 22:59:57 -0400
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57296211FD;
-        Sun, 12 Mar 2023 19:59:53 -0700 (PDT)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        with ESMTP id S229836AbjCMDDT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 23:03:19 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44D9B3AB9;
+        Sun, 12 Mar 2023 20:03:13 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id D92C224E252;
-        Mon, 13 Mar 2023 10:59:44 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 13 Mar
- 2023 10:47:59 +0800
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 465AD24E3ED;
+        Mon, 13 Mar 2023 11:03:06 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 13 Mar
+ 2023 10:29:13 +0800
 Received: from [192.168.125.74] (183.27.96.115) by EXMBX172.cuchost.com
  (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 13 Mar
- 2023 10:47:58 +0800
-Message-ID: <80549148-1bad-9190-c4ea-a9555d15ca38@starfivetech.com>
-Date:   Mon, 13 Mar 2023 10:47:57 +0800
+ 2023 10:29:12 +0800
+Message-ID: <df2464d3-9e9e-c299-675d-0a3f69856361@starfivetech.com>
+Date:   Mon, 13 Mar 2023 10:29:11 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.2
-Subject: Re: [PATCH v5 11/21] dt-bindings: clock: Add StarFive JH7110 system
- clock and reset generator
+Subject: Re: [PATCH v4 10/19] dt-bindings: clock: Add StarFive JH7110
+ always-on clock and reset generator
 Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>
-CC:     Marc Zyngier <maz@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Ben Dooks <ben.dooks@sifive.com>,
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>, Stephen Boyd <sboyd@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        <linux-riscv@lists.infradead.org>, Conor Dooley <conor@kernel.org>,
-        "Emil Renner Berthing" <emil.renner.berthing@canonical.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor@kernel.org>,
+        "Palmer Dabbelt" <palmer@dabbelt.com>,
         Paul Walmsley <paul.walmsley@sifive.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Ben Dooks <ben.dooks@sifive.com>,
         "Daniel Lezcano" <daniel.lezcano@linaro.org>,
-        <linux-clk@vger.kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>
-References: <20230311090733.56918-1-hal.feng@starfivetech.com>
- <20230311090733.56918-12-hal.feng@starfivetech.com>
- <167854282659.42837.5915012938593380363.robh@kernel.org>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20230221024645.127922-1-hal.feng@starfivetech.com>
+ <20230221024645.127922-11-hal.feng@starfivetech.com>
+ <dc88e0df-4e2f-d2b8-4ecb-514862d01c3c@linux-m68k.org>
 From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <167854282659.42837.5915012938593380363.robh@kernel.org>
+In-Reply-To: <dc88e0df-4e2f-d2b8-4ecb-514862d01c3c@linux-m68k.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
 X-Originating-IP: [183.27.96.115]
 X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX172.cuchost.com
  (172.16.6.92)
 X-YovoleRuleAgent: yovoleflag
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 11 Mar 2023 08:17:00 -0600, Rob Herring wrote:
-> On Sat, 11 Mar 2023 17:07:23 +0800, Hal Feng wrote:
+On Thu, 9 Mar 2023 15:22:54 +0100, Geert Uytterhoeven wrote:
+>     Hi Hal, Esmil,
+> 
+> On Tue, 21 Feb 2023, Hal Feng wrote:
 >> From: Emil Renner Berthing <kernel@esmil.dk>
->> 
->> Add bindings for the system clock and reset generator (SYSCRG) on the
+>>
+>> Add bindings for the always-on clock and reset generator (AONCRG) on the
 >> JH7110 RISC-V SoC by StarFive Ltd.
->> 
+>>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
 >> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 >> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
->> ---
->>  .../clock/starfive,jh7110-syscrg.yaml         | 104 +++++++++
->>  MAINTAINERS                                   |   8 +-
->>  .../dt-bindings/clock/starfive,jh7110-crg.h   | 203 ++++++++++++++++++
->>  .../dt-bindings/reset/starfive,jh7110-crg.h   | 142 ++++++++++++
->>  4 files changed, 454 insertions(+), 3 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
->>  create mode 100644 include/dt-bindings/clock/starfive,jh7110-crg.h
->>  create mode 100644 include/dt-bindings/reset/starfive,jh7110-crg.h
->> 
 > 
+> Thanks for your patch!
 > 
-> Please add Acked-by/Reviewed-by tags when posting new versions. However,
-> there's no need to repost patches *only* to add the tags. The upstream
-> maintainer will do that for acks received on the version they apply.
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-aoncrg.yaml
+>> @@ -0,0 +1,76 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/starfive,jh7110-aoncrg.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: StarFive JH7110 Always-On Clock and Reset Generator
+>> +
+>> +maintainers:
+>> +  - Emil Renner Berthing <kernel@esmil.dk>
+>> +
 > 
-> If a tag was not added on purpose, please state why and what changed.
+> This lacks a top-level "description" section, to anwer the question:
+> What is an "Always-On Clock and Reset Generator"?
 > 
-> Missing tags:
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> To me, "always-on" sounds like it's critical, and thus the driver
+> must always be built-in?
 
-This patch has been changed a lot and I am not sure whether it's still
-the one you want. So I removed the Reviewed-by tag.
+AON is a part of JH7110 circuit which is always powered on, but the
+AON clocks can be turned off if not used. The JH7110 can boot up
+successfully without the AON clock driver, so it's fine to build it
+as a module. Thanks.
 
 Best regards,
 Hal
