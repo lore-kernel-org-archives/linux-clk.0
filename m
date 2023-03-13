@@ -2,93 +2,119 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF597C6FD19
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 09:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54234C74A4B
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 09:21:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229921AbjCMJIA convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Mar 2023 05:08:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35818 "EHLO
+        id S231183AbjCMJVb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Mar 2023 05:21:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229994AbjCMJHp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 05:07:45 -0400
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC0A01F480;
-        Mon, 13 Mar 2023 02:05:38 -0700 (PDT)
-Received: by mail-qt1-f176.google.com with SMTP id y10so12415505qtj.2;
-        Mon, 13 Mar 2023 02:05:38 -0700 (PDT)
+        with ESMTP id S231209AbjCMJVU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 05:21:20 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 612C04989C
+        for <linux-clk@vger.kernel.org>; Mon, 13 Mar 2023 02:21:09 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id o11-20020a05600c4fcb00b003eb33ea29a8so7345490wmq.1
+        for <linux-clk@vger.kernel.org>; Mon, 13 Mar 2023 02:21:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1678699268;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=NyKmnb2IGGlRYKdA8v+Oi9cQGOt819vf2di9Hwq+CB0=;
+        b=mSVsf+a/ifTL56wAV9Qw2FDlsV5LEVpddsOHAnmgmNWX8ZYxk80hyF4aQqagAEUpRc
+         jDtW5tGU1a1sIXrahUuJD2t838vwVvvnj4Ixlt8aS35T1up5M9BaMB/TiJMSOI2IGuV9
+         4DpczCsw5ChdGLdIiV66BOPSrFanB1m6q32U2VqzOEmNpUIv9k55vB8EjTbMZCdowJuu
+         /SVQvLaRF7kjaEKEuU54weShdspUHgoj7wr916M1wsEnxth4j2CBMJB6SrbWvLaot6br
+         AjjW9ZVSxTuneR96w0vxXlzXrgJAt5qX1svj0H5QfW8P15XTzrOhQpO06GBAV80jJ6Q2
+         9YHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678698337;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HKyTtkBc3vhH0cNio/ELGF+bwr3W/1y9c0sgHfHKMEo=;
-        b=HhW4fv6ZXvYBTJ6AGZBCTFiFF9FWoelMQ7xdWlN5nyo+aZJGB9r/Any8H9INPuf29m
-         28SiXM86cVsLJea4/AMKo8zpTaM/Ty8X+4pEh82bpXtt7kkY52jtOjpCDxm7GdZXxJ00
-         FzGwnoZUGQXVmt99iWMyT3gY7zYO0SoQ2M2FgNHwm2MDnCGtcXA16Lm6ihufXjqNLleL
-         cCMGds80zIAfIaCJfhhm7Aj2G8qMTtoM/b0S+PHFPn7aQvAHm/PE+9s0zXs5F0cyH4sK
-         VdAy0K6aRdI5bizk87UDsKC+NSDEH0GaTHbESZYWy3tql68uXYjJsNeLEBfo9G7po7Tz
-         WN9Q==
-X-Gm-Message-State: AO0yUKV7efvX66PAbF55ht/tuGul/ctPt6XAo7HWAhYo/cfLDhoRB/Du
-        +1JxTSYYn7tudK0wdfgmaI8nCHuhm5HbdQ==
-X-Google-Smtp-Source: AK7set9Vc/bCfMIp7y+k42AvCq5XarJGXvB393t/nmVM2SXc6J+lplGl/cHI/86K4GC+mbJKxhyfdA==
-X-Received: by 2002:ac8:5904:0:b0:3bf:bbaf:5c82 with SMTP id 4-20020ac85904000000b003bfbbaf5c82mr17775124qty.21.1678698337638;
-        Mon, 13 Mar 2023 02:05:37 -0700 (PDT)
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
-        by smtp.gmail.com with ESMTPSA id 74-20020a37054d000000b007456c75edbbsm3422295qkf.129.2023.03.13.02.05.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Mar 2023 02:05:36 -0700 (PDT)
-Received: by mail-yb1-f180.google.com with SMTP id e71so2569609ybc.0;
-        Mon, 13 Mar 2023 02:05:36 -0700 (PDT)
-X-Received: by 2002:a05:6902:208:b0:acd:7374:f154 with SMTP id
- j8-20020a056902020800b00acd7374f154mr20748438ybs.7.1678698336364; Mon, 13 Mar
- 2023 02:05:36 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1678699268;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NyKmnb2IGGlRYKdA8v+Oi9cQGOt819vf2di9Hwq+CB0=;
+        b=7xzQZqCjHwJrBWvxxE/8dUpHNCnepXOseUzU25CruK0SPzmIdrMKZ/syf8/kdD652D
+         k4rABTp6OGejPy9Cqw0QWx6E68JLkZvY4aSchHC9cEJDfqxYKZuj8whh+13l6iEegpmU
+         aDTFAjlFrk+x8xs1dXf+1NlT0y02yRqa6rR2pf6dD7A0NV3A3myUA5G/KWsFg0ZKTWaN
+         OrlLF9NyZW54OCvVjbREubx7iq26SIW7ER6yjpAQeZgOI0LnEUI9Qc0OtV0TMU6VWeds
+         YmAYaHcnex3upsnzZSS1Tw/cdOuGHIg+6q4dIHO+8VqpeknVOURwFFWs6FzyTEgB3IQw
+         rbXw==
+X-Gm-Message-State: AO0yUKVnBDd8byHbAzmcd3GD/YHdxSpYohkowpDHJtRGztxj3pofojfk
+        q20wbpg2fvSL8fl/00DnQcCoLw==
+X-Google-Smtp-Source: AK7set+ffANocDz449+nx/CU8mE/uaLR+A5C2On6Z7RmrE6Px8IYI5sqoAqzr08nkoqwgeu6K+3K2w==
+X-Received: by 2002:a05:600c:1c9a:b0:3ed:2418:6cbe with SMTP id k26-20020a05600c1c9a00b003ed24186cbemr2701778wms.39.1678699267735;
+        Mon, 13 Mar 2023 02:21:07 -0700 (PDT)
+Received: from localhost (82-65-169-74.subs.proxad.net. [82.65.169.74])
+        by smtp.gmail.com with ESMTPSA id o4-20020a05600c378400b003e215a796fasm8292361wmr.34.2023.03.13.02.21.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Mar 2023 02:21:07 -0700 (PDT)
+References: <20230301183759.16163-1-ddrokosov@sberdevices.ru>
+ <20230301183759.16163-3-ddrokosov@sberdevices.ru>
+ <1jr0u2azfi.fsf@starbuckisacylon.baylibre.com>
+ <20230306200549.7iuedbl27ejfhf6b@CAB-WSD-L081021>
+ <1jlek60zun.fsf@starbuckisacylon.baylibre.com>
+ <20230309182857.a2fzotcejueio23w@CAB-WSD-L081021>
+User-agent: mu4e 1.8.13; emacs 28.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
+Cc:     neil.armstrong@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
+        martin.blumenstingl@googlemail.com, jian.hu@amlogic.com,
+        kernel@sberdevices.ru, rockosov@gmail.com,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v9 2/5] clk: meson: a1: add Amlogic A1 PLL clock
+ controller driver
+Date:   Mon, 13 Mar 2023 10:18:02 +0100
+In-reply-to: <20230309182857.a2fzotcejueio23w@CAB-WSD-L081021>
+Message-ID: <1j5yb50zxz.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de> <20230312161512.2715500-24-u.kleine-koenig@pengutronix.de>
-In-Reply-To: <20230312161512.2715500-24-u.kleine-koenig@pengutronix.de>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 13 Mar 2023 10:05:24 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWrn45DEG4yHqiEMsR4G5460rxBu5d5-OEMg_7TUWOfFA@mail.gmail.com>
-Message-ID: <CAMuHMdWrn45DEG4yHqiEMsR4G5460rxBu5d5-OEMg_7TUWOfFA@mail.gmail.com>
-Subject: Re: [PATCH 23/30] clk: renesas: Convert to platform remove callback
- returning void
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Mar 12, 2023 at 5:15 PM Uwe Kleine-König
-<u.kleine-koenig@pengutronix.de> wrote:
-> The .remove() callback for a platform driver returns an int which makes
-> many driver authors wrongly assume it's possible to do error handling by
-> returning an error code. However the value returned is (mostly) ignored
-> and this typically results in resource leaks. To improve here there is a
-> quest to make the remove callback return void. In the first step of this
-> quest all drivers are converted to .remove_new() which already returns
-> void.
+
+On Thu 09 Mar 2023 at 21:28, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
+
+>> >> 
+>> >> This last poke should not bits otherwise handled by parms.
+>> >> This is a rate init in disguise.
+>> >> 
+>> >
+>> > I believe, you are talking about hifi_pll clk_regmap conflicts with
+>> > hifi_init_regs. The above init sequence shouldn't affect pll regmap setup,
+>> > it doesn't touch them (we assume that default bit values are all zero):
+>> >
+>> >     .en = {
+>> >         .reg_off = ANACTRL_HIFIPLL_CTRL0,
+>> >         .shift   = 28,
+>> >         .width   = 1,
+>> >     },
+>> >     // init_value = 0x01f18440
+>> >     // en_mask    = 0x10000000
+>> >
+>> >     .m = {
+>> >         .reg_off = ANACTRL_HIFIPLL_CTRL0,
+>> >         .shift   = 0,
+>> >         .width   = 8,
+>> >     },
+>> >     // init_value = 0x01f18440
+>> >     // m_mask     = 0x0000000f
+>> 
+>> mask is 0xff with width 8
+>> 
 >
-> Trivially convert this driver from always returning zero in the remove
-> callback to the void returning variant.
+> Ah, you're right. Anyway, I think this is just init value and it's okay
+> to set it during initialization and rewrite after in parameter
+> propagation stage.
 >
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v6.4.
+... But the magic pokes are there only to initialize the unmanaged part
+of the clock regs. I'd like it to be clear and stay that way.
 
-Gr{oetje,eeting}s,
+So please, clear the managed fields from the initial poke table.
 
-                        Geert
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
