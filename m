@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E689C6FD19
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 18:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB9EC61DA4
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 18:47:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231270AbjCMSrh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Mar 2023 14:47:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42962 "EHLO
+        id S229536AbjCMSrq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Mar 2023 14:47:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231342AbjCMSr2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 14:47:28 -0400
+        with ESMTP id S230286AbjCMSrg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 14:47:36 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53D77D50E;
-        Mon, 13 Mar 2023 11:47:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDFF16597;
+        Mon, 13 Mar 2023 11:47:13 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3B89261469;
-        Mon, 13 Mar 2023 18:47:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 850DFC433D2;
-        Mon, 13 Mar 2023 18:47:02 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4F3966144F;
+        Mon, 13 Mar 2023 18:47:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A666EC433D2;
+        Mon, 13 Mar 2023 18:47:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678733222;
-        bh=DiUKSAfl3Bq/CEF6Ggysu8vzc21Hp4EjeRcfJXKVHVk=;
+        s=k20201202; t=1678733231;
+        bh=PxjYWjSxJZWB5VRDbYxpA5+lpyvYAO+uDsREZCVGcxQ=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=JeIWMLUI8z05oQMUViwuPijU2MIyMYfUpE465mjwrbBPI0VNUxW+dSTyUhtvNaXT3
-         fyViynHPh24shmEkKCL9bX8RwUZKCAaWLteqmpCKbtK+bEUEGslIMulmQadWRW8Twq
-         OxvwSlvaX4zEJn4zj8iJslRWdVtdr/fU5L1Ssca882Vqf/EfV2FxIpSebabZntj/ya
-         KMbnwbZYnhJI4uMzXDCFvP53SKLOI/YRwFw0GgGN0wen99enBaHUShAlgzCsFhw9Lm
-         R+jOdAPpEQ+SUFRDzZPzQixOsyqHMoDnOhr2QTJakb0dvqLD1VikMPsdu0ZJWpa6uQ
-         VLhc1PkC47h6A==
-Message-ID: <e1b513dac9d291423c3b5a193b3acaa4.sboyd@kernel.org>
+        b=Cu931uiv0GBwRx+Hf7JyRCsBY0NzGuOB5Ooded7UnEa8PcztTKNTZ9lO0FRArXpuW
+         hgmMPQX81PgXNZ6ZQ4eZBYd4X8Vglr5Zs7g/LBNublPbEdXqd3oGW9sdsIDbODFHa4
+         SymMq30JulQYDGoo+JztWFU3thoyVYchAcmVDSUrhGtBo32Dpy1LPU0uRjf+OE/u+L
+         x5C3cGYlbq7QfrTuvgLU0cOyEJooTjLPZ/Nl2EpOClsucohWwxMAjjxJyDw2DD4WB6
+         UGxk7lwEn6seYhapfyqzlD+Aczfn0AunQ+Ee4BXx/0rQbUxx5VxJUZTaI53C5OSPRx
+         LhzoM7zplvXvw==
+Message-ID: <fe1ab22c2c2e33e6757988364ac84199.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230206100105.861720-2-angelogioacchino.delregno@collabora.com>
-References: <20230206100105.861720-1-angelogioacchino.delregno@collabora.com> <20230206100105.861720-2-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v3 1/7] clk: mediatek: fhctl: Add support for older fhctl register layout
+In-Reply-To: <20230206100105.861720-3-angelogioacchino.delregno@collabora.com>
+References: <20230206100105.861720-1-angelogioacchino.delregno@collabora.com> <20230206100105.861720-3-angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v3 2/7] clk: mediatek: clk-pllfh: Export register/unregister/parse functions
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     mturquette@baylibre.com, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
@@ -51,20 +51,16 @@ Cc:     mturquette@baylibre.com, robh+dt@kernel.org,
         kernel@collabora.com
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-Date:   Mon, 13 Mar 2023 11:47:00 -0700
+Date:   Mon, 13 Mar 2023 11:47:09 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting AngeloGioacchino Del Regno (2023-02-06 02:00:59)
-> The Frequency Hopping Controller (FHCTL) seems to have different
-> versions, as it has a slightly different register layout on some
-> older SoCs like MT6795, MT8173, MT8183 (and others).
->=20
-> This driver is indeed compatible with at least some of those older
-> IP revisions, so all we need to do is to add a way to select the
-> right register layout at registration time.
+Quoting AngeloGioacchino Del Regno (2023-02-06 02:01:00)
+> These functions are used by the various MediaTek apmixed clock drivers
+> that may be built as modules: export the common functions used to parse
+> related devicetree properties, register and unregister the PLLFH clocks.
 >=20
 > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
 abora.com>
