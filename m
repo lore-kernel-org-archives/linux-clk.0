@@ -2,150 +2,79 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E50C74A4B
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 08:57:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC4AC6FD19
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 08:58:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230151AbjCMI5b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Mar 2023 04:57:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35132 "EHLO
+        id S230290AbjCMI6v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Mar 2023 04:58:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230449AbjCMI4y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 04:56:54 -0400
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A892224127
-        for <linux-clk@vger.kernel.org>; Mon, 13 Mar 2023 01:53:39 -0700 (PDT)
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        with ESMTP id S230526AbjCMI6R (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 04:58:17 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAC3558B57;
+        Mon, 13 Mar 2023 01:54:26 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id E2A7941303
-        for <linux-clk@vger.kernel.org>; Mon, 13 Mar 2023 08:53:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1678697599;
-        bh=rdDSrE0VIq+XmHMRyMrdPIQatR30pRaMUhYB/xPPqz8=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=dRUkVaI76q9CPTpgxlSgLIfN4e3vgNOB02uAdgPMCpwRnqavAYzp25GQl+WpX1rS0
-         Sw1bRRtLl5SXKuVE27+UYAG8Cw1+tbsNWy49t29TwQvYGVeAcXEoAZtMHaAN0mrNhx
-         yhGNLbyc5+w2Q83MfACT8R3zb0ymOk9olWtDQv2qde79eRTjn1sqWl5BQahmvjD3L8
-         OnK+9NlqOBIRqGVYVoYgQjBrrcn2elM4Ol4x8QgOBsXMujTC5k3zgAiLjOKhUp7TQ/
-         To5mgY6XVkqUg/Uom4YGKXYHACx8L0z6NaIonii6dQEopthGcXLkU+lct6q0nR5W6p
-         0EgQ/1CYptxsw==
-Received: by mail-qv1-f69.google.com with SMTP id w2-20020a0cc242000000b00583d8e55181so6651320qvh.23
-        for <linux-clk@vger.kernel.org>; Mon, 13 Mar 2023 01:53:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678697598;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rdDSrE0VIq+XmHMRyMrdPIQatR30pRaMUhYB/xPPqz8=;
-        b=6g3RTlNoKfgjPhY+vG6mkTuBd9I2DhJeJG7Pzad8PtvmGRD5nSg6WCzUXi3jJcm9rU
-         teP2Bkvs7bi8H4MMWV7CEKCTVNuOqfSJhnhROwT0h3AerJOLUZzyDeDRcJSdzvpNiRJt
-         LxkCcpW1jgzAJGzW3pNp40VGLC+9k7SrqcVqE4SBp4YP9NuNs9yK3mewPykFMdJrpsiO
-         U1vUf6EUiJhGQOxlTzb7beQmabV6Ius6NeZNv0oEz/uz5Y82GJgcrAtGWAS1a32WxkM3
-         KdjNLYUn2vhm4C4+E1a3SvmMcEwXQM+h2BT1+j5R3aBB73EYNXOzfK2Rj7YmkRmxSPQc
-         lZuw==
-X-Gm-Message-State: AO0yUKXBf459yYHAIvTunIcED2tK1zj9nUJtLQcXbLmDSuPy5/u4ZMZj
-        YVd/aWJcHZPml7a3kgV1RAjOBj5MXNbKAzZW08yiXa9jaouyv23BEb7wtMBWDUe6cB8XGGJr1hD
-        8zHAtCgU1cZjDr2W7lIA63iZR6Xga1t7sN+R7ZtwwLCGE4ZiDZY8o9A==
-X-Received: by 2002:ac8:56f7:0:b0:3bf:b9a4:6d41 with SMTP id 23-20020ac856f7000000b003bfb9a46d41mr9407535qtu.5.1678697598301;
-        Mon, 13 Mar 2023 01:53:18 -0700 (PDT)
-X-Google-Smtp-Source: AK7set8AA0sa2nCnrV8w1Osh5NxDD45ICECbteHeANn3sQWk04rh+36JVMJfWLEQ4krvOlUN6FZfm4pVyPz1TdTFshg=
-X-Received: by 2002:ac8:56f7:0:b0:3bf:b9a4:6d41 with SMTP id
- 23-20020ac856f7000000b003bfb9a46d41mr9407529qtu.5.1678697597999; Mon, 13 Mar
- 2023 01:53:17 -0700 (PDT)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 6F9E26602F64;
+        Mon, 13 Mar 2023 08:54:09 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1678697649;
+        bh=admtLczq/Oe08BYYh7NJZInoBni+S8Ud4YDJ0IMS12g=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=UwnLBdLThDgg+25+IUSw1XTQ7/OdINQyaS8DviABkAmScilRD3qHZFNReItOksrA+
+         OqeLi/0XkI/nKKgw4XZJeHTXqE+U1IkIEVMf7H1r/mpwd1tvIDwyfsGLaJZ3s0UMm0
+         ht7zP23kA1l33vKWBY6XZCTyY37+gFPDAKsZhJ5I1QXY2LmalPOBSJz8CcScP6OHbq
+         HkTswuQMBq4sRIuiAMynSMbONder9M+EkgZJPBycJKp1HDlyihRlzzdwWUbhLesXID
+         rusHiBDDYlmG/oJAwUgkfO9w3YS60KzPxP3RGDYaT3uqjQH7Q7dv4KIwI526mOluPL
+         gNkzY+aL1rdAw==
+Message-ID: <d0a2eb84-4420-8b6c-bd97-e58aa47be289@collabora.com>
+Date:   Mon, 13 Mar 2023 09:54:07 +0100
 MIME-Version: 1.0
-References: <20230311090733.56918-1-hal.feng@starfivetech.com>
- <20230311090733.56918-12-hal.feng@starfivetech.com> <34b0473a-91bd-453b-91dd-01defde92d68@spud>
- <92306b73-d7d2-0d60-de15-87bcd71714ed@starfivetech.com>
-In-Reply-To: <92306b73-d7d2-0d60-de15-87bcd71714ed@starfivetech.com>
-From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Date:   Mon, 13 Mar 2023 09:53:01 +0100
-Message-ID: <CAJM55Z-zps4gEohCGyia0nESWYWqQmoChnJZXkw2Zmi5TPV2Wg@mail.gmail.com>
-Subject: Re: [PATCH v5 11/21] dt-bindings: clock: Add StarFive JH7110 system
- clock and reset generator
-To:     Hal Feng <hal.feng@starfivetech.com>
-Cc:     Conor Dooley <conor@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH 01/30] clk: mediatek: Make mtk_clk_simple_remove() return
+ void
+Content-Language: en-US
+To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
+ <20230312161512.2715500-2-u.kleine-koenig@pengutronix.de>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230312161512.2715500-2-u.kleine-koenig@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 13 Mar 2023 at 04:22, Hal Feng <hal.feng@starfivetech.com> wrote:
-> On Sat, 11 Mar 2023 13:11:38 +0000, Conor Dooley wrote:
-> > On Sat, Mar 11, 2023 at 05:07:23PM +0800, Hal Feng wrote:
-> >> From: Emil Renner Berthing <kernel@esmil.dk>
-> >>
-> >> Add bindings for the system clock and reset generator (SYSCRG) on the
-> >> JH7110 RISC-V SoC by StarFive Ltd.
-> >>
-> >> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> >> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
-> >> ---
-> >>  .../clock/starfive,jh7110-syscrg.yaml         | 104 +++++++++
-> >>  MAINTAINERS                                   |   8 +-
-> >>  .../dt-bindings/clock/starfive,jh7110-crg.h   | 203 ++++++++++++++++++
-> >>  .../dt-bindings/reset/starfive,jh7110-crg.h   | 142 ++++++++++++
-> >>  4 files changed, 454 insertions(+), 3 deletions(-)
-> >>  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
-> >>  create mode 100644 include/dt-bindings/clock/starfive,jh7110-crg.h
-> >>  create mode 100644 include/dt-bindings/reset/starfive,jh7110-crg.h
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
-> >> new file mode 100644
-> >> index 000000000000..84373ae31644
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
-> >
-> >> +  clock-names:
-> >> +    oneOf:
-> >> +      - items:
-> >> +          - const: osc
-> >> +          - enum:
-> >> +              - gmac1_rmii_refin
-> >> +              - gmac1_rgmii_rxin
-> >> +          - const: i2stx_bclk_ext
-> >> +          - const: i2stx_lrck_ext
-> >> +          - const: i2srx_bclk_ext
-> >> +          - const: i2srx_lrck_ext
-> >> +          - const: tdm_ext
-> >> +          - const: mclk_ext
-> >> +
-> >> +      - items:
-> >> +          - const: osc
-> >> +          - const: gmac1_rmii_refin
-> >> +          - const: gmac1_rgmii_rxin
-> >> +          - const: i2stx_bclk_ext
-> >> +          - const: i2stx_lrck_ext
-> >> +          - const: i2srx_bclk_ext
-> >> +          - const: i2srx_lrck_ext
-> >> +          - const: tdm_ext
-> >> +          - const: mclk_ext
-> >
-> > Assuming nothing else here is optional,
-> > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
->
-> Yeah, nothing else here is optional. Thanks for your review.
+Il 12/03/23 17:14, Uwe Kleine-König ha scritto:
+> mtk_clk_simple_remove() returned zero unconditionally. Make it return no
+> value instead and convert the respective drivers to .remove_new.
+> 
+> This makes the semantics in the callers of mtk_clk_simple_remove() clearer
+> and prepares for the quest to make platform driver's remove function return
+> void.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Wait, what kind of optional are we talking about here? Surely all the
-i2s and tdm external clocks are optional in the sense that you don't
-need them on a board that never does any audio processing.
+Hello Uwe,
 
-/Emil
+since there's a big cleanup series that is well reviewed and that is touching
+practically all MediaTek clock drivers, can you please rebase this commit over
+[1]?
 
->
-> Best regards,
-> Hal
+Thanks,
+Angelo
+
+[1]: https://patchwork.kernel.org/project/linux-mediatek/list/?series=726914
+
