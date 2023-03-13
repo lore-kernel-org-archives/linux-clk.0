@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB9EC61DA4
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 18:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA3FC61DA4
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 18:47:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229536AbjCMSrq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Mar 2023 14:47:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42676 "EHLO
+        id S231526AbjCMSrx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Mar 2023 14:47:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230286AbjCMSrg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 14:47:36 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDFF16597;
-        Mon, 13 Mar 2023 11:47:13 -0700 (PDT)
+        with ESMTP id S231519AbjCMSro (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 14:47:44 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12E5385A44;
+        Mon, 13 Mar 2023 11:47:26 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4F3966144F;
-        Mon, 13 Mar 2023 18:47:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A666EC433D2;
-        Mon, 13 Mar 2023 18:47:11 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 05615CE1140;
+        Mon, 13 Mar 2023 18:47:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E3CDC433D2;
+        Mon, 13 Mar 2023 18:47:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678733231;
-        bh=PxjYWjSxJZWB5VRDbYxpA5+lpyvYAO+uDsREZCVGcxQ=;
+        s=k20201202; t=1678733242;
+        bh=ljsypJpBXhvMBP8K/2+k16E6BKcRzVE1HpkZG0IWuSw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Cu931uiv0GBwRx+Hf7JyRCsBY0NzGuOB5Ooded7UnEa8PcztTKNTZ9lO0FRArXpuW
-         hgmMPQX81PgXNZ6ZQ4eZBYd4X8Vglr5Zs7g/LBNublPbEdXqd3oGW9sdsIDbODFHa4
-         SymMq30JulQYDGoo+JztWFU3thoyVYchAcmVDSUrhGtBo32Dpy1LPU0uRjf+OE/u+L
-         x5C3cGYlbq7QfrTuvgLU0cOyEJooTjLPZ/Nl2EpOClsucohWwxMAjjxJyDw2DD4WB6
-         UGxk7lwEn6seYhapfyqzlD+Aczfn0AunQ+Ee4BXx/0rQbUxx5VxJUZTaI53C5OSPRx
-         LhzoM7zplvXvw==
-Message-ID: <fe1ab22c2c2e33e6757988364ac84199.sboyd@kernel.org>
+        b=h93YxbKXox6YIBETRmCrd9KyjNMlZHbKBdsNYTHsyWKKLeuq1TEwwKXQys18O+OKH
+         7abYeakeGMa21U7gOBR/aznxVoXzaXpEdDo28qQ55VWkWzdDyvlWxm1O0+jPZjYloP
+         nZcRNV35j66R+0ALMl62zeKk2SCh2aZ47SR9XrrBj5lXEjxV3zsob8WNlnrRzwdKzu
+         lDrftMi1sWsBixZoifFke6lTmFRDMNTbkPi9kQhpWGMuYbg9JHuqhT5SZhCXuvloHR
+         IvDj03iW7LF9BXfBJ/ev/oyyTv+DRJfFWWOluos3ithP/lbDljPm3suL71yb7DseE2
+         YoDj9qQAToUcQ==
+Message-ID: <c5388593e1d4320901208fe3f21fda1d.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230206100105.861720-3-angelogioacchino.delregno@collabora.com>
-References: <20230206100105.861720-1-angelogioacchino.delregno@collabora.com> <20230206100105.861720-3-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v3 2/7] clk: mediatek: clk-pllfh: Export register/unregister/parse functions
+In-Reply-To: <20230206100105.861720-4-angelogioacchino.delregno@collabora.com>
+References: <20230206100105.861720-1-angelogioacchino.delregno@collabora.com> <20230206100105.861720-4-angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v3 3/7] dt-bindings: clock: mediatek,mt8186-fhctl: Support MT6795, MT8173/92/95
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     mturquette@baylibre.com, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
@@ -51,16 +51,15 @@ Cc:     mturquette@baylibre.com, robh+dt@kernel.org,
         kernel@collabora.com
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-Date:   Mon, 13 Mar 2023 11:47:09 -0700
+Date:   Mon, 13 Mar 2023 11:47:20 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting AngeloGioacchino Del Regno (2023-02-06 02:01:00)
-> These functions are used by the various MediaTek apmixed clock drivers
-> that may be built as modules: export the common functions used to parse
-> related devicetree properties, register and unregister the PLLFH clocks.
+Quoting AngeloGioacchino Del Regno (2023-02-06 02:01:01)
+> MT6795, MT8173, MT8192 and MT8195 support Frequency Hopping: add the
+> compatibles for them.
 >=20
 > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
 abora.com>
