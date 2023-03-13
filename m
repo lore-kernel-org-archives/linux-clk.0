@@ -2,79 +2,93 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC4AC6FD19
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 08:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF597C6FD19
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 09:08:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230290AbjCMI6v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Mar 2023 04:58:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45826 "EHLO
+        id S229921AbjCMJIA convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Mar 2023 05:08:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230526AbjCMI6R (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 04:58:17 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAC3558B57;
-        Mon, 13 Mar 2023 01:54:26 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 6F9E26602F64;
-        Mon, 13 Mar 2023 08:54:09 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1678697649;
-        bh=admtLczq/Oe08BYYh7NJZInoBni+S8Ud4YDJ0IMS12g=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=UwnLBdLThDgg+25+IUSw1XTQ7/OdINQyaS8DviABkAmScilRD3qHZFNReItOksrA+
-         OqeLi/0XkI/nKKgw4XZJeHTXqE+U1IkIEVMf7H1r/mpwd1tvIDwyfsGLaJZ3s0UMm0
-         ht7zP23kA1l33vKWBY6XZCTyY37+gFPDAKsZhJ5I1QXY2LmalPOBSJz8CcScP6OHbq
-         HkTswuQMBq4sRIuiAMynSMbONder9M+EkgZJPBycJKp1HDlyihRlzzdwWUbhLesXID
-         rusHiBDDYlmG/oJAwUgkfO9w3YS60KzPxP3RGDYaT3uqjQH7Q7dv4KIwI526mOluPL
-         gNkzY+aL1rdAw==
-Message-ID: <d0a2eb84-4420-8b6c-bd97-e58aa47be289@collabora.com>
-Date:   Mon, 13 Mar 2023 09:54:07 +0100
+        with ESMTP id S229994AbjCMJHp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 05:07:45 -0400
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC0A01F480;
+        Mon, 13 Mar 2023 02:05:38 -0700 (PDT)
+Received: by mail-qt1-f176.google.com with SMTP id y10so12415505qtj.2;
+        Mon, 13 Mar 2023 02:05:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678698337;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HKyTtkBc3vhH0cNio/ELGF+bwr3W/1y9c0sgHfHKMEo=;
+        b=HhW4fv6ZXvYBTJ6AGZBCTFiFF9FWoelMQ7xdWlN5nyo+aZJGB9r/Any8H9INPuf29m
+         28SiXM86cVsLJea4/AMKo8zpTaM/Ty8X+4pEh82bpXtt7kkY52jtOjpCDxm7GdZXxJ00
+         FzGwnoZUGQXVmt99iWMyT3gY7zYO0SoQ2M2FgNHwm2MDnCGtcXA16Lm6ihufXjqNLleL
+         cCMGds80zIAfIaCJfhhm7Aj2G8qMTtoM/b0S+PHFPn7aQvAHm/PE+9s0zXs5F0cyH4sK
+         VdAy0K6aRdI5bizk87UDsKC+NSDEH0GaTHbESZYWy3tql68uXYjJsNeLEBfo9G7po7Tz
+         WN9Q==
+X-Gm-Message-State: AO0yUKV7efvX66PAbF55ht/tuGul/ctPt6XAo7HWAhYo/cfLDhoRB/Du
+        +1JxTSYYn7tudK0wdfgmaI8nCHuhm5HbdQ==
+X-Google-Smtp-Source: AK7set9Vc/bCfMIp7y+k42AvCq5XarJGXvB393t/nmVM2SXc6J+lplGl/cHI/86K4GC+mbJKxhyfdA==
+X-Received: by 2002:ac8:5904:0:b0:3bf:bbaf:5c82 with SMTP id 4-20020ac85904000000b003bfbbaf5c82mr17775124qty.21.1678698337638;
+        Mon, 13 Mar 2023 02:05:37 -0700 (PDT)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
+        by smtp.gmail.com with ESMTPSA id 74-20020a37054d000000b007456c75edbbsm3422295qkf.129.2023.03.13.02.05.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Mar 2023 02:05:36 -0700 (PDT)
+Received: by mail-yb1-f180.google.com with SMTP id e71so2569609ybc.0;
+        Mon, 13 Mar 2023 02:05:36 -0700 (PDT)
+X-Received: by 2002:a05:6902:208:b0:acd:7374:f154 with SMTP id
+ j8-20020a056902020800b00acd7374f154mr20748438ybs.7.1678698336364; Mon, 13 Mar
+ 2023 02:05:36 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 01/30] clk: mediatek: Make mtk_clk_simple_remove() return
- void
-Content-Language: en-US
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
+References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de> <20230312161512.2715500-24-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20230312161512.2715500-24-u.kleine-koenig@pengutronix.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 13 Mar 2023 10:05:24 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWrn45DEG4yHqiEMsR4G5460rxBu5d5-OEMg_7TUWOfFA@mail.gmail.com>
+Message-ID: <CAMuHMdWrn45DEG4yHqiEMsR4G5460rxBu5d5-OEMg_7TUWOfFA@mail.gmail.com>
+Subject: Re: [PATCH 23/30] clk: renesas: Convert to platform remove callback
+ returning void
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
- <20230312161512.2715500-2-u.kleine-koenig@pengutronix.de>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230312161512.2715500-2-u.kleine-koenig@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 12/03/23 17:14, Uwe Kleine-König ha scritto:
-> mtk_clk_simple_remove() returned zero unconditionally. Make it return no
-> value instead and convert the respective drivers to .remove_new.
-> 
-> This makes the semantics in the callers of mtk_clk_simple_remove() clearer
-> and prepares for the quest to make platform driver's remove function return
+On Sun, Mar 12, 2023 at 5:15 PM Uwe Kleine-König
+<u.kleine-koenig@pengutronix.de> wrote:
+> The .remove() callback for a platform driver returns an int which makes
+> many driver authors wrongly assume it's possible to do error handling by
+> returning an error code. However the value returned is (mostly) ignored
+> and this typically results in resource leaks. To improve here there is a
+> quest to make the remove callback return void. In the first step of this
+> quest all drivers are converted to .remove_new() which already returns
 > void.
-> 
+>
+> Trivially convert this driver from always returning zero in the remove
+> callback to the void returning variant.
+>
 > Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Hello Uwe,
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v6.4.
 
-since there's a big cleanup series that is well reviewed and that is touching
-practically all MediaTek clock drivers, can you please rebase this commit over
-[1]?
+Gr{oetje,eeting}s,
 
-Thanks,
-Angelo
+                        Geert
 
-[1]: https://patchwork.kernel.org/project/linux-mediatek/list/?series=726914
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
