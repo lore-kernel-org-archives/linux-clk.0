@@ -2,118 +2,102 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 739FDC6FD19
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 02:27:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC25C6FD19
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 02:59:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229516AbjCMC1D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Mar 2023 22:27:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43540 "EHLO
+        id S229473AbjCMC75 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Mar 2023 22:59:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjCMC1C (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 22:27:02 -0400
-Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D599232E46;
-        Sun, 12 Mar 2023 19:27:00 -0700 (PDT)
-Received: by mail-ua1-x92b.google.com with SMTP id ay14so755097uab.13;
-        Sun, 12 Mar 2023 19:27:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678674420;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oBN7MZjLeJOLen+baWvRMMf/qMAR/rC8mwjBChYkR4I=;
-        b=eV8ZHzyZHTa/moPPLfA9eEi65+z1w0eojcco0IYeBzCnw+HyW7EjdqpZEdlBxfFVHh
-         H1WRsP3EvWm/dFbLjvIbXKD+qzQXZWnHfNuS0jB3hTMQBY3WiVD5Ns8+A7X2kvIi4UGe
-         zkNyyPkRruFfJIG2F4gwOKWglKUz+vm5O/EwYTe9qN8OrHugBHVEYPsEAneCwb++HFLQ
-         L3tBk73dtpWenSKrC2YvkIwawuRwSYIl05zmDikZUKEuPvG8GRiW1pKHn/c+OE/FEn3i
-         hrLiwxF+5a0yEa1qQsAkHNkZZfjDjPNJk8CvdSXhiEgaK2o0X1rlrmoxHz5D2ePGBytK
-         7V5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678674420;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oBN7MZjLeJOLen+baWvRMMf/qMAR/rC8mwjBChYkR4I=;
-        b=a2wgBvKfPQXfkAxTxuSbMXsDJ83u5XwsU4zrinA9MXCGw1Qg8I6W35+xRNCoq/+Aqx
-         4Aoiu9r9iqefNV63YzxVQe92m+H1cnU7c9qFB07L/mbANMyP4MWkQ+/JdrZ4dgPa25Ay
-         JT4yrzc+A13s5sGcvtVDYXJ3CB4HatNGIAg26LGBPdEQHaEh2ZDFE3bEZED2LWtQBBFy
-         VSbbv6kAgRNnTTjAaXij/RTZm/7/woLFQ1Arv5x7Hq9BycED6bM+WfCz1th/DDacNDHD
-         RXztCVBezcjFyIKD5tkFIjj9y8cBbc5gsVjOoSlQIGeX2wgWNFpeyBOCAubL8oJRxaHv
-         OlAw==
-X-Gm-Message-State: AO0yUKXgGgnqkpcWtyeXEHl7EtLN6aBwyohnmYIPbQfe2KhepjnvSC2x
-        OPsir9Aep7rlshuhOJ0/Ux0/2Uc+Pa8chTCQ0Rs=
-X-Google-Smtp-Source: AK7set93JB0itlbEWaERpD6ndiS4qFu3fUXiBbk6eDBsJ6NtK7ZfGg1BvqVkC6SYgsy9XdmxJqQGXGNMjW6YMrvIY5g=
-X-Received: by 2002:a1f:46c6:0:b0:42d:7181:7c63 with SMTP id
- t189-20020a1f46c6000000b0042d71817c63mr9777947vka.1.1678674419884; Sun, 12
- Mar 2023 19:26:59 -0700 (PDT)
+        with ESMTP id S229450AbjCMC75 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 22:59:57 -0400
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57296211FD;
+        Sun, 12 Mar 2023 19:59:53 -0700 (PDT)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id D92C224E252;
+        Mon, 13 Mar 2023 10:59:44 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 13 Mar
+ 2023 10:47:59 +0800
+Received: from [192.168.125.74] (183.27.96.115) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 13 Mar
+ 2023 10:47:58 +0800
+Message-ID: <80549148-1bad-9190-c4ea-a9555d15ca38@starfivetech.com>
+Date:   Mon, 13 Mar 2023 10:47:57 +0800
 MIME-Version: 1.0
-References: <20230310144701.1541504-1-robh@kernel.org>
-In-Reply-To: <20230310144701.1541504-1-robh@kernel.org>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Mon, 13 Mar 2023 10:26:23 +0800
-Message-ID: <CAAfSe-tE44w7gZSsXAMkJYEiKWbVXqsuX+gXQs9BDs-FRBLeBw@mail.gmail.com>
-Subject: Re: [PATCH] clk: Use of_property_present() for testing DT property presence
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v5 11/21] dt-bindings: clock: Add StarFive JH7110 system
+ clock and reset generator
+Content-Language: en-US
 To:     Rob Herring <robh@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+CC:     Marc Zyngier <maz@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Stephen Boyd <sboyd@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        <linux-riscv@lists.infradead.org>, Conor Dooley <conor@kernel.org>,
+        "Emil Renner Berthing" <emil.renner.berthing@canonical.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+        <linux-clk@vger.kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>
+References: <20230311090733.56918-1-hal.feng@starfivetech.com>
+ <20230311090733.56918-12-hal.feng@starfivetech.com>
+ <167854282659.42837.5915012938593380363.robh@kernel.org>
+From:   Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <167854282659.42837.5915012938593380363.robh@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [183.27.96.115]
+X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 10 Mar 2023 at 22:47, Rob Herring <robh@kernel.org> wrote:
->
-> It is preferred to use typed property access functions (i.e.
-> of_property_read_<type> functions) rather than low-level
-> of_get_property/of_find_property functions for reading properties. As
-> part of this, convert of_get_property/of_find_property calls to the
-> recently added of_property_present() helper when we just want to test
-> for presence of a property and nothing more.
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/clk/clk.c         | 4 ++--
->  drivers/clk/sprd/common.c | 2 +-
+On Sat, 11 Mar 2023 08:17:00 -0600, Rob Herring wrote:
+> On Sat, 11 Mar 2023 17:07:23 +0800, Hal Feng wrote:
+>> From: Emil Renner Berthing <kernel@esmil.dk>
+>> 
+>> Add bindings for the system clock and reset generator (SYSCRG) on the
+>> JH7110 RISC-V SoC by StarFive Ltd.
+>> 
+>> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+>> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+>> ---
+>>  .../clock/starfive,jh7110-syscrg.yaml         | 104 +++++++++
+>>  MAINTAINERS                                   |   8 +-
+>>  .../dt-bindings/clock/starfive,jh7110-crg.h   | 203 ++++++++++++++++++
+>>  .../dt-bindings/reset/starfive,jh7110-crg.h   | 142 ++++++++++++
+>>  4 files changed, 454 insertions(+), 3 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+>>  create mode 100644 include/dt-bindings/clock/starfive,jh7110-crg.h
+>>  create mode 100644 include/dt-bindings/reset/starfive,jh7110-crg.h
+>> 
+> 
+> 
+> Please add Acked-by/Reviewed-by tags when posting new versions. However,
+> there's no need to repost patches *only* to add the tags. The upstream
+> maintainer will do that for acks received on the version they apply.
+> 
+> If a tag was not added on purpose, please state why and what changed.
+> 
+> Missing tags:
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-For sprd clk:
-Acked-by: Chunyan Zhang <zhang.lyra@gmail.com>
+This patch has been changed a lot and I am not sure whether it's still
+the one you want. So I removed the Reviewed-by tag.
 
-Thanks,
-Chunyan
-
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index ae07685c7588..f7528d7f8256 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -4880,8 +4880,8 @@ static struct device_node *get_clk_provider_node(struct device *dev)
->         np = dev->of_node;
->         parent_np = dev->parent ? dev->parent->of_node : NULL;
->
-> -       if (!of_find_property(np, "#clock-cells", NULL))
-> -               if (of_find_property(parent_np, "#clock-cells", NULL))
-> +       if (!of_property_present(np, "#clock-cells"))
-> +               if (of_property_present(parent_np, "#clock-cells"))
->                         np = parent_np;
->
->         return np;
-> diff --git a/drivers/clk/sprd/common.c b/drivers/clk/sprd/common.c
-> index ce81e4087a8f..1a3795a61f81 100644
-> --- a/drivers/clk/sprd/common.c
-> +++ b/drivers/clk/sprd/common.c
-> @@ -44,7 +44,7 @@ int sprd_clk_regmap_init(struct platform_device *pdev,
->         struct device_node *node = dev->of_node, *np;
->         struct regmap *regmap;
->
-> -       if (of_find_property(node, "sprd,syscon", NULL)) {
-> +       if (of_property_present(node, "sprd,syscon")) {
->                 regmap = syscon_regmap_lookup_by_phandle(node, "sprd,syscon");
->                 if (IS_ERR(regmap)) {
->                         pr_err("%s: failed to get syscon regmap\n", __func__);
-> --
-> 2.39.2
->
+Best regards,
+Hal
