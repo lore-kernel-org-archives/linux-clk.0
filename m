@@ -2,223 +2,186 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D24AC6FD19
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 15:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7744FC6FD19
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 15:39:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231177AbjCMPaq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Mar 2023 11:30:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43056 "EHLO
+        id S229540AbjCMPjg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Mar 2023 11:39:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230221AbjCMPap (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 11:30:45 -0400
-Received: from mail-oa1-x30.google.com (mail-oa1-x30.google.com [IPv6:2001:4860:4864:20::30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EBDE5CC26;
-        Mon, 13 Mar 2023 08:30:44 -0700 (PDT)
-Received: by mail-oa1-x30.google.com with SMTP id 586e51a60fabf-177b78067ffso2951575fac.7;
-        Mon, 13 Mar 2023 08:30:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678721443;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0b3TgdJ99fVHE7Fi3WYmDiYFJwk0+grVkre963bfbbA=;
-        b=TLjhRn9e0FF/cUyXqMyPGtTdJCz4IM3iq5yrjZGeOltpRLs+yJKQkEJy9Ma2FonAvu
-         uibvAujnKZT0u79hixIX2oFeCy0f9tVW1kPWD5U0FtZDK3qAk4U+dAWbPmBCzBU4Ol3s
-         DOrcdvKlhAYMRFVx/OK6YWH7mfk7W81J4IcgQbuAPSQBe0tPTxXK2OdK6J2tNGTbxbXR
-         HWMMkWPOAoG8RNgQTjMrq5dn+oKgHzGOo/Ky8ASqMk5kQEknCNg04K4pvyqARzVdkbKU
-         7L0yhzJldp1+mqnmhlHFTFXWB88dSPDNMxszYe7dQnBMnxnvvO9HnMODGfVccqSL3Yu+
-         SmDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678721443;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0b3TgdJ99fVHE7Fi3WYmDiYFJwk0+grVkre963bfbbA=;
-        b=gLdYu2Q4P3x3wbf83qv/YDSSY1lAk/HITVRPH+L9fqtipe23O9XKhKmPrEHwa/Oi24
-         9yANb3TrJnLpLD3Pc0Rls4Nzdj3AOl0QlX1tpkjjlc2s3k6w+gv0ikgn+bWPLQ+Zl9n0
-         TlKCBzdxgovFGekRFJZODm/SMec5UFDtqbHRKuNV0fao2KawUmRyG/N9fPfRsXhpiHjm
-         gmz/drPGHOQ0fcMpEvf3nQIGRbujdqyPqqGXu6hj3T3KM+5xNfVWmLFtsG5wNqgHaHMp
-         OaVnUdG6rwvORUOZcHOEN8zWAx7iqq7/xydS1MwONihgCBwsIeJV9LC4JcOt0wkNL3Nq
-         ZuXA==
-X-Gm-Message-State: AO0yUKUkGh2gKFM1LiBf5YJK2FYwvIzU0xOvY24BWlyJCARkLxznuiff
-        3TtIM0ijUANd6fLEqZgr1xs=
-X-Google-Smtp-Source: AK7set+6TyCLAMTfeShf5HNW6nlU+nm0GqRZLIhFOXlUEPx7J4wa/cjRQ9htKmprms8TICxiBi9pzw==
-X-Received: by 2002:a05:6870:9591:b0:177:8219:ad62 with SMTP id k17-20020a056870959100b001778219ad62mr6346081oao.50.1678721443239;
-        Mon, 13 Mar 2023 08:30:43 -0700 (PDT)
-Received: from ?IPV6:2600:1700:2442:6db0:6822:a477:b6d1:664a? ([2600:1700:2442:6db0:6822:a477:b6d1:664a])
-        by smtp.gmail.com with ESMTPSA id n185-20020acaefc2000000b00383e305597dsm3235820oih.23.2023.03.13.08.30.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Mar 2023 08:30:42 -0700 (PDT)
-Message-ID: <8ab5b110-2f46-fb39-894e-64d59669c02a@gmail.com>
-Date:   Mon, 13 Mar 2023 10:30:40 -0500
+        with ESMTP id S229641AbjCMPjf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 11:39:35 -0400
+X-Greylist: delayed 374 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 13 Mar 2023 08:39:33 PDT
+Received: from out-51.mta1.migadu.com (out-51.mta1.migadu.com [IPv6:2001:41d0:203:375::33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD15328225
+        for <linux-clk@vger.kernel.org>; Mon, 13 Mar 2023 08:39:33 -0700 (PDT)
+Message-ID: <eb738303-b95c-408c-448d-0ebf983df01f@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1678721597;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=eu0UkR8sQte9C6pbwO79Nt2+mjEe13eli9HbMHrf494=;
+        b=IHbgveoWRSXodRYSckjnvjKVZpI56kJGIClK/PuEb63HSzJ7bjn1oj/Ac56kWRMJZ54qgI
+        nZVXIiR3/bJHnqd+9hS7BCPlLcAFvEDsfc52n+32TEVQN9tCKyhzhhU4RGVG9+pqO8Z2/Q
+        nfy07Lx1aKYaP8Uz6/OCDxe85TJuNWE=
+Date:   Mon, 13 Mar 2023 15:33:13 +0000
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 0/8] clk: Add kunit tests for fixed rate and parent data
+Subject: Re: [PATCH RFC v6 0/6] Create common DPLL/clock configuration API
 Content-Language: en-US
-To:     David Gow <davidgow@google.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        patches@lists.linux.dev,
-        Brendan Higgins <brendan.higgins@linux.dev>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-References: <20230302013822.1808711-1-sboyd@kernel.org>
- <2ce31cd1-7a0e-18ac-8a5b-ed09d6539241@gmail.com>
- <CABVgOS=6mLLYDr3ZOmv6iBQKPdFxTGDFP+uy9xgTHvdc03=vPw@mail.gmail.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-In-Reply-To: <CABVgOS=6mLLYDr3ZOmv6iBQKPdFxTGDFP+uy9xgTHvdc03=vPw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Jiri Pirko <jiri@resnulli.us>, Vadim Fedorenko <vadfed@meta.com>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <20230312022807.278528-1-vadfed@meta.com>
+ <ZA8VAzAhaXK3hg04@nanopsycho>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <ZA8VAzAhaXK3hg04@nanopsycho>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 3/10/23 01:48, David Gow wrote:
-> On Sat, 4 Mar 2023 at 23:50, Frank Rowand <frowand.list@gmail.com> wrote:
->>
->> On 3/1/23 19:38, Stephen Boyd wrote:
->>> This patch series adds unit tests for the clk fixed rate basic type and
->>> the clk registration functions that use struct clk_parent_data. To get
->>> there, we add support for loading a DTB into the UML kernel that's
->>> running the unit tests along with probing platform drivers to bind to
->>> device nodes specified in DT.
->>>
->>> With this series, we're able to exercise some of the code in the common
->>> clk framework that uses devicetree lookups to find parents and the fixed
->>> rate clk code that scans devicetree directly and creates clks. Please
->>> review.
->>
->> I would _really_ like to _not_ have devicetree tests in two locations:
->> DT unittests and kunit tests.
->>
+On 13/03/2023 12:20, Jiri Pirko wrote:
+> Sun, Mar 12, 2023 at 03:28:01AM CET, vadfed@meta.com wrote:
+>> Implement common API for clock/DPLL configuration and status reporting.
+>> The API utilises netlink interface as transport for commands and event
+>> notifications. This API aim to extend current pin configuration and
+>> make it flexible and easy to cover special configurations.
 > 
+> Could you please put here some command line examples to work with this?
 
-This:
+We don't have open-source tools ready right now for specific hardware, 
+but with YAML spec published you can use in-kernel tool to manipulate 
+the values, i.e.:
 
-> I agree we don't want to split things up needlessly, but I think there
-> is a meaningful distinction between:
-> - Testing the DT infrastructure itself (with DT unittests)
-> - Testing a driver which may have some interaction with DT (via KUnit)
+./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml 
+--dump device-get
+./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml --do 
+device-get --json '{"id": 0}'
+./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml 
+--dump pin-get
+./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml --do 
+pin-get --json '{"id": 0, "pin-idx":1}'
+./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml --do 
+pin-set --json '{"id":0, "pin-idx":1, "pin-frequency":1}'
 
-> 
-> So, rather than going for a "devicetree" KUnit suite (unless we wanted
-> to port OF_UNITTEST to KUnit, which as you point out, would involve a
-> fair bit of reworking), I think the goal is for there to be lots of
-> driver test suites, each of which may verify that their specific
-> properties can be loaded from the devicetree correctly.
-> 
-> This is also why I prefer the overlay method, if we can get it to
-> work: it makes it clearer that the organisational hierarchy for these
-> tests is [driver]->[devicetree], not [devicetree]->[drvier].
-> 
->> For my testing, I already build and boot four times on real hardware:
->>
->>   1) no DT unittests
->>   2) CONFIG_OF_UNITTEST
->>   3) CONFIG_OF_UNITTEST
->>      CONFIG_OF_DYNAMIC
->>   4) CONFIG_OF_UNITTEST
->>      CONFIG_OF_DYNAMIC
->>      CONFIG_OF_OVERLAY
->>
->> I really should also be testing the four configurations on UML, but at
->> the moment I am not.
->>
->> I also check for new compile warnings at various warn levels for all
->> four configurations.
->>
->> If I recall correctly, the kunit framework encourages more (many more?)
->> kunit config options to select which test(s) are build for a test run.
->> Someone please correct this paragraph if I am mis-stating.
-> 
-> We do tend to suggest that there is a separate kconfig option for each
-> area being tested (usually one per test suite, but if there are
-> several closely related suites, sticking them under a single config
-> option isn't a problem.)
-> 
-> That being said:
-> - It's possible (and encouraged) to just test once with all of those
-> tests enabled, rather than needing to test every possible combination
-> of configs enabled/disabled.
-> - (Indeed, this is what we do with .kunitconfig files a lot: they're
-> collections of related configs, so you can quickly run, e.g., all DRM
-> tests)
-> - Because a KUnit test being run is an independent action from it
-> being built-in, it's possible to build the tests once and then just
-> run different subsets anyway, or possibly run them after boot if
-> they're compiled as modules.
-> - This of course, depends on two test configs not conflicting with
-> each other: obviously if there were some tests which relied on
-> OF_OVERLAY=n, and others which require OF_OVERLAY=y, you'd need two
-> builds.
-> 
-
-And this:
-
-> The bigger point is that, if the KUnit tests are focused on individual
-> drivers, rather than the devicetree infrastructure itself, then these
-> probably aren't as critical to run on every devicetree change (the DT
-> unittests should hopefully catch anything which affects devicetree as
-> a whole), but only on tests which affect a specific driver (as they're
-> really intended to make sure the drivers are accessing / interacting
-> with the DT properly, not that the DT infrastructure functions).
-
-Those two paragraphs are correct, and my original assumption was wrong.
-
-These tests appear to mostly be clock related and only minimally and
-indirectly test devicetree functionality.  In more generic terms,
-they are driver tests, not devicetree tests.
-
-Thus I withdraw my concern of making the devicetree test environment
-more complicated.
-
-> 
-> And obviously if this KUnit/devicetree support ends up depending on
-> overlays, that means there's no need to test them with overlays
-> disabled. :-)
 > 
 >>
->> Adding devicetree tests to kunit adds additional build and boot cycles
->> and additional test output streams to verify.
+>> v5 -> v6:
+>> * rework pin part to better fit shared pins use cases
+>> * add YAML spec to easy generate user-space apps
+>> * simple implementation in ptp_ocp is back again
+>> v4 -> v5:
+>> * fix code issues found during last reviews:
+>>    - replace cookie with clock id
+>> 	 - follow one naming schema in dpll subsys
+>> 	 - move function comments to dpll_core.c, fix exports
+>> 	 - remove single-use helper functions
+>> 	 - merge device register with alloc
+>>    - lock and unlock mutex on dpll device release
+>>    - move dpll_type to uapi header
+>>    - rename DPLLA_DUMP_FILTER to DPLLA_FILTER
+>>    - rename dpll_pin_state to dpll_pin_mode
+>>    - rename DPLL_MODE_FORCED to DPLL_MODE_MANUAL
+>>    - remove DPLL_CHANGE_PIN_TYPE enum value
+>> * rewrite framework once again (Arkadiusz)
+>>    - add clock class:
+>>      Provide userspace with clock class value of DPLL with dpll device dump
+>>      netlink request. Clock class is assigned by driver allocating a dpll
+>>      device. Clock class values are defined as specified in:
+>>      ITU-T G.8273.2/Y.1368.2 recommendation.
+>>    - dpll device naming schema use new pattern:
+>> 	   "dpll_%s_%d_%d", where:
+>>        - %s - dev_name(parent) of parent device,
+>>        - %d (1) - enum value of dpll type,
+>>        - %d (2) - device index provided by parent device.
+>>    - new muxed/shared pin registration:
+>> 	   Let the kernel module to register a shared or muxed pin without finding
+>>      it or its parent. Instead use a parent/shared pin description to find
+>>      correct pin internally in dpll_core, simplifing a dpll API
+>> * Implement complex DPLL design in ice driver (Arkadiusz)
+>> * Remove ptp_ocp driver from the series for now
+>> v3 -> v4:
+>> * redesign framework to make pins dynamically allocated (Arkadiusz)
+>> * implement shared pins (Arkadiusz)
+>> v2 -> v3:
+>> * implement source select mode (Arkadiusz)
+>> * add documentation
+>> * implementation improvements (Jakub)
+>> v1 -> v2:
+>> * implement returning supported input/output types
+>> * ptp_ocp: follow suggestions from Jonathan
+>> * add linux-clk mailing list
+>> v0 -> v1:
+>> * fix code style and errors
+>> * add linux-arm mailing list
 >>
->> Are there any issues with DT unittests that preclude adding clk tests
->> into the DT unittests?
+>> Arkadiusz Kubalewski (3):
+>>   dpll: spec: Add Netlink spec in YAML
+>>   ice: add admin commands to access cgu configuration
+>>   ice: implement dpll interface to control cgu
 >>
-> 
-> I think at least part of it is that there are already some clk KUnit
-> tests, so it's easier to have all of the clk tests behave similarly
-> (for the same reasons, alas, as using DT unittests makes it easier to
-> keep all of the DT tests in the same place).
-> 
-
-> Of course, as DT unittests move to KTAP, and possibly in the future
-> are able to make use of more KUnit infrastructure, this should get
-> simpler for everyone.
-
-I hope to move DT unitests to create KTAP V2 compatible data as a
-first step.
-
-I highly doubt that DT unittests fit the kunit model, but that would
-be a question that could be considered after DT unittests move to the
-KTAP V2 data format.
-
-> 
-> 
-> Does that seem sensible?
-
-Yes, thanks for the extra explanations.
-
-> 
-> -- David
+>> Vadim Fedorenko (3):
+>>   dpll: Add DPLL framework base functions
+>>   dpll: documentation on DPLL subsystem interface
+>>   ptp_ocp: implement DPLL ops
+>>
+>> Documentation/netlink/specs/dpll.yaml         |  514 +++++
+>> Documentation/networking/dpll.rst             |  347 ++++
+>> Documentation/networking/index.rst            |    1 +
+>> MAINTAINERS                                   |    9 +
+>> drivers/Kconfig                               |    2 +
+>> drivers/Makefile                              |    1 +
+>> drivers/dpll/Kconfig                          |    7 +
+>> drivers/dpll/Makefile                         |   10 +
+>> drivers/dpll/dpll_core.c                      |  835 ++++++++
+>> drivers/dpll/dpll_core.h                      |   99 +
+>> drivers/dpll/dpll_netlink.c                   | 1065 ++++++++++
+>> drivers/dpll/dpll_netlink.h                   |   30 +
+>> drivers/dpll/dpll_nl.c                        |  126 ++
+>> drivers/dpll/dpll_nl.h                        |   42 +
+>> drivers/net/ethernet/intel/Kconfig            |    1 +
+>> drivers/net/ethernet/intel/ice/Makefile       |    3 +-
+>> drivers/net/ethernet/intel/ice/ice.h          |    5 +
+>> .../net/ethernet/intel/ice/ice_adminq_cmd.h   |  240 ++-
+>> drivers/net/ethernet/intel/ice/ice_common.c   |  467 +++++
+>> drivers/net/ethernet/intel/ice/ice_common.h   |   43 +
+>> drivers/net/ethernet/intel/ice/ice_dpll.c     | 1845 +++++++++++++++++
+>> drivers/net/ethernet/intel/ice/ice_dpll.h     |   96 +
+>> drivers/net/ethernet/intel/ice/ice_lib.c      |   17 +-
+>> drivers/net/ethernet/intel/ice/ice_main.c     |    7 +
+>> drivers/net/ethernet/intel/ice/ice_ptp_hw.c   |  411 ++++
+>> drivers/net/ethernet/intel/ice/ice_ptp_hw.h   |  240 +++
+>> drivers/net/ethernet/intel/ice/ice_type.h     |    1 +
+>> drivers/ptp/Kconfig                           |    1 +
+>> drivers/ptp/ptp_ocp.c                         |  206 +-
+>> include/linux/dpll.h                          |  284 +++
+>> include/uapi/linux/dpll.h                     |  196 ++
+>> 31 files changed, 7135 insertions(+), 16 deletions(-)
+>> create mode 100644 Documentation/netlink/specs/dpll.yaml
+>> create mode 100644 Documentation/networking/dpll.rst
+>> create mode 100644 drivers/dpll/Kconfig
+>> create mode 100644 drivers/dpll/Makefile
+>> create mode 100644 drivers/dpll/dpll_core.c
+>> create mode 100644 drivers/dpll/dpll_core.h
+>> create mode 100644 drivers/dpll/dpll_netlink.c
+>> create mode 100644 drivers/dpll/dpll_netlink.h
+>> create mode 100644 drivers/dpll/dpll_nl.c
+>> create mode 100644 drivers/dpll/dpll_nl.h
+>> create mode 100644 drivers/net/ethernet/intel/ice/ice_dpll.c
+>> create mode 100644 drivers/net/ethernet/intel/ice/ice_dpll.h
+>> create mode 100644 include/linux/dpll.h
+>> create mode 100644 include/uapi/linux/dpll.h
+>>
+>> -- 
+>> 2.34.1
+>>
 
