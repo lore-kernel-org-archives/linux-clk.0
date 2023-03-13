@@ -2,36 +2,36 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4527CC6FD19
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 03:03:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C73C6FD19
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 03:22:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229884AbjCMDD0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Mar 2023 23:03:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33312 "EHLO
+        id S229673AbjCMDWj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Mar 2023 23:22:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229861AbjCMDDT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 23:03:19 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07E8861B9;
-        Sun, 12 Mar 2023 20:03:15 -0700 (PDT)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        with ESMTP id S229623AbjCMDWh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Mar 2023 23:22:37 -0400
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AE2E27D64;
+        Sun, 12 Mar 2023 20:22:35 -0700 (PDT)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 9644824E3E2;
-        Mon, 13 Mar 2023 11:03:08 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 13 Mar
- 2023 10:37:35 +0800
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id B9B5724E1D2;
+        Mon, 13 Mar 2023 11:22:33 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 13 Mar
+ 2023 11:22:33 +0800
 Received: from [192.168.125.74] (183.27.96.115) by EXMBX172.cuchost.com
  (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 13 Mar
- 2023 10:37:34 +0800
-Message-ID: <afee6601-e21c-5cde-deab-221420de68e9@starfivetech.com>
-Date:   Mon, 13 Mar 2023 10:37:33 +0800
+ 2023 11:22:32 +0800
+Message-ID: <92306b73-d7d2-0d60-de15-87bcd71714ed@starfivetech.com>
+Date:   Mon, 13 Mar 2023 11:22:31 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.2
-Subject: Re: [PATCH v5 03/21] clk: starfive: Rename clk-starfive-jh7100.h to
- clk-starfive-jh71x0.h
+Subject: Re: [PATCH v5 11/21] dt-bindings: clock: Add StarFive JH7110 system
+ clock and reset generator
 Content-Language: en-US
 To:     Conor Dooley <conor@kernel.org>
 CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
@@ -50,41 +50,74 @@ CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         "Emil Renner Berthing" <emil.renner.berthing@canonical.com>,
         <linux-kernel@vger.kernel.org>
 References: <20230311090733.56918-1-hal.feng@starfivetech.com>
- <20230311090733.56918-4-hal.feng@starfivetech.com>
- <c7e5a23a-16f9-4e30-adc7-a422abeb50ef@spud>
+ <20230311090733.56918-12-hal.feng@starfivetech.com>
+ <34b0473a-91bd-453b-91dd-01defde92d68@spud>
 From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <c7e5a23a-16f9-4e30-adc7-a422abeb50ef@spud>
+In-Reply-To: <34b0473a-91bd-453b-91dd-01defde92d68@spud>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [183.27.96.115]
-X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
+X-ClientProxiedBy: EXCAS061.cuchost.com (172.16.6.21) To EXMBX172.cuchost.com
  (172.16.6.92)
 X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 12 Mar 2023 14:00:23 +0000, Conor Dooley wrote:
-> On Sat, Mar 11, 2023 at 05:07:15PM +0800, Hal Feng wrote:
+On Sat, 11 Mar 2023 13:11:38 +0000, Conor Dooley wrote:
+> On Sat, Mar 11, 2023 at 05:07:23PM +0800, Hal Feng wrote:
 >> From: Emil Renner Berthing <kernel@esmil.dk>
 >> 
->> Rename clk-starfive-jh7100.h to clk-starfive-jh71x0.h for making
->> the code to be common.
+>> Add bindings for the system clock and reset generator (SYSCRG) on the
+>> JH7110 RISC-V SoC by StarFive Ltd.
 >> 
->> Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
->> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 >> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 >> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 >> ---
->>  .../clk/starfive/{clk-starfive-jh7100.h => clk-starfive-jh71x0.h} | 0
+>>  .../clock/starfive,jh7110-syscrg.yaml         | 104 +++++++++
+>>  MAINTAINERS                                   |   8 +-
+>>  .../dt-bindings/clock/starfive,jh7110-crg.h   | 203 ++++++++++++++++++
+>>  .../dt-bindings/reset/starfive,jh7110-crg.h   | 142 ++++++++++++
+>>  4 files changed, 454 insertions(+), 3 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+>>  create mode 100644 include/dt-bindings/clock/starfive,jh7110-crg.h
+>>  create mode 100644 include/dt-bindings/reset/starfive,jh7110-crg.h
+>> 
+>> diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+>> new file mode 100644
+>> index 000000000000..84373ae31644
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
 > 
-> So this patch has broken the build :(
-> https://patchwork.kernel.org/project/linux-riscv/patch/20230311090733.56918-4-hal.feng@starfivetech.com/
+>> +  clock-names:
+>> +    oneOf:
+>> +      - items:
+>> +          - const: osc
+>> +          - enum:
+>> +              - gmac1_rmii_refin
+>> +              - gmac1_rgmii_rxin
+>> +          - const: i2stx_bclk_ext
+>> +          - const: i2stx_lrck_ext
+>> +          - const: i2srx_bclk_ext
+>> +          - const: i2srx_lrck_ext
+>> +          - const: tdm_ext
+>> +          - const: mclk_ext
+>> +
+>> +      - items:
+>> +          - const: osc
+>> +          - const: gmac1_rmii_refin
+>> +          - const: gmac1_rgmii_rxin
+>> +          - const: i2stx_bclk_ext
+>> +          - const: i2stx_lrck_ext
+>> +          - const: i2srx_bclk_ext
+>> +          - const: i2srx_lrck_ext
+>> +          - const: tdm_ext
+>> +          - const: mclk_ext
 > 
-> I would imagine it is because you can't rename the header without also
-> changing the users of the header.
+> Assuming nothing else here is optional,
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-Will fix it later. Thanks for pointing it out.
+Yeah, nothing else here is optional. Thanks for your review.
 
 Best regards,
 Hal
