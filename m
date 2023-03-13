@@ -2,71 +2,143 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A7DC74A4B
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 18:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F200BC6FD19
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 20:14:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231340AbjCMSyo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Mar 2023 14:54:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59522 "EHLO
+        id S229909AbjCMUOU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Mar 2023 16:14:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231542AbjCMSy1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 14:54:27 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33966D535;
-        Mon, 13 Mar 2023 11:53:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A3C4C61469;
-        Mon, 13 Mar 2023 18:48:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BAB5C433D2;
-        Mon, 13 Mar 2023 18:48:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678733280;
-        bh=/d48bhLyzRVyeGxbnJF3Qv5h7/XTC0mhguBxZRlvvqU=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=GfHGVKoxU0W/N2wLo63mnd3Wc7tjoxw0cGbP7H/w/QB19ZggiY552NYKNip1AuS7O
-         yyEhBH5QUlTGepcYtQ0rYggBoxFGql5gkm+/6tE56b+9lS7Aszl6U3Uw11ZuLiRxbl
-         icEgjpYGDpuvQaidAQ+DoXKSfAmEC9XMwwHAe5fteGtrtJ8x/7Lx0KXHS9HEmbzWLO
-         RTfX5PzuiaXOTdpdG4PJEil+sMdxq5mEBJWaH60BSkHM8rFfpRuQ3Gzu7rihSDEYUp
-         Hi1BVYbP7E5WI9ncfgl22zSPBmHMqY9zEoEFS18oQT76bnG8/W0hZTazCNFmWO9OX/
-         Tze0GVrUJZQOg==
-Message-ID: <f0333440693d55316a064e3ad1dbd307.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229642AbjCMUOT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 16:14:19 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E030E24121;
+        Mon, 13 Mar 2023 13:13:50 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 196FE5FD14;
+        Mon, 13 Mar 2023 23:13:12 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1678738392;
+        bh=qcIGKcZIb5cUrNAdB7ZZAIiITgzMPRGFSQuzjV413Y4=;
+        h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+        b=aDFbwqf4suEffITUw430m/mQvA2yrKtAOcnjLqfIOgG4dgR4u1WIT14QGp6n0Tqa2
+         3HIcw4VMFOxXUpGeJKv7knpm5JNRXR1uQNUmAf0wHtMu7jdKhDA7VSkNtHWK/RmAgK
+         sNjemi/8ANEm9vPFgYb6E1oorrPdxCFTEhBRjYXEtDNxOLVobDudcHOgJTpIwkLZtR
+         JubmIYBH2BONfdId1JIc/Zz9vxw0NHcXKgz3U95u2w4mm0hiirQwvHYipmZpW8ZEpe
+         V7rmppVzA20MGBdC3wJK0FWlTiIeZliC3SG+rtzbnspkugR91oeoQDE8b7Db9PQWVL
+         24mMf7WO1xIzg==
+Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Mon, 13 Mar 2023 23:13:12 +0300 (MSK)
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <khilman@baylibre.com>, <martin.blumenstingl@googlemail.com>
+CC:     <jian.hu@amlogic.com>, <kernel@sberdevices.ru>,
+        <rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Dmitry Rokosov <ddrokosov@sberdevices.ru>
+Subject: [PATCH v10 1/5] clk: meson: make pll rst bit as optional
+Date:   Mon, 13 Mar 2023 23:12:55 +0300
+Message-ID: <20230313201259.19998-2-ddrokosov@sberdevices.ru>
+X-Mailer: git-send-email 2.36.0
+In-Reply-To: <20230313201259.19998-1-ddrokosov@sberdevices.ru>
+References: <20230313201259.19998-1-ddrokosov@sberdevices.ru>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230206100105.861720-8-angelogioacchino.delregno@collabora.com>
-References: <20230206100105.861720-1-angelogioacchino.delregno@collabora.com> <20230206100105.861720-8-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v3 7/7] clk: mediatek: mt8195: Add support for frequency hopping through FHCTL
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
-        angelogioacchino.delregno@collabora.com,
-        edward-jw.yang@mediatek.com, johnson.wang@mediatek.com,
-        wenst@chromium.org, miles.chen@mediatek.com,
-        chun-jie.chen@mediatek.com, rex-bc.chen@mediatek.com,
-        jose.exposito89@gmail.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Date:   Mon, 13 Mar 2023 11:47:58 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
+ S-MS-EXCH01.sberdevices.ru (172.16.1.4)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/03/13 10:14:00 #20942017
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting AngeloGioacchino Del Regno (2023-02-06 02:01:05)
-> Add FHCTL parameters and register PLLs through FHCTL to add support
-> for frequency hopping and SSC. FHCTL will be enabled only on PLLs
-> specified in devicetree.
->=20
-> This commit brings functional changes only upon addition of
-> devicetree configuration.
->=20
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
-> ---
+Compared with the previous SoCs, self-adaption current module
+is newly added for A1, and there is no reset parameter except the
+fixed pll. Since we use clk-pll generic driver for A1 pll
+implementation, rst bit should be optional to support new behavior.
 
-Applied to clk-next
+Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+---
+ drivers/clk/meson/clk-pll.c | 24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index afefeba6e458..314ca945a4d0 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -295,10 +295,14 @@ static int meson_clk_pll_init(struct clk_hw *hw)
+ 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+ 
+ 	if (pll->init_count) {
+-		meson_parm_write(clk->map, &pll->rst, 1);
++		if (MESON_PARM_APPLICABLE(&pll->rst))
++			meson_parm_write(clk->map, &pll->rst, 1);
++
+ 		regmap_multi_reg_write(clk->map, pll->init_regs,
+ 				       pll->init_count);
+-		meson_parm_write(clk->map, &pll->rst, 0);
++
++		if (MESON_PARM_APPLICABLE(&pll->rst))
++			meson_parm_write(clk->map, &pll->rst, 0);
+ 	}
+ 
+ 	return 0;
+@@ -309,8 +313,11 @@ static int meson_clk_pll_is_enabled(struct clk_hw *hw)
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+ 
+-	if (meson_parm_read(clk->map, &pll->rst) ||
+-	    !meson_parm_read(clk->map, &pll->en) ||
++	if (MESON_PARM_APPLICABLE(&pll->rst) &&
++	    meson_parm_read(clk->map, &pll->rst))
++		return 0;
++
++	if (!meson_parm_read(clk->map, &pll->en) ||
+ 	    !meson_parm_read(clk->map, &pll->l))
+ 		return 0;
+ 
+@@ -341,13 +348,15 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
+ 		return 0;
+ 
+ 	/* Make sure the pll is in reset */
+-	meson_parm_write(clk->map, &pll->rst, 1);
++	if (MESON_PARM_APPLICABLE(&pll->rst))
++		meson_parm_write(clk->map, &pll->rst, 1);
+ 
+ 	/* Enable the pll */
+ 	meson_parm_write(clk->map, &pll->en, 1);
+ 
+ 	/* Take the pll out reset */
+-	meson_parm_write(clk->map, &pll->rst, 0);
++	if (MESON_PARM_APPLICABLE(&pll->rst))
++		meson_parm_write(clk->map, &pll->rst, 0);
+ 
+ 	if (meson_clk_pll_wait_lock(hw))
+ 		return -EIO;
+@@ -361,7 +370,8 @@ static void meson_clk_pll_disable(struct clk_hw *hw)
+ 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+ 
+ 	/* Put the pll is in reset */
+-	meson_parm_write(clk->map, &pll->rst, 1);
++	if (MESON_PARM_APPLICABLE(&pll->rst))
++		meson_parm_write(clk->map, &pll->rst, 1);
+ 
+ 	/* Disable the pll */
+ 	meson_parm_write(clk->map, &pll->en, 0);
+-- 
+2.36.0
+
