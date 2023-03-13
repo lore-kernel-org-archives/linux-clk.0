@@ -2,129 +2,150 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B65DC6FD19
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 07:51:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E50C74A4B
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 08:57:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230033AbjCMHvd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Mar 2023 03:51:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49364 "EHLO
+        id S230151AbjCMI5b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Mar 2023 04:57:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229642AbjCMHva (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 03:51:30 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8322128D1D
-        for <linux-clk@vger.kernel.org>; Mon, 13 Mar 2023 00:51:23 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id y4so15423541edo.2
-        for <linux-clk@vger.kernel.org>; Mon, 13 Mar 2023 00:51:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678693882;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ApcfsHN2wN7CiLQkpY6hRDWMeHf0lIJaK00DDrg5fNU=;
-        b=kQPrGnxYvasHxYFYfGSGho1RYetKH4JyMKJ3ud5unTPePmdSRjZrRVQ2DDQprphbqa
-         +r/m8bdt6bmvlyJDpEICv8tnMoRqoVjoSPb/VHJY+mR5PHDx5Ktfzcfsg4LRlK4ofQpO
-         UlW+5VSH/eaEjDfdof4PmhhiDf5LsxDX3AyoauL/4xCkhXbCaNoBmLO0bsH48989iZdI
-         10/GL6vzIfjDJvEgL9zKJnluIlENU3y5J8koECXzLnt00hCMy2OgIxN7WhgXAgqhfPg7
-         gsivioYUOX8yzoZkH3CxeTHLIp4SkWd0F2piLS9zeaUFVH0oKf4PWk3e0Xz445cQOeNU
-         I4SQ==
+        with ESMTP id S230449AbjCMI4y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 04:56:54 -0400
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A892224127
+        for <linux-clk@vger.kernel.org>; Mon, 13 Mar 2023 01:53:39 -0700 (PDT)
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id E2A7941303
+        for <linux-clk@vger.kernel.org>; Mon, 13 Mar 2023 08:53:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1678697599;
+        bh=rdDSrE0VIq+XmHMRyMrdPIQatR30pRaMUhYB/xPPqz8=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=dRUkVaI76q9CPTpgxlSgLIfN4e3vgNOB02uAdgPMCpwRnqavAYzp25GQl+WpX1rS0
+         Sw1bRRtLl5SXKuVE27+UYAG8Cw1+tbsNWy49t29TwQvYGVeAcXEoAZtMHaAN0mrNhx
+         yhGNLbyc5+w2Q83MfACT8R3zb0ymOk9olWtDQv2qde79eRTjn1sqWl5BQahmvjD3L8
+         OnK+9NlqOBIRqGVYVoYgQjBrrcn2elM4Ol4x8QgOBsXMujTC5k3zgAiLjOKhUp7TQ/
+         To5mgY6XVkqUg/Uom4YGKXYHACx8L0z6NaIonii6dQEopthGcXLkU+lct6q0nR5W6p
+         0EgQ/1CYptxsw==
+Received: by mail-qv1-f69.google.com with SMTP id w2-20020a0cc242000000b00583d8e55181so6651320qvh.23
+        for <linux-clk@vger.kernel.org>; Mon, 13 Mar 2023 01:53:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678693882;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ApcfsHN2wN7CiLQkpY6hRDWMeHf0lIJaK00DDrg5fNU=;
-        b=Qo38a5N4buY033g0NNg35GGpplOEM++1zm7rQzr5N7sw2l5wep8F7Pz9Oq79sQVmKP
-         sm2txr/DzKUdIi0gUvqTee8oYbCNY0DFcc2+FeUA9hF0bhEmtgluNq7CV59N7CGm3g72
-         y7VVsdeSKeESRuYxjJl2b5dSVmAGSmjCUUMkkyMLqYOiZQEa4BbLp+pIXcN/Rx084Sh4
-         KaPT/p1nDbznQqb7ucp0eLz5JEb1w9eAXtQDXpd420OEYyuZdeFdg3A9Lk5+tO6bxok2
-         FA5L8ydI43t4mZFc2QEMtrKgPSQwONJ/3NVawRqyt5XXh2/MkY6bTyGOFsPgQdTmVvkt
-         ++Jg==
-X-Gm-Message-State: AO0yUKWm1KD9URGWO86qEdrt/3NdPC3mz3TcFvqD373vWT+guZdZ7umw
-        V+hpAomk4efG6LN9s6dMx4cmrw==
-X-Google-Smtp-Source: AK7set/Wdx3mz3K2b03zcdbLEh+zTAXkriPquRH3CNjv2VE6Bjjx7PkESjwthAp40ot+7EmKIeFxmg==
-X-Received: by 2002:aa7:c54b:0:b0:4ac:b760:f07a with SMTP id s11-20020aa7c54b000000b004acb760f07amr33049256edr.19.1678693881955;
-        Mon, 13 Mar 2023 00:51:21 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:f052:f15:3f90:fcb3? ([2a02:810d:15c0:828:f052:f15:3f90:fcb3])
-        by smtp.gmail.com with ESMTPSA id l22-20020a50d6d6000000b004fa19f5ba99sm2652296edj.79.2023.03.13.00.51.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Mar 2023 00:51:21 -0700 (PDT)
-Message-ID: <834fb899-7a03-ba0a-8302-f64ea58c60dd@linaro.org>
-Date:   Mon, 13 Mar 2023 08:51:20 +0100
+        d=1e100.net; s=20210112; t=1678697598;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rdDSrE0VIq+XmHMRyMrdPIQatR30pRaMUhYB/xPPqz8=;
+        b=6g3RTlNoKfgjPhY+vG6mkTuBd9I2DhJeJG7Pzad8PtvmGRD5nSg6WCzUXi3jJcm9rU
+         teP2Bkvs7bi8H4MMWV7CEKCTVNuOqfSJhnhROwT0h3AerJOLUZzyDeDRcJSdzvpNiRJt
+         LxkCcpW1jgzAJGzW3pNp40VGLC+9k7SrqcVqE4SBp4YP9NuNs9yK3mewPykFMdJrpsiO
+         U1vUf6EUiJhGQOxlTzb7beQmabV6Ius6NeZNv0oEz/uz5Y82GJgcrAtGWAS1a32WxkM3
+         KdjNLYUn2vhm4C4+E1a3SvmMcEwXQM+h2BT1+j5R3aBB73EYNXOzfK2Rj7YmkRmxSPQc
+         lZuw==
+X-Gm-Message-State: AO0yUKXBf459yYHAIvTunIcED2tK1zj9nUJtLQcXbLmDSuPy5/u4ZMZj
+        YVd/aWJcHZPml7a3kgV1RAjOBj5MXNbKAzZW08yiXa9jaouyv23BEb7wtMBWDUe6cB8XGGJr1hD
+        8zHAtCgU1cZjDr2W7lIA63iZR6Xga1t7sN+R7ZtwwLCGE4ZiDZY8o9A==
+X-Received: by 2002:ac8:56f7:0:b0:3bf:b9a4:6d41 with SMTP id 23-20020ac856f7000000b003bfb9a46d41mr9407535qtu.5.1678697598301;
+        Mon, 13 Mar 2023 01:53:18 -0700 (PDT)
+X-Google-Smtp-Source: AK7set8AA0sa2nCnrV8w1Osh5NxDD45ICECbteHeANn3sQWk04rh+36JVMJfWLEQ4krvOlUN6FZfm4pVyPz1TdTFshg=
+X-Received: by 2002:ac8:56f7:0:b0:3bf:b9a4:6d41 with SMTP id
+ 23-20020ac856f7000000b003bfb9a46d41mr9407529qtu.5.1678697597999; Mon, 13 Mar
+ 2023 01:53:17 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
+References: <20230311090733.56918-1-hal.feng@starfivetech.com>
+ <20230311090733.56918-12-hal.feng@starfivetech.com> <34b0473a-91bd-453b-91dd-01defde92d68@spud>
+ <92306b73-d7d2-0d60-de15-87bcd71714ed@starfivetech.com>
+In-Reply-To: <92306b73-d7d2-0d60-de15-87bcd71714ed@starfivetech.com>
+From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Date:   Mon, 13 Mar 2023 09:53:01 +0100
+Message-ID: <CAJM55Z-zps4gEohCGyia0nESWYWqQmoChnJZXkw2Zmi5TPV2Wg@mail.gmail.com>
 Subject: Re: [PATCH v5 11/21] dt-bindings: clock: Add StarFive JH7110 system
  clock and reset generator
-Content-Language: en-US
-To:     Hal Feng <hal.feng@starfivetech.com>, Rob Herring <robh@kernel.org>
-Cc:     Marc Zyngier <maz@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+To:     Hal Feng <hal.feng@starfivetech.com>
+Cc:     Conor Dooley <conor@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-riscv@lists.infradead.org, Conor Dooley <conor@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
         Paul Walmsley <paul.walmsley@sifive.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
+        Ben Dooks <ben.dooks@sifive.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>
-References: <20230311090733.56918-1-hal.feng@starfivetech.com>
- <20230311090733.56918-12-hal.feng@starfivetech.com>
- <167854282659.42837.5915012938593380363.robh@kernel.org>
- <80549148-1bad-9190-c4ea-a9555d15ca38@starfivetech.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <80549148-1bad-9190-c4ea-a9555d15ca38@starfivetech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/03/2023 03:47, Hal Feng wrote:
-> On Sat, 11 Mar 2023 08:17:00 -0600, Rob Herring wrote:
->> On Sat, 11 Mar 2023 17:07:23 +0800, Hal Feng wrote:
->>> From: Emil Renner Berthing <kernel@esmil.dk>
->>>
->>> Add bindings for the system clock and reset generator (SYSCRG) on the
->>> JH7110 RISC-V SoC by StarFive Ltd.
->>>
->>> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
->>> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
->>> ---
->>>  .../clock/starfive,jh7110-syscrg.yaml         | 104 +++++++++
->>>  MAINTAINERS                                   |   8 +-
->>>  .../dt-bindings/clock/starfive,jh7110-crg.h   | 203 ++++++++++++++++++
->>>  .../dt-bindings/reset/starfive,jh7110-crg.h   | 142 ++++++++++++
->>>  4 files changed, 454 insertions(+), 3 deletions(-)
->>>  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
->>>  create mode 100644 include/dt-bindings/clock/starfive,jh7110-crg.h
->>>  create mode 100644 include/dt-bindings/reset/starfive,jh7110-crg.h
->>>
->>
->>
->> Please add Acked-by/Reviewed-by tags when posting new versions. However,
->> there's no need to repost patches *only* to add the tags. The upstream
->> maintainer will do that for acks received on the version they apply.
->>
->> If a tag was not added on purpose, please state why and what changed.
->>
->> Missing tags:
->>
->> Reviewed-by: Rob Herring <robh@kernel.org>
-> 
-> This patch has been changed a lot and I am not sure whether it's still
-> the one you want. So I removed the Reviewed-by tag.
+On Mon, 13 Mar 2023 at 04:22, Hal Feng <hal.feng@starfivetech.com> wrote:
+> On Sat, 11 Mar 2023 13:11:38 +0000, Conor Dooley wrote:
+> > On Sat, Mar 11, 2023 at 05:07:23PM +0800, Hal Feng wrote:
+> >> From: Emil Renner Berthing <kernel@esmil.dk>
+> >>
+> >> Add bindings for the system clock and reset generator (SYSCRG) on the
+> >> JH7110 RISC-V SoC by StarFive Ltd.
+> >>
+> >> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> >> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+> >> ---
+> >>  .../clock/starfive,jh7110-syscrg.yaml         | 104 +++++++++
+> >>  MAINTAINERS                                   |   8 +-
+> >>  .../dt-bindings/clock/starfive,jh7110-crg.h   | 203 ++++++++++++++++++
+> >>  .../dt-bindings/reset/starfive,jh7110-crg.h   | 142 ++++++++++++
+> >>  4 files changed, 454 insertions(+), 3 deletions(-)
+> >>  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+> >>  create mode 100644 include/dt-bindings/clock/starfive,jh7110-crg.h
+> >>  create mode 100644 include/dt-bindings/reset/starfive,jh7110-crg.h
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+> >> new file mode 100644
+> >> index 000000000000..84373ae31644
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+> >
+> >> +  clock-names:
+> >> +    oneOf:
+> >> +      - items:
+> >> +          - const: osc
+> >> +          - enum:
+> >> +              - gmac1_rmii_refin
+> >> +              - gmac1_rgmii_rxin
+> >> +          - const: i2stx_bclk_ext
+> >> +          - const: i2stx_lrck_ext
+> >> +          - const: i2srx_bclk_ext
+> >> +          - const: i2srx_lrck_ext
+> >> +          - const: tdm_ext
+> >> +          - const: mclk_ext
+> >> +
+> >> +      - items:
+> >> +          - const: osc
+> >> +          - const: gmac1_rmii_refin
+> >> +          - const: gmac1_rgmii_rxin
+> >> +          - const: i2stx_bclk_ext
+> >> +          - const: i2stx_lrck_ext
+> >> +          - const: i2srx_bclk_ext
+> >> +          - const: i2srx_lrck_ext
+> >> +          - const: tdm_ext
+> >> +          - const: mclk_ext
+> >
+> > Assuming nothing else here is optional,
+> > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+>
+> Yeah, nothing else here is optional. Thanks for your review.
 
-Then mention it in changelog, just like Rob asked:
-"If a tag was not added on purpose, please state why and what changed."
-I don't see any explanation in the changelog about it.
+Wait, what kind of optional are we talking about here? Surely all the
+i2s and tdm external clocks are optional in the sense that you don't
+need them on a board that never does any audio processing.
 
-Best regards,
-Krzysztof
+/Emil
 
+>
+> Best regards,
+> Hal
