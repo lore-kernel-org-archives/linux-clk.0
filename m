@@ -2,111 +2,123 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F28C61DA4
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 09:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06CE0C74A4B
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 10:25:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230193AbjCMJqR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Mar 2023 05:46:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48668 "EHLO
+        id S229742AbjCMKZZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Mar 2023 06:25:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229612AbjCMJqQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 05:46:16 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1DE728208
-        for <linux-clk@vger.kernel.org>; Mon, 13 Mar 2023 02:46:00 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pbekf-0001xo-DD; Mon, 13 Mar 2023 10:45:57 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pbeke-003okY-2i; Mon, 13 Mar 2023 10:45:56 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pbekd-004Utn-Ao; Mon, 13 Mar 2023 10:45:55 +0100
-Date:   Mon, 13 Mar 2023 10:45:55 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 01/30] clk: mediatek: Make mtk_clk_simple_remove() return
- void
-Message-ID: <20230313094555.5w36kjkybiukan5j@pengutronix.de>
-References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
- <20230312161512.2715500-2-u.kleine-koenig@pengutronix.de>
- <d0a2eb84-4420-8b6c-bd97-e58aa47be289@collabora.com>
+        with ESMTP id S229792AbjCMKZX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 06:25:23 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E05E18152;
+        Mon, 13 Mar 2023 03:25:20 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 204C75FD0B;
+        Mon, 13 Mar 2023 13:25:17 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1678703117;
+        bh=3oXZsLeafS38+qYJFdTL8leUTox2P7WbbzgFUBRnCNg=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+        b=Qv/6hWdUh6jbEDRyIaWb0tKazL9ceDy5A4eBl9oL1x15fhKp0lC3vw3j324sOYQ0v
+         6xUgWl2C/Qt2YbkdjVoKgbGd8evAqrEUN4qI8MXoluGDowAAJbyREitrFmUd5mtcP1
+         Vb86myzYsKE7owVQq6dkJXyTvbxG1zJ52VDRSB4VRjGeQ/uqHS/+sQ5ESTa78y7EP5
+         B/RmhZOkv8c8x5AFQSp2KlHC2db1nH+lwfJQzSwThjC3v79A9Iy1D8skAuOD9cdziT
+         abV2qOGPZiflje6hBIFK+HijGFq3u1tLoSiv4KrTqWT0dVjrx8rkpIUQEnf47NMx+u
+         cMvfkYXcMB4wQ==
+Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Mon, 13 Mar 2023 13:25:16 +0300 (MSK)
+Date:   Mon, 13 Mar 2023 13:25:16 +0300
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+CC:     <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
+        <martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
+        <kernel@sberdevices.ru>, <rockosov@gmail.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v9 2/5] clk: meson: a1: add Amlogic A1 PLL clock
+ controller driver
+Message-ID: <20230313102516.grkj4jhkke2w7blm@CAB-WSD-L081021>
+References: <20230301183759.16163-1-ddrokosov@sberdevices.ru>
+ <20230301183759.16163-3-ddrokosov@sberdevices.ru>
+ <1jr0u2azfi.fsf@starbuckisacylon.baylibre.com>
+ <20230306200549.7iuedbl27ejfhf6b@CAB-WSD-L081021>
+ <1jlek60zun.fsf@starbuckisacylon.baylibre.com>
+ <20230309182857.a2fzotcejueio23w@CAB-WSD-L081021>
+ <1j5yb50zxz.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="nats3dcih3a6v62j"
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <d0a2eb84-4420-8b6c-bd97-e58aa47be289@collabora.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+In-Reply-To: <1j5yb50zxz.fsf@starbuckisacylon.baylibre.com>
+User-Agent: NeoMutt/20220415
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
+ S-MS-EXCH01.sberdevices.ru (172.16.1.4)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/03/13 06:38:00 #20941627
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, Mar 13, 2023 at 10:18:02AM +0100, Jerome Brunet wrote:
+> 
+> On Thu 09 Mar 2023 at 21:28, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
+> 
+> >> >> 
+> >> >> This last poke should not bits otherwise handled by parms.
+> >> >> This is a rate init in disguise.
+> >> >> 
+> >> >
+> >> > I believe, you are talking about hifi_pll clk_regmap conflicts with
+> >> > hifi_init_regs. The above init sequence shouldn't affect pll regmap setup,
+> >> > it doesn't touch them (we assume that default bit values are all zero):
+> >> >
+> >> >     .en = {
+> >> >         .reg_off = ANACTRL_HIFIPLL_CTRL0,
+> >> >         .shift   = 28,
+> >> >         .width   = 1,
+> >> >     },
+> >> >     // init_value = 0x01f18440
+> >> >     // en_mask    = 0x10000000
+> >> >
+> >> >     .m = {
+> >> >         .reg_off = ANACTRL_HIFIPLL_CTRL0,
+> >> >         .shift   = 0,
+> >> >         .width   = 8,
+> >> >     },
+> >> >     // init_value = 0x01f18440
+> >> >     // m_mask     = 0x0000000f
+> >> 
+> >> mask is 0xff with width 8
+> >> 
+> >
+> > Ah, you're right. Anyway, I think this is just init value and it's okay
+> > to set it during initialization and rewrite after in parameter
+> > propagation stage.
+> >
+> 
+> ... But the magic pokes are there only to initialize the unmanaged part
+> of the clock regs. I'd like it to be clear and stay that way.
+> 
+> So please, clear the managed fields from the initial poke table.
 
---nats3dcih3a6v62j
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I've double checked hifi_pll clk. In the my current configuration no any
+clks inherited from it. Therefore its 'enable_count' equals to 0.
+And of course in the such situation the rate must be zeroed as well.
+It means you are right at all. I'll remove pre_sel and fbkdiv hifi_pll
+pre-setup in the next version.
+Thank you for hunted down!
 
-Hello Angelo,
-
-On Mon, Mar 13, 2023 at 09:54:07AM +0100, AngeloGioacchino Del Regno wrote:
-> Il 12/03/23 17:14, Uwe Kleine-K=F6nig ha scritto:
-> > mtk_clk_simple_remove() returned zero unconditionally. Make it return no
-> > value instead and convert the respective drivers to .remove_new.
-> >=20
-> > This makes the semantics in the callers of mtk_clk_simple_remove() clea=
-rer
-> > and prepares for the quest to make platform driver's remove function re=
-turn
-> > void.
-> >=20
-> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
->=20
-> Hello Uwe,
->=20
-> since there's a big cleanup series that is well reviewed and that is touc=
-hing
-> practically all MediaTek clock drivers, can you please rebase this commit=
- over
-> [1]?
-
-I'll wait a bit until this series is in and then rebase and resend.
-Thanks for letting me know.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---nats3dcih3a6v62j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmQO8NAACgkQwfwUeK3K
-7AlSiAf/USrTyLSCOBQ/pxTpNaDcBd1ckdBpfIm3VyM/+KK5lPesPql8tHCB5xbo
-zwj78lmc3iBA2w5KuR8Hg3oxPVvXCysR/XmSBMizRzotJyts7D3zl/0geMWok5w8
-uGeXfeWjsEvuWWEbYP87D6c2H3A+gT2xMC3Rj822nrOFbedND9UwK4FZAtMBrqm+
-tYPONXJcv2lxQ8pcgpRRdZ6jfsT508k4EZ4o1lZPywn+72KwcrRX3shcCyd4k586
-EnRNPqoDKmJZ44a/Bq86qh/BoTsqlqpv5DV1lKwIjHceR551lBS2hnIbT1O5FV6w
-AE+mTyE2NCdTZpOO38xyNT6tKqouVA==
-=fX9n
------END PGP SIGNATURE-----
-
---nats3dcih3a6v62j--
+-- 
+Thank you,
+Dmitry
