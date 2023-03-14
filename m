@@ -2,459 +2,191 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7803AC74A44
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 10:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF5AC6FD1D
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 11:15:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229950AbjCNKFX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Mar 2023 06:05:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47512 "EHLO
+        id S230346AbjCNLPT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Mar 2023 07:15:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229814AbjCNKFW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 06:05:22 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A223C637E6
-        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2023 03:05:18 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id o5-20020a05600c510500b003ec0e4ec6deso6639339wms.3
-        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2023 03:05:18 -0700 (PDT)
+        with ESMTP id S231354AbjCNLOr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 07:14:47 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 338A87A9E;
+        Tue, 14 Mar 2023 04:14:16 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id qa18-20020a17090b4fd200b0023750b675f5so20002088pjb.3;
+        Tue, 14 Mar 2023 04:14:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1678788317;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mHJ2BlNCHzZNJ+PeIcSkNJ8xPYEE7jjHajBGYh/Esp0=;
-        b=0eUvRPd0LEFKeN4ExLeUPUM6orE75LEkykN2PyFpe9qWWgVjBIccJylxTRLnXleCvx
-         p9JQJ7Bx6dIuNwi5mEnQeT0Pv8OocozwlTAvcpMILbJ2wfYofYbsMYntbQzLMdTeluW6
-         T/IUS7EKDIthBiMvi/DGzPJNnm8vsZET0NuJ0hJdVxl2WmrTsmEhfA1tMF924vIxEhKY
-         Yllu/vHWXZA5iIr3LCeadS2YrXXnV7qLWZ7PoStnjf7REhT3nhfb32v6ipq9VNXHCUQM
-         hhwyEskq49ZzY5pA9sV1OYe8VsT9CGO+0vjWMd5xR0SE/QMZAATwDVp7WU490yAUh9qi
-         UYwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678788317;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20210112; t=1678792449;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mHJ2BlNCHzZNJ+PeIcSkNJ8xPYEE7jjHajBGYh/Esp0=;
-        b=a2PkqP2uk0/kTdLZAMBCkMEXY90wtRtQWy37NUrUM67t314WTTL++lIPrQeOsqYjYg
-         JWZU3fPihqBb55/kS5cNA8tqb6V5NyUD9xGuYMSXFE/RDhLwLVYD+pWIMCgEK7sWzP3B
-         RpCTerbeLl5c0NLmVUAUZNQCCxOy1mhN65J4wbnT5rONgsVJWI+DluunwnAaiWkte4rT
-         OpTpz6jFKYCR4E08KkO6dRG11oDHABgJ7B8R0N6GMm7QAVQsbsmOZKtPnwMITF7M0t/D
-         HhwhHHn6pxI53Spb8vJddzZRhjZ/Gx4+2f0sMNDGJHdJiihFek6P9VC8CbsrFmBX88U8
-         P9sA==
-X-Gm-Message-State: AO0yUKWnC8rkCgY0wSzrY/bXfqUo5jRNAmcXhMmOrMW/ssNuXTEZ0+ap
-        nsy0UBphPqrB6vF5xRC9GW836g==
-X-Google-Smtp-Source: AK7set/vhWMaj3UeJQAuytBkmY8X1MYJemK0fnWlGedVGfe6JJpKzV3Azij69JVdWVDCQ8sXCGzCJA==
-X-Received: by 2002:a05:600c:3107:b0:3dc:55d9:ec8 with SMTP id g7-20020a05600c310700b003dc55d90ec8mr12834473wmo.41.1678788317055;
-        Tue, 14 Mar 2023 03:05:17 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id g15-20020a05600c310f00b003dc4480df80sm2500582wmo.34.2023.03.14.03.05.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Mar 2023 03:05:16 -0700 (PDT)
-Date:   Tue, 14 Mar 2023 11:05:15 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Vadim Fedorenko <vadfed@meta.com>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>, poros@redhat.com,
-        mschmidt@redhat.com, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH RFC v6 6/6] ptp_ocp: implement DPLL ops
-Message-ID: <ZBBG2xRhLOIPMD0+@nanopsycho>
-References: <20230312022807.278528-1-vadfed@meta.com>
- <20230312022807.278528-7-vadfed@meta.com>
+        bh=5mgq4Gb4nShxf6TmYlZiPVcRLWKemqujm5F/88PcXx0=;
+        b=jwI6NyZ0sHbAv2SfupII60ISsAxcvwhbvvEgvI+TmfW1RSRtVcPPGiTr8xfzMdaTCC
+         o1ZCosT4jfzfZpRY/1sr2SM8g8T1BNYzKPOe1mpGqXYz6DOuFKOP1vEMtCtBzCkxyHFk
+         2FXqD+wPzojonD/YljZRMMHFPZCl9vINZfBT0VeMinSpkjpCMLF4r6OxX1XFarJV4GGj
+         ZkMpEocFDRf4Fc8MlHShnbWrruhn7U5FXVigquyiKjRkNXyRUUvG4+QWfI4/6fyoT8tu
+         TIt05b+4QU1tEw6hm6nEY/7SIZLbmK8o/WPRoFzZ07MtlD+tYW6lb8/GNi5awont9yZb
+         g9iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678792449;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5mgq4Gb4nShxf6TmYlZiPVcRLWKemqujm5F/88PcXx0=;
+        b=kdTG0EB/Q34miyJQOttOdJPVw4e1Da2WzCAiWEEFfr2kKMkbQTtzqT+V4+ukC94QkC
+         TTGH5skPneiC9lCkggwqnxJoLBVPWkq3yeAOIWzHBHXG0tfl+fX5v6yNKnozmPO4tcZ8
+         prvXimys70LRc8QAqFh8urA3wcyt3K0KqL/4/ZhTbxJv/7v0vSR61W6NKLiJNvF2y/o1
+         sQV9jqqhwgTNWVQSNMDE4cJTEoY/2b+B0L+YvIOPYT4LhS8S14Gl+4JVv7hsOYFSsgbh
+         xZ1H9FQduoXdktVF3R4E8Rj19d73K0I5xtBidc1HkZEhyiyRm9VJjhHZqb1Pa5UUqsXC
+         Aikg==
+X-Gm-Message-State: AO0yUKXxJDMxzdKe6kd0nH7nZsvVAye3wt4eRDhEyqUR8464HeCv1TAt
+        ltZGo2T7OVjcKmGctPIC3HPOOM3HqFPDIoro+hk=
+X-Google-Smtp-Source: AK7set9HY2xm2VayZK7HhUQVDsETGJKyT3ZFyHR/3YD/mhiNHc3TesK1jlt6LDa+ywQeB0bNBKQs8ZLdMhxgF1pdIRg=
+X-Received: by 2002:a17:902:fa8f:b0:1a0:5057:1b81 with SMTP id
+ lc15-20020a170902fa8f00b001a050571b81mr2230680plb.3.1678792449416; Tue, 14
+ Mar 2023 04:14:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230312022807.278528-7-vadfed@meta.com>
+References: <20230314024449.50151-1-aford173@gmail.com> <DU0PR04MB9417C49457C9E60898E6A92188BE9@DU0PR04MB9417.eurprd04.prod.outlook.com>
+In-Reply-To: <DU0PR04MB9417C49457C9E60898E6A92188BE9@DU0PR04MB9417.eurprd04.prod.outlook.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Tue, 14 Mar 2023 06:13:57 -0500
+Message-ID: <CAHCN7xK8DyRa-NbAnQrZdkU279kHZqXAB2WCH96HgsULxzVKRw@mail.gmail.com>
+Subject: Re: [RFC] clk: imx: Let IMX8MN_CLK_DISP_PIXEL set parent rate
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Sun, Mar 12, 2023 at 03:28:07AM CET, vadfed@meta.com wrote:
->Implement basic DPLL operations in ptp_ocp driver as the
->simplest example of using new subsystem.
+On Mon, Mar 13, 2023 at 11:39=E2=80=AFPM Peng Fan <peng.fan@nxp.com> wrote:
 >
->Signed-off-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
->---
-> drivers/ptp/Kconfig   |   1 +
-> drivers/ptp/ptp_ocp.c | 209 ++++++++++++++++++++++++++++++++++++++++--
-> 2 files changed, 200 insertions(+), 10 deletions(-)
+> > Subject: [RFC] clk: imx: Let IMX8MN_CLK_DISP_PIXEL set parent rate
+> >
+> > By default the display pixel clock needs to be evenly divide down from
+> > 594MHz which rules out a significant number of resolution and refresh r=
+ates.
+> > The current clock tree looks something like:
+> >
+> >  video_pll                594000000
+> >   video_pll_bypass        594000000
+> >    video_pll_out          594000000
+> >     disp_pixel            148500000
+> >      disp_pixel_clk       148500000
+> >
+> > To enable CLK_SET_RATE_PARENT on disp_pixel, a helper function needs to
+> > be added called imx8m_clk_hw_composite_flags which can pass the
+> > additional flag to the clock controller. Letting disp_pixel set video_p=
+ll_out
+> > rate should actually lower the clock rates of video_pll_bypass and vide=
+o_pll
+> > as well, since those clocks are already configured to enable
+> > CLK_SET_RATE_PARENT.
+> >
+> > Signed-off-by: Adam Ford <aford173@gmail.com>
+> > ---
+> >
+> > This is an RFC, because even with this patch, the video_pll_out clock d=
+oes
+> > not drop to 148500000 like I would expect.  The video_pll clock is a
+> > fractional pll, so it should be able to generate a significant number o=
+f
+> > optional clock frequencies to facilitate video.
+> [Peng Fan]
 >
->diff --git a/drivers/ptp/Kconfig b/drivers/ptp/Kconfig
->index fe4971b65c64..8c4cfabc1bfa 100644
->--- a/drivers/ptp/Kconfig
->+++ b/drivers/ptp/Kconfig
->@@ -177,6 +177,7 @@ config PTP_1588_CLOCK_OCP
-> 	depends on COMMON_CLK
-> 	select NET_DEVLINK
-> 	select CRC16
->+	select DPLL
-> 	help
-> 	  This driver adds support for an OpenCompute time card.
-> 
->diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
->index 4bbaccd543ad..02c95e724ec8 100644
->--- a/drivers/ptp/ptp_ocp.c
->+++ b/drivers/ptp/ptp_ocp.c
->@@ -23,6 +23,8 @@
-> #include <linux/mtd/mtd.h>
-> #include <linux/nvmem-consumer.h>
-> #include <linux/crc16.h>
->+#include <linux/dpll.h>
->+#include <uapi/linux/dpll.h>
+> Have you ever tried to directly set video pll out clk to the freq that yo=
+u wanna?
 
-Don't include UAPI directly. I'm pretty sure I had this comment earlier.
+In the application I am using, I have the DSI connected to an HDMI
+bridge, so some resolutions and refresh rates work, as long as they
+are evenly divisible from 594000000.  I am testing a series that was
+recently submitted to enable DSI on the i.MX8M Mini and Nano.
 
+If I manually change the video_pll to different frequencies, I can get
+other resolutions and refresh rates to work, but it then breaks the
+ones that I had previously working.  NXP's downstream code [1] as a
+comment added code to the ADV7511 driver which filters out clocks that
+are not divisible from 594 to mask the issue. It's listed as a TODO,
+and I think the author is blaming the ADV7511 driver, but  from my
+experience it's from the LCDIF clock not being able to reach to the
+proper value.  I think fixing this would also fix NXP's TODO list as
+well.
 
-> 
-> #define PCI_VENDOR_ID_FACEBOOK			0x1d9b
-> #define PCI_DEVICE_ID_FACEBOOK_TIMECARD		0x0400
->@@ -267,6 +269,7 @@ struct ptp_ocp_sma_connector {
-> 	bool	fixed_dir;
-> 	bool	disabled;
-> 	u8	default_fcn;
->+	struct dpll_pin *dpll_pin;
-> };
-> 
-> struct ocp_attr_group {
->@@ -353,6 +356,7 @@ struct ptp_ocp {
-> 	struct ptp_ocp_signal	signal[4];
-> 	struct ptp_ocp_sma_connector sma[4];
+I had modified the MXSFB driver to set the video_pll in addition to
+setting the disp_plixel_clk and I was able to sync many different
+resolutions and refresh rates, but I was told [2] that the solution
+would be to fix the clock driver by setting the parent clock rate,
+which is how I got here.
 
-It is quite customary to use defines for const numbers like this. Why
-don't you do that in ptp_ocp?
+adam
 
+[1] - https://github.com/nxp-imx/linux-imx/blob/lf-5.15.y/drivers/gpu/drm/b=
+ridge/adv7511/adv7511_drv.c#L80
+[2] - https://lore.kernel.org/linux-arm-kernel/20230313112937.GC7446@pengut=
+ronix.de/T/
 
-> 	const struct ocp_sma_op *sma_op;
->+	struct dpll_device *dpll;
-> };
-> 
-> #define OCP_REQ_TIMESTAMP	BIT(0)
->@@ -2689,16 +2693,9 @@ sma4_show(struct device *dev, struct device_attribute *attr, char *buf)
-> }
-> 
-> static int
->-ptp_ocp_sma_store(struct ptp_ocp *bp, const char *buf, int sma_nr)
->+ptp_ocp_sma_store_val(struct ptp_ocp *bp, int val, enum ptp_ocp_sma_mode mode, int sma_nr)
-> {
-> 	struct ptp_ocp_sma_connector *sma = &bp->sma[sma_nr - 1];
->-	enum ptp_ocp_sma_mode mode;
->-	int val;
->-
->-	mode = sma->mode;
->-	val = sma_parse_inputs(bp->sma_op->tbl, buf, &mode);
->-	if (val < 0)
->-		return val;
-> 
-> 	if (sma->fixed_dir && (mode != sma->mode || val & SMA_DISABLE))
-> 		return -EOPNOTSUPP;
->@@ -2733,6 +2730,21 @@ ptp_ocp_sma_store(struct ptp_ocp *bp, const char *buf, int sma_nr)
-> 	return val;
-> }
-> 
->+static int
->+ptp_ocp_sma_store(struct ptp_ocp *bp, const char *buf, int sma_nr)
->+{
->+	struct ptp_ocp_sma_connector *sma = &bp->sma[sma_nr - 1];
->+	enum ptp_ocp_sma_mode mode;
->+	int val;
->+
->+	mode = sma->mode;
->+	val = sma_parse_inputs(bp->sma_op->tbl, buf, &mode);
->+	if (val < 0)
->+		return val;
->+
->+	return ptp_ocp_sma_store_val(bp, val, mode, sma_nr);
->+}
->+
-> static ssize_t
-> sma1_store(struct device *dev, struct device_attribute *attr,
-> 	   const char *buf, size_t count)
->@@ -4171,12 +4183,151 @@ ptp_ocp_detach(struct ptp_ocp *bp)
-> 	device_unregister(&bp->dev);
-> }
-> 
->+static int ptp_ocp_dpll_pin_to_sma(const struct ptp_ocp *bp, const struct dpll_pin *pin)
->+{
->+	int i;
->+
->+	for (i = 0; i < 4; i++) {
->+		if (bp->sma[i].dpll_pin == pin)
->+			return i;
-
-Just pass &bp->sma[i] as a priv to dpll_pin_register().
-and get that pointer directly in pin ops. No need for lookup and use of
-sma_nr at all.
-
-
->+	}
->+	return -1;
->+}
->+
->+static int ptp_ocp_dpll_lock_status_get(const struct dpll_device *dpll,
->+				    enum dpll_lock_status *status,
->+				    struct netlink_ext_ack *extack)
->+{
->+	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
-
-No need to cast (void *), remove it.
-
-
->+	int sync;
->+
->+	sync = ioread32(&bp->reg->status) & OCP_STATUS_IN_SYNC;
->+	*status = sync ? DPLL_LOCK_STATUS_LOCKED : DPLL_LOCK_STATUS_UNLOCKED;
->+
->+	return 0;
->+}
->+
->+static int ptp_ocp_dpll_source_idx_get(const struct dpll_device *dpll,
->+				    u32 *idx, struct netlink_ext_ack *extack)
->+{
->+	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
->+
->+	if (bp->pps_select) {
->+		*idx = ioread32(&bp->pps_select->gpio1);
->+		return 0;
->+	}
->+	return -EINVAL;
->+}
->+
->+static int ptp_ocp_dpll_mode_get(const struct dpll_device *dpll,
->+				    u32 *mode, struct netlink_ext_ack *extack)
->+{
->+	*mode = DPLL_MODE_AUTOMATIC;
->+
-
-No need for empty line, I believe.
-
-
->+	return 0;
->+}
->+
->+static bool ptp_ocp_dpll_mode_supported(const struct dpll_device *dpll,
->+				    const enum dpll_mode mode,
->+				    struct netlink_ext_ack *extack)
->+{
->+	if (mode == DPLL_MODE_AUTOMATIC)
->+		return true;
->+
->+	return false;
-
-Just:
-	return mode == DPLL_MODE_AUTOMATIC;
-
->+}
->+
->+static int ptp_ocp_dpll_direction_get(const struct dpll_pin *pin,
->+				     const struct dpll_device *dpll,
->+				     enum dpll_pin_direction *direction,
->+				     struct netlink_ext_ack *extack)
->+{
->+	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
->+	int sma_nr = ptp_ocp_dpll_pin_to_sma(bp, pin);
->+
->+	if (sma_nr < 0)
->+		return -EINVAL;
->+
->+	*direction = bp->sma[sma_nr].mode == SMA_MODE_IN ? DPLL_PIN_DIRECTION_SOURCE :
->+							   DPLL_PIN_DIRECTION_OUTPUT;
->+	return 0;
->+}
->+
->+static int ptp_ocp_dpll_direction_set(const struct dpll_pin *pin,
->+				     const struct dpll_device *dpll,
->+				     enum dpll_pin_direction direction,
->+				     struct netlink_ext_ack *extack)
->+{
->+	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
->+	int sma_nr = ptp_ocp_dpll_pin_to_sma(bp, pin);
->+	enum ptp_ocp_sma_mode mode;
->+
->+	if (sma_nr < 0)
->+		return -EINVAL;
->+
->+	mode = direction == DPLL_PIN_DIRECTION_SOURCE ? SMA_MODE_IN : SMA_MODE_OUT;
->+	return ptp_ocp_sma_store_val(bp, 0, mode, sma_nr);
->+}
->+
->+static int ptp_ocp_dpll_frequency_set(const struct dpll_pin *pin,
->+			      const struct dpll_device *dpll,
->+			      const u32 frequency,
-
-Why you need const for u32?
-
-
->+			      struct netlink_ext_ack *extack)
->+{
->+	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
->+	int sma_nr = ptp_ocp_dpll_pin_to_sma(bp, pin);
->+	int val = frequency == 10000000 ? 0 : 1;
-
-This is weird. I believe you should handle unsupported frequencies
-gracefully.
-
-
->+
->+	if (sma_nr < 0)
->+		return -EINVAL;
->+
->+
-
-Avoid double empty lines.
-
-
->+	return ptp_ocp_sma_store_val(bp, val, bp->sma[sma_nr].mode, sma_nr);
->+}
->+
->+static int ptp_ocp_dpll_frequency_get(const struct dpll_pin *pin,
->+			      const struct dpll_device *dpll,
->+			      u32 *frequency,
->+			      struct netlink_ext_ack *extack)
->+{
->+	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
->+	int sma_nr = ptp_ocp_dpll_pin_to_sma(bp, pin);
->+	u32 val;
->+
->+	if (sma_nr < 0)
->+		return -EINVAL;
->+
->+	val = bp->sma_op->get(bp, sma_nr);
->+	if (!val)
->+		*frequency = 1000000;
->+	else
->+		*frequency = 0;
-
-I don't follow. How the frequency could be 0? Does that mean that the
-pin is disabled? If yes, you should rather implement
-.state_on_dpll_get
-.state_on_dpll_set
-
-and leave the frequency constant.
-
-
->+	return 0;
->+}
->+
->+static struct dpll_device_ops dpll_ops = {
-
-const
-
-
->+	.lock_status_get = ptp_ocp_dpll_lock_status_get,
->+	.source_pin_idx_get = ptp_ocp_dpll_source_idx_get,
-
-Should be called "source_pin_get" and return (struct dpll_pin *)
-On the driver api level, no reason to pass indexes. Work with objects.
-
-
->+	.mode_get = ptp_ocp_dpll_mode_get,
->+	.mode_supported = ptp_ocp_dpll_mode_supported,
->+};
->+
->+static struct dpll_pin_ops dpll_pins_ops = {
-
-const
-
-
->+	.frequency_get = ptp_ocp_dpll_frequency_get,
->+	.frequency_set = ptp_ocp_dpll_frequency_set,
->+	.direction_get = ptp_ocp_dpll_direction_get,
->+	.direction_set = ptp_ocp_dpll_direction_set,
->+};
->+
-> static int
-> ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-> {
->+	struct dpll_pin_properties prop;
-> 	struct devlink *devlink;
->+	char sma[4] = "SMA0";
-
-Won't fit. Just use:
-char *sma = "SMA0"
-to be safe
-
-
-> 	struct ptp_ocp *bp;
->-	int err;
->+	int err, i;
->+	u64 clkid;
-> 
-> 	devlink = devlink_alloc(&ptp_ocp_devlink_ops, sizeof(*bp), &pdev->dev);
-> 	if (!devlink) {
->@@ -4226,8 +4377,44 @@ ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-> 
-> 	ptp_ocp_info(bp);
-> 	devlink_register(devlink);
->-	return 0;
-> 
->+	clkid = pci_get_dsn(pdev);
->+	bp->dpll = dpll_device_get(clkid, 0, THIS_MODULE);
->+	if (!bp->dpll) {
->+		dev_err(&pdev->dev, "dpll_device_alloc failed\n");
->+		goto out;
->+	}
->+
->+	err = dpll_device_register(bp->dpll, DPLL_TYPE_PPS, &dpll_ops, bp, &pdev->dev);
->+	if (err)
->+		goto out;
->+
->+	prop.description = &sma[0];
->+	prop.freq_supported = DPLL_PIN_FREQ_SUPP_MAX;
->+	prop.type = DPLL_PIN_TYPE_EXT;
->+	prop.any_freq_max = 10000000;
->+	prop.any_freq_min = 0;
->+	prop.capabilities = DPLL_PIN_CAPS_DIRECTION_CAN_CHANGE;
->+
->+	for (i = 0; i < 4; i++) {
->+		sma[3] = 0x31 + i;
-
-Ugh. Just use the static const array as I suggested in the dpll patch
-reply. Helps you avoid this sort of "magic".
-
-
->+		bp->sma[i].dpll_pin = dpll_pin_get(clkid, i, THIS_MODULE, &prop);
->+		if (IS_ERR_OR_NULL(bp->sma[i].dpll_pin)) {
-
-How it could be NULL?
-
-
->+			bp->sma[i].dpll_pin = NULL;
-
-This would not be needed if the error path iterates over
-indexes which were successul.
-
-
->+			goto out_dpll;
->+		}
->+		err = dpll_pin_register(bp->dpll, bp->sma[i].dpll_pin, &dpll_pins_ops, bp, NULL);
->+		if (err)
->+			goto out_dpll;
->+	}
->+
->+	return 0;
->+out_dpll:
->+	for (i = 0; i < 4; i++) {
->+		if (bp->sma[i].dpll_pin)
-
-You don't do unregister of pin here.
-
-
->+			dpll_pin_put(bp->sma[i].dpll_pin);
->+	}
->+	dpll_device_put(bp->dpll);
-> out:
-> 	ptp_ocp_detach(bp);
-> out_disable:
->@@ -4243,6 +4430,8 @@ ptp_ocp_remove(struct pci_dev *pdev)
-> 	struct ptp_ocp *bp = pci_get_drvdata(pdev);
-> 	struct devlink *devlink = priv_to_devlink(bp);
-> 
->+	dpll_device_unregister(bp->dpll);
->+	dpll_device_put(bp->dpll);
-> 	devlink_unregister(devlink);
-> 	ptp_ocp_detach(bp);
-> 	pci_disable_device(pdev);
->-- 
->2.34.1
+>
+> Regards,
+> Peng.
+>
+> >
+> > diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.=
+c
+> > index af256ade554f..a116cc40d7d0 100644
+> > --- a/drivers/clk/imx/clk-imx8mn.c
+> > +++ b/drivers/clk/imx/clk-imx8mn.c
+> > @@ -470,7 +470,7 @@ static int imx8mn_clocks_probe(struct
+> > platform_device *pdev)
+> >       hws[IMX8MN_CLK_DRAM_ALT] =3D
+> > imx8m_clk_hw_fw_managed_composite("dram_alt",
+> > imx8mn_dram_alt_sels, base + 0xa000);
+> >       hws[IMX8MN_CLK_DRAM_APB] =3D
+> > imx8m_clk_hw_fw_managed_composite_critical("dram_apb",
+> > imx8mn_dram_apb_sels, base + 0xa080);
+> >
+> > -     hws[IMX8MN_CLK_DISP_PIXEL] =3D
+> > imx8m_clk_hw_composite("disp_pixel", imx8mn_disp_pixel_sels, base +
+> > 0xa500);
+> > +     hws[IMX8MN_CLK_DISP_PIXEL] =3D
+> > +imx8m_clk_hw_composite_flags("disp_pixel", imx8mn_disp_pixel_sels,
+> > base
+> > ++ 0xa500, CLK_SET_RATE_PARENT);
+> >       hws[IMX8MN_CLK_SAI2] =3D imx8m_clk_hw_composite("sai2",
+> > imx8mn_sai2_sels, base + 0xa600);
+> >       hws[IMX8MN_CLK_SAI3] =3D imx8m_clk_hw_composite("sai3",
+> > imx8mn_sai3_sels, base + 0xa680);
+> >       hws[IMX8MN_CLK_SAI5] =3D imx8m_clk_hw_composite("sai5",
+> > imx8mn_sai5_sels, base + 0xa780); diff --git a/drivers/clk/imx/clk.h
+> > b/drivers/clk/imx/clk.h index 689b3ad927c0..9977b512845b 100644
+> > --- a/drivers/clk/imx/clk.h
+> > +++ b/drivers/clk/imx/clk.h
+> > @@ -414,6 +414,10 @@ struct clk_hw *__imx8m_clk_hw_composite(const
+> > char *name,
+> >       _imx8m_clk_hw_composite(name, parent_names, reg, \
+> >                       0, IMX_COMPOSITE_CLK_FLAGS_DEFAULT)
+> >
+> > +#define imx8m_clk_hw_composite_flags(name, parent_names, reg, flags)
+> > \
+> > +     _imx8m_clk_hw_composite(name, parent_names, reg, \
+> > +                     0, IMX_COMPOSITE_CLK_FLAGS_DEFAULT |  flags)
+> > +
+> >  #define imx8m_clk_hw_composite_critical(name, parent_names, reg) \
+> >       _imx8m_clk_hw_composite(name, parent_names, reg, \
+> >                       0, IMX_COMPOSITE_CLK_FLAGS_CRITICAL)
+> > --
+> > 2.37.2
 >
