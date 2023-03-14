@@ -2,96 +2,74 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27FEBC61DA4
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Mar 2023 23:23:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD0FC6FD19
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 00:40:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229673AbjCMXW7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Mar 2023 19:22:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55952 "EHLO
+        id S229707AbjCNAkv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Mar 2023 20:40:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbjCMXW6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 19:22:58 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 533B87B9BF;
-        Mon, 13 Mar 2023 16:22:56 -0700 (PDT)
+        with ESMTP id S229616AbjCNAkt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 20:40:49 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA56F87A14;
+        Mon, 13 Mar 2023 17:40:12 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D828A6152C;
-        Mon, 13 Mar 2023 23:22:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BD1CC433EF;
-        Mon, 13 Mar 2023 23:22:55 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 95E3F6157B;
+        Tue, 14 Mar 2023 00:39:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD300C433D2;
+        Tue, 14 Mar 2023 00:39:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678749775;
-        bh=e2T3EnCeToIbB1oGc6Q3Dvzk4LxSn3pFP8jTx088sJs=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=bR116asJKEglby1yrat+gFGDWWT5x1rh4z3Z2BeehrZWPc05TN4B/G8vaJXUllt+/
-         w9KCV3Z3HkzdK8nnYL+jFZpQL3haeCSge+8rhfEOLxUGdLX7Xap9NjmYdXdNQxvjii
-         zaXtb8vCenhjps1oGXxbtRMOqO+YnTXy6UlWOIKmCoW0u3K3fFB99/+TuzBik4cUtg
-         vXtj57ybwUGw5XaVjX7P2HoeVHR+NZ5LEvNRXcZseTSQHM7/Pk8/W3sSO+Cp7YuShA
-         UV+40FCJSQbqtet2ILUmUUq1dscMyxWwD8Afl5ovKK4fuMCaOhQBzxsFX+P1AP4ya5
-         podxAbjicU2QA==
-Message-ID: <6c52bcda08b62593c541d52e269d3982.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1678754347;
+        bh=I5IHq5bn2nVWOr2WOI4rN3AaQ6amvwyigKJTJsYavWY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=RruQ+s06WTk+cgWdUxjMHNjDsZv9dZeRSQBbtDz0mm8ecHaKRqyke90dcSCWbvpdf
+         xOy6FZr9xiRMMF/3D/cbp9YhCSUxmF4asMpc9X0jdYOSBJLfzwpXIkETHdpLgvYyCO
+         6ogWtkTJZhcch7QFSxcA7085rNO2EqjU0h3aQ5qvpCp+OQCJK1bpQylahTJj4TH7b1
+         flkn6Ia7DtYZvHaLvyfmfKFMEcEqxDyH8NMzkQuRtlTccvCTa0Xd09hJOJ+cftRDxb
+         aGOg+4Wf3ZWGxTxeTiNbrB9hUFlgB2r1+ebAK0+DVcjF0WdYdNoqS3IqP3KOrhN7iK
+         GIEJl2rq3Q6LQ==
+Date:   Mon, 13 Mar 2023 17:39:04 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Andrew Halaney <ahalaney@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org,
+        davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        vkoul@kernel.org, bhupesh.sharma@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, peppe.cavallaro@st.com,
+        alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+        mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
+        linux@armlinux.org.uk, veekhee@apple.com,
+        tee.min.tan@linux.intel.com, mohammad.athari.ismail@intel.com,
+        jonathanh@nvidia.com, ruppala@nvidia.com, bmasney@redhat.com,
+        andrey.konovalov@linaro.org, linux-arm-msm@vger.kernel.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, ncai@quicinc.com,
+        jsuraj@qti.qualcomm.com, hisunil@quicinc.com
+Subject: Re: [PATCH net-next 08/11] net: stmmac: Add EMAC3 variant of dwmac4
+Message-ID: <20230313173904.3d611e83@kernel.org>
+In-Reply-To: <20230313165620.128463-9-ahalaney@redhat.com>
+References: <20230313165620.128463-1-ahalaney@redhat.com>
+        <20230313165620.128463-9-ahalaney@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230306140543.1813621-1-angelogioacchino.delregno@collabora.com>
-References: <20230306140543.1813621-1-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v6 00/54] MediaTek clocks: full module build and cleanups
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
-        wenst@chromium.org, johnson.wang@mediatek.com,
-        miles.chen@mediatek.com, chun-jie.chen@mediatek.com,
-        daniel@makrotopia.org, fparent@baylibre.com, msp@baylibre.com,
-        nfraprado@collabora.com, rex-bc.chen@mediatek.com,
-        zhaojh329@gmail.com, sam.shih@mediatek.com,
-        edward-jw.yang@mediatek.com, yangyingliang@huawei.com,
-        granquet@baylibre.com, pablo.sun@mediatek.com,
-        sean.wang@mediatek.com, chen.zhong@mediatek.com,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel@collabora.com
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, mturquette@baylibre.com
-Date:   Mon, 13 Mar 2023 16:22:52 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting AngeloGioacchino Del Regno (2023-03-06 06:04:49)
->=20
-> This huge series adds more cleanups on top, reducing size and adding more
-> commonization for clock drivers probe/remove, which also includes a new
-> common probe mechanism for multimedia clock drivers that are usually
-> probed by mtk-mmsys instead of a dt clock node: thanks to this, it was
-> finally possible to convert almost all clock drivers to the common probe
-> mechanism, which *finally again* makes us able to build all these drivers
-> as modules!
->=20
-> Since this looked like being *the* way forward, I went on converting some
-> more drivers away from OF_CLK_DECLARE_DRIVER to full platform_driver(s),
-> allowing for more (actually, almost all!) drivers to be built as modules.
->=20
-> While at it, I also added some more consistency in macros usage by
-> removing all of the duplicated full macro declaration for MediaTek gate
-> clocks and replacing all of those with using the GATE_MTK macro instead,
-> producing a nice reduction in amount of lines per file but, more
-> importantly, improving readability and eventual future batch changes.
->=20
-> This amount of commonization will also, in my opinion, greatly improve
-> the review process for new clock drivers, as they will be mostly just a
-> list of clocks and won't contain much new code, as it's all going to be
-> handled in the common places, which also reduces chances to see new clock
-> driver related bugs emerging on one SoC or the other.
->=20
-> Since I don't own devices with all of the supported MediaTek SoCs, I
-> could not test some of the conversions on real hardware... but I am
-> confident that this will work as the drivers are *very* similar on a
-> per-generation basis.
->=20
-> This series was build-tested for all (both module and built-in build)
-> and was manually tested on MT6795, MT8173, MT8192, MT8195.
->=20
+On Mon, 13 Mar 2023 11:56:17 -0500 Andrew Halaney wrote:
+> EMAC3 is a Qualcomm variant of dwmac4 that functions the same, but has a
+> different address space layout for MTL and DMA registers. This makes the
+> patch a bit more complicated than we would like so let's explain why the
+> current approach was used.
 
-Applied the whole series to clk-next.
+Please drop all the static inlines in C sources, you're wrapping 
+a single function call, the compiler will do the right thing.
+
+Please no more than 6 function arguments.
