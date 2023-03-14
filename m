@@ -2,103 +2,129 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 639E7C61DA4
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 01:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98284C61DA4
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 02:45:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230120AbjCNBH4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Mar 2023 21:07:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47876 "EHLO
+        id S229950AbjCNCpC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Mar 2023 22:45:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230028AbjCNBHZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 21:07:25 -0400
-Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3BB24867F4;
-        Mon, 13 Mar 2023 18:07:22 -0700 (PDT)
-Received: from loongson.cn (unknown [10.20.42.35])
-        by gateway (Coremail) with SMTP id _____8AxJ_DJyA9k1QkMAA--.16763S3;
-        Tue, 14 Mar 2023 09:07:22 +0800 (CST)
-Received: from [10.20.42.35] (unknown [10.20.42.35])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8AxY+XEyA9kgNZWAA--.49244S3;
-        Tue, 14 Mar 2023 09:07:21 +0800 (CST)
-Subject: Re: [PATCH v13 2/2] clk: clk-loongson2: add clock controller driver
- support
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        with ESMTP id S229911AbjCNCpB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 22:45:01 -0400
+Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 839928ABC4;
+        Mon, 13 Mar 2023 19:44:59 -0700 (PDT)
+Received: by mail-il1-x131.google.com with SMTP id a13so1577242ilr.9;
+        Mon, 13 Mar 2023 19:44:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678761898;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uL9K160y/sGe6aJSZRSqc6tSWBuvSQu9o5Le2ydkv3U=;
+        b=lxySSmNObprtDRo5tCy4GeJ+tbgiAN5HwlW4ZBow7bReCFWOKrhwK/7xuqnwCjN8nL
+         SPw07sc5SHYJT5J8WIjXYjM1Tbrq71vymSPESabbrGcQ8nD+hpAZrodg+aXu6ZJc7apl
+         Ll20WYHiEuPLd09Tu7iBM2XujLmyumxNzGx7KpJACzh3Va5Q8SnzCkft+O5JJLTbc91V
+         T3wDnnMTAAnP4T2W/tmDAtSDRRocDLKEzLW1nvOOmvxh79iRcsTYXaPC733Dzqafzi/a
+         sjS/s6YspRRCdPPHbM7hgQXDvnrjXMHOayt9meY3VaE6PDbHMPGycOsajuFD2F5Wcl2F
+         5V0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678761898;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uL9K160y/sGe6aJSZRSqc6tSWBuvSQu9o5Le2ydkv3U=;
+        b=5+/vvJbTCIUKMfgQt/xluBo5gsQQdZfaOS0HxVEePN3BaV6w7jvj0Vl5+g7YARGLyA
+         i8CxESwWCtiBhphpp6TWf3uvyNPs4q3EKx7B+V8m7XdpiV8UaAfYqeJOFKb6q+S2qNFd
+         miq3zCj19tbFkpnaeAdrPtDGXtMYVwMEctEeT+o2EOX18J8izXd9tB0XTHeQnakkgMpo
+         cM2x97ey5wz85a57w+OoxmN/Mm5J5c3LlaVYCXKcXYzfZkj6kr+pzjzDz2WyWkxCrWcL
+         ipA82OzDWKZBRmYJGSlRYzjNSYnghBgZ+M/Yoxe8KFkznSvqJhqcNIod4UufZ12yJCGd
+         clyA==
+X-Gm-Message-State: AO0yUKXm6b9Qb6yRzGINEaTvJGHg+HHRUhGMc5G1iERUIFj5XNBgMoi+
+        A2/UuEsL/gykjeDF/oUhTYEtm8g2bZk=
+X-Google-Smtp-Source: AK7set89TywbWImMZQTYoKaekvnwnBXYL3FZ90VeUeTdQCi5/3wo8Avs1WaTK9DVARNWmpN1Kw1JFg==
+X-Received: by 2002:a92:330b:0:b0:323:891:6f3a with SMTP id a11-20020a92330b000000b0032308916f3amr990011ilf.4.1678761898378;
+        Mon, 13 Mar 2023 19:44:58 -0700 (PDT)
+Received: from aford-IdeaCentre-A730.lan ([2601:447:d001:897f:c3af:15e4:6ad0:548])
+        by smtp.gmail.com with ESMTPSA id s13-20020a92cc0d000000b00323094e480dsm457499ilp.7.2023.03.13.19.44.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Mar 2023 19:44:57 -0700 (PDT)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     peng.fan@nxp.com, l.stach@pengutronix.de,
+        Adam Ford <aford173@gmail.com>,
+        Abel Vesa <abelvesa@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        kernel test robot <lkp@intel.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, Jianmin Lv <lvjianmin@loongson.cn>,
-        Liu Peibao <liupeibao@loongson.cn>, wanghongliang@loongson.cn,
-        loongson-kernel@lists.loongnix.cn, zhuyinbo@loongson.cn
-References: <20230307115022.12846-2-zhuyinbo@loongson.cn>
- <202303082037.QPfBP64A-lkp@intel.com>
- <b94ee1d2-b224-f9d5-3f3c-0096634f4c93@loongson.cn>
- <ec1fb4d134181a1b1859bcb884dcd494.sboyd@kernel.org>
- <c03e47f7-bb26-0114-b300-357634b0e581@kernel.org>
- <61eee19400e9a45ce9543bfd92a27eaa.sboyd@kernel.org>
-From:   zhuyinbo <zhuyinbo@loongson.cn>
-Message-ID: <958bfe5b-c7c5-3373-a904-d9a32b428e02@loongson.cn>
-Date:   Tue, 14 Mar 2023 09:07:16 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [RFC] clk: imx: Let IMX8MN_CLK_DISP_PIXEL set parent rate
+Date:   Mon, 13 Mar 2023 21:44:49 -0500
+Message-Id: <20230314024449.50151-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-In-Reply-To: <61eee19400e9a45ce9543bfd92a27eaa.sboyd@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID: AQAAf8AxY+XEyA9kgNZWAA--.49244S3
-X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjvJXoW7uFWrGr13tFyrGr15Jry8Grg_yoW8GFyDpa
-        y7Aa4qkw4vqr1Uury0vr1fuFWay3yxJ3W3Xr1DG3s7ur9Y93s5Kas5K3WxW3y5Jr45Cr43
-        X3W8K3y3WF4Yyw7anT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        bD8Fc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUGVWUXwA2ocxC64
-        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28E
-        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM2
-        8EF7xvwVC2z280aVCY1x0267AKxVW8JVW8Jr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq
-        07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7
-        xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
-        z7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxV
-        WUAVWUtwCF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26rWl4I8I3I0E4IkC6x0Y
-        z7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
-        7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j09a9UUUUU=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+By default the display pixel clock needs to be evenly divide
+down from 594MHz which rules out a significant number of
+resolution and refresh rates.
+The current clock tree looks something like:
 
-在 2023/3/14 上午2:20, Stephen Boyd 写道:
-> Quoting Krzysztof Kozlowski (2023-03-10 00:42:47)
->> On 10/03/2023 00:47, Stephen Boyd wrote:
->>> Quoting zhuyinbo (2023-03-08 18:58:02)
->>>> 在 2023/3/8 下午8:16, kernel test robot 写道:
->>>>> Hi Yinbo,
->>>>>
->>> [...]
->>>>>      drivers/clk/clk-loongson2.c: In function 'loongson2_calc_pll_rate':
->>>>>>> drivers/clk/clk-loongson2.c:79:15: error: implicit declaration of function 'readq'; did you mean 'readl'? [-Werror=implicit-function-declaration]
->>>>>         79 |         val = readq(loongson2_pll_base + offset);
->>>>>            |               ^~~~~
->>>>>            |               readl
->>>>>      cc1: some warnings being treated as errors
->>>> The CONFIG_64BIT not enabled in your config file, I will add a depend on
->>>> "CONFIG_64BIT" in my clock driver to fix this compile error.
->>> Do you need to use readq() here? Can you read two 32-bit registers with
->>> readl() and put them together for a 64-bit number?
->> If the platform supports 64-bit reads and these are actually one
->> register, then readq makes sense - code is more readable, smaller, more
->> efficient.
->>
-> Please read the section in Documentation/driver-api/device-io.rst about
-> hi_lo_readq() and <linux/io-64-nonatomic-lo-hi.h>. We shouldn't need to
-> restrict the driver to CONFIG_64BIT. Instead, include one of these
-> header files to get the IO access primitives.
+ video_pll                594000000
+  video_pll_bypass        594000000
+   video_pll_out          594000000
+    disp_pixel            148500000
+     disp_pixel_clk       148500000
 
-okay, I got it.
+To enable CLK_SET_RATE_PARENT on disp_pixel, a helper function
+needs to be added called imx8m_clk_hw_composite_flags which
+can pass the additional flag to the clock controller. Letting
+disp_pixel set video_pll_out rate should actually lower the
+clock rates of video_pll_bypass and video_pll as well, since
+those clocks are already configured to enable CLK_SET_RATE_PARENT.
 
-Thanks your advice!
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+
+This is an RFC, because even with this patch, the video_pll_out clock
+does not drop to 148500000 like I would expect.  The video_pll clock
+is a fractional pll, so it should be able to generate a significant
+number of optional clock frequencies to facilitate video.
+
+diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
+index af256ade554f..a116cc40d7d0 100644
+--- a/drivers/clk/imx/clk-imx8mn.c
++++ b/drivers/clk/imx/clk-imx8mn.c
+@@ -470,7 +470,7 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
+ 	hws[IMX8MN_CLK_DRAM_ALT] = imx8m_clk_hw_fw_managed_composite("dram_alt", imx8mn_dram_alt_sels, base + 0xa000);
+ 	hws[IMX8MN_CLK_DRAM_APB] = imx8m_clk_hw_fw_managed_composite_critical("dram_apb", imx8mn_dram_apb_sels, base + 0xa080);
+ 
+-	hws[IMX8MN_CLK_DISP_PIXEL] = imx8m_clk_hw_composite("disp_pixel", imx8mn_disp_pixel_sels, base + 0xa500);
++	hws[IMX8MN_CLK_DISP_PIXEL] = imx8m_clk_hw_composite_flags("disp_pixel", imx8mn_disp_pixel_sels, base + 0xa500, CLK_SET_RATE_PARENT);
+ 	hws[IMX8MN_CLK_SAI2] = imx8m_clk_hw_composite("sai2", imx8mn_sai2_sels, base + 0xa600);
+ 	hws[IMX8MN_CLK_SAI3] = imx8m_clk_hw_composite("sai3", imx8mn_sai3_sels, base + 0xa680);
+ 	hws[IMX8MN_CLK_SAI5] = imx8m_clk_hw_composite("sai5", imx8mn_sai5_sels, base + 0xa780);
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 689b3ad927c0..9977b512845b 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -414,6 +414,10 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
+ 	_imx8m_clk_hw_composite(name, parent_names, reg, \
+ 			0, IMX_COMPOSITE_CLK_FLAGS_DEFAULT)
+ 
++#define imx8m_clk_hw_composite_flags(name, parent_names, reg, flags) \
++	_imx8m_clk_hw_composite(name, parent_names, reg, \
++			0, IMX_COMPOSITE_CLK_FLAGS_DEFAULT |  flags)
++
+ #define imx8m_clk_hw_composite_critical(name, parent_names, reg) \
+ 	_imx8m_clk_hw_composite(name, parent_names, reg, \
+ 			0, IMX_COMPOSITE_CLK_FLAGS_CRITICAL)
+-- 
+2.37.2
 
