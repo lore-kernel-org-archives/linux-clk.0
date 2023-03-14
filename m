@@ -2,88 +2,110 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BCFFC6FD1C
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 06:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A262DC6FD1C
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 07:22:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229704AbjCNGtt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Mar 2023 02:49:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41686 "EHLO
+        id S229785AbjCNHWP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Mar 2023 03:22:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbjCNGts (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 02:49:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 578A650F9D;
-        Mon, 13 Mar 2023 23:49:47 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S229709AbjCNHWO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 03:22:14 -0400
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B51B60411
+        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2023 00:22:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1678778532; x=1710314532;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=QSbp+j3Lryzh5nHW/M+6DxKV/MdRyvj9Id1UXRl9KLo=;
+  b=pHTvIo7s/jTFehEq3hvYq9Qunc0C8y0kCfHC9KXEsLR916ddotKwrTN4
+   oJVX5IA33tkYC7tKFuzweLNXreNvH50vO3LpRzXFcOkVuAErfemcCadoj
+   tuh7RGAJPjsHupB+zgZA7KT5tTpiKObI4VLOsnCtES6YjSz0YtCC9bqFx
+   uVw9PWLa3/ZWF5Ubr2EbCMi5JXdeGi+hkzdtYrrE4k+VUuqbCxIH0xQfA
+   3A+/BBkS3/u08CLf5CpTcFo7+/v9aA6mxRdzi1/6l9bpZEYk7U//6cvop
+   /Q1rvHWmLoqZPv5R23N9sviqvG+wy4eOVCVj+PuC90OS2IrjGLh8ybO9p
+   g==;
+X-IronPort-AV: E=Sophos;i="5.98,259,1673910000"; 
+   d="scan'208";a="29664688"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 14 Mar 2023 08:22:10 +0100
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Tue, 14 Mar 2023 08:22:10 +0100
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Tue, 14 Mar 2023 08:22:10 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1678778530; x=1710314530;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=QSbp+j3Lryzh5nHW/M+6DxKV/MdRyvj9Id1UXRl9KLo=;
+  b=WRO2xVcb6HMnuHqosrd5FrI6Dkm6cKTGBJN8E/stKhAsKqgAJXywCWVX
+   iO4g2gwdksEI6AHb3ko+tvgS+yv1A20EcPN6UTFYg/PxeyGNyRCpCwTAI
+   zKhT5MHBGSQtc7jDrzVtgd3TZTGdw8y2toeGgsc8oCuErPz/ERspicpsp
+   M7oMIMIxvxSpBlHbFTTqrLzzO8NZwgwIdmrWpFfsrvJIon42MMoKW+PaQ
+   IchnSHMZ15Lgy5fIDxaf7FSAfWwvnovUEMsA+D5nXd0ldP/5SjJS7zGjw
+   w/5vor2p9BYAZPmmPDCcgdDs83midPJ0vERhP0EeO3eyA4KG1Kb+FSvR7
+   A==;
+X-IronPort-AV: E=Sophos;i="5.98,259,1673910000"; 
+   d="scan'208";a="29664687"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 14 Mar 2023 08:22:10 +0100
+Received: from steina-w.localnet (unknown [10.123.53.21])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DFE1E61570;
-        Tue, 14 Mar 2023 06:49:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E7B5C433D2;
-        Tue, 14 Mar 2023 06:49:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678776586;
-        bh=vCpyz//zBAiE3DDnV70snQunPQySkUISt26QGR58L2M=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=dJ2wjyyy+fGA/jE3q8gu9NJHiF5dAQ8LMCFKH33kpSxe5bNyMgoYDOOjjUQeIMCu+
-         clyABbuIb70AHUF9IMC1ljHMsysbzoUsGvPz7t5bhxRqpOpYnvcMFu0tiTPCsipwAu
-         EMIZ9pSdS+Q+t0Gnk1P6i4WaR+47PbzPiIdlL78qXbXnaY6eMik1L0JHGrrvnKllT1
-         duz7m8/9vWRg6KnND0LIiTfkcEpzdUhhRLeDLNYcirGTB7wBlv1oa4+6om0tg6EMNK
-         rbm9loBWx3NwaCbJY7YY7SlpvDhp/JCgHF68lIkI8HwI5WjRM7BKdhuSGgxx1kfGLq
-         79/CKe1G4vSiQ==
-Message-ID: <6ff60914-0c39-9916-2e3a-a906b4cdef0d@kernel.org>
-Date:   Tue, 14 Mar 2023 07:49:40 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v13 2/2] clk: clk-loongson2: add clock controller driver
- support
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>,
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 0FA0C280056;
+        Tue, 14 Mar 2023 08:22:10 +0100 (CET)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     Marek Vasut <marex@denx.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        kernel test robot <lkp@intel.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zhuyinbo <zhuyinbo@loongson.cn>
-Cc:     oe-kbuild-all@lists.linux.dev, Jianmin Lv <lvjianmin@loongson.cn>,
-        Liu Peibao <liupeibao@loongson.cn>, wanghongliang@loongson.cn,
-        loongson-kernel@lists.loongnix.cn
-References: <20230307115022.12846-2-zhuyinbo@loongson.cn>
- <202303082037.QPfBP64A-lkp@intel.com>
- <b94ee1d2-b224-f9d5-3f3c-0096634f4c93@loongson.cn>
- <ec1fb4d134181a1b1859bcb884dcd494.sboyd@kernel.org>
- <c03e47f7-bb26-0114-b300-357634b0e581@kernel.org>
- <61eee19400e9a45ce9543bfd92a27eaa.sboyd@kernel.org>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <61eee19400e9a45ce9543bfd92a27eaa.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/1] clk: rs9: Fix suspend/resume
+Date:   Tue, 14 Mar 2023 08:22:07 +0100
+Message-ID: <3227516.44csPzL39Z@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <a794bd7b3ee514a508c2af3d2b594d10.sboyd@kernel.org>
+References: <20230310074940.3475703-1-alexander.stein@ew.tq-group.com> <a794bd7b3ee514a508c2af3d2b594d10.sboyd@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/03/2023 19:20, Stephen Boyd wrote:
->>>> The CONFIG_64BIT not enabled in your config file, I will add a depend on 
->>>> "CONFIG_64BIT" in my clock driver to fix this compile error.
->>>
->>> Do you need to use readq() here? Can you read two 32-bit registers with
->>> readl() and put them together for a 64-bit number?
->>
->> If the platform supports 64-bit reads and these are actually one
->> register, then readq makes sense - code is more readable, smaller, more
->> efficient.
->>
-> 
-> Please read the section in Documentation/driver-api/device-io.rst about
-> hi_lo_readq() and <linux/io-64-nonatomic-lo-hi.h>. We shouldn't need to
-> restrict the driver to CONFIG_64BIT. Instead, include one of these
-> header files to get the IO access primitives.
+Am Montag, 13. M=E4rz 2023, 23:26:54 CET schrieb Stephen Boyd:
+> Quoting Alexander Stein (2023-03-09 23:49:40)
+>=20
+> > Disabling the cache in commit 2ff4ba9e3702 ("clk: rs9: Fix I2C accessor=
+s")
+> > without removing cache synchronization in resume path results in a
+> > kernel panic as map->cache_ops is unset, due to REGCACHE_NONE.
+> > Enable flat cache again to support resume again. num_reg_defaults_raw
+> > is necessary to read the cache defaults from hardware. Some registers
+> > are strapped in hardware and cannot be provided in software.
+> >=20
+> > Fixes: 2ff4ba9e3702 ("clk: rs9: Fix I2C accessors")
+> > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> > ---
+> > There is also a series to not panic when using regcache_sync on
+> > REGCACHE_NONE maps at [1].
+>=20
+> And it was rejected?
 
-These primitives are for 32bit access. Quoting: "on 32-bit
-architectures". What's the point of them if the code *will never* run on
-32-bit? It will be a fake choice of linux/io-64-nonatomic-lo-hi.h or
-linux/io-64-nonatomic-hi-lo.h misleading users to think this was tested
-on 32-bit.
+v2 has been accepted and is available at [1] in regmap's for-next branch.
 
 Best regards,
-Krzysztof
+Alexander
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git/
+commit/?id=3Dfd883d79e4dcd2417c2b80756f22a2ff03b0f6e0
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
