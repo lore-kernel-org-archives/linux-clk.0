@@ -2,44 +2,39 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD0FC6FD19
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 00:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E722EC61DA4
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 01:00:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229707AbjCNAkv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Mar 2023 20:40:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34312 "EHLO
+        id S229929AbjCNBAU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Mar 2023 21:00:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229616AbjCNAkt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 20:40:49 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA56F87A14;
-        Mon, 13 Mar 2023 17:40:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 95E3F6157B;
-        Tue, 14 Mar 2023 00:39:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD300C433D2;
-        Tue, 14 Mar 2023 00:39:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678754347;
-        bh=I5IHq5bn2nVWOr2WOI4rN3AaQ6amvwyigKJTJsYavWY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=RruQ+s06WTk+cgWdUxjMHNjDsZv9dZeRSQBbtDz0mm8ecHaKRqyke90dcSCWbvpdf
-         xOy6FZr9xiRMMF/3D/cbp9YhCSUxmF4asMpc9X0jdYOSBJLfzwpXIkETHdpLgvYyCO
-         6ogWtkTJZhcch7QFSxcA7085rNO2EqjU0h3aQ5qvpCp+OQCJK1bpQylahTJj4TH7b1
-         flkn6Ia7DtYZvHaLvyfmfKFMEcEqxDyH8NMzkQuRtlTccvCTa0Xd09hJOJ+cftRDxb
-         aGOg+4Wf3ZWGxTxeTiNbrB9hUFlgB2r1+ebAK0+DVcjF0WdYdNoqS3IqP3KOrhN7iK
-         GIEJl2rq3Q6LQ==
-Date:   Mon, 13 Mar 2023 17:39:04 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
+        with ESMTP id S229456AbjCNBAT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 21:00:19 -0400
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 954F51117E;
+        Mon, 13 Mar 2023 18:00:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+        bh=y6fsAeAZisUsOyM9bq21nKdUzGuVcfPdezi6Gdsvp+Y=; b=fOVzAogDt3T/HacpWZZ6HE1vWu
+        jAjiKi7RNHNnADZ8lpo5gJmnxCUdocuklB81QexvrEheh9C9O3Tv7bMksMRuVhBS1SjQLecD6H9he
+        VPPaJO1yKphC28NLSZq/F8ZCtC6fmdHe/tnCMbwxyRLNHU3LRsbko2PM/+uIwaD35TA0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1pbt0t-007FMJ-0v; Tue, 14 Mar 2023 01:59:39 +0100
+Date:   Tue, 14 Mar 2023 01:59:39 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
 To:     Andrew Halaney <ahalaney@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, agross@kernel.org,
         andersson@kernel.org, konrad.dybcio@linaro.org,
-        davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        vkoul@kernel.org, bhupesh.sharma@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, peppe.cavallaro@st.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, vkoul@kernel.org,
+        bhupesh.sharma@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, peppe.cavallaro@st.com,
         alexandre.torgue@foss.st.com, joabreu@synopsys.com,
         mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
         linux@armlinux.org.uk, veekhee@apple.com,
@@ -52,24 +47,31 @@ Cc:     linux-kernel@vger.kernel.org, agross@kernel.org,
         linux-arm-kernel@lists.infradead.org, ncai@quicinc.com,
         jsuraj@qti.qualcomm.com, hisunil@quicinc.com
 Subject: Re: [PATCH net-next 08/11] net: stmmac: Add EMAC3 variant of dwmac4
-Message-ID: <20230313173904.3d611e83@kernel.org>
-In-Reply-To: <20230313165620.128463-9-ahalaney@redhat.com>
+Message-ID: <9dc9eb28-43a9-4eca-b6de-302ce27388bf@lunn.ch>
 References: <20230313165620.128463-1-ahalaney@redhat.com>
-        <20230313165620.128463-9-ahalaney@redhat.com>
+ <20230313165620.128463-9-ahalaney@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230313165620.128463-9-ahalaney@redhat.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 13 Mar 2023 11:56:17 -0500 Andrew Halaney wrote:
-> EMAC3 is a Qualcomm variant of dwmac4 that functions the same, but has a
-> different address space layout for MTL and DMA registers. This makes the
-> patch a bit more complicated than we would like so let's explain why the
-> current approach was used.
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+> index 21aaa2730ac8..9e3d8e1202bd 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+> @@ -281,9 +281,8 @@ static int stmmac_mdio_read_c22(struct mii_bus *bus, int phyaddr, int phyreg)
+>  	value |= (phyreg << priv->hw->mii.reg_shift) & priv->hw->mii.reg_mask;
+>  	value |= (priv->clk_csr << priv->hw->mii.clk_csr_shift)
+>  		& priv->hw->mii.clk_csr_mask;
+> -	if (priv->plat->has_gmac4) {
+> +	if (priv->plat->has_gmac4 || priv->plat->has_emac3)
+>  		value |= MII_GMAC4_READ;
+> -	}
 
-Please drop all the static inlines in C sources, you're wrapping 
-a single function call, the compiler will do the right thing.
+Removing the {} is correct in terms of the coding style, but it should
+be done as part of a separate patch.
 
-Please no more than 6 function arguments.
+	Andrew
