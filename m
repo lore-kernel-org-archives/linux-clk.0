@@ -2,129 +2,76 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98284C61DA4
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 02:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E54B1C6FD1F
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 03:25:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229950AbjCNCpC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Mar 2023 22:45:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51282 "EHLO
+        id S229785AbjCNDZy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Mar 2023 23:25:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229911AbjCNCpB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 22:45:01 -0400
-Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 839928ABC4;
-        Mon, 13 Mar 2023 19:44:59 -0700 (PDT)
-Received: by mail-il1-x131.google.com with SMTP id a13so1577242ilr.9;
-        Mon, 13 Mar 2023 19:44:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678761898;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uL9K160y/sGe6aJSZRSqc6tSWBuvSQu9o5Le2ydkv3U=;
-        b=lxySSmNObprtDRo5tCy4GeJ+tbgiAN5HwlW4ZBow7bReCFWOKrhwK/7xuqnwCjN8nL
-         SPw07sc5SHYJT5J8WIjXYjM1Tbrq71vymSPESabbrGcQ8nD+hpAZrodg+aXu6ZJc7apl
-         Ll20WYHiEuPLd09Tu7iBM2XujLmyumxNzGx7KpJACzh3Va5Q8SnzCkft+O5JJLTbc91V
-         T3wDnnMTAAnP4T2W/tmDAtSDRRocDLKEzLW1nvOOmvxh79iRcsTYXaPC733Dzqafzi/a
-         sjS/s6YspRRCdPPHbM7hgQXDvnrjXMHOayt9meY3VaE6PDbHMPGycOsajuFD2F5Wcl2F
-         5V0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678761898;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uL9K160y/sGe6aJSZRSqc6tSWBuvSQu9o5Le2ydkv3U=;
-        b=5+/vvJbTCIUKMfgQt/xluBo5gsQQdZfaOS0HxVEePN3BaV6w7jvj0Vl5+g7YARGLyA
-         i8CxESwWCtiBhphpp6TWf3uvyNPs4q3EKx7B+V8m7XdpiV8UaAfYqeJOFKb6q+S2qNFd
-         miq3zCj19tbFkpnaeAdrPtDGXtMYVwMEctEeT+o2EOX18J8izXd9tB0XTHeQnakkgMpo
-         cM2x97ey5wz85a57w+OoxmN/Mm5J5c3LlaVYCXKcXYzfZkj6kr+pzjzDz2WyWkxCrWcL
-         ipA82OzDWKZBRmYJGSlRYzjNSYnghBgZ+M/Yoxe8KFkznSvqJhqcNIod4UufZ12yJCGd
-         clyA==
-X-Gm-Message-State: AO0yUKXm6b9Qb6yRzGINEaTvJGHg+HHRUhGMc5G1iERUIFj5XNBgMoi+
-        A2/UuEsL/gykjeDF/oUhTYEtm8g2bZk=
-X-Google-Smtp-Source: AK7set89TywbWImMZQTYoKaekvnwnBXYL3FZ90VeUeTdQCi5/3wo8Avs1WaTK9DVARNWmpN1Kw1JFg==
-X-Received: by 2002:a92:330b:0:b0:323:891:6f3a with SMTP id a11-20020a92330b000000b0032308916f3amr990011ilf.4.1678761898378;
-        Mon, 13 Mar 2023 19:44:58 -0700 (PDT)
-Received: from aford-IdeaCentre-A730.lan ([2601:447:d001:897f:c3af:15e4:6ad0:548])
-        by smtp.gmail.com with ESMTPSA id s13-20020a92cc0d000000b00323094e480dsm457499ilp.7.2023.03.13.19.44.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Mar 2023 19:44:57 -0700 (PDT)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     peng.fan@nxp.com, l.stach@pengutronix.de,
+        with ESMTP id S229480AbjCNDZo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2023 23:25:44 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8C9075861;
+        Mon, 13 Mar 2023 20:25:08 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 74568B816E4;
+        Tue, 14 Mar 2023 03:25:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1609C433D2;
+        Tue, 14 Mar 2023 03:25:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678764306;
+        bh=LfCZNwjOlVYN0x6GoeUL5szz6dZJkIiz+TcBLuPkVhY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=V8dSxK7QaIQwFIpctpoyOo27eQxdXn5eXMrDJPD/xprh29fTrQWwox2rhx19Ax9p0
+         R8SbL2F15q3PBfy56nUaNHAQfUEquHrV/RuxQvZ+Ou0ebqU9VWthCvitZ7NnSNpVIT
+         zzvhYUD1vX9iAi01chH0Ql9UuYaI5IYDW2bpDXghG25uq4gXArFdXl774Z0WcJAs9L
+         sUH9lnnk2JXsJEDIqbQxe1c9ws4OJ4eLd2AdJmnUm7HDp0/hheag8b8Q4isWCqzrdO
+         WBrgycbxAbPg/+aZR0aokactnol0EP0mmX5QjAHeMDYT9lvuwYljqGehY+z37JrsQK
+         NXLrFEnbWiW9g==
+Date:   Tue, 14 Mar 2023 11:24:57 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Marek Vasut <marex@denx.de>
+Cc:     linux-arm-kernel@lists.infradead.org,
         Adam Ford <aford173@gmail.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [RFC] clk: imx: Let IMX8MN_CLK_DISP_PIXEL set parent rate
-Date:   Mon, 13 Mar 2023 21:44:49 -0500
-Message-Id: <20230314024449.50151-1-aford173@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: imx8mn: specify #sound-dai-cells for SAI
+ nodes
+Message-ID: <20230314032457.GO143566@dragon>
+References: <20230228215244.166627-1-marex@denx.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230228215244.166627-1-marex@denx.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-By default the display pixel clock needs to be evenly divide
-down from 594MHz which rules out a significant number of
-resolution and refresh rates.
-The current clock tree looks something like:
+On Tue, Feb 28, 2023 at 10:52:44PM +0100, Marek Vasut wrote:
+> Add #sound-dai-cells properties to SAI nodes.
+> 
+> Reviewed-by: Adam Ford <aford173@gmail.com>
+> Reviewed-by: Fabio Estevam <festevam@gmail.com>
+> Fixes: 9e9860069725 ("arm64: dts: imx8mn: Add SAI nodes")
+> Signed-off-by: Marek Vasut <marex@denx.de>
 
- video_pll                594000000
-  video_pll_bypass        594000000
-   video_pll_out          594000000
-    disp_pixel            148500000
-     disp_pixel_clk       148500000
-
-To enable CLK_SET_RATE_PARENT on disp_pixel, a helper function
-needs to be added called imx8m_clk_hw_composite_flags which
-can pass the additional flag to the clock controller. Letting
-disp_pixel set video_pll_out rate should actually lower the
-clock rates of video_pll_bypass and video_pll as well, since
-those clocks are already configured to enable CLK_SET_RATE_PARENT.
-
-Signed-off-by: Adam Ford <aford173@gmail.com>
----
-
-This is an RFC, because even with this patch, the video_pll_out clock
-does not drop to 148500000 like I would expect.  The video_pll clock
-is a fractional pll, so it should be able to generate a significant
-number of optional clock frequencies to facilitate video.
-
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index af256ade554f..a116cc40d7d0 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -470,7 +470,7 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MN_CLK_DRAM_ALT] = imx8m_clk_hw_fw_managed_composite("dram_alt", imx8mn_dram_alt_sels, base + 0xa000);
- 	hws[IMX8MN_CLK_DRAM_APB] = imx8m_clk_hw_fw_managed_composite_critical("dram_apb", imx8mn_dram_apb_sels, base + 0xa080);
- 
--	hws[IMX8MN_CLK_DISP_PIXEL] = imx8m_clk_hw_composite("disp_pixel", imx8mn_disp_pixel_sels, base + 0xa500);
-+	hws[IMX8MN_CLK_DISP_PIXEL] = imx8m_clk_hw_composite_flags("disp_pixel", imx8mn_disp_pixel_sels, base + 0xa500, CLK_SET_RATE_PARENT);
- 	hws[IMX8MN_CLK_SAI2] = imx8m_clk_hw_composite("sai2", imx8mn_sai2_sels, base + 0xa600);
- 	hws[IMX8MN_CLK_SAI3] = imx8m_clk_hw_composite("sai3", imx8mn_sai3_sels, base + 0xa680);
- 	hws[IMX8MN_CLK_SAI5] = imx8m_clk_hw_composite("sai5", imx8mn_sai5_sels, base + 0xa780);
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 689b3ad927c0..9977b512845b 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -414,6 +414,10 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
- 	_imx8m_clk_hw_composite(name, parent_names, reg, \
- 			0, IMX_COMPOSITE_CLK_FLAGS_DEFAULT)
- 
-+#define imx8m_clk_hw_composite_flags(name, parent_names, reg, flags) \
-+	_imx8m_clk_hw_composite(name, parent_names, reg, \
-+			0, IMX_COMPOSITE_CLK_FLAGS_DEFAULT |  flags)
-+
- #define imx8m_clk_hw_composite_critical(name, parent_names, reg) \
- 	_imx8m_clk_hw_composite(name, parent_names, reg, \
- 			0, IMX_COMPOSITE_CLK_FLAGS_CRITICAL)
--- 
-2.37.2
-
+Applied, thanks!
