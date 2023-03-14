@@ -2,160 +2,232 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C534C6FD1D
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 14:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F86AC6FD1C
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 15:01:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231216AbjCNOxF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Mar 2023 10:53:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51106 "EHLO
+        id S231292AbjCNPBN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Mar 2023 11:01:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230266AbjCNOxB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 10:53:01 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F3162FCFE;
-        Tue, 14 Mar 2023 07:53:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1678805580; x=1710341580;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=ksLcaVD+ZVbIRf58Xl92905c5dgdJpL6M3la/uaLvzw=;
-  b=eTrpBmfRG7tL/FYyw9b2hxyFtE0mkBz3juTwqSrdES9nJ0AZbP9H2Hrr
-   D8QlzwKBJNcZfvXB3IFeBlIGeva2In3nGcA2iTm46hzNS9est7MFclYFo
-   3DjBHBC+vzLM1KhMqNrAyF3upu65ympPjov28m3kfI2SpZAZ+8MvuPt3C
-   60gzbxBOf6qTOvZep62tk022SI7tHGTwEmTQYVAcawsr3FfCkVqr61EDk
-   GuQ9/u8NSsDF5f4HRxs+3yF47FD+BV76qWmNe5vHacqR3my5fufG20XxH
-   KB16YY4j4GpPibYlGaiPyvR9V6XSaF67M/dOt5yOF4magpceEt7h9EP8T
-   w==;
-X-IronPort-AV: E=Sophos;i="5.98,260,1673938800"; 
-   d="scan'208";a="205330665"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 14 Mar 2023 07:52:49 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Tue, 14 Mar 2023 07:52:47 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
- Transport; Tue, 14 Mar 2023 07:52:46 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EtoYtR8TF49wubD3wtB33TGxDkFGeFnqx1i+4Pq31i14SNbQ3K4+xifIXEacZOn1QQ/GXAtiI+GEQFk9d5DcnJdz8dCz1PePtzoWhDl/hGNrBlehNw2dVg8fiGF5h3R7OERelTnb6K2t+StM3Ir6mzIL2qjAVy+pJ6QmePojXoFYBbbKOP5BiT+EAKBrcCufwMCtllHEtbt0o+H5f1wXgyBkQcHKIW1TQnH3BaAZa7kbw8BzAgSPiCA92D60dHIjuKEErtpe8woljz+yB7GY0c03I+TCkjoVkC+1YIEs+HM2fANDmNGz29aYWNBzMui6at/1giUFXi/qsdnFpMYz1g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ksLcaVD+ZVbIRf58Xl92905c5dgdJpL6M3la/uaLvzw=;
- b=DG8d5Wh1jqzwJGmDrzssK0BdSZD7/Z5Jwxxqe/NBZa8hqu9vLFpQslUQt0B3s2DtQ6LrqGeDaqfMpUU5mBFJc9flGZBKzXdysFFr/ar454IDzsGat9sWD0KZMqFRSTHuXQLrgSZKlmJJhjWTMH8Ob5wp9RYphMx7M/oxPZoqXiCiRCsLGi+0FiE7j0PW6Ck4/SkXbkGCyX3L3pIyPvmkiKWdNYm6JqobCW0/swlfVJO5BiuKCHvnISMq4432WjJRqd0fLZIFmeZNcViKMpm2xo1jwh/hBIexPBzdymINDcPHhT1+GMC5eLRjTBjN99aciCQUYi8G+rKdTTSFLVOPfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ksLcaVD+ZVbIRf58Xl92905c5dgdJpL6M3la/uaLvzw=;
- b=J+FF6/5v5KdOpyUxht2Fn82i0AjmdZOiGT9GGkBN03hhKckSaF5DQ+sbNBvqHoRKmyOz4/7iZPpYaDakieG16zGYeMU/BP9djICrFKnv1hqCMytYRlDuZ+KWdRBnno+3UHX1H+n2nptd8Goy9YEaxJGepdHgPcSWkzwM8nQG0hU=
-Received: from BN6PR11MB1953.namprd11.prod.outlook.com (2603:10b6:404:105::14)
- by SJ0PR11MB5770.namprd11.prod.outlook.com (2603:10b6:a03:421::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.24; Tue, 14 Mar
- 2023 14:52:44 +0000
-Received: from BN6PR11MB1953.namprd11.prod.outlook.com
- ([fe80::6eb8:36cd:3f97:ab32]) by BN6PR11MB1953.namprd11.prod.outlook.com
- ([fe80::6eb8:36cd:3f97:ab32%5]) with mapi id 15.20.6178.026; Tue, 14 Mar 2023
- 14:52:43 +0000
-From:   <Claudiu.Beznea@microchip.com>
-To:     <robh@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: microchip: Use of_property_read_bool() for boolean
- properties
-Thread-Topic: [PATCH] clk: microchip: Use of_property_read_bool() for boolean
- properties
-Thread-Index: AQHZVoSiqeBx9m+qbkSy2LCn2je2yw==
-Date:   Tue, 14 Mar 2023 14:52:43 +0000
-Message-ID: <e8bb4890-679c-4820-2620-680cdcafc848@microchip.com>
-References: <20230310144701.1541573-1-robh@kernel.org>
-In-Reply-To: <20230310144701.1541573-1-robh@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN6PR11MB1953:EE_|SJ0PR11MB5770:EE_
-x-ms-office365-filtering-correlation-id: 535d865b-e67f-4470-4e6c-08db249bc486
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: F5CkFqrj7DF8w7b4BtDgC8k9eODC4S+9CtXAM3MmTKyktSDvoXBBVnna8pf0oaH2nQfcgH5kUN4Yl05a1fLx1zp3OjVRqGXipXNeCCp8tLO/SuV2JoZ3uF53TBr5Jg3OlXdUkmB08m+CAXdkvuZ9w/bPlve80vsmnWsG25JFshkzUmSN1eJhZQ62yC9GTGAG7CSaxBkHExzj4Bq4S+JMNvcZ92q6FRc9fr5auyb1v55KZ2ejAfZ0Y2cZ0h6Wu7N4w5z/3CqO7OyZ9rVwifoTISRQbjevhyTFqMt9+FebPCeWnk/6MIL7r2WqFmwCPg+kjcFlKSp+xWPdbeDz1J9YPZ6dvL8wEDdqD+jrIwAocXKP0+5rZDqY8j3OIAJEJKX67Zw4sjYVD0O9S8f5Tv2nYPCKAwM3oJjmloeRh1mJswS8FINIbMAa6VFdAWkW185opbDfzsr7I9XDhEpIApfI/oUBGezx7HSdykn+MBoNyWLLIT2gh7b8YknKOFzTQ1Dah+3KnxnkQQGz0jK/boqvsKKhNhE03912GRXxEOXgDyqUZ/mTHCiXePCwC2Q8WYZrrUOefdfF5LBM0LqwJIbyPnVChGfHn3fVOUsffyem08gE0JvBhTO/4u2gbiFyg8hiNrTx2PqbkumCYDCZel9OZGPSLSwCvFNnaD5TbOqUnzzmDGBbrNoruEMmvB63bEwJOKX2L5YLQDLJa8GAQSWPp1+8KUtgE5/bS8m5ScRziJ8MA8A+UfW36PpuYSR8OUrHs6dfGUQhC2Oeh+ezt5dspw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR11MB1953.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(39860400002)(376002)(346002)(366004)(136003)(396003)(451199018)(6486002)(2906002)(31686004)(83380400001)(4744005)(5660300002)(53546011)(26005)(66446008)(6506007)(76116006)(8936002)(186003)(4326008)(86362001)(41300700001)(64756008)(91956017)(2616005)(38070700005)(6512007)(36756003)(31696002)(8676002)(66946007)(66476007)(66556008)(478600001)(122000001)(71200400001)(110136005)(38100700002)(316002)(54906003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Q2M1TEFOUk02UUhsTWN6anV0SVlUTVJGQnJlTXVXNllPUjFnbjBJenNWbkJi?=
- =?utf-8?B?dW5OeUs1L25yRGhWQWJlMUpWeTVyRy9SNWd5aTlVN3dQdkNQVzU5V1lFY3hW?=
- =?utf-8?B?cUV3Q09COTRUL3JYS1BzVHpvOTRMZ0ZGMVNldnpUS3dGZm54aHZHbTlWY1VC?=
- =?utf-8?B?eFhmcFRycmpOTVNjOEFwQzVZc3NrVkFWT29kSjhpMkJVWmROMVZPaHBkenFW?=
- =?utf-8?B?RTZoOGQyanFkSE04bWtQalFNdjhBMXdtNzEwbnBZUWgvb2hmRS9DWTZXTjgx?=
- =?utf-8?B?cVZ0K0NnelVtSVVtRCtsajRsQlVsbTRoaWhRL2U3VTg2REhyZ0Mrdko0akxz?=
- =?utf-8?B?OXVZcEwxUnJmMnNnQ01sQlVTdEtGUExBOG41c1pQOUN2cmgrOUorUFJZdDFu?=
- =?utf-8?B?bk9YazZnSHhYcTRQQkxObXN1Vk9lNS8xbndlUkd1eVRaS1BrRG8zSGdpQk9V?=
- =?utf-8?B?enFoMHdNUXJiRE9OdmlONUFNa2xFdStaWUlraDQzSkhXRUJnS1hNWmkyaW1B?=
- =?utf-8?B?M0FXbkU3K0V1SW0wWXZ0QWNDS3NVb1c2OWN5YktKeUMvSzNjYTV1NGk1L0N4?=
- =?utf-8?B?NWtzV1RSQmVrOVBieGhOWDF5RTZjRTZpZFRYUDVnV0JILzQ3b3dwQzFhdFd5?=
- =?utf-8?B?RVBhaVFYTm1wdlBmanRjL2tLMWpJMjBpU0JENnFWNmtyVml0NTFJUlZYb2tF?=
- =?utf-8?B?NXZhR2xOWk5pQ2ROekR0cGJMdHhUSVp5d3lCVnV4ei9sbGJaZnl3Z2gwTWF4?=
- =?utf-8?B?bVJ0WDVvbVNrM2xOL2EvYVZtd25rY0JjMHZWSjRJcXZhNU5ndGJoSGcrblFN?=
- =?utf-8?B?bVpMU29DM0VFS2V2WUpsS3RFSVR4YUs4Qll6dWpXcWJCc041RVJlY1ZNbERx?=
- =?utf-8?B?alBzb3hBZXU3Y1IwZlc5UFhnZ2N2TU9OaThvV1hFUEcxUUNiamVyUTNHcW9J?=
- =?utf-8?B?MzlObDROQ1ZEeTQwbm5LNjNNSVFMK1k5VlM3ZitkeWJIV3pRYTA5aGFpZ0Ju?=
- =?utf-8?B?SUFUREMyMmJTdEliazIrVlFhU3c4UXY5U1hjNzlVR0MzY1pVWU9NazJUWEZG?=
- =?utf-8?B?WHArckxJWWRCa2pJQVRPOHFCc0dGUXVkMlVaUytEZlFxZ29VSTJ6QjdSc3BW?=
- =?utf-8?B?WjRWdGVteUtCTW5PWE9rZ2praXV0YUREL2FOMFhib0RFZGg0MCs2aGs5MWdh?=
- =?utf-8?B?ZzRSLzVKYkZpZ2d6b2diR2RoT3JnWDYrQlczeE83S09KZDdZUmJpYlRUaitH?=
- =?utf-8?B?QUpCNWgzRnp2QU9EMEgwbUhOUFNZWUZZdnlzY2wzaEtPQTMvSnAyR1NJcmUw?=
- =?utf-8?B?SHdWdTdEZWR6RDdVUmZzdjJ3dXFVSllpVHVleWFZMmRrclJvR21FcG1OblBo?=
- =?utf-8?B?NGxFdW11VWNiTUpQeitUM29uVWZtVzJjNlJTMldaRjQ4akZPeUx4QmplU2VP?=
- =?utf-8?B?TEFBOWluV2t5MGtCelNBbUc3amtzcTdsT1NVUFFkeVFQR29HVkd5dlZUclVp?=
- =?utf-8?B?ZXJ4V3JLZXI5SzExazh3QTRicUE1NUwxbG9IY1ljaXN2VFZrSW40Y0M2OXVp?=
- =?utf-8?B?TXBaMWN6ZTNpM2wzR25XK1BoSjVaM25MMXVQRi95ZTFXaFJ0L1NGT1NWNkdp?=
- =?utf-8?B?eGhmVmpCNU81MCtyNTk5U3M2RFpVMnRqMzNtc0g4VG0yQ3FMWUNzQnlqL3hJ?=
- =?utf-8?B?b0VVUTg5MTJGaGt2VmVhSS9HR1p5ajBvVlJZamRqaExHQ002aUNjTS9ieDBQ?=
- =?utf-8?B?RkJrcVpBT21IZTZPT1V1NUErL08vY2ZzcC9iRjViU0tBUXgvQzg0cVRYRDN1?=
- =?utf-8?B?bWFubWNsN3drNm1UajdHd2V2Yi90TEc0dFgyb1p4dzhkNVQzOVlpQlZxUm5x?=
- =?utf-8?B?dnVjREZWcm5KaXBiT2ZsbzJPcXNtMk5lYzUvbFp5ZGZQdkYzWi9UV082bFZt?=
- =?utf-8?B?a0ZUa3psNk55QzlFYkg4UjJVczRMUi9tUEVDNGZNWmQ3ekM4N3lJaDV4N0Y1?=
- =?utf-8?B?d3EyREJVcTIxOHBsallkbW8rUTlPWkRFbnZjRXpab1M3dGRTZ2l4RnkvOGt4?=
- =?utf-8?B?OEZ6Vk1OdEIrYnN2aUwvckhpNi9kOVY2ai9FUkZTZVh0NGtLdnpSYVduK1lm?=
- =?utf-8?B?eWVEdzcxS1ZTdUM2azN1VjZEVlJENEJNWm1ZSldnb2lPZVRURjQ5VCtTanli?=
- =?utf-8?B?eFE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3CC457820E4B1F46B45136AB65E8F886@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        with ESMTP id S230072AbjCNPBN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 11:01:13 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A86386A7;
+        Tue, 14 Mar 2023 08:01:10 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 4F4625FD07;
+        Tue, 14 Mar 2023 18:01:08 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1678806068;
+        bh=VYtZNHbbMXIq+g24HuL1awnMYFh5ypx+E6yBnfNcl6A=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+        b=qsIgGNq9FJ+V3tMbZis0wrWJCHqgOAd4VH5hKqsP84sHMMyQ126g9D4n8CC8NTKJO
+         Afl9vosImnTrlWVMKzxfDPpOjxrWMdK1sk4SaFNE8dntktMxQRzU2t74V9gSwFXpKp
+         10uMAGSu1bm8lH97M+c6NOdSUeqcgM5inA2oGwOb/kRDUOG8D8aISg26bYcYDbSheg
+         kHA8dDLPO0lEC5OkuKUA9Jh2hh+nT9Bry6FSSDspRZHQvpWX4wDWH90tubUGwn4taT
+         4C/MVlZF48vOsFrnsWz6DcreHu/PcPaTfbDT2szz9BMaB+BV7e/4wxZjxBdtvOzmxu
+         4tNQ8XpHc70eg==
+Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Tue, 14 Mar 2023 18:01:07 +0300 (MSK)
+Date:   Tue, 14 Mar 2023 18:01:07 +0300
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <khilman@baylibre.com>, <martin.blumenstingl@googlemail.com>,
+        <jian.hu@amlogic.com>, <kernel@sberdevices.ru>,
+        <rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v10 3/5] dt-bindings: clock: meson: add A1 PLL and
+ Peripherals clkcs bindings
+Message-ID: <20230314150107.mwcglcu2jv4ixy3r@CAB-WSD-L081021>
+References: <20230313201259.19998-1-ddrokosov@sberdevices.ru>
+ <20230313201259.19998-4-ddrokosov@sberdevices.ru>
+ <ffebef1d-8447-181b-1890-3e638d399c62@linaro.org>
+ <20230314114825.yiv4vcszr6b7m45w@CAB-WSD-L081021>
+ <2d9297e9-dab7-9615-3859-79b3b2980d9a@linaro.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN6PR11MB1953.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 535d865b-e67f-4470-4e6c-08db249bc486
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Mar 2023 14:52:43.8255
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: tQmtQ+ata5b9t6ct4WVhuEND/7AJJ3Svbjypdpac6NTan+9uYlOsrtJohqVobyUKW3ZWcqWa7XJQnFuWDmDCo/jfCziNYCWB6c+l55YU1YY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5770
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <2d9297e9-dab7-9615-3859-79b3b2980d9a@linaro.org>
+User-Agent: NeoMutt/20220415
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
+ S-MS-EXCH01.sberdevices.ru (172.16.1.4)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/03/14 06:01:00 #20942017
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gMTAuMDMuMjAyMyAxNjo0NywgUm9iIEhlcnJpbmcgd3JvdGU6DQo+IEVYVEVSTkFMIEVNQUlM
-OiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3MgeW91IGtub3cg
-dGhlIGNvbnRlbnQgaXMgc2FmZQ0KPiANCj4gSXQgaXMgcHJlZmVycmVkIHRvIHVzZSB0eXBlZCBw
-cm9wZXJ0eSBhY2Nlc3MgZnVuY3Rpb25zIChpLmUuDQo+IG9mX3Byb3BlcnR5X3JlYWRfPHR5cGU+
-IGZ1bmN0aW9ucykgcmF0aGVyIHRoYW4gbG93LWxldmVsDQo+IG9mX2dldF9wcm9wZXJ0eS9vZl9m
-aW5kX3Byb3BlcnR5IGZ1bmN0aW9ucyBmb3IgcmVhZGluZyBwcm9wZXJ0aWVzLg0KPiBDb252ZXJ0
-IHJlYWRpbmcgYm9vbGVhbiBwcm9wZXJ0aWVzIHRvIHRvIG9mX3Byb3BlcnR5X3JlYWRfYm9vbCgp
-Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4NCg0K
-QXBwbGllZCB0byBhdDkxL2Nsay1taWNyb2NoaXAsIHRoYW5rcyENCg0K
+On Tue, Mar 14, 2023 at 03:05:48PM +0100, Krzysztof Kozlowski wrote:
+> On 14/03/2023 12:48, Dmitry Rokosov wrote:
+> > On Tue, Mar 14, 2023 at 12:28:40PM +0100, Krzysztof Kozlowski wrote:
+> >> On 13/03/2023 21:12, Dmitry Rokosov wrote:
+> > 
+> > [...]
+> > 
+> >>> +#define CLKID_SPIFC		84
+> >>> +#define CLKID_USB_BUS		85
+> >>> +#define CLKID_SD_EMMC		86
+> >>> +#define CLKID_PSRAM		87
+> >>> +#define CLKID_DMC		88
+> >>
+> >> And what is here? Between 88 and 121?
+> >>
+> > 
+> > Explained below.
+> > 
+> >>> +#define CLKID_GEN_SEL		121
+> >>> +
+> >>> +#endif /* __A1_CLKC_H */
+> >>> diff --git a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+> >>> new file mode 100644
+> >>> index 000000000000..8e97d3fb9d30
+> >>> --- /dev/null
+> >>> +++ b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+> >>> @@ -0,0 +1,20 @@
+> >>> +/* SPDX-License-Identifier: GPL-2.0+ */
+> >>
+> >> I found in changelog:
+> >> "fix license issue, it's GPL-2.0+ only in the current version"
+> >> and I do not understand.
+> >>
+> >> The license is wrong, so what did you fix?
+> >>
+> > 
+> > Sorry don't get you. Why is it wrong?
+> 
+> Run checkpatch - it will tell you why wrong. The license is not correct.
+> This is part of binding and should be the same as binding.
+> 
+
+I always run checkpatch before sending the next patch series. Checkpatch
+doesn't highlight this problem:
+
+--------------
+$ rg SPDX a1_clkc_v10/v10-0003-dt-bindings-clock-meson-add-A1-PLL-and-Periphera.patch
+32:+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+111:+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+188:+/* SPDX-License-Identifier: GPL-2.0+ */
+294:+/* SPDX-License-Identifier: GPL-2.0+ */
+
+$ ./scripts/checkpatch.pl --strict a1_clkc_v10/v10-0003-dt-bindings-clock-meson-add-A1-PLL-and-Periphera.patch
+total: 0 errors, 0 warnings, 0 checks, 259 lines checked
+
+a1_clkc_v10/v10-0003-dt-bindings-clock-meson-add-A1-PLL-and-Periphera.patch has no obvious style problems and is ready for submission.
+--------------
+
+I've got your point, will fix in the next version.
+
+> > I've changed all new source files to GPL-2.0+ except yaml, because yaml
+> > dt bindings schemas require the following license:
+> > 
+> >     # SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > 
+> > I've pointed it in the changelog.
+> 
+> The only thing I found was:
+> "fix license issue, it's GPL-2.0+ only in the current version"
+> 
+> so what exactly you pointed out in changelog? What was to fix? What was
+> fixed? Correct license into incorrect? But why?
+> 
+
+By 'license issue' I meant your comment for the previous version at:
+https://lore.kernel.org/all/6a950a51-fe90-9163-b73d-0a396d7187ee@linaro.org/
+
+I thought you mentioned the problem is in two license usage in the one
+line (GPL + MIT), I've fixed it to GPL2 only, and mentioned it in the
+changelog.
+
+I didn't know about the special requirement for a dt-bindings license, I've
+just checked other clock dt-bindings and found that license is different
+in the many places:
+
+$ grep -r "SPDX" include/dt-bindings/clock | grep -v -e "GPL-2.0.*BSD-2-Clause" | wc -l
+291
+
+And Tegra Car 124 as an example for different license between yaml
+schema and binding header:
+$ grep "SPDX" include/dt-bindings/clock/tegra124-car.h
+/* SPDX-License-Identifier: GPL-2.0 */
+$ grep "SPDX" Documentation/devicetree/bindings/clock/nvidia,tegra124-car.yaml
+# SPDX-License-Identifier: (GPL-2.0+ OR BSD-2-Clause)
+
+Anyway, it's not a problem to fix the license to the same value between
+header and yaml schema, I'll fix it in the next version.
+But based on the above experiments, other clock bindings should be fixed
+as well, checkpatch behavior should be extended for dt bindings headers
+licence checking.
+
+> > 
+> >>> +/*
+> >>> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+> >>> + * Author: Jian Hu <jian.hu@amlogic.com>
+> >>> + *
+> >>> + * Copyright (c) 2023, SberDevices. All Rights Reserved.
+> >>> + * Author: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+> >>> + */
+> >>> +
+> >>> +#ifndef __A1_PLL_CLKC_H
+> >>> +#define __A1_PLL_CLKC_H
+> >>> +
+> >>> +#define CLKID_FIXED_PLL		1
+> >>> +#define CLKID_FCLK_DIV2		6
+> >>> +#define CLKID_FCLK_DIV3		7
+> >>> +#define CLKID_FCLK_DIV5		8
+> >>> +#define CLKID_FCLK_DIV7		9
+> >>> +#define CLKID_HIFI_PLL		10
+> >>
+> >>
+> >> Probably I asked about this... why indices are not continuous? You know
+> >> that consumers are allowed to use number 2 and it will be your ABI, even
+> >> though you did not write it in the binding? That's a tricky and
+> >> confusing pattern for no real gains.
+> > 
+> > Actually, indices are continuou but splitted into two parts: public and
+> > private. The public part is located in the dt bindings and can be included
+> > from device tree sources. The private part is in the drivers/clk/meson
+> > folder, and only clk drivers can use it.
+> > I know, there is some trick when the user just inserts a digit value and
+> > doesn't use constants.
+> 
+> This is not a trick. This is how DTS works. You have only indices/numbers.
+> 
+> > But I'm starting from the assumption that such
+> > dts changes will not be approved by maintainers. In other words, the user
+> > *must* apply defined ABI constants from dt bindings; it's a strong
+> > restriction.
+> 
+> But it is not correct assumption. Defines are very important, but they
+> are just helpers. Otherwise without defines you could not use any clock?
+> We pretty often use IDs - for DTS to allow merging via different trees,
+> for DT binding examples to not rely on headers.
+> 
+> Your driver implements the ABI and the driver exposes for example clock
+> ID=2, even if it is not in the header.
+> 
+> These IDs are unfortunately undocumented ABI and you if you change them,
+> users are allowed to complain.
+> 
+> Solution: don't do this. Have all exposed clock IDs and clocks in sync
+> (and continuous).
+
+I see. But I don't understand how I can restrict access to private
+clock objects. I don't want to open ability to change system clocks
+parents, for example. Or it's under device tree developer responsibility?
+I would appreciate any assistance in determining the best path.
+
+-- 
+Thank you,
+Dmitry
