@@ -2,154 +2,134 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ABD9C05027
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 19:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A4A5C7618B
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 19:29:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229701AbjCNTQx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Mar 2023 15:16:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49668 "EHLO
+        id S229872AbjCNT3V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Mar 2023 15:29:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229513AbjCNTQw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 15:16:52 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EBEE360BE;
-        Tue, 14 Mar 2023 12:16:51 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 00BED61946;
-        Tue, 14 Mar 2023 19:16:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E773C433D2;
-        Tue, 14 Mar 2023 19:16:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678821410;
-        bh=g5ExXGMpe5aA0ybHCj45LLR+H6d/mL5sQpeLaLedFFA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SGWU/8WrtAPcZroK2jVynlM0r7OLqTNPvAdSF3GikUYpp6LrrRaZg1vZtx3xMAMsm
-         UCD5VWqcAP9Ky0VHu4e2g0cY7AHm8ha5NigGUZmYh3U7kNE+yZlRvXzkjpGEfErKZR
-         oVg29tSyoJ7RWsPT7XYSFvOA/Ri+0rCd69r2doMuj6ggxb1i/2hqnzaj3h+4YYjeAE
-         rXGbHa+tbJ0CgVuZQqjqV+RYN/rcvwoq8dNwuduuxewoOu3XVVNw5+4zmnp5iYCL5H
-         IoVFmkY35WylmqYKT9Ft6AnhZZREys5hIpPdh+FxucBaJOWUeCuUizxl83HF4QAWUY
-         hM/CNUOWRohrg==
-Date:   Tue, 14 Mar 2023 19:16:45 +0000
-From:   Conor Dooley <conor@kernel.org>
-To:     Jesse Taube <mr.bossman075@gmail.com>
-Cc:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yimin Gu <ustcymgu@gmail.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Waldemar Brodkorb <wbx@openadk.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v3 0/3] Add RISC-V 32 NOMMU support
-Message-ID: <ae9dc316-dac9-40c2-a84c-ce27d7535745@spud>
-References: <62852ee1-3763-3323-c3a8-f1e84f70204a@infradead.org>
- <c7941231-8ebd-dea5-81f8-3180cfc3f286@gmail.com>
- <1d858dbb-ae85-95a0-3e46-b67017733c04@infradead.org>
- <db3b3412-9616-d13c-3374-48647325e057@infradead.org>
- <7280914e-59e3-ba6d-4324-a29c1c0b4ce8@gmail.com>
- <2ebe4bc5-c11c-89b1-2644-358dc12bdfa5@infradead.org>
- <d3fb242e-646e-50b5-7dba-17b228bb32aa@opensource.wdc.com>
- <416e27cd-0826-9bfa-8ee8-cf70dfb503c1@gmail.com>
- <debe0a4a-126f-2308-d40c-32ed2d9f91e3@opensource.wdc.com>
- <dd45cdec-55d2-1a46-520d-e1468597c18a@gmail.com>
+        with ESMTP id S229743AbjCNT2v (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 15:28:51 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE9D45BAF;
+        Tue, 14 Mar 2023 12:28:47 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 13F265FD1F;
+        Tue, 14 Mar 2023 22:28:45 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1678822125;
+        bh=I8FmdPnM7dDH9PZcltGUQjyy4agraZazHHbaG/8Vggs=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+        b=R05HmtKuFnX5q9NAxSi9p8n5YBatv1yYtaOoacnekLXwP3JQy/3vPmhQLehD2x8Xs
+         +QVucbtN+RfX95KtzIoSCklc8yGutxcVwqBc6+Z3AfAlv0J2284Or3FD32GDOJqKCX
+         tKglCJVXvXHalqvN3xxCXZ/HBTV5GG4ZEDat86g07YRjqDSJGNJaihlKR3oYyhxz8T
+         u+BTnE09q5nboslp1vPbUPWXWPzNI/QVfkR7EJVlnjga/+l/FuOfBdGqCdgmwt7U7L
+         ugF6jwsIAPhWxdOHfdMlXLp7VADW3/p/iJdVoa3qNGURRy3CmlcFzL2+8isWxhwGbW
+         i+4AlhRsymjfg==
+Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Tue, 14 Mar 2023 22:28:43 +0300 (MSK)
+Date:   Tue, 14 Mar 2023 22:28:43 +0300
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <khilman@baylibre.com>, <martin.blumenstingl@googlemail.com>,
+        <jian.hu@amlogic.com>, <kernel@sberdevices.ru>,
+        <rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v10 3/5] dt-bindings: clock: meson: add A1 PLL and
+ Peripherals clkcs bindings
+Message-ID: <20230314192843.ajjfzkn4lxnmjxhc@CAB-WSD-L081021>
+References: <ffebef1d-8447-181b-1890-3e638d399c62@linaro.org>
+ <20230314114825.yiv4vcszr6b7m45w@CAB-WSD-L081021>
+ <2d9297e9-dab7-9615-3859-79b3b2980d9a@linaro.org>
+ <20230314150107.mwcglcu2jv4ixy3r@CAB-WSD-L081021>
+ <9d176288-cd7c-7107-e180-761e372a2b6e@linaro.org>
+ <c8fecf94-2581-6cc9-955c-324efdc7c70a@linaro.org>
+ <21add21d-4afe-7840-6c49-3786f82761d9@linaro.org>
+ <6b7ae52c-d84d-8d08-139c-5c67ec363e85@linaro.org>
+ <20230314155641.6iw5vgkrrqcx22n6@CAB-WSD-L081021>
+ <b9b4d33d-f325-6437-4f4d-f051d2455e2d@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="A6y262otodfLglAj"
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <dd45cdec-55d2-1a46-520d-e1468597c18a@gmail.com>
+In-Reply-To: <b9b4d33d-f325-6437-4f4d-f051d2455e2d@linaro.org>
+User-Agent: NeoMutt/20220415
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
+ S-MS-EXCH01.sberdevices.ru (172.16.1.4)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/03/14 06:01:00 #20942017
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Tue, Mar 14, 2023 at 05:37:04PM +0100, Krzysztof Kozlowski wrote:
+> On 14/03/2023 16:56, Dmitry Rokosov wrote:
+> > On Tue, Mar 14, 2023 at 04:40:19PM +0100, neil.armstrong@linaro.org wrote:
+> >> On 14/03/2023 16:37, Krzysztof Kozlowski wrote:
+> >>> On 14/03/2023 16:33, neil.armstrong@linaro.org wrote:
+> >>>>> There are many ways - depend on your driver. For example like this:
+> >>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/samsung/clk-exynos5420.c#n975
+> >>>>>
+> >>>>> The first argument is the clock ID (or ignore).
+> >>>>>
+> >>>>> BTW, quite likely the problem is generic to all Meson clock drivers.
+> >>>>
+> >>>> This issue about "public" non-continuous defined was already discussed at https://lore.kernel.org/all/c088e01c-0714-82be-8347-6140daf56640@linaro.org/
+> >>>>
+> >>>> I don't see what's different with this one.
+> >>>
+> >>> So you are aware that all undocumented clock IDs are still allowed to
+> >>> use in DTS and they are ABI? Changing them will be an ABI break.
+> >>
+> >> Yes of course.
+> >>
+> >> Neil
+> >>
+> >>>
+> >>> Best regards,
+> >>> Krzysztof
+> >>>
+> >>
+> > 
+> > Sorry, guys, I'm little bit confused.
+> > In the discussion pointed by Neil not-by-one-increment ID with public and
+> > private parts are acked by Krzysztof due to explicit explanation in the
+> > gxbb header. Have I to comment out my situation and stay it as is?
+> 
+> I did not NAK your solution here. I just pointed my usual remarks that
+> it has certain outcome and minuses (undocumented ABI). But it is OK.
+> 
 
---A6y262otodfLglAj
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Got it, thank you.
 
-On Tue, Mar 14, 2023 at 02:35:39PM -0400, Jesse Taube wrote:
->=20
->=20
-> On 3/7/23 23:11, Damien Le Moal wrote:
-> > On 3/8/23 12:46, Jesse Taube wrote:
-> > >=20
-> > >=20
-> > > On 3/7/23 22:42, Damien Le Moal wrote:
-> > > > On 3/8/23 12:23, Randy Dunlap wrote:
-> > > > > > > OK, I don't know how it happened. I cannot reproduce it now.
-> > > > > > > The failing .config files has CONFIG_MMU is not set (for RV32=
-I), which
-> > > > > > > appears to be impossible.
-> > > > > > These patches add `CONFIG_MMU is not set` (for RV32I).
-> > > > > > But no worries it seems to be a non issue=A0 now.
-> > > > > >=20
-> > > > > > Your thoughts Damien?
-> > > > > >=20
-> > > > >=20
-> > > > > Thanks for reminding me.
-> > > > >=20
-> > > > > With these 3 patches applied to linux-next-20230307,
-> > > > > I still get this build error.
-> > > >=20
-> > > > Does this help ?
-> > > >=20
-> > > > diff --git a/drivers/soc/canaan/Kconfig b/drivers/soc/canaan/Kconfig
-> > > > index 2527cf5757ec..7796c5f1d109 100644
-> > > > --- a/drivers/soc/canaan/Kconfig
-> > > > +++ b/drivers/soc/canaan/Kconfig
-> > > > @@ -4,7 +4,8 @@ config SOC_K210_SYSCTL
-> > > >           bool "Canaan Kendryte K210 SoC system controller"
-> > > >           depends on RISCV && SOC_CANAAN && OF
-> > > >           default SOC_CANAAN
-> > > > -        select PM
-> > > > -        select MFD_SYSCON
-> > > > +       select COMMON_CLK_K210
+> > 
+> > BTW, I think changing IDs value would not affect logic, because
+> > it's not connected to driver logic 'by values', but 'by constants
+> 
+> You cannot change the IDs, neither their values nor the names (with
+> exceptions). IDs - so the numbers - are ABI.
+> 
+> "Constant names" - I assume you mean the names of defines - do not exist
+> after preprocessing, so also not really relevant here...
+> 
 
-Ideally this would be depends on, rather than select, so that we avoid
-selecting user visible symbols like that.
+Ah, you mean the situation when dtb blob is old and module or kernel
+image is new, so ABI is broken. Yep, agree with you.
 
-> Ok so this has nothing to do with my patch-set actually and will happen on
-> 64BIT as well.
-> the commit that brought in this bug is:
->=20
-> RISC-V: stop directly selecting drivers for SOC_CANAAN
-> 3af577f9826fdddefac42b35fc5eb3912c5b7d85
+[...]
 
-Ah right, because the select in Kconfig.socs enforced that if the
-conditions were correct for the system controller driver to be enabled,
-the clock driver would always be present.
-In converting the select in kconfig.socs to a default "on location", I
-preserved the default behaviour but not the dependency.
-
-> I have tested the patches Damien here they work on 64BIT and 32BIT.
-> The change to drivers/clk/Kconfig is not strictly necessary but makes sce=
-ne.
-> I don't think they need to be tested on 32bit so we can omit COMPILE_TEST.
->=20
-> If needed i can submit the patches, which I will author under Damien.
-
-It probably does need fixing to satisfy the randconfigs, submit away!
-
-> As far as I can see there is nothing holding back this set as the issue
-> found has no relation to this set.
-
-Yup. You're currently in the queue on patchwork.
-
---A6y262otodfLglAj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZBDIHAAKCRB4tDGHoIJi
-0ncJAQCl53w8QAJ7W1kAbcYatfiYjs8cN169SAlvwotyW/ClRAEAyOPRKV5ktL+W
-u79IRkgFSC+dClqKFwTv/uRyNQbtUgI=
-=tU5S
------END PGP SIGNATURE-----
-
---A6y262otodfLglAj--
+-- 
+Thank you,
+Dmitry
