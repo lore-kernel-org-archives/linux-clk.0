@@ -2,49 +2,49 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BB5C6FD1F
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 15:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA47C6FD1C
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 16:03:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229886AbjCNP44 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Mar 2023 11:56:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34378 "EHLO
+        id S230020AbjCNQDG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Mar 2023 12:03:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230466AbjCNP4z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 11:56:55 -0400
+        with ESMTP id S231179AbjCNQC7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 12:02:59 -0400
 Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D53291ABE3;
-        Tue, 14 Mar 2023 08:56:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CED6B4211;
+        Tue, 14 Mar 2023 09:02:49 -0700 (PDT)
 Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id F2CDD5FD07;
-        Tue, 14 Mar 2023 18:56:47 +0300 (MSK)
+        by mx.sberdevices.ru (Postfix) with ESMTP id C67735FD07;
+        Tue, 14 Mar 2023 19:02:47 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1678809408;
-        bh=wcq5m53ZFK5TVWkcvwsaAEgiVXwUEOH+wnHeJh2ir6Q=;
+        s=mail; t=1678809767;
+        bh=wcc4FAl38imrcSXPUR9O3xFh7QgaJ4YgI5Qj/IValfU=;
         h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=cDhRnqXP6EcDV2NsQ3ThWKnGlVknGnlkzMGhSGpUsdMvKR3PmQzUOK2pfP1Kti0bG
-         pupxmjBJ9W+PFosbK3LcEZZVCjRfdpEh//94xKf0xHuyHT4FN3Sp6AGy7QENOeRQ9y
-         MixsRCdylJZmGJ0m43TyAXF0EYSlXBba+B6ayRXV1kJUFxxVmBrlKoSKKFcWXxUQAW
-         YZGB6uSl2KAjJynoSUhKtsCoYzbVsgt/z3q/fqOo1XOoda6hpd4ALB7XVas340yabJ
-         Pi1+IKZYMyYyfccrQ4j1n88dxbxU4a1ycLhJzTE/SkRGLwllskjC1qSWXIBWPqIIa/
-         jZ4N8Xd72UvNA==
+        b=jTkH5UGcnZPwWMxIw6Rdzh9gYr3kAIWLGncx4EG+kjWN3/Vhr8uH7SYayXd+4bveH
+         hNFirSuW7bgrb2OKk50YALtRcQl3UNd6Bm/2Cug5KzRShFDRyJBTWfGwBxZg23S0E3
+         K1w2PgrjRi3xl4xeFAfw5s+PtzcTQ83l8y534fKKWv255oI3hb/rIcvVL0EGjiUjBp
+         yMIVeazLjr3byAtboP48sMZVsq4EsSz9ZCjat5Kcvetoi6bDRW4FLxl2YrgEoQmUJ+
+         nvU/+zmHsJKfgQZMdmDImZpKTn7eeRCJcyQ22ubuUw6Lk/fZQ7CO0FmV2EKTaLQmtu
+         FeihMgDe+0NhA==
 Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
         by mx.sberdevices.ru (Postfix) with ESMTP;
-        Tue, 14 Mar 2023 18:56:47 +0300 (MSK)
-Date:   Tue, 14 Mar 2023 18:56:41 +0300
+        Tue, 14 Mar 2023 19:02:47 +0300 (MSK)
+Date:   Tue, 14 Mar 2023 19:02:42 +0300
 From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     <neil.armstrong@linaro.org>
-CC:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <jbrunet@baylibre.com>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-        <martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
-        <kernel@sberdevices.ru>, <rockosov@gmail.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <khilman@baylibre.com>, <martin.blumenstingl@googlemail.com>,
+        <jian.hu@amlogic.com>, <kernel@sberdevices.ru>,
+        <rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
 Subject: Re: [PATCH v10 3/5] dt-bindings: clock: meson: add A1 PLL and
  Peripherals clkcs bindings
-Message-ID: <20230314155641.6iw5vgkrrqcx22n6@CAB-WSD-L081021>
+Message-ID: <20230314160242.vetvl27oaxm6aw6l@CAB-WSD-L081021>
 References: <20230313201259.19998-1-ddrokosov@sberdevices.ru>
  <20230313201259.19998-4-ddrokosov@sberdevices.ru>
  <ffebef1d-8447-181b-1890-3e638d399c62@linaro.org>
@@ -52,16 +52,13 @@ References: <20230313201259.19998-1-ddrokosov@sberdevices.ru>
  <2d9297e9-dab7-9615-3859-79b3b2980d9a@linaro.org>
  <20230314150107.mwcglcu2jv4ixy3r@CAB-WSD-L081021>
  <9d176288-cd7c-7107-e180-761e372a2b6e@linaro.org>
- <c8fecf94-2581-6cc9-955c-324efdc7c70a@linaro.org>
- <21add21d-4afe-7840-6c49-3786f82761d9@linaro.org>
- <6b7ae52c-d84d-8d08-139c-5c67ec363e85@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <6b7ae52c-d84d-8d08-139c-5c67ec363e85@linaro.org>
+In-Reply-To: <9d176288-cd7c-7107-e180-761e372a2b6e@linaro.org>
 User-Agent: NeoMutt/20220415
 X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
+X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
  S-MS-EXCH01.sberdevices.ru (172.16.1.4)
 X-KSMG-Rule-ID: 4
 X-KSMG-Message-Action: clean
@@ -74,42 +71,202 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 14, 2023 at 04:40:19PM +0100, neil.armstrong@linaro.org wrote:
-> On 14/03/2023 16:37, Krzysztof Kozlowski wrote:
-> > On 14/03/2023 16:33, neil.armstrong@linaro.org wrote:
-> > > > There are many ways - depend on your driver. For example like this:
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/samsung/clk-exynos5420.c#n975
-> > > > 
-> > > > The first argument is the clock ID (or ignore).
-> > > > 
-> > > > BTW, quite likely the problem is generic to all Meson clock drivers.
-> > > 
-> > > This issue about "public" non-continuous defined was already discussed at https://lore.kernel.org/all/c088e01c-0714-82be-8347-6140daf56640@linaro.org/
-> > > 
-> > > I don't see what's different with this one.
+On Tue, Mar 14, 2023 at 04:19:22PM +0100, Krzysztof Kozlowski wrote:
+> On 14/03/2023 16:01, Dmitry Rokosov wrote:
+> > On Tue, Mar 14, 2023 at 03:05:48PM +0100, Krzysztof Kozlowski wrote:
+> >> On 14/03/2023 12:48, Dmitry Rokosov wrote:
+> >>> On Tue, Mar 14, 2023 at 12:28:40PM +0100, Krzysztof Kozlowski wrote:
+> >>>> On 13/03/2023 21:12, Dmitry Rokosov wrote:
+> >>>
+> >>> [...]
+> >>>
+> >>>>> +#define CLKID_SPIFC		84
+> >>>>> +#define CLKID_USB_BUS		85
+> >>>>> +#define CLKID_SD_EMMC		86
+> >>>>> +#define CLKID_PSRAM		87
+> >>>>> +#define CLKID_DMC		88
+> >>>>
+> >>>> And what is here? Between 88 and 121?
+> >>>>
+> >>>
+> >>> Explained below.
+> >>>
+> >>>>> +#define CLKID_GEN_SEL		121
+> >>>>> +
+> >>>>> +#endif /* __A1_CLKC_H */
+> >>>>> diff --git a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+> >>>>> new file mode 100644
+> >>>>> index 000000000000..8e97d3fb9d30
+> >>>>> --- /dev/null
+> >>>>> +++ b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+> >>>>> @@ -0,0 +1,20 @@
+> >>>>> +/* SPDX-License-Identifier: GPL-2.0+ */
+> >>>>
+> >>>> I found in changelog:
+> >>>> "fix license issue, it's GPL-2.0+ only in the current version"
+> >>>> and I do not understand.
+> >>>>
+> >>>> The license is wrong, so what did you fix?
+> >>>>
+> >>>
+> >>> Sorry don't get you. Why is it wrong?
+> >>
+> >> Run checkpatch - it will tell you why wrong. The license is not correct.
+> >> This is part of binding and should be the same as binding.
+> >>
 > > 
-> > So you are aware that all undocumented clock IDs are still allowed to
-> > use in DTS and they are ABI? Changing them will be an ABI break.
+> > I always run checkpatch before sending the next patch series. Checkpatch
+> > doesn't highlight this problem:
+> > 
+> > --------------
+> > $ rg SPDX a1_clkc_v10/v10-0003-dt-bindings-clock-meson-add-A1-PLL-and-Periphera.patch
+> > 32:+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > 111:+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > 188:+/* SPDX-License-Identifier: GPL-2.0+ */
+> > 294:+/* SPDX-License-Identifier: GPL-2.0+ */
+> > 
+> > $ ./scripts/checkpatch.pl --strict a1_clkc_v10/v10-0003-dt-bindings-clock-meson-add-A1-PLL-and-Periphera.patch
+> > total: 0 errors, 0 warnings, 0 checks, 259 lines checked
 > 
-> Yes of course.
-> 
-> Neil
+> Hmm, my bad, that's something to fix/improve in checkpatch.
 > 
 > > 
-> > Best regards,
-> > Krzysztof
+> > a1_clkc_v10/v10-0003-dt-bindings-clock-meson-add-A1-PLL-and-Periphera.patch has no obvious style problems and is ready for submission.
+> > --------------
 > > 
+> > I've got your point, will fix in the next version.
+> > 
+> >>> I've changed all new source files to GPL-2.0+ except yaml, because yaml
+> >>> dt bindings schemas require the following license:
+> >>>
+> >>>     # SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> >>>
+> >>> I've pointed it in the changelog.
+> >>
+> >> The only thing I found was:
+> >> "fix license issue, it's GPL-2.0+ only in the current version"
+> >>
+> >> so what exactly you pointed out in changelog? What was to fix? What was
+> >> fixed? Correct license into incorrect? But why?
+> >>
+> > 
+> > By 'license issue' I meant your comment for the previous version at:
+> > https://lore.kernel.org/all/6a950a51-fe90-9163-b73d-0a396d7187ee@linaro.org/
+> > 
+> > I thought you mentioned the problem is in two license usage in the one
+> > line (GPL + MIT), I've fixed it to GPL2 only, and mentioned it in the
+> > changelog.
+> 
+> The comment was for a reason why the license here is different than in
+> the binding. Should be the same. Binding had license:
+> GPL-2.0-only OR BSD-2-Clause
+> 
+> > 
+> > I didn't know about the special requirement for a dt-bindings license, I've
+> > just checked other clock dt-bindings and found that license is different
+> > in the many places:
+> > 
+> > $ grep -r "SPDX" include/dt-bindings/clock | grep -v -e "GPL-2.0.*BSD-2-Clause" | wc -l
+> > 291
+> > 
+> > And Tegra Car 124 as an example for different license between yaml
+> > schema and binding header:
+> > $ grep "SPDX" include/dt-bindings/clock/tegra124-car.h
+> > /* SPDX-License-Identifier: GPL-2.0 */
+> > $ grep "SPDX" Documentation/devicetree/bindings/clock/nvidia,tegra124-car.yaml
+> > # SPDX-License-Identifier: (GPL-2.0+ OR BSD-2-Clause)
+> 
+> checkpatch has the correct license. Many files were licensed differently
+> *on purpose* so I asked about purpose here.
 > 
 
-Sorry, guys, I'm little bit confused.
-In the discussion pointed by Neil not-by-one-increment ID with public and
-private parts are acked by Krzysztof due to explicit explanation in the
-gxbb header. Have I to comment out my situation and stay it as is?
+Okay, got it. So no reason to fix this difference.
 
-BTW, I think changing IDs value would not affect logic, because
-it's not connected to driver logic 'by values', but 'by constants
-names'. We can expose/hide anything from device tree bindings, it will
-not change the clk driver logic.
+> > 
+> > Anyway, it's not a problem to fix the license to the same value between
+> > header and yaml schema, I'll fix it in the next version.
+> > But based on the above experiments, other clock bindings should be fixed
+> 
+> Your binding has a correct license. What should be fixed?
+> 
+
+Other clocks bindings for another drivers. But you've explained the
+reason above, so skip it.
+
+> > as well, checkpatch behavior should be extended for dt bindings headers
+> > licence checking.
+> 
+> Yes.
+> 
+> > 
+> >>>
+> >>>>> +/*
+> >>>>> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+> >>>>> + * Author: Jian Hu <jian.hu@amlogic.com>
+> >>>>> + *
+> >>>>> + * Copyright (c) 2023, SberDevices. All Rights Reserved.
+> >>>>> + * Author: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+> >>>>> + */
+> >>>>> +
+> >>>>> +#ifndef __A1_PLL_CLKC_H
+> >>>>> +#define __A1_PLL_CLKC_H
+> >>>>> +
+> >>>>> +#define CLKID_FIXED_PLL		1
+> >>>>> +#define CLKID_FCLK_DIV2		6
+> >>>>> +#define CLKID_FCLK_DIV3		7
+> >>>>> +#define CLKID_FCLK_DIV5		8
+> >>>>> +#define CLKID_FCLK_DIV7		9
+> >>>>> +#define CLKID_HIFI_PLL		10
+> >>>>
+> >>>>
+> >>>> Probably I asked about this... why indices are not continuous? You know
+> >>>> that consumers are allowed to use number 2 and it will be your ABI, even
+> >>>> though you did not write it in the binding? That's a tricky and
+> >>>> confusing pattern for no real gains.
+> >>>
+> >>> Actually, indices are continuou but splitted into two parts: public and
+> >>> private. The public part is located in the dt bindings and can be included
+> >>> from device tree sources. The private part is in the drivers/clk/meson
+> >>> folder, and only clk drivers can use it.
+> >>> I know, there is some trick when the user just inserts a digit value and
+> >>> doesn't use constants.
+> >>
+> >> This is not a trick. This is how DTS works. You have only indices/numbers.
+> >>
+> >>> But I'm starting from the assumption that such
+> >>> dts changes will not be approved by maintainers. In other words, the user
+> >>> *must* apply defined ABI constants from dt bindings; it's a strong
+> >>> restriction.
+> >>
+> >> But it is not correct assumption. Defines are very important, but they
+> >> are just helpers. Otherwise without defines you could not use any clock?
+> >> We pretty often use IDs - for DTS to allow merging via different trees,
+> >> for DT binding examples to not rely on headers.
+> >>
+> >> Your driver implements the ABI and the driver exposes for example clock
+> >> ID=2, even if it is not in the header.
+> >>
+> >> These IDs are unfortunately undocumented ABI and you if you change them,
+> >> users are allowed to complain.
+> >>
+> >> Solution: don't do this. Have all exposed clock IDs and clocks in sync
+> >> (and continuous).
+> > 
+> > I see. But I don't understand how I can restrict access to private
+> > clock objects. I don't want to open ability to change system clocks
+> > parents, for example. Or it's under device tree developer responsibility?
+> > I would appreciate any assistance in determining the best path.
+> 
+> There are many ways - depend on your driver. For example like this:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/samsung/clk-exynos5420.c#n975
+> 
+> The first argument is the clock ID (or ignore).
+> 
+
+Hmmm, I like this way. But first, I think we need to make meson clock driver
+overall situation clear.
+
+[...]
 
 -- 
 Thank you,
