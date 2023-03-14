@@ -2,113 +2,73 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D056C6FD1D
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 14:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 403C6C6FD1C
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 14:35:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229525AbjCNOTH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Mar 2023 10:19:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43088 "EHLO
+        id S231517AbjCNOfC convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Mar 2023 10:35:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbjCNOTG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 10:19:06 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CD9E93EB;
-        Tue, 14 Mar 2023 07:19:04 -0700 (PDT)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id B666124DCBE;
-        Tue, 14 Mar 2023 22:19:00 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 14 Mar
- 2023 22:19:00 +0800
-Received: from [192.168.125.74] (113.72.145.194) by EXMBX172.cuchost.com
- (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 14 Mar
- 2023 22:18:59 +0800
-Message-ID: <518f47e4-7fc6-7715-93dd-2a3b1b4acadf@starfivetech.com>
-Date:   Tue, 14 Mar 2023 22:18:58 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v5 11/21] dt-bindings: clock: Add StarFive JH7110 system
- clock and reset generator
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh@kernel.org>
-CC:     Marc Zyngier <maz@kernel.org>,
+        with ESMTP id S231314AbjCNOey (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 10:34:54 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCFA04DE1D
+        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2023 07:34:52 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1pc5jL-0002AR-Bo; Tue, 14 Mar 2023 15:34:23 +0100
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1pc5jH-0046Cd-KN; Tue, 14 Mar 2023 15:34:19 +0100
+Received: from pza by lupine with local (Exim 4.94.2)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1pc5jH-0008jq-0N; Tue, 14 Mar 2023 15:34:19 +0100
+Message-ID: <0a3830dcee01c2605c8371a15dfaddd744a8e906.camel@pengutronix.de>
+Subject: Re: [PATCH v5 05/21] reset: starfive: Replace SOC_STARFIVE with
+ ARCH_STARFIVE
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Hal Feng <hal.feng@starfivetech.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        <linux-riscv@lists.infradead.org>, Conor Dooley <conor@kernel.org>,
-        "Emil Renner Berthing" <emil.renner.berthing@canonical.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Conor Dooley <conor@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
         Paul Walmsley <paul.walmsley@sifive.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Daniel Lezcano" <daniel.lezcano@linaro.org>,
-        <linux-clk@vger.kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 14 Mar 2023 15:34:18 +0100
+In-Reply-To: <20230311090733.56918-6-hal.feng@starfivetech.com>
 References: <20230311090733.56918-1-hal.feng@starfivetech.com>
- <20230311090733.56918-12-hal.feng@starfivetech.com>
- <167854282659.42837.5915012938593380363.robh@kernel.org>
- <80549148-1bad-9190-c4ea-a9555d15ca38@starfivetech.com>
- <834fb899-7a03-ba0a-8302-f64ea58c60dd@linaro.org>
-From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <834fb899-7a03-ba0a-8302-f64ea58c60dd@linaro.org>
+         <20230311090733.56918-6-hal.feng@starfivetech.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [113.72.145.194]
-X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX172.cuchost.com
- (172.16.6.92)
-X-YovoleRuleAgent: yovoleflag
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.38.3-1+deb11u1 
+MIME-Version: 1.0
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 13 Mar 2023 08:51:20 +0100, Krzysztof Kozlowski wrote:
-> On 13/03/2023 03:47, Hal Feng wrote:
->> On Sat, 11 Mar 2023 08:17:00 -0600, Rob Herring wrote:
->>> On Sat, 11 Mar 2023 17:07:23 +0800, Hal Feng wrote:
->>>> From: Emil Renner Berthing <kernel@esmil.dk>
->>>>
->>>> Add bindings for the system clock and reset generator (SYSCRG) on the
->>>> JH7110 RISC-V SoC by StarFive Ltd.
->>>>
->>>> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
->>>> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
->>>> ---
->>>>  .../clock/starfive,jh7110-syscrg.yaml         | 104 +++++++++
->>>>  MAINTAINERS                                   |   8 +-
->>>>  .../dt-bindings/clock/starfive,jh7110-crg.h   | 203 ++++++++++++++++++
->>>>  .../dt-bindings/reset/starfive,jh7110-crg.h   | 142 ++++++++++++
->>>>  4 files changed, 454 insertions(+), 3 deletions(-)
->>>>  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
->>>>  create mode 100644 include/dt-bindings/clock/starfive,jh7110-crg.h
->>>>  create mode 100644 include/dt-bindings/reset/starfive,jh7110-crg.h
->>>>
->>>
->>>
->>> Please add Acked-by/Reviewed-by tags when posting new versions. However,
->>> there's no need to repost patches *only* to add the tags. The upstream
->>> maintainer will do that for acks received on the version they apply.
->>>
->>> If a tag was not added on purpose, please state why and what changed.
->>>
->>> Missing tags:
->>>
->>> Reviewed-by: Rob Herring <robh@kernel.org>
->> 
->> This patch has been changed a lot and I am not sure whether it's still
->> the one you want. So I removed the Reviewed-by tag.
+On Sa, 2023-03-11 at 17:07 +0800, Hal Feng wrote:
+> Using ARCH_FOO symbol is preferred than SOC_FOO.
 > 
-> Then mention it in changelog, just like Rob asked:
-> "If a tag was not added on purpose, please state why and what changed."
-> I don't see any explanation in the changelog about it.
+> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 
-So sorry for missing that. Thank you for your suggestions.
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Best regards,
-Hal
+regards
+Philipp
