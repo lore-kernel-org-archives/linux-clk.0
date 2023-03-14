@@ -2,191 +2,148 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF5AC6FD1D
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 11:15:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C102CC6FD1D
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 11:28:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230346AbjCNLPT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Mar 2023 07:15:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50650 "EHLO
+        id S230300AbjCNL2r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Mar 2023 07:28:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231354AbjCNLOr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 07:14:47 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 338A87A9E;
-        Tue, 14 Mar 2023 04:14:16 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id qa18-20020a17090b4fd200b0023750b675f5so20002088pjb.3;
-        Tue, 14 Mar 2023 04:14:16 -0700 (PDT)
+        with ESMTP id S230306AbjCNL2p (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 07:28:45 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B6732B600
+        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2023 04:28:44 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id da10so60725013edb.3
+        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2023 04:28:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678792449;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5mgq4Gb4nShxf6TmYlZiPVcRLWKemqujm5F/88PcXx0=;
-        b=jwI6NyZ0sHbAv2SfupII60ISsAxcvwhbvvEgvI+TmfW1RSRtVcPPGiTr8xfzMdaTCC
-         o1ZCosT4jfzfZpRY/1sr2SM8g8T1BNYzKPOe1mpGqXYz6DOuFKOP1vEMtCtBzCkxyHFk
-         2FXqD+wPzojonD/YljZRMMHFPZCl9vINZfBT0VeMinSpkjpCMLF4r6OxX1XFarJV4GGj
-         ZkMpEocFDRf4Fc8MlHShnbWrruhn7U5FXVigquyiKjRkNXyRUUvG4+QWfI4/6fyoT8tu
-         TIt05b+4QU1tEw6hm6nEY/7SIZLbmK8o/WPRoFzZ07MtlD+tYW6lb8/GNi5awont9yZb
-         g9iA==
+        d=linaro.org; s=google; t=1678793323;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rOrTbnKTcE7CauGtKPDZAIZx3EY7nUKDtivuP9yBIvs=;
+        b=olc0q14IwQ9q8wZw71hvNsbQjPxVbaB7Q1Y5ubAKoYpMubDGVb7FvJf252fUZPXEaZ
+         CdZ39e8ufUMdZHhHt2arvPJAWhvWwN3NEhXw9+6z4tHQUw9ap2OijZElmtM1DUCoU4U0
+         F/Ni4guEPIUoKilRDKsKY3W9XxsnhfOym61oPQl9wMxAGvJwveC63pZlgmvcvaJyJt8G
+         p9ZLlUqg+8OBsgnESYiNj9x2l16/2G2jyUQQF4YBaYzKle/jxjypPZaVtQAzhtbGVqaj
+         R3GJuT8bXG1MbIjatgd2qwovq8DhXH3mC02ygXejSwg+QcEe5LW9XhH1+O0EoinsGLDr
+         j2cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678792449;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5mgq4Gb4nShxf6TmYlZiPVcRLWKemqujm5F/88PcXx0=;
-        b=kdTG0EB/Q34miyJQOttOdJPVw4e1Da2WzCAiWEEFfr2kKMkbQTtzqT+V4+ukC94QkC
-         TTGH5skPneiC9lCkggwqnxJoLBVPWkq3yeAOIWzHBHXG0tfl+fX5v6yNKnozmPO4tcZ8
-         prvXimys70LRc8QAqFh8urA3wcyt3K0KqL/4/ZhTbxJv/7v0vSR61W6NKLiJNvF2y/o1
-         sQV9jqqhwgTNWVQSNMDE4cJTEoY/2b+B0L+YvIOPYT4LhS8S14Gl+4JVv7hsOYFSsgbh
-         xZ1H9FQduoXdktVF3R4E8Rj19d73K0I5xtBidc1HkZEhyiyRm9VJjhHZqb1Pa5UUqsXC
-         Aikg==
-X-Gm-Message-State: AO0yUKXxJDMxzdKe6kd0nH7nZsvVAye3wt4eRDhEyqUR8464HeCv1TAt
-        ltZGo2T7OVjcKmGctPIC3HPOOM3HqFPDIoro+hk=
-X-Google-Smtp-Source: AK7set9HY2xm2VayZK7HhUQVDsETGJKyT3ZFyHR/3YD/mhiNHc3TesK1jlt6LDa+ywQeB0bNBKQs8ZLdMhxgF1pdIRg=
-X-Received: by 2002:a17:902:fa8f:b0:1a0:5057:1b81 with SMTP id
- lc15-20020a170902fa8f00b001a050571b81mr2230680plb.3.1678792449416; Tue, 14
- Mar 2023 04:14:09 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1678793323;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rOrTbnKTcE7CauGtKPDZAIZx3EY7nUKDtivuP9yBIvs=;
+        b=N5/pkBfE3frxFWWpvAKDp87AddzUKpZuYn5fasM8H6TvBIGhZXkdbeWb+cryVgftF3
+         8MXHsaUlgkNoK/032zr/5j6Rt8ryLmzs1AhaQ7LIrhBlNLHJSEdmG49yCBKoMpdHZWKO
+         /hvZlyuEkSMCXxQ4jjyjBlVZm3XzBbHZZZg4TOpal1xjF2576tywBQb8fCh/mjuB1yCg
+         vRrP/ojIPuAxoKYiVwwIKR0KvVc3cL5PkoZf8M1ngk94IgwKWadfzZ/uDRyfcbDzIdqw
+         PlsEe5AdB1TFXyFJZn+Nb+nh0FJlwvawAmXalvSO4ZEn65Slv37pTPE8H4b4mDkz3lWC
+         v8AQ==
+X-Gm-Message-State: AO0yUKV5n1WLIQ/yrGM+Lqj77E/eQ8KPU85/kcRuf48mHMSHolY1NUBd
+        1QGS0FCq2bCmY9HdJT25dQ+XmA==
+X-Google-Smtp-Source: AK7set8Ex15efZPVYFuYY54Frd1acshjdF/oeAMqSwkNIBG/aUh05lW25OUm7KGUBskPUPa6E142uw==
+X-Received: by 2002:a17:907:7290:b0:8b1:2eef:154c with SMTP id dt16-20020a170907729000b008b12eef154cmr2370532ejc.0.1678793322773;
+        Tue, 14 Mar 2023 04:28:42 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:59be:4b3f:994b:e78c? ([2a02:810d:15c0:828:59be:4b3f:994b:e78c])
+        by smtp.gmail.com with ESMTPSA id z22-20020a170906271600b0091f58083a15sm1015459ejc.175.2023.03.14.04.28.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Mar 2023 04:28:42 -0700 (PDT)
+Message-ID: <ffebef1d-8447-181b-1890-3e638d399c62@linaro.org>
+Date:   Tue, 14 Mar 2023 12:28:40 +0100
 MIME-Version: 1.0
-References: <20230314024449.50151-1-aford173@gmail.com> <DU0PR04MB9417C49457C9E60898E6A92188BE9@DU0PR04MB9417.eurprd04.prod.outlook.com>
-In-Reply-To: <DU0PR04MB9417C49457C9E60898E6A92188BE9@DU0PR04MB9417.eurprd04.prod.outlook.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Tue, 14 Mar 2023 06:13:57 -0500
-Message-ID: <CAHCN7xK8DyRa-NbAnQrZdkU279kHZqXAB2WCH96HgsULxzVKRw@mail.gmail.com>
-Subject: Re: [RFC] clk: imx: Let IMX8MN_CLK_DISP_PIXEL set parent rate
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v10 3/5] dt-bindings: clock: meson: add A1 PLL and
+ Peripherals clkcs bindings
+Content-Language: en-US
+To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>,
+        neil.armstrong@linaro.org, jbrunet@baylibre.com,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
+        martin.blumenstingl@googlemail.com
+Cc:     jian.hu@amlogic.com, kernel@sberdevices.ru, rockosov@gmail.com,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20230313201259.19998-1-ddrokosov@sberdevices.ru>
+ <20230313201259.19998-4-ddrokosov@sberdevices.ru>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230313201259.19998-4-ddrokosov@sberdevices.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Mar 13, 2023 at 11:39=E2=80=AFPM Peng Fan <peng.fan@nxp.com> wrote:
->
-> > Subject: [RFC] clk: imx: Let IMX8MN_CLK_DISP_PIXEL set parent rate
-> >
-> > By default the display pixel clock needs to be evenly divide down from
-> > 594MHz which rules out a significant number of resolution and refresh r=
-ates.
-> > The current clock tree looks something like:
-> >
-> >  video_pll                594000000
-> >   video_pll_bypass        594000000
-> >    video_pll_out          594000000
-> >     disp_pixel            148500000
-> >      disp_pixel_clk       148500000
-> >
-> > To enable CLK_SET_RATE_PARENT on disp_pixel, a helper function needs to
-> > be added called imx8m_clk_hw_composite_flags which can pass the
-> > additional flag to the clock controller. Letting disp_pixel set video_p=
-ll_out
-> > rate should actually lower the clock rates of video_pll_bypass and vide=
-o_pll
-> > as well, since those clocks are already configured to enable
-> > CLK_SET_RATE_PARENT.
-> >
-> > Signed-off-by: Adam Ford <aford173@gmail.com>
-> > ---
-> >
-> > This is an RFC, because even with this patch, the video_pll_out clock d=
-oes
-> > not drop to 148500000 like I would expect.  The video_pll clock is a
-> > fractional pll, so it should be able to generate a significant number o=
-f
-> > optional clock frequencies to facilitate video.
-> [Peng Fan]
->
-> Have you ever tried to directly set video pll out clk to the freq that yo=
-u wanna?
+On 13/03/2023 21:12, Dmitry Rokosov wrote:
+> Add the documentation for Amlogic A1 PLL and Amlogic A1 Peripherals
+> clock drivers.
+> Introduce Amlogic A1 PLL and Amlogic A1 Peripherals device tree
+> bindings and include them to MAINTAINERS.
+> 
 
-In the application I am using, I have the DSI connected to an HDMI
-bridge, so some resolutions and refresh rates work, as long as they
-are evenly divisible from 594000000.  I am testing a series that was
-recently submitted to enable DSI on the i.MX8M Mini and Nano.
 
-If I manually change the video_pll to different frequencies, I can get
-other resolutions and refresh rates to work, but it then breaks the
-ones that I had previously working.  NXP's downstream code [1] as a
-comment added code to the ADV7511 driver which filters out clocks that
-are not divisible from 594 to mask the issue. It's listed as a TODO,
-and I think the author is blaming the ADV7511 driver, but  from my
-experience it's from the LCDIF clock not being able to reach to the
-proper value.  I think fixing this would also fix NXP's TODO list as
-well.
+>  
+> diff --git a/include/dt-bindings/clock/amlogic,a1-clkc.h b/include/dt-bindings/clock/amlogic,a1-clkc.h
+> new file mode 100644
+> index 000000000000..2b16b1f1a5bf
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/amlogic,a1-clkc.h
+> @@ -0,0 +1,100 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
 
-I had modified the MXSFB driver to set the video_pll in addition to
-setting the disp_plixel_clk and I was able to sync many different
-resolutions and refresh rates, but I was told [2] that the solution
-would be to fix the clock driver by setting the parent clock rate,
-which is how I got here.
+???
 
-adam
+> +#define CLKID_SPIFC		84
+> +#define CLKID_USB_BUS		85
+> +#define CLKID_SD_EMMC		86
+> +#define CLKID_PSRAM		87
+> +#define CLKID_DMC		88
 
-[1] - https://github.com/nxp-imx/linux-imx/blob/lf-5.15.y/drivers/gpu/drm/b=
-ridge/adv7511/adv7511_drv.c#L80
-[2] - https://lore.kernel.org/linux-arm-kernel/20230313112937.GC7446@pengut=
-ronix.de/T/
+And what is here? Between 88 and 121?
 
->
-> Regards,
-> Peng.
->
-> >
-> > diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.=
-c
-> > index af256ade554f..a116cc40d7d0 100644
-> > --- a/drivers/clk/imx/clk-imx8mn.c
-> > +++ b/drivers/clk/imx/clk-imx8mn.c
-> > @@ -470,7 +470,7 @@ static int imx8mn_clocks_probe(struct
-> > platform_device *pdev)
-> >       hws[IMX8MN_CLK_DRAM_ALT] =3D
-> > imx8m_clk_hw_fw_managed_composite("dram_alt",
-> > imx8mn_dram_alt_sels, base + 0xa000);
-> >       hws[IMX8MN_CLK_DRAM_APB] =3D
-> > imx8m_clk_hw_fw_managed_composite_critical("dram_apb",
-> > imx8mn_dram_apb_sels, base + 0xa080);
-> >
-> > -     hws[IMX8MN_CLK_DISP_PIXEL] =3D
-> > imx8m_clk_hw_composite("disp_pixel", imx8mn_disp_pixel_sels, base +
-> > 0xa500);
-> > +     hws[IMX8MN_CLK_DISP_PIXEL] =3D
-> > +imx8m_clk_hw_composite_flags("disp_pixel", imx8mn_disp_pixel_sels,
-> > base
-> > ++ 0xa500, CLK_SET_RATE_PARENT);
-> >       hws[IMX8MN_CLK_SAI2] =3D imx8m_clk_hw_composite("sai2",
-> > imx8mn_sai2_sels, base + 0xa600);
-> >       hws[IMX8MN_CLK_SAI3] =3D imx8m_clk_hw_composite("sai3",
-> > imx8mn_sai3_sels, base + 0xa680);
-> >       hws[IMX8MN_CLK_SAI5] =3D imx8m_clk_hw_composite("sai5",
-> > imx8mn_sai5_sels, base + 0xa780); diff --git a/drivers/clk/imx/clk.h
-> > b/drivers/clk/imx/clk.h index 689b3ad927c0..9977b512845b 100644
-> > --- a/drivers/clk/imx/clk.h
-> > +++ b/drivers/clk/imx/clk.h
-> > @@ -414,6 +414,10 @@ struct clk_hw *__imx8m_clk_hw_composite(const
-> > char *name,
-> >       _imx8m_clk_hw_composite(name, parent_names, reg, \
-> >                       0, IMX_COMPOSITE_CLK_FLAGS_DEFAULT)
-> >
-> > +#define imx8m_clk_hw_composite_flags(name, parent_names, reg, flags)
-> > \
-> > +     _imx8m_clk_hw_composite(name, parent_names, reg, \
-> > +                     0, IMX_COMPOSITE_CLK_FLAGS_DEFAULT |  flags)
-> > +
-> >  #define imx8m_clk_hw_composite_critical(name, parent_names, reg) \
-> >       _imx8m_clk_hw_composite(name, parent_names, reg, \
-> >                       0, IMX_COMPOSITE_CLK_FLAGS_CRITICAL)
-> > --
-> > 2.37.2
->
+> +#define CLKID_GEN_SEL		121
+> +
+> +#endif /* __A1_CLKC_H */
+> diff --git a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+> new file mode 100644
+> index 000000000000..8e97d3fb9d30
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+> @@ -0,0 +1,20 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+
+I found in changelog:
+"fix license issue, it's GPL-2.0+ only in the current version"
+and I do not understand.
+
+The license is wrong, so what did you fix?
+
+> +/*
+> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+> + * Author: Jian Hu <jian.hu@amlogic.com>
+> + *
+> + * Copyright (c) 2023, SberDevices. All Rights Reserved.
+> + * Author: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+> + */
+> +
+> +#ifndef __A1_PLL_CLKC_H
+> +#define __A1_PLL_CLKC_H
+> +
+> +#define CLKID_FIXED_PLL		1
+> +#define CLKID_FCLK_DIV2		6
+> +#define CLKID_FCLK_DIV3		7
+> +#define CLKID_FCLK_DIV5		8
+> +#define CLKID_FCLK_DIV7		9
+> +#define CLKID_HIFI_PLL		10
+
+
+Probably I asked about this... why indices are not continuous? You know
+that consumers are allowed to use number 2 and it will be your ABI, even
+though you did not write it in the binding? That's a tricky and
+confusing pattern for no real gains.
+
+Best regards,
+Krzysztof
+
