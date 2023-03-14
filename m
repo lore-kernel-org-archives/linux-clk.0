@@ -2,112 +2,277 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6489C7618B
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 15:41:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66464C6FD1C
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 15:46:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229590AbjCNPlR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Mar 2023 11:41:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56510 "EHLO
+        id S229866AbjCNPqS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Mar 2023 11:46:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231458AbjCNPku (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 11:40:50 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21BD4B1A79
-        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2023 08:40:24 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id y14so2094826wrq.4
-        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2023 08:40:24 -0700 (PDT)
+        with ESMTP id S231591AbjCNPp6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 11:45:58 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 333BA9F221
+        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2023 08:45:29 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id j2so14758592wrh.9
+        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2023 08:45:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678808421;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=txkXz/I3r3Tjb5s8k1jSMemJtidVgLhZ7+02zqLYGf4=;
-        b=sD6q8uCo8xBD0SMMmwkuzWrvH9QcadfmFi4Z+WiGG7JnU3M7+5m5oo1OLN4tkuNsrk
-         rUJ6NQPlzNUtqwoCi31FrojSxjnNDfgnvzH3+a/4CzEKlXKIeA7PrzyMv6HymuGSSgvz
-         wohHyqnxU6dYWpIgbNHHGD2C94TmbVvu5PBKRQbrwj4UqgumRQvG+AnArg2MXqlYtrjL
-         Al/uLzsabUckDbPAX+VH06mju/nbsLsJf7CwOiCN6WRBKNpQEsZQDMzrKDHGxtDvYh34
-         ff477xAWAkCRmkVGI7JUbZiLEI22/ho/M3v7jfYIlIs5U6CtMuELrINjyOaQWe2/UvQ4
-         L0ng==
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1678808724;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hlyp7nrREyg/a0hHUvwNjxDQM8a9Yo9MGnyhTjJAXJ4=;
+        b=noeaJDguqKfIh08cy+5zlHvWFslWScBjda+n6hdS13WrqLSjWFT3TFB5MnvHfB3mfn
+         6aaiXE6S5ZgLmqEXXQqXS/OF4AI9JWdrdUQtzsZtSqHJwSrq4orjPHqnZAoEveGi97H1
+         iFDVwXz7PzUQ2EI564GoRaReRoTS/DYHJX8T7YNSqfWEps1Q8mc0RGj2kFQlc5uxYvTW
+         hWq4g8jWVdr8YBJdRobqGcbG/1QDdPhq1ujcfJ9Zi329cLV0oYOjpW6Xr+QJf2Dx+ilt
+         6uI/BLW9kKbXyxN3H8oxjrjhAxVL56BL6hgYq4CV/WBA8ex7ScCLbnjJ2TBqeZpafa8t
+         YL1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678808421;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=txkXz/I3r3Tjb5s8k1jSMemJtidVgLhZ7+02zqLYGf4=;
-        b=JDnDn8ool+4Xv/ZftBAkRZnnHY1u2G5rrJT4T5K5Yfo2px+PYY/bLpVlfsD8EEHh6m
-         PJ/yn9VZw+9Cixt5oroVMB5nkRi7XW/34QQ9H800n4+xkNdzCA/wRzX5ie5J9j0Ib0q1
-         jcCpkJs6JqyV9WOODmNOd44mvM9b4Vba/xnzk334eXohrKnHUrBW0vJQTiA3f5GxP2Ib
-         5mPtUBOq6cNqKRFajaxwYWrpRCYJtBoUBOrGUqOptWmd7ZpLyvbES4Oa1qqBbgMoMXUQ
-         VJpSuj3QyDQe60oVio5e7lneKRmQJvLOHNibf+xe11NQ0lSpFuBg1cwxoBYg6BLNDOBe
-         x9Kw==
-X-Gm-Message-State: AO0yUKXgE4TdgXsmfh8c3v2LLVE1rJiHod5VH+Z/ufbpp38OvN3PqPWS
-        +QPxlvd+f9gzhwcq5JVKztJAnQ==
-X-Google-Smtp-Source: AK7set/rB1r35ueF97ISYBhFnUPTdvBSKd9cI6GOQPNUprLBXMlhEuGTztdytq7ar4n0jR5So2Z6jQ==
-X-Received: by 2002:adf:fb51:0:b0:2ce:7219:42b8 with SMTP id c17-20020adffb51000000b002ce721942b8mr17688166wrs.32.1678808421181;
-        Tue, 14 Mar 2023 08:40:21 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:11c3:d4e5:ef75:8eb9? ([2a01:e0a:982:cbb0:11c3:d4e5:ef75:8eb9])
-        by smtp.gmail.com with ESMTPSA id g10-20020a5d698a000000b002c71a32394dsm2291933wru.64.2023.03.14.08.40.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Mar 2023 08:40:20 -0700 (PDT)
-Message-ID: <6b7ae52c-d84d-8d08-139c-5c67ec363e85@linaro.org>
-Date:   Tue, 14 Mar 2023 16:40:19 +0100
+        d=1e100.net; s=20210112; t=1678808724;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hlyp7nrREyg/a0hHUvwNjxDQM8a9Yo9MGnyhTjJAXJ4=;
+        b=QxmQIxml4X5mKSl8cOZhmP187Gyl7UtAfutadYRyZac0yfAZMjGdHoy973eLRP7Dk5
+         qTbE1utJltYWObXuppcD2iI5ylrW+XiNYDBpd+kdOleuCUFhL+3H/xvBg5ZUimc+sqrD
+         3zIceAHXJ73zs0X4h3m+n2+8KwhTvT75ILAmO1MBV8DNsQnOtafpkYRf00UoCAJLdmCw
+         u4wrZ8EUHW70r1PEUaBS507GM0xsU+QVT3t+Z6m9CwQYuwSrpx6nYP9Jsnqt164l8eDz
+         I5DbEbsnkh4K95/g3N/mqAcrINFyESfoVybdxXWwT6AalRa3MY/5bG8iuXzxa3r8l9Ga
+         z3nA==
+X-Gm-Message-State: AO0yUKVjVIHHeNjEcWTMIncaMS3ESvTtSCnpYs/053bFGgSL2EH8vDBT
+        7eNWZVK4pvGyOnpDLXZZ9Om9vg==
+X-Google-Smtp-Source: AK7set9kOQSCt1nILgCoCuDKCZW+ZbwUmc5Jc2ebbeLxsp+0MErUKCOweY8716ROMkP894uRtiidSA==
+X-Received: by 2002:a5d:408e:0:b0:2c9:b9bf:e20c with SMTP id o14-20020a5d408e000000b002c9b9bfe20cmr11747197wrp.2.1678808723716;
+        Tue, 14 Mar 2023 08:45:23 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id m6-20020adff386000000b002c5493a17efsm2345919wro.25.2023.03.14.08.45.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Mar 2023 08:45:23 -0700 (PDT)
+Date:   Tue, 14 Mar 2023 16:45:22 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Vadim Fedorenko <vadfed@meta.com>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Milena Olech <milena.olech@intel.com>,
+        Michal Michalik <michal.michalik@intel.com>
+Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
+Message-ID: <ZBCWkhRaUztjMapa@nanopsycho>
+References: <20230312022807.278528-1-vadfed@meta.com>
+ <20230312022807.278528-3-vadfed@meta.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-From:   neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v10 3/5] dt-bindings: clock: meson: add A1 PLL and
- Peripherals clkcs bindings
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Cc:     jbrunet@baylibre.com, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        khilman@baylibre.com, martin.blumenstingl@googlemail.com,
-        jian.hu@amlogic.com, kernel@sberdevices.ru, rockosov@gmail.com,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20230313201259.19998-1-ddrokosov@sberdevices.ru>
- <20230313201259.19998-4-ddrokosov@sberdevices.ru>
- <ffebef1d-8447-181b-1890-3e638d399c62@linaro.org>
- <20230314114825.yiv4vcszr6b7m45w@CAB-WSD-L081021>
- <2d9297e9-dab7-9615-3859-79b3b2980d9a@linaro.org>
- <20230314150107.mwcglcu2jv4ixy3r@CAB-WSD-L081021>
- <9d176288-cd7c-7107-e180-761e372a2b6e@linaro.org>
- <c8fecf94-2581-6cc9-955c-324efdc7c70a@linaro.org>
- <21add21d-4afe-7840-6c49-3786f82761d9@linaro.org>
-Organization: Linaro Developer Services
-In-Reply-To: <21add21d-4afe-7840-6c49-3786f82761d9@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230312022807.278528-3-vadfed@meta.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14/03/2023 16:37, Krzysztof Kozlowski wrote:
-> On 14/03/2023 16:33, neil.armstrong@linaro.org wrote:
->>> There are many ways - depend on your driver. For example like this:
->>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/samsung/clk-exynos5420.c#n975
->>>
->>> The first argument is the clock ID (or ignore).
->>>
->>> BTW, quite likely the problem is generic to all Meson clock drivers.
->>
->> This issue about "public" non-continuous defined was already discussed at https://lore.kernel.org/all/c088e01c-0714-82be-8347-6140daf56640@linaro.org/
->>
->> I don't see what's different with this one.
+Sun, Mar 12, 2023 at 03:28:03AM CET, vadfed@meta.com wrote:
+
+[...]
+
+
+>diff --git a/MAINTAINERS b/MAINTAINERS
+>index edd3d562beee..0222b19af545 100644
+>--- a/MAINTAINERS
+>+++ b/MAINTAINERS
+>@@ -6289,6 +6289,15 @@ F:	Documentation/networking/device_drivers/ethernet/freescale/dpaa2/switch-drive
+> F:	drivers/net/ethernet/freescale/dpaa2/dpaa2-switch*
+> F:	drivers/net/ethernet/freescale/dpaa2/dpsw*
 > 
-> So you are aware that all undocumented clock IDs are still allowed to
-> use in DTS and they are ABI? Changing them will be an ABI break.
+>+DPLL CLOCK SUBSYSTEM
 
-Yes of course.
+Why "clock"? You don't mention "clock" anywhere else.
 
-Neil
+[...]
 
-> 
-> Best regards,
-> Krzysztof
-> 
 
+>diff --git a/drivers/dpll/dpll_core.c b/drivers/dpll/dpll_core.c
+>new file mode 100644
+>index 000000000000..3fc151e16751
+>--- /dev/null
+>+++ b/drivers/dpll/dpll_core.c
+>@@ -0,0 +1,835 @@
+>+// SPDX-License-Identifier: GPL-2.0
+>+/*
+>+ *  dpll_core.c - Generic DPLL Management class support.
+
+Why "class" ?
+
+[...]
+
+
+>+static int
+>+dpll_msg_add_pin_freq(struct sk_buff *msg, const struct dpll_pin *pin,
+>+		      struct netlink_ext_ack *extack, bool dump_any_freq)
+>+{
+>+	enum dpll_pin_freq_supp fs;
+>+	struct dpll_pin_ref *ref;
+>+	unsigned long i;
+>+	u32 freq;
+>+
+>+	xa_for_each((struct xarray *)&pin->dpll_refs, i, ref) {
+>+		if (ref && ref->ops && ref->dpll)
+>+			break;
+>+	}
+>+	if (!ref || !ref->ops || !ref->dpll)
+>+		return -ENODEV;
+>+	if (!ref->ops->frequency_get)
+>+		return -EOPNOTSUPP;
+>+	if (ref->ops->frequency_get(pin, ref->dpll, &freq, extack))
+>+		return -EFAULT;
+>+	if (nla_put_u32(msg, DPLL_A_PIN_FREQUENCY, freq))
+>+		return -EMSGSIZE;
+>+	if (!dump_any_freq)
+>+		return 0;
+>+	for (fs = DPLL_PIN_FREQ_SUPP_UNSPEC + 1;
+>+	     fs <= DPLL_PIN_FREQ_SUPP_MAX; fs++) {
+>+		if (test_bit(fs, &pin->prop.freq_supported)) {
+>+			if (nla_put_u32(msg, DPLL_A_PIN_FREQUENCY_SUPPORTED,
+>+			    dpll_pin_freq_value[fs]))
+
+This is odd. As I suggested in the yaml patch, better to treat all
+supported frequencies the same, no matter if it is range or not. The you
+don't need this weird bitfield.
+
+You can have a macro to help driver to assemble array of supported
+frequencies and ranges.
+
+
+>+				return -EMSGSIZE;
+>+		}
+>+	}
+>+	if (pin->prop.any_freq_min && pin->prop.any_freq_max) {
+>+		if (nla_put_u32(msg, DPLL_A_PIN_ANY_FREQUENCY_MIN,
+>+				pin->prop.any_freq_min))
+>+			return -EMSGSIZE;
+>+		if (nla_put_u32(msg, DPLL_A_PIN_ANY_FREQUENCY_MAX,
+>+				pin->prop.any_freq_max))
+>+			return -EMSGSIZE;
+>+	}
+>+
+>+	return 0;
+>+}
+>+
+
+[...]
+
+
+>+static int
+>+dpll_cmd_pin_on_dpll_get(struct sk_buff *msg, struct dpll_pin *pin,
+>+			 struct dpll_device *dpll,
+>+			 struct netlink_ext_ack *extack)
+>+{
+>+	struct dpll_pin_ref *ref;
+>+	int ret;
+>+
+>+	if (nla_put_u32(msg, DPLL_A_PIN_IDX, pin->dev_driver_id))
+>+		return -EMSGSIZE;
+>+	if (nla_put_string(msg, DPLL_A_PIN_DESCRIPTION, pin->prop.description))
+>+		return -EMSGSIZE;
+>+	if (nla_put_u8(msg, DPLL_A_PIN_TYPE, pin->prop.type))
+>+		return -EMSGSIZE;
+>+	if (nla_put_u32(msg, DPLL_A_PIN_DPLL_CAPS, pin->prop.capabilities))
+>+		return -EMSGSIZE;
+>+	ret = dpll_msg_add_pin_direction(msg, pin, extack);
+>+	if (ret)
+>+		return ret;
+>+	ret = dpll_msg_add_pin_freq(msg, pin, extack, true);
+>+	if (ret && ret != -EOPNOTSUPP)
+>+		return ret;
+>+	ref = dpll_xa_ref_dpll_find(&pin->dpll_refs, dpll);
+>+	if (!ref)
+
+How exactly this can happen? Looks to me like only in case of a bug.
+WARN_ON() perhaps (put directly into dpll_xa_ref_dpll_find()?
+
+
+>+		return -EFAULT;
+>+	ret = dpll_msg_add_pin_prio(msg, pin, ref, extack);
+>+	if (ret && ret != -EOPNOTSUPP)
+>+		return ret;
+>+	ret = dpll_msg_add_pin_on_dpll_state(msg, pin, ref, extack);
+>+	if (ret && ret != -EOPNOTSUPP)
+>+		return ret;
+>+	ret = dpll_msg_add_pin_parents(msg, pin, extack);
+>+	if (ret)
+>+		return ret;
+>+	if (pin->rclk_dev_name)
+
+Use && and single if
+
+
+>+		if (nla_put_string(msg, DPLL_A_PIN_RCLK_DEVICE,
+>+				   pin->rclk_dev_name))
+>+			return -EMSGSIZE;
+>+
+>+	return 0;
+>+}
+>+
+
+[...]
+
+
+>+static int
+>+dpll_pin_freq_set(struct dpll_pin *pin, struct nlattr *a,
+>+		  struct netlink_ext_ack *extack)
+>+{
+>+	u32 freq = nla_get_u32(a);
+>+	struct dpll_pin_ref *ref;
+>+	unsigned long i;
+>+	int ret;
+>+
+>+	if (!dpll_pin_is_freq_supported(pin, freq))
+>+		return -EINVAL;
+>+
+>+	xa_for_each(&pin->dpll_refs, i, ref) {
+>+		ret = ref->ops->frequency_set(pin, ref->dpll, freq, extack);
+>+		if (ret)
+>+			return -EFAULT;
+
+return what the op returns: ret
+
+
+>+		dpll_pin_notify(ref->dpll, pin, DPLL_A_PIN_FREQUENCY);
+>+	}
+>+
+>+	return 0;
+>+}
+>+
+
+[...]
+
+
+>+static int
+>+dpll_pin_direction_set(struct dpll_pin *pin, struct nlattr *a,
+>+		       struct netlink_ext_ack *extack)
+>+{
+>+	enum dpll_pin_direction direction = nla_get_u8(a);
+>+	struct dpll_pin_ref *ref;
+>+	unsigned long i;
+>+
+>+	if (!(DPLL_PIN_CAPS_DIRECTION_CAN_CHANGE & pin->prop.capabilities))
+>+		return -EOPNOTSUPP;
+>+
+>+	xa_for_each(&pin->dpll_refs, i, ref) {
+>+		if (ref->ops->direction_set(pin, ref->dpll, direction, extack))
+
+ret = ..
+if (ret)
+	return ret;
+
+Please use this pattern in other ops call code as well.
+
+
+>+			return -EFAULT;
+>+		dpll_pin_notify(ref->dpll, pin, DPLL_A_PIN_DIRECTION);
+>+	}
+>+
+>+	return 0;
+
+[...]
