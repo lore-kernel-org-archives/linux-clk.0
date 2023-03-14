@@ -2,65 +2,62 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C86C6FD1F
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 15:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72CF7C6FD1F
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 15:39:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229571AbjCNPfG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Mar 2023 11:35:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40244 "EHLO
+        id S230131AbjCNPjg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Mar 2023 11:39:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231736AbjCNPeg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 11:34:36 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F039241ED
-        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2023 08:34:09 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id k25-20020a7bc419000000b003ed23114fa7so4753215wmi.4
-        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2023 08:34:09 -0700 (PDT)
+        with ESMTP id S230237AbjCNPjU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 11:39:20 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D38DF5D8BE
+        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2023 08:38:35 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id eh3so7809507edb.11
+        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2023 08:38:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678808040;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=cUjs6NviTytRdWImr2LdV+yP+PAoWGINkzdtBEGmEbo=;
-        b=POV/DSkl33KHDBhOQAlydeOy9+73CLozXWLMG3Fp6HkjJKsola5G8Vziii75lLRhyv
-         CSRrs2f5lbJH7Kx/VJjSwdjCR3jsjTGlRuZcAnp6WFwG1E5Tmc08QtLvoXI1YyIDpThr
-         97WIxRQrrbJlOjfSR1TJpyA9y172fwxHOMRTCRC8QgHWSsf3Tkylu2dlIRWSdn2RlZTZ
-         R2pfaTyQ1Ppb5qo4K0FuKI38IxJIOAvJPJfOPUeW6Tki0UPChiPjFJ8Acx44qCYbrZ2m
-         mbpE4Qoi5+TTIXXuji8sQfgKBsxcNuqLn0IERYFuLgFpHl1BsV7Q/OAOL2vUFTJ+w/Lw
-         C5VQ==
+        d=linaro.org; s=google; t=1678808279;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2TF36IhKXXk6YGbpKzPAtC6Xow3FHaqTfrUySLBDzQc=;
+        b=yMenpJmh6h0dQFb0waXpMdvJuTFRjxpgNLTbnbIHK6DlBmKA7EEuy+FwT5rSljD1DS
+         pLkZtnO4j1rt/C/KhIBdO42UU0o3lw+ksJ8O837YfjkpSmmkiu9lQHb0Rdvkj9TZvkCq
+         b55ApjN6XOlMzG11n9kfI2qHIvMM/g7pjEXZXya0+W44ZUBZTHRM0+j+ReL1wHC1Rw59
+         TrbFXzrAqmsT/7DTbFASErPZHb2dUy7U8hxFJ9rFtHl1Pv6T4GTxQWVJ0UdupAHCev8q
+         YTlhBSEMOITBXK0vnOts68LGZSoNQ5iR27VnKSD7StKMmQJkzF+APxuaR1vydyklinie
+         PBZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678808040;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cUjs6NviTytRdWImr2LdV+yP+PAoWGINkzdtBEGmEbo=;
-        b=wq2MFiWwwx0zfZai6chUFA0h1Naiow0nKnd6oy9ACLkexSOpJU1SfPDhif7aWrMNQ7
-         NwbiBVXBMXMsdMd18eZgDz2LSO07/6aG19iFbuFULCFU2CBu2Y4bAf0wFrwhBLmXTv25
-         GL+kCH1bEJSHO+L6NQCT5Z5zZsNtAPFOU22AIGs5IK5MTS8WAeoaNvL25hcFJhniWCBb
-         wX+PF7t/k/7gYTpOQpXebKgHZzd1WSN/khMGnCnOqDsTJU1ri8dLQrIfx6uwB31+oNI/
-         +/msz7RM0t/9lewx/SKwFpNF64f6iEii8E2Nl+uNCOrcjQgMslvQOYCCX1fueSjlcfh9
-         etuQ==
-X-Gm-Message-State: AO0yUKWd8DQBjk748k8xSrU9pEDoSk8iXuegT42qJ2n1HGABvVHsj7AS
-        nKBCJPpIyaXR4uvlVM3o3t7WBg==
-X-Google-Smtp-Source: AK7set+opZ/oLe2qEwrmqbnw6+/2Ubn1r0GXttqg3AYw7OCBnJYLnOJKGMtbzfih7muqNbDNx5Ux0A==
-X-Received: by 2002:a05:600c:4f01:b0:3ea:f6c4:3060 with SMTP id l1-20020a05600c4f0100b003eaf6c43060mr14821352wmq.18.1678808040282;
-        Tue, 14 Mar 2023 08:34:00 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:11c3:d4e5:ef75:8eb9? ([2a01:e0a:982:cbb0:11c3:d4e5:ef75:8eb9])
-        by smtp.gmail.com with ESMTPSA id s16-20020a05600c45d000b003ed29899dfdsm3381407wmo.21.2023.03.14.08.33.59
+        d=1e100.net; s=20210112; t=1678808279;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2TF36IhKXXk6YGbpKzPAtC6Xow3FHaqTfrUySLBDzQc=;
+        b=fUxL5XYUOfpge0OsWAy+17vWGsRZn63LZwBA3CMFIykqffxmOiqyJpQ8LJ4XUExoI1
+         qCKRJwIxHRHJh2iDNE8XqXSFYxNtV8MUfcDa/KOJMQdGdmc6m2V9aCuOCL2ZxiH2BK+w
+         EPjRnTa9o6zVj/wTzlc2JhOP73+nbqfWY2zBjKwhHYq4Y6X+YUTR/O+N/KFSJpsy4upd
+         2LYu9e7awr1X8BxAQecfmQCB6hidRQ2arymkHkr1OYwsZtjvJOlYPUEQTJYZKQoPbTFw
+         2HJUGg9bCMS00xXvCzRLE4FOTSym5Udv/1ZgJOj8RB2lRlMKdg+dErQr9m+AOx+ufxVY
+         Urww==
+X-Gm-Message-State: AO0yUKUOlQRfE2VSA3z0JAVbuvFDsoYHj0H/ePA68eacmYXokPnwYtN5
+        c1zq+tDDAdvS9xSnlcHv1EDUkQ==
+X-Google-Smtp-Source: AK7set9VlEaie3T4XSfwYSyfX9w55uBK9zmwb3D2/voALZ/htwROvQHC39CEVKRyTaWJmi8tkw0VJg==
+X-Received: by 2002:a17:907:c508:b0:92c:6fbf:28 with SMTP id tq8-20020a170907c50800b0092c6fbf0028mr3153303ejc.64.1678808279056;
+        Tue, 14 Mar 2023 08:37:59 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:59be:4b3f:994b:e78c? ([2a02:810d:15c0:828:59be:4b3f:994b:e78c])
+        by smtp.gmail.com with ESMTPSA id q19-20020a17090676d300b00922f76decefsm1304341ejn.99.2023.03.14.08.37.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Mar 2023 08:33:59 -0700 (PDT)
-Message-ID: <c8fecf94-2581-6cc9-955c-324efdc7c70a@linaro.org>
-Date:   Tue, 14 Mar 2023 16:33:58 +0100
+        Tue, 14 Mar 2023 08:37:58 -0700 (PDT)
+Message-ID: <21add21d-4afe-7840-6c49-3786f82761d9@linaro.org>
+Date:   Tue, 14 Mar 2023 16:37:57 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-From:   neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
+ Thunderbird/102.8.0
 Subject: Re: [PATCH v10 3/5] dt-bindings: clock: meson: add A1 PLL and
  Peripherals clkcs bindings
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+To:     neil.armstrong@linaro.org,
         Dmitry Rokosov <ddrokosov@sberdevices.ru>
 Cc:     jbrunet@baylibre.com, mturquette@baylibre.com, sboyd@kernel.org,
         robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
@@ -76,97 +73,30 @@ References: <20230313201259.19998-1-ddrokosov@sberdevices.ru>
  <2d9297e9-dab7-9615-3859-79b3b2980d9a@linaro.org>
  <20230314150107.mwcglcu2jv4ixy3r@CAB-WSD-L081021>
  <9d176288-cd7c-7107-e180-761e372a2b6e@linaro.org>
-Organization: Linaro Developer Services
-In-Reply-To: <9d176288-cd7c-7107-e180-761e372a2b6e@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ <c8fecf94-2581-6cc9-955c-324efdc7c70a@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <c8fecf94-2581-6cc9-955c-324efdc7c70a@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
-
-On 14/03/2023 16:19, Krzysztof Kozlowski wrote:
-> On 14/03/2023 16:01, Dmitry Rokosov wrote:
->> On Tue, Mar 14, 2023 at 03:05:48PM +0100, Krzysztof Kozlowski wrote:
->>> On 14/03/2023 12:48, Dmitry Rokosov wrote:
->>>> On Tue, Mar 14, 2023 at 12:28:40PM +0100, Krzysztof Kozlowski wrote:
->>>>> On 13/03/2023 21:12, Dmitry Rokosov wrote:
-
-<snip>
-
->>>>>> +/*
->>>>>> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
->>>>>> + * Author: Jian Hu <jian.hu@amlogic.com>
->>>>>> + *
->>>>>> + * Copyright (c) 2023, SberDevices. All Rights Reserved.
->>>>>> + * Author: Dmitry Rokosov <ddrokosov@sberdevices.ru>
->>>>>> + */
->>>>>> +
->>>>>> +#ifndef __A1_PLL_CLKC_H
->>>>>> +#define __A1_PLL_CLKC_H
->>>>>> +
->>>>>> +#define CLKID_FIXED_PLL		1
->>>>>> +#define CLKID_FCLK_DIV2		6
->>>>>> +#define CLKID_FCLK_DIV3		7
->>>>>> +#define CLKID_FCLK_DIV5		8
->>>>>> +#define CLKID_FCLK_DIV7		9
->>>>>> +#define CLKID_HIFI_PLL		10
->>>>>
->>>>>
->>>>> Probably I asked about this... why indices are not continuous? You know
->>>>> that consumers are allowed to use number 2 and it will be your ABI, even
->>>>> though you did not write it in the binding? That's a tricky and
->>>>> confusing pattern for no real gains.
->>>>
->>>> Actually, indices are continuou but splitted into two parts: public and
->>>> private. The public part is located in the dt bindings and can be included
->>>> from device tree sources. The private part is in the drivers/clk/meson
->>>> folder, and only clk drivers can use it.
->>>> I know, there is some trick when the user just inserts a digit value and
->>>> doesn't use constants.
->>>
->>> This is not a trick. This is how DTS works. You have only indices/numbers.
->>>
->>>> But I'm starting from the assumption that such
->>>> dts changes will not be approved by maintainers. In other words, the user
->>>> *must* apply defined ABI constants from dt bindings; it's a strong
->>>> restriction.
->>>
->>> But it is not correct assumption. Defines are very important, but they
->>> are just helpers. Otherwise without defines you could not use any clock?
->>> We pretty often use IDs - for DTS to allow merging via different trees,
->>> for DT binding examples to not rely on headers.
->>>
->>> Your driver implements the ABI and the driver exposes for example clock
->>> ID=2, even if it is not in the header.
->>>
->>> These IDs are unfortunately undocumented ABI and you if you change them,
->>> users are allowed to complain.
->>>
->>> Solution: don't do this. Have all exposed clock IDs and clocks in sync
->>> (and continuous).
+On 14/03/2023 16:33, neil.armstrong@linaro.org wrote:
+>> There are many ways - depend on your driver. For example like this:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/samsung/clk-exynos5420.c#n975
 >>
->> I see. But I don't understand how I can restrict access to private
->> clock objects. I don't want to open ability to change system clocks
->> parents, for example. Or it's under device tree developer responsibility?
->> I would appreciate any assistance in determining the best path.
+>> The first argument is the clock ID (or ignore).
+>>
+>> BTW, quite likely the problem is generic to all Meson clock drivers.
 > 
-> There are many ways - depend on your driver. For example like this:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/samsung/clk-exynos5420.c#n975
+> This issue about "public" non-continuous defined was already discussed at https://lore.kernel.org/all/c088e01c-0714-82be-8347-6140daf56640@linaro.org/
 > 
-> The first argument is the clock ID (or ignore).
-> 
-> BTW, quite likely the problem is generic to all Meson clock drivers.
+> I don't see what's different with this one.
 
-This issue about "public" non-continuous defined was already discussed at https://lore.kernel.org/all/c088e01c-0714-82be-8347-6140daf56640@linaro.org/
+So you are aware that all undocumented clock IDs are still allowed to
+use in DTS and they are ABI? Changing them will be an ABI break.
 
-I don't see what's different with this one.
-
-Neil
-
-> 
-> Best regards,
-> Krzysztof
-> 
+Best regards,
+Krzysztof
 
