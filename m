@@ -2,148 +2,147 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C102CC6FD1D
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 11:28:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B28BEC7618A
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 11:48:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230300AbjCNL2r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Mar 2023 07:28:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51456 "EHLO
+        id S231131AbjCNLsm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Mar 2023 07:48:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230306AbjCNL2p (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 07:28:45 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B6732B600
-        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2023 04:28:44 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id da10so60725013edb.3
-        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2023 04:28:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678793323;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rOrTbnKTcE7CauGtKPDZAIZx3EY7nUKDtivuP9yBIvs=;
-        b=olc0q14IwQ9q8wZw71hvNsbQjPxVbaB7Q1Y5ubAKoYpMubDGVb7FvJf252fUZPXEaZ
-         CdZ39e8ufUMdZHhHt2arvPJAWhvWwN3NEhXw9+6z4tHQUw9ap2OijZElmtM1DUCoU4U0
-         F/Ni4guEPIUoKilRDKsKY3W9XxsnhfOym61oPQl9wMxAGvJwveC63pZlgmvcvaJyJt8G
-         p9ZLlUqg+8OBsgnESYiNj9x2l16/2G2jyUQQF4YBaYzKle/jxjypPZaVtQAzhtbGVqaj
-         R3GJuT8bXG1MbIjatgd2qwovq8DhXH3mC02ygXejSwg+QcEe5LW9XhH1+O0EoinsGLDr
-         j2cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678793323;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rOrTbnKTcE7CauGtKPDZAIZx3EY7nUKDtivuP9yBIvs=;
-        b=N5/pkBfE3frxFWWpvAKDp87AddzUKpZuYn5fasM8H6TvBIGhZXkdbeWb+cryVgftF3
-         8MXHsaUlgkNoK/032zr/5j6Rt8ryLmzs1AhaQ7LIrhBlNLHJSEdmG49yCBKoMpdHZWKO
-         /hvZlyuEkSMCXxQ4jjyjBlVZm3XzBbHZZZg4TOpal1xjF2576tywBQb8fCh/mjuB1yCg
-         vRrP/ojIPuAxoKYiVwwIKR0KvVc3cL5PkoZf8M1ngk94IgwKWadfzZ/uDRyfcbDzIdqw
-         PlsEe5AdB1TFXyFJZn+Nb+nh0FJlwvawAmXalvSO4ZEn65Slv37pTPE8H4b4mDkz3lWC
-         v8AQ==
-X-Gm-Message-State: AO0yUKV5n1WLIQ/yrGM+Lqj77E/eQ8KPU85/kcRuf48mHMSHolY1NUBd
-        1QGS0FCq2bCmY9HdJT25dQ+XmA==
-X-Google-Smtp-Source: AK7set8Ex15efZPVYFuYY54Frd1acshjdF/oeAMqSwkNIBG/aUh05lW25OUm7KGUBskPUPa6E142uw==
-X-Received: by 2002:a17:907:7290:b0:8b1:2eef:154c with SMTP id dt16-20020a170907729000b008b12eef154cmr2370532ejc.0.1678793322773;
-        Tue, 14 Mar 2023 04:28:42 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:59be:4b3f:994b:e78c? ([2a02:810d:15c0:828:59be:4b3f:994b:e78c])
-        by smtp.gmail.com with ESMTPSA id z22-20020a170906271600b0091f58083a15sm1015459ejc.175.2023.03.14.04.28.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Mar 2023 04:28:42 -0700 (PDT)
-Message-ID: <ffebef1d-8447-181b-1890-3e638d399c62@linaro.org>
-Date:   Tue, 14 Mar 2023 12:28:40 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
+        with ESMTP id S231364AbjCNLsl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 07:48:41 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAD1346A3;
+        Tue, 14 Mar 2023 04:48:28 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 5576E5FD1A;
+        Tue, 14 Mar 2023 14:48:27 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1678794507;
+        bh=marFiN47fr+Q7MFOCmdErjItiqHs7/cgayQIHPn8o7A=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+        b=biN9QXQ+GzSQr7wcFa+QfG5JRntdnWm9/Wu0T6S/6iTOTMHlN0Wy2zlNhadFUno0l
+         0o0zTqvmMr0fn6Tgzh/gWnrqGT1onen90KfpytT34E7+3ffksNeeQlcSmCNgEwAFIz
+         G+92O3ABna3Oiu6dQvkfFhXLcvMYWsI2dJaBpkhAZgw2N6NMMvDB5OY/97dAzsHkvg
+         Qn0n/7J50CbBM801iRfbkkUUXL4voWuGWQWrm3mYpRn0Y8HhSja0vgl3BN6xHKz85l
+         /y62Sn+MrFT+rULGOzT6gD5FH6yZ9txoP8JOqC1S/UvyJLwjvDTfuwZP4TBsVuqPRO
+         XpvKzMr2snI5A==
+Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Tue, 14 Mar 2023 14:48:26 +0300 (MSK)
+Date:   Tue, 14 Mar 2023 14:48:25 +0300
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <khilman@baylibre.com>, <martin.blumenstingl@googlemail.com>,
+        <jian.hu@amlogic.com>, <kernel@sberdevices.ru>,
+        <rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
 Subject: Re: [PATCH v10 3/5] dt-bindings: clock: meson: add A1 PLL and
  Peripherals clkcs bindings
-Content-Language: en-US
-To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>,
-        neil.armstrong@linaro.org, jbrunet@baylibre.com,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
-        martin.blumenstingl@googlemail.com
-Cc:     jian.hu@amlogic.com, kernel@sberdevices.ru, rockosov@gmail.com,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
+Message-ID: <20230314114825.yiv4vcszr6b7m45w@CAB-WSD-L081021>
 References: <20230313201259.19998-1-ddrokosov@sberdevices.ru>
  <20230313201259.19998-4-ddrokosov@sberdevices.ru>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230313201259.19998-4-ddrokosov@sberdevices.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <ffebef1d-8447-181b-1890-3e638d399c62@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ffebef1d-8447-181b-1890-3e638d399c62@linaro.org>
+User-Agent: NeoMutt/20220415
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
+ S-MS-EXCH01.sberdevices.ru (172.16.1.4)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/03/14 06:01:00 #20942017
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/03/2023 21:12, Dmitry Rokosov wrote:
-> Add the documentation for Amlogic A1 PLL and Amlogic A1 Peripherals
-> clock drivers.
-> Introduce Amlogic A1 PLL and Amlogic A1 Peripherals device tree
-> bindings and include them to MAINTAINERS.
+On Tue, Mar 14, 2023 at 12:28:40PM +0100, Krzysztof Kozlowski wrote:
+> On 13/03/2023 21:12, Dmitry Rokosov wrote:
+
+[...]
+
+> > +#define CLKID_SPIFC		84
+> > +#define CLKID_USB_BUS		85
+> > +#define CLKID_SD_EMMC		86
+> > +#define CLKID_PSRAM		87
+> > +#define CLKID_DMC		88
+> 
+> And what is here? Between 88 and 121?
 > 
 
+Explained below.
 
->  
-> diff --git a/include/dt-bindings/clock/amlogic,a1-clkc.h b/include/dt-bindings/clock/amlogic,a1-clkc.h
-> new file mode 100644
-> index 000000000000..2b16b1f1a5bf
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/amlogic,a1-clkc.h
-> @@ -0,0 +1,100 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
+> > +#define CLKID_GEN_SEL		121
+> > +
+> > +#endif /* __A1_CLKC_H */
+> > diff --git a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+> > new file mode 100644
+> > index 000000000000..8e97d3fb9d30
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+> > @@ -0,0 +1,20 @@
+> > +/* SPDX-License-Identifier: GPL-2.0+ */
+> 
+> I found in changelog:
+> "fix license issue, it's GPL-2.0+ only in the current version"
+> and I do not understand.
+> 
+> The license is wrong, so what did you fix?
+> 
 
-???
+Sorry don't get you. Why is it wrong?
+I've changed all new source files to GPL-2.0+ except yaml, because yaml
+dt bindings schemas require the following license:
 
-> +#define CLKID_SPIFC		84
-> +#define CLKID_USB_BUS		85
-> +#define CLKID_SD_EMMC		86
-> +#define CLKID_PSRAM		87
-> +#define CLKID_DMC		88
+    # SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 
-And what is here? Between 88 and 121?
+I've pointed it in the changelog.
 
-> +#define CLKID_GEN_SEL		121
-> +
-> +#endif /* __A1_CLKC_H */
-> diff --git a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
-> new file mode 100644
-> index 000000000000..8e97d3fb9d30
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
-> @@ -0,0 +1,20 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
+> > +/*
+> > + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+> > + * Author: Jian Hu <jian.hu@amlogic.com>
+> > + *
+> > + * Copyright (c) 2023, SberDevices. All Rights Reserved.
+> > + * Author: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+> > + */
+> > +
+> > +#ifndef __A1_PLL_CLKC_H
+> > +#define __A1_PLL_CLKC_H
+> > +
+> > +#define CLKID_FIXED_PLL		1
+> > +#define CLKID_FCLK_DIV2		6
+> > +#define CLKID_FCLK_DIV3		7
+> > +#define CLKID_FCLK_DIV5		8
+> > +#define CLKID_FCLK_DIV7		9
+> > +#define CLKID_HIFI_PLL		10
+> 
+> 
+> Probably I asked about this... why indices are not continuous? You know
+> that consumers are allowed to use number 2 and it will be your ABI, even
+> though you did not write it in the binding? That's a tricky and
+> confusing pattern for no real gains.
 
-I found in changelog:
-"fix license issue, it's GPL-2.0+ only in the current version"
-and I do not understand.
+Actually, indices are continuou but splitted into two parts: public and
+private. The public part is located in the dt bindings and can be included
+from device tree sources. The private part is in the drivers/clk/meson
+folder, and only clk drivers can use it.
+I know, there is some trick when the user just inserts a digit value and
+doesn't use constants. But I'm starting from the assumption that such
+dts changes will not be approved by maintainers. In other words, the user
+*must* apply defined ABI constants from dt bindings; it's a strong
+restriction.
 
-The license is wrong, so what did you fix?
-
-> +/*
-> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
-> + * Author: Jian Hu <jian.hu@amlogic.com>
-> + *
-> + * Copyright (c) 2023, SberDevices. All Rights Reserved.
-> + * Author: Dmitry Rokosov <ddrokosov@sberdevices.ru>
-> + */
-> +
-> +#ifndef __A1_PLL_CLKC_H
-> +#define __A1_PLL_CLKC_H
-> +
-> +#define CLKID_FIXED_PLL		1
-> +#define CLKID_FCLK_DIV2		6
-> +#define CLKID_FCLK_DIV3		7
-> +#define CLKID_FCLK_DIV5		8
-> +#define CLKID_FCLK_DIV7		9
-> +#define CLKID_HIFI_PLL		10
-
-
-Probably I asked about this... why indices are not continuous? You know
-that consumers are allowed to use number 2 and it will be your ABI, even
-though you did not write it in the binding? That's a tricky and
-confusing pattern for no real gains.
-
-Best regards,
-Krzysztof
-
+-- 
+Thank you,
+Dmitry
