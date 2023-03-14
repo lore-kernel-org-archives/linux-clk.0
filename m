@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3646AC6FD1D
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 13:11:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C648CC6FD1D
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 13:11:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232177AbjCNNLM convert rfc822-to-8bit (ORCPT
+        id S231699AbjCNNLT convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Mar 2023 09:11:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42036 "EHLO
+        Tue, 14 Mar 2023 09:11:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231576AbjCNNKy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 09:10:54 -0400
+        with ESMTP id S231718AbjCNNKz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 09:10:55 -0400
 Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7484684816;
-        Tue, 14 Mar 2023 06:07:33 -0700 (PDT)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 127432A153;
+        Tue, 14 Mar 2023 06:07:37 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 2714E24E3BC;
-        Tue, 14 Mar 2023 20:44:10 +0800 (CST)
-Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 14 Mar
- 2023 20:44:09 +0800
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 1DE5324E3CA;
+        Tue, 14 Mar 2023 20:44:14 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 14 Mar
+ 2023 20:44:14 +0800
 Received: from localhost.localdomain (113.72.145.194) by EXMBX061.cuchost.com
  (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 14 Mar
- 2023 20:44:08 +0800
+ 2023 20:44:12 +0800
 From:   Xingyu Wu <xingyu.wu@starfivetech.com>
 To:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
         "Michael Turquette" <mturquette@baylibre.com>,
@@ -40,9 +40,9 @@ CC:     Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
         Hal Feng <hal.feng@starfivetech.com>,
         Xingyu Wu <xingyu.wu@starfivetech.com>,
         <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH v3 05/11] reset: starfive: jh7110: Add StarFive Image-Signal-Process reset support
-Date:   Tue, 14 Mar 2023 20:43:58 +0800
-Message-ID: <20230314124404.117592-6-xingyu.wu@starfivetech.com>
+Subject: [PATCH v3 10/11] riscv: dts: starfive: jh7110: Add DVP and HDMI TX pixel external clocks
+Date:   Tue, 14 Mar 2023 20:44:03 +0800
+Message-ID: <20230314124404.117592-11-xingyu.wu@starfivetech.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230314124404.117592-1-xingyu.wu@starfivetech.com>
 References: <20230314124404.117592-1-xingyu.wu@starfivetech.com>
@@ -57,43 +57,71 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add auxiliary_device_id to support StarFive JH7110 Image-Signal-Process
-resets of which the auxiliary device name is
-"clk_starfive_jh71x0.reset-isp".
+Add DVP and HDMI TX pixel external fixed clocks and the rates are
+74.25MHz and 297MHz.
 
 Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
 ---
- drivers/reset/starfive/reset-starfive-jh7110.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ .../dts/starfive/jh7110-starfive-visionfive-2.dtsi   |  8 ++++++++
+ arch/riscv/boot/dts/starfive/jh7110.dtsi             | 12 ++++++++++++
+ 2 files changed, 20 insertions(+)
 
-diff --git a/drivers/reset/starfive/reset-starfive-jh7110.c b/drivers/reset/starfive/reset-starfive-jh7110.c
-index 2dc46d91a244..3aeeea8ee1ed 100644
---- a/drivers/reset/starfive/reset-starfive-jh7110.c
-+++ b/drivers/reset/starfive/reset-starfive-jh7110.c
-@@ -35,6 +35,12 @@ static const struct jh7110_reset_info jh7110_stg_info = {
- 	.status_offset = 0x78,
+diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+index 2a6d81609284..1155b97b593d 100644
+--- a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+@@ -38,6 +38,10 @@ gpio-restart {
+ 	};
  };
  
-+static const struct jh7110_reset_info jh7110_isp_info = {
-+	.nr_resets = JH7110_ISPRST_END,
-+	.assert_offset = 0x38,
-+	.status_offset = 0x3C,
++&dvp_clk {
++	clock-frequency = <74250000>;
 +};
 +
- static int jh7110_reset_probe(struct auxiliary_device *adev,
- 			      const struct auxiliary_device_id *id)
- {
-@@ -65,6 +71,10 @@ static const struct auxiliary_device_id jh7110_reset_ids[] = {
- 		.name = "clk_starfive_jh71x0.reset-stg",
- 		.driver_data = (kernel_ulong_t)&jh7110_stg_info,
- 	},
-+	{
-+		.name = "clk_starfive_jh71x0.reset-isp",
-+		.driver_data = (kernel_ulong_t)&jh7110_isp_info,
-+	},
- 	{ /* sentinel */ }
+ &gmac0_rgmii_rxin {
+ 	clock-frequency = <125000000>;
  };
- MODULE_DEVICE_TABLE(auxiliary, jh7110_reset_ids);
+@@ -54,6 +58,10 @@ &gmac1_rmii_refin {
+ 	clock-frequency = <50000000>;
+ };
+ 
++&hdmitx0_pixelclk {
++	clock-frequency = <297000000>;
++};
++
+ &i2srx_bclk_ext {
+ 	clock-frequency = <12288000>;
+ };
+diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+index 417f7f51c219..d2757f4afab3 100644
+--- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+@@ -173,6 +173,12 @@ core4 {
+ 		};
+ 	};
+ 
++	dvp_clk: dvp-clock {
++		compatible = "fixed-clock";
++		clock-output-names = "dvp_clk";
++		#clock-cells = <0>;
++	};
++
+ 	gmac0_rgmii_rxin: gmac0-rgmii-rxin-clock {
+ 		compatible = "fixed-clock";
+ 		clock-output-names = "gmac0_rgmii_rxin";
+@@ -197,6 +203,12 @@ gmac1_rmii_refin: gmac1-rmii-refin-clock {
+ 		#clock-cells = <0>;
+ 	};
+ 
++	hdmitx0_pixelclk: hdmitx0-pixel-clock {
++		compatible = "fixed-clock";
++		clock-output-names = "hdmitx0_pixelclk";
++		#clock-cells = <0>;
++	};
++
+ 	i2srx_bclk_ext: i2srx-bclk-ext-clock {
+ 		compatible = "fixed-clock";
+ 		clock-output-names = "i2srx_bclk_ext";
 -- 
 2.25.1
 
