@@ -2,254 +2,921 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B54AC6FD1F
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 09:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86080C6FD1C
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Mar 2023 09:21:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229818AbjCNJOi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Mar 2023 05:14:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50954 "EHLO
+        id S230324AbjCNJVs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Mar 2023 05:21:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229704AbjCNJOg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 05:14:36 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD49D5291D;
-        Tue, 14 Mar 2023 02:14:01 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7A69D6603009;
-        Tue, 14 Mar 2023 09:13:59 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1678785240;
-        bh=dCwrtOBAteP3bw0Np33HjkJ4M+Fv2T1r2/JLU5LSVr4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Jpb8MiO/1b7QSptstUcJ6hrV2V4TjNbFbQmwQ0aefOLRz+KImkUZc3CkXIsxoYvly
-         0natlWy8iHDuPKG+4r7PKmJFRAXIsSZvT3xPiW4PnyS4OqpN0fxX2wxK9pVbWp1DOz
-         mMI7MLZT/XKwDu/3t1IBHM11c7H9H5kWD5Crs0w7s4FTPMd3H+Qk6II9GTnQt4rtCU
-         KGtO88Bl4khfLshF17WgE7gEws/SQM9bP0Aqs/AOBfXHmxCwKGl7Bvxtc9DGZOxHbk
-         AE8Fc/glUQ5QTZwsGSjduM5WXmRTGmDO5/zBZdK4h4emfzAKzbQ879riq2RDD27Fls
-         iTsM84OxyHFwA==
-Message-ID: <cd0289cc-00cb-398a-214e-09b994de4274@collabora.com>
-Date:   Tue, 14 Mar 2023 10:13:57 +0100
+        with ESMTP id S229704AbjCNJVr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 05:21:47 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44559168AE
+        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2023 02:21:41 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id l7-20020a05600c4f0700b003e79fa98ce1so9601662wmq.2
+        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2023 02:21:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1678785700;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VkH+Chfe9LfayvlVxfsj/xMsommsjeexdTIB7wosRKw=;
+        b=3KzwKgnLMbjERG2GfCO6O3NipmFde3pihwCiSAUGX4Ys5q6z3ejz0QejZFFkmUZqqI
+         NkcJRouu4+X5uka4aTUEPlQIyj7OMuU7J0LG3azsdYGNqC4DvtQ+Cf4NqasnUtGRrryK
+         oiX8GhrVJIux8uIQRzPnfFXp9UjuiVHbXvMCNW2PYy1TpurSkP4+JI93oAtShcDaGAux
+         B8sNPd2oamp6DXVsAHwitno3ZCELWdoNW64eCdS9SM1xSfxiwKq3qxdj1iFO6IB/w8cr
+         zV6D/JFCn7aZcoGwf0J6arAN3XINvYISBDhT+DU+xJLT9zJHmNo93DdwHhMjzQFGVTrQ
+         UtXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678785700;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VkH+Chfe9LfayvlVxfsj/xMsommsjeexdTIB7wosRKw=;
+        b=v2wtkiwezhqs45AwR+84npXJ8LuuH9pVByLe6eHqDjtlRlyhd0cFKfEATTq9SXvSuj
+         R07XjwwxbRdPFGr55GwHCbMCVRxX2toYmWnIpOkxPf+qk/cQ17JezaglpbYFvqpyy4oz
+         vw3tRMFRAq6pzH9utDx818+g9VDPo7euB/MC566qz3uwKy40KhYV/Zw1O6kQqdjNmF0Z
+         XuO2ATBthI6jAT5izztHxAbNfB5BoM1bIJE0y/TXaSXOSPsgpHHH/e5uCJmKFGiQlFiv
+         Z4OnsZQOq6K3+ISef+BVUl/1C4TGW2whxqpP0VrzRHyJQ4xJ4mc82i1v4pxxm0LRdtkn
+         lnOg==
+X-Gm-Message-State: AO0yUKWsQG2bwsikoXBuUoumeLUvLnglWyEZyLW5UY37LNbz7T9dph2o
+        +be7nfcPJHnMTcnKP+fGHV76iw==
+X-Google-Smtp-Source: AK7set/jn2h7uK9gxAs3lR1m56MpXWk0Ed0WMMSGZmhuTw2Ajtvk5VDn+0X7ehaqASZN5NijzLn6SQ==
+X-Received: by 2002:a05:600c:4f87:b0:3df:de28:f819 with SMTP id n7-20020a05600c4f8700b003dfde28f819mr13780372wmq.15.1678785699489;
+        Tue, 14 Mar 2023 02:21:39 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id l6-20020a05600c2cc600b003df5be8987esm2256276wmc.20.2023.03.14.02.21.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Mar 2023 02:21:38 -0700 (PDT)
+Date:   Tue, 14 Mar 2023 10:21:37 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc:     Vadim Fedorenko <vadfed@meta.com>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Milena Olech <milena.olech@intel.com>,
+        Michal Michalik <michal.michalik@intel.com>
+Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
+Message-ID: <ZBA8ofFfKigqZ6M7@nanopsycho>
+References: <20230312022807.278528-1-vadfed@meta.com>
+ <20230312022807.278528-3-vadfed@meta.com>
+ <ZA9Nbll8+xHt4ygd@nanopsycho>
+ <2b749045-021e-d6c8-b265-972cfa892802@linux.dev>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v6 12/19] clk: mediatek: Add MT8188 vdosys0 clock support
-Content-Language: en-US
-To:     "Garmin.Chang" <Garmin.Chang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>
-Cc:     Project_Global_Chrome_Upstream_Group@mediatek.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-clk@vger.kernel.org, netdev@vger.kernel.org
-References: <20230309135419.30159-1-Garmin.Chang@mediatek.com>
- <20230309135419.30159-13-Garmin.Chang@mediatek.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230309135419.30159-13-Garmin.Chang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2b749045-021e-d6c8-b265-972cfa892802@linux.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 09/03/23 14:54, Garmin.Chang ha scritto:
-> Add MT8188 vdosys0 clock controller which provides clock gate
-> control in video system. This is integrated with mtk-mmsys
-> driver which will populate device by platform_device_register_data
-> to start vdosys clock driver.
-> 
-> Signed-off-by: Garmin.Chang <Garmin.Chang@mediatek.com>
-> ---
->   drivers/clk/mediatek/Makefile          |   3 +-
->   drivers/clk/mediatek/clk-mt8188-vdo0.c | 135 +++++++++++++++++++++++++
->   2 files changed, 137 insertions(+), 1 deletion(-)
->   create mode 100644 drivers/clk/mediatek/clk-mt8188-vdo0.c
-> 
-> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-> index bf8e50b54bb4..fca66c37cecc 100644
-> --- a/drivers/clk/mediatek/Makefile
-> +++ b/drivers/clk/mediatek/Makefile
-> @@ -94,7 +94,8 @@ obj-$(CONFIG_COMMON_CLK_MT8186) += clk-mt8186-mcu.o clk-mt8186-topckgen.o clk-mt
->   obj-$(CONFIG_COMMON_CLK_MT8188) += clk-mt8188-apmixedsys.o clk-mt8188-topckgen.o \
->   				   clk-mt8188-peri_ao.o clk-mt8188-infra_ao.o \
->   				   clk-mt8188-cam.o clk-mt8188-ccu.o clk-mt8188-img.o \
-> -				   clk-mt8188-ipe.o clk-mt8188-mfg.o clk-mt8188-vdec.o
-> +				   clk-mt8188-ipe.o clk-mt8188-mfg.o clk-mt8188-vdec.o \
-> +				   clk-mt8188-vdo0.o
->   obj-$(CONFIG_COMMON_CLK_MT8192) += clk-mt8192.o
->   obj-$(CONFIG_COMMON_CLK_MT8192_AUDSYS) += clk-mt8192-aud.o
->   obj-$(CONFIG_COMMON_CLK_MT8192_CAMSYS) += clk-mt8192-cam.o
-> diff --git a/drivers/clk/mediatek/clk-mt8188-vdo0.c b/drivers/clk/mediatek/clk-mt8188-vdo0.c
-> new file mode 100644
-> index 000000000000..f649f603aab7
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt8188-vdo0.c
-> @@ -0,0 +1,135 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +//
-> +// Copyright (c) 2022 MediaTek Inc.
-> +// Author: Garmin Chang <garmin.chang@mediatek.com>
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/platform_device.h>
-> +#include <dt-bindings/clock/mediatek,mt8188-clk.h>
-> +
-> +#include "clk-gate.h"
-> +#include "clk-mtk.h"
-> +
-> +static const struct mtk_gate_regs vdo0_0_cg_regs = {
-> +	.set_ofs = 0x104,
-> +	.clr_ofs = 0x108,
-> +	.sta_ofs = 0x100,
-> +};
-> +
-> +static const struct mtk_gate_regs vdo0_1_cg_regs = {
-> +	.set_ofs = 0x114,
-> +	.clr_ofs = 0x118,
-> +	.sta_ofs = 0x110,
-> +};
-> +
-> +static const struct mtk_gate_regs vdo0_2_cg_regs = {
-> +	.set_ofs = 0x124,
-> +	.clr_ofs = 0x128,
-> +	.sta_ofs = 0x120,
-> +};
-> +
-> +#define GATE_VDO0_0(_id, _name, _parent, _shift)			\
-> +	GATE_MTK(_id, _name, _parent, &vdo0_0_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-> +
-> +#define GATE_VDO0_1(_id, _name, _parent, _shift)			\
-> +	GATE_MTK(_id, _name, _parent, &vdo0_1_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-> +
-> +#define GATE_VDO0_2(_id, _name, _parent, _shift)			\
-> +	GATE_MTK(_id, _name, _parent, &vdo0_2_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-> +
-> +#define GATE_VDO0_2_FLAGS(_id, _name, _parent, _shift, _flags)		\
-> +	GATE_MTK_FLAGS(_id, _name, _parent, &vdo0_2_cg_regs, _shift,	\
-> +	&mtk_clk_gate_ops_setclr, _flags)
-> +
-> +static const struct mtk_gate vdo0_clks[] = {
-> +	/* VDO0_0 */
-> +	GATE_VDO0_0(CLK_VDO0_DISP_OVL0, "vdo0_disp_ovl0", "top_vpp", 0),
-> +	GATE_VDO0_0(CLK_VDO0_FAKE_ENG0, "vdo0_fake_eng0", "top_vpp", 2),
-> +	GATE_VDO0_0(CLK_VDO0_DISP_CCORR0, "vdo0_disp_ccorr0", "top_vpp", 4),
-> +	GATE_VDO0_0(CLK_VDO0_DISP_MUTEX0, "vdo0_disp_mutex0", "top_vpp", 6),
-> +	GATE_VDO0_0(CLK_VDO0_DISP_GAMMA0, "vdo0_disp_gamma0", "top_vpp", 8),
-> +	GATE_VDO0_0(CLK_VDO0_DISP_DITHER0, "vdo0_disp_dither0", "top_vpp", 10),
-> +	GATE_VDO0_0(CLK_VDO0_DISP_WDMA0, "vdo0_disp_wdma0", "top_vpp", 17),
-> +	GATE_VDO0_0(CLK_VDO0_DISP_RDMA0, "vdo0_disp_rdma0", "top_vpp", 19),
-> +	GATE_VDO0_0(CLK_VDO0_DSI0, "vdo0_dsi0", "top_vpp", 21),
-> +	GATE_VDO0_0(CLK_VDO0_DSI1, "vdo0_dsi1", "top_vpp", 22),
-> +	GATE_VDO0_0(CLK_VDO0_DSC_WRAP0, "vdo0_dsc_wrap0", "top_vpp", 23),
-> +	GATE_VDO0_0(CLK_VDO0_VPP_MERGE0, "vdo0_vpp_merge0", "top_vpp", 24),
-> +	GATE_VDO0_0(CLK_VDO0_DP_INTF0, "vdo0_dp_intf0", "top_vpp", 25),
-> +	GATE_VDO0_0(CLK_VDO0_DISP_AAL0, "vdo0_disp_aal0", "top_vpp", 26),
-> +	GATE_VDO0_0(CLK_VDO0_INLINEROT0, "vdo0_inlinerot0", "top_vpp", 27),
-> +	GATE_VDO0_0(CLK_VDO0_APB_BUS, "vdo0_apb_bus", "top_vpp", 28),
-> +	GATE_VDO0_0(CLK_VDO0_DISP_COLOR0, "vdo0_disp_color0", "top_vpp", 29),
-> +	GATE_VDO0_0(CLK_VDO0_MDP_WROT0, "vdo0_mdp_wrot0", "top_vpp", 30),
-> +	GATE_VDO0_0(CLK_VDO0_DISP_RSZ0, "vdo0_disp_rsz0", "top_vpp", 31),
-> +	/* VDO0_1 */
-> +	GATE_VDO0_1(CLK_VDO0_DISP_POSTMASK0, "vdo0_disp_postmask0", "top_vpp", 0),
-> +	GATE_VDO0_1(CLK_VDO0_FAKE_ENG1, "vdo0_fake_eng1", "top_vpp", 1),
-> +	GATE_VDO0_1(CLK_VDO0_DL_ASYNC2, "vdo0_dl_async2", "top_vpp", 5),
-> +	GATE_VDO0_1(CLK_VDO0_DL_RELAY3, "vdo0_dl_relay3", "top_vpp", 6),
-> +	GATE_VDO0_1(CLK_VDO0_DL_RELAY4, "vdo0_dl_relay4", "top_vpp", 7),
-> +	GATE_VDO0_1(CLK_VDO0_SMI_GALS, "vdo0_smi_gals", "top_vpp", 10),
-> +	GATE_VDO0_1(CLK_VDO0_SMI_COMMON, "vdo0_smi_common", "top_vpp", 11),
-> +	GATE_VDO0_1(CLK_VDO0_SMI_EMI, "vdo0_smi_emi", "top_vpp", 12),
-> +	GATE_VDO0_1(CLK_VDO0_SMI_IOMMU, "vdo0_smi_iommu", "top_vpp", 13),
-> +	GATE_VDO0_1(CLK_VDO0_SMI_LARB, "vdo0_smi_larb", "top_vpp", 14),
-> +	GATE_VDO0_1(CLK_VDO0_SMI_RSI, "vdo0_smi_rsi", "top_vpp", 15),
-> +	/* VDO0_2 */
-> +	GATE_VDO0_2(CLK_VDO0_DSI0_DSI, "vdo0_dsi0_dsi", "top_dsi_occ", 0),
-> +	GATE_VDO0_2(CLK_VDO0_DSI1_DSI, "vdo0_dsi1_dsi", "top_dsi_occ", 8),
-> +	GATE_VDO0_2_FLAGS(CLK_VDO0_DP_INTF0_DP_INTF, "vdo0_dp_intf0_dp_intf",
-> +		"top_edp", 16, CLK_SET_RATE_PARENT),
-> +};
-> +
-> +static int clk_mt8188_vdo0_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *node = dev->parent->of_node;
-> +	struct clk_hw_onecell_data *clk_data;
-> +	int r;
-> +
-> +	clk_data = mtk_alloc_clk_data(CLK_VDO0_NR_CLK);
-> +	if (!clk_data)
-> +		return -ENOMEM;
-> +
-> +	r = mtk_clk_register_gates(&pdev->dev, node, vdo0_clks,
-> +				   ARRAY_SIZE(vdo0_clks), clk_data);
-> +	if (r)
-> +		goto free_vdo0_data;
-> +
-> +	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
-> +	if (r)
-> +		goto unregister_gates;
-> +
-> +	platform_set_drvdata(pdev, clk_data);
-> +
-> +	return r;
-> +
-> +unregister_gates:
-> +	mtk_clk_unregister_gates(vdo0_clks, ARRAY_SIZE(vdo0_clks), clk_data);
-> +free_vdo0_data:
-> +	mtk_free_clk_data(clk_data);
-> +	return r;
-> +}
-> +
-> +static int clk_mt8188_vdo0_remove(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *node = dev->parent->of_node;
-> +	struct clk_hw_onecell_data *clk_data = platform_get_drvdata(pdev);
-> +
-> +	of_clk_del_provider(node);
-> +	mtk_clk_unregister_gates(vdo0_clks, ARRAY_SIZE(vdo0_clks), clk_data);
-> +	mtk_free_clk_data(clk_data);
-> +
-> +	return 0;
-> +}
-> +
+Mon, Mar 13, 2023 at 11:59:32PM CET, vadim.fedorenko@linux.dev wrote:
+>On 13.03.2023 16:21, Jiri Pirko wrote:
+>> Sun, Mar 12, 2023 at 03:28:03AM CET, vadfed@meta.com wrote:
 
-static const struct mtk_clk_desc vdo0_desc = {
-	.clks ...
-	.num_clks ....
+[...]
+
+
+>> > diff --git a/drivers/dpll/Makefile b/drivers/dpll/Makefile
+>> > new file mode 100644
+>> > index 000000000000..d3926f2a733d
+>> > --- /dev/null
+>> > +++ b/drivers/dpll/Makefile
+>> > @@ -0,0 +1,10 @@
+>> > +# SPDX-License-Identifier: GPL-2.0
+>> > +#
+>> > +# Makefile for DPLL drivers.
+>> > +#
+>> > +
+>> > +obj-$(CONFIG_DPLL)          += dpll_sys.o
+>> 
+>> What's "sys" and why is it here?
+>
+>It's an object file for the subsystem. Could be useful if we will have drivers
+>for DPLL-only devices.
+
+Yeah, but why "sys"? I don't get what "sys" means here.
+Can't this be just "dpll.o"?
+
+
+>
+>> > +dpll_sys-y                  += dpll_core.o
+>> > +dpll_sys-y                  += dpll_netlink.o
+>> > +dpll_sys-y                  += dpll_nl.o
+>> > +
+
+[...]
+
+
+>> > +struct dpll_device *
+>> > +dpll_device_get(u64 clock_id, u32 dev_driver_id, struct module *module)
+>> > +{
+>> > +	struct dpll_device *dpll, *ret = NULL;
+>> > +	unsigned long index;
+>> > +
+>> > +	mutex_lock(&dpll_device_xa_lock);
+>> > +	xa_for_each(&dpll_device_xa, index, dpll) {
+>> > +		if (dpll->clock_id == clock_id &&
+>> > +		    dpll->dev_driver_id == dev_driver_id &&
+>> 
+>> Why you need "dev_driver_id"? clock_id is here for the purpose of
+>> identification, isn't that enough for you.
+>
+>dev_driver_id is needed to provide several DPLLs from one device. In ice driver
+>implementation there are 2 different DPLLs - to recover from PPS input and to
+>recover from Sync-E. I believe there is only one clock, that's why clock id
+>is the same for both of them. But Arkadiusz can tell more about it.
+
+Okay, I see. Clock_id is the same. Could we have index for pin, could
+this be index too:
+
+dpll_device_get(u64 clock_id, u32 device_index, struct module *module);
+dpll_pin_get(u64 clock_id, u32 pin_index, struct module *module,
+	     const struct dpll_pin_properties *prop);
+
+This way it is consistent, driver provides custom index for both dpll
+device and dpll pin.
+
+Makes sense?
+
+
+>> 
+>> Plus, the name is odd. "dev_driver" should certainly be avoided.
+>
+>Simply id doesn't tell anything either. dpll_dev_id?
+
+Yeah, see above.
+
+
+>
+>> > +		    dpll->module == module) {
+>> > +			ret = dpll;
+>> > +			refcount_inc(&ret->refcount);
+>> > +			break;
+>> > +		}
+>> > +	}
+>> > +	if (!ret)
+>> > +		ret = dpll_device_alloc(clock_id, dev_driver_id, module);
+>> > +	mutex_unlock(&dpll_device_xa_lock);
+>> > +
+>> > +	return ret;
+>> > +}
+>> > +EXPORT_SYMBOL_GPL(dpll_device_get);
+>> > +
+>> > +/**
+>> > + * dpll_device_put - decrease the refcount and free memory if possible
+>> > + * @dpll: dpll_device struct pointer
+>> > + *
+>> > + * Drop reference for a dpll device, if all references are gone, delete
+>> > + * dpll device object.
+>> > + */
+>> > +void dpll_device_put(struct dpll_device *dpll)
+>> > +{
+>> > +	if (!dpll)
+>> > +		return;
+>> 
+>> Remove this check. The driver should not call this with NULL.
+>
+>Well, netdev_put() has this kind of check. As well as spi_dev_put() or
+>i2c_put_adapter() at least. Not sure I would like to avoid a bit of safety.
+
+IDK, maybe for historical reasons. My point is, id driver is callin
+this with NULL, there is something odd in the driver flow. Lets not
+allow that for new code.
+
+
+>
+>> > +	mutex_lock(&dpll_device_xa_lock);
+>> > +	if (refcount_dec_and_test(&dpll->refcount)) {
+>> > +		WARN_ON_ONCE(!xa_empty(&dpll->pin_refs));
+>> 
+>> ASSERT_DPLL_NOT_REGISTERED(dpll);
+>
+>Good point!
+>
+>> > +		xa_destroy(&dpll->pin_refs);
+>> > +		xa_erase(&dpll_device_xa, dpll->id);
+>> > +		kfree(dpll);
+>> > +	}
+>> > +	mutex_unlock(&dpll_device_xa_lock);
+>> > +}
+>> > +EXPORT_SYMBOL_GPL(dpll_device_put);
+>> > +
+>> > +/**
+>> > + * dpll_device_register - register the dpll device in the subsystem
+>> > + * @dpll: pointer to a dpll
+>> > + * @type: type of a dpll
+>> > + * @ops: ops for a dpll device
+>> > + * @priv: pointer to private information of owner
+>> > + * @owner: pointer to owner device
+>> > + *
+>> > + * Make dpll device available for user space.
+>> > + *
+>> > + * Return:
+>> > + * * 0 on success
+>> > + * * -EINVAL on failure
+>> > + */
+>> > +int dpll_device_register(struct dpll_device *dpll, enum dpll_type type,
+>> > +			 struct dpll_device_ops *ops, void *priv,
+>> > +			 struct device *owner)
+>> > +{
+>> > +	if (WARN_ON(!ops || !owner))
+>> > +		return -EINVAL;
+>> > +	if (WARN_ON(type <= DPLL_TYPE_UNSPEC || type > DPLL_TYPE_MAX))
+>> > +		return -EINVAL;
+>> > +	mutex_lock(&dpll_device_xa_lock);
+>> > +	if (ASSERT_DPLL_NOT_REGISTERED(dpll)) {
+>> > +		mutex_unlock(&dpll_device_xa_lock);
+>> > +		return -EEXIST;
+>> > +	}
+>> > +	dpll->dev.bus = owner->bus;
+>> > +	dpll->parent = owner;
+>> > +	dpll->type = type;
+>> > +	dpll->ops = ops;
+>> > +	dev_set_name(&dpll->dev, "%s_%d", dev_name(owner),
+>> > +		     dpll->dev_driver_id);
+>> 
+>> This is really odd. As a result, the user would see something like:
+>> pci/0000:01:00.0_1
+>> pci/0000:01:00.0_2
+>> 
+>> I have to say it is confusing. In devlink, is bus/name and the user
+>> could use this info to look trough sysfs. Here, 0000:01:00.0_1 is not
+>> there. Also, "_" might have some meaning on some bus. Should not
+>> concatename dev_name() with anything.
+>> 
+>> Thinking about this some more, the module/clock_id tuple should be
+>> uniqueue and stable. It is used for dpll_device_get(), it could be used
+>> as the user handle, can't it?
+>> Example:
+>> ice/c92d02a7129f4747
+>> mlx5/90265d8bf6e6df56
+>> 
+>> If you really need the "dev_driver_id" (as I believe clock_id should be
+>> enough), you can put it here as well:
+>> ice/c92d02a7129f4747/1
+>> ice/c92d02a7129f4747/2
+>> 
+>
+>Looks good, will change it
+
+Great.
+
+
+>
+>> This would also be beneficial for mlx5, as mlx5 with 2 PFs would like to
+>> share instance of DPLL equally, there is no "one clock master". >
+
+[...]
+
+
+>> > +	pin->prop.description = kstrdup(prop->description, GFP_KERNEL);
+>> > +	if (!pin->prop.description) {
+>> > +		ret = -ENOMEM;
+>> > +		goto release;
+>> > +	}
+>> > +	if (WARN_ON(prop->type <= DPLL_PIN_TYPE_UNSPEC ||
+>> > +		    prop->type > DPLL_PIN_TYPE_MAX)) {
+>> > +		ret = -EINVAL;
+>> > +		goto release;
+>> > +	}
+>> > +	pin->prop.type = prop->type;
+>> > +	pin->prop.capabilities = prop->capabilities;
+>> > +	pin->prop.freq_supported = prop->freq_supported;
+>> > +	pin->prop.any_freq_min = prop->any_freq_min;
+>> > +	pin->prop.any_freq_max = prop->any_freq_max;
+>> 
+>> Make sure that the driver maintains prop (static const) and just save
+>> the pointer. Prop does not need to be something driver needs to change.
+>> 
+>
+>What's the difference? For ptp_ocp, we have the same configuration for all
+>ext pins and the allocator only changes the name of the pin. Properties of
+>the DPLL pins are stored within the pin object, not the driver, in this case.
+>Not sure if the pointer way is much better...
+
+For things like this it is common to have static const array in the
+driver, like:
+
+static const struct dpll_pin_properties dpll_pin_props[] = {
+	{
+		.description = "SMA0",
+		.freq_supported = DPLL_PIN_FREQ_SUPP_MAX,
+		.type = DPLL_PIN_TYPE_EXT,
+		.any_freq_max = 10000000,
+		.capabilities = DPLL_PIN_CAPS_DIRECTION_CAN_CHANGE,
+	},
+	{
+		.description = "SMA1",
+		.freq_supported = DPLL_PIN_FREQ_SUPP_MAX,
+		.type = DPLL_PIN_TYPE_EXT,
+		.any_freq_max = 10000000,
+		.capabilities = DPLL_PIN_CAPS_DIRECTION_CAN_CHANGE,
+	},
+	{
+		.description = "SMA2",
+		.freq_supported = DPLL_PIN_FREQ_SUPP_MAX,
+		.type = DPLL_PIN_TYPE_EXT,
+		.any_freq_max = 10000000,
+		.capabilities = DPLL_PIN_CAPS_DIRECTION_CAN_CHANGE,
+	},
+	{
+		.description = "SMA3",
+		.freq_supported = DPLL_PIN_FREQ_SUPP_MAX,
+		.type = DPLL_PIN_TYPE_EXT,
+		.any_freq_max = 10000000,
+		.capabilities = DPLL_PIN_CAPS_DIRECTION_CAN_CHANGE,
+	},
 };
 
-static const struct platform_device_id clk_mt8188_vdo0_id_table[] = {
-	{ .name = "clk-mt8188-vdo0", .driver_data = (kernel_ulong_T)&vdo0_desc },
-	{ /* sentinel */ }
-};
+Here you have very nice list of pins, the reader knows right away what
+is happening.
 
-> +static struct platform_driver clk_mt8188_vdo0_drv = {
-> +	.probe = clk_mt8188_vdo0_probe,
-> +	.remove = clk_mt8188_vdo0_remove,
+Thinking about "description" name, I think would be more appropriate to
+name this "label" as it represents user-facing label on the connector,
+isn't it? Does not describe anything.
 
-	.probe = mtk_clk_pdev_probe,
-	.remove = mtk_clk_pdev_remove,
 
-> +	.driver = {
-> +		.name = "clk-mt8188-vdo0",
-> +	},
+>
+>> 
 
-	.id_table = clk_mt8188_vdo0_id_table,
+[...]
 
-> +};
-> +builtin_platform_driver(clk_mt8188_vdo0_drv);
 
-module_platform_driver and MODULE_LICENSE.
+>
+>> 
+>> > +	     const struct dpll_pin_properties *prop)
+>> > +{
+>> > +	struct dpll_pin *pos, *ret = NULL;
+>> > +	unsigned long index;
+>> > +
+>> > +	mutex_lock(&dpll_pin_xa_lock);
+>> > +	xa_for_each(&dpll_pin_xa, index, pos) {
+>> > +		if (pos->clock_id == clock_id &&
+>> > +		    pos->dev_driver_id == device_drv_id &&
+>> > +		    pos->module == module) {
+>> 
+>> Compare prop as well.
+>> 
+>> Can't the driver_id (pin index) be something const as well? I think it
+>> should. And therefore it could be easily put inside.
+>> 
+>
+>I think clock_id + dev_driver_id + module should identify the pin exactly.
+>And now I think that *prop is not needed here at all. Arkadiusz, any
+>thoughts?
 
-Same for VDO1, VPP0, VPP1.
+IDK, no strong opinion on this. I just thought it may help to identify
+the pin and avoid potential driver bugs. (Like registering 2 pins with
+the same properties).
 
-Regards,
-Angelo
+[...]
+
+
+>> > +/**
+>> > + * dpll_pin_register - register the dpll pin in the subsystem
+>> > + * @dpll: pointer to a dpll
+>> > + * @pin: pointer to a dpll pin
+>> > + * @ops: ops for a dpll pin ops
+>> > + * @priv: pointer to private information of owner
+>> > + * @rclk_device: pointer to recovered clock device
+>> > + *
+>> > + * Return:
+>> > + * * 0 on success
+>> > + * * -EINVAL - missing dpll or pin
+>> > + * * -ENOMEM - failed to allocate memory
+>> > + */
+>> > +int
+>> > +dpll_pin_register(struct dpll_device *dpll, struct dpll_pin *pin,
+>> > +		  struct dpll_pin_ops *ops, void *priv,
+>> > +		  struct device *rclk_device)
+>> 
+>> Wait a second, what is this "struct device *"? Looks very odd.
+>> 
+>> 
+>> > +{
+>> > +	const char *rclk_name = rclk_device ? dev_name(rclk_device) : NULL;
+>> 
+>> If you need to store something here, store the pointer to the device
+>> directly. But this rclk_device seems odd to me.
+>> Dev_name is in case of PCI device for example 0000:01:00.0? That alone
+>> is incomplete. What should it server for?
+>> 
+>
+>Well, these questions go to Arkadiusz...
+
+Okay.
+
+[...]
+
+
+>> > + * dpll_pin_get_by_idx - find a pin ref on dpll by pin index
+>> > + * @dpll: dpll device pointer
+>> > + * @idx: index of pin
+>> > + *
+>> > + * Find a reference to a pin registered with given dpll and return its pointer.
+>> > + *
+>> > + * Return:
+>> > + * * valid pointer if pin was found
+>> > + * * NULL if not found
+>> > + */
+>> > +struct dpll_pin *dpll_pin_get_by_idx(struct dpll_device *dpll, u32 idx)
+>> > +{
+>> > +	struct dpll_pin_ref *pos;
+>> > +	unsigned long i;
+>> > +
+>> > +	xa_for_each(&dpll->pin_refs, i, pos) {
+>> > +		if (pos && pos->pin && pos->pin->dev_driver_id == idx)
+>> 
+>> How exactly pos->pin could be NULL?
+>> 
+>> Also, you are degrading the xarray to a mere list here with lookup like
+>> this. Why can't you use the pin index coming from driver and
+>> insert/lookup based on this index?
+>> 
+>Good point. We just have to be sure, that drivers provide 0-based indexes for
+>their pins. I'll re-think it.
+
+No, driver can provide indexing which is completely up to his decision.
+You should use xa_insert() to insert the entry at specific index. See
+devl_port_register for inspiration where it is done exactly like this.
+
+And this should be done in exactly the same way for both pin and device.
+
+
+>
+>
+>> 
+>> > +			return pos->pin;
+>> > +	}
+>> > +
+>> > +	return NULL;
+>> > +}
+>> > +
+>> > +/**
+>> > + * dpll_priv - get the dpll device private owner data
+>> > + * @dpll:	registered dpll pointer
+>> > + *
+>> > + * Return: pointer to the data
+>> > + */
+>> > +void *dpll_priv(const struct dpll_device *dpll)
+>> > +{
+>> > +	return dpll->priv;
+>> > +}
+>> > +EXPORT_SYMBOL_GPL(dpll_priv);
+>> > +
+>> > +/**
+>> > + * dpll_pin_on_dpll_priv - get the dpll device private owner data
+>> > + * @dpll:	registered dpll pointer
+>> > + * @pin:	pointer to a pin
+>> > + *
+>> > + * Return: pointer to the data
+>> > + */
+>> > +void *dpll_pin_on_dpll_priv(const struct dpll_device *dpll,
+>> 
+>> IIUC, you use this helper from dpll ops in drivers to get per dpll priv.
+>> Just pass the priv directly to the op and avoid need for this helper,
+>> no? Same goes to the rest of the priv helpers.
+
+Did you miss this?
+
+
+>> 
+>> 
+>> > +			    const struct dpll_pin *pin)
+>> > +{
+>> > +	struct dpll_pin_ref *ref;
+>> > +
+>> > +	ref = dpll_xa_ref_pin_find((struct xarray *)&dpll->pin_refs, pin);
+>> 
+>> Why cast is needed here? You have this on multiple places.
+
+Did you miss this?
+
+
+>> 
+>> 
+>> > +	if (!ref)
+>> > +		return NULL;
+>> > +
+>> > +	return ref->priv;
+>> > +}
+>> > +EXPORT_SYMBOL_GPL(dpll_pin_on_dpll_priv);
+>> > +
+>> > +/**
+>> > + * dpll_pin_on_pin_priv - get the dpll pin private owner data
+>> > + * @parent: pointer to a parent pin
+>> > + * @pin: pointer to a pin
+>> > + *
+>> > + * Return: pointer to the data
+>> > + */
+>> > +void *dpll_pin_on_pin_priv(const struct dpll_pin *parent,
+>> > +			   const struct dpll_pin *pin)
+>> > +{
+>> > +	struct dpll_pin_ref *ref;
+>> > +
+>> > +	ref = dpll_xa_ref_pin_find((struct xarray *)&pin->parent_refs, parent);
+>> > +	if (!ref)
+>> > +		return NULL;
+>> > +
+>> > +	return ref->priv;
+>> > +}
+>> > +EXPORT_SYMBOL_GPL(dpll_pin_on_pin_priv);
+>> > +
+>> > +static int __init dpll_init(void)
+>> > +{
+>> > +	int ret;
+>> > +
+>> > +	ret = dpll_netlink_init();
+>> > +	if (ret)
+>> > +		goto error;
+>> > +
+>> > +	ret = class_register(&dpll_class);
+>> 
+>> Why exactly do you need this? I asked to remove this previously, IIRC
+>> you said you would check if this needed. Why?
+>> 
+>Ah, sorry. Removed it now.
+
+Np, good.
+
+[...]
+
+
+>> > +static int
+>> > +dpll_msg_add_dev_handle(struct sk_buff *msg, const struct dpll_device *dpll)
+>> > +{
+>> > +	if (nla_put_u32(msg, DPLL_A_ID, dpll->id))
+>> 
+>> Why exactly do we need this dua--handle scheme? Why do you need
+>> unpredictable DPLL_A_ID to be exposed to userspace?
+>> It's just confusing.
+>> 
+>To be able to work with DPLL per integer after iterator on the list deducts
+>which DPLL device is needed. It can reduce the amount of memory copies and
+>simplify comparisons. Not sure why it's confusing.
+
+Wait, I don't get it. Could you please explain a bit more?
+
+My point is, there should be not such ID exposed over netlink
+You don't need to expose it to userspace. The user has well defined
+handle as you agreed with above. For example:
+
+ice/c92d02a7129f4747/1
+ice/c92d02a7129f4747/2
+
+This is shown in dpll device GET/DUMP outputs.
+Also user passes it during SET operation:
+$ dplltool set ice/c92d02a7129f4747/1 mode auto
+
+Isn't that enough stable and nice?
+
+
+>
+>> 
+>> > +		return -EMSGSIZE;
+>> > +	if (nla_put_string(msg, DPLL_A_BUS_NAME, dev_bus_name(&dpll->dev)))
+>> > +		return -EMSGSIZE;
+>> > +	if (nla_put_string(msg, DPLL_A_DEV_NAME, dev_name(&dpll->dev)))
+>> > +		return -EMSGSIZE;
+>> > +
+>> > +	return 0;
+>> > +}
+>
+>[...]
+>
+>> > +
+>> > +static int
+>> > +dpll_msg_add_pins_on_pin(struct sk_buff *msg, struct dpll_pin *pin,
+>> > +			 struct netlink_ext_ack *extack)
+>> > +{
+>> > +	struct dpll_pin_ref *ref = NULL;
+>> 
+>> Why this needs to be initialized?
+>> 
+>No need, fixed.
+>
+>
+>> 
+>> > +	enum dpll_pin_state state;
+>> > +	struct nlattr *nest;
+>> > +	unsigned long index;
+>> > +	int ret;
+>> > +
+>> > +	xa_for_each(&pin->parent_refs, index, ref) {
+>> > +		if (WARN_ON(!ref->ops->state_on_pin_get))
+>> > +			return -EFAULT;
+>> > +		ret = ref->ops->state_on_pin_get(pin, ref->pin, &state,
+>> > +						 extack);
+>> > +		if (ret)
+>> > +			return -EFAULT;
+>> > +		nest = nla_nest_start(msg, DPLL_A_PIN_PARENT);
+>> > +		if (!nest)
+>> > +			return -EMSGSIZE;
+>> > +		if (nla_put_u32(msg, DPLL_A_PIN_PARENT_IDX,
+>> > +				ref->pin->dev_driver_id)) {
+>> > +			ret = -EMSGSIZE;
+>> > +			goto nest_cancel;
+>> > +		}
+>> > +		if (nla_put_u8(msg, DPLL_A_PIN_STATE, state)) {
+>> > +			ret = -EMSGSIZE;
+>> > +			goto nest_cancel;
+>> > +		}
+>> > +		nla_nest_end(msg, nest);
+>> > +	}
+>> 
+>> How is this function different to dpll_msg_add_pin_parents()?
+>> Am I lost? To be honest, this x_on_pin/dpll, parent, refs dance is quite
+>> hard to follow for me :/
+>> 
+>> Did you get lost here as well? If yes, this needs some serious think
+>> through :)
+>> 
+>
+>Let's re-think it again. Arkadiuzs, do you have clear explanation of the
+>relationship between these things?
+
+Okay, Arkadiuzs?
+
+
+
+
+>
+>> 
+>> > +
+>> > +	return 0;
+>> > +
+>> > +nest_cancel:
+>> > +	nla_nest_cancel(msg, nest);
+>> > +	return ret;
+>> > +}
+>> > +
+>> > +static int
+>> > +dpll_msg_add_pin_dplls(struct sk_buff *msg, struct dpll_pin *pin,
+>> > +		       struct netlink_ext_ack *extack)
+>> > +{
+>> > +	struct dpll_pin_ref *ref;
+>> > +	struct nlattr *attr;
+>> > +	unsigned long index;
+>> > +	int ret;
+>> > +
+>> > +	xa_for_each(&pin->dpll_refs, index, ref) {
+>> > +		attr = nla_nest_start(msg, DPLL_A_DEVICE);
+>> > +		if (!attr)
+>> > +			return -EMSGSIZE;
+>> > +		ret = dpll_msg_add_dev_handle(msg, ref->dpll);
+>> > +		if (ret)
+>> > +			goto nest_cancel;
+>> > +		ret = dpll_msg_add_pin_on_dpll_state(msg, pin, ref, extack);
+>> > +		if (ret && ret != -EOPNOTSUPP)
+>> > +			goto nest_cancel;
+>> > +		ret = dpll_msg_add_pin_prio(msg, pin, ref, extack);
+>> > +		if (ret && ret != -EOPNOTSUPP)
+>> > +			goto nest_cancel;
+>> > +		nla_nest_end(msg, attr);
+>> > +	}
+>> > +
+>> > +	return 0;
+>> > +
+>> > +nest_cancel:
+>> > +	nla_nest_end(msg, attr);
+>> > +	return ret;
+>> > +}
+>> > +
+>> > +static int
+>> > +dpll_cmd_pin_on_dpll_get(struct sk_buff *msg, struct dpll_pin *pin,
+>> > +			 struct dpll_device *dpll,
+>> > +			 struct netlink_ext_ack *extack)
+>> > +{
+>> > +	struct dpll_pin_ref *ref;
+>> > +	int ret;
+>> > +
+>> > +	if (nla_put_u32(msg, DPLL_A_PIN_IDX, pin->dev_driver_id))
+>> 
+>> Is it "ID" or "INDEX" (IDX). Please make this consistent in the whole
+>> code.
+>> 
+>
+>I believe it's INDEX which is provided by the driver. I'll think about renaming,
+>but suggestions are welcome.
+
+Let's use "index" and "INDEX" internalla and in Netlink attr names as
+well then.
+
+[...]
+
+
+>
+>> 
+>> > +	int rem, ret = -EINVAL;
+>> > +	struct nlattr *a;
+>> > +
+>> > +	nla_for_each_attr(a, genlmsg_data(info->genlhdr),
+>> > +			  genlmsg_len(info->genlhdr), rem) {
+>> 
+>> This is odd. Why you iterace over attrs? Why don't you just access them
+>> directly, like attrs[DPLL_A_PIN_FREQUENCY] for example?
+>> 
+>
+>I had some unknown crashes when I was using such access. I might have lost some
+>checks, will try it again.
+
+Odd, yet definitelly debuggable though :)
+
+[...]
+
+
+>> > +int dpll_pin_pre_dumpit(struct netlink_callback *cb)
+>> > +{
+>> > +	mutex_lock(&dpll_pin_xa_lock);
+>> 
+>> ABBA deadlock here, see dpll_pin_register() for example where the lock
+>> taking order is opposite.
+>> 
+>
+>Now I see an ABBA deadlock here, as well as in function before. Not sure how to
+>solve it here. Any thoughts?
+
+Well, here you can just call dpll_pre_dumpit() before mutex_lock(&dpll_pin_xa_lock)
+to take the locks in the same order.
+
+
+>
+>> 
+>> > +
+>> > +	return dpll_pre_dumpit(cb);
+>> > +}
+>> > +
+>> > +int dpll_pin_post_dumpit(struct netlink_callback *cb)
+>> > +{
+>> > +	mutex_unlock(&dpll_pin_xa_lock);
+>> > +
+>> > +	return dpll_post_dumpit(cb);
+>> > +}
+>> > +
+>> > +static int
+>> > +dpll_event_device_change(struct sk_buff *msg, struct dpll_device *dpll,
+>> > +			 struct dpll_pin *pin, struct dpll_pin *parent,
+>> > +			 enum dplla attr)
+>> > +{
+>> > +	int ret = dpll_msg_add_dev_handle(msg, dpll);
+>> > +	struct dpll_pin_ref *ref = NULL;
+>> > +	enum dpll_pin_state state;
+>> > +
+>> > +	if (ret)
+>> > +		return ret;
+>> > +	if (pin && nla_put_u32(msg, DPLL_A_PIN_IDX, pin->dev_driver_id))
+>> > +		return -EMSGSIZE;
+>> 
+>> I don't really understand why you are trying figure something new and
+>> interesting with the change notifications. This object mix and random
+>> attrs fillup is something very wrong and makes userspace completely
+>> fuzzy about what it is getting. And yet it is so simple:
+>> You have 2 objects, dpll and pin, please just have:
+>> dpll_notify()
+>> dpll_pin_notify()
+>> and share the attrs fillup code with pin_get() and dpll_get() callbacks.
+>> No need for any smartness. Have this dumb and simple.
+>> 
+>> Think about it more as about "object-state-snapshot" than "atomic-change"
+>
+>But with full object-snapshot user space app will lose the information about
+>what exactly has changed. The reason to have this event is to provide the
+>attributes which have changed. Otherwise, the app should have full snapshot
+>and
+>compare all attributes to figure out changes and that's might not be great idea.
+
+Wait, are you saying that the app is stateless? Could you provide
+example use cases?
+
+From what I see, the app managing dpll knows the state of the device and
+pins, it monitors for the changes and saves new state with appropriate
+reaction (might be some action or maybe just log entry).
+
+
+>
+>> 
+>> > +
+>> > +	switch (attr) {
+>> > +	case DPLL_A_MODE:
+>> > +		ret = dpll_msg_add_mode(msg, dpll, NULL);
+>> > +		break;
+>> > +	case DPLL_A_SOURCE_PIN_IDX:
+>> > +		ret = dpll_msg_add_source_pin_idx(msg, dpll, NULL);
+>> > +		break;
+>> > +	case DPLL_A_LOCK_STATUS:
+>> > +		ret = dpll_msg_add_lock_status(msg, dpll, NULL);
+>> > +		break;
+>> > +	case DPLL_A_TEMP:
+>> > +		ret = dpll_msg_add_temp(msg, dpll, NULL);
+>> > +		break;
+>> > +	case DPLL_A_PIN_FREQUENCY:
+>> > +		ret = dpll_msg_add_pin_freq(msg, pin, NULL, false);
+>> > +		break;
+>> > +	case DPLL_A_PIN_PRIO:
+>> > +		ref = dpll_xa_ref_dpll_find(&pin->dpll_refs, dpll);
+>> > +		if (!ref)
+>> > +			return -EFAULT;
+>> > +		ret = dpll_msg_add_pin_prio(msg, pin, ref, NULL);
+>> > +		break;
+>> > +	case DPLL_A_PIN_STATE:
+>> > +		if (parent) {
+>> > +			ref = dpll_xa_ref_pin_find(&pin->parent_refs, parent);
+>> > +			if (!ref)
+>> > +				return -EFAULT;
+>> > +			if (!ref->ops || !ref->ops->state_on_pin_get)
+>> > +				return -EOPNOTSUPP;
+>> > +			ret = ref->ops->state_on_pin_get(pin, parent, &state,
+>> > +							 NULL);
+>> > +			if (ret)
+>> > +				return ret;
+>> > +			if (nla_put_u32(msg, DPLL_A_PIN_PARENT_IDX,
+>> > +					parent->dev_driver_id))
+>> > +				return -EMSGSIZE;
+>> > +		} else {
+>> > +			ref = dpll_xa_ref_dpll_find(&pin->dpll_refs, dpll);
+>> > +			if (!ref)
+>> > +				return -EFAULT;
+>> > +			ret = dpll_msg_add_pin_on_dpll_state(msg, pin, ref,
+>> > +							     NULL);
+>> > +			if (ret)
+>> > +				return ret;
+>> > +		}
+>> > +		break;
+>> > +	default:
+>> > +		break;
+>> > +	}
+>> > +
+>> > +	return ret;
+>> > +}
+>> > +
+>> > +static int
+>> > +dpll_send_event_create(enum dpll_event event, struct dpll_device *dpll)
+>> > +{
+>> > +	struct sk_buff *msg;
+>> > +	int ret = -EMSGSIZE;
+>> > +	void *hdr;
+>> > +
+>> > +	msg = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
+>> > +	if (!msg)
+>> > +		return -ENOMEM;
+>> > +
+>> > +	hdr = genlmsg_put(msg, 0, 0, &dpll_nl_family, 0, event);
+>> > +	if (!hdr)
+>> > +		goto out_free_msg;
+>> > +
+>> > +	ret = dpll_msg_add_dev_handle(msg, dpll);
+>> > +	if (ret)
+>> > +		goto out_cancel_msg;
+>> > +	genlmsg_end(msg, hdr);
+>> > +	genlmsg_multicast(&dpll_nl_family, msg, 0, 0, GFP_KERNEL);
+>> > +
+>> > +	return 0;
+>> > +
+>> > +out_cancel_msg:
+>> > +	genlmsg_cancel(msg, hdr);
+>> > +out_free_msg:
+>> > +	nlmsg_free(msg);
+>> > +
+>> > +	return ret;
+>> > +}
+>> > +
+>> > +static int
+>> > +dpll_send_event_change(struct dpll_device *dpll, struct dpll_pin *pin,
+>> > +		       struct dpll_pin *parent, enum dplla attr)
+>> > +{
+>> > +	struct sk_buff *msg;
+>> > +	int ret = -EMSGSIZE;
+>> > +	void *hdr;
+>> > +
+>> > +	msg = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
+>> > +	if (!msg)
+>> > +		return -ENOMEM;
+>> > +
+>> > +	hdr = genlmsg_put(msg, 0, 0, &dpll_nl_family, 0,
+>> > +			  DPLL_EVENT_DEVICE_CHANGE);
+>> 
+>> I don't really get it. Why exactly you keep having this *EVENT* cmds?
+>> Why per-object NEW/GET/DEL cmds shared with get genl op are not enough?
+>> I have to be missing something.
+>
+>Changes might come from other places, but will affect the DPLL device and we
+>have to notify users in this case.
+
+I'm not sure I follow. There are 2 scenarios for change:
+1) user originated - user issues set of something
+2) driver originated - something changes in HW, driver propagates that
+
+With what I suggest, both scenarios work of course. My point is, user
+knows very well the objects: device and pin, he knows the format or
+messages that are related to GET/DUMP/SET operations of both. The
+notification should have the same format, that is all I say.
+
+Btw, you can see devlink code for example how the notifications like
+this are implemented and work.
+
+
