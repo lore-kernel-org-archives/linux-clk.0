@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A741C61DA4
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 15:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C21BFC6FD1D
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 15:34:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232127AbjCOP3h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Mar 2023 11:29:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38966 "EHLO
+        id S232348AbjCOPei (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Mar 2023 11:34:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232012AbjCOP3g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 11:29:36 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 145DE19F26
-        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 08:29:34 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id q16so17687804wrw.2
-        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 08:29:34 -0700 (PDT)
+        with ESMTP id S232234AbjCOPeh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 11:34:37 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E14134025
+        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 08:34:36 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id m18-20020a05600c3b1200b003ed2a3d635eso1529919wms.4
+        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 08:34:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1678894172;
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1678894474;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XYhBeu/notvz82UgfkzH+YbK5CCJXB0MnLkpf5cNHAI=;
-        b=kRTHqzm153zu/Zc9NERe8ET2dWnkhROx09XiOifwd5oZvospmfGhysr6lgkUn1JFDn
-         OKTe/gvetQCDLDIePfi+W3lqVQUjhwlG9sYj9vX2lGl4M4O9IgXC66Iq9vJkTnN0daVu
-         OEmOT4sZkVH5whFbyf6o9UYCjHHTX7AeqahToseLy3ew/rQdWT2WtAdi3DUoNTjviJha
-         HUSZ+xeXwGN4MTDX5XRAnbijQw19nax8wTq8qyGQkrhBESKAgRgLuaog2UnPxqNMruat
-         FppK/AXaWfEStCKJlFEs2BuHGv+z5urycEjATQC0Zc5W+boeOQ5hHdFRFIbq1l/waU7k
-         bGrw==
+        bh=iSn5kfdhykvLhyEuzFDrK08azEwQSSmZ1qquAFvnjIQ=;
+        b=BToH7Z3bKMbzK2RjYie+EhidShhg+xhjJZAE5+GlddA9dzbs0n1hStJfanyTI1tNUU
+         8E1aha0lNNN3OjR7fF0Nc/0gKastWb83+rZhAadJO1UCkOyQ9F0oMhQbLabowqy2pg8u
+         XEJoo3m4hk9F4wwPsYf2rgKizCMsCzYthDZW1cKkVyXuIFrXms8mWqKNhLHLcBrwoCB3
+         dOGWuiSQLGKOQhqryeEpVAWL2t/cpc6J7AnbuxyStvtNbCbDyxHrrGLlJh40OdBNEO+Z
+         fwQ4p2pCV2/u6guFFwurxcdXBRJGd+4gx3RM0/eHNNxjXt2KRUAtY6Yl/nN1yyVsK1F4
+         MBqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678894172;
+        d=1e100.net; s=20210112; t=1678894474;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XYhBeu/notvz82UgfkzH+YbK5CCJXB0MnLkpf5cNHAI=;
-        b=beqgThYn6mt1ped5eBjmIieCB6k7hLWYrlPS/SJLIqbDSCzv8Aafg1JOxaMiUkzlZd
-         dOsvfypED6JdGr6RQK71WmS3trG6EqBPNgCJfZLZcxx7ohqqNqva2xRLuy8OrcSXezd3
-         iIUyB3GJatrxBEL0gcxLC0/NdXPDmGiibEDjS9kNqRZmMK6nu2j8FWK5PuCmTbqJobSA
-         S33Lbht3AJ5hjwkDrmG4L2YGlJE8E9RV3cTK8JpHU7WaEwpz4hmNlrl1ZZvHn7n/l6lF
-         z8Zw7gGs/58WxkbDmoCaQCTF3z/y4S3NqOzVp8rH0WD6UVH8OroNVOkR5F5C1M/0nDTs
-         59qQ==
-X-Gm-Message-State: AO0yUKVLkMrMkh31WnviOorlEyz5T8FcNqOGIWUVPvZDcqA/BAW36mKu
-        Ii3fTnVn73ElFNqVciWjgYPK2A==
-X-Google-Smtp-Source: AK7set8qri9bTR6kXZCDIDLsIRR7ZhcP+VRrtZ/y7MfYtf3hUI4jwn6GWBEtEAhFV/gvCoQZxvPD1g==
-X-Received: by 2002:a5d:448c:0:b0:2d0:bba8:3901 with SMTP id j12-20020a5d448c000000b002d0bba83901mr1647969wrq.62.1678894172494;
-        Wed, 15 Mar 2023 08:29:32 -0700 (PDT)
+        bh=iSn5kfdhykvLhyEuzFDrK08azEwQSSmZ1qquAFvnjIQ=;
+        b=0lLnMZ8vG9t7qeUuqqwv1+chSv4YxJjI/wOeKnB6eUJM/pwFwGyStHQIZ+UUsKC/Q0
+         LyWU9CsYD8Ata5bmws48HRIBG1DHCtQSNpEsXHlN4qfSuW7JQk1k7YnM2TddLtrui5UF
+         7jDqMco5y0tzJVtJ1exmHtefToFTVe7rmiNPJEMindUGrzE5bXzqgvRu0VkLFqaYQHi7
+         sZGZq+C+GwyOG3m+5DWmf4ZWi+9VS4XxxmR5JeA32TW79L1IMzkpvLutHNctDRalLuJy
+         p0WCA2Jca0khoHjDKwgV/sijKPU7HzMMf4eycywRN75OlftHXFrmd+ki5GJyMsLkwt5H
+         Xo5Q==
+X-Gm-Message-State: AO0yUKVId0FaoPUWDvlV45V6T18pkDQXqtWdKxIbN5LyVIJTBwjW/k0V
+        N+1RDFY7ZI1JKFx8FmRGDGEu1I8aNDGBbTwdB/s=
+X-Google-Smtp-Source: AK7set8Yoa8+IOiarZ3IfL/VWla0xR5U0UapuEedg4o2wA11yz28lAI5nnin9ac7ZaYZUjGvpdwgrg==
+X-Received: by 2002:a05:600c:3c9e:b0:3e1:f8af:8772 with SMTP id bg30-20020a05600c3c9e00b003e1f8af8772mr18006250wmb.9.1678894474641;
+        Wed, 15 Mar 2023 08:34:34 -0700 (PDT)
 Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id z4-20020a5d6544000000b002c56013c07fsm4931457wrv.109.2023.03.15.08.29.31
+        by smtp.gmail.com with ESMTPSA id o23-20020a05600c511700b003ed29b332b8sm2643610wms.35.2023.03.15.08.34.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Mar 2023 08:29:31 -0700 (PDT)
-Date:   Wed, 15 Mar 2023 16:29:30 +0100
+        Wed, 15 Mar 2023 08:34:33 -0700 (PDT)
+Date:   Wed, 15 Mar 2023 16:34:32 +0100
 From:   Jiri Pirko <jiri@resnulli.us>
 To:     Vadim Fedorenko <vadfed@meta.com>
 Cc:     Jakub Kicinski <kuba@kernel.org>,
@@ -57,39 +57,33 @@ Cc:     Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
         Vadim Fedorenko <vadim.fedorenko@linux.dev>, poros@redhat.com,
         mschmidt@redhat.com, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Milena Olech <milena.olech@intel.com>,
-        Michal Michalik <michal.michalik@intel.com>
-Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
-Message-ID: <ZBHkWiglP70VMm3B@nanopsycho>
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH RFC v6 6/6] ptp_ocp: implement DPLL ops
+Message-ID: <ZBHliPPS+e5d5JQe@nanopsycho>
 References: <20230312022807.278528-1-vadfed@meta.com>
- <20230312022807.278528-3-vadfed@meta.com>
+ <20230312022807.278528-7-vadfed@meta.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230312022807.278528-3-vadfed@meta.com>
+In-Reply-To: <20230312022807.278528-7-vadfed@meta.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Sun, Mar 12, 2023 at 03:28:03AM CET, vadfed@meta.com wrote:
+Sun, Mar 12, 2023 at 03:28:07AM CET, vadfed@meta.com wrote:
 
 [...]
 
->+struct dpll_device
->+*dpll_device_get(u64 clock_id, u32 dev_driver_id, struct module *module);
+>@@ -4226,8 +4377,44 @@ ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+> 
+> 	ptp_ocp_info(bp);
+> 	devlink_register(devlink);
+>-	return 0;
+> 
+>+	clkid = pci_get_dsn(pdev);
+>+	bp->dpll = dpll_device_get(clkid, 0, THIS_MODULE);
+>+	if (!bp->dpll) {
+
+You have to use IS_ERR() here. Same problem in ice.
 
 [...]
-
->+struct dpll_pin
->+*dpll_pin_get(u64 clock_id, u32 dev_driver_id, struct module *module,
->+	      const struct dpll_pin_properties *pin_prop);
-
-Small tweak, please use the same trick as shown for example here:
-/* pci_register_driver() must be a macro so KBUILD_MODNAME can be expanded */
-#define pci_register_driver(driver)             \
-        __pci_register_driver(driver, THIS_MODULE, KBUILD_MODNAME)
-
-The driver calls header helper which fills up the "THIS_MODULE" for it.
-
-Thanks!
