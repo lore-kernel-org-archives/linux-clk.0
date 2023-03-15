@@ -2,86 +2,92 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8650C6FD1D
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 19:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 255A7C6FD1D
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 21:19:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232286AbjCOTFD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Mar 2023 15:05:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42702 "EHLO
+        id S232856AbjCOVTB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Mar 2023 17:19:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232500AbjCOTEv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 15:04:51 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF6CB6C19B;
-        Wed, 15 Mar 2023 12:04:49 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 700D561E07;
-        Wed, 15 Mar 2023 19:04:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAF1EC433D2;
-        Wed, 15 Mar 2023 19:04:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678907088;
-        bh=PHCqtfNPtykLQzgOmD479r+vtvy5dP8Tx6mGL6Sg3ak=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=qKdBV3PNcXnrOccuRb2+b9kinnFWwz05lqXdy54fU9J37SpHDUIgXnn+I5S/6WeHL
-         SK5wZW1D/TPAQUvevh/VOdHiBJ36RAZHiRiiCAQMG2i2mVflMV8GVgPn+bb64VQ1r7
-         FTmMRDRRa7LtxOdgTvCoT5RYJ73jU61FiUUwua4PCTNb26Ru8s2IGnKwIAVeG/uWrD
-         hXcWvJuaDN5zf8fsF5/oxF85WKAfK8HHP0LGVdxLOLX3zQOSxLkpsf5iureCBqXgGi
-         vlZxwRkaz+ZrHr3/mxSHeqj3leMNtVB54aDyYPuSGMUH/4A0f70QY4VEzOKuFgO3g/
-         y5kek1OV90Atg==
-Message-ID: <48d30bc1f094bee18a2180a5b8e65e40.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S230473AbjCOVS5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 17:18:57 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C670F1C5A4;
+        Wed, 15 Mar 2023 14:18:09 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id nn12so20296815pjb.5;
+        Wed, 15 Mar 2023 14:18:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678915089;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tcbadi4LHnNl9v6BB5vI5hfKPMXT8EmjVagT497j48w=;
+        b=azPPRZdmIadaQL+HcQC0VCZN780tRkHWb5C648D7kxCoeQKAe9ifIXfnl/USGsYt2T
+         79x3PvUHrBbEq1LDxEQBEM05wmWdOsuecJWqxY+sU1JjoVnQTv+oVRUHlxiSv8YwpGP9
+         Uw3gMDpLZ3lHxPjR2ANcqByVnHkSGH9IWSykssxmFKrF1lSfecegwq2EBANRgMGT4JnN
+         5uKmIQYPmh+sq1q/NYRFEnEUZN6k4VXmT0i+0AuZ4qWezm1NflRqIZLn+P9IyIyfz8SZ
+         pPOSyO9bxNSbcHxelLth4HwWolOgj9NJYZo4K5YD6KZbYW9Cq7GVJ91pBtNs/7DEe2CH
+         5CMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678915089;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tcbadi4LHnNl9v6BB5vI5hfKPMXT8EmjVagT497j48w=;
+        b=sz4NXlgh81eWgOXUehlkirFAKn8n7tf4myJ+mkhM3u+THLThAd0RiCpv3XPvmFlz/s
+         Rc/rI0x11ONQJBkbu406FceaUDNljWA1SimfPaNmzFiXTtA2R2scDUmf1oWgU+Bb3OVc
+         cOXhmwVzsUnrKo5ZFRmS1etCzPclU3pIIGOpY7ra7y9D5fpsQxekIVD7Yoo2P2M6vUch
+         QsWPEbsjcIRERV+Fv5Hczzw5Q9VMWPa9cVVgX4d3oe2gs+sqAeHY/oi9Al74bk9tuMzz
+         rOMNPo4Zmhhl/RWT/mivsa5xxeuKIHAXdaZO0L1zS4VjtkVwlArgzKvw1FrOk/hzhe9z
+         XQGg==
+X-Gm-Message-State: AO0yUKUO4g7BiFd8JMOAb5V59FY7/O2bO6+7spFbH4g0lRWvezTCSfFt
+        XvzFSeM1TjIqdntLfk3EBlc=
+X-Google-Smtp-Source: AK7set+GGbc3V2FYuUvRcQG8mWp6MgEdFmH5gsq5boNcL/JLMDJMf3VklXqUeRlNqQDmdKwE+auxQA==
+X-Received: by 2002:a05:6a20:3c91:b0:cd:238f:4f4b with SMTP id b17-20020a056a203c9100b000cd238f4f4bmr1371413pzj.23.1678915089113;
+        Wed, 15 Mar 2023 14:18:09 -0700 (PDT)
+Received: from d.home.yangfl.dn42 ([104.28.213.199])
+        by smtp.gmail.com with ESMTPSA id i17-20020aa787d1000000b005897f5436c0sm3981695pfo.118.2023.03.15.14.18.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Mar 2023 14:18:08 -0700 (PDT)
+From:   David Yang <mmyangfl@gmail.com>
+To:     mmyangfl@gmail.com
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/4] Add CRG driver for Hi3798MV100 SoC
+Date:   Thu, 16 Mar 2023 05:16:19 +0800
+Message-Id: <20230315211628.963205-1-mmyangfl@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAJhJPsWDO_nyPLH7uMTB+ODS74SAKDPGOXxk_Nperk1dKBKStQ@mail.gmail.com>
-References: <20230210111141.1379645-1-keguang.zhang@gmail.com> <a3e6f6038511ad48258627dbf4c335e2.sboyd@kernel.org> <CAJhJPsUQN5Lo_rVUbbmGY68gorwkcQT=9AXfcEh371cP97Wj_A@mail.gmail.com> <20230315092910.GA8008@alpha.franken.de> <CAJhJPsWDO_nyPLH7uMTB+ODS74SAKDPGOXxk_Nperk1dKBKStQ@mail.gmail.com>
-Subject: Re: [PATCH] MIPS: loongson32: Update the clock initialization
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org,
-        Serge Semin <Sergey.Semin@baikalelectronics.ru>
-To:     Keguang Zhang <keguang.zhang@gmail.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Date:   Wed, 15 Mar 2023 12:04:46 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Keguang Zhang (2023-03-15 02:43:02)
-> On Wed, Mar 15, 2023 at 5:29=E2=80=AFPM Thomas Bogendoerfer
-> <tsbogend@alpha.franken.de> wrote:
-> >
-> > On Wed, Mar 15, 2023 at 11:07:23AM +0800, Keguang Zhang wrote:
-> > > On Sat, Feb 11, 2023 at 7:31=E2=80=AFAM Stephen Boyd <sboyd@kernel.or=
-g> wrote:
-> > > >
-> > > > Quoting Keguang Zhang (2023-02-10 03:11:41)
-> > > > > The Loongson-1 clock driver is under re-implementation
-> > > > > to add DT support. As a result, ls1x_clk_init() will be dropped s=
-oon.
-> > > > > Therefore, call of_clk_init() for clock initialization instead.
-> > > > >
-> > > > > Link: https://lore.kernel.org/all/20230209132614.1079198-3-keguan=
-g.zhang@gmail.com
-> > > > > Link: https://lore.kernel.org/all/20230209132614.1079198-4-keguan=
-g.zhang@gmail.com
-> > >
-> > > Hi Thomas,
-> > > Sorry to bother you.
-> > > For fear of raising build error, is it possible to merge this patch
-> > > before the above two patches getting applied?
-> > > Or is there anything to improve?
-> > > Thanks very much!
-> >
-> > the IMHO best way would be to let this patch go the same way as
-> > the other patch set. So Stephen could you take this into your
-> > tree, too ?
-> >
-> Sure. Will do.
->=20
+This series adds CRG driver for Hi3798MV100 SoC.
 
-Please resend this patch along with the loongson patches that it goes
-with.
+v2: move bindings to a separate patch
+v3: fix bindings commit message, reorganize patches
+v4: add ethernet and gpu clocks
+
+David Yang (4):
+  clk: hisilicon: Rename Hi3798CV200 to Hi3798
+  clk: hisilicon: Extract common functions
+  dt-bindings: clock: Add Hi3798MV100 CRG
+  clk: hisilicon: Add CRG driver for Hi3798MV100 SoC
+
+ .../devicetree/bindings/clock/hisi-crg.txt    |   2 +
+ drivers/clk/hisilicon/Kconfig                 |   6 +-
+ drivers/clk/hisilicon/Makefile                |   2 +-
+ drivers/clk/hisilicon/crg-hi3798.c            | 612 ++++++++++++++++++
+ drivers/clk/hisilicon/crg-hi3798cv200.c       | 401 ------------
+ include/dt-bindings/clock/histb-clock.h       |  13 +
+ 6 files changed, 631 insertions(+), 405 deletions(-)
+ create mode 100644 drivers/clk/hisilicon/crg-hi3798.c
+ delete mode 100644 drivers/clk/hisilicon/crg-hi3798cv200.c
+
+-- 
+2.39.2
+
