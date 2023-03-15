@@ -2,76 +2,367 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 730D9C7618B
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 14:30:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF2F1C7618B
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 14:43:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231806AbjCOOaB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Mar 2023 10:30:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55412 "EHLO
+        id S231976AbjCOOnU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Mar 2023 10:43:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233192AbjCOO36 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 10:29:58 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EBC01E5CB;
-        Wed, 15 Mar 2023 07:29:57 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DCBAEB81E55;
-        Wed, 15 Mar 2023 14:29:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EF23C433EF;
-        Wed, 15 Mar 2023 14:29:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678890594;
-        bh=yeoozDGy68VvFH5vyT1Uvv1fHYGrzFSj4yfihcifBiM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=utJE/6cMb3JgVNikhj5KXIVkJUVGjnQTuG5xH5dZmoxVyKAdcIy/hSqgcp1/aYN2M
-         kxWJIxUnljOpD9g4okXeDazyiP0QDyQAuXCmt6vC1++rJXFVn2xPRn0HZHk1CzIH4N
-         I1th88B3Y8nlpEo2gQtMDfzDqcn81ylGhBfeB9970RHbhD1lRaPgOcEZ0HYK7i2S1+
-         uQytbzX+AcsZiIjGqgkUaoaYV6jJiC5BMkMSNO1ngbH98gDnNfB35nJ1Ccz9pJWXXA
-         EFjByt3yNEdc0yPnspX2BaOQC5YQdxRI4d1PPZVuXZNPY33tH/y6zNAofnij49a8ri
-         e3av8CUdEUKhg==
-From:   Conor Dooley <conor@kernel.org>
-To:     linux-riscv@lists.infradead.org,
-        Jesse Taube <mr.bossman075@gmail.com>
-Cc:     conor@kernel.org, Conor Dooley <conor.dooley@microchip.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jesse Taube <Mr.Bossman075@gmail.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>
-Subject: Re: [PATCH v1] RISCV: CANAAN: Make K210_SYSCTL depend on CLK_K210
-Date:   Wed, 15 Mar 2023 14:29:31 +0000
-Message-Id: <167889030701.90562.14045600493618249277.b4-ty@microchip.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230314211030.3953195-1-Mr.Bossman075@gmail.com>
-References: <20230314211030.3953195-1-Mr.Bossman075@gmail.com>
+        with ESMTP id S232276AbjCOOnS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 10:43:18 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58FDF86166
+        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 07:43:15 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id bg16-20020a05600c3c9000b003eb34e21bdfso1251858wmb.0
+        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 07:43:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1678891394;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=G/vajOgVJDGRyPsxvLCJVF/iXOTJH808d6bXOCfkt/4=;
+        b=Xc/mE1ze/aKwECzjVQuYYFfcwJPstGHaCM8oGgRmksCbJrKA+J0LGug3x42Xewk34o
+         j031ICgUVeeq30dUFXMk2tcMZkWmI/ztwTq6Apecy1LA5Vfg7d41PoHxgtig2QLjZIG1
+         vK91xzTghoD4d1KqiKRIKkKgaXZaNufR3R1PMfI46kH3D6SWFZq/8bVrfKAm58ymmolF
+         AITe9/1pAofnnka0RNKJbYDLzg08SvGFZPI866mi/zJvP8ZQEeWL9MOUHxiLDHLmMYKw
+         yJnSlUmLY6kX72ppy27330uJ8FY5cB4a4YYZFoFxkMsbIsV8gnm+Oum2KNjpB/qAWouI
+         yBAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678891394;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G/vajOgVJDGRyPsxvLCJVF/iXOTJH808d6bXOCfkt/4=;
+        b=z+3vQ69iK5hE4d+bH8URgjd6eqWeTNEBLQVbpj8cQSrYxAXDW8R+0enpBPIO6MrCSO
+         W5Ivq/fMYNV05/lfVFY8zK2gknk8reDAMj0C0mu+Lnj0rpf6vL6y1k0mpmmtYDbkJaby
+         CxmUvk4HhC3GxwqJkmq/O9g1SaXDo/vek0BLhmkjdZ5FmV3f/6BkMdR0EMyMjVk7krug
+         GC9jji8tLWLxojNLrue8jq9xj6XFEZtKOHYWkZusmHGE7oSAmJzDnTXjwn3OcpnElapV
+         sfxyhWvdACAPoK7wEyQYa8gFI+Rg9SzrctttYDFB/HPQF6MzTedl1dwIaER0zxX1hXxG
+         ylfw==
+X-Gm-Message-State: AO0yUKWs0gX6uc/J49+Q6O/QIBxEsdQrIUUECtp7+QY49JJhRO52tjX9
+        urTHW1qHA0290mQ6hcAqwiFtuw==
+X-Google-Smtp-Source: AK7set8RNWBOtRp7eGHGijYKEIg//aBJ8DcuA/QvJ1qGKHco6K1DLauD56YV7b5Z67TmzNwKaX1WFA==
+X-Received: by 2002:a05:600c:198e:b0:3eb:2f3b:4477 with SMTP id t14-20020a05600c198e00b003eb2f3b4477mr17709955wmq.28.1678891393663;
+        Wed, 15 Mar 2023 07:43:13 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id y16-20020a05600c365000b003ed23845666sm2003884wmq.45.2023.03.15.07.43.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Mar 2023 07:43:06 -0700 (PDT)
+Date:   Wed, 15 Mar 2023 15:43:03 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Vadim Fedorenko <vadfed@meta.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        poros <poros@redhat.com>, mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
+Message-ID: <ZBHZd6Ldtu+TPE8w@nanopsycho>
+References: <20230312022807.278528-1-vadfed@meta.com>
+ <20230312022807.278528-3-vadfed@meta.com>
+ <ZBCWkhRaUztjMapa@nanopsycho>
+ <DM6PR11MB4657175A833B5DD7B84D54269BBE9@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=538; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=6lWFOE6LTt1oRZCLjVCboDlTzeAL/GgThgDMSLLR1N8=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDCmC1zy2XghyrlbTZ4+vWbPxrvOPtxrfA/6n9GbVVywRn GgRVvG3o5SFQYyDQVZMkSXxdl+L1Po/Ljuce97CzGFlAhnCwMUpABN5c5+R4XgFf83F+cVr2S2i thqfnRP48bnsCbtWNSZ2e9V988oifBkZPnD90TKKuhx97VsHy/3YXdPTAm/8/P30vsPbB+9CrzT fYgcA
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM6PR11MB4657175A833B5DD7B84D54269BBE9@DM6PR11MB4657.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Conor Dooley <conor.dooley@microchip.com>
+Tue, Mar 14, 2023 at 07:35:55PM CET, arkadiusz.kubalewski@intel.com wrote:
+>>From: Jiri Pirko <jiri@resnulli.us>
+>>Sent: Tuesday, March 14, 2023 4:45 PM
+>>
+>>[...]
+>>
+>>
+>>>diff --git a/MAINTAINERS b/MAINTAINERS
+>>>index edd3d562beee..0222b19af545 100644
+>>>--- a/MAINTAINERS
+>>>+++ b/MAINTAINERS
+>>>@@ -6289,6 +6289,15 @@ F:
+>>	Documentation/networking/device_drivers/ethernet/freescale/dpaa2/swit
+>>ch-drive
+>>> F:	drivers/net/ethernet/freescale/dpaa2/dpaa2-switch*
+>>> F:	drivers/net/ethernet/freescale/dpaa2/dpsw*
+>>>
+>>>+DPLL CLOCK SUBSYSTEM
+>>
+>>Why "clock"? You don't mention "clock" anywhere else.
+>>
+>>[...]
+>>
+>>
+>>>diff --git a/drivers/dpll/dpll_core.c b/drivers/dpll/dpll_core.c
+>>>new file mode 100644
+>>>index 000000000000..3fc151e16751
+>>>--- /dev/null
+>>>+++ b/drivers/dpll/dpll_core.c
+>>>@@ -0,0 +1,835 @@
+>>>+// SPDX-License-Identifier: GPL-2.0
+>>>+/*
+>>>+ *  dpll_core.c - Generic DPLL Management class support.
+>>
+>>Why "class" ?
+>>
+>>[...]
+>>
+>>
+>>>+static int
+>>>+dpll_msg_add_pin_freq(struct sk_buff *msg, const struct dpll_pin *pin,
+>>>+		      struct netlink_ext_ack *extack, bool dump_any_freq)
+>>>+{
+>>>+	enum dpll_pin_freq_supp fs;
+>>>+	struct dpll_pin_ref *ref;
+>>>+	unsigned long i;
+>>>+	u32 freq;
+>>>+
+>>>+	xa_for_each((struct xarray *)&pin->dpll_refs, i, ref) {
+>>>+		if (ref && ref->ops && ref->dpll)
+>>>+			break;
+>>>+	}
+>>>+	if (!ref || !ref->ops || !ref->dpll)
+>>>+		return -ENODEV;
+>>>+	if (!ref->ops->frequency_get)
+>>>+		return -EOPNOTSUPP;
+>>>+	if (ref->ops->frequency_get(pin, ref->dpll, &freq, extack))
+>>>+		return -EFAULT;
+>>>+	if (nla_put_u32(msg, DPLL_A_PIN_FREQUENCY, freq))
+>>>+		return -EMSGSIZE;
+>>>+	if (!dump_any_freq)
+>>>+		return 0;
+>>>+	for (fs = DPLL_PIN_FREQ_SUPP_UNSPEC + 1;
+>>>+	     fs <= DPLL_PIN_FREQ_SUPP_MAX; fs++) {
+>>>+		if (test_bit(fs, &pin->prop.freq_supported)) {
+>>>+			if (nla_put_u32(msg, DPLL_A_PIN_FREQUENCY_SUPPORTED,
+>>>+			    dpll_pin_freq_value[fs]))
+>>
+>>This is odd. As I suggested in the yaml patch, better to treat all
+>>supported frequencies the same, no matter if it is range or not. The you
+>>don't need this weird bitfield.
+>>
+>>You can have a macro to help driver to assemble array of supported
+>>frequencies and ranges.
+>>
+>
+>I understand suggestion on yaml, but here I am confused.
+>How do they relate to the supported frequency passed between driver and dpll
+>subsystem?
+>This bitfield is not visible to the userspace, and sure probably adding macro
+>can be useful.
 
-On Tue, 14 Mar 2023 17:10:30 -0400, Jesse Taube wrote:
-> CLK_K210 is no longer a dependency of SOC_CANAAN,
-> but K210_SYSCTL depends on CLK_K210. This patch makes K210_SYSCTL
-> depend on CLK_K210. Also fix whitespace errors.
-> 
-> 
+My point is to avoid the bitfield and to treat supported frequencies and
+ranges in the same way. It can look similar to this:
 
-Applied to riscv-soc-for-next, thanks!
+in dpll.h:
 
-[1/1] soc: canaan: Make K210_SYSCTL depend on CLK_K210
-      https://git.kernel.org/conor/c/49f965b6fbca63904d7397ce96066fa992f401a3
+struct struct dpll_pin_frequency {
+	u64 min;
+	u64 max;
+};
 
-I dropped the common clk dependency down onto its own line & tweaked
-the $subject a wee bit.
+#define DPLL_PIN_FREQUENCY_RANGE(_min, _mac)	\
+	{					\
+		.min = _min,			\
+		.max = _max,			\
+	}
 
-Thanks for the patch!
+#define DPLL_PIN_FREQUENCY(_val) DPLL_PIN_FREQUENCY_RANGE(_val, _val)
+#define DPLL_PIN_FREQUENCY_1PPS DPLL_PIN_FREQUENCY(1)
+#define DPLL_PIN_FREQUENCY_10MHZ DPLL_PIN_FREQUENCY(1000000)
 
+
+Then in driver you have:
+
+static const struct dpll_pin_frequency pcp_dpll_pin_freqs[] = {
+	DPLL_PIN_FREQUENCY_1PPS,
+	DPLL_PIN_FREQUENCY_10MHZ,
+	DPLL_PIN_FREQUENCY(4000000),
+	DPLL_PIN_FREQUENCY_RANGE(500, 1000),
+	DPLL_PIN_FREQUENCY_RANGE(9000, 10000),
+};
+
+static const struct dpll_pin_properties pcp_dpll_pin_props = {
+	.label = "SMA",
+	.frequencies_supported = pcp_dpll_pin_freqs,
+	.frequencies_supported_count = ARRAY_SIZE(pcp_dpll_pin_freqs),
+	.type = DPLL_PIN_TYPE_EXT,
+	.capabilities = DPLL_PIN_CAPS_DIRECTION_CAN_CHANGE,
+};
+
+
+Then the dpll core could very easily iterate over .frequencies_supported
+array and dump the supported values and ranges to user in uniform way.
+
+
+>
+>>
+>>>+				return -EMSGSIZE;
+>>>+		}
+>>>+	}
+>>>+	if (pin->prop.any_freq_min && pin->prop.any_freq_max) {
+>>>+		if (nla_put_u32(msg, DPLL_A_PIN_ANY_FREQUENCY_MIN,
+>>>+				pin->prop.any_freq_min))
+>>>+			return -EMSGSIZE;
+>>>+		if (nla_put_u32(msg, DPLL_A_PIN_ANY_FREQUENCY_MAX,
+>>>+				pin->prop.any_freq_max))
+>>>+			return -EMSGSIZE;
+>>>+	}
+>>>+
+>>>+	return 0;
+>>>+}
+>>>+
+>>
+>>[...]
+>>
+>>
+>>>+static int
+>>>+dpll_cmd_pin_on_dpll_get(struct sk_buff *msg, struct dpll_pin *pin,
+>>>+			 struct dpll_device *dpll,
+>>>+			 struct netlink_ext_ack *extack)
+>>>+{
+>>>+	struct dpll_pin_ref *ref;
+>>>+	int ret;
+>>>+
+>>>+	if (nla_put_u32(msg, DPLL_A_PIN_IDX, pin->dev_driver_id))
+>>>+		return -EMSGSIZE;
+>>>+	if (nla_put_string(msg, DPLL_A_PIN_DESCRIPTION, pin->prop.description))
+>>>+		return -EMSGSIZE;
+>>>+	if (nla_put_u8(msg, DPLL_A_PIN_TYPE, pin->prop.type))
+>>>+		return -EMSGSIZE;
+>>>+	if (nla_put_u32(msg, DPLL_A_PIN_DPLL_CAPS, pin->prop.capabilities))
+>>>+		return -EMSGSIZE;
+>>>+	ret = dpll_msg_add_pin_direction(msg, pin, extack);
+>>>+	if (ret)
+>>>+		return ret;
+>>>+	ret = dpll_msg_add_pin_freq(msg, pin, extack, true);
+>>>+	if (ret && ret != -EOPNOTSUPP)
+>>>+		return ret;
+>>>+	ref = dpll_xa_ref_dpll_find(&pin->dpll_refs, dpll);
+>>>+	if (!ref)
+>>
+>>How exactly this can happen? Looks to me like only in case of a bug.
+>>WARN_ON() perhaps (put directly into dpll_xa_ref_dpll_find()?
+>
+>Yes, makes sense.
+>
+>>
+>>
+>>>+		return -EFAULT;
+>>>+	ret = dpll_msg_add_pin_prio(msg, pin, ref, extack);
+>>>+	if (ret && ret != -EOPNOTSUPP)
+>>>+		return ret;
+>>>+	ret = dpll_msg_add_pin_on_dpll_state(msg, pin, ref, extack);
+>>>+	if (ret && ret != -EOPNOTSUPP)
+>>>+		return ret;
+>>>+	ret = dpll_msg_add_pin_parents(msg, pin, extack);
+>>>+	if (ret)
+>>>+		return ret;
+>>>+	if (pin->rclk_dev_name)
+>>
+>>Use && and single if
+>>
+>
+>Make sense to me.
+>
+>>
+>>>+		if (nla_put_string(msg, DPLL_A_PIN_RCLK_DEVICE,
+>>>+				   pin->rclk_dev_name))
+>>>+			return -EMSGSIZE;
+>>>+
+>>>+	return 0;
+>>>+}
+>>>+
+>>
+>>[...]
+>>
+>>
+>>>+static int
+>>>+dpll_pin_freq_set(struct dpll_pin *pin, struct nlattr *a,
+>>>+		  struct netlink_ext_ack *extack)
+>>>+{
+>>>+	u32 freq = nla_get_u32(a);
+>>>+	struct dpll_pin_ref *ref;
+>>>+	unsigned long i;
+>>>+	int ret;
+>>>+
+>>>+	if (!dpll_pin_is_freq_supported(pin, freq))
+>>>+		return -EINVAL;
+>>>+
+>>>+	xa_for_each(&pin->dpll_refs, i, ref) {
+>>>+		ret = ref->ops->frequency_set(pin, ref->dpll, freq, extack);
+>>>+		if (ret)
+>>>+			return -EFAULT;
+>>
+>>return what the op returns: ret
+>
+>Why would we return here a driver return code, userspace can have this info
+>from extack. IMHO return values of dpll subsystem shall be not dependent on
+>what is returned from the driver.
+
+Why not to return it? The driver had some problem, errno suggests what
+that was. It is completely desired to pass that along and actually,
+it's been done like this in the rest of the netlink ops I can think of.
+Why would you want to hide it? Extack carries string message,
+not related to this directly.
+
+
+>
+>>
+>>
+>>>+		dpll_pin_notify(ref->dpll, pin, DPLL_A_PIN_FREQUENCY);
+>>>+	}
+>>>+
+>>>+	return 0;
+>>>+}
+>>>+
+>>
+>>[...]
+>>
+>>
+>>>+static int
+>>>+dpll_pin_direction_set(struct dpll_pin *pin, struct nlattr *a,
+>>>+		       struct netlink_ext_ack *extack)
+>>>+{
+>>>+	enum dpll_pin_direction direction = nla_get_u8(a);
+>>>+	struct dpll_pin_ref *ref;
+>>>+	unsigned long i;
+>>>+
+>>>+	if (!(DPLL_PIN_CAPS_DIRECTION_CAN_CHANGE & pin->prop.capabilities))
+>>>+		return -EOPNOTSUPP;
+>>>+
+>>>+	xa_for_each(&pin->dpll_refs, i, ref) {
+>>>+		if (ref->ops->direction_set(pin, ref->dpll, direction, extack))
+>>
+>>ret = ..
+>>if (ret)
+>>	return ret;
+>>
+>>Please use this pattern in other ops call code as well.
+>>
+>
+>This is the same as above (return code by driver) explanation.
+
+Same reply as above.
+
+
+>
+>>
+>>>+			return -EFAULT;
+>>>+		dpll_pin_notify(ref->dpll, pin, DPLL_A_PIN_DIRECTION);
+>>>+	}
+>>>+
+>>>+	return 0;
+>>
+>>[...]
+>
+>Thanks,
+>Arkadiusz
