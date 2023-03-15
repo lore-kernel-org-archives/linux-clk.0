@@ -2,112 +2,139 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88DEBC61DA4
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 09:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84746C61DA4
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 09:51:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231630AbjCOJn1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Mar 2023 05:43:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52456 "EHLO
+        id S232170AbjCOJvV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Mar 2023 05:51:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229847AbjCOJnW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 05:43:22 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AF3252F75;
-        Wed, 15 Mar 2023 02:43:21 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id cn21so42834162edb.0;
-        Wed, 15 Mar 2023 02:43:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678873399;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FdAORWhuy7UpOtPuCDIcq2G8nFcvWyaAoBPU8Jm7BG4=;
-        b=HZLymt1yWd22U988Ky5g9AOZbRqgaMwK1eM/ZmdnmXQ00bSdAYqmGa2rUe2aiitvML
-         2In12v+z4HpVvRfSJP5mkUyu3nBv6Wouiz6Pyl3J0XxBG1o+fF8uxBxrPywNNdG8aeV4
-         4YO6EpK7qZwXwOkfXGscVbINkctbVHeF/xoM/uN8CSjWV2+SrAOIB5l0MOCKSuIymK9K
-         hbFvcNV+UbA2J6e+yiLL3QXxXadSrR6CyYKcVgSHGg3GIyilZsm7VgMfzl6yz0pumORE
-         NaFqdWodJxsUXXihmK8GnFXHbE+3YbjeWJxmvba8f+jm3cgZ9Nw8/DKAt8KGBFX8w/Ja
-         qikQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678873399;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FdAORWhuy7UpOtPuCDIcq2G8nFcvWyaAoBPU8Jm7BG4=;
-        b=ENp9LQ+zv4KNLWVpXMjvewFvF+67YqIPHJzu2yIjW5aAuEB1okNyQaspk5RYuDxQ2L
-         mPYkSF5JLLblLjn5LE75xdKj6Hl1vzK8Fb6iydpVdEXg5f8qNg3trMXsRWaY6gwqq7Yd
-         3LaKoTBSbv7/LTLIPjpoyBf12UcwQeBqjNxwsSCaWph09Sst1BNxXxX0ixPL1T5B0Z3E
-         MZ4u8aZ0G24s8dpXWcRX+5B8pcyVL4ygO/RZYBZGgIJ7cbzug9TjpL1vfMYlSvpm5Qfc
-         U8WAEwZTjsdUramMOmrFaFmJrN4rWZVNKKbtMhu5IFGzsfSlTYHnOZ1rT8VYIsajHSfa
-         GBQw==
-X-Gm-Message-State: AO0yUKVu6l8yvhTyzRV3brsfSq7wCT7Sj3ICL47ZdMWs3I/cnHEgyFDL
-        uT1JzQjDwCn9hl9AWYljNizbTsI8l9fDEG675EisT0wQc9U=
-X-Google-Smtp-Source: AK7set8f4DgucIX2+xcISs7Sks0D0B7X1c5NnRYnH4rSvmtaCCsqH6ITS9FHJYnH6BeyO/ld9zQ7IB3wmVs3O66vgtM=
-X-Received: by 2002:a50:aadd:0:b0:4fb:30fc:1e99 with SMTP id
- r29-20020a50aadd000000b004fb30fc1e99mr1094750edc.0.1678873399502; Wed, 15 Mar
- 2023 02:43:19 -0700 (PDT)
+        with ESMTP id S230280AbjCOJuh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 05:50:37 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F09365455;
+        Wed, 15 Mar 2023 02:49:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678873787; x=1710409787;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QSWH2oZrN6AG+LRQTmSkhiJhJRLWiR4GmeXcU4sJXws=;
+  b=nO+X2Yp8Rg0S3XMDuGd/a1hN0K0WucYhnRO7oquelVhg2hghruYAUL4y
+   tPXM3U9gkSLS1DvQ+lfett9TMsgp2A2Kz3T2bKP1F+jsTkV5dqP4zawNp
+   lX1+hNHifqhrCtll9pypUUxdmL/e9Am1rVvTD+MUSRoIyYtbD4kC6aI79
+   JFSEtkAOxDC4YPEj7fDQKOEmbzvCUsax93cSmi02ogh/LzKHprniG8k9Y
+   GoNFwqugTHCjZ5JYGiVSLV88fLDlQer4KH64F43QmDBSxXZ/W6HNZjCB8
+   SoP0zr1Mpwd2ZcJLu+akvc6jfhUpw5VGh35IJIhdwqQmYCuZzNK758C4p
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10649"; a="318053410"
+X-IronPort-AV: E=Sophos;i="5.98,262,1673942400"; 
+   d="scan'208";a="318053410"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2023 02:49:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10649"; a="853553720"
+X-IronPort-AV: E=Sophos;i="5.98,262,1673942400"; 
+   d="scan'208";a="853553720"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by orsmga005.jf.intel.com with ESMTP; 15 Mar 2023 02:49:42 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pcNlN-0007ay-2v;
+        Wed, 15 Mar 2023 09:49:41 +0000
+Date:   Wed, 15 Mar 2023 17:48:45 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Jacky Huang <ychuang570808@gmail.com>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, schung@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+Subject: Re: [PATCH 14/15] tty: serial: Add Nuvoton ma35d1 serial driver
+ support
+Message-ID: <202303151754.XvPyacT7-lkp@intel.com>
+References: <20230315072902.9298-15-ychuang570808@gmail.com>
 MIME-Version: 1.0
-References: <20230210111141.1379645-1-keguang.zhang@gmail.com>
- <a3e6f6038511ad48258627dbf4c335e2.sboyd@kernel.org> <CAJhJPsUQN5Lo_rVUbbmGY68gorwkcQT=9AXfcEh371cP97Wj_A@mail.gmail.com>
- <20230315092910.GA8008@alpha.franken.de>
-In-Reply-To: <20230315092910.GA8008@alpha.franken.de>
-From:   Keguang Zhang <keguang.zhang@gmail.com>
-Date:   Wed, 15 Mar 2023 17:43:02 +0800
-Message-ID: <CAJhJPsWDO_nyPLH7uMTB+ODS74SAKDPGOXxk_Nperk1dKBKStQ@mail.gmail.com>
-Subject: Re: [PATCH] MIPS: loongson32: Update the clock initialization
-To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org,
-        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230315072902.9298-15-ychuang570808@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 15, 2023 at 5:29=E2=80=AFPM Thomas Bogendoerfer
-<tsbogend@alpha.franken.de> wrote:
->
-> On Wed, Mar 15, 2023 at 11:07:23AM +0800, Keguang Zhang wrote:
-> > On Sat, Feb 11, 2023 at 7:31=E2=80=AFAM Stephen Boyd <sboyd@kernel.org>=
- wrote:
-> > >
-> > > Quoting Keguang Zhang (2023-02-10 03:11:41)
-> > > > The Loongson-1 clock driver is under re-implementation
-> > > > to add DT support. As a result, ls1x_clk_init() will be dropped soo=
-n.
-> > > > Therefore, call of_clk_init() for clock initialization instead.
-> > > >
-> > > > Link: https://lore.kernel.org/all/20230209132614.1079198-3-keguang.=
-zhang@gmail.com
-> > > > Link: https://lore.kernel.org/all/20230209132614.1079198-4-keguang.=
-zhang@gmail.com
-> >
-> > Hi Thomas,
-> > Sorry to bother you.
-> > For fear of raising build error, is it possible to merge this patch
-> > before the above two patches getting applied?
-> > Or is there anything to improve?
-> > Thanks very much!
->
-> the IMHO best way would be to let this patch go the same way as
-> the other patch set. So Stephen could you take this into your
-> tree, too ?
->
-Sure. Will do.
+Hi Jacky,
 
-> Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
->
-> --
-> Crap can work. Given enough thrust pigs will fly, but it's not necessaril=
-y a
-> good idea.                                                [ RFC1925, 2.3 =
-]
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on clk/clk-next tty/tty-testing tty/tty-next tty/tty-linus linus/master v6.3-rc2 next-20230315]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Jacky-Huang/arm64-Kconfig-platforms-Add-config-for-Nuvoton-MA35-platform/20230315-153355
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20230315072902.9298-15-ychuang570808%40gmail.com
+patch subject: [PATCH 14/15] tty: serial: Add Nuvoton ma35d1 serial driver support
+config: sparc-allyesconfig (https://download.01.org/0day-ci/archive/20230315/202303151754.XvPyacT7-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/064028d2f2d911398012103aef3ce8666342ddfc
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Jacky-Huang/arm64-Kconfig-platforms-Add-config-for-Nuvoton-MA35-platform/20230315-153355
+        git checkout 064028d2f2d911398012103aef3ce8666342ddfc
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=sparc olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=sparc SHELL=/bin/bash drivers/tty/serial/
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202303151754.XvPyacT7-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/tty/serial/ma35d1_serial.c:672:6: warning: no previous prototype for 'ma35d1serial_suspend_port' [-Wmissing-prototypes]
+     672 | void ma35d1serial_suspend_port(int line)
+         |      ^~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/tty/serial/ma35d1_serial.c:681:6: warning: no previous prototype for 'ma35d1serial_resume_port' [-Wmissing-prototypes]
+     681 | void ma35d1serial_resume_port(int line)
+         |      ^~~~~~~~~~~~~~~~~~~~~~~~
+--
+>> drivers/tty/serial/ma35d1_serial.c:670: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+    *  Suspend one serial port.
+   drivers/tty/serial/ma35d1_serial.c:679: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+    *  Resume one serial port.
 
 
+vim +/ma35d1serial_suspend_port +672 drivers/tty/serial/ma35d1_serial.c
 
---=20
-Best regards,
+   668	
+   669	/**
+ > 670	 *  Suspend one serial port.
+   671	 */
+ > 672	void ma35d1serial_suspend_port(int line)
+   673	{
+   674		uart_suspend_port(&ma35d1serial_reg, &ma35d1serial_ports[line].port);
+   675	}
+   676	EXPORT_SYMBOL(ma35d1serial_suspend_port);
+   677	
+   678	/**
+   679	 *  Resume one serial port.
+   680	 */
+ > 681	void ma35d1serial_resume_port(int line)
+   682	{
+   683		struct uart_ma35d1_port *up = &ma35d1serial_ports[line];
+   684	
+   685		uart_resume_port(&ma35d1serial_reg, &up->port);
+   686	}
+   687	EXPORT_SYMBOL(ma35d1serial_resume_port);
+   688	
 
-Keguang Zhang
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
