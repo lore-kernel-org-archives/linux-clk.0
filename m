@@ -2,100 +2,71 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 775FDC6FD1D
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 00:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E016DC7618B
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 00:30:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229787AbjCOA02 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Mar 2023 20:26:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53274 "EHLO
+        id S229845AbjCOAaY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Mar 2023 20:30:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229494AbjCOA02 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 20:26:28 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4D86279B0;
-        Tue, 14 Mar 2023 17:26:24 -0700 (PDT)
+        with ESMTP id S229735AbjCOAaY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 20:30:24 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FB665293E;
+        Tue, 14 Mar 2023 17:30:22 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3A62961A85;
-        Wed, 15 Mar 2023 00:26:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 877FAC433D2;
-        Wed, 15 Mar 2023 00:26:23 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CCDD7B81C1F;
+        Wed, 15 Mar 2023 00:30:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 802D2C4339B;
+        Wed, 15 Mar 2023 00:30:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678839983;
-        bh=lobEGi0h71abQ+OUCFajCF1V21Qb2ZNrY1ahlNRzi/E=;
+        s=k20201202; t=1678840219;
+        bh=vyxKtWor1GgdsppazI1GKwisemf4cHbxxelfecejTFc=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=RvUKfhl4lZ0LRKM49iRT91oXmLfZowNPYgnLuQg0uheJx7lUGg7anCRq3QhGKcIH8
-         LOWLa8LTzvvhE2xbKhMrSk17QXlRt9l/h9cS9tQB8iOjnZwPs+W9DDN97puQpyNBWg
-         EjrkQZpkMaxsV7zGV+jYmRJNra1H+w/rICx0T7aFLQCaEq8w/+0E82nOmThQHovakA
-         Zm2xh/Vx+FOqtiJl1twuJOSKqfj1u30jNYl1tJ/792ZMOJinHAaM8SN1yy3xUVU3Qq
-         1faBtCXuZUakV2QASJDcMIaFYx/pjH1uuBYnGumdradVFaB87lfr0Z/Hh9/WXG9KIR
-         1Rp/U/fcxYd1A==
-Message-ID: <c9e0e9b838cc046637059e771755f995.sboyd@kernel.org>
+        b=NwFgn7no1SNf9/Rt1sFsLJD1oT/5V7FTSVvRdgb++JWqbm2PG4XvNrrV9gburbViy
+         4op48ZM4uRZWCc3BkufMBigumIFPwvlP7dtGsocEqafLnRqsNj+uun79AUOORXhVSr
+         YN3Sd0LliOZfItxXUXo8DzJNaTuUEjdHEixB9gjOZGrDq7aLZhzoqoCqM5CCOZ7PZe
+         9RckPqB/fDqIMgUFNJ54NSrsJpt3ggxHxgCbgSe74NJJHoeZPT9GOfDbB5sfMx83Ya
+         a6vOrLjsDh7xTE2YcGSf4ORT8PKBJrTpiatDjqtUyX60EL8vn1veekMgsWHGtF5WtZ
+         Keem5xeyl8Z3Q==
+Message-ID: <de14f63beb2b3e424ec2375187c8087f.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <6ff60914-0c39-9916-2e3a-a906b4cdef0d@kernel.org>
-References: <20230307115022.12846-2-zhuyinbo@loongson.cn> <202303082037.QPfBP64A-lkp@intel.com> <b94ee1d2-b224-f9d5-3f3c-0096634f4c93@loongson.cn> <ec1fb4d134181a1b1859bcb884dcd494.sboyd@kernel.org> <c03e47f7-bb26-0114-b300-357634b0e581@kernel.org> <61eee19400e9a45ce9543bfd92a27eaa.sboyd@kernel.org> <6ff60914-0c39-9916-2e3a-a906b4cdef0d@kernel.org>
-Subject: Re: [PATCH v13 2/2] clk: clk-loongson2: add clock controller driver support
+In-Reply-To: <20230314124404.117592-1-xingyu.wu@starfivetech.com>
+References: <20230314124404.117592-1-xingyu.wu@starfivetech.com>
+Subject: Re: [PATCH v3 00/11] Add new partial clock and reset drivers for StarFive JH7110
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     oe-kbuild-all@lists.linux.dev, Jianmin Lv <lvjianmin@loongson.cn>,
-        Liu Peibao <liupeibao@loongson.cn>, wanghongliang@loongson.cn,
-        loongson-kernel@lists.loongnix.cn
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
+Cc:     Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        Xingyu Wu <xingyu.wu@starfivetech.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To:     Emil Renner Berthing <kernel@esmil.dk>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        kernel test robot <lkp@intel.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zhuyinbo <zhuyinbo@loongson.cn>
-Date:   Tue, 14 Mar 2023 17:26:21 -0700
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Xingyu Wu <xingyu.wu@starfivetech.com>,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
+Date:   Tue, 14 Mar 2023 17:30:17 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2023-03-13 23:49:40)
-> On 13/03/2023 19:20, Stephen Boyd wrote:
-> >>>> The CONFIG_64BIT not enabled in your config file, I will add a depen=
-d on=20
-> >>>> "CONFIG_64BIT" in my clock driver to fix this compile error.
-> >>>
-> >>> Do you need to use readq() here? Can you read two 32-bit registers wi=
-th
-> >>> readl() and put them together for a 64-bit number?
-> >>
-> >> If the platform supports 64-bit reads and these are actually one
-> >> register, then readq makes sense - code is more readable, smaller, more
-> >> efficient.
-> >>
-> >=20
-> > Please read the section in Documentation/driver-api/device-io.rst about
-> > hi_lo_readq() and <linux/io-64-nonatomic-lo-hi.h>. We shouldn't need to
-> > restrict the driver to CONFIG_64BIT. Instead, include one of these
-> > header files to get the IO access primitives.
->=20
-> These primitives are for 32bit access. Quoting: "on 32-bit
-> architectures". What's the point of them if the code *will never* run on
-> 32-bit?
+Quoting Xingyu Wu (2023-03-14 05:43:53)
+> This patch serises are to add new partial clock drivers and reset
+> supports about System-Top-Group(STG), Image-Signal-Process(ISP)
+> and Video-Output(VOUT) for the StarFive JH7110 RISC-V SoC.
 
-They're there to make drivers portable.
+What is your merge plan for this series? Did you intend for clk tree to
+take the majority of patches? We won't take the dts changes through the
+clk tree.
 
-> It will be a fake choice of linux/io-64-nonatomic-lo-hi.h or
-> linux/io-64-nonatomic-hi-lo.h misleading users to think this was tested
-> on 32-bit.
->=20
-
-I don't think anyone is really going to care that it hasn't been tested.
-It's not like the Linux kernel driver is the source of truth for
-integrating IP blocks into different architectures. If it's wrong
-someone will fix it when they try to use the hardware on 32-bit systems.
-
-Can the register handle being read/written with two 32-bit accesses? I
-still don't think we've had any answer to that question. If so, pick the
-one that makes the most sense and move on.
-
-In Linux, we try to write portable drivers. This way anyone can compile
-the driver on any host architecture with whatever compiler they're
-using. Otherwise, they have to download a cross compiler for the target
-architecture to simply build test the code. Also, the Linux kernel is
-fairly portable. We try to limit architecture specific code to arch/ and
-so anything in drivers/ is ideally portable code.
+I think Philipp Zabel reviewed some earlier version of the patches and
+provided reviewed-by tags. Can you check if they can be added here? If
+so, please resend again, or get those merged through the reset tree.
