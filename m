@@ -2,97 +2,84 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C72DDC6FD1F
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 03:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 515A2C6FD1D
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 03:44:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229648AbjCODHo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Mar 2023 23:07:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46416 "EHLO
+        id S229847AbjCODoN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Mar 2023 23:44:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbjCODHm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 23:07:42 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 281575D779;
-        Tue, 14 Mar 2023 20:07:41 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id x13so22816948edd.1;
-        Tue, 14 Mar 2023 20:07:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678849659;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tg96jB00Z0xJAjaX35dGOvi0S0BxZfiR5lY6gXxTruM=;
-        b=pcytAVu3ygryJm2ME+7AeEiL4mOWRr++QzyMQjmGY2UnI/Uff+01CJgO/L9Ircaesg
-         Xa4sqC9PVIhYgoPnMu4PMBQ/YPK3pZyUGLtPc1AQBVChzkslgRSTkzn1Q8ZCDafo22sD
-         nn6gW0pmSieLpa6E6LORgPHIfFsDnqo89hsJT4Gaf4GsTQXluJC5W2orm2wXsP79i/k0
-         BtQeNCtXcUPsrS5fuKtM+IaDEEiBkKikLD9KC9uDBQ+ZRzp7h02+GsCif0EIxNfz8O2p
-         rwtQN6RC4yIz1nBT5Unx9SNvZIjCVbzrfjlakRiapTq9a4i1OsxvbF9Qu0MWFcTWnN4w
-         pmaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678849659;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tg96jB00Z0xJAjaX35dGOvi0S0BxZfiR5lY6gXxTruM=;
-        b=wV9PXOua7PRlQdKTMWzvrty/ezQcLBzmioSZCK4eFCovSdMnaGJK9SIs3MZ5zjs6Pi
-         7h3W0VL+blg6OkfGWCoMJCmjtwYTMy/GIw/B/CCWUdS0ZkztQHbTZL+7wTcdiC15/ddW
-         gzcXZSc+WNoYxGsDzMdRLQRPxKIHj+E4/S5pvP54PwLAcR+aRb40+X+XY33Wj+9AoNPk
-         o5YBW6VQZ1UyBLJc+wJjYG0J63n/BxBt2j5n44jiFgqqJRm7V3pu9rNkj6E1MNu4lN6L
-         pQr/PASe+l+zKkpXC0SmAtWnYgQqxpQfucI1qfTNdCtiImsc+V1t2g0AsjWYZt3LvS7r
-         Wl2w==
-X-Gm-Message-State: AO0yUKUsGvNDoVmfhoVNE3Fi8ZRPuEcNbg7WO96Gnvl2pRYssGtEG+mQ
-        FIUN9KATwQb+J1GeGEqsH/LMAI2IYa8kJjs0vE2k14QvWYU=
-X-Google-Smtp-Source: AK7set8ZxP3H95X9OWSv2ZecRuaPva4uZTO8mzifEhRkJ6S5Mr5ycZSYvVuHcoKIBbPHVw4J8SaScTwBqs1gH/a91hw=
-X-Received: by 2002:a17:906:5619:b0:92b:e576:ea31 with SMTP id
- f25-20020a170906561900b0092be576ea31mr2163021ejq.5.1678849659601; Tue, 14 Mar
- 2023 20:07:39 -0700 (PDT)
+        with ESMTP id S229946AbjCODoL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 23:44:11 -0400
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CE0319F2E;
+        Tue, 14 Mar 2023 20:44:06 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id 2F8E924E1A6;
+        Wed, 15 Mar 2023 11:44:04 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 15 Mar
+ 2023 11:44:04 +0800
+Received: from [192.168.125.128] (113.72.145.194) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 15 Mar
+ 2023 11:44:03 +0800
+Message-ID: <729b1b69-aba6-4623-cf78-b08562d30d76@starfivetech.com>
+Date:   Wed, 15 Mar 2023 11:44:00 +0800
 MIME-Version: 1.0
-References: <20230210111141.1379645-1-keguang.zhang@gmail.com> <a3e6f6038511ad48258627dbf4c335e2.sboyd@kernel.org>
-In-Reply-To: <a3e6f6038511ad48258627dbf4c335e2.sboyd@kernel.org>
-From:   Keguang Zhang <keguang.zhang@gmail.com>
-Date:   Wed, 15 Mar 2023 11:07:23 +0800
-Message-ID: <CAJhJPsUQN5Lo_rVUbbmGY68gorwkcQT=9AXfcEh371cP97Wj_A@mail.gmail.com>
-Subject: Re: [PATCH] MIPS: loongson32: Update the clock initialization
-To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org,
-        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Stephen Boyd <sboyd@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v3 00/11] Add new partial clock and reset drivers for
+ StarFive JH7110
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>
+CC:     Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+        "Paul Walmsley" <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20230314124404.117592-1-xingyu.wu@starfivetech.com>
+ <de14f63beb2b3e424ec2375187c8087f.sboyd@kernel.org>
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+In-Reply-To: <de14f63beb2b3e424ec2375187c8087f.sboyd@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [113.72.145.194]
+X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Feb 11, 2023 at 7:31=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wro=
-te:
->
-> Quoting Keguang Zhang (2023-02-10 03:11:41)
-> > The Loongson-1 clock driver is under re-implementation
-> > to add DT support. As a result, ls1x_clk_init() will be dropped soon.
-> > Therefore, call of_clk_init() for clock initialization instead.
-> >
-> > Link: https://lore.kernel.org/all/20230209132614.1079198-3-keguang.zhan=
-g@gmail.com
-> > Link: https://lore.kernel.org/all/20230209132614.1079198-4-keguang.zhan=
-g@gmail.com
+On 2023/3/15 8:30, Stephen Boyd wrote:
+> Quoting Xingyu Wu (2023-03-14 05:43:53)
+>> This patch serises are to add new partial clock drivers and reset
+>> supports about System-Top-Group(STG), Image-Signal-Process(ISP)
+>> and Video-Output(VOUT) for the StarFive JH7110 RISC-V SoC.
+> 
+> What is your merge plan for this series? Did you intend for clk tree to
+> take the majority of patches? We won't take the dts changes through the
+> clk tree.
+> 
+> I think Philipp Zabel reviewed some earlier version of the patches and
+> provided reviewed-by tags. Can you check if they can be added here? If
+> so, please resend again, or get those merged through the reset tree.
 
-Hi Thomas,
-Sorry to bother you.
-For fear of raising build error, is it possible to merge this patch
-before the above two patches getting applied?
-Or is there anything to improve?
-Thanks very much!
+These patches add new clock & reset providers based on the basic clock & reset
+of the minimal system which Hal.feng had submitted[1], which are used in USB, DMA,
+VIN and Display modules that are merging.
+[1]: https://lore.kernel.org/all/20230311090733.56918-1-hal.feng@starfivetech.com/
 
+Oh I checked and had not received any comments from Philipp Zabel in earlier version
+of these patches. Maybe it was confused with the patches of the minimal system.
 
-> > Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
-> > ---
->
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-
-
-
---
 Best regards,
-
-Kelvin Cheung
+Xingyu Wu
