@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF8FC61DA4
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 13:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2807BC6FD1D
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 13:24:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232186AbjCONX6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Mar 2023 09:23:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50662 "EHLO
+        id S232139AbjCONX7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Mar 2023 09:23:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232123AbjCONXp (ORCPT
+        with ESMTP id S232126AbjCONXp (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 09:23:45 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EC74A3B64
-        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 06:23:42 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id r11so23837694edd.5
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08B76A3B7C
+        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 06:23:43 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id eh3so19570661edb.11
         for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 06:23:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678886621;
+        d=linaro.org; s=google; t=1678886622;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=z6Q5mnwZerUqt0rPDmFb5WgXIlQQvBuhlqFXmv7x/E8=;
-        b=v8CeUBfci+2vyzQEs4Rv2vSs3xgOflEwBGX290bxPufp8u8LNIOMlkwcnVzAd/JHTS
-         fKtlg1yp861KIf8/L1MJwZILV+rQXo66j3Yxt9GK2ezkucnxv+S+0i/EnOuoYDUhJOV3
-         B6JpC0fqm3lrN2erdD+046lrlomd/a16+nW2JchX0Jb24U9w1cd/ZJNtpLSUYRhQsIlu
-         j0VP1QxVb20iygWUI9vh2kc1KeznBSrLdSCryvv3cS+hgbtWk5/gbaQj/AD3vNkuqYPU
-         A/IWUl2UBUfC+Ob8tJcCN4OaDEuUsJbZqVAv+jnL6QKj1HEuwp2mjGfX7wCJLSZMrfzW
-         EfjA==
+        bh=UnW0CMrrRD3o9YvTtj/2PZfd1w3APSitkBSkSzkAq3A=;
+        b=cIoenhYmTDDKZ0euB2ODKr3LotX4ppL2RTmY7rx4LHYybPdccQrPSTr+zjPffclIwD
+         k+6Q4fDW3EAwNRRuFsbyhhImD8R3omHYItX05zQqnwsqlABoIOICjL/Cf/X9pC4J8Wjv
+         HZj1lO/Nsh2knHgaHr7f2V67UlTJVZWVAoynksoC9l8EeKEowzrk0pY+o+vQHm3IeQnm
+         PvdZtWTxW3F3JCNkpG+rgvq0x8m1XaGQ7HaEivuI/+dOvcEeU3nYVP0i9mtPnqsRSVM6
+         X1N4cWtUjSaXy2FJCd1/duAtLA7rV8DmP43e1rCd0jFSF52WSdUK/eikCZgXZ0TRFum3
+         eCdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678886621;
+        d=1e100.net; s=20210112; t=1678886622;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=z6Q5mnwZerUqt0rPDmFb5WgXIlQQvBuhlqFXmv7x/E8=;
-        b=2gU9fiT8yqZz7kob6Ddh11mdTbh2WK+4dNWSVyI3GlsouEZzbRZSzCvgzsNfx0VsaK
-         vNT3/KrjWsG9oKP/01d29FQLy0sTE7V8Cl2Xv6WWwGAUkqzguVbxiA1zvd1HbJJIKJ/+
-         wxKEqY3R2zCdUv3gDYCvCAwpuDu435qiN93YPolTaPOE/rtuekZpt+6qgRsYNsJUFVve
-         tw+ZdjpSkESSApKWtOevgNAlO5Hgg4t4b/2H0hAcwPeIqy2KMr0Eq8kypoxWK/qWYU5I
-         cwi0IzfaxEM+prIplkDty6doCOkcJQq+DdIJTWIkcGnx/l15+ff3JznnsFPwpubGHFMq
-         dqxg==
-X-Gm-Message-State: AO0yUKUy4gvL8Fhp9rCFZaj5KDiS2wCWSLFZ2p4mdwwESWUw8y8GkAnC
-        rkj8bvFraH4AmpVqnvHitwD3aA==
-X-Google-Smtp-Source: AK7set80lwILGeMEjE90/hXf2KxCex24k3hIxwK6a87YWNsiAs3RYf8jzg8Y/7RnlkbsWjydDWh7+g==
-X-Received: by 2002:a17:907:7f8e:b0:92f:1418:27f0 with SMTP id qk14-20020a1709077f8e00b0092f141827f0mr2127459ejc.34.1678886620990;
-        Wed, 15 Mar 2023 06:23:40 -0700 (PDT)
+        bh=UnW0CMrrRD3o9YvTtj/2PZfd1w3APSitkBSkSzkAq3A=;
+        b=1/uGjC/2708je2XKDSA7TLYgOKy03rKrwcBIp1/8B6gKdIY6SnCZoUz348xd/KjeYU
+         nKYLSVLqh7Lm1i4PHH2Q2eokv73db7iXyCtSVRV7+fsDWz9QkRX+GREtlOJZOgq5fgDr
+         jMHZriCGGif94DHHoaYXV1moESADVkwCMJMijDf0mg8Y4LTM6gO0B6Mkya54Y5dZRg28
+         oTvhVPOwBBgR/ci1x2I3Fr9UblJNhwOtXa6nC7YsuwQmHP2gZvVgx1f4JJs+6gDJ3dH+
+         OkOCLxSD56T6vpm8A2mQgRMXigHrn7sojZ9jNhVJ0s6xU5YsV6OA2p40nNJ53UL8rAvS
+         Vf6A==
+X-Gm-Message-State: AO0yUKWcz4edpPrkenpzT8t9jDK6LM6iWPXyOC+JEn7V/XPdsjpI/bKz
+        a6gBJ++pFTdzFYriN4dxWU6gaw==
+X-Google-Smtp-Source: AK7set+W+V2K+JVgObXv7PEO2bdA92Y2AmBplxjf8AwC8skNcxMQIt1ZNpm4fZzwq+uDEYAYCDcLJQ==
+X-Received: by 2002:a17:906:dff5:b0:8b1:3193:4874 with SMTP id lc21-20020a170906dff500b008b131934874mr5703584ejc.46.1678886622632;
+        Wed, 15 Mar 2023 06:23:42 -0700 (PDT)
 Received: from localhost.localdomain ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id pj18-20020a170906d79200b008b133f9b33dsm2497365ejb.169.2023.03.15.06.23.39
+        by smtp.gmail.com with ESMTPSA id pj18-20020a170906d79200b008b133f9b33dsm2497365ejb.169.2023.03.15.06.23.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Mar 2023 06:23:40 -0700 (PDT)
+        Wed, 15 Mar 2023 06:23:42 -0700 (PDT)
 From:   Abel Vesa <abel.vesa@linaro.org>
 To:     "Rafael J. Wysocki" <rafael@kernel.org>,
         Kevin Hilman <khilman@kernel.org>,
@@ -66,9 +66,9 @@ Cc:     linux-pm@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         Doug Anderson <dianders@chromium.org>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [RFC PATCH 4/5] clk: qcom: Add sync state callback to all SC8280XP providers
-Date:   Wed, 15 Mar 2023 15:23:29 +0200
-Message-Id: <20230315132330.450877-5-abel.vesa@linaro.org>
+Subject: [RFC PATCH 5/5] clk: qcom: Add sync state callback to all SM8450 providers
+Date:   Wed, 15 Mar 2023 15:23:30 +0200
+Message-Id: <20230315132330.450877-6-abel.vesa@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230315132330.450877-1-abel.vesa@linaro.org>
 References: <20230315132330.450877-1-abel.vesa@linaro.org>
@@ -80,51 +80,51 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Now that we have support for sync state delayed disabling of unused
 power domains and a provided generic gdsc sync state callback, add it to
-all the providers related to the SC8280XP platform.
+all the providers related to the SM8450 platform.
 
 Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 ---
- drivers/clk/qcom/dispcc-sc8280xp.c | 1 +
- drivers/clk/qcom/gcc-sc8280xp.c    | 1 +
- drivers/clk/qcom/gpucc-sc8280xp.c  | 1 +
+ drivers/clk/qcom/camcc-sm8450.c  | 1 +
+ drivers/clk/qcom/dispcc-sm8450.c | 1 +
+ drivers/clk/qcom/gcc-sm8450.c    | 1 +
  3 files changed, 3 insertions(+)
 
-diff --git a/drivers/clk/qcom/dispcc-sc8280xp.c b/drivers/clk/qcom/dispcc-sc8280xp.c
-index 167470beb369..f97bda6c7e3a 100644
---- a/drivers/clk/qcom/dispcc-sc8280xp.c
-+++ b/drivers/clk/qcom/dispcc-sc8280xp.c
-@@ -3199,6 +3199,7 @@ static struct platform_driver disp_cc_sc8280xp_driver = {
+diff --git a/drivers/clk/qcom/camcc-sm8450.c b/drivers/clk/qcom/camcc-sm8450.c
+index 51338a2884d2..6ae360898aee 100644
+--- a/drivers/clk/qcom/camcc-sm8450.c
++++ b/drivers/clk/qcom/camcc-sm8450.c
+@@ -2847,6 +2847,7 @@ static struct platform_driver cam_cc_sm8450_driver = {
  	.driver = {
- 		.name = "disp_cc-sc8280xp",
- 		.of_match_table = disp_cc_sc8280xp_match_table,
+ 		.name = "camcc-sm8450",
+ 		.of_match_table = cam_cc_sm8450_match_table,
 +		.sync_state = gdsc_sync_state,
  	},
  };
  
-diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
-index b3198784e1c3..222bca0f8093 100644
---- a/drivers/clk/qcom/gcc-sc8280xp.c
-+++ b/drivers/clk/qcom/gcc-sc8280xp.c
-@@ -7441,6 +7441,7 @@ static struct platform_driver gcc_sc8280xp_driver = {
+diff --git a/drivers/clk/qcom/dispcc-sm8450.c b/drivers/clk/qcom/dispcc-sm8450.c
+index adbfd30bfc96..45f4ea3d26bc 100644
+--- a/drivers/clk/qcom/dispcc-sm8450.c
++++ b/drivers/clk/qcom/dispcc-sm8450.c
+@@ -1803,6 +1803,7 @@ static struct platform_driver disp_cc_sm8450_driver = {
  	.driver = {
- 		.name = "gcc-sc8280xp",
- 		.of_match_table = gcc_sc8280xp_match_table,
+ 		.name = "disp_cc-sm8450",
+ 		.of_match_table = disp_cc_sm8450_match_table,
 +		.sync_state = gdsc_sync_state,
  	},
  };
  
-diff --git a/drivers/clk/qcom/gpucc-sc8280xp.c b/drivers/clk/qcom/gpucc-sc8280xp.c
-index ea1e9505c335..a9f0e7bbacce 100644
---- a/drivers/clk/qcom/gpucc-sc8280xp.c
-+++ b/drivers/clk/qcom/gpucc-sc8280xp.c
-@@ -453,6 +453,7 @@ static struct platform_driver gpu_cc_sc8280xp_driver = {
+diff --git a/drivers/clk/qcom/gcc-sm8450.c b/drivers/clk/qcom/gcc-sm8450.c
+index 84764cc3db4f..f2b542753553 100644
+--- a/drivers/clk/qcom/gcc-sm8450.c
++++ b/drivers/clk/qcom/gcc-sm8450.c
+@@ -3262,6 +3262,7 @@ static struct platform_driver gcc_sm8450_driver = {
  	.driver = {
- 		.name = "gpu_cc-sc8280xp",
- 		.of_match_table = gpu_cc_sc8280xp_match_table,
+ 		.name = "gcc-sm8450",
+ 		.of_match_table = gcc_sm8450_match_table,
 +		.sync_state = gdsc_sync_state,
  	},
  };
- module_platform_driver(gpu_cc_sc8280xp_driver);
+ 
 -- 
 2.34.1
 
