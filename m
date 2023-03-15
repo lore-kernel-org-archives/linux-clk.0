@@ -2,114 +2,117 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46BDFC7618B
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 15:58:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC06C6FD1D
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 16:02:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232675AbjCOP6b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Mar 2023 11:58:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53808 "EHLO
+        id S232359AbjCOQCU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Mar 2023 12:02:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232757AbjCOP6S (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 11:58:18 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B05E1E2A2
-        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 08:57:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678895799;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=CJaCLAjqxLo9SAqmZ/ZPxPuIYyAicDla8mBV+t3lBL8=;
-        b=IOZfFPchWAkCvcVhNy3AaXDuOfy/iDwCxB20ukevmD9833NHr+dat+w+kFX/EY8QMqcB71
-        IjQLinAxzVkbQaEfDpBmW/FIOIni8X5tIiKdY0TgxA6BxkmhA6UAK6XfYCyskhJV/+MNFO
-        BdVy3Ig+M1EOrt+0YZhbv8EgAQxzN64=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-74--fpbiiexPgybd6b-aCb16A-1; Wed, 15 Mar 2023 11:56:38 -0400
-X-MC-Unique: -fpbiiexPgybd6b-aCb16A-1
-Received: by mail-qv1-f72.google.com with SMTP id dl18-20020ad44e12000000b005a4d5420bc6so7009614qvb.11
-        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 08:56:38 -0700 (PDT)
+        with ESMTP id S232749AbjCOQCM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 12:02:12 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9762C92258
+        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 09:01:43 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id o8so4943088lfo.0
+        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 09:01:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678896101;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AV6slw0BlCofNDOL7OtplUvQsJbc6koKav7PXxWHhFQ=;
+        b=OcQm6Rm4xud1BP9QMbDcixJz2WgnENC5P/DfJhAe20tUrLih4nHymbLH6dTCtkb7V6
+         kg4qXBuIqu2l1ubJya3vzPClYSqkzjLsjp0yQuEIrToJJTZ/TQZqZK4ic83JA9rCKuEh
+         jrSytU4cpLxxqxtcSqSILUvGfWL3Bp9B3SVGfZv7gVghBWxO8L8xPndOTPVZEXpmOzm0
+         PhlpV+9cyqumdmTkYPvD+yoYGMqlER1ndsREwsPX98EI/jaj+z1pZ/TNVsucl6OujggC
+         kuWZ72e0NSX+Fl9kISMRSnliRE8saXFcbROWofw6mTzUcU8zFrXqzpJ3W5N2tYdycCXq
+         5VHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678895798;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CJaCLAjqxLo9SAqmZ/ZPxPuIYyAicDla8mBV+t3lBL8=;
-        b=MmO8YRQjG6nDJcmyBBOHMLkvJq727nW6Qw9lfpHkaIE06Nc8+FaHXzurMZIh2u6OOY
-         YfHP5RwjR0sVHaqPeicVQ01FFrta5jRSfGhoo4wjx+UERT9AZtilMGVbwBScp7+krm6P
-         2DebYDw2OGYkbnGuYDTkTLvmUjB2GMUnQsSjjC7Lf2PQPst6bUv8VBzecH3BnFKkot74
-         52I08VdE73JOaFV/hsdUAoW+3fWT7iINpaKw4UtAhjJKduOp61OHNceZ0fbqbqrmNNrg
-         I/dnf5fMrXRHhhxxfsBXReDl1C8EYG1a9/1l0nxmgOaJP0g1g4IIJtYCOTZSEz1MKQqe
-         oM8w==
-X-Gm-Message-State: AO0yUKV6H4oh1fhno3dvobUtIA22xLNkUkfME6F0DlJC5GtEloayDX7e
-        vX+wzGFDHJCkWn5JpBwZN1TnGS+1+PzYX0+Hixm2Xpj/ip/6APTy2sVUvAA83dr4xzN7JniUyyY
-        5tADs2p0FK8OfMbStR5aV
-X-Received: by 2002:ac8:5b95:0:b0:3bf:bff0:841d with SMTP id a21-20020ac85b95000000b003bfbff0841dmr644405qta.21.1678895798120;
-        Wed, 15 Mar 2023 08:56:38 -0700 (PDT)
-X-Google-Smtp-Source: AK7set/MjGuH4d1AxU+OLSdm6oom5h3vCnE3goYeC+g5OzZF63DemuqYGQ2rvDXJ3heg1B3xbb48ZA==
-X-Received: by 2002:ac8:5b95:0:b0:3bf:bff0:841d with SMTP id a21-20020ac85b95000000b003bfbff0841dmr644356qta.21.1678895797686;
-        Wed, 15 Mar 2023 08:56:37 -0700 (PDT)
-Received: from dell-per740-01.7a2m.lab.eng.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id 201-20020a3705d2000000b00745a78b0b3asm3873312qkf.130.2023.03.15.08.56.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Mar 2023 08:56:37 -0700 (PDT)
-From:   Tom Rix <trix@redhat.com>
-To:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
+        d=1e100.net; s=20210112; t=1678896101;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AV6slw0BlCofNDOL7OtplUvQsJbc6koKav7PXxWHhFQ=;
+        b=PuI96O4ta5HJhMTrbkQBhtr9qgMNpvRB45U/LWUjGLd28ha2+rzSuOdh8LmmN9qVKk
+         qXCtKzNa4J8F/1Y9BFak8BozNO0PR3v7mifEQrRSXFW6NcL50JPHgvl4DjRFxL6J7HGh
+         YL/H/S1+vjTPjPoIjcIRBACKgDHVV5fugQvPhCYd6SjOzY6LxuxDvS63bn141CLoKKv9
+         eEZiWkRmpFW9PxNfCiOYQ/HZ5D4/kdzlXOJAcYMW94bQ8nIwtXW66BC7WpsRwmKEC8JT
+         EF/daS0RvNT+6KfxIlJ+2ZAQNSmZSfiHGklhnz1tQkTJ0g6HICU58NMEOq+tk5Uv+/OO
+         NYbQ==
+X-Gm-Message-State: AO0yUKXAzxIWd+z1gCEnxUh5zgl1iCC9y+bUnPn8pkif7vGoavISzCnV
+        GEv/Pk9r4DfwrIDrHD7g9K/jWg==
+X-Google-Smtp-Source: AK7set9/RT7uN+0SqUFI+uXFVP9GYW5EZG8HpQWu7JYe/XDNT3IV69sXe7aP5+/1FRlrYuMBI90FIA==
+X-Received: by 2002:ac2:42cd:0:b0:4e8:5e39:6233 with SMTP id n13-20020ac242cd000000b004e85e396233mr881747lfl.64.1678896100838;
+        Wed, 15 Mar 2023 09:01:40 -0700 (PDT)
+Received: from [192.168.1.101] (abyj16.neoplus.adsl.tpnet.pl. [83.9.29.16])
+        by smtp.gmail.com with ESMTPSA id c17-20020ac244b1000000b004cee11feda1sm866517lfm.9.2023.03.15.09.01.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Mar 2023 09:01:40 -0700 (PDT)
+Message-ID: <caf0530a-aff3-1d36-1559-7a3320d0b036@linaro.org>
+Date:   Wed, 15 Mar 2023 17:01:38 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH] clk: qcom: remove unused variables
+ gpucc_parent_data,map_2
+Content-Language: en-US
+To:     Tom Rix <trix@redhat.com>, andersson@kernel.org, agross@kernel.org,
         mturquette@baylibre.com, sboyd@kernel.org
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tom Rix <trix@redhat.com>
-Subject: [PATCH] clk: qcom: remove unused variables gpucc_parent_data,map_2
-Date:   Wed, 15 Mar 2023 11:56:30 -0400
-Message-Id: <20230315155630.1740065-1-trix@redhat.com>
-X-Mailer: git-send-email 2.27.0
-MIME-Version: 1.0
+        linux-kernel@vger.kernel.org
+References: <20230315155630.1740065-1-trix@redhat.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230315155630.1740065-1-trix@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-gcc with W=1 reports these errors
-drivers/clk/qcom/gpucc-sm6375.c:145:37: error:
-  ‘gpucc_parent_data_2’ defined but not used [-Werror=unused-const-variable=]
-  145 | static const struct clk_parent_data gpucc_parent_data_2[] = {
-      |                                     ^~~~~~~~~~~~~~~~~~~
-drivers/clk/qcom/gpucc-sm6375.c:139:32: error:
-  ‘gpucc_parent_map_2’ defined but not used [-Werror=unused-const-variable=]
-  139 | static const struct parent_map gpucc_parent_map_2[] = {
-      |                                ^~~~~~~~~~~~~~~~~~
 
-These variables are not used, so remove them.
 
-Signed-off-by: Tom Rix <trix@redhat.com>
----
- drivers/clk/qcom/gpucc-sm6375.c | 12 ------------
- 1 file changed, 12 deletions(-)
+On 15.03.2023 16:56, Tom Rix wrote:
+> gcc with W=1 reports these errors
+> drivers/clk/qcom/gpucc-sm6375.c:145:37: error:
+>   ‘gpucc_parent_data_2’ defined but not used [-Werror=unused-const-variable=]
+>   145 | static const struct clk_parent_data gpucc_parent_data_2[] = {
+>       |                                     ^~~~~~~~~~~~~~~~~~~
+> drivers/clk/qcom/gpucc-sm6375.c:139:32: error:
+>   ‘gpucc_parent_map_2’ defined but not used [-Werror=unused-const-variable=]
+>   139 | static const struct parent_map gpucc_parent_map_2[] = {
+>       |                                ^~~~~~~~~~~~~~~~~~
+> 
+> These variables are not used, so remove them.
+> 
+> Signed-off-by: Tom Rix <trix@redhat.com>
+> ---
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-diff --git a/drivers/clk/qcom/gpucc-sm6375.c b/drivers/clk/qcom/gpucc-sm6375.c
-index eb9ffa956950..d8f4c4b59f1b 100644
---- a/drivers/clk/qcom/gpucc-sm6375.c
-+++ b/drivers/clk/qcom/gpucc-sm6375.c
-@@ -136,18 +136,6 @@ static const struct clk_parent_data gpucc_parent_data_1[] = {
- 	{ .index = DT_GCC_GPU_GPLL0_CLK_SRC },
- };
- 
--static const struct parent_map gpucc_parent_map_2[] = {
--	{ P_BI_TCXO, 0 },
--	{ P_GCC_GPU_GPLL0_CLK_SRC, 5 },
--	{ P_GCC_GPU_GPLL0_DIV_CLK_SRC, 6 },
--};
--
--static const struct clk_parent_data gpucc_parent_data_2[] = {
--	{ .index = P_BI_TCXO },
--	{ .index = DT_GCC_GPU_GPLL0_CLK_SRC },
--	{ .index = DT_GCC_GPU_GPLL0_DIV_CLK_SRC },
--};
--
- static const struct freq_tbl ftbl_gpucc_gmu_clk_src[] = {
- 	F(200000000, P_GCC_GPU_GPLL0_DIV_CLK_SRC, 1.5, 0, 0),
- 	{ }
--- 
-2.27.0
-
+Konrad
+>  drivers/clk/qcom/gpucc-sm6375.c | 12 ------------
+>  1 file changed, 12 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gpucc-sm6375.c b/drivers/clk/qcom/gpucc-sm6375.c
+> index eb9ffa956950..d8f4c4b59f1b 100644
+> --- a/drivers/clk/qcom/gpucc-sm6375.c
+> +++ b/drivers/clk/qcom/gpucc-sm6375.c
+> @@ -136,18 +136,6 @@ static const struct clk_parent_data gpucc_parent_data_1[] = {
+>  	{ .index = DT_GCC_GPU_GPLL0_CLK_SRC },
+>  };
+>  
+> -static const struct parent_map gpucc_parent_map_2[] = {
+> -	{ P_BI_TCXO, 0 },
+> -	{ P_GCC_GPU_GPLL0_CLK_SRC, 5 },
+> -	{ P_GCC_GPU_GPLL0_DIV_CLK_SRC, 6 },
+> -};
+> -
+> -static const struct clk_parent_data gpucc_parent_data_2[] = {
+> -	{ .index = P_BI_TCXO },
+> -	{ .index = DT_GCC_GPU_GPLL0_CLK_SRC },
+> -	{ .index = DT_GCC_GPU_GPLL0_DIV_CLK_SRC },
+> -};
+> -
+>  static const struct freq_tbl ftbl_gpucc_gmu_clk_src[] = {
+>  	F(200000000, P_GCC_GPU_GPLL0_DIV_CLK_SRC, 1.5, 0, 0),
+>  	{ }
