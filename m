@@ -2,62 +2,68 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BBF5C6FD1F
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 00:43:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF3DEC6FD1D
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 00:44:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229704AbjCOAnt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Mar 2023 20:43:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45968 "EHLO
+        id S229644AbjCOAok (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Mar 2023 20:44:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229720AbjCOAnt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 20:43:49 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA74E2211A;
-        Tue, 14 Mar 2023 17:43:15 -0700 (PDT)
+        with ESMTP id S229525AbjCOAoj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 20:44:39 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08A2240F8;
+        Tue, 14 Mar 2023 17:44:39 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 51DEF61A8E;
-        Wed, 15 Mar 2023 00:43:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 994A6C433EF;
-        Wed, 15 Mar 2023 00:43:14 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8C58261A94;
+        Wed, 15 Mar 2023 00:44:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF863C433D2;
+        Wed, 15 Mar 2023 00:44:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678840994;
-        bh=XEsYJFIURCHeFn+PKpy9C5JpcMh7QgmvoLxU3pULUW4=;
+        s=k20201202; t=1678841078;
+        bh=vNnYsNCqxczLQsXu+8zqK557WLqg/3NcVlt99CW8bq0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ne1lPM/tDqm4oDVJoGW8avdUPdlf/qW4a206xiInAUVaC6wGz5GybRkyF5sAYOyk7
-         OJ6PuuuXn1niUk2tMnlNEW3OYNfjD4ALBPQYkyrLxZyLE87r8lIo/e9vByjgAqziyN
-         G5WqeloWNl39p0Wx2WRL7NEIdVKg0DLlQoTRjyxnZUyc6LMPqSw4l3Y/QL8P0MepaZ
-         rvucbUMN/yUPolrKJDPXXeSceybxqAUvCxUQjLqc6OafQW6JpIm06l56IngSHRO7P4
-         cUD8c9uUw+L60RhVfNAOzERegSv5pJO6dx2gRGjXXnvHH8VVipNMMvqwvme9aIIy0m
-         HOsX9oJ/Z5auw==
-Message-ID: <79f2ab41e79b5e2d0df72045768810a3.sboyd@kernel.org>
+        b=uLXY6Iv5P/MrBF3/Lum142VSReVfGzwFUSs+Zf2O2kZsVgw7HR5iE0W+DPczjPzRN
+         L0ids3fySDZxbpldDdr2m/TcJrzqRu0cOKmOFSLxjTy1rIm7ZcMAMZDZRLbjrZHTqW
+         M+JBN//qC0txJ37VOntTx6j2RDh3vzkitnEbjjY/BbfXZzfcCXXB35ejmqUOlAkdDP
+         BltCojmR/mU3JNtGDoM78pC9t4oPDPfq301EV1eGeXfcJ1pZW+XuiRCWgnEWZvlrUv
+         lf1ghCimC2g0R7A9nfFeCeweU2bxkMh1UtgULer/NAXNQU7ikB2fdAEtaGflFHUcQX
+         DE7w3pHRNKRGQ==
+Message-ID: <9832bfd49eb83257a6a62620023773c1.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230314131718.27031-1-alfredo.carlon@gmail.com>
-References: <20230314131718.27031-1-alfredo.carlon@gmail.com>
-Subject: Re: [PATCH] clk/tegra/clk-tegra124-dfll-fcpu: Add check to 'regulator_list_voltage'
+In-Reply-To: <20230131083227.10990-1-clement.leger@bootlin.com>
+References: <20230131083227.10990-1-clement.leger@bootlin.com>
+Subject: Re: [PATCH v2] clk: add missing of_node_put() in "assigned-clocks" property parsing
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Alfredo Cruz <alfredo.carlon@gmail.com>
-To:     Alfredo Cruz <alfredo.carlon@gmail.com>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, mturquette@baylibre.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com
-Date:   Tue, 14 Mar 2023 17:43:12 -0700
+Cc:     =?utf-8?q?Cl=C3=A9ment_L=C3=A9ger?= <clement.leger@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     =?utf-8?q?Cl=C3=A9ment_L=C3=A9ger?= <clement.leger@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date:   Tue, 14 Mar 2023 17:44:35 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Alfredo Cruz (2023-03-14 06:17:18)
-> Signed-off-by: Alfredo Cruz <alfredo.carlon@gmail.com>
-
-Sorry, we can't apply this. It needs commit text. Please see
-Documentation/process/submitting-patches.rst
-
+Quoting Cl=C3=A9ment L=C3=A9ger (2023-01-31 00:32:27)
+> When returning from of_parse_phandle_with_args(), the np member of the
+> of_phandle_args structure should be put after usage. Add missing
+> of_node_put() calls in both __set_clk_parents() and __set_clk_rates().
+>=20
+> Fixes: 86be408bfbd8 ("clk: Support for clock parents and rates assigned f=
+rom device tree")
+> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
 > ---
-> Hi,
-> I'm not entirely sure if 'regulator_list_voltage(reg, 0)' will never retu=
-rn less than 0.
 
-Please find out.
+Does this series from a year ago help[1]?
+
+[1] https://lore.kernel.org/all/20220623121857.886-1-nuno.sa@analog.com/
+
+Nobody reviewed it, but if you can then I can probably apply it.
