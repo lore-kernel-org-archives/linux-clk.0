@@ -2,156 +2,96 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71DDAC61DA4
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 07:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0134C6FD1D
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 07:54:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231679AbjCOHji (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Mar 2023 03:39:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58026 "EHLO
+        id S231201AbjCOHyg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Mar 2023 03:54:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231641AbjCOHjO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 03:39:14 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A887137F17;
-        Wed, 15 Mar 2023 00:37:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3160CB81CCE;
-        Wed, 15 Mar 2023 07:37:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70AF8C433EF;
-        Wed, 15 Mar 2023 07:37:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1678865874;
-        bh=I4qlfV5mv2+OQ3PEUfgFdAU+FA2UpcPIsZUMmCKtaP8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ee5w8MnRQk6LLqSIVMK4OU23IhD14jL1y/+REVgu3MlkDgONkk5t9tS4QaIJyDLNQ
-         jM5wpONJkHdkIIqIlg2WuJ+Y1BYBDXXMV3Fmt1+PrYUWletPtUHKFdOIlg6u4LJ8Ze
-         xETWFLMV5rQmb72IlpIX1wb4nTwXnakSmibv7er0=
-Date:   Wed, 15 Mar 2023 08:37:51 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jacky Huang <ychuang570808@gmail.com>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        p.zabel@pengutronix.de, jirislaby@kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        schung@nuvoton.com, Jacky Huang <ychuang3@nuvoton.com>
-Subject: Re: [PATCH 14/15] tty: serial: Add Nuvoton ma35d1 serial driver
- support
-Message-ID: <ZBF1z5Bx9jnrpxox@kroah.com>
-References: <20230315072902.9298-1-ychuang570808@gmail.com>
- <20230315072902.9298-15-ychuang570808@gmail.com>
+        with ESMTP id S231397AbjCOHyf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 03:54:35 -0400
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F7352BF23;
+        Wed, 15 Mar 2023 00:54:30 -0700 (PDT)
+Received: from SHSend.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+        by SHSQR01.spreadtrum.com with ESMTP id 32F7rros062867;
+        Wed, 15 Mar 2023 15:53:53 +0800 (+08)
+        (envelope-from Chunyan.Zhang@unisoc.com)
+Received: from ubt.spreadtrum.com (10.0.74.87) by BJMBX02.spreadtrum.com
+ (10.0.64.8) with Microsoft SMTP Server (TLS) id 15.0.1497.23; Wed, 15 Mar
+ 2023 15:53:50 +0800
+From:   Chunyan Zhang <chunyan.zhang@unisoc.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     <linux-clk@vger.kernel.org>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] clk: sprd: set max_register according to mapping range
+Date:   Wed, 15 Mar 2023 15:53:43 +0800
+Message-ID: <20230315075343.740013-1-chunyan.zhang@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230315072902.9298-15-ychuang570808@gmail.com>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.0.74.87]
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL: SHSQR01.spreadtrum.com 32F7rros062867
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 15, 2023 at 07:29:01AM +0000, Jacky Huang wrote:
-> From: Jacky Huang <ychuang3@nuvoton.com>
-> 
-> This adds UART and console driver for Nuvoton ma35d1 Soc.
-> 
-> MA35D1 SoC provides up to 17 UART controllers, each with one uart port.
-> The ma35d1 uart controller is not compatible with 8250.
+In sprd clock driver, regmap_config.max_register was set to a fixed value
+which is likely larger than the address range configured in device tree,
+when reading registers through debugfs it would cause access violation.
 
-A new UART being designed that is not an 8250 compatible?  Why????
+Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+---
+ drivers/clk/sprd/common.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Anyway, some minor comments:
+diff --git a/drivers/clk/sprd/common.c b/drivers/clk/sprd/common.c
+index ce81e4087a8f..2bfbab8db94b 100644
+--- a/drivers/clk/sprd/common.c
++++ b/drivers/clk/sprd/common.c
+@@ -17,7 +17,6 @@ static const struct regmap_config sprdclk_regmap_config = {
+ 	.reg_bits	= 32,
+ 	.reg_stride	= 4,
+ 	.val_bits	= 32,
+-	.max_register	= 0xffff,
+ 	.fast_io	= true,
+ };
+ 
+@@ -43,6 +42,8 @@ int sprd_clk_regmap_init(struct platform_device *pdev,
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *node = dev->of_node, *np;
+ 	struct regmap *regmap;
++	struct resource *res;
++	struct regmap_config reg_config = sprdclk_regmap_config;
+ 
+ 	if (of_find_property(node, "sprd,syscon", NULL)) {
+ 		regmap = syscon_regmap_lookup_by_phandle(node, "sprd,syscon");
+@@ -59,12 +60,14 @@ int sprd_clk_regmap_init(struct platform_device *pdev,
+ 			return PTR_ERR(regmap);
+ 		}
+ 	} else {
+-		base = devm_platform_ioremap_resource(pdev, 0);
++		base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+ 		if (IS_ERR(base))
+ 			return PTR_ERR(base);
+ 
++		reg_config.max_register = resource_size(res) - reg_config.reg_stride;
++
+ 		regmap = devm_regmap_init_mmio(&pdev->dev, base,
+-					       &sprdclk_regmap_config);
++					       &reg_config);
+ 		if (IS_ERR(regmap)) {
+ 			pr_err("failed to init regmap\n");
+ 			return PTR_ERR(regmap);
+-- 
+2.25.1
 
->  drivers/tty/serial/ma35d1_serial.c | 842 +++++++++++++++++++++++++++++
->  drivers/tty/serial/ma35d1_serial.h |  93 ++++
-
-Why do you have a .h file for only a single .c file?  Please just put
-them both together into one .c file.
-
->  include/uapi/linux/serial_core.h   |   3 +
-
-Why do you need this #define?  Are you using it in userspace now?  If
-not, why have it?
-
-> +static void
-> +receive_chars(struct uart_ma35d1_port *up)
-
-Please just put all one one line.
-
-
-> +{
-> +	u8 ch;
-> +	u32 fsr;
-> +	u32 isr;
-> +	u32 dcnt;
-> +	char flag;
-> +
-> +	isr = serial_in(up, UART_REG_ISR);
-> +	fsr = serial_in(up, UART_REG_FSR);
-> +
-> +	while (!(fsr & RX_EMPTY)) {
-
-You have no way out if the hardware is stuck?  That feels wrong.
-
-> +static int ma35d1serial_ioctl(struct uart_port *port, u32 cmd, unsigned long arg)
-> +{
-> +	switch (cmd) {
-> +	default:
-> +		return -ENOIOCTLCMD;
-> +	}
-> +	return 0;
-> +}
-
-You do not need to handle any ioctls?
-
-> +static void ma35d1serial_console_putchar(struct uart_port *port,
-> +					 unsigned char ch)
-> +{
-> +	struct uart_ma35d1_port *up = (struct uart_ma35d1_port *)port;
-> +
-> +	do {
-> +	} while ((serial_in(up, UART_REG_FSR) & TX_FULL));
-
-Again, no way out if this gets stuck in a loop?
-
-> +/**
-> + *  Suspend one serial port.
-> + */
-> +void ma35d1serial_suspend_port(int line)
-> +{
-> +	uart_suspend_port(&ma35d1serial_reg, &ma35d1serial_ports[line].port);
-> +}
-> +EXPORT_SYMBOL(ma35d1serial_suspend_port);
-
-Why is this exported?  Who uses it?
-
-And why not EXPORT_SYMBOL_GPL()?
-
-> +
-> +/**
-> + *  Resume one serial port.
-> + */
-> +void ma35d1serial_resume_port(int line)
-> +{
-> +	struct uart_ma35d1_port *up = &ma35d1serial_ports[line];
-> +
-> +	uart_resume_port(&ma35d1serial_reg, &up->port);
-> +}
-> +EXPORT_SYMBOL(ma35d1serial_resume_port);
-
-Same here, who calls this and why?
-
-> --- a/include/uapi/linux/serial_core.h
-> +++ b/include/uapi/linux/serial_core.h
-> @@ -279,4 +279,7 @@
->  /* Sunplus UART */
->  #define PORT_SUNPLUS	123
->  
-> +/* Nuvoton MA35D1 UART */
-> +#define PORT_MA35D1	124
-
-Again, why is this define needed?
-
-thanks,
-
-greg k-h
