@@ -2,51 +2,52 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D48C7618B
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 23:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6457C76195
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 23:34:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233212AbjCOXeP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Mar 2023 19:34:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44818 "EHLO
+        id S229769AbjCOXey (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Mar 2023 19:34:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232856AbjCOXdg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 19:33:36 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 440B6A1FD4;
-        Wed, 15 Mar 2023 16:32:46 -0700 (PDT)
+        with ESMTP id S233249AbjCOXe2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 19:34:28 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33BC27FD50;
+        Wed, 15 Mar 2023 16:33:14 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6C9C361E7F;
-        Wed, 15 Mar 2023 23:32:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 009AFC433D2;
-        Wed, 15 Mar 2023 23:32:39 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 931D1B81FAA;
+        Wed, 15 Mar 2023 23:32:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8EF5C433AA;
+        Wed, 15 Mar 2023 23:32:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678923160;
-        bh=Ic72wvND6rzUvwtFlHFhzvcUBlI9mIniEmsRnS6u05M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S9tJwDXvwKySFiAT6ROPVmZ6jxmFQj57tYXTDFq/aSNyuYZQZ7YMSmEs13129qxRv
-         C+nCRgcGoccMhf+3x06Dqq9sQKRl6e0tkf0m1xpl/rfuaepOxZ2HZTTgtbpSU4nQTy
-         cT7bAhF4SenVN5KygLaHRqWgTmAZ8NKfYKvP26eiLgxkgWThKZYxNfi/E9UAoxNOxa
-         gT8J2pDIMajxGeTGcysMwqGVAEyAl319OAYSdonsfGKvJpHxR3Xm7Ax+gqF7cNMIws
-         +/rii4z9lFsuHUT3nvrQ0vDTW0sYyZXD7BvuorbgoNoy8O65sHPV740S6GpbSizvYv
-         r2c5n0SWumnEg==
+        s=k20201202; t=1678923169;
+        bh=TztJJoAB6d1POBSwF2F6LPHhJ889Q1ZZwKBG9GfxuF4=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=hYGHQdWlGJecZiXMu+JIX/RKgRakH81fwi7MrI5kqOkVN2IoE+M3AEvjWvVRsWFFy
+         2L7SmNYXPMIu1BvO+r9LnhlYxQRQ5F/6YTMrpIfSb2n/ZIuTz84bjGtAPmJgqsrkcc
+         yWb+hkKayMT/cvdZkrORMw+CBKq5KqEVYUBSChKkm4WhbpO4f2FTCxN7AZAbLLFsgN
+         92lzoXcEtRyzs5l6M5sKWBB+34CiT9Hm79ZCrCdN3fiGoODaYY7dQugUszUooK9I2E
+         6NHtkuYXg5yn+0YBq+u/2YRebmzydizPcwARDHOTIfsw1sTnz6IMmVsiGnMTxPB4Oz
+         8S2b1gN2Spk0g==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        phone-devel@vger.kernel.org, Luca Weiss <luca@z3ntu.xyz>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Andy Gross <agross@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/2] Switch hfpll & krait clock drivers to .determine_rate
-Date:   Wed, 15 Mar 2023 16:35:12 -0700
-Message-Id: <167892332565.4030021.47769370794989533.b4-ty@kernel.org>
+To:     broonie@kernel.org, agross@kernel.org,
+        Kathiravan T <quic_kathirav@quicinc.com>,
+        geert+renesas@glider.be, linux-arm-kernel@lists.infradead.org,
+        catalin.marinas@arm.com, linux-clk@vger.kernel.org,
+        rafal@milecki.pl, devicetree@vger.kernel.org, will@kernel.org,
+        mturquette@baylibre.com, dmitry.baryshkov@linaro.org,
+        linux-arm-msm@vger.kernel.org, sboyd@kernel.org,
+        robimarko@gmail.com, robh+dt@kernel.org, nfraprado@collabora.com,
+        konrad.dybcio@linaro.org, quic_gurus@quicinc.com, arnd@arndb.de,
+        krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH V6 0/9] Add minimal boot support for IPQ5332
+Date:   Wed, 15 Mar 2023 16:35:20 -0700
+Message-Id: <167892332568.4030021.1650680100964955590.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230212-clk-qcom-determine_rate-v1-0-b4e447d4926e@z3ntu.xyz>
-References: <20230212-clk-qcom-determine_rate-v1-0-b4e447d4926e@z3ntu.xyz>
+In-Reply-To: <20230307062232.4889-1-quic_kathirav@quicinc.com>
+References: <20230307062232.4889-1-quic_kathirav@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -54,23 +55,24 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 12 Feb 2023 15:11:07 +0100, Luca Weiss wrote:
-> While trying to get cpufreq working on msm8974 I've found an issue with
-> clock rates above 2.11GHz (e.g. 2.15GHz). When a rate above this
-> threshold gets requested the lowest possible frequency will be selected.
+On Tue, 7 Mar 2023 11:52:23 +0530, Kathiravan T wrote:
+> The IPQ5332 is Qualcomm's 802.11be SoC for Routers, Gateways and
+> Access Points.
 > 
-> This is caused by an overflow of the "long" return type of .round_rate
-> which has a maximum value of 2147483647 (2.14GHz) on 32-bit systems,
-> which msm8974 is.
+> This series adds minimal board boot support for ipq5332-mi01.2 board.
+> 
+> Changes in V6:
+> 	- Added couple of patches 1/9 and 5/9 in the series to make sure
+> 	  all the dependent patches are together
+> 	- V5 can be found at
+> 	  https://lore.kernel.org/linux-arm-msm/20230217075835.460-1-quic_kathirav@quicinc.com/
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] clk: qcom: clk-krait: switch to .determine_rate
-      commit: a7074c3eb26e0193f2c6ed79987e633b7578024e
-[2/2] clk: qcom: clk-hfpll: switch to .determine_rate
-      commit: 04648b8fad219599ccc9b103188a38e72d339a3d
+[9/9] arm64: defconfig: Enable IPQ5332 SoC base configs
+      commit: 48adb3be7d617ecc7d9656032e7253406b8040f5
 
 Best regards,
 -- 
