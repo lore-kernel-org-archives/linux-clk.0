@@ -2,95 +2,151 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1D6C6FD1D
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 17:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C672C6FD1D
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 18:38:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229546AbjCORa5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Mar 2023 13:30:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35968 "EHLO
+        id S231971AbjCOSiF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Mar 2023 14:38:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229598AbjCORaz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 13:30:55 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E23457D8
-        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 10:30:53 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id b10so20273877ljr.0
-        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 10:30:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678901451;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nyHC0VUkupsiuWX2pHsL/65xztoUDBBkuNkC20AficQ=;
-        b=GJ97q5jYvQR8vrr48icXglGbW7rbJfdUHhHBaxDDPZZlMjuR8MS2JnxvjV8cuStFTt
-         6qPpD4iKSjMNHuHp+i9qJ15VUl4IuKII6uZimndhf9u5uDyL4Hm5n9Day/PRXRZDHNm7
-         C6YHj0adBrFhpy24nz+Q+2EBEK7c82TPHA7gQpzDGb9O4PnGemNXrk0p8sZoZbnVquM5
-         bP54KsuOal0w7AKd8/jnsQM5EirCsBB7/Z2c8C/7YgmrpAn1T9WYh3M28XfSgtHZcyuO
-         quvQKTn1rwmVmXlX2gtJQG1Fk4km3eES/RMbwn+KL9WWgPCiypagIjwr4RjYpzuEZe9e
-         jfJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678901451;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nyHC0VUkupsiuWX2pHsL/65xztoUDBBkuNkC20AficQ=;
-        b=lG+WK8fDfsTBmWiGNTq31tz8F7GeZH5WADUGmM7zM7AEUmnGiXSEbxA1MgKrCAOELH
-         RaKwMMW4jLoxj1UL8ljhBCgSdfu/LFGPj627j1FTSvZDW4RVIby0JJmc57TIlkJv9OOE
-         czPQ/A5ZYjDQouP6WfAERQ44H/aIbGjK3NKttucFbttC6+IGDpRWkqChmzVtQC5gDn5L
-         xV+aF5XPytgyUsKVC+nQ/l/qlKSrd6ZUiFPzwaMtTJNVbTs6XqKbeG4ImxspZi/xJTIM
-         nczQj6XBzFdxNypwsDpfIM92Z06OhLzE0VSXW+50lLjl0Nh8xxd+VsL2mPYG5bSi5OHS
-         sTiQ==
-X-Gm-Message-State: AO0yUKVifLaUlWAatbOhc5Fb00GXPHnaXUPSYSVOkVWNBfR6VboryEfa
-        TE5H78JZnDdfiGy08PSQynRKUA==
-X-Google-Smtp-Source: AK7set8qdUTG2izjSNf/ErXIPYQfJRIKDjxOhFSDR7Kjx9V/3mxfJTKO2NEma+EDiR6JfZ0/rg41EA==
-X-Received: by 2002:a2e:850d:0:b0:290:8289:8cc8 with SMTP id j13-20020a2e850d000000b0029082898cc8mr993566lji.22.1678901451666;
-        Wed, 15 Mar 2023 10:30:51 -0700 (PDT)
-Received: from localhost.localdomain (abyj16.neoplus.adsl.tpnet.pl. [83.9.29.16])
-        by smtp.gmail.com with ESMTPSA id d28-20020ac244dc000000b004d85a7e8b17sm887561lfm.269.2023.03.15.10.30.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Mar 2023 10:30:51 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-To:     linux-arm-msm@vger.kernel.org, andersson@kernel.org,
-        agross@kernel.org
-Cc:     marijn.suijten@somainline.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: gcc-qcm2290: Fix up gcc_sdcc2_apps_clk_src
-Date:   Wed, 15 Mar 2023 18:30:48 +0100
-Message-Id: <20230315173048.3497655-1-konrad.dybcio@linaro.org>
-X-Mailer: git-send-email 2.39.2
+        with ESMTP id S231773AbjCOSiE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 14:38:04 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A15D2E80E;
+        Wed, 15 Mar 2023 11:37:34 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D14CCB81EDA;
+        Wed, 15 Mar 2023 18:37:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD527C433EF;
+        Wed, 15 Mar 2023 18:37:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678905450;
+        bh=AaKpurosJ1j97dxYAc0JwEaFhzjTwEBlY/xn7R5ple0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ZRfAotrkR/tcowvtJczP0tt4ZyNvI9Q7qPl22XQVlrb0T0eO4vGZYe284aIicnyMo
+         5ePPKPmzHEFsm+AxThe7+NPa1fJp5lB2yRgUjYmRbK65Y4BBvydY59q7p40lIcraAN
+         26fX3poxwZ3gOpzcGv9EETJ4+oReIJtE31QVtJrAhGAEdjt2nbzu61BQKn8STLlb60
+         G3mtJuDo/6/Uhig0ZT907tygl+F7VNr3Vs0Qp+a5dOkQ1ibauHm+SnN6lgQM0pTmlX
+         3CAM5IeeBzt06fBt4wVh1yqnAK58hESUHztnQl8XnMTc67oufVlnoBYeUeAzaLMedS
+         C7f30Q7teiC6Q==
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev,
+        Brendan Higgins <brendan.higgins@linux.dev>,
+        David Gow <davidgow@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kunit-dev@googlegroups.com, Maxime Ripard <maxime@cerno.tech>
+Subject: [PATCH v2 00/11] clk: Add kunit tests for fixed rate and parent data
+Date:   Wed, 15 Mar 2023 11:37:17 -0700
+Message-Id: <20230315183729.2376178-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.40.0.rc1.284.g88254d51c5-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the PARENT_ENABLE flag to prevent  the clock from getting stuck
-at boot and use floor_ops to avoid SDHCI overclocking.
+This patch series adds unit tests for the clk fixed rate basic type and
+the clk registration functions that use struct clk_parent_data. To get
+there, we add support for loading device tree overlays onto the live DTB
+along with probing platform drivers to bind to device nodes in the
+overlays. With this series, we're able to exercise some of the code in
+the common clk framework that uses devicetree lookups to find parents
+and the fixed rate clk code that scans device tree directly and creates
+clks. Please review.
 
-Fixes: 496d1a13d405 ("clk: qcom: Add Global Clock Controller driver for QCM2290")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/clk/qcom/gcc-qcm2290.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I Cced everyone to all the patches so they get the full context. I'm
+hoping I can take the whole pile through the clk tree as they almost all
+depend on each other.
 
-diff --git a/drivers/clk/qcom/gcc-qcm2290.c b/drivers/clk/qcom/gcc-qcm2290.c
-index 7792b8f23704..096deff2ba25 100644
---- a/drivers/clk/qcom/gcc-qcm2290.c
-+++ b/drivers/clk/qcom/gcc-qcm2290.c
-@@ -1243,7 +1243,8 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
- 		.name = "gcc_sdcc2_apps_clk_src",
- 		.parent_data = gcc_parents_12,
- 		.num_parents = ARRAY_SIZE(gcc_parents_12),
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
-+		.flags = CLK_OPS_PARENT_ENABLE,
- 	},
- };
- 
+Changes from v1 (https://lore.kernel.org/r/20230302013822.1808711-1-sboyd@kernel.org):
+ * Don't depend on UML, use unittest data approach to attach nodes
+ * Introduce overlay loading API for KUnit
+ * Move platform_device KUnit code to drivers/base/test
+ * Use #define macros for constants shared between unit tests and
+   overlays
+ * Settle on "test" as a vendor prefix
+ * Make KUnit wrappers have "_kunit" postfix
+
+Stephen Boyd (11):
+  of: Load KUnit DTB from of_core_init()
+  of: Add test managed wrappers for of_overlay_apply()/of_node_put()
+  dt-bindings: vendor-prefixes: Add "test" vendor for KUnit and friends
+  dt-bindings: test: Add KUnit empty node binding
+  of: Add a KUnit test for overlays and test managed APIs
+  platform: Add test managed platform_device/driver APIs
+  dt-bindings: kunit: Add fixed rate clk consumer test
+  clk: Add test managed clk provider/consumer APIs
+  clk: Add KUnit tests for clk fixed rate basic type
+  dt-bindings: clk: Add KUnit clk_parent_data test
+  clk: Add KUnit tests for clks registered with struct clk_parent_data
+
+ .../clock/test,clk-kunit-parent-data.yaml     |  47 ++
+ .../kunit/test,clk-kunit-fixed-rate.yaml      |  35 ++
+ .../bindings/test/test,kunit-empty.yaml       |  30 ++
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ drivers/base/test/Makefile                    |   3 +
+ drivers/base/test/platform_kunit-test.c       | 108 +++++
+ drivers/base/test/platform_kunit.c            | 186 +++++++
+ drivers/clk/.kunitconfig                      |   3 +
+ drivers/clk/Kconfig                           |   7 +
+ drivers/clk/Makefile                          |   9 +-
+ drivers/clk/clk-fixed-rate_test.c             | 299 ++++++++++++
+ drivers/clk/clk-fixed-rate_test.h             |   8 +
+ drivers/clk/clk_kunit.c                       | 219 +++++++++
+ drivers/clk/clk_parent_data_test.h            |  10 +
+ drivers/clk/clk_test.c                        | 459 +++++++++++++++++-
+ drivers/clk/kunit_clk_fixed_rate_test.dtso    |  19 +
+ drivers/clk/kunit_clk_parent_data_test.dtso   |  28 ++
+ drivers/of/.kunitconfig                       |   5 +
+ drivers/of/Kconfig                            |  23 +
+ drivers/of/Makefile                           |   7 +
+ drivers/of/base.c                             | 182 +++++++
+ drivers/of/kunit.dtso                         |  10 +
+ drivers/of/kunit_overlay_test.dtso            |   9 +
+ drivers/of/of_kunit.c                         | 123 +++++
+ drivers/of/of_private.h                       |   6 +
+ drivers/of/of_test.c                          |  43 ++
+ drivers/of/overlay_test.c                     | 107 ++++
+ drivers/of/unittest.c                         | 101 +---
+ include/kunit/clk.h                           |  28 ++
+ include/kunit/of.h                            |  90 ++++
+ include/kunit/platform_device.h               |  15 +
+ 31 files changed, 2119 insertions(+), 102 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/test,clk-kunit-parent-data.yaml
+ create mode 100644 Documentation/devicetree/bindings/kunit/test,clk-kunit-fixed-rate.yaml
+ create mode 100644 Documentation/devicetree/bindings/test/test,kunit-empty.yaml
+ create mode 100644 drivers/base/test/platform_kunit-test.c
+ create mode 100644 drivers/base/test/platform_kunit.c
+ create mode 100644 drivers/clk/clk-fixed-rate_test.c
+ create mode 100644 drivers/clk/clk-fixed-rate_test.h
+ create mode 100644 drivers/clk/clk_kunit.c
+ create mode 100644 drivers/clk/clk_parent_data_test.h
+ create mode 100644 drivers/clk/kunit_clk_fixed_rate_test.dtso
+ create mode 100644 drivers/clk/kunit_clk_parent_data_test.dtso
+ create mode 100644 drivers/of/.kunitconfig
+ create mode 100644 drivers/of/kunit.dtso
+ create mode 100644 drivers/of/kunit_overlay_test.dtso
+ create mode 100644 drivers/of/of_kunit.c
+ create mode 100644 drivers/of/of_test.c
+ create mode 100644 drivers/of/overlay_test.c
+ create mode 100644 include/kunit/clk.h
+ create mode 100644 include/kunit/of.h
+ create mode 100644 include/kunit/platform_device.h
+
+
+base-commit: fe15c26ee26efa11741a7b632e9f23b01aca4cc6
 -- 
-2.39.2
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
 
