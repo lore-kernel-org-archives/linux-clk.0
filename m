@@ -2,117 +2,95 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC06C6FD1D
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 16:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1D6C6FD1D
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 17:30:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232359AbjCOQCU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Mar 2023 12:02:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33756 "EHLO
+        id S229546AbjCORa5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Mar 2023 13:30:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232749AbjCOQCM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 12:02:12 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9762C92258
-        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 09:01:43 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id o8so4943088lfo.0
-        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 09:01:43 -0700 (PDT)
+        with ESMTP id S229598AbjCORaz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 13:30:55 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E23457D8
+        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 10:30:53 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id b10so20273877ljr.0
+        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 10:30:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678896101;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AV6slw0BlCofNDOL7OtplUvQsJbc6koKav7PXxWHhFQ=;
-        b=OcQm6Rm4xud1BP9QMbDcixJz2WgnENC5P/DfJhAe20tUrLih4nHymbLH6dTCtkb7V6
-         kg4qXBuIqu2l1ubJya3vzPClYSqkzjLsjp0yQuEIrToJJTZ/TQZqZK4ic83JA9rCKuEh
-         jrSytU4cpLxxqxtcSqSILUvGfWL3Bp9B3SVGfZv7gVghBWxO8L8xPndOTPVZEXpmOzm0
-         PhlpV+9cyqumdmTkYPvD+yoYGMqlER1ndsREwsPX98EI/jaj+z1pZ/TNVsucl6OujggC
-         kuWZ72e0NSX+Fl9kISMRSnliRE8saXFcbROWofw6mTzUcU8zFrXqzpJ3W5N2tYdycCXq
-         5VHw==
+        d=linaro.org; s=google; t=1678901451;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nyHC0VUkupsiuWX2pHsL/65xztoUDBBkuNkC20AficQ=;
+        b=GJ97q5jYvQR8vrr48icXglGbW7rbJfdUHhHBaxDDPZZlMjuR8MS2JnxvjV8cuStFTt
+         6qPpD4iKSjMNHuHp+i9qJ15VUl4IuKII6uZimndhf9u5uDyL4Hm5n9Day/PRXRZDHNm7
+         C6YHj0adBrFhpy24nz+Q+2EBEK7c82TPHA7gQpzDGb9O4PnGemNXrk0p8sZoZbnVquM5
+         bP54KsuOal0w7AKd8/jnsQM5EirCsBB7/Z2c8C/7YgmrpAn1T9WYh3M28XfSgtHZcyuO
+         quvQKTn1rwmVmXlX2gtJQG1Fk4km3eES/RMbwn+KL9WWgPCiypagIjwr4RjYpzuEZe9e
+         jfJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678896101;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AV6slw0BlCofNDOL7OtplUvQsJbc6koKav7PXxWHhFQ=;
-        b=PuI96O4ta5HJhMTrbkQBhtr9qgMNpvRB45U/LWUjGLd28ha2+rzSuOdh8LmmN9qVKk
-         qXCtKzNa4J8F/1Y9BFak8BozNO0PR3v7mifEQrRSXFW6NcL50JPHgvl4DjRFxL6J7HGh
-         YL/H/S1+vjTPjPoIjcIRBACKgDHVV5fugQvPhCYd6SjOzY6LxuxDvS63bn141CLoKKv9
-         eEZiWkRmpFW9PxNfCiOYQ/HZ5D4/kdzlXOJAcYMW94bQ8nIwtXW66BC7WpsRwmKEC8JT
-         EF/daS0RvNT+6KfxIlJ+2ZAQNSmZSfiHGklhnz1tQkTJ0g6HICU58NMEOq+tk5Uv+/OO
-         NYbQ==
-X-Gm-Message-State: AO0yUKXAzxIWd+z1gCEnxUh5zgl1iCC9y+bUnPn8pkif7vGoavISzCnV
-        GEv/Pk9r4DfwrIDrHD7g9K/jWg==
-X-Google-Smtp-Source: AK7set9/RT7uN+0SqUFI+uXFVP9GYW5EZG8HpQWu7JYe/XDNT3IV69sXe7aP5+/1FRlrYuMBI90FIA==
-X-Received: by 2002:ac2:42cd:0:b0:4e8:5e39:6233 with SMTP id n13-20020ac242cd000000b004e85e396233mr881747lfl.64.1678896100838;
-        Wed, 15 Mar 2023 09:01:40 -0700 (PDT)
-Received: from [192.168.1.101] (abyj16.neoplus.adsl.tpnet.pl. [83.9.29.16])
-        by smtp.gmail.com with ESMTPSA id c17-20020ac244b1000000b004cee11feda1sm866517lfm.9.2023.03.15.09.01.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Mar 2023 09:01:40 -0700 (PDT)
-Message-ID: <caf0530a-aff3-1d36-1559-7a3320d0b036@linaro.org>
-Date:   Wed, 15 Mar 2023 17:01:38 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] clk: qcom: remove unused variables
- gpucc_parent_data,map_2
-Content-Language: en-US
-To:     Tom Rix <trix@redhat.com>, andersson@kernel.org, agross@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230315155630.1740065-1-trix@redhat.com>
+        d=1e100.net; s=20210112; t=1678901451;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nyHC0VUkupsiuWX2pHsL/65xztoUDBBkuNkC20AficQ=;
+        b=lG+WK8fDfsTBmWiGNTq31tz8F7GeZH5WADUGmM7zM7AEUmnGiXSEbxA1MgKrCAOELH
+         RaKwMMW4jLoxj1UL8ljhBCgSdfu/LFGPj627j1FTSvZDW4RVIby0JJmc57TIlkJv9OOE
+         czPQ/A5ZYjDQouP6WfAERQ44H/aIbGjK3NKttucFbttC6+IGDpRWkqChmzVtQC5gDn5L
+         xV+aF5XPytgyUsKVC+nQ/l/qlKSrd6ZUiFPzwaMtTJNVbTs6XqKbeG4ImxspZi/xJTIM
+         nczQj6XBzFdxNypwsDpfIM92Z06OhLzE0VSXW+50lLjl0Nh8xxd+VsL2mPYG5bSi5OHS
+         sTiQ==
+X-Gm-Message-State: AO0yUKVifLaUlWAatbOhc5Fb00GXPHnaXUPSYSVOkVWNBfR6VboryEfa
+        TE5H78JZnDdfiGy08PSQynRKUA==
+X-Google-Smtp-Source: AK7set8qdUTG2izjSNf/ErXIPYQfJRIKDjxOhFSDR7Kjx9V/3mxfJTKO2NEma+EDiR6JfZ0/rg41EA==
+X-Received: by 2002:a2e:850d:0:b0:290:8289:8cc8 with SMTP id j13-20020a2e850d000000b0029082898cc8mr993566lji.22.1678901451666;
+        Wed, 15 Mar 2023 10:30:51 -0700 (PDT)
+Received: from localhost.localdomain (abyj16.neoplus.adsl.tpnet.pl. [83.9.29.16])
+        by smtp.gmail.com with ESMTPSA id d28-20020ac244dc000000b004d85a7e8b17sm887561lfm.269.2023.03.15.10.30.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Mar 2023 10:30:51 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230315155630.1740065-1-trix@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+To:     linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        agross@kernel.org
+Cc:     marijn.suijten@somainline.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: gcc-qcm2290: Fix up gcc_sdcc2_apps_clk_src
+Date:   Wed, 15 Mar 2023 18:30:48 +0100
+Message-Id: <20230315173048.3497655-1-konrad.dybcio@linaro.org>
+X-Mailer: git-send-email 2.39.2
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add the PARENT_ENABLE flag to prevent  the clock from getting stuck
+at boot and use floor_ops to avoid SDHCI overclocking.
 
+Fixes: 496d1a13d405 ("clk: qcom: Add Global Clock Controller driver for QCM2290")
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+ drivers/clk/qcom/gcc-qcm2290.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-On 15.03.2023 16:56, Tom Rix wrote:
-> gcc with W=1 reports these errors
-> drivers/clk/qcom/gpucc-sm6375.c:145:37: error:
->   ‘gpucc_parent_data_2’ defined but not used [-Werror=unused-const-variable=]
->   145 | static const struct clk_parent_data gpucc_parent_data_2[] = {
->       |                                     ^~~~~~~~~~~~~~~~~~~
-> drivers/clk/qcom/gpucc-sm6375.c:139:32: error:
->   ‘gpucc_parent_map_2’ defined but not used [-Werror=unused-const-variable=]
->   139 | static const struct parent_map gpucc_parent_map_2[] = {
->       |                                ^~~~~~~~~~~~~~~~~~
-> 
-> These variables are not used, so remove them.
-> 
-> Signed-off-by: Tom Rix <trix@redhat.com>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+diff --git a/drivers/clk/qcom/gcc-qcm2290.c b/drivers/clk/qcom/gcc-qcm2290.c
+index 7792b8f23704..096deff2ba25 100644
+--- a/drivers/clk/qcom/gcc-qcm2290.c
++++ b/drivers/clk/qcom/gcc-qcm2290.c
+@@ -1243,7 +1243,8 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
+ 		.name = "gcc_sdcc2_apps_clk_src",
+ 		.parent_data = gcc_parents_12,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_12),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
++		.flags = CLK_OPS_PARENT_ENABLE,
+ 	},
+ };
+ 
+-- 
+2.39.2
 
-Konrad
->  drivers/clk/qcom/gpucc-sm6375.c | 12 ------------
->  1 file changed, 12 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gpucc-sm6375.c b/drivers/clk/qcom/gpucc-sm6375.c
-> index eb9ffa956950..d8f4c4b59f1b 100644
-> --- a/drivers/clk/qcom/gpucc-sm6375.c
-> +++ b/drivers/clk/qcom/gpucc-sm6375.c
-> @@ -136,18 +136,6 @@ static const struct clk_parent_data gpucc_parent_data_1[] = {
->  	{ .index = DT_GCC_GPU_GPLL0_CLK_SRC },
->  };
->  
-> -static const struct parent_map gpucc_parent_map_2[] = {
-> -	{ P_BI_TCXO, 0 },
-> -	{ P_GCC_GPU_GPLL0_CLK_SRC, 5 },
-> -	{ P_GCC_GPU_GPLL0_DIV_CLK_SRC, 6 },
-> -};
-> -
-> -static const struct clk_parent_data gpucc_parent_data_2[] = {
-> -	{ .index = P_BI_TCXO },
-> -	{ .index = DT_GCC_GPU_GPLL0_CLK_SRC },
-> -	{ .index = DT_GCC_GPU_GPLL0_DIV_CLK_SRC },
-> -};
-> -
->  static const struct freq_tbl ftbl_gpucc_gmu_clk_src[] = {
->  	F(200000000, P_GCC_GPU_GPLL0_DIV_CLK_SRC, 1.5, 0, 0),
->  	{ }
