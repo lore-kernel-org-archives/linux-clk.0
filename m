@@ -2,343 +2,333 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC9AC61DA4
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 21:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F03FC61DA4
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 21:35:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233045AbjCOVTd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Mar 2023 17:19:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37996 "EHLO
+        id S230321AbjCOVfm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Mar 2023 17:35:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232569AbjCOVTX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 17:19:23 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04CDE28D3D;
-        Wed, 15 Mar 2023 14:18:50 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id om3-20020a17090b3a8300b0023efab0e3bfso3146111pjb.3;
-        Wed, 15 Mar 2023 14:18:50 -0700 (PDT)
+        with ESMTP id S229584AbjCOVfl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 17:35:41 -0400
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 383EB9AA3D;
+        Wed, 15 Mar 2023 14:35:38 -0700 (PDT)
+Received: by mail-qv1-xf34.google.com with SMTP id m6so31692qvq.0;
+        Wed, 15 Mar 2023 14:35:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678915127;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=blZ9NwtLz5yRWCkdCFSPcq3uMZcKHSjm0ekVI2AquYU=;
-        b=bVUt//EfwSLmTo5dpt1nScHBxLTZmzrBSuYIh2BiFOLwQJLLbIrn186askn1mbGXGO
-         i+5gLXq7G8fu96T45nKh57ZXcjZayApNkn727zKxs8UfLy0UFQlDdSfNp3LlQdtUx2Kc
-         KtuOvdu8s5GWEzUV2p3kie7BeBtRzESEScr+PfftfmhhX7m+93aONKASlI917QTwlCiN
-         aO0GMdXWq7tbqA9M2grMbcB3liR9zGmGB7ig/D2xrbTyqHjKllfLigh3qKdybu7bUhm+
-         Gr+WmNTO1RL65vPP+mNVOArTgCDKXWbQFK9U7hU5Ysh01A8NAMpQYCpnY08MtFT6p///
-         YT4A==
+        d=gmail.com; s=20210112; t=1678916137;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tHXlGrouFIItrvotnDdRyOu3Z/DlM64K8FgyMN5NtRk=;
+        b=U4TDBA2f2rMNiPnhuTtxncb1GUESgKLPpwE9kywbYXbh58/d8R0BEblUu6l5s7kHWQ
+         jw8974yjrbJc5mv+IwPnC81TfX8StCV2v9X24eBukhqbdrgwrWIzoKijWCgcM977w9pY
+         chC0hDomYh9MYVP1+bOByNeLuBZdA+mrsnLKFGSU36uPRH3OnTW8LM+kZqIE1CpvI+9o
+         eb8Nfn0jH2CJrjCOcBjJHANQisowfeYaAkdciM4AaE6S4tkM3+HX0YcmbmaDvwyd2AoX
+         i8VEqEESssiaWNlnqa/raNoRN3bMCSz45rLnVVisdDuIXVuK+V4q4Cs2ZGrvt7Rhi9Ok
+         K9xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678915127;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=blZ9NwtLz5yRWCkdCFSPcq3uMZcKHSjm0ekVI2AquYU=;
-        b=rsFD1e9MvRGYV4InWOuJItJt6wYNRQbPErr2CRDuMpQ3fPb+bZDKhfq3sFNKHY+/q3
-         hgOpsEvJ8EbbXKUsldpS0O4gC3G+lp5R3UVP/8PfK7d+k3CEjuzFmkLwcEPgGjOYfpRk
-         wlQc0EN0Q8i81ggc7G1TTDrF0zU4g6SWvorxBheISCDQygY0rpD3gwkMnWnbjuxzIxeC
-         hksGOjN1Q7mLjLz4Yp2i7xJ5pmTVqmHkH9SbZRk/7zdqN6ArfG+04AQNZIenOhSSNKDh
-         y9cPGJjZ+0cs68kSfMQ4FfOFmB+kR256Yyq5k/6T0d+Bj3KtNb7otEtir7UxJttWTOXf
-         7pmA==
-X-Gm-Message-State: AO0yUKXkChDTQfUJZX70YB9bZ9o++erxeOX+OvBzeoHSzvYB5/xqsH4O
-        eIHDMyfBSrDcdnFrCA063vk=
-X-Google-Smtp-Source: AK7set9L8pgfZ7UNbRobUGCKQPLs4CKU19V0pSxraz0b9eemmCNqSbqkbzY0RBai+DeUY3CuOcBJMw==
-X-Received: by 2002:a05:6a20:3aa1:b0:d5:9216:9182 with SMTP id d33-20020a056a203aa100b000d592169182mr1192600pzh.9.1678915126902;
-        Wed, 15 Mar 2023 14:18:46 -0700 (PDT)
-Received: from d.home.yangfl.dn42 ([104.28.213.199])
-        by smtp.gmail.com with ESMTPSA id i17-20020aa787d1000000b005897f5436c0sm3981695pfo.118.2023.03.15.14.18.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Mar 2023 14:18:46 -0700 (PDT)
-From:   David Yang <mmyangfl@gmail.com>
-To:     mmyangfl@gmail.com
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 4/4] clk: hisilicon: Add CRG driver for Hi3798MV100 SoC
-Date:   Thu, 16 Mar 2023 05:16:23 +0800
-Message-Id: <20230315211628.963205-5-mmyangfl@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230315211628.963205-1-mmyangfl@gmail.com>
-References: <20230315211628.963205-1-mmyangfl@gmail.com>
+        d=1e100.net; s=20210112; t=1678916137;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tHXlGrouFIItrvotnDdRyOu3Z/DlM64K8FgyMN5NtRk=;
+        b=oLS5X2aPAdahGvMF7q2Vj/aSVYsGXA91NJWtfUe6A4QzXu3IJbvInI5Il+fnnt5mTL
+         v77kvptS2SHbD4cEEPOd/rsnWyQTLHMOb1uu10UU7NRw44IOEYQXcDBlAOiy2i4TfFHT
+         8d0THV7bzvCAkSrQN6odf7h+jCZHvKor7G10Y2glgH4hG6yBYdL1XvHg9+YFI/2G5JIO
+         WVHVjCnhY2pqpgSLU2yNWKJ12XBYWrfZXlxqgzm9y4KM2139dW9shlzLzvH1KZbDu5B0
+         JMmbWSWGhx6GGjs0c9nBIYKrKWStTxswj/PKNCNUnm7s1EW+K4FyzIYoaJETF9ALYr7h
+         9qJw==
+X-Gm-Message-State: AO0yUKXzWRwHlQzUdXkM+EoLRrCoiTUEurtfn85iyMsLCd+jc5f53th8
+        2KfA+ofrPl7D0HGAKsKaTW4=
+X-Google-Smtp-Source: AK7set+JwYoSCnFkCy4+laSZcZF+uWVoZ8tUP+PvZQWYE7xhGoSyMfHsaWtbQwoKSsMixg6/BqLjYA==
+X-Received: by 2002:ad4:5cc4:0:b0:5ac:d0dc:8ec0 with SMTP id iu4-20020ad45cc4000000b005acd0dc8ec0mr13040417qvb.26.1678916137288;
+        Wed, 15 Mar 2023 14:35:37 -0700 (PDT)
+Received: from ?IPV6:2600:1700:2442:6db0:1157:1a08:54ae:71f7? ([2600:1700:2442:6db0:1157:1a08:54ae:71f7])
+        by smtp.gmail.com with ESMTPSA id x197-20020a3763ce000000b007458608f3a7sm4557100qkb.86.2023.03.15.14.35.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Mar 2023 14:35:36 -0700 (PDT)
+Message-ID: <b217e613-575e-9e33-3469-6de5e0fb813a@gmail.com>
+Date:   Wed, 15 Mar 2023 16:35:35 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 2/8] of: Enable DTB loading on UML for KUnit tests
+Content-Language: en-US
+To:     David Gow <davidgow@google.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev,
+        Brendan Higgins <brendan.higgins@linux.dev>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+References: <20230302013822.1808711-1-sboyd@kernel.org>
+ <20230302013822.1808711-3-sboyd@kernel.org>
+ <CABVgOSkomwwgKZ9N0_0YMDL--QaZiTV7ONgSRABU2Ph1Z0CG-g@mail.gmail.com>
+ <a97c9bb3a5addfb34af8ccabaa513026.sboyd@kernel.org>
+ <CABVgOSkJ4mw_DtFzn5EwcsuYixWY_j13YotxEYqWhO+ZCL1KPg@mail.gmail.com>
+ <d64a086ddcb7c5ca5abecab0ca654259.sboyd@kernel.org>
+ <CABVgOSk9gqRe_5yQZweBA2Qg2aGx8rUJtOHywGeT4x7TEyBH0A@mail.gmail.com>
+ <40299ee6-c518-5505-0dc5-874deef03d19@gmail.com>
+ <e1889f7f-2804-718b-6651-f333aed48e99@gmail.com>
+ <CABVgOS=B51mzjVLy35aMp5PSAB=qhzMQVNzvxDVMezYwsOv1zw@mail.gmail.com>
+From:   Frank Rowand <frowand.list@gmail.com>
+In-Reply-To: <CABVgOS=B51mzjVLy35aMp5PSAB=qhzMQVNzvxDVMezYwsOv1zw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add CRG driver for Hi3798MV100 SoC. CRG (Clock and Reset Generator) module
-generates clock and reset signals used by other module blocks on SoC.
+On 3/15/23 02:04, David Gow wrote:
+> On Tue, 14 Mar 2023 at 12:28, Frank Rowand <frowand.list@gmail.com> wrote:
+>>
+>> On 3/13/23 11:02, Frank Rowand wrote:
+>>> On 3/11/23 00:42, David Gow wrote:
+>>>> On Sat, 11 Mar 2023 at 07:34, Stephen Boyd <sboyd@kernel.org> wrote:
+>>>>>
+>>>>> Quoting David Gow (2023-03-10 00:09:48)
+>>>>>> On Fri, 10 Mar 2023 at 07:19, Stephen Boyd <sboyd@kernel.org> wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> Hmm. I think you're suggesting that the unit test data be loaded
+>>>>>>> whenever CONFIG_OF=y and CONFIG_KUNIT=y. Then tests can check for
+>>>>>>> CONFIG_OF and skip if it isn't enabled?
+>>>>>>>
+>>>>>>
+>>>>>> More of the opposite: that we should have some way of supporting tests
+>>>>>> which might want to use a DTB other than the built-in one. Mostly for
+>>>>>> non-UML situations where an actual devicetree is needed to even boot
+>>>>>> far enough to get test output (so we wouldn't be able to override it
+>>>>>> with a compiled-in test one).
+>>>>>
+>>>>> Ok, got it.
+>>>>>
+>>>>>>
+>>>>>> I think moving to overlays probably will render this idea obsolete:
+>>>>>> but the thought was to give test code a way to check for the required
+>>>>>> devicetree nodes at runtime, and skip the test if they weren't found.
+>>>>>> That way, the failure mode for trying to boot this on something which
+>>>>>> required another device tree for, e.g., serial, would be "these tests
+>>>>>> are skipped because the wrong device tree is loaded", not "I get no
+>>>>>> output because serial isn't working".
+>>>>>>
+>>>>>> Again, though, it's only really needed for non-UML, and just loading
+>>>>>> overlays as needed should be much more sensible anyway.
+>>>>>
+>>>>> I still have one niggle here. Loading overlays requires
+>>>>> CONFIG_OF_OVERLAY, and the overlay loading API returns -ENOTSUPP when
+>>>>> CONFIG_OF_OVERLAY=n. For now I'm checking for the config being enabled
+>>>>> in each test, but I'm thinking it may be better to simply call
+>>>>> kunit_skip() from the overlay loading function if the config is
+>>>>> disabled. This way tests can simply call the overlay loading function
+>>>>> and we'll halt the test immediately if the config isn't enabled.
+>>>>>
+>>>>
+>>>> That sounds sensible, though there is a potential pitfall. If
+>>>> kunit_skip() is called directly from overlay code, might introduce a
+>>>> dependency on kunit.ko from the DT overlay, which we might not want.
+>>>> The solution there is either to have a kunit wrapper function (so the
+>>>> call is already in kunit.ko), or to have a hook to skip the current
+>>>> test (which probably makes sense to do anyway, but I think the wrapper
+>>>> is the better option).
+>>>>
+>>>>
+>>>>>>
+>>>>>>>>
+>>>>>>>> That being said, I do think that there's probably some sense in
+>>>>>>>> supporting the compiled-in DTB as well (it's definitely simpler than
+>>>>>>>> patching kunit.py to always pass the extra command-line option in, for
+>>>>>>>> example).
+>>>>>>>> But maybe it'd be nice to have the command-line option override the
+>>>>>>>> built-in one if present.
+>>>>>>>
+>>>>>>> Got it. I need to test loading another DTB on the commandline still, but
+>>>>>>> I think this won't be a problem. We'll load the unittest-data DTB even
+>>>>>>> with KUnit on UML, so assuming that works on UML right now it should be
+>>>>>>> unchanged by this series once I resend.
+>>>>>>
+>>>>>> Again, moving to overlays should render this mostly obsolete, no? Or
+>>>>>> am I misunderstanding how the overlay stuff will work?
+>>>>>
+>>>>> Right, overlays make it largely a moot issue. The way the OF unit tests
+>>>>> work today is by grafting a DTB onto the live tree. I'm reusing that
+>>>>> logic to graft a container node target for kunit tests to add their
+>>>>> overlays too. It will be clearer once I post v2.
+>>>>>
+>>>>>>
+>>>>>> One possible future advantage of being able to test with custom DTs at
+>>>>>> boot time would be for fuzzing (provide random DT properties, see what
+>>>>>> happens in the test). We've got some vague plans to support a way of
+>>>>>> passing custom data to tests to support this kind of case (though, if
+>>>>>> we're using overlays, maybe the test could just patch those if we
+>>>>>> wanted to do that).
+>>>>>
+>>>>> Ah ok. I can see someone making a fuzzer that modifies devicetree
+>>>>> properties randomly, e.g. using different strings for clock-names.
+>>>>>
+>>>>> This reminds me of another issue I ran into. I wanted to test adding the
+>>>>> same platform device to the platform bus twice to confirm that the
+>>>>> second device can't be added. That prints a warning, which makes
+>>>>> kunit.py think that the test has failed because it printed a warning. Is
+>>>>> there some way to avoid that? I want something like
+>>>>>
+>>>>>         KUNIT_EXPECT_WARNING(test, <call some function>)
+>>>>>
+>>>>> so I can test error cases.
+>>>
+>>> DT unittests already have a similar concept.  A test can report that a
+>>> kernel warning (or any other specific text) either (1) must occur for the
+>>> test to pass or (2) must _not_ occur for the test to pass.  The check
+>>> for the kernel warning is done by the test output parsing program
+>>> scripts/dtc/of_unittest_expect.
+>>>
+>>> The reporting by a test of an expected error in drivers/of/unittest.c
+>>> is done by EXPECT_BEGIN() and EXPECT_END().  These have been in
+>>> unittest for a long time.
+>>>
+>>> The reporting by a test of a not expected to occur error is done
+>>> by EXPECT_NOT_BEGIN() and EXPECT_NOT_END().  These are added to
+>>> unittest in linux 6.3-rc1.
+>>>
+>>> I discussed this concept in one of the early TAP / KTAP discussion
+>>
+>> The link to the early KTAP discussion on this concept is:
+>>
+>>    https://lore.kernel.org/all/d38bf9f9-8a39-87a6-8ce7-d37e4a641675@gmail.com/T/#u
+>>
+>>
+> 
+> Thanks -- I'd totally forgotten about that!
+> 
 
-Signed-off-by: David Yang <mmyangfl@gmail.com>
----
- drivers/clk/hisilicon/crg-hi3798.c | 209 +++++++++++++++++++++++++++--
- 1 file changed, 195 insertions(+), 14 deletions(-)
+> I still personally would prefer a way of checking this from within the
+> kernel, as if we're just printing out "EXPECT: " lines, then it's not
+> possible to know if a test passes just from the raw results (and
+> things like statistics can't be updated without a separate tool like
+> kunit.py parsing the KTAP.
 
-diff --git a/drivers/clk/hisilicon/crg-hi3798.c b/drivers/clk/hisilicon/crg-hi3798.c
-index 2f8f14e73..a8d27130d 100644
---- a/drivers/clk/hisilicon/crg-hi3798.c
-+++ b/drivers/clk/hisilicon/crg-hi3798.c
-@@ -38,6 +38,11 @@
- #define HI3798_FIXED_166P5M		84
- #define HI3798_SDIO0_MUX			85
- #define HI3798_COMBPHY0_MUX		86
-+#define HI3798_FIXED_3M				87
-+#define HI3798_FIXED_15M			88
-+#define HI3798_FIXED_83P3M			89
-+#define HI3798_GPU_PP0_CLK			90
-+#define HI3798_GPU_PP1_CLK			91
- 
- #define HI3798_CRG_NR_CLKS			128
- 
-@@ -45,13 +50,16 @@ static const struct hisi_fixed_rate_clock hi3798_fixed_rate_clks[] = {
- 	{ HISTB_OSC_CLK, "clk_osc", NULL, 0, 24000000, },
- 	{ HISTB_APB_CLK, "clk_apb", NULL, 0, 100000000, },
- 	{ HISTB_AHB_CLK, "clk_ahb", NULL, 0, 200000000, },
-+	{ HI3798_FIXED_3M, "3m", NULL, 0, 3000000, },
- 	{ HI3798_FIXED_12M, "12m", NULL, 0, 12000000, },
-+	{ HI3798_FIXED_15M, "15m", NULL, 0, 15000000, },
- 	{ HI3798_FIXED_24M, "24m", NULL, 0, 24000000, },
- 	{ HI3798_FIXED_25M, "25m", NULL, 0, 25000000, },
- 	{ HI3798_FIXED_48M, "48m", NULL, 0, 48000000, },
- 	{ HI3798_FIXED_50M, "50m", NULL, 0, 50000000, },
- 	{ HI3798_FIXED_60M, "60m", NULL, 0, 60000000, },
- 	{ HI3798_FIXED_75M, "75m", NULL, 0, 75000000, },
-+	{ HI3798_FIXED_83P3M, "83p3m", NULL, 0, 83333333, },
- 	{ HI3798_FIXED_100M, "100m", NULL, 0, 100000000, },
- 	{ HI3798_FIXED_150M, "150m", NULL, 0, 150000000, },
- 	{ HI3798_FIXED_166P5M, "166p5m", NULL, 0, 165000000, },
-@@ -170,6 +178,187 @@ static void hi3798_sysctrl_clk_unregister(
- 	hisi_clk_unregister_gate(clks->gate_clks, clks->gate_clks_nums, crg->clk_data);
- }
- 
-+/* hi3798MV100 */
-+
-+static const char *const hi3798mv100_mmc_mux_p[] = {
-+		"75m", "100m", "50m", "15m" };
-+static u32 hi3798mv100_mmc_mux_table[] = {0, 1, 2, 3};
-+
-+static struct hisi_mux_clock hi3798mv100_mux_clks[] = {
-+	{ HI3798_MMC_MUX, "mmc_mux", hi3798mv100_mmc_mux_p,
-+		ARRAY_SIZE(hi3798mv100_mmc_mux_p), CLK_SET_RATE_PARENT,
-+		0xa0, 8, 2, 0, hi3798mv100_mmc_mux_table, },
-+	{ HI3798_SDIO0_MUX, "sdio0_mux", hi3798mv100_mmc_mux_p,
-+		ARRAY_SIZE(hi3798mv100_mmc_mux_p), CLK_SET_RATE_PARENT,
-+		0x9c, 8, 2, 0, hi3798mv100_mmc_mux_table, },
-+};
-+
-+static u32 mmc_phase_regvals[] = {0, 1, 2, 3, 4, 5, 6, 7};
-+static u32 mmc_phase_degrees[] = {0, 45, 90, 135, 180, 225, 270, 315};
-+
-+static struct hisi_phase_clock hi3798mv100_phase_clks[] = {
-+	{ HISTB_MMC_SAMPLE_CLK, "mmc_sample", "clk_mmc_ciu",
-+		CLK_SET_RATE_PARENT, 0xa0, 12, 3, mmc_phase_degrees,
-+		mmc_phase_regvals, ARRAY_SIZE(mmc_phase_regvals) },
-+	{ HISTB_MMC_DRV_CLK, "mmc_drive", "clk_mmc_ciu",
-+		CLK_SET_RATE_PARENT, 0xa0, 16, 3, mmc_phase_degrees,
-+		mmc_phase_regvals, ARRAY_SIZE(mmc_phase_regvals) },
-+};
-+
-+static const struct hisi_gate_clock hi3798mv100_gate_clks[] = {
-+	/* NAND */
-+	/* hi3798MV100 NAND driver does not get into mainline yet,
-+	 * expose these clocks when it gets ready */
-+	/* { HISTB_NAND_CLK, "clk_nand", "clk_apb",
-+		CLK_SET_RATE_PARENT, 0x60, 0, 0, }, */
-+	/* UART */
-+	{ HISTB_UART1_CLK, "clk_uart1", "3m",
-+		CLK_SET_RATE_PARENT, 0x68, 0, 0, },
-+	{ HISTB_UART2_CLK, "clk_uart2", "83p3m",
-+		CLK_SET_RATE_PARENT, 0x68, 4, 0, },
-+	/* I2C */
-+	{ HISTB_I2C0_CLK, "clk_i2c0", "clk_apb",
-+		CLK_SET_RATE_PARENT, 0x6C, 4, 0, },
-+	{ HISTB_I2C1_CLK, "clk_i2c1", "clk_apb",
-+		CLK_SET_RATE_PARENT, 0x6C, 8, 0, },
-+	{ HISTB_I2C2_CLK, "clk_i2c2", "clk_apb",
-+		CLK_SET_RATE_PARENT, 0x6C, 12, 0, },
-+	/* SPI */
-+	{ HISTB_SPI0_CLK, "clk_spi0", "clk_apb",
-+		CLK_SET_RATE_PARENT, 0x70, 0, 0, },
-+	/* SDIO */
-+	{ HISTB_SDIO0_BIU_CLK, "clk_sdio0_biu", "200m",
-+		CLK_SET_RATE_PARENT, 0x9c, 0, 0, },
-+	{ HISTB_SDIO0_CIU_CLK, "clk_sdio0_ciu", "sdio0_mux",
-+		CLK_SET_RATE_PARENT, 0x9c, 1, 0, },
-+	/* EMMC */
-+	{ HISTB_MMC_BIU_CLK, "clk_mmc_biu", "200m",
-+		CLK_SET_RATE_PARENT, 0xa0, 0, 0, },
-+	{ HISTB_MMC_CIU_CLK, "clk_mmc_ciu", "mmc_mux",
-+		CLK_SET_RATE_PARENT, 0xa0, 1, 0, },
-+	/* Ethernet */
-+	{ HI3798_ETH_BUS_CLK, "clk_bus", NULL,
-+		CLK_SET_RATE_PARENT, 0xcc, 0, 0, },
-+	{ HI3798_ETH_PUB_CLK, "clk_pub", "clk_bus",
-+		CLK_SET_RATE_PARENT, 0xcc, 1, 0, },
-+	{ HISTB_ETH0_MAC_CLK, "clk_mac0", "clk_pub",
-+		CLK_SET_RATE_PARENT, 0xcc, 3, 0, },
-+	/* USB2 */
-+	{ HISTB_USB2_BUS_CLK, "clk_u2_bus", "clk_ahb",
-+		CLK_SET_RATE_PARENT, 0xb8, 0, 0, },
-+	{ HISTB_USB2_PHY_CLK, "clk_u2_phy", "60m",
-+		CLK_SET_RATE_PARENT, 0xb8, 4, 0, },
-+	{ HISTB_USB2_12M_CLK, "clk_u2_12m", "12m",
-+		CLK_SET_RATE_PARENT, 0xb8, 2, 0 },
-+	{ HISTB_USB2_48M_CLK, "clk_u2_48m", "48m",
-+		CLK_SET_RATE_PARENT, 0xb8, 1, 0 },
-+	{ HISTB_USB2_UTMI_CLK, "clk_u2_utmi", "60m",
-+		CLK_SET_RATE_PARENT, 0xb8, 5, 0 },
-+	{ HISTB_USB2_UTMI_CLK1, "clk_u2_utmi1", "60m",
-+		CLK_SET_RATE_PARENT, 0xb8, 6, 0 },
-+	{ HISTB_USB2_OTG_UTMI_CLK, "clk_u2_otg_utmi", "60m",
-+		CLK_SET_RATE_PARENT, 0xb8, 3, 0 },
-+	{ HISTB_USB2_PHY1_REF_CLK, "clk_u2_phy1_ref", "24m",
-+		CLK_SET_RATE_PARENT, 0xbc, 0, 0 },
-+	{ HISTB_USB2_PHY2_REF_CLK, "clk_u2_phy2_ref", "24m",
-+		CLK_SET_RATE_PARENT, 0xbc, 2, 0 },
-+	/* USB2 2 */
-+	{ HISTB_USB2_2_BUS_CLK, "clk_u2_2_bus", "clk_ahb",
-+		CLK_SET_RATE_PARENT, 0x198, 0, 0, },
-+	{ HISTB_USB2_2_PHY_CLK, "clk_u2_2_phy", "60m",
-+		CLK_SET_RATE_PARENT, 0x198, 4, 0, },
-+	{ HISTB_USB2_2_12M_CLK, "clk_u2_2_12m", "12m",
-+		CLK_SET_RATE_PARENT, 0x198, 2, 0 },
-+	{ HISTB_USB2_2_48M_CLK, "clk_u2_2_48m", "48m",
-+		CLK_SET_RATE_PARENT, 0x198, 1, 0 },
-+	{ HISTB_USB2_2_UTMI_CLK, "clk_u2_2_utmi", "60m",
-+		CLK_SET_RATE_PARENT, 0x198, 5, 0 },
-+	{ HISTB_USB2_2_UTMI_CLK1, "clk_u2_2_utmi1", "60m",
-+		CLK_SET_RATE_PARENT, 0x198, 6, 0 },
-+	{ HISTB_USB2_2_OTG_UTMI_CLK, "clk_u2_2_otg_utmi", "60m",
-+		CLK_SET_RATE_PARENT, 0x198, 3, 0 },
-+	{ HISTB_USB2_2_PHY1_REF_CLK, "clk_u2_2_phy1_ref", "24m",
-+		CLK_SET_RATE_PARENT, 0x190, 0, 0 },
-+	{ HISTB_USB2_2_PHY2_REF_CLK, "clk_u2_2_phy2_ref", "24m",
-+		CLK_SET_RATE_PARENT, 0x190, 2, 0 },
-+	/* USB3 */
-+	{ HISTB_USB3_BUS_CLK, "clk_u3_bus", NULL,
-+		CLK_SET_RATE_PARENT, 0xb0, 0, 0 },
-+	{ HISTB_USB3_UTMI_CLK, "clk_u3_utmi", NULL,
-+		CLK_SET_RATE_PARENT, 0xb0, 4, 0 },
-+	{ HISTB_USB3_PIPE_CLK, "clk_u3_pipe", NULL,
-+		CLK_SET_RATE_PARENT, 0xb0, 3, 0 },
-+	{ HISTB_USB3_SUSPEND_CLK, "clk_u3_suspend", NULL,
-+		CLK_SET_RATE_PARENT, 0xb0, 2, 0 },
-+	/* GPU */
-+	{ HISTB_GPU_BUS_CLK, "clk_gpu", "200m",
-+		CLK_SET_RATE_PARENT, 0xd4, 0, 0 },
-+	{ HISTB_GPU_GP_CLK, "clk_gpu_gp", "clk_gpu_pp0",
-+		CLK_SET_RATE_PARENT, 0xd4, 8, 0 },
-+	{ HI3798_GPU_PP0_CLK, "clk_gpu_pp0", "clk_gpu_pp1",
-+		CLK_SET_RATE_PARENT, 0xd4, 9, 0 },
-+	{ HI3798_GPU_PP1_CLK, "clk_gpu_pp1", "200m",
-+		CLK_SET_RATE_PARENT, 0xd4, 10, 0 },
-+	/* FEPHY */
-+	{ HISTB_FEPHY_CLK, "clk_fephy", "25m",
-+		CLK_SET_RATE_PARENT, 0x120, 0, 0, },
-+};
-+
-+static const struct hi3798_clks hi3798mv100_crg_clks = {
-+	.gate_clks = hi3798mv100_gate_clks,
-+	.gate_clks_nums = ARRAY_SIZE(hi3798mv100_gate_clks),
-+	.mux_clks = hi3798mv100_mux_clks,
-+	.mux_clks_nums = ARRAY_SIZE(hi3798mv100_mux_clks),
-+	.phase_clks = hi3798mv100_phase_clks,
-+	.phase_clks_nums = ARRAY_SIZE(hi3798mv100_phase_clks),
-+};
-+
-+static struct hisi_clock_data *hi3798mv100_clk_register(
-+				struct platform_device *pdev)
-+{
-+	return hi3798_clk_register(pdev, &hi3798mv100_crg_clks);
-+}
-+
-+static void hi3798mv100_clk_unregister(struct platform_device *pdev)
-+{
-+	hi3798_clk_unregister(pdev, &hi3798mv100_crg_clks);
-+}
-+
-+static const struct hisi_crg_funcs hi3798mv100_crg_funcs = {
-+	.register_clks = hi3798mv100_clk_register,
-+	.unregister_clks = hi3798mv100_clk_unregister,
-+};
-+
-+static const struct hisi_gate_clock hi3798mv100_sysctrl_gate_clks[] = {
-+	{ HISTB_IR_CLK, "clk_ir", "24m",
-+		CLK_SET_RATE_PARENT, 0x48, 4, 0, },
-+	{ HISTB_TIMER01_CLK, "clk_timer01", "24m",
-+		CLK_SET_RATE_PARENT, 0x48, 6, 0, },
-+	{ HISTB_UART0_CLK, "clk_uart0", "83p3m",
-+		CLK_SET_RATE_PARENT, 0x48, 12, 0, },
-+};
-+
-+static const struct hi3798_clks hi3798mv100_sysctrl_clks = {
-+	.gate_clks = hi3798mv100_sysctrl_gate_clks,
-+	.gate_clks_nums = ARRAY_SIZE(hi3798mv100_sysctrl_gate_clks),
-+};
-+
-+static struct hisi_clock_data *hi3798mv100_sysctrl_clk_register(
-+					struct platform_device *pdev)
-+{
-+	return hi3798_sysctrl_clk_register(pdev, &hi3798mv100_sysctrl_clks);
-+}
-+
-+static void hi3798mv100_sysctrl_clk_unregister(struct platform_device *pdev)
-+{
-+	hi3798_sysctrl_clk_unregister(pdev, &hi3798mv100_sysctrl_clks);
-+}
-+
-+static const struct hisi_crg_funcs hi3798mv100_sysctrl_funcs = {
-+	.register_clks = hi3798mv100_sysctrl_clk_register,
-+	.unregister_clks = hi3798mv100_sysctrl_clk_unregister,
-+};
-+
- /* hi3798CV200 */
- 
- static const char *const hi3798cv200_mmc_mux_p[] = {
-@@ -199,18 +388,6 @@ static struct hisi_mux_clock hi3798cv200_mux_clks[] = {
- 		0x9c, 8, 2, 0, hi3798cv200_sdio_mux_table, },
- };
- 
--static u32 mmc_phase_regvals[] = {0, 1, 2, 3, 4, 5, 6, 7};
--static u32 mmc_phase_degrees[] = {0, 45, 90, 135, 180, 225, 270, 315};
--
--static struct hisi_phase_clock hi3798cv200_phase_clks[] = {
--	{ HISTB_MMC_SAMPLE_CLK, "mmc_sample", "clk_mmc_ciu",
--		CLK_SET_RATE_PARENT, 0xa0, 12, 3, mmc_phase_degrees,
--		mmc_phase_regvals, ARRAY_SIZE(mmc_phase_regvals) },
--	{ HISTB_MMC_DRV_CLK, "mmc_drive", "clk_mmc_ciu",
--		CLK_SET_RATE_PARENT, 0xa0, 16, 3, mmc_phase_degrees,
--		mmc_phase_regvals, ARRAY_SIZE(mmc_phase_regvals) },
--};
--
- static const struct hisi_gate_clock hi3798cv200_gate_clks[] = {
- 	/* UART */
- 	{ HISTB_UART2_CLK, "clk_uart2", "75m",
-@@ -312,8 +489,8 @@ static const struct hi3798_clks hi3798cv200_crg_clks = {
- 	.gate_clks_nums = ARRAY_SIZE(hi3798cv200_gate_clks),
- 	.mux_clks = hi3798cv200_mux_clks,
- 	.mux_clks_nums = ARRAY_SIZE(hi3798cv200_mux_clks),
--	.phase_clks = hi3798cv200_phase_clks,
--	.phase_clks_nums = ARRAY_SIZE(hi3798cv200_phase_clks),
-+	.phase_clks = hi3798mv100_phase_clks,
-+	.phase_clks_nums = ARRAY_SIZE(hi3798mv100_phase_clks),
- };
- 
- static struct hisi_clock_data *hi3798cv200_clk_register(
-@@ -363,6 +540,10 @@ static const struct hisi_crg_funcs hi3798cv200_sysctrl_funcs = {
- };
- 
- static const struct of_device_id hi3798_crg_match_table[] = {
-+	{ .compatible = "hisilicon,hi3798mv100-crg",
-+		.data = &hi3798mv100_crg_funcs },
-+	{ .compatible = "hisilicon,hi3798mv100-sysctrl",
-+		.data = &hi3798mv100_sysctrl_funcs },
- 	{ .compatible = "hisilicon,hi3798cv200-crg",
- 		.data = &hi3798cv200_crg_funcs },
- 	{ .compatible = "hisilicon,hi3798cv200-sysctrl",
--- 
-2.39.2
+Yes, I totally agree with that.  If there is a reasonable way to
+implement.  But in the DT unittest world, I have not found a
+reasonable way.  Adding hooks is suggested below, but for DT
+unittest _I_ (opinion) do not find that reasonable.  I voice no
+vote for kunit - that decision is up to the kunit crowd.
+
+> 
+> Indeed, my personal preference is that this log-based way of doing
+> expectations is probably best kept as a last resort. i.e.,
+> 1. Try to add a hook to the code which prints the message, which can
+> then fail the test (or set a flag for the test to check later). This
+> probably needs some better KUnit-side helpers to be truly ergonomic,
+> but at least avoids too strict a dependency on the exact formatting of
+> the log messages.
+
+I'm not a fan of hooks.  I see them as a maintenance burden, dependent
+upon the source version of the object being tested, yet another
+thing that can go wrong, and adds complexity to creating a test
+environment and running the test.  Again, this just a personal
+opinion, and I'm not voting for or against this for kunit.
+
+> 2. If that doesn't work, use console tracepoints or similar to
+> implement an EXPECT_BEGIN() / EXPECT_END() or similar API entirely
+> within the kernel.
+
+Isn't this just another hook?  So same opinion.
+
+> 3. Only if we can't come up with a working way of doing the former
+> options, resort to adding "EXPECT:" lines and having a parser pick up
+> on this.
+
+Again, don't let my opinion affect the voting between 1, 2, 3, or other
+for kunit.
+
+> 
+> One of the downsides of doing "EXPECT" lines in KTAP is that it'll
+> suddenly be much more dependent on the exact layout of the tests, as
+> we'd need to be able to override a test result if an expectation fails
+> (at least, to maintain the KUnit structure). And overriding a result
+> which is already in the output seems really, really ugly.
+
+I don't understand "dependent on the exact layout of the tests".
+If you are saying that the test result parser has to figure out
+which test result to override, that has not been an issue in
+the cases that I use EXPECTs in DT unittest.  The EXPECT begin and
+EXPECT end have always immediately surrounded a single test, so
+when the parser processes the EXPECT end, only the most recent
+test result could be overridden.  This has worked because the
+kernel warning and error messages have been from kernel action
+that happens synchronously with the test.  If the test prods the
+kernel in a way that results in the kernel performing an
+asynchronous activity (eg in another thread), then it becomes
+more complex to structure the EXPECT end -- I would imagine that the
+test would have to block on the asynchronous activity just before
+reporting the normal KTAP status result for the test (and the
+EXPECT end would normally be just after reporting the KTAP
+status result for the test).
+
+I agree with overriding being ugly.  For the DT unittest results
+parser, the EXPECT summary results are reported separately from
+the individual test summary results.  The parser also flags the
+EXPECT failure in line with the normal individual test result
+lines.
+
+I see both parsing results as valid, and as a policy choice for
+each test parser.
+
+> 
+> There's a patch to the KASAN tests to move from doing option 1 to
+> option 2 above (in order to better support RCU, which didn't work with
+> the hook):
+> https://lore.kernel.org/all/ebf96ea600050f00ed567e80505ae8f242633640.1666113393.git.andreyknvl@google.com/
+> 
+> 
+>>> threads and expect to start a discussion thread on this specific
+>>> topic in the KTAP Specification V2 context.  I expect the discussion
+>>> to result in a different implementation than what DT unittests are
+>>> using (bike shedding likely to ensue) but whatever is agreed to
+>>> should be easy for DT to switch to.
+>>
+>> The link to the KTAP Specification Version 2 process and progress is:
+>>
+>>    https://elinux.org/Test_Results_Format_Notes#KTAP_version_2
+>>
+> 
+> Thanks! We've got a few more KTAP ideas to air, so will hopefully send
+> those out soon!
+
+Glad to hear, I'm hoping that process starts progressing a bit.
+
+-Frank
+
+> 
+> Cheers,
+> -- David
+> 
+>>>
+>>>>
+>>>> Hmm... I'd've thought that shouldn't be a problem: kunit.py should
+>>>> ignore most messages during a test, unless it can't find a valid
+>>>> result line. What does the raw KTAP output look like? (You can get it
+>>>> from kunit.py by passing the --raw_output option).
+>>>>
+>>>> That being said, a KUNIT_EXPECT_LOG_MESSAGE() or similar is something
+>>>> we've wanted for a while. I think that the KASAN folks have been
+>>>> working on something similar using console tracepoints:
+>>>> https://lore.kernel.org/all/ebf96ea600050f00ed567e80505ae8f242633640.1666113393.git.andreyknvl@google.com/
+>>>>
+>>>> Cheers,
+>>>> -- David
+>>>
+>>
 
