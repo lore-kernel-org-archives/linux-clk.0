@@ -2,48 +2,46 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A896C61DA4
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 23:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39039C7618D
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 23:35:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233328AbjCOXf1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Mar 2023 19:35:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46076 "EHLO
+        id S233364AbjCOXfi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Mar 2023 19:35:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233340AbjCOXeu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 19:34:50 -0400
+        with ESMTP id S233204AbjCOXfD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 19:35:03 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51B38A8C40;
-        Wed, 15 Mar 2023 16:33:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 298F5A6BE3;
+        Wed, 15 Mar 2023 16:34:04 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 629F4B81F9A;
+        by ams.source.kernel.org (Postfix) with ESMTPS id E3AE6B81FA8;
+        Wed, 15 Mar 2023 23:32:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04C41C4339E;
         Wed, 15 Mar 2023 23:32:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40613C433D2;
-        Wed, 15 Mar 2023 23:32:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678923176;
-        bh=aoz2bnbiFrBxlSw6q0XxgH+8ryhNBVBOEYUuwtxFdQM=;
+        s=k20201202; t=1678923178;
+        bh=J+VdprXsDkR+blMkvRslh77/YhAHDDN+vCvCjz/vvLI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YvPpbXMkjrmQVwvQaBYqfnhvkekanx11vUo31RXxBu5OGLj6kWpapyqgnNcwrme7t
-         otesIGB1z+mSBUfq76W5e30FZOMzFxS4N2nBj/a5HQDs4PIydryzbK7S8fmhMx56ks
-         f/1vXeFFNp22KOMx5jHekYndfKGv/irSuB17lmQkMy/TlhTXNEJruYq2TMeN1N5lYL
-         MIEXbii9n2sx/cSxMZHc4GSWY48i/C+YbeawcSnOarei9pZfZIiUYnv8eVB6G/GTh9
-         uI2MKZCAfETqafs8b40dcddc2Rhvf4EErFEoQfAmpMGlCX+VqPCGwGfrSN1s4D0RAM
-         k9ezEB9LcrtOw==
+        b=Xyt0J9r4e5xX3KFqn3uiSSsvWIX00GokRQFtX8ZL1Jyzwh8ojXn6rinx8zrEcIpOZ
+         3toEjXS8o71xa7lmgrF9/RQLSiDWOkkPSKI/iR8Gr1eZipnMAdkKDBiWzaLJss5dBA
+         myq9r6icveeFgynCSEQi/s/UykZ7lW5cMsq9cwuXKN8zoM0ynHF2blrwbS0ZqLJb7l
+         YDNT77TTP/UkAqcxp3BwBYx/6iLbY1jW5AP5vTPcqoqcGnK1IPApn6e+qLIiTIent4
+         sFoN9SGeZJdhpOGW68f6CpNV4F/3hYtzB9HZ4BFhmIHN7ghjxzS0qhjZMWpm/w3l8b
+         RpX98qog/1AkQ==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     linux-arm-msm@vger.kernel.org, sboyd@kernel.org,
-        konrad.dybcio@linaro.org, Robert Marko <robert.marko@sartura.hr>,
-        robh+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com
-Cc:     luka.perkov@sartura.hr
-Subject: Re: (subset) [PATCH 1/7] dt-bindings: clock: split qcom,gcc-ipq4019 to separate file
-Date:   Wed, 15 Mar 2023 16:35:26 -0700
-Message-Id: <167892332566.4030021.2066671633508562447.b4-ty@kernel.org>
+To:     sboyd@kernel.org, konrad.dybcio@linaro.org, agross@kernel.org,
+        Tom Rix <trix@redhat.com>, mturquette@baylibre.com
+Cc:     linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: remove unused variables gpucc_parent_data,map_2
+Date:   Wed, 15 Mar 2023 16:35:29 -0700
+Message-Id: <167892332568.4030021.2522610216685451226.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230214162325.312057-1-robert.marko@sartura.hr>
-References: <20230214162325.312057-1-robert.marko@sartura.hr>
+In-Reply-To: <20230315155630.1740065-1-trix@redhat.com>
+References: <20230315155630.1740065-1-trix@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -51,18 +49,23 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 14 Feb 2023 17:23:19 +0100, Robert Marko wrote:
-> Move schema for the GCC on IPQ4019 platform to a separate file to be able
-> to allow passing XO and sleep clks directly to GCC.
+On Wed, 15 Mar 2023 11:56:30 -0400, Tom Rix wrote:
+> gcc with W=1 reports these errors
+> drivers/clk/qcom/gpucc-sm6375.c:145:37: error:
+>   ‘gpucc_parent_data_2’ defined but not used [-Werror=unused-const-variable=]
+>   145 | static const struct clk_parent_data gpucc_parent_data_2[] = {
+>       |                                     ^~~~~~~~~~~~~~~~~~~
+> drivers/clk/qcom/gpucc-sm6375.c:139:32: error:
+>   ‘gpucc_parent_map_2’ defined but not used [-Werror=unused-const-variable=]
+>   139 | static const struct parent_map gpucc_parent_map_2[] = {
+>       |                                ^~~~~~~~~~~~~~~~~~
 > 
-> 
+> [...]
 
 Applied, thanks!
 
-[3/7] ARM: dts: qcom: ipq4019: pass XO and sleep clocks to GCC
-      commit: 66e4811ab3967332c52a72f04d615f0faabb145e
-[4/7] ARM: dts: qcom: ipq4019: remove clk-output-names for sleep clock
-      commit: 2a41c611f21751150cf4c0132a02828700e58e2d
+[1/1] clk: qcom: remove unused variables gpucc_parent_data,map_2
+      commit: 54ed70b57623e18f6c18f510cbe1e741bca89f34
 
 Best regards,
 -- 
