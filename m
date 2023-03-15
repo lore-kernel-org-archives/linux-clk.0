@@ -2,68 +2,97 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B47DC6FD1D
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 02:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C72DDC6FD1F
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 03:07:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230215AbjCOCl1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Mar 2023 22:41:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46092 "EHLO
+        id S229648AbjCODHo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Mar 2023 23:07:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230039AbjCOCl1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 22:41:27 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51EDA3526D;
-        Tue, 14 Mar 2023 19:41:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EF4F4B81C61;
-        Wed, 15 Mar 2023 02:41:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9D7BAC4339B;
-        Wed, 15 Mar 2023 02:41:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678848083;
-        bh=cvwvvi834SOtHAuwLy0Zo0aR1OIbazmHZSMZaKfwczI=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=BmEhCZU610hENjDKTPIru5SZl/g85ocOLYqEejmrfgZ4faNkeuXv7WU+aS7xGbxoi
-         mWNv4VhykovcnocNxZOx1BYfE1e3Rftw1gn12l8zFfIAHW/Mwu31R5tUQmmTEUD4BT
-         Bs1yCDmDgZDDPQOTg9FrFrIZCf04+tQ5ZEoXc0gLVPvHhkBsvtqAY6FHtZ4iKqL8oK
-         XVUFex+cclO6qsePLGvRa8tEE2HqSfmtsblb6jDuq5n3r7G5UykDXU5Pcj6dpWnc7Q
-         3pCFxx6k5ssUL38eUXWvGH977w7Rx5kvoONhFdrdmBbgTWO1s8M9SFo8XPBYifPknT
-         vytzJphQGiT0A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8C2D5E4D005;
-        Wed, 15 Mar 2023 02:41:23 +0000 (UTC)
-Subject: Re: [GIT PULL] clk fixes for v6.3-rc2
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20230313231919.66868-1-sboyd@kernel.org>
-References: <20230313231919.66868-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20230313231919.66868-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: 5cf9d015be160e2d90d29ae74ef1364390e8fce8
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c0856b7c14b690ef9917cdb1d94e96169212e43b
-Message-Id: <167884808357.332.78190221801282534.pr-tracker-bot@kernel.org>
-Date:   Wed, 15 Mar 2023 02:41:23 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        with ESMTP id S229542AbjCODHm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2023 23:07:42 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 281575D779;
+        Tue, 14 Mar 2023 20:07:41 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id x13so22816948edd.1;
+        Tue, 14 Mar 2023 20:07:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1678849659;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tg96jB00Z0xJAjaX35dGOvi0S0BxZfiR5lY6gXxTruM=;
+        b=pcytAVu3ygryJm2ME+7AeEiL4mOWRr++QzyMQjmGY2UnI/Uff+01CJgO/L9Ircaesg
+         Xa4sqC9PVIhYgoPnMu4PMBQ/YPK3pZyUGLtPc1AQBVChzkslgRSTkzn1Q8ZCDafo22sD
+         nn6gW0pmSieLpa6E6LORgPHIfFsDnqo89hsJT4Gaf4GsTQXluJC5W2orm2wXsP79i/k0
+         BtQeNCtXcUPsrS5fuKtM+IaDEEiBkKikLD9KC9uDBQ+ZRzp7h02+GsCif0EIxNfz8O2p
+         rwtQN6RC4yIz1nBT5Unx9SNvZIjCVbzrfjlakRiapTq9a4i1OsxvbF9Qu0MWFcTWnN4w
+         pmaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678849659;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Tg96jB00Z0xJAjaX35dGOvi0S0BxZfiR5lY6gXxTruM=;
+        b=wV9PXOua7PRlQdKTMWzvrty/ezQcLBzmioSZCK4eFCovSdMnaGJK9SIs3MZ5zjs6Pi
+         7h3W0VL+blg6OkfGWCoMJCmjtwYTMy/GIw/B/CCWUdS0ZkztQHbTZL+7wTcdiC15/ddW
+         gzcXZSc+WNoYxGsDzMdRLQRPxKIHj+E4/S5pvP54PwLAcR+aRb40+X+XY33Wj+9AoNPk
+         o5YBW6VQZ1UyBLJc+wJjYG0J63n/BxBt2j5n44jiFgqqJRm7V3pu9rNkj6E1MNu4lN6L
+         pQr/PASe+l+zKkpXC0SmAtWnYgQqxpQfucI1qfTNdCtiImsc+V1t2g0AsjWYZt3LvS7r
+         Wl2w==
+X-Gm-Message-State: AO0yUKUsGvNDoVmfhoVNE3Fi8ZRPuEcNbg7WO96Gnvl2pRYssGtEG+mQ
+        FIUN9KATwQb+J1GeGEqsH/LMAI2IYa8kJjs0vE2k14QvWYU=
+X-Google-Smtp-Source: AK7set8ZxP3H95X9OWSv2ZecRuaPva4uZTO8mzifEhRkJ6S5Mr5ycZSYvVuHcoKIBbPHVw4J8SaScTwBqs1gH/a91hw=
+X-Received: by 2002:a17:906:5619:b0:92b:e576:ea31 with SMTP id
+ f25-20020a170906561900b0092be576ea31mr2163021ejq.5.1678849659601; Tue, 14 Mar
+ 2023 20:07:39 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230210111141.1379645-1-keguang.zhang@gmail.com> <a3e6f6038511ad48258627dbf4c335e2.sboyd@kernel.org>
+In-Reply-To: <a3e6f6038511ad48258627dbf4c335e2.sboyd@kernel.org>
+From:   Keguang Zhang <keguang.zhang@gmail.com>
+Date:   Wed, 15 Mar 2023 11:07:23 +0800
+Message-ID: <CAJhJPsUQN5Lo_rVUbbmGY68gorwkcQT=9AXfcEh371cP97Wj_A@mail.gmail.com>
+Subject: Re: [PATCH] MIPS: loongson32: Update the clock initialization
+To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org,
+        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Mon, 13 Mar 2023 16:19:18 -0700:
+On Sat, Feb 11, 2023 at 7:31=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wro=
+te:
+>
+> Quoting Keguang Zhang (2023-02-10 03:11:41)
+> > The Loongson-1 clock driver is under re-implementation
+> > to add DT support. As a result, ls1x_clk_init() will be dropped soon.
+> > Therefore, call of_clk_init() for clock initialization instead.
+> >
+> > Link: https://lore.kernel.org/all/20230209132614.1079198-3-keguang.zhan=
+g@gmail.com
+> > Link: https://lore.kernel.org/all/20230209132614.1079198-4-keguang.zhan=
+g@gmail.com
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+Hi Thomas,
+Sorry to bother you.
+For fear of raising build error, is it possible to merge this patch
+before the above two patches getting applied?
+Or is there anything to improve?
+Thanks very much!
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c0856b7c14b690ef9917cdb1d94e96169212e43b
 
-Thank you!
+> > Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
+> > ---
+>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+
+
+--
+Best regards,
+
+Kelvin Cheung
