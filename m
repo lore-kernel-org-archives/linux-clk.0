@@ -2,129 +2,76 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2807BC6FD1D
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 13:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 730D9C7618B
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Mar 2023 14:30:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232139AbjCONX7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Mar 2023 09:23:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50664 "EHLO
+        id S231806AbjCOOaB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Mar 2023 10:30:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232126AbjCONXp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 09:23:45 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08B76A3B7C
-        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 06:23:43 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id eh3so19570661edb.11
-        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 06:23:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678886622;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UnW0CMrrRD3o9YvTtj/2PZfd1w3APSitkBSkSzkAq3A=;
-        b=cIoenhYmTDDKZ0euB2ODKr3LotX4ppL2RTmY7rx4LHYybPdccQrPSTr+zjPffclIwD
-         k+6Q4fDW3EAwNRRuFsbyhhImD8R3omHYItX05zQqnwsqlABoIOICjL/Cf/X9pC4J8Wjv
-         HZj1lO/Nsh2knHgaHr7f2V67UlTJVZWVAoynksoC9l8EeKEowzrk0pY+o+vQHm3IeQnm
-         PvdZtWTxW3F3JCNkpG+rgvq0x8m1XaGQ7HaEivuI/+dOvcEeU3nYVP0i9mtPnqsRSVM6
-         X1N4cWtUjSaXy2FJCd1/duAtLA7rV8DmP43e1rCd0jFSF52WSdUK/eikCZgXZ0TRFum3
-         eCdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678886622;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UnW0CMrrRD3o9YvTtj/2PZfd1w3APSitkBSkSzkAq3A=;
-        b=1/uGjC/2708je2XKDSA7TLYgOKy03rKrwcBIp1/8B6gKdIY6SnCZoUz348xd/KjeYU
-         nKYLSVLqh7Lm1i4PHH2Q2eokv73db7iXyCtSVRV7+fsDWz9QkRX+GREtlOJZOgq5fgDr
-         jMHZriCGGif94DHHoaYXV1moESADVkwCMJMijDf0mg8Y4LTM6gO0B6Mkya54Y5dZRg28
-         oTvhVPOwBBgR/ci1x2I3Fr9UblJNhwOtXa6nC7YsuwQmHP2gZvVgx1f4JJs+6gDJ3dH+
-         OkOCLxSD56T6vpm8A2mQgRMXigHrn7sojZ9jNhVJ0s6xU5YsV6OA2p40nNJ53UL8rAvS
-         Vf6A==
-X-Gm-Message-State: AO0yUKWcz4edpPrkenpzT8t9jDK6LM6iWPXyOC+JEn7V/XPdsjpI/bKz
-        a6gBJ++pFTdzFYriN4dxWU6gaw==
-X-Google-Smtp-Source: AK7set+W+V2K+JVgObXv7PEO2bdA92Y2AmBplxjf8AwC8skNcxMQIt1ZNpm4fZzwq+uDEYAYCDcLJQ==
-X-Received: by 2002:a17:906:dff5:b0:8b1:3193:4874 with SMTP id lc21-20020a170906dff500b008b131934874mr5703584ejc.46.1678886622632;
-        Wed, 15 Mar 2023 06:23:42 -0700 (PDT)
-Received: from localhost.localdomain ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id pj18-20020a170906d79200b008b133f9b33dsm2497365ejb.169.2023.03.15.06.23.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Mar 2023 06:23:42 -0700 (PDT)
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
+        with ESMTP id S233192AbjCOO36 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 10:29:58 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EBC01E5CB;
+        Wed, 15 Mar 2023 07:29:57 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DCBAEB81E55;
+        Wed, 15 Mar 2023 14:29:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EF23C433EF;
+        Wed, 15 Mar 2023 14:29:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678890594;
+        bh=yeoozDGy68VvFH5vyT1Uvv1fHYGrzFSj4yfihcifBiM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=utJE/6cMb3JgVNikhj5KXIVkJUVGjnQTuG5xH5dZmoxVyKAdcIy/hSqgcp1/aYN2M
+         kxWJIxUnljOpD9g4okXeDazyiP0QDyQAuXCmt6vC1++rJXFVn2xPRn0HZHk1CzIH4N
+         I1th88B3Y8nlpEo2gQtMDfzDqcn81ylGhBfeB9970RHbhD1lRaPgOcEZ0HYK7i2S1+
+         uQytbzX+AcsZiIjGqgkUaoaYV6jJiC5BMkMSNO1ngbH98gDnNfB35nJ1Ccz9pJWXXA
+         EFjByt3yNEdc0yPnspX2BaOQC5YQdxRI4d1PPZVuXZNPY33tH/y6zNAofnij49a8ri
+         e3av8CUdEUKhg==
+From:   Conor Dooley <conor@kernel.org>
+To:     linux-riscv@lists.infradead.org,
+        Jesse Taube <mr.bossman075@gmail.com>
+Cc:     conor@kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jesse Taube <Mr.Bossman075@gmail.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Saravana Kannan <saravanak@google.com>
-Cc:     linux-pm@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Doug Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [RFC PATCH 5/5] clk: qcom: Add sync state callback to all SM8450 providers
-Date:   Wed, 15 Mar 2023 15:23:30 +0200
-Message-Id: <20230315132330.450877-6-abel.vesa@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230315132330.450877-1-abel.vesa@linaro.org>
-References: <20230315132330.450877-1-abel.vesa@linaro.org>
+        Randy Dunlap <rdunlap@infradead.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [PATCH v1] RISCV: CANAAN: Make K210_SYSCTL depend on CLK_K210
+Date:   Wed, 15 Mar 2023 14:29:31 +0000
+Message-Id: <167889030701.90562.14045600493618249277.b4-ty@microchip.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230314211030.3953195-1-Mr.Bossman075@gmail.com>
+References: <20230314211030.3953195-1-Mr.Bossman075@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=538; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=6lWFOE6LTt1oRZCLjVCboDlTzeAL/GgThgDMSLLR1N8=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDCmC1zy2XghyrlbTZ4+vWbPxrvOPtxrfA/6n9GbVVywRn GgRVvG3o5SFQYyDQVZMkSXxdl+L1Po/Ljuce97CzGFlAhnCwMUpABN5c5+R4XgFf83F+cVr2S2i thqfnRP48bnsCbtWNSZ2e9V988oifBkZPnD90TKKuhx97VsHy/3YXdPTAm/8/P30vsPbB+9CrzT fYgcA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now that we have support for sync state delayed disabling of unused
-power domains and a provided generic gdsc sync state callback, add it to
-all the providers related to the SM8450 platform.
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- drivers/clk/qcom/camcc-sm8450.c  | 1 +
- drivers/clk/qcom/dispcc-sm8450.c | 1 +
- drivers/clk/qcom/gcc-sm8450.c    | 1 +
- 3 files changed, 3 insertions(+)
+On Tue, 14 Mar 2023 17:10:30 -0400, Jesse Taube wrote:
+> CLK_K210 is no longer a dependency of SOC_CANAAN,
+> but K210_SYSCTL depends on CLK_K210. This patch makes K210_SYSCTL
+> depend on CLK_K210. Also fix whitespace errors.
+> 
+> 
 
-diff --git a/drivers/clk/qcom/camcc-sm8450.c b/drivers/clk/qcom/camcc-sm8450.c
-index 51338a2884d2..6ae360898aee 100644
---- a/drivers/clk/qcom/camcc-sm8450.c
-+++ b/drivers/clk/qcom/camcc-sm8450.c
-@@ -2847,6 +2847,7 @@ static struct platform_driver cam_cc_sm8450_driver = {
- 	.driver = {
- 		.name = "camcc-sm8450",
- 		.of_match_table = cam_cc_sm8450_match_table,
-+		.sync_state = gdsc_sync_state,
- 	},
- };
- 
-diff --git a/drivers/clk/qcom/dispcc-sm8450.c b/drivers/clk/qcom/dispcc-sm8450.c
-index adbfd30bfc96..45f4ea3d26bc 100644
---- a/drivers/clk/qcom/dispcc-sm8450.c
-+++ b/drivers/clk/qcom/dispcc-sm8450.c
-@@ -1803,6 +1803,7 @@ static struct platform_driver disp_cc_sm8450_driver = {
- 	.driver = {
- 		.name = "disp_cc-sm8450",
- 		.of_match_table = disp_cc_sm8450_match_table,
-+		.sync_state = gdsc_sync_state,
- 	},
- };
- 
-diff --git a/drivers/clk/qcom/gcc-sm8450.c b/drivers/clk/qcom/gcc-sm8450.c
-index 84764cc3db4f..f2b542753553 100644
---- a/drivers/clk/qcom/gcc-sm8450.c
-+++ b/drivers/clk/qcom/gcc-sm8450.c
-@@ -3262,6 +3262,7 @@ static struct platform_driver gcc_sm8450_driver = {
- 	.driver = {
- 		.name = "gcc-sm8450",
- 		.of_match_table = gcc_sm8450_match_table,
-+		.sync_state = gdsc_sync_state,
- 	},
- };
- 
--- 
-2.34.1
+Applied to riscv-soc-for-next, thanks!
+
+[1/1] soc: canaan: Make K210_SYSCTL depend on CLK_K210
+      https://git.kernel.org/conor/c/49f965b6fbca63904d7397ce96066fa992f401a3
+
+I dropped the common clk dependency down onto its own line & tweaked
+the $subject a wee bit.
+
+Thanks for the patch!
 
