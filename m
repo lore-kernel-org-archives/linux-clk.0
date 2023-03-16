@@ -2,179 +2,112 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D2AC6FD1F
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 19:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C2BC74A5B
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 22:24:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230308AbjCPTeM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Mar 2023 15:34:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36312 "EHLO
+        id S229532AbjCPWYP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Mar 2023 18:24:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230290AbjCPTeK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 15:34:10 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53BCE2A9A6
-        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 12:34:08 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id ek18so11925521edb.6
-        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 12:34:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678995247;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dyciw28w72xcQW9mQh3xwrk42HtEkqAkTnLwxCjUt1I=;
-        b=jDqdnQW7R9aFerJ6wrorsKPfOTU+aKBneRLhQVGtss9S/T+e8qLZ/WtyuHSPazKXlP
-         LCLGXb1WbkdfS45+Npn8Nl0lKy1f84TjB4kQ8fy8EG/c9bwDun7ozcmubXSESQemTOzR
-         h8ULyf3hwJtSIEP97mfo4O9wZyhKn/gZHDHoI73gViztzppizQXDBT5AYu0sxRRhDv2q
-         IdGW3c8psvYjfBnse59HncFk0Bvr7+ObRp+8rLhKCLJvqQ4DEiqoJKstGX1bawSQZWwv
-         1x7GY5SqbwcSUNZLLvaSUufn5E40ozOsYJj5tvPI70FDX6AEWkCBsACJUm/YtG/2Tirl
-         iSIw==
+        with ESMTP id S229977AbjCPWX6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 18:23:58 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96331B691D
+        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 15:22:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1679005321;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/Rowjv41usgCF4QQ+kI7SHFbssbiYFWw5qAQUMEZc44=;
+        b=SHTJpmtP4QCzXpF5Y+3qkm4FZKqpslAx6ZFqZzdJ8mDo8xHCtwoxouiiE4Ft11u8rJMvix
+        n75o9cITMTcYjst1fBRDjhUnDZQqPuhtXFl7iLpCqS5ktT3mDV0ekbxIK4EMRBEfApqSRU
+        KD2ovTrz7VWMuJ0OslHV9MELp667acg=
+Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
+ [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-642-4-yTVDeCPq-mzSE7Wpu-8A-1; Thu, 16 Mar 2023 18:22:00 -0400
+X-MC-Unique: 4-yTVDeCPq-mzSE7Wpu-8A-1
+Received: by mail-ot1-f70.google.com with SMTP id cm26-20020a056830651a00b006983a82ef15so1381375otb.18
+        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 15:21:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678995247;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dyciw28w72xcQW9mQh3xwrk42HtEkqAkTnLwxCjUt1I=;
-        b=SwQBzKDEvL1hAteS5OcyQJ2fYCS8/W88CTP89JY0qsCR8MSSmcAxaJz4tRSGmPhO+w
-         03I66zHqDyb+cxO0xsdrfmYULm8XxEe8pWVN5Pc+vh+Jz2mIuH01cKj7x8T/6Nhebyqf
-         FQkdOiIWRGuXAMpnLwewkRXPW3ZXbrcBZDIqbYlWlQNntML3GdagnC5EiL16MhYwmxpp
-         7cqhO2UTKZGnehGZfUG0UxGl40XqhOM7rVjMPxdDqYManeCSPVdjblq4ddDrXyYxxBL9
-         NObub8G0H/a00KQOkwHDHuo/YweiPaMzFC3qhbdNFRfeAc5j5JbzZqmS8C1VXlOyXkGG
-         6D0Q==
-X-Gm-Message-State: AO0yUKU5bLx/L1pumz0l2cvX7O6EztNedds2dJnp9YIxMnXjCW0QvxNv
-        zl2P305QG7GbS7PR19vK8ZXLlA==
-X-Google-Smtp-Source: AK7set/v1W7Ns5+ZlsqTjhJvhjWCh0bXOH6bccxxSpksf19UNwSeZsMDyZ3fw5BSDUUO2F7XNaAskg==
-X-Received: by 2002:a17:906:cc54:b0:884:37fd:bf4c with SMTP id mm20-20020a170906cc5400b0088437fdbf4cmr11914784ejb.19.1678995246860;
-        Thu, 16 Mar 2023 12:34:06 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:9827:5f65:8269:a95f? ([2a02:810d:15c0:828:9827:5f65:8269:a95f])
-        by smtp.gmail.com with ESMTPSA id r5-20020a1709064d0500b00923f05b2931sm16291eju.118.2023.03.16.12.34.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Mar 2023 12:34:06 -0700 (PDT)
-Message-ID: <7424bab4-6a92-7d71-b110-454819101678@linaro.org>
-Date:   Thu, 16 Mar 2023 20:34:05 +0100
+        d=1e100.net; s=20210112; t=1679005319;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/Rowjv41usgCF4QQ+kI7SHFbssbiYFWw5qAQUMEZc44=;
+        b=NoGtWYJafq/HftvNpax0T0WhMMMCoLt+eb5yZNbMlUb84zl415vTI06m0+YIhOQDUV
+         VhrdcKIgSHDl/kQgvSWhbduOtxU5+oVDcjmIFiYGHE2ZXasfjVGc11iMvzfggUS99Usr
+         YAgJwoNDyCrGHIt0qjs87W/K0QbOd3vm9mW3SIPA2PqlZRU4Ra2sDPtvfhTLTkd30QRD
+         Y1E1XhQ4JlZ4O2SxHlMHivKAbyumFP/T1W/5qODZdKa0FZU6nYiD9D6gbyVKgaxz5kSK
+         vBebKODwuXur+q/xwRaDDQ4xsdDylRBsS3PVlwcwIBEXwBcTlJfvciRAgRSez4P9OnE+
+         /lnw==
+X-Gm-Message-State: AO0yUKXE0wL9gUjYH/PnxDjRGifs7nuqXQk5uRhCS6kI9JZK3gPCBbCG
+        VwFeSFNn8vVn97L3jTyZ9gpCIUSnP9i3IRBDoDtw4COpyNaWh7O503E0lmuowCcOd4201GnEc4k
+        6ueDDU+uHPPhVQZXxbAQ+
+X-Received: by 2002:a05:6808:288e:b0:37f:ab79:a18a with SMTP id eu14-20020a056808288e00b0037fab79a18amr3573044oib.6.1679005319344;
+        Thu, 16 Mar 2023 15:21:59 -0700 (PDT)
+X-Google-Smtp-Source: AK7set/j+kh5lDpmaLzdIllCWV+e60+QESfodsxPJwbhNxsMnnYpD889YVRRc7aq7J3P6t24SdXMeg==
+X-Received: by 2002:a05:6808:288e:b0:37f:ab79:a18a with SMTP id eu14-20020a056808288e00b0037fab79a18amr3572986oib.6.1679005317656;
+        Thu, 16 Mar 2023 15:21:57 -0700 (PDT)
+Received: from halaney-x13s (104-53-165-62.lightspeed.stlsmo.sbcglobal.net. [104.53.165.62])
+        by smtp.gmail.com with ESMTPSA id r130-20020acaf388000000b00383f58e7e95sm245725oih.17.2023.03.16.15.21.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Mar 2023 15:21:56 -0700 (PDT)
+Date:   Thu, 16 Mar 2023 17:21:53 -0500
+From:   Andrew Halaney <ahalaney@redhat.com>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, agross@kernel.org,
+        andersson@kernel.org, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, vkoul@kernel.org,
+        bhupesh.sharma@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, peppe.cavallaro@st.com,
+        alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+        mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
+        linux@armlinux.org.uk, veekhee@apple.com,
+        tee.min.tan@linux.intel.com, mohammad.athari.ismail@intel.com,
+        jonathanh@nvidia.com, ruppala@nvidia.com, bmasney@redhat.com,
+        andrey.konovalov@linaro.org, linux-arm-msm@vger.kernel.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, ncai@quicinc.com,
+        jsuraj@qti.qualcomm.com, hisunil@quicinc.com
+Subject: Re: [PATCH net-next 05/11] clk: qcom: gcc-sc8280xp: Add EMAC GDSCs
+Message-ID: <20230316222153.43wzb4nv7s4d3wwz@halaney-x13s>
+References: <20230313165620.128463-1-ahalaney@redhat.com>
+ <20230313165620.128463-6-ahalaney@redhat.com>
+ <3f37eede-6d62-fb92-9cff-b308de333ebd@linaro.org>
+ <20230314160818.2yopv6yeczne7gfi@halaney-x13s>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom: Add bindings for videocc on
- SM8450
-Content-Language: en-US
-To:     Taniya Das <quic_tdas@quicinc.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andy Gross <agross@kernel.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_skakitap@quicinc.com, quic_jkona@quicinc.com
-References: <20230316083049.29979-1-quic_tdas@quicinc.com>
- <20230316083049.29979-2-quic_tdas@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230316083049.29979-2-quic_tdas@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230314160818.2yopv6yeczne7gfi@halaney-x13s>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16/03/2023 09:30, Taniya Das wrote:
-> Add device tree bindings for the video clock controller on Qualcomm
-> SM8450 platform.
-
-Subject: drop second/last, redundant "bindings for". The "dt-bindings"
-prefix is already stating that these are bindings.
-
+On Tue, Mar 14, 2023 at 11:08:18AM -0500, Andrew Halaney wrote:
+> On Tue, Mar 14, 2023 at 04:13:18PM +0100, Konrad Dybcio wrote:
+> > 
+> > 
+> > On 13.03.2023 17:56, Andrew Halaney wrote:
+> > > Add the EMAC GDSCs to allow the EMAC hardware to be enabled.
+> > > 
+> > > Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
+> > > ---
+> > Was it tested to not cause issues on access on "normal" 8280xp?
+> > AFAICS if there would be any, they would happen at registration
+> > time, as gdsc_init already accesses its registers
 > 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
->  .../bindings/clock/qcom,sm8450-videocc.yaml   | 84 +++++++++++++++++++
->  .../dt-bindings/clock/qcom,videocc-sm8450.h   | 38 +++++++++
->  2 files changed, 122 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,videocc-sm8450.h
+> No, I've only tested this series on the sa8540p-ride. I luckily also am
+> working from an x13s, I will use that to confirm nothing strange happens
+> with this applied before sending v2 and confirm the results.
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> new file mode 100644
-> index 000000000000..909da704c123
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> @@ -0,0 +1,84 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,sm8450-videocc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Video Clock & Reset Controller on SM8450
-> +
-> +maintainers:
-> +  - Taniya Das <quic_tdas@quicinc.com>
-> +
-> +description: |
-> +  Qualcomm video clock control module provides the clocks, resets and power
-> +  domains on SM8450.
-> +
-> +  See also:: include/dt-bindings/clock/qcom,videocc-sm8450.h
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,sm8450-videocc
-> +
-> +  clocks:
-> +    items:
-> +      - description: Video AHB clock from GCC
-> +      - description: Board XO source
-> +
-> +  clock-names:
-> +    items:
-> +      - const: iface
-> +      - const: bi_tcxo
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +    description:
-> +      A phandle and PM domain specifier for the MMCX power domain.
 
-Drop "A phandle and PM domain specifier for the"
+Writing from my x13s with this applied, things seem ok to me :)
 
-> +
-> +  required-opps:
-> +    maxItems: 1
-> +    description:
-> +      A phandle to an OPP node describing required MMCX performance point.
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  '#power-domain-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-
-That's a unusual ordering. Either order elements by name or use some
-custom order... but then reg is always second property.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - power-domains
-> +  - required-opps
-> +  - '#clock-cells'
-> +  - '#reset-cells'
-> +  - '#power-domain-cells'
-
-And keep same order in required.
-
-> +
-> +additionalProperties: false
-
-
-Best regards,
-Krzysztof
+Thanks,
+Andrew
 
