@@ -2,111 +2,71 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6823C7618D
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 07:51:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE30EC6FD19
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 07:59:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230092AbjCPHv5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Mar 2023 03:51:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49068 "EHLO
+        id S229982AbjCPH7d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Mar 2023 03:59:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230081AbjCPHv4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 03:51:56 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAD8A7A82
-        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 00:51:51 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id x3so3963521edb.10
-        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 00:51:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678953110;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SqBYAJISm+xBYuJniVgL6Vtz9zjcIWWDyN48wAu/KDU=;
-        b=lnTewBAO3G0u3bTSTT1mW63DMUn1vYj5aSnz30+U9T4zrIfTeEMf09IxtfBI9ypo3s
-         99wyjSTmC4wJ/1poHQp2AJWzRuoDFe+3UifIiAYpUX92ZTEjAF254OPkiHGrGdopmy7z
-         sJsmfb4PKdJV47u7x6sCoe3GfLW+GwwXmbWnoRC8EVCFL43UtJVPgmfIn8Yrgkzw6hFI
-         pWfGBqdh/cWi73mwxmNx74ooh1qi1W4Ipt1yJEuESE6EikMyQGDI4QuHyKD/07O+7ohc
-         BC2+aJkZ7WLlpLZmzAQDtjb/7N93GzW92VZGCtPmBw0FlQq0J1x9qyBRI+R6XmKklCX2
-         7SYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678953110;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SqBYAJISm+xBYuJniVgL6Vtz9zjcIWWDyN48wAu/KDU=;
-        b=70HaKC8pJz6h/vcAy0nLdl3SYJqZGcAzlGILWDHgWGusE+guO4kDEAyi5sicDONWko
-         fAceNZ2ZNbp7y+lWeX+Kpq1iV3asBJLd2VH4kZJ9Nhqk4VvVD3ZXuRy0OBEcuEb+kTU1
-         j6VcTSNArfSpXmnFN4Sz00UXymUSO7o7s1fpjVWeUYY8e8EQONax192IjPHA/83Dm0Xd
-         l2uzgFbPRADdgibh66mc5pPpmjp7XsuE5jNdCiCBFfheBnrFtLWChPeuWCTaXw7iPOtL
-         guSjBru5vUc0ZmY13iBE2NfrC74jcLiwsNVyYhGCv1PfABMk9YMyywY2/er40/m6eSTh
-         cqyg==
-X-Gm-Message-State: AO0yUKU4x2IiMJEc0DwJEseImC0nPSn9+YwLWZysWCkHbRaoGOktmPUB
-        mf5qznwf6BSP1F7ieh63UfdPvg==
-X-Google-Smtp-Source: AK7set/Z4ZcKVAlzgoCCzTTMAKl279txErOikpL4DryuHVlF04ywm9rUpDpTFI+1vzYR1TcBqoVxEQ==
-X-Received: by 2002:a17:906:c009:b0:930:6591:15ee with SMTP id e9-20020a170906c00900b00930659115eemr1183394ejz.10.1678953110172;
-        Thu, 16 Mar 2023 00:51:50 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:9827:5f65:8269:a95f? ([2a02:810d:15c0:828:9827:5f65:8269:a95f])
-        by smtp.gmail.com with ESMTPSA id og49-20020a1709071df100b0090953b9da51sm3487249ejc.194.2023.03.16.00.51.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Mar 2023 00:51:49 -0700 (PDT)
-Message-ID: <cbfad8ff-fe52-4e25-40d8-84ff43f5c3ad@linaro.org>
-Date:   Thu, 16 Mar 2023 08:51:48 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 13/15] reset: Add Nuvoton ma35d1 reset driver support
-Content-Language: en-US
-To:     Jacky Huang <ychuang570808@gmail.com>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        schung@nuvoton.com, Jacky Huang <ychuang3@nuvoton.com>
-References: <20230315072902.9298-1-ychuang570808@gmail.com>
- <20230315072902.9298-14-ychuang570808@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230315072902.9298-14-ychuang570808@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S230338AbjCPH71 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 03:59:27 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.237])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B69223B853;
+        Thu, 16 Mar 2023 00:59:16 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by mail.nfschina.com (Postfix) with ESMTP id 58BFC1A00AC4;
+        Thu, 16 Mar 2023 15:59:16 +0800 (CST)
+X-Virus-Scanned: amavisd-new at nfschina.com
+Received: from mail.nfschina.com ([127.0.0.1])
+        by localhost (localhost.localdomain [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Nqss6Lz1i7jM; Thu, 16 Mar 2023 15:59:15 +0800 (CST)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        (Authenticated sender: yuzhe@nfschina.com)
+        by mail.nfschina.com (Postfix) with ESMTPA id EC7F91A0079E;
+        Thu, 16 Mar 2023 15:59:14 +0800 (CST)
+From:   Yu Zhe <yuzhe@nfschina.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, liqiong@nfschina.com,
+        Yu Zhe <yuzhe@nfschina.com>
+Subject: [PATCH] clk: remove unnecessary (void*) conversions
+Date:   Thu, 16 Mar 2023 15:58:26 +0800
+Message-Id: <20230316075826.22754-1-yuzhe@nfschina.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 15/03/2023 08:29, Jacky Huang wrote:
-> From: Jacky Huang <ychuang3@nuvoton.com>
-> 
-> This driver supports individual IP reset for ma35d1. The reset
-> control registers is a subset of system control registers.
-> 
-> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
-> ---
->  drivers/reset/Kconfig        |   6 ++
->  drivers/reset/Makefile       |   1 +
->  drivers/reset/reset-ma35d1.c | 152 +++++++++++++++++++++++++++++++++++
->  3 files changed, 159 insertions(+)
->  create mode 100644 drivers/reset/reset-ma35d1.c
-> 
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 2a52c990d4fe..47671060d259 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -143,6 +143,12 @@ config RESET_NPCM
->  	  This enables the reset controller driver for Nuvoton NPCM
->  	  BMC SoCs.
->  
-> +config RESET_NUVOTON_MA35D1
-> +	bool "Nuvton MA35D1 Reset Driver"
-> +	default ARCH_NUVOTON
+Pointer variables of void * type do not require type cast.
 
-|| COMPILE_TEST
+Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+---
+ drivers/clk/clk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-> +	help
-> +	  This enables the reset controller driver for Nuvoton MA35D1 SoC.
-> +
-
-
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index ae07685c7588..9410a4e1b04b 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3194,7 +3194,7 @@ static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
+ static int clk_summary_show(struct seq_file *s, void *data)
+ {
+ 	struct clk_core *c;
+-	struct hlist_head **lists = (struct hlist_head **)s->private;
++	struct hlist_head **lists = s->private;
+ 
+ 	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware\n");
+ 	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable\n");
+@@ -3253,7 +3253,7 @@ static int clk_dump_show(struct seq_file *s, void *data)
+ {
+ 	struct clk_core *c;
+ 	bool first_node = true;
+-	struct hlist_head **lists = (struct hlist_head **)s->private;
++	struct hlist_head **lists = s->private;
+ 
+ 	seq_putc(s, '{');
+ 	clk_prepare_lock();
+-- 
+2.11.0
 
