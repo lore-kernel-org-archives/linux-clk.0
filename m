@@ -2,175 +2,86 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23811C6FD19
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 16:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13981C6FD19
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 16:45:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230078AbjCPQRV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Mar 2023 12:17:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36576 "EHLO
+        id S231130AbjCPQpF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Mar 2023 12:45:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229936AbjCPQRU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 12:17:20 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 515E6B32AD
-        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 09:15:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678983331;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=mlukPFgMuUiNDYUja4zCoHJNdHul/iInVFC/mNyQV8Q=;
-        b=WeIDxR7eS8wn2u9RAe3uYDIPjTN3fa4/3TeEbrgNYTSA4OJ8lRDo/CcY0j4qAa3S/r8Fqy
-        gBe/su+wJTNYG82KbEpOSbu1QSG6q6LdQAXuO10fQiRi8H76X/6IMfuPWcTWQZ0gwTSPb/
-        c2KGZl4aWeseV6gwMI8XUeq9odNrW3E=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-132-CFwEfPPUMSyg0TzXkqocKw-1; Thu, 16 Mar 2023 12:15:29 -0400
-X-MC-Unique: CFwEfPPUMSyg0TzXkqocKw-1
-Received: by mail-qk1-f199.google.com with SMTP id 191-20020a3705c8000000b007459d84a0f9so1188288qkf.17
-        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 09:15:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678983329;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mlukPFgMuUiNDYUja4zCoHJNdHul/iInVFC/mNyQV8Q=;
-        b=h6IsZS17r4Y0izENkKglaVfN0kpcbeA6AjbJ2avN8p+gZ29hL433b/hC8Q3TK7d/o1
-         7BFT2zGWXDHnuRQV4z0tp5XmDzMSwOJG2bj3Mnx11A98PIusiEjye0HdRWhh0N+/rIll
-         rKrL66VxJ/0SOla8ax3tHbsxQseV7KyAq/5Js2980RDWts+QB+VrK0oYaYPKJ+FjYtuV
-         AmbTG5plAzk3sWNR32lTGu81SUR79K2SjjHWx3RbNs3eqjo0fETOWYfptc48Ee5rPFrM
-         1GNPIL2qpl7L+nAMVo5yMQrgwkYlPu8wPbG0P6J7RcIvQjNzd9yMN8qfBRkRB8wYWbvj
-         CuaQ==
-X-Gm-Message-State: AO0yUKW1RzP04PTVTNlXIj1+4CTqupuv+HAdel6lZz/qTIp2ZBDWBBfD
-        MKYfhdH28kNm2+wIrTronQm54cZ9NG2Q0HiQznxUjoehSI8sH/g/dWeOZNUhtL07Iu9O1VLRrV+
-        EjciL9Cc6TMlYLrHxCf+U
-X-Received: by 2002:a05:6214:2428:b0:574:8ef8:89d2 with SMTP id gy8-20020a056214242800b005748ef889d2mr39824735qvb.38.1678983329396;
-        Thu, 16 Mar 2023 09:15:29 -0700 (PDT)
-X-Google-Smtp-Source: AK7set+of7na8F1dFKLndAwQGwakPmWiDEiDVwrlTO9yupX5AyjFyMqZe903mbwQxlEn+ZQoYaB20w==
-X-Received: by 2002:a05:6214:2428:b0:574:8ef8:89d2 with SMTP id gy8-20020a056214242800b005748ef889d2mr39824676qvb.38.1678983329027;
-        Thu, 16 Mar 2023 09:15:29 -0700 (PDT)
-Received: from halaney-x13s (104-53-165-62.lightspeed.stlsmo.sbcglobal.net. [104.53.165.62])
-        by smtp.gmail.com with ESMTPSA id q16-20020a05620a025000b00745df9edd7csm4841721qkn.91.2023.03.16.09.15.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Mar 2023 09:15:28 -0700 (PDT)
-Date:   Thu, 16 Mar 2023 11:15:25 -0500
-From:   Andrew Halaney <ahalaney@redhat.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, vkoul@kernel.org,
-        bhupesh.sharma@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, peppe.cavallaro@st.com,
-        alexandre.torgue@foss.st.com, joabreu@synopsys.com,
-        mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
-        linux@armlinux.org.uk, veekhee@apple.com,
-        tee.min.tan@linux.intel.com, mohammad.athari.ismail@intel.com,
-        jonathanh@nvidia.com, ruppala@nvidia.com, bmasney@redhat.com,
-        andrey.konovalov@linaro.org, linux-arm-msm@vger.kernel.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, ncai@quicinc.com,
-        jsuraj@qti.qualcomm.com, hisunil@quicinc.com
-Subject: Re: [PATCH net-next 01/11] dt-bindings: net: snps,dwmac: Update
- interrupt-names
-Message-ID: <20230316161525.fwzfyj3fhekfwafd@halaney-x13s>
-References: <20230313165620.128463-1-ahalaney@redhat.com>
- <20230313165620.128463-2-ahalaney@redhat.com>
- <d4831176-c6f1-5a9b-3086-23d82f1f05a6@linaro.org>
+        with ESMTP id S230495AbjCPQpE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 12:45:04 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B86F914223;
+        Thu, 16 Mar 2023 09:44:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1634762071;
+        Thu, 16 Mar 2023 16:44:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64545C433D2;
+        Thu, 16 Mar 2023 16:44:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678985074;
+        bh=yfx4iiucYGIUOEIaNe/Ybg77Apth21Lr71vscJTJmnk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XE+bKJewW8yN3Sbjp9vsvxlMkgKiA8UP1lu/rPOiFJ1ot1S+Q5yW+RbWxgLqS9wm+
+         oHaimwJphGUcJWzgf+b6ZkqmG1cR7KMDqSlTBl6MTP45jrs++dITnej253R+MM+cop
+         ixw+FWVouml+2bMnyrdHP2UIF8Wvmir55NMp/0AFhyuzdvFDf7y8+15zccnl/m4RDp
+         Qhaex5OPg7QDaKQPhoa9qY/HRjAGq4SE9puythuzkoU2wL3pbuqejsH9Mia3g0Gqzr
+         2ltD9oQZ6k9veA1kjuVvKix09uz/C25If9nm6++t87qSRZ8mfSYcEMFoUmEkydWski
+         YMoyEV+N0QMIQ==
+Date:   Thu, 16 Mar 2023 16:44:28 +0000
+From:   Lee Jones <lee@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Jacky Huang <ychuang570808@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, schung@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+Subject: Re: [PATCH 11/15] arm64: dts: nuvoton: Add initial ma35d1 device tree
+Message-ID: <20230316164428.GY9667@google.com>
+References: <20230315072902.9298-1-ychuang570808@gmail.com>
+ <20230315072902.9298-12-ychuang570808@gmail.com>
+ <2063c6d1-85ed-43d9-b572-a762b6ce18c1@app.fastmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d4831176-c6f1-5a9b-3086-23d82f1f05a6@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2063c6d1-85ed-43d9-b572-a762b6ce18c1@app.fastmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Mar 16, 2023 at 08:13:24AM +0100, Krzysztof Kozlowski wrote:
-> On 13/03/2023 17:56, Andrew Halaney wrote:
-> > From: Bhupesh Sharma <bhupesh.sharma@linaro.org>
-> >
-> > As commit fc191af1bb0d ("net: stmmac: platform: Fix misleading
-> > interrupt error msg") noted, not every stmmac based platform
-> > makes use of the 'eth_wake_irq' or 'eth_lpi' interrupts.
-> >
-> > So, update the 'interrupt-names' inside 'snps,dwmac' YAML
-> > bindings to reflect the same.
-> >
-> > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
-> > Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
-> > ---
-> >
-> > I picked this up from:
-> >		https://lore.kernel.org/netdev/20220929060405.2445745-2-bhupesh.sharma@linaro.org/
-> > No changes other than collecting the Acked-by.
-> >
-> >  Documentation/devicetree/bindings/net/snps,dwmac.yaml | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> > index 16b7d2904696..52ce14a4bea7 100644
-> > --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> > +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> > @@ -105,8 +105,8 @@ properties:
-> >      minItems: 1
-> >      items:
-> >        - const: macirq
-> > -      - const: eth_wake_irq
-> > -      - const: eth_lpi
-> > +      - enum: [eth_wake_irq, eth_lpi]
-> > +      - enum: [eth_wake_irq, eth_lpi]
+On Thu, 16 Mar 2023, Arnd Bergmann wrote:
+
+> On Wed, Mar 15, 2023, at 08:28, Jacky Huang wrote:
+> > +	mem: memory@80000000 {
+> > +		device_type = "memory";
+> > +		reg = <0x00000000 0x80000000 0 0x20000000>; /* 512M DRAM */
+> > +	};
+> > +};
 >
-> I acked it before but this is not correct. This should be:
-> +      - enum: [eth_wake_irq, eth_lpi]
-> +      - enum: eth_lpi
+> In most machines, the memory size is detected by the boot loader
+> and filled in the dtb in memory before starting the kernel, so
+> you should not need two separate files here for the two common
+> memory configurations.
+>
+> Since the machine is called 'som', I would assume that this is a
+> module that is integrated on another board, so more commonly one
+> would have a dtsi file for the som in addition to the one for the
+> soc, and have all the components of the module listed in this
+> file, while the dts file that includes the som.dtsi lists the
+> devices on the carrier board and enables the on-chip devices
+> that are connected to the outside.
 
-Would
-+      - enum: [eth_wake_irq, eth_lpi]
-+      - const: eth_lpi
-be more appropriate? With the suggested change above I get the following
-error, but with the above things seem to work as I expect:
+It's using syscon and simple-mfd by the looks of it.
 
-    (dtschema) ahalaney@halaney-x13s ~/git/redhat/stmmac (git)-[stmmac|rebase-i] % git diff HEAD~
-    diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-    index 16b7d2904696..ca199a17f83d 100644
-    --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-    +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-    @@ -105,8 +105,8 @@ properties:
-         minItems: 1
-         items:
-           - const: macirq
-    -      - const: eth_wake_irq
-    -      - const: eth_lpi
-    +      - enum: [eth_wake_irq, eth_lpi]
-    +      - enum: eth_lpi
-
-       clocks:
-         minItems: 1
-    (dtschema) ahalaney@halaney-x13s ~/git/redhat/stmmac (git)-[stmmac|rebase-i] % make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/net/snps,dwmac.yaml
-      DTEX    Documentation/devicetree/bindings/net/snps,dwmac.example.dts
-      LINT    Documentation/devicetree/bindings
-      CHKDT   Documentation/devicetree/bindings/processed-schema.json
-    /home/ahalaney/git/redhat/stmmac/Documentation/devicetree/bindings/net/snps,dwmac.yaml: properties:interrupt-names:items: 'anyOf' conditional failed, one must be fixed:
-        [{'const': 'macirq'}, {'enum': ['eth_wake_irq', 'eth_lpi']}, {'enum': 'eth_lpi'}] is not of type 'object', 'boolean'
-        'eth_lpi' is not of type 'array'
-        from schema $id: http://json-schema.org/draft-07/schema#
-    /home/ahalaney/git/redhat/stmmac/Documentation/devicetree/bindings/net/snps,dwmac.yaml: properties:interrupt-names:items: 'oneOf' conditional failed, one must be fixed:
-        [{'const': 'macirq'}, {'enum': ['eth_wake_irq', 'eth_lpi']}, {'enum': 'eth_lpi'}] is not of type 'object'
-        'eth_lpi' is not of type 'array'
-        from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-    /home/ahalaney/git/redhat/stmmac/Documentation/devicetree/bindings/net/snps,dwmac.yaml: properties:interrupt-names:items: 'oneOf' conditional failed, one must be fixed:
-        [{'const': 'macirq'}, {'enum': ['eth_wake_irq', 'eth_lpi']}, {'enum': 'eth_lpi'}] is not of type 'object'
-        'eth_lpi' is not of type 'array'
-        from schema $id: http://devicetree.org/meta-schemas/string-array.yaml#
-      SCHEMA  Documentation/devicetree/bindings/processed-schema.json
-    /home/ahalaney/git/redhat/stmmac/Documentation/devicetree/bindings/net/snps,dwmac.yaml: ignoring, error in schema: properties: interrupt-names: items
-      DTC_CHK Documentation/devicetree/bindings/net/snps,dwmac.example.dtb
-
-Thanks,
-Andrew
-
+--
+Lee Jones [李琼斯]
