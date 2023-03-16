@@ -2,123 +2,115 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D10C7618A
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 10:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0507AC7618D
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 11:17:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230044AbjCPKse (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Mar 2023 06:48:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35826 "EHLO
+        id S230263AbjCPLRQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Mar 2023 07:17:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230268AbjCPKrw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 06:47:52 -0400
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83731BE5E5;
-        Thu, 16 Mar 2023 03:47:35 -0700 (PDT)
-Received: by mail-pg1-x534.google.com with SMTP id x37so648347pga.1;
-        Thu, 16 Mar 2023 03:47:35 -0700 (PDT)
+        with ESMTP id S230256AbjCPLRP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 07:17:15 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1F9DC48AE
+        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 04:17:09 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id l22so1241646ljc.11
+        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 04:17:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678963654;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fN3Gy/q/ROltRj7J+tAnlAlwoyPhTrdOdavHnYVZxvY=;
-        b=N1lmQSw69vl53i59yOsOt26IWJZAgCGAqRqIm4+t8wAFQHtA5tSz7H1S9PPjsBsmr+
-         1jvqLKHCAjVI+rLSj1jgL9lHRJ3A5aVJtHfbAxJ2z+VUaIvSPF9cblsjdPJcJ5oD2rlU
-         4dRn1Z5EHmbSmVWrNhGC09MPPe5IbA0WxlrLkFMpJJ9XgxwN9ASSlR9ovnPqLE3Ze+L/
-         rL9VOgE6x8Le4ZbeTKrcJJESvgnqQgeqPOmHncGR9IOkTESp3Y+ogU23ht/vIbhHQVmn
-         MV0Qi1d44Le3gnngzB7J9XB7jk+IDVxVUlF0Cc6Dn01qRcDzjMsO3rKNFr1xyI13uuRD
-         i/DQ==
+        d=linaro.org; s=google; t=1678965428;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0mnANG0WP3DmVcvz1/YwEmwBOAubSIpodiPhLQQRHPQ=;
+        b=RzD6kGo45mF1NC8IwGwp1zoMdZiY/uwKOFdG0Gku81ZiR6TajnHjupDXa3KXXnqkLm
+         b1jdXXJxMatCz3vl8euA8Yl9D3n/VHxiWF5+yy3Wsf2ieKvPnVKeOP1mDb025CTOlsSU
+         XjmTMe76vdRHfP6pi55UkFl2z5bdGeD+etYICMpmkV3500gfrCNlY/cJNy6ttgihzm3G
+         +AQ+GIUnRkXaPIIvM1T2FFB0PWJLsQzyMT68M6kviJ3vwY+Rvcnw3BkNNINAPzZicaZY
+         c5Ov+RWsl8Bm0BexF7vKBCKhl1jMARnBYdnV/A1DxwEWB18ByHB7Wk5I629KkpGYn7Ek
+         b8Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678963654;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fN3Gy/q/ROltRj7J+tAnlAlwoyPhTrdOdavHnYVZxvY=;
-        b=fWYgEGJxqmQGpEzIx2/E4wNoeW1envaHPGNP9AQTdqLLX4E7P0Ri9HOxwkCoKDLk2O
-         Bq2FJOmIOIn2GPuSWYOIO9qFHfWwyWanBZLG/PYhm4mEU64XeKy8Z9W2NUVM9RAXloq6
-         uWgKCXD8YUvCQp254X8aFUX6/rS2AtAZibSdeU5xUZ0SLo2zNkQwk/h/McDpRtMis/kg
-         VtDUuduDigq12eCCckEYfvPHv+fXya5Af8sMaboC0MMutLuVQB1idC3EwnYcgh6IZJeZ
-         g6lQvktaDs2kxg50lluJh3GjLdAId3KfiOuf+1fHxHp6xErgP7/6HkeBbUEdO6vBWm9q
-         m8cA==
-X-Gm-Message-State: AO0yUKWdYwd6/XuA49j6citDuVmo4jwOEMLV29hmcMDRVdZ3w6EhwenT
-        HjFBXbrxTRlMNc3JR1mUfjGzgZ7LAsRZkg==
-X-Google-Smtp-Source: AK7set9fDPEuIUSuBy66rQSPu01HWrD6bc8RXkq2wZtUz8RLOPY1or5svlsEg6YYJoW3DtohKh8XNQ==
-X-Received: by 2002:a05:6a00:2e8a:b0:625:8d3e:34ff with SMTP id fd10-20020a056a002e8a00b006258d3e34ffmr3416209pfb.12.1678963653773;
-        Thu, 16 Mar 2023 03:47:33 -0700 (PDT)
-Received: from kelvin-ThinkPad-L14-Gen-1.. (94.130.220.35.bc.googleusercontent.com. [35.220.130.94])
-        by smtp.gmail.com with ESMTPSA id f11-20020aa78b0b000000b005d4e89b69e5sm5143263pfd.127.2023.03.16.03.47.29
+        d=1e100.net; s=20210112; t=1678965428;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0mnANG0WP3DmVcvz1/YwEmwBOAubSIpodiPhLQQRHPQ=;
+        b=ZbpXzX5Bv7drHRHItXIfRF5mJ0VhgoFpZ5i8hUHGfwsyZA+d4Z/MsaJRNIvXZYk4gX
+         p9/niIXT1sLdoLhEiF9foR7wZCIEHHKzgsLEoaBklcHqfvu99b1WMOJOhOMkRu4fnJJi
+         2MGf1tvEUEWvtwfe/D6a5zgRR7wF6iHQ/tjJ53HfiowLLuOT+IWXW/hLUo+VRTbFfC1w
+         SevscAZEvVzLW/xX+F6wKTAYHp0oQnMGGop22IRXIa+6hfOZoP1A9s8MIPagqnCVSDuF
+         NPG/JQAN3jLWrH9eKPLidkryA9LF4iCbI8Y4uZnk842n1fqcm31t6ljxm8BuTWvqk/xZ
+         GqfQ==
+X-Gm-Message-State: AO0yUKUC7JkrAzG09FoOT+kGGaA0kq04dcTd9k+H0qa7C0x2QoLuQxD/
+        JeOXrC05/0pf/hGfng2o0fSaPg==
+X-Google-Smtp-Source: AK7set9M9vMVB99HuWwfZmcxzJSQHkiSodthWkCxQ2Mc+9AVjxWrSiXpIzRKWDHZnNqcXE8DfZsohA==
+X-Received: by 2002:a05:651c:30e:b0:290:bca:b4d1 with SMTP id a14-20020a05651c030e00b002900bcab4d1mr1782028ljp.33.1678965427986;
+        Thu, 16 Mar 2023 04:17:07 -0700 (PDT)
+Received: from [192.168.1.101] (abyj16.neoplus.adsl.tpnet.pl. [83.9.29.16])
+        by smtp.gmail.com with ESMTPSA id u28-20020ac243dc000000b004db2978e330sm1194222lfl.258.2023.03.16.04.17.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Mar 2023 03:47:33 -0700 (PDT)
-From:   Keguang Zhang <keguang.zhang@gmail.com>
-To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Thu, 16 Mar 2023 04:17:07 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH 0/5] SM6350 GPU
+Date:   Thu, 16 Mar 2023 12:16:55 +0100
+Message-Id: <20230315-topic-lagoon_gpu-v1-0-a74cbec4ecfc@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKf6EmQC/x2N0QrCMAwAf2Xk2cDWoYi/IiJpjF2gpKV1Qxj7d
+ 4OPd3DcDl2aSofbsEOTTbsWc5hOA/BClgT15QxhDPM4T2f8lKqMmVIp9kx1xSsHisyRLxLBs0h
+ dMDYyXjy0NWeXtclbv//P/XEcP8JmKdJ3AAAA
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Keguang Zhang <keguang.zhang@gmail.com>
-Subject: [PATCH v3 4/4] MIPS: loongson32: Update the clock initialization
-Date:   Thu, 16 Mar 2023 18:47:07 +0800
-Message-Id: <20230316104707.236034-5-keguang.zhang@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230316104707.236034-1-keguang.zhang@gmail.com>
-References: <20230316104707.236034-1-keguang.zhang@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        Rob Herring <robh@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.12.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1678965426; l=1107;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=RF7HIBV67A6DiVij2JcKkT2mEA9SaWaW5WsM/kqTxv4=;
+ b=QW5XBYK11eROypzH3UX8psBBD5OI0JKN6JJUBvRp0LYvt/43LzbGr4lU9EV9m+X1R0X2NpjoNxm1
+ Qiu7SFcsAq2t3FlIt8JYILtpTxlkOUrpkgJQhSNXujfaqlDtTmvi
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Loongson-1 clock driver is under re-implementation
-to add DT support. As a result, ls1x_clk_init() will be dropped soon.
-Therefore, call of_clk_init() for clock initialization instead.
+Add all the required nodes for SM6350's A619 and fix up its GPUCC
+bindings.
 
-Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
----
-V2 -> V3: Add this patch to "Devicetree support for Loongson-1 clock" series
-	  Add Acked-by tag from Stephen Boyd and Thomas Bogendoerfer
-V1 -> V2: None
----
- arch/mips/include/asm/mach-loongson32/platform.h | 1 -
- arch/mips/loongson32/common/time.c               | 3 ++-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+This has been ready for like 1.5y now, time to finally merge it as
+the display part will take some more time (due to the HW catalog rework).
 
-diff --git a/arch/mips/include/asm/mach-loongson32/platform.h b/arch/mips/include/asm/mach-loongson32/platform.h
-index 86e1a6aab4e5..2cdcfb5f6012 100644
---- a/arch/mips/include/asm/mach-loongson32/platform.h
-+++ b/arch/mips/include/asm/mach-loongson32/platform.h
-@@ -20,7 +20,6 @@ extern struct platform_device ls1x_gpio1_pdev;
- extern struct platform_device ls1x_rtc_pdev;
- extern struct platform_device ls1x_wdt_pdev;
- 
--void __init ls1x_clk_init(void);
- void __init ls1x_rtc_set_extclk(struct platform_device *pdev);
- void __init ls1x_serial_set_uartclk(struct platform_device *pdev);
- 
-diff --git a/arch/mips/loongson32/common/time.c b/arch/mips/loongson32/common/time.c
-index 459b15c96d3b..965c04aa56fd 100644
---- a/arch/mips/loongson32/common/time.c
-+++ b/arch/mips/loongson32/common/time.c
-@@ -4,6 +4,7 @@
-  */
- 
- #include <linux/clk.h>
-+#include <linux/of_clk.h>
- #include <linux/interrupt.h>
- #include <linux/sizes.h>
- #include <asm/time.h>
-@@ -211,7 +212,7 @@ void __init plat_time_init(void)
- 	struct clk *clk = NULL;
- 
- 	/* initialize LS1X clocks */
--	ls1x_clk_init();
-+	of_clk_init(NULL);
- 
- #ifdef CONFIG_CEVT_CSRC_LS1X
- 	/* setup LS1X PWM timer */
+Depends on (bindings, admittedly I could have organized it better):
+https://lore.kernel.org/linux-arm-msm/20230314-topic-nvmem_compats-v1-0-508100c17603@linaro.org/#t
+
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+Konrad Dybcio (5):
+      dt-bindings: clock: qcom,gpucc: Fix SM6350 clock names
+      arm64: dts: qcom: sm6350: Add GPUCC node
+      arm64: dts: qcom: sm6350: Add QFPROM node
+      arm64: dts: qcom: sm6350: Add GPU nodes
+      arm64: dts: qcom: sm6350: Fix ZAP region
+
+ .../devicetree/bindings/clock/qcom,gpucc.yaml      |  29 +++-
+ arch/arm64/boot/dts/qcom/sm6350.dtsi               | 177 ++++++++++++++++++++-
+ 2 files changed, 197 insertions(+), 9 deletions(-)
+---
+base-commit: 225b6b81afe63b3850b7cee0a3590f51144f2a75
+change-id: 20230315-topic-lagoon_gpu-8c2abccbc6eb
+
+Best regards,
 -- 
-2.34.1
+Konrad Dybcio <konrad.dybcio@linaro.org>
 
