@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB0BC7618D
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 03:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 445C2C761A6
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 03:05:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229890AbjCPDFe convert rfc822-to-8bit (ORCPT
+        id S229866AbjCPDFf convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Mar 2023 23:05:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39386 "EHLO
+        Wed, 15 Mar 2023 23:05:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229793AbjCPDF0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 23:05:26 -0400
+        with ESMTP id S229844AbjCPDFZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 23:05:25 -0400
 Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9830BF951;
-        Wed, 15 Mar 2023 20:05:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB6B24ED2;
+        Wed, 15 Mar 2023 20:05:21 -0700 (PDT)
 Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id EFADD24E2B2;
-        Thu, 16 Mar 2023 11:05:21 +0800 (CST)
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 35AD624E0D6;
+        Thu, 16 Mar 2023 11:05:20 +0800 (CST)
 Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
  (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 16 Mar
- 2023 11:05:21 +0800
+ 2023 11:05:20 +0800
 Received: from localhost.localdomain (113.72.145.194) by EXMBX061.cuchost.com
  (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 16 Mar
- 2023 11:05:20 +0800
+ 2023 11:05:18 +0800
 From:   Xingyu Wu <xingyu.wu@starfivetech.com>
 To:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
         "Michael Turquette" <mturquette@baylibre.com>,
@@ -42,9 +42,9 @@ CC:     Rob Herring <robh+dt@kernel.org>,
         Xingyu Wu <xingyu.wu@starfivetech.com>,
         William Qiu <william.qiu@starfivetech.com>,
         <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH v2 6/6] riscv: dts: starfive: jh7110: Add PLL clock node and modify syscrg node
-Date:   Thu, 16 Mar 2023 11:05:14 +0800
-Message-ID: <20230316030514.137427-7-xingyu.wu@starfivetech.com>
+Subject: [PATCH v2 4/6] dt-bindings: clock: jh7110-syscrg: Add PLL clock inputs
+Date:   Thu, 16 Mar 2023 11:05:12 +0800
+Message-ID: <20230316030514.137427-5-xingyu.wu@starfivetech.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230316030514.137427-1-xingyu.wu@starfivetech.com>
 References: <20230316030514.137427-1-xingyu.wu@starfivetech.com>
@@ -59,51 +59,76 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the PLL clock node for the Starfive JH7110 SoC and
-modify the SYSCRG node to add PLL clocks.
+Add PLL clock inputs from PLL clock generator.
 
 Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
 ---
- arch/riscv/boot/dts/starfive/jh7110.dtsi | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ .../clock/starfive,jh7110-syscrg.yaml         | 20 +++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-index 49dd62276b0d..37ccd4600da8 100644
---- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
-+++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-@@ -461,19 +461,29 @@ syscrg: clock-controller@13020000 {
- 				 <&gmac1_rgmii_rxin>,
- 				 <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
- 				 <&i2srx_bclk_ext>, <&i2srx_lrck_ext>,
--				 <&tdm_ext>, <&mclk_ext>;
-+				 <&tdm_ext>, <&mclk_ext>,
-+				 <&pllclk JH7110_CLK_PLL0_OUT>,
-+				 <&pllclk JH7110_CLK_PLL1_OUT>,
-+				 <&pllclk JH7110_CLK_PLL2_OUT>;
- 			clock-names = "osc", "gmac1_rmii_refin",
- 				      "gmac1_rgmii_rxin",
- 				      "i2stx_bclk_ext", "i2stx_lrck_ext",
- 				      "i2srx_bclk_ext", "i2srx_lrck_ext",
--				      "tdm_ext", "mclk_ext";
-+				      "tdm_ext", "mclk_ext",
-+				      "pll0_out", "pll1_out", "pll2_out";
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
- 		};
+diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+index 84373ae31644..55d4e7f09cd5 100644
+--- a/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
++++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+@@ -27,6 +27,9 @@ properties:
+           - description: External I2S RX left/right channel clock
+           - description: External TDM clock
+           - description: External audio master clock
++          - description: PLL0
++          - description: PLL1
++          - description: PLL2
  
- 		sys_syscon: syscon@13030000 {
--			compatible = "starfive,jh7110-sys-syscon", "syscon";
-+			compatible = "starfive,jh7110-sys-syscon", "syscon", "simple-mfd";
- 			reg = <0x0 0x13030000 0x0 0x1000>;
-+
-+			pllclk: pll-clock-controller {
-+				compatible = "starfive,jh7110-pll";
-+				clocks = <&osc>;
-+				#clock-cells = <1>;
-+			};
- 		};
+       - items:
+           - description: Main Oscillator (24 MHz)
+@@ -38,6 +41,9 @@ properties:
+           - description: External I2S RX left/right channel clock
+           - description: External TDM clock
+           - description: External audio master clock
++          - description: PLL0
++          - description: PLL1
++          - description: PLL2
  
- 		sysgpio: pinctrl@13040000 {
+   clock-names:
+     oneOf:
+@@ -52,6 +58,9 @@ properties:
+           - const: i2srx_lrck_ext
+           - const: tdm_ext
+           - const: mclk_ext
++          - const: pll0_out
++          - const: pll1_out
++          - const: pll2_out
+ 
+       - items:
+           - const: osc
+@@ -63,6 +72,9 @@ properties:
+           - const: i2srx_lrck_ext
+           - const: tdm_ext
+           - const: mclk_ext
++          - const: pll0_out
++          - const: pll1_out
++          - const: pll2_out
+ 
+   '#clock-cells':
+     const: 1
+@@ -93,12 +105,16 @@ examples:
+                  <&gmac1_rgmii_rxin>,
+                  <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
+                  <&i2srx_bclk_ext>, <&i2srx_lrck_ext>,
+-                 <&tdm_ext>, <&mclk_ext>;
++                 <&tdm_ext>, <&mclk_ext>,
++                 <&pllclk JH7110_CLK_PLL0_OUT>,
++                 <&pllclk JH7110_CLK_PLL1_OUT>,
++                 <&pllclk JH7110_CLK_PLL2_OUT>;
+         clock-names = "osc", "gmac1_rmii_refin",
+                       "gmac1_rgmii_rxin",
+                       "i2stx_bclk_ext", "i2stx_lrck_ext",
+                       "i2srx_bclk_ext", "i2srx_lrck_ext",
+-                      "tdm_ext", "mclk_ext";
++                      "tdm_ext", "mclk_ext",
++                      "pll0_out", "pll1_out", "pll2_out";
+         #clock-cells = <1>;
+         #reset-cells = <1>;
+     };
 -- 
 2.25.1
 
