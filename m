@@ -2,101 +2,175 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6DCC6FD19
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 16:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23811C6FD19
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 16:17:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230131AbjCPQQy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Mar 2023 12:16:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36782 "EHLO
+        id S230078AbjCPQRV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Mar 2023 12:17:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230093AbjCPQQq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 12:16:46 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C2BECB04B
-        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 09:16:12 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id bh21-20020a05600c3d1500b003ed1ff06fb0so1532802wmb.3
-        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 09:16:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1678983368;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wX835sOTXGenDvrM9Jk5H9iGd+G5Ry9hzVMonTiqeF8=;
-        b=8W0GlkXluf3WSvAkb2eCYF1ksoQ+1Ay9zcraA9kwWP4UCSDo89FkIS+UE/JTNtOr+R
-         AKtVGGwXB55JlOnOqDS8UWhoXIjfn1F0XrT1FCJY9/4OYjKsobz+Xm6NxUmo8DWwNwbh
-         wUOsAGtwBt8Ytz43m0FzmZZfaLPazDYjWOyo92vt15hBpmyyKrOVwRbB1iglpMhYMJSq
-         l6/Aqee0FuI59mTebLgsv34/RvnB9QPfUOSgGdv/CPoCNKZnihLdPc3zKVZDmaIN+SEJ
-         1SULjAWVRvZo/NcvXuTm7RKLJV3DkiNZ3nA3bXME910UCXQPgAf/0RIgMwU4wxo4/ynf
-         jlmA==
+        with ESMTP id S229936AbjCPQRU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 12:17:20 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 515E6B32AD
+        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 09:15:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678983331;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=mlukPFgMuUiNDYUja4zCoHJNdHul/iInVFC/mNyQV8Q=;
+        b=WeIDxR7eS8wn2u9RAe3uYDIPjTN3fa4/3TeEbrgNYTSA4OJ8lRDo/CcY0j4qAa3S/r8Fqy
+        gBe/su+wJTNYG82KbEpOSbu1QSG6q6LdQAXuO10fQiRi8H76X/6IMfuPWcTWQZ0gwTSPb/
+        c2KGZl4aWeseV6gwMI8XUeq9odNrW3E=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-132-CFwEfPPUMSyg0TzXkqocKw-1; Thu, 16 Mar 2023 12:15:29 -0400
+X-MC-Unique: CFwEfPPUMSyg0TzXkqocKw-1
+Received: by mail-qk1-f199.google.com with SMTP id 191-20020a3705c8000000b007459d84a0f9so1188288qkf.17
+        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 09:15:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678983368;
+        d=1e100.net; s=20210112; t=1678983329;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wX835sOTXGenDvrM9Jk5H9iGd+G5Ry9hzVMonTiqeF8=;
-        b=uPpeHD1MDMMvfnhTzCvBxN6auUfd6J50SAtegs1uVEu5GKPmuSS2Yf2mRfJo0NMNvQ
-         eu0vfF+Ogx5UsJx5XRt08VkU8JgwsE0JtxP2SkWdKio9IrrYDF8yxsQHOCzar8K5uHlU
-         ZWSFy3Bdnnav3K+jGYv2MfllHCZQidddQ9oCoz10/tuAZvt1gTy36z5fHrMhPufJ10O/
-         Wpzndvj6RDLl21v75GVbNMePKNjlmJ6Is33xxJgpcWGenaVkSJIT2Dy88Av2nCg82lsY
-         ymDXOvnPSgHKjfqZRVVmsYl7aruNyOK62vKfle0COAuW+MGu5LeOnYuE9aIBxl9h91mW
-         pyug==
-X-Gm-Message-State: AO0yUKUOgXWygu6bMK+zCmZicRxj+OkdieiOmZOMj7N+dNP0SGxtcj4P
-        J8t7q9AG0yKfp8HIQSzN1KzBbA==
-X-Google-Smtp-Source: AK7set/5iz9jce0skzNhfyE7OilWfOKtLGfxC9x0HFGwKgdOeFNkTmKmSTfB37p5pR3ZiYxJTEBuXw==
-X-Received: by 2002:a05:600c:4f07:b0:3ed:3cec:d2ec with SMTP id l7-20020a05600c4f0700b003ed3cecd2ecmr4720861wmq.15.1678983368217;
-        Thu, 16 Mar 2023 09:16:08 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id p3-20020a05600c358300b003ed2eb5c2dcsm5734716wmq.43.2023.03.16.09.16.07
+        bh=mlukPFgMuUiNDYUja4zCoHJNdHul/iInVFC/mNyQV8Q=;
+        b=h6IsZS17r4Y0izENkKglaVfN0kpcbeA6AjbJ2avN8p+gZ29hL433b/hC8Q3TK7d/o1
+         7BFT2zGWXDHnuRQV4z0tp5XmDzMSwOJG2bj3Mnx11A98PIusiEjye0HdRWhh0N+/rIll
+         rKrL66VxJ/0SOla8ax3tHbsxQseV7KyAq/5Js2980RDWts+QB+VrK0oYaYPKJ+FjYtuV
+         AmbTG5plAzk3sWNR32lTGu81SUR79K2SjjHWx3RbNs3eqjo0fETOWYfptc48Ee5rPFrM
+         1GNPIL2qpl7L+nAMVo5yMQrgwkYlPu8wPbG0P6J7RcIvQjNzd9yMN8qfBRkRB8wYWbvj
+         CuaQ==
+X-Gm-Message-State: AO0yUKW1RzP04PTVTNlXIj1+4CTqupuv+HAdel6lZz/qTIp2ZBDWBBfD
+        MKYfhdH28kNm2+wIrTronQm54cZ9NG2Q0HiQznxUjoehSI8sH/g/dWeOZNUhtL07Iu9O1VLRrV+
+        EjciL9Cc6TMlYLrHxCf+U
+X-Received: by 2002:a05:6214:2428:b0:574:8ef8:89d2 with SMTP id gy8-20020a056214242800b005748ef889d2mr39824735qvb.38.1678983329396;
+        Thu, 16 Mar 2023 09:15:29 -0700 (PDT)
+X-Google-Smtp-Source: AK7set+of7na8F1dFKLndAwQGwakPmWiDEiDVwrlTO9yupX5AyjFyMqZe903mbwQxlEn+ZQoYaB20w==
+X-Received: by 2002:a05:6214:2428:b0:574:8ef8:89d2 with SMTP id gy8-20020a056214242800b005748ef889d2mr39824676qvb.38.1678983329027;
+        Thu, 16 Mar 2023 09:15:29 -0700 (PDT)
+Received: from halaney-x13s (104-53-165-62.lightspeed.stlsmo.sbcglobal.net. [104.53.165.62])
+        by smtp.gmail.com with ESMTPSA id q16-20020a05620a025000b00745df9edd7csm4841721qkn.91.2023.03.16.09.15.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Mar 2023 09:16:07 -0700 (PDT)
-Date:   Thu, 16 Mar 2023 17:16:06 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Vadim Fedorenko <vadfed@meta.com>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>, poros@redhat.com,
-        mschmidt@redhat.com, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Milena Olech <milena.olech@intel.com>,
-        Michal Michalik <michal.michalik@intel.com>
-Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
-Message-ID: <ZBNAxlNhSnTxNz3z@nanopsycho>
-References: <20230312022807.278528-1-vadfed@meta.com>
- <20230312022807.278528-3-vadfed@meta.com>
+        Thu, 16 Mar 2023 09:15:28 -0700 (PDT)
+Date:   Thu, 16 Mar 2023 11:15:25 -0500
+From:   Andrew Halaney <ahalaney@redhat.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, vkoul@kernel.org,
+        bhupesh.sharma@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, peppe.cavallaro@st.com,
+        alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+        mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
+        linux@armlinux.org.uk, veekhee@apple.com,
+        tee.min.tan@linux.intel.com, mohammad.athari.ismail@intel.com,
+        jonathanh@nvidia.com, ruppala@nvidia.com, bmasney@redhat.com,
+        andrey.konovalov@linaro.org, linux-arm-msm@vger.kernel.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, ncai@quicinc.com,
+        jsuraj@qti.qualcomm.com, hisunil@quicinc.com
+Subject: Re: [PATCH net-next 01/11] dt-bindings: net: snps,dwmac: Update
+ interrupt-names
+Message-ID: <20230316161525.fwzfyj3fhekfwafd@halaney-x13s>
+References: <20230313165620.128463-1-ahalaney@redhat.com>
+ <20230313165620.128463-2-ahalaney@redhat.com>
+ <d4831176-c6f1-5a9b-3086-23d82f1f05a6@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230312022807.278528-3-vadfed@meta.com>
+In-Reply-To: <d4831176-c6f1-5a9b-3086-23d82f1f05a6@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Sun, Mar 12, 2023 at 03:28:03AM CET, vadfed@meta.com wrote:
+On Thu, Mar 16, 2023 at 08:13:24AM +0100, Krzysztof Kozlowski wrote:
+> On 13/03/2023 17:56, Andrew Halaney wrote:
+> > From: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+> >
+> > As commit fc191af1bb0d ("net: stmmac: platform: Fix misleading
+> > interrupt error msg") noted, not every stmmac based platform
+> > makes use of the 'eth_wake_irq' or 'eth_lpi' interrupts.
+> >
+> > So, update the 'interrupt-names' inside 'snps,dwmac' YAML
+> > bindings to reflect the same.
+> >
+> > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+> > Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
+> > ---
+> >
+> > I picked this up from:
+> >		https://lore.kernel.org/netdev/20220929060405.2445745-2-bhupesh.sharma@linaro.org/
+> > No changes other than collecting the Acked-by.
+> >
+> >  Documentation/devicetree/bindings/net/snps,dwmac.yaml | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> > index 16b7d2904696..52ce14a4bea7 100644
+> > --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> > +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> > @@ -105,8 +105,8 @@ properties:
+> >      minItems: 1
+> >      items:
+> >        - const: macirq
+> > -      - const: eth_wake_irq
+> > -      - const: eth_lpi
+> > +      - enum: [eth_wake_irq, eth_lpi]
+> > +      - enum: [eth_wake_irq, eth_lpi]
+>
+> I acked it before but this is not correct. This should be:
+> +      - enum: [eth_wake_irq, eth_lpi]
+> +      - enum: eth_lpi
 
-[...]
+Would
++      - enum: [eth_wake_irq, eth_lpi]
++      - const: eth_lpi
+be more appropriate? With the suggested change above I get the following
+error, but with the above things seem to work as I expect:
 
+    (dtschema) ahalaney@halaney-x13s ~/git/redhat/stmmac (git)-[stmmac|rebase-i] % git diff HEAD~
+    diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+    index 16b7d2904696..ca199a17f83d 100644
+    --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+    +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+    @@ -105,8 +105,8 @@ properties:
+         minItems: 1
+         items:
+           - const: macirq
+    -      - const: eth_wake_irq
+    -      - const: eth_lpi
+    +      - enum: [eth_wake_irq, eth_lpi]
+    +      - enum: eth_lpi
 
->+int dpll_device_register(struct dpll_device *dpll, enum dpll_type type,
->+			 struct dpll_device_ops *ops, void *priv,
+       clocks:
+         minItems: 1
+    (dtschema) ahalaney@halaney-x13s ~/git/redhat/stmmac (git)-[stmmac|rebase-i] % make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/net/snps,dwmac.yaml
+      DTEX    Documentation/devicetree/bindings/net/snps,dwmac.example.dts
+      LINT    Documentation/devicetree/bindings
+      CHKDT   Documentation/devicetree/bindings/processed-schema.json
+    /home/ahalaney/git/redhat/stmmac/Documentation/devicetree/bindings/net/snps,dwmac.yaml: properties:interrupt-names:items: 'anyOf' conditional failed, one must be fixed:
+        [{'const': 'macirq'}, {'enum': ['eth_wake_irq', 'eth_lpi']}, {'enum': 'eth_lpi'}] is not of type 'object', 'boolean'
+        'eth_lpi' is not of type 'array'
+        from schema $id: http://json-schema.org/draft-07/schema#
+    /home/ahalaney/git/redhat/stmmac/Documentation/devicetree/bindings/net/snps,dwmac.yaml: properties:interrupt-names:items: 'oneOf' conditional failed, one must be fixed:
+        [{'const': 'macirq'}, {'enum': ['eth_wake_irq', 'eth_lpi']}, {'enum': 'eth_lpi'}] is not of type 'object'
+        'eth_lpi' is not of type 'array'
+        from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
+    /home/ahalaney/git/redhat/stmmac/Documentation/devicetree/bindings/net/snps,dwmac.yaml: properties:interrupt-names:items: 'oneOf' conditional failed, one must be fixed:
+        [{'const': 'macirq'}, {'enum': ['eth_wake_irq', 'eth_lpi']}, {'enum': 'eth_lpi'}] is not of type 'object'
+        'eth_lpi' is not of type 'array'
+        from schema $id: http://devicetree.org/meta-schemas/string-array.yaml#
+      SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+    /home/ahalaney/git/redhat/stmmac/Documentation/devicetree/bindings/net/snps,dwmac.yaml: ignoring, error in schema: properties: interrupt-names: items
+      DTC_CHK Documentation/devicetree/bindings/net/snps,dwmac.example.dtb
 
-ops should be const
+Thanks,
+Andrew
 
-
->+			 struct device *owner)
-
-[...]
-
-
->+
->+static int
->+__dpll_pin_register(struct dpll_device *dpll, struct dpll_pin *pin,
->+		    struct dpll_pin_ops *ops, void *priv,
-
-ops should be const
-
-
->+		    const char *rclk_device_name)
->+{
-
-[...]
