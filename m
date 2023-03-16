@@ -2,112 +2,130 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C04C6FD19
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 07:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A35C6FD19
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 07:30:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229735AbjCPHTd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Mar 2023 03:19:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51556 "EHLO
+        id S229801AbjCPHay (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Mar 2023 03:30:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230007AbjCPHTX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 03:19:23 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D8465F6DE
-        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 00:19:12 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id w9so3827078edc.3
-        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 00:19:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678951150;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bm96tdwLx6fPQGeDjINABDetH/ZY7i77lBQjLJrR1ts=;
-        b=lknDG8yZUnixEHyBPesXoiJREWN5L9q5lFvMBm9EJDIKbdAGhkgNdYivDsc4vUhQDD
-         8y2W+FyY+fXV3a9MIhsebmNN/Z/QCZvIAw8g7dtZRXX3ZhkZ2e4RQ40HOBjSqx39BetR
-         db37n60Az/c8hzlRRM4JzCsJ4dSySNlmMS7VJHt0PyA2U4aobJKcbHV7y6osDRonesgJ
-         +0EPdHijgkWkHXIlOLjPPXZwZQ2uVRe+A84j58m1duRUFqEf1ReWf1pNJoK18ONLvUZd
-         7UYyNmFLfknWngTkP5/NZfhqWVoyDWJxlLuoy7vEt6SxAcK8HnGSRSJQkuelMVg2EQ+p
-         8w7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678951150;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bm96tdwLx6fPQGeDjINABDetH/ZY7i77lBQjLJrR1ts=;
-        b=2CQimAyQfV+FwYfa8CZ1196/McfrN6VlTlLY3DTy6TjwOBgEibCyxWxMgtkH5P9NPw
-         EtvcqMPaRdGhYoQ08izVS2nxS1RatuDwQD/gX351BaR2mQpvE4jnrqzpXUP3gwFkkTvS
-         0hIP00CO4s3LsaLs3QYN2NIIsrI8cYWvaIE9KjwxLKKE82ut+cPT8pDrWi733D8SetGI
-         7eotIvDii+uOunJ4xKMazeG452erkNhrAiW5ro/HaXDrJUAsMNJiaZpmt/gt286pyfDH
-         lUHJ9xSiADMq945SU+7l1yKNzd3wrl7vH2jy1+MtJ5+/7gaUh7uTk1q6PubtkgUBot/E
-         BQqw==
-X-Gm-Message-State: AO0yUKWT/nwfIkX99MYhg7+BakVY+TBWPSv1dNIlryJgKmQv1A0XTsJH
-        0LhMg0tMQq4BDYppSQqKVHzsUg==
-X-Google-Smtp-Source: AK7set9cPxmxsJC+fDgnp9bdjaIupZwvekzcVHxzUtQcTePr9a9/UyCWNrhIzW+IZivrsS671zcVmg==
-X-Received: by 2002:a17:906:4e02:b0:8f7:48fe:319d with SMTP id z2-20020a1709064e0200b008f748fe319dmr1626347eju.17.1678951150203;
-        Thu, 16 Mar 2023 00:19:10 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:9827:5f65:8269:a95f? ([2a02:810d:15c0:828:9827:5f65:8269:a95f])
-        by smtp.gmail.com with ESMTPSA id r24-20020a50d698000000b004af71e8cc3dsm3387915edi.60.2023.03.16.00.19.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Mar 2023 00:19:09 -0700 (PDT)
-Message-ID: <47fd240a-847b-e034-5a6a-4ed14f453612@linaro.org>
-Date:   Thu, 16 Mar 2023 08:19:08 +0100
+        with ESMTP id S229556AbjCPHax (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 03:30:53 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9264E7D0AB;
+        Thu, 16 Mar 2023 00:30:44 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32G24YEE025271;
+        Thu, 16 Mar 2023 07:30:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=fSn2V8Mk4HZoheTsvu0JO8UNSSJGH46tAuJMmtxtDjw=;
+ b=m+Qy6BYnSFxt7JXLCcdfkC0Ub63w7kKxkz3yMUutIXiPCXsD806rx1UDJI6RtZ/K4sRM
+ PvM/voj22ZD12NpuypTivpVZhCr/udIh9wynYL0cDEuiEvHr/6Fnzebk1Rf3/ka4B4F5
+ cUZ7xCKDsmPzDxyl2SFIAg5YEaUQnowYJJ5KatAnViH+HlgrNTdHfg/VIfThMLYmZ+E/
+ ZP88VSKD68qSe3l5/pL0Hq2/2Dgr22UAIR3Z+k+xnRLmXPSzyLAbuk9Hf1fTZWJ8z1M1
+ a0FUjeRA5k9Lw9itR9lU7OIyBfoDYLSzv8tVAv7Tzj0Gv7Bp/YAEY5UnemYqXothvqRp HQ== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pbpxhs365-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 16 Mar 2023 07:30:13 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32G7UCSd005146
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 16 Mar 2023 07:30:12 GMT
+Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.41; Thu, 16 Mar 2023 00:30:04 -0700
+From:   Devi Priya <quic_devipriy@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linus.walleij@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <p.zabel@pengutronix.de>, <shawnguo@kernel.org>, <arnd@arndb.de>,
+        <marcel.ziswiler@toradex.com>, <dmitry.baryshkov@linaro.org>,
+        <nfraprado@collabora.com>, <broonie@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>
+Subject: [PATCH V9 0/6] Add minimal boot support for IPQ9574
+Date:   Thu, 16 Mar 2023 12:59:34 +0530
+Message-ID: <20230316072940.29137-1-quic_devipriy@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH net-next 04/11] dt-bindings: net: qcom,ethqos: Add
- Qualcomm sc8280xp compatibles
-Content-Language: en-US
-To:     Andrew Halaney <ahalaney@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, vkoul@kernel.org,
-        bhupesh.sharma@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, peppe.cavallaro@st.com,
-        alexandre.torgue@foss.st.com, joabreu@synopsys.com,
-        mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
-        linux@armlinux.org.uk, veekhee@apple.com,
-        tee.min.tan@linux.intel.com, mohammad.athari.ismail@intel.com,
-        jonathanh@nvidia.com, ruppala@nvidia.com, bmasney@redhat.com,
-        andrey.konovalov@linaro.org, linux-arm-msm@vger.kernel.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, ncai@quicinc.com,
-        jsuraj@qti.qualcomm.com, hisunil@quicinc.com
-References: <20230313165620.128463-1-ahalaney@redhat.com>
- <20230313165620.128463-5-ahalaney@redhat.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230313165620.128463-5-ahalaney@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: QJWkCgDM8T8rmFEqYgDEx8BjZ6AHnC1E
+X-Proofpoint-ORIG-GUID: QJWkCgDM8T8rmFEqYgDEx8BjZ6AHnC1E
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-16_05,2023-03-15_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 spamscore=0 lowpriorityscore=0 malwarescore=0
+ mlxlogscore=646 clxscore=1015 mlxscore=0 phishscore=0 bulkscore=0
+ impostorscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2303150002 definitions=main-2303160063
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/03/2023 17:56, Andrew Halaney wrote:
-> The sc8280xp has a new version of the ETHQOS hardware in it, EMAC v3.
-> Add a compatible for this.
-> 
-> Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
-> ---
->  Documentation/devicetree/bindings/net/qcom,ethqos.yaml | 1 +
->  Documentation/devicetree/bindings/net/snps,dwmac.yaml  | 3 +++
->  2 files changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/qcom,ethqos.yaml b/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
-> index 68ef43fb283d..89c17ed0442f 100644
-> --- a/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
-> +++ b/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
-> @@ -24,6 +24,7 @@ properties:
->      enum:
->        - qcom,qcs404-ethqos
->        - qcom,sm8150-ethqos
-> +      - qcom,sc8280xp-ethqos
+The IPQ9574 is Qualcomm's 802.11ax SoC for Routers,
+Gateways and Access Points
 
-Alphabetical order, same in other places.
+This series adds minimal board boot support for ipq9574-al02-c7 board
+
+V8 can be found at:
+https://lore.kernel.org/linux-arm-kernel/20230214163116.9924-1-quic_devipriy@quicinc.com/
+
+Changes in V9:
+	- Dropped 'dt-bindings: arm: qcom: Add ipq9574 compatible' 
+	  as it is already part of the for-next branch
+	- Change logs are added to the respective patches
+
+Devi Priya (6):
+  dt-bindings: clock: Add ipq9574 clock and reset definitions
+  clk: qcom: Add Global Clock Controller driver for IPQ9574
+  dt-bindings: pinctrl: qcom: Add support for IPQ9574
+  pinctrl: qcom: Add IPQ9574 pinctrl driver
+  arm64: dts: qcom: Add ipq9574 SoC and AL02 board support
+  arm64: defconfig: Enable IPQ9574 SoC base configs
+
+ .../bindings/clock/qcom,ipq9574-gcc.yaml      |   61 +
+ .../bindings/pinctrl/qcom,ipq9574-tlmm.yaml   |  130 +
+ arch/arm64/boot/dts/qcom/Makefile             |    1 +
+ arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts  |   84 +
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |  270 ++
+ arch/arm64/configs/defconfig                  |    2 +
+ drivers/clk/qcom/Kconfig                      |    8 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/gcc-ipq9574.c                | 4248 +++++++++++++++++
+ drivers/pinctrl/qcom/Kconfig                  |   11 +
+ drivers/pinctrl/qcom/Makefile                 |    1 +
+ drivers/pinctrl/qcom/pinctrl-ipq9574.c        |  826 ++++
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h  |  213 +
+ include/dt-bindings/reset/qcom,ipq9574-gcc.h  |  164 +
+ 14 files changed, 6020 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9574-gcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq9574-tlmm.yaml
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq9574.dtsi
+ create mode 100644 drivers/clk/qcom/gcc-ipq9574.c
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq9574.c
+ create mode 100644 include/dt-bindings/clock/qcom,ipq9574-gcc.h
+ create mode 100644 include/dt-bindings/reset/qcom,ipq9574-gcc.h
 
 
-Best regards,
-Krzysztof
+base-commit: 6f72958a49f68553f2b6ff713e8c8e51a34c1e1e
+-- 
+2.17.1
 
