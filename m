@@ -2,282 +2,119 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C8BAC6FD1F
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 15:05:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4FFC6FD1F
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 15:20:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231305AbjCPPFT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Mar 2023 11:05:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54268 "EHLO
+        id S230147AbjCPPUL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Mar 2023 11:20:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231217AbjCPPFT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 11:05:19 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D7C3B9531;
-        Thu, 16 Mar 2023 08:05:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1678979117; x=1710515117;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=/lKBXE6NMg4dM03Mb8QnXmlt4juzkr2o8eLsDDIEdAw=;
-  b=CWNVCgxcsYHEYWzrf7bR144mIl7JDQnshGm86/AeAY+b0Icb36vOu8m7
-   2QkjkMABYSRtutvWWUS3ElTAyUotU2aoMjQK8G/QATqGb8IZQmzHAIe9q
-   dSXYEHKN632Pksf9iLnjWsD7EE7NyHsOK2xUqW9uXnTx8dSGsEMVjxOIU
-   wpZ9EAYoN5Ubwd42WcIeiJKVEV1nE1U6Pcqb7+kzU38CqQXMahl0ASG8o
-   qGqu/nHGIPYr0poFX85fXCn3xjtrpcHSO3S3mDC2lUr4wUKgGK6FJk0Ns
-   3uAZlwR8qTRNbTnZkeLp6CB+Tjso5xQVsjknh7OjVDZL5dLGhbB3Mm6K9
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10651"; a="336707384"
-X-IronPort-AV: E=Sophos;i="5.98,265,1673942400"; 
-   d="scan'208";a="336707384"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2023 08:05:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10651"; a="768988962"
-X-IronPort-AV: E=Sophos;i="5.98,265,1673942400"; 
-   d="scan'208";a="768988962"
-Received: from trybicki-mobl1.ger.corp.intel.com ([10.252.63.119])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2023 08:05:12 -0700
-Date:   Thu, 16 Mar 2023 17:05:10 +0200 (EET)
-From:   =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To:     Jacky Huang <ychuang570808@gmail.com>
-cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        p.zabel@pengutronix.de, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, schung@nuvoton.com,
-        Jacky Huang <ychuang3@nuvoton.com>
-Subject: Re: [PATCH 13/15] reset: Add Nuvoton ma35d1 reset driver support
-In-Reply-To: <20230315072902.9298-14-ychuang570808@gmail.com>
-Message-ID: <1c943355-e9c0-3b23-4437-4040fa18b9fa@linux.intel.com>
-References: <20230315072902.9298-1-ychuang570808@gmail.com> <20230315072902.9298-14-ychuang570808@gmail.com>
+        with ESMTP id S231473AbjCPPUE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 11:20:04 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C637DF715
+        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 08:19:56 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id t15so1873139wrz.7
+        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 08:19:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1678979995;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TgWMfzhObrj0kUZQtkGZokHYyYa6G72Fv0Uf4IJo0P4=;
+        b=OFA5D4OZEBeF2ec1JKLo7kLqcCKk0K3Iu1MbggXzM4WF3NoHiJL77vDxG0vtpwZz+5
+         p+BgdPe11Hu93yERFTklAAYhi0sWI3Ly3v39IzDxjIhmp7w+cdZL3lxyPChU8afsDp6c
+         a1kVaqaUa7dUgZY/PnjT8Wj1M5S01gvY3JmENdDDcRAb0HWkK4sxKattyCXD4g1TpVUB
+         /wXOFpr7LfigmKLWb/9V5d2RR8HZ37xsyLTyGn1JZ48uQi42EctJjRheYwu3vbFNNojK
+         sk7MIp5YCYcATZmOI3ivgzozrwVMx9IBJadiuvbG8Jp18frgzdoDuojEn984zUmhi0DY
+         CI7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678979995;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TgWMfzhObrj0kUZQtkGZokHYyYa6G72Fv0Uf4IJo0P4=;
+        b=lXSJVGIwtK5RdD5sL2g+JD7lPc9eIpXd8D/rcMAUVcLq016AOldwYEXeHdsUcMc/k7
+         ZshWkJFZTA5O+3ieMmrEDiVxymiAKKJcORTHVjpFFIFV9Wkax1/k840JMHMtoewoHJfn
+         Q2kpC3Sk+635u3HlslGi8pYQ7rVvTinNNdqF5yH7d1yHaYbGKWAefnC63LwCm056WR0V
+         ZQPh55C+J/Ti0SbVbuWAoiaxDr4Kx8GDChTsHd2P7BAtlia3MGsYuUO6V7BYIbwz2VhI
+         JJc6+dULQIuFzMfLEX9Z1BzHn2iK6+1rUGKMmr+1+c6QjhcIywWFVOXvH15n0bwPN5s+
+         qbRQ==
+X-Gm-Message-State: AO0yUKVAaVIjskfx4U/BWTho6fspzX29zHFY1ZitIBPnZYhy07E25E6V
+        z1rxR7FmlGVu8PwFoerU1sdzEw==
+X-Google-Smtp-Source: AK7set/GLdd2/EehnrOKR4cb06GbiP0IsPpRFlvHvmNN0qsnqJJJAk8jeFWizMQY8mw4hy0TH4WzCA==
+X-Received: by 2002:a5d:608d:0:b0:2c7:d7c:7d0 with SMTP id w13-20020a5d608d000000b002c70d7c07d0mr4788153wrt.22.1678979994646;
+        Thu, 16 Mar 2023 08:19:54 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id r2-20020adff702000000b002c573cff730sm7482799wrp.68.2023.03.16.08.19.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Mar 2023 08:19:54 -0700 (PDT)
+Date:   Thu, 16 Mar 2023 16:19:52 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Vadim Fedorenko <vadfed@meta.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        poros <poros@redhat.com>, mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: Re: [PATCH RFC v6 1/6] dpll: spec: Add Netlink spec in YAML
+Message-ID: <ZBMzmHnW707gIvAU@nanopsycho>
+References: <20230312022807.278528-1-vadfed@meta.com>
+ <20230312022807.278528-2-vadfed@meta.com>
+ <ZBCIPg1u8UFugEFj@nanopsycho>
+ <DM6PR11MB4657F423D2B3B4F0799B0F019BBC9@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZBMdZkK91GHDrd/4@nanopsycho>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZBMdZkK91GHDrd/4@nanopsycho>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 15 Mar 2023, Jacky Huang wrote:
+Thu, Mar 16, 2023 at 02:45:10PM CET, jiri@resnulli.us wrote:
+>Thu, Mar 16, 2023 at 02:15:59PM CET, arkadiusz.kubalewski@intel.com wrote:
 
-> From: Jacky Huang <ychuang3@nuvoton.com>
-> 
-> This driver supports individual IP reset for ma35d1. The reset
-> control registers is a subset of system control registers.
-> 
-> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
-> ---
->  drivers/reset/Kconfig        |   6 ++
->  drivers/reset/Makefile       |   1 +
->  drivers/reset/reset-ma35d1.c | 152 +++++++++++++++++++++++++++++++++++
->  3 files changed, 159 insertions(+)
->  create mode 100644 drivers/reset/reset-ma35d1.c
-> 
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 2a52c990d4fe..47671060d259 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -143,6 +143,12 @@ config RESET_NPCM
->  	  This enables the reset controller driver for Nuvoton NPCM
->  	  BMC SoCs.
->  
-> +config RESET_NUVOTON_MA35D1
-> +	bool "Nuvton MA35D1 Reset Driver"
-> +	default ARCH_NUVOTON
-> +	help
-> +	  This enables the reset controller driver for Nuvoton MA35D1 SoC.
-> +
->  config RESET_OXNAS
->  	bool
->  
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index 3e7e5fd633a8..fd52dcf66a99 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -20,6 +20,7 @@ obj-$(CONFIG_RESET_MCHP_SPARX5) += reset-microchip-sparx5.o
->  obj-$(CONFIG_RESET_MESON) += reset-meson.o
->  obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
->  obj-$(CONFIG_RESET_NPCM) += reset-npcm.o
-> +obj-$(CONFIG_RESET_NUVOTON_MA35D1) += reset-ma35d1.o
->  obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
->  obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
->  obj-$(CONFIG_RESET_POLARFIRE_SOC) += reset-mpfs.o
-> diff --git a/drivers/reset/reset-ma35d1.c b/drivers/reset/reset-ma35d1.c
-> new file mode 100644
-> index 000000000000..bdd39483ca4e
-> --- /dev/null
-> +++ b/drivers/reset/reset-ma35d1.c
-> @@ -0,0 +1,152 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2023 Nuvoton Technology Corp.
-> + * Author: Chi-Fang Li <cfli0@nuvoton.com>
-> + */
-> +
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/io.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/mfd/ma35d1-sys.h>
-> +#include <dt-bindings/reset/nuvoton,ma35d1-reset.h>
-> +#include <linux/regmap.h>
-> +#include <linux/reboot.h>
-> +
-> +#define RST_PRE_REG	32
-> +
-> +struct ma35d1_reset_data {
-> +	struct reset_controller_dev rcdev;
-> +	struct regmap *regmap;
-> +};
-> +
-> +struct ma35d1_reboot_data {
-> +	struct notifier_block restart_handler;
-> +	struct regmap *regmap;
-> +};
-> +
-> +static int ma35d1_restart_handler(struct notifier_block *this,
-> +				  unsigned long mode, void *cmd)
-> +{
-> +	struct ma35d1_reboot_data *data =
-> +			container_of(this, struct ma35d1_reboot_data,
-> +				     restart_handler);
-> +	regmap_write(data->regmap, REG_SYS_IPRST0, 1 << MA35D1_RESET_CHIP);
-> +	return -EAGAIN;
+[...]
 
-This results -EAGAIN always???
 
-> +}
-> +
-> +static int ma35d1_reset_update(struct reset_controller_dev *rcdev,
-> +			      unsigned long id, bool assert)
-> +{
-> +	int reg;
-> +	int offset = (id / RST_PRE_REG) * 4;
-> +	struct ma35d1_reset_data *data =
-> +			container_of(rcdev, struct ma35d1_reset_data, rcdev);
-> +
-> +	regmap_read(data->regmap, REG_SYS_IPRST0 + offset, &reg);
-> +	if (assert)
-> +		reg |= 1 << (id % RST_PRE_REG);
-> +	else
-> +		reg &= ~(1 << (id % RST_PRE_REG));
-> +
-> +	regmap_write(data->regmap, REG_SYS_IPRST0 + offset, reg);
-> +	return 0;
+>>>>+      flags: [ admin-perm ]
+>>>>+
+>>>>+      do:
+>>>>+        pre: dpll-pre-doit
+>>>>+        post: dpll-post-doit
+>>>>+        request:
+>>>>+          attributes:
+>>>>+            - id
+>>>>+            - bus-name
+>>>>+            - dev-name
+>>>>+            - mode
+>>>
+>>>Hmm, shouldn't source-pin-index be here as well?
+>>
+>>No, there is no set for this.
+>>For manual mode user selects the pin by setting enabled state on the one
+>>he needs to recover signal from.
+>>
+>>source-pin-index is read only, returns active source.
+>
+>Okay, got it. Then why do we have this assymetric approach? Just have
+>the enabled state to serve the user to see which one is selected, no?
+>This would help to avoid confusion (like mine) and allow not to create
+>inconsistencies (like no pin enabled yet driver to return some source
+>pin index)
 
-This returns always 0. What about regmap_read/write() errors, should the 
-be returned?
+Actually, for mlx5 implementation, would be non-trivial to implement
+this, as each of the pin/port is instantiated and controlled by separate
+pci backend.
 
-> +}
-> +
-> +static int ma35d1_reset_assert(struct reset_controller_dev *rcdev,
-> +			       unsigned long id)
-> +{
-> +	return ma35d1_reset_update(rcdev, id, true);
-> +}
-> +
-> +static int ma35d1_reset_deassert(struct reset_controller_dev *rcdev,
-> +				 unsigned long id)
-> +{
-> +	return ma35d1_reset_update(rcdev, id, false);
-> +}
-> +
-> +static int ma35d1_reset_status(struct reset_controller_dev *rcdev,
-> +			      unsigned long id)
-> +{
-> +	int reg;
-> +	int offset = id / RST_PRE_REG;
-> +	struct ma35d1_reset_data *data =
-> +			container_of(rcdev, struct ma35d1_reset_data, rcdev);
-> +
-> +	regmap_read(data->regmap, REG_SYS_IPRST0 + offset, &reg);
+Could you please remove, it is not needed and has potential and real
+issues.
 
-Error handling?
-
-> +	return !!(reg & BIT(id % RST_PRE_REG));
-> +}
-> +
-> +static const struct reset_control_ops ma35d1_reset_ops = {
-> +	.assert = ma35d1_reset_assert,
-> +	.deassert = ma35d1_reset_deassert,
-> +	.status = ma35d1_reset_status,
-> +};
-> +
-> +static const struct of_device_id ma35d1_reset_dt_ids[] = {
-> +	{ .compatible = "nuvoton,ma35d1-reset" },
-> +	{ },
-> +};
-> +
-> +static int ma35d1_reset_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct ma35d1_reset_data *reset_data;
-> +	struct ma35d1_reboot_data *reboot_data;
-> +	int err;
-> +
-> +	if (!pdev->dev.of_node) {
-> +		dev_err(&pdev->dev, "Device tree node not found\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	reset_data = devm_kzalloc(dev, sizeof(*reset_data), GFP_KERNEL);
-> +	if (!reset_data)
-> +		return -ENOMEM;
-> +
-> +	reboot_data = devm_kzalloc(dev, sizeof(*reboot_data), GFP_KERNEL);
-> +	if (!reboot_data) {
-> +		devm_kfree(dev, reset_data);
-
-Unnecessary.
-
-> +		return -ENOMEM;
-> +	}
-> +
-> +	reset_data->regmap  = syscon_regmap_lookup_by_phandle(
-> +			      pdev->dev.of_node, "regmap");
-> +	if (IS_ERR(reset_data->regmap)) {
-> +		dev_err(&pdev->dev, "Failed to get SYS register base\n");
-> +		err = PTR_ERR(reset_data->regmap);
-> +		goto err_out;
-> +	}
-> +	reset_data->rcdev.owner = THIS_MODULE;
-> +	reset_data->rcdev.nr_resets = MA35D1_RESET_COUNT;
-> +	reset_data->rcdev.ops = &ma35d1_reset_ops;
-> +	reset_data->rcdev.of_node = dev->of_node;
-> +
-> +	reboot_data->regmap = reset_data->regmap;
-> +	reboot_data->restart_handler.notifier_call = ma35d1_restart_handler;
-> +	reboot_data->restart_handler.priority = 192;
-> +
-> +	err = register_restart_handler(&reboot_data->restart_handler);
-> +	if (err)
-> +		dev_warn(&pdev->dev, "failed to register restart handler\n");
-> +
-> +	return devm_reset_controller_register(dev, &reset_data->rcdev);
-> +
-> +err_out:
-> +	devm_kfree(dev, reset_data);
-> +	devm_kfree(dev, reboot_data);
-
-These are unnecessary since the probe is failing.
-
-> +	return err;
-> +}
-> +
-> +static struct platform_driver ma35d1_reset_driver = {
-> +	.probe = ma35d1_reset_probe,
-> +	.driver = {
-> +		.name = "ma35d1-reset",
-> +		.of_match_table	= ma35d1_reset_dt_ids,
-> +	},
-> +};
-> +
-> +builtin_platform_driver(ma35d1_reset_driver);
-> 
-
--- 
- i.
+[...]
 
