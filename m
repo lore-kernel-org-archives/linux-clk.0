@@ -2,109 +2,57 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3865C6FD19
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 08:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37736C7618A
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 08:54:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230077AbjCPIby (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Mar 2023 04:31:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43516 "EHLO
+        id S229950AbjCPIyq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Mar 2023 04:54:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230201AbjCPIbr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 04:31:47 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03D6C5D47A;
-        Thu, 16 Mar 2023 01:31:29 -0700 (PDT)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32G25G6n005233;
-        Thu, 16 Mar 2023 08:31:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=pCtK8yStFCoUdgm1GARqSe3ByjmfzfYBHM1eE0T8ptA=;
- b=p3ctpw2aijFjV5Wkml6MervSSvyNvzS5UaHAvHJDimwZ6xfQXCMj80tTP0MLthZ6GbL0
- 6QoLe/kphluXxL+UkSyroK4NAXOGv91QLsdQEVUpK1Y6aUKsOjWyYqUR7iL2l/FExibh
- ISdmItWJCrgrv4+GbOBgnq6JS7bvFXHy7wsSXDjwHEFrecsJS+Gh4bIvTHyrYC5WuUFu
- qhkGhgvOgHTKqoBOfGw0g3NX/dc2jTGEzwNbM7eWWfpDnaMVA9RX2ywdFPpp+fi36X2D
- gVFN4OEWHrUGYmLuilUvFejrayjh3k3ih3nc9R53VnmwoZqIf5GO8FmRbHBgRJks9nU6 sQ== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pbpyd16qm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 16 Mar 2023 08:31:25 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32G8VOOU006618
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 16 Mar 2023 08:31:24 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.41; Thu, 16 Mar 2023 01:31:20 -0700
-From:   Taniya Das <quic_tdas@quicinc.com>
-To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andy Gross <agross@kernel.org>
-CC:     Bjorn Andersson <andersson@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_skakitap@quicinc.com>, <quic_jkona@quicinc.com>
-Subject: [PATCH 3/3] arm64: dts: qcom: sm8450: Add video clock controller
-Date:   Thu, 16 Mar 2023 14:00:49 +0530
-Message-ID: <20230316083049.29979-4-quic_tdas@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230316083049.29979-1-quic_tdas@quicinc.com>
-References: <20230316083049.29979-1-quic_tdas@quicinc.com>
+        with ESMTP id S230212AbjCPIyE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 04:54:04 -0400
+Received: from mail.corrib.pl (mail.corrib.pl [185.58.226.145])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45A57B6D16
+        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 01:52:49 -0700 (PDT)
+Received: by mail.corrib.pl (Postfix, from userid 1001)
+        id 0DBD9A30E0; Thu, 16 Mar 2023 08:51:38 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=corrib.pl; s=mail;
+        t=1678956723; bh=X6IEpSISwJiYlJ3uA866lskXve3r+4o2hf4z7VM6m5o=;
+        h=Date:From:To:Subject:From;
+        b=PIN9m585LugRmuUIWK7GrHPSbvqiN1dz/ea93frumApWZGGa6HDQOQ/F9WQx2btCo
+         XiDMOJKzqo1360kGfJcbG/t7Pu3IvhX9j5iEXAZBNu0vf6ajObNoW3X0AHM39sedqL
+         K+q5canoyNDibexw+2drYsJG1ckKo/xI4knir1liEtshKd6lWgIvIL051LOjxfEWXo
+         TQKlXnBfA5HVAf3q+pv12dv492j2j3eL5cfyzzHKj0liri0pR9g2R+ohCm9g45y2rY
+         yQ/hl/D+TiLq3eCdLfyQvT7Pkn2XQLMnCMVRWHnZfPaVM/pC8GKZvdS9wVIwGhZood
+         LfFI+ovB5fx8Q==
+Received: by mail.corrib.pl for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 08:51:25 GMT
+Message-ID: <20230316074501-0.1.63.izis.0.uqhwpd2mlq@corrib.pl>
+Date:   Thu, 16 Mar 2023 08:51:25 GMT
+From:   =?UTF-8?Q? "Szczepan_Kie=C5=82basa" ?= 
+        <szczepan.kielbasa@corrib.pl>
+To:     <linux-clk@vger.kernel.org>
+Subject: Faktoring
+X-Mailer: mail.corrib.pl
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: fInyr5aMBfff7MdC8GR7rPhAHWP91yKd
-X-Proofpoint-ORIG-GUID: fInyr5aMBfff7MdC8GR7rPhAHWP91yKd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-16_06,2023-03-15_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- priorityscore=1501 phishscore=0 spamscore=0 mlxlogscore=849 adultscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303150002
- definitions=main-2303160071
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device node for video clock controller on Qualcomm SM8450 platform.
+Dzie=C5=84 dobry,
 
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sm8450.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+rozwa=C5=BCali Pa=C5=84stwo wyb=C3=B3r finansowania, kt=C3=B3re spe=C5=82=
+ni potrzeby firmy, zapewniaj=C4=85c natychmiastowy dost=C4=99p do got=C3=B3=
+wki, bez zb=C4=99dnych przestoj=C3=B3w?=20
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-index 1a744a33bcf4..1b36f59fc675 100644
---- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-@@ -760,6 +760,19 @@
- 				      "usb3_phy_wrapper_gcc_usb30_pipe_clk";
- 		};
- 
-+		videocc: clock-controller@aaf0000 {
-+			compatible = "qcom,sm8450-videocc";
-+			reg = <0 0x0aaf0000 0 0x10000>;
-+			clocks = <&gcc GCC_VIDEO_AHB_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "iface", "bi_tcxo";
-+			power-domains = <&rpmhpd SM8450_MMCX>;
-+			required-opps = <&rpmhpd_opp_low_svs>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		gpi_dma2: dma-controller@800000 {
- 			compatible = "qcom,sm8450-gpi-dma", "qcom,sm6350-gpi-dma";
- 			#dma-cells = <3>;
--- 
-2.17.1
+Przygotowali=C5=9Bmy rozwi=C4=85zania faktoringowe dopasowane do Pa=C5=84=
+stwa bran=C5=BCy i wielko=C5=9Bci firmy, dzi=C4=99ki kt=C3=B3rym, nie mus=
+z=C4=85 Pa=C5=84stwo martwi=C4=87 si=C4=99 o niewyp=C5=82acalno=C5=9B=C4=87=
+ kontrahent=C3=B3w, poniewa=C5=BC transakcje s=C4=85 zabezpieczone i posi=
+adaj=C4=85 gwarancj=C4=99 sp=C5=82aty.=20
+Chc=C4=85 Pa=C5=84stwo przeanalizowa=C4=87 dost=C4=99pne opcje?
 
+
+Pozdrawiam
+Szczepan Kie=C5=82basa
