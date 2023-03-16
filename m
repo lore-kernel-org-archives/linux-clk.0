@@ -2,124 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CBBAC6FD19
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 12:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B4FC6FD1F
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 12:37:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229708AbjCPMbv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Mar 2023 08:31:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53444 "EHLO
+        id S229733AbjCPMh0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Mar 2023 08:37:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229532AbjCPMbu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 08:31:50 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DBFCC88B6
-        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 05:31:48 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id r18so1393441wrx.1
-        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 05:31:48 -0700 (PDT)
+        with ESMTP id S229925AbjCPMhY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 08:37:24 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1697A17EA
+        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 05:37:21 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id m18-20020a05600c3b1200b003ed2a3d635eso1017033wms.4
+        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 05:37:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1678969907;
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1678970240;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EBgLiap3z0eOs9IEVV1ogrSUVwRj9wQ1k01+u0gMWts=;
-        b=FgR5guvHvPt4kprXYHnCrdMuuGY87sl592+oE7AbdXaOSaBhccVRR6LSIafFSvDjDN
-         8mx8u7y8ohjXaY3r3PowRqodGoXPB+mmdeco3rDch3ZB9lABVAqKAhi6rxrbrlaTrLGi
-         dGilRPr05l0o/L1nMmHRrEs3CK5eOErA95PKShDFJyozqR+4LzE4v1JpwRPJfmyFLJSw
-         LuiX1ekhHh6b7dnGF3TIOAyNJpkMcR4F6GGi+Pfuko8GF1aw3nFwo6ooxVbrb1pFYxGi
-         WCKPCvqe3HlKzCEv1N1L39hlx6qS97tsJy9lD0tGTX1M5fws/jpD9SDvdcOc05gb7F20
-         Cuew==
+        bh=514h8Ll5c2ZEp3l/zYfk/oJdo5XaAivqw3cyq8ZPZSw=;
+        b=bhaldaQm/jln74qCapYv4qWtRbz2JpUYOl7nJhAgaRQtWdo0utw7U6PPRr/WNU9ooN
+         dkviyz7Feenie0jg+2ekmn/dWx/Fvr8ASEBufpH0kVO7bGe0a/TCqqi2je96INnirGao
+         qRHprIeFmDro+yQ8ZfoxolaTbKIN+QKK1sYR28doKNZBTfrVXQ7H7PG+w2HtORe2FtOw
+         0XTbf76G0iwlvLQLjZBfn0KPaUTyWnP63Coa861PBv+ck/cPuBT7VI5C2BbaFIxdIaba
+         ciP8KUOHfcmZ2Xui2StYR/UfxTJlKHcIAB0bPA9r+dr1P/ZLsLRCKCGXkhmJWf2YEend
+         5MCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678969907;
+        d=1e100.net; s=20210112; t=1678970240;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EBgLiap3z0eOs9IEVV1ogrSUVwRj9wQ1k01+u0gMWts=;
-        b=f7urREMIxWtFsbJ49E40d0oIG3PddOTBpxhAqiFGzQKQGVD0YvRFkbdXLaoyACVLuC
-         wV//E85KIlZlnQeaeXClyuPGljfUfgqp4zl1iAwAXFK11hn2yGOGy19ds+msSY2jwtfW
-         AlaXDNDCeOB8y+ZKUJW9r+Tcc0L/rni5ugOyAnM+0dIq8ZG87rwGpwCVclC/q0zDTlyx
-         HU7axhMGPdWHzkPNVL4vtMspaAlsyCTN379M5z/+69AAyIXdHE4LCmZ6+Mr3ta64KpLW
-         +I1bUCr7UnUGhppF/fD05ADax67RBHe6QvJ8OnaNbVcepMUQeDEUI7ziiyU1JVhzBybp
-         nDiw==
-X-Gm-Message-State: AO0yUKUgepvo02HYzUil1U59+wjpe5WRFlvzSiiK2/BDoixNSIb7Lj62
-        MPh5rTJj/m1HWvwAdtukh/L0PA==
-X-Google-Smtp-Source: AK7set8nrHPE+yCjyiqyl0cay4i3vqG4IwBn3w4wy8QX9KqZAxyW3zqrdr6NHGXNGcwea6nJ5f6j3g==
-X-Received: by 2002:a5d:428c:0:b0:2cf:e957:644b with SMTP id k12-20020a5d428c000000b002cfe957644bmr4753522wrq.27.1678969906981;
-        Thu, 16 Mar 2023 05:31:46 -0700 (PDT)
+        bh=514h8Ll5c2ZEp3l/zYfk/oJdo5XaAivqw3cyq8ZPZSw=;
+        b=vj+gioksuEAXjxZ3wz1D98ju/sy8q/OtqWvhz/qNjQ/FJ/8Cz+eL0sQXWUgO3gosNc
+         2djuNM/Tm5Y5YDaT9rExNTauuKfzrk6uIuWFPlrfiIXxHFZWgt1gLkTDdprANGWy8tbi
+         5ksqzokH33ZZKVw5CeIC3w6nyY8A+epdgexfXFI0anZPO5+qUUrBHXGshvzq2z6j0VjX
+         Y62wia9+B3P6Cms26/hLzgwYLB0SOklClt/bQ6TU1NkEmqrKeIa48otUzM354v2bt8+4
+         OeJ5kK3TbnRJZWOAg0f5I/xlJifM5rMJn7mJwUOHCdtQk5uwVK7v5nCYUW3RpBBKhUap
+         qcrw==
+X-Gm-Message-State: AO0yUKVJAdaKMu55KMJfP2I3jP4YxMVqziZmVrai7aQM2JqyVhsfeeP8
+        1IZMj8ilZVFzApAvFmTfbQxjqg==
+X-Google-Smtp-Source: AK7set8ekJppoTaEs+bnyNw+oQE2sm8fXEl7zubfiVhYZ+bLOFl9uW5yvLguLiixXLXTFVdWY1gnVQ==
+X-Received: by 2002:a05:600c:ccf:b0:3eb:36fa:b78d with SMTP id fk15-20020a05600c0ccf00b003eb36fab78dmr21637699wmb.23.1678970240433;
+        Thu, 16 Mar 2023 05:37:20 -0700 (PDT)
 Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id u1-20020adfed41000000b002c6e8cb612fsm7148717wro.92.2023.03.16.05.31.45
+        by smtp.gmail.com with ESMTPSA id k3-20020a7bc403000000b003ed1f69c967sm4950954wmi.9.2023.03.16.05.37.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Mar 2023 05:31:46 -0700 (PDT)
-Date:   Thu, 16 Mar 2023 13:31:45 +0100
+        Thu, 16 Mar 2023 05:37:19 -0700 (PDT)
+Date:   Thu, 16 Mar 2023 13:37:18 +0100
 From:   Jiri Pirko <jiri@resnulli.us>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        Vadim Fedorenko <vadfed@meta.com>,
-        Jakub Kicinski <kuba@kernel.org>,
+To:     Vadim Fedorenko <vadfed@meta.com>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
         Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>
+        Paolo Abeni <pabeni@redhat.com>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Milena Olech <milena.olech@intel.com>,
+        Michal Michalik <michal.michalik@intel.com>
 Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
-Message-ID: <ZBMMMd+PifhKGj+t@nanopsycho>
+Message-ID: <ZBMNfjJjY9TL2Vif@nanopsycho>
 References: <20230312022807.278528-1-vadfed@meta.com>
  <20230312022807.278528-3-vadfed@meta.com>
- <ZA9Nbll8+xHt4ygd@nanopsycho>
- <2b749045-021e-d6c8-b265-972cfa892802@linux.dev>
- <ZBA8ofFfKigqZ6M7@nanopsycho>
- <DM6PR11MB4657120805D656A745EF724E9BBE9@DM6PR11MB4657.namprd11.prod.outlook.com>
- <ZBGOWQW+1JFzNsTY@nanopsycho>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZBGOWQW+1JFzNsTY@nanopsycho>
+In-Reply-To: <20230312022807.278528-3-vadfed@meta.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Wed, Mar 15, 2023 at 10:22:33AM CET, jiri@resnulli.us wrote:
->Tue, Mar 14, 2023 at 06:50:57PM CET, arkadiusz.kubalewski@intel.com wrote:
->>>From: Jiri Pirko <jiri@resnulli.us>
->>>Sent: Tuesday, March 14, 2023 10:22 AM
->>>
->>>Mon, Mar 13, 2023 at 11:59:32PM CET, vadim.fedorenko@linux.dev wrote:
->>>>On 13.03.2023 16:21, Jiri Pirko wrote:
->>>>> Sun, Mar 12, 2023 at 03:28:03AM CET, vadfed@meta.com wrote:
+Sun, Mar 12, 2023 at 03:28:03AM CET, vadfed@meta.com wrote:
 
 [...]
 
 
->>>>> > +	     const struct dpll_pin_properties *prop)
->>>>> > +{
->>>>> > +	struct dpll_pin *pos, *ret = NULL;
->>>>> > +	unsigned long index;
->>>>> > +
->>>>> > +	mutex_lock(&dpll_pin_xa_lock);
->>>>> > +	xa_for_each(&dpll_pin_xa, index, pos) {
->>>>> > +		if (pos->clock_id == clock_id &&
->>>>> > +		    pos->dev_driver_id == device_drv_id &&
->>>>> > +		    pos->module == module) {
->>>>>
->>>>> Compare prop as well.
->>>>>
->>>>> Can't the driver_id (pin index) be something const as well? I think it
->>>>> should. And therefore it could be easily put inside.
->>>>>
->>>>
->>>>I think clock_id + dev_driver_id + module should identify the pin exactly.
->>>>And now I think that *prop is not needed here at all. Arkadiusz, any
->>>>thoughts?
->>>
->>>IDK, no strong opinion on this. I just thought it may help to identify
->>>the pin and avoid potential driver bugs. (Like registering 2 pins with
+>+struct dpll_pin *
+>+dpll_pin_alloc(u64 clock_id, u8 device_drv_id,	struct module *module,
+>+	       const struct dpll_pin_properties *prop)
+>+{
+>+	struct dpll_pin *pin;
+>+	int ret;
+>+
+>+	pin = kzalloc(sizeof(*pin), GFP_KERNEL);
+>+	if (!pin)
+>+		return ERR_PTR(-ENOMEM);
+>+	pin->dev_driver_id = device_drv_id;
+>+	pin->clock_id = clock_id;
+>+	pin->module = module;
+>+	refcount_set(&pin->refcount, 1);
+>+	if (WARN_ON(!prop->description)) {
 
-Was thinking about this some more, I think that it would be good to
-store and check properties in case of pin_get() call. If the driver does
-call for the second time pin_get() for the same pin (clockid,pin_index)
-with different prop, it is buggy and WARN_ON should be triggered.
-WARN_ON check should compare the actual struct, not just pointer.
+Why is this mandatory? I'm now working on mlx5 implementation, don't
+really know what to put here for SyncE. The type of the pin SyncE tells
+all I need. I would like to avoid description fill-up.
+
+
+>+		ret = -EINVAL;
+>+		goto release;
+>+	}
+>+	pin->prop.description = kstrdup(prop->description, GFP_KERNEL);
+>+	if (!pin->prop.description) {
+>+		ret = -ENOMEM;
+>+		goto release;
+>+	}
 
 [...]
