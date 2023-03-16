@@ -2,218 +2,224 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84EA8C61DA4
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 01:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F962C6FD1D
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 01:28:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229436AbjCPBSE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Mar 2023 21:18:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56374 "EHLO
+        id S229784AbjCPB2Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Mar 2023 21:28:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229733AbjCPBSC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 21:18:02 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6104A279;
-        Wed, 15 Mar 2023 18:17:55 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id e15-20020a17090ac20f00b0023d1b009f52so3776618pjt.2;
-        Wed, 15 Mar 2023 18:17:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678929475;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mGop/tMt4q82DXV5wrVTM8PHD9eWr7G/KT9UlcjUMVo=;
-        b=DD9gdmP2LeH2VaSi9faVtQEk7fY9dVW+8tElSxe1Kuje3n5KpNHujtBUcG9cr46VGE
-         /53puLp5EIdq/Mo7zX9x/PogwlfKp7SD5np4+TrQVaLhHtW/eDdABqriallWtoIXGczl
-         Elagozdi8tdg28fBTDY1R5AuLJZA7xgeeEtH0y06MBkCZ1NzRXlrJjEyQC6+MWHvqGRt
-         SgPXfGJIcld2x8zyOQlBuwoZ9omh7qITkPxOEgwZMaU67TleT/8wetY0XFcqKR1p/sYr
-         I6qPd3iLM8sLG5vnoZF7FgjCPT8CNQ54U/hni9fI4iVNVL+dLw5xzoPhko2foJNRWHUL
-         wIow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678929475;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mGop/tMt4q82DXV5wrVTM8PHD9eWr7G/KT9UlcjUMVo=;
-        b=o517O2ytKOimHOLJ9yO8JQRMcCaIGcuB1QUZCOD/dJRL5JJvk3Uxol46K1fsztFKX+
-         34jdg5Up/v8bzcWIFGVDFJa/tQQ7qTKD2l8bOk/Z6c3rYF9N6rVoOkBHYqRpuCF+7deq
-         ahPL3UVBQALhVxrDRTxwTPKfZCYBHKOlOwj+Bqc8Qf0fBDYvJ/kHGyFucs68fnSJmnTb
-         nlkL4terNDWXy0Woh46kt13CmTbZUzD4ld0Q/Y4iuqoy+Ac8Z7tRQkjSnP6dltLtSijV
-         fp6sH7Wd0xqwLy1Vlje3NHaQYuZzuIZ0CiQ++qx+XxMNJzNp43512wIDTzgsseVlQYSn
-         siQQ==
-X-Gm-Message-State: AO0yUKW7A9xcF3xUp7FBum1XsYWYHebfs8A1jXHhieBpSWn+ZPuoUaFt
-        Vzoupf9g4If/dKGsWtluoGKNHgHIpssKfP30W1o=
-X-Google-Smtp-Source: AK7set+K+WpGt3Dq3azzO6ytGhf2QQY4fYEreqhVT9eSKKjxIAz/Wjevym9oEZgPEfPXkeE54WYuiLQVjXUi64Qa0U8=
-X-Received: by 2002:a17:903:2289:b0:1a0:6000:7fce with SMTP id
- b9-20020a170903228900b001a060007fcemr707887plh.3.1678929475022; Wed, 15 Mar
- 2023 18:17:55 -0700 (PDT)
+        with ESMTP id S229683AbjCPB2Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Mar 2023 21:28:24 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ABD774337
+        for <linux-clk@vger.kernel.org>; Wed, 15 Mar 2023 18:28:20 -0700 (PDT)
+Received: from mercury (unknown [185.254.75.29])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: sre)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8F87E6602FA0;
+        Thu, 16 Mar 2023 01:28:17 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1678930097;
+        bh=q8ebdQK9oGoecy54qsL+DNA2tnZv5JdVd2XF1eBumpk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ke4NDwyQ51eLka3fORbCDjaBx1LIx6XVt3EClp0VHKUcZxbDxtU9VT2oycOyNkyoO
+         k1JaG72vSnvAv6Zc+8rNrh6eKNPqn9oF6ExI9aufRwDozr6BDNAEmmQCxVRRwlpPKY
+         GWD0hx9n7GVs7rqsgQL4rVCwIzC5Iotc1t29fSBd3ib7fw1pHjT2bn44FT6Ctb3DJ8
+         tYFg8HJjhwPJhZorSKMNrbc4mqDTvNk/R+RORKrfbAql9MnFdp1NuDBRq3fpWFGwmN
+         LR42argxZaNqjQQD6Ky1Dhh05iuJr/TVclq8YH2jkTbBSTvLAVNsuS2Ci/Bq8yWc4l
+         WPnkcVNxmMvKA==
+Received: by mercury (Postfix, from userid 1000)
+        id E5FC310609DC; Thu, 16 Mar 2023 02:28:14 +0100 (CET)
+Date:   Thu, 16 Mar 2023 02:28:14 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Lee Jones <lee@kernel.org>
+Subject: Re: [PATCHv7 01/11] clk: RK808: reduce 'struct rk808' usage
+Message-ID: <20230316012814.fijsxfuw7a5mfjmn@mercury.elektranox.org>
+References: <20230307153617.643260-1-sebastian.reichel@collabora.com>
+ <20230307153617.643260-2-sebastian.reichel@collabora.com>
 MIME-Version: 1.0
-References: <20230314024449.50151-1-aford173@gmail.com> <DU0PR04MB9417C49457C9E60898E6A92188BE9@DU0PR04MB9417.eurprd04.prod.outlook.com>
- <CAHCN7xK8DyRa-NbAnQrZdkU279kHZqXAB2WCH96HgsULxzVKRw@mail.gmail.com>
-In-Reply-To: <CAHCN7xK8DyRa-NbAnQrZdkU279kHZqXAB2WCH96HgsULxzVKRw@mail.gmail.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Wed, 15 Mar 2023 20:17:43 -0500
-Message-ID: <CAHCN7xJydz-3Wb6W-3nMxryWQQbN9benvoJXJ7yai9cttJi_Og@mail.gmail.com>
-Subject: Re: [RFC] clk: imx: Let IMX8MN_CLK_DISP_PIXEL set parent rate
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        richard.zhao@linaro.org, mturquette@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="lgvrpfucjneu4wzk"
+Content-Disposition: inline
+In-Reply-To: <20230307153617.643260-2-sebastian.reichel@collabora.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 14, 2023 at 6:13=E2=80=AFAM Adam Ford <aford173@gmail.com> wrot=
-e:
->
-> On Mon, Mar 13, 2023 at 11:39=E2=80=AFPM Peng Fan <peng.fan@nxp.com> wrot=
-e:
-> >
-> > > Subject: [RFC] clk: imx: Let IMX8MN_CLK_DISP_PIXEL set parent rate
-> > >
-> > > By default the display pixel clock needs to be evenly divide down fro=
-m
-> > > 594MHz which rules out a significant number of resolution and refresh=
- rates.
-> > > The current clock tree looks something like:
-> > >
-> > >  video_pll                594000000
-> > >   video_pll_bypass        594000000
-> > >    video_pll_out          594000000
 
-It looks like video_pll_out ultimately defined as a mux clock and
-according to clk-mux.c, "* rate - rate is only affected by parent
-switching. No clk_set_rate support"  Since disp_pixel tries to pass
-this to its parent, it makes sense that it stops here.
+--lgvrpfucjneu4wzk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Since the clock rate is set by the parent, does it make sense to look
-for CLK_SET_RATE_PARENT flag and call a function to set the parent
-rate if the flag ist set?
+Hi Michael and Stephen,
 
-It seems like this would be the simplest without having to re-define
-what the clock type is, but lets us pass a flag and only mux's with
-that type could request the parent to set the clock rate.  This should
-let us drop the video_pll clock lower, have a better chance of
-successfully getting the ideal frequency for the LCDIF to sync, and
-allow for a larger list of resolutions and refresh rates due to the
-fact they are no longer limited to being evenly diviisable from 594
-MHz.
+On Tue, Mar 07, 2023 at 04:36:07PM +0100, Sebastian Reichel wrote:
+> Reduce usage of 'struct rk808' (driver data of the parent MFD), so
+> that only the chip variant field is still being accessed directly.
+> This allows restructuring the MFD driver to support SPI based
+> PMICs.
+>=20
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
 
-> > >     disp_pixel            148500000
-> > >      disp_pixel_clk       148500000
-> > >
-> > > To enable CLK_SET_RATE_PARENT on disp_pixel, a helper function needs =
-to
-> > > be added called imx8m_clk_hw_composite_flags which can pass the
-> > > additional flag to the clock controller. Letting disp_pixel set video=
-_pll_out
-> > > rate should actually lower the clock rates of video_pll_bypass and vi=
-deo_pll
-> > > as well, since those clocks are already configured to enable
-> > > CLK_SET_RATE_PARENT.
-> > >
-> > > Signed-off-by: Adam Ford <aford173@gmail.com>
-> > > ---
-> > >
-> > > This is an RFC, because even with this patch, the video_pll_out clock=
- does
-> > > not drop to 148500000 like I would expect.  The video_pll clock is a
-> > > fractional pll, so it should be able to generate a significant number=
- of
-> > > optional clock frequencies to facilitate video.
-> > [Peng Fan]
-> >
-> > Have you ever tried to directly set video pll out clk to the freq that =
-you wanna?
->
-> In the application I am using, I have the DSI connected to an HDMI
-> bridge, so some resolutions and refresh rates work, as long as they
-> are evenly divisible from 594000000.  I am testing a series that was
-> recently submitted to enable DSI on the i.MX8M Mini and Nano.
->
-> If I manually change the video_pll to different frequencies, I can get
-> other resolutions and refresh rates to work, but it then breaks the
-> ones that I had previously working.  NXP's downstream code [1] as a
-> comment added code to the ADV7511 driver which filters out clocks that
-> are not divisible from 594 to mask the issue. It's listed as a TODO,
-> and I think the author is blaming the ADV7511 driver, but  from my
-> experience it's from the LCDIF clock not being able to reach to the
-> proper value.  I think fixing this would also fix NXP's TODO list as
-> well.
->
-> I had modified the MXSFB driver to set the video_pll in addition to
-> setting the disp_plixel_clk and I was able to sync many different
-> resolutions and refresh rates, but I was told [2] that the solution
-> would be to fix the clock driver by setting the parent clock rate,
-> which is how I got here.
->
-> adam
->
-> [1] - https://github.com/nxp-imx/linux-imx/blob/lf-5.15.y/drivers/gpu/drm=
-/bridge/adv7511/adv7511_drv.c#L80
-> [2] - https://lore.kernel.org/linux-arm-kernel/20230313112937.GC7446@peng=
-utronix.de/T/
->
-> >
-> > Regards,
-> > Peng.
-> >
-> > >
-> > > diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8m=
-n.c
-> > > index af256ade554f..a116cc40d7d0 100644
-> > > --- a/drivers/clk/imx/clk-imx8mn.c
-> > > +++ b/drivers/clk/imx/clk-imx8mn.c
-> > > @@ -470,7 +470,7 @@ static int imx8mn_clocks_probe(struct
-> > > platform_device *pdev)
-> > >       hws[IMX8MN_CLK_DRAM_ALT] =3D
-> > > imx8m_clk_hw_fw_managed_composite("dram_alt",
-> > > imx8mn_dram_alt_sels, base + 0xa000);
-> > >       hws[IMX8MN_CLK_DRAM_APB] =3D
-> > > imx8m_clk_hw_fw_managed_composite_critical("dram_apb",
-> > > imx8mn_dram_apb_sels, base + 0xa080);
-> > >
-> > > -     hws[IMX8MN_CLK_DISP_PIXEL] =3D
-> > > imx8m_clk_hw_composite("disp_pixel", imx8mn_disp_pixel_sels, base +
-> > > 0xa500);
-> > > +     hws[IMX8MN_CLK_DISP_PIXEL] =3D
-> > > +imx8m_clk_hw_composite_flags("disp_pixel", imx8mn_disp_pixel_sels,
-> > > base
-> > > ++ 0xa500, CLK_SET_RATE_PARENT);
-> > >       hws[IMX8MN_CLK_SAI2] =3D imx8m_clk_hw_composite("sai2",
-> > > imx8mn_sai2_sels, base + 0xa600);
-> > >       hws[IMX8MN_CLK_SAI3] =3D imx8m_clk_hw_composite("sai3",
-> > > imx8mn_sai3_sels, base + 0xa680);
-> > >       hws[IMX8MN_CLK_SAI5] =3D imx8m_clk_hw_composite("sai5",
-> > > imx8mn_sai5_sels, base + 0xa780); diff --git a/drivers/clk/imx/clk.h
-> > > b/drivers/clk/imx/clk.h index 689b3ad927c0..9977b512845b 100644
-> > > --- a/drivers/clk/imx/clk.h
-> > > +++ b/drivers/clk/imx/clk.h
-> > > @@ -414,6 +414,10 @@ struct clk_hw *__imx8m_clk_hw_composite(const
-> > > char *name,
-> > >       _imx8m_clk_hw_composite(name, parent_names, reg, \
-> > >                       0, IMX_COMPOSITE_CLK_FLAGS_DEFAULT)
-> > >
-> > > +#define imx8m_clk_hw_composite_flags(name, parent_names, reg, flags)
-> > > \
-> > > +     _imx8m_clk_hw_composite(name, parent_names, reg, \
-> > > +                     0, IMX_COMPOSITE_CLK_FLAGS_DEFAULT |  flags)
-> > > +
-> > >  #define imx8m_clk_hw_composite_critical(name, parent_names, reg) \
-> > >       _imx8m_clk_hw_composite(name, parent_names, reg, \
-> > >                       0, IMX_COMPOSITE_CLK_FLAGS_CRITICAL)
-> > > --
-> > > 2.37.2
-> >
+Can you Ack this please? (patch needs to go through mfd tree)
+
+-- Sebastian
+
+>  drivers/clk/clk-rk808.c | 34 ++++++++++++++++------------------
+>  1 file changed, 16 insertions(+), 18 deletions(-)
+>=20
+> diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
+> index 32f833d732ed..f7412b137e5e 100644
+> --- a/drivers/clk/clk-rk808.c
+> +++ b/drivers/clk/clk-rk808.c
+> @@ -12,10 +12,9 @@
+>  #include <linux/slab.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/mfd/rk808.h>
+> -#include <linux/i2c.h>
+> =20
+>  struct rk808_clkout {
+> -	struct rk808 *rk808;
+> +	struct regmap		*regmap;
+>  	struct clk_hw		clkout1_hw;
+>  	struct clk_hw		clkout2_hw;
+>  };
+> @@ -31,9 +30,8 @@ static int rk808_clkout2_enable(struct clk_hw *hw, bool=
+ enable)
+>  	struct rk808_clkout *rk808_clkout =3D container_of(hw,
+>  							 struct rk808_clkout,
+>  							 clkout2_hw);
+> -	struct rk808 *rk808 =3D rk808_clkout->rk808;
+> =20
+> -	return regmap_update_bits(rk808->regmap, RK808_CLK32OUT_REG,
+> +	return regmap_update_bits(rk808_clkout->regmap, RK808_CLK32OUT_REG,
+>  				  CLK32KOUT2_EN, enable ? CLK32KOUT2_EN : 0);
+>  }
+> =20
+> @@ -52,10 +50,9 @@ static int rk808_clkout2_is_prepared(struct clk_hw *hw)
+>  	struct rk808_clkout *rk808_clkout =3D container_of(hw,
+>  							 struct rk808_clkout,
+>  							 clkout2_hw);
+> -	struct rk808 *rk808 =3D rk808_clkout->rk808;
+>  	uint32_t val;
+> =20
+> -	int ret =3D regmap_read(rk808->regmap, RK808_CLK32OUT_REG, &val);
+> +	int ret =3D regmap_read(rk808_clkout->regmap, RK808_CLK32OUT_REG, &val);
+> =20
+>  	if (ret < 0)
+>  		return ret;
+> @@ -93,9 +90,8 @@ static int rk817_clkout2_enable(struct clk_hw *hw, bool=
+ enable)
+>  	struct rk808_clkout *rk808_clkout =3D container_of(hw,
+>  							 struct rk808_clkout,
+>  							 clkout2_hw);
+> -	struct rk808 *rk808 =3D rk808_clkout->rk808;
+> =20
+> -	return regmap_update_bits(rk808->regmap, RK817_SYS_CFG(1),
+> +	return regmap_update_bits(rk808_clkout->regmap, RK817_SYS_CFG(1),
+>  				  RK817_CLK32KOUT2_EN,
+>  				  enable ? RK817_CLK32KOUT2_EN : 0);
+>  }
+> @@ -115,10 +111,9 @@ static int rk817_clkout2_is_prepared(struct clk_hw *=
+hw)
+>  	struct rk808_clkout *rk808_clkout =3D container_of(hw,
+>  							 struct rk808_clkout,
+>  							 clkout2_hw);
+> -	struct rk808 *rk808 =3D rk808_clkout->rk808;
+>  	unsigned int val;
+> =20
+> -	int ret =3D regmap_read(rk808->regmap, RK817_SYS_CFG(1), &val);
+> +	int ret =3D regmap_read(rk808_clkout->regmap, RK817_SYS_CFG(1), &val);
+> =20
+>  	if (ret < 0)
+>  		return 0;
+> @@ -153,18 +148,21 @@ static const struct clk_ops *rkpmic_get_ops(long va=
+riant)
+>  static int rk808_clkout_probe(struct platform_device *pdev)
+>  {
+>  	struct rk808 *rk808 =3D dev_get_drvdata(pdev->dev.parent);
+> -	struct i2c_client *client =3D rk808->i2c;
+> -	struct device_node *node =3D client->dev.of_node;
+> +	struct device *dev =3D &pdev->dev;
+>  	struct clk_init_data init =3D {};
+>  	struct rk808_clkout *rk808_clkout;
+>  	int ret;
+> =20
+> -	rk808_clkout =3D devm_kzalloc(&client->dev,
+> +	dev->of_node =3D pdev->dev.parent->of_node;
+> +
+> +	rk808_clkout =3D devm_kzalloc(dev,
+>  				    sizeof(*rk808_clkout), GFP_KERNEL);
+>  	if (!rk808_clkout)
+>  		return -ENOMEM;
+> =20
+> -	rk808_clkout->rk808 =3D rk808;
+> +	rk808_clkout->regmap =3D dev_get_regmap(pdev->dev.parent, NULL);
+> +	if (!rk808_clkout->regmap)
+> +		return -ENODEV;
+> =20
+>  	init.parent_names =3D NULL;
+>  	init.num_parents =3D 0;
+> @@ -173,10 +171,10 @@ static int rk808_clkout_probe(struct platform_devic=
+e *pdev)
+>  	rk808_clkout->clkout1_hw.init =3D &init;
+> =20
+>  	/* optional override of the clockname */
+> -	of_property_read_string_index(node, "clock-output-names",
+> +	of_property_read_string_index(dev->of_node, "clock-output-names",
+>  				      0, &init.name);
+> =20
+> -	ret =3D devm_clk_hw_register(&client->dev, &rk808_clkout->clkout1_hw);
+> +	ret =3D devm_clk_hw_register(dev, &rk808_clkout->clkout1_hw);
+>  	if (ret)
+>  		return ret;
+> =20
+> @@ -185,10 +183,10 @@ static int rk808_clkout_probe(struct platform_devic=
+e *pdev)
+>  	rk808_clkout->clkout2_hw.init =3D &init;
+> =20
+>  	/* optional override of the clockname */
+> -	of_property_read_string_index(node, "clock-output-names",
+> +	of_property_read_string_index(dev->of_node, "clock-output-names",
+>  				      1, &init.name);
+> =20
+> -	ret =3D devm_clk_hw_register(&client->dev, &rk808_clkout->clkout2_hw);
+> +	ret =3D devm_clk_hw_register(dev, &rk808_clkout->clkout2_hw);
+>  	if (ret)
+>  		return ret;
+> =20
+> --=20
+> 2.39.2
+>=20
+>=20
+> --=20
+> To unsubscribe, send mail to kernel-unsubscribe@lists.collabora.co.uk.
+
+--lgvrpfucjneu4wzk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmQScKsACgkQ2O7X88g7
++pqOaA//TmRWRC8cYxPTrmdEpzhneu7duDPKUX5+yWMbJo+UASHAxyJ83gVEPYAl
+MAqKH75tNcccG20vkUHImDSgxw012NURuzth7AGBnYD7i+CggSBZp3uusI7AkT2r
+Zb66H1Cx1otZMyl9kQR5XtV3k4CYFwlfPyluXT5CgR4YHnpYNm7IWDPAQiyvsxD2
+deh2ETCSHZy8igxn8+7qhm/qEwCjNMPr2ttiSb+uSw/4IcRwpou0adjtIWygTuuB
+GkXWQrzN7Ai2VNeUtCqCTGVU0xH7FIMric5LjGGwaUtdCe5XBZAMPdkEDhTuko/r
+HZc6M9CYFrRT6Lvr8C5cC4gG1OC/lLPMHGtgdviODn0nZ7KwkPIS9ehUzYz1GGAY
+/IMBq15q7p+gFSGB+R83Qe3mD1s2Vqco8igBei28c+xSQ8lVihgUJDp3iUnYcD9h
+eN4g5rl7kb4Y853OczOxLeaU0St/dO21fF6Ra/fnPmKErO1dljw2ijFG/LRCNEk1
+/h42CW1i/M8Xv3BnNHlkUrV8oWiwJGXgFBYTXiz968F8/jmvmdUPQ7owNTVQHp5p
+5HFMqVG9eO3AB8IJmwan1RvVXONaetl44ayO3+sCUv/a6R8c+ElJlQr3Lj/84zi0
+LnADlwMlTQFHnQ+XJjnKqA4oT+zFTXAtxfjC1kUwz5b5Nx3XTPw=
+=5Xxi
+-----END PGP SIGNATURE-----
+
+--lgvrpfucjneu4wzk--
