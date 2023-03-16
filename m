@@ -2,119 +2,112 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4FFC6FD1F
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 15:20:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC37C6FD1F
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 15:49:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230147AbjCPPUL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Mar 2023 11:20:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48470 "EHLO
+        id S230446AbjCPPtj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Mar 2023 11:49:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231473AbjCPPUE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 11:20:04 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C637DF715
-        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 08:19:56 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id t15so1873139wrz.7
-        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 08:19:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1678979995;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TgWMfzhObrj0kUZQtkGZokHYyYa6G72Fv0Uf4IJo0P4=;
-        b=OFA5D4OZEBeF2ec1JKLo7kLqcCKk0K3Iu1MbggXzM4WF3NoHiJL77vDxG0vtpwZz+5
-         p+BgdPe11Hu93yERFTklAAYhi0sWI3Ly3v39IzDxjIhmp7w+cdZL3lxyPChU8afsDp6c
-         a1kVaqaUa7dUgZY/PnjT8Wj1M5S01gvY3JmENdDDcRAb0HWkK4sxKattyCXD4g1TpVUB
-         /wXOFpr7LfigmKLWb/9V5d2RR8HZ37xsyLTyGn1JZ48uQi42EctJjRheYwu3vbFNNojK
-         sk7MIp5YCYcATZmOI3ivgzozrwVMx9IBJadiuvbG8Jp18frgzdoDuojEn984zUmhi0DY
-         CI7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678979995;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TgWMfzhObrj0kUZQtkGZokHYyYa6G72Fv0Uf4IJo0P4=;
-        b=lXSJVGIwtK5RdD5sL2g+JD7lPc9eIpXd8D/rcMAUVcLq016AOldwYEXeHdsUcMc/k7
-         ZshWkJFZTA5O+3ieMmrEDiVxymiAKKJcORTHVjpFFIFV9Wkax1/k840JMHMtoewoHJfn
-         Q2kpC3Sk+635u3HlslGi8pYQ7rVvTinNNdqF5yH7d1yHaYbGKWAefnC63LwCm056WR0V
-         ZQPh55C+J/Ti0SbVbuWAoiaxDr4Kx8GDChTsHd2P7BAtlia3MGsYuUO6V7BYIbwz2VhI
-         JJc6+dULQIuFzMfLEX9Z1BzHn2iK6+1rUGKMmr+1+c6QjhcIywWFVOXvH15n0bwPN5s+
-         qbRQ==
-X-Gm-Message-State: AO0yUKVAaVIjskfx4U/BWTho6fspzX29zHFY1ZitIBPnZYhy07E25E6V
-        z1rxR7FmlGVu8PwFoerU1sdzEw==
-X-Google-Smtp-Source: AK7set/GLdd2/EehnrOKR4cb06GbiP0IsPpRFlvHvmNN0qsnqJJJAk8jeFWizMQY8mw4hy0TH4WzCA==
-X-Received: by 2002:a5d:608d:0:b0:2c7:d7c:7d0 with SMTP id w13-20020a5d608d000000b002c70d7c07d0mr4788153wrt.22.1678979994646;
-        Thu, 16 Mar 2023 08:19:54 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id r2-20020adff702000000b002c573cff730sm7482799wrp.68.2023.03.16.08.19.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Mar 2023 08:19:54 -0700 (PDT)
-Date:   Thu, 16 Mar 2023 16:19:52 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Vadim Fedorenko <vadfed@meta.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        poros <poros@redhat.com>, mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "Michalik, Michal" <michal.michalik@intel.com>
-Subject: Re: [PATCH RFC v6 1/6] dpll: spec: Add Netlink spec in YAML
-Message-ID: <ZBMzmHnW707gIvAU@nanopsycho>
-References: <20230312022807.278528-1-vadfed@meta.com>
- <20230312022807.278528-2-vadfed@meta.com>
- <ZBCIPg1u8UFugEFj@nanopsycho>
- <DM6PR11MB4657F423D2B3B4F0799B0F019BBC9@DM6PR11MB4657.namprd11.prod.outlook.com>
- <ZBMdZkK91GHDrd/4@nanopsycho>
+        with ESMTP id S230452AbjCPPtf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 11:49:35 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FCCB7D92
+        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 08:49:07 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pcpqX-0008TT-5q; Thu, 16 Mar 2023 16:48:53 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pcpqV-004a3N-TO; Thu, 16 Mar 2023 16:48:51 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pcpqU-005PJw-QC; Thu, 16 Mar 2023 16:48:50 +0100
+Date:   Thu, 16 Mar 2023 16:48:50 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Sudeep Holla <sudeep.holla@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Cristian Marussi <cristian.marussi@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 15/30] clk: scpi: Convert to platform remove callback
+ returning void
+Message-ID: <20230316154850.wxwiztump5de3xt4@pengutronix.de>
+References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de>
+ <20230312161512.2715500-16-u.kleine-koenig@pengutronix.de>
+ <20230316150144.2aap5otmgblj24ty@bogus>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="5mrnsz43afupa3b4"
 Content-Disposition: inline
-In-Reply-To: <ZBMdZkK91GHDrd/4@nanopsycho>
+In-Reply-To: <20230316150144.2aap5otmgblj24ty@bogus>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thu, Mar 16, 2023 at 02:45:10PM CET, jiri@resnulli.us wrote:
->Thu, Mar 16, 2023 at 02:15:59PM CET, arkadiusz.kubalewski@intel.com wrote:
 
-[...]
+--5mrnsz43afupa3b4
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hello,
 
->>>>+      flags: [ admin-perm ]
->>>>+
->>>>+      do:
->>>>+        pre: dpll-pre-doit
->>>>+        post: dpll-post-doit
->>>>+        request:
->>>>+          attributes:
->>>>+            - id
->>>>+            - bus-name
->>>>+            - dev-name
->>>>+            - mode
->>>
->>>Hmm, shouldn't source-pin-index be here as well?
->>
->>No, there is no set for this.
->>For manual mode user selects the pin by setting enabled state on the one
->>he needs to recover signal from.
->>
->>source-pin-index is read only, returns active source.
->
->Okay, got it. Then why do we have this assymetric approach? Just have
->the enabled state to serve the user to see which one is selected, no?
->This would help to avoid confusion (like mine) and allow not to create
->inconsistencies (like no pin enabled yet driver to return some source
->pin index)
+[put the clk maintainers in To:]
 
-Actually, for mlx5 implementation, would be non-trivial to implement
-this, as each of the pin/port is instantiated and controlled by separate
-pci backend.
+On Thu, Mar 16, 2023 at 03:01:44PM +0000, Sudeep Holla wrote:
+> On Sun, Mar 12, 2023 at 05:14:57PM +0100, Uwe Kleine-K=F6nig wrote:
+> > The .remove() callback for a platform driver returns an int which makes
+> > many driver authors wrongly assume it's possible to do error handling by
+> > returning an error code. However the value returned is (mostly) ignored
+> > and this typically results in resource leaks. To improve here there is a
+> > quest to make the remove callback return void. In the first step of this
+> > quest all drivers are converted to .remove_new() which already returns
+> > void.
+> >=20
+> > Trivially convert this driver from always returning zero in the remove
+> > callback to the void returning variant.
+> >
+>=20
+> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+>=20
+> Let me know if you want me to pick up instead.
 
-Could you please remove, it is not needed and has potential and real
-issues.
+Honestly I don't know. I expected that the series is applied completely
+via the clk maintainers, but the samsung patch was already taken
+individually.
 
-[...]
+Michael and Stephen: It would probably be helpful if you shared your
+thoughs about this. For me both options are fine.
 
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--5mrnsz43afupa3b4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmQTOl8ACgkQwfwUeK3K
+7AkNqQf/UA7zXQz4+AFWQFgpi30qcC1O218m/8U75zgzwkIyDgraoGDl+NQJDp0l
+o1tHfdO6/7ghxY+Fm0853gWP8+dBoui1wkjaqZA6MyMmS5PPPtK0sGiyrubm3ZPs
+5ReuoNPdPr4IdHNhihYxp872N5IBCmjijbyw+8o8Zbgk7ADLIjP+CIAb4YWuDLy7
+6CZMDBTImHiAZW0/fB2PQK8iGVosNObpqlQWR67lze7LtVJ+ioPKyQOLgo0yLxym
+AldCyyUdMPmoGxLP4gOfZqpgBrdorfE+uUfU1OiEVPK4xZRvyDo+DSxSxOdefEEb
+bttxdh9rF8T6mU5OFnv7tWYbwp/11A==
+=KvDT
+-----END PGP SIGNATURE-----
+
+--5mrnsz43afupa3b4--
