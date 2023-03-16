@@ -2,115 +2,157 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9159DC7618A
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 19:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ABE0C7618E
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 19:20:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229704AbjCPTTF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Mar 2023 15:19:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39492 "EHLO
+        id S230186AbjCPTU6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Mar 2023 15:20:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230006AbjCPTTC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 15:19:02 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AA19E4863;
-        Thu, 16 Mar 2023 12:18:20 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 207BC620F7;
-        Thu, 16 Mar 2023 19:18:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1D0DC433D2;
-        Thu, 16 Mar 2023 19:18:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678994298;
-        bh=U6/3MAM8lEWJuAQad1Q+TVX2oTsNcl0STc3k5xy9Klg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lka3LA3zNxRuOKAFjjixGSIQqsYiL+s0wuBpCboYGUB+hn39p7r+N9ZHBasxkdnyb
-         4JSSvT96btScmpf0WgeEX29S62/0B301LF49slJPT5Z0XJEhHOrzXTm1hOQ03rtDP/
-         XbzEMb5/S1Rx3gdNkhmMaZ+5U/zWhgPN6skkB8J79ghJkpmb1htrW7LAOPrDYW5Ewc
-         uPHZPuIYSC8ya9qx8xt1HMHWoK3sd4uhVWfW0MtgXlmhOG+gwTy1XznsCAwW1V79lk
-         vMJix/0BhIo+9Dkjd2gLc+Kf36QBHmsmh4vWdWXtquzrQJWBE/zF5SdrR0PfkLyFod
-         QvYWz9NCaDZqw==
-Date:   Thu, 16 Mar 2023 20:18:15 +0100
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Conor Dooley <conor@kernel.org>
-Cc:     linux-riscv@lists.infradead.org,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        linux-clk@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org, Bin Liu <b-liu@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Daire McNamara <daire.mcnamara@microchip.com>
-Subject: Re: [PATCH v1 2/5] i2c: microchip-core: convert
- SOC_MICROCHIP_POLARFIRE to ARCH_MICROCHIP_POLARFIRE
-Message-ID: <ZBNrd5ww9YD3xQTS@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Conor Dooley <conor@kernel.org>, linux-riscv@lists.infradead.org,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        linux-clk@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org, Bin Liu <b-liu@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Daire McNamara <daire.mcnamara@microchip.com>
-References: <20230309204452.969574-1-conor@kernel.org>
- <20230309204452.969574-3-conor@kernel.org>
+        with ESMTP id S230173AbjCPTU5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 15:20:57 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C5F3C648
+        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 12:20:55 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id x13so11862765edd.1
+        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 12:20:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678994453;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I6W9kUfmlY3tEraL4nU9eY/Af3MdcpRFdLZzCUy+85U=;
+        b=hVfamywI7Z36xHj6XfceRT3rEYu7wfXqO1XRTmOt0XtuS1PkmzUQX16lsH2KqLEfeV
+         d255f9CAmKEI7EjqrU+c2cWlBUD0/GqyV9J10tpEQV7fjFsPcfLEIB8cu57VtX7rUDek
+         4UanuNT7Ya6abBq+7caHifRqkiFOySFpEFbTnXAGI11fG0/r91wVhtxEmL9DFt2KZ+v9
+         61m93BAFn1HQ/DoFe2qm/JF3HyET+PE7ufKR1sVG3VDpherQkPZwxCxGbZFJj/Mf+ZmD
+         KzSeMCcilkxHvT6YH859eyYaRNj29AaCjaDhv1aCh46FqqymjR95pJOp7h4ME5sShC6V
+         8VDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678994453;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I6W9kUfmlY3tEraL4nU9eY/Af3MdcpRFdLZzCUy+85U=;
+        b=U5Z/kXQ8yY2i4jxub26/k6gLD69HQJ+qVlARfG0kf+tUi34p2fTkHFBn72ajWGCxYE
+         KH9Y8s7+mG8RBpV9V+DPtngOFwzD30NIHZY54VfBhWagtnNSjmga0D3Wm6iOKHKh0/hX
+         mfPJH+MShO/G65ctfPCq8DUP2nmYwz7jvcYtoFCwzD6y8MfdP1Zk0TV/y+hTURqa8jTm
+         QxJOqmYhW8kD+imMomXGHnENdG/oDndCmFP7P+4zJ4xLllkXJs0qrLgLtGUPkz2O045N
+         ZJ/3xut3ZvgycKUslxmW3kY45qGl+5vD0Bb9mCevTk+B80CG2DzhrhWJl0sYX+W5BTua
+         urRQ==
+X-Gm-Message-State: AO0yUKVqBqEmhaAVJGScLauEavXmUpjdGussh/8uGkENVbIyQVMfPpzP
+        RdK0SBBaz3AkpH/FlZRsH2HDBA==
+X-Google-Smtp-Source: AK7set8t10Jjk9M0yulDUJsBcv70/mUwE18d9PBfWRZHveo8W0esOHyL0XnxuDdXiwksCvF4lp4NSg==
+X-Received: by 2002:aa7:db96:0:b0:4fa:d2b1:9176 with SMTP id u22-20020aa7db96000000b004fad2b19176mr672063edt.22.1678994453564;
+        Thu, 16 Mar 2023 12:20:53 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:9827:5f65:8269:a95f? ([2a02:810d:15c0:828:9827:5f65:8269:a95f])
+        by smtp.gmail.com with ESMTPSA id k12-20020a50ce4c000000b004af70c546dasm143487edj.87.2023.03.16.12.20.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Mar 2023 12:20:53 -0700 (PDT)
+Message-ID: <066ca8a9-783d-de4f-aa49-86748e5ee716@linaro.org>
+Date:   Thu, 16 Mar 2023 20:20:51 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="TIODK/DyJw5FNTCf"
-Content-Disposition: inline
-In-Reply-To: <20230309204452.969574-3-conor@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH net-next 01/11] dt-bindings: net: snps,dwmac: Update
+ interrupt-names
+Content-Language: en-US
+To:     Andrew Halaney <ahalaney@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, vkoul@kernel.org,
+        bhupesh.sharma@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, peppe.cavallaro@st.com,
+        alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+        mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
+        linux@armlinux.org.uk, veekhee@apple.com,
+        tee.min.tan@linux.intel.com, mohammad.athari.ismail@intel.com,
+        jonathanh@nvidia.com, ruppala@nvidia.com, bmasney@redhat.com,
+        andrey.konovalov@linaro.org, linux-arm-msm@vger.kernel.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, ncai@quicinc.com,
+        jsuraj@qti.qualcomm.com, hisunil@quicinc.com
+References: <20230313165620.128463-1-ahalaney@redhat.com>
+ <20230313165620.128463-2-ahalaney@redhat.com>
+ <d4831176-c6f1-5a9b-3086-23d82f1f05a6@linaro.org>
+ <20230316161525.fwzfyj3fhekfwafd@halaney-x13s>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230316161525.fwzfyj3fhekfwafd@halaney-x13s>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 16/03/2023 17:15, Andrew Halaney wrote:
+> On Thu, Mar 16, 2023 at 08:13:24AM +0100, Krzysztof Kozlowski wrote:
+>> On 13/03/2023 17:56, Andrew Halaney wrote:
+>>> From: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+>>>
+>>> As commit fc191af1bb0d ("net: stmmac: platform: Fix misleading
+>>> interrupt error msg") noted, not every stmmac based platform
+>>> makes use of the 'eth_wake_irq' or 'eth_lpi' interrupts.
+>>>
+>>> So, update the 'interrupt-names' inside 'snps,dwmac' YAML
+>>> bindings to reflect the same.
+>>>
+>>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+>>> Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
+>>> ---
+>>>
+>>> I picked this up from:
+>>> 		https://lore.kernel.org/netdev/20220929060405.2445745-2-bhupesh.sharma@linaro.org/
+>>> No changes other than collecting the Acked-by.
+>>>
+>>>  Documentation/devicetree/bindings/net/snps,dwmac.yaml | 4 ++--
+>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+>>> index 16b7d2904696..52ce14a4bea7 100644
+>>> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+>>> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+>>> @@ -105,8 +105,8 @@ properties:
+>>>      minItems: 1
+>>>      items:
+>>>        - const: macirq
+>>> -      - const: eth_wake_irq
+>>> -      - const: eth_lpi
+>>> +      - enum: [eth_wake_irq, eth_lpi]
+>>> +      - enum: [eth_wake_irq, eth_lpi]
+>>
+>> I acked it before but this is not correct. This should be:
+>> +      - enum: [eth_wake_irq, eth_lpi]
+>> +      - enum: eth_lpi
+> 
+> Would
+> +      - enum: [eth_wake_irq, eth_lpi]
+> +      - const: eth_lpi
+> be more appropriate? With the suggested change above I get the following
+> error, but with the above things seem to work as I expect:
+> 
+>     (dtschema) ahalaney@halaney-x13s ~/git/redhat/stmmac (git)-[stmmac|rebase-i] % git diff HEAD~
+>     diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+>     index 16b7d2904696..ca199a17f83d 100644
+>     --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+>     +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+>     @@ -105,8 +105,8 @@ properties:
+>          minItems: 1
+>          items:
+>            - const: macirq
+>     -      - const: eth_wake_irq
+>     -      - const: eth_lpi
+>     +      - enum: [eth_wake_irq, eth_lpi]
+>     +      - enum: eth_lpi
 
---TIODK/DyJw5FNTCf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Eh, right, obviously should be here const, so:
 
-On Thu, Mar 09, 2023 at 08:44:49PM +0000, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
->=20
-> As part of converting RISC-V SOC_FOO symbols to ARCH_FOO to match the
-> use of such symbols on other architectures, convert the Microchip FPGA
-> i2c drivers to use the new symbol.
->=20
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+ - const: eth_lpi
 
-Applied to for-next, thanks!
+Best regards,
+Krzysztof
 
-
---TIODK/DyJw5FNTCf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmQTa3YACgkQFA3kzBSg
-KbZWQRAArPUHPGdzaDCWZYxs1RoufYMPW3mLcn2mvcWqFmxkR89/yXReohhpb09D
-99smcOSUtpAXFkzmCoCc4KlsUQDmUqG8Zy8dJ70//YEbx1IZddE8OkDOu2WwMToX
-WY3AQ7Xkfa3Ror25SeitAVTnpP3XnFTR/jPl4d6Vz7ug5vGIcleqJRs5AOShZfdH
-nDRdXQfayeVeWfjA/zSp4XM4ahx5ZaLAyqyOQEUmx2IZDJGcaUZXc4K2SeHoeJ9e
-KYrhY+SHfwTSqNoPB7bUUfrz11Ub6use6WHLLZPMGUYzkuHyhpkFUxAInoZPpVgd
-dhpTUodP5iZHalX4Z2ZFCX1ciYuowOQN5fr5dFZBBM87cxE9OMd/eaGC3dVMe98U
-LqAmJzWg1+E38GswGLZdgRWtuhSwMxvSGm5bRxlZlyoOdBXEFlTjOB1WAKGyduzs
-raLno/7NRrdQvPzV9/DVXNQQ4ERA5hInN6Ax1bhqApMNouaxsTqv8leU+AVFL+Tg
-JVU1OFGedAfBYFHySpAEO3AeNV1hWKBMkccjWZHMwExC86r3dGFfc4KYo8/OEM//
-/yjIwK1DuOLfH7CoM/F/wsK4Ga8XmuIg7z1/34m5Z7iKfsz30zmlDxHHKeMLm5RF
-XoBHu7Mq3A0osybzaKLJWmXXYW9G3/kIIeXGZhQNoCb999t+8+I=
-=WGcd
------END PGP SIGNATURE-----
-
---TIODK/DyJw5FNTCf--
