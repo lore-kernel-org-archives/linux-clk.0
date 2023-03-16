@@ -2,268 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BD9C7618D
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 10:12:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C97C6FD19
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 10:47:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230034AbjCPKMq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Mar 2023 06:12:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34282 "EHLO
+        id S230063AbjCPKrX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Mar 2023 06:47:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230318AbjCPKMa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 06:12:30 -0400
-Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABF87B951E
-        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 03:12:09 -0700 (PDT)
-Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-54184571389so21433827b3.4
-        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 03:12:09 -0700 (PDT)
+        with ESMTP id S230030AbjCPKrS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 06:47:18 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69586B854D;
+        Thu, 16 Mar 2023 03:47:17 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id h8so1237324plf.10;
+        Thu, 16 Mar 2023 03:47:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678961528;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HUXMtYCJCytkJaYrRDzWMzdMH+FzcGdy44GMw4xZIbw=;
-        b=qrgea51T34DMF4J459mkcIfZM1O5H1D7Blf2NqQVaiHCYu/S0yJheRooxcaRzkLKA8
-         o/qVX9Z5kPl+ZfI2iQMguYLIjfKBVzZ/51FeU9TxUjsn21UWVJRd8bkLeLExN+2r/t9C
-         45dK+4coBBS0nCQo/mOSU3oqeFUNMQfD0NX0r49iCClhHAW/fcHlu/dqbB/fgBjBk390
-         bWnb+0+NO+OPFq5zMlxdFnzT+Ug9A8QfqOeZrVpa+1ikFXFkqKb9IEE3Cl9JP69IlFoN
-         gMlRtPTcKjpVX08WqHkJdp4oZzjNf+lUIWzemFJQ3SKZD40b09+Qkie46tTorxxT0epL
-         5G1A==
+        d=gmail.com; s=20210112; t=1678963636;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sARMOewAiJNOJtS/RRcjmmgBbN0L7rWCfxuqDehP+MQ=;
+        b=dpGSN3jOw4n9s1Ax3nsBLmwBq4kF6qhUNyP5tdxK+zYs5m39cF1Axk/vNSA11kT2Pq
+         MCAlSSHBgtyCEnGZ/vJduGlsVXL9u/LBP91KyEkAtRd4G0HbuV3j3iqwoTVaBihCJ3Z9
+         NyIzSqnioJhYp4P3SbYcjOKaVEAjqihAGG8TbQIFIr0J1vN0EaYZfvNxEyJu8eX4K9r+
+         S/3aUHv+1vRqMapbD59ygvnfcrCH8eySbwLzu9sYnW/MoXiiNAq0ig/17YI62X9ja1/i
+         AxweE44CM+HbmxwmD4A3J8ltetlqiBgGsdiozsLRIqcnU+Nacm25oQxo1+xELk/07AQ1
+         hGqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678961528;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20210112; t=1678963636;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HUXMtYCJCytkJaYrRDzWMzdMH+FzcGdy44GMw4xZIbw=;
-        b=R8SESl58qt+88abZzerDvm+YvzClQSLyBF8uxPSX8aCDBKoYGcvYf7l/pAQ4YHy7cZ
-         zT/UhapmqjXjNq7RmXNpWZFuwvvxFXjIp8MJoSoCgLW9A1mF0dnxoyeQwVhWIRXXqVWk
-         SsB8BjK2jGP31mb3ch94u64ezEvHlCxuAfD+E6iOIPAvYKVWBctOYcVNtNoqbPPZ41OO
-         x5315ydusGZGeFUE27/xiZoWXjXz5kne2TlxIh433kmvhleoFI8WKTzeV/ZEyQwIgm3n
-         Vrtu0YtzlVEhqtaxyUwziji7bLKf2n3sJEk5czCegf0xiz9T1MDxRkG/co/U6PqION1M
-         QnsA==
-X-Gm-Message-State: AO0yUKXY9X1qAlmVtCncsF8yR6dCxzkX4B0xUCpabtIzSyPkk2ElNV/U
-        m8JolRxkV5PAFRV9q83i5urqhcuIygjFckYeL9Y2ag==
-X-Google-Smtp-Source: AK7set/KxCCnM2xscrt5p3IwN8pijGV3hZwQNY4jhHYrQ6X7R+dhtMmXWquofPXgEnNNKJko0qibO1BNsjyewjnx8Xk=
-X-Received: by 2002:a81:d84d:0:b0:543:9065:b225 with SMTP id
- n13-20020a81d84d000000b005439065b225mr1963135ywl.5.1678961528178; Thu, 16 Mar
- 2023 03:12:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230316083049.29979-1-quic_tdas@quicinc.com> <20230316083049.29979-3-quic_tdas@quicinc.com>
-In-Reply-To: <20230316083049.29979-3-quic_tdas@quicinc.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Thu, 16 Mar 2023 12:11:57 +0200
-Message-ID: <CAA8EJpqxtRyVKoqNsY01FmHaa10WK9LT49ydenztoJ1q0ah0+A@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: qcom: videocc-sm8450: Add video clock controller
- driver for SM8450
-To:     Taniya Das <quic_tdas@quicinc.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        bh=sARMOewAiJNOJtS/RRcjmmgBbN0L7rWCfxuqDehP+MQ=;
+        b=4dqOTmt0i09W12d/ncZ3FCPqZt/KWAaWH+8CMFtvFCGG9FaNuOAieTlEh7o+38g3my
+         ijl2pYTS3VSjXd+svNN2YYxpR0QHQbq+pnZ6WAOAwiaNe6GR5Ptja6H+bIthRBQA0D7N
+         7cQ7QD90I6SiZKFZG+TrgTpzzzfrlwJvCTKfahN9Zyhp2XTPyza8BHdyf5j+R+CepMpS
+         Og8rQFxAjtj/yoE5Q76vsDOuI8zqBllxkjZ8U7ZAL28uU81iUDTNXe79AwHclMjhX3tu
+         EIYanOryvCkk1XVPCtX45KeClymTZ2ZP/3SnWDJlv7Xt1F7WKKTaBAUvDfJpSiVnCN1c
+         8djA==
+X-Gm-Message-State: AO0yUKX2+0naItSnhn1bHjca4BRqNNsg+nSbXlJkU9IqZF5Glo/7441j
+        o5S5GV9eLw2C/tUhexHnAReti7ujox6J/w==
+X-Google-Smtp-Source: AK7set8RKHXbcmQkOIL7eB7IjStAEF3yZHLQ4Yv28epu2B3lhayzDR0FHUU7j01EpjMG4i67nD5sDA==
+X-Received: by 2002:a05:6a20:c124:b0:d4:72ab:df31 with SMTP id bh36-20020a056a20c12400b000d472abdf31mr2774384pzb.11.1678963636478;
+        Thu, 16 Mar 2023 03:47:16 -0700 (PDT)
+Received: from kelvin-ThinkPad-L14-Gen-1.. (94.130.220.35.bc.googleusercontent.com. [35.220.130.94])
+        by smtp.gmail.com with ESMTPSA id f11-20020aa78b0b000000b005d4e89b69e5sm5143263pfd.127.2023.03.16.03.47.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Mar 2023 03:47:16 -0700 (PDT)
+From:   Keguang Zhang <keguang.zhang@gmail.com>
+To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_skakitap@quicinc.com, quic_jkona@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Keguang Zhang <keguang.zhang@gmail.com>
+Subject: [PATCH v3 0/4] Devicetree support for Loongson-1 clock
+Date:   Thu, 16 Mar 2023 18:47:03 +0800
+Message-Id: <20230316104707.236034-1-keguang.zhang@gmail.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 16 Mar 2023 at 10:31, Taniya Das <quic_tdas@quicinc.com> wrote:
->
-> Add support for the video clock controller driver for peripheral clock
-> clients to be able to request for video cc clocks.
->
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
->  drivers/clk/qcom/Kconfig          |   9 +
->  drivers/clk/qcom/Makefile         |   1 +
->  drivers/clk/qcom/videocc-sm8450.c | 464 ++++++++++++++++++++++++++++++
->  3 files changed, 474 insertions(+)
->  create mode 100644 drivers/clk/qcom/videocc-sm8450.c
->
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 5ab4b7dfe3c2..81909e179bc7 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -892,4 +892,13 @@ config CLK_GFM_LPASS_SM8250
->           Support for the Glitch Free Mux (GFM) Low power audio
->            subsystem (LPASS) clocks found on SM8250 SoCs.
->
-> +config SM_VIDEOCC_8450
-> +       tristate "SM8450 Video Clock Controller"
-> +       select SM_GCC_8450
-> +       select QCOM_GDSC
-> +       help
-> +         Support for the video clock controller on Qualcomm Technologies, Inc.
-> +         SM8450 devices.
-> +         Say Y if you want to support video devices and functionality such as
-> +         video encode/decode.
->  endif
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index c743805a9cbb..5cbd0eedd6d9 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -119,6 +119,7 @@ obj-$(CONFIG_SM_GPUCC_8350) += gpucc-sm8350.o
->  obj-$(CONFIG_SM_TCSRCC_8550) += tcsrcc-sm8550.o
->  obj-$(CONFIG_SM_VIDEOCC_8150) += videocc-sm8150.o
->  obj-$(CONFIG_SM_VIDEOCC_8250) += videocc-sm8250.o
-> +obj-$(CONFIG_SM_VIDEOCC_8450) += videocc-sm8450.o
->  obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
->  obj-$(CONFIG_KPSS_XCC) += kpss-xcc.o
->  obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
-> diff --git a/drivers/clk/qcom/videocc-sm8450.c b/drivers/clk/qcom/videocc-sm8450.c
-> new file mode 100644
-> index 000000000000..ca60f3be587d
-> --- /dev/null
-> +++ b/drivers/clk/qcom/videocc-sm8450.c
-> @@ -0,0 +1,464 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/clock/qcom,videocc-sm8450.h>
-> +
-> +#include "clk-alpha-pll.h"
-> +#include "clk-branch.h"
-> +#include "clk-rcg.h"
-> +#include "clk-regmap.h"
-> +#include "clk-regmap-divider.h"
-> +#include "common.h"
-> +#include "gdsc.h"
-> +#include "reset.h"
-> +
-> +enum {
-> +       P_BI_TCXO,
-> +       P_VIDEO_CC_PLL0_OUT_MAIN,
-> +       P_VIDEO_CC_PLL1_OUT_MAIN,
-> +};
-> +
-> +static const struct pll_vco lucid_evo_vco[] = {
-> +       { 249600000, 2020000000, 0 },
-> +};
-> +
-> +static const struct alpha_pll_config video_cc_pll0_config = {
-> +       .l = 0x1E,
-> +       .alpha = 0x0,
-> +       .config_ctl_val = 0x20485699,
-> +       .config_ctl_hi_val = 0x00182261,
-> +       .config_ctl_hi1_val = 0x32AA299C,
-> +       .user_ctl_val = 0x00000000,
-> +       .user_ctl_hi_val = 0x00000805,
-> +};
-> +
-> +static struct clk_alpha_pll video_cc_pll0 = {
-> +       .offset = 0x0,
-> +       .vco_table = lucid_evo_vco,
-> +       .num_vco = ARRAY_SIZE(lucid_evo_vco),
-> +       .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_EVO],
-> +       .clkr = {
-> +               .hw.init = &(const struct clk_init_data){
-> +                       .name = "video_cc_pll0",
-> +                       .parent_data = &(const struct clk_parent_data){
-> +                               .fw_name = "bi_tcxo",
+Removes the old Loongson-1 clock driver and related code
+mainly because of no DT support and outdated implementation.
 
-Could you please follow the last of recent drivers and use DT indices
-instead of clock-names?
+Then, re-implement it to solve the above issues,
+along with the devicetree binding document.
 
-Also, as a syntax nit, could you please add whitespaces between ) and { ?
+Changelog
+V2 -> V3: Add 'reg' property into the 'required' field
+          Delete the unnecessary property 'clock-names'
+          Use the same license as binding document for the header file.
+          Add MODULE_AUTHOR and MODULE_DESCRIPTION info
+          Add patch "MIPS: loongson32: Update the clock initialization" into this series
+	  Add Acked-by tag from Stephen Boyd and Thomas Bogendoerfer
+V1 -> V2: Change to one clock controller (suggested by Krzysztof Kozlowski)
+          Add clock-related dt-binding header file
+          Fix the warning of dt_binding_check
+          Split the driver removal to a separate patch
+          Implement one clock controller instead of single clocks
+          (suggested by Krzysztof Kozlowski)
 
-> +                       },
-> +                       .num_parents = 1,
-> +                       .ops = &clk_alpha_pll_lucid_evo_ops,
-> +               },
-> +       },
-> +};
-> +
+Keguang Zhang (4):
+  dt-bindings: clock: Add Loongson-1 clock
+  clk: loongson1: Remove the outdated driver
+  clk: loongson1: Re-implement the clock driver
+  MIPS: loongson32: Update the clock initialization
 
-[skipped]
+ .../bindings/clock/loongson,ls1x-clk.yaml     |  45 +++
+ .../include/asm/mach-loongson32/platform.h    |   1 -
+ arch/mips/loongson32/common/time.c            |   3 +-
+ drivers/clk/Makefile                          |   2 +-
+ drivers/clk/clk-loongson1.c                   | 301 ++++++++++++++++++
+ drivers/clk/loongson1/Makefile                |   4 -
+ drivers/clk/loongson1/clk-loongson1b.c        | 118 -------
+ drivers/clk/loongson1/clk-loongson1c.c        |  95 ------
+ drivers/clk/loongson1/clk.c                   |  41 ---
+ drivers/clk/loongson1/clk.h                   |  15 -
+ include/dt-bindings/clock/loongson,ls1x-clk.h |  19 ++
+ 11 files changed, 368 insertions(+), 276 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/loongson,ls1x-clk.yaml
+ create mode 100644 drivers/clk/clk-loongson1.c
+ delete mode 100644 drivers/clk/loongson1/Makefile
+ delete mode 100644 drivers/clk/loongson1/clk-loongson1b.c
+ delete mode 100644 drivers/clk/loongson1/clk-loongson1c.c
+ delete mode 100644 drivers/clk/loongson1/clk.c
+ delete mode 100644 drivers/clk/loongson1/clk.h
+ create mode 100644 include/dt-bindings/clock/loongson,ls1x-clk.h
 
 
-> +
-> +static void video_cc_sm8450_pm_runtime_disable(void *data)
-> +{
-> +       pm_runtime_disable(data);
-> +}
-> +
-> +static int video_cc_sm8450_probe(struct platform_device *pdev)
-> +{
-> +       struct regmap *regmap;
-> +       int ret;
-> +
-> +       pm_runtime_enable(&pdev->dev);
-> +
-> +       ret = devm_add_action_or_reset(&pdev->dev, video_cc_sm8450_pm_runtime_disable, &pdev->dev);
-> +       if (ret)
-> +               return ret;
-
-Could you please shift to using devm_pm_runtime_enable()?
-
-> +
-> +       ret = pm_runtime_resume_and_get(&pdev->dev);
-> +       if (ret)
-> +               return ret;
-> +
-> +       regmap = qcom_cc_map(pdev, &video_cc_sm8450_desc);
-> +       if (IS_ERR(regmap)) {
-> +               pm_runtime_put(&pdev->dev);
-> +               return PTR_ERR(regmap);
-> +       }
-> +
-> +       clk_lucid_evo_pll_configure(&video_cc_pll0, regmap, &video_cc_pll0_config);
-> +       clk_lucid_evo_pll_configure(&video_cc_pll1, regmap, &video_cc_pll1_config);
-> +
-> +       /*
-> +        * Keep clocks always enabled:
-> +        *      video_cc_ahb_clk
-> +        *      video_cc_sleep_clk
-> +        *      video_cc_xo_clk
-> +        */
-> +       regmap_update_bits(regmap, 0x80e4, BIT(0), BIT(0));
-> +       regmap_update_bits(regmap, 0x8130, BIT(0), BIT(0));
-> +       regmap_update_bits(regmap, 0x8114, BIT(0), BIT(0));
-> +
-> +       ret = qcom_cc_really_probe(pdev, &video_cc_sm8450_desc, regmap);
-> +
-> +       pm_runtime_put(&pdev->dev);
-> +
-> +       return ret;
-> +}
-> +
-> +static struct platform_driver video_cc_sm8450_driver = {
-> +       .probe = video_cc_sm8450_probe,
-> +       .driver = {
-> +               .name = "video_cc-sm8450",
-> +               .of_match_table = video_cc_sm8450_match_table,
-> +       },
-> +};
-> +
-> +static int __init video_cc_sm8450_init(void)
-> +{
-> +       return platform_driver_register(&video_cc_sm8450_driver);
-> +}
-> +subsys_initcall(video_cc_sm8450_init);
-> +
-> +static void __exit video_cc_sm8450_exit(void)
-> +{
-> +       platform_driver_unregister(&video_cc_sm8450_driver);
-> +}
-> +module_exit(video_cc_sm8450_exit);
-> +
-> +MODULE_DESCRIPTION("QTI VIDEO_CC SM8450 Driver");
-> +MODULE_LICENSE("GPL v2");
-
-I think this should be just "GPL" nowaways.
-
-> --
-> 2.17.1
->
-
-
+base-commit: 6f173737e1b5670c200329677e821cce1d3d755e
 -- 
-With best wishes
-Dmitry
+2.34.1
+
