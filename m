@@ -2,57 +2,268 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37736C7618A
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 08:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BD9C7618D
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 10:12:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229950AbjCPIyq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Mar 2023 04:54:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46142 "EHLO
+        id S230034AbjCPKMq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Mar 2023 06:12:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230212AbjCPIyE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 04:54:04 -0400
-Received: from mail.corrib.pl (mail.corrib.pl [185.58.226.145])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45A57B6D16
-        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 01:52:49 -0700 (PDT)
-Received: by mail.corrib.pl (Postfix, from userid 1001)
-        id 0DBD9A30E0; Thu, 16 Mar 2023 08:51:38 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=corrib.pl; s=mail;
-        t=1678956723; bh=X6IEpSISwJiYlJ3uA866lskXve3r+4o2hf4z7VM6m5o=;
-        h=Date:From:To:Subject:From;
-        b=PIN9m585LugRmuUIWK7GrHPSbvqiN1dz/ea93frumApWZGGa6HDQOQ/F9WQx2btCo
-         XiDMOJKzqo1360kGfJcbG/t7Pu3IvhX9j5iEXAZBNu0vf6ajObNoW3X0AHM39sedqL
-         K+q5canoyNDibexw+2drYsJG1ckKo/xI4knir1liEtshKd6lWgIvIL051LOjxfEWXo
-         TQKlXnBfA5HVAf3q+pv12dv492j2j3eL5cfyzzHKj0liri0pR9g2R+ohCm9g45y2rY
-         yQ/hl/D+TiLq3eCdLfyQvT7Pkn2XQLMnCMVRWHnZfPaVM/pC8GKZvdS9wVIwGhZood
-         LfFI+ovB5fx8Q==
-Received: by mail.corrib.pl for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 08:51:25 GMT
-Message-ID: <20230316074501-0.1.63.izis.0.uqhwpd2mlq@corrib.pl>
-Date:   Thu, 16 Mar 2023 08:51:25 GMT
-From:   =?UTF-8?Q? "Szczepan_Kie=C5=82basa" ?= 
-        <szczepan.kielbasa@corrib.pl>
-To:     <linux-clk@vger.kernel.org>
-Subject: Faktoring
-X-Mailer: mail.corrib.pl
+        with ESMTP id S230318AbjCPKMa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 06:12:30 -0400
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABF87B951E
+        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 03:12:09 -0700 (PDT)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-54184571389so21433827b3.4
+        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 03:12:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678961528;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HUXMtYCJCytkJaYrRDzWMzdMH+FzcGdy44GMw4xZIbw=;
+        b=qrgea51T34DMF4J459mkcIfZM1O5H1D7Blf2NqQVaiHCYu/S0yJheRooxcaRzkLKA8
+         o/qVX9Z5kPl+ZfI2iQMguYLIjfKBVzZ/51FeU9TxUjsn21UWVJRd8bkLeLExN+2r/t9C
+         45dK+4coBBS0nCQo/mOSU3oqeFUNMQfD0NX0r49iCClhHAW/fcHlu/dqbB/fgBjBk390
+         bWnb+0+NO+OPFq5zMlxdFnzT+Ug9A8QfqOeZrVpa+1ikFXFkqKb9IEE3Cl9JP69IlFoN
+         gMlRtPTcKjpVX08WqHkJdp4oZzjNf+lUIWzemFJQ3SKZD40b09+Qkie46tTorxxT0epL
+         5G1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678961528;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HUXMtYCJCytkJaYrRDzWMzdMH+FzcGdy44GMw4xZIbw=;
+        b=R8SESl58qt+88abZzerDvm+YvzClQSLyBF8uxPSX8aCDBKoYGcvYf7l/pAQ4YHy7cZ
+         zT/UhapmqjXjNq7RmXNpWZFuwvvxFXjIp8MJoSoCgLW9A1mF0dnxoyeQwVhWIRXXqVWk
+         SsB8BjK2jGP31mb3ch94u64ezEvHlCxuAfD+E6iOIPAvYKVWBctOYcVNtNoqbPPZ41OO
+         x5315ydusGZGeFUE27/xiZoWXjXz5kne2TlxIh433kmvhleoFI8WKTzeV/ZEyQwIgm3n
+         Vrtu0YtzlVEhqtaxyUwziji7bLKf2n3sJEk5czCegf0xiz9T1MDxRkG/co/U6PqION1M
+         QnsA==
+X-Gm-Message-State: AO0yUKXY9X1qAlmVtCncsF8yR6dCxzkX4B0xUCpabtIzSyPkk2ElNV/U
+        m8JolRxkV5PAFRV9q83i5urqhcuIygjFckYeL9Y2ag==
+X-Google-Smtp-Source: AK7set/KxCCnM2xscrt5p3IwN8pijGV3hZwQNY4jhHYrQ6X7R+dhtMmXWquofPXgEnNNKJko0qibO1BNsjyewjnx8Xk=
+X-Received: by 2002:a81:d84d:0:b0:543:9065:b225 with SMTP id
+ n13-20020a81d84d000000b005439065b225mr1963135ywl.5.1678961528178; Thu, 16 Mar
+ 2023 03:12:08 -0700 (PDT)
 MIME-Version: 1.0
+References: <20230316083049.29979-1-quic_tdas@quicinc.com> <20230316083049.29979-3-quic_tdas@quicinc.com>
+In-Reply-To: <20230316083049.29979-3-quic_tdas@quicinc.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Thu, 16 Mar 2023 12:11:57 +0200
+Message-ID: <CAA8EJpqxtRyVKoqNsY01FmHaa10WK9LT49ydenztoJ1q0ah0+A@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: qcom: videocc-sm8450: Add video clock controller
+ driver for SM8450
+To:     Taniya Das <quic_tdas@quicinc.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_skakitap@quicinc.com, quic_jkona@quicinc.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On Thu, 16 Mar 2023 at 10:31, Taniya Das <quic_tdas@quicinc.com> wrote:
+>
+> Add support for the video clock controller driver for peripheral clock
+> clients to be able to request for video cc clocks.
+>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>  drivers/clk/qcom/Kconfig          |   9 +
+>  drivers/clk/qcom/Makefile         |   1 +
+>  drivers/clk/qcom/videocc-sm8450.c | 464 ++++++++++++++++++++++++++++++
+>  3 files changed, 474 insertions(+)
+>  create mode 100644 drivers/clk/qcom/videocc-sm8450.c
+>
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 5ab4b7dfe3c2..81909e179bc7 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -892,4 +892,13 @@ config CLK_GFM_LPASS_SM8250
+>           Support for the Glitch Free Mux (GFM) Low power audio
+>            subsystem (LPASS) clocks found on SM8250 SoCs.
+>
+> +config SM_VIDEOCC_8450
+> +       tristate "SM8450 Video Clock Controller"
+> +       select SM_GCC_8450
+> +       select QCOM_GDSC
+> +       help
+> +         Support for the video clock controller on Qualcomm Technologies, Inc.
+> +         SM8450 devices.
+> +         Say Y if you want to support video devices and functionality such as
+> +         video encode/decode.
+>  endif
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index c743805a9cbb..5cbd0eedd6d9 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -119,6 +119,7 @@ obj-$(CONFIG_SM_GPUCC_8350) += gpucc-sm8350.o
+>  obj-$(CONFIG_SM_TCSRCC_8550) += tcsrcc-sm8550.o
+>  obj-$(CONFIG_SM_VIDEOCC_8150) += videocc-sm8150.o
+>  obj-$(CONFIG_SM_VIDEOCC_8250) += videocc-sm8250.o
+> +obj-$(CONFIG_SM_VIDEOCC_8450) += videocc-sm8450.o
+>  obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
+>  obj-$(CONFIG_KPSS_XCC) += kpss-xcc.o
+>  obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
+> diff --git a/drivers/clk/qcom/videocc-sm8450.c b/drivers/clk/qcom/videocc-sm8450.c
+> new file mode 100644
+> index 000000000000..ca60f3be587d
+> --- /dev/null
+> +++ b/drivers/clk/qcom/videocc-sm8450.c
+> @@ -0,0 +1,464 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <dt-bindings/clock/qcom,videocc-sm8450.h>
+> +
+> +#include "clk-alpha-pll.h"
+> +#include "clk-branch.h"
+> +#include "clk-rcg.h"
+> +#include "clk-regmap.h"
+> +#include "clk-regmap-divider.h"
+> +#include "common.h"
+> +#include "gdsc.h"
+> +#include "reset.h"
+> +
+> +enum {
+> +       P_BI_TCXO,
+> +       P_VIDEO_CC_PLL0_OUT_MAIN,
+> +       P_VIDEO_CC_PLL1_OUT_MAIN,
+> +};
+> +
+> +static const struct pll_vco lucid_evo_vco[] = {
+> +       { 249600000, 2020000000, 0 },
+> +};
+> +
+> +static const struct alpha_pll_config video_cc_pll0_config = {
+> +       .l = 0x1E,
+> +       .alpha = 0x0,
+> +       .config_ctl_val = 0x20485699,
+> +       .config_ctl_hi_val = 0x00182261,
+> +       .config_ctl_hi1_val = 0x32AA299C,
+> +       .user_ctl_val = 0x00000000,
+> +       .user_ctl_hi_val = 0x00000805,
+> +};
+> +
+> +static struct clk_alpha_pll video_cc_pll0 = {
+> +       .offset = 0x0,
+> +       .vco_table = lucid_evo_vco,
+> +       .num_vco = ARRAY_SIZE(lucid_evo_vco),
+> +       .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_EVO],
+> +       .clkr = {
+> +               .hw.init = &(const struct clk_init_data){
+> +                       .name = "video_cc_pll0",
+> +                       .parent_data = &(const struct clk_parent_data){
+> +                               .fw_name = "bi_tcxo",
 
-rozwa=C5=BCali Pa=C5=84stwo wyb=C3=B3r finansowania, kt=C3=B3re spe=C5=82=
-ni potrzeby firmy, zapewniaj=C4=85c natychmiastowy dost=C4=99p do got=C3=B3=
-wki, bez zb=C4=99dnych przestoj=C3=B3w?=20
+Could you please follow the last of recent drivers and use DT indices
+instead of clock-names?
 
-Przygotowali=C5=9Bmy rozwi=C4=85zania faktoringowe dopasowane do Pa=C5=84=
-stwa bran=C5=BCy i wielko=C5=9Bci firmy, dzi=C4=99ki kt=C3=B3rym, nie mus=
-z=C4=85 Pa=C5=84stwo martwi=C4=87 si=C4=99 o niewyp=C5=82acalno=C5=9B=C4=87=
- kontrahent=C3=B3w, poniewa=C5=BC transakcje s=C4=85 zabezpieczone i posi=
-adaj=C4=85 gwarancj=C4=99 sp=C5=82aty.=20
-Chc=C4=85 Pa=C5=84stwo przeanalizowa=C4=87 dost=C4=99pne opcje?
+Also, as a syntax nit, could you please add whitespaces between ) and { ?
+
+> +                       },
+> +                       .num_parents = 1,
+> +                       .ops = &clk_alpha_pll_lucid_evo_ops,
+> +               },
+> +       },
+> +};
+> +
+
+[skipped]
 
 
-Pozdrawiam
-Szczepan Kie=C5=82basa
+> +
+> +static void video_cc_sm8450_pm_runtime_disable(void *data)
+> +{
+> +       pm_runtime_disable(data);
+> +}
+> +
+> +static int video_cc_sm8450_probe(struct platform_device *pdev)
+> +{
+> +       struct regmap *regmap;
+> +       int ret;
+> +
+> +       pm_runtime_enable(&pdev->dev);
+> +
+> +       ret = devm_add_action_or_reset(&pdev->dev, video_cc_sm8450_pm_runtime_disable, &pdev->dev);
+> +       if (ret)
+> +               return ret;
+
+Could you please shift to using devm_pm_runtime_enable()?
+
+> +
+> +       ret = pm_runtime_resume_and_get(&pdev->dev);
+> +       if (ret)
+> +               return ret;
+> +
+> +       regmap = qcom_cc_map(pdev, &video_cc_sm8450_desc);
+> +       if (IS_ERR(regmap)) {
+> +               pm_runtime_put(&pdev->dev);
+> +               return PTR_ERR(regmap);
+> +       }
+> +
+> +       clk_lucid_evo_pll_configure(&video_cc_pll0, regmap, &video_cc_pll0_config);
+> +       clk_lucid_evo_pll_configure(&video_cc_pll1, regmap, &video_cc_pll1_config);
+> +
+> +       /*
+> +        * Keep clocks always enabled:
+> +        *      video_cc_ahb_clk
+> +        *      video_cc_sleep_clk
+> +        *      video_cc_xo_clk
+> +        */
+> +       regmap_update_bits(regmap, 0x80e4, BIT(0), BIT(0));
+> +       regmap_update_bits(regmap, 0x8130, BIT(0), BIT(0));
+> +       regmap_update_bits(regmap, 0x8114, BIT(0), BIT(0));
+> +
+> +       ret = qcom_cc_really_probe(pdev, &video_cc_sm8450_desc, regmap);
+> +
+> +       pm_runtime_put(&pdev->dev);
+> +
+> +       return ret;
+> +}
+> +
+> +static struct platform_driver video_cc_sm8450_driver = {
+> +       .probe = video_cc_sm8450_probe,
+> +       .driver = {
+> +               .name = "video_cc-sm8450",
+> +               .of_match_table = video_cc_sm8450_match_table,
+> +       },
+> +};
+> +
+> +static int __init video_cc_sm8450_init(void)
+> +{
+> +       return platform_driver_register(&video_cc_sm8450_driver);
+> +}
+> +subsys_initcall(video_cc_sm8450_init);
+> +
+> +static void __exit video_cc_sm8450_exit(void)
+> +{
+> +       platform_driver_unregister(&video_cc_sm8450_driver);
+> +}
+> +module_exit(video_cc_sm8450_exit);
+> +
+> +MODULE_DESCRIPTION("QTI VIDEO_CC SM8450 Driver");
+> +MODULE_LICENSE("GPL v2");
+
+I think this should be just "GPL" nowaways.
+
+> --
+> 2.17.1
+>
+
+
+-- 
+With best wishes
+Dmitry
