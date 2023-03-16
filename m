@@ -2,104 +2,132 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD6AC74A5B
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 13:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A93A6C6FD19
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 14:06:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231144AbjCPNyU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Mar 2023 09:54:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58814 "EHLO
+        id S230460AbjCPOGb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Mar 2023 10:06:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230495AbjCPNx6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 09:53:58 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57121B951E
-        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 06:53:49 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id m18-20020a05600c3b1200b003ed2a3d635eso1195948wms.4
-        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2023 06:53:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1678974827;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tJUkcR5TLj/pckcV8NLJv4p0N2ALJ8mExf2txWHqrmk=;
-        b=wWYYJ+ypcPdJWK8mFMkmqjjTg/4tNQcs0l/VDlsiczG9njmrsHE+8e2lHla18Brgd9
-         KH7eoUQG5yA5+ddWujlQEuiA1U+UbeBjJOkWb92cpyhwyt2nLoXbIItaXQ6DkpA1riAH
-         71uscclX9xlwsyG59l3cAyXvVnDJKd06TT5lHUfP1WVX/V+Ef9nIpmMHoMNzkAdGgE1u
-         e+IFUWiMCBhjNJ1fSBWMBn6CykaHsiGAGNrxX8P+bYwLu/vUSURlzV4k3EArtB4VIthU
-         nPGwF6G/A684ROdz1Dk1ew3/Ic1YeDs5ZvIkmCtlpdOYPsKxd7/0xJubMZ+QGvzMcpWd
-         FuFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678974827;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tJUkcR5TLj/pckcV8NLJv4p0N2ALJ8mExf2txWHqrmk=;
-        b=ajZmfRW3GYFBr1HDZ/f34AfGj5IV7GcrKW0bawKhUbIZUTSnWkSx9JqCunfEffPC2v
-         pa1KsisXtMs1QewmIHDZHjZBzKgNvrk4rW7n/e+NVlCQJkszGoo/P0jGAWMBHrAGjfs1
-         pRPqXQA4X2LnQHiZGn+KIgGU9y+s5x6jymqV9/qL1d8kaR2aQeLImah7Q9C1Q7EK8dNj
-         EhoOFWyevwvqDyjQS+Pyw4zx7slEeZHBtLMfQkfhmRu/dmQ/ZzGeYPdYT2HhjMwL6Bp6
-         ajO6m+ao88oyc9PsrXSd43RFpyST9p82fiuTRfyVZ4teiVcCtlAiBILfG45n8FIbhHhA
-         95MA==
-X-Gm-Message-State: AO0yUKUXBJM59WZoxyCShxt7GSbluG38Qc1YEotNJJuGb5n2kY1ERPac
-        CaFVuAPEELr/GrhPINUmfryzyA==
-X-Google-Smtp-Source: AK7set+rqXMflrFeUbInvbGJbf4bdkNqSmGD9Ehmghl2MY/AZ9NJO7HEaQFrvUB9p731GmxgmKdHZg==
-X-Received: by 2002:a05:600c:35ce:b0:3e2:1368:e3a0 with SMTP id r14-20020a05600c35ce00b003e21368e3a0mr22297978wmq.18.1678974827774;
-        Thu, 16 Mar 2023 06:53:47 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id p3-20020a05600c358300b003ed2eb5c2dcsm5370341wmq.43.2023.03.16.06.53.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Mar 2023 06:53:47 -0700 (PDT)
-Date:   Thu, 16 Mar 2023 14:53:46 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Vadim Fedorenko <vadfed@meta.com>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>, poros@redhat.com,
-        mschmidt@redhat.com, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Milena Olech <milena.olech@intel.com>,
-        Michal Michalik <michal.michalik@intel.com>
-Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
-Message-ID: <ZBMfat0x+nNRtDqV@nanopsycho>
-References: <20230312022807.278528-1-vadfed@meta.com>
- <20230312022807.278528-3-vadfed@meta.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230312022807.278528-3-vadfed@meta.com>
+        with ESMTP id S230457AbjCPOGa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 10:06:30 -0400
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64D311EFEB;
+        Thu, 16 Mar 2023 07:06:25 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id 967935C0183;
+        Thu, 16 Mar 2023 10:06:24 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Thu, 16 Mar 2023 10:06:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1678975584; x=1679061984; bh=KH
+        KZXwWX3HDPPdF2HBzm7dMQaqdnN/EoTUEQ7VDQcFo=; b=o9a3qPtgOBbIWi+vbn
+        mo3i5NEzcbNrQp3P552ieGB/ntbcoSbfu0FT8eTwiIUGugS+9GSShBYfFuMMB7sw
+        X6z7T/VZ/kT5kp1s5+PBEwWj+8lPuUt2JfWwsh+JcC5Box5HhY7Jd6xNF4aPyG67
+        kaJzu6eiWUZHpeMwgHLBF1LGJ0QGopK8ZPKQ9aJQTxqxlJfxOz5JmxIbYxHSOGYk
+        XMqbRizyWCi02jsq1O5BxmMuJyEBPo3ZMs3+L69aaYk8KRfhCwkd1UaCdU+synrZ
+        No6qVib4NhfZssyTQqxXsA5Ch4zpHtuGGYbDS7OKvSf1wejI3HaEywVSF8xA1K+R
+        jlkg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1678975584; x=1679061984; bh=KHKZXwWX3HDPP
+        dF2HBzm7dMQaqdnN/EoTUEQ7VDQcFo=; b=JFNrqyfmLFvUp0Vspwv+deQQb1ff/
+        DAvRhtGC0g9osljc1xYuJhDJyZHLM8ppDLKjBaogZmmsJpEPokgiRbQqr/GqFJJj
+        0Cm3VKKpIPs59lShsh/vcLxWBc26yiITGCLWhfQlOq6XnxBAUvWInz7tTS5x/Z1H
+        PFgx0ux/3D0l2HgcGEJEQrHl98/kPROmhgeWfjG28FM6kB0lZqM338bVFJJOSCDv
+        amd8LUvYlkSN/MG4FhXMtopPRq0EaD/NqjmIOvVuF+FsgeuOOVoPW2XD5e6QJ0gt
+        w6JPeOqBCmykaEhJ5xFCzm+yKNs0lh/geW5KlXFTr5egFxmRctNZGsQ6Q==
+X-ME-Sender: <xms:XyITZIZNoSZJehJSZ1GdYdIykqe2aunRPJpy2sb516YpD1uJXqzX7Q>
+    <xme:XyITZDaC0lF8Hm6r21ackxpi53q6cMCPefNmpBE4I-7xKAzvVWwL1OopiKXgSQNbh
+    2kqqQEnAdXL20a-VBM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdeftddgiedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepieekieffueduhfelhfduleeggfeftdeutdejvefhueegudefheeiieejffek
+    vedtnecuffhomhgrihhnpehnuhhvohhtohhnrdgtohhmpdhgihhthhhusgdrtghomhenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnuges
+    rghrnhgusgdruggv
+X-ME-Proxy: <xmx:XyITZC9NxsxHHcDGt0cJHEkG_xk18xIbBdVnuvrxyQestch8POJifg>
+    <xmx:XyITZCqD_odw1vsluuASxL1BJs9pSkGcFX-6e02o_xsA6ZOH_mRP6g>
+    <xmx:XyITZDpZMSQ2TWPZVEihDjbBCsEFWV6iCalM-e9uwtr0lhFMXsX3vw>
+    <xmx:YCITZBhsAo0xOkJkGtOlwmnNgL-9pWNrHACGvf9ZudyQkm-29zuo8Q>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 7D28EB60086; Thu, 16 Mar 2023 10:06:23 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-221-gec32977366-fm-20230306.001-gec329773
+Mime-Version: 1.0
+Message-Id: <f2699aa1-4d8a-48c0-b332-484db0b04252@app.fastmail.com>
+In-Reply-To: <20230315072902.9298-1-ychuang570808@gmail.com>
+References: <20230315072902.9298-1-ychuang570808@gmail.com>
+Date:   Thu, 16 Mar 2023 15:05:59 +0100
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Jacky Huang" <ychuang570808@gmail.com>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org, "Lee Jones" <lee@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Jiri Slaby" <jirislaby@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        schung@nuvoton.com, "Jacky Huang" <ychuang3@nuvoton.com>
+Subject: Re: [PATCH 00/15] Introduce Nuvoton ma35d1 SoC
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Sun, Mar 12, 2023 at 03:28:03AM CET, vadfed@meta.com wrote:
+On Wed, Mar 15, 2023, at 08:28, Jacky Huang wrote:
+> From: Jacky Huang <ychuang3@nuvoton.com>
+>
+> This patchset adds initial support for the Nuvoton ma35d1 SoC, including
+> initial device tree, clock driver, reset driver, and serial driver.
+>
+> This patchset cover letter is based from the initial support for Nuvoton
+> ma35d1 to keep tracking the version history.
+>
+> This patchset had been applied to Linux kernel 6.3-rc2 and tested on the
+> Nuvoton ma35d1 SOM evaluation board.
+>
+> (ma35d1 information: 
+> https://www.nuvoton.com/products/microprocessors/arm-cortex-a35-mpus/)
+> MA35D1 porting on linux-5.10.y can be found at: 
+> https://github.com/OpenNuvoton/MPU-Family
 
-[...]
+Hi Jacky,
 
+Thanks a lot for your submission. I saw this presented at
+EmbeddedWorld yesterday and asked about mainline Linux
+support, but did not expect to see the patches this soon ;-)
 
->+	int (*state_on_pin_get)(const struct dpll_pin *pin,
->+				const struct dpll_pin *parent_pin,
->+				enum dpll_pin_state *state,
->+				struct netlink_ext_ack *extack);
->+	int (*state_on_dpll_get)(const struct dpll_pin *pin,
->+				 const struct dpll_device *dpll,
->+				 enum dpll_pin_state *state,
->+				 struct netlink_ext_ack *extack);
+The easiest process for getting the series merged is to
+have me add it the entire series to the SoC tree after the
+individual drivers have been reviewed by the respective
+subsystem maintainers that are already on Cc here. When
+the review is complete, you can add soc@kernel.org to Cc,
+so they show up in patchwork, or alternatively send a pull
+request for a git tree to that address. Until then, you
+can add my own email address to Cc so I can follow the
+reviews.
 
-Could this be rather called "state_on_device_get" or perhaps even better
-just "state_get" (in sync with "prio_set/get") ?
+After the initial merge, the normal method for additional
+device drivers is to have them sent for inclusion to the
+subsystem maintainers. The soc tree and soc@kernel.org address
+is then only used for changes in arch/arm64, i.e. updates
+to the dts files, Kconfig, defconfig and MAINTAINERS, 
+as well as the drivers/soc and drivers/firmware directories,
+if you have anything in there.
 
-This "od dpll" is a bit confusing, there is no such object.
-We have "device" and "pin".
+If you have any additional questions about the process,
+feel free to also ask me.
 
-
->+	int (*state_on_pin_set)(const struct dpll_pin *pin,
->+				const struct dpll_pin *parent_pin,
->+				const enum dpll_pin_state state,
->+				struct netlink_ext_ack *extack);
->+	int (*state_on_dpll_set)(const struct dpll_pin *pin,
->+				 const struct dpll_device *dpll,
->+				 const enum dpll_pin_state state,
->+				 struct netlink_ext_ack *extack);
-
-[...]
+     Arnd
