@@ -2,100 +2,138 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A09AC74A5B
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 14:17:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 980AEC6FD1D
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 14:29:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230523AbjCQORu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Mar 2023 10:17:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33382 "EHLO
+        id S231206AbjCQO3y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Mar 2023 10:29:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231140AbjCQORo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 10:17:44 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ED42AA263;
-        Fri, 17 Mar 2023 07:17:38 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32H7WnvT004884;
-        Fri, 17 Mar 2023 14:17:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=qcppdkim1;
- bh=4oTxhazIrrjZa+mYyuKTnui1iY7aod3VMNR9MDbaMQw=;
- b=XLup6JLaDmbM38RyFFyRpIoPTFGP4QOJBf+jSvtOzxvMvG3exBG9akHEFhYGL+lhUbmF
- ZjqpQvtWmdKKUqBqJnFC1ZcSs6zhcM7kx73VBiioE2LMcN3ypPX9PW4WDFE026cpDOiS
- OLVpJ6Ulg67gQM8RweoxiWvva2qXr8aIYg/y7m0IZhe2upDmkTnQenUkt5vpIqF0V77R
- nQRc+u2frrLtGKrSOZHqYIeD5htFrFiTes3iKh1mDjh79JKjkLjaBBYP1I8tHQ5K9o2v
- FgkUb1299YCyLUIV2vWZ31ovkuunpkcjSQC11FDKJwjcHE8QRFQ6/6HjSblHMoLxHfGK bw== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pcd5mt9jj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Mar 2023 14:17:24 +0000
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32HEHNjx001048
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 17 Mar 2023 14:17:23 GMT
-Received: from hu-mohs-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.41; Fri, 17 Mar 2023 07:17:19 -0700
-From:   Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-To:     <swboyd@chromium.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>, <robh+dt@kernel.org>,
-        <broonie@kernel.org>, <quic_plai@quicinc.com>,
-        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_visr@quicinc.com>
-CC:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-Subject: [PATCH v9 4/4] clk: qcom: lpassaudiocc-sc7280: Modify qcom_cc_probe to qcom_cc_probe_by_index
-Date:   Fri, 17 Mar 2023 19:46:22 +0530
-Message-ID: <20230317141622.1926573-5-quic_mohs@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230317141622.1926573-1-quic_mohs@quicinc.com>
-References: <20230317141622.1926573-1-quic_mohs@quicinc.com>
+        with ESMTP id S229651AbjCQO3u (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 10:29:50 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC4ECD5A7F
+        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 07:29:40 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id ip21-20020a05600ca69500b003ed56690948so3157219wmb.1
+        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 07:29:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1679063379;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TC4JhN24VRkXfCJn3EN0pxyu20Kc6X0LVvYiiW34KUw=;
+        b=Oh2pDDoySWwlh5slWc7GLkY+Jp79GbDkTlt2ELVfSNR7zocx4j+tfZJYOAy+bKqFPF
+         6JGRUrG65BceY55xIyuyE9/6LofdMYqb1JdOr5NKxY9ODXT75EkOVFL4e5gUPLs7QXVa
+         rLFtGyLPgFQFKiVsgTUmqW8ZAyyQ+dVbOjPataEZmI/xn+28OdTYW03So49vOO3jHGUi
+         NYDBAJLcKJjbZmlJAi0fdP6UQtmDSIjjFqtj9mXdlFt1AY0HHDcweEpFn98OQAymhIKk
+         t+mukt1JydnfTmZ6lX27W7hotLQsbKcMfmZNfWEfQ1KY7q9b+u5HHaytYu3tR69hyEQ1
+         7/ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679063379;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TC4JhN24VRkXfCJn3EN0pxyu20Kc6X0LVvYiiW34KUw=;
+        b=TgZg4yLZat46wvI5ysjqVMyP8JQZTaChCRozlNbDklbJZAa/N4jylS3QWrT2b1yxF3
+         Oz+vpjwwCuUz7N7e4KWAT/i1+Ban0eHGUedPZW8JuwNw0JBSUsmyUrnZgyydBdzpHHBs
+         zfaNM+tL5mGjLCprFALmutsSIKEvjL6fJ0ZuY72yl3aGYZn/Fyi++AqHynDNDFPAk3XS
+         WQHDwzVllBoBHA3xfiRRDcrKLQvsUSpQ/aXlqKOkUT5Eoi/0jAKF5hq0ZuU9pW1Mfec6
+         WcAVJyENBGUSFtelP1+5Ajir3rVTe+g6/Fp6ifd68XtBntaOgN9X6C5lTD5WsgV3iL3Q
+         vQ3Q==
+X-Gm-Message-State: AO0yUKUJ+70U6u/m0Rt+Dnr81tKnrFe2yJ8570A2AdCc7DxqL+mDRiKs
+        Zh1gfXHwC3RN26cpq7sJb7ejrg==
+X-Google-Smtp-Source: AK7set/5yd8eHA/DHRjrURRwh9fCclvu/hQ9JlKTY+8G1Q7lpRH91RRBU3SBEdu+8h+TjVDv7J/NsQ==
+X-Received: by 2002:a05:600c:28c:b0:3ed:5d41:f964 with SMTP id 12-20020a05600c028c00b003ed5d41f964mr1878674wmk.1.1679063378822;
+        Fri, 17 Mar 2023 07:29:38 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id r6-20020a05600c35c600b003ed29189777sm8444894wmq.47.2023.03.17.07.29.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Mar 2023 07:29:38 -0700 (PDT)
+Date:   Fri, 17 Mar 2023 15:29:36 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Vadim Fedorenko <vadfed@meta.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        poros <poros@redhat.com>, mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: Re: [PATCH RFC v6 1/6] dpll: spec: Add Netlink spec in YAML
+Message-ID: <ZBR5UC5cF15ciXPf@nanopsycho>
+References: <20230312022807.278528-1-vadfed@meta.com>
+ <20230312022807.278528-2-vadfed@meta.com>
+ <ZBCIPg1u8UFugEFj@nanopsycho>
+ <DM6PR11MB4657F423D2B3B4F0799B0F019BBC9@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZBMdZkK91GHDrd/4@nanopsycho>
+ <DM6PR11MB465709625C2C391D470C33F49BBD9@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZBQ7ZuJSXRfFOy1b@nanopsycho>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: nFUzVPqmCpcuQ36s48fz-3FwG8Rs5NN6
-X-Proofpoint-ORIG-GUID: nFUzVPqmCpcuQ36s48fz-3FwG8Rs5NN6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-17_08,2023-03-16_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
- malwarescore=0 adultscore=0 spamscore=0 mlxscore=0 mlxlogscore=977
- suspectscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303150002 definitions=main-2303170098
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZBQ7ZuJSXRfFOy1b@nanopsycho>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Modify AHB clocks explicit registration from qcom_cc_probe to
-qcom_cc_probe_by_index.
+Fri, Mar 17, 2023 at 11:05:26AM CET, jiri@resnulli.us wrote:
+>Fri, Mar 17, 2023 at 01:52:44AM CET, arkadiusz.kubalewski@intel.com wrote:
+>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>Sent: Thursday, March 16, 2023 2:45 PM
+>>>
+>>
+>>[...]
+>>
+>>>>>>+attribute-sets:
+>>>>>>+  -
+>>>>>>+    name: dpll
+>>>>>>+    enum-name: dplla
+>>>>>>+    attributes:
+>>>>>>+      -
+>>>>>>+        name: device
+>>>>>>+        type: nest
+>>>>>>+        value: 1
+>>>>>>+        multi-attr: true
+>>>>>>+        nested-attributes: device
+>>>>>
+>>>>>What is this "device" and what is it good for? Smells like some leftover
+>>>>>and with the nested scheme looks quite odd.
+>>>>>
+>>>>
+>>>>No, it is nested attribute type, used when multiple devices are returned
+>>>>with netlink:
+>>>>
+>>>>- dump of device-get command where all devices are returned, each one nested
+>>>>inside it:
+>>>>[{'device': [{'bus-name': 'pci', 'dev-name': '0000:21:00.0_0', 'id': 0},
+>>>>             {'bus-name': 'pci', 'dev-name': '0000:21:00.0_1', 'id': 1}]}]
+>>>
+>>>Okay, why is it nested here? The is one netlink msg per dpll device
+>>>instance. Is this the real output of you made that up?
+>>>
+>>>Device nest should not be there for DEVICE_GET, does not make sense.
+>>>
+>>
+>>This was returned by CLI parser on ice with cmd:
+>>$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml /
+>>--dump device-get
+>>
+>>Please note this relates to 'dump' request , it is rather expected that there
+>>are multiple dplls returned, thus we need a nest attribute for each one.
+>
+>No, you definitelly don't need to nest them. Dump format and get format
+>should be exactly the same. Please remove the nest.
 
-Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
----
- drivers/clk/qcom/lpassaudiocc-sc7280.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Another example:
+$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml --dump dev-get
+[{'ifindex': 1, 'xdp-features': set()},
+ {'ifindex': 2, 'xdp-features': {'basic', 'rx-sg', 'redirect'}},
+ {'ifindex': 3, 'xdp-features': {'basic', 'rx-sg', 'redirect'}},
+ {'ifindex': 4, 'xdp-features': set()},
+ {'ifindex': 5, 'xdp-features': {'basic', 'rx-sg', 'xsk-zerocopy', 'redirect'}},
+ {'ifindex': 6, 'xdp-features': {'basic', 'rx-sg', 'xsk-zerocopy', 'redirect'}}]
 
-diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-index 134eb1529ede..b7f4688a61f4 100644
---- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
-+++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-@@ -830,7 +830,7 @@ static int lpass_aon_cc_sc7280_probe(struct platform_device *pdev)
- 	if (of_property_read_bool(pdev->dev.of_node, "qcom,adsp-pil-mode")) {
- 		lpass_audio_cc_sc7280_regmap_config.name = "cc";
- 		desc = &lpass_cc_sc7280_desc;
--		ret = qcom_cc_probe(pdev, desc);
-+		ret = qcom_cc_probe_by_index(pdev, 0, desc);
- 		goto exit;
- 	}
- 
--- 
-2.25.1
-
+[...]
