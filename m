@@ -2,115 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE22C6FD1D
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 12:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A50C74A5B
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 13:22:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230034AbjCQMOB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Mar 2023 08:14:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59428 "EHLO
+        id S229966AbjCQNWm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Mar 2023 09:22:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230045AbjCQMOA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 08:14:00 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A1E521E3
-        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 05:13:58 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id bi9so6182248lfb.12
-        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 05:13:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679055237;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=83U2jLiLn7IaOmKXStZYTfl67I48v7+ZeyuCVBIILts=;
-        b=cH9kWSsGThr2YarnxMONCf2X8PtI67bYIGQkrTru4RxWE7dWDDuUQ0iqbUhKkAM6X3
-         fzBbo8+EYV2VZrwqgbweLL7y2VzxHg80mj7XugfSn2n4yMCWTGivXBMS8r4Of2Yvoi6n
-         KswyLgpsPOdGXhgq+nm/kvfbKH+G320Ll+3aWTUtvuDoYFF6tiPJCEkQTtAnpERWBCKR
-         cZalWa+fXAmZxUS/gGjLKuAZ1je1ftF8Pf9zRb0FRxldh83vK15foHOnRBMYnYGgc7V5
-         iQsG3qzbRLUBnSjeFku14VpaSP14e08KV3BIUHkgs1WThEYYcsMgVXSqG3EzKuINZ5WH
-         twxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679055237;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=83U2jLiLn7IaOmKXStZYTfl67I48v7+ZeyuCVBIILts=;
-        b=BssbLQn/g0E7kWdTuu9stnN68b1210PO5wFDj8WIgNchPwhzq7vjHqM6WDqH9nUrXM
-         o0TYWc4Oi6Z91zq7yViddR3MZ0I7MAeU1L+9wE/3lVKtARpP/lYGQXKmJW1x7iP0TVVM
-         9OQwDkNntV0G3BQR8Sa6YIdvliKLgFwvY6FkBPkjEyYdF4WtqQAjIt9k9JVQYdPAVkmN
-         uPwTtTDxm09o7AnrQ7HU/L8A3avycC30ysUy94vfwSgqv5+DKUm4eBYCJ32skVFFzgq3
-         cRs0vR5R1qWstsK9hYBnyFTDHYeoN/nSMGfRc/xh73aBwjPrwU83yTCOxeW7okDl+Mie
-         GxPg==
-X-Gm-Message-State: AO0yUKU14Cv9ztAMmrxhkjQxgDreI9julAoWbCOsZcBUqrqv/VwnH9xq
-        GRzujEGqFAInrcYsYMF2vsZTfQ==
-X-Google-Smtp-Source: AK7set9LGs58S9Z7/HdJn2wBUJ5Td7GhsgiBh6ePhghD0PO0si0Jx4wEuI4NpmQBkhz8ayhj7+oDfA==
-X-Received: by 2002:ac2:5d63:0:b0:4e8:47cd:b4ba with SMTP id h3-20020ac25d63000000b004e847cdb4bamr3697975lft.13.1679055237154;
-        Fri, 17 Mar 2023 05:13:57 -0700 (PDT)
-Received: from [192.168.1.101] (abyj16.neoplus.adsl.tpnet.pl. [83.9.29.16])
-        by smtp.gmail.com with ESMTPSA id m15-20020a056512014f00b004d0b1327b75sm365251lfo.61.2023.03.17.05.13.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Mar 2023 05:13:56 -0700 (PDT)
-Message-ID: <baf9336d-fd53-b01e-6e1c-1efdbb1a35dd@linaro.org>
-Date:   Fri, 17 Mar 2023 13:13:55 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] clk: qcom: Remove the unused variables
-Content-Language: en-US
-To:     Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-        andersson@kernel.org
-Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-References: <20230317062045.130638-1-jiapeng.chong@linux.alibaba.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230317062045.130638-1-jiapeng.chong@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S229599AbjCQNWk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 09:22:40 -0400
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 106A47301F;
+        Fri, 17 Mar 2023 06:22:37 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id 783D55C00CB;
+        Fri, 17 Mar 2023 09:22:36 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Fri, 17 Mar 2023 09:22:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
+        1679059356; x=1679145756; bh=IiuIkC1zEw6QkmK0uIff30q3Fvs8CngwrEt
+        lD2Jw2JU=; b=TZBOL3r1hB9jjltsHwaApyTplgqLA29nd0L3SVZ1PC0J/EY4BaS
+        NrPGdSPWGrAUeqg5ab0dvvNmwsJbfaQU1v4+FHyUGvR6Jf+nkvHWuJKmRz3Q3qri
+        5aZxuL/0CG0SVtwY9cG7k6IvhbTbjXLAty9/bBo7I2DEG727A+j1V6g5AUB42yhy
+        O+BNbvqELjbEeDZb39TXH5oN2Dw8kMs7g+gr54JMjJ/pBFFwnneGF0hEiuMv4nM8
+        v+rMopV/G9y3NkHoQgyWQRaK9lj1vDb9KUxrg2BdLyr1l7ChPqiqF+hIQO6ZqcrC
+        p96GKRQmSpFDVMlbFlNsvn7pMKOSxD5CFxA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+        1679059356; x=1679145756; bh=IiuIkC1zEw6QkmK0uIff30q3Fvs8CngwrEt
+        lD2Jw2JU=; b=MRXm3Jyhv12HRzCsBLFo2D8Rngs135b9pfCdj4UhXlOurlOlPi/
+        +iBcoml4ndcl0cIz9oDCepOjHLjrdFrYioIr5nGp4oCoFB6sIdn0ca/ZAbdfOF1g
+        YE043VD+6smRlLoTQoTZ2tt0OJ846z7wEaAji4jyk+rosuP82V5Njcs2NaVgUyps
+        antZBOY2ngNVtBbkAGvhnejrSVwk4ssMV3vTMFCwzfKGvjiuPWjBliN/FtPSkZQT
+        RYfb5xIfd5hg3oP97bkWQJBiLJSejKOp2pVAzB+xU9ImKScWE5T89nRABt+vq5Ha
+        cXN0kOIvxxHXUd54LYJa+jNDF7ZLoTyYrdA==
+X-ME-Sender: <xms:m2kUZKGOF46BwguJUhRdIDLrFRUJrHRFo-KVNLKPPL2sozMyK3GiHA>
+    <xme:m2kUZLV8jgz7KnW_yyCiSeSct6z9jvVdcxOBVY3Bg4v0mWhMKZA6BfRvadqstbLAe
+    1qmHY0jbDE5Z0o9J4k>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdefvddghedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpefgkeeuleegieeghfduudeltdekfeffjeeuleehleefudettddtgfevueef
+    feeigeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:m2kUZEIP8kAaBYgwEtrxmaN_3lQAUMR5P5xmOjIyvTnf0dWLXyUbEw>
+    <xmx:m2kUZEE3gbI7AfNuw4NYJNKi01-DOp_oyVtHhPpRCaN2mCJ18qq-tg>
+    <xmx:m2kUZAWx2KKS7y0oFKsFOoMNRA8G65DAquceXsokU3uGuBfagUVJCA>
+    <xmx:nGkUZBvzqx1HSUt_98kkxrX83mpwTW4aC0kKem4Nz_UkOfcP30Ly9w>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id B830FB60086; Fri, 17 Mar 2023 09:22:35 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-221-gec32977366-fm-20230306.001-gec329773
+Mime-Version: 1.0
+Message-Id: <6ed7e89f-2d2c-4134-9c6f-a9d18e2fc8a8@app.fastmail.com>
+In-Reply-To: <1a1277ac-4ae5-eaab-01c3-0242c12be76b@gmail.com>
+References: <20230315072902.9298-1-ychuang570808@gmail.com>
+ <f2699aa1-4d8a-48c0-b332-484db0b04252@app.fastmail.com>
+ <1a1277ac-4ae5-eaab-01c3-0242c12be76b@gmail.com>
+Date:   Fri, 17 Mar 2023 14:21:56 +0100
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Jacky Huang" <ychuang570808@gmail.com>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org, "Lee Jones" <lee@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Jiri Slaby" <jirislaby@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        schung@nuvoton.com, "Jacky Huang" <ychuang3@nuvoton.com>
+Subject: Re: [PATCH 00/15] Introduce Nuvoton ma35d1 SoC
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, Mar 17, 2023, at 07:30, Jacky Huang wrote:
+> On 2023/3/16 =E4=B8=8B=E5=8D=88 10:05, Arnd Bergmann wrote:
+>
+> Thank you very much for your kind help. You explained it so well,
+> I have understood the process. We got a lot of suggestions for this
+> patchset, and there are a lot of issues to fix. When most of the
+> problems get solved and acknowledged by the reviewers, I will
+> add you and soc@kernel.org to Cc.
+
+Ok, sounds good. Two more clarifications from me:
+
+1. I expect you will have to go through two or three submissions
+that get more feedback before everyone is happy. Please include
+my arnd@arndb.de on Cc on all the submissions, but only include
+the soc@kernel.org address when all patches have an Acked-by
+or Reviewed-by from the respective subsystem maintainer.
+
+2. I think the series looks very good at this point, and most of the
+feedback was about minor details, so I am optimistic that we can
+actually merge it soon.
+
+I only now saw that you had already submitted this several times
+at the beginning of last year, and this is technically 'v5'
+of the series, and it would make sense to add 'v6' to the subject
+next time and link back to the previous [1] and this[2] submission
+on lore.kernel.org.
 
 
-On 17.03.2023 07:20, Jiapeng Chong wrote:
-> Variable gpucc_parent_map_2 and gpucc_parent_data_2 is not effectively
-> used, so delete it.
-> 
-> drivers/clk/qcom/gpucc-sm6375.c:145:37: warning: unused variable 'gpucc_parent_data_2'.
-> drivers/clk/qcom/gpucc-sm6375.c:139:32: warning: unused variable 'gpucc_parent_map_2'.
-> 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Link: https://bugzilla.openanolis.cn/show_bug.cgi?id=4555
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> ---
-This is fixed already
+    Arnd
 
-https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git/commit/?h=for-next&id=54ed70b57623e18f6c18f510cbe1e741bca89f34
-
-Konrad
->  drivers/clk/qcom/gpucc-sm6375.c | 12 ------------
->  1 file changed, 12 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gpucc-sm6375.c b/drivers/clk/qcom/gpucc-sm6375.c
-> index eb9ffa956950..d8f4c4b59f1b 100644
-> --- a/drivers/clk/qcom/gpucc-sm6375.c
-> +++ b/drivers/clk/qcom/gpucc-sm6375.c
-> @@ -136,18 +136,6 @@ static const struct clk_parent_data gpucc_parent_data_1[] = {
->  	{ .index = DT_GCC_GPU_GPLL0_CLK_SRC },
->  };
->  
-> -static const struct parent_map gpucc_parent_map_2[] = {
-> -	{ P_BI_TCXO, 0 },
-> -	{ P_GCC_GPU_GPLL0_CLK_SRC, 5 },
-> -	{ P_GCC_GPU_GPLL0_DIV_CLK_SRC, 6 },
-> -};
-> -
-> -static const struct clk_parent_data gpucc_parent_data_2[] = {
-> -	{ .index = P_BI_TCXO },
-> -	{ .index = DT_GCC_GPU_GPLL0_CLK_SRC },
-> -	{ .index = DT_GCC_GPU_GPLL0_DIV_CLK_SRC },
-> -};
-> -
->  static const struct freq_tbl ftbl_gpucc_gmu_clk_src[] = {
->  	F(200000000, P_GCC_GPU_GPLL0_DIV_CLK_SRC, 1.5, 0, 0),
->  	{ }
+[1] https://lore.kernel.org/all/20220510032558.10304-1-ychuang3@nuvoton.=
+com/
+[2] https://lore.kernel.org/all/20230315072902.9298-1-ychuang570808@gmai=
+l.com/
