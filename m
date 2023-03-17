@@ -2,119 +2,77 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D207C6FD1D
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 18:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8615CC74A5B
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 19:12:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229590AbjCQSxX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Mar 2023 14:53:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38092 "EHLO
+        id S229644AbjCQTMj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Mar 2023 15:12:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbjCQSxW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 14:53:22 -0400
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0AE3C796E;
-        Fri, 17 Mar 2023 11:53:20 -0700 (PDT)
-Received: by mail-il1-f182.google.com with SMTP id r4so3225192ilt.8;
-        Fri, 17 Mar 2023 11:53:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679079200;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LhejdJ2QzRiuDi7NcPcw8B7d/cMeKEhfekni41Gxpkk=;
-        b=7WAEfeVFDcEnA4SDzyXkrgw1Qiq58T6odvHnIWejT4A2zAEPWBeO2RCoemmW+3B/sg
-         NLZNFpPukC/v+suk9XAw+agtM+inMkTGwd6CkNuv9VHHKlI1s9cq4l68mLhosKhhq0OX
-         zadDhOneyL3wz4G3CVlyeOGFM1djtS2uLBsBbpaPoOGtTCinXsTP5OEXXm7c0LTwqKcB
-         hWeuVoT26tZagmRwoZNAlHDdF5yPUsdae85s8aC30Jq7BoRhF2F/jX8f8R14XmiMPf4L
-         e2LpZqaFvKAq4UJ5p4OJTINEuShwccqZ9Xrrn5NAX/DEVeo19JrCqiUiyrX24fxi/2GL
-         /hpQ==
-X-Gm-Message-State: AO0yUKVXYkZACwIfx/tEsP4G+ADE4XcxYZ6L6vyI0b6/l3ZqMIVywuoI
-        +WsrCSHimeqPZJzzW5FHyQ==
-X-Google-Smtp-Source: AK7set+MH4oe7paXw4mNYBNwZmQ3XrzicpMki++gWyEP2w53ywhZy/ZcN6LTqzsa+uss+FVSLWKCcQ==
-X-Received: by 2002:a92:dc01:0:b0:317:99d0:8ad6 with SMTP id t1-20020a92dc01000000b0031799d08ad6mr246243iln.16.1679079199880;
-        Fri, 17 Mar 2023 11:53:19 -0700 (PDT)
-Received: from robh_at_kernel.org ([64.188.179.249])
-        by smtp.gmail.com with ESMTPSA id n24-20020a02a918000000b004050d92f6d4sm905689jam.50.2023.03.17.11.53.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Mar 2023 11:53:19 -0700 (PDT)
-Received: (nullmailer pid 2616891 invoked by uid 1000);
-        Fri, 17 Mar 2023 18:53:17 -0000
-Date:   Fri, 17 Mar 2023 13:53:17 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        neil.armstrong@linaro.org, jbrunet@baylibre.com,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
-        martin.blumenstingl@googlemail.com, jian.hu@amlogic.com,
-        kernel@sberdevices.ru, rockosov@gmail.com,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v10 3/5] dt-bindings: clock: meson: add A1 PLL and
- Peripherals clkcs bindings
-Message-ID: <20230317185317.GA2608140-robh@kernel.org>
-References: <20230313201259.19998-1-ddrokosov@sberdevices.ru>
- <20230313201259.19998-4-ddrokosov@sberdevices.ru>
- <ffebef1d-8447-181b-1890-3e638d399c62@linaro.org>
- <20230314114825.yiv4vcszr6b7m45w@CAB-WSD-L081021>
+        with ESMTP id S229488AbjCQTMi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 15:12:38 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04A12D7C3F;
+        Fri, 17 Mar 2023 12:12:38 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A5F38B826C2;
+        Fri, 17 Mar 2023 19:12:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DFFEC433D2;
+        Fri, 17 Mar 2023 19:12:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679080355;
+        bh=mJ2DYx2tCFy9khrVBbHTGMC5bHcdNPPifrYSylrXXL8=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=NRO7KnZdJkTjimikFdEyBR/U06MQB9gjujyrd+na1Gt5gzn7j29AA29U89YM3jFLL
+         Mly2zlli6URIl8cUTV+mE1yjVwWvqAMNOG+VJbfStcOS2pWMXSE/yGRsmY/wTx5dsR
+         A8b25C+N30PTo/+MhN8WL32UXOtY6wp7Gwl8Z4D5bxFCnv2LZcqKccPEXMhw9O/Gjo
+         Pw1tEri3BoztehxzncVS4umjglNZhiQieRklQEL2bRigqTJku/P3QHiC57DCVwptAq
+         wEu1tvslZD/M8YxqP/vAZvGN/CWxAKJeUffRbahfbGclfw+M00NMqddoIpZAC0ZPdN
+         Ujvy7qkCW0JJg==
+Message-ID: <818d6df5ba8fe125e39bfa0a0fd59cea.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230314114825.yiv4vcszr6b7m45w@CAB-WSD-L081021>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230301163257.49005-1-marex@denx.de>
+References: <20230301163257.49005-1-marex@denx.de>
+Subject: Re: [PATCH v7 1/5] clk: Introduce devm_clk_hw_register_gate_parent_data()
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Marek Vasut <marex@denx.de>, Peng Fan <peng.fan@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Adam Ford <aford173@gmail.com>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Abel Vesa <abelvesa@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+To:     Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org
+Date:   Fri, 17 Mar 2023 12:12:33 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 14, 2023 at 02:48:25PM +0300, Dmitry Rokosov wrote:
-> On Tue, Mar 14, 2023 at 12:28:40PM +0100, Krzysztof Kozlowski wrote:
-> > On 13/03/2023 21:12, Dmitry Rokosov wrote:
-> 
-> [...]
-> 
-> > > +#define CLKID_SPIFC		84
-> > > +#define CLKID_USB_BUS		85
-> > > +#define CLKID_SD_EMMC		86
-> > > +#define CLKID_PSRAM		87
-> > > +#define CLKID_DMC		88
-> > 
-> > And what is here? Between 88 and 121?
-> > 
-> 
-> Explained below.
-> 
-> > > +#define CLKID_GEN_SEL		121
-> > > +
-> > > +#endif /* __A1_CLKC_H */
-> > > diff --git a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
-> > > new file mode 100644
-> > > index 000000000000..8e97d3fb9d30
-> > > --- /dev/null
-> > > +++ b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
-> > > @@ -0,0 +1,20 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0+ */
-> > 
-> > I found in changelog:
-> > "fix license issue, it's GPL-2.0+ only in the current version"
-> > and I do not understand.
-> > 
-> > The license is wrong, so what did you fix?
-> > 
-> 
-> Sorry don't get you. Why is it wrong?
-> I've changed all new source files to GPL-2.0+ except yaml, because yaml
-> dt bindings schemas require the following license:
+Quoting Marek Vasut (2023-03-01 08:32:53)
+> Add an API for clock gate that uses parent_data for the parent instead of
+> a string parent_name.
+>=20
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> Reviewed-by: Fabio Estevam <festevam@gmail.com>
+> Tested-by: Adam Ford <aford173@gmail.com> #imx8mp-beacon-kit
+> Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> Signed-off-by: Marek Vasut <marex@denx.de>
+> ---
 
-Why 2.0+? The kernel's default license is 2.0-only. Are you (and 
-your lawyer) okay with GPL v4?
-
-But this is still part of the DT binding and has the same license 
-preference:
- 
->     # SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-
-However, the header licenses are complicated due to .dts licenses which 
-are all over the place. The requirement is dual licensed and matching 
-what includes it.
-
-Rob
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
