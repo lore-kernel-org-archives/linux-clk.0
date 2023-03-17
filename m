@@ -2,138 +2,136 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20916C6FD1D
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 10:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9988AC74A5B
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 12:11:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229925AbjCQKHN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Mar 2023 06:07:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39220 "EHLO
+        id S229780AbjCQMLu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Mar 2023 08:11:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229943AbjCQKHM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 06:07:12 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B9616422E
-        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 03:07:11 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id q16so3914529wrw.2
-        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 03:07:11 -0700 (PDT)
+        with ESMTP id S229706AbjCQMLt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 08:11:49 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CF4EB6919
+        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 05:11:46 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id y15so6205337lfa.7
+        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 05:11:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1679047629;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6nbUDuEU6uTWIAdeLCP5lhT1CFPOOyV80Bskgn2+yJU=;
-        b=mgl13Gym82GcWn1Wtlr4PcbrzztuXSmQQdp5RIO2IM5NsR2RaJmV41CVihP2rt6aVq
-         a5+4vMzNMSxrAEzWZTTtSJvSxqSwVuJUpwecD8sKMR69GM4Mq/NUZCwIF8ocuGvCr6eb
-         5XjmjMtuHQfxwkAw+uTyG3voLkMncng+PKbjB4cBCVpRNQXjx5e9GXWHeswe0oipDOSi
-         VwEvN1scjgKQfxA69wAyMGIxIDz0buNaigpdPnK86kVygveJjDH0ldYcOP/4qLMEIJZX
-         zbTfk4EqAMwzKmnY962UueqHGhstFQVHGHRlZ9jObIusQQNOxxn5D2LKW0SRwWskjU8E
-         3OPw==
+        d=linaro.org; s=google; t=1679055104;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1nv1WVingwKQqcczYi8r8VBOd0VikPJkwNV75HJHOc0=;
+        b=n5o7j0lVrENy0i3VuG3fuFH3roBx9qJHhS5QR2EpySWyeFbVL1wpv74Soc9yHgcIYs
+         RZ9NdCvNgMjKMSpdZJnrZGhX7LhefQB7ERV3bAnNmKy/jcryYY1RS28RbvdHcB1pxiNJ
+         TUGQLKkK1AUlLf8RWYd5LD6XCM3wwaMYAaNF/I8+tA72z6DvlSOWhcLP0f4f0TmqTrP2
+         zX9QCaPgZCQDBJlMkO4nB7noNZhYck7Twa+uItXMuVFMVkZHmyFGPN/4ZHpZoHOZKdQ+
+         Q7nKbxm21kH+8vC3S7g8ehS5/Bm9jMMKWcWLEjPH4RXx2HdxnX0DKAIrWf85g/Jpe/cr
+         9Bgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679047629;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6nbUDuEU6uTWIAdeLCP5lhT1CFPOOyV80Bskgn2+yJU=;
-        b=wyocH6sjOkzcqJmXJemvnedaR6fADlfQ1wN9Vquu/9/t7T/+wxOae1+5rzCIXNMDSl
-         rqcEJdHeKpB+BKpPJfhXhm1ikGhH9123RhgVcE1Nb+yx2nDhn4N3FW6eFWPwwDOWyplw
-         L2VW4n6XCTxVCpjzGAjmnHp2FYAcSgbeX/CmscHDEagp7ZF8ogQL5K3Le7p9zNGSPzAQ
-         CnCHSRo+T98kfU3RYE2CwyJsgdVsprukqi83x5uv6PRZQSj3xyYUgKiPtr8ymD5q8qSW
-         0t++Goz8agRjuanw6Tz6oC9mi1upCKXTapbIDIpkXpCRLZQoTlfC1vVa0yC5ezDxJmys
-         UWaQ==
-X-Gm-Message-State: AO0yUKUXiKHxfKeCtfCsqNr0o2O+i8Xz0mBj3lLHt1aVBnoeZWJVz8hp
-        Cl9PqnkdRLF9ZyrG5oyItOOf4Q==
-X-Google-Smtp-Source: AK7set/qq8MbDkna0M2I0vYYINGvM6YraMvrzeQW+GKf79XOPl/1BxYkvQpFPdQ+QbLBSRHxaXNaGw==
-X-Received: by 2002:a5d:522b:0:b0:2cf:e67c:8245 with SMTP id i11-20020a5d522b000000b002cfe67c8245mr6724886wra.44.1679047629414;
-        Fri, 17 Mar 2023 03:07:09 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id h4-20020a5d5044000000b002c70851fdd8sm1573504wrt.75.2023.03.17.03.07.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Mar 2023 03:07:08 -0700 (PDT)
-Date:   Fri, 17 Mar 2023 11:07:07 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Vadim Fedorenko <vadfed@meta.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        poros <poros@redhat.com>, mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "Michalik, Michal" <michal.michalik@intel.com>
-Subject: Re: [PATCH RFC v6 1/6] dpll: spec: Add Netlink spec in YAML
-Message-ID: <ZBQ7y/TT9UgQgKlh@nanopsycho>
-References: <20230312022807.278528-1-vadfed@meta.com>
- <20230312022807.278528-2-vadfed@meta.com>
- <ZBCIPg1u8UFugEFj@nanopsycho>
- <DM6PR11MB4657F423D2B3B4F0799B0F019BBC9@DM6PR11MB4657.namprd11.prod.outlook.com>
- <ZBMdZkK91GHDrd/4@nanopsycho>
- <ZBMzmHnW707gIvAU@nanopsycho>
- <DM6PR11MB4657BD050F326085A21817C99BBD9@DM6PR11MB4657.namprd11.prod.outlook.com>
+        d=1e100.net; s=20210112; t=1679055104;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1nv1WVingwKQqcczYi8r8VBOd0VikPJkwNV75HJHOc0=;
+        b=gwY3XL5V93KmgMHkWbO1KeJe10F4VmKohXjqVABPZo0EfqDkBRBtXcm8cymlfR7v3l
+         dapidMEPwmmGo/jPejXY00oclxT0SquWmKGEWpntCnn/GAwP5ANlGZ5u9VKkrhxxD77x
+         NglUXLvCxofBUs01Yfa0SqMF/G7y4xdeFnJP6cs193ufH38RgOebosPvbhJY4+ET9XeH
+         M8HgZgs0WYzGb9KvcamWAT/oyeBhiQuPmehAHracxFjIvedAj4G+Fhkrk/2gq+MM5CR2
+         RMHZ/UHQ7YO4PmQwMDCA0+YX07UZqNgzx4/lbelNZJAbBhakBVRwAqv03uShL0lwgkum
+         B2SQ==
+X-Gm-Message-State: AO0yUKUPH6qsBjLQIwIFkNDOWhluDgvAKh4JtAGMmLnDBsAk/eY04gp1
+        SOyfOAgfStvR61/akBkLlZL5VA==
+X-Google-Smtp-Source: AK7set+SITW6PfVyW0vx/b6QUwTQu4cULmJDZbRF+ch64jkCjg5miyQdWBlyuzqsrmRjQJ3jp+rO+w==
+X-Received: by 2002:a19:ae0c:0:b0:4dd:840d:462 with SMTP id f12-20020a19ae0c000000b004dd840d0462mr940064lfc.21.1679055104657;
+        Fri, 17 Mar 2023 05:11:44 -0700 (PDT)
+Received: from [192.168.1.101] (abyj16.neoplus.adsl.tpnet.pl. [83.9.29.16])
+        by smtp.gmail.com with ESMTPSA id w10-20020a19c50a000000b004e84a8c3d86sm363638lfe.42.2023.03.17.05.11.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Mar 2023 05:11:44 -0700 (PDT)
+Message-ID: <63037930-8ce4-532c-2e1a-0711005bdd77@linaro.org>
+Date:   Fri, 17 Mar 2023 13:11:42 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM6PR11MB4657BD050F326085A21817C99BBD9@DM6PR11MB4657.namprd11.prod.outlook.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH 1/5] dt-bindings: clock: qcom,gpucc: Fix SM6350 clock
+ names
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        Rob Herring <robh@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230315-topic-lagoon_gpu-v1-0-a74cbec4ecfc@linaro.org>
+ <20230315-topic-lagoon_gpu-v1-1-a74cbec4ecfc@linaro.org>
+ <1d0c894b-ccd4-348f-0c48-c6a5c89df27d@linaro.org>
+Content-Language: en-US
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <1d0c894b-ccd4-348f-0c48-c6a5c89df27d@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fri, Mar 17, 2023 at 01:53:49AM CET, arkadiusz.kubalewski@intel.com wrote:
->>From: Jiri Pirko <jiri@resnulli.us>
->>Sent: Thursday, March 16, 2023 4:20 PM
->>
->>Thu, Mar 16, 2023 at 02:45:10PM CET, jiri@resnulli.us wrote:
->>>Thu, Mar 16, 2023 at 02:15:59PM CET, arkadiusz.kubalewski@intel.com wrote:
->>
->>[...]
->>
->>
->>>>>>+      flags: [ admin-perm ]
->>>>>>+
->>>>>>+      do:
->>>>>>+        pre: dpll-pre-doit
->>>>>>+        post: dpll-post-doit
->>>>>>+        request:
->>>>>>+          attributes:
->>>>>>+            - id
->>>>>>+            - bus-name
->>>>>>+            - dev-name
->>>>>>+            - mode
->>>>>
->>>>>Hmm, shouldn't source-pin-index be here as well?
->>>>
->>>>No, there is no set for this.
->>>>For manual mode user selects the pin by setting enabled state on the one
->>>>he needs to recover signal from.
->>>>
->>>>source-pin-index is read only, returns active source.
->>>
->>>Okay, got it. Then why do we have this assymetric approach? Just have
->>>the enabled state to serve the user to see which one is selected, no?
->>>This would help to avoid confusion (like mine) and allow not to create
->>>inconsistencies (like no pin enabled yet driver to return some source
->>>pin index)
->>
->>Actually, for mlx5 implementation, would be non-trivial to implement
->>this, as each of the pin/port is instantiated and controlled by separate
->>pci backend.
->>
->>Could you please remove, it is not needed and has potential and real
->>issues.
->>
->>[...]
->
->Sorry I cannot, for priority based automatic selection mode multiple sources
->are enabled at any time - selection is done automatically by the chip.
->Thus for that case, this attribute is only way of getting an active source.
->Although, maybe we could allow driver to not implement it, would this help
->for your case? As it seems only required for automatic mode selection.
-
-Please see the other reply for this patch where I describe what I
-think is wrong about this approach and suggesting a solution.
 
 
->
->Thank you,
->Arkadiusz
+On 17.03.2023 09:37, Krzysztof Kozlowski wrote:
+> On 16/03/2023 12:16, Konrad Dybcio wrote:
+>> SM6350 GPUCC uses the same clock names as the rest of the gang, except
+>> without a _src suffix. Account for that.
+> 
+> Why not fixing the names instead (to use the same)? If the clocks are
+> the same, why using different names for the inputs? To remind - these
+> are not names of clocks in GCC, but names of clock inputs to the device.
+Considering SM6350 is the only used of SM6350_GPUCC and it's not yet
+in next and I don't think any other project using devicetree has
+Adreno up on any platform, let alone this one, I suppose the ABI could
+be broken and the driver could be made to expect the more common set
+of names? Or I could transition it to index-based lookup?
+
+Konrad
+> 
+>>
+>> Fixes: 7b91b9d8cc6c ("dt-bindings: clock: add SM6350 QCOM Graphics clock bindings")
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> ---
+>>  .../devicetree/bindings/clock/qcom,gpucc.yaml      | 29 +++++++++++++++++++---
+>>  1 file changed, 25 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+>> index db53eb288995..d209060a619d 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+>> @@ -43,10 +43,8 @@ properties:
+>>        - description: GPLL0 div branch source
+>>  
+>>    clock-names:
+>> -    items:
+>> -      - const: bi_tcxo
+>> -      - const: gcc_gpu_gpll0_clk_src
+>> -      - const: gcc_gpu_gpll0_div_clk_src
+>> +    minItems: 3
+> 
+> Drop minItems, not needed as it is implied by maxItems.
+> 
+>> +    maxItems: 3
+>>  
+>>    '#clock-cells':
+>>      const: 1
+>> @@ -71,6 +69,29 @@ required:
+>>  
+>>  additionalProperties: false
+>>
+>>
+> 
+> Best regards,
+> Krzysztof
+> 
