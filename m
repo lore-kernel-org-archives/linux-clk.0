@@ -2,64 +2,57 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60820C74A5B
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Mar 2023 23:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C89C74A5B
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 00:28:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229455AbjCPXlI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Mar 2023 19:41:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39174 "EHLO
+        id S229581AbjCQA26 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Mar 2023 20:28:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230227AbjCPXlD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 19:41:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D241CB5FC6;
-        Thu, 16 Mar 2023 16:40:31 -0700 (PDT)
+        with ESMTP id S229477AbjCQA25 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2023 20:28:57 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04048298D7;
+        Thu, 16 Mar 2023 17:28:55 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A891C62157;
-        Thu, 16 Mar 2023 23:40:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE657C433D2;
-        Thu, 16 Mar 2023 23:40:04 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 4CB01CE1D32;
+        Fri, 17 Mar 2023 00:28:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8B2DC433EF;
+        Fri, 17 Mar 2023 00:28:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679010005;
-        bh=gaEWoGVbQdo400PIFpa/a6tdIPaKV1l5ImBHIuKTljo=;
+        s=k20201202; t=1679012932;
+        bh=3vJXnqBm00ZDstQ8uLx5XtAk2Rl5SQ7zjEvPgSWBmBo=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Pv33oHq3ImBnH1f8q15CUQrKnwcdJ4kjX2LIXaSoD6UEyCzkB5T9umM2UKc6tJQZq
-         29+s0rLDZSI7T05NAvN1UOMJT7jgJDwl55tL683bXQ5PnggSSziJBfi+MiETBmN79C
-         MEK2QAZKtHh9bnqap5c63408Xp5svF4jiow57od+GMOWzUbQOsNNriY5UrFOm0iL85
-         cbXnIYD+1ZJUn1LDfa4p2vL6DvioauzQeThO27j/n3BAwksi0Nf4Ctb5j2vGsOn5YE
-         jSxmotWWQqRKHP9O0Q9I3XqFPRw2XOuNUIlRWP0jfr1aC5NgScHzMvIf/XKNgpKgPA
-         F+ay3O4Rm3P8Q==
-Message-ID: <182bd2465ee74ccc739b82c6ebd49cf8.sboyd@kernel.org>
+        b=BvP+XKEu613khmPNUON97fI8KB3YlzxNJDnrVmv0NBGlg6ft4RM5heQY5rV8nONpW
+         svcubGvJF3z1RwI56P5ucnz+EEg3rBiKXLY4GVKZ/pvodNCi6nJ5QSaMR0hFWsCTiu
+         PAWdu4w1Kj9UoVTPMvwSzAeeBjLmIBP+sEnlE90eOvW3Ru8moGvI3ROYShPGPKU4I1
+         mJffXKukf4gyfBfPrkk1KHrIygCQGUrjjHvaYR4bnwdTR3Ke7RXR01LjWjCQchPLf0
+         qoN0cgcU3WPtSEYD2qkzzouK4MKu5QJZAJbYEW8GQDF0wHrmaHI1krIGV/G72GtHzR
+         nRiorYtQ0eOdw==
+Message-ID: <08e3ad53673421caa01ae490813ec957.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230316023624.758204-1-chunyan.zhang@unisoc.com>
-References: <20230316023624.758204-1-chunyan.zhang@unisoc.com>
-Subject: Re: [PATCH V2] clk: sprd: set max_register according to mapping range
+In-Reply-To: <20230316075826.22754-1-yuzhe@nfschina.com>
+References: <20230316075826.22754-1-yuzhe@nfschina.com>
+Subject: Re: [PATCH] clk: remove unnecessary (void*) conversions
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        LKML <linux-kernel@vger.kernel.org>
-To:     Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Thu, 16 Mar 2023 16:40:02 -0700
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, liqiong@nfschina.com,
+        Yu Zhe <yuzhe@nfschina.com>
+To:     Yu Zhe <yuzhe@nfschina.com>, mturquette@baylibre.com
+Date:   Thu, 16 Mar 2023 17:28:50 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Chunyan Zhang (2023-03-15 19:36:24)
-> In sprd clock driver, regmap_config.max_register was set to a fixed value
-> which is likely larger than the address range configured in device tree,
-> when reading registers through debugfs it would cause access violation.
+Quoting Yu Zhe (2023-03-16 00:58:26)
+> Pointer variables of void * type do not require type cast.
 >=20
-> Fixes: d41f59fd92f2 (clk: sprd: Add common infrastructure)
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
 > ---
 
-Applied to clk-fixes
+Applied to clk-next
