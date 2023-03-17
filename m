@@ -2,131 +2,76 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE82C76196
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 20:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0ED8C7618E
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 22:13:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229581AbjCQU2E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Mar 2023 16:28:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58538 "EHLO
+        id S229896AbjCQWNj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Mar 2023 18:13:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229959AbjCQU2B (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 16:28:01 -0400
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56EC4AB8B4;
-        Fri, 17 Mar 2023 13:27:54 -0700 (PDT)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 539265FD4F;
-        Fri, 17 Mar 2023 23:27:52 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1679084872;
-        bh=9klZq5XNmdsCI8Jf4BIs+c2sADGKOJ1gBsYtYIHMRbs=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=XZLGSNSDmTYCZb7s7O8f3ZHMIYyHbCaPHo56b39hLpJh8r2PPMyPdt6JZf/f58gS6
-         348VQBGsQwgKna4KcBjfocVat4Lqe47Se+jPzZVU/R2rBfpLoY1XV5J9SdDnY/MhuD
-         nEQmoM7C4NtEflIqujh+NYYR6c0/dYiZ2pSZIDpWO/wkYg9ssjJ8UCokIFIKbMHW4O
-         wrMnu9VEuqIb6kJwYg6uDZFbq4+xVLkxvqCB/1BdyNc2QmNUJgg2jzPqIkAyQSsUIV
-         4ehY8/Xe9OvmJIHSZFZWjeQXbTyfcDZK5fT93/oA8Zjv4VhwxaKfF9gR7OjPIoDThE
-         zH5yyfYc2Jekg==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Fri, 17 Mar 2023 23:27:49 +0300 (MSK)
-Date:   Fri, 17 Mar 2023 23:27:48 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-        <martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
-        <kernel@sberdevices.ru>, <rockosov@gmail.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v10 3/5] dt-bindings: clock: meson: add A1 PLL and
- Peripherals clkcs bindings
-Message-ID: <20230317202748.7ctqhswettiemwi7@CAB-WSD-L081021>
-References: <20230313201259.19998-1-ddrokosov@sberdevices.ru>
- <20230313201259.19998-4-ddrokosov@sberdevices.ru>
- <ffebef1d-8447-181b-1890-3e638d399c62@linaro.org>
- <20230314114825.yiv4vcszr6b7m45w@CAB-WSD-L081021>
- <20230317185317.GA2608140-robh@kernel.org>
+        with ESMTP id S229735AbjCQWNi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 18:13:38 -0400
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B14B532A8;
+        Fri, 17 Mar 2023 15:13:36 -0700 (PDT)
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 2EF9720002;
+        Fri, 17 Mar 2023 22:13:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1679091214;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=eqxKutKiqW8yb2sPT5I6IOs38EHv69itxPuXft2vTRA=;
+        b=AbsH0TjoP6YcpQsD+UJ+eJekzztouvgcCeWA2NlIs0pjV7MpzkjbqVA48XdcBYQLK8f8IV
+        g38lBx8f21+94whY7EBbNXB4OT9l/XbjfPrfUR+UQrElDTAd82JqXq1qm0q2HF4VeoCVxg
+        hXjnzuYZ3sK7S6HiY8aYU8zOHwAaK/SFn77zRqWcv8c5ADq+RCcR8He/Ac9vc7eHhV7bXS
+        /jL+O67DQidklXIf5le3d3+atjpZfiCs8TaLVtuFlhFcDFAFThDSxbmXfd7Iqbvbk8qxly
+        XNFCVknlDusaQbfgP0m/5Cn5nAkwGekIz3Vn+eCEArSWqT8H+mDLsaLqx0H8cw==
+Date:   Fri, 17 Mar 2023 23:13:32 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     linux-riscv@lists.infradead.org, Conor Dooley <conor@kernel.org>
+Cc:     Conor Dooley <conor.dooley@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        linux-clk@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-rtc@vger.kernel.org, Bin Liu <b-liu@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, Wolfram Sang <wsa@kernel.org>,
+        linux-i2c@vger.kernel.org,
+        Daire McNamara <daire.mcnamara@microchip.com>
+Subject: Re: (subset) [PATCH v1 4/5] rtc: mpfs: convert
+ SOC_MICROCHIP_POLARFIRE to ARCH_MICROCHIP_POLARFIRE
+Message-ID: <167909119653.115559.4747292512289955247.b4-ty@bootlin.com>
+References: <20230309204452.969574-1-conor@kernel.org>
+ <20230309204452.969574-5-conor@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230317185317.GA2608140-robh@kernel.org>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
- S-MS-EXCH01.sberdevices.ru (172.16.1.4)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/03/17 17:26:00 #20964929
-X-KSMG-AntiVirus-Status: Clean, skipped
+In-Reply-To: <20230309204452.969574-5-conor@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Mar 17, 2023 at 01:53:17PM -0500, Rob Herring wrote:
-> On Tue, Mar 14, 2023 at 02:48:25PM +0300, Dmitry Rokosov wrote:
-> > On Tue, Mar 14, 2023 at 12:28:40PM +0100, Krzysztof Kozlowski wrote:
-> > > On 13/03/2023 21:12, Dmitry Rokosov wrote:
-> > 
-> > [...]
-> > 
-> > > > +#define CLKID_SPIFC		84
-> > > > +#define CLKID_USB_BUS		85
-> > > > +#define CLKID_SD_EMMC		86
-> > > > +#define CLKID_PSRAM		87
-> > > > +#define CLKID_DMC		88
-> > > 
-> > > And what is here? Between 88 and 121?
-> > > 
-> > 
-> > Explained below.
-> > 
-> > > > +#define CLKID_GEN_SEL		121
-> > > > +
-> > > > +#endif /* __A1_CLKC_H */
-> > > > diff --git a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
-> > > > new file mode 100644
-> > > > index 000000000000..8e97d3fb9d30
-> > > > --- /dev/null
-> > > > +++ b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
-> > > > @@ -0,0 +1,20 @@
-> > > > +/* SPDX-License-Identifier: GPL-2.0+ */
-> > > 
-> > > I found in changelog:
-> > > "fix license issue, it's GPL-2.0+ only in the current version"
-> > > and I do not understand.
-> > > 
-> > > The license is wrong, so what did you fix?
-> > > 
-> > 
-> > Sorry don't get you. Why is it wrong?
-> > I've changed all new source files to GPL-2.0+ except yaml, because yaml
-> > dt bindings schemas require the following license:
-> 
-> Why 2.0+? The kernel's default license is 2.0-only. Are you (and 
-> your lawyer) okay with GPL v4?
-> 
-> But this is still part of the DT binding and has the same license 
-> preference:
->  
-> >     # SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> 
-> However, the header licenses are complicated due to .dts licenses which 
-> are all over the place. The requirement is dual licensed and matching 
-> what includes it.
 
-Agree with you. As we discussed with Krzysztof, checkpatch must verify
-such wrong license tags. I've introduced the patchset for that, please
-take a look:
+On Thu, 09 Mar 2023 20:44:51 +0000, Conor Dooley wrote:
+> As part of converting RISC-V SOC_FOO symbols to ARCH_FOO to match the
+> use of such symbols on other architectures, convert the Microchip FPGA
+> RTC driver to use the new symbol.
+> 
+> 
 
-https://lore.kernel.org/all/20230317201621.15518-1-ddrokosov@sberdevices.ru/
+Applied, thanks!
+
+[4/5] rtc: mpfs: convert SOC_MICROCHIP_POLARFIRE to ARCH_MICROCHIP_POLARFIRE
+      commit: f12f0c7da37c58da92bd4a6bdc469df7e0b2da5e
+
+Best regards,
 
 -- 
-Thank you,
-Dmitry
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
