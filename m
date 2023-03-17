@@ -2,111 +2,130 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E620FC6FD1D
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 09:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E39C6FD1D
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 09:14:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231253AbjCQJGj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Mar 2023 05:06:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50532 "EHLO
+        id S231138AbjCQJOH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Mar 2023 05:14:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231243AbjCQJGK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 05:06:10 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85023B1B3E;
-        Fri, 17 Mar 2023 02:05:04 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id d13so4473577pjh.0;
-        Fri, 17 Mar 2023 02:05:04 -0700 (PDT)
+        with ESMTP id S230479AbjCQJOH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 05:14:07 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A5B96286A
+        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 02:13:39 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id x3so17660518edb.10
+        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 02:13:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679043904;
+        d=linaro.org; s=google; t=1679044417;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QX2XZwWz7YJVp28nkiAFRa3YDgRjaTUhSz6LKfDtyiA=;
-        b=ltwRrOIwgxe/ygDpCrI+lISFDpB94cBuDvk4QnYhyD0ld8dQZOReapD1MGWD1BYu0u
-         0LhKqjvpA1HvFdtw83xS1gd8zGAiyvNujHJDoC7DqJ+ox2/ubmzBztuPgYQ8J4lWsqsV
-         cOiFIEt82KAmUNmwbKRdWguhIMH9phiIMPo9VVKh8AjPm8fMVTn2mWyKsc2pQ48A7YE2
-         I6wfcnEz4Q6YSRYtfZTlAUQU0UzGf+YU7PMz0zOfazODy7FO9zmDit/8XBLLbgQ5YAuQ
-         0ej+iXdBkjmZXZ3KCH6cPQhbFTHuoO1fdUqiMzarXLzWGo7/bYRkyCPdPD3Lw7dMIfKR
-         5c0w==
+        bh=+cpBYnKN5+YMFMw4tpn2s+6a2wFSz7gO8ZG313XuCv4=;
+        b=FnqJnDfJTBi41p9JHh2V4t9548s1xSHZk6EhJKO2KgFARu+eOEDIROmxBeCN72zWEt
+         rXKKFkFnh7MaSbygTcYQnQw6DomruPVc97RonbsScgLiLBHhBhFTor3ygxEcHDPFT0zM
+         +SmoboRs+Es/JA9Gij/nX0aRL8Evwsbe6Nr6E7/xS3j8UKi2zFWJB8mP2lzoaXB7UyOM
+         ptLx8MyGxhtb15z9T4IxnHMN7ZjjnBuPS9vdjAwXjoJ7Ha4YFVudkyW4XEEtUNKzI7sf
+         H6yhIQ3F+2pB4qjLD+VNUGHSJ3hKVEOLwEvIPDHWG2H4U2t8GeR5Pg1FJgcxFH6lPUZI
+         /0UQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679043904;
+        d=1e100.net; s=20210112; t=1679044417;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QX2XZwWz7YJVp28nkiAFRa3YDgRjaTUhSz6LKfDtyiA=;
-        b=FwMoeTHWlE721ekTOxgFGSfbiK8DiyhoxS4sU/YvtHIwTnW3MGcAXoZmgWdHHWgJQ+
-         zmvbFphphUe6uX6Nl+ltfhaaEKbcrCrp9ZzGYCWasw75z+iv985Zu9kRHo/a1DBtIyWZ
-         Bxe5VdEa+s3RHsvNnfQx17Sn3uZgZJBjejf9Etx/R8mUOaOKd8hmiFC58ZlwaeJAyywL
-         S4csslmZsY9VdLjdC9zFtFrqud3l2YjURCM/cX9gNxRdhcwzH0QffeHoLX0BJ3LVIWwA
-         vcXH9kmWYZkiMenmqGjiJ9Yi/fho6JYKuoiVg4I1at5YDmmiMBlMdmweWUmd2QfcwIzn
-         QoAg==
-X-Gm-Message-State: AO0yUKXk/SZM2FCDJcEN5VxIywXcpADO3HdhBr/p7Vwv6xK9JIMd7dU1
-        B07xxEq557lqBwqC2kZAplA=
-X-Google-Smtp-Source: AK7set9a65EBPVyz+AO2HaViA43JOsoHIciGp+Ovxbm0iISW7nsDtyTzfHt5j1HBUuUVOn1wz3R8Qg==
-X-Received: by 2002:a17:903:1112:b0:19d:f7e:9864 with SMTP id n18-20020a170903111200b0019d0f7e9864mr7502967plh.57.1679043903853;
-        Fri, 17 Mar 2023 02:05:03 -0700 (PDT)
-Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id j3-20020a170902c3c300b001a072be70desm1082569plj.41.2023.03.17.02.05.01
+        bh=+cpBYnKN5+YMFMw4tpn2s+6a2wFSz7gO8ZG313XuCv4=;
+        b=EMBsa//9JtZ9EGw3dmtOqSztHjULUCYYAoV4PXFU+eMvNyYm28Ps7+q+0y/b0WNj1O
+         Xs/mv5yWZRsv7eh8nbB7I03gYb8yOBHKZKqwnJJhK7XOI0tkCJ+VcuZuBLG/yUwqHXT2
+         ZhMz61fnnp2gourLjG8WowNRIZ2ZoIYPvp3DxuCnMesU5N2gKPsVtFkLEZJTACuFv7nj
+         MOl5PD0rttyeqR9uCnAILaoxbNDtk5o/oX5FWrOjTpi+t8XiFJGcK+eCR5eAb6p/OMM7
+         16Hs0KsvTDICKuZFGntfxXJ/HkQ4BlX/DqErhxNea6qol4DBPJWOtYKcrlq8CGtoYW/B
+         wIQg==
+X-Gm-Message-State: AO0yUKU7h4O0EDRh/ydaeKBjG+EvWc4oDka+aOf4r4i3hulSlj1apP7m
+        dMO4jUoiAOSg36m0xBmTSwi3pA==
+X-Google-Smtp-Source: AK7set8AbOUSg9RLLGhVLscb7j5DdC0tsCnYce7R6YkcgOcQcZDKJYLl8/4X0z9PrsNAsTJb0yyzGw==
+X-Received: by 2002:a17:906:56:b0:91f:7455:cb1d with SMTP id 22-20020a170906005600b0091f7455cb1dmr13023353ejg.57.1679044416747;
+        Fri, 17 Mar 2023 02:13:36 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:848a:1971:93e0:b465? ([2a02:810d:15c0:828:848a:1971:93e0:b465])
+        by smtp.gmail.com with ESMTPSA id l20-20020a1709066b9400b0093114ce0837sm740814ejr.51.2023.03.17.02.13.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Mar 2023 02:05:03 -0700 (PDT)
-Message-ID: <2ae442f2-8f9a-29da-63fa-9b32858e3789@gmail.com>
-Date:   Fri, 17 Mar 2023 17:05:00 +0800
+        Fri, 17 Mar 2023 02:13:36 -0700 (PDT)
+Message-ID: <b9753d54-6605-e3cb-2943-795b4d58cd83@linaro.org>
+Date:   Fri, 17 Mar 2023 10:13:35 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 02/15] arm64: defconfig: Add Nuvoton MA35 family support
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH 08/15] dt-bindings: clock: Document ma35d1 clock
+ controller bindings
 Content-Language: en-US
-To:     Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org, Lee Jones <lee@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>
+To:     Jacky Huang <ychuang570808@gmail.com>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org
 Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
         schung@nuvoton.com, Jacky Huang <ychuang3@nuvoton.com>
 References: <20230315072902.9298-1-ychuang570808@gmail.com>
- <20230315072902.9298-3-ychuang570808@gmail.com>
- <44c5fe37-be74-4fb1-802a-8cf8c813ec96@app.fastmail.com>
-From:   Jacky Huang <ychuang570808@gmail.com>
-In-Reply-To: <44c5fe37-be74-4fb1-802a-8cf8c813ec96@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ <20230315072902.9298-9-ychuang570808@gmail.com>
+ <0ad8521d-90b9-29c7-62e6-2d65aa2a7a27@linaro.org>
+ <00423efa-d4ca-5d76-d0b2-11853a49c5e9@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <00423efa-d4ca-5d76-d0b2-11853a49c5e9@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Anrd,
-
-Thanks for your advice.
-
-On 2023/3/16 下午 10:23, Arnd Bergmann wrote:
-> On Wed, Mar 15, 2023, at 08:28, Jacky Huang wrote:
->> From: Jacky Huang <ychuang3@nuvoton.com>
+On 17/03/2023 04:47, Jacky Huang wrote:
+> 
 >>
->> Enable basic drivers for ma35d1 booting up support: architecture,
->> device tree, clock, reset, and uart.
+>>> +
+>>> +  nuvoton,pll-mode:
+>>> +    description:
+>>> +      A list of PLL operation mode corresponding to CAPLL, DDRPLL, APLL,
+>>> +      EPLL, and VPLL in sequential. The operation mode value 0 is for
+>>> +      integer mode, 1 is for fractional mode, and 2 is for spread
+>>> +      spectrum mode.
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>>> +    maxItems: 5
+>>> +    items:
+>>> +      minimum: 0
+>>> +      maximum: 2
+>> Why exactly this is suitable for DT?
+> 
+> I will use strings instead.
+
+I have doubts why PLL mode is a property of DT. Is this a board-specific
+property?
+
+> 
 >>
->> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
-> The description does not seem to match the actual contents,
-> which only enable the platform but none of the drivers.
+>>> +
+>>> +  nuvoton,sys:
+>>> +    description:
+>>> +      Phandle to the system management controller.
+>>> +    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+>> Drop quotes.
+>>
+>> You need here constraints, look for existing examples.
+>>
+> 
+> I would like to modify this as:
+> 
+> 
+>    nuvoton,sys:
+>      description:
+>        Use to unlock and lock some clock controller registers. The lock
+>        control register is in system controller.
+>      $ref: /schemas/types.yaml#/definitions/phandle-array
+>      items:
+>        - items:
+>            - description: phandle to the system controller.
 
-I would like to rewrite it as:
-
-arm64: defconfig: Add support for Nuvoton MA35 family SoCs
-
-This adds support for the Nuvoton MA35 family SoCs which
-are based on the Cortex-A35 Armv8-A 64-bit architecture.
+In such case you do not have array. Just make it phandle and drop the items.
 
 
-> It's ok generally to enable options in the defconfig file
-> before you add the drivers, but if it's all part of a patch
-> series, I would probable more this bit to the end.
->
->       Arnd
 
 Best regards,
-
-Jacky Huang
+Krzysztof
 
