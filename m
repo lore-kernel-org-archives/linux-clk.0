@@ -2,78 +2,131 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 103C5C76195
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 19:14:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE82C76196
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 20:28:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229680AbjCQTOQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Mar 2023 15:14:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46278 "EHLO
+        id S229581AbjCQU2E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Mar 2023 16:28:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230156AbjCQTOO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 15:14:14 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24743E41CE;
-        Fri, 17 Mar 2023 12:13:51 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4A974B826AD;
-        Fri, 17 Mar 2023 19:13:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9419C433D2;
-        Fri, 17 Mar 2023 19:13:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679080427;
-        bh=kJ5KDDh2GLSsp9XhhD0hmVpezrJHgDMsml3WxRv/lhs=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=UjSlIS17umcmgDBUU3qnBIB1/Dr19nBLfB4H8rvE9ANxKHlWp3uBJZ1Ixmj5b8grd
-         ulJKA29Q/y6yHG4WG0/0Y9SVgX3y5lvbU/hrDLO7VhL1HJcwUFrHcO839IyBw/95r3
-         0I7Up7qJhHi3LsmhKGUhObKSvQM7HwBGMtxjcgFvEh6iYfhd1qgcQVY9Vh59aRu9mh
-         HbnxWSaiuTK/V9nQo0P7YXUs3+2kBM/VilZL31A5pHkImwswAtzqcCKW0upBu0uOIG
-         ilOXW6JF2Nj0cqu8em7UIEVef0L0qulDWDORPvdBgXD/zM1DgT+PpWGwwnYYp2OQm6
-         Lo0Aqva+x+/0A==
-Message-ID: <3ed5634cd610fad7e3b46648e7e63260.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229959AbjCQU2B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 16:28:01 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56EC4AB8B4;
+        Fri, 17 Mar 2023 13:27:54 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 539265FD4F;
+        Fri, 17 Mar 2023 23:27:52 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1679084872;
+        bh=9klZq5XNmdsCI8Jf4BIs+c2sADGKOJ1gBsYtYIHMRbs=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+        b=XZLGSNSDmTYCZb7s7O8f3ZHMIYyHbCaPHo56b39hLpJh8r2PPMyPdt6JZf/f58gS6
+         348VQBGsQwgKna4KcBjfocVat4Lqe47Se+jPzZVU/R2rBfpLoY1XV5J9SdDnY/MhuD
+         nEQmoM7C4NtEflIqujh+NYYR6c0/dYiZ2pSZIDpWO/wkYg9ssjJ8UCokIFIKbMHW4O
+         wrMnu9VEuqIb6kJwYg6uDZFbq4+xVLkxvqCB/1BdyNc2QmNUJgg2jzPqIkAyQSsUIV
+         4ehY8/Xe9OvmJIHSZFZWjeQXbTyfcDZK5fT93/oA8Zjv4VhwxaKfF9gR7OjPIoDThE
+         zH5yyfYc2Jekg==
+Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Fri, 17 Mar 2023 23:27:49 +0300 (MSK)
+Date:   Fri, 17 Mar 2023 23:27:48 +0300
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
+        <martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
+        <kernel@sberdevices.ru>, <rockosov@gmail.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v10 3/5] dt-bindings: clock: meson: add A1 PLL and
+ Peripherals clkcs bindings
+Message-ID: <20230317202748.7ctqhswettiemwi7@CAB-WSD-L081021>
+References: <20230313201259.19998-1-ddrokosov@sberdevices.ru>
+ <20230313201259.19998-4-ddrokosov@sberdevices.ru>
+ <ffebef1d-8447-181b-1890-3e638d399c62@linaro.org>
+ <20230314114825.yiv4vcszr6b7m45w@CAB-WSD-L081021>
+ <20230317185317.GA2608140-robh@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230316231118.2579242-1-sboyd@kernel.org>
-References: <20230316231118.2579242-1-sboyd@kernel.org>
-Subject: Re: [PATCH] clk: mediatek: Ensure fhctl code is available for COMMON_CLK_MT6795
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        patches@lists.linux.dev,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Chen-Yu Tsai <wenst@chromium.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Date:   Fri, 17 Mar 2023 12:13:45 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20230317185317.GA2608140-robh@kernel.org>
+User-Agent: NeoMutt/20220415
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
+ S-MS-EXCH01.sberdevices.ru (172.16.1.4)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/03/17 17:26:00 #20964929
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stephen Boyd (2023-03-16 16:11:18)
-> Without this select we get linker errors when linking
-> clk-mt6795-apmixedsys
->=20
-> arm-linux-gnueabi-ld: drivers/clk/mediatek/clk-mt6795-apmixedsys.o: in fu=
-nction `clk_mt6795_apmixed_remove':
-> clk-mt6795-apmixedsys.c:(.text+0x34): undefined reference to `mtk_clk_unr=
-egister_pllfhs'
-> arm-linux-gnueabi-ld: drivers/clk/mediatek/clk-mt6795-apmixedsys.o: in fu=
-nction `clk_mt6795_apmixed_probe':
-> clk-mt6795-apmixedsys.c:(.text+0x98): undefined reference to `fhctl_parse=
-_dt'
-> arm-linux-gnueabi-ld: clk-mt6795-apmixedsys.c:(.text+0xb8): undefined ref=
-erence to `mtk_clk_register_pllfhs'
-> arm-linux-gnueabi-ld: clk-mt6795-apmixedsys.c:(.text+0x1c4): undefined re=
-ference to `mtk_clk_unregister_pllfhs'
->=20
-> Fixes: f222a1baec5f ("clk: mediatek: mt6795: Add support for frequency ho=
-pping through FHCTL")
-> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Cc: Chen-Yu Tsai <wenst@chromium.org>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
+On Fri, Mar 17, 2023 at 01:53:17PM -0500, Rob Herring wrote:
+> On Tue, Mar 14, 2023 at 02:48:25PM +0300, Dmitry Rokosov wrote:
+> > On Tue, Mar 14, 2023 at 12:28:40PM +0100, Krzysztof Kozlowski wrote:
+> > > On 13/03/2023 21:12, Dmitry Rokosov wrote:
+> > 
+> > [...]
+> > 
+> > > > +#define CLKID_SPIFC		84
+> > > > +#define CLKID_USB_BUS		85
+> > > > +#define CLKID_SD_EMMC		86
+> > > > +#define CLKID_PSRAM		87
+> > > > +#define CLKID_DMC		88
+> > > 
+> > > And what is here? Between 88 and 121?
+> > > 
+> > 
+> > Explained below.
+> > 
+> > > > +#define CLKID_GEN_SEL		121
+> > > > +
+> > > > +#endif /* __A1_CLKC_H */
+> > > > diff --git a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+> > > > new file mode 100644
+> > > > index 000000000000..8e97d3fb9d30
+> > > > --- /dev/null
+> > > > +++ b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+> > > > @@ -0,0 +1,20 @@
+> > > > +/* SPDX-License-Identifier: GPL-2.0+ */
+> > > 
+> > > I found in changelog:
+> > > "fix license issue, it's GPL-2.0+ only in the current version"
+> > > and I do not understand.
+> > > 
+> > > The license is wrong, so what did you fix?
+> > > 
+> > 
+> > Sorry don't get you. Why is it wrong?
+> > I've changed all new source files to GPL-2.0+ except yaml, because yaml
+> > dt bindings schemas require the following license:
+> 
+> Why 2.0+? The kernel's default license is 2.0-only. Are you (and 
+> your lawyer) okay with GPL v4?
+> 
+> But this is still part of the DT binding and has the same license 
+> preference:
+>  
+> >     # SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> 
+> However, the header licenses are complicated due to .dts licenses which 
+> are all over the place. The requirement is dual licensed and matching 
+> what includes it.
 
-Applied to clk-next
+Agree with you. As we discussed with Krzysztof, checkpatch must verify
+such wrong license tags. I've introduced the patchset for that, please
+take a look:
+
+https://lore.kernel.org/all/20230317201621.15518-1-ddrokosov@sberdevices.ru/
+
+-- 
+Thank you,
+Dmitry
