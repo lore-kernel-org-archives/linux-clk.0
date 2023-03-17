@@ -2,94 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35F6EC74A5B
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 16:07:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C02EC6FD1D
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 16:10:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230373AbjCQQHZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Mar 2023 12:07:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40256 "EHLO
+        id S230234AbjCQQKL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Mar 2023 12:10:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231533AbjCQQHW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 12:07:22 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBBE7B1A73
-        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 09:06:48 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id x13so22405804edd.1
-        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 09:06:48 -0700 (PDT)
+        with ESMTP id S229733AbjCQQKK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 12:10:10 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D016CF
+        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 09:10:08 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id v25so1458368wra.12
+        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 09:10:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679069207;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Sgtfxiu0i9YSBCZdlpmZ+23ZIgI7eVaV3XtK/FVd+sM=;
-        b=eJY1iVeZGOr+E2fTTWDxlkIa3GYuwF1sUF/A/9sluy0tf/50AK1Rxyc0/mPYrXQ1Eh
-         Mnz37ayxjUnSoeqTfR5DG3VuCPCIr9wnrhYxUuuLnzv/fRk1MufTWjwmjGcx5DvlbDq4
-         jcDWglpm+nfIX1BHdiOiDHZ3nTVw4lmByY6I2EJXrABG3pzPMBzm4Yy4vTTaUjqi92os
-         jmW03TcZQJhWuKtX7QIJ/ABI3GVhf9eT+JxhL1svUUJLNwQaoyzPXwJVEr0/fFQmvmsJ
-         y2aFTWH9mihmLb1Swoeq0JClf6J2VwIvkUIXFUGVvmbwjR2ac4dmey4DJ8lTCVpt/6Rc
-         y/cw==
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1679069407;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UjzDxDVWXiH7vDhwwdNksFwW7YtaxEhKuy7mNkKU/kY=;
+        b=WLtYCSEw6QZI9xCr3EfpQa/4pvjbN6mMOrCWKnyFC71zf7OLUE1vSzp76q1DKeOLvA
+         A5qVA3aHYRzDHcj5adEuiwVislL78m8zLrH2E3NYuaZcwvkeXjtwy4jRS7z+aAl0j6d4
+         nmvscTrM2Ogf1O2YqX9qmjinE3f/dNi+OoHbbO0tWhqeSf4Vul2FtoeqqosCN0fShjQo
+         GZ0M2gGrqJDRHKU/H4YfV18sjgP5QMSaroqqjz7dyEPtPhCQ3HxaatLICuvI0wXSK/m1
+         /gyTlC4AXPR6wQIEKFs2h9P5r4WId/zJqdXfYiGdeZteSvQSdijhbZ58jGgpTRWz/eRX
+         6/VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679069207;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sgtfxiu0i9YSBCZdlpmZ+23ZIgI7eVaV3XtK/FVd+sM=;
-        b=BwnXKmNdfRc2UGP7Y1Q2ld/enODf5QHRbQHpM+w+ZNNQqSRR2ujogfpjZBev5JUfoj
-         nRhvQAwkKtIsZ7wRb9CmZZvgVW4BXjqKiih4pUvqtgd3PtmmQ8uXvFd2Wo0vRc0c9qDy
-         eYiMZUz89254nEmQ+JxlqnHc2fTxBNBh0KN56W7Z9kSAUDnJgFu47tC2Hmn+xFbyWsON
-         S7MGchkoJV56XxWCl8OwcMJ+sh0V8VLjPnBMbEHLPusui61rg3Lu2j1aJCvPHZ5grkUi
-         +dk23joKyZP59HUnD1iEpqg0Ij7q3xtjyeXgpQfXu1JhSoniZpwTbfVOpROw+skr+W/W
-         p13g==
-X-Gm-Message-State: AO0yUKVvGdsTFSrh/YcwoN9i7axT/mLSMtIQShMqQwyciFCoKjLaPnRw
-        GWV9at/1PD53xtZPuM9B367+5w==
-X-Google-Smtp-Source: AK7set9DXGRx38/0ZQ75JqG5RLB5OpQJI77okOMQ6ZiwDKUDz8YsADPoF+IAPbjepZh+Wr7qLkJgDw==
-X-Received: by 2002:a17:906:a450:b0:88d:9cf8:2dbb with SMTP id cb16-20020a170906a45000b0088d9cf82dbbmr15431897ejb.12.1679069207004;
-        Fri, 17 Mar 2023 09:06:47 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:d013:3eeb:7658:cec? ([2a02:810d:15c0:828:d013:3eeb:7658:cec])
-        by smtp.gmail.com with ESMTPSA id g1-20020a170906348100b0090953b9da51sm1124655ejb.194.2023.03.17.09.06.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Mar 2023 09:06:46 -0700 (PDT)
-Message-ID: <a90fc6f6-df95-3a4f-da5b-ebdafbe7dd34@linaro.org>
-Date:   Fri, 17 Mar 2023 17:06:45 +0100
+        d=1e100.net; s=20210112; t=1679069407;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UjzDxDVWXiH7vDhwwdNksFwW7YtaxEhKuy7mNkKU/kY=;
+        b=oKwJwcr0Pfh4wWUEVPgy4Yn7ZJUIKzH3W22/SjXEk3LPPcJJXmlj6G20wwJRJHdKdb
+         HVwRI2OUil8EC43/isSfOc1YkdGIr+3Q2VAqOlAbu86ZxKDzG3/UCXSmMgCS5QQ7UD00
+         +EgeRp5TZHVz1XFMzWiOX3XzpWc8YDxjWoC+tQ7TX1Lnybl8WYLBQesKzBzBpvl7xffS
+         KlLK/9zZrGDYMoMLu3W4qGSOYfLQK3ej17Y04xpSTXIncwy8OqoUTfWdc7V/qgeuW0dD
+         TeFlF13jW3+b309GnewpTfZnglwK/Z3S8+cvw1RhGalz3LRYVgX2lP99lN/iQjjdX6sr
+         DqKg==
+X-Gm-Message-State: AO0yUKUyRKDFeC38CJc7LqD+qxQWohYqLWwNWQi/Lv8zi/aptOvzBaqE
+        5ClygDWmdtTam3ucdN22R83g3w==
+X-Google-Smtp-Source: AK7set93hypJDsMm1enAfIZg8215eCAIhP4PBJcZFx0zQJdvHMFklrJCpfni543ui1ToxFKL4ckHKw==
+X-Received: by 2002:a05:6000:12c5:b0:2ce:a8f9:7cae with SMTP id l5-20020a05600012c500b002cea8f97caemr7964173wrx.53.1679069406830;
+        Fri, 17 Mar 2023 09:10:06 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id y1-20020a5d4ac1000000b002ceaeb24c0asm2303163wrs.58.2023.03.17.09.10.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Mar 2023 09:10:05 -0700 (PDT)
+Date:   Fri, 17 Mar 2023 17:10:04 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc:     Vadim Fedorenko <vadfed@meta.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH RFC v6 0/6] Create common DPLL/clock configuration API
+Message-ID: <ZBSQ3MFzQSBfGH7O@nanopsycho>
+References: <20230312022807.278528-1-vadfed@meta.com>
+ <ZA8VAzAhaXK3hg04@nanopsycho>
+ <eb738303-b95c-408c-448d-0ebf983df01f@linux.dev>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH 00/15] Introduce Nuvoton ma35d1 SoC
-Content-Language: en-US
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Jacky Huang <ychuang570808@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org, Lee Jones <lee@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        schung@nuvoton.com, Jacky Huang <ychuang3@nuvoton.com>
-References: <20230315072902.9298-1-ychuang570808@gmail.com>
- <f2699aa1-4d8a-48c0-b332-484db0b04252@app.fastmail.com>
- <1a1277ac-4ae5-eaab-01c3-0242c12be76b@gmail.com>
- <6ed7e89f-2d2c-4134-9c6f-a9d18e2fc8a8@app.fastmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <6ed7e89f-2d2c-4134-9c6f-a9d18e2fc8a8@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eb738303-b95c-408c-448d-0ebf983df01f@linux.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17/03/2023 14:21, Arnd Bergmann wrote:
-> I only now saw that you had already submitted this several times
-> at the beginning of last year, and this is technically 'v5'
-> of the series, and it would make sense to add 'v6' to the subject
-> next time and link back to the previous [1] and this[2] submission
-> on lore.kernel.org.
+Mon, Mar 13, 2023 at 04:33:13PM CET, vadim.fedorenko@linux.dev wrote:
+>On 13/03/2023 12:20, Jiri Pirko wrote:
+>> Sun, Mar 12, 2023 at 03:28:01AM CET, vadfed@meta.com wrote:
+>> > Implement common API for clock/DPLL configuration and status reporting.
+>> > The API utilises netlink interface as transport for commands and event
+>> > notifications. This API aim to extend current pin configuration and
+>> > make it flexible and easy to cover special configurations.
+>> 
+>> Could you please put here some command line examples to work with this?
+>
+>We don't have open-source tools ready right now for specific hardware, but
+>with YAML spec published you can use in-kernel tool to manipulate the values,
+>i.e.:
+>
+>./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml --dump
+>device-get
+>./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml --do
+>device-get --json '{"id": 0}'
+>./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml --dump
+>pin-get
+>./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml --do
+>pin-get --json '{"id": 0, "pin-idx":1}'
+>./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml --do
+>pin-set --json '{"id":0, "pin-idx":1, "pin-frequency":1}'
 
-... and address previous feedback. Or at least make it clear in
-changelog that you addressed it, so our review was not ignored.
-
-Best regards,
-Krzysztof
+Interesting, is this working for you?
+I'm experiencing some issue with cmd value. Example:
+./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml --do device-get --json '{"id": 0}'
+this should send DPLL_CMD_DEVICE_GET which is 1.
+In kernel genl_family_rcv_msg() the hdr->cmd is 2
+Any idea what might be wrong?
 
