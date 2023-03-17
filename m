@@ -2,102 +2,92 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8945C6FD1D
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 16:53:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D60EFC6FD1D
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 18:21:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229665AbjCQQxw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Mar 2023 12:53:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57472 "EHLO
+        id S230117AbjCQSVC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Mar 2023 14:21:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229881AbjCQQxr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 12:53:47 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B444474C4
-        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 09:53:43 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id q16so5052820wrw.2
-        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 09:53:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1679072021;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KJIzqRDlIl5u/pNsNO+CkEW5Nyckm1onTwJJM1lb0r8=;
-        b=6kSjS2QkIjCrWzBaEUeLZw68U8S19D9GtBrF/6R/LWzmSbVfAc/JHsxDReb9//IroS
-         FK9sPCSmTASM/OZ1LXFILcbLADtPp0YZx430/wFv75VuKN2HxeXj/cB7wJtBRshFT2wu
-         tfb0wi60dWTxRIlEhN/xHxfQUKoZv+d7SrcWpOclVGuwnqsPukLlFYGz7NJqPkh8Kxpt
-         ifYwioMT/t2j1J7sB5V/I8CXT5nlpUX4Dk5bXnCUkgJX2y3c0WMfHSu+OTvNdybNjp/G
-         OiXGIvsazDKF/sQ18V2Zv56Dsh2FEWtN9mW6Z/VGoG9/cvQnaiERyh6wlawGN0+p2Ei5
-         e9aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679072021;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KJIzqRDlIl5u/pNsNO+CkEW5Nyckm1onTwJJM1lb0r8=;
-        b=KFdSlMKkzokYf4SvwDulgrHHgM+YAUELW7VPnbS9WgLLPgatnd1qGtu1S65qIM5bwh
-         mmheB4JzFvLO1IjRpaXck22y/nwxe7bd5N1y+WxEeNjWkDRndXF+UmqWo2lC95CjHbc8
-         2rgFXXoSwfdyAXeiy8Qr77u5tQN9EB7beeDeNs3c9cdEj/1NX1DbtrARNXzT+WyOnCHf
-         +mMiqxK7VY+dQhm6jnWe1mHc+Qa0+ejvKAue5u/rJqL0HawZ7e2flAMEv48GQDorzHWo
-         k54t3avBSvZjKuglFcIgouNr+vfo03yk+tMlxaTNcCUvhgfLlq09W1cvJuLbyIMoweB6
-         qvzw==
-X-Gm-Message-State: AO0yUKWoLYuu1VVBNolsqsA2PcCNgPT//Bob8qv/9BJL0xtjjor2ippW
-        kIxQGhUzv08c39S/dsG3ZSQjJg==
-X-Google-Smtp-Source: AK7set8pHjCt/e8bd28Q05BYNst8oP4BR1BhOm9Du0zyjX/0NuEZ5lD0gvmfBxWXSsHHdYWk6b/DVA==
-X-Received: by 2002:adf:e743:0:b0:2ce:ae55:340a with SMTP id c3-20020adfe743000000b002ceae55340amr7217485wrn.48.1679072021420;
-        Fri, 17 Mar 2023 09:53:41 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id c8-20020adfe708000000b002cde626cd96sm2351673wrm.65.2023.03.17.09.53.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Mar 2023 09:53:40 -0700 (PDT)
-Date:   Fri, 17 Mar 2023 17:53:39 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Vadim Fedorenko <vadfed@meta.com>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>, poros@redhat.com,
-        mschmidt@redhat.com, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Michal Michalik <michal.michalik@intel.com>
-Subject: Re: [PATCH RFC v6 1/6] dpll: spec: Add Netlink spec in YAML
-Message-ID: <ZBSbE+8p/u9hl0JI@nanopsycho>
-References: <20230312022807.278528-1-vadfed@meta.com>
- <20230312022807.278528-2-vadfed@meta.com>
+        with ESMTP id S229799AbjCQSVC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 14:21:02 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E73335F52F;
+        Fri, 17 Mar 2023 11:21:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 96271B82692;
+        Fri, 17 Mar 2023 18:20:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D4DAC433EF;
+        Fri, 17 Mar 2023 18:20:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679077258;
+        bh=AxXX2L5I74yqWWOgqH5b2dx2xWaIQUEl63ihhnOAsLQ=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=nFMxkd78YIY121JTXMYkvS9+GA54+9LI1oUkpJRUyU9GZsxggVp8ayJieN7+zzTNG
+         bxum8mX2qh5YALw0a0Uqbzuu/EiXwSinDVmfqt0FbJbVlUbgLOBaAaviA3eeb9jmJJ
+         CuStonQBHAHekhjLgvf77TLOPg98zuhm+FpPW3ig/JZ5L4Pzymh9QauXAO4Dksg2X/
+         nF1Bv0wmT+/Jdl/2OHvD4BMY1fRm5b0SVVXupI4ayHHYPjX3+lUuiBOcyo1YFJcNiZ
+         8JtAiVSla+ciqSSCTNYZHOHzk32vA7Idw/HK2qrDG2CFw1n1BhAFOEy6BpTkQx1Kq8
+         Rmrstysp2XlwA==
+Message-ID: <5601e0edc19dc03d0fc516f9ffe4d1aa.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230312022807.278528-2-vadfed@meta.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <62533d5a-f39a-0806-b4d9-932e2af6beef@linaro.org>
+References: <20230303-topic-rpmcc_sleep-v2-0-ae80a325fe94@linaro.org> <20230303-topic-rpmcc_sleep-v2-1-ae80a325fe94@linaro.org> <20230316225803.GA4036689-robh@kernel.org> <62533d5a-f39a-0806-b4d9-932e2af6beef@linaro.org>
+Subject: Re: [PATCH RFT v2 01/14] dt-bindings: clock: qcom,rpmcc: Add a way to enable unused clock cleanup
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        devicetree@vger.kernel.org
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh@kernel.org>
+Date:   Fri, 17 Mar 2023 11:20:56 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Sun, Mar 12, 2023 at 03:28:02AM CET, vadfed@meta.com wrote:
->From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
->
+Quoting Konrad Dybcio (2023-03-16 17:31:34)
+>=20
+> On 16.03.2023 23:58, Rob Herring wrote:
+> > On Wed, Mar 08, 2023 at 10:35:17PM +0100, Konrad Dybcio wrote:
+> >> =20
+> >> +  qcom,clk-disable-unused:
+> >> +    type: boolean
+> >> +    description:
+> >> +      Indicates whether unused RPM clocks can be shut down with the c=
+ommon
+> >> +      unused clock cleanup. Requires a functional interconnect driver.
+> >=20
+> > I don't think this should be QCom specific. Come up with something=20
+> > common (which will probably have some debate).=20
+> Generally the opposite (ignoring unused clocks during the cleanup) is
+> the thing you need to opt into.
+>=20
+> I can however see how (especially with the focus on not breaking things
+> for older DTs) somebody else may also decide to only allow them to be
+> cleaned up conditionally (by marking the clocks that were enabled earlier
+> as enabled in Linux OR not addding clk.flags |=3D CLK_IGNORE_UNUSED) as we
+> do here.
+>=20
+> Stephen, Rob, would `clk-disable-unused` be a fitting generic property
+> name for that? Should we also think about `clk-ignore-unused` as a
+> clock-controller-specific alternative to the CCF-wide clk_ignore_unused
+> cmdline?
+>=20
 
-[...]
-
-
->+      name: device-get
->+      doc: |
->+        Get list of DPLL devices (dump) or attributes of a single dpll device
->+      attribute-set: dpll
->+      flags: [ admin-perm ]
->+
-
-[...]
-
-
->+    -
->+      name: pin-get
->+      doc: |
->+        Get list of pins and its attributes.
->+        - dump request without any attributes given - list all the pins in the system
->+        - dump request with target dpll - list all the pins registered with a given dpll device
->+        - do request with target dpll and target pin - single pin attributes
->+      attribute-set: dpll
->+      flags: [ admin-perm ]
-
-Any particular reason to have admin cap required for get operations?
-If not, please remove.
-
+There are multiple threads on the list about disabling unused clks.
+Moving the decision to disable unused clks to a DT property is yet
+another approach. I'd rather not do that, because it really isn't
+describing the hardware configuration. If anything, I'd expect the
+property to be describing which clks are enabled by the firmware and
+then leave the decision to disable them because they're unused up to the
+software.
