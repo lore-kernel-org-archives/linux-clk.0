@@ -2,126 +2,131 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A87C7618A
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 08:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2EE2C74A5B
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 08:48:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231439AbjCQImQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Mar 2023 04:42:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39586 "EHLO
+        id S231416AbjCQIsQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Mar 2023 04:48:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231436AbjCQImA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 04:42:00 -0400
-Received: from wnew3-smtp.messagingengine.com (wnew3-smtp.messagingengine.com [64.147.123.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80EDF1205F;
-        Fri, 17 Mar 2023 01:40:37 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.west.internal (Postfix) with ESMTP id 40E4A2B06754;
-        Fri, 17 Mar 2023 04:39:55 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 17 Mar 2023 04:39:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
-        1679042394; x=1679049594; bh=vd9YrYSnV4XdS8WGt7v2P7Vyy5NZXy01mXq
-        mDhxZrBk=; b=J5Flu0OFGnWhvnczWVSoPOJKDUehhmBYZx8M1v7obqIpWIJlYUH
-        PTGqbYbvMURhKg20tWtkTjMhVU1LLQYvtQYXrvKjT8PPF3gtmxkaGZaOxfv7pPOD
-        sp8WKeQG279mQ7PBEAv8nHP3pBze/hfCKQTQt8Ad+KWT0yR6NxSdhsg12OjHY8rZ
-        nqgJsXXSYojYL+QOoIJ/qh4rQ9Uiehgrmfn57ZcUalByr1EDyh/0erX9LFx0PRM7
-        MTWb5wTQ8ZO/42AyMIQL1X4ybU7liD7d1ApxE/WXqeLq6R1mNofBg3ukeJYn+9YU
-        tbiOpECuDKPBgPzexnLmrCUcGTPEDGVSsJA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1679042394; x=1679049594; bh=vd9YrYSnV4XdS8WGt7v2P7Vyy5NZXy01mXq
-        mDhxZrBk=; b=KqtwJZjwVnUe5XBlxTwzUKQNXyC3Rfsei1gmTYeUHmfumN9D6xG
-        09uK5EKqNS+BBcRqEe5TaalMgM1TqLZZssOtpMDrCuJTu5rA9H1JBAFNTk/1AuLe
-        sIE0ZzNC14+F1kvMpLuhD6yimW4RlLH8dtvEHYQL3wiHN/E0LTpCpAZjzWm39089
-        nQY+ydpKmPpU69PFkZGUruBLAUFvrROZT8Abkv/joe4n5TgVzExbwEHiNzmpTuQf
-        p+ScDFBOpLur5LwyhJPMsr0oE5KtukTw1bX5nsjTvvGOvS1chYho8w6vo3ptoTpm
-        cFbOdQ9AWm7hg4GgCsvc1FgRFNWNNPed0MQ==
-X-ME-Sender: <xms:WicUZHLilA8zXpe5Xb1fj3MjTT_oK8DCnUE9GCcRjRDnvbCzy72yzw>
-    <xme:WicUZLLy5EqEHolQ1oAGq-md_oHg6x8Xf1cgdYuR0QByrIHTaABMu5m15uAq0Z1fr
-    ZL4nQfj41mAGsNHkCE>
-X-ME-Received: <xmr:WicUZPuZ_6TZ6oGcbxdPMMxZzZkoDNHiCj8S5ax3eVW2TnOQHs5nbHJfsb4SFfn7bzXNCkDLHmQwTa_ZVhf_N-_T6kO8Q-4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdefuddguddvgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtugfgjgesthhqredttddtvdenucfhrhhomhepofgr
-    gihimhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtf
-    frrghtthgvrhhnpeeitdeuffevieeufedtuddvffffffegfffgkeeihfelleektdelhfev
-    hfduudfhgfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordht
-    vggthh
-X-ME-Proxy: <xmx:WicUZAZ-c8e0fPKAOsp-qMCsIOlSrT-zVWG5n-P4NsktYNrXKJEPmw>
-    <xmx:WicUZObQMU2D5jvplwyUvdeuBpE28F4Zgi4VUi1Y21G_AssogWcU6A>
-    <xmx:WicUZEAy0yj0Eg9FZp8z1DN3HQkMUEb9imJ_jeUciBfXTU0CXo0epw>
-    <xmx:WicUZBldN-2lwA1IiSkG-EhWzd4we2dkvC2wdt2HqTupC5jE7QPPL-pnr1E>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 17 Mar 2023 04:39:53 -0400 (EDT)
-Date:   Fri, 17 Mar 2023 09:39:51 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        patches@lists.linux.dev,
-        Brendan Higgins <brendan.higgins@linux.dev>,
-        David Gow <davidgow@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kunit-dev@googlegroups.com
-Subject: Re: [PATCH v2 00/11] clk: Add kunit tests for fixed rate and parent
- data
-Message-ID: <20230317083951.oaupqybf7llrpmeo@houat>
-References: <20230315183729.2376178-1-sboyd@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        with ESMTP id S231546AbjCQIrw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 04:47:52 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BDD934311
+        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 01:47:20 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id w9so17566956edc.3
+        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 01:47:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1679042837;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CnJ/BVy4SBZ8eH5OPmRpFFL8LrOC5KW/6id1E1a0ulI=;
+        b=an+ZRTybvHjMbEESndLf3cwEK4vIcpejteU+3+UR8UkDibRo6Sk8/oRtIElrLZxKNo
+         Cmgis6c4lGP9OWXs+GPd6Jf1qRFNGJThCyOV6cAHa/x7kFKIZtTF7E+eUVpRmn7ASLBe
+         /UILF2TjBpmO2vWQnBjgxrovViZK2pKeGQK3h9ABNjRK2TAA3SQ6wwKT/Gl7Ss8RoMIC
+         +Ano9T7n/OJoGy+SlK6oNvKrRZEV0juvsuJ7srqXYHll0KmbZgLrBYRk91aOoL9SxvyM
+         cS/r0KOHBwAF2al/3k+l1Cl8CL99NWUt64/KF1nQBm+HhKGAwBB+xB5+HPb2ATI8f4ZX
+         mFmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679042837;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=CnJ/BVy4SBZ8eH5OPmRpFFL8LrOC5KW/6id1E1a0ulI=;
+        b=7EZCckwQQaf3sNTP3qLf8myISB4YReH9xfsKv3XysH1HkGBJgi17g1F9IJ4sf9mf4N
+         ysS4wIBflnsHyfAL4ouizOewpt4UWCphQGZRqixGE2bB9BrmM59v175H9SYuBzpR5R4U
+         sIzw5jbc3PgwLg4eIQxtuKiYI5tPMi4nJZGltsGqY0QJuBo+Cb+drbQaJ0pk+p/RiIsX
+         k2qrzMe4l+36XDIQqOcwA5jJcveWI8+PH8xhmt9uaHabVxe/xWkMcelME5oRl9/Y+rJl
+         oVQpo+irDWLDK/IXYIU8Kkf2aeUQhlZXLaRt5I6QcoYDeMt5Gj8zut1s7HQoINuycoGo
+         aEiA==
+X-Gm-Message-State: AO0yUKXk/mMc2rVZS37wJn5MbNETQ/m9pBAKpA/wEx+pDHLQXCZO/9Ks
+        inQFuxa9XWXnBW4M5vvdnLFE4w==
+X-Google-Smtp-Source: AK7set9MnDT1ldk25flR6fAwdCE+sqx5UVOMd+osCs/jxOJ7gvi9sokgU4kqzSLwEeCr53Tgbj8VNQ==
+X-Received: by 2002:a17:907:1b17:b0:930:9385:ce51 with SMTP id mp23-20020a1709071b1700b009309385ce51mr5720966ejc.68.1679042836927;
+        Fri, 17 Mar 2023 01:47:16 -0700 (PDT)
+Received: from localhost (2a02-8388-6582-fe80-0000-0000-0000-000b.cable.dynamic.v6.surfer.at. [2a02:8388:6582:fe80::b])
+        by smtp.gmail.com with ESMTPSA id n13-20020a170906088d00b0092707833d08sm707626eje.70.2023.03.17.01.47.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Mar 2023 01:47:16 -0700 (PDT)
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230315183729.2376178-1-sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Date:   Fri, 17 Mar 2023 09:47:15 +0100
+Message-Id: <CR8J0E9M2SFJ.3B3W26OYPWP2N@otso>
+Cc:     "Marijn Suijten" <marijn.suijten@somainline.org>,
+        "Rob Herring" <robh@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Konrad Dybcio" <konrad.dybcio@somainline.org>
+Subject: Re: [PATCH 2/5] arm64: dts: qcom: sm6350: Add GPUCC node
+From:   "Luca Weiss" <luca.weiss@fairphone.com>
+To:     "Konrad Dybcio" <konrad.dybcio@linaro.org>,
+        "Bjorn Andersson" <andersson@kernel.org>,
+        "Andy Gross" <agross@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        "AngeloGioacchino Del Regno" 
+        <angelogioacchino.delregno@somainline.org>
+X-Mailer: aerc 0.14.0
+References: <20230315-topic-lagoon_gpu-v1-0-a74cbec4ecfc@linaro.org>
+ <20230315-topic-lagoon_gpu-v1-2-a74cbec4ecfc@linaro.org>
+In-Reply-To: <20230315-topic-lagoon_gpu-v1-2-a74cbec4ecfc@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Thu Mar 16, 2023 at 12:16 PM CET, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@somainline.org>
+>
+> Add and configure a node for the GPU clock controller.
+>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-On Wed, Mar 15, 2023 at 11:37:17AM -0700, Stephen Boyd wrote:
-> This patch series adds unit tests for the clk fixed rate basic type and
-> the clk registration functions that use struct clk_parent_data. To get
-> there, we add support for loading device tree overlays onto the live DTB
-> along with probing platform drivers to bind to device nodes in the
-> overlays. With this series, we're able to exercise some of the code in
-> the common clk framework that uses devicetree lookups to find parents
-> and the fixed rate clk code that scans device tree directly and creates
-> clks. Please review.
->=20
-> I Cced everyone to all the patches so they get the full context. I'm
-> hoping I can take the whole pile through the clk tree as they almost all
-> depend on each other.
->=20
-> Changes from v1 (https://lore.kernel.org/r/20230302013822.1808711-1-sboyd=
-@kernel.org):
->  * Don't depend on UML, use unittest data approach to attach nodes
->  * Introduce overlay loading API for KUnit
->  * Move platform_device KUnit code to drivers/base/test
->  * Use #define macros for constants shared between unit tests and
->    overlays
->  * Settle on "test" as a vendor prefix
->  * Make KUnit wrappers have "_kunit" postfix
+Reviewed-by: Luca Weiss <luca.weiss@fairphone.com>
 
-Maybe I'm overthinking this, but wouldn't it make more sense to have a
-kunit *prefix* to those functions? Any other function in the kernel
-taking a kunit test pointer as a parameter starts with kunit (like
-kunit_kzalloc), so it would make more sense to me that kunit-related clk
-functions follow the same pattern.
+> ---
+>  arch/arm64/boot/dts/qcom/sm6350.dtsi | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dts/q=
+com/sm6350.dtsi
+> index c46bb6dab6a1..523c7edfa4b3 100644
+> --- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
+> @@ -5,6 +5,7 @@
+>   */
+> =20
+>  #include <dt-bindings/clock/qcom,gcc-sm6350.h>
+> +#include <dt-bindings/clock/qcom,gpucc-sm6350.h>
+>  #include <dt-bindings/clock/qcom,rpmh.h>
+>  #include <dt-bindings/clock/qcom,sm6350-camcc.h>
+>  #include <dt-bindings/dma/qcom-gpi.h>
+> @@ -1125,6 +1126,20 @@ compute-cb@5 {
+>  			};
+>  		};
+> =20
+> +		gpucc: clock-controller@3d90000 {
+> +			compatible =3D "qcom,sm6350-gpucc";
+> +			reg =3D <0 0x03d90000 0 0x9000>;
+> +			clocks =3D <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&gcc GCC_GPU_GPLL0_CLK>,
+> +				 <&gcc GCC_GPU_GPLL0_DIV_CLK>;
+> +			clock-names =3D "bi_tcxo",
+> +				      "gcc_gpu_gpll0_clk",
+> +				      "gcc_gpu_gpll0_div_clk";
+> +			#clock-cells =3D <1>;
+> +			#reset-cells =3D <1>;
+> +			#power-domain-cells =3D <1>;
+> +		};
+> +
+>  		mpss: remoteproc@4080000 {
+>  			compatible =3D "qcom,sm6350-mpss-pas";
+>  			reg =3D <0x0 0x04080000 0x0 0x4040>;
+>
+> --=20
+> 2.39.2
 
-Maxime
