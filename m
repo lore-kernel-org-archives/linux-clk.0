@@ -2,158 +2,268 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A59EC7618A
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 08:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45239C7618A
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Mar 2023 08:23:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229720AbjCQITD convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Mar 2023 04:19:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49536 "EHLO
+        id S230201AbjCQIXN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Mar 2023 04:23:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229678AbjCQITA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 04:19:00 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1B1183EA;
-        Fri, 17 Mar 2023 01:18:18 -0700 (PDT)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id C920024DC31;
-        Fri, 17 Mar 2023 16:17:08 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 17 Mar
- 2023 16:17:08 +0800
-Received: from [192.168.125.74] (113.72.145.194) by EXMBX172.cuchost.com
- (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 17 Mar
- 2023 16:17:07 +0800
-Message-ID: <555ba3ba-085b-b7e0-f06f-3ec856034801@starfivetech.com>
-Date:   Fri, 17 Mar 2023 16:17:06 +0800
+        with ESMTP id S230130AbjCQIXJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 04:23:09 -0400
+Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AAB930197
+        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 01:22:43 -0700 (PDT)
+Received: by mail-vs1-xe35.google.com with SMTP id f13so3813356vsg.6
+        for <linux-clk@vger.kernel.org>; Fri, 17 Mar 2023 01:22:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112; t=1679041362;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3fCK0hwBQ015qQMRz6rEb6KJK5VZfeedczVvOB+shX0=;
+        b=solPzoFkcmTWSFUZ0VfIarTU432Mn7pgUUu8BphEg7C5tZIyt2kOYRb0U8at7f6XnT
+         VmIv5dC5xoiAYohacuB9gl/JB+wSjzAFJ/EmGxGFyFC2J6bzq6eGYQMRoboGx552+cEK
+         lktODB22odRr/+X65Hu3i4dzeVfEfV2IiEL2zCw84UR/HtK9VUlCFJpmTwouGwOwZtdD
+         xWYAzwTCOjNDwKX7mdFIyIQZqYOvt4mr/EYKzTCdYCnMYZTZE64XCdVmMCxmr70gsQAe
+         mmYloTsbEcdBnuFoYdSUvSUVYlHSMRmB5h1oGVXvosrpdH4s8V65OnQdzo7DBeqEYWdH
+         uqzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679041362;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3fCK0hwBQ015qQMRz6rEb6KJK5VZfeedczVvOB+shX0=;
+        b=ZIxTApevTmiWRxo71OeQeFzRDsSOxLGp6YG0fMyZVg8tueoZQYkVfbiO7isqOfzX9c
+         G042q90pKvugjrXAOie5+4Xvm5/E/i5PK0Obz5WILqGVfWAYXEQVUFcp9LBhnobuPtov
+         lF/NrkiyIBFbvzq3Svf1DL2bd7X0NjBrf2eCn8bIpJz7RnMEIb4/UnAYTV3ZOs+NH4p+
+         d5RsMD+a2QVavF4X0eaTIWI4yWzPMowFK3RRpC/8OmWUEP7zrxFpDNnNwfFxuSIl60nu
+         bTz4gbeby+wMKrMPceiEF8HxLDXYyarhQhtIIiB+IRFbFKMQTTgpK2oaMtDZn8mfiipO
+         w36g==
+X-Gm-Message-State: AO0yUKW6MnsRW9PU3JzhkN0fkdKVLmZduOYbPa7NqD+p7wogVQJlGMst
+        LC8NCGgIy4ROjwIUTNiKOY+XyI3NR6PuQR7yiKR5ow==
+X-Google-Smtp-Source: AK7set/9AE4RSZxJdKcBAH5kvuNKB5KDURWDDse3moefUQ7EjosATFwsHMtyRxtgDtAo+kXYHGpu6UK8/i7ekNNEf3g=
+X-Received: by 2002:a67:dc81:0:b0:422:194a:8566 with SMTP id
+ g1-20020a67dc81000000b00422194a8566mr20213687vsk.5.1679041362233; Fri, 17 Mar
+ 2023 01:22:42 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-From:   Hal Feng <hal.feng@starfivetech.com>
-Subject: Re: [PATCH v5 06/21] reset: Create subdirectory for StarFive drivers
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>
-CC:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+References: <20230315183729.2376178-1-sboyd@kernel.org>
+In-Reply-To: <20230315183729.2376178-1-sboyd@kernel.org>
+From:   David Gow <davidgow@google.com>
+Date:   Fri, 17 Mar 2023 16:22:30 +0800
+Message-ID: <CABVgOS=g6yvNg6xscZqa5fQdyWMEGJ0K9_86R3K7_Fa0wCM_VQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] clk: Add kunit tests for fixed rate and parent data
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev,
+        Brendan Higgins <brendan.higgins@linux.dev>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        "Emil Renner Berthing" <emil.renner.berthing@canonical.com>,
-        <linux-kernel@vger.kernel.org>
-References: <20230311090733.56918-1-hal.feng@starfivetech.com>
- <20230311090733.56918-7-hal.feng@starfivetech.com>
- <3df9aa881dce1cfb1360c4d4fe6f609f5a73f97b.camel@pengutronix.de>
-Content-Language: en-US
-In-Reply-To: <3df9aa881dce1cfb1360c4d4fe6f609f5a73f97b.camel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Originating-IP: [113.72.145.194]
-X-ClientProxiedBy: EXCAS062.cuchost.com (172.16.6.22) To EXMBX172.cuchost.com
- (172.16.6.92)
-X-YovoleRuleAgent: yovoleflag
-Content-Transfer-Encoding: 8BIT
+        Frank Rowand <frowand.list@gmail.com>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kunit-dev@googlegroups.com, Maxime Ripard <maxime@cerno.tech>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="000000000000fb717105f7144703"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 14 Mar 2023 15:34:26 +0100, Philipp Zabel wrote:
-> On Sa, 2023-03-11 at 17:07 +0800, Hal Feng wrote:
->> From: Emil Renner Berthing <kernel@esmil.dk>
->> 
->> This moves the StarFive JH7100 reset driver to a new subdirectory in
->> preparation for adding more StarFive reset drivers.
->> 
->> Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
->> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
->> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
->> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
->> ---
->>  MAINTAINERS                                          | 2 +-
->>  drivers/reset/Kconfig                                | 8 +-------
->>  drivers/reset/Makefile                               | 2 +-
->>  drivers/reset/starfive/Kconfig                       | 8 ++++++++
->>  drivers/reset/starfive/Makefile                      | 2 ++
->>  drivers/reset/{ => starfive}/reset-starfive-jh7100.c | 0
->>  6 files changed, 13 insertions(+), 9 deletions(-)
->>  create mode 100644 drivers/reset/starfive/Kconfig
->>  create mode 100644 drivers/reset/starfive/Makefile
->>  rename drivers/reset/{ => starfive}/reset-starfive-jh7100.c (100%)
->> 
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index caba3b61ad5c..87f210e357ca 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -19940,7 +19940,7 @@ STARFIVE JH7100 RESET CONTROLLER DRIVER
->>  M:	Emil Renner Berthing <kernel@esmil.dk>
->>  S:	Maintained
->>  F:	Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
->> -F:	drivers/reset/reset-starfive-jh7100.c
->> +F:	drivers/reset/starfive/reset-starfive-jh7100.c
->>  F:	include/dt-bindings/reset/starfive-jh7100.h
->>  
->> 
->> 
->> 
->>  STARFIVE JH71XX PMU CONTROLLER DRIVER
->> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
->> index 6ae5aa46a6b2..6aa8f243b30c 100644
->> --- a/drivers/reset/Kconfig
->> +++ b/drivers/reset/Kconfig
->> @@ -232,13 +232,6 @@ config RESET_SOCFPGA
->>  	  This enables the reset driver for the SoCFPGA ARMv7 platforms. This
->>  	  driver gets initialized early during platform init calls.
->>  
->> 
->> 
->> 
->> -config RESET_STARFIVE_JH7100
->> -	bool "StarFive JH7100 Reset Driver"
->> -	depends on ARCH_STARFIVE || COMPILE_TEST
->> -	default ARCH_STARFIVE
->> -	help
->> -	  This enables the reset controller driver for the StarFive JH7100 SoC.
->> -
->>  config RESET_SUNPLUS
->>  	bool "Sunplus SoCs Reset Driver" if COMPILE_TEST
->>  	default ARCH_SUNPLUS
->> @@ -320,6 +313,7 @@ config RESET_ZYNQ
->>  	help
->>  	  This enables the reset controller driver for Xilinx Zynq SoCs.
->>  
->> 
->> 
->> 
->> +source "drivers/reset/starfive/Kconfig"
->>  source "drivers/reset/sti/Kconfig"
->>  source "drivers/reset/hisilicon/Kconfig"
->>  source "drivers/reset/tegra/Kconfig"
->> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
->> index 3e7e5fd633a8..719b8f6f84bc 100644
->> --- a/drivers/reset/Makefile
->> +++ b/drivers/reset/Makefile
->> @@ -1,6 +1,7 @@
->>  # SPDX-License-Identifier: GPL-2.0
->>  obj-y += core.o
->>  obj-y += hisilicon/
->> +obj-$(CONFIG_ARCH_STARFIVE) += starfive/
-> 
-> This should really be obj-y, otherwise this won't compile with
-> COMPILE_TEST=y but ARCH_STARFIVE=n.
-> 
-> With that fixed,
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+--000000000000fb717105f7144703
+Content-Type: text/plain; charset="UTF-8"
 
-The same problem exists in drivers/clk/Makefile.
-Will fix them in the next version. Thank you for your review.
+On Thu, 16 Mar 2023 at 02:37, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> This patch series adds unit tests for the clk fixed rate basic type and
+> the clk registration functions that use struct clk_parent_data. To get
+> there, we add support for loading device tree overlays onto the live DTB
+> along with probing platform drivers to bind to device nodes in the
+> overlays. With this series, we're able to exercise some of the code in
+> the common clk framework that uses devicetree lookups to find parents
+> and the fixed rate clk code that scans device tree directly and creates
+> clks. Please review.
+>
+> I Cced everyone to all the patches so they get the full context. I'm
+> hoping I can take the whole pile through the clk tree as they almost all
+> depend on each other.
+>
+> Changes from v1 (https://lore.kernel.org/r/20230302013822.1808711-1-sboyd@kernel.org):
+>  * Don't depend on UML, use unittest data approach to attach nodes
+>  * Introduce overlay loading API for KUnit
+>  * Move platform_device KUnit code to drivers/base/test
+>  * Use #define macros for constants shared between unit tests and
+>    overlays
+>  * Settle on "test" as a vendor prefix
+>  * Make KUnit wrappers have "_kunit" postfix
+>
 
-Best regards,
-Hal
+
+Thanks! I like this much better, and it is working fine here under UML
+and x86_64.
+
+There are some issues with other architectures (mostly endianness
+problems, but I got a refcount underflow in kunit_remove_resource
+after platform_device_alloc_kunit_test on sparc64 as well), but
+otherwise it's working on most of the things I've tried.
+
+I'll play around with it some more next week and dig into the code in
+more detail, but I've not seen anything I dislike about the overall
+design so far.
+
+Thanks!
+-- David
+
+
+> Stephen Boyd (11):
+>   of: Load KUnit DTB from of_core_init()
+>   of: Add test managed wrappers for of_overlay_apply()/of_node_put()
+>   dt-bindings: vendor-prefixes: Add "test" vendor for KUnit and friends
+>   dt-bindings: test: Add KUnit empty node binding
+>   of: Add a KUnit test for overlays and test managed APIs
+>   platform: Add test managed platform_device/driver APIs
+>   dt-bindings: kunit: Add fixed rate clk consumer test
+>   clk: Add test managed clk provider/consumer APIs
+>   clk: Add KUnit tests for clk fixed rate basic type
+>   dt-bindings: clk: Add KUnit clk_parent_data test
+>   clk: Add KUnit tests for clks registered with struct clk_parent_data
+>
+>  .../clock/test,clk-kunit-parent-data.yaml     |  47 ++
+>  .../kunit/test,clk-kunit-fixed-rate.yaml      |  35 ++
+>  .../bindings/test/test,kunit-empty.yaml       |  30 ++
+>  .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+>  drivers/base/test/Makefile                    |   3 +
+>  drivers/base/test/platform_kunit-test.c       | 108 +++++
+>  drivers/base/test/platform_kunit.c            | 186 +++++++
+>  drivers/clk/.kunitconfig                      |   3 +
+>  drivers/clk/Kconfig                           |   7 +
+>  drivers/clk/Makefile                          |   9 +-
+>  drivers/clk/clk-fixed-rate_test.c             | 299 ++++++++++++
+>  drivers/clk/clk-fixed-rate_test.h             |   8 +
+>  drivers/clk/clk_kunit.c                       | 219 +++++++++
+>  drivers/clk/clk_parent_data_test.h            |  10 +
+>  drivers/clk/clk_test.c                        | 459 +++++++++++++++++-
+>  drivers/clk/kunit_clk_fixed_rate_test.dtso    |  19 +
+>  drivers/clk/kunit_clk_parent_data_test.dtso   |  28 ++
+>  drivers/of/.kunitconfig                       |   5 +
+>  drivers/of/Kconfig                            |  23 +
+>  drivers/of/Makefile                           |   7 +
+>  drivers/of/base.c                             | 182 +++++++
+>  drivers/of/kunit.dtso                         |  10 +
+>  drivers/of/kunit_overlay_test.dtso            |   9 +
+>  drivers/of/of_kunit.c                         | 123 +++++
+>  drivers/of/of_private.h                       |   6 +
+>  drivers/of/of_test.c                          |  43 ++
+>  drivers/of/overlay_test.c                     | 107 ++++
+>  drivers/of/unittest.c                         | 101 +---
+>  include/kunit/clk.h                           |  28 ++
+>  include/kunit/of.h                            |  90 ++++
+>  include/kunit/platform_device.h               |  15 +
+>  31 files changed, 2119 insertions(+), 102 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/test,clk-kunit-parent-data.yaml
+>  create mode 100644 Documentation/devicetree/bindings/kunit/test,clk-kunit-fixed-rate.yaml
+>  create mode 100644 Documentation/devicetree/bindings/test/test,kunit-empty.yaml
+>  create mode 100644 drivers/base/test/platform_kunit-test.c
+>  create mode 100644 drivers/base/test/platform_kunit.c
+>  create mode 100644 drivers/clk/clk-fixed-rate_test.c
+>  create mode 100644 drivers/clk/clk-fixed-rate_test.h
+>  create mode 100644 drivers/clk/clk_kunit.c
+>  create mode 100644 drivers/clk/clk_parent_data_test.h
+>  create mode 100644 drivers/clk/kunit_clk_fixed_rate_test.dtso
+>  create mode 100644 drivers/clk/kunit_clk_parent_data_test.dtso
+>  create mode 100644 drivers/of/.kunitconfig
+>  create mode 100644 drivers/of/kunit.dtso
+>  create mode 100644 drivers/of/kunit_overlay_test.dtso
+>  create mode 100644 drivers/of/of_kunit.c
+>  create mode 100644 drivers/of/of_test.c
+>  create mode 100644 drivers/of/overlay_test.c
+>  create mode 100644 include/kunit/clk.h
+>  create mode 100644 include/kunit/of.h
+>  create mode 100644 include/kunit/platform_device.h
+>
+>
+> base-commit: fe15c26ee26efa11741a7b632e9f23b01aca4cc6
+> --
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+> https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+>
+
+--000000000000fb717105f7144703
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIPnwYJKoZIhvcNAQcCoIIPkDCCD4wCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ggz5MIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
+dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
+6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
+c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
+I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
+AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
+BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
+CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
+AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
+MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
+My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
+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
+64VRg2IjDI2fJVE9RD6aMEwGA1UdIARFMEMwQQYJKwYBBAGgMgEoMDQwMgYIKwYBBQUHAgEWJmh0
+dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQCMAAwgZoGCCsG
+AQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9jYS9n
+c2F0bGFzcjNzbWltZWNhMjAyMDBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5nbG9iYWxzaWdu
+LmNvbS9jYWNlcnQvZ3NhdGxhc3Izc21pbWVjYTIwMjAuY3J0MB8GA1UdIwQYMBaAFHzMCmjXouse
+LHIb0c1dlW+N+/JjMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20v
+Y2EvZ3NhdGxhc3Izc21pbWVjYTIwMjAuY3JsMA0GCSqGSIb3DQEBCwUAA4IBAQA2lZLYRLu7foeR
+cHo1VeNA974FZBiCm08Kd44/aCMEzdTJvxAE9xbUJf7hS1i6eW49qxuSp3/YLn6U7uatwAcmZcwp
+Zma19ftf3LH+9Hvffk+X8fbPKe6uHkJhR2LktrhRzF159jj67NvXyGQv8J4n7UNeEVP0d5ByvRwv
+tF2bJwlOwRGLoxasKSyDHIyUpwTfWYPq7XvjoGqQ/tDS7Khcc5WncJl0/ZEj7EKjtoGbsDbLdXEF
+m/6vdcYKJzF9ghHewtV3YIU4RE3pEM4aCWWRtJwbExzeue6fI7RqURbNCAyQuSpWv0YQvzsX3ZX3
+c1otrs50n1N0Sf8/rfJxq7sWMYICajCCAmYCAQEwaDBUMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQ
+R2xvYmFsU2lnbiBudi1zYTEqMCgGA1UEAxMhR2xvYmFsU2lnbiBBdGxhcyBSMyBTTUlNRSBDQSAy
+MDIwAhABxy1wm0tAmHKHFkLS9RWPMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCAm
+LD0bzOo1mGqnjDNiyk612P/TmqI26xsS4FiA39NZDjAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcB
+MBwGCSqGSIb3DQEJBTEPFw0yMzAzMTcwODIyNDJaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUD
+BAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsG
+CSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAnMvBaiqgwWbHc+GYNLuy
+ZzWSji42DQggTYSuJTH6GX49osxY/MC/tgZ6U7aEB5uXnBi4AZKfKB9GMUOWjU1ZsayRtu8PjISE
+4WDI+xSidDZUTcQJVo6hho5nQeUmqk2UTSOr5XbFIOyhZlctvn6zYUrqF8/Rjx9RMpEVlKU4KdvD
+tPWs4+hzAPy9Ai7aeeWHkZ3IxD7KRyKCwT3cdX4ZWoOFRfZGU7YcJygqd2CWKOCPmhUW7nh8klWn
+olpHzCe2mfvwzuBydDC0YG6cYeL9mMDk6k1YS8wlaSU2op9+SDDxL1oighAZxPfDOm9IKqado/Ei
+e7nMMLdSLzoUedMCYg==
+--000000000000fb717105f7144703--
