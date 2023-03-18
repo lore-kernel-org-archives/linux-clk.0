@@ -2,139 +2,381 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46100C77B61
-	for <linux-clk@archiver.kernel.org>; Sat, 18 Mar 2023 05:46:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2595CC761A6
+	for <linux-clk@archiver.kernel.org>; Sat, 18 Mar 2023 06:07:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229671AbjCRFqk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 18 Mar 2023 01:46:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57362 "EHLO
+        id S229581AbjCRGHs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 18 Mar 2023 02:07:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229602AbjCRFqj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Mar 2023 01:46:39 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06DBF4E5D3;
-        Fri, 17 Mar 2023 22:46:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1679118397; x=1710654397;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XwBj/9hfmpagIdGRdqZJjnfQeY4udKL5fw//ppbl99Q=;
-  b=nNtEEeg7ihrityF+2dHDLh0r79oIXGeELFDs7OPMnurVWyKdcyeK2Fek
-   Awhs4K6YygjX9MlqZYxkERZ/Gm0B+cEHNRY7aq4OeO4KfVz+tqt5M3mg3
-   0eFVzgOY8uV87XSaxSkVFRgInOTNr+52V3+LVjvGJGkXNgTWHwh8NJnt1
-   cXgE+1im+LA+h6hurivDD47+e3hp2C6VTNMpjl7TAk4c+/bc11XPiwnT9
-   46TcIIFm3+KstovY07dR1f99JJ8g9KwYC+niVnCwEak5qGTVVQED43pSA
-   f7I+/eSe2TWAbPzovvYQCA+Y/QLTN4DdtRl6jbiWyVVDcE9R7bw4h41Fi
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10652"; a="424685487"
-X-IronPort-AV: E=Sophos;i="5.98,271,1673942400"; 
-   d="scan'208";a="424685487"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2023 22:46:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10652"; a="790989675"
-X-IronPort-AV: E=Sophos;i="5.98,271,1673942400"; 
-   d="scan'208";a="790989675"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 17 Mar 2023 22:46:35 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pdPOk-0009pm-1D;
-        Sat, 18 Mar 2023 05:46:34 +0000
-Date:   Sat, 18 Mar 2023 13:46:07 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Keguang Zhang <keguang.zhang@gmail.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Keguang Zhang <keguang.zhang@gmail.com>
-Subject: Re: [PATCH v3 3/4] clk: loongson1: Re-implement the clock driver
-Message-ID: <202303181358.BXLJVMkh-lkp@intel.com>
-References: <20230316104707.236034-4-keguang.zhang@gmail.com>
+        with ESMTP id S230029AbjCRGHq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Mar 2023 02:07:46 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED1930B0A;
+        Fri, 17 Mar 2023 23:07:45 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id ix20so7462616plb.3;
+        Fri, 17 Mar 2023 23:07:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679119665;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7OSciM2x0+oGmVdQlvuC0U3qKjDi3cY9emvJC0OLmMU=;
+        b=HUJT+JUxL7hPnr380yrvXXitKd0FupDusqtJ7XLUmcmeIxJUz84ZGftGijXq2DoOBe
+         soD37gv+K2D4a+cIznZYJXf6UT2ZFEVA9K/4IOezNLgrg4nc9Bvmu9nwKzEmacIGrhLp
+         +xDIjrI4X+cBAQ8qRYWU/DHj/VIOk3b5Ip7yg2qjNmdR89tnFMMKRvOFU8VPgRQYuCD4
+         HW33Tas4Qb8KlMeN22pcEFOZIqEAwpMn+VioryYmNZJA0wF/sZv8nzUxY8LPE5e1etaI
+         X+410n8M+Mhad7tp30peKCGPcdZnMjg9pwjKVwAiUVF+Kd+p6Q5zIuEPPy33g34jFT/d
+         Oa+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679119665;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7OSciM2x0+oGmVdQlvuC0U3qKjDi3cY9emvJC0OLmMU=;
+        b=WLKyoUdLYRyWP+4R2s+TyUCWP3xCzPtg4L4UFoZzTR71aJiNA4INuvf5NFE7UCHasX
+         fGNcv7qI0PXROs8PPSaIOnLx/SwH2hsthRmmsK/NmGTs/0Cfw4YjGepCY/n5EPOLUwMB
+         NlL8MJ9lvvsn3prVIgeTbgwVmP1xTo0/4/mKHmPQWN5TmvMv5RV16iF1cB+cgVxyo/f8
+         X7eUWLQOmo8rWCuEFTBc/XTrCb/NxKYeKJL0NPx/UA2Z/sMZ0fsfkTnABmEzeWheItUI
+         hmyzXFVL7v3embGgHf/t3tz1fuJmIH6UvNMliChUVe/O1N09v4KEFTFOjz0h9/78I2b/
+         P5cw==
+X-Gm-Message-State: AO0yUKUaixPhKPLu8rARurFyKmxaeZVX2qe9utx13sNwtqG9Jkx/GnuA
+        yJ5e4xHqix9EIzO4yeMOBbU=
+X-Google-Smtp-Source: AK7set93kf5NiNy1CPG3znsB8tTN2iUuq7zIgS+nK8Er8UGMS8t75Yk4fDXt42CEHuCuL6ul03bwAA==
+X-Received: by 2002:a05:6a20:8e06:b0:d6:8c70:85ce with SMTP id y6-20020a056a208e0600b000d68c7085cemr11714588pzj.54.1679119664657;
+        Fri, 17 Mar 2023 23:07:44 -0700 (PDT)
+Received: from [192.168.1.101] (1-160-164-133.dynamic-ip.hinet.net. [1.160.164.133])
+        by smtp.gmail.com with ESMTPSA id f23-20020aa782d7000000b0056283e2bdbdsm2447380pfn.138.2023.03.17.23.07.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Mar 2023 23:07:44 -0700 (PDT)
+Message-ID: <c902606e-8a1b-6673-02c7-7beea5477795@gmail.com>
+Date:   Sat, 18 Mar 2023 14:07:40 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230316104707.236034-4-keguang.zhang@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH 11/15] arm64: dts: nuvoton: Add initial ma35d1 device tree
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        p.zabel@pengutronix.de, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        schung@nuvoton.com, Jacky Huang <ychuang3@nuvoton.com>
+References: <20230315072902.9298-1-ychuang570808@gmail.com>
+ <20230315072902.9298-12-ychuang570808@gmail.com>
+ <fb4f60a7-011e-3745-cc40-631247735f2b@linaro.org>
+From:   Jacky Huang <ychuang570808@gmail.com>
+In-Reply-To: <fb4f60a7-011e-3745-cc40-631247735f2b@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Keguang,
-
-I love your patch! Yet something to improve:
-
-[auto build test ERROR on 6f173737e1b5670c200329677e821cce1d3d755e]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Keguang-Zhang/dt-bindings-clock-Add-Loongson-1-clock/20230316-185026
-base:   6f173737e1b5670c200329677e821cce1d3d755e
-patch link:    https://lore.kernel.org/r/20230316104707.236034-4-keguang.zhang%40gmail.com
-patch subject: [PATCH v3 3/4] clk: loongson1: Re-implement the clock driver
-config: mips-loongson1c_defconfig (https://download.01.org/0day-ci/archive/20230318/202303181358.BXLJVMkh-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project 67409911353323ca5edf2049ef0df54132fa1ca7)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install mips cross compiling tool for clang build
-        # apt-get install binutils-mipsel-linux-gnu
-        # https://github.com/intel-lab-lkp/linux/commit/de00eab744ddc82edb1853048dd5d50aa8220115
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Keguang-Zhang/dt-bindings-clock-Add-Loongson-1-clock/20230316-185026
-        git checkout de00eab744ddc82edb1853048dd5d50aa8220115
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=mips olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=mips SHELL=/bin/bash drivers/
-
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202303181358.BXLJVMkh-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/clk/clk-loongson1.c:300:15: error: expected parameter declarator
-   MODULE_AUTHOR("Keguang Zhang <keguang.zhang@gmail.com>");
-                 ^
->> drivers/clk/clk-loongson1.c:300:15: error: expected ')'
-   drivers/clk/clk-loongson1.c:300:14: note: to match this '('
-   MODULE_AUTHOR("Keguang Zhang <keguang.zhang@gmail.com>");
-                ^
->> drivers/clk/clk-loongson1.c:300:1: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
-   MODULE_AUTHOR("Keguang Zhang <keguang.zhang@gmail.com>");
-   ^
-   int
->> drivers/clk/clk-loongson1.c:300:14: error: a function declaration without a prototype is deprecated in all versions of C [-Werror,-Wstrict-prototypes]
-   MODULE_AUTHOR("Keguang Zhang <keguang.zhang@gmail.com>");
-                ^
-                                                          void
-   drivers/clk/clk-loongson1.c:301:20: error: expected parameter declarator
-   MODULE_DESCRIPTION("Loongson1 clock driver");
-                      ^
-   drivers/clk/clk-loongson1.c:301:20: error: expected ')'
-   drivers/clk/clk-loongson1.c:301:19: note: to match this '('
-   MODULE_DESCRIPTION("Loongson1 clock driver");
-                     ^
-   drivers/clk/clk-loongson1.c:301:1: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
-   MODULE_DESCRIPTION("Loongson1 clock driver");
-   ^
-   int
-   drivers/clk/clk-loongson1.c:301:19: error: a function declaration without a prototype is deprecated in all versions of C [-Werror,-Wstrict-prototypes]
-   MODULE_DESCRIPTION("Loongson1 clock driver");
-                     ^
-                                              void
-   8 errors generated.
+Dear Krzysztof,
 
 
-vim +300 drivers/clk/clk-loongson1.c
+Thanks for your review.
 
-   299	
- > 300	MODULE_AUTHOR("Keguang Zhang <keguang.zhang@gmail.com>");
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+On 2023/3/16 下午 03:45, Krzysztof Kozlowski wrote:
+> On 15/03/2023 08:28, Jacky Huang wrote:
+>> From: Jacky Huang <ychuang3@nuvoton.com>
+>>
+>> Add initial device tree support for Nuvoton ma35d1 SoC, including
+>> cpu, clock, reset, and serial controllers.
+>> Add reference boards som-256m and iot-512m.
+>>
+>> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+>> ---
+>>   arch/arm64/boot/dts/nuvoton/Makefile          |   2 +
+>>   .../boot/dts/nuvoton/ma35d1-iot-512m.dts      |  24 ++
+>>   .../boot/dts/nuvoton/ma35d1-som-256m.dts      |  23 ++
+>>   arch/arm64/boot/dts/nuvoton/ma35d1.dtsi       | 272 ++++++++++++++++++
+>>   4 files changed, 321 insertions(+)
+>>   create mode 100644 arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts
+>>   create mode 100644 arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts
+>>   create mode 100644 arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
+>>
+>> diff --git a/arch/arm64/boot/dts/nuvoton/Makefile b/arch/arm64/boot/dts/nuvoton/Makefile
+>> index a99dab90472a..c11ab4eac9c7 100644
+>> --- a/arch/arm64/boot/dts/nuvoton/Makefile
+>> +++ b/arch/arm64/boot/dts/nuvoton/Makefile
+>> @@ -1,2 +1,4 @@
+>>   # SPDX-License-Identifier: GPL-2.0
+>>   dtb-$(CONFIG_ARCH_NPCM) += nuvoton-npcm845-evb.dtb
+>> +dtb-$(CONFIG_ARCH_NUVOTON) += ma35d1-iot-512m.dtb
+>> +dtb-$(CONFIG_ARCH_NUVOTON) += ma35d1-som-256m.dtb
+>> diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts b/arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts
+>> new file mode 100644
+>> index 000000000000..dffcaef1e6d8
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts
+>> @@ -0,0 +1,24 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2023 Nuvoton Technology Corp.
+>> + * Author: Shan-Chun Hung <schung@nuvoton.com>
+>> + *         Jacky huang <ychuang3@nuvoton.com>
+>> + */
+>> +
+>> +/dts-v1/;
+>> +#include "ma35d1.dtsi"
+>> +
+>> +/ {
+>> +	model = "Nuvoton MA35D1-IoT";
+>> +	compatible = "nuvoton,ma35d1-iot", "nuvoton,ma35d1";
+>> +
+>> +	chosen {
+>> +		stdout-path = "serial0:115200n8";
+>> +	};
+>> +
+>> +	mem: memory@80000000 {
+>> +		device_type = "memory";
+>> +		reg = <0x00000000 0x80000000 0 0x20000000>; /* 512M DRAM */
+>> +	};
+>> +};
+>> +
+>> diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts b/arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts
+>> new file mode 100644
+>> index 000000000000..3e6c3d5469ac
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts
+>> @@ -0,0 +1,23 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2023 Nuvoton Technology Corp.
+>> + * Author: Shan-Chun Hung <schung@nuvoton.com>
+>> + *         Jacky huang <ychuang3@nuvoton.com>
+>> + */
+>> +
+>> +/dts-v1/;
+>> +#include "ma35d1.dtsi"
+>> +
+>> +/ {
+>> +	model = "Nuvoton MA35D1-SOM";
+>> +	compatible = "nuvoton,ma35d1-som", "nuvoton,ma35d1";
+>> +
+>> +	chosen {
+>> +		stdout-path = "serial0:115200n8";
+>> +	};
+>> +
+>> +	mem: memory@80000000 {
+>> +		device_type = "memory";
+>> +		reg = <0x00000000 0x80000000 0 0x10000000>; /* 256M DRAM */
+>> +	};
+>> +};
+>> diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi b/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
+>> new file mode 100644
+>> index 000000000000..8c855f6b330a
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
+>> @@ -0,0 +1,272 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2023 Nuvoton Technology Corp.
+>> + * Author: Shan-Chun Hung <schung@nuvoton.com>
+>> + *         Jacky huang <ychuang3@nuvoton.com>
+>> + */
+>> +
+>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +#include <dt-bindings/input/input.h>
+>> +#include <dt-bindings/gpio/gpio.h>
+>> +#include <dt-bindings/clock/nuvoton,ma35d1-clk.h>
+>> +#include <dt-bindings/reset/nuvoton,ma35d1-reset.h>
+>> +
+>> +/ {
+>> +	compatible = "nuvoton,ma35d1";
+>> +	interrupt-parent = <&gic>;
+>> +	#address-cells = <2>;
+>> +	#size-cells = <2>;
+>> +
+>> +	aliases {
+>> +		serial0 = &uart0;
+>> +		serial1 = &uart1;
+>> +		serial2 = &uart2;
+>> +		serial3 = &uart3;
+>> +		serial4 = &uart4;
+>> +		serial5 = &uart5;
+>> +		serial6 = &uart6;
+>> +		serial7 = &uart7;
+>> +		serial8 = &uart8;
+>> +		serial9 = &uart9;
+>> +		serial10 = &uart10;
+>> +		serial11 = &uart11;
+>> +		serial12 = &uart12;
+>> +		serial13 = &uart13;
+>> +		serial14 = &uart14;
+>> +		serial15 = &uart15;
+>> +		serial16 = &uart16;
+> Aliases of interfaces coming out of SoC are properties of boards, not
+> SoC DTSI.
+
+
+OK, I will remove it from dtsi, and add to dts if required.
+
+
+>> +	};
+>> +
+>> +	chosen {
+>> +		stdout-path = "serial0:115200n8";
+>> +	};
+>> +
+>> +	cpus {
+>> +		#address-cells = <2>;
+>> +		#size-cells = <0>;
+>
+> Blank line.
+>
+>> +		cpu0: cpu@0 {
+>> +			device_type = "cpu";
+>> +			compatible = "arm,cortex-a35";
+>> +			reg = <0x0 0x0>;
+>> +			enable-method = "psci";
+>> +			next-level-cache = <&L2_0>;
+>> +		};
+> Between every node as well.
+
+
+OK, I will fix them.
+
+
+>> +		cpu1: cpu@1 {
+>> +			device_type = "cpu";
+>> +			compatible = "arm,cortex-a35";
+>> +			reg = <0x0 0x1>;
+>> +			enable-method = "psci";
+>> +			next-level-cache = <&L2_0>;
+>> +		};
+>> +		L2_0: l2-cache0 {
+>> +			compatible = "cache";
+>> +			cache-level = <2>;
+>> +		};
+>> +	};
+>> +
+>> +	psci {
+>> +		compatible = "arm,psci-0.2";
+>> +		method = "smc";
+>> +	};
+>> +
+>> +	clk_hxt: clock_hxt {
+> No underscores in node names.
+
+
+I will rewrite as:
+
+clk_hxt: clock-hxt {
+
+
+>
+>> +		compatible = "fixed-clock";
+>> +		#clock-cells = <0>;
+>> +		clock-frequency = <24000000>;
+>> +		clock-output-names = "clk_hxt";
+> This looks like a property of boards, not SoC. Are you sure the clock
+> physically is in every SoC? If so, why it is not part of clock
+> controller? (before you start explaining what is this, have in mind that
+> I am pretty sure I know what is this, so rather answer the questions)
+
+
+Yes, it's external to SoC and should be board specific.
+
+I will move this to board dts.
+
+
+>> +	};
+>> +
+>> +	timer {
+>> +		compatible = "arm,armv8-timer";
+>> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) |
+>> +			      IRQ_TYPE_LEVEL_LOW)>, /* Physical Secure */
+>> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) |
+>> +			      IRQ_TYPE_LEVEL_LOW)>, /* Physical Non-Secure */
+>> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) |
+>> +			      IRQ_TYPE_LEVEL_LOW)>, /* Virtual */
+>> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) |
+>> +			      IRQ_TYPE_LEVEL_LOW)>; /* Hypervisor */
+>> +		clock-frequency = <12000000>;
+>> +		interrupt-parent = <&gic>;
+>> +	};
+>> +
+>> +	sys: system-management@40460000 {
+>> +		compatible = "nuvoton,ma35d1-sys", "syscon", "simple-mfd";
+>> +		reg = <0x0 0x40460000 0x0 0x200>;
+>> +
+>> +		reset: reset-controller {
+>> +			compatible = "nuvoton,ma35d1-reset";
+>> +			regmap = <&sys>;
+>> +			#reset-cells = <1>;
+>> +		};
+>> +	};
+>> +
+>> +	clk: clock-controller@40460200 {
+>> +		compatible = "nuvoton,ma35d1-clk", "syscon";
+>> +		reg = <0x00000000 0x40460200 0x0 0x100>;
+>> +		#clock-cells = <1>;
+>> +		clocks = <&clk_hxt>;
+>> +		clock-names = "clk_hxt";
+>> +		assigned-clocks = <&clk CAPLL>,
+>> +				  <&clk DDRPLL>,
+>> +				  <&clk APLL>,
+>> +				  <&clk EPLL>,
+>> +				  <&clk VPLL>;
+>> +		assigned-clock-rates = <800000000>,
+>> +				       <266000000>,
+>> +				       <180000000>,
+>> +				       <500000000>,
+>> +				       <102000000>;
+>> +		nuvoton,pll-mode = <0>, <1>, <0>, <0>, <0>;
+>> +		nuvoton,sys = <&sys>;
+>> +	};
+>> +
+>> +	gic: interrupt-controller@50801000 {
+>> +		compatible = "arm,gic-400";
+>> +		#interrupt-cells = <3>;
+>> +		interrupt-parent = <&gic>;
+>> +		interrupt-controller;
+>> +		reg =   <0x0 0x50801000 0 0x1000>, /* GICD */
+>> +			<0x0 0x50802000 0 0x2000>, /* GICC */
+>> +			<0x0 0x50804000 0 0x2000>, /* GICH */
+>> +			<0x0 0x50806000 0 0x2000>; /* GICV */
+> reg is second property.
+
+
+OK, I will fix it.
+
+
+>
+>> +		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_RAW(0x13) |
+>> +			      IRQ_TYPE_LEVEL_HIGH)>;
+>> +	};
+>> +
+>> +	uart0:serial@40700000 {
+>> +		compatible = "nuvoton,ma35d1-uart";
+>> +		reg = <0x0 0x40700000 0x0 0x100>;
+>> +		interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+>> +		clocks = <&clk UART0_GATE>;
+>> +		status = "okay";
+> Why? Drop the line... or convert it to disabled. Otherwise, why every
+> SoC has serial0 enabled? Is it used internally?
+
+
+uart0 is on all the way since this SoC booting from the MaskROM boot code,
+
+load arm-trusted-firmware, load bootloader, and finally load linux  kernel.
+
+uart0 is also the Linux console.
+
+
+>
+> Best regards,
+> Krzysztof
+
+
+Best regards,
+
+Jacky Huang
+
+
