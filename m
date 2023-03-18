@@ -2,258 +2,149 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB5EC7618A
-	for <linux-clk@archiver.kernel.org>; Sat, 18 Mar 2023 13:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 569ECC74A5B
+	for <linux-clk@archiver.kernel.org>; Sat, 18 Mar 2023 14:05:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229488AbjCRNqT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 18 Mar 2023 09:46:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41508 "EHLO
+        id S229651AbjCROF2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 18 Mar 2023 10:05:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbjCRNqS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Mar 2023 09:46:18 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DC9928875
-        for <linux-clk@vger.kernel.org>; Sat, 18 Mar 2023 06:45:52 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id y14so7796060ljq.4
-        for <linux-clk@vger.kernel.org>; Sat, 18 Mar 2023 06:45:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679147144;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bZmVH1RGUKYBmKWQcwY+fEbQpKKUjfXojhC77rsS5vw=;
-        b=DhvDZch5gEJxBKeV+NwUImlx9raxeIXs3Im41v4mxQuvjADUvQe3M0VqLziW6htM1J
-         2P0qzRLqBcIZAw8QfAq32ee/xTLOCWtDQ1ZBi2NV0BcYY8LlhhKnKwf2ojwq59YGgrjR
-         9Z76DsRXLEn9XARR59tn9hoa7wtJnwoML40IwdyA1h6YtsDSbARMQz39U9VotO1Svjw6
-         cn6ySS2U321F3X0u1NIrLp7ATmWvvd6tS/Z57+1VBHkhvf227CQ7/xzXOoJ9yybshApR
-         /ObHqazxSeuvuRUTptKEycigxfVPHHO0q52HsQ6LUGDY2g/LiMsYQ36xcTAlFUAP72zo
-         lwIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679147144;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bZmVH1RGUKYBmKWQcwY+fEbQpKKUjfXojhC77rsS5vw=;
-        b=zyMJJy8hprL33Jp0XSOP/iOblJro5MCRBauEq/RJmNS4Ti/x6BTvMw/aPDkUt3+PkE
-         Aeyrf1IK0ZDBrA3JyMEQ6CWEpaiHaapz9JJlfovowQ7D4RNdrk/npDKdlM7s+0A4KOU6
-         BsBNvxx53agAr9LjUqxbLn/IQTU8zitqKLp6zVQogNHuQxl5cgQSEXBJOwuHZSXDhjBR
-         lboPmVxJv9nLl+zJm46Dae8y9i/UcjFtLqMnTpUbLLmb3twoNGf7mqAO7LcNzyAD9Bml
-         tRSDfMQnkK9o1ZEEQxGjMsHKfwoZaEKzk++XOGxqZ86ibs6fiN8XVKkFw2X/bY12PwIU
-         /31w==
-X-Gm-Message-State: AO0yUKX6XcZ3KFH3kO6OtKXBfgoNXmGoQqSpoDAYHWgFiXxA9dL6bFQn
-        JbUtDD8acyjo/b9KvkFxrG3pLQ==
-X-Google-Smtp-Source: AK7set+HlJAWljTPYjq99oajZiG5ytdECwFazBY9rPV1N0eWXvHicunAFRQxFl9lqZHrglA/jmwJpg==
-X-Received: by 2002:a2e:9b93:0:b0:29b:b7ae:e2e4 with SMTP id z19-20020a2e9b93000000b0029bb7aee2e4mr572704lji.33.1679147144126;
-        Sat, 18 Mar 2023 06:45:44 -0700 (PDT)
-Received: from [192.168.1.101] (abym238.neoplus.adsl.tpnet.pl. [83.9.32.238])
-        by smtp.gmail.com with ESMTPSA id h26-20020a2e901a000000b00298a7f8c4bfsm254175ljg.67.2023.03.18.06.45.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 Mar 2023 06:45:43 -0700 (PDT)
-Message-ID: <22cfb674-eb2b-ff77-da87-cf6b520e592d@linaro.org>
-Date:   Sat, 18 Mar 2023 14:45:42 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 4/5] arm64: dts: qcom: sm6350: Add GPU nodes
-Content-Language: en-US
-To:     Luca Weiss <luca.weiss@fairphone.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        Rob Herring <robh@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-References: <20230315-topic-lagoon_gpu-v1-0-a74cbec4ecfc@linaro.org>
- <20230315-topic-lagoon_gpu-v1-4-a74cbec4ecfc@linaro.org>
- <CR8J7A4RGCHZ.293RWUBS367M2@otso>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <CR8J7A4RGCHZ.293RWUBS367M2@otso>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S229570AbjCROF1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Mar 2023 10:05:27 -0400
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53C4D1EBC0;
+        Sat, 18 Mar 2023 07:05:23 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id C16325C01D9;
+        Sat, 18 Mar 2023 10:05:20 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Sat, 18 Mar 2023 10:05:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
+        1679148320; x=1679234720; bh=ne/ZkURyOBnvQZJfA/dZ5P1GHL8xeaXDuo7
+        2X96mUAI=; b=PWikUWM3nRrwrVKDkhGUG4yZLKM+qv3w0qRH8+aP7kRH0GCOXso
+        x5/MwfoaRCPs+GSEE64L3II+XIY5u0api+BlU23UP7NEdV6YwrBxtpCVsmC7PwL8
+        KIIPmUVDa2cSrq9xVNaQ0TFFMQthZJKbzSTTlhDnqH7FUDHRqjGv/TWO1+C3sTmK
+        FqP6rOAiLT/xXWXU5ouibhWu0MPxHCYxjL9dZD1sILy9v11+udYxqTTSE5VBAV1a
+        12CmZpql/aowC44Ikmdu0an3RYUFJT0OqcSE3h0WiKBBbJGOlYKnGNdYkGksQA2I
+        HngjLuZ5SNSx9NzlPmqV7UG6JZyQuJCsQpg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+        1679148320; x=1679234720; bh=ne/ZkURyOBnvQZJfA/dZ5P1GHL8xeaXDuo7
+        2X96mUAI=; b=n2roBARfoflGRnl+aYU+hQ9zC7+YjssGLD9gcVAxfhISvUNwI9P
+        0R9Smd4ErRI5sWHRgsQQgg4Zm9leBCSlOI6bnCAKJQtT1mzT0wn8aOgx5JJj/nSS
+        cMPq5Xm4hDIxWL/XYk/kx8nxSO18g3WRLDKGjC6ntxJp0s1aL6YzZKOdikFLOHI6
+        ADKeoHSpJo/IAlDsXfiQxzVxt9o0faH+FqlWJq7D6A9p4FOdKzX1+O8msnJNk9Ho
+        +c9xndLcxLIrcI8AeercVpKUrL819JfskKtE+2UYbfu8wM98BtYaH84Vg8iBwPqQ
+        UetYHJM07UueJI/UV1w1HhlOHW2SfGyM0Kg==
+X-ME-Sender: <xms:H8UVZKO5hsePPBXygggc8Se1Mc17WDUEan853sWl8vGRPZWY1LuYbA>
+    <xme:H8UVZI-YX8PoBNdK14Hb22aPkgbDV3OLFKKXnLRridBDQIB2JP2XD5aLC-Jap7Jlx
+    MGPCEIdOgpOX72RHEE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdefgedgheekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
+    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:H8UVZBTH-K8trWBZHXlwQI6WJ_h5tYCXamdoN-EXBElRubJRjCZcRQ>
+    <xmx:H8UVZKsnHJMHCk7mQgtMJfnf3oyTFZfAOnXSTJf_Oqq9G5jzuz6JLQ>
+    <xmx:H8UVZCdKiAaM_7T-eIkluqlpzhN5E81HI07nO5mU73A9Wpm3R7zvpA>
+    <xmx:IMUVZI22ozlqtFOxaEyopgNB_2_sLPE_g6q-hUAUMIdAb3vD5FLm4Q>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 6A542B60086; Sat, 18 Mar 2023 10:05:19 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-221-gec32977366-fm-20230306.001-gec329773
+Mime-Version: 1.0
+Message-Id: <12298b67-3012-4902-9dcc-61c3c9907a47@app.fastmail.com>
+In-Reply-To: <7cc8258c-3a77-5387-aaa4-658761fbb0ae@gmail.com>
+References: <20230315072902.9298-1-ychuang570808@gmail.com>
+ <20230315072902.9298-12-ychuang570808@gmail.com>
+ <2063c6d1-85ed-43d9-b572-a762b6ce18c1@app.fastmail.com>
+ <7cc8258c-3a77-5387-aaa4-658761fbb0ae@gmail.com>
+Date:   Sat, 18 Mar 2023 15:04:58 +0100
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Jacky Huang" <ychuang570808@gmail.com>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org, "Lee Jones" <lee@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Jiri Slaby" <jirislaby@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        schung@nuvoton.com, "Jacky Huang" <ychuang3@nuvoton.com>
+Subject: Re: [PATCH 11/15] arm64: dts: nuvoton: Add initial ma35d1 device tree
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Sat, Mar 18, 2023, at 14:17, Jacky Huang wrote:
+> On 2023/3/16 =E4=B8=8B=E5=8D=88 10:17, Arnd Bergmann wrote:
+>> On Wed, Mar 15, 2023, at 08:28, Jacky Huang wrote:
+>>> +	mem: memory@80000000 {
+>>> +		device_type =3D "memory";
+>>> +		reg =3D <0x00000000 0x80000000 0 0x20000000>; /* 512M DRAM */
+>>> +	};
+>>> +};
+>> In most machines, the memory size is detected by the boot loader
+>> and filled in the dtb in memory before starting the kernel, so
+>> you should not need two separate files here for the two common
+>> memory configurations.
+>
+>
+> On ma35d1, memory size is determined early before uboot.
+>
+> BL1 (MaskROM boot code) -> BL2 (arm-trust-firmware) -> BL32 (op-tee) &=20
+> BL33 (uboot).
+> The DDR was initialized in BL2 stage with a selected DDR setting, which
+> is hard coded, including DDR size.
+>
+> We searched the arm64 dts and found that almost all vendors claimed
+> memory size in board level dtsi/dts. This seems to be common.
+>
+> So, can we have it unchanged?
 
+I see the memory size encoded in about one out of three .dts files,
+which is more than I expected. It's clearly not harmful to have it
+listed in the dts, it just shouldn't be necessary.
 
-On 17.03.2023 09:56, Luca Weiss wrote:
-> On Thu Mar 16, 2023 at 12:16 PM CET, Konrad Dybcio wrote:
->> From: Konrad Dybcio <konrad.dybcio@somainline.org>
+If it helps you with your current u-boot, then leave it in, but
+consider adding detection logic into u-boot so it can override
+the value in the dtb file at boot time.
+
+>> Since the machine is called 'som', I would assume that this is a
+>> module that is integrated on another board, so more commonly one
+>> would have a dtsi file for the som in addition to the one for the
+>> soc, and have all the components of the module listed in this
+>> file, while the dts file that includes the som.dtsi lists the
+>> devices on the carrier board and enables the on-chip devices
+>> that are connected to the outside.
 >>
->> Add Adreno, GPU SMMU and GMU nodes to hook up everything that
->> the A619 needs to function properly.
->>
->> Co-developed-by: Luca Weiss <luca.weiss@fairphone.com>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->> ---
-[...]
+>
+> You are right, ma35d1 som have a base board, and a cpu board on it.
+>
+> It is a good suggestion that we should have a dtsi for som base board.
+>
+> Consider that we are in the initial submit, and such a dtsi will be an=
+ empty
+> file at this stage. So, I would like to do it when peripheral drivers
+> upstream started. Is it ok?
 
-> What about adding interconnect already? I also have opp-peak-kBps
-> additions in the opp table for that. I'll attach the diff I have at the
-> end of the email.
-I believe the GMU takes care of it internally (or at least should)
-with the bandwidth tables we send in a6xx_hfi.c : a6xx_hfi_send_bw_table()
+It's not a big deal either way. I if you want to keep it only with
+one dts file and one dtsi file, that's fine, but maybe rename the dts
+file based on the name of the carrier rather than the SoM in this
+case.
 
-
-[...]
-
->>  
->> +		adreno_smmu: iommu@3d40000 {
-> 
-> This and gmu should be above gpucc @3d90000?
-Absolutely.
-
-Konrad
-> 
->> +			compatible = "qcom,sm6350-smmu-v2", "qcom,adreno-smmu", "qcom,smmu-v2";
->> +			reg = <0 0x03d40000 0 0x10000>;
->> +			#iommu-cells = <1>;
->> +			#global-interrupts = <2>;
->> +			interrupts = <GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 231 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 364 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 365 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 366 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 367 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 368 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 369 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
->> +
->> +			clocks = <&gpucc GPU_CC_AHB_CLK>,
->> +				 <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
->> +				 <&gcc GCC_GPU_SNOC_DVM_GFX_CLK>;
->> +			clock-names = "ahb",
->> +				      "bus",
->> +				      "iface";
->> +
->> +			power-domains = <&gpucc GPU_CX_GDSC>;
->> +		};
->> +
->> +		gmu: gmu@3d6a000 {
->> +			compatible = "qcom,adreno-gmu-619.0", "qcom,adreno-gmu";
->> +			reg = <0 0x03d6a000 0 0x31000>,
->> +			      <0 0x0b290000 0 0x10000>,
->> +			      <0 0x0b490000 0 0x10000>;
->> +			reg-names = "gmu",
->> +				    "gmu_pdc",
->> +				    "gmu_pdc_seq";
->> +
->> +			interrupts = <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
->> +			interrupt-names = "hfi",
->> +					  "gmu";
->> +
->> +			clocks = <&gpucc GPU_CC_AHB_CLK>,
->> +				 <&gpucc GPU_CC_CX_GMU_CLK>,
->> +				 <&gpucc GPU_CC_CXO_CLK>,
->> +				 <&gcc GCC_DDRSS_GPU_AXI_CLK>,
->> +				 <&gcc GCC_GPU_MEMNOC_GFX_CLK>;
->> +			clock-names = "ahb",
->> +				      "gmu",
->> +				      "cxo",
->> +				      "axi",
->> +				      "memnoc";
->> +
->> +			power-domains = <&gpucc GPU_CX_GDSC>,
->> +					<&gpucc GPU_GX_GDSC>;
->> +			power-domain-names = "cx",
->> +					     "gx";
->> +
->> +			iommus = <&adreno_smmu 5>;
->> +
->> +			operating-points-v2 = <&gmu_opp_table>;
->> +
->> +			status = "disabled";
->> +
->> +			gmu_opp_table: opp-table {
->> +				compatible = "operating-points-v2";
->> +
->> +				opp-200000000 {
->> +					opp-hz = /bits/ 64 <200000000>;
->> +					opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
->> +				};
->> +			};
->> +		};
->> +
->>  		mpss: remoteproc@4080000 {
->>  			compatible = "qcom,sm6350-mpss-pas";
->>  			reg = <0x0 0x04080000 0x0 0x4040>;
->>
->> -- 
->> 2.39.2
-> 
-> Here's the diff I have for interconnect on top of this:
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-> index 4954cbc2c0fc..51c5ac679a32 100644
-> --- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-> @@ -1142,6 +1142,8 @@ gpu: gpu@3d00000 {
->  			iommus = <&adreno_smmu 0>;
->  			operating-points-v2 = <&gpu_opp_table>;
->  			qcom,gmu = <&gmu>;
-> +			interconnects = <&gem_noc MASTER_GRAPHICS_3D 0 &clk_virt SLAVE_EBI_CH0 0>;
-> +			interconnect-names = "gfx-mem";
->  			nvmem-cells = <&gpu_speed_bin>;
->  			nvmem-cell-names = "speed_bin";
->  
-> @@ -1157,42 +1159,49 @@ gpu_opp_table: opp-table {
->  				opp-850000000 {
->  					opp-hz = /bits/ 64 <850000000>;
->  					opp-level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
-> +					opp-peak-kBps = <8371200>;
->  					opp-supported-hw = <0x02>;
->  				};
->  
->  				opp-800000000 {
->  					opp-hz = /bits/ 64 <800000000>;
->  					opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
-> +					opp-peak-kBps = <8371200>;
->  					opp-supported-hw = <0x04>;
->  				};
->  
->  				opp-650000000 {
->  					opp-hz = /bits/ 64 <650000000>;
->  					opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
-> +					opp-peak-kBps = <6220000>;
->  					opp-supported-hw = <0x08>;
->  				};
->  
->  				opp-565000000 {
->  					opp-hz = /bits/ 64 <565000000>;
->  					opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
-> +					opp-peak-kBps = <5412000>;
->  					opp-supported-hw = <0x10>;
->  				};
->  
->  				opp-430000000 {
->  					opp-hz = /bits/ 64 <430000000>;
->  					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
-> +					opp-peak-kBps = <4068000>;
->  					opp-supported-hw = <0xff>;
->  				};
->  
->  				opp-355000000 {
->  					opp-hz = /bits/ 64 <355000000>;
->  					opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
-> +					opp-peak-kBps = <3072000>;
->  					opp-supported-hw = <0xff>;
->  				};
->  
->  				opp-253000000 {
->  					opp-hz = /bits/ 64 <253000000>;
->  					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
-> +					opp-peak-kBps = <2188000>;
->  					opp-supported-hw = <0xff>;
->  				};
->  			};
-> 
+     Arnd
