@@ -2,113 +2,281 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23777C6FD1D
-	for <linux-clk@archiver.kernel.org>; Sat, 18 Mar 2023 03:07:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDDA3C74A5B
+	for <linux-clk@archiver.kernel.org>; Sat, 18 Mar 2023 04:20:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229784AbjCRDHS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Mar 2023 23:07:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43940 "EHLO
+        id S229681AbjCREUE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 18 Mar 2023 00:20:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbjCRDHQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2023 23:07:16 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A05C0D2966;
-        Fri, 17 Mar 2023 20:07:11 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id lr16-20020a17090b4b9000b0023f187954acso7198006pjb.2;
-        Fri, 17 Mar 2023 20:07:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679108831;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=URZQ3gLDJKimA8H5HfP/flcS8+UR77bug41nYZUBjAI=;
-        b=bhwRich09gdEYZiFJBIfMyaJ6k3QyBPx6nzUio9WiZ0/0Hfs+tjFSzj+mSkwZxGuCo
-         UJrNcQdlkZYOtCDpH/kLCzXxXneA+/DRkw2ctPU/4ndciIMtsP7ngsRYaWa+nEf87Azh
-         arXIhLdZt/SyGCeHaNN5enFbpnDUcqCbTUbMBsSZsyPx6lGUp9gGr3RndtnHlSnsjPrk
-         FGZk2hLl4LnqWk8sr2QSU0W/ZfYKi9Z4UOFYcwAJkWk9H0afyQRBoIpDHCogsB7H6cg+
-         oYOeSydk0CNBwU0FFfHPI2rxfh+HIiZ+Kt3dFnAq2OJRBoN+uYkDcLB/uSdVSLLtgu6S
-         S0+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679108831;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=URZQ3gLDJKimA8H5HfP/flcS8+UR77bug41nYZUBjAI=;
-        b=R6Prp5pGc8iCYIQP+Bf2ZVfk+T0Fk5hvjyobF/MEKyLwDlOz0elzysrhcXGg8YzNbU
-         +52EZnZv3dHTpz9fnpvehnFd9Pbo5h94Mxq4jqG/by2NAbcy73oYFjISya4GrMjgGbqi
-         XzjeeYx1xFwtiQVhyN+QBH1hZChkH5LuiIzakGqEdYw16RJyyXo+euOSA4T+RKHDbmGf
-         Wp+GuLigWpZHrsC0SWYDr/itObenSfmZgnkAyCER5tKrFKR/Sp74xEoNb7aPeUSyEPH1
-         TiXyj8u96dfVu3xBnE2cIh694+YWfNKmmjU6+4r3FDuUcoffQ2t0viGXPBlUXdbIaQyA
-         FcHQ==
-X-Gm-Message-State: AO0yUKVIXUOX7T5+AGImrQiuB1j5imDlQRPXkKcPqtUW5t8Q9qZl1YfL
-        hdVkQREMOg043UWL52VUBJcN2EHP4Qs=
-X-Google-Smtp-Source: AK7set+sXpYsxgs1XShPfJfOrXFTCTdYJJnhtA8rWOmBQsIn0vb+NQ9X4koH/HjXIFY9cncCFmaTYA==
-X-Received: by 2002:a05:6a20:2444:b0:bc:96bd:d701 with SMTP id t4-20020a056a20244400b000bc96bdd701mr13140312pzc.13.1679108831008;
-        Fri, 17 Mar 2023 20:07:11 -0700 (PDT)
-Received: from [192.168.1.101] (1-160-164-133.dynamic-ip.hinet.net. [1.160.164.133])
-        by smtp.gmail.com with ESMTPSA id w6-20020aa78586000000b0061949fe3be8sm2218319pfn.106.2023.03.17.20.07.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Mar 2023 20:07:10 -0700 (PDT)
-Message-ID: <f21df56b-43b8-a48e-ab8f-e0cf2b163976@gmail.com>
-Date:   Sat, 18 Mar 2023 11:07:07 +0800
+        with ESMTP id S229473AbjCREUE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Mar 2023 00:20:04 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59DE017CF6;
+        Fri, 17 Mar 2023 21:20:00 -0700 (PDT)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 3B4F224DB8C;
+        Sat, 18 Mar 2023 12:19:58 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Sat, 18 Mar
+ 2023 12:19:58 +0800
+Received: from [172.16.16.231] (113.72.144.193) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Sat, 18 Mar
+ 2023 12:19:56 +0800
+Message-ID: <069c0483-d536-7e66-659f-c6816fc65453@starfivetech.com>
+Date:   Sat, 18 Mar 2023 12:19:57 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH 00/15] Introduce Nuvoton ma35d1 SoC
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org, Lee Jones <lee@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v5 04/21] clk: starfive: Rename "jh7100" to "jh71x0" for
+ the common code
+To:     Tommaso Merciai <tomm.merciai@gmail.com>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>, Stephen Boyd <sboyd@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        schung@nuvoton.com, Jacky Huang <ychuang3@nuvoton.com>
-References: <20230315072902.9298-1-ychuang570808@gmail.com>
- <f2699aa1-4d8a-48c0-b332-484db0b04252@app.fastmail.com>
- <1a1277ac-4ae5-eaab-01c3-0242c12be76b@gmail.com>
- <6ed7e89f-2d2c-4134-9c6f-a9d18e2fc8a8@app.fastmail.com>
- <a90fc6f6-df95-3a4f-da5b-ebdafbe7dd34@linaro.org>
-From:   Jacky Huang <ychuang570808@gmail.com>
-In-Reply-To: <a90fc6f6-df95-3a4f-da5b-ebdafbe7dd34@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor@kernel.org>,
+        "Palmer Dabbelt" <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20230311090733.56918-1-hal.feng@starfivetech.com>
+ <20230311090733.56918-5-hal.feng@starfivetech.com>
+ <ZBNoaGd9l0HjFv2l@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+Content-Language: en-US
+From:   Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <ZBNoaGd9l0HjFv2l@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [113.72.144.193]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, 16 Mar 2023 20:05:12 +0100, Tommaso Merciai wrote:
+> Hello Hal,
+> Patcht itself looks good to me, btw I have some style issue applying
+> this:
+> 
+> On Sat, Mar 11, 2023 at 05:07:16PM +0800, Hal Feng wrote:
+>> From: Emil Renner Berthing <kernel@esmil.dk>
+>> 
+>> Rename some variables from "jh7100" or "JH7100" to "jh71x0"
+>> or "JH71X0".
+>> 
+>> Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
+>> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+>> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+>> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+>> ---
+>>  .../clk/starfive/clk-starfive-jh7100-audio.c  |  74 ++--
+>>  drivers/clk/starfive/clk-starfive-jh7100.c    | 388 +++++++++---------
+>>  drivers/clk/starfive/clk-starfive-jh71x0.c    | 284 ++++++-------
+>>  drivers/clk/starfive/clk-starfive-jh71x0.h    |  72 ++--
+>>  4 files changed, 409 insertions(+), 409 deletions(-)
+>> 
+[...]
+>> diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.h b/drivers/clk/starfive/clk-starfive-jh71x0.h
+>> index a8ba6e25b5ce..baf4b5cb4b8a 100644
+>> --- a/drivers/clk/starfive/clk-starfive-jh71x0.h
+>> +++ b/drivers/clk/starfive/clk-starfive-jh71x0.h
+>> @@ -1,6 +1,6 @@
+>>  /* SPDX-License-Identifier: GPL-2.0 */
+>> -#ifndef __CLK_STARFIVE_JH7100_H
+>> -#define __CLK_STARFIVE_JH7100_H
+>> +#ifndef __CLK_STARFIVE_JH71X0_H
+>> +#define __CLK_STARFIVE_JH71X0_H
+>>  
+>>  #include <linux/bits.h>
+>>  #include <linux/clk-provider.h>
+>> @@ -8,107 +8,107 @@
+>>  #include <linux/spinlock.h>
+>>  
+>>  /* register fields */
+>> -#define JH7100_CLK_ENABLE	BIT(31)
+>> -#define JH7100_CLK_INVERT	BIT(30)
+>> -#define JH7100_CLK_MUX_MASK	GENMASK(27, 24)
+>> -#define JH7100_CLK_MUX_SHIFT	24
+>> -#define JH7100_CLK_DIV_MASK	GENMASK(23, 0)
+>> -#define JH7100_CLK_FRAC_MASK	GENMASK(15, 8)
+>> -#define JH7100_CLK_FRAC_SHIFT	8
+>> -#define JH7100_CLK_INT_MASK	GENMASK(7, 0)
+>> +#define JH71X0_CLK_ENABLE	BIT(31)
+>> +#define JH71X0_CLK_INVERT	BIT(30)
+>> +#define JH71X0_CLK_MUX_MASK	GENMASK(27, 24)
+>> +#define JH71X0_CLK_MUX_SHIFT	24
+>> +#define JH71X0_CLK_DIV_MASK	GENMASK(23, 0)
+>> +#define JH71X0_CLK_FRAC_MASK	GENMASK(15, 8)
+>> +#define JH71X0_CLK_FRAC_SHIFT	8
+>> +#define JH71X0_CLK_INT_MASK	GENMASK(7, 0)
+>>  
+>>  /* fractional divider min/max */
+>> -#define JH7100_CLK_FRAC_MIN	100UL
+>> -#define JH7100_CLK_FRAC_MAX	25599UL
+>> +#define JH71X0_CLK_FRAC_MIN	100UL
+>> +#define JH71X0_CLK_FRAC_MAX	25599UL
+>>  
+>>  /* clock data */
+>> -struct jh7100_clk_data {
+>> +struct jh71x0_clk_data {
+>>  	const char *name;
+>>  	unsigned long flags;
+>>  	u32 max;
+>>  	u8 parents[4];
+>>  };
+>>  
+>> -#define JH7100_GATE(_idx, _name, _flags, _parent) [_idx] = {			\
+>> +#define JH71X0_GATE(_idx, _name, _flags, _parent) [_idx] = {			\
+>>  	.name = _name,								\
+>>  	.flags = CLK_SET_RATE_PARENT | (_flags),				\
+>> -	.max = JH7100_CLK_ENABLE,						\
+>> +	.max = JH71X0_CLK_ENABLE,						\
+>>  	.parents = { [0] = _parent },						\
+>>  }
+> 
+> 
+> ERROR: space prohibited before open square bracket '['
+> #1155: FILE: drivers/clk/starfive/clk-starfive-jh71x0.h:32:
+> +#define JH71X0_GATE(_idx, _name, _flags, _parent) [_idx] = {			\
+> 
+> Same for others define.
+> I would suggest this style.
+> Hope this can help you:
+> 
+> #define JH71X0_GATE(_idx, _name, _flags, _parent)		\
+> 	[_idx] = {						\
+> 		.name = _name,					\
+> 		.flags = CLK_SET_RATE_PARENT | (_flags),	\
+> 		.max = JH71X0_CLK_ENABLE,			\
+> 		.parents = { [0] = _parent },			\
+> }
+> 
+> tested using:
+> 
+> scripts/checkpatch.pl -f drivers/clk/starfive/clk-starfive-jh71x0.h
 
-On 2023/3/18 上午 12:06, Krzysztof Kozlowski wrote:
-> On 17/03/2023 14:21, Arnd Bergmann wrote:
->> I only now saw that you had already submitted this several times
->> at the beginning of last year, and this is technically 'v5'
->> of the series, and it would make sense to add 'v6' to the subject
->> next time and link back to the previous [1] and this[2] submission
->> on lore.kernel.org.
-> ... and address previous feedback. Or at least make it clear in
-> changelog that you addressed it, so our review was not ignored.
->
-> Best regards,
-> Krzysztof
-
-
-Dear Krzysztof,
-
-
-Thank you.
-
-Of course, I will add back the changelog.
-
-And, I have a question. If subsequent modifications made to a patch, 
-should the
-
-"Reviewed-by" still be valid? Can we keep it?
+I will fix the errors reported by checkpatch.pl in v6. Thanks.
 
 Best regards,
+Hal
 
-Jacky Huang
+> 
+> 
+> Thanks for your work,
+> Tommaso
+> 
+> 
+>>  
+>> -#define JH7100__DIV(_idx, _name, _max, _parent) [_idx] = {			\
+>> +#define JH71X0__DIV(_idx, _name, _max, _parent) [_idx] = {			\
+>>  	.name = _name,								\
+>>  	.flags = 0,								\
+>>  	.max = _max,								\
+>>  	.parents = { [0] = _parent },						\
+>>  }
+>>  
+>> -#define JH7100_GDIV(_idx, _name, _flags, _max, _parent) [_idx] = {		\
+>> +#define JH71X0_GDIV(_idx, _name, _flags, _max, _parent) [_idx] = {		\
+>>  	.name = _name,								\
+>>  	.flags = _flags,							\
+>> -	.max = JH7100_CLK_ENABLE | (_max),					\
+>> +	.max = JH71X0_CLK_ENABLE | (_max),					\
+>>  	.parents = { [0] = _parent },						\
+>>  }
+>>  
+>> -#define JH7100_FDIV(_idx, _name, _parent) [_idx] = {				\
+>> +#define JH71X0_FDIV(_idx, _name, _parent) [_idx] = {				\
+>>  	.name = _name,								\
+>>  	.flags = 0,								\
+>> -	.max = JH7100_CLK_FRAC_MAX,						\
+>> +	.max = JH71X0_CLK_FRAC_MAX,						\
+>>  	.parents = { [0] = _parent },						\
+>>  }
+>>  
+>> -#define JH7100__MUX(_idx, _name, _nparents, ...) [_idx] = {			\
+>> +#define JH71X0__MUX(_idx, _name, _nparents, ...) [_idx] = {			\
+>>  	.name = _name,								\
+>>  	.flags = 0,								\
+>> -	.max = ((_nparents) - 1) << JH7100_CLK_MUX_SHIFT,			\
+>> +	.max = ((_nparents) - 1) << JH71X0_CLK_MUX_SHIFT,			\
+>>  	.parents = { __VA_ARGS__ },						\
+>>  }
+>>  
+>> -#define JH7100_GMUX(_idx, _name, _flags, _nparents, ...) [_idx] = {		\
+>> +#define JH71X0_GMUX(_idx, _name, _flags, _nparents, ...) [_idx] = {		\
+>>  	.name = _name,								\
+>>  	.flags = _flags,							\
+>> -	.max = JH7100_CLK_ENABLE |						\
+>> -		(((_nparents) - 1) << JH7100_CLK_MUX_SHIFT),			\
+>> +	.max = JH71X0_CLK_ENABLE |						\
+>> +		(((_nparents) - 1) << JH71X0_CLK_MUX_SHIFT),			\
+>>  	.parents = { __VA_ARGS__ },						\
+>>  }
+>>  
+>> -#define JH7100_MDIV(_idx, _name, _max, _nparents, ...) [_idx] = {		\
+>> +#define JH71X0_MDIV(_idx, _name, _max, _nparents, ...) [_idx] = {		\
+>>  	.name = _name,								\
+>>  	.flags = 0,								\
+>> -	.max = (((_nparents) - 1) << JH7100_CLK_MUX_SHIFT) | (_max),		\
+>> +	.max = (((_nparents) - 1) << JH71X0_CLK_MUX_SHIFT) | (_max),		\
+>>  	.parents = { __VA_ARGS__ },						\
+>>  }
+>>  
+>> -#define JH7100__GMD(_idx, _name, _flags, _max, _nparents, ...) [_idx] = {	\
+>> +#define JH71X0__GMD(_idx, _name, _flags, _max, _nparents, ...) [_idx] = {	\
+>>  	.name = _name,								\
+>>  	.flags = _flags,							\
+>> -	.max = JH7100_CLK_ENABLE |						\
+>> -		(((_nparents) - 1) << JH7100_CLK_MUX_SHIFT) | (_max),		\
+>> +	.max = JH71X0_CLK_ENABLE |						\
+>> +		(((_nparents) - 1) << JH71X0_CLK_MUX_SHIFT) | (_max),		\
+>>  	.parents = { __VA_ARGS__ },						\
+>>  }
+>>  
+>> -#define JH7100__INV(_idx, _name, _parent) [_idx] = {				\
+>> +#define JH71X0__INV(_idx, _name, _parent) [_idx] = {				\
+>>  	.name = _name,								\
+>>  	.flags = CLK_SET_RATE_PARENT,						\
+>> -	.max = JH7100_CLK_INVERT,						\
+>> +	.max = JH71X0_CLK_INVERT,						\
+>>  	.parents = { [0] = _parent },						\
+>>  }
+>>  
+>> -struct jh7100_clk {
+>> +struct jh71x0_clk {
+>>  	struct clk_hw hw;
+>>  	unsigned int idx;
+>>  	unsigned int max_div;
+>>  };
+>>  
+>> -struct jh7100_clk_priv {
+>> +struct jh71x0_clk_priv {
+>>  	/* protect clk enable and set rate/parent from happening at the same time */
+>>  	spinlock_t rmw_lock;
+>>  	struct device *dev;
+>>  	void __iomem *base;
+>>  	struct clk_hw *pll[3];
+>> -	struct jh7100_clk reg[];
+>> +	struct jh71x0_clk reg[];
+>>  };
+>>  
+>> -const struct clk_ops *starfive_jh7100_clk_ops(u32 max);
+>> +const struct clk_ops *starfive_jh71x0_clk_ops(u32 max);
+>>  
+>>  #endif
+>> -- 
+>> 2.38.1
+>> 
 
