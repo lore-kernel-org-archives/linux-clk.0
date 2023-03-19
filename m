@@ -2,115 +2,91 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33993C7618A
-	for <linux-clk@archiver.kernel.org>; Sun, 19 Mar 2023 14:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7FC6C7618A
+	for <linux-clk@archiver.kernel.org>; Sun, 19 Mar 2023 16:32:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229472AbjCSOQr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 19 Mar 2023 10:16:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49704 "EHLO
+        id S230492AbjCSQcv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 19 Mar 2023 12:32:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230260AbjCSOQp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Mar 2023 10:16:45 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3403D49DA;
-        Sun, 19 Mar 2023 07:16:38 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id a16so5383957pjs.4;
-        Sun, 19 Mar 2023 07:16:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679235397;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Fofrlve0pl+ic6K67ZryHrzuH/Gn4T8D1dVcL+8p9ZE=;
-        b=EQrhPQJzJLs6DekeTg2zcd509dgqJ/FC+3PzLgaRv666cl4ZgwLazu/sGw0+iJgTtw
-         ngLGDACi7D9p/E69Ur3GF0XY6HruLhIW8tBW3Fyjr3BTtLy8/Xb2nPMzGX7GUvdWHVZM
-         9IeDOIrYBccd9Y2D1yP22CmOqu13REZSI+2jErFkLQdZhEMhxFAq8nq7W/i0blcJtii/
-         twJgY/Sw0RQmD6YtldMyBTF1CFLC27KIrea5+0+dFvtI6P2n8PhpSahcVKAqOLUHILBd
-         Ps8Up//NHx1OIOehB5MuEWb7PMP2VfnYDmoJCQDY215itObT1UR87bup6ykNaLMWmnTb
-         Mnwg==
+        with ESMTP id S230483AbjCSQcq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Mar 2023 12:32:46 -0400
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0D6720060;
+        Sun, 19 Mar 2023 09:32:24 -0700 (PDT)
+Received: by mail-io1-f50.google.com with SMTP id d14so1590387ion.9;
+        Sun, 19 Mar 2023 09:32:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679235397;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fofrlve0pl+ic6K67ZryHrzuH/Gn4T8D1dVcL+8p9ZE=;
-        b=TFXpFOx/3YyOEqpzdK5ikItdgbXQq58jkXAuwkMqx3GUDsz0jyDJ7vMahTIlJUKr36
-         DNtSy2usi49EuIVjTb9o7pvE3p6NUU1yJIIRTYT4+xWGPbT3FkguPpV5Ys5Xn8GmZFIT
-         7gwnnUHLL5kISi1TVQebizf7sIXpj+qLCGKb/ZnJ57ZWM7pd7ovNLxL7lk5if+IQSwL7
-         yeUqNFsekJB+bPZZil6rNlw1bvrw1AtxJoCP2K6gVLlN8Pr9VM4y6KNpdb3rn2vTlvzT
-         x3/MdeRhy+W99Fr1rI5sQBurewggUdWd5iQ7Q24PfPuZREMu9fdATsIQODDk/n82zChe
-         2lvQ==
-X-Gm-Message-State: AO0yUKXOFXgjBl81W8GEeZni+Y4I7DLgWj2Wnww7lqZSpiHzSSyoEKQf
-        2qO+lWFyQLrjK+I1oTxIFoI=
-X-Google-Smtp-Source: AK7set8eZ1H2+CkVyArr75/ApS72a8JfEgQXeSMDYFkA6WnQoXs36QOZBRaawac/KuVMva4709Pbwg==
-X-Received: by 2002:a17:902:fb85:b0:19c:da68:337a with SMTP id lg5-20020a170902fb8500b0019cda68337amr12437940plb.31.1679235397565;
-        Sun, 19 Mar 2023 07:16:37 -0700 (PDT)
-Received: from [192.168.1.101] (1-160-164-133.dynamic-ip.hinet.net. [1.160.164.133])
-        by smtp.gmail.com with ESMTPSA id s14-20020a170902b18e00b001a1ccb37847sm601054plr.146.2023.03.19.07.16.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 Mar 2023 07:16:37 -0700 (PDT)
-Message-ID: <4e4b6bfd-89b2-e917-6e20-24f3be54606a@gmail.com>
-Date:   Sun, 19 Mar 2023 22:16:34 +0800
+        d=1e100.net; s=20210112; t=1679243542;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oOo8FyF7jwRP0L0/DCsqOtLfD9IQ2Dgjo9DgIapHOWc=;
+        b=uXQ0h2PXFFUToEQYwe1CLRPpbenlLmvujEZ0LQLC9qtjkM9ZaNszJn3a89qYdetJrH
+         HOgt4O3v6aPqyHnzsmYwv272pvOxhSmJ0cPXaOLiXR4NvdbA/1QBOy0W6+TYiEPBYUb2
+         yMne02lgdA25NSk7r85jAv0bOxj1DXDR20ftlrloyI81aBT+JQk3zYBzkDFPCQjWKSsS
+         AA7LG/oIcgxhowCMTFxpfAClFcOYX5U4T6v6BlXAk8FQeXpNM7/hhYrEM5sc/X5uLct4
+         bwgCTv/RRjUkUDadkJAvi876TWCL+uTXILGQJ7VL/QZs104w29xSY/uc/4app8RcRAiP
+         SW3Q==
+X-Gm-Message-State: AO0yUKXjvLsZBrKB3etisBtXcOSYGcdbEYZ2WBdpNPtrYa1gIpn28XDT
+        ZcifW4lCHfla/MJ6Jcmw5ovkuHMfQA==
+X-Google-Smtp-Source: AK7set/h6vpCslX6rjxzrWpAO3XN3jPyrb7izBUOhcXggLs7QMgyyrivJJ9IlFuZ3bUgBfMkIoRvPg==
+X-Received: by 2002:a6b:f01a:0:b0:743:7742:1bc2 with SMTP id w26-20020a6bf01a000000b0074377421bc2mr3523486ioc.16.1679243542321;
+        Sun, 19 Mar 2023 09:32:22 -0700 (PDT)
+Received: from robh_at_kernel.org ([2605:ef80:80c7:2689:137d:d795:47e4:3de1])
+        by smtp.gmail.com with ESMTPSA id a6-20020a5d9ec6000000b0074ca5ac5037sm2262348ioe.26.2023.03.19.09.32.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Mar 2023 09:32:21 -0700 (PDT)
+Received: (nullmailer pid 226230 invoked by uid 1000);
+        Sun, 19 Mar 2023 16:32:19 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Tero Kristo <kristo@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: ti: Use of_address_to_resource()
+Date:   Sun, 19 Mar 2023 11:32:17 -0500
+Message-Id: <20230319163217.226144-1-robh@kernel.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH 11/15] arm64: dts: nuvoton: Add initial ma35d1 device tree
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        p.zabel@pengutronix.de, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        schung@nuvoton.com, Jacky Huang <ychuang3@nuvoton.com>
-References: <20230315072902.9298-1-ychuang570808@gmail.com>
- <20230315072902.9298-12-ychuang570808@gmail.com>
- <fb4f60a7-011e-3745-cc40-631247735f2b@linaro.org>
- <c902606e-8a1b-6673-02c7-7beea5477795@gmail.com>
- <87171ab8-9c6d-3978-6d34-4ae922361307@linaro.org>
-From:   Jacky Huang <ychuang570808@gmail.com>
-In-Reply-To: <87171ab8-9c6d-3978-6d34-4ae922361307@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dear Krzyszto,
+Replace of_get_address() and of_translate_address() calls with single
+call to of_address_to_resource().
 
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ drivers/clk/ti/clkctrl.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-On 2023/3/19 下午 07:06, Krzysztof Kozlowski wrote:
-> On 18/03/2023 07:07, Jacky Huang wrote:
->>>> +		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_RAW(0x13) |
->>>> +			      IRQ_TYPE_LEVEL_HIGH)>;
->>>> +	};
->>>> +
->>>> +	uart0:serial@40700000 {
->>>> +		compatible = "nuvoton,ma35d1-uart";
->>>> +		reg = <0x0 0x40700000 0x0 0x100>;
->>>> +		interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
->>>> +		clocks = <&clk UART0_GATE>;
->>>> +		status = "okay";
->>> Why? Drop the line... or convert it to disabled. Otherwise, why every
->>> SoC has serial0 enabled? Is it used internally?
->>
->> uart0 is on all the way since this SoC booting from the MaskROM boot code,
->>
->> load arm-trusted-firmware, load bootloader, and finally load linux  kernel.
->>
->> uart0 is also the Linux console.
-> Are you sure? Maybe my board has UART0 disconnected.
->
-> Best regards,
-> Krzysztof
-
-
-OK, I will have the uart0 disabled in dtsi, and enabled it in dts.
-
-
-Best regards,
-
-Jacky Huang
-
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+index f73f402ff7de..b6fce916967c 100644
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -512,16 +512,16 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 	struct clk_hw_omap *hw;
+ 	struct clk *clk;
+ 	struct omap_clkctrl_clk *clkctrl_clk = NULL;
+-	const __be32 *addrp;
+ 	bool legacy_naming;
+ 	const char *clkctrl_name;
+ 	u32 addr;
+ 	int ret;
+ 	char *c;
+ 	u16 soc_mask = 0;
++	struct resource res;
+ 
+-	addrp = of_get_address(node, 0, NULL, NULL);
+-	addr = (u32)of_translate_address(node, addrp);
++	of_address_to_resource(node, 0, &res);
++	addr = (u32)res.start;
+ 
+ #ifdef CONFIG_ARCH_OMAP4
+ 	if (of_machine_is_compatible("ti,omap4"))
+-- 
+2.39.2
 
