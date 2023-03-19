@@ -2,104 +2,144 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE31C7619A
-	for <linux-clk@archiver.kernel.org>; Sun, 19 Mar 2023 11:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF70BC7619A
+	for <linux-clk@archiver.kernel.org>; Sun, 19 Mar 2023 12:01:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229980AbjCSLGW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 19 Mar 2023 07:06:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39000 "EHLO
+        id S230167AbjCSMBO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 19 Mar 2023 08:01:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230041AbjCSLGT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Mar 2023 07:06:19 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD361233F8
-        for <linux-clk@vger.kernel.org>; Sun, 19 Mar 2023 04:06:16 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id ek18so36471295edb.6
-        for <linux-clk@vger.kernel.org>; Sun, 19 Mar 2023 04:06:16 -0700 (PDT)
+        with ESMTP id S229605AbjCSMBN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Mar 2023 08:01:13 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A111A12F1B;
+        Sun, 19 Mar 2023 05:01:10 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id o2so2349613plg.4;
+        Sun, 19 Mar 2023 05:01:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679223975;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=gmail.com; s=20210112; t=1679227270;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=nBClyZjqzsvX4XcfHoxPbXuLX0hX3wAS1PzOKSKD6qY=;
-        b=ceb14UefHIQse6qb+4nApgrCDxC15oK3YeIPm2+MmmsGD8IwI0epyP4s1DrZRVh4+z
-         tDMNWO8qp2S/FF3ZEHUiYhrXpnGblatsi3NTCkdn2zlwft/GR2xbZZAmP5MKQilvO+YL
-         iYMiFFzQZeMdlJBZEevViB0gbnkaXeorGwfdenxCnmIzAiu263JG/VKI5Ww2jCcSKYHS
-         fOkJZBuu8JZE2tKdnGw15pq8s5nNQMcuHm+C6TEi+aJ+j3C0spIAt0wP4OQFrSNV6lV4
-         atEKzpj+jSIZ35pcza41zU6NmuZ0H0qp/cakvd5pgYJJQXICgZlF4lekabXndN2ijX2H
-         bGpw==
+        bh=8fk4Dw/7JxcyrMau3xOds6YykNBRlo5bMZX0N77SkCI=;
+        b=MT1xY5/WWr6AisdKABITu1sTwONVVVF/UBT7xncfXA5+ynopTVhnpbDq3mlqom09rm
+         2OANzuhfMGutOtRiCH1txp2oGbryGQKBmoORUZAk34gG1RAqlCP46BK92P/N8SJSP2/c
+         7EpZN+pUOXWgE8dP9LT8klK2NfViS6BCxaQgd0Szk8Vh8D6I+xO4wSb5nfYykUN7yPhz
+         3oF59kbOK0Al3kEM4mWZD0PSF3Rm8Vn3fMAMpOGF+tMz2UrO0yXGrogeMSwKnhD0RN4/
+         rh98cnzlhx39iApttbgqkRlXCrnNiCyuAXM13OL+eRkolgq9aVpQQpKNmRhb5Z+ov+ie
+         nIhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679223975;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20210112; t=1679227270;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nBClyZjqzsvX4XcfHoxPbXuLX0hX3wAS1PzOKSKD6qY=;
-        b=u9+XXipi2o1Vr/DsXxDTrsrf+V/aLpP0HC4Dia2hMCl0OIJHlk1cZNjCkVHbXCu4ns
-         OgoW0bq+3TS0Lu8Pz8OCpHFOWrOVbtq9jcm/7ZNu7IzVxnvUjgMS7QOsgm9mDTPCh6EC
-         wupTdGTVwV9xLLBJCF85WIERYxMKSaGugYfAy9PqocGcmKbNRgjvJloAEcM4Ec2L6ISw
-         eh8m5m6UA3Vs0B73tUFQvg8rQze1l0YwfNn/PI0rpl+FsbJBvRerKAZgrLikhbOhDGKi
-         81t1atxlzaWWgI4owmVt8rPOGKeE2y43s0imO+Sz5JzpvDjmsHMp91VbI6APK3F2eVGI
-         LSdg==
-X-Gm-Message-State: AO0yUKU67kOVJQglFDRfuAIdDGThGaceUU7Aw5f8DJVkE2YUrK3c3dUx
-        +dPKuB0LB51YDfxOgfUm0nAvbg==
-X-Google-Smtp-Source: AK7set+09rHLmfBFB8O9udJ+850QNdD95CbOHTD0fZ1NophhDuk/Rlf/ZKLukSxggEy5xfDNzUMgfw==
-X-Received: by 2002:a50:ff17:0:b0:4fa:b302:84d9 with SMTP id a23-20020a50ff17000000b004fab30284d9mr9364725edu.14.1679223975316;
-        Sun, 19 Mar 2023 04:06:15 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:5b5f:f22b:a0b:559d? ([2a02:810d:15c0:828:5b5f:f22b:a0b:559d])
-        by smtp.gmail.com with ESMTPSA id s29-20020a50d49d000000b004fc2a75c6b3sm3376851edi.23.2023.03.19.04.06.14
+        bh=8fk4Dw/7JxcyrMau3xOds6YykNBRlo5bMZX0N77SkCI=;
+        b=t5LgzZwJHDV/I95e1txhAlSEH1oj7GKi4i4CRmqDxmAyO9NdQKg7HN2dre8v1Fp4Pz
+         R1zWns57HvjpHFaf97Q7sM7fDPRwu8JV0h+7rguetrAEnmJSilAEgEP07BMSxBIVZ888
+         buudWnAVteTQI3vUhpTVtVnl/fiTuhQhbTkOIUYGK+J1cD7TV/nlMX13wElUcyyxUJAd
+         xE5u2wporT2PY3ZtiZspe2ZBoF+McXRJPNSBkEyJ9GjRMcvdi+0rvA4hh4N9v1+QNfSs
+         149vc+wvt943VJ/IOl6Igpp9+WFgNylo+wYEuuuTlR016S0sR9sD3yjoN4aulVws1yPz
+         csfg==
+X-Gm-Message-State: AO0yUKWZAje/Q82wUlCf+2B5Y8/FIjzPRyd24PQSXKeb1eImGRx8nU+g
+        rd0OaIeytTKudGiL8RcjLjs=
+X-Google-Smtp-Source: AK7set9FsOrkqa5CNM3iqGzyu14xSi6aWGOyr/2wUYueNk7HAE614o8zmP1s5JP4cnLnNfUuUjtIdg==
+X-Received: by 2002:a05:6a20:ba93:b0:d9:3e8a:dc48 with SMTP id fb19-20020a056a20ba9300b000d93e8adc48mr1181017pzb.62.1679227269928;
+        Sun, 19 Mar 2023 05:01:09 -0700 (PDT)
+Received: from [192.168.1.101] (1-160-164-133.dynamic-ip.hinet.net. [1.160.164.133])
+        by smtp.gmail.com with ESMTPSA id a23-20020a62bd17000000b005a91d570972sm2298656pff.41.2023.03.19.05.01.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 Mar 2023 04:06:14 -0700 (PDT)
-Message-ID: <87171ab8-9c6d-3978-6d34-4ae922361307@linaro.org>
-Date:   Sun, 19 Mar 2023 12:06:13 +0100
+        Sun, 19 Mar 2023 05:01:09 -0700 (PDT)
+Message-ID: <652015b6-c2d7-0d97-3a4f-99d26d90f7f7@gmail.com>
+Date:   Sun, 19 Mar 2023 20:01:05 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
-Subject: Re: [PATCH 11/15] arm64: dts: nuvoton: Add initial ma35d1 device tree
-Content-Language: en-US
-To:     Jacky Huang <ychuang570808@gmail.com>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org
+Subject: Re: [PATCH 15/15] MAINTAINERS: Add entry for NUVOTON MA35
+To:     Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org, Lee Jones <lee@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>
 Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
         schung@nuvoton.com, Jacky Huang <ychuang3@nuvoton.com>
 References: <20230315072902.9298-1-ychuang570808@gmail.com>
- <20230315072902.9298-12-ychuang570808@gmail.com>
- <fb4f60a7-011e-3745-cc40-631247735f2b@linaro.org>
- <c902606e-8a1b-6673-02c7-7beea5477795@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <c902606e-8a1b-6673-02c7-7beea5477795@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+ <20230315072902.9298-16-ychuang570808@gmail.com>
+ <d56ec914-c2e4-427d-abc4-a290f3467937@app.fastmail.com>
+Content-Language: en-US
+From:   Jacky Huang <ychuang570808@gmail.com>
+In-Reply-To: <d56ec914-c2e4-427d-abc4-a290f3467937@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18/03/2023 07:07, Jacky Huang wrote:
-> 
->>
->>> +		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_RAW(0x13) |
->>> +			      IRQ_TYPE_LEVEL_HIGH)>;
->>> +	};
->>> +
->>> +	uart0:serial@40700000 {
->>> +		compatible = "nuvoton,ma35d1-uart";
->>> +		reg = <0x0 0x40700000 0x0 0x100>;
->>> +		interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
->>> +		clocks = <&clk UART0_GATE>;
->>> +		status = "okay";
->> Why? Drop the line... or convert it to disabled. Otherwise, why every
->> SoC has serial0 enabled? Is it used internally?
-> 
-> 
-> uart0 is on all the way since this SoC booting from the MaskROM boot code,
-> 
-> load arm-trusted-firmware, load bootloader, and finally load linux  kernel.
-> 
-> uart0 is also the Linux console.
+Dear Arnd,
 
-Are you sure? Maybe my board has UART0 disconnected.
+
+Thanks for your advice.
+
+
+On 2023/3/16 下午 10:38, Arnd Bergmann wrote:
+> On Wed, Mar 15, 2023, at 08:29, Jacky Huang wrote:
+>> From: Jacky Huang <ychuang3@nuvoton.com>
+>>
+>> Add entry for Nuvton ma35d1 maintainer and files
+>>
+>> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+>> ---
+>> +F:	Documentation/devicetree/bindings/*/*nuvoton*
+>> +F:	arch/arm64/boot/dts/nuvoton/
+> This clashes with the existing entry for NPCM, so
+> contributors can easily get confused about where
+> to send their dts patches.
+>
+> I don't have a good solution here, but maybe you can
+> discuss this with the npcm maintainers (added to Cc)
+> to see how they would like to handle this.
+>
+> For me, the easiest way would be to have a single
+> maintainer send me all the patches for both ma35d1
+> and npcm, but that may not be practical for you.
+
+
+All I can do so far is, once we receive a patch for npcm,
+
+forward it to the maintainers of npcm, and the npcm side
+
+does the same.
+
+And I would like to modify it as
+
++F:	arch/arm64/boot/dts/nuvoton/*ma35*
+
+>> +F:	drivers/*/*/*ma35d1*
+>> +F:	drivers/*/*ma35d1*
+>> +F:	include/dt-bindings/*/*ma35d1*
+>> +F:	include/linux/mfd/ma35d1-sys.h
+> I would replace these with a single line
+>
+> K:    ma35d1
+>
+> that should have the same effect.
+>
+>       Arnd
+
+
+It's fine. I will use K: instead. Thank you.
+
 
 Best regards,
-Krzysztof
+
+Jacky Huang
+
 
