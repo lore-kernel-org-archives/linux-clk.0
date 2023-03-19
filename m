@@ -2,60 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFA9C7619A
-	for <linux-clk@archiver.kernel.org>; Sun, 19 Mar 2023 11:05:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE31C7619A
+	for <linux-clk@archiver.kernel.org>; Sun, 19 Mar 2023 11:06:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229953AbjCSLF1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 19 Mar 2023 07:05:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38144 "EHLO
+        id S229980AbjCSLGW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 19 Mar 2023 07:06:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229713AbjCSLFZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Mar 2023 07:05:25 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADD93234D6
-        for <linux-clk@vger.kernel.org>; Sun, 19 Mar 2023 04:05:19 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id x3so36398638edb.10
-        for <linux-clk@vger.kernel.org>; Sun, 19 Mar 2023 04:05:19 -0700 (PDT)
+        with ESMTP id S230041AbjCSLGT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Mar 2023 07:06:19 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD361233F8
+        for <linux-clk@vger.kernel.org>; Sun, 19 Mar 2023 04:06:16 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id ek18so36471295edb.6
+        for <linux-clk@vger.kernel.org>; Sun, 19 Mar 2023 04:06:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679223918;
+        d=linaro.org; s=google; t=1679223975;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=oz7Mn5Slt/oCZXIyID1LQ+0ctRwDR+H2/7RiKV/KiC8=;
-        b=z9Ary3jPwxWtnf6V3vNq0eQZ+9bqPM/Bmrbyxfk9GUbrahRuXb97qVmkFUmRYa+xxt
-         qhxjdZkanTFpgKwk3LMFZGwT2krOqdSJTTd89h8jm1Ukus9cQ+uXQu0/ys8Xz1Z92NRb
-         3gRq0JyWpgV72Tez7iS2oLGKsS1QH6vKeeZ0NUUbJpGm88JDLx5NLWIFiZiXJisNgFTx
-         fWy9a6H+0Np2gR8nFkyHjMJ8xJP2Wwkmp5Bkf3bitmkacsmQY6nOvlu0K6TpkaBnIuIu
-         qY4YhIT+o/gQme3tKSptm/4YKxG5u7+uK+tOffmdCMIhsbM5d6rsaFIz+uTHFIa8XpRM
-         jd2w==
+        bh=nBClyZjqzsvX4XcfHoxPbXuLX0hX3wAS1PzOKSKD6qY=;
+        b=ceb14UefHIQse6qb+4nApgrCDxC15oK3YeIPm2+MmmsGD8IwI0epyP4s1DrZRVh4+z
+         tDMNWO8qp2S/FF3ZEHUiYhrXpnGblatsi3NTCkdn2zlwft/GR2xbZZAmP5MKQilvO+YL
+         iYMiFFzQZeMdlJBZEevViB0gbnkaXeorGwfdenxCnmIzAiu263JG/VKI5Ww2jCcSKYHS
+         fOkJZBuu8JZE2tKdnGw15pq8s5nNQMcuHm+C6TEi+aJ+j3C0spIAt0wP4OQFrSNV6lV4
+         atEKzpj+jSIZ35pcza41zU6NmuZ0H0qp/cakvd5pgYJJQXICgZlF4lekabXndN2ijX2H
+         bGpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679223918;
+        d=1e100.net; s=20210112; t=1679223975;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oz7Mn5Slt/oCZXIyID1LQ+0ctRwDR+H2/7RiKV/KiC8=;
-        b=G/aXuT8zWEAK5NKoROEZ7rnWQdSO2Cy/94UE1GSIr9upkShciIk9n3j1kwW7jd0UC0
-         xCA286fwNcR9CBLXfIhCaXNRtDMaeMw8YgLayxm3glZ71JQRWgXSqeQpRJ4Nzh8H6yqW
-         aQSRGZ5QbWnSHbsqC9qec0k9PkvKxCa2vdEPAklrg2OJkMfqLR3TlU/haRqXZdlT/NyN
-         P/LfRd78ig8kJC3/qFshMW4IctIgvtemqLk8mCYU8NheF9BX9xOApXkxqidR0uOa4kc6
-         jHFoG6zPhbCAzFD27XOKPco++oo0r5SF46Gr9wtFMefLYIh4usCZziRefDt3HUcgp7Vo
-         mQEw==
-X-Gm-Message-State: AO0yUKXJwMPEb/zbM9n+7eQDca85j6exJKQrTahW0ivfVXTKmx6g9erI
-        xIi1alP2pp7M4fTcf50BuPWJ6g==
-X-Google-Smtp-Source: AK7set8iyweCO1S8OBE+lR0gDceMHD0ysV/bfRKB03FfwieiyiZ/Nrqp+yiz4a4BU9OPNpb08OMDEg==
-X-Received: by 2002:a17:906:4ed3:b0:932:2282:dbd6 with SMTP id i19-20020a1709064ed300b009322282dbd6mr6255501ejv.5.1679223917979;
-        Sun, 19 Mar 2023 04:05:17 -0700 (PDT)
+        bh=nBClyZjqzsvX4XcfHoxPbXuLX0hX3wAS1PzOKSKD6qY=;
+        b=u9+XXipi2o1Vr/DsXxDTrsrf+V/aLpP0HC4Dia2hMCl0OIJHlk1cZNjCkVHbXCu4ns
+         OgoW0bq+3TS0Lu8Pz8OCpHFOWrOVbtq9jcm/7ZNu7IzVxnvUjgMS7QOsgm9mDTPCh6EC
+         wupTdGTVwV9xLLBJCF85WIERYxMKSaGugYfAy9PqocGcmKbNRgjvJloAEcM4Ec2L6ISw
+         eh8m5m6UA3Vs0B73tUFQvg8rQze1l0YwfNn/PI0rpl+FsbJBvRerKAZgrLikhbOhDGKi
+         81t1atxlzaWWgI4owmVt8rPOGKeE2y43s0imO+Sz5JzpvDjmsHMp91VbI6APK3F2eVGI
+         LSdg==
+X-Gm-Message-State: AO0yUKU67kOVJQglFDRfuAIdDGThGaceUU7Aw5f8DJVkE2YUrK3c3dUx
+        +dPKuB0LB51YDfxOgfUm0nAvbg==
+X-Google-Smtp-Source: AK7set+09rHLmfBFB8O9udJ+850QNdD95CbOHTD0fZ1NophhDuk/Rlf/ZKLukSxggEy5xfDNzUMgfw==
+X-Received: by 2002:a50:ff17:0:b0:4fa:b302:84d9 with SMTP id a23-20020a50ff17000000b004fab30284d9mr9364725edu.14.1679223975316;
+        Sun, 19 Mar 2023 04:06:15 -0700 (PDT)
 Received: from ?IPV6:2a02:810d:15c0:828:5b5f:f22b:a0b:559d? ([2a02:810d:15c0:828:5b5f:f22b:a0b:559d])
-        by smtp.gmail.com with ESMTPSA id qn17-20020a170907211100b0093048a8bd31sm3138943ejb.68.2023.03.19.04.05.16
+        by smtp.gmail.com with ESMTPSA id s29-20020a50d49d000000b004fc2a75c6b3sm3376851edi.23.2023.03.19.04.06.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 Mar 2023 04:05:17 -0700 (PDT)
-Message-ID: <fd0cb506-707a-4f5d-b917-de6a03787f6a@linaro.org>
-Date:   Sun, 19 Mar 2023 12:05:16 +0100
+        Sun, 19 Mar 2023 04:06:14 -0700 (PDT)
+Message-ID: <87171ab8-9c6d-3978-6d34-4ae922361307@linaro.org>
+Date:   Sun, 19 Mar 2023 12:06:13 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
-Subject: Re: [PATCH 09/15] dt-bindings: reset: Document ma35d1 reset
- controller bindings
+Subject: Re: [PATCH 11/15] arm64: dts: nuvoton: Add initial ma35d1 device tree
 Content-Language: en-US
 To:     Jacky Huang <ychuang570808@gmail.com>, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
@@ -65,99 +64,41 @@ Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
         schung@nuvoton.com, Jacky Huang <ychuang3@nuvoton.com>
 References: <20230315072902.9298-1-ychuang570808@gmail.com>
- <20230315072902.9298-10-ychuang570808@gmail.com>
- <cee0497e-c441-3937-07ec-0b6c4621f4e4@linaro.org>
- <b9f93711-7302-4ed6-3f71-7bb792507136@linaro.org>
- <4d62376f-1b33-62ac-2ed9-6b71ae7485a2@gmail.com>
+ <20230315072902.9298-12-ychuang570808@gmail.com>
+ <fb4f60a7-011e-3745-cc40-631247735f2b@linaro.org>
+ <c902606e-8a1b-6673-02c7-7beea5477795@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <4d62376f-1b33-62ac-2ed9-6b71ae7485a2@gmail.com>
+In-Reply-To: <c902606e-8a1b-6673-02c7-7beea5477795@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18/03/2023 05:30, Jacky Huang wrote:
-> Dear Krzysztof,
+On 18/03/2023 07:07, Jacky Huang wrote:
+> 
+>>
+>>> +		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_RAW(0x13) |
+>>> +			      IRQ_TYPE_LEVEL_HIGH)>;
+>>> +	};
+>>> +
+>>> +	uart0:serial@40700000 {
+>>> +		compatible = "nuvoton,ma35d1-uart";
+>>> +		reg = <0x0 0x40700000 0x0 0x100>;
+>>> +		interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+>>> +		clocks = <&clk UART0_GATE>;
+>>> +		status = "okay";
+>> Why? Drop the line... or convert it to disabled. Otherwise, why every
+>> SoC has serial0 enabled? Is it used internally?
 > 
 > 
-> Thanks for your advice.
+> uart0 is on all the way since this SoC booting from the MaskROM boot code,
 > 
+> load arm-trusted-firmware, load bootloader, and finally load linux  kernel.
 > 
-> On 2023/3/16 下午 03:39, Krzysztof Kozlowski wrote:
->> On 16/03/2023 08:37, Krzysztof Kozlowski wrote:
->>> On 15/03/2023 08:28, Jacky Huang wrote:
->>>> From: Jacky Huang <ychuang3@nuvoton.com>
->>>>
->>>> Add documentation to describe nuvoton ma35d1 reset driver bindings.
->>> Subject: drop second/last, redundant "bindings". The "dt-bindings"
->>> prefix is already stating that these are bindings.
-> 
-> 
-> OK, I will fix it.
-> 
-> 
->>>> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
->>>> ---
->>>>   .../bindings/reset/nuvoton,ma35d1-reset.yaml  | 50 +++++++++++++++++++
->>>>   1 file changed, 50 insertions(+)
->>>>   create mode 100644 Documentation/devicetree/bindings/reset/nuvoton,ma35d1-reset.yaml
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/reset/nuvoton,ma35d1-reset.yaml b/Documentation/devicetree/bindings/reset/nuvoton,ma35d1-reset.yaml
->>>> new file mode 100644
->>>> index 000000000000..f66c566c6dce
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/reset/nuvoton,ma35d1-reset.yaml
->>>> @@ -0,0 +1,50 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/reset/nuvoton,ma35d1-reset.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: Nuvoton MA35D1 Reset Controller
->>>> +
->>>> +maintainers:
->>>> +  - Chi-Fang Li <cfli0@nuvoton.com>
->>>> +  - Jacky Huang <ychuang3@nuvoton.com>
->>>> +
->>>> +description:
->>>> +  The system reset controller can be used to reset various peripheral
->>>> +  controllers in MA35D1 SoC.
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    const: nuvoton,ma35d1-reset
->>>> +
->>>> +  regmap:
->>>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>>> +    description: Phandle to the register map node.
->>> You need to be specific what is this. As you can easily check, there is
->>> no such property in any devices. I don't understand why do you need it
->>> in the first place.
-> 
->          reset: reset-controller {
->              compatible = "nuvoton,ma35d1-reset";
->              regmap = <&sys>;
->              #reset-cells = <1>;
->          };
-> 
-> The dt_binding_check check report an error about the above "regmap".
-> 
-> I found that add this can pass the test.
+> uart0 is also the Linux console.
 
-Do not add properties to bindings to "pass the test". That's not the
-goal of bindings. Add there properties because they make sense...
-
-Anyway, you did not answer my question at all. So one by one - address them:
-1. As you can easily check, there is no such property in any devices.
-Explanation: do you see it anywhere in existing bindings?
-
-2. I don't understand why do you need it in the first place.
-Explanation: your binding suggest this is not needed. If you think
-otherwise, you need to provide rationale.
-
-
+Are you sure? Maybe my board has UART0 disconnected.
 
 Best regards,
 Krzysztof
