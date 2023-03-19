@@ -2,124 +2,173 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7CBC6FD1F
-	for <linux-clk@archiver.kernel.org>; Sun, 19 Mar 2023 13:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C26C76195
+	for <linux-clk@archiver.kernel.org>; Sun, 19 Mar 2023 13:28:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230370AbjCSNVl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 19 Mar 2023 09:21:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50774 "EHLO
+        id S229676AbjCSN2R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 19 Mar 2023 09:28:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229622AbjCSNVj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Mar 2023 09:21:39 -0400
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D91D822794;
-        Sun, 19 Mar 2023 06:21:37 -0700 (PDT)
-Received: by mail-il1-x12d.google.com with SMTP id h11so5253901ild.11;
-        Sun, 19 Mar 2023 06:21:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679232097;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9jRLas+X66DwX3DvgENKtWbw6Tk9kAguCjzndTr3/Fs=;
-        b=J9DyP+7/MlVewq+owGn+geALUpv3MYnFqyNPqqv5xtvFRYzsxIAUC1RKIvEqAubk93
-         rTfJBEv0/IHksl3L9dZ8MSkyuHdPgkmBuK5rmTe80SnBIsEmGdc4T1iOwohN9J01GLIW
-         56VlyFvZrmDiRNuOqgZlEL9midprlFaCt8JpZJlVYxs4S+90wcKY5XcJ9jf63stCyU+v
-         fznUYlOJQCbtzfOObWyRK40qDfCYef8jWOJmKsCFr0phBiMiOSJQ9XN+lKqb8dP9RrZL
-         lvwgAfdCOHivA1K9vcDxj6amxv6St5eZJzCAoW9pgK4jqs1MkyH8EGwtc1rZWCaiJ9uS
-         O0HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679232097;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9jRLas+X66DwX3DvgENKtWbw6Tk9kAguCjzndTr3/Fs=;
-        b=PgBhLnMtfnun+A7kZWz+4VGvjllOrBZB6Qw+9emoFT4mflgnEXu8/JxVbk+uNe4HrB
-         13dfweNzhuJFoi5pqWy/m+0X4wsbcrcbe/BYq1j8dTMoXPDQXiE7ZSOELgBZ5U6rw80Z
-         GctdhV7rLMrKJ2pLbQzDvofD/0sNbGFmuhiwqLshFKz2Y/vnP47wsRx4tdyqMk+DKYR0
-         U24Iofr3C5+0UVl+3m5fnWeTTJxkUsgx9bTWQB9kJZtGzIGdZvgTCjQDWIqtX3cZ2Dre
-         KFH3UvSCB5C10lMsw3aQJi0idVVBLzNwIFTp/3rQGUL0MdXIE2lwwn/ay7fLWu25xCzm
-         QVDw==
-X-Gm-Message-State: AO0yUKVZ8R+i7HCJX2hgtREEOSfsWuiUERfZKSy4UxAv6bOMkJk2dxMr
-        yRuznsohiUV9HM7/sGceYW4ckaR8fSU=
-X-Google-Smtp-Source: AK7set9E8JPLYVAomIXIP7dJobm+AJ5GJXDPiDKsreSdMdMszzhI8MANxoCTEXwrxH+EYLP4mq/BIA==
-X-Received: by 2002:a05:6e02:686:b0:318:aa8a:6453 with SMTP id o6-20020a056e02068600b00318aa8a6453mr3334106ils.7.1679232096852;
-        Sun, 19 Mar 2023 06:21:36 -0700 (PDT)
-Received: from aford-IdeaCentre-A730.lan (c-75-72-166-104.hsd1.mn.comcast.net. [75.72.166.104])
-        by smtp.gmail.com with ESMTPSA id a23-20020a027357000000b00406227162fesm2363460jae.32.2023.03.19.06.21.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Mar 2023 06:21:36 -0700 (PDT)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] clk: imx: Let IMX8MN_CLK_DISP_PIXEL set parent rate
-Date:   Sun, 19 Mar 2023 08:21:20 -0500
-Message-Id: <20230319132120.6347-4-aford173@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230319132120.6347-1-aford173@gmail.com>
-References: <20230319132120.6347-1-aford173@gmail.com>
+        with ESMTP id S229605AbjCSN2Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Mar 2023 09:28:16 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DB819029;
+        Sun, 19 Mar 2023 06:28:12 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 43CB624DC09;
+        Sun, 19 Mar 2023 21:28:07 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Sun, 19 Mar
+ 2023 21:28:07 +0800
+Received: from [172.16.16.231] (183.27.96.84) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Sun, 19 Mar
+ 2023 21:28:06 +0800
+Message-ID: <6294ffee-3c66-5287-59b4-068a7f4e84ba@starfivetech.com>
+Date:   Sun, 19 Mar 2023 21:28:04 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH v5 12/21] dt-bindings: clock: Add StarFive JH7110
+ always-on clock and reset generator
+To:     Conor Dooley <conor@kernel.org>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>, Stephen Boyd <sboyd@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        "Emil Renner Berthing" <emil.renner.berthing@canonical.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20230311090733.56918-1-hal.feng@starfivetech.com>
+ <20230311090733.56918-13-hal.feng@starfivetech.com>
+ <b9a421c0-85df-4c8c-a3cb-8286328c5ed0@spud>
+Content-Language: en-US
+From:   Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <b9a421c0-85df-4c8c-a3cb-8286328c5ed0@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [183.27.96.84]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-By default the display pixel clock needs to be evenly divide
-down from the video_pll_out clock which rules out a significant
-number of resolution and refresh rates.
+On Sat, 11 Mar 2023 13:14:45 +0000, Conor Dooley wrote:
+> On Sat, Mar 11, 2023 at 05:07:24PM +0800, Hal Feng wrote:
+>> From: Emil Renner Berthing <kernel@esmil.dk>
+>> 
+>> Add bindings for the always-on clock and reset generator (AONCRG) on the
+>> JH7110 RISC-V SoC by StarFive Ltd.
+>> 
+>> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+>> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+>> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-aoncrg.yaml
+>> @@ -0,0 +1,107 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/starfive,jh7110-aoncrg.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: StarFive JH7110 Always-On Clock and Reset Generator
+>> +
+>> +maintainers:
+>> +  - Emil Renner Berthing <kernel@esmil.dk>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: starfive,jh7110-aoncrg
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    oneOf:
+>> +      - items:
+>> +          - description: Main Oscillator (24 MHz)
+>> +          - description: GMAC0 RMII reference or GMAC0 RGMII RX
+>> +          - description: STG AXI/AHB
+>> +          - description: APB Bus
+>> +          - description: GMAC0 GTX
+>> +
+>> +      - items:
+>> +          - description: Main Oscillator (24 MHz)
+>> +          - description: GMAC0 RMII reference or GMAC0 RGMII RX
+>> +          - description: STG AXI/AHB or GMAC0 RGMII RX
+>> +          - description: APB Bus or STG AXI/AHB
+>> +          - description: GMAC0 GTX or APB Bus
+>> +          - description: RTC Oscillator (32.768 kHz) or GMAC0 GTX
+> 
+> Something tells me that the use of "or" means we're not doing this
+> correctly.
+> Otherwise,
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-The current clock tree looks something like:
+There are two possible cases when the number of clock inputs is 6:
 
- video_pll                594000000
-  video_pll_bypass        594000000
-   video_pll_out          594000000
-    disp_pixel            148500000
-     disp_pixel_clk       148500000
+Main Oscillator
+GMAC0 RMII reference or GMAC0 RGMII RX
+STG AXI/AHB
+APB Bus
+GMAC0 GTX
+RTC Oscillator
 
-Now that composite-8m supports determine_rate, we can allow
-disp_pixel to set the parent rate which then switches
-every clock in the chain to a new frequency when disp_pixel
-cannot evenly divide from video_pll_out.
+and
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
+Main Oscillator
+GMAC0 RMII reference
+GMAC0 RGMII RX
+STG AXI/AHB
+APB Bus
+GMAC0 GTX
 
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index a042ed3a9d6c..4b23a4648600 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -470,7 +470,7 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MN_CLK_DRAM_ALT] = imx8m_clk_hw_fw_managed_composite("dram_alt", imx8mn_dram_alt_sels, base + 0xa000);
- 	hws[IMX8MN_CLK_DRAM_APB] = imx8m_clk_hw_fw_managed_composite_critical("dram_apb", imx8mn_dram_apb_sels, base + 0xa080);
- 
--	hws[IMX8MN_CLK_DISP_PIXEL] = imx8m_clk_hw_composite("disp_pixel", imx8mn_disp_pixel_sels, base + 0xa500);
-+	hws[IMX8MN_CLK_DISP_PIXEL] = imx8m_clk_hw_composite_flags("disp_pixel", imx8mn_disp_pixel_sels, base + 0xa500, CLK_SET_RATE_PARENT);
- 	hws[IMX8MN_CLK_SAI2] = imx8m_clk_hw_composite("sai2", imx8mn_sai2_sels, base + 0xa600);
- 	hws[IMX8MN_CLK_SAI3] = imx8m_clk_hw_composite("sai3", imx8mn_sai3_sels, base + 0xa680);
- 	hws[IMX8MN_CLK_SAI5] = imx8m_clk_hw_composite("sai5", imx8mn_sai5_sels, base + 0xa780);
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 3d94722bbf99..621b0e84ef27 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -417,6 +417,10 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
- 	_imx8m_clk_hw_composite(name, parent_names, reg, \
- 			0, IMX_COMPOSITE_CLK_FLAGS_DEFAULT)
- 
-+#define imx8m_clk_hw_composite_flags(name, parent_names, reg, flags) \
-+	_imx8m_clk_hw_composite(name, parent_names, reg, \
-+			0, IMX_COMPOSITE_CLK_FLAGS_DEFAULT |  flags)
-+
- #define imx8m_clk_hw_composite_critical(name, parent_names, reg) \
- 	_imx8m_clk_hw_composite(name, parent_names, reg, \
- 			0, IMX_COMPOSITE_CLK_FLAGS_CRITICAL)
--- 
-2.34.1
+So I used the "or" in the items descriptions. Thanks.
+
+Best regards,
+Hal
+
+> 
+>> +      - items:
+>> +          - description: Main Oscillator (24 MHz)
+>> +          - description: GMAC0 RMII reference
+>> +          - description: GMAC0 RGMII RX
+>> +          - description: STG AXI/AHB
+>> +          - description: APB Bus
+>> +          - description: GMAC0 GTX
+>> +          - description: RTC Oscillator (32.768 kHz)
+>> +
+>> +  clock-names:
+>> +    oneOf:
+>> +      - minItems: 5
+>> +        items:
+>> +          - const: osc
+>> +          - enum:
+>> +              - gmac0_rmii_refin
+>> +              - gmac0_rgmii_rxin
+>> +          - const: stg_axiahb
+>> +          - const: apb_bus
+>> +          - const: gmac0_gtxclk
+>> +          - const: rtc_osc
+>> +
+>> +      - minItems: 6
+>> +        items:
+>> +          - const: osc
+>> +          - const: gmac0_rmii_refin
+>> +          - const: gmac0_rgmii_rxin
+>> +          - const: stg_axiahb
+>> +          - const: apb_bus
+>> +          - const: gmac0_gtxclk
+>> +          - const: rtc_osc
+> 
 
