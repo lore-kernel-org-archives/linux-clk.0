@@ -2,88 +2,68 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E52E4C6FD1C
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 21:21:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE9BC6FD1D
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 21:28:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229612AbjCTVVw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 17:21:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43358 "EHLO
+        id S229778AbjCTV2H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 17:28:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229916AbjCTVVv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 17:21:51 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2454B30B22;
-        Mon, 20 Mar 2023 14:21:43 -0700 (PDT)
+        with ESMTP id S229746AbjCTV2F (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 17:28:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C67FAD17;
+        Mon, 20 Mar 2023 14:27:21 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 51613B810F4;
-        Mon, 20 Mar 2023 21:21:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD943C433EF;
-        Mon, 20 Mar 2023 21:21:39 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1372261811;
+        Mon, 20 Mar 2023 21:25:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6391FC433D2;
+        Mon, 20 Mar 2023 21:25:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679347300;
-        bh=qlNHY3AtvWM7FXZ0JBT4vSXElewhp64RqmgLO5c9uUA=;
+        s=k20201202; t=1679347544;
+        bh=E0a55P+RyXdkQBGe9esmwlAZYuCtloLp8FGR7H5aZQY=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Ix7ZaNOlKAc03BSJ5Yo5CFuhMP1KPy47cHjl2PazM9iz8L+mGwNHH/jnYEkSTC6yM
-         +BibgyyMHBkRKkeYwciv/AmH1EZmsFJSNq7/gggByVWpHjcFcChlaNqPFkFHYI38Il
-         dUtshLcxPsukp5NjNYyuphYZl0p3/uy6vs5V6aYXkgmAk7sa+TJ8a2pUsqUIL3SW8y
-         4DnARn1o9d+LuKw9TzBL9WNbns0wXiDeLZf96/7gXhE8k3PAUgQL2swfpxqJ1lWins
-         wQ2dHlZmAP222HeWmVaxu0E75beLz77mPOEDd3Ano5EwSPn0Tt06v0QCvQRxYPY7z0
-         c4b31eGXpvKFA==
-Message-ID: <90dd1f841e7941d8b5931ef68cd6d14e.sboyd@kernel.org>
+        b=agH6755/zCYq7YE7FvkeGpqEbWa1sRTwqUOEAlSl7G1m4+0+rVeyjXf5f9jc01Hw6
+         /v9Ed3DNOjtOdjkm1a/XkEmQu14lNuFA+FDLBvWA18E2BdQyXn5KGrmraAozyiqD1G
+         J2XWrqUDjPCHQ7it4z7BQkC88xVKQSF7R84kebd2uJoIEtdtbQQ/wX0FV9WTazn43N
+         0fR+2u8jZUDm7EG9Z0T/jol+6kZP9Oz7kc8YQzhuuAnzubGALiTdnO8/YiHrhqEro8
+         ewoCyfXH4csbw4tM4zjaWHbidoB4hXGH41tM8vC/NJX6vnnT9+TGkwti5tnW0SwnBx
+         QZgS6U34MvIOA==
+Message-ID: <cd802cf4347e571d7ba85c4161c10dc2.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAMhs-H-y6TsSoKsJzM0gkFk6wx7xNigXKJb7wm8rBzrigtJANg@mail.gmail.com>
-References: <20230320161823.1424278-1-sergio.paracuellos@gmail.com> <20230320161823.1424278-8-sergio.paracuellos@gmail.com> <966523bee1d28d546969a24eff60d315.sboyd@kernel.org> <CAMhs-H-y6TsSoKsJzM0gkFk6wx7xNigXKJb7wm8rBzrigtJANg@mail.gmail.com>
-Subject: Re: [PATCH 07/10] mips: ralink: remove clock related function prototypes
+In-Reply-To: <20230310164523.534571-1-o.rempel@pengutronix.de>
+References: <20230310164523.534571-1-o.rempel@pengutronix.de>
+Subject: Re: [PATCH v1] clk: imx6ul: fix "failed to get parent" error
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-        tsbogend@alpha.franken.de, john@phrozen.org,
-        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
-        mturquette@baylibre.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
-        devicetree@vger.kernel.org, arinc.unal@arinc9.com
-To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Mon, 20 Mar 2023 14:21:37 -0700
+Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To:     Abel Vesa <abelvesa@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Oleksij Rempel <o.rempel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Date:   Mon, 20 Mar 2023 14:25:42 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sergio Paracuellos (2023-03-20 13:17:47)
-> Hi Stephen,
+Quoting Oleksij Rempel (2023-03-10 08:45:23)
+> On some configuration we may get following error:
+> [    0.000000] imx:clk-gpr-mux: failed to get parent (-EINVAL)
 >=20
-> On Mon, Mar 20, 2023 at 8:38=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> w=
-rote:
-> >
-> > Quoting Sergio Paracuellos (2023-03-20 09:18:20)
-> > > Clock related code has been removed from 'arch/mips/ralink' folder an=
-d put
-> > > into drivers space. Hence remove clock related prototypes which are n=
-ot
-> > > used anymore.
-> > >
-> > > Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-> > > ---
-> > >  arch/mips/ralink/common.h | 3 ---
-> > >  1 file changed, 3 deletions(-)
-> > >
-> > > diff --git a/arch/mips/ralink/common.h b/arch/mips/ralink/common.h
-> > > index 87fc16751281..fcdfc9dc6210 100644
-> > > --- a/arch/mips/ralink/common.h
-> > > +++ b/arch/mips/ralink/common.h
-> > > @@ -23,9 +23,6 @@ extern struct ralink_soc_info soc_info;
-> > >
-> > >  extern void ralink_of_remap(void);
-> > >
-> > > -extern void ralink_clk_init(void);
-> >
-> > Why isn't this removed in the patch that removes the function?
+> This happens if selector is configured to not supported value. To avoid
+> this warnings add dummy parents for not supported values.
 >=20
-> Because the function exists for all the SoCs code and there are
-> several patches removing it; one per SoC, so I decided to remove this
-> at the end. Should I squash all patches together instead?
+> Fixes: 4e197ee880c2 ("clk: imx6ul: add ethernet refclock mux support")
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
 
-No. But you should squash this with whatever patch removes the last one.
+Applied to clk-fixes
