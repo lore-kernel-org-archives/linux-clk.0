@@ -2,265 +2,435 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F59C6FD1D
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 19:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3119CC7619A
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 20:06:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229738AbjCTTvD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 15:51:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49196 "EHLO
+        id S230136AbjCTUGx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 16:06:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229806AbjCTTvD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 15:51:03 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F892C666;
-        Mon, 20 Mar 2023 12:50:53 -0700 (PDT)
+        with ESMTP id S229685AbjCTUGu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 16:06:50 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36685C64F;
+        Mon, 20 Mar 2023 13:06:44 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0C91CB810B5;
-        Mon, 20 Mar 2023 19:50:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72937C433EF;
-        Mon, 20 Mar 2023 19:50:50 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id AA13CB810A7;
+        Mon, 20 Mar 2023 20:06:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DF00C433D2;
+        Mon, 20 Mar 2023 20:06:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679341850;
-        bh=VD5TRZZRaexzJ2W5HrqpTQ+oq8DTCJBVLAWbveaqmt8=;
+        s=k20201202; t=1679342801;
+        bh=RuqwWdFBmmRhgzI7VwXcy9qkadNZFYSQgKYwk08C8Ls=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=js9pUDIS/Af0joB+Vco9V2asSvobONowoLqaOp59vtwnfLzyaTObuPlmvWDaQWxia
-         jewH2U6UnwvAjoNZr1FAVTXok95MDWhsk9EzeBbiEBOPIMrGhljyPjOWOIHdxeyE7T
-         cvYlPi5plQ8qkBZ9RUwIAMW5hPEMRhDsi84Gt3h2APO98ipRJS89C6iNqqp0VyFtqQ
-         727hA+lw6pZgqw/kOoCcEOC/LeM7jpSbu2TcUNtLuTnExuVWS15Ybn/J4Em5d2C/7o
-         vmWBHsjezyymk3Q6601/2ffDDlcbh19vGk91JoXs3MMcPHNr2JBCZnr3qhEXtx2axN
-         f/xtWBkOWjEmw==
-Message-ID: <495fcc93ab28ff8949569ededee954c1.sboyd@kernel.org>
+        b=RvIri+10udHBazMLPnhLIu3CWRdAqtA+IfdBHB3swkc3AcD9x0/YRo30/8KBj0syf
+         Cork1VxCPT6/1V2IaryiPH2DzQnQ8s793rb4e+yVOOPxkCIGQqzMWg65yLCIu1LHpM
+         rYEarlpubwnkn62b0rfLmDT08zg7tEzC+b//6LrAoOPhlJkekYvMj3KAlaF2j39gf+
+         7Y9EhtUguMq10LymWOzdWlmkV6sxTwQXNmoQhLcKoXQ6sQdBNHPTPpIkI7sFljh/Kb
+         Bg6XShbWwkspIAU6nmxTxzRUII/Aa+vRle8hKzXAvP75K2WyjjBGG3V3HhcDMBDCx1
+         VxHLdcMxa6qHg==
+Message-ID: <21872a93cb09d6c0d9aa3593c0ec489e.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230309194402.119562-2-tmaimon77@gmail.com>
-References: <20230309194402.119562-1-tmaimon77@gmail.com> <20230309194402.119562-2-tmaimon77@gmail.com>
-Subject: Re: [PATCH v15 1/1] clk: npcm8xx: add clock controller
+In-Reply-To: <20230316104707.236034-4-keguang.zhang@gmail.com>
+References: <20230316104707.236034-1-keguang.zhang@gmail.com> <20230316104707.236034-4-keguang.zhang@gmail.com>
+Subject: Re: [PATCH v3 3/4] clk: loongson1: Re-implement the clock driver
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tomer Maimon <tmaimon77@gmail.com>
-To:     Tomer Maimon <tmaimon77@gmail.com>, avifishman70@gmail.com,
-        benjaminfair@google.com, joel@jms.id.au, mturquette@baylibre.com,
-        tali.perry1@gmail.com, venture@google.com, yuenn@google.com
-Date:   Mon, 20 Mar 2023 12:50:48 -0700
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Keguang Zhang <keguang.zhang@gmail.com>
+To:     Keguang Zhang <keguang.zhang@gmail.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+Date:   Mon, 20 Mar 2023 13:06:39 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tomer Maimon (2023-03-09 11:44:02)
-> diff --git a/drivers/clk/clk-npcm8xx.c b/drivers/clk/clk-npcm8xx.c
+Quoting Keguang Zhang (2023-03-16 03:47:06)
+> diff --git a/drivers/clk/clk-loongson1.c b/drivers/clk/clk-loongson1.c
 > new file mode 100644
-> index 000000000000..67058f121251
+> index 000000000000..4fda55c67d8d
 > --- /dev/null
-> +++ b/drivers/clk/clk-npcm8xx.c
-> @@ -0,0 +1,561 @@
-[...]
+> +++ b/drivers/clk/clk-loongson1.c
+> @@ -0,0 +1,301 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Clock driver for Loongson-1 SoC
+> + *
+> + * Copyright (C) 2012-2023 Keguang Zhang <keguang.zhang@gmail.com>
+> + */
 > +
-> +struct npcm8xx_pll_data {
-> +       const char *name;
-> +       struct clk_parent_data parent;
-> +       unsigned int reg;
-> +       unsigned long flags;
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_address.h>
+> +#include <linux/slab.h>
+
+Need some more includes here, for container_of() and GENMASK(), readl(),
+etc.
+
+> +
+> +#include <dt-bindings/clock/loongson,ls1x-clk.h>
+> +
+> +/* Loongson 1 Clock Register Definitions */
+> +#define CLK_PLL_FREQ           0x0
+> +#define CLK_PLL_DIV            0x4
+> +
+> +static DEFINE_SPINLOCK(ls1x_clk_div_lock);
+> +
+
+Needs include.
+
+> +struct ls1x_clk_pll_data {
+> +       u32 fixed;
+> +       u8 shift;
+> +       u8 int_shift;
+> +       u8 int_width;
+> +       u8 frac_shift;
+> +       u8 frac_width;
 > +};
 > +
-> +struct npcm8xx_clk_div_data {
-> +       u32 reg;
+> +struct ls1x_clk_div_data {
 > +       u8 shift;
 > +       u8 width;
-> +       const char *name;
-> +       const struct clk_parent_data parent_data;
-> +       u8 clk_divider_flags;
 > +       unsigned long flags;
-> +       int onecell_idx;
+> +       const struct clk_div_table *table;
+> +       u8 bypass_shift;
+> +       u8 bypass_inv;
+> +       spinlock_t *lock;       /* protect access to DIV registers */
 > +};
 > +
-> +struct npcm8xx_clk_mux_data {
-> +       u8 shift;
-> +       u32 mask;
-> +       const u32 *table;
-> +       const char *name;
-> +       const struct clk_parent_data *parent_data;
-> +       u8 num_parents;
-> +       unsigned long flags;
+> +struct ls1x_clk {
+> +       void __iomem *reg;
+> +       unsigned int offset;
+> +       struct clk_hw hw;
+> +       void *data;
 > +};
 > +
-[...]
+> +#define to_ls1x_clk(_hw) container_of(_hw, struct ls1x_clk, hw)
 > +
-> +static struct npcm8xx_pll_data npcm8xx_pll_clks[] =3D {
+> +static inline unsigned long ls1x_pll_rate_part(unsigned int val,
 
-Can this be const?
+return a u32?
 
-> +       { NPCM8XX_CLK_S_PLL0, { .name =3D NPCM8XX_CLK_S_REFCLK }, NPCM8XX=
-_PLLCON0, 0 },
-> +       { NPCM8XX_CLK_S_PLL1, { .name =3D NPCM8XX_CLK_S_REFCLK }, NPCM8XX=
-_PLLCON1, 0 },
-> +       { NPCM8XX_CLK_S_PLL2, { .name =3D NPCM8XX_CLK_S_REFCLK }, NPCM8XX=
-_PLLCON2, 0 },
-> +       { NPCM8XX_CLK_S_PLL_GFX, { .name =3D NPCM8XX_CLK_S_REFCLK }, NPCM=
-8XX_PLLCONG, 0 },
-> +};
-> +
-> +static const u32 cpuck_mux_table[] =3D { 0, 1, 2, 7 };
-> +static const struct clk_parent_data cpuck_mux_parents[] =3D {
-> +       { .fw_name =3D NPCM8XX_CLK_S_PLL0, .name =3D NPCM8XX_CLK_S_PLL0 },
-
-You should only have .fw_name or .index when introducing new drivers.
-The .name field is for existing drivers that want to migrate to
-clk_parent_data.
-
-> +       { .fw_name =3D NPCM8XX_CLK_S_PLL1, .name =3D NPCM8XX_CLK_S_PLL1 },
-> +       { .name =3D NPCM8XX_CLK_S_REFCLK },
-
-Note, this line says to use '.index =3D 0', and .name will be ignored.
-Maybe just use the index for everything? That makes it simpler and
-potentially faster because we don't have to do string comparisons
-anywhere.
-
-> +       { .fw_name =3D NPCM8XX_CLK_S_PLL2, .name =3D NPCM8XX_CLK_S_PLL2 }
-> +};
-> +
-> +static const u32 pixcksel_mux_table[] =3D { 0, 2 };
-> +static const struct clk_parent_data pixcksel_mux_parents[] =3D {
-> +       { .fw_name =3D NPCM8XX_CLK_S_PLL_GFX, .name =3D NPCM8XX_CLK_S_PLL=
-_GFX },
-> +       { .name =3D NPCM8XX_CLK_S_REFCLK }
-> +};
-> +
-[...]
-> +
-> +static unsigned long npcm8xx_clk_pll_recalc_rate(struct clk_hw *hw,
-> +                                                unsigned long parent_rat=
-e)
+> +                                              unsigned int shift,
+> +                                              unsigned int width)
 > +{
-> +       struct npcm8xx_clk_pll *pll =3D to_npcm8xx_clk_pll(hw);
-> +       unsigned long fbdv, indv, otdv1, otdv2;
+> +       return (val & GENMASK(shift + width, shift)) >> shift;
+> +}
+> +
+> +static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
+> +                                         unsigned long parent_rate)
+> +{
+> +       struct ls1x_clk *ls1x_clk =3D to_ls1x_clk(hw);
+> +       const struct ls1x_clk_pll_data *d =3D ls1x_clk->data;
+> +       u32 val, rate;
+> +
+> +       val =3D readl(ls1x_clk->reg);
+> +       rate =3D d->fixed;
+> +       rate +=3D ls1x_pll_rate_part(val, d->int_shift, d->int_width);
+> +       if (d->frac_width)
+> +               rate +=3D ls1x_pll_rate_part(val, d->frac_shift, d->frac_=
+width);
+> +       rate *=3D parent_rate;
+> +       rate >>=3D d->shift;
+> +
+> +       return rate;
+> +}
+> +
+> +static const struct clk_ops ls1x_pll_clk_ops =3D {
+> +       .recalc_rate =3D ls1x_pll_recalc_rate,
+> +};
+> +
+> +static unsigned long ls1x_divider_recalc_rate(struct clk_hw *hw,
+> +                                             unsigned long parent_rate)
+> +{
+> +       struct ls1x_clk *ls1x_clk =3D to_ls1x_clk(hw);
+> +       const struct ls1x_clk_div_data *d =3D ls1x_clk->data;
 > +       unsigned int val;
-> +       u64 ret;
 > +
-> +       if (parent_rate =3D=3D 0) {
-> +               pr_debug("%s: parent rate is zero\n", __func__);
-> +               return 0;
-> +       }
+> +       val =3D readl(ls1x_clk->reg) >> d->shift;
+> +       val &=3D clk_div_mask(d->width);
 > +
-> +       val =3D readl_relaxed(pll->pllcon + pll->reg);
-
-Is pll->reg ever set?
-
-> +
-> +       indv =3D FIELD_GET(PLLCON_INDV, val);
-> +       fbdv =3D FIELD_GET(PLLCON_FBDV, val);
-> +       otdv1 =3D FIELD_GET(PLLCON_OTDV1, val);
-> +       otdv2 =3D FIELD_GET(PLLCON_OTDV2, val);
-> +
-> +       ret =3D (u64)parent_rate * fbdv;
-> +       do_div(ret, indv * otdv1 * otdv2);
-> +
-> +       return ret;
+> +       return divider_recalc_rate(hw, parent_rate, val, d->table,
+> +                                  d->flags, d->width);
 > +}
 > +
-> +static const struct clk_ops npcm8xx_clk_pll_ops =3D {
-> +       .recalc_rate =3D npcm8xx_clk_pll_recalc_rate,
+> +static long ls1x_divider_round_rate(struct clk_hw *hw, unsigned long rat=
+e,
+> +                                   unsigned long *prate)
+> +{
+> +       struct ls1x_clk *ls1x_clk =3D to_ls1x_clk(hw);
+> +       const struct ls1x_clk_div_data *d =3D ls1x_clk->data;
+> +
+> +       return divider_round_rate(hw, rate, prate, d->table,
+> +                                 d->width, d->flags);
+> +}
+> +
+> +static int ls1x_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                                unsigned long parent_rate)
+> +{
+> +       struct ls1x_clk *ls1x_clk =3D to_ls1x_clk(hw);
+> +       const struct ls1x_clk_div_data *d =3D ls1x_clk->data;
+> +       int val, div_val;
+> +       unsigned long flags =3D 0;
+> +
+> +       div_val =3D divider_get_val(rate, parent_rate, d->table,
+> +                                 d->width, d->flags);
+> +       if (div_val < 0)
+> +               return div_val;
+> +
+> +       if (d->lock)
+> +               spin_lock_irqsave(d->lock, flags);
+> +       else
+> +               __acquire(d->lock);
+> +
+> +       /* Bypass the clock */
+> +       val =3D readl(ls1x_clk->reg);
+> +       if (d->bypass_inv)
+> +               val &=3D ~BIT(d->bypass_shift);
+> +       else
+> +               val |=3D BIT(d->bypass_shift);
+> +       writel(val, ls1x_clk->reg);
+> +
+> +       val =3D readl(ls1x_clk->reg);
+> +       val &=3D ~(clk_div_mask(d->width) << d->shift);
+> +       val |=3D (u32)div_val << d->shift;
+> +       writel(val, ls1x_clk->reg);
+> +
+> +       /* Restore the clock */
+> +       val =3D readl(ls1x_clk->reg);
+> +       if (d->bypass_inv)
+> +               val |=3D BIT(d->bypass_shift);
+> +       else
+> +               val &=3D ~BIT(d->bypass_shift);
+> +       writel(val, ls1x_clk->reg);
+> +
+> +       if (d->lock)
+> +               spin_unlock_irqrestore(d->lock, flags);
+> +       else
+> +               __release(d->lock);
+
+Is there a case where there isn't a lock? It would be easier to read if
+this always had a lock and it wasn't optional.
+
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct clk_ops ls1x_clk_divider_ops =3D {
+> +       .recalc_rate =3D ls1x_divider_recalc_rate,
+> +       .round_rate =3D ls1x_divider_round_rate,
+> +       .set_rate =3D ls1x_divider_set_rate,
 > +};
 > +
-> +static struct clk_hw *
-> +npcm8xx_clk_register_pll(struct device *dev, void __iomem *pllcon,
-> +                        const char *name, const struct clk_parent_data *=
-parent,
-> +                        unsigned long flags)
-> +{
-> +       struct npcm8xx_clk_pll *pll;
-> +       struct clk_init_data init =3D {};
-> +       int ret;
-> +
-> +       pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
-> +       if (!pll)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       init.name =3D name;
-> +       init.ops =3D &npcm8xx_clk_pll_ops;
-> +       init.parent_data =3D parent;
-> +       init.num_parents =3D 1;
-> +       init.flags =3D flags;
-> +
-> +       pll->pllcon =3D pllcon;
-> +       pll->hw.init =3D &init;
-> +
-> +       ret =3D devm_clk_hw_register(dev, &pll->hw);
-> +       if (ret) {
-> +               kfree(pll);
-> +               return ERR_PTR(ret);
-> +       }
-> +
-> +       return &pll->hw;
+> +#define LS1X_CLK_PLL(_name, _offset, _fixed, _shift,                   \
+> +                    f_shift, f_width, i_shift, i_width)                \
+> +struct ls1x_clk _name =3D {                                             =
+ \
+> +       .offset =3D (_offset),                                           =
+ \
+> +       .data =3D &(struct ls1x_clk_pll_data) {                          =
+ \
+> +               .fixed =3D (_fixed),                                     =
+ \
+> +               .shift =3D (_shift),                                     =
+ \
+> +               .int_shift =3D (i_shift),                                =
+ \
+> +               .int_width =3D (i_width),                                =
+ \
+> +               .frac_shift =3D (f_shift),                               =
+ \
+> +               .frac_width =3D (f_width),                               =
+ \
+> +       },                                                              \
+> +       .hw.init =3D &(struct clk_init_data) {                           =
+ \
+> +               .name =3D #_name,                                        =
+ \
+> +               .ops =3D &ls1x_pll_clk_ops,                              =
+ \
+> +               .parent_data =3D &(const struct clk_parent_data) {       =
+ \
+> +                       .fw_name =3D "xtal",                             =
+ \
+> +                       .name =3D "xtal",                                =
+ \
+> +                       .index =3D -1,                                   =
+ \
+> +               },                                                      \
+> +               .num_parents =3D 1,                                      =
+ \
+> +       },                                                              \
 > +}
 > +
-> +static DEFINE_SPINLOCK(npcm8xx_clk_lock);
+> +#define LS1X_CLK_DIV(_name, _pname, _offset, _shift, _width,           \
+> +                    _table, _bypass_shift, _bypass_inv, _flags)        \
+> +struct ls1x_clk _name =3D {                                             =
+ \
+> +       .offset =3D (_offset),                                           =
+ \
+> +       .data =3D &(struct ls1x_clk_div_data){                           =
+ \
+> +               .shift =3D (_shift),                                     =
+ \
+> +               .width =3D (_width),                                     =
+ \
+> +               .table =3D (_table),                                     =
+ \
+> +               .flags =3D (_flags),                                     =
+ \
+> +               .bypass_shift =3D (_bypass_shift),                       =
+ \
+> +               .bypass_inv =3D (_bypass_inv),                           =
+ \
+> +               .lock =3D &ls1x_clk_div_lock,                            =
+ \
+> +       },                                                              \
+> +       .hw.init =3D &(struct clk_init_data) {                           =
+ \
+
+Can be const.
+
+> +               .name =3D #_name,                                        =
+ \
+> +               .ops =3D &ls1x_clk_divider_ops,                          =
+ \
+> +               .parent_hws =3D (const struct clk_hw *[]) { _pname },    =
+ \
+> +               .num_parents =3D 1,                                      =
+ \
+> +               .flags =3D CLK_GET_RATE_NOCACHE,                         =
+ \
+> +       },                                                              \
+> +}
 > +
-> +static int npcm8xx_clk_probe(struct platform_device *pdev)
+> +static LS1X_CLK_PLL(ls1b_clk_pll, CLK_PLL_FREQ, 12, 1, 0, 5, 0, 0);
+> +static LS1X_CLK_DIV(ls1b_clk_cpu, &ls1b_clk_pll.hw, CLK_PLL_DIV,
+> +                   20, 4, NULL, 8, 0,
+> +                   CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ROUND_CLOSEST);
+> +static LS1X_CLK_DIV(ls1b_clk_dc, &ls1b_clk_pll.hw, CLK_PLL_DIV,
+> +                   26, 4, NULL, 12, 0, CLK_DIVIDER_ONE_BASED);
+> +static LS1X_CLK_DIV(ls1b_clk_ahb, &ls1b_clk_pll.hw, CLK_PLL_DIV,
+> +                   14, 4, NULL, 10, 0, CLK_DIVIDER_ONE_BASED);
+> +static CLK_FIXED_FACTOR(ls1b_clk_apb, "ls1b_clk_apb", "ls1b_clk_ahb", 2,=
+ 1,
+> +                       CLK_SET_RATE_PARENT);
+> +
+> +static struct clk_hw_onecell_data ls1b_clk_hw_data =3D {
+> +       .hws =3D {
+> +               [LS1X_CLKID_PLL] =3D &ls1b_clk_pll.hw,
+> +               [LS1X_CLKID_CPU] =3D &ls1b_clk_cpu.hw,
+> +               [LS1X_CLKID_DC] =3D &ls1b_clk_dc.hw,
+> +               [LS1X_CLKID_AHB] =3D &ls1b_clk_ahb.hw,
+> +               [LS1X_CLKID_APB] =3D &ls1b_clk_apb.hw,
+> +               [CLK_NR_CLKS] =3D NULL,
+
+Do you need a CLK_NR_CLKS sentinel entry?
+
+> +       },
+> +       .num =3D CLK_NR_CLKS,
+> +};
+> +
+> +static const struct clk_div_table ls1c_ahb_div_table[] =3D {
+> +       [0] =3D { .val =3D 0, .div =3D 2 },
+> +       [1] =3D { .val =3D 1, .div =3D 4 },
+> +       [2] =3D { .val =3D 2, .div =3D 3 },
+> +       [3] =3D { .val =3D 3, .div =3D 3 },
+> +       [4] =3D { /* sentinel */ }
+> +};
+> +
+> +static LS1X_CLK_PLL(ls1c_clk_pll, CLK_PLL_FREQ, 0, 2, 8, 8, 16, 8);
+> +static LS1X_CLK_DIV(ls1c_clk_cpu, &ls1c_clk_pll.hw, CLK_PLL_DIV,
+> +                   8, 7, NULL, 0, 1,
+> +                   CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ROUND_CLOSEST);
+> +static LS1X_CLK_DIV(ls1c_clk_dc, &ls1c_clk_pll.hw, CLK_PLL_DIV,
+> +                   24, 7, NULL, 4, 1, CLK_DIVIDER_ONE_BASED);
+> +static LS1X_CLK_DIV(ls1c_clk_ahb, &ls1c_clk_cpu.hw, CLK_PLL_FREQ,
+> +                   0, 2, ls1c_ahb_div_table, 0, 0, CLK_DIVIDER_ALLOW_ZER=
+O);
+> +static CLK_FIXED_FACTOR(ls1c_clk_apb, "ls1c_clk_apb", "ls1c_clk_ahb", 1,=
+ 1,
+> +                       CLK_SET_RATE_PARENT);
+> +
+> +static struct clk_hw_onecell_data ls1c_clk_hw_data =3D {
+> +       .hws =3D {
+> +               [LS1X_CLKID_PLL] =3D &ls1c_clk_pll.hw,
+> +               [LS1X_CLKID_CPU] =3D &ls1c_clk_cpu.hw,
+> +               [LS1X_CLKID_DC] =3D &ls1c_clk_dc.hw,
+> +               [LS1X_CLKID_AHB] =3D &ls1c_clk_ahb.hw,
+> +               [LS1X_CLKID_APB] =3D &ls1c_clk_apb.hw,
+> +               [CLK_NR_CLKS] =3D NULL,
+> +       },
+> +       .num =3D CLK_NR_CLKS,
+> +};
+> +
+> +static void __init ls1x_clk_init(struct device_node *np,
+> +                                struct clk_hw_onecell_data *hw_data)
 > +{
-> +       struct clk_hw_onecell_data *npcm8xx_clk_data;
-> +       struct device *dev =3D &pdev->dev;
-> +       void __iomem *clk_base;
-> +       struct resource *res;
-> +       struct clk_hw *hw;
-> +       unsigned int i;
-> +       int err;
+> +       struct ls1x_clk *ls1x_clk;
+> +       void __iomem *reg;
+> +       int i, ret;
 > +
-> +       npcm8xx_clk_data =3D devm_kzalloc(dev, struct_size(npcm8xx_clk_da=
-ta, hws,
-> +                                                        NPCM8XX_NUM_CLOC=
-KS),
-> +                                       GFP_KERNEL);
-> +       if (!npcm8xx_clk_data)
-> +               return -ENOMEM;
-> +
-> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       clk_base =3D devm_ioremap(dev, res->start, resource_size(res));
+> +       reg =3D of_iomap(np, 0);
+> +       if (!reg) {
+> +               pr_err("Unable to map base for %pOF\n", np);
 
-Can you use devm_platform_ioremap_resource() instead?
+Needs include.
 
-> +       if (!clk_base) {
-
-Then this is checked for error pointer.
-
-> +               dev_err(&pdev->dev, "Failed to remap I/O memory\n");
-
-And no error message.
-
-> +               return -ENOMEM;
+> +               return;
 > +       }
 > +
-> +       npcm8xx_clk_data->num =3D NPCM8XX_NUM_CLOCKS;
+> +       for (i =3D 0; i < CLK_NR_CLKS; i++) {
+> +               /* array might be sparse */
+> +               if (!hw_data->hws[i])
+> +                       continue;
 > +
-[....]
-> +       if (IS_ERR(hw)) {
-> +               dev_err(dev, "npcm8xx_clk: Can't register axi div2\n");
-> +               return PTR_ERR(hw);
+> +               if (i !=3D LS1X_CLKID_APB) {
+> +                       ls1x_clk =3D to_ls1x_clk(hw_data->hws[i]);
+> +                       ls1x_clk->reg =3D reg + ls1x_clk->offset;
+> +               }
+> +
+> +               ret =3D of_clk_hw_register(np, hw_data->hws[i]);
+> +               if (ret)
+> +                       return;
+
+unmap memory on failure? and unregister clks?
+
 > +       }
-> +       npcm8xx_clk_data->hws[NPCM8XX_CLK_AXI] =3D hw;
 > +
-> +       hw =3D devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_ATB,
-> +                                              NPCM8XX_CLK_S_AXI, 0, 1, 2=
+> +       ret =3D of_clk_add_hw_provider(np, of_clk_hw_onecell_get, hw_data=
 );
-> +       if (IS_ERR(hw)) {
-> +               dev_err(dev, "npcm8xx_clk: Can't register atb div2\n");
-> +               return PTR_ERR(hw);
-> +       }
-> +       npcm8xx_clk_data->hws[NPCM8XX_CLK_ATB] =3D hw;
-> +
-> +       /* Register clock dividers specified in npcm8xx_divs */
-> +       for (i =3D 0; i < ARRAY_SIZE(npcm8xx_divs); i++) {
-> +               const struct npcm8xx_clk_div_data *div_data =3D &npcm8xx_=
-divs[i];
-> +
-> +               hw =3D clk_hw_register_divider_parent_data(dev, div_data-=
->name,
+> +       if (ret)
+> +               pr_err("Failed to register %pOF\n", np);
 
-Do we have a devm_ variant of this function? If not, can you add it?
+unmap memory on failure? And unregister clks?
 
-> +                                                        &div_data->paren=
-t_data,
-> +                                                        div_data->flags,
+> +}
+> +
+> +static void __init ls1b_clk_init(struct device_node *np)
+> +{
+> +       return ls1x_clk_init(np, &ls1b_clk_hw_data);
+> +}
+> +
+> +static void __init ls1c_clk_init(struct device_node *np)
+> +{
+> +       return ls1x_clk_init(np, &ls1c_clk_hw_data);
+> +}
+> +
+> +CLK_OF_DECLARE(ls1b_clk, "loongson,ls1b-clk", ls1b_clk_init);
+> +CLK_OF_DECLARE(ls1c_clk, "loongson,ls1c-clk", ls1c_clk_init);
+
+Any reason these can't be platform device drivers?
+
+> +
+> +MODULE_AUTHOR("Keguang Zhang <keguang.zhang@gmail.com>");
+> +MODULE_DESCRIPTION("Loongson1 clock driver");
+
+It's not a module. So these are useless macros. Drop them?
