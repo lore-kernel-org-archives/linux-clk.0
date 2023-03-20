@@ -2,126 +2,219 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7735C7618A
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 10:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5377C7619A
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 10:32:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229648AbjCTKYj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 06:24:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35984 "EHLO
+        id S229582AbjCTKcE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 06:32:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229588AbjCTKYi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 06:24:38 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 677F1A5CF
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 03:24:36 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id h17so9781159wrt.8
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 03:24:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1679307875;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=A+r+Ws9THn6CGGgF4iFUCDGWb6IKHLEjNyMHSQSGlO8=;
-        b=nG9TTuPuz+uZOoE6OQ4kAZeXgquf97A2dUACNYxaDnO02llmtPU4pk5B/ZQP1wlcu0
-         /BIF/AKRMYPy6EoIOoRrNjp+VwUHQ6Af+hF0vAWgep+GqiEG/r+wbl4GwhmGu81kE7kb
-         xzgqjPVgqoLacuzWjjm1LmwGeeuw1LRXA5q7o/EzcHQ0qKcTy1hH5HpnPJxA7Q8zIvBC
-         l/29cBygTSzm2yk2PpLr2bfScGQR96IYS61iMGf/jQGFKzWIGHQyjAb/1OAkgxif1Nz3
-         SAkJLL9KJ3/J3/gdUq2sxdpfBbHU2PCRF4f7abSjKz7CdaYwuGqjiC5G4TJVSUX+/RFW
-         Plkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679307875;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A+r+Ws9THn6CGGgF4iFUCDGWb6IKHLEjNyMHSQSGlO8=;
-        b=GWmc2K7N2SrTKg0yxnBLDU/a8kVyK68jvT2wiRQlQmYYWgvNumq+r6zqPx9m4H/Rdk
-         7HXzlT25EQDtjYNZCr6dgpIQ7YBXJbU+GiRxguh0Hlb0s40jMWHCjTtEI19FbaIp9s8o
-         DbpJl2vNZ9SnU/0CHWruJrwcoi/kFA6cVNVdIkea10t93M/qL1cOXDAYOBqzvt3n0v66
-         0HWkDbL4yFZdtYWdoOJZPRi1CFAJP11ae5gucFFPrOC3BjkRaeMuN79IUpXwAMW99Pxw
-         9XcedSAAy1yCh1ZGkYNeibotXWM2Yv+pgetbFuf2LAAwQqW1PBNs0MG/mEl+3cuBd7cr
-         rhIQ==
-X-Gm-Message-State: AO0yUKWSzTKFVL7Z9ZGeY2rtzYa+9ILnOwXvqlfSxx/RIsNnartH9rVr
-        bBMKAbzl+Dz681kP/OdBLaSviQ==
-X-Google-Smtp-Source: AK7set9f6rQrysSDP3kM2wqFNJh2dj49yepLBpmS2CK1LmemoN2ngd4i7NVxTEb1XHgVZqZ60K0rag==
-X-Received: by 2002:adf:f8c2:0:b0:2cf:e6de:c6ab with SMTP id f2-20020adff8c2000000b002cfe6dec6abmr13631837wrq.11.1679307874756;
-        Mon, 20 Mar 2023 03:24:34 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id f18-20020adff452000000b002c5d3f0f737sm8564095wrp.30.2023.03.20.03.24.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Mar 2023 03:24:34 -0700 (PDT)
-Date:   Mon, 20 Mar 2023 11:24:33 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Vadim Fedorenko <vadfed@meta.com>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>, poros@redhat.com,
-        mschmidt@redhat.com, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Milena Olech <milena.olech@intel.com>,
-        Michal Michalik <michal.michalik@intel.com>
-Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
-Message-ID: <ZBg0YTdD5E2xjBP/@nanopsycho>
-References: <20230312022807.278528-1-vadfed@meta.com>
- <20230312022807.278528-3-vadfed@meta.com>
+        with ESMTP id S230127AbjCTKbr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 06:31:47 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2CE623DBF;
+        Mon, 20 Mar 2023 03:31:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1679308297; x=1710844297;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=u75KIvpojk8bOs9GDkjrsePIrDttzD1llg3QobSi+Xo=;
+  b=RgqFIs8c49Ngm0KBuDSrnD/HYCQSwjMXpsC6o4Oz4ZBeWG2kvQvV/teZ
+   6o2eiUmKnOJ/lQTRm+9NEXdqZ43zrVnKOTCkLW/2L3FtjSolJgv3FF20/
+   D98Tsj3TWVON3NHPhSPSrCF7xOhkEECmq5F227bCoz2sZghCD1HLnrUeL
+   kqAFvvbOpGjq+sTk9wNRMypXC+/bNv+lDvRxwKJiBIEJDlpMyn3+woiVl
+   GsEprTcQFYZln+64sV4ftMa4/dBh4JlRzI6328CwGqM3z9mjCvrpnAVyk
+   /6YWjHybehmr1G8RsLnwz1Ot32W3roloN3f0td9KtT1QknNNvTDItXbpZ
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10654"; a="326997580"
+X-IronPort-AV: E=Sophos;i="5.98,274,1673942400"; 
+   d="scan'208";a="326997580"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2023 03:31:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10654"; a="713523451"
+X-IronPort-AV: E=Sophos;i="5.98,274,1673942400"; 
+   d="scan'208";a="713523451"
+Received: from mbouhaou-mobl1.ger.corp.intel.com ([10.252.61.151])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2023 03:31:31 -0700
+Date:   Mon, 20 Mar 2023 12:31:29 +0200 (EET)
+From:   =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To:     Jacky Huang <ychuang570808@gmail.com>
+cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        p.zabel@pengutronix.de,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-serial <linux-serial@vger.kernel.org>, schung@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+Subject: Re: [PATCH 12/15] clk: nuvoton: Add clock driver for ma35d1 clock
+ controller
+In-Reply-To: <00c3748b-61fa-f14b-f92c-b60fd9d6b4ee@gmail.com>
+Message-ID: <9115473c-2e88-da76-9631-ca19b9129be4@linux.intel.com>
+References: <20230315072902.9298-1-ychuang570808@gmail.com> <20230315072902.9298-13-ychuang570808@gmail.com> <8b5854d3-2793-bc33-137e-5a2673d72329@linux.intel.com> <00c3748b-61fa-f14b-f92c-b60fd9d6b4ee@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230312022807.278528-3-vadfed@meta.com>
+Content-Type: multipart/mixed; BOUNDARY="8323329-1678519641-1679307619=:2177"
+Content-ID: <3549237f-f963-10e-aa4c-3c3227b3c958@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Sun, Mar 12, 2023 at 03:28:03AM CET, vadfed@meta.com wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-[...]
+--8323329-1678519641-1679307619=:2177
+Content-Type: text/plain; CHARSET=UTF-8
+Content-Transfer-Encoding: 8BIT
+Content-ID: <7de21190-7ef6-abd3-494-1cf39f4974d4@linux.intel.com>
+
+On Sun, 19 Mar 2023, Jacky Huang wrote:
+
+> 
+> On 2023/3/16 下午 11:56, Ilpo Järvinen wrote:
+> > On Wed, 15 Mar 2023, Jacky Huang wrote:
+> > 
+> > > From: Jacky Huang <ychuang3@nuvoton.com>
+> > > 
+> > > The clock controller generates clocks for the whole chip, including
+> > > system clocks and all peripheral clocks. This driver support ma35d1
+> > > clock gating, divider, and individual PLL configuration.
+> > > 
+> > > There are 6 PLLs in ma35d1 SoC:
+> > >    - CA-PLL for the two Cortex-A35 CPU clock
+> > >    - SYS-PLL for system bus, which comes from the companion MCU
+> > >      and cannot be programmed by clock controller.
+> > >    - DDR-PLL for DDR
+> > >    - EPLL for GMAC and GFX, Display, and VDEC IPs.
+> > >    - VPLL for video output pixel clock
+> > >    - APLL for SDHC, I2S audio, and other IPs.
+> > > CA-PLL has only one operation mode.
+> > > DDR-PLL, EPLL, VPLL, and APLL are advanced PLLs which have 3
+> > > operation modes: integer mode, fraction mode, and spread specturm mode.
+> > > 
+> > > Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+> > > ---
+
+> > > +};
+> > > +
+> > > +#define to_ma35d1_adc_clk_divider(_hw)	\
+> > > +	container_of(_hw, struct ma35d1_adc_clk_divider, hw)
+> > static inline
+> 
+> 
+> I will modify these "static" functions as "static inline".
+
+No, that's not what I meant. Make the container_of define static inline
+function instead, no other functions. (Or if you have more than one of 
+such, all of them of course).
+
+> > > +}
+> > > diff --git a/drivers/clk/nuvoton/clk-ma35d1-pll.c
+> > > b/drivers/clk/nuvoton/clk-ma35d1-pll.c
+> > > new file mode 100644
+> > > index 000000000000..79e724b148fa
+> > > --- /dev/null
+> > > +++ b/drivers/clk/nuvoton/clk-ma35d1-pll.c
+> > > @@ -0,0 +1,534 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +/*
+> > > + * Copyright (C) 2023 Nuvoton Technology Corp.
+> > > + * Author: Chi-Fang Li <cfli0@nuvoton.com>
+> > > + */
+> > > +
+> > > +#include <linux/clk.h>
+> > > +#include <linux/clk-provider.h>
+> > > +#include <linux/io.h>
+> > > +#include <linux/slab.h>
+> > > +#include <linux/bitfield.h>
+> > > +
+> > > +#include "clk-ma35d1.h"
+> > > +
+> > > +#define to_ma35d1_clk_pll(clk) \
+> > > +	(container_of(clk, struct ma35d1_clk_pll, clk))
+> > static inline
+> 
+> 
+> I am sorry cannot get "static inline" refer to which one.
+> 
+> Would you give more advice here?
+> 
+> Thank you.
+
+static inline struct ...type_here... *to_ma35d1_clk_pll(struct ...type_here... *clk)
+{
+	return container_of(clk, struct ma35d1_clk_pll, clk);
+}
 
 
->+static int
->+dpll_msg_add_pins_on_pin(struct sk_buff *msg, struct dpll_pin *pin,
->+			 struct netlink_ext_ack *extack)
->+{
->+	struct dpll_pin_ref *ref = NULL;
+> > > +	} else {
+> > > +		pr_err("Failed to set rate %ld\n", u64PllFreq);
+> > > +		return 0;
+> > > +	}
+> > > +
+> > > +	u64P = (u64FCLKO >= VSIPLL_FCLK_MIN_FREQ) ? 1 :
+> > > +	       ((VSIPLL_FCLK_MIN_FREQ / u64FCLKO) +
+> > > +		((VSIPLL_FCLK_MIN_FREQ % u64FCLKO) ? 1 : 0));
+> > Ditto.
+> > 
+> > Is here some ...ROUND_UP() trick hidden too?
+> 
+> 
+> This follows the description of PLL spec.
 
-Pointless init.
+Right but I was looking into what the math does. To me this looks like 
+rounding up:
+ VSIPLL_FCLK_MIN_FREQ / u64FCLKO + (VSIPLL_FCLK_MIN_FREQ % u64FCLKO ? 1 : 0)
 
-[...]
+When modulo is > 0, add one, which is round up, no?
+
+There are helpers which you should use for rounding up, search for 
+*_ROUND_UP. I think math64.h had one 64-bit one.
+
+> > > +	u64X = u64tmp % 1000;
+> > > +	u32FRAC = ((u64X << 24) + 500) / 1000;
+
+I missed this earlier, is this rounding? ...Use a helper if it is. 
+Otherwise define what 500 is. (No need to answer despite question mark, 
+just do the change).
+
+> > > +
+> > > +	u64SSRATE = ((PllSrcClk >> 1) / (u32Fmod * 2)) - 1;
+> > > +	u64SLOPE = ((u64tmp * u32SR / u64SSRATE) << 24) / 100 / 1000;
+> > > +
+> > > +	u64PllClk = (PllSrcClk * u64tmp) / u64P / u64M / 1000;
+> > Is some *SEC_PER_*SEC define relevant for 1000 ?
+> > 
+> > Or some other units, e.g., HZ related?
+> 
+> 
+> 1000 is for kHz to MHz, and 100 is for percentage.
+
+Okay, then use KHZ_PER_MHZ from linux/units.h.
+
+We don't have anything for percents under include/ I think so that can be 
+left as literal.
+
+> > > +	switch (pll->mode) {
+> > > +	case VSIPLL_INTEGER_MODE:
+> > > +		u64PllClk = CLK_CalPLLFreq_Mode0(PllSrcClk, u64PllFreq,
+> > > +						 u32Reg);
+> > One line.
+> 
+> 
+> It will exceed 80 characters in one line.
+
+Yeah, the semicolon won't fit to 80 chars :-) which means there won't be 
+significant information loss even on 80 chars terminal. This kind of cases 
+is why checkpatch won't complain until 100 chars. Use common sense (don't 
+hide most of the logic to 80-100 but don't be afraid of breaking the 80 
+chars where the information loss is not significant issue).
+
+Besides, once you removed the types from variable names, it will be 
+shorter anyway.
 
 
->+static int
->+dpll_event_device_change(struct sk_buff *msg, struct dpll_device *dpll,
->+			 struct dpll_pin *pin, struct dpll_pin *parent,
->+			 enum dplla attr)
->+{
->+	int ret = dpll_msg_add_dev_handle(msg, dpll);
->+	struct dpll_pin_ref *ref = NULL;
-
-Pointless init.
-
-[...]
-
-
->+struct dpll_pin_ops {
->+	int (*frequency_set)(const struct dpll_pin *pin,
->+			     const struct dpll_device *dpll,
->+			     const u32 frequency,
->+			     struct netlink_ext_ack *extack);
->+	int (*frequency_get)(const struct dpll_pin *pin,
->+			     const struct dpll_device *dpll,
->+			     u32 *frequency, struct netlink_ext_ack *extack);
->+	int (*direction_set)(const struct dpll_pin *pin,
->+			     const struct dpll_device *dpll,
->+			     const enum dpll_pin_direction direction,
->+			     struct netlink_ext_ack *extack);
->+	int (*direction_get)(const struct dpll_pin *pin,
->+			     const struct dpll_device *dpll,
->+			     enum dpll_pin_direction *direction,
->+			     struct netlink_ext_ack *extack);
-
-
-For frequency and direction, why exactly do you need to pass dpll
-pointer? For set I can understand you need it to set the same
-frequency/direction for all dplls the pin is connected to, but why for
-get()?
-
-[...]
+-- 
+ i.
+--8323329-1678519641-1679307619=:2177--
