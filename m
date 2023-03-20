@@ -2,58 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8EBBC7619A
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 22:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0B9C761AF
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 22:17:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229756AbjCTWRh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 18:17:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42064 "EHLO
+        id S229902AbjCTWRr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 18:17:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229629AbjCTWRg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 18:17:36 -0400
+        with ESMTP id S229755AbjCTWRp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 18:17:45 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3F3B31BF8
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 15:16:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E983199E2
+        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 15:16:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1679350594;
+        s=mimecast20190719; t=1679350604;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=/pYp/+TvIZEdbO864hX1ZaEe6NV95MuM6NldpNo+j88=;
-        b=F7fLCCkOEqFA3I8Te7issJ2FFrCUNwgGZXX14nkLCCAhdWlJEUPMOt1D36d/PSYU2LbYIi
-        a5PPr6/9T+Qas26pYtjBfW+QZuG3jx9rYMXWhrColLmYlhxWP9rfdLZOjp5Mb5pZAYLEFu
-        y7acaOts5tDuzbW0Og+0F2+I/cMKAHw=
-Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com
- [209.85.210.69]) by relay.mimecast.com with ESMTP with STARTTLS
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DO1JoA7rf1NN/v1DlyTM5EYQQrfJrSOpwTi6FaNOaeQ=;
+        b=dg/6HvQ58tb620E0BM7TpFtAQs0sFbab2CHn4fKieughqwLi+mizXVUXQlrD1laf+S9ouJ
+        OxtfaTlpozGECvuVKeJRtNx2BBDbWZggc/xhJxNlDXEMHKsNV55HxnOUASxoEcIgasjoF7
+        iVAnVYtpql0qkD5FEagj/8MXwEsD1f4=
+Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com
+ [209.85.210.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-171-BDAdosHIPNub7fzOsVWGFg-1; Mon, 20 Mar 2023 18:16:32 -0400
-X-MC-Unique: BDAdosHIPNub7fzOsVWGFg-1
-Received: by mail-ot1-f69.google.com with SMTP id e8-20020a9d63c8000000b0069f0e0bd36cso3111011otl.20
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 15:16:32 -0700 (PDT)
+ us-mta-589-oyqNsQj9PdKa2cJhICEN8w-1; Mon, 20 Mar 2023 18:16:43 -0400
+X-MC-Unique: oyqNsQj9PdKa2cJhICEN8w-1
+Received: by mail-ot1-f72.google.com with SMTP id c2-20020a056830000200b0069f1299335fso2782950otp.3
+        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 15:16:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679350592;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/pYp/+TvIZEdbO864hX1ZaEe6NV95MuM6NldpNo+j88=;
-        b=shVZBkTRT4aULw38IU0A75NsfPlEaxaTf2/fMiIFsU2kQPZrzK783F41vw7EGWcvaI
-         U5wCjPfULfeTs61GR0VeGeWoQKfQ0VjTOXUur6nCBSirjlajHYNh70B3FfawSl6+PX6j
-         gp2zxCrT4UJ7oomYPDIErxP+gk3Uryb6YKsdUbX3y6mwpkg0tTyPKYVbRjCpK7n3SM9P
-         3gePz53oZhAvn6uWV612x6dbgcwbVI4XZgOAhWt3W9GjZJvHODtIbybFerjvrQK/h2lY
-         xVZpMef3D/2HRBrcSG8GWLf5A5VFrXBJm8W9PzwEgzASWCUDY1yOV+C4GAnNway9SM+3
-         aqeQ==
-X-Gm-Message-State: AO0yUKWlZROX4tWzTt88MTbt7JzPRfrAfyIREotn7sa+GOLYytetDcH7
-        Auylhgb0Tp3Ky/8ioGOEDjObWofksy3K16UIYIjzBIQW4x+SHqMDprm0YUsKguufTCUKEmCCQXi
-        F4y1CjETuqdUMCaw1M/bG
-X-Received: by 2002:a05:6808:10c:b0:387:117f:f7fb with SMTP id b12-20020a056808010c00b00387117ff7fbmr25037oie.20.1679350592188;
-        Mon, 20 Mar 2023 15:16:32 -0700 (PDT)
-X-Google-Smtp-Source: AK7set+FD0dDk0+dvXSvybPdytDkBKj3L/oyZtE72xtPkWildC/DlDoAUTQxy/hAD04b7A6y0cPDLA==
-X-Received: by 2002:a05:6808:10c:b0:387:117f:f7fb with SMTP id b12-20020a056808010c00b00387117ff7fbmr24984oie.20.1679350590464;
-        Mon, 20 Mar 2023 15:16:30 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1679350602;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DO1JoA7rf1NN/v1DlyTM5EYQQrfJrSOpwTi6FaNOaeQ=;
+        b=i1ueGiE4qLG+4ofUZpF4dZtZ1K47JWXQYGL7F91WseDM2Me6t9UqinH590hUXjflCQ
+         hKU4Po+/se7pYWGi9fSf6L3sV3LZzHN1rs7Boy9lhRVBXzuvKZvpM2S8y0y5axQGG+6X
+         XhxeHXrYVEYdsYWj2JZztmkZmWwBPsjD6+TV0gFPrvtooHb/yEAooksHdvc5vhm9ezkI
+         dPfXDfaObIW3uRXHJL/BDzzJmjEAqptQQG53IU/o4lN/QkLeaqVj0LW+/v+zGRyMTSRk
+         LHaAPb2lUP5YAM//CIoiDYFdHP4GHtDpGutB/XZfsAqkwPfBf+8ZO22Uz+0Ge78RB/Ny
+         UGAg==
+X-Gm-Message-State: AO0yUKXpENiLMmX4nirQWM4nM/jUFXC/Xe76XwfPr8FnO34sFijWH1bK
+        cO2WKiQK4x3TnvLD9Bzv8t+R25T0FuohvpzRjElVaA95QwnDqe8kXufUIkyARYNaKTTeZ8WXK8J
+        QaBAXPYXx7AjVw0pnP3zc
+X-Received: by 2002:a05:6830:18da:b0:69f:3fd:d03e with SMTP id v26-20020a05683018da00b0069f03fdd03emr147159ote.12.1679350602131;
+        Mon, 20 Mar 2023 15:16:42 -0700 (PDT)
+X-Google-Smtp-Source: AK7set+WqeyPEu+9Z1p1lpdrw7AyksGa+7Eo7VAfnk6kC1FQXbmvfF3G9lqNRW2EAEBEJNNTLjJb6w==
+X-Received: by 2002:a05:6830:18da:b0:69f:3fd:d03e with SMTP id v26-20020a05683018da00b0069f03fdd03emr147141ote.12.1679350601927;
+        Mon, 20 Mar 2023 15:16:41 -0700 (PDT)
 Received: from halaney-x13s.redhat.com (104-53-165-62.lightspeed.stlsmo.sbcglobal.net. [104.53.165.62])
-        by smtp.gmail.com with ESMTPSA id q204-20020a4a33d5000000b0053853156b5csm4092465ooq.8.2023.03.20.15.16.28
+        by smtp.gmail.com with ESMTPSA id q204-20020a4a33d5000000b0053853156b5csm4092465ooq.8.2023.03.20.15.16.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Mar 2023 15:16:29 -0700 (PDT)
+        Mon, 20 Mar 2023 15:16:41 -0700 (PDT)
 From:   Andrew Halaney <ahalaney@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
@@ -73,11 +74,14 @@ Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org, ncai@quicinc.com,
         jsuraj@qti.qualcomm.com, hisunil@quicinc.com, echanude@redhat.com,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Andrew Halaney <ahalaney@redhat.com>
-Subject: [PATCH net-next v2 00/12] Add EMAC3 support for sa8540p-ride
-Date:   Mon, 20 Mar 2023 17:16:05 -0500
-Message-Id: <20230320221617.236323-1-ahalaney@redhat.com>
+Subject: [PATCH net-next v2 02/12] dt-bindings: net: snps,dwmac: Add Qualcomm Ethernet ETHQOS compatibles
+Date:   Mon, 20 Mar 2023 17:16:07 -0500
+Message-Id: <20230320221617.236323-3-ahalaney@redhat.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230320221617.236323-1-ahalaney@redhat.com>
+References: <20230320221617.236323-1-ahalaney@redhat.com>
 MIME-Version: 1.0
 Content-type: text/plain
 Content-Transfer-Encoding: 8bit
@@ -85,69 +89,44 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is a forward port / upstream refactor of code delivered
-downstream by Qualcomm over at [0] to enable the DWMAC5 based
-implementation called EMAC3 on the sa8540p-ride dev board.
+From: Bhupesh Sharma <bhupesh.sharma@linaro.org>
 
-From what I can tell with the board schematic in hand,
-as well as the code delivered, the main changes needed are:
+Add Qualcomm Ethernet ETHQOS compatible checks
+in snps,dwmac YAML binding document.
 
-    1. A new address space layout for /dwmac5/EMAC3 MTL/DMA regs
-    2. A new programming sequence required for the EMAC3 base platforms
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
+---
 
-This series makes those adaptations as well as other housekeeping items
-such as converting dt-bindings to yaml, adding clock descriptions, etc.
+Changes since v1:
+	* None
 
-[0] https://git.codelinaro.org/clo/la/kernel/ark-5.14/-/commit/510235ad02d7f0df478146fb00d7a4ba74821b17
+ Documentation/devicetree/bindings/net/snps,dwmac.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-v1: https://lore.kernel.org/netdev/20230313165620.128463-1-ahalaney@redhat.com/
-
-Thanks,
-Andrew
-
-Andrew Halaney (8):
-  dt-bindings: net: qcom,ethqos: Add Qualcomm sc8280xp compatibles
-  clk: qcom: gcc-sc8280xp: Add EMAC GDSCs
-  arm64: dts: qcom: sc8280xp: Add ethernet nodes
-  arm64: dts: qcom: sa8540p-ride: Add ethernet nodes
-  net: stmmac: Remove unnecessary if statement brackets
-  net: stmmac: dwmac-qcom-ethqos: Respect phy-mode and TX delay
-  net: stmmac: dwmac-qcom-ethqos: Use loopback_en for all speeds
-  net: stmmac: dwmac-qcom-ethqos: Add EMAC3 support
-
-Bhupesh Sharma (3):
-  dt-bindings: net: snps,dwmac: Update interrupt-names
-  dt-bindings: net: snps,dwmac: Add Qualcomm Ethernet ETHQOS compatibles
-  dt-bindings: net: qcom,ethqos: Convert bindings to yaml
-
-Brian Masney (1):
-  net: stmmac: Add EMAC3 variant of dwmac4
-
- .../devicetree/bindings/net/qcom,ethqos.txt   |  66 ----
- .../devicetree/bindings/net/qcom,ethqos.yaml  | 111 ++++++
- .../devicetree/bindings/net/snps,dwmac.yaml   |   9 +-
- MAINTAINERS                                   |   2 +-
- arch/arm64/boot/dts/qcom/sa8540p-ride.dts     | 181 ++++++++++
- arch/arm64/boot/dts/qcom/sc8280xp.dtsi        |  53 +++
- drivers/clk/qcom/gcc-sc8280xp.c               |  18 +
- .../stmicro/stmmac/dwmac-qcom-ethqos.c        | 161 ++++++---
- drivers/net/ethernet/stmicro/stmmac/dwmac4.h  |  32 +-
- .../net/ethernet/stmicro/stmmac/dwmac4_core.c | 235 ++++++++++--
- .../net/ethernet/stmicro/stmmac/dwmac4_dma.c  | 334 ++++++++++++++----
- .../net/ethernet/stmicro/stmmac/dwmac4_dma.h  |  38 ++
- .../net/ethernet/stmicro/stmmac/dwmac4_lib.c  | 144 ++++++--
- drivers/net/ethernet/stmicro/stmmac/hwif.c    |  29 +-
- drivers/net/ethernet/stmicro/stmmac/hwif.h    |   2 +
- .../ethernet/stmicro/stmmac/stmmac_ethtool.c  |   6 +-
- .../net/ethernet/stmicro/stmmac/stmmac_main.c |  17 +-
- .../net/ethernet/stmicro/stmmac/stmmac_mdio.c |   9 +-
- .../net/ethernet/stmicro/stmmac/stmmac_ptp.c  |   4 +-
- include/dt-bindings/clock/qcom,gcc-sc8280xp.h |   2 +
- include/linux/stmmac.h                        |   1 +
- 21 files changed, 1196 insertions(+), 258 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/net/qcom,ethqos.txt
- create mode 100644 Documentation/devicetree/bindings/net/qcom,ethqos.yaml
-
+diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+index df4c5d184446..154955718246 100644
+--- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+@@ -65,6 +65,8 @@ properties:
+         - ingenic,x2000-mac
+         - loongson,ls2k-dwmac
+         - loongson,ls7a-dwmac
++        - qcom,qcs404-ethqos
++        - qcom,sm8150-ethqos
+         - renesas,r9a06g032-gmac
+         - renesas,rzn1-gmac
+         - rockchip,px30-gmac
+@@ -625,6 +627,8 @@ allOf:
+               - ingenic,x1600-mac
+               - ingenic,x1830-mac
+               - ingenic,x2000-mac
++              - qcom,qcs404-ethqos
++              - qcom,sm8150-ethqos
+               - snps,dwmac-4.00
+               - snps,dwmac-4.10a
+               - snps,dwmac-4.20a
 -- 
 2.39.2
 
