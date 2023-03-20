@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2387FC6FD1D
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 10:39:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16046C7618A
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 10:40:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230274AbjCTKjX convert rfc822-to-8bit (ORCPT
+        id S229531AbjCTKkK convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 06:39:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51364 "EHLO
+        Mon, 20 Mar 2023 06:40:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230332AbjCTKim (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 06:38:42 -0400
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2763AAB;
-        Mon, 20 Mar 2023 03:38:02 -0700 (PDT)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        with ESMTP id S230447AbjCTKj0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 06:39:26 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C07E1C653;
+        Mon, 20 Mar 2023 03:38:38 -0700 (PDT)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id D49D424E293;
-        Mon, 20 Mar 2023 18:38:00 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 20 Mar
- 2023 18:38:00 +0800
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id D6CB824E2E3;
+        Mon, 20 Mar 2023 18:38:06 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 20 Mar
+ 2023 18:38:06 +0800
 Received: from ubuntu.localdomain (183.27.97.64) by EXMBX172.cuchost.com
  (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 20 Mar
- 2023 18:37:59 +0800
+ 2023 18:38:05 +0800
 From:   Hal Feng <hal.feng@starfivetech.com>
 To:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-riscv@lists.infradead.org>
@@ -45,9 +45,9 @@ CC:     Stephen Boyd <sboyd@kernel.org>,
         Emil Renner Berthing <emil.renner.berthing@canonical.com>,
         Hal Feng <hal.feng@starfivetech.com>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 10/21] reset: starfive: jh71x0: Use 32bit I/O on 32bit registers
-Date:   Mon, 20 Mar 2023 18:37:39 +0800
-Message-ID: <20230320103750.60295-11-hal.feng@starfivetech.com>
+Subject: [PATCH v6 17/21] dt-bindings: interrupt-controller: Add StarFive JH7110 plic
+Date:   Mon, 20 Mar 2023 18:37:46 +0800
+Message-ID: <20230320103750.60295-18-hal.feng@starfivetech.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20230320103750.60295-1-hal.feng@starfivetech.com>
 References: <20230320103750.60295-1-hal.feng@starfivetech.com>
@@ -64,150 +64,28 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Emil Renner Berthing <kernel@esmil.dk>
 
-We currently use 64bit I/O on the 32bit registers. This works because
-there are an even number of assert and status registers, so they're only
-ever accessed in pairs on 64bit boundaries.
+Add compatible string for StarFive JH7110 plic.
 
-There are however other reset controllers for audio and video on the
-JH7100 SoC with only one status register that isn't 64bit aligned so
-64bit I/O results in an unaligned access exception.
-
-Switch to 32bit I/O in preparation for supporting these resets too.
-
-Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
 Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 ---
- .../reset/starfive/reset-starfive-jh7100.c    | 14 ++++-----
- .../reset/starfive/reset-starfive-jh71x0.c    | 31 +++++++++----------
- .../reset/starfive/reset-starfive-jh71x0.h    |  2 +-
- 3 files changed, 23 insertions(+), 24 deletions(-)
+ .../bindings/interrupt-controller/sifive,plic-1.0.0.yaml         | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/reset/starfive/reset-starfive-jh7100.c b/drivers/reset/starfive/reset-starfive-jh7100.c
-index 5f06e5ae3346..2a56f7fd4ba7 100644
---- a/drivers/reset/starfive/reset-starfive-jh7100.c
-+++ b/drivers/reset/starfive/reset-starfive-jh7100.c
-@@ -30,16 +30,16 @@
-  * lines don't though, so store the expected value of the status registers when
-  * all lines are asserted.
-  */
--static const u64 jh7100_reset_asserted[2] = {
-+static const u32 jh7100_reset_asserted[4] = {
- 	/* STATUS0 */
--	BIT_ULL_MASK(JH7100_RST_U74) |
--	BIT_ULL_MASK(JH7100_RST_VP6_DRESET) |
--	BIT_ULL_MASK(JH7100_RST_VP6_BRESET) |
-+	BIT(JH7100_RST_U74 % 32) |
-+	BIT(JH7100_RST_VP6_DRESET % 32) |
-+	BIT(JH7100_RST_VP6_BRESET % 32),
- 	/* STATUS1 */
--	BIT_ULL_MASK(JH7100_RST_HIFI4_DRESET) |
--	BIT_ULL_MASK(JH7100_RST_HIFI4_BRESET),
-+	BIT(JH7100_RST_HIFI4_DRESET % 32) |
-+	BIT(JH7100_RST_HIFI4_BRESET % 32),
- 	/* STATUS2 */
--	BIT_ULL_MASK(JH7100_RST_E24) |
-+	BIT(JH7100_RST_E24 % 32),
- 	/* STATUS3 */
- 	0,
- };
-diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.c b/drivers/reset/starfive/reset-starfive-jh71x0.c
-index a689f4730ed7..55bbbd2de52c 100644
---- a/drivers/reset/starfive/reset-starfive-jh71x0.c
-+++ b/drivers/reset/starfive/reset-starfive-jh71x0.c
-@@ -8,7 +8,6 @@
- #include <linux/bitmap.h>
- #include <linux/device.h>
- #include <linux/io.h>
--#include <linux/io-64-nonatomic-lo-hi.h>
- #include <linux/iopoll.h>
- #include <linux/reset-controller.h>
- #include <linux/spinlock.h>
-@@ -21,7 +20,7 @@ struct jh71x0_reset {
- 	spinlock_t lock;
- 	void __iomem *assert;
- 	void __iomem *status;
--	const u64 *asserted;
-+	const u32 *asserted;
- };
- 
- static inline struct jh71x0_reset *
-@@ -34,12 +33,12 @@ static int jh71x0_reset_update(struct reset_controller_dev *rcdev,
- 			       unsigned long id, bool assert)
- {
- 	struct jh71x0_reset *data = jh71x0_reset_from(rcdev);
--	unsigned long offset = BIT_ULL_WORD(id);
--	u64 mask = BIT_ULL_MASK(id);
--	void __iomem *reg_assert = data->assert + offset * sizeof(u64);
--	void __iomem *reg_status = data->status + offset * sizeof(u64);
--	u64 done = data->asserted ? data->asserted[offset] & mask : 0;
--	u64 value;
-+	unsigned long offset = id / 32;
-+	u32 mask = BIT(id % 32);
-+	void __iomem *reg_assert = data->assert + offset * sizeof(u32);
-+	void __iomem *reg_status = data->status + offset * sizeof(u32);
-+	u32 done = data->asserted ? data->asserted[offset] & mask : 0;
-+	u32 value;
- 	unsigned long flags;
- 	int ret;
- 
-@@ -48,15 +47,15 @@ static int jh71x0_reset_update(struct reset_controller_dev *rcdev,
- 
- 	spin_lock_irqsave(&data->lock, flags);
- 
--	value = readq(reg_assert);
-+	value = readl(reg_assert);
- 	if (assert)
- 		value |= mask;
- 	else
- 		value &= ~mask;
--	writeq(value, reg_assert);
-+	writel(value, reg_assert);
- 
- 	/* if the associated clock is gated, deasserting might otherwise hang forever */
--	ret = readq_poll_timeout_atomic(reg_status, value, (value & mask) == done, 0, 1000);
-+	ret = readl_poll_timeout_atomic(reg_status, value, (value & mask) == done, 0, 1000);
- 
- 	spin_unlock_irqrestore(&data->lock, flags);
- 	return ret;
-@@ -90,10 +89,10 @@ static int jh71x0_reset_status(struct reset_controller_dev *rcdev,
- 			       unsigned long id)
- {
- 	struct jh71x0_reset *data = jh71x0_reset_from(rcdev);
--	unsigned long offset = BIT_ULL_WORD(id);
--	u64 mask = BIT_ULL_MASK(id);
--	void __iomem *reg_status = data->status + offset * sizeof(u64);
--	u64 value = readq(reg_status);
-+	unsigned long offset = id / 32;
-+	u32 mask = BIT(id % 32);
-+	void __iomem *reg_status = data->status + offset * sizeof(u32);
-+	u32 value = readl(reg_status);
- 
- 	return !((value ^ data->asserted[offset]) & mask);
- }
-@@ -107,7 +106,7 @@ static const struct reset_control_ops jh71x0_reset_ops = {
- 
- int reset_starfive_jh71x0_register(struct device *dev, struct device_node *of_node,
- 				   void __iomem *assert, void __iomem *status,
--				   const u64 *asserted, unsigned int nr_resets,
-+				   const u32 *asserted, unsigned int nr_resets,
- 				   struct module *owner)
- {
- 	struct jh71x0_reset *data;
-diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.h b/drivers/reset/starfive/reset-starfive-jh71x0.h
-index ac9e80dd3f59..db7d39a87f87 100644
---- a/drivers/reset/starfive/reset-starfive-jh71x0.h
-+++ b/drivers/reset/starfive/reset-starfive-jh71x0.h
-@@ -8,7 +8,7 @@
- 
- int reset_starfive_jh71x0_register(struct device *dev, struct device_node *of_node,
- 				   void __iomem *assert, void __iomem *status,
--				   const u64 *asserted, unsigned int nr_resets,
-+				   const u32 *asserted, unsigned int nr_resets,
- 				   struct module *owner);
- 
- #endif /* __RESET_STARFIVE_JH71X0_H */
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+index 63bc89e13480..4e98261f2948 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+@@ -59,6 +59,7 @@ properties:
+           - enum:
+               - sifive,fu540-c000-plic
+               - starfive,jh7100-plic
++              - starfive,jh7110-plic
+               - canaan,k210-plic
+           - const: sifive,plic-1.0.0
+       - items:
 -- 
 2.38.1
 
