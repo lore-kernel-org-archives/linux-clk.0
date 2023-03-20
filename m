@@ -2,74 +2,83 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7BAC6FD1C
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 19:41:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C83FC6FD1D
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 19:44:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230327AbjCTTlN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 15:41:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34124 "EHLO
+        id S230020AbjCTToJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 15:44:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229854AbjCTTkk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 15:40:40 -0400
+        with ESMTP id S230036AbjCTTnm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 15:43:42 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23F69198F
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 12:35:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5409837560;
+        Mon, 20 Mar 2023 12:38:57 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C21EA617AF
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 19:35:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 144D2C4339C;
-        Mon, 20 Mar 2023 19:35:44 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A72B9617AF;
+        Mon, 20 Mar 2023 19:38:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0426EC433D2;
+        Mon, 20 Mar 2023 19:38:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679340944;
-        bh=qu8DeqsmcJyPxNU0rND2wauwcQbq3kv14Xzxpd60JWo=;
+        s=k20201202; t=1679341136;
+        bh=xw7yWF8qm73chBz32rRP1ijEJSTjInaPKsdd1qVK5HM=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=N5V7FDKU1iobk3x7V66e+lUDWAHAX/ov7BZS4BtUcoh2NgeePHwGH3wE3PeffDre+
-         ss0H7eJO9l5pCJy/GNK2YWNVFys+h1R5bVJ+Bwg6yzk3rv3VXI9WQ6Jvatt0LAZiDc
-         RQ9Eng005s5l5Re+rfsW1Sg2t+sLQMspKD0hRms18xm5mXgN6O2L6OAYkQdPZOc5CW
-         IBS8Ew0FH4Pzn1VoSms+8shP80HSD1GyCsEAaVj2eyzTGI0V3BkOQgMC8laGW1LJml
-         b7/+B7n0YIsOpV+QxVfuSu0UuPPruqXPSt/mAIuSoEm8OQinYHaMsiLI/cZ4lqqlPe
-         T3PBem5Oyzipw==
-Message-ID: <47c091b45aac1dc7a88e154a70e9a655.sboyd@kernel.org>
+        b=n+xBaCiehuuGEAUfECWs9RatEiWhhHrMX7r8r3XZXyPrvBI3T8hPrXoAPIwulENLU
+         lUYyhLWvUGA9HC0VYzdPuDVc/rUeGaZq3+W2NHbRdm08mDzX5rGmjdLfadYRo9krR3
+         TS6ZOCH7HJYgdPVo6hSPzJaMvYiubVvd1ptuD9UmSP5eTJzd/lqjmNxcEn79ICXt/S
+         BcmO4ybDzyS50d418FbZL/UbBbC+UlSLnbO0zW2CDYosGK4UE67f7T1PkqmdmOpewV
+         f6v68HggM2zyaEDBDolh3GecsqUzg51TEzS7ybfLtduXbbKoQSpHFo9JB5nCIWBV6O
+         XcWCan0yaHi+A==
+Message-ID: <966523bee1d28d546969a24eff60d315.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <3227516.44csPzL39Z@steina-w>
-References: <20230310074940.3475703-1-alexander.stein@ew.tq-group.com> <a794bd7b3ee514a508c2af3d2b594d10.sboyd@kernel.org> <3227516.44csPzL39Z@steina-w>
-Subject: Re: [PATCH 1/1] clk: rs9: Fix suspend/resume
+In-Reply-To: <20230320161823.1424278-8-sergio.paracuellos@gmail.com>
+References: <20230320161823.1424278-1-sergio.paracuellos@gmail.com> <20230320161823.1424278-8-sergio.paracuellos@gmail.com>
+Subject: Re: [PATCH 07/10] mips: ralink: remove clock related function prototypes
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org
-To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Marek Vasut <marex@denx.de>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Mon, 20 Mar 2023 12:35:41 -0700
+Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
+        john@phrozen.org, linux-kernel@vger.kernel.org,
+        p.zabel@pengutronix.de, mturquette@baylibre.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        matthias.bgg@gmail.com, devicetree@vger.kernel.org,
+        arinc.unal@arinc9.com
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        linux-clk@vger.kernel.org
+Date:   Mon, 20 Mar 2023 12:38:53 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Alexander Stein (2023-03-14 00:22:07)
-> Am Montag, 13. M=EF=BF=BDrz 2023, 23:26:54 CET schrieb Stephen Boyd:
-> > Quoting Alexander Stein (2023-03-09 23:49:40)
-> >=20
-> > > Disabling the cache in commit 2ff4ba9e3702 ("clk: rs9: Fix I2C access=
-ors")
-> > > without removing cache synchronization in resume path results in a
-> > > kernel panic as map->cache_ops is unset, due to REGCACHE_NONE.
-> > > Enable flat cache again to support resume again. num_reg_defaults_raw
-> > > is necessary to read the cache defaults from hardware. Some registers
-> > > are strapped in hardware and cannot be provided in software.
-> > >=20
-> > > Fixes: 2ff4ba9e3702 ("clk: rs9: Fix I2C accessors")
-> > > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> > > ---
-> > > There is also a series to not panic when using regcache_sync on
-> > > REGCACHE_NONE maps at [1].
-> >=20
-> > And it was rejected?
+Quoting Sergio Paracuellos (2023-03-20 09:18:20)
+> Clock related code has been removed from 'arch/mips/ralink' folder and put
+> into drivers space. Hence remove clock related prototypes which are not
+> used anymore.
 >=20
-> v2 has been accepted and is available at [1] in regmap's for-next branch.
+> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> ---
+>  arch/mips/ralink/common.h | 3 ---
+>  1 file changed, 3 deletions(-)
 >=20
+> diff --git a/arch/mips/ralink/common.h b/arch/mips/ralink/common.h
+> index 87fc16751281..fcdfc9dc6210 100644
+> --- a/arch/mips/ralink/common.h
+> +++ b/arch/mips/ralink/common.h
+> @@ -23,9 +23,6 @@ extern struct ralink_soc_info soc_info;
+> =20
+>  extern void ralink_of_remap(void);
+> =20
+> -extern void ralink_clk_init(void);
 
-So this still needs to be applied and backported to fix stable kernels?
+Why isn't this removed in the patch that removes the function?
+
+> -extern void ralink_clk_add(const char *dev, unsigned long rate);
+> -
+
+Same comment.
+
+>  extern void ralink_rst_init(void);
+>
