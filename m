@@ -2,220 +2,171 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A11B7C6FD1C
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 11:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0788C6FD1F
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 12:16:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230013AbjCVLSj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Mar 2023 07:18:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36506 "EHLO
+        id S230059AbjCVMQT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Mar 2023 08:16:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229788AbjCVLSi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 07:18:38 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 456B53B86F
-        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 04:18:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1679483917; x=1711019917;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=NOS3qjKWkRPBeWnoeomAnjKX3B7ayL8JnTZy2osIB6s=;
-  b=MFEZi2pQN4oG0qMcXhHLjETcrvGLdVLOrbpQs2Mq8I+kDBgQrHXPdRmh
-   HIZgHXx7BI6mrGI2eAyQEadXpYpM+WfZ3yWdva60wCd+Wv1K8PjIG+IcZ
-   IdT+fikZi76FGozwDOo6NbPXL20Sk/O+sDo4SPcE/Roa/As7xO1lZfBQK
-   vH6oukSglfm1Eu22JEqPZ8zvaJuejXchrEL/6pJNO1BxUzhgcLWIBM25P
-   vGf2W7zVMXO2fOV/nrbmwNQnNZMnPwonkVsZY8wWl+agE62cpf7aRBF2K
-   KpipnVIdtBGYlsxsCDzOHBJ5LD/sKR1ENAvMmGUJpBPs3zLdcf1GSdYjF
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10656"; a="327566793"
-X-IronPort-AV: E=Sophos;i="5.98,281,1673942400"; 
-   d="scan'208";a="327566793"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2023 04:18:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10656"; a="681860415"
-X-IronPort-AV: E=Sophos;i="5.98,281,1673942400"; 
-   d="scan'208";a="681860415"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga002.jf.intel.com with ESMTP; 22 Mar 2023 04:18:34 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pewUE-000DDy-0g;
-        Wed, 22 Mar 2023 11:18:34 +0000
-Date:   Wed, 22 Mar 2023 19:17:48 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Qin Jian <qinjian@cqplus1.com>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [clk:clk-sunplus 1/1] drivers/clk/clk-sp7021.c:316:8: warning:
- result of comparison of constant 18446744073709551615 with expression of
- type 'typeof (_Generic((_m), char: (unsigned char)0, unsigned char:
- (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigne...
-Message-ID: <202303221947.pXP2v4xJ-lkp@intel.com>
+        with ESMTP id S229747AbjCVMQS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 08:16:18 -0400
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2088.outbound.protection.outlook.com [40.107.20.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F01F91C587;
+        Wed, 22 Mar 2023 05:16:16 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lDfsSeYirTwMVPacvVnYm6/SYt5lCWfNQLQNyy2gfYvrCeJRUlNlQhq9G9mGWDHwH8PdVZplqXtByckJeGIYXANNVtvIAcZSvqIH++zM2oVbxDcgCQdsuAC+3fC9DboB7eQpefLdPZagNyYAkvLYlqH61H9fNzqhNm8BE3yKKjeAhPPx/5lpLkGzdf4rRoYLRt+cikijr2OhgnzgZwUP3jsZ7bCaoyC5w1U24mOQppPMuG1PKMuLgC1aqiGVhc6wrfB4u5m7vTZgFq9UccKQFJm02w2vDYn8k6dWYZ6Jsiy8MFAwptk+If7B5saSYjwdOzLC/REngkcd+lcyKC3TeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Jh+J3hB3c/ZZPD/o9hi+r2C3MO/ORnrK8HHhvFfDE/w=;
+ b=mdeNmKmhxiU6FS3Y5TVXA+lCGOm4kGlhQ+AILNioScZ9yTGXX4O4yOwEkNINeGAXoVrDjOF9M+QgYA1ggCtLlPg6z7mRGaSOpHHftwn05ZaPK7RDMyfwDdMVFNFVADxxw0eokToKtZ41TaNdMg6uiXn4XaG2fJWkdH+qHc7FqVejtEGpSlAKexSPsrPz67zDiFKENznKxx0O0MHPU/p6a64UpHcoD4J1rU88kGOj1RiFUpeXuxXvibtRUoa0CdFTC3B2NfE5Hx6+z/lK0IvLSqs7mXH5p6s2WR9b83oJzFPx8K7sdz+KMFWPpd62/YKA+60dMLgs8pmvrSBsi6wPpA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Jh+J3hB3c/ZZPD/o9hi+r2C3MO/ORnrK8HHhvFfDE/w=;
+ b=HrFrBXEDjCGwsvMuDpeeTmjK2PIsCGubit0/wN7cHOOCxWL0LraHtyI83o2RX2+N4Ngb0g9wZRzSYx9+uaRkH4rCAdGdD16izDkFQOUBLPp+J/F/XZq+YK/YAXkQ5E8KH8WSAQkigc+o+FEkLEKkLNI9fJ4N8Bb/KnOhH4dpcao=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by PR3PR04MB7227.eurprd04.prod.outlook.com (2603:10a6:102:82::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.37; Wed, 22 Mar
+ 2023 12:16:13 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::f55a:cf12:da08:6d2a]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::f55a:cf12:da08:6d2a%7]) with mapi id 15.20.6178.037; Wed, 22 Mar 2023
+ 12:16:13 +0000
+Message-ID: <0c7f583b-ad19-3010-f7a8-e6999f5477e1@oss.nxp.com>
+Date:   Mon, 20 Mar 2023 13:45:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.0
+Subject: Re: [PATCH 1/3] clk: imx: composite-8m: Add support to determine_rate
+To:     Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org
+Cc:     aford@beaconembedded.com, Abel Vesa <abelvesa@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20230319132120.6347-1-aford173@gmail.com>
+ <20230319132120.6347-2-aford173@gmail.com>
+Content-Language: en-US
+From:   Peng Fan <peng.fan@oss.nxp.com>
+In-Reply-To: <20230319132120.6347-2-aford173@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR01CA0044.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:193::8) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|PR3PR04MB7227:EE_
+X-MS-Office365-Filtering-Correlation-Id: 141410c8-c4e6-4d7c-e353-08db2acf3a16
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: GFHOEqYMNpuFrngxjIjhRu4eCLawS1D52PMX0LKswznP1XrBB2VlnriQKacaBX0EPQo8izFDJ8o+mvQTEDHBfA2uSHSK6tf1teWYyYDjWWXJVMPoUOiQGJiD7yNjFbgZ9yUVYdyEw9FnjLUQj0r25m6preVPqzbBwOHFIkkT6Mez2u0K4E79HwXkMcVq/WBG6uQFfdu6Htau9OvELM4aEhjDnexrXjam4NjztJkglEM2tGR/tv99f8tZVWWSMOYdlrm9XCr+71dcFf9FpWU9h6c8IRXhhpyLOMv2S0tsI84u52wg1FH16L9VssQs6vKK3VqVvW7P/BGj+wDGApArAXrmHVVu+QXewKqQbM94OwmdoiPUIF+Iai8nZwaJjpJ/m+EuYsIVjFJWuB+rbhvKC6fFAqJ7g25AdYflzbKyJ1qSVMbqoqe9PkOmXTEChCqX8x/UKK79kjl0S7BLihKGdu1ksJd4wz8hInnfnuXQv2TEbRYvkE/Qci/wkwJ1KEiA/TZbJhSGFY1rGah2OLuNKS2KbUHZ8Z6OCSRQTmHQ31qYbSv3sXLr8WFtltPOaaBEfiPqtKXcBnJRetn7PhyRfG15Ud2Y1QseP1giHdar7rhXaeHCqwtfE7zD4TVjlfNLrwedtQsHG1Y85KLoAQKlZdyi1IionRvRuC7B8PjkSFnNtM6umI9w47gejyvKaIUbNgk/4lDPbN/UeIts6JMhtSC7yW1g85j1JB9ow5mdwsBdx0QBuB8kUZLUoRzXbG4diqVsqSlF4MQXw0PM03tq0A==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(396003)(366004)(346002)(136003)(376002)(39860400002)(451199018)(31686004)(41300700001)(5660300002)(7416002)(66946007)(66556008)(66476007)(8676002)(4326008)(2906002)(44832011)(38100700002)(38350700002)(86362001)(31696002)(52116002)(6666004)(26005)(6506007)(6486002)(478600001)(54906003)(316002)(8936002)(83380400001)(6512007)(2616005)(186003)(53546011)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MVR3cVNJa0loWGFQdXpLZExiWUJENDNpT0w4Wlh5RWd3eWg4UnRtREUrN21G?=
+ =?utf-8?B?L3hxeElRUGg0Q2VGT3VGb0tKRllLMVdwSmhrMHlNMTVjck40WmVpY0g3OXFT?=
+ =?utf-8?B?eVhXbFEvaFlmT2ZkbEFIWTN1Njd6MkFaU0ZEOFIvM25oMXNuc000Nk94MVNX?=
+ =?utf-8?B?WjQvNHc1d0FrbTlweTNDQzZIVTR4ajY0STdvUUxzU3Ezd2xDamxsUUtMMnZ2?=
+ =?utf-8?B?UndPd01TZFVzeUcrOWtzaWtUTFhzL24rU2kzQWNGNXdYRGw3Q0gxQW5KM0pO?=
+ =?utf-8?B?dDN6SjBjRHlHbFg3MEpoWnlTcGJDRVQveHBLemcyT3RvYktYYThmQkJieUVn?=
+ =?utf-8?B?a042UHRxdDh1MEV6NDZoWForcE5QdDhESG1wcklIVG9HNTNoYkEwajBTYjNV?=
+ =?utf-8?B?Yi9SUFhtWjBsVlpVLzBydlNTcmFnTVUwdUhQb0QrOVFHUENGRkxKZmpXb25j?=
+ =?utf-8?B?RnFzZVplelNlbWJjZGpBSHFsUFBqQlVXZ1ZyVDZ2UTlWWGtLQy9Uc0ZCS2Rp?=
+ =?utf-8?B?ZmwzQzdNVE5KVzBtck5pclBrUDJHQmZ1RXp4SWxnL1pRR1VHNXovWW5GVTZI?=
+ =?utf-8?B?RURua1NVV3k5SHpZWWVZakcvaThMZWoremZkUks5OGNJQ1JEbVlsMTYzMEtu?=
+ =?utf-8?B?MlE3Vkk2U04xK1BJdVRXd2JYS3BYdmViUzdNN0lHRG0vTlRINDFRWU9QUlov?=
+ =?utf-8?B?Ty9XMFFDSUVvTDRRRlZLOER5WDNoNlQvNlQ0SVhYU3dmdzFDS3RJRWQ2MUxB?=
+ =?utf-8?B?ai9DMTN3aXpyRWFsa0t3QzkxVEZJbTNRY0lzcGMxZDRLcEdCNEdIRzFUaDJv?=
+ =?utf-8?B?MWVUS05zUjlKeitKa0t4SGkxdE5lMkRXNWIyMVlQd2hzcHE1UFBXL2l1Y2U0?=
+ =?utf-8?B?c2FLSGtvWWE1R3dQaUh6eWp1OGRhd3AzWXRzYVFZUzJBYWk1OHhRNVVTbU1D?=
+ =?utf-8?B?TTdsQ1BvL0h5TXp5b2hLWWZXV013bE8weURnWFJlZU9hUnpqV1ZXbTV0YkEy?=
+ =?utf-8?B?Y1J2ZVpoRHNBNnlPVU1yMmdTNjZ2Wlg4U3E4Q0dhWnNWN1ZHSko5U3FIZmhl?=
+ =?utf-8?B?cTkwcFhUa0ZCb2JkUTh0Um5SQ29Yc2RNTFF5Z3BBQnZTd0NOcUxFYmtUMFZZ?=
+ =?utf-8?B?SUJCRmFvNWZKR1FXcE9zZ2gxcG9HczF4ZDc3VmpRWVBtVG9IT3RDMmdxUDAz?=
+ =?utf-8?B?SlZQL2JRV0Njcjg4cHloU1RKUlIxTEJ1WVRMME9yK1I4THZjMHRhUUE0Tm5u?=
+ =?utf-8?B?MU9nWGFsZGV0SW1FanpkR1Q3Yjh0MmU4UkRJZnBnQmYyVitUMHhLUC9kZC8y?=
+ =?utf-8?B?UG9OR0h6K2tXN2FhSS9WVVFlRmNDeCtna3kyMExLTUo2cFRYN2ZYOW85TFk3?=
+ =?utf-8?B?MXNBNGt3UmgrRzdNUDIxSHBpYTNmTTVQVllPTGkvWVBjVTRzOUJkbGJCaVFU?=
+ =?utf-8?B?bG5DLzZsN0tNSkZQUjZYUWJ2YkNwWDZuak1rakJOeVlUd2txdVFMeUsvajFz?=
+ =?utf-8?B?UFFyVkVBUkp2SmE2bWR4TzdMVStSdUt1R3lhOGZCRVBqNGorSm5YMTFacVB1?=
+ =?utf-8?B?M2llYkphVmJ3S1dXQWtHbWlJTWRBeUp1K2R0Nk5VM05BTGZDczJhbXUyYnRF?=
+ =?utf-8?B?OGpxckxVamNhck5Zak0xbGcwTzNTeTU3a2JUQ1pLV3NRU2RyMEh0YnpzN0Qy?=
+ =?utf-8?B?ZjVkZ3RZOTFOdWppUVJUeE9USlk0VHd0a0VXNlFpMVNFN1RqZ2ZjaklmUEZs?=
+ =?utf-8?B?QjBTSDQvK0IvUjljQ0FwMjU5TEVreDFBVUNldGswMEdiRFNoQXJXMUYrakc4?=
+ =?utf-8?B?SGhOUTRaNDRWU0Z5VGgwai9BL21HOFE0UjZDYTk2L0hmTDFodlo3YVBuRTVt?=
+ =?utf-8?B?WFhkMEIzOW1WWE5GSTdhSXZXNGVaMmp2a05WdThwLzByOFNxWm9xQm1McmNS?=
+ =?utf-8?B?Q21peHUzajRLMGc4TkN2VmpuTEtra1ZKVUhQR0JDL1JCbmlmTjNENTdGZmNv?=
+ =?utf-8?B?RC9mWVpGRlk2cTZPcnFRNzFmcWZkUkQ3UU80TDZZYWZ0MGZvR2RNTE1DaDl4?=
+ =?utf-8?B?amYrVGkyaWhLQm1yRHlYOFd2NVJ2aTA1c2t1eXJlMWZhU0RTN0JRRXp5enRj?=
+ =?utf-8?Q?ngIC+nPkxARp+UuQ6UQQGMp4n?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 141410c8-c4e6-4d7c-e353-08db2acf3a16
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Mar 2023 12:16:12.9387
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SZK7k1VJD7DbNE92thWSZvtHheiowLlBdjkQtf4PAu8eq5UhXumPeBZ9lqifoIlZfD2z1btjUFQYh9ulMrxyWQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7227
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-sunplus
-head:   d54c1fd4a51e8fbc7f9da86b0cd338a4f7cd2bb2
-commit: d54c1fd4a51e8fbc7f9da86b0cd338a4f7cd2bb2 [1/1] clk: Add Sunplus SP7021 clock driver
-config: mips-randconfig-r012-20230322 (https://download.01.org/0day-ci/archive/20230322/202303221947.pXP2v4xJ-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project 67409911353323ca5edf2049ef0df54132fa1ca7)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install mips cross compiling tool for clang build
-        # apt-get install binutils-mipsel-linux-gnu
-        # https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/?id=d54c1fd4a51e8fbc7f9da86b0cd338a4f7cd2bb2
-        git remote add clk https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
-        git fetch --no-tags clk clk-sunplus
-        git checkout d54c1fd4a51e8fbc7f9da86b0cd338a4f7cd2bb2
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=mips olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=mips SHELL=/bin/bash drivers/clk/
-
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202303221947.pXP2v4xJ-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/clk/clk-sp7021.c:316:8: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((_m), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (_m)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
-           r0 |= HWM_FIELD_PREP(MASK_SEL_FRA, clk->p[SEL_FRA]);
-                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/clk-sp7021.c:45:15: note: expanded from macro 'HWM_FIELD_PREP'
-           (_m << 16) | FIELD_PREP(_m, value);     \
-                        ^~~~~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:114:3: note: expanded from macro 'FIELD_PREP'
-                   __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
-                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:71:53: note: expanded from macro '__BF_FIELD_CHECK'
-                   BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
-                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
-   note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
-   include/linux/compiler_types.h:397:22: note: expanded from macro 'compiletime_assert'
-           _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-           ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:385:23: note: expanded from macro '_compiletime_assert'
-           __compiletime_assert(condition, msg, prefix, suffix)
-           ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:377:9: note: expanded from macro '__compiletime_assert'
-                   if (!(condition))                                       \
-                         ^~~~~~~~~
-   drivers/clk/clk-sp7021.c:317:8: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((_m), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (_m)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
-           r0 |= HWM_FIELD_PREP(MASK_SDM_MOD, clk->p[SDM_MOD]);
-                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/clk-sp7021.c:45:15: note: expanded from macro 'HWM_FIELD_PREP'
-           (_m << 16) | FIELD_PREP(_m, value);     \
-                        ^~~~~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:114:3: note: expanded from macro 'FIELD_PREP'
-                   __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
-                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:71:53: note: expanded from macro '__BF_FIELD_CHECK'
-                   BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
-                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
-   note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
-   include/linux/compiler_types.h:397:22: note: expanded from macro 'compiletime_assert'
-           _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-           ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:385:23: note: expanded from macro '_compiletime_assert'
-           __compiletime_assert(condition, msg, prefix, suffix)
-           ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:377:9: note: expanded from macro '__compiletime_assert'
-                   if (!(condition))                                       \
-                         ^~~~~~~~~
-   drivers/clk/clk-sp7021.c:318:8: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((_m), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (_m)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
-           r0 |= HWM_FIELD_PREP(MASK_PH_SEL, clk->p[PH_SEL]);
-                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/clk-sp7021.c:45:15: note: expanded from macro 'HWM_FIELD_PREP'
-           (_m << 16) | FIELD_PREP(_m, value);     \
-                        ^~~~~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:114:3: note: expanded from macro 'FIELD_PREP'
-                   __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
-                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:71:53: note: expanded from macro '__BF_FIELD_CHECK'
-                   BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
-                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
-   note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
-   include/linux/compiler_types.h:397:22: note: expanded from macro 'compiletime_assert'
-           _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-           ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:385:23: note: expanded from macro '_compiletime_assert'
-           __compiletime_assert(condition, msg, prefix, suffix)
-           ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:377:9: note: expanded from macro '__compiletime_assert'
-                   if (!(condition))                                       \
-                         ^~~~~~~~~
-   drivers/clk/clk-sp7021.c:319:8: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((_m), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (_m)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
-           r0 |= HWM_FIELD_PREP(MASK_NFRA, clk->p[NFRA]);
-                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/clk-sp7021.c:45:15: note: expanded from macro 'HWM_FIELD_PREP'
-           (_m << 16) | FIELD_PREP(_m, value);     \
-                        ^~~~~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:114:3: note: expanded from macro 'FIELD_PREP'
-                   __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
-                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:71:53: note: expanded from macro '__BF_FIELD_CHECK'
-                   BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
-                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
-   note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
-   include/linux/compiler_types.h:397:22: note: expanded from macro 'compiletime_assert'
-           _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-           ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:385:23: note: expanded from macro '_compiletime_assert'
-           __compiletime_assert(condition, msg, prefix, suffix)
-           ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:377:9: note: expanded from macro '__compiletime_assert'
-                   if (!(condition))                                       \
-                         ^~~~~~~~~
-   drivers/clk/clk-sp7021.c:321:8: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((_m), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (_m)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
-           r1  = HWM_FIELD_PREP(MASK_DIVR, clk->p[DIVR]);
-                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/clk-sp7021.c:45:15: note: expanded from macro 'HWM_FIELD_PREP'
-           (_m << 16) | FIELD_PREP(_m, value);     \
-                        ^~~~~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:114:3: note: expanded from macro 'FIELD_PREP'
-                   __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
-                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:71:53: note: expanded from macro '__BF_FIELD_CHECK'
-                   BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
-                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
-   note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
 
 
-vim +316 drivers/clk/clk-sp7021.c
+On 3/19/2023 9:21 PM, Adam Ford wrote:
+> Similar to imx/clk-composite-93 and imx/clk-divider-gate, the
+> imx8m_clk_composite_divider_ops can support determine_rate.
+> Without this the parent clocks are set to a fixed value, and
+> if a consumer needs a slower reate, the clock is divided, but
+> the division is only as good as the parent clock rate.
+> 
+> With this added, the system can attempt to adjust the parent rate
+> if the proper flags are set which can lead to a more precise clock
+> value.
+> 
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> 
+> diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
+> index cbf0d7955a00..3b63e47f088f 100644
+> --- a/drivers/clk/imx/clk-composite-8m.c
+> +++ b/drivers/clk/imx/clk-composite-8m.c
+> @@ -119,10 +119,17 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
+>   	return ret;
+>   }
+>   
+> +static int clk_divider_determine_rate(struct clk_hw *hw,
+> +				      struct clk_rate_request *req)
+> +{
+> +	return clk_divider_ops.determine_rate(hw, req);
+> +}
+> +
+>   static const struct clk_ops imx8m_clk_composite_divider_ops = {
+>   	.recalc_rate = imx8m_clk_composite_divider_recalc_rate,
+>   	.round_rate = imx8m_clk_composite_divider_round_rate,
+>   	.set_rate = imx8m_clk_composite_divider_set_rate,
+> +	.determine_rate = clk_divider_determine_rate,
 
-   309	
-   310	static int plltv_set_rate(struct sp_pll *clk)
-   311	{
-   312		unsigned long flags;
-   313		u32 r0, r1, r2;
-   314	
-   315		r0  = BIT(clk->bp_bit + 16);
- > 316		r0 |= HWM_FIELD_PREP(MASK_SEL_FRA, clk->p[SEL_FRA]);
-   317		r0 |= HWM_FIELD_PREP(MASK_SDM_MOD, clk->p[SDM_MOD]);
-   318		r0 |= HWM_FIELD_PREP(MASK_PH_SEL, clk->p[PH_SEL]);
-   319		r0 |= HWM_FIELD_PREP(MASK_NFRA, clk->p[NFRA]);
-   320	
-   321		r1  = HWM_FIELD_PREP(MASK_DIVR, clk->p[DIVR]);
-   322	
-   323		r2  = HWM_FIELD_PREP(MASK_DIVN, clk->p[DIVN] - 1);
-   324		r2 |= HWM_FIELD_PREP(MASK_DIVM, clk->p[DIVM] - 1);
-   325	
-   326		spin_lock_irqsave(&clk->lock, flags);
-   327		writel(r0, clk->reg);
-   328		writel(r1, clk->reg + 4);
-   329		writel(r2, clk->reg + 8);
-   330		spin_unlock_irqrestore(&clk->lock, flags);
-   331	
-   332		return 0;
-   333	}
-   334	
+Please align the name with imx8m_ as prefix. Other than that:
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+>   };
+>   
+>   static u8 imx8m_clk_composite_mux_get_parent(struct clk_hw *hw)
