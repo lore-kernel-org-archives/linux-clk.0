@@ -2,150 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 750EDC7618A
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 03:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EFFAC76195
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 05:46:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229861AbjCTDyl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 19 Mar 2023 23:54:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54950 "EHLO
+        id S229713AbjCTFqh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 01:46:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229446AbjCTDyk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Mar 2023 23:54:40 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A36A1CAD7;
-        Sun, 19 Mar 2023 20:54:36 -0700 (PDT)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 8D4D524E2B0;
-        Mon, 20 Mar 2023 11:54:34 +0800 (CST)
-Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 20 Mar
- 2023 11:54:34 +0800
-Received: from [192.168.125.128] (183.27.97.64) by EXMBX061.cuchost.com
- (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 20 Mar
- 2023 11:54:33 +0800
-Message-ID: <45221a1c-dc01-2759-3e32-658636625529@starfivetech.com>
-Date:   Mon, 20 Mar 2023 11:54:25 +0800
+        with ESMTP id S229700AbjCTFqg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 01:46:36 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E4A818B16;
+        Sun, 19 Mar 2023 22:46:34 -0700 (PDT)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32K5K3x0015415;
+        Mon, 20 Mar 2023 05:46:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=FdiERBDNupNV8C9GnoQMOmECcBVBz64rI00JxNqc3kc=;
+ b=ploVJHXTMBMU0aI1KvKd9h7Tes7aOJko/q2qqbeJguIQ4XjTzxMncT/QHahwbWMN+2nU
+ IKtbB7tvU5Wt4c2d8/ADDKROFhCl9+8xxjDlQLsnGs04rEd+ht3rDwmV6eIMRCMg2Y2f
+ NRxPuCm2cNdR9vzMxa85yCgSk7vQsljbaONSqLJPe2X0uszQV0lflNX5sUKJ4eqINnyj
+ k1Xgg3cljsiveVFtEyUrEa0qghPqRoFtUQQuWDZ0cp6A3J4vLBTS/qcr8BxU4E1ELBTb
+ 5WNShpDSzoXB7Sxq/fqQRj1wTne0RyX1VF46yr9Btjzas2Wfx1b3lethgjiUdI8jlt2m 8A== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pd6kgkv1c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 20 Mar 2023 05:46:26 +0000
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32K5kPRA008738
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 20 Mar 2023 05:46:25 GMT
+Received: from [10.216.3.84] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Sun, 19 Mar
+ 2023 22:46:22 -0700
+Message-ID: <f673e050-6093-bf01-ed24-325f8de584d5@quicinc.com>
+Date:   Mon, 20 Mar 2023 11:16:19 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v2 3/6] dt-bindings: soc: starfive: syscon: Add optional
- patternProperties
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v9 3/4] clk: qcom: lpassaudiocc-sc7280: Add required gdsc
+ power domain clks in lpass_cc_sc7280_desc strcuture
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        Conor Dooley <conor@kernel.org>,
-        "Emil Renner Berthing" <kernel@esmil.dk>,
-        Rob Herring <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <20230316030514.137427-1-xingyu.wu@starfivetech.com>
- <20230316030514.137427-4-xingyu.wu@starfivetech.com>
- <1f352445-4677-e33b-be14-c76bd7ffa188@linaro.org>
-From:   Xingyu Wu <xingyu.wu@starfivetech.com>
-In-Reply-To: <1f352445-4677-e33b-be14-c76bd7ffa188@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+To:     Stephen Boyd <sboyd@kernel.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <broonie@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_visr@quicinc.com>,
+        <swboyd@chromium.org>
+References: <20230317141622.1926573-1-quic_mohs@quicinc.com>
+ <20230317141622.1926573-4-quic_mohs@quicinc.com>
+ <06cc8339e30eb38175e04058b69b41ca.sboyd@kernel.org>
+From:   Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+In-Reply-To: <06cc8339e30eb38175e04058b69b41ca.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [183.27.97.64]
-X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX061.cuchost.com
- (172.16.6.61)
-X-YovoleRuleAgent: yovoleflag
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: nArNwX-OFIHeiD9u-ck6TP02jeR-Rgeu
+X-Proofpoint-ORIG-GUID: nArNwX-OFIHeiD9u-ck6TP02jeR-Rgeu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-20_02,2023-03-16_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ impostorscore=0 malwarescore=0 adultscore=0 priorityscore=1501
+ mlxlogscore=721 clxscore=1015 mlxscore=0 lowpriorityscore=0 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303150002 definitions=main-2303200051
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023/3/19 20:28, Krzysztof Kozlowski wrote:
-> On 16/03/2023 04:05, Xingyu Wu wrote:
->> Add optional compatible and patternProperties.
->> 
->> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
->> ---
->>  .../soc/starfive/starfive,jh7110-syscon.yaml  | 39 ++++++++++++++++---
->>  1 file changed, 33 insertions(+), 6 deletions(-)
->> 
->> diff --git a/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
->> index ae7f1d6916af..b61d8921ef42 100644
->> --- a/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
->> +++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
->> @@ -15,16 +15,31 @@ description: |
->>  
->>  properties:
->>    compatible:
->> -    items:
->> -      - enum:
->> -          - starfive,jh7110-aon-syscon
->> -          - starfive,jh7110-stg-syscon
->> -          - starfive,jh7110-sys-syscon
->> -      - const: syscon
->> +    oneOf:
->> +      - items:
->> +          - enum:
->> +              - starfive,jh7110-aon-syscon
->> +              - starfive,jh7110-stg-syscon
->> +              - starfive,jh7110-sys-syscon
->> +          - const: syscon
->> +      - items:
->> +          - enum:
->> +              - starfive,jh7110-aon-syscon
->> +              - starfive,jh7110-stg-syscon
->> +              - starfive,jh7110-sys-syscon
->> +          - const: syscon
->> +          - const: simple-mfd
->>  
->>    reg:
->>      maxItems: 1
->>  
->> +patternProperties:
->> +  # Optional children
->> +  "pll-clock-controller":
-> 
-> It's not a pattern.
 
-Does it use 'properties' instead of 'patternProperties'?
+On 3/18/2023 12:13 AM, Stephen Boyd wrote:
+> Just remove strcuture from the subject.
+>
+> Quoting Mohammad Rafi Shaik (2023-03-17 07:16:21)
+>> Add the gdsc's in lpass_cc_sc7280_desc strcuture,
+> s/strcuture/struct/
+>
+>> When qcom,adsp-pil-mode is enabled, gdsc's required to solve
+> Just 'GDSCs', because gdsc isn't owning anything.
+>
+>> dependencies in lpass_audiocc probe.
+> I think you're saying that we need to register the GDSCs when
+> qcom,adsp-pil-mode is set in the qcom,sc7280-lpassaoncc node. Otherwise,
+> we don't get any GDSCs provided by that node when we should always be
+> providing them.
 
-> 
-> Anyway should be clock-controller
+Yes, need to register GDSCs when qcom,adsp-pil-mode is set in the 
+qcom,sc7280-lpassaoncc node.
 
-Will fix.
+The lpass_audiocc requires GDSCs to probe become success.
 
-> 
->> +    type: object
->> +    $ref: /schemas/clock/starfive,jh7110-pll.yaml#
->> +    description: Clock provider for PLL.
->> +
-> 
-> You just added these bindings! So the initial submission was incomplete
-> on purpose?
-> 
-> No, add complete bindings.
-
-Does you mean that it should drop the 'description', or add complete 'description',
-or add 'compatible', 'clocks' and 'clock-cells' of complete clock-controller bindings?
-
-> 
->>  required:
->>    - compatible
->>    - reg
->> @@ -38,4 +53,16 @@ examples:
->>          reg = <0x10240000 0x1000>;
->>      };
->>  
->> +  - |
->> +    syscon@13030000 {
-> 
-> No need for new example... Just put it in existing one.
-> 
-
-Actually, the PLL clock-controller are just set in sys-syscon resgisters. The stg-syscon and
-aon-syscon don't need it. So PLL clock-controller node only is added in sys-syscon node.
-
-Best regards,
-Xingyu Wu
+>> Fixes: 4ab43d171181 ("clk: qcom: Add lpass clock controller driver for SC7280")
+> If the above is right, then this fixes tag is wrong. It should really be
+>
+> Fixes: 0cbcfbe50cbf ("clk: qcom: lpass: Handle the regmap overlap of lpasscc and lpass_aon")
+>
+> right?
+Okay, will change fixes tag.
