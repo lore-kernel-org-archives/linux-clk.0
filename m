@@ -2,153 +2,113 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C9FC7618A
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 11:36:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A00C7618D
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 11:51:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231180AbjCTLgS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 07:36:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40114 "EHLO
+        id S231180AbjCTLvc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 07:51:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231219AbjCTLgL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 07:36:11 -0400
-Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79F9F1114A;
-        Mon, 20 Mar 2023 04:35:23 -0700 (PDT)
-Received: from droid06.amlogic.com (10.18.11.248) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.13; Mon, 20 Mar 2023
- 19:35:20 +0800
-From:   Yu Tu <yu.tu@amlogic.com>
-To:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Neil Armstrong" <neil.armstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>
-CC:     <kelvin.zhang@amlogic.com>, <qi.duan@amlogic.com>,
-        Yu Tu <yu.tu@amlogic.com>
-Subject: [PATCH V2] clk: meson: vid-pll-div: added meson_vid_pll_div_ops support
-Date:   Mon, 20 Mar 2023 19:34:45 +0800
-Message-ID: <20230320113445.17260-1-yu.tu@amlogic.com>
-X-Mailer: git-send-email 2.33.1
+        with ESMTP id S230161AbjCTLvb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 07:51:31 -0400
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCDAA23129
+        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 04:51:26 -0700 (PDT)
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 88F663FDA0
+        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 11:51:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1679313083;
+        bh=GGpWfsM5C1ImSMDFhmoi1LbWjuKbL/WrII+NG9/nakI=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=hM94kEI8J2CWhITw3n83CPVx9YzA536hjQLxYB06Fxl+w8uG0/GUhF93JlycEI8AZ
+         dymKrPQWZZAsV/6EfntZ5gkHMMPrFq4ol60FfcOQqq+RBWxe4G4kJntWA0i6Edhofp
+         f+vtVJEfeHVPeJea8V9q+C32gk7jABGBITbezAw2GuC1weGYHVcrxta2XEtNcMVFhG
+         Ef3uD2YTZ3N0dyFcRlB7W4gtsACVUENNVpNoxJO+qE7ulF0uBcUfZ+tWdZnt/RdcO9
+         WYl4GYOgIZ7GpjdbgMQLupexlwgQhMHwbSFXJ3sExIasIIhXs2skMyEJG1X+C9/Kmk
+         Mlq+Zc0K7+q/A==
+Received: by mail-qv1-f69.google.com with SMTP id dl18-20020ad44e12000000b005a4d5420bc6so5905320qvb.11
+        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 04:51:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679313082;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GGpWfsM5C1ImSMDFhmoi1LbWjuKbL/WrII+NG9/nakI=;
+        b=7GG0VhhIukRX+9H+jZkmhHyqwbshE8ybfsvPVQ/Xi1j70RO/Moc4vertB+hjt3Rs1F
+         TnlBLv/JNRrfTRsH0jBfrdsgDvZCvZF3SZ0I3FLVM/uDjoKhYif2nxGxy20A0FhGf6X+
+         gPWJ+zxAZbacondZdSUbu/pa1LpHOjV9oKBmnobKXHbo/jgmtj1UGY8RnVJyv937VkCI
+         4bIhcHpw6cdyl9SukbtNlTcju4xU3XAPKSRaQbgPfdAJ1PLd63b5dQANQ2qj+45unw/L
+         mH5sDPCtohv9GD1bXT5oJy4Hms/SaccGaEeSfRxcA2Wg0bo911yPGJGlM+ccUfZh84Ez
+         Ecvg==
+X-Gm-Message-State: AO0yUKUnSooP3bpcuercBzNleJKTL5MY6CoNbd6eLnHhsK/Z56b04+48
+        Z1H2101rv1sOqUDQdbLUyss2u2sHhNw3/Kk/5Sdpyp+xtrwvhVFlKj6Gf+aS6alsiCiBAR7M2WV
+        VW13LHrWFSvzNqoxSQ/E9Ry9+/Txcqrnlx3Uv92cyj1KJYPq0mQt/OQ==
+X-Received: by 2002:ad4:59c7:0:b0:56f:3e5:850e with SMTP id el7-20020ad459c7000000b0056f03e5850emr6960034qvb.3.1679313082509;
+        Mon, 20 Mar 2023 04:51:22 -0700 (PDT)
+X-Google-Smtp-Source: AK7set/l+AwVJZR40S7GPUVKDWevuOOVX4sYPIEehyQctIQv1qL8d4CCuDF//+jeSsWW86R+pXOcTviboByTpW6VUeI=
+X-Received: by 2002:ad4:59c7:0:b0:56f:3e5:850e with SMTP id
+ el7-20020ad459c7000000b0056f03e5850emr6960029qvb.3.1679313082287; Mon, 20 Mar
+ 2023 04:51:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.18.11.248]
+References: <20230311090733.56918-1-hal.feng@starfivetech.com> <20230311090733.56918-6-hal.feng@starfivetech.com>
+In-Reply-To: <20230311090733.56918-6-hal.feng@starfivetech.com>
+From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Date:   Mon, 20 Mar 2023 12:51:06 +0100
+Message-ID: <CAJM55Z-2HB4PCw3fy6n3e0FErV9DXqGazVkq4TN+X+34ozNcbw@mail.gmail.com>
+Subject: Re: [PATCH v5 05/21] reset: starfive: Replace SOC_STARFIVE with ARCH_STARFIVE
+To:     Hal Feng <hal.feng@starfivetech.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Since the previous code only provides "ro_ops" for the vid_pll_div
-clock. In fact, the clock can be set. So add "ops" that can set the
-clock, especially for later chips like S4 SOC and so on.
+On Sat, 11 Mar 2023 at 10:07, Hal Feng <hal.feng@starfivetech.com> wrote:
+>
+> Using ARCH_FOO symbol is preferred than SOC_FOO.
+>
+> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 
-Signed-off-by: Yu Tu <yu.tu@amlogic.com>
----
- drivers/clk/meson/vid-pll-div.c | 67 +++++++++++++++++++++++++++++++++
- drivers/clk/meson/vid-pll-div.h |  3 ++
- 2 files changed, 70 insertions(+)
+Thanks!
+Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 
-diff --git a/drivers/clk/meson/vid-pll-div.c b/drivers/clk/meson/vid-pll-div.c
-index daff235bc763..3c9015944f24 100644
---- a/drivers/clk/meson/vid-pll-div.c
-+++ b/drivers/clk/meson/vid-pll-div.c
-@@ -89,6 +89,73 @@ static unsigned long meson_vid_pll_div_recalc_rate(struct clk_hw *hw,
- 	return DIV_ROUND_UP_ULL(parent_rate * div->multiplier, div->divider);
- }
- 
-+static int meson_vid_pll_div_determine_rate(struct clk_hw *hw,
-+					    struct clk_rate_request *req)
-+{
-+	unsigned long parent_rate, best = 0, now = 0, rate;
-+	unsigned long parent_rate_saved = req->best_parent_rate;
-+	unsigned int i, best_i = 0;
-+
-+	for (i = 0 ; i < VID_PLL_DIV_TABLE_SIZE; ++i) {
-+		rate = DIV_ROUND_CLOSEST_ULL(req->rate * vid_pll_div_table[i].divider,
-+					     vid_pll_div_table[i].multiplier);
-+		if (parent_rate_saved == rate) {
-+			req->best_parent_rate = parent_rate_saved;
-+			best_i = i;
-+			break;
-+		}
-+
-+		parent_rate = clk_hw_round_rate(req->best_parent_hw, rate);
-+		now = DIV_ROUND_CLOSEST_ULL(parent_rate *
-+					    vid_pll_div_table[i].multiplier,
-+					    vid_pll_div_table[i].divider);
-+		if (abs(now - req->rate) < abs(best - req->rate)) {
-+			best = now;
-+			best_i = i;
-+			req->best_parent_rate = parent_rate;
-+		}
-+	}
-+
-+	req->rate = DIV_ROUND_CLOSEST_ULL(req->best_parent_rate *
-+					  vid_pll_div_table[best_i].multiplier,
-+					  vid_pll_div_table[best_i].divider);
-+
-+	return 0;
-+}
-+
-+static int meson_vid_pll_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+				      unsigned long parent_rate)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_vid_pll_div_data *pll_div = meson_vid_pll_div_data(clk);
-+	unsigned long best = 0, now = 0;
-+	unsigned int i, best_i = 0;
-+
-+	for (i = 0 ; i < VID_PLL_DIV_TABLE_SIZE; ++i) {
-+		now = DIV_ROUND_CLOSEST_ULL(parent_rate * vid_pll_div_table[i].multiplier,
-+					    vid_pll_div_table[i].divider);
-+		if (now == rate) {
-+			best_i = i;
-+			break;
-+		} else if (abs(now - rate) < abs(best - rate)) {
-+			best = now;
-+			best_i = i;
-+		}
-+	}
-+
-+	meson_parm_write(clk->map, &pll_div->val, vid_pll_div_table[best_i].shift_val);
-+	meson_parm_write(clk->map, &pll_div->sel, vid_pll_div_table[best_i].shift_sel);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops meson_vid_pll_div_ops = {
-+	.recalc_rate	= meson_vid_pll_div_recalc_rate,
-+	.determine_rate	= meson_vid_pll_div_determine_rate,
-+	.set_rate	= meson_vid_pll_div_set_rate,
-+};
-+EXPORT_SYMBOL_GPL(meson_vid_pll_div_ops);
-+
- const struct clk_ops meson_vid_pll_div_ro_ops = {
- 	.recalc_rate	= meson_vid_pll_div_recalc_rate,
- };
-diff --git a/drivers/clk/meson/vid-pll-div.h b/drivers/clk/meson/vid-pll-div.h
-index c0128e33ccf9..bbccab340910 100644
---- a/drivers/clk/meson/vid-pll-div.h
-+++ b/drivers/clk/meson/vid-pll-div.h
-@@ -10,11 +10,14 @@
- #include <linux/clk-provider.h>
- #include "parm.h"
- 
-+#define VID_PLL_DIV_TABLE_SIZE		14
-+
- struct meson_vid_pll_div_data {
- 	struct parm val;
- 	struct parm sel;
- };
- 
- extern const struct clk_ops meson_vid_pll_div_ro_ops;
-+extern const struct clk_ops meson_vid_pll_div_ops;
- 
- #endif /* __MESON_VID_PLL_DIV_H */
--- 
-2.33.1
-
+> ---
+>  drivers/reset/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 2a52c990d4fe..6ae5aa46a6b2 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -234,8 +234,8 @@ config RESET_SOCFPGA
+>
+>  config RESET_STARFIVE_JH7100
+>         bool "StarFive JH7100 Reset Driver"
+> -       depends on SOC_STARFIVE || COMPILE_TEST
+> -       default SOC_STARFIVE
+> +       depends on ARCH_STARFIVE || COMPILE_TEST
+> +       default ARCH_STARFIVE
+>         help
+>           This enables the reset controller driver for the StarFive JH7100 SoC.
+>
+> --
+> 2.38.1
+>
