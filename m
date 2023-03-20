@@ -2,394 +2,122 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D66C761A6
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 10:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E64C6FD1D
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 10:42:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230128AbjCTKk3 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 06:40:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34284 "EHLO
+        id S229985AbjCTKmr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 06:42:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231207AbjCTKjw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 06:39:52 -0400
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74EF410E6;
-        Mon, 20 Mar 2023 03:38:42 -0700 (PDT)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id 6557524E29B;
-        Mon, 20 Mar 2023 18:38:09 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 20 Mar
- 2023 18:38:09 +0800
-Received: from ubuntu.localdomain (183.27.97.64) by EXMBX172.cuchost.com
- (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 20 Mar
- 2023 18:38:08 +0800
-From:   Hal Feng <hal.feng@starfivetech.com>
-To:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>
-CC:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Rob Herring" <robh+dt@kernel.org>,
+        with ESMTP id S229786AbjCTKmY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 06:42:24 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C451D26CC9;
+        Mon, 20 Mar 2023 03:40:31 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id k2so11926352pll.8;
+        Mon, 20 Mar 2023 03:40:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679308810;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ytodzSMqKI+g6vziElNMEkt2Uz4MK0qBsUvh5kc4oY0=;
+        b=aVBcSvaWtaFyKL45eHS55ASyUBgV5hhFSlWXe/FsfV8IvzxFyee8V/j4n+ZXr0cA8h
+         ZVO2KBURAWTx2sUgqY4G8Ljf25jjf0Y6HIDXcyB7YvRQGkw0Sh5T1+SvoFSwmWjobvks
+         QdM8Sp+gEDAYzFGmYlS6aUYGI3/nbVRQ5KRxBhe/Z/XPBb7JjsonC28RDfnFDjMX73cb
+         CXMPSorHzThl8TuhJ0P5QdTG6RvDljh+uBZOSaKN5lHngSq8Kv9/V9jo8hCbVN18KvlG
+         6eT4AVsfw9ulFNRBoqJxRYRzmQO657hP6slEvoeZWBff7wJzglbmd/KaG7ZAZRrd88JH
+         dH4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679308810;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ytodzSMqKI+g6vziElNMEkt2Uz4MK0qBsUvh5kc4oY0=;
+        b=LNyoPqbq8mpUAVlFIgJ5aZEFi7/+dhpyzkhsAy/Lpl36euktrsuu1Ly67kiVZYRxKj
+         4dTwqXR3NYRXUtGVkiF6JqWPQJu46FLXWd+4jCsI0qdVvVf8Bai+6zc4h0GDt/kaGbvw
+         aIBziinUV1RHL56vSDm8wTkvUNvxbxfNsfjtYBQy4OvBjo4j2ouTGtwBfJxUOy7R68Om
+         gjgqKtxSSIwcsrwTWr4p9bxd/Mncd/0/XWpLOlcQ1+i/K5XofYWh372EkX87H6DcGB2S
+         WWb+eUz1N6cSoVLTJb27a1MrPO/+6LTfGsnD2M5UECCMQ/8kyy3lyJs/iKCCh0uXWmru
+         yMCw==
+X-Gm-Message-State: AO0yUKUqEVahlWpqxXiY28y8p3b61iCF0k+/E2Cj9cLEqCV0crG2q6EJ
+        3Seq1vP6CmAWs97sFNhj/sT0kLY4OpI=
+X-Google-Smtp-Source: AK7set9p7RaTki583fnEIoXwiT2hgRfy0b/tvJDJntOFblX1CVmcZ4gFnxZPOBptOMTfENV0EHIrrw==
+X-Received: by 2002:a05:6a20:4321:b0:cd:1367:3b69 with SMTP id h33-20020a056a20432100b000cd13673b69mr19206208pzk.17.1679308810517;
+        Mon, 20 Mar 2023 03:40:10 -0700 (PDT)
+Received: from kelvin-ThinkPad-L14-Gen-1.. (94.130.220.35.bc.googleusercontent.com. [35.220.130.94])
+        by smtp.gmail.com with ESMTPSA id e17-20020a63ee11000000b00478c48cf73csm5922535pgi.82.2023.03.20.03.40.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Mar 2023 03:40:10 -0700 (PDT)
+From:   Keguang Zhang <keguang.zhang@gmail.com>
+To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor@kernel.org>,
-        "Palmer Dabbelt" <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        "Daniel Lezcano" <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 20/21] riscv: dts: starfive: Add StarFive JH7110 pin function definitions
-Date:   Mon, 20 Mar 2023 18:37:49 +0800
-Message-ID: <20230320103750.60295-21-hal.feng@starfivetech.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20230320103750.60295-1-hal.feng@starfivetech.com>
-References: <20230320103750.60295-1-hal.feng@starfivetech.com>
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Keguang Zhang <keguang.zhang@gmail.com>
+Subject: [PATCH v4 0/4] Devicetree support for Loongson-1 clock
+Date:   Mon, 20 Mar 2023 18:39:59 +0800
+Message-Id: <20230320104003.407844-1-keguang.zhang@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [183.27.97.64]
-X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
- (172.16.6.92)
-X-YovoleRuleAgent: yovoleflag
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jianlong Huang <jianlong.huang@starfivetech.com>
+Removes the old Loongson-1 clock driver and related code
+mainly because of no DT support and outdated implementation.
 
-Add pin function definitions for StarFive JH7110 SoC.
+Then, re-implement it to solve the above issues,
+along with the devicetree binding document.
 
-Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
-Co-developed-by: Emil Renner Berthing <kernel@esmil.dk>
-Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-Signed-off-by: Jianlong Huang <jianlong.huang@starfivetech.com>
-Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
----
- arch/riscv/boot/dts/starfive/jh7110-pinfunc.h | 308 ++++++++++++++++++
- 1 file changed, 308 insertions(+)
- create mode 100644 arch/riscv/boot/dts/starfive/jh7110-pinfunc.h
+Changelog
+V3 -> V4: Fix the build error of missing linux/module.h
+          Add Reviewed-by tag from Krzysztof Kozlowski
+V2 -> V3: Add 'reg' property into the 'required' field
+          Delete the unnecessary property 'clock-names'
+          Use the same license as binding document for the header file.
+          Add MODULE_AUTHOR and MODULE_DESCRIPTION info
+          Add patch "MIPS: loongson32: Update the clock initialization" into this series
+	  Add Acked-by tag from Stephen Boyd and Thomas Bogendoerfer
+V1 -> V2: Change to one clock controller (suggested by Krzysztof Kozlowski)
+          Add clock-related dt-binding header file
+          Fix the warning of dt_binding_check
+          Split the driver removal to a separate patch
+          Implement one clock controller instead of single clocks
+          (suggested by Krzysztof Kozlowski)
 
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-pinfunc.h b/arch/riscv/boot/dts/starfive/jh7110-pinfunc.h
-new file mode 100644
-index 000000000000..fb0139b56723
---- /dev/null
-+++ b/arch/riscv/boot/dts/starfive/jh7110-pinfunc.h
-@@ -0,0 +1,308 @@
-+/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-+/*
-+ * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
-+ * Copyright (C) 2022 StarFive Technology Co., Ltd.
-+ */
-+
-+#ifndef __JH7110_PINFUNC_H__
-+#define __JH7110_PINFUNC_H__
-+
-+/*
-+ * mux bits:
-+ *  | 31 - 24 | 23 - 16 | 15 - 10 |  9 - 8   |  7 - 0  |
-+ *  |  din    |  dout   |  doen   | function | gpio nr |
-+ *
-+ * dout:     output signal
-+ * doen:     output enable signal
-+ * din:      optional input signal, 0xff = none
-+ * function: function selector
-+ * gpio nr:  gpio number, 0 - 63
-+ */
-+#define GPIOMUX(n, dout, doen, din) ( \
-+		(((din)  & 0xff) << 24) | \
-+		(((dout) & 0xff) << 16) | \
-+		(((doen) & 0x3f) << 10) | \
-+		((n) & 0x3f))
-+
-+#define PINMUX(n, func) ((1 << 10) | (((func) & 0x3) << 8) | ((n) & 0xff))
-+
-+/* sys_iomux dout */
-+#define GPOUT_LOW				0
-+#define GPOUT_HIGH				1
-+#define GPOUT_SYS_WAVE511_UART_TX		2
-+#define GPOUT_SYS_CAN0_STBY			3
-+#define GPOUT_SYS_CAN0_TST_NEXT_BIT		4
-+#define GPOUT_SYS_CAN0_TST_SAMPLE_POINT		5
-+#define GPOUT_SYS_CAN0_TXD			6
-+#define GPOUT_SYS_USB_DRIVE_VBUS		7
-+#define GPOUT_SYS_QSPI_CS1			8
-+#define GPOUT_SYS_SPDIF				9
-+#define GPOUT_SYS_HDMI_CEC_SDA			10
-+#define GPOUT_SYS_HDMI_DDC_SCL			11
-+#define GPOUT_SYS_HDMI_DDC_SDA			12
-+#define GPOUT_SYS_WATCHDOG			13
-+#define GPOUT_SYS_I2C0_CLK			14
-+#define GPOUT_SYS_I2C0_DATA			15
-+#define GPOUT_SYS_SDIO0_BACK_END_POWER		16
-+#define GPOUT_SYS_SDIO0_CARD_POWER_EN		17
-+#define GPOUT_SYS_SDIO0_CCMD_OD_PULLUP_EN	18
-+#define GPOUT_SYS_SDIO0_RST			19
-+#define GPOUT_SYS_UART0_TX			20
-+#define GPOUT_SYS_HIFI4_JTAG_TDO		21
-+#define GPOUT_SYS_JTAG_TDO			22
-+#define GPOUT_SYS_PDM_MCLK			23
-+#define GPOUT_SYS_PWM_CHANNEL0			24
-+#define GPOUT_SYS_PWM_CHANNEL1			25
-+#define GPOUT_SYS_PWM_CHANNEL2			26
-+#define GPOUT_SYS_PWM_CHANNEL3			27
-+#define GPOUT_SYS_PWMDAC_LEFT			28
-+#define GPOUT_SYS_PWMDAC_RIGHT			29
-+#define GPOUT_SYS_SPI0_CLK			30
-+#define GPOUT_SYS_SPI0_FSS			31
-+#define GPOUT_SYS_SPI0_TXD			32
-+#define GPOUT_SYS_GMAC_PHYCLK			33
-+#define GPOUT_SYS_I2SRX_BCLK			34
-+#define GPOUT_SYS_I2SRX_LRCK			35
-+#define GPOUT_SYS_I2STX0_BCLK			36
-+#define GPOUT_SYS_I2STX0_LRCK			37
-+#define GPOUT_SYS_MCLK				38
-+#define GPOUT_SYS_TDM_CLK			39
-+#define GPOUT_SYS_TDM_SYNC			40
-+#define GPOUT_SYS_TDM_TXD			41
-+#define GPOUT_SYS_TRACE_DATA0			42
-+#define GPOUT_SYS_TRACE_DATA1			43
-+#define GPOUT_SYS_TRACE_DATA2			44
-+#define GPOUT_SYS_TRACE_DATA3			45
-+#define GPOUT_SYS_TRACE_REF			46
-+#define GPOUT_SYS_CAN1_STBY			47
-+#define GPOUT_SYS_CAN1_TST_NEXT_BIT		48
-+#define GPOUT_SYS_CAN1_TST_SAMPLE_POINT		49
-+#define GPOUT_SYS_CAN1_TXD			50
-+#define GPOUT_SYS_I2C1_CLK			51
-+#define GPOUT_SYS_I2C1_DATA			52
-+#define GPOUT_SYS_SDIO1_BACK_END_POWER		53
-+#define GPOUT_SYS_SDIO1_CARD_POWER_EN		54
-+#define GPOUT_SYS_SDIO1_CLK			55
-+#define GPOUT_SYS_SDIO1_CMD_OD_PULLUP_EN	56
-+#define GPOUT_SYS_SDIO1_CMD			57
-+#define GPOUT_SYS_SDIO1_DATA0			58
-+#define GPOUT_SYS_SDIO1_DATA1			59
-+#define GPOUT_SYS_SDIO1_DATA2			60
-+#define GPOUT_SYS_SDIO1_DATA3			61
-+#define GPOUT_SYS_SDIO1_DATA4			63
-+#define GPOUT_SYS_SDIO1_DATA5			63
-+#define GPOUT_SYS_SDIO1_DATA6			64
-+#define GPOUT_SYS_SDIO1_DATA7			65
-+#define GPOUT_SYS_SDIO1_RST			66
-+#define GPOUT_SYS_UART1_RTS			67
-+#define GPOUT_SYS_UART1_TX			68
-+#define GPOUT_SYS_I2STX1_SDO0			69
-+#define GPOUT_SYS_I2STX1_SDO1			70
-+#define GPOUT_SYS_I2STX1_SDO2			71
-+#define GPOUT_SYS_I2STX1_SDO3			72
-+#define GPOUT_SYS_SPI1_CLK			73
-+#define GPOUT_SYS_SPI1_FSS			74
-+#define GPOUT_SYS_SPI1_TXD			75
-+#define GPOUT_SYS_I2C2_CLK			76
-+#define GPOUT_SYS_I2C2_DATA			77
-+#define GPOUT_SYS_UART2_RTS			78
-+#define GPOUT_SYS_UART2_TX			79
-+#define GPOUT_SYS_SPI2_CLK			80
-+#define GPOUT_SYS_SPI2_FSS			81
-+#define GPOUT_SYS_SPI2_TXD			82
-+#define GPOUT_SYS_I2C3_CLK			83
-+#define GPOUT_SYS_I2C3_DATA			84
-+#define GPOUT_SYS_UART3_TX			85
-+#define GPOUT_SYS_SPI3_CLK			86
-+#define GPOUT_SYS_SPI3_FSS			87
-+#define GPOUT_SYS_SPI3_TXD			88
-+#define GPOUT_SYS_I2C4_CLK			89
-+#define GPOUT_SYS_I2C4_DATA			90
-+#define GPOUT_SYS_UART4_RTS			91
-+#define GPOUT_SYS_UART4_TX			92
-+#define GPOUT_SYS_SPI4_CLK			93
-+#define GPOUT_SYS_SPI4_FSS			94
-+#define GPOUT_SYS_SPI4_TXD			95
-+#define GPOUT_SYS_I2C5_CLK			96
-+#define GPOUT_SYS_I2C5_DATA			97
-+#define GPOUT_SYS_UART5_RTS			98
-+#define GPOUT_SYS_UART5_TX			99
-+#define GPOUT_SYS_SPI5_CLK			100
-+#define GPOUT_SYS_SPI5_FSS			101
-+#define GPOUT_SYS_SPI5_TXD			102
-+#define GPOUT_SYS_I2C6_CLK			103
-+#define GPOUT_SYS_I2C6_DATA			104
-+#define GPOUT_SYS_SPI6_CLK			105
-+#define GPOUT_SYS_SPI6_FSS			106
-+#define GPOUT_SYS_SPI6_TXD			107
-+
-+/* aon_iomux dout */
-+#define GPOUT_AON_CLK_32K_OUT			2
-+#define GPOUT_AON_PTC0_PWM4			3
-+#define GPOUT_AON_PTC0_PWM5			4
-+#define GPOUT_AON_PTC0_PWM6			5
-+#define GPOUT_AON_PTC0_PWM7			6
-+#define GPOUT_AON_CLK_GCLK0			7
-+#define GPOUT_AON_CLK_GCLK1			8
-+#define GPOUT_AON_CLK_GCLK2			9
-+
-+/* sys_iomux doen */
-+#define GPOEN_ENABLE				0
-+#define GPOEN_DISABLE				1
-+#define GPOEN_SYS_HDMI_CEC_SDA			2
-+#define GPOEN_SYS_HDMI_DDC_SCL			3
-+#define GPOEN_SYS_HDMI_DDC_SDA			4
-+#define GPOEN_SYS_I2C0_CLK			5
-+#define GPOEN_SYS_I2C0_DATA			6
-+#define GPOEN_SYS_HIFI4_JTAG_TDO		7
-+#define GPOEN_SYS_JTAG_TDO			8
-+#define GPOEN_SYS_PWM0_CHANNEL0			9
-+#define GPOEN_SYS_PWM0_CHANNEL1			10
-+#define GPOEN_SYS_PWM0_CHANNEL2			11
-+#define GPOEN_SYS_PWM0_CHANNEL3			12
-+#define GPOEN_SYS_SPI0_NSSPCTL			13
-+#define GPOEN_SYS_SPI0_NSSP			14
-+#define GPOEN_SYS_TDM_SYNC			15
-+#define GPOEN_SYS_TDM_TXD			16
-+#define GPOEN_SYS_I2C1_CLK			17
-+#define GPOEN_SYS_I2C1_DATA			18
-+#define GPOEN_SYS_SDIO1_CMD			19
-+#define GPOEN_SYS_SDIO1_DATA0			20
-+#define GPOEN_SYS_SDIO1_DATA1			21
-+#define GPOEN_SYS_SDIO1_DATA2			22
-+#define GPOEN_SYS_SDIO1_DATA3			23
-+#define GPOEN_SYS_SDIO1_DATA4			24
-+#define GPOEN_SYS_SDIO1_DATA5			25
-+#define GPOEN_SYS_SDIO1_DATA6			26
-+#define GPOEN_SYS_SDIO1_DATA7			27
-+#define GPOEN_SYS_SPI1_NSSPCTL			28
-+#define GPOEN_SYS_SPI1_NSSP			29
-+#define GPOEN_SYS_I2C2_CLK			30
-+#define GPOEN_SYS_I2C2_DATA			31
-+#define GPOEN_SYS_SPI2_NSSPCTL			32
-+#define GPOEN_SYS_SPI2_NSSP			33
-+#define GPOEN_SYS_I2C3_CLK			34
-+#define GPOEN_SYS_I2C3_DATA			35
-+#define GPOEN_SYS_SPI3_NSSPCTL			36
-+#define GPOEN_SYS_SPI3_NSSP			37
-+#define GPOEN_SYS_I2C4_CLK			38
-+#define GPOEN_SYS_I2C4_DATA			39
-+#define GPOEN_SYS_SPI4_NSSPCTL			40
-+#define GPOEN_SYS_SPI4_NSSP			41
-+#define GPOEN_SYS_I2C5_CLK			42
-+#define GPOEN_SYS_I2C5_DATA			43
-+#define GPOEN_SYS_SPI5_NSSPCTL			44
-+#define GPOEN_SYS_SPI5_NSSP			45
-+#define GPOEN_SYS_I2C6_CLK			46
-+#define GPOEN_SYS_I2C6_DATA			47
-+#define GPOEN_SYS_SPI6_NSSPCTL			48
-+#define GPOEN_SYS_SPI6_NSSP			49
-+
-+/* aon_iomux doen */
-+#define GPOEN_AON_PTC0_OE_N_4			2
-+#define GPOEN_AON_PTC0_OE_N_5			3
-+#define GPOEN_AON_PTC0_OE_N_6			4
-+#define GPOEN_AON_PTC0_OE_N_7			5
-+
-+/* sys_iomux gin */
-+#define GPI_NONE				255
-+
-+#define GPI_SYS_WAVE511_UART_RX			0
-+#define GPI_SYS_CAN0_RXD			1
-+#define GPI_SYS_USB_OVERCURRENT			2
-+#define GPI_SYS_SPDIF				3
-+#define GPI_SYS_JTAG_RST			4
-+#define GPI_SYS_HDMI_CEC_SDA			5
-+#define GPI_SYS_HDMI_DDC_SCL			6
-+#define GPI_SYS_HDMI_DDC_SDA			7
-+#define GPI_SYS_HDMI_HPD			8
-+#define GPI_SYS_I2C0_CLK			9
-+#define GPI_SYS_I2C0_DATA			10
-+#define GPI_SYS_SDIO0_CD			11
-+#define GPI_SYS_SDIO0_INT			12
-+#define GPI_SYS_SDIO0_WP			13
-+#define GPI_SYS_UART0_RX			14
-+#define GPI_SYS_HIFI4_JTAG_TCK			15
-+#define GPI_SYS_HIFI4_JTAG_TDI			16
-+#define GPI_SYS_HIFI4_JTAG_TMS			17
-+#define GPI_SYS_HIFI4_JTAG_RST			18
-+#define GPI_SYS_JTAG_TDI			19
-+#define GPI_SYS_JTAG_TMS			20
-+#define GPI_SYS_PDM_DMIC0			21
-+#define GPI_SYS_PDM_DMIC1			22
-+#define GPI_SYS_I2SRX_SDIN0			23
-+#define GPI_SYS_I2SRX_SDIN1			24
-+#define GPI_SYS_I2SRX_SDIN2			25
-+#define GPI_SYS_SPI0_CLK			26
-+#define GPI_SYS_SPI0_FSS			27
-+#define GPI_SYS_SPI0_RXD			28
-+#define GPI_SYS_JTAG_TCK			29
-+#define GPI_SYS_MCLK_EXT			30
-+#define GPI_SYS_I2SRX_BCLK			31
-+#define GPI_SYS_I2SRX_LRCK			32
-+#define GPI_SYS_I2STX0_BCLK			33
-+#define GPI_SYS_I2STX0_LRCK			34
-+#define GPI_SYS_TDM_CLK				35
-+#define GPI_SYS_TDM_RXD				36
-+#define GPI_SYS_TDM_SYNC			37
-+#define GPI_SYS_CAN1_RXD			38
-+#define GPI_SYS_I2C1_CLK			39
-+#define GPI_SYS_I2C1_DATA			40
-+#define GPI_SYS_SDIO1_CD			41
-+#define GPI_SYS_SDIO1_INT			42
-+#define GPI_SYS_SDIO1_WP			43
-+#define GPI_SYS_SDIO1_CMD			44
-+#define GPI_SYS_SDIO1_DATA0			45
-+#define GPI_SYS_SDIO1_DATA1			46
-+#define GPI_SYS_SDIO1_DATA2			47
-+#define GPI_SYS_SDIO1_DATA3			48
-+#define GPI_SYS_SDIO1_DATA4			49
-+#define GPI_SYS_SDIO1_DATA5			50
-+#define GPI_SYS_SDIO1_DATA6			51
-+#define GPI_SYS_SDIO1_DATA7			52
-+#define GPI_SYS_SDIO1_STRB			53
-+#define GPI_SYS_UART1_CTS			54
-+#define GPI_SYS_UART1_RX			55
-+#define GPI_SYS_SPI1_CLK			56
-+#define GPI_SYS_SPI1_FSS			57
-+#define GPI_SYS_SPI1_RXD			58
-+#define GPI_SYS_I2C2_CLK			59
-+#define GPI_SYS_I2C2_DATA			60
-+#define GPI_SYS_UART2_CTS			61
-+#define GPI_SYS_UART2_RX			62
-+#define GPI_SYS_SPI2_CLK			63
-+#define GPI_SYS_SPI2_FSS			64
-+#define GPI_SYS_SPI2_RXD			65
-+#define GPI_SYS_I2C3_CLK			66
-+#define GPI_SYS_I2C3_DATA			67
-+#define GPI_SYS_UART3_RX			68
-+#define GPI_SYS_SPI3_CLK			69
-+#define GPI_SYS_SPI3_FSS			70
-+#define GPI_SYS_SPI3_RXD			71
-+#define GPI_SYS_I2C4_CLK			72
-+#define GPI_SYS_I2C4_DATA			73
-+#define GPI_SYS_UART4_CTS			74
-+#define GPI_SYS_UART4_RX			75
-+#define GPI_SYS_SPI4_CLK			76
-+#define GPI_SYS_SPI4_FSS			77
-+#define GPI_SYS_SPI4_RXD			78
-+#define GPI_SYS_I2C5_CLK			79
-+#define GPI_SYS_I2C5_DATA			80
-+#define GPI_SYS_UART5_CTS			81
-+#define GPI_SYS_UART5_RX			82
-+#define GPI_SYS_SPI5_CLK			83
-+#define GPI_SYS_SPI5_FSS			84
-+#define GPI_SYS_SPI5_RXD			85
-+#define GPI_SYS_I2C6_CLK			86
-+#define GPI_SYS_I2C6_DATA			87
-+#define GPI_SYS_SPI6_CLK			88
-+#define GPI_SYS_SPI6_FSS			89
-+#define GPI_SYS_SPI6_RXD			90
-+
-+/* aon_iomux gin */
-+#define GPI_AON_PMU_GPIO_WAKEUP_0		0
-+#define GPI_AON_PMU_GPIO_WAKEUP_1		1
-+#define GPI_AON_PMU_GPIO_WAKEUP_2		2
-+#define GPI_AON_PMU_GPIO_WAKEUP_3		3
-+
-+#endif
+Keguang Zhang (4):
+  dt-bindings: clock: Add Loongson-1 clock
+  clk: loongson1: Remove the outdated driver
+  clk: loongson1: Re-implement the clock driver
+  MIPS: loongson32: Update the clock initialization
+
+ .../bindings/clock/loongson,ls1x-clk.yaml     |  45 +++
+ .../include/asm/mach-loongson32/platform.h    |   1 -
+ arch/mips/loongson32/common/time.c            |   3 +-
+ drivers/clk/Makefile                          |   2 +-
+ drivers/clk/clk-loongson1.c                   | 302 ++++++++++++++++++
+ drivers/clk/loongson1/Makefile                |   4 -
+ drivers/clk/loongson1/clk-loongson1b.c        | 118 -------
+ drivers/clk/loongson1/clk-loongson1c.c        |  95 ------
+ drivers/clk/loongson1/clk.c                   |  41 ---
+ drivers/clk/loongson1/clk.h                   |  15 -
+ include/dt-bindings/clock/loongson,ls1x-clk.h |  19 ++
+ 11 files changed, 369 insertions(+), 276 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/loongson,ls1x-clk.yaml
+ create mode 100644 drivers/clk/clk-loongson1.c
+ delete mode 100644 drivers/clk/loongson1/Makefile
+ delete mode 100644 drivers/clk/loongson1/clk-loongson1b.c
+ delete mode 100644 drivers/clk/loongson1/clk-loongson1c.c
+ delete mode 100644 drivers/clk/loongson1/clk.c
+ delete mode 100644 drivers/clk/loongson1/clk.h
+ create mode 100644 include/dt-bindings/clock/loongson,ls1x-clk.h
+
+
+base-commit: d8bb7bcf754c39de7347b746766ed45932e787d1
 -- 
-2.38.1
+2.34.1
 
