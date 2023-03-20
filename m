@@ -2,188 +2,88 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE41BC6FD1C
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 21:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E52E4C6FD1C
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 21:21:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229746AbjCTVVG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 17:21:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42434 "EHLO
+        id S229612AbjCTVVw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 17:21:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229524AbjCTVVG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 17:21:06 -0400
+        with ESMTP id S229916AbjCTVVv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 17:21:51 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF62D5BA2
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 14:21:03 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2454B30B22;
+        Mon, 20 Mar 2023 14:21:43 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 98F13B810BC
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 21:21:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3805AC433EF;
-        Mon, 20 Mar 2023 21:21:01 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 51613B810F4;
+        Mon, 20 Mar 2023 21:21:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD943C433EF;
+        Mon, 20 Mar 2023 21:21:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679347261;
-        bh=x6I9S1lGK6o4MSuZSnmVynR5hopBiJy13ULWh3RzYf8=;
+        s=k20201202; t=1679347300;
+        bh=qlNHY3AtvWM7FXZ0JBT4vSXElewhp64RqmgLO5c9uUA=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=BEzZGUoQyXqtBfGHFMl0DsdwZ0XWZ7KyKudFj/5yPhv06SHPG8wpaZ+0Ctiu6e+Kk
-         /nDyV/4CdIPCviPjnxBHTWetb+JgoSXYbsRuYLpXzL5J/lyxYCKvR9yqP55d1JdfKE
-         eFCfv7/jbhckOwfnnLvK90CwgX/Sl8ZBHj+3dM+VzHb83lUzwOlki67wz+2KZpNkax
-         JcmQBVOtyVG/o5nrUEIJAf1iDndWhnrWORLbdlSjR3Zm3O/XvV4/3hG3vLLCXf7fJJ
-         TXAArrPxCyDGvtVamWRaxCAjnzqMgqqaBWi96H4Jx2+InH+nLqW97WqmqALlZh9fjC
-         5TZ97dYBfz3Zw==
-Message-ID: <b76168cc3f328235bbb8bf9f195dbaf4.sboyd@kernel.org>
+        b=Ix7ZaNOlKAc03BSJ5Yo5CFuhMP1KPy47cHjl2PazM9iz8L+mGwNHH/jnYEkSTC6yM
+         +BibgyyMHBkRKkeYwciv/AmH1EZmsFJSNq7/gggByVWpHjcFcChlaNqPFkFHYI38Il
+         dUtshLcxPsukp5NjNYyuphYZl0p3/uy6vs5V6aYXkgmAk7sa+TJ8a2pUsqUIL3SW8y
+         4DnARn1o9d+LuKw9TzBL9WNbns0wXiDeLZf96/7gXhE8k3PAUgQL2swfpxqJ1lWins
+         wQ2dHlZmAP222HeWmVaxu0E75beLz77mPOEDd3Ano5EwSPn0Tt06v0QCvQRxYPY7z0
+         c4b31eGXpvKFA==
+Message-ID: <90dd1f841e7941d8b5931ef68cd6d14e.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230317073539.13288-1-shubhrajyoti.datta@amd.com>
-References: <20230317073539.13288-1-shubhrajyoti.datta@amd.com>
-Subject: Re: [PATCH v3] clocking-wizard: Support higher frequency accuracy
+In-Reply-To: <CAMhs-H-y6TsSoKsJzM0gkFk6wx7xNigXKJb7wm8rBzrigtJANg@mail.gmail.com>
+References: <20230320161823.1424278-1-sergio.paracuellos@gmail.com> <20230320161823.1424278-8-sergio.paracuellos@gmail.com> <966523bee1d28d546969a24eff60d315.sboyd@kernel.org> <CAMhs-H-y6TsSoKsJzM0gkFk6wx7xNigXKJb7wm8rBzrigtJANg@mail.gmail.com>
+Subject: Re: [PATCH 07/10] mips: ralink: remove clock related function prototypes
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     git@amd.com, mturquette@baylibre.com, michal.simek@xilinx.com
-To:     Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-        linux-clk@vger.kernel.org
-Date:   Mon, 20 Mar 2023 14:20:58 -0700
+Cc:     linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
+        tsbogend@alpha.franken.de, john@phrozen.org,
+        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+        mturquette@baylibre.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
+        devicetree@vger.kernel.org, arinc.unal@arinc9.com
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Mon, 20 Mar 2023 14:21:37 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Shubhrajyoti Datta (2023-03-17 00:35:39)
-> diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xil=
-inx/clk-xlnx-clock-wizard.c
-> index c495d709f9e2..6828911b6342 100644
-> --- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-> +++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-> @@ -107,6 +129,9 @@ struct clk_wzrd_divider {
->         u8 width;
->         u8 flags;
->         const struct clk_div_table *table;
-> +       u32 valuem;
-> +       u32 valued;
-> +       u32 valueo;
+Quoting Sergio Paracuellos (2023-03-20 13:17:47)
+> Hi Stephen,
+>=20
+> On Mon, Mar 20, 2023 at 8:38=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> w=
+rote:
+> >
+> > Quoting Sergio Paracuellos (2023-03-20 09:18:20)
+> > > Clock related code has been removed from 'arch/mips/ralink' folder an=
+d put
+> > > into drivers space. Hence remove clock related prototypes which are n=
+ot
+> > > used anymore.
+> > >
+> > > Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> > > ---
+> > >  arch/mips/ralink/common.h | 3 ---
+> > >  1 file changed, 3 deletions(-)
+> > >
+> > > diff --git a/arch/mips/ralink/common.h b/arch/mips/ralink/common.h
+> > > index 87fc16751281..fcdfc9dc6210 100644
+> > > --- a/arch/mips/ralink/common.h
+> > > +++ b/arch/mips/ralink/common.h
+> > > @@ -23,9 +23,6 @@ extern struct ralink_soc_info soc_info;
+> > >
+> > >  extern void ralink_of_remap(void);
+> > >
+> > > -extern void ralink_clk_init(void);
+> >
+> > Why isn't this removed in the patch that removes the function?
+>=20
+> Because the function exists for all the SoCs code and there are
+> several patches removing it; one per SoC, so I decided to remove this
+> at the end. Should I squash all patches together instead?
 
-Can this just be 'm, d, o'? That 'value' prefix is not helpful.
-
->         spinlock_t *lock;  /* divider lock */
->  };
-> =20
-[...]
-> +
-> +static int clk_wzrd_dynamic_all_nolock(struct clk_hw *hw, unsigned long =
-rate,
-> +                                      unsigned long parent_rate)
-> +{
-> +       struct clk_wzrd_divider *divider =3D to_clk_wzrd_divider(hw);
-> +       unsigned long vco_freq, rate_div, f, clockout0_div;
-> +       u32 reg, pre, value;
-> +       int err;
-> +
-> +       err =3D clk_wzrd_get_divisors(hw, rate, parent_rate);
-> +       if (err)
-> +               return err;
-> +
-> +       vco_freq =3D DIV_ROUND_CLOSEST(parent_rate * divider->valuem, div=
-ider->valued);
-> +       rate_div =3D DIV_ROUND_CLOSEST_ULL((vco_freq * WZRD_FRAC_POINTS),=
- rate);
-> +
-> +       clockout0_div =3D div_u64(rate_div,  WZRD_FRAC_POINTS);
-> +
-> +       pre =3D DIV_ROUND_CLOSEST_ULL(vco_freq * WZRD_FRAC_POINTS, rate);
-> +       f =3D (u32)(pre - (clockout0_div * WZRD_FRAC_POINTS));
-
-Make 'f' a u32 instead of unsigned long and then drop the cast.
-
-> +       f &=3D WZRD_CLKOUT_FRAC_MASK;
-> +
-> +       reg =3D FIELD_PREP(WZRD_CLKOUT_DIVIDE_MASK, clockout0_div) |
-> +             FIELD_PREP(WZRD_CLKOUT0_FRAC_MASK, f);
-> +
-> +       writel(reg, divider->base + WZRD_CLK_CFG_REG(2));
-> +       /* Set divisor and clear phase offset */
-> +       reg =3D FIELD_PREP(WZRD_CLKFBOUT_MULT_MASK, divider->valuem) |
-> +             FIELD_PREP(WZRD_DIVCLK_DIVIDE_MASK, divider->valued);
-> +       writel(reg, divider->base + WZRD_CLK_CFG_REG(0));
-> +       writel(divider->valueo, divider->base + WZRD_CLK_CFG_REG(2));
-> +       writel(0, divider->base + WZRD_CLK_CFG_REG(3));
-> +       /* Check status register */
-> +       err =3D readl_poll_timeout(divider->base + WZRD_DR_STATUS_REG_OFF=
-SET, value,
-> +                                value & WZRD_DR_LOCK_BIT_MASK,
-> +                                WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
-> +       if (err)
-> +               return -ETIMEDOUT;
-> +
-> +       /* Initiate reconfiguration */
-> +       writel(WZRD_DR_BEGIN_DYNA_RECONF,
-> +              divider->base + WZRD_DR_INIT_REG_OFFSET);
-> +
-> +       /* Check status register */
-> +       return readl_poll_timeout(divider->base + WZRD_DR_STATUS_REG_OFFS=
-ET, value,
-> +                                value & WZRD_DR_LOCK_BIT_MASK,
-> +                                WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
-> +}
-> +
-> +static int clk_wzrd_dynamic_all(struct clk_hw *hw, unsigned long rate,
-> +                               unsigned long parent_rate)
-> +{
-> +       struct clk_wzrd_divider *divider =3D to_clk_wzrd_divider(hw);
-> +       unsigned long flags =3D 0;
-> +       int ret;
-> +
-> +       if (divider->lock)
-> +               spin_lock_irqsave(divider->lock, flags);
-> +       else
-> +               __acquire(divider->lock);
-
-Is there always a lock? Can we just always lock?
-
-> +
-> +       ret =3D clk_wzrd_dynamic_all_nolock(hw, rate, parent_rate);
-> +
-> +       if (divider->lock)
-> +               spin_unlock_irqrestore(divider->lock, flags);
-> +       else
-> +               __release(divider->lock);
-> +
-> +       return ret;
-> +}
-> +
-> +static unsigned long clk_wzrd_recalc_rate_all(struct clk_hw *hw,
-> +                                             unsigned long parent_rate)
-> +{
-> +       struct clk_wzrd_divider *divider =3D to_clk_wzrd_divider(hw);
-> +       u32 m, d, o, div, reg, f;
-> +
-> +       reg =3D readl(divider->base + WZRD_CLK_CFG_REG(0));
-> +       d =3D FIELD_GET(WZRD_DIVCLK_DIVIDE_MASK, reg);
-> +       m =3D FIELD_GET(WZRD_CLKFBOUT_MULT_MASK, reg);
-> +       reg =3D readl(divider->base + WZRD_CLK_CFG_REG(2));
-> +       o =3D FIELD_GET(WZRD_DIVCLK_DIVIDE_MASK, reg);
-> +       f =3D FIELD_GET(WZRD_CLKOUT0_FRAC_MASK, reg);
-> +
-> +       div =3D DIV_ROUND_CLOSEST(d * (WZRD_FRAC_POINTS * o + f), WZRD_FR=
-AC_POINTS);
-> +       return divider_recalc_rate(hw, parent_rate * m, div, divider->tab=
-le,
-> +                       divider->flags, divider->width);
-> +}
-> +
-> +static long clk_wzrd_round_rate_all(struct clk_hw *hw, unsigned long rat=
-e,
-> +                                   unsigned long *prate)
-> +{
-> +       return rate;
-
-This needs to do math to figure out what the rate is going to be. We
-can't just return the rate passed in.
-
-> +}
-> +
->  static const struct clk_ops clk_wzrd_clk_divider_ops =3D {
->         .round_rate =3D clk_wzrd_round_rate,
->         .set_rate =3D clk_wzrd_dynamic_reconfig,
->         .recalc_rate =3D clk_wzrd_recalc_rate,
->  };
->
+No. But you should squash this with whatever patch removes the last one.
