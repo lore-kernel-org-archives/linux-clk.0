@@ -2,32 +2,32 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A06FBC6FD1D
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 15:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD30C7618A
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 15:08:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232181AbjCTPIk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 11:08:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36690 "EHLO
+        id S232165AbjCTPIz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 11:08:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232200AbjCTPIS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 11:08:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC442270F;
-        Mon, 20 Mar 2023 08:03:44 -0700 (PDT)
+        with ESMTP id S232163AbjCTPIi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 11:08:38 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD9DEAD04;
+        Mon, 20 Mar 2023 08:04:01 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4816F6158B;
-        Mon, 20 Mar 2023 15:03:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BF66C433EF;
-        Mon, 20 Mar 2023 15:03:13 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7D671B80ECD;
+        Mon, 20 Mar 2023 15:04:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6E92C433D2;
+        Mon, 20 Mar 2023 15:03:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1679324593;
-        bh=f1RmTaChlATyRSUZ9EPL2SM6wu64SUGwnXYSCJtNH0E=;
+        s=korg; t=1679324640;
+        bh=dvPK7pX9fTGsLSRmKiPozyisP9QMENNzIH9EWKYqf2I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xeBQYM/qZNB3KdFua5dBrh3RLUVYCdXECdWtMEkfKsRenSyEsOgWDB5hHoHiu+3Ew
-         cVoq+5IFlcseDP+AYmVy1fU7Ek1QxXcsF5q8PIxCqTrJxg7G9Np1TcZ10WL5i5b69o
-         tAf4VW1MggRrfZTEis5ct61kCjg+zUkJkOOXa3wc=
+        b=ny2b2GY2B5ZK87T/WtRoPKdkLeIF7fd0+Cbk/75wwT5uajx1jXChAkrQCOlcMygfQ
+         XKWR2OFKCd/GoXbpY7Elr2+InuqJQDHMzj4Dr/dqqu4SlmkYCRZzUNBTPhbCClo3q9
+         DzXLQSpNGRKr4cs+ImQ+VtmjG5+Nau2+HCenlyxM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -36,12 +36,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.10 05/99] clk: HI655X: select REGMAP instead of depending on it
-Date:   Mon, 20 Mar 2023 15:53:43 +0100
-Message-Id: <20230320145443.573814052@linuxfoundation.org>
+Subject: [PATCH 5.15 005/115] clk: HI655X: select REGMAP instead of depending on it
+Date:   Mon, 20 Mar 2023 15:53:37 +0100
+Message-Id: <20230320145449.575345693@linuxfoundation.org>
 X-Mailer: git-send-email 2.40.0
-In-Reply-To: <20230320145443.333824603@linuxfoundation.org>
-References: <20230320145443.333824603@linuxfoundation.org>
+In-Reply-To: <20230320145449.336983711@linuxfoundation.org>
+References: <20230320145449.336983711@linuxfoundation.org>
 User-Agent: quilt/0.67
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -77,10 +77,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index c715d4681a0b8..4ae49eae45869 100644
+index c5b3dc97396a6..100e474ff3dc5 100644
 --- a/drivers/clk/Kconfig
 +++ b/drivers/clk/Kconfig
-@@ -79,7 +79,7 @@ config COMMON_CLK_RK808
+@@ -83,7 +83,7 @@ config COMMON_CLK_RK808
  config COMMON_CLK_HI655X
  	tristate "Clock driver for Hi655x" if EXPERT
  	depends on (MFD_HI655X_PMIC || COMPILE_TEST)
