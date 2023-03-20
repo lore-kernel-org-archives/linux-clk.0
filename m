@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 997ADC6FD1D
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 10:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C19EC7619A
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 10:40:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229754AbjCTKkU convert rfc822-to-8bit (ORCPT
+        id S229806AbjCTKkW convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 06:40:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59462 "EHLO
+        Mon, 20 Mar 2023 06:40:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230090AbjCTKj0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 06:39:26 -0400
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58C9A269E;
-        Mon, 20 Mar 2023 03:38:34 -0700 (PDT)
+        with ESMTP id S231159AbjCTKjL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 06:39:11 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BF2012062;
+        Mon, 20 Mar 2023 03:38:31 -0700 (PDT)
 Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id B72B324E29A;
-        Mon, 20 Mar 2023 18:38:08 +0800 (CST)
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 0E67A24E2AB;
+        Mon, 20 Mar 2023 18:38:00 +0800 (CST)
 Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
  (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 20 Mar
- 2023 18:38:08 +0800
+ 2023 18:37:59 +0800
 Received: from ubuntu.localdomain (183.27.97.64) by EXMBX172.cuchost.com
  (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 20 Mar
- 2023 18:38:07 +0800
+ 2023 18:37:58 +0800
 From:   Hal Feng <hal.feng@starfivetech.com>
 To:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-riscv@lists.infradead.org>
@@ -45,9 +45,9 @@ CC:     Stephen Boyd <sboyd@kernel.org>,
         Emil Renner Berthing <emil.renner.berthing@canonical.com>,
         Hal Feng <hal.feng@starfivetech.com>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 19/21] riscv: dts: starfive: Add initial StarFive JH7110 device tree
-Date:   Mon, 20 Mar 2023 18:37:48 +0800
-Message-ID: <20230320103750.60295-20-hal.feng@starfivetech.com>
+Subject: [PATCH v6 09/21] reset: starfive: Rename "jh7100" to "jh71x0" for the common code
+Date:   Mon, 20 Mar 2023 18:37:38 +0800
+Message-ID: <20230320103750.60295-10-hal.feng@starfivetech.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20230320103750.60295-1-hal.feng@starfivetech.com>
 References: <20230320103750.60295-1-hal.feng@starfivetech.com>
@@ -64,536 +64,171 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Emil Renner Berthing <kernel@esmil.dk>
 
-Add initial device tree for the JH7110 RISC-V SoC by StarFive
-Technology Ltd.
+For the common code will be shared with the StarFive JH7110 SoC.
 
 Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
 Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-Co-developed-by: Jianlong Huang <jianlong.huang@starfivetech.com>
-Signed-off-by: Jianlong Huang <jianlong.huang@starfivetech.com>
-Co-developed-by: Hal Feng <hal.feng@starfivetech.com>
 Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 ---
- arch/riscv/boot/dts/starfive/jh7110.dtsi | 509 +++++++++++++++++++++++
- 1 file changed, 509 insertions(+)
- create mode 100644 arch/riscv/boot/dts/starfive/jh7110.dtsi
+ .../reset/starfive/reset-starfive-jh7100.c    |  2 +-
+ .../reset/starfive/reset-starfive-jh71x0.c    | 50 +++++++++----------
+ .../reset/starfive/reset-starfive-jh71x0.h    |  2 +-
+ 3 files changed, 27 insertions(+), 27 deletions(-)
 
-diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-new file mode 100644
-index 000000000000..d484ecdf93f7
---- /dev/null
-+++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-@@ -0,0 +1,509 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
-+/*
-+ * Copyright (C) 2022 StarFive Technology Co., Ltd.
-+ * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
-+ */
-+
-+/dts-v1/;
-+#include <dt-bindings/clock/starfive,jh7110-crg.h>
-+#include <dt-bindings/reset/starfive,jh7110-crg.h>
-+
-+/ {
-+	compatible = "starfive,jh7110";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		S7_0: cpu@0 {
-+			compatible = "sifive,s7", "riscv";
-+			reg = <0>;
-+			d-cache-block-size = <64>;
-+			d-cache-sets = <64>;
-+			d-cache-size = <8192>;
-+			d-tlb-sets = <1>;
-+			d-tlb-size = <40>;
-+			device_type = "cpu";
-+			i-cache-block-size = <64>;
-+			i-cache-sets = <64>;
-+			i-cache-size = <16384>;
-+			i-tlb-sets = <1>;
-+			i-tlb-size = <40>;
-+			mmu-type = "riscv,sv39";
-+			next-level-cache = <&ccache>;
-+			riscv,isa = "rv64imac_zba_zbb";
-+			tlb-split;
-+			status = "disabled";
-+
-+			cpu0_intc: interrupt-controller {
-+				compatible = "riscv,cpu-intc";
-+				interrupt-controller;
-+				#interrupt-cells = <1>;
-+			};
-+		};
-+
-+		U74_1: cpu@1 {
-+			compatible = "sifive,u74-mc", "riscv";
-+			reg = <1>;
-+			d-cache-block-size = <64>;
-+			d-cache-sets = <64>;
-+			d-cache-size = <32768>;
-+			d-tlb-sets = <1>;
-+			d-tlb-size = <40>;
-+			device_type = "cpu";
-+			i-cache-block-size = <64>;
-+			i-cache-sets = <64>;
-+			i-cache-size = <32768>;
-+			i-tlb-sets = <1>;
-+			i-tlb-size = <40>;
-+			mmu-type = "riscv,sv39";
-+			next-level-cache = <&ccache>;
-+			riscv,isa = "rv64imafdc_zba_zbb";
-+			tlb-split;
-+
-+			cpu1_intc: interrupt-controller {
-+				compatible = "riscv,cpu-intc";
-+				interrupt-controller;
-+				#interrupt-cells = <1>;
-+			};
-+		};
-+
-+		U74_2: cpu@2 {
-+			compatible = "sifive,u74-mc", "riscv";
-+			reg = <2>;
-+			d-cache-block-size = <64>;
-+			d-cache-sets = <64>;
-+			d-cache-size = <32768>;
-+			d-tlb-sets = <1>;
-+			d-tlb-size = <40>;
-+			device_type = "cpu";
-+			i-cache-block-size = <64>;
-+			i-cache-sets = <64>;
-+			i-cache-size = <32768>;
-+			i-tlb-sets = <1>;
-+			i-tlb-size = <40>;
-+			mmu-type = "riscv,sv39";
-+			next-level-cache = <&ccache>;
-+			riscv,isa = "rv64imafdc_zba_zbb";
-+			tlb-split;
-+
-+			cpu2_intc: interrupt-controller {
-+				compatible = "riscv,cpu-intc";
-+				interrupt-controller;
-+				#interrupt-cells = <1>;
-+			};
-+		};
-+
-+		U74_3: cpu@3 {
-+			compatible = "sifive,u74-mc", "riscv";
-+			reg = <3>;
-+			d-cache-block-size = <64>;
-+			d-cache-sets = <64>;
-+			d-cache-size = <32768>;
-+			d-tlb-sets = <1>;
-+			d-tlb-size = <40>;
-+			device_type = "cpu";
-+			i-cache-block-size = <64>;
-+			i-cache-sets = <64>;
-+			i-cache-size = <32768>;
-+			i-tlb-sets = <1>;
-+			i-tlb-size = <40>;
-+			mmu-type = "riscv,sv39";
-+			next-level-cache = <&ccache>;
-+			riscv,isa = "rv64imafdc_zba_zbb";
-+			tlb-split;
-+
-+			cpu3_intc: interrupt-controller {
-+				compatible = "riscv,cpu-intc";
-+				interrupt-controller;
-+				#interrupt-cells = <1>;
-+			};
-+		};
-+
-+		U74_4: cpu@4 {
-+			compatible = "sifive,u74-mc", "riscv";
-+			reg = <4>;
-+			d-cache-block-size = <64>;
-+			d-cache-sets = <64>;
-+			d-cache-size = <32768>;
-+			d-tlb-sets = <1>;
-+			d-tlb-size = <40>;
-+			device_type = "cpu";
-+			i-cache-block-size = <64>;
-+			i-cache-sets = <64>;
-+			i-cache-size = <32768>;
-+			i-tlb-sets = <1>;
-+			i-tlb-size = <40>;
-+			mmu-type = "riscv,sv39";
-+			next-level-cache = <&ccache>;
-+			riscv,isa = "rv64imafdc_zba_zbb";
-+			tlb-split;
-+
-+			cpu4_intc: interrupt-controller {
-+				compatible = "riscv,cpu-intc";
-+				interrupt-controller;
-+				#interrupt-cells = <1>;
-+			};
-+		};
-+
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&S7_0>;
-+				};
-+
-+				core1 {
-+					cpu = <&U74_1>;
-+				};
-+
-+				core2 {
-+					cpu = <&U74_2>;
-+				};
-+
-+				core3 {
-+					cpu = <&U74_3>;
-+				};
-+
-+				core4 {
-+					cpu = <&U74_4>;
-+				};
-+			};
-+		};
-+	};
-+
-+	gmac0_rgmii_rxin: gmac0-rgmii-rxin-clock {
-+		compatible = "fixed-clock";
-+		clock-output-names = "gmac0_rgmii_rxin";
-+		#clock-cells = <0>;
-+	};
-+
-+	gmac0_rmii_refin: gmac0-rmii-refin-clock {
-+		compatible = "fixed-clock";
-+		clock-output-names = "gmac0_rmii_refin";
-+		#clock-cells = <0>;
-+	};
-+
-+	gmac1_rgmii_rxin: gmac1-rgmii-rxin-clock {
-+		compatible = "fixed-clock";
-+		clock-output-names = "gmac1_rgmii_rxin";
-+		#clock-cells = <0>;
-+	};
-+
-+	gmac1_rmii_refin: gmac1-rmii-refin-clock {
-+		compatible = "fixed-clock";
-+		clock-output-names = "gmac1_rmii_refin";
-+		#clock-cells = <0>;
-+	};
-+
-+	i2srx_bclk_ext: i2srx-bclk-ext-clock {
-+		compatible = "fixed-clock";
-+		clock-output-names = "i2srx_bclk_ext";
-+		#clock-cells = <0>;
-+	};
-+
-+	i2srx_lrck_ext: i2srx-lrck-ext-clock {
-+		compatible = "fixed-clock";
-+		clock-output-names = "i2srx_lrck_ext";
-+		#clock-cells = <0>;
-+	};
-+
-+	i2stx_bclk_ext: i2stx-bclk-ext-clock {
-+		compatible = "fixed-clock";
-+		clock-output-names = "i2stx_bclk_ext";
-+		#clock-cells = <0>;
-+	};
-+
-+	i2stx_lrck_ext: i2stx-lrck-ext-clock {
-+		compatible = "fixed-clock";
-+		clock-output-names = "i2stx_lrck_ext";
-+		#clock-cells = <0>;
-+	};
-+
-+	mclk_ext: mclk-ext-clock {
-+		compatible = "fixed-clock";
-+		clock-output-names = "mclk_ext";
-+		#clock-cells = <0>;
-+	};
-+
-+	osc: oscillator {
-+		compatible = "fixed-clock";
-+		clock-output-names = "osc";
-+		#clock-cells = <0>;
-+	};
-+
-+	rtc_osc: rtc-oscillator {
-+		compatible = "fixed-clock";
-+		clock-output-names = "rtc_osc";
-+		#clock-cells = <0>;
-+	};
-+
-+	tdm_ext: tdm-ext-clock {
-+		compatible = "fixed-clock";
-+		clock-output-names = "tdm_ext";
-+		#clock-cells = <0>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&plic>;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		clint: timer@2000000 {
-+			compatible = "starfive,jh7110-clint", "sifive,clint0";
-+			reg = <0x0 0x2000000 0x0 0x10000>;
-+			interrupts-extended = <&cpu0_intc 3>, <&cpu0_intc 7>,
-+					      <&cpu1_intc 3>, <&cpu1_intc 7>,
-+					      <&cpu2_intc 3>, <&cpu2_intc 7>,
-+					      <&cpu3_intc 3>, <&cpu3_intc 7>,
-+					      <&cpu4_intc 3>, <&cpu4_intc 7>;
-+		};
-+
-+		ccache: cache-controller@2010000 {
-+			compatible = "starfive,jh7110-ccache", "sifive,ccache0", "cache";
-+			reg = <0x0 0x2010000 0x0 0x4000>;
-+			interrupts = <1>, <3>, <4>, <2>;
-+			cache-block-size = <64>;
-+			cache-level = <2>;
-+			cache-sets = <2048>;
-+			cache-size = <2097152>;
-+			cache-unified;
-+		};
-+
-+		plic: interrupt-controller@c000000 {
-+			compatible = "starfive,jh7110-plic", "sifive,plic-1.0.0";
-+			reg = <0x0 0xc000000 0x0 0x4000000>;
-+			interrupts-extended = <&cpu0_intc 11>,
-+					      <&cpu1_intc 11>, <&cpu1_intc 9>,
-+					      <&cpu2_intc 11>, <&cpu2_intc 9>,
-+					      <&cpu3_intc 11>, <&cpu3_intc 9>,
-+					      <&cpu4_intc 11>, <&cpu4_intc 9>;
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+			#address-cells = <0>;
-+			riscv,ndev = <136>;
-+		};
-+
-+		uart0: serial@10000000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x0 0x10000000 0x0 0x10000>;
-+			clocks = <&syscrg JH7110_SYSCLK_UART0_CORE>,
-+				 <&syscrg JH7110_SYSCLK_UART0_APB>;
-+			clock-names = "baudclk", "apb_pclk";
-+			resets = <&syscrg JH7110_SYSRST_UART0_APB>;
-+			interrupts = <32>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@10010000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x0 0x10010000 0x0 0x10000>;
-+			clocks = <&syscrg JH7110_SYSCLK_UART1_CORE>,
-+				 <&syscrg JH7110_SYSCLK_UART1_APB>;
-+			clock-names = "baudclk", "apb_pclk";
-+			resets = <&syscrg JH7110_SYSRST_UART1_APB>;
-+			interrupts = <33>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			status = "disabled";
-+		};
-+
-+		uart2: serial@10020000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x0 0x10020000 0x0 0x10000>;
-+			clocks = <&syscrg JH7110_SYSCLK_UART2_CORE>,
-+				 <&syscrg JH7110_SYSCLK_UART2_APB>;
-+			clock-names = "baudclk", "apb_pclk";
-+			resets = <&syscrg JH7110_SYSRST_UART2_APB>;
-+			interrupts = <34>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			status = "disabled";
-+		};
-+
-+		i2c0: i2c@10030000 {
-+			compatible = "snps,designware-i2c";
-+			reg = <0x0 0x10030000 0x0 0x10000>;
-+			clocks = <&syscrg JH7110_SYSCLK_I2C0_APB>;
-+			clock-names = "ref";
-+			resets = <&syscrg JH7110_SYSRST_I2C0_APB>;
-+			interrupts = <35>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		i2c1: i2c@10040000 {
-+			compatible = "snps,designware-i2c";
-+			reg = <0x0 0x10040000 0x0 0x10000>;
-+			clocks = <&syscrg JH7110_SYSCLK_I2C1_APB>;
-+			clock-names = "ref";
-+			resets = <&syscrg JH7110_SYSRST_I2C1_APB>;
-+			interrupts = <36>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		i2c2: i2c@10050000 {
-+			compatible = "snps,designware-i2c";
-+			reg = <0x0 0x10050000 0x0 0x10000>;
-+			clocks = <&syscrg JH7110_SYSCLK_I2C2_APB>;
-+			clock-names = "ref";
-+			resets = <&syscrg JH7110_SYSRST_I2C2_APB>;
-+			interrupts = <37>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		uart3: serial@12000000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x0 0x12000000 0x0 0x10000>;
-+			clocks = <&syscrg JH7110_SYSCLK_UART3_CORE>,
-+				 <&syscrg JH7110_SYSCLK_UART3_APB>;
-+			clock-names = "baudclk", "apb_pclk";
-+			resets = <&syscrg JH7110_SYSRST_UART3_APB>;
-+			interrupts = <45>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			status = "disabled";
-+		};
-+
-+		uart4: serial@12010000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x0 0x12010000 0x0 0x10000>;
-+			clocks = <&syscrg JH7110_SYSCLK_UART4_CORE>,
-+				 <&syscrg JH7110_SYSCLK_UART4_APB>;
-+			clock-names = "baudclk", "apb_pclk";
-+			resets = <&syscrg JH7110_SYSRST_UART4_APB>;
-+			interrupts = <46>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			status = "disabled";
-+		};
-+
-+		uart5: serial@12020000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x0 0x12020000 0x0 0x10000>;
-+			clocks = <&syscrg JH7110_SYSCLK_UART5_CORE>,
-+				 <&syscrg JH7110_SYSCLK_UART5_APB>;
-+			clock-names = "baudclk", "apb_pclk";
-+			resets = <&syscrg JH7110_SYSRST_UART5_APB>;
-+			interrupts = <47>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			status = "disabled";
-+		};
-+
-+		i2c3: i2c@12030000 {
-+			compatible = "snps,designware-i2c";
-+			reg = <0x0 0x12030000 0x0 0x10000>;
-+			clocks = <&syscrg JH7110_SYSCLK_I2C3_APB>;
-+			clock-names = "ref";
-+			resets = <&syscrg JH7110_SYSRST_I2C3_APB>;
-+			interrupts = <48>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		i2c4: i2c@12040000 {
-+			compatible = "snps,designware-i2c";
-+			reg = <0x0 0x12040000 0x0 0x10000>;
-+			clocks = <&syscrg JH7110_SYSCLK_I2C4_APB>;
-+			clock-names = "ref";
-+			resets = <&syscrg JH7110_SYSRST_I2C4_APB>;
-+			interrupts = <49>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		i2c5: i2c@12050000 {
-+			compatible = "snps,designware-i2c";
-+			reg = <0x0 0x12050000 0x0 0x10000>;
-+			clocks = <&syscrg JH7110_SYSCLK_I2C5_APB>;
-+			clock-names = "ref";
-+			resets = <&syscrg JH7110_SYSRST_I2C5_APB>;
-+			interrupts = <50>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		i2c6: i2c@12060000 {
-+			compatible = "snps,designware-i2c";
-+			reg = <0x0 0x12060000 0x0 0x10000>;
-+			clocks = <&syscrg JH7110_SYSCLK_I2C6_APB>;
-+			clock-names = "ref";
-+			resets = <&syscrg JH7110_SYSRST_I2C6_APB>;
-+			interrupts = <51>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		syscrg: clock-controller@13020000 {
-+			compatible = "starfive,jh7110-syscrg";
-+			reg = <0x0 0x13020000 0x0 0x10000>;
-+			clocks = <&osc>, <&gmac1_rmii_refin>,
-+				 <&gmac1_rgmii_rxin>,
-+				 <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
-+				 <&i2srx_bclk_ext>, <&i2srx_lrck_ext>,
-+				 <&tdm_ext>, <&mclk_ext>;
-+			clock-names = "osc", "gmac1_rmii_refin",
-+				      "gmac1_rgmii_rxin",
-+				      "i2stx_bclk_ext", "i2stx_lrck_ext",
-+				      "i2srx_bclk_ext", "i2srx_lrck_ext",
-+				      "tdm_ext", "mclk_ext";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
-+		sysgpio: pinctrl@13040000 {
-+			compatible = "starfive,jh7110-sys-pinctrl";
-+			reg = <0x0 0x13040000 0x0 0x10000>;
-+			clocks = <&syscrg JH7110_SYSCLK_IOMUX_APB>;
-+			resets = <&syscrg JH7110_SYSRST_IOMUX_APB>;
-+			interrupts = <86>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+		};
-+
-+		aoncrg: clock-controller@17000000 {
-+			compatible = "starfive,jh7110-aoncrg";
-+			reg = <0x0 0x17000000 0x0 0x10000>;
-+			clocks = <&osc>, <&gmac0_rmii_refin>,
-+				 <&gmac0_rgmii_rxin>,
-+				 <&syscrg JH7110_SYSCLK_STG_AXIAHB>,
-+				 <&syscrg JH7110_SYSCLK_APB_BUS>,
-+				 <&syscrg JH7110_SYSCLK_GMAC0_GTXCLK>,
-+				 <&rtc_osc>;
-+			clock-names = "osc", "gmac0_rmii_refin",
-+				      "gmac0_rgmii_rxin", "stg_axiahb",
-+				      "apb_bus", "gmac0_gtxclk",
-+				      "rtc_osc";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
-+		aongpio: pinctrl@17020000 {
-+			compatible = "starfive,jh7110-aon-pinctrl";
-+			reg = <0x0 0x17020000 0x0 0x10000>;
-+			resets = <&aoncrg JH7110_AONRST_IOMUX>;
-+			interrupts = <85>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+		};
-+	};
-+};
+diff --git a/drivers/reset/starfive/reset-starfive-jh7100.c b/drivers/reset/starfive/reset-starfive-jh7100.c
+index 9d7cb4ed8869..5f06e5ae3346 100644
+--- a/drivers/reset/starfive/reset-starfive-jh7100.c
++++ b/drivers/reset/starfive/reset-starfive-jh7100.c
+@@ -51,7 +51,7 @@ static int __init jh7100_reset_probe(struct platform_device *pdev)
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
+-	return reset_starfive_jh7100_register(&pdev->dev, pdev->dev.of_node,
++	return reset_starfive_jh71x0_register(&pdev->dev, pdev->dev.of_node,
+ 					      base + JH7100_RESET_ASSERT0,
+ 					      base + JH7100_RESET_STATUS0,
+ 					      jh7100_reset_asserted,
+diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.c b/drivers/reset/starfive/reset-starfive-jh71x0.c
+index 3577444a89c6..a689f4730ed7 100644
+--- a/drivers/reset/starfive/reset-starfive-jh71x0.c
++++ b/drivers/reset/starfive/reset-starfive-jh71x0.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+- * Reset driver for the StarFive JH7100 SoC
++ * Reset driver for the StarFive JH71X0 SoCs
+  *
+  * Copyright (C) 2021 Emil Renner Berthing <kernel@esmil.dk>
+  */
+@@ -15,7 +15,7 @@
+ 
+ #include "reset-starfive-jh71x0.h"
+ 
+-struct jh7100_reset {
++struct jh71x0_reset {
+ 	struct reset_controller_dev rcdev;
+ 	/* protect registers against concurrent read-modify-write */
+ 	spinlock_t lock;
+@@ -24,16 +24,16 @@ struct jh7100_reset {
+ 	const u64 *asserted;
+ };
+ 
+-static inline struct jh7100_reset *
+-jh7100_reset_from(struct reset_controller_dev *rcdev)
++static inline struct jh71x0_reset *
++jh71x0_reset_from(struct reset_controller_dev *rcdev)
+ {
+-	return container_of(rcdev, struct jh7100_reset, rcdev);
++	return container_of(rcdev, struct jh71x0_reset, rcdev);
+ }
+ 
+-static int jh7100_reset_update(struct reset_controller_dev *rcdev,
++static int jh71x0_reset_update(struct reset_controller_dev *rcdev,
+ 			       unsigned long id, bool assert)
+ {
+-	struct jh7100_reset *data = jh7100_reset_from(rcdev);
++	struct jh71x0_reset *data = jh71x0_reset_from(rcdev);
+ 	unsigned long offset = BIT_ULL_WORD(id);
+ 	u64 mask = BIT_ULL_MASK(id);
+ 	void __iomem *reg_assert = data->assert + offset * sizeof(u64);
+@@ -62,34 +62,34 @@ static int jh7100_reset_update(struct reset_controller_dev *rcdev,
+ 	return ret;
+ }
+ 
+-static int jh7100_reset_assert(struct reset_controller_dev *rcdev,
++static int jh71x0_reset_assert(struct reset_controller_dev *rcdev,
+ 			       unsigned long id)
+ {
+-	return jh7100_reset_update(rcdev, id, true);
++	return jh71x0_reset_update(rcdev, id, true);
+ }
+ 
+-static int jh7100_reset_deassert(struct reset_controller_dev *rcdev,
++static int jh71x0_reset_deassert(struct reset_controller_dev *rcdev,
+ 				 unsigned long id)
+ {
+-	return jh7100_reset_update(rcdev, id, false);
++	return jh71x0_reset_update(rcdev, id, false);
+ }
+ 
+-static int jh7100_reset_reset(struct reset_controller_dev *rcdev,
++static int jh71x0_reset_reset(struct reset_controller_dev *rcdev,
+ 			      unsigned long id)
+ {
+ 	int ret;
+ 
+-	ret = jh7100_reset_assert(rcdev, id);
++	ret = jh71x0_reset_assert(rcdev, id);
+ 	if (ret)
+ 		return ret;
+ 
+-	return jh7100_reset_deassert(rcdev, id);
++	return jh71x0_reset_deassert(rcdev, id);
+ }
+ 
+-static int jh7100_reset_status(struct reset_controller_dev *rcdev,
++static int jh71x0_reset_status(struct reset_controller_dev *rcdev,
+ 			       unsigned long id)
+ {
+-	struct jh7100_reset *data = jh7100_reset_from(rcdev);
++	struct jh71x0_reset *data = jh71x0_reset_from(rcdev);
+ 	unsigned long offset = BIT_ULL_WORD(id);
+ 	u64 mask = BIT_ULL_MASK(id);
+ 	void __iomem *reg_status = data->status + offset * sizeof(u64);
+@@ -98,25 +98,25 @@ static int jh7100_reset_status(struct reset_controller_dev *rcdev,
+ 	return !((value ^ data->asserted[offset]) & mask);
+ }
+ 
+-static const struct reset_control_ops jh7100_reset_ops = {
+-	.assert		= jh7100_reset_assert,
+-	.deassert	= jh7100_reset_deassert,
+-	.reset		= jh7100_reset_reset,
+-	.status		= jh7100_reset_status,
++static const struct reset_control_ops jh71x0_reset_ops = {
++	.assert		= jh71x0_reset_assert,
++	.deassert	= jh71x0_reset_deassert,
++	.reset		= jh71x0_reset_reset,
++	.status		= jh71x0_reset_status,
+ };
+ 
+-int reset_starfive_jh7100_register(struct device *dev, struct device_node *of_node,
++int reset_starfive_jh71x0_register(struct device *dev, struct device_node *of_node,
+ 				   void __iomem *assert, void __iomem *status,
+ 				   const u64 *asserted, unsigned int nr_resets,
+ 				   struct module *owner)
+ {
+-	struct jh7100_reset *data;
++	struct jh71x0_reset *data;
+ 
+ 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-	data->rcdev.ops = &jh7100_reset_ops;
++	data->rcdev.ops = &jh71x0_reset_ops;
+ 	data->rcdev.owner = owner;
+ 	data->rcdev.nr_resets = nr_resets;
+ 	data->rcdev.dev = dev;
+@@ -129,4 +129,4 @@ int reset_starfive_jh7100_register(struct device *dev, struct device_node *of_no
+ 
+ 	return devm_reset_controller_register(dev, &data->rcdev);
+ }
+-EXPORT_SYMBOL_GPL(reset_starfive_jh7100_register);
++EXPORT_SYMBOL_GPL(reset_starfive_jh71x0_register);
+diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.h b/drivers/reset/starfive/reset-starfive-jh71x0.h
+index 1fc5a648c8d8..ac9e80dd3f59 100644
+--- a/drivers/reset/starfive/reset-starfive-jh71x0.h
++++ b/drivers/reset/starfive/reset-starfive-jh71x0.h
+@@ -6,7 +6,7 @@
+ #ifndef __RESET_STARFIVE_JH71X0_H
+ #define __RESET_STARFIVE_JH71X0_H
+ 
+-int reset_starfive_jh7100_register(struct device *dev, struct device_node *of_node,
++int reset_starfive_jh71x0_register(struct device *dev, struct device_node *of_node,
+ 				   void __iomem *assert, void __iomem *status,
+ 				   const u64 *asserted, unsigned int nr_resets,
+ 				   struct module *owner);
 -- 
 2.38.1
 
