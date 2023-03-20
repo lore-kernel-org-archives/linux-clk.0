@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C19EC7619A
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 10:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF6BC7618D
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 10:40:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229806AbjCTKkW convert rfc822-to-8bit (ORCPT
+        id S229892AbjCTKkZ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 06:40:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59294 "EHLO
+        Mon, 20 Mar 2023 06:40:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231159AbjCTKjL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 06:39:11 -0400
+        with ESMTP id S231174AbjCTKjt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 06:39:49 -0400
 Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BF2012062;
-        Mon, 20 Mar 2023 03:38:31 -0700 (PDT)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0763BDF5;
+        Mon, 20 Mar 2023 03:38:38 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 0E67A24E2AB;
-        Mon, 20 Mar 2023 18:38:00 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 20 Mar
- 2023 18:37:59 +0800
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id BB65924E2EF;
+        Mon, 20 Mar 2023 18:38:07 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 20 Mar
+ 2023 18:38:07 +0800
 Received: from ubuntu.localdomain (183.27.97.64) by EXMBX172.cuchost.com
  (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 20 Mar
- 2023 18:37:58 +0800
+ 2023 18:38:06 +0800
 From:   Hal Feng <hal.feng@starfivetech.com>
 To:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-riscv@lists.infradead.org>
@@ -45,9 +45,9 @@ CC:     Stephen Boyd <sboyd@kernel.org>,
         Emil Renner Berthing <emil.renner.berthing@canonical.com>,
         Hal Feng <hal.feng@starfivetech.com>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 09/21] reset: starfive: Rename "jh7100" to "jh71x0" for the common code
-Date:   Mon, 20 Mar 2023 18:37:38 +0800
-Message-ID: <20230320103750.60295-10-hal.feng@starfivetech.com>
+Subject: [PATCH v6 18/21] dt-bindings: riscv: Add SiFive S7 compatible
+Date:   Mon, 20 Mar 2023 18:37:47 +0800
+Message-ID: <20230320103750.60295-19-hal.feng@starfivetech.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20230320103750.60295-1-hal.feng@starfivetech.com>
 References: <20230320103750.60295-1-hal.feng@starfivetech.com>
@@ -62,173 +62,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Emil Renner Berthing <kernel@esmil.dk>
+Add a new compatible string in cpu.yaml for SiFive S7 CPU
+core which is used on SiFive U74-MC core complex etc.
 
-For the common code will be shared with the StarFive JH7110 SoC.
-
-Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
 Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 ---
- .../reset/starfive/reset-starfive-jh7100.c    |  2 +-
- .../reset/starfive/reset-starfive-jh71x0.c    | 50 +++++++++----------
- .../reset/starfive/reset-starfive-jh71x0.h    |  2 +-
- 3 files changed, 27 insertions(+), 27 deletions(-)
+ Documentation/devicetree/bindings/riscv/cpus.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/reset/starfive/reset-starfive-jh7100.c b/drivers/reset/starfive/reset-starfive-jh7100.c
-index 9d7cb4ed8869..5f06e5ae3346 100644
---- a/drivers/reset/starfive/reset-starfive-jh7100.c
-+++ b/drivers/reset/starfive/reset-starfive-jh7100.c
-@@ -51,7 +51,7 @@ static int __init jh7100_reset_probe(struct platform_device *pdev)
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
--	return reset_starfive_jh7100_register(&pdev->dev, pdev->dev.of_node,
-+	return reset_starfive_jh71x0_register(&pdev->dev, pdev->dev.of_node,
- 					      base + JH7100_RESET_ASSERT0,
- 					      base + JH7100_RESET_STATUS0,
- 					      jh7100_reset_asserted,
-diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.c b/drivers/reset/starfive/reset-starfive-jh71x0.c
-index 3577444a89c6..a689f4730ed7 100644
---- a/drivers/reset/starfive/reset-starfive-jh71x0.c
-+++ b/drivers/reset/starfive/reset-starfive-jh71x0.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
- /*
-- * Reset driver for the StarFive JH7100 SoC
-+ * Reset driver for the StarFive JH71X0 SoCs
-  *
-  * Copyright (C) 2021 Emil Renner Berthing <kernel@esmil.dk>
-  */
-@@ -15,7 +15,7 @@
- 
- #include "reset-starfive-jh71x0.h"
- 
--struct jh7100_reset {
-+struct jh71x0_reset {
- 	struct reset_controller_dev rcdev;
- 	/* protect registers against concurrent read-modify-write */
- 	spinlock_t lock;
-@@ -24,16 +24,16 @@ struct jh7100_reset {
- 	const u64 *asserted;
- };
- 
--static inline struct jh7100_reset *
--jh7100_reset_from(struct reset_controller_dev *rcdev)
-+static inline struct jh71x0_reset *
-+jh71x0_reset_from(struct reset_controller_dev *rcdev)
- {
--	return container_of(rcdev, struct jh7100_reset, rcdev);
-+	return container_of(rcdev, struct jh71x0_reset, rcdev);
- }
- 
--static int jh7100_reset_update(struct reset_controller_dev *rcdev,
-+static int jh71x0_reset_update(struct reset_controller_dev *rcdev,
- 			       unsigned long id, bool assert)
- {
--	struct jh7100_reset *data = jh7100_reset_from(rcdev);
-+	struct jh71x0_reset *data = jh71x0_reset_from(rcdev);
- 	unsigned long offset = BIT_ULL_WORD(id);
- 	u64 mask = BIT_ULL_MASK(id);
- 	void __iomem *reg_assert = data->assert + offset * sizeof(u64);
-@@ -62,34 +62,34 @@ static int jh7100_reset_update(struct reset_controller_dev *rcdev,
- 	return ret;
- }
- 
--static int jh7100_reset_assert(struct reset_controller_dev *rcdev,
-+static int jh71x0_reset_assert(struct reset_controller_dev *rcdev,
- 			       unsigned long id)
- {
--	return jh7100_reset_update(rcdev, id, true);
-+	return jh71x0_reset_update(rcdev, id, true);
- }
- 
--static int jh7100_reset_deassert(struct reset_controller_dev *rcdev,
-+static int jh71x0_reset_deassert(struct reset_controller_dev *rcdev,
- 				 unsigned long id)
- {
--	return jh7100_reset_update(rcdev, id, false);
-+	return jh71x0_reset_update(rcdev, id, false);
- }
- 
--static int jh7100_reset_reset(struct reset_controller_dev *rcdev,
-+static int jh71x0_reset_reset(struct reset_controller_dev *rcdev,
- 			      unsigned long id)
- {
- 	int ret;
- 
--	ret = jh7100_reset_assert(rcdev, id);
-+	ret = jh71x0_reset_assert(rcdev, id);
- 	if (ret)
- 		return ret;
- 
--	return jh7100_reset_deassert(rcdev, id);
-+	return jh71x0_reset_deassert(rcdev, id);
- }
- 
--static int jh7100_reset_status(struct reset_controller_dev *rcdev,
-+static int jh71x0_reset_status(struct reset_controller_dev *rcdev,
- 			       unsigned long id)
- {
--	struct jh7100_reset *data = jh7100_reset_from(rcdev);
-+	struct jh71x0_reset *data = jh71x0_reset_from(rcdev);
- 	unsigned long offset = BIT_ULL_WORD(id);
- 	u64 mask = BIT_ULL_MASK(id);
- 	void __iomem *reg_status = data->status + offset * sizeof(u64);
-@@ -98,25 +98,25 @@ static int jh7100_reset_status(struct reset_controller_dev *rcdev,
- 	return !((value ^ data->asserted[offset]) & mask);
- }
- 
--static const struct reset_control_ops jh7100_reset_ops = {
--	.assert		= jh7100_reset_assert,
--	.deassert	= jh7100_reset_deassert,
--	.reset		= jh7100_reset_reset,
--	.status		= jh7100_reset_status,
-+static const struct reset_control_ops jh71x0_reset_ops = {
-+	.assert		= jh71x0_reset_assert,
-+	.deassert	= jh71x0_reset_deassert,
-+	.reset		= jh71x0_reset_reset,
-+	.status		= jh71x0_reset_status,
- };
- 
--int reset_starfive_jh7100_register(struct device *dev, struct device_node *of_node,
-+int reset_starfive_jh71x0_register(struct device *dev, struct device_node *of_node,
- 				   void __iomem *assert, void __iomem *status,
- 				   const u64 *asserted, unsigned int nr_resets,
- 				   struct module *owner)
- {
--	struct jh7100_reset *data;
-+	struct jh71x0_reset *data;
- 
- 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
- 
--	data->rcdev.ops = &jh7100_reset_ops;
-+	data->rcdev.ops = &jh71x0_reset_ops;
- 	data->rcdev.owner = owner;
- 	data->rcdev.nr_resets = nr_resets;
- 	data->rcdev.dev = dev;
-@@ -129,4 +129,4 @@ int reset_starfive_jh7100_register(struct device *dev, struct device_node *of_no
- 
- 	return devm_reset_controller_register(dev, &data->rcdev);
- }
--EXPORT_SYMBOL_GPL(reset_starfive_jh7100_register);
-+EXPORT_SYMBOL_GPL(reset_starfive_jh71x0_register);
-diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.h b/drivers/reset/starfive/reset-starfive-jh71x0.h
-index 1fc5a648c8d8..ac9e80dd3f59 100644
---- a/drivers/reset/starfive/reset-starfive-jh71x0.h
-+++ b/drivers/reset/starfive/reset-starfive-jh71x0.h
-@@ -6,7 +6,7 @@
- #ifndef __RESET_STARFIVE_JH71X0_H
- #define __RESET_STARFIVE_JH71X0_H
- 
--int reset_starfive_jh7100_register(struct device *dev, struct device_node *of_node,
-+int reset_starfive_jh71x0_register(struct device *dev, struct device_node *of_node,
- 				   void __iomem *assert, void __iomem *status,
- 				   const u64 *asserted, unsigned int nr_resets,
- 				   struct module *owner);
+diff --git a/Documentation/devicetree/bindings/riscv/cpus.yaml b/Documentation/devicetree/bindings/riscv/cpus.yaml
+index 001931d526ec..14b5b7ea0ce0 100644
+--- a/Documentation/devicetree/bindings/riscv/cpus.yaml
++++ b/Documentation/devicetree/bindings/riscv/cpus.yaml
+@@ -35,6 +35,7 @@ properties:
+               - sifive,e7
+               - sifive,e71
+               - sifive,rocket0
++              - sifive,s7
+               - sifive,u5
+               - sifive,u54
+               - sifive,u7
 -- 
 2.38.1
 
