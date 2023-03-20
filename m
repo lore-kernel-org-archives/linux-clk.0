@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6004CC761AF
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 22:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7241AC6FD1C
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 22:19:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230045AbjCTWTH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 18:19:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43092 "EHLO
+        id S230093AbjCTWTR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 18:19:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229709AbjCTWSd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 18:18:33 -0400
+        with ESMTP id S229995AbjCTWSf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 18:18:35 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC879360B0
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 15:17:07 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4714D3668C
+        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 15:17:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1679350627;
+        s=mimecast20190719; t=1679350635;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=uADkhSDU3kNDzAhx/ALq71/R+qHbMHup0NfIf4oXRRk=;
-        b=bAOQ/wnAPB2pqQp9ZW/9j3a0vAI1BaIGY68qGiGTGrBezsfYSS2r5j+YDSXlKwy8yyYRXD
-        hPX7pnezb8OQl9ttmSgXydBO0msx/AYy4xyuY/raGUx4WZG98BBRREp8sjcKgnkyJAWbEy
-        Z7+i+lbMF0i+taVBeKXQdbk0mNh9A9I=
-Received: from mail-oa1-f71.google.com (mail-oa1-f71.google.com
- [209.85.160.71]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=pge60lbtNXyjhIC7xM2HbTt6URs0YcanlV/EtqaeLXQ=;
+        b=HGYwMmhnM3SHEJxYxDmEP4vQCru8EXJRIDPww3rNiCayL3T6TfEE8gJh+rclZB9iJgnKW4
+        2y9OYP3r95ka08AJvYrboQKszKgqiF/d8N17z/ih0h93RUgW6WorwAOg8r80qj4zaK0VH0
+        t0zIxBFl3uy4op5SmEbP+8+r0Bpkt8g=
+Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com
+ [209.85.160.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-262-uBgZbL0PNNCDbq3d9Gw1tA-1; Mon, 20 Mar 2023 18:17:05 -0400
-X-MC-Unique: uBgZbL0PNNCDbq3d9Gw1tA-1
-Received: by mail-oa1-f71.google.com with SMTP id 586e51a60fabf-17772c5c940so7742150fac.11
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 15:17:05 -0700 (PDT)
+ us-mta-34-dB1Kl4ZpOei2zQ9VEjTCXg-1; Mon, 20 Mar 2023 18:17:13 -0400
+X-MC-Unique: dB1Kl4ZpOei2zQ9VEjTCXg-1
+Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-17270774b8fso7726165fac.3
+        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 15:17:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679350625;
+        d=1e100.net; s=20210112; t=1679350633;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uADkhSDU3kNDzAhx/ALq71/R+qHbMHup0NfIf4oXRRk=;
-        b=8C9Lh9gU4z+I6lVl7Pi/MNXW9lTDahLKwLxPCj7+MNZEco74/wXxAB6qwq7iYzIs4O
-         fpm4HQz6ZIVVk32HcgKTnBC9PJbRtCcNAXMT9pIAkmZfHe3h+J6efTTiqLwO67FfDmnJ
-         Ahr+uTcd4NoZpQsVjPe4rEratKcNv4KBmnxydVYqgVsesNbR2dORQjQr5kuUdLJu6+21
-         svVJQICvXptXN/N7NxAM1LcWE37KeyogAo3p9cVgdGbLtz2/mvTk1978e0ynregAdWNq
-         gMppqk7pg4UsXHtjt7nArTRayLfcfGBWj305fb9zjLb+B6VkHKGuK6OdYflLMC8J5zop
-         ymkw==
-X-Gm-Message-State: AO0yUKXGgT5TGdTmWXGD6SOMYH2ZSpnUBBI/93exsa904T0mlPuzJITi
-        rWEZ+x8lFOtHF7zVqK4L/QiDj6GF/40grphicJ9n5JMM/MeH9jTOunbpnpjai7PVGr7MhA63/l+
-        iaZTUZYGz+1SA+gatF29q
-X-Received: by 2002:a4a:d38e:0:b0:53b:1086:7a09 with SMTP id i14-20020a4ad38e000000b0053b10867a09mr949135oos.3.1679350625162;
-        Mon, 20 Mar 2023 15:17:05 -0700 (PDT)
-X-Google-Smtp-Source: AK7set8HeXukDtyerKLEQLIGqNPkUK2wofZTtG54Dcrc14ovssGSEI09uY51mICdr2wdiRw2g7QDRw==
-X-Received: by 2002:a4a:d38e:0:b0:53b:1086:7a09 with SMTP id i14-20020a4ad38e000000b0053b10867a09mr949133oos.3.1679350624966;
-        Mon, 20 Mar 2023 15:17:04 -0700 (PDT)
+        bh=pge60lbtNXyjhIC7xM2HbTt6URs0YcanlV/EtqaeLXQ=;
+        b=L2MrOIsaNzwIeQW47AMx0SJKzRnBUEOZwzps0P8JBMOEUnMq6Ui66eUP+0OcUh87+l
+         jvQFWsc8HkMLhY/Fku3QZiCP0SKZWl/ZdlLBv5We3jCFwmW9ux0ib8T2547lRXfE2wkV
+         qK7HVaa2JlEEiPxWq6ZLEsOqYIr/iik/b7BdLO9ClKZ7SkQgFjXTyYHAaOItBGyT18aG
+         RIv6O1GS34fT5w6ul+H+M8JA44ZxXFUbgifp6cVaJ/40a0Pu04UnmgRjslol4QlKhlYk
+         vVowlYBsuFX6p47o4qXeu+Ccr8PYPxh3Bb/D6vqWd3BbPchLUdkQ5W9dXHQT6YY3xV21
+         cKKw==
+X-Gm-Message-State: AO0yUKWfgzB1S7PuW3E2r0yEM0saaAgqNXDkA9F0kthf3iJFXokDfzwD
+        daokRTUWpqxmHBz3zO4YQQNEiNyOvFO3zfJilog9STRFkUtHTPB1THMZcq6Jyf+Tkd55M+t+5/f
+        Y6ZzV3OI3ARdaqfzWZIWH
+X-Received: by 2002:a4a:4942:0:b0:536:584c:eb1f with SMTP id z63-20020a4a4942000000b00536584ceb1fmr679552ooa.2.1679350632836;
+        Mon, 20 Mar 2023 15:17:12 -0700 (PDT)
+X-Google-Smtp-Source: AK7set+Tggwv6X8YXBBYlPzxDeaPL/yXFE5Kx8UTm2ESFLzqErgx22ScqfI1N/KEIqaxjClaqy3gqw==
+X-Received: by 2002:a4a:4942:0:b0:536:584c:eb1f with SMTP id z63-20020a4a4942000000b00536584ceb1fmr679529ooa.2.1679350632616;
+        Mon, 20 Mar 2023 15:17:12 -0700 (PDT)
 Received: from halaney-x13s.redhat.com (104-53-165-62.lightspeed.stlsmo.sbcglobal.net. [104.53.165.62])
-        by smtp.gmail.com with ESMTPSA id q204-20020a4a33d5000000b0053853156b5csm4092465ooq.8.2023.03.20.15.17.02
+        by smtp.gmail.com with ESMTPSA id q204-20020a4a33d5000000b0053853156b5csm4092465ooq.8.2023.03.20.15.17.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Mar 2023 15:17:04 -0700 (PDT)
+        Mon, 20 Mar 2023 15:17:12 -0700 (PDT)
 From:   Andrew Halaney <ahalaney@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
@@ -75,9 +75,9 @@ Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
         linux-arm-kernel@lists.infradead.org, ncai@quicinc.com,
         jsuraj@qti.qualcomm.com, hisunil@quicinc.com, echanude@redhat.com,
         Andrew Halaney <ahalaney@redhat.com>
-Subject: [PATCH net-next v2 08/12] net: stmmac: Remove unnecessary if statement brackets
-Date:   Mon, 20 Mar 2023 17:16:13 -0500
-Message-Id: <20230320221617.236323-9-ahalaney@redhat.com>
+Subject: [PATCH net-next v2 10/12] net: stmmac: dwmac-qcom-ethqos: Respect phy-mode and TX delay
+Date:   Mon, 20 Mar 2023 17:16:15 -0500
+Message-Id: <20230320221617.236323-11-ahalaney@redhat.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230320221617.236323-1-ahalaney@redhat.com>
 References: <20230320221617.236323-1-ahalaney@redhat.com>
@@ -88,34 +88,71 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The brackets are unnecessary, remove them to match the coding style
-used in the kernel.
+The driver currently sets a MAC TX delay of 2 ns no matter what the
+phy-mode is. If the phy-mode indicates the phy is in charge of the
+TX delay (rgmii-txid, rgmii-id), don't do it in the MAC.
 
 Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
 ---
 
 Changes since v1:
-	* This patch is split from the next patch since it is a logically
-	  different change (Andrew Lunn)
+	* Use a consistent subject prefix with other stmmac changes in series (myself)
 
- drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ .../stmicro/stmmac/dwmac-qcom-ethqos.c        | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-index 21aaa2730ac8..6807c4c1a0a2 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-@@ -281,9 +281,8 @@ static int stmmac_mdio_read_c22(struct mii_bus *bus, int phyaddr, int phyreg)
- 	value |= (phyreg << priv->hw->mii.reg_shift) & priv->hw->mii.reg_mask;
- 	value |= (priv->clk_csr << priv->hw->mii.clk_csr_shift)
- 		& priv->hw->mii.clk_csr_mask;
--	if (priv->plat->has_gmac4) {
-+	if (priv->plat->has_gmac4)
- 		value |= MII_GMAC4_READ;
--	}
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+index 32763566c214..e89937916741 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+@@ -279,6 +279,16 @@ static int ethqos_dll_configure(struct qcom_ethqos *ethqos)
  
- 	data = stmmac_mdio_read(priv, data, value);
- 
+ static int ethqos_rgmii_macro_init(struct qcom_ethqos *ethqos)
+ {
++	int phy_mode;
++	int phase_shift;
++
++	/* Determine if the PHY adds a 2 ns TX delay or the MAC handles it */
++	phy_mode = device_get_phy_mode(&ethqos->pdev->dev);
++	if (phy_mode == PHY_INTERFACE_MODE_RGMII_ID || phy_mode == PHY_INTERFACE_MODE_RGMII_TXID)
++		phase_shift = 0;
++	else
++		phase_shift = RGMII_CONFIG2_TX_CLK_PHASE_SHIFT_EN;
++
+ 	/* Disable loopback mode */
+ 	rgmii_updatel(ethqos, RGMII_CONFIG2_TX_TO_RX_LOOPBACK_EN,
+ 		      0, RGMII_IO_MACRO_CONFIG2);
+@@ -300,9 +310,9 @@ static int ethqos_rgmii_macro_init(struct qcom_ethqos *ethqos)
+ 			      RGMII_CONFIG_PROG_SWAP, RGMII_IO_MACRO_CONFIG);
+ 		rgmii_updatel(ethqos, RGMII_CONFIG2_DATA_DIVIDE_CLK_SEL,
+ 			      0, RGMII_IO_MACRO_CONFIG2);
++
+ 		rgmii_updatel(ethqos, RGMII_CONFIG2_TX_CLK_PHASE_SHIFT_EN,
+-			      RGMII_CONFIG2_TX_CLK_PHASE_SHIFT_EN,
+-			      RGMII_IO_MACRO_CONFIG2);
++				  phase_shift, RGMII_IO_MACRO_CONFIG2);
+ 		rgmii_updatel(ethqos, RGMII_CONFIG2_RSVD_CONFIG15,
+ 			      0, RGMII_IO_MACRO_CONFIG2);
+ 		rgmii_updatel(ethqos, RGMII_CONFIG2_RX_PROG_SWAP,
+@@ -336,8 +346,7 @@ static int ethqos_rgmii_macro_init(struct qcom_ethqos *ethqos)
+ 		rgmii_updatel(ethqos, RGMII_CONFIG2_DATA_DIVIDE_CLK_SEL,
+ 			      0, RGMII_IO_MACRO_CONFIG2);
+ 		rgmii_updatel(ethqos, RGMII_CONFIG2_TX_CLK_PHASE_SHIFT_EN,
+-			      RGMII_CONFIG2_TX_CLK_PHASE_SHIFT_EN,
+-			      RGMII_IO_MACRO_CONFIG2);
++				  phase_shift, RGMII_IO_MACRO_CONFIG2);
+ 		rgmii_updatel(ethqos, RGMII_CONFIG_MAX_SPD_PRG_2,
+ 			      BIT(6), RGMII_IO_MACRO_CONFIG);
+ 		rgmii_updatel(ethqos, RGMII_CONFIG2_RSVD_CONFIG15,
+@@ -375,7 +384,7 @@ static int ethqos_rgmii_macro_init(struct qcom_ethqos *ethqos)
+ 		rgmii_updatel(ethqos, RGMII_CONFIG2_DATA_DIVIDE_CLK_SEL,
+ 			      0, RGMII_IO_MACRO_CONFIG2);
+ 		rgmii_updatel(ethqos, RGMII_CONFIG2_TX_CLK_PHASE_SHIFT_EN,
+-			      0, RGMII_IO_MACRO_CONFIG2);
++				  phase_shift, RGMII_IO_MACRO_CONFIG2);
+ 		rgmii_updatel(ethqos, RGMII_CONFIG_MAX_SPD_PRG_9,
+ 			      BIT(12) | GENMASK(9, 8),
+ 			      RGMII_IO_MACRO_CONFIG);
 -- 
 2.39.2
 
