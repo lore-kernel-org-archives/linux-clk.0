@@ -2,113 +2,127 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A00C7618D
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 11:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF01C7618D
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 13:42:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231180AbjCTLvc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 07:51:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34400 "EHLO
+        id S231641AbjCTNmj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 09:42:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230161AbjCTLvb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 07:51:31 -0400
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCDAA23129
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 04:51:26 -0700 (PDT)
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 88F663FDA0
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 11:51:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1679313083;
-        bh=GGpWfsM5C1ImSMDFhmoi1LbWjuKbL/WrII+NG9/nakI=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=hM94kEI8J2CWhITw3n83CPVx9YzA536hjQLxYB06Fxl+w8uG0/GUhF93JlycEI8AZ
-         dymKrPQWZZAsV/6EfntZ5gkHMMPrFq4ol60FfcOQqq+RBWxe4G4kJntWA0i6Edhofp
-         f+vtVJEfeHVPeJea8V9q+C32gk7jABGBITbezAw2GuC1weGYHVcrxta2XEtNcMVFhG
-         Ef3uD2YTZ3N0dyFcRlB7W4gtsACVUENNVpNoxJO+qE7ulF0uBcUfZ+tWdZnt/RdcO9
-         WYl4GYOgIZ7GpjdbgMQLupexlwgQhMHwbSFXJ3sExIasIIhXs2skMyEJG1X+C9/Kmk
-         Mlq+Zc0K7+q/A==
-Received: by mail-qv1-f69.google.com with SMTP id dl18-20020ad44e12000000b005a4d5420bc6so5905320qvb.11
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 04:51:23 -0700 (PDT)
+        with ESMTP id S231282AbjCTNm3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 09:42:29 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A09F93C28
+        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 06:42:25 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id o12so46875716edb.9
+        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 06:42:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679319744;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KrZdAoTHd1rYa6+2bns0LZXrcUZt1Y0m6OA8qCzTSf0=;
+        b=nKq81/J0FvmXA5JsN+7z0xgyaD9ypIJv/BMXgeposmSq7l8XikkO3z4up7Arj9kxwi
+         VuV2Ip6nA1LpGeefrIatp+un0KTSs0rYOS6Tns2H8z0qDvBpOQn4PGu/17PQCK9/UrzB
+         yjh5iCdll2J6urVxY2BAcIEfwBQm44lRHj4nFo9prwAtLKSjAEph5Ln1HT9R9Y9bLrc1
+         9VArIsZE/0RK4GeOFr3eStNrxoP7l7MQOVxbIByaB70Fr0BlXOjIEf+KCuOyZH/BI93l
+         GP1lLQIpAnmwfrEAXAGbt+3Jw8C7d0gMuunLiRhQY6q7LhdK5hkG2BqUO/wAk0Yf9dUc
+         ETjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679313082;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20210112; t=1679319744;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GGpWfsM5C1ImSMDFhmoi1LbWjuKbL/WrII+NG9/nakI=;
-        b=7GG0VhhIukRX+9H+jZkmhHyqwbshE8ybfsvPVQ/Xi1j70RO/Moc4vertB+hjt3Rs1F
-         TnlBLv/JNRrfTRsH0jBfrdsgDvZCvZF3SZ0I3FLVM/uDjoKhYif2nxGxy20A0FhGf6X+
-         gPWJ+zxAZbacondZdSUbu/pa1LpHOjV9oKBmnobKXHbo/jgmtj1UGY8RnVJyv937VkCI
-         4bIhcHpw6cdyl9SukbtNlTcju4xU3XAPKSRaQbgPfdAJ1PLd63b5dQANQ2qj+45unw/L
-         mH5sDPCtohv9GD1bXT5oJy4Hms/SaccGaEeSfRxcA2Wg0bo911yPGJGlM+ccUfZh84Ez
-         Ecvg==
-X-Gm-Message-State: AO0yUKUnSooP3bpcuercBzNleJKTL5MY6CoNbd6eLnHhsK/Z56b04+48
-        Z1H2101rv1sOqUDQdbLUyss2u2sHhNw3/Kk/5Sdpyp+xtrwvhVFlKj6Gf+aS6alsiCiBAR7M2WV
-        VW13LHrWFSvzNqoxSQ/E9Ry9+/Txcqrnlx3Uv92cyj1KJYPq0mQt/OQ==
-X-Received: by 2002:ad4:59c7:0:b0:56f:3e5:850e with SMTP id el7-20020ad459c7000000b0056f03e5850emr6960034qvb.3.1679313082509;
-        Mon, 20 Mar 2023 04:51:22 -0700 (PDT)
-X-Google-Smtp-Source: AK7set/l+AwVJZR40S7GPUVKDWevuOOVX4sYPIEehyQctIQv1qL8d4CCuDF//+jeSsWW86R+pXOcTviboByTpW6VUeI=
-X-Received: by 2002:ad4:59c7:0:b0:56f:3e5:850e with SMTP id
- el7-20020ad459c7000000b0056f03e5850emr6960029qvb.3.1679313082287; Mon, 20 Mar
- 2023 04:51:22 -0700 (PDT)
+        bh=KrZdAoTHd1rYa6+2bns0LZXrcUZt1Y0m6OA8qCzTSf0=;
+        b=O/UixrCEqon884+iyo/+EywMC/8niue+XQ4P2OpfLi84cjikTw58S6gTftVlrnv7+m
+         SSyZ+3RfVzzQQYQGPsmx2BA6omRET3Ge4M3AhVxJU5GTWZcQhkveRtX243pWQ9OpLDgG
+         e6pekTSIkPT5O6/6TnAXy1l0vWWoaNTFnhA9Y+TXTzJNsSYUOLkSnYSENu91OF3Z9kcl
+         yefZnk4QlJrGykfE9Eg7WY5GM+e3+0HOKI2a7jSJ2tq63p8Nik5cqJQqZuwAbKYstA1b
+         OIqlElFILZCb9ZP+RS+5xIK+/D2nftKvVIFB8msr2FpVmAG7wl8EENj94G5526ohDiQ3
+         fjzw==
+X-Gm-Message-State: AO0yUKVocZx/Ymf+CkGifMMsIsft8JPVYmVS9D14+rJLpyOxY2Hs9s1m
+        eSpCHnnqQox8vn+aF7GDwT0Edg==
+X-Google-Smtp-Source: AK7set8a5ZEuGsV4rxIxgp5mWPOeREMId+pRDTv53eMzIMjUrfk9Hm1tTkVX6dtosamqVSw3/ut4yA==
+X-Received: by 2002:a17:907:86a8:b0:937:9a24:370b with SMTP id qa40-20020a17090786a800b009379a24370bmr1347382ejc.67.1679319744054;
+        Mon, 20 Mar 2023 06:42:24 -0700 (PDT)
+Received: from localhost.localdomain ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id u23-20020a170906409700b009334a6ef3e8sm2368602ejj.141.2023.03.20.06.42.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Mar 2023 06:42:23 -0700 (PDT)
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Saravana Kannan <saravanak@google.com>
+Cc:     linux-pm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [RFC PATCH v2 0/5] Allow genpd providers to power off domains on sync state
+Date:   Mon, 20 Mar 2023 15:42:12 +0200
+Message-Id: <20230320134217.1685781-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230311090733.56918-1-hal.feng@starfivetech.com> <20230311090733.56918-6-hal.feng@starfivetech.com>
-In-Reply-To: <20230311090733.56918-6-hal.feng@starfivetech.com>
-From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Date:   Mon, 20 Mar 2023 12:51:06 +0100
-Message-ID: <CAJM55Z-2HB4PCw3fy6n3e0FErV9DXqGazVkq4TN+X+34ozNcbw@mail.gmail.com>
-Subject: Re: [PATCH v5 05/21] reset: starfive: Replace SOC_STARFIVE with ARCH_STARFIVE
-To:     Hal Feng <hal.feng@starfivetech.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 11 Mar 2023 at 10:07, Hal Feng <hal.feng@starfivetech.com> wrote:
->
-> Using ARCH_FOO symbol is preferred than SOC_FOO.
->
-> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+There have been already a couple of tries to make the genpd "disable
+unused" late initcall skip the powering off of domains that might be
+needed until later on (i.e. until some consumer probes). The conclusion
+was that the provider could return -EBUSY from the power_off callback
+until the provider's sync state has been reached. This patch series tries
+to provide a proof-of-concept that is working on Qualcomm platforms.
 
-Thanks!
-Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+I've been doing extensive testing on SM8450, but I've also spinned this
+on my X13s (SC8280XP). Both patches that add the sync state callback to
+the SC8280XP and SM8450 are here to provide context. Once we agree on
+the form, I intend to add the sync state callback to all gdsc providers.
 
-> ---
->  drivers/reset/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 2a52c990d4fe..6ae5aa46a6b2 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -234,8 +234,8 @@ config RESET_SOCFPGA
->
->  config RESET_STARFIVE_JH7100
->         bool "StarFive JH7100 Reset Driver"
-> -       depends on SOC_STARFIVE || COMPILE_TEST
-> -       default SOC_STARFIVE
-> +       depends on ARCH_STARFIVE || COMPILE_TEST
-> +       default ARCH_STARFIVE
->         help
->           This enables the reset controller driver for the StarFive JH7100 SoC.
->
-> --
-> 2.38.1
->
+Currently, some of the gdsc providers might not reach sync state due to
+list of consumers not probing yet (or at all). The sync state can be
+enforced by writing 1 to the state_synced sysfs attribute of the
+provider, thanks to Saravana's commit [1] which has been already merged.
+
+[1] https://lore.kernel.org/r/20230304005355.746421-3-saravanak@google.com
+
+V1 of this patchset was here:
+https://lore.kernel.org/all/20230315132330.450877-1-abel.vesa@linaro.org/
+
+Changes since v1:
+ * Added the qcom_cc sync state callback which calls in turn the gdsc one
+ * dropped extra semicolon from pm_domain.h
+
+Abel Vesa (5):
+  PM: domains: Allow power off queuing from providers
+  soc: qcom: rpmhpd: Do proper power off when state synced
+  clk: qcom: gdsc: Avoid actual power off until sync state
+  clk: qcom: Add sync state callback to all SC8280XP providers
+  clk: qcom: Add sync state callback to all SM8450 providers
+
+ drivers/base/power/domain.c        |  3 ++-
+ drivers/clk/qcom/camcc-sm8450.c    |  1 +
+ drivers/clk/qcom/common.c          | 19 +++++++++++++++++++
+ drivers/clk/qcom/common.h          |  2 ++
+ drivers/clk/qcom/dispcc-sc8280xp.c |  1 +
+ drivers/clk/qcom/dispcc-sm8450.c   |  1 +
+ drivers/clk/qcom/gcc-sc8280xp.c    |  1 +
+ drivers/clk/qcom/gcc-sm8450.c      |  1 +
+ drivers/clk/qcom/gdsc.c            | 26 ++++++++++++++++++++++++++
+ drivers/clk/qcom/gdsc.h            |  6 ++++++
+ drivers/clk/qcom/gpucc-sc8280xp.c  |  1 +
+ drivers/soc/qcom/rpmhpd.c          | 19 +++++++------------
+ include/linux/pm_domain.h          |  6 ++++++
+ 13 files changed, 74 insertions(+), 13 deletions(-)
+
+-- 
+2.34.1
+
