@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E24A6C7619A
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 10:39:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF318C7618A
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 10:39:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230396AbjCTKjG convert rfc822-to-8bit (ORCPT
+        id S231135AbjCTKjH convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 06:39:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52262 "EHLO
+        Mon, 20 Mar 2023 06:39:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230419AbjCTKie (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 06:38:34 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9365B1ADE6;
-        Mon, 20 Mar 2023 03:37:58 -0700 (PDT)
+        with ESMTP id S230200AbjCTKif (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 06:38:35 -0400
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1BF47A9D;
+        Mon, 20 Mar 2023 03:37:59 -0700 (PDT)
 Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 277C924DF02;
-        Mon, 20 Mar 2023 18:37:53 +0800 (CST)
+        by ex01.ufhost.com (Postfix) with ESMTP id C31E424E291;
+        Mon, 20 Mar 2023 18:37:54 +0800 (CST)
 Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
  (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 20 Mar
- 2023 18:37:53 +0800
+ 2023 18:37:54 +0800
 Received: from ubuntu.localdomain (183.27.97.64) by EXMBX172.cuchost.com
  (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 20 Mar
- 2023 18:37:52 +0800
+ 2023 18:37:53 +0800
 From:   Hal Feng <hal.feng@starfivetech.com>
 To:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-riscv@lists.infradead.org>
@@ -45,9 +45,9 @@ CC:     Stephen Boyd <sboyd@kernel.org>,
         Emil Renner Berthing <emil.renner.berthing@canonical.com>,
         Hal Feng <hal.feng@starfivetech.com>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 01/21] clk: starfive: Replace SOC_STARFIVE with ARCH_STARFIVE
-Date:   Mon, 20 Mar 2023 18:37:30 +0800
-Message-ID: <20230320103750.60295-2-hal.feng@starfivetech.com>
+Subject: [PATCH v6 03/21] clk: starfive: Rename clk-starfive-jh7100.h to clk-starfive-jh71x0.h
+Date:   Mon, 20 Mar 2023 18:37:32 +0800
+Message-ID: <20230320103750.60295-4-hal.feng@starfivetech.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20230320103750.60295-1-hal.feng@starfivetech.com>
 References: <20230320103750.60295-1-hal.feng@starfivetech.com>
@@ -62,54 +62,66 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Using ARCH_FOO symbol is preferred than SOC_FOO.
-Set obj-y for starfive/ in Makefile, so the StarFive drivers
-can be compiled with COMPILE_TEST=y but ARCH_STARFIVE=n.
+From: Emil Renner Berthing <kernel@esmil.dk>
 
+Rename clk-starfive-jh7100.h to clk-starfive-jh71x0.h for making
+the code to be common.
+
+Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
 Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 ---
- drivers/clk/Makefile         | 2 +-
- drivers/clk/starfive/Kconfig | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/starfive/clk-starfive-jh7100-audio.c                | 2 +-
+ drivers/clk/starfive/clk-starfive-jh7100.c                      | 2 +-
+ drivers/clk/starfive/clk-starfive-jh71x0.c                      | 2 +-
+ .../starfive/{clk-starfive-jh7100.h => clk-starfive-jh71x0.h}   | 0
+ 4 files changed, 3 insertions(+), 3 deletions(-)
+ rename drivers/clk/starfive/{clk-starfive-jh7100.h => clk-starfive-jh71x0.h} (100%)
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index e3ca0d058a25..3bed88d67a3a 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -117,7 +117,7 @@ obj-$(CONFIG_PLAT_SPEAR)		+= spear/
- obj-y					+= sprd/
- obj-$(CONFIG_ARCH_STI)			+= st/
- obj-$(CONFIG_ARCH_STM32)		+= stm32/
--obj-$(CONFIG_SOC_STARFIVE)		+= starfive/
-+obj-y					+= starfive/
- obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
- obj-y					+= sunxi-ng/
- obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
-diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
-index 003bd2d56ce7..ef3517f4a276 100644
---- a/drivers/clk/starfive/Kconfig
-+++ b/drivers/clk/starfive/Kconfig
-@@ -2,8 +2,8 @@
+diff --git a/drivers/clk/starfive/clk-starfive-jh7100-audio.c b/drivers/clk/starfive/clk-starfive-jh7100-audio.c
+index 8473a65e219b..db0d9533bd9c 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7100-audio.c
++++ b/drivers/clk/starfive/clk-starfive-jh7100-audio.c
+@@ -16,7 +16,7 @@
  
- config CLK_STARFIVE_JH7100
- 	bool "StarFive JH7100 clock support"
--	depends on SOC_STARFIVE || COMPILE_TEST
--	default SOC_STARFIVE
-+	depends on ARCH_STARFIVE || COMPILE_TEST
-+	default ARCH_STARFIVE
- 	help
- 	  Say yes here to support the clock controller on the StarFive JH7100
- 	  SoC.
-@@ -11,7 +11,7 @@ config CLK_STARFIVE_JH7100
- config CLK_STARFIVE_JH7100_AUDIO
- 	tristate "StarFive JH7100 audio clock support"
- 	depends on CLK_STARFIVE_JH7100
--	default m if SOC_STARFIVE
-+	default m if ARCH_STARFIVE
- 	help
- 	  Say Y or M here to support the audio clocks on the StarFive JH7100
- 	  SoC.
+ #include <dt-bindings/clock/starfive-jh7100-audio.h>
+ 
+-#include "clk-starfive-jh7100.h"
++#include "clk-starfive-jh71x0.h"
+ 
+ /* external clocks */
+ #define JH7100_AUDCLK_AUDIO_SRC			(JH7100_AUDCLK_END + 0)
+diff --git a/drivers/clk/starfive/clk-starfive-jh7100.c b/drivers/clk/starfive/clk-starfive-jh7100.c
+index eea52f16af0d..662eb8f74c12 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7100.c
++++ b/drivers/clk/starfive/clk-starfive-jh7100.c
+@@ -15,7 +15,7 @@
+ 
+ #include <dt-bindings/clock/starfive-jh7100.h>
+ 
+-#include "clk-starfive-jh7100.h"
++#include "clk-starfive-jh71x0.h"
+ 
+ /* external clocks */
+ #define JH7100_CLK_OSC_SYS		(JH7100_CLK_END + 0)
+diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.c b/drivers/clk/starfive/clk-starfive-jh71x0.c
+index 6c07b61b4a32..0140bdf27a01 100644
+--- a/drivers/clk/starfive/clk-starfive-jh71x0.c
++++ b/drivers/clk/starfive/clk-starfive-jh71x0.c
+@@ -10,7 +10,7 @@
+ #include <linux/device.h>
+ #include <linux/io.h>
+ 
+-#include "clk-starfive-jh7100.h"
++#include "clk-starfive-jh71x0.h"
+ 
+ static struct jh7100_clk *jh7100_clk_from(struct clk_hw *hw)
+ {
+diff --git a/drivers/clk/starfive/clk-starfive-jh7100.h b/drivers/clk/starfive/clk-starfive-jh71x0.h
+similarity index 100%
+rename from drivers/clk/starfive/clk-starfive-jh7100.h
+rename to drivers/clk/starfive/clk-starfive-jh71x0.h
 -- 
 2.38.1
 
