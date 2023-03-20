@@ -2,105 +2,82 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70324C7618A
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 18:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F51C6FD1C
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 19:32:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229891AbjCTScT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 14:32:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54494 "EHLO
+        id S229679AbjCTTce (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 15:32:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229922AbjCTSbr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 14:31:47 -0400
-X-Greylist: delayed 4670 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 20 Mar 2023 11:24:22 PDT
-Received: from sender3-op-o18.zoho.com (sender3-op-o18.zoho.com [136.143.184.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E36F31E29
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 11:24:21 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1679336618; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=OYpZ8/MOy9/Sv5w/gjuY/jMFNCToIzLNTzT7zIWp77kYm+evVOI3i5rrD82y8xKaQHI+DFYsDmQq+HuUob7hJ4obnCQ9AeSCodFtRq5UyivirXi+hvxsg0wHY2KYXWUiqMaJmeWGOI1kueZkVmo2EtIMCwJfuT0EJf1fo8Coayo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1679336618; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=so7tX6OW8//LFmzMA4l6Ntrngg/J9YJH/igJ97ZyXrs=; 
-        b=nG+N3IzKipK81vh2DnBEWZ8Y1CgdD+jEQ1D9BoF9T2V/bW5f//TrVk2G4VbXCsegA61dg7RYLPTmlvBy4e1sf3Vx6AUvN4H5x9z4NXdHG2yn3i+X9i+A9Cf3r5+uAStQzLwpb7Gv4dl8gCYmJENCGMuLyKVslIsmeXq2+5qH9hU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=arinc9.com;
-        spf=pass  smtp.mailfrom=arinc.unal@arinc9.com;
-        dmarc=pass header.from=<arinc.unal@arinc9.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1679336618;
-        s=zmail; d=arinc9.com; i=arinc.unal@arinc9.com;
-        h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-        bh=so7tX6OW8//LFmzMA4l6Ntrngg/J9YJH/igJ97ZyXrs=;
-        b=NZ4+d6yGK+tBdGjKHfUksQWt0tCnk+puc1vo3QZUhzsoHC79RJwvm5HxqS5q3hrg
-        3JhkFabTOWBa1ztiHnK4Z7iFHTOI287C6BZCiSVkQNsnKI1RvLGnPp5ULpSbPZapvEw
-        GXPya8bJ9vqJBCKpJZXp3el2kpfLIhU0uzeG2x7k=
-Received: from [10.10.10.3] (149.91.1.15 [149.91.1.15]) by mx.zohomail.com
-        with SMTPS id 1679336616427517.2861213917661; Mon, 20 Mar 2023 11:23:36 -0700 (PDT)
-Message-ID: <6a8989c5-f12d-a4cb-9b20-29049dee016e@arinc9.com>
-Date:   Mon, 20 Mar 2023 21:23:31 +0300
+        with ESMTP id S231207AbjCTTcG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 15:32:06 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4888119134;
+        Mon, 20 Mar 2023 12:25:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 953FE617B5;
+        Mon, 20 Mar 2023 19:25:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFA46C4339C;
+        Mon, 20 Mar 2023 19:25:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679340339;
+        bh=3fGON+9vlo8O171eVGVxUiOYPdlLCuWs1odLvjB4snM=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=IE1JaW8XlsCYmNWYDCunL7D09hl66J+hH+/gcUEnMiCbdg0pEAmcIFv3neTxEwYiD
+         OcVvQg7zD3C5SzMO5YV2VlJKUlBYmG5rOAXFh5u7XTaDtwpAJdTpRmI1KQVniYkyI6
+         fFir/5FQZHEnQZ2zNGTFXk5aKfNfZ/fnrphq+1sBIXHOukd7mXXENa771BbyOenUVN
+         WXaRzhEgv+T1r+IPbdn/BRI29uJQwrwox3v5bXiR6OCKDWvnAkoyF2yzOlxfvSme8O
+         Nu7JIZEtilOPLb233mha0boxScOBQ7BU4nPkEJcizS5HBixaz+tBF13ac/YR4NPZPh
+         aVrtKp+03e/fQ==
+Message-ID: <037449463ec342ec8d053163e4e58ee5.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 01/10] dt: bindings: clock: add mtmips SoCs clock device
- tree binding documentation
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        linux-clk@vger.kernel.org
-Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
-        john@phrozen.org, linux-kernel@vger.kernel.org,
-        p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        matthias.bgg@gmail.com, devicetree@vger.kernel.org
-References: <20230320161823.1424278-1-sergio.paracuellos@gmail.com>
- <20230320161823.1424278-2-sergio.paracuellos@gmail.com>
- <5109c01b-48bd-2854-3f42-bf8ef8b4a821@linaro.org>
- <9cfd5bc1-64e9-5250-5a8d-18ac4c205584@arinc9.com>
- <f323f1bc-1d91-f8bb-2c1f-2f1b93fe1b3e@linaro.org>
-Content-Language: en-US
-From:   =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-In-Reply-To: <f323f1bc-1d91-f8bb-2c1f-2f1b93fe1b3e@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230320091353.1918439-1-arnd@kernel.org>
+References: <20230320091353.1918439-1-arnd@kernel.org>
+Subject: Re: [PATCH] clk: mediatek: mt81xx: Ensure fhctl code is available
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Edward-JW Yang <edward-jw.yang@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Johnson Wang <johnson.wang@mediatek.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Arnd Bergmann <arnd@kernel.org>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Mon, 20 Mar 2023 12:25:36 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20.03.2023 21:11, Krzysztof Kozlowski wrote:
-> On 20/03/2023 19:07, Arınç ÜNAL wrote:
->> On 20.03.2023 21:01, Krzysztof Kozlowski wrote:
->>> On 20/03/2023 17:18, Sergio Paracuellos wrote:
->>>> +properties:
->>>> +  compatible:
->>>> +    items:
->>>> +      - enum:
->>>> +          - ralink,rt2880-sysc
->>>> +          - ralink,rt3050-sysc
->>>> +          - ralink,rt3052-sysc
->>>> +          - ralink,rt3352-sysc
->>>> +          - ralink,rt3883-sysc
->>>> +          - ralink,rt5350-sysc
->>>> +          - ralink,mt7620-sysc
->>>> +          - ralink,mt7620a-sysc
->>>> +          - ralink,mt7628-sysc
->>>> +          - ralink,mt7688-sysc
->>>
->>> One more comment - this and maybe other compatibles - have wrong vendor
->>> prefix. This is mediatek, not ralink.
->>
->> This platform was acquired from Ralink by MediaTek. I couldn't change
->> some existing ralink compatible strings to mediatek as Rob explained on
->> my pinctrl patch series that we don't do that. The compatible strings on
->> this patch series here are new but I'd rather keep the compatible
->> strings ralink to keep things consistent.
-> 
-> The comment that you cannot change existing compatibles does not apply
-> to these, because these are new. However indeed some SoCs have already
-> compatibles with ralink, so it's fine for these. mt7620 and mt7628 are
-> already used with mediatek, so these should be rather corrected to new
-> prefix.
+Quoting Arnd Bergmann (2023-03-20 02:13:42)
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> Just like in commit eddc63094855 ("clk: mediatek: Ensure fhctl code is
+> available for COMMON_CLK_MT6795"), these three need the shared driver
+> code, otherwise they run into link errors such as:
+>=20
+> aarch64-linux/bin/aarch64-linux-ld: drivers/clk/mediatek/clk-mt8192-apmix=
+edsys.o: in function `clk_mt8192_apmixed_probe':
+> clk-mt8192-apmixedsys.c:(.text+0x134): undefined reference to `fhctl_pars=
+e_dt'
+>=20
+> Fixes: 45a5cbe05d1f ("clk: mediatek: mt8173: Add support for frequency ho=
+pping through FHCTL")
+> Fixes: 4d586e10c428 ("clk: mediatek: mt8192: Add support for frequency ho=
+pping through FHCTL")
+> Fixes: da4a82dc67b0 ("clk: mediatek: mt8195: Add support for frequency ho=
+pping through FHCTL")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-If you're talking about the pinctrl schemas for MT7620 and MT7628, it's 
-just the name of the yaml files that have mediatek. The compatible 
-string is still ralink so it should be kept ralink here as well.
-
-Arınç
+Applied to clk-next
