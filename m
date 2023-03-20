@@ -2,202 +2,402 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E7FC7618A
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 07:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 312C8C7618A
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 08:11:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230151AbjCTHlJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 03:41:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50678 "EHLO
+        id S230310AbjCTILA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 04:11:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229835AbjCTHlH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 03:41:07 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38089E3AF
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 00:41:00 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id o12so42929012edb.9
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 00:41:00 -0700 (PDT)
+        with ESMTP id S230194AbjCTIK7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 04:10:59 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C99B18166
+        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 01:10:53 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id j24so511288wrd.0
+        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 01:10:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679298058;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EEJwPUcj30LR1Jvi4gq3x/eDVKkkFRtCJxEfs4FDdm4=;
-        b=K+smoDKcwnMxZrFNrJhdgowPDNaNTLyYz6zlEKxBEqQoEG3U+3ow0kJxlZknQwrGMB
-         u04dEEYkv//4yL//8tVkINm9Ieh7vEfPxMPVPRU5Zxh3K6ves71YXuJonexO5/k0eruR
-         Dw4HDFJYDAT8EGmLhsDNJTcXS/1bhC560OysoRkAxlvuoUCC4qx2VzVba6gN432Z3iCx
-         JPMK8sefwNUC70ZxMHds79JkwuendtkP6KHYKc+KaAA9Yl+K1NY1bS7zb+5+KNlQ49cL
-         5foHjP4G5g5hHiEThk8XHd+37eot8QkVHdL358kCzBtbTA7CKD9Shn76OLsosAJ7tU9U
-         BLLw==
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1679299851;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9QaCCr5qOD+a1NrjFAQNpaZDwnLW2R0U0UJg4O231ZA=;
+        b=Zzl0XwjfSGnfXNcCgNwd6zwQBbTIqV9nGyyFqAhwEPqp5lUK1mNo0G9akBTmsUTY1M
+         ul7XMtjFX7o4uGRldrro53RMfhNU48J3S4tV74Guw6oDCSGsL7oXTJmApgg6nNmDq6Mm
+         BaNfNESxdJddurQhSOTpWZH+UuiTZs9rf2PbkztKIKHmfkG96bqcXWJHX/rzvoRbx9BG
+         BH077yVJ7waUBwNwN+2OrSEBm/ApothC74zDvfjojgSwgUXG8xTmFyA11EE4eyZeHnRB
+         niHJJYQB4ZRysEh85LaYlvRPgss7EBQbRGrdMhPvsugzpczVFfmssVIrFA8O4+/60pyM
+         JdoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679298058;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EEJwPUcj30LR1Jvi4gq3x/eDVKkkFRtCJxEfs4FDdm4=;
-        b=SIDh1X577FXOSjJzCFMMHGwtam6KV8mTCE1d5/cz3wiBH4LCYoWQCqMFSm0QWLof42
-         eSj0L2/gu4n/1V84ayQP2Vy1a9/eZZ+63yUpIq8LvGFTb+FeLI0vgJanxw83q7a9nVXd
-         Wb16585nM8sFEHnAw2uVdDTW7wj0RhnX25eKLLD2e1P4zQVpOfrxdbJdj1jXol1dfQ+L
-         P0YRR2Rt1rUcZOZR+ZPuplRsaQXkMPrPcFEZ6OXpuuZbXXhO8PGtMIfi0nMgQB3amuHX
-         cHohVon2JJ2V8YNidp0uO6WwP/7qcBedwho6fOFoRUyzgcB8+tNde1FWhdn/1KXGamjY
-         hz4w==
-X-Gm-Message-State: AO0yUKVIAgUmkfpCM+cEBiqR6mvdrDGdkwTKTPhbPRzCeQtyVPsoQf0b
-        6ubCS0EwNsUu1eFdf7a8AmAZEQ==
-X-Google-Smtp-Source: AK7set8K83XcDqgvWGsUDkVZexSnqd6rwD5aeLXBfdzVWwJ7+1NQq8zSCs4BDTyss9P7wWoUZ3G6Lw==
-X-Received: by 2002:a17:906:1f53:b0:931:91a:fa4f with SMTP id d19-20020a1709061f5300b00931091afa4fmr8808137ejk.41.1679298058663;
-        Mon, 20 Mar 2023 00:40:58 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:4428:8354:afb6:2992? ([2a02:810d:15c0:828:4428:8354:afb6:2992])
-        by smtp.gmail.com with ESMTPSA id kj2-20020a170907764200b009324717b9f3sm3513196ejc.71.2023.03.20.00.40.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Mar 2023 00:40:58 -0700 (PDT)
-Message-ID: <a65697f4-0a75-23e2-517c-2784b0c382bc@linaro.org>
-Date:   Mon, 20 Mar 2023 08:40:57 +0100
+        d=1e100.net; s=20210112; t=1679299851;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9QaCCr5qOD+a1NrjFAQNpaZDwnLW2R0U0UJg4O231ZA=;
+        b=Lx8vTZTmavjEa/QHOe48jiqhV4k2iSHhH3Z5Wj2W+iqIT//ko+YGyB0scdKP66fpTO
+         wKRMskcanwDaMQOcMCby4QZnROazZarES4rTDN349dIScxFeO3SQBvaE/X258boViZH3
+         TDNP6R+QCEjPfSzNe+tVi7q3eTfvFBha5FTKJxBXR0qacsOXUvyqky3iM+l8MfxZiOMa
+         qCrhvLUNbBXRgBhjZT3rgu7qLTCL6+4dBjRkwLa75EPWD+c5LavljtHtvJ1kSGfD/0xd
+         243b4FP/dhdph2wN39zxigfipVlwXtwTFIMq309eTpTrFTyamjHjaZTX9WocAv7n8EpQ
+         aJPA==
+X-Gm-Message-State: AO0yUKVRbQJdjy3X5XYt5mKEos7uweAP+nfiA6Fx/N+yI9lIhJ/pSo7K
+        et/nVtmTDaRswFevw/ZYdl4Zqw==
+X-Google-Smtp-Source: AK7set/VddU3lyc4scA3tkqtYGHDB1K/9ha2QKq1BwZRfr4yK3oEtr1qukKvqAKFkyZHb9lrB+Djgw==
+X-Received: by 2002:adf:eb4c:0:b0:2d7:452f:79ec with SMTP id u12-20020adfeb4c000000b002d7452f79ecmr1376104wrn.7.1679299851386;
+        Mon, 20 Mar 2023 01:10:51 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id y16-20020a056000109000b002c56013c07fsm8195105wrw.109.2023.03.20.01.10.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Mar 2023 01:10:50 -0700 (PDT)
+Date:   Mon, 20 Mar 2023 09:10:49 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Vadim Fedorenko <vadfed@meta.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        poros <poros@redhat.com>, mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: Re: [PATCH RFC v6 1/6] dpll: spec: Add Netlink spec in YAML
+Message-ID: <ZBgVCaUgcZMmZBw4@nanopsycho>
+References: <20230312022807.278528-1-vadfed@meta.com>
+ <20230312022807.278528-2-vadfed@meta.com>
+ <ZBCIPg1u8UFugEFj@nanopsycho>
+ <DM6PR11MB4657F423D2B3B4F0799B0F019BBC9@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZBMdZkK91GHDrd/4@nanopsycho>
+ <DM6PR11MB465709625C2C391D470C33F49BBD9@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZBQ7ZuJSXRfFOy1b@nanopsycho>
+ <DM6PR11MB4657F48649CFEB92D28D4ED49BBD9@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZBSTUB7q8EsfhHSL@nanopsycho>
+ <DM6PR11MB465709F2E30586AFCCE1461E9BBD9@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v2 3/6] dt-bindings: soc: starfive: syscon: Add optional
- patternProperties
-Content-Language: en-US
-To:     Xingyu Wu <xingyu.wu@starfivetech.com>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Conor Dooley <conor@kernel.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Rob Herring <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20230316030514.137427-1-xingyu.wu@starfivetech.com>
- <20230316030514.137427-4-xingyu.wu@starfivetech.com>
- <1f352445-4677-e33b-be14-c76bd7ffa188@linaro.org>
- <45221a1c-dc01-2759-3e32-658636625529@starfivetech.com>
- <a6b9bab2-4151-c811-85ff-2424866e21d8@linaro.org>
- <ce674ea9-41ec-2862-c39c-207f0b6c45a2@starfivetech.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <ce674ea9-41ec-2862-c39c-207f0b6c45a2@starfivetech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM6PR11MB465709F2E30586AFCCE1461E9BBD9@DM6PR11MB4657.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20/03/2023 08:29, Xingyu Wu wrote:
-> On 2023/3/20 14:37, Krzysztof Kozlowski wrote:
->> On 20/03/2023 04:54, Xingyu Wu wrote:
->>> On 2023/3/19 20:28, Krzysztof Kozlowski wrote:
->>>> On 16/03/2023 04:05, Xingyu Wu wrote:
->>>>> Add optional compatible and patternProperties.
+Fri, Mar 17, 2023 at 07:22:46PM CET, arkadiusz.kubalewski@intel.com wrote:
+>>From: Jiri Pirko <jiri@resnulli.us>
+>>Sent: Friday, March 17, 2023 5:21 PM
+>>
+>>Fri, Mar 17, 2023 at 04:14:45PM CET, arkadiusz.kubalewski@intel.com wrote:
+>>>
+>>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>>Sent: Friday, March 17, 2023 11:05 AM
+>>>>
+>>>>Fri, Mar 17, 2023 at 01:52:44AM CET, arkadiusz.kubalewski@intel.com
+>>>>wrote:
+>>>>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>>>>Sent: Thursday, March 16, 2023 2:45 PM
+>>>>>>
 >>>>>
->>>>> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
->>>>> ---
->>>>>  .../soc/starfive/starfive,jh7110-syscon.yaml  | 39 ++++++++++++++++---
->>>>>  1 file changed, 33 insertions(+), 6 deletions(-)
+>>>>>[...]
 >>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
->>>>> index ae7f1d6916af..b61d8921ef42 100644
->>>>> --- a/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
->>>>> +++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
->>>>> @@ -15,16 +15,31 @@ description: |
->>>>>  
->>>>>  properties:
->>>>>    compatible:
->>>>> -    items:
->>>>> -      - enum:
->>>>> -          - starfive,jh7110-aon-syscon
->>>>> -          - starfive,jh7110-stg-syscon
->>>>> -          - starfive,jh7110-sys-syscon
->>>>> -      - const: syscon
->>>>> +    oneOf:
->>>>> +      - items:
->>>>> +          - enum:
->>>>> +              - starfive,jh7110-aon-syscon
->>>>> +              - starfive,jh7110-stg-syscon
->>>>> +              - starfive,jh7110-sys-syscon
->>>>> +          - const: syscon
->>>>> +      - items:
->>>>> +          - enum:
->>>>> +              - starfive,jh7110-aon-syscon
->>>>> +              - starfive,jh7110-stg-syscon
->>>>> +              - starfive,jh7110-sys-syscon
->>>>> +          - const: syscon
->>>>> +          - const: simple-mfd
-
-BTW, this also looks wrong. You just said that clock controller exists
-only in few variants. Also, why sometimes the same device  goes with
-simple-mfd and sometimies without? It's the same device.
-
->>>>>  
->>>>>    reg:
->>>>>      maxItems: 1
->>>>>  
->>>>> +patternProperties:
->>>>> +  # Optional children
->>>>> +  "pll-clock-controller":
+>>>>>>>>>+attribute-sets:
+>>>>>>>>>+  -
+>>>>>>>>>+    name: dpll
+>>>>>>>>>+    enum-name: dplla
+>>>>>>>>>+    attributes:
+>>>>>>>>>+      -
+>>>>>>>>>+        name: device
+>>>>>>>>>+        type: nest
+>>>>>>>>>+        value: 1
+>>>>>>>>>+        multi-attr: true
+>>>>>>>>>+        nested-attributes: device
+>>>>>>>>
+>>>>>>>>What is this "device" and what is it good for? Smells like some
+>>>>>>>>leftover
+>>>>>>>>and with the nested scheme looks quite odd.
+>>>>>>>>
+>>>>>>>
+>>>>>>>No, it is nested attribute type, used when multiple devices are returned
+>>>>>>>with netlink:
+>>>>>>>
+>>>>>>>- dump of device-get command where all devices are returned, each one
+>>>>>>>nested
+>>>>>>>inside it:
+>>>>>>>[{'device': [{'bus-name': 'pci', 'dev-name': '0000:21:00.0_0', 'id':0},
+>>>>>>>             {'bus-name': 'pci', 'dev-name': '0000:21:00.0_1', 'id':1}]}]
+>>>>>>
+>>>>>>Okay, why is it nested here? The is one netlink msg per dpll device
+>>>>>>instance. Is this the real output of you made that up?
+>>>>>>
+>>>>>>Device nest should not be there for DEVICE_GET, does not make sense.
+>>>>>>
+>>>>>
+>>>>>This was returned by CLI parser on ice with cmd:
+>>>>>$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml /
+>>>>>--dump device-get
+>>>>>
+>>>>>Please note this relates to 'dump' request , it is rather expected that
+>>>>there
+>>>>>are multiple dplls returned, thus we need a nest attribute for each one.
 >>>>
->>>> It's not a pattern.
+>>>>No, you definitelly don't need to nest them. Dump format and get format
+>>>>should be exactly the same. Please remove the nest.
+>>>>
+>>>>See how that is done in devlink for example: devlink_nl_fill()
+>>>>This functions fills up one object in the dump. No nesting.
+>>>>I'm not aware of such nesting approach anywhere in kernel dumps, does
+>>>>not make sense at all.
+>>>>
 >>>
->>> Does it use 'properties' instead of 'patternProperties'?
+>>>Yeah it make sense to have same output on `do` and `dump`, but this is also
+>>>achievable with nest DPLL_A_DEVICE, still don't need put extra header for it.
+>>>The difference would be that on `dump` multiple DPLL_A_DEVICE are provided,
+>>>on `do` only one.
 >>
->> Yes.
+>>Please don't. This root nesting is not correct.
 >>
->>>
->>>>
->>>> Anyway should be clock-controller
->>>
->>> Will fix.
->>>
->>>>
->>>>> +    type: object
->>>>> +    $ref: /schemas/clock/starfive,jh7110-pll.yaml#
->>>>> +    description: Clock provider for PLL.
->>>>> +
->>>>
->>>> You just added these bindings! So the initial submission was incomplete
->>>> on purpose?
->>>>
->>>> No, add complete bindings.
->>>
->>> Does you mean that it should drop the 'description', or add complete 'description',
->>> or add 'compatible', 'clocks' and 'clock-cells' of complete clock-controller bindings?
->>
->> It means it should be squashed with the patch which adds it.
-> 
-> Should I drop the 'decription' here and keep the 'decription' in patch1?
-
-There should be no this patch at all. However I do not understand what
-you want to do with description. What's wrong with description?
-> 
 >>
 >>>
+>>>Will try to fix it.
+>>>Although could you please explain why it make sense to put extra header
+>>>(exactly the same header) multiple times in one netlink response message?
+>>
+>>This is how it's done for all netlink dumps as far as I know.
+>
+>So we just following something but we cannot explain why?
+
+I thought it is obvious. With what you suggest, each generic netlink
+user would have to have all commands that implement both do and dump
+with message format of a root nest. Not only that, for the sake of
+consistency, all the rest of the commands would have to implement same
+root nesting format. Both ways, to and from kernel.
+So no matter what, all the messages would look like:
+
+CMD_X MSG:
+  SUBSYS_ATTR_ROOT
+    SUBSYS_ATTR_1
+    SUBSYS_ATTR_2
+    ***
+    SUBSYS_ATTR_N
+
+What I say, this extra level of nesting is not needed and in fact it is
+not good for anything. Remove it and just have:
+
+CMD_X MSG:
+  SUBSYS_ATTR_1
+  SUBSYS_ATTR_2
+  ***
+  SUBSYS_ATTR_N
+
+Clear and simple. For dump, you repeat the header, I don't see why that
+is problem. All implementations are doing that, all userspace apps are
+used to it. It is simple and consistent even if you consider multiple
+skbs used for dump. I'm lacking to understand your need to reinvent
+the wheel here.
+
+
+
+>
+>>The reason might be that the userspace is parsing exactly the same
+>>message as if it would be DOIT message.
+>>
+>
+>This argument is achievable on both approaches.
+>
+>[...]
+>
+>
+>>>>>>>>
+>>>>>>>>Hmm, shouldn't source-pin-index be here as well?
+>>>>>>>
+>>>>>>>No, there is no set for this.
+>>>>>>>For manual mode user selects the pin by setting enabled state on the
+>>one
+>>>>>>>he needs to recover signal from.
+>>>>>>>
+>>>>>>>source-pin-index is read only, returns active source.
+>>>>>>
+>>>>>>Okay, got it. Then why do we have this assymetric approach? Just have
+>>>>>>the enabled state to serve the user to see which one is selected, no?
+>>>>>>This would help to avoid confusion (like mine) and allow not to create
+>>>>>>inconsistencies (like no pin enabled yet driver to return some source
+>>>>>>pin index)
+>>>>>>
+>>>>>
+>>>>>This is due to automatic mode were multiple pins are enabled, but actual
+>>>>>selection is done on hardware level with priorities.
 >>>>
->>>>>  required:
->>>>>    - compatible
->>>>>    - reg
->>>>> @@ -38,4 +53,16 @@ examples:
->>>>>          reg = <0x10240000 0x1000>;
->>>>>      };
->>>>>  
->>>>> +  - |
->>>>> +    syscon@13030000 {
+>>>>Okay, this is confusing and I believe wrong.
+>>>>You have dual meaning for pin state attribute with states
+>>>>STATE_CONNECTED/DISCONNECTED:
 >>>>
->>>> No need for new example... Just put it in existing one.
+>>>>1) Manual mode, MUX pins (both share the same model):
+>>>>   There is only one pin with STATE_CONNECTED. The others are in
+>>>>   STATE_DISCONNECTED
+>>>>   User changes a state of a pin to make the selection.
+>>>>
+>>>>   Example:
+>>>>     $ dplltool pin dump
+>>>>       pin 1 state connected
+>>>>       pin 2 state disconnected
+>>>>     $ dplltool pin 2 set state connected
+>>>>     $ dplltool pin dump
+>>>>       pin 1 state disconnected
+>>>>       pin 2 state connected
+>>>>
+>>>>2) Automatic mode:
+>>>>   The user by setting "state" decides it the pin should be considered
+>>>>   by the device for auto selection.
+>>>>
+>>>>   Example:
+>>>>     $ dplltool pin dump:
+>>>>       pin 1 state connected prio 10
+>>>>       pin 2 state connected prio 15
+>>>>     $ dplltool dpll x get:
+>>>>       dpll x source-pin-index 1
+>>>>
+>>>>So in manual mode, STATE_CONNECTED means the dpll is connected to this
+>>>>source pin. However, in automatic mode it means something else. It means
+>>>>the user allows this pin to be considered for auto selection. The fact
+>>>>the pin is selected source is exposed over source-pin-index.
+>>>>
+>>>>Instead of this, I believe that the semantics of
+>>>>STATE_CONNECTED/DISCONNECTED should be the same for automatic mode as
+>>>>well. Unlike the manual mode/mux, where the state is written by user, in
+>>>>automatic mode the state should be only written by the driver. User
+>>>>attemts to set the state should fail with graceful explanation (DPLL
+>>>>netlink/core code should handle that, w/o driver interaction)
+>>>>
+>>>>Suggested automatic mode example:
+>>>>     $ dplltool pin dump:
+>>>>       pin 1 state connected prio 10 connectable true
+>>>>       pin 2 state disconnected prio 15 connectable true
+>>>>     $ dplltool pin 1 set connectable false
+>>>>     $ dplltool pin dump:
+>>>>       pin 1 state disconnected prio 10 connectable false
+>>>>       pin 2 state connected prio 15 connectable true
+>>>>     $ dplltool pin 1 set state connected
+>>>>       -EOPNOTSUPP
+>>>>
+>>>>Note there is no "source-pin-index" at all. Replaced by pin state here.
+>>>>There is a new attribute called "connectable", the user uses this
+>>>>attribute to tell the device, if this source pin could be considered for
+>>>>auto selection or not.
+>>>>
+>>>>Could be called perhaps "selectable", does not matter. The point is, the
+>>>>meaning of the "state" attribute is consistent for automatic mode,
+>>>>manual mode and mux pin.
+>>>>
+>>>>Makes sense?
 >>>>
 >>>
->>> Actually, the PLL clock-controller are just set in sys-syscon resgisters. The stg-syscon and
->>> aon-syscon don't need it. So PLL clock-controller node only is added in sys-syscon node.
+>>>Great idea!
+>>>I will add third enum for pin-state: DPLL_PIN_STATE_SELECTABLE.
+>>>In the end we will have this:
+>>>              +--------------------------------+
+>>>              | valid DPLL_A_PIN_STATE values  |
+>>>	      +---------------+----------------+
+>>>+------------+| requested:    | returned:      |
+>>>|DPLL_A_MODE:||               |                |
+>>>|------------++--------------------------------|
+>>>|AUTOMATIC   ||- SELECTABLE   | - SELECTABLE   |
+>>>|            ||- DISCONNECTED | - DISCONNECTED |
+>>>|            ||               | - CONNECTED    |
 >>
->> So why having other examples if they are included here? Drop them.
+>>"selectable" is something the user sets.
+>
+>Yes.
+>
+>>"connected"/"disconnected" is in case of auto mode something that driver
+>>sets.
 >>
-> 
-> Should I drop the old example of stg-syscon and add a new example of sys-syscon which
-> include clock-controller child node?
+>
+>No. Not really.
+>"CONNECTED" is only set by driver once a pin is choosen.
+>"SELECTABLE" is set by the user if he needs to enable a pin for selection,
+>it is also default state of a pin if it was not selected ("CONNECTED")
+>"DISCONNECTED" is set by the user if he needs to disable a pin from selection.
 
-No, there should be no stg-syscon example, it's useless.
+Sure.
 
-Best regards,
-Krzysztof
 
+>
+>>Looks a bit odd to mix them together. That is why I suggested
+>>to have sepectable as a separate attr. But up to you. Please make sure
+>>you sanitize the user/driver set of this attr in dpll code.
+>>
+>
+>What is odd?
+
+To mix them together in a single attr. But I'm fine with that.
+
+
+>What do you mean by "sanitize the user/driver set of this attr in dpll code"?
+
+What I mean is that in each mode there has to be clearly documented
+which entity changes state, how and under which circumstance. This
+behaviour needs to be enforced in the dpll code.
+
+
+>
+>
+>Thank you,
+>Arkadiusz
+>
+>>
+>>>|------------++--------------------------------|
+>>>|MANUAL      ||- CONNECTED    | - CONNECTED    |
+>>>|            ||- DISCONNECTED | - DISCONNECTED |
+>>>+------------++---------------+----------------+
+>>>
+>>>Thank you,
+>>>Arkadiusz
+>>>
+>>>>
+>>>>>
+>>>>>[...]
+>>>>>
+>>>>>>>>>+
+>>>>>>>>>+/* DPLL_CMD_DEVICE_SET - do */
+>>>>>>>>>+static const struct nla_policy
+>>dpll_device_set_nl_policy[DPLL_A_MODE +
+>>>>>>>>>1]
+>>>>>>>>>= {
+>>>>>>>>>+	[DPLL_A_ID] = { .type = NLA_U32, },
+>>>>>>>>>+	[DPLL_A_BUS_NAME] = { .type = NLA_NUL_STRING, },
+>>>>>>>>>+	[DPLL_A_DEV_NAME] = { .type = NLA_NUL_STRING, },
+>>>>>>>>>+	[DPLL_A_MODE] = NLA_POLICY_MAX(NLA_U8, 5),
+>>>>>>>>
+>>>>>>>>Hmm, any idea why the generator does not put define name
+>>>>>>>>here instead of "5"?
+>>>>>>>>
+>>>>>>>
+>>>>>>>Not really, it probably needs a fix for this.
+>>>>>>
+>>>>>>Yeah.
+>>>>>>
+>>>>>
+>>>>>Well, once we done with review maybe we could also fix those, or ask
+>>>>>Jakub if he could help :)
+>>>>>
+>>>>>
+>>>>>[...]
+>>>>>
+>>>>>>>>
+>>>>>>>>>+	DPLL_A_PIN_PRIO,
+>>>>>>>>>+	DPLL_A_PIN_STATE,
+>>>>>>>>>+	DPLL_A_PIN_PARENT,
+>>>>>>>>>+	DPLL_A_PIN_PARENT_IDX,
+>>>>>>>>>+	DPLL_A_PIN_RCLK_DEVICE,
+>>>>>>>>>+	DPLL_A_PIN_DPLL_CAPS,
+>>>>>>>>
+>>>>>>>>Just DPLL_A_PIN_CAPS is enough, that would be also consistent with the
+>>>>>>>>enum name.
+>>>>>>>
+>>>>>>>Sure, fixed.
+>>>>>>
+>>>>>>
+>>>>>>Thanks for all your work on this!
+>>>>>
+>>>>>Thanks for a great review! :)
+>>>>
+>>>>Glad to help.
