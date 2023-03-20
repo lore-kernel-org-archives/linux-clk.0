@@ -2,123 +2,188 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75AB3C7619A
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 20:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE41BC6FD1C
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 21:21:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229583AbjCTUmS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 16:42:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43562 "EHLO
+        id S229746AbjCTVVG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 17:21:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229677AbjCTUmO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 16:42:14 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0B7C1EBDF;
-        Mon, 20 Mar 2023 13:41:32 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id x15so3137214pjk.2;
-        Mon, 20 Mar 2023 13:41:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679344891;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P1nihvRARKpi6tkVd5cEgKMlSNEP4XWbbAUmPmevZWQ=;
-        b=a0HcIxFpIjo1lSgr+MxW8pudqshXcHw+BiPZWFvBtQqePhHvgvVEQVZdmnTDBmMDK7
-         CmY91u5/YP6ybN/4gdZa8q8Mgky1m5JbY7TEnEZvulms39aEHxjr7Gf+psuJinYYj9cj
-         tQAAVEnc4BPk5+UErXx38+ddx4LMuOzQaHgrcnEVEkmD1KOxTkCCqgAEGWlyOb7pT4SK
-         LH9Rs8k5OVkK8NEwmDJmgpHNxtKcCBuGfvxI4+gLk40kdj/ZBp/MpdPdAjQbjiscQZd4
-         BS0SF8pqdy9NPUsz8F4A8dlnswapEQueHbN8FdH3agnrJmmSH0HgmvtdrgUKAAgRryhY
-         UHXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679344891;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P1nihvRARKpi6tkVd5cEgKMlSNEP4XWbbAUmPmevZWQ=;
-        b=ei/3sFtFHynA7Q8IIOVuBQd69OGvue3l/NSyT/M0lzf1MvboJMfCqUCWvCZ/JI+rG+
-         W4Cj35DMfanwiyY9zuFH+noJ6qSGaoFHC3QX830quLGZihZ/VaLvF6uH8ebaP7DwXZYC
-         NGZXGuDH68wd0RTSuktNawsnZ2+19qqs+cah15wQm2FfjJzCKx3suqELsN9YLvQS46Ec
-         n6iJbEJgICydnj3SxvJuwYsqjxNj1bqZm1+Hvw9LpvJMgf3SVvQnArTn9MffOLjkQ/uR
-         oXxJSOK1H0oSerb8us5ItJbWK0aOEWUED0j9KT+m2PVam7Xvyy+TzyoiqpmEr9NLL34z
-         rlIA==
-X-Gm-Message-State: AO0yUKUAyFu/8q6U+32qUcXxjCbSQ8rMJyAjfACTtZVIY+T8seQBNibt
-        E84jvl+C9rndy1ZbnwWrI9M=
-X-Google-Smtp-Source: AK7set8RQR+fc+qe2esmHZrxVXZ0nOPF1zAz+mZWdv/urEMxOguZoqyh1B3Hr75AJXbELY1VcDLbxA==
-X-Received: by 2002:a17:90b:1a8e:b0:234:e3f:f53b with SMTP id ng14-20020a17090b1a8e00b002340e3ff53bmr454210pjb.21.1679344891331;
-        Mon, 20 Mar 2023 13:41:31 -0700 (PDT)
-Received: from d.home.yangfl.dn42 ([104.28.213.202])
-        by smtp.gmail.com with ESMTPSA id c3-20020a17090aa60300b0023b29b464f9sm6580943pjq.27.2023.03.20.13.41.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Mar 2023 13:41:31 -0700 (PDT)
-From:   David Yang <mmyangfl@gmail.com>
-Cc:     David Yang <mmyangfl@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v5 4/5] dt-bindings: clock: Add Hi3798MV100 CRG
-Date:   Tue, 21 Mar 2023 04:40:37 +0800
-Message-Id: <20230320204042.980708-5-mmyangfl@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230320204042.980708-1-mmyangfl@gmail.com>
-References: <20230320204042.980708-1-mmyangfl@gmail.com>
+        with ESMTP id S229524AbjCTVVG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 17:21:06 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF62D5BA2
+        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 14:21:03 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 98F13B810BC
+        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 21:21:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3805AC433EF;
+        Mon, 20 Mar 2023 21:21:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679347261;
+        bh=x6I9S1lGK6o4MSuZSnmVynR5hopBiJy13ULWh3RzYf8=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=BEzZGUoQyXqtBfGHFMl0DsdwZ0XWZ7KyKudFj/5yPhv06SHPG8wpaZ+0Ctiu6e+Kk
+         /nDyV/4CdIPCviPjnxBHTWetb+JgoSXYbsRuYLpXzL5J/lyxYCKvR9yqP55d1JdfKE
+         eFCfv7/jbhckOwfnnLvK90CwgX/Sl8ZBHj+3dM+VzHb83lUzwOlki67wz+2KZpNkax
+         JcmQBVOtyVG/o5nrUEIJAf1iDndWhnrWORLbdlSjR3Zm3O/XvV4/3hG3vLLCXf7fJJ
+         TXAArrPxCyDGvtVamWRaxCAjnzqMgqqaBWi96H4Jx2+InH+nLqW97WqmqALlZh9fjC
+         5TZ97dYBfz3Zw==
+Message-ID: <b76168cc3f328235bbb8bf9f195dbaf4.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230317073539.13288-1-shubhrajyoti.datta@amd.com>
+References: <20230317073539.13288-1-shubhrajyoti.datta@amd.com>
+Subject: Re: [PATCH v3] clocking-wizard: Support higher frequency accuracy
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     git@amd.com, mturquette@baylibre.com, michal.simek@xilinx.com
+To:     Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+        linux-clk@vger.kernel.org
+Date:   Mon, 20 Mar 2023 14:20:58 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add CRG bindings for Hi3798MV100 SoC. CRG (Clock and Reset Generator)
-module generates clock and reset signals used by other module blocks on
-SoC.
+Quoting Shubhrajyoti Datta (2023-03-17 00:35:39)
+> diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xil=
+inx/clk-xlnx-clock-wizard.c
+> index c495d709f9e2..6828911b6342 100644
+> --- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+> +++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+> @@ -107,6 +129,9 @@ struct clk_wzrd_divider {
+>         u8 width;
+>         u8 flags;
+>         const struct clk_div_table *table;
+> +       u32 valuem;
+> +       u32 valued;
+> +       u32 valueo;
 
-Signed-off-by: David Yang <mmyangfl@gmail.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../devicetree/bindings/clock/hisi-crg.txt          |  2 ++
- include/dt-bindings/clock/histb-clock.h             | 13 +++++++++++++
- 2 files changed, 15 insertions(+)
+Can this just be 'm, d, o'? That 'value' prefix is not helpful.
 
-diff --git a/Documentation/devicetree/bindings/clock/hisi-crg.txt b/Documentation/devicetree/bindings/clock/hisi-crg.txt
-index cc60b3d42..972c038c8 100644
---- a/Documentation/devicetree/bindings/clock/hisi-crg.txt
-+++ b/Documentation/devicetree/bindings/clock/hisi-crg.txt
-@@ -13,6 +13,8 @@ Required Properties:
-   - "hisilicon,hi3516cv300-crg"
-   - "hisilicon,hi3516cv300-sysctrl"
-   - "hisilicon,hi3519-crg"
-+  - "hisilicon,hi3798mv100-crg"
-+  - "hisilicon,hi3798mv100-sysctrl"
-   - "hisilicon,hi3798cv200-crg"
-   - "hisilicon,hi3798cv200-sysctrl"
- 
-diff --git a/include/dt-bindings/clock/histb-clock.h b/include/dt-bindings/clock/histb-clock.h
-index e64e5770a..126b1f839 100644
---- a/include/dt-bindings/clock/histb-clock.h
-+++ b/include/dt-bindings/clock/histb-clock.h
-@@ -58,6 +58,19 @@
- #define HISTB_USB3_UTMI_CLK1		48
- #define HISTB_USB3_PIPE_CLK1		49
- #define HISTB_USB3_SUSPEND_CLK1		50
-+#define HISTB_USB2_UTMI_CLK1		51
-+#define HISTB_USB2_2_BUS_CLK		52
-+#define HISTB_USB2_2_PHY_CLK		53
-+#define HISTB_USB2_2_UTMI_CLK		54
-+#define HISTB_USB2_2_UTMI_CLK1		55
-+#define HISTB_USB2_2_12M_CLK		56
-+#define HISTB_USB2_2_48M_CLK		57
-+#define HISTB_USB2_2_OTG_UTMI_CLK	58
-+#define HISTB_USB2_2_PHY1_REF_CLK	59
-+#define HISTB_USB2_2_PHY2_REF_CLK	60
-+#define HISTB_FEPHY_CLK			61
-+#define HISTB_GPU_BUS_CLK		62
-+#define HISTB_GPU_CORE_CLK		63
- 
- /* clocks provided by mcu CRG */
- #define HISTB_MCE_CLK			1
--- 
-2.39.2
+>         spinlock_t *lock;  /* divider lock */
+>  };
+> =20
+[...]
+> +
+> +static int clk_wzrd_dynamic_all_nolock(struct clk_hw *hw, unsigned long =
+rate,
+> +                                      unsigned long parent_rate)
+> +{
+> +       struct clk_wzrd_divider *divider =3D to_clk_wzrd_divider(hw);
+> +       unsigned long vco_freq, rate_div, f, clockout0_div;
+> +       u32 reg, pre, value;
+> +       int err;
+> +
+> +       err =3D clk_wzrd_get_divisors(hw, rate, parent_rate);
+> +       if (err)
+> +               return err;
+> +
+> +       vco_freq =3D DIV_ROUND_CLOSEST(parent_rate * divider->valuem, div=
+ider->valued);
+> +       rate_div =3D DIV_ROUND_CLOSEST_ULL((vco_freq * WZRD_FRAC_POINTS),=
+ rate);
+> +
+> +       clockout0_div =3D div_u64(rate_div,  WZRD_FRAC_POINTS);
+> +
+> +       pre =3D DIV_ROUND_CLOSEST_ULL(vco_freq * WZRD_FRAC_POINTS, rate);
+> +       f =3D (u32)(pre - (clockout0_div * WZRD_FRAC_POINTS));
 
+Make 'f' a u32 instead of unsigned long and then drop the cast.
+
+> +       f &=3D WZRD_CLKOUT_FRAC_MASK;
+> +
+> +       reg =3D FIELD_PREP(WZRD_CLKOUT_DIVIDE_MASK, clockout0_div) |
+> +             FIELD_PREP(WZRD_CLKOUT0_FRAC_MASK, f);
+> +
+> +       writel(reg, divider->base + WZRD_CLK_CFG_REG(2));
+> +       /* Set divisor and clear phase offset */
+> +       reg =3D FIELD_PREP(WZRD_CLKFBOUT_MULT_MASK, divider->valuem) |
+> +             FIELD_PREP(WZRD_DIVCLK_DIVIDE_MASK, divider->valued);
+> +       writel(reg, divider->base + WZRD_CLK_CFG_REG(0));
+> +       writel(divider->valueo, divider->base + WZRD_CLK_CFG_REG(2));
+> +       writel(0, divider->base + WZRD_CLK_CFG_REG(3));
+> +       /* Check status register */
+> +       err =3D readl_poll_timeout(divider->base + WZRD_DR_STATUS_REG_OFF=
+SET, value,
+> +                                value & WZRD_DR_LOCK_BIT_MASK,
+> +                                WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
+> +       if (err)
+> +               return -ETIMEDOUT;
+> +
+> +       /* Initiate reconfiguration */
+> +       writel(WZRD_DR_BEGIN_DYNA_RECONF,
+> +              divider->base + WZRD_DR_INIT_REG_OFFSET);
+> +
+> +       /* Check status register */
+> +       return readl_poll_timeout(divider->base + WZRD_DR_STATUS_REG_OFFS=
+ET, value,
+> +                                value & WZRD_DR_LOCK_BIT_MASK,
+> +                                WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
+> +}
+> +
+> +static int clk_wzrd_dynamic_all(struct clk_hw *hw, unsigned long rate,
+> +                               unsigned long parent_rate)
+> +{
+> +       struct clk_wzrd_divider *divider =3D to_clk_wzrd_divider(hw);
+> +       unsigned long flags =3D 0;
+> +       int ret;
+> +
+> +       if (divider->lock)
+> +               spin_lock_irqsave(divider->lock, flags);
+> +       else
+> +               __acquire(divider->lock);
+
+Is there always a lock? Can we just always lock?
+
+> +
+> +       ret =3D clk_wzrd_dynamic_all_nolock(hw, rate, parent_rate);
+> +
+> +       if (divider->lock)
+> +               spin_unlock_irqrestore(divider->lock, flags);
+> +       else
+> +               __release(divider->lock);
+> +
+> +       return ret;
+> +}
+> +
+> +static unsigned long clk_wzrd_recalc_rate_all(struct clk_hw *hw,
+> +                                             unsigned long parent_rate)
+> +{
+> +       struct clk_wzrd_divider *divider =3D to_clk_wzrd_divider(hw);
+> +       u32 m, d, o, div, reg, f;
+> +
+> +       reg =3D readl(divider->base + WZRD_CLK_CFG_REG(0));
+> +       d =3D FIELD_GET(WZRD_DIVCLK_DIVIDE_MASK, reg);
+> +       m =3D FIELD_GET(WZRD_CLKFBOUT_MULT_MASK, reg);
+> +       reg =3D readl(divider->base + WZRD_CLK_CFG_REG(2));
+> +       o =3D FIELD_GET(WZRD_DIVCLK_DIVIDE_MASK, reg);
+> +       f =3D FIELD_GET(WZRD_CLKOUT0_FRAC_MASK, reg);
+> +
+> +       div =3D DIV_ROUND_CLOSEST(d * (WZRD_FRAC_POINTS * o + f), WZRD_FR=
+AC_POINTS);
+> +       return divider_recalc_rate(hw, parent_rate * m, div, divider->tab=
+le,
+> +                       divider->flags, divider->width);
+> +}
+> +
+> +static long clk_wzrd_round_rate_all(struct clk_hw *hw, unsigned long rat=
+e,
+> +                                   unsigned long *prate)
+> +{
+> +       return rate;
+
+This needs to do math to figure out what the rate is going to be. We
+can't just return the rate passed in.
+
+> +}
+> +
+>  static const struct clk_ops clk_wzrd_clk_divider_ops =3D {
+>         .round_rate =3D clk_wzrd_round_rate,
+>         .set_rate =3D clk_wzrd_dynamic_reconfig,
+>         .recalc_rate =3D clk_wzrd_recalc_rate,
+>  };
+>
