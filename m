@@ -2,95 +2,115 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA24C6FD1D
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 15:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2154C7618A
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 15:45:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232097AbjCTPRj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 11:17:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48972 "EHLO
+        id S232956AbjCTPp4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 11:45:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232408AbjCTPRS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 11:17:18 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE7992ED58;
-        Mon, 20 Mar 2023 08:12:03 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8469EB80EC5;
-        Mon, 20 Mar 2023 15:12:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8691C433EF;
-        Mon, 20 Mar 2023 15:12:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1679325122;
-        bh=UeW1CQAAoSJChSLO401v/ThGrxNP3MJwVrLenSBvI1U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S8lhUrPYqpOaMHQgpnYyjNZgMdRDGPhv2BfV2U5bCAhjHK2QRVLDHziRis6qXX3hO
-         IN3utOhtxZI8wzXrPOwsi1mVKD16Sd5z8ek7XRGa/XO+H8kaGRX/5QhQnKGpQmHxqX
-         jDY1UBukR/5ND3Wg2gA786gbMzC1bj0JNUzVGCuI=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     stable@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        patches@lists.linux.dev, Randy Dunlap <rdunlap@infradead.org>,
-        Riku Voipio <riku.voipio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.2 008/211] clk: HI655X: select REGMAP instead of depending on it
-Date:   Mon, 20 Mar 2023 15:52:23 +0100
-Message-Id: <20230320145513.650732473@linuxfoundation.org>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <20230320145513.305686421@linuxfoundation.org>
-References: <20230320145513.305686421@linuxfoundation.org>
-User-Agent: quilt/0.67
+        with ESMTP id S232983AbjCTPpk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 11:45:40 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A67FB37B6F;
+        Mon, 20 Mar 2023 08:36:03 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id y4so48444156edo.2;
+        Mon, 20 Mar 2023 08:36:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112; t=1679326562;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L7O9sQEBEyADAKShtHU/SV4p9FNZJbLKQq8Lw4CGcFY=;
+        b=BE6GpoyPw/AtySquV40eHJgpL6SWYMenmYeYMtclwKiXWHVXC9JA+1/Gxrb3tRXE2e
+         mNLG6v+SbrTxH0SjFNiidBlc1dG2gIEVMRLo/QATdLrNyk2/m2UtzyEEJ2aO1mSnLiEK
+         xlqlAs6KgNI6qc2pV8iZjzUCSmjDp5ebWTXKQh800VGtbci9onYhEVblyftUBDkPDWnh
+         ntskMDf5QBsqXI3wfTi/2cdsoO2xnjuQyUHy4N4Qrgv2ZXCo3tnEBiQOwNVeAEYzIAk1
+         7tlXARNcqsM/VOOFigg4VX+5tQVJOS0eWYlyerqoWLNXzWJCy+qbt7KPu4ut4NNevIs+
+         QN2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679326562;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L7O9sQEBEyADAKShtHU/SV4p9FNZJbLKQq8Lw4CGcFY=;
+        b=nz+GZvCS64Ifgc0P77dAct0j4uFOSDITKN8qmq9BZGEi4T7u0wBPfEoF/1nuSlcjzr
+         TE1bL3Mo8RQY5b6W/MDq2qHqVjc83fD2+Ph+LLhlp6Nem7+YY8WWe8nKeOLSWDw9Reyj
+         xC3flT5x91gxbMDa9QT8DBhnfZYHeJqxOvxrLyppqvzAMPukLNalVt9KkmPwcbySC9fp
+         CweE/ln1mAkNkXTs3ZCOW6Dk1N+9BRFqffj2KP/TzaDcKZgGMPlN6IyyYIVYYdldK1du
+         WdE1WCziM2c54O9dgk6jWixibFgSn7eEj1UMsda6CE9FlBvj7GZKNh15Y9zGNBj6B3In
+         zoQw==
+X-Gm-Message-State: AO0yUKU1wtgHgorqJs1eK8OwiwzoVEvCcwT/JVUe3lGwByTZo6zElDYI
+        O1XvbbMOknYB2w0r9WJ68wh/oT0Id4Qi9Efxrm0=
+X-Google-Smtp-Source: AK7set+uH28cMFUpa6epWEpBR3ODSq1DYQPiF68MjOnhPNWsv1RcqqFuNC7TRJTOxtvfIB6B1/dwSy8yOuTgBc4MgO4=
+X-Received: by 2002:a17:906:3e1a:b0:930:90ce:a1a6 with SMTP id
+ k26-20020a1709063e1a00b0093090cea1a6mr3861875eji.6.1679326561903; Mon, 20 Mar
+ 2023 08:36:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20230320113445.17260-1-yu.tu@amlogic.com>
+In-Reply-To: <20230320113445.17260-1-yu.tu@amlogic.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Mon, 20 Mar 2023 16:35:50 +0100
+Message-ID: <CAFBinCAE-ihq9oeXc=GqUEHVKUYM+n_e+2_5+gDMTGQcEEhRtg@mail.gmail.com>
+Subject: Re: [PATCH V2] clk: meson: vid-pll-div: added meson_vid_pll_div_ops support
+To:     Yu Tu <yu.tu@amlogic.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, kelvin.zhang@amlogic.com,
+        qi.duan@amlogic.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Hello Yu Tu,
 
-[ Upstream commit 0ffad67784a097beccf34d297ddd1b0773b3b8a3 ]
+On Mon, Mar 20, 2023 at 12:35=E2=80=AFPM Yu Tu <yu.tu@amlogic.com> wrote:
+>
+> Since the previous code only provides "ro_ops" for the vid_pll_div
+> clock. In fact, the clock can be set. So add "ops" that can set the
+> clock, especially for later chips like S4 SOC and so on.
+>
+> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
+> ---
+please describe the changes you did compared to the previous version(s)
 
-REGMAP is a hidden (not user visible) symbol. Users cannot set it
-directly thru "make *config", so drivers should select it instead of
-depending on it if they need it.
+[...]
+> diff --git a/drivers/clk/meson/vid-pll-div.h b/drivers/clk/meson/vid-pll-=
+div.h
+> index c0128e33ccf9..bbccab340910 100644
+> --- a/drivers/clk/meson/vid-pll-div.h
+> +++ b/drivers/clk/meson/vid-pll-div.h
+> @@ -10,11 +10,14 @@
+>  #include <linux/clk-provider.h>
+>  #include "parm.h"
+>
+> +#define VID_PLL_DIV_TABLE_SIZE         14
+In v1 you used ARRAY_SIZE(vid_pll_div_table) wherever this new macro
+is used instead.
+I think using ARRAY_SIZE is the better approach because it means the
+references will update automatically if an entry is added/removed from
+vid_pll_div_table
 
-Consistently using "select" or "depends on" can also help reduce
-Kconfig circular dependency issues.
-
-Therefore, change the use of "depends on REGMAP" to "select REGMAP".
-
-Fixes: 3a49afb84ca0 ("clk: enable hi655x common clk automatically")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Riku Voipio <riku.voipio@linaro.org>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org
-Link: https://lore.kernel.org/r/20230226053953.4681-3-rdunlap@infradead.org
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index d79905f3e1744..5da82f2bdd211 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -92,7 +92,7 @@ config COMMON_CLK_RK808
- config COMMON_CLK_HI655X
- 	tristate "Clock driver for Hi655x" if EXPERT
- 	depends on (MFD_HI655X_PMIC || COMPILE_TEST)
--	depends on REGMAP
-+	select REGMAP
- 	default MFD_HI655X_PMIC
- 	help
- 	  This driver supports the hi655x PMIC clock. This
--- 
-2.39.2
+Also I think there's a different understanding about what Jerome
+previously wrote:
+> It would be nice to actually describe how this vid pll work so we can
+> stop using precompute "magic" values and actually use the IP to its full
+> capacity.
+From what I understand is that you interpreted this as "let's change
+ARRAY_SIZE(vid_pll_div_table) to a new macro called
+VID_PLL_DIV_TABLE_SIZE".
+But I think what Jerome meant is: "let's get rid of vid_pll_div_table
+and implement how to actually calculate the clock rate - without
+hard-coding 14 possible clock settings in vid_pll_div_table". Look at
+clk-mpll.c and/or clk-pll.c which allow calculating arbitrary rates
+without any hard-coded tables.
 
 
-
+Best regards,
+Martin
