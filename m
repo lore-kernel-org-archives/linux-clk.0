@@ -2,111 +2,92 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE51C7619A
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 20:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03439C6FD1C
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 20:41:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230030AbjCTUSH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 16:18:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34186 "EHLO
+        id S229819AbjCTUlQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 16:41:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229915AbjCTUSG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 16:18:06 -0400
-Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BAA52659C;
-        Mon, 20 Mar 2023 13:17:59 -0700 (PDT)
-Received: by mail-oi1-x22c.google.com with SMTP id r36so9658205oiw.7;
-        Mon, 20 Mar 2023 13:17:59 -0700 (PDT)
+        with ESMTP id S230296AbjCTUlO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 16:41:14 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 174D66EAE;
+        Mon, 20 Mar 2023 13:40:59 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id bc12so13244085plb.0;
+        Mon, 20 Mar 2023 13:40:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679343479;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yvCcR37fJLrlgMelR2q/aS1U42JwkCalYOsRuH6mTh8=;
-        b=IKID8tLkc4Izl4DY8COzbDpVHlzwLNw9WA2rcFJqv14tjXVobe7QhMBCp8bZ4v9cnO
-         /Satm3TrEt+LK98otDTP6100A93uBQYCVVreUQ205taqSq+fP34SNCRN5NfxBgWT+ObM
-         GNdEYb0CrhVk0fz9yydwfg3DL94vUQdLDG+jUlzE3aMemPx9E09UqgwT5nb5YlyKdeHS
-         OWPsag8iVs9tL64UPZ5R20tPIUnHDQfZ+gRHrNQwSio4E5Y0AiAJfmncH9HNu/7TJdie
-         aZNNNA2e+rLjOa5TeMTQKr4CLT8NtOkTvu1PVkTQmJ3AU7KbCeMqZtz0kA07hs7pERD5
-         Orag==
+        d=gmail.com; s=20210112; t=1679344857;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oP/lmvQkJKOB+NiwdwqhS7TJ3nK9Wr8UjnRiV84v7Ec=;
+        b=dTO1VImJdRiJkRGhegkOaL3B+5MUB2K7KE43b5gCftBgc+p2PNRgHMFnJuBCGpSDh7
+         aT1MxFEknjb7nYTE7zcrcrGsCepsNJYETH2B+YqJn1qA1opjp0pq+iTlomaTv+4yo1ay
+         U8j5KczVvPGzdhE8GCr5vWZU6wculTjvyYkpwCbVEVviMJizucsOtC1nFeek8G6XNbNN
+         OF0fKsVNE6GkOK1jIB8DBt8UvGZZT2tfvXpyS7PLqQnlXV+aUVdXgspOGO9jtmVccrsc
+         mlGcwdiP7r3kKL/DJvM+l5lSOQPNxnx9qRkDIbY3zM4KDW9q2OTKuITffWrUKj6uWeMw
+         o3uQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679343479;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yvCcR37fJLrlgMelR2q/aS1U42JwkCalYOsRuH6mTh8=;
-        b=yBK+lj/q7m/1VtseVIWN6tQKJ6cxEOY/a/RJx5BtFc6SktiOLdJDXFsn7e0wbcm+f6
-         itCeentwJWYHYJqIcrexjYmak6wPxVisM4wPpZiGanG5jwx7YFsoiF9SqvpaaA/yMqbC
-         uJDc22B0nHQ3/n8drWCWxMN8BZDwfEeVCTYn50Vt4PKDC51VjTfG5nhI9vGUCMOjmkUo
-         8HNE6djeyPfKzbIv1I4hHYVBS0fPDUp46YFOIA30nbgUHoiglBf38MGjuXYoKMBO6wsO
-         f2oJSEoZBLMgJgCfb3aEyK/MDRtoG+y4HrLa32OF55ooK+sZxvOb0PRINQxOcTeQiKiY
-         tCyQ==
-X-Gm-Message-State: AO0yUKXeFwhz+Nr7pOKL4StYhAoXyAMAp2KiWBnSDDk3lrqnMIWGfC4d
-        Z1rUBHqjNqxpuxSrBGGckb0NZOC3TVIB4c6OR0c1ZjMM
-X-Google-Smtp-Source: AK7set807dpDFqIgr0TVWjB5UgDKtLRi91cnUNLVUYnXxWSDoNT/vCt3knhIXpePGsDmGr/HTl+GDDsJ6PHeO0k/eb8=
-X-Received: by 2002:a05:6808:18f:b0:387:1107:1d63 with SMTP id
- w15-20020a056808018f00b0038711071d63mr387087oic.0.1679343478819; Mon, 20 Mar
- 2023 13:17:58 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1679344857;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oP/lmvQkJKOB+NiwdwqhS7TJ3nK9Wr8UjnRiV84v7Ec=;
+        b=VZz2BVb7M22UT3WGfypFCWzkIRbApLlhCV4qrIQVJ8PSI/W64eEPgmt3lwWdsbHJMI
+         bqlyA9jysNrfULFv3ff5kUTQuuFOSqca/mm20bjVxVc8ZIs+5d+ehc0NcJbabU+mQVUh
+         t6iEm74GhKu2aapdXh5BYVnS9UDMAooCbcH08OXbZJ7IQkMEoRqXx1tCJKmjlKt8x4F6
+         uRdlxDtwdTctgnCvYC0SbEpgCP1GHz0kXqnKzyzKbd/tsrz6qa/XnLl4j1YQ2Q8Jm1jO
+         1yneXzXH+WU9Y6aTRLios6qkQENUEdFAKkibJmEGFm0Dlu7GIVwUSzM2XnadqMcpfBAM
+         P+Ew==
+X-Gm-Message-State: AO0yUKXUn7TRBEiEs25W01FRD/gFFMMgdrpmD1Ebg08NQOs84mohGGS5
+        ZCpBvjGDewTfktCESERlEuMKGoyFlXgpcfc9
+X-Google-Smtp-Source: AK7set9CSd1MpC/y59ddHgavhDboSBzOwMzuF1fFx9AD17b+1pdMkVZ1k91joG9Z3gBS2oVAwlQW6A==
+X-Received: by 2002:a17:90b:4d8b:b0:23f:3ee2:8ec6 with SMTP id oj11-20020a17090b4d8b00b0023f3ee28ec6mr496577pjb.11.1679344857541;
+        Mon, 20 Mar 2023 13:40:57 -0700 (PDT)
+Received: from d.home.yangfl.dn42 ([104.28.213.202])
+        by smtp.gmail.com with ESMTPSA id c3-20020a17090aa60300b0023b29b464f9sm6580943pjq.27.2023.03.20.13.40.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Mar 2023 13:40:57 -0700 (PDT)
+From:   David Yang <mmyangfl@gmail.com>
+Cc:     David Yang <mmyangfl@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/5] Add CRG driver for Hi3798MV100 SoC
+Date:   Tue, 21 Mar 2023 04:40:33 +0800
+Message-Id: <20230320204042.980708-1-mmyangfl@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-References: <20230320161823.1424278-1-sergio.paracuellos@gmail.com>
- <20230320161823.1424278-8-sergio.paracuellos@gmail.com> <966523bee1d28d546969a24eff60d315.sboyd@kernel.org>
-In-Reply-To: <966523bee1d28d546969a24eff60d315.sboyd@kernel.org>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Mon, 20 Mar 2023 21:17:47 +0100
-Message-ID: <CAMhs-H-y6TsSoKsJzM0gkFk6wx7xNigXKJb7wm8rBzrigtJANg@mail.gmail.com>
-Subject: Re: [PATCH 07/10] mips: ralink: remove clock related function prototypes
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-        tsbogend@alpha.franken.de, john@phrozen.org,
-        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
-        mturquette@baylibre.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
-        devicetree@vger.kernel.org, arinc.unal@arinc9.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+This series adds CRG driver for Hi3798MV100 SoC.
 
-On Mon, Mar 20, 2023 at 8:38=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wro=
-te:
->
-> Quoting Sergio Paracuellos (2023-03-20 09:18:20)
-> > Clock related code has been removed from 'arch/mips/ralink' folder and =
-put
-> > into drivers space. Hence remove clock related prototypes which are not
-> > used anymore.
-> >
-> > Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-> > ---
-> >  arch/mips/ralink/common.h | 3 ---
-> >  1 file changed, 3 deletions(-)
-> >
-> > diff --git a/arch/mips/ralink/common.h b/arch/mips/ralink/common.h
-> > index 87fc16751281..fcdfc9dc6210 100644
-> > --- a/arch/mips/ralink/common.h
-> > +++ b/arch/mips/ralink/common.h
-> > @@ -23,9 +23,6 @@ extern struct ralink_soc_info soc_info;
-> >
-> >  extern void ralink_of_remap(void);
-> >
-> > -extern void ralink_clk_init(void);
->
-> Why isn't this removed in the patch that removes the function?
+v2: move bindings to a separate patch
+v3: fix bindings commit message, reorganize patches
+v4: add ethernet and gpu clocks
+v5: add complex clock
 
-Because the function exists for all the SoCs code and there are
-several patches removing it; one per SoC, so I decided to remove this
-at the end. Should I squash all patches together instead?
+David Yang (5):
+  clk: hisilicon: Rename Hi3798CV200 to Hi3798
+  clk: hisilicon: Extract common functions
+  clk: hisilicon: Add complex clock for Hi3798
+  dt-bindings: clock: Add Hi3798MV100 CRG
+  clk: hisilicon: Add CRG driver for Hi3798MV100 SoC
 
->
-> > -extern void ralink_clk_add(const char *dev, unsigned long rate);
-> > -
->
-> Same comment.
->
-> >  extern void ralink_rst_init(void);
-> >
+ .../devicetree/bindings/clock/hisi-crg.txt    |   2 +
+ drivers/clk/hisilicon/Kconfig                 |   6 +-
+ drivers/clk/hisilicon/Makefile                |   2 +-
+ drivers/clk/hisilicon/crg-hi3798.c            | 742 ++++++++++++++++++
+ drivers/clk/hisilicon/crg-hi3798cv200.c       | 401 ----------
+ include/dt-bindings/clock/histb-clock.h       |  13 +
+ 6 files changed, 761 insertions(+), 405 deletions(-)
+ create mode 100644 drivers/clk/hisilicon/crg-hi3798.c
+ delete mode 100644 drivers/clk/hisilicon/crg-hi3798cv200.c
 
-Best regards,
-    Sergio Paracuellos
+-- 
+2.39.2
+
