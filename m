@@ -2,75 +2,64 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E11FC6FD1D
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 23:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FF5C6FD20
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 23:35:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229511AbjCUXX4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 19:23:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38210 "EHLO
+        id S230055AbjCUXfC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 19:35:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230140AbjCUXX4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 19:23:56 -0400
+        with ESMTP id S229726AbjCUXfB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 19:35:01 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39DD8574ED;
-        Tue, 21 Mar 2023 16:23:55 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0707B4A1C9;
+        Tue, 21 Mar 2023 16:35:01 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CC11C61ECD;
-        Tue, 21 Mar 2023 23:23:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25840C433EF;
-        Tue, 21 Mar 2023 23:23:54 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A21F461A43;
+        Tue, 21 Mar 2023 23:35:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08280C433EF;
+        Tue, 21 Mar 2023 23:35:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679441034;
-        bh=+EfnOxT75Ld+29rEVmKi6TN3JgIS8p2r7e10xPEAPGo=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=Vzd5oM68Pw5X+tVrVXkMn/ejgMsiJ0J5brorQOCg3FqUYlN4j4PrLRDWspJ39cEna
-         sQ6p/chTwubRym64K3xbcpvM9QxuVmvSPVxhoyXDEH2FnK8X8KuVw4YzAFGJpNoROo
-         /6min28s0g6QwMl3/z6/velSIRSwPgljM8P7SbjnPF4z0mAEMklOBqq121zTRh8CIJ
-         vNXlRj1ufVLX2olhzT8aSmnMWOMKcewQ5TFyZVX6hmMXS3FpT70QU5PJ11i9enYOhg
-         WrJbAay6sZ7xZRzcYIFlbolZV5bwJ5jnctE9g24Urlak/2X9yurE8eXNCIZ6Hafi6O
-         7C+vNBFAbUEJA==
-Message-ID: <896d16997cf3d308eff0cb8ce8596fc3.sboyd@kernel.org>
+        s=k20201202; t=1679441700;
+        bh=yppEdnyn3l0bkWt80AgXtS9D7pP3J+7NasAmtSPyhqs=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=Cz9xySntcGlWSjnt/rJuaj4LNvNWDclflDI8TNx39VGq3ijn+NVmm0RRYTDGUl4Io
+         kiRs4KoBop9vH/wlPT7P7KuXHV1hK35kUizOrJF2a2XNztCG6ORZEDn9nJNogSJNZ3
+         Jjvcy7u3hxwR4S/E92JEoaWHOUKvQNUKdh/aBfMInjF5jM7D2ubX5OF0GW0Z9R8AZO
+         pKYV8OgjXBldZjjI14poJoLobe4Iw4zaKKA93rZaOOQIIIK07PRVkHUsv2q2U6+3OT
+         5zed7+kjQ0YC2btNiuDxRJ1k/pvJu/p03z09RdNIFJ0z8cLELh8AXbR0zaNpO1Te4n
+         6hgoxgN+xAWDw==
+Message-ID: <e39b470005a7d61c3eefa5e152acbd8c.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <302bb0c4-a31e-7025-26d6-21c8d473f370@gmail.com>
-References: <20210315122605.28437-1-noltari@gmail.com> <20230321201022.1052743-1-noltari@gmail.com> <20230321201022.1052743-5-noltari@gmail.com> <3a1d7b271a42324c056d983e1943b386.sboyd@kernel.org> <0071fdc1-fa53-e096-19c7-ecd1a9d56e86@gmail.com> <d06781c905adb23089a85a8d54b94461.sboyd@kernel.org> <302bb0c4-a31e-7025-26d6-21c8d473f370@gmail.com>
-Subject: Re: [PATCH v3 4/4] clk: bcm: Add BCM63268 timer clock and reset driver
+In-Reply-To: <20230321111817.71756-2-keguang.zhang@gmail.com>
+References: <20230321111817.71756-1-keguang.zhang@gmail.com> <20230321111817.71756-2-keguang.zhang@gmail.com>
+Subject: Re: [PATCH v5 1/4] dt-bindings: clock: Add Loongson-1 clock
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        devicetree@vger.kernel.org, jonas.gorski@gmail.com,
-        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        p.zabel@pengutronix.de, robh+dt@kernel.org,
-        william.zhang@broadcom.com,
-        =?utf-8?q?=C3=81lvaro_Fern=C3=A1ndez?= Rojas <noltari@gmail.com>
-Date:   Tue, 21 Mar 2023 16:23:51 -0700
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Keguang Zhang <keguang.zhang@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Keguang Zhang <keguang.zhang@gmail.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+Date:   Tue, 21 Mar 2023 16:34:57 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Florian Fainelli (2023-03-21 16:09:54)
-> On 3/21/23 16:06, Stephen Boyd wrote:
-> > Quoting Florian Fainelli (2023-03-21 16:00:29)
-> >>
-> >> These SoCs are big-endian, require native endian register access and
-> >> have no posted writes within their bus logic (UBUS) and require no
-> >> barriers, hence the use of __raw_readl() and __raw_writel() is adequat=
-e.
-> >>
-> >=20
-> > Use ioread32be() then?
+Quoting Keguang Zhang (2023-03-21 04:18:14)
+> Add devicetree binding document and related header file
+> for the Loongson-1 clock.
 >=20
-> BCM63xx drivers tend to use __raw_{read,write}l for consistency and to=20
-> make it clear that no barriers, no endian swapping is necessary, I would =
+> Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-> prefer to remain consistent with that convention.
-
-Ok.
-
-Is the clk device big-endian? Or the CPU is big-endian? SoC being
-big-endian sounds like the devices in the SoC are big-endian. I hope we
-never plop this device down with a CPU that's litle-endian.
+Applied to clk-next
