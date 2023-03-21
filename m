@@ -2,111 +2,88 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D57C761A6
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 02:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D92DCC6FD1D
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 03:28:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229931AbjCUCcP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 22:32:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49316 "EHLO
+        id S229527AbjCUD2K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 23:28:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229916AbjCUCcO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 22:32:14 -0400
-Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B977A39283;
-        Mon, 20 Mar 2023 19:31:54 -0700 (PDT)
-Received: by mail-il1-x129.google.com with SMTP id h11so7481127ild.11;
-        Mon, 20 Mar 2023 19:31:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679365914;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dqpGcS63yc5cSPHmxqdpFofUmCewSZ11m39gJLQd6jk=;
-        b=XJK8bYuAYWV4i+jlGHDK0/eQ6IRVok7DNw6IJTnUYWwb4ig0zAAX0SIU3PHXgfpnJt
-         2HQF2Umxf9xDQihRG/fSD65jlmjzeBcSQUgPywH4RijcHEjUSbGWDZc3WgourQC8J4Ic
-         dzn+iNwn5DrCUANEZUqD28UUJtZUpM8a5pOsNwo6uG2rE8ZKmrDjJD/biWzU+f5dPpli
-         W0R7BtzGCR9ZCu8ITtypWIWuM74mjNg/ZBV8eh+yGx8Vcs8iq4Z283Ktyx22dxd4dSNM
-         AvPqHZNsn7l+K+zxiQr0551r7gtRKAEZWwPy0Bth2GJaTKOlGRMbuQ6g0ozw28kRm4a8
-         oe8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679365914;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dqpGcS63yc5cSPHmxqdpFofUmCewSZ11m39gJLQd6jk=;
-        b=NMzgIDHeFlHWexDRavOMmmkyW26QYvyIqQys0FNicj0yE4cZ1H3nLUHIYH5HcsUSgQ
-         //jV9J+qtBSLB4OFLfRLZ/7qKkV/LajxU9tMO/UhNLDIAZxtlV7me1CaJQMMh7HpDLE/
-         aQq+oKU4seGzvAMQLyPfdJeIMxc56x9nQtcPNVC/BHMNy3tk5gR6/3G+HsOnidKn3wfS
-         Z99mIH0+mkuw4oj+sgNb1ItUvFHkAhCB88ea12lZuvsg0pwdrfECmupxcyrdbiHzqQSu
-         /D/qLcw1SyvgG6fibr9dreFPu3j9X/oM934T4b8FPrz/jI3ng8wTWUVHMC6otsKv/m1E
-         vR4Q==
-X-Gm-Message-State: AO0yUKUp+j9uJhlickS0jufyHg+I4eNuajLm+Pu/Ujnjqw/tVtxAw1Fw
-        3kCOmHYm35N5uwQ60g9EXxmoV/JyMY8=
-X-Google-Smtp-Source: AK7set8HYWHZUuD+7SIheB2PsHjWfQQaWd1+NCf3uo8ARCLs+rPES5DAi/i/7R+KWeEiFzcgOgKtOA==
-X-Received: by 2002:a05:6e02:2162:b0:315:6f9d:e75 with SMTP id s2-20020a056e02216200b003156f9d0e75mr395505ilv.7.1679365913785;
-        Mon, 20 Mar 2023 19:31:53 -0700 (PDT)
-Received: from aford-IdeaCentre-A730.lan ([2601:447:d001:897f:1387:3268:b209:f4ec])
-        by smtp.gmail.com with ESMTPSA id a28-20020a027a1c000000b004065ad317fdsm2241200jac.151.2023.03.20.19.31.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Mar 2023 19:31:53 -0700 (PDT)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2 4/4] clk: imx: Let IMX8MN_CLK_DISP_PIXEL set parent rate
-Date:   Mon, 20 Mar 2023 21:31:36 -0500
-Message-Id: <20230321023136.57986-5-aford173@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230321023136.57986-1-aford173@gmail.com>
-References: <20230321023136.57986-1-aford173@gmail.com>
+        with ESMTP id S229458AbjCUD2I (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 23:28:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EA7A360B0;
+        Mon, 20 Mar 2023 20:28:06 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D402B6194A;
+        Tue, 21 Mar 2023 03:28:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDCE4C433EF;
+        Tue, 21 Mar 2023 03:28:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679369285;
+        bh=gPaz0m5VwLPwRghqvP+CjqfIDdbUBC7XARXxckF53iU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=U9aP+QFwl15u+q3ZUXeL7tMANBDg6IUHSaiJVTtMXXW84SMdmVBzZlwtprQKRJrrh
+         brRsPaWA1aaBp/yJukvczyrPVnpUFfpduzSz3a6rGCTcOqai6meplCoJfbjiLzoKYu
+         LbfDelSJfbxIf76FdEgMHyZH3y6oX0vIqarLJw3UfpJcanG7g5Jyc16aozp8ffR4dL
+         rvgOA1yfhCAerANOnORiGkZ98Z1vivobuNiguIS1aw/oepjG0obV92Oed2M6v2QXzB
+         MVmbtaHKqlfXofv4v4PLTa/855P2iJz9mWYvrXfpKGbw4M7TNvoougEYBTPViWI4bn
+         gBJ7PcWu8Pnag==
+Date:   Mon, 20 Mar 2023 20:28:02 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Andrew Halaney <ahalaney@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org,
+        davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        vkoul@kernel.org, bhupesh.sharma@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, peppe.cavallaro@st.com,
+        alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+        mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
+        linux@armlinux.org.uk, veekhee@apple.com,
+        tee.min.tan@linux.intel.com, mohammad.athari.ismail@intel.com,
+        jonathanh@nvidia.com, ruppala@nvidia.com, bmasney@redhat.com,
+        andrey.konovalov@linaro.org, linux-arm-msm@vger.kernel.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, ncai@quicinc.com,
+        jsuraj@qti.qualcomm.com, hisunil@quicinc.com, echanude@redhat.com
+Subject: Re: [PATCH net-next v2 00/12] Add EMAC3 support for sa8540p-ride
+Message-ID: <20230320202802.4e7dc54c@kernel.org>
+In-Reply-To: <20230320221617.236323-1-ahalaney@redhat.com>
+References: <20230320221617.236323-1-ahalaney@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-By default the display pixel clock needs to be evenly divide
-down from the video_pll_out clock which rules out a significant
-number of resolution and refresh rates.
+On Mon, 20 Mar 2023 17:16:05 -0500 Andrew Halaney wrote:
+> This is a forward port / upstream refactor of code delivered
+> downstream by Qualcomm over at [0] to enable the DWMAC5 based
+> implementation called EMAC3 on the sa8540p-ride dev board.
+> 
+> From what I can tell with the board schematic in hand,
+> as well as the code delivered, the main changes needed are:
+> 
+>     1. A new address space layout for /dwmac5/EMAC3 MTL/DMA regs
+>     2. A new programming sequence required for the EMAC3 base platforms
+> 
+> This series makes those adaptations as well as other housekeeping items
+> such as converting dt-bindings to yaml, adding clock descriptions, etc.
+> 
+> [0] https://git.codelinaro.org/clo/la/kernel/ark-5.14/-/commit/510235ad02d7f0df478146fb00d7a4ba74821b17
+> 
+> v1: https://lore.kernel.org/netdev/20230313165620.128463-1-ahalaney@redhat.com/
 
-The current clock tree looks something like:
+At a glance 1-4,8-12 need to go via networking, 5 via clock tree,
+and 6,7 via ARM/Qualcomm.
 
- video_pll                594000000
-  video_pll_bypass        594000000
-   video_pll_out          594000000
-    disp_pixel            148500000
-     disp_pixel_clk       148500000
-
-Now that composite-8m supports determine_rate, we can allow
-disp_pixel to set the parent rate which then switches
-every clock in the chain to a new frequency when disp_pixel
-cannot evenly divide from video_pll_out.
-
-Signed-off-by: Adam Ford <aford173@gmail.com>
----
-V2:  Move imx8m_clk_hw_composite_flags macro into its own patch
-
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index a042ed3a9d6c..4b23a4648600 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -470,7 +470,7 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MN_CLK_DRAM_ALT] = imx8m_clk_hw_fw_managed_composite("dram_alt", imx8mn_dram_alt_sels, base + 0xa000);
- 	hws[IMX8MN_CLK_DRAM_APB] = imx8m_clk_hw_fw_managed_composite_critical("dram_apb", imx8mn_dram_apb_sels, base + 0xa080);
- 
--	hws[IMX8MN_CLK_DISP_PIXEL] = imx8m_clk_hw_composite("disp_pixel", imx8mn_disp_pixel_sels, base + 0xa500);
-+	hws[IMX8MN_CLK_DISP_PIXEL] = imx8m_clk_hw_composite_flags("disp_pixel", imx8mn_disp_pixel_sels, base + 0xa500, CLK_SET_RATE_PARENT);
- 	hws[IMX8MN_CLK_SAI2] = imx8m_clk_hw_composite("sai2", imx8mn_sai2_sels, base + 0xa600);
- 	hws[IMX8MN_CLK_SAI3] = imx8m_clk_hw_composite("sai3", imx8mn_sai3_sels, base + 0xa680);
- 	hws[IMX8MN_CLK_SAI5] = imx8m_clk_hw_composite("sai5", imx8mn_sai5_sels, base + 0xa780);
--- 
-2.34.1
-
+AFAICT there are no strong (compile) dependencies so we can each merge
+our chunk and they will meet in Linus's tree? If so please repost just
+the networking stuff for net-next, and the other bits to respective
+trees, as separate series.
