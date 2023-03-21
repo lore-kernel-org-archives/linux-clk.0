@@ -2,185 +2,463 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2504C6FD1D
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 17:31:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62708C6FD1D
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 17:33:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229801AbjCURbS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 13:31:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42220 "EHLO
+        id S229571AbjCURdQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 13:33:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229713AbjCURbQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 13:31:16 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99DC5113FA;
-        Tue, 21 Mar 2023 10:31:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 33A8661D54;
-        Tue, 21 Mar 2023 17:31:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC44C433D2;
-        Tue, 21 Mar 2023 17:31:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679419874;
-        bh=be0SOJijbIAFiA4S90OBb78y61Nkl7wEB41PUf9Nang=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=go3Zx3kIkA/vKDOMA+8kgvYmqQCbJGGPq0BhEPX/RbYLsGLKJNxsbUsi00qnUeyWo
-         6nQyG9WEIf1kZVLGFXF7ul0wDUrJUdrtHdkFa3mNSvdQhY64CsJOuLKCCgSbI/cVQr
-         oCuOn8DswhW46Z4VKLPfzccKfRyAYiupv4pFnYb0VBHpZUP1UjymBGS1ev5xVukR74
-         gtm5B0WNo/zqJIm2tjMtaEShhZ+JM1uPJJjt/3AEoXRHenps3YqSE4OVClrEuIvHtl
-         ZxZ6wWXh/OhFbaRDtVwDy7ls1fPtBSjddunXoSX+iyBZcgUTiAJ/xKZFGTBhF8rGkx
-         vH9fEGefFLdrA==
-Message-ID: <d3b057408117a71bcd153f4a91bcdfe1.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229941AbjCURdP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 13:33:15 -0400
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ABB1166E7;
+        Tue, 21 Mar 2023 10:33:05 -0700 (PDT)
+Received: by mail-oo1-f48.google.com with SMTP id f5-20020a4ad805000000b005399cfd276bso1876773oov.6;
+        Tue, 21 Mar 2023 10:33:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679419984;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2CnL7hgvPnni7trOuk9467gN9OsVhQvyHsDFM8C85TE=;
+        b=erKzFFARO+2sBeW5xA3ifXL+hbLFsauWD0I612nh3ZqpFHQUn5hcazqIm2ZVoC8rpd
+         HUPwe4tllkl7H5QiTeuAalMF2g7HGCrjN5H8KSwOh9QaHH4lpsdnvQRSB7MLiGVCmpiQ
+         zDRhtAtmtr0prA07NurpdNtx49i8Zw0vU1btnd7UnoVUMSmkIXsL8eRu5UpH9jWzLOtZ
+         Fp0e6YxxGygI4B4pIAWC/vErJwGVsQZFgP53grEsUFnlrSsKiyGRlawN3tk5UFLxmOcx
+         rxlKPPDwaIEqlf87HBAkFvdgRtC/vPGEGKcSs452u4JrEkxHhXSwjtQvgHv+zOGBNX2H
+         NIYQ==
+X-Gm-Message-State: AO0yUKVAc8qcTsk/aU9HY9GidmD8da4UIg/gaohpGG3SltfY4DMY0X6E
+        +kKHxafOGrP75IlOyMdypw==
+X-Google-Smtp-Source: AK7set94YgcKGUBqS/jmcEyCGuFJ245hmQff358C8dqQKs6OobLo4j5MwstfAkhefwZM+zU1beaMRw==
+X-Received: by 2002:a4a:3307:0:b0:53b:68bf:ada3 with SMTP id q7-20020a4a3307000000b0053b68bfada3mr704104ooq.3.1679419984314;
+        Tue, 21 Mar 2023 10:33:04 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id y13-20020a4ad64d000000b0053b5271f030sm1204741oos.39.2023.03.21.10.33.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Mar 2023 10:33:04 -0700 (PDT)
+Received: (nullmailer pid 990808 invoked by uid 1000);
+        Tue, 21 Mar 2023 17:33:03 -0000
+Date:   Tue, 21 Mar 2023 12:33:03 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev,
+        Brendan Higgins <brendan.higgins@linux.dev>,
+        David Gow <davidgow@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kunit-dev@googlegroups.com, Maxime Ripard <maxime@cerno.tech>
+Subject: Re: [PATCH v2 01/11] of: Load KUnit DTB from of_core_init()
+Message-ID: <20230321173303.GA950598-robh@kernel.org>
+References: <20230315183729.2376178-1-sboyd@kernel.org>
+ <20230315183729.2376178-2-sboyd@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230320204042.980708-4-mmyangfl@gmail.com>
-References: <20230320204042.980708-1-mmyangfl@gmail.com> <20230320204042.980708-4-mmyangfl@gmail.com>
-Subject: Re: [PATCH v5 3/5] clk: hisilicon: Add complex clock for Hi3798
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     David Yang <mmyangfl@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     David Yang <mmyangfl@gmail.com>
-Date:   Tue, 21 Mar 2023 10:31:12 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230315183729.2376178-2-sboyd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting David Yang (2023-03-20 13:40:36)
-> @@ -59,6 +61,131 @@ static const struct hisi_fixed_rate_clock hi3798_fixe=
-d_rate_clks[] =3D {
->         { HI3798_FIXED_250M, "250m", NULL, 0, 250000000, },
->  };
-> =20
-> +struct hi3798_complex_clock {
-> +       unsigned int    id;
-> +       const char      *name;
-> +       const char      *parent_name;
-> +       unsigned long   flags;
-> +       unsigned long   offset;
-> +       u32             mask;
-> +       u32             value;
-> +       const char      *alias;
+On Wed, Mar 15, 2023 at 11:37:18AM -0700, Stephen Boyd wrote:
+> Load a small DTB for KUnit from of_core_init() as long as CONFIG_OF=y
+> and CONFIG_KUNIT=y/m. This allows KUnit tests to load overlays into the
+> running system. It also allows KUnit tests to run on any architecture
+> that supports it so that devicetree can be used while unit testing
+> architecture specific code.
+> 
+> Overlays need a target node to apply their overlays to, so make a fake
+> bus called 'kunit-bus' in the root node to allow this. Make the node a
+> simple-bus so that platform devices are automatically created for nodes
+> added as children of this node. Unit test overlays can target this node
+> via the label 'kunit_bus'.
+> 
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Frank Rowand <frowand.list@gmail.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  drivers/of/.kunitconfig |   3 +
+>  drivers/of/Kconfig      |  13 +++
+>  drivers/of/Makefile     |   4 +
+>  drivers/of/base.c       | 182 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/of/kunit.dtso   |  10 +++
+>  drivers/of/of_private.h |   6 ++
+>  drivers/of/of_test.c    |  43 ++++++++++
+>  drivers/of/unittest.c   | 101 +---------------------
+>  8 files changed, 262 insertions(+), 100 deletions(-)
+>  create mode 100644 drivers/of/.kunitconfig
+>  create mode 100644 drivers/of/kunit.dtso
+>  create mode 100644 drivers/of/of_test.c
+> 
+> diff --git a/drivers/of/.kunitconfig b/drivers/of/.kunitconfig
+> new file mode 100644
+> index 000000000000..5a8fee11978c
+> --- /dev/null
+> +++ b/drivers/of/.kunitconfig
+> @@ -0,0 +1,3 @@
+> +CONFIG_KUNIT=y
+> +CONFIG_OF=y
+> +CONFIG_OF_KUNIT_TEST=y
+> diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+> index 644386833a7b..f6739b9560c5 100644
+> --- a/drivers/of/Kconfig
+> +++ b/drivers/of/Kconfig
+> @@ -37,6 +37,19 @@ config OF_UNITTEST
+>  
+>  	  If unsure, say N here. This option is not safe to enable.
+>  
+> +config OF_KUNIT
+> +	def_bool KUNIT
+> +	select OF_RESOLVE
+> +
+> +config OF_KUNIT_TEST
+> +	tristate "Devicetree KUnit DTB Test" if !KUNIT_ALL_TESTS
+> +	depends on KUNIT
+> +	default KUNIT_ALL_TESTS
+> +	help
+> +	  This option builds KUnit unit tests for device tree infrastructure.
+> +
+> +	  If unsure, say N here, but this option is safe to enable.
+> +
+>  config OF_ALL_DTBS
+>  	bool "Build all Device Tree Blobs"
+>  	depends on COMPILE_TEST
+> diff --git a/drivers/of/Makefile b/drivers/of/Makefile
+> index e0360a44306e..cf6ee7ba6350 100644
+> --- a/drivers/of/Makefile
+> +++ b/drivers/of/Makefile
+> @@ -19,4 +19,8 @@ obj-y	+= kexec.o
+>  endif
+>  endif
+>  
+> +DTC_FLAGS_kunit += -@
+> +obj-$(CONFIG_OF_KUNIT) += kunit.dtbo.o
+> +obj-$(CONFIG_OF_KUNIT_TEST) += of_test.o
+> +
+>  obj-$(CONFIG_OF_UNITTEST) += unittest-data/
+> diff --git a/drivers/of/base.c b/drivers/of/base.c
+> index ac6fde53342f..090c5d7925e4 100644
+> --- a/drivers/of/base.c
+> +++ b/drivers/of/base.c
+> @@ -16,13 +16,16 @@
+>  
+>  #define pr_fmt(fmt)	"OF: " fmt
+>  
+> +#include <linux/align.h>
+>  #include <linux/console.h>
+>  #include <linux/ctype.h>
+>  #include <linux/cpu.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+> +#include <linux/of_fdt.h>
+
+base.c deals with unflattened trees. There shouldn't be anything FDT 
+related in it.
+
+>  #include <linux/of_graph.h>
+> +#include <linux/printk.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/slab.h>
+>  #include <linux/string.h>
+> @@ -163,10 +166,90 @@ void __of_phandle_cache_inv_entry(phandle handle)
+>  		phandle_cache[handle_hash] = NULL;
+>  }
+>  
+> +#ifdef CONFIG_OF_KUNIT
+
+base.c is already quite big. This should probably be its own file. 
+Perhaps in kunit code because that's what we do for everything else 
+(e.g. DT clock code goes in drivers/clk/). (My goal is to eliminate 
+drivers/of/. That's easier than finding maintainers. ;) )
+
+> +static int __init of_kunit_add_data(void)
+> +{
+> +	void *kunit_fdt;
+> +	void *kunit_fdt_align;
+> +	struct device_node *kunit_node = NULL, *np;
+> +	/*
+> +	 * __dtbo_kunit_begin[] and __dtbo_kunit_end[] are magically
+> +	 * created by cmd_dt_S_dtbo in scripts/Makefile.lib
+> +	 */
+> +	extern uint8_t __dtbo_kunit_begin[];
+> +	extern uint8_t __dtbo_kunit_end[];
+> +	const int size = __dtbo_kunit_end - __dtbo_kunit_begin;
+> +	int rc;
+> +	void *ret;
+> +
+> +	if (!size) {
+> +		pr_warn("kunit.dtbo is empty\n");
+> +		return -ENODATA;
+> +	}
+> +
+> +	kunit_fdt = kmalloc(size + FDT_ALIGN_SIZE, GFP_KERNEL);
+> +	if (!kunit_fdt)
+> +		return -ENOMEM;
+> +
+> +	kunit_fdt_align = PTR_ALIGN(kunit_fdt, FDT_ALIGN_SIZE);
+> +	memcpy(kunit_fdt_align, __dtbo_kunit_begin, size);
+> +
+> +	ret = of_fdt_unflatten_tree(kunit_fdt_align, NULL, &kunit_node);
+
+I don't understand why this doesn't use of_overlay_fdt_apply(). Your 
+test(s) shouldn't be any different than any other overlay user (granted, 
+there aren't many). You apply the overlay, run your test, then remove 
+the overlay.
+
+> +	if (!ret) {
+> +		pr_warn("unflatten KUnit tree failed\n");
+> +		kfree(kunit_fdt);
+> +		return -ENODATA;
+> +	}
+> +	if (!kunit_node) {
+> +		pr_warn("KUnit tree is empty\n");
+> +		kfree(kunit_fdt);
+> +		return -ENODATA;
+> +	}
+> +
+> +	of_overlay_mutex_lock();
+> +	rc = of_resolve_phandles(kunit_node);
+> +	if (rc) {
+> +		pr_err("Failed to resolve KUnit phandles (rc=%i)\n", rc);
+> +		of_overlay_mutex_unlock();
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (!of_root) {
+
+There's patches from Frank and others under review which will always 
+create and empty DT if the bootloader/arch didn't provide one. This 
+series should rely on that. (Or just assume that when that happens, your 
+tests will run in more environments)
+
+> +		of_root = kunit_node;
+> +		of_chosen = of_find_node_by_path("/chosen");
+> +	} else {
+> +		/* attach the sub-tree to live tree */
+> +		np = kunit_node->child;
+> +		while (np) {
+> +			struct device_node *next = np->sibling;
+> +
+> +			np->parent = of_root;
+> +			of_test_attach_node_and_children(np);
+> +			np = next;
+> +		}
+> +	}
+> +
+> +	if (!of_aliases)
+> +		of_aliases = of_find_node_by_path("/aliases");
+> +
+> +	of_overlay_mutex_unlock();
+> +
+> +	return 0;
+> +}
+> +#else
+> +static inline int __init of_kunit_add_data(void) { return 0; }
+> +#endif
+> +
+>  void __init of_core_init(void)
+>  {
+>  	struct device_node *np;
+> +	int ret;
+>  
+> +	ret = of_kunit_add_data();
+> +	if (ret) {
+> +		pr_err("failed to add kunit test data\n");
+> +		return;
+> +	}
+>  
+>  	/* Create the kset, and register existing nodes */
+>  	mutex_lock(&of_mutex);
+> @@ -1879,6 +1962,105 @@ int of_update_property(struct device_node *np, struct property *newprop)
+>  	return rc;
+>  }
+>  
+> +#if defined(CONFIG_OF_UNITTEST) || defined (CONFIG_KUNIT)
+> +/**
+> + * update_node_properties - adds the properties of np into dup node (present in
+> + * live tree) and updates parent of children of np to dup.
+> + *
+> + * @np: node whose properties are being added to the live tree
+> + * @dup: node present in live tree to be updated
+> + */
+> +static void __init update_node_properties(struct device_node *np,
+> +					struct device_node *dup)
+
+Please split any moving of code to separate patches.
+
+I'm not remembering why we need these test functions vs. just applying 
+overlays. Frank? Perhaps because it's trying to test the overlay code 
+itself. But you should just be a user of the overlay API and not need to 
+do anything special.
+
+> +{
+> +	struct property *prop;
+> +	struct property *save_next;
+> +	struct device_node *child;
+> +	int ret;
+> +
+> +	for_each_child_of_node(np, child)
+> +		child->parent = dup;
+> +
+> +	/*
+> +	 * "unittest internal error: unable to add testdata property"
+> +	 *
+> +	 *    If this message reports a property in node '/__symbols__' then
+> +	 *    the respective unittest overlay contains a label that has the
+> +	 *    same name as a label in the live devicetree.  The label will
+> +	 *    be in the live devicetree only if the devicetree source was
+> +	 *    compiled with the '-@' option.  If you encounter this error,
+> +	 *    please consider renaming __all__ of the labels in the unittest
+> +	 *    overlay dts files with an odd prefix that is unlikely to be
+> +	 *    used in a real devicetree.
+> +	 */
+> +
+> +	/*
+> +	 * open code for_each_property_of_node() because of_add_property()
+> +	 * sets prop->next to NULL
+> +	 */
+> +	for (prop = np->properties; prop != NULL; prop = save_next) {
+> +		save_next = prop->next;
+> +		ret = of_add_property(dup, prop);
+> +		if (ret) {
+> +			if (ret == -EEXIST && !strcmp(prop->name, "name"))
+> +				continue;
+> +			pr_err("unittest internal error: unable to add testdata property %pOF/%s",
+> +			       np, prop->name);
+> +		}
+> +	}
+> +}
+> +
+> +/**
+> + * of_test_attach_node_and_children - attaches nodes and its children to live tree.
+> + * @np:	Node to attach to live tree
+> + *
+> + * CAUTION: misleading function name - if node @np already exists in
+> + * the live tree then children of @np are *not* attached to the live
+> + * tree.  This works for the current test devicetree nodes because such
+> + * nodes do not have child nodes.
+> + */
+> +void __init of_test_attach_node_and_children(struct device_node *np)
+> +{
+> +	struct device_node *next, *dup, *child;
+> +	unsigned long flags;
+> +	const char *full_name;
+> +
+> +	full_name = kasprintf(GFP_KERNEL, "%pOF", np);
+> +
+> +	if (!strcmp(full_name, "/__local_fixups__") ||
+> +	    !strcmp(full_name, "/__fixups__")) {
+> +		kfree(full_name);
+> +		return;
+> +	}
+> +
+> +	dup = of_find_node_by_path(full_name);
+> +	kfree(full_name);
+> +	if (dup) {
+> +		update_node_properties(np, dup);
+> +		return;
+> +	}
+> +
+> +	child = np->child;
+> +	np->child = NULL;
+> +
+> +	mutex_lock(&of_mutex);
+> +	raw_spin_lock_irqsave(&devtree_lock, flags);
+> +	np->sibling = np->parent->child;
+> +	np->parent->child = np;
+> +	of_node_clear_flag(np, OF_DETACHED);
+> +	raw_spin_unlock_irqrestore(&devtree_lock, flags);
+> +
+> +	__of_attach_node_sysfs(np);
+> +	mutex_unlock(&of_mutex);
+> +
+> +	while (child) {
+> +		next = child->sibling;
+> +		of_test_attach_node_and_children(child);
+> +		child = next;
+> +	}
+> +}
+> +#endif
+> +
+>  static void of_alias_add(struct alias_prop *ap, struct device_node *np,
+>  			 int id, const char *stem, int stem_len)
+>  {
+> diff --git a/drivers/of/kunit.dtso b/drivers/of/kunit.dtso
+> new file mode 100644
+> index 000000000000..d512057df98d
+> --- /dev/null
+> +++ b/drivers/of/kunit.dtso
+> @@ -0,0 +1,10 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/dts-v1/;
+> +/plugin/;
+> +
+> +/ {
+> +	/* Container node where KUnit tests can load overlays */
+> +	kunit_bus: kunit-bus {
+> +		compatible = "simple-bus";
+> +	};
 > +};
-> +
-> +struct hi3798_clk_complex {
-> +       struct clk_hw   hw;
-> +       void __iomem    *reg;
-> +       u32             mask;
-> +       u32             value;
-> +};
-> +
-> +#define to_complex_clk(_hw) container_of(_hw, struct hi3798_clk_complex,=
- hw)
 
-Missing header include for container_of()
+Why do we need an overlay to apply overlays to? 
 
+
+> diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
+> index fb6792d381a6..2151a28ca234 100644
+> --- a/drivers/of/of_private.h
+> +++ b/drivers/of/of_private.h
+> @@ -96,6 +96,12 @@ static inline void of_overlay_mutex_lock(void) {};
+>  static inline void of_overlay_mutex_unlock(void) {};
+>  #endif
+>  
+> +#if defined(CONFIG_OF_UNITTEST) || defined (CONFIG_KUNIT)
+> +void __init of_test_attach_node_and_children(struct device_node *np);
+> +#else
+> +static inline void __init of_test_attach_node_and_children(struct device_node *np) {}
+> +#endif
 > +
-> +static int hi3798_clk_complex_prepare(struct clk_hw *hw)
+>  #if defined(CONFIG_OF_UNITTEST) && defined(CONFIG_OF_OVERLAY)
+>  extern void __init unittest_unflatten_overlay_base(void);
+>  #else
+> diff --git a/drivers/of/of_test.c b/drivers/of/of_test.c
+> new file mode 100644
+> index 000000000000..a4d70ac344ad
+> --- /dev/null
+> +++ b/drivers/of/of_test.c
+> @@ -0,0 +1,43 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * KUnit tests for OF APIs
+> + */
+> +#include <linux/kconfig.h>
+> +#include <linux/of.h>
+> +
+> +#include <kunit/test.h>
+> +
+> +/*
+> + * Test that the root node / exists.
+> + */
+> +static void dtb_root_node_exists(struct kunit *test)
 > +{
-> +       struct hi3798_clk_complex *clk =3D to_complex_clk(hw);
-> +       u32 val;
-> +
-> +       val =3D readl_relaxed(clk->reg);
-> +       val &=3D ~(clk->mask);
-> +       val |=3D clk->value;
-> +       writel_relaxed(val, clk->reg);
-> +
-> +       return 0;
+> +	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, of_find_node_by_path("/"));
 > +}
 > +
-> +static void hi3798_clk_complex_unprepare(struct clk_hw *hw)
+> +/*
+> + * Test that the /__symbols__ node exists.
+> + */
+> +static void dtb_symbols_node_exists(struct kunit *test)
 > +{
-> +       struct hi3798_clk_complex *clk =3D to_complex_clk(hw);
-> +       u32 val;
-> +
-> +       val =3D readl_relaxed(clk->reg);
-> +       val &=3D ~(clk->mask);
-> +       writel_relaxed(val, clk->reg);
+> +	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, of_find_node_by_path("/__symbols__"));
 > +}
-> +
-> +static int hi3798_clk_complex_is_prepared(struct clk_hw *hw)
-> +{
-> +       struct hi3798_clk_complex *clk =3D to_complex_clk(hw);
-> +       u32 val;
-> +
-> +       val =3D readl_relaxed(clk->reg);
-> +       return (val & clk->mask) =3D=3D clk->value;
-> +}
-> +
-> +static const struct clk_ops hi3798_clk_complex_ops =3D {
-> +       .prepare =3D hi3798_clk_complex_prepare,
-> +       .unprepare =3D hi3798_clk_complex_unprepare,
-> +       .is_prepared =3D hi3798_clk_complex_is_prepared,
-> +};
-> +
-> +static int hi3798_clk_register_complex(const struct hi3798_complex_clock=
- *clks, int nums,
-> +                                      struct hisi_clock_data *data)
-> +{
-> +       void __iomem *base =3D data->base;
-> +       int i;
-> +       int ret;
-> +
-> +       for (i =3D 0; i < nums; i++) {
-> +               struct hi3798_clk_complex *p_clk;
-> +               struct clk *clk;
-> +               struct clk_init_data init;
-> +
-> +               p_clk =3D kzalloc(sizeof(*p_clk), GFP_KERNEL);
 
-Use devm?
+Many base DTs will not have this. And the kunit tests themselves 
+shouldn't need it because they should be independent of the base tree.
 
-> +               if (!p_clk) {
-> +                       ret =3D -ENOMEM;
-> +                       goto err_kzalloc;
-> +               }
-> +
-> +               init.name =3D clks[i].name;
-> +               init.ops =3D &hi3798_clk_complex_ops;
-> +
-> +               init.flags =3D 0;
-> +               init.parent_names =3D
-> +                       (clks[i].parent_name ? &clks[i].parent_name : NUL=
-L);
-> +               init.num_parents =3D (clks[i].parent_name ? 1 : 0);
-> +
-> +               p_clk->reg =3D base + clks[i].offset;
-> +               p_clk->mask =3D clks[i].mask;
-> +               p_clk->value =3D clks[i].value;
-> +               p_clk->hw.init =3D &init;
-> +
-> +               clk =3D clk_register(NULL, &p_clk->hw);
-
-Use devm? Also, please use devm_clk_hw_register()
-
-> +               if (IS_ERR(clk)) {
-> +                       kfree(p_clk);
-> +err_kzalloc:
-> +                       pr_err("%s: failed to register clock %s\n",
-> +                              __func__, clks[i].name);
-> +                       goto err;
-> +               }
-> +
-> +               if (clks[i].alias)
-> +                       clk_register_clkdev(clk, clks[i].alias, NULL);
-
-Do you use this clkdev lookup? You have an OF clk provider. Hopefully
-this can be removed.
-
-> +
-> +               data->clk_data.clks[clks[i].id] =3D clk;
-> +       }
-> +
-> +       return 0;
-> +
-> +err:
-> +       while (i--)
-> +               clk_unregister(data->clk_data.clks[clks[i].id]);
-> +
-> +       return ret;
-> +}
-> +
+Rob
