@@ -2,94 +2,161 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5DEC7618D
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 09:04:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33B8DC6FD1D
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 09:53:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230456AbjCUJE3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 05:04:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51172 "EHLO
+        id S229996AbjCUJxV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 05:53:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230250AbjCUJEO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 05:04:14 -0400
-Received: from sender3-op-o17.zoho.com (sender3-op-o17.zoho.com [136.143.184.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E5CE497CE;
-        Tue, 21 Mar 2023 02:03:08 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1679389375; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=WqRN3QzU/H7CaDpyz81HgDFIkuUMULXko1qK+O+0z29BUNDrIhGPK3QqY3tfkvJs0fEMjoY8lR8RtPbczIE9J87IdJn87deu4cme5ydsQavkHZU2us1W4Jfufj5ixCmx6xloQSdhIBGELL6SKgkNP26z1YwEYDcPgSErnnimVTA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1679389375; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=sB3XH7Ovi9XCs+7jQmmSOIgLMpgr0aqXAXi1VknrLAU=; 
-        b=h7/UY7O9kNpcsBI3wTGm9bh6zGM9SYpYrfK7cX0m4HhEaRSPiCFdYpwIrWgrjOFCEQw/IyLpnokvkAMvz9p1memBfVzWuORRh4Y0upaQvND86V+5NlWVKNpIjruybNt28hMvsYgTA2/Gyn+8pT6m3q0OI1wFpanfyVFY2s0JpCA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=arinc9.com;
-        spf=pass  smtp.mailfrom=arinc.unal@arinc9.com;
-        dmarc=pass header.from=<arinc.unal@arinc9.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1679389375;
-        s=zmail; d=arinc9.com; i=arinc.unal@arinc9.com;
-        h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-        bh=sB3XH7Ovi9XCs+7jQmmSOIgLMpgr0aqXAXi1VknrLAU=;
-        b=cWA94N13PqvOSF08RkF11GPjZqAX0mPMweYC254siqNGr7+QHGaKmvnb7TA9o4QV
-        Hh+2uuWV1+sx/jHM49gZzCj+dIXUU7sMdXl+L0NYe4t/tFnsEh12BoOvF84ctIgntd8
-        66sIdn8RAOsjFJa3FTOd+0BEZVfhNSu7VPMqT2Iw=
-Received: from [10.10.10.3] (149.91.1.15 [149.91.1.15]) by mx.zohomail.com
-        with SMTPS id 1679389372126149.2113472793228; Tue, 21 Mar 2023 02:02:52 -0700 (PDT)
-Message-ID: <6ed317bc-ce3a-2da2-1d96-f0ea8ff0b48c@arinc9.com>
-Date:   Tue, 21 Mar 2023 12:02:47 +0300
+        with ESMTP id S229889AbjCUJxU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 05:53:20 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00404399CD
+        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 02:53:17 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id u11-20020a05600c19cb00b003edcc414997so4201563wmq.3
+        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 02:53:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1679392396;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8yA68mVCD9647FSmY0WIdU7C5V3TS02L03uEop8rxjQ=;
+        b=j7FCeyRD6YBEXkRQv9mUPmCaBZopvhSVUbtRsIfzj/pnb4sqgsiAeDscdckWwXbJQo
+         rjchjtuAqteH/0uW7PK9TnqwyoDcMRrcFz7dB33YBFhNPAseRGBOSnFSFF1j0sfC4pDm
+         Baw24bVOKgGQ6ImuYOT2jDq/1oEJEwUaB80eP1jm2UWoPXPSfubmFCKdkED6PKIR6mOk
+         DHx1w4KS1Aii4stKzbzr83UNUrIp4KKD+co/YPnxnGWlMBB+4EeyxqPZOBpBlGnEnAyg
+         fHDV/uY1gYzSz5Z99GGxK6REzDia3BT2Fb/A5pD7b8IqziVsfd+iMHpitq1SgAo0i+w2
+         omww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679392396;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8yA68mVCD9647FSmY0WIdU7C5V3TS02L03uEop8rxjQ=;
+        b=lzdSttvWX2nJ98fSeH/tDcOmCHoP5jYRVgZUXNmvrzJPj5MbB+d5JOe22Obde4cCxG
+         471/MMclmPst9XrjNRabDIFzdDGjE75bhD65en61O3VdoTtp6cuEO5A93B0QwvtH4DVY
+         yQmigJ4MHul1SIu34K961h3vTszQCAYZCgJGbazZNI7uacZYRElTg6ThYcwnXolxdiUd
+         brwty4ouJkB2TU8hnQHOeRcMWJK2LhZWnkU9WglDDV09rLv2MI3TkM2pvjFXAVBWHtSp
+         y1RpOhWdWUW6EbFH71bxPoz27jqisx6rWieL8tu7b6BRX94o5Vlr4MhchGzH8sMZ/8H8
+         kAUQ==
+X-Gm-Message-State: AO0yUKUloJ8c2tHW6qfGCmJJGpJUjtgIc8smP2UdpAdjCGetJ0iQ8a+W
+        C3kY2IpZ7n6rQKdbNEvEsJ9hxA==
+X-Google-Smtp-Source: AK7set++dkFwaIUlLnHFajj9Ph/VXG0+DakPApcFT7auIiRl4rgMhGx0C7G/lIYM20rkGG0T7rr73A==
+X-Received: by 2002:a1c:7717:0:b0:3e2:2467:d3f5 with SMTP id t23-20020a1c7717000000b003e22467d3f5mr1826132wmi.25.1679392396513;
+        Tue, 21 Mar 2023 02:53:16 -0700 (PDT)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id fc6-20020a05600c524600b003ee04190ddfsm4655830wmb.17.2023.03.21.02.53.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Mar 2023 02:53:16 -0700 (PDT)
+References: <20230320113445.17260-1-yu.tu@amlogic.com>
+ <CAFBinCAE-ihq9oeXc=GqUEHVKUYM+n_e+2_5+gDMTGQcEEhRtg@mail.gmail.com>
+ <b5e647e2-4561-e6c1-016f-2c3b260916bb@amlogic.com>
+User-agent: mu4e 1.8.13; emacs 28.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Yu Tu <yu.tu@amlogic.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, kelvin.zhang@amlogic.com,
+        qi.duan@amlogic.com
+Subject: Re: [PATCH V2] clk: meson: vid-pll-div: added meson_vid_pll_div_ops
+ support
+Date:   Tue, 21 Mar 2023 10:41:33 +0100
+In-reply-to: <b5e647e2-4561-e6c1-016f-2c3b260916bb@amlogic.com>
+Message-ID: <1jsfdy77n8.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 01/10] dt: bindings: clock: add mtmips SoCs clock device
- tree binding documentation
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Cc:     linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-        tsbogend@alpha.franken.de, john@phrozen.org,
-        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
-        devicetree@vger.kernel.org
-References: <20230320161823.1424278-1-sergio.paracuellos@gmail.com>
- <21a90597-78c9-4d46-7b01-257702e7afca@linaro.org>
- <525a6388-a4b8-3052-fe81-5aa21d8f424a@arinc9.com>
- <507f79cf-acd8-5238-031a-fd71024e0c6a@linaro.org>
- <CAMhs-H8_S5eO7B+dZ7jeq7Jjnw71QBmSo4M+woe3U5sH7dCADg@mail.gmail.com>
- <39ba681e-5bab-cffc-edf7-4bf86387987c@linaro.org>
- <132de602-6467-536c-c66d-657f22a59bd5@arinc9.com>
- <40e3acac-b58a-7af8-b025-3678f84434da@linaro.org>
- <CAMhs-H9AWXvtbg=qz06HN3piUO0E5YF3RmrdRLC7qH2n6KjrSw@mail.gmail.com>
- <d598f5f8-f998-2a31-bb21-97e641793dda@linaro.org>
- <120663a9-aecf-4a43-d1fb-779cd52802c6@arinc9.com>
- <3d2b8a1a-99c9-f53e-4bb3-a8b938e2672f@linaro.org>
- <543ad00d-4171-ed02-0d31-676c6b003e54@arinc9.com>
- <82f517b5-6697-3379-8d71-163b0d17735d@linaro.org>
- <d640a929-b6a0-1552-e66a-3a7bbabbc69f@arinc9.com>
- <2150938b-5433-6f51-c404-2c0f6976f864@linaro.org>
- <1c279b0a-c814-2fe3-0432-2aa6b3dff16e@arinc9.com>
- <9f8e7a74-35c6-6db5-4960-1efa79a23983@linaro.org>
-From:   =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-In-Reply-To: <9f8e7a74-35c6-6db5-4960-1efa79a23983@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21.03.2023 12:01, Krzysztof Kozlowski wrote:
-> On 21/03/2023 09:53, Arınç ÜNAL wrote:
+
+On Tue 21 Mar 2023 at 10:29, Yu Tu <yu.tu@amlogic.com> wrote:
+
+> Hi Martin=EF=BC=8C
+> 	First of all, thank you for your reply.
+>
+> On 2023/3/20 23:35, Martin Blumenstingl wrote:
+>> [ EXTERNAL EMAIL ]
+>> Hello Yu Tu,
+>> On Mon, Mar 20, 2023 at 12:35=E2=80=AFPM Yu Tu <yu.tu@amlogic.com> wrote:
 >>>
->>> I do not see how choosing one variant for compatibles having two
->>> variants of prefixes, complicates things. Following this argument
->>> choosing "ralink" also complicates!
->>
->> The idea is to make every compatible string of MTMIPS to have the ralink
->> prefix so it's not mediatek on some schemas and ralink on others. Simpler.
-> 
-> Which is an ABI break, so you cannot do it.
+>>> Since the previous code only provides "ro_ops" for the vid_pll_div
+>>> clock. In fact, the clock can be set. So add "ops" that can set the
+>>> clock, especially for later chips like S4 SOC and so on.
+>>>
+>>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
+>>> ---
+>> please describe the changes you did compared to the previous version(s)
+>
+> I'll add it in the next version.
+>
+>> [...]
+>>> diff --git a/drivers/clk/meson/vid-pll-div.h b/drivers/clk/meson/vid-pl=
+l-div.h
+>>> index c0128e33ccf9..bbccab340910 100644
+>>> --- a/drivers/clk/meson/vid-pll-div.h
+>>> +++ b/drivers/clk/meson/vid-pll-div.h
+>>> @@ -10,11 +10,14 @@
+>>>   #include <linux/clk-provider.h>
+>>>   #include "parm.h"
+>>>
+>>> +#define VID_PLL_DIV_TABLE_SIZE         14
+>> In v1 you used ARRAY_SIZE(vid_pll_div_table) wherever this new macro
+>> is used instead.
+>> I think using ARRAY_SIZE is the better approach because it means the
+>> references will update automatically if an entry is added/removed from
+>> vid_pll_div_table
+>
+> I agree with you. Perhaps the key is to understand what Jerome said.
 
-No, both strings stay on the driver, it's the schemas that will only 
-keep ralink.
+I asked you to describe how this divider actually works. Not remove
+ARRAY_SIZE().
 
-Arınç
+This divider uses tables only because the parameters are "magic".
+I'd like the driver to be able come up with "computed" values instead.
+
+What I requested is some explanation about how this HW clock works
+because the documentation is not very clear when it comes to this. These
+values must come from somewhere, I'd like to understand "how".
+
+This is the same as the PLL driver which can take a range and come up
+with the different parameters, instead of using big pre-computed tables.
+
+>
+>> Also I think there's a different understanding about what Jerome
+>> previously wrote:
+>>> It would be nice to actually describe how this vid pll work so we can
+>>> stop using precompute "magic" values and actually use the IP to its full
+>>> capacity.
+>>  From what I understand is that you interpreted this as "let's change
+>> ARRAY_SIZE(vid_pll_div_table) to a new macro called
+>> VID_PLL_DIV_TABLE_SIZE".
+>> But I think what Jerome meant is: "let's get rid of vid_pll_div_table
+>> and implement how to actually calculate the clock rate - without
+>> hard-coding 14 possible clock settings in vid_pll_div_table". Look at
+>> clk-mpll.c and/or clk-pll.c which allow calculating arbitrary rates
+>> without any hard-coded tables.
+>
+
+exactly ... or at least an explanation about how it works and
+why it is too complicated to compute the values at runtime.
+
+> In fact, pll and mpll are also fixed register writes corresponding
+> values.
+
+That is not true. The pll and mpll drivers are able to compute their
+values at runtime. Please have a look at the drivers.
+
+> But every SOC is different, so it makes more sense to set it
+> outside. The VID PLL is a fixed value for all current SoCs.
+>
+>> Best regards,
+>> Martin
+>>=20
+
