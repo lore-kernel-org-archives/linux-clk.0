@@ -2,133 +2,131 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D9DBC6FD1D
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 18:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E977C761AF
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 18:45:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230408AbjCUSYv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 14:24:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34620 "EHLO
+        id S230371AbjCUSpj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 14:45:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230046AbjCUSYu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 14:24:50 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E4891CBF9;
-        Tue, 21 Mar 2023 11:24:49 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 994DF61D98;
-        Tue, 21 Mar 2023 18:24:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBA39C433EF;
-        Tue, 21 Mar 2023 18:24:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679423088;
-        bh=Ih24D6DL2Z+45IV1xj0EMMfRxt3EZLsNuWJ/2RCaeQA=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=jF03Bmn4KZ2dlxkLkltkNkV1byIn+l+M/FbWIrz+LS9ntaxbIl7vmIVjCr6Zd61HN
-         +tjXacBWwpZVdi1E07D8liCNR7fMHO9AJGfzwfooM1/9Ccf0TV6X7o27VGfXj/BCds
-         NH+++eRfZmoql8Wl1BUmINFK6Ut/XTlirb2ITXCXvHB2LLQm0uHps8hQ0l+pqq2I1f
-         CsllvazDFFBuO37X3x1wolIXxbfL5a3F8UznE6Yy0qbd+J2PoFnWiX3s27kGw6b9Id
-         Sjn67WlFCU7g3CnRWmHo77lEHiRquM5nA1qMjPAD+/DjRQb+Q3z+1VAcxuhR8lCl/0
-         H8NOH6EEqqX0A==
-Message-ID: <d4ca881f69306a25b020432446a84c90.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S230330AbjCUSpi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 14:45:38 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F224053DB7
+        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 11:44:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1679424281;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fuPq/q/n2UQFDBdFIY9AeffBgLt18anlB8x0yQm2Zg0=;
+        b=XZSqe98b6WChSiaryKeA87umPzxTeG/mZuwxpLrG4wuPkiB47K/evk1/9Ne+8z+UpWbFTI
+        1ZSVQYSS2LXsl8qEgbaDOndAfk6I3lh7hKlIkHfUmS1OOAqmrf1ZBcgmnbGFzvm3tCGf7g
+        gTMTw9DfZKXVevLhvLC2TTtwJfFm188=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-621-tVvwrJPyOvOUQ31BTXPnrQ-1; Tue, 21 Mar 2023 14:44:40 -0400
+X-MC-Unique: tVvwrJPyOvOUQ31BTXPnrQ-1
+Received: by mail-qv1-f72.google.com with SMTP id c15-20020a056214070f00b005bb308e7c12so6952418qvz.19
+        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 11:44:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679424279;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fuPq/q/n2UQFDBdFIY9AeffBgLt18anlB8x0yQm2Zg0=;
+        b=6Os36oVCb2DUL/CGATqjFfWaPf01JI4ez6RFSe1+Y27PAihdAoXPZ8bSr3JGYg1vAQ
+         d8WCHnbUf7gXsLWHlWGuIhj6iiBrJ+cGDoxgzuGYSpg3Er/1W/xorBgWywGmSY0U4Oma
+         OsgHy8Nse8A7UC5TgtaYRUKJj7ZAMBz9MkxYQf09rPpq/xSGb7v3Z/TdwCDqN1Xgy1nm
+         XXNKvERvRDUQjbNcnPmpNCg6vgyhWpxei6QKMGbdgRZlgorQhkP2CEiuSeBTkiACDGrf
+         bWEKHo8I0+ekf8UES6SoqDei+PEv1gpFCNTlv0Y6SnXdE+prcZ7tBJUzVMNdysmVCSF/
+         OO0w==
+X-Gm-Message-State: AO0yUKWjKK+vRMQoQyuaIq6k08LNa2RG9gjpIyyIdaQ6gNYdxNnaE47C
+        LzM7J0290wfqGrXDBrAVQ1JYE/jxDkHWYzG7gspMPXPQpuSA4VM8i/QF5W/fT5FAKWQXr0mNgjq
+        d5DkGu1Ce6MqbefVy0Xq/
+X-Received: by 2002:a05:622a:314:b0:3db:9289:6946 with SMTP id q20-20020a05622a031400b003db92896946mr1944735qtw.0.1679424279510;
+        Tue, 21 Mar 2023 11:44:39 -0700 (PDT)
+X-Google-Smtp-Source: AK7set90RizWeWzAQuOQOBvfTCwkzx+74B8QQPTScDsieskr674HwVX05tKIvLoFJq5kExR+Z/9F5w==
+X-Received: by 2002:a05:622a:314:b0:3db:9289:6946 with SMTP id q20-20020a05622a031400b003db92896946mr1944696qtw.0.1679424279210;
+        Tue, 21 Mar 2023 11:44:39 -0700 (PDT)
+Received: from halaney-x13s (104-53-165-62.lightspeed.stlsmo.sbcglobal.net. [104.53.165.62])
+        by smtp.gmail.com with ESMTPSA id 2-20020a05620a040200b006f9f3c0c63csm9793316qkp.32.2023.03.21.11.44.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Mar 2023 11:44:38 -0700 (PDT)
+Date:   Tue, 21 Mar 2023 13:44:35 -0500
+From:   Andrew Halaney <ahalaney@redhat.com>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org,
+        davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        vkoul@kernel.org, bhupesh.sharma@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, peppe.cavallaro@st.com,
+        alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+        mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
+        linux@armlinux.org.uk, veekhee@apple.com,
+        tee.min.tan@linux.intel.com, mohammad.athari.ismail@intel.com,
+        jonathanh@nvidia.com, ruppala@nvidia.com, bmasney@redhat.com,
+        andrey.konovalov@linaro.org, linux-arm-msm@vger.kernel.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, ncai@quicinc.com,
+        jsuraj@qti.qualcomm.com, hisunil@quicinc.com, echanude@redhat.com
+Subject: Re: [PATCH net-next v2 00/12] Add EMAC3 support for sa8540p-ride
+Message-ID: <20230321184435.5pqkjp4adgn6cpxy@halaney-x13s>
+References: <20230320221617.236323-1-ahalaney@redhat.com>
+ <20230320202802.4e7dc54c@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <12903a61f64206be837c1f0744632f29.sboyd@kernel.org>
-References: <20230315183729.2376178-1-sboyd@kernel.org> <20230315183729.2376178-2-sboyd@kernel.org> <20230321173303.GA950598-robh@kernel.org> <12903a61f64206be837c1f0744632f29.sboyd@kernel.org>
-Subject: Re: [PATCH v2 01/11] of: Load KUnit DTB from of_core_init()
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        patches@lists.linux.dev,
-        Brendan Higgins <brendan.higgins@linux.dev>,
-        David Gow <davidgow@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        rafael@kernel.org, Frank Rowand <frowand.list@gmail.com>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kunit-dev@googlegroups.com, Maxime Ripard <maxime@cerno.tech>
-To:     Rob Herring <robh@kernel.org>
-Date:   Tue, 21 Mar 2023 11:24:45 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230320202802.4e7dc54c@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stephen Boyd (2023-03-21 11:15:19)
-> Quoting Rob Herring (2023-03-21 10:33:03)
-> > On Wed, Mar 15, 2023 at 11:37:18AM -0700, Stephen Boyd wrote:
-> > > diff --git a/drivers/of/of_test.c b/drivers/of/of_test.c
-> > > new file mode 100644
-> > > index 000000000000..a4d70ac344ad
-> > > --- /dev/null
-> > > +++ b/drivers/of/of_test.c
-> > > @@ -0,0 +1,43 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * KUnit tests for OF APIs
-> > > + */
-> > > +#include <linux/kconfig.h>
-> > > +#include <linux/of.h>
-> > > +
-> > > +#include <kunit/test.h>
-> > > +
-> > > +/*
-> > > + * Test that the root node / exists.
-> > > + */
-> > > +static void dtb_root_node_exists(struct kunit *test)
-> > > +{
-> > > +     KUNIT_EXPECT_NOT_ERR_OR_NULL(test, of_find_node_by_path("/"));
-> > > +}
-> > > +
-> > > +/*
-> > > + * Test that the /__symbols__ node exists.
-> > > + */
-> > > +static void dtb_symbols_node_exists(struct kunit *test)
-> > > +{
-> > > +     KUNIT_EXPECT_NOT_ERR_OR_NULL(test, of_find_node_by_path("/__sym=
-bols__"));
-> > > +}
-> >=20
-> > Many base DTs will not have this. And the kunit tests themselves=20
-> > shouldn't need it because they should be independent of the base tree.
-> >=20
->=20
-> When I try to apply an overlay it fails=20
->=20
->  OF: overlay: no fragments or symbols in overlay
->  OF: overlay: init_overlay_changeset() failed, ret =3D -22
->      # of_overlay_apply_kunit_apply: ASSERTION FAILED at drivers/of/overl=
-ay_test.c:18
->      Expected 0 =3D=3D ({ extern uint8_t __dtbo_kunit_overlay_test_begin[=
-]; extern uint8_t __dtbo_kunit_overlay_test_end[]; __of_overlay_apply_kunit=
-((test), __dtbo_kunit_overlay_test_begin, __dtbo_kunit_overlay_test_end); }=
-), but
->          ({ extern uint8_t __dtbo_kunit_overlay_test_begin[]; extern uint=
-8_t __dtbo_kunit_overlay_test_end[]; __of_overlay_apply_kunit((test), __dtb=
-o_kunit_overlay_test_begin, __dtbo_kunit_overlay_test_end); }) =3D=3D -12 (=
-0xfffffffffffffff4)
->  [FAILED] of_overlay_apply_kunit_apply
->=20
-> Now I'm trying to hack on the fake root node to see if I can make it work.
->=20
+On Mon, Mar 20, 2023 at 08:28:02PM -0700, Jakub Kicinski wrote:
+> On Mon, 20 Mar 2023 17:16:05 -0500 Andrew Halaney wrote:
+> > This is a forward port / upstream refactor of code delivered
+> > downstream by Qualcomm over at [0] to enable the DWMAC5 based
+> > implementation called EMAC3 on the sa8540p-ride dev board.
+> > 
+> > From what I can tell with the board schematic in hand,
+> > as well as the code delivered, the main changes needed are:
+> > 
+> >     1. A new address space layout for /dwmac5/EMAC3 MTL/DMA regs
+> >     2. A new programming sequence required for the EMAC3 base platforms
+> > 
+> > This series makes those adaptations as well as other housekeeping items
+> > such as converting dt-bindings to yaml, adding clock descriptions, etc.
+> > 
+> > [0] https://git.codelinaro.org/clo/la/kernel/ark-5.14/-/commit/510235ad02d7f0df478146fb00d7a4ba74821b17
+> > 
+> > v1: https://lore.kernel.org/netdev/20230313165620.128463-1-ahalaney@redhat.com/
+> 
+> At a glance 1-4,8-12 need to go via networking, 5 via clock tree,
+> and 6,7 via ARM/Qualcomm.
+> 
+> AFAICT there are no strong (compile) dependencies so we can each merge
+> our chunk and they will meet in Linus's tree? If so please repost just
+> the networking stuff for net-next, and the other bits to respective
+> trees, as separate series.
+> 
 
-Aha I figured it out. Needed to read more documentation.
+That makes sense to me, thanks for the advice.
 
----8<---
-diff --git a/drivers/of/kunit_overlay_test.dtso b/drivers/of/kunit_overlay_=
-test.dtso
-index e3ced1467dd9..7688f9ef1b6b 100644
---- a/drivers/of/kunit_overlay_test.dtso
-+++ b/drivers/of/kunit_overlay_test.dtso
-@@ -2,7 +2,7 @@
- /dts-v1/;
- /plugin/;
-=20
--/ {
-+&{/} {
- 	test-kunit {
- 		compatible =3D "test,kunit-empty";
- 	};
+The only note is that 5 (the clk patch) is depended on by 6/7 to
+compile (they use the header value in 5)... So I'll keep those together!
+
+So all in all it will be the dt-binding changes + stmmac changes in one
+series for networking, and the clock + devicetree changes via
+ARM/Qualcomm if I am following properly.
+
+I'll go that route for v3 and link here (just to make finding the split
+easier) unless someone objects (got some time as I need to refactor
+based on series feedback)!
+
+Thanks,
+Andrew
+
