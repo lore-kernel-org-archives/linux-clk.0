@@ -2,115 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBE3C74A5B
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 06:48:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC2DC761AF
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 06:57:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230415AbjCUGsM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 02:48:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57516 "EHLO
+        id S229666AbjCUG5K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 02:57:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230137AbjCUGsK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 02:48:10 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8905720049
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 23:48:00 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id y4so55779672edo.2
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 23:48:00 -0700 (PDT)
+        with ESMTP id S230363AbjCUG5H (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 02:57:07 -0400
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEF0824BED;
+        Mon, 20 Mar 2023 23:56:38 -0700 (PDT)
+Received: by mail-oi1-x234.google.com with SMTP id bf30so3877685oib.12;
+        Mon, 20 Mar 2023 23:56:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679381278;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wInF6GafTuPljjFUA+Is8vEjW4Pl6T2we7ZsIWHpBdc=;
-        b=t9qzeK5r/pPr7nWar54bwzgkW8DFarwVWfGFpk9NaytbIwZEw12umrs7bj5QwxiuK9
-         +kES/0g4F0MOIqGI3y0l3OhtGun11qEdDNfxlGop6VqcPTYPWZiDsGR6MWW4HCkzKWje
-         nIezYvISRxREMY9fTomU4/11ue8ESMWS4hggPvBp3S3VmXnorkI5pZ9V1KEZvhlPzbqy
-         noAwHJARgZzzi+g7afH2SqNj6avLPLAFW13JEKXKc7AkAMtRUGwm40CRFQj9R3zAEcJQ
-         bjV9n63wr2KXFRgENQYbp/6cJ6azeqYMXLsTGiaad8fCbNzd8Me7BOEfbYj8BF+dg5KV
-         TqXQ==
+        d=gmail.com; s=20210112; t=1679381798;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7CB30YBR/unG1rtVrj/VEIoIIDqVdeb6HobkvOGdOhs=;
+        b=ljEyPQ/miVXVu+ZkXp99IVFxim/tHSNUWMN+4y6JRzkUykqZhmcnNntq5viRLU26lW
+         3+BbBMyvpE1sPre6zjo+lrT/+JDUo1yl1O4FblkNIaUquGngGNjiyX6U2URmgXv5gMAk
+         vU0VrR1p/ostCdOeelGYLa/sAyRBmtkDFZdOv5wAkn11p3M0VIfT8EDuj9KWM2FmXGJr
+         SAOlEMjX/r9JnXWKZFx2ngdrJowL4QiRsJdfNnESe5wGxPqOWAEpVKOjXWD5WBcpzYW2
+         pMKGsXI/PL9kpKOFNH9b+dOQO+YAQ1vbxXPijZG1T6z/uawYtBCb2M5BdD9j++O/8ykx
+         oY3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679381278;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wInF6GafTuPljjFUA+Is8vEjW4Pl6T2we7ZsIWHpBdc=;
-        b=e5NrVNrEjKsku0CXhwFKhaV0MVJ9NYzqOpQYCFaT0BlAhbMAGcZKIyA2YViMZM7P2E
-         eB7+2u53Cdf1amafvktJiNnTnzLi2UULAkinNqxQqOWqAgAxFR63KhAKQgAzWHn98D8R
-         k3fiRpxb2k4py+JYUmM0iWIRX7pnvP5XwTusrQkw3OQHbr8z1JzjJelRKjOO+cneQawF
-         85Ky+gEOs7DhIHXGPG/QRIwVGsr8C6KaPs7oYLCKoShF6UU5ziqGT9BEGC4/jpqPXanK
-         Cz3rgNKYm0ZFZLPImHAhc1hAF015N1jpKBIZzfVHkNdQ6rmJ5KDJkTWRsDxg/Oa3ZnM/
-         89cw==
-X-Gm-Message-State: AO0yUKW2m+nL5IyiwGlg/ZXRULZyqsC9wWieZdJv6tWomOU27Fc4E5Mm
-        TYPlRlLkxX0ZJwwHShShbPQiCA==
-X-Google-Smtp-Source: AK7set+yUBYPnpsgcGFshQfAIT5gVBUyoTKz/PVli/szhlsgnT8leqFozAyoOp7o+jk4oZaehIJKDw==
-X-Received: by 2002:a17:906:397:b0:932:1af9:7386 with SMTP id b23-20020a170906039700b009321af97386mr2043033eja.27.1679381278702;
-        Mon, 20 Mar 2023 23:47:58 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:2142:d8da:5ae4:d817? ([2a02:810d:15c0:828:2142:d8da:5ae4:d817])
-        by smtp.gmail.com with ESMTPSA id qq24-20020a17090720d800b008df7d2e122dsm5344909ejb.45.2023.03.20.23.47.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Mar 2023 23:47:58 -0700 (PDT)
-Message-ID: <48261996-1993-7c9c-b090-eba68157aecf@linaro.org>
-Date:   Tue, 21 Mar 2023 07:47:56 +0100
+        d=1e100.net; s=20210112; t=1679381798;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7CB30YBR/unG1rtVrj/VEIoIIDqVdeb6HobkvOGdOhs=;
+        b=bS+zGYvnWGl8dFobnOa9JMVP2WIW7H061c4TLa7Xp4Pvj8TqqCOWgoE9yQwbPhgpjL
+         eP+Bw1ucK5tcn5ZCB2YLXg7C98dzgBByuya9qCyW36dmlRWYdBfBHnF2pxMD5wux4ars
+         Z3b6gutQ9iRZPAc3Cbmkwf3azfrNZjyXubjRkjFNmOEJnn5StokRyAZFH3S/Vint74UX
+         SZ0ZFM+jj4IoXo2JfzVQ9ru64AQJOX+YZq92nL7CzC4Rt7M2QuE3B4xSE5PDYMybi2It
+         QnGp2LnRzwkaw9jk6kHssG7VQuDADrk6U/WfyjKrb7iplMFaIenJAguI/4G4Q7VwAwSy
+         SFoA==
+X-Gm-Message-State: AO0yUKVyeJ1uVxB5e4KB3M/f9Z8T6nYuuZmwYzQFigeTXR19FVTldOBE
+        PzGrQX4GJ/b57gSN5wKXrqyotzzcmPIfPvVaXEk=
+X-Google-Smtp-Source: AK7set8XAb32jOcG6ctlGx42mqM8SUCZhdbCzSCOqkbYwbN4WIQyCH/Ly80MQgmj1MEHdFvG6xKhBB0Rd57/AHcSI5g=
+X-Received: by 2002:a05:6808:199f:b0:384:21dd:2793 with SMTP id
+ bj31-20020a056808199f00b0038421dd2793mr313020oib.0.1679381798025; Mon, 20 Mar
+ 2023 23:56:38 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH net-next v2 04/12] dt-bindings: net: qcom,ethqos: Add
- Qualcomm sc8280xp compatibles
-Content-Language: en-US
-To:     Andrew Halaney <ahalaney@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, vkoul@kernel.org,
-        bhupesh.sharma@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, peppe.cavallaro@st.com,
-        alexandre.torgue@foss.st.com, joabreu@synopsys.com,
-        mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
-        linux@armlinux.org.uk, veekhee@apple.com,
-        tee.min.tan@linux.intel.com, mohammad.athari.ismail@intel.com,
-        jonathanh@nvidia.com, ruppala@nvidia.com, bmasney@redhat.com,
-        andrey.konovalov@linaro.org, linux-arm-msm@vger.kernel.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, ncai@quicinc.com,
-        jsuraj@qti.qualcomm.com, hisunil@quicinc.com, echanude@redhat.com
-References: <20230320221617.236323-1-ahalaney@redhat.com>
- <20230320221617.236323-5-ahalaney@redhat.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230320221617.236323-5-ahalaney@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230320161823.1424278-1-sergio.paracuellos@gmail.com>
+ <20230320161823.1424278-2-sergio.paracuellos@gmail.com> <1e2f67b4-3bfb-d394-4f60-e6f63ce6a2fd@linaro.org>
+ <CAMhs-H8OQ9gJLsifLuHD2GN8rYwnY=Zmdb0kMEfX4UUHhjMUyQ@mail.gmail.com>
+ <d0f74721-bf5a-62de-53dc-62e7e735e2dc@linaro.org> <bdc82b4a-f1a9-0372-5a57-200a422b1b70@arinc9.com>
+ <21a90597-78c9-4d46-7b01-257702e7afca@linaro.org> <525a6388-a4b8-3052-fe81-5aa21d8f424a@arinc9.com>
+ <507f79cf-acd8-5238-031a-fd71024e0c6a@linaro.org> <CAMhs-H8_S5eO7B+dZ7jeq7Jjnw71QBmSo4M+woe3U5sH7dCADg@mail.gmail.com>
+ <39ba681e-5bab-cffc-edf7-4bf86387987c@linaro.org> <132de602-6467-536c-c66d-657f22a59bd5@arinc9.com>
+ <40e3acac-b58a-7af8-b025-3678f84434da@linaro.org>
+In-Reply-To: <40e3acac-b58a-7af8-b025-3678f84434da@linaro.org>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Tue, 21 Mar 2023 07:56:25 +0100
+Message-ID: <CAMhs-H9AWXvtbg=qz06HN3piUO0E5YF3RmrdRLC7qH2n6KjrSw@mail.gmail.com>
+Subject: Re: [PATCH 01/10] dt: bindings: clock: add mtmips SoCs clock device
+ tree binding documentation
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
+        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
+        tsbogend@alpha.franken.de, john@phrozen.org,
+        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20/03/2023 23:16, Andrew Halaney wrote:
-> The sc8280xp has a new version of the ETHQOS hardware in it, EMAC v3.
-> Add a compatible for this.
-> 
-> Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
-> ---
-> 
-> Changes since v1:
-> 	* Alphabetical sorting (Krzysztof)
-> 
->  Documentation/devicetree/bindings/net/qcom,ethqos.yaml | 1 +
->  Documentation/devicetree/bindings/net/snps,dwmac.yaml  | 3 +++
->  2 files changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/qcom,ethqos.yaml b/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
-> index 88234a2010b1..c60248e17e5a 100644
-> --- a/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
-> +++ b/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
-> @@ -21,6 +21,7 @@ properties:
->      enum:
->        - qcom,qcs404-ethqos
->        - qcom,sm8150-ethqos
-> +      - qcom,sc8280xp-ethqos
+On Tue, Mar 21, 2023 at 7:43=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 21/03/2023 07:38, Ar=C4=B1n=C3=A7 =C3=9CNAL wrote:
+> >>>>
+> >>>> Ah, but indeed there are newer Mediatek MT6xxx and MT8xxx SoCs which=
+ are
+> >>>> ARM, so mediatek,mtmips-sysc would work.
+> >>>
+> >>> I can use 'mediatek,mtmips-sysc.yaml' as the name but compatibles wil=
+l
+> >>> start with ralink. There are already some existent compatibles for
+> >>> mt762x already having ralink as prefix, so to be coherent ralink
+> >>> should be maintained as prefix.
+> >>
+> >> The compatibles I mentioned start already with mediatek, so why do you
+> >> want to introduce incorrect vendor name for these?
+> >
+> > Can you point out where these compatible strings for mt7620 and mt7628 =
+are?
+>
+> git grep
 
-This still needs sort.
+Not for *-sysc nodes. The only current one in use (from git grep):
 
-Best regards,
-Krzysztof
+arch/mips/ralink/mt7620.c:      rt_sysc_membase =3D
+plat_of_remap_node("ralink,mt7620a-sysc");
 
+That's the reason I also used prefix ralink for the rest.
+
+Does it make sense to you to maintain this one as ralink,mt7620a-sysc
+and add the following with mediatek prefix?
+
+mediatek,mt7620-sysc
+mediatek,mt7628-sysc
+mediatek,mt7688-sysc
+
+That would be weird IMHO.
+
+> Best regards,
+> Krzysztof
+
+Thanks,
+    Sergio Paracuellos
