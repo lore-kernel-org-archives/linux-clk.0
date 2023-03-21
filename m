@@ -2,61 +2,55 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76710C74A5B
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 03:42:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A1BC74A5B
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 04:10:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229656AbjCUDmF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 23:42:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60944 "EHLO
+        id S229670AbjCUEK5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 00:10:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229550AbjCUDmC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 23:42:02 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8102932E56;
-        Mon, 20 Mar 2023 20:41:59 -0700 (PDT)
+        with ESMTP id S230326AbjCUEKY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 00:10:24 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC71023DBE;
+        Mon, 20 Mar 2023 21:07:16 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EA38EB81235;
-        Tue, 21 Mar 2023 03:41:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17888C433EF;
-        Tue, 21 Mar 2023 03:41:55 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7FBA96194E;
+        Tue, 21 Mar 2023 04:05:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6966CC433EF;
+        Tue, 21 Mar 2023 04:05:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679370116;
-        bh=Jk2T8KzAk6AYQ1kjo+O7hUQbaKhmKLsFTuvlYvwxK/A=;
+        s=k20201202; t=1679371550;
+        bh=dkNXtuPKzvH8px3D6BZTKCZ/f6/0QU05iqQDcuooA8g=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=oLf3l/0yU8YpuM7jfKUSyIKeoRoUdovOG9TYbeB30Wm8DCFIhnaL6MV24hkWZyeUi
-         6zntvyKAunOQIffo2oeilPDVtH4aJAV0jofS/FBZkNcRE+rIbye/YZnJ1A3rnj/G9N
-         rIvBgzbrwLPBn3WT5EBKLRtM/fCUT4srAorE1TX+XroTG2dxAn3sjDnSNVzrDn63Z5
-         4U0YEr+xP21vy0nzcmFci9MHCHCEsBP903MTQ5c275B9i8ZSY9Kn6uHYE4A5RvCkBX
-         CL+b8t1GpWaKooO9pIVDpcC21GnX3+ZTBEVLVQcqcQUApDiAeDVzcATDiDvffwRsiR
-         wQjxtHPocjnNg==
-Date:   Mon, 20 Mar 2023 20:41:53 -0700
+        b=pzADmA5bysShRhtC8zU+1CY1moObQ/KOtgBsTkrjYieCcDGfLyEgUG/1v2S9ntb3a
+         zgqgQzl5SDJS0Z/JBGwt+WHwnnj8Sa71i3YON3MD6IMcpd4T8CZeSM5NY3xLfS4HTX
+         Ahq9CvkwOW19c7h+0DlTiM5XxR2NqauCICZs1aa6nJRqgwnsVKT5vCTP94xpwqqNJP
+         gHk7vARzojEZN4ItrwppFssYWCkdCcpWRblOGtvvB3Bn9Os1B9zZqcfM7uvC69daRs
+         sXqnnY2hwRgfvGuW22kY/U6I8+K6MdAh/Gm/pe7ZbC6e5+3OOtiqRMaQmGUE1geXMF
+         in6r6hTOXHKZA==
+Date:   Mon, 20 Mar 2023 21:05:49 -0700
 From:   Jakub Kicinski <kuba@kernel.org>
-To:     Andrew Halaney <ahalaney@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org,
-        davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        vkoul@kernel.org, bhupesh.sharma@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, peppe.cavallaro@st.com,
-        alexandre.torgue@foss.st.com, joabreu@synopsys.com,
-        mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
-        linux@armlinux.org.uk, veekhee@apple.com,
-        tee.min.tan@linux.intel.com, mohammad.athari.ismail@intel.com,
-        jonathanh@nvidia.com, ruppala@nvidia.com, bmasney@redhat.com,
-        andrey.konovalov@linaro.org, linux-arm-msm@vger.kernel.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, ncai@quicinc.com,
-        jsuraj@qti.qualcomm.com, hisunil@quicinc.com, echanude@redhat.com
-Subject: Re: [PATCH net-next v2 09/12] net: stmmac: Add EMAC3 variant of
- dwmac4
-Message-ID: <20230320204153.21736840@kernel.org>
-In-Reply-To: <20230320221617.236323-10-ahalaney@redhat.com>
-References: <20230320221617.236323-1-ahalaney@redhat.com>
-        <20230320221617.236323-10-ahalaney@redhat.com>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Jiri Pirko <jiri@resnulli.us>, Vadim Fedorenko <vadfed@meta.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        poros <poros@redhat.com>, mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: Re: [PATCH RFC v6 1/6] dpll: spec: Add Netlink spec in YAML
+Message-ID: <20230320210549.081da89b@kernel.org>
+In-Reply-To: <DM6PR11MB4657F423D2B3B4F0799B0F019BBC9@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20230312022807.278528-1-vadfed@meta.com>
+        <20230312022807.278528-2-vadfed@meta.com>
+        <ZBCIPg1u8UFugEFj@nanopsycho>
+        <DM6PR11MB4657F423D2B3B4F0799B0F019BBC9@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -64,19 +58,22 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 20 Mar 2023 17:16:14 -0500 Andrew Halaney wrote:
-> The next approach that was checked was to have a function pointer
-> embedded inside a structure that does the appropriate conversion based
-> on the variant that's in use. However, some of the function definitions
-> are like the following:
+On Thu, 16 Mar 2023 13:15:59 +0000 Kubalewski, Arkadiusz wrote:
+> >Value 23? What's this?
+> >You have it specified for some attrs all over the place.
+> >What is the reason for it?
+> >  
 > 
->     void emac3_set_rx_ring_len(void __iomem *ioaddr, u32 len, u32 chan)
+> Actually this particular one is not needed (also value: 12 on pin above),
+> I will remove those.
+> But the others you are refering to (the ones in nested attribute list),
+> are required because of cli.py parser issue, maybe Kuba knows a better way to
+> prevent the issue?
+> Basically, without those values, cli.py brakes on parsing responses, after
+> every "jump" to nested attribute list it is assigning first attribute there
+> with value=0, thus there is a need to assign a proper value, same as it is on
+> 'main' attribute list.
 
-I checked a couple of callbacks and they seem to all be called with
-priv->iomem as an arg, so there is no strong reason to pass iomem
-instead of priv / hw. Or at least not to pass both..
-
-I think that's a better approach than adding the wrappers :(
-
-Are you familiar with coccinelle / spatch? It's often better than 
-just regexps for refactoring, maybe it can help?
+Are you saying the parser gets confused after returning from nested
+parsing? Can you still repro this problem? I don't see any global
+state in _decode()..
