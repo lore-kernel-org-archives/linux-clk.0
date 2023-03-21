@@ -2,204 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71150C74A5B
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 17:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A12C6FD1D
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 17:45:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230512AbjCURfb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 13:35:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47294 "EHLO
+        id S229950AbjCURpY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 13:45:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230523AbjCURfH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 13:35:07 -0400
+        with ESMTP id S229675AbjCURpX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 13:45:23 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2B88532AA;
-        Tue, 21 Mar 2023 10:34:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDEA32448A;
+        Tue, 21 Mar 2023 10:45:18 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 57595B81908;
-        Tue, 21 Mar 2023 17:34:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7B9EC4339C;
-        Tue, 21 Mar 2023 17:34:30 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4CBACB818D3;
+        Tue, 21 Mar 2023 17:45:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2931C433D2;
+        Tue, 21 Mar 2023 17:45:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679420071;
-        bh=kwmBUU9WFc//wAOTsHeeQNScNVfG/4HR6pbYmzcyOf0=;
+        s=k20201202; t=1679420715;
+        bh=N3J1/tOTpmUVVtlZBsmsKwvceQFZJ+nVYVRndnoaBKc=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=KCnyTme5s6Xgat1J1YBKgJttYPdWPVtocYSgMStUwLDt3IsVFr3hjedcLwgdyi50e
-         +MfhbbuImrDLhntQLfG9CMIriizUTj0NLG1H6/6Ue1GnfFt1QuJxrYggyXl6iSA6Bz
-         y5gVYUtq9V5bKVgYjGZGDfkelAzksK6yEul047QY3MSjVs2gKv2ymylQAyJoeTBcYW
-         2ql0vN0aeKfU+tCan8RbV1Z+vfRmd1zMPVbB8HP4eVDTSGNyTfMMrA75uY3M9b6DgK
-         2EQk0PXVhsroDpG/YC89kkh364EK2+PDdbeVsyX0SsaAQcv//9CqpmDgYSjv4Z4Zyc
-         FWxT1TEJNz4kg==
-Message-ID: <c087fa09f92838b4e1a2a3e7139b7106.sboyd@kernel.org>
+        b=VIF/lRfRgRLDv9oGNCbhKz07Zf1QpSuheZkRJ2MVg7FQqLDg5eQGQDXRKn2WqNq+h
+         n4ZHRqtdT1MvnAdm2aVgQlZRUPO2kgvoWUS/EDybdaLdR0rM8B7Q7Ux+3IPmoPlZyi
+         2cqqEXrQxLNtYywSUpec6MidpatcMs+F8fEAWgfcYzLACVtRgPVBU4R4LvEMrbNP8w
+         z0uwcfO59LQmRtT4OS9cpQ8Fxu1VaK/EjQttg82pJS9d86XBbSMV/1w/zuDG9p3eH/
+         L/p4PMkS1nBpEbUIVWfiSrbGBhxF4sbMbWcmHsIiQHnf5XX1mH63KxRhHa7JlQWMWo
+         jVi49K815wd7g==
+Message-ID: <a1a827bcdc4bc6ceb50bd1cc6d47df66.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230320204042.980708-3-mmyangfl@gmail.com>
-References: <20230320204042.980708-1-mmyangfl@gmail.com> <20230320204042.980708-3-mmyangfl@gmail.com>
-Subject: Re: [PATCH v5 2/5] clk: hisilicon: Extract common functions
+In-Reply-To: <24293be77ccdcf5e9b1fa0fd219de6152f234616.1679388632.git.quic_varada@quicinc.com>
+References: <cover.1677749625.git.quic_varada@quicinc.com> <cover.1679388632.git.quic_varada@quicinc.com> <24293be77ccdcf5e9b1fa0fd219de6152f234616.1679388632.git.quic_varada@quicinc.com>
+Subject: Re: [PATCH v2 4/8] clk: qcom: gcc-ipq9574: Add USB related clocks
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     David Yang <mmyangfl@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     David Yang <mmyangfl@gmail.com>
-Date:   Tue, 21 Mar 2023 10:34:28 -0700
+Cc:     Varadarajan Narayanan <quic_varada@quicinc.com>
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, devicetree@vger.kernel.org,
+        gregkh@linuxfoundation.org, kishon@kernel.org,
+        konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-usb@vger.kernel.org, mturquette@baylibre.com,
+        quic_wcheng@quicinc.com, robh+dt@kernel.org, vkoul@kernel.org
+Date:   Tue, 21 Mar 2023 10:45:13 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting David Yang (2023-03-20 13:40:35)
-> To be reused with other Hi3798 series SoCs.
+Quoting Varadarajan Narayanan (2023-03-21 01:54:22)
+> Add the clocks needed for enabling USB in IPQ9574
 >=20
-> Signed-off-by: David Yang <mmyangfl@gmail.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+>=20
 > ---
 
-Please squash this patch in
-
----8<---
-diff --git a/drivers/clk/hisilicon/crg-hi3798.c b/drivers/clk/hisilicon/crg=
--hi3798.c
-index 3a8d70b7c8ec..0d6886bca3ba 100644
---- a/drivers/clk/hisilicon/crg-hi3798.c
-+++ b/drivers/clk/hisilicon/crg-hi3798.c
-@@ -203,8 +203,9 @@ struct hi3798_clks {
- 	int complex_clks_nums;
- };
-=20
--static struct hisi_clock_data *hi3798_clk_register(
--		struct platform_device *pdev, const struct hi3798_clks *clks)
-+static struct hisi_clock_data *
-+hi3798_clk_register(struct platform_device *pdev,
-+		    const struct hi3798_clks *clks)
- {
- 	struct hisi_clock_data *clk_data;
- 	int ret;
-@@ -257,8 +258,8 @@ static struct hisi_clock_data *hi3798_clk_register(
- 	return ERR_PTR(ret);
- }
-=20
--static void hi3798_clk_unregister(
--		struct platform_device *pdev, const struct hi3798_clks *clks)
-+static void hi3798_clk_unregister(struct platform_device *pdev,
-+				  const struct hi3798_clks *clks)
- {
- 	struct hisi_crg_dev *crg =3D platform_get_drvdata(pdev);
-=20
-@@ -276,8 +277,9 @@ static void hi3798_clk_unregister(
-=20
- #define HI3798_SYSCTRL_NR_CLKS 16
-=20
--static struct hisi_clock_data *hi3798_sysctrl_clk_register(
--		struct platform_device *pdev, const struct hi3798_clks *clks)
-+static struct hisi_clock_data *
-+hi3798_sysctrl_clk_register(struct platform_device *pdev,
-+			    const struct hi3798_clks *clks)
- {
- 	struct hisi_clock_data *clk_data;
- 	int ret;
-@@ -302,8 +304,8 @@ static struct hisi_clock_data *hi3798_sysctrl_clk_regis=
-ter(
- 	return ERR_PTR(ret);
- }
-=20
--static void hi3798_sysctrl_clk_unregister(
--		struct platform_device *pdev, const struct hi3798_clks *clks)
-+static void hi3798_sysctrl_clk_unregister(struct platform_device *pdev,
-+					  const struct hi3798_clks *clks)
- {
- 	struct hisi_crg_dev *crg =3D platform_get_drvdata(pdev);
-=20
-@@ -623,8 +625,8 @@ static const struct hi3798_clks hi3798cv200_crg_clks =
-=3D {
- 	.phase_clks_nums =3D ARRAY_SIZE(hi3798mv100_phase_clks),
- };
-=20
--static struct hisi_clock_data *hi3798cv200_clk_register(
--				struct platform_device *pdev)
-+static struct hisi_clock_data *
-+hi3798cv200_clk_register(struct platform_device *pdev)
- {
- 	return hi3798_clk_register(pdev, &hi3798cv200_crg_clks);
- }
-@@ -653,8 +655,8 @@ static const struct hi3798_clks hi3798cv200_sysctrl_clk=
-s =3D {
- 	.gate_clks_nums =3D ARRAY_SIZE(hi3798cv200_sysctrl_gate_clks),
- };
-=20
--static struct hisi_clock_data *hi3798cv200_sysctrl_clk_register(
--					struct platform_device *pdev)
-+static struct hisi_clock_data *
-+hi3798cv200_sysctrl_clk_register(struct platform_device *pdev)
- {
- 	return hi3798_sysctrl_clk_register(pdev, &hi3798cv200_sysctrl_clks);
- }
-
-
-
-> diff --git a/drivers/clk/hisilicon/crg-hi3798.c b/drivers/clk/hisilicon/c=
-rg-hi3798.c
-> index 7e9507de2..2f8f14e73 100644
-> --- a/drivers/clk/hisilicon/crg-hi3798.c
-> +++ b/drivers/clk/hisilicon/crg-hi3798.c
-> @@ -59,6 +59,119 @@ static const struct hisi_fixed_rate_clock hi3798_fixe=
-d_rate_clks[] =3D {
->         { HI3798_FIXED_250M, "250m", NULL, 0, 250000000, },
->  };
-> =20
-> +struct hi3798_clks {
-> +       const struct hisi_gate_clock *gate_clks;
-> +       int gate_clks_nums;
-> +       const struct hisi_mux_clock *mux_clks;
-> +       int mux_clks_nums;
-> +       const struct hisi_phase_clock *phase_clks;
-> +       int phase_clks_nums;
-> +};
-> +
-> +static struct hisi_clock_data *hi3798_clk_register(
-> +               struct platform_device *pdev, const struct hi3798_clks *c=
-lks)
-> +{
-> +       struct hisi_clock_data *clk_data;
-> +       int ret;
-> +
-> +       clk_data =3D hisi_clk_alloc(pdev, HI3798_CRG_NR_CLKS);
-> +       if (!clk_data)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       /* hisi_phase_clock is resource managed */
-> +       ret =3D hisi_clk_register_phase(&pdev->dev, clks->phase_clks,
-> +                                     clks->phase_clks_nums, clk_data);
-> +       if (ret)
-> +               return ERR_PTR(ret);
-> +
-> +       ret =3D hisi_clk_register_fixed_rate(hi3798_fixed_rate_clks,
-> +                                          ARRAY_SIZE(hi3798_fixed_rate_c=
-lks),
-> +                                          clk_data);
-> +       if (ret)
-> +               return ERR_PTR(ret);
-> +
-> +       ret =3D hisi_clk_register_mux(clks->mux_clks, clks->mux_clks_nums=
-, clk_data);
-> +       if (ret)
-> +               goto unregister_fixed_rate;
-> +
-> +       ret =3D hisi_clk_register_gate(clks->gate_clks, clks->gate_clks_n=
-ums, clk_data);
-
-Please make a follow-up patch that passes the pdev->dev pointer to these
-registration functions so they can use devm APIs.
-
-> +       if (ret)
-> +               goto unregister_mux;
-> +
-> +       ret =3D of_clk_add_provider(pdev->dev.of_node,
-
-Please make a follow-up patch that migrates this to
-devm_of_clk_add_hw_provider.
-
-> +                       of_clk_src_onecell_get, &clk_data->clk_data);
-> +       if (ret)
-> +               goto unregister_gate;
-> +
+Acked-by: Stephen Boyd <sboyd@kernel.org>
