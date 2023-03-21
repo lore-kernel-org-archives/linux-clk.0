@@ -2,166 +2,237 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE663C6FD1D
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 14:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81899C74A5B
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 15:03:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230444AbjCUOdH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 10:33:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57554 "EHLO
+        id S231513AbjCUPDU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 11:03:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230025AbjCUOdG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 10:33:06 -0400
-Received: from new3-smtp.messagingengine.com (new3-smtp.messagingengine.com [66.111.4.229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B13A4C0A;
-        Tue, 21 Mar 2023 07:33:03 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 2F777582194;
-        Tue, 21 Mar 2023 10:33:00 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Tue, 21 Mar 2023 10:33:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; t=1679409180; x=1679416380; bh=T/
-        lq0wdl5waDK7GJCv2ptAX5Xsg9I9oRktyonRsh2Ok=; b=nSQeM/hAbtbjunm3+l
-        9m0ACRX5pcJaI4mDgqc3K84iYdrOkpWyhiivRFGddhBnNafT5tIoYwX0pOKg2/r2
-        d0AREqYUPBAnPjyugOIN8SdCGJ5DLL7KISvulndfWgfqsEsKKKArdTJ72QG0ezyJ
-        4oMmHbQYFFK3UhUvVy9evNiYJrAY+iPwA1HL6OOwMtIYq4msJtNrcR3o4PKPsIHj
-        Kty9Csv3mzjyUMehWpPB5RriaZ77gwU5fVLJXT3wRu4YMMkNNeDWM/IXnWO9RCMn
-        rZERZ4TDdS8g5Ux/IOJR3oXbPFCyXkWOJEQ1+b3x+gvYXHz+KzM/vFSAqzBpPlfe
-        AKCw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1679409180; x=1679416380; bh=T/lq0wdl5waDK
-        7GJCv2ptAX5Xsg9I9oRktyonRsh2Ok=; b=WkTdIj36fxYe9ZB98EK6mienufLrF
-        qeZoTxB5+dougAHWFmQH32QWx12UioQ12q5M2JLS2WS1Kr7xwhBRKkQR2QpqVrw2
-        hiMqLBUR1Plzw97VXOJOPMeUjY03KWodhVVRlHatQmFQ2WezHqtoZI4h6YPwMKZH
-        ZPbf5C2KfjpCXB1Fyu2SsJ0TaD9YSTVdYsgGB+5Ebz03LHezG1LKtF5yQb6CjTmN
-        4jUvzz0B/Lj2B0i7vPJujZbH8yGXsEawU7ZPc1Rpc4yWK+WcfEHSHweiP0S6CbI8
-        /gKKIQe7ZeUgg18lTzYQQxnZ11jXsJT9aPRjoSpd2uzOxkUXgoK6elABg==
-X-ME-Sender: <xms:G8AZZLgSQPHKhlV50q8TO3b-YscRkC9yQ7lc6TnjJh3KXHLYTAIoBw>
-    <xme:G8AZZIBkr2JChgYJTsTYbi8KEuTIK3nbfoAys_uyDwo6kwBEqioF6pJqiS6PK0GA7
-    LGno9h1qEJDq5duAws>
-X-ME-Received: <xmr:G8AZZLEiWTYxlKntBJX_Dbfee0v_Ar8edQcJPjs3c9Cl_2MWZ1WJrd3s9dB2l-8aAeOCNJ10YVlIV2qs9a2EOTRy_d9uno0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdegtddgieehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeetfefffefgkedtfefgledugfdtjeefjedvtddtkeetieffjedvgfehheff
-    hfevudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:G8AZZIQ3LvdGLv99ngFCGTO6-hTz02yJFTBVzDt_NQDAqd12r6Cx-A>
-    <xmx:G8AZZIz_gaZiOALKNSZFvA5p-bS7GlshX4IHWG3o1ksbDtqfeafejg>
-    <xmx:G8AZZO4y6C4PkPoN8Zjyt2N7JuF9PlRNG7idrZua3C8HEm9UgYCm4w>
-    <xmx:HMAZZIEv6AY65hhQlNCWwIlZEXqiIg197-nyQfcGi_cisbYAWFZd0A>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 21 Mar 2023 10:32:58 -0400 (EDT)
-Date:   Tue, 21 Mar 2023 15:32:56 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     David Gow <davidgow@google.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        patches@lists.linux.dev,
-        Brendan Higgins <brendan.higgins@linux.dev>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-Subject: Re: [PATCH 4/8] clk: Add test managed clk provider/consumer APIs
-Message-ID: <20230321143256.ybr6c6kstcv5lnbk@houat>
-References: <20230302013822.1808711-1-sboyd@kernel.org>
- <20230302013822.1808711-5-sboyd@kernel.org>
- <CABVgOSkahumU6T+rCVx+k7Y9=iMszveseVYE0wfKjXwkNJpFxQ@mail.gmail.com>
- <77b315f6b89eb256c516ee08b1c17312.sboyd@kernel.org>
- <CABVgOSk4gEob3rokKF_p2Bcd_Sj3ikUN4R-HPHyTR0Eoo==85g@mail.gmail.com>
+        with ESMTP id S229964AbjCUPDT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 11:03:19 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78E782596C;
+        Tue, 21 Mar 2023 08:03:17 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id p13-20020a17090a284d00b0023d2e945aebso1929870pjf.0;
+        Tue, 21 Mar 2023 08:03:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679410997;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K4P7a0/rXTyc57id8CDTnxqxhaZ2GzBVxFhFkoIR7uk=;
+        b=j0uZLcvL7n5o9c8Kh7uq/gnpjJ7g2Y48whQ6tE8UruQFrEmushobctNeWdOTkqKZbW
+         sZX6fcP/Gp2jP9ryQDTIYzK8JD491Ym+Q8HYztA3nQwOq21sgXCuftBGYSQSYOvgqW22
+         rvJ4QdtPkIZ3qKsC+r6qZyIWRdXP3Uacc9b+wWZnEJw7eQMBcd1CgTglmvb1VnZQa18R
+         Wqt9GYcu0VAs/QG6bYBANPa2et5//XCUB2n81LvoUzszRwDWOiAPpMVa4ms4gVBl22xO
+         QVOfyu2k9B6pnWS8lAGwfEHLObFIupo7+lttCTDMgWU5DXwiBN3wyreROYD9M37Y7kB1
+         oobw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679410997;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K4P7a0/rXTyc57id8CDTnxqxhaZ2GzBVxFhFkoIR7uk=;
+        b=tHPUqT7wZgG0rLLWyUCR29rG8pMRIHsQTFgcGruE6zSv9kF8yFAcE93HE11lapBStm
+         BIrbEasMOWD+8pRe7ADaTGv+NDHEg8BhI+Ogy4iayBQnRqbNfoT1jrvtDelN7oy26y+W
+         3oZETEJIa8WhSLcv90oKlIx7mrYUgfXxvTJoeYEJVpA7K52SoG+tH3VphJpJdK3oqIr8
+         71HpUge7BL4htjXMHITS0e/0/tRaHFKFMDIvvcjeGSY61hX46ythbCvDqNodQmYJ2xhr
+         e95UNTsphLV8yXxTuu4d466lb5bx+egWneLDc9vIqnwpGd6+5e8nXKHI0dOt6aSFnlX/
+         BRwA==
+X-Gm-Message-State: AO0yUKW7b3UCQLxUEEi2M8yrf2inm/omOeJEjZxf6G6FwPL2MHlJ8Ixi
+        MYXYpiXDDfYzYN3YQDHWVkv/fhX5mQ8=
+X-Google-Smtp-Source: AK7set99Pc5eg5pmBA+wYuNn07qDtLUwAn/dSaqIvVkGyhs+4JyZ/kfNWOZkFp0QMhUA4h2baD0WxA==
+X-Received: by 2002:a05:6a20:8c02:b0:d6:ba0b:c82c with SMTP id j2-20020a056a208c0200b000d6ba0bc82cmr2140408pzh.38.1679410996661;
+        Tue, 21 Mar 2023 08:03:16 -0700 (PDT)
+Received: from [192.168.1.101] (1-160-162-168.dynamic-ip.hinet.net. [1.160.162.168])
+        by smtp.gmail.com with ESMTPSA id c8-20020a62e808000000b005cdbd9c8825sm8325299pfi.195.2023.03.21.08.03.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Mar 2023 08:03:16 -0700 (PDT)
+Message-ID: <d59489d2-e801-a4a9-7bb4-bc80ffd0469a@gmail.com>
+Date:   Tue, 21 Mar 2023 23:03:12 +0800
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="kn4g64rogn4yrwmy"
-Content-Disposition: inline
-In-Reply-To: <CABVgOSk4gEob3rokKF_p2Bcd_Sj3ikUN4R-HPHyTR0Eoo==85g@mail.gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH 12/15] clk: nuvoton: Add clock driver for ma35d1 clock
+ controller
+Content-Language: en-US
+To:     =?UTF-8?Q?Ilpo_J=c3=a4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        p.zabel@pengutronix.de,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-serial <linux-serial@vger.kernel.org>, schung@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+References: <20230315072902.9298-1-ychuang570808@gmail.com>
+ <20230315072902.9298-13-ychuang570808@gmail.com>
+ <8b5854d3-2793-bc33-137e-5a2673d72329@linux.intel.com>
+ <00c3748b-61fa-f14b-f92c-b60fd9d6b4ee@gmail.com>
+ <9115473c-2e88-da76-9631-ca19b9129be4@linux.intel.com>
+From:   Jacky Huang <ychuang570808@gmail.com>
+In-Reply-To: <9115473c-2e88-da76-9631-ca19b9129be4@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Dear Ilpo,
 
---kn4g64rogn4yrwmy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 11, 2023 at 02:32:04PM +0800, David Gow wrote:
-> > > > diff --git a/drivers/clk/clk-kunit.c b/drivers/clk/clk-kunit.c
-> > > > new file mode 100644
-> > > > index 000000000000..78d85b3a7a4a
-> > > > --- /dev/null
-> > > > +++ b/drivers/clk/clk-kunit.c
-> > > > @@ -0,0 +1,204 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > +/*
-> > > > + * KUnit helpers for clk tests
-> > > > + */
-> > > > +#include <linux/clk.h>
-> > > > +#include <linux/clk-provider.h>
-> > > > +#include <linux/err.h>
-> > > > +#include <linux/kernel.h>
-> > > > +#include <linux/slab.h>
-> > > > +
-> > > > +#include <kunit/resource.h>
-> > > > +
-> > > > +#include "clk-kunit.h"
-> > > > +
-> > > > +static void kunit_clk_disable_unprepare(struct kunit_resource *res)
-> > >
-> > > We need to decide on the naming scheme of these, and in particular if
-> > > they should be kunit_clk or clk_kunit (or something else).
-> > >
-> > > I'd lean to clk_kunit, if only to match DRM's KUnit helpers being
-> > > drm_kunit_helper better, and so that these are more tightly bound to
-> > > the subsystem being tested.
-> > > (i.e., so I don't have to scroll through every subsystem's helpers
-> > > when autocompleting kunit_).
-> >
-> > Ok, got it. I was trying to match kunit_kzalloc() style. It makes it
-> > easy to slap the 'kunit_' prefix on existing auto-completed function
-> > names like kzalloc() or clk_prepare_enable().
->=20
-> Yeah: my rule of thumb at the moment is to keep the kunit_ prefix for
-> things which are generic across the whole kernel (and tend to be
-> implemented in lib/kunit), and to use suffixes or infixes (whichever
-> works best) for things which are subsystem-specific.
+On 2023/3/20 下午 06:31, Ilpo Järvinen wrote:
+> On Sun, 19 Mar 2023, Jacky Huang wrote:
+>
+>> On 2023/3/16 下午 11:56, Ilpo Järvinen wrote:
+>>> On Wed, 15 Mar 2023, Jacky Huang wrote:
+>>>
+>>>> From: Jacky Huang <ychuang3@nuvoton.com>
+>>>>
+>>>> The clock controller generates clocks for the whole chip, including
+>>>> system clocks and all peripheral clocks. This driver support ma35d1
+>>>> clock gating, divider, and individual PLL configuration.
+>>>>
+>>>> There are 6 PLLs in ma35d1 SoC:
+>>>>     - CA-PLL for the two Cortex-A35 CPU clock
+>>>>     - SYS-PLL for system bus, which comes from the companion MCU
+>>>>       and cannot be programmed by clock controller.
+>>>>     - DDR-PLL for DDR
+>>>>     - EPLL for GMAC and GFX, Display, and VDEC IPs.
+>>>>     - VPLL for video output pixel clock
+>>>>     - APLL for SDHC, I2S audio, and other IPs.
+>>>> CA-PLL has only one operation mode.
+>>>> DDR-PLL, EPLL, VPLL, and APLL are advanced PLLs which have 3
+>>>> operation modes: integer mode, fraction mode, and spread specturm mode.
+>>>>
+>>>> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+>>>> ---
+>>>> +};
+>>>> +
+>>>> +#define to_ma35d1_adc_clk_divider(_hw)	\
+>>>> +	container_of(_hw, struct ma35d1_adc_clk_divider, hw)
+>>> static inline
+>>
+>> I will modify these "static" functions as "static inline".
+> No, that's not what I meant. Make the container_of define static inline
+> function instead, no other functions. (Or if you have more than one of
+> such, all of them of course).
+>
+>>>> +}
+>>>> diff --git a/drivers/clk/nuvoton/clk-ma35d1-pll.c
+>>>> b/drivers/clk/nuvoton/clk-ma35d1-pll.c
+>>>> new file mode 100644
+>>>> index 000000000000..79e724b148fa
+>>>> --- /dev/null
+>>>> +++ b/drivers/clk/nuvoton/clk-ma35d1-pll.c
+>>>> @@ -0,0 +1,534 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>>> +/*
+>>>> + * Copyright (C) 2023 Nuvoton Technology Corp.
+>>>> + * Author: Chi-Fang Li <cfli0@nuvoton.com>
+>>>> + */
+>>>> +
+>>>> +#include <linux/clk.h>
+>>>> +#include <linux/clk-provider.h>
+>>>> +#include <linux/io.h>
+>>>> +#include <linux/slab.h>
+>>>> +#include <linux/bitfield.h>
+>>>> +
+>>>> +#include "clk-ma35d1.h"
+>>>> +
+>>>> +#define to_ma35d1_clk_pll(clk) \
+>>>> +	(container_of(clk, struct ma35d1_clk_pll, clk))
+>>> static inline
+>>
+>> I am sorry cannot get "static inline" refer to which one.
+>>
+>> Would you give more advice here?
+>>
+>> Thank you.
+> static inline struct ...type_here... *to_ma35d1_clk_pll(struct ...type_here... *clk)
+> {
+> 	return container_of(clk, struct ma35d1_clk_pll, clk);
+> }
+>
 
-A suffix is kind of weird though when any other managed call is using a
-prefix: devm is always using a prefix including for clocks, kunit for
-some calls too (like kzalloc).
+OK, I got it. Thank you very much.
 
-Having clk_get vs devm_clk_get vs clk_get_kunit would be very
-inconsistent and throws me off completely :)
 
-Maxime
+>>>> +	} else {
+>>>> +		pr_err("Failed to set rate %ld\n", u64PllFreq);
+>>>> +		return 0;
+>>>> +	}
+>>>> +
+>>>> +	u64P = (u64FCLKO >= VSIPLL_FCLK_MIN_FREQ) ? 1 :
+>>>> +	       ((VSIPLL_FCLK_MIN_FREQ / u64FCLKO) +
+>>>> +		((VSIPLL_FCLK_MIN_FREQ % u64FCLKO) ? 1 : 0));
+>>> Ditto.
+>>>
+>>> Is here some ...ROUND_UP() trick hidden too?
+>>
+>> This follows the description of PLL spec.
+> Right but I was looking into what the math does. To me this looks like
+> rounding up:
+>   VSIPLL_FCLK_MIN_FREQ / u64FCLKO + (VSIPLL_FCLK_MIN_FREQ % u64FCLKO ? 1 : 0)
+>
+> When modulo is > 0, add one, which is round up, no?
+>
+> There are helpers which you should use for rounding up, search for
+> *_ROUND_UP. I think math64.h had one 64-bit one.
 
---kn4g64rogn4yrwmy
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Yes, it is a round up. We will find out all the occurrence and use 
+ROUND_UP() macro instead.
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZBnAGAAKCRDj7w1vZxhR
-xcCXAPwJeWrqE0jAwByKsB4bICizCU+z39K0DcfRrOCvNgqcfwD8DHaZSDnzz/ky
-XhKIRMR9Jm58Oeu5HdXIKxO3zDFyWQU=
-=1Uxg
------END PGP SIGNATURE-----
 
---kn4g64rogn4yrwmy--
+>>>> +	u64X = u64tmp % 1000;
+>>>> +	u32FRAC = ((u64X << 24) + 500) / 1000;
+> I missed this earlier, is this rounding? ...Use a helper if it is.
+> Otherwise define what 500 is. (No need to answer despite question mark,
+> just do the change).
+>
+>>>> +
+>>>> +	u64SSRATE = ((PllSrcClk >> 1) / (u32Fmod * 2)) - 1;
+>>>> +	u64SLOPE = ((u64tmp * u32SR / u64SSRATE) << 24) / 100 / 1000;
+>>>> +
+>>>> +	u64PllClk = (PllSrcClk * u64tmp) / u64P / u64M / 1000;
+>>> Is some *SEC_PER_*SEC define relevant for 1000 ?
+>>>
+>>> Or some other units, e.g., HZ related?
+>>
+>> 1000 is for kHz to MHz, and 100 is for percentage.
+> Okay, then use KHZ_PER_MHZ from linux/units.h.
+>
+> We don't have anything for percents under include/ I think so that can be
+> left as literal.
+
+
+Sure, we are rewriting the pll calculation routine and add formula 
+comments to make it more readable.
+
+
+>>>> +	switch (pll->mode) {
+>>>> +	case VSIPLL_INTEGER_MODE:
+>>>> +		u64PllClk = CLK_CalPLLFreq_Mode0(PllSrcClk, u64PllFreq,
+>>>> +						 u32Reg);
+>>> One line.
+>>
+>> It will exceed 80 characters in one line.
+> Yeah, the semicolon won't fit to 80 chars :-) which means there won't be
+> significant information loss even on 80 chars terminal. This kind of cases
+> is why checkpatch won't complain until 100 chars. Use common sense (don't
+> hide most of the logic to 80-100 but don't be afraid of breaking the 80
+> chars where the information loss is not significant issue).
+>
+> Besides, once you removed the types from variable names, it will be
+> shorter anyway.
+>
+Got it. Thanks for your kind help and detailed explanation.
+
+
+Best regards,
+
+Jacky Huang
+
+
