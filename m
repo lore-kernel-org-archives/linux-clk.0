@@ -2,62 +2,47 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A941C6FD1D
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 08:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3BABC74A5B
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 08:35:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231207AbjCUI2R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 04:28:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52330 "EHLO
+        id S230387AbjCUIfi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 04:35:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231205AbjCUI1v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 04:27:51 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CE2942BF1
-        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 01:27:46 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id i5so9567677eda.0
-        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 01:27:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679387264;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/TEoac3zeVJgrljfVa3qI82OfUIQHCkP0Xt4a5FiT+o=;
-        b=yoCa7/aGur2BAdLJ0k075LI38fAA5uW/39Bida5ARuhbJngZpq4KmgzY4307Ut8mcl
-         5+KBSkPEzkhMAwVC2vJ0La0j1YcVqBeAsxgBRRLyNbnfUihAUfAwg9KJ2SKX/+mmcyBH
-         hsxEZrPQyY8MUSaIW44hGOF//5Fz62bZsZINgIUp1HMH0rv86LKAwuVYsB7oanw7OZe7
-         EB2/+hQ49iUSD89pX8kSyNdsN/GdaAIRJQ9+i2uojH8Mpy6qRk4E5k8knP27e/ETahjy
-         4EcIE96IsWZWZWSWZnCPCz0rTrt4u0mEZOEu7sqJoAWDrYti8/2rKmXD4z1+SoRCjYzh
-         Mf/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679387264;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/TEoac3zeVJgrljfVa3qI82OfUIQHCkP0Xt4a5FiT+o=;
-        b=KSbv3FVi7QitkEOiquTLhFKrZYoK44xBGbk88hI4TECfw8V6AZgHjX3ZIWdrvxlT9N
-         X3FddHnXRvwx5OHXhOWZu3rTm/EHqUqoRHRRrUf+NTwoX9eQEWS6r7s/qFQPTfX6vz51
-         ew15E5RngwyfPl+gapDzdw5GzraPW/+WgrGkNpKH/FV6utMs5EI7vqxrTs44nBFfdroc
-         ai7w4gtT7uqEBYtZswQCoezlAeOS+2kyX9yMqAU5LjJ1IYuf6g+fFrc6yBSfK3gZUIOj
-         CFixOKPlZnL0dBmBT2KPjn1UT/rb8LmVr5Lq85YwGKQaRMaLl/RgvZRzfOQS0Rwgn5T1
-         zAkA==
-X-Gm-Message-State: AO0yUKUZeU5JKQkC5PJXW7pxd3og+ucIp/AyX9U/z8FBJZj5EHnDE6nJ
-        etTx5Nvj9s/93lnlwJlHPfoKxA==
-X-Google-Smtp-Source: AK7set/otTGERTl499ZirD8V+i4JpJed1Ipr6PSjOnjMebniqJYVuGKY9sgR9QOB04aOlA+Bn+URmg==
-X-Received: by 2002:aa7:c858:0:b0:4fe:9bb7:73a2 with SMTP id g24-20020aa7c858000000b004fe9bb773a2mr2092978edt.38.1679387264161;
-        Tue, 21 Mar 2023 01:27:44 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:2142:d8da:5ae4:d817? ([2a02:810d:15c0:828:2142:d8da:5ae4:d817])
-        by smtp.gmail.com with ESMTPSA id x23-20020a50d617000000b004fa268da13esm5985814edi.56.2023.03.21.01.27.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Mar 2023 01:27:43 -0700 (PDT)
-Message-ID: <82f517b5-6697-3379-8d71-163b0d17735d@linaro.org>
-Date:   Tue, 21 Mar 2023 09:27:42 +0100
+        with ESMTP id S230070AbjCUIfQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 04:35:16 -0400
+Received: from sender3-op-o18.zoho.com (sender3-op-o18.zoho.com [136.143.184.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2BF4222F0;
+        Tue, 21 Mar 2023 01:34:32 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1679387632; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=RZ33c6MMbBaIUiN6tW6Y444tiInEw5dnZH4aJV04Ggrj2u77jkKN7Pptmq3Cj7mjRsimoPNbY52IDoe68FM3Saz0QyZ+8bMeZQjd/NWHjP6v72mGi17IXVPqEduQ6cDh4tic5wutYf7FTBaDR1SG6zo+jx3Vr8NNQE0ZpDHfmSA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1679387632; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=8hpQK9ToNpRcIR0nUQvwZUjbZt8M7a1xsGtg97t/jT8=; 
+        b=feFPt9K259BOOQvAzSGLpAj7UrqyPI6kaaLGi0SQbdOllKThreMgImG7kATvATJGwsflLdL/pu018hivdCiApDvJPZm+iwEaAS8a5w4MteDnt999Gvq8g1mI++qUM7hepkNbViR5BpU9e2JXq7QjjfgplDw7ZxfhlvKh8hErGvk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=arinc9.com;
+        spf=pass  smtp.mailfrom=arinc.unal@arinc9.com;
+        dmarc=pass header.from=<arinc.unal@arinc9.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1679387632;
+        s=zmail; d=arinc9.com; i=arinc.unal@arinc9.com;
+        h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+        bh=8hpQK9ToNpRcIR0nUQvwZUjbZt8M7a1xsGtg97t/jT8=;
+        b=N+x6iwsLl0kkIZvL5WzjHEHkXFoBBvW3/lNB4gleJO2NHWXD4gOH1PyVt7RWQQih
+        dSVEFvydqUMmFHUQPi6N9PgT/HVXTDqJtX8643HofqSdID9gsCxXSswfQc0VUINguHx
+        VfiT1ErqjShopml8rg+dbxTTNoI3vAZrdP1MZ5QM=
+Received: from [10.10.10.3] (149.91.1.15 [149.91.1.15]) by mx.zohomail.com
+        with SMTPS id 1679387630600838.4456904705892; Tue, 21 Mar 2023 01:33:50 -0700 (PDT)
+Message-ID: <d640a929-b6a0-1552-e66a-3a7bbabbc69f@arinc9.com>
+Date:   Tue, 21 Mar 2023 11:33:46 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
+ Thunderbird/102.8.0
 Subject: Re: [PATCH 01/10] dt: bindings: clock: add mtmips SoCs clock device
  tree binding documentation
 Content-Language: en-US
-To:     =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Sergio Paracuellos <sergio.paracuellos@gmail.com>
 Cc:     linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
         tsbogend@alpha.franken.de, john@phrozen.org,
@@ -66,7 +51,6 @@ Cc:     linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
         krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
         devicetree@vger.kernel.org
 References: <20230320161823.1424278-1-sergio.paracuellos@gmail.com>
- <20230320161823.1424278-2-sergio.paracuellos@gmail.com>
  <1e2f67b4-3bfb-d394-4f60-e6f63ce6a2fd@linaro.org>
  <CAMhs-H8OQ9gJLsifLuHD2GN8rYwnY=Zmdb0kMEfX4UUHhjMUyQ@mail.gmail.com>
  <d0f74721-bf5a-62de-53dc-62e7e735e2dc@linaro.org>
@@ -83,32 +67,39 @@ References: <20230320161823.1424278-1-sergio.paracuellos@gmail.com>
  <120663a9-aecf-4a43-d1fb-779cd52802c6@arinc9.com>
  <3d2b8a1a-99c9-f53e-4bb3-a8b938e2672f@linaro.org>
  <543ad00d-4171-ed02-0d31-676c6b003e54@arinc9.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <543ad00d-4171-ed02-0d31-676c6b003e54@arinc9.com>
-Content-Type: text/plain; charset=UTF-8
+ <82f517b5-6697-3379-8d71-163b0d17735d@linaro.org>
+From:   =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+In-Reply-To: <82f517b5-6697-3379-8d71-163b0d17735d@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/03/2023 09:24, Arınç ÜNAL wrote:
+On 21.03.2023 11:27, Krzysztof Kozlowski wrote:
+> On 21/03/2023 09:24, Arınç ÜNAL wrote:
+>>>>
+>>>> If we take the calling new things mediatek route, we will never get to
+>>>> the bottom of fixing the naming inconsistency.
 >>>
->>> If we take the calling new things mediatek route, we will never get to
->>> the bottom of fixing the naming inconsistency.
+>>> All new things, so new SoCs, should be called mediatek, because there is
+>>> no ralink and mediatek is already used for them. So why some new
+>>> Mediatek SoCs are "mediatek" but some other also new SoCs are "ralink"?
+>>>
+>>> You can do nothing (and no actual need) about existing inconsistency...
 >>
->> All new things, so new SoCs, should be called mediatek, because there is
->> no ralink and mediatek is already used for them. So why some new
->> Mediatek SoCs are "mediatek" but some other also new SoCs are "ralink"?
->>
->> You can do nothing (and no actual need) about existing inconsistency...
+>> I couldn't change ralink -> mediatek because company acquisitions don't
+>> grant the change. I don't see any reason to prevent changing mediatek ->
+>> ralink without breaking the ABI on the existing schemas.
 > 
-> I couldn't change ralink -> mediatek because company acquisitions don't 
-> grant the change. I don't see any reason to prevent changing mediatek -> 
-> ralink without breaking the ABI on the existing schemas.
+> You cannot change mediatek->ralink without breaking the ABI for the same
+> reasons.
 
-You cannot change mediatek->ralink without breaking the ABI for the same
-reasons.
+Then this is where I ask for an exception.
 
-Best regards,
-Krzysztof
+The current solution only complicates things more.
 
+https://github.com/paraka/linux/pull/1/files#diff-0ae6c456898d08536ce987c32f23f2eb6f4a0f7c38bff9a61bdf3d0daa3f6549R21
+
+Arınç
