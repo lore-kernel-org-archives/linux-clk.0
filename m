@@ -2,330 +2,185 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33B69C761AF
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Mar 2023 22:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB0DC761A6
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 02:31:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229643AbjCTWT0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 18:19:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43366 "EHLO
+        id S229579AbjCUCbG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 22:31:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230017AbjCTWSj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 18:18:39 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEB22366AB
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 15:17:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1679350644;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6mAYxo5czKjIWVyAG97r5+Dwem7hjuC7SmdROQurOmg=;
-        b=DXdzwp45fKKTxiJQMa2+GPSJZLPp7iFLTzcFa+pTiWeYaG+04BUX3Py1jqHx6cuhAcTwMG
-        T1wkfLS6ncLik5dO+01oL3Vl5BK6kD9I+i9jTBD/JcUfWAaYN8RzyCUxcaQkpxR9RENd0D
-        R8cwVMsXMtL5vgubYuL8pXeq7oxRTx4=
-Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com
- [209.85.210.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-58-JVSw3FNNPVasOClNBbgfEg-1; Mon, 20 Mar 2023 18:17:22 -0400
-X-MC-Unique: JVSw3FNNPVasOClNBbgfEg-1
-Received: by mail-ot1-f71.google.com with SMTP id a15-20020a0568300b8f00b0069965814cf7so6384328otv.15
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 15:17:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679350642;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6mAYxo5czKjIWVyAG97r5+Dwem7hjuC7SmdROQurOmg=;
-        b=gBxJZBFf3UNZXAid0NbyprmvaM22x+8LpVjqbsuKCV3UQwK2e2r8N1uQOvRf/bKFgg
-         vFPpRVcSKOZlYI/O56BsA7CNajUyyFjosCN7tLO9RAU5kM3ZW8EJReyLbQm+O6AZRVMB
-         cJQELLuQyrw93FFJNHeRO+zYJ+5YKbJ4VG9uI6X+JfrxNQSzUOgLybzv5ob+EY554tI0
-         GM4sOKqTaCckjE1pwHaaLtVG6Hj21rt1Iu1LCWk0hzaffG1eqlZpLhHPyLaQJXS9acdB
-         YSrqn0p2W0BVeyhkBm5imu4SzZLED8FAie+t4tzVrzqAUDlymHXj8ej5/LXXptQKvX5I
-         jE4g==
-X-Gm-Message-State: AO0yUKUs22soZ1kpEC0LCiEfnwD/7bDdkhIPozcUctoLDRByEmhCQzXE
-        BqjNTbffFiPh6h+mc0tq84vJiH4UhzBEk/+9nxXtyAOKJJZr+NVx4UYUR4pAxrkxoIy8ixKNgTt
-        0b9obqwD7RjcvwD0Cg1AR
-X-Received: by 2002:a05:6808:1455:b0:386:cbb7:fd34 with SMTP id x21-20020a056808145500b00386cbb7fd34mr907295oiv.57.1679350641888;
-        Mon, 20 Mar 2023 15:17:21 -0700 (PDT)
-X-Google-Smtp-Source: AK7set/RPMw/4dqYIQwLU8hOZP75EGO+7zdFukaYHz8sVO/zWvrU5i4JX8duj3sLervZuK2KiyF5Eg==
-X-Received: by 2002:a05:6808:1455:b0:386:cbb7:fd34 with SMTP id x21-20020a056808145500b00386cbb7fd34mr907277oiv.57.1679350641625;
-        Mon, 20 Mar 2023 15:17:21 -0700 (PDT)
-Received: from halaney-x13s.redhat.com (104-53-165-62.lightspeed.stlsmo.sbcglobal.net. [104.53.165.62])
-        by smtp.gmail.com with ESMTPSA id q204-20020a4a33d5000000b0053853156b5csm4092465ooq.8.2023.03.20.15.17.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Mar 2023 15:17:21 -0700 (PDT)
-From:   Andrew Halaney <ahalaney@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, vkoul@kernel.org,
-        bhupesh.sharma@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, peppe.cavallaro@st.com,
-        alexandre.torgue@foss.st.com, joabreu@synopsys.com,
-        mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
-        linux@armlinux.org.uk, veekhee@apple.com,
-        tee.min.tan@linux.intel.com, mohammad.athari.ismail@intel.com,
-        jonathanh@nvidia.com, ruppala@nvidia.com, bmasney@redhat.com,
-        andrey.konovalov@linaro.org, linux-arm-msm@vger.kernel.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, ncai@quicinc.com,
-        jsuraj@qti.qualcomm.com, hisunil@quicinc.com, echanude@redhat.com,
-        Andrew Halaney <ahalaney@redhat.com>
-Subject: [PATCH net-next v2 12/12] net: stmmac: dwmac-qcom-ethqos: Add EMAC3 support
-Date:   Mon, 20 Mar 2023 17:16:17 -0500
-Message-Id: <20230320221617.236323-13-ahalaney@redhat.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230320221617.236323-1-ahalaney@redhat.com>
-References: <20230320221617.236323-1-ahalaney@redhat.com>
-MIME-Version: 1.0
-Content-type: text/plain
+        with ESMTP id S229756AbjCUCbE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 22:31:04 -0400
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2105.outbound.protection.outlook.com [40.107.255.105])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A26242BF3B;
+        Mon, 20 Mar 2023 19:30:15 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dPxW1nLp92zAA4RL1/eB2KQn1lYwo9sSrjs2qVmQjtwRh1SpbYeilRSV/+6j7TwlUMtryXFuJ9z0rukA0SZNeoGz9Lb2TEIalKk2MiitHm8s4soEr6bBxj4uVaSny9HliLkqArn79TJuCDoXtiNMaOLbmYTLUyW0jmjopTVQttNkFppPul0Eb37DvYZ8mFEhSQ+UBS5K+mNaD6yZ22RivGR20EeML4gw/glf/eH80tlq9jmAENg6tjbS9lK/1QzAFgcu45wyEGomwqIx5YrM/0tm6CV9zPTeK8jFrfS9PCMZNOuXz49NzOdodd2BoYON3bUydtIffI//qkor9SU/AQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=U7xCt5bGts4l07TSUXTI5HH6jdlNYjXViQGoWIFmhqw=;
+ b=JcewCIVqqybln2eFDpZmgoaIbvXhrlPi6sKKptBHylfEygAET7kjMN2VFQ+zWW8OKO4IXVohF9ZsJbgHiP3btvZHpLxl3w03thf9xxTZ9Op8bhMoVKs/rD2x7dwpWLj1ffEhYzbtSlsDxtEe5fcud7ATAsN+p+IgKw+hB+LgoS+3u1ZIHoEBjS9e0LxRe0Nj9c533hkTJFs50829h6z4OTz4x5b65GnDkW0g40ZVadUgISzxNZxR6FvsHjCAT27zTgWtMjhCAT5F4reNTIs4zpwDxVApiDpCRTZo/75L2AdlP86KlxbUDRM2UU6wZ1X7Bi/X2AzBWzgy3CULD6P3Zg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from PSAPR03MB6329.apcprd03.prod.outlook.com (2603:1096:301:5a::9)
+ by KL1PR0302MB5204.apcprd03.prod.outlook.com (2603:1096:820:43::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.37; Tue, 21 Mar
+ 2023 02:30:09 +0000
+Received: from PSAPR03MB6329.apcprd03.prod.outlook.com
+ ([fe80::3262:d4e7:7c19:dcc1]) by PSAPR03MB6329.apcprd03.prod.outlook.com
+ ([fe80::3262:d4e7:7c19:dcc1%9]) with mapi id 15.20.6178.037; Tue, 21 Mar 2023
+ 02:30:09 +0000
+Message-ID: <b5e647e2-4561-e6c1-016f-2c3b260916bb@amlogic.com>
+Date:   Tue, 21 Mar 2023 10:29:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH V2] clk: meson: vid-pll-div: added meson_vid_pll_div_ops
+ support
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, kelvin.zhang@amlogic.com,
+        qi.duan@amlogic.com
+References: <20230320113445.17260-1-yu.tu@amlogic.com>
+ <CAFBinCAE-ihq9oeXc=GqUEHVKUYM+n_e+2_5+gDMTGQcEEhRtg@mail.gmail.com>
+Content-Language: en-US
+From:   Yu Tu <yu.tu@amlogic.com>
+In-Reply-To: <CAFBinCAE-ihq9oeXc=GqUEHVKUYM+n_e+2_5+gDMTGQcEEhRtg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2PR02CA0030.apcprd02.prod.outlook.com
+ (2603:1096:4:195::17) To PSAPR03MB6329.apcprd03.prod.outlook.com
+ (2603:1096:301:5a::9)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PSAPR03MB6329:EE_|KL1PR0302MB5204:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0b65780d-c081-4568-0d99-08db29b42fb7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 2C0spAM9Ci61ur+DH2qMJ+S6UH3aHvis9AP3xEV8J07b5wkJOb0HSAxoL1j4K92vVou55Z+1zuywZXZCVkdLmZ2YEmpye53KDb23gHukfnW9cMWvTN6SVffvEvCZzEz2ctlyyEGMqf9AX/v5+CjJFVHwOZ82b39k36MbyTr3s8lVXg6LpO5lL25QUgF0WhTB/cEGVML7vYA8dPZmq7G87bKGKDCoeJRy5fUxw1EzjsGaWw/31d5e+1BH50SVe2TOFNQ3t6TpjK0DZ0IDiz6r1utYVDQSem5zgGo54t6nNfrsuJow67vOBHXgJo+5tb5fVmO1Ja4MHiJ3rTsJu/3NIVyH58DnkbWuwiIe1bahHdGiJBa6rM5/PGY0+hdGsuZcTu7z7qpmc3Pcl4Y7PIa0sX939r2Rvgf8bI47qHoN0gp/ZTH5te2HlAomyJaz9ByRZYloef4hDkUyK7tTF+CSIIuZKcvUFeUQ5Rva8smrZX7VImZ/6wfzdqOMZ3Sm4aLpjTcIohwBARd9T87Jz0wrR3UxuvFyNzYIoZJgisAnDAxVf42is1/Neo7Kzp0VR3hsy3Ol1XxrrQEcAjk+dS0yjMNqh8Ah016BoeXVVIWBlnPls6Mq8wzgZXQbze5dnfb5M7c/+QY6EK0n52HoLGfZB8SQ93fr2UsL9IpRkW90hqQ5Q9m5TjnDJHasIdd+M+5G6OC9p/SP9J6pYxHXw5mj7IifATD4LpikkwlaafpTZtcnOOAzpksiwKUXy/RnL2mLaR/c4iZDg8OHn2xpOA18qOzVsmLvAQYgiRMpmsyPniQ=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR03MB6329.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(39850400004)(366004)(376002)(346002)(136003)(396003)(451199018)(44832011)(41300700001)(8936002)(7416002)(5660300002)(4326008)(6506007)(86362001)(36756003)(31696002)(38100700002)(2906002)(107886003)(6666004)(83380400001)(478600001)(6486002)(2616005)(6512007)(26005)(186003)(53546011)(31686004)(54906003)(316002)(66476007)(8676002)(66946007)(6916009)(66556008)(45980500001)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UzJHZFRNdEdza2dQblBRZVR5TGFyTzVITW9xZG9HUnNsSE91Q3NnSlkvalF5?=
+ =?utf-8?B?NDBtQnp5UmtkRkV4bmdGbi9aUTVURzQ2STlzM1VITFNENCtEc2tPU3cxMjd3?=
+ =?utf-8?B?Q1RFUng3V3pzampDQ1RIeGJmUmRBM2VhOEkyaGZlK2hwN1AxaUVKTnJoVm8r?=
+ =?utf-8?B?QkgyT1FTcG1RbUhRek1hRG9XTWZXY010UmJBVzE2dlFMMkxhZWwzck9NbXZt?=
+ =?utf-8?B?Mk51Z0tMRGhvS3JuZ1l5aGIvYStzTzlTODlFZHpZdXBSNW9sbXBJUGZtZkl2?=
+ =?utf-8?B?WlN6VkZTQ2lTaVhnNnk5cDJVN1hGek41c1prOVJFT1U2alBqMklpanNaZEow?=
+ =?utf-8?B?akZPcXNzRU1rMldNSVZ5c09kaUtNeUExaTQxQTZYYk80OE1RZHlRQ2puSkJn?=
+ =?utf-8?B?NTRDTGFZWUJZS1RoaDNLTVVFd1YvM2xYYTJWeVUwczNIWDU0QzdWZEg4MHhY?=
+ =?utf-8?B?S2JYMnk3d1lMMHdYbWk0VHBYd1dlTndGODNVb2x4ZUltbjBhRGNwWm0xVUtF?=
+ =?utf-8?B?c3lmSjEydXRuUjhuekdQYkFvbnZDU3BlN2lrQ0dWYXdaVGJDV0lSU1hSSDN6?=
+ =?utf-8?B?cW1iL1VlVGM5YWdkZzlzbnVVaFlWQjRIOEhlalRjMkN2QXpoSUFXNFptWUlj?=
+ =?utf-8?B?YTNHSTdTSFVoZmMrek9xU2pKWm9MMHZaV1dqNnIrcFUxTFcyQUMrdis3UUs0?=
+ =?utf-8?B?azNTbVRlNm1HUko2UVczZ1ZvOStKQjhhQUJnVkdkOG5uYTNYcUh6OGJhQVJn?=
+ =?utf-8?B?clpXU2tEa2I1bGorY0txR3JERVZrVm1GL05DVjJZdzNQOFJNSlVwa1VIb2Q3?=
+ =?utf-8?B?dThJTFpCbVZXNUl0YThLSVhMYmV2T1dIVmMwb05QWllpSUlGN0lZZjlYckdX?=
+ =?utf-8?B?K2ZWSldsY3A3NWtDRmZ6ejhNeUxFOStmNjJOZ0RTb1pNS3dvWlJUMXloYWxj?=
+ =?utf-8?B?RGpSbVIvU3hINnM0cVRISlBQQ2FJODVoR0ZBeUNsTnVkTXZFT1hUWUVXN1R6?=
+ =?utf-8?B?TU11YUpYanEzNm13MUZWZW5XYW1EVmtMRnVreDZhdXI3MkNOcWUxbHZ2WmFB?=
+ =?utf-8?B?aUNtZ3IrUDhQSzFCc2lPSFdnamtuLzNiaFFzZU9qdUlOaU9leXBuakM0VTBt?=
+ =?utf-8?B?Ykw3KzdtSkdyRmw2QzlNd3ArOFlpeFByYVR4dVBDakEveGFlbkI5VU9HVkpF?=
+ =?utf-8?B?Y1JVM211VU9BZ1ZwekpvS2M0L1lnNERmMzRPVnl3THBTa1kzMlpiQkkrM1pW?=
+ =?utf-8?B?U1htU3VrZi8vSFdJY3JzUHlkTDhHQ0NGUm9SdGZkOEdaZnR0UUE4b2JXUDQ5?=
+ =?utf-8?B?SWY2OU5WdUpYWTdTYU9uUlduRXNnV3NlL0RxbU8wcm5DbUx4eTRkMk5kaVhQ?=
+ =?utf-8?B?Mm80TGdteU1YaTUzT0ZlZmgzSTRzWGliZlJmR3JBVVEvZkJiV0hzRVFoRloy?=
+ =?utf-8?B?OG80TzRYQWdxQmhpeUJKNnQxcGRLNldEMjNzMTBzVmpGNjJJQmpGbndlbE5B?=
+ =?utf-8?B?cERrZy9ZRnFVY0ZwdDUwdjFPS2N3SjA5cnFOYUxRcnFERDJFd25jdHpjZ0NR?=
+ =?utf-8?B?QitFL2xWSXVJc01pUXF5aXRLUW5nZUwvdU4xM3dyQ3Y0MFNCK25xVFdRQ3VD?=
+ =?utf-8?B?OFR3dTRNRVN5MmtjN1ZpWGRxM2VkNllJZUZmdHBxNkhlUGpRRklnQ25zL3NL?=
+ =?utf-8?B?VWdxckZkK3lML0V6Z2t2MDBadE1QOFdsN05wc0F4YzZ1eXJubWRHajRHQW94?=
+ =?utf-8?B?ZS9EMExHZWovYkpDSFF5enJtZDIra2lGY21lTzVmZndqVm5ZcEZ2NUdvcHJs?=
+ =?utf-8?B?YXdiWitwNmwxWTRHbjZOem9aMStSZEw4bnc2RlRUa3pDYWZZUkdCKzZmbXpU?=
+ =?utf-8?B?NzdrdHdUaG5PZm54eDRmZmkyRnl4ZHhRVVhJSFYySTN4Uk80T21CN20yMXN0?=
+ =?utf-8?B?emxZWGs2aVUxc3k0ODBKN0Q3R3BJMmx3NFdsNWZQdzhHRnJ0TWtVYnMrdkc3?=
+ =?utf-8?B?V0MzMlZGRVpvQ0hUd2RlcTJNRDdFUncyNDgwUjNrWkxnWCtrdCtSOEUzejZn?=
+ =?utf-8?B?KzU3dkR4cWJpUndWcFBBOWlnQy9RdGtydXUxS3dzc1dYczlYOUFOME8rbjJh?=
+ =?utf-8?Q?+DJoVrrSjTqgAUk0chEbf8Hn2?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b65780d-c081-4568-0d99-08db29b42fb7
+X-MS-Exchange-CrossTenant-AuthSource: PSAPR03MB6329.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2023 02:30:07.8809
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Qysil+Zs4eISICnIpOdeD9tdirY+re/pLQKk58DhfjqCKqwIosa5w10hqxK29t8qiC2nupS0iI09+7GbaNCn+g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0302MB5204
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the new programming sequence needed for EMAC3 based platforms such
-as the sc8280xp family.
+Hi Martin，
+	First of all, thank you for your reply.
 
-Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
----
+On 2023/3/20 23:35, Martin Blumenstingl wrote:
+> [ EXTERNAL EMAIL ]
+> 
+> Hello Yu Tu,
+> 
+> On Mon, Mar 20, 2023 at 12:35 PM Yu Tu <yu.tu@amlogic.com> wrote:
+>>
+>> Since the previous code only provides "ro_ops" for the vid_pll_div
+>> clock. In fact, the clock can be set. So add "ops" that can set the
+>> clock, especially for later chips like S4 SOC and so on.
+>>
+>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
+>> ---
+> please describe the changes you did compared to the previous version(s)
 
-Changes since v1:
-	* None
+I'll add it in the next version.
 
- .../stmicro/stmmac/dwmac-qcom-ethqos.c        | 106 ++++++++++++++----
- 1 file changed, 84 insertions(+), 22 deletions(-)
+> 
+> [...]
+>> diff --git a/drivers/clk/meson/vid-pll-div.h b/drivers/clk/meson/vid-pll-div.h
+>> index c0128e33ccf9..bbccab340910 100644
+>> --- a/drivers/clk/meson/vid-pll-div.h
+>> +++ b/drivers/clk/meson/vid-pll-div.h
+>> @@ -10,11 +10,14 @@
+>>   #include <linux/clk-provider.h>
+>>   #include "parm.h"
+>>
+>> +#define VID_PLL_DIV_TABLE_SIZE         14
+> In v1 you used ARRAY_SIZE(vid_pll_div_table) wherever this new macro
+> is used instead.
+> I think using ARRAY_SIZE is the better approach because it means the
+> references will update automatically if an entry is added/removed from
+> vid_pll_div_table
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-index 41e6f4fa92f3..1fe8563b9c0d 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-@@ -11,6 +11,7 @@
- 
- #define RGMII_IO_MACRO_CONFIG		0x0
- #define SDCC_HC_REG_DLL_CONFIG		0x4
-+#define SDCC_TEST_CTL			0x8
- #define SDCC_HC_REG_DDR_CONFIG		0xC
- #define SDCC_HC_REG_DLL_CONFIG2		0x10
- #define SDC4_STATUS			0x14
-@@ -49,6 +50,7 @@
- #define SDCC_DDR_CONFIG_EXT_PRG_RCLK_DLY	GENMASK(26, 21)
- #define SDCC_DDR_CONFIG_EXT_PRG_RCLK_DLY_CODE	GENMASK(29, 27)
- #define SDCC_DDR_CONFIG_EXT_PRG_RCLK_DLY_EN	BIT(30)
-+#define SDCC_DDR_CONFIG_TCXO_CYCLES_CNT		GENMASK(11, 9)
- #define SDCC_DDR_CONFIG_PRG_RCLK_DLY		GENMASK(8, 0)
- 
- /* SDCC_HC_REG_DLL_CONFIG2 fields */
-@@ -79,6 +81,7 @@ struct ethqos_emac_driver_data {
- 	const struct ethqos_emac_por *por;
- 	unsigned int num_por;
- 	bool rgmii_config_loopback_en;
-+	bool has_emac3;
- };
- 
- struct qcom_ethqos {
-@@ -92,6 +95,7 @@ struct qcom_ethqos {
- 	const struct ethqos_emac_por *por;
- 	unsigned int num_por;
- 	bool rgmii_config_loopback_en;
-+	bool has_emac3;
- };
- 
- static int rgmii_readl(struct qcom_ethqos *ethqos, unsigned int offset)
-@@ -184,6 +188,7 @@ static const struct ethqos_emac_driver_data emac_v2_3_0_data = {
- 	.por = emac_v2_3_0_por,
- 	.num_por = ARRAY_SIZE(emac_v2_3_0_por),
- 	.rgmii_config_loopback_en = true,
-+	.has_emac3 = false,
- };
- 
- static const struct ethqos_emac_por emac_v2_1_0_por[] = {
-@@ -199,6 +204,23 @@ static const struct ethqos_emac_driver_data emac_v2_1_0_data = {
- 	.por = emac_v2_1_0_por,
- 	.num_por = ARRAY_SIZE(emac_v2_1_0_por),
- 	.rgmii_config_loopback_en = false,
-+	.has_emac3 = false,
-+};
-+
-+static const struct ethqos_emac_por emac_v3_0_0_por[] = {
-+	{ .offset = RGMII_IO_MACRO_CONFIG,	.value = 0x40c01343 },
-+	{ .offset = SDCC_HC_REG_DLL_CONFIG,	.value = 0x2004642c },
-+	{ .offset = SDCC_HC_REG_DDR_CONFIG,	.value = 0x80040800 },
-+	{ .offset = SDCC_HC_REG_DLL_CONFIG2,	.value = 0x00200000 },
-+	{ .offset = SDCC_USR_CTL,		.value = 0x00010800 },
-+	{ .offset = RGMII_IO_MACRO_CONFIG2,	.value = 0x00002060 },
-+};
-+
-+static const struct ethqos_emac_driver_data emac_v3_0_0_data = {
-+	.por = emac_v3_0_0_por,
-+	.num_por = ARRAY_SIZE(emac_v3_0_0_por),
-+	.rgmii_config_loopback_en = false,
-+	.has_emac3 = true,
- };
- 
- static int ethqos_dll_configure(struct qcom_ethqos *ethqos)
-@@ -222,11 +244,13 @@ static int ethqos_dll_configure(struct qcom_ethqos *ethqos)
- 	rgmii_updatel(ethqos, SDCC_DLL_CONFIG_DLL_EN,
- 		      SDCC_DLL_CONFIG_DLL_EN, SDCC_HC_REG_DLL_CONFIG);
- 
--	rgmii_updatel(ethqos, SDCC_DLL_MCLK_GATING_EN,
--		      0, SDCC_HC_REG_DLL_CONFIG);
-+	if (!ethqos->has_emac3) {
-+		rgmii_updatel(ethqos, SDCC_DLL_MCLK_GATING_EN,
-+			      0, SDCC_HC_REG_DLL_CONFIG);
- 
--	rgmii_updatel(ethqos, SDCC_DLL_CDR_FINE_PHASE,
--		      0, SDCC_HC_REG_DLL_CONFIG);
-+		rgmii_updatel(ethqos, SDCC_DLL_CDR_FINE_PHASE,
-+			      0, SDCC_HC_REG_DLL_CONFIG);
-+	}
- 
- 	/* Wait for CK_OUT_EN clear */
- 	do {
-@@ -261,18 +285,20 @@ static int ethqos_dll_configure(struct qcom_ethqos *ethqos)
- 	rgmii_updatel(ethqos, SDCC_DLL_CONFIG2_DDR_CAL_EN,
- 		      SDCC_DLL_CONFIG2_DDR_CAL_EN, SDCC_HC_REG_DLL_CONFIG2);
- 
--	rgmii_updatel(ethqos, SDCC_DLL_CONFIG2_DLL_CLOCK_DIS,
--		      0, SDCC_HC_REG_DLL_CONFIG2);
-+	if (!ethqos->has_emac3) {
-+		rgmii_updatel(ethqos, SDCC_DLL_CONFIG2_DLL_CLOCK_DIS,
-+			      0, SDCC_HC_REG_DLL_CONFIG2);
- 
--	rgmii_updatel(ethqos, SDCC_DLL_CONFIG2_MCLK_FREQ_CALC,
--		      0x1A << 10, SDCC_HC_REG_DLL_CONFIG2);
-+		rgmii_updatel(ethqos, SDCC_DLL_CONFIG2_MCLK_FREQ_CALC,
-+			      0x1A << 10, SDCC_HC_REG_DLL_CONFIG2);
- 
--	rgmii_updatel(ethqos, SDCC_DLL_CONFIG2_DDR_TRAFFIC_INIT_SEL,
--		      BIT(2), SDCC_HC_REG_DLL_CONFIG2);
-+		rgmii_updatel(ethqos, SDCC_DLL_CONFIG2_DDR_TRAFFIC_INIT_SEL,
-+			      BIT(2), SDCC_HC_REG_DLL_CONFIG2);
- 
--	rgmii_updatel(ethqos, SDCC_DLL_CONFIG2_DDR_TRAFFIC_INIT_SW,
--		      SDCC_DLL_CONFIG2_DDR_TRAFFIC_INIT_SW,
--		      SDCC_HC_REG_DLL_CONFIG2);
-+		rgmii_updatel(ethqos, SDCC_DLL_CONFIG2_DDR_TRAFFIC_INIT_SW,
-+			      SDCC_DLL_CONFIG2_DDR_TRAFFIC_INIT_SW,
-+			      SDCC_HC_REG_DLL_CONFIG2);
-+	}
- 
- 	return 0;
- }
-@@ -326,9 +352,17 @@ static int ethqos_rgmii_macro_init(struct qcom_ethqos *ethqos)
- 			      RGMII_CONFIG2_RX_PROG_SWAP,
- 			      RGMII_IO_MACRO_CONFIG2);
- 
--		/* Set PRG_RCLK_DLY to 57 for 1.8 ns delay */
--		rgmii_updatel(ethqos, SDCC_DDR_CONFIG_PRG_RCLK_DLY,
--			      57, SDCC_HC_REG_DDR_CONFIG);
-+		/* PRG_RCLK_DLY = TCXO period * TCXO_CYCLES_CNT / 2 * RX delay ns,
-+		 * in practice this becomes PRG_RCLK_DLY = 52 * 4 / 2 * RX delay ns
-+		 */
-+		if (ethqos->has_emac3)
-+			/* 0.9 ns */
-+			rgmii_updatel(ethqos, SDCC_DDR_CONFIG_PRG_RCLK_DLY,
-+				      115, SDCC_HC_REG_DDR_CONFIG);
-+		else
-+			/* 1.8 ns */
-+			rgmii_updatel(ethqos, SDCC_DDR_CONFIG_PRG_RCLK_DLY,
-+				      57, SDCC_HC_REG_DDR_CONFIG);
- 		rgmii_updatel(ethqos, SDCC_DDR_CONFIG_PRG_DLY_EN,
- 			      SDCC_DDR_CONFIG_PRG_DLY_EN,
- 			      SDCC_HC_REG_DDR_CONFIG);
-@@ -354,8 +388,15 @@ static int ethqos_rgmii_macro_init(struct qcom_ethqos *ethqos)
- 			      BIT(6), RGMII_IO_MACRO_CONFIG);
- 		rgmii_updatel(ethqos, RGMII_CONFIG2_RSVD_CONFIG15,
- 			      0, RGMII_IO_MACRO_CONFIG2);
--		rgmii_updatel(ethqos, RGMII_CONFIG2_RX_PROG_SWAP,
--			      0, RGMII_IO_MACRO_CONFIG2);
-+
-+		if (ethqos->has_emac3)
-+			rgmii_updatel(ethqos, RGMII_CONFIG2_RX_PROG_SWAP,
-+				      RGMII_CONFIG2_RX_PROG_SWAP,
-+				      RGMII_IO_MACRO_CONFIG2);
-+		else
-+			rgmii_updatel(ethqos, RGMII_CONFIG2_RX_PROG_SWAP,
-+				      0, RGMII_IO_MACRO_CONFIG2);
-+
- 		/* Write 0x5 to PRG_RCLK_DLY_CODE */
- 		rgmii_updatel(ethqos, SDCC_DDR_CONFIG_EXT_PRG_RCLK_DLY_CODE,
- 			      (BIT(29) | BIT(27)), SDCC_HC_REG_DDR_CONFIG);
-@@ -388,8 +429,13 @@ static int ethqos_rgmii_macro_init(struct qcom_ethqos *ethqos)
- 			      RGMII_IO_MACRO_CONFIG);
- 		rgmii_updatel(ethqos, RGMII_CONFIG2_RSVD_CONFIG15,
- 			      0, RGMII_IO_MACRO_CONFIG2);
--		rgmii_updatel(ethqos, RGMII_CONFIG2_RX_PROG_SWAP,
--			      0, RGMII_IO_MACRO_CONFIG2);
-+		if (ethqos->has_emac3)
-+			rgmii_updatel(ethqos, RGMII_CONFIG2_RX_PROG_SWAP,
-+				      RGMII_CONFIG2_RX_PROG_SWAP,
-+				      RGMII_IO_MACRO_CONFIG2);
-+		else
-+			rgmii_updatel(ethqos, RGMII_CONFIG2_RX_PROG_SWAP,
-+				      0, RGMII_IO_MACRO_CONFIG2);
- 		/* Write 0x5 to PRG_RCLK_DLY_CODE */
- 		rgmii_updatel(ethqos, SDCC_DDR_CONFIG_EXT_PRG_RCLK_DLY_CODE,
- 			      (BIT(29) | BIT(27)), SDCC_HC_REG_DDR_CONFIG);
-@@ -432,6 +478,17 @@ static int ethqos_configure(struct qcom_ethqos *ethqos)
- 	rgmii_updatel(ethqos, SDCC_DLL_CONFIG_PDN,
- 		      SDCC_DLL_CONFIG_PDN, SDCC_HC_REG_DLL_CONFIG);
- 
-+	if (ethqos->has_emac3) {
-+		if (ethqos->speed == SPEED_1000) {
-+			rgmii_writel(ethqos, 0x1800000, SDCC_TEST_CTL);
-+			rgmii_writel(ethqos, 0x2C010800, SDCC_USR_CTL);
-+			rgmii_writel(ethqos, 0xA001, SDCC_HC_REG_DLL_CONFIG2);
-+		} else {
-+			rgmii_writel(ethqos, 0x40010800, SDCC_USR_CTL);
-+			rgmii_writel(ethqos, 0xA001, SDCC_HC_REG_DLL_CONFIG2);
-+		}
-+	}
-+
- 	/* Clear DLL_RST */
- 	rgmii_updatel(ethqos, SDCC_DLL_CONFIG_DLL_RST, 0,
- 		      SDCC_HC_REG_DLL_CONFIG);
-@@ -451,7 +508,9 @@ static int ethqos_configure(struct qcom_ethqos *ethqos)
- 			      SDCC_HC_REG_DLL_CONFIG);
- 
- 		/* Set USR_CTL bit 26 with mask of 3 bits */
--		rgmii_updatel(ethqos, GENMASK(26, 24), BIT(26), SDCC_USR_CTL);
-+		if (!ethqos->has_emac3)
-+			rgmii_updatel(ethqos, GENMASK(26, 24), BIT(26),
-+				      SDCC_USR_CTL);
- 
- 		/* wait for DLL LOCK */
- 		do {
-@@ -546,6 +605,7 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
- 	ethqos->por = data->por;
- 	ethqos->num_por = data->num_por;
- 	ethqos->rgmii_config_loopback_en = data->rgmii_config_loopback_en;
-+	ethqos->has_emac3 = data->has_emac3;
- 
- 	ethqos->rgmii_clk = devm_clk_get(&pdev->dev, "rgmii");
- 	if (IS_ERR(ethqos->rgmii_clk)) {
-@@ -564,7 +624,8 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
- 	plat_dat->bsp_priv = ethqos;
- 	plat_dat->fix_mac_speed = ethqos_fix_mac_speed;
- 	plat_dat->dump_debug_regs = rgmii_dump;
--	plat_dat->has_gmac4 = 1;
-+	plat_dat->has_gmac4 = !data->has_emac3;
-+	plat_dat->has_emac3 = data->has_emac3;
- 	plat_dat->pmt = 1;
- 	plat_dat->tso_en = of_property_read_bool(np, "snps,tso");
- 	if (of_device_is_compatible(np, "qcom,qcs404-ethqos"))
-@@ -603,6 +664,7 @@ static int qcom_ethqos_remove(struct platform_device *pdev)
- static const struct of_device_id qcom_ethqos_match[] = {
- 	{ .compatible = "qcom,qcs404-ethqos", .data = &emac_v2_3_0_data},
- 	{ .compatible = "qcom,sm8150-ethqos", .data = &emac_v2_1_0_data},
-+	{ .compatible = "qcom,sc8280xp-ethqos", &emac_v3_0_0_data},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, qcom_ethqos_match);
--- 
-2.39.2
+I agree with you. Perhaps the key is to understand what Jerome said.
 
+> 
+> Also I think there's a different understanding about what Jerome
+> previously wrote:
+>> It would be nice to actually describe how this vid pll work so we can
+>> stop using precompute "magic" values and actually use the IP to its full
+>> capacity.
+>  From what I understand is that you interpreted this as "let's change
+> ARRAY_SIZE(vid_pll_div_table) to a new macro called
+> VID_PLL_DIV_TABLE_SIZE".
+> But I think what Jerome meant is: "let's get rid of vid_pll_div_table
+> and implement how to actually calculate the clock rate - without
+> hard-coding 14 possible clock settings in vid_pll_div_table". Look at
+> clk-mpll.c and/or clk-pll.c which allow calculating arbitrary rates
+> without any hard-coded tables.
+
+In fact, pll and mpll are also fixed register writes corresponding 
+values. But every SOC is different, so it makes more sense to set it 
+outside. The VID PLL is a fixed value for all current SoCs.
+
+> 
+> 
+> Best regards,
+> Martin
+> 
