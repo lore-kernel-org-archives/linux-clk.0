@@ -2,105 +2,136 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2473BC74A5B
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 06:43:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F627C74A5B
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 06:46:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230369AbjCUGn3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 02:43:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50126 "EHLO
+        id S229611AbjCUGqM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 02:46:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230141AbjCUGn2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 02:43:28 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB0151517A
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 23:43:25 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id o12so55664854edb.9
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 23:43:25 -0700 (PDT)
+        with ESMTP id S230021AbjCUGqK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 02:46:10 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41009144A0
+        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 23:46:00 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id t5so18883830edd.7
+        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 23:46:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679381004;
+        d=linaro.org; s=google; t=1679381159;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=TBUGEm6xD04h/1z1H1/LXCFCYvbeAFjDxoKdCWiZTRw=;
-        b=TrNJRcarl79asRsxZoLMPzcwUu9wvLMOavua/gYPjGiTqabgLiBYld2RVgUkSQQ3/v
-         ICaxVcfnes/fWiF0adfSWcMSu0R1Cry5cvNEqyGn+PIst6lpmh6Boz9WPoc131jdZKVg
-         xQd47BhvQPqfdyvkhnDRisG68N5BO9+Fj9/BzYi6/ZyDdSlvfFMpuWJR3DZgJQUm/Pft
-         V2hKilEhJ2EuUE49nz2PbPonKntN8qMXDfUQFGgwlCGYuYdup0NPD6geGrvNsHkOfx+5
-         JLR5sgPtcQxlHC0FMJ/ZBhEr6z8EtoVeUXhg7jnqHvqdxjprUGQ35qnBZtrnZsigW6v7
-         KPPA==
+        bh=mUdHje46W1zTNIZ/CNDjQ6OgFD/hkF9BqC9f0d1Yp9M=;
+        b=TB5gf0cvfqQErXIDKzhTilnhKc+Giz9y1+e86uIzU/0xKYTMgwA/IgCKLMpazw9ryD
+         mfcDTbDBDoXseNMRrrY56pFaTEj9uBIHJePDrH2UHcvgBS7EZpkkwqinD4xK4Tik8AOa
+         FPZEhAACyT3+UbI5tkPnoI+n/FTDSkIfRPUw7YUlNfZPYZIhjhfV1DNsfmB7Pg561+xt
+         +TJaI6+kDXRyzcGehlirCDanGlXqwWQj7cLMH89R+ybR57wEq6RaqWgcMyUYyKNaHp9l
+         BCb+MXlpw0bVFIYYJqo5sOVQj3SDIl1ysphQeIQ8TVvXkPvaUSHEuoMR7+mRnFBUXhId
+         gN3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679381004;
+        d=1e100.net; s=20210112; t=1679381159;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TBUGEm6xD04h/1z1H1/LXCFCYvbeAFjDxoKdCWiZTRw=;
-        b=KIeSQGShnyPsRYhdgYjfODoYM82W3vJPU6phDh6tTukN9wu2/qIth4061mf49nNq+R
-         tn6cl4JFIavVMVMEiDMUdyEOFOC/shMZUhWqRvNlcXRbhZtpmIE5eQUA5c4NlfDT8KnD
-         ffuGKxWxWuPcABYiU8q/fWiE4ktK/X5GEaGXYIPqMtCnyfdz7vHxSVapO+suB3a7iUlx
-         1OWG8b7t2wSgqpj7TH5B5v2oPOiKTr0fdHAOqVAnMgeHrZ3VYhQG0AyPwrXxyrqomdVX
-         LrkE2fILQg5rRRzjL5i224FIQ3eTOh7fGxykI8G+hXb0ccrLVMakV9oIxkvsRJWfMOWK
-         SxAQ==
-X-Gm-Message-State: AO0yUKVhRRK7uDiubrDGN4kjNH0irnWSzrWrngtw85j+xcfKiOU9RCvI
-        81zC6msc02pgaEnYpECFQZ2Y3A==
-X-Google-Smtp-Source: AK7set90DgK0fLStgygz7YjDNixGQ2/rmIf/crP7sAutEUUnexfUaXlW0q3Uv8u71EKZeaXveQmNpw==
-X-Received: by 2002:a17:906:2c07:b0:84d:4e4f:1f85 with SMTP id e7-20020a1709062c0700b0084d4e4f1f85mr1693912ejh.59.1679381004262;
-        Mon, 20 Mar 2023 23:43:24 -0700 (PDT)
+        bh=mUdHje46W1zTNIZ/CNDjQ6OgFD/hkF9BqC9f0d1Yp9M=;
+        b=j8mZR6povspfdLLZRa7Buqif7XoQtZBWEI5FjBCmEn/zYk5wpI0y9/L4BlafjTHDQ8
+         gj8yA40yyF4S8dBNiCluksL/UWVzJTUcekWnnAzo2EC715JJiyyjs1jAbX34cIRbs5q8
+         SPp0hH5Helk7iZnkSLmiAD+4C1LotP2Zxr/zpVQFFszWCmsPWSGVDxBM34t+y2J6tbi3
+         qvh3tASwRHK9pXdHYXzqN2p13WKfD5NJUilq21pKS1UzcuQvJdZd6zYlzqJ8q3RLkvdx
+         fGgByeqDSal/YbDEMZW+yl+nbzmyCP3ZImVNHrLoIlo1H4jNj8I8TJBIXVxHrrBqlA99
+         pWMA==
+X-Gm-Message-State: AO0yUKXksuxRwKBKj2kdpAGYLkYpect07TYHsE7xk+EWzOH/iYN0XcTg
+        MHHJAQx1CEJZ7J/GlVcfXRJjmA==
+X-Google-Smtp-Source: AK7set9KntAUZelH9dbtcgqaN9WTD/LLuB564Gyuw5k4TY2V6hGRJS5Ic08qeAgb7GRXGx2RHKYnNA==
+X-Received: by 2002:aa7:cc09:0:b0:4fd:8333:e29f with SMTP id q9-20020aa7cc09000000b004fd8333e29fmr1986856edt.41.1679381159099;
+        Mon, 20 Mar 2023 23:45:59 -0700 (PDT)
 Received: from ?IPV6:2a02:810d:15c0:828:2142:d8da:5ae4:d817? ([2a02:810d:15c0:828:2142:d8da:5ae4:d817])
-        by smtp.gmail.com with ESMTPSA id ja21-20020a170907989500b0093338259b2bsm3799951ejc.207.2023.03.20.23.43.23
+        by smtp.gmail.com with ESMTPSA id g12-20020a170906198c00b00930c7b642d0sm5319444ejd.166.2023.03.20.23.45.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Mar 2023 23:43:23 -0700 (PDT)
-Message-ID: <40e3acac-b58a-7af8-b025-3678f84434da@linaro.org>
-Date:   Tue, 21 Mar 2023 07:43:22 +0100
+        Mon, 20 Mar 2023 23:45:58 -0700 (PDT)
+Message-ID: <5f295438-8334-d374-2ae6-2a385ffb317d@linaro.org>
+Date:   Tue, 21 Mar 2023 07:45:57 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
-Subject: Re: [PATCH 01/10] dt: bindings: clock: add mtmips SoCs clock device
- tree binding documentation
+Subject: Re: [PATCH v2 1/9] dt-bindings: clock: add mtmips SoCs system
+ controller
 Content-Language: en-US
-To:     =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Cc:     linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-        tsbogend@alpha.franken.de, john@phrozen.org,
-        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
-        devicetree@vger.kernel.org
-References: <20230320161823.1424278-1-sergio.paracuellos@gmail.com>
- <20230320161823.1424278-2-sergio.paracuellos@gmail.com>
- <1e2f67b4-3bfb-d394-4f60-e6f63ce6a2fd@linaro.org>
- <CAMhs-H8OQ9gJLsifLuHD2GN8rYwnY=Zmdb0kMEfX4UUHhjMUyQ@mail.gmail.com>
- <d0f74721-bf5a-62de-53dc-62e7e735e2dc@linaro.org>
- <bdc82b4a-f1a9-0372-5a57-200a422b1b70@arinc9.com>
- <21a90597-78c9-4d46-7b01-257702e7afca@linaro.org>
- <525a6388-a4b8-3052-fe81-5aa21d8f424a@arinc9.com>
- <507f79cf-acd8-5238-031a-fd71024e0c6a@linaro.org>
- <CAMhs-H8_S5eO7B+dZ7jeq7Jjnw71QBmSo4M+woe3U5sH7dCADg@mail.gmail.com>
- <39ba681e-5bab-cffc-edf7-4bf86387987c@linaro.org>
- <132de602-6467-536c-c66d-657f22a59bd5@arinc9.com>
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        linux-clk@vger.kernel.org
+Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
+        john@phrozen.org, linux-kernel@vger.kernel.org,
+        p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        matthias.bgg@gmail.com, devicetree@vger.kernel.org,
+        arinc.unal@arinc9.com
+References: <20230321050034.1431379-1-sergio.paracuellos@gmail.com>
+ <20230321050034.1431379-2-sergio.paracuellos@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <132de602-6467-536c-c66d-657f22a59bd5@arinc9.com>
+In-Reply-To: <20230321050034.1431379-2-sergio.paracuellos@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/03/2023 07:38, Arınç ÜNAL wrote:
->>>>
->>>> Ah, but indeed there are newer Mediatek MT6xxx and MT8xxx SoCs which are
->>>> ARM, so mediatek,mtmips-sysc would work.
->>>
->>> I can use 'mediatek,mtmips-sysc.yaml' as the name but compatibles will
->>> start with ralink. There are already some existent compatibles for
->>> mt762x already having ralink as prefix, so to be coherent ralink
->>> should be maintained as prefix.
->>
->> The compatibles I mentioned start already with mediatek, so why do you
->> want to introduce incorrect vendor name for these?
+On 21/03/2023 06:00, Sergio Paracuellos wrote:
+> Adds device tree binding documentation for system controller node present
+> in Mediatek MIPS and Ralink SOCs. This node is a clock and reset provider
+> for the rest of the world. This covers RT2880, RT3050, RT3052, RT3350,
+> RT3883, RT5350, MT7620, MT7628 and MT7688 SoCs.
 > 
-> Can you point out where these compatible strings for mt7620 and mt7628 are?
+> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> ---
+>  .../bindings/clock/mediatek,mtmips-sysc.yaml  | 65 +++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml b/Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
+> new file mode 100644
+> index 000000000000..f07e1652723b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
+> @@ -0,0 +1,65 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/mediatek,mtmips-sysc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MTMIPS SoCs System Controller
+> +
+> +maintainers:
+> +  - Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> +
+> +description: |
+> +  MediaTek MIPS and Ralink SoCs provides a system controller to allow
+> +  to access to system control registers. These registers include clock
+> +  and reset related ones so this node is both clock and reset provider
+> +  for the rest of the world.
+> +
+> +  These SoCs have an XTAL from where the cpu clock is
+> +  provided as well as derived clocks for the bus and the peripherals.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - ralink,mt7620-sysc
 
-git grep
+Since you decided to send it before we finish discussion:
+NAK - this is already used as mediatek
+
+> +          - ralink,mt7620a-sysc
+> +          - ralink,mt7628-sysc
+
+Same here.
+
+> +          - ralink,mt7688-sysc
+
+I expect you to check the others.
+
+
 
 Best regards,
 Krzysztof
