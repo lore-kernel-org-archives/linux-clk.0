@@ -2,68 +2,112 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 879B8C6FD1D
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 04:20:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86665C6FD1D
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 04:23:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229612AbjCUEUH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 00:20:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55650 "EHLO
+        id S229627AbjCUEXk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 00:23:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229561AbjCUEUG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 00:20:06 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E78E66E95;
-        Mon, 20 Mar 2023 21:20:03 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7E78E618D2;
-        Tue, 21 Mar 2023 04:20:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DF14C433D2;
-        Tue, 21 Mar 2023 04:20:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679372402;
-        bh=PT/CiT0BEhsjPkLcZdtBOfXFvi9IAgN+QsC5PQz8EQk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=jvXFofMQWAE5gTYRDV1rzQVYlRhmNw3SljGu6jzGVGKSbZrERJcoeA4t8LqDfUEFF
-         umAjV32Ocokg5xJtP1BVoXTLAZFNvVB3prYNsI80iXxN99TLoxX2EsXJwfcPfabZ3v
-         NsebbOyl+AQ3rihrggmYpvVQoQ80/aBgIX3P8hKL7Cf3AW7mPGHXd9wPB7G3H8wTxD
-         +YGKX1vgyn7pgDGOKcGRuOqDhveEoeym16IoZqyONtTZTWymXkVhs3X8WLbbh1+vgm
-         aSHAyPmytVk3xZcz3qy/e2k9n56DGVoUx5sBwG+4gWx0KcNpwqA4+NbREnhnqkOvyX
-         6ZTATnKOMgNIA==
-Date:   Mon, 20 Mar 2023 21:20:01 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Jiri Pirko <jiri@resnulli.us>, Vadim Fedorenko <vadfed@meta.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        poros <poros@redhat.com>, mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "Michalik, Michal" <michal.michalik@intel.com>
-Subject: Re: [PATCH RFC v6 1/6] dpll: spec: Add Netlink spec in YAML
-Message-ID: <20230320212001.46fd0200@kernel.org>
-In-Reply-To: <20230320211354.4d0f8654@kernel.org>
-References: <20230312022807.278528-1-vadfed@meta.com>
-        <20230312022807.278528-2-vadfed@meta.com>
-        <ZBCIPg1u8UFugEFj@nanopsycho>
-        <DM6PR11MB4657F423D2B3B4F0799B0F019BBC9@DM6PR11MB4657.namprd11.prod.outlook.com>
-        <20230320210549.081da89b@kernel.org>
-        <20230320211354.4d0f8654@kernel.org>
+        with ESMTP id S229622AbjCUEXj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 00:23:39 -0400
+Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25AE212868;
+        Mon, 20 Mar 2023 21:23:38 -0700 (PDT)
+Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-17ac5ee3f9cso15084963fac.12;
+        Mon, 20 Mar 2023 21:23:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679372617;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=26n9Fj0XRag4eT+rhFG7hdMB+QgQvTFFvrbS9ZfWqXQ=;
+        b=o4IFSN0hUNN/FKoHtilOVOpaxTOjdvJW4Bw7OSMuT6bH8oSZqnwEcZ08Jwh/MU4RdV
+         JuGUtBtSCRoU72qYFEWLaxu97JEpl7WA9a7FEmL2zEqKBkedOIbLC1DdGWyJplVYxbbk
+         9qTfgTGqffuFUqE4whS2yXwdaC+9mAs+vQgoRm9f+o9ErbIVFIaJfSVhahp9f3YQK0ZA
+         JmLNzS4pQwvcZaj+g7cxyLcAH0+y+WxVMSKSO6fr/H8wSwomac+lf2NhWRwHJX2wQ/f3
+         NsrqiZ+3O+AchimaNyVMcjmKFuhHFx7UrBl0QvnfAb2OKmFBA34Dqf3MpRAIHs0hV/lc
+         aSSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679372617;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=26n9Fj0XRag4eT+rhFG7hdMB+QgQvTFFvrbS9ZfWqXQ=;
+        b=6eb4KAK86Xy+7Qi6eTPeygcLQ3yDztTI6Z+pylmA4VPK5A8BRkgkQbfe40qwF9DbAE
+         pmhurjPOtJW61ZJoX1ZTuHniHNKK9SX2daR7BfvIsHxQBKthZYs8IrvYBqbx2v9g8+nY
+         h4C7oGTfgUmlkdjkxIYGAzeWYRpE869beLHHfajMGMONaGDOzUvLYLU0UuJksk/QsSZW
+         dcY080nOkp0lwwoyklfyMwQOO7lqEJrfkwe8tCNYAijY0QLTQ4dy0hLDKXsb7rFfBZ2h
+         Gz0Fb2JkIauGcdwJiqnqGvWNNBmTE8NG0H5xRjc3+DSD24WvkRKlr3t19uzaUqMeGCdR
+         fdWQ==
+X-Gm-Message-State: AO0yUKVpE8Rpan5n1Mn5fIJQ5i+YY01Id0HiPPC69DLcqyaUuuvO43t+
+        wcjF/3U8R7hDs4hnpnpmpJz7pIo4nFv22Ej2MpI=
+X-Google-Smtp-Source: AK7set9CA2uoTUKHKEfuByZqzqpS0iFxe74NVh1Fj/sg+c9HccsyC2LJNYepkVoZ5cifDgg50z4EUzcjybb25t+zvK4=
+X-Received: by 2002:a05:6870:1314:b0:17a:c59b:8836 with SMTP id
+ 20-20020a056870131400b0017ac59b8836mr148672oab.0.1679372617394; Mon, 20 Mar
+ 2023 21:23:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20230320161823.1424278-1-sergio.paracuellos@gmail.com>
+ <20230320161823.1424278-8-sergio.paracuellos@gmail.com> <966523bee1d28d546969a24eff60d315.sboyd@kernel.org>
+ <CAMhs-H-y6TsSoKsJzM0gkFk6wx7xNigXKJb7wm8rBzrigtJANg@mail.gmail.com> <90dd1f841e7941d8b5931ef68cd6d14e.sboyd@kernel.org>
+In-Reply-To: <90dd1f841e7941d8b5931ef68cd6d14e.sboyd@kernel.org>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Tue, 21 Mar 2023 05:23:26 +0100
+Message-ID: <CAMhs-H8A-c0wo0vExRP_e9my6vzuOkoYwJ2WBTsnjh-X5iK08A@mail.gmail.com>
+Subject: Re: [PATCH 07/10] mips: ralink: remove clock related function prototypes
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
+        tsbogend@alpha.franken.de, john@phrozen.org,
+        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+        mturquette@baylibre.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
+        devicetree@vger.kernel.org, arinc.unal@arinc9.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 20 Mar 2023 21:13:54 -0700 Jakub Kicinski wrote:
-> If one has to carry a link to the other you should create a subset
-> so there is no circular dependency. That's the only potentially tricky
-> thing I can think of...
+On Mon, Mar 20, 2023 at 10:21=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wr=
+ote:
+>
+> Quoting Sergio Paracuellos (2023-03-20 13:17:47)
+> > Hi Stephen,
+> >
+> > On Mon, Mar 20, 2023 at 8:38=E2=80=AFPM Stephen Boyd <sboyd@kernel.org>=
+ wrote:
+> > >
+> > > Quoting Sergio Paracuellos (2023-03-20 09:18:20)
+> > > > Clock related code has been removed from 'arch/mips/ralink' folder =
+and put
+> > > > into drivers space. Hence remove clock related prototypes which are=
+ not
+> > > > used anymore.
+> > > >
+> > > > Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> > > > ---
+> > > >  arch/mips/ralink/common.h | 3 ---
+> > > >  1 file changed, 3 deletions(-)
+> > > >
+> > > > diff --git a/arch/mips/ralink/common.h b/arch/mips/ralink/common.h
+> > > > index 87fc16751281..fcdfc9dc6210 100644
+> > > > --- a/arch/mips/ralink/common.h
+> > > > +++ b/arch/mips/ralink/common.h
+> > > > @@ -23,9 +23,6 @@ extern struct ralink_soc_info soc_info;
+> > > >
+> > > >  extern void ralink_of_remap(void);
+> > > >
+> > > > -extern void ralink_clk_init(void);
+> > >
+> > > Why isn't this removed in the patch that removes the function?
+> >
+> > Because the function exists for all the SoCs code and there are
+> > several patches removing it; one per SoC, so I decided to remove this
+> > at the end. Should I squash all patches together instead?
+>
+> No. But you should squash this with whatever patch removes the last one.
 
-Another option is to take a page from ethtool's book and factor out
-identifiers to a nested attr from the start.
+Ah, ok. I see your point. I will squash this with the last removal, then.
+
+Thanks,
+    Sergio Paracuellos
