@@ -2,133 +2,280 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA527C76195
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 13:08:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25439C7619A
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 13:35:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230431AbjCUNIH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 09:08:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45154 "EHLO
+        id S231135AbjCUNfD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 09:35:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230390AbjCUNID (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 09:08:03 -0400
-Received: from mail-yw1-x112f.google.com (mail-yw1-x112f.google.com [IPv6:2607:f8b0:4864:20::112f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0045D4DBEB
-        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 06:07:46 -0700 (PDT)
-Received: by mail-yw1-x112f.google.com with SMTP id 00721157ae682-54184571389so279703567b3.4
-        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 06:07:46 -0700 (PDT)
+        with ESMTP id S231124AbjCUNfB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 09:35:01 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD6B443921
+        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 06:34:58 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id o11-20020a05600c4fcb00b003eb33ea29a8so9480590wmq.1
+        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 06:34:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679404066;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7OMTf5Ga7cygQE1B9rsS6pN7RAXO/nEzZ4boh/y9Vt0=;
-        b=cmJ8XIdSsNL/DkdwP6cioRpdQEMqyvRHRipv5kDKib1eCTK9r/TTQFkJ591EPAprgW
-         kq+VOaFqG5IX5Y49IJLieVe4Yfzzh0D1CbApAa2dUuBDYA2BQKTHPzVhniNz4VD8TBmW
-         4BquqEkEWXiF/o+8UKQ02d9YUbI2e0zJzXEUI4h6K9P1ZuDYQusqtbSPZ5a7NSUD26Cv
-         ffegSH5qZRqhh+unOsVNC8HjiZJZe13TQR1kZOv7c/SgoL2Z/zOYub+eld/LVyB/ot02
-         akzOY70zzgoeGMVkMtWSYvwHdpV3ThAm3o5tWKy9XvO4dfqJnRiN3+TAqeppxewF7dzE
-         iXAA==
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1679405697;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GrENT+Bmj91DUGrS8eAgiWjucLYxnLyFAeYYdHsziOc=;
+        b=BdM/UtBOYA+F5CIZlXubGB/bS37BhYp0OyWo8Fa0tepR3GFBm988Qn22OBX2ihoz+G
+         x2ZUJKC4Xz7b1hKmzW1uMuqaD2OuszbJIsBE/Oiz+1vsJFt9a8nKXNU8kj/D/dFuwwA/
+         lVV69WzmLLw7F+tcT1CESaXrJ7CdnzEt8zjxgHy/KRVduuMIL3Mgd2K+fS3aLmdCayRj
+         eQOtiYsMLmP24jgS/nKaA/pgO+e6hukVCODkKAPNvqsSIhKPKPyXx/nNplLWu5sRXW/+
+         5UGmHz/1/aLZwmTNRH9yCEsX8snFQNN7wZRe3mpQAdGi37QVYiopC4++G50rT29Nolff
+         3I9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679404066;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7OMTf5Ga7cygQE1B9rsS6pN7RAXO/nEzZ4boh/y9Vt0=;
-        b=TOR/uzH9gnLxd70fQgmZ5eEYqTqdZjcuMNtCcHJuW2twGCByNhkFlNkA6Z2EQ4FREp
-         MKASjjMQuvCsoxFDHJNxv7jnjDEsZfv6PXp3VCowKH47ag9K3RTZ/apAKtRcX+tHGb9J
-         mxOMGp6AHvW0+BZiIVvcPENKBB05aCdUp1k7WyDgq3eFob53PDUjBxoYaHQgU7N75XrS
-         V6Ff0+jZygA7VRXh6StXMbfWkdyq0PMSXyb+vQs2f0Z3N2NBMRtkvOXXUCWFKDaMIzeO
-         K7xGnF1mgI/zoHsqPQyQAz4b2m2CF/eh98K9M3PupGr42O9T5oVeI6BqsU7dcnG6UD4Q
-         l3Ew==
-X-Gm-Message-State: AAQBX9dc6Qi5vquYU0ddp+6G3cgqMLS2rvgmVA7b+L7/fA47RtXSb31V
-        CWGy05M4utQdhPKZFBrMxOnr1A7neCF/zd1yrKOaHA==
-X-Google-Smtp-Source: AKy350aj0PlWxbSVBeOrBC5vlMmi49wh+264w2jb98dmgSFBHyYGXdbEC1QiSslS+rFn7ARz91359uDeEapA874kEBA=
-X-Received: by 2002:a81:4305:0:b0:52e:e095:d840 with SMTP id
- q5-20020a814305000000b0052ee095d840mr1020956ywa.0.1679404065610; Tue, 21 Mar
- 2023 06:07:45 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1679405697;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GrENT+Bmj91DUGrS8eAgiWjucLYxnLyFAeYYdHsziOc=;
+        b=ZDtOpfYTi2i9pmaV9Xv9VDM4AiN1MH8N1Vux7YZRut+gj1eiUE4oZ6vCEUZARiROPZ
+         DRfslr/UP+wsRV4ZJ075ysXpKSOGsY4kylH1M2r4/NCOEKLRCLxlGPfU9n39j3MR0IKr
+         OjN59vZGytCpv4pFsHB5NrfIrLp5Fhq8sEgjfDhJ2SQn/UjChIzZ3ojBw5XyK2fStcfP
+         yOOR4qG4xXsUNFAAzN7Y2KZ0V2kVcOMMZw5HKo/VZE4Mqah3KsUE1mVGebMcY8+9gmal
+         XfhDM/CL6YlticfZ9gSX8ADIl0UWwriq3oQu6EtmHKPP1ONmAQ79P+eVO7nXY+ZT8jH6
+         1pWg==
+X-Gm-Message-State: AO0yUKXG6hsXXMhvvFWUUHljeU/wVj+3QJBx/pRQl5DUayO0qYDLJ5qo
+        YMzrECQmy64yHRKBd+Tz1LT2UA==
+X-Google-Smtp-Source: AK7set/otdogiOsl2XYCUC7V1wbfsXSVyEvekWorAgLY37lUAh2OB176uEHSDWtn3rp/IPkAuyqJdQ==
+X-Received: by 2002:a05:600c:295:b0:3ed:492f:7f37 with SMTP id 21-20020a05600c029500b003ed492f7f37mr2313076wmk.10.1679405697267;
+        Tue, 21 Mar 2023 06:34:57 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id g14-20020a05600c310e00b003eddf30bab6sm7625547wmo.27.2023.03.21.06.34.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Mar 2023 06:34:56 -0700 (PDT)
+Date:   Tue, 21 Mar 2023 14:34:55 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Vadim Fedorenko <vadfed@meta.com>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Milena Olech <milena.olech@intel.com>,
+        Michal Michalik <michal.michalik@intel.com>
+Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
+Message-ID: <ZBmyfzr/VLsLVp7Y@nanopsycho>
+References: <20230312022807.278528-1-vadfed@meta.com>
+ <20230312022807.278528-3-vadfed@meta.com>
 MIME-Version: 1.0
-References: <20230320134217.1685781-1-abel.vesa@linaro.org>
-In-Reply-To: <20230320134217.1685781-1-abel.vesa@linaro.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 21 Mar 2023 14:07:09 +0100
-Message-ID: <CAPDyKFrhqOfiUPEcb724Qw0ZCUV6LYj8HL0OhnVbr-2vj+_6Wg@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/5] Allow genpd providers to power off domains on
- sync state
-To:     Abel Vesa <abel.vesa@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Saravana Kannan <saravanak@google.com>,
-        linux-pm@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Doug Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230312022807.278528-3-vadfed@meta.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 20 Mar 2023 at 14:42, Abel Vesa <abel.vesa@linaro.org> wrote:
->
-> There have been already a couple of tries to make the genpd "disable
-> unused" late initcall skip the powering off of domains that might be
-> needed until later on (i.e. until some consumer probes). The conclusion
-> was that the provider could return -EBUSY from the power_off callback
-> until the provider's sync state has been reached. This patch series tries
-> to provide a proof-of-concept that is working on Qualcomm platforms.
->
-> I've been doing extensive testing on SM8450, but I've also spinned this
-> on my X13s (SC8280XP). Both patches that add the sync state callback to
-> the SC8280XP and SM8450 are here to provide context. Once we agree on
-> the form, I intend to add the sync state callback to all gdsc providers.
->
-> Currently, some of the gdsc providers might not reach sync state due to
-> list of consumers not probing yet (or at all). The sync state can be
-> enforced by writing 1 to the state_synced sysfs attribute of the
-> provider, thanks to Saravana's commit [1] which has been already merged.
->
-> [1] https://lore.kernel.org/r/20230304005355.746421-3-saravanak@google.com
->
-> V1 of this patchset was here:
-> https://lore.kernel.org/all/20230315132330.450877-1-abel.vesa@linaro.org/
->
-> Changes since v1:
->  * Added the qcom_cc sync state callback which calls in turn the gdsc one
->  * dropped extra semicolon from pm_domain.h
->
-> Abel Vesa (5):
->   PM: domains: Allow power off queuing from providers
->   soc: qcom: rpmhpd: Do proper power off when state synced
->   clk: qcom: gdsc: Avoid actual power off until sync state
->   clk: qcom: Add sync state callback to all SC8280XP providers
->   clk: qcom: Add sync state callback to all SM8450 providers
->
->  drivers/base/power/domain.c        |  3 ++-
->  drivers/clk/qcom/camcc-sm8450.c    |  1 +
->  drivers/clk/qcom/common.c          | 19 +++++++++++++++++++
->  drivers/clk/qcom/common.h          |  2 ++
->  drivers/clk/qcom/dispcc-sc8280xp.c |  1 +
->  drivers/clk/qcom/dispcc-sm8450.c   |  1 +
->  drivers/clk/qcom/gcc-sc8280xp.c    |  1 +
->  drivers/clk/qcom/gcc-sm8450.c      |  1 +
->  drivers/clk/qcom/gdsc.c            | 26 ++++++++++++++++++++++++++
->  drivers/clk/qcom/gdsc.h            |  6 ++++++
->  drivers/clk/qcom/gpucc-sc8280xp.c  |  1 +
->  drivers/soc/qcom/rpmhpd.c          | 19 +++++++------------
->  include/linux/pm_domain.h          |  6 ++++++
->  13 files changed, 74 insertions(+), 13 deletions(-)
->
+Sun, Mar 12, 2023 at 03:28:03AM CET, vadfed@meta.com wrote:
 
-Besides the minor comments on patch1, this looks good to me! So, feel
-free to add:
+[...]
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+>+static int
+>+dpll_event_device_change(struct sk_buff *msg, struct dpll_device *dpll,
+>+			 struct dpll_pin *pin, struct dpll_pin *parent,
+>+			 enum dplla attr)
+>+{
+>+	int ret = dpll_msg_add_dev_handle(msg, dpll);
+>+	struct dpll_pin_ref *ref = NULL;
+>+	enum dpll_pin_state state;
+>+
+>+	if (ret)
+>+		return ret;
+>+	if (pin && nla_put_u32(msg, DPLL_A_PIN_IDX, pin->dev_driver_id))
+>+		return -EMSGSIZE;
+>+
+>+	switch (attr) {
+>+	case DPLL_A_MODE:
+>+		ret = dpll_msg_add_mode(msg, dpll, NULL);
+>+		break;
+>+	case DPLL_A_SOURCE_PIN_IDX:
+>+		ret = dpll_msg_add_source_pin_idx(msg, dpll, NULL);
+>+		break;
+>+	case DPLL_A_LOCK_STATUS:
+>+		ret = dpll_msg_add_lock_status(msg, dpll, NULL);
 
-Kind regards
-Uffe
+On top of what I wrote about the notifications, I found another two
+issues:
+1) You don't take any lock calling this from drivers. You need to hold
+   the xarray locks you have now.
+
+   I have to repear, I think that we definitelly need to convert the
+   overall locking scheme to have this per-instance, in a similar way
+   we did that for devlink. I noted this in another email, but wanted
+   to say that again.
+
+2) You have possible race condition:
+   1) -> driver gets a state change event
+   2) -> driver calls into this function
+   3) -> this code does call the driver op to get the state, driver
+         queries the state again
+
+   Between 1) and 3) state can easily change, multiple times. That might
+   lead to oddities observed by the user (like getting a notification
+   of change with the original values)
+
+   I see only 1 solutions to this:
+   Pass the value of changed item from the driver here and just pass
+   it on over netlink without doing calling into driver again.
+
+
+>+		break;
+>+	case DPLL_A_TEMP:
+>+		ret = dpll_msg_add_temp(msg, dpll, NULL);
+>+		break;
+>+	case DPLL_A_PIN_FREQUENCY:
+>+		ret = dpll_msg_add_pin_freq(msg, pin, NULL, false);
+>+		break;
+>+	case DPLL_A_PIN_PRIO:
+>+		ref = dpll_xa_ref_dpll_find(&pin->dpll_refs, dpll);
+>+		if (!ref)
+>+			return -EFAULT;
+>+		ret = dpll_msg_add_pin_prio(msg, pin, ref, NULL);
+>+		break;
+>+	case DPLL_A_PIN_STATE:
+>+		if (parent) {
+>+			ref = dpll_xa_ref_pin_find(&pin->parent_refs, parent);
+>+			if (!ref)
+>+				return -EFAULT;
+>+			if (!ref->ops || !ref->ops->state_on_pin_get)
+>+				return -EOPNOTSUPP;
+>+			ret = ref->ops->state_on_pin_get(pin, parent, &state,
+>+							 NULL);
+>+			if (ret)
+>+				return ret;
+>+			if (nla_put_u32(msg, DPLL_A_PIN_PARENT_IDX,
+>+					parent->dev_driver_id))
+>+				return -EMSGSIZE;
+>+		} else {
+>+			ref = dpll_xa_ref_dpll_find(&pin->dpll_refs, dpll);
+>+			if (!ref)
+>+				return -EFAULT;
+>+			ret = dpll_msg_add_pin_on_dpll_state(msg, pin, ref,
+>+							     NULL);
+>+			if (ret)
+>+				return ret;
+>+		}
+>+		break;
+>+	default:
+>+		break;
+>+	}
+>+
+>+	return ret;
+>+}
+>+
+>+static int
+>+dpll_send_event_create(enum dpll_event event, struct dpll_device *dpll)
+>+{
+>+	struct sk_buff *msg;
+>+	int ret = -EMSGSIZE;
+>+	void *hdr;
+>+
+>+	msg = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
+>+	if (!msg)
+>+		return -ENOMEM;
+>+
+>+	hdr = genlmsg_put(msg, 0, 0, &dpll_nl_family, 0, event);
+>+	if (!hdr)
+>+		goto out_free_msg;
+>+
+>+	ret = dpll_msg_add_dev_handle(msg, dpll);
+>+	if (ret)
+>+		goto out_cancel_msg;
+>+	genlmsg_end(msg, hdr);
+>+	genlmsg_multicast(&dpll_nl_family, msg, 0, 0, GFP_KERNEL);
+>+
+>+	return 0;
+>+
+>+out_cancel_msg:
+>+	genlmsg_cancel(msg, hdr);
+>+out_free_msg:
+>+	nlmsg_free(msg);
+>+
+>+	return ret;
+>+}
+>+
+>+static int
+>+dpll_send_event_change(struct dpll_device *dpll, struct dpll_pin *pin,
+>+		       struct dpll_pin *parent, enum dplla attr)
+>+{
+>+	struct sk_buff *msg;
+>+	int ret = -EMSGSIZE;
+>+	void *hdr;
+>+
+>+	msg = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
+>+	if (!msg)
+>+		return -ENOMEM;
+>+
+>+	hdr = genlmsg_put(msg, 0, 0, &dpll_nl_family, 0,
+>+			  DPLL_EVENT_DEVICE_CHANGE);
+>+	if (!hdr)
+>+		goto out_free_msg;
+>+
+>+	ret = dpll_event_device_change(msg, dpll, pin, parent, attr);
+>+	if (ret)
+>+		goto out_cancel_msg;
+>+	genlmsg_end(msg, hdr);
+>+	genlmsg_multicast(&dpll_nl_family, msg, 0, 0, GFP_KERNEL);
+>+
+>+	return 0;
+>+
+>+out_cancel_msg:
+>+	genlmsg_cancel(msg, hdr);
+>+out_free_msg:
+>+	nlmsg_free(msg);
+>+
+>+	return ret;
+>+}
+>+
+>+int dpll_notify_device_create(struct dpll_device *dpll)
+>+{
+>+	return dpll_send_event_create(DPLL_EVENT_DEVICE_CREATE, dpll);
+>+}
+>+
+>+int dpll_notify_device_delete(struct dpll_device *dpll)
+
+Please change the function names to "register/unregister" to be
+consistent with the rest of the code.
+
+
+>+{
+>+	return dpll_send_event_create(DPLL_EVENT_DEVICE_DELETE, dpll);
+>+}
+>+
+>+int dpll_device_notify(struct dpll_device *dpll, enum dplla attr)
+>+{
+>+	if (WARN_ON(!dpll))
+>+		return -EINVAL;
+>+
+>+	return dpll_send_event_change(dpll, NULL, NULL, attr);
+>+}
+>+EXPORT_SYMBOL_GPL(dpll_device_notify);
+>+
+>+int dpll_pin_notify(struct dpll_device *dpll, struct dpll_pin *pin,
+>+		    enum dplla attr)
+
+The driver should be aware of netlink attributes. Should be
+abstracted out.
+
+just have per-item notification like:
+dpll_pin_state_notify()
+dpll_pin_prio_notify()
+...
+
+Then you can easily pass changed value that would allow solution to
+the issue 2) I described above.
+
+
+
+>+{
+>+	return dpll_send_event_change(dpll, pin, NULL, attr);
+>+}
+>+
+
+[...]
