@@ -2,144 +2,163 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 769C8C74A5B
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 17:58:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E22B1C7619A
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 18:15:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229677AbjCUR6b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 13:58:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56234 "EHLO
+        id S229808AbjCUSP2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 14:15:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230466AbjCUR61 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 13:58:27 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFA771CBCF
-        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 10:58:07 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id h8so63014206ede.8
-        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 10:58:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679421485;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=beQg10Ver7dN23IwCsKB//20vr3DygviG7yoTEe+FxY=;
-        b=QYAinkUisZBUcqo8VDaVOtNZcE9iFdEWTyzmy+5Vslhmfcvc2PXM46b3gIzf8PAWNg
-         wk0cuUkFBYCNPNdWsdLs75cyRkOfwGriVmanTFGFlETNqFqo+vVRhE22syEXMoAc9YT+
-         l3W4AOQF/7195XmOmm9TRVJ+f2Iu1nTZ/mW+CJZRAfSzResa+vuByUXUjgjkMWReRX2N
-         /28pe7mcY0it3eefC1NF6gAxt+MYwlGEE+fSDAhzvXVeyFDiq2H3jJst7I1sJOOOSlWl
-         H587CiPo+Mczy397Hvvc6VZ3O8LQZHVzD6AmcNx5XrHWiMLMVuVgF1gRtnWi3rhlBEcB
-         go3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679421485;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=beQg10Ver7dN23IwCsKB//20vr3DygviG7yoTEe+FxY=;
-        b=jTacBwuOpyrJ7IhnpczQVT/1RzZTJH7sn8JCqgWSntI7x7Ova5p/vFoOolK6tFyN2P
-         hFjsf572F6hY5t3CypYhHeuBTgzgpif1YskHRcYSeczui5H9LgTf0YqBFLQr5A8so6lo
-         pucCxZU53Wdp/LofZvAOHP67aJWjc40ojQV34Hdov+QVXBrEnxET5Jy/bWu+JKKW1fHS
-         FDTLUIxYCJJ/EOq+E7tkO9FfL9s9R2bZ51vvGVbKVYBIn4BFUaNzjMCnkdsxP0/ZAOl1
-         jbI39+Pr37gV/zwSj1y3NliqGpdc0VYs+fkGkhB2Qm646KkRD8c0Vp2u4EtDqGvUZw+b
-         5gXw==
-X-Gm-Message-State: AO0yUKUADBEJIF87y4nX5IUvbOV0679gwB9v/9EpriRO3Kh77+ojv0tB
-        PN1G9aClmQ+0yTZ+w61l+CFT+w==
-X-Google-Smtp-Source: AK7set8gOMiqKZ8ghAMrSL9tsj+E0T5/dhTV2S9V9Tjnei/fZr6elg7a8benpEtAOLJHv9tHtR9fcA==
-X-Received: by 2002:a17:906:2855:b0:92a:7178:ab56 with SMTP id s21-20020a170906285500b0092a7178ab56mr3498973ejc.39.1679421485742;
-        Tue, 21 Mar 2023 10:58:05 -0700 (PDT)
-Received: from localhost.localdomain ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id p9-20020a1709060e8900b0093313f4fc3csm4887360ejf.70.2023.03.21.10.58.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Mar 2023 10:58:04 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     andersson@kernel.org, agross@kernel.org
-Cc:     konrad.dybcio@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        stable@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH] clk: qcom: gfm-mux: use runtime pm while accessing registers
-Date:   Tue, 21 Mar 2023 17:57:58 +0000
-Message-Id: <20230321175758.26738-1-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.21.0
+        with ESMTP id S229606AbjCUSP1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 14:15:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19E308A7E;
+        Tue, 21 Mar 2023 11:15:23 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 931F361D98;
+        Tue, 21 Mar 2023 18:15:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCBAAC433D2;
+        Tue, 21 Mar 2023 18:15:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679422522;
+        bh=hIOq5dDkrg3sXzDPPJvDRD1aVZ39RpNjhbDlFV9Te8Y=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=VXR6MyBIQLcC8YRSmkoxYqeuBl0N5nxmb5pljge76AYMMBt06x6XPyEkUfUq8+CgE
+         /UJvLCkPg1ufseDOQ7g3lE3e3koPsvUqBsGzDRfdtt+NbCNebgoNN0vwd1PzHQH9Zg
+         BQrraxC6CKNk1e7Du3u3NXpB76OASsBLcXNWL46DRFeyNGMLfDicYrLoJZ2pYa8Y1d
+         Dc2c3nZvtgVhwcVngiUik37zhPF+BmQR+xLwN9sUCHA+FtI6n/vBkdhzO1Pt6uFssT
+         EcrtKrFlFeRFrijmpiuLlvkMCoL4tBk3K/EFXtEALyRKDXU7bqniMG8dPLroz8GaZn
+         VAuDCcjT/fhgw==
+Message-ID: <12903a61f64206be837c1f0744632f29.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230321173303.GA950598-robh@kernel.org>
+References: <20230315183729.2376178-1-sboyd@kernel.org> <20230315183729.2376178-2-sboyd@kernel.org> <20230321173303.GA950598-robh@kernel.org>
+Subject: Re: [PATCH v2 01/11] of: Load KUnit DTB from of_core_init()
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev,
+        Brendan Higgins <brendan.higgins@linux.dev>,
+        David Gow <davidgow@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <rafael@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kunit-dev@googlegroups.com, Maxime Ripard <maxime@cerno.tech>
+To:     Rob Herring <robh@kernel.org>
+Date:   Tue, 21 Mar 2023 11:15:19 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-gfm mux driver does support runtime pm but we never use it while
-accessing registers. Looks like this driver was getting lucky and
-totally depending on other drivers to leave the clk on.
+Quoting Rob Herring (2023-03-21 10:33:03)
+> On Wed, Mar 15, 2023 at 11:37:18AM -0700, Stephen Boyd wrote:
+> > diff --git a/drivers/of/of_test.c b/drivers/of/of_test.c
+> > new file mode 100644
+> > index 000000000000..a4d70ac344ad
+> > --- /dev/null
+> > +++ b/drivers/of/of_test.c
+> > @@ -0,0 +1,43 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * KUnit tests for OF APIs
+> > + */
+> > +#include <linux/kconfig.h>
+> > +#include <linux/of.h>
+> > +
+> > +#include <kunit/test.h>
+> > +
+> > +/*
+> > + * Test that the root node / exists.
+> > + */
+> > +static void dtb_root_node_exists(struct kunit *test)
+> > +{
+> > +     KUNIT_EXPECT_NOT_ERR_OR_NULL(test, of_find_node_by_path("/"));
+> > +}
+> > +
+> > +/*
+> > + * Test that the /__symbols__ node exists.
+> > + */
+> > +static void dtb_symbols_node_exists(struct kunit *test)
+> > +{
+> > +     KUNIT_EXPECT_NOT_ERR_OR_NULL(test, of_find_node_by_path("/__symbo=
+ls__"));
+> > +}
+>=20
+> Many base DTs will not have this. And the kunit tests themselves=20
+> shouldn't need it because they should be independent of the base tree.
+>=20
 
-Fix this by doing runtime pm while accessing registers.
+When I try to apply an overlay it fails=20
 
-Fixes: a2d8f507803e ("clk: qcom: Add support to LPASS AUDIO_CC Glitch Free Mux clocks")
-Cc: stable@vger.kernel.org
-Reported-by: Amit Pundir <amit.pundir@linaro.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/clk/qcom/lpass-gfm-sm8250.c | 29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+ OF: overlay: no fragments or symbols in overlay
+ OF: overlay: init_overlay_changeset() failed, ret =3D -22
+     # of_overlay_apply_kunit_apply: ASSERTION FAILED at drivers/of/overlay=
+_test.c:18
+     Expected 0 =3D=3D ({ extern uint8_t __dtbo_kunit_overlay_test_begin[];=
+ extern uint8_t __dtbo_kunit_overlay_test_end[]; __of_overlay_apply_kunit((=
+test), __dtbo_kunit_overlay_test_begin, __dtbo_kunit_overlay_test_end); }),=
+ but
+         ({ extern uint8_t __dtbo_kunit_overlay_test_begin[]; extern uint8_=
+t __dtbo_kunit_overlay_test_end[]; __of_overlay_apply_kunit((test), __dtbo_=
+kunit_overlay_test_begin, __dtbo_kunit_overlay_test_end); }) =3D=3D -12 (0x=
+fffffffffffffff4)
+ [FAILED] of_overlay_apply_kunit_apply
 
-diff --git a/drivers/clk/qcom/lpass-gfm-sm8250.c b/drivers/clk/qcom/lpass-gfm-sm8250.c
-index 96f476f24eb2..bcf0ea534f7f 100644
---- a/drivers/clk/qcom/lpass-gfm-sm8250.c
-+++ b/drivers/clk/qcom/lpass-gfm-sm8250.c
-@@ -38,14 +38,37 @@ struct clk_gfm {
- static u8 clk_gfm_get_parent(struct clk_hw *hw)
- {
- 	struct clk_gfm *clk = to_clk_gfm(hw);
-+	int ret;
-+	u8 parent;
-+
-+	ret = pm_runtime_resume_and_get(clk->priv->dev);
-+	if (ret < 0 && ret != -EACCES) {
-+		dev_err_ratelimited(clk->priv->dev,
-+				    "pm_runtime_resume_and_get failed in %s, ret %d\n",
-+				    __func__, ret);
-+		return ret;
-+	}
-+
-+	parent = readl(clk->gfm_mux) & clk->mux_mask;
-+
-+	pm_runtime_mark_last_busy(clk->priv->dev);
- 
--	return readl(clk->gfm_mux) & clk->mux_mask;
-+	return parent;
+Now I'm trying to hack on the fake root node to see if I can make it work.
+
+---8<---
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index 090c5d7925e4..12c44c86b8ae 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -166,7 +166,7 @@ void __of_phandle_cache_inv_entry(phandle handle)
+ 		phandle_cache[handle_hash] =3D NULL;
  }
- 
- static int clk_gfm_set_parent(struct clk_hw *hw, u8 index)
+=20
+-#ifdef CONFIG_OF_KUNIT
++#if 0
+ static int __init of_kunit_add_data(void)
  {
- 	struct clk_gfm *clk = to_clk_gfm(hw);
- 	unsigned int val;
-+	int ret;
-+
-+	ret = pm_runtime_resume_and_get(clk->priv->dev);
-+	if (ret < 0 && ret != -EACCES) {
-+		dev_err_ratelimited(clk->priv->dev,
-+				    "pm_runtime_resume_and_get failed in %s, ret %d\n",
-+				    __func__, ret);
-+		return ret;
-+	}
- 
- 	val = readl(clk->gfm_mux);
- 
-@@ -57,6 +80,8 @@ static int clk_gfm_set_parent(struct clk_hw *hw, u8 index)
- 
- 	writel(val, clk->gfm_mux);
- 
-+	pm_runtime_mark_last_busy(clk->priv->dev);
-+
- 	return 0;
+ 	void *kunit_fdt;
+diff --git a/drivers/of/kunit_overlay_test.dtso b/drivers/of/kunit_overlay_=
+test.dtso
+index 6e70e2f8cd90..e3ced1467dd9 100644
+--- a/drivers/of/kunit_overlay_test.dtso
++++ b/drivers/of/kunit_overlay_test.dtso
+@@ -2,7 +2,7 @@
+ /dts-v1/;
+ /plugin/;
+=20
+-&kunit_bus {
++/ {
+ 	test-kunit {
+ 		compatible =3D "test,kunit-empty";
+ 	};
+diff --git a/drivers/of/of_test.c b/drivers/of/of_test.c
+index 543fdf0936f6..08b670aee083 100644
+--- a/drivers/of/of_test.c
++++ b/drivers/of/of_test.c
+@@ -15,17 +15,8 @@ static void dtb_root_node_exists(struct kunit *test)
+ 	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, of_find_node_by_path("/"));
  }
- 
-@@ -251,6 +276,8 @@ static int lpass_gfm_clk_driver_probe(struct platform_device *pdev)
- 	if (IS_ERR(cc->base))
- 		return PTR_ERR(cc->base);
- 
-+	cc->dev = dev;
-+
- 	err = devm_pm_runtime_enable(dev);
- 	if (err)
- 		return err;
--- 
-2.21.0
-
+=20
+-/*
+- * Test that the /__symbols__ node exists.
+- */
+-static void dtb_symbols_node_exists(struct kunit *test)
+-{
+-	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, of_find_node_by_path("/__symbols__"));
+-}
+-
+ static struct kunit_case dtb_test_cases[] =3D {
+ 	KUNIT_CASE(dtb_root_node_exists),
+-	KUNIT_CASE(dtb_symbols_node_exists),
+ 	{}
+ };
