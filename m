@@ -2,280 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25439C7619A
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 13:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A84AAC6FD1D
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 13:55:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231135AbjCUNfD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 09:35:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58220 "EHLO
+        id S231317AbjCUNzz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 09:55:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231124AbjCUNfB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 09:35:01 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD6B443921
-        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 06:34:58 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id o11-20020a05600c4fcb00b003eb33ea29a8so9480590wmq.1
-        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 06:34:58 -0700 (PDT)
+        with ESMTP id S231244AbjCUNzv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 09:55:51 -0400
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41D684FA92
+        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 06:55:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1679405697;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GrENT+Bmj91DUGrS8eAgiWjucLYxnLyFAeYYdHsziOc=;
-        b=BdM/UtBOYA+F5CIZlXubGB/bS37BhYp0OyWo8Fa0tepR3GFBm988Qn22OBX2ihoz+G
-         x2ZUJKC4Xz7b1hKmzW1uMuqaD2OuszbJIsBE/Oiz+1vsJFt9a8nKXNU8kj/D/dFuwwA/
-         lVV69WzmLLw7F+tcT1CESaXrJ7CdnzEt8zjxgHy/KRVduuMIL3Mgd2K+fS3aLmdCayRj
-         eQOtiYsMLmP24jgS/nKaA/pgO+e6hukVCODkKAPNvqsSIhKPKPyXx/nNplLWu5sRXW/+
-         5UGmHz/1/aLZwmTNRH9yCEsX8snFQNN7wZRe3mpQAdGi37QVYiopC4++G50rT29Nolff
-         3I9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679405697;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GrENT+Bmj91DUGrS8eAgiWjucLYxnLyFAeYYdHsziOc=;
-        b=ZDtOpfYTi2i9pmaV9Xv9VDM4AiN1MH8N1Vux7YZRut+gj1eiUE4oZ6vCEUZARiROPZ
-         DRfslr/UP+wsRV4ZJ075ysXpKSOGsY4kylH1M2r4/NCOEKLRCLxlGPfU9n39j3MR0IKr
-         OjN59vZGytCpv4pFsHB5NrfIrLp5Fhq8sEgjfDhJ2SQn/UjChIzZ3ojBw5XyK2fStcfP
-         yOOR4qG4xXsUNFAAzN7Y2KZ0V2kVcOMMZw5HKo/VZE4Mqah3KsUE1mVGebMcY8+9gmal
-         XfhDM/CL6YlticfZ9gSX8ADIl0UWwriq3oQu6EtmHKPP1ONmAQ79P+eVO7nXY+ZT8jH6
-         1pWg==
-X-Gm-Message-State: AO0yUKXG6hsXXMhvvFWUUHljeU/wVj+3QJBx/pRQl5DUayO0qYDLJ5qo
-        YMzrECQmy64yHRKBd+Tz1LT2UA==
-X-Google-Smtp-Source: AK7set/otdogiOsl2XYCUC7V1wbfsXSVyEvekWorAgLY37lUAh2OB176uEHSDWtn3rp/IPkAuyqJdQ==
-X-Received: by 2002:a05:600c:295:b0:3ed:492f:7f37 with SMTP id 21-20020a05600c029500b003ed492f7f37mr2313076wmk.10.1679405697267;
-        Tue, 21 Mar 2023 06:34:57 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id g14-20020a05600c310e00b003eddf30bab6sm7625547wmo.27.2023.03.21.06.34.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Mar 2023 06:34:56 -0700 (PDT)
-Date:   Tue, 21 Mar 2023 14:34:55 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Vadim Fedorenko <vadfed@meta.com>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>, poros@redhat.com,
-        mschmidt@redhat.com, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Milena Olech <milena.olech@intel.com>,
-        Michal Michalik <michal.michalik@intel.com>
-Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
-Message-ID: <ZBmyfzr/VLsLVp7Y@nanopsycho>
-References: <20230312022807.278528-1-vadfed@meta.com>
- <20230312022807.278528-3-vadfed@meta.com>
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1679406924; x=1710942924;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rHSsFFLzvJOIk/IC2B/yzNA5kF3fMYLm3qlpsB04MMo=;
+  b=T1tY7MPF/3JKJcNFCbmcY7UBgHNHwpG7P76t0Zrpn5TAxkr1FkYUxl7j
+   1oI/iTk4pOGndjEExPtsjJ8QayDH8SIyeS5wpXLkYpWrJcvLRUgaAnoRg
+   cCPmzeCPGb0+1iGiARWUGP/3FNQdlpK7xDAKoq7+JCsTramTeatIkoppm
+   pjZZjyFKAF0uoyEwgX7rat4esxDgTRwnAzhrDLq77IkECm5uFBfwp97t5
+   40MTyZBc5Z/yYnAfwmuhKaOyOxA5OQbQZuHWQqaamQgD2RP9BFzYCvDUs
+   KUuFjSHWmoQ6AYwLarjoASBxb+E6OItuRXb3XhtuIiM3tyik1z9dQ99ko
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.98,279,1673910000"; 
+   d="scan'208";a="29834292"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 21 Mar 2023 14:54:16 +0100
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Tue, 21 Mar 2023 14:54:16 +0100
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Tue, 21 Mar 2023 14:54:16 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1679406856; x=1710942856;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rHSsFFLzvJOIk/IC2B/yzNA5kF3fMYLm3qlpsB04MMo=;
+  b=DHfjHV4YPQB9XJBNW4NTcKRgp6OYlqNTCxuB3qjwfgMKPHwkdo/u+XGK
+   PsbXqp87vNvG+FYZPqWwkBU5mTkpuFe2T2DOiQERDRqpprH3fDd0yEU0I
+   Jcy2O+gSJvbe4aA/pdYqt4IiD3jLTxmUsqJVW59brNufVCrv0ZpKuQnoK
+   re5+OxQpN1XNzLhPBB20XWR2Cs+9sBrE8yryf5Brw5v7QvaxXinrmQayh
+   DW7BOVRrnX56ar0xozzuB1fcZRkeULICci9W3c8rP1JL5EdXKdDMNCUz2
+   xMAswpZ1zQemor9dtcx3zrJD/LTOcry9lYFR3Ux7Es9CWAvA5bhEHR4oi
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.98,279,1673910000"; 
+   d="scan'208";a="29834291"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 21 Mar 2023 14:54:16 +0100
+Received: from steina-w.tq-net.de (unknown [10.123.53.21])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id D313D280056;
+        Tue, 21 Mar 2023 14:54:15 +0100 (CET)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>
+Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/1] clk: imx6ul: retain early UART clocks during kernel init
+Date:   Tue, 21 Mar 2023 14:53:24 +0100
+Message-Id: <20230321135324.1286359-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230312022807.278528-3-vadfed@meta.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Sun, Mar 12, 2023 at 03:28:03AM CET, vadfed@meta.com wrote:
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-[...]
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+Apparently i.MX6UL was missed in commit 0822f933735c ("clk: imx6: retain
+early UART clocks during kernel init"). But as commit 379c9a24cc23 ("clk:
+imx: Fix reparenting of UARTs not associated with stdout") changes the
+calling signature it's not warranting a Fixes for the old commit.
 
->+static int
->+dpll_event_device_change(struct sk_buff *msg, struct dpll_device *dpll,
->+			 struct dpll_pin *pin, struct dpll_pin *parent,
->+			 enum dplla attr)
->+{
->+	int ret = dpll_msg_add_dev_handle(msg, dpll);
->+	struct dpll_pin_ref *ref = NULL;
->+	enum dpll_pin_state state;
->+
->+	if (ret)
->+		return ret;
->+	if (pin && nla_put_u32(msg, DPLL_A_PIN_IDX, pin->dev_driver_id))
->+		return -EMSGSIZE;
->+
->+	switch (attr) {
->+	case DPLL_A_MODE:
->+		ret = dpll_msg_add_mode(msg, dpll, NULL);
->+		break;
->+	case DPLL_A_SOURCE_PIN_IDX:
->+		ret = dpll_msg_add_source_pin_idx(msg, dpll, NULL);
->+		break;
->+	case DPLL_A_LOCK_STATUS:
->+		ret = dpll_msg_add_lock_status(msg, dpll, NULL);
+ drivers/clk/imx/clk-imx6ul.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-On top of what I wrote about the notifications, I found another two
-issues:
-1) You don't take any lock calling this from drivers. You need to hold
-   the xarray locks you have now.
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index 206e4c43f68f..26578e407d3e 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -510,6 +510,8 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 		clk_set_parent(hws[IMX6ULL_CLK_EPDC_PRE_SEL]->clk, hws[IMX6UL_CLK_PLL3_PFD2]->clk);
+ 
+ 	clk_set_parent(hws[IMX6UL_CLK_ENFC_SEL]->clk, hws[IMX6UL_CLK_PLL2_PFD2]->clk);
++
++	imx_register_uart_clocks(2);
+ }
+ 
+ CLK_OF_DECLARE(imx6ul, "fsl,imx6ul-ccm", imx6ul_clocks_init);
+-- 
+2.34.1
 
-   I have to repear, I think that we definitelly need to convert the
-   overall locking scheme to have this per-instance, in a similar way
-   we did that for devlink. I noted this in another email, but wanted
-   to say that again.
-
-2) You have possible race condition:
-   1) -> driver gets a state change event
-   2) -> driver calls into this function
-   3) -> this code does call the driver op to get the state, driver
-         queries the state again
-
-   Between 1) and 3) state can easily change, multiple times. That might
-   lead to oddities observed by the user (like getting a notification
-   of change with the original values)
-
-   I see only 1 solutions to this:
-   Pass the value of changed item from the driver here and just pass
-   it on over netlink without doing calling into driver again.
-
-
->+		break;
->+	case DPLL_A_TEMP:
->+		ret = dpll_msg_add_temp(msg, dpll, NULL);
->+		break;
->+	case DPLL_A_PIN_FREQUENCY:
->+		ret = dpll_msg_add_pin_freq(msg, pin, NULL, false);
->+		break;
->+	case DPLL_A_PIN_PRIO:
->+		ref = dpll_xa_ref_dpll_find(&pin->dpll_refs, dpll);
->+		if (!ref)
->+			return -EFAULT;
->+		ret = dpll_msg_add_pin_prio(msg, pin, ref, NULL);
->+		break;
->+	case DPLL_A_PIN_STATE:
->+		if (parent) {
->+			ref = dpll_xa_ref_pin_find(&pin->parent_refs, parent);
->+			if (!ref)
->+				return -EFAULT;
->+			if (!ref->ops || !ref->ops->state_on_pin_get)
->+				return -EOPNOTSUPP;
->+			ret = ref->ops->state_on_pin_get(pin, parent, &state,
->+							 NULL);
->+			if (ret)
->+				return ret;
->+			if (nla_put_u32(msg, DPLL_A_PIN_PARENT_IDX,
->+					parent->dev_driver_id))
->+				return -EMSGSIZE;
->+		} else {
->+			ref = dpll_xa_ref_dpll_find(&pin->dpll_refs, dpll);
->+			if (!ref)
->+				return -EFAULT;
->+			ret = dpll_msg_add_pin_on_dpll_state(msg, pin, ref,
->+							     NULL);
->+			if (ret)
->+				return ret;
->+		}
->+		break;
->+	default:
->+		break;
->+	}
->+
->+	return ret;
->+}
->+
->+static int
->+dpll_send_event_create(enum dpll_event event, struct dpll_device *dpll)
->+{
->+	struct sk_buff *msg;
->+	int ret = -EMSGSIZE;
->+	void *hdr;
->+
->+	msg = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
->+	if (!msg)
->+		return -ENOMEM;
->+
->+	hdr = genlmsg_put(msg, 0, 0, &dpll_nl_family, 0, event);
->+	if (!hdr)
->+		goto out_free_msg;
->+
->+	ret = dpll_msg_add_dev_handle(msg, dpll);
->+	if (ret)
->+		goto out_cancel_msg;
->+	genlmsg_end(msg, hdr);
->+	genlmsg_multicast(&dpll_nl_family, msg, 0, 0, GFP_KERNEL);
->+
->+	return 0;
->+
->+out_cancel_msg:
->+	genlmsg_cancel(msg, hdr);
->+out_free_msg:
->+	nlmsg_free(msg);
->+
->+	return ret;
->+}
->+
->+static int
->+dpll_send_event_change(struct dpll_device *dpll, struct dpll_pin *pin,
->+		       struct dpll_pin *parent, enum dplla attr)
->+{
->+	struct sk_buff *msg;
->+	int ret = -EMSGSIZE;
->+	void *hdr;
->+
->+	msg = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
->+	if (!msg)
->+		return -ENOMEM;
->+
->+	hdr = genlmsg_put(msg, 0, 0, &dpll_nl_family, 0,
->+			  DPLL_EVENT_DEVICE_CHANGE);
->+	if (!hdr)
->+		goto out_free_msg;
->+
->+	ret = dpll_event_device_change(msg, dpll, pin, parent, attr);
->+	if (ret)
->+		goto out_cancel_msg;
->+	genlmsg_end(msg, hdr);
->+	genlmsg_multicast(&dpll_nl_family, msg, 0, 0, GFP_KERNEL);
->+
->+	return 0;
->+
->+out_cancel_msg:
->+	genlmsg_cancel(msg, hdr);
->+out_free_msg:
->+	nlmsg_free(msg);
->+
->+	return ret;
->+}
->+
->+int dpll_notify_device_create(struct dpll_device *dpll)
->+{
->+	return dpll_send_event_create(DPLL_EVENT_DEVICE_CREATE, dpll);
->+}
->+
->+int dpll_notify_device_delete(struct dpll_device *dpll)
-
-Please change the function names to "register/unregister" to be
-consistent with the rest of the code.
-
-
->+{
->+	return dpll_send_event_create(DPLL_EVENT_DEVICE_DELETE, dpll);
->+}
->+
->+int dpll_device_notify(struct dpll_device *dpll, enum dplla attr)
->+{
->+	if (WARN_ON(!dpll))
->+		return -EINVAL;
->+
->+	return dpll_send_event_change(dpll, NULL, NULL, attr);
->+}
->+EXPORT_SYMBOL_GPL(dpll_device_notify);
->+
->+int dpll_pin_notify(struct dpll_device *dpll, struct dpll_pin *pin,
->+		    enum dplla attr)
-
-The driver should be aware of netlink attributes. Should be
-abstracted out.
-
-just have per-item notification like:
-dpll_pin_state_notify()
-dpll_pin_prio_notify()
-...
-
-Then you can easily pass changed value that would allow solution to
-the issue 2) I described above.
-
-
-
->+{
->+	return dpll_send_event_change(dpll, pin, NULL, attr);
->+}
->+
-
-[...]
