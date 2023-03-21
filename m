@@ -2,155 +2,161 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA9CC6FD20
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 20:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B00F3C76195
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 22:18:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230285AbjCUUdz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 16:33:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50286 "EHLO
+        id S229848AbjCUWSm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 18:18:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229713AbjCUUdz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 16:33:55 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39C2F22101
-        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 13:33:53 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id cn12so19005838edb.4
-        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 13:33:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679430832;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KTpu7F9BL2yL3dz5JaGLJyVf1Ik8YB0yHGfUTS5ixLY=;
-        b=p+bIXPROrY9Nrek+Wmbtia3iwVn1uy5t5w/nMtRwmRA8GTLXIuMWRTOTMjAwvAADPV
-         DACTTt5AzcV0w90we/PtHmkPjievW5kvs59J9hzQLWyky5rRuUgY1b5xiseQW36ZPKK9
-         Qwqwk8npprKqw1mJPUEG7w210YMUp93BRMFT1lnoh9lD+y6tFqpkIoIQMg4RAUfh0KK6
-         Wwfbp+utgdZ+r1i1hW04RWiH5VYdU0mdiPpGB8DIcCsI+IupfeQ+6anQzwFCdo+wJWpT
-         nV9TgkqYd3VykDsAhd5lMfSMmXrgd36f605L+P5vjqTFjEEn8Fifu0TRTFskB/NSP27F
-         WaFw==
+        with ESMTP id S229565AbjCUWSk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 18:18:40 -0400
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8EE81E5F7;
+        Tue, 21 Mar 2023 15:18:39 -0700 (PDT)
+Received: by mail-ot1-f44.google.com with SMTP id 14-20020a9d010e000000b0069f1287f557so5029305otu.0;
+        Tue, 21 Mar 2023 15:18:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679430832;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20210112; t=1679437119;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KTpu7F9BL2yL3dz5JaGLJyVf1Ik8YB0yHGfUTS5ixLY=;
-        b=64vCWOpAcZKGtLJbOspnkCIREWggjPPC0mdkSVnbtgQQn35in3v3jjGI6+cP2QCuMO
-         Yq4YrCizwQy3FaygwTRWZOJagwpOjtrJCcyzNfV+84u6x0NAujZ3CMR4HKeEadhfBjXS
-         o+83aG/j/SR69/cxFxPqjheeNFzO4h1Fp8a9TT7smbF3OBbftPqa5GhhMGWMLcktSRDR
-         GQHFT4f1lWEjLjPk3nmj4gfLKwAa0HMxtebswOCtoQ8/KJld2wM6lGMyt4EV6OKnbMxX
-         x8myjbF7Z0WhaYlNGvtO2PvJYMksfeFdHprhWPKNaPOXPNUv++UuuH3umEt+d9LlsDm9
-         bgNw==
-X-Gm-Message-State: AO0yUKWntv4EghMsm98lFkDt9B3IfbRkwE0mdqTQLBFAtIjx8hvDUVSN
-        HmvuLkeF64SDS7lzPqOQCOrVuw==
-X-Google-Smtp-Source: AK7set8DiQQyI/6A7EQc/HPSa7kGeb9afOqUgPq7x5HSX2RAXq6ySWlu8V7lc1HMMxcVwyd57KB7FA==
-X-Received: by 2002:a17:907:2122:b0:92f:b290:78c with SMTP id qo2-20020a170907212200b0092fb290078cmr4179455ejb.21.1679430831701;
-        Tue, 21 Mar 2023 13:33:51 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id b1-20020a1709065e4100b008ca52f7fbcbsm6212839eju.1.2023.03.21.13.33.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Mar 2023 13:33:51 -0700 (PDT)
-Message-ID: <4df4d530-f12a-cc34-692a-1f5ff784bbe5@linaro.org>
-Date:   Tue, 21 Mar 2023 20:33:49 +0000
+        bh=PgT8vls4hh33J9msm1OhhnWu9ZRUnj1Q8H8sA1kcql4=;
+        b=2j1XzdhuJEgmIpJjAEjO4juWgUjZhnhG4F+vsFq4Fs1JeMUCW/eIwYloRHP/AEMz0Z
+         DSbaIHp+FEKUml/nMMI2a4PtDFITbIrnwoKnAEIvqmdfzuuaq4VsUfDxcvQtQy1ZbGsG
+         63R7sdtvAe9EKhnn8/9smsw/wOTc3S2nBYEvfqeQL2yTY33aUz0xUgrZOyBvDK25fT/r
+         KNxEHBLbbR301JfVDIXL70UN8H/NL3L87CfL8GyuBkToo8GR9jLFSoLAZOcHFY2qCVgl
+         hzAAtgUpR98UTWx8PQLlFMfAFoFyFCRGPhvVRCUPLzoFUwN0AvHjr/5Rjt+8/1EtcYpP
+         9Pmg==
+X-Gm-Message-State: AO0yUKXR0S0IIES71tHon3po1bVdBnW68dLLeg+Fy7kUwJr/g7S6555+
+        G3xQ37Lf63xXO9h0C3fdWguzAKU2Lg==
+X-Google-Smtp-Source: AK7set+rU5ha02hkCLeAmjMoAnusptaZ98SOslOUw6UTplb/Yxc9KvFfzwg/VROypKzVU4n34lhKIA==
+X-Received: by 2002:a9d:3f6:0:b0:693:c3bb:8392 with SMTP id f109-20020a9d03f6000000b00693c3bb8392mr74660otf.7.1679437119170;
+        Tue, 21 Mar 2023 15:18:39 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id q204-20020a4a33d5000000b0053853156b5csm5163244ooq.8.2023.03.21.15.18.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Mar 2023 15:18:38 -0700 (PDT)
+Received: (nullmailer pid 1764639 invoked by uid 1000);
+        Tue, 21 Mar 2023 22:18:37 -0000
+Date:   Tue, 21 Mar 2023 17:18:37 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     =?utf-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+Cc:     Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
+        tsbogend@alpha.franken.de, john@phrozen.org,
+        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/9] dt-bindings: clock: add mtmips SoCs system
+ controller
+Message-ID: <20230321221837.GA1751474-robh@kernel.org>
+References: <20230321050034.1431379-1-sergio.paracuellos@gmail.com>
+ <20230321050034.1431379-2-sergio.paracuellos@gmail.com>
+ <5f295438-8334-d374-2ae6-2a385ffb317d@linaro.org>
+ <CAMhs-H_dSgcPNQVusHWVvztYHptOxSJ_o7G0eU9=M1C7RXdsVw@mail.gmail.com>
+ <ce13ca6c-e61a-d31e-2626-d818a5d0e15e@arinc9.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] clk: qcom: gfm-mux: use runtime pm while accessing
- registers
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, agross@kernel.org,
-        andersson@kernel.org
-Cc:     konrad.dybcio@linaro.org, mturquette@baylibre.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Amit Pundir <amit.pundir@linaro.org>
-References: <20230321175758.26738-1-srinivas.kandagatla@linaro.org>
- <c5273d67493cbb008f13d7538837828a.sboyd@kernel.org>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <c5273d67493cbb008f13d7538837828a.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ce13ca6c-e61a-d31e-2626-d818a5d0e15e@arinc9.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 21/03/2023 18:46, Stephen Boyd wrote:
-> Quoting Srinivas Kandagatla (2023-03-21 10:57:58)
->> gfm mux driver does support runtime pm but we never use it while
->> accessing registers. Looks like this driver was getting lucky and
->> totally depending on other drivers to leave the clk on.
->>
->> Fix this by doing runtime pm while accessing registers.
->>
->> Fixes: a2d8f507803e ("clk: qcom: Add support to LPASS AUDIO_CC Glitch Free Mux clocks")
->> Cc: stable@vger.kernel.org
->> Reported-by: Amit Pundir <amit.pundir@linaro.org>
+On Tue, Mar 21, 2023 at 10:09:59AM +0300, Arınç ÜNAL wrote:
+> On 21.03.2023 10:00, Sergio Paracuellos wrote:
+> > On Tue, Mar 21, 2023 at 7:45 AM Krzysztof Kozlowski
+> > <krzysztof.kozlowski@linaro.org> wrote:
+> > > 
+> > > On 21/03/2023 06:00, Sergio Paracuellos wrote:
+> > > > Adds device tree binding documentation for system controller node present
+> > > > in Mediatek MIPS and Ralink SOCs. This node is a clock and reset provider
+> > > > for the rest of the world. This covers RT2880, RT3050, RT3052, RT3350,
+> > > > RT3883, RT5350, MT7620, MT7628 and MT7688 SoCs.
+> > > > 
+> > > > Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> > > > ---
+> > > >   .../bindings/clock/mediatek,mtmips-sysc.yaml  | 65 +++++++++++++++++++
+> > > >   1 file changed, 65 insertions(+)
+> > > >   create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml b/Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..f07e1652723b
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
+> > > > @@ -0,0 +1,65 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/clock/mediatek,mtmips-sysc.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: MTMIPS SoCs System Controller
+> > > > +
+> > > > +maintainers:
+> > > > +  - Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> > > > +
+> > > > +description: |
+> > > > +  MediaTek MIPS and Ralink SoCs provides a system controller to allow
+> > > > +  to access to system control registers. These registers include clock
+> > > > +  and reset related ones so this node is both clock and reset provider
+> > > > +  for the rest of the world.
+> > > > +
+> > > > +  These SoCs have an XTAL from where the cpu clock is
+> > > > +  provided as well as derived clocks for the bus and the peripherals.
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    items:
+> > > > +      - enum:
+> > > > +          - ralink,mt7620-sysc
+> > > 
+> > > Since you decided to send it before we finish discussion:
+> > > NAK - this is already used as mediatek
+> > 
+> > Sorry, there was too much stuff commented so I preferred to clean up
+> > all of them while maintaining the compatibles with the ralink prefix
+> > instead since that was where the current discussion was at that point.
+> > 
+> > > 
+> > > > +          - ralink,mt7620a-sysc
+> > 
+> > As I have said, this one exists:
+> > 
+> > arch/mips/ralink/mt7620.c:      rt_sysc_membase =
+> > plat_of_remap_node("ralink,mt7620a-sysc");
+> > 
+> > 
+> > > > +          - ralink,mt7628-sysc
+> > > 
+> > > Same here.
+> > > 
+> > > > +          - ralink,mt7688-sysc
+> > > 
+> > > I expect you to check the others.
+> > 
+> > I can change others to mediatek but that would be a bit weird, don't you think?
 > 
-> Is there a link to the report?
+> I've seen some parts of the MTMIPS platform use mediatek compatible strings
+> thanks to Krzysztof pointing them out. I don't like having some parts of the
+> MTMIPS platform (pci, mmc, usbphy, etc.) with mediatek compatible string
+> while others are ralink.
 
-https://www.spinics.net/lists/stable/msg638380.html
+That's unfortunate, but again, compatibles are just unique identifiers. 
+They are only wrong if they aren't unique...
 
-> 
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> ---
->>   drivers/clk/qcom/lpass-gfm-sm8250.c | 29 ++++++++++++++++++++++++++++-
->>   1 file changed, 28 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/qcom/lpass-gfm-sm8250.c b/drivers/clk/qcom/lpass-gfm-sm8250.c
->> index 96f476f24eb2..bcf0ea534f7f 100644
->> --- a/drivers/clk/qcom/lpass-gfm-sm8250.c
->> +++ b/drivers/clk/qcom/lpass-gfm-sm8250.c
->> @@ -38,14 +38,37 @@ struct clk_gfm {
->>   static u8 clk_gfm_get_parent(struct clk_hw *hw)
->>   {
->>          struct clk_gfm *clk = to_clk_gfm(hw);
->> +       int ret;
->> +       u8 parent;
->> +
->> +       ret = pm_runtime_resume_and_get(clk->priv->dev);
->> +       if (ret < 0 && ret != -EACCES) {
->> +               dev_err_ratelimited(clk->priv->dev,
->> +                                   "pm_runtime_resume_and_get failed in %s, ret %d\n",
->> +                                   __func__, ret);
->> +               return ret;
->> +       }
->> +
->> +       parent = readl(clk->gfm_mux) & clk->mux_mask;
->> +
->> +       pm_runtime_mark_last_busy(clk->priv->dev);
->>   
->> -       return readl(clk->gfm_mux) & clk->mux_mask;
->> +       return parent;
->>   }
->>   
->>   static int clk_gfm_set_parent(struct clk_hw *hw, u8 index)
->>   {
->>          struct clk_gfm *clk = to_clk_gfm(hw);
->>          unsigned int val;
->> +       int ret;
->> +
->> +       ret = pm_runtime_resume_and_get(clk->priv->dev);
-> 
-> Doesn't the clk framework already do this? Why do we need to do it
-> again?
+> Like Krzysztof said [0], Ralink is now Mediatek, thus there is no conflict
+> and no issues with different vendor used. So I'd rather keep new things
+> Ralink and gradually change these mediatek strings to ralink.
 
-You are right, clk core already does do pm_runtime_resume_and_get for 
-set_parent.
+So break the ABI multiple times slowly. Again, either you live with 
+*all* the existing compatible strings or you declare it is fine to break 
+the ABI on these platforms and switch everything at once. Carrying both 
+strings (in bindings or drivers) and breaking the ABI is lose-lose.
 
-this looks redundant here.
-
-
-so we need only need to add this for get_parent
-
---srini
-> 
->> +       if (ret < 0 && ret != -EACCES) {
->> +               dev_err_ratelimited(clk->priv->dev,
->> +                                   "pm_runtime_resume_and_get failed in %s, ret %d\n",
->> +                                   __func__, ret);
->> +               return ret;
->> +       }
->>   
->>          val = readl(clk->gfm_mux);
->>
+Rob
