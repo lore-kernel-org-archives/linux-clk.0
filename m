@@ -2,124 +2,123 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69863C74A5B
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 06:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B575CC77B60
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 06:33:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229683AbjCUGVA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 02:21:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51666 "EHLO
+        id S229646AbjCUGdb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 02:33:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230193AbjCUGU7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 02:20:59 -0400
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41D6B35266
-        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 23:20:54 -0700 (PDT)
+        with ESMTP id S230233AbjCUGd3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 02:33:29 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79C0734C0B
+        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 23:33:01 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id cy23so55502425edb.12
+        for <linux-clk@vger.kernel.org>; Mon, 20 Mar 2023 23:33:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1679379655; x=1710915655;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=x/JKQO/tvXLKFrfpzBs7bKa38ecdXEcKSMQn3siIxCc=;
-  b=jArOACVhV3PIAfAgxq2Nkp2yEyDs3uPC2hoaKtA7tgK3I2kK36YB6J61
-   eZgmmt9DOkMzpINld5EDKOtF5Lb/J6P0+sUTpvC1wGeS/Qm/SkTlDIynx
-   4PIcJTqdPY6Y68C8DI7sbATT1x+/6nEmdfOCyEsazOUMGBdams5A2jDeW
-   mcJT1dhtjLFbtzPyAJqFStXRF05KhRhM0hCfTeCeX2R1UeEStALV9kAdF
-   kFmBFYq50H5R06QfEdLgIP6ahRJijQER6LZZC2y335haEYaVpP2qLm2Pk
-   XvQwNvSNY+VkHE+8fU2/EG+coHjdF59WZThtnKxI5qiWZjq1YbccmP0RG
-   w==;
-X-IronPort-AV: E=Sophos;i="5.98,278,1673910000"; 
-   d="scan'208";a="29816836"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 21 Mar 2023 07:20:53 +0100
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Tue, 21 Mar 2023 07:20:53 +0100
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Tue, 21 Mar 2023 07:20:53 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1679379653; x=1710915653;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=x/JKQO/tvXLKFrfpzBs7bKa38ecdXEcKSMQn3siIxCc=;
-  b=cx/v5mNcfnc4HI14UYjq64HzbGI7nhU6EAv3kJEMnjyLOlNgE5GEhRx6
-   FCilRqoFqhqdDQVW8RWKHw5GXV+eR6MkcBlcOAtdkUZQJFAy89m0+sBmI
-   PVO54LHb/+qhZ2z3SlrD9/2PsudTWBZhL7Syg0ZXZa7b+EycTUfATEoN9
-   Zln5Tg4w+ZNWOT1PtoZo1hMjQqRDhXDUwTd5bEjODdSYkjciyS01gxGUo
-   yYvGPfjLKY33j1VqGLNHL+6aOKZIA7AGiqCJFYL1KjGcb5tzPWyuJcE/J
-   thowGw54wGHNzzWweXncDkh4ISeDupiZ8qVlXI3dnuyiKK0brTgPL4Mim
-   w==;
-X-IronPort-AV: E=Sophos;i="5.98,278,1673910000"; 
-   d="scan'208";a="29816835"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 21 Mar 2023 07:20:52 +0100
-Received: from steina-w.localnet (unknown [10.123.53.21])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id CE0D6280056;
-        Tue, 21 Mar 2023 07:20:52 +0100 (CET)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Marek Vasut <marex@denx.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/1] clk: rs9: Fix suspend/resume
-Date:   Tue, 21 Mar 2023 07:20:50 +0100
-Message-ID: <12182972.O9o76ZdvQC@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <47c091b45aac1dc7a88e154a70e9a655.sboyd@kernel.org>
-References: <20230310074940.3475703-1-alexander.stein@ew.tq-group.com> <3227516.44csPzL39Z@steina-w> <47c091b45aac1dc7a88e154a70e9a655.sboyd@kernel.org>
+        d=linaro.org; s=google; t=1679380380;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+HtQTr70p9g0PFqB21eWyfcsMG//fwSOn6c9K2QaLZg=;
+        b=U0naptLlEpIIIPIujtsOPbCXgtUTGWKYTvhXhVRe0+VrDYAC1jzdgU8unYp+1fWM+a
+         K4s9mQWcd9Fn1xPdQhA70P6yAMxmkXr0MKWS/Aeq6WaKV4Xd0zWw+6FaZMyDHg2IjdgI
+         xvin3/erA8RN5zf2AGuo20nWq7ptInWL+iZC1Q5WBsSFzunxx8rhuySAhR5YoXqBZ0+q
+         xiWd4wr9EGF7jEJRyzJp5ziCZNdy94gtKLqGjvzamsH4wIJFQlZ3DxYWuKrmYz8cGCjp
+         Kht/hVbxz/6z0EpfI+bDtXVah7uiYbSF7kNK8IFD6EtVE2vZU05bF6x9RkVkLZISNlFr
+         Xy2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679380380;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+HtQTr70p9g0PFqB21eWyfcsMG//fwSOn6c9K2QaLZg=;
+        b=SysJ8cz3XBsmerM58KSOxi1XSPHoZ3LZDMeLK19BJN6ZN2c2mZYBO6+z2TEiSmyYds
+         M6AHHnYFUzGdoZf0bKVNHYxXXsoOnSs31p/jC+6ocpNhEpiaKz8G5JQ2PNy7LGqfj+9B
+         v+IGaxHUEgRu4plZAS2CDVKZ6RyWaOkLYwA9Zokzr3H97RP62UQnYcMIfNva92reNJf6
+         o0J4VlX7IhAbHSBjBrh/Xgskvog+AtvVEDq+PbiNSz3s0qOFLxQCl122gHQzNDqxUID2
+         PUd7gZeCH4UjxNpgTdAgmyiWZB2s+e+rh41Mn50kWSyMaQERoP9e2C0C5rXS+ck8r+aX
+         1xuw==
+X-Gm-Message-State: AO0yUKV9QqMbG2dvmlnGBKXePww9UxxUJsBkLRKpxwl4Z760r1Z6zEcd
+        SkPTTnTNnXsBP/lQt1HodhixYA==
+X-Google-Smtp-Source: AK7set+X26OM3FXuIWXm2jm5XGPMTjCpHNvsswvRWpweqJQXypouCjDAycl742Es0v6RCKzFZmHJAw==
+X-Received: by 2002:a17:906:86cd:b0:878:545b:e540 with SMTP id j13-20020a17090686cd00b00878545be540mr1633577ejy.51.1679380379982;
+        Mon, 20 Mar 2023 23:32:59 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:2142:d8da:5ae4:d817? ([2a02:810d:15c0:828:2142:d8da:5ae4:d817])
+        by smtp.gmail.com with ESMTPSA id a11-20020a17090680cb00b00930d22474dbsm5358277ejx.97.2023.03.20.23.32.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Mar 2023 23:32:59 -0700 (PDT)
+Message-ID: <39ba681e-5bab-cffc-edf7-4bf86387987c@linaro.org>
+Date:   Tue, 21 Mar 2023 07:32:58 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH 01/10] dt: bindings: clock: add mtmips SoCs clock device
+ tree binding documentation
+Content-Language: en-US
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc:     =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
+        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
+        tsbogend@alpha.franken.de, john@phrozen.org,
+        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
+        devicetree@vger.kernel.org
+References: <20230320161823.1424278-1-sergio.paracuellos@gmail.com>
+ <20230320161823.1424278-2-sergio.paracuellos@gmail.com>
+ <1e2f67b4-3bfb-d394-4f60-e6f63ce6a2fd@linaro.org>
+ <CAMhs-H8OQ9gJLsifLuHD2GN8rYwnY=Zmdb0kMEfX4UUHhjMUyQ@mail.gmail.com>
+ <d0f74721-bf5a-62de-53dc-62e7e735e2dc@linaro.org>
+ <bdc82b4a-f1a9-0372-5a57-200a422b1b70@arinc9.com>
+ <21a90597-78c9-4d46-7b01-257702e7afca@linaro.org>
+ <525a6388-a4b8-3052-fe81-5aa21d8f424a@arinc9.com>
+ <507f79cf-acd8-5238-031a-fd71024e0c6a@linaro.org>
+ <CAMhs-H8_S5eO7B+dZ7jeq7Jjnw71QBmSo4M+woe3U5sH7dCADg@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <CAMhs-H8_S5eO7B+dZ7jeq7Jjnw71QBmSo4M+woe3U5sH7dCADg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Montag, 20. M=C3=A4rz 2023, 20:35:41 CET schrieb Stephen Boyd:
-> Quoting Alexander Stein (2023-03-14 00:22:07)
->=20
-> > Am Montag, 13. M=EF=BF=BDrz 2023, 23:26:54 CET schrieb Stephen Boyd:
-> > > Quoting Alexander Stein (2023-03-09 23:49:40)
-> > >=20
-> > > > Disabling the cache in commit 2ff4ba9e3702 ("clk: rs9: Fix I2C
-> > > > accessors")
-> > > > without removing cache synchronization in resume path results in a
-> > > > kernel panic as map->cache_ops is unset, due to REGCACHE_NONE.
-> > > > Enable flat cache again to support resume again. num_reg_defaults_r=
-aw
-> > > > is necessary to read the cache defaults from hardware. Some registe=
-rs
-> > > > are strapped in hardware and cannot be provided in software.
-> > > >=20
-> > > > Fixes: 2ff4ba9e3702 ("clk: rs9: Fix I2C accessors")
-> > > > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> > > > ---
-> > > > There is also a series to not panic when using regcache_sync on
-> > > > REGCACHE_NONE maps at [1].
-> > >=20
-> > > And it was rejected?
-> >=20
-> > v2 has been accepted and is available at [1] in regmap's for-next branc=
-h.
->=20
-> So this still needs to be applied and backported to fix stable kernels?
+On 21/03/2023 05:34, Sergio Paracuellos wrote:
+> On Mon, Mar 20, 2023 at 7:15 PM Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+>>
+>> On 20/03/2023 19:09, Arınç ÜNAL wrote:
+>>>>> Would mediatek,mtmips-clock.yaml make sense?
+>>>>
+>>>> More, except:
+>>>> 1. This is not clock, but sysc.
+>>>
+>>> Sergio, beware.
+>>
+>> I meant, that's what I understood from what Sergio said. :)
+> 
+> Yes, you understood properly. I will use 'sysc' instead.
+> 
+>>
+>>>
+>>>> 2. mips sounds redundant. Do you have rt2xxx and mt7xxx chips which are ARM?
+>>>
+>>> All of the SoCs, RTXXXX, MT7620, MT7621, MT7628, MT7688 are MIPS. So I
+>>> decided to call this platform MTMIPS as I've seen MediaTek use this on
+>>> other projects like U-Boot. This is what I did on my pinctrl patch
+>>> series as well.
+>>
+>> Ah, but indeed there are newer Mediatek MT6xxx and MT8xxx SoCs which are
+>> ARM, so mediatek,mtmips-sysc would work.
+> 
+> I can use 'mediatek,mtmips-sysc.yaml' as the name but compatibles will
+> start with ralink. There are already some existent compatibles for
+> mt762x already having ralink as prefix, so to be coherent ralink
+> should be maintained as prefix.
 
-IMHO yes, because without cache nothing will be stored/restored upon suspen=
-d/
-resume. The other patch in regcache was just to ensure broken drivers (like=
-=20
-this one in the current state) do not crash the kernel.
+The compatibles I mentioned start already with mediatek, so why do you
+want to introduce incorrect vendor name for these?
 
 Best regards,
-Alexander
-
-=2D-=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-http://www.tq-group.com/
-
+Krzysztof
 
