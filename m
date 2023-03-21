@@ -2,88 +2,117 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D126C6FD1D
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 10:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E8DBC6FD1D
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 11:17:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230454AbjCUK6i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 06:58:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34836 "EHLO
+        id S229634AbjCULRZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 07:17:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230451AbjCUK6g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 06:58:36 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84CC42366E;
-        Tue, 21 Mar 2023 03:58:33 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id o12so57942119edb.9;
-        Tue, 21 Mar 2023 03:58:33 -0700 (PDT)
+        with ESMTP id S229788AbjCULRY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 07:17:24 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AB4D40E2
+        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 04:17:20 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id i13so2938512lfe.9
+        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 04:17:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679396312;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1679397438;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+xlekolJZJNpYqeRZP2jE+3o7E56WL7sl6ehOjJfpv8=;
-        b=h6ShNJs3ppB1oKzTgjzc7MAp2E1KgvjVgCoQPdAJrMR1poEuCuPf+HWYJUsikwwQSz
-         VpTZyJLNecrlMrnece1Pdy/yh61uw34J9QoTGgWppJFHaofTnD4780CMU4zB5mSy7mSs
-         AlKD/xhvsBxxmWo9/dDnpUOz1Bm9qVcF9QJbK/Lap/rhM2wCSko9zc6uxWyW9JVAD7PG
-         ApyU2Oede9idH1ghPuah3+TA1XuAJbO8/MsgawYGzqACX7BGeIARsosZQnJjITmPmA0S
-         5D/lxO0QZzlVzJqZ2hwOU8xMcJ82Kr8s3weydfOcK75YcZ/kvYPF0osEILfAE3FCAKD9
-         KdfQ==
+        bh=NtKEJBNyunYjPawzF3HMbeki6+rSmdWQGFTeKC93lS8=;
+        b=xP7wVRu4n2NvCx9w5tgDPIrBrnDazF2rn1Ugs5zcZrJrmnsJDdrMMbTNPhVetL+qYt
+         VnXYrx/tiqxOrPDiXirqr9fFdv4Z3uYyekA5rBvoqzitMRmO4hULouTlzjUabHJYwH4h
+         05/kTRXg8apF86NYLPjVOxxS+mrOW61WidTtm9dGtJt8llPweUPdw4h9iCxFC7OOh1gq
+         f5S7HVqNGewrBO3/ocncSILrZDipu3g8Yv/XB6L9g8NEpRPWCuvOUCrN1omtuXyMrOgC
+         DTAShJuPqtuZ+TR+/MK7bc7UrldvM8h4BQsXMtGuvAtPQCZV159V5J05KzHOF4F4JJZD
+         4vgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679396312;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+xlekolJZJNpYqeRZP2jE+3o7E56WL7sl6ehOjJfpv8=;
-        b=yE+Ek6nK3PUFRotQHjWuJXdFoOfpi9mH2e+vtjSqxP7DqJSIEu8HiCfzNOjpeEDlQ6
-         OzTWduG4AcC0Y/WKCwjyaXATcfEtvxJ/WPNXxY4rTezZqBeYfNLOgCbi1tiW502eTkaS
-         w8o4xJLJ09g0VBP4IICZYMPlqYKUBRLgGzh6aFypofcUD9tVnxZKs8V+6m7+7BuBQh3y
-         fKUk9bqNjmev5NJFo1YoIrg3ZY8tqN7jRxmxJHs858j80lfVey+DE1Ofc7P0YVM9LMyl
-         wEgUWhJ1hG5mNl7n79zeztF+3uI6PBhXQ0o+Jfr5YcqYfx59C2bzmvY8kdaebubvvlhN
-         btmg==
-X-Gm-Message-State: AO0yUKW92dIPFS+Uwk2Umdw6f0PfmKmeQia3fwrmnMbnMXv4M2nVcFUI
-        5tCYECooMh4/+i9nAIajL8igyndyyjFfWWJbC/0=
-X-Google-Smtp-Source: AK7set+6s92yKhF8P7ciNAdRReIw2l1D6bnTwlkstvWmOS0XOu11vT/w2cyLDcHtnC10WTyzOr7wfAE3UCqGjxZsCsM=
-X-Received: by 2002:a50:bb2d:0:b0:501:d3a2:b4b3 with SMTP id
- y42-20020a50bb2d000000b00501d3a2b4b3mr1419083ede.0.1679396311722; Tue, 21 Mar
- 2023 03:58:31 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1679397438;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=NtKEJBNyunYjPawzF3HMbeki6+rSmdWQGFTeKC93lS8=;
+        b=u57Bu09omg+zpi576NVBZrK/UCwrItBtZbgjxTQK+VgeUyMD/A+D6/RvS1S5I/yFIW
+         VuB5a42DMYwTl/8L+YcOZjHwhnp/QxplCL+WBfgWIncUk8BPs0rS8kqiPogIpSQNPgc1
+         jR2NARGm5nmVQ+PB1sohPbgL/mO3UrUNwPA1ZB287fZwVPXPJJuO0DQD7cTQbEPziFqj
+         53jto9JFvym5RX3XY8ou/j7kN4ZEVuHZWqLGA+ON22WFe3WsnDiejGoCSKxxjMRg8sSq
+         jQXwNIUy+w+jvEmKwO22civ2tcRgwJ7Q3vt2ZPlnB1Jv97rJ7n4sDaud2P4eU4O2uvs8
+         WCoA==
+X-Gm-Message-State: AO0yUKXW70L+mLP3qtbnxAEY05B+PniersjtqpwxCjxThPxnItx4f4Pb
+        6LmZwtVw55mHtrpsQSPqgWStYA==
+X-Google-Smtp-Source: AK7set/Cu17olUriB8ZQQHQ5Aoy/b9zxovXnsVmvUhfJhKT+otuqfADxe0j3tJFlQHz6V7oAyzVd3Q==
+X-Received: by 2002:a05:6512:3a8b:b0:4db:3846:f908 with SMTP id q11-20020a0565123a8b00b004db3846f908mr963454lfu.10.1679397438291;
+        Tue, 21 Mar 2023 04:17:18 -0700 (PDT)
+Received: from [127.0.0.1] ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id m2-20020a2e9342000000b00295965f7495sm2174305ljh.0.2023.03.21.04.17.17
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 Mar 2023 04:17:17 -0700 (PDT)
+Date:   Tue, 21 Mar 2023 14:17:13 +0300
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org, vkoul@kernel.org,
+        kishon@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org,
+        mturquette@baylibre.com, sboyd@kernel.org, quic_wcheng@quicinc.com,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_1/8=5D_dt-bindings=3A_phy=3A_q?= =?US-ASCII?Q?com=2Cqusb2=3A_Document_IPQ9574_compatible?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <ef5af2e581203e2101773863aa7e1667b4d1b705.1679388632.git.quic_varada@quicinc.com>
+References: <cover.1677749625.git.quic_varada@quicinc.com> <cover.1679388632.git.quic_varada@quicinc.com> <ef5af2e581203e2101773863aa7e1667b4d1b705.1679388632.git.quic_varada@quicinc.com>
+Message-ID: <69120CDC-19C5-4087-BF71-0ECAB87D018B@linaro.org>
 MIME-Version: 1.0
-References: <20230320104003.407844-1-keguang.zhang@gmail.com>
- <20230320104003.407844-4-keguang.zhang@gmail.com> <591123c5b80d12cf861cc5392688da41.sboyd@kernel.org>
-In-Reply-To: <591123c5b80d12cf861cc5392688da41.sboyd@kernel.org>
-From:   Keguang Zhang <keguang.zhang@gmail.com>
-Date:   Tue, 21 Mar 2023 18:58:15 +0800
-Message-ID: <CAJhJPsWhwSzCMMaox6VoKZL7NGretnrYb+YS8pvg9BH1hip8Yw@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] clk: loongson1: Re-implement the clock driver
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 21, 2023 at 4:07=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wro=
-te:
->
-> Quoting Keguang Zhang (2023-03-20 03:40:02)
-> > Re-implement the clock driver for Loongson-1 to
-> > add devicetree support and fit into the clock framework.
-> >
-> > Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
-> > ---
-> > V3 -> V4: Fix the build error of missing linux/module.h
->
-> Most of my review on v3 still applies. This needs a resend.
 
-Will send v5 along with the modifications suggested on v3.
-Thanks for your time!
+
+On 21 March 2023 11:54:19 GMT+03:00, Varadarajan Narayanan <quic_varada@qu=
+icinc=2Ecom> wrote:
+>Document the compatible string used for the qusb2 phy in IPQ9574=2E
+>
+>Acked-by: Krzysztof Kozlowski <krzysztof=2Ekozlowski@linaro=2Eorg>
+>Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc=2Ecom>
+>
+>---
+> Changes in v2:
+>	- Moved ipq6018 to the proper place and placed ipq9574
+>	  next to it as suggested by Dmitry
+>---
+> Documentation/devicetree/bindings/phy/qcom,qusb2-phy=2Eyaml | 3 ++-
+> 1 file changed, 2 insertions(+), 1 deletion(-)
+>
+>diff --git a/Documentation/devicetree/bindings/phy/qcom,qusb2-phy=2Eyaml =
+b/Documentation/devicetree/bindings/phy/qcom,qusb2-phy=2Eyaml
+>index 7f403e7=2E=2Eeaecf9b 100644
+>--- a/Documentation/devicetree/bindings/phy/qcom,qusb2-phy=2Eyaml
+>+++ b/Documentation/devicetree/bindings/phy/qcom,qusb2-phy=2Eyaml
+>@@ -19,12 +19,13 @@ properties:
+>       - items:
+>           - enum:
+>               - qcom,ipq8074-qusb2-phy
+>+              - qcom,ipq6018-qusb2-phy
+>+              - qcom,ipq9574-qusb2-phy
+
+This still isn't sorted
+
+>               - qcom,msm8953-qusb2-phy
+>               - qcom,msm8996-qusb2-phy
+>               - qcom,msm8998-qusb2-phy
+>               - qcom,qcm2290-qusb2-phy
+>               - qcom,sdm660-qusb2-phy
+>-              - qcom,ipq6018-qusb2-phy
+>               - qcom,sm4250-qusb2-phy
+>               - qcom,sm6115-qusb2-phy
+>       - items:
 
 --=20
-Best regards,
-
-Keguang Zhang
+With best wishes
+Dmitry
