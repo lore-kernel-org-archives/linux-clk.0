@@ -2,174 +2,108 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF41C6FD20
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 19:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95100C6FD1D
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 20:00:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230429AbjCUTfb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 15:35:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51058 "EHLO
+        id S229668AbjCUUAy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 16:00:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230311AbjCUTfF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 15:35:05 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07FEF25BB3
-        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 12:34:31 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id h25so8857726lfv.6
-        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 12:34:30 -0700 (PDT)
+        with ESMTP id S229484AbjCUUAx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 16:00:53 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED2E01B2CE;
+        Tue, 21 Mar 2023 13:00:51 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id kq3so4843500plb.13;
+        Tue, 21 Mar 2023 13:00:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679427234;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JMHhMtonsK7206fFrguTPhzlan6ylHN3dFzR3FtCHqU=;
-        b=DCkVJgx5M23kD7k2bq7WLI2pRpSdvanRfk8ncagMTwNUQVu7Bjxka0AtqfeIH53IVq
-         ut6KpJq0gwl4w0bKU7woofqTwlkgHMYggthFa3SCl+F7I97qFXkWpyDVkHx8yyRAlS6n
-         aNXbeNTBmjPs8frGvwiueaLoTnIrbSLW0YIlW7IfVtI8xH3+JWrbeAyy7CY5PgEOrMdJ
-         WOj35tpXYPJCbKYONREBkVppfJ7IAtd/S43GdbRnMfvIAkghy6lzWoU/B79NpRVmCNGL
-         5rAfZyHrHv4mxOJACUAEH8duhcXsVg1ynpYJYhr6gvNVsyww0ZUkpLmVHGIKSJHGGEqi
-         fnRg==
+        d=gmail.com; s=20210112; t=1679428851;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zl3AN2bR2c47Gsz04WT/Fkytkbat7m4x1pFkQgEqWJ8=;
+        b=cSPcqpd8F0HoCIdGtNrHuMjn1yM3WcSxvmCYEjWsx0NMXcC5h3PbVPsIQwNHJvQKf+
+         hfEWS8C6wd7Ss6V95AMdDD386S3yp80/a+ycaOXHmDF1lFYuYcfQ26sYwN4gZuefb5EJ
+         SYsHpE0Ry0lHI+fM+XD1pHWwRfDtMjcmGqKi+4+VV43kFQ+amBTnqzCDx0v0sX76AeWJ
+         4TvmVEnrYwsrNat6xIATKHiAceH3g/A9A1z8oGY3OureUdOV1yY2KdTDOz4OQBNse1eK
+         GgFknwAjEnxDqZhMAiSaSndS5I5hoBINVget8Cy7w4oDGUAh/BvSjmkXoK0NfqbmsbZ/
+         XinQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679427234;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JMHhMtonsK7206fFrguTPhzlan6ylHN3dFzR3FtCHqU=;
-        b=Q8vRbhGC3/9c+hcD7bz926AUZyS7I03nEs7SO5+BJX3U0zrZYvOeVqhL1m/jUq9fhY
-         SbyEK+5JzzkPCP6y9HaPGtAySgEVmU91q/d1NKwvgWFE3fViSNK8Ye9+rHue3LEd78hR
-         T4K169BWfpK/fMW5ca4ZdASU+x9IszhSHYvqWTjLCRoTISnX0AA1QBiOueU8lkEyPEZQ
-         ebKrEAH+b18SgdS26IqOZnFNlv/J29cvvyme25Fx3lO2fabmYkMvq2Y1KSxdNeihMS4O
-         +b12zhHEcCmvveJ/ECWIleEBalgb+gZwyxVUs9ba/tpnJAB5qd4O3fYkU6LVAjNRqX0Q
-         Wdig==
-X-Gm-Message-State: AO0yUKWefwGL9fZH3i8SVVZoQui4QOV011RJmIgiGhtwlmzYJp2jTjKn
-        QmcQ8tzHkh8SPfyIymebTFA3Jw==
-X-Google-Smtp-Source: AK7set/7NLnyEkxDSUA9YVO7IO07SEYU/d89whtJ6yXcPqhZfZ0byhUFUgX/8egdo7Ka51f2/nft4w==
-X-Received: by 2002:ac2:44da:0:b0:4ea:c730:aac3 with SMTP id d26-20020ac244da000000b004eac730aac3mr1356890lfm.3.1679427233818;
-        Tue, 21 Mar 2023 12:33:53 -0700 (PDT)
-Received: from [192.168.1.101] (abym238.neoplus.adsl.tpnet.pl. [83.9.32.238])
-        by smtp.gmail.com with ESMTPSA id y3-20020ac24463000000b004db00b4c671sm2295208lfl.7.2023.03.21.12.33.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Mar 2023 12:33:53 -0700 (PDT)
-Message-ID: <7d4f9662-2eb1-e2d2-193c-e6453dc7b93b@linaro.org>
-Date:   Tue, 21 Mar 2023 20:33:47 +0100
+        d=1e100.net; s=20210112; t=1679428851;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zl3AN2bR2c47Gsz04WT/Fkytkbat7m4x1pFkQgEqWJ8=;
+        b=sjb0gCTemtQ6RrXEEJO8uUsPx+IKUC1cTH4QQ6+yV38MTi2R17HHKLJA4bi8hZGWFG
+         hnsXbgb+EzI57e681nu161v38dsOJ3BFJ2qZsoJrOlnXdhCyPDvsLJSA6xz0HcV/7CB/
+         Ky8FgG7VSphRHVV+r4hsmqy1EroTYwq52NuttaE+uy7ar+F24vkJjxgTsDvRN7pfAIUB
+         1M5Sr89EnUi72i3mms+W47CXRDrtKB0kUxfIgCs2c2jr19FWNX/BoW92426whbcm5kx3
+         6Bo6V6YJTagNdkjReT/S8q3irpI8XzjZpkOT/37N1WBnriUTaPo0ust8KyD3UAQTHYs+
+         xn5w==
+X-Gm-Message-State: AO0yUKXbSL6GSk10qjzrkxP211NR4VxweffwWUJShLnU1b2+GcLwXc97
+        wEHilrm4JR/GpZ6WhEG9pGeq+uz0q9HFmgwyIkY=
+X-Google-Smtp-Source: AK7set8TCXkyNT9UjVt6FtQxGfe71d6gix72pzxnU6Mmwt6e9uOMwyxYv2B3Rf8oiTRvvtiH+OICQw==
+X-Received: by 2002:a17:90b:4d05:b0:23f:2757:ce99 with SMTP id mw5-20020a17090b4d0500b0023f2757ce99mr637987pjb.49.1679428851277;
+        Tue, 21 Mar 2023 13:00:51 -0700 (PDT)
+Received: from d.home.yangfl.dn42 ([104.28.245.199])
+        by smtp.gmail.com with ESMTPSA id mt19-20020a17090b231300b0023b5528b8d4sm930557pjb.19.2023.03.21.13.00.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Mar 2023 13:00:50 -0700 (PDT)
+From:   David Yang <mmyangfl@gmail.com>
+Cc:     David Yang <mmyangfl@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/6] Add CRG driver for Hi3798MV100 SoC
+Date:   Wed, 22 Mar 2023 04:00:21 +0800
+Message-Id: <20230321200031.1812026-1-mmyangfl@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH net-next v2 06/12] arm64: dts: qcom: sc8280xp: Add
- ethernet nodes
-Content-Language: en-US
-To:     Andrew Halaney <ahalaney@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     agross@kernel.org, andersson@kernel.org, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        vkoul@kernel.org, bhupesh.sharma@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, peppe.cavallaro@st.com,
-        alexandre.torgue@foss.st.com, joabreu@synopsys.com,
-        mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
-        linux@armlinux.org.uk, veekhee@apple.com,
-        tee.min.tan@linux.intel.com, mohammad.athari.ismail@intel.com,
-        jonathanh@nvidia.com, ruppala@nvidia.com, bmasney@redhat.com,
-        andrey.konovalov@linaro.org, linux-arm-msm@vger.kernel.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, ncai@quicinc.com,
-        jsuraj@qti.qualcomm.com, hisunil@quicinc.com, echanude@redhat.com
-References: <20230320221617.236323-1-ahalaney@redhat.com>
- <20230320221617.236323-7-ahalaney@redhat.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230320221617.236323-7-ahalaney@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+This series adds CRG driver for Hi3798MV100 SoC.
 
+v2: move bindings to a separate patch
+v3: fix bindings commit message, reorganize patches
+v4: add ethernet and gpu clocks
+v5: add complex clock
+v6: migrate devm api
 
-On 20.03.2023 23:16, Andrew Halaney wrote:
-> This platform has 2 MACs integrated in it, go ahead and describe them.
-> 
-> Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
-> ---
-> 
-> Changes since v1:
-> 	* None
-> 
->  arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 53 ++++++++++++++++++++++++++
->  1 file changed, 53 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-> index 0d02599d8867..a63e8e81a8c4 100644
-> --- a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-> @@ -761,6 +761,59 @@ soc: soc@0 {
->  		ranges = <0 0 0 0 0x10 0>;
->  		dma-ranges = <0 0 0 0 0x10 0>;
->  
-> +		ethernet0: ethernet@20000 {
-> +			compatible = "qcom,sc8280xp-ethqos";
-> +			reg = <0x0 0x00020000 0x0 0x10000>,
-> +				<0x0 0x00036000 0x0 0x100>;
-Please correct the indentation here.
+David Yang (6):
+  clk: hisilicon: Rename Hi3798CV200 to Hi3798
+  clk: hisilicon: Extract common functions
+  clk: hisilicon: Migrate devm APIs
+  clk: hisilicon: Add complex clock for Hi3798
+  dt-bindings: clock: Add Hi3798MV100 CRG
+  clk: hisilicon: Add CRG driver for Hi3798MV100 SoC
 
-> +			reg-names = "stmmaceth", "rgmii";
-> +
-> +			clocks = <&gcc GCC_EMAC0_AXI_CLK>,
-> +				<&gcc GCC_EMAC0_SLV_AHB_CLK>,
-> +				<&gcc GCC_EMAC0_PTP_CLK>,
-> +				<&gcc GCC_EMAC0_RGMII_CLK>;
-Please correct the indentation here.
+ .../devicetree/bindings/clock/hisi-crg.txt    |   2 +
+ drivers/clk/hisilicon/Kconfig                 |   6 +-
+ drivers/clk/hisilicon/Makefile                |   2 +-
+ drivers/clk/hisilicon/clk-hi3519.c            |  45 +-
+ drivers/clk/hisilicon/clk-hi3559a.c           | 111 +--
+ drivers/clk/hisilicon/clk-hi3620.c            |  12 +-
+ drivers/clk/hisilicon/clk-hi3660.c            |  46 +-
+ drivers/clk/hisilicon/clk-hi3670.c            |  52 +-
+ drivers/clk/hisilicon/clk-hi6220.c            |  34 +-
+ drivers/clk/hisilicon/clk-hip04.c             |   4 +-
+ drivers/clk/hisilicon/clk-hisi-phase.c        |  15 +-
+ drivers/clk/hisilicon/clk-hix5hd2.c           |  33 +-
+ drivers/clk/hisilicon/clk.c                   | 245 +++----
+ drivers/clk/hisilicon/clk.h                   |  89 +--
+ drivers/clk/hisilicon/clkdivider-hi6220.c     |  23 +-
+ drivers/clk/hisilicon/clkgate-separated.c     |  16 +-
+ drivers/clk/hisilicon/crg-hi3516cv300.c       |  60 +-
+ drivers/clk/hisilicon/crg-hi3798.c            | 692 ++++++++++++++++++
+ drivers/clk/hisilicon/crg-hi3798cv200.c       | 401 ----------
+ include/dt-bindings/clock/histb-clock.h       |  13 +
+ 20 files changed, 1060 insertions(+), 841 deletions(-)
+ create mode 100644 drivers/clk/hisilicon/crg-hi3798.c
+ delete mode 100644 drivers/clk/hisilicon/crg-hi3798cv200.c
 
-> +			clock-names = "stmmaceth", "pclk", "ptp_ref", "rgmii";
-Please turn this into a vertical list.
+-- 
+2.39.2
 
-> +
-> +			interrupts = <GIC_SPI 946 IRQ_TYPE_LEVEL_HIGH>,
-> +				<GIC_SPI 936 IRQ_TYPE_LEVEL_HIGH>;
-Please correct the indentation here.
-
-Same for the other node.
-
-Konrad
-> +			interrupt-names = "macirq", "eth_lpi";
-> +			iommus = <&apps_smmu 0x4c0 0xf>;
-> +			power-domains = <&gcc EMAC_0_GDSC>;
-> +
-> +			snps,tso;
-> +			snps,pbl = <32>;
-> +			rx-fifo-depth = <4096>;
-> +			tx-fifo-depth = <4096>;
-> +
-> +			status = "disabled";
-> +		};
-> +
-> +		ethernet1: ethernet@23000000 {
-> +			compatible = "qcom,sc8280xp-ethqos";
-> +			reg = <0x0 0x23000000 0x0 0x10000>,
-> +				<0x0 0x23016000 0x0 0x100>;
-> +			reg-names = "stmmaceth", "rgmii";
-> +
-> +			clocks = <&gcc GCC_EMAC1_AXI_CLK>,
-> +				<&gcc GCC_EMAC1_SLV_AHB_CLK>,
-> +				<&gcc GCC_EMAC1_PTP_CLK>,
-> +				<&gcc GCC_EMAC1_RGMII_CLK>;
-> +			clock-names = "stmmaceth", "pclk", "ptp_ref", "rgmii";
-> +
-> +			interrupts = <GIC_SPI 929 IRQ_TYPE_LEVEL_HIGH>,
-> +				<GIC_SPI 919 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "macirq", "eth_lpi";
-> +
-> +			iommus = <&apps_smmu 0x40 0xf>;
-> +			power-domains = <&gcc EMAC_1_GDSC>;
-> +
-> +			snps,tso;
-> +			snps,pbl = <32>;
-> +			rx-fifo-depth = <4096>;
-> +			tx-fifo-depth = <4096>;
-> +
-> +			status = "disabled";
-> +		};
-> +
->  		gcc: clock-controller@100000 {
->  			compatible = "qcom,gcc-sc8280xp";
->  			reg = <0x0 0x00100000 0x0 0x1f0000>;
