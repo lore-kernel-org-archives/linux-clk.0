@@ -2,36 +2,36 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 180ACC6FD1D
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 03:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76710C74A5B
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 03:42:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229757AbjCUD3z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Mar 2023 23:29:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55028 "EHLO
+        id S229656AbjCUDmF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Mar 2023 23:42:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229579AbjCUD3y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 23:29:54 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CE6137726;
-        Mon, 20 Mar 2023 20:29:53 -0700 (PDT)
+        with ESMTP id S229550AbjCUDmC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2023 23:42:02 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8102932E56;
+        Mon, 20 Mar 2023 20:41:59 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 32909B811CF;
-        Tue, 21 Mar 2023 03:29:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 160ACC433D2;
-        Tue, 21 Mar 2023 03:29:49 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EA38EB81235;
+        Tue, 21 Mar 2023 03:41:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17888C433EF;
+        Tue, 21 Mar 2023 03:41:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679369390;
-        bh=GZWXqBx1VZ5HLFmDQaUsHeHsXagTJgeevyhmDS9nBQI=;
+        s=k20201202; t=1679370116;
+        bh=Jk2T8KzAk6AYQ1kjo+O7hUQbaKhmKLsFTuvlYvwxK/A=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fgt8ewdhEaKB7HcggS2oUKQwMcNjAqV2eGMyVXGnJauZ79cLN0Uq1f/sdAzSEe1L+
-         DAusnUTbcsPD7vBET9ovu5kWDQsz4LsyQ4CacIDa31R7ZZGY9SGtZUWJxHJ1jOjBOf
-         BI6cR447fnFLxdGR2kMzAfcl56Oo339nQmQ7gua4g/t4rvuu4OcwbO3KwSPoFpypE/
-         R/TQBEEnnYE4Y2SPTUUR7kj1ajpDIz0ivcl568Qs80uG7BEZQGzaCqdqDfDIUxp33y
-         P9ko7lq6mwUiJLD/E1Vbdgw8RHqnmP+RpYbcmiGVKQWaz048cEXLJtEk8JSWNXrZ8G
-         GjGG53hhlKLCA==
-Date:   Mon, 20 Mar 2023 20:29:48 -0700
+        b=oLf3l/0yU8YpuM7jfKUSyIKeoRoUdovOG9TYbeB30Wm8DCFIhnaL6MV24hkWZyeUi
+         6zntvyKAunOQIffo2oeilPDVtH4aJAV0jofS/FBZkNcRE+rIbye/YZnJ1A3rnj/G9N
+         rIvBgzbrwLPBn3WT5EBKLRtM/fCUT4srAorE1TX+XroTG2dxAn3sjDnSNVzrDn63Z5
+         4U0YEr+xP21vy0nzcmFci9MHCHCEsBP903MTQ5c275B9i8ZSY9Kn6uHYE4A5RvCkBX
+         CL+b8t1GpWaKooO9pIVDpcC21GnX3+ZTBEVLVQcqcQUApDiAeDVzcATDiDvffwRsiR
+         wQjxtHPocjnNg==
+Date:   Mon, 20 Mar 2023 20:41:53 -0700
 From:   Jakub Kicinski <kuba@kernel.org>
 To:     Andrew Halaney <ahalaney@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, agross@kernel.org,
@@ -51,12 +51,12 @@ Cc:     linux-kernel@vger.kernel.org, agross@kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org, ncai@quicinc.com,
         jsuraj@qti.qualcomm.com, hisunil@quicinc.com, echanude@redhat.com
-Subject: Re: [PATCH net-next v2 10/12] net: stmmac: dwmac-qcom-ethqos:
- Respect phy-mode and TX delay
-Message-ID: <20230320202948.7ba109a4@kernel.org>
-In-Reply-To: <20230320221617.236323-11-ahalaney@redhat.com>
+Subject: Re: [PATCH net-next v2 09/12] net: stmmac: Add EMAC3 variant of
+ dwmac4
+Message-ID: <20230320204153.21736840@kernel.org>
+In-Reply-To: <20230320221617.236323-10-ahalaney@redhat.com>
 References: <20230320221617.236323-1-ahalaney@redhat.com>
-        <20230320221617.236323-11-ahalaney@redhat.com>
+        <20230320221617.236323-10-ahalaney@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -64,38 +64,19 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 20 Mar 2023 17:16:15 -0500 Andrew Halaney wrote:
->  static int ethqos_rgmii_macro_init(struct qcom_ethqos *ethqos)
->  {
-> +	int phy_mode;
-> +	int phase_shift;
+On Mon, 20 Mar 2023 17:16:14 -0500 Andrew Halaney wrote:
+> The next approach that was checked was to have a function pointer
+> embedded inside a structure that does the appropriate conversion based
+> on the variant that's in use. However, some of the function definitions
+> are like the following:
+> 
+>     void emac3_set_rx_ring_len(void __iomem *ioaddr, u32 len, u32 chan)
 
-nit: invert the order, we like variable declaration lines longest 
-to shortest
+I checked a couple of callbacks and they seem to all be called with
+priv->iomem as an arg, so there is no strong reason to pass iomem
+instead of priv / hw. Or at least not to pass both..
 
-> +	/* Determine if the PHY adds a 2 ns TX delay or the MAC handles it */
-> +	phy_mode = device_get_phy_mode(&ethqos->pdev->dev);
-> +	if (phy_mode == PHY_INTERFACE_MODE_RGMII_ID || phy_mode == PHY_INTERFACE_MODE_RGMII_TXID)
+I think that's a better approach than adding the wrappers :(
 
-Let's try to stick to 80 chars where reasonable, this would be easier
-to read as 2 lines.
-
-> +		phase_shift = 0;
-> +	else
-> +		phase_shift = RGMII_CONFIG2_TX_CLK_PHASE_SHIFT_EN;
-> +
->  	/* Disable loopback mode */
->  	rgmii_updatel(ethqos, RGMII_CONFIG2_TX_TO_RX_LOOPBACK_EN,
->  		      0, RGMII_IO_MACRO_CONFIG2);
-> @@ -300,9 +310,9 @@ static int ethqos_rgmii_macro_init(struct qcom_ethqos *ethqos)
->  			      RGMII_CONFIG_PROG_SWAP, RGMII_IO_MACRO_CONFIG);
->  		rgmii_updatel(ethqos, RGMII_CONFIG2_DATA_DIVIDE_CLK_SEL,
->  			      0, RGMII_IO_MACRO_CONFIG2);
-> +
->  		rgmii_updatel(ethqos, RGMII_CONFIG2_TX_CLK_PHASE_SHIFT_EN,
-> -			      RGMII_CONFIG2_TX_CLK_PHASE_SHIFT_EN,
-> -			      RGMII_IO_MACRO_CONFIG2);
-> +				  phase_shift, RGMII_IO_MACRO_CONFIG2);
-
-here and in couple more places looks like indentation got broken?
-continuation line should start under the opening bracket + 1.
+Are you familiar with coccinelle / spatch? It's often better than 
+just regexps for refactoring, maybe it can help?
