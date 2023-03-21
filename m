@@ -2,55 +2,52 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A1BC74A5B
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 04:10:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F848C761A6
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 04:12:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229670AbjCUEK5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 00:10:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41518 "EHLO
+        id S229494AbjCUEMB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 00:12:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230326AbjCUEKY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 00:10:24 -0400
+        with ESMTP id S230259AbjCUELX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 00:11:23 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC71023DBE;
-        Mon, 20 Mar 2023 21:07:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5025621283;
+        Mon, 20 Mar 2023 21:08:57 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7FBA96194E;
-        Tue, 21 Mar 2023 04:05:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6966CC433EF;
-        Tue, 21 Mar 2023 04:05:50 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 072C3618CD;
+        Tue, 21 Mar 2023 04:01:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5559C433D2;
+        Tue, 21 Mar 2023 04:01:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679371550;
-        bh=dkNXtuPKzvH8px3D6BZTKCZ/f6/0QU05iqQDcuooA8g=;
+        s=k20201202; t=1679371261;
+        bh=RbnGONoE1gOWA8I/bFj6idggHbyoPFRsWZDvzLLDxb8=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=pzADmA5bysShRhtC8zU+1CY1moObQ/KOtgBsTkrjYieCcDGfLyEgUG/1v2S9ntb3a
-         zgqgQzl5SDJS0Z/JBGwt+WHwnnj8Sa71i3YON3MD6IMcpd4T8CZeSM5NY3xLfS4HTX
-         Ahq9CvkwOW19c7h+0DlTiM5XxR2NqauCICZs1aa6nJRqgwnsVKT5vCTP94xpwqqNJP
-         gHk7vARzojEZN4ItrwppFssYWCkdCcpWRblOGtvvB3Bn9Os1B9zZqcfM7uvC69daRs
-         sXqnnY2hwRgfvGuW22kY/U6I8+K6MdAh/Gm/pe7ZbC6e5+3OOtiqRMaQmGUE1geXMF
-         in6r6hTOXHKZA==
-Date:   Mon, 20 Mar 2023 21:05:49 -0700
+        b=s1FdFxwXi83R/jjWZ8Bp6EgrFqlAOT/WgTeyZuwwcjLofuCGfpjvZV5f+qkSDy95R
+         /W5POTJsXlSXiytEqMWRX5k1A/4+jVr1Z+7xOa21a0SA9qXgG/YkeQEcNP9oohWKPD
+         +//0neghvQqFIz/IyP6OOJGv1HtZkC7NDbsSvkX4x1G9Q2CG7GduthoeIOWvTXJ4IE
+         t3JtS6Zq+jlwn3CpIgyM2w9JwC+uxrK4mgW3BwlxQcPuL3LSmJmdT1CIj9f+R9sGa8
+         YdLcg8cMYL2d5/sujBhOQwO5hADyYUc65K1MpUMwxOrHSZcrQNcv3wKkRdVe95GW+c
+         lNa7k24T3+2uQ==
+Date:   Mon, 20 Mar 2023 21:00:59 -0700
 From:   Jakub Kicinski <kuba@kernel.org>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Jiri Pirko <jiri@resnulli.us>, Vadim Fedorenko <vadfed@meta.com>,
+To:     Jiri Pirko <jiri@resnulli.us>
+Cc:     Vadim Fedorenko <vadfed@meta.com>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
         Jonathan Lemon <jonathan.lemon@gmail.com>,
         Paolo Abeni <pabeni@redhat.com>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        poros <poros@redhat.com>, mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "Michalik, Michal" <michal.michalik@intel.com>
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Michal Michalik <michal.michalik@intel.com>
 Subject: Re: [PATCH RFC v6 1/6] dpll: spec: Add Netlink spec in YAML
-Message-ID: <20230320210549.081da89b@kernel.org>
-In-Reply-To: <DM6PR11MB4657F423D2B3B4F0799B0F019BBC9@DM6PR11MB4657.namprd11.prod.outlook.com>
+Message-ID: <20230320210059.244daae0@kernel.org>
+In-Reply-To: <ZBSUBWUwC0FLlS/D@nanopsycho>
 References: <20230312022807.278528-1-vadfed@meta.com>
         <20230312022807.278528-2-vadfed@meta.com>
-        <ZBCIPg1u8UFugEFj@nanopsycho>
-        <DM6PR11MB4657F423D2B3B4F0799B0F019BBC9@DM6PR11MB4657.namprd11.prod.outlook.com>
+        <ZBSUBWUwC0FLlS/D@nanopsycho>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -58,22 +55,13 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 16 Mar 2023 13:15:59 +0000 Kubalewski, Arkadiusz wrote:
-> >Value 23? What's this?
-> >You have it specified for some attrs all over the place.
-> >What is the reason for it?
-> >  
+On Fri, 17 Mar 2023 17:23:33 +0100 Jiri Pirko wrote:
+> >+/* Ops table for dpll */
+> >+static const struct genl_split_ops dpll_nl_ops[6] = {  
 > 
-> Actually this particular one is not needed (also value: 12 on pin above),
-> I will remove those.
-> But the others you are refering to (the ones in nested attribute list),
-> are required because of cli.py parser issue, maybe Kuba knows a better way to
-> prevent the issue?
-> Basically, without those values, cli.py brakes on parsing responses, after
-> every "jump" to nested attribute list it is assigning first attribute there
-> with value=0, thus there is a need to assign a proper value, same as it is on
-> 'main' attribute list.
+> It's odd to see 6 here. Should by just []
+> But it's an issue of Jakub's generator.
 
-Are you saying the parser gets confused after returning from nested
-parsing? Can you still repro this problem? I don't see any global
-state in _decode()..
+In some modes of generation the array is visible outside the source file
+i.e. there's a forward declaration in the header. So I had to get the
+counting right, anyway. But sure, I'll send a "fix"..
