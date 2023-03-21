@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9782C77B61
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 05:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA40BC77B6E
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 05:01:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229997AbjCUFBP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 01:01:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38698 "EHLO
+        id S229648AbjCUFBQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 01:01:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229902AbjCUFA5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 01:00:57 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91A0B233D1;
-        Mon, 20 Mar 2023 22:00:48 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id p16so8769657wmq.5;
-        Mon, 20 Mar 2023 22:00:48 -0700 (PDT)
+        with ESMTP id S229934AbjCUFBF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 01:01:05 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0B7131E19;
+        Mon, 20 Mar 2023 22:00:51 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id r19-20020a05600c459300b003eb3e2a5e7bso8729175wmo.0;
+        Mon, 20 Mar 2023 22:00:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679374844;
+        d=gmail.com; s=20210112; t=1679374848;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+0hlvvdbeDEIm7xJGhHSHeJnLpm+LhG9OICPA4xVqkE=;
-        b=mlXYuC4HLhJSYbbxfkKtoRifhPZod5zry60kYmldrX4a9B5KMevPGI8ntol92zJch9
-         4CUxeWGDp6ROdWimiH55JFNgCQn8DvZoDNkyvzY6WWcGTaJ2VYfSBgbx4wj9nLN4HKrQ
-         lwf3HdZJMRNXEhgtNokQDDLGvyu6KN4A3Iz4u/BR1l36iRlrVhkQlODHznrI74jGELx1
-         lhcaPH6ZiAyrdv5PeKYdeoM1RGD/QZAMfKORatUTgZh8hTWEryAvUNhbkqYXVVmOh3WI
-         inVm1pzqPZ4bAxkXVlt1szRSL9jhNDTM2dvE93JrU9GP6jaayF69XEpk9Fo+dLuc8oLT
-         4yIw==
+        bh=ENURxkCD4SFoaP6aebwo/q0vo0bcMItJOR8Kmmrb9B8=;
+        b=MzDi76ThSJ8I2UkP/1F3yZstqxOBzhMRm8kTOdg93unOq72ahgfP3W5Ulb0xwBZP+j
+         EikY+r0Rvr+oAzMBNm1hsM2pVmZkhoe8vrWeiJvB3E56/WBg9o+LTMkYDpu3wrIgEa9O
+         BlNq2mLNyFfjSfPX8eMbinPcw15IgQ+1yGUm8ZuFHLgJgeTyJI+2UJwQdx/4Egs7FO6u
+         BRqaD1JbmAXUT6Ff4yv8PURggJngN7R9cS1hawx7RZeYnwbmeHCbbnKdEl02QtTPbnAj
+         PTZtHB5Yu8IlAhnGRt9bkx56cPi9yMuuRQ/x3N7drBUJ6W3hOBPBTTNOuC+cVJLJbKJ9
+         q41g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679374844;
+        d=1e100.net; s=20210112; t=1679374848;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+0hlvvdbeDEIm7xJGhHSHeJnLpm+LhG9OICPA4xVqkE=;
-        b=w26xcjTupA55poBJAaf+NvQWmYRce1Fd51Lc06uBTti6A/BaeoHyyackaFMJpR0W5c
-         quEHMjfbzNODOlIc6hT+ga52WOHf9qifh+sX0/Br/DgPjo5WQupwyIwX59wGFeS9PgTd
-         BZiWPkjnN3+kzlKh4RRmn5W5AHlIJ53pLvIZqNt3tqfzEtos/yZV639KrNYe4ZxJv2s/
-         rM9YshNiCHIDNTneBi43wPiBT7pYtyeLFPLVnhHzKEhAxaL45kwvf6gbxjEVsc1eqS4l
-         FhMdfw8AT1poXE8cXr1tYqDM5jmEFU7who5UEg1Cr1odXwjtctMk4Y0yntxon4DV81FS
-         ri0A==
-X-Gm-Message-State: AO0yUKVe5/DI3d0PrD4S+Ms74KBv4ZHgQcp1NlGBNvuK8+ICFhfNje7j
-        w+FOnl8YNm3yDRmRDTGRiugKcCzuytc=
-X-Google-Smtp-Source: AK7set/dYJHr+yMgJh17VY8pqnuegn8HnpcGfcJpKrv1OIZr38dRZaZ/4QYzB/ToYI37hUSUNhZT6g==
-X-Received: by 2002:a1c:7908:0:b0:3eb:3843:9f31 with SMTP id l8-20020a1c7908000000b003eb38439f31mr1176595wme.10.1679374843782;
-        Mon, 20 Mar 2023 22:00:43 -0700 (PDT)
+        bh=ENURxkCD4SFoaP6aebwo/q0vo0bcMItJOR8Kmmrb9B8=;
+        b=UZEV3eGwYh9cKYA71l3txjzxDz9XJm5Ui0xKyko84o41Ff70M7/KoHmDDixzZUMq9L
+         6Y81Ei0C4VPqh52HQfJvD+Dd3CAKLMkWvJB6FvjSKyvkSJ41Y/u1UJQIwv61gt+isyEC
+         fPzVxK5Wj0g1gf+LUR+TNKHH4paiyS6Gbo/L1kC48jnctQ5W790aYiC/7Ktr0knjCiu+
+         1OFKTc6MZCrQOEG/paA48B/yIoIPt4UvdC6senF2H/gpmMhimO5wV8V80ZUtREvz/4JZ
+         46wIP0W9BX8bkf+ghq/uwYk6krxMKlDCgNeS/1AA27feClRvlqRHPsZDpXSzkc9Zh351
+         /XmA==
+X-Gm-Message-State: AO0yUKXVRclGd2AMnTOGldZ2XesbTfr8kZUOShjJISHG7WdEAIRNVTsu
+        mK60EOG315ZN+JtlAmBqXhRrLnjsJ9s=
+X-Google-Smtp-Source: AK7set/nSITNOfKlnwangQvWZxYyjfmmynvUdRicYyvRkVc2yJbushi7SPSbH8E30up/WyxNbmzEwg==
+X-Received: by 2002:a7b:c3c8:0:b0:3dc:4fd7:31f7 with SMTP id t8-20020a7bc3c8000000b003dc4fd731f7mr1143547wmj.41.1679374848699;
+        Mon, 20 Mar 2023 22:00:48 -0700 (PDT)
 Received: from localhost.localdomain (106.red-88-13-29.dynamicip.rima-tde.net. [88.13.29.106])
-        by smtp.gmail.com with ESMTPSA id 3-20020a05600c020300b003eddefd8792sm6238432wmi.14.2023.03.20.22.00.42
+        by smtp.gmail.com with ESMTPSA id 3-20020a05600c020300b003eddefd8792sm6238432wmi.14.2023.03.20.22.00.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Mar 2023 22:00:43 -0700 (PDT)
+        Mon, 20 Mar 2023 22:00:48 -0700 (PDT)
 From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
 To:     linux-clk@vger.kernel.org
 Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
@@ -57,9 +57,9 @@ Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
         robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         matthias.bgg@gmail.com, devicetree@vger.kernel.org,
         arinc.unal@arinc9.com
-Subject: [PATCH v2 5/9] mips: ralink: rt3883: remove clock related code
-Date:   Tue, 21 Mar 2023 06:00:30 +0100
-Message-Id: <20230321050034.1431379-6-sergio.paracuellos@gmail.com>
+Subject: [PATCH v2 9/9] MAINTAINERS: add Mediatek MTMIPS Clock maintainer
+Date:   Tue, 21 Mar 2023 06:00:34 +0100
+Message-Id: <20230321050034.1431379-10-sergio.paracuellos@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230321050034.1431379-1-sergio.paracuellos@gmail.com>
 References: <20230321050034.1431379-1-sergio.paracuellos@gmail.com>
@@ -69,89 +69,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-A properly clock driver for ralink SoCs has been added. Hence there is no
-need to have clock related code in 'arch/mips/ralink' folder anymore.
+Adding myself as maintainer for Mediatek MTMIPS clock driver.
 
 Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 ---
- arch/mips/include/asm/mach-ralink/rt3883.h |  8 ----
- arch/mips/ralink/rt3883.c                  | 44 ----------------------
- 2 files changed, 52 deletions(-)
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/mips/include/asm/mach-ralink/rt3883.h b/arch/mips/include/asm/mach-ralink/rt3883.h
-index ad25d5e8d2dc..4a835b178925 100644
---- a/arch/mips/include/asm/mach-ralink/rt3883.h
-+++ b/arch/mips/include/asm/mach-ralink/rt3883.h
-@@ -92,14 +92,6 @@
- #define RT3883_REVID_VER_ID_SHIFT	8
- #define RT3883_REVID_ECO_ID_MASK	0x0f
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8d5bc223f305..581234dfa735 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13137,6 +13137,12 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/phy/mediatek,mt7621-pci-phy.yaml
+ F:	drivers/phy/ralink/phy-mt7621-pci.c
  
--#define RT3883_SYSCFG0_DRAM_TYPE_DDR2	BIT(17)
--#define RT3883_SYSCFG0_CPUCLK_SHIFT	8
--#define RT3883_SYSCFG0_CPUCLK_MASK	0x3
--#define RT3883_SYSCFG0_CPUCLK_250	0x0
--#define RT3883_SYSCFG0_CPUCLK_384	0x1
--#define RT3883_SYSCFG0_CPUCLK_480	0x2
--#define RT3883_SYSCFG0_CPUCLK_500	0x3
--
- #define RT3883_SYSCFG1_USB0_HOST_MODE	BIT(10)
- #define RT3883_SYSCFG1_PCIE_RC_MODE	BIT(8)
- #define RT3883_SYSCFG1_PCI_HOST_MODE	BIT(7)
-diff --git a/arch/mips/ralink/rt3883.c b/arch/mips/ralink/rt3883.c
-index cca887af378f..14c56993611a 100644
---- a/arch/mips/ralink/rt3883.c
-+++ b/arch/mips/ralink/rt3883.c
-@@ -21,50 +21,6 @@
- 
- static struct ralink_soc_info *soc_info_ptr;
- 
--void __init ralink_clk_init(void)
--{
--	unsigned long cpu_rate, sys_rate;
--	u32 syscfg0;
--	u32 clksel;
--	u32 ddr2;
--
--	syscfg0 = rt_sysc_r32(RT3883_SYSC_REG_SYSCFG0);
--	clksel = ((syscfg0 >> RT3883_SYSCFG0_CPUCLK_SHIFT) &
--		RT3883_SYSCFG0_CPUCLK_MASK);
--	ddr2 = syscfg0 & RT3883_SYSCFG0_DRAM_TYPE_DDR2;
--
--	switch (clksel) {
--	case RT3883_SYSCFG0_CPUCLK_250:
--		cpu_rate = 250000000;
--		sys_rate = (ddr2) ? 125000000 : 83000000;
--		break;
--	case RT3883_SYSCFG0_CPUCLK_384:
--		cpu_rate = 384000000;
--		sys_rate = (ddr2) ? 128000000 : 96000000;
--		break;
--	case RT3883_SYSCFG0_CPUCLK_480:
--		cpu_rate = 480000000;
--		sys_rate = (ddr2) ? 160000000 : 120000000;
--		break;
--	case RT3883_SYSCFG0_CPUCLK_500:
--		cpu_rate = 500000000;
--		sys_rate = (ddr2) ? 166000000 : 125000000;
--		break;
--	}
--
--	ralink_clk_add("cpu", cpu_rate);
--	ralink_clk_add("10000100.timer", sys_rate);
--	ralink_clk_add("10000120.watchdog", sys_rate);
--	ralink_clk_add("10000500.uart", 40000000);
--	ralink_clk_add("10000900.i2c", 40000000);
--	ralink_clk_add("10000a00.i2s", 40000000);
--	ralink_clk_add("10000b00.spi", sys_rate);
--	ralink_clk_add("10000b40.spi", sys_rate);
--	ralink_clk_add("10000c00.uartlite", 40000000);
--	ralink_clk_add("10100000.ethernet", sys_rate);
--	ralink_clk_add("10180000.wmac", 40000000);
--}
--
- void __init ralink_of_remap(void)
- {
- 	rt_sysc_membase = plat_of_remap_node("ralink,rt3883-sysc");
++MEDIATEK MTMIPS CLOCK DRIVER
++M:	Sergio Paracuellos <sergio.paracuellos@gmail.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
++F:	drivers/clk/ralink/clk-mtmips.c
++
+ MEDIATEK NAND CONTROLLER DRIVER
+ L:	linux-mtd@lists.infradead.org
+ S:	Orphan
 -- 
 2.25.1
 
