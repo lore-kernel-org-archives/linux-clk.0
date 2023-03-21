@@ -2,359 +2,386 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 364A5C6FD1D
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 20:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 436E5C761A6
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 20:13:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229975AbjCUUKr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 16:10:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48692 "EHLO
+        id S229648AbjCUUNx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 16:13:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229676AbjCUUKq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 16:10:46 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 576404C6DD;
-        Tue, 21 Mar 2023 13:10:32 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id o11-20020a05600c4fcb00b003eb33ea29a8so10212456wmq.1;
-        Tue, 21 Mar 2023 13:10:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679429430;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=viHWNP8s4BI0z0vZNADv22A48oTfIdBG6AOV5RLn/v4=;
-        b=qFIYQOZgV/KvbBYNrFJElcZIHZZyL/rcBKPBR6Y0+TZOS0MSJntGjGZfrEfoAq/Q7l
-         x7wNZyHwq/Jv8YoWNovlOnCxk7dp0rAY8MmEM8867OAobxPwvenYRQw2k7HwptRQP8x4
-         3oa93FJNNf2Z62vFYND2iZbITkb53amPthA/HqYxdZ5ePxb3QxJ+mIZQCd4Q1t4nzgdY
-         FFUR3HCHjxbQgZ8FqECn5npnSFcnVmUUBjS9qEeXdSaQohODXZ3FQJya5n3kpQSfqbTc
-         JtIQj7lCFR1/BD63GR9aWpso7uE4puT8l419MqlbAtlQ0DaptGSX/q075Z0iuuIP5CMH
-         m2Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679429430;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=viHWNP8s4BI0z0vZNADv22A48oTfIdBG6AOV5RLn/v4=;
-        b=mvxGhkKWDoPd0LtsT3FhhlQZJLzz8ryX3J7GDa+dbiAbebdjkLUV0OYUZbCSS6a6nP
-         2L6r/+hT5N8VMDuFyIhH5aTn8NcaIRsIMBZkFkuFrJjCeggq2IuOj4jd0U5tUvwkD/s1
-         ANDyAwNERUYG8YrJVcvA4hFwwdAB0ZbWHQjKb/cIj7dlcQdG3e2N0zid2SdZX20FjafF
-         +258L09EU5gCeF+mmNP5LMnmod8b5fIi/QoLgzcYWLsCs+XP0KP4lElQGSFqYF7n7xs/
-         HfM1HVu31smpMyQz4NaCY01rJjRBQv89gQLIb8nhTW2tSb44rRV2k/uKAYO9rsjw+au0
-         95mg==
-X-Gm-Message-State: AO0yUKXEWQ1p3zWcxHmT+0GMDcIqx8vEwkOEDiQDp+iF0N/vc9s2wn8m
-        BMnw/S+2QXQCRMHnVDbNqRM=
-X-Google-Smtp-Source: AK7set89DXSzpxj4qBQOvh0zoaFhuNNu8x3PeMw9mxOEUURcPtEzZSTAF7wd5RH1LYXTIHZUgznIDw==
-X-Received: by 2002:a7b:c5c1:0:b0:3ed:b349:e473 with SMTP id n1-20020a7bc5c1000000b003edb349e473mr3389880wmk.37.1679429430648;
-        Tue, 21 Mar 2023 13:10:30 -0700 (PDT)
-Received: from atlantis.lan (255.red-79-146-124.dynamicip.rima-tde.net. [79.146.124.255])
-        by smtp.gmail.com with ESMTPSA id b13-20020adff90d000000b002c54c92e125sm12107693wrr.46.2023.03.21.13.10.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Mar 2023 13:10:30 -0700 (PDT)
-From:   =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
-        <noltari@gmail.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, p.zabel@pengutronix.de,
-        f.fainelli@gmail.com, jonas.gorski@gmail.com,
-        william.zhang@broadcom.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
-        <noltari@gmail.com>
-Subject: [PATCH v3 4/4] clk: bcm: Add BCM63268 timer clock and reset driver
-Date:   Tue, 21 Mar 2023 21:10:22 +0100
-Message-Id: <20230321201022.1052743-5-noltari@gmail.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20230321201022.1052743-1-noltari@gmail.com>
-References: <20210315122605.28437-1-noltari@gmail.com>
- <20230321201022.1052743-1-noltari@gmail.com>
-MIME-Version: 1.0
+        with ESMTP id S229734AbjCUUNw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 16:13:52 -0400
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04hn2244.outbound.protection.outlook.com [52.100.17.244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 297B34C6DD;
+        Tue, 21 Mar 2023 13:13:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N7SjqAGJWUCrdMlqLs8dOLrwOazJcdUmBiLXczJHDao=;
+ b=YAqeS6pjEuLAnJihQeWKRnlZfbAHV8S+E4KZ3HHbgTtJwXd83lg1f3I5RIpf7LDbb4ItY5lSQbJtj7vl5MNsP5EJ1/aAJFTcphbO28ubuK4CKt3URKk1NOziBnTlMYZLQKPGA5pXdiFK3PVrDd0IaljU2+wvCKUX1plE1GM71R3hlwarCfOQFTP9h9LygjoWXYcz+TMPZmQqU4uVNceK0OqYQFQUfjxKxF64wOJzDYyzmjB8wSSAY+sRj61bEQX4oIXuxgaHGv9gwM0Pw0Aw1efIOEVVFTPlo02C7ldbg5QFc6s/wOn0doQgppVZk4Ur9qrYw9nccoN9lLbCQzHdkA==
+Received: from ZR2P278CA0071.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:52::17)
+ by PAXPR03MB7548.eurprd03.prod.outlook.com (2603:10a6:102:1db::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.37; Tue, 21 Mar
+ 2023 20:13:38 +0000
+Received: from VI1EUR05FT035.eop-eur05.prod.protection.outlook.com
+ (2603:10a6:910:52:cafe::f4) by ZR2P278CA0071.outlook.office365.com
+ (2603:10a6:910:52::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.37 via Frontend
+ Transport; Tue, 21 Mar 2023 20:13:38 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 20.160.56.87)
+ smtp.mailfrom=seco.com; dkim=pass (signature was verified)
+ header.d=seco.com;dmarc=pass action=none header.from=seco.com;
+Received-SPF: Pass (protection.outlook.com: domain of seco.com designates
+ 20.160.56.87 as permitted sender) receiver=protection.outlook.com;
+ client-ip=20.160.56.87; helo=inpost-eu.tmcas.trendmicro.com; pr=C
+Received: from inpost-eu.tmcas.trendmicro.com (20.160.56.87) by
+ VI1EUR05FT035.mail.protection.outlook.com (10.233.242.114) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6222.17 via Frontend Transport; Tue, 21 Mar 2023 20:13:37 +0000
+Received: from outmta (unknown [192.168.82.133])
+        by inpost-eu.tmcas.trendmicro.com (Trend Micro CAS) with ESMTP id 3EA762008088A;
+        Tue, 21 Mar 2023 20:13:37 +0000 (UTC)
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com (unknown [104.47.51.176])
+        by repre.tmcas.trendmicro.com (Trend Micro CAS) with ESMTPS id EA88C2008006F;
+        Tue, 21 Mar 2023 20:11:43 +0000 (UTC)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ks7GQ1WqzJudXHKEGTIbEEMw4v/8ali4lwilNiYzACwekgOnrdCjOmXNSgEaoZs8n3BNqvBQSb7gdizGIO8+eET9wZelNSnFkHf+M+pQnItPq0WbLGnqs5P4WtrlgWC9hEJUmwCaI8tYzazDkBFfRl1p3FMkqBeeCYdHytsndyKTzG/kXenG/tUcHJPfqsdKugbWWBX3sAi9h/zTlfwKAHDctf1E6jkuMSvYj1nJnoJUVq3UGzeUyqCpTyEkfg7a68xIULQB4hlS9jrOVKgX6QO4VUSce38OCyabiVMYRPJiHQRdJY4GjTuVMofFUDIzlsMoAdckZqMDO0JqKnP8ig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=N7SjqAGJWUCrdMlqLs8dOLrwOazJcdUmBiLXczJHDao=;
+ b=kFkfcN3+uTjmzQKavTWief0Z4Ocb31CWNAwAz1tDb5fTGMfUxhwSDdw+Ov0abIxrPijT1otRPZrDYSdjZaQM2jJPN8YVcm9cGljHjkb4HYuZEreS1EJdI9ojy3/0Hqto/ITP+I+kyrz5hPF6x/T84s0BOG6LC/5d0ApHUv7yJYIvterCBSm1Yi9z1PD7QU1iUB72GKnbBnxL00zvExXoRsTiPPCT7AN5u7E9bHqN805XKiEunAKRFN2r0u7BEPItO49QxCVBXqI2iZNI1R0sk+ozKXMY/JdMCL0G7Wfz2Gac2FeFxWlD5YJ4foGMcYfPkRzIFzz9S5v02qz9klrOCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=seco.com; dmarc=pass action=none header.from=seco.com;
+ dkim=pass header.d=seco.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N7SjqAGJWUCrdMlqLs8dOLrwOazJcdUmBiLXczJHDao=;
+ b=YAqeS6pjEuLAnJihQeWKRnlZfbAHV8S+E4KZ3HHbgTtJwXd83lg1f3I5RIpf7LDbb4ItY5lSQbJtj7vl5MNsP5EJ1/aAJFTcphbO28ubuK4CKt3URKk1NOziBnTlMYZLQKPGA5pXdiFK3PVrDd0IaljU2+wvCKUX1plE1GM71R3hlwarCfOQFTP9h9LygjoWXYcz+TMPZmQqU4uVNceK0OqYQFQUfjxKxF64wOJzDYyzmjB8wSSAY+sRj61bEQX4oIXuxgaHGv9gwM0Pw0Aw1efIOEVVFTPlo02C7ldbg5QFc6s/wOn0doQgppVZk4Ur9qrYw9nccoN9lLbCQzHdkA==
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=seco.com;
+Received: from DB9PR03MB8847.eurprd03.prod.outlook.com (2603:10a6:10:3dd::13)
+ by AM9PR03MB7044.eurprd03.prod.outlook.com (2603:10a6:20b:2d9::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.37; Tue, 21 Mar
+ 2023 20:13:32 +0000
+Received: from DB9PR03MB8847.eurprd03.prod.outlook.com
+ ([fe80::dbcf:1089:3242:614e]) by DB9PR03MB8847.eurprd03.prod.outlook.com
+ ([fe80::dbcf:1089:3242:614e%6]) with mapi id 15.20.6178.037; Tue, 21 Mar 2023
+ 20:13:32 +0000
+From:   Sean Anderson <sean.anderson@seco.com>
+To:     Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-phy@lists.infradead.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, Madalin Bucur <madalin.bucur@nxp.com>,
+        Camelia Alexandra Groza <camelia.groza@nxp.com>,
+        Bagas Sanjaya <bagasdotme@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Sean Anderson <sean.anderson@seco.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        =?UTF-8?q?Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, Li Yang <leoyang.li@nxp.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH v12 00/13] phy: Add support for Lynx 10G SerDes
+Date:   Tue, 21 Mar 2023 16:12:59 -0400
+Message-Id: <20230321201313.2507539-1-sean.anderson@seco.com>
+X-Mailer: git-send-email 2.35.1.1320.gc452695387.dirty
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MN2PR20CA0026.namprd20.prod.outlook.com
+ (2603:10b6:208:e8::39) To DB9PR03MB8847.eurprd03.prod.outlook.com
+ (2603:10a6:10:3dd::13)
+MIME-Version: 1.0
+X-MS-TrafficTypeDiagnostic: DB9PR03MB8847:EE_|AM9PR03MB7044:EE_|VI1EUR05FT035:EE_|PAXPR03MB7548:EE_
+X-MS-Office365-Filtering-Correlation-Id: aba9a379-ed43-4b70-99dc-08db2a48c1cf
+X-TrendMicro-CAS-OUT-LOOP-IDENTIFIER: 656f966764b7fb185830381c646b41a1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted: BCL:0;
+X-Microsoft-Antispam-Message-Info-Original: Urcdlt0Dw08nzYIs+i4hYp3xmSvXIJ6wyO30rTkME1DlW0s1QDW7zqw5J8tnVRJgSv7PMpd8TR7nD3P99ZCOh+jaAAA+Z8uJeVf4tOYqSqdw64d+EYM1WHxWAf7MQjZrKLi0JiBZPgCH3fMACuX8VpvJQAe+Fgm0YM5KlugqS+wtKiHKqS2wXww0kfADeSBbKqKRF4PHqLMKRxhHyacacNg4pF2IbN71DhEjYK+1jIdUf1AU5UvdL5fKqXCXXqUk6KqH6Nca4LuKxjDVsDzp6vrD92ZxccupepJzDJtLyh0Jl7LnBZraHbRtDfLJg9bRHoQVfZPR0oOGgrOS5osnhAYJVUS8DlqeX2qUA+x7QcXlh9hxEHLs/ouY1MJvjW5ju3E0MZcf4CsxP7RBWIVZdq4C75iiAjDdG2ewtT0ktYwdB2eQ9Upl/S3+mSNDrqHIod+lKyqBbYEjarj7hYoCjEDNn7MsYZkXxIKxuq9U8m7vzNnDcrCmJyOmfDCIP8MZJTRa1u3lKifaIX/LTt4qv0QCDFLNxk+yiY+BF+sqf0vEa7Qbfc1jMBORWRChtrZ+DAHXF0YLCj4afofxCb/dMOcPTOD8ujiynxCHEoJ3xI40y3SB1ZON9d1mQPLIdcX3pGUg94vrYtRILNVa+FmZp6G5xp7Fe3IvZFi4VnJcaYK4mKNohjPI+Pb0zIJJQHP0EwzToJ1A/ifb32Md3dbRcw==
+X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR03MB8847.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(376002)(396003)(346002)(39860400002)(366004)(136003)(451199018)(2616005)(54906003)(83380400001)(6512007)(7416002)(6506007)(6486002)(478600001)(316002)(1076003)(26005)(52116002)(5660300002)(6666004)(186003)(110136005)(86362001)(38350700002)(38100700002)(30864003)(66946007)(41300700001)(44832011)(2906002)(8936002)(66476007)(66556008)(8676002)(4326008)(36756003);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR03MB7044
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: VI1EUR05FT035.eop-eur05.prod.protection.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs: d7a46605-91a4-49dd-5488-08db2a48be4f
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: IHVhZfievzphSiMslJQnBnO/81jJwQr1Ey1wjmHQ4S7qKT9IBhps3lNSkL1GFNwqYY0tyWuQHhHE7W4b7nykN2NJmE2Qk5yqVEzy4dHUnNRUrEBsRIaVxyIzhtills26hm8EcdDTfL596qIUszz4mNyQfiqmuYRuO+Ig5tNxuklDcXIZ5SdNyrL+XBwapOUBHXXGcv5YrRotVkK8H3Bh6zPXL3YByX1aNVIiTN0GOYV6TtCJXnLilwn0HZn3K1WC9VBl+/8kBZvYBdTqd0K1G7cHj6k2hzmzUSRhAcC4kiezIrpvkDwYyLicBowvCdC2Lom7A9jiN/zdz5G3AtYt92b+A7FT/Pi04FQfSDVj0lZVuvqrARBkXNayYsGeRYvmLNosHrBPB1mDTD4qUDRt1xQ3L9hjuP/Ja3PKLsQL/f7Ta1Qb5ChIaXeFXxDj/4w32uiPyaZQpWHhiCqtS5R2bxvO7fxhCL45qeKLsuL5Yo/m3DWHKOXve16+gSb8fRLyFuA5HPpgGOXEMqpzQqg3KlRIlwqN9uVMQScPeMzLTAoAcCLdjcuaVU/5Sc2zgjV21inWPe1JP/7eLitVNmWcSpymj14RNrtRctlTagomh4mlAXozkUO8yDzfH58wNiiYeZN6ZVN8lVSribWjNI3DSW3Z/Agn/k3cBpidmXvCOM8jZep9JJaZ08Y1xzhe2YIaKCz5KkuvOe7iA8hXnnI5MYE1QkhWqpnIfskrBTW60HIMCuKMQ42/ieQung1Fqr235RKg/gBFcFdqKX5wY7UZtA==
+X-Forefront-Antispam-Report: CIP:20.160.56.87;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:inpost-eu.tmcas.trendmicro.com;PTR:inpost-eu.tmcas.trendmicro.com;CAT:NONE;SFS:(13230025)(136003)(376002)(396003)(346002)(39860400002)(5400799012)(451199018)(36840700001)(40470700004)(46966006)(47076005)(86362001)(30864003)(110136005)(54906003)(316002)(8676002)(8936002)(40480700001)(44832011)(36756003)(36860700001)(70206006)(34070700002)(5660300002)(41300700001)(7416002)(70586007)(4326008)(478600001)(2906002)(7596003)(40460700003)(7636003)(83380400001)(82310400005)(82740400003)(336012)(6666004)(356005)(2616005)(26005)(1076003)(6512007)(186003)(6506007)(6486002)(12100799024);DIR:OUT;SFP:1501;
+X-OriginatorOrg: seco.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2023 20:13:37.9739
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: aba9a379-ed43-4b70-99dc-08db2a48c1cf
+X-MS-Exchange-CrossTenant-Id: bebe97c3-6438-442e-ade3-ff17aa50e733
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bebe97c3-6438-442e-ade3-ff17aa50e733;Ip=[20.160.56.87];Helo=[inpost-eu.tmcas.trendmicro.com]
+X-MS-Exchange-CrossTenant-AuthSource: VI1EUR05FT035.eop-eur05.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR03MB7548
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add driver for BCM63268 timer clock and reset controller.
+This adds support for the Lynx 10G SerDes found on the QorIQ T-series
+and Layerscape series. Due to limited time and hardware, only support
+for the LS1046ARDB and LS1088ARDB is added in this initial series.
 
-Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
----
- v3: add missing <linux/io.h> include to fix build warning
- v2: add changes suggested by Stephen Boyd
+This series is ready for review by the phy maintainers. I have addressed
+all known feedback and there are no outstanding issues.
 
- drivers/clk/bcm/Kconfig              |   9 ++
- drivers/clk/bcm/Makefile             |   1 +
- drivers/clk/bcm/clk-bcm63268-timer.c | 232 +++++++++++++++++++++++++++
- 3 files changed, 242 insertions(+)
- create mode 100644 drivers/clk/bcm/clk-bcm63268-timer.c
+Major reconfiguration of baud rate (e.g. 1G->10G) does not work. From my
+testing, SerDes register settings appear identical. The issue appears to
+be between the PCS and the MAC. The link itself comes up at both ends,
+and a mac loopback succeeds. However, a PCS loopback results in dropped
+packets. Perhaps there is some undocumented register in the PCS?
 
-diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-index 77266afb1c79..a972d763eb77 100644
---- a/drivers/clk/bcm/Kconfig
-+++ b/drivers/clk/bcm/Kconfig
-@@ -37,6 +37,15 @@ config CLK_BCM_63XX_GATE
- 	  Enable common clock framework support for Broadcom BCM63xx DSL SoCs
- 	  based on the MIPS architecture
- 
-+config CLK_BCM63268_TIMER
-+	bool "Broadcom BCM63268 timer clock and reset support"
-+	depends on BMIPS_GENERIC || COMPILE_TEST
-+	default BMIPS_GENERIC
-+	select RESET_CONTROLLER
-+	help
-+	  Enable timer clock and reset support for Broadcom BCM63268 DSL SoCs
-+	  based on the MIPS architecture.
-+
- config CLK_BCM_KONA
- 	bool "Broadcom Kona CCU clock support"
- 	depends on ARCH_BCM_MOBILE || COMPILE_TEST
-diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
-index edb66b44cb27..d0b6f4b1fb08 100644
---- a/drivers/clk/bcm/Makefile
-+++ b/drivers/clk/bcm/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_CLK_BCM_63XX)	+= clk-bcm63xx.o
- obj-$(CONFIG_CLK_BCM_63XX_GATE)	+= clk-bcm63xx-gate.o
-+obj-$(CONFIG_CLK_BCM63268_TIMER) += clk-bcm63268-timer.o
- obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona.o
- obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
- obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
-diff --git a/drivers/clk/bcm/clk-bcm63268-timer.c b/drivers/clk/bcm/clk-bcm63268-timer.c
-new file mode 100644
-index 000000000000..6a1fdd193cb5
---- /dev/null
-+++ b/drivers/clk/bcm/clk-bcm63268-timer.c
-@@ -0,0 +1,232 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * BCM63268 Timer Clock and Reset Controller Driver
-+ *
-+ * Copyright (C) 2023 Álvaro Fernández Rojas <noltari@gmail.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+
-+#include <dt-bindings/clock/bcm63268-clock.h>
-+
-+#define BCM63268_TIMER_RESET_SLEEP_MIN_US	10000
-+#define BCM63268_TIMER_RESET_SLEEP_MAX_US	20000
-+
-+struct bcm63268_tclkrst_hw {
-+	void __iomem *regs;
-+	spinlock_t lock;
-+
-+	struct reset_controller_dev rcdev;
-+	struct clk_hw_onecell_data data;
-+};
-+
-+struct bcm63268_tclk_table_entry {
-+	const char * const name;
-+	u8 bit;
-+};
-+
-+static const struct bcm63268_tclk_table_entry bcm63268_timer_clocks[] = {
-+	{
-+		.name = "ephy1",
-+		.bit = BCM63268_TCLK_EPHY1,
-+	}, {
-+		.name = "ephy2",
-+		.bit = BCM63268_TCLK_EPHY2,
-+	}, {
-+		.name = "ephy3",
-+		.bit = BCM63268_TCLK_EPHY3,
-+	}, {
-+		.name = "gphy1",
-+		.bit = BCM63268_TCLK_GPHY1,
-+	}, {
-+		.name = "dsl",
-+		.bit = BCM63268_TCLK_DSL,
-+	}, {
-+		.name = "wakeon_ephy",
-+		.bit = BCM63268_TCLK_WAKEON_EPHY,
-+	}, {
-+		.name = "wakeon_dsl",
-+		.bit = BCM63268_TCLK_WAKEON_DSL,
-+	}, {
-+		.name = "fap1_pll",
-+		.bit = BCM63268_TCLK_FAP1,
-+	}, {
-+		.name = "fap2_pll",
-+		.bit = BCM63268_TCLK_FAP2,
-+	}, {
-+		.name = "uto_50",
-+		.bit = BCM63268_TCLK_UTO_50,
-+	}, {
-+		.name = "uto_extin",
-+		.bit = BCM63268_TCLK_UTO_EXTIN,
-+	}, {
-+		.name = "usb_ref",
-+		.bit = BCM63268_TCLK_USB_REF,
-+	}, {
-+		/* sentinel */
-+	}
-+};
-+
-+static inline struct bcm63268_tclkrst_hw *
-+to_bcm63268_timer_reset(struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct bcm63268_tclkrst_hw, rcdev);
-+}
-+
-+static int bcm63268_timer_reset_update(struct reset_controller_dev *rcdev,
-+				unsigned long id, bool assert)
-+{
-+	struct bcm63268_tclkrst_hw *reset = to_bcm63268_timer_reset(rcdev);
-+	unsigned long flags;
-+	uint32_t val;
-+
-+	spin_lock_irqsave(&reset->lock, flags);
-+	val = __raw_readl(reset->regs);
-+	if (assert)
-+		val &= ~BIT(id);
-+	else
-+		val |= BIT(id);
-+	__raw_writel(val, reset->regs);
-+	spin_unlock_irqrestore(&reset->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int bcm63268_timer_reset_assert(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	return bcm63268_timer_reset_update(rcdev, id, true);
-+}
-+
-+static int bcm63268_timer_reset_deassert(struct reset_controller_dev *rcdev,
-+				  unsigned long id)
-+{
-+	return bcm63268_timer_reset_update(rcdev, id, false);
-+}
-+
-+static int bcm63268_timer_reset_reset(struct reset_controller_dev *rcdev,
-+			       unsigned long id)
-+{
-+	bcm63268_timer_reset_update(rcdev, id, true);
-+	usleep_range(BCM63268_TIMER_RESET_SLEEP_MIN_US,
-+		     BCM63268_TIMER_RESET_SLEEP_MAX_US);
-+
-+	bcm63268_timer_reset_update(rcdev, id, false);
-+	/*
-+	 * Ensure component is taken out reset state by sleeping also after
-+	 * deasserting the reset. Otherwise, the component may not be ready
-+	 * for operation.
-+	 */
-+	usleep_range(BCM63268_TIMER_RESET_SLEEP_MIN_US,
-+		     BCM63268_TIMER_RESET_SLEEP_MAX_US);
-+
-+	return 0;
-+}
-+
-+static int bcm63268_timer_reset_status(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	struct bcm63268_tclkrst_hw *reset = to_bcm63268_timer_reset(rcdev);
-+
-+	return !(__raw_readl(reset->regs) & BIT(id));
-+}
-+
-+static struct reset_control_ops bcm63268_timer_reset_ops = {
-+	.assert = bcm63268_timer_reset_assert,
-+	.deassert = bcm63268_timer_reset_deassert,
-+	.reset = bcm63268_timer_reset_reset,
-+	.status = bcm63268_timer_reset_status,
-+};
-+
-+static int bcm63268_tclk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	const struct bcm63268_tclk_table_entry *entry, *table;
-+	struct bcm63268_tclkrst_hw *hw;
-+	struct clk_hw *clk;
-+	u8 maxbit = 0;
-+	int i, ret;
-+
-+	table = of_device_get_match_data(dev);
-+	if (!table)
-+		return -EINVAL;
-+
-+	for (entry = table; entry->name; entry++)
-+		maxbit = max(maxbit, entry->bit);
-+	maxbit++;
-+
-+	hw = devm_kzalloc(&pdev->dev, struct_size(hw, data.hws, maxbit),
-+			  GFP_KERNEL);
-+	if (!hw)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, hw);
-+
-+	spin_lock_init(&hw->lock);
-+
-+	hw->data.num = maxbit;
-+	for (i = 0; i < maxbit; i++)
-+		hw->data.hws[i] = ERR_PTR(-ENODEV);
-+
-+	hw->regs = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(hw->regs))
-+		return PTR_ERR(hw->regs);
-+
-+	for (entry = table; entry->name; entry++) {
-+		clk = clk_hw_register_gate(dev, entry->name, NULL, 0,
-+					   hw->regs, entry->bit,
-+					   CLK_GATE_BIG_ENDIAN, &hw->lock);
-+		if (IS_ERR(clk)) {
-+			ret = PTR_ERR(clk);
-+			goto out_err;
-+		}
-+
-+		hw->data.hws[entry->bit] = clk;
-+	}
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					  &hw->data);
-+	if (ret)
-+		return ret;
-+
-+	hw->rcdev.of_node = dev->of_node;
-+	hw->rcdev.ops = &bcm63268_timer_reset_ops;
-+
-+	ret = devm_reset_controller_register(dev, &hw->rcdev);
-+	if (ret)
-+		dev_err(dev, "Failed to register reset controller\n");
-+
-+	return 0;
-+
-+out_err:
-+	for (i = 0; i < hw->data.num; i++) {
-+		if (!IS_ERR(hw->data.hws[i]))
-+			clk_hw_unregister_gate(hw->data.hws[i]);
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct of_device_id bcm63268_tclk_dt_ids[] = {
-+	{
-+		.compatible = "brcm,bcm63268-timer-clocks",
-+		.data = &bcm63268_timer_clocks,
-+	}, {
-+		/* sentinel */
-+	}
-+};
-+
-+static struct platform_driver bcm63268_tclk = {
-+	.probe = bcm63268_tclk_probe,
-+	.driver = {
-+		.name = "bcm63268-timer-clock",
-+		.of_match_table = bcm63268_tclk_dt_ids,
-+	},
-+};
-+builtin_platform_driver(bcm63268_tclk);
+I suspect this driver is around 95% complete, but I don't have the
+documentation to make it work completely. At the very least it is useful
+for two cases:
+
+- Although this is untested, it should support 2.5G SGMII as well as
+  1000BASE-KX. The latter needs MAC and PCS support, but the former
+  should work out of the box.
+- It allows for clock configurations not supported by the RCW. This is
+  very useful if you want to use e.g. SRDS_PRTCL_S1=0x3333 and =0x1133
+  on the same board. This is because the former setting will use PLL1
+  as the 1G reference, but the latter will use PLL1 as the 10G
+  reference. Because we can reconfigure the PLLs, it is possible to
+  always use PLL1 as the 1G reference.
+
+Changes in v12:
+- Put compatible first
+- Keep gpio-controller to one line
+- Add little-endian property
+- Alphabetize compatibles
+- Remove some comments
+- Remove some examples with insufficient novelty
+
+Changes in v11:
+- Keep empty (or almost-empty) properties on a single line
+- Don't use | unnecessarily
+- Use gpio as the node name for examples
+- Rename brcm,bcm6345-gpio.yaml to brcm,bcm63xx-gpio.yaml
+
+Changes in v10:
+- Convert gpio-mmio to yaml
+- Add compatible for QIXIS
+- Remove unnecessary inclusion of clk.h
+- Don't gate clocks in compatibility mode
+- Fix debugging print with incorrect error variable
+- Move serdes bindings to SoC dtsi
+- Add support for all (ethernet) serdes modes
+- Refer to "nodes" instead of "bindings"
+- Move compatible/reg first
+
+Changes in v9:
+- Add fsl,unused-lanes-reserved to allow for a gradual transition
+  between firmware and Linux control of the SerDes
+- Change phy-type back to fsl,type, as I was getting the error
+    '#phy-cells' is a dependency of 'phy-type'
+- Convert some u32s to unsigned long to match arguments
+- Switch from round_rate to determine_rate
+- Drop explicit reference to reference clock
+- Use .parent_names when requesting parents
+- Use devm_clk_hw_get_clk to pass clocks back to serdes
+- Fix indentation
+- Split off clock "driver" into its own patch to allow for better
+  review.
+- Add ability to defer lane initialization to phy_init. This allows
+  for easier transitioning between firmware-managed serdes and Linux-
+  managed serdes, as the consumer (such as dpaa2, which knows what the
+  firmware is doing) has the last say on who gets control.
+- Fix name of phy mode node
+- Add fsl,unused-lanes-reserved to allow a gradual transition, depending
+  on the mac link type.
+- Remove unused clocks
+- Fix some phy mode node names
+
+Changes in v8:
+- Remove unused variable from lynx_ls_mode_init
+- Rename serdes phy handles to use _A, _B, etc. instead of _0, _1, etc.
+  This should help remind readers that the numbering corresponds to the
+  physical layout of the registers, and not the lane (pin) number.
+- Prevent PCSs from probing as phys
+- Rename serdes phy handles like the LS1046A
+- Add SFP slot binding
+- Fix incorrect lane ordering (it's backwards on the LS1088A just like it is in
+  the LS1046A).
+- Fix duplicated lane 2 (it should have been lane 3).
+- Fix incorrectly-documented value for XFI1.
+- Remove interrupt for aquantia phy. It never fired for whatever reason,
+  preventing the link from coming up.
+- Add GPIOs for QIXIS FPGA.
+- Enable MAC1 PCS
+- Remove si5341 binding
+
+Changes in v7:
+- Use double quotes everywhere in yaml
+- Break out call order into generic documentation
+- Refuse to switch "major" protocols
+- Update Kconfig to reflect restrictions
+- Remove set/clear of "pcs reset" bit, since it doesn't seem to fix
+  anything.
+
+Changes in v6:
+- Bump PHY_TYPE_2500BASEX to 13, since PHY_TYPE_USXGMII was added in the
+  meantime
+- fsl,type -> phy-type
+- frequence -> frequency
+- Update MAINTAINERS to include new files
+- Include bitfield.h and slab.h to allow compilation on non-arm64
+  arches.
+- Depend on COMMON_CLK and either layerscape/ppc
+- XGI.9 -> XFI.9
+
+Changes in v5:
+- Update commit description
+- Dual id header
+- Remove references to PHY_INTERFACE_MODE_1000BASEKX to allow this
+  series to be applied directly to linux/master.
+- Add fsl,lynx-10g.h to MAINTAINERS
+
+Changes in v4:
+- Add 2500BASE-X and 10GBASE-R phy types
+- Use subnodes to describe lane configuration, instead of describing
+  PCCRs. This is the same style used by phy-cadence-sierra et al.
+- Add ids for Lynx 10g PLLs
+- Rework all debug statements to remove use of __func__. Additional
+  information has been provided as necessary.
+- Consider alternative parent rates in round_rate and not in set_rate.
+  Trying to modify out parent's rate in set_rate will deadlock.
+- Explicitly perform a stop/reset sequence in set_rate. This way we
+  always ensure that the PLL is properly stopped.
+- Set the power-down bit when disabling the PLL. We can do this now that
+  enable/disable aren't abused during the set rate sequence.
+- Fix typos in QSGMII_OFFSET and XFI_OFFSET
+- Rename LNmTECR0_TEQ_TYPE_PRE to LNmTECR0_TEQ_TYPE_POST to better
+  reflect its function (adding post-cursor equalization).
+- Use of_clk_hw_onecell_get instead of a custom function.
+- Return struct clks from lynx_clks_init instead of embedding lynx_clk
+  in lynx_priv.
+- Rework PCCR helper functions; T-series SoCs differ from Layerscape SoCs
+  primarily in the layout and offset of the PCCRs. This will help bring a
+  cleaner abstraction layer. The caps have been removed, since this handles the
+  only current usage.
+- Convert to use new binding format. As a result of this, we no longer need to
+  have protocols for PCIe or SATA. Additionally, modes now live in lynx_group
+  instead of lynx_priv.
+- Remove teq from lynx_proto_params, since it can be determined from
+  preq_ratio/postq_ratio.
+- Fix an early return from lynx_set_mode not releasing serdes->lock.
+- Rename lynx_priv.conf to .cfg, since I kept mistyping it.
+
+Changes in v3:
+- Manually expand yaml references
+- Add mode configuration to device tree
+- Rename remaining references to QorIQ SerDes to Lynx 10G
+- Fix PLL enable sequence by waiting for our reset request to be cleared
+  before continuing. Do the same for the lock, even though it isn't as
+  critical. Because we will delay for 1.5ms on average, use prepare
+  instead of enable so we can sleep.
+- Document the status of each protocol
+- Fix offset of several bitfields in RECR0
+- Take into account PLLRST_B, SDRST_B, and SDEN when considering whether
+  a PLL is "enabled."
+- Only power off unused lanes.
+- Split mode lane mask into first/last lane (like group)
+- Read modes from device tree
+- Use caps to determine whether KX/KR are supported
+- Move modes to lynx_priv
+- Ensure that the protocol controller is not already in-use when we try
+  to configure a new mode. This should only occur if the device tree is
+  misconfigured (e.g. when QSGMII is selected on two lanes but there is
+  only one QSGMII controller).
+- Split PLL drivers off into their own file
+- Add clock for "ext_dly" instead of writing the bit directly (and
+  racing with any clock code).
+- Use kasprintf instead of open-coding the snprintf dance
+- Support 1000BASE-KX in lynx_lookup_proto. This still requires PCS
+  support, so nothing is truly "enabled" yet.
+- Describe modes in device tree
+- ls1088a: Add serdes bindings
+
+Changes in v2:
+- Rename to fsl,lynx-10g.yaml
+- Refer to the device in the documentation, rather than the binding
+- Move compatible first
+- Document phy cells in the description
+- Allow a value of 1 for phy-cells. This allows for compatibility with
+  the similar (but according to Ioana Ciornei different enough) lynx-28g
+  binding.
+- Remove minItems
+- Use list for clock-names
+- Fix example binding having too many cells in regs
+- Add #clock-cells. This will allow using assigned-clocks* to configure
+  the PLLs.
+- Document the structure of the compatible strings
+- Rename driver to Lynx 10G (etc.)
+- Fix not clearing group->pll after disabling it
+- Support 1 and 2 phy-cells
+- Power off lanes during probe
+- Clear SGMIIaCR1_PCS_EN during probe
+- Rename LYNX_PROTO_UNKNOWN to LYNX_PROTO_NONE
+- Handle 1000BASE-KX in lynx_proto_mode_prep
+- Use one phy cell for SerDes1, since no lanes can be grouped
+- Disable SerDes by default to prevent breaking boards inadvertently.
+
+Sean Anderson (13):
+  dt-bindings: phy: Add 2500BASE-X and 10GBASE-R
+  dt-bindings: phy: Add Lynx 10G phy binding
+  dt-bindings: Convert gpio-mmio to yaml
+  dt-bindings: gpio-mmio: Add compatible for QIXIS
+  dt-bindings: clock: Add ids for Lynx 10g PLLs
+  clk: Add Lynx 10G SerDes PLL driver
+  phy: fsl: Add Lynx 10G SerDes driver
+  phy: lynx10g: Enable by default on Layerscape
+  arm64: dts: ls1046a: Add serdes nodes
+  arm64: dts: ls1046ardb: Add serdes descriptions
+  arm64: dts: ls1088a: Add serdes nodes
+  arm64: dts: ls1088a: Prevent PCSs from probing as phys
+  arm64: dts: ls1088ardb: Add serdes descriptions
+
+ ...m6345-gpio.yaml => brcm,bcm63xx-gpio.yaml} |   16 +-
+ .../devicetree/bindings/gpio/gpio-mmio.yaml   |  123 ++
+ .../bindings/gpio/ni,169445-nand-gpio.txt     |   38 -
+ .../devicetree/bindings/gpio/wd,mbl-gpio.txt  |   38 -
+ .../devicetree/bindings/phy/fsl,lynx-10g.yaml |  248 ++++
+ Documentation/driver-api/phy/index.rst        |    1 +
+ Documentation/driver-api/phy/lynx_10g.rst     |   58 +
+ MAINTAINERS                                   |    9 +
+ .../boot/dts/freescale/fsl-ls1046a-rdb.dts    |   26 +
+ .../arm64/boot/dts/freescale/fsl-ls1046a.dtsi |  111 ++
+ .../boot/dts/freescale/fsl-ls1088a-rdb.dts    |   82 +-
+ .../arm64/boot/dts/freescale/fsl-ls1088a.dtsi |  156 ++-
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-fsl-lynx-10g.c                |  510 +++++++
+ drivers/phy/freescale/Kconfig                 |   23 +
+ drivers/phy/freescale/Makefile                |    1 +
+ drivers/phy/freescale/phy-fsl-lynx-10g.c      | 1224 +++++++++++++++++
+ include/dt-bindings/clock/fsl,lynx-10g.h      |   14 +
+ include/dt-bindings/phy/phy.h                 |    2 +
+ include/linux/phy/lynx-10g.h                  |   16 +
+ 20 files changed, 2594 insertions(+), 103 deletions(-)
+ rename Documentation/devicetree/bindings/gpio/{brcm,bcm6345-gpio.yaml => brcm,bcm63xx-gpio.yaml} (78%)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-mmio.yaml
+ delete mode 100644 Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt
+ delete mode 100644 Documentation/devicetree/bindings/gpio/wd,mbl-gpio.txt
+ create mode 100644 Documentation/devicetree/bindings/phy/fsl,lynx-10g.yaml
+ create mode 100644 Documentation/driver-api/phy/lynx_10g.rst
+ create mode 100644 drivers/clk/clk-fsl-lynx-10g.c
+ create mode 100644 drivers/phy/freescale/phy-fsl-lynx-10g.c
+ create mode 100644 include/dt-bindings/clock/fsl,lynx-10g.h
+ create mode 100644 include/linux/phy/lynx-10g.h
+
 -- 
-2.30.2
+2.35.1.1320.gc452695387.dirty
 
