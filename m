@@ -2,130 +2,131 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE03C6FD1D
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 08:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1624C6FD1D
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 08:57:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231278AbjCUI4K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 04:56:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38048 "EHLO
+        id S231254AbjCUI5h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 04:57:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231280AbjCUIzj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 04:55:39 -0400
-Received: from sender4-op-o10.zoho.com (sender4-op-o10.zoho.com [136.143.188.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17D884A1DF;
-        Tue, 21 Mar 2023 01:54:33 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1679388805; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=Swv/m0J4JYRMHxlqM6ECwP2kon4rJ/HJj6ZqQTKYLCJjehL8CFkZkel6SFhlGnrkdtA5SjtM/bYVLjqBk+kFu0mCbvUhpIfJqPybu0qIB6oj+ZVgC8pw0BYEpsSSoMjLsLI8OXRl1pBTS419m2go0YpzspJ7hopFd0mQToyvm5g=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1679388805; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=SYr/ERVf7CLgKo8BYU40SJ/s8dnmY3Et/To78+kiaok=; 
-        b=eHBdWAI5BgOe/8uphh4rutUaT+O44LX4h4qV4H0LYJR7RwEh4Q9KJKBqJSh1tM3uBVvmXfK3YGJ4sQLCjlNKKLHX9LhsLS2U8nynBfsTR9X4b69omsCVb/CC461wqESh2llULs59pUmj5sTvzN2GBLyCYbIHcuSh8YbHde7SmKg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=arinc9.com;
-        spf=pass  smtp.mailfrom=arinc.unal@arinc9.com;
-        dmarc=pass header.from=<arinc.unal@arinc9.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1679388805;
-        s=zmail; d=arinc9.com; i=arinc.unal@arinc9.com;
-        h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-        bh=SYr/ERVf7CLgKo8BYU40SJ/s8dnmY3Et/To78+kiaok=;
-        b=AZG9H+sEfYbUlUJydeJ22rxDPL7HTLtPG5JIm+EbEmhf4mmhlumVDD2OweH3MFIN
-        YefnygVFBezJwLdGvKtTKoeXh+7qvq5CEYzK9mASpII99TqQZUMLJ4bo+8Bvaik6C7/
-        VwLSay/6mUZlLLMs7Lv7xGX8WWQAqRYiXPrRkdqw=
-Received: from [10.10.10.3] (149.91.1.15 [149.91.1.15]) by mx.zohomail.com
-        with SMTPS id 1679388803856160.0109146913502; Tue, 21 Mar 2023 01:53:23 -0700 (PDT)
-Message-ID: <1c279b0a-c814-2fe3-0432-2aa6b3dff16e@arinc9.com>
-Date:   Tue, 21 Mar 2023 11:53:18 +0300
+        with ESMTP id S231272AbjCUI5Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 04:57:16 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 418EA3BDB6;
+        Tue, 21 Mar 2023 01:56:00 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32L60ZiQ005795;
+        Tue, 21 Mar 2023 08:55:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=C5i6Lb2az4K0UbrOKbM7fKXf3cghf7uw6Z1c9mBZsBo=;
+ b=m9yXNB5fim4uUBob44dWIq4hPTt4r8oV1BD9Pf/8bGPfh8o/cdlT+OsEUlXjWX9OL+sF
+ 3TAxAHmjktzwfjXQ44CNNOPtFjU6On0rstk6VuXOzjuoMsQZMolEPLY3lKLuTQ6fVwK9
+ u1CAPEe8TyZvC2LRYkKIg1LdR8ZdzdKPgDd+fZ9rGdQUHJ79JtDqZgUIGyNJ45XULa5E
+ ES3MeLIqttXGSC0USzkO1AhaK2aUGXgrERL/GecDQJ88IyeatyP8uzd7bf69pT61HmgV
+ qsgoWa/kyIGuLLsrDnADFdNGFEKyHOscNSgp6ggbWX8r0GcTkBdY/arWP6sWcyPzrV/3 NA== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3peg57uq5s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 Mar 2023 08:55:26 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32L8tO6A008279
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 Mar 2023 08:55:24 GMT
+Received: from varda-linux.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.41; Tue, 21 Mar 2023 01:55:19 -0700
+From:   Varadarajan Narayanan <quic_varada@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <gregkh@linuxfoundation.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <quic_wcheng@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC:     Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH v2 2/8] dt-bindings: phy: qcom,qmp-usb: Add IPQ9574 USB3 PHY
+Date:   Tue, 21 Mar 2023 14:24:20 +0530
+Message-ID: <11537744f1ed42f43a3a0a2b1dc690c1884679ac.1679388632.git.quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1679388632.git.quic_varada@quicinc.com>
+References: <cover.1677749625.git.quic_varada@quicinc.com> <cover.1679388632.git.quic_varada@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 01/10] dt: bindings: clock: add mtmips SoCs clock device
- tree binding documentation
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Cc:     linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-        tsbogend@alpha.franken.de, john@phrozen.org,
-        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
-        devicetree@vger.kernel.org
-References: <20230320161823.1424278-1-sergio.paracuellos@gmail.com>
- <d0f74721-bf5a-62de-53dc-62e7e735e2dc@linaro.org>
- <bdc82b4a-f1a9-0372-5a57-200a422b1b70@arinc9.com>
- <21a90597-78c9-4d46-7b01-257702e7afca@linaro.org>
- <525a6388-a4b8-3052-fe81-5aa21d8f424a@arinc9.com>
- <507f79cf-acd8-5238-031a-fd71024e0c6a@linaro.org>
- <CAMhs-H8_S5eO7B+dZ7jeq7Jjnw71QBmSo4M+woe3U5sH7dCADg@mail.gmail.com>
- <39ba681e-5bab-cffc-edf7-4bf86387987c@linaro.org>
- <132de602-6467-536c-c66d-657f22a59bd5@arinc9.com>
- <40e3acac-b58a-7af8-b025-3678f84434da@linaro.org>
- <CAMhs-H9AWXvtbg=qz06HN3piUO0E5YF3RmrdRLC7qH2n6KjrSw@mail.gmail.com>
- <d598f5f8-f998-2a31-bb21-97e641793dda@linaro.org>
- <120663a9-aecf-4a43-d1fb-779cd52802c6@arinc9.com>
- <3d2b8a1a-99c9-f53e-4bb3-a8b938e2672f@linaro.org>
- <543ad00d-4171-ed02-0d31-676c6b003e54@arinc9.com>
- <82f517b5-6697-3379-8d71-163b0d17735d@linaro.org>
- <d640a929-b6a0-1552-e66a-3a7bbabbc69f@arinc9.com>
- <2150938b-5433-6f51-c404-2c0f6976f864@linaro.org>
-From:   =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-In-Reply-To: <2150938b-5433-6f51-c404-2c0f6976f864@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 6QJj6T-5d_OkAi3XSOow6CmWMVfibaIk
+X-Proofpoint-GUID: 6QJj6T-5d_OkAi3XSOow6CmWMVfibaIk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-21_06,2023-03-20_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ impostorscore=0 spamscore=0 clxscore=1011 phishscore=0 mlxlogscore=999
+ priorityscore=1501 mlxscore=0 suspectscore=0 adultscore=0 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303150002 definitions=main-2303210068
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21.03.2023 11:39, Krzysztof Kozlowski wrote:
-> On 21/03/2023 09:33, Arınç ÜNAL wrote:
->> On 21.03.2023 11:27, Krzysztof Kozlowski wrote:
->>> On 21/03/2023 09:24, Arınç ÜNAL wrote:
->>>>>>
->>>>>> If we take the calling new things mediatek route, we will never get to
->>>>>> the bottom of fixing the naming inconsistency.
->>>>>
->>>>> All new things, so new SoCs, should be called mediatek, because there is
->>>>> no ralink and mediatek is already used for them. So why some new
->>>>> Mediatek SoCs are "mediatek" but some other also new SoCs are "ralink"?
->>>>>
->>>>> You can do nothing (and no actual need) about existing inconsistency...
->>>>
->>>> I couldn't change ralink -> mediatek because company acquisitions don't
->>>> grant the change. I don't see any reason to prevent changing mediatek ->
->>>> ralink without breaking the ABI on the existing schemas.
->>>
->>> You cannot change mediatek->ralink without breaking the ABI for the same
->>> reasons.
->>
->> Then this is where I ask for an exception.
->>
->> The current solution only complicates things more.
->>
->> https://github.com/paraka/linux/pull/1/files#diff-0ae6c456898d08536ce987c32f23f2eb6f4a0f7c38bff9a61bdf3d0daa3f6549R21
-> 
-> Sorry, I don't understand what's under this link and how some Github
-> repo pull helps in this discussion. I don't see there any text, which
-> could help.
+Add dt-bindings for USB3 PHY found on Qualcomm IPQ9574
 
-That's Sergio's current branch, before he sends out a new version of the 
-patch series. So that's the current solution, having 
-mediatek,mt7620-sysc and ralink,mt7620a-sysc on the schema.
+Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 
-> 
-> I also do not understand why this pull proves that you can change
-> existing mediatek compatibles (we talk also about ARM, which is shipped
-> to million of devices) to ralink without breaking the ABI.
+---
+ Changes in v2:
+	- Updated sections missed in previous patch
+---
+ .../bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml    | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-No no, I only want to do this on schemas that concern the MTMIPS 
-platform. It doesn't concern the MediaTek ARM schemas.
+diff --git a/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
+index e81a382..beae44c 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
+@@ -21,6 +21,7 @@ properties:
+     enum:
+       - qcom,ipq6018-qmp-usb3-phy
+       - qcom,ipq8074-qmp-usb3-phy
++      - qcom,ipq9574-qmp-usb3-phy
+       - qcom,msm8996-qmp-usb3-phy
+       - qcom,msm8998-qmp-usb3-phy
+       - qcom,qcm2290-qmp-usb3-phy
+@@ -204,6 +205,27 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - qcom,ipq9574-qmp-usb3-phy
++    then:
++      properties:
++        clocks:
++          maxItems: 2
++        clock-names:
++          items:
++            - const: aux
++            - const: cfg_ahb
++        resets:
++          maxItems: 2
++        reset-names:
++          items:
++            - const: phy
++            - const: common
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
+               - qcom,sm8150-qmp-usb3-phy
+               - qcom,sm8150-qmp-usb3-uni-phy
+               - qcom,sm8250-qmp-usb3-uni-phy
+-- 
+2.7.4
 
-> 
-> I do not see how choosing one variant for compatibles having two
-> variants of prefixes, complicates things. Following this argument
-> choosing "ralink" also complicates!
-
-The idea is to make every compatible string of MTMIPS to have the ralink 
-prefix so it's not mediatek on some schemas and ralink on others. Simpler.
-
-Arınç
