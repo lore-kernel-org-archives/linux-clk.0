@@ -2,61 +2,46 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 647EEC74A5B
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 08:04:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E61EC6FD1D
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 08:25:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229924AbjCUIEd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 04:04:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47838 "EHLO
+        id S229552AbjCUIZB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 04:25:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229747AbjCUIEc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 04:04:32 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C11343BC75
-        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 01:04:29 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id h8so56255758ede.8
-        for <linux-clk@vger.kernel.org>; Tue, 21 Mar 2023 01:04:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679385868;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=a6kAibFtUmFQRuVkt3XyxH7xyFCW8XFyaXNZx8x1cuQ=;
-        b=HG5ouOwSztWyCZxl76s5Quolbu30q6mLAxcu6SGpRSP14LBk69oEa0EEO0Ab2rKvEk
-         zQgWel7OBNYZB8z6ozJV7H9a2NXXFQPtnFd2d3XpJRpX0OLWHvpVKXi6eQGfL5/ZYN8q
-         camPhUVeWtUx6nbtBjLdeHBlfytWZ4Gf5xHvmXo3INfq9d4LsiC1sDvv+ZK1vaxtE9oF
-         WSCYHpOVlu70n5F10jM3Jh/Od2/V+tvbxJjJFiUt1Q6ZEF2EoD3djskiHQpWcgTzSMpU
-         nboV4Yd0+tnZ06ELFNe3xS0EMDkQ3xlrXy26wJF9eR+zvRHIERRKr5ljO4EQW97lExiG
-         NvSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679385868;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a6kAibFtUmFQRuVkt3XyxH7xyFCW8XFyaXNZx8x1cuQ=;
-        b=bF2/aw8pALzncFY2GvDP3pe6eHqM04OMOAZSjjQqfgSs3RmowTK0L7GK6IVmM7K6YU
-         HmEdgjoShftTWd5FIpz1Gx53OJG4xaUSLbspMxJIjz3n+Ec+dbBv35DQIBZEzbhAU7WD
-         X21f5qlvbQQUooqBY8E/VuV4w769MTMtY7p2SVeoe6yL3iGfOQQ1FVfRFg8rAd9yVs+T
-         KHwNEFJ0sli7Q5gjO4gsQHtsbas3BtmtAYrghUvPVD8J3YILaeUh9Rj8AKdQM1Tx+lK2
-         2AY8Xb2HU3M2EdXFhtRV6JqS7Ux4c9g0OxYnGheEDQYU4SBySS+/kuVi7YAcAlR28UYc
-         HQpA==
-X-Gm-Message-State: AO0yUKWTSPKvaN5e7quqYx0RKaQBaXQBm20boMfoxU0WcaBANUEkX9eI
-        Oy1gbrRALdIBsfEyJP6ahQt1cA==
-X-Google-Smtp-Source: AK7set8lwvGGzgiMVMHsy9OSuBQEMrKIN0ffIGRRRzlKyRPmOzc7GpCN0/I7GVJb4jCVeLD1qiD2Yw==
-X-Received: by 2002:a17:906:8a62:b0:920:7827:302 with SMTP id hy2-20020a1709068a6200b0092078270302mr2618185ejc.18.1679385868234;
-        Tue, 21 Mar 2023 01:04:28 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:2142:d8da:5ae4:d817? ([2a02:810d:15c0:828:2142:d8da:5ae4:d817])
-        by smtp.gmail.com with ESMTPSA id p13-20020a1709066a8d00b00932ab7699ffsm4615372ejr.148.2023.03.21.01.04.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Mar 2023 01:04:27 -0700 (PDT)
-Message-ID: <3d2b8a1a-99c9-f53e-4bb3-a8b938e2672f@linaro.org>
-Date:   Tue, 21 Mar 2023 09:04:26 +0100
+        with ESMTP id S229511AbjCUIZA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 04:25:00 -0400
+Received: from sender4-op-o10.zoho.com (sender4-op-o10.zoho.com [136.143.188.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91C2AD53E;
+        Tue, 21 Mar 2023 01:24:58 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1679387085; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=i05bnC+eqsZ/guCkE1iDRgrw/24mMV66GoLFVESxqjw3330+WDiXIPf5bJdpAJX6vUCQT+xiICC32CVERizh4mfpG+cRfxxnfR4pidCsrBqE9E5DjnseudCIh85QaNRRhirmn6vJ9Ouq752FVeqevCobspMyyYLAGBYGxJG48BQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1679387085; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=od2igUX/Gb6z7tl9jzyrfJnWIXU+B/ka6PHP7kBPVDQ=; 
+        b=Vde4uie4FCtAiYzgRpH6dPsFp8dxCqhagPU4pCNu12bnjsdbsrKhYDAU9G+6Rb03nrijskINTzuwkWJysnzAEOzkDq6khxnXkx51VN3w59Drk9PgTcz5iAAISv5gV17Ua0vj33LCpW6LfQSdiNljJ4qvx/Lj/59Q+9s/P0rrT4I=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=arinc9.com;
+        spf=pass  smtp.mailfrom=arinc.unal@arinc9.com;
+        dmarc=pass header.from=<arinc.unal@arinc9.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1679387085;
+        s=zmail; d=arinc9.com; i=arinc.unal@arinc9.com;
+        h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+        bh=od2igUX/Gb6z7tl9jzyrfJnWIXU+B/ka6PHP7kBPVDQ=;
+        b=C7pD7bJJX6X9uVIcDUYWRRDn352MDvLOKIE8pWASUbWXtgMKJgDpg9UBvrPX8iBe
+        ZS2ItuAaF1UW/LK1P3d5UO/2IoFSuX2M8rNhI2FcuQMQ7dHM6ld/h/+PO0Nb+2YsepF
+        g6GwWz0xmMvuQ00s4IhIrd7syVBOncSAB+z+lsWg=
+Received: from [10.10.10.3] (149.91.1.15 [149.91.1.15]) by mx.zohomail.com
+        with SMTPS id 1679387084074537.1592183726682; Tue, 21 Mar 2023 01:24:44 -0700 (PDT)
+Message-ID: <543ad00d-4171-ed02-0d31-676c6b003e54@arinc9.com>
+Date:   Tue, 21 Mar 2023 11:24:39 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
+ Thunderbird/102.8.0
 Subject: Re: [PATCH 01/10] dt: bindings: clock: add mtmips SoCs clock device
  tree binding documentation
-To:     =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Sergio Paracuellos <sergio.paracuellos@gmail.com>
 Cc:     linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
         tsbogend@alpha.franken.de, john@phrozen.org,
@@ -80,62 +65,66 @@ References: <20230320161823.1424278-1-sergio.paracuellos@gmail.com>
  <CAMhs-H9AWXvtbg=qz06HN3piUO0E5YF3RmrdRLC7qH2n6KjrSw@mail.gmail.com>
  <d598f5f8-f998-2a31-bb21-97e641793dda@linaro.org>
  <120663a9-aecf-4a43-d1fb-779cd52802c6@arinc9.com>
+ <3d2b8a1a-99c9-f53e-4bb3-a8b938e2672f@linaro.org>
 Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <120663a9-aecf-4a43-d1fb-779cd52802c6@arinc9.com>
-Content-Type: text/plain; charset=UTF-8
+From:   =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+In-Reply-To: <3d2b8a1a-99c9-f53e-4bb3-a8b938e2672f@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/03/2023 08:39, Arınç ÜNAL wrote:
+On 21.03.2023 11:04, Krzysztof Kozlowski wrote:
+> On 21/03/2023 08:39, Arınç ÜNAL wrote:
+>>>>
+>>>> arch/mips/ralink/mt7620.c:      rt_sysc_membase =
+>>>> plat_of_remap_node("ralink,mt7620a-sysc");
+>>>>
+>>>> That's the reason I also used prefix ralink for the rest.
+>>>>
+>>>> Does it make sense to you to maintain this one as ralink,mt7620a-sysc
+>>>> and add the following with mediatek prefix?
+>>>>
+>>>> mediatek,mt7620-sysc
+>>>> mediatek,mt7628-sysc
+>>>> mediatek,mt7688-sysc
+>>>>
+>>>> That would be weird IMHO.
 >>>
->>> arch/mips/ralink/mt7620.c:      rt_sysc_membase =
->>> plat_of_remap_node("ralink,mt7620a-sysc");
+>>> What exactly would be weird? Did you read the discussion about vendor
+>>> prefix from Arinc? mt7620 is not a Ralink product, so what would be
+>>> weird is to use "ralink" vendor prefix. This was never a Ralink. However
+>>> since there are compatibles using "ralink" for non-ralink devices, we
+>>> agreed not to change them.
 >>>
->>> That's the reason I also used prefix ralink for the rest.
->>>
->>> Does it make sense to you to maintain this one as ralink,mt7620a-sysc
->>> and add the following with mediatek prefix?
->>>
->>> mediatek,mt7620-sysc
->>> mediatek,mt7628-sysc
->>> mediatek,mt7688-sysc
->>>
->>> That would be weird IMHO.
+>>> These though use at least in one place mediatek, so the above argument
+>>> does not apply. (and before you say "but they also use ralink and
+>>> mediatek", it does not matter - it is already inconsistent thus we can
+>>> choose whatever we want and ralink is not correct).
 >>
->> What exactly would be weird? Did you read the discussion about vendor
->> prefix from Arinc? mt7620 is not a Ralink product, so what would be
->> weird is to use "ralink" vendor prefix. This was never a Ralink. However
->> since there are compatibles using "ralink" for non-ralink devices, we
->> agreed not to change them.
+>> My argument was that your point being Ralink is now Mediatek, thus there
+>> is no conflict and no issues with different vendor used. It's the next
+>> best thing to be able to address the inconsistency, call everything of
+>> the MTMIPS platform ralink on the compatible strings.
+> 
+> And how does it help consistency? The mt7620 is used also with mediatek
+> prefix and adding more variants of realtek does not make the
+> inconsistency smaller. It's still inconsistent.
+> 
 >>
->> These though use at least in one place mediatek, so the above argument
->> does not apply. (and before you say "but they also use ralink and
->> mediatek", it does not matter - it is already inconsistent thus we can
->> choose whatever we want and ralink is not correct).
+>> If we take the calling new things mediatek route, we will never get to
+>> the bottom of fixing the naming inconsistency.
 > 
-> My argument was that your point being Ralink is now Mediatek, thus there 
-> is no conflict and no issues with different vendor used. It's the next 
-> best thing to be able to address the inconsistency, call everything of 
-> the MTMIPS platform ralink on the compatible strings.
-
-And how does it help consistency? The mt7620 is used also with mediatek
-prefix and adding more variants of realtek does not make the
-inconsistency smaller. It's still inconsistent.
-
+> All new things, so new SoCs, should be called mediatek, because there is
+> no ralink and mediatek is already used for them. So why some new
+> Mediatek SoCs are "mediatek" but some other also new SoCs are "ralink"?
 > 
-> If we take the calling new things mediatek route, we will never get to 
-> the bottom of fixing the naming inconsistency.
+> You can do nothing (and no actual need) about existing inconsistency...
 
-All new things, so new SoCs, should be called mediatek, because there is
-no ralink and mediatek is already used for them. So why some new
-Mediatek SoCs are "mediatek" but some other also new SoCs are "ralink"?
+I couldn't change ralink -> mediatek because company acquisitions don't 
+grant the change. I don't see any reason to prevent changing mediatek -> 
+ralink without breaking the ABI on the existing schemas.
 
-You can do nothing (and no actual need) about existing inconsistency...
-
-
-Best regards,
-Krzysztof
-
+Arınç
