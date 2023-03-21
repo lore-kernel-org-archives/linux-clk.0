@@ -2,66 +2,70 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BABAC76195
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 23:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A694BC6FD1D
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Mar 2023 23:58:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229788AbjCUXyK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Mar 2023 19:54:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47610 "EHLO
+        id S229521AbjCUX6A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Mar 2023 19:58:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229642AbjCUXyJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 19:54:09 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C30405943D;
-        Tue, 21 Mar 2023 16:53:58 -0700 (PDT)
+        with ESMTP id S229459AbjCUX57 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Mar 2023 19:57:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F18C08D;
+        Tue, 21 Mar 2023 16:57:55 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 68764B81986;
-        Tue, 21 Mar 2023 23:53:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F274C433EF;
-        Tue, 21 Mar 2023 23:53:56 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 825A361E74;
+        Tue, 21 Mar 2023 23:57:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2664C433D2;
+        Tue, 21 Mar 2023 23:57:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679442836;
-        bh=J6tFeM38IM7MOoSSdzpx3tQvMrfs/A8zdFZCKt/JIJc=;
+        s=k20201202; t=1679443074;
+        bh=UyBZQu//dK6YIN2Hhik6aydJiVU1mQzZJsoluwZgzgY=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=BPdw1YKDmHoOOBMf6Tv9JUL7ZmShVwcA4aaoAzxIPH1UQs01Wn82/b+eMyzG7Gngj
-         CpeUT0ivk6JKWv3j0wyWF4JzTuHFMQDeVGBCjLmxgL6FNYP1kg8ZXCivfVOieTKhMe
-         KWtJL8/U+rpKUTVZnR8zsReDdr1FPcd8QMu4RUZWNtsWxozyUskrS3dX/OeVs6/SAx
-         6hx8u61vKQyqDiMWX5nn2a8YkYTV0MG2dsv327eC/LotHf/4xFOs9ZNo+PDzz3YsKu
-         fuQoEqepI2cuIHYq2o6IGC/m8Ti1RwlSWeCIvQQDrJzn6yNVcMLQNZrHXKOsvzgVyA
-         vY/u2AfQ3ffbA==
-Message-ID: <3d2a4063dfa82d49dd98ee8f615f3aec.sboyd@kernel.org>
+        b=X1ywQzClIA/IIy6qrMSpj8zqk1nF2fQRr/gMkCbpxrrYNeXGA/BvmRvpoPC0Pe94H
+         b9sIBM4N6fli1D/xyntONk4da7U+sNXVA1VtTzRWjD1hTlN/bgd4VL4nx+IC7ClX88
+         d3mWHNOyBXBTGKCbFI++EormE7xMP8qDWYYj95Rq2J648rBKpv822K1C2mz+7RLgh4
+         ZeJ8Eh+e4+hy61RGxbFsolDjevVYKIH58AIWOwVx2gqe/h5hY2G2i1+Y5NJ72jOuE0
+         ex2gyko8ZDtJlKLgaWEBPEPN3QGXLFmRMIcvz5nKPb4is5WUmoNCb4eiG6Hfwx0xm/
+         NJYXPRUgN3uZw==
+Message-ID: <62b766cef78d95793af95f428693c359.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221209152913.1335068-7-marpagan@redhat.com>
-References: <20221209152913.1335068-1-marpagan@redhat.com> <20221209152913.1335068-7-marpagan@redhat.com>
-Subject: Re: [PATCH 6/6] clk: socfpga: arria10: use of_clk_add_hw_provider and improve error handling
+In-Reply-To: <95f11f7c-611f-49a9-97e8-0de89846e430@spud>
+References: <20230320103750.60295-1-hal.feng@starfivetech.com> <95f11f7c-611f-49a9-97e8-0de89846e430@spud>
+Subject: Re: [PATCH v6 00/21] Basic clock, reset & device tree support for StarFive JH7110 RISC-V SoC
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Marco Pagani <marpagan@redhat.com>, linux-clk@vger.kernel.org,
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
         linux-kernel@vger.kernel.org
-To:     Dinh Nguyen <dinguyen@kernel.org>,
-        Marco Pagani <marpagan@redhat.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Tue, 21 Mar 2023 16:53:54 -0700
+To:     Conor Dooley <conor@kernel.org>,
+        Hal Feng <hal.feng@starfivetech.com>, kernel@esmil.dk
+Date:   Tue, 21 Mar 2023 16:57:52 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Marco Pagani (2022-12-09 07:29:13)
-> The function of_clk_add_provider() has been deprecated, so use its
-> suggested replacement of_clk_add_hw_provider() instead.
+Quoting Conor Dooley (2023-03-21 16:03:54)
 >=20
-> Since of_clk_add_hw_provider() can fail, like of_clk_add_provider(),
-> check its return value and do the error handling.
->=20
-> The return type of the init function has been changed to void since
-> the return value was not used, and the indentation of the parameters has
-> been aligned to match open parenthesis, as suggested by checkpatch.
->=20
-> Signed-off-by: Marco Pagani <marpagan@redhat.com>
-> ---
+> If you're happy on the driver side of things, do you want to pick those
+> patches up on top of the bindings and send a PR to Stephen?
 
-Applied to clk-next
+This sounds fine to me. Let me know if you plan to send a PR with the
+starfive clk bits.
