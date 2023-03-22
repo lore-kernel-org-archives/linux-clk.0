@@ -2,110 +2,102 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B2E4C6FD1C
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 17:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 267C2C76196
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 17:19:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229648AbjCVRTA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Mar 2023 13:19:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39616 "EHLO
+        id S229720AbjCVRTE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Mar 2023 13:19:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbjCVRS7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 13:18:59 -0400
-Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6F0D12048;
-        Wed, 22 Mar 2023 10:18:34 -0700 (PDT)
-Received: by mail-qv1-xf2f.google.com with SMTP id 59so6704688qva.11;
-        Wed, 22 Mar 2023 10:18:34 -0700 (PDT)
+        with ESMTP id S229823AbjCVRTC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 13:19:02 -0400
+Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8C682CC63;
+        Wed, 22 Mar 2023 10:18:43 -0700 (PDT)
+Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-53d277c1834so350367177b3.10;
+        Wed, 22 Mar 2023 10:18:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679505506;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GRTvs40VdXDncOuhkXyv5eYNQBnzAzdM6lr9TY/as18=;
-        b=ZUgFFDe0ehLKesB9SUDFEl9uZROHGbPT7Y2FXa/bn3dq6jfDiSD/zCmJRBYY+ApX/N
-         dZNbK+CrjOp7CboTGl22bqzs001lX3iL69gvl7TnF3adZOxV6R3FjpJdGLkerPuTZZZe
-         hSyshBbRFkPJO6rI8sHiVIS/WUIrWIzZf8lnWUiy3Z9TeLBVQUL8zN1uFmN1VkYynJAl
-         o+zzWxojSqQ/4hIB2vXZVBQNvl+ycLg8BYblhp5qZELx2SXKbFNOg5QSvETM75GmijsU
-         PM6k0+AhxtqAj2/XBg/pthPoFUaQ5ZO7qzLDbnYVC+GyKzL4k8GfGqQ/XVf+Eg7Xex2W
-         qB/g==
+        d=gmail.com; s=20210112; t=1679505518;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E5/aVehBsgh0kzDWGWqpxifEfBtyQggusoaHEV8RT/M=;
+        b=fTnHzZ+vROjiscjk5DTXVVgaqhY5LcEvflX3LkNzqg5LrJbZOhuT/8gG1mZYC3Dg44
+         rZbTiyNFhHgMyancDn019aeLQzbaTvhgbkoBBVVg8l8vJ1IBIY7E7sOBVzFHQ0njxClC
+         YQCuU+ROgb3B6FuT5crCquG5FNDrEuzGzhEIeHUccgvlygWIeyXL6yoyCZwo7o44CG2A
+         p/ZQ+YUlneZZZuWZK8rUO8ILIdrqXuw7oEvqfrEydaMqh+9pLP7Wt9w/gFiSawDiNBEu
+         dlpualbfDcQCKf2MgZSy1Z2/yBhiGPsbXRgb2RMh3ZsjBsCX0eGRAAw4nn4jFA3oRhoS
+         IeUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679505506;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GRTvs40VdXDncOuhkXyv5eYNQBnzAzdM6lr9TY/as18=;
-        b=AHUTsVrK+oURQYHawqXXhYVnzN2omsXZrf1PWQmpU7e7WYPENF3U67vzmWZdOjhM+U
-         OVg2vQpj3Hvld3M4wdQKRPMLdtXBg2psIVNS+IU+iei2IsCP4fMKhCxhvtx27XmOM0ju
-         nlCJShDAF+S3GZUnlCPSGfURDFWPxIgHNfl6c8Z5IkhzqDyXF3gD/XbV1P8fHbsQOlVF
-         MBn8Jc0ic3qojHciqjHea2z17JtQ1b8t0wozlmmoveF5+UELGsIwXH1SZ5e2IveLUHj8
-         a+bG/zJ5OjPoOOUeKS9/CusYz1jCLO3gOaa4XN7WLNt8ekg4ctNuIsDviNf7/+sy2SKN
-         ZP9g==
-X-Gm-Message-State: AO0yUKU5WXjfYLzlTctKLdqV8o0qt5xRNKOMeea5khJlewU8N/0CU8Em
-        +CY3cFw+j4gCGs6HY2IfZK8=
-X-Google-Smtp-Source: AK7set8j8oLgm00l5AmFzb6jpLprx4l21D23G4FUkEfNrIT4nqIcuu/yPG+xQnOPkJVC6MOEe4bwvg==
-X-Received: by 2002:a05:6214:2025:b0:5a7:e9e4:5010 with SMTP id 5-20020a056214202500b005a7e9e45010mr9000518qvf.14.1679505505905;
-        Wed, 22 Mar 2023 10:18:25 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id e11-20020a05620a014b00b0074669eddb05sm2982212qkn.68.2023.03.22.10.18.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Mar 2023 10:18:24 -0700 (PDT)
-Message-ID: <d84a84d7-f065-8ac6-fb21-20a0c9af6c14@gmail.com>
-Date:   Wed, 22 Mar 2023 10:18:18 -0700
+        d=1e100.net; s=20210112; t=1679505518;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E5/aVehBsgh0kzDWGWqpxifEfBtyQggusoaHEV8RT/M=;
+        b=JuJJqQXarWk0sztRL3JN2B0JmKirqBEyY7TXUdr0uto/8VOFjCBORvGDMQL3iErtKV
+         dKIJPftywp4jz2OBuJopon0+xoWBNvMTeq/isETGYCaci6V0cd7osJphiUxY+0k9MpUr
+         ScuAiCAk4bGl1lL3IBzXNYCCG6xXvtmAgdiB6/H05I2Kcc3RaqejyWkDuwZxx4lECfI2
+         HPnmYTXSLOjClV/r8R5GmIW2z06U5muVpWcHIxOqNTSpU5Pr/zedaKKlrAuYF83aY1/m
+         8kw9dtXbzsRZNiPLCmUWPT+J8sapj5/7N9zoW1Wm46HhcACDAbj7wZMX5IjKOicbR1Rv
+         bzJg==
+X-Gm-Message-State: AAQBX9dUSaRDBkafC/eAaOwUlXbMyqnbMUa6MtAHmejCS8lhzFfiXkkh
+        GfUeqwUI/hAM+vH4PWZY8DIChlrxVrwCPBnmmfM=
+X-Google-Smtp-Source: AKy350aJ8+5bIapFVS2V7Xlh6Fx35AQq+ZxlQkFE9XnIFYFz+3BqwQOvw7YXnSl+EBHR0JTaw+qhUBvq/a2f3kxUYkM=
+X-Received: by 2002:a81:b149:0:b0:544:b7ff:b0df with SMTP id
+ p70-20020a81b149000000b00544b7ffb0dfmr344866ywh.2.1679505518520; Wed, 22 Mar
+ 2023 10:18:38 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH v3 4/4] clk: bcm: Add BCM63268 timer clock and reset
- driver
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+References: <20210315122605.28437-1-noltari@gmail.com> <20230321201022.1052743-1-noltari@gmail.com>
+ <62d8aff43456051cb607999a7db0b5cd.sboyd@kernel.org>
+In-Reply-To: <62d8aff43456051cb607999a7db0b5cd.sboyd@kernel.org>
+From:   =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
+Date:   Wed, 22 Mar 2023 18:18:27 +0100
+Message-ID: <CAKR-sGfzV0MXY_qGZCepZxXc3uWzWYb3v9fsJdAhoqOA6ikiTw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] clk: add BCM63268 timer clock and reset
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, f.fainelli@gmail.com,
         jonas.gorski@gmail.com, krzysztof.kozlowski+dt@linaro.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         mturquette@baylibre.com, p.zabel@pengutronix.de,
-        robh+dt@kernel.org, william.zhang@broadcom.com,
-        =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>
-References: <20210315122605.28437-1-noltari@gmail.com>
- <20230321201022.1052743-1-noltari@gmail.com>
- <20230321201022.1052743-5-noltari@gmail.com>
- <3a1d7b271a42324c056d983e1943b386.sboyd@kernel.org>
- <0071fdc1-fa53-e096-19c7-ecd1a9d56e86@gmail.com>
- <d06781c905adb23089a85a8d54b94461.sboyd@kernel.org>
- <302bb0c4-a31e-7025-26d6-21c8d473f370@gmail.com>
- <896d16997cf3d308eff0cb8ce8596fc3.sboyd@kernel.org>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <896d16997cf3d308eff0cb8ce8596fc3.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        robh+dt@kernel.org, william.zhang@broadcom.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 3/21/23 16:23, Stephen Boyd wrote:
-> Quoting Florian Fainelli (2023-03-21 16:09:54)
->> On 3/21/23 16:06, Stephen Boyd wrote:
->>> Quoting Florian Fainelli (2023-03-21 16:00:29)
->>>>
->>>> These SoCs are big-endian, require native endian register access and
->>>> have no posted writes within their bus logic (UBUS) and require no
->>>> barriers, hence the use of __raw_readl() and __raw_writel() is adequate.
->>>>
->>>
->>> Use ioread32be() then?
->>
->> BCM63xx drivers tend to use __raw_{read,write}l for consistency and to
->> make it clear that no barriers, no endian swapping is necessary, I would
->> prefer to remain consistent with that convention.
-> 
-> Ok.
-> 
-> Is the clk device big-endian? Or the CPU is big-endian? SoC being
-> big-endian sounds like the devices in the SoC are big-endian. I hope we
-> never plop this device down with a CPU that's litle-endian.
+El mar, 21 mar 2023 a las 23:54, Stephen Boyd (<sboyd@kernel.org>) escribi=
+=C3=B3:
+>
+> Quoting =C3=81lvaro Fern=C3=A1ndez Rojas (2023-03-21 13:10:18)
+> > Broadcom BCM63268 has a timer clock and reset controller which has the
+> > following layout:
+> >   #define POR_RESET_STATUS            (1 << 31)
+> >   #define HW_RESET_STATUS             (1 << 30)
+> >   #define SW_RESET_STATUS             (1 << 29)
+> >   #define USB_REF_CLKEN               (1 << 18)
+> >   #define UTO_EXTIN_CLKEN             (1 << 17)
+> >   #define UTO_CLK50_SEL               (1 << 16)
+> >   #define FAP2_PLL_CLKEN              (1 << 15)
+> >   #define FAP2_PLL_FREQ_SHIFT         12
+> >   #define FAP1_PLL_CLKEN              (1 << 11)
+> >   #define FAP1_PLL_FREQ_SHIFT         8
+> >   #define WAKEON_DSL                  (1 << 7)
+> >   #define WAKEON_EPHY                 (1 << 6)
+> >   #define DSL_ENERGY_DETECT_ENABLE    (1 << 4)
+> >   #define GPHY_1_ENERGY_DETECT_ENABLE (1 << 3)
+> >   #define EPHY_3_ENERGY_DETECT_ENABLE (1 << 2)
+> >   #define EPHY_2_ENERGY_DETECT_ENABLE (1 << 1)
+> >   #define EPHY_1_ENERGY_DETECT_ENABLE (1 << 0)
+> >
+> > Also excuse me for the delay in the v3, but I totally forgot about this=
+...
+>
+> Please don't send as a reply to a previous round. It makes applying the
+> patch series more difficult and buries the new series deep down in the
+> mail thread.
 
-The CPU is big endian and the peripheral and bus to access the 
-peripheral are native endian, so also big endian in that case.
+Excuse me for that, but other kernel maintainers prefer it this way.
 
-The newer SoCs are ARM-based and are little endian, but we already have 
-a clock driver for those.
--- 
-Florian
-
+--
+=C3=81lvaro
