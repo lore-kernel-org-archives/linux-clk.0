@@ -2,171 +2,216 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0788C6FD1F
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 12:16:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCE5C6FD1F
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 14:42:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230059AbjCVMQT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Mar 2023 08:16:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43322 "EHLO
+        id S231726AbjCVOmH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Mar 2023 10:42:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229747AbjCVMQS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 08:16:18 -0400
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2088.outbound.protection.outlook.com [40.107.20.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F01F91C587;
-        Wed, 22 Mar 2023 05:16:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lDfsSeYirTwMVPacvVnYm6/SYt5lCWfNQLQNyy2gfYvrCeJRUlNlQhq9G9mGWDHwH8PdVZplqXtByckJeGIYXANNVtvIAcZSvqIH++zM2oVbxDcgCQdsuAC+3fC9DboB7eQpefLdPZagNyYAkvLYlqH61H9fNzqhNm8BE3yKKjeAhPPx/5lpLkGzdf4rRoYLRt+cikijr2OhgnzgZwUP3jsZ7bCaoyC5w1U24mOQppPMuG1PKMuLgC1aqiGVhc6wrfB4u5m7vTZgFq9UccKQFJm02w2vDYn8k6dWYZ6Jsiy8MFAwptk+If7B5saSYjwdOzLC/REngkcd+lcyKC3TeA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Jh+J3hB3c/ZZPD/o9hi+r2C3MO/ORnrK8HHhvFfDE/w=;
- b=mdeNmKmhxiU6FS3Y5TVXA+lCGOm4kGlhQ+AILNioScZ9yTGXX4O4yOwEkNINeGAXoVrDjOF9M+QgYA1ggCtLlPg6z7mRGaSOpHHftwn05ZaPK7RDMyfwDdMVFNFVADxxw0eokToKtZ41TaNdMg6uiXn4XaG2fJWkdH+qHc7FqVejtEGpSlAKexSPsrPz67zDiFKENznKxx0O0MHPU/p6a64UpHcoD4J1rU88kGOj1RiFUpeXuxXvibtRUoa0CdFTC3B2NfE5Hx6+z/lK0IvLSqs7mXH5p6s2WR9b83oJzFPx8K7sdz+KMFWPpd62/YKA+60dMLgs8pmvrSBsi6wPpA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jh+J3hB3c/ZZPD/o9hi+r2C3MO/ORnrK8HHhvFfDE/w=;
- b=HrFrBXEDjCGwsvMuDpeeTmjK2PIsCGubit0/wN7cHOOCxWL0LraHtyI83o2RX2+N4Ngb0g9wZRzSYx9+uaRkH4rCAdGdD16izDkFQOUBLPp+J/F/XZq+YK/YAXkQ5E8KH8WSAQkigc+o+FEkLEKkLNI9fJ4N8Bb/KnOhH4dpcao=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by PR3PR04MB7227.eurprd04.prod.outlook.com (2603:10a6:102:82::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.37; Wed, 22 Mar
- 2023 12:16:13 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::f55a:cf12:da08:6d2a]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::f55a:cf12:da08:6d2a%7]) with mapi id 15.20.6178.037; Wed, 22 Mar 2023
- 12:16:13 +0000
-Message-ID: <0c7f583b-ad19-3010-f7a8-e6999f5477e1@oss.nxp.com>
-Date:   Mon, 20 Mar 2023 13:45:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.0
-Subject: Re: [PATCH 1/3] clk: imx: composite-8m: Add support to determine_rate
-To:     Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org
-Cc:     aford@beaconembedded.com, Abel Vesa <abelvesa@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20230319132120.6347-1-aford173@gmail.com>
- <20230319132120.6347-2-aford173@gmail.com>
-Content-Language: en-US
-From:   Peng Fan <peng.fan@oss.nxp.com>
-In-Reply-To: <20230319132120.6347-2-aford173@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR01CA0044.apcprd01.prod.exchangelabs.com
- (2603:1096:4:193::8) To DU0PR04MB9417.eurprd04.prod.outlook.com
- (2603:10a6:10:358::11)
+        with ESMTP id S231598AbjCVOlt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 10:41:49 -0400
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A395265C43
+        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 07:41:19 -0700 (PDT)
+Received: by mail-yb1-xb30.google.com with SMTP id n125so21226740ybg.7
+        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 07:41:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679496072;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dwrWFBfwB9kGIHdKOm9I7XrkyLQMCrqtoZsi4Z0QdbM=;
+        b=F0w5e6ZMX4ejR5QsVQiqxR3dcGhYhLoC0lZNvEZOA0Q7DL2mOy3SrO7dbV15fGayLP
+         OyXmKujQ0zcDkkemYCGNsyf75hLK6LlpbxIh5GVqde2o0sjQo2lRTFwIGGSvLk/nvdTr
+         lkuNFvcuE+FNrR6LuFS5EuCM4/ZRCbnvpW7opbAWoh13a9QP8sFpw36WEdUMsREEIpK1
+         adCs+5hzP7cWPvxU5pwPwkG1I6W24jY2fEoKgMWEPbDVIJVbGAWAbRg3G3t/ua30bcE2
+         Bp3nUoo3S5yMaczrYsbO+6tNLgweA9mdFDVwZwLvJGeb/9kGlJVSb/ZNdehyTelgUAc2
+         gNTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679496072;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dwrWFBfwB9kGIHdKOm9I7XrkyLQMCrqtoZsi4Z0QdbM=;
+        b=uyNZgSwahg9bfrLP62REbWaBDkOwCq+Yw29GtsCrxMqifAhtaKigRbzZl0f/BKwWt/
+         z0UDy9A70t1E0tHb5hnMxVaSYR4KMUP/s07QWg/RSlPTjSo6CxzSeXIUhN7+u/HM2zSP
+         R5ccljlMrCf97J4bltS4QigLZ+sInfXapFTzJCy8yMd2fj2CRXXyrjElFNYajbWMqX6k
+         Eqt2cSn64eLJtBsZalxQ0bUrdh7gn/LFkfbyuKqPRFGu1VrGaE8hF67ukr1wYdAfuizH
+         MG92T01foy2hxaKxCyk2vk+h8xHfWlkjYTDP5MSvk5IqeQMLuxvPJxbcBalkffFr50FJ
+         UqFg==
+X-Gm-Message-State: AAQBX9d/+RF50N9Q6OrlI9Wj/hlPG89P1u3oiIzaTB3YNJVO+oA1JNZF
+        fOuzeIz0PFv/tN22roXmW7uhNz9/3kB0Z2NR/6MNUw==
+X-Google-Smtp-Source: AKy350brfn7Z6o8S2/0vpnavmEx1927OK55K5Jv3TrdYOcq2VC9PIKusWzICyXRr17lUOcIb7jQf8MvaL8LUkwY93es=
+X-Received: by 2002:a25:7456:0:b0:b6b:79a2:8cff with SMTP id
+ p83-20020a257456000000b00b6b79a28cffmr12890ybc.9.1679496072367; Wed, 22 Mar
+ 2023 07:41:12 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|PR3PR04MB7227:EE_
-X-MS-Office365-Filtering-Correlation-Id: 141410c8-c4e6-4d7c-e353-08db2acf3a16
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: GFHOEqYMNpuFrngxjIjhRu4eCLawS1D52PMX0LKswznP1XrBB2VlnriQKacaBX0EPQo8izFDJ8o+mvQTEDHBfA2uSHSK6tf1teWYyYDjWWXJVMPoUOiQGJiD7yNjFbgZ9yUVYdyEw9FnjLUQj0r25m6preVPqzbBwOHFIkkT6Mez2u0K4E79HwXkMcVq/WBG6uQFfdu6Htau9OvELM4aEhjDnexrXjam4NjztJkglEM2tGR/tv99f8tZVWWSMOYdlrm9XCr+71dcFf9FpWU9h6c8IRXhhpyLOMv2S0tsI84u52wg1FH16L9VssQs6vKK3VqVvW7P/BGj+wDGApArAXrmHVVu+QXewKqQbM94OwmdoiPUIF+Iai8nZwaJjpJ/m+EuYsIVjFJWuB+rbhvKC6fFAqJ7g25AdYflzbKyJ1qSVMbqoqe9PkOmXTEChCqX8x/UKK79kjl0S7BLihKGdu1ksJd4wz8hInnfnuXQv2TEbRYvkE/Qci/wkwJ1KEiA/TZbJhSGFY1rGah2OLuNKS2KbUHZ8Z6OCSRQTmHQ31qYbSv3sXLr8WFtltPOaaBEfiPqtKXcBnJRetn7PhyRfG15Ud2Y1QseP1giHdar7rhXaeHCqwtfE7zD4TVjlfNLrwedtQsHG1Y85KLoAQKlZdyi1IionRvRuC7B8PjkSFnNtM6umI9w47gejyvKaIUbNgk/4lDPbN/UeIts6JMhtSC7yW1g85j1JB9ow5mdwsBdx0QBuB8kUZLUoRzXbG4diqVsqSlF4MQXw0PM03tq0A==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(396003)(366004)(346002)(136003)(376002)(39860400002)(451199018)(31686004)(41300700001)(5660300002)(7416002)(66946007)(66556008)(66476007)(8676002)(4326008)(2906002)(44832011)(38100700002)(38350700002)(86362001)(31696002)(52116002)(6666004)(26005)(6506007)(6486002)(478600001)(54906003)(316002)(8936002)(83380400001)(6512007)(2616005)(186003)(53546011)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MVR3cVNJa0loWGFQdXpLZExiWUJENDNpT0w4Wlh5RWd3eWg4UnRtREUrN21G?=
- =?utf-8?B?L3hxeElRUGg0Q2VGT3VGb0tKRllLMVdwSmhrMHlNMTVjck40WmVpY0g3OXFT?=
- =?utf-8?B?eVhXbFEvaFlmT2ZkbEFIWTN1Njd6MkFaU0ZEOFIvM25oMXNuc000Nk94MVNX?=
- =?utf-8?B?WjQvNHc1d0FrbTlweTNDQzZIVTR4ajY0STdvUUxzU3Ezd2xDamxsUUtMMnZ2?=
- =?utf-8?B?UndPd01TZFVzeUcrOWtzaWtUTFhzL24rU2kzQWNGNXdYRGw3Q0gxQW5KM0pO?=
- =?utf-8?B?dDN6SjBjRHlHbFg3MEpoWnlTcGJDRVQveHBLemcyT3RvYktYYThmQkJieUVn?=
- =?utf-8?B?a042UHRxdDh1MEV6NDZoWForcE5QdDhESG1wcklIVG9HNTNoYkEwajBTYjNV?=
- =?utf-8?B?Yi9SUFhtWjBsVlpVLzBydlNTcmFnTVUwdUhQb0QrOVFHUENGRkxKZmpXb25j?=
- =?utf-8?B?RnFzZVplelNlbWJjZGpBSHFsUFBqQlVXZ1ZyVDZ2UTlWWGtLQy9Uc0ZCS2Rp?=
- =?utf-8?B?ZmwzQzdNVE5KVzBtck5pclBrUDJHQmZ1RXp4SWxnL1pRR1VHNXovWW5GVTZI?=
- =?utf-8?B?RURua1NVV3k5SHpZWWVZakcvaThMZWoremZkUks5OGNJQ1JEbVlsMTYzMEtu?=
- =?utf-8?B?MlE3Vkk2U04xK1BJdVRXd2JYS3BYdmViUzdNN0lHRG0vTlRINDFRWU9QUlov?=
- =?utf-8?B?Ty9XMFFDSUVvTDRRRlZLOER5WDNoNlQvNlQ0SVhYU3dmdzFDS3RJRWQ2MUxB?=
- =?utf-8?B?ai9DMTN3aXpyRWFsa0t3QzkxVEZJbTNRY0lzcGMxZDRLcEdCNEdIRzFUaDJv?=
- =?utf-8?B?MWVUS05zUjlKeitKa0t4SGkxdE5lMkRXNWIyMVlQd2hzcHE1UFBXL2l1Y2U0?=
- =?utf-8?B?c2FLSGtvWWE1R3dQaUh6eWp1OGRhd3AzWXRzYVFZUzJBYWk1OHhRNVVTbU1D?=
- =?utf-8?B?TTdsQ1BvL0h5TXp5b2hLWWZXV013bE8weURnWFJlZU9hUnpqV1ZXbTV0YkEy?=
- =?utf-8?B?Y1J2ZVpoRHNBNnlPVU1yMmdTNjZ2Wlg4U3E4Q0dhWnNWN1ZHSko5U3FIZmhl?=
- =?utf-8?B?cTkwcFhUa0ZCb2JkUTh0Um5SQ29Yc2RNTFF5Z3BBQnZTd0NOcUxFYmtUMFZZ?=
- =?utf-8?B?SUJCRmFvNWZKR1FXcE9zZ2gxcG9HczF4ZDc3VmpRWVBtVG9IT3RDMmdxUDAz?=
- =?utf-8?B?SlZQL2JRV0Njcjg4cHloU1RKUlIxTEJ1WVRMME9yK1I4THZjMHRhUUE0Tm5u?=
- =?utf-8?B?MU9nWGFsZGV0SW1FanpkR1Q3Yjh0MmU4UkRJZnBnQmYyVitUMHhLUC9kZC8y?=
- =?utf-8?B?UG9OR0h6K2tXN2FhSS9WVVFlRmNDeCtna3kyMExLTUo2cFRYN2ZYOW85TFk3?=
- =?utf-8?B?MXNBNGt3UmgrRzdNUDIxSHBpYTNmTTVQVllPTGkvWVBjVTRzOUJkbGJCaVFU?=
- =?utf-8?B?bG5DLzZsN0tNSkZQUjZYUWJ2YkNwWDZuak1rakJOeVlUd2txdVFMeUsvajFz?=
- =?utf-8?B?UFFyVkVBUkp2SmE2bWR4TzdMVStSdUt1R3lhOGZCRVBqNGorSm5YMTFacVB1?=
- =?utf-8?B?M2llYkphVmJ3S1dXQWtHbWlJTWRBeUp1K2R0Nk5VM05BTGZDczJhbXUyYnRF?=
- =?utf-8?B?OGpxckxVamNhck5Zak0xbGcwTzNTeTU3a2JUQ1pLV3NRU2RyMEh0YnpzN0Qy?=
- =?utf-8?B?ZjVkZ3RZOTFOdWppUVJUeE9USlk0VHd0a0VXNlFpMVNFN1RqZ2ZjaklmUEZs?=
- =?utf-8?B?QjBTSDQvK0IvUjljQ0FwMjU5TEVreDFBVUNldGswMEdiRFNoQXJXMUYrakc4?=
- =?utf-8?B?SGhOUTRaNDRWU0Z5VGgwai9BL21HOFE0UjZDYTk2L0hmTDFodlo3YVBuRTVt?=
- =?utf-8?B?WFhkMEIzOW1WWE5GSTdhSXZXNGVaMmp2a05WdThwLzByOFNxWm9xQm1McmNS?=
- =?utf-8?B?Q21peHUzajRLMGc4TkN2VmpuTEtra1ZKVUhQR0JDL1JCbmlmTjNENTdGZmNv?=
- =?utf-8?B?RC9mWVpGRlk2cTZPcnFRNzFmcWZkUkQ3UU80TDZZYWZ0MGZvR2RNTE1DaDl4?=
- =?utf-8?B?amYrVGkyaWhLQm1yRHlYOFd2NVJ2aTA1c2t1eXJlMWZhU0RTN0JRRXp5enRj?=
- =?utf-8?Q?ngIC+nPkxARp+UuQ6UQQGMp4n?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 141410c8-c4e6-4d7c-e353-08db2acf3a16
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Mar 2023 12:16:12.9387
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SZK7k1VJD7DbNE92thWSZvtHheiowLlBdjkQtf4PAu8eq5UhXumPeBZ9lqifoIlZfD2z1btjUFQYh9ulMrxyWQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7227
+References: <cover.1679479634.git.quic_varada@quicinc.com> <5b7213a4c402ee334ff48f2efe2b920858637ac5.1679479634.git.quic_varada@quicinc.com>
+In-Reply-To: <5b7213a4c402ee334ff48f2efe2b920858637ac5.1679479634.git.quic_varada@quicinc.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Wed, 22 Mar 2023 16:41:01 +0200
+Message-ID: <CAA8EJppXuaGx4VhZ9fOBUkD8fECngzJ8pubNC4bm_0M9+64ZqQ@mail.gmail.com>
+Subject: Re: [PATCH v3 7/8] arm64: dts: qcom: ipq9574: Add USB related nodes
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org,
+        mturquette@baylibre.com, sboyd@kernel.org, quic_wcheng@quicinc.com,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Wed, 22 Mar 2023 at 12:46, Varadarajan Narayanan
+<quic_varada@quicinc.com> wrote:
+>
+> Add USB phy and controller related nodes
+>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+>  Changes in v3:
+>         - Insert the nodes at proper location
+>
+>  Changes in v2:
+>         - Fixed issues flagged by Krzysztof
+>         - Fix issues reported by make dtbs_check
+>         - Remove NOC related clocks (to be added with proper
+>           interconnect support)
+> ---
+>  arch/arm64/boot/dts/qcom/ipq9574.dtsi | 86 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 86 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> index 2bb4053..0943901 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> @@ -215,6 +215,48 @@
+>                 #size-cells = <1>;
+>                 ranges = <0 0 0 0xffffffff>;
+>
+> +               qusb_phy_0: phy@7b000 {
+> +                       compatible = "qcom,ipq9574-qusb2-phy";
+> +                       reg = <0x07b000 0x180>;
+
+Please pad addresses to 8 hex digits.
 
 
-On 3/19/2023 9:21 PM, Adam Ford wrote:
-> Similar to imx/clk-composite-93 and imx/clk-divider-gate, the
-> imx8m_clk_composite_divider_ops can support determine_rate.
-> Without this the parent clocks are set to a fixed value, and
-> if a consumer needs a slower reate, the clock is divided, but
-> the division is only as good as the parent clock rate.
-> 
-> With this added, the system can attempt to adjust the parent rate
-> if the proper flags are set which can lead to a more precise clock
-> value.
-> 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> 
-> diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
-> index cbf0d7955a00..3b63e47f088f 100644
-> --- a/drivers/clk/imx/clk-composite-8m.c
-> +++ b/drivers/clk/imx/clk-composite-8m.c
-> @@ -119,10 +119,17 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
->   	return ret;
->   }
->   
-> +static int clk_divider_determine_rate(struct clk_hw *hw,
-> +				      struct clk_rate_request *req)
-> +{
-> +	return clk_divider_ops.determine_rate(hw, req);
-> +}
+> +                       #phy-cells = <0>;
 > +
->   static const struct clk_ops imx8m_clk_composite_divider_ops = {
->   	.recalc_rate = imx8m_clk_composite_divider_recalc_rate,
->   	.round_rate = imx8m_clk_composite_divider_round_rate,
->   	.set_rate = imx8m_clk_composite_divider_set_rate,
-> +	.determine_rate = clk_divider_determine_rate,
+> +                       clocks = <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
+> +                               <&xo_board_clk>;
+> +                       clock-names = "cfg_ahb", "ref";
+> +
+> +                       resets = <&gcc GCC_QUSB2_0_PHY_BCR>;
+> +                       status = "disabled";
+> +               };
+> +
+> +               ssphy_0: phy@7d000 {
+> +                       compatible = "qcom,ipq9574-qmp-usb3-phy";
+> +                       reg = <0x7d000 0x1c4>;
+> +                       #clock-cells = <1>;
+> +                       #address-cells = <1>;
+> +                       #size-cells = <1>;
+> +                       ranges;
+> +
+> +                       clocks = <&gcc GCC_USB0_AUX_CLK>,
+> +                                <&gcc GCC_USB0_PHY_CFG_AHB_CLK>;
 
-Please align the name with imx8m_ as prefix. Other than that:
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Could you please check the indentation here? Vertical lists should be aligned
 
->   };
->   
->   static u8 imx8m_clk_composite_mux_get_parent(struct clk_hw *hw)
+> +                       clock-names = "aux", "cfg_ahb";
+
+One item per line
+
+> +
+> +                       resets =  <&gcc GCC_USB0_PHY_BCR>,
+> +                                <&gcc GCC_USB3PHY_0_PHY_BCR>;
+> +                       reset-names = "phy","common";
+> +                       status = "disabled";
+> +
+> +                       usb0_ssphy: phy@7d200 {
+
+Newer bindings please, without subnodes.
+
+> +                               reg = <0x0007d200 0x130>,       /* tx */
+> +                                     <0x0007d400 0x200>,       /* rx */
+> +                                     <0x0007d800 0x1f8>,       /* pcs  */
+> +                                     <0x0007d600 0x044>;       /* pcs misc */
+> +                               #phy-cells = <0>;
+> +                               clocks = <&gcc GCC_USB0_PIPE_CLK>;
+> +                               clock-names = "pipe0";
+> +                               clock-output-names = "usb0_pipe_clk";
+> +                       };
+> +               };
+> +
+>                 pcie0_phy: phy@84000 {
+>                         compatible = "qcom,ipq9574-qmp-gen3x1-pcie-phy";
+>                         reg = <0x00084000 0x1bc>; /* Serdes PLL */
+> @@ -436,6 +478,50 @@
+>                         status = "disabled";
+>                 };
+>
+> +               usb3: usb3@8a00000 {
+> +                       compatible = "qcom,ipq9574-dwc3", "qcom,dwc3";
+> +                       reg = <0x8af8800 0x400>;
+> +                       #address-cells = <1>;
+> +                       #size-cells = <1>;
+> +                       ranges;
+> +
+> +                       clocks = <&gcc GCC_SNOC_USB_CLK>,
+> +                                <&gcc GCC_ANOC_USB_AXI_CLK>,
+> +                                <&gcc GCC_USB0_MASTER_CLK>,
+> +                                <&gcc GCC_USB0_SLEEP_CLK>,
+> +                                <&gcc GCC_USB0_MOCK_UTMI_CLK>;
+> +
+> +                       clock-names = "sys_noc_axi",
+> +                                     "anoc_axi",
+> +                                     "master",
+> +                                     "sleep",
+> +                                     "mock_utmi";
+> +
+> +                       assigned-clocks = <&gcc GCC_USB0_MASTER_CLK>,
+> +                                         <&gcc GCC_USB0_MOCK_UTMI_CLK>;
+> +                       assigned-clock-rates = <200000000>,
+> +                                              <24000000>;
+
+Indentation?
+
+> +
+> +                       resets = <&gcc GCC_USB_BCR>;
+> +                       status = "disabled";
+> +
+> +                       dwc_0: usb@8a00000 {
+> +                               compatible = "snps,dwc3";
+> +                               reg = <0x8a00000 0xcd00>;
+> +                               clocks = <&gcc GCC_USB0_MOCK_UTMI_CLK>;
+> +                               clock-names = "ref";
+> +                               interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
+> +                               phys = <&qusb_phy_0>, <&usb0_ssphy>;
+> +                               phy-names = "usb2-phy", "usb3-phy";
+> +                               tx-fifo-resize;
+> +                               snps,is-utmi-l1-suspend;
+> +                               snps,hird-threshold = /bits/ 8 <0x0>;
+> +                               snps,dis_u2_susphy_quirk;
+> +                               snps,dis_u3_susphy_quirk;
+> +                               dr_mode = "host";
+
+Is dr_mode a property of the host or of the board?
+
+> +                       };
+> +               };
+> +
+>                 intc: interrupt-controller@b000000 {
+>                         compatible = "qcom,msm-qgic2";
+>                         reg = <0x0b000000 0x1000>,  /* GICD */
+> --
+> 2.7.4
+>
+
+
+--
+With best wishes
+Dmitry
