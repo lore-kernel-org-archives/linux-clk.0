@@ -2,150 +2,106 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FCE4C6FD1F
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 10:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C155C6FD1F
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 10:19:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229524AbjCVKHM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Mar 2023 06:07:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34072 "EHLO
+        id S230042AbjCVKT6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Mar 2023 06:19:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229682AbjCVKHM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 06:07:12 -0400
-Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E35E5A185
-        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 03:07:10 -0700 (PDT)
-Received: by mail-qv1-xf2a.google.com with SMTP id x8so11810857qvr.9
-        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 03:07:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679479630;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QnZosvUq8qzkgLxKKE/9sPWIfB/HU/AWtKSlc35tW34=;
-        b=cMsBUuFOrqgW4w0tLieqeHBMLL41hmnKw7r8Fp9vPn1fChqVnwXV8aYmpJpZ/hT8fE
-         ixgJ7yOsH9QUmpPf+cewXdGkRCHC8AgUosnRlVYEpIxyPfj2spF3Y4qEbY1XfyLGlz0s
-         XIwKQwNpdvGo6mumkR4yE3dmIVip9uIWmqfTqJMKhnva6rzroVlp8gyU3xKlQRXBM7AU
-         7jaYevdLxFFj7nl6Z7nw4yIbtxrqs6y+NnqUpWs6Jo9/s0SAuGeawoHJLOEca52HFkp3
-         Cg7TXt2zsO46AwG19yCvTgqkT/Rr0dgtSN4TjcuRkBfZjUf7uQTW5RQ/i5hFdNzLGzq1
-         BdwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679479630;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QnZosvUq8qzkgLxKKE/9sPWIfB/HU/AWtKSlc35tW34=;
-        b=vKS+7zEFsvIkJkHr0ZmCfr/H4TARN4qUIjUgHu29A+iPtE45kRXFQGqxv2HMEt+7wZ
-         aHKW5YFaRYN7FHDdTvf1CE/7oWT/Pl/baUBw6L7CYpG6Xd309mkZcClGRQwxhmDud9ES
-         /Ou/BLuT7VbE1NUIJkfZp3V8iI83T79SOBTJlG40iN91bwSDnIytYYYzjPQvAEiONlhD
-         R7qAWCBJqe3tmOEwVPl14qX029OSI4SwikPan9GtTzUJ5PS8EWdN4LdxHJMonVkhXChp
-         uDliO1W/PDuFz2AdUXEcYySEDfW8/j541dw3NJpepm0ciev6FzihGODfePQGivJrss8H
-         QIRA==
-X-Gm-Message-State: AO0yUKW20FjlNYNedCIX0Yo20CCg4ptXfxBuQYdfLMO42xPodQx+ga7/
-        0i2G2zh2WwRBL/BfP81+jqq4RgW5LvS0QsHn1gRf7g==
-X-Google-Smtp-Source: AK7set8ZJjgsD0g8hB/7Rat/s/Hv8yPnY9iwyQc6Q23dgWte7vKx0c7Bwb+1pdWnuluDFJFx03CmZ7jldKPs+8eHFos=
-X-Received: by 2002:ad4:4ba3:0:b0:56f:6b7:3a7b with SMTP id
- i3-20020ad44ba3000000b0056f06b73a7bmr621393qvw.7.1679479629674; Wed, 22 Mar
- 2023 03:07:09 -0700 (PDT)
+        with ESMTP id S229791AbjCVKT4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 06:19:56 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7C2A5651A;
+        Wed, 22 Mar 2023 03:19:55 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32M4XRw5014780;
+        Wed, 22 Mar 2023 10:19:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=RLqMGRumJK6CZZb2/pwHr9Dl3j5xeLjrcwS0hWS47y0=;
+ b=bzpXLSu6PXajW2t0tQnCVRPjoYLG2pudUAuu9QljUIqhXsAVvJBYTRSxmO4G6J0nI2Ft
+ XoO6djV1w9Lr6NU9VlXw/mGBU+wGFQcDVkkijPb7zAJlKgvIbK5V/CfRfZq15Yf8tWnD
+ h21PnjmJg7Mq6iu6EXIHgTLh68PFRYzsBIWcoI976w6DthF/yhRnemw8+G2Tr7dLLUzT
+ lO7Sl/737jCs6BYKGSewpevQ/74MIqcXfEIy3OTdkw9LxbsELxPFX025EJmENGUpMDfQ
+ 24g5AgL8kOXk3kUtPjfP9DJXKggpmbG/MOPks/VOp9nntlYS+e8f+qFFG29XDVdf669l Qg== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pfpfgs8e3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 22 Mar 2023 10:19:45 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32MAJimr018523
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 22 Mar 2023 10:19:44 GMT
+Received: from [10.242.243.187] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 22 Mar
+ 2023 03:19:37 -0700
+Message-ID: <bb56bbb7-7b08-79f9-ad1b-a2de63eca5f6@quicinc.com>
+Date:   Wed, 22 Mar 2023 15:48:41 +0530
 MIME-Version: 1.0
-References: <20230321175758.26738-1-srinivas.kandagatla@linaro.org>
-In-Reply-To: <20230321175758.26738-1-srinivas.kandagatla@linaro.org>
-From:   Amit Pundir <amit.pundir@linaro.org>
-Date:   Wed, 22 Mar 2023 15:36:33 +0530
-Message-ID: <CAMi1Hd06QKQ3B_fSsvmP6pJOPCCv3J5ntd+VvHSA8u1Q8pJmCw@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: gfm-mux: use runtime pm while accessing registers
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH 08/11] remoteproc: qcom: Add Hexagon based multipd rproc
+ driver
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
+        <mathieu.poirier@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <quic_gurus@quicinc.com>,
+        <loic.poulain@linaro.org>, <quic_eberman@quicinc.com>,
+        <robimarko@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>
+References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
+ <1678164097-13247-9-git-send-email-quic_mmanikan@quicinc.com>
+ <059bec3f-0c77-fc16-83a3-d78cf82d543f@linaro.org>
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <059bec3f-0c77-fc16-83a3-d78cf82d543f@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: cqcy1Thc334ObsRiiKhhOqiQGD2AStnb
+X-Proofpoint-ORIG-GUID: cqcy1Thc334ObsRiiKhhOqiQGD2AStnb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-22_07,2023-03-22_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=373 spamscore=0 suspectscore=0 impostorscore=0 bulkscore=0
+ phishscore=0 priorityscore=1501 clxscore=1011 malwarescore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303150002
+ definitions=main-2303220073
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 21 Mar 2023 at 23:28, Srinivas Kandagatla
-<srinivas.kandagatla@linaro.org> wrote:
->
-> gfm mux driver does support runtime pm but we never use it while
-> accessing registers. Looks like this driver was getting lucky and
-> totally depending on other drivers to leave the clk on.
->
-> Fix this by doing runtime pm while accessing registers.
 
-Thank you Srini, this fixes the boot regression I see on the RB5
-booting v6.1.y and v6.3-rc kernel versions.
 
-Tested-by: Amit Pundir <amit.pundir@linaro.org>
+On 3/7/2023 9:09 PM, Krzysztof Kozlowski wrote:
+> Why exactly do you need a new driver for this instead of extending
+> existing PIL? I feel all this is growing because no one wants to touch
+> existing code and merge with it...
 
->
-> Fixes: a2d8f507803e ("clk: qcom: Add support to LPASS AUDIO_CC Glitch Free Mux clocks")
-> Cc: stable@vger.kernel.org
-> Reported-by: Amit Pundir <amit.pundir@linaro.org>
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  drivers/clk/qcom/lpass-gfm-sm8250.c | 29 ++++++++++++++++++++++++++++-
->  1 file changed, 28 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/qcom/lpass-gfm-sm8250.c b/drivers/clk/qcom/lpass-gfm-sm8250.c
-> index 96f476f24eb2..bcf0ea534f7f 100644
-> --- a/drivers/clk/qcom/lpass-gfm-sm8250.c
-> +++ b/drivers/clk/qcom/lpass-gfm-sm8250.c
-> @@ -38,14 +38,37 @@ struct clk_gfm {
->  static u8 clk_gfm_get_parent(struct clk_hw *hw)
->  {
->         struct clk_gfm *clk = to_clk_gfm(hw);
-> +       int ret;
-> +       u8 parent;
-> +
-> +       ret = pm_runtime_resume_and_get(clk->priv->dev);
-> +       if (ret < 0 && ret != -EACCES) {
-> +               dev_err_ratelimited(clk->priv->dev,
-> +                                   "pm_runtime_resume_and_get failed in %s, ret %d\n",
-> +                                   __func__, ret);
-> +               return ret;
-> +       }
-> +
-> +       parent = readl(clk->gfm_mux) & clk->mux_mask;
-> +
-> +       pm_runtime_mark_last_busy(clk->priv->dev);
->
-> -       return readl(clk->gfm_mux) & clk->mux_mask;
-> +       return parent;
->  }
->
->  static int clk_gfm_set_parent(struct clk_hw *hw, u8 index)
->  {
->         struct clk_gfm *clk = to_clk_gfm(hw);
->         unsigned int val;
-> +       int ret;
-> +
-> +       ret = pm_runtime_resume_and_get(clk->priv->dev);
-> +       if (ret < 0 && ret != -EACCES) {
-> +               dev_err_ratelimited(clk->priv->dev,
-> +                                   "pm_runtime_resume_and_get failed in %s, ret %d\n",
-> +                                   __func__, ret);
-> +               return ret;
-> +       }
->
->         val = readl(clk->gfm_mux);
->
-> @@ -57,6 +80,8 @@ static int clk_gfm_set_parent(struct clk_hw *hw, u8 index)
->
->         writel(val, clk->gfm_mux);
->
-> +       pm_runtime_mark_last_busy(clk->priv->dev);
-> +
->         return 0;
->  }
->
-> @@ -251,6 +276,8 @@ static int lpass_gfm_clk_driver_probe(struct platform_device *pdev)
->         if (IS_ERR(cc->base))
->                 return PTR_ERR(cc->base);
->
-> +       cc->dev = dev;
-> +
->         err = devm_pm_runtime_enable(dev);
->         if (err)
->                 return err;
-> --
-> 2.21.0
->
+Previously we raised patch to add secure-pil to existing rproc driver. 
+Bjorn suggested to introduce a new secure-pil driver.
+
+https://patchwork.kernel.org/project/linux-arm-msm/patch/1611984013-10201-3-git-send-email-gokulsri@codeaurora.org/ 
+
+
+Also IPQ5018, IPQ9574 soc's follows multipd model. So we decided to
+have new driver which consists 'secure-pil + multi pd' in one
+place.
+
+Thanks & Regards,
+Manikanta.
