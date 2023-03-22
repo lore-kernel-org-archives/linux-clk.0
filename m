@@ -2,101 +2,208 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71980C6FD1F
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 08:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56726C761A6
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 08:57:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229802AbjCVIj1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Mar 2023 04:39:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47660 "EHLO
+        id S229549AbjCVI52 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Mar 2023 04:57:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229656AbjCVIj0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 04:39:26 -0400
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFC4A3BC7D;
-        Wed, 22 Mar 2023 01:39:24 -0700 (PDT)
-Received: from booty (unknown [37.160.6.101])
-        (Authenticated sender: luca.ceresoli@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id EEB1020015;
-        Wed, 22 Mar 2023 08:39:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1679474363;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Wz9JRgOQIMXRFmXdLRwJEba3ig72shB4CQk5G3EPImk=;
-        b=TCL05enbOB0QJnuM/O0bDTeHVFDCWPFQScT6mHJu4nTz6/dUQs906scsp0TLqQ85+FDD4x
-        XNrsna6SBl6J1/PWHEKAFBDv+N4HkTEzjy141bAv1I2Nm1xopxBPUxQpoeQ4DeblVau+dL
-        VKDCvkcfGrlTUSd/W+LANUbrobDQK1r4PWQCTKNYakh8a8IPslfusYX636H+/jmYysgTas
-        EqidyXoTincrKoQ/HHQi6dtxJwA3FyRV1aAEVK2bGsr7fIfzRlojMzeAPJ1rBklMLd8aCk
-        bAGl+68yOgoDrmVHm3QwLvZV/WgDnaPO+dUw96lAIO2bRLlNlaLFIch2GR/w/w==
-Date:   Wed, 22 Mar 2023 09:39:18 +0100
-From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sean Anderson <sean.anderson@seco.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-reneas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: clk: vc5: Make SD/OE pin configuration
- properties not required
-Message-ID: <20230322093918.33690db3@booty>
-In-Reply-To: <83f4f33ebd3706ec7d35acd807b1e44b.sboyd@kernel.org>
-References: <68037ad181991fe0b792f6d003e3e9e538d5ffd7.1673452118.git.geert+renesas@glider.be>
-        <5da02a9b-3d42-a26f-0d18-29a6b5b181e5@seco.com>
-        <20230124091236.1bf8c6da@booty>
-        <CAMuHMdV8_+dF03VD6mST2zMDQ68cgsLLRQi6UeXK2jH-eWqWZg@mail.gmail.com>
-        <232f59aa-704b-a374-6a78-469156ccdbea@seco.com>
-        <83f4f33ebd3706ec7d35acd807b1e44b.sboyd@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        with ESMTP id S229459AbjCVI51 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 04:57:27 -0400
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96ADC37550;
+        Wed, 22 Mar 2023 01:57:26 -0700 (PDT)
+Received: by mail-oi1-x234.google.com with SMTP id v17so3319015oic.5;
+        Wed, 22 Mar 2023 01:57:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679475446;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9R65xRwnP78FkfCIDRDlxuQWuoh+B5jkgUQeHyiYKs4=;
+        b=BzX2g/d/PwKi0WrbKxuspgEu6//KEqZez/h3Z4SUTXP7/jvKJFkby9B9GQO+KTUHsE
+         W65sf9Gy/trXdSt90so1/GOmmoLLZARD4IsKZCkDk2etHFHpArvzQbnFQtnMyl0zJb+d
+         8lMVmbmtH+esaMTP8fetOFOeRstHo8oBCemwCVBxkjMb7N/FqY8AzMSoUsWPeYbGu1lO
+         0PUtqEt3FEOi1IGQQFlnkuPbUYhbVn73y+u/oa8h8rdfPHogNrQPuGYx1I3ZOuGrKFP2
+         8SwuONbBbMSOwB+4qUVYYbU74/bATOlJOTBQ6EXFImNPzwm30PIfpebSvJmL75TiHoKq
+         V8Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679475446;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9R65xRwnP78FkfCIDRDlxuQWuoh+B5jkgUQeHyiYKs4=;
+        b=Zl1IL6AuV4YSn4BmDtU3YMsW3ouVdRK+LMgLttaI/Q/ZpP6E7AKd8gd0KaQ14frAAM
+         9HZFV/VYAPrxRYIAEqQRQAFOA9c0m5KiJ+M1BSO0g0VGpshULpiCoUNkSaFLK1OJya0m
+         YDEuKX7mH31AvN5YiNjxvaykw4JnWE/GlWqZUOw/I+5oUD83dhWrr7LR2CNyhR8zdSE8
+         qsy8u/f6betY/IaovizQxB5ryUH2+h+lXCpSfozl/smU3jATUpmemi+3cFZ4dOmJh22T
+         CkYTCl9/FRPvefj3wBYLQShB8IacsGlCvegung46yLBlw/+mdm4bX3b2A7iqKq7GmWGY
+         ghEA==
+X-Gm-Message-State: AO0yUKXuHz7Fcm05b6H24RxQOrBgpK9y7mDPRIAxHc/bagHWm+0ON8JC
+        tun7qnUHcTgao8oKZvM9yZEctH05eUmUcail4XU=
+X-Google-Smtp-Source: AK7set+0gKpKBhnJuNAs/qFQdwquhXaQRSm9yoz9xDZO2H2W0KpJg3sc6xxviuNxkxak1UH7Y50S1EOegHBtt+qnVtg=
+X-Received: by 2002:aca:190a:0:b0:383:c459:1bc with SMTP id
+ l10-20020aca190a000000b00383c45901bcmr778745oii.0.1679475445949; Wed, 22 Mar
+ 2023 01:57:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20230321050034.1431379-1-sergio.paracuellos@gmail.com>
+ <20230321050034.1431379-2-sergio.paracuellos@gmail.com> <5f295438-8334-d374-2ae6-2a385ffb317d@linaro.org>
+ <CAMhs-H_dSgcPNQVusHWVvztYHptOxSJ_o7G0eU9=M1C7RXdsVw@mail.gmail.com>
+ <ce13ca6c-e61a-d31e-2626-d818a5d0e15e@arinc9.com> <20230321221837.GA1751474-robh@kernel.org>
+ <5f9e9d79-a744-99cf-6a53-bd7342252b46@arinc9.com>
+In-Reply-To: <5f9e9d79-a744-99cf-6a53-bd7342252b46@arinc9.com>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Wed, 22 Mar 2023 09:57:13 +0100
+Message-ID: <CAMhs-H_r0F=ewQqakzyo=XaUwCOXZACdWTuXZSXpueDy6xp=7g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/9] dt-bindings: clock: add mtmips SoCs system controller
+To:     =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
+        tsbogend@alpha.franken.de, john@phrozen.org,
+        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Stephen,
+On Wed, Mar 22, 2023 at 9:36=E2=80=AFAM Ar=C4=B1n=C3=A7 =C3=9CNAL <arinc.un=
+al@arinc9.com> wrote:
+>
+> On 22.03.2023 01:18, Rob Herring wrote:
+> > On Tue, Mar 21, 2023 at 10:09:59AM +0300, Ar=C4=B1n=C3=A7 =C3=9CNAL wro=
+te:
+> >> On 21.03.2023 10:00, Sergio Paracuellos wrote:
+> >>> On Tue, Mar 21, 2023 at 7:45=E2=80=AFAM Krzysztof Kozlowski
+> >>> <krzysztof.kozlowski@linaro.org> wrote:
+> >>>>
+> >>>> On 21/03/2023 06:00, Sergio Paracuellos wrote:
+> >>>>> Adds device tree binding documentation for system controller node p=
+resent
+> >>>>> in Mediatek MIPS and Ralink SOCs. This node is a clock and reset pr=
+ovider
+> >>>>> for the rest of the world. This covers RT2880, RT3050, RT3052, RT33=
+50,
+> >>>>> RT3883, RT5350, MT7620, MT7628 and MT7688 SoCs.
+> >>>>>
+> >>>>> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> >>>>> ---
+> >>>>>    .../bindings/clock/mediatek,mtmips-sysc.yaml  | 65 +++++++++++++=
+++++++
+> >>>>>    1 file changed, 65 insertions(+)
+> >>>>>    create mode 100644 Documentation/devicetree/bindings/clock/media=
+tek,mtmips-sysc.yaml
+> >>>>>
+> >>>>> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mtmip=
+s-sysc.yaml b/Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.=
+yaml
+> >>>>> new file mode 100644
+> >>>>> index 000000000000..f07e1652723b
+> >>>>> --- /dev/null
+> >>>>> +++ b/Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.=
+yaml
+> >>>>> @@ -0,0 +1,65 @@
+> >>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >>>>> +%YAML 1.2
+> >>>>> +---
+> >>>>> +$id: http://devicetree.org/schemas/clock/mediatek,mtmips-sysc.yaml=
+#
+> >>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >>>>> +
+> >>>>> +title: MTMIPS SoCs System Controller
+> >>>>> +
+> >>>>> +maintainers:
+> >>>>> +  - Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> >>>>> +
+> >>>>> +description: |
+> >>>>> +  MediaTek MIPS and Ralink SoCs provides a system controller to al=
+low
+> >>>>> +  to access to system control registers. These registers include c=
+lock
+> >>>>> +  and reset related ones so this node is both clock and reset prov=
+ider
+> >>>>> +  for the rest of the world.
+> >>>>> +
+> >>>>> +  These SoCs have an XTAL from where the cpu clock is
+> >>>>> +  provided as well as derived clocks for the bus and the periphera=
+ls.
+> >>>>> +
+> >>>>> +properties:
+> >>>>> +  compatible:
+> >>>>> +    items:
+> >>>>> +      - enum:
+> >>>>> +          - ralink,mt7620-sysc
+> >>>>
+> >>>> Since you decided to send it before we finish discussion:
+> >>>> NAK - this is already used as mediatek
+> >>>
+> >>> Sorry, there was too much stuff commented so I preferred to clean up
+> >>> all of them while maintaining the compatibles with the ralink prefix
+> >>> instead since that was where the current discussion was at that point=
+.
+> >>>
+> >>>>
+> >>>>> +          - ralink,mt7620a-sysc
+> >>>
+> >>> As I have said, this one exists:
+> >>>
+> >>> arch/mips/ralink/mt7620.c:      rt_sysc_membase =3D
+> >>> plat_of_remap_node("ralink,mt7620a-sysc");
+> >>>
+> >>>
+> >>>>> +          - ralink,mt7628-sysc
+> >>>>
+> >>>> Same here.
+> >>>>
+> >>>>> +          - ralink,mt7688-sysc
+> >>>>
+> >>>> I expect you to check the others.
+> >>>
+> >>> I can change others to mediatek but that would be a bit weird, don't =
+you think?
+> >>
+> >> I've seen some parts of the MTMIPS platform use mediatek compatible st=
+rings
+> >> thanks to Krzysztof pointing them out. I don't like having some parts =
+of the
+> >> MTMIPS platform (pci, mmc, usbphy, etc.) with mediatek compatible stri=
+ng
+> >> while others are ralink.
+> >
+> > That's unfortunate, but again, compatibles are just unique identifiers.
+> > They are only wrong if they aren't unique...
+>
+> Understood. Sergio, please keep the new strings here ralink.
 
-On Mon, 20 Mar 2023 14:27:56 -0700
-Stephen Boyd <sboyd@kernel.org> wrote:
+So if I have to maintain this as "ralink" I think this patch is ok as
+it is now? If that is the case, I prefer to get Reviewed-by for this
+patch as it is now by Krzysztof or Rob before changing anything in my
+current code.
 
-> Quoting Sean Anderson (2023-01-24 08:23:45)
-> > On 1/24/23 03:28, Geert Uytterhoeven wrote:  
-> > > Hi Luca,
-> > > 
-> > > On Tue, Jan 24, 2023 at 9:12 AM Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:  
-> > >> On Thu, 19 Jan 2023 14:27:43 -0500
-> > >> Sean Anderson <sean.anderson@seco.com> wrote:  
-> > >> > On 1/11/23 10:55, Geert Uytterhoeven wrote:  
-> > >  
-> > >> I'm wondering whether Geert has a practical example of a situation
-> > >> where it is better to have these properties optional.  
-> > > 
-> > > My issue was that these properties were introduced long after the
-> > > initial bindings, hence pre-existing DTS does not have them.
-> > > Yes, we can add them, but then we have to read out the OTP-programmed
-> > > settings first. If that's the way to go, I can look into that, though...  
-> > 
-> > FWIW I think there's no need to update existing bindings which don't
-> > have this property. The required aspect is mainly a reminder for new
-> > device trees.
-> >   
-> 
-> Is there any resolution on this thread? I'm dropping this patch from my
-> queue.
+>
+> >
+> >> Like Krzysztof said [0], Ralink is now Mediatek, thus there is no conf=
+lict
+> >> and no issues with different vendor used. So I'd rather keep new thing=
+s
+> >> Ralink and gradually change these mediatek strings to ralink.
+> >
+> > So break the ABI multiple times slowly. Again, either you live with
+> > *all* the existing compatible strings or you declare it is fine to brea=
+k
+> > the ABI on these platforms and switch everything at once. Carrying both
+> > strings (in bindings or drivers) and breaking the ABI is lose-lose.
+>
+> If removing the mediatek strings from the drivers and bindings is better
+> than keeping both strings on the drivers except the bindings, which
+> would keep the ABI intact, I'll do the prior and do it all at once.
+>
+> Ar=C4=B1n=C3=A7
 
-IIRC Geert kind of accepted the idea that these properties should stay
-required. Which is a bit annoying but it's the safest option, so unless
-there are new complaints with solid use cases for making them optionalm,
-I think it's OK to drop the patch.
-
-Luca
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks,
+    Sergio Paracuellos
