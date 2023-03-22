@@ -2,93 +2,125 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C919C76195
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 15:16:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA3DC76195
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 16:19:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231254AbjCVPQV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Mar 2023 11:16:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48852 "EHLO
+        id S230018AbjCVQTa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Mar 2023 12:19:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231240AbjCVPQU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 11:16:20 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 637E961333;
-        Wed, 22 Mar 2023 08:16:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 04269B81D24;
-        Wed, 22 Mar 2023 15:16:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A205C433EF;
-        Wed, 22 Mar 2023 15:16:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679498175;
-        bh=pXRwvFBDd8R3dAnBvX8mqqspelbFAFqbO5AlulXm+z4=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=QJe272Z4HSu8RERaZjMtkARad991ROAJ3MHUGdw6nqgRu3zEnqpxddVHxxOYIBKBe
-         +lxnID72s2bL7QbC4FQp5YR9NvqGOqo908Uvxz5n5uk2VYbhuHQ+hdaYTsCpqAFzHO
-         wSBAwY4pEYD0eYEWSZMt6EdObRiq+ZxiHrk8qVE9b8OCW4AF4iiHOS9NBGBY5XQJz8
-         nI0/ay1uveVuiLJ6cwrn5b7XbsdS1j7sHXFeYDT5PM2/mcUgGX5pWVmXOvN1WK4Wab
-         0NyCp10OWdWH50jJ7R0OpYqFpSP+iVCvNaGlZLNp+XTr8tQxxo7b+GcGf2Tqgufd4L
-         ElZ1usrG2SMjQ==
-Message-ID: <55bea6244a6d41e3d7d38d6cb6d379e9.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S230013AbjCVQT3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 12:19:29 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 131056E96;
+        Wed, 22 Mar 2023 09:19:27 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32MBnQJ3007798;
+        Wed, 22 Mar 2023 16:19:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=emt2nFclvijCJPmzUPqyfZAG/M+5FrVGUpsJxVKKHuI=;
+ b=DuWkTse+FJMx1qKG1XCwsJTKpdn8sc2nXX0Ki1510MQ+8wwZecExtR/91q6MShFvklhP
+ 4UvWmPTRFbXpTYOYwUjriKkDFC7ucu3E4/JTBAbjOKRSRET66YnQ93g/bI4BtgfXGyQk
+ BFVNe6OtKbBlcqNvGmJfLYvblU4l3zavclzDwguiPkrzyARMOKFdydZVmMndUwpHoi5f
+ Xp0hWbKdbSr1DBmfHV08jtBJ7sUkcawveuOTP+h6DLGK+WaXL3PH7icoRRxNRCj6qToO
+ q7KURp4sQANSmU00shaIrfz0Rs5vioxqwr0cuRQ5xe7MQjxaNcrSYS8wAIv06M7XZYi8 og== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pfhnv2p1h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 22 Mar 2023 16:19:23 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32MGJMrd020204
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 22 Mar 2023 16:19:22 GMT
+Received: from [10.50.28.236] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 22 Mar
+ 2023 09:19:17 -0700
+Message-ID: <52967ff4-0ca7-463e-1b62-df455584f199@quicinc.com>
+Date:   Wed, 22 Mar 2023 21:49:14 +0530
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <79ceb9c5-2657-ca9b-e017-5ec14acfcda1@loongson.cn>
-References: <20230321130710.20236-1-zhuyinbo@loongson.cn> <20230321130710.20236-2-zhuyinbo@loongson.cn> <26c4712672de6c4f70f88c6846bc892f.sboyd@kernel.org> <79ceb9c5-2657-ca9b-e017-5ec14acfcda1@loongson.cn>
-Subject: Re: [PATCH v15 2/2] clk: clk-loongson2: add clock controller driver support
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Jianmin Lv <lvjianmin@loongson.cn>, wanghongliang@loongson.cn,
-        Liu Peibao <liupeibao@loongson.cn>,
-        loongson-kernel@lists.loongnix.cn, zhuyinbo@loongson.cn
-To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        zhuyinbo <zhuyinbo@loongson.cn>
-Date:   Wed, 22 Mar 2023 08:16:13 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH V3 0/5] Add APSS clock driver support for IPQ5332
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
+References: <20230217083308.12017-1-quic_kathirav@quicinc.com>
+Content-Language: en-US
+From:   Kathiravan T <quic_kathirav@quicinc.com>
+In-Reply-To: <20230217083308.12017-1-quic_kathirav@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 3LcisabJFNk_pKSgd78I04FWdTR_z4Ya
+X-Proofpoint-ORIG-GUID: 3LcisabJFNk_pKSgd78I04FWdTR_z4Ya
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-22_13,2023-03-22_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=837 clxscore=1011 mlxscore=0 phishscore=0 bulkscore=0
+ malwarescore=0 spamscore=0 adultscore=0 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303150002 definitions=main-2303220115
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting zhuyinbo (2023-03-21 19:07:26)
->=20
-> =E5=9C=A8 2023/3/22 =E4=B8=8A=E5=8D=887:42, Stephen Boyd =E5=86=99=E9=81=
-=93:
-> > Quoting Yinbo Zhu (2023-03-21 06:07:10)
-> >> diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
-> >> new file mode 100644
-> >> index 000000000000..090810655511
-> >> --- /dev/null
-> >> +++ b/drivers/clk/clk-loongson2.c
-> >> @@ -0,0 +1,344 @@
-[....]
-> >> +
-> >> +static void __iomem *loongson2_pll_base;
-> > Why is this a global?
->=20
-> Normally, this should be an element in the structure, but since there is =
 
-> only one
->=20
-> element, It is directly defined as a global variable for use by other=20
-> function.
->=20
+On 2/17/2023 2:03 PM, Kathiravan T wrote:
+> This series adds support for the APSS clock to bump the CPU frequency
+> above 800MHz.
+>
+> APSS PLL found in the IPQ5332 is of type Stromer Plus. However the
+> existing IPQ targets uses the Huayra PLL. So the driver has to
+> refactored to accommodate the different PLL types. The first patch in
+> the series does the refactoring, which can be independenty merged.
+>
+> For the Stromer PLL separate function clk_stromer_pll_configure is
+> introduced, so the 3rd patch in the series depends on the below patch
+> https://lore.kernel.org/linux-arm-msm/20230120082631.22053-1-quic_kathirav@quicinc.com/
+>
+> DTS patch depends on the IPQ5332 baseport series
+> https://lore.kernel.org/linux-arm-msm/20230130114702.20606-1-quic_kathirav@quicinc.com/
+>
+> Changes since V2:
+> 	- Pick up R-b tags and sort the node in DTS
+> 	- V2 can be found at
+> 	   https://lore.kernel.org/linux-arm-msm/20230208042850.1687-1-quic_kathirav@quicinc.com/
+>
+> Changes since V1:
+> 	- Dropped the patch 5/6, since the fallback mechanism for compatible
+> 	  is introduced to avoid bloating the of_device_id table
+> 	- V1 can be found at
+> 	  https://lore.kernel.org/linux-arm-msm/20230202145208.2328032-1-quic_kathirav@quicinc.com/
 
-Ok. Globals are frowned upon but it's just a single pointers so I guess
-it's Ok.
 
-> >
-> >> +               return PTR_ERR(loongson2_pll_base);
-> >> +
-> >> +       loongson2_clocks_init(dev);
-> > Please inline this function here.
->=20
-> The loongson2_clocks_init had inline in this version, or do you mean some=
-thing else ? Need to inline the probe?
+Gentle Reminder ...
 
-I mean get rid of the function loongson2_clocks_init() and move the code
-in that function into this probe function. With this patch the probe is
-split to two functions when it should be one function.
+
+>
+>
+> Kathiravan T (5):
+>    clk: qcom: apss-ipq-pll: refactor the driver to accommodate different
+>      PLL types
+>    dt-bindings: clock: qcom,a53pll: add IPQ5332 compatible
+>    clk: qcom: apss-ipq-pll: add support for IPQ5332
+>    dt-bindings: mailbox: qcom: add compatible for the IPQ5332 SoC
+>    arm64: dts: qcom: ipq5332: enable the CPUFreq support
+>
+>   .../bindings/clock/qcom,a53pll.yaml           |   1 +
+>   .../mailbox/qcom,apcs-kpss-global.yaml        |  18 ++-
+>   arch/arm64/boot/dts/qcom/ipq5332.dtsi         |  37 ++++++
+>   drivers/clk/qcom/apss-ipq-pll.c               | 116 +++++++++++++++---
+>   4 files changed, 147 insertions(+), 25 deletions(-)
+>
