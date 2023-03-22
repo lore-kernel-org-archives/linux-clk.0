@@ -2,100 +2,122 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB3DC761AF
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 21:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB333C6FD1C
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 22:02:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230052AbjCVVx6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Mar 2023 17:53:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60446 "EHLO
+        id S229676AbjCVWCy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Mar 2023 18:02:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230059AbjCVVx5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 17:53:57 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F9E434326
-        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 14:53:54 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id ew6so15817809edb.7
-        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 14:53:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679522032;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xehrL2dgpZYyP/0AM2a+lXnXwn5PW3e0iW5W0VmPTqg=;
-        b=KI4TzoNHQxflEoUcBryC3LXEvMO9lxh2bsIloTZApwsunrsKsg/6DG3LYjPR5oFezI
-         5d8J3vnMlni6v+vzv9ACcW66GzUBcBw/K8sL01C5mAu3Sl/R6PDlECvjEAcR6l0oG9iI
-         3TAXYG4RGicppbFPS+KwYwga/aDWrOF6JisGaWjN6DkxOPEEmb2096NhC7ZlQdeu+XwH
-         6GILqbGa4V8HaiubNnE+t5cWZAP5TQQmCIdNdah2XT1/mPkplH0H6XKVLHOZGz+PbalS
-         SsQ02tae7TxAYj7DnzjObjMbDHUrMrzXtAmVblIqV5PpLUD86/Lz0S1/Oh+XmlAy3xkS
-         1j1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679522032;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xehrL2dgpZYyP/0AM2a+lXnXwn5PW3e0iW5W0VmPTqg=;
-        b=TnMHSCpK3O99lg8o6waaTd+7+sbpoYWEOB4OUFnL75/Y96TlCTmUX34nE6vP5JEIg2
-         jGT2nTjSDdzAqceml7Ge/uuoRENv/eQdJ0WHqaY9RwZNLSPdGT8ZeMiDSoY+IMHDTQNn
-         fNtBHJ1QJZNNPXFIvj4N3+OlbuvhwgkKwEpKa6WalvXOGiXRDjELCP0Me5J6jdgaHqF3
-         qIWhLYjX7o8e5dJiiG83FEhQOiPW5c5AdjU7/QvIz89llYal+Eh0jLpHE6NMQOa3Jvcv
-         xBgrnzeRx05Hw/rAK5B1V9XmoCpuHmJ6rLZD5n7k0ejB0Kvxwr2M7VMphUFkNBrqSCBJ
-         awPg==
-X-Gm-Message-State: AO0yUKXKOaty8F7OdqrJVBzoTPc0xkDuDUI3sBvk2G27OaSThN4w7Cpl
-        Sm4fU22hejY2q9j9rXjZ9cnFrg==
-X-Google-Smtp-Source: AK7set+sdpyhZHcj4stGuQd5RDDcBiVcAch7q43+icvAAhA35KsTbJdpiWJDVoDcAHwDrvEpoPevgA==
-X-Received: by 2002:a17:906:46d7:b0:930:7164:e8e5 with SMTP id k23-20020a17090646d700b009307164e8e5mr7122905ejs.38.1679522032625;
-        Wed, 22 Mar 2023 14:53:52 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:626d:5729:6e71:4c22? ([2a02:810d:15c0:828:626d:5729:6e71:4c22])
-        by smtp.gmail.com with ESMTPSA id lk8-20020a170906cb0800b009311c9d33d7sm7656336ejb.184.2023.03.22.14.53.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Mar 2023 14:53:52 -0700 (PDT)
-Message-ID: <4e1cc130-8bfb-96d1-1f93-f1389544b8e3@linaro.org>
-Date:   Wed, 22 Mar 2023 22:53:51 +0100
+        with ESMTP id S229510AbjCVWCy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 18:02:54 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 075BCEC4B;
+        Wed, 22 Mar 2023 15:02:49 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9C87CB81E05;
+        Wed, 22 Mar 2023 22:02:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF116C433D2;
+        Wed, 22 Mar 2023 22:02:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679522566;
+        bh=hcMZNp9Ksh0riZoo4Yt+LZltGdkzddZrrKlsdq6SSFs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SBeFLN+n+5IqXTMSRZF99iAhYSZN0+Ozu3ryCbzt6WCEDt4I+X1bWCEK/0N548dPQ
+         x70PHNbkMmZBHS9Hod1NOld73/3AJcpG4jEN41y1wfIkwYBF0MbM0XLBdpXDdxEkyv
+         LIzhWK4RML4OZXokBhd2Dydd3S+qwp2M9QvP/wnZs4XGvvV4tSqkRyij7RiY2fey4N
+         y736dbmlQE9Bx8Iv+qSoyI7QDMJIxNxZXQiVZIPV+9d5Dm5+dh+eAqYZcym6yT16A3
+         lvou2VM80uY7v66X9hwQt2qOeNua8XA5P6Lht/1sYQXgGpFL5RwQtQiZvukk9IsJkI
+         IMSy7dvbzwppw==
+Date:   Wed, 22 Mar 2023 22:02:40 +0000
+From:   Conor Dooley <conor@kernel.org>
+To:     Hal Feng <hal.feng@starfivetech.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 19/21] riscv: dts: starfive: Add initial StarFive
+ JH7110 device tree
+Message-ID: <60359574-8bce-40f2-99db-6d81f6e6c5c3@spud>
+References: <20230320103750.60295-1-hal.feng@starfivetech.com>
+ <20230320103750.60295-20-hal.feng@starfivetech.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v3 3/8] dt-bindings: usb: dwc3: Add IPQ9574 compatible
-Content-Language: en-US
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org, vkoul@kernel.org,
-        kishon@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org,
-        mturquette@baylibre.com, sboyd@kernel.org, quic_wcheng@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-clk@vger.kernel.org
-References: <cover.1679479634.git.quic_varada@quicinc.com>
- <2ef0959be2aba24b3e3017cd09af7cc63aea74ba.1679479634.git.quic_varada@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <2ef0959be2aba24b3e3017cd09af7cc63aea74ba.1679479634.git.quic_varada@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="LDF26h45g5RnUqDq"
+Content-Disposition: inline
+In-Reply-To: <20230320103750.60295-20-hal.feng@starfivetech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22/03/2023 11:44, Varadarajan Narayanan wrote:
-> Document the IPQ9574 dwc3 compatible.
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+
+--LDF26h45g5RnUqDq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Mar 20, 2023 at 06:37:48PM +0800, Hal Feng wrote:
+> From: Emil Renner Berthing <kernel@esmil.dk>
+>=20
+> Add initial device tree for the JH7110 RISC-V SoC by StarFive
+> Technology Ltd.
+>=20
+> Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> Co-developed-by: Jianlong Huang <jianlong.huang@starfivetech.com>
+> Signed-off-by: Jianlong Huang <jianlong.huang@starfivetech.com>
+> Co-developed-by: Hal Feng <hal.feng@starfivetech.com>
+> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 > ---
->  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-> index a2aabda..3ae56d3 100644
-> --- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-> +++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-> @@ -17,6 +17,7 @@ properties:
->            - qcom,ipq6018-dwc3
->            - qcom,ipq8064-dwc3
->            - qcom,ipq8074-dwc3
-> +          - qcom,ipq9574-dwc3
->            - qcom,msm8953-dwc3
->            - qcom,msm8994-dwc3
 
-No updates for clocks? Then disallow them for your variant.
+> +		S7_0: cpu@0 {
+> +			compatible =3D "sifive,s7", "riscv";
+> +			reg =3D <0>;
+> +			d-cache-block-size =3D <64>;
+> +			d-cache-sets =3D <64>;
+> +			d-cache-size =3D <8192>;
+> +			d-tlb-sets =3D <1>;
+> +			d-tlb-size =3D <40>;
+> +			device_type =3D "cpu";
+> +			i-cache-block-size =3D <64>;
+> +			i-cache-sets =3D <64>;
+> +			i-cache-size =3D <16384>;
+> +			i-tlb-sets =3D <1>;
+> +			i-tlb-size =3D <40>;
+> +			mmu-type =3D "riscv,sv39";
+> +			next-level-cache =3D <&ccache>;
+> +			riscv,isa =3D "rv64imac_zba_zbb";
+> +			tlb-split;
+> +			status =3D "disabled";
 
-Best regards,
-Krzysztof
+Jess pointed out on IRC that this S7 entry looks wrong as it is claiming
+that the S7 has an mmu. I didn't go looking back in the history of
+u74-mc core complex manuals, but the latest version does not show an mmu
+for the S7.
 
+--LDF26h45g5RnUqDq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZBt7AAAKCRB4tDGHoIJi
+0qDMAQCIGeIN/1mCb1Q1snEUZqE//3UatgEEoP8CxHntNWLrTQD/XTmZpvTZFpwX
+3ByenbwoM1VkdniTFBdF5mZUoMNZQgY=
+=8Oss
+-----END PGP SIGNATURE-----
+
+--LDF26h45g5RnUqDq--
