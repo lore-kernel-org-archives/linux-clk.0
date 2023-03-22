@@ -2,41 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C4E4C6FD1F
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 10:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50425C6FD1F
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 10:45:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229789AbjCVKpD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Mar 2023 06:45:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34948 "EHLO
+        id S230339AbjCVKpM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Mar 2023 06:45:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229671AbjCVKpC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 06:45:02 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A53B5ADFB;
-        Wed, 22 Mar 2023 03:45:00 -0700 (PDT)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32M5UC2J031665;
-        Wed, 22 Mar 2023 10:44:51 GMT
+        with ESMTP id S230298AbjCVKpK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 06:45:10 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B014E5F524;
+        Wed, 22 Mar 2023 03:45:08 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32MAaBDf019384;
+        Wed, 22 Mar 2023 10:45:01 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=qcppdkim1;
- bh=2zUsAxusiknHcBSIUqmqdhHVjw9JMqVGq/GGIYaJ+Kk=;
- b=LpF7V0X+OQeV8LXoEdmLMtiW6hD0m+RZYcGIG1XuQ2CeiGFGQsqLNVfsDHfKcGcI69Ys
- zys5Ix9j1PhX9UdS10cGcB+KHKcM4wkzL+cwba9NE6Yaqabqm6Qvxa6jfZGmpLNA692Q
- YVtGMihm8Sgg5iIKtiDLK4o7C3f054MsxDL1rhK5OKICFtUxsBQ8xU9uoeDxRx/7G0Dx
- OefeX69GbDs6hdeea+Hi7Zkc7JVAsQktInKJkOWD7JUALRHsen7MRrNpn711YI/AQGU1
- UneKFT9iFgW1dZI6qW9wuBnh4NqkQxpdoATGTzsQkmjAxkV71v0gAR6OvvwJZ7rZYGan Kg== 
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pfrk0s3k8-1
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=C5i6Lb2az4K0UbrOKbM7fKXf3cghf7uw6Z1c9mBZsBo=;
+ b=SdtJT01vJXwdGimfLPyj6OHphaFiPmX6s6Cc3Vj8n/ZjEYH51JG5SBnAtQxNWrdfVIyA
+ Ij00rNZr6Fc7yvsZ0mj6M3MdDpzz1dLU9L5J09qdyhC9hGny0GCGVBFFqddybtvKm2wz
+ iJvq8kJ+56YkmQt9uuGlLYYizZaeXkDWzPGomBT8gKu5FLPuNV+FvAX5GkcWXa4X4xfk
+ cTJ/p2inDjDpCS1pAHBNwoLGQGBAT4gtegnbp7YrWfDz/kPzgp8LH9fJkJzKOCXTtSZE
+ sgXlPtoXC/j03fBYYCdzN6jfCzk+FxPV3C/LOJx+s2A+uDPCBFYcQqipKDbhe3vyb8Hw iw== 
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pfyy7011u-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 22 Mar 2023 10:44:50 +0000
+        Wed, 22 Mar 2023 10:45:01 +0000
 Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32MAin0g006366
+        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32MAj0Ns011376
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 22 Mar 2023 10:44:49 GMT
+        Wed, 22 Mar 2023 10:45:00 GMT
 Received: from varda-linux.qualcomm.com (10.80.80.8) by
  nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.41; Wed, 22 Mar 2023 03:44:43 -0700
+ 15.2.986.41; Wed, 22 Mar 2023 03:44:55 -0700
 From:   Varadarajan Narayanan <quic_varada@quicinc.com>
 To:     <agross@kernel.org>, <andersson@kernel.org>,
         <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
@@ -48,10 +49,12 @@ To:     <agross@kernel.org>, <andersson@kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
         <linux-clk@vger.kernel.org>
 CC:     Varadarajan Narayanan <quic_varada@quicinc.com>
-Subject: [PATCH v2 0/8] Enable IPQ9754 USB
-Date:   Wed, 22 Mar 2023 16:14:04 +0530
-Message-ID: <cover.1679479634.git.quic_varada@quicinc.com>
+Subject: [PATCH v3 2/8] dt-bindings: phy: qcom,qmp-usb: Add IPQ9574 USB3 PHY
+Date:   Wed, 22 Mar 2023 16:14:06 +0530
+Message-ID: <e34d8eddc1dda8bb0ff840a7dd18ca4dd6c62d22.1679479634.git.quic_varada@quicinc.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1679479634.git.quic_varada@quicinc.com>
+References: <cover.1679479634.git.quic_varada@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.80.80.8]
@@ -59,61 +62,71 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nasanex01a.na.qualcomm.com (10.52.223.231)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: RhcjNpgXQ8k3TkAyRxcTPKbFj8V5kmki
-X-Proofpoint-ORIG-GUID: RhcjNpgXQ8k3TkAyRxcTPKbFj8V5kmki
+X-Proofpoint-GUID: TsoSydLkFqLDJD9g2WXmYkgS0vhItg_F
+X-Proofpoint-ORIG-GUID: TsoSydLkFqLDJD9g2WXmYkgS0vhItg_F
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-22_07,2023-03-22_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- bulkscore=0 priorityscore=1501 clxscore=1015 impostorscore=0 adultscore=0
- lowpriorityscore=0 spamscore=0 mlxlogscore=535 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303150002
- definitions=main-2303220076
+ definitions=2023-03-22_08,2023-03-22_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 phishscore=0 clxscore=1015 lowpriorityscore=0
+ impostorscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 adultscore=0
+ mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303150002 definitions=main-2303220077
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch series adds the relevant phy and controller
-configurations for enabling USB on IPQ9754
+Add dt-bindings for USB3 PHY found on Qualcomm IPQ9574
 
-Depends on:
-https://lore.kernel.org/all/20230217142030.16012-1-quic_devipriy@quicinc.com/
+Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 
-[v3]:
-        - Incorporated review comments regarding coding style
+---
+ Changes in v2:
+	- Updated sections missed in previous patch
+---
+ .../bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml    | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-[v2]:
-        - Incorporated review comments regarding coding style,
-          maintaining sorted order of entries and unused phy register
-          offsets
-        - Removed NOC clock entries from DT node (will be implemented
-          later with interconnect support)
-        - Fixed 'make dtbs_check' errors/warnings
-
-[v1]:
-        https://lore.kernel.org/linux-arm-msm/5dac3aa4-8dc7-f9eb-5cf3-b361efdc9494@linaro.org/T/
-
-Varadarajan Narayanan (8):
-  dt-bindings: phy: qcom,qusb2: Document IPQ9574 compatible
-  dt-bindings: phy: qcom,qmp-usb: Add IPQ9574 USB3 PHY
-  dt-bindings: usb: dwc3: Add IPQ9574 compatible
-  clk: qcom: gcc-ipq9574: Add USB related clocks
-  phy: qcom-qusb2: add QUSB2 support for IPQ9574
-  phy: qcom: qmp: Update IPQ9574 USB Phy initialization Sequence
-  arm64: dts: qcom: ipq9574: Add USB related nodes
-  arm64: dts: qcom: ipq9574: Enable USB
-
- .../bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml    |  22 ++++
- .../devicetree/bindings/phy/qcom,qusb2-phy.yaml    |   3 +-
- .../devicetree/bindings/usb/qcom,dwc3.yaml         |   1 +
- arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts       |  12 +++
- arch/arm64/boot/dts/qcom/ipq9574.dtsi              |  86 +++++++++++++++
- drivers/clk/qcom/gcc-ipq9574.c                     |  37 +++++++
- drivers/phy/qualcomm/phy-qcom-qmp-usb.c            | 119 +++++++++++++++++++++
- drivers/phy/qualcomm/phy-qcom-qusb2.c              |   3 +
- include/dt-bindings/clock/qcom,ipq9574-gcc.h       |   2 +
- 9 files changed, 284 insertions(+), 1 deletion(-)
-
+diff --git a/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
+index e81a382..beae44c 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
+@@ -21,6 +21,7 @@ properties:
+     enum:
+       - qcom,ipq6018-qmp-usb3-phy
+       - qcom,ipq8074-qmp-usb3-phy
++      - qcom,ipq9574-qmp-usb3-phy
+       - qcom,msm8996-qmp-usb3-phy
+       - qcom,msm8998-qmp-usb3-phy
+       - qcom,qcm2290-qmp-usb3-phy
+@@ -204,6 +205,27 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - qcom,ipq9574-qmp-usb3-phy
++    then:
++      properties:
++        clocks:
++          maxItems: 2
++        clock-names:
++          items:
++            - const: aux
++            - const: cfg_ahb
++        resets:
++          maxItems: 2
++        reset-names:
++          items:
++            - const: phy
++            - const: common
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
+               - qcom,sm8150-qmp-usb3-phy
+               - qcom,sm8150-qmp-usb3-uni-phy
+               - qcom,sm8250-qmp-usb3-uni-phy
 -- 
 2.7.4
 
