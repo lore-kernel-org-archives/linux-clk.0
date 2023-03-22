@@ -2,130 +2,227 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D485C6FD1C
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 06:19:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 180DDC6FD1C
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 07:47:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229691AbjCVGTO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Mar 2023 02:19:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49630 "EHLO
+        id S229992AbjCVHrJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Mar 2023 03:47:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229549AbjCVGTM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 02:19:12 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0125D1FEE;
-        Tue, 21 Mar 2023 23:19:11 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32M5ODN6017443;
-        Wed, 22 Mar 2023 06:19:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
- cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=qcppdkim1; bh=xi1R7lRkXD/lKHVkZ4mgBjQ8EbAACSsqoT+12EbXACg=;
- b=YbR8X4R60yAbBUwNcp4AyJtjm1PbDDOVcJe99BDVV1XUveuGn1MoKClGYJt5temubV0p
- 8NtcvUMieBjZISwPKQTmbex6EVQ4vwk2FWiEM9cjkvz1V8drXfv0hWUlK6eYKsbl7ZG4
- VBIj/6N+HEykKKW+xC5iYS4ttJTntZBir/dlJ+xUcQdgnVmBP51IRUpS9KkQBhmBfY+I
- XIczPyWim0UitKqRAxUmzxL57loEDoExibmq0tMKXV2FhOPc9pDCoZEjhULQQof9x1Nf
- UTbYTXN2J42QqlQyHvJHhoxCP+cKnNvWSFOk9GAxMjKUpsW/e9Hz2zbk67kRo5m8Yf1M Hg== 
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pfhnx19vr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 22 Mar 2023 06:19:05 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32M6J4XK002105
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 22 Mar 2023 06:19:04 GMT
-Received: from varda-linux.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.41; Tue, 21 Mar 2023 23:18:59 -0700
-Date:   Wed, 22 Mar 2023 11:48:55 +0530
-From:   Varadarajan Narayanan <quic_varada@quicinc.com>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-CC:     <agross@kernel.org>, <andersson@kernel.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <gregkh@linuxfoundation.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <quic_wcheng@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 0/8] Enable IPQ9754 USB
-Message-ID: <20230322061854.GD12808@varda-linux.qualcomm.com>
-References: <cover.1677749625.git.quic_varada@quicinc.com>
- <cover.1679388632.git.quic_varada@quicinc.com>
- <1cb44e37-9881-3c71-816f-a492c917c494@linaro.org>
+        with ESMTP id S229524AbjCVHrI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 03:47:08 -0400
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2072d.outbound.protection.outlook.com [IPv6:2a01:111:f400:feae::72d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 229A25AB5A;
+        Wed, 22 Mar 2023 00:46:28 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dm1tRkYvo0XDzx1kYEp/4dQ+pKg2eDcWV+ezWu2r1sFrwOFFFn1VLGEbLckilDnNhgSo/XHje6PHxK/41+guK3hPgEKR59h4reGzCGMyB/RXkLMd2UhGhZMpTzWaPfS+ItAYjQN/oC/z2EEFWNVFpfBXjec83Mvkuo/Wep3iXfZ4dpcQQ2IWTCrzcsG1VyhWmMd9wk/4LqIEvrNmxE6tqiEcq5xzwy7H3bxU5TrU59T0nM1ULn8mwXODjS5gPR9gy66mN9WwlzxDa9r4zLu/i3aW4C8jYhc6utellDoCGD10XtjoB9e6UvFrSJi+3SXyrXyGEadp1nDdU4A4EPJ7+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5dg3e+nbqaB4EjGFuSk/oGwyeaKBflpxfE0oSZwEW0s=;
+ b=leZHhNZ6l5i2Hmtaxn/5Ogz9Nnem4Gk2vNzPVecziLhxn149w+eWWjdFHTct+AjJKyNe9RwA6bb9JmUY8OYnRFoQECCwWeP7L/IRhKyE33XPZRImIQl71VdTxggObonBebD0QsqzCKpDzh9JA+BdJ8NXUPL+I8WFtaIuQbzuQBfpIRTJwH9vtpt1M/liLtFRv2h8yPKLHX7t2LdnhUZYNjimAXaHD593YQzi2BkId2UOfIe4A8Js9E35RwfSd9cy5KjBLALLQsE4BJXB2gxFjnSZ5Oa/HP6wc4NeK4hrkRxmZeCwStp0bYv1qjiaCmeLkrrIENBvnxqXqrudgt5C2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from PSAPR03MB6329.apcprd03.prod.outlook.com (2603:1096:301:5a::9)
+ by KL1PR03MB5522.apcprd03.prod.outlook.com (2603:1096:820:56::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.37; Wed, 22 Mar
+ 2023 07:46:23 +0000
+Received: from PSAPR03MB6329.apcprd03.prod.outlook.com
+ ([fe80::3262:d4e7:7c19:dcc1]) by PSAPR03MB6329.apcprd03.prod.outlook.com
+ ([fe80::3262:d4e7:7c19:dcc1%9]) with mapi id 15.20.6178.037; Wed, 22 Mar 2023
+ 07:46:22 +0000
+Message-ID: <d403dda4-e3db-4f26-6996-090a8c520b94@amlogic.com>
+Date:   Wed, 22 Mar 2023 15:46:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH V2] clk: meson: vid-pll-div: added meson_vid_pll_div_ops
+ support
+Content-Language: en-US
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, kelvin.zhang@amlogic.com,
+        qi.duan@amlogic.com
+References: <20230320113445.17260-1-yu.tu@amlogic.com>
+ <CAFBinCAE-ihq9oeXc=GqUEHVKUYM+n_e+2_5+gDMTGQcEEhRtg@mail.gmail.com>
+ <b5e647e2-4561-e6c1-016f-2c3b260916bb@amlogic.com>
+ <1jsfdy77n8.fsf@starbuckisacylon.baylibre.com>
+From:   Yu Tu <yu.tu@amlogic.com>
+In-Reply-To: <1jsfdy77n8.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR01CA0164.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:28::20) To PSAPR03MB6329.apcprd03.prod.outlook.com
+ (2603:1096:301:5a::9)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1cb44e37-9881-3c71-816f-a492c917c494@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: RJQHagLzEj7Q8rT-BYhg-wMBxa2Aig2W
-X-Proofpoint-ORIG-GUID: RJQHagLzEj7Q8rT-BYhg-wMBxa2Aig2W
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-21_11,2023-03-21_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- bulkscore=0 priorityscore=1501 adultscore=0 mlxlogscore=631
- lowpriorityscore=0 impostorscore=0 clxscore=1015 phishscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303150002 definitions=main-2303220044
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PSAPR03MB6329:EE_|KL1PR03MB5522:EE_
+X-MS-Office365-Filtering-Correlation-Id: 16c97c4b-cda2-4aec-d31c-08db2aa987c9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: c6n1Jt4/GhBW9UdkW6d/zJ/WkTKwjO+Nj00QQJW0WlMzozEtS6YVti0xAhBSY39FQb2PUeis2MlxVR0eYyXq40eJTdtazuV/QDwuAzSMaZSSvDnGWk38lDtY7vMejVkLsTByI1De98vG0UMRRXfCRHyiO185GxD6i2/9hXLXon5JnVPKHYafmivG2mUgyJ89dBDpM9O4vc8FldN4FQScWjdAo4yyEoVotnaWZCsAahoToNBBZ6BOUlQDXHBDjZWIEoCcrsr9uncG9uNstTizSW+V9gzH25eNwbNVL/2aJSiURLqsJDMXkpxMdH3/TCTO3d856KkVphsBMI4QtmK8LK752tqFY0vRMgImQLZH/MXtsaWsq2AVaDIrl6tnw2DeUu0OlDy3/dbAp4NYegUg+5OdaAa7JwMiKIi/BCPFxRWhOna6j1QxKrfbG9ZtYPfQ81KuSWpCPRHyiMy2Wz3/R5dhQg3i1K70ISLb3b21jZqmtwuU5wupJylYPFvmimRLpuLGPcAA5VgRT/f8eGFqkASKqeAWj7hcrNL9+fX1YSU9D7ITPeSwwXxoWk4yjN8iU5r4lT7XEnepcf+PdMGI/FTYTMIxtE2tLZ1jpAUhcOwCbE3pSR/rsuiht7dccx/OYeD/Nt+xMr7yJ518GTgFbg1wspcFx8M2pqeD/LZa9nG8k+x98gaXOCmF5OWpCEBlFGVdAXbxKGLhLFJ9bIYdgsWRD/WF1Yz/OR4zrDcgjdw=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR03MB6329.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(346002)(366004)(136003)(39850400004)(376002)(396003)(451199018)(53546011)(186003)(2616005)(31686004)(107886003)(6666004)(6486002)(6512007)(6506007)(26005)(38100700002)(110136005)(316002)(31696002)(478600001)(2906002)(86362001)(83380400001)(44832011)(54906003)(36756003)(7416002)(4326008)(8936002)(5660300002)(41300700001)(66556008)(8676002)(66476007)(66946007)(43740500002)(45980500001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SCt1ZkZ5dldyNXFJUEJiNFpMRUZKWFhhQW5tSmxBVElST3lDSjJXc2oxSno0?=
+ =?utf-8?B?TlhzSGlCZ0RkSXVYWElhWXhKYlJnVDBrbW1RU2thTDFOWVBWaGs3di96d2wv?=
+ =?utf-8?B?aHdRWjVPRTEzNUh5RlVCdWtHMHRsS041ZllOVVQ3c2Zib21oWXJzak11am14?=
+ =?utf-8?B?TEc2Wndsc2FDSFh2V1lrbWl6UmVMQ0sveGY1YjlBRm5BZGVJVmZVdUFlakVE?=
+ =?utf-8?B?QVYrS0tVTERaSWVHbVRKWEI1aDl0MXVka3loTmJKb3NWSzNSRzRBcmgxMkJa?=
+ =?utf-8?B?anJKT2FXWGY0R0dabUJxRUoxZ0IxejZJbldkUjIvRCtaS3YrZURsZDN2bTgx?=
+ =?utf-8?B?K29sc0dhVWtYb3grQWU5Z2crU1c0a3VZUitHb0ZSay80dUJVYjdzTGZieWlB?=
+ =?utf-8?B?RllqY2VYdUpjL005RnoxcHZEN3htUDhSZGFhYWhsbG4vcjFpNUJyY0t3cjZF?=
+ =?utf-8?B?TlVMMk5yMXlFWGZmanV1SFpRdk85clN2YW5IaVBtQXR0V1pFRlljNlpFemli?=
+ =?utf-8?B?MjBRSytiYWxtVmY2YmthVEh0VmYrazh3Zk02VVVab1ZLMHN0N0tOYkhqRVRT?=
+ =?utf-8?B?OVlmV1NFMGNma0ZvQWg4d3BmMENCeVNhbkx1aTc0ZWUraWNkck84b2JEdEdD?=
+ =?utf-8?B?NC8rOWszUDIzcDNCV3FvYkU2RzdyV0hUaTJpdXh2QTQ0YVhYNWZiMEdZZHdH?=
+ =?utf-8?B?SkthTFN0dTZhcExGZS85SUdid3NHeTY2elFQVmYxVG5rTFVnY3lneUxSNHpw?=
+ =?utf-8?B?cTAyQVRuZEM0UlB0VGZIR1ZhMnlZTUQzbHdDdTFOR1JpZlc3UXIvN3NiblRq?=
+ =?utf-8?B?SFQvM293OTNpdlBYRXRpR1ZSb0dIdlNCcFI0eUZXUU9BMWlYdmF0eFAyK1hq?=
+ =?utf-8?B?cmNCRmxFc3JXQkp4QXRCaHNEL3kzcXFldlFMd05xaGNMSTB5dXNNVWVMcVR5?=
+ =?utf-8?B?REVva21aeXJlODluMjd5TS9sS1IvakcrMTMrZFZ1alNlUEg3OVoyQ2I0MmZo?=
+ =?utf-8?B?TXAwQnkvb0VFTHJTaTg2UW0zTjd2WWhYUGNqdUdxOVNmd1pLMVFia1pEVmVy?=
+ =?utf-8?B?WGpQUVM4b1ZNcEtnSEpXRHhleno4ZlpvRWFIdTZXWU15SUtvYW5CREowbWIw?=
+ =?utf-8?B?VHN1QlZObTdVRGk2YkpOUnpTY0ZGMlhVUXpLbzRqeG9hRWthWjJaaGlvajFL?=
+ =?utf-8?B?ZHZ6MTA1QWZ5azVzczd2SkZnUitOak1heDFXRTRjQVlsb2puOVlzT0xiaURY?=
+ =?utf-8?B?WUk3RC8wdG13cXNBVjJkcXpCV3JxMWtBSWpHRStOOC9DcUU5QXRWZVNvNzho?=
+ =?utf-8?B?VGhaS1lKTmhBcGx4UDhISEtqVnh5MnFnV2N0Q28zbVc4TmZDMmNTdGVPdUtT?=
+ =?utf-8?B?cjBaM1pHa2Myb3lwNEZ0WGoxOWpqYWp5dE83Nlg3cXF3SkFVTkt2UkQvcWMz?=
+ =?utf-8?B?YzNFSGVoZDJ0QTYzcTFnQWxpTmFpTk52Wk0vZTBRSk1tQkorUmhOdzBtRXJS?=
+ =?utf-8?B?ZzZRZUpKZGoyVUNJbGU3ZlZtTlhiVUkzTVFmUHpmTWhKbjR4ZGsrRkI0dWVn?=
+ =?utf-8?B?RURhdUJxbHNEU1dFNFFKcms0Qy93S293RFJCV0xoTC8rV1JwUXJQSkFuSzg5?=
+ =?utf-8?B?ZnlPVVM2aitQVkJvRys0VGZ3YkFLNkhjZ2J3eEN4dGxIK2xXUng1TnA1MnRy?=
+ =?utf-8?B?bmIybDQyMXVZWUdxaEVzWGhHSzlkLzgwazRFNkNNbXhwUlZKNmhZVnE1VSti?=
+ =?utf-8?B?MjZxSVBtMUlxYnBSL0YvRkdUK0Jpb1RuNCtLeURzRUU1RHlBcWlPV2t0N05h?=
+ =?utf-8?B?eEdUaGZjRysrZVJMcTltUFlrZCtVZnJjdDROMmhkV3p4c1lWTXF2bG4yWGVh?=
+ =?utf-8?B?Mm5kSzlDTEhOcmd1aVdsTjRqL1BiRWlhbGh6blFwWllyWU5KeFBHKzRSVUZZ?=
+ =?utf-8?B?SytqSkxRQ1pJeXRQaWNIWnMwdnBWYnFBSTU5bEtIQjU4TzFTaVZHeWRITVk5?=
+ =?utf-8?B?S3dUNzByQzcxM05zblpYUlJCMmplWmV0RlpIc0lyaHExT0d6OWJCdE9KdnhQ?=
+ =?utf-8?B?TWthc05wR2c1RjIzOEdaRE1UYWNYN202S1VoWXY4OUx6OWRhNEhEUjY3cHVp?=
+ =?utf-8?Q?aGxBp35NzJr3kFZrtydhj6PPJ?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16c97c4b-cda2-4aec-d31c-08db2aa987c9
+X-MS-Exchange-CrossTenant-AuthSource: PSAPR03MB6329.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Mar 2023 07:46:22.1547
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bXF0JHVrCs8jYQZANYBZAFAD3QzAvROObfMXlwDap/oX+tu1w+4l85yaDYqOhHp7K2tG+J+o1U/3v46M977fpQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB5522
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 21, 2023 at 12:53:41PM +0100, Konrad Dybcio wrote:
->
->
-> On 21.03.2023 09:54, Varadarajan Narayanan wrote:
-> > This patch series adds the relevant phy and controller
-> > configurations for enabling USB on IPQ9754
-> I got this as a reply to the v1 thread. Please don't do that
-> and send it as a new mail thread the next time around.
->
-> Konrad
 
-Sorry. Will take care next time.
+On 2023/3/21 17:41, Jerome Brunet wrote:
+> [ EXTERNAL EMAIL ]
+Hi Jerome,
+	Thank you for your reply.
+> 
+> 
+> On Tue 21 Mar 2023 at 10:29, Yu Tu <yu.tu@amlogic.com> wrote:
+> 
+>> Hi Martin，
+>> 	First of all, thank you for your reply.
+>>
+>> On 2023/3/20 23:35, Martin Blumenstingl wrote:
+>>> [ EXTERNAL EMAIL ]
+>>> Hello Yu Tu,
+>>> On Mon, Mar 20, 2023 at 12:35 PM Yu Tu <yu.tu@amlogic.com> wrote:
+>>>>
+>>>> Since the previous code only provides "ro_ops" for the vid_pll_div
+>>>> clock. In fact, the clock can be set. So add "ops" that can set the
+>>>> clock, especially for later chips like S4 SOC and so on.
+>>>>
+>>>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
+>>>> ---
+>>> please describe the changes you did compared to the previous version(s)
+>>
+>> I'll add it in the next version.
+>>
+>>> [...]
+>>>> diff --git a/drivers/clk/meson/vid-pll-div.h b/drivers/clk/meson/vid-pll-div.h
+>>>> index c0128e33ccf9..bbccab340910 100644
+>>>> --- a/drivers/clk/meson/vid-pll-div.h
+>>>> +++ b/drivers/clk/meson/vid-pll-div.h
+>>>> @@ -10,11 +10,14 @@
+>>>>    #include <linux/clk-provider.h>
+>>>>    #include "parm.h"
+>>>>
+>>>> +#define VID_PLL_DIV_TABLE_SIZE         14
+>>> In v1 you used ARRAY_SIZE(vid_pll_div_table) wherever this new macro
+>>> is used instead.
+>>> I think using ARRAY_SIZE is the better approach because it means the
+>>> references will update automatically if an entry is added/removed from
+>>> vid_pll_div_table
+>>
+>> I agree with you. Perhaps the key is to understand what Jerome said.
+> 
+> I asked you to describe how this divider actually works. Not remove
+> ARRAY_SIZE().
 
-Thanks
-Varada
+OKay! I misunderstood your meaning.
 
-> >
-> > Depends on:
-> > https://lore.kernel.org/all/20230217142030.16012-1-quic_devipriy@quicinc.com/
-> >
-> > [v2]:
-> >         - Incorporated review comments regarding coding styler,
-> >           maintaining sorted order of entries and unused phy register
-> >           offsets
-> >         - Removed NOC clock entries from DT node (will be implemented
-> >           later with interconnect support)
-> >         - Fixed 'make dtbs_check' errors/warnings
-> >
-> > [v1]:
-> >         https://lore.kernel.org/linux-arm-msm/5dac3aa4-8dc7-f9eb-5cf3-b361efdc9494@linaro.org/T/
-> >
-> > Varadarajan Narayanan (8):
-> >   dt-bindings: phy: qcom,qusb2: Document IPQ9574 compatible
-> >   dt-bindings: phy: qcom,qmp-usb: Add IPQ9574 USB3 PHY
-> >   dt-bindings: usb: dwc3: Add IPQ9574 compatible
-> >   clk: qcom: gcc-ipq9574: Add USB related clocks
-> >   phy: qcom-qusb2: add QUSB2 support for IPQ9574
-> >   phy: qcom: qmp: Update IPQ9574 USB Phy initialization Sequence
-> >   arm64: dts: qcom: ipq9574: Add USB related nodes
-> >   arm64: dts: qcom: ipq9574: Enable USB
-> >
-> >  .../bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml    |  22 ++++
-> >  .../devicetree/bindings/phy/qcom,qusb2-phy.yaml    |   3 +-
-> >  .../devicetree/bindings/usb/qcom,dwc3.yaml         |   1 +
-> >  arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts       |  12 +++
-> >  arch/arm64/boot/dts/qcom/ipq9574.dtsi              |  86 +++++++++++++++
-> >  drivers/clk/qcom/gcc-ipq9574.c                     |  37 +++++++
-> >  drivers/phy/qualcomm/phy-qcom-qmp-usb.c            | 119 +++++++++++++++++++++
-> >  drivers/phy/qualcomm/phy-qcom-qusb2.c              |   3 +
-> >  include/dt-bindings/clock/qcom,ipq9574-gcc.h       |   2 +
-> >  9 files changed, 284 insertions(+), 1 deletion(-)
-> >
+> 
+> This divider uses tables only because the parameters are "magic".
+> I'd like the driver to be able come up with "computed" values instead.
+> 
+> What I requested is some explanation about how this HW clock works
+> because the documentation is not very clear when it comes to this. These
+> values must come from somewhere, I'd like to understand "how".
+> 
+> This is the same as the PLL driver which can take a range and come up
+> with the different parameters, instead of using big pre-computed tables.
+> 
+>>
+>>> Also I think there's a different understanding about what Jerome
+>>> previously wrote:
+>>>> It would be nice to actually describe how this vid pll work so we can
+>>>> stop using precompute "magic" values and actually use the IP to its full
+>>>> capacity.
+>>>   From what I understand is that you interpreted this as "let's change
+>>> ARRAY_SIZE(vid_pll_div_table) to a new macro called
+>>> VID_PLL_DIV_TABLE_SIZE".
+>>> But I think what Jerome meant is: "let's get rid of vid_pll_div_table
+>>> and implement how to actually calculate the clock rate - without
+>>> hard-coding 14 possible clock settings in vid_pll_div_table". Look at
+>>> clk-mpll.c and/or clk-pll.c which allow calculating arbitrary rates
+>>> without any hard-coded tables.
+>>
+> 
+> exactly ... or at least an explanation about how it works and
+> why it is too complicated to compute the values at runtime.
+> 
+>> In fact, pll and mpll are also fixed register writes corresponding
+>> values.
+> 
+> That is not true. The pll and mpll drivers are able to compute their
+> values at runtime. Please have a look at the drivers.
+> 
+
+After consulting the engineer of the chip design, the clock is a digital 
+frequency divider, and the frequency divider is verified by the sequence 
+generator, which is bit0-bi15. bit16-bit17 confirms the size of the 
+frequency division. Whereas other PLLS and MPLLS are analog dividers so 
+there are fixed formulas to calculate.
+
+So Neil had no problem implementing it this way. So now I want to know 
+your advice what should I do next?
+
+>> But every SOC is different, so it makes more sense to set it
+>> outside. The VID PLL is a fixed value for all current SoCs.
+>>
+>>> Best regards,
+>>> Martin
+>>>
+> 
