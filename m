@@ -2,45 +2,44 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F0EBC6FD1C
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 23:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23856C6FD1F
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 23:57:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230093AbjCVXxa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Mar 2023 19:53:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52608 "EHLO
+        id S229555AbjCVX5f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Mar 2023 19:57:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbjCVXx2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 19:53:28 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C3B5171E;
-        Wed, 22 Mar 2023 16:53:28 -0700 (PDT)
+        with ESMTP id S230150AbjCVX5e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 19:57:34 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8552F305DE;
+        Wed, 22 Mar 2023 16:57:32 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A3BF6B81EA8;
-        Wed, 22 Mar 2023 23:53:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31160C433D2;
-        Wed, 22 Mar 2023 23:53:25 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DAB0462351;
+        Wed, 22 Mar 2023 23:57:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30014C433EF;
+        Wed, 22 Mar 2023 23:57:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679529205;
-        bh=YhNph/4ta8FbF44lEZUNxH84xxM4Dhb4EA5vqQ7GTfQ=;
+        s=k20201202; t=1679529451;
+        bh=y9U/5hZyFfh0oQkHVBhuHaZSSNPer4aXYq7GpolG5rU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=sSnptT/fc40Ox/q2g5fz1FwiCmNlTFZnNMtInH8BwlwJkIyZ3sib8iVFGavpg1daB
-         +K5l0T0xbv/G+W5V10zAurN1MCmqqu0fZlWtAt2avoQvUU0y2gGad5y86QPaWanQ/g
-         ZkQuPkqESuVgsFZQx/xusZkyu1y0GhuyvlhRpbrUXd+wlZnTTDmiygF0hk+2rN0CbB
-         yV3r1P6Gvyoa/aESrcaCHhjSdp/f7Emmj5vxFYyZur26oRWrMG71suOK2H/1NlK4rq
-         bhZz6Tw2O87E+YWv3z85UofnPXMOFLCXVEM0/Y3NdBo9CR87BSVnYW5yIKbn96EIk/
-         d/i6t3gpxdKFQ==
-Message-ID: <1abd70426bb69995e6bdf1194ede56eb.sboyd@kernel.org>
+        b=hlTMsxwsdHEPbcZ0FHd0U3HCMN+5KMbB4GdzyMoynPPZs7M3Qulola3FMclIzMBGy
+         MA7IFAqYndlH8nBQt2vxK/XtVd/DEocK2WNMBtztWjrQrEjTcaf6mKYAaLYklXaw2Y
+         ccaJGUBIm0ZGvP+2ZkucdrrfK0BsWLYn+hV1JDOU2MkkKVEq4lBB3SYKqS55TF9w8K
+         g73lN0U5uwtbmEX7W6uySdtlT0wnOrAoWPGY88DPUrYN4Bj2pgcF9sJo6QorusZx4s
+         0pnDosayty3cjQPJ1PXT23JXZKQmywKg0PkvASpPD/i+jZLydr4DxMcWmW1qVJkh+b
+         8aJmkhStClcSw==
+Message-ID: <ce3e64bedd449e6c782e243c28cf4945.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <a6358a5f-bbfd-4a14-a828-a3c28f82709a@spud>
-References: <20230320103750.60295-1-hal.feng@starfivetech.com> <95f11f7c-611f-49a9-97e8-0de89846e430@spud> <62b766cef78d95793af95f428693c359.sboyd@kernel.org> <a6358a5f-bbfd-4a14-a828-a3c28f82709a@spud>
-Subject: Re: [PATCH v6 00/21] Basic clock, reset & device tree support for StarFive JH7110 RISC-V SoC
+In-Reply-To: <b4beb457-8581-4b2f-8655-2e3f82a94f75@spud>
+References: <20230320103750.60295-1-hal.feng@starfivetech.com> <20230320103750.60295-12-hal.feng@starfivetech.com> <b4beb457-8581-4b2f-8655-2e3f82a94f75@spud>
+Subject: Re: [PATCH v6 11/21] dt-bindings: clock: Add StarFive JH7110 system clock and reset generator
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Hal Feng <hal.feng@starfivetech.com>, kernel@esmil.dk,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-riscv@lists.infradead.org,
         Michael Turquette <mturquette@baylibre.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
@@ -55,37 +54,27 @@ Cc:     Hal Feng <hal.feng@starfivetech.com>, kernel@esmil.dk,
         Marc Zyngier <maz@kernel.org>,
         Emil Renner Berthing <emil.renner.berthing@canonical.com>,
         linux-kernel@vger.kernel.org
-To:     Conor Dooley <conor@kernel.org>
-Date:   Wed, 22 Mar 2023 16:53:23 -0700
+To:     Conor Dooley <conor@kernel.org>,
+        Hal Feng <hal.feng@starfivetech.com>
+Date:   Wed, 22 Mar 2023 16:57:29 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Conor Dooley (2023-03-22 14:06:00)
-> On Tue, Mar 21, 2023 at 04:57:52PM -0700, Stephen Boyd wrote:
-> > Quoting Conor Dooley (2023-03-21 16:03:54)
-> > >=20
-> > > If you're happy on the driver side of things, do you want to pick tho=
-se
-> > > patches up on top of the bindings and send a PR to Stephen?
-> >=20
-> > This sounds fine to me. Let me know if you plan to send a PR with the
-> > starfive clk bits.
+Quoting Conor Dooley (2023-03-22 14:53:37)
 >=20
-> Since it was off-list:
-> Emil and I spoke about this briefly today at the weekly linux-riscv
-> meeting, the upshot of which is that it is likely to be me, rather than
-> him, sending you a PR as he's pretty busy at the moment.
-> That said, Emil mentioned that he has some doubts as to whether the
-> bindings are correct, and from taking a look - he's right, so there'll
-> likely not be a PR just yet! I'll go leave a comment about that...
+> This leaves me wondering which clocks are *actually* required for a
+> functioning system - is it actually just osc and one of gmac1_rmii_refin
+> or gmac1_rgmii_rxin.
 >=20
-> I've got no real desire to maintain these drivers going forward though,
-> so perhaps Hal, or one of the other StarFive folks, can get themselves
-> set up to send them to you going forwards?
+> I really don't want you to have to go and spell out every combination of
+> clocks to have some sort of validation here.
+>=20
+> Stephen, Rob or Krzysztof, do you have any guidance on this situation
+> (assuming I've not made a fool of myself)? There's probably something
+> "obvious" that I'm missing, as I am sure this is not a unique problem.
 >=20
 
-Sure, or I can apply them myself based on some branch you provide that
-has the required header files. It doesn't really matter as long as I
-know what's going on.
+You can always use '<0>' if the pad isn't connected for that clk input.
+It's not great, but it works, so there's an escape hatch if you need it.
