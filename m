@@ -2,242 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2362DC761AF
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 17:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B70C6FD1C
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 17:39:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229924AbjCVRgL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Mar 2023 13:36:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44232 "EHLO
+        id S229725AbjCVRjL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Mar 2023 13:39:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229961AbjCVRgJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 13:36:09 -0400
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30D3D5A1AA;
-        Wed, 22 Mar 2023 10:35:56 -0700 (PDT)
-Received: by mail-ot1-f54.google.com with SMTP id f17-20020a9d7b51000000b00697349ab7e7so10774853oto.9;
-        Wed, 22 Mar 2023 10:35:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679506555;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d8pgjNLgTfMWBbJ8AnTbw7pnuGrKkNboaIvf8UVBNTc=;
-        b=dSalATgXk2CI28Ukjq0vQJKNrCtdtLV+ch80ttiHMaV0ZdGOrlRJT+jWWJJDH0PAwr
-         9aGqwTz7HSTYxb5CMv3ngrqVm+G85EhgYdhj//JHBphdVIhQI8ABtZMfOF9d4Jp9GVNT
-         Cv6Lx5I66y4bWIGrIZZL94HqdL2jc1s/+cXkNY3IZYKMFgj2hEglH77whY0aY2Px4iwz
-         wkmR+Yfb5+9B/ZVMRfXmRuHSgUz34rE/PaK2tDehDDviITKrqF7ZDvFAmQlLjdXVjvTr
-         0Dv3YMHVouLZzLBmGr3fWJsdXhAfaloGk8Nt9mqBRm17T3iizVcBfUj6k/K5ro2R8D4L
-         hLfw==
-X-Gm-Message-State: AO0yUKW9ox14FvLI8P13yoDxsgskuAqcqkkNGcYwEcTnSaULMeK6DE+x
-        6cG+AHMsUdBGNVGAjDCaQg==
-X-Google-Smtp-Source: AK7set8rTNt0p0QO6Z1R7F4xwgbwGcsYwzKCKhE8A0gUpCzXX6IigCet2LpUQKbEFE9nwisADJwMcQ==
-X-Received: by 2002:a05:6830:1308:b0:68d:416e:3d9d with SMTP id p8-20020a056830130800b0068d416e3d9dmr2117154otq.7.1679506555322;
-        Wed, 22 Mar 2023 10:35:55 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id e13-20020a9d63cd000000b0069f9a73a65fsm847319otl.29.2023.03.22.10.35.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Mar 2023 10:35:54 -0700 (PDT)
-Received: (nullmailer pid 3972257 invoked by uid 1000);
-        Wed, 22 Mar 2023 17:35:53 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH] dt-bindings: clock: Drop unneeded quotes
-Date:   Wed, 22 Mar 2023 12:35:48 -0500
-Message-Id: <20230322173549.3972106-1-robh@kernel.org>
-X-Mailer: git-send-email 2.39.2
+        with ESMTP id S229646AbjCVRjK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 13:39:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93646BB
+        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 10:39:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 20C58621F1
+        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 17:39:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6612CC433EF;
+        Wed, 22 Mar 2023 17:39:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679506748;
+        bh=+cY6SLgySfXog0odOKNsMVvo+BxosOx02DWC6mWb+AM=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=YFPKcbYn8Z2xt7vnrjKuYmz6OrhyZroympdIeE9pzmKAApiFhtFyeF0PzV9B6nc4P
+         Y2woVg6qZ8z7+QQ5aHnWvEEy/3s6MOBxbfR2GAjnOEeJilNc2Tnh866NTDmviv69NH
+         BEVzJTgV6hX/RR6IL/PDnko7XvUw8KAbVGSVbYX6CjOywxLddAk0Qkv96Um3tCpFw3
+         EONvs/aRO8J/JiWzXcvtFz3G4sBQFUyaRLr0Qj2yxq8ET2gAPZ31pAccCo2f/Z5W/a
+         5sucLQHqOpWheqjNmLH/VUl8wekscwKpLO0CyQmCqlwWGy1AxwIzO8BGep5mu7BVMj
+         WF717iIhsi1+g==
+Message-ID: <81b2a67f89d7f46dd27f6d05606e753f.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <202303221947.pXP2v4xJ-lkp@intel.com>
+References: <202303221947.pXP2v4xJ-lkp@intel.com>
+Subject: Re: [clk:clk-sunplus 1/1] drivers/clk/clk-sp7021.c:316:8: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((_m), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigne...
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To:     Qin Jian <qinjian@cqplus1.com>, kernel test robot <lkp@intel.com>
+Date:   Wed, 22 Mar 2023 10:39:06 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Cleanup bindings dropping unneeded quotes. Once all these are fixed,
-checking for this can be enabled in yamllint.
+Quoting kernel test robot (2023-03-22 04:17:48)
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk=
+-sunplus
+> head:   d54c1fd4a51e8fbc7f9da86b0cd338a4f7cd2bb2
+> commit: d54c1fd4a51e8fbc7f9da86b0cd338a4f7cd2bb2 [1/1] clk: Add Sunplus S=
+P7021 clock driver
+> config: mips-randconfig-r012-20230322 (https://download.01.org/0day-ci/ar=
+chive/20230322/202303221947.pXP2v4xJ-lkp@intel.com/config)
+> compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project 6740=
+9911353323ca5edf2049ef0df54132fa1ca7)
+> reproduce (this is a W=3D1 build):
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbi=
+n/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # install mips cross compiling tool for clang build
+>         # apt-get install binutils-mipsel-linux-gnu
+>         # https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/c=
+ommit/?id=3Dd54c1fd4a51e8fbc7f9da86b0cd338a4f7cd2bb2
+>         git remote add clk https://git.kernel.org/pub/scm/linux/kernel/gi=
+t/clk/linux.git
+>         git fetch --no-tags clk clk-sunplus
+>         git checkout d54c1fd4a51e8fbc7f9da86b0cd338a4f7cd2bb2
+>         # save the config file
+>         mkdir build_dir && cp config build_dir/.config
+>         COMPILER_INSTALL_PATH=3D$HOME/0day COMPILER=3Dclang make.cross W=
+=3D1 O=3Dbuild_dir ARCH=3Dmips olddefconfig
+>         COMPILER_INSTALL_PATH=3D$HOME/0day COMPILER=3Dclang make.cross W=
+=3D1 O=3Dbuild_dir ARCH=3Dmips SHELL=3D/bin/bash drivers/clk/
+>=20
+> If you fix the issue, kindly add following tag where applicable
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Link: https://lore.kernel.org/oe-kbuild-all/202303221947.pXP2v4xJ-lkp@i=
+ntel.com/
+>=20
 
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml  | 4 ++--
- .../devicetree/bindings/clock/mediatek,apmixedsys.yaml        | 4 ++--
- .../devicetree/bindings/clock/mediatek,topckgen.yaml          | 4 ++--
- Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml | 4 ++--
- .../bindings/clock/renesas,rcar-usb2-clock-sel.yaml           | 4 ++--
- .../devicetree/bindings/clock/renesas,rzg2l-cpg.yaml          | 4 ++--
- .../devicetree/bindings/clock/samsung,exynos850-clock.yaml    | 2 +-
- Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml | 4 ++--
- Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml  | 4 ++--
- .../devicetree/bindings/clock/xlnx,clocking-wizard.yaml       | 4 ++--
- 10 files changed, 19 insertions(+), 19 deletions(-)
+Does this fix it?
 
-diff --git a/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml b/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
-index 90eadf6869b2..b5533f81307c 100644
---- a/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
-+++ b/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
-@@ -81,11 +81,11 @@ properties:
-     maxItems: 1
- 
-   lock-offset:
--    $ref: '/schemas/types.yaml#/definitions/uint32'
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     description: Offset to the unlocking register for the oscillator
- 
-   vco-offset:
--    $ref: '/schemas/types.yaml#/definitions/uint32'
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     description: Offset to the VCO register for the oscillator
-     deprecated: true
- 
-diff --git a/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml b/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml
-index dae25dba4ba6..372c1d744bc2 100644
---- a/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml
-+++ b/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml
-@@ -1,8 +1,8 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: "http://devicetree.org/schemas/clock/mediatek,apmixedsys.yaml#"
--$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/clock/mediatek,apmixedsys.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: MediaTek AP Mixedsys Controller
- 
-diff --git a/Documentation/devicetree/bindings/clock/mediatek,topckgen.yaml b/Documentation/devicetree/bindings/clock/mediatek,topckgen.yaml
-index 0fdf56414833..6d087ded7437 100644
---- a/Documentation/devicetree/bindings/clock/mediatek,topckgen.yaml
-+++ b/Documentation/devicetree/bindings/clock/mediatek,topckgen.yaml
-@@ -1,8 +1,8 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: "http://devicetree.org/schemas/clock/mediatek,topckgen.yaml#"
--$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/clock/mediatek,topckgen.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: MediaTek Top Clock Generator Controller
- 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-index e57bc40d307a..9c3dc6c4fa94 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-@@ -1,8 +1,8 @@
- # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: "http://devicetree.org/schemas/clock/renesas,cpg-mssr.yaml#"
--$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/clock/renesas,cpg-mssr.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: Renesas Clock Pulse Generator / Module Standby and Software Reset
- 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
-index 81f09df7147e..c84f29f1810f 100644
---- a/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
-@@ -1,8 +1,8 @@
- # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: "http://devicetree.org/schemas/clock/renesas,rcar-usb2-clock-sel.yaml#"
--$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/clock/renesas,rcar-usb2-clock-sel.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: Renesas R-Car USB 2.0 clock selector
- 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-index 487f74cdc749..fe2fba18ae84 100644
---- a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-@@ -1,8 +1,8 @@
- # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: "http://devicetree.org/schemas/clock/renesas,rzg2l-cpg.yaml#"
--$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/clock/renesas,rzg2l-cpg.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: Renesas RZ/{G2L,V2L,V2M} Clock Pulse Generator / Module Standby Mode
- 
-diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-index 141cf173f87d..7737fbec482c 100644
---- a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-@@ -183,7 +183,7 @@ allOf:
-             - description: External RTC clock (32768 Hz)
-             - description: CMU_HSI bus clock (from CMU_TOP)
-             - description: SD card clock (from CMU_TOP)
--            - description: "USB 2.0 DRD clock (from CMU_TOP)"
-+            - description: USB 2.0 DRD clock (from CMU_TOP)
- 
-         clock-names:
-           items:
-diff --git a/Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml b/Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
-index 785a12797a42..1703e305e6d8 100644
---- a/Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
-+++ b/Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
-@@ -2,8 +2,8 @@
- # Copyright 2019 Unisoc Inc.
- %YAML 1.2
- ---
--$id: "http://devicetree.org/schemas/clock/sprd,sc9863a-clk.yaml#"
--$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/clock/sprd,sc9863a-clk.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: SC9863A Clock Control Unit
- 
-diff --git a/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-index 5f747b0471cf..43d2b6c31357 100644
---- a/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-+++ b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-@@ -2,8 +2,8 @@
- # Copyright 2022 Unisoc Inc.
- %YAML 1.2
- ---
--$id: "http://devicetree.org/schemas/clock/sprd,ums512-clk.yaml#"
--$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/clock/sprd,ums512-clk.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: UMS512 Soc clock controller
- 
-diff --git a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-index 634b7b964606..c1f04830a832 100644
---- a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-+++ b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-@@ -1,8 +1,8 @@
- # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: "http://devicetree.org/schemas/clock/xlnx,clocking-wizard.yaml#"
--$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+$id: http://devicetree.org/schemas/clock/xlnx,clocking-wizard.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
- 
- title: Xilinx clocking wizard
- 
--- 
-2.39.2
-
+---8<---
+diff --git a/drivers/clk/clk-sp7021.c b/drivers/clk/clk-sp7021.c
+index 8fec14120105..caabbf5e2197 100644
+--- a/drivers/clk/clk-sp7021.c
++++ b/drivers/clk/clk-sp7021.c
+@@ -30,9 +30,9 @@ enum {
+ 	P_MAX
+ };
+=20
+-#define MASK_SEL_FRA	GENMASK(1, 1)
+-#define MASK_SDM_MOD	GENMASK(2, 2)
+-#define MASK_PH_SEL	GENMASK(4, 4)
++#define MASK_SEL_FRA	BITMASK(1)
++#define MASK_SDM_MOD	BITMASK(2)
++#define MASK_PH_SEL	BITMASK(4)
+ #define MASK_NFRA	GENMASK(12, 6)
+ #define MASK_DIVR	GENMASK(8, 7)
+ #define MASK_DIVN	GENMASK(7, 0)
