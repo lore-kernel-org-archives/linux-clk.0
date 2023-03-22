@@ -2,125 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA3DC76195
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 16:19:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D86C6FD1C
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 16:42:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230018AbjCVQTa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Mar 2023 12:19:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44406 "EHLO
+        id S230338AbjCVQmO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Mar 2023 12:42:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230013AbjCVQT3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 12:19:29 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 131056E96;
-        Wed, 22 Mar 2023 09:19:27 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32MBnQJ3007798;
-        Wed, 22 Mar 2023 16:19:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=emt2nFclvijCJPmzUPqyfZAG/M+5FrVGUpsJxVKKHuI=;
- b=DuWkTse+FJMx1qKG1XCwsJTKpdn8sc2nXX0Ki1510MQ+8wwZecExtR/91q6MShFvklhP
- 4UvWmPTRFbXpTYOYwUjriKkDFC7ucu3E4/JTBAbjOKRSRET66YnQ93g/bI4BtgfXGyQk
- BFVNe6OtKbBlcqNvGmJfLYvblU4l3zavclzDwguiPkrzyARMOKFdydZVmMndUwpHoi5f
- Xp0hWbKdbSr1DBmfHV08jtBJ7sUkcawveuOTP+h6DLGK+WaXL3PH7icoRRxNRCj6qToO
- q7KURp4sQANSmU00shaIrfz0Rs5vioxqwr0cuRQ5xe7MQjxaNcrSYS8wAIv06M7XZYi8 og== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pfhnv2p1h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 22 Mar 2023 16:19:23 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32MGJMrd020204
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 22 Mar 2023 16:19:22 GMT
-Received: from [10.50.28.236] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 22 Mar
- 2023 09:19:17 -0700
-Message-ID: <52967ff4-0ca7-463e-1b62-df455584f199@quicinc.com>
-Date:   Wed, 22 Mar 2023 21:49:14 +0530
+        with ESMTP id S230323AbjCVQmO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 12:42:14 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62F1561312;
+        Wed, 22 Mar 2023 09:42:13 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id om3-20020a17090b3a8300b0023efab0e3bfso24021505pjb.3;
+        Wed, 22 Mar 2023 09:42:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679503332;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G/8XZE/yFGszOzfw0A58HIjFpMY0V+dYfoL8G0BVVcs=;
+        b=fM8RkQKsMmwWsUP7O7/y8UnpeZSLgcrKAtMjc3SSpkkDVndUCJ/+Pjl1hx2cHVKhDw
+         aKV+ENzYx+MTURok8OKsaMEPtVH+rldgsL+4UlUmVwJ0QoxWEMQ7ZlQQGZopCF8KfnXr
+         +4Y4cPX5jHKSeP6iKDPAmJo9z+u8j1rqHswrPbOs4ZkbVJ8vlXTAFhAYo0s80vrLWXOP
+         zw7mxAiiReBD85l+K/jALk4gIqvnP+LuSZXLc2KsoS1B3lVcr04WoDVMTWX9edmy1SiV
+         iKT7qgxJqL2TzQ0CZ1RFk/AK4uxQtDFgN8ZX0xg2pWJurDlvomiAZlZFOwhYNt1vwUTO
+         C1Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679503332;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G/8XZE/yFGszOzfw0A58HIjFpMY0V+dYfoL8G0BVVcs=;
+        b=NmhSrUQE4PodH4JYVgkOdE1lrVkb5NK+j5sEShXIiNo6xl1d4AGyG7hKM/b2Cweh3T
+         /1ckCh7gTsJCzp+D0FTlbCSP9KZCpDZRzva5d1MjuRstN1a4GCwVVqPUssWJAg+mnhsF
+         Ot70jM+1qZng3vh2DwAXaRuWzXKr/qoIreTziD5yn3JmgCHbMv1zTOxKnBZdGPKkJQ+w
+         tXFc9wwDOAkSrP2LIZUiYfp3MALuUhg5OWbLpIvrNTzzInOqEllbA2mWZQGlDP8xHX7B
+         RB9yCeIRFPlmy6KcEzbsGLppFkN+uWEiAv4GcnzuGdhfMwq9ymoGxgRkIsCLHUMolMz/
+         WPPA==
+X-Gm-Message-State: AO0yUKWRpqTJ6C7DdgN46U78cmT/0TNqSBBu4J4fMNbksiOWSjX+IbEx
+        svE4XXKgJsfLRS7SOUa6mOI60TInfUt/uTlQkP4=
+X-Google-Smtp-Source: AK7set9ZfbnDEO3Ylc5yn357paNbmmijhhNTFDuNLoU+2z5afNKrEOAw6Ae99HVNGoctPuiMgy2XgQ==
+X-Received: by 2002:a05:6a20:4d92:b0:da:acdf:d241 with SMTP id gj18-20020a056a204d9200b000daacdfd241mr130784pzb.45.1679503332548;
+        Wed, 22 Mar 2023 09:42:12 -0700 (PDT)
+Received: from d.home.yangfl.dn42 ([104.28.213.202])
+        by smtp.gmail.com with ESMTPSA id g6-20020a62e306000000b005a8bf239f5csm10300830pfh.193.2023.03.22.09.42.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Mar 2023 09:42:12 -0700 (PDT)
+From:   David Yang <mmyangfl@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     David Yang <mmyangfl@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v7 0/9] Add CRG driver for Hi3798MV100 SoC
+Date:   Thu, 23 Mar 2023 00:41:48 +0800
+Message-Id: <20230322164201.2454771-1-mmyangfl@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH V3 0/5] Add APSS clock driver support for IPQ5332
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
-References: <20230217083308.12017-1-quic_kathirav@quicinc.com>
-Content-Language: en-US
-From:   Kathiravan T <quic_kathirav@quicinc.com>
-In-Reply-To: <20230217083308.12017-1-quic_kathirav@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3LcisabJFNk_pKSgd78I04FWdTR_z4Ya
-X-Proofpoint-ORIG-GUID: 3LcisabJFNk_pKSgd78I04FWdTR_z4Ya
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-22_13,2023-03-22_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=837 clxscore=1011 mlxscore=0 phishscore=0 bulkscore=0
- malwarescore=0 spamscore=0 adultscore=0 impostorscore=0 lowpriorityscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303150002 definitions=main-2303220115
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+This series adds CRG driver for Hi3798MV100 SoC.
 
-On 2/17/2023 2:03 PM, Kathiravan T wrote:
-> This series adds support for the APSS clock to bump the CPU frequency
-> above 800MHz.
->
-> APSS PLL found in the IPQ5332 is of type Stromer Plus. However the
-> existing IPQ targets uses the Huayra PLL. So the driver has to
-> refactored to accommodate the different PLL types. The first patch in
-> the series does the refactoring, which can be independenty merged.
->
-> For the Stromer PLL separate function clk_stromer_pll_configure is
-> introduced, so the 3rd patch in the series depends on the below patch
-> https://lore.kernel.org/linux-arm-msm/20230120082631.22053-1-quic_kathirav@quicinc.com/
->
-> DTS patch depends on the IPQ5332 baseport series
-> https://lore.kernel.org/linux-arm-msm/20230130114702.20606-1-quic_kathirav@quicinc.com/
->
-> Changes since V2:
-> 	- Pick up R-b tags and sort the node in DTS
-> 	- V2 can be found at
-> 	   https://lore.kernel.org/linux-arm-msm/20230208042850.1687-1-quic_kathirav@quicinc.com/
->
-> Changes since V1:
-> 	- Dropped the patch 5/6, since the fallback mechanism for compatible
-> 	  is introduced to avoid bloating the of_device_id table
-> 	- V1 can be found at
-> 	  https://lore.kernel.org/linux-arm-msm/20230202145208.2328032-1-quic_kathirav@quicinc.com/
+v2: move bindings to a separate patch
+v3: fix bindings commit message, reorganize patches
+v4: add ethernet and gpu clocks
+v5: add complex clock
+v6: migrate devm api
+v7: fix devm api migration as requested
+
+Links:
+v1: https://lore.kernel.org/r/20230303151417.104321-1-mmyangfl@gmail.com
+v2: https://lore.kernel.org/r/20230304063333.162309-1-mmyangfl@gmail.com
+v3: https://lore.kernel.org/r/20230307032243.14988-1-mmyangfl@gmail.com
+v4: https://lore.kernel.org/r/20230315211628.963205-1-mmyangfl@gmail.com
+v5: https://lore.kernel.org/r/20230320204042.980708-1-mmyangfl@gmail.com
+v6: https://lore.kernel.org/r/20230321200031.1812026-1-mmyangfl@gmail.com
+
+David Yang (9):
+  clk: hisilicon: Rename Hi3798CV200 to Hi3798
+  clk: hisilicon: Extract common functions
+  clk: hisilicon: Remove hisi_clk_alloc
+  clk: hisilicon: Add helper functions for platform driver
+  clk: hisilicon: Use helper functions
+  clk: hisilicon: Convert to platform_driver
+  clk: hisilicon: Migrate devm APIs
+  dt-bindings: clock: Add Hi3798MV100 CRG
+  clk: hisilicon: Add CRG driver for Hi3798MV100 SoC
+
+ .../devicetree/bindings/clock/hisi-crg.txt    |   2 +
+ drivers/clk/hisilicon/Kconfig                 |   6 +-
+ drivers/clk/hisilicon/Makefile                |   2 +-
+ drivers/clk/hisilicon/clk-hi3519.c            | 134 +----
+ drivers/clk/hisilicon/clk-hi3559a.c           | 253 ++-------
+ drivers/clk/hisilicon/clk-hi3620.c            | 214 ++++----
+ drivers/clk/hisilicon/clk-hi3660.c            | 204 +++----
+ drivers/clk/hisilicon/clk-hi3670.c            | 267 ++++------
+ drivers/clk/hisilicon/clk-hi6220-stub.c       |   9 +-
+ drivers/clk/hisilicon/clk-hi6220.c            | 229 ++++----
+ drivers/clk/hisilicon/clk-hip04.c             |  38 +-
+ drivers/clk/hisilicon/clk-hisi-phase.c        |  13 +-
+ drivers/clk/hisilicon/clk-hix5hd2.c           |  90 ++--
+ drivers/clk/hisilicon/clk.c                   | 428 ++++++++-------
+ drivers/clk/hisilicon/clk.h                   | 146 +++--
+ drivers/clk/hisilicon/clkdivider-hi6220.c     |  24 +-
+ drivers/clk/hisilicon/clkgate-separated.c     |  26 +-
+ drivers/clk/hisilicon/crg-hi3516cv300.c       | 177 +------
+ drivers/clk/hisilicon/crg-hi3798.c            | 498 ++++++++++++++++++
+ drivers/clk/hisilicon/crg-hi3798cv200.c       | 401 --------------
+ drivers/clk/hisilicon/crg.h                   |  11 +-
+ drivers/clk/hisilicon/reset.c                 |  64 ++-
+ include/dt-bindings/clock/histb-clock.h       |  13 +
+ 23 files changed, 1463 insertions(+), 1786 deletions(-)
+ create mode 100644 drivers/clk/hisilicon/crg-hi3798.c
+ delete mode 100644 drivers/clk/hisilicon/crg-hi3798cv200.c
 
 
-Gentle Reminder ...
+base-commit: 6015b1aca1a233379625385feb01dd014aca60b5
+-- 
+2.39.2
 
-
->
->
-> Kathiravan T (5):
->    clk: qcom: apss-ipq-pll: refactor the driver to accommodate different
->      PLL types
->    dt-bindings: clock: qcom,a53pll: add IPQ5332 compatible
->    clk: qcom: apss-ipq-pll: add support for IPQ5332
->    dt-bindings: mailbox: qcom: add compatible for the IPQ5332 SoC
->    arm64: dts: qcom: ipq5332: enable the CPUFreq support
->
->   .../bindings/clock/qcom,a53pll.yaml           |   1 +
->   .../mailbox/qcom,apcs-kpss-global.yaml        |  18 ++-
->   arch/arm64/boot/dts/qcom/ipq5332.dtsi         |  37 ++++++
->   drivers/clk/qcom/apss-ipq-pll.c               | 116 +++++++++++++++---
->   4 files changed, 147 insertions(+), 25 deletions(-)
->
