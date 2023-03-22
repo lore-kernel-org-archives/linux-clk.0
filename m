@@ -2,204 +2,150 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA89C6FD1F
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 09:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FCE4C6FD1F
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 10:07:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229873AbjCVJAD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Mar 2023 05:00:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43316 "EHLO
+        id S229524AbjCVKHM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Mar 2023 06:07:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229735AbjCVJAC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 05:00:02 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5909151FBE
-        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 02:00:00 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id r19-20020a05600c459300b003eb3e2a5e7bso10928511wmo.0
-        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 02:00:00 -0700 (PDT)
+        with ESMTP id S229682AbjCVKHM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 06:07:12 -0400
+Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E35E5A185
+        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 03:07:10 -0700 (PDT)
+Received: by mail-qv1-xf2a.google.com with SMTP id x8so11810857qvr.9
+        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 03:07:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1679475599;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PDWhDX61pEZpOC/Qh13y4vUXorcsmxd3OlXqgNKWZDE=;
-        b=6ZA1ZR0/6wDTVRFkHZ92A3pWWOaEVFibEUDA2P1NJrTPCxZKUEMVdqJjYgTBqdtVMr
-         jf9G4qnFGWwfZtb6Pw2RIFJc8RRypESQBA5aMuxN3kPE1pBIzOzz1F58MaqlGNKk2b8I
-         rGWVn24/ZxHflRtjl9HY7ie6KpvoykJC/Kmdm2lUTyeuGfDG7iF759fLGUFLWtm/KrfU
-         /LmyrHPaGWOuml9/+rTHx5kZJYJLH5BrYqfeYnyphFcfJ/p7RXTWRYFf38IIvQbF+Ozl
-         lnROV0+6f/ZFeheb2lDHILWur9oG7LOqxJ0GmzshAW9uhbLB38O00WPlc6NbDw7jEB62
-         UcAw==
+        d=linaro.org; s=google; t=1679479630;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QnZosvUq8qzkgLxKKE/9sPWIfB/HU/AWtKSlc35tW34=;
+        b=cMsBUuFOrqgW4w0tLieqeHBMLL41hmnKw7r8Fp9vPn1fChqVnwXV8aYmpJpZ/hT8fE
+         ixgJ7yOsH9QUmpPf+cewXdGkRCHC8AgUosnRlVYEpIxyPfj2spF3Y4qEbY1XfyLGlz0s
+         XIwKQwNpdvGo6mumkR4yE3dmIVip9uIWmqfTqJMKhnva6rzroVlp8gyU3xKlQRXBM7AU
+         7jaYevdLxFFj7nl6Z7nw4yIbtxrqs6y+NnqUpWs6Jo9/s0SAuGeawoHJLOEca52HFkp3
+         Cg7TXt2zsO46AwG19yCvTgqkT/Rr0dgtSN4TjcuRkBfZjUf7uQTW5RQ/i5hFdNzLGzq1
+         BdwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679475599;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PDWhDX61pEZpOC/Qh13y4vUXorcsmxd3OlXqgNKWZDE=;
-        b=DM/gki2MKJ4a63YVnRcpo39o/7mAr1/j6RoHrYKZPzXJgr6+6zCyG2WJBm89/t+rf7
-         3YoY7q4BIYyi0CbPnvU8tBmv7B27AMqpht/zSZLoII7Tp7PlZ3U6+tplacIeM4skCQ/R
-         Org0VTb5HbPlhpwoatzeQ+ReXyKluIbxY0vIChPVcbDSr2t8VlypRAyHb1bwwaxqbql6
-         u4dGITb6LMWS14dAAiaBndvMwxPkyKI7uvI2qLiXgwrKzv5jPRt3B4dDEv8DqTh9AQEX
-         lFlsbMaiSZt9WoKki+jAQY/R1hY8MShEURMB92+XD30Ao15OMA3RbzyAfnUYAt/A82oC
-         adDA==
-X-Gm-Message-State: AO0yUKUvFFJUUxRtnUTKe75vxFVJAeh+6rEpklPVeUKbKl8266vRvE31
-        WzIwlacryzbkh5PRYet3uQ0Zcg==
-X-Google-Smtp-Source: AK7set/l+T35hALC3b1FNj8Sid6f9cfqYeNM7XX9QpST1HgtuW/nZ4b26CCHYsecaWGcPNr2Fn6QPA==
-X-Received: by 2002:a05:600c:3781:b0:3ed:b103:4fe5 with SMTP id o1-20020a05600c378100b003edb1034fe5mr4724897wmr.31.1679475598769;
-        Wed, 22 Mar 2023 01:59:58 -0700 (PDT)
-Received: from localhost (82-65-169-74.subs.proxad.net. [82.65.169.74])
-        by smtp.gmail.com with ESMTPSA id u15-20020a05600c19cf00b003ee5fa61f45sm1223082wmq.3.2023.03.22.01.59.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Mar 2023 01:59:58 -0700 (PDT)
-References: <20230320113445.17260-1-yu.tu@amlogic.com>
- <CAFBinCAE-ihq9oeXc=GqUEHVKUYM+n_e+2_5+gDMTGQcEEhRtg@mail.gmail.com>
- <b5e647e2-4561-e6c1-016f-2c3b260916bb@amlogic.com>
- <1jsfdy77n8.fsf@starbuckisacylon.baylibre.com>
- <d403dda4-e3db-4f26-6996-090a8c520b94@amlogic.com>
-User-agent: mu4e 1.8.13; emacs 28.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Yu Tu <yu.tu@amlogic.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, kelvin.zhang@amlogic.com,
-        qi.duan@amlogic.com
-Subject: Re: [PATCH V2] clk: meson: vid-pll-div: added meson_vid_pll_div_ops
- support
-Date:   Wed, 22 Mar 2023 09:41:39 +0100
-In-reply-to: <d403dda4-e3db-4f26-6996-090a8c520b94@amlogic.com>
-Message-ID: <1j8rfp6u0h.fsf@starbuckisacylon.baylibre.com>
+        d=1e100.net; s=20210112; t=1679479630;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QnZosvUq8qzkgLxKKE/9sPWIfB/HU/AWtKSlc35tW34=;
+        b=vKS+7zEFsvIkJkHr0ZmCfr/H4TARN4qUIjUgHu29A+iPtE45kRXFQGqxv2HMEt+7wZ
+         aHKW5YFaRYN7FHDdTvf1CE/7oWT/Pl/baUBw6L7CYpG6Xd309mkZcClGRQwxhmDud9ES
+         /Ou/BLuT7VbE1NUIJkfZp3V8iI83T79SOBTJlG40iN91bwSDnIytYYYzjPQvAEiONlhD
+         R7qAWCBJqe3tmOEwVPl14qX029OSI4SwikPan9GtTzUJ5PS8EWdN4LdxHJMonVkhXChp
+         uDliO1W/PDuFz2AdUXEcYySEDfW8/j541dw3NJpepm0ciev6FzihGODfePQGivJrss8H
+         QIRA==
+X-Gm-Message-State: AO0yUKW20FjlNYNedCIX0Yo20CCg4ptXfxBuQYdfLMO42xPodQx+ga7/
+        0i2G2zh2WwRBL/BfP81+jqq4RgW5LvS0QsHn1gRf7g==
+X-Google-Smtp-Source: AK7set8ZJjgsD0g8hB/7Rat/s/Hv8yPnY9iwyQc6Q23dgWte7vKx0c7Bwb+1pdWnuluDFJFx03CmZ7jldKPs+8eHFos=
+X-Received: by 2002:ad4:4ba3:0:b0:56f:6b7:3a7b with SMTP id
+ i3-20020ad44ba3000000b0056f06b73a7bmr621393qvw.7.1679479629674; Wed, 22 Mar
+ 2023 03:07:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20230321175758.26738-1-srinivas.kandagatla@linaro.org>
+In-Reply-To: <20230321175758.26738-1-srinivas.kandagatla@linaro.org>
+From:   Amit Pundir <amit.pundir@linaro.org>
+Date:   Wed, 22 Mar 2023 15:36:33 +0530
+Message-ID: <CAMi1Hd06QKQ3B_fSsvmP6pJOPCCv3J5ntd+VvHSA8u1Q8pJmCw@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: gfm-mux: use runtime pm while accessing registers
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Wed 22 Mar 2023 at 15:46, Yu Tu <yu.tu@amlogic.com> wrote:
-
-> On 2023/3/21 17:41, Jerome Brunet wrote:
->> [ EXTERNAL EMAIL ]
-> Hi Jerome,
-> 	Thank you for your reply.
->> On Tue 21 Mar 2023 at 10:29, Yu Tu <yu.tu@amlogic.com> wrote:
->>=20
->>> Hi Martin=EF=BC=8C
->>> 	First of all, thank you for your reply.
->>>
->>> On 2023/3/20 23:35, Martin Blumenstingl wrote:
->>>> [ EXTERNAL EMAIL ]
->>>> Hello Yu Tu,
->>>> On Mon, Mar 20, 2023 at 12:35=E2=80=AFPM Yu Tu <yu.tu@amlogic.com> wro=
-te:
->>>>>
->>>>> Since the previous code only provides "ro_ops" for the vid_pll_div
->>>>> clock. In fact, the clock can be set. So add "ops" that can set the
->>>>> clock, especially for later chips like S4 SOC and so on.
->>>>>
->>>>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
->>>>> ---
->>>> please describe the changes you did compared to the previous version(s)
->>>
->>> I'll add it in the next version.
->>>
->>>> [...]
->>>>> diff --git a/drivers/clk/meson/vid-pll-div.h b/drivers/clk/meson/vid-=
-pll-div.h
->>>>> index c0128e33ccf9..bbccab340910 100644
->>>>> --- a/drivers/clk/meson/vid-pll-div.h
->>>>> +++ b/drivers/clk/meson/vid-pll-div.h
->>>>> @@ -10,11 +10,14 @@
->>>>>    #include <linux/clk-provider.h>
->>>>>    #include "parm.h"
->>>>>
->>>>> +#define VID_PLL_DIV_TABLE_SIZE         14
->>>> In v1 you used ARRAY_SIZE(vid_pll_div_table) wherever this new macro
->>>> is used instead.
->>>> I think using ARRAY_SIZE is the better approach because it means the
->>>> references will update automatically if an entry is added/removed from
->>>> vid_pll_div_table
->>>
->>> I agree with you. Perhaps the key is to understand what Jerome said.
->> I asked you to describe how this divider actually works. Not remove
->> ARRAY_SIZE().
+On Tue, 21 Mar 2023 at 23:28, Srinivas Kandagatla
+<srinivas.kandagatla@linaro.org> wrote:
 >
-> OKay! I misunderstood your meaning.
+> gfm mux driver does support runtime pm but we never use it while
+> accessing registers. Looks like this driver was getting lucky and
+> totally depending on other drivers to leave the clk on.
 >
->> This divider uses tables only because the parameters are "magic".
->> I'd like the driver to be able come up with "computed" values instead.
->> What I requested is some explanation about how this HW clock works
->> because the documentation is not very clear when it comes to this. These
->> values must come from somewhere, I'd like to understand "how".
->> This is the same as the PLL driver which can take a range and come up
->> with the different parameters, instead of using big pre-computed tables.
->>=20
->>>
->>>> Also I think there's a different understanding about what Jerome
->>>> previously wrote:
->>>>> It would be nice to actually describe how this vid pll work so we can
->>>>> stop using precompute "magic" values and actually use the IP to its f=
-ull
->>>>> capacity.
->>>>   From what I understand is that you interpreted this as "let's change
->>>> ARRAY_SIZE(vid_pll_div_table) to a new macro called
->>>> VID_PLL_DIV_TABLE_SIZE".
->>>> But I think what Jerome meant is: "let's get rid of vid_pll_div_table
->>>> and implement how to actually calculate the clock rate - without
->>>> hard-coding 14 possible clock settings in vid_pll_div_table". Look at
->>>> clk-mpll.c and/or clk-pll.c which allow calculating arbitrary rates
->>>> without any hard-coded tables.
->>>
->> exactly ... or at least an explanation about how it works and
->> why it is too complicated to compute the values at runtime.
->>=20
->>> In fact, pll and mpll are also fixed register writes corresponding
->>> values.
->> That is not true. The pll and mpll drivers are able to compute their
->> values at runtime. Please have a look at the drivers.
->>=20
->
-> After consulting the engineer of the chip design, the clock is a digital
-> frequency divider, and the frequency divider is verified by the sequence
-> generator, which is bit0-bi15. bit16-bit17 confirms the size of the
-> frequency division.
+> Fix this by doing runtime pm while accessing registers.
 
-That, we already know. This is what the datasheet already give us.
-It is still a bit light.
+Thank you Srini, this fixes the boot regression I see on the RB5
+booting v6.1.y and v6.3-rc kernel versions.
 
-You don't set the bit randomly and check the output, do you ?
-
-The question is how setting this bit impact the relation between
-the input and output rate? IOW, from these 17bits, how do you come up
-with the multiplier and divider values (and the other way around) ?=20
-
-> Whereas other PLLS and MPLLS are analog dividers so
-> there are fixed formulas to calculate.
->
-> So Neil had no problem implementing it this way. So now I want to know yo=
-ur
-> advice what should I do next?
-
-1) Neil did what he could to get compute the rate (RO) which the little
-information he had. You are trying to extend the driver, keeping an
-dummy approach. It is only fair that I ask you to make this a real
-driver.
-
-2) Because something has been done once, it not necessarily appropriate
-to continue ... this type of argument hardly a valid reason.
-
-I don't want to keep adding table based driver unless necessary.
-So far, you have not proved this approach is really required, nor
-provided the necessary information to make the calculation.
+Tested-by: Amit Pundir <amit.pundir@linaro.org>
 
 >
->>> But every SOC is different, so it makes more sense to set it
->>> outside. The VID PLL is a fixed value for all current SoCs.
->>>
->>>> Best regards,
->>>> Martin
->>>>
->>=20
-
+> Fixes: a2d8f507803e ("clk: qcom: Add support to LPASS AUDIO_CC Glitch Free Mux clocks")
+> Cc: stable@vger.kernel.org
+> Reported-by: Amit Pundir <amit.pundir@linaro.org>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  drivers/clk/qcom/lpass-gfm-sm8250.c | 29 ++++++++++++++++++++++++++++-
+>  1 file changed, 28 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/qcom/lpass-gfm-sm8250.c b/drivers/clk/qcom/lpass-gfm-sm8250.c
+> index 96f476f24eb2..bcf0ea534f7f 100644
+> --- a/drivers/clk/qcom/lpass-gfm-sm8250.c
+> +++ b/drivers/clk/qcom/lpass-gfm-sm8250.c
+> @@ -38,14 +38,37 @@ struct clk_gfm {
+>  static u8 clk_gfm_get_parent(struct clk_hw *hw)
+>  {
+>         struct clk_gfm *clk = to_clk_gfm(hw);
+> +       int ret;
+> +       u8 parent;
+> +
+> +       ret = pm_runtime_resume_and_get(clk->priv->dev);
+> +       if (ret < 0 && ret != -EACCES) {
+> +               dev_err_ratelimited(clk->priv->dev,
+> +                                   "pm_runtime_resume_and_get failed in %s, ret %d\n",
+> +                                   __func__, ret);
+> +               return ret;
+> +       }
+> +
+> +       parent = readl(clk->gfm_mux) & clk->mux_mask;
+> +
+> +       pm_runtime_mark_last_busy(clk->priv->dev);
+>
+> -       return readl(clk->gfm_mux) & clk->mux_mask;
+> +       return parent;
+>  }
+>
+>  static int clk_gfm_set_parent(struct clk_hw *hw, u8 index)
+>  {
+>         struct clk_gfm *clk = to_clk_gfm(hw);
+>         unsigned int val;
+> +       int ret;
+> +
+> +       ret = pm_runtime_resume_and_get(clk->priv->dev);
+> +       if (ret < 0 && ret != -EACCES) {
+> +               dev_err_ratelimited(clk->priv->dev,
+> +                                   "pm_runtime_resume_and_get failed in %s, ret %d\n",
+> +                                   __func__, ret);
+> +               return ret;
+> +       }
+>
+>         val = readl(clk->gfm_mux);
+>
+> @@ -57,6 +80,8 @@ static int clk_gfm_set_parent(struct clk_hw *hw, u8 index)
+>
+>         writel(val, clk->gfm_mux);
+>
+> +       pm_runtime_mark_last_busy(clk->priv->dev);
+> +
+>         return 0;
+>  }
+>
+> @@ -251,6 +276,8 @@ static int lpass_gfm_clk_driver_probe(struct platform_device *pdev)
+>         if (IS_ERR(cc->base))
+>                 return PTR_ERR(cc->base);
+>
+> +       cc->dev = dev;
+> +
+>         err = devm_pm_runtime_enable(dev);
+>         if (err)
+>                 return err;
+> --
+> 2.21.0
+>
