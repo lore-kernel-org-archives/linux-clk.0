@@ -2,104 +2,98 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B70C6FD1C
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 17:39:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E1AC76195
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 17:52:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229725AbjCVRjL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Mar 2023 13:39:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53952 "EHLO
+        id S230384AbjCVRwX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Mar 2023 13:52:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229646AbjCVRjK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 13:39:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93646BB
-        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 10:39:09 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 20C58621F1
-        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 17:39:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6612CC433EF;
-        Wed, 22 Mar 2023 17:39:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679506748;
-        bh=+cY6SLgySfXog0odOKNsMVvo+BxosOx02DWC6mWb+AM=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=YFPKcbYn8Z2xt7vnrjKuYmz6OrhyZroympdIeE9pzmKAApiFhtFyeF0PzV9B6nc4P
-         Y2woVg6qZ8z7+QQ5aHnWvEEy/3s6MOBxbfR2GAjnOEeJilNc2Tnh866NTDmviv69NH
-         BEVzJTgV6hX/RR6IL/PDnko7XvUw8KAbVGSVbYX6CjOywxLddAk0Qkv96Um3tCpFw3
-         EONvs/aRO8J/JiWzXcvtFz3G4sBQFUyaRLr0Qj2yxq8ET2gAPZ31pAccCo2f/Z5W/a
-         5sucLQHqOpWheqjNmLH/VUl8wekscwKpLO0CyQmCqlwWGy1AxwIzO8BGep5mu7BVMj
-         WF717iIhsi1+g==
-Message-ID: <81b2a67f89d7f46dd27f6d05606e753f.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S230331AbjCVRwV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 13:52:21 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1758F67022
+        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 10:52:16 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id ek18so76305214edb.6
+        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 10:52:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679507534;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wh4Z1xlqDztZUH1w7IbXNlkUYB0pflLL3OVprobSnZc=;
+        b=WcgQoZMSV/a0eQ9pzfFJS6PJOkUq4BOxRnUsYi1tODvQhCM6XAVIzZ656d7dRAo45m
+         jkaqVR41zmD3Evi/JdVzZeSvpsycq/g8HfPdXGdmzr9IHdZ4ZYUYgWDA35WIKSb8qs3K
+         4GBwCIqYJvd3cfwJ5x7LEfjiVp+qyWH9wtr6wChbhNsNKvXjgYhh4zcK+vRgLQR26xTM
+         vlUm34N7H5q/KUnatolWI/y9cmvYTiN/H/0GTnQrgx0ot2jx13y5wzrOogaDdd4VVVD4
+         g0zGgYhpbxRwUZOUoELIh4LuhRgOf63m18hB+Av+4hLt4x54//xRNZQqSjygqbRAADne
+         KPpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679507534;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wh4Z1xlqDztZUH1w7IbXNlkUYB0pflLL3OVprobSnZc=;
+        b=f2P+1kBEZpmE9EbV6YB3SK6IBESntHKUJsneAkV9QNSc9o2oMKo/qIO2xTvqnJJ1b3
+         Jn6BHrFdTGiCmpwvvmzAVmI8xfluf7mGLACIKw+aoMPPfrp0GKfshO4d1xbx5U2UTn71
+         XMvVEaNsb8BB9o7d3UUSOtk8ArKDQbrxYWPHdNSzVZ3zWBAGICTkCk5EnYyBpX3Ge0nH
+         nT/jWZjgCMEeaN4/YtQrnpddCQu9GUqnRFEQGec0+Jhd7fRLAEOd0QpaSnDHY71+WmBA
+         N3uMQt7G+iipnUumYUEqvuFrmiP0hQbQIrFLkBS3Beh61MPCvLh1bq5WFDnNvfNO1Tu3
+         uWxA==
+X-Gm-Message-State: AO0yUKVFjtqWcOE+h2BAu38yvFaFyuxbktRaoLv67r8+sFcB3ItgtXYi
+        g3bPdj43lz1CWu85uk4aSTvvug==
+X-Google-Smtp-Source: AK7set/w/Af4r7ZkWY5/EYuLO7gRu4DNAGQ4mEA4NNMEcc/QIJ5nDOUWk6vdiJaM+ZJYjQJK7+8P1Q==
+X-Received: by 2002:aa7:c053:0:b0:4fc:6475:d249 with SMTP id k19-20020aa7c053000000b004fc6475d249mr6466295edo.3.1679507534645;
+        Wed, 22 Mar 2023 10:52:14 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:5050:151b:e755:1c6? ([2a02:810d:15c0:828:5050:151b:e755:1c6])
+        by smtp.gmail.com with ESMTPSA id t22-20020a50d716000000b004af6163f845sm8115519edi.28.2023.03.22.10.52.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Mar 2023 10:52:14 -0700 (PDT)
+Message-ID: <2087e394-afa6-f1c0-cfc1-df382b2d13d3@linaro.org>
+Date:   Wed, 22 Mar 2023 18:52:12 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <202303221947.pXP2v4xJ-lkp@intel.com>
-References: <202303221947.pXP2v4xJ-lkp@intel.com>
-Subject: Re: [clk:clk-sunplus 1/1] drivers/clk/clk-sp7021.c:316:8: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((_m), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigne...
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-To:     Qin Jian <qinjian@cqplus1.com>, kernel test robot <lkp@intel.com>
-Date:   Wed, 22 Mar 2023 10:39:06 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH] dt-bindings: clock: Drop unneeded quotes
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+References: <20230322173549.3972106-1-robh@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230322173549.3972106-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting kernel test robot (2023-03-22 04:17:48)
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk=
--sunplus
-> head:   d54c1fd4a51e8fbc7f9da86b0cd338a4f7cd2bb2
-> commit: d54c1fd4a51e8fbc7f9da86b0cd338a4f7cd2bb2 [1/1] clk: Add Sunplus S=
-P7021 clock driver
-> config: mips-randconfig-r012-20230322 (https://download.01.org/0day-ci/ar=
-chive/20230322/202303221947.pXP2v4xJ-lkp@intel.com/config)
-> compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project 6740=
-9911353323ca5edf2049ef0df54132fa1ca7)
-> reproduce (this is a W=3D1 build):
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbi=
-n/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # install mips cross compiling tool for clang build
->         # apt-get install binutils-mipsel-linux-gnu
->         # https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/c=
-ommit/?id=3Dd54c1fd4a51e8fbc7f9da86b0cd338a4f7cd2bb2
->         git remote add clk https://git.kernel.org/pub/scm/linux/kernel/gi=
-t/clk/linux.git
->         git fetch --no-tags clk clk-sunplus
->         git checkout d54c1fd4a51e8fbc7f9da86b0cd338a4f7cd2bb2
->         # save the config file
->         mkdir build_dir && cp config build_dir/.config
->         COMPILER_INSTALL_PATH=3D$HOME/0day COMPILER=3Dclang make.cross W=
-=3D1 O=3Dbuild_dir ARCH=3Dmips olddefconfig
->         COMPILER_INSTALL_PATH=3D$HOME/0day COMPILER=3Dclang make.cross W=
-=3D1 O=3Dbuild_dir ARCH=3Dmips SHELL=3D/bin/bash drivers/clk/
->=20
-> If you fix the issue, kindly add following tag where applicable
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Link: https://lore.kernel.org/oe-kbuild-all/202303221947.pXP2v4xJ-lkp@i=
-ntel.com/
->=20
+On 22/03/2023 18:35, Rob Herring wrote:
+> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
+> checking for this can be enabled in yamllint.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Does this fix it?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
----8<---
-diff --git a/drivers/clk/clk-sp7021.c b/drivers/clk/clk-sp7021.c
-index 8fec14120105..caabbf5e2197 100644
---- a/drivers/clk/clk-sp7021.c
-+++ b/drivers/clk/clk-sp7021.c
-@@ -30,9 +30,9 @@ enum {
- 	P_MAX
- };
-=20
--#define MASK_SEL_FRA	GENMASK(1, 1)
--#define MASK_SDM_MOD	GENMASK(2, 2)
--#define MASK_PH_SEL	GENMASK(4, 4)
-+#define MASK_SEL_FRA	BITMASK(1)
-+#define MASK_SDM_MOD	BITMASK(2)
-+#define MASK_PH_SEL	BITMASK(4)
- #define MASK_NFRA	GENMASK(12, 6)
- #define MASK_DIVR	GENMASK(8, 7)
- #define MASK_DIVN	GENMASK(7, 0)
+Best regards,
+Krzysztof
+
