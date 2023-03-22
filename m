@@ -2,122 +2,146 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB333C6FD1C
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 22:02:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 924A6C6FD1F
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 23:48:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229676AbjCVWCy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Mar 2023 18:02:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42992 "EHLO
+        id S229484AbjCVXss (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Mar 2023 19:48:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229510AbjCVWCy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 18:02:54 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 075BCEC4B;
-        Wed, 22 Mar 2023 15:02:49 -0700 (PDT)
+        with ESMTP id S229487AbjCVXsr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 19:48:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FAF3CC2D
+        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 16:48:46 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9C87CB81E05;
-        Wed, 22 Mar 2023 22:02:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF116C433D2;
-        Wed, 22 Mar 2023 22:02:42 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EEF5262304
+        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 23:48:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E1EEC433D2;
+        Wed, 22 Mar 2023 23:48:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679522566;
-        bh=hcMZNp9Ksh0riZoo4Yt+LZltGdkzddZrrKlsdq6SSFs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SBeFLN+n+5IqXTMSRZF99iAhYSZN0+Ozu3ryCbzt6WCEDt4I+X1bWCEK/0N548dPQ
-         x70PHNbkMmZBHS9Hod1NOld73/3AJcpG4jEN41y1wfIkwYBF0MbM0XLBdpXDdxEkyv
-         LIzhWK4RML4OZXokBhd2Dydd3S+qwp2M9QvP/wnZs4XGvvV4tSqkRyij7RiY2fey4N
-         y736dbmlQE9Bx8Iv+qSoyI7QDMJIxNxZXQiVZIPV+9d5Dm5+dh+eAqYZcym6yT16A3
-         lvou2VM80uY7v66X9hwQt2qOeNua8XA5P6Lht/1sYQXgGpFL5RwQtQiZvukk9IsJkI
-         IMSy7dvbzwppw==
-Date:   Wed, 22 Mar 2023 22:02:40 +0000
-From:   Conor Dooley <conor@kernel.org>
-To:     Hal Feng <hal.feng@starfivetech.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 19/21] riscv: dts: starfive: Add initial StarFive
- JH7110 device tree
-Message-ID: <60359574-8bce-40f2-99db-6d81f6e6c5c3@spud>
-References: <20230320103750.60295-1-hal.feng@starfivetech.com>
- <20230320103750.60295-20-hal.feng@starfivetech.com>
+        s=k20201202; t=1679528925;
+        bh=wWdLNiCNfnRGyGZ00699DT+v9vg5lBigHWNeZvkgUrw=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=i9V+BBFcNtBZruyQRBAA4M+mpqfzubCFLDCmMm7KReRuxW+R3YTZt7uUqCzDUu/4s
+         7QNCmWga6UjU7PO8YovoKse2Xlg39DYXAb0yWjfypCUrka7go2ravpJ0aR73J1lQhs
+         PnpNc3sCC7qVWvhBHD+muC0KINu3a+sHecHrzss/Ety6btbusud9twK8AUSJvQWTYS
+         AtenEzJN3YUppXMUwdkXPbr3tLBZ2I/ezzLNBZQCOLujgn88KOs+jMX5FtogxX7qb/
+         yTNh6gJvMu3zrdgv2oYxHayFGYRDq93imbanJP+6e2K/c9GYl/9G/0HEuLmK/WMmJ0
+         I0OmqXV1j2BNw==
+Message-ID: <00c24196e5ceb60b7d69967b73910264.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="LDF26h45g5RnUqDq"
-Content-Disposition: inline
-In-Reply-To: <20230320103750.60295-20-hal.feng@starfivetech.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230322195933.GA2828949@dev-arch.thelio-3990X>
+References: <202303221947.pXP2v4xJ-lkp@intel.com> <81b2a67f89d7f46dd27f6d05606e753f.sboyd@kernel.org> <20230322195933.GA2828949@dev-arch.thelio-3990X>
+Subject: Re: [clk:clk-sunplus 1/1] drivers/clk/clk-sp7021.c:316:8: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((_m), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigne...
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Qin Jian <qinjian@cqplus1.com>, kernel test robot <lkp@intel.com>,
+        llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To:     Nathan Chancellor <nathan@kernel.org>
+Date:   Wed, 22 Mar 2023 16:48:43 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
---LDF26h45g5RnUqDq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Mar 20, 2023 at 06:37:48PM +0800, Hal Feng wrote:
-> From: Emil Renner Berthing <kernel@esmil.dk>
+Quoting Nathan Chancellor (2023-03-22 12:59:33)
+> On Wed, Mar 22, 2023 at 10:39:06AM -0700, Stephen Boyd wrote:
+> > Quoting kernel test robot (2023-03-22 04:17:48)
+> > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git=
+ clk-sunplus
+> > > head:   d54c1fd4a51e8fbc7f9da86b0cd338a4f7cd2bb2
+> > > commit: d54c1fd4a51e8fbc7f9da86b0cd338a4f7cd2bb2 [1/1] clk: Add Sunpl=
+us SP7021 clock driver
+> > > config: mips-randconfig-r012-20230322 (https://download.01.org/0day-c=
+i/archive/20230322/202303221947.pXP2v4xJ-lkp@intel.com/config)
+> > > compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project =
+67409911353323ca5edf2049ef0df54132fa1ca7)
+> > > reproduce (this is a W=3D1 build):
+> > >         wget https://raw.githubusercontent.com/intel/lkp-tests/master=
+/sbin/make.cross -O ~/bin/make.cross
+> > >         chmod +x ~/bin/make.cross
+> > >         # install mips cross compiling tool for clang build
+> > >         # apt-get install binutils-mipsel-linux-gnu
+> > >         # https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.g=
+it/commit/?id=3Dd54c1fd4a51e8fbc7f9da86b0cd338a4f7cd2bb2
+> > >         git remote add clk https://git.kernel.org/pub/scm/linux/kerne=
+l/git/clk/linux.git
+> > >         git fetch --no-tags clk clk-sunplus
+> > >         git checkout d54c1fd4a51e8fbc7f9da86b0cd338a4f7cd2bb2
+> > >         # save the config file
+> > >         mkdir build_dir && cp config build_dir/.config
+> > >         COMPILER_INSTALL_PATH=3D$HOME/0day COMPILER=3Dclang make.cros=
+s W=3D1 O=3Dbuild_dir ARCH=3Dmips olddefconfig
+> > >         COMPILER_INSTALL_PATH=3D$HOME/0day COMPILER=3Dclang make.cros=
+s W=3D1 O=3Dbuild_dir ARCH=3Dmips SHELL=3D/bin/bash drivers/clk/
+> > >=20
+> > > If you fix the issue, kindly add following tag where applicable
+> > > | Reported-by: kernel test robot <lkp@intel.com>
+> > > | Link: https://lore.kernel.org/oe-kbuild-all/202303221947.pXP2v4xJ-l=
+kp@intel.com/
+> > >=20
+> >=20
+> > Does this fix it?
+> >=20
+> > ---8<---
+> > diff --git a/drivers/clk/clk-sp7021.c b/drivers/clk/clk-sp7021.c
+> > index 8fec14120105..caabbf5e2197 100644
+> > --- a/drivers/clk/clk-sp7021.c
+> > +++ b/drivers/clk/clk-sp7021.c
+> > @@ -30,9 +30,9 @@ enum {
+> >       P_MAX
+> >  };
+> > =20
+> > -#define MASK_SEL_FRA GENMASK(1, 1)
+> > -#define MASK_SDM_MOD GENMASK(2, 2)
+> > -#define MASK_PH_SEL  GENMASK(4, 4)
+> > +#define MASK_SEL_FRA BITMASK(1)
+> > +#define MASK_SDM_MOD BITMASK(2)
+> > +#define MASK_PH_SEL  BITMASK(4)
+> >  #define MASK_NFRA    GENMASK(12, 6)
+> >  #define MASK_DIVR    GENMASK(8, 7)
+> >  #define MASK_DIVN    GENMASK(7, 0)
+> >=20
 >=20
-> Add initial device tree for the JH7110 RISC-V SoC by StarFive
-> Technology Ltd.
+> No (BITMASK did not exist but BIT_MASK does).
+
+Heh ok.
+
+> It looks like clang is
+> complaining that mask is an unsigned int and it is being compared
+> against ~0ull, which will always be false. This makes the warning go
+> away for me, which is similar to commit cfd6fb45cfaf ("crypto: ccree -
+> avoid out-of-range warnings from clang"), but I am not sure if that is
+> correct or not.
+
+Cool thanks. Can you send it as a proper patch?
+
 >=20
-> Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> Co-developed-by: Jianlong Huang <jianlong.huang@starfivetech.com>
-> Signed-off-by: Jianlong Huang <jianlong.huang@starfivetech.com>
-> Co-developed-by: Hal Feng <hal.feng@starfivetech.com>
-> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
-> ---
+> diff --git a/drivers/clk/clk-sp7021.c b/drivers/clk/clk-sp7021.c
+> index 8fec14120105..11d22043ddd7 100644
+> --- a/drivers/clk/clk-sp7021.c
+> +++ b/drivers/clk/clk-sp7021.c
+> @@ -41,7 +41,7 @@ enum {
+>  /* HIWORD_MASK FIELD_PREP */
+>  #define HWM_FIELD_PREP(mask, value)            \
+>  ({                                             \
+> -       u32 _m =3D mask;                          \
+> +       u64 _m =3D mask;                          \
+>         (_m << 16) | FIELD_PREP(_m, value);     \
+>  })
+> =20
+>=20
+> For the record, this only happens under W=3D1 but I think we would like to
+> eventually enable this warning so it would be good to avoid introducing
+> new instances.
 
-> +		S7_0: cpu@0 {
-> +			compatible =3D "sifive,s7", "riscv";
-> +			reg =3D <0>;
-> +			d-cache-block-size =3D <64>;
-> +			d-cache-sets =3D <64>;
-> +			d-cache-size =3D <8192>;
-> +			d-tlb-sets =3D <1>;
-> +			d-tlb-size =3D <40>;
-> +			device_type =3D "cpu";
-> +			i-cache-block-size =3D <64>;
-> +			i-cache-sets =3D <64>;
-> +			i-cache-size =3D <16384>;
-> +			i-tlb-sets =3D <1>;
-> +			i-tlb-size =3D <40>;
-> +			mmu-type =3D "riscv,sv39";
-> +			next-level-cache =3D <&ccache>;
-> +			riscv,isa =3D "rv64imac_zba_zbb";
-> +			tlb-split;
-> +			status =3D "disabled";
+It makes sense to me because FIELD_PREP typically takes a GENMASK input,
+which is an unsigned long long shifted around.=20
 
-Jess pointed out on IRC that this S7 entry looks wrong as it is claiming
-that the S7 has an mmu. I didn't go looking back in the history of
-u74-mc core complex manuals, but the latest version does not show an mmu
-for the S7.
-
---LDF26h45g5RnUqDq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZBt7AAAKCRB4tDGHoIJi
-0qDMAQCIGeIN/1mCb1Q1snEUZqE//3UatgEEoP8CxHntNWLrTQD/XTmZpvTZFpwX
-3ByenbwoM1VkdniTFBdF5mZUoMNZQgY=
-=8Oss
------END PGP SIGNATURE-----
-
---LDF26h45g5RnUqDq--
+I think I'm building with W=3D1, but I'm not building with clang. I'll
+have to go fetch another compiler and put it into circulation.
