@@ -2,82 +2,64 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB4BC6FD1C
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Mar 2023 18:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53812C74A5B
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Mar 2023 20:46:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229682AbjCWSAY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Mar 2023 14:00:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48740 "EHLO
+        id S231454AbjCWUqq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Mar 2023 16:46:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229508AbjCWSAX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Mar 2023 14:00:23 -0400
-Received: from out-12.mta1.migadu.com (out-12.mta1.migadu.com [IPv6:2001:41d0:203:375::c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C484EC7A
-        for <linux-clk@vger.kernel.org>; Thu, 23 Mar 2023 11:00:22 -0700 (PDT)
-Message-ID: <74312436-9219-b810-a4e6-41dc7dba1b01@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1679594420;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=q2w/GvpgKsDWKHZy/ga0YBGnoNgmGp9Is1eChRY5q6A=;
-        b=LPWQbfV2gr5mqJ4PhEildk1NnllTGVMSsLLZgy61A3Vwru2pM6/feN2tRn++xFrmFqfnfK
-        e4ImqcYXkbS4hYanoIQWvVeiSmZF0pspRo4TUaxAhToogG9i1UgP1x+n7ewNd2NOxBFx00
-        Q2yz9tjAG4EFlQjSJKMLCzw5jl8Jutg=
-Date:   Thu, 23 Mar 2023 18:00:16 +0000
+        with ESMTP id S231504AbjCWUql (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Mar 2023 16:46:41 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80EB118B26;
+        Thu, 23 Mar 2023 13:46:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 185E3628AC;
+        Thu, 23 Mar 2023 20:46:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CFF3C433D2;
+        Thu, 23 Mar 2023 20:46:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679604395;
+        bh=P6I0W6qPAsf0hZMdu29TtpwKztyniEZ29LfDRXsGq7w=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=HGkcOxq8/EGtQMuOQjnEgKzxYEn6jA+Tkv/UlOH6epkeISTnRnPz0LjAgMNk30+BK
+         hzQ5nrKVAfC2B5/h8brgxFunzYp6nf1TL/P7rCn3bPcYN1Ylbp5EMeDdv4/cMfVOXx
+         S359U2GjKhuUieB+GOYFFswsZU2VTyEgKYrw36fa4o0xaLiv6ntKlpGs9KGGJLxyKF
+         ODuVJ5oPwQ5OHQcuBhUCQBVPGgGp7UL0ElTsGVFX4QPhHwHkEBtgeGGjCpigpJTeSs
+         n8GOjvk6+xr2k1wgEoeJhRrSn4m7hc5Y3CxcBf0KwbB5//OlrdZn3Lc8Lb+rIMp8E2
+         eAwY1Y9AOlGLg==
+Message-ID: <8e0fac7e756272e2593e7c220f9ae69f.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Subject: Re: [PATCH RFC v6 0/6] Create common DPLL/clock configuration API
-Content-Language: en-US
-To:     Jiri Pirko <jiri@resnulli.us>, Vadim Fedorenko <vadfed@meta.com>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>, poros@redhat.com,
-        mschmidt@redhat.com, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-References: <20230312022807.278528-1-vadfed@meta.com>
- <ZBw2HlGePj7J5GCX@nanopsycho>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <ZBw2HlGePj7J5GCX@nanopsycho>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <5b3fcceb-1a0d-d0c7-910d-eb4e65892676@quicinc.com>
+References: <20230317141622.1926573-1-quic_mohs@quicinc.com> <20230317141622.1926573-5-quic_mohs@quicinc.com> <406d02f72767afafa8e563ec2ee7f310.sboyd@kernel.org> <5b3fcceb-1a0d-d0c7-910d-eb4e65892676@quicinc.com>
+Subject: Re: [PATCH v9 4/4] clk: qcom: lpassaudiocc-sc7280: Modify qcom_cc_probe to qcom_cc_probe_by_index
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_visr@quicinc.com
+Date:   Thu, 23 Mar 2023 13:46:33 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23/03/2023 11:21, Jiri Pirko wrote:
-> Sun, Mar 12, 2023 at 03:28:01AM CET, vadfed@meta.com wrote:
->> Implement common API for clock/DPLL configuration and status reporting.
->> The API utilises netlink interface as transport for commands and event
->> notifications. This API aim to extend current pin configuration and
->> make it flexible and easy to cover special configurations.
->>
->> v5 -> v6:
->> * rework pin part to better fit shared pins use cases
->> * add YAML spec to easy generate user-space apps
->> * simple implementation in ptp_ocp is back again
-> 
-> 
-> Vadim, Arkadiusz.
-> 
-> I have couple of patches on top of this one and mlx5 implementation.
-> I would like to send it to you until Sunday. Could you include those to
-> the next rfc?
-> 
-> I will not review this version more now. Lets do the changes, I will
-> continue with the review on the next version of rfc.
-> 
-> Thanks!
+Quoting Mohammad Rafi Shaik (2023-03-23 00:45:26)
+>=20
+> On 3/17/2023 11:57 PM, Stephen Boyd wrote:
+> > Quoting Mohammad Rafi Shaik (2023-03-17 07:16:22)
+> >> Modify AHB clocks explicit registration from qcom_cc_probe to
+> >> qcom_cc_probe_by_index.
+> > Why? Isn't it the same?
+> yes, it is same.
+>=20
+> As per the previous version review comment, modified qcom_cc_probe to=20
+> qcom_cc_probe_by_index.
 
-Hi Jiri!
-
-I'm going to spend Friday and weekend polishing the series to address as 
-much comments as I can and publish v7 next week. You can send your 
-patches prepared on top of github version, that would be the best way to 
-have them ready for the next round.
-
-Thanks,
-Vadim
+Previously you were probing with index 1. That necessitated using
+qcom_cc_probe_by_index() instead of qcom_cc_probe(). That is no longer
+the case though, so this patch is unnecessary.
