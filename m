@@ -2,111 +2,82 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 806DAC6FD1C
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Mar 2023 14:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB4BC6FD1C
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Mar 2023 18:00:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231236AbjCWORx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Mar 2023 10:17:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45780 "EHLO
+        id S229682AbjCWSAY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Mar 2023 14:00:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230482AbjCWORw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Mar 2023 10:17:52 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93C9026C32;
-        Thu, 23 Mar 2023 07:17:50 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id om3-20020a17090b3a8300b0023efab0e3bfso2060200pjb.3;
-        Thu, 23 Mar 2023 07:17:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679581070;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KwWlt/KOKKTZV5IfSjGfyeDxmoG3w+1dWejJirL87Kc=;
-        b=ShXIgySZUj17n8AichZ6BuKTikQIsXDd6ZVTquByVrE6Vbrd5xJvxmzFeGybkzJQw+
-         2dvPVykT31PVMXZkQI4/V1PrLosJ8/G81+bLf7guHi0hoaBYJbF4P4oFsacqNyGOGzl0
-         KWAIfcfULvOuAvq54WwijhDLokXsbuMfLjGNKadLpchF8Xh1u2lk9enjxA9BLLWIOWEu
-         sNxTYRawdnA2VypiKSGiKAadBU691K9veJ+xX+PPKmFrf9bhOcFw5otLG9wahtG3Sl1x
-         1QbMXbM+gOxUpC+3yWS7L272rcBPzaRxoZNn6I4m1UlenvHfLy+sDQLGpknXl3R0oztV
-         pQ/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679581070;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KwWlt/KOKKTZV5IfSjGfyeDxmoG3w+1dWejJirL87Kc=;
-        b=ajvT9cjLz2cZPN1wUz09h1OyHKs/xydjqcZOnnVSc0agF2qZFlMOiZbtXDkU3hef5e
-         JHUHQEHrxKVurAqeonwz5RdMSHoTyoO9KsYCE4E1YAXiblS5u8KnMSAfBpPGVEN46VGL
-         IKXbkiCCmgg4vqmA2NmON6T0CLENu00FOt+QRTEhImXsc30zLicJ+FDftuR0XWgP/7a1
-         c5wTso9sGZoaU1fX66zFoNMLn1P9TAoFcmbbC/EVWyiiDzA+6gG3ITPqo8Pn8CKQZ52b
-         R/r9ZSEpDnL8PcISxTvM4AVGW/NrIm5PQnZ46SZ4hjwRI/j/wmSGxKG3QHLigkQ1GPJf
-         78Qw==
-X-Gm-Message-State: AO0yUKWrhdrwNn5+XWmExQ7mtM6nBM1j62MT6n6eLXwEz0bCEAuv9CDa
-        pkAnD4rYplzrd9SglKUJ0sA=
-X-Google-Smtp-Source: AK7set8s8aOBz3BhSS+2TpYUEhRf2Zwajb86+z7vpmqctX+tEU+jGLlvaa7kumROlD7GK1yDG+Y7Ag==
-X-Received: by 2002:a05:6a20:a914:b0:d7:6b87:94b8 with SMTP id cd20-20020a056a20a91400b000d76b8794b8mr2981901pzb.18.1679581069864;
-        Thu, 23 Mar 2023 07:17:49 -0700 (PDT)
-Received: from [172.30.1.36] ([14.32.163.5])
-        by smtp.gmail.com with ESMTPSA id d18-20020aa78692000000b0062a515874b4sm1237790pfo.32.2023.03.23.07.17.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Mar 2023 07:17:49 -0700 (PDT)
-Message-ID: <81425aaa-8c41-8d9d-ddc4-f951039bc516@gmail.com>
-Date:   Thu, 23 Mar 2023 23:17:42 +0900
+        with ESMTP id S229508AbjCWSAX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Mar 2023 14:00:23 -0400
+Received: from out-12.mta1.migadu.com (out-12.mta1.migadu.com [IPv6:2001:41d0:203:375::c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C484EC7A
+        for <linux-clk@vger.kernel.org>; Thu, 23 Mar 2023 11:00:22 -0700 (PDT)
+Message-ID: <74312436-9219-b810-a4e6-41dc7dba1b01@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1679594420;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=q2w/GvpgKsDWKHZy/ga0YBGnoNgmGp9Is1eChRY5q6A=;
+        b=LPWQbfV2gr5mqJ4PhEildk1NnllTGVMSsLLZgy61A3Vwru2pM6/feN2tRn++xFrmFqfnfK
+        e4ImqcYXkbS4hYanoIQWvVeiSmZF0pspRo4TUaxAhToogG9i1UgP1x+n7ewNd2NOxBFx00
+        Q2yz9tjAG4EFlQjSJKMLCzw5jl8Jutg=
+Date:   Thu, 23 Mar 2023 18:00:16 +0000
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] dt-bindings: clock: Drop unneeded quotes
-To:     Rob Herring <robh@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-References: <20230322173549.3972106-1-robh@kernel.org>
-From:   Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCH RFC v6 0/6] Create common DPLL/clock configuration API
 Content-Language: en-US
-In-Reply-To: <20230322173549.3972106-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To:     Jiri Pirko <jiri@resnulli.us>, Vadim Fedorenko <vadfed@meta.com>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <20230312022807.278528-1-vadfed@meta.com>
+ <ZBw2HlGePj7J5GCX@nanopsycho>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <ZBw2HlGePj7J5GCX@nanopsycho>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23. 3. 23. 02:35, Rob Herring wrote:
-> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
-> checking for this can be enabled in yamllint.
+On 23/03/2023 11:21, Jiri Pirko wrote:
+> Sun, Mar 12, 2023 at 03:28:01AM CET, vadfed@meta.com wrote:
+>> Implement common API for clock/DPLL configuration and status reporting.
+>> The API utilises netlink interface as transport for commands and event
+>> notifications. This API aim to extend current pin configuration and
+>> make it flexible and easy to cover special configurations.
+>>
+>> v5 -> v6:
+>> * rework pin part to better fit shared pins use cases
+>> * add YAML spec to easy generate user-space apps
+>> * simple implementation in ptp_ocp is back again
 > 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml  | 4 ++--
->  .../devicetree/bindings/clock/mediatek,apmixedsys.yaml        | 4 ++--
->  .../devicetree/bindings/clock/mediatek,topckgen.yaml          | 4 ++--
->  Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml | 4 ++--
->  .../bindings/clock/renesas,rcar-usb2-clock-sel.yaml           | 4 ++--
->  .../devicetree/bindings/clock/renesas,rzg2l-cpg.yaml          | 4 ++--
->  .../devicetree/bindings/clock/samsung,exynos850-clock.yaml    | 2 +-
->  Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml | 4 ++--
->  Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml  | 4 ++--
->  .../devicetree/bindings/clock/xlnx,clocking-wizard.yaml       | 4 ++--
->  10 files changed, 19 insertions(+), 19 deletions(-)
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> 
+> Vadim, Arkadiusz.
+> 
+> I have couple of patches on top of this one and mlx5 implementation.
+> I would like to send it to you until Sunday. Could you include those to
+> the next rfc?
+> 
+> I will not review this version more now. Lets do the changes, I will
+> continue with the review on the next version of rfc.
+> 
+> Thanks!
 
--- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+Hi Jiri!
 
+I'm going to spend Friday and weekend polishing the series to address as 
+much comments as I can and publish v7 next week. You can send your 
+patches prepared on top of github version, that would be the best way to 
+have them ready for the next round.
+
+Thanks,
+Vadim
