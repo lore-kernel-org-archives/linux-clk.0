@@ -2,132 +2,183 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C604C76196
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Mar 2023 06:42:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 773CDC6FD1D
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Mar 2023 06:45:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229903AbjCWGmp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Mar 2023 02:42:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44366 "EHLO
+        id S229379AbjCWGpk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Mar 2023 02:45:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229644AbjCWGmm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Mar 2023 02:42:42 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 902962BED2
-        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 23:42:40 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id ew6so19273178edb.7
-        for <linux-clk@vger.kernel.org>; Wed, 22 Mar 2023 23:42:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679553759;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8N/XaeLLwIkdvDZKm8o78DXnGxcOUGR0NMOEEQz35z0=;
-        b=lDxcvr5ATCpedu3VGnpb8banpvgsvL4WHvd3fdqEdDJDsZqHDcg7SCHK7jD3qBRH0Z
-         3HZQvHnKMh+aweQcSYtBE7N/T+2qRPPNQ2KoND9LUsWyY+UL9e7xS+Ts0rZUocfTpOwA
-         FkBt8c5WRvUCArdZpRQ7hePy/qmHZARcvgqEsZpUJZFTprDnMS316yoqY1gVWx0j4jY2
-         ciR/wP0ABBT71+u6PwJsujNBXS2VUfFL9IWABhqrMsWho6sUaXQv7bAHM36a9+YF7+Bq
-         N6uE4wU5DM9P22SquidRpNNCkjRIG86OMQQfhkL8xvSSjOGWHnxSkMehQWLNTgXvZVpG
-         8meA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679553759;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8N/XaeLLwIkdvDZKm8o78DXnGxcOUGR0NMOEEQz35z0=;
-        b=2YXOzkVBmd1PAU9kf5alXuLMZPDHxRTK0keYSYWZcDPlERZ6Klcq91vq2JDMiJ+Xr6
-         gYq/4G1k4539jE8FnorlBo3t1+xbtk491wKndD64nqTRzOLDCeISStWPgYK4afixy1Kf
-         DtQtNzoz3inAOw3+yYTdQnZhwAOnwrEQ/BuE9ARmz5JlNZTBGkLHAM9SXAuzWWKcSsgH
-         /TaQVq3s5JTA4iYhj8d4lLqvOm7TPjCtzW9STWf+Zgb34K+BxWW/PDo3Q/PJMq+jLCeB
-         ympiXhbsJgTFASUtXNFKkpo+y6DF1QE91VY0+boh7NJF3VsXOvEysS4D9GbUZ2g7ywTx
-         Om6Q==
-X-Gm-Message-State: AO0yUKUQKUu5Vat6KtCjKrwvOxLnT9ZYze5TGGx3AJP2eM/fOBaZCVio
-        3SKEF9Ml5qNeFb+OsVLGKSxGYA==
-X-Google-Smtp-Source: AK7set+yg1lsxvSZGJlZeaAPDUcWbsIyd9m6BF2xr2YnwB6qRVho+nRzalX5J6ERkOZevu0PVgHs2A==
-X-Received: by 2002:a17:906:804e:b0:8af:4120:63a8 with SMTP id x14-20020a170906804e00b008af412063a8mr9388515ejw.68.1679553759082;
-        Wed, 22 Mar 2023 23:42:39 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:a665:ed1e:3966:c991? ([2a02:810d:15c0:828:a665:ed1e:3966:c991])
-        by smtp.gmail.com with ESMTPSA id z1-20020a1709064e0100b00931baabe36csm8146329eju.63.2023.03.22.23.42.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Mar 2023 23:42:38 -0700 (PDT)
-Message-ID: <a8c3f324-0231-2180-8464-a3bfc663f743@linaro.org>
-Date:   Thu, 23 Mar 2023 07:42:37 +0100
+        with ESMTP id S230186AbjCWGpW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Mar 2023 02:45:22 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD7B82E0F4;
+        Wed, 22 Mar 2023 23:45:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1679553916; x=1711089916;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=A6mO3eZa9srZD0TwB6Z9CiOjfI3r19eFRufP6HLE7HM=;
+  b=HUzhp1t1FBraVoM1KMG5rR+3p+VTyTEB+nsJFXuwAPFodqVYV37yjIiy
+   KfzZOThYsZgC77zFY9/8cZRosJRWWE8InxUV1cmvwDNxmuTOnFZimhJOS
+   kTk+QtzYKogcajQ9/ZvV1LXdhuMmx2/XQ1e+FEdkXTjKlHNI8QfvOG6yi
+   8hx+p86ZbxS6JsduPlWQ1MmfIK6wAn1mZpjPMO6bPdTGymmluGIlfk+Jf
+   rbP/3XPBto15IibhPsGQ/gooVYMMFBpyTTMNIb4dQTXiI4EcIWJXrLnI6
+   Omfsi/CEhjdd5PA+x6qxIh819s1rOg+KQXek9av24FI93GkakkLAOt+5r
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10657"; a="319800782"
+X-IronPort-AV: E=Sophos;i="5.98,283,1673942400"; 
+   d="scan'208";a="319800782"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2023 23:45:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10657"; a="632275854"
+X-IronPort-AV: E=Sophos;i="5.98,283,1673942400"; 
+   d="scan'208";a="632275854"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by orsmga003.jf.intel.com with ESMTP; 22 Mar 2023 23:45:14 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pfEhF-000E5A-19;
+        Thu, 23 Mar 2023 06:45:13 +0000
+Date:   Thu, 23 Mar 2023 14:44:41 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, David Yang <mmyangfl@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 7/9] clk: hisilicon: Migrate devm APIs
+Message-ID: <202303231400.ccfrqXUI-lkp@intel.com>
+References: <20230322164201.2454771-8-mmyangfl@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v3 2/8] dt-bindings: phy: qcom,qmp-usb: Add IPQ9574 USB3
- PHY
-Content-Language: en-US
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org,
-        mturquette@baylibre.com, sboyd@kernel.org, quic_wcheng@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-clk@vger.kernel.org
-References: <cover.1679479634.git.quic_varada@quicinc.com>
- <e34d8eddc1dda8bb0ff840a7dd18ca4dd6c62d22.1679479634.git.quic_varada@quicinc.com>
- <c52a329d-8683-de82-9b55-209b99ac36c0@linaro.org>
- <20230323063705.GA19800@varda-linux.qualcomm.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230323063705.GA19800@varda-linux.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230322164201.2454771-8-mmyangfl@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23/03/2023 07:37, Varadarajan Narayanan wrote:
-> On Wed, Mar 22, 2023 at 10:52:44PM +0100, Krzysztof Kozlowski wrote:
->> On 22/03/2023 11:44, Varadarajan Narayanan wrote:
->>> Add dt-bindings for USB3 PHY found on Qualcomm IPQ9574
->>>
->>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->>>
->>> ---
->>>  Changes in v2:
->>> 	- Updated sections missed in previous patch
->>> ---
->>>  .../bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml    | 22 ++++++++++++++++++++++
->>>  1 file changed, 22 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
->>> index e81a382..beae44c 100644
->>> --- a/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
->>> +++ b/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
->>> @@ -21,6 +21,7 @@ properties:
->>>      enum:
->>>        - qcom,ipq6018-qmp-usb3-phy
->>>        - qcom,ipq8074-qmp-usb3-phy
->>> +      - qcom,ipq9574-qmp-usb3-phy
->>>        - qcom,msm8996-qmp-usb3-phy
->>>        - qcom,msm8998-qmp-usb3-phy
->>>        - qcom,qcm2290-qmp-usb3-phy
->>> @@ -204,6 +205,27 @@ allOf:
->>>          compatible:
->>>            contains:
->>>              enum:
->>> +              - qcom,ipq9574-qmp-usb3-phy
->>> +    then:
->>> +      properties:
->>> +        clocks:
->>> +          maxItems: 2
->>
->> toplevel defines minItems as 3, so are you sure this works? Did you test it?
-> 
-> Yes, this is tested. Able to do I/O.
+Hi David,
 
-Bindings do not impact on whether you can or can not do IO, so I meant
-tested as DTS is compliant with bindings. I assume it was not, so please
-test bindings and DTS before sending new version.
-see Documentation/devicetree/bindings/writing-schema.rst for instructions
+Thank you for the patch! Yet something to improve:
 
-> We only have 2 items. Is it ok change the minItems to 2?
+[auto build test ERROR on 6015b1aca1a233379625385feb01dd014aca60b5]
 
-Yes, because you must update top level (and maybe other) constraints to
-correct ones. Just test the code...
+url:    https://github.com/intel-lab-lkp/linux/commits/David-Yang/clk-hisilicon-Rename-Hi3798CV200-to-Hi3798/20230323-004453
+base:   6015b1aca1a233379625385feb01dd014aca60b5
+patch link:    https://lore.kernel.org/r/20230322164201.2454771-8-mmyangfl%40gmail.com
+patch subject: [PATCH v7 7/9] clk: hisilicon: Migrate devm APIs
+config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20230323/202303231400.ccfrqXUI-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/8d88e46ef325130e4dd516ce36e3e0484bc52230
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review David-Yang/clk-hisilicon-Rename-Hi3798CV200-to-Hi3798/20230323-004453
+        git checkout 8d88e46ef325130e4dd516ce36e3e0484bc52230
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/clk/hisilicon/
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202303231400.ccfrqXUI-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   In file included from include/linux/device.h:15,
+                    from drivers/clk/hisilicon/clk-hi3620.c:14:
+   drivers/clk/hisilicon/clk-hi3620.c: In function 'clk_register_hisi_mmc':
+>> drivers/clk/hisilicon/clk-hi3620.c:435:35: error: 'clks' undeclared (first use in this function); did you mean 'clk'?
+     435 |                         __func__, clks[i].name);
+         |                                   ^~~~
+   include/linux/dev_printk.h:110:37: note: in definition of macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                                     ^~~~~~~~~~~
+   drivers/clk/hisilicon/clk-hi3620.c:434:17: note: in expansion of macro 'dev_err'
+     434 |                 dev_err(dev, "%s: failed to register clock %s\n",
+         |                 ^~~~~~~
+   drivers/clk/hisilicon/clk-hi3620.c:435:35: note: each undeclared identifier is reported only once for each function it appears in
+     435 |                         __func__, clks[i].name);
+         |                                   ^~~~
+   include/linux/dev_printk.h:110:37: note: in definition of macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                                     ^~~~~~~~~~~
+   drivers/clk/hisilicon/clk-hi3620.c:434:17: note: in expansion of macro 'dev_err'
+     434 |                 dev_err(dev, "%s: failed to register clock %s\n",
+         |                 ^~~~~~~
+>> drivers/clk/hisilicon/clk-hi3620.c:435:40: error: 'i' undeclared (first use in this function)
+     435 |                         __func__, clks[i].name);
+         |                                        ^
+   include/linux/dev_printk.h:110:37: note: in definition of macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                                     ^~~~~~~~~~~
+   drivers/clk/hisilicon/clk-hi3620.c:434:17: note: in expansion of macro 'dev_err'
+     434 |                 dev_err(dev, "%s: failed to register clock %s\n",
+         |                 ^~~~~~~
+>> drivers/clk/hisilicon/clk-hi3620.c:436:24: warning: returning 'int' from a function with return type 'struct clk_hw *' makes pointer from integer without a cast [-Wint-conversion]
+     436 |                 return ret;
+         |                        ^~~
+--
+   drivers/clk/hisilicon/clk-hix5hd2.c: In function 'hix5hd2_clk_register_complex':
+   drivers/clk/hisilicon/clk-hix5hd2.c:260:46: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+     260 |         struct hix5hd2_complex_clock *clks = clocks;
+         |                                              ^~~~~~
+>> drivers/clk/hisilicon/clk-hix5hd2.c:300:31: error: 'data->clk_data' is a pointer; did you mean to use '->'?
+     300 |                 data->clk_data.clks[clks[i].id] = clk;
+         |                               ^
+         |                               ->
 
 
-Best regards,
-Krzysztof
+vim +435 drivers/clk/hisilicon/clk-hi3620.c
 
+   399	
+   400	static struct clk_hw *
+   401	clk_register_hisi_mmc(struct device *dev, const struct hisi_mmc_clock *mmc_clk,
+   402			      void __iomem *base)
+   403	{
+   404		struct clk_mmc *mclk;
+   405		struct clk_init_data init;
+   406		int ret;
+   407	
+   408		mclk = devm_kzalloc(dev, sizeof(*mclk), GFP_KERNEL);
+   409		if (!mclk)
+   410			return ERR_PTR(-ENOMEM);
+   411	
+   412		init.name = mmc_clk->name;
+   413		init.ops = &clk_mmc_ops;
+   414		init.flags = mmc_clk->flags;
+   415		init.parent_names = (mmc_clk->parent_name ? &mmc_clk->parent_name : NULL);
+   416		init.num_parents = (mmc_clk->parent_name ? 1 : 0);
+   417		mclk->hw.init = &init;
+   418	
+   419		mclk->id = mmc_clk->id;
+   420		mclk->clken_reg = base + mmc_clk->clken_reg;
+   421		mclk->clken_bit = mmc_clk->clken_bit;
+   422		mclk->div_reg = base + mmc_clk->div_reg;
+   423		mclk->div_off = mmc_clk->div_off;
+   424		mclk->div_bits = mmc_clk->div_bits;
+   425		mclk->drv_reg = base + mmc_clk->drv_reg;
+   426		mclk->drv_off = mmc_clk->drv_off;
+   427		mclk->drv_bits = mmc_clk->drv_bits;
+   428		mclk->sam_reg = base + mmc_clk->sam_reg;
+   429		mclk->sam_off = mmc_clk->sam_off;
+   430		mclk->sam_bits = mmc_clk->sam_bits;
+   431	
+   432		ret = devm_clk_hw_register(dev, &mclk->hw);
+   433		if (ret) {
+   434			dev_err(dev, "%s: failed to register clock %s\n",
+ > 435				__func__, clks[i].name);
+ > 436			return ret;
+   437		}
+   438	
+   439		return &mclk->hw;
+   440	}
+   441	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
