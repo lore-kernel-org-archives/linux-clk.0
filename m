@@ -2,116 +2,203 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81501C6FD20
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Mar 2023 10:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F00BC76196
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Mar 2023 11:09:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229908AbjCXKuG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Mar 2023 06:50:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43018 "EHLO
+        id S231667AbjCXLJo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Mar 2023 07:09:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229943AbjCXKuF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Mar 2023 06:50:05 -0400
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2059.outbound.protection.outlook.com [40.107.244.59])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7B1A21A13
-        for <linux-clk@vger.kernel.org>; Fri, 24 Mar 2023 03:50:04 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ECTkO5sa98bdu8gX/pEJbEJ1UI8n1HRMFg4CAoChNYRSbFIClBMDzOjy9f6hBZBM4WNlSvLkg+dK+rwXctlyXpZij5wBvyBJgeiYPRao4Ygtor+VoPmkSy1uZGAzLJNKJ5keZJN6xYdnfd1mKd3yZS0gkXD6HLHUzPs56gMTEg5bNp95uu3gxWhlNkLv0bdJMlML2zi0LH5wYrYonqBAyaxL+asVTphzgPt2b/72GMVMhawAFXlikte6aoAI1jowBOh1pb84+jb4TTdDZ4c5DMELFugFDhZHQ+kvH+oCOgrcUX9h9Oaqb8HpuaMvsm/efod1z8RXsr4H9Ip0+P4RzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mYNLOFkVHIaA2G1xmPzzijbemTcBS6PM+sL5M0IHWbs=;
- b=ToL5HJGXHJYXx1sUeD9YrR8feV5SaXKvE3S/tL1H9HlDUJkms5pyiD3DvQ9TJe5Ionj1PJa//6fQnl1qrark+6bSOqp0N7bjMHGC5QvjIqYeOOTbKNaQyieK4G9FyOH3HKJ2PyUQ9p+Y3ZWyyaqMB1u7viz8YwP//m6jp6nFScfov2DXLZE+rohv+61eIbNwIFLdOj+Pa88XHz+g5VI1pLLjGKe8MiR5Y+XM8fdsPVZ0usri5LTZDPrQZtopuGnwXaET5ELvWsrqonNwZD796enR9JtAZWRclkf/b4srNllcIV4RVtEmiw4qvRD1HY6hZlMzu4Ht9C/5oySV+10cxA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mYNLOFkVHIaA2G1xmPzzijbemTcBS6PM+sL5M0IHWbs=;
- b=FTI9GSjZbih2rMmf15KkZZmlEnyWpD+L5Ytk/4uEgPNl9rPyolY4JnqSq8VWXl9XB/oYKCBXwCnpN3Qdm2D/4Aep+6FYdbneiDleA8Gw9HCvG9NbLdfkI1U+cEWuctFS/eYOAM5g+VRwbCBdFesxIsPdbDJ1lw1DiUynG92+naA=
-Received: from MW4P223CA0025.NAMP223.PROD.OUTLOOK.COM (2603:10b6:303:80::30)
- by SA0PR12MB4557.namprd12.prod.outlook.com (2603:10b6:806:9d::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.38; Fri, 24 Mar
- 2023 10:50:02 +0000
-Received: from CO1NAM11FT021.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:80:cafe::25) by MW4P223CA0025.outlook.office365.com
- (2603:10b6:303:80::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.39 via Frontend
- Transport; Fri, 24 Mar 2023 10:50:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1NAM11FT021.mail.protection.outlook.com (10.13.175.51) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6222.22 via Frontend Transport; Fri, 24 Mar 2023 10:50:02 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Fri, 24 Mar
- 2023 05:50:01 -0500
-Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2375.34 via Frontend
- Transport; Fri, 24 Mar 2023 05:49:59 -0500
-From:   Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-To:     <linux-clk@vger.kernel.org>
-CC:     <git@amd.com>, <sboyd@kernel.org>, <mturquette@baylibre.com>,
-        <michal.simek@xilinx.com>
-Subject: [PATCH] clk: zynqmp: pll: Remove the limit
-Date:   Fri, 24 Mar 2023 16:19:58 +0530
-Message-ID: <20230324104958.25099-1-shubhrajyoti.datta@amd.com>
-X-Mailer: git-send-email 2.17.1
+        with ESMTP id S229908AbjCXLJn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Mar 2023 07:09:43 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EC7312CFA;
+        Fri, 24 Mar 2023 04:09:42 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id r29so1356682wra.13;
+        Fri, 24 Mar 2023 04:09:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679656180;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :references:from:to:cc:subject:date:message-id:reply-to;
+        bh=KKGzHAjESOwY5CJ6aIkXRblEUT9vcmLWXQ+M0lRFaT8=;
+        b=hzyILuXnSZ7lMaDYB5rhB/bnNUkufwU6fB5inzHRnGwGUpJquemA3X84Lzp++Y2YJ+
+         xX92fJNLk8xQHwS1+YxTda7OSm5DtCOvp4pDLhNSgUC+z/fJXup9nphjXvyJHgvtZySv
+         Ing1oEJUNGaC5fkPShiXmhVhP4ZVm14D3SAO1J3Mw26nhpiPZuGPtANkaXRqnth94OzX
+         eWmkntp/5aW21aNCDZJKirG9vn5GmZabE2CYZSk/g1dEY9qxrgIgg/yw5kqOFSzwoNBS
+         JwX3UeufEHb7ANEt7KtJeAKptHBPlTmLr2bfmp8WEFpNkr4PD3Q/FNi6OhewGezr1Z61
+         Chlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679656180;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :references:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KKGzHAjESOwY5CJ6aIkXRblEUT9vcmLWXQ+M0lRFaT8=;
+        b=ly5d+/fL5EKpn7Bp+71iKSRbyO7HkCOSlqRVToPpkQcwQxjoExn2qXhRa6aL2P8VYR
+         L3cn82n8D9kWtW16wyaaCX2aA6PPBslJ8KqtQ1eqA4ewCd18tmzREnRvXWEQ+9yxxZn1
+         EbYNXUve1JZbDLB3j8Zs/5G+EGgC51UdGWxpiruj70bvj8LntE6DUFbkLIc3+Luxy1qz
+         ezJKwU4NO0MEoxdtsntbn7gEFewHA9RCTbYvSewCzIIyK+mf/QOha5nQ524L5qLN85vo
+         tUrOAiKIiPTT1xR6FGISAj7kHKy9Y89e6s7Y+S3bmjgQoUJSyYfSxhZagl4orQqlJk9B
+         ar6Q==
+X-Gm-Message-State: AAQBX9f6sUP/obKVPazfcA2R9b+mg0FPaxX/sf6ZLCxXwDWmtsT29Jvx
+        jjOxYpQFGLrRNZTHL2w6/D8=
+X-Google-Smtp-Source: AKy350ZmBQJTJNYHdzNhp0Qvsm2ha5bci7Pffhjn47i2N4HkGJnSU/0GajVbD8LVTLhlg10uq2ysNw==
+X-Received: by 2002:a5d:6290:0:b0:2da:53e3:57cf with SMTP id k16-20020a5d6290000000b002da53e357cfmr1959487wru.71.1679656180460;
+        Fri, 24 Mar 2023 04:09:40 -0700 (PDT)
+Received: from localhost (188.28.8.105.threembb.co.uk. [188.28.8.105])
+        by smtp.gmail.com with ESMTPSA id a8-20020a056000100800b002d8566128e5sm9760336wrx.25.2023.03.24.04.09.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Mar 2023 04:09:39 -0700 (PDT)
+References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
+ <20221018-clk-range-checks-fixes-v2-56-f6736dec138e@cerno.tech>
+ <80VTKR.CE8RVN8M3ZYK3@crapouillou.net>
+ <20221104145946.orsyrhiqvypisl5j@houat>
+ <cp7Yh29ndlOOi1yW8KwCcpzoLPLxm1vR@localhost>
+ <20221107085417.xrsh6xy3ouwdkp4z@houat>
+ <ucJ6KSBqdPTxfxUQqLUr9C9RGiQRnY1I@localhost>
+ <20221109110045.j24vwkaq3s4yzoy3@houat>
+ <06a293adc75990ed3e297b076fc38d8a.sboyd@kernel.org>
+From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Maxime Ripard <maxime@cerno.tech>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        David Airlie <airlied@gmail.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        David Lechner <david@lechnology.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
+        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 56/65] clk: ingenic: cgu: Switch to determine_rate
+Date:   Thu, 23 Mar 2023 15:35:30 +0000
+In-reply-to: <06a293adc75990ed3e297b076fc38d8a.sboyd@kernel.org>
+Message-ID: <xpKMzGb1sOsucWMTlJIMzrT5KjLlZ7JP@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT021:EE_|SA0PR12MB4557:EE_
-X-MS-Office365-Filtering-Correlation-Id: 33889418-c878-47cf-851d-08db2c55853d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: rhRfQ6z7pxryaSbJXLmxp0XGyfGcPXOK4HPQpC0ujSrtST4sKkKKxYeo/VSlEnO6VXnybj8GDcmCSh8vMeNZuSRB/M8pyyAzsT8dAsOp4oiLbFVXCQt03XgXs2JWa7F6163EhFKHxk6WI7RrRDZejB9Toah/2DLaqA3cDd3ssS/viCdD4rJYx5TnJjyzHmLm1b92mNPBaEVnKMNeWvGRiklpZUw1x0L4DeAUHPJhMnGu6zVHNdVB52VtCT+DbnYbvhsn88TthrrEWhyuHm7FQxsbf17/WerAI1G9L4E9as9/XtRIDr/Dgr/SitmYiyfp4KUxkYfDvwEJj5RaoUF1W4/Qlj9O/owT3+1rmRiiWGFbalfgW8gzcQ2fC4vsEh7gk/iYrBHfP4ckuTW98nosbUCMMXdbbYNE8EEWcvBIpYmmaFl+/MZZcO1G6u1UQgPpLvPuYY22jPQlbdT0xMxqqbvjnp1JDlBQsHGuXxMcO4AdJjuve3AYgkMMvBwqHR6/fwUNiQ803tBfcWYjdUow/m9rQ4OFrdLOtUYKQLBmnt/Zu7UoNe4ybarLhNphUhVuicWM05mbSbsmVc9Mc6HV65wJkVWOY60vYHtU92IfswwOtpTETWklc3j1dUwvCGnEBDyarV3x1zg2w2IFfF1hetTWsI7r0lV+XiKCH+pyr5VHqRxHHceW2uJgye3aj8zK/QZvlYyc2h6uQBykT87zL7gq8ShSkyRQI5ogswh54Fc=
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230025)(4636009)(136003)(376002)(346002)(396003)(39860400002)(451199018)(36840700001)(46966006)(40470700004)(356005)(40480700001)(2906002)(40460700003)(2616005)(336012)(478600001)(82310400005)(186003)(316002)(36756003)(83380400001)(86362001)(54906003)(8676002)(4744005)(6916009)(36860700001)(70206006)(70586007)(4326008)(41300700001)(47076005)(1076003)(426003)(8936002)(26005)(81166007)(82740400003)(44832011)(5660300002)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2023 10:50:02.0582
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33889418-c878-47cf-851d-08db2c55853d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT021.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4557
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The range is taken care in the zynqmp_pll_round_rate. Remove the rate range
-in the zynqmp_clk_register_pll() to prevent the early truncation of the
-frequencies and also allow multiple combinations of child and parent to get
-more accurate rates.
 
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
----
+Stephen Boyd <sboyd@kernel.org> writes:
 
- drivers/clk/zynqmp/pll.c | 2 --
- 1 file changed, 2 deletions(-)
+> Quoting Maxime Ripard (2022-11-09 03:00:45)
+>> On Mon, Nov 07, 2022 at 08:57:22PM +0000, Aidan MacDonald wrote:
+>> >
+>> > Maxime Ripard <maxime@cerno.tech> writes:
+>> >
+>> > > Hi,
+>> > >
+>> > > On Fri, Nov 04, 2022 at 05:35:29PM +0000, Aidan MacDonald wrote:
+>> >
+>> > Assigning the parent clock in the DT works once, at boot, but going off
+>> > what you wrote in the commit message, if the clock driver has a
+>> > .determine_rate() implementation that *can* reparent clocks then it
+>> > probably *will* reparent them, and the DT assignment will be lost.
+>>
+>> Yes, indeed, but assigned-clock-parents never provided any sort of
+>> guarantee on whether or not the clock was allowed to reparent or not.
+>> It's just a one-off thing, right before probe, and a clk_set_parent()
+>> call at probe will override that just fine.
+>>
+>> Just like assigned-clock-rates isn't permanent.
+>>
+>> > What I'm suggesting is a runtime constraint that the clock subsystem
+>> > would enforce, and actively prevent drivers from changing the parent.
+>> > Either explicitly with clk_set_parent() or due to .determine_rate().
+>> >
+>> > That way you could write a .determine_rate() implementation that *can*
+>> > select a better parent, but if the DT applies a constraint to fix the
+>> > clock to a particular parent, the clock subsystem will force that parent
+>> > to be used so you can be sure the clock is never reparented by accident.
+>>
+>> Yeah, that sounds like a good idea, and CLK_SET_RATE_NO_REPARENT isn't
+>> too far off from this, it's just ignored by clk_set_parent() for now. I
+>> guess we could rename CLK_SET_RATE_NO_REPARENT to CLK_NO_REPARENT, make
+>> clk_set_parent handle it, and set that flag whenever
+>> assigned-clock-parents is set on a clock.
+>>
+>> It's out of scope for this series though, and I certainly don't want to
+>> deal with all the regressions it might create :)
+>>
+>
+> This sounds like a new dt binding that says the assigned parent should
+> never change. It sounds sort of like gpio hogs. A clock-hogs binding?
 
-diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
-index 0d3e1377b092..7411a7fd50ac 100644
---- a/drivers/clk/zynqmp/pll.c
-+++ b/drivers/clk/zynqmp/pll.c
-@@ -341,7 +341,5 @@ struct clk_hw *zynqmp_clk_register_pll(const char *name, u32 clk_id,
- 		return ERR_PTR(ret);
- 	}
- 
--	clk_hw_set_rate_range(hw, PS_PLL_VCO_MIN, PS_PLL_VCO_MAX);
--
- 	return hw;
- }
--- 
-2.17.1
+Ideally we want the clock driver to be able to reparent clocks freely
+to get the best rate. But we also need some control over that to stop
+consumers from being reparented in undesired ways. Eg. you might want
+to make sure the GPU gets its own PLL so it can be reclocked easily,
+and putting another device on the GPU's PLL could prevent that.
 
+The only way to achieve this today is (1) never do any reparenting in
+the clock driver; and (2) use assigned-clock-parents in the DT to set
+up the entire clock tree manually.
+
+Maxime said that (2) is basically wrong -- if assigned-clock-parents
+provides no guarantee on what the OS does "after boot" then the OS is
+pretty much free to ignore it.
+
+My suggestion: add a per-clock bitmap to keep track of which parents
+are allowed. Any operation that would select a parent clock not on the
+whitelist should fail. Automatic reparenting should only select from
+clocks on the whitelist. And we need new DT bindings for controlling
+the whitelist, for example:
+
+    clock-parents-0 = <&clk1>, <&pll_c>;
+    clock-parents-1 = <&clk2>, <&pll_a>, <&pll_b>;
+
+This means that clk1 can only have pll_c as a parent, while clk2 can
+have pll_a or pll_b as parents. By default every clock will be able
+to use any parent, so a list is only needed if the machine needs a
+more restrictive policy.
+
+assigned-clock-parents should disable automatic reparenting, but allow
+explicit clk_set_parent(). This will allow clock drivers to start doing
+reparenting without breaking old DTs.
