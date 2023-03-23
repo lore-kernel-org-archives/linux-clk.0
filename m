@@ -2,94 +2,111 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 814F9C76195
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Mar 2023 12:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 806DAC6FD1C
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Mar 2023 14:17:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231527AbjCWMP7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Mar 2023 08:15:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49182 "EHLO
+        id S231236AbjCWORx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Mar 2023 10:17:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231531AbjCWMPk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Mar 2023 08:15:40 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCB00279A4;
-        Thu, 23 Mar 2023 05:14:44 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id ew6so22560609edb.7;
-        Thu, 23 Mar 2023 05:14:44 -0700 (PDT)
+        with ESMTP id S230482AbjCWORw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Mar 2023 10:17:52 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93C9026C32;
+        Thu, 23 Mar 2023 07:17:50 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id om3-20020a17090b3a8300b0023efab0e3bfso2060200pjb.3;
+        Thu, 23 Mar 2023 07:17:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679573683;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QtfyA5+0e27PBCjZwhJRtSv2XkdtikGY1iiyI1Ysvsc=;
-        b=CsTdLDaM4ckiOneovfOqYSr+RapnYsg0Em1LH78jxOaP8J8VJR/OlcupAihouHCkNk
-         uzr7h7GEN5zUAuqehdtnNOkxyi4A86b1qa+3Dagw1r4saZkPbGehuQOr+7k4MMZ3++SE
-         5oubKdfoYCPeM//ZXBsQ7l/4HBLgey5isd6A8mug/WyP+kM250QMYUKIZ5qVuKxMjvsE
-         aF84KmkCvBupLdx2IWP9uvUxYdOZfbQYV0vFj6zGbsXX6gHNxfegFmB24vvtjKbgeHx5
-         OOvqlUtB6t98UJzkuGD3gC9+FuhvYYw4zYdAjDvbc6xfBmGVWrMljb7LCrVhWWUTMj17
-         ulng==
+        d=gmail.com; s=20210112; t=1679581070;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KwWlt/KOKKTZV5IfSjGfyeDxmoG3w+1dWejJirL87Kc=;
+        b=ShXIgySZUj17n8AichZ6BuKTikQIsXDd6ZVTquByVrE6Vbrd5xJvxmzFeGybkzJQw+
+         2dvPVykT31PVMXZkQI4/V1PrLosJ8/G81+bLf7guHi0hoaBYJbF4P4oFsacqNyGOGzl0
+         KWAIfcfULvOuAvq54WwijhDLokXsbuMfLjGNKadLpchF8Xh1u2lk9enjxA9BLLWIOWEu
+         sNxTYRawdnA2VypiKSGiKAadBU691K9veJ+xX+PPKmFrf9bhOcFw5otLG9wahtG3Sl1x
+         1QbMXbM+gOxUpC+3yWS7L272rcBPzaRxoZNn6I4m1UlenvHfLy+sDQLGpknXl3R0oztV
+         pQ/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679573683;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QtfyA5+0e27PBCjZwhJRtSv2XkdtikGY1iiyI1Ysvsc=;
-        b=gAzaS4Ay/Iy9K3SFkbOtuVzcqA5gFHW2i2yFetTOrzkiI5QP65741E9rKiXv3VPxH7
-         QpjKGWgrN8GnMf2gCPNl7g0WEREvLRMrGoAbijrlWEO5XwbYNE0iGSt+h02DyEoNzuPU
-         qp0VXRk7Kinp6HTCBXZPrmLpkSGfmew83zbPMz5ypulOiXk9ClA2Yfc7Dwvz5VuJxHge
-         tsmHIGqYNxz+bKkAuwrDRMcqmR28o/JAP9ejXR9O4qs993hFZXZrcPGKoOrN9Kg5/kIK
-         8WZjSkQlz4ZYih7qedW5CxhvjSIwbFaxMw3Mr+xS+ciPmic3GTENr0DICWAiMWuxDSBQ
-         RoSQ==
-X-Gm-Message-State: AO0yUKW0mhJqO4vhnH2yyIXD/1n5qoLSmG0X3FCy6UGkhkBGrpBEd8hc
-        kYoqVCSS7qEkpQWtbnKx/WHmTPq2t+f2zA==
-X-Google-Smtp-Source: AK7set+HmNtTcwTYVRADBqYt9gkrEw4spWc+kfydjtrvRIb2Z0PVz5ZIdmiiy6REIw4t61dQidpwHQ==
-X-Received: by 2002:a17:907:1def:b0:8b2:d30:e722 with SMTP id og47-20020a1709071def00b008b20d30e722mr10074299ejc.3.1679573682628;
-        Thu, 23 Mar 2023 05:14:42 -0700 (PDT)
-Received: from felia.fritz.box ([2a02:810d:2a40:1104:d509:cbf0:f579:76f0])
-        by smtp.gmail.com with ESMTPSA id z21-20020a1709064e1500b00930de1da701sm8772930eju.10.2023.03.23.05.14.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Mar 2023 05:14:42 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Keguang Zhang <keguang.zhang@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-mips@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: remove obsolete file entry in MIPS/LOONGSON1 ARCHITECTURE
-Date:   Thu, 23 Mar 2023 13:14:37 +0100
-Message-Id: <20230323121437.28239-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        d=1e100.net; s=20210112; t=1679581070;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KwWlt/KOKKTZV5IfSjGfyeDxmoG3w+1dWejJirL87Kc=;
+        b=ajvT9cjLz2cZPN1wUz09h1OyHKs/xydjqcZOnnVSc0agF2qZFlMOiZbtXDkU3hef5e
+         JHUHQEHrxKVurAqeonwz5RdMSHoTyoO9KsYCE4E1YAXiblS5u8KnMSAfBpPGVEN46VGL
+         IKXbkiCCmgg4vqmA2NmON6T0CLENu00FOt+QRTEhImXsc30zLicJ+FDftuR0XWgP/7a1
+         c5wTso9sGZoaU1fX66zFoNMLn1P9TAoFcmbbC/EVWyiiDzA+6gG3ITPqo8Pn8CKQZ52b
+         R/r9ZSEpDnL8PcISxTvM4AVGW/NrIm5PQnZ46SZ4hjwRI/j/wmSGxKG3QHLigkQ1GPJf
+         78Qw==
+X-Gm-Message-State: AO0yUKWrhdrwNn5+XWmExQ7mtM6nBM1j62MT6n6eLXwEz0bCEAuv9CDa
+        pkAnD4rYplzrd9SglKUJ0sA=
+X-Google-Smtp-Source: AK7set8s8aOBz3BhSS+2TpYUEhRf2Zwajb86+z7vpmqctX+tEU+jGLlvaa7kumROlD7GK1yDG+Y7Ag==
+X-Received: by 2002:a05:6a20:a914:b0:d7:6b87:94b8 with SMTP id cd20-20020a056a20a91400b000d76b8794b8mr2981901pzb.18.1679581069864;
+        Thu, 23 Mar 2023 07:17:49 -0700 (PDT)
+Received: from [172.30.1.36] ([14.32.163.5])
+        by smtp.gmail.com with ESMTPSA id d18-20020aa78692000000b0062a515874b4sm1237790pfo.32.2023.03.23.07.17.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Mar 2023 07:17:49 -0700 (PDT)
+Message-ID: <81425aaa-8c41-8d9d-ddc4-f951039bc516@gmail.com>
+Date:   Thu, 23 Mar 2023 23:17:42 +0900
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH] dt-bindings: clock: Drop unneeded quotes
+To:     Rob Herring <robh@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+References: <20230322173549.3972106-1-robh@kernel.org>
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20230322173549.3972106-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Commit c46496119ed0 ("clk: loongson1: Remove the outdated driver") removes
-all files matching the pattern drivers/*/*/*loongson1*, but misses to
-adjust the file entry for MIPS/LOONGSON1 ARCHITECTURE in MAINTAINERS.
+On 23. 3. 23. 02:35, Rob Herring wrote:
+> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
+> checking for this can be enabled in yamllint.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml  | 4 ++--
+>  .../devicetree/bindings/clock/mediatek,apmixedsys.yaml        | 4 ++--
+>  .../devicetree/bindings/clock/mediatek,topckgen.yaml          | 4 ++--
+>  Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml | 4 ++--
+>  .../bindings/clock/renesas,rcar-usb2-clock-sel.yaml           | 4 ++--
+>  .../devicetree/bindings/clock/renesas,rzg2l-cpg.yaml          | 4 ++--
+>  .../devicetree/bindings/clock/samsung,exynos850-clock.yaml    | 2 +-
+>  Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml | 4 ++--
+>  Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml  | 4 ++--
+>  .../devicetree/bindings/clock/xlnx,clocking-wizard.yaml       | 4 ++--
+>  10 files changed, 19 insertions(+), 19 deletions(-)
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
-
-Remove this file entry in MIPS/LOONGSON1 ARCHITECTURE.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Keguang, please ack.
-Stephen, please pick this minor fix-up on the top of the commit above.
-
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8f8e846fc453..4aac18b5d5c1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14047,7 +14047,6 @@ L:	linux-mips@vger.kernel.org
- S:	Maintained
- F:	arch/mips/include/asm/mach-loongson32/
- F:	arch/mips/loongson32/
--F:	drivers/*/*/*loongson1*
- F:	drivers/*/*loongson1*
- 
- MIPS/LOONGSON2EF ARCHITECTURE
 -- 
-2.17.1
+Best Regards,
+Samsung Electronics
+Chanwoo Choi
 
