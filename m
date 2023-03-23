@@ -2,152 +2,261 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C55C6FD1D
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Mar 2023 06:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C64C76196
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Mar 2023 07:44:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229690AbjCWGxX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Mar 2023 02:53:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54464 "EHLO
+        id S230382AbjCWHo5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Mar 2023 03:44:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229791AbjCWGxV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Mar 2023 02:53:21 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 894F21F5C2;
-        Wed, 22 Mar 2023 23:53:20 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32N6KDpa016196;
-        Thu, 23 Mar 2023 06:53:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
- cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=qcppdkim1; bh=2b/5067R9GHcy29L7fsJhopZDL7DjzKE9imXFmh9BrY=;
- b=mHeSVT3BslTA6jzuzvCq1F/UQQkrZR3kUGUreWCafnkQ8R1hqLpw3W1/ZMJMA8fNPtC0
- utT+uiiUG8i6XxLfX7nb59BiaLvDfOgNes2/XdBcq0oZvcdRYvQQ1pK9L2/7o+D5EdPa
- cYoK9XR6c8ZhQhrDjryfaAxo6w2mGO9dsnnA6HqFl/a+Uz0aR7mqzTuHBMBeET3b4gPL
- ec3Vhl5HZX48OysXWQhdCDxwLkEgQMScWye16Ud/3WSM+PUw6oClEErKy6AVU8P+fd1g
- Tuz0MQ+jg9i2RojsbKYXEqdb+6A5zXXSNMKOMzvHqxCzeBl40w33Amx2H8c9FW4Irg+g pA== 
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pg3c9a22c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 23 Mar 2023 06:53:12 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32N6rBHI009152
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 23 Mar 2023 06:53:11 GMT
-Received: from varda-linux.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.41; Wed, 22 Mar 2023 23:53:05 -0700
-Date:   Thu, 23 Mar 2023 12:23:01 +0530
-From:   Varadarajan Narayanan <quic_varada@quicinc.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <gregkh@linuxfoundation.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <quic_wcheng@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v3 2/8] dt-bindings: phy: qcom,qmp-usb: Add IPQ9574 USB3
- PHY
-Message-ID: <20230323065300.GB19800@varda-linux.qualcomm.com>
-References: <cover.1679479634.git.quic_varada@quicinc.com>
- <e34d8eddc1dda8bb0ff840a7dd18ca4dd6c62d22.1679479634.git.quic_varada@quicinc.com>
- <c52a329d-8683-de82-9b55-209b99ac36c0@linaro.org>
- <20230323063705.GA19800@varda-linux.qualcomm.com>
- <a8c3f324-0231-2180-8464-a3bfc663f743@linaro.org>
+        with ESMTP id S229589AbjCWHoz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Mar 2023 03:44:55 -0400
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C865719C4E;
+        Thu, 23 Mar 2023 00:44:50 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id 0B5F324E1BE;
+        Thu, 23 Mar 2023 15:44:43 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 23 Mar
+ 2023 15:44:43 +0800
+Received: from [192.168.125.74] (183.27.97.64) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 23 Mar
+ 2023 15:44:42 +0800
+Message-ID: <5b75161e-3d0d-50e5-fd4e-af92edf62317@starfivetech.com>
+Date:   Thu, 23 Mar 2023 15:44:41 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <a8c3f324-0231-2180-8464-a3bfc663f743@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: NA7dAzEcAnRdzB5xSAN5Zb_fXrFfX3BR
-X-Proofpoint-ORIG-GUID: NA7dAzEcAnRdzB5xSAN5Zb_fXrFfX3BR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-22_21,2023-03-22_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 bulkscore=0 priorityscore=1501 mlxscore=0 malwarescore=0
- clxscore=1015 suspectscore=0 adultscore=0 impostorscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303150002 definitions=main-2303230052
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v6 11/21] dt-bindings: clock: Add StarFive JH7110 system
+ clock and reset generator
+Content-Language: en-US
+To:     Conor Dooley <conor@kernel.org>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>, Stephen Boyd <sboyd@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        "Emil Renner Berthing" <emil.renner.berthing@canonical.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20230320103750.60295-1-hal.feng@starfivetech.com>
+ <20230320103750.60295-12-hal.feng@starfivetech.com>
+ <b4beb457-8581-4b2f-8655-2e3f82a94f75@spud>
+From:   Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <b4beb457-8581-4b2f-8655-2e3f82a94f75@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [183.27.97.64]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Mar 23, 2023 at 07:42:37AM +0100, Krzysztof Kozlowski wrote:
-> On 23/03/2023 07:37, Varadarajan Narayanan wrote:
-> > On Wed, Mar 22, 2023 at 10:52:44PM +0100, Krzysztof Kozlowski wrote:
-> >> On 22/03/2023 11:44, Varadarajan Narayanan wrote:
-> >>> Add dt-bindings for USB3 PHY found on Qualcomm IPQ9574
-> >>>
-> >>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> >>>
-> >>> ---
-> >>>  Changes in v2:
-> >>> 	- Updated sections missed in previous patch
-> >>> ---
-> >>>  .../bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml    | 22 ++++++++++++++++++++++
-> >>>  1 file changed, 22 insertions(+)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
-> >>> index e81a382..beae44c 100644
-> >>> --- a/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
-> >>> +++ b/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
-> >>> @@ -21,6 +21,7 @@ properties:
-> >>>      enum:
-> >>>        - qcom,ipq6018-qmp-usb3-phy
-> >>>        - qcom,ipq8074-qmp-usb3-phy
-> >>> +      - qcom,ipq9574-qmp-usb3-phy
-> >>>        - qcom,msm8996-qmp-usb3-phy
-> >>>        - qcom,msm8998-qmp-usb3-phy
-> >>>        - qcom,qcm2290-qmp-usb3-phy
-> >>> @@ -204,6 +205,27 @@ allOf:
-> >>>          compatible:
-> >>>            contains:
-> >>>              enum:
-> >>> +              - qcom,ipq9574-qmp-usb3-phy
-> >>> +    then:
-> >>> +      properties:
-> >>> +        clocks:
-> >>> +          maxItems: 2
-> >>
-> >> toplevel defines minItems as 3, so are you sure this works? Did you test it?
-> >
-> > Yes, this is tested. Able to do I/O.
->
-> Bindings do not impact on whether you can or can not do IO, so I meant
-> tested as DTS is compliant with bindings. I assume it was not, so please
-> test bindings and DTS before sending new version.
-> see Documentation/devicetree/bindings/writing-schema.rst for instructions
+On Wed, 22 Mar 2023 21:53:37 +0000, Conor Dooley wrote:
+> Hey Hal,
+> 
+> On Mon, Mar 20, 2023 at 06:37:40PM +0800, Hal Feng wrote:
+>> From: Emil Renner Berthing <kernel@esmil.dk>
+>> 
+>> Add bindings for the system clock and reset generator (SYSCRG) on the
+>> JH7110 RISC-V SoC by StarFive Ltd.
+>> 
+>> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+>> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+>> ---
+>>  .../clock/starfive,jh7110-syscrg.yaml         | 104 +++++++++
+>>  MAINTAINERS                                   |   8 +-
+>>  .../dt-bindings/clock/starfive,jh7110-crg.h   | 203 ++++++++++++++++++
+>>  .../dt-bindings/reset/starfive,jh7110-crg.h   | 142 ++++++++++++
+>>  4 files changed, 454 insertions(+), 3 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+>>  create mode 100644 include/dt-bindings/clock/starfive,jh7110-crg.h
+>>  create mode 100644 include/dt-bindings/reset/starfive,jh7110-crg.h
+>> 
+>> diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+>> new file mode 100644
+>> index 000000000000..84373ae31644
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+>> @@ -0,0 +1,104 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/starfive,jh7110-syscrg.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: StarFive JH7110 System Clock and Reset Generator
+>> +
+>> +maintainers:
+>> +  - Emil Renner Berthing <kernel@esmil.dk>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: starfive,jh7110-syscrg
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    oneOf:
+>> +      - items:
+>> +          - description: Main Oscillator (24 MHz)
+>> +          - description: GMAC1 RMII reference or GMAC1 RGMII RX
+>> +          - description: External I2S TX bit clock
+>> +          - description: External I2S TX left/right channel clock
+>> +          - description: External I2S RX bit clock
+>> +          - description: External I2S RX left/right channel clock
+>> +          - description: External TDM clock
+>> +          - description: External audio master clock
+>> +
+>> +      - items:
+>> +          - description: Main Oscillator (24 MHz)
+>> +          - description: GMAC1 RMII reference
+>> +          - description: GMAC1 RGMII RX
+>> +          - description: External I2S TX bit clock
+>> +          - description: External I2S TX left/right channel clock
+>> +          - description: External I2S RX bit clock
+>> +          - description: External I2S RX left/right channel clock
+>> +          - description: External TDM clock
+>> +          - description: External audio master clock
+>> +
+>> +  clock-names:
+>> +    oneOf:
+>> +      - items:
+>> +          - const: osc
+>> +          - enum:
+>> +              - gmac1_rmii_refin
+>> +              - gmac1_rgmii_rxin
+>> +          - const: i2stx_bclk_ext
+>> +          - const: i2stx_lrck_ext
+>> +          - const: i2srx_bclk_ext
+>> +          - const: i2srx_lrck_ext
+>> +          - const: tdm_ext
+>> +          - const: mclk_ext
+>> +
+>> +      - items:
+>> +          - const: osc
+>> +          - const: gmac1_rmii_refin
+>> +          - const: gmac1_rgmii_rxin
+>> +          - const: i2stx_bclk_ext
+>> +          - const: i2stx_lrck_ext
+>> +          - const: i2srx_bclk_ext
+>> +          - const: i2srx_lrck_ext
+>> +          - const: tdm_ext
+>> +          - const: mclk_ext
+> 
+> I'm sorry to be a bit of a bore about these bindings, but Emil mentioned
+> to me today that he had some doubts about whether any of these audio
+> clocks are actually required.
+> I've had a bit of a look at the driver, cos the TRM that I have doesn't
+> describe the clock tree (from what recall at least) and I think he is
+> right.
+> For example, the TDM clock:
+> +	JH71X0_GATE(JH7110_SYSCLK_TDM_AHB, "tdm_ahb", 0, JH7110_SYSCLK_AHB0),
+> +	JH71X0_GATE(JH7110_SYSCLK_TDM_APB, "tdm_apb", 0, JH7110_SYSCLK_APB0),
+> +	JH71X0_GDIV(JH7110_SYSCLK_TDM_INTERNAL, "tdm_internal", 0, 64, JH7110_SYSCLK_MCLK),
+> +	JH71X0__MUX(JH7110_SYSCLK_TDM_TDM, "tdm_tdm", 2,
+> +		    JH7110_SYSCLK_TDM_INTERNAL,
+> +		    JH7110_SYSCLK_TDM_EXT),
+> 
+> Hopefully, I'm not making a balls of something here, but it looks like I
+> can choose an internal TDM clock, that is based on JH7110_SYSCLK_MCLK,
+> which in turn comes from either an internal or external source.
+> If I am following correctly, that'd be:
+> +	JH71X0__DIV(JH7110_SYSCLK_MCLK_INNER, "mclk_inner", 64, JH7110_SYSCLK_AUDIO_ROOT),
+> 
+> Which in turn comes from:
+> +	JH71X0__DIV(JH7110_SYSCLK_AUDIO_ROOT, "audio_root", 8, JH7110_SYSCLK_PLL2_OUT),
+> 
+> This leaves me wondering which clocks are *actually* required for a
+> functioning system - is it actually just osc and one of gmac1_rmii_refin
+> or gmac1_rgmii_rxin.
 
-Sorry. Misunderstood the question. Yes, I ran make dtbs_check and
-got these messages. But couldn't relate them with the
-minItems/maxItems mismatch...
+As I had mentioned somewhere before, some audio clocks need to change their
+parents at different stages of work. I should explain in detail here.
 
-	phy@7d000: clocks: [[8, 93], [8, 102]] is too short
-	phy@7d000: clock-names: ['aux', 'cfg_ahb'] is too short
+For the i2s*_ext clocks, we should use these external clocks as parents when
+the I2S module is working in the slave mode, while we should use the internal
+clocks as parents when the I2S module is working in the master mode.
 
-Will fix it now. Thanks for the clarification.
+For the tdm_ext clock, we use it as the clock source for an accurate playback
+rate. If we use the internal clock as clock source, the TDM can't work
+normally, because it can't get a required rate from the internal divider.
+By the way, note that we need to use the internal clock as clock source when
+we try to reset the tdm clock, otherwise, the reset will fail.
 
-> > We only have 2 items. Is it ok change the minItems to 2?
->
-> Yes, because you must update top level (and maybe other) constraints to
-> correct ones. Just test the code...
+For the mclk_ext clock, which is 12.288MHz, it's used as the clock source
+through all the running time, otherwise, the daughter clocks can't get the
+required rate from the internal PLL2 clock (1188MHz) through dividers.
 
-Ok.
+So all these audio external clocks (i2s*_ext / tdm_ext / mclk_ext) are
+actually required.
 
-Thanks
-Varada
+Best regards,
+Hal
 
->
->
-> Best regards,
-> Krzysztof
->
+> 
+> I really don't want you to have to go and spell out every combination of
+> clocks to have some sort of validation here.
+> 
+> Stephen, Rob or Krzysztof, do you have any guidance on this situation
+> (assuming I've not made a fool of myself)? There's probably something
+> "obvious" that I'm missing, as I am sure this is not a unique problem.
+> 
+> Cheers,
+> Conor.
+> 
+>> +
+>> +  '#clock-cells':
+>> +    const: 1
+>> +    description:
+>> +      See <dt-bindings/clock/starfive,jh7110-crg.h> for valid indices.
+>> +
+>> +  '#reset-cells':
+>> +    const: 1
+>> +    description:
+>> +      See <dt-bindings/reset/starfive,jh7110-crg.h> for valid indices.
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +  - '#clock-cells'
+>> +  - '#reset-cells'
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    clock-controller@13020000 {
+>> +        compatible = "starfive,jh7110-syscrg";
+>> +        reg = <0x13020000 0x10000>;
+>> +        clocks = <&osc>, <&gmac1_rmii_refin>,
+>> +                 <&gmac1_rgmii_rxin>,
+>> +                 <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
+>> +                 <&i2srx_bclk_ext>, <&i2srx_lrck_ext>,
+>> +                 <&tdm_ext>, <&mclk_ext>;
+>> +        clock-names = "osc", "gmac1_rmii_refin",
+>> +                      "gmac1_rgmii_rxin",
+>> +                      "i2stx_bclk_ext", "i2stx_lrck_ext",
+>> +                      "i2srx_bclk_ext", "i2srx_lrck_ext",
+>> +                      "tdm_ext", "mclk_ext";
+>> +        #clock-cells = <1>;
+>> +        #reset-cells = <1>;
+>> +    };
+
