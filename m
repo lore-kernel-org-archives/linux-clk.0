@@ -2,79 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23856C6FD1F
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Mar 2023 23:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5373CC6FD1F
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Mar 2023 01:24:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229555AbjCVX5f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Mar 2023 19:57:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56502 "EHLO
+        id S229670AbjCWBYh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Mar 2023 21:24:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230150AbjCVX5e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 19:57:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8552F305DE;
-        Wed, 22 Mar 2023 16:57:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DAB0462351;
-        Wed, 22 Mar 2023 23:57:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30014C433EF;
-        Wed, 22 Mar 2023 23:57:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679529451;
-        bh=y9U/5hZyFfh0oQkHVBhuHaZSSNPer4aXYq7GpolG5rU=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=hlTMsxwsdHEPbcZ0FHd0U3HCMN+5KMbB4GdzyMoynPPZs7M3Qulola3FMclIzMBGy
-         MA7IFAqYndlH8nBQt2vxK/XtVd/DEocK2WNMBtztWjrQrEjTcaf6mKYAaLYklXaw2Y
-         ccaJGUBIm0ZGvP+2ZkucdrrfK0BsWLYn+hV1JDOU2MkkKVEq4lBB3SYKqS55TF9w8K
-         g73lN0U5uwtbmEX7W6uySdtlT0wnOrAoWPGY88DPUrYN4Bj2pgcF9sJo6QorusZx4s
-         0pnDosayty3cjQPJ1PXT23JXZKQmywKg0PkvASpPD/i+jZLydr4DxMcWmW1qVJkh+b
-         8aJmkhStClcSw==
-Message-ID: <ce3e64bedd449e6c782e243c28cf4945.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <b4beb457-8581-4b2f-8655-2e3f82a94f75@spud>
-References: <20230320103750.60295-1-hal.feng@starfivetech.com> <20230320103750.60295-12-hal.feng@starfivetech.com> <b4beb457-8581-4b2f-8655-2e3f82a94f75@spud>
-Subject: Re: [PATCH v6 11/21] dt-bindings: clock: Add StarFive JH7110 system clock and reset generator
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S229480AbjCWBYh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 21:24:37 -0400
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 041662F06E;
+        Wed, 22 Mar 2023 18:24:34 -0700 (PDT)
+Received: from loongson.cn (unknown [10.20.42.35])
+        by gateway (Coremail) with SMTP id _____8BxPNpRqhtk5CcQAA--.12948S3;
+        Thu, 23 Mar 2023 09:24:33 +0800 (CST)
+Received: from [10.20.42.35] (unknown [10.20.42.35])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8DxAeVOqhtkoQcKAA--.39350S3;
+        Thu, 23 Mar 2023 09:24:33 +0800 (CST)
+Subject: Re: [PATCH v15 2/2] clk: clk-loongson2: add clock controller driver
+ support
+To:     Stephen Boyd <sboyd@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        linux-kernel@vger.kernel.org
-To:     Conor Dooley <conor@kernel.org>,
-        Hal Feng <hal.feng@starfivetech.com>
-Date:   Wed, 22 Mar 2023 16:57:29 -0700
-User-Agent: alot/0.10
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Jianmin Lv <lvjianmin@loongson.cn>, wanghongliang@loongson.cn,
+        Liu Peibao <liupeibao@loongson.cn>,
+        loongson-kernel@lists.loongnix.cn, zhuyinbo@loongson.cn
+References: <20230321130710.20236-1-zhuyinbo@loongson.cn>
+ <20230321130710.20236-2-zhuyinbo@loongson.cn>
+ <26c4712672de6c4f70f88c6846bc892f.sboyd@kernel.org>
+ <79ceb9c5-2657-ca9b-e017-5ec14acfcda1@loongson.cn>
+ <55bea6244a6d41e3d7d38d6cb6d379e9.sboyd@kernel.org>
+From:   zhuyinbo <zhuyinbo@loongson.cn>
+Message-ID: <e50268ba-5b9c-9b37-5302-89482eb600b4@loongson.cn>
+Date:   Thu, 23 Mar 2023 09:24:30 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <55bea6244a6d41e3d7d38d6cb6d379e9.sboyd@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID: AQAAf8DxAeVOqhtkoQcKAA--.39350S3
+X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjvJXoWrKF4kKw4rZr15WF43CFy8Krg_yoW8JrWrpa
+        43AFW5CF4kJFnFvr93tw4rWF1SvrWftFy3Gr12gryUu398J347WF18tFWYk3yxArs5AF10
+        vayqqr4FkFn8ArJanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        bTkFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
+        kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28E
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM2
+        8EF7xvwVC2z280aVCY1x0267AKxVW8JVW8Jr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq
+        07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7
+        xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
+        z7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwI
+        xGrwCF04k20xvE74AGY7Cv6cx26rWl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAF
+        wI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zV
+        AF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4l
+        IxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCw
+        CI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVF
+        xhVjvjDU0xZFpf9x07j1jgxUUUUU=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Conor Dooley (2023-03-22 14:53:37)
->=20
-> This leaves me wondering which clocks are *actually* required for a
-> functioning system - is it actually just osc and one of gmac1_rmii_refin
-> or gmac1_rgmii_rxin.
->=20
-> I really don't want you to have to go and spell out every combination of
-> clocks to have some sort of validation here.
->=20
-> Stephen, Rob or Krzysztof, do you have any guidance on this situation
-> (assuming I've not made a fool of myself)? There's probably something
-> "obvious" that I'm missing, as I am sure this is not a unique problem.
->=20
 
-You can always use '<0>' if the pad isn't connected for that clk input.
-It's not great, but it works, so there's an escape hatch if you need it.
+在 2023/3/22 下午11:16, Stephen Boyd 写道:
+> Quoting zhuyinbo (2023-03-21 19:07:26)
+>> 在 2023/3/22 上午7:42, Stephen Boyd 写道:
+>>> Quoting Yinbo Zhu (2023-03-21 06:07:10)
+>>>> diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
+>>>> new file mode 100644
+>>>> index 000000000000..090810655511
+>>>> --- /dev/null
+>>>> +++ b/drivers/clk/clk-loongson2.c
+>>>> @@ -0,0 +1,344 @@
+> [....]
+>>>> +
+>>>> +static void __iomem *loongson2_pll_base;
+>>> Why is this a global?
+>> Normally, this should be an element in the structure, but since there is
+>> only one
+>>
+>> element, It is directly defined as a global variable for use by other
+>> function.
+>>
+> Ok. Globals are frowned upon but it's just a single pointers so I guess
+> it's Ok.
+>
+>>>> +               return PTR_ERR(loongson2_pll_base);
+>>>> +
+>>>> +       loongson2_clocks_init(dev);
+>>> Please inline this function here.
+>> The loongson2_clocks_init had inline in this version, or do you mean something else ? Need to inline the probe?
+> I mean get rid of the function loongson2_clocks_init() and move the code
+> in that function into this probe function. With this patch the probe is
+> split to two functions when it should be one function.
+
+okay, I got it.
+
+
+Thanks.
+
