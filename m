@@ -2,153 +2,127 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55CE4C6FD1C
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Mar 2023 06:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDCCBC6FD1D
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Mar 2023 06:37:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229690AbjCWGPR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Mar 2023 02:15:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39976 "EHLO
+        id S229997AbjCWGha (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Mar 2023 02:37:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbjCWGPQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Mar 2023 02:15:16 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F5A010A96;
-        Wed, 22 Mar 2023 23:15:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1679552115; x=1711088115;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=K+tsOStEKSUmWTrSxW8kyIQZ2eMLpgKoXdX9PkiVDnE=;
-  b=fZiGnkMNZHTfuqQ6dTlJjSOm71yU2Hb75qE6UF2ZiCZxBoLnHJRsGbZX
-   HezYzUkVwfj/A5wiry4XkI3srYgzqTK9KSps+yvmyrsoBc7moCJzvhCGY
-   FjsI6S5MPgetq7avza2ivQxugdEg/JiEqUuG3U6OgjvCH2PLEHdMIUwXt
-   yXXOJc7dWzcsLGq+qOm1j99sJiXIQnljp/AQ25+/LSl5WGDifsKQoq2Zd
-   6fEyFCEaKNlrswZQAvLqooDC2XF0gmu+JQwRCl7+UHAQA4zNco9cKj1bM
-   Cn+tbVU9PiTJ2ijsDaN2rq7y6+1q9v95HqA/E/d5DEsVmW5b+fWy5yrNF
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10657"; a="327785202"
-X-IronPort-AV: E=Sophos;i="5.98,283,1673942400"; 
-   d="scan'208";a="327785202"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2023 23:15:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10657"; a="746598086"
-X-IronPort-AV: E=Sophos;i="5.98,283,1673942400"; 
-   d="scan'208";a="746598086"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 22 Mar 2023 23:15:12 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pfEEC-000E2S-0C;
-        Thu, 23 Mar 2023 06:15:12 +0000
-Date:   Thu, 23 Mar 2023 14:14:19 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, David Yang <mmyangfl@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 6/9] clk: hisilicon: Convert to platform_driver
-Message-ID: <202303231426.GOJVQoEn-lkp@intel.com>
-References: <20230322164201.2454771-7-mmyangfl@gmail.com>
+        with ESMTP id S229691AbjCWGh3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Mar 2023 02:37:29 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 493B31E2B3;
+        Wed, 22 Mar 2023 23:37:28 -0700 (PDT)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32N49WI8004664;
+        Thu, 23 Mar 2023 06:37:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
+ cc : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=qcppdkim1; bh=FNg5Oh6Q1umWQmzGDXWoO0b7gZutocILacI50suqzjk=;
+ b=TsTYowU8jt+RN0zklRIMgSc4Qbumb1I7UM07ZvYBfLMDK06gcydR+7IdZIxLBaKJMCmw
+ IV/jVJCcXx1p46rhWr75gC1BUZtyUbQxTAe2rLS1B5QCYO75vS1kPtkWcbKYJuBJO0PR
+ fqtzOcr5IcN5fvnLgLeGIHcXYh5d57VbM1UpLsB88TV++uK6vFWwG36UJoC/JZ6w/HUb
+ 69vHL96i/WTub+lU0sywItUf4wu0GkjtlJjPx2R1bzhZx+ogysTpOf6o4Q4fbQNzAHvQ
+ EmkYZU34HaQKKE4s8YIAVrQ1zBGc3iTEZtFLLv/MI1cSOf1CA3OknxHKXgJKetLCIlDR vA== 
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pgfaxg8us-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 23 Mar 2023 06:37:19 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32N6bJoe024806
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 23 Mar 2023 06:37:19 GMT
+Received: from varda-linux.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.41; Wed, 22 Mar 2023 23:37:12 -0700
+Date:   Thu, 23 Mar 2023 12:07:06 +0530
+From:   Varadarajan Narayanan <quic_varada@quicinc.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <gregkh@linuxfoundation.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <quic_wcheng@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v3 2/8] dt-bindings: phy: qcom,qmp-usb: Add IPQ9574 USB3
+ PHY
+Message-ID: <20230323063705.GA19800@varda-linux.qualcomm.com>
+References: <cover.1679479634.git.quic_varada@quicinc.com>
+ <e34d8eddc1dda8bb0ff840a7dd18ca4dd6c62d22.1679479634.git.quic_varada@quicinc.com>
+ <c52a329d-8683-de82-9b55-209b99ac36c0@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20230322164201.2454771-7-mmyangfl@gmail.com>
+In-Reply-To: <c52a329d-8683-de82-9b55-209b99ac36c0@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: jjlrriOG6OMwRrVapGnVNpVWfVfBCuS0
+X-Proofpoint-ORIG-GUID: jjlrriOG6OMwRrVapGnVNpVWfVfBCuS0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-22_21,2023-03-22_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 phishscore=0 impostorscore=0
+ adultscore=0 spamscore=0 suspectscore=0 mlxlogscore=934 clxscore=1015
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303150002 definitions=main-2303230050
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi David,
+On Wed, Mar 22, 2023 at 10:52:44PM +0100, Krzysztof Kozlowski wrote:
+> On 22/03/2023 11:44, Varadarajan Narayanan wrote:
+> > Add dt-bindings for USB3 PHY found on Qualcomm IPQ9574
+> >
+> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> >
+> > ---
+> >  Changes in v2:
+> > 	- Updated sections missed in previous patch
+> > ---
+> >  .../bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml    | 22 ++++++++++++++++++++++
+> >  1 file changed, 22 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
+> > index e81a382..beae44c 100644
+> > --- a/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
+> > +++ b/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
+> > @@ -21,6 +21,7 @@ properties:
+> >      enum:
+> >        - qcom,ipq6018-qmp-usb3-phy
+> >        - qcom,ipq8074-qmp-usb3-phy
+> > +      - qcom,ipq9574-qmp-usb3-phy
+> >        - qcom,msm8996-qmp-usb3-phy
+> >        - qcom,msm8998-qmp-usb3-phy
+> >        - qcom,qcm2290-qmp-usb3-phy
+> > @@ -204,6 +205,27 @@ allOf:
+> >          compatible:
+> >            contains:
+> >              enum:
+> > +              - qcom,ipq9574-qmp-usb3-phy
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          maxItems: 2
+>
+> toplevel defines minItems as 3, so are you sure this works? Did you test it?
 
-Thank you for the patch! Perhaps something to improve:
+Yes, this is tested. Able to do I/O.
+We only have 2 items. Is it ok change the minItems to 2?
 
-[auto build test WARNING on 6015b1aca1a233379625385feb01dd014aca60b5]
+Thanks
+Varada
 
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Yang/clk-hisilicon-Rename-Hi3798CV200-to-Hi3798/20230323-004453
-base:   6015b1aca1a233379625385feb01dd014aca60b5
-patch link:    https://lore.kernel.org/r/20230322164201.2454771-7-mmyangfl%40gmail.com
-patch subject: [PATCH v7 6/9] clk: hisilicon: Convert to platform_driver
-config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20230323/202303231426.GOJVQoEn-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/f551034776d2c5eb0495634bd2f8bde5c4743f92
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review David-Yang/clk-hisilicon-Rename-Hi3798CV200-to-Hi3798/20230323-004453
-        git checkout f551034776d2c5eb0495634bd2f8bde5c4743f92
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/clk/hisilicon/
-
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202303231426.GOJVQoEn-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/clk/hisilicon/clk-hix5hd2.c: In function 'hix5hd2_clk_register_complex':
->> drivers/clk/hisilicon/clk-hix5hd2.c:260:46: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-     260 |         struct hix5hd2_complex_clock *clks = clocks;
-         |                                              ^~~~~~
-
-
-vim +/const +260 drivers/clk/hisilicon/clk-hix5hd2.c
-
-   255	
-   256	static int
-   257	hix5hd2_clk_register_complex(struct device *dev, const void *clocks, int nums,
-   258				     struct hisi_clock_data *data)
-   259	{
- > 260		struct hix5hd2_complex_clock *clks = clocks;
-   261		void __iomem *base = data->base;
-   262		int i;
-   263	
-   264		for (i = 0; i < nums; i++) {
-   265			struct hix5hd2_clk_complex *p_clk;
-   266			struct clk *clk;
-   267			struct clk_init_data init;
-   268	
-   269			p_clk = kzalloc(sizeof(*p_clk), GFP_KERNEL);
-   270			if (!p_clk)
-   271				return -ENOMEM;
-   272	
-   273			init.name = clks[i].name;
-   274			if (clks[i].type == TYPE_ETHER)
-   275				init.ops = &clk_ether_ops;
-   276			else
-   277				init.ops = &clk_complex_ops;
-   278	
-   279			init.flags = 0;
-   280			init.parent_names =
-   281				(clks[i].parent_name ? &clks[i].parent_name : NULL);
-   282			init.num_parents = (clks[i].parent_name ? 1 : 0);
-   283	
-   284			p_clk->ctrl_reg = base + clks[i].ctrl_reg;
-   285			p_clk->ctrl_clk_mask = clks[i].ctrl_clk_mask;
-   286			p_clk->ctrl_rst_mask = clks[i].ctrl_rst_mask;
-   287			p_clk->phy_reg = base + clks[i].phy_reg;
-   288			p_clk->phy_clk_mask = clks[i].phy_clk_mask;
-   289			p_clk->phy_rst_mask = clks[i].phy_rst_mask;
-   290			p_clk->hw.init = &init;
-   291	
-   292			clk = clk_register(NULL, &p_clk->hw);
-   293			if (IS_ERR(clk)) {
-   294				kfree(p_clk);
-   295				pr_err("%s: failed to register clock %s\n",
-   296				       __func__, clks[i].name);
-   297				return PTR_ERR(p_clk);
-   298			}
-   299	
-   300			data->clk_data.clks[clks[i].id] = clk;
-   301		}
-   302	
-   303		return 0;
-   304	}
-   305	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+>
+> Best regards,
+> Krzysztof
+>
