@@ -2,47 +2,47 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBFA3C7619A
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Mar 2023 09:02:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB32C6FD1C
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Mar 2023 09:04:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229672AbjCWJCi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Mar 2023 05:02:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39238 "EHLO
+        id S231494AbjCWJD7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Mar 2023 05:03:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231194AbjCWJCe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Mar 2023 05:02:34 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04482193CD;
-        Thu, 23 Mar 2023 02:02:24 -0700 (PDT)
+        with ESMTP id S229903AbjCWJD4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Mar 2023 05:03:56 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C786C1BAC8;
+        Thu, 23 Mar 2023 02:03:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1679562145; x=1711098145;
+  t=1679562233; x=1711098233;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=PaQtkvTOLRhCk6nrvbWJlygudDxC9m49B4Nt0wj5BMc=;
-  b=yJywUyoMCTuAFFAJKjbbZ6a9n3Bw5Y2/uR3PLpCsumlo6yTBeFbZ4AOU
-   zSXN09gaRymNAuZ7r/aOnquUFSsnx/FdMnlezSp1vZzQpPpObidqPLnFN
-   9ZKIU8684AqFXMG6zcRXKxRnTAWa8OHyQWuOAry262dJAUbhw+CX0MCK8
-   h+DXozjLqPRTiwlqXSCZJSX1Jln2RMXDXZ2/R+v+wSHfgE6ffCq/utR+J
-   fXpJV7XsjLHBCKp3RXJ7chEnnaNT5QKI6/FP4Mya9qEqwc6LI4YJ0D+ZQ
-   EtCYXpnn5V8YRCOVoknXjpsSzMSpv2XF3OPGk0rwmJikpOkntixqburj2
-   w==;
+  bh=pfEd7PgZgr1Enscty5HN6t0iA9hWqdaXMHbtn/VGXDE=;
+  b=EQtWeyABmSX8woix394JzYCZHr9aXm42jqXXIPuPmKp5rq3gDAUd39+o
+   zwuTWo/j15FHuZ0S6xmzIjZaNGUO4x1sfQhOBJCATVEUhP1EpS1Q08+bD
+   EEEq31N4lYTTCS7mzFq8QC6Rhd9PpEPhvWTaApXkXlBctL3Iscf1wUb1b
+   sPBSTYg77S0ltAuWjhsYf2npZUSc7+tYhNnVclqgnJZHc7/uFOx/av/i9
+   zSxhujgSVkJRQS5pUsxP/j0YuVS1A3y61MQPxhMuGcnQjPFFrHNj3HMa0
+   3Kito3D/Q8mMfB34EU2aFpupQxcrj8CcCWxZq+31do8ZaM1o5qi8u0/vS
+   A==;
 X-IronPort-AV: E=Sophos;i="5.98,283,1673938800"; 
-   d="asc'?scan'208";a="203031984"
+   d="asc'?scan'208";a="217613551"
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 23 Mar 2023 02:02:23 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 23 Mar 2023 02:03:52 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Thu, 23 Mar 2023 02:02:20 -0700
-Received: from wendy (10.10.115.15) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server (version=TLS1_2,
+ 15.1.2507.21; Thu, 23 Mar 2023 02:03:44 -0700
+Received: from wendy (10.10.115.15) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
- Transport; Thu, 23 Mar 2023 02:02:16 -0700
-Date:   Thu, 23 Mar 2023 09:01:58 +0000
+ Transport; Thu, 23 Mar 2023 02:03:41 -0700
+Date:   Thu, 23 Mar 2023 09:03:23 +0000
 From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Hal Feng <hal.feng@starfivetech.com>
-CC:     Conor Dooley <conor@kernel.org>, <linux-clk@vger.kernel.org>,
+To:     Conor Dooley <conor@kernel.org>, <hal.feng@starfivetech.com>
+CC:     Hal Feng <hal.feng@starfivetech.com>, <linux-clk@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -58,197 +58,83 @@ CC:     Conor Dooley <conor@kernel.org>, <linux-clk@vger.kernel.org>,
         Marc Zyngier <maz@kernel.org>,
         Emil Renner Berthing <emil.renner.berthing@canonical.com>,
         <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 11/21] dt-bindings: clock: Add StarFive JH7110 system
- clock and reset generator
-Message-ID: <828e8cb9-a4c6-4c2d-8a23-2cfdc4395fe1@spud>
+Subject: Re: [PATCH v6 19/21] riscv: dts: starfive: Add initial StarFive
+ JH7110 device tree
+Message-ID: <6ce5b897-f1c2-4b58-9353-9d9e881ad237@spud>
 References: <20230320103750.60295-1-hal.feng@starfivetech.com>
- <20230320103750.60295-12-hal.feng@starfivetech.com>
- <b4beb457-8581-4b2f-8655-2e3f82a94f75@spud>
- <5b75161e-3d0d-50e5-fd4e-af92edf62317@starfivetech.com>
+ <20230320103750.60295-20-hal.feng@starfivetech.com>
+ <60359574-8bce-40f2-99db-6d81f6e6c5c3@spud>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Foui7XXDAfVTlAsO"
+        protocol="application/pgp-signature"; boundary="Kj0I/hLRt9/h7AYV"
 Content-Disposition: inline
-In-Reply-To: <5b75161e-3d0d-50e5-fd4e-af92edf62317@starfivetech.com>
+In-Reply-To: <60359574-8bce-40f2-99db-6d81f6e6c5c3@spud>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---Foui7XXDAfVTlAsO
+--Kj0I/hLRt9/h7AYV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hal, Emil,
-
-On Thu, Mar 23, 2023 at 03:44:41PM +0800, Hal Feng wrote:
-> On Wed, 22 Mar 2023 21:53:37 +0000, Conor Dooley wrote:
-> > On Mon, Mar 20, 2023 at 06:37:40PM +0800, Hal Feng wrote:
-> >> From: Emil Renner Berthing <kernel@esmil.dk>
-> >>=20
-> >> Add bindings for the system clock and reset generator (SYSCRG) on the
-> >> JH7110 RISC-V SoC by StarFive Ltd.
-> >>=20
-> >> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> >> Reviewed-by: Rob Herring <robh@kernel.org>
-> >> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> >> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
-> >> ---
-> >>  .../clock/starfive,jh7110-syscrg.yaml         | 104 +++++++++
-> >>  MAINTAINERS                                   |   8 +-
-> >>  .../dt-bindings/clock/starfive,jh7110-crg.h   | 203 ++++++++++++++++++
-> >>  .../dt-bindings/reset/starfive,jh7110-crg.h   | 142 ++++++++++++
-> >>  4 files changed, 454 insertions(+), 3 deletions(-)
-> >>  create mode 100644 Documentation/devicetree/bindings/clock/starfive,j=
-h7110-syscrg.yaml
-> >>  create mode 100644 include/dt-bindings/clock/starfive,jh7110-crg.h
-> >>  create mode 100644 include/dt-bindings/reset/starfive,jh7110-crg.h
-> >>=20
-> >> diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-s=
-yscrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg=
-=2Eyaml
-> >> new file mode 100644
-> >> index 000000000000..84373ae31644
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.y=
-aml
-> >> @@ -0,0 +1,104 @@
-> >> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: http://devicetree.org/schemas/clock/starfive,jh7110-syscrg.yaml#
-> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> +
-> >> +title: StarFive JH7110 System Clock and Reset Generator
-> >> +
-> >> +maintainers:
-> >> +  - Emil Renner Berthing <kernel@esmil.dk>
-> >> +
-> >> +properties:
-> >> +  compatible:
-> >> +    const: starfive,jh7110-syscrg
-> >> +
-> >> +  reg:
-> >> +    maxItems: 1
-> >> +
-> >> +  clocks:
-> >> +    oneOf:
-> >> +      - items:
-> >> +          - description: Main Oscillator (24 MHz)
-> >> +          - description: GMAC1 RMII reference or GMAC1 RGMII RX
-> >> +          - description: External I2S TX bit clock
-> >> +          - description: External I2S TX left/right channel clock
-> >> +          - description: External I2S RX bit clock
-> >> +          - description: External I2S RX left/right channel clock
-> >> +          - description: External TDM clock
-> >> +          - description: External audio master clock
-> >> +
-> >> +      - items:
-> >> +          - description: Main Oscillator (24 MHz)
-> >> +          - description: GMAC1 RMII reference
-> >> +          - description: GMAC1 RGMII RX
-> >> +          - description: External I2S TX bit clock
-> >> +          - description: External I2S TX left/right channel clock
-> >> +          - description: External I2S RX bit clock
-> >> +          - description: External I2S RX left/right channel clock
-> >> +          - description: External TDM clock
-> >> +          - description: External audio master clock
-> >> +
-> >> +  clock-names:
-> >> +    oneOf:
-> >> +      - items:
-> >> +          - const: osc
-> >> +          - enum:
-> >> +              - gmac1_rmii_refin
-> >> +              - gmac1_rgmii_rxin
-> >> +          - const: i2stx_bclk_ext
-> >> +          - const: i2stx_lrck_ext
-> >> +          - const: i2srx_bclk_ext
-> >> +          - const: i2srx_lrck_ext
-> >> +          - const: tdm_ext
-> >> +          - const: mclk_ext
-> >> +
-> >> +      - items:
-> >> +          - const: osc
-> >> +          - const: gmac1_rmii_refin
-> >> +          - const: gmac1_rgmii_rxin
-> >> +          - const: i2stx_bclk_ext
-> >> +          - const: i2stx_lrck_ext
-> >> +          - const: i2srx_bclk_ext
-> >> +          - const: i2srx_lrck_ext
-> >> +          - const: tdm_ext
-> >> +          - const: mclk_ext
+On Wed, Mar 22, 2023 at 10:02:40PM +0000, Conor Dooley wrote:
+> On Mon, Mar 20, 2023 at 06:37:48PM +0800, Hal Feng wrote:
+> > From: Emil Renner Berthing <kernel@esmil.dk>
 > >=20
-> > I'm sorry to be a bit of a bore about these bindings, but Emil mentioned
-> > to me today that he had some doubts about whether any of these audio
-> > clocks are actually required.
-> > I've had a bit of a look at the driver, cos the TRM that I have doesn't
-> > describe the clock tree (from what recall at least) and I think he is
-> > right.
-> > For example, the TDM clock:
-> > +	JH71X0_GATE(JH7110_SYSCLK_TDM_AHB, "tdm_ahb", 0, JH7110_SYSCLK_AHB0),
-> > +	JH71X0_GATE(JH7110_SYSCLK_TDM_APB, "tdm_apb", 0, JH7110_SYSCLK_APB0),
-> > +	JH71X0_GDIV(JH7110_SYSCLK_TDM_INTERNAL, "tdm_internal", 0, 64, JH7110=
-_SYSCLK_MCLK),
-> > +	JH71X0__MUX(JH7110_SYSCLK_TDM_TDM, "tdm_tdm", 2,
-> > +		    JH7110_SYSCLK_TDM_INTERNAL,
-> > +		    JH7110_SYSCLK_TDM_EXT),
+> > Add initial device tree for the JH7110 RISC-V SoC by StarFive
+> > Technology Ltd.
 > >=20
-> > Hopefully, I'm not making a balls of something here, but it looks like I
-> > can choose an internal TDM clock, that is based on JH7110_SYSCLK_MCLK,
-> > which in turn comes from either an internal or external source.
-> > If I am following correctly, that'd be:
-> > +	JH71X0__DIV(JH7110_SYSCLK_MCLK_INNER, "mclk_inner", 64, JH7110_SYSCLK=
-_AUDIO_ROOT),
-> >=20
-> > Which in turn comes from:
-> > +	JH71X0__DIV(JH7110_SYSCLK_AUDIO_ROOT, "audio_root", 8, JH7110_SYSCLK_=
-PLL2_OUT),
-> >=20
-> > This leaves me wondering which clocks are *actually* required for a
-> > functioning system - is it actually just osc and one of gmac1_rmii_refin
-> > or gmac1_rgmii_rxin.
+> > Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
+> > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> > Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> > Co-developed-by: Jianlong Huang <jianlong.huang@starfivetech.com>
+> > Signed-off-by: Jianlong Huang <jianlong.huang@starfivetech.com>
+> > Co-developed-by: Hal Feng <hal.feng@starfivetech.com>
+> > Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+> > ---
 >=20
-> As I had mentioned somewhere before, some audio clocks need to change the=
-ir
-> parents at different stages of work. I should explain in detail here.
+> > +		S7_0: cpu@0 {
+> > +			compatible =3D "sifive,s7", "riscv";
+> > +			reg =3D <0>;
+> > +			d-cache-block-size =3D <64>;
+> > +			d-cache-sets =3D <64>;
+> > +			d-cache-size =3D <8192>;
+> > +			d-tlb-sets =3D <1>;
+> > +			d-tlb-size =3D <40>;
+> > +			device_type =3D "cpu";
+> > +			i-cache-block-size =3D <64>;
+> > +			i-cache-sets =3D <64>;
+> > +			i-cache-size =3D <16384>;
+> > +			i-tlb-sets =3D <1>;
+> > +			i-tlb-size =3D <40>;
+> > +			mmu-type =3D "riscv,sv39";
+> > +			next-level-cache =3D <&ccache>;
+> > +			riscv,isa =3D "rv64imac_zba_zbb";
+> > +			tlb-split;
+> > +			status =3D "disabled";
 >=20
-> For the i2s*_ext clocks, we should use these external clocks as parents w=
-hen
-> the I2S module is working in the slave mode, while we should use the inte=
-rnal
-> clocks as parents when the I2S module is working in the master mode.
->=20
-> For the tdm_ext clock, we use it as the clock source for an accurate play=
-back
-> rate. If we use the internal clock as clock source, the TDM can't work
-> normally, because it can't get a required rate from the internal divider.
-> By the way, note that we need to use the internal clock as clock source w=
-hen
-> we try to reset the tdm clock, otherwise, the reset will fail.
->=20
-> For the mclk_ext clock, which is 12.288MHz, it's used as the clock source
-> through all the running time, otherwise, the daughter clocks can't get the
-> required rate from the internal PLL2 clock (1188MHz) through dividers.
->=20
-> So all these audio external clocks (i2s*_ext / tdm_ext / mclk_ext) are
-> actually required.
+> Jess pointed out on IRC that this S7 entry looks wrong as it is claiming
+> that the S7 has an mmu. I didn't go looking back in the history of
+> u74-mc core complex manuals, but the latest version does not show an mmu
+> for the S7.
 
-Okay. I think I am okay with leaving the binding as-is then, and if
-someone needs to omit the entire audio subsystem on the SoC, they can
-follow Stephen's suggestion.
+BTW Hal, if the dt-binding stuff is okay with Emil, I can just remove
+the mmu here if you confirm it is a mistake rather than you needing to
+resubmit to remove it.
 
-@Emil, is that okay with you?
+Cheers,
+Conor.
 
---Foui7XXDAfVTlAsO
+--Kj0I/hLRt9/h7AYV
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZBwVhgAKCRB4tDGHoIJi
-0i/3AP9r2zZm6eoH/54hqo2pd+NSfc9/7hEFva5Rb8WtL+g7jQD/eIwjER83anUB
-EBld9LgX9JfHICJiEkV/c3WCtgEtbQo=
-=XiNe
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZBwV2gAKCRB4tDGHoIJi
+0mosAQC0tTdSuLZs5V6/bJW0odHWJ3cmDx/Sya5mfwta/QgwXAD/YImkx/axtw7b
+1SczMbwlvay1eA/viVfufOvLXfk5XQ0=
+=2Nu6
 -----END PGP SIGNATURE-----
 
---Foui7XXDAfVTlAsO--
+--Kj0I/hLRt9/h7AYV--
