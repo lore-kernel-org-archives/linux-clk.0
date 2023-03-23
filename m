@@ -2,107 +2,102 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5373CC6FD1F
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Mar 2023 01:24:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D8B9C6FD1F
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Mar 2023 02:52:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229670AbjCWBYh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Mar 2023 21:24:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44460 "EHLO
+        id S229589AbjCWCwn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Mar 2023 22:52:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229480AbjCWBYh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 21:24:37 -0400
+        with ESMTP id S229496AbjCWCwm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2023 22:52:42 -0400
 Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 041662F06E;
-        Wed, 22 Mar 2023 18:24:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4219520573;
+        Wed, 22 Mar 2023 19:52:40 -0700 (PDT)
 Received: from loongson.cn (unknown [10.20.42.35])
-        by gateway (Coremail) with SMTP id _____8BxPNpRqhtk5CcQAA--.12948S3;
-        Thu, 23 Mar 2023 09:24:33 +0800 (CST)
-Received: from [10.20.42.35] (unknown [10.20.42.35])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8DxAeVOqhtkoQcKAA--.39350S3;
-        Thu, 23 Mar 2023 09:24:33 +0800 (CST)
-Subject: Re: [PATCH v15 2/2] clk: clk-loongson2: add clock controller driver
- support
-To:     Stephen Boyd <sboyd@kernel.org>,
+        by gateway (Coremail) with SMTP id _____8Axz__2vhtk3CwQAA--.24599S3;
+        Thu, 23 Mar 2023 10:52:38 +0800 (CST)
+Received: from user-pc.202.106.0.20 (unknown [10.20.42.35])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8BxLL7uvhtkXhEKAA--.3341S2;
+        Thu, 23 Mar 2023 10:52:37 +0800 (CST)
+From:   Yinbo Zhu <zhuyinbo@loongson.cn>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
 Cc:     Jianmin Lv <lvjianmin@loongson.cn>, wanghongliang@loongson.cn,
         Liu Peibao <liupeibao@loongson.cn>,
-        loongson-kernel@lists.loongnix.cn, zhuyinbo@loongson.cn
-References: <20230321130710.20236-1-zhuyinbo@loongson.cn>
- <20230321130710.20236-2-zhuyinbo@loongson.cn>
- <26c4712672de6c4f70f88c6846bc892f.sboyd@kernel.org>
- <79ceb9c5-2657-ca9b-e017-5ec14acfcda1@loongson.cn>
- <55bea6244a6d41e3d7d38d6cb6d379e9.sboyd@kernel.org>
-From:   zhuyinbo <zhuyinbo@loongson.cn>
-Message-ID: <e50268ba-5b9c-9b37-5302-89482eb600b4@loongson.cn>
-Date:   Thu, 23 Mar 2023 09:24:30 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        loongson-kernel@lists.loongnix.cn,
+        Yinbo Zhu <zhuyinbo@loongson.cn>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v16 1/2] dt-bindings: clock: add loongson-2 boot clock index
+Date:   Thu, 23 Mar 2023 10:52:28 +0800
+Message-Id: <20230323025229.2971-1-zhuyinbo@loongson.cn>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <55bea6244a6d41e3d7d38d6cb6d379e9.sboyd@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID: AQAAf8DxAeVOqhtkoQcKAA--.39350S3
+X-CM-TRANSID: AQAAf8BxLL7uvhtkXhEKAA--.3341S2
 X-CM-SenderInfo: 52kx5xhqerqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjvJXoWrKF4kKw4rZr15WF43CFy8Krg_yoW8JrWrpa
-        43AFW5CF4kJFnFvr93tw4rWF1SvrWftFy3Gr12gryUu398J347WF18tFWYk3yxArs5AF10
-        vayqqr4FkFn8ArJanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+X-Coremail-Antispam: 1Uk129KBjvJXoW7KFW8CF1xKw4xXFWkArWkWFg_yoW8Jw4fpF
+        sYkrykGFWjyFWSkFsFvr1xGrn5Za17J3srAayjka4UAr43Jw1xXrs7Ja48Ar90qrW3ZFW7
+        ZF17Cw4rZF4Du3DanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
         qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        bTkFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
+        b38Fc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64
         kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28E
-        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM2
-        8EF7xvwVC2z280aVCY1x0267AKxVW8JVW8Jr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq
-        07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7
-        xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
-        z7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwI
-        xGrwCF04k20xvE74AGY7Cv6cx26rWl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAF
-        wI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zV
-        AF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4l
-        IxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCw
-        CI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVF
-        xhVjvjDU0xZFpf9x07j1jgxUUUUU=
+        F7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJw
+        A2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2AFwI0_Jrv_JF1le2I262IYc4CY
+        6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrV
+        C2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
+        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7
+        Cv6cx26rWl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAq
+        x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r
+        43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
+        7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
+        WUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU
+        7J3vUUUUU
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The Loongson-2 boot clock was used to spi and lio peripheral and
+this patch was to add boot clock index number.
 
-在 2023/3/22 下午11:16, Stephen Boyd 写道:
-> Quoting zhuyinbo (2023-03-21 19:07:26)
->> 在 2023/3/22 上午7:42, Stephen Boyd 写道:
->>> Quoting Yinbo Zhu (2023-03-21 06:07:10)
->>>> diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
->>>> new file mode 100644
->>>> index 000000000000..090810655511
->>>> --- /dev/null
->>>> +++ b/drivers/clk/clk-loongson2.c
->>>> @@ -0,0 +1,344 @@
-> [....]
->>>> +
->>>> +static void __iomem *loongson2_pll_base;
->>> Why is this a global?
->> Normally, this should be an element in the structure, but since there is
->> only one
->>
->> element, It is directly defined as a global variable for use by other
->> function.
->>
-> Ok. Globals are frowned upon but it's just a single pointers so I guess
-> it's Ok.
->
->>>> +               return PTR_ERR(loongson2_pll_base);
->>>> +
->>>> +       loongson2_clocks_init(dev);
->>> Please inline this function here.
->> The loongson2_clocks_init had inline in this version, or do you mean something else ? Need to inline the probe?
-> I mean get rid of the function loongson2_clocks_init() and move the code
-> in that function into this probe function. With this patch the probe is
-> split to two functions when it should be one function.
+Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+Change in v16:
+		1. NO change, but other patch in this series of patches has
+		   changes.
+Change in v15:
+		1. Add the acked-by for review information.
+Change in v14:
+		1. Add the history changelog for this patch.
+		2. Move the boot clock index in ending.
+Change in v13:
+		1. Add this patch as new patch and the clock driver patch need
+		   depend on this patch so add this patch as a series and set
+		   version number was v13.
+Change in v2 to v12:
+		1. This patch doesn't exit, so no changelog. 
 
-okay, I got it.
+ include/dt-bindings/clock/loongson,ls2k-clk.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-
-Thanks.
+diff --git a/include/dt-bindings/clock/loongson,ls2k-clk.h b/include/dt-bindings/clock/loongson,ls2k-clk.h
+index db1e27e792ff..3bc4dfc193c2 100644
+--- a/include/dt-bindings/clock/loongson,ls2k-clk.h
++++ b/include/dt-bindings/clock/loongson,ls2k-clk.h
+@@ -24,6 +24,7 @@
+ #define LOONGSON2_SATA_CLK				14
+ #define LOONGSON2_PIX0_CLK				15
+ #define LOONGSON2_PIX1_CLK				16
+-#define LOONGSON2_CLK_END				17
++#define LOONGSON2_BOOT_CLK				17
++#define LOONGSON2_CLK_END				18
+ 
+ #endif
+-- 
+2.20.1
 
