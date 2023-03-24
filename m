@@ -2,73 +2,235 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED5FC7619A
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Mar 2023 18:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3777CC6FD20
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Mar 2023 22:04:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231504AbjCXScA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Mar 2023 14:32:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46092 "EHLO
+        id S232362AbjCXWEE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Mar 2023 18:04:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230011AbjCXSby (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Mar 2023 14:31:54 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D695212BF;
-        Fri, 24 Mar 2023 11:31:38 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 15BF6CE276B;
-        Fri, 24 Mar 2023 18:31:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D091C433AC;
-        Fri, 24 Mar 2023 18:31:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679682695;
-        bh=wRBE24LcWjOGg2t9TBn4CHi2d572AMBII6jwnZxbL8A=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tnMbYpkq5Yf28p1rRw0M2I+uS/F31Yb6c2Hy4J7GcK2A17wki2lD/FqaM0SiaxWdC
-         A+AFQfUU11XJQnlxgcUgakMYCK3oJNboeCMOjguaU1tiOq88LQtKsPDhP0uDEHrnfL
-         2w36fhuLYxtnZrQIofKsJ+AkOtbf0aMuQvTeqTIE3/4gI9HCaNPWJ9LijBWkwMkXfw
-         4lk2G+R06c4g4qyEAtBGEdCSuzi8Boxj+RSadXkjA3X9e/DMhp/X8NePosldrSZc4s
-         P8zLrk/hlzUkL6i/20ELS+Waqiyc32F86xhumC//ROIeAkuCQHqWCSZDngBuRwpPxX
-         uFxmnVIJmPliQ==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        agross@kernel.org, jassisinghbrar@gmail.com,
-        devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        sboyd@kernel.org, konrad.dybcio@linaro.org,
-        linux-clk@vger.kernel.org,
-        Kathiravan T <quic_kathirav@quicinc.com>, robh+dt@kernel.org,
-        mturquette@baylibre.com
-Cc:     quic_varada@quicinc.com, quic_srichara@quicinc.com
-Subject: Re: (subset) [PATCH V3 0/5] Add APSS clock driver support for IPQ5332
-Date:   Fri, 24 Mar 2023 11:34:34 -0700
-Message-Id: <167968287203.2233401.11163223502955044307.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230217083308.12017-1-quic_kathirav@quicinc.com>
-References: <20230217083308.12017-1-quic_kathirav@quicinc.com>
+        with ESMTP id S231896AbjCXWEA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Mar 2023 18:04:00 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AE7F15899;
+        Fri, 24 Mar 2023 15:03:56 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id l27so3152595wrb.2;
+        Fri, 24 Mar 2023 15:03:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679695435;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :references:from:to:cc:subject:date:message-id:reply-to;
+        bh=eQ3RSbBi4GxRzlwFNletxU5cxz92xG3Lj6FTyrjdc0o=;
+        b=T3F8aNz2ox9uoURQlE0mq2sXW4z262BpvG7ZxRtAtIbFhPc/TQEpQM0a0SgR+TrqHO
+         CLYGJXT6hxHwzdY9UN32CZG2dOkIF2LFvXUPmwkIF/2GkwmMW7kb6axItHjQcEjAF96P
+         YoZ2Q3loL8sCvN2e52vHQqe+AQbmZyqmh9t2+HCpPytsWAA2sxbaBc61b92bJ1dDr0QQ
+         Tdx2iHxB/Aa/m/jyDHMcs00O0mdizZduxSlMQxMVQw/7cAeVdYgYGEV+MFN8ajK6+qK2
+         SFuRxlx0kY19AQ86OkmU5aCJ9GqDDqrZ45+h67Pz4nAn4V4ElL3E8abtemphkRCVy/gF
+         HzMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679695435;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :references:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eQ3RSbBi4GxRzlwFNletxU5cxz92xG3Lj6FTyrjdc0o=;
+        b=nmxnWhLnjHt3vcEBGatjhUU02G51BLUYULi2BQs8T4icOYnbGK69tW1ZyhLdYQcMdB
+         lQ0/cjB5ysCngJr+CEm08KzBxQPdvw9X2h6gTwaZr765p/kVhGS3ZHa9p2MkUwe4i6DO
+         +mq78Ig92aPgTQIc1F70Sq/YjIDabu83Pt9ZFe8r6o9fb3z0cRTseWTLlOrOFg+vtI2b
+         pm+PiiHs2A9PrdXj9dpJ6nghIOvs3c/SBtAPr8/4HfP3MAPqgCx3MF2VYczslInfrCzo
+         1GdO642oQVdIw8XR/hKtcau1UhnMIXiv9pEJQI5nRdopNyqqUpazgyVMpzeyhK/CGJCu
+         +E6Q==
+X-Gm-Message-State: AAQBX9ccfpBnfgybTJcuB6w0QlS5vELRyLYPQwuxym7dv63XmkNTTpek
+        gNP11EBchsClD+5U2Z4sRJo=
+X-Google-Smtp-Source: AKy350bTnEgVdoWb1kTWyTj04kbZ8RkYf2o8/EHnYZiiSg63myut6K0B/vHtQugbPkbZgvwsB8kF9A==
+X-Received: by 2002:adf:e905:0:b0:2ce:a096:3ff2 with SMTP id f5-20020adfe905000000b002cea0963ff2mr3187613wrm.63.1679695434807;
+        Fri, 24 Mar 2023 15:03:54 -0700 (PDT)
+Received: from localhost (94.197.5.156.threembb.co.uk. [94.197.5.156])
+        by smtp.gmail.com with ESMTPSA id e9-20020adffc49000000b002be5bdbe40csm19237361wrs.27.2023.03.24.15.03.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Mar 2023 15:03:54 -0700 (PDT)
+References: <20221018-clk-range-checks-fixes-v2-0-f6736dec138e@cerno.tech>
+ <20221018-clk-range-checks-fixes-v2-56-f6736dec138e@cerno.tech>
+ <80VTKR.CE8RVN8M3ZYK3@crapouillou.net>
+ <20221104145946.orsyrhiqvypisl5j@houat>
+ <cp7Yh29ndlOOi1yW8KwCcpzoLPLxm1vR@localhost>
+ <20221107085417.xrsh6xy3ouwdkp4z@houat>
+ <ucJ6KSBqdPTxfxUQqLUr9C9RGiQRnY1I@localhost>
+ <20221109110045.j24vwkaq3s4yzoy3@houat>
+ <06a293adc75990ed3e297b076fc38d8a.sboyd@kernel.org>
+ <xpKMzGb1sOsucWMTlJIMzrT5KjLlZ7JP@localhost>
+ <20230324111959.frjf4neopbs67ugd@houat>
+From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        David Airlie <airlied@gmail.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        David Lechner <david@lechnology.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
+        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 56/65] clk: ingenic: cgu: Switch to determine_rate
+Date:   Fri, 24 Mar 2023 20:58:48 +0000
+In-reply-to: <20230324111959.frjf4neopbs67ugd@houat>
+Message-ID: <rTJKpeLOBeu3eOLW5z3P5fEpcOJJLrGs@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 17 Feb 2023 14:03:03 +0530, Kathiravan T wrote:
-> This series adds support for the APSS clock to bump the CPU frequency
-> above 800MHz.
-> 
-> APSS PLL found in the IPQ5332 is of type Stromer Plus. However the
-> existing IPQ targets uses the Huayra PLL. So the driver has to
-> refactored to accommodate the different PLL types. The first patch in
-> the series does the refactoring, which can be independenty merged.
-> 
-> [...]
 
-Applied, thanks!
+Maxime Ripard <maxime@cerno.tech> writes:
 
-[5/5] arm64: dts: qcom: ipq5332: enable the CPUFreq support
-      commit: e16dd29a3dff57eb6c84374ad8d824f1ec1c48bd
+> On Thu, Mar 23, 2023 at 03:35:30PM +0000, Aidan MacDonald wrote:
+>>
+>> Stephen Boyd <sboyd@kernel.org> writes:
+>>
+>> > Quoting Maxime Ripard (2022-11-09 03:00:45)
+>> >> On Mon, Nov 07, 2022 at 08:57:22PM +0000, Aidan MacDonald wrote:
+>> >> >
+>> >> > Maxime Ripard <maxime@cerno.tech> writes:
+>> >> >
+>> >> > > Hi,
+>> >> > >
+>> >> > > On Fri, Nov 04, 2022 at 05:35:29PM +0000, Aidan MacDonald wrote:
+>> >> >
+>> >> > Assigning the parent clock in the DT works once, at boot, but going off
+>> >> > what you wrote in the commit message, if the clock driver has a
+>> >> > .determine_rate() implementation that *can* reparent clocks then it
+>> >> > probably *will* reparent them, and the DT assignment will be lost.
+>> >>
+>> >> Yes, indeed, but assigned-clock-parents never provided any sort of
+>> >> guarantee on whether or not the clock was allowed to reparent or not.
+>> >> It's just a one-off thing, right before probe, and a clk_set_parent()
+>> >> call at probe will override that just fine.
+>> >>
+>> >> Just like assigned-clock-rates isn't permanent.
+>> >>
+>> >> > What I'm suggesting is a runtime constraint that the clock subsystem
+>> >> > would enforce, and actively prevent drivers from changing the parent.
+>> >> > Either explicitly with clk_set_parent() or due to .determine_rate().
+>> >> >
+>> >> > That way you could write a .determine_rate() implementation that *can*
+>> >> > select a better parent, but if the DT applies a constraint to fix the
+>> >> > clock to a particular parent, the clock subsystem will force that parent
+>> >> > to be used so you can be sure the clock is never reparented by accident.
+>> >>
+>> >> Yeah, that sounds like a good idea, and CLK_SET_RATE_NO_REPARENT isn't
+>> >> too far off from this, it's just ignored by clk_set_parent() for now. I
+>> >> guess we could rename CLK_SET_RATE_NO_REPARENT to CLK_NO_REPARENT, make
+>> >> clk_set_parent handle it, and set that flag whenever
+>> >> assigned-clock-parents is set on a clock.
+>> >>
+>> >> It's out of scope for this series though, and I certainly don't want to
+>> >> deal with all the regressions it might create :)
+>> >>
+>> >
+>> > This sounds like a new dt binding that says the assigned parent should
+>> > never change. It sounds sort of like gpio hogs. A clock-hogs binding?
+>>
+>> Ideally we want the clock driver to be able to reparent clocks freely
+>> to get the best rate. But we also need some control over that to stop
+>> consumers from being reparented in undesired ways. Eg. you might want
+>> to make sure the GPU gets its own PLL so it can be reclocked easily,
+>> and putting another device on the GPU's PLL could prevent that.
+>>
+>> The only way to achieve this today is (1) never do any reparenting in
+>> the clock driver; and (2) use assigned-clock-parents in the DT to set
+>> up the entire clock tree manually.
+>>
+>> Maxime said that (2) is basically wrong -- if assigned-clock-parents
+>> provides no guarantee on what the OS does "after boot" then the OS is
+>> pretty much free to ignore it.
+>
+> I didn't really say it's wrong, just that it never provided the
+> guarantee you expect it to provide. I can't really say whether it's an
+> issue or not on your platform.
+>
+> It's mostly unrelated to this series though, none of these patches
+> affect that behavior in one way or the other.
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+I know. Sorry for derailing your patch :(
+
+>> My suggestion: add a per-clock bitmap to keep track of which parents
+>> are allowed. Any operation that would select a parent clock not on the
+>> whitelist should fail. Automatic reparenting should only select from
+>> clocks on the whitelist. And we need new DT bindings for controlling
+>> the whitelist, for example:
+>>
+>>     clock-parents-0 = <&clk1>, <&pll_c>;
+>>     clock-parents-1 = <&clk2>, <&pll_a>, <&pll_b>;
+>>
+>> This means that clk1 can only have pll_c as a parent, while clk2 can
+>> have pll_a or pll_b as parents. By default every clock will be able
+>> to use any parent, so a list is only needed if the machine needs a
+>> more restrictive policy.
+>>
+>> assigned-clock-parents should disable automatic reparenting, but allow
+>> explicit clk_set_parent(). This will allow clock drivers to start doing
+>> reparenting without breaking old DTs.
+>
+> I'm generally not a fan of putting all these policies in the device
+> tree. Do you have an example where it wouldn't be possible to do exactly
+> this from the driver itself?
+>
+> Maxime
+
+I'm confused. What's implicit in the example is clk1 and clk2 might
+have *other* possible choices of parent clock and the device tree is
+limiting what the OS is allowed to choose.
+
+Why would you put such arbitrary limitations into the driver? They
+would be different from machine to machine, unless the clock tree is
+so simple there is only *one* meaningful way to configure it. Most
+SoCs are complicated enough that there will be tradeoffs depending
+on what peripherals you are using (typically a single machine will
+not use *every* peripheral device provided by the SoC).
