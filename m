@@ -2,250 +2,116 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0CD5C6FD1C
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Mar 2023 09:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81501C6FD20
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Mar 2023 10:50:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230088AbjCXJlA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Mar 2023 05:41:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46682 "EHLO
+        id S229908AbjCXKuG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Mar 2023 06:50:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231890AbjCXJkc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Mar 2023 05:40:32 -0400
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1598710AA3
-        for <linux-clk@vger.kernel.org>; Fri, 24 Mar 2023 02:39:59 -0700 (PDT)
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 9D4894453F
-        for <linux-clk@vger.kernel.org>; Fri, 24 Mar 2023 09:39:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1679650794;
-        bh=x1u3QRP74rxw2nee5OeJkGqMtHejmjh8sNTSy7NjgGo=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=Akz9EUykOTaC/Wpfbg83agbhhSoA1TRbdktTHnSAjAlRwZ1sj09w8syNf81mcqCcb
-         dyEJdWIvOMQfGMCiHLulU3+cy2uzgZX1S6/SLJYlD2AP64AaQHn7i+TwjL2nd0cJbs
-         25oDixyvgw2PYr1UfAJ3s1gxOg4qoLYxUF3WvRxOaAyn9qeDA0c46r1z5oA+8QC71+
-         Y9GHL1Orz3Nz2588SnJuyUjpZaHSWWuYSAxOXoKdnvU6YAx2dqnAg1PL7pv5G36T4N
-         ndaRov0EBoc63vq7RiKRtBYHl8W40Ag4Y8U+XVaVNlg7xzERMsdh1xYdlJoNfFuxFL
-         k4atWWNsIBVqw==
-Received: by mail-qt1-f197.google.com with SMTP id u1-20020a05622a198100b003e12a0467easo717848qtc.11
-        for <linux-clk@vger.kernel.org>; Fri, 24 Mar 2023 02:39:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679650793;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x1u3QRP74rxw2nee5OeJkGqMtHejmjh8sNTSy7NjgGo=;
-        b=HGBNgLCr1IMCTS0B0GbfrLRHJNlMZ1EKu/3hn9lXDIhm4SndsMK6RUSpwq8Yeoubdv
-         b4EF1pD8elGwzIVlfyoV9MO7Y7oebh90haVXwBEtTJUNMf5q/2M6mmbzZV6+nw5HF6Nj
-         tkpS4i0r/1Mzz1u7nj2NQklSOJ2fKpEbIb4cJ7a70VxaEGNpj5L2DtuMTSydsU8e27UA
-         gnhD6SURkVJpaHpMMrJFhA+pqdVYKh/G+4dKMZ24e1vU7A7r3EY3oZOSDKai/zxUUF+Y
-         ZBbNbRWRrQQMuqJumvanyujlk8FN/267kbvovJcgRi1mYkjJRC0Jj+Og5QLw/GpXe0I4
-         CBLw==
-X-Gm-Message-State: AO0yUKX8TqPac1WMTT8Khf2G43LkLvcicqM3rdi8NfZ22cwtqTMxT0fk
-        FCxyU/yZuzHJ7+xCQ7S9ONxH0cHCoOm/Mb1g634n8FDoZyTRSxqW0IVqH1Ot7+UzFwFmzbP7Sfe
-        //sXucsRMbIt19qW0W4vwwjePlFSvSEKaABeOBNTwW/Jwurj9awOZdg==
-X-Received: by 2002:a05:622a:451:b0:3bf:e265:9bf with SMTP id o17-20020a05622a045100b003bfe26509bfmr880582qtx.5.1679650792593;
-        Fri, 24 Mar 2023 02:39:52 -0700 (PDT)
-X-Google-Smtp-Source: AK7set+q0Yp8ZlJj5eLBsDugPvTedO/h3PnYGnGhBGHJml+AqpsIH2K51udX+L1TK9PO0R/sfinm5PneI740v94KOeg=
-X-Received: by 2002:a05:622a:451:b0:3bf:e265:9bf with SMTP id
- o17-20020a05622a045100b003bfe26509bfmr880578qtx.5.1679650792313; Fri, 24 Mar
- 2023 02:39:52 -0700 (PDT)
+        with ESMTP id S229943AbjCXKuF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Mar 2023 06:50:05 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2059.outbound.protection.outlook.com [40.107.244.59])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7B1A21A13
+        for <linux-clk@vger.kernel.org>; Fri, 24 Mar 2023 03:50:04 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ECTkO5sa98bdu8gX/pEJbEJ1UI8n1HRMFg4CAoChNYRSbFIClBMDzOjy9f6hBZBM4WNlSvLkg+dK+rwXctlyXpZij5wBvyBJgeiYPRao4Ygtor+VoPmkSy1uZGAzLJNKJ5keZJN6xYdnfd1mKd3yZS0gkXD6HLHUzPs56gMTEg5bNp95uu3gxWhlNkLv0bdJMlML2zi0LH5wYrYonqBAyaxL+asVTphzgPt2b/72GMVMhawAFXlikte6aoAI1jowBOh1pb84+jb4TTdDZ4c5DMELFugFDhZHQ+kvH+oCOgrcUX9h9Oaqb8HpuaMvsm/efod1z8RXsr4H9Ip0+P4RzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mYNLOFkVHIaA2G1xmPzzijbemTcBS6PM+sL5M0IHWbs=;
+ b=ToL5HJGXHJYXx1sUeD9YrR8feV5SaXKvE3S/tL1H9HlDUJkms5pyiD3DvQ9TJe5Ionj1PJa//6fQnl1qrark+6bSOqp0N7bjMHGC5QvjIqYeOOTbKNaQyieK4G9FyOH3HKJ2PyUQ9p+Y3ZWyyaqMB1u7viz8YwP//m6jp6nFScfov2DXLZE+rohv+61eIbNwIFLdOj+Pa88XHz+g5VI1pLLjGKe8MiR5Y+XM8fdsPVZ0usri5LTZDPrQZtopuGnwXaET5ELvWsrqonNwZD796enR9JtAZWRclkf/b4srNllcIV4RVtEmiw4qvRD1HY6hZlMzu4Ht9C/5oySV+10cxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mYNLOFkVHIaA2G1xmPzzijbemTcBS6PM+sL5M0IHWbs=;
+ b=FTI9GSjZbih2rMmf15KkZZmlEnyWpD+L5Ytk/4uEgPNl9rPyolY4JnqSq8VWXl9XB/oYKCBXwCnpN3Qdm2D/4Aep+6FYdbneiDleA8Gw9HCvG9NbLdfkI1U+cEWuctFS/eYOAM5g+VRwbCBdFesxIsPdbDJ1lw1DiUynG92+naA=
+Received: from MW4P223CA0025.NAMP223.PROD.OUTLOOK.COM (2603:10b6:303:80::30)
+ by SA0PR12MB4557.namprd12.prod.outlook.com (2603:10b6:806:9d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.38; Fri, 24 Mar
+ 2023 10:50:02 +0000
+Received: from CO1NAM11FT021.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:80:cafe::25) by MW4P223CA0025.outlook.office365.com
+ (2603:10b6:303:80::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.39 via Frontend
+ Transport; Fri, 24 Mar 2023 10:50:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1NAM11FT021.mail.protection.outlook.com (10.13.175.51) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.6222.22 via Frontend Transport; Fri, 24 Mar 2023 10:50:02 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Fri, 24 Mar
+ 2023 05:50:01 -0500
+Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2375.34 via Frontend
+ Transport; Fri, 24 Mar 2023 05:49:59 -0500
+From:   Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+To:     <linux-clk@vger.kernel.org>
+CC:     <git@amd.com>, <sboyd@kernel.org>, <mturquette@baylibre.com>,
+        <michal.simek@xilinx.com>
+Subject: [PATCH] clk: zynqmp: pll: Remove the limit
+Date:   Fri, 24 Mar 2023 16:19:58 +0530
+Message-ID: <20230324104958.25099-1-shubhrajyoti.datta@amd.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20230320103750.60295-1-hal.feng@starfivetech.com>
- <20230320103750.60295-12-hal.feng@starfivetech.com> <b4beb457-8581-4b2f-8655-2e3f82a94f75@spud>
- <5b75161e-3d0d-50e5-fd4e-af92edf62317@starfivetech.com> <828e8cb9-a4c6-4c2d-8a23-2cfdc4395fe1@spud>
-In-Reply-To: <828e8cb9-a4c6-4c2d-8a23-2cfdc4395fe1@spud>
-From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Date:   Fri, 24 Mar 2023 10:39:36 +0100
-Message-ID: <CAJM55Z-dKKpBJAof1cuAombBFckEhvZ00o6MZHT_KN+baKRc0g@mail.gmail.com>
-Subject: Re: [PATCH v6 11/21] dt-bindings: clock: Add StarFive JH7110 system
- clock and reset generator
-To:     Conor Dooley <conor.dooley@microchip.com>
-Cc:     Hal Feng <hal.feng@starfivetech.com>,
-        Conor Dooley <conor@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT021:EE_|SA0PR12MB4557:EE_
+X-MS-Office365-Filtering-Correlation-Id: 33889418-c878-47cf-851d-08db2c55853d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: rhRfQ6z7pxryaSbJXLmxp0XGyfGcPXOK4HPQpC0ujSrtST4sKkKKxYeo/VSlEnO6VXnybj8GDcmCSh8vMeNZuSRB/M8pyyAzsT8dAsOp4oiLbFVXCQt03XgXs2JWa7F6163EhFKHxk6WI7RrRDZejB9Toah/2DLaqA3cDd3ssS/viCdD4rJYx5TnJjyzHmLm1b92mNPBaEVnKMNeWvGRiklpZUw1x0L4DeAUHPJhMnGu6zVHNdVB52VtCT+DbnYbvhsn88TthrrEWhyuHm7FQxsbf17/WerAI1G9L4E9as9/XtRIDr/Dgr/SitmYiyfp4KUxkYfDvwEJj5RaoUF1W4/Qlj9O/owT3+1rmRiiWGFbalfgW8gzcQ2fC4vsEh7gk/iYrBHfP4ckuTW98nosbUCMMXdbbYNE8EEWcvBIpYmmaFl+/MZZcO1G6u1UQgPpLvPuYY22jPQlbdT0xMxqqbvjnp1JDlBQsHGuXxMcO4AdJjuve3AYgkMMvBwqHR6/fwUNiQ803tBfcWYjdUow/m9rQ4OFrdLOtUYKQLBmnt/Zu7UoNe4ybarLhNphUhVuicWM05mbSbsmVc9Mc6HV65wJkVWOY60vYHtU92IfswwOtpTETWklc3j1dUwvCGnEBDyarV3x1zg2w2IFfF1hetTWsI7r0lV+XiKCH+pyr5VHqRxHHceW2uJgye3aj8zK/QZvlYyc2h6uQBykT87zL7gq8ShSkyRQI5ogswh54Fc=
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230025)(4636009)(136003)(376002)(346002)(396003)(39860400002)(451199018)(36840700001)(46966006)(40470700004)(356005)(40480700001)(2906002)(40460700003)(2616005)(336012)(478600001)(82310400005)(186003)(316002)(36756003)(83380400001)(86362001)(54906003)(8676002)(4744005)(6916009)(36860700001)(70206006)(70586007)(4326008)(41300700001)(47076005)(1076003)(426003)(8936002)(26005)(81166007)(82740400003)(44832011)(5660300002)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2023 10:50:02.0582
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 33889418-c878-47cf-851d-08db2c55853d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT021.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4557
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 23 Mar 2023 at 10:02, Conor Dooley <conor.dooley@microchip.com> wrote:
->
-> Hal, Emil,
->
-> On Thu, Mar 23, 2023 at 03:44:41PM +0800, Hal Feng wrote:
-> > On Wed, 22 Mar 2023 21:53:37 +0000, Conor Dooley wrote:
-> > > On Mon, Mar 20, 2023 at 06:37:40PM +0800, Hal Feng wrote:
-> > >> From: Emil Renner Berthing <kernel@esmil.dk>
-> > >>
-> > >> Add bindings for the system clock and reset generator (SYSCRG) on the
-> > >> JH7110 RISC-V SoC by StarFive Ltd.
-> > >>
-> > >> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> > >> Reviewed-by: Rob Herring <robh@kernel.org>
-> > >> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> > >> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
-> > >> ---
-> > >>  .../clock/starfive,jh7110-syscrg.yaml         | 104 +++++++++
-> > >>  MAINTAINERS                                   |   8 +-
-> > >>  .../dt-bindings/clock/starfive,jh7110-crg.h   | 203 ++++++++++++++++++
-> > >>  .../dt-bindings/reset/starfive,jh7110-crg.h   | 142 ++++++++++++
-> > >>  4 files changed, 454 insertions(+), 3 deletions(-)
-> > >>  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
-> > >>  create mode 100644 include/dt-bindings/clock/starfive,jh7110-crg.h
-> > >>  create mode 100644 include/dt-bindings/reset/starfive,jh7110-crg.h
-> > >>
-> > >> diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
-> > >> new file mode 100644
-> > >> index 000000000000..84373ae31644
-> > >> --- /dev/null
-> > >> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
-> > >> @@ -0,0 +1,104 @@
-> > >> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > >> +%YAML 1.2
-> > >> +---
-> > >> +$id: http://devicetree.org/schemas/clock/starfive,jh7110-syscrg.yaml#
-> > >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > >> +
-> > >> +title: StarFive JH7110 System Clock and Reset Generator
-> > >> +
-> > >> +maintainers:
-> > >> +  - Emil Renner Berthing <kernel@esmil.dk>
-> > >> +
-> > >> +properties:
-> > >> +  compatible:
-> > >> +    const: starfive,jh7110-syscrg
-> > >> +
-> > >> +  reg:
-> > >> +    maxItems: 1
-> > >> +
-> > >> +  clocks:
-> > >> +    oneOf:
-> > >> +      - items:
-> > >> +          - description: Main Oscillator (24 MHz)
-> > >> +          - description: GMAC1 RMII reference or GMAC1 RGMII RX
-> > >> +          - description: External I2S TX bit clock
-> > >> +          - description: External I2S TX left/right channel clock
-> > >> +          - description: External I2S RX bit clock
-> > >> +          - description: External I2S RX left/right channel clock
-> > >> +          - description: External TDM clock
-> > >> +          - description: External audio master clock
-> > >> +
-> > >> +      - items:
-> > >> +          - description: Main Oscillator (24 MHz)
-> > >> +          - description: GMAC1 RMII reference
-> > >> +          - description: GMAC1 RGMII RX
-> > >> +          - description: External I2S TX bit clock
-> > >> +          - description: External I2S TX left/right channel clock
-> > >> +          - description: External I2S RX bit clock
-> > >> +          - description: External I2S RX left/right channel clock
-> > >> +          - description: External TDM clock
-> > >> +          - description: External audio master clock
-> > >> +
-> > >> +  clock-names:
-> > >> +    oneOf:
-> > >> +      - items:
-> > >> +          - const: osc
-> > >> +          - enum:
-> > >> +              - gmac1_rmii_refin
-> > >> +              - gmac1_rgmii_rxin
-> > >> +          - const: i2stx_bclk_ext
-> > >> +          - const: i2stx_lrck_ext
-> > >> +          - const: i2srx_bclk_ext
-> > >> +          - const: i2srx_lrck_ext
-> > >> +          - const: tdm_ext
-> > >> +          - const: mclk_ext
-> > >> +
-> > >> +      - items:
-> > >> +          - const: osc
-> > >> +          - const: gmac1_rmii_refin
-> > >> +          - const: gmac1_rgmii_rxin
-> > >> +          - const: i2stx_bclk_ext
-> > >> +          - const: i2stx_lrck_ext
-> > >> +          - const: i2srx_bclk_ext
-> > >> +          - const: i2srx_lrck_ext
-> > >> +          - const: tdm_ext
-> > >> +          - const: mclk_ext
-> > >
-> > > I'm sorry to be a bit of a bore about these bindings, but Emil mentioned
-> > > to me today that he had some doubts about whether any of these audio
-> > > clocks are actually required.
-> > > I've had a bit of a look at the driver, cos the TRM that I have doesn't
-> > > describe the clock tree (from what recall at least) and I think he is
-> > > right.
-> > > For example, the TDM clock:
-> > > +   JH71X0_GATE(JH7110_SYSCLK_TDM_AHB, "tdm_ahb", 0, JH7110_SYSCLK_AHB0),
-> > > +   JH71X0_GATE(JH7110_SYSCLK_TDM_APB, "tdm_apb", 0, JH7110_SYSCLK_APB0),
-> > > +   JH71X0_GDIV(JH7110_SYSCLK_TDM_INTERNAL, "tdm_internal", 0, 64, JH7110_SYSCLK_MCLK),
-> > > +   JH71X0__MUX(JH7110_SYSCLK_TDM_TDM, "tdm_tdm", 2,
-> > > +               JH7110_SYSCLK_TDM_INTERNAL,
-> > > +               JH7110_SYSCLK_TDM_EXT),
-> > >
-> > > Hopefully, I'm not making a balls of something here, but it looks like I
-> > > can choose an internal TDM clock, that is based on JH7110_SYSCLK_MCLK,
-> > > which in turn comes from either an internal or external source.
-> > > If I am following correctly, that'd be:
-> > > +   JH71X0__DIV(JH7110_SYSCLK_MCLK_INNER, "mclk_inner", 64, JH7110_SYSCLK_AUDIO_ROOT),
-> > >
-> > > Which in turn comes from:
-> > > +   JH71X0__DIV(JH7110_SYSCLK_AUDIO_ROOT, "audio_root", 8, JH7110_SYSCLK_PLL2_OUT),
-> > >
-> > > This leaves me wondering which clocks are *actually* required for a
-> > > functioning system - is it actually just osc and one of gmac1_rmii_refin
-> > > or gmac1_rgmii_rxin.
-> >
-> > As I had mentioned somewhere before, some audio clocks need to change their
-> > parents at different stages of work. I should explain in detail here.
-> >
-> > For the i2s*_ext clocks, we should use these external clocks as parents when
-> > the I2S module is working in the slave mode, while we should use the internal
-> > clocks as parents when the I2S module is working in the master mode.
+The range is taken care in the zynqmp_pll_round_rate. Remove the rate range
+in the zynqmp_clk_register_pll() to prevent the early truncation of the
+frequencies and also allow multiple combinations of child and parent to get
+more accurate rates.
 
-Right, so what Hal is saying here is that the i2s*_ext clocks are only
-needed if the board is designed to have i2s modules in slave mode.
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+---
 
-> > For the tdm_ext clock, we use it as the clock source for an accurate playback
-> > rate. If we use the internal clock as clock source, the TDM can't work
-> > normally, because it can't get a required rate from the internal divider.
-> > By the way, note that we need to use the internal clock as clock source when
-> > we try to reset the tdm clock, otherwise, the reset will fail.
-> >
-> > For the mclk_ext clock, which is 12.288MHz, it's used as the clock source
-> > through all the running time, otherwise, the daughter clocks can't get the
-> > required rate from the internal PLL2 clock (1188MHz) through dividers.
+ drivers/clk/zynqmp/pll.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Right, so PLL2 is 1188MHz on the VisionFive 2.
+diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
+index 0d3e1377b092..7411a7fd50ac 100644
+--- a/drivers/clk/zynqmp/pll.c
++++ b/drivers/clk/zynqmp/pll.c
+@@ -341,7 +341,5 @@ struct clk_hw *zynqmp_clk_register_pll(const char *name, u32 clk_id,
+ 		return ERR_PTR(ret);
+ 	}
+ 
+-	clk_hw_set_rate_range(hw, PS_PLL_VCO_MIN, PS_PLL_VCO_MAX);
+-
+ 	return hw;
+ }
+-- 
+2.17.1
 
-Hal: But is it not possible to program the PLL2 to run at a multiple
-of 12.288MHz in some other configuration?
-
-> > So all these audio external clocks (i2s*_ext / tdm_ext / mclk_ext) are
-> > actually required.
->
-> Okay. I think I am okay with leaving the binding as-is then, and if
-> someone needs to omit the entire audio subsystem on the SoC, they can
-> follow Stephen's suggestion.
->
-> @Emil, is that okay with you?
-
-Conor: I'm fine with the bindings like this. I just want to make sure
-that we all have the same idea of what is "optional" and should be
-marked as such in the bindings.
-
-/Emil
