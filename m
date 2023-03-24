@@ -2,110 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0AE0C74A5B
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Mar 2023 23:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 474A3C6FD20
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Mar 2023 07:03:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231146AbjCWXBs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Mar 2023 19:01:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58970 "EHLO
+        id S229536AbjCXHDw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Mar 2023 03:03:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230369AbjCWXBh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Mar 2023 19:01:37 -0400
-Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 226CCDBCB;
-        Thu, 23 Mar 2023 16:01:37 -0700 (PDT)
-Received: by mail-il1-x131.google.com with SMTP id h5so92319ile.13;
-        Thu, 23 Mar 2023 16:01:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679612496;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZKi3A+dV0/tXsD8Az45Lpy5Jn7qD/QNBqF2DDHsjptI=;
-        b=bbrVRFpgVq8Z3pBppHqtnNOI941pkMlpAPmDFti9VxOgzynxQt3tR06ysjKU2+DzfF
-         UtoOufG2ylJ67O3C9L44T2wOHLLSGe9sIUvTRYah+xjdDwPYySLoOIY3VeCFqHhDFvTR
-         cR4lbDtUHfWKEaOvGE6kQzp0szas1ks5+lblONRTAohv97yAmBp8yuwC56A9p3r8aAj2
-         B4EZOQmM/l+YMe3/coS9LKmKgaoCNSO2gWSYSTshdYHNYkGKJeu9K8wCaESQn6dGr3ew
-         6QlvLIFTpOHx6cSpbupE8aeVEvZvjX+b9ugcwp1gbWemJ/Ycfbp6amoCzKEoEm7d8+2l
-         WUdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679612496;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZKi3A+dV0/tXsD8Az45Lpy5Jn7qD/QNBqF2DDHsjptI=;
-        b=qzvj2SxK1HfuEaqqfdduQ7+aIS9iYCj1YuGMwuLRs7BUuavhmoRCX4uX+B7k1CcpvS
-         01zVzaBEJD3rBjUYiOPkJOj22Nd0gS6xBL391iFFThtF9GAG3ZyCibUJYVZGwOBS0XLw
-         tKngP0dFpnj/oBoY3n4azjSMgt1niXVwf9V4z43PgbJQW3mzp1CUnv2Lul+axP1z5jwL
-         lPZWRs8/RerVWLQ5vpdZkj7o1LntibGZLP9T8pPdr+uzBjSRkMZ9LE+tuYUOxdVCgUtu
-         Rtv99MywlL8RpDGJ5SmAjy/UezUXBKglSC7CNyPxJFoSd8MDb9Nkxo4xJ+dCOIRk90ov
-         NQXg==
-X-Gm-Message-State: AAQBX9ftzpQrKO6NlmaK6484we8O4fAhArakg40bc94MUa35rjU0dN+Z
-        SP7kdAUkNenJ3JpmjtrLbhdG6gjrtNc=
-X-Google-Smtp-Source: AKy350YVoWYfxzjzrJIZa0sUyA0VhekNp7+yIqqBVCM5Wett6PZZYMup1lS9ba5KWjGP4UqlIqq0DA==
-X-Received: by 2002:a92:d48a:0:b0:325:b96e:66fb with SMTP id p10-20020a92d48a000000b00325b96e66fbmr916084ilg.1.1679612496050;
-        Thu, 23 Mar 2023 16:01:36 -0700 (PDT)
-Received: from aford-IdeaCentre-A730.lan ([2601:447:d001:897f:f38d:f05d:4666:1249])
-        by smtp.gmail.com with ESMTPSA id w20-20020a056e0213f400b00314201bcbdfsm5405492ilj.3.2023.03.23.16.01.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Mar 2023 16:01:35 -0700 (PDT)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V4 4/4] clk: imx: Let IMX8MN_CLK_DISP_PIXEL set parent rate
-Date:   Thu, 23 Mar 2023 18:01:27 -0500
-Message-Id: <20230323230127.120883-5-aford173@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230323230127.120883-1-aford173@gmail.com>
-References: <20230323230127.120883-1-aford173@gmail.com>
+        with ESMTP id S229508AbjCXHDv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Mar 2023 03:03:51 -0400
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECB03133;
+        Fri, 24 Mar 2023 00:03:48 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id 4220624E1E2;
+        Fri, 24 Mar 2023 15:03:42 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 24 Mar
+ 2023 15:03:42 +0800
+Received: from [192.168.125.74] (113.72.145.117) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 24 Mar
+ 2023 15:03:41 +0800
+Message-ID: <0c9c19ad-815c-fb0f-3024-96ea55e7c6c0@starfivetech.com>
+Date:   Fri, 24 Mar 2023 15:03:40 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v6 19/21] riscv: dts: starfive: Add initial StarFive
+ JH7110 device tree
+Content-Language: en-US
+To:     Conor Dooley <conor.dooley@microchip.com>,
+        Conor Dooley <conor@kernel.org>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>, Stephen Boyd <sboyd@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        "Emil Renner Berthing" <emil.renner.berthing@canonical.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20230320103750.60295-1-hal.feng@starfivetech.com>
+ <20230320103750.60295-20-hal.feng@starfivetech.com>
+ <60359574-8bce-40f2-99db-6d81f6e6c5c3@spud>
+ <6ce5b897-f1c2-4b58-9353-9d9e881ad237@spud>
+From:   Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <6ce5b897-f1c2-4b58-9353-9d9e881ad237@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [113.72.145.117]
+X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-By default the display pixel clock needs to be evenly divide
-down from the video_pll_out clock which rules out a significant
-number of resolution and refresh rates.
+On Thu, 23 Mar 2023 09:03:23 +0000, Conor Dooley wrote:
+> On Wed, Mar 22, 2023 at 10:02:40PM +0000, Conor Dooley wrote:
+>> On Mon, Mar 20, 2023 at 06:37:48PM +0800, Hal Feng wrote:
+>> > From: Emil Renner Berthing <kernel@esmil.dk>
+>> > 
+>> > Add initial device tree for the JH7110 RISC-V SoC by StarFive
+>> > Technology Ltd.
+>> > 
+>> > Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
+>> > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+>> > Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+>> > Co-developed-by: Jianlong Huang <jianlong.huang@starfivetech.com>
+>> > Signed-off-by: Jianlong Huang <jianlong.huang@starfivetech.com>
+>> > Co-developed-by: Hal Feng <hal.feng@starfivetech.com>
+>> > Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+>> > ---
+>> 
+>> > +		S7_0: cpu@0 {
+>> > +			compatible = "sifive,s7", "riscv";
+>> > +			reg = <0>;
+>> > +			d-cache-block-size = <64>;
+>> > +			d-cache-sets = <64>;
+>> > +			d-cache-size = <8192>;
+>> > +			d-tlb-sets = <1>;
+>> > +			d-tlb-size = <40>;
+>> > +			device_type = "cpu";
+>> > +			i-cache-block-size = <64>;
+>> > +			i-cache-sets = <64>;
+>> > +			i-cache-size = <16384>;
+>> > +			i-tlb-sets = <1>;
+>> > +			i-tlb-size = <40>;
+>> > +			mmu-type = "riscv,sv39";
+>> > +			next-level-cache = <&ccache>;
+>> > +			riscv,isa = "rv64imac_zba_zbb";
+>> > +			tlb-split;
+>> > +			status = "disabled";
+>> 
+>> Jess pointed out on IRC that this S7 entry looks wrong as it is claiming
+>> that the S7 has an mmu. I didn't go looking back in the history of
+>> u74-mc core complex manuals, but the latest version does not show an mmu
+>> for the S7.
+> 
+> BTW Hal, if the dt-binding stuff is okay with Emil, I can just remove
+> the mmu here if you confirm it is a mistake rather than you needing to
+> resubmit to remove it.
 
-The current clock tree looks something like:
+I confirm that the S7 core has no L1 data cache and MMU, so some properties
+should be deleted. I have submitted a new patch for the correction.
 
- video_pll                594000000
-  video_pll_bypass        594000000
-   video_pll_out          594000000
-    disp_pixel            148500000
-     disp_pixel_clk       148500000
+https://lore.kernel.org/all/20230324064651.84670-1-hal.feng@starfivetech.com/
 
-Now that composite-8m supports determine_rate, we can allow
-disp_pixel to set the parent rate which then switches
-every clock in the chain to a new frequency when disp_pixel
-cannot evenly divide from video_pll_out.
-
-Signed-off-by: Adam Ford <aford173@gmail.com>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
-
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index a042ed3a9d6c..4b23a4648600 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -470,7 +470,7 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MN_CLK_DRAM_ALT] = imx8m_clk_hw_fw_managed_composite("dram_alt", imx8mn_dram_alt_sels, base + 0xa000);
- 	hws[IMX8MN_CLK_DRAM_APB] = imx8m_clk_hw_fw_managed_composite_critical("dram_apb", imx8mn_dram_apb_sels, base + 0xa080);
- 
--	hws[IMX8MN_CLK_DISP_PIXEL] = imx8m_clk_hw_composite("disp_pixel", imx8mn_disp_pixel_sels, base + 0xa500);
-+	hws[IMX8MN_CLK_DISP_PIXEL] = imx8m_clk_hw_composite_flags("disp_pixel", imx8mn_disp_pixel_sels, base + 0xa500, CLK_SET_RATE_PARENT);
- 	hws[IMX8MN_CLK_SAI2] = imx8m_clk_hw_composite("sai2", imx8mn_sai2_sels, base + 0xa600);
- 	hws[IMX8MN_CLK_SAI3] = imx8m_clk_hw_composite("sai3", imx8mn_sai3_sels, base + 0xa680);
- 	hws[IMX8MN_CLK_SAI5] = imx8m_clk_hw_composite("sai5", imx8mn_sai5_sels, base + 0xa780);
--- 
-2.34.1
-
+Best regards,
+Hal
