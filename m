@@ -2,116 +2,94 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3431DC6FD1C
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Mar 2023 23:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF767C6FD1F
+	for <linux-clk@archiver.kernel.org>; Sat, 25 Mar 2023 11:57:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231308AbjCXXQC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Mar 2023 19:16:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45858 "EHLO
+        id S230037AbjCYL5W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 25 Mar 2023 07:57:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230350AbjCXXQB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Mar 2023 19:16:01 -0400
-Received: from sender3-op-o19.zoho.com (sender3-op-o19.zoho.com [136.143.184.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30A0F1632E;
-        Fri, 24 Mar 2023 16:15:41 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1679699724; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=d3y3LPZCu4SPmmoSoE4F1CKylg9Vm+wwqfkQOsexnma8glSM3yZaxhSJMRACbP/yFteQ4gO62P7wItEi51gh9h7B+fNM/01aZLlDA+huCBSf0xO1Wz9b2ekw96x3MtA3IyEKZ+65DvkJHGIdQUyRCa/lnqpMlStvdciNsjd/rpE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1679699724; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=UOBDa6MyNkcFKIV/F23N+9xhrYR0u9RTEEtDZX8a+jo=; 
-        b=PGgjg6WzgXvVJ7+M1kVx4MceFBzhhK5bs9GIPE8B4XJ0hdqNqCrdZ8REIF/1ayTgYldAVmcoOJlH98TbDG4mlk0Xsk08CFsyc4sXmYW5yqqvyi+3oYnwsJu7ZXIjEcawLkfo+hNmaeFeaku9ZiUH6y/+j6Y1Qmu30kOoz+3oZ2E=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=arinc9.com;
-        spf=pass  smtp.mailfrom=arinc.unal@arinc9.com;
-        dmarc=pass header.from=<arinc.unal@arinc9.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1679699724;
-        s=zmail; d=arinc9.com; i=arinc.unal@arinc9.com;
-        h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-        bh=UOBDa6MyNkcFKIV/F23N+9xhrYR0u9RTEEtDZX8a+jo=;
-        b=cTkJFg04WU+lmEEpriyfAYjs6ld6bnmkkqmxjxzSg8xX/AvIpNqRhb3BPjAqOx9o
-        GshsQrsLfAX9T6l9o911AjvyyTZNuyvkJgZk0DBEMeJrl3j2Lm5P1hTGkFG2gagvlFY
-        4eoqBvUxJVXXKFo2Xw/oRDTXLuWNKa5R4J+OvP/A=
-Received: from [10.10.10.3] (149.91.1.15 [149.91.1.15]) by mx.zohomail.com
-        with SMTPS id 167969972213758.27737140967122; Fri, 24 Mar 2023 16:15:22 -0700 (PDT)
-Message-ID: <3fdc7db4-0df3-f922-3dbf-9f9250c271aa@arinc9.com>
-Date:   Sat, 25 Mar 2023 02:15:16 +0300
+        with ESMTP id S229925AbjCYL5V (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 25 Mar 2023 07:57:21 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6E20125BB;
+        Sat, 25 Mar 2023 04:57:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 5A7B1B801C0;
+        Sat, 25 Mar 2023 11:57:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F4F9C433EF;
+        Sat, 25 Mar 2023 11:57:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679745438;
+        bh=SO6La1Bfj9RCTD1Pb6AjuC2LMQRpiSJIGJOAvIQKZek=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GlAdcNwQVVQaacGPFavVd/KFp8a0sMdwyt+fSpMxrmmd5oHAp5ftvsmyU24+e7P7Z
+         0f319zF0lY4r76PkEOwUF0wDszpC1KBVRDcNib5PuFS3htIbAkE/3vxac1XjSff6F7
+         nD5kFxI5aBsx1Z+8TqnCuY2ftpaVsu2lFLtQffhuZYsr82Y4dQOFvkIi5aZ3FH6dbI
+         KZvXNkqo6k+J7mu83D4P4uUfQDSgfuoP0XXSh6Pt+enVk+DojL2FrvXBYByDd3WUAr
+         +23ciwdshyyN2KKVv7fhaiUMov5gDFv+gzWZo3ZrJNKw4s29JKg8mnK7IgBgPsIJOy
+         ngdVCGj6ZrmBA==
+Date:   Sat, 25 Mar 2023 11:57:13 +0000
+From:   Conor Dooley <conor@kernel.org>
+To:     Jesse Taube <mr.bossman075@gmail.com>
+Cc:     linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yimin Gu <ustcymgu@gmail.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Waldemar Brodkorb <wbx@openadk.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Subject: Re: [PATCH v3 0/3]  Add RISC-V 32 NOMMU support
+Message-ID: <f7df17e4-e05e-4b66-8b53-72b90d13eecf@spud>
+References: <20230301002657.352637-1-Mr.Bossman075@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 01/10] dt: bindings: clock: add mtmips SoCs clock device
- tree binding documentation
-To:     Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-        tsbogend@alpha.franken.de, john@phrozen.org,
-        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
-        devicetree@vger.kernel.org
-References: <d598f5f8-f998-2a31-bb21-97e641793dda@linaro.org>
- <120663a9-aecf-4a43-d1fb-779cd52802c6@arinc9.com>
- <3d2b8a1a-99c9-f53e-4bb3-a8b938e2672f@linaro.org>
- <543ad00d-4171-ed02-0d31-676c6b003e54@arinc9.com>
- <82f517b5-6697-3379-8d71-163b0d17735d@linaro.org>
- <d640a929-b6a0-1552-e66a-3a7bbabbc69f@arinc9.com>
- <2150938b-5433-6f51-c404-2c0f6976f864@linaro.org>
- <1c279b0a-c814-2fe3-0432-2aa6b3dff16e@arinc9.com>
- <9f8e7a74-35c6-6db5-4960-1efa79a23983@linaro.org>
- <6ed317bc-ce3a-2da2-1d96-f0ea8ff0b48c@arinc9.com>
- <20230324221029.GA64664-robh@kernel.org>
-Content-Language: en-US
-From:   =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-In-Reply-To: <20230324221029.GA64664-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="EDBkoLcIyrEpbBAz"
+Content-Disposition: inline
+In-Reply-To: <20230301002657.352637-1-Mr.Bossman075@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25.03.2023 01:10, Rob Herring wrote:
-> On Tue, Mar 21, 2023 at 12:02:47PM +0300, Arınç ÜNAL wrote:
->> On 21.03.2023 12:01, Krzysztof Kozlowski wrote:
->>> On 21/03/2023 09:53, Arınç ÜNAL wrote:
->>>>>
->>>>> I do not see how choosing one variant for compatibles having two
->>>>> variants of prefixes, complicates things. Following this argument
->>>>> choosing "ralink" also complicates!
->>>>
->>>> The idea is to make every compatible string of MTMIPS to have the ralink
->>>> prefix so it's not mediatek on some schemas and ralink on others. Simpler.
->>>
->>> Which is an ABI break, so you cannot do it.
->>
->> No, both strings stay on the driver, it's the schemas that will only keep
->> ralink.
-> 
-> But you are adding one of the strings to the driver, right? Still an ABI
-> break, but only if you have an old kernel and new DT. That can be
-> somewhat mitigated with a stable backport of the new id, but still an
-> ABI break.
 
-Ah, that makes sense. Yes, I'd be adding new strings to the driver.
+--EDBkoLcIyrEpbBAz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Whatever is in the driver should be in the schema too. 'make 
-> dt_compatible_check' will check this. And some day, I'd like that list 
-> to get to 0.
+On Tue, Feb 28, 2023 at 07:26:54PM -0500, Jesse Taube wrote:
+> This patch-set aims to add NOMMU support to RV32.
+> Many people want to build simple emulators or HDL
+> models of RISC-V this patch makes it possible to
+> run linux on them.
 
-I'll keep this in mind for the schemas I maintain. I will add 
-ralink,rt2880-pinmux as deprecated on the pinctrl schemas so it would 
-disappear from 'make dt_compatible check'. I believe I'm supposed to do 
-it like this?
+> Jesse Taube (1):
+>   riscv: configs: Add nommu PHONY defconfig for RV32
+> Yimin Gu (1):
+>   riscv: Kconfig: Allow RV32 to build with no MMU
 
-properties:
-   compatible:
-     enum:
-       - ralink,rt2880-pinctrl
-       - ralink,rt2880-pinmux
-     deprecated:
-       items:
-         - const: ralink,rt2880-pinmux
-           deprecated: true
+For these two:
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-Arınç
+I'll add an rv32 nommu build to the patchwork CI once this lands I
+suppose!
+
+Thanks,
+Conor.
+
+
+--EDBkoLcIyrEpbBAz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZB7hmQAKCRB4tDGHoIJi
+0lF/AP0Y0rYosV/eXnRN2ahOEPdVLjpABAgV4zSCmtNkuR6BjQD+O9RhKOyYg0N8
+fkPU2E1AIcKWuhjQStoFFCCEgX5hjAc=
+=ShSr
+-----END PGP SIGNATURE-----
+
+--EDBkoLcIyrEpbBAz--
