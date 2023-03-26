@@ -2,231 +2,100 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9B2DC6FD1F
-	for <linux-clk@archiver.kernel.org>; Sat, 25 Mar 2023 15:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC07C6FD1C
+	for <linux-clk@archiver.kernel.org>; Sun, 26 Mar 2023 05:28:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229805AbjCYPzC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 25 Mar 2023 11:55:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50152 "EHLO
+        id S231877AbjCZF2N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 26 Mar 2023 01:28:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231926AbjCYPy6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 25 Mar 2023 11:54:58 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC0471206D;
-        Sat, 25 Mar 2023 08:54:48 -0700 (PDT)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 8BEAB24DC09;
-        Sat, 25 Mar 2023 23:54:45 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Sat, 25 Mar
- 2023 23:54:45 +0800
-Received: from [172.16.16.231] (113.72.145.48) by EXMBX172.cuchost.com
- (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Sat, 25 Mar
- 2023 23:54:44 +0800
-Message-ID: <c7bd699c-77fe-c01b-bbc6-be7ddc511a20@starfivetech.com>
-Date:   Sat, 25 Mar 2023 23:54:42 +0800
+        with ESMTP id S231873AbjCZF2M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Mar 2023 01:28:12 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EC912684;
+        Sat, 25 Mar 2023 22:28:09 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id z11so3640845pfh.4;
+        Sat, 25 Mar 2023 22:28:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679808489;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wlFfAJUvKczTOkYz9X2Qooa6CRtdSnd+xdhPi/7m9Ic=;
+        b=L7QPuLz52mZgbRhF8kodkVZI8KohR9u4d/6qGl3XTnyuCoiw3xafMbQqXT6VLs8P0Z
+         mo5B75+4NI68F7GeS5fhi7vgEIgzXzj5fn2laRyZ+apJr9pO1lzLghYY7aZQPAKalXAb
+         oSowzpiu6Sd5hsnhMKDlA7NJs+beMgcLtmN8jAbr4ziQ9iF+2t+kafIK32bUyzJPoVZ2
+         I7LCBqRgtwlSLYZy37IUH1zUCASMKls0ifBaPcDywQ7Y35MVW3MFwxB9IG2O18Tb9wkH
+         73JpzOZRcPWnAkz/n79aptdvoN4pNfjjWJZ/i1aQFmaGdXKrE6EnrJ+uguwD/vmZeskm
+         uP5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679808489;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wlFfAJUvKczTOkYz9X2Qooa6CRtdSnd+xdhPi/7m9Ic=;
+        b=aseg7+sZooAdSFsuWtz3KbzCMp2B4jumqwuU597YVMsyxheBBl615cfMhHUg1+BOzT
+         fvR9sk4jwDBlu+IQA37uJkzS4T0mCLBrAllQekwMlOEqkqSw2474ym/GS+BgyIFAJ2rF
+         4gwmzMNf+Xi31/h52iR73Cc/10X32AqAU9FB7CRXufG5BLJ/sCA03l/LAPuA9pL28+cD
+         MT/TskX2DDT3aez6/VuSega6Baao9bm9Dcnzr2oMkZj0XOtsLIh3FCG2tzqvZKTIRgO/
+         91rHonmnNliVOhwPDZPFtuGBT2fA5W6p4kAP/rlLG/yPMgh5xL+ySbVXBKwzDtEoQn1k
+         aKCw==
+X-Gm-Message-State: AAQBX9d66LETPKd41gNwOqGix6GogTPfs09xmMX9nUlpwvV7GIdZV0qP
+        YELsundKJGzkEirCsMoWDDNpvgZvzFuRLZPv
+X-Google-Smtp-Source: AKy350bBvgrqC0e9d5NlAmPja6o7DsXjICg6612sMXhN5Eqs39M42xT8/G+33qQx6foyBlxpHwbcjg==
+X-Received: by 2002:a05:6a00:4e:b0:628:a3d:8aa7 with SMTP id i14-20020a056a00004e00b006280a3d8aa7mr8168682pfk.31.1679808488703;
+        Sat, 25 Mar 2023 22:28:08 -0700 (PDT)
+Received: from d.home.yangfl.dn42 ([104.28.213.201])
+        by smtp.gmail.com with ESMTPSA id b14-20020a63eb4e000000b004fb5f4bf585sm15966915pgk.78.2023.03.25.22.28.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 Mar 2023 22:28:08 -0700 (PDT)
+From:   David Yang <mmyangfl@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     David Yang <mmyangfl@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] clk: hisilicon: Migrate devm APIs
+Date:   Sun, 26 Mar 2023 13:27:46 +0800
+Message-Id: <20230326052757.297551-1-mmyangfl@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v6 13/21] clk: starfive: Add StarFive JH7110 system clock
- driver
-Content-Language: en-US
-To:     Emil Renner Berthing <emil.renner.berthing@canonical.com>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>, Stephen Boyd <sboyd@kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor@kernel.org>,
-        "Palmer Dabbelt" <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        "Daniel Lezcano" <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20230320103750.60295-1-hal.feng@starfivetech.com>
- <20230320103750.60295-14-hal.feng@starfivetech.com>
- <CAJM55Z_jY67-SUZm3PDRKQTXZS4BJ6jUTBKXMqMTNW5MTFXK_g@mail.gmail.com>
-From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <CAJM55Z_jY67-SUZm3PDRKQTXZS4BJ6jUTBKXMqMTNW5MTFXK_g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [113.72.145.48]
-X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
- (172.16.6.92)
-X-YovoleRuleAgent: yovoleflag
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 24 Mar 2023 15:39:54 +0100, Emil Renner Berthing wrote:
-> On Mon, 20 Mar 2023 at 11:38, Hal Feng <hal.feng@starfivetech.com> wrote:
-[...]
->> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
->> new file mode 100644
->> index 000000000000..f98a508969c3
->> --- /dev/null
->> +++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
->> @@ -0,0 +1,450 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * StarFive JH7110 System Clock Driver
->> + *
->> + * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
->> + * Copyright (C) 2022 StarFive Technology Co., Ltd.
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/init.h>
->> +#include <linux/io.h>
->> +#include <linux/platform_device.h>
->> +
->> +#include <dt-bindings/clock/starfive,jh7110-crg.h>
->> +
->> +#include "clk-starfive-jh71x0.h"
->> +
->> +/* external clocks */
->> +#define JH7110_SYSCLK_OSC                      (JH7110_SYSCLK_END + 0)
->> +#define JH7110_SYSCLK_GMAC1_RMII_REFIN         (JH7110_SYSCLK_END + 1)
->> +#define JH7110_SYSCLK_GMAC1_RGMII_RXIN         (JH7110_SYSCLK_END + 2)
->> +#define JH7110_SYSCLK_I2STX_BCLK_EXT           (JH7110_SYSCLK_END + 3)
->> +#define JH7110_SYSCLK_I2STX_LRCK_EXT           (JH7110_SYSCLK_END + 4)
->> +#define JH7110_SYSCLK_I2SRX_BCLK_EXT           (JH7110_SYSCLK_END + 5)
->> +#define JH7110_SYSCLK_I2SRX_LRCK_EXT           (JH7110_SYSCLK_END + 6)
->> +#define JH7110_SYSCLK_TDM_EXT                  (JH7110_SYSCLK_END + 7)
->> +#define JH7110_SYSCLK_MCLK_EXT                 (JH7110_SYSCLK_END + 8)
->> +#define JH7110_SYSCLK_PLL0_OUT                 (JH7110_SYSCLK_END + 9)
->> +#define JH7110_SYSCLK_PLL1_OUT                 (JH7110_SYSCLK_END + 10)
->> +#define JH7110_SYSCLK_PLL2_OUT                 (JH7110_SYSCLK_END + 11)
->> +
->> +static const struct jh71x0_clk_data jh7110_sysclk_data[] __initconst = {
->> +       /* root */
->> +       JH71X0__MUX(JH7110_SYSCLK_CPU_ROOT, "cpu_root", 2,
->> +                   JH7110_SYSCLK_OSC,
->> +                   JH7110_SYSCLK_PLL0_OUT),
->> +       JH71X0__DIV(JH7110_SYSCLK_CPU_CORE, "cpu_core", 7, JH7110_SYSCLK_CPU_ROOT),
-[...]
->> +       /* qspi */
->> +       JH71X0_GATE(JH7110_SYSCLK_QSPI_AHB, "qspi_ahb", CLK_IGNORE_UNUSED, JH7110_SYSCLK_AHB1),
->> +       JH71X0_GATE(JH7110_SYSCLK_QSPI_APB, "qspi_apb", CLK_IGNORE_UNUSED, JH7110_SYSCLK_APB_BUS),
-> 
-> Hi Hal,
-> 
-> Thanks for going through clocks marked with CLK_IGNORE_UNUSED and
-> either remove the flags or mark them as critical.. It seems you've
-> missed these two though.
+Migrate devm APIs for HiSilicon clock drivers and remove redundant codes.
 
-The QSPI module of JH7110 supported by Cadence, requires three
-clocks (qspi_ahb, qspi_apb and qspi_ref), but the Cadence QSPI
-driver only supports one clock. As the StarFive QSPI support
-patches [1] had been accepted, I kept these two flags here.
+This series is a partial improvement of
+https://lore.kernel.org/r/20230322164201.2454771-1-mmyangfl@gmail.com
 
-[1] https://lore.kernel.org/all/20230302105221.197421-1-william.qiu@starfivetech.com/
+David Yang (4):
+  clk: hisilicon: Add helper functions for platform driver
+  clk: hisilicon: Use helper functions
+  clk: hisilicon: Convert to platform driver
+  clk: hisilicon: Migrate devm APIs
 
-> 
-[...]
->> diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.c b/drivers/clk/starfive/clk-starfive-jh71x0.c
->> index b372083d11c3..a8c60630ae73 100644
->> --- a/drivers/clk/starfive/clk-starfive-jh71x0.c
->> +++ b/drivers/clk/starfive/clk-starfive-jh71x0.c
->> @@ -5,6 +5,7 @@
->>   * Copyright (C) 2021-2022 Emil Renner Berthing <kernel@esmil.dk>
->>   */
->>
->> +#include <linux/auxiliary_bus.h>
->>  #include <linux/clk-provider.h>
->>  #include <linux/debugfs.h>
->>  #include <linux/device.h>
->> @@ -331,3 +332,52 @@ const struct clk_ops *starfive_jh71x0_clk_ops(u32 max)
->>         return &jh71x0_clk_inv_ops;
->>  }
->>  EXPORT_SYMBOL_GPL(starfive_jh71x0_clk_ops);
->> +
->> +#if IS_ENABLED(CONFIG_CLK_STARFIVE_JH7110_SYS)
->> +
->> +static void jh7110_reset_unregister_adev(void *_adev)
->> +{
->> +       struct auxiliary_device *adev = _adev;
->> +
->> +       auxiliary_device_delete(adev);
->> +}
->> +
->> +static void jh7110_reset_adev_release(struct device *dev)
->> +{
->> +       struct auxiliary_device *adev = to_auxiliary_dev(dev);
->> +
->> +       auxiliary_device_uninit(adev);
->> +}
->> +
->> +int jh7110_reset_controller_register(struct jh71x0_clk_priv *priv,
->> +                                    const char *adev_name,
->> +                                    u32 adev_id)
->> +{
->> +       struct auxiliary_device *adev;
->> +       int ret;
->> +
->> +       adev = devm_kzalloc(priv->dev, sizeof(*adev), GFP_KERNEL);
->> +       if (!adev)
->> +               return -ENOMEM;
->> +
->> +       adev->name = adev_name;
->> +       adev->dev.parent = priv->dev;
->> +       adev->dev.release = jh7110_reset_adev_release;
->> +       adev->id = adev_id;
->> +
->> +       ret = auxiliary_device_init(adev);
->> +       if (ret)
->> +               return ret;
->> +
->> +       ret = auxiliary_device_add(adev);
->> +       if (ret) {
->> +               auxiliary_device_uninit(adev);
->> +               return ret;
->> +       }
->> +
->> +       return devm_add_action_or_reset(priv->dev,
->> +                                       jh7110_reset_unregister_adev, adev);
->> +}
->> +EXPORT_SYMBOL_GPL(jh7110_reset_controller_register);
->> +
->> +#endif
-> 
-> Hey, sorry for not noticing this before, but is there a reason these
-> JH7110-specific functions must be added to the generic JH71x0 code?
-> Can't they be added to the JH7110 SYSCRG driver, and then let the
-> other CRG drivers depend on that (which they already do because of
-> clock dependencies)?
+ drivers/clk/hisilicon/clk-hi3519.c        | 134 +------
+ drivers/clk/hisilicon/clk-hi3559a.c       | 253 +++----------
+ drivers/clk/hisilicon/clk-hi3620.c        | 215 +++++------
+ drivers/clk/hisilicon/clk-hi3660.c        | 207 ++++-------
+ drivers/clk/hisilicon/clk-hi3670.c        | 270 +++++---------
+ drivers/clk/hisilicon/clk-hi6220-stub.c   |   9 +-
+ drivers/clk/hisilicon/clk-hi6220.c        | 230 ++++++------
+ drivers/clk/hisilicon/clk-hip04.c         |  41 ++-
+ drivers/clk/hisilicon/clk-hisi-phase.c    |  13 +-
+ drivers/clk/hisilicon/clk-hix5hd2.c       |  93 +++--
+ drivers/clk/hisilicon/clk.c               | 429 +++++++++++-----------
+ drivers/clk/hisilicon/clk.h               | 147 +++++---
+ drivers/clk/hisilicon/clkdivider-hi6220.c |  24 +-
+ drivers/clk/hisilicon/clkgate-separated.c |  26 +-
+ drivers/clk/hisilicon/crg-hi3516cv300.c   | 177 +--------
+ drivers/clk/hisilicon/crg-hi3798cv200.c   | 206 ++---------
+ drivers/clk/hisilicon/crg.h               |  11 +-
+ drivers/clk/hisilicon/reset.c             |  64 +++-
+ 18 files changed, 989 insertions(+), 1560 deletions(-)
 
-It's ok to move these functions to clk-starfive-jh7110-sys.c. By the
-way, could I still keep the declaration in clk-starfive-jh71x0.h?
 
-Best regards,
-Hal
-
-> 
->> diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.h b/drivers/clk/starfive/clk-starfive-jh71x0.h
->> index 34bb11c72eb7..cfe69aabd65a 100644
->> --- a/drivers/clk/starfive/clk-starfive-jh71x0.h
->> +++ b/drivers/clk/starfive/clk-starfive-jh71x0.h
->> @@ -120,4 +120,12 @@ struct jh71x0_clk_priv {
->>
->>  const struct clk_ops *starfive_jh71x0_clk_ops(u32 max);
->>
->> +#if IS_ENABLED(CONFIG_CLK_STARFIVE_JH7110_SYS)
->> +
->> +int jh7110_reset_controller_register(struct jh71x0_clk_priv *priv,
->> +                                    const char *adev_name,
->> +                                    u32 adev_id);
->> +
->> +#endif
->> +
->>  #endif
->> --
->> 2.38.1
->>
+base-commit: fff5a5e7f528b2ed2c335991399a766c2cf01103
+-- 
+2.39.2
 
