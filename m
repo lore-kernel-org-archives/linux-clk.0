@@ -2,67 +2,89 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93382C77B6C
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 17:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20923C6FD1D
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 18:43:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232475AbjC0R5L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Mar 2023 13:57:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37108 "EHLO
+        id S230095AbjC0Sng (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Mar 2023 14:43:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232645AbjC0R4z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 13:56:55 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E08A30EE;
-        Mon, 27 Mar 2023 10:56:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 52941B818A6;
-        Mon, 27 Mar 2023 17:56:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F17B7C433D2;
-        Mon, 27 Mar 2023 17:56:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679939775;
-        bh=ZNR5VTvFrLH8ao7gO0y2nPvauBf/yf8/FCIc9MIqURM=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=UTgtXYM3JymKVOscd3RDK4KbKoVWlySi/QLxvaU6vAkYVvzEtTVYD5P1Wu6Pcu8Lu
-         LETBHG+/uPv4qaGbG/Y6ePWoeMtuA4MeGeDPdBnwg1fgMzERseXdHxpwbaIQn4gZKQ
-         yTxUywVyIm+UFkewaJqkI7NcbcNQa6mrJuCXgu/OLEmp52ss9HY5RJl0Q1b+EHoe1c
-         z+FogQqdlNBTF8h+zpgHY1Hj4QTX6604j2Y6e/bTr9c0ygvwIT98yJCOgf1W2vgp1z
-         FmnqJZ6fKUdt26TDeiGgWXxioc9C6GB7i/iDNW6u4TVuthOvZ3tNciO5sHAmG1EUff
-         UB+bmTy+tMtSA==
-Message-ID: <16dcfd98a72c8c4b6bac6e758bd10beb.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S232745AbjC0Sn0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 14:43:26 -0400
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DBDC40E7;
+        Mon, 27 Mar 2023 11:43:21 -0700 (PDT)
+Received: by mail-ot1-f49.google.com with SMTP id f4-20020a9d0384000000b0069fab3f4cafso5063079otf.9;
+        Mon, 27 Mar 2023 11:43:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679942600;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QiiBLEZPlQzu45k0Hu3yD+klHY/8gppuEuWQh0rwN1Y=;
+        b=H8hObbVepyle4+RgAaKHAnDLGmbukYFuNwfACd6E25G6brwtvRDzFCCmUrLXTGk5Gn
+         e6/6AofMBYfFTD0rxto5ST+X+0/DGRnuuF65DV5N2ZHib1RhkrWg33V9eJ4q8GrfMW0h
+         6J376rv+fP52atobRc44CGKsSTc8G7SGTQFDhVvCGnXnzpCIbxSY2TJxqR3Dul6za1i9
+         C0AO6YrQ2IawxUb5zqmeIqvyvvEpAxYh0AyeMZah5z1lwwuqCidux1pA4OVwDTUxqPS3
+         qTxTx9uRdJJU8yu/IngJ1Qem3XVzmbuWEtCp8xhabypPUC8l73nY0gro6HiPFsj12Tcp
+         YIvA==
+X-Gm-Message-State: AO0yUKXhzl5pxfg/mxshvuCrryigmEPXuYnJYFpAvtWp2W9ZaohhuNRH
+        /MtBOe7Ot7kECGDKKiYt5Ajrn/9JOg==
+X-Google-Smtp-Source: AKy350a1+WSE/k5JT2iVmvW1QIunpD4icUcr0gou91cdXiN32HGnRrOZgGc1/o/6cRP8MH24qsjj5A==
+X-Received: by 2002:a9d:7c94:0:b0:69b:c852:4ab8 with SMTP id q20-20020a9d7c94000000b0069bc8524ab8mr5919552otn.7.1679942600225;
+        Mon, 27 Mar 2023 11:43:20 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id m2-20020a9d6442000000b0069f0a85fa36sm10526407otl.57.2023.03.27.11.43.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Mar 2023 11:43:19 -0700 (PDT)
+Received: (nullmailer pid 250774 invoked by uid 1000);
+        Mon, 27 Mar 2023 18:43:19 -0000
+From:   Rob Herring <robh@kernel.org>
+Subject: [PATCH 0/3] clk: Fix/cleanup mvebu CPU DT node accesses
+Date:   Mon, 27 Mar 2023 13:43:17 -0500
+Message-Id: <20230327-mvebu-clk-fixes-v1-0-438de1026efd@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230310075535.3476580-3-alexander.stein@ew.tq-group.com>
-References: <20230310075535.3476580-1-alexander.stein@ew.tq-group.com> <20230310075535.3476580-3-alexander.stein@ew.tq-group.com>
-Subject: Re: [PATCH v3 3/4] clk: rs9: Support device specific dif bit calculation
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Marek Vasut <marex@denx.de>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMXjIWQC/x2L0QrCMAwAf2Xk2UDX6gb+iviQ1nQL66o0bAhj/
+ 27w8Y67A5SbsMK9O6DxLirvatBfOkgz1YlRXsbgnQ8u+BHXneOGqSyY5cuK+Up9GG6ZXBzBrkj
+ KGBvVNNtXt1JMfhr/azOP53n+AJQ6IFN2AAAA
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 27 Mar 2023 10:56:12 -0700
-User-Agent: alot/0.10
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+X-Mailer: b4 0.13-dev
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Alexander Stein (2023-03-09 23:55:34)
-> The calculation DIFx is BIT(n) +1 is only true for 9FGV0241. With
-> additional devices this is getting more complicated.
-> Support a base bit for the DIF calculation, currently only devices
-> with consecutive bits are supported, e.g. the 6-channel device needs
-> additional logic.
->=20
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> Reviewed-by: Marek Vasut <marex@denx.de>
-> ---
+This is a couple of fixes and clean-ups to use preferred CPU accessors
+rather than directly parsing DT "reg" properties. It's part of a larger 
+effort to remove open coded parsing of "reg". The existing code is 
+fragile depending on the CPU architecture details and is wrong for 
+arm64 (though the dts files are also wrong).
 
-Applied to clk-next
+Compile tested only.
+
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+Rob Herring (3):
+      MAINTAINERS: Add Marvell mvebu clock drivers
+      clk: mvebu: Use of_get_cpu_hwid() to read CPU ID
+      clk: mvebu: Iterate over possible CPUs instead of DT CPU nodes
+
+ MAINTAINERS                    |  1 +
+ drivers/clk/mvebu/ap-cpu-clk.c | 16 ++++++++--------
+ drivers/clk/mvebu/clk-cpu.c    | 14 +++-----------
+ 3 files changed, 12 insertions(+), 19 deletions(-)
+---
+base-commit: fe15c26ee26efa11741a7b632e9f23b01aca4cc6
+change-id: 20230327-mvebu-clk-fixes-f4a1365fa0b7
+
+Best regards,
+-- 
+Rob Herring <robh@kernel.org>
+
