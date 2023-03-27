@@ -2,37 +2,37 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2668CC76195
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 13:19:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5018CC76195
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 13:22:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229959AbjC0NTf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Mar 2023 09:19:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59284 "EHLO
+        id S229653AbjC0NWP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Mar 2023 09:22:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbjC0NTe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 09:19:34 -0400
+        with ESMTP id S229565AbjC0NWO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 09:22:14 -0400
 Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C03411723;
-        Mon, 27 Mar 2023 06:19:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 624E51723;
+        Mon, 27 Mar 2023 06:22:12 -0700 (PDT)
 Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id E3E965FD0E;
-        Mon, 27 Mar 2023 16:19:28 +0300 (MSK)
+        by mx.sberdevices.ru (Postfix) with ESMTP id C2C485FD0E;
+        Mon, 27 Mar 2023 16:22:10 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1679923168;
-        bh=r/g6+1aexCmhn5DuTBkJmHKaVN7SrHEXHCMTnOGbfJA=;
+        s=mail; t=1679923330;
+        bh=uWyMD5If887JpUXUAf2FQIqs4GKKl1iQKzSB5o9q4ok=;
         h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=UG02xd1YhnsoOGv+yDroIOFfRc0vXcEdUtR+Wfc8JyP8Tpky/BHcm7CV7WBFbKP4Q
-         LN3mWA+KlG1ni8SHmlHSiye63+akHBCbBEEK/h+y6NeEslobTAnuKDmQFxWBYOv8Q+
-         sFZzw42jkdVFkYPP0NAJg0DRPt1uw36Tn/DwixzYLVokkTNP0ifh1IF6uaw1iEjdNw
-         Xmr7AoDkYQc1/lDxaQgUi3Qijkcaezd3b+c0qN52V+E2m7S2sMXc84PgX1xtATFtyn
-         Rvem93hXYk8d6fFJHjJ0BeqP7jx3FXj+Ybt3I3Yr96Cb1/VQu9BNbqZ8yuXlfpxJu9
-         L9fn3s23yujEQ==
+        b=DYabJhqEltilnGOBhjRmouVD5C4M9W0f4cyZHlPQhITMB7/HfcfuvWx6rPmxTG+gR
+         RHwsHcZHgoPaXWIB5mv5dxE2nCVNaq2x/hFEWeYYOWazPmwWfHdnUfeT5gvWMVdzTB
+         areAkdxHes7nXA/K4FeH4F2D3upvsrrNF6Q3iMYLPtdyLAmUrOUJyNfL3569322u1h
+         v59z3duYEuj7kc9R8KnfY8cjRJ2+cM6uoZLx02pe1tITThaH/nJUrbRGuwow2sNlOV
+         VPfA7w9C0MfGuQ568p1ndUl4IZSrd9NNONnTkNMxwgO0InXYyyfai+3IAmYSF2euzJ
+         AxEw7OR5o93+w==
 Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
         by mx.sberdevices.ru (Postfix) with ESMTP;
-        Mon, 27 Mar 2023 16:19:28 +0300 (MSK)
-Date:   Mon, 27 Mar 2023 16:19:27 +0300
+        Mon, 27 Mar 2023 16:22:10 +0300 (MSK)
+Date:   Mon, 27 Mar 2023 16:22:09 +0300
 From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     <neil.armstrong@linaro.org>
+To:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>
 CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
         <khilman@baylibre.com>, <martin.blumenstingl@googlemail.com>,
@@ -43,20 +43,21 @@ CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
 Subject: Re: [PATCH v11 3/5] dt-bindings: clock: meson: add A1 PLL and
  Peripherals clkcs bindings
-Message-ID: <20230327131927.k7uswfn6i3jqjrzv@CAB-WSD-L081021>
+Message-ID: <20230327132209.c64ye4ou22cq7wm6@CAB-WSD-L081021>
 References: <20230321193014.26349-1-ddrokosov@sberdevices.ru>
  <20230321193014.26349-4-ddrokosov@sberdevices.ru>
  <1jmt3yo5r0.fsf@starbuckisacylon.baylibre.com>
  <20230327105115.ury3w4xpzhcpnqjg@CAB-WSD-L081021>
  <1jilemo1r9.fsf@starbuckisacylon.baylibre.com>
  <ae367a80-e617-42a6-f873-73a1ecfe7c0d@linaro.org>
+ <20230327131927.k7uswfn6i3jqjrzv@CAB-WSD-L081021>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <ae367a80-e617-42a6-f873-73a1ecfe7c0d@linaro.org>
+In-Reply-To: <20230327131927.k7uswfn6i3jqjrzv@CAB-WSD-L081021>
 User-Agent: NeoMutt/20220415
 X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
+X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
  S-MS-EXCH01.sberdevices.ru (172.16.1.4)
 X-KSMG-Rule-ID: 4
 X-KSMG-Message-Action: clean
@@ -68,6 +69,9 @@ X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
+
+Don't know why, but my client deleted Jerome from To:. Sorry, added him
+back.
 
 On Mon, Mar 27, 2023 at 02:03:25PM +0200, neil.armstrong@linaro.org wrote:
 > On 27/03/2023 13:39, Jerome Brunet wrote:
