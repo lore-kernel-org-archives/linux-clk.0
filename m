@@ -2,66 +2,71 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26CA6C76195
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 16:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 211C2C76195
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 17:41:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230417AbjC0Q7m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Mar 2023 12:59:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50240 "EHLO
+        id S229492AbjC0Rl4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Mar 2023 13:41:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229751AbjC0Q7l (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 12:59:41 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3F9930D6;
-        Mon, 27 Mar 2023 09:59:40 -0700 (PDT)
+        with ESMTP id S229452AbjC0Rlz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 13:41:55 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3045170C;
+        Mon, 27 Mar 2023 10:41:54 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 63172B817AE;
-        Mon, 27 Mar 2023 16:59:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E37EC433EF;
-        Mon, 27 Mar 2023 16:59:38 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8FF9F61456;
+        Mon, 27 Mar 2023 17:41:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2ED1C433EF;
+        Mon, 27 Mar 2023 17:41:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679936378;
-        bh=iX6xV1/d1zdpnc1oyrBq9Ygc5V6FknfTfC9oyWjOAA8=;
+        s=k20201202; t=1679938913;
+        bh=uuQuqqM9Ye/wRWSRDk0xYoQNtYIma2tReP69LAgb3RQ=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=GyaQFUv4KBrA92HoxGy6rqmiMKzRKyEfm6ALYYGiCcrmBTLv8HsbhWNvx0uT/fx+i
-         GdTuaDV/8ZM8v4fSuYqlxQlGgdlph44zIPUVVOOW9r1LJwXZ2TfpW55UHW/eHqkP9K
-         570rpFId/sUu2qIkG2ZVTLTpzi9hg194iHcQ5RZEsUsEG976rByQrlJVNfedPpfNly
-         +wNuG0AipoxxyBxSh6ZMHJ+ELmxGuACUlOL85LBgFrrkgBky6wpFfo0tf50snk2TyZ
-         wzgCwoATYaTyppdKLQTmOvMYrw/7iiaJDMrowmNO2c38eklJXzaX0gjcH1eIlRZiio
-         0KTNAZMl4Ss5g==
-Message-ID: <5e2e9442d232444fcb8630f178f228e8.sboyd@kernel.org>
+        b=ld/oGyfycsjr6cflf5tmWhVkT5RnDxm+pB86yH/1dSkqh02gMYQWr0EGvd8QtxbFG
+         kPptNr+KQDaOH6KWOAfDR4fUqPp+zbZt0cYBxL/y07n6DvDmMBHn75C7asbEfZcFT/
+         UYQRyJKxNJhsvNvVs56dcf7BgT8qqI+dhwN3EBW+Z5ozjGDtmIIZCKMB2qJkC6YXsQ
+         G8L0HM73u+1MIIc1UKj/PIpe+eYcE93yDiKogZJyuOuLdyWV+NDD3syAUqqd4U89YB
+         ML6z0Ce5kUM4KFCll2f1axSaT51ihTRK9nizfu4DGg69YOZtkKIl0n5hIAox5VetvQ
+         puz4B0srKW4fg==
+Message-ID: <b347395dd736194ae9392f2f6ea450b0.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230323121437.28239-1-lukas.bulwahn@gmail.com>
-References: <20230323121437.28239-1-lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: remove obsolete file entry in MIPS/LOONGSON1 ARCHITECTURE
+In-Reply-To: <20230327163249.1081824-1-quic_mohs@quicinc.com>
+References: <20230327163249.1081824-1-quic_mohs@quicinc.com>
+Subject: Re: [PATCH v1 0/4] Remove the qdsp6ss register from lpasscc
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Keguang Zhang <keguang.zhang@gmail.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org
-Date:   Mon, 27 Mar 2023 09:59:35 -0700
+Cc:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+To:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, broonie@kernel.org,
+        konrad.dybcio@somainline.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        quic_plai@quicinc.com, quic_rohkumar@quicinc.com,
+        quic_visr@quicinc.com, robh+dt@kernel.org, swboyd@chromium.org
+Date:   Mon, 27 Mar 2023 10:41:50 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Lukas Bulwahn (2023-03-23 05:14:37)
-> Commit c46496119ed0 ("clk: loongson1: Remove the outdated driver") removes
-> all files matching the pattern drivers/*/*/*loongson1*, but misses to
-> adjust the file entry for MIPS/LOONGSON1 ARCHITECTURE in MAINTAINERS.
->=20
-> Hence, ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about=
- a
-> broken reference.
->=20
-> Remove this file entry in MIPS/LOONGSON1 ARCHITECTURE.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
+Quoting Mohammad Rafi Shaik (2023-03-27 09:32:45)
+> This patch set is to remove the qdsp6ss register from lpasscc to
+> resolve memory conflict's between lpascc and ADSP remoteproc driver.
 
-Applied to clk-next
+Is this related to the other patch series[1] ("[PATCH v9 0/4] Add resets
+for ADSP based audio clock controller driver")? Does it supersede those?
+
+>=20
+> Mohammad Rafi Shaik (4):
+>   arm64: dts: qcom: sc7280: Modify lpasscc node name
+>   dt-bindings: clock: qcom,sc7280-lpasscc: Remove qdsp6ss register
+>     region
+>   arm64: dts: qcom: sc7280: Remove qdsp6ss regmap region
+>   clk: qcom: lpasscc-sc7280: Remove qdsp6ss clock registration
+
+[1] https://lore.kernel.org/all/20230317141622.1926573-1-quic_mohs@quicinc.=
+com/
