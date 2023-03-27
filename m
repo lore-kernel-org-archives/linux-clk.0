@@ -2,71 +2,68 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 211C2C76195
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 17:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED27C6FD1D
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 17:49:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229492AbjC0Rl4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Mar 2023 13:41:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44032 "EHLO
+        id S232120AbjC0Rtl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Mar 2023 13:49:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjC0Rlz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 13:41:55 -0400
+        with ESMTP id S232139AbjC0Rti (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 13:49:38 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3045170C;
-        Mon, 27 Mar 2023 10:41:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D247170C;
+        Mon, 27 Mar 2023 10:49:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8FF9F61456;
-        Mon, 27 Mar 2023 17:41:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2ED1C433EF;
-        Mon, 27 Mar 2023 17:41:53 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A467C61458;
+        Mon, 27 Mar 2023 17:49:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECE77C433D2;
+        Mon, 27 Mar 2023 17:49:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679938913;
-        bh=uuQuqqM9Ye/wRWSRDk0xYoQNtYIma2tReP69LAgb3RQ=;
+        s=k20201202; t=1679939376;
+        bh=z6Mf9mmmJmkwpYKNu4EDMwMe4wXtgPWUTk0mNL0Jqd8=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ld/oGyfycsjr6cflf5tmWhVkT5RnDxm+pB86yH/1dSkqh02gMYQWr0EGvd8QtxbFG
-         kPptNr+KQDaOH6KWOAfDR4fUqPp+zbZt0cYBxL/y07n6DvDmMBHn75C7asbEfZcFT/
-         UYQRyJKxNJhsvNvVs56dcf7BgT8qqI+dhwN3EBW+Z5ozjGDtmIIZCKMB2qJkC6YXsQ
-         G8L0HM73u+1MIIc1UKj/PIpe+eYcE93yDiKogZJyuOuLdyWV+NDD3syAUqqd4U89YB
-         ML6z0Ce5kUM4KFCll2f1axSaT51ihTRK9nizfu4DGg69YOZtkKIl0n5hIAox5VetvQ
-         puz4B0srKW4fg==
-Message-ID: <b347395dd736194ae9392f2f6ea450b0.sboyd@kernel.org>
+        b=PtK0fCgDxniwbHb2b7tunPgVtISR8UmCwPRszDIj2DUAp/az/6ONLmvSjH7DM3sUC
+         yFrHIVTWvcyZgY2KVwMYXzzJdy9zBtJig3D7rYd38SwmVpCgyPfuaVGidixEnO4qgD
+         /8O5TCcvqHLBeF29PnGgC9OCamqscPIEBKtPkYxmzdxWbnovjYE0R6ughSk/PZIJER
+         Erl2JMZ1E5q+Ui4LsrncJ+wd1hqN91+m5TdfA79BQWG2gYgPmYfvLaQEOKqfN0PBkf
+         ZYMft2+eBw6hZu0Tto8Wedfg3yJ3DL99B3OcGp8V0zQVzXotw8e80vklina5RXqLGn
+         0ECQzt2kaUAfw==
+Message-ID: <6407bbae6eb46897765508262bd2e1ec.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230327163249.1081824-1-quic_mohs@quicinc.com>
-References: <20230327163249.1081824-1-quic_mohs@quicinc.com>
-Subject: Re: [PATCH v1 0/4] Remove the qdsp6ss register from lpasscc
+In-Reply-To: <20230118191521.15544-1-marex@denx.de>
+References: <20230118191521.15544-1-marex@denx.de>
+Subject: Re: [PATCH v3 1/2] dt-bindings: clk: si521xx: Add Skyworks Si521xx I2C PCIe clock generators
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-To:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, broonie@kernel.org,
-        konrad.dybcio@somainline.org, krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        quic_plai@quicinc.com, quic_rohkumar@quicinc.com,
-        quic_visr@quicinc.com, robh+dt@kernel.org, swboyd@chromium.org
-Date:   Mon, 27 Mar 2023 10:41:50 -0700
+Cc:     Marek Vasut <marex@denx.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org
+To:     Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org
+Date:   Mon, 27 Mar 2023 10:49:32 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Mohammad Rafi Shaik (2023-03-27 09:32:45)
-> This patch set is to remove the qdsp6ss register from lpasscc to
-> resolve memory conflict's between lpascc and ADSP remoteproc driver.
-
-Is this related to the other patch series[1] ("[PATCH v9 0/4] Add resets
-for ADSP based audio clock controller driver")? Does it supersede those?
-
+Quoting Marek Vasut (2023-01-18 11:15:20)
+> Add binding for Skyworks Si521xx PCIe clock generators. This binding
+> is designed to support Si52144/Si52146/Si52147 series I2C PCIe clock
+> generators, tested model is Si52144. It should be possible to add
+> Si5213x series as well.
 >=20
-> Mohammad Rafi Shaik (4):
->   arm64: dts: qcom: sc7280: Modify lpasscc node name
->   dt-bindings: clock: qcom,sc7280-lpasscc: Remove qdsp6ss register
->     region
->   arm64: dts: qcom: sc7280: Remove qdsp6ss regmap region
->   clk: qcom: lpasscc-sc7280: Remove qdsp6ss clock registration
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Marek Vasut <marex@denx.de>
+> ---
 
-[1] https://lore.kernel.org/all/20230317141622.1926573-1-quic_mohs@quicinc.=
-com/
+Applied to clk-next
