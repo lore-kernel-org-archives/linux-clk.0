@@ -2,197 +2,211 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40EC0C761A6
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 19:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8177FC6FD1D
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 19:38:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229547AbjC0Tay (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Mar 2023 15:30:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53732 "EHLO
+        id S232348AbjC0Tim (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Mar 2023 15:38:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbjC0Taw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 15:30:52 -0400
-X-Greylist: delayed 372 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 27 Mar 2023 12:30:51 PDT
-Received: from new3-smtp.messagingengine.com (new3-smtp.messagingengine.com [66.111.4.229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5657A2D48;
-        Mon, 27 Mar 2023 12:30:51 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id A10135821C9;
-        Mon, 27 Mar 2023 15:24:35 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Mon, 27 Mar 2023 15:24:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
-        1679945075; x=1679952275; bh=rUuK9HXT1QKP+JaV2sHZBw1jLvvNj/LeTVl
-        Vzz2mgnE=; b=Gbu8P4udsMzoUHOjBbc5vfZkP8tmap7dDKr2UbNlg1rixDocDy1
-        FxnzMOf4IOE2QfpQC16ztGYJPxILJkIxjIgvAYZvE6YKh8ByrZaG/DwGgBebbWeR
-        u897wwvNEQblafmWFWlheo89ARPXU3Y8oogaRB7FitYdT+Ut11wADq6gdu2WovDh
-        Xkmp8I7I9FIQMArX6acMwEXaNFUqd2HKMXcH43MHmPOzshN26/iirV1eH6W3dVXI
-        8/qFTx4K/XYsgt3TO6s0Awb2KVJUO/QYpQYZyPru8lsOFL1AaMAGCylG/7RBI5k9
-        jN2zsyhGhjzCZHGorsCFbB/6Ikisoduw5rw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1679945075; x=1679952275; bh=rUuK9HXT1QKP+JaV2sHZBw1jLvvNj/LeTVl
-        Vzz2mgnE=; b=SHHB4k7bT/dpA/WpBJ4y6Me/WnLbpnFXIndTiaB8/gRhPh84gMh
-        BWWBeQ2XwYOIN72SfXrmMvw1Fp7uf/LOu2PSFypexIyJHggZzMGs7l6ee1zSHLSh
-        oDdQ+vdPBe9KNPXErhfHevDOs1nDqM2OVelCWFp97TAwMIVY0/2/h3xlmXqOtiYf
-        EVwH2yJfjFhnXvgqDRNyzHjPstZZOaYq3QFTE2qxYXpu0A46u0Mm1LUIMjT71nea
-        MN2+d/lsVf8chYLWOQNX2owgkOwLov/Ep9ne8iDdinid6yyrileqeAyQzZn48c9N
-        Q0qZYiL21tuinlqT4OtghVeAeGKaikoV2ow==
-X-ME-Sender: <xms:ce0hZIdM24euIGEUtoe65OkBtoRYVeI3ONUCSPWoGVW_5JO4kFnMXA>
-    <xme:ce0hZKP7isXAj98ojUZU3qfBX3AC7TN1qwun_tqjjRNsKWlTzcp_QsyECQ0whwQwo
-    rwnun8onbXM8eXunNI>
-X-ME-Received: <xmr:ce0hZJju5UXKYf1ZB4-cgid8Z7MS1h-PShHiUVPZRgduIHmJvBnjnu1tYdV9>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdehvddgudefkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtugfgjgesthhqredttddtvdenucfhrhhomhepofgr
-    gihimhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtf
-    frrghtthgvrhhnpeetgfelgefggeekkefggfeludeiudffjeffgeevveekjedukedtudeu
-    teefteefgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:ce0hZN-SRmDaQe-0vFu3eAyHD4JPegYDiDKo-JQR5BGerdxYpxnFaQ>
-    <xmx:ce0hZEun2Gmy0YnOs-3_4-7t5O9t6z8MgMYrxxX_G44CPUvCVCr81Q>
-    <xmx:ce0hZEE5l3ugjz44F874HhjsOZZjibqjYjw1zy4XvsjTYlW2FEW9Yg>
-    <xmx:c-0hZFMocL39774IjxJ1l8UQZNiYw8FCE5ns7VU4Jf79p3npVDrKMQ>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 27 Mar 2023 15:24:32 -0400 (EDT)
-Date:   Mon, 27 Mar 2023 21:24:30 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel@ffwll.ch>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
+        with ESMTP id S232237AbjC0Til (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 15:38:41 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCE0F2738
+        for <linux-clk@vger.kernel.org>; Mon, 27 Mar 2023 12:38:38 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id y4so40820222edo.2
+        for <linux-clk@vger.kernel.org>; Mon, 27 Mar 2023 12:38:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679945917;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2QU02QZqcsWxbNIoA4doC7Xt9Nnah2Ywv2Hy8C/OsKs=;
+        b=lo8NIfcYiwKdB1RCkQW37pKPM68hzsBaSC7jKskOPnAavAxa6DBDCTWz+ioo+FbxrG
+         Fnt55dDR23s1B4F+N/vztIcFa3lLX+VGAKvFm1dunuLH/KZb6cwG4TWeXEuKcfpyvJlm
+         phNZ4rhS3elvof5NetxwNCFkBEy/4wHvUXu0tFfTZ5VYag9tWYOlyiez1qK2ACYy33So
+         vbOcmrjHMkz3o8v9XZphdX1Y/IH+JizIGZ4sJnKyVNVUNTf7l8k2kANdafkNLUJ9Loc2
+         D6mZ6AyvSKibq++ecB+KTj28o7NA+f0W3VKRMKq0y6EKlcaFMZes4Ss0x7IsRkiw5TdY
+         HvDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679945917;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2QU02QZqcsWxbNIoA4doC7Xt9Nnah2Ywv2Hy8C/OsKs=;
+        b=i9saGidFe2EEMvb7z/6ZshWTpzpW+Wjx06rxaQ6q4S3uNSfS0CT8WndQ/BnAEZt81C
+         T1LIZPl5/9S6GS9Wh/P1mKUJ8nARoQvkS/DktTn13v8dbDk8PEMn2RWjVk9YEL8S9fkd
+         ryLtWZRnPet9TnZrhXAxW231yR8yyH0zuMBoqRo7UAIBuuq9KjLb3rqs4yfjXU9Q5987
+         3MKUEi4Z4ne6+szt7moldC2lOQgAhbkKFrs+wi+6IZvI/i1Vks4KGtmcCulTq4Gs+m+3
+         keInpSq6SQ2phIIeePxGGl0DzFUfmvnjN/QLy9CC2Y+n3H/y1I3b/Y1l3/nILwIrSVTM
+         vz1g==
+X-Gm-Message-State: AAQBX9fKa1CSe6ZX8n4xm0co/ohYDs7RcnjRZSJZkTatGh7rQsfWHV7x
+        aRuDr1cJFiBk9vmKBxX1xQwa6w==
+X-Google-Smtp-Source: AKy350Ypsv2QkGJlBje8SS91Xz6ZgGJsh65MgKeyO60yTmdJsae4YAUIYIVnuHHX9X3fqNOWJBQ3jw==
+X-Received: by 2002:a50:ec89:0:b0:4fa:4b1c:5ea3 with SMTP id e9-20020a50ec89000000b004fa4b1c5ea3mr13354358edr.23.1679945917173;
+        Mon, 27 Mar 2023 12:38:37 -0700 (PDT)
+Received: from localhost.localdomain ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id kb1-20020a1709070f8100b00933c4a25735sm11701254ejc.100.2023.03.27.12.38.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Mar 2023 12:38:36 -0700 (PDT)
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        David Airlie <airlied@gmail.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        David Lechner <david@lechnology.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        alsa-devel@alsa-project.org, linux-mediatek@lists.infradead.org,
-        linux-phy@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        patches@opensource.cirrus.com, linux-tegra@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 56/65] clk: ingenic: cgu: Switch to determine_rate
-Message-ID: <20230327192430.b2cp3yyrkzy4g4vw@penduick>
-References: <80VTKR.CE8RVN8M3ZYK3@crapouillou.net>
- <20221104145946.orsyrhiqvypisl5j@houat>
- <cp7Yh29ndlOOi1yW8KwCcpzoLPLxm1vR@localhost>
- <20221107085417.xrsh6xy3ouwdkp4z@houat>
- <ucJ6KSBqdPTxfxUQqLUr9C9RGiQRnY1I@localhost>
- <20221109110045.j24vwkaq3s4yzoy3@houat>
- <06a293adc75990ed3e297b076fc38d8a.sboyd@kernel.org>
- <xpKMzGb1sOsucWMTlJIMzrT5KjLlZ7JP@localhost>
- <20230324111959.frjf4neopbs67ugd@houat>
- <rTJKpeLOBeu3eOLW5z3P5fEpcOJJLrGs@localhost>
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Saravana Kannan <saravanak@google.com>
+Cc:     linux-pm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH v3 0/4] Allow genpd providers to power off domains on sync state
+Date:   Mon, 27 Mar 2023 22:38:25 +0300
+Message-Id: <20230327193829.3756640-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <rTJKpeLOBeu3eOLW5z3P5fEpcOJJLrGs@localhost>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Mar 24, 2023 at 08:58:48PM +0000, Aidan MacDonald wrote:
-> >> My suggestion: add a per-clock bitmap to keep track of which parents
-> >> are allowed. Any operation that would select a parent clock not on the
-> >> whitelist should fail. Automatic reparenting should only select from
-> >> clocks on the whitelist. And we need new DT bindings for controlling
-> >> the whitelist, for example:
-> >>
-> >>     clock-parents-0 =3D <&clk1>, <&pll_c>;
-> >>     clock-parents-1 =3D <&clk2>, <&pll_a>, <&pll_b>;
-> >>
-> >> This means that clk1 can only have pll_c as a parent, while clk2 can
-> >> have pll_a or pll_b as parents. By default every clock will be able
-> >> to use any parent, so a list is only needed if the machine needs a
-> >> more restrictive policy.
-> >>
-> >> assigned-clock-parents should disable automatic reparenting, but allow
-> >> explicit clk_set_parent(). This will allow clock drivers to start doing
-> >> reparenting without breaking old DTs.
-> >
-> > I'm generally not a fan of putting all these policies in the device
-> > tree. Do you have an example where it wouldn't be possible to do exactly
-> > this from the driver itself?
->=20
-> I'm confused. What's implicit in the example is clk1 and clk2 might
-> have *other* possible choices of parent clock and the device tree is
-> limiting what the OS is allowed to choose.
->
-> Why would you put such arbitrary limitations into the driver?
+There have been already a couple of tries to make the genpd "disable
+unused" late initcall skip the powering off of domains that might be
+needed until later on (i.e. until some consumer probes). The conclusion
+was that the provider could return -EBUSY from the power_off callback
+until the provider's sync state has been reached. This patch series tries
+to provide a proof-of-concept that is working on Qualcomm platforms.
 
-Why would we put such arbitrary limitations in the firmware? As this
-entire thread can attest, people are already using the device tree to
-work around the limitations of the Linux driver, or reduce the
-features of Linux because they can rely on the device tree. Either
-way, it's linked to the state of the Linux driver, and any other OS or
-Linux version could very well implement something more dynamic.
+I've been doing extensive testing on SM8450, but I've also spinned this
+on my X13s (SC8280XP). Both patches that add the sync state callback to
+the SC8280XP and SM8450 are here to provide context. Once we agree on
+the form, I intend to add the sync state callback to all gdsc providers.
 
-> They would be different from machine to machine, unless the clock
-> tree is so simple there is only *one* meaningful way to configure
-> it.
+Currently, some of the gdsc providers might not reach sync state due to
+list of consumers not probing yet (or at all). The sync state can be
+enforced by writing 1 to the state_synced sysfs attribute of the
+provider, thanks to Saravana's commit [1] which has been already merged.
 
-If we look at the device trees we have in-tree, most of the users of
-assigned-clocks are the same from one board to another.
+[1] https://lore.kernel.org/r/20230304005355.746421-3-saravanak@google.com
 
-> Most SoCs are complicated enough that there will be tradeoffs
-> depending on what peripherals you are using (typically a single
-> machine will not use *every* peripheral device provided by the SoC).
+V2 (RFC) of this patchset was here:
+https://lore.kernel.org/all/20230320134217.1685781-1-abel.vesa@linaro.org/
 
-We already have APIs to lock parents or rates on a given clock from
-the consumer. It's far superior (feature-wise) than what the device
-tree will ever offer because it's code, and it depends on the usage
-already since an unused driver won't probe.
+Changes since v2:
+ * renamed genpd_queue_power_off_work to pm_genpd_queue_power_off and added
+   comment about its purpose w.r.t. it being exported.
+ * added the qcom_cc generic sync state callback to all providers that
+   register GDSCs, instead of SM8450 and SC8280XP
 
-Maxime
+Changes since v1:
+ * Added the qcom_cc sync state callback which calls in turn the gdsc one
+ * dropped extra semicolon from pm_domain.h
+
+Abel Vesa (4):
+  PM: domains: Allow power off queuing from providers
+  soc: qcom: rpmhpd: Do proper power off when state synced
+  clk: qcom: gdsc: Avoid actual power off until sync state
+  clk: qcom: Add sync state callback to all providers
+
+ drivers/base/power/domain.c            | 18 ++++++++++--------
+ drivers/clk/qcom/apss-ipq6018.c        |  1 +
+ drivers/clk/qcom/camcc-sc7180.c        |  1 +
+ drivers/clk/qcom/camcc-sc7280.c        |  1 +
+ drivers/clk/qcom/camcc-sdm845.c        |  1 +
+ drivers/clk/qcom/camcc-sm6350.c        |  1 +
+ drivers/clk/qcom/camcc-sm8250.c        |  1 +
+ drivers/clk/qcom/camcc-sm8450.c        |  1 +
+ drivers/clk/qcom/common.c              | 19 +++++++++++++++++++
+ drivers/clk/qcom/common.h              |  2 ++
+ drivers/clk/qcom/dispcc-qcm2290.c      |  1 +
+ drivers/clk/qcom/dispcc-sc7180.c       |  1 +
+ drivers/clk/qcom/dispcc-sc7280.c       |  1 +
+ drivers/clk/qcom/dispcc-sc8280xp.c     |  1 +
+ drivers/clk/qcom/dispcc-sdm845.c       |  1 +
+ drivers/clk/qcom/dispcc-sm6115.c       |  1 +
+ drivers/clk/qcom/dispcc-sm6125.c       |  1 +
+ drivers/clk/qcom/dispcc-sm6350.c       |  1 +
+ drivers/clk/qcom/dispcc-sm6375.c       |  1 +
+ drivers/clk/qcom/dispcc-sm8250.c       |  1 +
+ drivers/clk/qcom/dispcc-sm8450.c       |  1 +
+ drivers/clk/qcom/dispcc-sm8550.c       |  1 +
+ drivers/clk/qcom/gcc-apq8084.c         |  1 +
+ drivers/clk/qcom/gcc-ipq806x.c         |  1 +
+ drivers/clk/qcom/gcc-ipq8074.c         |  1 +
+ drivers/clk/qcom/gcc-mdm9615.c         |  1 +
+ drivers/clk/qcom/gcc-msm8660.c         |  1 +
+ drivers/clk/qcom/gcc-msm8909.c         |  1 +
+ drivers/clk/qcom/gcc-msm8916.c         |  1 +
+ drivers/clk/qcom/gcc-msm8939.c         |  1 +
+ drivers/clk/qcom/gcc-msm8953.c         |  1 +
+ drivers/clk/qcom/gcc-msm8960.c         |  1 +
+ drivers/clk/qcom/gcc-msm8974.c         |  1 +
+ drivers/clk/qcom/gcc-msm8976.c         |  1 +
+ drivers/clk/qcom/gcc-msm8994.c         |  1 +
+ drivers/clk/qcom/gcc-msm8996.c         |  1 +
+ drivers/clk/qcom/gcc-msm8998.c         |  1 +
+ drivers/clk/qcom/gcc-qcm2290.c         |  1 +
+ drivers/clk/qcom/gcc-qcs404.c          |  1 +
+ drivers/clk/qcom/gcc-qdu1000.c         |  1 +
+ drivers/clk/qcom/gcc-sa8775p.c         |  1 +
+ drivers/clk/qcom/gcc-sc7180.c          |  1 +
+ drivers/clk/qcom/gcc-sc7280.c          |  1 +
+ drivers/clk/qcom/gcc-sc8180x.c         |  1 +
+ drivers/clk/qcom/gcc-sc8280xp.c        |  1 +
+ drivers/clk/qcom/gcc-sdm660.c          |  1 +
+ drivers/clk/qcom/gcc-sdm845.c          |  1 +
+ drivers/clk/qcom/gcc-sdx55.c           |  1 +
+ drivers/clk/qcom/gcc-sdx65.c           |  1 +
+ drivers/clk/qcom/gcc-sm6115.c          |  1 +
+ drivers/clk/qcom/gcc-sm6125.c          |  1 +
+ drivers/clk/qcom/gcc-sm6350.c          |  1 +
+ drivers/clk/qcom/gcc-sm6375.c          |  1 +
+ drivers/clk/qcom/gcc-sm7150.c          |  1 +
+ drivers/clk/qcom/gcc-sm8150.c          |  1 +
+ drivers/clk/qcom/gcc-sm8250.c          |  1 +
+ drivers/clk/qcom/gcc-sm8350.c          |  1 +
+ drivers/clk/qcom/gcc-sm8450.c          |  1 +
+ drivers/clk/qcom/gcc-sm8550.c          |  1 +
+ drivers/clk/qcom/gdsc.c                | 26 ++++++++++++++++++++++++++
+ drivers/clk/qcom/gdsc.h                |  6 ++++++
+ drivers/clk/qcom/gpucc-msm8998.c       |  1 +
+ drivers/clk/qcom/gpucc-sc7180.c        |  1 +
+ drivers/clk/qcom/gpucc-sc7280.c        |  1 +
+ drivers/clk/qcom/gpucc-sc8280xp.c      |  1 +
+ drivers/clk/qcom/gpucc-sdm660.c        |  1 +
+ drivers/clk/qcom/gpucc-sdm845.c        |  1 +
+ drivers/clk/qcom/gpucc-sm6115.c        |  1 +
+ drivers/clk/qcom/gpucc-sm6125.c        |  1 +
+ drivers/clk/qcom/gpucc-sm6350.c        |  1 +
+ drivers/clk/qcom/gpucc-sm6375.c        |  1 +
+ drivers/clk/qcom/gpucc-sm8150.c        |  1 +
+ drivers/clk/qcom/gpucc-sm8250.c        |  1 +
+ drivers/clk/qcom/gpucc-sm8350.c        |  1 +
+ drivers/clk/qcom/lcc-ipq806x.c         |  1 +
+ drivers/clk/qcom/lpassaudiocc-sc7280.c |  1 +
+ drivers/clk/qcom/lpasscc-sc7280.c      |  1 +
+ drivers/clk/qcom/lpasscorecc-sc7180.c  |  2 ++
+ drivers/clk/qcom/lpasscorecc-sc7280.c  |  2 ++
+ drivers/clk/qcom/mmcc-apq8084.c        |  1 +
+ drivers/clk/qcom/mmcc-msm8974.c        |  1 +
+ drivers/clk/qcom/mmcc-msm8994.c        |  1 +
+ drivers/clk/qcom/mmcc-msm8996.c        |  1 +
+ drivers/clk/qcom/mmcc-msm8998.c        |  1 +
+ drivers/clk/qcom/mmcc-sdm660.c         |  1 +
+ drivers/clk/qcom/videocc-sc7180.c      |  1 +
+ drivers/clk/qcom/videocc-sc7280.c      |  1 +
+ drivers/clk/qcom/videocc-sdm845.c      |  1 +
+ drivers/clk/qcom/videocc-sm8150.c      |  1 +
+ drivers/clk/qcom/videocc-sm8250.c      |  1 +
+ drivers/soc/qcom/rpmhpd.c              | 19 +++++++------------
+ include/linux/pm_domain.h              |  4 ++++
+ 92 files changed, 161 insertions(+), 20 deletions(-)
+
+-- 
+2.34.1
+
