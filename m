@@ -2,53 +2,52 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20923C6FD1D
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 18:43:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D98F5C76195
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 18:43:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230095AbjC0Sng (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Mar 2023 14:43:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57842 "EHLO
+        id S232700AbjC0Sni (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Mar 2023 14:43:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232745AbjC0Sn0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 14:43:26 -0400
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DBDC40E7;
-        Mon, 27 Mar 2023 11:43:21 -0700 (PDT)
-Received: by mail-ot1-f49.google.com with SMTP id f4-20020a9d0384000000b0069fab3f4cafso5063079otf.9;
-        Mon, 27 Mar 2023 11:43:21 -0700 (PDT)
+        with ESMTP id S232707AbjC0Sn3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 14:43:29 -0400
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E8D635BC;
+        Mon, 27 Mar 2023 11:43:22 -0700 (PDT)
+Received: by mail-oo1-f54.google.com with SMTP id p2-20020a056820044200b0053e5914a50fso229890oou.2;
+        Mon, 27 Mar 2023 11:43:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679942600;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QiiBLEZPlQzu45k0Hu3yD+klHY/8gppuEuWQh0rwN1Y=;
-        b=H8hObbVepyle4+RgAaKHAnDLGmbukYFuNwfACd6E25G6brwtvRDzFCCmUrLXTGk5Gn
-         e6/6AofMBYfFTD0rxto5ST+X+0/DGRnuuF65DV5N2ZHib1RhkrWg33V9eJ4q8GrfMW0h
-         6J376rv+fP52atobRc44CGKsSTc8G7SGTQFDhVvCGnXnzpCIbxSY2TJxqR3Dul6za1i9
-         C0AO6YrQ2IawxUb5zqmeIqvyvvEpAxYh0AyeMZah5z1lwwuqCidux1pA4OVwDTUxqPS3
-         qTxTx9uRdJJU8yu/IngJ1Qem3XVzmbuWEtCp8xhabypPUC8l73nY0gro6HiPFsj12Tcp
-         YIvA==
-X-Gm-Message-State: AO0yUKXhzl5pxfg/mxshvuCrryigmEPXuYnJYFpAvtWp2W9ZaohhuNRH
-        /MtBOe7Ot7kECGDKKiYt5Ajrn/9JOg==
-X-Google-Smtp-Source: AKy350a1+WSE/k5JT2iVmvW1QIunpD4icUcr0gou91cdXiN32HGnRrOZgGc1/o/6cRP8MH24qsjj5A==
-X-Received: by 2002:a9d:7c94:0:b0:69b:c852:4ab8 with SMTP id q20-20020a9d7c94000000b0069bc8524ab8mr5919552otn.7.1679942600225;
-        Mon, 27 Mar 2023 11:43:20 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1679942601;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7mYF/p73swKVMGgtJSK6eBueBgSxph1TeoNqsitRFwA=;
+        b=XjRttvbJRCUx82ASH1d5wEA5halSg15OyoYCZ9w3v3R75MM/Xh6VZWRDx3dNSpoe+E
+         SoYDHw+kIeuMIdEdNYb0FXHHa3rhO/f/mQNfPD56F9NGctjcUQOE+6Rx+ArpQohLNdhB
+         Oyeq9DCt/+bbL95Aqx3KogLfatZM34D2Xwcal0PAPEkzqdQCsuEP9F1KNLaMIls0HB/G
+         G5ZsDXRBon4VOaFOGBHKeWXM+oXCnDlCZoMZRTPUkGwTbLr92AvTFTZUpdEWbqLbWSbR
+         XMJU95fXd8S3Ud7uVtvPfus/b7U8aUD+nfrxkrCtxhcdVdndfuQf0urNzqPsXqUplPWc
+         ajMQ==
+X-Gm-Message-State: AO0yUKV7id96TJFijdZvZBRHL/t92VeQ7vE4gxs7F7pkg6e0XEtdA+6O
+        UMPoNCT3/IiMacefM745yg==
+X-Google-Smtp-Source: AK7set93rXSYxq6KWYshAjTfCfw3AeV65pKHZdMYG56Xbhfos4ATeuSH5uZ8XV3z5yG6pRXhevkRtQ==
+X-Received: by 2002:a4a:2c86:0:b0:525:2b54:d6a4 with SMTP id o128-20020a4a2c86000000b005252b54d6a4mr5858648ooo.0.1679942601498;
+        Mon, 27 Mar 2023 11:43:21 -0700 (PDT)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id m2-20020a9d6442000000b0069f0a85fa36sm10526407otl.57.2023.03.27.11.43.19
+        by smtp.gmail.com with ESMTPSA id u63-20020a4a5742000000b0051aa196ac82sm11759997ooa.14.2023.03.27.11.43.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Mar 2023 11:43:19 -0700 (PDT)
-Received: (nullmailer pid 250774 invoked by uid 1000);
+        Mon, 27 Mar 2023 11:43:21 -0700 (PDT)
+Received: (nullmailer pid 250779 invoked by uid 1000);
         Mon, 27 Mar 2023 18:43:19 -0000
 From:   Rob Herring <robh@kernel.org>
-Subject: [PATCH 0/3] clk: Fix/cleanup mvebu CPU DT node accesses
-Date:   Mon, 27 Mar 2023 13:43:17 -0500
-Message-Id: <20230327-mvebu-clk-fixes-v1-0-438de1026efd@kernel.org>
+Date:   Mon, 27 Mar 2023 13:43:19 -0500
+Subject: [PATCH 2/3] clk: mvebu: Use of_get_cpu_hwid() to read CPU ID
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAMXjIWQC/x2L0QrCMAwAf2Xk2UDX6gb+iviQ1nQL66o0bAhj/
- 27w8Y67A5SbsMK9O6DxLirvatBfOkgz1YlRXsbgnQ8u+BHXneOGqSyY5cuK+Up9GG6ZXBzBrkj
- KGBvVNNtXt1JMfhr/azOP53n+AJQ6IFN2AAAA
+Message-Id: <20230327-mvebu-clk-fixes-v1-2-438de1026efd@kernel.org>
+References: <20230327-mvebu-clk-fixes-v1-0-438de1026efd@kernel.org>
+In-Reply-To: <20230327-mvebu-clk-fixes-v1-0-438de1026efd@kernel.org>
 To:     Andrew Lunn <andrew@lunn.ch>,
         Gregory Clement <gregory.clement@bootlin.com>,
         Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
@@ -61,30 +60,59 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is a couple of fixes and clean-ups to use preferred CPU accessors
-rather than directly parsing DT "reg" properties. It's part of a larger 
-effort to remove open coded parsing of "reg". The existing code is 
-fragile depending on the CPU architecture details and is wrong for 
-arm64 (though the dts files are also wrong).
-
-Compile tested only.
+Use of_get_cpu_hwid() rather than the open coded reading of the CPU
+nodes "reg" property. The existing code is in fact wrong as the "reg"
+address cells size is 2 cells for arm64. The existing code happens to
+work because the DTS files are wrong as well.
 
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
-Rob Herring (3):
-      MAINTAINERS: Add Marvell mvebu clock drivers
-      clk: mvebu: Use of_get_cpu_hwid() to read CPU ID
-      clk: mvebu: Iterate over possible CPUs instead of DT CPU nodes
-
- MAINTAINERS                    |  1 +
- drivers/clk/mvebu/ap-cpu-clk.c | 16 ++++++++--------
- drivers/clk/mvebu/clk-cpu.c    | 14 +++-----------
- 3 files changed, 12 insertions(+), 19 deletions(-)
+Note this should be marked for stable so that if/when the DTS files are
+fixed, then at least stable kernels will work. This is untested, so I
+didn't mark for stable.
 ---
-base-commit: fe15c26ee26efa11741a7b632e9f23b01aca4cc6
-change-id: 20230327-mvebu-clk-fixes-f4a1365fa0b7
+ drivers/clk/mvebu/ap-cpu-clk.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Best regards,
+diff --git a/drivers/clk/mvebu/ap-cpu-clk.c b/drivers/clk/mvebu/ap-cpu-clk.c
+index 71bdd7c3ff03..d8a7a4c90d54 100644
+--- a/drivers/clk/mvebu/ap-cpu-clk.c
++++ b/drivers/clk/mvebu/ap-cpu-clk.c
+@@ -253,12 +253,12 @@ static int ap_cpu_clock_probe(struct platform_device *pdev)
+ 	 */
+ 	nclusters = 1;
+ 	for_each_of_cpu_node(dn) {
+-		int cpu, err;
++		u64 cpu;
+ 
+-		err = of_property_read_u32(dn, "reg", &cpu);
+-		if (WARN_ON(err)) {
++		cpu = of_get_cpu_hwid(dn, 0);
++		if (WARN_ON(cpu == OF_BAD_ADDR)) {
+ 			of_node_put(dn);
+-			return err;
++			return -EINVAL;
+ 		}
+ 
+ 		/* If cpu2 or cpu3 is enabled */
+@@ -288,12 +288,12 @@ static int ap_cpu_clock_probe(struct platform_device *pdev)
+ 		struct clk_init_data init;
+ 		const char *parent_name;
+ 		struct clk *parent;
+-		int cpu, err;
++		u64 cpu;
+ 
+-		err = of_property_read_u32(dn, "reg", &cpu);
+-		if (WARN_ON(err)) {
++		cpu = of_get_cpu_hwid(dn, 0);
++		if (WARN_ON(cpu == OF_BAD_ADDR)) {
+ 			of_node_put(dn);
+-			return err;
++			return -EINVAL;
+ 		}
+ 
+ 		cluster_index = cpu & APN806_CLUSTER_NUM_MASK;
+
 -- 
-Rob Herring <robh@kernel.org>
+2.39.2
 
