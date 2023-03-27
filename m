@@ -2,88 +2,92 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F00C77B61
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 15:28:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25034C6FD1D
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 16:33:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232637AbjC0P2z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Mar 2023 11:28:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46408 "EHLO
+        id S231929AbjC0Qdu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Mar 2023 12:33:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232630AbjC0P2t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 11:28:49 -0400
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A322540EE;
-        Mon, 27 Mar 2023 08:28:45 -0700 (PDT)
-Received: by mail-ot1-f52.google.com with SMTP id f4-20020a9d0384000000b0069fab3f4cafso4733247otf.9;
-        Mon, 27 Mar 2023 08:28:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679930924;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LEE//CVec7N01zWXhmb3QcGzLCREQLQp/FRs8Lve+i8=;
-        b=0K/p1PL7PZUZoufEM8AhsUo15BgZ9CZ9Rl8yQK+H3tvouIL3HbaC3TBH1Sdp7MzY2D
-         TQ9bduZvE5G4rJsSovvCgFczg3+/6rVBwZijFGBUY1VK6RxgWh1pYOjl17uZb5Dj93pI
-         itN19KP/U2TCa2HrxAsRzYymyg8lT1XFKZ9qmFv9jUFP39QHdHCdxQ+AjlnXbX9et8gC
-         zU1vux54LlycbUbv2kh+frptV8wxd1N4edB1YGcRGZyipaVUbMK6LNXZZNEkAdcOn9vh
-         v7DzAkkuKCMn0L2h805N3aGG6ZpRzq0tlbab0ABf/RrtMprpeCBX/u9yr7r9NRwzgVgo
-         +lsA==
-X-Gm-Message-State: AAQBX9csWQKNC8Pc7Ct0aorKjAZtvBuRsB4ib/NkqG1OaTQC8VhfW5FH
-        5QZjBMUTMNk6vDsp5UAbOQ==
-X-Google-Smtp-Source: AKy350bmPVQig+xpjcFDj6G5EpbUIjt419xav/Kwr6elxAu9ry41ovS9zixIUChIOJIaJ1v3e4y4UQ==
-X-Received: by 2002:a05:6830:3892:b0:6a1:2a17:16f2 with SMTP id bq18-20020a056830389200b006a12a1716f2mr4375958otb.1.1679930924535;
-        Mon, 27 Mar 2023 08:28:44 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id n37-20020a056870972500b00177b33ce85bsm9935770oaq.30.2023.03.27.08.28.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Mar 2023 08:28:44 -0700 (PDT)
-Received: (nullmailer pid 3907135 invoked by uid 1000);
-        Mon, 27 Mar 2023 15:28:43 -0000
-Date:   Mon, 27 Mar 2023 10:28:43 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Cc:     robh+dt@kernel.org, linux-kernel@vger.kernel.org,
-        jbrunet@baylibre.com, neil.armstrong@linaro.org,
-        rockosov@gmail.com, sboyd@kernel.org, mturquette@baylibre.com,
-        khilman@baylibre.com, jian.hu@amlogic.com, kernel@sberdevices.ru,
-        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org,
-        martin.blumenstingl@googlemail.com
-Subject: Re: [PATCH v11 3/5] dt-bindings: clock: meson: add A1 PLL and
- Peripherals clkcs bindings
-Message-ID: <167993090466.3906795.9343915150600336952.robh@kernel.org>
-References: <20230321193014.26349-1-ddrokosov@sberdevices.ru>
- <20230321193014.26349-4-ddrokosov@sberdevices.ru>
+        with ESMTP id S230116AbjC0Qds (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 12:33:48 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 403D12699;
+        Mon, 27 Mar 2023 09:33:27 -0700 (PDT)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32RDNW0t029977;
+        Mon, 27 Mar 2023 16:33:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=KTYq0H+n5QnNPVgJ4qydeRprJdLzVKJuG4fkcEqI/8o=;
+ b=Gn47S7P5Q+M/xlbKa8n6ck95hoRjiUxyZKb1Rza7UWfRsUrMdRU5kHPYgfWHljSS1mfb
+ 1c57Tk/dMapNvX5W3TwN/qebDUuMM05HJgXbi+onM5QPsiRYQ+Uh1aJs9PQVNSwm2RqP
+ 68yanff8rfdZYDFdPj7+Y50lx5jAqkGn3KCj+H637VGheeUoKlyLpeyIy8nj7mVSqI9S
+ jmQe+wW541T698qSRsdK840xmqpq7KxyB7VnD3UTRno946gMO+iCCzf6rAJGV6cQfj2k
+ QxRpmH4mmf9bTHEEu5fNx2zJsAdWqCrFlw9DNsAECDmgwue6Bms+lec8w3QFP3BmW2V7 Rg== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pkbyw8k6f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 27 Mar 2023 16:33:17 +0000
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32RGXH0w012872
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 27 Mar 2023 16:33:17 GMT
+Received: from hu-mohs-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.41; Mon, 27 Mar 2023 09:33:12 -0700
+From:   Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+To:     <swboyd@chromium.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>, <robh+dt@kernel.org>,
+        <broonie@kernel.org>, <quic_plai@quicinc.com>,
+        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_rohkumar@quicinc.com>, <quic_visr@quicinc.com>
+CC:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Subject: [PATCH v1 0/4] Remove the qdsp6ss register from lpasscc
+Date:   Mon, 27 Mar 2023 22:02:45 +0530
+Message-ID: <20230327163249.1081824-1-quic_mohs@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230321193014.26349-4-ddrokosov@sberdevices.ru>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: lKEliUnVx_yQL4_j-Vb9GnSnY7aFvr3M
+X-Proofpoint-ORIG-GUID: lKEliUnVx_yQL4_j-Vb9GnSnY7aFvr3M
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-24_11,2023-03-27_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ adultscore=0 priorityscore=1501 mlxlogscore=747 spamscore=0 malwarescore=0
+ impostorscore=0 bulkscore=0 lowpriorityscore=0 clxscore=1015 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
+ definitions=main-2303270133
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+This patch set is to remove the qdsp6ss register from lpasscc to
+resolve memory conflict's between lpascc and ADSP remoteproc driver.
 
-On Tue, 21 Mar 2023 22:30:12 +0300, Dmitry Rokosov wrote:
-> Add the documentation for Amlogic A1 PLL and Amlogic A1 Peripherals
-> clock drivers.
-> Introduce Amlogic A1 PLL and Amlogic A1 Peripherals device tree
-> bindings and include them to MAINTAINERS.
-> 
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
-> ---
->  .../bindings/clock/amlogic,a1-clkc.yaml       |  73 +++++++++++
->  .../bindings/clock/amlogic,a1-pll-clkc.yaml   |  59 +++++++++
->  MAINTAINERS                                   |   1 +
->  include/dt-bindings/clock/amlogic,a1-clkc.h   | 113 ++++++++++++++++++
->  .../dt-bindings/clock/amlogic,a1-pll-clkc.h   |  21 ++++
->  5 files changed, 267 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
->  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
->  create mode 100644 include/dt-bindings/clock/amlogic,a1-clkc.h
->  create mode 100644 include/dt-bindings/clock/amlogic,a1-pll-clkc.h
-> 
+Mohammad Rafi Shaik (4):
+  arm64: dts: qcom: sc7280: Modify lpasscc node name
+  dt-bindings: clock: qcom,sc7280-lpasscc: Remove qdsp6ss register
+    region
+  arm64: dts: qcom: sc7280: Remove qdsp6ss regmap region
+  clk: qcom: lpasscc-sc7280: Remove qdsp6ss clock registration
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+ .../bindings/clock/qcom,sc7280-lpasscc.yaml   |  8 +--
+ arch/arm64/boot/dts/qcom/sc7280.dtsi          |  7 +--
+ drivers/clk/qcom/lpasscc-sc7280.c             | 63 +------------------
+ 3 files changed, 7 insertions(+), 71 deletions(-)
+
+-- 
+2.25.1
 
