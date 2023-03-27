@@ -2,60 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 603C1C761A6
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 10:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5F60C76195
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 10:07:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233344AbjC0KC6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Mar 2023 06:02:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33162 "EHLO
+        id S233104AbjC0KHB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Mar 2023 06:07:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232708AbjC0KC4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 06:02:56 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1274849EB
-        for <linux-clk@vger.kernel.org>; Mon, 27 Mar 2023 03:02:55 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id by8so8297170ljb.12
-        for <linux-clk@vger.kernel.org>; Mon, 27 Mar 2023 03:02:54 -0700 (PDT)
+        with ESMTP id S232345AbjC0KHB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 06:07:01 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D10C749E9
+        for <linux-clk@vger.kernel.org>; Mon, 27 Mar 2023 03:06:59 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id h9so8353379ljq.2
+        for <linux-clk@vger.kernel.org>; Mon, 27 Mar 2023 03:06:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679911373;
+        d=linaro.org; s=google; t=1679911618;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Xe59W+8n0LHdS75+2f+pme8HiqANF92L3kkD2RxU+AI=;
-        b=Y+80HLDyBwwMHTJZD2gSDP306gNMFn367cv3TzftoZMdV5fccdNzZ+xMHFfFhlxnj5
-         CRlXpkA67z2CjlYR86fScmYK+5bSVjRW3Mta3sCp8/XVLGei0O0rhU5D30NDqPvSWJXx
-         hqlg3xcES3Fj4yxRz8Ig2RPP4FjmtF45ykD0mUAQ8kG+F/317JN3rLJ3g35Yjva3z69h
-         rTWeD/6J+rPE2HDqzogvkfC3InAnvo8ZeYwR01DHb0v+jCEZIIzYjfKkUm4K6fh3CEwJ
-         i6xQyvCF9+otzt7N1iKQwLZwfRv/keABmZhuf19yQNthlnFaUWzmeWpsLRDKTUPNpofa
-         4ypA==
+        bh=KFv/A1+uJn3CnMRGy/hasrUt1t16K7NodNwg6vSfcFk=;
+        b=IdP5kqn82eh9bgkRp3Z2liP32XsdMsNhWaiV1xVFrkUnDDdOgJNqCKvX6cMc2pDu93
+         8gg4nWR/Ttc0Jqyd7iyE8dKcXkHmJ//8kQ8H+j+/uumRJqeZWv8JyaNdX3M9uQFRho67
+         CBQ78CZa5lIvoKLWTVM04LWj+WeE1MWEyYu2sgb7BBynDbRvPhx7bimOWJpHDd95kZ5f
+         EQeCKKyfafSHXq21IZ8d88qrCrirv8e0RZzDTo9iEoN5UlWxCp7RvL6ivDdyy8ccr9Ni
+         efODoystPOCp1d9pAyHkyVcVaxJm3eu94F6I3oimPlUcABp00yBeRTX55r7GsyYmMj/z
+         oW+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679911373;
+        d=1e100.net; s=20210112; t=1679911618;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xe59W+8n0LHdS75+2f+pme8HiqANF92L3kkD2RxU+AI=;
-        b=c2yKZsYArcziSDABBs2GRgXoiTOTauhoVJ8vGkKEqtTms7Ut+SJ4q8g24EvF88mLKY
-         S4+opBvUhViZQVnpj+GxtqxxIeJ5Di66DyMjPM4CcVuuo+LQDmEmegQgOUfCe5YAG/Ju
-         KtO1vfJIgBMZNP6GoZ9fR95RZrPpCxO4rDrBVDSAy32ZNmJumIMEu9eEZFJr3hnpAFgH
-         rr3E3Tg6fI66xX8DaIy9oX3kW5BzeR/YSa5ouPr5niw35g7hNNsCFJfOiWiGdHkGDBd0
-         7lDRF6Aj24fozcGR68brcr5UpAjNK96NP4vQLQ3D0olZKIbNd+oL1ce/5qsCs4eMwwPe
-         z0+g==
-X-Gm-Message-State: AAQBX9c9KuLQpbg+m08ZQM0sqFmBC0KZLwoLiTNqUFWI5O3y3A4CBnsf
-        sHXA75t/rvlgl6M75P6+mcRpVw==
-X-Google-Smtp-Source: AKy350YaXBNZKwdUWMkwIV51zBoiqKukB1XXP3LwHXLcwQXjOA2npLp3FiGSOI9tvYIJuXjx/XtaPA==
-X-Received: by 2002:a2e:9cd0:0:b0:295:ab86:336b with SMTP id g16-20020a2e9cd0000000b00295ab86336bmr3780693ljj.15.1679911373345;
-        Mon, 27 Mar 2023 03:02:53 -0700 (PDT)
+        bh=KFv/A1+uJn3CnMRGy/hasrUt1t16K7NodNwg6vSfcFk=;
+        b=N7c4q19sSxStnWVx1ZJwxRUAgiXNxj2bp+G4+miHlk/r0gc0D8LT7+i4tM4EJ/e0Dg
+         kTCqsnkTCT4cWRibzBYzyC+vUl4RmZY2kbztZqtlFdsH4ai6VIsrq/3vtvOkeuBuoiX8
+         Lt6BRh+JllwvrO/HnW/SiIUihLERdnqAYTlch1WsC5tP4ueGcTaVen7tuG9M/2/IXTMN
+         Mba7V3Rkg9FLCDpZ6bXGGqVSNY97pSMMpNZ0YmFH7HfdDr1T9+zrzjlqqV1dfUOeRvGY
+         kp+0KgOH8Y4I9scyJx+Z1xpIOTaStV2sNtrb/hRUHQJ0Lbu437xv2psiYTWlSrUE15hb
+         LQ+A==
+X-Gm-Message-State: AAQBX9fHQ97QOyXzXbGtv/Hg3qNJ7YyTg04qj11s4C+lzQK34/5+2SX/
+        jzXo1P8J5RoNBI2z11uR1lSMNw==
+X-Google-Smtp-Source: AKy350ZoyXzkePDlK0a2Zv/qtfAPQqmBLJtchcelEf+6jFDMmAb+gyVqvE+cz+ETMv+aPdHloSJs2Q==
+X-Received: by 2002:a2e:9c01:0:b0:29b:964e:693d with SMTP id s1-20020a2e9c01000000b0029b964e693dmr3635550lji.42.1679911618103;
+        Mon, 27 Mar 2023 03:06:58 -0700 (PDT)
 Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id c23-20020a2e9497000000b002934b9ce521sm4590526ljh.10.2023.03.27.03.02.52
+        by smtp.gmail.com with ESMTPSA id j12-20020a2e6e0c000000b002a5faadb938sm156521ljc.138.2023.03.27.03.06.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Mar 2023 03:02:53 -0700 (PDT)
-Message-ID: <3d49b4b0-587c-f7e5-4122-65b3e9f11583@linaro.org>
-Date:   Mon, 27 Mar 2023 13:02:52 +0300
+        Mon, 27 Mar 2023 03:06:57 -0700 (PDT)
+Message-ID: <522e9f28-bcb7-13cf-8da9-8db8a66193cc@linaro.org>
+Date:   Mon, 27 Mar 2023 13:06:57 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
-Subject: Re: [PATCH v4 2/8] dt-bindings: phy: qcom,qmp-usb: Add IPQ9574 USB3
- PHY
+Subject: Re: [PATCH v4 4/8] clk: qcom: gcc-ipq9574: Add USB related clocks
 Content-Language: en-GB
 To:     Varadarajan Narayanan <quic_varada@quicinc.com>, agross@kernel.org,
         andersson@kernel.org, konrad.dybcio@linaro.org, vkoul@kernel.org,
@@ -66,9 +65,9 @@ To:     Varadarajan Narayanan <quic_varada@quicinc.com>, agross@kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-usb@vger.kernel.org, linux-clk@vger.kernel.org
 References: <cover.1679909245.git.quic_varada@quicinc.com>
- <4a21defe3320eb11d0e43bc7f02b3168ecefd458.1679909245.git.quic_varada@quicinc.com>
+ <ff189b0316ad524a7d8331bd89452112b60cdbb2.1679909245.git.quic_varada@quicinc.com>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <4a21defe3320eb11d0e43bc7f02b3168ecefd458.1679909245.git.quic_varada@quicinc.com>
+In-Reply-To: <ff189b0316ad524a7d8331bd89452112b60cdbb2.1679909245.git.quic_varada@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -76,44 +75,20 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 27/03/2023 12:30, Varadarajan Narayanan wrote:
-> Add dt-bindings for USB3 PHY found on Qualcomm IPQ9574
+> Add the clocks needed for enabling USB in IPQ9574
 > 
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 > ---
->   Changes in v4:
-> 	- Remove constraints not applicable to IPQ9574
->   Changes in v3:
-> 	- Update other mandatory fields to accomodate IPQ9574
 >   Changes in v2:
-> 	- Updated sections missed in previous patch
+> 	- Fixed coding style issues
 > ---
->   .../bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml    | 25 ++++++++++++++++++++--
->   1 file changed, 23 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
-> index e81a382..aa5b58c 100644
-> --- a/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
-> @@ -21,6 +21,7 @@ properties:
->       enum:
->         - qcom,ipq6018-qmp-usb3-phy
->         - qcom,ipq8074-qmp-usb3-phy
-> +      - qcom,ipq9574-qmp-usb3-phy
->         - qcom,msm8996-qmp-usb3-phy
->         - qcom,msm8998-qmp-usb3-phy
->         - qcom,qcm2290-qmp-usb3-phy
-> @@ -122,8 +123,6 @@ required:
->     - clock-names
->     - resets
->     - reset-names
-> -  - vdda-phy-supply
-> -  - vdda-pll-supply
+>   drivers/clk/qcom/gcc-ipq9574.c               | 37 ++++++++++++++++++++++++++++
+>   include/dt-bindings/clock/qcom,ipq9574-gcc.h |  2 ++
+>   2 files changed, 39 insertions(+)
 
-Same questions as for the qusb2 PHY. How is the PHY powered?
 
->   
->   additionalProperties: false
->   
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
 With best wishes
