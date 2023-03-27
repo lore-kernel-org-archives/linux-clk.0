@@ -2,248 +2,81 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 230C9C76195
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 14:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0FF5C76195
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 15:01:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229804AbjC0OpQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Mar 2023 10:45:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47346 "EHLO
+        id S232825AbjC0PBk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Mar 2023 11:01:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229733AbjC0OpP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 10:45:15 -0400
-Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C912E1736
-        for <linux-clk@vger.kernel.org>; Mon, 27 Mar 2023 07:45:13 -0700 (PDT)
-Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-54606036bb3so9011867b3.6
-        for <linux-clk@vger.kernel.org>; Mon, 27 Mar 2023 07:45:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679928313;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=L12ayakUPlP/19pA0REczduySKLGqF0UobwpxbA4vYI=;
-        b=HCMDYbOpcls0l7uJ+OcpKeY9i+39w/6k34p7qzXuauPoRiiQ/iBrgNX6plxv3DaduO
-         LYUg1kmkuYUu1ASohU87q45xXcF5zZwjhZcjxLHNRqunmGVyvdE0ncfAbM4jYGL2a6Hi
-         ZQrZHvwxbn7Qj9gGrEo+lSWNxtJMehoP7+sMxooTClbw9a72tymMpZDtFWW9QK55dq7j
-         tZzKAyZROkTUGYIO6A8fULGQ90NIoJvIq/X31peKCSn6/V/RtSMVwdv2Xr54SK5CP77n
-         J/+otEjjHgbrbE2HS1bwHf02GJDWrMg5vm71JCafQx1tGYW2IJIyWC5MrHLym5gAKPjm
-         rKkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679928313;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L12ayakUPlP/19pA0REczduySKLGqF0UobwpxbA4vYI=;
-        b=Zkr5cD0FCZaJg8qM+Jy+9u5ZZd35Z/otGhSRDnnmYC3O2D6BL/WakTxORkIyTlcr+q
-         mz0dGP46o3hCcdQ8OKVOqoU3foh1eOuNu3dg9jqcdxuXtkAc2WKzX3dW97JaJrXpxaO9
-         wK68vg2U9dOdvMw+wbgwEMj0rLFvZ3xDXT4s5wn0kosJeyctFA5jLYzcCDHWVJZsCsgj
-         xRRaEZ5Dg/jTfzix0SYywZ9FtsX7zPQjW5lpxHRlGqvq7NdCJWQaZChSlyFqf5r2dy2g
-         kLhcTB1asccg+9y1vFqDbEdzxA0f/Sb3aFbutDPHOkWFKh5UnilgDDknJHTnRp4mgtPj
-         Wi8Q==
-X-Gm-Message-State: AAQBX9dZJ2Dpsd7CyL5WNoVxWMJubrzsfwnH/lQJp54k/UpZn+vZCbuD
-        fYu9SC9nLZ5EvByPSgNfvbtU5ksKaOzQ3RTI0TyLZA==
-X-Google-Smtp-Source: AKy350ZjBUkCK3zk3r6esLgw2CWtnPJs9phaPxb0j+BPMz06Xywjq1t0XhIWnlijihL/e6IBy3vNDh1mPbmMAfJ9vJ8=
-X-Received: by 2002:a81:b617:0:b0:541:7f69:aa8b with SMTP id
- u23-20020a81b617000000b005417f69aa8bmr5256500ywh.5.1679928312880; Mon, 27 Mar
- 2023 07:45:12 -0700 (PDT)
+        with ESMTP id S232782AbjC0PBi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 11:01:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E84D4483;
+        Mon, 27 Mar 2023 08:01:37 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CAE6061303;
+        Mon, 27 Mar 2023 15:01:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2FC4C4339E;
+        Mon, 27 Mar 2023 15:01:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679929296;
+        bh=dsoVd3bOkZ1/OXyt+ZP8t5ze5tdgtMoUGRvUuV6EukM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=SHPAMbr7ynIEkq5oNWhug9hIbn4LJ0wlRJ6JgemhXBguNbBUPRRDeUdVcqazMWkWC
+         dk9d8QHtU103JjtWCjNwzZLwSakTbYVoyyZMPznbW2kNkDFCK+lV/7pj97e//rbFdB
+         KAcjBslm3nZ5BD8UOtzQgE313X4qN68GC8CjlYGQyBtCbPdHgVt918IpKotLwM74ca
+         Zn52WHW55dJ8f6+KX/RVedxJw0EkqlPTOL1x9rcwK7iDgIZU3Ce79U8tYgcWxannLX
+         MEStSzPPRTj0snsGEx0UFdc0kYSX/e0hXkgCvgkTLp0pcdTYZYHGlYYERA/m/ZwxGN
+         9en6lprtJ6hkQ==
+From:   Will Deacon <will@kernel.org>
+To:     mcgrof@kernel.org, Nick Alcock <nick.alcock@oracle.com>
+Cc:     catalin.marinas@arm.com, kernel-team@android.com,
+        Will Deacon <will@kernel.org>, linux-gpio@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-modules@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-actions@lists.infradead.org,
+        linux-serial@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, asahi@lists.linux.dev,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH 00/24] MODULE_LICENSE removals, second tranche
+Date:   Mon, 27 Mar 2023 16:01:15 +0100
+Message-Id: <167992609868.3834946.4831319626649638477.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20230217141059.392471-1-nick.alcock@oracle.com>
+References: <20230217141059.392471-1-nick.alcock@oracle.com>
 MIME-Version: 1.0
-References: <20230327132718.573-1-quic_devipriy@quicinc.com> <20230327132718.573-4-quic_devipriy@quicinc.com>
-In-Reply-To: <20230327132718.573-4-quic_devipriy@quicinc.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Mon, 27 Mar 2023 17:45:02 +0300
-Message-ID: <CAA8EJprTm1sZ8fnfNee+NJTiaFq17QwWaEnSoJWVYs_GY65xFg@mail.gmail.com>
-Subject: Re: [PATCH V10 3/4] arm64: dts: qcom: Add support for ipq9574 SoC and
- RDP433 variant
-To:     Devi Priya <quic_devipriy@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, catalin.marinas@arm.com, will@kernel.org,
-        p.zabel@pengutronix.de, shawnguo@kernel.org, arnd@arndb.de,
-        marcel.ziswiler@toradex.com, nfraprado@collabora.com,
-        broonie@kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, quic_srichara@quicinc.com,
-        quic_gokulsri@quicinc.com, quic_sjaganat@quicinc.com,
-        quic_kathirav@quicinc.com, quic_arajkuma@quicinc.com,
-        quic_anusha@quicinc.com, quic_poovendh@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 27 Mar 2023 at 16:28, Devi Priya <quic_devipriy@quicinc.com> wrote:
->
-> Add initial device tree support for Qualcomm IPQ9574 SoC and
-> Reference Design Platform(RDP) 433 which is based on IPQ9574
-> family of SoCs
->
-> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-> Co-developed-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
-> Signed-off-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
-> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> ---
->  Changes in V10:
->         - Renamed the Board Device Tree Source to use the RDP numbers
->         - Updated the Makefile, subject and commit message accordingly
->
->  arch/arm64/boot/dts/qcom/Makefile           |   1 +
->  arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts |  84 ++++++
->  arch/arm64/boot/dts/qcom/ipq9574.dtsi       | 270 ++++++++++++++++++++
->  3 files changed, 355 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
->  create mode 100644 arch/arm64/boot/dts/qcom/ipq9574.dtsi
->
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> index 1a29403400b7..52f1f92c5195 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -8,6 +8,7 @@ dtb-$(CONFIG_ARCH_QCOM) += ipq6018-cp01-c1.dtb
->  dtb-$(CONFIG_ARCH_QCOM)        += ipq8074-hk01.dtb
->  dtb-$(CONFIG_ARCH_QCOM)        += ipq8074-hk10-c1.dtb
->  dtb-$(CONFIG_ARCH_QCOM)        += ipq8074-hk10-c2.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)        += ipq9574-rdp433.dtb
->  dtb-$(CONFIG_ARCH_QCOM)        += msm8916-acer-a1-724.dtb
->  dtb-$(CONFIG_ARCH_QCOM)        += msm8916-alcatel-idol347.dtb
->  dtb-$(CONFIG_ARCH_QCOM)        += msm8916-asus-z00l.dtb
-> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-> new file mode 100644
-> index 000000000000..2ce8e09e7565
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-> @@ -0,0 +1,84 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-> +/*
-> + * IPQ9574 RDP433 board device tree source
-> + *
-> + * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "ipq9574.dtsi"
-> +
-> +/ {
-> +       model = "Qualcomm Technologies, Inc. IPQ9574/AP-AL02-C7";
-> +       compatible = "qcom,ipq9574-ap-al02-c7", "qcom,ipq9574";
-> +
-> +       aliases {
-> +               serial0 = &blsp1_uart2;
-> +       };
-> +
-> +       chosen {
-> +               stdout-path = "serial0:115200n8";
-> +       };
-> +};
-> +
-> +&blsp1_uart2 {
-> +       pinctrl-0 = <&uart2_pins>;
-> +       pinctrl-names = "default";
-> +       status = "okay";
-> +};
-> +
-> +&sdhc_1 {
-> +       pinctrl-0 = <&sdc_default_state>;
-> +       pinctrl-names = "default";
-> +       mmc-ddr-1_8v;
-> +       mmc-hs200-1_8v;
-> +       mmc-hs400-1_8v;
-> +       mmc-hs400-enhanced-strobe;
-> +       max-frequency = <384000000>;
-> +       bus-width = <8>;
-> +       status = "okay";
-> +};
-> +
-> +&sleep_clk {
-> +       clock-frequency = <32000>;
-> +};
-> +
-> +&tlmm {
-> +       sdc_default_state: sdc-default-state {
-> +               clk-pins {
-> +                       pins = "gpio5";
-> +                       function = "sdc_clk";
-> +                       drive-strength = <8>;
-> +                       bias-disable;
-> +               };
-> +
-> +               cmd-pins {
-> +                       pins = "gpio4";
-> +                       function = "sdc_cmd";
-> +                       drive-strength = <8>;
-> +                       bias-pull-up;
-> +               };
-> +
-> +               data-pins {
-> +                       pins = "gpio0", "gpio1", "gpio2",
-> +                              "gpio3", "gpio6", "gpio7",
-> +                              "gpio8", "gpio9";
-> +                       function = "sdc_data";
-> +                       drive-strength = <8>;
-> +                       bias-pull-up;
-> +               };
-> +
-> +               rclk-pins {
-> +                       pins = "gpio10";
-> +                       function = "sdc_rclk";
-> +                       drive-strength = <8>;
-> +                       bias-pull-down;
-> +               };
-> +       };
-> +};
-> +
-> +&xo_board_clk {
-> +       clock-frequency = <24000000>;
-> +};
-> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> new file mode 100644
-> index 000000000000..3bb7435f5e7f
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> @@ -0,0 +1,270 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-> +/*
-> + * IPQ9574 SoC device tree source
-> + *
-> + * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/clock/qcom,ipq9574-gcc.h>
-> +#include <dt-bindings/reset/qcom,ipq9574-gcc.h>
-> +
-> +/ {
-> +       interrupt-parent = <&intc>;
-> +       #address-cells = <2>;
-> +       #size-cells = <2>;
-> +
-> +       clocks {
-> +               bias_pll_ubi_nc_clk: bias-pll-ubi-nc-clk {
-> +                       compatible = "fixed-clock";
-> +                       clock-frequency = <353000000>;
-> +                       #clock-cells = <0>;
-> +               };
+On Fri, 17 Feb 2023 14:10:35 +0000, Nick Alcock wrote:
+> This series, based on current modules-next, is part of a treewide cleanup
+> suggested by Luis Chamberlain, to remove the LICENSE_MODULE usage from
+> files/objects that are not tristate.  Due to recent changes to kbuild, these
+> uses are now problematic.  See the commit logs for more details.
+> 
+> (The commit log prefixes and Cc lists are automatically determined using
+> the script mentioned below.  I've eyeballed them, and they seem reasonable:
+> my apologies if they are not.)
+> 
+> [...]
 
-What is the source for this clock? With it clocking at 353 MHz, I
-doubt that it is an external clock.
+Applied drivers/perf patch to will (for-next/perf), thanks!
 
-> +
-> +               sleep_clk: sleep-clk {
-> +                       compatible = "fixed-clock";
-> +                       #clock-cells = <0>;
-> +               };
-> +
-> +               xo_board_clk: xo-board-clk {
-> +                       compatible = "fixed-clock";
-> +                       #clock-cells = <0>;
-> +               };
-> +       };
+[08/24] kbuild, drivers/perf: remove MODULE_LICENSE in non-modules
+        https://git.kernel.org/will/c/a64021d3726a
 
-[skipped the rest]
-
+Cheers,
 -- 
-With best wishes
-Dmitry
+Will
+
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
