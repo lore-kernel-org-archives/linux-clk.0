@@ -2,171 +2,248 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A4DC6FD1D
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 14:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 230C9C76195
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 14:45:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232319AbjC0OKZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Mar 2023 10:10:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43064 "EHLO
+        id S229804AbjC0OpQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Mar 2023 10:45:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232267AbjC0OKY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 10:10:24 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69AB31734
-        for <linux-clk@vger.kernel.org>; Mon, 27 Mar 2023 07:10:15 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id o32so5131517wms.1
-        for <linux-clk@vger.kernel.org>; Mon, 27 Mar 2023 07:10:15 -0700 (PDT)
+        with ESMTP id S229733AbjC0OpP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 10:45:15 -0400
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C912E1736
+        for <linux-clk@vger.kernel.org>; Mon, 27 Mar 2023 07:45:13 -0700 (PDT)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-54606036bb3so9011867b3.6
+        for <linux-clk@vger.kernel.org>; Mon, 27 Mar 2023 07:45:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1679926214;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZVlIe/RgdhwWumjRHCwBYuMjJV3egIYQrdrj1qprP/0=;
-        b=MfGvpI6CNgREzd3FpwD44ac3g0urXBQcIr/jfzJgvkLVOrj5OY8LvP2WYnjW2Xd6ql
-         y4lR0WO8eFmfoumUCMf8+itWPii9nUo2Bd8f7k2lQph5CqvxmA6ndj2aw2W9+9P2BuRV
-         jeA/LEz2R+4QURvHaajRhx/sb8LbscGdvo1AU6C2pHrDgay4GgCFw0yDPiTgTmAkzX9+
-         ZZIwaLbntgdqMJVHWuRwjSdBb4QdlQxGwK2fqwaVhvkZlbhMrvY24L2gvuhf52sU5aTM
-         S/BTcl5tUvkNWfDqAH/LUBgNrKGKXJZS/Aqf3C9phy4mTj4qdppnXdjNMrTme2OuRvTO
-         iYew==
+        d=linaro.org; s=google; t=1679928313;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=L12ayakUPlP/19pA0REczduySKLGqF0UobwpxbA4vYI=;
+        b=HCMDYbOpcls0l7uJ+OcpKeY9i+39w/6k34p7qzXuauPoRiiQ/iBrgNX6plxv3DaduO
+         LYUg1kmkuYUu1ASohU87q45xXcF5zZwjhZcjxLHNRqunmGVyvdE0ncfAbM4jYGL2a6Hi
+         ZQrZHvwxbn7Qj9gGrEo+lSWNxtJMehoP7+sMxooTClbw9a72tymMpZDtFWW9QK55dq7j
+         tZzKAyZROkTUGYIO6A8fULGQ90NIoJvIq/X31peKCSn6/V/RtSMVwdv2Xr54SK5CP77n
+         J/+otEjjHgbrbE2HS1bwHf02GJDWrMg5vm71JCafQx1tGYW2IJIyWC5MrHLym5gAKPjm
+         rKkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679926214;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZVlIe/RgdhwWumjRHCwBYuMjJV3egIYQrdrj1qprP/0=;
-        b=N95QpnQux5YEscobqfcXcUuc4GNK5MQuC1kTwg5WFS4ZtR/b61O71NkifU9XnpE/Hv
-         H5vdjYyJVmefprOOr3IhGjEJ9wVBXLMx2JdWXChItlu22zUee3X8NeHZPNArZvoijBbx
-         UUfnMiLr/dEk91oFCGhoo2YPL/6Nomn4frVXR0urMkcCCmSoCODYmLIzSDZeKmF7BJvN
-         OUDCkZyiJsI2wDtBSXE96cj2MoHtz3Gg9ECIa9XOJ1xwni2aSsP3rtruADc+bJJaMXbM
-         HMval6CJZIhc2JWJDKzSLSDKn8ku55HmnhSJycJ3eUKZojRyb9Lgwz0588iH2EqLssWd
-         sDSQ==
-X-Gm-Message-State: AO0yUKUeeqedhQ6YfDfN99p7JOTNdfKbGS4MrisNXodZyLsqk1Vctss/
-        5fFx0YPgXQGhb1abVFu62xV/Ng==
-X-Google-Smtp-Source: AK7set/aY05hvbiA8KMzWBPj0eKSUapzbpCUsTazqbkJwnY7zYE8nWiRLrnNjGBX/wUBUVVHowIx3Q==
-X-Received: by 2002:a05:600c:3642:b0:3e2:1d1e:78d6 with SMTP id y2-20020a05600c364200b003e21d1e78d6mr9400422wmq.7.1679926213866;
-        Mon, 27 Mar 2023 07:10:13 -0700 (PDT)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id m5-20020a7bce05000000b003edff838723sm13886159wmc.3.2023.03.27.07.10.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Mar 2023 07:10:13 -0700 (PDT)
-References: <20230321193014.26349-1-ddrokosov@sberdevices.ru>
- <20230321193014.26349-4-ddrokosov@sberdevices.ru>
- <1jmt3yo5r0.fsf@starbuckisacylon.baylibre.com>
- <20230327105115.ury3w4xpzhcpnqjg@CAB-WSD-L081021>
- <1jilemo1r9.fsf@starbuckisacylon.baylibre.com>
- <1f68ff4f-46ab-7d9e-fa57-bb94beb4c691@linaro.org>
-User-agent: mu4e 1.8.13; emacs 28.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Cc:     neil.armstrong@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
-        martin.blumenstingl@googlemail.com, jian.hu@amlogic.com,
-        kernel@sberdevices.ru, rockosov@gmail.com,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v11 3/5] dt-bindings: clock: meson: add A1 PLL and
- Peripherals clkcs bindings
-Date:   Mon, 27 Mar 2023 15:59:02 +0200
-In-reply-to: <1f68ff4f-46ab-7d9e-fa57-bb94beb4c691@linaro.org>
-Message-ID: <1ja5zynv3v.fsf@starbuckisacylon.baylibre.com>
+        d=1e100.net; s=20210112; t=1679928313;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L12ayakUPlP/19pA0REczduySKLGqF0UobwpxbA4vYI=;
+        b=Zkr5cD0FCZaJg8qM+Jy+9u5ZZd35Z/otGhSRDnnmYC3O2D6BL/WakTxORkIyTlcr+q
+         mz0dGP46o3hCcdQ8OKVOqoU3foh1eOuNu3dg9jqcdxuXtkAc2WKzX3dW97JaJrXpxaO9
+         wK68vg2U9dOdvMw+wbgwEMj0rLFvZ3xDXT4s5wn0kosJeyctFA5jLYzcCDHWVJZsCsgj
+         xRRaEZ5Dg/jTfzix0SYywZ9FtsX7zPQjW5lpxHRlGqvq7NdCJWQaZChSlyFqf5r2dy2g
+         kLhcTB1asccg+9y1vFqDbEdzxA0f/Sb3aFbutDPHOkWFKh5UnilgDDknJHTnRp4mgtPj
+         Wi8Q==
+X-Gm-Message-State: AAQBX9dZJ2Dpsd7CyL5WNoVxWMJubrzsfwnH/lQJp54k/UpZn+vZCbuD
+        fYu9SC9nLZ5EvByPSgNfvbtU5ksKaOzQ3RTI0TyLZA==
+X-Google-Smtp-Source: AKy350ZjBUkCK3zk3r6esLgw2CWtnPJs9phaPxb0j+BPMz06Xywjq1t0XhIWnlijihL/e6IBy3vNDh1mPbmMAfJ9vJ8=
+X-Received: by 2002:a81:b617:0:b0:541:7f69:aa8b with SMTP id
+ u23-20020a81b617000000b005417f69aa8bmr5256500ywh.5.1679928312880; Mon, 27 Mar
+ 2023 07:45:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20230327132718.573-1-quic_devipriy@quicinc.com> <20230327132718.573-4-quic_devipriy@quicinc.com>
+In-Reply-To: <20230327132718.573-4-quic_devipriy@quicinc.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Mon, 27 Mar 2023 17:45:02 +0300
+Message-ID: <CAA8EJprTm1sZ8fnfNee+NJTiaFq17QwWaEnSoJWVYs_GY65xFg@mail.gmail.com>
+Subject: Re: [PATCH V10 3/4] arm64: dts: qcom: Add support for ipq9574 SoC and
+ RDP433 variant
+To:     Devi Priya <quic_devipriy@quicinc.com>
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, catalin.marinas@arm.com, will@kernel.org,
+        p.zabel@pengutronix.de, shawnguo@kernel.org, arnd@arndb.de,
+        marcel.ziswiler@toradex.com, nfraprado@collabora.com,
+        broonie@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, quic_srichara@quicinc.com,
+        quic_gokulsri@quicinc.com, quic_sjaganat@quicinc.com,
+        quic_kathirav@quicinc.com, quic_arajkuma@quicinc.com,
+        quic_anusha@quicinc.com, quic_poovendh@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Mon 27 Mar 2023 at 15:41, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-
-> On 27/03/2023 13:39, Jerome Brunet wrote:
->> 
->> On Mon 27 Mar 2023 at 13:51, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
->> 
->>> On Mon, Mar 27, 2023 at 11:51:21AM +0200, Jerome Brunet wrote:
->>>>
->>>> On Tue 21 Mar 2023 at 22:30, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
->>>>
->>>>> Add the documentation for Amlogic A1 PLL and Amlogic A1 Peripherals
->>>>> clock drivers.
->>>>> Introduce Amlogic A1 PLL and Amlogic A1 Peripherals device tree
->>>>> bindings and include them to MAINTAINERS.
->>>>>
->>>>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
->>>>> Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
->>>>> ---
->>>>>  .../bindings/clock/amlogic,a1-clkc.yaml       |  73 +++++++++++
->>>>>  .../bindings/clock/amlogic,a1-pll-clkc.yaml   |  59 +++++++++
->>>>>  MAINTAINERS                                   |   1 +
->>>>>  include/dt-bindings/clock/amlogic,a1-clkc.h   | 113 ++++++++++++++++++
->>>>>  .../dt-bindings/clock/amlogic,a1-pll-clkc.h   |  21 ++++
->>>>>  5 files changed, 267 insertions(+)
->>>>>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
->>>>>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
->>>>
->>>> There is two drivers (and 2 independent patches). There should be 2
->>>> bindings patches as well.
->>>>
->>>
->>> Before, in previous versions I had two versions, but it wasn't bisectable
->>> approach.
->> 
->> You are confusing bisectable and Rob's robot. Splitting patches is more
->> that likely to help bisect (and patches backport) - not the other way around.
+On Mon, 27 Mar 2023 at 16:28, Devi Priya <quic_devipriy@quicinc.com> wrote:
 >
-> No, he did not confuse. Splitting patches makes the series
-> non-bisectable which was visible in the past.
+> Add initial device tree support for Qualcomm IPQ9574 SoC and
+> Reference Design Platform(RDP) 433 which is based on IPQ9574
+> family of SoCs
 >
-> What's more, there is no reason to have bindings patches split just
-> because you split drivers. Bindings are independent of drivers - we
-> write them for hardware description.
+> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+> Co-developed-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
+> Signed-off-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+> ---
+>  Changes in V10:
+>         - Renamed the Board Device Tree Source to use the RDP numbers
+>         - Updated the Makefile, subject and commit message accordingly
+>
+>  arch/arm64/boot/dts/qcom/Makefile           |   1 +
+>  arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts |  84 ++++++
+>  arch/arm64/boot/dts/qcom/ipq9574.dtsi       | 270 ++++++++++++++++++++
+>  3 files changed, 355 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+>  create mode 100644 arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> index 1a29403400b7..52f1f92c5195 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -8,6 +8,7 @@ dtb-$(CONFIG_ARCH_QCOM) += ipq6018-cp01-c1.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        += ipq8074-hk01.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        += ipq8074-hk10-c1.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        += ipq8074-hk10-c2.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)        += ipq9574-rdp433.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        += msm8916-acer-a1-724.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        += msm8916-alcatel-idol347.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        += msm8916-asus-z00l.dtb
+> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+> new file mode 100644
+> index 000000000000..2ce8e09e7565
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+> @@ -0,0 +1,84 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+> +/*
+> + * IPQ9574 RDP433 board device tree source
+> + *
+> + * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "ipq9574.dtsi"
+> +
+> +/ {
+> +       model = "Qualcomm Technologies, Inc. IPQ9574/AP-AL02-C7";
+> +       compatible = "qcom,ipq9574-ap-al02-c7", "qcom,ipq9574";
+> +
+> +       aliases {
+> +               serial0 = &blsp1_uart2;
+> +       };
+> +
+> +       chosen {
+> +               stdout-path = "serial0:115200n8";
+> +       };
+> +};
+> +
+> +&blsp1_uart2 {
+> +       pinctrl-0 = <&uart2_pins>;
+> +       pinctrl-names = "default";
+> +       status = "okay";
+> +};
+> +
+> +&sdhc_1 {
+> +       pinctrl-0 = <&sdc_default_state>;
+> +       pinctrl-names = "default";
+> +       mmc-ddr-1_8v;
+> +       mmc-hs200-1_8v;
+> +       mmc-hs400-1_8v;
+> +       mmc-hs400-enhanced-strobe;
+> +       max-frequency = <384000000>;
+> +       bus-width = <8>;
+> +       status = "okay";
+> +};
+> +
+> +&sleep_clk {
+> +       clock-frequency = <32000>;
+> +};
+> +
+> +&tlmm {
+> +       sdc_default_state: sdc-default-state {
+> +               clk-pins {
+> +                       pins = "gpio5";
+> +                       function = "sdc_clk";
+> +                       drive-strength = <8>;
+> +                       bias-disable;
+> +               };
+> +
+> +               cmd-pins {
+> +                       pins = "gpio4";
+> +                       function = "sdc_cmd";
+> +                       drive-strength = <8>;
+> +                       bias-pull-up;
+> +               };
+> +
+> +               data-pins {
+> +                       pins = "gpio0", "gpio1", "gpio2",
+> +                              "gpio3", "gpio6", "gpio7",
+> +                              "gpio8", "gpio9";
+> +                       function = "sdc_data";
+> +                       drive-strength = <8>;
+> +                       bias-pull-up;
+> +               };
+> +
+> +               rclk-pins {
+> +                       pins = "gpio10";
+> +                       function = "sdc_rclk";
+> +                       drive-strength = <8>;
+> +                       bias-pull-down;
+> +               };
+> +       };
+> +};
+> +
+> +&xo_board_clk {
+> +       clock-frequency = <24000000>;
+> +};
+> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> new file mode 100644
+> index 000000000000..3bb7435f5e7f
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> @@ -0,0 +1,270 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+> +/*
+> + * IPQ9574 SoC device tree source
+> + *
+> + * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/qcom,ipq9574-gcc.h>
+> +#include <dt-bindings/reset/qcom,ipq9574-gcc.h>
+> +
+> +/ {
+> +       interrupt-parent = <&intc>;
+> +       #address-cells = <2>;
+> +       #size-cells = <2>;
+> +
+> +       clocks {
+> +               bias_pll_ubi_nc_clk: bias-pll-ubi-nc-clk {
+> +                       compatible = "fixed-clock";
+> +                       clock-frequency = <353000000>;
+> +                       #clock-cells = <0>;
+> +               };
 
-Patches should do one thing, my comment is a simple application of that.
+What is the source for this clock? With it clocking at 353 MHz, I
+doubt that it is an external clock.
 
-There no reason to have a single patch provide the bindings for 2
-independent pieces of HW, which those components are. If a dependency
-has been set, it is one that should not be there.
+> +
+> +               sleep_clk: sleep-clk {
+> +                       compatible = "fixed-clock";
+> +                       #clock-cells = <0>;
+> +               };
+> +
+> +               xo_board_clk: xo-board-clk {
+> +                       compatible = "fixed-clock";
+> +                       #clock-cells = <0>;
+> +               };
+> +       };
 
-They do provide inputs to one another, yes but remain independent pieces of
-HW. They have a different address space and as a consequences, different
-drivers
+[skipped the rest]
 
-If we were being strict, it should even be seperate series.
-
->
->> 
->>> a1-clkc schema depends on a1-pll-clkc headers and vice versa.
->>> It means dt schemas checkers will show us failure if we split them into two
->>> patchsets.
->> 
->> Only because you are patches are not upstream yet ...
->> 
->>> I know, that we can use raw digits instead of CLKID names, but IMO it doesn't
->>> look like production schema and it requires one more patchset above the
->>> series with proper CLKID definitons usage and proper header including.
->>>
->>> BTW, there is an example of Rob's test bot failure found in the previous
->>> v10 patch series due to chicken or the egg problem.
->>> https://lore.kernel.org/all/167769997208.7087.5344356236212731922.robh@kernel.org/
->>>
->>> Please advise what's the best practice to resolve that..
->> 
->> Don't use the header in your example would solve the problem and
->> still be correct DT wise.
->> 
->> The examples are just examples, they are not required to actually
->> matches a real HW, as far as I know.
->
-> Yes, that would work... or just keep them here.
->
->
-> Best regards,
-> Krzysztof
->
->
-> _______________________________________________
-> linux-amlogic mailing list
-> linux-amlogic@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-amlogic
-
+-- 
+With best wishes
+Dmitry
