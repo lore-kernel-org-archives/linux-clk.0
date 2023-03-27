@@ -2,117 +2,152 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEAA5C761AF
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 13:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E221C76195
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 13:41:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232839AbjC0N3Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Mar 2023 09:29:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46370 "EHLO
+        id S230212AbjC0Nld (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Mar 2023 09:41:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232779AbjC0N2t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 09:28:49 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6EAA5BA8;
-        Mon, 27 Mar 2023 06:28:42 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32RAJS4X029091;
-        Mon, 27 Mar 2023 13:28:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=mm1Og06q9p1YZtHFP+SxIFZvPyOBmHeBXB9LRVIgicY=;
- b=QMXXZ0hozXyO3viEj3hpO+xRonQXDfbb21tYJ59TI6Tov4LU+xkYDbdx1H2wGxaOJXDl
- 3dLvS2VlgcF9yNlczFcvE2ri95QamkpzRcJW4KqcTcVitGNf+tULmMh1BQhFTK1hLpjm
- 0i7Q18y3DsL7J+zklTxhcPHVIzH9QfHbyLUwCGmSKiVIlXuZEKZ9PcGFnZBPbeGV153i
- KUukFoi8EqAuTnxORTgvKuLhLhgwFPw1hJppr3EEP3x6fknvbfwckHdgjE6U6RHcYVyZ
- uYw01kVOVFkC0L+S+j4CAb1Bh6n6seMOxGIHl/nj17YGR474oOfLCRz2RwgOXEWTWtMt HQ== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pk79b8pgm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 27 Mar 2023 13:28:24 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32RDSN50030038
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 27 Mar 2023 13:28:23 GMT
-Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.41; Mon, 27 Mar 2023 06:28:14 -0700
-From:   Devi Priya <quic_devipriy@quicinc.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linus.walleij@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <p.zabel@pengutronix.de>, <shawnguo@kernel.org>, <arnd@arndb.de>,
-        <marcel.ziswiler@toradex.com>, <dmitry.baryshkov@linaro.org>,
-        <nfraprado@collabora.com>, <broonie@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_poovendh@quicinc.com>
-Subject: [PATCH V10 4/4] arm64: defconfig: Enable IPQ9574 SoC base configs
-Date:   Mon, 27 Mar 2023 18:57:18 +0530
-Message-ID: <20230327132718.573-5-quic_devipriy@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230327132718.573-1-quic_devipriy@quicinc.com>
-References: <20230327132718.573-1-quic_devipriy@quicinc.com>
+        with ESMTP id S229762AbjC0Nlb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 09:41:31 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D5B035B1
+        for <linux-clk@vger.kernel.org>; Mon, 27 Mar 2023 06:41:30 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id w9so36455168edc.3
+        for <linux-clk@vger.kernel.org>; Mon, 27 Mar 2023 06:41:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679924489;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BguImQejWs9Xrm9LIQbrEJlaJByblYgam+0cE2D3Eks=;
+        b=n+uLWyhAi1YMP5Yovq683+Dtb3SBcW1cDafB20zJ/qEOpvULXcBONEhcTTawGHOrjl
+         7zZbEug+ksGt8m/qaOuYEZFTpu2AeeJuKHHaMrtqSheT624NwwAEqTqF0PT82Gg7/crz
+         ZSHUzdQjTmGEhE7MP1rKLMQBQpepX+i0MrMgcNVPWxy1AZ1lidk7kCo+AAeXP1IvIEP0
+         3+U53diXpK2gH/bqMgjY/1xGJ6C8tjwpFRFwIlS6fTdm/sA00JaS3hqHpq6yWmyfRaZD
+         GB6JFjP+bAiiaF4hq6Pdl8Jo2K+LRga/dj0Eq0imrNVTlj/GtmWwN6Ze9FmL6vQ+ogVZ
+         g0Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679924489;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BguImQejWs9Xrm9LIQbrEJlaJByblYgam+0cE2D3Eks=;
+        b=U2A/nwAKbzdp6gv2pxYwlwBr6WXXc/K2v+KG3QHljwBU40dOYtHHz+7ibHJm2C7y06
+         P3X0KS8A4i6TJVrzGnoixycjG8BeogEGN4AjbmXiEKQnk2282UIb46TxF+NkJebeuXyG
+         mHUuWCBtOVU7VYGUlL8X1NSlWxG8oWRpALfgO/8V6GsvwCkKIM5WQmmj+5fwis0VgVKm
+         4Z2EYbeknvGRUPB9Z4dWO1Jw2zbRnQ4tk/MHCdG4FAcLQ82o48ZP5U6QCj/MEwFsM+5y
+         KSFGD5H5PdIllcgV5zBSbXNOJxJ0zEFHjl8E1FSMLjDDjjQ6sQCgaVPO36gwtNBfuUGh
+         CdBA==
+X-Gm-Message-State: AO0yUKUjzTH6y+FlT/faMY66c7HW0YNcJDUh7lTXoj5Pm4Ilu9+ww7RO
+        s20jRAb/22p2ef06ycznirsqfA==
+X-Google-Smtp-Source: AK7set8tmGTSisftlq1JzklWojvkM/aWZ85dTS2Od4qqCfmD7pDm03nVf3rP90Cvx455hEpPlJ2gfQ==
+X-Received: by 2002:a17:907:6d91:b0:8af:2f5e:93e3 with SMTP id sb17-20020a1709076d9100b008af2f5e93e3mr22108507ejc.29.1679924488950;
+        Mon, 27 Mar 2023 06:41:28 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:581e:789c:7616:5ee? ([2a02:810d:15c0:828:581e:789c:7616:5ee])
+        by smtp.gmail.com with ESMTPSA id l11-20020a1709066b8b00b00939faf4be97sm9088451ejr.215.2023.03.27.06.41.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Mar 2023 06:41:28 -0700 (PDT)
+Message-ID: <1f68ff4f-46ab-7d9e-fa57-bb94beb4c691@linaro.org>
+Date:   Mon, 27 Mar 2023 15:41:27 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: AedGR3f3dV-ADt8EtA7Ggwdti6drfiNm
-X-Proofpoint-GUID: AedGR3f3dV-ADt8EtA7Ggwdti6drfiNm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-24_11,2023-03-27_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 mlxscore=0 priorityscore=1501 clxscore=1015 suspectscore=0
- mlxlogscore=747 spamscore=0 malwarescore=0 phishscore=0 bulkscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2303270105
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH v11 3/5] dt-bindings: clock: meson: add A1 PLL and
+ Peripherals clkcs bindings
+Content-Language: en-US
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Dmitry Rokosov <ddrokosov@sberdevices.ru>
+Cc:     neil.armstrong@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
+        martin.blumenstingl@googlemail.com, jian.hu@amlogic.com,
+        kernel@sberdevices.ru, rockosov@gmail.com,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20230321193014.26349-1-ddrokosov@sberdevices.ru>
+ <20230321193014.26349-4-ddrokosov@sberdevices.ru>
+ <1jmt3yo5r0.fsf@starbuckisacylon.baylibre.com>
+ <20230327105115.ury3w4xpzhcpnqjg@CAB-WSD-L081021>
+ <1jilemo1r9.fsf@starbuckisacylon.baylibre.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <1jilemo1r9.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Enables clk & pinctrl related configs for Qualcomm IPQ9574 SoC
+On 27/03/2023 13:39, Jerome Brunet wrote:
+> 
+> On Mon 27 Mar 2023 at 13:51, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
+> 
+>> On Mon, Mar 27, 2023 at 11:51:21AM +0200, Jerome Brunet wrote:
+>>>
+>>> On Tue 21 Mar 2023 at 22:30, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
+>>>
+>>>> Add the documentation for Amlogic A1 PLL and Amlogic A1 Peripherals
+>>>> clock drivers.
+>>>> Introduce Amlogic A1 PLL and Amlogic A1 Peripherals device tree
+>>>> bindings and include them to MAINTAINERS.
+>>>>
+>>>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>>>> Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+>>>> ---
+>>>>  .../bindings/clock/amlogic,a1-clkc.yaml       |  73 +++++++++++
+>>>>  .../bindings/clock/amlogic,a1-pll-clkc.yaml   |  59 +++++++++
+>>>>  MAINTAINERS                                   |   1 +
+>>>>  include/dt-bindings/clock/amlogic,a1-clkc.h   | 113 ++++++++++++++++++
+>>>>  .../dt-bindings/clock/amlogic,a1-pll-clkc.h   |  21 ++++
+>>>>  5 files changed, 267 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
+>>>>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+>>>
+>>> There is two drivers (and 2 independent patches). There should be 2
+>>> bindings patches as well.
+>>>
+>>
+>> Before, in previous versions I had two versions, but it wasn't bisectable
+>> approach.
+> 
+> You are confusing bisectable and Rob's robot. Splitting patches is more
+> that likely to help bisect (and patches backport) - not the other way around.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
----
- Changes in V10:
-	- No change
+No, he did not confuse. Splitting patches makes the series
+non-bisectable which was visible in the past.
 
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+What's more, there is no reason to have bindings patches split just
+because you split drivers. Bindings are independent of drivers - we
+write them for hardware description.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index d206a9120ee4..b18e8ab2f334 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -557,6 +557,7 @@ CONFIG_PINCTRL_MSM=y
- CONFIG_PINCTRL_IPQ8074=y
- CONFIG_PINCTRL_IPQ5332=y
- CONFIG_PINCTRL_IPQ6018=y
-+CONFIG_PINCTRL_IPQ9574=y
- CONFIG_PINCTRL_MSM8916=y
- CONFIG_PINCTRL_MSM8953=y
- CONFIG_PINCTRL_MSM8976=y
-@@ -1153,6 +1154,7 @@ CONFIG_QCOM_CLK_RPMH=y
- CONFIG_IPQ_GCC_5332=y
- CONFIG_IPQ_GCC_6018=y
- CONFIG_IPQ_GCC_8074=y
-+CONFIG_IPQ_GCC_9574=y
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_GCC_8994=y
- CONFIG_MSM_MMCC_8994=m
--- 
-2.17.1
+> 
+>> a1-clkc schema depends on a1-pll-clkc headers and vice versa.
+>> It means dt schemas checkers will show us failure if we split them into two
+>> patchsets.
+> 
+> Only because you are patches are not upstream yet ...
+> 
+>> I know, that we can use raw digits instead of CLKID names, but IMO it doesn't
+>> look like production schema and it requires one more patchset above the
+>> series with proper CLKID definitons usage and proper header including.
+>>
+>> BTW, there is an example of Rob's test bot failure found in the previous
+>> v10 patch series due to chicken or the egg problem.
+>> https://lore.kernel.org/all/167769997208.7087.5344356236212731922.robh@kernel.org/
+>>
+>> Please advise what's the best practice to resolve that..
+> 
+> Don't use the header in your example would solve the problem and
+> still be correct DT wise.
+> 
+> The examples are just examples, they are not required to actually
+> matches a real HW, as far as I know.
+
+Yes, that would work... or just keep them here.
+
+
+Best regards,
+Krzysztof
 
