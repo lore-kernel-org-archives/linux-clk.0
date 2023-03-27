@@ -2,130 +2,95 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43509C6FD1D
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 22:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D3EC76195
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Mar 2023 22:50:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232401AbjC0WWa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Mar 2023 18:22:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54362 "EHLO
+        id S229783AbjC0Wu3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Mar 2023 18:50:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232199AbjC0WWR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 18:22:17 -0400
+        with ESMTP id S229534AbjC0Wu2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 18:50:28 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE82740DB;
-        Mon, 27 Mar 2023 15:22:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5CA01FF3;
+        Mon, 27 Mar 2023 15:50:26 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 19A95B819A5;
-        Mon, 27 Mar 2023 22:22:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 423F6C4339C;
-        Mon, 27 Mar 2023 22:22:07 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 61BD1B819A9;
+        Mon, 27 Mar 2023 22:50:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93D19C433D2;
+        Mon, 27 Mar 2023 22:50:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679955727;
-        bh=2Hped3KY6Uk2Oc/RHdUAUuvCu9fegBzwhk+dDaq1CSo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lAyNd0WoR1WcvvMf+8Wb4XJei0r0zHaAMVOg+st4WmC77BMhUQBudfLNQ9S0JKafa
-         Y7uedc/ieLIIzblkbrx7ktwUd03utg9POvdqQGaX+sa+MeARGeEUtn7wT8oWlcGQvQ
-         V9Mmh1TZrB0phjvNmYyuB+vrGOzjTvm87qFwtB1s7ASHY3lRy6WWow0GsftwGTd3UV
-         RI/MRHDN3W+k6KlaQxsBlwqQ1slq4lSt+iVW22pW1uzTG9AQ2TGdH1MRF6x5tn0Gv5
-         KhKCL6qL/cpaWmgfqjb9YroXiVcBcpU5tzU6z7cunHwGOp8Yrp5lJ93uoCjbzsnJho
-         Vl9UGj8/5g0qA==
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        patches@lists.linux.dev,
-        Brendan Higgins <brendan.higgins@linux.dev>,
-        David Gow <davidgow@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
+        s=k20201202; t=1679957424;
+        bh=G4vSpWRXFWHWcZZEwCKRH35BlIP0Tx29Xiu9ic3cC+M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RMmsuv/6IS08xb8zGe9H3FWIyEKz6OniqOjQXIT87SwSRPVrWdIwk/Kheo3XNHSwG
+         QkgPaD37hY4OZUmZ3eEXXnWVDMvs/ZP2cUQReHavAZqtSG88rKAlJiO0s5VqmgmgpA
+         cnjT6i18JHQ2Ks4w3I1R5D3jsgE1oNX9YfR2Mvp2K2ClJRdUpRz9uuxZReXhoTXBZ4
+         b+Ph66gsdGpGBnxY3P1nRhd7BrY7C9utjzOKb74fYPaC2rfVEErWeSV0arGw7582ko
+         L52jSXanh62mr+eUSOuEj+mkf/4G+LbcUWGfX0l3Nh6kB0UZnwecOpRkk8i+l11NPz
+         HDPzGsKeVgUeg==
+Date:   Mon, 27 Mar 2023 23:50:18 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Hal Feng <hal.feng@starfivetech.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Christian Marangi <ansuelsmth@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kunit-dev@googlegroups.com, Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v3 10/11] dt-bindings: clk: Add KUnit clk_parent_data test
-Date:   Mon, 27 Mar 2023 15:21:58 -0700
-Message-Id: <20230327222159.3509818-11-sboyd@kernel.org>
-X-Mailer: git-send-email 2.40.0.348.gf938b09366-goog
-In-Reply-To: <20230327222159.3509818-1-sboyd@kernel.org>
-References: <20230327222159.3509818-1-sboyd@kernel.org>
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 00/21] Basic clock, reset & device tree support for
+ StarFive JH7110 RISC-V SoC
+Message-ID: <29ba8a8d-940d-4b49-bd86-5cd5df002c23@spud>
+References: <20230320103750.60295-1-hal.feng@starfivetech.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="EvmgkiZ1lEXclYTa"
+Content-Disposition: inline
+In-Reply-To: <20230320103750.60295-1-hal.feng@starfivetech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Describe a binding for a device that provides and consumes clks in DT so
-that a KUnit test can register clks based on the device node and test
-clk_hw_register() with clk_parent_data.
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>
-Cc: David Gow <davidgow@google.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- .../bindings/clock/test,clk-parent-data.yaml  | 47 +++++++++++++++++++
- 1 file changed, 47 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/test,clk-parent-data.yaml
+--EvmgkiZ1lEXclYTa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/Documentation/devicetree/bindings/clock/test,clk-parent-data.yaml b/Documentation/devicetree/bindings/clock/test,clk-parent-data.yaml
-new file mode 100644
-index 000000000000..a2f927526405
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/test,clk-parent-data.yaml
-@@ -0,0 +1,47 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/test,clk-parent-data.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Fake clk provider for clk_parent_data unit tests
-+
-+maintainers:
-+  - Stephen Boyd <sboyd@kernel.org>
-+
-+description:
-+  A clk provider to test the struct clk_parent_data implementation in the Linux
-+  kernel.
-+
-+properties:
-+  compatible:
-+    const: test,clk-parent-data
-+
-+  clocks:
-+    items:
-+      - description: Fixed parent
-+      - description: 50 MHz fixed parent
-+
-+  clock-names:
-+    items:
-+      - const: parent_fwname
-+      - const: "50"
-+
-+  "#clock-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - "#clock-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller {
-+      compatible = "test,clk-parent-data";
-+      #clock-cells = <1>;
-+      clocks = <&fixed_parent>, <&fixed_50MHz>;
-+      clock-names = "parent_fwname", "50";
-+    };
-+...
--- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+Hey Hal,
 
+On Mon, Mar 20, 2023 at 06:37:29PM +0800, Hal Feng wrote:
+> This patch series adds basic clock, reset & DT support for StarFive
+> JH7110 SoC.
+
+Probably obvious at this point given the number of outstanding comments
+on this version, but I'm gonna mark this series as "Changes Requested"
+on the RISC-V patchwork. I'm not sure what Stephen's cutoff for stuff is,
+but I'd like to have stuff ready to go to Arnd for -rc6, so you still
+have some time for another revision I think :)
+
+Cheers,
+Conor.
+
+--EvmgkiZ1lEXclYTa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZCIdqQAKCRB4tDGHoIJi
+0vYmAP4tJIxpbqPo89Mr6eQyscwzz5HyB5of8DCc+nuX/2v38gD/dP3dUrOdOFC5
+HnIQm3HIRolqC9lBVMIu9urkf6xrGwA=
+=cdfk
+-----END PGP SIGNATURE-----
+
+--EvmgkiZ1lEXclYTa--
