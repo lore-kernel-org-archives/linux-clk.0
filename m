@@ -2,56 +2,79 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6683C76196
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 07:43:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B79C76196
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 07:46:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230245AbjC1Hnd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Mar 2023 03:43:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58800 "EHLO
+        id S229501AbjC1HqP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Mar 2023 03:46:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231929AbjC1Hna (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 03:43:30 -0400
-Received: from mail.lokoho.com (mail.lokoho.com [217.61.105.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A3D3183
-        for <linux-clk@vger.kernel.org>; Tue, 28 Mar 2023 00:43:29 -0700 (PDT)
-Received: by mail.lokoho.com (Postfix, from userid 1001)
-        id 79655840CB; Tue, 28 Mar 2023 08:42:02 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lokoho.com; s=mail;
-        t=1679989407; bh=Z0N5VlX9/JlryGOL5I747Le9USomZJCRNNGRT3LbbKc=;
-        h=Date:From:To:Subject:From;
-        b=KlOq/62HU4ein2/Ej5CYyf48b9kVP++167uh1ncZo8+PvYNXT55Q3ZjRS7nQWZwBy
-         Nuc9jxV6cpB3Lzc8aYIgf71JW6XrtiSFaxaa+mV7YyxahFC8oRfuzeBvInaAuDsmwq
-         y4XlM8Db0V9pw0bEFpIAwA4iRuZmUUQ6GWd5VW/Pq+tKlMZQhbWbA0SRZjLNHzW6Mk
-         3ff0FwWO1h8G0G4TuNLjbRlL97UFt8t/X99RkPRwsg27ucOaPEdha8R5sRd3vrU96o
-         Z/1qAVK05tNiId4WVXIb/yvS+NeRoqtTXzPmcsz1XEgxh5/XPnETubSpGYM/By/KZB
-         a8buHyuxqmPpw==
-Received: by mail.lokoho.com for <linux-clk@vger.kernel.org>; Tue, 28 Mar 2023 07:40:50 GMT
-Message-ID: <20230328074501-0.1.4x.1mzy4.0.0c857d56ig@lokoho.com>
-Date:   Tue, 28 Mar 2023 07:40:50 GMT
-From:   "Adam Charachuta" <adam.charachuta@lokoho.com>
-To:     <linux-clk@vger.kernel.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
-X-Mailer: mail.lokoho.com
+        with ESMTP id S230365AbjC1HqO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 03:46:14 -0400
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91064183;
+        Tue, 28 Mar 2023 00:46:12 -0700 (PDT)
+Received: (Authenticated sender: clement.leger@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 6BAB31C000A;
+        Tue, 28 Mar 2023 07:46:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1679989571;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=gnINcze37S33vHMBmE2XZI97D/oQO140BrPywcEV24k=;
+        b=BkCbJ6RjXwa+a5i7lfZaMQmFRtc8bs+T98Pf/4Q+M8gjSSQbFjDiVoqLswSPfLqAUyUT0T
+        KHlwzE49zoniebxXsGLDqnOQaSfZG/RKvRkmZvMJ5s7/3RcWpMXVLiHI/kMawrA9SL4wCF
+        K+SiY95jWsEWf7CFRp2bWfGNema90M5Aq3/dX2EqokDIuIiRrF2UkjcLxDFcy43fh9BJvI
+        /ia4+IhA7wmw03NxI+rl5P/SaBZ2NV1ddNv3RHoSf3PAnVkKVQo4ZRZhfFYpSEmw6kr4EZ
+        LNTkVBBjLUSYtQvj2CRc/z9PFM9Fs3lhywdIPALKRnUQZvfnbLWzry7caINNoQ==
+Date:   Tue, 28 Mar 2023 09:46:48 +0200
+From:   =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: add missing of_node_put() in "assigned-clocks"
+ property parsing
+Message-ID: <20230328094648.51928f2f@fixe.home>
+In-Reply-To: <9832bfd49eb83257a6a62620023773c1.sboyd@kernel.org>
+References: <20230131083227.10990-1-clement.leger@bootlin.com>
+        <9832bfd49eb83257a6a62620023773c1.sboyd@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.36; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Le Tue, 14 Mar 2023 17:44:35 -0700,
+Stephen Boyd <sboyd@kernel.org> a =C3=A9crit :
 
-zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
-=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
-o dalszych rozm=C3=B3w.=20
+> Quoting Cl=C3=A9ment L=C3=A9ger (2023-01-31 00:32:27)
+> > When returning from of_parse_phandle_with_args(), the np member of the
+> > of_phandle_args structure should be put after usage. Add missing
+> > of_node_put() calls in both __set_clk_parents() and __set_clk_rates().
+> >=20
+> > Fixes: 86be408bfbd8 ("clk: Support for clock parents and rates assigned=
+ from device tree")
+> > Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+> > --- =20
+>=20
+> Does this series from a year ago help[1]?
+>=20
+> [1] https://lore.kernel.org/all/20220623121857.886-1-nuno.sa@analog.com/
+>=20
+> Nobody reviewed it, but if you can then I can probably apply it.
 
-Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
-=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
-=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
-strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
+I'm only be able to review the first patch of the serie which
+is equivalent to what I did but it mixes refactoring and fixes.
 
-Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
-
-
-Pozdrawiam
-Adam Charachuta
+--=20
+Cl=C3=A9ment L=C3=A9ger,
+Embedded Linux and Kernel engineer at Bootlin
+https://bootlin.com
