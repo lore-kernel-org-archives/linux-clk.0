@@ -2,173 +2,274 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B6B0C76196
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 08:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D5FCC77B60
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 08:43:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230411AbjC1Iat (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Mar 2023 04:30:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49106 "EHLO
+        id S230210AbjC1Im7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Mar 2023 04:42:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230263AbjC1Ias (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 04:30:48 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7CDFC7;
-        Tue, 28 Mar 2023 01:30:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1679992245; x=1711528245;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=bzUK80jztzjDzA1SZeBZahUFNGq7t3lGQg15wparD6c=;
-  b=rdl7gQjY85k472G5yU9f3vDBzDp0aPaReok335T7UbW5ISk0xpNeJ/34
-   4C5WivTyF75B+5FUPROLwKctE4wEsj49Sw6xvjK8Iq3wvzW9IGNXNr06c
-   6TX4xoYJus++Z51fJXgzxE2sy8VGfTzJcn7t2ssOiIOwM+83nnIfmeHyq
-   dO87/6y0bMJOAs/CAa4ptJap4KgbBtAnTEKmkeIGDjcaLKHoQxDDWTG3j
-   sz9ymcr/8jucrS6SHTR6I4pf67D/A4ofezEAkuhMi6OqtEs0qUVE7x+DY
-   kOqhhP9PY0njdbJTklFYq2vor7pJOvvQOjZxZcPSpVsqKKKjQAAV8J1JT
-   w==;
-X-IronPort-AV: E=Sophos;i="5.98,296,1673938800"; 
-   d="scan'208";a="144232728"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 28 Mar 2023 01:30:43 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Tue, 28 Mar 2023 01:30:42 -0700
-Received: from [10.159.245.112] (10.10.115.15) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.21 via Frontend
- Transport; Tue, 28 Mar 2023 01:30:40 -0700
-Message-ID: <7890284f-5809-2f46-9d5f-52e20a3ec327@microchip.com>
-Date:   Tue, 28 Mar 2023 10:30:34 +0200
+        with ESMTP id S230371AbjC1Im6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 04:42:58 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58A282111
+        for <linux-clk@vger.kernel.org>; Tue, 28 Mar 2023 01:42:54 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id br6so14764019lfb.11
+        for <linux-clk@vger.kernel.org>; Tue, 28 Mar 2023 01:42:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679992972;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eXAO2QVztc0wIt4GbZ6rGEc3cgJK8TnMWwwoFL/En1o=;
+        b=K2+jVIubCiT4gJ6wBkkGdON9SRmp178AuQrKMbBcaGesnpoyocjauSMco50YGFHn2c
+         2EOImgAs7VV8pUkg+INg4bNkk8flMPrrVlQTk6BLrK2q5nguJBS4TlHkdaU/Ii9FOSh6
+         NbflJpGC1ApBm8IqpuF1srmnpk2qkYzFj+WA5qLPZ0LBBJUTKXScxUZH+INH8R+UO+xb
+         ++Ux58FkUXhhNBPP83PgMT+jERsB/hj7Ns7rD1rKQfdRM6Sc60AxG17n2IpL+UBfwLhj
+         RzvPzna8mz4Qoxpdqw5Z4CME8zPwawPE3jQ68vALwVzHRRBkhvuJRe6T0XctEwTSUCu3
+         WE4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679992972;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eXAO2QVztc0wIt4GbZ6rGEc3cgJK8TnMWwwoFL/En1o=;
+        b=imT3100HBYrKFHkYT6bJHwa/fClVnzWvpxk4kTSLRDiTUoDj5B2v4uBD8QBdFH6V4i
+         Bpae0aOHeVzu88Fc8dwzwxcFEpHBNaqKmvZDm7olP0bj1jF8/O4dz41yjE7pcNxeF93+
+         uv6BMdCEG2e9/wvnxy//qv8t5/DDVBHHKXZG8YhcAOIzU21pKHyVLRnVjoGWFiA103G7
+         xc9C4d9ewjLtn6LjolUdIX7rLQ9uNFiAJrITL68yGWbXrAmOjZuGXYCXAblCKvYRUgB8
+         YuUI5oKseYDkZ/RHvhAvW6epX0XQHtlQF8zxCFyNGiqBbEM/nDyuX52zsx5N2Qyw0/Uq
+         IMQg==
+X-Gm-Message-State: AAQBX9cXQB986ughLsAwfuFvYfUiyW29faBnSzUFFiJS3bnaqotiZE2/
+        soH6SWkDnx5EB0sy/fYd0hmJ1A==
+X-Google-Smtp-Source: AKy350ZSAWagGBNHA5PmKfaemuAQKtAXuaYDZnKQL0TPA7YYUOdEM3bAwyuwhOZQCrm4lGjdbmFE6A==
+X-Received: by 2002:ac2:59d9:0:b0:4dd:cbf3:e981 with SMTP id x25-20020ac259d9000000b004ddcbf3e981mr4338231lfn.28.1679992972560;
+        Tue, 28 Mar 2023 01:42:52 -0700 (PDT)
+Received: from [192.168.1.101] (abxj225.neoplus.adsl.tpnet.pl. [83.9.3.225])
+        by smtp.gmail.com with ESMTPSA id t18-20020a2e9c52000000b002934b5d6a61sm4939271ljj.121.2023.03.28.01.42.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Mar 2023 01:42:52 -0700 (PDT)
+Message-ID: <cf530ceb-ca4c-5f5e-db61-60f856dafecb@linaro.org>
+Date:   Tue, 28 Mar 2023 10:42:50 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
-Subject: Re: [PATCH resent] clk: at91: sama7g5: Add two jump labels in
- sama7g5_pmc_setup()
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        <kernel-janitors@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     <cocci@inria.fr>, LKML <linux-kernel@vger.kernel.org>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <5ed1bc78-77a1-8eb8-43f9-6005d7de49c8@web.de>
- <9e3705dc-7a70-c584-916e-ae582c7667b6@web.de>
+Subject: Re: [PATCH V10 3/4] arm64: dts: qcom: Add support for ipq9574 SoC and
+ RDP433 variant
 Content-Language: en-US
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-In-Reply-To: <9e3705dc-7a70-c584-916e-ae582c7667b6@web.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     Devi Priya <quic_devipriy@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     agross@kernel.org, andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linus.walleij@linaro.org,
+        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
+        shawnguo@kernel.org, arnd@arndb.de, marcel.ziswiler@toradex.com,
+        nfraprado@collabora.com, broonie@kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
+        quic_poovendh@quicinc.com
+References: <20230327132718.573-1-quic_devipriy@quicinc.com>
+ <20230327132718.573-4-quic_devipriy@quicinc.com>
+ <CAA8EJprTm1sZ8fnfNee+NJTiaFq17QwWaEnSoJWVYs_GY65xFg@mail.gmail.com>
+ <a6225636-7abb-3c5c-c78f-8d40c25167b9@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <a6225636-7abb-3c5c-c78f-8d40c25167b9@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/03/2023 at 15:05, Markus Elfring wrote:
-> Date: Fri, 17 Mar 2023 20:02:34 +0100
-> 
-> The label “err_free” was used to jump to another pointer check despite of
-> the detail in the implementation of the function “sama7g5_pmc_setup”
-> that it was determined already that the corresponding variable contained
-> a null pointer (because of a failed memory allocation).
-> 
-> * Thus use additional labels.
-> 
-> * Delete an extra pointer check at the end which became unnecessary
->    with this refactoring.
-> 
-> This issue was detected by using the Coccinelle software.
 
-Fine, but I'm sorry that it complexity the function for no real value. 
-Other clk drivers have the same pattern so I want them to all stay the same.
 
-This is a NACK, sorry about that.
+On 28.03.2023 09:31, Devi Priya wrote:
+> 
+> 
+> On 3/27/2023 8:15 PM, Dmitry Baryshkov wrote:
+>> On Mon, 27 Mar 2023 at 16:28, Devi Priya <quic_devipriy@quicinc.com> wrote:
+>>>
+>>> Add initial device tree support for Qualcomm IPQ9574 SoC and
+>>> Reference Design Platform(RDP) 433 which is based on IPQ9574
+>>> family of SoCs
+>>>
+>>> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+>>> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+>>> Co-developed-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
+>>> Signed-off-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
+>>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+>>> ---
+>>>   Changes in V10:
+>>>          - Renamed the Board Device Tree Source to use the RDP numbers
+>>>          - Updated the Makefile, subject and commit message accordingly
+>>>
+>>>   arch/arm64/boot/dts/qcom/Makefile           |   1 +
+>>>   arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts |  84 ++++++
+>>>   arch/arm64/boot/dts/qcom/ipq9574.dtsi       | 270 ++++++++++++++++++++
+>>>   3 files changed, 355 insertions(+)
+>>>   create mode 100644 arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+>>>   create mode 100644 arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+>>> index 1a29403400b7..52f1f92c5195 100644
+>>> --- a/arch/arm64/boot/dts/qcom/Makefile
+>>> +++ b/arch/arm64/boot/dts/qcom/Makefile
+>>> @@ -8,6 +8,7 @@ dtb-$(CONFIG_ARCH_QCOM) += ipq6018-cp01-c1.dtb
+>>>   dtb-$(CONFIG_ARCH_QCOM)        += ipq8074-hk01.dtb
+>>>   dtb-$(CONFIG_ARCH_QCOM)        += ipq8074-hk10-c1.dtb
+>>>   dtb-$(CONFIG_ARCH_QCOM)        += ipq8074-hk10-c2.dtb
+>>> +dtb-$(CONFIG_ARCH_QCOM)        += ipq9574-rdp433.dtb
+>>>   dtb-$(CONFIG_ARCH_QCOM)        += msm8916-acer-a1-724.dtb
+>>>   dtb-$(CONFIG_ARCH_QCOM)        += msm8916-alcatel-idol347.dtb
+>>>   dtb-$(CONFIG_ARCH_QCOM)        += msm8916-asus-z00l.dtb
+>>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+>>> new file mode 100644
+>>> index 000000000000..2ce8e09e7565
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+>>> @@ -0,0 +1,84 @@
+>>> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+>>> +/*
+>>> + * IPQ9574 RDP433 board device tree source
+>>> + *
+>>> + * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
+>>> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+>>> + */
+>>> +
+>>> +/dts-v1/;
+>>> +
+>>> +#include "ipq9574.dtsi"
+>>> +
+>>> +/ {
+>>> +       model = "Qualcomm Technologies, Inc. IPQ9574/AP-AL02-C7";
+>>> +       compatible = "qcom,ipq9574-ap-al02-c7", "qcom,ipq9574";
+>>> +
+>>> +       aliases {
+>>> +               serial0 = &blsp1_uart2;
+>>> +       };
+>>> +
+>>> +       chosen {
+>>> +               stdout-path = "serial0:115200n8";
+>>> +       };
+>>> +};
+>>> +
+>>> +&blsp1_uart2 {
+>>> +       pinctrl-0 = <&uart2_pins>;
+>>> +       pinctrl-names = "default";
+>>> +       status = "okay";
+>>> +};
+>>> +
+>>> +&sdhc_1 {
+>>> +       pinctrl-0 = <&sdc_default_state>;
+>>> +       pinctrl-names = "default";
+>>> +       mmc-ddr-1_8v;
+>>> +       mmc-hs200-1_8v;
+>>> +       mmc-hs400-1_8v;
+>>> +       mmc-hs400-enhanced-strobe;
+>>> +       max-frequency = <384000000>;
+>>> +       bus-width = <8>;
+>>> +       status = "okay";
+>>> +};
+>>> +
+>>> +&sleep_clk {
+>>> +       clock-frequency = <32000>;
+>>> +};
+>>> +
+>>> +&tlmm {
+>>> +       sdc_default_state: sdc-default-state {
+>>> +               clk-pins {
+>>> +                       pins = "gpio5";
+>>> +                       function = "sdc_clk";
+>>> +                       drive-strength = <8>;
+>>> +                       bias-disable;
+>>> +               };
+>>> +
+>>> +               cmd-pins {
+>>> +                       pins = "gpio4";
+>>> +                       function = "sdc_cmd";
+>>> +                       drive-strength = <8>;
+>>> +                       bias-pull-up;
+>>> +               };
+>>> +
+>>> +               data-pins {
+>>> +                       pins = "gpio0", "gpio1", "gpio2",
+>>> +                              "gpio3", "gpio6", "gpio7",
+>>> +                              "gpio8", "gpio9";
+>>> +                       function = "sdc_data";
+>>> +                       drive-strength = <8>;
+>>> +                       bias-pull-up;
+>>> +               };
+>>> +
+>>> +               rclk-pins {
+>>> +                       pins = "gpio10";
+>>> +                       function = "sdc_rclk";
+>>> +                       drive-strength = <8>;
+>>> +                       bias-pull-down;
+>>> +               };
+>>> +       };
+>>> +};
+>>> +
+>>> +&xo_board_clk {
+>>> +       clock-frequency = <24000000>;
+>>> +};
+>>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>>> new file mode 100644
+>>> index 000000000000..3bb7435f5e7f
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>>> @@ -0,0 +1,270 @@
+>>> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+>>> +/*
+>>> + * IPQ9574 SoC device tree source
+>>> + *
+>>> + * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
+>>> + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+>>> + */
+>>> +
+>>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>>> +#include <dt-bindings/clock/qcom,ipq9574-gcc.h>
+>>> +#include <dt-bindings/reset/qcom,ipq9574-gcc.h>
+>>> +
+>>> +/ {
+>>> +       interrupt-parent = <&intc>;
+>>> +       #address-cells = <2>;
+>>> +       #size-cells = <2>;
+>>> +
+>>> +       clocks {
+>>> +               bias_pll_ubi_nc_clk: bias-pll-ubi-nc-clk {
+>>> +                       compatible = "fixed-clock";
+>>> +                       clock-frequency = <353000000>;
+>>> +                       #clock-cells = <0>;
+>>> +               };
+>>
+>> What is the source for this clock? With it clocking at 353 MHz, I
+>> doubt that it is an external clock.
+> bias_pll_ubi_nc_clk (353MHz)is a backup source
+> for Q6_AXIM2_CLK
+Is this not handled internally by MPSS firmware or RPM
+then?
 
-Regards,
-   Nicolas
-
-> Fixes: cb783bbbcf54c36256006895c215e86c5e7266d8 ("clk: at91: sama7g5: add clock support for sama7g5")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   drivers/clk/at91/sama7g5.c | 23 +++++++++++------------
->   1 file changed, 11 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
-> index f135b662f1ff..224b1f2ebef2 100644
-> --- a/drivers/clk/at91/sama7g5.c
-> +++ b/drivers/clk/at91/sama7g5.c
-> @@ -927,25 +927,25 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
->                              (ARRAY_SIZE(sama7g5_mckx) + ARRAY_SIZE(sama7g5_gck)),
->                              GFP_KERNEL);
->          if (!alloc_mem)
-> -               goto err_free;
-> +               goto free_pmc;
-> 
->          hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
->                                             50000000);
->          if (IS_ERR(hw))
-> -               goto err_free;
-> +               goto free_alloc_mem;
-> 
->          bypass = of_property_read_bool(np, "atmel,osc-bypass");
-> 
->          hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name,
->                                          bypass);
->          if (IS_ERR(hw))
-> -               goto err_free;
-> +               goto free_alloc_mem;
-> 
->          parent_names[0] = "main_rc_osc";
->          parent_names[1] = "main_osc";
->          hw = at91_clk_register_sam9x5_main(regmap, "mainck", parent_names, 2);
->          if (IS_ERR(hw))
-> -               goto err_free;
-> +               goto free_alloc_mem;
-> 
->          sama7g5_pmc->chws[PMC_MAIN] = hw;
-> 
-> @@ -987,7 +987,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
->                          }
-> 
->                          if (IS_ERR(hw))
-> -                               goto err_free;
-> +                               goto free_alloc_mem;
-> 
->                          if (sama7g5_plls[i][j].eid)
->                                  sama7g5_pmc->chws[sama7g5_plls[i][j].eid] = hw;
-> @@ -999,7 +999,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
->                                            &mck0_layout, &mck0_characteristics,
->                                            &pmc_mck0_lock, CLK_GET_RATE_NOCACHE, 5);
->          if (IS_ERR(hw))
-> -               goto err_free;
-> +               goto free_alloc_mem;
-> 
->          sama7g5_pmc->chws[PMC_MCK] = hw;
-> 
-> @@ -1128,12 +1128,11 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
->          return;
-> 
->   err_free:
-> -       if (alloc_mem) {
-> -               for (i = 0; i < alloc_mem_size; i++)
-> -                       kfree(alloc_mem[i]);
-> -               kfree(alloc_mem);
-> -       }
-> -
-> +       for (i = 0; i < alloc_mem_size; i++)
-> +               kfree(alloc_mem[i]);
-> +free_alloc_mem:
-> +       kfree(alloc_mem);
-> +free_pmc:
->          kfree(sama7g5_pmc);
->   }
-> 
-> --
-> 2.40.0
-> 
-
--- 
-Nicolas Ferre
-
+Konrad
+/PCIE2_AXIM_CLK/PCIE3_AXIM_CLK/SNOC-CLK
+> It is from the CMN_PLL, and is the same as that of PPE core clock.
+> Do you suggest to move its clock-frequency to Board DT similar to xo/sleep clock?
+>>
+>>> +
+>>> +               sleep_clk: sleep-clk {
+>>> +                       compatible = "fixed-clock";
+>>> +                       #clock-cells = <0>;
+>>> +               };
+>>> +
+>>> +               xo_board_clk: xo-board-clk {
+>>> +                       compatible = "fixed-clock";
+>>> +                       #clock-cells = <0>;
+>>> +               };
+>>> +       };
+>>
+>> [skipped the rest]
+>>
+> Regards,
+> Devi Priya
