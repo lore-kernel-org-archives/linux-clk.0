@@ -2,78 +2,93 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCBC4C6FD18
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 16:36:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9115C77B61
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 16:59:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229924AbjC1QgT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Mar 2023 12:36:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47230 "EHLO
+        id S231587AbjC1Q76 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Mar 2023 12:59:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbjC1QgS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 12:36:18 -0400
-Received: from out-37.mta1.migadu.com (out-37.mta1.migadu.com [IPv6:2001:41d0:203:375::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A11DCC2D
-        for <linux-clk@vger.kernel.org>; Tue, 28 Mar 2023 09:36:17 -0700 (PDT)
-Message-ID: <64e444ee-70e4-e51a-250d-471cfffeab5a@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1680021375;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=y1mvRN/2jYKvoRjIsnLQKdOjpz9Xb6FNa5ZLklCXKNc=;
-        b=pgGAvtjJ708aQj6Lcu77vMpjK0QiX/zIVljlWTa8WoWPR+LgFr2xtSKXNok7S17pIyug8/
-        H/qCdEjOFmywoavWR2sN0/w6lYTDwgaYYl5Rfpw5f8ZVL97gMIEhD6Moa+EWw7xgBCRYOl
-        NdMIpdycyw5a8U3/xcRxX/RWkmMMKuk=
-Date:   Tue, 28 Mar 2023 17:36:13 +0100
+        with ESMTP id S229632AbjC1Q75 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 12:59:57 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22DCC9ECF;
+        Tue, 28 Mar 2023 09:59:57 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A129D618C7;
+        Tue, 28 Mar 2023 16:59:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE429C433EF;
+        Tue, 28 Mar 2023 16:59:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680022796;
+        bh=5JSnUi0WPwXlNlLr2PLygtWZxa1SAMU3aE2taoy2XJ8=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=pG0CxzYc2iEAdKBPDBguoug0WhMNqYnXGWZ0vBpoy+o6qPYkfq/te1U0HzBubmaQY
+         Qc8D+RBVRs1+W1SNXJeXhNKBBI9XldesJIStEjChrgsxA4gbMXGDDthNbKmnJm75t/
+         rbiuw9xpcFMA4l9jMzA9x3O4cQgTvHfYJBzKd5tHBS2YxTcl56WOqzpvinvMcLQ6QR
+         ZZZNr2QWvUVX9A5g2OoAj4eUUfQqtuziuEXpF+e38ZnF2Wj0hWFv1NPx+LQ0f+d+u7
+         6i1mCDUrzUQp9f8kbWzJZ1qdkaw6r3WKLHPJQlx2L24KbYY/2fUPQel4IbrAAIC++G
+         gXkxDvMHR41aw==
+Message-ID: <1cfd584a48e1bb453596948a0187ecf1.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Subject: Re: [patch dpll-rfc 0/7] dpll: initial patchset extension by mlx5
- implementation
-Content-Language: en-US
-To:     Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org,
-        arkadiusz.kubalewski@intel.com, vadfed@meta.com
-Cc:     kuba@kernel.org, jonathan.lemon@gmail.com, pabeni@redhat.com,
-        poros@redhat.com, mschmidt@redhat.com,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-References: <20230312022807.278528-1-vadfed@meta.com>
- <20230326170052.2065791-1-jiri@resnulli.us>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20230326170052.2065791-1-jiri@resnulli.us>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <2484518b-bcf6-7fb1-6bfb-b96b3682397b@quicinc.com>
+References: <20230327132718.573-1-quic_devipriy@quicinc.com> <20230327132718.573-3-quic_devipriy@quicinc.com> <0af15083921c5d3c89392209654f0c9b.sboyd@kernel.org> <2484518b-bcf6-7fb1-6bfb-b96b3682397b@quicinc.com>
+Subject: Re: [PATCH V10 2/4] clk: qcom: Add Global Clock Controller driver for IPQ9574
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
+        quic_poovendh@quicinc.com
+To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, arnd@arndb.de, broonie@kernel.org,
+        catalin.marinas@arm.com, devicetree@vger.kernel.org,
+        dmitry.baryshkov@linaro.org, konrad.dybcio@linaro.org,
+        krzysztof.kozlowski+dt@linaro.org, linus.walleij@linaro.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        marcel.ziswiler@toradex.com, mturquette@baylibre.com,
+        nfraprado@collabora.com, p.zabel@pengutronix.de,
+        robh+dt@kernel.org, shawnguo@kernel.org, will@kernel.org
+Date:   Tue, 28 Mar 2023 09:59:53 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/03/2023 18:00, Jiri Pirko wrote:
-> From: Jiri Pirko <jiri@nvidia.com>
-> 
-> Hi.
-> 
-> This is extending your patchset. Basically, I do this on top of the
-> changes I pointed out during review. For example patch #6 is exposing
-> pin handle which is going to change, etc (there, I put a note).
-> 
-> First 5 patches are just needed dependencies and you can squash them
-> into your patch/patches. Last two patches should go in separatelly.
-> 
-> Please note that the patch #6 is replacing the need to pass the rclk
-> device during pin registration by putting a link between netdev and dpll
-> pin.
-> 
-> Please merge this into your dpll patchset and include it in the next
-> RFC. Thanks!
->
+Quoting Devi Priya (2023-03-27 23:15:35)
+>=20
+>=20
+> On 3/27/2023 10:18 PM, Stephen Boyd wrote:
+> > Quoting Devi Priya (2023-03-27 06:27:16)
+> >> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq=
+9574.c
+> >> new file mode 100644
+> >> index 000000000000..b2a2d618a5ec
+> >> --- /dev/null
+> >> +++ b/drivers/clk/qcom/gcc-ipq9574.c
+> >> @@ -0,0 +1,4248 @@
+> >> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >> +/*
+> >> + * Copyright (c) 2023 The Linux Foundation. All rights reserved.
+> >> + */
+> >> +
+> >> +#include <linux/kernel.h>
+> >> +#include <linux/err.h>
+> >> +#include <linux/platform_device.h>
+> >> +#include <linux/module.h>
+> >> +#include <linux/of.h>
+> >> +#include <linux/of_device.h>
+> >=20
+> > What is this include for?
+> This include actually don't seem necessary. But, I see that of.h &=20
+> platform_device.h are being included via of_device.h
+> Would you suggest to drop of_device.h or the other two
+> headers instead?
 
-Hi Jiri!
-
-Thanks for the patch set. It looks like it covers some changes that I 
-have also done to address the comments. I'll try to combine everything 
-in a couple of days and will re-spin series and we restart review 
-process. I think that there are open question still in the conversation 
-which were not answered.
-
-Best,
-Vadim
+Include headers for things you use. Don't try to omit includes if you
+see that a header includes other headers that you're using.
