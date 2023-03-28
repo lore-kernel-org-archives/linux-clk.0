@@ -2,79 +2,173 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B79C76196
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 07:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B6B0C76196
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 08:30:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229501AbjC1HqP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Mar 2023 03:46:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59896 "EHLO
+        id S230411AbjC1Iat (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Mar 2023 04:30:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230365AbjC1HqO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 03:46:14 -0400
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91064183;
-        Tue, 28 Mar 2023 00:46:12 -0700 (PDT)
-Received: (Authenticated sender: clement.leger@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 6BAB31C000A;
-        Tue, 28 Mar 2023 07:46:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1679989571;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=gnINcze37S33vHMBmE2XZI97D/oQO140BrPywcEV24k=;
-        b=BkCbJ6RjXwa+a5i7lfZaMQmFRtc8bs+T98Pf/4Q+M8gjSSQbFjDiVoqLswSPfLqAUyUT0T
-        KHlwzE49zoniebxXsGLDqnOQaSfZG/RKvRkmZvMJ5s7/3RcWpMXVLiHI/kMawrA9SL4wCF
-        K+SiY95jWsEWf7CFRp2bWfGNema90M5Aq3/dX2EqokDIuIiRrF2UkjcLxDFcy43fh9BJvI
-        /ia4+IhA7wmw03NxI+rl5P/SaBZ2NV1ddNv3RHoSf3PAnVkKVQo4ZRZhfFYpSEmw6kr4EZ
-        LNTkVBBjLUSYtQvj2CRc/z9PFM9Fs3lhywdIPALKRnUQZvfnbLWzry7caINNoQ==
-Date:   Tue, 28 Mar 2023 09:46:48 +0200
-From:   =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: add missing of_node_put() in "assigned-clocks"
- property parsing
-Message-ID: <20230328094648.51928f2f@fixe.home>
-In-Reply-To: <9832bfd49eb83257a6a62620023773c1.sboyd@kernel.org>
-References: <20230131083227.10990-1-clement.leger@bootlin.com>
-        <9832bfd49eb83257a6a62620023773c1.sboyd@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.36; x86_64-pc-linux-gnu)
+        with ESMTP id S230263AbjC1Ias (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 04:30:48 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7CDFC7;
+        Tue, 28 Mar 2023 01:30:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1679992245; x=1711528245;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=bzUK80jztzjDzA1SZeBZahUFNGq7t3lGQg15wparD6c=;
+  b=rdl7gQjY85k472G5yU9f3vDBzDp0aPaReok335T7UbW5ISk0xpNeJ/34
+   4C5WivTyF75B+5FUPROLwKctE4wEsj49Sw6xvjK8Iq3wvzW9IGNXNr06c
+   6TX4xoYJus++Z51fJXgzxE2sy8VGfTzJcn7t2ssOiIOwM+83nnIfmeHyq
+   dO87/6y0bMJOAs/CAa4ptJap4KgbBtAnTEKmkeIGDjcaLKHoQxDDWTG3j
+   sz9ymcr/8jucrS6SHTR6I4pf67D/A4ofezEAkuhMi6OqtEs0qUVE7x+DY
+   kOqhhP9PY0njdbJTklFYq2vor7pJOvvQOjZxZcPSpVsqKKKjQAAV8J1JT
+   w==;
+X-IronPort-AV: E=Sophos;i="5.98,296,1673938800"; 
+   d="scan'208";a="144232728"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 28 Mar 2023 01:30:43 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Tue, 28 Mar 2023 01:30:42 -0700
+Received: from [10.159.245.112] (10.10.115.15) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.21 via Frontend
+ Transport; Tue, 28 Mar 2023 01:30:40 -0700
+Message-ID: <7890284f-5809-2f46-9d5f-52e20a3ec327@microchip.com>
+Date:   Tue, 28 Mar 2023 10:30:34 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH resent] clk: at91: sama7g5: Add two jump labels in
+ sama7g5_pmc_setup()
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        <kernel-janitors@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     <cocci@inria.fr>, LKML <linux-kernel@vger.kernel.org>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <5ed1bc78-77a1-8eb8-43f9-6005d7de49c8@web.de>
+ <9e3705dc-7a70-c584-916e-ae582c7667b6@web.de>
+Content-Language: en-US
+From:   Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <9e3705dc-7a70-c584-916e-ae582c7667b6@web.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Le Tue, 14 Mar 2023 17:44:35 -0700,
-Stephen Boyd <sboyd@kernel.org> a =C3=A9crit :
+On 25/03/2023 at 15:05, Markus Elfring wrote:
+> Date: Fri, 17 Mar 2023 20:02:34 +0100
+> 
+> The label “err_free” was used to jump to another pointer check despite of
+> the detail in the implementation of the function “sama7g5_pmc_setup”
+> that it was determined already that the corresponding variable contained
+> a null pointer (because of a failed memory allocation).
+> 
+> * Thus use additional labels.
+> 
+> * Delete an extra pointer check at the end which became unnecessary
+>    with this refactoring.
+> 
+> This issue was detected by using the Coccinelle software.
 
-> Quoting Cl=C3=A9ment L=C3=A9ger (2023-01-31 00:32:27)
-> > When returning from of_parse_phandle_with_args(), the np member of the
-> > of_phandle_args structure should be put after usage. Add missing
-> > of_node_put() calls in both __set_clk_parents() and __set_clk_rates().
-> >=20
-> > Fixes: 86be408bfbd8 ("clk: Support for clock parents and rates assigned=
- from device tree")
-> > Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
-> > --- =20
->=20
-> Does this series from a year ago help[1]?
->=20
-> [1] https://lore.kernel.org/all/20220623121857.886-1-nuno.sa@analog.com/
->=20
-> Nobody reviewed it, but if you can then I can probably apply it.
+Fine, but I'm sorry that it complexity the function for no real value. 
+Other clk drivers have the same pattern so I want them to all stay the same.
 
-I'm only be able to review the first patch of the serie which
-is equivalent to what I did but it mixes refactoring and fixes.
+This is a NACK, sorry about that.
 
---=20
-Cl=C3=A9ment L=C3=A9ger,
-Embedded Linux and Kernel engineer at Bootlin
-https://bootlin.com
+Regards,
+   Nicolas
+
+> Fixes: cb783bbbcf54c36256006895c215e86c5e7266d8 ("clk: at91: sama7g5: add clock support for sama7g5")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>   drivers/clk/at91/sama7g5.c | 23 +++++++++++------------
+>   1 file changed, 11 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
+> index f135b662f1ff..224b1f2ebef2 100644
+> --- a/drivers/clk/at91/sama7g5.c
+> +++ b/drivers/clk/at91/sama7g5.c
+> @@ -927,25 +927,25 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
+>                              (ARRAY_SIZE(sama7g5_mckx) + ARRAY_SIZE(sama7g5_gck)),
+>                              GFP_KERNEL);
+>          if (!alloc_mem)
+> -               goto err_free;
+> +               goto free_pmc;
+> 
+>          hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
+>                                             50000000);
+>          if (IS_ERR(hw))
+> -               goto err_free;
+> +               goto free_alloc_mem;
+> 
+>          bypass = of_property_read_bool(np, "atmel,osc-bypass");
+> 
+>          hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name,
+>                                          bypass);
+>          if (IS_ERR(hw))
+> -               goto err_free;
+> +               goto free_alloc_mem;
+> 
+>          parent_names[0] = "main_rc_osc";
+>          parent_names[1] = "main_osc";
+>          hw = at91_clk_register_sam9x5_main(regmap, "mainck", parent_names, 2);
+>          if (IS_ERR(hw))
+> -               goto err_free;
+> +               goto free_alloc_mem;
+> 
+>          sama7g5_pmc->chws[PMC_MAIN] = hw;
+> 
+> @@ -987,7 +987,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
+>                          }
+> 
+>                          if (IS_ERR(hw))
+> -                               goto err_free;
+> +                               goto free_alloc_mem;
+> 
+>                          if (sama7g5_plls[i][j].eid)
+>                                  sama7g5_pmc->chws[sama7g5_plls[i][j].eid] = hw;
+> @@ -999,7 +999,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
+>                                            &mck0_layout, &mck0_characteristics,
+>                                            &pmc_mck0_lock, CLK_GET_RATE_NOCACHE, 5);
+>          if (IS_ERR(hw))
+> -               goto err_free;
+> +               goto free_alloc_mem;
+> 
+>          sama7g5_pmc->chws[PMC_MCK] = hw;
+> 
+> @@ -1128,12 +1128,11 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
+>          return;
+> 
+>   err_free:
+> -       if (alloc_mem) {
+> -               for (i = 0; i < alloc_mem_size; i++)
+> -                       kfree(alloc_mem[i]);
+> -               kfree(alloc_mem);
+> -       }
+> -
+> +       for (i = 0; i < alloc_mem_size; i++)
+> +               kfree(alloc_mem[i]);
+> +free_alloc_mem:
+> +       kfree(alloc_mem);
+> +free_pmc:
+>          kfree(sama7g5_pmc);
+>   }
+> 
+> --
+> 2.40.0
+> 
+
+-- 
+Nicolas Ferre
+
