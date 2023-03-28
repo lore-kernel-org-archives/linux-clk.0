@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CECE9C77B72
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 19:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2584C77B6D
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 19:36:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229750AbjC1Tgy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Mar 2023 15:36:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50410 "EHLO
+        id S229525AbjC1Tgz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Mar 2023 15:36:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbjC1Tgu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 15:36:50 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA0C83AAB
-        for <linux-clk@vger.kernel.org>; Tue, 28 Mar 2023 12:36:47 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id n10-20020a05600c4f8a00b003ee93d2c914so9784356wmq.2
-        for <linux-clk@vger.kernel.org>; Tue, 28 Mar 2023 12:36:47 -0700 (PDT)
+        with ESMTP id S229623AbjC1Tgv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 15:36:51 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4C803C0E
+        for <linux-clk@vger.kernel.org>; Tue, 28 Mar 2023 12:36:48 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id l37so7618626wms.2
+        for <linux-clk@vger.kernel.org>; Tue, 28 Mar 2023 12:36:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1680032207;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1680032208;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qPfw21v8gtigUsolrO+BT5/gzWDhSW7RBoQgHH2kESM=;
-        b=kF/rxL6HVsDj9bfhViunjiZMJgAqenp9lJbX12wrq8Yc/fgJ8g49GZ0kyXOiZDhPAW
-         RtiT3XhxPkHG6rKkRXIwSJ3OY4i8zohFaDdlohQd4v3swYbIXpN3Dvwi3NNDnpp8P2aQ
-         LSdx8+DaFgSdbPPR7BaFVnf33vELH1KN+IzrN5/H2t/WVyWzu+rG70GR845QfAjZPvpd
-         WrsoHv9vgSPYIjuNbGGW/ZoQ8k1J3/8/uAqsbsxJlpDB9/1qinc+McchbRalyADDZ4S6
-         BQufyZmAInEnsTn+e4DVKB7OYQ8OlDd93qMvtDa4T5atUlBNK3Imc0zj8Cd9L+mOuGuz
-         cgRw==
+        bh=MnMzj7ZL79LUqbUVPGQil7x2FOJbb8kWmQlz9dfo7dA=;
+        b=xWi7Hv9NpattlAgLrE5n4/25XF6YG9IMjnz6bom/kF+tMy3RnLf1pW5INeMugCkSyw
+         SASbBVXtYrWuX/fXcxoapxKAcIZPYh8hsfbHEclxV4iUj41b1SkVQ2/XFO3NMWQTa7BJ
+         2OxTiaEye4sH0t2nUGfqsBJZt++ifJ84wbpfejsSuhlsIrsbvmeOhh3TpDgaJn8Fj45a
+         xmsGaRLSyvqkpUYmnR14iw26U5+TFs+ZyWwTUvIwle0pv+IR+viJ/D3//quffnFzGBBI
+         uo7v2+7FNCqAEdRLMg72+rOAKHDZVtbgaW7YZIcNhIsVwextLdSL0Sr7OiNFtaRBsT8Z
+         iOxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680032207;
+        d=1e100.net; s=20210112; t=1680032208;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qPfw21v8gtigUsolrO+BT5/gzWDhSW7RBoQgHH2kESM=;
-        b=hR0nVqvfNKOnqS3i1PbNN9zn8aoOfC9sHoIWMfEERUu8OXdtzKYmTiAhaDh05sHGzF
-         +A0P1XMMO77Ie0unac+ow5Xk4pCBGCWOliRXwaWh+9OXQVVt/ZCJm5OAEQbtOWYs2kMt
-         XxnJz16VjuewQQk4w2kF9oEaREp6PMziHrbZ9vFWMaGwaSiuk9ZYBirtiknBeMijNoje
-         DiPdqVn+LAtmWkKZwQ+Nw3XUX2ACC6Zx5qfrhOJyU+8SiwveZwEc/vdubuxxL5f0Im2J
-         hr0skY5A2BKiV2KMwnGD2J/KM5NMsQxvlX7YPbDOKB18K3rz0JnRUfdMCb3R6j4/ZFKq
-         K4IQ==
-X-Gm-Message-State: AO0yUKV41Kty6fbtgQBs4erv9BUCeVdn/t28eFfnfhHB7zHr3xRSGNZN
-        xsclYGyUFzDPgqnQyZNEOolHzQ==
-X-Google-Smtp-Source: AK7set85YATpUqwBvEqs8LLDDBhARuvoL81CvF03dXRaHzkTq7Iz9KPPOE7V+3XqtJXXaSOETffEmA==
-X-Received: by 2002:a7b:c392:0:b0:3ed:5d41:f998 with SMTP id s18-20020a7bc392000000b003ed5d41f998mr13708339wmj.15.1680032207394;
-        Tue, 28 Mar 2023 12:36:47 -0700 (PDT)
+        bh=MnMzj7ZL79LUqbUVPGQil7x2FOJbb8kWmQlz9dfo7dA=;
+        b=DU3pxISJvHobCB57hLOn0bS0KLUx14X2xplDsJ5h5VeMUnBS1vtLi20cbiBk47yXag
+         fvRkv8AFDuuPIqz61S5Pn2JcEr2BFrzR6lB5FIuaAuO1sVWDMLcMlLfg6Uf9jn6MTWP4
+         +wqzWgkUBo8kmh0rO3DEgYSMiUZTtawkrLdwIsSkxyvb1A2DY0MsZMlAy4MzxCgN2efw
+         09Vxmjvpb0onoiSkd0mefsKxYOyKtWzDoiv8XL7w0mlnhzkoZDRuSUTdl1T8Cn6PWR74
+         3pR6frscYhCeXlDK3BqTtY9JygU4aEZWBGjUov6tq+6/Ei33/SFPMGzm3CWJMVUC/uz+
+         tIgA==
+X-Gm-Message-State: AO0yUKWo2iFKsHAEmZo8AkrX9yy0bC2YTd/I7COzEB7SVS9R5kLBXxrH
+        6KI5q/YEldu7ZLiavRM3Mga0QQ==
+X-Google-Smtp-Source: AK7set/amkAAst5aN5iawLGDEAZKdW/QVQ5cwY3lBH30XnzTf2CTyiV7lWHVjHV2Dk6mjnns57wW9g==
+X-Received: by 2002:a7b:cb81:0:b0:3ee:1a70:7ea2 with SMTP id m1-20020a7bcb81000000b003ee1a707ea2mr12434106wmi.3.1680032208496;
+        Tue, 28 Mar 2023 12:36:48 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:7b39:552d:b2f1:d7e8])
-        by smtp.gmail.com with ESMTPSA id g23-20020a7bc4d7000000b003eb5ce1b734sm18060544wmk.7.2023.03.28.12.36.46
+        by smtp.gmail.com with ESMTPSA id g23-20020a7bc4d7000000b003eb5ce1b734sm18060544wmk.7.2023.03.28.12.36.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Mar 2023 12:36:46 -0700 (PDT)
+        Tue, 28 Mar 2023 12:36:48 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -60,9 +60,9 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 6/7] arm64: dts: qcom: sa8775p: add the GPU clock controller node
-Date:   Tue, 28 Mar 2023 21:36:31 +0200
-Message-Id: <20230328193632.226095-7-brgl@bgdev.pl>
+Subject: [PATCH 7/7] arm64: dts: qcom: sa8775p: add the GPU IOMMU node
+Date:   Tue, 28 Mar 2023 21:36:32 +0200
+Message-Id: <20230328193632.226095-8-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20230328193632.226095-1-brgl@bgdev.pl>
 References: <20230328193632.226095-1-brgl@bgdev.pl>
@@ -74,31 +74,55 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Add the GPUCC node for sa8775p platforms.
+Add the GPU IOMMU for sa8775p-based platforms.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi | 29 +++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 9ab630c7d81b..4c45ad1cc7ff 100644
+index 4c45ad1cc7ff..de5e8449397c 100644
 --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
 +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -591,6 +591,18 @@ tcsr_mutex: hwlock@1f40000 {
- 			#hwlock-cells = <1>;
+@@ -7,6 +7,7 @@
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/qcom,rpmh.h>
+ #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
++#include <dt-bindings/clock/qcom,sa8775p-gpucc.h>
+ #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
+ #include <dt-bindings/power/qcom-rpmpd.h>
+ #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+@@ -603,6 +604,34 @@ gpucc: clock-controller@3d90000 {
+ 			#power-domain-cells = <1>;
  		};
  
-+		gpucc: clock-controller@3d90000 {
-+			compatible = "qcom,sa8775p-gpucc";
-+			reg = <0x0 0x03d90000 0x0 0xa000>;
-+			clocks = <&gcc GCC_GPU_CFG_AHB_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>,
-+				 <&gcc GCC_GPU_GPLL0_CLK_SRC>,
-+				 <&gcc GCC_GPU_GPLL0_DIV_CLK_SRC>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
++		kgsl_smmu: iommu@3da0000 {
++			compatible = "qcom,sa8775p-smmu-500", "qcom,smmu-500", "arm,mmu-500";
++			reg = <0x0 0x03da0000 0x0 0x20000>;
++			#iommu-cells = <2>;
++			#global-interrupts = <2>;
++			dma-coherent;
++			power-domains = <&gpucc GPU_CC_CX_GDSC>;
++			clocks = <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
++				 <&gcc GCC_GPU_SNOC_DVM_GFX_CLK>,
++				 <&gpucc GPU_CC_AHB_CLK>,
++				 <&gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>,
++				 <&gpucc GPU_CC_CX_GMU_CLK>,
++				 <&gpucc GPU_CC_HUB_CX_INT_CLK>,
++				 <&gpucc GPU_CC_HUB_AON_CLK>;
++			interrupts = <GIC_SPI 673 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 674 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 678 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 679 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 680 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 681 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 682 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 683 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 684 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 685 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 686 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 687 IRQ_TYPE_LEVEL_HIGH>;
 +		};
 +
  		pdc: interrupt-controller@b220000 {
