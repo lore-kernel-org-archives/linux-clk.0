@@ -2,78 +2,90 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4415C76196
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 17:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 919F5C77B6C
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 17:48:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229600AbjC1RmE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Mar 2023 13:42:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50782 "EHLO
+        id S229756AbjC1Rsq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Mar 2023 13:48:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229604AbjC1RmD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 13:42:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D67F4E06B;
-        Tue, 28 Mar 2023 10:42:02 -0700 (PDT)
+        with ESMTP id S229737AbjC1Rsn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 13:48:43 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9647D301;
+        Tue, 28 Mar 2023 10:48:35 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6C0776181B;
-        Tue, 28 Mar 2023 17:42:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1BFDC433EF;
-        Tue, 28 Mar 2023 17:42:01 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6A09B618F1;
+        Tue, 28 Mar 2023 17:48:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCFF2C433D2;
+        Tue, 28 Mar 2023 17:48:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680025321;
-        bh=2SMsf25Os8n/Nh4s1s1UZQy+WrqVW8lL7AF37NLGxhE=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=cZIk5LMM/eQRh5i9MUcZzAdXLzyqXmMMnSXdA1QzSryyEEhco5byULYBGCPq7h+c6
-         9Wh2FIUizPRVV9RfkIs6YelU4xYJlYjQSqyOKIVKxE15K6pakoOh8msL5zVC0zQImk
-         sGBi4GXpIcK7zkmG3ZwZ1+xCN4m4PURdChHj1AbOnKh1hJ1iuKk6c0z0fJ16p2jy09
-         ImHzGJ1tjz2RpJYb8LYLDr3USGDTgEswDxXbDoENWzS74n4RzfWGJt96QeSHNlEVfa
-         nSfUYlp/4oc9htfgTAdKO/+ZzmflTnsZYVcIKVuCIqnK4e6Kn0BYm04HuyGkPHwogJ
-         mBGHNemAn0ErA==
-Message-ID: <5c89937f7b208e872af58636933194a0.sboyd@kernel.org>
+        s=k20201202; t=1680025714;
+        bh=ksYek1bvUMLYnCew1+mEmDZuLGTzn7CLWILhJMWLiRE=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=t9PdvvBf1/Bxi8gwVhioMwjJr5XvulDRb/Kz3QjTK9l1v4Z4QHRvF/vNjBCyQ8US4
+         ovWK31oyqwkRF+cowHl0NqatlhxZPETyq+Lba+D+gv2RWaFo3Fp4TfY9GEKvC1j2SX
+         WmQBtjslQQAFODvfh/fAOCIfHqYWrwnFFSfVg+vQHYO56qGzo64rDOrmTE35PWReog
+         wilak6oBWi+QUjiEmXmq3SKoluZkmPfbYzEo3qW/QIcXjayfnAB5veQsdokZYAY0XJ
+         AID65wlSzObTnJ3Lp/JIlfrF7Uj+ZX57pTkV8kQdAn5DbHQsNEvqkq/avhYeq9qZb6
+         asVYKBQHERWEw==
+Message-ID: <81d8a7b18901c85fd24705977e6b9ce3.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <fb9712fc-d103-769c-2ed7-51a08bbe76b2@quicinc.com>
-References: <20230327163249.1081824-1-quic_mohs@quicinc.com> <b347395dd736194ae9392f2f6ea450b0.sboyd@kernel.org> <fb9712fc-d103-769c-2ed7-51a08bbe76b2@quicinc.com>
-Subject: Re: [PATCH v1 0/4] Remove the qdsp6ss register from lpasscc
+In-Reply-To: <20230328021912.177301-5-ychuang570808@gmail.com>
+References: <20230328021912.177301-1-ychuang570808@gmail.com> <20230328021912.177301-5-ychuang570808@gmail.com>
+Subject: Re: [PATCH v6 04/12] dt-bindings: reset: nuvoton: add binding for ma35d1 IP reset control
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, broonie@kernel.org,
-        konrad.dybcio@somainline.org, krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        quic_plai@quicinc.com, quic_rohkumar@quicinc.com,
-        quic_visr@quicinc.com, robh+dt@kernel.org, swboyd@chromium.org
-Date:   Tue, 28 Mar 2023 10:41:59 -0700
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+To:     Jacky Huang <ychuang570808@gmail.com>, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        lee@kernel.org, mturquette@baylibre.com, p.zabel@pengutronix.de,
+        robh+dt@kernel.org
+Date:   Tue, 28 Mar 2023 10:48:32 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Mohammad Rafi Shaik (2023-03-27 23:02:38)
->=20
-> On 3/27/2023 11:11 PM, Stephen Boyd wrote:
-> > Quoting Mohammad Rafi Shaik (2023-03-27 09:32:45)
-> >> This patch set is to remove the qdsp6ss register from lpasscc to
-> >> resolve memory conflict's between lpascc and ADSP remoteproc driver.
-> > Is this related to the other patch series[1] ("[PATCH v9 0/4] Add resets
-> > for ADSP based audio clock controller driver")? Does it supersede those?
-> Thanks for comment,
->=20
-> yes, its superseded form patch series[1] ("[PATCH v9 0/4] Add resets
-> for ADSP based audio clock controller driver") which is required many
-> changes.
->=20
-> As the qdsp6ss clocks are being enabled in remoteproc driver,
-> the qdsp6ss not required in lpasscc node.
->=20
-> For audioreach solution required to create the remoteproc_adsp
-> device tree node with base address 0x3000000 for remoteproc driver,
-> as already this address being used in lpasscc node it's causing memory
-> conflict.
+Quoting Jacky Huang (2023-03-27 19:19:04)
+> +description:
+> +  The system reset controller can be used to reset various peripheral
+> +  controllers in MA35D1 SoC.
+> +
+> +properties:
+> +  compatible:
+> +    const: nuvoton,ma35d1-reset
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - '#reset-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  # system reset controller node:
+> +  - |
+> +
+> +    system-management@40460000 {
+> +        compatible =3D "nuvoton,ma35d1-sys", "syscon", "simple-mfd";
+> +        reg =3D <0x40460000 0x200>;
+> +
+> +        reset-controller {
+> +            compatible =3D "nuvoton,ma35d1-reset";
+> +            #reset-cells =3D <1>;
+> +        };
 
-Ok. Please add the details of superseded patch series to the cover
-letter. It helps us understand what to do with the other patches on the
-list.
+This is prescribing driver details to the system-management node. The
+reset-controller node should be removed, the #reset-cells moved up one
+level, and the "nuvoton,ma35d1-sys" should match a driver that registers
+an auxiliary device for reset functionality. Is anything besides child
+nodes like 'reset-controller' using the syscon@40460000?
