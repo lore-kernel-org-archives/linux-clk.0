@@ -2,170 +2,92 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D5CC6FD18
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 19:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB6DC76196
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 22:03:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229816AbjC1ThO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Mar 2023 15:37:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50436 "EHLO
+        id S229930AbjC1WDE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Mar 2023 18:03:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229732AbjC1Tgx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 15:36:53 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C912A3AA9
-        for <linux-clk@vger.kernel.org>; Tue, 28 Mar 2023 12:36:47 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id u11-20020a05600c19cb00b003edcc414997so8239073wmq.3
-        for <linux-clk@vger.kernel.org>; Tue, 28 Mar 2023 12:36:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1680032206;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tXyJ56MXTgaGuaRJ30aQZ32hSfK274M12CnrDdVzkv0=;
-        b=7/ds7V0h2S7otrMbbA+WRdoPc9dImUqHRtmje+FNFsl9xyx9EEbO7F6HDPQCIW8WwV
-         JbmVJQ8SdGzxzuQbXVQcBJK3BW9aV2zP6ujODZez8NY/9GloaYqmSXhF2r4dptAO9KgS
-         sNXxr3lOn+gzuQUffD4qmT8I1IcpJGUsKu0Tqu/TacoI2TRS4pE3jPViB3eozKjC8C1W
-         yQ5jworz1MIfE+ckBqhkXMr4Ab9vymTkBVXnmPpqWilyKMIkNe/XC/Z+QI88ghg1qrLN
-         jmgGYn89SgZ6YEFa7w3E99kyzWWonxDnNn3Z5aUppiWgm5sIP+kyYbWp1wsgIDoVuomQ
-         nIWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680032206;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tXyJ56MXTgaGuaRJ30aQZ32hSfK274M12CnrDdVzkv0=;
-        b=xTuK/1kqnHo4zIHKlg6IK86daMVcJZkvoG50SBKla890r2mCyPAcsCiQvr7h1k9i2J
-         CpeMDNPeDdPxkDLJ2CtmDg7iUoRp9QuxBTzAm4mFinQ6EUbmEmEiYVqQbfn/3PGIdYoz
-         3CAkv7fGF4BQX/Z9ox/ubLhYerWEMLuVKWHKGsbUBPKkferlDTvEiUrgs2OLFHc2I8mM
-         P3zDgjIK1E5OcdVsNkbEoCo7p65t2DczYK1zhTlygEhJVtzaza5m2qa0MFpcaDEF4+Be
-         ZQTFdWTJ+x9lzoea9Bcl9dOc3/B20PgB+wVszjZs7Vtyme2oy40dYTXjKokZrGTO3LE9
-         KYtw==
-X-Gm-Message-State: AO0yUKU0U65meW6ajXDjzUskx6wb1laPuNHVM+lX5Vq3GE7EN8SFafJN
-        hL6LXxY4/qttQWYrPT3g40DdYA==
-X-Google-Smtp-Source: AK7set+9RumftxwVPieikWYJ/01dioKPsGwlkf5uBvJY7YPqr0n+6S9w+IiXnKmIGiAW+r20P998GQ==
-X-Received: by 2002:a7b:c04a:0:b0:3ee:6161:7d98 with SMTP id u10-20020a7bc04a000000b003ee61617d98mr13903002wmc.16.1680032206330;
-        Tue, 28 Mar 2023 12:36:46 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:7b39:552d:b2f1:d7e8])
-        by smtp.gmail.com with ESMTPSA id g23-20020a7bc4d7000000b003eb5ce1b734sm18060544wmk.7.2023.03.28.12.36.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Mar 2023 12:36:45 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 5/7] arm64: dts: qcom: sa8775p: add the pcie smmu node
-Date:   Tue, 28 Mar 2023 21:36:30 +0200
-Message-Id: <20230328193632.226095-6-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20230328193632.226095-1-brgl@bgdev.pl>
-References: <20230328193632.226095-1-brgl@bgdev.pl>
+        with ESMTP id S229739AbjC1WDD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 18:03:03 -0400
+Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [IPv6:2001:4b98:dc4:8::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5BF2126;
+        Tue, 28 Mar 2023 15:03:01 -0700 (PDT)
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 5C1E7100002;
+        Tue, 28 Mar 2023 22:02:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1680040980;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rLxkuolFWCKZXPrFlMPQjelZHZ3iSSYl5Tg09kEuqFw=;
+        b=d3DHupHtgpyZn5uk+D8NQEu58+ECXt01ErHNlny0J/E0YjfOAJaSOEjiG9TI/wnH/gW/ej
+        KPFXJy8WF0osovYQDJ34GWropPaupUo9/YOi6gsMeDHKr++/pLaN10oyBAtigCx98668at
+        FgALOR5hLwWMksRrX0XOvtsvxzlB0sfjdzzNvu3XJSVAoz0GFsnfgppZvcMJoDjjIG56z2
+        4Mp6ccWaJwIrozvs8ZWwLMD7+d2exHQ9My+7GZgMW1gwRA5sbaG2j+m0P/UU2qmJJwrJD0
+        8ahTaL/n6mgL8LGyTq+D2KKg6kYugZnevH6PVPEC5wAKjChLgpcrN3i2PEPnqA==
+Date:   Wed, 29 Mar 2023 00:02:59 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, cocci@inria.fr,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH resent] clk: at91: sama7g5: Add two jump labels in
+ sama7g5_pmc_setup()
+Message-ID: <202303282202593dfa4106@mail.local>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <5ed1bc78-77a1-8eb8-43f9-6005d7de49c8@web.de>
+ <9e3705dc-7a70-c584-916e-ae582c7667b6@web.de>
+ <7890284f-5809-2f46-9d5f-52e20a3ec327@microchip.com>
+ <7985ac57-5b33-e7df-f319-ad6ee0788e2c@web.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <7985ac57-5b33-e7df-f319-ad6ee0788e2c@web.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 28/03/2023 21:24:00+0200, Markus Elfring wrote:
+> >> The label “err_free” was used to jump to another pointer check despite of
+> >> the detail in the implementation of the function “sama7g5_pmc_setup”
+> >> that it was determined already that the corresponding variable contained
+> >> a null pointer (because of a failed memory allocation).
+> >>
+> >> * Thus use additional labels.
+> >>
+> >> * Delete an extra pointer check at the end which became unnecessary
+> >>    with this refactoring.
+> >>
+> >> This issue was detected by using the Coccinelle software.
+> >
+> > Fine, but I'm sorry that it complexity the function for no real value.
+> 
+> Under which circumstances can advice be taken better into account
+> also from another information source?
+> https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+goto+chain+when+leaving+a+function+on+error+when+using+and+releasing+resources#MEM12C.Considerusingagotochainwhenleavingafunctiononerrorwhenusingandreleasingresources-CompliantSolution%28POSIX,GotoChain%29
+> 
+> 
+> 
+> > Other clk drivers have the same pattern so I want them to all stay the same.
+> > This is a NACK, sorry about that.
+> 
+> I am curious if other contributors (or code reviewers) would like to influence
+> the software situation a bit more.
+> 
 
-Add the PCIe SMMU node for sa8775p platforms.
+I agree with Nicolas here, this is useless churn.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 74 +++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 2343df7e0ea4..9ab630c7d81b 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -809,6 +809,80 @@ apps_smmu: iommu@15000000 {
- 				     <GIC_SPI 891 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		pcie_smmu: iommu@15200000 {
-+			compatible = "qcom,sa8775p-smmu-500", "qcom,smmu-500", "arm,mmu-500";
-+			reg = <0x0 0x15200000 0x0 0x800000>;
-+			#iommu-cells = <2>;
-+			#global-interrupts = <2>;
-+
-+			interrupts = <GIC_SPI 920 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 921 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 925 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 926 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 927 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 928 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 950 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 951 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 952 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 953 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 954 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 955 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 956 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 957 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 958 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 885 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 886 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 887 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 888 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 820 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 822 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 823 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 447 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 452 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 840 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 841 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 842 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 843 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 844 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 845 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 846 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 847 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 848 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 849 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 802 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 803 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 804 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 805 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 806 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 807 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 808 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 809 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 810 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 811 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 812 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 813 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 814 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 836 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 837 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 838 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 839 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 854 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 855 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 856 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 790 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 791 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 792 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 793 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 794 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 795 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 796 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 639 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 640 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
- 		intc: interrupt-controller@17a00000 {
- 			compatible = "arm,gic-v3";
- 			reg = <0x0 0x17a00000 0x0 0x10000>,     /* GICD */
 -- 
-2.37.2
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
