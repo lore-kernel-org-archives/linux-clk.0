@@ -2,88 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F89C76196
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 03:39:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E118C76196
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 06:03:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232488AbjC1DjS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Mar 2023 23:39:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48428 "EHLO
+        id S229436AbjC1GDK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Mar 2023 02:03:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231841AbjC1DjQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 23:39:16 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DA1F171E
-        for <linux-clk@vger.kernel.org>; Mon, 27 Mar 2023 20:39:15 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id e21so11115423ljn.7
-        for <linux-clk@vger.kernel.org>; Mon, 27 Mar 2023 20:39:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20210112.gappssmtp.com; s=20210112; t=1679974753;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+teYGhMbJ/qz9LQzLhsSWOaFjw154Q/LczJdwFN1UeE=;
-        b=F25dTMryVlQgpQKpjDgvxzOxrW0aEVP+Jq/+lByoYVS4zsu4zkgCJDRkE1d60fMccI
-         U2JOv0BB7HitFjCJ7FNotbGPYdFO3+qc1LUidTvGZmaIEoJAdCxMbHGY6sFK67fqTa8D
-         wA6nqM6YJpJqaUQsHT0d+grlxH3eBNSTK3d/Jne867T6UGBPA0McqjIrs6H2OxOBiHVT
-         lkxmZyDkc1gc2ONr6Aupt+KVjw4o1zXiN+cL00c6b7xcZI6WLjnDaoMD4d6S7bRqNrfw
-         49xt5E4eyIFwFj+EkD22/H4x23prEI3eQWCIDWf1idGAd3kmYWna6PNMNa/jAPqG2oRq
-         bi0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679974753;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+teYGhMbJ/qz9LQzLhsSWOaFjw154Q/LczJdwFN1UeE=;
-        b=kr285cDHQP1MUPb65iKn1c/ieUji6oOcnBMY6LLD57FYBT7tN0dZqi6P0G/vh+BnTQ
-         AE9NQ7Tz83jytCgwl4d+aNxqB/KQDTnHxir91RfETB3sXbs98KmX1je+qcy5x4Mm1M/l
-         8uKbGdYH9pmCFgHzsNn3vkkXzqX51rHhFkA7pJR0t3cBWH7EdrmuNXvhVhYrIM0CMRDh
-         sqquI+FnccUvdSDLSxrOAWdsuQ9CmfkIR594okrrKWjnFlpTCj3USOIk1WCZGJGsyGdM
-         +BLGYo0nm/sHEOwiqLH0iXxZG58gao0a5iqasrBIPXwU2Ryyqx4zY4IFUqqQSbnvE4kY
-         sJjw==
-X-Gm-Message-State: AAQBX9e+23HJq/Y6bLrFEaroaBZJAydP3azXGr751VBPjmAKWqdke8wt
-        j/idZs7ZglBDraBiD6oqItKPhg==
-X-Google-Smtp-Source: AKy350ZXmlguZVLGLGK8nHVPZeZlcJTzhlT/xD/9+u+W4Dc/kdvYAValjAG/AN1/BfQqHwd4pZb1UA==
-X-Received: by 2002:a2e:868c:0:b0:298:9b8d:cc17 with SMTP id l12-20020a2e868c000000b002989b8dcc17mr4391050lji.9.1679974753652;
-        Mon, 27 Mar 2023 20:39:13 -0700 (PDT)
-Received: from cobook.lan ([85.193.119.48])
-        by smtp.gmail.com with ESMTPSA id r10-20020a2eb60a000000b002945b851ea5sm4865094ljn.21.2023.03.27.20.39.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Mar 2023 20:39:13 -0700 (PDT)
-From:   Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH] clk: renesas: r8a77980: Add i2c5 clock
-Date:   Tue, 28 Mar 2023 09:39:02 +0600
-Message-Id: <20230328033902.830269-1-nikita.yoush@cogentembedded.com>
-X-Mailer: git-send-email 2.30.2
+        with ESMTP id S230468AbjC1GDJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 02:03:09 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D93821BF9;
+        Mon, 27 Mar 2023 23:02:58 -0700 (PDT)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32S3kP4H027584;
+        Tue, 28 Mar 2023 06:02:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=tiXyRIJPK6Rsvlv8Hvs8pKKjdhdnF707hGQ8B7kyECA=;
+ b=cv1WsJOT3+/i8V09AAyFX7cmrz/2kFmazIG3RzRWzq0tIOBWZ160hQngJS+OnY5CSFSC
+ zn+TltEIB0YRZnX3b3XBlAp6lk92IM6qYeELogqYNgNp6HiCTkiSQofmbw9EX8icZWJd
+ g28MIv/SSM1EkmcdWEw3/jr+JozzbJ+JPtN0qxcxfHYJKt9Nf7lrMDoRKctorKHDNiCA
+ 5ObG60Nv0s7ojliYvDcZ7OE976x2m4xHKmoK+CxCZTqsJAx0epZRGc6/H9VkgKU4BRcR
+ lMvcRAsQRK/GBQIUM/bqW+/9WIXvSJtahZQVdurPh+57vvl0oIHX7aOporp1U2WbJI0I vA== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pk5773512-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Mar 2023 06:02:47 +0000
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32S62k3e019484
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Mar 2023 06:02:46 GMT
+Received: from [10.216.36.96] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Mon, 27 Mar
+ 2023 23:02:41 -0700
+Message-ID: <fb9712fc-d103-769c-2ed7-51a08bbe76b2@quicinc.com>
+Date:   Tue, 28 Mar 2023 11:32:38 +0530
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v1 0/4] Remove the qdsp6ss register from lpasscc
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <broonie@kernel.org>,
+        <konrad.dybcio@somainline.org>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
+        <quic_plai@quicinc.com>, <quic_rohkumar@quicinc.com>,
+        <quic_visr@quicinc.com>, <robh+dt@kernel.org>,
+        <swboyd@chromium.org>
+References: <20230327163249.1081824-1-quic_mohs@quicinc.com>
+ <b347395dd736194ae9392f2f6ea450b0.sboyd@kernel.org>
+From:   Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+In-Reply-To: <b347395dd736194ae9392f2f6ea450b0.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: fj3ZzXUIWJ0lnJLW_nJtJNSq9jfRGId5
+X-Proofpoint-ORIG-GUID: fj3ZzXUIWJ0lnJLW_nJtJNSq9jfRGId5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-24_11,2023-03-27_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0 adultscore=0
+ mlxlogscore=645 phishscore=0 malwarescore=0 spamscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
+ definitions=main-2303280049
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The MSSR clock definition for i2c5 was missing. Add it.
 
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
----
- drivers/clk/renesas/r8a77980-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+On 3/27/2023 11:11 PM, Stephen Boyd wrote:
+> Quoting Mohammad Rafi Shaik (2023-03-27 09:32:45)
+>> This patch set is to remove the qdsp6ss register from lpasscc to
+>> resolve memory conflict's between lpascc and ADSP remoteproc driver.
+> Is this related to the other patch series[1] ("[PATCH v9 0/4] Add resets
+> for ADSP based audio clock controller driver")? Does it supersede those?
+Thanks for comment,
 
-diff --git a/drivers/clk/renesas/r8a77980-cpg-mssr.c b/drivers/clk/renesas/r8a77980-cpg-mssr.c
-index 01ea09891b32..2f21a8725907 100644
---- a/drivers/clk/renesas/r8a77980-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77980-cpg-mssr.c
-@@ -206,6 +206,7 @@ static const struct mssr_mod_clk r8a77980_mod_clks[] __initconst = {
- 	DEF_MOD("gpio0",		 912,	R8A77980_CLK_CP),
- 	DEF_MOD("can-fd",		 914,	R8A77980_CLK_S3D2),
- 	DEF_MOD("rpc-if",		 917,	R8A77980_CLK_RPCD2),
-+	DEF_MOD("i2c5",			 919,	R8A77980_CLK_S0D6),
- 	DEF_MOD("i2c4",			 927,	R8A77980_CLK_S0D6),
- 	DEF_MOD("i2c3",			 928,	R8A77980_CLK_S0D6),
- 	DEF_MOD("i2c2",			 929,	R8A77980_CLK_S3D2),
--- 
-2.30.2
+yes, its superseded form patch series[1] ("[PATCH v9 0/4] Add resets
+for ADSP based audio clock controller driver") which is required many
+changes.
 
+As the qdsp6ss clocks are being enabled in remoteproc driver,
+the qdsp6ss not required in lpasscc node.
+
+For audioreach solution required to create the remoteproc_adsp
+device tree node with base address 0x3000000 for remoteproc driver,
+as already this address being used in lpasscc node it's causing memory
+conflict.
+>> Mohammad Rafi Shaik (4):
+>>    arm64: dts: qcom: sc7280: Modify lpasscc node name
+>>    dt-bindings: clock: qcom,sc7280-lpasscc: Remove qdsp6ss register
+>>      region
+>>    arm64: dts: qcom: sc7280: Remove qdsp6ss regmap region
+>>    clk: qcom: lpasscc-sc7280: Remove qdsp6ss clock registration
+> [1] https://lore.kernel.org/all/20230317141622.1926573-1-quic_mohs@quicinc.com/
