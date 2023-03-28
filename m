@@ -2,107 +2,197 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E118C76196
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 06:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57DDDC77B61
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 06:16:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229436AbjC1GDK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Mar 2023 02:03:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48070 "EHLO
+        id S232372AbjC1GQN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Mar 2023 02:16:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230468AbjC1GDJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 02:03:09 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D93821BF9;
-        Mon, 27 Mar 2023 23:02:58 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32S3kP4H027584;
-        Tue, 28 Mar 2023 06:02:47 GMT
+        with ESMTP id S232345AbjC1GQM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 02:16:12 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AC4230FC;
+        Mon, 27 Mar 2023 23:16:10 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32S6C7jK010531;
+        Tue, 28 Mar 2023 06:15:49 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : references : from : in-reply-to :
+ mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=tiXyRIJPK6Rsvlv8Hvs8pKKjdhdnF707hGQ8B7kyECA=;
- b=cv1WsJOT3+/i8V09AAyFX7cmrz/2kFmazIG3RzRWzq0tIOBWZ160hQngJS+OnY5CSFSC
- zn+TltEIB0YRZnX3b3XBlAp6lk92IM6qYeELogqYNgNp6HiCTkiSQofmbw9EX8icZWJd
- g28MIv/SSM1EkmcdWEw3/jr+JozzbJ+JPtN0qxcxfHYJKt9Nf7lrMDoRKctorKHDNiCA
- 5ObG60Nv0s7ojliYvDcZ7OE976x2m4xHKmoK+CxCZTqsJAx0epZRGc6/H9VkgKU4BRcR
- lMvcRAsQRK/GBQIUM/bqW+/9WIXvSJtahZQVdurPh+57vvl0oIHX7aOporp1U2WbJI0I vA== 
+ bh=iRrp4ZVtHf6+VfJjNdWEkd8OHn2fcSeeKtKC2EYmZqI=;
+ b=oDJO0GnxXGX/pXQnqDScTGS7qLfCVyxGW5Ggatsn9zRS/JRaBGNtMxl5TIdv1Hx3ls04
+ gwxSJD5rYPKwPXqibHUvYl2koRaOKuzqFtYQq8rkLeDFp3j0F9jKAerg7COsUp8kS+Ro
+ uf6/ezOiBQbhb11pFSpIhwU3RC9OxuKwUAVSzE3xZrnoZdf+ak2Q8X7RucRW1w9TMIix
+ 1VNPUfEECqRkXRjEwMkEOETpp1tEVhQ+ZSAf8XGT/5WOSpitHonK14vbPmocLXJ9cy7x
+ xjXcxV1qOm8hSC4Xs33OYdVqkDojLYCA7G0lZrqOQB65L2WC9b4BVXPTn/y2cU9x0FaZ ug== 
 Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pk5773512-1
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pk7h8tu7p-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 28 Mar 2023 06:02:47 +0000
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32S62k3e019484
+        Tue, 28 Mar 2023 06:15:49 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32S6Fl1R002528
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 28 Mar 2023 06:02:46 GMT
-Received: from [10.216.36.96] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+        Tue, 28 Mar 2023 06:15:47 GMT
+Received: from [10.216.32.150] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Mon, 27 Mar
- 2023 23:02:41 -0700
-Message-ID: <fb9712fc-d103-769c-2ed7-51a08bbe76b2@quicinc.com>
-Date:   Tue, 28 Mar 2023 11:32:38 +0530
+ 2023 23:15:38 -0700
+Message-ID: <2484518b-bcf6-7fb1-6bfb-b96b3682397b@quicinc.com>
+Date:   Tue, 28 Mar 2023 11:45:35 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v1 0/4] Remove the qdsp6ss register from lpasscc
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH V10 2/4] clk: qcom: Add Global Clock Controller driver for
+ IPQ9574
 Content-Language: en-US
 To:     Stephen Boyd <sboyd@kernel.org>, <agross@kernel.org>,
-        <andersson@kernel.org>, <broonie@kernel.org>,
-        <konrad.dybcio@somainline.org>,
-        <krzysztof.kozlowski+dt@linaro.org>,
+        <andersson@kernel.org>, <arnd@arndb.de>, <broonie@kernel.org>,
+        <catalin.marinas@arm.com>, <devicetree@vger.kernel.org>,
+        <dmitry.baryshkov@linaro.org>, <konrad.dybcio@linaro.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <linus.walleij@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
         <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
-        <quic_plai@quicinc.com>, <quic_rohkumar@quicinc.com>,
-        <quic_visr@quicinc.com>, <robh+dt@kernel.org>,
-        <swboyd@chromium.org>
-References: <20230327163249.1081824-1-quic_mohs@quicinc.com>
- <b347395dd736194ae9392f2f6ea450b0.sboyd@kernel.org>
-From:   Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-In-Reply-To: <b347395dd736194ae9392f2f6ea450b0.sboyd@kernel.org>
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <marcel.ziswiler@toradex.com>, <mturquette@baylibre.com>,
+        <nfraprado@collabora.com>, <p.zabel@pengutronix.de>,
+        <robh+dt@kernel.org>, <shawnguo@kernel.org>, <will@kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>
+References: <20230327132718.573-1-quic_devipriy@quicinc.com>
+ <20230327132718.573-3-quic_devipriy@quicinc.com>
+ <0af15083921c5d3c89392209654f0c9b.sboyd@kernel.org>
+From:   Devi Priya <quic_devipriy@quicinc.com>
+In-Reply-To: <0af15083921c5d3c89392209654f0c9b.sboyd@kernel.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
 X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: fj3ZzXUIWJ0lnJLW_nJtJNSq9jfRGId5
-X-Proofpoint-ORIG-GUID: fj3ZzXUIWJ0lnJLW_nJtJNSq9jfRGId5
+X-Proofpoint-GUID: NKZ7h8yzMq3DFkKuh5KMdGewxq-VMlB_
+X-Proofpoint-ORIG-GUID: NKZ7h8yzMq3DFkKuh5KMdGewxq-VMlB_
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
  definitions=2023-03-24_11,2023-03-27_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- suspectscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0 adultscore=0
- mlxlogscore=645 phishscore=0 malwarescore=0 spamscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2303280049
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ bulkscore=0 impostorscore=0 malwarescore=0 adultscore=0 lowpriorityscore=0
+ clxscore=1015 mlxlogscore=999 phishscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2303280050
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On 3/27/2023 11:11 PM, Stephen Boyd wrote:
-> Quoting Mohammad Rafi Shaik (2023-03-27 09:32:45)
->> This patch set is to remove the qdsp6ss register from lpasscc to
->> resolve memory conflict's between lpascc and ADSP remoteproc driver.
-> Is this related to the other patch series[1] ("[PATCH v9 0/4] Add resets
-> for ADSP based audio clock controller driver")? Does it supersede those?
-Thanks for comment,
 
-yes, its superseded form patch series[1] ("[PATCH v9 0/4] Add resets
-for ADSP based audio clock controller driver") which is required many
-changes.
-
-As the qdsp6ss clocks are being enabled in remoteproc driver,
-the qdsp6ss not required in lpasscc node.
-
-For audioreach solution required to create the remoteproc_adsp
-device tree node with base address 0x3000000 for remoteproc driver,
-as already this address being used in lpasscc node it's causing memory
-conflict.
->> Mohammad Rafi Shaik (4):
->>    arm64: dts: qcom: sc7280: Modify lpasscc node name
->>    dt-bindings: clock: qcom,sc7280-lpasscc: Remove qdsp6ss register
->>      region
->>    arm64: dts: qcom: sc7280: Remove qdsp6ss regmap region
->>    clk: qcom: lpasscc-sc7280: Remove qdsp6ss clock registration
-> [1] https://lore.kernel.org/all/20230317141622.1926573-1-quic_mohs@quicinc.com/
+On 3/27/2023 10:18 PM, Stephen Boyd wrote:
+> Quoting Devi Priya (2023-03-27 06:27:16)
+>> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
+>> new file mode 100644
+>> index 000000000000..b2a2d618a5ec
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/gcc-ipq9574.c
+>> @@ -0,0 +1,4248 @@
+>> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +/*
+>> + * Copyright (c) 2023 The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/err.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_device.h>
+> 
+> What is this include for?
+This include actually don't seem necessary. But, I see that of.h & 
+platform_device.h are being included via of_device.h
+Would you suggest to drop of_device.h or the other two
+headers instead?
+> 
+>> +#include <linux/regmap.h>
+> 
+> Need to include clk-provider.h
+> 
+>> +
+>> +#include <linux/reset-controller.h>
+> 
+> Put a newline here.
+Okay
+> 
+>> +#include <dt-bindings/clock/qcom,ipq9574-gcc.h>
+>> +#include <dt-bindings/reset/qcom,ipq9574-gcc.h>
+>> +
+>> +#include "clk-rcg.h"
+>> +#include "clk-branch.h"
+>> +#include "clk-alpha-pll.h"
+>> +#include "clk-regmap-divider.h"
+>> +#include "clk-regmap-mux.h"
+>> +#include "clk-regmap-phy-mux.h"
+>> +#include "reset.h"
+>> +
+>> +/* Need to match the order of clocks in DT binding */
+>> +enum {
+>> +       DT_XO,
+>> +       DT_SLEEP_CLK,
+>> +       DT_BIAS_PLL_UBI_NC_CLK,
+>> +       DT_PCIE30_PHY0_PIPE_CLK,
+>> +       DT_PCIE30_PHY1_PIPE_CLK,
+>> +       DT_PCIE30_PHY2_PIPE_CLK,
+>> +       DT_PCIE30_PHY3_PIPE_CLK,
+>> +       DT_USB3PHY_0_CC_PIPE_CLK,
+>> +};
+>> +
+>> +enum {
+>> +       P_XO,
+>> +       P_PCIE30_PHY0_PIPE,
+>> +       P_PCIE30_PHY1_PIPE,
+>> +       P_PCIE30_PHY2_PIPE,
+>> +       P_PCIE30_PHY3_PIPE,
+>> +       P_USB3PHY_0_PIPE,
+>> +       P_GPLL0,
+>> +       P_GPLL0_DIV2,
+>> +       P_GPLL0_OUT_AUX,
+>> +       P_GPLL2,
+>> +       P_GPLL4,
+>> +       P_PI_SLEEP,
+>> +       P_BIAS_PLL_UBI_NC_CLK,
+>> +};
+>> +
+>> +static const struct parent_map gcc_xo_map[] = {
+>> +       { P_XO, 0 },
+>> +};
+>> +
+>> +static const struct clk_parent_data gcc_xo_data[] = {
+>> +       { .index = DT_XO },
+>> +};
+>> +
+>> +static const struct clk_parent_data gcc_sleep_clk_data[] = {
+>> +       { .index = DT_SLEEP_CLK },
+>> +};
+>> +
+>> +static struct clk_alpha_pll gpll0_main = {
+>> +       .offset = 0x20000,
+>> +       .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
+>> +       .clkr = {
+>> +               .enable_reg = 0x0b000,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data) {
+> 
+> All these clk_init_data structs should be const.
+Okay
+> 
+>> +                       .name = "gpll0_main",
+>> +                       .parent_data = gcc_xo_data,
+>> +                       .num_parents = ARRAY_SIZE(gcc_xo_data),
+>> +                       .ops = &clk_alpha_pll_ops,
+>> +               },
+>> +       },
+>> +};
+Thanks,
+Devi Priya
