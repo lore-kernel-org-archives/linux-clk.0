@@ -2,81 +2,188 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5556C6FD1D
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 01:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CCFDC6FD1D
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 02:19:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232377AbjC1Bm1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Mar 2023 21:42:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43426 "EHLO
+        id S229611AbjC1CTW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Mar 2023 22:19:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230287AbjC1BmY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 21:42:24 -0400
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F946270B;
-        Mon, 27 Mar 2023 18:42:05 -0700 (PDT)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id 3EFEE24E1CE;
-        Tue, 28 Mar 2023 09:42:04 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 28 Mar
- 2023 09:42:04 +0800
-Received: from [192.168.125.74] (113.72.145.117) by EXMBX172.cuchost.com
- (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 28 Mar
- 2023 09:42:03 +0800
-Message-ID: <a2aae3a9-1d72-0b35-68cf-8fa3d28517c9@starfivetech.com>
-Date:   Tue, 28 Mar 2023 09:42:02 +0800
+        with ESMTP id S229610AbjC1CTV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 22:19:21 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0AC8171F;
+        Mon, 27 Mar 2023 19:19:20 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id l7so9493435pjg.5;
+        Mon, 27 Mar 2023 19:19:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679969960;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0WBf2jQarhSY4/8q0wFbU+ysG8lL+dw6EMEdvJUjZAE=;
+        b=iBsrxWW+TFjjRybX8B4FNvSRyl9gv9o8e2qkj5adMi9XOXv3+uMPxe4SGfO0ZxbIpM
+         Xgh37/8RbBcKf1GgVKtJIbdc67EpdZ5eDjFSCfC6ZsmPAoFolxkJxYb5nLDGJm93NmmL
+         LZWR6btsCJnr0e0Q4VWxbbIEuWYIh/8pfsv1DL2xS+YdWgqpeLeom7dQfAmoua6KbuTS
+         16MVGX27wJBDdwiYc9QKbEDFDsLsLYX3QPhWgKQfXFQ8eG8tNxSMJQ+4hMJUj9NcQRZg
+         xjU1WdaJfHjLP90i+iC+sD6oOt6mRb9D3I3RbuOiww0hD0oImBXyNwDbkv964WHriPHV
+         0LCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679969960;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0WBf2jQarhSY4/8q0wFbU+ysG8lL+dw6EMEdvJUjZAE=;
+        b=k4jOuUS6FNoHlfvLAAYmE85A8fa3epCcj9okQFr5pySeXkp2mGFZPE3w3L2yRIaI2/
+         wpPvy5SwUBVzVhPdhfi0Ox5opeZRJb42Va8jAL10u/j26d/COfLUdCYkaU17cm8dBXQp
+         XiJJ27k298W5EnKRLZWbu+A5Vy3Gq4maKwVz1KKfTRozp1inmvDSuEJVFUShkV7//7db
+         y5AjlEmIfoBNuDsHveQiWqKH3D0zMUBYAd2/85nCnYt2Sp5mYbBoE3cHPhqPBWzrThO8
+         5jkEDArXcfDh8vVBx4fVy7qk91TvPbFjmNBpqlgKS4OFi/BOv80moYAlmdc4Q8BNaTo/
+         s2JQ==
+X-Gm-Message-State: AAQBX9eSLDTURLcchhUnG1Mrq3je45JSshxeE/IMQGS+snt4eCF7LWGl
+        NFNiKlFdFPyudWjGeWngGQY=
+X-Google-Smtp-Source: AKy350ZmWZY6l9lRRsHhMPzolqKwxdjyI1+SD+9Rzy8K2LrjfxgG75DOeK8PQvTxmP7sNy/0JRVgzQ==
+X-Received: by 2002:a17:90a:86c1:b0:237:50b6:9843 with SMTP id y1-20020a17090a86c100b0023750b69843mr13217552pjv.0.1679969960035;
+        Mon, 27 Mar 2023 19:19:20 -0700 (PDT)
+Received: from a28aa0606c51.. (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id f17-20020a17090ac29100b00232cc61e16bsm5029301pjt.35.2023.03.27.19.19.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Mar 2023 19:19:19 -0700 (PDT)
+From:   Jacky Huang <ychuang570808@gmail.com>
+To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        p.zabel@pengutronix.de, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+Subject: [PATCH v6 00/12] Introduce Nuvoton ma35d1 SoC
+Date:   Tue, 28 Mar 2023 02:19:00 +0000
+Message-Id: <20230328021912.177301-1-ychuang570808@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v6 00/21] Basic clock, reset & device tree support for
- StarFive JH7110 RISC-V SoC
-Content-Language: en-US
-To:     Conor Dooley <conor@kernel.org>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>, Stephen Boyd <sboyd@kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        "Emil Renner Berthing" <emil.renner.berthing@canonical.com>,
-        <linux-kernel@vger.kernel.org>
-References: <20230320103750.60295-1-hal.feng@starfivetech.com>
- <29ba8a8d-940d-4b49-bd86-5cd5df002c23@spud>
-From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <29ba8a8d-940d-4b49-bd86-5cd5df002c23@spud>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [113.72.145.117]
-X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX172.cuchost.com
- (172.16.6.92)
-X-YovoleRuleAgent: yovoleflag
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 27 Mar 2023 23:50:18 +0100, Conor Dooley wrote:
-> Hey Hal,
-> 
-> On Mon, Mar 20, 2023 at 06:37:29PM +0800, Hal Feng wrote:
->> This patch series adds basic clock, reset & DT support for StarFive
->> JH7110 SoC.
-> 
-> Probably obvious at this point given the number of outstanding comments
-> on this version, but I'm gonna mark this series as "Changes Requested"
-> on the RISC-V patchwork. I'm not sure what Stephen's cutoff for stuff is,
-> but I'd like to have stuff ready to go to Arnd for -rc6, so you still
-> have some time for another revision I think :)
+From: Jacky Huang <ychuang3@nuvoton.com>
 
-Thanks for reminding. I will submit the next revision today or tomorrow.
+This patchset adds initial support for the Nuvoton ma35d1 SoC, including
+initial device tree, clock driver, reset driver, and serial driver.
 
-Best regards,
-Hal
+This patchset cover letter is based from the initial support for Nuvoton
+ma35d1 to keep tracking the version history.
+
+This patchset had been applied to Linux kernel 6.3-rc3 and tested on the
+Nuvoton ma35d1 SOM evaluation board.
+
+(ma35d1 information: https://www.nuvoton.com/products/microprocessors/arm-cortex-a35-mpus/)
+MA35D1 porting on linux-5.10.y can be found at: https://github.com/OpenNuvoton/MPU-Family
+
+v6:
+  - Combine nuvoton,ma35d1-clk.yaml and nuvoton,ma35d1-clk.h into one patch
+  - Combine nuvoton,ma35d1-reset.yaml and nuvoton,ma35d1-reset.h into one patch
+  - rename Documentation/devicetree/bindings/arm/npcm directory as nuvoton
+  - Remove patch for adding include/linux/mfd/ma35d1-sys.h as it's not required
+  - Update dtsi & dts files and move board-specific nodes to dts
+  - Modify reset driver
+  - Modify serial driver, fix coding style issues
+  - Modify clock driver, rewrite the PLL calculation functions
+
+v5:
+  - Add ARCH_NUVOTON to arm64 Kconfig
+  - Add ARCH_NUVOTON to defconfig
+  - Add the clock driver
+  - Add the reset driver
+  - Add the serial driver
+  - Add us to the maintainer
+
+v4:
+  - patch 4/5 is a resend
+  - Fixed dt_binding_check errors of nuvoton,ma35d1-clk.yaml
+  - Modify ma35d1.dtsi
+    1. Add a node hxt_24m
+    2. Fixed the base address of gic node
+    3. Add clocks and clock-names to clock node
+  - Fixed borad binding mistakes of nuvoton.yaml
+
+v3:
+  - added patch 4/5 and 5/5
+  - introduce CONFIG_ARCH_NUVOTON option
+  - add initial bindings for Nuvoton Platform boards
+  - fixed coding style problem of nuvoton,ma35d1-clk.h
+  - added CAPLL to clock-controller node
+  - modify the chosen node of ma35d1-evb.dts
+  - modify clock yaml "clk-pll-mode" to "nuvoton,clk-pll-mode"
+
+v2:
+  - fixed dt_binding_check failed of nuvoton,ma35d1-clk.yaml
+
+Jacky Huang (12):
+  arm64: Kconfig.platforms: Add config for Nuvoton MA35 platform
+  arm64: defconfig: Add support for Nuvoton MA35 family SoCs
+  dt-bindings: clock: nuvoton: add binding for ma35d1 clock controller
+  dt-bindings: reset: nuvoton: add binding for ma35d1 IP reset control
+  dt-bindings: mfd: syscon: Add nuvoton,ma35d1-sys compatible
+  dt-bindings: arm: Add initial bindings for Nuvoton platform
+  dt-bindings: serial: Document ma35d1 uart controller
+  arm64: dts: nuvoton: Add initial ma35d1 device tree
+  clk: nuvoton: Add clock driver for ma35d1 clock controller
+  reset: Add Nuvoton ma35d1 reset driver support
+  tty: serial: Add Nuvoton ma35d1 serial driver support
+  MAINTAINERS: Add entry for NUVOTON MA35
+
+ .../bindings/arm/nuvoton/nuvoton,ma35d1.yaml  |  30 +
+ .../nuvoton,npcm-gcr.yaml}                    |   2 +-
+ .../npcm.yaml => nuvoton/nuvoton,npcm.yaml}   |   2 +-
+ .../bindings/clock/nuvoton,ma35d1-clk.yaml    |  72 ++
+ .../devicetree/bindings/mfd/syscon.yaml       |   1 +
+ .../bindings/reset/nuvoton,ma35d1-reset.yaml  |  44 +
+ .../serial/nuvoton,ma35d1-serial.yaml         |  48 +
+ MAINTAINERS                                   |   9 +
+ arch/arm64/Kconfig.platforms                  |   9 +
+ arch/arm64/boot/dts/nuvoton/Makefile          |   2 +
+ .../boot/dts/nuvoton/ma35d1-iot-512m.dts      |  56 +
+ .../boot/dts/nuvoton/ma35d1-som-256m.dts      |  56 +
+ arch/arm64/boot/dts/nuvoton/ma35d1.dtsi       | 231 +++++
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/nuvoton/Kconfig                   |  19 +
+ drivers/clk/nuvoton/Makefile                  |   4 +
+ drivers/clk/nuvoton/clk-ma35d1-divider.c      | 140 +++
+ drivers/clk/nuvoton/clk-ma35d1-pll.c          | 350 +++++++
+ drivers/clk/nuvoton/clk-ma35d1.c              | 963 ++++++++++++++++++
+ drivers/clk/nuvoton/clk-ma35d1.h              | 123 +++
+ drivers/reset/Kconfig                         |   6 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-ma35d1.c                  | 152 +++
+ drivers/tty/serial/Kconfig                    |  18 +
+ drivers/tty/serial/Makefile                   |   1 +
+ drivers/tty/serial/ma35d1_serial.c            | 802 +++++++++++++++
+ .../dt-bindings/clock/nuvoton,ma35d1-clk.h    | 253 +++++
+ .../dt-bindings/reset/nuvoton,ma35d1-reset.h  | 108 ++
+ 29 files changed, 3502 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/nuvoton/nuvoton,ma35d1.yaml
+ rename Documentation/devicetree/bindings/arm/{npcm/nuvoton,gcr.yaml => nuvoton/nuvoton,npcm-gcr.yaml} (93%)
+ rename Documentation/devicetree/bindings/arm/{npcm/npcm.yaml => nuvoton/nuvoton,npcm.yaml} (93%)
+ create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml
+ create mode 100644 Documentation/devicetree/bindings/reset/nuvoton,ma35d1-reset.yaml
+ create mode 100644 Documentation/devicetree/bindings/serial/nuvoton,ma35d1-serial.yaml
+ create mode 100644 arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts
+ create mode 100644 arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts
+ create mode 100644 arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
+ create mode 100644 drivers/clk/nuvoton/Kconfig
+ create mode 100644 drivers/clk/nuvoton/Makefile
+ create mode 100644 drivers/clk/nuvoton/clk-ma35d1-divider.c
+ create mode 100644 drivers/clk/nuvoton/clk-ma35d1-pll.c
+ create mode 100644 drivers/clk/nuvoton/clk-ma35d1.c
+ create mode 100644 drivers/clk/nuvoton/clk-ma35d1.h
+ create mode 100644 drivers/reset/reset-ma35d1.c
+ create mode 100644 drivers/tty/serial/ma35d1_serial.c
+ create mode 100644 include/dt-bindings/clock/nuvoton,ma35d1-clk.h
+ create mode 100644 include/dt-bindings/reset/nuvoton,ma35d1-reset.h
+
+-- 
+2.34.1
+
