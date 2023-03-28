@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7165C77B60
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 02:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56858C77B60
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Mar 2023 02:20:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232577AbjC1CTr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Mar 2023 22:19:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44296 "EHLO
+        id S232659AbjC1CUI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Mar 2023 22:20:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232524AbjC1CTg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 22:19:36 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B33B2715;
-        Mon, 27 Mar 2023 19:19:31 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id o6-20020a17090a9f8600b0023f32869993so13741901pjp.1;
-        Mon, 27 Mar 2023 19:19:31 -0700 (PDT)
+        with ESMTP id S232394AbjC1CTu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2023 22:19:50 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 613F62D76;
+        Mon, 27 Mar 2023 19:19:38 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id j13so9515236pjd.1;
+        Mon, 27 Mar 2023 19:19:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679969971;
+        d=gmail.com; s=20210112; t=1679969977;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rlMZWXI0BqpjxcDo3vioPoQp6EHN6TdIk4431Kd79Vo=;
-        b=R4kIHWP6FtqQWttzMUdipv3eix4i3tQADsRWvc70fZ6dB4A2Ao65MHMv9n09qApbMD
-         lg2wl1vyjLvNPVpwBU23w0UrmsemjM/zTPu3AAecbT3kfdrlA3f12znCAL+hRa22YChq
-         Z/UiZQmDaUAnXDa0KHUFoTguVDozNSXfj2v9+CBRLBtzwWad/6StCTgibderqoDGZNwA
-         CV2sGjlMI4RMyN7cwYjG+HonFmwfJEAhK6AF6KOTlVnX98MOoWE5kearIBMs9wI1cHhI
-         V1Nwlkw7idM/FIy0AXCLQLXrK3K/uXOWu+OfxJgLlen0GmKfL669L38ffstw7nwI7uly
-         vKhw==
+        bh=9jyCpXhdQrRdIItZilRrI84sFNyhhCD7V61mef/guao=;
+        b=nG1dUPYlvn/ycTll+sB9SJovsn4+INiDFfdakFCw8UZZ0t5GqvYOZQBmQWKGRyoOtH
+         xlJ7KM3LkysX1Ys2CS4e4RHz57RBNcrv6n28N9Hi6t3IxuAkaz9V/B3f/EKx9IRv3wKp
+         ujCxKbT5cXO6M+I2J+mGeiXOJ+iV8SGmPENtk0sYjiCctpp6lZrBx/FREBm13kJD9e+T
+         CZQ3xcVLsgb489GksxuAbokkMyxyMZYUFGKc/guHpi0G5mlSjKx1wK9NN+9D9OmmEroj
+         sQ7h0NrgzMxqWsJYOMWXH8T84hnpP5rlTHnRsRyi3/5MpioR5hHfPVukpPkBP9uMCzPE
+         M+mQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679969971;
+        d=1e100.net; s=20210112; t=1679969977;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rlMZWXI0BqpjxcDo3vioPoQp6EHN6TdIk4431Kd79Vo=;
-        b=twgtrOBh/n2RnLs6uDyoxE+KKm8u1tph00Gkpo34qzMqvik6yq1avyFX484K52hco/
-         iEiSLjDkEeekG9yTVVgy/pHrmJPyROtSBg8mvhDNxNKqV+U1qFMAS26l2fvN6OJeG0jd
-         ny4AUAufadwxXGvHbnxRmZRKLiE8r8j904yF8k2ndsKxxhcGhQJYrd3ZpmJNxHn9Zt77
-         M/1k+s0tSyf8FFxHHKlwEQUx88O0hD56ZZ2XohZ2YsmQ5bXfLwH/saGMiDQmrXQD4uzo
-         RcCcKHtgU0NFrO0Adx5lQSgd/fgcTAj2g6CX/p5hqmIls98d+w8MmI4dKKpf6MSWh27G
-         9lbg==
-X-Gm-Message-State: AAQBX9dyQTMaaKtLnUPE7awsXjGGgE9GgmgJnaWE3lYNgHMwZ3HgJjgV
-        ya82zGAz83x0o3QRFzN+y6Y=
-X-Google-Smtp-Source: AKy350bOjFMN4qrmBxHTmxvriKn7u42SHrZx7W4llTbNEQjJGn2j7xU2CiDmHsDqiHuxkvGAXAGRRw==
-X-Received: by 2002:a17:90b:3c49:b0:23d:19c6:84b7 with SMTP id pm9-20020a17090b3c4900b0023d19c684b7mr14798947pjb.16.1679969971250;
-        Mon, 27 Mar 2023 19:19:31 -0700 (PDT)
+        bh=9jyCpXhdQrRdIItZilRrI84sFNyhhCD7V61mef/guao=;
+        b=pJaRDghNertJuGI0h34z/eGGnsslfvscIve9qxQ3GI5YSPkggXf8sUCvtaAlpfBpPn
+         xRGaefnr4rNxcOTRvnpeNUYWAzZ0eLN6SjXXiFnIVDIVWZuVteoMvpRwqgf/CUgMndTt
+         4EJpbPzDYhyEM0a8CfzJvSAyUhKSUno4FEW9QOkVvnea7X8uGr5Qwhwx8X5BT9cbs523
+         Db5A5US1GtcLzexz5rbPN4CHiL9ros1uGjD5i3a6PR5ujlLOw5PM1bjYZlD4RvcQTcWX
+         Te/PgLfvDON6Y/6OShhQzEpcRVGwLHuI1HJbKGRhxmsxEr0+Gmf5Lijz1B9UMjlpUO48
+         hdWg==
+X-Gm-Message-State: AAQBX9cKq7qYrNsMqPW2KNriZ6qdZlOjkvUT/8k25HcTvKs1JBGthwO8
+        hiDx3j25NVdWo3ceeY8oHkc=
+X-Google-Smtp-Source: AKy350Zx7DLve3aH5qT1Wofayb+2R58sClIDBVU3v+M0f8Q6z2BJPjgWqTQPFfCyEZVpt94TPBBtJA==
+X-Received: by 2002:a17:90b:350a:b0:23b:4388:7d8a with SMTP id ls10-20020a17090b350a00b0023b43887d8amr14139825pjb.21.1679969977016;
+        Mon, 27 Mar 2023 19:19:37 -0700 (PDT)
 Received: from a28aa0606c51.. (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id f17-20020a17090ac29100b00232cc61e16bsm5029301pjt.35.2023.03.27.19.19.28
+        by smtp.gmail.com with ESMTPSA id f17-20020a17090ac29100b00232cc61e16bsm5029301pjt.35.2023.03.27.19.19.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Mar 2023 19:19:31 -0700 (PDT)
+        Mon, 27 Mar 2023 19:19:36 -0700 (PDT)
 From:   Jacky Huang <ychuang570808@gmail.com>
 To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
@@ -58,9 +58,9 @@ Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
         arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
         Jacky Huang <ychuang3@nuvoton.com>
-Subject: [PATCH v6 04/12] dt-bindings: reset: nuvoton: add binding for ma35d1 IP reset control
-Date:   Tue, 28 Mar 2023 02:19:04 +0000
-Message-Id: <20230328021912.177301-5-ychuang570808@gmail.com>
+Subject: [PATCH v6 06/12] dt-bindings: arm: Add initial bindings for Nuvoton platform
+Date:   Tue, 28 Mar 2023 02:19:06 +0000
+Message-Id: <20230328021912.177301-7-ychuang570808@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230328021912.177301-1-ychuang570808@gmail.com>
 References: <20230328021912.177301-1-ychuang570808@gmail.com>
@@ -72,182 +72,88 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Jacky Huang <ychuang3@nuvoton.com>
 
-Add the dt-bindings header for Nuvoton ma35d1, that gets shared
-between the reset controller and reset references in the dts.
-Add documentation to describe nuvoton ma35d1 reset driver.
+Rename the bindings/arm/npcm directory as nuvoton.
+Add binding for ARMv8 based Nuvotn SoCs and platform boards.
+Add initial bindings for ma35d1 series development boards.
 
 Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
 ---
- .../bindings/reset/nuvoton,ma35d1-reset.yaml  |  44 +++++++
- .../dt-bindings/reset/nuvoton,ma35d1-reset.h  | 108 ++++++++++++++++++
- 2 files changed, 152 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reset/nuvoton,ma35d1-reset.yaml
- create mode 100644 include/dt-bindings/reset/nuvoton,ma35d1-reset.h
+ .../bindings/arm/nuvoton/nuvoton,ma35d1.yaml  | 30 +++++++++++++++++++
+ .../nuvoton,npcm-gcr.yaml}                    |  2 +-
+ .../npcm.yaml => nuvoton/nuvoton,npcm.yaml}   |  2 +-
+ 3 files changed, 32 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/nuvoton/nuvoton,ma35d1.yaml
+ rename Documentation/devicetree/bindings/arm/{npcm/nuvoton,gcr.yaml => nuvoton/nuvoton,npcm-gcr.yaml} (93%)
+ rename Documentation/devicetree/bindings/arm/{npcm/npcm.yaml => nuvoton/nuvoton,npcm.yaml} (93%)
 
-diff --git a/Documentation/devicetree/bindings/reset/nuvoton,ma35d1-reset.yaml b/Documentation/devicetree/bindings/reset/nuvoton,ma35d1-reset.yaml
+diff --git a/Documentation/devicetree/bindings/arm/nuvoton/nuvoton,ma35d1.yaml b/Documentation/devicetree/bindings/arm/nuvoton/nuvoton,ma35d1.yaml
 new file mode 100644
-index 000000000000..342717257e5c
+index 000000000000..fb190db61525
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/reset/nuvoton,ma35d1-reset.yaml
-@@ -0,0 +1,44 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++++ b/Documentation/devicetree/bindings/arm/nuvoton/nuvoton,ma35d1.yaml
+@@ -0,0 +1,30 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/reset/nuvoton,ma35d1-reset.yaml#
++$id: http://devicetree.org/schemas/arm/nuvoton/nuvoton,ma35d1.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Nuvoton MA35D1 Reset Controller
++title: Nuvoton MA35 series SoC based platforms
 +
 +maintainers:
-+  - Chi-Fang Li <cfli0@nuvoton.com>
 +  - Jacky Huang <ychuang3@nuvoton.com>
 +
-+description:
-+  The system reset controller can be used to reset various peripheral
-+  controllers in MA35D1 SoC.
++description: |
++  Boards with an ARMv8 based Nuvoton MA35 series SoC shall have
++  the following properties.
 +
 +properties:
++  $nodename:
++    const: '/'
 +  compatible:
-+    const: nuvoton,ma35d1-reset
++    oneOf:
 +
-+  '#reset-cells':
-+    const: 1
++      - description: MA35D1 based boards
++        items:
++          - enum:
++              - nuvoton,ma35d1-iot
++              - nuvoton,ma35d1-som
++          - const: nuvoton,ma35d1
 +
-+required:
-+  - compatible
-+  - '#reset-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  # system reset controller node:
-+  - |
-+
-+    system-management@40460000 {
-+        compatible = "nuvoton,ma35d1-sys", "syscon", "simple-mfd";
-+        reg = <0x40460000 0x200>;
-+
-+        reset-controller {
-+            compatible = "nuvoton,ma35d1-reset";
-+            #reset-cells = <1>;
-+        };
-+    };
++additionalProperties: true
 +...
-+
-diff --git a/include/dt-bindings/reset/nuvoton,ma35d1-reset.h b/include/dt-bindings/reset/nuvoton,ma35d1-reset.h
-new file mode 100644
-index 000000000000..f3088bc0afec
---- /dev/null
-+++ b/include/dt-bindings/reset/nuvoton,ma35d1-reset.h
-@@ -0,0 +1,108 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-2-Clause) */
-+/*
-+ * Copyright (C) 2023 Nuvoton Technologies.
-+ * Author: Chi-Fen Li <cfli0@nuvoton.com>
-+ *
-+ * Device Tree binding constants for MA35D1 reset controller.
-+ */
-+
-+#ifndef __DT_BINDINGS_RESET_MA35D1_H
-+#define __DT_BINDINGS_RESET_MA35D1_H
-+
-+#define MA35D1_RESET_CHIP	0
-+#define MA35D1_RESET_CA35CR0	1
-+#define MA35D1_RESET_CA35CR1	2
-+#define MA35D1_RESET_CM4	3
-+#define MA35D1_RESET_PDMA0	4
-+#define MA35D1_RESET_PDMA1	5
-+#define MA35D1_RESET_PDMA2	6
-+#define MA35D1_RESET_PDMA3	7
-+#define MA35D1_RESET_DISP	9
-+#define MA35D1_RESET_VCAP0	10
-+#define MA35D1_RESET_VCAP1	11
-+#define MA35D1_RESET_GFX	12
-+#define MA35D1_RESET_VDEC	13
-+#define MA35D1_RESET_WHC0	14
-+#define MA35D1_RESET_WHC1	15
-+#define MA35D1_RESET_GMAC0	16
-+#define MA35D1_RESET_GMAC1	17
-+#define MA35D1_RESET_HWSEM	18
-+#define MA35D1_RESET_EBI	19
-+#define MA35D1_RESET_HSUSBH0	20
-+#define MA35D1_RESET_HSUSBH1	21
-+#define MA35D1_RESET_HSUSBD	22
-+#define MA35D1_RESET_USBHL	23
-+#define MA35D1_RESET_SDH0	24
-+#define MA35D1_RESET_SDH1	25
-+#define MA35D1_RESET_NAND	26
-+#define MA35D1_RESET_GPIO	27
-+#define MA35D1_RESET_MCTLP	28
-+#define MA35D1_RESET_MCTLC	29
-+#define MA35D1_RESET_DDRPUB	30
-+#define MA35D1_RESET_TMR0	34
-+#define MA35D1_RESET_TMR1	35
-+#define MA35D1_RESET_TMR2	36
-+#define MA35D1_RESET_TMR3	37
-+#define MA35D1_RESET_I2C0	40
-+#define MA35D1_RESET_I2C1	41
-+#define MA35D1_RESET_I2C2	42
-+#define MA35D1_RESET_I2C3	43
-+#define MA35D1_RESET_QSPI0	44
-+#define MA35D1_RESET_SPI0	45
-+#define MA35D1_RESET_SPI1	46
-+#define MA35D1_RESET_SPI2	47
-+#define MA35D1_RESET_UART0	48
-+#define MA35D1_RESET_UART1	49
-+#define MA35D1_RESET_UART2	50
-+#define MA35D1_RESET_UAER3	51
-+#define MA35D1_RESET_UART4	52
-+#define MA35D1_RESET_UART5	53
-+#define MA35D1_RESET_UART6	54
-+#define MA35D1_RESET_UART7	55
-+#define MA35D1_RESET_CANFD0	56
-+#define MA35D1_RESET_CANFD1	57
-+#define MA35D1_RESET_EADC0	60
-+#define MA35D1_RESET_I2S0	61
-+#define MA35D1_RESET_SC0	64
-+#define MA35D1_RESET_SC1	65
-+#define MA35D1_RESET_QSPI1	68
-+#define MA35D1_RESET_SPI3	70
-+#define MA35D1_RESET_EPWM0	80
-+#define MA35D1_RESET_EPWM1	81
-+#define MA35D1_RESET_QEI0	86
-+#define MA35D1_RESET_QEI1	87
-+#define MA35D1_RESET_ECAP0	90
-+#define MA35D1_RESET_ECAP1	91
-+#define MA35D1_RESET_CANFD2	92
-+#define MA35D1_RESET_ADC0	95
-+#define MA35D1_RESET_TMR4	96
-+#define MA35D1_RESET_TMR5	97
-+#define MA35D1_RESET_TMR6	98
-+#define MA35D1_RESET_TMR7	99
-+#define MA35D1_RESET_TMR8	100
-+#define MA35D1_RESET_TMR9	101
-+#define MA35D1_RESET_TMR10	102
-+#define MA35D1_RESET_TMR11	103
-+#define MA35D1_RESET_UART8	104
-+#define MA35D1_RESET_UART9	105
-+#define MA35D1_RESET_UART10	106
-+#define MA35D1_RESET_UART11	107
-+#define MA35D1_RESET_UART12	108
-+#define MA35D1_RESET_UART13	109
-+#define MA35D1_RESET_UART14	110
-+#define MA35D1_RESET_UART15	111
-+#define MA35D1_RESET_UART16	112
-+#define MA35D1_RESET_I2S1	113
-+#define MA35D1_RESET_I2C4	114
-+#define MA35D1_RESET_I2C5	115
-+#define MA35D1_RESET_EPWM2	116
-+#define MA35D1_RESET_ECAP2	117
-+#define MA35D1_RESET_QEI2	118
-+#define MA35D1_RESET_CANFD3	119
-+#define MA35D1_RESET_KPI	120
-+#define MA35D1_RESET_GIC	124
-+#define MA35D1_RESET_SSMCC	126
-+#define MA35D1_RESET_SSPCC	127
-+#define MA35D1_RESET_COUNT	128
-+
-+#endif
+diff --git a/Documentation/devicetree/bindings/arm/npcm/nuvoton,gcr.yaml b/Documentation/devicetree/bindings/arm/nuvoton/nuvoton,npcm-gcr.yaml
+similarity index 93%
+rename from Documentation/devicetree/bindings/arm/npcm/nuvoton,gcr.yaml
+rename to Documentation/devicetree/bindings/arm/nuvoton/nuvoton,npcm-gcr.yaml
+index 94e72f25b331..1f354aa900ea 100644
+--- a/Documentation/devicetree/bindings/arm/npcm/nuvoton,gcr.yaml
++++ b/Documentation/devicetree/bindings/arm/nuvoton/nuvoton,npcm-gcr.yaml
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/arm/npcm/nuvoton,gcr.yaml#
++$id: http://devicetree.org/schemas/arm/nuvoton/nuvoton,npcm-gcr.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Global Control Registers block in Nuvoton SoCs
+diff --git a/Documentation/devicetree/bindings/arm/npcm/npcm.yaml b/Documentation/devicetree/bindings/arm/nuvoton/nuvoton,npcm.yaml
+similarity index 93%
+rename from Documentation/devicetree/bindings/arm/npcm/npcm.yaml
+rename to Documentation/devicetree/bindings/arm/nuvoton/nuvoton,npcm.yaml
+index 6871483947c5..d386744c8815 100644
+--- a/Documentation/devicetree/bindings/arm/npcm/npcm.yaml
++++ b/Documentation/devicetree/bindings/arm/nuvoton/nuvoton,npcm.yaml
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/arm/npcm/npcm.yaml#
++$id: http://devicetree.org/schemas/arm/nuvoton/nuvoton,npcm.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: NPCM Platforms
 -- 
 2.34.1
 
