@@ -2,108 +2,112 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8545CC6FD18
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 08:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB3FC74A5B
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 08:32:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230436AbjC2IaH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Mar 2023 04:30:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39046 "EHLO
+        id S229833AbjC2Icv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Mar 2023 04:32:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229554AbjC2IaG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Mar 2023 04:30:06 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E259C268B
-        for <linux-clk@vger.kernel.org>; Wed, 29 Mar 2023 01:30:04 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id a21so8060565ljq.10
-        for <linux-clk@vger.kernel.org>; Wed, 29 Mar 2023 01:30:04 -0700 (PDT)
+        with ESMTP id S229782AbjC2Icv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Mar 2023 04:32:51 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84438269E;
+        Wed, 29 Mar 2023 01:32:50 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id o2so14238846plg.4;
+        Wed, 29 Mar 2023 01:32:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680078603;
+        d=gmail.com; s=20210112; t=1680078770;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=/EcWROde/fSgB7fPEne2rQ8lUn+CutePNUDujtYA7t0=;
-        b=gL+HFX+UhfxR+hU55ZY21NJKH/JpKaqPvyepmPKZTsgNgUk665G+FybMJpJ7b2UsYU
-         73hEhQOcimb5SzcSUzVLxA2u9Gf/6m+M6cVvbtNLv4gVPEBLZjxMytOvnIY2jwtWh1dv
-         Io0teIfK6CnYj033dYLkwjrrdOmj+e4LxvzC94FM+zEU7IQGQ4apAOrYMQ/hdYy3ZEoY
-         KeKCrqKSNyfPsI+5/GC+u4NqwT6a6fqnkbhK1UhhqqaQZsWuJpVvj9FrBAqH7pL6LTy/
-         mIt8vXuccLZLCbdRRnlZgQvWeSRxQPKvAmXU5LbqBBFOnNciY2/z3Cw5c1o1QeKJCufn
-         mxsg==
+        bh=n4d+dtycLWqp0weLwXRWpI8ZrJvnJZhAPdrOE5mljqQ=;
+        b=Wpnsul2QEgA7ExdcZ8IljuJzHdvrVZoaBkKniQMz4wROWKSOi5OwSY6kbdqkR04778
+         ukPTw9Hccif979qBxKCtHEmWgVXL7cHKw3u/WxwzhELIrWecx4s0EJOrcHZT7g6V5MB6
+         II71lnNtQtfbbvGLHERGkMdLGHDJveB1IW/2hTKTbg9iXuwuE920zJ/Kvkj5DYcwND2J
+         ERyPA2hQPpiVn1SdXgDFbVxYPdX7JEpTRnTjnHCu9luRC5g1QU5RDw+qWSxRvZFKIo0z
+         VvGCqRJyuotoSkT7PkuGdh/Lozpm/CL2pJ0Ha0T9Sq+J4yPeY1E52+kysSrbRbFbOQuJ
+         7uzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680078603;
+        d=1e100.net; s=20210112; t=1680078770;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/EcWROde/fSgB7fPEne2rQ8lUn+CutePNUDujtYA7t0=;
-        b=Y3hGE8+QuLnLUIg/K1OkJcxD+7y26RGghWKq7CPjpJAjp5BTyGDQrT2/ZcgdPMz9VA
-         J/E1FXilVyBgNON1QKNCtH49QKOAonGh5RN6MZbaE5ouGE668BGVAJFfNV+W7D/iKFS6
-         SHUAcoKhjYqa+O8qE5u7SAwt44kboZ72ISSIdlA1xz5Y9HgaZ70ctlAeWj3w/gDES5UX
-         72Vb5K6jwwMuhZbxV6QdUwa9rUrEpjHSNGww9CCY1l7FV38csl0sf2ugjp5c1GB7eYF7
-         t0mkONyHrxDRkh7Bg3PnO9E/JbnH1UeiQ4kOySUZY0NDQEH60G8YGInl7/CzMB3vukNq
-         JOoA==
-X-Gm-Message-State: AAQBX9fXZxF2FJMJfBXeA7gwnl48Frf7mGBbhiBCGWag2NajFWhSINGm
-        fYfcd60Vs1/EYv5+BUxKHUiY8Q==
-X-Google-Smtp-Source: AKy350bWalFraWgsfObpbZdx1IhK3P7b5bpTIysDLckqLJGKrj+nH2qcQbBQfYQI+c7C4OLAM80NWA==
-X-Received: by 2002:a05:651c:213:b0:298:6a47:bec6 with SMTP id y19-20020a05651c021300b002986a47bec6mr6274246ljn.35.1680078603212;
-        Wed, 29 Mar 2023 01:30:03 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id c1-20020a2e6801000000b002a421ac8629sm2005273lja.49.2023.03.29.01.30.02
+        bh=n4d+dtycLWqp0weLwXRWpI8ZrJvnJZhAPdrOE5mljqQ=;
+        b=2lHFjlj/iaPBj33KdgJg4/nucrD+Ec8Ti/Ah3i8JzYT7Vc0i4zatXaAm8R19xLUnFV
+         GqaqVk85Kkl2FOf4vUSy3ylspI+rF32srR7jyy/0AUpWRxXnr4eKbgnxoYuJksXyKunP
+         mPrszwSlhokBsojroMpCUUkp+Lvn4tODsZbB6BInD1/yNyj5XgWaKuMVLzvy+p+SplgD
+         PpMARIjCjnc5EZpg2JQWqBc0UtHiK67temWwkW948GKbIgFVMoXNlYaK5nzozo2fltVj
+         wj+reSXfARO81nWEm+MBfVD5+ikaeH9UqAMNYlr5BrU2VDcy24mTDUejTYurDjS3x481
+         Twgg==
+X-Gm-Message-State: AAQBX9fN56Xmwt4P6Jagfmlw5/fQJJ26VZMyyueXgAcPS4z+PawswuI+
+        eBcpMcq8FvPcw/8K8HtUcAw=
+X-Google-Smtp-Source: AKy350awpeY8bOldqL9b57hQSiQ97WJ7Hx0J70LbNPhE78MTqPCx2YMDST61xjpihFh1ASflsS8iYg==
+X-Received: by 2002:a17:903:2847:b0:19e:bc01:610e with SMTP id kq7-20020a170903284700b0019ebc01610emr17418538plb.33.1680078769983;
+        Wed, 29 Mar 2023 01:32:49 -0700 (PDT)
+Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id bi11-20020a170902bf0b00b0019f11caf11asm22501787plb.166.2023.03.29.01.32.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Mar 2023 01:30:02 -0700 (PDT)
-Message-ID: <cb058c66-7a66-0c3e-4f76-a24b3ecd1767@linaro.org>
-Date:   Wed, 29 Mar 2023 10:30:01 +0200
+        Wed, 29 Mar 2023 01:32:49 -0700 (PDT)
+Message-ID: <1ba9f9f4-2198-1fbd-5031-cd8be214c210@gmail.com>
+Date:   Wed, 29 Mar 2023 16:32:46 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
-Subject: Re: [PATCH 1/7] dt-bindings: clock: qcom: describe the GPUCC clock
- for SA8775P
+Subject: Re: [PATCH v6 06/12] dt-bindings: arm: Add initial bindings for
+ Nuvoton platform
 Content-Language: en-US
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-References: <20230328193632.226095-1-brgl@bgdev.pl>
- <20230328193632.226095-2-brgl@bgdev.pl>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230328193632.226095-2-brgl@bgdev.pl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        p.zabel@pengutronix.de, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+References: <20230328021912.177301-1-ychuang570808@gmail.com>
+ <20230328021912.177301-7-ychuang570808@gmail.com>
+ <ba59626b-454b-f7d9-fe51-6e588c1ed40e@linaro.org>
+From:   Jacky Huang <ychuang570808@gmail.com>
+In-Reply-To: <ba59626b-454b-f7d9-fe51-6e588c1ed40e@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/03/2023 21:36, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Add bindings for the Qualcomm Graphics Clock control module present on
-> sa8775p platforms.
-> 
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
 
-Please drop the autogenerated scripts/get_maintainer.pl CC-entries from
-commit msg. There is no single need to store automated output of
-get_maintainers.pl in the git log. It can be easily re-created at any
-given time, thus its presence in the git history is redundant and
-obfuscates the log.
-
-If you need it for your own patch management purposes, keep it under the
---- separator.
-
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Dear Krzysztof,
 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On 2023/3/29 下午 04:19, Krzysztof Kozlowski wrote:
+> On 28/03/2023 04:19, Jacky Huang wrote:
+>> From: Jacky Huang <ychuang3@nuvoton.com>
+>>
+>> Rename the bindings/arm/npcm directory as nuvoton.
+>> Add binding for ARMv8 based Nuvotn SoCs and platform boards.
+> Typo: Nucotn?
+
+I will fix it. Thank you.
+
+>> Add initial bindings for ma35d1 series development boards.
+>>
+>> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+>> ---
+>>   .../bindings/arm/nuvoton/nuvoton,ma35d1.yaml  | 30 +++++++++++++++++++
+> Anyway robot pointed to issues here...
+>
+>
+> Best regards,
+> Krzysztof
+>
+
+The robot report path error in MAINTAINER. I should modify it when I 
+rename the npcm directory.
 
 
 Best regards,
-Krzysztof
+Jacky Huang
+
 
