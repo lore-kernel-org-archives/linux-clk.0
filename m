@@ -2,179 +2,87 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA4FC74A5B
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 11:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30409C6FD18
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 13:07:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229479AbjC2LdQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Mar 2023 07:33:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34508 "EHLO
+        id S229861AbjC2NH5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Mar 2023 09:07:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229853AbjC2LdO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Mar 2023 07:33:14 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3C3C40E4
-        for <linux-clk@vger.kernel.org>; Wed, 29 Mar 2023 04:33:12 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id br6so19658685lfb.11
-        for <linux-clk@vger.kernel.org>; Wed, 29 Mar 2023 04:33:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680089591;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sohlc8aRdt0ptQ3unHlw5QOmftyBVVlEC9VNICwLo1w=;
-        b=RQ1HZFubaw3Kwxfm/62gAa93r2wx/Vqmsa/0FzpPQNvdjH1lIynHB0C625AWRk/XYB
-         o9gnX+QmtJ9YUjH2tkx8GgM5DwohBvDHfE7+psBcI7/LA4PKncHMGfd+TSHDVoWRJx8O
-         CI+kuQ8odWQe4lk2Hlst0rDS6seABNQkmoqXlt3QBlbAg/Xdq8dGfbj8q7trmrQiCCrE
-         kPt5w2ObOKUgD0HGk9T7VOY4gURn6FZFzVRQqnh6DTJCn0ylCnZkWfijC6pGs+Bj3HCr
-         Y0kqamI7syOBe46m60O+uLtwsk4BYVEUvqmRoYdFXetRVfqSBAAnVhNO1CvnB7CfJEcW
-         uN+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680089591;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sohlc8aRdt0ptQ3unHlw5QOmftyBVVlEC9VNICwLo1w=;
-        b=LjZje2wRcEEbvlQJSFtJzl5Mc7rs492kU9evfnBG4dn8V640B/aUoiBgrpUS3kgqk2
-         HeKzL3vy6c0eAunuEBwJR0gLjTcZkRTyZ/MtmIEf6wQzTrP+xFQXJPZGLnlC3Gbfq5kh
-         A6sNjUXXtc9cu2iNflWtpFibmmt9KBi+2vpCcZIf1v4kRLhj5+ix6Wwoe2q05T4lpubM
-         pYJXKSwjvrkITm8nZHayKZeJf9i9Riyave3kQR/uVR7xmSu3NpFJiOQWkWUGvMlXVA5c
-         lmil0o39+i3E4LNxjYcj6C5oscj0BbBteB0nEfsi2bl9kCF8xAPuC+hU7+C/Il6GM6jB
-         Se0w==
-X-Gm-Message-State: AAQBX9fpf0ZrbVGu1NZknp5Tv+Ak88XhzXLP43kBnC286tihALVDJ1Tm
-        c6F6XGaNpF2txI2FWlCPTQJ81g==
-X-Google-Smtp-Source: AKy350ajcJzhIh0qFeuqDCAoDEJi8t7QXDzrgy34sATyGDAdmmbqC6g3CxoIxWcZ48SqVnGaZ4q1AA==
-X-Received: by 2002:ac2:4c95:0:b0:4d7:58c8:5f44 with SMTP id d21-20020ac24c95000000b004d758c85f44mr6528158lfl.12.1680089591160;
-        Wed, 29 Mar 2023 04:33:11 -0700 (PDT)
-Received: from [192.168.1.101] (abxj225.neoplus.adsl.tpnet.pl. [83.9.3.225])
-        by smtp.gmail.com with ESMTPSA id m18-20020a195212000000b004e95f53adc7sm5445662lfb.27.2023.03.29.04.33.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Mar 2023 04:33:10 -0700 (PDT)
-Message-ID: <b520f8c8-5ab6-79f6-7eef-28f6f14f536e@linaro.org>
-Date:   Wed, 29 Mar 2023 13:33:09 +0200
+        with ESMTP id S229816AbjC2NH4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Mar 2023 09:07:56 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 185044C02;
+        Wed, 29 Mar 2023 06:07:29 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 305F1CE2402;
+        Wed, 29 Mar 2023 13:07:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40378C433A8;
+        Wed, 29 Mar 2023 13:07:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680095244;
+        bh=64OVEta+8cwYkwrCXKWVXG9McVRJXZTO5LX36p5K5KQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=da3xQ3WAUJLpDJMDKtepK1aRetwmoI55sJpq3a8EswUK/icNIaY9hfMAMIT+3xZNM
+         7JM9/IeA2dRTwU68j/h2+1+bX42lN+q0s8eFi0alaIhCo/+AeNMhwrXPZQm+3pl00M
+         WdYAVEl4QdoqgFGSTD3jAUUfy3JNWekoDDm23ihZXgJtdnCOFPZ7x3NKJbLw3WNhVq
+         mhTwq5mQadQLupUBo88QJOvbW5hvcUdsacMTGbX16aL1dqd/Zqi7zXuaQEUJVn5X7r
+         2cewsUMi7bICrn4En/qApKzuCPmUYNEx/OQVknYayqIk0j9nmNh/m7FoM8HFM7XrJb
+         cP34LVWpqSeLQ==
+Received: by mail-yb1-f173.google.com with SMTP id r187so19191052ybr.6;
+        Wed, 29 Mar 2023 06:07:24 -0700 (PDT)
+X-Gm-Message-State: AAQBX9dDJu1IjLso0spHIxW3u+QVd30RcE7l8rF67YrOow8+ePnI19z8
+        Gxc3jNeK3TJnkhhK33zlD3gjt7WMD8f+YyUOhw==
+X-Google-Smtp-Source: AKy350bwcTIPA/G3ETRQktnXdBJhdzSnaF6sl6bCmHm1c0aOLy6nbEarw0pjdIo3RIbbloaB2gT0TDTk8aI9coR2H5Y=
+X-Received: by 2002:a05:6902:1586:b0:98e:6280:74ca with SMTP id
+ k6-20020a056902158600b0098e628074camr12456018ybu.1.1680095243200; Wed, 29 Mar
+ 2023 06:07:23 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH 5/7] arm64: dts: qcom: sa8775p: add the pcie smmu node
-Content-Language: en-US
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20230328193632.226095-1-brgl@bgdev.pl>
- <20230328193632.226095-6-brgl@bgdev.pl>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230328193632.226095-6-brgl@bgdev.pl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230328021912.177301-1-ychuang570808@gmail.com> <20230328021912.177301-7-ychuang570808@gmail.com>
+In-Reply-To: <20230328021912.177301-7-ychuang570808@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 29 Mar 2023 08:07:11 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKrrWyOKGUAaT-8r-nKvtS5f_gHAhE5=XaXuGtuYC2gCw@mail.gmail.com>
+Message-ID: <CAL_JsqKrrWyOKGUAaT-8r-nKvtS5f_gHAhE5=XaXuGtuYC2gCw@mail.gmail.com>
+Subject: Re: [PATCH v6 06/12] dt-bindings: arm: Add initial bindings for
+ Nuvoton platform
+To:     Jacky Huang <ychuang570808@gmail.com>
+Cc:     krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 28.03.2023 21:36, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Add the PCIe SMMU node for sa8775p platforms.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Mon, Mar 27, 2023 at 9:19=E2=80=AFPM Jacky Huang <ychuang570808@gmail.co=
+m> wrote:
+>
+> From: Jacky Huang <ychuang3@nuvoton.com>
+>
+> Rename the bindings/arm/npcm directory as nuvoton.
+> Add binding for ARMv8 based Nuvotn SoCs and platform boards.
+> Add initial bindings for ma35d1 series development boards.
+>
+> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
 > ---
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 74 +++++++++++++++++++++++++++
->  1 file changed, 74 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> index 2343df7e0ea4..9ab630c7d81b 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> @@ -809,6 +809,80 @@ apps_smmu: iommu@15000000 {
->  				     <GIC_SPI 891 IRQ_TYPE_LEVEL_HIGH>;
->  		};
->  
-> +		pcie_smmu: iommu@15200000 {
-> +			compatible = "qcom,sa8775p-smmu-500", "qcom,smmu-500", "arm,mmu-500";
-> +			reg = <0x0 0x15200000 0x0 0x800000>;
-> +			#iommu-cells = <2>;
-> +			#global-interrupts = <2>;
-> +
-> +			interrupts = <GIC_SPI 920 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 921 IRQ_TYPE_LEVEL_HIGH>,
-That's a lot of interrupts!
+>  .../bindings/arm/nuvoton/nuvoton,ma35d1.yaml  | 30 +++++++++++++++++++
+>  .../nuvoton,npcm-gcr.yaml}                    |  2 +-
+>  .../npcm.yaml =3D> nuvoton/nuvoton,npcm.yaml}   |  2 +-
+>  3 files changed, 32 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/arm/nuvoton/nuvoton=
+,ma35d1.yaml
+>  rename Documentation/devicetree/bindings/arm/{npcm/nuvoton,gcr.yaml =3D>=
+ nuvoton/nuvoton,npcm-gcr.yaml} (93%)
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Since you are moving it, this one should be moved to bindings/soc/nuvoton/
 
-Konrad
-> +				     <GIC_SPI 925 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 926 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 927 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 928 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 950 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 951 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 952 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 953 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 954 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 955 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 956 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 957 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 958 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 885 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 886 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 887 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 888 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 820 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 822 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 823 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 447 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 452 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 840 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 841 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 842 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 843 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 844 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 845 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 846 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 847 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 848 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 849 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 802 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 803 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 804 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 805 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 806 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 807 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 808 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 809 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 810 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 811 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 812 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 813 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 814 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 836 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 837 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 838 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 839 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 854 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 855 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 856 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 790 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 791 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 792 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 793 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 794 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 795 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 796 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 639 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 640 IRQ_TYPE_LEVEL_HIGH>;
-> +		};
-> +
->  		intc: interrupt-controller@17a00000 {
->  			compatible = "arm,gic-v3";
->  			reg = <0x0 0x17a00000 0x0 0x10000>,     /* GICD */
+>  rename Documentation/devicetree/bindings/arm/{npcm/npcm.yaml =3D> nuvoto=
+n/nuvoton,npcm.yaml} (93%)
