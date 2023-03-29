@@ -2,111 +2,119 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 630B5C6FD18
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 08:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF14C74A5B
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 08:36:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229838AbjC2Igg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Mar 2023 04:36:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48148 "EHLO
+        id S229959AbjC2Ig4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Mar 2023 04:36:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbjC2Igg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Mar 2023 04:36:36 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99BE0BA
-        for <linux-clk@vger.kernel.org>; Wed, 29 Mar 2023 01:36:33 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id ek18so60122451edb.6
-        for <linux-clk@vger.kernel.org>; Wed, 29 Mar 2023 01:36:33 -0700 (PDT)
+        with ESMTP id S229481AbjC2Igz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Mar 2023 04:36:55 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2CBBA;
+        Wed, 29 Mar 2023 01:36:54 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id ja10so14241369plb.5;
+        Wed, 29 Mar 2023 01:36:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680078992;
+        d=gmail.com; s=20210112; t=1680079014;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1rkqB/pSe/Uf7R42daYkgCUwin72MjNO+JZK0n3K2tQ=;
-        b=czhBAIR15K3/QMgCfWoz7zsl1hUze64kkHJm0ygOWkJOgwLDqSIXSV4gszgmG5A3x6
-         oEr+5tJyoat25VyQc3AK513zGyw41IDJYSlDxvA+ajgv9W/pb9hD0uNYrDXBkbHZ/u43
-         88fsIsgyOGe7YfpohBRD9Rqv+FNqq/djaWDPK5QaE9hzoxh64cZCMCOyJ2HOmMQKWEaT
-         pLBU5OVN4tzzRHxH0w7nxgpAqGKwO4fKpTS8SL2bY/9rPLEd+jWs7f86BNIg3T8iXcK9
-         2ld0G70NJCIXM3ag3N90QIjuRd0zbmeWu8sk2QIMmW0ym7I4n2qZdxkVwXb6Sj197ZsU
-         F4Yg==
+        bh=OvPiX5ci5jR6Qhqc7feloIWYWq1Fjc5rTBladfN4lhU=;
+        b=dyUUzHU4tiokOMdzwerinToRc3tjTR+C2f7uSV/CU3B1iLaLkYNetRFJGKuCklbpcr
+         YDJlVng+AupMYmc9dPSDC8MbwP7b1CHVPIpSAZe4Wq79d1re6XcParhQr0122TlpfYsN
+         Bos+pOP8Umxkk6HMP1V194HvHBUHBgqoyyQY+6mrd/OReaSfmDvS7mNoYuI/8tOahO+7
+         qu6v5NuPPEgImIxkPs55rNu6YF57vS+01omcdGFqFAeqV42gowpQ8pzdtBMnhQ4rLEN1
+         jAl1U3E3QbkzWUI51bULWKbd2bC/kUWyL7UxJXIlE6tn7JfurpIPrNaSm/hHSa+deKBc
+         xnbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680078992;
+        d=1e100.net; s=20210112; t=1680079014;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1rkqB/pSe/Uf7R42daYkgCUwin72MjNO+JZK0n3K2tQ=;
-        b=tlMT92IfqkG0ptUpdQMcCwkoqDYdAW5yrB/rksRDLoEnqf1bFOTQAxfZL3eMvdd/lS
-         AaV0axoCBcTMhx5CRM9vTfSkj3JbmkofuW+DoggQ8uWQM/SriCwuP3O/NcYNwVU7/ppJ
-         s97zoMHfm1QMye6BaPjnOEerVRV0sXUJrPuj+g9g9vUG0et2W5Av5r4SgBtadgH5eSWs
-         WYiRavY92lVO2cgn9nHMAafR57KGI0PryInoox/4GWgCxEyAt4/iwZwdj8G6H+i5E9Wi
-         sOVnGMxIyRVrLLXrP2tNAazVwV8MchsRu3zoj2YUvl9SrGZ/0mqap8lGbxfRNsXnwJ0u
-         0mew==
-X-Gm-Message-State: AAQBX9c4TpQL4YmRFDyyKcvYGwkDs0WeIWleTBixtr2v01WjtHgiuQBT
-        gBeFjXHLri4sqet0yAxRJ/Sc7cR3FutosCzaiBB9sA==
-X-Google-Smtp-Source: AKy350aLnZoE3VH5F+C9qZoroickOae9EztGyVhx2T4moZpvdDOO2NmhS3zjPSDiQb1l+vkSWljpNA==
-X-Received: by 2002:ac2:5966:0:b0:4e9:d85d:9032 with SMTP id h6-20020ac25966000000b004e9d85d9032mr5581749lfp.54.1680078679782;
-        Wed, 29 Mar 2023 01:31:19 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id x6-20020a2e7c06000000b002a5f91380e2sm1030479ljc.84.2023.03.29.01.31.18
+        bh=OvPiX5ci5jR6Qhqc7feloIWYWq1Fjc5rTBladfN4lhU=;
+        b=FUpWm71DbbaLrhedojABm6JN979kzLeFxAARurQC19nyGYV6l9shzYKoiHLbsif3Sf
+         USmDsebHK+iP7JjtA2/ZJuSJ3yBdbY+1u9xaj2bJgzpTUMfQgXSsj/tHTwsDMYC8+AKX
+         AkzKRGoVosmpN9R2L10i98DONcJXin4p4gAwggiruqOYh4ysaCIOykSpjeT/69tNj3CG
+         lRt+vycXsJrQE6fLLVyCrHPLK+WVA67msbxhd/NMH3bgX6wwE/oGwW6fChMxUB5K0Yo1
+         Lsuqm3AjPgEwHu01XiQiGqZus/zQ10wAxJFWcEDzxAqs+uHFxJGYCAM5B/IZlsEdQBT1
+         /XFw==
+X-Gm-Message-State: AAQBX9dccCKNgsRQTvpAmB/CxlA27KMcChEZkfJsSQTFLguIQCt4Ochq
+        pz1XE0pz0pdHcTnvW5vXtpM=
+X-Google-Smtp-Source: AKy350YSk+R2sNpPl1vdd78/1HInutyjP12GZAdtg9vQ9/lJ/EkymFBWgcDnhrLRzz9RZGoi3crlrQ==
+X-Received: by 2002:a17:90b:33c7:b0:23d:4ffc:43e with SMTP id lk7-20020a17090b33c700b0023d4ffc043emr18456574pjb.38.1680079014215;
+        Wed, 29 Mar 2023 01:36:54 -0700 (PDT)
+Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id ji17-20020a170903325100b00199023c688esm22480280plb.26.2023.03.29.01.36.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Mar 2023 01:31:19 -0700 (PDT)
-Message-ID: <14688a5c-c50a-4876-e7b7-565b106b431a@linaro.org>
-Date:   Wed, 29 Mar 2023 10:31:18 +0200
+        Wed, 29 Mar 2023 01:36:54 -0700 (PDT)
+Message-ID: <c2e430ac-c23d-4268-151c-a3a398252382@gmail.com>
+Date:   Wed, 29 Mar 2023 16:36:50 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
-Subject: Re: [PATCH 4/7] dt-bindings: iommu: arm,smmu: enable clocks for
- sa8775p
+Subject: Re: [PATCH v6 08/12] arm64: dts: nuvoton: Add initial ma35d1 device
+ tree
 Content-Language: en-US
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>
-References: <20230328193632.226095-1-brgl@bgdev.pl>
- <20230328193632.226095-5-brgl@bgdev.pl>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230328193632.226095-5-brgl@bgdev.pl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        p.zabel@pengutronix.de, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+References: <20230328021912.177301-1-ychuang570808@gmail.com>
+ <20230328021912.177301-9-ychuang570808@gmail.com>
+ <36f75c71-cf5b-7cbd-8eac-8a8f628d1201@linaro.org>
+From:   Jacky Huang <ychuang570808@gmail.com>
+In-Reply-To: <36f75c71-cf5b-7cbd-8eac-8a8f628d1201@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/03/2023 21:36, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> The KGSL iommu will require the clocks property to be set. Enable it for
-> sa8775p in the bindings.
-> 
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> index 807cb511fe18..74d5164ed1e8 100644
-> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> @@ -375,7 +375,6 @@ allOf:
->                - nvidia,smmu-500
->                - qcom,qcm2290-smmu-500
->                - qcom,qdu1000-smmu-500
-> -              - qcom,sa8775p-smmu-500
+Dear Krzysztof,
 
-Then you need to describe them, like other variants are doing.
+
+On 2023/3/29 下午 04:21, Krzysztof Kozlowski wrote:
+> On 28/03/2023 04:19, Jacky Huang wrote:
+>> From: Jacky Huang <ychuang3@nuvoton.com>
+>>
+>> Add initial device tree support for Nuvoton ma35d1 SoC, including
+>> cpu, clock, reset, and serial controllers.
+>> Add reference boards som-256m and iot-512m.
+>>
+>> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+>
+>
+>> +	gic: interrupt-controller@50801000 {
+>> +		compatible = "arm,gic-400";
+>> +		reg =   <0x0 0x50801000 0 0x1000>, /* GICD */
+>> +			<0x0 0x50802000 0 0x2000>, /* GICC */
+>> +			<0x0 0x50804000 0 0x2000>, /* GICH */
+>> +			<0x0 0x50806000 0 0x2000>; /* GICV */
+>> +		#interrupt-cells = <3>;
+>> +		interrupt-parent = <&gic>;
+>> +		interrupt-controller;
+>> +		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_RAW(0x13) |
+>> +			      IRQ_TYPE_LEVEL_HIGH)>;
+>> +	};
+>> +
+>> +	uart0:serial@40700000 {
+> There is always space after label:.
+>
+>
+> Best regards,
+> Krzysztof
+>
+
+I will fix them all.
+
 
 Best regards,
-Krzysztof
+Jacky Huang
 
