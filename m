@@ -2,112 +2,117 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB3FC74A5B
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 08:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F5DC74A5B
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 08:33:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229833AbjC2Icv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Mar 2023 04:32:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41416 "EHLO
+        id S230489AbjC2Ida (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Mar 2023 04:33:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229782AbjC2Icv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Mar 2023 04:32:51 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84438269E;
-        Wed, 29 Mar 2023 01:32:50 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id o2so14238846plg.4;
-        Wed, 29 Mar 2023 01:32:50 -0700 (PDT)
+        with ESMTP id S231144AbjC2Id1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Mar 2023 04:33:27 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0470846B2
+        for <linux-clk@vger.kernel.org>; Wed, 29 Mar 2023 01:33:14 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id g19so6010513lfr.9
+        for <linux-clk@vger.kernel.org>; Wed, 29 Mar 2023 01:33:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680078770;
+        d=linaro.org; s=google; t=1680078793;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=n4d+dtycLWqp0weLwXRWpI8ZrJvnJZhAPdrOE5mljqQ=;
-        b=Wpnsul2QEgA7ExdcZ8IljuJzHdvrVZoaBkKniQMz4wROWKSOi5OwSY6kbdqkR04778
-         ukPTw9Hccif979qBxKCtHEmWgVXL7cHKw3u/WxwzhELIrWecx4s0EJOrcHZT7g6V5MB6
-         II71lnNtQtfbbvGLHERGkMdLGHDJveB1IW/2hTKTbg9iXuwuE920zJ/Kvkj5DYcwND2J
-         ERyPA2hQPpiVn1SdXgDFbVxYPdX7JEpTRnTjnHCu9luRC5g1QU5RDw+qWSxRvZFKIo0z
-         VvGCqRJyuotoSkT7PkuGdh/Lozpm/CL2pJ0Ha0T9Sq+J4yPeY1E52+kysSrbRbFbOQuJ
-         7uzw==
+        bh=/mj5Xq6+JfoalzpG1WEfQLWuCEqNy/WskP4LNoja4eI=;
+        b=mZu4wAUV9wtAfMe4oDDeNDOHrT8dJJ4XXAMQIKc4TBMCYrBJJnqF+x5EH1iO2TsVfl
+         aEvpWhvc+NId0UWzgJvVeZnPy35HPwgKrybTyP8/JMuTKgLnVdMdU6L6FJf+kIKW3Mlr
+         sg5w+KDBwE8p+3OWtejmvCjocBLh2P+KpPYxHenen9Hrvn1yNTMC9BSInu5jy3O49Pqz
+         V+CaV4YqzWhb5b0avKwGAVVgbm1H4WVWBcTsCVUgNqf0rjfVX0mCfX4UMnDM/lPpB24y
+         Q2BgzsrZn7DLQqsTGqrCcsj2/8sXjsIpKCANJH1ihtRrIdEsc2mx1tA8OqGXEysBodkO
+         +uFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680078770;
+        d=1e100.net; s=20210112; t=1680078793;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n4d+dtycLWqp0weLwXRWpI8ZrJvnJZhAPdrOE5mljqQ=;
-        b=2lHFjlj/iaPBj33KdgJg4/nucrD+Ec8Ti/Ah3i8JzYT7Vc0i4zatXaAm8R19xLUnFV
-         GqaqVk85Kkl2FOf4vUSy3ylspI+rF32srR7jyy/0AUpWRxXnr4eKbgnxoYuJksXyKunP
-         mPrszwSlhokBsojroMpCUUkp+Lvn4tODsZbB6BInD1/yNyj5XgWaKuMVLzvy+p+SplgD
-         PpMARIjCjnc5EZpg2JQWqBc0UtHiK67temWwkW948GKbIgFVMoXNlYaK5nzozo2fltVj
-         wj+reSXfARO81nWEm+MBfVD5+ikaeH9UqAMNYlr5BrU2VDcy24mTDUejTYurDjS3x481
-         Twgg==
-X-Gm-Message-State: AAQBX9fN56Xmwt4P6Jagfmlw5/fQJJ26VZMyyueXgAcPS4z+PawswuI+
-        eBcpMcq8FvPcw/8K8HtUcAw=
-X-Google-Smtp-Source: AKy350awpeY8bOldqL9b57hQSiQ97WJ7Hx0J70LbNPhE78MTqPCx2YMDST61xjpihFh1ASflsS8iYg==
-X-Received: by 2002:a17:903:2847:b0:19e:bc01:610e with SMTP id kq7-20020a170903284700b0019ebc01610emr17418538plb.33.1680078769983;
-        Wed, 29 Mar 2023 01:32:49 -0700 (PDT)
-Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id bi11-20020a170902bf0b00b0019f11caf11asm22501787plb.166.2023.03.29.01.32.47
+        bh=/mj5Xq6+JfoalzpG1WEfQLWuCEqNy/WskP4LNoja4eI=;
+        b=RL8hJKjZKu/v1ckA9x1KJJK1g/RcCftPpWWV30XlMihsmd1X3CWlKtLI4+8B8Ge8xV
+         28pmq9hSBE11VXL18a3pD1dzJizVDL/cAsgYR6/3Ot8DkIt+z7byRftccoqS6YS1uXnL
+         4+Oaf9bG9OzqpESjWmrgrrEAY/Cr4XJN+1MRcrLw1VuigevmB8OMmPNeKSMvlsqXZme4
+         y9/dEO6hgVVTTgUIlokn3GBFlLNFoh7whmjymfWeerR85VDlPZObBqwuamcXrAPeBg3D
+         SiUNyvuOLHJOmBd71rOfjsb6RAFtpW9KMlwpwb1eQ4sNLmseqmzvBxON0WmW/BBzZ0aK
+         K+qg==
+X-Gm-Message-State: AAQBX9djn8eBOFjqFWfegKIkK33Lcc/Ygv+b0u8khP4KYrbSzfPOhvH4
+        6dwXcGiyj1z+uKbdGpGnolTisw==
+X-Google-Smtp-Source: AKy350aNzNob6HbJ/RxdWslNWAtB+K0yVD/z7brX3plRakI3Uhf8hEdc3GG+W8V8r8TlCiYY/4Ui8A==
+X-Received: by 2002:a19:4f1d:0:b0:4d8:86c1:477e with SMTP id d29-20020a194f1d000000b004d886c1477emr483750lfb.19.1680078793292;
+        Wed, 29 Mar 2023 01:33:13 -0700 (PDT)
+Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id o1-20020ac24941000000b004ea889258d1sm3974268lfi.72.2023.03.29.01.33.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Mar 2023 01:32:49 -0700 (PDT)
-Message-ID: <1ba9f9f4-2198-1fbd-5031-cd8be214c210@gmail.com>
-Date:   Wed, 29 Mar 2023 16:32:46 +0800
+        Wed, 29 Mar 2023 01:33:12 -0700 (PDT)
+Message-ID: <4ac63dc9-a420-f9c7-a1c2-1384dbf37fec@linaro.org>
+Date:   Wed, 29 Mar 2023 10:33:11 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
-Subject: Re: [PATCH v6 06/12] dt-bindings: arm: Add initial bindings for
- Nuvoton platform
+Subject: Re: [PATCH 3/7] arm64: defconfig: enable the SA8775P GPUCC driver
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        p.zabel@pengutronix.de, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
-        Jacky Huang <ychuang3@nuvoton.com>
-References: <20230328021912.177301-1-ychuang570808@gmail.com>
- <20230328021912.177301-7-ychuang570808@gmail.com>
- <ba59626b-454b-f7d9-fe51-6e588c1ed40e@linaro.org>
-From:   Jacky Huang <ychuang570808@gmail.com>
-In-Reply-To: <ba59626b-454b-f7d9-fe51-6e588c1ed40e@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>
+References: <20230328193632.226095-1-brgl@bgdev.pl>
+ <20230328193632.226095-4-brgl@bgdev.pl>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230328193632.226095-4-brgl@bgdev.pl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 28/03/2023 21:36, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Enable the GPUCC module for SA8775P platforms in the arm64 defconfig.
 
-Dear Krzysztof,
+...for Qualcomm SA8775P platforms...
 
+(you know, this is defconfig for every ARMv8 SoC)
 
-On 2023/3/29 下午 04:19, Krzysztof Kozlowski wrote:
-> On 28/03/2023 04:19, Jacky Huang wrote:
->> From: Jacky Huang <ychuang3@nuvoton.com>
->>
->> Rename the bindings/arm/npcm directory as nuvoton.
->> Add binding for ARMv8 based Nuvotn SoCs and platform boards.
-> Typo: Nucotn?
+> 
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index d206a9120ee4..fa0a145defe2 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -1161,6 +1161,7 @@ CONFIG_MSM_MMCC_8998=m
+>  CONFIG_MSM_GCC_8998=y
+>  CONFIG_QCS_GCC_404=y
+>  CONFIG_SA_GCC_8775P=y
+> +CONFIG_SA_GPUCC_8775P=y
 
-I will fix it. Thank you.
+Are you sure this is correct place? Your Kconfig has it in different
+location.
 
->> Add initial bindings for ma35d1 series development boards.
->>
->> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
->> ---
->>   .../bindings/arm/nuvoton/nuvoton,ma35d1.yaml  | 30 +++++++++++++++++++
-> Anyway robot pointed to issues here...
->
->
-> Best regards,
-> Krzysztof
->
-
-The robot report path error in MAINTAINER. I should modify it when I 
-rename the npcm directory.
-
+>  CONFIG_SC_DISPCC_8280XP=m
+>  CONFIG_SC_GCC_7180=y
+>  CONFIG_SC_GCC_7280=y
 
 Best regards,
-Jacky Huang
-
+Krzysztof
 
