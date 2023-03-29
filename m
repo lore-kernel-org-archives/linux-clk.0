@@ -2,59 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F5DC74A5B
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 08:33:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 630B5C6FD18
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 08:36:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230489AbjC2Ida (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Mar 2023 04:33:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43116 "EHLO
+        id S229838AbjC2Igg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Mar 2023 04:36:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231144AbjC2Id1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Mar 2023 04:33:27 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0470846B2
-        for <linux-clk@vger.kernel.org>; Wed, 29 Mar 2023 01:33:14 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id g19so6010513lfr.9
-        for <linux-clk@vger.kernel.org>; Wed, 29 Mar 2023 01:33:14 -0700 (PDT)
+        with ESMTP id S229481AbjC2Igg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Mar 2023 04:36:36 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99BE0BA
+        for <linux-clk@vger.kernel.org>; Wed, 29 Mar 2023 01:36:33 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id ek18so60122451edb.6
+        for <linux-clk@vger.kernel.org>; Wed, 29 Mar 2023 01:36:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680078793;
+        d=linaro.org; s=google; t=1680078992;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=/mj5Xq6+JfoalzpG1WEfQLWuCEqNy/WskP4LNoja4eI=;
-        b=mZu4wAUV9wtAfMe4oDDeNDOHrT8dJJ4XXAMQIKc4TBMCYrBJJnqF+x5EH1iO2TsVfl
-         aEvpWhvc+NId0UWzgJvVeZnPy35HPwgKrybTyP8/JMuTKgLnVdMdU6L6FJf+kIKW3Mlr
-         sg5w+KDBwE8p+3OWtejmvCjocBLh2P+KpPYxHenen9Hrvn1yNTMC9BSInu5jy3O49Pqz
-         V+CaV4YqzWhb5b0avKwGAVVgbm1H4WVWBcTsCVUgNqf0rjfVX0mCfX4UMnDM/lPpB24y
-         Q2BgzsrZn7DLQqsTGqrCcsj2/8sXjsIpKCANJH1ihtRrIdEsc2mx1tA8OqGXEysBodkO
-         +uFg==
+        bh=1rkqB/pSe/Uf7R42daYkgCUwin72MjNO+JZK0n3K2tQ=;
+        b=czhBAIR15K3/QMgCfWoz7zsl1hUze64kkHJm0ygOWkJOgwLDqSIXSV4gszgmG5A3x6
+         oEr+5tJyoat25VyQc3AK513zGyw41IDJYSlDxvA+ajgv9W/pb9hD0uNYrDXBkbHZ/u43
+         88fsIsgyOGe7YfpohBRD9Rqv+FNqq/djaWDPK5QaE9hzoxh64cZCMCOyJ2HOmMQKWEaT
+         pLBU5OVN4tzzRHxH0w7nxgpAqGKwO4fKpTS8SL2bY/9rPLEd+jWs7f86BNIg3T8iXcK9
+         2ld0G70NJCIXM3ag3N90QIjuRd0zbmeWu8sk2QIMmW0ym7I4n2qZdxkVwXb6Sj197ZsU
+         F4Yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680078793;
+        d=1e100.net; s=20210112; t=1680078992;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/mj5Xq6+JfoalzpG1WEfQLWuCEqNy/WskP4LNoja4eI=;
-        b=RL8hJKjZKu/v1ckA9x1KJJK1g/RcCftPpWWV30XlMihsmd1X3CWlKtLI4+8B8Ge8xV
-         28pmq9hSBE11VXL18a3pD1dzJizVDL/cAsgYR6/3Ot8DkIt+z7byRftccoqS6YS1uXnL
-         4+Oaf9bG9OzqpESjWmrgrrEAY/Cr4XJN+1MRcrLw1VuigevmB8OMmPNeKSMvlsqXZme4
-         y9/dEO6hgVVTTgUIlokn3GBFlLNFoh7whmjymfWeerR85VDlPZObBqwuamcXrAPeBg3D
-         SiUNyvuOLHJOmBd71rOfjsb6RAFtpW9KMlwpwb1eQ4sNLmseqmzvBxON0WmW/BBzZ0aK
-         K+qg==
-X-Gm-Message-State: AAQBX9djn8eBOFjqFWfegKIkK33Lcc/Ygv+b0u8khP4KYrbSzfPOhvH4
-        6dwXcGiyj1z+uKbdGpGnolTisw==
-X-Google-Smtp-Source: AKy350aNzNob6HbJ/RxdWslNWAtB+K0yVD/z7brX3plRakI3Uhf8hEdc3GG+W8V8r8TlCiYY/4Ui8A==
-X-Received: by 2002:a19:4f1d:0:b0:4d8:86c1:477e with SMTP id d29-20020a194f1d000000b004d886c1477emr483750lfb.19.1680078793292;
-        Wed, 29 Mar 2023 01:33:13 -0700 (PDT)
+        bh=1rkqB/pSe/Uf7R42daYkgCUwin72MjNO+JZK0n3K2tQ=;
+        b=tlMT92IfqkG0ptUpdQMcCwkoqDYdAW5yrB/rksRDLoEnqf1bFOTQAxfZL3eMvdd/lS
+         AaV0axoCBcTMhx5CRM9vTfSkj3JbmkofuW+DoggQ8uWQM/SriCwuP3O/NcYNwVU7/ppJ
+         s97zoMHfm1QMye6BaPjnOEerVRV0sXUJrPuj+g9g9vUG0et2W5Av5r4SgBtadgH5eSWs
+         WYiRavY92lVO2cgn9nHMAafR57KGI0PryInoox/4GWgCxEyAt4/iwZwdj8G6H+i5E9Wi
+         sOVnGMxIyRVrLLXrP2tNAazVwV8MchsRu3zoj2YUvl9SrGZ/0mqap8lGbxfRNsXnwJ0u
+         0mew==
+X-Gm-Message-State: AAQBX9c4TpQL4YmRFDyyKcvYGwkDs0WeIWleTBixtr2v01WjtHgiuQBT
+        gBeFjXHLri4sqet0yAxRJ/Sc7cR3FutosCzaiBB9sA==
+X-Google-Smtp-Source: AKy350aLnZoE3VH5F+C9qZoroickOae9EztGyVhx2T4moZpvdDOO2NmhS3zjPSDiQb1l+vkSWljpNA==
+X-Received: by 2002:ac2:5966:0:b0:4e9:d85d:9032 with SMTP id h6-20020ac25966000000b004e9d85d9032mr5581749lfp.54.1680078679782;
+        Wed, 29 Mar 2023 01:31:19 -0700 (PDT)
 Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id o1-20020ac24941000000b004ea889258d1sm3974268lfi.72.2023.03.29.01.33.12
+        by smtp.gmail.com with ESMTPSA id x6-20020a2e7c06000000b002a5f91380e2sm1030479ljc.84.2023.03.29.01.31.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Mar 2023 01:33:12 -0700 (PDT)
-Message-ID: <4ac63dc9-a420-f9c7-a1c2-1384dbf37fec@linaro.org>
-Date:   Wed, 29 Mar 2023 10:33:11 +0200
+        Wed, 29 Mar 2023 01:31:19 -0700 (PDT)
+Message-ID: <14688a5c-c50a-4876-e7b7-565b106b431a@linaro.org>
+Date:   Wed, 29 Mar 2023 10:31:18 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
-Subject: Re: [PATCH 3/7] arm64: defconfig: enable the SA8775P GPUCC driver
+Subject: Re: [PATCH 4/7] dt-bindings: iommu: arm,smmu: enable clocks for
+ sa8775p
 Content-Language: en-US
 To:     Bartosz Golaszewski <brgl@bgdev.pl>,
         Andy Gross <agross@kernel.org>,
@@ -67,12 +68,13 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>
 References: <20230328193632.226095-1-brgl@bgdev.pl>
- <20230328193632.226095-4-brgl@bgdev.pl>
+ <20230328193632.226095-5-brgl@bgdev.pl>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230328193632.226095-4-brgl@bgdev.pl>
+In-Reply-To: <20230328193632.226095-5-brgl@bgdev.pl>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -82,36 +84,28 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On 28/03/2023 21:36, Bartosz Golaszewski wrote:
 > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> Enable the GPUCC module for SA8775P platforms in the arm64 defconfig.
-
-...for Qualcomm SA8775P platforms...
-
-(you know, this is defconfig for every ARMv8 SoC)
-
+> The KGSL iommu will require the clocks property to be set. Enable it for
+> sa8775p in the bindings.
 > 
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Joerg Roedel <joro@8bytes.org>
 > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > ---
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
+>  Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index d206a9120ee4..fa0a145defe2 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -1161,6 +1161,7 @@ CONFIG_MSM_MMCC_8998=m
->  CONFIG_MSM_GCC_8998=y
->  CONFIG_QCS_GCC_404=y
->  CONFIG_SA_GCC_8775P=y
-> +CONFIG_SA_GPUCC_8775P=y
+> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+> index 807cb511fe18..74d5164ed1e8 100644
+> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+> @@ -375,7 +375,6 @@ allOf:
+>                - nvidia,smmu-500
+>                - qcom,qcm2290-smmu-500
+>                - qcom,qdu1000-smmu-500
+> -              - qcom,sa8775p-smmu-500
 
-Are you sure this is correct place? Your Kconfig has it in different
-location.
-
->  CONFIG_SC_DISPCC_8280XP=m
->  CONFIG_SC_GCC_7180=y
->  CONFIG_SC_GCC_7280=y
+Then you need to describe them, like other variants are doing.
 
 Best regards,
 Krzysztof
