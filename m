@@ -2,128 +2,73 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EED8EC761AF
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 02:19:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3440FC76196
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 02:35:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229532AbjC2CTV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Mar 2023 22:19:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37738 "EHLO
+        id S229632AbjC2CfD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Mar 2023 22:35:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229750AbjC2CTV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 22:19:21 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C693273E;
-        Tue, 28 Mar 2023 19:19:15 -0700 (PDT)
+        with ESMTP id S229456AbjC2CfC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 22:35:02 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8A7F2703;
+        Tue, 28 Mar 2023 19:35:01 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C4B4AB81F94;
-        Wed, 29 Mar 2023 02:19:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58B26C433EF;
-        Wed, 29 Mar 2023 02:19:12 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3CAD061A3F;
+        Wed, 29 Mar 2023 02:35:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 818F7C433D2;
+        Wed, 29 Mar 2023 02:35:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680056352;
-        bh=FtQpj8iEUziXDo/mDSXE7qrZrcIgPVB/uYotZNpI5nk=;
+        s=k20201202; t=1680057300;
+        bh=GqNruyQ94NkZ9NZt0BUZLkCLHVLlwAwMXOdfDeCJI04=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=R0S/WePl5v3awL048+lqF2jzLgWIJv68pBHoA5Lu31hd1ugG/tKGd8ucFVR2frUMw
-         1uPmbTod+B8vkN1b/7eInyZOnVMyHi6d2b+nhuz/8QQGxlyVJaT5DZZ0h0n24C3lcM
-         Q+uK43vAcSFenqhla0qjJpP5m1ezRNqaW9VDCEwXYwjGKbsejHX63GGT9oD1Cc+8iZ
-         x3M/umenURW9kvh4qsoyGC3ubIH2VJoDwfpW15r2D4AMeWpOmNZ0435dXUEllCvh+5
-         UH1Li/aL9AaxOCMVuA4X+A2N0/0PXbn4NwTAdUg9/Z08GEyWPsBH1+WlP2qxyanyGt
-         kkJ2m3VCMpCmw==
-Message-ID: <c37e1f3a40c404acd81c2c9d5b28b340.sboyd@kernel.org>
+        b=ovg0HlNr3Bs88xxOHq4hcpTCtbM+6JRYm0WsI4AU+1u5NlvgImtKg6x2VOrNqhzmy
+         TXo7abF/Uk6iVlsJedflsT7NZ1qXTPi9LYQirrguYQKQFJ3EEqf3ntsIOe0+zk5DES
+         cpt/Nnb5NDzbaAuklKOJtjlLXpNzjYQlhUk+9DPff5rSRmNljbwFkKUgHVfwDPbGwW
+         fKHdMZTPeIaw8iWgBjhJO9jC+OBXaaaSEIYp4m0C1Oo5OAeMfJFDmywcnwTL+RHc5F
+         DNUQofY35JnnjosPfUZcGgfaHjDNSvTY/OrfctUMLtCFIke/F8qDhHgB87vERs5fK6
+         zMZZ3BDDpf5DA==
+Message-ID: <ce45ed77bb246d98adda4f478c020222.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <b7977069-4f82-76a1-10c1-b6400862c2c4@gmail.com>
-References: <20230328021912.177301-1-ychuang570808@gmail.com> <20230328021912.177301-9-ychuang570808@gmail.com> <ab4e0bc8834b7e618e9a88ea6a1c30cc.sboyd@kernel.org> <b7977069-4f82-76a1-10c1-b6400862c2c4@gmail.com>
-Subject: Re: [PATCH v6 08/12] arm64: dts: nuvoton: Add initial ma35d1 device tree
+In-Reply-To: <20230312161512.2715500-3-u.kleine-koenig@pengutronix.de>
+References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de> <20230312161512.2715500-3-u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 02/30] clk: tegra: Don't warn three times about failure to unregister
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
-        Jacky Huang <ychuang3@nuvoton.com>
-To:     Jacky Huang <ychuang570808@gmail.com>, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        lee@kernel.org, mturquette@baylibre.com, p.zabel@pengutronix.de,
-        robh+dt@kernel.org
-Date:   Tue, 28 Mar 2023 19:19:10 -0700
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?utf-8?q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Date:   Tue, 28 Mar 2023 19:34:58 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jacky Huang (2023-03-28 19:03:24)
-> On 2023/3/29 =E4=B8=8A=E5=8D=88 01:57, Stephen Boyd wrote:
-> > Quoting Jacky Huang (2023-03-27 19:19:08)
-> >> diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi b/arch/arm64/boot=
-/dts/nuvoton/ma35d1.dtsi
-> >> new file mode 100644
-> >> index 000000000000..0740b0b218a7
-> >> --- /dev/null
-> >> +++ b/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
-> >> @@ -0,0 +1,231 @@
-[...]
-> >> +
-> >> +               L2_0: l2-cache0 {
-> > Just l2-cache for the node name. Doesn't it go under the cpu0 node as
-> > well?
+Quoting Uwe Kleine-K=C3=B6nig (2023-03-12 09:14:44)
+> tegra124_dfll_fcpu_remove() calls tegra_dfll_unregister() and the former
+> emits an error message if the latter fails. In that case
+> tegra_dfll_unregister() already printed an error message. Additionally
+> tegra124_dfll_fcpu_remove() returns an error code which results in yet
+> another warning emitted by platform_remove().
 >=20
-> This describes the level-2 cache which is external to and shared by cpu0 =
+> So drop the error message from tegra124_dfll_fcpu_remove() and let it
+> return 0. (Retuning 0 has no side effect but suppressing the error
+> message in platform_remove().)
+>=20
+> Also add two comments about exiting early being wrong. This is something
+> that needs fixing separately.
+>=20
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> ---
 
-> & cpu1.
-> And only level-1 cache is inside of CPU core.
-> L2_0 is must, because both cpu0 and cpu1 has a next-level-cache =3D=20
-> <&L2_0> property.
-
-Ok. The name should just be l2-cache then, not l2-cache0.
-
->=20
-> Many identical example of l2-cache node can be found in arm64 dts, such=20
-> as k3-arm642.dtsi,
-> rk3328.dtsi, mt8195.dtsi, etc. Here is just a copy of similar arm64=20
-> multi-core SoCs.
->=20
-> So we would like to keep this unchanged. Is it OK for you? Thanks.
->=20
-
-Mostly ok, yes.
-
->=20
-> >> +
-> >> +       sys: system-management@40460000 {
-> >> +               compatible =3D "nuvoton,ma35d1-sys", "syscon", "simple=
--mfd";
-> >> +               reg =3D <0x0 0x40460000 0x0 0x200>;
-> >> +
-> >> +               reset: reset-controller {
-> >> +                       compatible =3D "nuvoton,ma35d1-reset";
-> >> +                       #reset-cells =3D <1>;
-> >> +               };
-> >> +       };
-> >> +
-> >> +       clk: clock-controller@40460200 {
-> >> +               compatible =3D "nuvoton,ma35d1-clk", "syscon";
-> >> +               reg =3D <0x00000000 0x40460200 0x0 0x100>;
-> >> +               #clock-cells =3D <1>;
-> >> +               clocks =3D <&clk_hxt>;
-> >> +               nuvoton,sys =3D <&sys>;
-> >> +       };
-> > It looks like the device at 40460000 is a reset and clock controller.
-> > Just make it one node and register the clk or reset device as an
-> > auxiliary device.
->=20
-> 40460000 is for system control registers, including power contrl,=20
-> multifunction pin control,
-> usb phy control, IP reset control, power-on setting information, and=20
-> many other miscellaneous controls.
-> The registers of reset controller is only a subset of system control=20
-> registers.
->=20
-> 40460200 is for clock controller which is independent of the system=20
-> control integration
-> The register base of clock controller is very close to system=20
-> controller, but in fact the two are independent.
-
-What do you use the syscon for then? The clock driver must want to use
-the syscon for something, implying that they are the same device.
+Applied to clk-next
