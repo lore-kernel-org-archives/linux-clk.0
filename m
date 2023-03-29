@@ -2,87 +2,92 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30409C6FD18
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 13:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B97C6FD18
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 14:01:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229861AbjC2NH5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Mar 2023 09:07:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55644 "EHLO
+        id S230049AbjC2OBn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Mar 2023 10:01:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229816AbjC2NH4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Mar 2023 09:07:56 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 185044C02;
-        Wed, 29 Mar 2023 06:07:29 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 305F1CE2402;
-        Wed, 29 Mar 2023 13:07:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40378C433A8;
-        Wed, 29 Mar 2023 13:07:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680095244;
-        bh=64OVEta+8cwYkwrCXKWVXG9McVRJXZTO5LX36p5K5KQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=da3xQ3WAUJLpDJMDKtepK1aRetwmoI55sJpq3a8EswUK/icNIaY9hfMAMIT+3xZNM
-         7JM9/IeA2dRTwU68j/h2+1+bX42lN+q0s8eFi0alaIhCo/+AeNMhwrXPZQm+3pl00M
-         WdYAVEl4QdoqgFGSTD3jAUUfy3JNWekoDDm23ihZXgJtdnCOFPZ7x3NKJbLw3WNhVq
-         mhTwq5mQadQLupUBo88QJOvbW5hvcUdsacMTGbX16aL1dqd/Zqi7zXuaQEUJVn5X7r
-         2cewsUMi7bICrn4En/qApKzuCPmUYNEx/OQVknYayqIk0j9nmNh/m7FoM8HFM7XrJb
-         cP34LVWpqSeLQ==
-Received: by mail-yb1-f173.google.com with SMTP id r187so19191052ybr.6;
-        Wed, 29 Mar 2023 06:07:24 -0700 (PDT)
-X-Gm-Message-State: AAQBX9dDJu1IjLso0spHIxW3u+QVd30RcE7l8rF67YrOow8+ePnI19z8
-        Gxc3jNeK3TJnkhhK33zlD3gjt7WMD8f+YyUOhw==
-X-Google-Smtp-Source: AKy350bwcTIPA/G3ETRQktnXdBJhdzSnaF6sl6bCmHm1c0aOLy6nbEarw0pjdIo3RIbbloaB2gT0TDTk8aI9coR2H5Y=
-X-Received: by 2002:a05:6902:1586:b0:98e:6280:74ca with SMTP id
- k6-20020a056902158600b0098e628074camr12456018ybu.1.1680095243200; Wed, 29 Mar
- 2023 06:07:23 -0700 (PDT)
+        with ESMTP id S229451AbjC2OBn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Mar 2023 10:01:43 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36F254229
+        for <linux-clk@vger.kernel.org>; Wed, 29 Mar 2023 07:01:40 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id j11so20321926lfg.13
+        for <linux-clk@vger.kernel.org>; Wed, 29 Mar 2023 07:01:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680098498;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OhTgON0dpxaPIhYp4g9uF92+QxjyZ+xguuLpohTAKmg=;
+        b=Wq54+Cc+T37WaDD5ViDJJfCLih1P8ghtEFm+JK1BlYhNcjOePgW88UhvHRmjx5/RAl
+         B+Ay1hNAolar1G7lAeqYARt8W4wseQimTn1W7EXv0qiyXRhhms8s2nyKymUmt6FCThvq
+         LSBI0Mx24/3ZP9zFH+B6kfpGoF5qw0E1hJG0BmgnhN7FE/Na77S4PAiE+0TFyL4lAstq
+         eXiQeaK90rcoqXUJBi8MB4R4dwFTXK7NzSZuPywYRdfAw5PZNxNtOmHppt8cjz3OeAn5
+         PT8WWYAUBEJQtzyaPNwMmGmc8bv3yXVWE8N2qN+5/VWW/zlfA8MgAQsbYhfyWj0y3KGu
+         pZ8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680098498;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OhTgON0dpxaPIhYp4g9uF92+QxjyZ+xguuLpohTAKmg=;
+        b=XsVAo6GV11C7T11jtXaibFbKAYaP9gNH/7t953uSCHqgBrEXnvvfiODY0+HjDThrV9
+         qzKM7J6+UBz7Oa6fzjyRH+x6BJUFRQwbL2BrwrHd+0QqfEM7UmyL2Wxov6p/M1CDe/ya
+         +SxSWK9bQ5df0jhHweyxmz0cZwpI//5icDbgByat3pxOUWwoW3ny6OtF/xBeSgJHJl2D
+         w7e3zVPEXppwyFj+75AXiPW0Ag1+WYj9ha/kk3mnP04jVi1tVB4SPX6qBXj25oQi6yRj
+         hLRtY2o9pJ8fY4iP3wvitKqJBI+8KHOt5S86XoJ6oWTy3wilEOIvXD95F1TBHlK68GgW
+         FthA==
+X-Gm-Message-State: AAQBX9dL4+Msv7fIFJ55nC1rFk/AqLh6tdKCmSa+Dign0hjGUO3ZaDEQ
+        5Vym/wHNjC1bJqezBaX+LLMeXw==
+X-Google-Smtp-Source: AKy350ZNTKzZtKddMtavq1i1b8KNqFHuir9cjj6n6vuYljnvf66eJhkvpodYJQTkAmrMpveW6iW6pQ==
+X-Received: by 2002:ac2:5ddb:0:b0:4ea:d6c7:c897 with SMTP id x27-20020ac25ddb000000b004ead6c7c897mr5782374lfq.31.1680098498119;
+        Wed, 29 Mar 2023 07:01:38 -0700 (PDT)
+Received: from localhost.localdomain (abxj225.neoplus.adsl.tpnet.pl. [83.9.3.225])
+        by smtp.gmail.com with ESMTPSA id f25-20020ac251b9000000b004d4d7fb0e07sm5511340lfk.216.2023.03.29.07.01.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Mar 2023 07:01:37 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+To:     linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        agross@kernel.org
+Cc:     marijn.suijten@somainline.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: gpucc-sm6375: Configure CX_GDSC disable wait value
+Date:   Wed, 29 Mar 2023 16:01:35 +0200
+Message-Id: <20230329140135.2178957-1-konrad.dybcio@linaro.org>
+X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
-References: <20230328021912.177301-1-ychuang570808@gmail.com> <20230328021912.177301-7-ychuang570808@gmail.com>
-In-Reply-To: <20230328021912.177301-7-ychuang570808@gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 29 Mar 2023 08:07:11 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKrrWyOKGUAaT-8r-nKvtS5f_gHAhE5=XaXuGtuYC2gCw@mail.gmail.com>
-Message-ID: <CAL_JsqKrrWyOKGUAaT-8r-nKvtS5f_gHAhE5=XaXuGtuYC2gCw@mail.gmail.com>
-Subject: Re: [PATCH v6 06/12] dt-bindings: arm: Add initial bindings for
- Nuvoton platform
-To:     Jacky Huang <ychuang570808@gmail.com>
-Cc:     krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
-        Jacky Huang <ychuang3@nuvoton.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Mar 27, 2023 at 9:19=E2=80=AFPM Jacky Huang <ychuang570808@gmail.co=
-m> wrote:
->
-> From: Jacky Huang <ychuang3@nuvoton.com>
->
-> Rename the bindings/arm/npcm directory as nuvoton.
-> Add binding for ARMv8 based Nuvotn SoCs and platform boards.
-> Add initial bindings for ma35d1 series development boards.
->
-> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
-> ---
->  .../bindings/arm/nuvoton/nuvoton,ma35d1.yaml  | 30 +++++++++++++++++++
->  .../nuvoton,npcm-gcr.yaml}                    |  2 +-
->  .../npcm.yaml =3D> nuvoton/nuvoton,npcm.yaml}   |  2 +-
->  3 files changed, 32 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/arm/nuvoton/nuvoton=
-,ma35d1.yaml
->  rename Documentation/devicetree/bindings/arm/{npcm/nuvoton,gcr.yaml =3D>=
- nuvoton/nuvoton,npcm-gcr.yaml} (93%)
+Configure the disable wait value on the CX GDSC to ensure we don't get
+any undefined behavior. This was omitted when first adding the driver.
 
-Since you are moving it, this one should be moved to bindings/soc/nuvoton/
+Fixes: 8397e24278b3 ("clk: qcom: Add GPU clock controller driver for SM6375")
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+ drivers/clk/qcom/gpucc-sm6375.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->  rename Documentation/devicetree/bindings/arm/{npcm/npcm.yaml =3D> nuvoto=
-n/nuvoton,npcm.yaml} (93%)
+diff --git a/drivers/clk/qcom/gpucc-sm6375.c b/drivers/clk/qcom/gpucc-sm6375.c
+index d8f4c4b59f1b..d3620344a009 100644
+--- a/drivers/clk/qcom/gpucc-sm6375.c
++++ b/drivers/clk/qcom/gpucc-sm6375.c
+@@ -358,6 +358,7 @@ static struct clk_branch gpucc_sleep_clk = {
+ static struct gdsc gpu_cx_gdsc = {
+ 	.gdscr = 0x106c,
+ 	.gds_hw_ctrl = 0x1540,
++	.clk_dis_wait_val = 8,
+ 	.pd = {
+ 		.name = "gpu_cx_gdsc",
+ 	},
+-- 
+2.40.0
+
