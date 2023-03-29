@@ -2,278 +2,140 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68FADC77B6C
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 09:13:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 563B3C74A5B
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 09:25:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230092AbjC2JNA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Mar 2023 05:13:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48812 "EHLO
+        id S230401AbjC2JZR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Mar 2023 05:25:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230045AbjC2JM6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Mar 2023 05:12:58 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B05261FD8;
-        Wed, 29 Mar 2023 02:12:57 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id o6-20020a17090a9f8600b0023f32869993so17929805pjp.1;
-        Wed, 29 Mar 2023 02:12:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680081177;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=k8Zkws+xWRTaYS/ZAzUFbnGxAmYvxcaqEtVBhFnWTyA=;
-        b=jEs0Ev+2VuxncC2NHQn2BKc/0ZhuALWzlT8LxHS2+OBvyCXs1AnqBmdZHFhKF3Xusf
-         jk3LIRU+S1zeFLtx2Nc28hft9VlceAp+7xp9jG7QaQSsGBFLYbSGPj1LsshMPs72DATM
-         ngfQrpxJx+GELgcCdPI5aS+iE77mnTun+XoKNPgzHoOP7RvftwNor/iYEnk++9rt+rA9
-         GKvAgsofAc0IC/IadpUQqKOgS06Ro+UdZTUH47YJYTPzTu2X3nH8v++LG3Qpzfh7yNzC
-         8njLP8gKB11khswSQl6xi/1n8BairFLO+YVop/w/eO6PHCWjyoUScavei8MYeDjqB5ka
-         ni1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680081177;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k8Zkws+xWRTaYS/ZAzUFbnGxAmYvxcaqEtVBhFnWTyA=;
-        b=DVZqNUBRUUG0W55hHx4ZV65J4EZ56Gfcs31l6bWUcKWgvqgo5iW9pewpJOGSWAuhE2
-         Tmga07NEr/r5oyasCCzazq7+CvtsdX7jaLGJEZRFXdLor3rVVjvgn0GZnnjBVeOJK8HF
-         5IxMLuVslZ5+vMvqHxAba5OJjx/P+RrjYtibP+ZXb1HeuSaXkhcyx30BmoknVPpz5XDA
-         VdLjbgRHZK7oUi7wGtD9VCA1x91oUeEe8RDS5uRMQ980qY9zUcs7qveDjQAPMeU/0FJN
-         1pvSKjb9xkuAyyRXiEozHZG48JIC+KrhV+aEZEjswfOcUJUMhLYxPHDs64QwhqHgexWa
-         6SIw==
-X-Gm-Message-State: AAQBX9cWEvkE3O627LPMY/dNi+wxR8HOS5TxtKXQ9YtzIlZH7vDQv45y
-        HcxXhb+5OV1nuyzUxEgDpUHcjwxEd8u1RQ==
-X-Google-Smtp-Source: AKy350YncHX6Rvpv+z5oKzm7ebxFxwhDbtKH8f3BZMbuyOc4HIOf/MqAx2wyjrXHWKlD6dNZjXwMdg==
-X-Received: by 2002:a17:902:f2ca:b0:1a1:c54c:1a36 with SMTP id h10-20020a170902f2ca00b001a1c54c1a36mr14960678plc.63.1680081176848;
-        Wed, 29 Mar 2023 02:12:56 -0700 (PDT)
-Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id 12-20020a170902c24c00b0019e5fc3c7e6sm22512327plg.101.2023.03.29.02.12.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Mar 2023 02:12:56 -0700 (PDT)
-Message-ID: <1ddf53be-3c4f-3f24-de69-9475c82341b1@gmail.com>
-Date:   Wed, 29 Mar 2023 17:12:52 +0800
+        with ESMTP id S230161AbjC2JZH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Mar 2023 05:25:07 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFBFF30D8;
+        Wed, 29 Mar 2023 02:25:05 -0700 (PDT)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32T9IH3g023884;
+        Wed, 29 Mar 2023 09:24:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=FnliORwFo6RM4w2NuP/huI2taPY0SuqrkgBObjK8CWw=;
+ b=HowNSw1YjDkLIMi+qs5WO8p3X7h9orncq8r6Vcs8H9Q5O09yOmhi/yzPTdbJE4+Ur4kW
+ k52xk1BvYtoCxwaAxV7CKGvZrpw60QLDzoNJ30/rCG5e7ffMtI6mcyHNDsioGyu6icut
+ nRhflyT1MmfrpI5ZlF3Iz1bDzQNWiF1uhAqnFRx+XjIbAmoej1TRKGpEsYMVDjcxLMhy
+ gaHjOFpng5tyU7969DsR9NOFtQzKObqKmgBuh88fQs5/oSN2e8I3g2WBaBePY9xuWyt/
+ hLXx6dq5beUuuU4b2p7216vv08yu21XpkUN6/tIbaTpPLBLCeTsgFMv/k3waWlVaoqLb oA== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pm5v1smhj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 29 Mar 2023 09:24:52 +0000
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32T9OpHt011030
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 29 Mar 2023 09:24:51 GMT
+Received: from [10.216.46.184] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Wed, 29 Mar
+ 2023 02:24:46 -0700
+Message-ID: <41d84c24-a363-7f73-1590-c23cc2ecbdc5@quicinc.com>
+Date:   Wed, 29 Mar 2023 14:54:43 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v6 04/12] dt-bindings: reset: nuvoton: add binding for
- ma35d1 IP reset control
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v1 4/4] clk: qcom: lpasscc-sc7280: Remove qdsp6ss clock
+ registration
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        p.zabel@pengutronix.de, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
-        Jacky Huang <ychuang3@nuvoton.com>
-References: <20230328021912.177301-1-ychuang570808@gmail.com>
- <20230328021912.177301-5-ychuang570808@gmail.com>
- <96bbb16a-1748-c0cb-0fc6-90804eab01c1@linaro.org>
-From:   Jacky Huang <ychuang570808@gmail.com>
-In-Reply-To: <96bbb16a-1748-c0cb-0fc6-90804eab01c1@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Stephen Boyd <sboyd@kernel.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <broonie@kernel.org>,
+        <konrad.dybcio@somainline.org>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
+        <quic_plai@quicinc.com>, <quic_rohkumar@quicinc.com>,
+        <quic_visr@quicinc.com>, <robh+dt@kernel.org>,
+        <swboyd@chromium.org>
+References: <20230327163249.1081824-1-quic_mohs@quicinc.com>
+ <20230327163249.1081824-5-quic_mohs@quicinc.com>
+ <f2fa0b0813b26c0eb1893ef4c4c4c672.sboyd@kernel.org>
+From:   Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+In-Reply-To: <f2fa0b0813b26c0eb1893ef4c4c4c672.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: jC5ZuTD7YUZz5u_kg7swU-UawilAtR4t
+X-Proofpoint-ORIG-GUID: jC5ZuTD7YUZz5u_kg7swU-UawilAtR4t
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-29_03,2023-03-28_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ bulkscore=0 mlxscore=0 impostorscore=0 spamscore=0 adultscore=0
+ malwarescore=0 suspectscore=0 priorityscore=1501 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2303290077
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dear Krzysztof,
 
+On 3/29/2023 8:41 AM, Stephen Boyd wrote:
+> Quoting Mohammad Rafi Shaik (2023-03-27 09:32:49)
+>> diff --git a/drivers/clk/qcom/lpasscc-sc7280.c b/drivers/clk/qcom/lpasscc-sc7280.c
+>> index 48432010ce24..4719e3fa8b05 100644
+>> --- a/drivers/clk/qcom/lpasscc-sc7280.c
+>> +++ b/drivers/clk/qcom/lpasscc-sc7280.c
+>> @@ -121,17 +67,10 @@ static int lpass_cc_sc7280_probe(struct platform_device *pdev)
+>>                  goto destroy_pm_clk;
+>>          }
+>>   
+>> -       lpass_regmap_config.name = "qdsp6ss";
+>> -       desc = &lpass_qdsp6ss_sc7280_desc;
+>> -
+>> -       ret = qcom_cc_probe_by_index(pdev, 0, desc);
+>> -       if (ret)
+>> -               goto destroy_pm_clk;
+>> -
+>>          lpass_regmap_config.name = "top_cc";
+>>          desc = &lpass_cc_top_sc7280_desc;
+>>   
+>> -       ret = qcom_cc_probe_by_index(pdev, 1, desc);
+>> +       ret = qcom_cc_probe_by_index(pdev, 0, desc);
+> Instead of changing the binding, it may be better to leave it as is and
+> ignore the first reg property in the driver. Then you don't need any DTS
+> patch or binding patch. You can just have this one patch. After that you
+> can introduce a new compatible string for the proper design and make it
+> have only a single reg property and deprecate the old binding. The
+> driver can then pick index 0 if the new compatible is present.
 
-On 2023/3/29 下午 04:17, Krzysztof Kozlowski wrote:
-> On 28/03/2023 04:19, Jacky Huang wrote:
->> From: Jacky Huang <ychuang3@nuvoton.com>
-> Subject: drop second/last, redundant "bindings". The "dt-bindings"
-> prefix is already stating that these are bindings.
->
-> This is a friendly reminder during the review process.
->
-> It seems my previous comments were not fully addressed. Maybe my
-> feedback got lost between the quotes, maybe you just forgot to apply it.
-> Please go back to the previous discussion and either implement all
-> requested changes or keep discussing them.
->
-> Thank you.
->
->> Add the dt-bindings header for Nuvoton ma35d1, that gets shared
->> between the reset controller and reset references in the dts.
->> Add documentation to describe nuvoton ma35d1 reset driver.
->>
->> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
->> ---
->>   .../bindings/reset/nuvoton,ma35d1-reset.yaml  |  44 +++++++
->>   .../dt-bindings/reset/nuvoton,ma35d1-reset.h  | 108 ++++++++++++++++++
->>   2 files changed, 152 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/reset/nuvoton,ma35d1-reset.yaml
->>   create mode 100644 include/dt-bindings/reset/nuvoton,ma35d1-reset.h
->>
->> diff --git a/Documentation/devicetree/bindings/reset/nuvoton,ma35d1-reset.yaml b/Documentation/devicetree/bindings/reset/nuvoton,ma35d1-reset.yaml
->> new file mode 100644
->> index 000000000000..342717257e5c
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/reset/nuvoton,ma35d1-reset.yaml
->> @@ -0,0 +1,44 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/reset/nuvoton,ma35d1-reset.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Nuvoton MA35D1 Reset Controller
->> +
->> +maintainers:
->> +  - Chi-Fang Li <cfli0@nuvoton.com>
->> +  - Jacky Huang <ychuang3@nuvoton.com>
->> +
->> +description:
->> +  The system reset controller can be used to reset various peripheral
->> +  controllers in MA35D1 SoC.
->> +
->> +properties:
->> +  compatible:
->> +    const: nuvoton,ma35d1-reset
->> +
->> +  '#reset-cells':
->> +    const: 1
->> +
->> +required:
->> +  - compatible
->> +  - '#reset-cells'
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  # system reset controller node:
->> +  - |
->> +
->> +    system-management@40460000 {
->> +        compatible = "nuvoton,ma35d1-sys", "syscon", "simple-mfd";
->> +        reg = <0x40460000 0x200>;
->> +
->> +        reset-controller {
->> +            compatible = "nuvoton,ma35d1-reset";
->> +            #reset-cells = <1>;
-> You do not take any resources here, thus this should be rather part of
-> the parent node.
+Thanks for comment,
 
-I will modify it as:
-     sys: system-management@40460000 {
-         compatible = "nuvoton,ma35d1-sys", "syscon",;
-         reg = <0x0 0x40460000 0x0 0x200>;
-         #reset-cells = <1>;
-         };
-     };
+The main issue with sc7280.dtsi file.
 
+Required to upstream remoteproc_adsp node for audioreach adsp based 
+solution.
+The base address for remoteproc_adsp dts node is 0x3000000.
 
->> +        };
->> +    };
->> +...
->> +
->> diff --git a/include/dt-bindings/reset/nuvoton,ma35d1-reset.h b/include/dt-bindings/reset/nuvoton,ma35d1-reset.h
->> new file mode 100644
->> index 000000000000..f3088bc0afec
->> --- /dev/null
->> +++ b/include/dt-bindings/reset/nuvoton,ma35d1-reset.h
->> @@ -0,0 +1,108 @@
->> +/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-2-Clause) */
-> Weird license, why 2.0+?
->
-> You already got here comment about license in previous version of this
-> patch.
->
+Please refer below link audioreach dts patch:
+https://patchwork.kernel.org/project/linux-arm-msm/patch/1675700201-12890-4-git-send-email-quic_srivasam@quicinc.com/
 
-In fact, I always be confused with the license.
-It should be right if I just copy one from the same directory 
-/include/dt-bindings/reset/.
-But, when I find there are several versions there, I was confused and 
-just select one of them.
+remoteproc_adsp: remoteproc@3000000 {
+             compatible = "qcom,sc7280-adsp-pil";
+             reg = <0 0x03000000 0 0x5000>, <0 0x0355b000 0 0x10>;
+             reg-names = "qdsp6ss_base", "lpass_efuse";
 
-/* SPDX-License-Identifier: GPL-2.0-only */
-/* SPDX-License-Identifier: GPL-2.0+ */
-/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)*/
-/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
-/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+and in sc7280.dtsi lpasscc node base address also same.
 
-So, should I fix the license as
+lpasscc: lpasscc@3000000 {
+             compatible = "qcom,sc7280-lpasscc";
+             reg = <0 0x03000000 0 0x40>,
+                       <0 0x03c04000 0 0x4>,
 
-/* SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause) */
+In single dtsi file should not have same physical address node.
+Required to sort the nodes based on physical address.
 
-just remove the '+' ?
-
->> +/*
->> + * Copyright (C) 2023 Nuvoton Technologies.
->> + * Author: Chi-Fen Li <cfli0@nuvoton.com>
->> + *
->> + * Device Tree binding constants for MA35D1 reset controller.
->> + */
->> +
->> +#ifndef __DT_BINDINGS_RESET_MA35D1_H
->> +#define __DT_BINDINGS_RESET_MA35D1_H
->> +
->> +#define MA35D1_RESET_CHIP	0
->> +#define MA35D1_RESET_CA35CR0	1
->> +#define MA35D1_RESET_CA35CR1	2
->> +#define MA35D1_RESET_CM4	3
->> +#define MA35D1_RESET_PDMA0	4
->> +#define MA35D1_RESET_PDMA1	5
->> +#define MA35D1_RESET_PDMA2	6
->> +#define MA35D1_RESET_PDMA3	7
->> +#define MA35D1_RESET_DISP	9
->> +#define MA35D1_RESET_VCAP0	10
->> +#define MA35D1_RESET_VCAP1	11
->> +#define MA35D1_RESET_GFX	12
->> +#define MA35D1_RESET_VDEC	13
->> +#define MA35D1_RESET_WHC0	14
->> +#define MA35D1_RESET_WHC1	15
->> +#define MA35D1_RESET_GMAC0	16
->> +#define MA35D1_RESET_GMAC1	17
->> +#define MA35D1_RESET_HWSEM	18
->> +#define MA35D1_RESET_EBI	19
->> +#define MA35D1_RESET_HSUSBH0	20
->> +#define MA35D1_RESET_HSUSBH1	21
->> +#define MA35D1_RESET_HSUSBD	22
->> +#define MA35D1_RESET_USBHL	23
->> +#define MA35D1_RESET_SDH0	24
->> +#define MA35D1_RESET_SDH1	25
->> +#define MA35D1_RESET_NAND	26
->> +#define MA35D1_RESET_GPIO	27
->> +#define MA35D1_RESET_MCTLP	28
->> +#define MA35D1_RESET_MCTLC	29
->> +#define MA35D1_RESET_DDRPUB	30
->> +#define MA35D1_RESET_TMR0	34
->> +#define MA35D1_RESET_TMR1	35
->> +#define MA35D1_RESET_TMR2	36
->> +#define MA35D1_RESET_TMR3	37
->> +#define MA35D1_RESET_I2C0	40
->> +#define MA35D1_RESET_I2C1	41
->> +#define MA35D1_RESET_I2C2	42
->> +#define MA35D1_RESET_I2C3	43
->> +#define MA35D1_RESET_QSPI0	44
->> +#define MA35D1_RESET_SPI0	45
->> +#define MA35D1_RESET_SPI1	46
->> +#define MA35D1_RESET_SPI2	47
->> +#define MA35D1_RESET_UART0	48
->> +#define MA35D1_RESET_UART1	49
->> +#define MA35D1_RESET_UART2	50
->> +#define MA35D1_RESET_UAER3	51
->> +#define MA35D1_RESET_UART4	52
->> +#define MA35D1_RESET_UART5	53
->> +#define MA35D1_RESET_UART6	54
->> +#define MA35D1_RESET_UART7	55
->> +#define MA35D1_RESET_CANFD0	56
->> +#define MA35D1_RESET_CANFD1	57
->> +#define MA35D1_RESET_EADC0	60
-> Why do you have gaps here? These should be IDs, not register offsets.
->
-> Best regards,
-> Krzysztof
->
-
-The reset controller registers are composed of four 32-bits register.
-And the ID will be translated into the corresponding bit of these register.
-Each ID is mapped to a unique bit position.
-
-
-Best regards,
-Jacky Huang
-
+As the qdsp6ss clocks are being enabled in remoteproc driver,
+removing the qdsp6ss reg region from lpasscc in sc7280.dtsi.
