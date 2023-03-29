@@ -2,95 +2,80 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6FEC74A5B
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 17:57:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E58C6FD18
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 18:46:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229605AbjC2R5j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Mar 2023 13:57:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51284 "EHLO
+        id S229846AbjC2Sqk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Mar 2023 14:46:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbjC2R5i (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Mar 2023 13:57:38 -0400
+        with ESMTP id S229489AbjC2Sqk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Mar 2023 14:46:40 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C7C5A6;
-        Wed, 29 Mar 2023 10:57:37 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9074830ED;
+        Wed, 29 Mar 2023 11:46:39 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8584761D60;
-        Wed, 29 Mar 2023 17:57:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2B73C433EF;
-        Wed, 29 Mar 2023 17:57:36 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2D67A61D7A;
+        Wed, 29 Mar 2023 18:46:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85928C433EF;
+        Wed, 29 Mar 2023 18:46:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680112656;
-        bh=BMoNbmsfNfOkhi4yfXSxjV/u4Ku/ne70lJ45WdOhIak=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=tPxX9AwvmGxPoycDrTNASDSW2TYQKIfoY3al4wIpwboHI/R/TPM2nfBUDbtTLl6JT
-         i3WucSNoU9cAJ59zceMPQMlOkilhk5QsY3nB1XIgA6Ba7/Dp/CU7N4qDxZ8xuWBQDy
-         PQHhNkXUmKj+tavQ0hvXdWZwPJVnxmWNVwrYTix2ywq/MNJHl/VYQSNGx9+uF1K02L
-         JNm2Uy+9bGxJDcARduByqbWQbt2xBM1QU6yUNtRoRa0A0kM2nrKTt7i5OCg65pD/JL
-         vZqH2I5M42SztBj6lsOqfdkVOqlgXUgsQN+CwDlsQ4GdnxSdGm1HfHUO52xqPTrUgI
-         cNnnmbCoUxp6w==
-Message-ID: <1125013051e5f6578fde8aa006c9bcbd.sboyd@kernel.org>
+        s=k20201202; t=1680115598;
+        bh=l/ZQEIg0r3dnpJOqbbYfQM5WM0p8Fh/Vcz3IqMRkfnE=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=IivxkDO5tDlyb5I+0Frr1Ndni142zhBGjvQtkpL2SMsZZqAX20gkL1BrV2/1TFN+o
+         HAzSfLxfXoQuHr4wcmsgEBr/IvJxTSDPgU8aGOo22n4+Vnotkddw1POWZb5szug+Pk
+         YFWru+jEJtWYkjQefllaw9mTdf+FWsUPOR47TQI6V+EHlkkjLXGPaZz+KN2+UFpPxZ
+         KBtFXl9FkEyH2B+O2anstXVYgpLgABSYC9/DIH+b8o4WcJiaFAYeAo7deRvYIudPPK
+         lxDDvzw8Vd0Yv1hGkyjjAHqACrnf40uwESAgt3tSm/IB2OkTqck9fSvp1biNnRCHLi
+         TEBv0eYMXMyMA==
+Message-ID: <2e74c4c93f4bcc6a7af0c3ef5a8edd23.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <41d84c24-a363-7f73-1590-c23cc2ecbdc5@quicinc.com>
-References: <20230327163249.1081824-1-quic_mohs@quicinc.com> <20230327163249.1081824-5-quic_mohs@quicinc.com> <f2fa0b0813b26c0eb1893ef4c4c4c672.sboyd@kernel.org> <41d84c24-a363-7f73-1590-c23cc2ecbdc5@quicinc.com>
-Subject: Re: [PATCH v1 4/4] clk: qcom: lpasscc-sc7280: Remove qdsp6ss clock registration
+In-Reply-To: <d1874eb8848d5f97f87337011188640a1463a666.1676649335.git.christophe.jaillet@wanadoo.fr>
+References: <d1874eb8848d5f97f87337011188640a1463a666.1676649335.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] clk: Reorder fields in 'struct clk_fractional_divider'
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, broonie@kernel.org,
-        konrad.dybcio@somainline.org, krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        quic_plai@quicinc.com, quic_rohkumar@quicinc.com,
-        quic_visr@quicinc.com, robh+dt@kernel.org, swboyd@chromium.org
-Date:   Wed, 29 Mar 2023 10:57:34 -0700
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-clk@vger.kernel.org
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Wed, 29 Mar 2023 11:46:36 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Mohammad Rafi Shaik (2023-03-29 02:24:43)
->=20
-> The main issue with sc7280.dtsi file.
->=20
-> Required to upstream remoteproc_adsp node for audioreach adsp based=20
-> solution.
-> The base address for remoteproc_adsp dts node is 0x3000000.
->=20
-> Please refer below link audioreach dts patch:
-> https://patchwork.kernel.org/project/linux-arm-msm/patch/1675700201-12890=
--4-git-send-email-quic_srivasam@quicinc.com/
->=20
-> remoteproc_adsp: remoteproc@3000000 {
->  =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 compatible =3D =
-"qcom,sc7280-adsp-pil";
->  =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 reg =3D <0 0x03=
-000000 0 0x5000>, <0 0x0355b000 0 0x10>;
->  =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 reg-names =3D "=
-qdsp6ss_base", "lpass_efuse";
->=20
-> and in sc7280.dtsi lpasscc node base address also same.
->=20
-> lpasscc: lpasscc@3000000 {
->  =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 compatible =3D =
-"qcom,sc7280-lpasscc";
->  =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 reg =3D <0 0x03=
-000000 0 0x40>,
->  =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 <0 0x03c04000 0 0x4>,
->=20
-> In single dtsi file should not have same physical address node.
-> Required to sort the nodes based on physical address.
+Quoting Christophe JAILLET (2023-02-17 07:55:55)
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index cf1adfeaf257..8cec844f5dde 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -1134,13 +1134,13 @@ struct clk_hw *clk_hw_register_fixed_factor_paren=
+t_hw(struct device *dev,
+>  struct clk_fractional_divider {
+>         struct clk_hw   hw;
+>         void __iomem    *reg;
+> +       u8              flags;
+>         u8              mshift;
+>         u8              mwidth;
+>         u32             mmask;
 
-Yes the same address shouldn't be used twice, but it still compiles,
-right? The node name is different, remoteproc vs. clock-controller, so
-it should work for the interim while the qcom,sc7280-lpasscc-2 binding
-is written that only has one reg property.
+This member ...
 
-I'm suggesting you don't change the existing binding. Instead, deprecate
-the compatible and add a new compatible for the binding that omits the
-second reg property. Then the driver patch can work with old and new dts
-files.
+>         u8              nshift;
+>         u8              nwidth;
+>         u32             nmask;
+
+and this member can be calculated. Doing that would save more bytes when
+combined with this patch. Can you make this into a patch series?
+
+> -       u8              flags;
+>         void            (*approximation)(struct clk_hw *hw,
+>                                 unsigned long rate, unsigned long *parent=
+_rate,
+>                                 unsigned long *m, unsigned long *n);
