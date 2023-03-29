@@ -2,79 +2,95 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF62C6FD18
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 17:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6FEC74A5B
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 17:57:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229596AbjC2RwH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Mar 2023 13:52:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46306 "EHLO
+        id S229605AbjC2R5j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Mar 2023 13:57:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbjC2RwG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Mar 2023 13:52:06 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 144F4DB;
-        Wed, 29 Mar 2023 10:52:06 -0700 (PDT)
+        with ESMTP id S229451AbjC2R5i (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Mar 2023 13:57:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C7C5A6;
+        Wed, 29 Mar 2023 10:57:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id AF665B823F8;
-        Wed, 29 Mar 2023 17:52:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57552C433EF;
-        Wed, 29 Mar 2023 17:52:03 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8584761D60;
+        Wed, 29 Mar 2023 17:57:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2B73C433EF;
+        Wed, 29 Mar 2023 17:57:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680112323;
-        bh=w8jUtzScreWIDo7Aw/aAc5jBL+unzSwEx2kU/1yGx60=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=XJeFVsqL56erab6j/2q5XeQRgm0r4cgkDDfbP/DntYv01dBpmrSTKXeflchMEmfdK
-         B+yanwrkDp0DIbDzuTZicO6LQuH3P4k4iJI6rcjs/qOWVPgDkOl4YxWAgKFGEyou3y
-         ZEMHuKqBcTIJKEq0k1juQqqWECXl7m0DV05zh4AwJ98oVG9lz618GdmGsDvoguRN3E
-         IYFKMd1aKt9cbHYrTA3ZF0ZBJFVOHZfOwSx6j2I2W6kOL+dPQqMMpVoOiRXtTuUvCF
-         KrwtRSWsLBbOIRIXmOulQyyaUkCQTexTEn4hW3Y5/zETHAuJsWKQcwVxbmiOAVVsyD
-         /x6aU27LAIQCQ==
-Message-ID: <e45cd7bb6dce2b8b2f08d3b3bd96bb06.sboyd@kernel.org>
+        s=k20201202; t=1680112656;
+        bh=BMoNbmsfNfOkhi4yfXSxjV/u4Ku/ne70lJ45WdOhIak=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=tPxX9AwvmGxPoycDrTNASDSW2TYQKIfoY3al4wIpwboHI/R/TPM2nfBUDbtTLl6JT
+         i3WucSNoU9cAJ59zceMPQMlOkilhk5QsY3nB1XIgA6Ba7/Dp/CU7N4qDxZ8xuWBQDy
+         PQHhNkXUmKj+tavQ0hvXdWZwPJVnxmWNVwrYTix2ywq/MNJHl/VYQSNGx9+uF1K02L
+         JNm2Uy+9bGxJDcARduByqbWQbt2xBM1QU6yUNtRoRa0A0kM2nrKTt7i5OCg65pD/JL
+         vZqH2I5M42SztBj6lsOqfdkVOqlgXUgsQN+CwDlsQ4GdnxSdGm1HfHUO52xqPTrUgI
+         cNnnmbCoUxp6w==
+Message-ID: <1125013051e5f6578fde8aa006c9bcbd.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <458d454e-64ba-849a-38cb-88bf016f5a2e@gmail.com>
-References: <20230328021912.177301-1-ychuang570808@gmail.com> <b7977069-4f82-76a1-10c1-b6400862c2c4@gmail.com> <c37e1f3a40c404acd81c2c9d5b28b340.sboyd@kernel.org> <129cf4b6-b3b5-2a12-5911-37e70a624812@gmail.com> <e5221cd020bc60513df6a1c1859e1acc.sboyd@kernel.org> <ad908782-8291-4240-d88e-61dff5a05ef7@gmail.com> <1d379f28f54fd025f687bfcb71e4bae5.sboyd@kernel.org> <dd7940fd-bf63-552c-6e2e-05eff5fdb636@gmail.com> <b816411c301e2b3afe9c3df36728f946.sboyd@kernel.org> <458d454e-64ba-849a-38cb-88bf016f5a2e@gmail.com>
-Subject: Re: [PATCH v6 08/12] arm64: dts: nuvoton: Add initial ma35d1 device tree
+In-Reply-To: <41d84c24-a363-7f73-1590-c23cc2ecbdc5@quicinc.com>
+References: <20230327163249.1081824-1-quic_mohs@quicinc.com> <20230327163249.1081824-5-quic_mohs@quicinc.com> <f2fa0b0813b26c0eb1893ef4c4c4c672.sboyd@kernel.org> <41d84c24-a363-7f73-1590-c23cc2ecbdc5@quicinc.com>
+Subject: Re: [PATCH v1 4/4] clk: qcom: lpasscc-sc7280: Remove qdsp6ss clock registration
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
-        Jacky Huang <ychuang3@nuvoton.com>
-To:     Jacky Huang <ychuang570808@gmail.com>, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        lee@kernel.org, mturquette@baylibre.com, p.zabel@pengutronix.de,
-        robh+dt@kernel.org
-Date:   Wed, 29 Mar 2023 10:52:01 -0700
+To:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, broonie@kernel.org,
+        konrad.dybcio@somainline.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        quic_plai@quicinc.com, quic_rohkumar@quicinc.com,
+        quic_visr@quicinc.com, robh+dt@kernel.org, swboyd@chromium.org
+Date:   Wed, 29 Mar 2023 10:57:34 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jacky Huang (2023-03-28 23:02:31)
+Quoting Mohammad Rafi Shaik (2023-03-29 02:24:43)
 >=20
-> On 2023/3/29 =E4=B8=8A=E5=8D=88 11:54, Stephen Boyd wrote:
-> > Quoting Jacky Huang (2023-03-28 20:43:23)
-> >
-> >> We just employ regmap mechansim for the access to REG_SYS_RLKTZNS regi=
-ster.
-> >> Is this implementation OK for you?=C2=A0 Thank you.
-> >>
-> > No. Why can't that be a hwspinlock? Or why can't it be unlocked all the
-> > time and rely on software spinlocks in the kernel to prevent concurrent
-> > access to the registers accessed by a driver, like a lock for the clk
-> > registers and a lock for the reset registers, etc. Or if no two clks or
-> > resets exist within one 32-bit word then no lock is necessary.
+> The main issue with sc7280.dtsi file.
 >=20
-> You gave a good suggestion here. Yes, of course we can let it be=20
-> unlocked all the time.
-> We can unlock the "register lock" before entering Linux.
-> As a result, the unlonk and lock register related code is not required.
-> Thus, we can remove syscon from the clock controller node.
+> Required to upstream remoteproc_adsp node for audioreach adsp based=20
+> solution.
+> The base address for remoteproc_adsp dts node is 0x3000000.
 >=20
-> If you agree with this, we will modify it in the next version.
+> Please refer below link audioreach dts patch:
+> https://patchwork.kernel.org/project/linux-arm-msm/patch/1675700201-12890=
+-4-git-send-email-quic_srivasam@quicinc.com/
 >=20
+> remoteproc_adsp: remoteproc@3000000 {
+>  =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 compatible =3D =
+"qcom,sc7280-adsp-pil";
+>  =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 reg =3D <0 0x03=
+000000 0 0x5000>, <0 0x0355b000 0 0x10>;
+>  =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 reg-names =3D "=
+qdsp6ss_base", "lpass_efuse";
+>=20
+> and in sc7280.dtsi lpasscc node base address also same.
+>=20
+> lpasscc: lpasscc@3000000 {
+>  =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 compatible =3D =
+"qcom,sc7280-lpasscc";
+>  =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 reg =3D <0 0x03=
+000000 0 0x40>,
+>  =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 <0 0x03c04000 0 0x4>,
+>=20
+> In single dtsi file should not have same physical address node.
+> Required to sort the nodes based on physical address.
 
-Sure, that works.
+Yes the same address shouldn't be used twice, but it still compiles,
+right? The node name is different, remoteproc vs. clock-controller, so
+it should work for the interim while the qcom,sc7280-lpasscc-2 binding
+is written that only has one reg property.
+
+I'm suggesting you don't change the existing binding. Instead, deprecate
+the compatible and add a new compatible for the binding that omits the
+second reg property. Then the driver patch can work with old and new dts
+files.
