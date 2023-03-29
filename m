@@ -2,54 +2,54 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F81FC77B61
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 02:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 196ADC6FD18
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Mar 2023 02:40:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229954AbjC2CkB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Mar 2023 22:40:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54578 "EHLO
+        id S229991AbjC2CkM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Mar 2023 22:40:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229941AbjC2CkA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 22:40:00 -0400
+        with ESMTP id S229976AbjC2CkJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Mar 2023 22:40:09 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C74F12D75;
-        Tue, 28 Mar 2023 19:39:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9424619C;
+        Tue, 28 Mar 2023 19:39:54 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 63D05B81F88;
-        Wed, 29 Mar 2023 02:39:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24AC9C4339B;
-        Wed, 29 Mar 2023 02:39:42 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2A90BB81F90;
+        Wed, 29 Mar 2023 02:39:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7452C433EF;
+        Wed, 29 Mar 2023 02:39:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680057582;
-        bh=K7paEBB+bHnLz5ptP7eD4tlgak6ZNDD+KEHV0qFL7+E=;
+        s=k20201202; t=1680057591;
+        bh=AOiDL9Y2ml83BLEn20P3SSrioHrKVETfCuYTYAAYWQE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Q45s9E9mVfaNaGSI3iu/gIjo/aWyVF2j20keL416lpG+kDQlSS8dgRFkhGY7AIETW
-         KKSwfaRGGA+CvtPgGHnCJthsQii9MDjl1XdqI/I9wVcSc1IsN/0aZP+TshOJUcoAYH
-         Pjegzd9hM6jY6rkDEHEgptvh4xXNP5GshqfoXRR7sc2KqE9i5c7Qevb54Ro9kh0zjR
-         g4OLGbN3NJni8t7Wr/6W2w32QOyOpobRxoGE2+xHh3Drk9YmML11teppFUU1ayAWi9
-         QUq4OsRR+1cmCbbfG/Fn/xo6sXdN2NzzLQESoGfP2/Uj/EdDDrrC5sLpcflggnL3Al
-         19J3+VRi+a1UA==
-Message-ID: <54917a133b103f0e71acda6370922c9a.sboyd@kernel.org>
+        b=rUsDdFgApx/sbdj3+hQJhmThGm3bbG3SZ1aYl0U3QWEnlr8cj49jjgPvY02mSafTx
+         NrFNdqLPQpUADeG8Zfl776KqteAahWczD7Y0e8y/4yKQqcOGa7uoA3lcwOosg48LjU
+         rq7KYe9ryegYsoLKX6zmou74dyzXjAy+1y7hobPcArYBUV9KpXlS1zzM4QGFt+FxZA
+         sGm8r4Rqz6WOSUCtiH5Mc4QQ0LXQ2Vq+CvKEXYW8GjLIeHiDcmIe1+GG3NhS5Ru08H
+         YO2d/HuS9KPCfX2dmyHASlWCZ488XkHNIJzcZaTCAbXCR41R1i4DPnUGxG/TfyYmGJ
+         3HtE2pfDrEHeg==
+Message-ID: <7635e7146fa8d07834d84cece41b9408.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230312161512.2715500-21-u.kleine-koenig@pengutronix.de>
-References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de> <20230312161512.2715500-21-u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 20/30] clk: mmp: Convert to platform remove callback returning void
+In-Reply-To: <20230312161512.2715500-22-u.kleine-koenig@pengutronix.de>
+References: <20230312161512.2715500-1-u.kleine-koenig@pengutronix.de> <20230312161512.2715500-22-u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 21/30] clk: mvebu: Convert to platform remove callback returning void
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 To:     Michael Turquette <mturquette@baylibre.com>,
         Uwe =?utf-8?q?Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
-Date:   Tue, 28 Mar 2023 19:39:40 -0700
+Date:   Tue, 28 Mar 2023 19:39:49 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Uwe Kleine-K=C3=B6nig (2023-03-12 09:15:02)
+Quoting Uwe Kleine-K=C3=B6nig (2023-03-12 09:15:03)
 > The .remove() callback for a platform driver returns an int which makes
 > many driver authors wrongly assume it's possible to do error handling by
 > returning an error code. However the value returned is (mostly) ignored
