@@ -2,128 +2,129 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A8E8C74A5B
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Mar 2023 06:07:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D08A8C77B61
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Mar 2023 07:10:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230122AbjC3GHY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Mar 2023 02:07:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35762 "EHLO
+        id S230427AbjC3HKl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Mar 2023 03:10:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230091AbjC3GHX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Mar 2023 02:07:23 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 764CB40CF
-        for <linux-clk@vger.kernel.org>; Wed, 29 Mar 2023 23:06:48 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1phlQE-0004b8-RX; Thu, 30 Mar 2023 08:06:06 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1phlQD-007hMh-G9; Thu, 30 Mar 2023 08:06:05 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1phlQC-0096gh-1A; Thu, 30 Mar 2023 08:06:04 +0200
-Date:   Thu, 30 Mar 2023 08:06:01 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-doc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        kernel@pengutronix.de, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4] clk: expand clk_ignore_unused mechanism to keep only
- a few clks on
-Message-ID: <20230330060601.6mo7b4ecd2sk5mdr@pengutronix.de>
-References: <20221026151812.1042052-1-u.kleine-koenig@pengutronix.de>
- <4d8d412a33a7d63f2ffe6a13194375ed.sboyd@kernel.org>
- <20230329204632.lsiiqf42hrwmn6xm@pengutronix.de>
- <2f4967f2a079e23b2b8a6013012c66e0.sboyd@kernel.org>
+        with ESMTP id S229942AbjC3HKk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Mar 2023 03:10:40 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21BCD6195;
+        Thu, 30 Mar 2023 00:10:38 -0700 (PDT)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32U2pkdx006462;
+        Thu, 30 Mar 2023 07:10:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
+ cc : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=qcppdkim1; bh=5fX5B9Q2BVkwuM7B9UYaH7QjBXrTk5UeN4scDRz2vRw=;
+ b=G2nJ5oTWYcWQZLg7f5c084VFO0cQV+HQ302xW9B8K/gPYzSI4hjNER4BQCT2EldPFJvm
+ XotNLtHUqcKx/wMQtIZ4ztgEXWm5T6Bu37wycw4BlB4Y/qE69hu2JBw4L1L4u5qEGZJY
+ EmVb36uM7NMlTI5F02GZNIqp26bYLAixcAalLDm04EnOrKCJJW07CQDGOqbfytvB+Mm9
+ pTtcO9d14plNbOzsAzgXBCsH9a2JFguor3zT51Y5WPOzxt1zqYSjb/9zFJJfXMFKx3LN
+ fnXP7RDxrMYoXw/BJrU1m/zFb2MpY36V8Kv0E+GJvpneQfN1Kz7bsiW5YDP0jSuOphri lQ== 
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pmpbm2hs0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 Mar 2023 07:10:30 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32U7ASBD007377
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 Mar 2023 07:10:28 GMT
+Received: from varda-linux.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Thu, 30 Mar 2023 00:10:22 -0700
+Date:   Thu, 30 Mar 2023 12:40:17 +0530
+From:   Varadarajan Narayanan <quic_varada@quicinc.com>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <gregkh@linuxfoundation.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <quic_wcheng@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v4 2/8] dt-bindings: phy: qcom,qmp-usb: Add IPQ9574 USB3
+ PHY
+Message-ID: <20230330071016.GB13508@varda-linux.qualcomm.com>
+References: <cover.1679909245.git.quic_varada@quicinc.com>
+ <4a21defe3320eb11d0e43bc7f02b3168ecefd458.1679909245.git.quic_varada@quicinc.com>
+ <3d49b4b0-587c-f7e5-4122-65b3e9f11583@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="hhy7jls2kpl3mst3"
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <2f4967f2a079e23b2b8a6013012c66e0.sboyd@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+In-Reply-To: <3d49b4b0-587c-f7e5-4122-65b3e9f11583@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 87ChGyKcncQbXYejQSX4iRceP-vTJx2Y
+X-Proofpoint-ORIG-GUID: 87ChGyKcncQbXYejQSX4iRceP-vTJx2Y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-30_02,2023-03-30_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ clxscore=1015 suspectscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0
+ mlxlogscore=999 adultscore=0 phishscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2303300056
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, Mar 27, 2023 at 01:02:52PM +0300, Dmitry Baryshkov wrote:
+> On 27/03/2023 12:30, Varadarajan Narayanan wrote:
+> >Add dt-bindings for USB3 PHY found on Qualcomm IPQ9574
+> >
+> >Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> >---
+> >  Changes in v4:
+> >	- Remove constraints not applicable to IPQ9574
+> >  Changes in v3:
+> >	- Update other mandatory fields to accomodate IPQ9574
+> >  Changes in v2:
+> >	- Updated sections missed in previous patch
+> >---
+> >  .../bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml    | 25 ++++++++++++++++++++--
+> >  1 file changed, 23 insertions(+), 2 deletions(-)
+> >
+> >diff --git a/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
+> >index e81a382..aa5b58c 100644
+> >--- a/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
+> >+++ b/Documentation/devicetree/bindings/phy/qcom,msm8996-qmp-usb3-phy.yaml
+> >@@ -21,6 +21,7 @@ properties:
+> >      enum:
+> >        - qcom,ipq6018-qmp-usb3-phy
+> >        - qcom,ipq8074-qmp-usb3-phy
+> >+      - qcom,ipq9574-qmp-usb3-phy
+> >        - qcom,msm8996-qmp-usb3-phy
+> >        - qcom,msm8998-qmp-usb3-phy
+> >        - qcom,qcm2290-qmp-usb3-phy
+> >@@ -122,8 +123,6 @@ required:
+> >    - clock-names
+> >    - resets
+> >    - reset-names
+> >-  - vdda-phy-supply
+> >-  - vdda-pll-supply
+>
+> Same questions as for the qusb2 PHY. How is the PHY powered?
 
---hhy7jls2kpl3mst3
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It is powered by always on regulators. Will create fixed
+regulators and assign them to these.
 
-On Wed, Mar 29, 2023 at 02:27:08PM -0700, Stephen Boyd wrote:
-> Quoting Uwe Kleine-K=F6nig (2023-03-29 13:46:32)
-> > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > > index c3c3f8c07258..356119a7e5fe 100644
-> > > > --- a/drivers/clk/clk.c
-> > > > +++ b/drivers/clk/clk.c
-> > > > [...]
-> > > > @@ -1352,12 +1354,17 @@ static void __init clk_disable_unused_subtr=
-ee(struct clk_core *core)
-> > > >          * back to .disable
-> > > >          */
-> > > >         if (clk_core_is_enabled(core)) {
-> > > > -               trace_clk_disable(core);
-> > > > -               if (core->ops->disable_unused)
-> > > > -                       core->ops->disable_unused(core->hw);
-> > > > -               else if (core->ops->disable)
-> > > > -                       core->ops->disable(core->hw);
-> > > > -               trace_clk_disable_complete(core);
-> > > > +               if (clk_unused_keep_on) {
-> > > > +                       pr_warn("Keep unused clk \"%s\" on\n", core=
-->name);
-> > > > +                       clk_unused_keep_on -=3D 1;
-> > > > +               } else {
-> > > > +                       trace_clk_disable(core);
-> > >=20
-> > > We have trace_clk_disable() here. Can you have this tracepoint print =
-to
-> > > the kernel log and watch over serial console? That would be faster th=
-an
-> > > bisecting.
-> >=20
-> > Well no, that doesn't work for all the problems where
-> > clk_ignore_unused=3D7 could be useful. Consider that e.g. you know that
-> > eth0 is broken, but with clk_ignore_unused is works. So one of the (say)
-> > 25 nominally unused clks are required for eth0. But it's not possible to
-> > test the network after each of the 25 clk_disable()s. Unless I'm missing
-> > something and you can hook a userspace action on a trace line?!
->=20
-> In that case it sounds like you want to compile the kernel with the
-> support for enabling clks from debugfs. Can you use that?
+Thanks
+Varada
 
-In some of the cases that might work. Unless for example the problem
-makes the kernel fail to boot or the device is broken when the clk was
-disabled and reenable doesn't help?!
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---hhy7jls2kpl3mst3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmQlJsgACgkQj4D7WH0S
-/k60JQf+IxdY8eZUr5+sls0cy3Y9g0VVX/jGhbXhDTUMrbZz2Ktf0pfqHq5qnpHJ
-zNf3Nwny9c1VfMjormWp9toqkcPazH9F37SiMzekVGZkEUoEcvNaEDuAatIfqFFT
-vlxmq4/3AepjsqxiSfGb209ykKzA3xQ1dOm/s/GbvPaBb7FGNF34qRE2Bs+/7eZf
-uqqpznFPgIy8F8krv/vl/SIqkrT8iMiYok/ezqtIF1MMgAA1ghropOf0GG9Lx5TS
-MF7QT128U2RB9aRzSo/NLDB/epChjdJU4CFGONuWl0ZJh698tUgI1FGujZ7YTuP3
-NItNfoJ7GuMgcmq/4hc3a0/9mUc01g==
-=7eiI
------END PGP SIGNATURE-----
-
---hhy7jls2kpl3mst3--
+> >  additionalProperties: false
+>
+> --
+> With best wishes
+> Dmitry
+>
