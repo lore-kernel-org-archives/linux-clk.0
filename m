@@ -2,108 +2,122 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65698C761AF
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Mar 2023 07:33:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E846C77B61
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Mar 2023 08:41:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230208AbjC3Hdp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Mar 2023 03:33:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35680 "EHLO
+        id S230085AbjC3Ily (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Mar 2023 04:41:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230037AbjC3Hdo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Mar 2023 03:33:44 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 033CC171E
-        for <linux-clk@vger.kernel.org>; Thu, 30 Mar 2023 00:33:37 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id br6so23315043lfb.11
-        for <linux-clk@vger.kernel.org>; Thu, 30 Mar 2023 00:33:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680161615;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/UrwCz/2ptkU0/AeoW0jXW25OTACtteoXP52Ppf7Hdg=;
-        b=XUlVPhJAjGFo0Umn/pfktPavvi4lOjOlIWwN3B7jpn0n44XxUiGHEKHnNfPZplFzYL
-         kr/T3vQqQPTGN4PYg3TGWtTePGZr10weXqyDWDy5S6a5l2fCwMDJk/W/nWBJWmcMLsB4
-         zttLWhNlN1vnY4c4KEa58TDI8cz2aV/K8RZ6l6rr9CA5Mbj1XENaM6hx/qf+LaIXvS3b
-         MGrv17oV9HPy9gPWGj/+tfYxaUqHG5DECmRjkqRqA8HqOfRMCTF0tzBxDMC7+xMFH77U
-         4qV7LCRt8D5Ats/BNM9AxyROavqm6gYOfEllxzbquzaPAlSgnF+9Q4bpJZWC0ovd+Gl/
-         4nvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680161615;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/UrwCz/2ptkU0/AeoW0jXW25OTACtteoXP52Ppf7Hdg=;
-        b=I0k/bPnXoanoe5gSR6y9lV+QKNx6/jfIU5ZNDCQKNtJiFkq4aKob9/eyAj9rsuI5Vz
-         SiBJqEDG/GnLtBnv7UcpDQ2RKnMnRE7m6rNj9wsfJ/0bOmKlp8M8lw+sEDoRp2fAkk5n
-         gSHHVQKeodxrLLtiNZVbQ9pra5ErRULTy8A2c4YaszIjKv6a8HQNMGyRCORMrlPSGMC9
-         nt4uqEYNs07c8FlfoqSRJJwY69/B5Sz5tg4wAo1Jn+hCPYQe6gwXv51I7WRC4AQWYBe+
-         ayJhV1sSYIyULzCSe59ZF03hFdtXOmApuUh+AuefI5bGGkahCEqu5Voxn7VnQrfN1G0r
-         pxXA==
-X-Gm-Message-State: AAQBX9do7lzrLX1OdEcTmI5+5drGPIHHu6WGw0DP/qquHtCvmKvKYOI1
-        rEY1Inry2We9MuMoNNaopDa11A==
-X-Google-Smtp-Source: AKy350Zta9rmDKv1ETYbF6fe9ZiGwYOA5nVKHKSUOoMhK4VO0b6L3QzNCpN96G5xpCkPdDzJ3XITQw==
-X-Received: by 2002:a19:c206:0:b0:4ea:f632:474f with SMTP id l6-20020a19c206000000b004eaf632474fmr5975137lfc.40.1680161615229;
-        Thu, 30 Mar 2023 00:33:35 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id q5-20020ac25145000000b004d3d43c7569sm5767526lfd.3.2023.03.30.00.33.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Mar 2023 00:33:34 -0700 (PDT)
-Message-ID: <4c1fa450-79c9-2c66-4bb8-b880f2cf07a5@linaro.org>
-Date:   Thu, 30 Mar 2023 09:33:33 +0200
+        with ESMTP id S230007AbjC3Ilk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Mar 2023 04:41:40 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49A0C7ABA;
+        Thu, 30 Mar 2023 01:41:17 -0700 (PDT)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32U4GCc2030262;
+        Thu, 30 Mar 2023 08:41:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=yU+P58sM61QEebJMYMjbG2v8sje3z1huhML0WwCSng8=;
+ b=b6dCmWTm5s4UxVNQA3kTLA3E9vzQQIWLiVyXLH3hLIPPdJ25D8kY9U7CtnN4aReELbaB
+ zl4k7Qx3tlx5pUvnXyJqrh8OOk+5cHi3Tu4vaAP1ZBoitqRsP03mHcclWhDqqmQ6TWpT
+ 7MC+4BGQNspfLuyVWyrPgGIk2CYG2efD4TxcquVMAfVIYvWVdnM227kh/hrQOx4P8kPf
+ mNX7KzawdjD9A53xI+SUmb2AyvdUGzGtath6pG4YItSeeO+yG9M9IXcQSLNDYgOWP93a
+ i4369CmgxBf9MG0NCYmDqVhNUcsM58nvKSvTRdyc+K8Djsm2h5jMa8mmlg93NdvMoDUz Zg== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pm5v1vy5v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 Mar 2023 08:41:09 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32U8f8BK008598
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 Mar 2023 08:41:09 GMT
+Received: from varda-linux.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Thu, 30 Mar 2023 01:41:03 -0700
+From:   Varadarajan Narayanan <quic_varada@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <gregkh@linuxfoundation.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <quic_wcheng@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC:     Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH v5 1/8] dt-bindings: phy: qcom,qusb2: Document IPQ9574 compatible
+Date:   Thu, 30 Mar 2023 14:10:43 +0530
+Message-ID: <40df3909e82ddd180b1f6aca0f637dacf5a2837c.1680162377.git.quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1680162377.git.quic_varada@quicinc.com>
+References: <cover.1680162377.git.quic_varada@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v6 07/12] dt-bindings: serial: Document ma35d1 uart
- controller
-Content-Language: en-US
-To:     Jacky Huang <ychuang570808@gmail.com>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
-        Jacky Huang <ychuang3@nuvoton.com>
-References: <20230328021912.177301-1-ychuang570808@gmail.com>
- <20230328021912.177301-8-ychuang570808@gmail.com>
- <be0bf335-39fc-2eac-ed37-112881bac675@linaro.org>
- <7b5e42bc-0788-5208-e97e-10502da1c238@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <7b5e42bc-0788-5208-e97e-10502da1c238@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 4MSvFo7Gz3f7iN8sdWd2JZICBWMWNSmF
+X-Proofpoint-ORIG-GUID: 4MSvFo7Gz3f7iN8sdWd2JZICBWMWNSmF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-30_04,2023-03-30_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ bulkscore=0 mlxscore=0 impostorscore=0 spamscore=0 adultscore=0
+ malwarescore=0 suspectscore=0 priorityscore=1501 mlxlogscore=858
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2303300069
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 29/03/2023 10:44, Jacky Huang wrote:
-> Dear Krzysztof,
-> 
-> 
-> Thanks for your review.
-> 
-> 
-> On 2023/3/29 下午 04:20, Krzysztof Kozlowski wrote:
->> On 28/03/2023 04:19, Jacky Huang wrote:
->>> From: Jacky Huang <ychuang3@nuvoton.com>
->>>
->>> Add documentation to describe nuvoton ma35d1 uart driver bindings.
->>>
->> This depends on clock patches, so it must be taken together.
->>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>
->> Best regards,
->> Krzysztof
->>
-> 
-> OK, I will combine this patch with the clock patch.
+Document the compatible string used for the qusb2 phy in IPQ9574.
 
-I don't know what you mean by "combine", but I don't think this is what
-we want. You must clearly state all dependencies and patch merging
-strategy/way.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 
-Best regards,
-Krzysztof
+---
+ Changes in v5:
+	- Undo v4 changes
+
+ Changes in v4:
+	- Remove constraints not applicable to IPQ9574
+
+ Changes in v3:
+	- Maintain the proper sorted order
+
+ Changes in v2:
+	- Moved ipq6018 to the proper place and placed ipq9574
+	  next to it as suggested by Dmitry
+---
+ Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
+index 7f403e7..20e18d5 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml
+@@ -18,13 +18,14 @@ properties:
+     oneOf:
+       - items:
+           - enum:
++              - qcom,ipq6018-qusb2-phy
+               - qcom,ipq8074-qusb2-phy
++              - qcom,ipq9574-qusb2-phy
+               - qcom,msm8953-qusb2-phy
+               - qcom,msm8996-qusb2-phy
+               - qcom,msm8998-qusb2-phy
+               - qcom,qcm2290-qusb2-phy
+               - qcom,sdm660-qusb2-phy
+-              - qcom,ipq6018-qusb2-phy
+               - qcom,sm4250-qusb2-phy
+               - qcom,sm6115-qusb2-phy
+       - items:
+-- 
+2.7.4
 
