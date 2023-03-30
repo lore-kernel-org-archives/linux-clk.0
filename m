@@ -2,381 +2,293 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03944C77B60
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Mar 2023 12:47:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB60AC6FD1D
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Mar 2023 12:58:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229895AbjC3Mrj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Mar 2023 08:47:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42364 "EHLO
+        id S231659AbjC3M6N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Mar 2023 08:58:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231477AbjC3Mri (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Mar 2023 08:47:38 -0400
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C0AD91;
-        Thu, 30 Mar 2023 05:47:36 -0700 (PDT)
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-17fcc07d6c4so5508090fac.8;
-        Thu, 30 Mar 2023 05:47:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680180455;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=L9da3RztuEaK2R1chEVmMMY8g07HXvBf7GOsgks3EJU=;
-        b=yffchRJdKbFaj9+VYWwsp2nxL8ydMpghLxJEXsYmCpQLMNGWyYGVo5qsZEllRx/Xtn
-         jekAdmrU+QXI2cIbslWOUTAXlq5FlztxN847mowYQw6cpxjRMJaFxFhUKPWyklm0vHcS
-         RhzcxI70kI5w3g6sS0G8ZJGcXzdL3qPMEeKEEAG1FWclbIjats5q1Qu8LrPZJh4LUTyq
-         FEe93OQRr0nsPFlInV3F5qvCF6pCzhfIykGSFcvOjlpaBHerw/NwwZ2/9+y1puXTFEOW
-         VB5prqwLmCyMe7L7t2pluErbTxpnYlp8YFqPeNG8A+58s/DDKV5TcdjLpEioBf6TJwlq
-         HklQ==
-X-Gm-Message-State: AAQBX9egDi3xd8TVQHhG7e2L1qaodqU023GNYyDLgmuBwg/IkCmGZWIN
-        0C7EItQkdhGMt0+JwNhiNA==
-X-Google-Smtp-Source: AKy350YghLak0zz/2mTljRWGf4IHaCIVgJjlCbZOiK6HdF0cXWTyybVCcWMwszMvSZpi09ldbg47XA==
-X-Received: by 2002:a05:6870:14d6:b0:17e:6eaa:9452 with SMTP id l22-20020a05687014d600b0017e6eaa9452mr3189662oab.13.1680180455484;
-        Thu, 30 Mar 2023 05:47:35 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id zd40-20020a05687127a800b0017eccc3fed9sm4915077oab.47.2023.03.30.05.47.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Mar 2023 05:47:35 -0700 (PDT)
-Received: (nullmailer pid 1824010 invoked by uid 1000);
-        Thu, 30 Mar 2023 12:47:33 -0000
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc:     konrad.dybcio@linaro.org, linux-phy@lists.infradead.org,
-        andersson@kernel.org, gregkh@linuxfoundation.org,
-        agross@kernel.org, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        sboyd@kernel.org, vkoul@kernel.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, linux-usb@vger.kernel.org,
-        kishon@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        quic_wcheng@quicinc.com, devicetree@vger.kernel.org
-In-Reply-To: <cb8f2ba0ff39951aeada479ed3895d19c9f72617.1680162377.git.quic_varada@quicinc.com>
+        with ESMTP id S231367AbjC3M6M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Mar 2023 08:58:12 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBC4B10F3;
+        Thu, 30 Mar 2023 05:58:11 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32UArTiI026312;
+        Thu, 30 Mar 2023 12:58:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
+ cc : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=qcppdkim1; bh=l4bosBmg2yENuCSLikCixfjRCSUBzv/KwV5r8m6+V/Y=;
+ b=h+BF3XoFk5z+r/iO8OK19sFqmvsB3GL7w6UUdMinxnpX1oijl/7hmyFqmTK2VddmxE2U
+ phvTEDIbnOG23ZIKc0PJUR4y958Fr+HK8bgdBTms7SeYUCHhjWDS9t7gt1DiDmJzBpB4
+ 6RwVnGMAGf/sOVXiT1EhjlziwbeCMHNib86i8v+QVkZDm/qnPVKEWImyaFqqG0txAyuQ
+ dA9QW7Wbe0Hxq8GjSubr2mHawKZqgHO2Kvfe4hcRjrruEnUdqSRsfKIQht/EIepn6w4r
+ /hQGek98oWLLRHvWGirjq9MP0gvR4iv+2az24kY7oxQ8uhZssOnJn0L3VnGWkgVjxM/i 2Q== 
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pn8wng8vj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 Mar 2023 12:58:01 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32UCw03t011736
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 Mar 2023 12:58:00 GMT
+Received: from varda-linux.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Thu, 30 Mar 2023 05:57:54 -0700
+Date:   Thu, 30 Mar 2023 18:27:50 +0530
+From:   Varadarajan Narayanan <quic_varada@quicinc.com>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <gregkh@linuxfoundation.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <quic_wcheng@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>,
+        Praveenkumar I <quic_ipkumar@quicinc.com>
+Subject: Re: [PATCH v5 6/8] phy: qcom: qmp: Update IPQ9574 USB Phy
+ initialization Sequence
+Message-ID: <20230330125749.GA19941@varda-linux.qualcomm.com>
 References: <cover.1680162377.git.quic_varada@quicinc.com>
- <cb8f2ba0ff39951aeada479ed3895d19c9f72617.1680162377.git.quic_varada@quicinc.com>
-Message-Id: <168017973612.1809972.2258406921826317163.robh@kernel.org>
-Subject: Re: [PATCH v5 3/8] dt-bindings: usb: dwc3: Add IPQ9574 compatible
-Date:   Thu, 30 Mar 2023 07:47:33 -0500
+ <60954818576384e36136cb706aa554788ec4bb22.1680162377.git.quic_varada@quicinc.com>
+ <CAA8EJpoyw6mspNUffU3KKvRPdB2XQE0A6FF7YUUzwpBVQO=Ykw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAA8EJpoyw6mspNUffU3KKvRPdB2XQE0A6FF7YUUzwpBVQO=Ykw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: fDuDz5i29YnhDjD7KytZitIUU5YTcZ0u
+X-Proofpoint-GUID: fDuDz5i29YnhDjD7KytZitIUU5YTcZ0u
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-30_07,2023-03-30_03,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=999 phishscore=0 spamscore=0 impostorscore=0 suspectscore=0
+ bulkscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
+ definitions=main-2303300104
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, Mar 30, 2023 at 12:41:08PM +0300, Dmitry Baryshkov wrote:
+> On Thu, 30 Mar 2023 at 11:42, Varadarajan Narayanan
+> <quic_varada@quicinc.com> wrote:
+> >
+> > Updated USB QMP PHY Init sequence based on HPG for IPQ9574.
+> > Reused clock and reset list from existing targets.
+> >
+> > Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > ---
+> >  Changes in v5:
+> >         - Fix additional review comments
+> >         - Use V3 register offsets
+> >  Changes in v4:
+> >         - Use qmp_usb_offsets for register space access
+> >  Changes in v3:
+> >         - Fix hex captitalization
+> >  Changes in v2:
+> >         - Removed unused phy register offsets
+> >         - Moved the clock entries to the correct place
+> >         - Maintain sorted order
+> > ---
+> >  drivers/phy/qualcomm/phy-qcom-qmp-usb.c | 115 ++++++++++++++++++++++++++++++++
+> >  1 file changed, 115 insertions(+)
+> >
+> > diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-usb.c b/drivers/phy/qualcomm/phy-qcom-qmp-usb.c
+> > index a49711c..77041dd 100644
+> > --- a/drivers/phy/qualcomm/phy-qcom-qmp-usb.c
+> > +++ b/drivers/phy/qualcomm/phy-qcom-qmp-usb.c
+> > @@ -139,6 +139,88 @@ static const unsigned int qmp_v5_usb3phy_regs_layout[QPHY_LAYOUT_SIZE] = {
+> >         [QPHY_PCS_LFPS_RXTERM_IRQ_CLEAR] = QPHY_V5_PCS_USB3_LFPS_RXTERM_IRQ_CLEAR,
+> >  };
+> >
+> > +static const struct qmp_phy_init_tbl ipq9574_usb3_serdes_tbl[] = {
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_SYSCLK_EN_SEL, 0x1a),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_BIAS_EN_CLKBUFLR_EN, 0x08),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_CLK_SELECT, 0x30),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_BG_TRIM, 0x0f),
+> > +       QMP_PHY_INIT_CFG(QSERDES_RX_UCDR_FASTLOCK_FO_GAIN, 0x0b),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_SVS_MODE_CLK_SEL, 0x01),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_HSCLK_SEL, 0x00),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_CMN_CONFIG, 0x06),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_PLL_IVCO, 0x0f),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_SYS_CLK_CTRL, 0x06),
+> > +       /* PLL and Loop filter settings */
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_DEC_START_MODE0, 0x68),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START1_MODE0, 0xab),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START2_MODE0, 0xaa),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START3_MODE0, 0x02),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_CP_CTRL_MODE0, 0x09),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_PLL_RCTRL_MODE0, 0x16),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_PLL_CCTRL_MODE0, 0x28),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_INTEGLOOP_GAIN0_MODE0, 0xa0),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP1_MODE0, 0xaa),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP2_MODE0, 0x29),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP3_MODE0, 0x00),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_CORE_CLK_EN, 0x00),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP_CFG, 0x00),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_VCO_TUNE_MAP, 0x00),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_BG_TIMER, 0x0a),
+> > +       /* SSC settings */
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_SSC_EN_CENTER, 0x01),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_SSC_PER1, 0x7d),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_SSC_PER2, 0x01),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_SSC_ADJ_PER1, 0x00),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_SSC_ADJ_PER2, 0x00),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_SSC_STEP_SIZE1, 0x0a),
+> > +       QMP_PHY_INIT_CFG(QSERDES_COM_SSC_STEP_SIZE2, 0x05),
+> > +};
+> > +
+> > +static const struct qmp_phy_init_tbl ipq9574_usb3_tx_tbl[] = {
+> > +       QMP_PHY_INIT_CFG(QSERDES_TX_HIGHZ_TRANSCEIVEREN_BIAS_DRVR_EN, 0x45),
+> > +       QMP_PHY_INIT_CFG(QSERDES_TX_RCV_DETECT_LVL_2, 0x12),
+> > +       QMP_PHY_INIT_CFG(QSERDES_TX_LANE_MODE, 0x06),
+> > +};
+> > +
+> > +static const struct qmp_phy_init_tbl ipq9574_usb3_rx_tbl[] = {
+> > +       QMP_PHY_INIT_CFG(QSERDES_RX_UCDR_SO_GAIN, 0x06),
+> > +       QMP_PHY_INIT_CFG(QSERDES_RX_RX_EQU_ADAPTOR_CNTRL2, 0x02),
+> > +       QMP_PHY_INIT_CFG(QSERDES_RX_RX_EQU_ADAPTOR_CNTRL3, 0x6c),
+> > +       QMP_PHY_INIT_CFG(QSERDES_RX_RX_EQU_ADAPTOR_CNTRL3, 0x4c),
+> > +       QMP_PHY_INIT_CFG(QSERDES_RX_RX_EQU_ADAPTOR_CNTRL4, 0xb8),
+> > +       QMP_PHY_INIT_CFG(QSERDES_RX_RX_EQ_OFFSET_ADAPTOR_CNTRL1, 0x77),
+> > +       QMP_PHY_INIT_CFG(QSERDES_RX_RX_OFFSET_ADAPTOR_CNTRL2, 0x80),
+> > +       QMP_PHY_INIT_CFG(QSERDES_RX_SIGDET_CNTRL, 0x03),
+> > +       QMP_PHY_INIT_CFG(QSERDES_RX_SIGDET_DEGLITCH_CNTRL, 0x16),
+> > +       QMP_PHY_INIT_CFG(QSERDES_RX_SIGDET_ENABLES, 0x0c),
+> > +};
+> > +
+> > +static const struct qmp_phy_init_tbl ipq9574_usb3_pcs_tbl[] = {
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M6DB_V0, 0x15),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M3P5DB_V0, 0x0e),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_CNTRL2, 0x83),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_CNTRL1, 0x02),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_CNT_VAL_L, 0x09),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_CNT_VAL_H_TOL, 0xa2),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_MAN_CODE, 0x85),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_LOCK_DETECT_CONFIG1, 0xd1),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_LOCK_DETECT_CONFIG2, 0x1f),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_LOCK_DETECT_CONFIG3, 0x47),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_POWER_STATE_CONFIG2, 0x1b),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_RXEQTRAINING_WAIT_TIME, 0x75),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_RXEQTRAINING_RUN_TIME, 0x13),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_LFPS_TX_ECSTART_EQTLOCK, 0x86),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_PWRUP_RESET_DLY_TIME_AUXCLK, 0x04),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_TSYNC_RSYNC_TIME, 0x44),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_RCVR_DTCT_DLY_P1U2_L, 0xe7),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_RCVR_DTCT_DLY_P1U2_H, 0x03),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_RCVR_DTCT_DLY_U3_L, 0x40),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_RCVR_DTCT_DLY_U3_H, 0x00),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_RX_SIGDET_LVL, 0x88),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M6DB_V0, 0x17),
+> > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M3P5DB_V0, 0x0f),
+> > +};
+> > +
+> >  static const struct qmp_phy_init_tbl ipq8074_usb3_serdes_tbl[] = {
+> >         QMP_PHY_INIT_CFG(QSERDES_COM_SYSCLK_EN_SEL, 0x1a),
+> >         QMP_PHY_INIT_CFG(QSERDES_COM_BIAS_EN_CLKBUFLR_EN, 0x08),
+> > @@ -1558,6 +1640,14 @@ static const char * const qmp_phy_vreg_l[] = {
+> >         "vdda-phy", "vdda-pll",
+> >  };
+> >
+> > +static const struct qmp_usb_offsets qmp_usb_offsets_ipq9574 = {
+> > +       .serdes         = 0,
+> > +       .pcs            = 0x800,
+> > +       .pcs_usb        = 0,
+>
+> No, pcs_usb is not 0.
 
-On Thu, 30 Mar 2023 14:10:45 +0530, Varadarajan Narayanan wrote:
-> Document the IPQ9574 dwc3 compatible.
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
->  Changes in v5:
-> 	- Restore removed constraints
-> 
->  Changes in v4:
-> 	- Update other relevant sections
-> 	- Remove constraints not applicable to IPQ9574
-> ---
->  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
+Not sure I understand this comment.
 
-Running 'make dtbs_check' with the schema in this patch gives the
-following warnings. Consider if they are expected or the schema is
-incorrect. These may not be new warnings.
+Since IPQ9574 uses new style DT entries, pcs_usb_offset = 0 and
+that will not be used.
 
-Note that it is not yet a requirement to have 0 warnings for dtbs_check.
-This will change in the future.
+qmp->pcs_usb is used in qmp_usb_enable_autonomous_mode and
+qmp_usb_disable_autonomous_mode. If "qmp->pcs_usb == 0", those
+functions use the value of qmp->pcs (0x7d800) for pcs_usb.
 
-Full log is available here: https://patchwork.ozlabs.org/project/devicetree-bindings/patch/cb8f2ba0ff39951aeada479ed3895d19c9f72617.1680162377.git.quic_varada@quicinc.com
+The registers used in these functions are
+QPHY_PCS_LFPS_RXTERM_IRQ_CLEAR & QPHY_PCS_AUTONOMOUS_MODE_CTRL
+
+The offsets for the above registers as specified in
+qmp_v3_usb3phy_regs_layout is
+
+	#define QPHY_V3_PCS_AUTONOMOUS_MODE_CTRL	0x0d8
+	#define QPHY_V3_PCS_LFPS_RXTERM_IRQ_CLEAR	0x0dc
+
+qphy_{set|clr}bits called from qmp_usb_enable_autonomous_mode and
+qmp_usb_disable_autonomous_mode will use the offset 0x7d8d8 and
+0x78d8c. This offset matches with the register offset document of
+the IPQ9574. So, felt setting pcs_usb to zero should be ok. Can
+you please clarify.
+
+Thanks
+Varada
 
 
-usb2@60f8800: clock-names:0: 'core' was expected
-	arch/arm/boot/dts/qcom-ipq4018-ap120c-ac-bit.dtb
-	arch/arm/boot/dts/qcom-ipq4018-ap120c-ac.dtb
-	arch/arm/boot/dts/qcom-ipq4018-jalapeno.dtb
-	arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1-c1.dtb
-	arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dtb
-	arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c3.dtb
-	arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c1.dtb
-	arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dtb
-
-usb2@60f8800: 'dwc3@6000000' does not match any of the regexes: '^usb@[0-9a-f]+$', 'pinctrl-[0-9]+'
-	arch/arm/boot/dts/qcom-ipq4018-ap120c-ac-bit.dtb
-	arch/arm/boot/dts/qcom-ipq4018-ap120c-ac.dtb
-	arch/arm/boot/dts/qcom-ipq4018-jalapeno.dtb
-	arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1-c1.dtb
-	arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dtb
-	arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c3.dtb
-	arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c1.dtb
-	arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dtb
-
-usb2@60f8800: 'interrupt-names' is a required property
-	arch/arm/boot/dts/qcom-ipq4018-ap120c-ac-bit.dtb
-	arch/arm/boot/dts/qcom-ipq4018-ap120c-ac.dtb
-	arch/arm/boot/dts/qcom-ipq4018-jalapeno.dtb
-
-usb2@60f8800: 'oneOf' conditional failed, one must be fixed:
-	arch/arm/boot/dts/qcom-ipq4018-ap120c-ac-bit.dtb
-	arch/arm/boot/dts/qcom-ipq4018-ap120c-ac.dtb
-	arch/arm/boot/dts/qcom-ipq4018-jalapeno.dtb
-
-usb2@60f8800: 'power-domains' is a required property
-	arch/arm/boot/dts/qcom-ipq4018-ap120c-ac-bit.dtb
-	arch/arm/boot/dts/qcom-ipq4018-ap120c-ac.dtb
-	arch/arm/boot/dts/qcom-ipq4018-jalapeno.dtb
-
-usb3@100f8800: 'dwc3@10000000', 'reset-names' do not match any of the regexes: '^usb@[0-9a-f]+$', 'pinctrl-[0-9]+'
-	arch/arm/boot/dts/qcom-ipq8064-ap148.dtb
-	arch/arm/boot/dts/qcom-ipq8064-rb3011.dtb
-
-usb3@110f8800: 'dwc3@11000000', 'reset-names' do not match any of the regexes: '^usb@[0-9a-f]+$', 'pinctrl-[0-9]+'
-	arch/arm/boot/dts/qcom-ipq8064-ap148.dtb
-	arch/arm/boot/dts/qcom-ipq8064-rb3011.dtb
-
-usb3@110f8800: 'interrupt-names' is a required property
-	arch/arm/boot/dts/qcom-ipq8064-rb3011.dtb
-
-usb3@110f8800: 'oneOf' conditional failed, one must be fixed:
-	arch/arm/boot/dts/qcom-ipq8064-rb3011.dtb
-
-usb3@110f8800: 'power-domains' is a required property
-	arch/arm/boot/dts/qcom-ipq8064-rb3011.dtb
-
-usb3@8af8800: 'dwc3@8a00000' does not match any of the regexes: '^usb@[0-9a-f]+$', 'pinctrl-[0-9]+'
-	arch/arm/boot/dts/qcom-ipq4018-ap120c-ac-bit.dtb
-	arch/arm/boot/dts/qcom-ipq4018-ap120c-ac.dtb
-	arch/arm/boot/dts/qcom-ipq4018-jalapeno.dtb
-	arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1-c1.dtb
-	arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dtb
-	arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c3.dtb
-	arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c1.dtb
-	arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dtb
-
-usb3@8af8800: 'interrupt-names' is a required property
-	arch/arm/boot/dts/qcom-ipq4018-ap120c-ac-bit.dtb
-	arch/arm/boot/dts/qcom-ipq4018-ap120c-ac.dtb
-	arch/arm/boot/dts/qcom-ipq4018-jalapeno.dtb
-
-usb3@8af8800: 'oneOf' conditional failed, one must be fixed:
-	arch/arm/boot/dts/qcom-ipq4018-ap120c-ac-bit.dtb
-	arch/arm/boot/dts/qcom-ipq4018-ap120c-ac.dtb
-	arch/arm/boot/dts/qcom-ipq4018-jalapeno.dtb
-
-usb3@8af8800: 'power-domains' is a required property
-	arch/arm/boot/dts/qcom-ipq4018-ap120c-ac-bit.dtb
-	arch/arm/boot/dts/qcom-ipq4018-ap120c-ac.dtb
-	arch/arm/boot/dts/qcom-ipq4018-jalapeno.dtb
-
-usb@4ef8800: 'interrupt-names' is a required property
-	arch/arm64/boot/dts/qcom/sm6125-sony-xperia-seine-pdx201.dtb
-
-usb@4ef8800: 'oneOf' conditional failed, one must be fixed:
-	arch/arm64/boot/dts/qcom/sm6125-sony-xperia-seine-pdx201.dtb
-
-usb@4ef8800: usb@4e00000: Unevaluated properties are not allowed ('extcon' was unexpected)
-	arch/arm64/boot/dts/qcom/sm6125-sony-xperia-seine-pdx201.dtb
-
-usb@6af8800: 'extcon' does not match any of the regexes: '^usb@[0-9a-f]+$', 'pinctrl-[0-9]+'
-	arch/arm64/boot/dts/qcom/apq8096-db820c.dtb
-	arch/arm64/boot/dts/qcom/msm8996pro-xiaomi-natrium.dtb
-	arch/arm64/boot/dts/qcom/msm8996pro-xiaomi-scorpio.dtb
-	arch/arm64/boot/dts/qcom/msm8996-xiaomi-gemini.dtb
-
-usb@6af8800: usb@6a00000: Unevaluated properties are not allowed ('extcon' was unexpected)
-	arch/arm64/boot/dts/qcom/apq8096-db820c.dtb
-	arch/arm64/boot/dts/qcom/msm8996pro-xiaomi-natrium.dtb
-	arch/arm64/boot/dts/qcom/msm8996pro-xiaomi-scorpio.dtb
-	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-dora.dtb
-	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-kagura.dtb
-	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-keyaki.dtb
-	arch/arm64/boot/dts/qcom/msm8996-xiaomi-gemini.dtb
-
-usb@70f8800: 'interrupt-names' is a required property
-	arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dtb
-
-usb@70f8800: 'oneOf' conditional failed, one must be fixed:
-	arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dtb
-
-usb@70f8800: 'power-domains' is a required property
-	arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dtb
-
-usb@70f8800: usb@7000000: Unevaluated properties are not allowed ('phy_mode' was unexpected)
-	arch/arm64/boot/dts/qcom/msm8953-motorola-potter.dtb
-	arch/arm64/boot/dts/qcom/msm8953-xiaomi-daisy.dtb
-	arch/arm64/boot/dts/qcom/msm8953-xiaomi-mido.dtb
-	arch/arm64/boot/dts/qcom/msm8953-xiaomi-tissot.dtb
-	arch/arm64/boot/dts/qcom/msm8953-xiaomi-vince.dtb
-	arch/arm64/boot/dts/qcom/sdm450-motorola-ali.dtb
-	arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dtb
-	arch/arm64/boot/dts/qcom/sdm632-motorola-ocean.dtb
-
-usb@7678800: 'interrupt-names' is a required property
-	arch/arm64/boot/dts/qcom/qcs404-evb-1000.dtb
-	arch/arm64/boot/dts/qcom/qcs404-evb-4000.dtb
-
-usb@7678800: 'oneOf' conditional failed, one must be fixed:
-	arch/arm64/boot/dts/qcom/qcs404-evb-1000.dtb
-	arch/arm64/boot/dts/qcom/qcs404-evb-4000.dtb
-
-usb@7678800: 'power-domains' is a required property
-	arch/arm64/boot/dts/qcom/qcs404-evb-1000.dtb
-	arch/arm64/boot/dts/qcom/qcs404-evb-4000.dtb
-
-usb@76f8800: 'extcon' does not match any of the regexes: '^usb@[0-9a-f]+$', 'pinctrl-[0-9]+'
-	arch/arm64/boot/dts/qcom/apq8096-db820c.dtb
-
-usb@76f8800: 'interrupt-names' is a required property
-	arch/arm64/boot/dts/qcom/apq8096-db820c.dtb
-
-usb@76f8800: 'oneOf' conditional failed, one must be fixed:
-	arch/arm64/boot/dts/qcom/apq8096-db820c.dtb
-
-usb@76f8800: usb@7600000: Unevaluated properties are not allowed ('extcon' was unexpected)
-	arch/arm64/boot/dts/qcom/apq8096-db820c.dtb
-
-usb@79b8800: 'interrupt-names' is a required property
-	arch/arm64/boot/dts/qcom/qcs404-evb-1000.dtb
-	arch/arm64/boot/dts/qcom/qcs404-evb-4000.dtb
-
-usb@79b8800: 'oneOf' conditional failed, one must be fixed:
-	arch/arm64/boot/dts/qcom/qcs404-evb-1000.dtb
-	arch/arm64/boot/dts/qcom/qcs404-evb-4000.dtb
-
-usb@79b8800: 'power-domains' is a required property
-	arch/arm64/boot/dts/qcom/qcs404-evb-1000.dtb
-	arch/arm64/boot/dts/qcom/qcs404-evb-4000.dtb
-
-usb@8af8800: assigned-clock-rates: 'oneOf' conditional failed, one must be fixed:
-	arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dtb
-	arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb
-	arch/arm64/boot/dts/qcom/ipq8074-hk10-c1.dtb
-	arch/arm64/boot/dts/qcom/ipq8074-hk10-c2.dtb
-
-usb@8af8800: assigned-clocks: [[4, 124], [4, 125], [4, 126]] is too long
-	arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb
-	arch/arm64/boot/dts/qcom/ipq8074-hk10-c1.dtb
-	arch/arm64/boot/dts/qcom/ipq8074-hk10-c2.dtb
-
-usb@8af8800: assigned-clocks: [[9, 186], [9, 158], [9, 159]] is too long
-	arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dtb
-
-usb@8af8800: 'interrupt-names' is a required property
-	arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb
-
-usb@8af8800: 'oneOf' conditional failed, one must be fixed:
-	arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb
-
-usb@8cf8800: assigned-clock-rates: 'oneOf' conditional failed, one must be fixed:
-	arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb
-	arch/arm64/boot/dts/qcom/ipq8074-hk10-c1.dtb
-	arch/arm64/boot/dts/qcom/ipq8074-hk10-c2.dtb
-
-usb@8cf8800: assigned-clocks: [[4, 131], [4, 132], [4, 133]] is too long
-	arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb
-	arch/arm64/boot/dts/qcom/ipq8074-hk10-c1.dtb
-	arch/arm64/boot/dts/qcom/ipq8074-hk10-c2.dtb
-
-usb@8cf8800: 'interrupt-names' is a required property
-	arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb
-
-usb@8cf8800: 'oneOf' conditional failed, one must be fixed:
-	arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb
-
-usb@a6f8800: 'dr_mode' does not match any of the regexes: '^usb@[0-9a-f]+$', 'pinctrl-[0-9]+'
-	arch/arm64/boot/dts/qcom/sm8350-microsoft-surface-duo2.dtb
-
-usb@a6f8800: 'dwc3@a600000' does not match any of the regexes: '^usb@[0-9a-f]+$', 'pinctrl-[0-9]+'
-	arch/arm/boot/dts/qcom-sdx55-mtp.dtb
-	arch/arm/boot/dts/qcom-sdx55-t55.dtb
-	arch/arm/boot/dts/qcom-sdx55-telit-fn980-tlb.dtb
-
-usb@a6f8800: usb@a600000: Unevaluated properties are not allowed ('maximum-spped' was unexpected)
-	arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish.dtb
-
-usb@a8f8800: assigned-clock-rates: 'oneOf' conditional failed, one must be fixed:
-	arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-ganges-kirin.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-discovery.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-pioneer.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-voyager.dtb
-	arch/arm64/boot/dts/qcom/sdm636-sony-xperia-ganges-mermaid.dtb
-	arch/arm64/boot/dts/qcom/sdm660-xiaomi-lavender.dtb
-
-usb@a8f8800: assigned-clocks: [[34, 92], [34, 91], [35, 64]] is too long
-	arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-ganges-kirin.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-discovery.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-pioneer.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-voyager.dtb
-	arch/arm64/boot/dts/qcom/sdm636-sony-xperia-ganges-mermaid.dtb
-	arch/arm64/boot/dts/qcom/sdm660-xiaomi-lavender.dtb
-
-usb@a8f8800: usb@a800000: Unevaluated properties are not allowed ('extcon' was unexpected)
-	arch/arm64/boot/dts/qcom/msm8998-fxtec-pro1.dtb
-	arch/arm64/boot/dts/qcom/msm8998-sony-xperia-yoshino-lilac.dtb
-	arch/arm64/boot/dts/qcom/msm8998-sony-xperia-yoshino-maple.dtb
-	arch/arm64/boot/dts/qcom/msm8998-sony-xperia-yoshino-poplar.dtb
-	arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-ganges-kirin.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-discovery.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-pioneer.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-voyager.dtb
-	arch/arm64/boot/dts/qcom/sdm660-xiaomi-lavender.dtb
-
-usb@c2f8800: clock-names:2: 'iface' was expected
-	arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-ganges-kirin.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-discovery.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-pioneer.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-voyager.dtb
-	arch/arm64/boot/dts/qcom/sdm636-sony-xperia-ganges-mermaid.dtb
-	arch/arm64/boot/dts/qcom/sdm660-xiaomi-lavender.dtb
-
-usb@c2f8800: clock-names: ['cfg_noc', 'core', 'mock_utmi', 'sleep'] is too short
-	arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-ganges-kirin.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-discovery.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-pioneer.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-voyager.dtb
-	arch/arm64/boot/dts/qcom/sdm636-sony-xperia-ganges-mermaid.dtb
-	arch/arm64/boot/dts/qcom/sdm660-xiaomi-lavender.dtb
-
-usb@c2f8800: clocks: [[34, 48], [34, 88], [34, 89], [34, 90]] is too short
-	arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-ganges-kirin.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-discovery.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-pioneer.dtb
-	arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-voyager.dtb
-	arch/arm64/boot/dts/qcom/sdm636-sony-xperia-ganges-mermaid.dtb
-	arch/arm64/boot/dts/qcom/sdm660-xiaomi-lavender.dtb
-
-usb@c2f8800: 'power-domains' is a required property
-	arch/arm64/boot/dts/qcom/sda660-inforce-ifc6560.dtb
-
-usb@f92f8800: 'interrupt-names' is a required property
-	arch/arm64/boot/dts/qcom/apq8094-sony-xperia-kitakami-karin_windy.dtb
-	arch/arm64/boot/dts/qcom/msm8992-lg-bullhead-rev-101.dtb
-	arch/arm64/boot/dts/qcom/msm8992-lg-bullhead-rev-10.dtb
-	arch/arm64/boot/dts/qcom/msm8992-msft-lumia-octagon-talkman.dtb
-	arch/arm64/boot/dts/qcom/msm8992-xiaomi-libra.dtb
-	arch/arm64/boot/dts/qcom/msm8994-huawei-angler-rev-101.dtb
-	arch/arm64/boot/dts/qcom/msm8994-msft-lumia-octagon-cityman.dtb
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-ivy.dtb
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-karin.dtb
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-satsuki.dtb
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-sumire.dtb
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-suzuran.dtb
-
-usb@f92f8800: 'oneOf' conditional failed, one must be fixed:
-	arch/arm64/boot/dts/qcom/apq8094-sony-xperia-kitakami-karin_windy.dtb
-	arch/arm64/boot/dts/qcom/msm8992-lg-bullhead-rev-101.dtb
-	arch/arm64/boot/dts/qcom/msm8992-lg-bullhead-rev-10.dtb
-	arch/arm64/boot/dts/qcom/msm8992-msft-lumia-octagon-talkman.dtb
-	arch/arm64/boot/dts/qcom/msm8992-xiaomi-libra.dtb
-	arch/arm64/boot/dts/qcom/msm8994-huawei-angler-rev-101.dtb
-	arch/arm64/boot/dts/qcom/msm8994-msft-lumia-octagon-cityman.dtb
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-ivy.dtb
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-karin.dtb
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-satsuki.dtb
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-sumire.dtb
-	arch/arm64/boot/dts/qcom/msm8994-sony-xperia-kitakami-suzuran.dtb
-
+>
+> > +       .tx             = 0x200,
+> > +       .rx             = 0x400,
+> > +};
+> > +
+> >  static const struct qmp_usb_offsets qmp_usb_offsets_v5 = {
+> >         .serdes         = 0,
+> >         .pcs            = 0x0200,
+> > @@ -1586,6 +1676,28 @@ static const struct qmp_phy_cfg ipq8074_usb3phy_cfg = {
+> >         .regs                   = qmp_v3_usb3phy_regs_layout,
+> >  };
+> >
+> > +static const struct qmp_phy_cfg ipq9574_usb3phy_cfg = {
+> > +       .lanes                  = 1,
+> > +
+> > +       .offsets                = &qmp_usb_offsets_ipq9574,
+> > +
+> > +       .serdes_tbl             = ipq9574_usb3_serdes_tbl,
+> > +       .serdes_tbl_num         = ARRAY_SIZE(ipq9574_usb3_serdes_tbl),
+> > +       .tx_tbl                 = ipq9574_usb3_tx_tbl,
+> > +       .tx_tbl_num             = ARRAY_SIZE(ipq9574_usb3_tx_tbl),
+> > +       .rx_tbl                 = ipq9574_usb3_rx_tbl,
+> > +       .rx_tbl_num             = ARRAY_SIZE(ipq9574_usb3_rx_tbl),
+> > +       .pcs_tbl                = ipq9574_usb3_pcs_tbl,
+> > +       .pcs_tbl_num            = ARRAY_SIZE(ipq9574_usb3_pcs_tbl),
+> > +       .clk_list               = qmp_v4_phy_clk_l,
+> > +       .num_clks               = ARRAY_SIZE(qmp_v4_phy_clk_l),
+> > +       .reset_list             = qcm2290_usb3phy_reset_l,
+> > +       .num_resets             = ARRAY_SIZE(qcm2290_usb3phy_reset_l),
+> > +       .vreg_list              = qmp_phy_vreg_l,
+> > +       .num_vregs              = ARRAY_SIZE(qmp_phy_vreg_l),
+> > +       .regs                   = qmp_v3_usb3phy_regs_layout,
+> > +};
+> > +
+> >  static const struct qmp_phy_cfg msm8996_usb3phy_cfg = {
+> >         .lanes                  = 1,
+> >
+> > @@ -2589,6 +2701,9 @@ static const struct of_device_id qmp_usb_of_match_table[] = {
+> >                 .compatible = "qcom,ipq8074-qmp-usb3-phy",
+> >                 .data = &ipq8074_usb3phy_cfg,
+> >         }, {
+> > +               .compatible = "qcom,ipq9574-qmp-usb3-phy",
+> > +               .data = &ipq9574_usb3phy_cfg,
+> > +       }, {
+> >                 .compatible = "qcom,msm8996-qmp-usb3-phy",
+> >                 .data = &msm8996_usb3phy_cfg,
+> >         }, {
+> > --
+> > 2.7.4
+> >
+>
+>
+> --
+> With best wishes
+> Dmitry
