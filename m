@@ -2,95 +2,149 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7820C6FD1D
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Mar 2023 14:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D44BBC6FD1D
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Mar 2023 15:28:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232359AbjC3OHV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Mar 2023 10:07:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53934 "EHLO
+        id S232840AbjC3P2E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Mar 2023 11:28:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232322AbjC3OHB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Mar 2023 10:07:01 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEF9093CA
-        for <linux-clk@vger.kernel.org>; Thu, 30 Mar 2023 07:05:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1680185143;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=R4zCvOc1mMH56XgSR/h8YQ6LP3eLzSrZLD7OODqShKc=;
-        b=eCPQb9f7UfUiOJRtKsnODCnIkN0rBgQADRnqQ/C6aDkaBO0LLzvehrXja/Lg263dBN+53e
-        qYj0CFy38ZJHtIxZbYV7soithf4qSGd6y6LC1HLMSSY2vTvATGcXn1NcC9pkE1qzLldHRQ
-        44y4lSql+JznbCS0CN2yF7UAKZ/IlNI=
-Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
- [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-453-VpnIkAT_ONCaqx_PvVDgeA-1; Thu, 30 Mar 2023 10:05:42 -0400
-X-MC-Unique: VpnIkAT_ONCaqx_PvVDgeA-1
-Received: by mail-ot1-f70.google.com with SMTP id r17-20020a05683002f100b006a131178723so5051885ote.10
-        for <linux-clk@vger.kernel.org>; Thu, 30 Mar 2023 07:05:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680185141;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R4zCvOc1mMH56XgSR/h8YQ6LP3eLzSrZLD7OODqShKc=;
-        b=qhfSGbK3VoqoNZkSA0U3cG23q4mj8BhFUTcyT9tO3QLDPfZa+FSa0uWOShF34ZCRb3
-         /xiIkJ7RgbkgPhi/MVHtyha9UjUY3pdDsRZf9dCsMqM2AF20CeLL/5gzyt6oEXtA+xSv
-         l6vgnJcpotXt7KMEbe/EqXvPKS3Xhtl1NukKulx39W1yRGpX0gG6mCC4v6ReEfNwC3s5
-         7EpFiPQEG36CuevW4EIVzdhOfX+5CJmPq4euq+6SG+6WLD8ajMcBpgEB/8iY5Q346MKj
-         zTfw98NR/vlvRGTO+JMBC/rld/OSgF0QyzsR4GZAcmAOtwareUvuodtzbHLGBBf+cxam
-         QBBg==
-X-Gm-Message-State: AO0yUKW2zyOthac8bw8E1Nc1aTeM3uIhnwBxEo/yKPzSXtwnqNOVPjGz
-        VCLN4MuqnPZHwNopw9fGooeZ6R8JXBUnPNJyigEimCUZfLXd91TlnXvNkDvdSTR12TBjCAwbFv8
-        SpSkYaO3jWj8Rlb7OGkeW
-X-Received: by 2002:a9d:73c2:0:b0:68f:2134:9a3a with SMTP id m2-20020a9d73c2000000b0068f21349a3amr13731354otk.30.1680185141707;
-        Thu, 30 Mar 2023 07:05:41 -0700 (PDT)
-X-Google-Smtp-Source: AK7set/zNPcgN/WnTgj0au7XovwmrXUXk9Y34tj4Bl9Gf9AZeZXE4KpUqaqWU4dfJz20w/H+BfTr3A==
-X-Received: by 2002:a9d:73c2:0:b0:68f:2134:9a3a with SMTP id m2-20020a9d73c2000000b0068f21349a3amr13731343otk.30.1680185141411;
-        Thu, 30 Mar 2023 07:05:41 -0700 (PDT)
-Received: from x1 ([2600:381:4303:f0c4:d889:8469:3106:3568])
-        by smtp.gmail.com with ESMTPSA id a20-20020a9d74d4000000b006a11998d20esm7092278otl.45.2023.03.30.07.05.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Mar 2023 07:05:40 -0700 (PDT)
-Date:   Thu, 30 Mar 2023 10:05:37 -0400
-From:   Brian Masney <bmasney@redhat.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: add debug message showing which unused clocks are
- disabled on boot
-Message-ID: <ZCWXMXdaLdBb9KzL@x1>
-References: <20221117105829.256717-1-bmasney@redhat.com>
- <27ded6a4ebd67cef0d4b472a2aea442e.sboyd@kernel.org>
+        with ESMTP id S233022AbjC3P1y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Mar 2023 11:27:54 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92778C679;
+        Thu, 30 Mar 2023 08:27:25 -0700 (PDT)
+Received: from mercury (dyndsl-091-248-191-116.ewe-ip-backbone.de [91.248.191.116])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: sre)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id B398866030CD;
+        Thu, 30 Mar 2023 16:26:20 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1680189980;
+        bh=b8BFbDxlmYytLZ0QnDA04VtQavFxFlJBUUjl2Zq+y4k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WgcabsnyEs+YRnB9DrSuVJG76rhjme+YMIeghLJUXySMkMRbTlkRaU88/Y1tAJsZv
+         hsIPDR/ddOO3WdZzFLpppQWN0xVyp1gwn3k5EEp7m7FAHMEsLEGOoOWMlqK1WBSJ5p
+         t+lbvrwqstI7vMt4eZss8GEr06/Vt4KVf7CRwcCtetFoztOsjW/1nF/4Av9qsu7SCS
+         m4nB6SXSnaSpEgBclRmHBWu/CLNjHQvGkKh3I877viqoLNjgqRsat2++KP7QKb0PPe
+         bU0TbO/ej0xYD713PXy2mOJEADsSCNAZfilphQ5LtS7J8p+jidgJo1Ov4pU6VTJnGn
+         fq6UU7kG8/ewA==
+Received: by mercury (Postfix, from userid 1000)
+        id AC0301062717; Thu, 30 Mar 2023 17:26:17 +0200 (CEST)
+Date:   Thu, 30 Mar 2023 17:26:17 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Stephen Boyd <sboyd@kernel.org>, linux-doc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        kernel@pengutronix.de, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4] clk: expand clk_ignore_unused mechanism to keep only
+ a few clks on
+Message-ID: <20230330152617.6zj5llx5pf6mlv2t@mercury.elektranox.org>
+References: <20221026151812.1042052-1-u.kleine-koenig@pengutronix.de>
+ <4d8d412a33a7d63f2ffe6a13194375ed.sboyd@kernel.org>
+ <20230329204632.lsiiqf42hrwmn6xm@pengutronix.de>
+ <2f4967f2a079e23b2b8a6013012c66e0.sboyd@kernel.org>
+ <20230330060601.6mo7b4ecd2sk5mdr@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4t4y27tmdb2m2ofs"
 Content-Disposition: inline
-In-Reply-To: <27ded6a4ebd67cef0d4b472a2aea442e.sboyd@kernel.org>
-User-Agent: Mutt/2.2.7 (2022-08-07)
+In-Reply-To: <20230330060601.6mo7b4ecd2sk5mdr@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 29, 2023 at 02:49:50PM -0700, Stephen Boyd wrote:
-> Quoting Brian Masney (2022-11-17 02:58:29)
-> > The clk framework on bootup will automatically disable all unused clocks
-> > on bootup unless the clk_ignore_unused kernel parameter is present.
-> > Let's add a basic debugging log statement here that shows which clocks
-> > are disabled. There is already tracepoint present here as well, but
-> > there's nothing like a simple, good ol' fashioned printk for simplicity.
-> > 
-> > Signed-off-by: Brian Masney <bmasney@redhat.com>
-> > ---
-> 
-> I'd like to see a documentation update instead that covers how to enable
-> the tracepoint on the kernel commandline and have it print to the serial
-> console.
 
-Sure, I can do that. I see there's a section 'Disabling clock gating of
-unused clocks' in Documentation/driver-api/clk.rst where I think this
-would be appropriate.
+--4t4y27tmdb2m2ofs
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Brian
+Hi,
 
+On Thu, Mar 30, 2023 at 08:06:01AM +0200, Uwe Kleine-K=F6nig wrote:
+> On Wed, Mar 29, 2023 at 02:27:08PM -0700, Stephen Boyd wrote:
+> > Quoting Uwe Kleine-K=F6nig (2023-03-29 13:46:32)
+> > > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > > > index c3c3f8c07258..356119a7e5fe 100644
+> > > > > --- a/drivers/clk/clk.c
+> > > > > +++ b/drivers/clk/clk.c
+> > > > > [...]
+> > > > > @@ -1352,12 +1354,17 @@ static void __init clk_disable_unused_sub=
+tree(struct clk_core *core)
+> > > > >          * back to .disable
+> > > > >          */
+> > > > >         if (clk_core_is_enabled(core)) {
+> > > > > -               trace_clk_disable(core);
+> > > > > -               if (core->ops->disable_unused)
+> > > > > -                       core->ops->disable_unused(core->hw);
+> > > > > -               else if (core->ops->disable)
+> > > > > -                       core->ops->disable(core->hw);
+> > > > > -               trace_clk_disable_complete(core);
+> > > > > +               if (clk_unused_keep_on) {
+> > > > > +                       pr_warn("Keep unused clk \"%s\" on\n", co=
+re->name);
+> > > > > +                       clk_unused_keep_on -=3D 1;
+> > > > > +               } else {
+> > > > > +                       trace_clk_disable(core);
+> > > >=20
+> > > > We have trace_clk_disable() here. Can you have this tracepoint prin=
+t to
+> > > > the kernel log and watch over serial console? That would be faster =
+than
+> > > > bisecting.
+> > >=20
+> > > Well no, that doesn't work for all the problems where
+> > > clk_ignore_unused=3D7 could be useful. Consider that e.g. you know th=
+at
+> > > eth0 is broken, but with clk_ignore_unused is works. So one of the (s=
+ay)
+> > > 25 nominally unused clks are required for eth0. But it's not possible=
+ to
+> > > test the network after each of the 25 clk_disable()s. Unless I'm miss=
+ing
+> > > something and you can hook a userspace action on a trace line?!
+> >=20
+> > In that case it sounds like you want to compile the kernel with the
+> > support for enabling clks from debugfs. Can you use that?
+>=20
+> In some of the cases that might work. Unless for example the problem
+> makes the kernel fail to boot or the device is broken when the clk was
+> disabled and reenable doesn't help?!
+
+I recently debugged a similar issue like this:
+
+1. build kernel with CLOCK_ALLOW_WRITE_DEBUGFS
+2. boot with clk_ignore_unused, so clocks stay enabled
+3. disable clocks via sysfs:
+   echo 1 > /sys/kernel/debug/clk/${CLK}/clk_prepare_enable
+   echo 0 > /sys/kernel/debug/clk/${CLK}/clk_prepare_enable
+4. check if peripheral is still ok
+5. repeat step 3 with the next 'interesting' clock
+
+-- Sebastian
+
+--4t4y27tmdb2m2ofs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmQlqhIACgkQ2O7X88g7
++ppqHw/+OdRrES3M3CO43e8OqvDC9wqhevdLaEYJEqY7/vbrb4Vq3h8Wbb4DWfJj
+iWLNR3TUsWIGQ95b6SGTJCQarLBgRIeEln+YN5nyRc7bYfrjLboNfCxo4dHhjbgl
+u2ZYY7kYdT9oyXvBx5WushvIUxRe687yxfQqHUMoBi0MjDD/+WjBZDQ0q1w5ZQWb
+ySpmlbMGa8md9HmxIQmUSGD1t5B7y8KCYHQPYO/YJoosTe6jrRksdP56JRVwj2Gj
+zr5jJ2rPLI/Xk2604rK/GQPKUebFHPcrYzotNjNyOuwEVRtA3qGOKiI/IJFkozpE
+oG05WALoD42Zt9NapQOeysMJQErAbIpZEYsF8+/sj7SzJfRCALEcvYPYCbwubf6W
+/ZSkxZFZyz4cyY6vvHTZ1xZfQdrBDmHgYnf8l4Iu2zT7dWJB2ZSUoHMwZVqBeGze
+MG0cHB1yApfedJrP29UMnaFTG2GeBDW3lgYTkYdODn+jCoRyneCceodx1LBpEA2z
+sLMr8M/yf60ZB6+RPrqP0jQAFlD/dj+VVwaqIIAomQJSCLd5yKm6faVlOOagMwhI
+OaCdg1JMa2wwetu7zyfgATNSC9Bmub7d9swYwdNN6GSIZvvttM2IFG2Fv5mapP4+
+qpO6Jtm6duP6uDbf91V79JVvML6HMEeo6m7WdtkF1gpcdZguEX4=
+=888j
+-----END PGP SIGNATURE-----
+
+--4t4y27tmdb2m2ofs--
