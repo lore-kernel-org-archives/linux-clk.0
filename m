@@ -2,123 +2,128 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 797C5C761AF
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Mar 2023 09:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E95C6FD1D
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Mar 2023 09:19:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229690AbjC3JNz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Mar 2023 05:13:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40244 "EHLO
+        id S229655AbjC3JTA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Mar 2023 05:19:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230225AbjC3JNh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Mar 2023 05:13:37 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on20617.outbound.protection.outlook.com [IPv6:2a01:111:f400:fe5b::617])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AFE61984;
-        Thu, 30 Mar 2023 02:13:31 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XbezMHXkqncrdn7c4u4jcvrpcrc8NrhwQshUhaciay7Pmz2T+8iPg6Q6pO+4FEdy94V6I6fQDWGa2Qk9hN/pnowaQ02NXOJXRdPyTm0XyNO5HcFyr6inoKOzJdWaJgXQ5BifVOAVFbn9u96sTV0ISFOiXGx0h/7bsje+IO2W2oyfVNZLfaZJ5YQFeEYPb05SLTIo9j8ghXze/JYKblgnFJ462CGqmR9uQsOLk14nzXOK8Q6K+KQggGpddi8bC/2FitfmM/48dZK9s2bowKk4G2C06o+9RJ8Ajku5ltZZ2Jk2pzRJSh9RHqNbvkhdPRmOe59C0yxiz8cjRtXw1TKlnw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tgFahVhiZvGBrMh72bPWIoPUYbOnOxst/TWaFxr+Lec=;
- b=OSbvSDXu28pJqNPrlELtOyXUkuZU+ouYqKXzTsjCD+tA3mdrFbmgrrZzgCeJH5eqUqhL4EXkokJqaiCE6FfFURHVgYFMBwwIjyQN8xGDeKyBep+iwIKmdPaTQELfgXR7w4ZjEF/DlWebOAEnxHM0BjENQIoPnxJfGpCig5iBWcmqRr8cTc21lwCZw3Qb1sx74EaVsV4r6Rti6PRJiMWmZz94b5tVydYoZ8o5zWY+gusWddXCnUiDd3gVC73ul+pLqhQTFL9ophcgBtm8qWC5xkZwlkpNUefaSGnJ/oZN0qz36T5UHiSTd/+IZqW9kXxh+OxHiIahyBtT5mzcL0w0Fg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tgFahVhiZvGBrMh72bPWIoPUYbOnOxst/TWaFxr+Lec=;
- b=zN8VGiwUQ9sf43SlYMb5VOWIDnA8vcp6l0nP8yMRTd6NlM0KUWtQX0o38pDNyHM9p07ypboocn/QhQE0rfJIafElb25i4NyeSTccmZdc0AbxdPSPpv1MBR0snpD85jjoBM4wlL86CRWHw4590aOVsGdsnRjUQQuZDWItFMN2JbM=
-Received: from MW3PR05CA0029.namprd05.prod.outlook.com (2603:10b6:303:2b::34)
- by SJ1PR12MB6123.namprd12.prod.outlook.com (2603:10b6:a03:45a::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.41; Thu, 30 Mar
- 2023 09:13:26 +0000
-Received: from CO1NAM11FT111.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:2b:cafe::95) by MW3PR05CA0029.outlook.office365.com
- (2603:10b6:303:2b::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.13 via Frontend
- Transport; Thu, 30 Mar 2023 09:13:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1NAM11FT111.mail.protection.outlook.com (10.13.174.61) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6254.20 via Frontend Transport; Thu, 30 Mar 2023 09:13:26 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Thu, 30 Mar
- 2023 04:13:18 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Thu, 30 Mar
- 2023 04:13:17 -0500
-Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2375.34 via Frontend
- Transport; Thu, 30 Mar 2023 04:13:15 -0500
-From:   Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-To:     <devicetree@vger.kernel.org>
-CC:     <git@amd.com>, <linux-clk@vger.kernel.org>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <michal.simek@xilinx.com>
-Subject: [PATCH v1 2/2] drivers: clk: zynqmp: Add versal-net compatible string
-Date:   Thu, 30 Mar 2023 14:43:09 +0530
-Message-ID: <20230330091309.16215-3-shubhrajyoti.datta@amd.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230330091309.16215-1-shubhrajyoti.datta@amd.com>
-References: <20230330091309.16215-1-shubhrajyoti.datta@amd.com>
+        with ESMTP id S229500AbjC3JSi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Mar 2023 05:18:38 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA0D3172A;
+        Thu, 30 Mar 2023 02:18:37 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32U8lhXP013501;
+        Thu, 30 Mar 2023 09:18:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=qmGkvGd4ktq1l/QDvk5WbJ3XQOI7H5CxYNwOBRXa/FA=;
+ b=W5zcyq4uPZk0yygVF/+epdDqQFvXYdMCmyamBJCG4SooB0oST4HF7mbVkBFI06ePamyE
+ F3+ueQXLA5J/shFfXott7a82njNk8q6tfC3tzPLjo3vMcuVzwqCQgUPTIb+FHUGIcovh
+ JUo68XFNHZRnO0rbxFbcvwQTrm2ZeXBK4pT8exYBwzc+/v+7Zw4+c1Ps2iOoAOPJR9Kt
+ U0R6cotpORl2hjmDrysbpGgfPed7bIEmCufwkCLTPnWppa+kMjxHyPW+VnNi+mVPvUf4
+ b+5YAZ/a1PdCzIRQKp0YKhns0ajGzvqJWbuJVQsYWPJaMfx25wv8hsqKbRVS609BRROg PA== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pn51ygg01-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 Mar 2023 09:18:15 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32U9IDal010154
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 Mar 2023 09:18:13 GMT
+Received: from [10.50.5.192] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Thu, 30 Mar
+ 2023 02:18:04 -0700
+Message-ID: <4be7554b-eba7-5c72-f040-9b9f12bfb3d9@quicinc.com>
+Date:   Thu, 30 Mar 2023 14:47:52 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT111:EE_|SJ1PR12MB6123:EE_
-X-MS-Office365-Filtering-Correlation-Id: c3016298-d980-45c4-46df-08db30ff04fe
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: J3nyGyzBrfTb/SNnJIAAuoCpBahZzzFQcYYMBWK2FIE1U2tOg5RvYEQOD+JU3HEGrxfqGakbQxDzn2K17b7rQbvgaIBOq2JPR37UUKo6AI6SNAIJSfDl6PwNA/1QYUjlPqC1kWzVl8vpGaaquOGvcTQdZiEDxFPOjVWBcdRUI6ap6v469x1gaoKvyIb7j1z+eHR6gMnbG49BO74zgYBZLm/05CrOlxbyjp+LFOC4Sc1cc/NLP2BlH54ARdcV8ccugfymbnzqrSDkR7CbN+CRfz/oJaKqRHzCIHe7lMNTUC5XvkA4VWl0AofcvmQ9b8xU39gxTL5BohTjF8zm1yDbQEXEkZlTFnbxjWc05I7V7XLpniyKIYFDZIhDFB1f0yT/MsUCrOcLq8FlwIh1mq0ehRANHTv02MuR2H74qLhH4QnApxz8UXUx8INDf73S0ORKfa813lCdsfRRu7DdMtZJeVR8LQD/DmjF2iJea1ITGPt11ZpgerrcxsEw12/t/L/rmfZFpfiQKe+ig0aRXVfJcJjxFJY1DLSoM3aFIOcViAYPPgaKFVK0MUk5uCcdG8XR/csYm+wPalqMMWh/kABp97SzSJWwLYEmKFt6lJ0G45UaAj2m1UHL1POiacWGDDC2XSOzLGp+WYPyztXJDspXjbU/jKlEZfY/H5REH5shpIPOW2sWX4NPhDynAxnL/S42anzjDFUbTRSYcnTo9CNkGTJ2OsT6EiKxqcgPpF1YYGU=
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(346002)(39860400002)(376002)(396003)(136003)(451199021)(46966006)(40470700004)(36840700001)(356005)(47076005)(2616005)(40480700001)(2906002)(40460700003)(426003)(6666004)(6916009)(336012)(70586007)(8676002)(41300700001)(82310400005)(4326008)(478600001)(70206006)(186003)(26005)(54906003)(86362001)(36756003)(36860700001)(316002)(83380400001)(82740400003)(8936002)(81166007)(44832011)(5660300002)(4744005)(1076003)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2023 09:13:26.0217
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c3016298-d980-45c4-46df-08db30ff04fe
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT111.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6123
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH V10 2/4] clk: qcom: Add Global Clock Controller driver for
+ IPQ9574
+To:     Stephen Boyd <sboyd@kernel.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <arnd@arndb.de>, <broonie@kernel.org>,
+        <catalin.marinas@arm.com>, <devicetree@vger.kernel.org>,
+        <dmitry.baryshkov@linaro.org>, <konrad.dybcio@linaro.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <linus.walleij@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <marcel.ziswiler@toradex.com>, <mturquette@baylibre.com>,
+        <nfraprado@collabora.com>, <p.zabel@pengutronix.de>,
+        <robh+dt@kernel.org>, <shawnguo@kernel.org>, <will@kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>
+References: <20230327132718.573-1-quic_devipriy@quicinc.com>
+ <20230327132718.573-3-quic_devipriy@quicinc.com>
+ <0af15083921c5d3c89392209654f0c9b.sboyd@kernel.org>
+ <2484518b-bcf6-7fb1-6bfb-b96b3682397b@quicinc.com>
+ <1cfd584a48e1bb453596948a0187ecf1.sboyd@kernel.org>
+Content-Language: en-US
+From:   Devi Priya <quic_devipriy@quicinc.com>
+In-Reply-To: <1cfd584a48e1bb453596948a0187ecf1.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: CkK5fHF6YxF7BIdqV0rOIUxMQspOyjII
+X-Proofpoint-GUID: CkK5fHF6YxF7BIdqV0rOIUxMQspOyjII
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-30_04,2023-03-30_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ impostorscore=0 malwarescore=0 adultscore=0 spamscore=0 bulkscore=0
+ lowpriorityscore=0 clxscore=1015 priorityscore=1501 mlxlogscore=740
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2303300075
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jay Buddhabhatti <jay.buddhabhatti@xilinx.com>
 
-Add compatible string for versal-net.
 
-Signed-off-by: Jay Buddhabhatti <jay.buddhabhatti@xilinx.com>
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
----
+On 3/28/2023 10:29 PM, Stephen Boyd wrote:
+> Quoting Devi Priya (2023-03-27 23:15:35)
+>>
+>>
+>> On 3/27/2023 10:18 PM, Stephen Boyd wrote:
+>>> Quoting Devi Priya (2023-03-27 06:27:16)
+>>>> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
+>>>> new file mode 100644
+>>>> index 000000000000..b2a2d618a5ec
+>>>> --- /dev/null
+>>>> +++ b/drivers/clk/qcom/gcc-ipq9574.c
+>>>> @@ -0,0 +1,4248 @@
+>>>> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>> +/*
+>>>> + * Copyright (c) 2023 The Linux Foundation. All rights reserved.
+>>>> + */
+>>>> +
+>>>> +#include <linux/kernel.h>
+>>>> +#include <linux/err.h>
+>>>> +#include <linux/platform_device.h>
+>>>> +#include <linux/module.h>
+>>>> +#include <linux/of.h>
+>>>> +#include <linux/of_device.h>
+>>>
+>>> What is this include for?
+>> This include actually don't seem necessary. But, I see that of.h &
+>> platform_device.h are being included via of_device.h
+>> Would you suggest to drop of_device.h or the other two
+>> headers instead?
+> 
+> Include headers for things you use. Don't try to omit includes if you
+> see that a header includes other headers that you're using.
+Sure, got it!
 
- drivers/clk/zynqmp/clkc.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
-index 5636ff1ce552..1ea5fba20d91 100644
---- a/drivers/clk/zynqmp/clkc.c
-+++ b/drivers/clk/zynqmp/clkc.c
-@@ -789,6 +789,7 @@ static int zynqmp_clock_probe(struct platform_device *pdev)
- static const struct of_device_id zynqmp_clock_of_match[] = {
- 	{.compatible = "xlnx,zynqmp-clk"},
- 	{.compatible = "xlnx,versal-clk"},
-+	{.compatible = "xlnx,versal-net-clk"},
- 	{},
- };
- MODULE_DEVICE_TABLE(of, zynqmp_clock_of_match);
--- 
-2.17.1
-
+Regards,
+Devi Priya
