@@ -2,149 +2,110 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D44BBC6FD1D
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Mar 2023 15:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D2E6C761A6
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Mar 2023 17:33:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232840AbjC3P2E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Mar 2023 11:28:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41690 "EHLO
+        id S232540AbjC3Rdh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Mar 2023 13:33:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233022AbjC3P1y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Mar 2023 11:27:54 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92778C679;
-        Thu, 30 Mar 2023 08:27:25 -0700 (PDT)
-Received: from mercury (dyndsl-091-248-191-116.ewe-ip-backbone.de [91.248.191.116])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id B398866030CD;
-        Thu, 30 Mar 2023 16:26:20 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1680189980;
-        bh=b8BFbDxlmYytLZ0QnDA04VtQavFxFlJBUUjl2Zq+y4k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WgcabsnyEs+YRnB9DrSuVJG76rhjme+YMIeghLJUXySMkMRbTlkRaU88/Y1tAJsZv
-         hsIPDR/ddOO3WdZzFLpppQWN0xVyp1gwn3k5EEp7m7FAHMEsLEGOoOWMlqK1WBSJ5p
-         t+lbvrwqstI7vMt4eZss8GEr06/Vt4KVf7CRwcCtetFoztOsjW/1nF/4Av9qsu7SCS
-         m4nB6SXSnaSpEgBclRmHBWu/CLNjHQvGkKh3I877viqoLNjgqRsat2++KP7QKb0PPe
-         bU0TbO/ej0xYD713PXy2mOJEADsSCNAZfilphQ5LtS7J8p+jidgJo1Ov4pU6VTJnGn
-         fq6UU7kG8/ewA==
-Received: by mercury (Postfix, from userid 1000)
-        id AC0301062717; Thu, 30 Mar 2023 17:26:17 +0200 (CEST)
-Date:   Thu, 30 Mar 2023 17:26:17 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-doc@vger.kernel.org,
+        with ESMTP id S232525AbjC3Rdg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Mar 2023 13:33:36 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 929B7F75E
+        for <linux-clk@vger.kernel.org>; Thu, 30 Mar 2023 10:33:33 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1phw9M-0002bv-87; Thu, 30 Mar 2023 19:33:24 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1phw9L-007ohf-6b; Thu, 30 Mar 2023 19:33:23 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1phw9K-009FWH-JA; Thu, 30 Mar 2023 19:33:22 +0200
+Date:   Thu, 30 Mar 2023 19:33:19 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>, Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel@pengutronix.de, linux-clk@vger.kernel.org
 Subject: Re: [PATCH v4] clk: expand clk_ignore_unused mechanism to keep only
  a few clks on
-Message-ID: <20230330152617.6zj5llx5pf6mlv2t@mercury.elektranox.org>
+Message-ID: <20230330173319.x4w2yd2bbk5hy2hb@pengutronix.de>
 References: <20221026151812.1042052-1-u.kleine-koenig@pengutronix.de>
  <4d8d412a33a7d63f2ffe6a13194375ed.sboyd@kernel.org>
  <20230329204632.lsiiqf42hrwmn6xm@pengutronix.de>
  <2f4967f2a079e23b2b8a6013012c66e0.sboyd@kernel.org>
  <20230330060601.6mo7b4ecd2sk5mdr@pengutronix.de>
+ <20230330152617.6zj5llx5pf6mlv2t@mercury.elektranox.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4t4y27tmdb2m2ofs"
+        protocol="application/pgp-signature"; boundary="cfdydxwxw4zjvqxx"
 Content-Disposition: inline
-In-Reply-To: <20230330060601.6mo7b4ecd2sk5mdr@pengutronix.de>
+In-Reply-To: <20230330152617.6zj5llx5pf6mlv2t@mercury.elektranox.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---4t4y27tmdb2m2ofs
+--cfdydxwxw4zjvqxx
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hello Sebastian,
 
-On Thu, Mar 30, 2023 at 08:06:01AM +0200, Uwe Kleine-K=F6nig wrote:
-> On Wed, Mar 29, 2023 at 02:27:08PM -0700, Stephen Boyd wrote:
-> > Quoting Uwe Kleine-K=F6nig (2023-03-29 13:46:32)
-> > > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > > > index c3c3f8c07258..356119a7e5fe 100644
-> > > > > --- a/drivers/clk/clk.c
-> > > > > +++ b/drivers/clk/clk.c
-> > > > > [...]
-> > > > > @@ -1352,12 +1354,17 @@ static void __init clk_disable_unused_sub=
-tree(struct clk_core *core)
-> > > > >          * back to .disable
-> > > > >          */
-> > > > >         if (clk_core_is_enabled(core)) {
-> > > > > -               trace_clk_disable(core);
-> > > > > -               if (core->ops->disable_unused)
-> > > > > -                       core->ops->disable_unused(core->hw);
-> > > > > -               else if (core->ops->disable)
-> > > > > -                       core->ops->disable(core->hw);
-> > > > > -               trace_clk_disable_complete(core);
-> > > > > +               if (clk_unused_keep_on) {
-> > > > > +                       pr_warn("Keep unused clk \"%s\" on\n", co=
-re->name);
-> > > > > +                       clk_unused_keep_on -=3D 1;
-> > > > > +               } else {
-> > > > > +                       trace_clk_disable(core);
-> > > >=20
-> > > > We have trace_clk_disable() here. Can you have this tracepoint prin=
-t to
-> > > > the kernel log and watch over serial console? That would be faster =
-than
-> > > > bisecting.
-> > >=20
-> > > Well no, that doesn't work for all the problems where
-> > > clk_ignore_unused=3D7 could be useful. Consider that e.g. you know th=
-at
-> > > eth0 is broken, but with clk_ignore_unused is works. So one of the (s=
-ay)
-> > > 25 nominally unused clks are required for eth0. But it's not possible=
- to
-> > > test the network after each of the 25 clk_disable()s. Unless I'm miss=
-ing
-> > > something and you can hook a userspace action on a trace line?!
+On Thu, Mar 30, 2023 at 05:26:17PM +0200, Sebastian Reichel wrote:
+> > > In that case it sounds like you want to compile the kernel with the
+> > > support for enabling clks from debugfs. Can you use that?
 > >=20
-> > In that case it sounds like you want to compile the kernel with the
-> > support for enabling clks from debugfs. Can you use that?
+> > In some of the cases that might work. Unless for example the problem
+> > makes the kernel fail to boot or the device is broken when the clk was
+> > disabled and reenable doesn't help?!
 >=20
-> In some of the cases that might work. Unless for example the problem
-> makes the kernel fail to boot or the device is broken when the clk was
-> disabled and reenable doesn't help?!
+> I recently debugged a similar issue like this:
+>=20
+> 1. build kernel with CLOCK_ALLOW_WRITE_DEBUGFS
+> 2. boot with clk_ignore_unused, so clocks stay enabled
+> 3. disable clocks via sysfs:
+>    echo 1 > /sys/kernel/debug/clk/${CLK}/clk_prepare_enable
+>    echo 0 > /sys/kernel/debug/clk/${CLK}/clk_prepare_enable
+> 4. check if peripheral is still ok
+> 5. repeat step 3 with the next 'interesting' clock
 
-I recently debugged a similar issue like this:
+Ah, that makes sense. Thanks.
 
-1. build kernel with CLOCK_ALLOW_WRITE_DEBUGFS
-2. boot with clk_ignore_unused, so clocks stay enabled
-3. disable clocks via sysfs:
-   echo 1 > /sys/kernel/debug/clk/${CLK}/clk_prepare_enable
-   echo 0 > /sys/kernel/debug/clk/${CLK}/clk_prepare_enable
-4. check if peripheral is still ok
-5. repeat step 3 with the next 'interesting' clock
+With that I cannot imagine a scenario that I can only debug with
+clk_ignore_unused=3Dn. So let's drop my patch.
 
--- Sebastian
+Best regards
+Uwe
 
---4t4y27tmdb2m2ofs
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--cfdydxwxw4zjvqxx
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmQlqhIACgkQ2O7X88g7
-+ppqHw/+OdRrES3M3CO43e8OqvDC9wqhevdLaEYJEqY7/vbrb4Vq3h8Wbb4DWfJj
-iWLNR3TUsWIGQ95b6SGTJCQarLBgRIeEln+YN5nyRc7bYfrjLboNfCxo4dHhjbgl
-u2ZYY7kYdT9oyXvBx5WushvIUxRe687yxfQqHUMoBi0MjDD/+WjBZDQ0q1w5ZQWb
-ySpmlbMGa8md9HmxIQmUSGD1t5B7y8KCYHQPYO/YJoosTe6jrRksdP56JRVwj2Gj
-zr5jJ2rPLI/Xk2604rK/GQPKUebFHPcrYzotNjNyOuwEVRtA3qGOKiI/IJFkozpE
-oG05WALoD42Zt9NapQOeysMJQErAbIpZEYsF8+/sj7SzJfRCALEcvYPYCbwubf6W
-/ZSkxZFZyz4cyY6vvHTZ1xZfQdrBDmHgYnf8l4Iu2zT7dWJB2ZSUoHMwZVqBeGze
-MG0cHB1yApfedJrP29UMnaFTG2GeBDW3lgYTkYdODn+jCoRyneCceodx1LBpEA2z
-sLMr8M/yf60ZB6+RPrqP0jQAFlD/dj+VVwaqIIAomQJSCLd5yKm6faVlOOagMwhI
-OaCdg1JMa2wwetu7zyfgATNSC9Bmub7d9swYwdNN6GSIZvvttM2IFG2Fv5mapP4+
-qpO6Jtm6duP6uDbf91V79JVvML6HMEeo6m7WdtkF1gpcdZguEX4=
-=888j
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmQlx94ACgkQj4D7WH0S
+/k7cCAf+MHsYzxvenAAIdoLCJYxPpxjV5k6YCwYkEVtAY8G7zsNnkoXUH1dSS+Fd
+nfIrOQWMRz/6V+Am+yVG/BKElQB3smN7jZ/DEpAXJWtV9naHWncQ0geMzg79RJ+8
+TuabL605yjk41yc7J+IiP4EzhUv/ZeR+QggL7GK8IIRm8Mhaa33b/znCX9zjUViS
+sSqs4jp2JO/DBnj37VO3GvUpr1xXHAq4nF0BPDL6UUvEMTNKf6uY0OTxtVgXtZIT
+GJquOoCtzcMhXw71kB7DpE9bH0G0OPOKAXwM9PeS2nISflGDqsrE23QlL9MQjYSO
+Ss73bBb1igE8VUBF/9qYlJ2RPr40Xg==
+=OWZG
 -----END PGP SIGNATURE-----
 
---4t4y27tmdb2m2ofs--
+--cfdydxwxw4zjvqxx--
