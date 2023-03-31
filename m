@@ -2,62 +2,62 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BEB9C77B62
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 08:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F39CDC77B70
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 08:34:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230496AbjCaIeu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Mar 2023 04:34:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56024 "EHLO
+        id S231278AbjCaIex (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Mar 2023 04:34:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231223AbjCaIes (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 04:34:48 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2250213C
-        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 01:34:45 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id v1so21592171wrv.1
-        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 01:34:45 -0700 (PDT)
+        with ESMTP id S229448AbjCaIew (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 04:34:52 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80FF918809
+        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 01:34:48 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id e18so21583209wra.9
+        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 01:34:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680251684;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wKmFDwBzmqKaD1W7wuLHbQZgTpJgWQagzC13l4DdTqw=;
-        b=ez7Y8DKhU9m8mENWYc8eLh3UjQj04JKUYpk8LZc0Cgj82lGXgAqKThXbmY29WwZFpa
-         8iJCKddXPmrHzPzXLQ682kWfEp0XTxPc6/GH5fWihQi5njtBGVCzQSKchgik6ZjPxGVs
-         LJ6kI8ENaL4ylviyHLejBooWU1vyhc5pUBM2V6BzXIypiwp1tF0C80ee0BcHRFohBjvs
-         PS3KjixZZ5L0SEv7mF4LYg/aatUGXQwxrjYjN3GBCSHubljOca4C/g7Smtoai9yEYKM2
-         MPuBgGNvstDtP1p1JijRIUW+SkbLI/c5/0B4ugSh+dx2vHET0l1a/8etg25rGkrvIHls
-         EkFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680251684;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1680251687;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wKmFDwBzmqKaD1W7wuLHbQZgTpJgWQagzC13l4DdTqw=;
-        b=yPNV1JX+SZ0PSs8+rjOqyrcOi+E+XOTBMeC2oCMIu/raPJzU+hAYs3YCaPKn2CVO7p
-         Oh60LvkzU46dkwyx9Rkg+sOQjoufM1SkguvXA+7ewyRG9q4mycxqZgyDz4L5DMdvHF/X
-         n2PiQceHwK2GKpGhuzvSXgtF7udiIzZ+ZJ4+96Oj9B1omtVGjcclkxTB+ZgUgdK1NUjZ
-         6PGBp1jP0CYGTzOlFdZMrFq9azt0YmmShgAM86SIR2ty5eGApOhy/KG/Q9xSP8v+LVLA
-         T747AAtic0AV8dHGyBB6934Gem2nUMtrlrlA9oTRCLWaLa7TFfOMswH1GgSqH23Wvs/e
-         p2qg==
-X-Gm-Message-State: AAQBX9dBIVViILLkQqFVG1erEY47AB42bUuIwB3oUDwLdqz568EfyiRH
-        F8P/aPX/nTvjjldMuaZFOQaoeA==
-X-Google-Smtp-Source: AKy350ZffcjiZSGBVm/JblhOGFpZodzn92ieAjz2v27srUZ+zaxOkeHyJPQUex2yEMscYYMGa2NW2w==
-X-Received: by 2002:a5d:58c9:0:b0:2cf:e34c:a229 with SMTP id o9-20020a5d58c9000000b002cfe34ca229mr22477632wrf.8.1680251684116;
-        Fri, 31 Mar 2023 01:34:44 -0700 (PDT)
+        bh=aHrUnZC9rbzLW/5UuslNdsLyDWCrAVuJNyAo7I4AMWQ=;
+        b=VSeZX4dc6a1VHevFk6wYWuUx52Fu1aDq9jL8sgwwVCVS6BBHwfpIjUAHhDS6/7LhrO
+         qvPhrOnqjIRoN4IHis7BjDY2Gz5jG7IM2GPdWI3rFajdqF7lzgAzv423Du3Wy8UctYbP
+         RX5ePrSTKYkxKduq+ZOk3zHJjVM4OGrWJjXnW+nw2mO1udYxTN/dH9hwLlB/JY/WSnKQ
+         GBmPPmXKlPgQnSP2t0s76UrTT0OUXFoxmgtq6rFkjckZjvcS6zS0j0T98sHnYNTqIeWz
+         bFvRuWLo1dCLgQbsHfW0sAeXXwRWuDZjWfRtk8nyIgSD3JAb+5jv0Qg5Qj5gCgiUly/P
+         +UsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680251687;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aHrUnZC9rbzLW/5UuslNdsLyDWCrAVuJNyAo7I4AMWQ=;
+        b=NoxrNYRNEraQ5npi59Yg4LMTMkm+oiBwxY4vDr393rNNquYLpI7uRG4WQXgfP+7W1t
+         uOGXTfBKM0u645wyc0mqSj0F1jyLnj0TP012MqEUuxNF+8NgYXhgJ2NDZbHcCa806aTH
+         fxDtJLTv6x5Bi1W9IvWKiApzZgRmEdAb2Zhc+67fkgO6u4Y9k+fQjlWUp11T4lPPk7fd
+         7OjTd0qXzQiz10Nb6P8+JGk139SCzfdXPFSuoSh6nOC/7l0BfwthcH2+rHxtKXDfY2ce
+         gXdt3lFz/hUVld07s/pNxgnZTajG5MkfdrZePmZPPN+qxpdQZB5cPfjztYBjS7bXVav/
+         V5LQ==
+X-Gm-Message-State: AAQBX9eGt3Xw/eUmVh7YjzVuvlpesyu+yiruoTapEYcT9OxiwY5sccFt
+        mZLkNhicO0JRDKitpRxB6bphlg==
+X-Google-Smtp-Source: AKy350bTtpPmDWoxvdz6mCtcYISz/1Ys9qi/+iO21shv0+wBfNCQorzQUaMEiY+swVm6wHSWmwrb0w==
+X-Received: by 2002:adf:ff89:0:b0:2cf:e957:644b with SMTP id j9-20020adfff89000000b002cfe957644bmr6630729wrr.27.1680251686957;
+        Fri, 31 Mar 2023 01:34:46 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id e11-20020a5d4e8b000000b002cde626cd96sm1563153wru.65.2023.03.31.01.34.42
+        by smtp.gmail.com with ESMTPSA id e11-20020a5d4e8b000000b002cde626cd96sm1563153wru.65.2023.03.31.01.34.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Mar 2023 01:34:43 -0700 (PDT)
+        Fri, 31 Mar 2023 01:34:46 -0700 (PDT)
 From:   Neil Armstrong <neil.armstrong@linaro.org>
-Subject: [PATCH RFC 00/20] ARM: oxnas support removal
-Date:   Fri, 31 Mar 2023 10:34:38 +0200
-Message-Id: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
+Date:   Fri, 31 Mar 2023 10:34:40 +0200
+Subject: [PATCH RFC 02/20] ARM: oxnas: remove OXNAS support
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAB6bJmQC/x2NwQqDMBAFf0X23AVNQLDXQj+g19JDjM+6oEnIq
- gjivzf0OHOYOUmRBUr36qSMXVRiKNDcKvKTC1+wDIXJ1MbW1ja8xiSe4xGc8pZ0zXALZyxxB7v
- WoBu6dgRApdA7BffZBT+VRtjmuciUMcrxX77p9XzQ57p+JL2B/4cAAAA=
+Message-Id: <20230331-topic-oxnas-upstream-remove-v1-2-5bd58fd1dd1f@linaro.org>
+References: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
+In-Reply-To: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
 To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
         soc@kernel.org, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -93,107 +93,77 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-With [1] removing MPCore SMP support, this makes the OX820 barely usable,
-associated with a clear lack of maintainance, development and migration to
-dt-schema it's clear that Linux support for OX810 and OX820 should be removed.
-
-In addition, the OX810 hasn't been booted for years and isn't even present
-in an ARM config file.
-
-For the OX820, lack of USB and SATA support makes the platform not usable
-in the current Linux support and relies on off-tree drivers hacked from the
-vendor (defunct for years) sources.
-
-The last users are in the OpenWRT distribution, and today's removal means
-support will still be in stable 6.1 LTS kernel until end of 2026.
-
-If someone wants to take over the development even with lack of SMP, I'll
-be happy to hand off maintainance.
-
-The plan is to apply the first 4 patches first, then the drivers
-followed by bindings. Finally the MAINTAINANCE entry can be removed.
-
-I'm not sure about the process of bindings removal, but perhaps the bindings
-should be marked as deprecated first then removed later on ?
-
-It has been a fun time adding support for this architecture, but it's time
-to get over!
-
-Patch 2 obviously depends on [1].
-
-[1] https://lore.kernel.org/all/20230327121317.4081816-1-arnd@kernel.org/
+Due to lack of maintainance and stall of development for a few years now,
+and since no new features will ever be added upstream, remove support
+for OX810 and OX820 ARM support.
 
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
-Neil Armstrong (20):
-      ARM: dts: oxnas: remove obsolete device tree files
-      ARM: oxnas: remove OXNAS support
-      ARM: configs: remove oxnas_v6_defconfig
-      dt-bindings: arm: oxnas: remove obsolete bindings
-      clk: oxnas: remove obsolete clock driver
-      dt-bindings: clk: oxnas: remove obsolete bindings
-      clksource: timer-oxnas-rps: remove obsolete timer driver
-      dt-bindings: timer: oxsemi,rps-timer: remove obsolete bindings
-      nand: oxnas_nand: remove obsolete raw nand driver
-      dt-bindings: mtd: oxnas-nand: remove obsolete bindings
-      net: stmmac: dwmac-oxnas: remove obsolete dwmac glue driver
-      dt-bindings: net: oxnas-dwmac: remove obsolete bindings
-      pinctrl: pinctrl-oxnas: remove obsolete pinctrl driver
-      dt-bindings: pinctrl: oxnas,pinctrl: remove obsolete bindings
-      dt-bindings: gpio: gpio_oxnas: remove obsolete bindings
-      power: reset: oxnas-restart: remove obsolete restart driver
-      reset: oxnas: remove obsolete reset driver
-      irqchip: irq-versatile-fpga: remove obsolete oxnas compatible
-      dt-bindings: interrupt-controller: arm,versatile-fpga-irq: mark oxnas compatible as deprecated
-      MAINTAINERS: remove OXNAS entry
+ arch/arm/Makefile            |  1 -
+ arch/arm/mach-oxnas/Kconfig  | 34 ----------------------------------
+ arch/arm/mach-oxnas/Makefile |  1 -
+ 3 files changed, 36 deletions(-)
 
- Documentation/devicetree/bindings/arm/oxnas.txt    |   14 -
- .../devicetree/bindings/clock/oxnas,stdclk.txt     |   28 -
- .../devicetree/bindings/gpio/gpio_oxnas.txt        |   47 -
- .../arm,versatile-fpga-irq.txt                     |    4 +-
- .../devicetree/bindings/mtd/oxnas-nand.txt         |   41 -
- .../devicetree/bindings/net/oxnas-dwmac.txt        |   41 -
- .../devicetree/bindings/pinctrl/oxnas,pinctrl.txt  |   56 -
- .../devicetree/bindings/reset/oxnas,reset.txt      |   32 -
- .../devicetree/bindings/timer/oxsemi,rps-timer.txt |   17 -
- MAINTAINERS                                        |   10 -
- arch/arm/Makefile                                  |    1 -
- arch/arm/boot/dts/Makefile                         |    3 -
- arch/arm/boot/dts/ox810se-wd-mbwe.dts              |  115 --
- arch/arm/boot/dts/ox810se.dtsi                     |  357 ------
- .../dts/ox820-cloudengines-pogoplug-series-3.dts   |   93 --
- arch/arm/boot/dts/ox820.dtsi                       |  299 -----
- arch/arm/configs/oxnas_v6_defconfig                |   92 --
- arch/arm/mach-oxnas/Kconfig                        |   34 -
- arch/arm/mach-oxnas/Makefile                       |    1 -
- drivers/clk/Kconfig                                |    7 -
- drivers/clk/Makefile                               |    1 -
- drivers/clk/clk-oxnas.c                            |  251 ----
- drivers/clocksource/Kconfig                        |    7 -
- drivers/clocksource/Makefile                       |    1 -
- drivers/clocksource/timer-oxnas-rps.c              |  288 -----
- drivers/irqchip/irq-versatile-fpga.c               |    1 -
- drivers/mtd/nand/raw/Kconfig                       |    7 -
- drivers/mtd/nand/raw/Makefile                      |    1 -
- drivers/mtd/nand/raw/oxnas_nand.c                  |  211 ----
- drivers/net/ethernet/stmicro/stmmac/Kconfig        |   11 -
- drivers/net/ethernet/stmicro/stmmac/Makefile       |    1 -
- drivers/net/ethernet/stmicro/stmmac/dwmac-oxnas.c  |  245 ----
- drivers/pinctrl/Kconfig                            |   11 -
- drivers/pinctrl/Makefile                           |    1 -
- drivers/pinctrl/pinctrl-oxnas.c                    | 1292 --------------------
- drivers/power/reset/Kconfig                        |    7 -
- drivers/power/reset/Makefile                       |    1 -
- drivers/power/reset/oxnas-restart.c                |  233 ----
- drivers/reset/Kconfig                              |    3 -
- drivers/reset/Makefile                             |    1 -
- drivers/reset/reset-oxnas.c                        |  114 --
- 41 files changed, 3 insertions(+), 3977 deletions(-)
----
-base-commit: df45499b419b31c4d44ef9f1d1656d1fc0897014
-change-id: 20230331-topic-oxnas-upstream-remove-a62e9d96feee
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index 485a439e22ca..547e5856eaa0 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -203,7 +203,6 @@ machine-$(CONFIG_ARCH_MSTARV7)		+= mstar
+ machine-$(CONFIG_ARCH_NOMADIK)		+= nomadik
+ machine-$(CONFIG_ARCH_NPCM)		+= npcm
+ machine-$(CONFIG_ARCH_NSPIRE)		+= nspire
+-machine-$(CONFIG_ARCH_OXNAS)		+= oxnas
+ machine-$(CONFIG_ARCH_OMAP1)		+= omap1
+ machine-$(CONFIG_ARCH_OMAP2PLUS)	+= omap2
+ machine-$(CONFIG_ARCH_ORION5X)		+= orion5x
+diff --git a/arch/arm/mach-oxnas/Kconfig b/arch/arm/mach-oxnas/Kconfig
+deleted file mode 100644
+index a054235c3d6c..000000000000
+--- a/arch/arm/mach-oxnas/Kconfig
++++ /dev/null
+@@ -1,34 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0-only
+-menuconfig ARCH_OXNAS
+-	bool "Oxford Semiconductor OXNAS Family SoCs"
+-	depends on (ARCH_MULTI_V5 && CPU_LITTLE_ENDIAN) || ARCH_MULTI_V6
+-	select ARCH_HAS_RESET_CONTROLLER
+-	select COMMON_CLK_OXNAS
+-	select GPIOLIB
+-	select MFD_SYSCON
+-	select OXNAS_RPS_TIMER
+-	select PINCTRL_OXNAS
+-	select RESET_CONTROLLER
+-	select RESET_OXNAS
+-	select VERSATILE_FPGA_IRQ
+-	select PINCTRL
+-	help
+-	  Support for OxNas SoC family developed by Oxford Semiconductor.
+-
+-if ARCH_OXNAS
+-
+-config MACH_OX810SE
+-	bool "Support OX810SE Based Products"
+-	depends on ARCH_MULTI_V5
+-	select CPU_ARM926T
+-	help
+-	  Include Support for the Oxford Semiconductor OX810SE SoC Based Products.
+-
+-config MACH_OX820
+-	bool "Support OX820 Based Products"
+-	depends on ARCH_MULTI_V6
+-	select ARM_GIC
+-	help
+-	  Include Support for the Oxford Semiconductor OX820 SoC Based Products.
+-
+-endif
+diff --git a/arch/arm/mach-oxnas/Makefile b/arch/arm/mach-oxnas/Makefile
+deleted file mode 100644
+index a4e40e534e6a..000000000000
+--- a/arch/arm/mach-oxnas/Makefile
++++ /dev/null
+@@ -1 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0-only
 
-Best regards,
 -- 
-Neil Armstrong <neil.armstrong@linaro.org>
+2.34.1
 
