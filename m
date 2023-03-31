@@ -2,70 +2,125 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E96B2C76196
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 09:56:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 808A7C761AF
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 10:22:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232601AbjCaJ4b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Mar 2023 05:56:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49594 "EHLO
+        id S231381AbjCaKWP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Mar 2023 06:22:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231327AbjCaJy5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 05:54:57 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCB3E1DFB1;
-        Fri, 31 Mar 2023 02:54:38 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        with ESMTP id S230151AbjCaKVS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 06:21:18 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18A6A40C6;
+        Fri, 31 Mar 2023 03:18:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 1EB7B6603192;
-        Fri, 31 Mar 2023 10:54:37 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1680256477;
-        bh=uO0m8n14JLI7IWscEOpkhxVDFLw0lJfH0RRYJJ0etvg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=QO+tIyI2Vr3sxGboyaTqWX9ggHX4L20aTc8kN94LcMlW0vENMEuNnej/sb8+uNu1b
-         AI87DzJcK3IrbmE21XuNt61EF1MmpcYbUQc2sbQyfGQyWjFe+eBjvpUqo1Dy+orlIK
-         tX4fOIPY7SYJeufHNmlp86G0KrV/z2W3/XpZPPxM1xi4He9FNRtrO9bVSXmte6xoaB
-         StHcmqRm1Z56HLhlLsVNkJPCDOsJRvWQGuFN1dNH8VfQ7zC3vR2qTWjEuls2VvP+/M
-         C8Yfn+4JvusQ2JJSjP28Y7m0sEfhP05R/l1v7+6QX1BBxdDHZdOPmn1V6KgJBEdf/j
-         aiEAVq82o/oug==
-Message-ID: <abb74f12-a1c0-7d5f-ad11-c9c892a38fe2@collabora.com>
-Date:   Fri, 31 Mar 2023 11:54:34 +0200
+        by ams.source.kernel.org (Postfix) with ESMTPS id CE0A3B82E29;
+        Fri, 31 Mar 2023 10:18:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E4F0C433D2;
+        Fri, 31 Mar 2023 10:18:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680257929;
+        bh=5A3MI1NM5Uq/2OVg1nMJ+OOp//buqxGmoqLAWsIGndg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nFu8EEpL/yc6LfoS3gnG3bmm4mj3ewDjHxPWj9mvPwAM+ZuAZVRh6EhG7X6qmZ5HD
+         l5cAYUlVPq/z4q9mER2jXuIvzGQonzJ8ULQPpBwjMYoZRY5GePZG+o+irlHXOp8vTD
+         DybiTBkdYhiEMqL9fU4xX/j554JNFo3ZxyKdiU+b+4eR37mWDdX3AyotYNrWZGyExY
+         Hpz6gF2ZhRcUsXKXT+FAJrZEbbdG5zOJlZ0SqmF21V+7YsHXJmMEGXHOZYsx2bPivZ
+         heJvpIwi0b11XfAq9jWZbLUsCJrHq1WtlkBHa3Ola2amMkXG/fIyuYP/XTh0FiUG4r
+         /PAYny8iqIpvA==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1piBqg-0004es-QE; Fri, 31 Mar 2023 12:19:10 +0200
+Date:   Fri, 31 Mar 2023 12:19:10 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org, vkoul@kernel.org,
+        kishon@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org,
+        mturquette@baylibre.com, sboyd@kernel.org, quic_wcheng@quicinc.com,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 7/8] arm64: dts: qcom: ipq9574: Add USB related nodes
+Message-ID: <ZCaznloORtzgioOP@hovoldconsulting.com>
+References: <cover.1680162377.git.quic_varada@quicinc.com>
+ <c46b542b112b59002ab965be1d3fcae8c372d545.1680162377.git.quic_varada@quicinc.com>
+ <CAA8EJpo_ckJtYV4aU613X5L6+wj-1i9vZkud5p72PLdCSnj5ng@mail.gmail.com>
+ <20230331092710.GB19162@varda-linux.qualcomm.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v7 09/19] clk: mediatek: Add MT8188 ipesys clock support
-Content-Language: en-US
-To:     "Garmin.Chang" <Garmin.Chang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>
-Cc:     Project_Global_Chrome_Upstream_Group@mediatek.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-clk@vger.kernel.org, netdev@vger.kernel.org
-References: <20230331082131.12517-1-Garmin.Chang@mediatek.com>
- <20230331082131.12517-10-Garmin.Chang@mediatek.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230331082131.12517-10-Garmin.Chang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230331092710.GB19162@varda-linux.qualcomm.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 31/03/23 10:21, Garmin.Chang ha scritto:
-> Add MT8188 ipesys clock controller which provides clock gate
-> control for Image Process Engine.
+On Fri, Mar 31, 2023 at 02:57:11PM +0530, Varadarajan Narayanan wrote:
+> On Thu, Mar 30, 2023 at 12:44:40PM +0300, Dmitry Baryshkov wrote:
+> > On Thu, 30 Mar 2023 at 11:42, Varadarajan Narayanan
+> > <quic_varada@quicinc.com> wrote:
+> > >
+> > > Add USB phy and controller related nodes
+> > >
+> > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > > ---
+> > >  Changes in v5:
+> > >         - Fix additional comments
+> > >         - Edit nodes to match with qcom,sc8280xp-qmp-usb3-uni-phy.yaml
+> > >         - 'make dtbs_check' giving the following messages since
+> > >           ipq9574 doesn't have power domains. Hope this is ok
+> > >
+> > >                 /local/mnt/workspace/varada/varda-linux/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dtb: phy@7d000: 'power-domains' is a required property
+> > >                 From schema: /local/mnt/workspace/varada/varda-linux/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml
+> > >                 /local/mnt/workspace/varada/varda-linux/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dtb: usb@8a00000: 'power-domains' is a required property
+> > >                 From schema: /local/mnt/workspace/varada/varda-linux/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+> >
+> > No, I think it is not.
 > 
-> Signed-off-by: Garmin.Chang <Garmin.Chang@mediatek.com>
+> There are no GDSCs in IPQ9574. Can you suggest how to proceed.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+You need to update the binding and either make the power domains
+property optional in the binding or dependent on the SoC.
 
+> > > +               ssphy_0: phy@7d000 {
+> >
+> > Nit: usually the label usb_0_qmpphy
+> >
+> > > +                       compatible = "qcom,ipq9574-qmp-usb3-phy";
+> > > +                       reg = <0x0007d000 0xa00>;
+> > > +                       #phy-cells = <0>;
+> > > +
+> > > +                       clocks = <&gcc GCC_USB0_AUX_CLK>,
+> > > +                                <&xo_board_clk>,
+> > > +                                <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
+> > > +                                <&gcc GCC_USB0_PIPE_CLK>;
+> > > +                       clock-names = "aux",
+> > > +                                     "ref",
+> > > +                                     "com_aux",
 
+This is not the right name for this clock so you need to update the
+binding first.
+
+Please be more careful.
+
+> > > +                                     "pipe";
+> > > +
+> > > +                       resets = <&gcc GCC_USB0_PHY_BCR>,
+> > > +                                <&gcc GCC_USB3PHY_0_PHY_BCR>;
+> > > +                       reset-names = "phy",
+> > > +                                     "phy_phy";
+> > > +
+> > > +                       vdda-pll-supply = <&reg_usb_1p8>;
+> > > +                       vdda-phy-supply = <&reg_usb_0p925>;
+> > > +
+> > > +                       status = "disabled";
+> > > +
+> > > +                       #clock-cells = <0>;
+> > > +                       clock-output-names = "usb0_pipe_clk";
+> > > +               };
+
+Johan
