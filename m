@@ -2,113 +2,162 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD09C6FD18
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 12:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2317C77B6E
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 13:42:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232349AbjCaMvb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Mar 2023 08:51:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45566 "EHLO
+        id S232667AbjCaNmr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Mar 2023 09:42:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232404AbjCaMvK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 08:51:10 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 019E52061C
-        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 05:50:32 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id v6-20020a05600c470600b003f034269c96so3536099wmo.4
-        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 05:50:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680267021;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tQOcaJo0gjfdjDN9Kz62Il382Hb0T1MZkR+qKXhlg4c=;
-        b=fRHkHxjHpIMI1mgZ4M4btKrnOe0sFl5otr4Cu32Cu5QIu6LPakVq+xreCKdQ5XhAiN
-         b95O479bK8ZEMxhR9iAH565ceHfzlAy5q0reJLlcVGqaNStulaIW0F9DjNJPpIr37lKv
-         fYSo6sauCYsM3Z6RT20E3wcayf7CwCH7syH0MEN5sMS2YX+LRRE4O5l89FfYVNcwL62P
-         JcXACvtZXOT+9uS/r44LB2DXANag+7PpqUm5N1OL9VfhPZcyQl0WBRjSCrkiaHmiz0mb
-         fGQGDF9zHQRz4wA1MVET4l3MvNajZNZnQ27hKOdxbCC9yXv2v3T95BlS1MkNLg0Oyv67
-         xqlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680267021;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tQOcaJo0gjfdjDN9Kz62Il382Hb0T1MZkR+qKXhlg4c=;
-        b=15/ZhREOxAp1qSmFO5NoHORxyAWV8oD6xTI510kS3jze8jCJ+xVtHMiHgxHntwYxip
-         1e4uKLpBtQEpviPpUmhVKKBdketyA4ITFAhXUq4P2TXp6AdoxAyAQm4mZtf7H4nGLBQ+
-         JkRMigdl9LmU/80mYh8ck2bdpc9k45QVolHf23tfuSHDha3GfsogL0yrucZD7dTZUHiz
-         9c/TO/XQ5tmiKJeWroTTfJuLCcaCGQ7iThCSPEelqqlxG5H5EJjKfyHx3MJyjXUuVgNc
-         i8iRpahU/BlaL2EBZ7Ld9SkaZDbuSEzR791c+ahIHM5eTI+UDcsbi0JXN019OH+7wAlS
-         SEBA==
-X-Gm-Message-State: AO0yUKX6auHWRFFrh9gWtuXeTPBopGrm4rf4BXRvHLClxBzx66E9A8fp
-        NXU1dNtFNZ1bf0sMwjPFrUC3+w==
-X-Google-Smtp-Source: AK7set9Yd7xSI/pfgzBWTUd8cSHqADDuRA2IypgwQeaHoXHb9vy5hJiefUKdVhF2f6lcyy1sH0Inqg==
-X-Received: by 2002:a05:600c:b54:b0:3ed:b6ad:54d with SMTP id k20-20020a05600c0b5400b003edb6ad054dmr20022209wmr.18.1680267021220;
-        Fri, 31 Mar 2023 05:50:21 -0700 (PDT)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id n23-20020a05600c3b9700b003ede04deb14sm9577046wms.48.2023.03.31.05.50.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Mar 2023 05:50:20 -0700 (PDT)
-Date:   Fri, 31 Mar 2023 15:50:19 +0300
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/1] clk: imx6ul: retain early UART clocks during kernel
- init
-Message-ID: <ZCbXC6A4lgxc4wO4@linaro.org>
-References: <20230321135324.1286359-1-alexander.stein@ew.tq-group.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230321135324.1286359-1-alexander.stein@ew.tq-group.com>
+        with ESMTP id S231566AbjCaNmp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 09:42:45 -0400
+Received: from wnew4-smtp.messagingengine.com (wnew4-smtp.messagingengine.com [64.147.123.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 046051C1F0;
+        Fri, 31 Mar 2023 06:42:43 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailnew.west.internal (Postfix) with ESMTP id B7A372B06431;
+        Fri, 31 Mar 2023 09:42:38 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Fri, 31 Mar 2023 09:42:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1680270158; x=1680277358; bh=g6
+        aDwmQjQnWklILxvXl/woLrKoW/quWophX6bAkTCEo=; b=TTmtV29COQdi0bvTzb
+        VEpOlT1o3jNnc2wW8GBlrOk7+9/MctBDjVr53zmvoRdTqDlOTHAZKSLyDysAlwte
+        hEq/UpD9pogU3widuS5h8W8iB0wDYNfKdJJp6rppFP540f3Gy8tENgGeSHLJCOfs
+        FsjqDoVn2xrJaPPe0yx+9YBr07Ytqv0+3MVEk6q4+goccGh7j+FOH1QrFJWc5+7l
+        1um7QLnwaAqjNCRAXNsz5fdPsFQELPHYPzUxRDOKCmdeTFZf0diPkEsF1wbYL5IU
+        o8eDmdF6Fg60Dieg3k/ZJuONUdXA4X4EOjmny+OgIeur77zl0ochP7FNQbxyH8DH
+        Ax3Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1680270158; x=1680277358; bh=g6aDwmQjQnWkl
+        ILxvXl/woLrKoW/quWophX6bAkTCEo=; b=SqeGvKfxDDPP6t6KWDRtwqd19OBwm
+        jLeWZaJG9njNSDuwSGhOBBwv8v+SMBgELYq66iwF60uEt+dhet3hwp909xte/2SB
+        tJyvlehj1z1m+g4xdV7w3tsirezdITNOLuB/NwH7T10WHDpsZJfpQ0/LHDrj7umk
+        fRi4pv32y+KR954J2n3JdG8/s18d4gMzJHborWBy9dO5Sl1adMDS/B0zwa2zLu5z
+        TQ0g1TsJZ+bTf3iFVHy36iQxP3hkSGdhQzuMbFsvj+V82QYHZ4eKfZqVISYgna4H
+        WiADkMFo1mKNsaSN0hl1SCrWRD/l3lNhjJL47a8Zgqen0ZYRspYfU1qhw==
+X-ME-Sender: <xms:TOMmZDEUxJuQhS9X_pVD4QAt3n0IwOnRgq2voG0ebtOIwNjFuFey4A>
+    <xme:TOMmZAW7wt-5QbCblh5vM5luzY2SXMJn6tkrqQcmi5CSSNndmSwG0iJ6QZMaKjLjW
+    QBa4jz0Ao3FL7ODJkE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvdeiuddgieegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepvefhffeltdegheeffffhtdegvdehjedtgfekueevgfduffettedtkeekueef
+    hedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:TeMmZFJ37O-uyaodkYU6iR0w8O5z6CFRwtCjNWfSvXGVNs2ReLvN4g>
+    <xmx:TeMmZBHmXfvKlHe2yMi5gFmhlBU8f_-bZKLlj5dJSJfcjiulTMKJag>
+    <xmx:TeMmZJX_nXXwVxDg-8mFHJiCHj8DZ6XoLAflwYYAMOJ1U0Kr66Otvg>
+    <xmx:TuMmZBWNulWSSTdEsn3zCw_0hYIiZqCD6OKFcr7ytl8CB3fAQ3O89lNgRRM>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id E2D7BB60092; Fri, 31 Mar 2023 09:42:36 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-238-g746678b8b6-fm-20230329.001-g746678b8
+Mime-Version: 1.0
+Message-Id: <df218abb-fa83-49d2-baf5-557b83b33670@app.fastmail.com>
+In-Reply-To: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
+References: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
+Date:   Fri, 31 Mar 2023 15:42:15 +0200
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Neil Armstrong" <neil.armstrong@linaro.org>,
+        "Olof Johansson" <olof@lixom.net>, soc@kernel.org,
+        "Rob Herring" <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        "Russell King" <linux@armlinux.org.uk>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Miquel Raynal" <miquel.raynal@bootlin.com>,
+        "Richard Weinberger" <richard@nod.at>,
+        "Vignesh Raghavendra" <vigneshr@ti.com>,
+        "Giuseppe Cavallaro" <peppe.cavallaro@st.com>,
+        "Alexandre Torgue" <alexandre.torgue@foss.st.com>,
+        "Jose Abreu" <joabreu@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "Eric Dumazet" <edumazet@google.com>,
+        "Jakub Kicinski" <kuba@kernel.org>,
+        "Paolo Abeni" <pabeni@redhat.com>,
+        "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
+        "Linus Walleij" <linus.walleij@linaro.org>,
+        "Bartosz Golaszewski" <brgl@bgdev.pl>,
+        "Sebastian Reichel" <sre@kernel.org>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        "Marc Zyngier" <maz@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Netdev <netdev@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-pm@vger.kernel.org, "Daniel Golle" <daniel@makrotopia.org>
+Subject: Re: [PATCH RFC 00/20] ARM: oxnas support removal
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-03-21 14:53:24, Alexander Stein wrote:
-> Make sure to keep UART clocks enabled during kernel init if
-> earlyprintk or earlycon are active.
-> 
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+On Fri, Mar 31, 2023, at 10:34, Neil Armstrong wrote:
+> With [1] removing MPCore SMP support, this makes the OX820 barely usable,
+> associated with a clear lack of maintainance, development and migration to
+> dt-schema it's clear that Linux support for OX810 and OX820 should be removed.
+>
+> In addition, the OX810 hasn't been booted for years and isn't even present
+> in an ARM config file.
+>
+> For the OX820, lack of USB and SATA support makes the platform not usable
+> in the current Linux support and relies on off-tree drivers hacked from the
+> vendor (defunct for years) sources.
+>
+> The last users are in the OpenWRT distribution, and today's removal means
+> support will still be in stable 6.1 LTS kernel until end of 2026.
+>
+> If someone wants to take over the development even with lack of SMP, I'll
+> be happy to hand off maintainance.
+>
+> The plan is to apply the first 4 patches first, then the drivers
+> followed by bindings. Finally the MAINTAINANCE entry can be removed.
+>
+> I'm not sure about the process of bindings removal, but perhaps the bindings
+> should be marked as deprecated first then removed later on ?
+>
+> It has been a fun time adding support for this architecture, but it's time
+> to get over!
+>
+> Patch 2 obviously depends on [1].
+>
+> [1] https://lore.kernel.org/all/20230327121317.4081816-1-arnd@kernel.org/
+>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-Applied, thanks!
+Thanks a lot for going through this and preparing the patches!
 
-[1/1] clk: imx6ul: retain early UART clocks during kernel init
-      commit: edc6476d334adaeedf899c70e61264305155fd70
+I've discussed this with Daniel Golle on the OpenWRT channel as well,
+and he indicated that the timing is probably fine here, as there are
+already close to zero downloads for oxnas builds, and the 6.1 kernel
+will only be part of a release in 2024.
 
-Best regards,
---
-Abel Vesa <abel.vesa@linaro.org>
+For the dependency on my other patch, I'd suggest you instead
+remove the SMP files here as well, which means we can merge either
+part independently based on just 6.3-rc. I can do that change
+myself by picking up patches 1-4 of your RFC series, or maybe you
+can send resend them after rebase to 6.3-rc1.
 
-> ---
-> Apparently i.MX6UL was missed in commit 0822f933735c ("clk: imx6: retain
-> early UART clocks during kernel init"). But as commit 379c9a24cc23 ("clk:
-> imx: Fix reparenting of UARTs not associated with stdout") changes the
-> calling signature it's not warranting a Fixes for the old commit.
-> 
->  drivers/clk/imx/clk-imx6ul.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-> index 206e4c43f68f..26578e407d3e 100644
-> --- a/drivers/clk/imx/clk-imx6ul.c
-> +++ b/drivers/clk/imx/clk-imx6ul.c
-> @@ -510,6 +510,8 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
->  		clk_set_parent(hws[IMX6ULL_CLK_EPDC_PRE_SEL]->clk, hws[IMX6UL_CLK_PLL3_PFD2]->clk);
->  
->  	clk_set_parent(hws[IMX6UL_CLK_ENFC_SEL]->clk, hws[IMX6UL_CLK_PLL2_PFD2]->clk);
-> +
-> +	imx_register_uart_clocks(2);
->  }
->  
->  CLK_OF_DECLARE(imx6ul, "fsl,imx6ul-ccm", imx6ul_clocks_init);
-> -- 
-> 2.34.1
-> 
+For the driver removals, I think we can merge those at the same
+time as the platform removal since there are no shared header files
+that would cause build time regressions and there are no runtime
+regressions other than breaking the platform itself. Maybe
+just send the driver removal separately to the subsystem
+maintainers with my
+
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+
+     Arnd
