@@ -2,61 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A6B8C77B62
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 08:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3785BC77B60
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 08:36:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231834AbjCaIgu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Mar 2023 04:36:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59738 "EHLO
+        id S231847AbjCaIg4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Mar 2023 04:36:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231642AbjCaIgQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 04:36:16 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55FA21D92C
-        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 01:35:04 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id h17so21571037wrt.8
-        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 01:35:03 -0700 (PDT)
+        with ESMTP id S231783AbjCaIgS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 04:36:18 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 401401D87A
+        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 01:35:07 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id q19so18517574wrc.5
+        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 01:35:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680251701;
+        d=linaro.org; s=google; t=1680251706;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=e2XVUgcXhhuEI3xNnuwh8AFlDinLYyU1iswACd61bmI=;
-        b=kGHKFCRY2/20Z1rCTqcYJVgU3cd0wi3wDJXSMUyFVmZc5j+V1KaiZPKiBhBCNWiEmk
-         YTJR/O1xNUVyGTEJU7oVvd4EgpSvsIeWc4G/vW2FHJAqvr1kgXR0guIzHaF0b/f40umh
-         vl0zURjjjrylWlJemjFV4xwD8kY/633aitJ0VVNsQRTNDNLcU4QFEFBQI5Tugl9mdmvg
-         udtFPfIzb33L0bIbMKt5hHXVZJ/EmVQBNEEcbXpC9ggPMZBn5+Hkia/GFYA4U/4x+oy3
-         mXHaaqPyZzupgnB9Wh3WgukGpxphE0upGxLInLzuYg3CiYPeQuCGDmHn/E7to5cUt0TD
-         JMVg==
+        bh=sR14Pzk1ZWPhY5OD69Rj27prrk3LKbGiHay2FBxMcv4=;
+        b=Fty/aJcYkFZEKr2metM5EqkEKq17l5gJGQix+tZCxMOlAKB1AMO/oIkTZt9URAowwf
+         RWICJqsjkouqcMT9vmE8IfKQP/DHvv9UkXQRhxf1Q+mimQtH5cxG/PhbPnk9w1TLrlYA
+         AT8hUgqpZZAhjexFXTVWXk7iDen88KQTq1xUn9G6YnJTv4noraV6PymxxUwt1fBqooou
+         HQcSuX+pCi41nBC6SYZ0CEIxhTt/9F6IwxjYEtO3fybv47zKTSc43Sy/DwIzgnv6/5km
+         N5ydK4H27c9gO2NPO/42s0zygtKswLo05pSB9tKxjIogSH3waXuYQbnc4SyFxThsFPss
+         UMTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680251701;
+        d=1e100.net; s=20210112; t=1680251706;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=e2XVUgcXhhuEI3xNnuwh8AFlDinLYyU1iswACd61bmI=;
-        b=x9Ed1MZ53dCsES3dFsT49us2/UKfw6cpBp89H5IexDAYfea5MaEKdhZ1o1dzjcA/Zd
-         FrVyywg43IXRezib2xugn3XOaVFYUKOz+sLdJY1MUszyBbZ0A+qYj4lZ9nOzc9v2ZJfz
-         f3TofvLDLGlLf14nx/2glKe5xNEfhSQOSRj/PPKuwn41TWOc088FAih1ZvtrrBwtCGfi
-         TMUKsptNO6+M2DkJvrcSyOhyYMR5RUuynOOU75HwMzLelcGRInewowwDFBYqs5qyjavV
-         mmXrStP03CWS3MNVulLdJSrYf5Z6SRrmc4BosIAlSbFK5ohvZg7st3OZ4x8x8lFIbCSw
-         ktYQ==
-X-Gm-Message-State: AAQBX9cyR5VhHOdAst1eeRn/jqrCph2r5OKYHIBODTKZVhoe4MtXgAhN
-        +Zlc2E1Vew7x2sI6uvolqFXEMw==
-X-Google-Smtp-Source: AKy350aNpaM25UKb9HFn6P6W9+ACITvL4WD6p7Ljzn1vIWq606qr2KNRuWDoLeB1DkeoT9ecCJBieQ==
-X-Received: by 2002:a5d:6e54:0:b0:2da:45f4:c053 with SMTP id j20-20020a5d6e54000000b002da45f4c053mr18574691wrz.52.1680251700946;
-        Fri, 31 Mar 2023 01:35:00 -0700 (PDT)
+        bh=sR14Pzk1ZWPhY5OD69Rj27prrk3LKbGiHay2FBxMcv4=;
+        b=2fJLsti6RPVBClXbys5hx2umf9/96JSznrVhQciA2wz6bpjeqtE6NXh0yT5pmgMa49
+         Y3oiWArMnQBC4iF6R7Aj5v4hSKNwIGFELu0XBghioMhUtCus22fropIeh4H4Thf+Vq2e
+         NQcdWL6aMnjxCQWlDEn4lbIyQ+yzjH/dallIPTa4IaiqhEo9W3J5L57pJq+A6SkmhAU9
+         FKfQ/JJbxSE3hEm7HwxadejAsEnh4lfPObf7HD9mEUVEjDjVrq4SknncDRDDxoYBY6i3
+         M+HCr74KdhQmi2J2rvgzx0ThiE1O7IslxjCct4qvo0PTFTaAFnTpr5Vzdd+uz1QmFr+T
+         jwNg==
+X-Gm-Message-State: AAQBX9c/DyKlkAK38kUpRHytCERx/k8AxaUelQU07O8R92VFhOKDGPY3
+        /VcQIqIwJ+7THeLy3jUuSnokjg==
+X-Google-Smtp-Source: AKy350YkNKUXMSjTTKKpy6c26g6vAz/W5xiVHdg7Pfywz18Z1jB2OllrAaU4jJjzL55BSkouJUd0zA==
+X-Received: by 2002:adf:ed8c:0:b0:2cf:e868:f781 with SMTP id c12-20020adfed8c000000b002cfe868f781mr18949949wro.42.1680251706543;
+        Fri, 31 Mar 2023 01:35:06 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id e11-20020a5d4e8b000000b002cde626cd96sm1563153wru.65.2023.03.31.01.34.59
+        by smtp.gmail.com with ESMTPSA id e11-20020a5d4e8b000000b002cde626cd96sm1563153wru.65.2023.03.31.01.35.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Mar 2023 01:35:00 -0700 (PDT)
+        Fri, 31 Mar 2023 01:35:06 -0700 (PDT)
 From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Fri, 31 Mar 2023 10:34:50 +0200
-Subject: [PATCH RFC 12/20] dt-bindings: net: oxnas-dwmac: remove obsolete
- bindings
+Date:   Fri, 31 Mar 2023 10:34:54 +0200
+Subject: [PATCH RFC 16/20] power: reset: oxnas-restart: remove obsolete
+ restart driver
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230331-topic-oxnas-upstream-remove-v1-12-5bd58fd1dd1f@linaro.org>
+Message-Id: <20230331-topic-oxnas-upstream-remove-v1-16-5bd58fd1dd1f@linaro.org>
 References: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
 In-Reply-To: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
 To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
@@ -95,61 +95,285 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Due to lack of maintainance and stall of development for a few years now,
-and since no new features will ever be added upstream, remove the
-OX810 and OX820 dwmac glue.
+and since no new features will ever be added upstream, remove support
+for OX810 and OX820 restart feature.
 
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- .../devicetree/bindings/net/oxnas-dwmac.txt        | 41 ----------------------
- 1 file changed, 41 deletions(-)
+ drivers/power/reset/Kconfig         |   7 --
+ drivers/power/reset/Makefile        |   1 -
+ drivers/power/reset/oxnas-restart.c | 233 ------------------------------------
+ 3 files changed, 241 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/oxnas-dwmac.txt b/Documentation/devicetree/bindings/net/oxnas-dwmac.txt
+diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+index 8c87eeda0fec..cc734c1fe4c0 100644
+--- a/drivers/power/reset/Kconfig
++++ b/drivers/power/reset/Kconfig
+@@ -148,13 +148,6 @@ config POWER_RESET_ODROID_GO_ULTRA_POWEROFF
+ 	help
+ 	  This driver supports Power off for Odroid Go Ultra device.
+ 
+-config POWER_RESET_OXNAS
+-	bool "OXNAS SoC restart driver"
+-	depends on ARCH_OXNAS
+-	default MACH_OX820
+-	help
+-	  Restart support for OXNAS/PLXTECH OX820 SoC.
+-
+ config POWER_RESET_PIIX4_POWEROFF
+ 	tristate "Intel PIIX4 power-off driver"
+ 	depends on PCI
+diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
+index d763e6735ee3..a95d1bd275d1 100644
+--- a/drivers/power/reset/Makefile
++++ b/drivers/power/reset/Makefile
+@@ -14,7 +14,6 @@ obj-$(CONFIG_POWER_RESET_HISI) += hisi-reboot.o
+ obj-$(CONFIG_POWER_RESET_LINKSTATION) += linkstation-poweroff.o
+ obj-$(CONFIG_POWER_RESET_MSM) += msm-poweroff.o
+ obj-$(CONFIG_POWER_RESET_MT6323) += mt6323-poweroff.o
+-obj-$(CONFIG_POWER_RESET_OXNAS) += oxnas-restart.o
+ obj-$(CONFIG_POWER_RESET_QCOM_PON) += qcom-pon.o
+ obj-$(CONFIG_POWER_RESET_OCELOT_RESET) += ocelot-reset.o
+ obj-$(CONFIG_POWER_RESET_ODROID_GO_ULTRA_POWEROFF) += odroid-go-ultra-poweroff.o
+diff --git a/drivers/power/reset/oxnas-restart.c b/drivers/power/reset/oxnas-restart.c
 deleted file mode 100644
-index 27db496f1ce8..000000000000
---- a/Documentation/devicetree/bindings/net/oxnas-dwmac.txt
+index 13090bec058a..000000000000
+--- a/drivers/power/reset/oxnas-restart.c
 +++ /dev/null
-@@ -1,41 +0,0 @@
--* Oxford Semiconductor OXNAS DWMAC Ethernet controller
+@@ -1,233 +0,0 @@
+-// SPDX-License-Identifier: (GPL-2.0)
+-/*
+- * oxnas SoC reset driver
+- * based on:
+- * Microsemi MIPS SoC reset driver
+- * and ox820_assert_system_reset() written by Ma Hajun <mahaijuns@gmail.com>
+- *
+- * Copyright (c) 2013 Ma Hajun <mahaijuns@gmail.com>
+- * Copyright (c) 2017 Microsemi Corporation
+- * Copyright (c) 2020 Daniel Golle <daniel@makrotopia.org>
+- */
+-#include <linux/delay.h>
+-#include <linux/io.h>
+-#include <linux/notifier.h>
+-#include <linux/mfd/syscon.h>
+-#include <linux/of_address.h>
+-#include <linux/of_device.h>
+-#include <linux/platform_device.h>
+-#include <linux/reboot.h>
+-#include <linux/regmap.h>
 -
--The device inherits all the properties of the dwmac/stmmac devices
--described in the file stmmac.txt in the current directory with the
--following changes.
+-/* bit numbers of reset control register */
+-#define OX820_SYS_CTRL_RST_SCU                0
+-#define OX820_SYS_CTRL_RST_COPRO              1
+-#define OX820_SYS_CTRL_RST_ARM0               2
+-#define OX820_SYS_CTRL_RST_ARM1               3
+-#define OX820_SYS_CTRL_RST_USBHS              4
+-#define OX820_SYS_CTRL_RST_USBHSPHYA          5
+-#define OX820_SYS_CTRL_RST_MACA               6
+-#define OX820_SYS_CTRL_RST_MAC                OX820_SYS_CTRL_RST_MACA
+-#define OX820_SYS_CTRL_RST_PCIEA              7
+-#define OX820_SYS_CTRL_RST_SGDMA              8
+-#define OX820_SYS_CTRL_RST_CIPHER             9
+-#define OX820_SYS_CTRL_RST_DDR                10
+-#define OX820_SYS_CTRL_RST_SATA               11
+-#define OX820_SYS_CTRL_RST_SATA_LINK          12
+-#define OX820_SYS_CTRL_RST_SATA_PHY           13
+-#define OX820_SYS_CTRL_RST_PCIEPHY            14
+-#define OX820_SYS_CTRL_RST_STATIC             15
+-#define OX820_SYS_CTRL_RST_GPIO               16
+-#define OX820_SYS_CTRL_RST_UART1              17
+-#define OX820_SYS_CTRL_RST_UART2              18
+-#define OX820_SYS_CTRL_RST_MISC               19
+-#define OX820_SYS_CTRL_RST_I2S                20
+-#define OX820_SYS_CTRL_RST_SD                 21
+-#define OX820_SYS_CTRL_RST_MACB               22
+-#define OX820_SYS_CTRL_RST_PCIEB              23
+-#define OX820_SYS_CTRL_RST_VIDEO              24
+-#define OX820_SYS_CTRL_RST_DDR_PHY            25
+-#define OX820_SYS_CTRL_RST_USBHSPHYB          26
+-#define OX820_SYS_CTRL_RST_USBDEV             27
+-#define OX820_SYS_CTRL_RST_ARMDBG             29
+-#define OX820_SYS_CTRL_RST_PLLA               30
+-#define OX820_SYS_CTRL_RST_PLLB               31
 -
--Required properties on all platforms:
+-/* bit numbers of clock control register */
+-#define OX820_SYS_CTRL_CLK_COPRO              0
+-#define OX820_SYS_CTRL_CLK_DMA                1
+-#define OX820_SYS_CTRL_CLK_CIPHER             2
+-#define OX820_SYS_CTRL_CLK_SD                 3
+-#define OX820_SYS_CTRL_CLK_SATA               4
+-#define OX820_SYS_CTRL_CLK_I2S                5
+-#define OX820_SYS_CTRL_CLK_USBHS              6
+-#define OX820_SYS_CTRL_CLK_MACA               7
+-#define OX820_SYS_CTRL_CLK_MAC                OX820_SYS_CTRL_CLK_MACA
+-#define OX820_SYS_CTRL_CLK_PCIEA              8
+-#define OX820_SYS_CTRL_CLK_STATIC             9
+-#define OX820_SYS_CTRL_CLK_MACB               10
+-#define OX820_SYS_CTRL_CLK_PCIEB              11
+-#define OX820_SYS_CTRL_CLK_REF600             12
+-#define OX820_SYS_CTRL_CLK_USBDEV             13
+-#define OX820_SYS_CTRL_CLK_DDR                14
+-#define OX820_SYS_CTRL_CLK_DDRPHY             15
+-#define OX820_SYS_CTRL_CLK_DDRCK              16
 -
--- compatible:	For the OX820 SoC, it should be :
--		- "oxsemi,ox820-dwmac" to select glue
--		- "snps,dwmac-3.512" to select IP version.
--		For the OX810SE SoC, it should be :
--		- "oxsemi,ox810se-dwmac" to select glue
--		- "snps,dwmac-3.512" to select IP version.
+-/* Regmap offsets */
+-#define OX820_CLK_SET_REGOFFSET               0x2c
+-#define OX820_CLK_CLR_REGOFFSET               0x30
+-#define OX820_RST_SET_REGOFFSET               0x34
+-#define OX820_RST_CLR_REGOFFSET               0x38
+-#define OX820_SECONDARY_SEL_REGOFFSET         0x14
+-#define OX820_TERTIARY_SEL_REGOFFSET          0x8c
+-#define OX820_QUATERNARY_SEL_REGOFFSET        0x94
+-#define OX820_DEBUG_SEL_REGOFFSET             0x9c
+-#define OX820_ALTERNATIVE_SEL_REGOFFSET       0xa4
+-#define OX820_PULLUP_SEL_REGOFFSET            0xac
+-#define OX820_SEC_SECONDARY_SEL_REGOFFSET     0x100014
+-#define OX820_SEC_TERTIARY_SEL_REGOFFSET      0x10008c
+-#define OX820_SEC_QUATERNARY_SEL_REGOFFSET    0x100094
+-#define OX820_SEC_DEBUG_SEL_REGOFFSET         0x10009c
+-#define OX820_SEC_ALTERNATIVE_SEL_REGOFFSET   0x1000a4
+-#define OX820_SEC_PULLUP_SEL_REGOFFSET        0x1000ac
 -
--- clocks: Should contain phandles to the following clocks
--- clock-names:	Should contain the following:
--		- "stmmaceth" for the host clock - see stmmac.txt
--		- "gmac" for the peripheral gate clock
--
--- oxsemi,sys-ctrl: a phandle to the system controller syscon node
--
--Example :
--
--etha: ethernet@40400000 {
--	compatible = "oxsemi,ox820-dwmac", "snps,dwmac-3.512";
--	reg = <0x40400000 0x2000>;
--	interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
--	interrupt-names = "macirq", "eth_wake_irq";
--	mac-address = [000000000000]; /* Filled in by U-Boot */
--	phy-mode = "rgmii";
--
--	clocks = <&stdclk CLK_820_ETHA>, <&gmacclk>;
--	clock-names = "gmac", "stmmaceth";
--	resets = <&reset RESET_MAC>;
--
--	/* Regmap for sys registers */
--	oxsemi,sys-ctrl = <&sys>;
--
+-struct oxnas_restart_context {
+-	struct regmap *sys_ctrl;
+-	struct notifier_block restart_handler;
 -};
+-
+-static int ox820_restart_handle(struct notifier_block *this,
+-				 unsigned long mode, void *cmd)
+-{
+-	struct oxnas_restart_context *ctx = container_of(this, struct
+-							oxnas_restart_context,
+-							restart_handler);
+-	u32 value;
+-
+-	/*
+-	 * Assert reset to cores as per power on defaults
+-	 * Don't touch the DDR interface as things will come to an impromptu
+-	 * stop NB Possibly should be asserting reset for PLLB, but there are
+-	 * timing concerns here according to the docs
+-	 */
+-	value = BIT(OX820_SYS_CTRL_RST_COPRO)		|
+-		BIT(OX820_SYS_CTRL_RST_USBHS)		|
+-		BIT(OX820_SYS_CTRL_RST_USBHSPHYA)	|
+-		BIT(OX820_SYS_CTRL_RST_MACA)		|
+-		BIT(OX820_SYS_CTRL_RST_PCIEA)		|
+-		BIT(OX820_SYS_CTRL_RST_SGDMA)		|
+-		BIT(OX820_SYS_CTRL_RST_CIPHER)		|
+-		BIT(OX820_SYS_CTRL_RST_SATA)		|
+-		BIT(OX820_SYS_CTRL_RST_SATA_LINK)	|
+-		BIT(OX820_SYS_CTRL_RST_SATA_PHY)	|
+-		BIT(OX820_SYS_CTRL_RST_PCIEPHY)		|
+-		BIT(OX820_SYS_CTRL_RST_STATIC)		|
+-		BIT(OX820_SYS_CTRL_RST_UART1)		|
+-		BIT(OX820_SYS_CTRL_RST_UART2)		|
+-		BIT(OX820_SYS_CTRL_RST_MISC)		|
+-		BIT(OX820_SYS_CTRL_RST_I2S)		|
+-		BIT(OX820_SYS_CTRL_RST_SD)		|
+-		BIT(OX820_SYS_CTRL_RST_MACB)		|
+-		BIT(OX820_SYS_CTRL_RST_PCIEB)		|
+-		BIT(OX820_SYS_CTRL_RST_VIDEO)		|
+-		BIT(OX820_SYS_CTRL_RST_USBHSPHYB)	|
+-		BIT(OX820_SYS_CTRL_RST_USBDEV);
+-
+-	regmap_write(ctx->sys_ctrl, OX820_RST_SET_REGOFFSET, value);
+-
+-	/* Release reset to cores as per power on defaults */
+-	regmap_write(ctx->sys_ctrl, OX820_RST_CLR_REGOFFSET,
+-			BIT(OX820_SYS_CTRL_RST_GPIO));
+-
+-	/*
+-	 * Disable clocks to cores as per power-on defaults - must leave DDR
+-	 * related clocks enabled otherwise we'll stop rather abruptly.
+-	 */
+-	value = BIT(OX820_SYS_CTRL_CLK_COPRO)		|
+-		BIT(OX820_SYS_CTRL_CLK_DMA)		|
+-		BIT(OX820_SYS_CTRL_CLK_CIPHER)		|
+-		BIT(OX820_SYS_CTRL_CLK_SD)		|
+-		BIT(OX820_SYS_CTRL_CLK_SATA)		|
+-		BIT(OX820_SYS_CTRL_CLK_I2S)		|
+-		BIT(OX820_SYS_CTRL_CLK_USBHS)		|
+-		BIT(OX820_SYS_CTRL_CLK_MAC)		|
+-		BIT(OX820_SYS_CTRL_CLK_PCIEA)		|
+-		BIT(OX820_SYS_CTRL_CLK_STATIC)		|
+-		BIT(OX820_SYS_CTRL_CLK_MACB)		|
+-		BIT(OX820_SYS_CTRL_CLK_PCIEB)		|
+-		BIT(OX820_SYS_CTRL_CLK_REF600)		|
+-		BIT(OX820_SYS_CTRL_CLK_USBDEV);
+-
+-	regmap_write(ctx->sys_ctrl, OX820_CLK_CLR_REGOFFSET, value);
+-
+-	/* Enable clocks to cores as per power-on defaults */
+-
+-	/* Set sys-control pin mux'ing as per power-on defaults */
+-	regmap_write(ctx->sys_ctrl, OX820_SECONDARY_SEL_REGOFFSET, 0);
+-	regmap_write(ctx->sys_ctrl, OX820_TERTIARY_SEL_REGOFFSET, 0);
+-	regmap_write(ctx->sys_ctrl, OX820_QUATERNARY_SEL_REGOFFSET, 0);
+-	regmap_write(ctx->sys_ctrl, OX820_DEBUG_SEL_REGOFFSET, 0);
+-	regmap_write(ctx->sys_ctrl, OX820_ALTERNATIVE_SEL_REGOFFSET, 0);
+-	regmap_write(ctx->sys_ctrl, OX820_PULLUP_SEL_REGOFFSET, 0);
+-
+-	regmap_write(ctx->sys_ctrl, OX820_SEC_SECONDARY_SEL_REGOFFSET, 0);
+-	regmap_write(ctx->sys_ctrl, OX820_SEC_TERTIARY_SEL_REGOFFSET, 0);
+-	regmap_write(ctx->sys_ctrl, OX820_SEC_QUATERNARY_SEL_REGOFFSET, 0);
+-	regmap_write(ctx->sys_ctrl, OX820_SEC_DEBUG_SEL_REGOFFSET, 0);
+-	regmap_write(ctx->sys_ctrl, OX820_SEC_ALTERNATIVE_SEL_REGOFFSET, 0);
+-	regmap_write(ctx->sys_ctrl, OX820_SEC_PULLUP_SEL_REGOFFSET, 0);
+-
+-	/*
+-	 * No need to save any state, as the ROM loader can determine whether
+-	 * reset is due to power cycling or programatic action, just hit the
+-	 * (self-clearing) CPU reset bit of the block reset register
+-	 */
+-	value =
+-		BIT(OX820_SYS_CTRL_RST_SCU) |
+-		BIT(OX820_SYS_CTRL_RST_ARM0) |
+-		BIT(OX820_SYS_CTRL_RST_ARM1);
+-
+-	regmap_write(ctx->sys_ctrl, OX820_RST_SET_REGOFFSET, value);
+-
+-	pr_emerg("Unable to restart system\n");
+-	return NOTIFY_DONE;
+-}
+-
+-static int ox820_restart_probe(struct platform_device *pdev)
+-{
+-	struct oxnas_restart_context *ctx;
+-	struct regmap *sys_ctrl;
+-	struct device *dev = &pdev->dev;
+-	int err = 0;
+-
+-	sys_ctrl = syscon_node_to_regmap(pdev->dev.of_node);
+-	if (IS_ERR(sys_ctrl))
+-		return PTR_ERR(sys_ctrl);
+-
+-	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
+-	if (!ctx)
+-		return -ENOMEM;
+-
+-	ctx->sys_ctrl = sys_ctrl;
+-	ctx->restart_handler.notifier_call = ox820_restart_handle;
+-	ctx->restart_handler.priority = 192;
+-	err = register_restart_handler(&ctx->restart_handler);
+-	if (err)
+-		dev_err(dev, "can't register restart notifier (err=%d)\n", err);
+-
+-	return err;
+-}
+-
+-static const struct of_device_id ox820_restart_of_match[] = {
+-	{ .compatible = "oxsemi,ox820-sys-ctrl" },
+-	{}
+-};
+-
+-static struct platform_driver ox820_restart_driver = {
+-	.probe = ox820_restart_probe,
+-	.driver = {
+-		.name = "ox820-chip-reset",
+-		.of_match_table = ox820_restart_of_match,
+-	},
+-};
+-builtin_platform_driver(ox820_restart_driver);
 
 -- 
 2.34.1
