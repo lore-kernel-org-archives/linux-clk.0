@@ -2,403 +2,184 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41146C6FD18
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 10:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAFAEC76196
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 12:15:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230148AbjCaKgK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Mar 2023 06:36:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41206 "EHLO
+        id S232098AbjCaMPn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Mar 2023 08:15:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229894AbjCaKgJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 06:36:09 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 059176585;
-        Fri, 31 Mar 2023 03:36:06 -0700 (PDT)
-Received: from mercury (dyndsl-091-248-213-136.ewe-ip-backbone.de [91.248.213.136])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 117B86600357;
-        Fri, 31 Mar 2023 11:36:05 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1680258965;
-        bh=6gLxzw85mRLOJzG01mRch9rXA1jFQi0Sl2YPQQ0QA1o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T6RArj34SKOA3VU1/ngSnib2dDR5pwZ/M4t78XN4LfST7bpdrIAcP5L8rRdGQpHbZ
-         +6o6AKeLI14XAd0nNAVJxRJnpf+6k3/EsTIIBcIlLP1En48+0ne5aNsplp4vGq6oQ1
-         1pBpxyxhxclxRT+30IfPmclnXM5vlCR711D+PPe5XWdwewlKKl2rkK0Gjbz/YAUmJT
-         eahqOrhh66Cj0AFMW9cD9ApjqYCjWb0mVOlyumx7uQ8ynYS1AAslOBsZmAKOPTHNhe
-         clw5qEsIqBdT0Y+gLw5WHCcU2BJpYwaSXKuv8hJnvvZkyd+M8a+ERzccCiT58UJ2F8
-         BD8+s6FC5Lbvg==
-Received: by mercury (Postfix, from userid 1000)
-        id 5224810626B9; Fri, 31 Mar 2023 12:36:02 +0200 (CEST)
-Date:   Fri, 31 Mar 2023 12:36:02 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Neil Armstrong <neil.armstrong@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        soc@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH RFC 16/20] power: reset: oxnas-restart: remove obsolete
- restart driver
-Message-ID: <20230331103602.k2cpzjwnradftxu3@mercury.elektranox.org>
-References: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
- <20230331-topic-oxnas-upstream-remove-v1-16-5bd58fd1dd1f@linaro.org>
+        with ESMTP id S232089AbjCaMPm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 08:15:42 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC01D1DF90;
+        Fri, 31 Mar 2023 05:15:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1680264940; x=1711800940;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MDqfavBp0xhE9zr6CTvKsp9hMprvzZOnmnyhz/PHj+8=;
+  b=XdyqMmaxy9mdQX8UmVRgRM3gEEcYc+Zis2igX6pWfcLhertv0EzzwRQ4
+   JR3Cu/aszxmoDw2NKhUBGMW4fmCZWcD/ZtdkZuWPwuZWEADt3SP5mtKla
+   uzQLOXpgwlFIexyxHlWKxsgHX28ghfh2WfBVjjabHuufIzDImOxnGeHzv
+   dgZ9kDWH5u7flPd6T8r2ajxIZfjpReXOmB40LirkKM36G0H1YcXVJWSJ0
+   mvGTkmDPyRBY4nxWYx/TuHbQjyEeWfUFT/utT5Ua+79wMxL9/Z5tmx4y9
+   8h/UUreewXZuyZkvET7q2QB43D7TmNgSdwgmWJtywMU07fH48GZqyHl0U
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10665"; a="404155580"
+X-IronPort-AV: E=Sophos;i="5.98,307,1673942400"; 
+   d="scan'208";a="404155580"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2023 05:15:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10665"; a="809018313"
+X-IronPort-AV: E=Sophos;i="5.98,307,1673942400"; 
+   d="scan'208";a="809018313"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by orsmga004.jf.intel.com with ESMTP; 31 Mar 2023 05:15:36 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1piDfL-000LlO-1i;
+        Fri, 31 Mar 2023 12:15:35 +0000
+Date:   Fri, 31 Mar 2023 20:14:36 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, abelvesa@kernel.org,
+        abel.vesa@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 4/6] clk: imx: fracn-gppll: support integer pll
+Message-ID: <202303312017.I9c9cLVj-lkp@intel.com>
+References: <20230331064629.2475338-5-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="nn5ipiarsss3x6zd"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230331-topic-oxnas-upstream-remove-v1-16-5bd58fd1dd1f@linaro.org>
+In-Reply-To: <20230331064629.2475338-5-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Peng,
 
---nn5ipiarsss3x6zd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I love your patch! Perhaps something to improve:
 
-Hi,
+[auto build test WARNING on abelvesa/clk/imx]
+[also build test WARNING on linus/master v6.3-rc4 next-20230331]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-On Fri, Mar 31, 2023 at 10:34:54AM +0200, Neil Armstrong wrote:
-> Due to lack of maintainance and stall of development for a few years now,
-> and since no new features will ever be added upstream, remove support
-> for OX810 and OX820 restart feature.
->=20
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
+url:    https://github.com/intel-lab-lkp/linux/commits/Peng-Fan-OSS/clk-imx-fracn-gppll-fix-the-rate-table/20230331-144314
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git clk/imx
+patch link:    https://lore.kernel.org/r/20230331064629.2475338-5-peng.fan%40oss.nxp.com
+patch subject: [PATCH 4/6] clk: imx: fracn-gppll: support integer pll
+config: hexagon-randconfig-r045-20230329 (https://download.01.org/0day-ci/archive/20230331/202303312017.I9c9cLVj-lkp@intel.com/config)
+compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project 67409911353323ca5edf2049ef0df54132fa1ca7)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/b80cff81a332a2005b90c5c1fbab96e732c03494
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Peng-Fan-OSS/clk-imx-fracn-gppll-fix-the-rate-table/20230331-144314
+        git checkout b80cff81a332a2005b90c5c1fbab96e732c03494
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash drivers/clk/imx/
 
-Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202303312017.I9c9cLVj-lkp@intel.com/
 
--- Sebastian
+All warnings (new ones prefixed by >>):
 
->  drivers/power/reset/Kconfig         |   7 --
->  drivers/power/reset/Makefile        |   1 -
->  drivers/power/reset/oxnas-restart.c | 233 ------------------------------=
-------
->  3 files changed, 241 deletions(-)
->=20
-> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-> index 8c87eeda0fec..cc734c1fe4c0 100644
-> --- a/drivers/power/reset/Kconfig
-> +++ b/drivers/power/reset/Kconfig
-> @@ -148,13 +148,6 @@ config POWER_RESET_ODROID_GO_ULTRA_POWEROFF
->  	help
->  	  This driver supports Power off for Odroid Go Ultra device.
-> =20
-> -config POWER_RESET_OXNAS
-> -	bool "OXNAS SoC restart driver"
-> -	depends on ARCH_OXNAS
-> -	default MACH_OX820
-> -	help
-> -	  Restart support for OXNAS/PLXTECH OX820 SoC.
-> -
->  config POWER_RESET_PIIX4_POWEROFF
->  	tristate "Intel PIIX4 power-off driver"
->  	depends on PCI
-> diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
-> index d763e6735ee3..a95d1bd275d1 100644
-> --- a/drivers/power/reset/Makefile
-> +++ b/drivers/power/reset/Makefile
-> @@ -14,7 +14,6 @@ obj-$(CONFIG_POWER_RESET_HISI) +=3D hisi-reboot.o
->  obj-$(CONFIG_POWER_RESET_LINKSTATION) +=3D linkstation-poweroff.o
->  obj-$(CONFIG_POWER_RESET_MSM) +=3D msm-poweroff.o
->  obj-$(CONFIG_POWER_RESET_MT6323) +=3D mt6323-poweroff.o
-> -obj-$(CONFIG_POWER_RESET_OXNAS) +=3D oxnas-restart.o
->  obj-$(CONFIG_POWER_RESET_QCOM_PON) +=3D qcom-pon.o
->  obj-$(CONFIG_POWER_RESET_OCELOT_RESET) +=3D ocelot-reset.o
->  obj-$(CONFIG_POWER_RESET_ODROID_GO_ULTRA_POWEROFF) +=3D odroid-go-ultra-=
-poweroff.o
-> diff --git a/drivers/power/reset/oxnas-restart.c b/drivers/power/reset/ox=
-nas-restart.c
-> deleted file mode 100644
-> index 13090bec058a..000000000000
-> --- a/drivers/power/reset/oxnas-restart.c
-> +++ /dev/null
-> @@ -1,233 +0,0 @@
-> -// SPDX-License-Identifier: (GPL-2.0)
-> -/*
-> - * oxnas SoC reset driver
-> - * based on:
-> - * Microsemi MIPS SoC reset driver
-> - * and ox820_assert_system_reset() written by Ma Hajun <mahaijuns@gmail.=
-com>
-> - *
-> - * Copyright (c) 2013 Ma Hajun <mahaijuns@gmail.com>
-> - * Copyright (c) 2017 Microsemi Corporation
-> - * Copyright (c) 2020 Daniel Golle <daniel@makrotopia.org>
-> - */
-> -#include <linux/delay.h>
-> -#include <linux/io.h>
-> -#include <linux/notifier.h>
-> -#include <linux/mfd/syscon.h>
-> -#include <linux/of_address.h>
-> -#include <linux/of_device.h>
-> -#include <linux/platform_device.h>
-> -#include <linux/reboot.h>
-> -#include <linux/regmap.h>
-> -
-> -/* bit numbers of reset control register */
-> -#define OX820_SYS_CTRL_RST_SCU                0
-> -#define OX820_SYS_CTRL_RST_COPRO              1
-> -#define OX820_SYS_CTRL_RST_ARM0               2
-> -#define OX820_SYS_CTRL_RST_ARM1               3
-> -#define OX820_SYS_CTRL_RST_USBHS              4
-> -#define OX820_SYS_CTRL_RST_USBHSPHYA          5
-> -#define OX820_SYS_CTRL_RST_MACA               6
-> -#define OX820_SYS_CTRL_RST_MAC                OX820_SYS_CTRL_RST_MACA
-> -#define OX820_SYS_CTRL_RST_PCIEA              7
-> -#define OX820_SYS_CTRL_RST_SGDMA              8
-> -#define OX820_SYS_CTRL_RST_CIPHER             9
-> -#define OX820_SYS_CTRL_RST_DDR                10
-> -#define OX820_SYS_CTRL_RST_SATA               11
-> -#define OX820_SYS_CTRL_RST_SATA_LINK          12
-> -#define OX820_SYS_CTRL_RST_SATA_PHY           13
-> -#define OX820_SYS_CTRL_RST_PCIEPHY            14
-> -#define OX820_SYS_CTRL_RST_STATIC             15
-> -#define OX820_SYS_CTRL_RST_GPIO               16
-> -#define OX820_SYS_CTRL_RST_UART1              17
-> -#define OX820_SYS_CTRL_RST_UART2              18
-> -#define OX820_SYS_CTRL_RST_MISC               19
-> -#define OX820_SYS_CTRL_RST_I2S                20
-> -#define OX820_SYS_CTRL_RST_SD                 21
-> -#define OX820_SYS_CTRL_RST_MACB               22
-> -#define OX820_SYS_CTRL_RST_PCIEB              23
-> -#define OX820_SYS_CTRL_RST_VIDEO              24
-> -#define OX820_SYS_CTRL_RST_DDR_PHY            25
-> -#define OX820_SYS_CTRL_RST_USBHSPHYB          26
-> -#define OX820_SYS_CTRL_RST_USBDEV             27
-> -#define OX820_SYS_CTRL_RST_ARMDBG             29
-> -#define OX820_SYS_CTRL_RST_PLLA               30
-> -#define OX820_SYS_CTRL_RST_PLLB               31
-> -
-> -/* bit numbers of clock control register */
-> -#define OX820_SYS_CTRL_CLK_COPRO              0
-> -#define OX820_SYS_CTRL_CLK_DMA                1
-> -#define OX820_SYS_CTRL_CLK_CIPHER             2
-> -#define OX820_SYS_CTRL_CLK_SD                 3
-> -#define OX820_SYS_CTRL_CLK_SATA               4
-> -#define OX820_SYS_CTRL_CLK_I2S                5
-> -#define OX820_SYS_CTRL_CLK_USBHS              6
-> -#define OX820_SYS_CTRL_CLK_MACA               7
-> -#define OX820_SYS_CTRL_CLK_MAC                OX820_SYS_CTRL_CLK_MACA
-> -#define OX820_SYS_CTRL_CLK_PCIEA              8
-> -#define OX820_SYS_CTRL_CLK_STATIC             9
-> -#define OX820_SYS_CTRL_CLK_MACB               10
-> -#define OX820_SYS_CTRL_CLK_PCIEB              11
-> -#define OX820_SYS_CTRL_CLK_REF600             12
-> -#define OX820_SYS_CTRL_CLK_USBDEV             13
-> -#define OX820_SYS_CTRL_CLK_DDR                14
-> -#define OX820_SYS_CTRL_CLK_DDRPHY             15
-> -#define OX820_SYS_CTRL_CLK_DDRCK              16
-> -
-> -/* Regmap offsets */
-> -#define OX820_CLK_SET_REGOFFSET               0x2c
-> -#define OX820_CLK_CLR_REGOFFSET               0x30
-> -#define OX820_RST_SET_REGOFFSET               0x34
-> -#define OX820_RST_CLR_REGOFFSET               0x38
-> -#define OX820_SECONDARY_SEL_REGOFFSET         0x14
-> -#define OX820_TERTIARY_SEL_REGOFFSET          0x8c
-> -#define OX820_QUATERNARY_SEL_REGOFFSET        0x94
-> -#define OX820_DEBUG_SEL_REGOFFSET             0x9c
-> -#define OX820_ALTERNATIVE_SEL_REGOFFSET       0xa4
-> -#define OX820_PULLUP_SEL_REGOFFSET            0xac
-> -#define OX820_SEC_SECONDARY_SEL_REGOFFSET     0x100014
-> -#define OX820_SEC_TERTIARY_SEL_REGOFFSET      0x10008c
-> -#define OX820_SEC_QUATERNARY_SEL_REGOFFSET    0x100094
-> -#define OX820_SEC_DEBUG_SEL_REGOFFSET         0x10009c
-> -#define OX820_SEC_ALTERNATIVE_SEL_REGOFFSET   0x1000a4
-> -#define OX820_SEC_PULLUP_SEL_REGOFFSET        0x1000ac
-> -
-> -struct oxnas_restart_context {
-> -	struct regmap *sys_ctrl;
-> -	struct notifier_block restart_handler;
-> -};
-> -
-> -static int ox820_restart_handle(struct notifier_block *this,
-> -				 unsigned long mode, void *cmd)
-> -{
-> -	struct oxnas_restart_context *ctx =3D container_of(this, struct
-> -							oxnas_restart_context,
-> -							restart_handler);
-> -	u32 value;
-> -
-> -	/*
-> -	 * Assert reset to cores as per power on defaults
-> -	 * Don't touch the DDR interface as things will come to an impromptu
-> -	 * stop NB Possibly should be asserting reset for PLLB, but there are
-> -	 * timing concerns here according to the docs
-> -	 */
-> -	value =3D BIT(OX820_SYS_CTRL_RST_COPRO)		|
-> -		BIT(OX820_SYS_CTRL_RST_USBHS)		|
-> -		BIT(OX820_SYS_CTRL_RST_USBHSPHYA)	|
-> -		BIT(OX820_SYS_CTRL_RST_MACA)		|
-> -		BIT(OX820_SYS_CTRL_RST_PCIEA)		|
-> -		BIT(OX820_SYS_CTRL_RST_SGDMA)		|
-> -		BIT(OX820_SYS_CTRL_RST_CIPHER)		|
-> -		BIT(OX820_SYS_CTRL_RST_SATA)		|
-> -		BIT(OX820_SYS_CTRL_RST_SATA_LINK)	|
-> -		BIT(OX820_SYS_CTRL_RST_SATA_PHY)	|
-> -		BIT(OX820_SYS_CTRL_RST_PCIEPHY)		|
-> -		BIT(OX820_SYS_CTRL_RST_STATIC)		|
-> -		BIT(OX820_SYS_CTRL_RST_UART1)		|
-> -		BIT(OX820_SYS_CTRL_RST_UART2)		|
-> -		BIT(OX820_SYS_CTRL_RST_MISC)		|
-> -		BIT(OX820_SYS_CTRL_RST_I2S)		|
-> -		BIT(OX820_SYS_CTRL_RST_SD)		|
-> -		BIT(OX820_SYS_CTRL_RST_MACB)		|
-> -		BIT(OX820_SYS_CTRL_RST_PCIEB)		|
-> -		BIT(OX820_SYS_CTRL_RST_VIDEO)		|
-> -		BIT(OX820_SYS_CTRL_RST_USBHSPHYB)	|
-> -		BIT(OX820_SYS_CTRL_RST_USBDEV);
-> -
-> -	regmap_write(ctx->sys_ctrl, OX820_RST_SET_REGOFFSET, value);
-> -
-> -	/* Release reset to cores as per power on defaults */
-> -	regmap_write(ctx->sys_ctrl, OX820_RST_CLR_REGOFFSET,
-> -			BIT(OX820_SYS_CTRL_RST_GPIO));
-> -
-> -	/*
-> -	 * Disable clocks to cores as per power-on defaults - must leave DDR
-> -	 * related clocks enabled otherwise we'll stop rather abruptly.
-> -	 */
-> -	value =3D BIT(OX820_SYS_CTRL_CLK_COPRO)		|
-> -		BIT(OX820_SYS_CTRL_CLK_DMA)		|
-> -		BIT(OX820_SYS_CTRL_CLK_CIPHER)		|
-> -		BIT(OX820_SYS_CTRL_CLK_SD)		|
-> -		BIT(OX820_SYS_CTRL_CLK_SATA)		|
-> -		BIT(OX820_SYS_CTRL_CLK_I2S)		|
-> -		BIT(OX820_SYS_CTRL_CLK_USBHS)		|
-> -		BIT(OX820_SYS_CTRL_CLK_MAC)		|
-> -		BIT(OX820_SYS_CTRL_CLK_PCIEA)		|
-> -		BIT(OX820_SYS_CTRL_CLK_STATIC)		|
-> -		BIT(OX820_SYS_CTRL_CLK_MACB)		|
-> -		BIT(OX820_SYS_CTRL_CLK_PCIEB)		|
-> -		BIT(OX820_SYS_CTRL_CLK_REF600)		|
-> -		BIT(OX820_SYS_CTRL_CLK_USBDEV);
-> -
-> -	regmap_write(ctx->sys_ctrl, OX820_CLK_CLR_REGOFFSET, value);
-> -
-> -	/* Enable clocks to cores as per power-on defaults */
-> -
-> -	/* Set sys-control pin mux'ing as per power-on defaults */
-> -	regmap_write(ctx->sys_ctrl, OX820_SECONDARY_SEL_REGOFFSET, 0);
-> -	regmap_write(ctx->sys_ctrl, OX820_TERTIARY_SEL_REGOFFSET, 0);
-> -	regmap_write(ctx->sys_ctrl, OX820_QUATERNARY_SEL_REGOFFSET, 0);
-> -	regmap_write(ctx->sys_ctrl, OX820_DEBUG_SEL_REGOFFSET, 0);
-> -	regmap_write(ctx->sys_ctrl, OX820_ALTERNATIVE_SEL_REGOFFSET, 0);
-> -	regmap_write(ctx->sys_ctrl, OX820_PULLUP_SEL_REGOFFSET, 0);
-> -
-> -	regmap_write(ctx->sys_ctrl, OX820_SEC_SECONDARY_SEL_REGOFFSET, 0);
-> -	regmap_write(ctx->sys_ctrl, OX820_SEC_TERTIARY_SEL_REGOFFSET, 0);
-> -	regmap_write(ctx->sys_ctrl, OX820_SEC_QUATERNARY_SEL_REGOFFSET, 0);
-> -	regmap_write(ctx->sys_ctrl, OX820_SEC_DEBUG_SEL_REGOFFSET, 0);
-> -	regmap_write(ctx->sys_ctrl, OX820_SEC_ALTERNATIVE_SEL_REGOFFSET, 0);
-> -	regmap_write(ctx->sys_ctrl, OX820_SEC_PULLUP_SEL_REGOFFSET, 0);
-> -
-> -	/*
-> -	 * No need to save any state, as the ROM loader can determine whether
-> -	 * reset is due to power cycling or programatic action, just hit the
-> -	 * (self-clearing) CPU reset bit of the block reset register
-> -	 */
-> -	value =3D
-> -		BIT(OX820_SYS_CTRL_RST_SCU) |
-> -		BIT(OX820_SYS_CTRL_RST_ARM0) |
-> -		BIT(OX820_SYS_CTRL_RST_ARM1);
-> -
-> -	regmap_write(ctx->sys_ctrl, OX820_RST_SET_REGOFFSET, value);
-> -
-> -	pr_emerg("Unable to restart system\n");
-> -	return NOTIFY_DONE;
-> -}
-> -
-> -static int ox820_restart_probe(struct platform_device *pdev)
-> -{
-> -	struct oxnas_restart_context *ctx;
-> -	struct regmap *sys_ctrl;
-> -	struct device *dev =3D &pdev->dev;
-> -	int err =3D 0;
-> -
-> -	sys_ctrl =3D syscon_node_to_regmap(pdev->dev.of_node);
-> -	if (IS_ERR(sys_ctrl))
-> -		return PTR_ERR(sys_ctrl);
-> -
-> -	ctx =3D devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
-> -	if (!ctx)
-> -		return -ENOMEM;
-> -
-> -	ctx->sys_ctrl =3D sys_ctrl;
-> -	ctx->restart_handler.notifier_call =3D ox820_restart_handle;
-> -	ctx->restart_handler.priority =3D 192;
-> -	err =3D register_restart_handler(&ctx->restart_handler);
-> -	if (err)
-> -		dev_err(dev, "can't register restart notifier (err=3D%d)\n", err);
-> -
-> -	return err;
-> -}
-> -
-> -static const struct of_device_id ox820_restart_of_match[] =3D {
-> -	{ .compatible =3D "oxsemi,ox820-sys-ctrl" },
-> -	{}
-> -};
-> -
-> -static struct platform_driver ox820_restart_driver =3D {
-> -	.probe =3D ox820_restart_probe,
-> -	.driver =3D {
-> -		.name =3D "ox820-chip-reset",
-> -		.of_match_table =3D ox820_restart_of_match,
-> -	},
-> -};
-> -builtin_platform_driver(ox820_restart_driver);
->=20
-> --=20
-> 2.34.1
->=20
+   In file included from drivers/clk/imx/clk-fracn-gppll.c:10:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:334:
+   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           val = __raw_readb(PCI_IOBASE + addr);
+                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+                                                           ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+   #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+                                                     ^
+   In file included from drivers/clk/imx/clk-fracn-gppll.c:10:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:334:
+   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+                                                           ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+   #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+                                                     ^
+   In file included from drivers/clk/imx/clk-fracn-gppll.c:10:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:334:
+   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           __raw_writeb(value, PCI_IOBASE + addr);
+                               ~~~~~~~~~~ ^
+   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+                                                         ~~~~~~~~~~ ^
+   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+                                                         ~~~~~~~~~~ ^
+>> drivers/clk/imx/clk-fracn-gppll.c:340:16: warning: no previous prototype for function '_imx_clk_fracn_gppll' [-Wmissing-prototypes]
+   struct clk_hw *_imx_clk_fracn_gppll(const char *name, const char *parent_name, void __iomem *base,
+                  ^
+   drivers/clk/imx/clk-fracn-gppll.c:340:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+   struct clk_hw *_imx_clk_fracn_gppll(const char *name, const char *parent_name, void __iomem *base,
+   ^
+   static 
+   7 warnings generated.
 
---nn5ipiarsss3x6zd
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+vim +/_imx_clk_fracn_gppll +340 drivers/clk/imx/clk-fracn-gppll.c
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmQmt4YACgkQ2O7X88g7
-+pqJzA/8CGVL0iQh94nUi0bcp3m8x6gWQZjujZuRsEK89y933fjMBL8ssJxqaGzl
-ddSbdFZrIVje9blwgWhD+eKSeAGUYm6QwGpQ8mLMnXW4Rm/qL/hlEGPEvJO/wzdn
-OR0AGgn/5E8zmD7DqCo8ZIYIAzE017KGcwlTjDa/VyXq7WbxYDwyB8lLK/NL88oo
-Agkq7u5KkKqDt3VtREBWdKYvS9O3wO6I6grvQ34N0D38g5qdDp/4xncSPYQS5jLI
-YxZ6D52yJvgrTncwsu3cB4lObBQye+hN/Nj2vkYrfaYrza+t5I/rzsQLq8yrcVv5
-jiC5xsQhZ3KjoEPI7tSiinaLAt1poc2SbNMSaAFh31RAVW/uqTU9jpZXsaLVThFU
-SmJB33O20B84AJp9He5wKVuUnYIz34FmctSdz3aKNrktmpqv3TcgwI7LJVUG2uDp
-BKeCTlU3bwA3f9P4xfirAE5rfZg3YaFgxFXFXryVQ2AyYLrbwZKdyxzgpoGUWwNZ
-6pFJ7o1opArBR/cMrN6ac1FqZXJa2UZFiYFjTDHGu2RDTCDfJnTWTmLnTopmmUno
-2e56Y3ue1P0rl1mNY+H31EWhbpOtKR4FS3OTuyTkUMwaO68o7Ja+g4VFevilErvm
-eUlNW4uTSA/5Rf0gfHUC1EA48ykYN+8u+FGelIcPQyCCK9LbCg8=
-=Q1vF
------END PGP SIGNATURE-----
+   339	
+ > 340	struct clk_hw *_imx_clk_fracn_gppll(const char *name, const char *parent_name, void __iomem *base,
+   341					    const struct imx_fracn_gppll_clk *pll_clk, u32 pll_flags)
+   342	{
+   343		struct clk_fracn_gppll *pll;
+   344		struct clk_hw *hw;
+   345		struct clk_init_data init;
+   346		int ret;
+   347	
+   348		pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+   349		if (!pll)
+   350			return ERR_PTR(-ENOMEM);
+   351	
+   352		init.name = name;
+   353		init.flags = pll_clk->flags;
+   354		init.parent_names = &parent_name;
+   355		init.num_parents = 1;
+   356		init.ops = &clk_fracn_gppll_ops;
+   357	
+   358		pll->base = base;
+   359		pll->hw.init = &init;
+   360		pll->rate_table = pll_clk->rate_table;
+   361		pll->rate_count = pll_clk->rate_count;
+   362		pll->flags = pll_flags;
+   363	
+   364		hw = &pll->hw;
+   365	
+   366		ret = clk_hw_register(NULL, hw);
+   367		if (ret) {
+   368			pr_err("%s: failed to register pll %s %d\n", __func__, name, ret);
+   369			kfree(pll);
+   370			return ERR_PTR(ret);
+   371		}
+   372	
+   373		return hw;
+   374	}
+   375	
 
---nn5ipiarsss3x6zd--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
