@@ -2,102 +2,81 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5624C76196
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 15:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7125C76196
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 16:34:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233252AbjCaP3D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Mar 2023 11:29:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50630 "EHLO
+        id S229992AbjCaQez (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Mar 2023 12:34:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232746AbjCaP25 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 11:28:57 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51B731D846;
-        Fri, 31 Mar 2023 08:28:54 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32V9XJKg020114;
-        Fri, 31 Mar 2023 15:28:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=qcppdkim1;
- bh=RRsxgAHgTlm+iwTceKr7VhVyxrmQp3oO7UsRfGYfjCw=;
- b=E/FiN/Y4o5BKcEr3tONep6GpbfedFOd0hEa/f+H6TypJh+XM+TuaM3+3wfO+C1Pmd3i6
- SHEdmWCqPUDKtzStsZs1NZDHCtd1zWElcD0lk+H5W4xZzKh1zNvLr2P1qGpcB5BdqkAQ
- lT/1Qa5yIWpHH9UKYC2kU8kam9ZR8nyT3T+7/wrmRA/bcNIF7gzznf6Zu+/d4ARMqOM/
- Dt6KAqNXvkrVYlwnwWM5SNH7zmpvMpKg9z4nSg5ns+s2AJlTFXF/4G4dtEtosH4spzqT
- v5vgUiSpqk5Vc+S5VLlKfN3vLY8SanP+BcQ5Su2MrjYWcEy4eSqjSvnH8aXTbrUggbzC uA== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pnvyuh82s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 31 Mar 2023 15:28:48 +0000
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32VFSlPV014746
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 31 Mar 2023 15:28:47 GMT
-Received: from hu-mohs-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Fri, 31 Mar 2023 08:28:42 -0700
-From:   Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-To:     <swboyd@chromium.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>, <robh+dt@kernel.org>,
-        <broonie@kernel.org>, <quic_plai@quicinc.com>,
-        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_rohkumar@quicinc.com>, <quic_visr@quicinc.com>
-CC:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-Subject: [PATCH v10 3/3] clk: qcom: lpassaudiocc-sc7280: Add required gdsc power domain clks in lpass_cc_sc7280_desc
-Date:   Fri, 31 Mar 2023 20:58:05 +0530
-Message-ID: <20230331152805.3199968-4-quic_mohs@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230331152805.3199968-1-quic_mohs@quicinc.com>
-References: <20230331152805.3199968-1-quic_mohs@quicinc.com>
+        with ESMTP id S231718AbjCaQe0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 12:34:26 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B0DA23FC1;
+        Fri, 31 Mar 2023 09:31:10 -0700 (PDT)
+Received: from jupiter.universe (dyndsl-091-248-213-136.ewe-ip-backbone.de [91.248.213.136])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: sre)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 0F1A3660319C;
+        Fri, 31 Mar 2023 17:31:08 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1680280268;
+        bh=rHbX/qlp+rL7Mg3bJEUnLaEAxzLsCgYjKEhKA8ZUJz4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=IPNZJ7WpofmAGTMqLY4lbwCWpt6LL5tJuC6mjLQw0LWMbcMUFuOBPM0TZe+LwR7K9
+         L4GRTAzTt3R09aRVmpXy3ENqsFz/qPtYRJtSoO105tq8dF9IJbAZA340GEzTuCgsEM
+         41NDVfFYFsj4KSB4+fGEEnNbD9Tkc+ImspVtLwUFkCras2MMTQSCBcqJZnISgTd8ZT
+         t2o1d9T3Az+vkGNgvO5qqI3/HBARDjf87Hy2OHewpND7brHXbsmv1ysrc2E6VhivcG
+         3Li0XNUMU62VHWJz7IuvLJmviaTuqbhRzjRnw+1lAJxjtuT5vXa/hkfljDDPytXiPO
+         mMyPw+sWPrvgQ==
+Received: by jupiter.universe (Postfix, from userid 1000)
+        id 56A574807E1; Fri, 31 Mar 2023 18:31:06 +0200 (CEST)
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Heiko Stuebner <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org
+Cc:     Peter Geis <pgwipeout@gmail.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        Finley Xiao <finley.xiao@rock-chips.com>,
+        Jagan Teki <jagan@edgeble.ai>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        kernel@collabora.com
+Subject: [PATCHv1 0/2] Improve RK3588 clocks and power domains support
+Date:   Fri, 31 Mar 2023 18:30:56 +0200
+Message-Id: <20230331163058.5688-1-sebastian.reichel@collabora.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: KWc0Fshp3LlVZMIoQQ9bT9lMnGl7EVbN
-X-Proofpoint-ORIG-GUID: KWc0Fshp3LlVZMIoQQ9bT9lMnGl7EVbN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-31_07,2023-03-31_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- spamscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015
- priorityscore=1501 malwarescore=0 mlxlogscore=999 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2303310122
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add GDSCs in lpass_cc_sc7280_desc struct.
-When qcom,adsp-pil-mode is enabled, GDSCs required to solve
-dependencies in lpass_audiocc probe().
+Hi,
 
-Fixes: 0cbcfbe50cbf ("clk: qcom: lpass: Handle the regmap overlap of lpasscc and lpass_aon")
-Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
----
- drivers/clk/qcom/lpassaudiocc-sc7280.c | 2 ++
- 1 file changed, 2 insertions(+)
+After this patchset the power-domain support for RK3588 is basically on par
+with the downstream implementation. More importantly the clock controller
+change unblocks support for any IP blocks using linked clocks. The clock
+controller change must be applied before the power-domain change to avoid
+accessing unclocked registers.
 
-diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-index 1339f9211a14..134eb1529ede 100644
---- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
-+++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-@@ -696,6 +696,8 @@ static const struct qcom_cc_desc lpass_cc_sc7280_desc = {
- 	.config = &lpass_audio_cc_sc7280_regmap_config,
- 	.clks = lpass_cc_sc7280_clocks,
- 	.num_clks = ARRAY_SIZE(lpass_cc_sc7280_clocks),
-+	.gdscs = lpass_aon_cc_sc7280_gdscs,
-+	.num_gdscs = ARRAY_SIZE(lpass_aon_cc_sc7280_gdscs),
- };
- 
- static const struct qcom_cc_desc lpass_audio_cc_sc7280_desc = {
+-- Sebastian
+
+Boris Brezillon (1):
+  soc: rockchip: power-domain: add rk3588 mem module support
+
+Sebastian Reichel (1):
+  clk: rockchip: rk3588: make gate linked clocks ignore unused
+
+ drivers/clk/rockchip/clk-rk3588.c |  42 +++++---
+ drivers/soc/rockchip/pm_domains.c | 160 +++++++++++++++++++++++-------
+ 2 files changed, 151 insertions(+), 51 deletions(-)
+
 -- 
-2.25.1
+2.39.2
 
