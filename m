@@ -2,288 +2,132 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D40C76196
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 12:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43EDDC6FD18
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 12:36:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232366AbjCaM0g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Mar 2023 08:26:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43588 "EHLO
+        id S230294AbjCaMgO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Mar 2023 08:36:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232144AbjCaM0f (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 08:26:35 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02AD226BE;
-        Fri, 31 Mar 2023 05:26:33 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32V7DMgV006937;
-        Fri, 31 Mar 2023 12:26:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=KecvlXR5Xf+6vpH/FS8Z60UCAHN1qIrGzVAd51rNoOQ=;
- b=KK+G+XysT+0jpo8exI2ZxVrGf38rjxJ6mBGNx9HXwrnXFhh/HIvUErt5570N7UrZPsOP
- TleraHmFlWZ3uvt8RCW53WofOLG7D7n/Gf1nD5vgJipY1zMUBq63zJVbuES1qjpzYmiI
- BQCEC/MiEA3J1wDzNE77hJ7Zz+bIwpUFyZ1V6Vvywb41crpjktcmLcgWG4b20RX7BB/F
- QBDVRRnw2gdgXQ23hKr6sKRKTxPOHRAzu1hKqLiwdoGfqsWJ9Xitn3CTpk+3cFJSW0kT
- bEhRs6afnQRruZXKX+fYYEqGTwW2ABzvQpNwO0jg1cwFvlvdxn+Pi4J54QGwfst0tD6n 2g== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pntxf8uaf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 31 Mar 2023 12:26:00 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32VCPxcf018378
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 31 Mar 2023 12:25:59 GMT
-Received: from [10.50.5.218] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Fri, 31 Mar
- 2023 05:25:50 -0700
-Message-ID: <0316b1fb-0581-e3e6-b5ba-64c2a6ef2ec4@quicinc.com>
-Date:   Fri, 31 Mar 2023 17:52:51 +0530
+        with ESMTP id S231853AbjCaMgM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 08:36:12 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D6F720616
+        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 05:35:47 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id i9so22241226wrp.3
+        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 05:35:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680266141;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=swOeWot85GIaEePp91l98DkNomzcOh+V2vppc9loIuU=;
+        b=BkF/FqSsbVjbR1KVsiSpp7SQNoMqEdlMojmSrjeDo+9LbCdA3wvvUQ2FqFFr4Z1N+R
+         CqvWeyyswgPkG4UhnYDxHpGST9/tVFnwd96DXgIG09uDl11pUyymaTp6BErulwzQCzS9
+         LIX3VrPMQTBXcHtZss4xxMBJeUUWPwCH5qAfyRhPj9kLH+T+B7MEsnt6YD6Cyjv10KxI
+         sdNVD328u7TA54082Z2OjMePKjVajcHwBGjsI3stsu3m+FyrqMwMlBxWuq76N8mgry6n
+         Sni/ScuRCDhOSWwvi2IYqsRGLekiVM+jOxz7cWEgYpgLannbfs8iknnC5J2uwsNQtqhD
+         9b7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680266141;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=swOeWot85GIaEePp91l98DkNomzcOh+V2vppc9loIuU=;
+        b=h+6bAnSP9X8AWsb4qYBB6F7qOjFhJ1E7HQStNHLV/hkBTTdFrWD7fCPAHcMkLm6gQD
+         QJ7XqKcYCivnlyoh+Jyzoq7F3xptGuSbUfhmgsdbhpOT6Cp6JaNIIAOE960hK2rxUEis
+         PVR2s8hBevRPmG3RUVFGXTvt03rKwO0dGTL8qlpNXbY3gGbYqEXuhSLZK1taiIdc54X2
+         x3RJmBzMLTZnRaAlh7BiVpAEqvK5QLm1Mdp9A4z6b9+Ex7nkZZXTiG5puqP7Kiu7oRzh
+         bj9yWXkEmvegiQ1hQ+DS0PahYrqlMyyIPPhRtwK8R2P2PyTichjlOn7T0Hoifm019oP5
+         M15A==
+X-Gm-Message-State: AAQBX9fIzvni6Zja165kqYhlplqZDlAYzcLIFY4QRsxjBbNZffLEKnDD
+        3Em5/fdr1f8oxGY8GSI/MRl3yA==
+X-Google-Smtp-Source: AKy350b9EDA4FRXrfvd4zTIm9hwFtXN5pA+QlBIcWSVxOH0R42o/XjmxtvUN+8Tr/9+SP05WzOhqIA==
+X-Received: by 2002:adf:dd87:0:b0:2ce:aa62:ff79 with SMTP id x7-20020adfdd87000000b002ceaa62ff79mr20600624wrl.40.1680266140773;
+        Fri, 31 Mar 2023 05:35:40 -0700 (PDT)
+Received: from linaro.org ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id v12-20020a5d4b0c000000b002cfed482e9asm2109776wrq.61.2023.03.31.05.35.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Mar 2023 05:35:40 -0700 (PDT)
+Date:   Fri, 31 Mar 2023 15:35:38 +0300
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-clk@vger.kernel.org, aford@beaconembedded.com,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 0/4] clk: imx: Improve imx8mm/imx8mn LCDIF clocks
+Message-ID: <ZCbTmitvBTQu26PX@linaro.org>
+References: <20230323230127.120883-1-aford173@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH V10 3/4] arm64: dts: qcom: Add support for ipq9574 SoC and
- RDP433 variant
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linus.walleij@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <p.zabel@pengutronix.de>, <shawnguo@kernel.org>, <arnd@arndb.de>,
-        <marcel.ziswiler@toradex.com>, <nfraprado@collabora.com>,
-        <broonie@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_poovendh@quicinc.com>
-References: <20230327132718.573-1-quic_devipriy@quicinc.com>
- <20230327132718.573-4-quic_devipriy@quicinc.com>
- <CAA8EJprTm1sZ8fnfNee+NJTiaFq17QwWaEnSoJWVYs_GY65xFg@mail.gmail.com>
- <a6225636-7abb-3c5c-c78f-8d40c25167b9@quicinc.com>
- <CAA8EJprgcMOX-WRXP2i9k850La1A1UKaKuODd-fVi27nOxMbyA@mail.gmail.com>
-Content-Language: en-US
-From:   Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <CAA8EJprgcMOX-WRXP2i9k850La1A1UKaKuODd-fVi27nOxMbyA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: vW7OdrM7OPZuEvEvwN9zF4gpPlQa2XXp
-X-Proofpoint-ORIG-GUID: vW7OdrM7OPZuEvEvwN9zF4gpPlQa2XXp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-31_06,2023-03-30_04,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- bulkscore=0 phishscore=0 priorityscore=1501 lowpriorityscore=0 mlxscore=0
- mlxlogscore=999 adultscore=0 clxscore=1015 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2303310099
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230323230127.120883-1-aford173@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 23-03-23 18:01:23, Adam Ford wrote:
+> Both the i.MX8M Mini and Nano have a video_pll which can be used 
+> to source a clock which feeds the lcdif interface.  This interface
+> currently fixes video_pll and divides down the clock feeding LCDIF.
+> However, when connected to an HDMI bridge chip that supports a
+> variety of video resolutions and refresh rates, the only settings
+> that properly sync are ones that evenly divide from the video_pll_out
+> clock.
+> 
+> This series adds the ability for the clk-compolsite-8m to
+> request a better parent clock rate if the proper clock flag is
+> enable and sets that flag in the corresponding imx8mm and 
+> imx8mn video_pll clocks to increase the number of resolutions
+> and refresh rates timings that the LCDIF can produce.
+> 
+> This also has a side benefit of allowing the video-pll to run
+> at a lower clock speed which can potentially save some power
+> depending on the requested resolution and refresh rate.
+> 
+
+Applied, thanks!
+
+[1/4] clk: imx: composite-8m: Add support to determine_rate
+      commit: 156e96ff2172518b6f83e97d8f11f677bc668e22
+[2/4] clk: imx: Add imx8m_clk_hw_composite_flags macro
+      commit: 784a9b3916e949c00666588fd167c4ab245ec9d6
+[3/4] clk: imx8mm: Let IMX8MM_CLK_LCDIF_PIXEL set parent rate
+      commit: 5fe6ec93f10b0765d59e0efb6ecba419a6a49d48
+[4/4] clk: imx: Let IMX8MN_CLK_DISP_PIXEL set parent rate
+      commit: 46a974433ea7fa468b45db70536f7cea81feb87c
 
 
-On 3/28/2023 4:09 PM, Dmitry Baryshkov wrote:
-> On Tue, 28 Mar 2023 at 10:31, Devi Priya <quic_devipriy@quicinc.com> wrote:
->> On 3/27/2023 8:15 PM, Dmitry Baryshkov wrote:
->>> On Mon, 27 Mar 2023 at 16:28, Devi Priya <quic_devipriy@quicinc.com> wrote:
->>>>
->>>> Add initial device tree support for Qualcomm IPQ9574 SoC and
->>>> Reference Design Platform(RDP) 433 which is based on IPQ9574
->>>> family of SoCs
->>>>
->>>> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
->>>> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
->>>> Co-developed-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
->>>> Signed-off-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
->>>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
->>>> ---
->>>>    Changes in V10:
->>>>           - Renamed the Board Device Tree Source to use the RDP numbers
->>>>           - Updated the Makefile, subject and commit message accordingly
->>>>
->>>>    arch/arm64/boot/dts/qcom/Makefile           |   1 +
->>>>    arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts |  84 ++++++
->>>>    arch/arm64/boot/dts/qcom/ipq9574.dtsi       | 270 ++++++++++++++++++++
->>>>    3 files changed, 355 insertions(+)
->>>>    create mode 100644 arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
->>>>    create mode 100644 arch/arm64/boot/dts/qcom/ipq9574.dtsi
->>>>
->>>> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
->>>> index 1a29403400b7..52f1f92c5195 100644
->>>> --- a/arch/arm64/boot/dts/qcom/Makefile
->>>> +++ b/arch/arm64/boot/dts/qcom/Makefile
->>>> @@ -8,6 +8,7 @@ dtb-$(CONFIG_ARCH_QCOM) += ipq6018-cp01-c1.dtb
->>>>    dtb-$(CONFIG_ARCH_QCOM)        += ipq8074-hk01.dtb
->>>>    dtb-$(CONFIG_ARCH_QCOM)        += ipq8074-hk10-c1.dtb
->>>>    dtb-$(CONFIG_ARCH_QCOM)        += ipq8074-hk10-c2.dtb
->>>> +dtb-$(CONFIG_ARCH_QCOM)        += ipq9574-rdp433.dtb
->>>>    dtb-$(CONFIG_ARCH_QCOM)        += msm8916-acer-a1-724.dtb
->>>>    dtb-$(CONFIG_ARCH_QCOM)        += msm8916-alcatel-idol347.dtb
->>>>    dtb-$(CONFIG_ARCH_QCOM)        += msm8916-asus-z00l.dtb
->>>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
->>>> new file mode 100644
->>>> index 000000000000..2ce8e09e7565
->>>> --- /dev/null
->>>> +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
->>>> @@ -0,0 +1,84 @@
->>>> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
->>>> +/*
->>>> + * IPQ9574 RDP433 board device tree source
->>>> + *
->>>> + * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
->>>> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
->>>> + */
->>>> +
->>>> +/dts-v1/;
->>>> +
->>>> +#include "ipq9574.dtsi"
->>>> +
->>>> +/ {
->>>> +       model = "Qualcomm Technologies, Inc. IPQ9574/AP-AL02-C7";
->>>> +       compatible = "qcom,ipq9574-ap-al02-c7", "qcom,ipq9574";
->>>> +
->>>> +       aliases {
->>>> +               serial0 = &blsp1_uart2;
->>>> +       };
->>>> +
->>>> +       chosen {
->>>> +               stdout-path = "serial0:115200n8";
->>>> +       };
->>>> +};
->>>> +
->>>> +&blsp1_uart2 {
->>>> +       pinctrl-0 = <&uart2_pins>;
->>>> +       pinctrl-names = "default";
->>>> +       status = "okay";
->>>> +};
->>>> +
->>>> +&sdhc_1 {
->>>> +       pinctrl-0 = <&sdc_default_state>;
->>>> +       pinctrl-names = "default";
->>>> +       mmc-ddr-1_8v;
->>>> +       mmc-hs200-1_8v;
->>>> +       mmc-hs400-1_8v;
->>>> +       mmc-hs400-enhanced-strobe;
->>>> +       max-frequency = <384000000>;
->>>> +       bus-width = <8>;
->>>> +       status = "okay";
->>>> +};
->>>> +
->>>> +&sleep_clk {
->>>> +       clock-frequency = <32000>;
->>>> +};
->>>> +
->>>> +&tlmm {
->>>> +       sdc_default_state: sdc-default-state {
->>>> +               clk-pins {
->>>> +                       pins = "gpio5";
->>>> +                       function = "sdc_clk";
->>>> +                       drive-strength = <8>;
->>>> +                       bias-disable;
->>>> +               };
->>>> +
->>>> +               cmd-pins {
->>>> +                       pins = "gpio4";
->>>> +                       function = "sdc_cmd";
->>>> +                       drive-strength = <8>;
->>>> +                       bias-pull-up;
->>>> +               };
->>>> +
->>>> +               data-pins {
->>>> +                       pins = "gpio0", "gpio1", "gpio2",
->>>> +                              "gpio3", "gpio6", "gpio7",
->>>> +                              "gpio8", "gpio9";
->>>> +                       function = "sdc_data";
->>>> +                       drive-strength = <8>;
->>>> +                       bias-pull-up;
->>>> +               };
->>>> +
->>>> +               rclk-pins {
->>>> +                       pins = "gpio10";
->>>> +                       function = "sdc_rclk";
->>>> +                       drive-strength = <8>;
->>>> +                       bias-pull-down;
->>>> +               };
->>>> +       };
->>>> +};
->>>> +
->>>> +&xo_board_clk {
->>>> +       clock-frequency = <24000000>;
->>>> +};
->>>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->>>> new file mode 100644
->>>> index 000000000000..3bb7435f5e7f
->>>> --- /dev/null
->>>> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->>>> @@ -0,0 +1,270 @@
->>>> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
->>>> +/*
->>>> + * IPQ9574 SoC device tree source
->>>> + *
->>>> + * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
->>>> + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
->>>> + */
->>>> +
->>>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->>>> +#include <dt-bindings/clock/qcom,ipq9574-gcc.h>
->>>> +#include <dt-bindings/reset/qcom,ipq9574-gcc.h>
->>>> +
->>>> +/ {
->>>> +       interrupt-parent = <&intc>;
->>>> +       #address-cells = <2>;
->>>> +       #size-cells = <2>;
->>>> +
->>>> +       clocks {
->>>> +               bias_pll_ubi_nc_clk: bias-pll-ubi-nc-clk {
->>>> +                       compatible = "fixed-clock";
->>>> +                       clock-frequency = <353000000>;
->>>> +                       #clock-cells = <0>;
->>>> +               };
->>>
->>> What is the source for this clock? With it clocking at 353 MHz, I
->>> doubt that it is an external clock.
->> bias_pll_ubi_nc_clk (353MHz)is a backup source
->> for Q6_AXIM2_CLK/PCIE2_AXIM_CLK/PCIE3_AXIM_CLK/SNOC-CLK
->> It is from the CMN_PLL, and is the same as that of PPE core clock.
->> Do you suggest to move its clock-frequency to Board DT similar to
->> xo/sleep clock?
-> 
-> No, I suggest moving it to the device where it originates. If it comes
-> from GCC, it should be provided by the GCC, not by the top-level fixed
-> clock.Bias PLL is a fixed PLL on the SoC which provides 352MHz.
-As it is just a backup source for PCIE2_AXIM_CLK, we would remove the
-clock node as it is not being used.
+Best regards,
+--
+Abel Vesa <abel.vesa@linaro.org>
 
+
+
+> v4:  Sorry for the noise.  I forgot to 'git ammend' so V4
+>      is what V3 should have been.
+> V3:  Change the name of clk_divider_determine_rate to
+>       imx8m_clk_divider_determine_rate
+> V2:  Split off the new imx8m_clk_hw_composite_flags definition
+>      into its own patch and re-order to fix build error.
+>       
+> Adam Ford (3):
+>   clk: imx: composite-8m: Add support to determine_rate
+>   clk: imx8mm: Let IMX8MM_CLK_LCDIF_PIXEL set parent rate
+>   clk: imx: Let IMX8MN_CLK_DISP_PIXEL set parent rate
 > 
->>>
->>>> +
->>>> +               sleep_clk: sleep-clk {
->>>> +                       compatible = "fixed-clock";
->>>> +                       #clock-cells = <0>;
->>>> +               };
->>>> +
->>>> +               xo_board_clk: xo-board-clk {
->>>> +                       compatible = "fixed-clock";
->>>> +                       #clock-cells = <0>;
->>>> +               };
->>>> +       };
->>>
->>> [skipped the rest]
->>>
->> Regards,
->> Devi Priya
+>  drivers/clk/imx/clk-composite-8m.c | 7 +++++++
+>  drivers/clk/imx/clk-imx8mm.c       | 2 +-
+>  drivers/clk/imx/clk-imx8mn.c       | 2 +-
+>  drivers/clk/imx/clk.h              | 4 ++++
+>  4 files changed, 13 insertions(+), 2 deletions(-)
 > 
+> -- 
+> 2.34.1
 > 
->
-Regards,
-Devi Priya
