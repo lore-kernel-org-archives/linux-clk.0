@@ -2,177 +2,128 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47409C76196
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 14:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB534C761A6
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 15:28:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232934AbjCaO7G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Mar 2023 10:59:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46358 "EHLO
+        id S232637AbjCaP2n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Mar 2023 11:28:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232452AbjCaO7F (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 10:59:05 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F35DACA38
-        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 07:59:02 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id j36-20020a05600c1c2400b003f04057c152so1921978wms.5
-        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 07:59:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680274741;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=vnlFqaagyiGC/yxykb+LPtjAztaRZkdyq0QplfwjoFU=;
-        b=nF3sjGDQMAa+9jHsKfcp2XyDYlHpo2KuexE8K8B4AEt9/p0IObEDWv2CgD5R/nHOZs
-         LKrnCyin/QS2zaGGOJyMPMc9pDYbfs+wygN0GlXYN79Pk627UpehAwFW+43cDdVYZ3h5
-         EKqyUv3wk56Nyvg2r5e0GliVdi+B8N8eRMEu7xCrjLBQFnSstXL2oVvoMkrtv/dveeiO
-         F37ewmOOr6JQO4KPhRRQmgyaI7I1mqSfqTqfRB3WByalYZ5HZ8FovnO1iw6OQz1VY4oN
-         KGrF+QS+fO8qgq6jFJlJv0L9G9eYlEl0jj7QZM7zsAaCtqPH4+v4I5ncnoa+EWF86CHG
-         DKmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680274741;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vnlFqaagyiGC/yxykb+LPtjAztaRZkdyq0QplfwjoFU=;
-        b=AyB/ZDmgY/BHiHonhhMeaMHDcr70sMLVjyMDf7bjV+8r5vljSIBbNwZ1lvV3T6XSWw
-         B+VbIwwmnqqgi2iVUfGLvLv5CQdQYa3oaPucNGzNY4UxvhSdD9ewzd9Ie3jjuciSymdN
-         SBX+8hjrP1v2VAbd7dUFkIh5U9EVWNvEVP0/oPtaPGl15fkTn2K61+/cDRZzMUIGV0lK
-         v133jYyzXax+v+JkJGHSBt0eZcj6cnTzNudGOwlM7OWyEVryj/+p1cp0E9Alkl+rzlSv
-         zG9WFle680L0eYbjpSyC9ErdQFzMuvCM2fqApCwzz2m9Nlde7hOe9q8j5KsgbZDKXuEN
-         ARXA==
-X-Gm-Message-State: AO0yUKVdz45bpTLILKLzAig+ZPuOJQiIFm24bu9q9lM9MPRfepSsptF1
-        AdTBKihMRX+emhH6dys2A2DqlQ==
-X-Google-Smtp-Source: AK7set/StNy++vH3rTk//CEKOWCplvO4ynmJaY373xQJNztEOfuyKCvvX4OAZ8I7XwRimDvrMK7WOA==
-X-Received: by 2002:a7b:c8c3:0:b0:3ed:711c:e8fe with SMTP id f3-20020a7bc8c3000000b003ed711ce8femr23315255wml.2.1680274741435;
-        Fri, 31 Mar 2023 07:59:01 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:74cb:1a96:c994:e7e0? ([2a01:e0a:982:cbb0:74cb:1a96:c994:e7e0])
-        by smtp.gmail.com with ESMTPSA id iv19-20020a05600c549300b003ef69873cf1sm10363016wmb.40.2023.03.31.07.58.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Mar 2023 07:59:01 -0700 (PDT)
-Message-ID: <22bac350-0a2f-48df-c8b3-6d915a830caa@linaro.org>
-Date:   Fri, 31 Mar 2023 16:58:59 +0200
+        with ESMTP id S232153AbjCaP2m (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 11:28:42 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01B891BF54;
+        Fri, 31 Mar 2023 08:28:40 -0700 (PDT)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32V9XJKc020114;
+        Fri, 31 Mar 2023 15:28:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=6qcypVzMNkLWeZ9yXHpWDaOXDE2ERBXhQP32pFnzclw=;
+ b=CXow/l59loWE6/v1jTeziB1HFfRrDIjiFyG/Prx/HN6/lHWk1WOgSMhn2/UlSe61TMCJ
+ oUYoX0u7cUkDMYnC3/7OlsZ2KaTXPo8lgzOV6c13pM4KfkYCFqeRMl+lyl4Vh35KMlBK
+ MqRBIxf3seR5cOWCJvkrsjbIBEjFyJOQ+7zpeL7naH/62e21toMIrpHqrI7noXqoSHQO
+ tkSf0PwbddLURVc/yOpCM9U/iwtOwwSdvJOwKvnnc7wlsA9sGIPWyV/Br5GAj32jiUdY
+ /QU7rdLFZNmU6gxKx8jOE5B4HIPxkRsRBL7xkgAUCuOuwP8rbGgLttAVo009QnJSQruQ Ow== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pnvyuh807-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 31 Mar 2023 15:28:33 +0000
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32VFSVAE014668
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 31 Mar 2023 15:28:31 GMT
+Received: from hu-mohs-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Fri, 31 Mar 2023 08:28:27 -0700
+From:   Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+To:     <swboyd@chromium.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>, <robh+dt@kernel.org>,
+        <broonie@kernel.org>, <quic_plai@quicinc.com>,
+        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_rohkumar@quicinc.com>, <quic_visr@quicinc.com>
+CC:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Subject: [PATCH v10 0/3] Add resets for ADSP based audio clock controller driver
+Date:   Fri, 31 Mar 2023 20:58:02 +0530
+Message-ID: <20230331152805.3199968-1-quic_mohs@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH RFC 00/20] ARM: oxnas support removal
-Content-Language: en-US
-To:     Daniel Golle <daniel@makrotopia.org>, Arnd Bergmann <arnd@arndb.de>
-Cc:     Olof Johansson <olof@lixom.net>, soc@kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Sebastian Reichel <sre@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-mtd@lists.infradead.org, Netdev <netdev@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-pm@vger.kernel.org
-References: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
- <df218abb-fa83-49d2-baf5-557b83b33670@app.fastmail.com>
- <ZCblCsKMHYDZI-H9@makrotopia.org>
-Organization: Linaro Developer Services
-In-Reply-To: <ZCblCsKMHYDZI-H9@makrotopia.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: QZkWOzbuG4h9BA9kZSO4GgG9gOGvFzEO
+X-Proofpoint-ORIG-GUID: QZkWOzbuG4h9BA9kZSO4GgG9gOGvFzEO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-31_07,2023-03-31_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ spamscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1011
+ priorityscore=1501 malwarescore=0 mlxlogscore=923 suspectscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2303310122
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Daniel,
+Add resets and remove qdsp6ss clock controller for audioreach based platforms.
 
-On 31/03/2023 15:50, Daniel Golle wrote:
-> On Fri, Mar 31, 2023 at 03:42:15PM +0200, Arnd Bergmann wrote:
->> On Fri, Mar 31, 2023, at 10:34, Neil Armstrong wrote:
->>> With [1] removing MPCore SMP support, this makes the OX820 barely usable,
->>> associated with a clear lack of maintainance, development and migration to
->>> dt-schema it's clear that Linux support for OX810 and OX820 should be removed.
->>>
->>> In addition, the OX810 hasn't been booted for years and isn't even present
->>> in an ARM config file.
->>>
->>> For the OX820, lack of USB and SATA support makes the platform not usable
->>> in the current Linux support and relies on off-tree drivers hacked from the
->>> vendor (defunct for years) sources.
->>>
->>> The last users are in the OpenWRT distribution, and today's removal means
->>> support will still be in stable 6.1 LTS kernel until end of 2026.
->>>
->>> If someone wants to take over the development even with lack of SMP, I'll
->>> be happy to hand off maintainance.
->>>
->>> The plan is to apply the first 4 patches first, then the drivers
->>> followed by bindings. Finally the MAINTAINANCE entry can be removed.
->>>
->>> I'm not sure about the process of bindings removal, but perhaps the bindings
->>> should be marked as deprecated first then removed later on ?
->>>
->>> It has been a fun time adding support for this architecture, but it's time
->>> to get over!
->>>
->>> Patch 2 obviously depends on [1].
->>>
->>> [1] https://lore.kernel.org/all/20230327121317.4081816-1-arnd@kernel.org/
->>>
->>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>
->> Thanks a lot for going through this and preparing the patches!
->>
->> I've discussed this with Daniel Golle on the OpenWRT channel as well,
->> and he indicated that the timing is probably fine here, as there are
->> already close to zero downloads for oxnas builds, and the 6.1 kernel
->> will only be part of a release in 2024.
->>
->> For the dependency on my other patch, I'd suggest you instead
->> remove the SMP files here as well, which means we can merge either
->> part independently based on just 6.3-rc. I can do that change
->> myself by picking up patches 1-4 of your RFC series, or maybe you
->> can send resend them after rebase to 6.3-rc1.
->>
->> For the driver removals, I think we can merge those at the same
->> time as the platform removal since there are no shared header files
->> that would cause build time regressions and there are no runtime
->> regressions other than breaking the platform itself. Maybe
->> just send the driver removal separately to the subsystem
->> maintainers with my
->>
->> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> Sounds reasonable, so also
-> 
-> Acked-by: Daniel Golle <daniel@makrotopia.org>
-> 
-> (but I am a bit sad about it anyway. without SMP it doesn't make sense
-> to keep ox820 though)
+Changes since v9:
+    -- Drop "clk: qcom: lpassaudiocc-sc7280: Modify qcom_cc_probe" patch.
+    -- Update Fixes tag in Add the required gdsc's in lpass_cc_sc7280_desc patch.
+    -- Add the max_register value in Skip qdsp6ss clock registration patch.
+Changes since v8:
+    -- Add the required gdsc's in lpass_cc_sc7280_desc structure.
+    -- Modify qcom_cc_probe to qcom_cc_probe_by_index.
+    -- Update the commit message for v8,4/5 patch, which is not required for new logic.
+    -- Drop "Add binding headers for lpasscc" patch.
+    -- Drop "Skip lpass_aon_cc_pll config" patch.
+Changes since v7:
+    -- Modiy AHB clock probing method in "Merge lpasscc into lpass_aon patch".
+    -- Fix Typo errors in "Merge lpasscc into lpass_aon patch".
+    -- Update commit message in "Merge lpasscc into lpass_aon patch"
+Changes since v6:
+    -- Update commit message in "Merge lpasscc into lpass_aon patch" patch.
+    -- Drop "Skip lpasscorecc registration" patch.
+    -- Add comment in the code in "Skip lpass_aon_cc_pll config" patch.
+Changes since v5:
+    -- Fix compilation issue.
+Changes since v4:
+    -- Update Fixes tag in Merge lpasscc into lpass_aon patch.
+    -- Revert removal of clk_regmap structure in Merge lpasscc into lpass_aon patch.
+Changes since v3:
+    -- Remove duplicate clock resets patch.
+    -- Add binding headers for q6 clocks.
+    -- Create new patch for merging lpasscc q6 clocks into lpass_aon.
+    -- Create new patches for handling conflicts of ADSP and bypass solution.
+Changes since v2:
+    -- Revert removing qdsp6ss clock control.
+    -- Add Conditional check for qdsp6ss clock registration.
+Changes since v1:
+    -- Update commit message.
+    -- Remove qdsp6ss clock control.
 
-Same !
+Mohammad Rafi Shaik (1):
+  clk: qcom: lpassaudiocc-sc7280: Add required gdsc power domain clks in
+    lpass_cc_sc7280_desc
 
-I would have loved to see the full support mainline, but the platform is
-old and apart you nobody were interested in working on this.
+Srinivasa Rao Mandadapu (2):
+  dt-bindings: clock: qcom,sc7280-lpasscc: Add qcom,adsp-pil-mode
+    property
+  clk: qcom: lpasscc-sc7280: Skip qdsp6ss clock registration
 
-Thanks a lot for you work keeping Oxnas support alive!
-Neil
+ .../bindings/clock/qcom,sc7280-lpasscc.yaml       |  7 +++++++
+ drivers/clk/qcom/lpassaudiocc-sc7280.c            |  2 ++
+ drivers/clk/qcom/lpasscc-sc7280.c                 | 15 ++++++++++-----
+ 3 files changed, 19 insertions(+), 5 deletions(-)
 
+-- 
+2.25.1
 
