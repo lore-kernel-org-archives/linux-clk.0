@@ -2,132 +2,113 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43EDDC6FD18
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 12:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C2EAC76196
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 12:44:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230294AbjCaMgO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Mar 2023 08:36:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57626 "EHLO
+        id S231741AbjCaMoh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Mar 2023 08:44:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231853AbjCaMgM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 08:36:12 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D6F720616
-        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 05:35:47 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id i9so22241226wrp.3
-        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 05:35:47 -0700 (PDT)
+        with ESMTP id S231613AbjCaMof (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 08:44:35 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 584A220607
+        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 05:44:11 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id r29so22219037wra.13
+        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 05:44:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680266141;
+        d=linaro.org; s=google; t=1680266645;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=swOeWot85GIaEePp91l98DkNomzcOh+V2vppc9loIuU=;
-        b=BkF/FqSsbVjbR1KVsiSpp7SQNoMqEdlMojmSrjeDo+9LbCdA3wvvUQ2FqFFr4Z1N+R
-         CqvWeyyswgPkG4UhnYDxHpGST9/tVFnwd96DXgIG09uDl11pUyymaTp6BErulwzQCzS9
-         LIX3VrPMQTBXcHtZss4xxMBJeUUWPwCH5qAfyRhPj9kLH+T+B7MEsnt6YD6Cyjv10KxI
-         sdNVD328u7TA54082Z2OjMePKjVajcHwBGjsI3stsu3m+FyrqMwMlBxWuq76N8mgry6n
-         Sni/ScuRCDhOSWwvi2IYqsRGLekiVM+jOxz7cWEgYpgLannbfs8iknnC5J2uwsNQtqhD
-         9b7g==
+        bh=U1Lfh9KietRk/SXmq2S1nzMw4qRuEmtosaggZBr7IbQ=;
+        b=ArsnnvqYlwJA36eSfco0/UVrsiLjFOa78ZhyH3MvsXhJNcQOs6mpmMJT4zIhMaihFU
+         1H30+CTYfJW8Vh5u0OTvEh+21kzpzoF2CjLRbiR0otPBbrve34+P6Fv9lC84BpjmWEFq
+         x83e2L5ufu+2wQzBpvllCtUlqQ/C2MVz+xbzie/6tV96OkpGvDBdS2/sNrVIw1unOKYt
+         4HX8R9W34b5oHsHvIB6wbnqdCVbHFswLMX3eGbTRd3X471dB6F+yUKUfli0gdSKoeMCy
+         6kRk3DIRug3Fq1iqs/NQNTEYLoQ2lJUi3r+i2toHLCOLJnIqQSxt5ft/Zb52MKe7cc+q
+         Dkzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680266141;
+        d=1e100.net; s=20210112; t=1680266645;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=swOeWot85GIaEePp91l98DkNomzcOh+V2vppc9loIuU=;
-        b=h+6bAnSP9X8AWsb4qYBB6F7qOjFhJ1E7HQStNHLV/hkBTTdFrWD7fCPAHcMkLm6gQD
-         QJ7XqKcYCivnlyoh+Jyzoq7F3xptGuSbUfhmgsdbhpOT6Cp6JaNIIAOE960hK2rxUEis
-         PVR2s8hBevRPmG3RUVFGXTvt03rKwO0dGTL8qlpNXbY3gGbYqEXuhSLZK1taiIdc54X2
-         x3RJmBzMLTZnRaAlh7BiVpAEqvK5QLm1Mdp9A4z6b9+Ex7nkZZXTiG5puqP7Kiu7oRzh
-         bj9yWXkEmvegiQ1hQ+DS0PahYrqlMyyIPPhRtwK8R2P2PyTichjlOn7T0Hoifm019oP5
-         M15A==
-X-Gm-Message-State: AAQBX9fIzvni6Zja165kqYhlplqZDlAYzcLIFY4QRsxjBbNZffLEKnDD
-        3Em5/fdr1f8oxGY8GSI/MRl3yA==
-X-Google-Smtp-Source: AKy350b9EDA4FRXrfvd4zTIm9hwFtXN5pA+QlBIcWSVxOH0R42o/XjmxtvUN+8Tr/9+SP05WzOhqIA==
-X-Received: by 2002:adf:dd87:0:b0:2ce:aa62:ff79 with SMTP id x7-20020adfdd87000000b002ceaa62ff79mr20600624wrl.40.1680266140773;
-        Fri, 31 Mar 2023 05:35:40 -0700 (PDT)
+        bh=U1Lfh9KietRk/SXmq2S1nzMw4qRuEmtosaggZBr7IbQ=;
+        b=W4UVAjCPDELSeP38IdoT1HDCE3w9diHIxpH+BksLUT5vCMrGo4GdiUc7LtZtqk9vWW
+         +5YDKQPotVVqZ9x0EphdRY+gF25PPCqw380H6nM8EmbQaqLjs8XwcX77Lm2nqt8KQqpq
+         W+iNulSHOl0PN3qdTbb2E3teFfM0Fv+gJ1Qja8NP9vJzDLxuuvaencQYlsozQ/kENgAs
+         WqJlGCxW6GalMeyFAeu9ZTAZITxNtSr87Ld9i4rbkNIjT/gDJ1ERWZcZjy6dsi3xBwrn
+         lVG3eA+A6+Ru1HuKh66NR1y67LI5dmDa2WaZRcE5oEHmbvIt5O+6hrqEdsLyIr/TNVbH
+         3e+w==
+X-Gm-Message-State: AAQBX9eSTgZsmnNb1y/ReICzcp+QvdfeS/xWZLKlYvY9IsziKhhKewbp
+        duRx1jOYxSYUEy98ApdEpY0OuQ==
+X-Google-Smtp-Source: AKy350Zgt+E2U4cmPtWUflobeN/+f2uimL/ABursN18vXWggXQLr+CvySB2bTeAJUcWkd1kF6H6C0w==
+X-Received: by 2002:a5d:490d:0:b0:2cc:4e58:f6d0 with SMTP id x13-20020a5d490d000000b002cc4e58f6d0mr18389913wrq.54.1680266645514;
+        Fri, 31 Mar 2023 05:44:05 -0700 (PDT)
 Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id v12-20020a5d4b0c000000b002cfed482e9asm2109776wrq.61.2023.03.31.05.35.39
+        by smtp.gmail.com with ESMTPSA id l12-20020a5d560c000000b002cfe685bfd6sm2086617wrv.108.2023.03.31.05.44.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Mar 2023 05:35:40 -0700 (PDT)
-Date:   Fri, 31 Mar 2023 15:35:38 +0300
+        Fri, 31 Mar 2023 05:44:04 -0700 (PDT)
+Date:   Fri, 31 Mar 2023 15:44:03 +0300
 From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-clk@vger.kernel.org, aford@beaconembedded.com,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+To:     Stefan Wahren <stefan.wahren@i2se.com>
+Cc:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V4 0/4] clk: imx: Improve imx8mm/imx8mn LCDIF clocks
-Message-ID: <ZCbTmitvBTQu26PX@linaro.org>
-References: <20230323230127.120883-1-aford173@gmail.com>
+        Fabio Estevam <festevam@gmail.com>, kernel@pengutronix.de,
+        linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: imx: clk-gpr-mux: Provide clock name in error
+ message
+Message-ID: <ZCbVk1hFMVVTq1h/@linaro.org>
+References: <20230308184603.10049-1-stefan.wahren@i2se.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230323230127.120883-1-aford173@gmail.com>
+In-Reply-To: <20230308184603.10049-1-stefan.wahren@i2se.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-03-23 18:01:23, Adam Ford wrote:
-> Both the i.MX8M Mini and Nano have a video_pll which can be used 
-> to source a clock which feeds the lcdif interface.  This interface
-> currently fixes video_pll and divides down the clock feeding LCDIF.
-> However, when connected to an HDMI bridge chip that supports a
-> variety of video resolutions and refresh rates, the only settings
-> that properly sync are ones that evenly divide from the video_pll_out
-> clock.
+On 23-03-08 19:46:03, Stefan Wahren wrote:
+> In error case the error message doesn't provide much context:
 > 
-> This series adds the ability for the clk-compolsite-8m to
-> request a better parent clock rate if the proper clock flag is
-> enable and sets that flag in the corresponding imx8mm and 
-> imx8mn video_pll clocks to increase the number of resolutions
-> and refresh rates timings that the LCDIF can produce.
+> imx:clk-gpr-mux: failed to get parent (-EINVAL)
 > 
-> This also has a side benefit of allowing the video-pll to run
-> at a lower clock speed which can potentially save some power
-> depending on the requested resolution and refresh rate.
+> So additionally provide the clock name in the message, in
+> order to simplify the further analyze.
 > 
+> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+
 
 Applied, thanks!
 
-[1/4] clk: imx: composite-8m: Add support to determine_rate
-      commit: 156e96ff2172518b6f83e97d8f11f677bc668e22
-[2/4] clk: imx: Add imx8m_clk_hw_composite_flags macro
-      commit: 784a9b3916e949c00666588fd167c4ab245ec9d6
-[3/4] clk: imx8mm: Let IMX8MM_CLK_LCDIF_PIXEL set parent rate
-      commit: 5fe6ec93f10b0765d59e0efb6ecba419a6a49d48
-[4/4] clk: imx: Let IMX8MN_CLK_DISP_PIXEL set parent rate
-      commit: 46a974433ea7fa468b45db70536f7cea81feb87c
-
+[1/1] clk: imx: clk-gpr-mux: Provide clock name in error message
+      commit: f47a669ffa11c6c14b463d762562fe9681345c6e
 
 Best regards,
 --
 Abel Vesa <abel.vesa@linaro.org>
 
-
-
-> v4:  Sorry for the noise.  I forgot to 'git ammend' so V4
->      is what V3 should have been.
-> V3:  Change the name of clk_divider_determine_rate to
->       imx8m_clk_divider_determine_rate
-> V2:  Split off the new imx8m_clk_hw_composite_flags definition
->      into its own patch and re-order to fix build error.
->       
-> Adam Ford (3):
->   clk: imx: composite-8m: Add support to determine_rate
->   clk: imx8mm: Let IMX8MM_CLK_LCDIF_PIXEL set parent rate
->   clk: imx: Let IMX8MN_CLK_DISP_PIXEL set parent rate
+> ---
+>  drivers/clk/imx/clk-gpr-mux.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
->  drivers/clk/imx/clk-composite-8m.c | 7 +++++++
->  drivers/clk/imx/clk-imx8mm.c       | 2 +-
->  drivers/clk/imx/clk-imx8mn.c       | 2 +-
->  drivers/clk/imx/clk.h              | 4 ++++
->  4 files changed, 13 insertions(+), 2 deletions(-)
-> 
+> diff --git a/drivers/clk/imx/clk-gpr-mux.c b/drivers/clk/imx/clk-gpr-mux.c
+> index c8d6090f15d6..0b5a97698b47 100644
+> --- a/drivers/clk/imx/clk-gpr-mux.c
+> +++ b/drivers/clk/imx/clk-gpr-mux.c
+> @@ -48,7 +48,8 @@ static u8 imx_clk_gpr_mux_get_parent(struct clk_hw *hw)
+>  	return ret;
+>  
+>  get_parent_err:
+> -	pr_err("failed to get parent (%pe)\n", ERR_PTR(ret));
+> +	pr_err("%s: failed to get parent (%pe)\n",
+> +	       clk_hw_get_name(hw), ERR_PTR(ret));
+>  
+>  	/* return some realistic non negative value. Potentially we could
+>  	 * give index to some dummy error parent.
 > -- 
 > 2.34.1
 > 
