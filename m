@@ -2,147 +2,198 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E4AC6FD18
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 07:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BEB9C77B62
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 08:34:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230135AbjCaHQB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Mar 2023 03:16:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40556 "EHLO
+        id S230496AbjCaIeu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Mar 2023 04:34:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230077AbjCaHP7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 03:15:59 -0400
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2081.outbound.protection.outlook.com [40.107.249.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02C561A47F;
-        Fri, 31 Mar 2023 00:15:57 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BLImIy3o8cDxIWjiCzqYLH+xziTX7sAny/q9EobXoTzclvOhfqvpuOegUCDLBHkbQ//BahtZfJSE6FjZXMOaPyWO83+qEFFmFXzw4kZS8RHYdHfS0aR7/M9XALnrLG2Bedr0g05wo+pJZPMagjrjAS0/2PPWhjI4SXukHxwE8OUexy/Wf/dKlaQFPLrjmfauRXhS73wyI9XFM5l2atCsx16QsgSg/ZXqa0+fu9VUoocXVciqID9Yqb2K+xnB33vqyvjBed2Wc/rngQ/tEVRJyo6yi+TdY3VQspqqM2QFfDXgprHI+rn2h5y5I9bRjk6dhvpAO08kPnkbTIOgrRYi0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KmCZvQV26FmdrI6zifDlOXchdQTeus2mYVJqcU7WEnk=;
- b=Hjp+DZAYPWyOJ7PsrxqlPDOHZlxBbELem9QlnVIRSqTOygcL1B0kHW0RCRmBhfJoG7/lQyKB0/oLNdrJAT4pc0DfQDzIPy70n79A1OsjqpmZElSLcBQDLuL/orDK9G8PLsdgMd68F2uWdAeopKpnmMyb/M9Y0U+dyHT6EczFKumqipRqwZFsL3FSRng1AtbGpqb/gsVd1S3i0EioXTP6B5rUcW5rxTE01D2XINzz/HYpmPNy6jIdBX6SvE2IdDua8Fj0AJqGFZtVo0h6o0RICjN1VlDbSJiRcyJ3vyt4LQEUqK2hYHGG6KW2FK+S6QUnGj4jugCi7t/Luz+R7OFVhA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KmCZvQV26FmdrI6zifDlOXchdQTeus2mYVJqcU7WEnk=;
- b=i3AIFfvrqS/VdKqpfV1FbSKlfFPfNKbcnmJDn9x0MHecdIlKqITSrO/MZa8N01TJ/wgybqJg/JqowfRTHqjLsSGU5P0V+W95AIkkCOzZZilbTVe04lBY9OIu4Vz+f/RNUwO0xl3VsBFAFglN+A8dPupgXdm1lYzus5HsDo/h9aw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by AM8PR04MB7892.eurprd04.prod.outlook.com (2603:10a6:20b:235::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6222.29; Fri, 31 Mar
- 2023 07:15:54 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::778e:19d0:cba0:5cc0]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::778e:19d0:cba0:5cc0%4]) with mapi id 15.20.6222.028; Fri, 31 Mar 2023
- 07:15:53 +0000
-From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To:     abelvesa@kernel.org, abel.vesa@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com
-Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH] clk: imx: imx6sx: spdif clock rate is too high for asrc
-Date:   Fri, 31 Mar 2023 15:20:58 +0800
-Message-Id: <20230331072058.2483975-1-peng.fan@oss.nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR03CA0105.apcprd03.prod.outlook.com
- (2603:1096:4:7c::33) To DU0PR04MB9417.eurprd04.prod.outlook.com
- (2603:10a6:10:358::11)
+        with ESMTP id S231223AbjCaIes (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 04:34:48 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2250213C
+        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 01:34:45 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id v1so21592171wrv.1
+        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 01:34:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680251684;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wKmFDwBzmqKaD1W7wuLHbQZgTpJgWQagzC13l4DdTqw=;
+        b=ez7Y8DKhU9m8mENWYc8eLh3UjQj04JKUYpk8LZc0Cgj82lGXgAqKThXbmY29WwZFpa
+         8iJCKddXPmrHzPzXLQ682kWfEp0XTxPc6/GH5fWihQi5njtBGVCzQSKchgik6ZjPxGVs
+         LJ6kI8ENaL4ylviyHLejBooWU1vyhc5pUBM2V6BzXIypiwp1tF0C80ee0BcHRFohBjvs
+         PS3KjixZZ5L0SEv7mF4LYg/aatUGXQwxrjYjN3GBCSHubljOca4C/g7Smtoai9yEYKM2
+         MPuBgGNvstDtP1p1JijRIUW+SkbLI/c5/0B4ugSh+dx2vHET0l1a/8etg25rGkrvIHls
+         EkFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680251684;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wKmFDwBzmqKaD1W7wuLHbQZgTpJgWQagzC13l4DdTqw=;
+        b=yPNV1JX+SZ0PSs8+rjOqyrcOi+E+XOTBMeC2oCMIu/raPJzU+hAYs3YCaPKn2CVO7p
+         Oh60LvkzU46dkwyx9Rkg+sOQjoufM1SkguvXA+7ewyRG9q4mycxqZgyDz4L5DMdvHF/X
+         n2PiQceHwK2GKpGhuzvSXgtF7udiIzZ+ZJ4+96Oj9B1omtVGjcclkxTB+ZgUgdK1NUjZ
+         6PGBp1jP0CYGTzOlFdZMrFq9azt0YmmShgAM86SIR2ty5eGApOhy/KG/Q9xSP8v+LVLA
+         T747AAtic0AV8dHGyBB6934Gem2nUMtrlrlA9oTRCLWaLa7TFfOMswH1GgSqH23Wvs/e
+         p2qg==
+X-Gm-Message-State: AAQBX9dBIVViILLkQqFVG1erEY47AB42bUuIwB3oUDwLdqz568EfyiRH
+        F8P/aPX/nTvjjldMuaZFOQaoeA==
+X-Google-Smtp-Source: AKy350ZffcjiZSGBVm/JblhOGFpZodzn92ieAjz2v27srUZ+zaxOkeHyJPQUex2yEMscYYMGa2NW2w==
+X-Received: by 2002:a5d:58c9:0:b0:2cf:e34c:a229 with SMTP id o9-20020a5d58c9000000b002cfe34ca229mr22477632wrf.8.1680251684116;
+        Fri, 31 Mar 2023 01:34:44 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id e11-20020a5d4e8b000000b002cde626cd96sm1563153wru.65.2023.03.31.01.34.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Mar 2023 01:34:43 -0700 (PDT)
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH RFC 00/20] ARM: oxnas support removal
+Date:   Fri, 31 Mar 2023 10:34:38 +0200
+Message-Id: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|AM8PR04MB7892:EE_
-X-MS-Office365-Filtering-Correlation-Id: a6882e19-a1ac-418c-bb65-08db31b7c3c6
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: NkYdcSiCjXUkPKKfyq0cuxaTW4ZntSs5U2Bu8/gEMQSIDZqR6N11PrkteKo1RB+1K8DueldRh0/i95m7EcpQPKkfRPhLCYcjJyQTPwCS4SKfzib8wCs8A263x6l2bcf/M0DCeGYzKq/WPVYlgbxNXZwin/Kq3z5HOkcRin6uqJp3sI/oAFEcD8jfmzCIb0JDS1Dggm3Eg7IUBtF+uk7hyEw6130/IdV+cDwIzBxmYiZQXnXJ6p/WWbmWFR3tZNuDC+JHNQevZm+eVMrqRNj1I0lFfX9WYyrGuV1lzanP+ETx5h2tzQX25KJYdMvN1u37RoVkHAR46NiR5v6ykKYlKA+QNpNWQxxdPaVamsswCqXShXHtFZw4hGZYd3sFu4hnINcY+45v3vyfOYuibaxYzOs8TkL60kKeWT1LjzV++NpvUHfGhsRMCmAuJV1pVhkUie/MSWpbSnil07wZs1gBEBC36J2gAXK04deZ/kun32vPQD89q+M93TVSWNE8ABhrQ8eIC+gHS+c3uAy1a92/q2SWA0QKB6445yFryirRyn0wyH6mP+BbNBoqpRPp2qS8agYLuiJxq9wg1XRX4UJM7UqqHibd2ckwqARhHzceInmohrMm640qaTwfGLBEIOl6REsjPdteSYls42GMmz76LA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(376002)(366004)(136003)(346002)(39860400002)(451199021)(6512007)(2906002)(2616005)(83380400001)(54906003)(4326008)(66476007)(7416002)(66556008)(8676002)(66946007)(478600001)(1076003)(316002)(6506007)(26005)(186003)(52116002)(86362001)(38350700002)(38100700002)(6486002)(5660300002)(41300700001)(66899021)(8936002)(32563001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?aFmTyR5i/CQvX5Qv1sjCRrv7tODNNvqKoMZJy0qOqMMgBGSawnSrTzeRynAg?=
- =?us-ascii?Q?ejxwmib7hplPQQAoX86X51DAtPluoPjt48B6AVM/8vPRXFanFC+0BYOaAqAe?=
- =?us-ascii?Q?2zeJ/H9yLClbNxtGZzDP2OU5Hd/FMK3Q1SRrr+DSLE6ZHOQk9XaGamriR45u?=
- =?us-ascii?Q?M2Vjv20kAww1q5rNVeVUJ9CAHp6kkNua2SWenKp9JQO+jlcGiYvK94Lab+Or?=
- =?us-ascii?Q?7hTBJyAsv4Qlc2queSQFtHvdG4RgOqM/lhcDxglO6+78PBxe3izKAVnzf0f9?=
- =?us-ascii?Q?92mUD0zuAGtHzkKYH7ET6KGXym17os1T8SQ8gqQxrap4DAqbeOWtCJDtqGz/?=
- =?us-ascii?Q?v0b9TmSEO1BCmhDrWV2qqCbArAlAJFnWhhwYP8VC55MzWrMklpu4+7CnZuZ9?=
- =?us-ascii?Q?hhUuz7tlZnj/itzwz53oiC+qAMKLt70wwR5uQeylY/g5fSrmIXfqseZkG8QB?=
- =?us-ascii?Q?i0Ww5IYkhUk77K8kL6ylCIlAOgUxLFM3z/7GCuiFdOb/7Haef8iWQp8JygKc?=
- =?us-ascii?Q?d8+j20qMfGXA9mjzddYU5yG64sBrut0v/RaLAiXeMP8JA5ugoDrhYuGaQ0Uc?=
- =?us-ascii?Q?9JJ+ec+Khe1H8M7qpCAUPsdWWuKSmboMYS9x8N7B431AeZ/UDycq/7vg/4AD?=
- =?us-ascii?Q?iYfVO/+ukYnWMExG32rrpNqlWQaN1ScewP+vEJA4ijyP+FFgkYhehoDqUb6H?=
- =?us-ascii?Q?wlq4Sp6rnQzcfvGLhvBFKua2yQT2V+EjM557XNJM9YwwgY7lL0Sh5+3JkI9e?=
- =?us-ascii?Q?IuoC/FwwrHjEmW8SG9p1TsWiYGLiMb94a2l2ZaPlJe+SBk3QANYekUcTrx3w?=
- =?us-ascii?Q?nEFHwJeO+B8bonWYRNYc384CXuT1pmHwjPuo3AwZm8aJrwgcPM5BTlYkVnjw?=
- =?us-ascii?Q?jkUkHqh2DUbfgV2LeKo9TT9HLtMCd7xO3Hj44JgbkxBbI0+KMzk/IZKmJ0HI?=
- =?us-ascii?Q?Wxa6Tb8hYINWmYGi+i3AV0X705yICRtoIBPqn7bvhEmknzGbIYF+2KUVsE36?=
- =?us-ascii?Q?tsuBDqzYFWN4RI2Y7tgELTGPjx70uJ50SsscQm92xFhZ8Ch2b6jMvgWNyV3r?=
- =?us-ascii?Q?E/pdYFVZbgWXTvI6CFF6tyJ9qLHEPztx8/2jim9wmi7ptWBExU+xbzrCcZiS?=
- =?us-ascii?Q?tC7W3Cz0Bl3ye4ZBrJkQrBA6PVYbYPgtGMnrxJe7OMPAuL8cLl1BcLQOP9fr?=
- =?us-ascii?Q?P8qwUH/qvwiU4ZO8mT9wCdQ3ws/uSIdn/gnZP8lC3mPYsHre0tCwPsxOE+cW?=
- =?us-ascii?Q?hU30spCYg1SAkEEsZydj8XbwWORWvcqT1K+w9otY2dddNyqywlN5/hBgpBeR?=
- =?us-ascii?Q?RxKqcYC7qvQdIQ0MFE52qQ9D3x/EUYgzIDetVA3Wqiu1lWeKm+64YEwG1G2i?=
- =?us-ascii?Q?sCunzFiWjsgEfhfiO2sQYu6lgyQl9c3i1Pltfp/R6cqICG5zUQAyALFWEZQZ?=
- =?us-ascii?Q?D83cpgPYj4MVdXD1NzOEvEJfKrdWrZRjTy197fNmQs8R26ztidwe/nPY7Jog?=
- =?us-ascii?Q?1Pi4vHBJgQ+eQvevqOlyuU+PpTFix9odEs5UVD53S0wEL7hWwemTAN84yHVg?=
- =?us-ascii?Q?RwyWx7Ao1yafWm49de11UYrlATJRReBSgWwybaVI?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a6882e19-a1ac-418c-bb65-08db31b7c3c6
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Mar 2023 07:15:53.8592
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: W6EXaUw316sF13vsAC8OHu8SmnZSTQ7hHuJb7InL8LG8lXdGsYuluuJQIuSWzLh30PWQSGZEpbweS5DKZmObLg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7892
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB6bJmQC/x2NwQqDMBAFf0X23AVNQLDXQj+g19JDjM+6oEnIq
+ gjivzf0OHOYOUmRBUr36qSMXVRiKNDcKvKTC1+wDIXJ1MbW1ja8xiSe4xGc8pZ0zXALZyxxB7v
+ WoBu6dgRApdA7BffZBT+VRtjmuciUMcrxX77p9XzQ57p+JL2B/4cAAAA=
+To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        soc@kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Sebastian Reichel <sre@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Marc Zyngier <maz@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.12.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
+With [1] removing MPCore SMP support, this makes the OX820 barely usable,
+associated with a clear lack of maintainance, development and migration to
+dt-schema it's clear that Linux support for OX810 and OX820 should be removed.
 
-spdif clock is one of the asrc clock source, which is used
-for ideal ratio mode. when set to 98.304MHz, it cause the
-divider of asrc input clock and output clock exceed the
-maximum value, and asrc driver saturate the value to maximum
-value, which will cause the ASRC's performance very bad.
-So we need to set spdif clock to a proper rate. which make asrc
-divider not exceed maximum value, at least one of divider not
-exceed maximum value.
-The target is spdif clock rate / output(or input) sample rate
-less than 1024(which is maximum divider).
+In addition, the OX810 hasn't been booted for years and isn't even present
+in an ARM config file.
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
+For the OX820, lack of USB and SATA support makes the platform not usable
+in the current Linux support and relies on off-tree drivers hacked from the
+vendor (defunct for years) sources.
+
+The last users are in the OpenWRT distribution, and today's removal means
+support will still be in stable 6.1 LTS kernel until end of 2026.
+
+If someone wants to take over the development even with lack of SMP, I'll
+be happy to hand off maintainance.
+
+The plan is to apply the first 4 patches first, then the drivers
+followed by bindings. Finally the MAINTAINANCE entry can be removed.
+
+I'm not sure about the process of bindings removal, but perhaps the bindings
+should be marked as deprecated first then removed later on ?
+
+It has been a fun time adding support for this architecture, but it's time
+to get over!
+
+Patch 2 obviously depends on [1].
+
+[1] https://lore.kernel.org/all/20230327121317.4081816-1-arnd@kernel.org/
+
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- drivers/clk/imx/clk-imx6sx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Neil Armstrong (20):
+      ARM: dts: oxnas: remove obsolete device tree files
+      ARM: oxnas: remove OXNAS support
+      ARM: configs: remove oxnas_v6_defconfig
+      dt-bindings: arm: oxnas: remove obsolete bindings
+      clk: oxnas: remove obsolete clock driver
+      dt-bindings: clk: oxnas: remove obsolete bindings
+      clksource: timer-oxnas-rps: remove obsolete timer driver
+      dt-bindings: timer: oxsemi,rps-timer: remove obsolete bindings
+      nand: oxnas_nand: remove obsolete raw nand driver
+      dt-bindings: mtd: oxnas-nand: remove obsolete bindings
+      net: stmmac: dwmac-oxnas: remove obsolete dwmac glue driver
+      dt-bindings: net: oxnas-dwmac: remove obsolete bindings
+      pinctrl: pinctrl-oxnas: remove obsolete pinctrl driver
+      dt-bindings: pinctrl: oxnas,pinctrl: remove obsolete bindings
+      dt-bindings: gpio: gpio_oxnas: remove obsolete bindings
+      power: reset: oxnas-restart: remove obsolete restart driver
+      reset: oxnas: remove obsolete reset driver
+      irqchip: irq-versatile-fpga: remove obsolete oxnas compatible
+      dt-bindings: interrupt-controller: arm,versatile-fpga-irq: mark oxnas compatible as deprecated
+      MAINTAINERS: remove OXNAS entry
 
-diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
-index 7cf86707bc39..3face052527d 100644
---- a/drivers/clk/imx/clk-imx6sx.c
-+++ b/drivers/clk/imx/clk-imx6sx.c
-@@ -520,7 +520,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 	clk_set_rate(hws[IMX6SX_CLK_PLL4_AUDIO_DIV]->clk, 393216000);
- 
- 	clk_set_parent(hws[IMX6SX_CLK_SPDIF_SEL]->clk, hws[IMX6SX_CLK_PLL4_AUDIO_DIV]->clk);
--	clk_set_rate(hws[IMX6SX_CLK_SPDIF_PODF]->clk, 98304000);
-+	clk_set_rate(hws[IMX6SX_CLK_SPDIF_PODF]->clk, 24576000);
- 
- 	clk_set_parent(hws[IMX6SX_CLK_AUDIO_SEL]->clk, hws[IMX6SX_CLK_PLL3_USB_OTG]->clk);
- 	clk_set_rate(hws[IMX6SX_CLK_AUDIO_PODF]->clk, 24000000);
+ Documentation/devicetree/bindings/arm/oxnas.txt    |   14 -
+ .../devicetree/bindings/clock/oxnas,stdclk.txt     |   28 -
+ .../devicetree/bindings/gpio/gpio_oxnas.txt        |   47 -
+ .../arm,versatile-fpga-irq.txt                     |    4 +-
+ .../devicetree/bindings/mtd/oxnas-nand.txt         |   41 -
+ .../devicetree/bindings/net/oxnas-dwmac.txt        |   41 -
+ .../devicetree/bindings/pinctrl/oxnas,pinctrl.txt  |   56 -
+ .../devicetree/bindings/reset/oxnas,reset.txt      |   32 -
+ .../devicetree/bindings/timer/oxsemi,rps-timer.txt |   17 -
+ MAINTAINERS                                        |   10 -
+ arch/arm/Makefile                                  |    1 -
+ arch/arm/boot/dts/Makefile                         |    3 -
+ arch/arm/boot/dts/ox810se-wd-mbwe.dts              |  115 --
+ arch/arm/boot/dts/ox810se.dtsi                     |  357 ------
+ .../dts/ox820-cloudengines-pogoplug-series-3.dts   |   93 --
+ arch/arm/boot/dts/ox820.dtsi                       |  299 -----
+ arch/arm/configs/oxnas_v6_defconfig                |   92 --
+ arch/arm/mach-oxnas/Kconfig                        |   34 -
+ arch/arm/mach-oxnas/Makefile                       |    1 -
+ drivers/clk/Kconfig                                |    7 -
+ drivers/clk/Makefile                               |    1 -
+ drivers/clk/clk-oxnas.c                            |  251 ----
+ drivers/clocksource/Kconfig                        |    7 -
+ drivers/clocksource/Makefile                       |    1 -
+ drivers/clocksource/timer-oxnas-rps.c              |  288 -----
+ drivers/irqchip/irq-versatile-fpga.c               |    1 -
+ drivers/mtd/nand/raw/Kconfig                       |    7 -
+ drivers/mtd/nand/raw/Makefile                      |    1 -
+ drivers/mtd/nand/raw/oxnas_nand.c                  |  211 ----
+ drivers/net/ethernet/stmicro/stmmac/Kconfig        |   11 -
+ drivers/net/ethernet/stmicro/stmmac/Makefile       |    1 -
+ drivers/net/ethernet/stmicro/stmmac/dwmac-oxnas.c  |  245 ----
+ drivers/pinctrl/Kconfig                            |   11 -
+ drivers/pinctrl/Makefile                           |    1 -
+ drivers/pinctrl/pinctrl-oxnas.c                    | 1292 --------------------
+ drivers/power/reset/Kconfig                        |    7 -
+ drivers/power/reset/Makefile                       |    1 -
+ drivers/power/reset/oxnas-restart.c                |  233 ----
+ drivers/reset/Kconfig                              |    3 -
+ drivers/reset/Makefile                             |    1 -
+ drivers/reset/reset-oxnas.c                        |  114 --
+ 41 files changed, 3 insertions(+), 3977 deletions(-)
+---
+base-commit: df45499b419b31c4d44ef9f1d1656d1fc0897014
+change-id: 20230331-topic-oxnas-upstream-remove-a62e9d96feee
+
+Best regards,
 -- 
-2.37.1
+Neil Armstrong <neil.armstrong@linaro.org>
 
