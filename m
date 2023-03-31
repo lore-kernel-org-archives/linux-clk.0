@@ -2,317 +2,139 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3198BC76196
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 06:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F21CC76196
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 07:11:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230212AbjCaGrw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Mar 2023 02:47:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37514 "EHLO
+        id S230351AbjCaHLM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Mar 2023 03:11:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230124AbjCaGrv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 02:47:51 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE1B0103;
-        Thu, 30 Mar 2023 23:47:49 -0700 (PDT)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32V4Ofni016735;
-        Fri, 31 Mar 2023 06:47:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
- cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=qcppdkim1; bh=EC+v/2olfRac9xNHQjMCulTSUV0NecCCgzAQO2RMC7M=;
- b=ZcdkjSe4+f0Xe+k+OxdfzK3aBe8Hjxh4FERqBZxc7asfizjeaD26BuT6x0/rnHUMN4eD
- npCOAuvYkCK4o4Ttbx/XIJXNC8D8n3ZGfHh7pjcpAmNL9lIc56eIqO8eY2JJX+u6qfXY
- ohHqS0ZtCZQJQjBVrrpoa1it9MoNNlL3KKU2nzEAihpCmbMlgJ0EfIW4uKDDJJrFkhPj
- XSAqJqBSYP5ruwNnJ4WHZlDeDWYETp+R09oegDqkJG29yCx1HrAJYfKDnseSa5f7nwk6
- K1wgmK36FSo4RhnfdfjkFmZYlUjxDUs1ZB9ChwVQHxwe3vfuPRZHoF5MzVtjRCvvMG7r NA== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pncx0svwx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 31 Mar 2023 06:47:39 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32V6lcQ3003557
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 31 Mar 2023 06:47:38 GMT
-Received: from varda-linux.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Thu, 30 Mar 2023 23:47:29 -0700
-Date:   Fri, 31 Mar 2023 12:17:24 +0530
-From:   Varadarajan Narayanan <quic_varada@quicinc.com>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <gregkh@linuxfoundation.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <quic_wcheng@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        Praveenkumar I <quic_ipkumar@quicinc.com>
-Subject: Re: [PATCH v5 6/8] phy: qcom: qmp: Update IPQ9574 USB Phy
- initialization Sequence
-Message-ID: <20230331064723.GA19162@varda-linux.qualcomm.com>
-References: <cover.1680162377.git.quic_varada@quicinc.com>
- <60954818576384e36136cb706aa554788ec4bb22.1680162377.git.quic_varada@quicinc.com>
- <CAA8EJpoyw6mspNUffU3KKvRPdB2XQE0A6FF7YUUzwpBVQO=Ykw@mail.gmail.com>
- <20230330125749.GA19941@varda-linux.qualcomm.com>
- <CAA8EJpoWKCPtWcxS6UpdxXDQsO+PgdX1heOLmrfKq6T16-foEg@mail.gmail.com>
+        with ESMTP id S230429AbjCaHLL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 03:11:11 -0400
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2075.outbound.protection.outlook.com [40.107.105.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB04BCA35;
+        Fri, 31 Mar 2023 00:11:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XeMXRDEbHZHmk7Cg0YTbyWJmTTxKNChoh6lEgEsgCb1c2z6P9eOiynDB+5HR+QGoB4uZYJMm/S0wmtxSMxIBvU1lPAcD8rFbKhUwpT46GGCuPbUS8KVqp2ywb3SIhXbYhT9xeFUGNxGEK4vD3l/D5y4WxbtqCi5SqBeg5dBeFznhtNpc/Ivmf7Ki+rvt21jbKjD3y78XErfggPIw7GTzHimxhXu1IkdMDCgQJ6TSQ84+dM5Icfg9o2o8wah8jQrVo+ZUbIYEBBDV/5L1hyh7tKHwTpYkCb1WtJLyBvdw91rPWzKPe3UH7xR4wvMWBSV4hDR4aHRT01AR1J6tIidv4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6AxxwbyzYLGj9lvep3Y9GH5/tQSwUtKjgI3ik13F+pg=;
+ b=lixfZIaSycmVDiTZKbqYbowtHxNOJ0nvYFmYUNdpI7+nv37xANidShj9ahC+yqNKlMjJoIpQTKZ2r2ApBb0WTEM7nEsa07wvFZjllzAiaWoVpFREMFPWgYPUgCZ/U52XKytp1WsPh2fem6cMcrrnh8Fi1wxbQxo+/2IVXRFye39Kip4tltXsq2tO46U/MKS8uGZy/idJd8zIKywwjDBV3j55FfFmckYz8pJrzctzkvdpCQvlSpxl+zoLZLYDDGGfVFFZKMFIUun9/UcA20ZKyin7o5BGkZZbwUDtzgtE4JG5KCNPAgNUwOdJ6U3gxmwBZjixy+DY0STJ2JPypsor3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6AxxwbyzYLGj9lvep3Y9GH5/tQSwUtKjgI3ik13F+pg=;
+ b=dEWYkbYqVYxabwUeXzqQDH1Sz8K9DIZgvJM7gVQLwJSUx8qP1XcuYfXmk/HHiZI0HGJpIRmB3VbachenTI2u9U1+8Dmsp0Y0hua/cPOC0LbeQHS7A5KuEUn+gDeiumFZW+JXrbrx0iBbkqbWD3K5vCxzkGTdqF3UBVdiht2ri3g=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by DU2PR04MB8632.eurprd04.prod.outlook.com (2603:10a6:10:2df::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.24; Fri, 31 Mar
+ 2023 07:11:05 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::778e:19d0:cba0:5cc0]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::778e:19d0:cba0:5cc0%4]) with mapi id 15.20.6222.028; Fri, 31 Mar 2023
+ 07:11:05 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     abelvesa@kernel.org, abel.vesa@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com
+Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Adrian Alonso <adrian.alonso@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] clk: imx: imx8mn: add sai7_ipg_clk clock settings
+Date:   Fri, 31 Mar 2023 15:16:09 +0800
+Message-Id: <20230331071609.2483024-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR02CA0036.apcprd02.prod.outlook.com
+ (2603:1096:4:195::15) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAA8EJpoWKCPtWcxS6UpdxXDQsO+PgdX1heOLmrfKq6T16-foEg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: NY_peXYU5JfWPaK_GlprEK4qB16F40j9
-X-Proofpoint-GUID: NY_peXYU5JfWPaK_GlprEK4qB16F40j9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-31_02,2023-03-30_04,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- malwarescore=0 priorityscore=1501 bulkscore=0 adultscore=0 clxscore=1015
- suspectscore=0 phishscore=0 mlxlogscore=999 spamscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2303310055
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|DU2PR04MB8632:EE_
+X-MS-Office365-Filtering-Correlation-Id: b257c322-131a-4c47-a45c-08db31b71789
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: yr/x/1wo0APLQ1EjT/drU2RC9Z0EEbaMadI95qp+hnuYoou4slHqyheFiZUoXqBoZzuvLZsdqM+TxBroic/8cjRDh0Weg7h5wYk63WlBddblPbpJ7NWDY22ZOUBzIwWuHfYaD9zHeDiou6SzvUNTTql6FC3eehsNFJ+lXM8ZkSHlV1OwDZJ8g3Zy9kGieEqZ4caViv7k0n5fkqIhDD4GuNbftSLtkr3xbziM8WAaAirpu5xazpA5LYqrQ8PdRZEP1qWodP7EuUcnwu9WTZMLcA+y2EvuvgT77HRcZsBLzHv6iL1i2cQFNKZuSsI3pbOjTz4HGNSaVbceTUNXgXb2+1ILwzd4b2QIaZdk9hqfvsD8Kmp41gCPgLuVtja8EVbX79EfltBHPkKpVIySudOxiPtHly1pz3wDxcJcBTYClaZymn8sh8/rxCEsU/JqHdMagaBXMU4RchPwT6+kFRB2I3O0a1t1wz+b2BfMZFsZq9N5+46G9wMW9nbIi6rTT4FnSddoZdnaye59M+LNCZ/3p62Hn8/TM4a/cV8srxYzsHRBYo6dpn9QWWLlv2top2zbKIKcvDPeVUeIUXzB9XufvOut3sSaXrjzeVFpZwsS9c14qQZYJKH8cFn5NTYJdm2v6H0t9EGVxswj1YvLWF0pLw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(366004)(136003)(396003)(346002)(376002)(451199021)(4326008)(54906003)(316002)(8676002)(66946007)(66556008)(66476007)(6486002)(52116002)(478600001)(8936002)(41300700001)(5660300002)(7416002)(2906002)(86362001)(38100700002)(38350700002)(186003)(2616005)(6512007)(6506007)(1076003)(26005)(83380400001)(32563001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?AZud6WQGV0m9vm39yK6Jzla1xQxkTdkVmdqyXk33KhOaviUmhletonXa5wp+?=
+ =?us-ascii?Q?JgsgBt+QYmScb4NOxuJgk262/FH+Dp2VvWTuf8TAD9W53YR57O/KLj8rUNpi?=
+ =?us-ascii?Q?MSf65+1/jiw+i1CjvZTgsFDvpLB1rZ/+cH57pc2H8jlpjdU0lKMmcXffATS1?=
+ =?us-ascii?Q?hHkCQbKGUzybnsDoCKpD4c8GYSasvorereoBCvNJETukb14u1r12m4cOKmRf?=
+ =?us-ascii?Q?NfLfdOvQnHewvtJaF3h8YUstNsiW/aqedGSuI/NuhPEETLV9SoYGwh4RxnZj?=
+ =?us-ascii?Q?2/yx1VzZHo9Jix2OEC5VXs2wEZkFYIbz4vZSClHMrtEesJGSDEDdfTDMsWOk?=
+ =?us-ascii?Q?b4qO53paN6Qk2gpNQAlnBbpDByWny79OfxuM/SS1bU6r/474mgfjUvZCagx3?=
+ =?us-ascii?Q?6zvjHE2P6eCHcxT+g/MqPTl08XpYB/EVB0MD784T+pJo13ZQ4zOQ5UvLHC5A?=
+ =?us-ascii?Q?ITZM1H6HWeBkOmpPikPy9uDQqAqx650G6Ljkg4O8t21w84heFFd6FiVibIse?=
+ =?us-ascii?Q?f2kfkm/UmADBdCA59PEvZoJyha54yU9B1AixaWK2ShiE0Axa95yAH3bJVAMZ?=
+ =?us-ascii?Q?iDpACUgNBuJ3APU4Cx9maM5WBw9+RfZ3ID5M4kwxTzHtCyTBHMDdNT0S68QY?=
+ =?us-ascii?Q?AfMcxojeLBvAr4+XHXD8MI508CuN7cW7x2Q3hJMZ9qkpqjm9GeEQtZiLVvIB?=
+ =?us-ascii?Q?AV8OjbjqlOSqciAG5BY6hUd4v9GRLYk1lROk0RzWZrh3ERBe6BeG2MU46Q2e?=
+ =?us-ascii?Q?saOpGpy9BpYag6pOuK33vz+dGw+VhSleXg9tIlD6d8twjnM/uRDkoD1e3A3t?=
+ =?us-ascii?Q?Re6QIL6ku3CmzIne40eKB8ydcnCPGUtRRkw6FqOwtxvb73jDuU01CJIA0jf/?=
+ =?us-ascii?Q?yMyx4wLpIH98dF1/3c1wwE8qYwg5byLCf8O367pKE2rw+TGMIiA6EGWJBECB?=
+ =?us-ascii?Q?uKrZZaFbGHh5QVPuKlOQEH9nAoWYyE6OjWVUKUH37Z8oGmyF+YzXt57hlrwL?=
+ =?us-ascii?Q?dR7fh6thSWMYvXzxdfxK0ToNemvkqtHQkgVR8MEpoOjMU298Q/2gbpNYyVSt?=
+ =?us-ascii?Q?kvwVSoTq8Cwh1FezcM6d539m5KdqyyXp1LOE632S/GlvpDiVul3bHl8RUXYj?=
+ =?us-ascii?Q?jCSvzgD3G+QXx2XKUkVgvB4x3eq52vykVx4MZB73r3xB0872nK+M+K5+NcLa?=
+ =?us-ascii?Q?hoLhlPcNlIjej/wwcMp76qWsm39NzXPgHeMMrEkbxQZhz/ngULOhKO+PJxfv?=
+ =?us-ascii?Q?Oj/LHh6fb/9IQ8H7y2ZBDpLfMEP94jABadwkxueYXHIW0o0o5Qbq40D6JCfB?=
+ =?us-ascii?Q?m4VtUGyMCPteB1hwdcXXqR6ulwhamxP6V3RNFJsdhk/YPgc9q0HMQfes4Tt6?=
+ =?us-ascii?Q?4pRhaVqrwhwnL6AKUDqj+6Oysy7mEuAK8mI/vWlk4ctxLH25YKbSI/m/KAzb?=
+ =?us-ascii?Q?uAkbtQB51WI8+VJ39wumgkEKlTNRj1d+OZOqXEjW4grGaNeaezoKiOcpS6If?=
+ =?us-ascii?Q?WgetSY6SiWA8gYxXgGV0RXYdW3+nTpgu8Hj2+ftwNxZRscIGbuyqP9UNO9rF?=
+ =?us-ascii?Q?+PMtcxeLsJVsnf6xh9AEBNQZpysHkU4jB6n59dxO?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b257c322-131a-4c47-a45c-08db31b71789
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Mar 2023 07:11:05.1338
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lh92kE+VqcyccHvsnIzaOtaV3eBYKd3IIL2fYvIQPnnOxVw+SeGx4K5/jPrk9O2phSJaBPySG4volvgqySREvQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8632
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Mar 30, 2023 at 04:09:41PM +0300, Dmitry Baryshkov wrote:
-> On Thu, 30 Mar 2023 at 15:58, Varadarajan Narayanan
-> <quic_varada@quicinc.com> wrote:
-> >
-> > On Thu, Mar 30, 2023 at 12:41:08PM +0300, Dmitry Baryshkov wrote:
-> > > On Thu, 30 Mar 2023 at 11:42, Varadarajan Narayanan
-> > > <quic_varada@quicinc.com> wrote:
-> > > >
-> > > > Updated USB QMP PHY Init sequence based on HPG for IPQ9574.
-> > > > Reused clock and reset list from existing targets.
-> > > >
-> > > > Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
-> > > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > > > ---
-> > > >  Changes in v5:
-> > > >         - Fix additional review comments
-> > > >         - Use V3 register offsets
-> > > >  Changes in v4:
-> > > >         - Use qmp_usb_offsets for register space access
-> > > >  Changes in v3:
-> > > >         - Fix hex captitalization
-> > > >  Changes in v2:
-> > > >         - Removed unused phy register offsets
-> > > >         - Moved the clock entries to the correct place
-> > > >         - Maintain sorted order
-> > > > ---
-> > > >  drivers/phy/qualcomm/phy-qcom-qmp-usb.c | 115 ++++++++++++++++++++++++++++++++
-> > > >  1 file changed, 115 insertions(+)
-> > > >
-> > > > diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-usb.c b/drivers/phy/qualcomm/phy-qcom-qmp-usb.c
-> > > > index a49711c..77041dd 100644
-> > > > --- a/drivers/phy/qualcomm/phy-qcom-qmp-usb.c
-> > > > +++ b/drivers/phy/qualcomm/phy-qcom-qmp-usb.c
-> > > > @@ -139,6 +139,88 @@ static const unsigned int qmp_v5_usb3phy_regs_layout[QPHY_LAYOUT_SIZE] = {
-> > > >         [QPHY_PCS_LFPS_RXTERM_IRQ_CLEAR] = QPHY_V5_PCS_USB3_LFPS_RXTERM_IRQ_CLEAR,
-> > > >  };
-> > > >
-> > > > +static const struct qmp_phy_init_tbl ipq9574_usb3_serdes_tbl[] = {
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_SYSCLK_EN_SEL, 0x1a),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_BIAS_EN_CLKBUFLR_EN, 0x08),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_CLK_SELECT, 0x30),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_BG_TRIM, 0x0f),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_RX_UCDR_FASTLOCK_FO_GAIN, 0x0b),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_SVS_MODE_CLK_SEL, 0x01),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_HSCLK_SEL, 0x00),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_CMN_CONFIG, 0x06),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_PLL_IVCO, 0x0f),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_SYS_CLK_CTRL, 0x06),
-> > > > +       /* PLL and Loop filter settings */
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_DEC_START_MODE0, 0x68),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START1_MODE0, 0xab),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START2_MODE0, 0xaa),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START3_MODE0, 0x02),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_CP_CTRL_MODE0, 0x09),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_PLL_RCTRL_MODE0, 0x16),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_PLL_CCTRL_MODE0, 0x28),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_INTEGLOOP_GAIN0_MODE0, 0xa0),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP1_MODE0, 0xaa),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP2_MODE0, 0x29),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP3_MODE0, 0x00),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_CORE_CLK_EN, 0x00),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP_CFG, 0x00),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_VCO_TUNE_MAP, 0x00),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_BG_TIMER, 0x0a),
-> > > > +       /* SSC settings */
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_SSC_EN_CENTER, 0x01),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_SSC_PER1, 0x7d),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_SSC_PER2, 0x01),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_SSC_ADJ_PER1, 0x00),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_SSC_ADJ_PER2, 0x00),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_SSC_STEP_SIZE1, 0x0a),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_COM_SSC_STEP_SIZE2, 0x05),
-> > > > +};
-> > > > +
-> > > > +static const struct qmp_phy_init_tbl ipq9574_usb3_tx_tbl[] = {
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_TX_HIGHZ_TRANSCEIVEREN_BIAS_DRVR_EN, 0x45),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_TX_RCV_DETECT_LVL_2, 0x12),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_TX_LANE_MODE, 0x06),
-> > > > +};
-> > > > +
-> > > > +static const struct qmp_phy_init_tbl ipq9574_usb3_rx_tbl[] = {
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_RX_UCDR_SO_GAIN, 0x06),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_RX_RX_EQU_ADAPTOR_CNTRL2, 0x02),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_RX_RX_EQU_ADAPTOR_CNTRL3, 0x6c),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_RX_RX_EQU_ADAPTOR_CNTRL3, 0x4c),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_RX_RX_EQU_ADAPTOR_CNTRL4, 0xb8),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_RX_RX_EQ_OFFSET_ADAPTOR_CNTRL1, 0x77),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_RX_RX_OFFSET_ADAPTOR_CNTRL2, 0x80),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_RX_SIGDET_CNTRL, 0x03),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_RX_SIGDET_DEGLITCH_CNTRL, 0x16),
-> > > > +       QMP_PHY_INIT_CFG(QSERDES_RX_SIGDET_ENABLES, 0x0c),
-> > > > +};
-> > > > +
-> > > > +static const struct qmp_phy_init_tbl ipq9574_usb3_pcs_tbl[] = {
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M6DB_V0, 0x15),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M3P5DB_V0, 0x0e),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_CNTRL2, 0x83),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_CNTRL1, 0x02),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_CNT_VAL_L, 0x09),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_CNT_VAL_H_TOL, 0xa2),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_MAN_CODE, 0x85),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_LOCK_DETECT_CONFIG1, 0xd1),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_LOCK_DETECT_CONFIG2, 0x1f),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_LOCK_DETECT_CONFIG3, 0x47),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_POWER_STATE_CONFIG2, 0x1b),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_RXEQTRAINING_WAIT_TIME, 0x75),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_RXEQTRAINING_RUN_TIME, 0x13),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_LFPS_TX_ECSTART_EQTLOCK, 0x86),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_PWRUP_RESET_DLY_TIME_AUXCLK, 0x04),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_TSYNC_RSYNC_TIME, 0x44),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_RCVR_DTCT_DLY_P1U2_L, 0xe7),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_RCVR_DTCT_DLY_P1U2_H, 0x03),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_RCVR_DTCT_DLY_U3_L, 0x40),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_RCVR_DTCT_DLY_U3_H, 0x00),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_RX_SIGDET_LVL, 0x88),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M6DB_V0, 0x17),
-> > > > +       QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M3P5DB_V0, 0x0f),
-> > > > +};
-> > > > +
-> > > >  static const struct qmp_phy_init_tbl ipq8074_usb3_serdes_tbl[] = {
-> > > >         QMP_PHY_INIT_CFG(QSERDES_COM_SYSCLK_EN_SEL, 0x1a),
-> > > >         QMP_PHY_INIT_CFG(QSERDES_COM_BIAS_EN_CLKBUFLR_EN, 0x08),
-> > > > @@ -1558,6 +1640,14 @@ static const char * const qmp_phy_vreg_l[] = {
-> > > >         "vdda-phy", "vdda-pll",
-> > > >  };
-> > > >
-> > > > +static const struct qmp_usb_offsets qmp_usb_offsets_ipq9574 = {
-> > > > +       .serdes         = 0,
-> > > > +       .pcs            = 0x800,
-> > > > +       .pcs_usb        = 0,
-> > >
-> > > No, pcs_usb is not 0.
-> >
-> > Not sure I understand this comment.
-> >
-> > Since IPQ9574 uses new style DT entries, pcs_usb_offset = 0 and
-> > that will not be used.
-> >
-> > qmp->pcs_usb is used in qmp_usb_enable_autonomous_mode and
-> > qmp_usb_disable_autonomous_mode. If "qmp->pcs_usb == 0", those
-> > functions use the value of qmp->pcs (0x7d800) for pcs_usb.
->
-> So, you mixed qmp->pcs_usb and offsets->pcs_usb here. They are not equal.
+From: Adrian Alonso <adrian.alonso@nxp.com>
 
-Got it. Thanks.
-Will set pcs_usb to 0x800, that way the register offsets will get
-calculated properly.
+Add sai7_ipg_clk clock settings, fixes use of SAI7
+interface on imx8mn SoC.
 
-Thanks
-Varada
+Signed-off-by: Adrian Alonso <adrian.alonso@nxp.com>
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/clk/imx/clk-imx8mn.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> > The registers used in these functions are
-> > QPHY_PCS_LFPS_RXTERM_IRQ_CLEAR & QPHY_PCS_AUTONOMOUS_MODE_CTRL
-> >
-> > The offsets for the above registers as specified in
-> > qmp_v3_usb3phy_regs_layout is
-> >
-> >         #define QPHY_V3_PCS_AUTONOMOUS_MODE_CTRL        0x0d8
-> >         #define QPHY_V3_PCS_LFPS_RXTERM_IRQ_CLEAR       0x0dc
-> >
-> > qphy_{set|clr}bits called from qmp_usb_enable_autonomous_mode and
-> > qmp_usb_disable_autonomous_mode will use the offset 0x7d8d8 and
-> > 0x78d8c. This offset matches with the register offset document of
-> > the IPQ9574. So, felt setting pcs_usb to zero should be ok. Can
-> > you please clarify.
->
-> And this tells you what pcs_usb offset is.
->
-> >
-> > Thanks
-> > Varada
-> >
-> >
-> > >
-> > > > +       .tx             = 0x200,
-> > > > +       .rx             = 0x400,
-> > > > +};
-> > > > +
-> > > >  static const struct qmp_usb_offsets qmp_usb_offsets_v5 = {
-> > > >         .serdes         = 0,
-> > > >         .pcs            = 0x0200,
-> > > > @@ -1586,6 +1676,28 @@ static const struct qmp_phy_cfg ipq8074_usb3phy_cfg = {
-> > > >         .regs                   = qmp_v3_usb3phy_regs_layout,
-> > > >  };
-> > > >
-> > > > +static const struct qmp_phy_cfg ipq9574_usb3phy_cfg = {
-> > > > +       .lanes                  = 1,
-> > > > +
-> > > > +       .offsets                = &qmp_usb_offsets_ipq9574,
-> > > > +
-> > > > +       .serdes_tbl             = ipq9574_usb3_serdes_tbl,
-> > > > +       .serdes_tbl_num         = ARRAY_SIZE(ipq9574_usb3_serdes_tbl),
-> > > > +       .tx_tbl                 = ipq9574_usb3_tx_tbl,
-> > > > +       .tx_tbl_num             = ARRAY_SIZE(ipq9574_usb3_tx_tbl),
-> > > > +       .rx_tbl                 = ipq9574_usb3_rx_tbl,
-> > > > +       .rx_tbl_num             = ARRAY_SIZE(ipq9574_usb3_rx_tbl),
-> > > > +       .pcs_tbl                = ipq9574_usb3_pcs_tbl,
-> > > > +       .pcs_tbl_num            = ARRAY_SIZE(ipq9574_usb3_pcs_tbl),
-> > > > +       .clk_list               = qmp_v4_phy_clk_l,
-> > > > +       .num_clks               = ARRAY_SIZE(qmp_v4_phy_clk_l),
-> > > > +       .reset_list             = qcm2290_usb3phy_reset_l,
-> > > > +       .num_resets             = ARRAY_SIZE(qcm2290_usb3phy_reset_l),
-> > > > +       .vreg_list              = qmp_phy_vreg_l,
-> > > > +       .num_vregs              = ARRAY_SIZE(qmp_phy_vreg_l),
-> > > > +       .regs                   = qmp_v3_usb3phy_regs_layout,
-> > > > +};
-> > > > +
-> > > >  static const struct qmp_phy_cfg msm8996_usb3phy_cfg = {
-> > > >         .lanes                  = 1,
-> > > >
-> > > > @@ -2589,6 +2701,9 @@ static const struct of_device_id qmp_usb_of_match_table[] = {
-> > > >                 .compatible = "qcom,ipq8074-qmp-usb3-phy",
-> > > >                 .data = &ipq8074_usb3phy_cfg,
-> > > >         }, {
-> > > > +               .compatible = "qcom,ipq9574-qmp-usb3-phy",
-> > > > +               .data = &ipq9574_usb3phy_cfg,
-> > > > +       }, {
-> > > >                 .compatible = "qcom,msm8996-qmp-usb3-phy",
-> > > >                 .data = &msm8996_usb3phy_cfg,
-> > > >         }, {
-> > > > --
-> > > > 2.7.4
-> > > >
-> > >
-> > >
-> > > --
-> > > With best wishes
-> > > Dmitry
->
->
->
-> --
-> With best wishes
-> Dmitry
+diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
+index a042ed3a9d6c..435af18bf2bb 100644
+--- a/drivers/clk/imx/clk-imx8mn.c
++++ b/drivers/clk/imx/clk-imx8mn.c
+@@ -583,6 +583,7 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
+ 	hws[IMX8MN_CLK_SDMA2_ROOT] = imx_clk_hw_gate4("sdma2_clk", "ipg_audio_root", base + 0x43b0, 0);
+ 	hws[IMX8MN_CLK_SDMA3_ROOT] = imx_clk_hw_gate4("sdma3_clk", "ipg_audio_root", base + 0x45f0, 0);
+ 	hws[IMX8MN_CLK_SAI7_ROOT] = imx_clk_hw_gate2_shared2("sai7_root_clk", "sai7", base + 0x4650, 0, &share_count_sai7);
++	hws[IMX8MN_CLK_SAI7_IPG] = imx_clk_hw_gate2_shared2("sai7_ipg_clk", "ipg_audio_root", base + 0x4650, 0, &share_count_sai7);
+ 
+ 	hws[IMX8MN_CLK_GPT_3M] = imx_clk_hw_fixed_factor("gpt_3m", "osc_24m", 1, 8);
+ 
+-- 
+2.37.1
+
