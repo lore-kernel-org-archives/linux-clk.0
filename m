@@ -2,85 +2,70 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5701FC6FD18
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 09:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63407C6FD18
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 09:54:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232124AbjCaJjQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Mar 2023 05:39:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52958 "EHLO
+        id S232007AbjCaJyp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Mar 2023 05:54:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232282AbjCaJiw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 05:38:52 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 347B24C39;
-        Fri, 31 Mar 2023 02:38:46 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S230509AbjCaJyQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 05:54:16 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC10D30ED;
+        Fri, 31 Mar 2023 02:53:33 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C991EB82DCD;
-        Fri, 31 Mar 2023 09:38:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8F11C4339B;
-        Fri, 31 Mar 2023 09:38:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680255523;
-        bh=7KUp7Ii7UolpTbxPnQfkQEoaGhYSWLfitDHJhVWIiHI=;
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id AD52C6603192;
+        Fri, 31 Mar 2023 10:53:31 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1680256412;
+        bh=jNOaW71eag7G5il18yilOMcRbddq9VsgCKH4D6vwk0Q=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=g9+/G9yPuGAHET4A+SaouSqLdhpcDUXJ+Hv9Ln4iWbO/jl632XwLTTJM8iGxDBIRU
-         YfQq2oDefpka4gZ57/cRM+ikBWpILzrxG0bNISIEdLcIrOi4VcdRPBe/1LgBrk/44j
-         kZPQsxqTma/3McKQf12KrUvEho+z9A/ySWFEdNXwSU7vMXvtILwZcXPBWbJ84eSE5T
-         ZhM4RzB8y/IkXl7CoB86MfFyWDiaS2gHibF2wLCv7odv4uwb8iEN6J1lNtuN1R0SiQ
-         fYe1CdShdVbWdOCyq+DiaifItxZk6szblMAGU4EZpSfa48EYgdEnnRwvmb7Yy3uIPD
-         y6EyxQ4+RyLMw==
-Message-ID: <1aaf91c6-7bfb-c615-69ef-e7e538f2cc7f@kernel.org>
-Date:   Fri, 31 Mar 2023 11:38:37 +0200
+        b=m6zkoKR4+sN6ROjOmI8MPs8SGzmVgo79kidUfTMxVrqXEUwSyocdpmkaKiRBz6iJ4
+         lVzU6vc6K/rFWJN9GRC1FDeva3Se7KWAf3KwEpkslSGTWlVXyfTYVJWLm+AQSkTGcL
+         +3UroBw75qWSQU+u6oFRrYVAsjtvzFf/u2yNTUXi3xn8ET6mdeFpvwOQa7kJ+ZnxGM
+         u15Q40I9WlCW/KIwxJrlb+jR+BZ7nY3GdxtSCOKcFswT7ROaXVJJrVbvgXGirNhGDI
+         JLfm5OLx1cZw7LwAjZdOIxYn2D1UeaUGZV9U06U69nEgr+DLna8i3QhpcIBkoDf3OL
+         ceLG3EVzK5NMg==
+Message-ID: <f0c7abcd-6751-5172-1ec9-9e16f3210531@collabora.com>
+Date:   Fri, 31 Mar 2023 11:53:29 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
-Subject: Re: [PATCH 2/3] clk: imx: imx8mp: Add LDB root clock
+Subject: Re: [PATCH v7 19/19] clk: mediatek: Add MT8188 adsp clock support
 Content-Language: en-US
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, abelvesa@kernel.org,
-        abel.vesa@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com
-Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Liu Ying <victor.liu@nxp.com>, Sandor Yu <Sandor.yu@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>
-References: <20230331071801.2483686-1-peng.fan@oss.nxp.com>
- <20230331071801.2483686-2-peng.fan@oss.nxp.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <20230331071801.2483686-2-peng.fan@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
+To:     "Garmin.Chang" <Garmin.Chang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>
+Cc:     Project_Global_Chrome_Upstream_Group@mediatek.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-clk@vger.kernel.org, netdev@vger.kernel.org
+References: <20230331082131.12517-1-Garmin.Chang@mediatek.com>
+ <20230331082131.12517-20-Garmin.Chang@mediatek.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230331082131.12517-20-Garmin.Chang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 31/03/2023 09:18, Peng Fan (OSS) wrote:
-> From: Liu Ying <victor.liu@nxp.com>
-
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC.  It might happen, that command when run on an older
-kernel, gives you outdated entries.  Therefore please be sure you base
-your patches on recent Linux kernel.
-
+Il 31/03/23 10:21, Garmin.Chang ha scritto:
+> Add MT8188 adsp clock controller which provides clock gate
+> control for Audio DSP.
 > 
-> This patch adds "media_ldb_root_clk" clock for
-> the LDB in the MEDIAMIX subsystem.
-> 
-> Reviewed-by: Sandor Yu <Sandor.yu@nxp.com>
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx8mp.c             | 1 +
->  include/dt-bindings/clock/imx8mp-clock.h | 4 ++--
+> Signed-off-by: Garmin.Chang <Garmin.Chang@mediatek.com>
 
-NAK, bindings are always separate patches.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-
-
-Best regards,
-Krzysztof
 
