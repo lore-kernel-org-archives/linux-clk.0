@@ -2,321 +2,238 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A9CC77B62
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Mar 2023 19:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB78C7619A
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 00:30:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231494AbjC3TvZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Mar 2023 15:51:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53300 "EHLO
+        id S229617AbjCaAag (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Mar 2023 20:30:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230487AbjC3TvY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Mar 2023 15:51:24 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56E3049EA
-        for <linux-clk@vger.kernel.org>; Thu, 30 Mar 2023 12:51:21 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id s8so13366763pfk.5
-        for <linux-clk@vger.kernel.org>; Thu, 30 Mar 2023 12:51:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112; t=1680205881;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B2KkKqSokarGzXyvNEiBBLEjwsvtzgAMOVE94PKyWD4=;
-        b=jblTpS57i+2qud1N3ZeARD/kLDam7ssMfSuc49oUZusL5RWH3zfQtd4ssUo5hFZ36z
-         1LZx1C4T2zWor2eM4VadNdp7Ir8myhwEhm4y8N5XaOA4bqzz17DUb6OpfQTHi9blehEQ
-         m84ZbM/jU5ws4652ddOnuVLHm/5pmSfUzIXsg46LqxC+i1L2M0PwrmrPc63O4EPC4YRf
-         xBJS54AmX//tZynU4RmqACTh39CRIE8KhlJriX1VDr+Z6g+Ak/Q//93qktcgUxofkDln
-         vzVBbN6mopaR+CZwv4mYwGQ7Nk9oar/8mia54z7qHRbghF1tQ0+Su6olQxga2OGwuAs8
-         0nfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680205881;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B2KkKqSokarGzXyvNEiBBLEjwsvtzgAMOVE94PKyWD4=;
-        b=lEhu1Q18okBcVx6SBuvQEQARb/wLSx9uEu+DnR+wWpdmdTTNqfhns/5DOq2ACtHZ60
-         sciFcwiWyPJGFZHIuhrmfVuiz8aOIGpQPbgh9vQyEliw3TXoScKI/KYB6YLVpCqqI0m/
-         7wMpnFjix6b1cB+gU9KP1z6zyq0n+eP1DKzJybLSXUmY00xZGRTiyT9VpOx5va8bf48s
-         KSlYf0e5XfOMBLzFGCaPhtsykzW6rOuqaRgG+ou6y3f43zYtYD4NgpVEYDhfN87pLJRy
-         a9+8lecF9KVFUbocNYx7dbXAWiW8JvySDvCDbkCokMOjaUEWqBSbxSa7/5qQRhCJvv24
-         BLvg==
-X-Gm-Message-State: AAQBX9fZebsGasy2IfOvpUasYyuvPGByKEA3iyJkNFYTRhVl/UIda9Q+
-        Q98WXixsiqzGMT9bbQer+BY1B2JP1J+QyGRhNwVKWw==
-X-Google-Smtp-Source: AKy350YljZg0LAJ1pGauRJH9Ug9x1zpWp1FCNUw1cQIIYVmoHx0TjmmxrQsLPEF80/N7Q2v7bpghrRyPhMXzy8oZRjM=
-X-Received: by 2002:a05:6a00:1a8b:b0:627:d4fa:6a9c with SMTP id
- e11-20020a056a001a8b00b00627d4fa6a9cmr13061941pfv.6.1680205880504; Thu, 30
- Mar 2023 12:51:20 -0700 (PDT)
+        with ESMTP id S229550AbjCaAaf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Mar 2023 20:30:35 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25ECAF75C;
+        Thu, 30 Mar 2023 17:30:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1680222628; x=1711758628;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=291iR8fs89AY3P1z/Ojn7EHb26WDXguxsSvangQrPS4=;
+  b=ZrWcomVeImflRNd7wbezdICfLICWxVjDmc9LItUAoOaLkRlOYeJBYQO4
+   JIZvGjWXjty+5HWKcV2hwDKSXadEWYt4bacTotDS/ivTYEnov+/VJJZMi
+   JUqvmBz0Ftt7jti7amwBLf+d1PtcltxiArdRna3Rsft7CNEdxwCTbSrRY
+   ZPNV8pb4CjAY1+rqd2pHlf4zdRH/X3NKmM70zs5P2KLSqTRnPUNxwJN9n
+   xErJ5HcYH1cxHliwLWXZ8O/wp8Z+7BuFa/TNMPkSPsbLMofd1NpUH28EB
+   3QbDCWRLrzhi85KmIu5Ymycz/b+56qb/QBTM4zrCH2lmiIXXD7iUezjjB
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10665"; a="329844024"
+X-IronPort-AV: E=Sophos;i="5.98,306,1673942400"; 
+   d="scan'208";a="329844024"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2023 17:30:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10665"; a="715219715"
+X-IronPort-AV: E=Sophos;i="5.98,306,1673942400"; 
+   d="scan'208";a="715219715"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by orsmga008.jf.intel.com with ESMTP; 30 Mar 2023 17:30:22 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pi2em-000LLc-2j;
+        Fri, 31 Mar 2023 00:30:16 +0000
+Date:   Fri, 31 Mar 2023 08:29:21 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Jacky Huang <ychuang570808@gmail.com>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+Subject: Re: [PATCH v6 11/12] tty: serial: Add Nuvoton ma35d1 serial driver
+ support
+Message-ID: <202303310829.6uVozWbB-lkp@intel.com>
+References: <20230328021912.177301-12-ychuang570808@gmail.com>
 MIME-Version: 1.0
-References: <20230327193829.3756640-1-abel.vesa@linaro.org>
- <CAGETcx9f1p2esfyzyfU04EAB1FXh=d9-U81DaGyZNjL_Vti3oQ@mail.gmail.com> <ZCVyBuKMvDV0gQPW@linaro.org>
-In-Reply-To: <ZCVyBuKMvDV0gQPW@linaro.org>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Thu, 30 Mar 2023 12:50:44 -0700
-Message-ID: <CAGETcx-mxzzZ_FU6Agju9gMhFOEDhY6Rj78BnvAVJjNtZhif=w@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] Allow genpd providers to power off domains on sync state
-To:     Abel Vesa <abel.vesa@linaro.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Doug Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Android Kernel Team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230328021912.177301-12-ychuang570808@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Mar 30, 2023 at 4:27=E2=80=AFAM Abel Vesa <abel.vesa@linaro.org> wr=
-ote:
->
-> On 23-03-27 17:17:28, Saravana Kannan wrote:
-> > On Mon, Mar 27, 2023 at 12:38=E2=80=AFPM Abel Vesa <abel.vesa@linaro.or=
-g> wrote:
-> > >
-> > > There have been already a couple of tries to make the genpd "disable
-> > > unused" late initcall skip the powering off of domains that might be
-> > > needed until later on (i.e. until some consumer probes). The conclusi=
-on
-> > > was that the provider could return -EBUSY from the power_off callback
-> > > until the provider's sync state has been reached. This patch series t=
-ries
-> > > to provide a proof-of-concept that is working on Qualcomm platforms.
-> >
-> > I'm giving my thoughts in the cover letter instead of spreading it
-> > around all the patches so that there's context between the comments.
-> >
-> > 1) Why can't all the logic in this patch series be implemented at the
-> > framework level? And then allow the drivers to opt into this behavior
-> > by setting the sync_state() callback.
-> >
-> > That way, you can land it only for QC drivers by setting up
-> > sync_state() callback only for QC drivers, but actually have the same
-> > code function correctly for non-QC drivers too. And then once we have
-> > this functionality working properly for QC drivers for one kernel
-> > version (or two), we'll just have the framework set the device's
-> > driver's sync_state() if it doesn't have one already.
->
-> I think Ulf has already NACK'ed that approach here:
-> [1] https://lore.kernel.org/lkml/CAPDyKFon35wcQ+5kx3QZb-awN_S_q8y1Sir-G+G=
-oxkCvpN=3DiiA@mail.gmail.com/
+Hi Jacky,
 
-I would have NACK'ed that too because that's an incomplete fix. As I
-said further below, the fix needs to be at the aggregation level where
-you aggregate all the current consumer requests. In there, you need to
-add in the "state at boot" input that gets cleared out after a
-sync_state() call is received for that power domain.
+Thank you for the patch! Perhaps something to improve:
 
-> And suggested this new approach that this patch series proposes.
-> (Unless I missunderstood his point)
->
-> >
-> > 2) sync_state() is not just about power on/off. It's also about the
-> > power domain level. Can you handle that too please?
->
-> Well, this patchset only tries to delay the disabling of unused power
-> domains until all consumers have had a chance to probe. So we use sync
-> state only to queue up a power-off request to make sure those unused
-> ones get disabled.
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on clk/clk-next linus/master]
+[cannot apply to pza/reset/next pza/imx-drm/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Sure, but the design is completely unusable for a more complete
-sync_state() behavior. I'm okay if you want to improve the
-sync_state() behavior in layers, but don't do it in a way where the
-current design will definitely not work for what you want to add in
-the future.
+url:    https://github.com/intel-lab-lkp/linux/commits/Jacky-Huang/arm64-Kconfig-platforms-Add-config-for-Nuvoton-MA35-platform/20230328-102245
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20230328021912.177301-12-ychuang570808%40gmail.com
+patch subject: [PATCH v6 11/12] tty: serial: Add Nuvoton ma35d1 serial driver support
+config: powerpc-allyesconfig (https://download.01.org/0day-ci/archive/20230331/202303310829.6uVozWbB-lkp@intel.com/config)
+compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project 67409911353323ca5edf2049ef0df54132fa1ca7)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install powerpc cross compiling tool for clang build
+        # apt-get install binutils-powerpc-linux-gnu
+        # https://github.com/intel-lab-lkp/linux/commit/380d83a62e873855024ca4c660865c654a62748a
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Jacky-Huang/arm64-Kconfig-platforms-Add-config-for-Nuvoton-MA35-platform/20230328-102245
+        git checkout 380d83a62e873855024ca4c660865c654a62748a
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=powerpc olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=powerpc SHELL=/bin/bash drivers/tty/serial/
 
-> >
-> > 3) In your GDSC drivers, it's not clear to me if you are preventing
-> > power off until sync_state() only for GDSCs that were already on at
-> > boot. So if an off-at-boot GDSC gets turned on, and then you attempt
-> > to turn it off before all its consumers have probed, it'll fail to
-> > power it off even though that wasn't necessary?
->
-> I think we can circumvent looking at a GDSC by knowing it there was ever
-> a power on request since boot. I'll try to come up with something in the
-> new version.
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202303310829.6uVozWbB-lkp@intel.com/
 
-Please no. There's nothing wrong with reading the GDSC values. Please
-read them and don't turn on GDSC's that weren't on at boot.
+All warnings (new ones prefixed by >>):
 
-Otherwise you are making it a hassle for the case where there is a
-consumer without a driver for a GDSC that was off at boot. You are now
-forcing the use of timeouts or writing to state_synced file. Those
-should be absolute last resorts, but you are making that a requirement
-with your current implementation. If you implement it correctly by
-reading the GDSC register, things will "just work". And it's not even
-hard to do.
+>> drivers/tty/serial/ma35d1_serial.c:672:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+           if (pdev->dev.of_node) {
+               ^~~~~~~~~~~~~~~~~
+   drivers/tty/serial/ma35d1_serial.c:679:27: note: uninitialized use occurs here
+           up = &ma35d1serial_ports[ret];
+                                    ^~~
+   drivers/tty/serial/ma35d1_serial.c:672:2: note: remove the 'if' if its condition is always true
+           if (pdev->dev.of_node) {
+           ^~~~~~~~~~~~~~~~~~~~~~~
+   drivers/tty/serial/ma35d1_serial.c:668:9: note: initialize the variable 'ret' to silence this warning
+           int ret;
+                  ^
+                   = 0
+>> drivers/tty/serial/ma35d1_serial.c:730:6: warning: variable 'i' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+           if (dev->dev.of_node)
+               ^~~~~~~~~~~~~~~~
+   drivers/tty/serial/ma35d1_serial.c:732:6: note: uninitialized use occurs here
+           if (i < 0) {
+               ^
+   drivers/tty/serial/ma35d1_serial.c:730:2: note: remove the 'if' if its condition is always true
+           if (dev->dev.of_node)
+           ^~~~~~~~~~~~~~~~~~~~~
+   drivers/tty/serial/ma35d1_serial.c:727:7: note: initialize the variable 'i' to silence this warning
+           int i;
+                ^
+                 = 0
+   drivers/tty/serial/ma35d1_serial.c:750:6: warning: variable 'i' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+           if (dev->dev.of_node)
+               ^~~~~~~~~~~~~~~~
+   drivers/tty/serial/ma35d1_serial.c:752:6: note: uninitialized use occurs here
+           if (i < 0) {
+               ^
+   drivers/tty/serial/ma35d1_serial.c:750:2: note: remove the 'if' if its condition is always true
+           if (dev->dev.of_node)
+           ^~~~~~~~~~~~~~~~~~~~~
+   drivers/tty/serial/ma35d1_serial.c:747:7: note: initialize the variable 'i' to silence this warning
+           int i;
+                ^
+                 = 0
+   3 warnings generated.
 
-NACK'ed until this is handled correctly.
 
->
-> >
-> > 4) The returning -EBUSY when a power off is attempted seems to be
-> > quite wasteful. The framework will go through the whole sequence of
-> > trying to power down, send the notifications and then fail and then
-> > send the undo notifications. Combined with point (2) I think this can
-> > be handled better at the aggregation level in the framework to avoid
-> > even going that far into the power off sequence.
->
-> Again, have a look at [1] (above).
+vim +672 drivers/tty/serial/ma35d1_serial.c
 
-See my reply above. If you do it properly at the framework level, this
-can be done in a clean way and will work for all power domains.
+   658	
+   659	/*
+   660	 * Register a set of serial devices attached to a platform device.
+   661	 * The list is terminated with a zero flags entry, which means we expect
+   662	 * all entries to have at least UPF_BOOT_AUTOCONF set.
+   663	 */
+   664	static int ma35d1serial_probe(struct platform_device *pdev)
+   665	{
+   666		struct resource *res_mem;
+   667		struct uart_ma35d1_port *up;
+   668		int ret;
+   669		struct clk *clk;
+   670		int err;
+   671	
+ > 672		if (pdev->dev.of_node) {
+   673			ret = of_alias_get_id(pdev->dev.of_node, "serial");
+   674			if (ret < 0) {
+   675				dev_err(&pdev->dev, "failed to get alias/pdev id, errno %d\n", ret);
+   676				return ret;
+   677			}
+   678		}
+   679		up = &ma35d1serial_ports[ret];
+   680		up->port.line = ret;
+   681		res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+   682		if (!res_mem)
+   683			return -ENODEV;
+   684	
+   685		up->port.iobase = res_mem->start;
+   686		up->port.membase = ioremap(up->port.iobase, UART_REG_SIZE);
+   687		up->port.ops = &ma35d1serial_ops;
+   688	
+   689		spin_lock_init(&up->port.lock);
+   690	
+   691		clk = of_clk_get(pdev->dev.of_node, 0);
+   692		if (IS_ERR(clk)) {
+   693			err = PTR_ERR(clk);
+   694			dev_err(&pdev->dev, "failed to get core clk: %d\n", err);
+   695			return -ENOENT;
+   696		}
+   697		err = clk_prepare_enable(clk);
+   698		if (err)
+   699			return -ENOENT;
+   700	
+   701		if (up->port.line != 0)
+   702			up->port.uartclk = clk_get_rate(clk);
+   703		up->port.irq = platform_get_irq(pdev, 0);
+   704		up->port.dev = &pdev->dev;
+   705		up->port.flags = UPF_BOOT_AUTOCONF;
+   706		ret = uart_add_one_port(&ma35d1serial_reg, &up->port);
+   707		platform_set_drvdata(pdev, up);
+   708		return 0;
+   709	}
+   710	
+   711	/*
+   712	 * Remove serial ports registered against a platform device.
+   713	 */
+   714	static int ma35d1serial_remove(struct platform_device *dev)
+   715	{
+   716		struct uart_port *port = platform_get_drvdata(dev);
+   717	
+   718		if (port) {
+   719			uart_remove_one_port(&ma35d1serial_reg, port);
+   720			free_irq(port->irq, port);
+   721		}
+   722		return 0;
+   723	}
+   724	
+   725	static int ma35d1serial_suspend(struct platform_device *dev, pm_message_t state)
+   726	{
+   727		int i;
+   728		struct uart_ma35d1_port *up;
+   729	
+ > 730		if (dev->dev.of_node)
+   731			i = of_alias_get_id(dev->dev.of_node, "serial");
+   732		if (i < 0) {
+   733			dev_err(&dev->dev, "failed to get alias/pdev id, errno %d\n", i);
+   734			return i;
+   735		}
+   736		up = &ma35d1serial_ports[i];
+   737		if (i == 0) {
+   738			up->console_baud_rate = serial_in(up, UART_REG_BAUD);
+   739			up->console_line = serial_in(up, UART_REG_LCR);
+   740			up->console_int = serial_in(up, UART_REG_IER);
+   741		}
+   742		return 0;
+   743	}
+   744	
 
--Saravana
-
->
-> Ulf, any thoughts on this 4th point?
->
-> >
-> > -Saravana
-> >
-> > >
-> > > I've been doing extensive testing on SM8450, but I've also spinned th=
-is
-> > > on my X13s (SC8280XP). Both patches that add the sync state callback =
-to
-> > > the SC8280XP and SM8450 are here to provide context. Once we agree on
-> > > the form, I intend to add the sync state callback to all gdsc provide=
-rs.
-> > >
-> > > Currently, some of the gdsc providers might not reach sync state due =
-to
-> > > list of consumers not probing yet (or at all). The sync state can be
-> > > enforced by writing 1 to the state_synced sysfs attribute of the
-> > > provider, thanks to Saravana's commit [1] which has been already merg=
-ed.
-> > >
-> > > [1] https://lore.kernel.org/r/20230304005355.746421-3-saravanak@googl=
-e.com
-> > >
-> > > V2 (RFC) of this patchset was here:
-> > > https://lore.kernel.org/all/20230320134217.1685781-1-abel.vesa@linaro=
-.org/
-> > >
-> > > Changes since v2:
-> > >  * renamed genpd_queue_power_off_work to pm_genpd_queue_power_off and=
- added
-> > >    comment about its purpose w.r.t. it being exported.
-> > >  * added the qcom_cc generic sync state callback to all providers tha=
-t
-> > >    register GDSCs, instead of SM8450 and SC8280XP
-> > >
-> > > Changes since v1:
-> > >  * Added the qcom_cc sync state callback which calls in turn the gdsc=
- one
-> > >  * dropped extra semicolon from pm_domain.h
-> > >
-> > > Abel Vesa (4):
-> > >   PM: domains: Allow power off queuing from providers
-> > >   soc: qcom: rpmhpd: Do proper power off when state synced
-> > >   clk: qcom: gdsc: Avoid actual power off until sync state
-> > >   clk: qcom: Add sync state callback to all providers
-> > >
-> > >  drivers/base/power/domain.c            | 18 ++++++++++--------
-> > >  drivers/clk/qcom/apss-ipq6018.c        |  1 +
-> > >  drivers/clk/qcom/camcc-sc7180.c        |  1 +
-> > >  drivers/clk/qcom/camcc-sc7280.c        |  1 +
-> > >  drivers/clk/qcom/camcc-sdm845.c        |  1 +
-> > >  drivers/clk/qcom/camcc-sm6350.c        |  1 +
-> > >  drivers/clk/qcom/camcc-sm8250.c        |  1 +
-> > >  drivers/clk/qcom/camcc-sm8450.c        |  1 +
-> > >  drivers/clk/qcom/common.c              | 19 +++++++++++++++++++
-> > >  drivers/clk/qcom/common.h              |  2 ++
-> > >  drivers/clk/qcom/dispcc-qcm2290.c      |  1 +
-> > >  drivers/clk/qcom/dispcc-sc7180.c       |  1 +
-> > >  drivers/clk/qcom/dispcc-sc7280.c       |  1 +
-> > >  drivers/clk/qcom/dispcc-sc8280xp.c     |  1 +
-> > >  drivers/clk/qcom/dispcc-sdm845.c       |  1 +
-> > >  drivers/clk/qcom/dispcc-sm6115.c       |  1 +
-> > >  drivers/clk/qcom/dispcc-sm6125.c       |  1 +
-> > >  drivers/clk/qcom/dispcc-sm6350.c       |  1 +
-> > >  drivers/clk/qcom/dispcc-sm6375.c       |  1 +
-> > >  drivers/clk/qcom/dispcc-sm8250.c       |  1 +
-> > >  drivers/clk/qcom/dispcc-sm8450.c       |  1 +
-> > >  drivers/clk/qcom/dispcc-sm8550.c       |  1 +
-> > >  drivers/clk/qcom/gcc-apq8084.c         |  1 +
-> > >  drivers/clk/qcom/gcc-ipq806x.c         |  1 +
-> > >  drivers/clk/qcom/gcc-ipq8074.c         |  1 +
-> > >  drivers/clk/qcom/gcc-mdm9615.c         |  1 +
-> > >  drivers/clk/qcom/gcc-msm8660.c         |  1 +
-> > >  drivers/clk/qcom/gcc-msm8909.c         |  1 +
-> > >  drivers/clk/qcom/gcc-msm8916.c         |  1 +
-> > >  drivers/clk/qcom/gcc-msm8939.c         |  1 +
-> > >  drivers/clk/qcom/gcc-msm8953.c         |  1 +
-> > >  drivers/clk/qcom/gcc-msm8960.c         |  1 +
-> > >  drivers/clk/qcom/gcc-msm8974.c         |  1 +
-> > >  drivers/clk/qcom/gcc-msm8976.c         |  1 +
-> > >  drivers/clk/qcom/gcc-msm8994.c         |  1 +
-> > >  drivers/clk/qcom/gcc-msm8996.c         |  1 +
-> > >  drivers/clk/qcom/gcc-msm8998.c         |  1 +
-> > >  drivers/clk/qcom/gcc-qcm2290.c         |  1 +
-> > >  drivers/clk/qcom/gcc-qcs404.c          |  1 +
-> > >  drivers/clk/qcom/gcc-qdu1000.c         |  1 +
-> > >  drivers/clk/qcom/gcc-sa8775p.c         |  1 +
-> > >  drivers/clk/qcom/gcc-sc7180.c          |  1 +
-> > >  drivers/clk/qcom/gcc-sc7280.c          |  1 +
-> > >  drivers/clk/qcom/gcc-sc8180x.c         |  1 +
-> > >  drivers/clk/qcom/gcc-sc8280xp.c        |  1 +
-> > >  drivers/clk/qcom/gcc-sdm660.c          |  1 +
-> > >  drivers/clk/qcom/gcc-sdm845.c          |  1 +
-> > >  drivers/clk/qcom/gcc-sdx55.c           |  1 +
-> > >  drivers/clk/qcom/gcc-sdx65.c           |  1 +
-> > >  drivers/clk/qcom/gcc-sm6115.c          |  1 +
-> > >  drivers/clk/qcom/gcc-sm6125.c          |  1 +
-> > >  drivers/clk/qcom/gcc-sm6350.c          |  1 +
-> > >  drivers/clk/qcom/gcc-sm6375.c          |  1 +
-> > >  drivers/clk/qcom/gcc-sm7150.c          |  1 +
-> > >  drivers/clk/qcom/gcc-sm8150.c          |  1 +
-> > >  drivers/clk/qcom/gcc-sm8250.c          |  1 +
-> > >  drivers/clk/qcom/gcc-sm8350.c          |  1 +
-> > >  drivers/clk/qcom/gcc-sm8450.c          |  1 +
-> > >  drivers/clk/qcom/gcc-sm8550.c          |  1 +
-> > >  drivers/clk/qcom/gdsc.c                | 26 ++++++++++++++++++++++++=
-++
-> > >  drivers/clk/qcom/gdsc.h                |  6 ++++++
-> > >  drivers/clk/qcom/gpucc-msm8998.c       |  1 +
-> > >  drivers/clk/qcom/gpucc-sc7180.c        |  1 +
-> > >  drivers/clk/qcom/gpucc-sc7280.c        |  1 +
-> > >  drivers/clk/qcom/gpucc-sc8280xp.c      |  1 +
-> > >  drivers/clk/qcom/gpucc-sdm660.c        |  1 +
-> > >  drivers/clk/qcom/gpucc-sdm845.c        |  1 +
-> > >  drivers/clk/qcom/gpucc-sm6115.c        |  1 +
-> > >  drivers/clk/qcom/gpucc-sm6125.c        |  1 +
-> > >  drivers/clk/qcom/gpucc-sm6350.c        |  1 +
-> > >  drivers/clk/qcom/gpucc-sm6375.c        |  1 +
-> > >  drivers/clk/qcom/gpucc-sm8150.c        |  1 +
-> > >  drivers/clk/qcom/gpucc-sm8250.c        |  1 +
-> > >  drivers/clk/qcom/gpucc-sm8350.c        |  1 +
-> > >  drivers/clk/qcom/lcc-ipq806x.c         |  1 +
-> > >  drivers/clk/qcom/lpassaudiocc-sc7280.c |  1 +
-> > >  drivers/clk/qcom/lpasscc-sc7280.c      |  1 +
-> > >  drivers/clk/qcom/lpasscorecc-sc7180.c  |  2 ++
-> > >  drivers/clk/qcom/lpasscorecc-sc7280.c  |  2 ++
-> > >  drivers/clk/qcom/mmcc-apq8084.c        |  1 +
-> > >  drivers/clk/qcom/mmcc-msm8974.c        |  1 +
-> > >  drivers/clk/qcom/mmcc-msm8994.c        |  1 +
-> > >  drivers/clk/qcom/mmcc-msm8996.c        |  1 +
-> > >  drivers/clk/qcom/mmcc-msm8998.c        |  1 +
-> > >  drivers/clk/qcom/mmcc-sdm660.c         |  1 +
-> > >  drivers/clk/qcom/videocc-sc7180.c      |  1 +
-> > >  drivers/clk/qcom/videocc-sc7280.c      |  1 +
-> > >  drivers/clk/qcom/videocc-sdm845.c      |  1 +
-> > >  drivers/clk/qcom/videocc-sm8150.c      |  1 +
-> > >  drivers/clk/qcom/videocc-sm8250.c      |  1 +
-> > >  drivers/soc/qcom/rpmhpd.c              | 19 +++++++------------
-> > >  include/linux/pm_domain.h              |  4 ++++
-> > >  92 files changed, 161 insertions(+), 20 deletions(-)
-> > >
-> > > --
-> > > 2.34.1
-> > >
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
