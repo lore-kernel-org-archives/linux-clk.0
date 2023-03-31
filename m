@@ -2,45 +2,44 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72727C77B60
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 18:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A6BC761A6
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 18:48:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233104AbjCaSqy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Mar 2023 14:46:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51636 "EHLO
+        id S233051AbjCaSsN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Mar 2023 14:48:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233101AbjCaSqw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 14:46:52 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B6201D90A;
-        Fri, 31 Mar 2023 11:46:37 -0700 (PDT)
+        with ESMTP id S231313AbjCaSsM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 14:48:12 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE2D220DA1;
+        Fri, 31 Mar 2023 11:48:11 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EDCF8B831B1;
-        Fri, 31 Mar 2023 18:46:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B1BDC433D2;
-        Fri, 31 Mar 2023 18:46:34 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6313762B24;
+        Fri, 31 Mar 2023 18:48:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AECD4C433D2;
+        Fri, 31 Mar 2023 18:48:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680288394;
-        bh=tCzI3Tz/p1oGs31cXIxkiwzfqh3vb27okPmXKlpiXUY=;
+        s=k20201202; t=1680288490;
+        bh=zY4dS2/SLSVBzseaW2oxegDu0wyzcRO33cz9dHtnmTU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=lousBBo5HxCugDSX/ME76JZExUqA6oOiacYVRNIwZ4zp78DNt6r60dFSB9oodFp0Z
-         4VGPwZDoQfRfFcNobpydkYSN+TTSsMsOA3q0nBJW6D6LlJVkDk80e8Y/60etXAdyPE
-         6Rwv9rpAjMrVbR11quy2ZLebPyp6Bfk5IXfLoW2nYxh8CEarsAuntkFYKWaPm6AIDx
-         UBcKbc98SzG1nUayg3wz63fI0bznU88hsh03AZB8YxAM5CanDqDe4x19ob/7ryr2T2
-         SUAxdDU5letGimI7vmDg/RaoEQQfpYDelathg/oNAUaubvKStnEcQnSUdk/lJsc1I0
-         84+/haDA0RPlQ==
-Message-ID: <32e439d2fb2db190cd1486b2bd15aab3.sboyd@kernel.org>
+        b=sT5fRzFwmyg7WnZg0sQuu1DXdo/wkQXrR3mhL//2KY+iKMSqbw7F+75sgytsvx6SX
+         wpjqvKLKHLzZV3V2hljSqV99DdLFmThJqLi1zdogNnkXVMgz+WcFPt+oIb19QoRps7
+         F/satiyV4kRM3de7xLS8JGIRFeUOO30fFNdB0KeBr+eKMcjEOzqL6fkSx2DiQOal4/
+         ZDOF+UwTHLVxzX138AT+43Jc8cLPne+4eJ94zc6CHOMUo6++RVOjZVr6eC4Wlf48fG
+         oPR5ZYhS179K2xdurooeLs4fknV5x9VDgJSqiDkzhtZqTSuY69J4L9W0fADYf+y5um
+         wkiS32QIWkjOg==
+Message-ID: <dc11a5959578c7366e30fba96794cc23.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230331152805.3199968-3-quic_mohs@quicinc.com>
-References: <20230331152805.3199968-1-quic_mohs@quicinc.com> <20230331152805.3199968-3-quic_mohs@quicinc.com>
-Subject: Re: [PATCH v10 2/3] clk: qcom: lpasscc-sc7280: Skip qdsp6ss clock registration
+In-Reply-To: <20230331152805.3199968-1-quic_mohs@quicinc.com>
+References: <20230331152805.3199968-1-quic_mohs@quicinc.com>
+Subject: Re: [PATCH v10 0/3] Add resets for ADSP based audio clock controller driver
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
-        Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Cc:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>
 To:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>, agross@kernel.org,
         andersson@kernel.org, broonie@kernel.org,
         konrad.dybcio@somainline.org, krzysztof.kozlowski+dt@linaro.org,
@@ -48,41 +47,25 @@ To:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>, agross@kernel.org,
         linux-kernel@vger.kernel.org, mturquette@baylibre.com,
         quic_plai@quicinc.com, quic_rohkumar@quicinc.com,
         quic_visr@quicinc.com, robh+dt@kernel.org, swboyd@chromium.org
-Date:   Fri, 31 Mar 2023 11:46:32 -0700
+Date:   Fri, 31 Mar 2023 11:48:08 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Mohammad Rafi Shaik (2023-03-31 08:28:04)
-> diff --git a/drivers/clk/qcom/lpasscc-sc7280.c b/drivers/clk/qcom/lpasscc=
--sc7280.c
-> index 5c1e17bd0d76..24aeed6bcf0e 100644
-> --- a/drivers/clk/qcom/lpasscc-sc7280.c
-> +++ b/drivers/clk/qcom/lpasscc-sc7280.c
-> @@ -17,6 +17,8 @@
->  #include "clk-branch.h"
->  #include "common.h"
-> =20
-> +#define QDSP6SS_MAX_REGISTER           0x3f
+Quoting Mohammad Rafi Shaik (2023-03-31 08:28:02)
+> Add resets and remove qdsp6ss clock controller for audioreach based platf=
+orms.
 
-You can drop the define and just put the raw number in the one place
-this is used.
+Does this supersede the v1 patch series[1]?
 
-> +
->  static struct clk_branch lpass_top_cc_lpi_q6_axim_hs_clk =3D {
->         .halt_reg =3D 0x0,
->         .halt_check =3D BRANCH_HALT,
-> @@ -118,12 +120,15 @@ static int lpass_cc_sc7280_probe(struct platform_de=
-vice *pdev)
->                 goto destroy_pm_clk;
->         }
-> =20
-> -       lpass_regmap_config.name =3D "qdsp6ss";
-> -       desc =3D &lpass_qdsp6ss_sc7280_desc;
-> +       if (!of_property_read_bool(pdev->dev.of_node, "qcom,adsp-pil-mode=
-")) {
-> +               lpass_regmap_config.name =3D "qdsp6ss";
-> +               lpass_regmap_config.max_register =3D QDSP6SS_MAX_REGISTER;
-> +               desc =3D &lpass_qdsp6ss_sc7280_desc;
->
+>=20
+> Changes since v9:
+>     -- Drop "clk: qcom: lpassaudiocc-sc7280: Modify qcom_cc_probe" patch.
+>     -- Update Fixes tag in Add the required gdsc's in lpass_cc_sc7280_des=
+c patch.
+>     -- Add the max_register value in Skip qdsp6ss clock registration patc=
+h.
+
+[1] https://lore.kernel.org/linux-clk/20230327163249.1081824-1-quic_mohs@qu=
+icinc.com/
