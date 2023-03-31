@@ -2,60 +2,64 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB26EC76196
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 14:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C686DC77B62
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Mar 2023 14:57:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232477AbjCaOLd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Mar 2023 10:11:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38332 "EHLO
+        id S233000AbjCaO5a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Mar 2023 10:57:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230341AbjCaOLb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 10:11:31 -0400
-Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7479E1D2ED
-        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 07:11:30 -0700 (PDT)
-Received: by mail-vs1-xe2b.google.com with SMTP id cz11so19237368vsb.6
-        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 07:11:30 -0700 (PDT)
+        with ESMTP id S231775AbjCaO53 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2023 10:57:29 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACF84C142
+        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 07:57:12 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id t4so17481323wra.7
+        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2023 07:57:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1680271889;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lG/WYsq29l19IPVJ1k1HveeXpXEw8n6whXP0RBXQsVE=;
-        b=EvtZrKsNbHzwyuTtRqHQROrrofpQ/sG01uOiuhmiI8aPts7n7Ee5Ir4NvfrBMC9uI+
-         rP59rZDcNbSrbcJgAHZuzWOVqM440qSkPSsXQam8gLhm6JrqARMEWp7hP37azlVW4org
-         fBACV9jHeMc/fcIgXarc7w17iylr7tNHGmieksiQNlIzpXJ80+yWU+CJGHU8lpI3k2C8
-         ICYW0V27W/2DBLWul+Ja7q7aEtfylH/JCpUFcy+E+zrhYwff5tk/+w+43pgclTvoUdaY
-         JKB3eTBzT085pwnm7cEdG1xRDF3HVWkUIWkzjjSc40AzCnbk/tZvpSB9Tq3T3RIS9CKy
-         06FA==
+        d=linaro.org; s=google; t=1680274631;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=X2dQ+lYOZmXZreHzCA27SPymWQu74XpJ9AsKWsdeeL4=;
+        b=LxMr8btqIWpZVBhNCuG3Pv8bToCfJWDTdR7+mR8mGHozcnAnNX8W0cDET2uL7CaGs9
+         5e93/RuXqDOnGQEs4AERzNy/Qogvh1lNEl5m/Bf/swKpLDINZWZrVcg2ZaNJuQJxTI3k
+         scrF3ioZ8uoXF7zeOPiJ/wP8xdLa/F/5qp3ahGdIGZuPJ7thH6JA/9PSgY4cV1Egc6BI
+         O1Rz6S+5Em4dXlsXilZs5u99e4DEWL7+4xEEyTpHsjLqG+DWWc96/933gCmUjtvMCuis
+         cNHHsNXvDWRcx4rsOJaAwffsHJR3LJLod1tAvHB9N9onT9OneeyP7ioLARMZpPHqlTA4
+         cJqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680271889;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lG/WYsq29l19IPVJ1k1HveeXpXEw8n6whXP0RBXQsVE=;
-        b=gaqYwPPhlOlREJWmBeZkTQWfmaeuPhBgwtFNT9T6JfkxeVeWu1B0eR9Jd97SaabKiG
-         YG05PRKYl7k7PhDJF3JjTRW2Cm6RYpq7iU6/RL3sLvxH827RTAJeQE45gFrGiAi3G8v0
-         5eSlnFE3sfkw6XDISuK7sam/qSoibprgqzDlL16ucIS5wCz7K7o8IBF8V32TeKijG/ec
-         zWs31jQxgltw57YOIV/HxACs6X2HpGve/uoO7W9UfQR5KSbu+Uvuix9NQiKhVSlJr+dT
-         UoNOe3pSb8ruAasPW11QhE2vvLyW33W16B0Lfg8McN2A5cO/bhTyeavBvGgs+rmwcaGO
-         H2RQ==
-X-Gm-Message-State: AAQBX9eMmUrNRzPflbXb6qmLrc09xVcJWuBWXxA+EUiPAEaIjzgV/BbN
-        2RyMBLDpGN418btVSZa/H37J+FiCLwZYGjCMbbfcBA==
-X-Google-Smtp-Source: AKy350Ya9O0j2IJ/iXVAszn5aY9fHDH1jV5pYhAfg5ER4OEHtZmmlP21NIaPy6SQjGvX406cL1yK9LBdk5p7JcyHINc=
-X-Received: by 2002:a67:e095:0:b0:426:b051:1c4 with SMTP id
- f21-20020a67e095000000b00426b05101c4mr9141092vsl.0.1680271889495; Fri, 31 Mar
- 2023 07:11:29 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1680274631;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X2dQ+lYOZmXZreHzCA27SPymWQu74XpJ9AsKWsdeeL4=;
+        b=ayt6HUwoEBfuDVEpO3ziIOARFl1KsbySC7eBflUZ3E5ZtbsJ3+Lo681YP+iUHE7Yoz
+         ZnDEQPgDE1wkt4GDPTALFg9DAlS40ZQtHy0yRkqc9FUvRbzKni2BJ+XEx+3lYy3RsVDc
+         9QtXVftNFLk33y6eSryrJ2gWuQuka1jaxXHu/AJ6o/Q4p3R0Uz3U8F/STYSwXFFLB76v
+         jjuwYzVU6MGPItDZOV528Tqg6VXNCNF4Ppbladb9PiifhcOr9pCBplIFfyX5aECIOR7E
+         S6X/lD6/ikZOShxNc7xVMepMQeeQsFr1dI24JRB6+9gAP+FO8lpJb7yA9eXfegC411zG
+         e5tg==
+X-Gm-Message-State: AAQBX9ehCsccofglybEzN0egytOaPwwpZ6D/hipFGbP++zlpnFsh4ngl
+        rdFWLKCKfhK/h0u/nlyE1p+YiA==
+X-Google-Smtp-Source: AKy350ZhM7TlzzbkKQh+f2qjf5R7dBolMimYX1XKzO4RjCFaq7KCOpO3n90LcpUgFdpKCsl7ogNfUw==
+X-Received: by 2002:a5d:4409:0:b0:2cf:e422:e28c with SMTP id z9-20020a5d4409000000b002cfe422e28cmr18329961wrq.42.1680274631125;
+        Fri, 31 Mar 2023 07:57:11 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:74cb:1a96:c994:e7e0? ([2a01:e0a:982:cbb0:74cb:1a96:c994:e7e0])
+        by smtp.gmail.com with ESMTPSA id b12-20020a5d4d8c000000b002e51195a3e2sm2392687wru.79.2023.03.31.07.57.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Mar 2023 07:57:10 -0700 (PDT)
+Message-ID: <23e513ad-9fca-30cd-1f08-2ff559072314@linaro.org>
+Date:   Fri, 31 Mar 2023 16:57:05 +0200
 MIME-Version: 1.0
-References: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
- <20230331-topic-oxnas-upstream-remove-v1-15-5bd58fd1dd1f@linaro.org>
-In-Reply-To: <20230331-topic-oxnas-upstream-remove-v1-15-5bd58fd1dd1f@linaro.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 31 Mar 2023 16:11:18 +0200
-Message-ID: <CAMRc=Mdp48+DitzSV5gq3arPL75TJXQLoBxTujsWSH4UVpd2ww@mail.gmail.com>
-Subject: Re: [PATCH RFC 15/20] dt-bindings: gpio: gpio_oxnas: remove obsolete bindings
-To:     Neil Armstrong <neil.armstrong@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH RFC 00/20] ARM: oxnas support removal
+Content-Language: en-US
+To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
         soc@kernel.org, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Russell King <linux@armlinux.org.uk>,
@@ -69,100 +73,96 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
         Giuseppe Cavallaro <peppe.cavallaro@st.com>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
         Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        "David S . Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
         Sebastian Reichel <sre@kernel.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Marc Zyngier <maz@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Netdev <netdev@vger.kernel.org>,
         linux-stm32@st-md-mailman.stormreply.com,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-pm@vger.kernel.org, Daniel Golle <daniel@makrotopia.org>
+References: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
+ <df218abb-fa83-49d2-baf5-557b83b33670@app.fastmail.com>
+Organization: Linaro Developer Services
+In-Reply-To: <df218abb-fa83-49d2-baf5-557b83b33670@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Mar 31, 2023 at 10:35=E2=80=AFAM Neil Armstrong
-<neil.armstrong@linaro.org> wrote:
->
-> Due to lack of maintainance and stall of development for a few years now,
-> and since no new features will ever be added upstream, remove the
-> OX810 and OX820 gpio bindings.
->
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  .../devicetree/bindings/gpio/gpio_oxnas.txt        | 47 ----------------=
-------
->  1 file changed, 47 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt b/Docu=
-mentation/devicetree/bindings/gpio/gpio_oxnas.txt
-> deleted file mode 100644
-> index 966514744df4..000000000000
-> --- a/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
-> +++ /dev/null
-> @@ -1,47 +0,0 @@
-> -* Oxford Semiconductor OXNAS SoC GPIO Controller
-> -
-> -Please refer to gpio.txt for generic information regarding GPIO bindings=
-.
-> -
-> -Required properties:
-> - - compatible: "oxsemi,ox810se-gpio" or "oxsemi,ox820-gpio"
-> - - reg: Base address and length for the device.
-> - - interrupts: The port interrupt shared by all pins.
-> - - gpio-controller: Marks the port as GPIO controller.
-> - - #gpio-cells: Two. The first cell is the pin number and
-> -   the second cell is used to specify the gpio polarity as defined in
-> -   defined in <dt-bindings/gpio/gpio.h>:
-> -      0 =3D GPIO_ACTIVE_HIGH
-> -      1 =3D GPIO_ACTIVE_LOW
-> - - interrupt-controller: Marks the device node as an interrupt controlle=
-r.
-> - - #interrupt-cells: Two. The first cell is the GPIO number and second c=
-ell
-> -   is used to specify the trigger type as defined in
-> -   <dt-bindings/interrupt-controller/irq.h>:
-> -      IRQ_TYPE_EDGE_RISING
-> -      IRQ_TYPE_EDGE_FALLING
-> -      IRQ_TYPE_EDGE_BOTH
-> - - gpio-ranges: Interaction with the PINCTRL subsystem, it also specifie=
-s the
-> -   gpio base and count, should be in the format of numeric-gpio-range as
-> -   specified in the gpio.txt file.
-> -
-> -Example:
-> -
-> -gpio0: gpio@0 {
-> -       compatible =3D "oxsemi,ox810se-gpio";
-> -       reg =3D <0x000000 0x100000>;
-> -       interrupts =3D <21>;
-> -       #gpio-cells =3D <2>;
-> -       gpio-controller;
-> -       interrupt-controller;
-> -       #interrupt-cells =3D <2>;
-> -       gpio-ranges =3D <&pinctrl 0 0 32>;
-> -};
-> -
-> -keys {
-> -       ...
-> -
-> -       button-esc {
-> -               label =3D "ESC";
-> -               linux,code =3D <1>;
-> -               gpios =3D <&gpio0 12 0>;
-> -       };
-> -};
->
-> --
-> 2.34.1
->
+On 31/03/2023 15:42, Arnd Bergmann wrote:
+> On Fri, Mar 31, 2023, at 10:34, Neil Armstrong wrote:
+>> With [1] removing MPCore SMP support, this makes the OX820 barely usable,
+>> associated with a clear lack of maintainance, development and migration to
+>> dt-schema it's clear that Linux support for OX810 and OX820 should be removed.
+>>
+>> In addition, the OX810 hasn't been booted for years and isn't even present
+>> in an ARM config file.
+>>
+>> For the OX820, lack of USB and SATA support makes the platform not usable
+>> in the current Linux support and relies on off-tree drivers hacked from the
+>> vendor (defunct for years) sources.
+>>
+>> The last users are in the OpenWRT distribution, and today's removal means
+>> support will still be in stable 6.1 LTS kernel until end of 2026.
+>>
+>> If someone wants to take over the development even with lack of SMP, I'll
+>> be happy to hand off maintainance.
+>>
+>> The plan is to apply the first 4 patches first, then the drivers
+>> followed by bindings. Finally the MAINTAINANCE entry can be removed.
+>>
+>> I'm not sure about the process of bindings removal, but perhaps the bindings
+>> should be marked as deprecated first then removed later on ?
+>>
+>> It has been a fun time adding support for this architecture, but it's time
+>> to get over!
+>>
+>> Patch 2 obviously depends on [1].
+>>
+>> [1] https://lore.kernel.org/all/20230327121317.4081816-1-arnd@kernel.org/
+>>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> 
+> Thanks a lot for going through this and preparing the patches!
+> 
+> I've discussed this with Daniel Golle on the OpenWRT channel as well,
+> and he indicated that the timing is probably fine here, as there are
+> already close to zero downloads for oxnas builds, and the 6.1 kernel
+> will only be part of a release in 2024.
+> 
+> For the dependency on my other patch, I'd suggest you instead
+> remove the SMP files here as well, which means we can merge either
+> part independently based on just 6.3-rc. I can do that change
+> myself by picking up patches 1-4 of your RFC series, or maybe you
+> can send resend them after rebase to 6.3-rc1.
 
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Ack I'll send patches 1-4 rebased on v6.3-rc1 with the acks
+and sent a PR next week.
+
+> 
+> For the driver removals, I think we can merge those at the same
+> time as the platform removal since there are no shared header files
+> that would cause build time regressions and there are no runtime
+> regressions other than breaking the platform itself. Maybe
+> just send the driver removal separately to the subsystem
+> maintainers with my
+> 
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+
+Thanks, I'll submit those individually once the first patches are merged.
+
+Neil
+
+> 
+>       Arnd
+
