@@ -2,131 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A952C76196
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Apr 2023 12:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5312C6FD1D
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Apr 2023 12:54:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229569AbjDAMxk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 1 Apr 2023 08:53:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45252 "EHLO
+        id S229635AbjDAMyy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 1 Apr 2023 08:54:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbjDAMxj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Apr 2023 08:53:39 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FB8FE2
-        for <linux-clk@vger.kernel.org>; Sat,  1 Apr 2023 05:53:38 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id eh3so100063122edb.11
-        for <linux-clk@vger.kernel.org>; Sat, 01 Apr 2023 05:53:38 -0700 (PDT)
+        with ESMTP id S229379AbjDAMyx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Apr 2023 08:54:53 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62BA4CD
+        for <linux-clk@vger.kernel.org>; Sat,  1 Apr 2023 05:54:52 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id r11so100171650edd.5
+        for <linux-clk@vger.kernel.org>; Sat, 01 Apr 2023 05:54:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1680353617;
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1680353691;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IsXudeJf7ex/KMkd9XKZrKSgXi5k8V6Ttiz3EATGpHg=;
-        b=aEyF2EFqPsdk0bwXMo5zmj7q77sIpNvMQ0J1s5h/QDOyoI7rPgOkDNb4mSO3rxJKhO
-         R1nwP1io/pqkC4+gLFnMxczK7arE13+14mgfLVoLH9AEZQLwBeFkDZtk7XLWdtlrwvFz
-         2w39nql083wFUEvKtzSjMTLwLj761DinO2OLxcyp28m2+UzozNw5ZOMgSjJVBsGxmdx2
-         nnTiget7yOpQ3qydH/FzPx9nLPtDLnM7SGm+nyuYw4d+ht+8D1HJpRTZeTT2VSqvVFAO
-         RkqOmX2eZXIncAVKWCk/CLb4k4Y/DFqCr0TEd4wBfZcKZG9UT6UNnTx4VCTnSic86xn1
-         27+Q==
+        bh=0beBMw+hMVh3FjRpEnhN5R5HjAtPpSbXA385RJD9c2E=;
+        b=38HRFcDQLRXpJLwecxdoaQD4CqI1wH4hGxPQgwNzouW+klDFkUebYqvZvbPxXIkHlc
+         Pif75a5M+MAs2Nfq1ZTkVvwmUeMI+hFnoSsGLvlMc1R94QZ4orSm8ThLa0+RiQUR9pjJ
+         N6FPXq33FV+CvfvP5yo0ZhdMQM7PVJoJNVM8y+6j5dZGG/X1bqBDm1pJe2jGnVGD8lEN
+         BejGfHtZr6Td5eGXuy8pJzOL6orgceR1+Hd61C5iS62y1gVyn2TsupQBrEtFSNnev9xR
+         haIxcIK5L9hgzCVHoVOgL31VWY7OYn1B0ez8XyaptvLyieaL2BN90G/451Zh2M33Qeaz
+         bxqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680353617;
+        d=1e100.net; s=20210112; t=1680353691;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IsXudeJf7ex/KMkd9XKZrKSgXi5k8V6Ttiz3EATGpHg=;
-        b=lUAneshQWl+Oax4z/gLlEI6Amn5V1IOLqWYM0IguCfaAqFIINLS0XFYgxw5QgN0ExG
-         BXcrY5l6dUAugQNWSuUDvtTd8AQSB726S1TvbbuM2i4JJgOetHl543km1TGtcRM4a7mG
-         XyQOMEJxMlXQYrQ4H5ipsX1HIJnJuyuefXwiyJps+RMp/R4sWYZKphpE8We1DM8GvMAJ
-         bDIETM3LI2bidfSRvjhPO5Js4Hd8Vfh5nBXl5I5ifnzIICgcWtk5sMOF4wHOhgsTGQt+
-         XrOtQstohVJtuJsA3PJptmJ0rm1jWzGpGtMv4+0/ezpGynlubBRah9vvrCRU2lJoq+5j
-         kD1g==
-X-Gm-Message-State: AAQBX9fD6qjATzbfgT2PqE9Sk64P8a2HuLlKo3MfMHXCROg+Jvc+pVLX
-        ubZHtwp4AqcZTd4ONN5tP3qDAT75AwIplC5HDg0=
-X-Google-Smtp-Source: AKy350av/v61Im2E/iRFPy8cHyBemO9SfGylTKdV/Xz+fFW+bDVWlyYIfaz89gnHfK5k4p/j/jRthw==
-X-Received: by 2002:aa7:da82:0:b0:502:100c:53a with SMTP id q2-20020aa7da82000000b00502100c053amr30460055eds.41.1680353616865;
-        Sat, 01 Apr 2023 05:53:36 -0700 (PDT)
+        bh=0beBMw+hMVh3FjRpEnhN5R5HjAtPpSbXA385RJD9c2E=;
+        b=1eazB3fU218uZftX4SKd4WQgeUv/P+2m7L2ciqU8Hesipfey57lb+zul/Xtr7d2fFb
+         bbE50xthW8hlacwb8SU8TfzPAJ+Y12UYdNQKan9eslogo2Rc0lu+9UAjq3UgWIx6DrMW
+         yl6AFoO62QVfHWYXbhogA6AFvNuGsDUPzKtBywNr0NvRRd0oD8M/T835cRzNVI5Hi0Un
+         +jabFTtQel6mS1ZHxLkxpP+Ijtrc66wzdppQmXofs1KfMXOTAt5Gu5E9LywfXCe5qbyg
+         eTwoIBm6x9B3ZiWYjaLg5i0dz6sv1F2qYGSWtOclSLkG6ticI9gSbApRp/Pxe/waIgkQ
+         4J3Q==
+X-Gm-Message-State: AAQBX9cDIHqh4SP0dfY9gdfw/H8vDorjJ04bk2iqPG+Tm9twFHebhtPP
+        DPs/hVVXv4bQsG/05GKyW6TqNQ==
+X-Google-Smtp-Source: AKy350bUwpdbBUsGt2YMZSM6UBEM8ok+A5wkqGFJ/2vNp5xI3vaP9FatSkLPZQzN2n/9Z3HPHsSF7w==
+X-Received: by 2002:a17:907:1c09:b0:930:f953:9608 with SMTP id nc9-20020a1709071c0900b00930f9539608mr42672606ejc.0.1680353690799;
+        Sat, 01 Apr 2023 05:54:50 -0700 (PDT)
 Received: from localhost ([86.61.181.4])
-        by smtp.gmail.com with ESMTPSA id b17-20020a50b411000000b004bf7905559asm2093952edh.44.2023.04.01.05.53.36
+        by smtp.gmail.com with ESMTPSA id z16-20020a5096d0000000b00501d51c23fbsm2091370eda.6.2023.04.01.05.54.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Apr 2023 05:53:36 -0700 (PDT)
-Date:   Sat, 1 Apr 2023 14:53:35 +0200
+        Sat, 01 Apr 2023 05:54:50 -0700 (PDT)
+Date:   Sat, 1 Apr 2023 14:54:49 +0200
 From:   Jiri Pirko <jiri@resnulli.us>
 To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc:     Vadim Fedorenko <vadfed@meta.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>, poros@redhat.com,
-        mschmidt@redhat.com, netdev@vger.kernel.org,
+Cc:     netdev@vger.kernel.org, arkadiusz.kubalewski@intel.com,
+        vadfed@meta.com, kuba@kernel.org, jonathan.lemon@gmail.com,
+        pabeni@redhat.com, poros@redhat.com, mschmidt@redhat.com,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH RFC v6 6/6] ptp_ocp: implement DPLL ops
-Message-ID: <ZCgpTyHPu9Cz/XiA@nanopsycho>
+Subject: Re: [patch dpll-rfc 0/7] dpll: initial patchset extension by mlx5
+ implementation
+Message-ID: <ZCgpmZXnWAMG7Dnd@nanopsycho>
 References: <20230312022807.278528-1-vadfed@meta.com>
- <20230312022807.278528-7-vadfed@meta.com>
- <ZBBG2xRhLOIPMD0+@nanopsycho>
- <d192e0ac-3fa3-c799-ac93-84a17e6f6d50@linux.dev>
- <ZBG5CpF/o2wZkgSX@nanopsycho>
- <c8638e7a-5107-9a66-6725-0f087f834c46@linux.dev>
+ <20230326170052.2065791-1-jiri@resnulli.us>
+ <64e444ee-70e4-e51a-250d-471cfffeab5a@linux.dev>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c8638e7a-5107-9a66-6725-0f087f834c46@linux.dev>
+In-Reply-To: <64e444ee-70e4-e51a-250d-471cfffeab5a@linux.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Sat, Apr 01, 2023 at 01:28:29AM CEST, vadim.fedorenko@linux.dev wrote:
->On 15.03.2023 12:24, Jiri Pirko wrote:
->> Wed, Mar 15, 2023 at 01:10:33AM CET, vadim.fedorenko@linux.dev wrote:
->> > On 14/03/2023 10:05, Jiri Pirko wrote:
->> > > Sun, Mar 12, 2023 at 03:28:07AM CET, vadfed@meta.com wrote:
-
-[...]
-
-
->> > > > +static int ptp_ocp_dpll_pin_to_sma(const struct ptp_ocp *bp, const struct dpll_pin *pin)
->> > > > +{
->> > > > +	int i;
->> > > > +
->> > > > +	for (i = 0; i < 4; i++) {
->> > > > +		if (bp->sma[i].dpll_pin == pin)
->> > > > +			return i;
->> > > 
->> > > Just pass &bp->sma[i] as a priv to dpll_pin_register().
->> > > and get that pointer directly in pin ops. No need for lookup and use of
->> > > sma_nr at all.
->> > 
->> > I'm still thinking about the change that you proposed to remove these
->> > _priv() helpers. I have to look into ice code to be sure we won't break
->> > any assumptions in it with moving to additional (void *) parameter.
+Tue, Mar 28, 2023 at 06:36:13PM CEST, vadim.fedorenko@linux.dev wrote:
+>On 26/03/2023 18:00, Jiri Pirko wrote:
+>> From: Jiri Pirko <jiri@nvidia.com>
 >> 
->> There are basically 2 ways:
->> someop(struct subsystemobj *x, void *priv)
->> {
->> 	struct *mine = priv;
->> }
->> or:
->> someop(struct subsystemobj *x)
->> {
->> 	struct *mine = subsystem_get_priv(x);
->> }
+>> Hi.
 >> 
->> Both are more or less equal. The first has benefit that the caller most
->> usually has direct access to the priv, so it can just easily pass it on.
->> Also, you as the driver write see right away there is a priv arg and
->> makes you want to use it and not figure out odd lookups to get to the
->> same priv.
+>> This is extending your patchset. Basically, I do this on top of the
+>> changes I pointed out during review. For example patch #6 is exposing
+>> pin handle which is going to change, etc (there, I put a note).
+>> 
+>> First 5 patches are just needed dependencies and you can squash them
+>> into your patch/patches. Last two patches should go in separatelly.
+>> 
+>> Please note that the patch #6 is replacing the need to pass the rclk
+>> device during pin registration by putting a link between netdev and dpll
+>> pin.
+>> 
+>> Please merge this into your dpll patchset and include it in the next
+>> RFC. Thanks!
+>> 
 >
->Thinking about this part. We have tons of parameters for some ops already.
->Adding void *priv to every one of them (and actually two for pins) makes them
->even more ugly. Let's stay with helpers if you don't have strong opinion
->against.
+>Hi Jiri!
+>
+>Thanks for the patch set. It looks like it covers some changes that I have
+>also done to address the comments. I'll try to combine everything in a couple
+>of days and will re-spin series and we restart review process. I think that
+>there are open question still in the conversation which were not answered.
 
-Well, with the patches I sent when 1 device/pin can be registered
-multiple times with multiple privs, I believe it is much more feasable
-to just pass the priv along in the arg list, because otherwise you would
-have to do some odd lookup.
+I hope I didn't miss anything. I believe I replied to every comment.
+Please tell me if not.
 
-Please pass priv, would be nicer and easier and more simple for the
-driver to implement. The arg list can handle that easily.
+Thanks!
 
-[...]
+
+>
+>Best,
+>Vadim
