@@ -2,107 +2,83 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5312C6FD1D
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Apr 2023 12:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B0EC76196
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Apr 2023 14:33:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229635AbjDAMyy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 1 Apr 2023 08:54:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45520 "EHLO
+        id S229708AbjDAOdi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 1 Apr 2023 10:33:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbjDAMyx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Apr 2023 08:54:53 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62BA4CD
-        for <linux-clk@vger.kernel.org>; Sat,  1 Apr 2023 05:54:52 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id r11so100171650edd.5
-        for <linux-clk@vger.kernel.org>; Sat, 01 Apr 2023 05:54:52 -0700 (PDT)
+        with ESMTP id S229537AbjDAOdh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Apr 2023 10:33:37 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C695ACA0B;
+        Sat,  1 Apr 2023 07:33:36 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id ix20so24084233plb.3;
+        Sat, 01 Apr 2023 07:33:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1680353691;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0beBMw+hMVh3FjRpEnhN5R5HjAtPpSbXA385RJD9c2E=;
-        b=38HRFcDQLRXpJLwecxdoaQD4CqI1wH4hGxPQgwNzouW+klDFkUebYqvZvbPxXIkHlc
-         Pif75a5M+MAs2Nfq1ZTkVvwmUeMI+hFnoSsGLvlMc1R94QZ4orSm8ThLa0+RiQUR9pjJ
-         N6FPXq33FV+CvfvP5yo0ZhdMQM7PVJoJNVM8y+6j5dZGG/X1bqBDm1pJe2jGnVGD8lEN
-         BejGfHtZr6Td5eGXuy8pJzOL6orgceR1+Hd61C5iS62y1gVyn2TsupQBrEtFSNnev9xR
-         haIxcIK5L9hgzCVHoVOgL31VWY7OYn1B0ez8XyaptvLyieaL2BN90G/451Zh2M33Qeaz
-         bxqQ==
+        d=gmail.com; s=20210112; t=1680359616;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XVMCxKkdAj5G/sHqBJwRjfivjb3c00JzonL5QvYBrDc=;
+        b=oorS77R7MIzVP0hceo91ptJHWN9iXoA1WQeFlSuZGUdTpqzzj+6KEWHDb9EvFJioJB
+         s7Yk/litLZVKfdHl2yWdlE2pKQ3qC3Aw3v7reTboKin+yD1gkIBCODUAYsLsZ6kMdDM+
+         d7E/3CR/y4+dI3crXmJE/IC5fqv8XTyyK51Qn2x28S/dfqrqty9m6QyLUPLeOjvQSabB
+         o71Lrwk67YDTb17v79gPk94omHSRIKPnRsXaQBmPEZxvNRa5W0R0NBTCs+SEx1tqU4Q5
+         dSgxXViMUO5Tj6yXlV2tnPu1nCSNXT7TQOQYK0Y2WWhZkna0tkn7H+MzFuTHhWu0fti1
+         q0tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680353691;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0beBMw+hMVh3FjRpEnhN5R5HjAtPpSbXA385RJD9c2E=;
-        b=1eazB3fU218uZftX4SKd4WQgeUv/P+2m7L2ciqU8Hesipfey57lb+zul/Xtr7d2fFb
-         bbE50xthW8hlacwb8SU8TfzPAJ+Y12UYdNQKan9eslogo2Rc0lu+9UAjq3UgWIx6DrMW
-         yl6AFoO62QVfHWYXbhogA6AFvNuGsDUPzKtBywNr0NvRRd0oD8M/T835cRzNVI5Hi0Un
-         +jabFTtQel6mS1ZHxLkxpP+Ijtrc66wzdppQmXofs1KfMXOTAt5Gu5E9LywfXCe5qbyg
-         eTwoIBm6x9B3ZiWYjaLg5i0dz6sv1F2qYGSWtOclSLkG6ticI9gSbApRp/Pxe/waIgkQ
-         4J3Q==
-X-Gm-Message-State: AAQBX9cDIHqh4SP0dfY9gdfw/H8vDorjJ04bk2iqPG+Tm9twFHebhtPP
-        DPs/hVVXv4bQsG/05GKyW6TqNQ==
-X-Google-Smtp-Source: AKy350bUwpdbBUsGt2YMZSM6UBEM8ok+A5wkqGFJ/2vNp5xI3vaP9FatSkLPZQzN2n/9Z3HPHsSF7w==
-X-Received: by 2002:a17:907:1c09:b0:930:f953:9608 with SMTP id nc9-20020a1709071c0900b00930f9539608mr42672606ejc.0.1680353690799;
-        Sat, 01 Apr 2023 05:54:50 -0700 (PDT)
-Received: from localhost ([86.61.181.4])
-        by smtp.gmail.com with ESMTPSA id z16-20020a5096d0000000b00501d51c23fbsm2091370eda.6.2023.04.01.05.54.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Apr 2023 05:54:50 -0700 (PDT)
-Date:   Sat, 1 Apr 2023 14:54:49 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc:     netdev@vger.kernel.org, arkadiusz.kubalewski@intel.com,
-        vadfed@meta.com, kuba@kernel.org, jonathan.lemon@gmail.com,
-        pabeni@redhat.com, poros@redhat.com, mschmidt@redhat.com,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [patch dpll-rfc 0/7] dpll: initial patchset extension by mlx5
- implementation
-Message-ID: <ZCgpmZXnWAMG7Dnd@nanopsycho>
-References: <20230312022807.278528-1-vadfed@meta.com>
- <20230326170052.2065791-1-jiri@resnulli.us>
- <64e444ee-70e4-e51a-250d-471cfffeab5a@linux.dev>
+        d=1e100.net; s=20210112; t=1680359616;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XVMCxKkdAj5G/sHqBJwRjfivjb3c00JzonL5QvYBrDc=;
+        b=CODQ2XSdzEi80XB+HeaeUJSMcmKH+uOTRw21SRAGPJGXjhOhFgf1f8gTUzmcYKY93D
+         6mlNLuC9y8anlQ5XySn13ISIyaSDImi6YkzhxEG58VLc0iQUGhBL45n/5rLpswAoVs0o
+         C1TpEX4m/2CIGpV7xspTkWVCaT/AMRXf924Ml5OPjwyG8a4YvB0B1Tw42BEVEwJP7x35
+         o4InCiHDhs+RQs1LdFpslHuxRfpIXYsY6TsqYUJjCR37FAcHKGHDWqPuf7pZGUvFAm/c
+         j6UvTMrwhRPVAGfZ2PSDA2OYr68+Cfx0oGpdXmZ1fsRaIfDwgTekG+IwAGX35ODt3107
+         8ILw==
+X-Gm-Message-State: AAQBX9efa9cM9UkUOP3cKkqflM+WcZKtNX2JomrDInvIyBnYJ96Etj4K
+        ZP0VXdEFezm6Jm+Sxyil6068IwcHkNYl8TdEPss=
+X-Google-Smtp-Source: AKy350bWY76S1g8Vj/Huvn7WWZ45nm5q5e7cFRBykceGGzehIhVjpEW9LM82jjc/w8x69HUL9jxGeorEgerr+yx+Blo=
+X-Received: by 2002:a17:902:d70b:b0:1a2:8940:6da8 with SMTP id
+ w11-20020a170902d70b00b001a289406da8mr3191541ply.13.1680359616143; Sat, 01
+ Apr 2023 07:33:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <64e444ee-70e4-e51a-250d-471cfffeab5a@linux.dev>
+References: <20230331163058.5688-1-sebastian.reichel@collabora.com>
+In-Reply-To: <20230331163058.5688-1-sebastian.reichel@collabora.com>
+From:   Vincent Legoll <vincent.legoll@gmail.com>
+Date:   Sat, 1 Apr 2023 16:30:53 +0200
+Message-ID: <CAEwRq=q=W57W33nYe_uUDQb0cf7QkFoa0rO+EWdsuUGTN7k_Vg@mail.gmail.com>
+Subject: Re: [PATCHv1 0/2] Improve RK3588 clocks and power domains support
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org,
+        Peter Geis <pgwipeout@gmail.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        Finley Xiao <finley.xiao@rock-chips.com>,
+        Jagan Teki <jagan@edgeble.ai>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Tue, Mar 28, 2023 at 06:36:13PM CEST, vadim.fedorenko@linux.dev wrote:
->On 26/03/2023 18:00, Jiri Pirko wrote:
->> From: Jiri Pirko <jiri@nvidia.com>
->> 
->> Hi.
->> 
->> This is extending your patchset. Basically, I do this on top of the
->> changes I pointed out during review. For example patch #6 is exposing
->> pin handle which is going to change, etc (there, I put a note).
->> 
->> First 5 patches are just needed dependencies and you can squash them
->> into your patch/patches. Last two patches should go in separatelly.
->> 
->> Please note that the patch #6 is replacing the need to pass the rclk
->> device during pin registration by putting a link between netdev and dpll
->> pin.
->> 
->> Please merge this into your dpll patchset and include it in the next
->> RFC. Thanks!
->> 
->
->Hi Jiri!
->
->Thanks for the patch set. It looks like it covers some changes that I have
->also done to address the comments. I'll try to combine everything in a couple
->of days and will re-spin series and we restart review process. I think that
->there are open question still in the conversation which were not answered.
+Hello,
 
-I hope I didn't miss anything. I believe I replied to every comment.
-Please tell me if not.
+I'm running a QuartzPro64 with this patch set applied, everything(*)
+works properly.
 
-Thanks!
+(*) eMMC, SD, LED, ethernet, serial, watchdog.
 
+Are there any tests I can do to help with this ?
 
->
->Best,
->Vadim
+Regards
+
+-- 
+Vincent Legoll
