@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB31C77B75
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Apr 2023 11:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22CB8C77B71
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Apr 2023 11:20:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229888AbjDALTz convert rfc822-to-8bit (ORCPT
+        id S229892AbjDALT4 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 1 Apr 2023 07:19:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52008 "EHLO
+        Sat, 1 Apr 2023 07:19:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229792AbjDALTt (ORCPT
+        with ESMTP id S229791AbjDALTt (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Apr 2023 07:19:49 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B2651CB9B;
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67C8D1CBA4;
         Sat,  1 Apr 2023 04:19:45 -0700 (PDT)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 887E124E20D;
-        Sat,  1 Apr 2023 19:19:41 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Sat, 1 Apr
- 2023 19:19:41 +0800
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id B52C924DBBD;
+        Sat,  1 Apr 2023 19:19:38 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Sat, 1 Apr
+ 2023 19:19:38 +0800
 Received: from ubuntu.localdomain (113.72.144.76) by EXMBX172.cuchost.com
  (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Sat, 1 Apr
- 2023 19:19:40 +0800
+ 2023 19:19:37 +0800
 From:   Hal Feng <hal.feng@starfivetech.com>
 To:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-riscv@lists.infradead.org>
@@ -45,9 +45,9 @@ CC:     Stephen Boyd <sboyd@kernel.org>,
         Emil Renner Berthing <emil.renner.berthing@canonical.com>,
         Hal Feng <hal.feng@starfivetech.com>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 04/22] clk: starfive: Factor out common JH7100 and JH7110 code
-Date:   Sat, 1 Apr 2023 19:19:16 +0800
-Message-ID: <20230401111934.130844-5-hal.feng@starfivetech.com>
+Subject: [PATCH v7 01/22] dt-bindings: clock: Add StarFive JH7110 system clock and reset generator
+Date:   Sat, 1 Apr 2023 19:19:13 +0800
+Message-ID: <20230401111934.130844-2-hal.feng@starfivetech.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20230401111934.130844-1-hal.feng@starfivetech.com>
 References: <20230401111934.130844-1-hal.feng@starfivetech.com>
@@ -64,758 +64,529 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Emil Renner Berthing <kernel@esmil.dk>
 
-The clock control registers on the StarFive JH7100 and JH7110 work
-identically, so factor out the code then drivers for the two SoCs
-can share it without depending on each other. No functional change.
+Add bindings for the system clock and reset generator (SYSCRG) on the
+JH7110 RISC-V SoC by StarFive Ltd.
 
-Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
 Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 ---
- drivers/clk/starfive/Kconfig               |   5 +
- drivers/clk/starfive/Makefile              |   3 +-
- drivers/clk/starfive/clk-starfive-jh7100.c | 325 --------------------
- drivers/clk/starfive/clk-starfive-jh7100.h |   2 +
- drivers/clk/starfive/clk-starfive-jh71x0.c | 333 +++++++++++++++++++++
- 5 files changed, 342 insertions(+), 326 deletions(-)
- create mode 100644 drivers/clk/starfive/clk-starfive-jh71x0.c
+ .../clock/starfive,jh7110-syscrg.yaml         | 104 +++++++++
+ MAINTAINERS                                   |  16 +-
+ .../dt-bindings/clock/starfive,jh7110-crg.h   | 203 ++++++++++++++++++
+ .../dt-bindings/reset/starfive,jh7110-crg.h   | 142 ++++++++++++
+ 4 files changed, 458 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+ create mode 100644 include/dt-bindings/clock/starfive,jh7110-crg.h
+ create mode 100644 include/dt-bindings/reset/starfive,jh7110-crg.h
 
-diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
-index ef3517f4a276..3ceeb19b5eda 100644
---- a/drivers/clk/starfive/Kconfig
-+++ b/drivers/clk/starfive/Kconfig
-@@ -1,8 +1,12 @@
- # SPDX-License-Identifier: GPL-2.0
- 
-+config CLK_STARFIVE_JH71X0
-+	bool
-+
- config CLK_STARFIVE_JH7100
- 	bool "StarFive JH7100 clock support"
- 	depends on ARCH_STARFIVE || COMPILE_TEST
-+	select CLK_STARFIVE_JH71X0
- 	default ARCH_STARFIVE
- 	help
- 	  Say yes here to support the clock controller on the StarFive JH7100
-@@ -11,6 +15,7 @@ config CLK_STARFIVE_JH7100
- config CLK_STARFIVE_JH7100_AUDIO
- 	tristate "StarFive JH7100 audio clock support"
- 	depends on CLK_STARFIVE_JH7100
-+	select CLK_STARFIVE_JH71X0
- 	default m if ARCH_STARFIVE
- 	help
- 	  Say Y or M here to support the audio clocks on the StarFive JH7100
-diff --git a/drivers/clk/starfive/Makefile b/drivers/clk/starfive/Makefile
-index 0fa8ecb9ec1c..82edfa9f9cb8 100644
---- a/drivers/clk/starfive/Makefile
-+++ b/drivers/clk/starfive/Makefile
-@@ -1,4 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--# StarFive Clock
-+obj-$(CONFIG_CLK_STARFIVE_JH71X0)	+= clk-starfive-jh71x0.o
-+
- obj-$(CONFIG_CLK_STARFIVE_JH7100)	+= clk-starfive-jh7100.o
- obj-$(CONFIG_CLK_STARFIVE_JH7100_AUDIO)	+= clk-starfive-jh7100-audio.o
-diff --git a/drivers/clk/starfive/clk-starfive-jh7100.c b/drivers/clk/starfive/clk-starfive-jh7100.c
-index 691aeebc7092..eea52f16af0d 100644
---- a/drivers/clk/starfive/clk-starfive-jh7100.c
-+++ b/drivers/clk/starfive/clk-starfive-jh7100.c
-@@ -7,15 +7,10 @@
-  * Copyright (C) 2021 Emil Renner Berthing <kernel@esmil.dk>
-  */
- 
--#include <linux/bits.h>
- #include <linux/clk-provider.h>
--#include <linux/debugfs.h>
- #include <linux/device.h>
- #include <linux/init.h>
--#include <linux/io.h>
--#include <linux/kernel.h>
- #include <linux/mod_devicetable.h>
--#include <linux/module.h>
- #include <linux/platform_device.h>
- 
- #include <dt-bindings/clock/starfive-jh7100.h>
-@@ -269,326 +264,6 @@ static const struct jh7100_clk_data jh7100_clk_data[] __initconst = {
- 	JH7100_GATE(JH7100_CLK_SYSERR_APB, "syserr_apb", 0, JH7100_CLK_APB2_BUS),
- };
- 
--static struct jh7100_clk *jh7100_clk_from(struct clk_hw *hw)
--{
--	return container_of(hw, struct jh7100_clk, hw);
--}
--
--static struct jh7100_clk_priv *jh7100_priv_from(struct jh7100_clk *clk)
--{
--	return container_of(clk, struct jh7100_clk_priv, reg[clk->idx]);
--}
--
--static u32 jh7100_clk_reg_get(struct jh7100_clk *clk)
--{
--	struct jh7100_clk_priv *priv = jh7100_priv_from(clk);
--	void __iomem *reg = priv->base + 4 * clk->idx;
--
--	return readl_relaxed(reg);
--}
--
--static void jh7100_clk_reg_rmw(struct jh7100_clk *clk, u32 mask, u32 value)
--{
--	struct jh7100_clk_priv *priv = jh7100_priv_from(clk);
--	void __iomem *reg = priv->base + 4 * clk->idx;
--	unsigned long flags;
--
--	spin_lock_irqsave(&priv->rmw_lock, flags);
--	value |= readl_relaxed(reg) & ~mask;
--	writel_relaxed(value, reg);
--	spin_unlock_irqrestore(&priv->rmw_lock, flags);
--}
--
--static int jh7100_clk_enable(struct clk_hw *hw)
--{
--	struct jh7100_clk *clk = jh7100_clk_from(hw);
--
--	jh7100_clk_reg_rmw(clk, JH7100_CLK_ENABLE, JH7100_CLK_ENABLE);
--	return 0;
--}
--
--static void jh7100_clk_disable(struct clk_hw *hw)
--{
--	struct jh7100_clk *clk = jh7100_clk_from(hw);
--
--	jh7100_clk_reg_rmw(clk, JH7100_CLK_ENABLE, 0);
--}
--
--static int jh7100_clk_is_enabled(struct clk_hw *hw)
--{
--	struct jh7100_clk *clk = jh7100_clk_from(hw);
--
--	return !!(jh7100_clk_reg_get(clk) & JH7100_CLK_ENABLE);
--}
--
--static unsigned long jh7100_clk_recalc_rate(struct clk_hw *hw,
--					    unsigned long parent_rate)
--{
--	struct jh7100_clk *clk = jh7100_clk_from(hw);
--	u32 div = jh7100_clk_reg_get(clk) & JH7100_CLK_DIV_MASK;
--
--	return div ? parent_rate / div : 0;
--}
--
--static int jh7100_clk_determine_rate(struct clk_hw *hw,
--				     struct clk_rate_request *req)
--{
--	struct jh7100_clk *clk = jh7100_clk_from(hw);
--	unsigned long parent = req->best_parent_rate;
--	unsigned long rate = clamp(req->rate, req->min_rate, req->max_rate);
--	unsigned long div = min_t(unsigned long, DIV_ROUND_UP(parent, rate), clk->max_div);
--	unsigned long result = parent / div;
--
--	/*
--	 * we want the result clamped by min_rate and max_rate if possible:
--	 * case 1: div hits the max divider value, which means it's less than
--	 * parent / rate, so the result is greater than rate and min_rate in
--	 * particular. we can't do anything about result > max_rate because the
--	 * divider doesn't go any further.
--	 * case 2: div = DIV_ROUND_UP(parent, rate) which means the result is
--	 * always lower or equal to rate and max_rate. however the result may
--	 * turn out lower than min_rate, but then the next higher rate is fine:
--	 *   div - 1 = ceil(parent / rate) - 1 < parent / rate
--	 * and thus
--	 *   min_rate <= rate < parent / (div - 1)
--	 */
--	if (result < req->min_rate && div > 1)
--		result = parent / (div - 1);
--
--	req->rate = result;
--	return 0;
--}
--
--static int jh7100_clk_set_rate(struct clk_hw *hw,
--			       unsigned long rate,
--			       unsigned long parent_rate)
--{
--	struct jh7100_clk *clk = jh7100_clk_from(hw);
--	unsigned long div = clamp(DIV_ROUND_CLOSEST(parent_rate, rate),
--				  1UL, (unsigned long)clk->max_div);
--
--	jh7100_clk_reg_rmw(clk, JH7100_CLK_DIV_MASK, div);
--	return 0;
--}
--
--static unsigned long jh7100_clk_frac_recalc_rate(struct clk_hw *hw,
--						 unsigned long parent_rate)
--{
--	struct jh7100_clk *clk = jh7100_clk_from(hw);
--	u32 reg = jh7100_clk_reg_get(clk);
--	unsigned long div100 = 100 * (reg & JH7100_CLK_INT_MASK) +
--			       ((reg & JH7100_CLK_FRAC_MASK) >> JH7100_CLK_FRAC_SHIFT);
--
--	return (div100 >= JH7100_CLK_FRAC_MIN) ? 100 * parent_rate / div100 : 0;
--}
--
--static int jh7100_clk_frac_determine_rate(struct clk_hw *hw,
--					  struct clk_rate_request *req)
--{
--	unsigned long parent100 = 100 * req->best_parent_rate;
--	unsigned long rate = clamp(req->rate, req->min_rate, req->max_rate);
--	unsigned long div100 = clamp(DIV_ROUND_CLOSEST(parent100, rate),
--				     JH7100_CLK_FRAC_MIN, JH7100_CLK_FRAC_MAX);
--	unsigned long result = parent100 / div100;
--
--	/* clamp the result as in jh7100_clk_determine_rate() above */
--	if (result > req->max_rate && div100 < JH7100_CLK_FRAC_MAX)
--		result = parent100 / (div100 + 1);
--	if (result < req->min_rate && div100 > JH7100_CLK_FRAC_MIN)
--		result = parent100 / (div100 - 1);
--
--	req->rate = result;
--	return 0;
--}
--
--static int jh7100_clk_frac_set_rate(struct clk_hw *hw,
--				    unsigned long rate,
--				    unsigned long parent_rate)
--{
--	struct jh7100_clk *clk = jh7100_clk_from(hw);
--	unsigned long div100 = clamp(DIV_ROUND_CLOSEST(100 * parent_rate, rate),
--				     JH7100_CLK_FRAC_MIN, JH7100_CLK_FRAC_MAX);
--	u32 value = ((div100 % 100) << JH7100_CLK_FRAC_SHIFT) | (div100 / 100);
--
--	jh7100_clk_reg_rmw(clk, JH7100_CLK_DIV_MASK, value);
--	return 0;
--}
--
--static u8 jh7100_clk_get_parent(struct clk_hw *hw)
--{
--	struct jh7100_clk *clk = jh7100_clk_from(hw);
--	u32 value = jh7100_clk_reg_get(clk);
--
--	return (value & JH7100_CLK_MUX_MASK) >> JH7100_CLK_MUX_SHIFT;
--}
--
--static int jh7100_clk_set_parent(struct clk_hw *hw, u8 index)
--{
--	struct jh7100_clk *clk = jh7100_clk_from(hw);
--	u32 value = (u32)index << JH7100_CLK_MUX_SHIFT;
--
--	jh7100_clk_reg_rmw(clk, JH7100_CLK_MUX_MASK, value);
--	return 0;
--}
--
--static int jh7100_clk_mux_determine_rate(struct clk_hw *hw,
--					 struct clk_rate_request *req)
--{
--	return clk_mux_determine_rate_flags(hw, req, 0);
--}
--
--static int jh7100_clk_get_phase(struct clk_hw *hw)
--{
--	struct jh7100_clk *clk = jh7100_clk_from(hw);
--	u32 value = jh7100_clk_reg_get(clk);
--
--	return (value & JH7100_CLK_INVERT) ? 180 : 0;
--}
--
--static int jh7100_clk_set_phase(struct clk_hw *hw, int degrees)
--{
--	struct jh7100_clk *clk = jh7100_clk_from(hw);
--	u32 value;
--
--	if (degrees == 0)
--		value = 0;
--	else if (degrees == 180)
--		value = JH7100_CLK_INVERT;
--	else
--		return -EINVAL;
--
--	jh7100_clk_reg_rmw(clk, JH7100_CLK_INVERT, value);
--	return 0;
--}
--
--#ifdef CONFIG_DEBUG_FS
--static void jh7100_clk_debug_init(struct clk_hw *hw, struct dentry *dentry)
--{
--	static const struct debugfs_reg32 jh7100_clk_reg = {
--		.name = "CTRL",
--		.offset = 0,
--	};
--	struct jh7100_clk *clk = jh7100_clk_from(hw);
--	struct jh7100_clk_priv *priv = jh7100_priv_from(clk);
--	struct debugfs_regset32 *regset;
--
--	regset = devm_kzalloc(priv->dev, sizeof(*regset), GFP_KERNEL);
--	if (!regset)
--		return;
--
--	regset->regs = &jh7100_clk_reg;
--	regset->nregs = 1;
--	regset->base = priv->base + 4 * clk->idx;
--
--	debugfs_create_regset32("registers", 0400, dentry, regset);
--}
--#else
--#define jh7100_clk_debug_init NULL
--#endif
--
--static const struct clk_ops jh7100_clk_gate_ops = {
--	.enable = jh7100_clk_enable,
--	.disable = jh7100_clk_disable,
--	.is_enabled = jh7100_clk_is_enabled,
--	.debug_init = jh7100_clk_debug_init,
--};
--
--static const struct clk_ops jh7100_clk_div_ops = {
--	.recalc_rate = jh7100_clk_recalc_rate,
--	.determine_rate = jh7100_clk_determine_rate,
--	.set_rate = jh7100_clk_set_rate,
--	.debug_init = jh7100_clk_debug_init,
--};
--
--static const struct clk_ops jh7100_clk_fdiv_ops = {
--	.recalc_rate = jh7100_clk_frac_recalc_rate,
--	.determine_rate = jh7100_clk_frac_determine_rate,
--	.set_rate = jh7100_clk_frac_set_rate,
--	.debug_init = jh7100_clk_debug_init,
--};
--
--static const struct clk_ops jh7100_clk_gdiv_ops = {
--	.enable = jh7100_clk_enable,
--	.disable = jh7100_clk_disable,
--	.is_enabled = jh7100_clk_is_enabled,
--	.recalc_rate = jh7100_clk_recalc_rate,
--	.determine_rate = jh7100_clk_determine_rate,
--	.set_rate = jh7100_clk_set_rate,
--	.debug_init = jh7100_clk_debug_init,
--};
--
--static const struct clk_ops jh7100_clk_mux_ops = {
--	.determine_rate = jh7100_clk_mux_determine_rate,
--	.set_parent = jh7100_clk_set_parent,
--	.get_parent = jh7100_clk_get_parent,
--	.debug_init = jh7100_clk_debug_init,
--};
--
--static const struct clk_ops jh7100_clk_gmux_ops = {
--	.enable = jh7100_clk_enable,
--	.disable = jh7100_clk_disable,
--	.is_enabled = jh7100_clk_is_enabled,
--	.determine_rate = jh7100_clk_mux_determine_rate,
--	.set_parent = jh7100_clk_set_parent,
--	.get_parent = jh7100_clk_get_parent,
--	.debug_init = jh7100_clk_debug_init,
--};
--
--static const struct clk_ops jh7100_clk_mdiv_ops = {
--	.recalc_rate = jh7100_clk_recalc_rate,
--	.determine_rate = jh7100_clk_determine_rate,
--	.get_parent = jh7100_clk_get_parent,
--	.set_parent = jh7100_clk_set_parent,
--	.set_rate = jh7100_clk_set_rate,
--	.debug_init = jh7100_clk_debug_init,
--};
--
--static const struct clk_ops jh7100_clk_gmd_ops = {
--	.enable = jh7100_clk_enable,
--	.disable = jh7100_clk_disable,
--	.is_enabled = jh7100_clk_is_enabled,
--	.recalc_rate = jh7100_clk_recalc_rate,
--	.determine_rate = jh7100_clk_determine_rate,
--	.get_parent = jh7100_clk_get_parent,
--	.set_parent = jh7100_clk_set_parent,
--	.set_rate = jh7100_clk_set_rate,
--	.debug_init = jh7100_clk_debug_init,
--};
--
--static const struct clk_ops jh7100_clk_inv_ops = {
--	.get_phase = jh7100_clk_get_phase,
--	.set_phase = jh7100_clk_set_phase,
--	.debug_init = jh7100_clk_debug_init,
--};
--
--const struct clk_ops *starfive_jh7100_clk_ops(u32 max)
--{
--	if (max & JH7100_CLK_DIV_MASK) {
--		if (max & JH7100_CLK_MUX_MASK) {
--			if (max & JH7100_CLK_ENABLE)
--				return &jh7100_clk_gmd_ops;
--			return &jh7100_clk_mdiv_ops;
--		}
--		if (max & JH7100_CLK_ENABLE)
--			return &jh7100_clk_gdiv_ops;
--		if (max == JH7100_CLK_FRAC_MAX)
--			return &jh7100_clk_fdiv_ops;
--		return &jh7100_clk_div_ops;
--	}
--
--	if (max & JH7100_CLK_MUX_MASK) {
--		if (max & JH7100_CLK_ENABLE)
--			return &jh7100_clk_gmux_ops;
--		return &jh7100_clk_mux_ops;
--	}
--
--	if (max & JH7100_CLK_ENABLE)
--		return &jh7100_clk_gate_ops;
--
--	return &jh7100_clk_inv_ops;
--}
--EXPORT_SYMBOL_GPL(starfive_jh7100_clk_ops);
--
- static struct clk_hw *jh7100_clk_get(struct of_phandle_args *clkspec, void *data)
- {
- 	struct jh7100_clk_priv *priv = data;
-diff --git a/drivers/clk/starfive/clk-starfive-jh7100.h b/drivers/clk/starfive/clk-starfive-jh7100.h
-index f116be5740a5..a8ba6e25b5ce 100644
---- a/drivers/clk/starfive/clk-starfive-jh7100.h
-+++ b/drivers/clk/starfive/clk-starfive-jh7100.h
-@@ -4,6 +4,8 @@
- 
- #include <linux/bits.h>
- #include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/spinlock.h>
- 
- /* register fields */
- #define JH7100_CLK_ENABLE	BIT(31)
-diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.c b/drivers/clk/starfive/clk-starfive-jh71x0.c
+diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
 new file mode 100644
-index 000000000000..6c07b61b4a32
+index 000000000000..84373ae31644
 --- /dev/null
-+++ b/drivers/clk/starfive/clk-starfive-jh71x0.c
-@@ -0,0 +1,333 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+@@ -0,0 +1,104 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/starfive,jh7110-syscrg.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: StarFive JH7110 System Clock and Reset Generator
++
++maintainers:
++  - Emil Renner Berthing <kernel@esmil.dk>
++
++properties:
++  compatible:
++    const: starfive,jh7110-syscrg
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    oneOf:
++      - items:
++          - description: Main Oscillator (24 MHz)
++          - description: GMAC1 RMII reference or GMAC1 RGMII RX
++          - description: External I2S TX bit clock
++          - description: External I2S TX left/right channel clock
++          - description: External I2S RX bit clock
++          - description: External I2S RX left/right channel clock
++          - description: External TDM clock
++          - description: External audio master clock
++
++      - items:
++          - description: Main Oscillator (24 MHz)
++          - description: GMAC1 RMII reference
++          - description: GMAC1 RGMII RX
++          - description: External I2S TX bit clock
++          - description: External I2S TX left/right channel clock
++          - description: External I2S RX bit clock
++          - description: External I2S RX left/right channel clock
++          - description: External TDM clock
++          - description: External audio master clock
++
++  clock-names:
++    oneOf:
++      - items:
++          - const: osc
++          - enum:
++              - gmac1_rmii_refin
++              - gmac1_rgmii_rxin
++          - const: i2stx_bclk_ext
++          - const: i2stx_lrck_ext
++          - const: i2srx_bclk_ext
++          - const: i2srx_lrck_ext
++          - const: tdm_ext
++          - const: mclk_ext
++
++      - items:
++          - const: osc
++          - const: gmac1_rmii_refin
++          - const: gmac1_rgmii_rxin
++          - const: i2stx_bclk_ext
++          - const: i2stx_lrck_ext
++          - const: i2srx_bclk_ext
++          - const: i2srx_lrck_ext
++          - const: tdm_ext
++          - const: mclk_ext
++
++  '#clock-cells':
++    const: 1
++    description:
++      See <dt-bindings/clock/starfive,jh7110-crg.h> for valid indices.
++
++  '#reset-cells':
++    const: 1
++    description:
++      See <dt-bindings/reset/starfive,jh7110-crg.h> for valid indices.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#clock-cells'
++  - '#reset-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@13020000 {
++        compatible = "starfive,jh7110-syscrg";
++        reg = <0x13020000 0x10000>;
++        clocks = <&osc>, <&gmac1_rmii_refin>,
++                 <&gmac1_rgmii_rxin>,
++                 <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
++                 <&i2srx_bclk_ext>, <&i2srx_lrck_ext>,
++                 <&tdm_ext>, <&mclk_ext>;
++        clock-names = "osc", "gmac1_rmii_refin",
++                      "gmac1_rgmii_rxin",
++                      "i2stx_bclk_ext", "i2stx_lrck_ext",
++                      "i2srx_bclk_ext", "i2srx_lrck_ext",
++                      "tdm_ext", "mclk_ext";
++        #clock-cells = <1>;
++        #reset-cells = <1>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1dc8bd26b6cf..e674a65d4e42 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19905,12 +19905,13 @@ M:	Emil Renner Berthing <kernel@esmil.dk>
+ S:	Maintained
+ F:	arch/riscv/boot/dts/starfive/
+ 
+-STARFIVE JH7100 CLOCK DRIVERS
++STARFIVE JH71X0 CLOCK DRIVERS
+ M:	Emil Renner Berthing <kernel@esmil.dk>
++M:	Hal Feng <hal.feng@starfivetech.com>
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/clock/starfive,jh7100-*.yaml
+-F:	drivers/clk/starfive/clk-starfive-jh7100*
+-F:	include/dt-bindings/clock/starfive-jh7100*.h
++F:	Documentation/devicetree/bindings/clock/starfive,jh71*.yaml
++F:	drivers/clk/starfive/clk-starfive-jh71*
++F:	include/dt-bindings/clock/starfive?jh71*.h
+ 
+ STARFIVE JH7110 MMC/SD/SDIO DRIVER
+ M:	William Qiu <william.qiu@starfivetech.com>
+@@ -19928,12 +19929,13 @@ F:	drivers/pinctrl/starfive/pinctrl-starfive-jh71*
+ F:	include/dt-bindings/pinctrl/pinctrl-starfive-jh7100.h
+ F:	include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
+ 
+-STARFIVE JH7100 RESET CONTROLLER DRIVER
++STARFIVE JH71X0 RESET CONTROLLER DRIVER
+ M:	Emil Renner Berthing <kernel@esmil.dk>
++M:	Hal Feng <hal.feng@starfivetech.com>
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
+-F:	drivers/reset/reset-starfive-jh7100.c
+-F:	include/dt-bindings/reset/starfive-jh7100.h
++F:	drivers/reset/starfive/reset-starfive-jh71*
++F:	include/dt-bindings/reset/starfive?jh71*.h
+ 
+ STARFIVE JH71XX PMU CONTROLLER DRIVER
+ M:	Walker Chen <walker.chen@starfivetech.com>
+diff --git a/include/dt-bindings/clock/starfive,jh7110-crg.h b/include/dt-bindings/clock/starfive,jh7110-crg.h
+new file mode 100644
+index 000000000000..fdd1852e34cc
+--- /dev/null
++++ b/include/dt-bindings/clock/starfive,jh7110-crg.h
+@@ -0,0 +1,203 @@
++/* SPDX-License-Identifier: GPL-2.0 OR MIT */
 +/*
-+ * StarFive JH7100 Clock Generator Driver
-+ *
-+ * Copyright (C) 2021-2022 Emil Renner Berthing <kernel@esmil.dk>
++ * Copyright 2022 Emil Renner Berthing <kernel@esmil.dk>
 + */
 +
-+#include <linux/clk-provider.h>
-+#include <linux/debugfs.h>
-+#include <linux/device.h>
-+#include <linux/io.h>
++#ifndef __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
++#define __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
 +
-+#include "clk-starfive-jh7100.h"
++/* SYSCRG clocks */
++#define JH7110_SYSCLK_CPU_ROOT			0
++#define JH7110_SYSCLK_CPU_CORE			1
++#define JH7110_SYSCLK_CPU_BUS			2
++#define JH7110_SYSCLK_GPU_ROOT			3
++#define JH7110_SYSCLK_PERH_ROOT			4
++#define JH7110_SYSCLK_BUS_ROOT			5
++#define JH7110_SYSCLK_NOCSTG_BUS		6
++#define JH7110_SYSCLK_AXI_CFG0			7
++#define JH7110_SYSCLK_STG_AXIAHB		8
++#define JH7110_SYSCLK_AHB0			9
++#define JH7110_SYSCLK_AHB1			10
++#define JH7110_SYSCLK_APB_BUS			11
++#define JH7110_SYSCLK_APB0			12
++#define JH7110_SYSCLK_PLL0_DIV2			13
++#define JH7110_SYSCLK_PLL1_DIV2			14
++#define JH7110_SYSCLK_PLL2_DIV2			15
++#define JH7110_SYSCLK_AUDIO_ROOT		16
++#define JH7110_SYSCLK_MCLK_INNER		17
++#define JH7110_SYSCLK_MCLK			18
++#define JH7110_SYSCLK_MCLK_OUT			19
++#define JH7110_SYSCLK_ISP_2X			20
++#define JH7110_SYSCLK_ISP_AXI			21
++#define JH7110_SYSCLK_GCLK0			22
++#define JH7110_SYSCLK_GCLK1			23
++#define JH7110_SYSCLK_GCLK2			24
++#define JH7110_SYSCLK_CORE			25
++#define JH7110_SYSCLK_CORE1			26
++#define JH7110_SYSCLK_CORE2			27
++#define JH7110_SYSCLK_CORE3			28
++#define JH7110_SYSCLK_CORE4			29
++#define JH7110_SYSCLK_DEBUG			30
++#define JH7110_SYSCLK_RTC_TOGGLE		31
++#define JH7110_SYSCLK_TRACE0			32
++#define JH7110_SYSCLK_TRACE1			33
++#define JH7110_SYSCLK_TRACE2			34
++#define JH7110_SYSCLK_TRACE3			35
++#define JH7110_SYSCLK_TRACE4			36
++#define JH7110_SYSCLK_TRACE_COM			37
++#define JH7110_SYSCLK_NOC_BUS_CPU_AXI		38
++#define JH7110_SYSCLK_NOC_BUS_AXICFG0_AXI	39
++#define JH7110_SYSCLK_OSC_DIV2			40
++#define JH7110_SYSCLK_PLL1_DIV4			41
++#define JH7110_SYSCLK_PLL1_DIV8			42
++#define JH7110_SYSCLK_DDR_BUS			43
++#define JH7110_SYSCLK_DDR_AXI			44
++#define JH7110_SYSCLK_GPU_CORE			45
++#define JH7110_SYSCLK_GPU_CORE_CLK		46
++#define JH7110_SYSCLK_GPU_SYS_CLK		47
++#define JH7110_SYSCLK_GPU_APB			48
++#define JH7110_SYSCLK_GPU_RTC_TOGGLE		49
++#define JH7110_SYSCLK_NOC_BUS_GPU_AXI		50
++#define JH7110_SYSCLK_ISP_TOP_CORE		51
++#define JH7110_SYSCLK_ISP_TOP_AXI		52
++#define JH7110_SYSCLK_NOC_BUS_ISP_AXI		53
++#define JH7110_SYSCLK_HIFI4_CORE		54
++#define JH7110_SYSCLK_HIFI4_AXI			55
++#define JH7110_SYSCLK_AXI_CFG1_MAIN		56
++#define JH7110_SYSCLK_AXI_CFG1_AHB		57
++#define JH7110_SYSCLK_VOUT_SRC			58
++#define JH7110_SYSCLK_VOUT_AXI			59
++#define JH7110_SYSCLK_NOC_BUS_DISP_AXI		60
++#define JH7110_SYSCLK_VOUT_TOP_AHB		61
++#define JH7110_SYSCLK_VOUT_TOP_AXI		62
++#define JH7110_SYSCLK_VOUT_TOP_HDMITX0_MCLK	63
++#define JH7110_SYSCLK_VOUT_TOP_MIPIPHY_REF	64
++#define JH7110_SYSCLK_JPEGC_AXI			65
++#define JH7110_SYSCLK_CODAJ12_AXI		66
++#define JH7110_SYSCLK_CODAJ12_CORE		67
++#define JH7110_SYSCLK_CODAJ12_APB		68
++#define JH7110_SYSCLK_VDEC_AXI			69
++#define JH7110_SYSCLK_WAVE511_AXI		70
++#define JH7110_SYSCLK_WAVE511_BPU		71
++#define JH7110_SYSCLK_WAVE511_VCE		72
++#define JH7110_SYSCLK_WAVE511_APB		73
++#define JH7110_SYSCLK_VDEC_JPG			74
++#define JH7110_SYSCLK_VDEC_MAIN			75
++#define JH7110_SYSCLK_NOC_BUS_VDEC_AXI		76
++#define JH7110_SYSCLK_VENC_AXI			77
++#define JH7110_SYSCLK_WAVE420L_AXI		78
++#define JH7110_SYSCLK_WAVE420L_BPU		79
++#define JH7110_SYSCLK_WAVE420L_VCE		80
++#define JH7110_SYSCLK_WAVE420L_APB		81
++#define JH7110_SYSCLK_NOC_BUS_VENC_AXI		82
++#define JH7110_SYSCLK_AXI_CFG0_MAIN_DIV		83
++#define JH7110_SYSCLK_AXI_CFG0_MAIN		84
++#define JH7110_SYSCLK_AXI_CFG0_HIFI4		85
++#define JH7110_SYSCLK_AXIMEM2_AXI		86
++#define JH7110_SYSCLK_QSPI_AHB			87
++#define JH7110_SYSCLK_QSPI_APB			88
++#define JH7110_SYSCLK_QSPI_REF_SRC		89
++#define JH7110_SYSCLK_QSPI_REF			90
++#define JH7110_SYSCLK_SDIO0_AHB			91
++#define JH7110_SYSCLK_SDIO1_AHB			92
++#define JH7110_SYSCLK_SDIO0_SDCARD		93
++#define JH7110_SYSCLK_SDIO1_SDCARD		94
++#define JH7110_SYSCLK_USB_125M			95
++#define JH7110_SYSCLK_NOC_BUS_STG_AXI		96
++#define JH7110_SYSCLK_GMAC1_AHB			97
++#define JH7110_SYSCLK_GMAC1_AXI			98
++#define JH7110_SYSCLK_GMAC_SRC			99
++#define JH7110_SYSCLK_GMAC1_GTXCLK		100
++#define JH7110_SYSCLK_GMAC1_RMII_RTX		101
++#define JH7110_SYSCLK_GMAC1_PTP			102
++#define JH7110_SYSCLK_GMAC1_RX			103
++#define JH7110_SYSCLK_GMAC1_RX_INV		104
++#define JH7110_SYSCLK_GMAC1_TX			105
++#define JH7110_SYSCLK_GMAC1_TX_INV		106
++#define JH7110_SYSCLK_GMAC1_GTXC		107
++#define JH7110_SYSCLK_GMAC0_GTXCLK		108
++#define JH7110_SYSCLK_GMAC0_PTP			109
++#define JH7110_SYSCLK_GMAC_PHY			110
++#define JH7110_SYSCLK_GMAC0_GTXC		111
++#define JH7110_SYSCLK_IOMUX_APB			112
++#define JH7110_SYSCLK_MAILBOX_APB		113
++#define JH7110_SYSCLK_INT_CTRL_APB		114
++#define JH7110_SYSCLK_CAN0_APB			115
++#define JH7110_SYSCLK_CAN0_TIMER		116
++#define JH7110_SYSCLK_CAN0_CAN			117
++#define JH7110_SYSCLK_CAN1_APB			118
++#define JH7110_SYSCLK_CAN1_TIMER		119
++#define JH7110_SYSCLK_CAN1_CAN			120
++#define JH7110_SYSCLK_PWM_APB			121
++#define JH7110_SYSCLK_WDT_APB			122
++#define JH7110_SYSCLK_WDT_CORE			123
++#define JH7110_SYSCLK_TIMER_APB			124
++#define JH7110_SYSCLK_TIMER0			125
++#define JH7110_SYSCLK_TIMER1			126
++#define JH7110_SYSCLK_TIMER2			127
++#define JH7110_SYSCLK_TIMER3			128
++#define JH7110_SYSCLK_TEMP_APB			129
++#define JH7110_SYSCLK_TEMP_CORE			130
++#define JH7110_SYSCLK_SPI0_APB			131
++#define JH7110_SYSCLK_SPI1_APB			132
++#define JH7110_SYSCLK_SPI2_APB			133
++#define JH7110_SYSCLK_SPI3_APB			134
++#define JH7110_SYSCLK_SPI4_APB			135
++#define JH7110_SYSCLK_SPI5_APB			136
++#define JH7110_SYSCLK_SPI6_APB			137
++#define JH7110_SYSCLK_I2C0_APB			138
++#define JH7110_SYSCLK_I2C1_APB			139
++#define JH7110_SYSCLK_I2C2_APB			140
++#define JH7110_SYSCLK_I2C3_APB			141
++#define JH7110_SYSCLK_I2C4_APB			142
++#define JH7110_SYSCLK_I2C5_APB			143
++#define JH7110_SYSCLK_I2C6_APB			144
++#define JH7110_SYSCLK_UART0_APB			145
++#define JH7110_SYSCLK_UART0_CORE		146
++#define JH7110_SYSCLK_UART1_APB			147
++#define JH7110_SYSCLK_UART1_CORE		148
++#define JH7110_SYSCLK_UART2_APB			149
++#define JH7110_SYSCLK_UART2_CORE		150
++#define JH7110_SYSCLK_UART3_APB			151
++#define JH7110_SYSCLK_UART3_CORE		152
++#define JH7110_SYSCLK_UART4_APB			153
++#define JH7110_SYSCLK_UART4_CORE		154
++#define JH7110_SYSCLK_UART5_APB			155
++#define JH7110_SYSCLK_UART5_CORE		156
++#define JH7110_SYSCLK_PWMDAC_APB		157
++#define JH7110_SYSCLK_PWMDAC_CORE		158
++#define JH7110_SYSCLK_SPDIF_APB			159
++#define JH7110_SYSCLK_SPDIF_CORE		160
++#define JH7110_SYSCLK_I2STX0_APB		161
++#define JH7110_SYSCLK_I2STX0_BCLK_MST		162
++#define JH7110_SYSCLK_I2STX0_BCLK_MST_INV	163
++#define JH7110_SYSCLK_I2STX0_LRCK_MST		164
++#define JH7110_SYSCLK_I2STX0_BCLK		165
++#define JH7110_SYSCLK_I2STX0_BCLK_INV		166
++#define JH7110_SYSCLK_I2STX0_LRCK		167
++#define JH7110_SYSCLK_I2STX1_APB		168
++#define JH7110_SYSCLK_I2STX1_BCLK_MST		169
++#define JH7110_SYSCLK_I2STX1_BCLK_MST_INV	170
++#define JH7110_SYSCLK_I2STX1_LRCK_MST		171
++#define JH7110_SYSCLK_I2STX1_BCLK		172
++#define JH7110_SYSCLK_I2STX1_BCLK_INV		173
++#define JH7110_SYSCLK_I2STX1_LRCK		174
++#define JH7110_SYSCLK_I2SRX_APB			175
++#define JH7110_SYSCLK_I2SRX_BCLK_MST		176
++#define JH7110_SYSCLK_I2SRX_BCLK_MST_INV	177
++#define JH7110_SYSCLK_I2SRX_LRCK_MST		178
++#define JH7110_SYSCLK_I2SRX_BCLK		179
++#define JH7110_SYSCLK_I2SRX_BCLK_INV		180
++#define JH7110_SYSCLK_I2SRX_LRCK		181
++#define JH7110_SYSCLK_PDM_DMIC			182
++#define JH7110_SYSCLK_PDM_APB			183
++#define JH7110_SYSCLK_TDM_AHB			184
++#define JH7110_SYSCLK_TDM_APB			185
++#define JH7110_SYSCLK_TDM_INTERNAL		186
++#define JH7110_SYSCLK_TDM_TDM			187
++#define JH7110_SYSCLK_TDM_TDM_INV		188
++#define JH7110_SYSCLK_JTAG_CERTIFICATION_TRNG	189
 +
-+static struct jh7100_clk *jh7100_clk_from(struct clk_hw *hw)
-+{
-+	return container_of(hw, struct jh7100_clk, hw);
-+}
++#define JH7110_SYSCLK_END			190
 +
-+static struct jh7100_clk_priv *jh7100_priv_from(struct jh7100_clk *clk)
-+{
-+	return container_of(clk, struct jh7100_clk_priv, reg[clk->idx]);
-+}
++#endif /* __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__ */
+diff --git a/include/dt-bindings/reset/starfive,jh7110-crg.h b/include/dt-bindings/reset/starfive,jh7110-crg.h
+new file mode 100644
+index 000000000000..b88216a4fe40
+--- /dev/null
++++ b/include/dt-bindings/reset/starfive,jh7110-crg.h
+@@ -0,0 +1,142 @@
++/* SPDX-License-Identifier: GPL-2.0 OR MIT */
++/*
++ * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
++ */
 +
-+static u32 jh7100_clk_reg_get(struct jh7100_clk *clk)
-+{
-+	struct jh7100_clk_priv *priv = jh7100_priv_from(clk);
-+	void __iomem *reg = priv->base + 4 * clk->idx;
++#ifndef __DT_BINDINGS_RESET_STARFIVE_JH7110_CRG_H__
++#define __DT_BINDINGS_RESET_STARFIVE_JH7110_CRG_H__
 +
-+	return readl_relaxed(reg);
-+}
++/* SYSCRG resets */
++#define JH7110_SYSRST_JTAG_APB			0
++#define JH7110_SYSRST_SYSCON_APB		1
++#define JH7110_SYSRST_IOMUX_APB			2
++#define JH7110_SYSRST_BUS			3
++#define JH7110_SYSRST_DEBUG			4
++#define JH7110_SYSRST_CORE0			5
++#define JH7110_SYSRST_CORE1			6
++#define JH7110_SYSRST_CORE2			7
++#define JH7110_SYSRST_CORE3			8
++#define JH7110_SYSRST_CORE4			9
++#define JH7110_SYSRST_CORE0_ST			10
++#define JH7110_SYSRST_CORE1_ST			11
++#define JH7110_SYSRST_CORE2_ST			12
++#define JH7110_SYSRST_CORE3_ST			13
++#define JH7110_SYSRST_CORE4_ST			14
++#define JH7110_SYSRST_TRACE0			15
++#define JH7110_SYSRST_TRACE1			16
++#define JH7110_SYSRST_TRACE2			17
++#define JH7110_SYSRST_TRACE3			18
++#define JH7110_SYSRST_TRACE4			19
++#define JH7110_SYSRST_TRACE_COM			20
++#define JH7110_SYSRST_GPU_APB			21
++#define JH7110_SYSRST_GPU_DOMA			22
++#define JH7110_SYSRST_NOC_BUS_APB		23
++#define JH7110_SYSRST_NOC_BUS_AXICFG0_AXI	24
++#define JH7110_SYSRST_NOC_BUS_CPU_AXI		25
++#define JH7110_SYSRST_NOC_BUS_DISP_AXI		26
++#define JH7110_SYSRST_NOC_BUS_GPU_AXI		27
++#define JH7110_SYSRST_NOC_BUS_ISP_AXI		28
++#define JH7110_SYSRST_NOC_BUS_DDRC		29
++#define JH7110_SYSRST_NOC_BUS_STG_AXI		30
++#define JH7110_SYSRST_NOC_BUS_VDEC_AXI		31
 +
-+static void jh7100_clk_reg_rmw(struct jh7100_clk *clk, u32 mask, u32 value)
-+{
-+	struct jh7100_clk_priv *priv = jh7100_priv_from(clk);
-+	void __iomem *reg = priv->base + 4 * clk->idx;
-+	unsigned long flags;
++#define JH7110_SYSRST_NOC_BUS_VENC_AXI		32
++#define JH7110_SYSRST_AXI_CFG1_AHB		33
++#define JH7110_SYSRST_AXI_CFG1_MAIN		34
++#define JH7110_SYSRST_AXI_CFG0_MAIN		35
++#define JH7110_SYSRST_AXI_CFG0_MAIN_DIV		36
++#define JH7110_SYSRST_AXI_CFG0_HIFI4		37
++#define JH7110_SYSRST_DDR_AXI			38
++#define JH7110_SYSRST_DDR_OSC			39
++#define JH7110_SYSRST_DDR_APB			40
++#define JH7110_SYSRST_ISP_TOP			41
++#define JH7110_SYSRST_ISP_TOP_AXI		42
++#define JH7110_SYSRST_VOUT_TOP_SRC		43
++#define JH7110_SYSRST_CODAJ12_AXI		44
++#define JH7110_SYSRST_CODAJ12_CORE		45
++#define JH7110_SYSRST_CODAJ12_APB		46
++#define JH7110_SYSRST_WAVE511_AXI		47
++#define JH7110_SYSRST_WAVE511_BPU		48
++#define JH7110_SYSRST_WAVE511_VCE		49
++#define JH7110_SYSRST_WAVE511_APB		50
++#define JH7110_SYSRST_VDEC_JPG			51
++#define JH7110_SYSRST_VDEC_MAIN			52
++#define JH7110_SYSRST_AXIMEM0_AXI		53
++#define JH7110_SYSRST_WAVE420L_AXI		54
++#define JH7110_SYSRST_WAVE420L_BPU		55
++#define JH7110_SYSRST_WAVE420L_VCE		56
++#define JH7110_SYSRST_WAVE420L_APB		57
++#define JH7110_SYSRST_AXIMEM1_AXI		58
++#define JH7110_SYSRST_AXIMEM2_AXI		59
++#define JH7110_SYSRST_INTMEM			60
++#define JH7110_SYSRST_QSPI_AHB			61
++#define JH7110_SYSRST_QSPI_APB			62
++#define JH7110_SYSRST_QSPI_REF			63
 +
-+	spin_lock_irqsave(&priv->rmw_lock, flags);
-+	value |= readl_relaxed(reg) & ~mask;
-+	writel_relaxed(value, reg);
-+	spin_unlock_irqrestore(&priv->rmw_lock, flags);
-+}
++#define JH7110_SYSRST_SDIO0_AHB			64
++#define JH7110_SYSRST_SDIO1_AHB			65
++#define JH7110_SYSRST_GMAC1_AXI			66
++#define JH7110_SYSRST_GMAC1_AHB			67
++#define JH7110_SYSRST_MAILBOX_APB		68
++#define JH7110_SYSRST_SPI0_APB			69
++#define JH7110_SYSRST_SPI1_APB			70
++#define JH7110_SYSRST_SPI2_APB			71
++#define JH7110_SYSRST_SPI3_APB			72
++#define JH7110_SYSRST_SPI4_APB			73
++#define JH7110_SYSRST_SPI5_APB			74
++#define JH7110_SYSRST_SPI6_APB			75
++#define JH7110_SYSRST_I2C0_APB			76
++#define JH7110_SYSRST_I2C1_APB			77
++#define JH7110_SYSRST_I2C2_APB			78
++#define JH7110_SYSRST_I2C3_APB			79
++#define JH7110_SYSRST_I2C4_APB			80
++#define JH7110_SYSRST_I2C5_APB			81
++#define JH7110_SYSRST_I2C6_APB			82
++#define JH7110_SYSRST_UART0_APB			83
++#define JH7110_SYSRST_UART0_CORE		84
++#define JH7110_SYSRST_UART1_APB			85
++#define JH7110_SYSRST_UART1_CORE		86
++#define JH7110_SYSRST_UART2_APB			87
++#define JH7110_SYSRST_UART2_CORE		88
++#define JH7110_SYSRST_UART3_APB			89
++#define JH7110_SYSRST_UART3_CORE		90
++#define JH7110_SYSRST_UART4_APB			91
++#define JH7110_SYSRST_UART4_CORE		92
++#define JH7110_SYSRST_UART5_APB			93
++#define JH7110_SYSRST_UART5_CORE		94
++#define JH7110_SYSRST_SPDIF_APB			95
 +
-+static int jh7100_clk_enable(struct clk_hw *hw)
-+{
-+	struct jh7100_clk *clk = jh7100_clk_from(hw);
++#define JH7110_SYSRST_PWMDAC_APB		96
++#define JH7110_SYSRST_PDM_DMIC			97
++#define JH7110_SYSRST_PDM_APB			98
++#define JH7110_SYSRST_I2SRX_APB			99
++#define JH7110_SYSRST_I2SRX_BCLK		100
++#define JH7110_SYSRST_I2STX0_APB		101
++#define JH7110_SYSRST_I2STX0_BCLK		102
++#define JH7110_SYSRST_I2STX1_APB		103
++#define JH7110_SYSRST_I2STX1_BCLK		104
++#define JH7110_SYSRST_TDM_AHB			105
++#define JH7110_SYSRST_TDM_CORE			106
++#define JH7110_SYSRST_TDM_APB			107
++#define JH7110_SYSRST_PWM_APB			108
++#define JH7110_SYSRST_WDT_APB			109
++#define JH7110_SYSRST_WDT_CORE			110
++#define JH7110_SYSRST_CAN0_APB			111
++#define JH7110_SYSRST_CAN0_CORE			112
++#define JH7110_SYSRST_CAN0_TIMER		113
++#define JH7110_SYSRST_CAN1_APB			114
++#define JH7110_SYSRST_CAN1_CORE			115
++#define JH7110_SYSRST_CAN1_TIMER		116
++#define JH7110_SYSRST_TIMER_APB			117
++#define JH7110_SYSRST_TIMER0			118
++#define JH7110_SYSRST_TIMER1			119
++#define JH7110_SYSRST_TIMER2			120
++#define JH7110_SYSRST_TIMER3			121
++#define JH7110_SYSRST_INT_CTRL_APB		122
++#define JH7110_SYSRST_TEMP_APB			123
++#define JH7110_SYSRST_TEMP_CORE			124
++#define JH7110_SYSRST_JTAG_CERTIFICATION	125
 +
-+	jh7100_clk_reg_rmw(clk, JH7100_CLK_ENABLE, JH7100_CLK_ENABLE);
-+	return 0;
-+}
++#define JH7110_SYSRST_END			126
 +
-+static void jh7100_clk_disable(struct clk_hw *hw)
-+{
-+	struct jh7100_clk *clk = jh7100_clk_from(hw);
-+
-+	jh7100_clk_reg_rmw(clk, JH7100_CLK_ENABLE, 0);
-+}
-+
-+static int jh7100_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct jh7100_clk *clk = jh7100_clk_from(hw);
-+
-+	return !!(jh7100_clk_reg_get(clk) & JH7100_CLK_ENABLE);
-+}
-+
-+static unsigned long jh7100_clk_recalc_rate(struct clk_hw *hw,
-+					    unsigned long parent_rate)
-+{
-+	struct jh7100_clk *clk = jh7100_clk_from(hw);
-+	u32 div = jh7100_clk_reg_get(clk) & JH7100_CLK_DIV_MASK;
-+
-+	return div ? parent_rate / div : 0;
-+}
-+
-+static int jh7100_clk_determine_rate(struct clk_hw *hw,
-+				     struct clk_rate_request *req)
-+{
-+	struct jh7100_clk *clk = jh7100_clk_from(hw);
-+	unsigned long parent = req->best_parent_rate;
-+	unsigned long rate = clamp(req->rate, req->min_rate, req->max_rate);
-+	unsigned long div = min_t(unsigned long, DIV_ROUND_UP(parent, rate), clk->max_div);
-+	unsigned long result = parent / div;
-+
-+	/*
-+	 * we want the result clamped by min_rate and max_rate if possible:
-+	 * case 1: div hits the max divider value, which means it's less than
-+	 * parent / rate, so the result is greater than rate and min_rate in
-+	 * particular. we can't do anything about result > max_rate because the
-+	 * divider doesn't go any further.
-+	 * case 2: div = DIV_ROUND_UP(parent, rate) which means the result is
-+	 * always lower or equal to rate and max_rate. however the result may
-+	 * turn out lower than min_rate, but then the next higher rate is fine:
-+	 *   div - 1 = ceil(parent / rate) - 1 < parent / rate
-+	 * and thus
-+	 *   min_rate <= rate < parent / (div - 1)
-+	 */
-+	if (result < req->min_rate && div > 1)
-+		result = parent / (div - 1);
-+
-+	req->rate = result;
-+	return 0;
-+}
-+
-+static int jh7100_clk_set_rate(struct clk_hw *hw,
-+			       unsigned long rate,
-+			       unsigned long parent_rate)
-+{
-+	struct jh7100_clk *clk = jh7100_clk_from(hw);
-+	unsigned long div = clamp(DIV_ROUND_CLOSEST(parent_rate, rate),
-+				  1UL, (unsigned long)clk->max_div);
-+
-+	jh7100_clk_reg_rmw(clk, JH7100_CLK_DIV_MASK, div);
-+	return 0;
-+}
-+
-+static unsigned long jh7100_clk_frac_recalc_rate(struct clk_hw *hw,
-+						 unsigned long parent_rate)
-+{
-+	struct jh7100_clk *clk = jh7100_clk_from(hw);
-+	u32 reg = jh7100_clk_reg_get(clk);
-+	unsigned long div100 = 100 * (reg & JH7100_CLK_INT_MASK) +
-+			       ((reg & JH7100_CLK_FRAC_MASK) >> JH7100_CLK_FRAC_SHIFT);
-+
-+	return (div100 >= JH7100_CLK_FRAC_MIN) ? 100 * parent_rate / div100 : 0;
-+}
-+
-+static int jh7100_clk_frac_determine_rate(struct clk_hw *hw,
-+					  struct clk_rate_request *req)
-+{
-+	unsigned long parent100 = 100 * req->best_parent_rate;
-+	unsigned long rate = clamp(req->rate, req->min_rate, req->max_rate);
-+	unsigned long div100 = clamp(DIV_ROUND_CLOSEST(parent100, rate),
-+				     JH7100_CLK_FRAC_MIN, JH7100_CLK_FRAC_MAX);
-+	unsigned long result = parent100 / div100;
-+
-+	/* clamp the result as in jh7100_clk_determine_rate() above */
-+	if (result > req->max_rate && div100 < JH7100_CLK_FRAC_MAX)
-+		result = parent100 / (div100 + 1);
-+	if (result < req->min_rate && div100 > JH7100_CLK_FRAC_MIN)
-+		result = parent100 / (div100 - 1);
-+
-+	req->rate = result;
-+	return 0;
-+}
-+
-+static int jh7100_clk_frac_set_rate(struct clk_hw *hw,
-+				    unsigned long rate,
-+				    unsigned long parent_rate)
-+{
-+	struct jh7100_clk *clk = jh7100_clk_from(hw);
-+	unsigned long div100 = clamp(DIV_ROUND_CLOSEST(100 * parent_rate, rate),
-+				     JH7100_CLK_FRAC_MIN, JH7100_CLK_FRAC_MAX);
-+	u32 value = ((div100 % 100) << JH7100_CLK_FRAC_SHIFT) | (div100 / 100);
-+
-+	jh7100_clk_reg_rmw(clk, JH7100_CLK_DIV_MASK, value);
-+	return 0;
-+}
-+
-+static u8 jh7100_clk_get_parent(struct clk_hw *hw)
-+{
-+	struct jh7100_clk *clk = jh7100_clk_from(hw);
-+	u32 value = jh7100_clk_reg_get(clk);
-+
-+	return (value & JH7100_CLK_MUX_MASK) >> JH7100_CLK_MUX_SHIFT;
-+}
-+
-+static int jh7100_clk_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct jh7100_clk *clk = jh7100_clk_from(hw);
-+	u32 value = (u32)index << JH7100_CLK_MUX_SHIFT;
-+
-+	jh7100_clk_reg_rmw(clk, JH7100_CLK_MUX_MASK, value);
-+	return 0;
-+}
-+
-+static int jh7100_clk_mux_determine_rate(struct clk_hw *hw,
-+					 struct clk_rate_request *req)
-+{
-+	return clk_mux_determine_rate_flags(hw, req, 0);
-+}
-+
-+static int jh7100_clk_get_phase(struct clk_hw *hw)
-+{
-+	struct jh7100_clk *clk = jh7100_clk_from(hw);
-+	u32 value = jh7100_clk_reg_get(clk);
-+
-+	return (value & JH7100_CLK_INVERT) ? 180 : 0;
-+}
-+
-+static int jh7100_clk_set_phase(struct clk_hw *hw, int degrees)
-+{
-+	struct jh7100_clk *clk = jh7100_clk_from(hw);
-+	u32 value;
-+
-+	if (degrees == 0)
-+		value = 0;
-+	else if (degrees == 180)
-+		value = JH7100_CLK_INVERT;
-+	else
-+		return -EINVAL;
-+
-+	jh7100_clk_reg_rmw(clk, JH7100_CLK_INVERT, value);
-+	return 0;
-+}
-+
-+#ifdef CONFIG_DEBUG_FS
-+static void jh7100_clk_debug_init(struct clk_hw *hw, struct dentry *dentry)
-+{
-+	static const struct debugfs_reg32 jh7100_clk_reg = {
-+		.name = "CTRL",
-+		.offset = 0,
-+	};
-+	struct jh7100_clk *clk = jh7100_clk_from(hw);
-+	struct jh7100_clk_priv *priv = jh7100_priv_from(clk);
-+	struct debugfs_regset32 *regset;
-+
-+	regset = devm_kzalloc(priv->dev, sizeof(*regset), GFP_KERNEL);
-+	if (!regset)
-+		return;
-+
-+	regset->regs = &jh7100_clk_reg;
-+	regset->nregs = 1;
-+	regset->base = priv->base + 4 * clk->idx;
-+
-+	debugfs_create_regset32("registers", 0400, dentry, regset);
-+}
-+#else
-+#define jh7100_clk_debug_init NULL
-+#endif
-+
-+static const struct clk_ops jh7100_clk_gate_ops = {
-+	.enable = jh7100_clk_enable,
-+	.disable = jh7100_clk_disable,
-+	.is_enabled = jh7100_clk_is_enabled,
-+	.debug_init = jh7100_clk_debug_init,
-+};
-+
-+static const struct clk_ops jh7100_clk_div_ops = {
-+	.recalc_rate = jh7100_clk_recalc_rate,
-+	.determine_rate = jh7100_clk_determine_rate,
-+	.set_rate = jh7100_clk_set_rate,
-+	.debug_init = jh7100_clk_debug_init,
-+};
-+
-+static const struct clk_ops jh7100_clk_fdiv_ops = {
-+	.recalc_rate = jh7100_clk_frac_recalc_rate,
-+	.determine_rate = jh7100_clk_frac_determine_rate,
-+	.set_rate = jh7100_clk_frac_set_rate,
-+	.debug_init = jh7100_clk_debug_init,
-+};
-+
-+static const struct clk_ops jh7100_clk_gdiv_ops = {
-+	.enable = jh7100_clk_enable,
-+	.disable = jh7100_clk_disable,
-+	.is_enabled = jh7100_clk_is_enabled,
-+	.recalc_rate = jh7100_clk_recalc_rate,
-+	.determine_rate = jh7100_clk_determine_rate,
-+	.set_rate = jh7100_clk_set_rate,
-+	.debug_init = jh7100_clk_debug_init,
-+};
-+
-+static const struct clk_ops jh7100_clk_mux_ops = {
-+	.determine_rate = jh7100_clk_mux_determine_rate,
-+	.set_parent = jh7100_clk_set_parent,
-+	.get_parent = jh7100_clk_get_parent,
-+	.debug_init = jh7100_clk_debug_init,
-+};
-+
-+static const struct clk_ops jh7100_clk_gmux_ops = {
-+	.enable = jh7100_clk_enable,
-+	.disable = jh7100_clk_disable,
-+	.is_enabled = jh7100_clk_is_enabled,
-+	.determine_rate = jh7100_clk_mux_determine_rate,
-+	.set_parent = jh7100_clk_set_parent,
-+	.get_parent = jh7100_clk_get_parent,
-+	.debug_init = jh7100_clk_debug_init,
-+};
-+
-+static const struct clk_ops jh7100_clk_mdiv_ops = {
-+	.recalc_rate = jh7100_clk_recalc_rate,
-+	.determine_rate = jh7100_clk_determine_rate,
-+	.get_parent = jh7100_clk_get_parent,
-+	.set_parent = jh7100_clk_set_parent,
-+	.set_rate = jh7100_clk_set_rate,
-+	.debug_init = jh7100_clk_debug_init,
-+};
-+
-+static const struct clk_ops jh7100_clk_gmd_ops = {
-+	.enable = jh7100_clk_enable,
-+	.disable = jh7100_clk_disable,
-+	.is_enabled = jh7100_clk_is_enabled,
-+	.recalc_rate = jh7100_clk_recalc_rate,
-+	.determine_rate = jh7100_clk_determine_rate,
-+	.get_parent = jh7100_clk_get_parent,
-+	.set_parent = jh7100_clk_set_parent,
-+	.set_rate = jh7100_clk_set_rate,
-+	.debug_init = jh7100_clk_debug_init,
-+};
-+
-+static const struct clk_ops jh7100_clk_inv_ops = {
-+	.get_phase = jh7100_clk_get_phase,
-+	.set_phase = jh7100_clk_set_phase,
-+	.debug_init = jh7100_clk_debug_init,
-+};
-+
-+const struct clk_ops *starfive_jh7100_clk_ops(u32 max)
-+{
-+	if (max & JH7100_CLK_DIV_MASK) {
-+		if (max & JH7100_CLK_MUX_MASK) {
-+			if (max & JH7100_CLK_ENABLE)
-+				return &jh7100_clk_gmd_ops;
-+			return &jh7100_clk_mdiv_ops;
-+		}
-+		if (max & JH7100_CLK_ENABLE)
-+			return &jh7100_clk_gdiv_ops;
-+		if (max == JH7100_CLK_FRAC_MAX)
-+			return &jh7100_clk_fdiv_ops;
-+		return &jh7100_clk_div_ops;
-+	}
-+
-+	if (max & JH7100_CLK_MUX_MASK) {
-+		if (max & JH7100_CLK_ENABLE)
-+			return &jh7100_clk_gmux_ops;
-+		return &jh7100_clk_mux_ops;
-+	}
-+
-+	if (max & JH7100_CLK_ENABLE)
-+		return &jh7100_clk_gate_ops;
-+
-+	return &jh7100_clk_inv_ops;
-+}
-+EXPORT_SYMBOL_GPL(starfive_jh7100_clk_ops);
++#endif /* __DT_BINDINGS_RESET_STARFIVE_JH7110_CRG_H__ */
 -- 
 2.38.1
 
