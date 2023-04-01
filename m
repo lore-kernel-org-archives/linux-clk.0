@@ -2,83 +2,65 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B0EC76196
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Apr 2023 14:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 736F4C76196
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Apr 2023 15:52:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229708AbjDAOdi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 1 Apr 2023 10:33:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51144 "EHLO
+        id S229770AbjDAPwX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 1 Apr 2023 11:52:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbjDAOdh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Apr 2023 10:33:37 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C695ACA0B;
-        Sat,  1 Apr 2023 07:33:36 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id ix20so24084233plb.3;
-        Sat, 01 Apr 2023 07:33:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680359616;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XVMCxKkdAj5G/sHqBJwRjfivjb3c00JzonL5QvYBrDc=;
-        b=oorS77R7MIzVP0hceo91ptJHWN9iXoA1WQeFlSuZGUdTpqzzj+6KEWHDb9EvFJioJB
-         s7Yk/litLZVKfdHl2yWdlE2pKQ3qC3Aw3v7reTboKin+yD1gkIBCODUAYsLsZ6kMdDM+
-         d7E/3CR/y4+dI3crXmJE/IC5fqv8XTyyK51Qn2x28S/dfqrqty9m6QyLUPLeOjvQSabB
-         o71Lrwk67YDTb17v79gPk94omHSRIKPnRsXaQBmPEZxvNRa5W0R0NBTCs+SEx1tqU4Q5
-         dSgxXViMUO5Tj6yXlV2tnPu1nCSNXT7TQOQYK0Y2WWhZkna0tkn7H+MzFuTHhWu0fti1
-         q0tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680359616;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XVMCxKkdAj5G/sHqBJwRjfivjb3c00JzonL5QvYBrDc=;
-        b=CODQ2XSdzEi80XB+HeaeUJSMcmKH+uOTRw21SRAGPJGXjhOhFgf1f8gTUzmcYKY93D
-         6mlNLuC9y8anlQ5XySn13ISIyaSDImi6YkzhxEG58VLc0iQUGhBL45n/5rLpswAoVs0o
-         C1TpEX4m/2CIGpV7xspTkWVCaT/AMRXf924Ml5OPjwyG8a4YvB0B1Tw42BEVEwJP7x35
-         o4InCiHDhs+RQs1LdFpslHuxRfpIXYsY6TsqYUJjCR37FAcHKGHDWqPuf7pZGUvFAm/c
-         j6UvTMrwhRPVAGfZ2PSDA2OYr68+Cfx0oGpdXmZ1fsRaIfDwgTekG+IwAGX35ODt3107
-         8ILw==
-X-Gm-Message-State: AAQBX9efa9cM9UkUOP3cKkqflM+WcZKtNX2JomrDInvIyBnYJ96Etj4K
-        ZP0VXdEFezm6Jm+Sxyil6068IwcHkNYl8TdEPss=
-X-Google-Smtp-Source: AKy350bWY76S1g8Vj/Huvn7WWZ45nm5q5e7cFRBykceGGzehIhVjpEW9LM82jjc/w8x69HUL9jxGeorEgerr+yx+Blo=
-X-Received: by 2002:a17:902:d70b:b0:1a2:8940:6da8 with SMTP id
- w11-20020a170902d70b00b001a289406da8mr3191541ply.13.1680359616143; Sat, 01
- Apr 2023 07:33:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230331163058.5688-1-sebastian.reichel@collabora.com>
-In-Reply-To: <20230331163058.5688-1-sebastian.reichel@collabora.com>
-From:   Vincent Legoll <vincent.legoll@gmail.com>
-Date:   Sat, 1 Apr 2023 16:30:53 +0200
-Message-ID: <CAEwRq=q=W57W33nYe_uUDQb0cf7QkFoa0rO+EWdsuUGTN7k_Vg@mail.gmail.com>
-Subject: Re: [PATCHv1 0/2] Improve RK3588 clocks and power domains support
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org,
-        Peter Geis <pgwipeout@gmail.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Finley Xiao <finley.xiao@rock-chips.com>,
-        Jagan Teki <jagan@edgeble.ai>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S229573AbjDAPwW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Apr 2023 11:52:22 -0400
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 101F522E90
+        for <linux-clk@vger.kernel.org>; Sat,  1 Apr 2023 08:52:20 -0700 (PDT)
+Received: from pop-os.home ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id idWapMwyLusWfidWap27kk; Sat, 01 Apr 2023 17:52:19 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 01 Apr 2023 17:52:19 +0200
+X-ME-IP: 86.243.2.178
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-clk@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: stm32h7: Remove an unused field in struct stm32_fractional_divider
+Date:   Sat,  1 Apr 2023 17:52:12 +0200
+Message-Id: <e08a470fbd6151ebd83a548714c08807a80a8ad0.1680364296.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+'mmask' has never been used in this driver.
+Remove it.
 
-I'm running a QuartzPro64 with this patch set applied, everything(*)
-works properly.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/clk/clk-stm32h7.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-(*) eMMC, SD, LED, ethernet, serial, watchdog.
-
-Are there any tests I can do to help with this ?
-
-Regards
-
+diff --git a/drivers/clk/clk-stm32h7.c b/drivers/clk/clk-stm32h7.c
+index 1a701eada0c1..04c18a1d45d3 100644
+--- a/drivers/clk/clk-stm32h7.c
++++ b/drivers/clk/clk-stm32h7.c
+@@ -667,7 +667,6 @@ struct stm32_fractional_divider {
+ 	void __iomem	*mreg;
+ 	u8		mshift;
+ 	u8		mwidth;
+-	u32		mmask;
+ 
+ 	void __iomem	*nreg;
+ 	u8		nshift;
 -- 
-Vincent Legoll
+2.34.1
+
