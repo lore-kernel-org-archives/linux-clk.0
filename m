@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63D85C76196
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Apr 2023 11:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F68C77B61
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Apr 2023 11:20:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229940AbjDALUA convert rfc822-to-8bit (ORCPT
+        id S229970AbjDALUH convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 1 Apr 2023 07:20:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52126 "EHLO
+        Sat, 1 Apr 2023 07:20:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229868AbjDALTx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Apr 2023 07:19:53 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CED721A86;
-        Sat,  1 Apr 2023 04:19:51 -0700 (PDT)
+        with ESMTP id S229913AbjDALT7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Apr 2023 07:19:59 -0400
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5706F20C1E;
+        Sat,  1 Apr 2023 04:19:52 -0700 (PDT)
 Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 276D524E289;
-        Sat,  1 Apr 2023 19:19:49 +0800 (CST)
+        by ex01.ufhost.com (Postfix) with ESMTP id F087024E01A;
+        Sat,  1 Apr 2023 19:19:50 +0800 (CST)
 Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
  (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Sat, 1 Apr
- 2023 19:19:49 +0800
+ 2023 19:19:50 +0800
 Received: from ubuntu.localdomain (113.72.144.76) by EXMBX172.cuchost.com
  (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Sat, 1 Apr
- 2023 19:19:48 +0800
+ 2023 19:19:49 +0800
 From:   Hal Feng <hal.feng@starfivetech.com>
 To:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-riscv@lists.infradead.org>
@@ -45,9 +45,9 @@ CC:     Stephen Boyd <sboyd@kernel.org>,
         Emil Renner Berthing <emil.renner.berthing@canonical.com>,
         Hal Feng <hal.feng@starfivetech.com>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 12/22] reset: starfive: jh71x0: Use 32bit I/O on 32bit registers
-Date:   Sat, 1 Apr 2023 19:19:24 +0800
-Message-ID: <20230401111934.130844-13-hal.feng@starfivetech.com>
+Subject: [PATCH v7 14/22] clk: starfive: Add StarFive JH7110 always-on clock driver
+Date:   Sat, 1 Apr 2023 19:19:26 +0800
+Message-ID: <20230401111934.130844-15-hal.feng@starfivetech.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20230401111934.130844-1-hal.feng@starfivetech.com>
 References: <20230401111934.130844-1-hal.feng@starfivetech.com>
@@ -64,150 +64,211 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Emil Renner Berthing <kernel@esmil.dk>
 
-We currently use 64bit I/O on the 32bit registers. This works because
-there are an even number of assert and status registers, so they're only
-ever accessed in pairs on 64bit boundaries.
-
-There are however other reset controllers for audio and video on the
-JH7100 SoC with only one status register that isn't 64bit aligned so
-64bit I/O results in an unaligned access exception.
-
-Switch to 32bit I/O in preparation for supporting these resets too.
+Add driver for the StarFive JH7110 always-on clock controller
+and register an auxiliary device for always-on reset controller
+which is named as "reset-aon".
 
 Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+Co-developed-by: Hal Feng <hal.feng@starfivetech.com>
 Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 ---
- .../reset/starfive/reset-starfive-jh7100.c    | 14 ++++-----
- .../reset/starfive/reset-starfive-jh71x0.c    | 31 +++++++++----------
- .../reset/starfive/reset-starfive-jh71x0.h    |  2 +-
- 3 files changed, 23 insertions(+), 24 deletions(-)
+ drivers/clk/starfive/Kconfig                  |  11 ++
+ drivers/clk/starfive/Makefile                 |   1 +
+ .../clk/starfive/clk-starfive-jh7110-aon.c    | 156 ++++++++++++++++++
+ 3 files changed, 168 insertions(+)
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-aon.c
 
-diff --git a/drivers/reset/starfive/reset-starfive-jh7100.c b/drivers/reset/starfive/reset-starfive-jh7100.c
-index 5f06e5ae3346..2a56f7fd4ba7 100644
---- a/drivers/reset/starfive/reset-starfive-jh7100.c
-+++ b/drivers/reset/starfive/reset-starfive-jh7100.c
-@@ -30,16 +30,16 @@
-  * lines don't though, so store the expected value of the status registers when
-  * all lines are asserted.
-  */
--static const u64 jh7100_reset_asserted[2] = {
-+static const u32 jh7100_reset_asserted[4] = {
- 	/* STATUS0 */
--	BIT_ULL_MASK(JH7100_RST_U74) |
--	BIT_ULL_MASK(JH7100_RST_VP6_DRESET) |
--	BIT_ULL_MASK(JH7100_RST_VP6_BRESET) |
-+	BIT(JH7100_RST_U74 % 32) |
-+	BIT(JH7100_RST_VP6_DRESET % 32) |
-+	BIT(JH7100_RST_VP6_BRESET % 32),
- 	/* STATUS1 */
--	BIT_ULL_MASK(JH7100_RST_HIFI4_DRESET) |
--	BIT_ULL_MASK(JH7100_RST_HIFI4_BRESET),
-+	BIT(JH7100_RST_HIFI4_DRESET % 32) |
-+	BIT(JH7100_RST_HIFI4_BRESET % 32),
- 	/* STATUS2 */
--	BIT_ULL_MASK(JH7100_RST_E24) |
-+	BIT(JH7100_RST_E24 % 32),
- 	/* STATUS3 */
- 	0,
- };
-diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.c b/drivers/reset/starfive/reset-starfive-jh71x0.c
-index a689f4730ed7..55bbbd2de52c 100644
---- a/drivers/reset/starfive/reset-starfive-jh71x0.c
-+++ b/drivers/reset/starfive/reset-starfive-jh71x0.c
-@@ -8,7 +8,6 @@
- #include <linux/bitmap.h>
- #include <linux/device.h>
- #include <linux/io.h>
--#include <linux/io-64-nonatomic-lo-hi.h>
- #include <linux/iopoll.h>
- #include <linux/reset-controller.h>
- #include <linux/spinlock.h>
-@@ -21,7 +20,7 @@ struct jh71x0_reset {
- 	spinlock_t lock;
- 	void __iomem *assert;
- 	void __iomem *status;
--	const u64 *asserted;
-+	const u32 *asserted;
- };
+diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
+index 670c5084aeb8..71c1148ee5f6 100644
+--- a/drivers/clk/starfive/Kconfig
++++ b/drivers/clk/starfive/Kconfig
+@@ -31,3 +31,14 @@ config CLK_STARFIVE_JH7110_SYS
+ 	help
+ 	  Say yes here to support the system clock controller on the
+ 	  StarFive JH7110 SoC.
++
++config CLK_STARFIVE_JH7110_AON
++	tristate "StarFive JH7110 always-on clock support"
++	depends on CLK_STARFIVE_JH7110_SYS
++	select AUXILIARY_BUS
++	select CLK_STARFIVE_JH71X0
++	select RESET_STARFIVE_JH7110
++	default m if ARCH_STARFIVE
++	help
++	  Say yes here to support the always-on clock controller on the
++	  StarFive JH7110 SoC.
+diff --git a/drivers/clk/starfive/Makefile b/drivers/clk/starfive/Makefile
+index 5ca4e887fb9c..f3df7d957b1e 100644
+--- a/drivers/clk/starfive/Makefile
++++ b/drivers/clk/starfive/Makefile
+@@ -5,3 +5,4 @@ obj-$(CONFIG_CLK_STARFIVE_JH7100)	+= clk-starfive-jh7100.o
+ obj-$(CONFIG_CLK_STARFIVE_JH7100_AUDIO)	+= clk-starfive-jh7100-audio.o
  
- static inline struct jh71x0_reset *
-@@ -34,12 +33,12 @@ static int jh71x0_reset_update(struct reset_controller_dev *rcdev,
- 			       unsigned long id, bool assert)
- {
- 	struct jh71x0_reset *data = jh71x0_reset_from(rcdev);
--	unsigned long offset = BIT_ULL_WORD(id);
--	u64 mask = BIT_ULL_MASK(id);
--	void __iomem *reg_assert = data->assert + offset * sizeof(u64);
--	void __iomem *reg_status = data->status + offset * sizeof(u64);
--	u64 done = data->asserted ? data->asserted[offset] & mask : 0;
--	u64 value;
-+	unsigned long offset = id / 32;
-+	u32 mask = BIT(id % 32);
-+	void __iomem *reg_assert = data->assert + offset * sizeof(u32);
-+	void __iomem *reg_status = data->status + offset * sizeof(u32);
-+	u32 done = data->asserted ? data->asserted[offset] & mask : 0;
-+	u32 value;
- 	unsigned long flags;
- 	int ret;
- 
-@@ -48,15 +47,15 @@ static int jh71x0_reset_update(struct reset_controller_dev *rcdev,
- 
- 	spin_lock_irqsave(&data->lock, flags);
- 
--	value = readq(reg_assert);
-+	value = readl(reg_assert);
- 	if (assert)
- 		value |= mask;
- 	else
- 		value &= ~mask;
--	writeq(value, reg_assert);
-+	writel(value, reg_assert);
- 
- 	/* if the associated clock is gated, deasserting might otherwise hang forever */
--	ret = readq_poll_timeout_atomic(reg_status, value, (value & mask) == done, 0, 1000);
-+	ret = readl_poll_timeout_atomic(reg_status, value, (value & mask) == done, 0, 1000);
- 
- 	spin_unlock_irqrestore(&data->lock, flags);
- 	return ret;
-@@ -90,10 +89,10 @@ static int jh71x0_reset_status(struct reset_controller_dev *rcdev,
- 			       unsigned long id)
- {
- 	struct jh71x0_reset *data = jh71x0_reset_from(rcdev);
--	unsigned long offset = BIT_ULL_WORD(id);
--	u64 mask = BIT_ULL_MASK(id);
--	void __iomem *reg_status = data->status + offset * sizeof(u64);
--	u64 value = readq(reg_status);
-+	unsigned long offset = id / 32;
-+	u32 mask = BIT(id % 32);
-+	void __iomem *reg_status = data->status + offset * sizeof(u32);
-+	u32 value = readl(reg_status);
- 
- 	return !((value ^ data->asserted[offset]) & mask);
- }
-@@ -107,7 +106,7 @@ static const struct reset_control_ops jh71x0_reset_ops = {
- 
- int reset_starfive_jh71x0_register(struct device *dev, struct device_node *of_node,
- 				   void __iomem *assert, void __iomem *status,
--				   const u64 *asserted, unsigned int nr_resets,
-+				   const u32 *asserted, unsigned int nr_resets,
- 				   struct module *owner)
- {
- 	struct jh71x0_reset *data;
-diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.h b/drivers/reset/starfive/reset-starfive-jh71x0.h
-index ac9e80dd3f59..db7d39a87f87 100644
---- a/drivers/reset/starfive/reset-starfive-jh71x0.h
-+++ b/drivers/reset/starfive/reset-starfive-jh71x0.h
-@@ -8,7 +8,7 @@
- 
- int reset_starfive_jh71x0_register(struct device *dev, struct device_node *of_node,
- 				   void __iomem *assert, void __iomem *status,
--				   const u64 *asserted, unsigned int nr_resets,
-+				   const u32 *asserted, unsigned int nr_resets,
- 				   struct module *owner);
- 
- #endif /* __RESET_STARFIVE_JH71X0_H */
+ obj-$(CONFIG_CLK_STARFIVE_JH7110_SYS)	+= clk-starfive-jh7110-sys.o
++obj-$(CONFIG_CLK_STARFIVE_JH7110_AON)	+= clk-starfive-jh7110-aon.o
+diff --git a/drivers/clk/starfive/clk-starfive-jh7110-aon.c b/drivers/clk/starfive/clk-starfive-jh7110-aon.c
+new file mode 100644
+index 000000000000..a2799fe8a234
+--- /dev/null
++++ b/drivers/clk/starfive/clk-starfive-jh7110-aon.c
+@@ -0,0 +1,156 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * StarFive JH7110 Always-On Clock Driver
++ *
++ * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
++ * Copyright (C) 2022 StarFive Technology Co., Ltd.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/io.h>
++#include <linux/platform_device.h>
++
++#include <dt-bindings/clock/starfive,jh7110-crg.h>
++
++#include "clk-starfive-jh7110.h"
++
++/* external clocks */
++#define JH7110_AONCLK_OSC		(JH7110_AONCLK_END + 0)
++#define JH7110_AONCLK_GMAC0_RMII_REFIN	(JH7110_AONCLK_END + 1)
++#define JH7110_AONCLK_GMAC0_RGMII_RXIN	(JH7110_AONCLK_END + 2)
++#define JH7110_AONCLK_STG_AXIAHB	(JH7110_AONCLK_END + 3)
++#define JH7110_AONCLK_APB_BUS		(JH7110_AONCLK_END + 4)
++#define JH7110_AONCLK_GMAC0_GTXCLK	(JH7110_AONCLK_END + 5)
++#define JH7110_AONCLK_RTC_OSC		(JH7110_AONCLK_END + 6)
++
++static const struct jh71x0_clk_data jh7110_aonclk_data[] = {
++	/* source */
++	JH71X0__DIV(JH7110_AONCLK_OSC_DIV4, "osc_div4", 4, JH7110_AONCLK_OSC),
++	JH71X0__MUX(JH7110_AONCLK_APB_FUNC, "apb_func", 2,
++		    JH7110_AONCLK_OSC_DIV4,
++		    JH7110_AONCLK_OSC),
++	/* gmac0 */
++	JH71X0_GATE(JH7110_AONCLK_GMAC0_AHB, "gmac0_ahb", 0, JH7110_AONCLK_STG_AXIAHB),
++	JH71X0_GATE(JH7110_AONCLK_GMAC0_AXI, "gmac0_axi", 0, JH7110_AONCLK_STG_AXIAHB),
++	JH71X0__DIV(JH7110_AONCLK_GMAC0_RMII_RTX, "gmac0_rmii_rtx", 30,
++		    JH7110_AONCLK_GMAC0_RMII_REFIN),
++	JH71X0_GMUX(JH7110_AONCLK_GMAC0_TX, "gmac0_tx",
++		    CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT, 2,
++		    JH7110_AONCLK_GMAC0_GTXCLK,
++		    JH7110_AONCLK_GMAC0_RMII_RTX),
++	JH71X0__INV(JH7110_AONCLK_GMAC0_TX_INV, "gmac0_tx_inv", JH7110_AONCLK_GMAC0_TX),
++	JH71X0__MUX(JH7110_AONCLK_GMAC0_RX, "gmac0_rx", 2,
++		    JH7110_AONCLK_GMAC0_RGMII_RXIN,
++		    JH7110_AONCLK_GMAC0_RMII_RTX),
++	JH71X0__INV(JH7110_AONCLK_GMAC0_RX_INV, "gmac0_rx_inv", JH7110_AONCLK_GMAC0_RX),
++	/* otpc */
++	JH71X0_GATE(JH7110_AONCLK_OTPC_APB, "otpc_apb", 0, JH7110_AONCLK_APB_BUS),
++	/* rtc */
++	JH71X0_GATE(JH7110_AONCLK_RTC_APB, "rtc_apb", 0, JH7110_AONCLK_APB_BUS),
++	JH71X0__DIV(JH7110_AONCLK_RTC_INTERNAL, "rtc_internal", 1022, JH7110_AONCLK_OSC),
++	JH71X0__MUX(JH7110_AONCLK_RTC_32K, "rtc_32k", 2,
++		    JH7110_AONCLK_RTC_OSC,
++		    JH7110_AONCLK_RTC_INTERNAL),
++	JH71X0_GATE(JH7110_AONCLK_RTC_CAL, "rtc_cal", 0, JH7110_AONCLK_OSC),
++};
++
++static struct clk_hw *jh7110_aonclk_get(struct of_phandle_args *clkspec, void *data)
++{
++	struct jh71x0_clk_priv *priv = data;
++	unsigned int idx = clkspec->args[0];
++
++	if (idx < JH7110_AONCLK_END)
++		return &priv->reg[idx].hw;
++
++	return ERR_PTR(-EINVAL);
++}
++
++static int jh7110_aoncrg_probe(struct platform_device *pdev)
++{
++	struct jh71x0_clk_priv *priv;
++	unsigned int idx;
++	int ret;
++
++	priv = devm_kzalloc(&pdev->dev,
++			    struct_size(priv, reg, JH7110_AONCLK_END),
++			    GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	spin_lock_init(&priv->rmw_lock);
++	priv->dev = &pdev->dev;
++	priv->base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(priv->base))
++		return PTR_ERR(priv->base);
++
++	dev_set_drvdata(priv->dev, (void *)(&priv->base));
++
++	for (idx = 0; idx < JH7110_AONCLK_END; idx++) {
++		u32 max = jh7110_aonclk_data[idx].max;
++		struct clk_parent_data parents[4] = {};
++		struct clk_init_data init = {
++			.name = jh7110_aonclk_data[idx].name,
++			.ops = starfive_jh71x0_clk_ops(max),
++			.parent_data = parents,
++			.num_parents =
++				((max & JH71X0_CLK_MUX_MASK) >> JH71X0_CLK_MUX_SHIFT) + 1,
++			.flags = jh7110_aonclk_data[idx].flags,
++		};
++		struct jh71x0_clk *clk = &priv->reg[idx];
++		unsigned int i;
++
++		for (i = 0; i < init.num_parents; i++) {
++			unsigned int pidx = jh7110_aonclk_data[idx].parents[i];
++
++			if (pidx < JH7110_AONCLK_END)
++				parents[i].hw = &priv->reg[pidx].hw;
++			else if (pidx == JH7110_AONCLK_OSC)
++				parents[i].fw_name = "osc";
++			else if (pidx == JH7110_AONCLK_GMAC0_RMII_REFIN)
++				parents[i].fw_name = "gmac0_rmii_refin";
++			else if (pidx == JH7110_AONCLK_GMAC0_RGMII_RXIN)
++				parents[i].fw_name = "gmac0_rgmii_rxin";
++			else if (pidx == JH7110_AONCLK_STG_AXIAHB)
++				parents[i].fw_name = "stg_axiahb";
++			else if (pidx == JH7110_AONCLK_APB_BUS)
++				parents[i].fw_name = "apb_bus";
++			else if (pidx == JH7110_AONCLK_GMAC0_GTXCLK)
++				parents[i].fw_name = "gmac0_gtxclk";
++			else if (pidx == JH7110_AONCLK_RTC_OSC)
++				parents[i].fw_name = "rtc_osc";
++		}
++
++		clk->hw.init = &init;
++		clk->idx = idx;
++		clk->max_div = max & JH71X0_CLK_DIV_MASK;
++
++		ret = devm_clk_hw_register(&pdev->dev, &clk->hw);
++		if (ret)
++			return ret;
++	}
++
++	ret = devm_of_clk_add_hw_provider(&pdev->dev, jh7110_aonclk_get, priv);
++	if (ret)
++		return ret;
++
++	return jh7110_reset_controller_register(priv, "rst-aon", 1);
++}
++
++static const struct of_device_id jh7110_aoncrg_match[] = {
++	{ .compatible = "starfive,jh7110-aoncrg" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, jh7110_aoncrg_match);
++
++static struct platform_driver jh7110_aoncrg_driver = {
++	.probe = jh7110_aoncrg_probe,
++	.driver = {
++		.name = "clk-starfive-jh7110-aon",
++		.of_match_table = jh7110_aoncrg_match,
++	},
++};
++module_platform_driver(jh7110_aoncrg_driver);
++
++MODULE_AUTHOR("Emil Renner Berthing");
++MODULE_DESCRIPTION("StarFive JH7110 always-on clock driver");
++MODULE_LICENSE("GPL");
 -- 
 2.38.1
 
