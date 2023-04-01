@@ -2,361 +2,254 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD3BC761AF
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Apr 2023 11:21:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59564C76196
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Apr 2023 12:49:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230048AbjDALU5 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 1 Apr 2023 07:20:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54636 "EHLO
+        id S229505AbjDAMts (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 1 Apr 2023 08:49:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230045AbjDALUk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Apr 2023 07:20:40 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91D5C25465;
-        Sat,  1 Apr 2023 04:19:59 -0700 (PDT)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id B2B6024E2AF;
-        Sat,  1 Apr 2023 19:19:57 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Sat, 1 Apr
- 2023 19:19:57 +0800
-Received: from ubuntu.localdomain (113.72.144.76) by EXMBX172.cuchost.com
- (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Sat, 1 Apr
- 2023 19:19:56 +0800
-From:   Hal Feng <hal.feng@starfivetech.com>
-To:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>
-CC:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor@kernel.org>,
-        "Palmer Dabbelt" <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        "Daniel Lezcano" <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 21/22] riscv: dts: starfive: Add StarFive JH7110 VisionFive 2 board device tree
-Date:   Sat, 1 Apr 2023 19:19:33 +0800
-Message-ID: <20230401111934.130844-22-hal.feng@starfivetech.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20230401111934.130844-1-hal.feng@starfivetech.com>
-References: <20230401111934.130844-1-hal.feng@starfivetech.com>
+        with ESMTP id S229475AbjDAMts (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Apr 2023 08:49:48 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 997E0C15F
+        for <linux-clk@vger.kernel.org>; Sat,  1 Apr 2023 05:49:45 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id i5so100322468eda.0
+        for <linux-clk@vger.kernel.org>; Sat, 01 Apr 2023 05:49:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1680353384;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3ewVCP+wDJHX46RNaKAZarx7ThtmmaIaa+PN5mp/uXI=;
+        b=KjoCp7+uXnJLPnyG7tx0qBq+jW2fO0pUeHxkLnG2pfZRO45BJ2F7oFWMNPVoes+kSv
+         SN/87ysk/WTWanPqKDYoFmasrbGoIXR3RFI5Fz/mZQ7qt7D/lbsNCU1XVfe+Ki3nQuYs
+         BYJONtvqyweOdKlBwq8+pB9aeVIgHKkmEHppCEiy5Upltb/1QTFoIl/e9yqsY/ivBnC4
+         XqXUJL0N6gbMWGCvRS427wQ2bSeHLPC+7VVozrjNW4Wp2v7W2phYz4tVNpby0TTXUdnm
+         7VpBx4Ubong80KWZYgNHRG8OI4ofwEo/zfD5aWIAVKIiUKZAzoQE2hpHlRztcYZumvgH
+         Fw5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680353384;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3ewVCP+wDJHX46RNaKAZarx7ThtmmaIaa+PN5mp/uXI=;
+        b=Faf0N5Q1+Kt1E+EJX2EOvsbksoCEd0AkzBFsXW7ybx+iYGSsg2gG7wKBPf9NlMCZWP
+         EsSm5CaW8lMX0USuRga7dUVaguZIegzVU7KeAcl+kYV0v8CGJnKtkir5BfUDTVccQdEa
+         Qwtkd7UhL6q0jpOi50GOpmkN5654YOiG+7Dz7lRRazaFIGPTuGUUUEWDRt7937qQ/6gF
+         J4fCBfwIPWOOoM7CcYxMt+uUHNB1PUFmG0zg3PQGs8DVP6T8XgZx9fH+Gulb6fo4CGRe
+         esAZohz+EcN7sSfK/+MypY8Zpau7+52e6yYXTOHhyOR117Jxw0gbv6GcwAjnZe9w48W6
+         nHDQ==
+X-Gm-Message-State: AAQBX9fG2RfFouAasFZ4c7aA7pjamoNbwyWr+sVTFklpcTDebXZGui9V
+        +IHRseTQg0trTxnH6w6T7uh3JQ==
+X-Google-Smtp-Source: AKy350adyWbn7jQXnTGpzPFF4lXd+Au+soeUfPr6sJfOYwooSsz1o63aMbbl5rmMFD3s3DKr3f0MMg==
+X-Received: by 2002:aa7:d3cc:0:b0:502:ef8:1c80 with SMTP id o12-20020aa7d3cc000000b005020ef81c80mr31270334edr.21.1680353383732;
+        Sat, 01 Apr 2023 05:49:43 -0700 (PDT)
+Received: from localhost ([86.61.181.4])
+        by smtp.gmail.com with ESMTPSA id f24-20020a50a6d8000000b004acbda55f6bsm2070677edc.27.2023.04.01.05.49.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Apr 2023 05:49:42 -0700 (PDT)
+Date:   Sat, 1 Apr 2023 14:49:41 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        Vadim Fedorenko <vadfed@meta.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
+Message-ID: <ZCgoZWjFcivWmDNJ@nanopsycho>
+References: <20230312022807.278528-1-vadfed@meta.com>
+ <20230312022807.278528-3-vadfed@meta.com>
+ <ZA9Nbll8+xHt4ygd@nanopsycho>
+ <2b749045-021e-d6c8-b265-972cfa892802@linux.dev>
+ <ZBA8ofFfKigqZ6M7@nanopsycho>
+ <DM6PR11MB4657120805D656A745EF724E9BBE9@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZBGOWQW+1JFzNsTY@nanopsycho>
+ <c7da39fb-f60d-ac0c-ddc3-cb9b9280081d@linux.dev>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [113.72.144.76]
-X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
- (172.16.6.92)
-X-YovoleRuleAgent: yovoleflag
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c7da39fb-f60d-ac0c-ddc3-cb9b9280081d@linux.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Emil Renner Berthing <kernel@esmil.dk>
+Tue, Mar 28, 2023 at 05:22:04PM CEST, vadim.fedorenko@linux.dev wrote:
+>On 15/03/2023 09:22, Jiri Pirko wrote:
+>> Tue, Mar 14, 2023 at 06:50:57PM CET, arkadiusz.kubalewski@intel.com wrote:
+>> > > From: Jiri Pirko <jiri@resnulli.us>
+>> > > Sent: Tuesday, March 14, 2023 10:22 AM
+>> > > 
+>> > > Mon, Mar 13, 2023 at 11:59:32PM CET, vadim.fedorenko@linux.dev wrote:
+>> > > > On 13.03.2023 16:21, Jiri Pirko wrote:
+>> > > > > Sun, Mar 12, 2023 at 03:28:03AM CET, vadfed@meta.com wrote:
 
-Add a minimal device tree for StarFive JH7110 VisionFive 2 board
-which has version A and version B. Support booting and basic
-clock/reset/pinctrl/uart drivers.
+[...]
 
-Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-Co-developed-by: Jianlong Huang <jianlong.huang@starfivetech.com>
-Signed-off-by: Jianlong Huang <jianlong.huang@starfivetech.com>
-Co-developed-by: Hal Feng <hal.feng@starfivetech.com>
-Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
----
- arch/riscv/boot/dts/starfive/Makefile         |   6 +-
- .../jh7110-starfive-visionfive-2-v1.2a.dts    |  13 ++
- .../jh7110-starfive-visionfive-2-v1.3b.dts    |  13 ++
- .../jh7110-starfive-visionfive-2.dtsi         | 215 ++++++++++++++++++
- 4 files changed, 246 insertions(+), 1 deletion(-)
- create mode 100644 arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.2a.dts
- create mode 100644 arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.3b.dts
- create mode 100644 arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
 
-diff --git a/arch/riscv/boot/dts/starfive/Makefile b/arch/riscv/boot/dts/starfive/Makefile
-index 7b00a48580ca..170956846d49 100644
---- a/arch/riscv/boot/dts/starfive/Makefile
-+++ b/arch/riscv/boot/dts/starfive/Makefile
-@@ -1,2 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
--dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-beaglev-starlight.dtb jh7100-starfive-visionfive-v1.dtb
-+dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-beaglev-starlight.dtb
-+dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-starfive-visionfive-v1.dtb
-+
-+dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.2a.dtb
-+dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.3b.dtb
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.2a.dts b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.2a.dts
-new file mode 100644
-index 000000000000..4af3300f3cf3
---- /dev/null
-+++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.2a.dts
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
-+/*
-+ * Copyright (C) 2022 StarFive Technology Co., Ltd.
-+ * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
-+ */
-+
-+/dts-v1/;
-+#include "jh7110-starfive-visionfive-2.dtsi"
-+
-+/ {
-+	model = "StarFive VisionFive 2 v1.2A";
-+	compatible = "starfive,visionfive-2-v1.2a", "starfive,jh7110";
-+};
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.3b.dts b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.3b.dts
-new file mode 100644
-index 000000000000..9230cc3d8946
---- /dev/null
-+++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.3b.dts
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
-+/*
-+ * Copyright (C) 2022 StarFive Technology Co., Ltd.
-+ * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
-+ */
-+
-+/dts-v1/;
-+#include "jh7110-starfive-visionfive-2.dtsi"
-+
-+/ {
-+	model = "StarFive VisionFive 2 v1.3B";
-+	compatible = "starfive,visionfive-2-v1.3b", "starfive,jh7110";
-+};
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-new file mode 100644
-index 000000000000..2a6d81609284
---- /dev/null
-+++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-@@ -0,0 +1,215 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
-+/*
-+ * Copyright (C) 2022 StarFive Technology Co., Ltd.
-+ * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
-+ */
-+
-+/dts-v1/;
-+#include "jh7110.dtsi"
-+#include "jh7110-pinfunc.h"
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	aliases {
-+		i2c0 = &i2c0;
-+		i2c2 = &i2c2;
-+		i2c5 = &i2c5;
-+		i2c6 = &i2c6;
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	cpus {
-+		timebase-frequency = <4000000>;
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x40000000 0x1 0x0>;
-+	};
-+
-+	gpio-restart {
-+		compatible = "gpio-restart";
-+		gpios = <&sysgpio 35 GPIO_ACTIVE_HIGH>;
-+		priority = <224>;
-+	};
-+};
-+
-+&gmac0_rgmii_rxin {
-+	clock-frequency = <125000000>;
-+};
-+
-+&gmac0_rmii_refin {
-+	clock-frequency = <50000000>;
-+};
-+
-+&gmac1_rgmii_rxin {
-+	clock-frequency = <125000000>;
-+};
-+
-+&gmac1_rmii_refin {
-+	clock-frequency = <50000000>;
-+};
-+
-+&i2srx_bclk_ext {
-+	clock-frequency = <12288000>;
-+};
-+
-+&i2srx_lrck_ext {
-+	clock-frequency = <192000>;
-+};
-+
-+&i2stx_bclk_ext {
-+	clock-frequency = <12288000>;
-+};
-+
-+&i2stx_lrck_ext {
-+	clock-frequency = <192000>;
-+};
-+
-+&mclk_ext {
-+	clock-frequency = <12288000>;
-+};
-+
-+&osc {
-+	clock-frequency = <24000000>;
-+};
-+
-+&rtc_osc {
-+	clock-frequency = <32768>;
-+};
-+
-+&tdm_ext {
-+	clock-frequency = <49152000>;
-+};
-+
-+&i2c0 {
-+	clock-frequency = <100000>;
-+	i2c-sda-hold-time-ns = <300>;
-+	i2c-sda-falling-time-ns = <510>;
-+	i2c-scl-falling-time-ns = <510>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c0_pins>;
-+	status = "okay";
-+};
-+
-+&i2c2 {
-+	clock-frequency = <100000>;
-+	i2c-sda-hold-time-ns = <300>;
-+	i2c-sda-falling-time-ns = <510>;
-+	i2c-scl-falling-time-ns = <510>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c2_pins>;
-+	status = "okay";
-+};
-+
-+&i2c5 {
-+	clock-frequency = <100000>;
-+	i2c-sda-hold-time-ns = <300>;
-+	i2c-sda-falling-time-ns = <510>;
-+	i2c-scl-falling-time-ns = <510>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c5_pins>;
-+	status = "okay";
-+};
-+
-+&i2c6 {
-+	clock-frequency = <100000>;
-+	i2c-sda-hold-time-ns = <300>;
-+	i2c-sda-falling-time-ns = <510>;
-+	i2c-scl-falling-time-ns = <510>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c6_pins>;
-+	status = "okay";
-+};
-+
-+&sysgpio {
-+	i2c0_pins: i2c0-0 {
-+		i2c-pins {
-+			pinmux = <GPIOMUX(57, GPOUT_LOW,
-+					      GPOEN_SYS_I2C0_CLK,
-+					      GPI_SYS_I2C0_CLK)>,
-+				 <GPIOMUX(58, GPOUT_LOW,
-+					      GPOEN_SYS_I2C0_DATA,
-+					      GPI_SYS_I2C0_DATA)>;
-+			bias-disable; /* external pull-up */
-+			input-enable;
-+			input-schmitt-enable;
-+		};
-+	};
-+
-+	i2c2_pins: i2c2-0 {
-+		i2c-pins {
-+			pinmux = <GPIOMUX(3, GPOUT_LOW,
-+					     GPOEN_SYS_I2C2_CLK,
-+					     GPI_SYS_I2C2_CLK)>,
-+				 <GPIOMUX(2, GPOUT_LOW,
-+					     GPOEN_SYS_I2C2_DATA,
-+					     GPI_SYS_I2C2_DATA)>;
-+			bias-disable; /* external pull-up */
-+			input-enable;
-+			input-schmitt-enable;
-+		};
-+	};
-+
-+	i2c5_pins: i2c5-0 {
-+		i2c-pins {
-+			pinmux = <GPIOMUX(19, GPOUT_LOW,
-+					      GPOEN_SYS_I2C5_CLK,
-+					      GPI_SYS_I2C5_CLK)>,
-+				 <GPIOMUX(20, GPOUT_LOW,
-+					      GPOEN_SYS_I2C5_DATA,
-+					      GPI_SYS_I2C5_DATA)>;
-+			bias-disable; /* external pull-up */
-+			input-enable;
-+			input-schmitt-enable;
-+		};
-+	};
-+
-+	i2c6_pins: i2c6-0 {
-+		i2c-pins {
-+			pinmux = <GPIOMUX(16, GPOUT_LOW,
-+					      GPOEN_SYS_I2C6_CLK,
-+					      GPI_SYS_I2C6_CLK)>,
-+				 <GPIOMUX(17, GPOUT_LOW,
-+					      GPOEN_SYS_I2C6_DATA,
-+					      GPI_SYS_I2C6_DATA)>;
-+			bias-disable; /* external pull-up */
-+			input-enable;
-+			input-schmitt-enable;
-+		};
-+	};
-+
-+	uart0_pins: uart0-0 {
-+		tx-pins {
-+			pinmux = <GPIOMUX(5, GPOUT_SYS_UART0_TX,
-+					     GPOEN_ENABLE,
-+					     GPI_NONE)>;
-+			bias-disable;
-+			drive-strength = <12>;
-+			input-disable;
-+			input-schmitt-disable;
-+			slew-rate = <0>;
-+		};
-+
-+		rx-pins {
-+			pinmux = <GPIOMUX(6, GPOUT_LOW,
-+					     GPOEN_DISABLE,
-+					     GPI_SYS_UART0_RX)>;
-+			bias-disable; /* external pull-up */
-+			drive-strength = <2>;
-+			input-enable;
-+			input-schmitt-enable;
-+			slew-rate = <0>;
-+		};
-+	};
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pins>;
-+	status = "okay";
-+};
--- 
-2.38.1
+>> > > > > > +static int
+>> > > > > > +dpll_msg_add_dev_handle(struct sk_buff *msg, const struct dpll_device
+>> > > > > > *dpll)
+>> > > > > > +{
+>> > > > > > +	if (nla_put_u32(msg, DPLL_A_ID, dpll->id))
+>> > > > > 
+>> > > > > Why exactly do we need this dua--handle scheme? Why do you need
+>> > > > > unpredictable DPLL_A_ID to be exposed to userspace?
+>> > > > > It's just confusing.
+>> > > > > 
+>> > > > To be able to work with DPLL per integer after iterator on the list deducts
+>> > > > which DPLL device is needed. It can reduce the amount of memory copies and
+>> > > > simplify comparisons. Not sure why it's confusing.
+>> > > 
+>> > > Wait, I don't get it. Could you please explain a bit more?
+>> > > 
+>> > > My point is, there should be not such ID exposed over netlink
+>> > > You don't need to expose it to userspace. The user has well defined
+>> > > handle as you agreed with above. For example:
+>> > > 
+>> > > ice/c92d02a7129f4747/1
+>> > > ice/c92d02a7129f4747/2
+>> > > 
+>> > > This is shown in dpll device GET/DUMP outputs.
+>> > > Also user passes it during SET operation:
+>> > > $ dplltool set ice/c92d02a7129f4747/1 mode auto
+>> > > 
+>> > > Isn't that enough stable and nice?
+>> > > 
+>> > 
+>> > I agree with Vadim, this is rather to be used by a daemon tools, which
+>> > would get the index once, then could use it as long as device is there.
+>> 
+>> So basically you say, you can have 2 approaches in app:
+>> 1)
+>> id = dpll_device_get_id("ice/c92d02a7129f4747/1")
+>> dpll_device_set(id, something);
+>> dpll_device_set(id, something);
+>> dpll_device_set(id, something);
+>> 2):
+>> dpll_device_set("ice/c92d02a7129f4747/1, something);
+>> dpll_device_set("ice/c92d02a7129f4747/1, something);
+>> dpll_device_set("ice/c92d02a7129f4747/1, something);
+>> 
+>> What is exactly benefit of the first one? Why to have 2 handles? Devlink
+>> is a nice example of 2) approach, no problem there.
+>> 
+>> Perhaps I'm missing something, but looks like you want the id for no
+>> good reason and this dual-handle scheme just makes things more
+>> complicated with 0 added value.
+>
+>I would like to avoid any extra memory copies or memory checks when it's
+>possible to compare single u32/u64 index value. I might be invisible on a
+>single host setup, but running monitoring at scale which will parse and
+>compare string on every get/event can burn a bit of compute capacity.
 
+Wait, that does not make any sense what so ever.
+Show me numbers and real usecase. A sane app gets once at start, then
+processes notifications. You have a flow where string compare on a
+netlink command makes difference to int compare? Like tens of thousands
+of netlink cmds per second? I doubt that. If yes, it is a misuse. Btw,
+the string compare would be your last problem comparing the overhead of
+Netlink processing with ioctl for example.
+
+Your dual handle scheme just adds complexicity, confusion with 0 added
+value. Please drop it. I really don't understand the need to defend this
+odd approach :/
+
+[...]
+
+
+>> > > > > > +
+>> > > > > > +	return dpll_pre_dumpit(cb);
+>> > > > > > +}
+>> > > > > > +
+>> > > > > > +int dpll_pin_post_dumpit(struct netlink_callback *cb)
+>> > > > > > +{
+>> > > > > > +	mutex_unlock(&dpll_pin_xa_lock);
+>> > > > > > +
+>> > > > > > +	return dpll_post_dumpit(cb);
+>> > > > > > +}
+>> > > > > > +
+>> > > > > > +static int
+>> > > > > > +dpll_event_device_change(struct sk_buff *msg, struct dpll_device
+>> > > > > > *dpll,
+>> > > > > > +			 struct dpll_pin *pin, struct dpll_pin *parent,
+>> > > > > > +			 enum dplla attr)
+>> > > > > > +{
+>> > > > > > +	int ret = dpll_msg_add_dev_handle(msg, dpll);
+>> > > > > > +	struct dpll_pin_ref *ref = NULL;
+>> > > > > > +	enum dpll_pin_state state;
+>> > > > > > +
+>> > > > > > +	if (ret)
+>> > > > > > +		return ret;
+>> > > > > > +	if (pin && nla_put_u32(msg, DPLL_A_PIN_IDX, pin-
+>> > > > > > dev_driver_id))
+>> > > > > > +		return -EMSGSIZE;
+>> > > > > 
+>> > > > > I don't really understand why you are trying figure something new and
+>> > > > > interesting with the change notifications. This object mix and random
+>> > > > > attrs fillup is something very wrong and makes userspace completely
+>> > > > > fuzzy about what it is getting. And yet it is so simple:
+>> > > > > You have 2 objects, dpll and pin, please just have:
+>> > > > > dpll_notify()
+>> > > > > dpll_pin_notify()
+>> > > > > and share the attrs fillup code with pin_get() and dpll_get() callbacks.
+>> > > > > No need for any smartness. Have this dumb and simple.
+>> > > > > 
+>> > > > > Think about it more as about "object-state-snapshot" than "atomic-change"
+>> > > > 
+>> > > > But with full object-snapshot user space app will lose the information about
+>> > > > what exactly has changed. The reason to have this event is to provide the
+>> > > > attributes which have changed. Otherwise, the app should have full snapshot
+>> > > > and
+>> > > > compare all attributes to figure out changes and that's might not be great
+>> > > > idea.
+>> > > 
+>> > > Wait, are you saying that the app is stateless? Could you provide
+>> > > example use cases?
+>> > > 
+>> > >From what I see, the app managing dpll knows the state of the device and
+>> > > pins, it monitors for the changes and saves new state with appropriate
+>> > > reaction (might be some action or maybe just log entry).
+>> > > 
+>> > 
+>> > It depends on the use case, right? App developer having those information knows
+>> > what has changed, thus can react in a way it thinks is most suitable.
+>> > IMHO from user perspective it is good to have a notification which actually
+>> > shows it's reason, so proper flow could be assigned to handle the reaction.
+>> 
+>> Again, could you provide me specific example in which this is needed?
+>> I may be missing something, but I don't see how it can bring
+>> and benefit. It just makes the live of the app harder because it has to
+>> treat the get and notify messages differently.
+>> 
+>> It is quite common for app to:
+>> init:
+>> 1) get object state
+>> 2) store it
+>> 3) apply configuration
+>> runtime:
+>> 1) listen to object state change
+>> 2) store it
+>> 3) apply configuration
+>> 
+>> Same code for both.
+>
+>Well, I'm thinking about simple monitoring app which will wait for the events
+>and create an alert if the changes coming from the event differ from the
+>"allowed configs". In this case no real reason to store whole object state,
+>but the changes in events are very useful.
+
+No problem. But as I wrote elsewhere in this thread, make sure that msg
+format of a change message is the same as the format of get cmd message.
+Basically think of it as a get cmd message filtered to have only
+attrs which changed. Same nesting and everything. Makes it simple for
+the app to have same parsing code for get/dump/notification messages.
+
+[...]
