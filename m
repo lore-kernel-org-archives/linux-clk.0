@@ -2,91 +2,92 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D19C6FD1D
-	for <linux-clk@archiver.kernel.org>; Sun,  2 Apr 2023 03:03:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A47C76196
+	for <linux-clk@archiver.kernel.org>; Sun,  2 Apr 2023 08:23:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229492AbjDBDDw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 1 Apr 2023 23:03:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56190 "EHLO
+        id S230208AbjDBIXE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 2 Apr 2023 04:23:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbjDBDDv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Apr 2023 23:03:51 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 338111F7B3
-        for <linux-clk@vger.kernel.org>; Sat,  1 Apr 2023 20:03:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1680404630; x=1711940630;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=7aZifsaAEso7qXDiYmzrkdxCr4EDkLyzHawHD9RGCQQ=;
-  b=ZA0AyOWuZszjWDwe8Ap4rOCZN1mnmKmR/crFtiIybBwjaE2BWcyF6L5l
-   vJrorY8pXqP556SBMtyCoYQ1P3IHWNeZZLlsoyVBHQiUnFZOeLtYNfc4X
-   DUJ75En2vO56B1N1CHaeYwAfS8lEjO+qmWtu2AegNl3v8wtULl545mDDN
-   TGCil43OHMqDiTIqKQULySnOOQVoPLBs6VK6eJOtMXeIY2/CY+9oMEZbP
-   wyvrUpmKpQXdbx6Y9hgbb01yLFjnqNsGeSXI49FgUXSe8/41d9RA5P8Oc
-   ZOxNS/v+66pfQKzjLVphJ3fblV0PnSoM6dzY2jVi99o3qxLmMQ5tedG4V
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10667"; a="406741672"
-X-IronPort-AV: E=Sophos;i="5.98,311,1673942400"; 
-   d="scan'208";a="406741672"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2023 20:03:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10667"; a="754819234"
-X-IronPort-AV: E=Sophos;i="5.98,311,1673942400"; 
-   d="scan'208";a="754819234"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 01 Apr 2023 20:03:47 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pio0Q-000NCL-2a;
-        Sun, 02 Apr 2023 03:03:46 +0000
-Date:   Sun, 2 Apr 2023 11:02:48 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     "Garmin.Chang" <Garmin.Chang@mediatek.com>
-Cc:     oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Subject: [clk:clk-mediatek 82/82] FATAL: modpost:
- drivers/clk/mediatek/clk-mt8188-adsp_audio26m: sizeof(struct
- platform_device_id)=24 is not a modulo of the size of section
- __mod_platform__<identifier>_device_table=392.
-Message-ID: <202304021055.WDhQPcoS-lkp@intel.com>
+        with ESMTP id S229447AbjDBIXD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Apr 2023 04:23:03 -0400
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEBD8FF03
+        for <linux-clk@vger.kernel.org>; Sun,  2 Apr 2023 01:23:01 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id iszLpCRz4xuxqiszLpYwjS; Sun, 02 Apr 2023 10:22:59 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 02 Apr 2023 10:22:59 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <0a5fa878-b7c3-b5a3-8ffa-b3a2dcdc400d@wanadoo.fr>
+Date:   Sun, 2 Apr 2023 10:22:59 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH] clk: Reorder fields in 'struct clk_fractional_divider'
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <d1874eb8848d5f97f87337011188640a1463a666.1676649335.git.christophe.jaillet@wanadoo.fr>
+ <2e74c4c93f4bcc6a7af0c3ef5a8edd23.sboyd@kernel.org>
+Content-Language: fr, en-US
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <2e74c4c93f4bcc6a7af0c3ef5a8edd23.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-mediatek
-head:   0d2f2cefba64729a0730ce183ad58cf3e7929b94
-commit: 0d2f2cefba64729a0730ce183ad58cf3e7929b94 [82/82] clk: mediatek: Add MT8188 adsp clock support
-config: microblaze-randconfig-r024-20230402 (https://download.01.org/0day-ci/archive/20230402/202304021055.WDhQPcoS-lkp@intel.com/config)
-compiler: microblaze-linux-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/?id=0d2f2cefba64729a0730ce183ad58cf3e7929b94
-        git remote add clk https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
-        git fetch --no-tags clk clk-mediatek
-        git checkout 0d2f2cefba64729a0730ce183ad58cf3e7929b94
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=microblaze olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=microblaze SHELL=/bin/bash
+Le 29/03/2023 à 20:46, Stephen Boyd a écrit :
+> Quoting Christophe JAILLET (2023-02-17 07:55:55)
+>> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+>> index cf1adfeaf257..8cec844f5dde 100644
+>> --- a/include/linux/clk-provider.h
+>> +++ b/include/linux/clk-provider.h
+>> @@ -1134,13 +1134,13 @@ struct clk_hw *clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+>>   struct clk_fractional_divider {
+>>          struct clk_hw   hw;
+>>          void __iomem    *reg;
+>> +       u8              flags;
+>>          u8              mshift;
+>>          u8              mwidth;
+>>          u32             mmask;
+> 
+> This member ...
+> 
+>>          u8              nshift;
+>>          u8              nwidth;
+>>          u32             nmask;
+> 
+> and this member can be calculated. Doing that would save more bytes when
+> combined with this patch. Can you make this into a patch series?
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202304021055.WDhQPcoS-lkp@intel.com/
+Hi,
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+with your proposed change, there is no more need to move flags. All u8 
+are grouped and the struct is optimal.
 
->> FATAL: modpost: drivers/clk/mediatek/clk-mt8188-adsp_audio26m: sizeof(struct platform_device_id)=24 is not a modulo of the size of section __mod_platform__<identifier>_device_table=392.
-Fix definition of struct platform_device_id in mod_devicetable.h
+I'll send a v2, but not sure it really worth it.
+When dynamically allocated, even when the struct is 56 bytes, 64 are 
+still allocated.
+And there are only 2 users of struct clk_fractional_divider embedded in 
+another struct that will be shrinked with your change.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+On the other side, having theses masks pre-computed could save a few 
+cycles, at nearly no memory usage impact.
+
+I'll let you decide if v1 or v2 is the preferred way to go.
+
+CJ
+
+> 
+>> -       u8              flags;
+>>          void            (*approximation)(struct clk_hw *hw,
+>>                                  unsigned long rate, unsigned long *parent_rate,
+>>                                  unsigned long *m, unsigned long *n);
+> 
+
