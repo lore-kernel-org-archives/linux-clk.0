@@ -2,171 +2,143 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E356C77B62
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 10:41:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB9B1C76196
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 16:32:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232246AbjDCKlw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Apr 2023 06:41:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59212 "EHLO
+        id S232208AbjDCQb7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Apr 2023 12:31:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231886AbjDCKlX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 06:41:23 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F6C212BC1;
-        Mon,  3 Apr 2023 03:40:59 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id 185so6004249pgc.10;
-        Mon, 03 Apr 2023 03:40:59 -0700 (PDT)
+        with ESMTP id S229473AbjDCQb7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 12:31:59 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD6062122
+        for <linux-clk@vger.kernel.org>; Mon,  3 Apr 2023 09:31:30 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id cn12so119716210edb.4
+        for <linux-clk@vger.kernel.org>; Mon, 03 Apr 2023 09:31:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680518459;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AFuL6ChpVUUgBPgyIo4zUUMh6LlZPDJPlmBW1Q5qZg8=;
-        b=ddMKekAjo8HdAcsOLoioX/xPvxdrkFFaA0B/cyLzxbLFI8Ln0goCY8ygu65HhlUsB1
-         ikjJVip5ACJzg1hqxGMkAU79CDtu6uNxFUGwCW9t2MFWBjL28chDTjBMnyO10xZN3Htv
-         i1pa0Euntl5mXtZiTBfPpS4MCQf83EDcDWNILPcC9R/baVe7S3zyJEicYsOGqAjEEVnT
-         rgXZkcuvEWsJMFA3797m7ITbF8XPjs7lK/rVFnkVVIf+0zE+w3GIR5JviqkxlAlgaDeN
-         fRei51a+S/c0lArUA/F7hsZ6Lh7aovQBggoEMhYqdh4N+w474XbXYbwwlIbZVSxEkd8q
-         9Khw==
+        d=linaro.org; s=google; t=1680539484;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=do5D8PA2Ob021tcdMPdX8DXoHHob1pEJ74k2NUfYoOw=;
+        b=gvcObH+GeWNztUvTPEolF4QBTe8UBkuEhmEzaDz+0v1RlevYxGTkVez9vOJDJeO0Am
+         KHj40v8o36pKjV8INTNUVi1oPRc1hYy1cRaFvexNAMox4fJokjSZi2o0kkXk15k00YO5
+         3imybZCeo47YY+phMyZa3N44ep8RYqTAJL3oySNMJSDoAevdz6FKcncx1zoZXk3y1vZJ
+         anvB2QLdYe/NjbdBKUZY6QPBDSg5Q9tMEudCVjpv2yLPCBxqURC1S3oeq8p5UaooSy/U
+         jxMOaQ7pSU8YG4/m0pdWxtvZdeFCrE4cj+7Ramr1kJCGNlNzUGrcjuC1VkyhBB20Xx+d
+         vI5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680518459;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AFuL6ChpVUUgBPgyIo4zUUMh6LlZPDJPlmBW1Q5qZg8=;
-        b=XRLQmjjYPUbPKvnVAU51EEXGivmuFC5ryyELMQaWOJAy1dUHuVmTZR+Yf4QvsWoTKx
-         3sz6hV0I54mjMPxqfmyutOdfVgB1VM5NO8yHHhnYiTRxxQtQONbvNlM+sB0M5oJwjH2b
-         68eGuNx8hyAwk6HbxDu4jiLG4V1UIf4i9Uud+X7BYLwm615pgMQkWUyqe9NYSqG8tAmU
-         ToBQMh9pRPudhJS30fm9sUufTISN9JW1INKwwy+WBt5kcGLzOu/OAzN6lmxggY2T2azX
-         kD8Y0zRyxaMeBLd4Y/66NLCAKgG21G/Z3hD3bZaPq8BJC//lqHDgDHs0Z/xVONrpyubX
-         ABIg==
-X-Gm-Message-State: AAQBX9ePKhL63S5X87C1RGdpdfKGOEbdeLAj6rAtfmqHvzwYhyB0j8iE
-        KF0+bdy0qQa4gKcKZfrO3RVNRWKw2ye3lG9Yq+M=
-X-Google-Smtp-Source: AKy350ZgcbNdLWCD2SElCx52IwknONkFSjpKh+B1fGuP38l/SArhy1jlY2KFg4e89kIFLn72ByaxCAoDab+K4//dXV8=
-X-Received: by 2002:a05:6a00:99f:b0:62b:113b:72d7 with SMTP id
- u31-20020a056a00099f00b0062b113b72d7mr16244491pfg.3.1680518458919; Mon, 03
- Apr 2023 03:40:58 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1680539484;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=do5D8PA2Ob021tcdMPdX8DXoHHob1pEJ74k2NUfYoOw=;
+        b=PvAHHUMOnmj29Wc9lBT50nTHr5bOXzp55aqJwzgwjGla5rFzkMxPfMA+hzLCRvPGiN
+         YawivgUILiRoE0c4Yxntd8i6cipCAopqa1AGklazsMmH+hNn2AfFda15zD4/SgxOlLEg
+         A4Z2DYIdIaZ16fjJEFRkUm94pQbwBoVKRM3DaTbQMXbu7e7ovBRcqyvyc3nj/pyEeuOn
+         ZxjcOQfy48rpsY8Fg31lnwv3mRDv/iNshUahsbD2bd/UUP4IgIdvHJPPJDToMwadPsKi
+         8Plov3SJL3eCaMrOrSjMCubDXN1/uV1xJGfjg1NmdxD5UP0eONhDouYmdcvsYYcnx5rG
+         /CVw==
+X-Gm-Message-State: AAQBX9fYbFFptGDwwLVugvRdQt33z3UHaW4f7KDmwMrttSIrF3Mf67Pz
+        IVRVv+lzQ/ZxIpHnnXj0jA7rqw==
+X-Google-Smtp-Source: AKy350bvrGXVzVDbeYDPijEMx72wVfks2dCFgyV4cScGu2NL13KvmMYqiVyTa6DX5gDdX/uUh/KHwQ==
+X-Received: by 2002:a17:906:5856:b0:930:1391:da7c with SMTP id h22-20020a170906585600b009301391da7cmr32345440ejs.60.1680539484409;
+        Mon, 03 Apr 2023 09:31:24 -0700 (PDT)
+Received: from krzk-bin.. ([2a02:810d:15c0:828:ae90:d80:1069:4805])
+        by smtp.gmail.com with ESMTPSA id u2-20020a17090617c200b00930c7b642d0sm4755010eje.166.2023.04.03.09.31.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Apr 2023 09:31:23 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-clk@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] clk: samsung: drivers for v6.4
+Date:   Mon,  3 Apr 2023 18:31:05 +0200
+Message-Id: <20230403163106.331712-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230331163058.5688-1-sebastian.reichel@collabora.com>
- <CAEwRq=q=W57W33nYe_uUDQb0cf7QkFoa0rO+EWdsuUGTN7k_Vg@mail.gmail.com> <22215580.EfDdHjke4D@diego>
-In-Reply-To: <22215580.EfDdHjke4D@diego>
-From:   Vincent Legoll <vincent.legoll@gmail.com>
-Date:   Mon, 3 Apr 2023 12:38:12 +0200
-Message-ID: <CAEwRq=rmd=m1YybLYU9zTLGjwkvQze9fkX3WQhF+2RWWWfAKig@mail.gmail.com>
-Subject: Re: [PATCHv1 0/2] Improve RK3588 clocks and power domains support
-To:     =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc:     Sebastian Reichel <sebastian.reichel@collabora.com>,
-        linux-rockchip@lists.infradead.org,
-        Peter Geis <pgwipeout@gmail.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Finley Xiao <finley.xiao@rock-chips.com>,
-        Jagan Teki <jagan@edgeble.ai>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Apr 3, 2023 at 12:23=E2=80=AFPM Heiko St=C3=BCbner <heiko@sntech.de=
-> wrote:
-> If you want to check more, try
-> # mkdir /debug
-> # mount none /debug -t debugfs
-> [or do this to a location of your choice, I guess the standard is under /=
-proc]
->
-> # cat /debug/pm_genpd/pm_genpd_summary
->
-> and check the runtime_status field.
+The following changes since commit fe15c26ee26efa11741a7b632e9f23b01aca4cc6:
 
-Here it is:
+  Linux 6.3-rc1 (2023-03-05 14:52:03 -0800)
 
-domain                          status          children
-            performance
-    /device                                             runtime status
----------------------------------------------------------------------------=
--------------------
-sdmmc                           off-0
-            0
-    /devices/platform/fe2c0000.mmc                      suspended
-            0
-audio                           off-0
-            0
-sdio                            off-0
-            0
-pcie                            off-0
-            0
-gmac                            on
-            0
-    /devices/platform/fe1b0000.ethernet                 active
-            0
-usb                             off-0
-            0
-rga31                           off-0
-            0
-fec                             off-0
-            0
-isp1                            off-0
-            0
-vi                              off-0
-            0
-                                                isp1, fec
-vo1                             off-0
-            0
-vo0                             off-0
-            0
-vop                             off-0
-            0
-                                                vo0
-rga30                           off-0
-            0
-av1                             off-0
-            0
-vdpu                            off-0
-            0
-                                                av1, rkvdec0, rkvdec1, rga3=
-0
-venc1                           off-0
-            0
-venc0                           off-0
-            0
-                                                venc1
-rkvdec1                         off-0
-            0
-rkvdec0                         off-0
-            0
-vcodec                          off-0
-            0
-                                                rkvdec0, rkvdec1, venc0
-gpu                             off-0
-            0
-npu2                            off-0
-            0
-npu1                            off-0
-            0
-nputop                          off-0
-            0
-                                                npu1, npu2
-npu                             off-0
-            0
-                                                nputop
+are available in the Git repository at:
 
-Don't know how to interpret this though...
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.4
 
-> Also you could provide a email-reply with a
->
-> Tested-by: Your Name <your-email>
+for you to fetch changes up to babb3e6a8a8e5a61a65d4463610108808139b23e:
 
-You can add my:
+  clk: samsung: exynos850: Make PMU_ALIVE_PCLK critical (2023-03-13 08:24:57 +0100)
 
-Tested-by: Vincent Legoll <vincent.legoll@gmail.com>
+----------------------------------------------------------------
+Samsung SoC clock drivers changes for 6.4
 
-Regards
+1. Exynos850: Add CMU_G3D clock controller for the Mali GPU.  This
+   brings new PLLs and few cleanups/simplifications in core Exynos clock
+   controller code, so they can be easier re-used in Exynos850 clock
+   controller driver.
+   New CMU_G3D clock controller needs Devicetree bindings header changes
+   with clock indices which are pulled from Samsung SoC repository.
 
---=20
-Vincent Legoll
+2. Extract Exynos5433 (ARM64) clock controller power management code to
+   common driver parts, so later it can be re-used by other Exynos clock
+   controller drivers.  This only prepares for such re-usage, which is
+   expected to come later for Exynos850.
+
+3. Exynos850: make PMU_ALIVE_PCLK clock critical, because it is needed
+   for core block - Power Management Unit.
+
+4. Cleanup: remove() callback returns void.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (1):
+      Merge branch 'for-v6.4/clk-exynos850-dt-binding' into next/clk
+
+Sam Protsenko (12):
+      dt-bindings: clock: exynos850: Add Exynos850 CMU_G3D
+      dt-bindings: clock: exynos850: Add AUD and HSI main gate clocks
+      clk: samsung: Remove np argument from samsung_clk_init()
+      clk: samsung: Don't pass reg_base to samsung_clk_register_pll()
+      clk: samsung: Set dev in samsung_clk_init()
+      clk: samsung: clk-pll: Implement pll0818x PLL type
+      clk: samsung: exynos850: Implement CMU_G3D domain
+      clk: samsung: exynos850: Add AUD and HSI main gate clocks
+      clk: samsung: Extract clocks registration to common function
+      clk: samsung: Extract parent clock enabling to common function
+      clk: samsung: exynos5433: Extract PM support to common ARM64 layer
+      clk: samsung: exynos850: Make PMU_ALIVE_PCLK critical
+
+Uwe Kleine-König (1):
+      clk: samsung: Convert to platform remove callback returning void
+
+ .../bindings/clock/samsung,exynos850-clock.yaml    |  19 ++
+ drivers/clk/samsung/clk-exynos-arm64.c             | 229 +++++++++++++++++++--
+ drivers/clk/samsung/clk-exynos-arm64.h             |   3 +
+ drivers/clk/samsung/clk-exynos-audss.c             |   6 +-
+ drivers/clk/samsung/clk-exynos-clkout.c            |   6 +-
+ drivers/clk/samsung/clk-exynos4.c                  |   6 +-
+ drivers/clk/samsung/clk-exynos4412-isp.c           |   3 +-
+ drivers/clk/samsung/clk-exynos5250.c               |   5 +-
+ drivers/clk/samsung/clk-exynos5420.c               |   5 +-
+ drivers/clk/samsung/clk-exynos5433.c               | 157 +-------------
+ drivers/clk/samsung/clk-exynos850.c                | 141 ++++++++++++-
+ drivers/clk/samsung/clk-pll.c                      |  12 +-
+ drivers/clk/samsung/clk-pll.h                      |   1 +
+ drivers/clk/samsung/clk-s3c64xx.c                  |   4 +-
+ drivers/clk/samsung/clk-s5pv210.c                  |   6 +-
+ drivers/clk/samsung/clk.c                          |  64 ++++--
+ drivers/clk/samsung/clk.h                          |  10 +-
+ include/dt-bindings/clock/exynos850.h              |  28 ++-
+ 18 files changed, 475 insertions(+), 230 deletions(-)
