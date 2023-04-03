@@ -2,87 +2,175 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3234FC76196
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 10:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20FF5C77B6E
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 10:33:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232227AbjDCKch (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Apr 2023 06:32:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49862 "EHLO
+        id S231421AbjDCKdY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Apr 2023 06:33:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231555AbjDCKca (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 06:32:30 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B23504EE3
-        for <linux-clk@vger.kernel.org>; Mon,  3 Apr 2023 03:32:28 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id er13so74341003edb.9
-        for <linux-clk@vger.kernel.org>; Mon, 03 Apr 2023 03:32:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680517947;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ziesCGyE5ths8HzE/mhJvKhp/kqnRaJ5l6HH5FEAep8=;
-        b=l2KRbV63hq0ABBC0fAbwwaH56OrBM+lonL5AbrqdCqij4e6mYZuRQgvsJcG9ba2OHj
-         JdQAr6S1I6SNn/ffRfikpDvQZ6tsBB+Sr8MU0mtuuXK0YnwF4i5YmFOSyQWgxPTM5L61
-         Ha17k4z2oahI9CVuVagXWVhhHnTSQN0IyULowdRUwv1E+b4aNgJFcY/xZgBFIb3Gm1Mk
-         DaURSiK3gHrIyIocZsLyM6wr/FsFylOiabXQ7hXsiFf04HQ+AubRGoVK1bWnE8tmSuc0
-         be6buNRvxg1U4kxJE/+Wh1zo7ebp2PZwvzAkI9z8SngE9gZPFAbbQbPT2ou8YbdZfC1J
-         f3qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680517947;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ziesCGyE5ths8HzE/mhJvKhp/kqnRaJ5l6HH5FEAep8=;
-        b=WSA5SK0yCk8b6XHu+LEORg/xMe+qPawIPdErZCdnKzRF0qZpkPY382WAslsQRqqGR/
-         AK5iUNQcGbetjUTH+ofg5GYw+GvfRcihajz9LCiHSIoZKrf+gj5WrKP/eQnNaVD7us/X
-         u/h9elJPYYfNyLGLsEl91+HvL7GWTdNoWDiyUMlAZrdGNG+FCRTXMxTxRKIx5l6mp6Ls
-         dTyHDm6OPTv29k0x1fqcraDQDyGOdeBJTi0uCLip9WKr137r113chwl2lwESGbqONcwC
-         tUIBEN/GtGIH8Glu5YB9lkIpZHrJzSBa1guqw+P+fHRJsvqiu5qzOcaHNI7Bn16xZ6XT
-         xQZA==
-X-Gm-Message-State: AAQBX9eXhSqKy5Oe/knPC0g8J5cC9Pb5woQPVXp1elee7HrWa8RMLAaC
-        OQw+9fNPmSG45hX8yCeF8qSb7A==
-X-Google-Smtp-Source: AKy350bXqnHRSCry8TNkyNVTg3r+0qjfsw4m4vCtJmGjh2QVaiDlfZ4+urlWYvfoN5DuvqM0V8TEuQ==
-X-Received: by 2002:aa7:d8cf:0:b0:4fc:8642:ce56 with SMTP id k15-20020aa7d8cf000000b004fc8642ce56mr31893374eds.25.1680517945601;
-        Mon, 03 Apr 2023 03:32:25 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:ae90:d80:1069:4805? ([2a02:810d:15c0:828:ae90:d80:1069:4805])
-        by smtp.gmail.com with ESMTPSA id q6-20020a056402518600b005028c376d50sm3169066edd.71.2023.04.03.03.32.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Apr 2023 03:32:25 -0700 (PDT)
-Message-ID: <f8c64dc8-7ded-6dff-4d27-754e547f79e8@linaro.org>
-Date:   Mon, 3 Apr 2023 12:32:24 +0200
+        with ESMTP id S231744AbjDCKdJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 06:33:09 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6E06C524A;
+        Mon,  3 Apr 2023 03:33:07 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.98,314,1673881200"; 
+   d="scan'208";a="154702133"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 03 Apr 2023 19:33:06 +0900
+Received: from localhost.localdomain (unknown [10.226.92.243])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 920ED42050D2;
+        Mon,  3 Apr 2023 19:33:03 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 1/3] dt-bindings: clock: Add Renesas versa3 clock generator bindings
+Date:   Mon,  3 Apr 2023 11:32:55 +0100
+Message-Id: <20230403103257.328954-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230403103257.328954-1-biju.das.jz@bp.renesas.com>
+References: <20230403103257.328954-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH V3 6/7] dt-bindings: clock: imx93: add NIC, A55 and ARM
- PLL CLK
-Content-Language: en-US
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, abelvesa@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
-Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-References: <20230403095300.3386988-1-peng.fan@oss.nxp.com>
- <20230403095300.3386988-7-peng.fan@oss.nxp.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230403095300.3386988-7-peng.fan@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/04/2023 11:52, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> Add i.MX93 NIC, A55 and ARM PLL CLK.
-> 
+Document Renesas versa3 clock generator(5P35023) bindings.
 
+The 5P35023 is a VersaClock programmable clock generator and
+is designed for low-power, consumer, and high-performance PCI
+Express applications. The 5P35023 device is a three PLL
+architecture design, and each PLL is individually programmable
+and allowing for up to 6 unique frequency outputs.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+v2->v3:
+ * Added Rb tag from Krzysztof Kozlowski
+ * Removed | from Link to data sheet.
+ * Dropped stray blank line from example.
+ * Updated example section for assigned-clocks to mach same alignment
+   with assigned-clock-rates. This is trivial change so retained the
+   Rb tag.
+RFC->v2:
+ * Renamed the filename to match with compatible
+ * Added maintainers entry after title
+ * Removed the wrapping for the link to data sheet.
+ * Removed reg description
+ * Removed clock names
+ * Replaced minItems->maxItems in renesas,settings property
+ * Dropped assigned-clocks, assigned-clock-rates
+ * Dropped renesas,clock-divider-read-only and renesas,clock-flags
+ * Drooped clock handle part from example
+ * Dropped reg from example.
+ * Dropped consumer example
+---
+ .../bindings/clock/renesas,5p35023.yaml       | 86 +++++++++++++++++++
+ 1 file changed, 86 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
 
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
+new file mode 100644
+index 000000000000..839648e753d4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
+@@ -0,0 +1,86 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/renesas,5p35023.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas 5p35023 VersaClock 3 programmable I2C clock generator
++
++maintainers:
++  - Biju Das <biju.das.jz@bp.renesas.com>
++
++description: |
++  The 5P35023 is a VersaClock programmable clock generator and
++  is designed for low-power, consumer, and high-performance PCI
++  express applications. The 5P35023 device is a three PLL
++  architecture design, and each PLL is individually programmable
++  and allowing for up to 6 unique frequency outputs.
++
++  An internal OTP memory allows the user to store the configuration
++  in the device. After power up, the user can change the device register
++  settings through the I2C interface when I2C mode is selected.
++
++  The driver can read a full register map from the DT, and will use that
++  register map to initialize the attached part (via I2C) when the system
++  boots. Any configuration not supported by the common clock framework
++  must be done via the full register map, including optimized settings.
++
++  Link to datasheet:
++  https://www.renesas.com/us/en/products/clocks-timing/clock-generation/programmable-clocks/5p35023-versaclock-3s-programmable-clock-generator
++
++properties:
++  compatible:
++    enum:
++      - renesas,5p35023
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++  clocks:
++    maxItems: 1
++
++  renesas,settings:
++    description: Optional, complete register map of the device.
++      Optimized settings for the device must be provided in full
++      and are written during initialization.
++    $ref: /schemas/types.yaml#/definitions/uint8-array
++    maxItems: 37
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++  - clocks
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        versa3: clock-generator@68 {
++            compatible = "renesas,5p35023";
++            reg = <0x68>;
++            #clock-cells = <1>;
++
++            clocks = <&x1_x2>;
++
++            renesas,settings = [
++                80 00 11 19 4c 02 23 7f 83 19 08 a9 5f 25 24 bf
++                00 14 7a e1 00 00 00 00 01 55 59 bb 3f 30 90 b6
++                80 b0 45 c4 95
++            ];
++
++            assigned-clocks = <&versa3 0>, <&versa3 1>,
++                              <&versa3 2>, <&versa3 3>,
++                              <&versa3 4>, <&versa3 5>;
++            assigned-clock-rates = <12288000>, <25000000>,
++                                   <12000000>, <11289600>,
++                                   <11289600>, <24000000>;
++        };
++    };
+-- 
+2.25.1
 
