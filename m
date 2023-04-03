@@ -2,154 +2,141 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF2AC761A6
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 07:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26567C76196
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 08:07:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231501AbjDCHsB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Apr 2023 03:48:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41266 "EHLO
+        id S231683AbjDCIHs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Apr 2023 04:07:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229509AbjDCHsA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 03:48:00 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DA6C1FF5;
-        Mon,  3 Apr 2023 00:47:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1680508076; x=1712044076;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zGqIFvsIBpWbq/uZw0Ixb3JhhlFXJPObQzt1HnJSOpc=;
-  b=Y0f3ldBp0OyrL74hEPh0T7eYh3iISzcg+FiP9czbESDeGAFd1Vpabnki
-   sXa9499GpThQDnat8a+ovFGGUN4eH8zgyEEDwQE9JKBriN2OK5yfGT8Kp
-   tn05RtUTM0V2VmjSHEqi7IEgE/deOnNIAsVZH6IB+tyIuV07lnii6VYU7
-   r+NUbqeHkUqS99+0bg37aOMneSCeRB9hj+QDeb29MXu1oUrS3RabRuAgw
-   FSHXIxy1QsYAJytwiPKezNWL31I7Fk6nM4oTeCcvcPpXsPB556EPxuLSr
-   BPvoYjGuIZz4sbaCwiINOt0i2HczoocNX2fnKykgH9jlscox6GNiHlDyx
-   w==;
-X-IronPort-AV: E=Sophos;i="5.98,314,1673938800"; 
-   d="asc'?scan'208";a="145174505"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 03 Apr 2023 00:47:54 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Mon, 3 Apr 2023 00:47:53 -0700
-Received: from wendy (10.10.115.15) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
- Transport; Mon, 3 Apr 2023 00:47:50 -0700
-Date:   Mon, 3 Apr 2023 08:47:35 +0100
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Hal Feng <hal.feng@starfivetech.com>
-CC:     Conor Dooley <conor@kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 00/22] Basic clock, reset & device tree support for
- StarFive JH7110 RISC-V SoC
-Message-ID: <1eda304a-a8e0-4f19-bfe4-8793052f73a9@spud>
-References: <20230401111934.130844-1-hal.feng@starfivetech.com>
- <acb36897-8085-4f41-9b68-b243467ffc6f@spud>
- <ce4ee037-c53c-5bd4-8968-437ee21c9c51@starfivetech.com>
+        with ESMTP id S231202AbjDCIHr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 04:07:47 -0400
+Received: from EUR01-HE1-obe.outbound.protection.outlook.com (mail-he1eur01on2052.outbound.protection.outlook.com [40.107.13.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D1F110E;
+        Mon,  3 Apr 2023 01:07:46 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iZGN6oeAl6gTkICWjTeixMOXRLAoc54/QdBh+RTqZ86pgPqteb3zASFXt3+TIV8NdbMziCyK6fu0ROufn8AFX7Z9dCa/6/OHNipnD5cnIWlqU4QQpMpPx839gMtI+6uUDHfajMUHMH1AJBXlj4Ubvog9WKuK2xuRWNIJQFkvDd201NzcZMCkDk8WPrG7zFTzhOPwZwGgoaS7INuYxwzQlzDc8ZqytHVvSpFI5V+svAHpObJcSmtk5SCJEMa8WUPIf/YL40CeDqiOJ/YLpFog4hcVlhOZOXBHHfjLt7Hq4yhAcm4xrpxM1R/q6IphmPFOP/AI//ujXbDq4WZK+ToKRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=U6J59jH+LqyNW3TxttpZKS+Cm1FENBgDVFJD7tQnWDw=;
+ b=SHuBX/Qv5b/kZmTMObLXjN9661X9TnSKMTr/blUnpddQPqszaOZhb/Gy55W8kxf1xR3ANLCSFI0+KNdRyXAyx5c/SSQVZifQuo02majTPFtSTDhiX4bw5I1F+Ft4hlo0PeYbOvHzAR1afFa9aA9arjZt0ShUt+p1ZUPcZw0+SM9bgD1EdwI+CM6IgDu39Dt5YrZWw/ApkILXfkHpAeIHxmkmgmbTlaV9nDFZwLpVsWee74EqWUJ02KHl4iSkzhLKd5XbZrUSdMzIDC63uEFfLwpsZnr3fpnvEq1UEb3Cgz8jfA8gPo44IU68c8nk4oHnKiLhbeTWbCnG4N+G3CijeQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U6J59jH+LqyNW3TxttpZKS+Cm1FENBgDVFJD7tQnWDw=;
+ b=hU5f2+Z6SBMjqn1TV7D0tLi7Gwr23GSIocy3AJDRcGibwSfa3GMA0XC52BJoZ4AKlTNYmXxwDhLEgt4p7vL5In8urzVU+arwERUPuZvYmwKO8ocIHY7cIKMxklQ9xA5jH3xmbH15g5CR/By3F6GEhNVSpkXgKIMM8pFayVK+cG0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by DB9PR04MB8090.eurprd04.prod.outlook.com (2603:10a6:10:240::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.33; Mon, 3 Apr
+ 2023 08:07:42 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::b999:f2c6:a8cc:7b4]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::b999:f2c6:a8cc:7b4%4]) with mapi id 15.20.6254.033; Mon, 3 Apr 2023
+ 08:07:42 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org
+Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V2 1/4] clk: imx: imx8mp: correct DISP2 pixel clock type
+Date:   Mon,  3 Apr 2023 16:12:43 +0800
+Message-Id: <20230403081246.3194230-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR04CA0197.apcprd04.prod.outlook.com
+ (2603:1096:4:14::35) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="QEXRWawa+Yd/Oc16"
-Content-Disposition: inline
-In-Reply-To: <ce4ee037-c53c-5bd4-8968-437ee21c9c51@starfivetech.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|DB9PR04MB8090:EE_
+X-MS-Office365-Filtering-Correlation-Id: 81bc8747-5c89-45a1-4aca-08db341a7fbd
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 0tcRKXWlX1t7cJFqsIFxgV+Onlnld4fyI5BGlY8yXui9TeaBP30gwDAW+SOoNCTNKSWO6KXgK8Ki2xEe6f7kbNk+2HVVHXnW0CfBGDMifjJOMklF4KWpJO8ZG9EJibZgZsXAi53xeD4v5hJy6RS9C60s1HzPR/eep38cm1SF5oUWdecypVslLifFvcmFl3lLbgvs1QxzcHEESsdWGHpRHPb8hnRFOMs8vZ8B9jPPB3vvDeVAaHIsEEBSe87hl+wkvcuFMCynAbd4yveOlAqLpNCJeQeYA84w8UkiTioFc0bn3uskpBSrC8DdtqDt7MtHSMTl2O0JfIqcj29RIrnAcwrLDDQjz3iMuzX2iAHLvrZwvcdal78aKP7d1J0BIaDsYsRvVa8v6bpYly/yeQ3XRfRaiVNriBDWItZuh7hCv9wXfxaa0DD1U5fePqoBCks0RHSrjkfUV+97muY7bFCXC+xizCZgg1aMP6+hhoATyHiATiaUB1hx3KKKUEoanvt7J9VSPGW9rRzNxJgQOQAeLg9wun4aP4lYKTOU+dDNb75DYg9N0CRyS3hCEuyoQSJuiF4+nz8S9rdorV/8oXerKpGAR0fDqrUF2Htfgjl6roj+a3AZcyUekndEB7sHjOyYl+UFKuO5lY6ts2LeSfK1kg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(346002)(39860400002)(136003)(376002)(366004)(451199021)(316002)(8676002)(66476007)(66556008)(41300700001)(4326008)(66946007)(5660300002)(7416002)(38100700002)(8936002)(38350700002)(478600001)(86362001)(2906002)(6486002)(52116002)(6506007)(6512007)(26005)(1076003)(186003)(83380400001)(2616005)(32563001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?edd1NKhQOUXZr9Zo8qMGcEPa0w7XiO+89lp+K/Vaxw2GtOjCNnLWRMR+SunF?=
+ =?us-ascii?Q?HaEFD+kIbU1woBLkHRdOcrqSajPpbENBydm6o/tXlXfCfCvm1++cBJ+9BdzZ?=
+ =?us-ascii?Q?vEm6tDzVIqHFaRdLtWKSRYzb/QDw64HnxBjiZTE7+Mv6gA5pz55fwVZkJBCV?=
+ =?us-ascii?Q?ZGFRvNMyylAQwFpKoq5ZGGSr0rGaPpZrxcSCY5ICX5UfLTGhcB3/a+jhfhsR?=
+ =?us-ascii?Q?PokE4VAniLbiKslZadW+X+eV6yEjviK/5KaVThOm6RlwZTA9WBVVjeeCjwQq?=
+ =?us-ascii?Q?co6caYmbHOdB7zTpGwxbTze2dMUDGEztlawOcMCmPsyisHDEkvimUjds9tjb?=
+ =?us-ascii?Q?XcBytG+wS+losSBhJvXjo9Mw6D7Wlgr2tC7RdhqqxHcCvjtmnpXO0kZujkPt?=
+ =?us-ascii?Q?pC7HX2kmi4GAJsa+X/9TuFpi9XJp5JAVKnpxuhPBZ6fqxtX7ffOpTqd4s/Pk?=
+ =?us-ascii?Q?/O8+nq/tbSp3FVYnBp120PAwGK/mW/n7qfCLvAPATsFy1bGcHM9HpTA7Jyqp?=
+ =?us-ascii?Q?dgUPyF3T1/EhDLGxdEk4foNVB6RMqR7kbLyVfNXCvwutys1IYF+7YnET6usy?=
+ =?us-ascii?Q?AVNCH3Vq53zDXcIO0KSmuGWr6BytvFOhkPi7CEEMz/DQBqj53sr6/IBViV5o?=
+ =?us-ascii?Q?Zk2pNxWtkAAplJ1xvrZVskg8d5Oj3zRoAkFJjN5cbYQMgX/1nfOiFljBY6tT?=
+ =?us-ascii?Q?qLfrpg6o62F9aDlunKaPuHNRNcZ/3MoeaocUPCpboO2G+lqUThsrVn7ZGvb7?=
+ =?us-ascii?Q?9DrMwscyzqW/mUAhWv4qfSlfPskSWUwn42h1kMIlTaG1X7RGwzG0pxW4L+ox?=
+ =?us-ascii?Q?sb8wYWcyy5vyVP4I8QeE40OdSl2MwnF+KgNI0Z+AkjnnTqluA/7csGHJcapt?=
+ =?us-ascii?Q?ca/zTJ9sdzaKqm63Tl/jo7qUYAu9Wy+ukQ6d9OuClevj1+FQDrM+wwzDvTpn?=
+ =?us-ascii?Q?vrJnCzRsiDsQIfC/y1HqCkPPHLYzVrq/n8NGBfCdNXOxLyaMUGTSqQue/aX4?=
+ =?us-ascii?Q?mFETdQCQ6oecnGmPXxYeMwESlqBhlis67sjfvXX7MBuRZr4KrAsDf603xEhi?=
+ =?us-ascii?Q?mQbjCErhaZ5shoPkOvDUyI8IvLYRNkKee7bN891d1Wh/k9JoI6S7PEvpt7SI?=
+ =?us-ascii?Q?EGq1nx/wrcP32J+po1/J9NS8FHeqvjPV4Npd2sEdc7xwV0XvW1LTgceuNOr2?=
+ =?us-ascii?Q?b9wmlmZvuB6RWmOByOq6iKjvaWJZO9kxm5BBYSUqRFf/P/gwnqULlmjmU+zM?=
+ =?us-ascii?Q?ZqVtg25rfyBP9J+9n1VoEl0Be2qqmK1mBRuKcDPjCncDhGXp0hssTUlJLlfV?=
+ =?us-ascii?Q?96o7ZK7FJYV1ZqBvN6RLC9kf2O1M+q7VKpCUhY7luaoiANg8fKfUIB3L2mOD?=
+ =?us-ascii?Q?mHfMyrrYodZMeSt+IO1jznYvc5geVALqC0kT5kp0PVx10G3SMhpyDXM99Bc2?=
+ =?us-ascii?Q?auwkqa/VgiOFNBPCT0d3f8x+8q9WSj0/N9KQuoAjDzl5YMwhVx5qEuW05+xd?=
+ =?us-ascii?Q?UucogUsdwRlzm+RzuUvT2aC0ZkPzehnCzL/PMbalVzwdGLj7OqyykHwiPJPi?=
+ =?us-ascii?Q?GA5IfJI0asFs+uRbEJZm3PtxrWKPREFNT/5oXous?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 81bc8747-5c89-45a1-4aca-08db341a7fbd
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2023 08:07:42.5228
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fTEryKH94hdJ4NKWOhh6G3+F5KN6x9xrudZ/bltp6Lei7tpm9799V9kDprg/suiDVIO6E1N8ufxR9xpFLa2TZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8090
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---QEXRWawa+Yd/Oc16
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Peng Fan <peng.fan@nxp.com>
 
-On Mon, Apr 03, 2023 at 03:30:32PM +0800, Hal Feng wrote:
-> On Sun, 2 Apr 2023 20:19:41 +0100, Conor Dooley wrote:
-> > On Sat, Apr 01, 2023 at 07:19:12PM +0800, Hal Feng wrote:
+The MEDIA_DISP2_CLK_ROOT use ccm_ahb_channel, it is bus type.
 
-> > And the rest as riscv-jh7110_clk_reset:
-> > MAINTAINERS: generalise StarFive clk/reset entries
->=20
-> For this patch, I find something to improve.
-> 1. Could you please help me sort the StarFive entries in MAINTAINERS?
-> "STARFIVE JH71X0 CLOCK DRIVERS" should be added after
-> "STARFIVE JH7110 MMC/SD/SDIO DRIVER".
->=20
-> 2. A "S" should be added at the end of
-> "STARFIVE JH7100 RESET CONTROLLER DRIVER".
->=20
-> I have tested your branch and have no comments on the other patches.
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
 
-Done:
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f405114bf096..0a701632b0b5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19907,6 +19907,12 @@ M:     Emil Renner Berthing <kernel@esmil.dk>
- S:     Maintained
- F:     arch/riscv/boot/dts/starfive/
-=20
-+STARFIVE JH7110 MMC/SD/SDIO DRIVER
-+M:     William Qiu <william.qiu@starfivetech.com>
-+S:     Supported
-+F:     Documentation/devicetree/bindings/mmc/starfive*
-+F:     drivers/mmc/host/dw_mmc-starfive.c
-+
- STARFIVE JH71X0 CLOCK DRIVERS
- M:     Emil Renner Berthing <kernel@esmil.dk>
- M:     Hal Feng <hal.feng@starfivetech.com>
-@@ -19915,12 +19921,6 @@ F:     Documentation/devicetree/bindings/clock/sta=
-rfive,jh71*.yaml
- F:     drivers/clk/starfive/clk-starfive-jh71*
- F:     include/dt-bindings/clock/starfive?jh71*.h
-=20
--STARFIVE JH7110 MMC/SD/SDIO DRIVER
--M:     William Qiu <william.qiu@starfivetech.com>
--S:     Supported
--F:     Documentation/devicetree/bindings/mmc/starfive*
--F:     drivers/mmc/host/dw_mmc-starfive.c
--
- STARFIVE JH71X0 PINCTRL DRIVERS
- M:     Emil Renner Berthing <kernel@esmil.dk>
- M:     Jianlong Huang <jianlong.huang@starfivetech.com>
-@@ -19931,7 +19931,7 @@ F:      drivers/pinctrl/starfive/pinctrl-starfive-j=
-h71*
- F:     include/dt-bindings/pinctrl/pinctrl-starfive-jh7100.h
- F:     include/dt-bindings/pinctrl/starfive,jh7110-pinctrl.h
-=20
--STARFIVE JH71X0 RESET CONTROLLER DRIVER
-+STARFIVE JH71X0 RESET CONTROLLER DRIVERS
- M:     Emil Renner Berthing <kernel@esmil.dk>
- M:     Hal Feng <hal.feng@starfivetech.com>
- S:     Maintained
+V2:
+ None
 
- Cheers,
- Conor.
+ drivers/clk/imx/clk-imx8mp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---QEXRWawa+Yd/Oc16
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+index 3253589851ff..4a0f1b739fd4 100644
+--- a/drivers/clk/imx/clk-imx8mp.c
++++ b/drivers/clk/imx/clk-imx8mp.c
+@@ -554,7 +554,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+ 	hws[IMX8MP_CLK_AHB] = imx8m_clk_hw_composite_bus_critical("ahb_root", imx8mp_ahb_sels, ccm_base + 0x9000);
+ 	hws[IMX8MP_CLK_AUDIO_AHB] = imx8m_clk_hw_composite_bus("audio_ahb", imx8mp_audio_ahb_sels, ccm_base + 0x9100);
+ 	hws[IMX8MP_CLK_MIPI_DSI_ESC_RX] = imx8m_clk_hw_composite_bus("mipi_dsi_esc_rx", imx8mp_mipi_dsi_esc_rx_sels, ccm_base + 0x9200);
+-	hws[IMX8MP_CLK_MEDIA_DISP2_PIX] = imx8m_clk_hw_composite("media_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300);
++	hws[IMX8MP_CLK_MEDIA_DISP2_PIX] = imx8m_clk_hw_composite_bus("media_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300);
+ 
+ 	hws[IMX8MP_CLK_IPG_ROOT] = imx_clk_hw_divider2("ipg_root", "ahb_root", ccm_base + 0x9080, 0, 1);
+ 
+-- 
+2.37.1
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZCqElwAKCRB4tDGHoIJi
-0sqbAQCMsACpQzkzhLoKfCAGm331fVF+ABaBHJYSyLnVCVgBVAEAmAp9CCOzimm4
-keaJvJy+j9w82evuGi+U1ktFrXhXDQs=
-=7zTB
------END PGP SIGNATURE-----
-
---QEXRWawa+Yd/Oc16--
