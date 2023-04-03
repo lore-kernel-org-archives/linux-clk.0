@@ -2,113 +2,101 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4EB0C76188
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 20:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABD25C76188
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 20:41:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233495AbjDCUjb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Apr 2023 16:39:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58348 "EHLO
+        id S232806AbjDCUla (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Apr 2023 16:41:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232915AbjDCUjZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 16:39:25 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E1A9173C
-        for <linux-clk@vger.kernel.org>; Mon,  3 Apr 2023 13:39:15 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id t4so25424552wra.7
-        for <linux-clk@vger.kernel.org>; Mon, 03 Apr 2023 13:39:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680554354;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8W33znYIAl2DMyLncbJoqCopj/H6Dvst/McCNbNede4=;
-        b=aqN6rHZLCar/09kDSX23dhRO9TE6+zp5ZBhXizjjLoiA2bJ8NgApcvuPz1q2WwsZrD
-         2kFRTjggRG1o9yQaYJuN8bOA10f3SiClaNt99XjI5bWqN7GyPlCf+JjsN7om6K3+lRHC
-         v58+eBgq6Dy/iUV4YZOdWEWbPIpGUlaii/2QSbIuafUr9uJH1s2VaDHLv2xRug/yB69u
-         KQ01ulzTWkt3yGK+I7CRag0Zo/a5tz/L7JFav860fGdUj9GK6wEJ4oxS9j0DANQmBL/E
-         8EDSid2M8ryO4aPHomrjVUF97O8amMTeBRrBai12ixdDITAsCMJ/honqoFEZjsXKi0jw
-         Owug==
+        with ESMTP id S232468AbjDCUl3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 16:41:29 -0400
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52CAAE1;
+        Mon,  3 Apr 2023 13:41:29 -0700 (PDT)
+Received: by mail-ot1-f50.google.com with SMTP id 6-20020a9d0106000000b006a177038dfeso7157717otu.7;
+        Mon, 03 Apr 2023 13:41:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680554354;
+        d=1e100.net; s=20210112; t=1680554488;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8W33znYIAl2DMyLncbJoqCopj/H6Dvst/McCNbNede4=;
-        b=O6wZoIReGJCJCxKC+1FoCZKFVWBtSpC/X8FPxs+KNaeVHWqhE2eBopGIrEUvrzWPbB
-         JOq1DqSs6x+cvoNJdd/JbCKBbI8v6P/bOrygVKElDdV1M1TMiwgrRBw6eDKfby1ITGgg
-         Wdj4bZAKqXnDjS+1EbcapLfYHKmFy+k5O6QfrvYFWXNpXxRBkuogPy4OeIp9U/Onewq7
-         Kx5/SeEnC2l2UFxTsuGj6W7U4Nio5pGspVLfzlWr/cdUraUvKtB2jKemqLiw4Syspcl6
-         cT0eqSK3P/BOHBPicq5dWAByuZhP4u2l3qAkKxeADAmRh2BJvTc6mWfuz8fuMe6iaJnS
-         Xmaw==
-X-Gm-Message-State: AAQBX9e7tQCFEmh6+4GclSh8j4ef0YgOCss0xd39JZDc0BNeFzI3ZAKY
-        /M7SlqOPyICwrFfEoCFkiz2hAA==
-X-Google-Smtp-Source: AKy350YyFexgg+NYJQCh9I/uLB6xaL4WoSYOUrK8XcxLQm3830fqtBhPHXAE9Y7PxeJU7wWXoNVzhQ==
-X-Received: by 2002:adf:fa4c:0:b0:2da:75c5:e127 with SMTP id y12-20020adffa4c000000b002da75c5e127mr25515578wrr.23.1680554353766;
-        Mon, 03 Apr 2023 13:39:13 -0700 (PDT)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id z6-20020a5d4d06000000b002e6d4ac31a3sm8183664wrt.72.2023.04.03.13.39.12
+        bh=z9C/3hBrTR7K2nHN4gC1rv1X/TFSh2EbFRlM3X5whh8=;
+        b=4DJ0H4/8HyQvdTG70jhQVWFCoVFtsuki6y+O9Vye9ynNm8+FQXDZy5Ilhb8sPpNInW
+         pswVY3FgVMZdUDBzDE3TsHqulppzQtBFbS26FFYknRLtyX02Mflyib3heZy08mZ0yhMw
+         aZpgK0WFED8IoTmEeJ65r4lo+af4AUYFS5H24Lxbqp/n3TJZcX5QJDtA6ZjQr9dhFcZ4
+         E+lRZEA9j61i7KNjPsa8HQAmciF1yB7Gucb7GFu7aYNu+N7vOKZCv4S+oFjorxdHpuWY
+         MirDsgjxGSLbyAMG5Vd/v0aacH0uADYyVtsiEaJccWppq9JGrosgMazf6dRQ+G3qVkh5
+         F8YQ==
+X-Gm-Message-State: AAQBX9eu32GBPNiNZEDwrwvWyTRLUYcEYzHHTVsgb0QooeSeLIw1+s+3
+        Ub1pdcq4CZ/13NFrYa3dzA==
+X-Google-Smtp-Source: AKy350bLaMZm4zgOYFd0dWu6aGZldut/svNiHGH7Kc2jWFeeDzQmIG9nsGYpwa5jcpaQGkCUr2yC+Q==
+X-Received: by 2002:a05:6830:571:b0:6a1:2a17:16f2 with SMTP id f17-20020a056830057100b006a12a1716f2mr8533665otc.1.1680554488633;
+        Mon, 03 Apr 2023 13:41:28 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id z1-20020a9d7a41000000b006a144b97e73sm4629237otm.74.2023.04.03.13.41.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Apr 2023 13:39:13 -0700 (PDT)
-Date:   Mon, 3 Apr 2023 23:39:11 +0300
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, abelvesa@kernel.org,
-        peng.fan@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        heiko@sntech.de, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] clk: imx: Remove values for mmask and nmask in
- struct clk_fractional_divider
-Message-ID: <ZCs5bwy63l8E91AM@linaro.org>
-References: <cover.1680423909.git.christophe.jaillet@wanadoo.fr>
- <187a2266c3a034a593a151d6e5e6b21118043b5d.1680423909.git.christophe.jaillet@wanadoo.fr>
+        Mon, 03 Apr 2023 13:41:28 -0700 (PDT)
+Received: (nullmailer pid 1710521 invoked by uid 1000);
+        Mon, 03 Apr 2023 20:41:27 -0000
+Date:   Mon, 3 Apr 2023 15:41:27 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH 4/7] dt-bindings: iommu: arm,smmu: enable clocks for
+ sa8775p
+Message-ID: <20230403204127.GA1708388-robh@kernel.org>
+References: <20230328193632.226095-1-brgl@bgdev.pl>
+ <20230328193632.226095-5-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <187a2266c3a034a593a151d6e5e6b21118043b5d.1680423909.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20230328193632.226095-5-brgl@bgdev.pl>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-04-02 11:42:05, Christophe JAILLET wrote:
-> Now that fractional_divider clk computes mmask and nmask when needed, there
-> is no more need to provide them explicitly anymore.
+On Tue, Mar 28, 2023 at 09:36:29PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> The KGSL iommu will require the clocks property to be set. Enable it for
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Isn't KGSL the name for QCom's adreno vendor driver? What does that have 
+to do with bindings?
 
+> sa8775p in the bindings.
+> 
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > ---
->  drivers/clk/imx/clk-composite-7ulp.c | 4 ----
->  1 file changed, 4 deletions(-)
+>  Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> diff --git a/drivers/clk/imx/clk-composite-7ulp.c b/drivers/clk/imx/clk-composite-7ulp.c
-> index 4eedd45dbaa8..e208ddc51133 100644
-> --- a/drivers/clk/imx/clk-composite-7ulp.c
-> +++ b/drivers/clk/imx/clk-composite-7ulp.c
-> @@ -19,10 +19,8 @@
->  #define PCG_CGC_SHIFT	30
->  #define PCG_FRAC_SHIFT	3
->  #define PCG_FRAC_WIDTH	1
-> -#define PCG_FRAC_MASK	BIT(3)
->  #define PCG_PCD_SHIFT	0
->  #define PCG_PCD_WIDTH	3
-> -#define PCG_PCD_MASK	0x7
->  
->  #define SW_RST		BIT(28)
->  
-> @@ -102,10 +100,8 @@ static struct clk_hw *imx_ulp_clk_hw_composite(const char *name,
->  		fd->reg = reg;
->  		fd->mshift = PCG_FRAC_SHIFT;
->  		fd->mwidth = PCG_FRAC_WIDTH;
-> -		fd->mmask  = PCG_FRAC_MASK;
->  		fd->nshift = PCG_PCD_SHIFT;
->  		fd->nwidth = PCG_PCD_WIDTH;
-> -		fd->nmask = PCG_PCD_MASK;
->  		fd->flags = CLK_FRAC_DIVIDER_ZERO_BASED;
->  		if (has_swrst)
->  			fd->lock = &imx_ccm_lock;
+> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+> index 807cb511fe18..74d5164ed1e8 100644
+> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+> @@ -375,7 +375,6 @@ allOf:
+>                - nvidia,smmu-500
+>                - qcom,qcm2290-smmu-500
+>                - qcom,qdu1000-smmu-500
+> -              - qcom,sa8775p-smmu-500
+>                - qcom,sc7180-smmu-500
+>                - qcom,sc8180x-smmu-500
+>                - qcom,sc8280xp-smmu-500
 > -- 
-> 2.34.1
+> 2.37.2
 > 
