@@ -2,151 +2,92 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71463C77B6E
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 08:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 483A6C76196
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 09:23:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231364AbjDCIie (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Apr 2023 04:38:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58964 "EHLO
+        id S232020AbjDCJXN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Apr 2023 05:23:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230052AbjDCIid (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 04:38:33 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36F0B19BF
-        for <linux-clk@vger.kernel.org>; Mon,  3 Apr 2023 01:38:30 -0700 (PDT)
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1pjFhk-0007cH-Ub; Mon, 03 Apr 2023 10:38:20 +0200
-Message-ID: <325d0023-9dd1-f1af-302e-d32b9b5f2f6b@pengutronix.de>
-Date:   Mon, 3 Apr 2023 10:38:20 +0200
+        with ESMTP id S231917AbjDCJXC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 05:23:02 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09F0459D6
+        for <linux-clk@vger.kernel.org>; Mon,  3 Apr 2023 02:22:47 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id eg48so114494585edb.13
+        for <linux-clk@vger.kernel.org>; Mon, 03 Apr 2023 02:22:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680513763;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fjeXiHYDWLDYDH3tp2OHz3EiswuWFVd+Ntpw6O0fatQ=;
+        b=z6Av2ppJybkbEQzB/0dLSbhCmvSMg5sYHB4466FR8KqhH52rocQ3sWeQY3mdCNFvo5
+         XfaL9ToasOWr2ICYR62hiz2ND++yoH3QWb+0nPmUcBtCWGHZkhKPvOcoLoU5+lKJMUKG
+         C2hTVV9C8i1v1O7A89inr67fbEcNcmo3JZn85HtACkWz6CegDyAhZ0TfZtFYEUzffekY
+         vYXwosGWmAZiHATxb0yuWMxjpSbHTMmnQkZuj9oWI+2USGbWIuNCGH78B7kcQzzxCUT0
+         fwZH//+Tx2IYhjk41NbaurMuAep+vwsZDHnA+zPXBfPxmyFHfq1wTjmK9c5miaSfnkMN
+         A4Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680513763;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fjeXiHYDWLDYDH3tp2OHz3EiswuWFVd+Ntpw6O0fatQ=;
+        b=VpatOb7Xc8IzIJE5X7xTjKffMI7PSJEqSEusTS03+gvKeGPyBIwumyONfyPFc3/QZw
+         2cBPmFzzJnI4PZHGiOBRcrixtad4DrLroHgk/I6A+NWpsr8uLiF5r5SelJvJfot+fDHH
+         DB50oTA9QowAypHU9tSwV9WpTjFyFUV7LhOy0SemlBKwKuMKdDskAjC+3OTA0gn8Usw2
+         uf8rD55bSD6Q5ZMrUAeupk4nALtYI0JvH7hxwAvphqNylu7e6Iuze2PvkN39nffIVWvI
+         9u9JZcKm86U25O6huRdVqR9VyMf98U6u8Lxm6TK/I26+K5B1sFKHjtMCsXiHeWnDnQwd
+         f+/A==
+X-Gm-Message-State: AAQBX9f/fwiGHrw69eFXTF1keAdJKeFhJY4nvY4hMwVO2+BYjOMuymht
+        SiWx5TgNle+AUMS6SZT+1bJYNg==
+X-Google-Smtp-Source: AKy350Yj5ESiRy5699EV3GW6T9BfJpuMHWCkbBNGLqd26yEE0yjjj1FOYFwSJySIaibJItggeUy8Yw==
+X-Received: by 2002:aa7:d5d5:0:b0:4af:63a7:7474 with SMTP id d21-20020aa7d5d5000000b004af63a77474mr30655770eds.17.1680513763451;
+        Mon, 03 Apr 2023 02:22:43 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:ae90:d80:1069:4805? ([2a02:810d:15c0:828:ae90:d80:1069:4805])
+        by smtp.gmail.com with ESMTPSA id b17-20020a50b411000000b004bf7905559asm4347630edh.44.2023.04.03.02.22.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Apr 2023 02:22:43 -0700 (PDT)
+Message-ID: <5f324c32-86a3-a1af-cfe6-b41c4b3979f4@linaro.org>
+Date:   Mon, 3 Apr 2023 11:22:41 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.0
-Subject: Re: [PATCH V2] clk: imx: imx6sx: spdif clock rate is too high for
- asrc
+Subject: Re: [PATCH V2 2/4] dt-binding: clock: imx8mp: Add LDB clock entry
 Content-Language: en-US
-To:     Peng Fan <peng.fan@nxp.com>,
-        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        "abelvesa@kernel.org" <abelvesa@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>
-Cc:     "S.J. Wang" <shengjiu.wang@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-References: <20230403082138.3195452-1-peng.fan@oss.nxp.com>
- <a23f486a-e08f-f1ce-5f1b-bc34e4c92e67@pengutronix.de>
- <DU0PR04MB9417853B92B651A69452006088929@DU0PR04MB9417.eurprd04.prod.outlook.com>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <DU0PR04MB9417853B92B651A69452006088929@DU0PR04MB9417.eurprd04.prod.outlook.com>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, abelvesa@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
+Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+References: <20230403081246.3194230-1-peng.fan@oss.nxp.com>
+ <20230403081246.3194230-2-peng.fan@oss.nxp.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230403081246.3194230-2-peng.fan@oss.nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03.04.23 10:36, Peng Fan wrote:
->> Subject: Re: [PATCH V2] clk: imx: imx6sx: spdif clock rate is too high for asrc
->>
->> Hello Peng,
->>
->> On 03.04.23 10:21, Peng Fan (OSS) wrote:
->>> From: Shengjiu Wang <shengjiu.wang@nxp.com>
->>>
->>> spdif clock is one of the asrc clock source, which is used for ideal
->>> ratio mode. when set to 98.304MHz, it cause the divider of asrc input
->>> clock and output clock exceed the maximum value, and asrc driver
->>> saturate the value to maximum value, which will cause the ASRC's
->>> performance very bad.
->>> So we need to set spdif clock to a proper rate. which make asrc
->>> divider not exceed maximum value, at least one of divider not exceed
->>> maximum value.
->>> The target is spdif clock rate / output(or input) sample rate less
->>> than 1024(which is maximum divider).
->>>
->>> Fixes: f1541e15e38e ("clk: imx6sx: Switch to clk_hw based API")
->>
->> Before referenced commit, it looked like this:
->>
->>   clk_set_rate(clks[IMX6SX_CLK_SPDIF_PODF], 98304000);
->>
->> I think commit d55135689019 ("ARM: imx: add clock driver for imx6sx") is
->> what you're after.
+On 03/04/2023 10:12, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> Should I add both the commits as Fixes? Or only the one your listed?
+> Add LDB clock entry for i.MX8MP
 
-AFAICS, f1541e15e38e introduced no functional change with regards to the
-SPDIF clock, so you should only reference the original commit introducing
-the issue you aim to resolve.
-
-Cheers,
-Ahmad
+Use subject prefixes matching the subsystem (which you can get for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching).
 
 > 
-> Thanks,
-> Peng.
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
 > 
->>
->> Cheers,
->> Ahmad
->>
->>> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
->>> Signed-off-by: Peng Fan <peng.fan@nxp.com>
->>> ---
->>>
->>> V2:
->>>  Add Fixes tag
->>>
->>>  drivers/clk/imx/clk-imx6sx.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/clk/imx/clk-imx6sx.c
->>> b/drivers/clk/imx/clk-imx6sx.c index 7cf86707bc39..3face052527d 100644
->>> --- a/drivers/clk/imx/clk-imx6sx.c
->>> +++ b/drivers/clk/imx/clk-imx6sx.c
->>> @@ -520,7 +520,7 @@ static void __init imx6sx_clocks_init(struct
->> device_node *ccm_node)
->>>  	clk_set_rate(hws[IMX6SX_CLK_PLL4_AUDIO_DIV]->clk, 393216000);
->>>
->>>  	clk_set_parent(hws[IMX6SX_CLK_SPDIF_SEL]->clk,
->> hws[IMX6SX_CLK_PLL4_AUDIO_DIV]->clk);
->>> -	clk_set_rate(hws[IMX6SX_CLK_SPDIF_PODF]->clk, 98304000);
->>> +	clk_set_rate(hws[IMX6SX_CLK_SPDIF_PODF]->clk, 24576000);
->>>
->>>  	clk_set_parent(hws[IMX6SX_CLK_AUDIO_SEL]->clk,
->> hws[IMX6SX_CLK_PLL3_USB_OTG]->clk);
->>>  	clk_set_rate(hws[IMX6SX_CLK_AUDIO_PODF]->clk, 24000000);
->>
->> --
->> Pengutronix e.K.                           |                             |
->> Steuerwalder Str. 21                       |
->> https://eur01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fwww.
->> pengutronix.de%2F&data=05%7C01%7Cpeng.fan%40nxp.com%7Cc7131cb2
->> 058346303de208db341e3824%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C
->> 0%7C0%7C638161076614883851%7CUnknown%7CTWFpbGZsb3d8eyJWIjoi
->> MC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C30
->> 00%7C%7C%7C&sdata=bmXiNAsD5SCoNrZF7pTgPFpjbColwBdBsO2qxR0KVO
->> U%3D&reserved=0  |
->> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
->> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-> 
-> 
-> 
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+> V2:
+>  New
+Best regards,
+Krzysztof
 
