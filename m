@@ -2,101 +2,85 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABD25C76188
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 20:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 933A2C76196
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 20:43:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232806AbjDCUla (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Apr 2023 16:41:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33124 "EHLO
+        id S233487AbjDCUnE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Apr 2023 16:43:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232468AbjDCUl3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 16:41:29 -0400
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52CAAE1;
-        Mon,  3 Apr 2023 13:41:29 -0700 (PDT)
-Received: by mail-ot1-f50.google.com with SMTP id 6-20020a9d0106000000b006a177038dfeso7157717otu.7;
-        Mon, 03 Apr 2023 13:41:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680554488;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        with ESMTP id S233486AbjDCUm7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 16:42:59 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD38D1717
+        for <linux-clk@vger.kernel.org>; Mon,  3 Apr 2023 13:42:51 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id v1so30674384wrv.1
+        for <linux-clk@vger.kernel.org>; Mon, 03 Apr 2023 13:42:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680554570;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=z9C/3hBrTR7K2nHN4gC1rv1X/TFSh2EbFRlM3X5whh8=;
-        b=4DJ0H4/8HyQvdTG70jhQVWFCoVFtsuki6y+O9Vye9ynNm8+FQXDZy5Ilhb8sPpNInW
-         pswVY3FgVMZdUDBzDE3TsHqulppzQtBFbS26FFYknRLtyX02Mflyib3heZy08mZ0yhMw
-         aZpgK0WFED8IoTmEeJ65r4lo+af4AUYFS5H24Lxbqp/n3TJZcX5QJDtA6ZjQr9dhFcZ4
-         E+lRZEA9j61i7KNjPsa8HQAmciF1yB7Gucb7GFu7aYNu+N7vOKZCv4S+oFjorxdHpuWY
-         MirDsgjxGSLbyAMG5Vd/v0aacH0uADYyVtsiEaJccWppq9JGrosgMazf6dRQ+G3qVkh5
-         F8YQ==
-X-Gm-Message-State: AAQBX9eu32GBPNiNZEDwrwvWyTRLUYcEYzHHTVsgb0QooeSeLIw1+s+3
-        Ub1pdcq4CZ/13NFrYa3dzA==
-X-Google-Smtp-Source: AKy350bLaMZm4zgOYFd0dWu6aGZldut/svNiHGH7Kc2jWFeeDzQmIG9nsGYpwa5jcpaQGkCUr2yC+Q==
-X-Received: by 2002:a05:6830:571:b0:6a1:2a17:16f2 with SMTP id f17-20020a056830057100b006a12a1716f2mr8533665otc.1.1680554488633;
-        Mon, 03 Apr 2023 13:41:28 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id z1-20020a9d7a41000000b006a144b97e73sm4629237otm.74.2023.04.03.13.41.27
+        bh=jsXZOUmTIvuqTGRRSXLCxsQtjq6NOtSPfGUe7/3UZ4U=;
+        b=SCjfQ0wynXd/hEqjm5VLa5dKgx5CYR3zFbfTC4wZpXBq/eli5xIqtZU2jwQgBKIMIW
+         gQNGtYoN1cSl9NermspKi5hw2mOaIu9xO7knhugSTLEK39qiB3BZXJcoGqFO5zJCMzJy
+         DQa8nXgOPl5XdyyvqWcP3mSmGwwm89v+slTQAv6Exx7UU+zFSYFXHwiUgL6eHFyugVdd
+         Tp2yEmAddamwWhkukNXg/sN4vjpcdtImzR+ADRIlZzXLfP+OrQyvMuDcKMccpndiPR4c
+         xHkBBBmBymipKMnm+DSlOK9gaOFdwoaPMJe2u6tKuhdjQskn8ye3iywT7odBXgp6TWOY
+         F+JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680554570;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jsXZOUmTIvuqTGRRSXLCxsQtjq6NOtSPfGUe7/3UZ4U=;
+        b=jfD6fLWjNuVpIsXfaQhxrlzAF8S47F9WRW6DFr2l/WBSfPdoA36Nnl2QTw+wXD0KcN
+         nG0+p1KEQqBzDAKKjCskIyt4tRzwzTWwkimPtYgeJMSfeRS1WwGxJPnnu3TmHi7RzURb
+         SOaHbsX1df7Ijg/A1PGDYkqCWlPFiweIqm/OwD1h8W1oNrrx0kPULak5JJOn2IF3k5Vf
+         B4eZyf9CP3MiIW+hWtUjYX7KLv78B3uSsL+tal3eR1hdQfo1mE1ZURmCAA0IeJOnzMus
+         0UfGT3vXr5hOUUZw60lwbtb1UUf4GwnAu0a+tlKBFdF7yqbzaqcQ+ll01aa1dKnN3RKm
+         x2zA==
+X-Gm-Message-State: AAQBX9c25uA/PMMJfAV/YumMGIPVpXyjOoXrpx4waq78r3CMhiU66nY7
+        bv5oOmQJaq5OOSWujhcF4yLb0w==
+X-Google-Smtp-Source: AKy350bRnMTIJx7ByEQuSeqfOccO7KEea5y8X9Kxm2W+PX0m4hanzgsekcPwBv/6NsA1PGEqYV1XVQ==
+X-Received: by 2002:adf:decb:0:b0:2d2:471f:cf6e with SMTP id i11-20020adfdecb000000b002d2471fcf6emr27653446wrn.5.1680554570109;
+        Mon, 03 Apr 2023 13:42:50 -0700 (PDT)
+Received: from localhost.localdomain ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id y16-20020adfe6d0000000b002df7c38dc3esm10564165wrm.87.2023.04.03.13.42.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Apr 2023 13:41:28 -0700 (PDT)
-Received: (nullmailer pid 1710521 invoked by uid 1000);
-        Mon, 03 Apr 2023 20:41:27 -0000
-Date:   Mon, 3 Apr 2023 15:41:27 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH 4/7] dt-bindings: iommu: arm,smmu: enable clocks for
- sa8775p
-Message-ID: <20230403204127.GA1708388-robh@kernel.org>
-References: <20230328193632.226095-1-brgl@bgdev.pl>
- <20230328193632.226095-5-brgl@bgdev.pl>
+        Mon, 03 Apr 2023 13:42:43 -0700 (PDT)
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     sboyd@kernel.org, abelvesa@kernel.org, s.hauer@pengutronix.de,
+        festevam@gmail.com, shawnguo@kernel.org, mturquette@baylibre.com,
+        kernel@pengutronix.de, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>,
+        linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: imx: drop duplicated macro
+Date:   Mon,  3 Apr 2023 23:41:53 +0300
+Message-Id: <168055445901.2178600.3873641347083873753.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230403082728.3199849-1-peng.fan@oss.nxp.com>
+References: <20230403082728.3199849-1-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230328193632.226095-5-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 28, 2023 at 09:36:29PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Mon, 3 Apr 2023 16:27:28 +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> The KGSL iommu will require the clocks property to be set. Enable it for
+> Drop duplicated macro definition
+> 
+> 
 
-Isn't KGSL the name for QCom's adreno vendor driver? What does that have 
-to do with bindings?
+Applied, thanks!
 
-> sa8775p in the bindings.
-> 
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> index 807cb511fe18..74d5164ed1e8 100644
-> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> @@ -375,7 +375,6 @@ allOf:
->                - nvidia,smmu-500
->                - qcom,qcm2290-smmu-500
->                - qcom,qdu1000-smmu-500
-> -              - qcom,sa8775p-smmu-500
->                - qcom,sc7180-smmu-500
->                - qcom,sc8180x-smmu-500
->                - qcom,sc8280xp-smmu-500
-> -- 
-> 2.37.2
-> 
+[1/1] clk: imx: drop duplicated macro
+      commit: 79ef82c55a37b9c3605602c4909db84481c9fb2f
+
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
