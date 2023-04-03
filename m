@@ -2,115 +2,138 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6CA5C761A6
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 06:39:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B79FC76196
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 07:08:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231367AbjDCGjt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Apr 2023 02:39:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47180 "EHLO
+        id S231421AbjDCHIK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Apr 2023 03:08:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231402AbjDCGjs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 02:39:48 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AE48CA30;
-        Sun,  2 Apr 2023 23:39:46 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3334f8mn017249;
-        Mon, 3 Apr 2023 06:39:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=AC0DGBr1P5ZXE9dXpblLlLAEcoFh5fnTzg7ZQvDdUnE=;
- b=oyYH/b1GkMyA4RybCpPKyR6Pb3v9+mP+KH66fSOS3taZua21ODCqqtHNplhkFBfLYauf
- 8ET3qwm1fBauGAm0+BDAPbJ110Lz9JIBZ2TUOqTOIZl9e+Cd6xH1s9U0CyCiTHVV83Fp
- lcYXfFn1FiTHaYZK2sf7tZrLesSh0vnHcpLPIdHUWZf2FGqb1RoPWY+k4ciNlhm+PW30
- ydw6jEmLKyVe4UZ3dboID1azEfkfeeTU06wzQpOLAmBwbvRpHcosGLcbCShSRBsD4PZW
- NNp5lu89kSYIt5ndOWfl8UwnFeGAiGKFCYlwZzXc7W1pQ0OUdG/sJ8c7iTRwKXKom40F Hg== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ppcq3kprf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Apr 2023 06:39:33 +0000
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3336dWn3018470
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 3 Apr 2023 06:39:32 GMT
-Received: from [10.216.31.88] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Sun, 2 Apr 2023
- 23:39:26 -0700
-Message-ID: <8c18bddc-c3d5-74b4-7b85-d819df0ec3d6@quicinc.com>
-Date:   Mon, 3 Apr 2023 12:09:23 +0530
+        with ESMTP id S229454AbjDCHIK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 03:08:10 -0400
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2085.outbound.protection.outlook.com [40.107.21.85])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBDDD59D2;
+        Mon,  3 Apr 2023 00:08:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FS53Ief9MU8pNHsetDaj83z1atepQpy6OxdtA0ikzJBnzAwaMWpiYFD5SmPxkWqJmKYav7qR0BJil+aQ18ohV1WVXgzhcPVrHvudHBNS03VPZzdsEos7lbHi/g8Dai28Kx0OGgPIcbo74/p2ACbfWm9iT6nJUsitcI3TcwWG4wA7aEO0HHsoPmkCNiVVQFK8K7i7zYyFIZCjWWdCbTn6Jj1tLq+jc5rFK9+Wi8QGbhI43wOBxlGl+X0LxD++d87P1qZAM43WjbK9Gz16pkZFfR+rqtFoD9Vx7EiBAbj2kZRGKlJ1KsESD6fLYrqrQJtK3SMkOFQGANJOqZjjcjE6WQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hjRvtjF0TFhob888R/LruGwCmqHD5KlAjQAIyqNqqek=;
+ b=FKDJZ4V+/WPuhkzDw4o1wdPL73PFrHJxFkgVaIQqUZ5P9UqFE4CJ25aQZp2Duy6rI+TuXS/ib7DAa6V1rfzcgAY7/XKcXxYb3xuP23lKuZ+L+9XwyGXtsULsa/MgGNLfaL0F8qy5N1yH5nmSxuiIjDWM0IzA/30ZKNFrgAeJKu+NCxrCwAz+qZUlbtPBAr6ujwqiGGok1+hcMVzu4S6ZBFNf1wLm4JyGIdn30aR5NSMrV4+rkXxHdYnUHLK+B6xQPrjChttUYz7WaXLC0EKsrPM9ssd7wvF6lDLbsVNWlzV0rgl/wvF11ELBODPlhHdz+ax7m3pJX2ciJ9Rc1YJspA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hjRvtjF0TFhob888R/LruGwCmqHD5KlAjQAIyqNqqek=;
+ b=IR+8dPtZzW9wSJfNMPx4pG5MP8T5hbh3ROctL/blr2jhvVO2+EMoJ4pyBX0dOWxOOYwCE6K5Ys430o4aT3E5WYscpPFN4k1AL+gTP146Dsu35dG114qHaFvXEmV009juTji1e+MqSITvpijNt2ug4/2F4bk8deoGECTD3EU+9IY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by PAXPR04MB8768.eurprd04.prod.outlook.com (2603:10a6:102:20f::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.33; Mon, 3 Apr
+ 2023 07:08:05 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::b999:f2c6:a8cc:7b4]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::b999:f2c6:a8cc:7b4%4]) with mapi id 15.20.6254.033; Mon, 3 Apr 2023
+ 07:08:05 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org
+Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V2 0/7] clk: imx: imx93: fix and update
+Date:   Mon,  3 Apr 2023 15:13:02 +0800
+Message-Id: <20230403071309.3113513-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR06CA0013.apcprd06.prod.outlook.com
+ (2603:1096:4:186::18) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v10 2/3] clk: qcom: lpasscc-sc7280: Skip qdsp6ss clock
- registration
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, <agross@kernel.org>,
-        <andersson@kernel.org>, <broonie@kernel.org>,
-        <konrad.dybcio@somainline.org>,
-        <krzysztof.kozlowski+dt@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
-        <quic_plai@quicinc.com>, <quic_rohkumar@quicinc.com>,
-        <quic_visr@quicinc.com>, <robh+dt@kernel.org>,
-        <swboyd@chromium.org>
-CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-References: <20230331152805.3199968-1-quic_mohs@quicinc.com>
- <20230331152805.3199968-3-quic_mohs@quicinc.com>
- <32e439d2fb2db190cd1486b2bd15aab3.sboyd@kernel.org>
-From:   Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-In-Reply-To: <32e439d2fb2db190cd1486b2bd15aab3.sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: eeoQ-h7je3rZXW3YNnPm8RIXha6bhBec
-X-Proofpoint-ORIG-GUID: eeoQ-h7je3rZXW3YNnPm8RIXha6bhBec
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-03_03,2023-03-31_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 phishscore=0 impostorscore=0 suspectscore=0 spamscore=0
- bulkscore=0 mlxlogscore=999 adultscore=0 clxscore=1015 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2304030049
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|PAXPR04MB8768:EE_
+X-MS-Office365-Filtering-Correlation-Id: 46406cb9-398c-4876-7d5e-08db34122b8d
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: M9nD8lZG7SxEaqz4py/dB0eW6OO5sQelg4KziAtvBNULClJkpJis/qJ0nPWIMPlhz8AwJhhhIR5rEHbcSrm7AonWRYmB3/2FA+vg4/4GMVatKLjkQj/rMXkrkPaSMkar9H7lhmrgjZ0VhbIlwOfYFk/Lf8BLAxBOmBckjHMkOEcKO1dyQYIh86RCzUtN1BkM0wXYPMXPx2JB2JrICJT04LrNAqWCLQz6zaijWJa1Y04K+4SfPsfuhHlV9A0XFnFRC6RTmm/nIlgGbJ2GT6cdqlo8v3HyMRDoLtw9JpYWyos//Pl9SL5d62qgmH8aOJcpoWErROl9a5EP9YSHBGgGV3Nm1Fgb3ebt4PpS79ZxWu08et5rXouWmpQTUI0nNqQQueXfr6mjM/awm13U7aYT8xeinkIz8JGBJgdv1BJrEL+1xKQA6TRVnxDBtNhM9NmNeo5QNBKOuEI4WIfJaZyZDOmJFIiO6TDVlaS1bbOjXylFVHQE+jbxONZTF1SeEmi6A80z8R7adrAQ7bgxEHUDeBqRc2WcWrGAUCnpmlZt9YHOtvlONgfWmtECXKICPTo/M0FcTMQPRsHD4WAtHoPbsm13Di4aODIU34kJjlpKsZ9XTlw0UWG2a9Fr5nHe8CSu
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(396003)(136003)(376002)(39860400002)(366004)(451199021)(4326008)(8676002)(66946007)(66556008)(66476007)(316002)(478600001)(8936002)(4744005)(5660300002)(7416002)(41300700001)(38100700002)(38350700002)(186003)(83380400001)(2616005)(52116002)(6486002)(6666004)(6512007)(6506007)(26005)(1076003)(86362001)(2906002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?MKHGuub+YqdxCCzr1xcHpa4mnBMSwjFwLVs4uWdSZOGPnZVzrWk4x8HKYVpo?=
+ =?us-ascii?Q?GzoktlamswlOMNArm8gKJbb+Aty3Gqc838nFvM8RJ0JJxc9NndkSBNMIweLL?=
+ =?us-ascii?Q?IU68KHsfnARS6fpnyWPQMhBQiVK7hToYL1RKLbDfhocAClX7r1LumXRQ2HtI?=
+ =?us-ascii?Q?iQlaaCZ20rSG2lpqWmRhP5Z8aeBZMC4BbcfcDz8H96ghIyA8yLFUwY53SM5z?=
+ =?us-ascii?Q?1/EoDKu5mFqLjFn56t4mKkfOfv16RMY1WrIzaYbydGIlMVIDAqPPDUtJbwf8?=
+ =?us-ascii?Q?2ZwUJuAJhR/mAwwNK0qDT6Pk3N4sTktr0Y51vFI4CWh31G2XArM1DNcLz+us?=
+ =?us-ascii?Q?KENUT4arfZ62OXuj8FAJQuVS4gDG2GZ4t6yLqXCBZzw2RzmbPB5DI6zPNzxN?=
+ =?us-ascii?Q?4yC3Hc/jI60rUxxZsKY/pV/i1RpObAOFw0A+5FrvKVy5Qd05eGokM3IuD2Y6?=
+ =?us-ascii?Q?lbxhDCzsfTlrKLydCJe9WInaS6ckh0Wkgfib2YQRT4XQIP4AY8M+4AC7ZxNv?=
+ =?us-ascii?Q?K4+c90pL4kerqXF32VW9hJk1s92hjvJlZZLhWFlb0EJyfFb9w8TGZinvPwOf?=
+ =?us-ascii?Q?8TTtjMU5FoUNBah35eq4epJDVQJ8/UXYHFkSLZDt/DyXoUFN7ewiRyvjLR2U?=
+ =?us-ascii?Q?4+x0/EwRfTMvoyQ5ASbKUPpR4MzAKW6KIwBK83fpgw02BipdGeXVa6sMtjhr?=
+ =?us-ascii?Q?xY2fBx7X6dmRIu8TX5R4vCel9MoAQa2Q9vHqIhq8fRTEBlLHFHCj9w+Qa84q?=
+ =?us-ascii?Q?zvgHGP2G/AWeALQyLgP9pk+0Izh4g00pzRv5971fXcvB6cElkspyRrzLBIja?=
+ =?us-ascii?Q?qEFOWwp94NFQuu1BgwoGrCEg31n60V31vBgpTQhZMrI5m4jCT/kZRl9Z/JkP?=
+ =?us-ascii?Q?1iamj6dloP0N8JcI9RrOJlRXAS1zxYS4I/vcLj0N6/Rw41nT8nOMmTEAgCuV?=
+ =?us-ascii?Q?uUFkOcJ+QIflz7TKF4Mb6fvmJwZFGvlO4Uyh1sIagh6udGmt9CWzWXjfAG//?=
+ =?us-ascii?Q?X7NbsMRCTJksQbPf444Fr8g5QDmXBTnyKU/Do66Quo/41bwk5Hmj3DRsoYs8?=
+ =?us-ascii?Q?yNwFwF1TMck7D9Mp3om9e4cY9xogswErQ4qyM9qcHGm8WtauGn73s2rRJQou?=
+ =?us-ascii?Q?sVeM0r1fPTGjgLDi1/HUbHPcsF2bCxwvGHYTIhFY+n2NZadm0Dit9Bgif4zR?=
+ =?us-ascii?Q?eegJTDTathmQb0oFUo/qCzN12zipZPRXnLSsohpe85cSTXAhLoZb7YC/JJdI?=
+ =?us-ascii?Q?jv712pZ6I6DSig+4IePWJGChGj9Pg08ZOkOpMrulhDJNxBD0Ji6FnmGp06Tc?=
+ =?us-ascii?Q?6xTk1w0tVUAfPHl3WDgkQ1s9Uqtyxy0nm1siQXsKGGe+zBAY5nAu6+GPogFr?=
+ =?us-ascii?Q?7jQCoxJf+lUg7MWPf8VgulHSeYbsh7f8FVv/bgULzqmf+pC0SGg5YgRZh/YJ?=
+ =?us-ascii?Q?BTt1+63D5lz/yVZmP83G97T2yTLsHvtyrKA+fi49kVAR7zrWl9Nk/x117aFV?=
+ =?us-ascii?Q?faHj/fv3avWirGL5WqgnA8mmlIJ/Fk1WAls3KLNZIxHOEtRxuvHJRhyH15mH?=
+ =?us-ascii?Q?w43v9z1LazZPiVzvueHWs2mt1klDYNxLdEOMx5qe?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 46406cb9-398c-4876-7d5e-08db34122b8d
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2023 07:08:05.2719
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EUke/rghqcZmq35GYAKMwCUzGEIA5V1WSfVTwpZFOcRFGaed+lW8DAfgNH9uczh8r206J8PPelLkNXewVKifFQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8768
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Peng Fan <peng.fan@nxp.com>
 
-On 4/1/2023 12:16 AM, Stephen Boyd wrote:
-> Quoting Mohammad Rafi Shaik (2023-03-31 08:28:04)
->> diff --git a/drivers/clk/qcom/lpasscc-sc7280.c b/drivers/clk/qcom/lpasscc-sc7280.c
->> index 5c1e17bd0d76..24aeed6bcf0e 100644
->> --- a/drivers/clk/qcom/lpasscc-sc7280.c
->> +++ b/drivers/clk/qcom/lpasscc-sc7280.c
->> @@ -17,6 +17,8 @@
->>   #include "clk-branch.h"
->>   #include "common.h"
->>   
->> +#define QDSP6SS_MAX_REGISTER           0x3f
-> You can drop the define and just put the raw number in the one place
-> this is used.
-Thanks for comment,
+Patch 1,2 is fix the freq table and set rate flow
+Patch 3,4,5 is to support integer, A55 clk, mcore_booted parameter
 
-okay, will drop the define.
->> +
->>   static struct clk_branch lpass_top_cc_lpi_q6_axim_hs_clk = {
->>          .halt_reg = 0x0,
->>          .halt_check = BRANCH_HALT,
->> @@ -118,12 +120,15 @@ static int lpass_cc_sc7280_probe(struct platform_device *pdev)
->>                  goto destroy_pm_clk;
->>          }
->>   
->> -       lpass_regmap_config.name = "qdsp6ss";
->> -       desc = &lpass_qdsp6ss_sc7280_desc;
->> +       if (!of_property_read_bool(pdev->dev.of_node, "qcom,adsp-pil-mode")) {
->> +               lpass_regmap_config.name = "qdsp6ss";
->> +               lpass_regmap_config.max_register = QDSP6SS_MAX_REGISTER;
->> +               desc = &lpass_qdsp6ss_sc7280_desc;
->>
+Jacky Bai (1):
+  clk: imx: fracn-gppll: Add 300MHz freq support for imx9
+
+Peng Fan (6):
+  clk: imx: fracn-gppll: fix the rate table
+  clk: imx: fracn-gppll: disable hardware select control
+  clk: imx: fracn-gppll: support integer pll
+  clk: imx: imx93: add mcore_booted module paratemter
+  dt-binding: clock: imx93: add NIC, A55 and ARM PLL CLK
+  clk: imx: imx93: Add nic and A55 clk
+
+ drivers/clk/imx/clk-composite-93.c      |  8 ++-
+ drivers/clk/imx/clk-fracn-gppll.c       | 91 +++++++++++++++++++++----
+ drivers/clk/imx/clk-imx93.c             | 19 +++++-
+ drivers/clk/imx/clk.h                   |  7 ++
+ include/dt-bindings/clock/imx93-clock.h |  6 +-
+ 5 files changed, 113 insertions(+), 18 deletions(-)
+
+-- 
+2.37.1
+
