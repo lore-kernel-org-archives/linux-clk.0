@@ -2,101 +2,143 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A4DFC76188
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 18:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BDFC761A6
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 18:05:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232994AbjDCSB3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Apr 2023 14:01:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54648 "EHLO
+        id S233022AbjDCSFq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Apr 2023 14:05:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232950AbjDCSBY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 14:01:24 -0400
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A55F3AAF;
-        Mon,  3 Apr 2023 11:01:12 -0700 (PDT)
-Received: by mail-ot1-f52.google.com with SMTP id r17-20020a05683002f100b006a131458abfso13500844ote.2;
-        Mon, 03 Apr 2023 11:01:12 -0700 (PDT)
+        with ESMTP id S232739AbjDCSFo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 14:05:44 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C63C2685
+        for <linux-clk@vger.kernel.org>; Mon,  3 Apr 2023 11:05:43 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id 20so31291272lju.0
+        for <linux-clk@vger.kernel.org>; Mon, 03 Apr 2023 11:05:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680545141;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=R2HkI4cTUCP2cGZwi+QRGyuqlnwQLBxlin1+ogWHLy0=;
+        b=n+uZs52IEvopHGjLJv5ixfblvCWQcA1693SNNBJWwcON5Q1A+UQmyoann/sytlgRV3
+         h22PLDHHsK1oHhUdDvOmWtT7qRxVuP1jhyX+fA8/SNbCmNuN50YJ18azzbuePwHm9ttq
+         x/d+cKjz5bkKlH5LHF2SLD0/JBSAXmCrW2rxhdl/tkF/UgGOvO4rdtKFzaGm8DkeJT6R
+         j5xX1nBp4irYyyPOkiHeKRt68tKidcB+4mY9zNwfefcG2X8MbtDy2RbLxq3uecq3DWNg
+         PzV89xuM9gx2e6rIUwj3ecj6KGM6UxPMlLIdLh9hKhocdWyrJ9pgA+s4Xj9iukX4kt9e
+         NjBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680544871;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n+2HyVBZpgIAk4A8UQ7TPXHjOeuEm1wa0e7V0v5arzY=;
-        b=D+mf2KUY3Qb17H/BgD9gHZYhHxG91N05+An1M6TiE7loZwLVgRwbAMzGi2kftDTkY/
-         0yi+UJ2D4D3sdyPupBNvviknCfiuCDrKMEuMTxWw7aUWAjWbuZaCv2QwIuE3kphjsBtj
-         2/zIc5yUSgLl4QzlhtI/FNlA972TQnZsQPYrYm9rhHXMb3IfDntWygpZBV79QgLVCKJi
-         qzYjDcz4hnXrxoPBbbfLjPeyGxsfD5IL82eioISgLkENqmVMDHQky8edGiybVS4CRTdl
-         5Wjygu+wcQ55wLmbcCrHJwJTlCNY7Xnlw8fx+LVMhfX74/Pe3Gk65/OEiDpqL0w957eJ
-         d8xA==
-X-Gm-Message-State: AAQBX9cN3Iyc5deHrM9QlrX3Fp5boWC+ajKyrvG4STstCUMXXgIEXaEc
-        PuDdizaw9orhQzHXAtrhAA==
-X-Google-Smtp-Source: AKy350YbposOHjUqSKPLp1r0c5pZmS2vrYBOO8PRSBJMRbIsZ8g5xLashYmoygD9IWOODdA8MPrzFQ==
-X-Received: by 2002:a9d:63c5:0:b0:697:a381:a8f8 with SMTP id e5-20020a9d63c5000000b00697a381a8f8mr41722otl.3.1680544871315;
-        Mon, 03 Apr 2023 11:01:11 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id d11-20020a9d5e0b000000b006a3170fe3efsm2707835oti.27.2023.04.03.10.59.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Apr 2023 10:59:56 -0700 (PDT)
-Received: (nullmailer pid 1164679 invoked by uid 1000);
-        Mon, 03 Apr 2023 17:59:39 -0000
-Date:   Mon, 3 Apr 2023 12:59:39 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Neil Armstrong <neil.armstrong@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        soc@kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
+        d=1e100.net; s=20210112; t=1680545141;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=R2HkI4cTUCP2cGZwi+QRGyuqlnwQLBxlin1+ogWHLy0=;
+        b=gykFsZLCt6yqcnXubp4z6MmGbR/geh36VLhk7hgHCbVmZtbxBWgaqWHWQAx5wsn0Gt
+         z7Toghg/H2L/bBB1cuPbUumHYM9S56TKkOijVmxLTw5QIogwGtOfRNbIVXcHCnWqjbxH
+         JxxH+aJ6O16zy7ZflZOhMsYrjjqnA3jg2z/n7DUMK7XOeUZnrjCpL3Noqh3NTw2EHqr8
+         oZBnuh3/m8SP3j7R4kESgVwwJgfMHJiIyy8+0Z6YjRJAT6Cf0QIgsJ94YxPuNTOeKEd+
+         27guMRP4QYOR1M3jlESjyQIsPYswQjekxhxEcbvJKazmFUE7NMf/x6rnWAT8zvF3cpck
+         oHTA==
+X-Gm-Message-State: AAQBX9d/qQf2/btkZasZEXxdgzPbSDKduzfHKE/fydJl6+XuUMxGXekj
+        f0p9TZZ8Ej0Rq7NzlCfO44gcIQ==
+X-Google-Smtp-Source: AKy350Y/q2Hrwz8PlPoUGUnxQyh1S12S5N9FBlDdGljkYL+7RNeVy94u6bcoheHGJs6zsQ4+3FJ51Q==
+X-Received: by 2002:a2e:80c5:0:b0:293:1565:4353 with SMTP id r5-20020a2e80c5000000b0029315654353mr125952ljg.10.1680545141478;
+        Mon, 03 Apr 2023 11:05:41 -0700 (PDT)
+Received: from [192.168.1.101] (abxj135.neoplus.adsl.tpnet.pl. [83.9.3.135])
+        by smtp.gmail.com with ESMTPSA id u22-20020a2e2e16000000b002a260e3a5bdsm1860320lju.27.2023.04.03.11.05.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Apr 2023 11:05:41 -0700 (PDT)
+Message-ID: <8b8540a9-505a-2b68-c246-fabba0f5fc37@linaro.org>
+Date:   Mon, 3 Apr 2023 20:05:38 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH 1/5] dt-bindings: clock: qcom,gpucc: Fix SM6350 clock
+ names
+Content-Language: en-US
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Sebastian Reichel <sre@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH RFC 06/20] dt-bindings: clk: oxnas: remove obsolete
- bindings
-Message-ID: <20230403175939.GA1162106-robh@kernel.org>
-References: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
- <20230331-topic-oxnas-upstream-remove-v1-6-5bd58fd1dd1f@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230331-topic-oxnas-upstream-remove-v1-6-5bd58fd1dd1f@linaro.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        Rob Herring <robh@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230315-topic-lagoon_gpu-v1-0-a74cbec4ecfc@linaro.org>
+ <20230315-topic-lagoon_gpu-v1-1-a74cbec4ecfc@linaro.org>
+ <1d0c894b-ccd4-348f-0c48-c6a5c89df27d@linaro.org>
+ <63037930-8ce4-532c-2e1a-0711005bdd77@linaro.org>
+In-Reply-To: <63037930-8ce4-532c-2e1a-0711005bdd77@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Mar 31, 2023 at 10:34:44AM +0200, Neil Armstrong wrote:
-> Due to lack of maintainance and stall of development for a few years now,
 
-I can't spell it either, but checkpatch tells me it is: maintenance
 
-> and since no new features will ever be added upstream, remove the
-> OX810 and OX820 clock bindings.
+On 17.03.2023 13:11, Konrad Dybcio wrote:
 > 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  .../devicetree/bindings/clock/oxnas,stdclk.txt     | 28 ----------------------
->  1 file changed, 28 deletions(-)
+> 
+> On 17.03.2023 09:37, Krzysztof Kozlowski wrote:
+>> On 16/03/2023 12:16, Konrad Dybcio wrote:
+>>> SM6350 GPUCC uses the same clock names as the rest of the gang, except
+>>> without a _src suffix. Account for that.
+>>
+>> Why not fixing the names instead (to use the same)? If the clocks are
+>> the same, why using different names for the inputs? To remind - these
+>> are not names of clocks in GCC, but names of clock inputs to the device.
+> Considering SM6350 is the only used of SM6350_GPUCC and it's not yet
+> in next and I don't think any other project using devicetree has
+> Adreno up on any platform, let alone this one, I suppose the ABI could
+> be broken and the driver could be made to expect the more common set
+> of names? Or I could transition it to index-based lookup?
+Comments, please?
 
-Always great to see fewer bindings. 
-
-Rob
+Konrad
+> 
+> Konrad
+>>
+>>>
+>>> Fixes: 7b91b9d8cc6c ("dt-bindings: clock: add SM6350 QCOM Graphics clock bindings")
+>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>> ---
+>>>  .../devicetree/bindings/clock/qcom,gpucc.yaml      | 29 +++++++++++++++++++---
+>>>  1 file changed, 25 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+>>> index db53eb288995..d209060a619d 100644
+>>> --- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+>>> +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+>>> @@ -43,10 +43,8 @@ properties:
+>>>        - description: GPLL0 div branch source
+>>>  
+>>>    clock-names:
+>>> -    items:
+>>> -      - const: bi_tcxo
+>>> -      - const: gcc_gpu_gpll0_clk_src
+>>> -      - const: gcc_gpu_gpll0_div_clk_src
+>>> +    minItems: 3
+>>
+>> Drop minItems, not needed as it is implied by maxItems.
+>>
+>>> +    maxItems: 3
+>>>  
+>>>    '#clock-cells':
+>>>      const: 1
+>>> @@ -71,6 +69,29 @@ required:
+>>>  
+>>>  additionalProperties: false
+>>>
+>>>
+>>
+>> Best regards,
+>> Krzysztof
+>>
