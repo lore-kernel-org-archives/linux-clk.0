@@ -2,143 +2,363 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB9B1C76196
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 16:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C2A4C76188
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 17:50:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232208AbjDCQb7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Apr 2023 12:31:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38344 "EHLO
+        id S230527AbjDCRuK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Apr 2023 13:50:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbjDCQb7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 12:31:59 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD6062122
-        for <linux-clk@vger.kernel.org>; Mon,  3 Apr 2023 09:31:30 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id cn12so119716210edb.4
-        for <linux-clk@vger.kernel.org>; Mon, 03 Apr 2023 09:31:30 -0700 (PDT)
+        with ESMTP id S231796AbjDCRt4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 13:49:56 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B312840C3
+        for <linux-clk@vger.kernel.org>; Mon,  3 Apr 2023 10:49:22 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id a11so31207357lji.6
+        for <linux-clk@vger.kernel.org>; Mon, 03 Apr 2023 10:49:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680539484;
+        d=linaro.org; s=google; t=1680544102;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=do5D8PA2Ob021tcdMPdX8DXoHHob1pEJ74k2NUfYoOw=;
-        b=gvcObH+GeWNztUvTPEolF4QBTe8UBkuEhmEzaDz+0v1RlevYxGTkVez9vOJDJeO0Am
-         KHj40v8o36pKjV8INTNUVi1oPRc1hYy1cRaFvexNAMox4fJokjSZi2o0kkXk15k00YO5
-         3imybZCeo47YY+phMyZa3N44ep8RYqTAJL3oySNMJSDoAevdz6FKcncx1zoZXk3y1vZJ
-         anvB2QLdYe/NjbdBKUZY6QPBDSg5Q9tMEudCVjpv2yLPCBxqURC1S3oeq8p5UaooSy/U
-         jxMOaQ7pSU8YG4/m0pdWxtvZdeFCrE4cj+7Ramr1kJCGNlNzUGrcjuC1VkyhBB20Xx+d
-         vI5Q==
+        bh=cmh0U8QZH0xaWmRcmSkGM1kVFcibzuua/RqQdb5w48c=;
+        b=pUYKi9COWvM908cqLmR/Stpqm/ekT1k/Ssqy7bUJzUau/ZVCKK/6wI/5u5+5PVoiir
+         /VRKH5esgpWBLfwsE/0M0F+hF6hG0hUEsBtErE9ZUJWAw2JHlcCqYN4pqZv17cWe8LZm
+         5YcjrzBzxJkRZkTp70MTZ0IFN4YI6uJIdDzGPNd7/FJGjcXpJJI9JleN2h6ZERKZUBqY
+         aOvSCvMdUXlQTQDSvBUJGrwQ5TAmOQghmSwI18JCqI8/MOA10wnQil3/Yrk1paT2GsgY
+         XrxfRMvRC/Trfcz0VWv+xOnsfIvBKDvIPHUYyyWCREAjIGZ6lu3Gb4wjKQke88BVqETI
+         ns0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680539484;
+        d=1e100.net; s=20210112; t=1680544102;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=do5D8PA2Ob021tcdMPdX8DXoHHob1pEJ74k2NUfYoOw=;
-        b=PvAHHUMOnmj29Wc9lBT50nTHr5bOXzp55aqJwzgwjGla5rFzkMxPfMA+hzLCRvPGiN
-         YawivgUILiRoE0c4Yxntd8i6cipCAopqa1AGklazsMmH+hNn2AfFda15zD4/SgxOlLEg
-         A4Z2DYIdIaZ16fjJEFRkUm94pQbwBoVKRM3DaTbQMXbu7e7ovBRcqyvyc3nj/pyEeuOn
-         ZxjcOQfy48rpsY8Fg31lnwv3mRDv/iNshUahsbD2bd/UUP4IgIdvHJPPJDToMwadPsKi
-         8Plov3SJL3eCaMrOrSjMCubDXN1/uV1xJGfjg1NmdxD5UP0eONhDouYmdcvsYYcnx5rG
-         /CVw==
-X-Gm-Message-State: AAQBX9fYbFFptGDwwLVugvRdQt33z3UHaW4f7KDmwMrttSIrF3Mf67Pz
-        IVRVv+lzQ/ZxIpHnnXj0jA7rqw==
-X-Google-Smtp-Source: AKy350bvrGXVzVDbeYDPijEMx72wVfks2dCFgyV4cScGu2NL13KvmMYqiVyTa6DX5gDdX/uUh/KHwQ==
-X-Received: by 2002:a17:906:5856:b0:930:1391:da7c with SMTP id h22-20020a170906585600b009301391da7cmr32345440ejs.60.1680539484409;
-        Mon, 03 Apr 2023 09:31:24 -0700 (PDT)
-Received: from krzk-bin.. ([2a02:810d:15c0:828:ae90:d80:1069:4805])
-        by smtp.gmail.com with ESMTPSA id u2-20020a17090617c200b00930c7b642d0sm4755010eje.166.2023.04.03.09.31.23
+        bh=cmh0U8QZH0xaWmRcmSkGM1kVFcibzuua/RqQdb5w48c=;
+        b=tXrpqO27p1RFEXPR04c6lto/Kvgh5ObSu36J3my/L2itKcmq+DFcuUfhlxIT8pklmg
+         0eJBGmqQ+9eDKF+wEhs1VyTZeJ705q9/Oj2KY1xoa4Ds+Ik3cTZWd5LIUZK8JPfBaOeP
+         dIFR/mv3pj6KEWIIAOszwgPWB8RDFraBO0YbOSy9F/MC9pBxWATyDpUg+cKNSiP+TrOV
+         aw/WicpZpuDRz91WqUqz45rYdyKF6wYv1VY090Bg3dvEvG+/GpgI6bOJAIEujP/2fjAG
+         LnqyFmpi9yKtzBIh+A94zX3KqFy6ZWtae8M8g92CXTAJNGk5o08X4d9j363+QnSIU2jv
+         i4VQ==
+X-Gm-Message-State: AAQBX9ctUPgqd7UsDrRSi8pBprayEAkl7nBGWHqJNJCkvlctOSSQKlVJ
+        P9/dRbGEzWnX63JsqIL961NQnA==
+X-Google-Smtp-Source: AKy350bO6RBLR5yWbMFgglqYDQA4F446v9NcM5SCkNi19VgH8B47arkq95Jp1Z/wKteCLZAq9Kh1vw==
+X-Received: by 2002:a2e:9e16:0:b0:295:a3aa:e7d8 with SMTP id e22-20020a2e9e16000000b00295a3aae7d8mr91237ljk.29.1680544101964;
+        Mon, 03 Apr 2023 10:48:21 -0700 (PDT)
+Received: from localhost.localdomain (abxj135.neoplus.adsl.tpnet.pl. [83.9.3.135])
+        by smtp.gmail.com with ESMTPSA id n20-20020a2e86d4000000b00295a8c68585sm1863588ljj.56.2023.04.03.10.48.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Apr 2023 09:31:23 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] clk: samsung: drivers for v6.4
-Date:   Mon,  3 Apr 2023 18:31:05 +0200
-Message-Id: <20230403163106.331712-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Mon, 03 Apr 2023 10:48:21 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+To:     linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        agross@kernel.org
+Cc:     marijn.suijten@somainline.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: gcc-qcm2290: Mark RCGs shared where applicable
+Date:   Mon,  3 Apr 2023 19:48:07 +0200
+Message-Id: <20230403174807.345185-1-konrad.dybcio@linaro.org>
+X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit fe15c26ee26efa11741a7b632e9f23b01aca4cc6:
+The vast majority of shared RCGs were not marked as such. Fix it.
 
-  Linux 6.3-rc1 (2023-03-05 14:52:03 -0800)
+Fixes: 496d1a13d405 ("clk: qcom: Add Global Clock Controller driver for QCM2290")
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+ drivers/clk/qcom/gcc-qcm2290.c | 62 +++++++++++++++++-----------------
+ 1 file changed, 31 insertions(+), 31 deletions(-)
 
-are available in the Git repository at:
+diff --git a/drivers/clk/qcom/gcc-qcm2290.c b/drivers/clk/qcom/gcc-qcm2290.c
+index 096deff2ba25..48995e50c6bd 100644
+--- a/drivers/clk/qcom/gcc-qcm2290.c
++++ b/drivers/clk/qcom/gcc-qcm2290.c
+@@ -650,7 +650,7 @@ static struct clk_rcg2 gcc_usb30_prim_mock_utmi_clk_src = {
+ 		.name = "gcc_usb30_prim_mock_utmi_clk_src",
+ 		.parent_data = gcc_parents_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -686,7 +686,7 @@ static struct clk_rcg2 gcc_camss_axi_clk_src = {
+ 		.name = "gcc_camss_axi_clk_src",
+ 		.parent_data = gcc_parents_4,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_4),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -706,7 +706,7 @@ static struct clk_rcg2 gcc_camss_cci_clk_src = {
+ 		.name = "gcc_camss_cci_clk_src",
+ 		.parent_data = gcc_parents_9,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_9),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -728,7 +728,7 @@ static struct clk_rcg2 gcc_camss_csi0phytimer_clk_src = {
+ 		.name = "gcc_camss_csi0phytimer_clk_src",
+ 		.parent_data = gcc_parents_5,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_5),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -742,7 +742,7 @@ static struct clk_rcg2 gcc_camss_csi1phytimer_clk_src = {
+ 		.name = "gcc_camss_csi1phytimer_clk_src",
+ 		.parent_data = gcc_parents_5,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_5),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -764,7 +764,7 @@ static struct clk_rcg2 gcc_camss_mclk0_clk_src = {
+ 		.parent_data = gcc_parents_3,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_3),
+ 		.flags = CLK_OPS_PARENT_ENABLE,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -779,7 +779,7 @@ static struct clk_rcg2 gcc_camss_mclk1_clk_src = {
+ 		.parent_data = gcc_parents_3,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_3),
+ 		.flags = CLK_OPS_PARENT_ENABLE,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -794,7 +794,7 @@ static struct clk_rcg2 gcc_camss_mclk2_clk_src = {
+ 		.parent_data = gcc_parents_3,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_3),
+ 		.flags = CLK_OPS_PARENT_ENABLE,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -809,7 +809,7 @@ static struct clk_rcg2 gcc_camss_mclk3_clk_src = {
+ 		.parent_data = gcc_parents_3,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_3),
+ 		.flags = CLK_OPS_PARENT_ENABLE,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -830,7 +830,7 @@ static struct clk_rcg2 gcc_camss_ope_ahb_clk_src = {
+ 		.name = "gcc_camss_ope_ahb_clk_src",
+ 		.parent_data = gcc_parents_6,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_6),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -854,7 +854,7 @@ static struct clk_rcg2 gcc_camss_ope_clk_src = {
+ 		.parent_data = gcc_parents_6,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_6),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -888,7 +888,7 @@ static struct clk_rcg2 gcc_camss_tfe_0_clk_src = {
+ 		.name = "gcc_camss_tfe_0_clk_src",
+ 		.parent_data = gcc_parents_7,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_7),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -912,7 +912,7 @@ static struct clk_rcg2 gcc_camss_tfe_0_csid_clk_src = {
+ 		.name = "gcc_camss_tfe_0_csid_clk_src",
+ 		.parent_data = gcc_parents_8,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_8),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -926,7 +926,7 @@ static struct clk_rcg2 gcc_camss_tfe_1_clk_src = {
+ 		.name = "gcc_camss_tfe_1_clk_src",
+ 		.parent_data = gcc_parents_7,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_7),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -940,7 +940,7 @@ static struct clk_rcg2 gcc_camss_tfe_1_csid_clk_src = {
+ 		.name = "gcc_camss_tfe_1_csid_clk_src",
+ 		.parent_data = gcc_parents_8,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_8),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -963,7 +963,7 @@ static struct clk_rcg2 gcc_camss_tfe_cphy_rx_clk_src = {
+ 		.parent_data = gcc_parents_10,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_10),
+ 		.flags = CLK_OPS_PARENT_ENABLE,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -984,7 +984,7 @@ static struct clk_rcg2 gcc_camss_top_ahb_clk_src = {
+ 		.name = "gcc_camss_top_ahb_clk_src",
+ 		.parent_data = gcc_parents_4,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_4),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1006,7 +1006,7 @@ static struct clk_rcg2 gcc_gp1_clk_src = {
+ 		.name = "gcc_gp1_clk_src",
+ 		.parent_data = gcc_parents_2,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_2),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1020,7 +1020,7 @@ static struct clk_rcg2 gcc_gp2_clk_src = {
+ 		.name = "gcc_gp2_clk_src",
+ 		.parent_data = gcc_parents_2,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_2),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1034,7 +1034,7 @@ static struct clk_rcg2 gcc_gp3_clk_src = {
+ 		.name = "gcc_gp3_clk_src",
+ 		.parent_data = gcc_parents_2,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_2),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1054,7 +1054,7 @@ static struct clk_rcg2 gcc_pdm2_clk_src = {
+ 		.name = "gcc_pdm2_clk_src",
+ 		.parent_data = gcc_parents_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1082,7 +1082,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s0_clk_src_init = {
+ 	.name = "gcc_qupv3_wrap0_s0_clk_src",
+ 	.parent_data = gcc_parents_1,
+ 	.num_parents = ARRAY_SIZE(gcc_parents_1),
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s0_clk_src = {
+@@ -1098,7 +1098,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s1_clk_src_init = {
+ 	.name = "gcc_qupv3_wrap0_s1_clk_src",
+ 	.parent_data = gcc_parents_1,
+ 	.num_parents = ARRAY_SIZE(gcc_parents_1),
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s1_clk_src = {
+@@ -1114,7 +1114,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s2_clk_src_init = {
+ 	.name = "gcc_qupv3_wrap0_s2_clk_src",
+ 	.parent_data = gcc_parents_1,
+ 	.num_parents = ARRAY_SIZE(gcc_parents_1),
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s2_clk_src = {
+@@ -1130,7 +1130,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s3_clk_src_init = {
+ 	.name = "gcc_qupv3_wrap0_s3_clk_src",
+ 	.parent_data = gcc_parents_1,
+ 	.num_parents = ARRAY_SIZE(gcc_parents_1),
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s3_clk_src = {
+@@ -1146,7 +1146,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s4_clk_src_init = {
+ 	.name = "gcc_qupv3_wrap0_s4_clk_src",
+ 	.parent_data = gcc_parents_1,
+ 	.num_parents = ARRAY_SIZE(gcc_parents_1),
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s4_clk_src = {
+@@ -1162,7 +1162,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s5_clk_src_init = {
+ 	.name = "gcc_qupv3_wrap0_s5_clk_src",
+ 	.parent_data = gcc_parents_1,
+ 	.num_parents = ARRAY_SIZE(gcc_parents_1),
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_shared_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s5_clk_src = {
+@@ -1219,7 +1219,7 @@ static struct clk_rcg2 gcc_sdcc1_ice_core_clk_src = {
+ 		.name = "gcc_sdcc1_ice_core_clk_src",
+ 		.parent_data = gcc_parents_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1266,7 +1266,7 @@ static struct clk_rcg2 gcc_usb30_prim_master_clk_src = {
+ 		.name = "gcc_usb30_prim_master_clk_src",
+ 		.parent_data = gcc_parents_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1280,7 +1280,7 @@ static struct clk_rcg2 gcc_usb3_prim_phy_aux_clk_src = {
+ 		.name = "gcc_usb3_prim_phy_aux_clk_src",
+ 		.parent_data = gcc_parents_13,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_13),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1303,7 +1303,7 @@ static struct clk_rcg2 gcc_video_venus_clk_src = {
+ 		.parent_data = gcc_parents_14,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_14),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+-- 
+2.40.0
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.4
-
-for you to fetch changes up to babb3e6a8a8e5a61a65d4463610108808139b23e:
-
-  clk: samsung: exynos850: Make PMU_ALIVE_PCLK critical (2023-03-13 08:24:57 +0100)
-
-----------------------------------------------------------------
-Samsung SoC clock drivers changes for 6.4
-
-1. Exynos850: Add CMU_G3D clock controller for the Mali GPU.  This
-   brings new PLLs and few cleanups/simplifications in core Exynos clock
-   controller code, so they can be easier re-used in Exynos850 clock
-   controller driver.
-   New CMU_G3D clock controller needs Devicetree bindings header changes
-   with clock indices which are pulled from Samsung SoC repository.
-
-2. Extract Exynos5433 (ARM64) clock controller power management code to
-   common driver parts, so later it can be re-used by other Exynos clock
-   controller drivers.  This only prepares for such re-usage, which is
-   expected to come later for Exynos850.
-
-3. Exynos850: make PMU_ALIVE_PCLK clock critical, because it is needed
-   for core block - Power Management Unit.
-
-4. Cleanup: remove() callback returns void.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (1):
-      Merge branch 'for-v6.4/clk-exynos850-dt-binding' into next/clk
-
-Sam Protsenko (12):
-      dt-bindings: clock: exynos850: Add Exynos850 CMU_G3D
-      dt-bindings: clock: exynos850: Add AUD and HSI main gate clocks
-      clk: samsung: Remove np argument from samsung_clk_init()
-      clk: samsung: Don't pass reg_base to samsung_clk_register_pll()
-      clk: samsung: Set dev in samsung_clk_init()
-      clk: samsung: clk-pll: Implement pll0818x PLL type
-      clk: samsung: exynos850: Implement CMU_G3D domain
-      clk: samsung: exynos850: Add AUD and HSI main gate clocks
-      clk: samsung: Extract clocks registration to common function
-      clk: samsung: Extract parent clock enabling to common function
-      clk: samsung: exynos5433: Extract PM support to common ARM64 layer
-      clk: samsung: exynos850: Make PMU_ALIVE_PCLK critical
-
-Uwe Kleine-König (1):
-      clk: samsung: Convert to platform remove callback returning void
-
- .../bindings/clock/samsung,exynos850-clock.yaml    |  19 ++
- drivers/clk/samsung/clk-exynos-arm64.c             | 229 +++++++++++++++++++--
- drivers/clk/samsung/clk-exynos-arm64.h             |   3 +
- drivers/clk/samsung/clk-exynos-audss.c             |   6 +-
- drivers/clk/samsung/clk-exynos-clkout.c            |   6 +-
- drivers/clk/samsung/clk-exynos4.c                  |   6 +-
- drivers/clk/samsung/clk-exynos4412-isp.c           |   3 +-
- drivers/clk/samsung/clk-exynos5250.c               |   5 +-
- drivers/clk/samsung/clk-exynos5420.c               |   5 +-
- drivers/clk/samsung/clk-exynos5433.c               | 157 +-------------
- drivers/clk/samsung/clk-exynos850.c                | 141 ++++++++++++-
- drivers/clk/samsung/clk-pll.c                      |  12 +-
- drivers/clk/samsung/clk-pll.h                      |   1 +
- drivers/clk/samsung/clk-s3c64xx.c                  |   4 +-
- drivers/clk/samsung/clk-s5pv210.c                  |   6 +-
- drivers/clk/samsung/clk.c                          |  64 ++++--
- drivers/clk/samsung/clk.h                          |  10 +-
- include/dt-bindings/clock/exynos850.h              |  28 ++-
- 18 files changed, 475 insertions(+), 230 deletions(-)
