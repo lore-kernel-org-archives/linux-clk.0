@@ -2,137 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA6BC76196
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 08:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3692C761A6
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 08:34:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231679AbjDCIWv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Apr 2023 04:22:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44904 "EHLO
+        id S229670AbjDCIeb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Apr 2023 04:34:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231675AbjDCIWu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 04:22:50 -0400
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2060.outbound.protection.outlook.com [40.107.6.60])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AB876199;
-        Mon,  3 Apr 2023 01:22:49 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=c+QXsyV11H+GyQaNyYx/Lx+q66rcz3oR/ssOzEHw1CjzV2f4HXLRuQH3wOUWBQS2IKws8F/qd88oFyG3QjTfKbcuP3jDfsYDvNOK5qtuAOV+vyzZ6ecVTH4AvL+YuHZFDgeEfPnXErFTGNsOXvyafHGT/O9XqH/sx53sx5eNvcfui5tan54M0shLSoi+tIQVf5WOzNFu6iJZrKdvhFssHotO++JqQ3NrEB6kn1IH4W0NRReLDeyF6CnUdvMiZDllebb9KPhNxTP1aLpT+a5MqSRjs00vftQv5tdM2p1dMfHu26O014LrObEshGGhN/acGMBwNmK6nxrD0g6b/bt+7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tCW0g5JNBSvgPpTNessthHsMKD3M1mE1184E4qW6fy0=;
- b=CFjnCCy9N2bcQAx6mtHkxY4jixCzZxesmL4Y5qpBiMMRCX7pEGbVFpBVRbgRDmJkz6m3USP1Kx8SDcUillnKqgy1jFqW5B6E1gYtnWf4l66Ppo7kReJGWMtmvKGWYTuNFa6KmDc45y9PQmWEbcnIQbVqhIVz46AM07XH+wzJXPs9lHB4pADLif2nskTPBDVyh+CMF7lwhlV1k3dPx1SSpmqE9O5KjMzHzzUfalGDe4K2cg8IMzq7R13UjG3tC4+rzZDfMINpg9GqlyNahfUdJwRX9qcUq6YqjMqgQQgdog08Vdjg6hxyILeGA16HKWAEzrzWvZngHnI9b296jSq4ug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tCW0g5JNBSvgPpTNessthHsMKD3M1mE1184E4qW6fy0=;
- b=LItbeeLiWOAUY6Pi5vIwX9ausDLJ1msjYAL0NWXnruTXQ8fv7ocFusoqiRQLts+5zOYIWtI2+opdNbAcSrAdn67wjL62xQZvHVHEMotjfTDqz8asnJD8xt22gSCpCBw8j9UVDAgg/UbVxYSdxePmJ3AHOspCiuX2gTauffpEweQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by PAXPR04MB8878.eurprd04.prod.outlook.com (2603:10a6:102:20d::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.33; Mon, 3 Apr
- 2023 08:22:46 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::b999:f2c6:a8cc:7b4]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::b999:f2c6:a8cc:7b4%4]) with mapi id 15.20.6254.033; Mon, 3 Apr 2023
- 08:22:46 +0000
-From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com
-Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH] clk: imx: drop duplicated macro
-Date:   Mon,  3 Apr 2023 16:27:28 +0800
-Message-Id: <20230403082728.3199849-1-peng.fan@oss.nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR01CA0024.apcprd01.prod.exchangelabs.com
- (2603:1096:4:192::20) To DU0PR04MB9417.eurprd04.prod.outlook.com
- (2603:10a6:10:358::11)
+        with ESMTP id S231444AbjDCIe3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 04:34:29 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B406449EC
+        for <linux-clk@vger.kernel.org>; Mon,  3 Apr 2023 01:34:24 -0700 (PDT)
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1pjFdi-0006hM-RM; Mon, 03 Apr 2023 10:34:10 +0200
+Message-ID: <a23f486a-e08f-f1ce-5f1b-bc34e4c92e67@pengutronix.de>
+Date:   Mon, 3 Apr 2023 10:34:09 +0200
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|PAXPR04MB8878:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9dd1e0b5-214f-4a66-0dd2-08db341c9a6d
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 8iNOIJa557nFoPS+Gfn6p5DTZElvtb/XUk9GBuL+whmkNThTxKOZrQJ0piJO4aHkgkA2dttDrJX/EG2qhMRS7SkkLiArf7qA5+6UtzoPiauu4Yh4ll4EME/uD590XfZFfj/H1XmifB4L6lBSrO0nPsR8G+5bonWXbe4rZYojM6Qr8h89exBG+1tCDf7yjjy5Wh2SRXJinm16Z+36pNLMzBvQ1bHEXQEI0kuAZR8qxZkRXS5KXY0Ul5INtaWJAkLOaEW7zLWq/FH9hsGSgo3m5tcFJX5eEIo9J7kr10beE5VhESt+jKA/yzpLvYeAGZLpBjbwo73juJUaoYJVLUuIuC865KHCMHfm53glm7NNRXV/0x+OzzCvhaKYsWFQj/fRbLzp7ANBWj45FX4nJF1JcHTOLNxor+JT5yuw3RqDnB0/ueZkXdnZYAs/D3E3h6fYtrNb8yIVxVmDTbCN1jZSSiagv1NZyxs/VmhhLbu/S/CnOdfQrpFghGbjS95KAlE7snbMFAtY7O0REtEgiwg/EXzVnZsVG+aF6jjoCXzhOOXP6Augp81eqTBUt7VdHEf07vamdxBsocprTK7ik8QVXwkkW4Q4Mgm4SXmLfhH+vkIzs6ksiz+tNUR92k55T12E
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(136003)(396003)(376002)(346002)(366004)(451199021)(86362001)(2906002)(52116002)(2616005)(83380400001)(186003)(6512007)(6506007)(1076003)(26005)(6486002)(6666004)(4326008)(8676002)(478600001)(66556008)(66946007)(66476007)(41300700001)(7416002)(38100700002)(38350700002)(5660300002)(316002)(4744005)(8936002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?gjlpp33HevE1gP6hBO1YGai0J2IFPQsUV9L3cJk+NoBL46lohXUbMhvcIQ/m?=
- =?us-ascii?Q?a2J4wR2mm6iVaYgWT26F7Iusx0CyYkHQQzX8IYy7h7mjjRN7Sjz/ftLadrBj?=
- =?us-ascii?Q?RSih8dZvcK2zFNYfE5rj7JO+95/ooB/8tBqO52zekT2WAiFv5Pb/rSt1zZv3?=
- =?us-ascii?Q?aoo3Ii4rHZwABag0ypXQI6nK8YAGQMOhvAy3+d3J3NRSEPsivk2i57laGaeg?=
- =?us-ascii?Q?IApy3C8kY+PKfClhrJ/pTQBdbQuxmlPx0F4oqToowJXeiLbfdJ7R6sqpRLF1?=
- =?us-ascii?Q?3pNm9EtgIb8w6SPUr5XSdsmjlGjE/HpqZUDsfYyrwlnzHIFVoHNyXQ/cNnYe?=
- =?us-ascii?Q?Zzk1Lv0rD+Soqq99Pf8B2Hi2gbeTMLQgIzLlm+HNGesBtZaNaOICpu5+o+qz?=
- =?us-ascii?Q?Krh0/KmIam+TDjEj7v/aFcjLi9VYv/IFTXoC7++hH0wOpxUfPIKzqdHGkFVC?=
- =?us-ascii?Q?excnkYXwIjflf/U7mJKksI24txHhJ7yMrYm7mZccq2IJ7engZj1BZJKSjxAl?=
- =?us-ascii?Q?B/uGjB6tNiBem1ddblilHAYG0PCzEkOsL7CEGq7VuhCdQPVVdD/dfcU+bOVi?=
- =?us-ascii?Q?nNIkfLzt0mHemS9T3tAgqxquH/6+wG/+bjWUrx7StxqkU8uVBF1RRpT1BO3t?=
- =?us-ascii?Q?zHrxi5QAASj8P+DRPdk9NREMjzXXPzrVSx8YCe/pLfTwgO3Mjt6/olW7akC+?=
- =?us-ascii?Q?bx9ic349+cSJM+kF+46fYpeZer+/FY4C0p8RsJYSx7d/0zWTe4Q71dXVBQJq?=
- =?us-ascii?Q?HpPqzYrie1ZCFXSM+BvrmPMhzworhnaLJTVqoGxgu8rcNkhm+VXNUt2thE6+?=
- =?us-ascii?Q?KCFL89ZHQbM5f9C3y4g2JYabmaScYeLQTslsDqgTj1VWHFPfJuCsQtp/UM+o?=
- =?us-ascii?Q?39R+sLjNrS5pEx4FJ1+tQHCXQp09XZJgRMFO6rpjJdeaQUDNBl7bSJrTZgfl?=
- =?us-ascii?Q?EXMrqMDnoEXIroezftIF5RaW+8ZYdwnvhRxHM6Uv3GrXnIBusqxkvcoNj51s?=
- =?us-ascii?Q?AgTJtsYeysVIr6RIz2hSPlH3fe1e/rimfxNJqtkL3YyQ4SDro1MQKX6kSdaA?=
- =?us-ascii?Q?DmwkJhHG2vaqF7nHMhmEQqs9QtbVOxRbrtsmYkFj8kFP9AQobbzi1hM5FmJ1?=
- =?us-ascii?Q?MT/RqMOzp6JJoxpgVUTxkIoKduaxdCzOsNDGKvgwIINdT4Kmr2Q2YtHnk0/h?=
- =?us-ascii?Q?9bbzXF/upKCtxCcvaOJHvMF3RP+wPW5umFO42N2dCcOBapiDICN+KhOgR2d2?=
- =?us-ascii?Q?SVIwW8Ji36nxPDSjTm08keJupyUNugVBwG50BmCy0V4qhsQXkEwXLWS6s1GH?=
- =?us-ascii?Q?w/xCwZXBqKP+Nnpvgf4U8RA8tQ1E9nna6BRJqA598ZVHhfW0g6ERSOmoq+XV?=
- =?us-ascii?Q?DfjH/tmcuw/9obd/FLyyXNpOoXNnvpqYCylhvr7l+WHPrHWZlSvjzITWEJCy?=
- =?us-ascii?Q?7qOjm/FpxssYSVzBmPN1D81oIslBFN3R46yLfVG0JpZYG9Y+Q7/LOwhBE78u?=
- =?us-ascii?Q?GnBsx3ojeQgHG14Kr299GWYs0yCO6rW7PfXboo/SKVMKQorDnLTPBwzVwVq4?=
- =?us-ascii?Q?BvaDqeqFua0P+Eu40+eyAFocvf3q5ixEk3pP+BG+?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9dd1e0b5-214f-4a66-0dd2-08db341c9a6d
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2023 08:22:46.1409
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EKH0TvZ8+oi8ZsthNKDCUwP/ZKZALyd/AiZR8wDHtB6syDtgvwtN7KEa8w8v3c6S0AKWKr4LBe8G01DszwlgfQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8878
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH V2] clk: imx: imx6sx: spdif clock rate is too high for
+ asrc
+Content-Language: en-US
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, abelvesa@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
+Cc:     Peng Fan <peng.fan@nxp.com>, Shengjiu Wang <shengjiu.wang@nxp.com>,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20230403082138.3195452-1-peng.fan@oss.nxp.com>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <20230403082138.3195452-1-peng.fan@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+Hello Peng,
 
-Drop duplicated macro definition
+On 03.04.23 10:21, Peng Fan (OSS) wrote:
+> From: Shengjiu Wang <shengjiu.wang@nxp.com>
+> 
+> spdif clock is one of the asrc clock source, which is used
+> for ideal ratio mode. when set to 98.304MHz, it cause the
+> divider of asrc input clock and output clock exceed the
+> maximum value, and asrc driver saturate the value to maximum
+> value, which will cause the ASRC's performance very bad.
+> So we need to set spdif clock to a proper rate. which make asrc
+> divider not exceed maximum value, at least one of divider not
+> exceed maximum value.
+> The target is spdif clock rate / output(or input) sample rate
+> less than 1024(which is maximum divider).
+> 
+> Fixes: f1541e15e38e ("clk: imx6sx: Switch to clk_hw based API")
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/imx/clk.h | 3 ---
- 1 file changed, 3 deletions(-)
+Before referenced commit, it looked like this:
 
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 3d94722bbf99..055bc9197fb4 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -153,9 +153,6 @@ extern struct imx_fracn_gppll_clk imx_fracn_gppll;
- #define imx_clk_pllv2(name, parent, base) \
- 	to_clk(imx_clk_hw_pllv2(name, parent, base))
- 
--#define imx_clk_mux_flags(name, reg, shift, width, parents, num_parents, flags) \
--	to_clk(imx_clk_hw_mux_flags(name, reg, shift, width, parents, num_parents, flags))
--
- #define imx_clk_hw_gate(name, parent, reg, shift) \
- 	imx_clk_hw_gate_flags(name, parent, reg, shift, 0)
- 
+  clk_set_rate(clks[IMX6SX_CLK_SPDIF_PODF], 98304000);
+
+I think commit d55135689019 ("ARM: imx: add clock driver for imx6sx")
+is what you're after.
+
+Cheers,
+Ahmad
+
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+> 
+> V2:
+>  Add Fixes tag
+> 
+>  drivers/clk/imx/clk-imx6sx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
+> index 7cf86707bc39..3face052527d 100644
+> --- a/drivers/clk/imx/clk-imx6sx.c
+> +++ b/drivers/clk/imx/clk-imx6sx.c
+> @@ -520,7 +520,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+>  	clk_set_rate(hws[IMX6SX_CLK_PLL4_AUDIO_DIV]->clk, 393216000);
+>  
+>  	clk_set_parent(hws[IMX6SX_CLK_SPDIF_SEL]->clk, hws[IMX6SX_CLK_PLL4_AUDIO_DIV]->clk);
+> -	clk_set_rate(hws[IMX6SX_CLK_SPDIF_PODF]->clk, 98304000);
+> +	clk_set_rate(hws[IMX6SX_CLK_SPDIF_PODF]->clk, 24576000);
+>  
+>  	clk_set_parent(hws[IMX6SX_CLK_AUDIO_SEL]->clk, hws[IMX6SX_CLK_PLL3_USB_OTG]->clk);
+>  	clk_set_rate(hws[IMX6SX_CLK_AUDIO_PODF]->clk, 24000000);
+
 -- 
-2.37.1
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
