@@ -2,322 +2,133 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1514AC76188
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 19:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A8B5C761AF
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 20:33:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231987AbjDCTdu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Apr 2023 15:33:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53698 "EHLO
+        id S232647AbjDCUdy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Apr 2023 16:33:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231655AbjDCTdr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 15:33:47 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DF76E7F;
-        Mon,  3 Apr 2023 12:33:45 -0700 (PDT)
-Received: from jupiter.universe (dyndsl-091-248-212-192.ewe-ip-backbone.de [91.248.212.192])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id DE785660313D;
-        Mon,  3 Apr 2023 20:33:43 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1680550424;
-        bh=N/cNKrsvkjXxZ3Cgmxcn9TFhixbf9GdSPlug1xbzESs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lfDHpUFkm2wyKlnufwvl47YSnBkluFHTEBRXtU5e3qYMXpwg0TKuFqYbOX6x7mx6x
-         HUKYQk3CL4OnEi20UbgYyewnVlEYQNQc3Qub1prPxuHPfDrhp1qhF0D2EpWfGVuvyt
-         /dOHKvDy3byqNNGi/3bYYkxiHB27Iq7wblhCjVuAqnPnGokCcOYTRQ6WsYMWIPm5gr
-         vdMrppHaUM2clvmm68ip7mc8Gua8AluiUcX8d8ckFJubVZAncsWLr2B9I/yiJodyoy
-         wphUKr8imhzdFIOeZKok8fyRVa5PnOaqnuiQsqdmexxWgVj3OCXyepzf0IW8eK9TzU
-         lBF7n+pRAfy7Q==
-Received: by jupiter.universe (Postfix, from userid 1000)
-        id 5039E4807E3; Mon,  3 Apr 2023 21:33:41 +0200 (CEST)
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Heiko Stuebner <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org
-Cc:     Peter Geis <pgwipeout@gmail.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Finley Xiao <finley.xiao@rock-chips.com>,
-        Jagan Teki <jagan@edgeble.ai>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com,
-        Vincent Legoll <vincent.legoll@gmail.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCHv2 2/2] soc: rockchip: power-domain: add rk3588 mem module support
-Date:   Mon,  3 Apr 2023 21:32:50 +0200
-Message-Id: <20230403193250.108693-3-sebastian.reichel@collabora.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230403193250.108693-1-sebastian.reichel@collabora.com>
-References: <20230403193250.108693-1-sebastian.reichel@collabora.com>
+        with ESMTP id S232778AbjDCUdx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 16:33:53 -0400
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACEEDE5C;
+        Mon,  3 Apr 2023 13:33:51 -0700 (PDT)
+Received: by mail-ot1-f47.google.com with SMTP id r40-20020a05683044a800b006a14270bc7eso12976696otv.6;
+        Mon, 03 Apr 2023 13:33:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680554031;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=c3C4JihcH4XmAQpVSh8OElVY6IOaw4kS9WRJhi0vlAA=;
+        b=RAaU9upaVJP5U6hLmG/ta7smotBVOy33MHzH51sqBaJ2D8f+R6Ci3yoJpGv4+uU0Pl
+         DdqyRu51Y2X8tvIFghu5h9pTINSg6GHRZ52jvhh94GH2ED5pndJzr9BE+/aJ56aHYcbl
+         R+Pzp3xMGKkSWrkYy27M9qu4iThx68OOeFBxm8hnMVf1vHW8TIYvMb+gbJuWsNUdBJXt
+         BalQBUyeCOVyIggb4H035mX9G/dxQ9ZeIki1Cc9ePiHDvQUf/Yqly5Ybsxz2ZLfqjDSJ
+         SyMpFL3MqEbXAZCQzfpwF8xuDWEHzNSRLFWrRSiDPWOej8alge6SkJrBpzAWQ11O1TZL
+         NDFQ==
+X-Gm-Message-State: AAQBX9ebmp6iAVKeHoL3nrmUFwAL4NFCgF5eZn8iKOIPxsOtkJpknnVh
+        pEboMZz5Zl2A5dyrWl81VQ==
+X-Google-Smtp-Source: AKy350bBXrNMR6/Kktx4TnFXtFl5xlFjp4aGv2j9w0eC+FhMWK7fokPOVWHCmb1CspD//eEUjPn/RA==
+X-Received: by 2002:a05:6830:10cc:b0:69f:174a:3587 with SMTP id z12-20020a05683010cc00b0069f174a3587mr261557oto.22.1680554030982;
+        Mon, 03 Apr 2023 13:33:50 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id a26-20020a9d6e9a000000b0069f85f0a1b7sm4624694otr.33.2023.04.03.13.33.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Apr 2023 13:33:50 -0700 (PDT)
+Received: (nullmailer pid 1700083 invoked by uid 1000);
+        Mon, 03 Apr 2023 20:33:49 -0000
+Date:   Mon, 3 Apr 2023 15:33:49 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Jacky Huang <ychuang570808@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+Subject: Re: [PATCH v6 06/12] dt-bindings: arm: Add initial bindings for
+ Nuvoton platform
+Message-ID: <20230403203349.GA1692472-robh@kernel.org>
+References: <20230328021912.177301-1-ychuang570808@gmail.com>
+ <20230328021912.177301-7-ychuang570808@gmail.com>
+ <CAL_JsqKrrWyOKGUAaT-8r-nKvtS5f_gHAhE5=XaXuGtuYC2gCw@mail.gmail.com>
+ <a497eb9c-8279-d4e9-3b8d-537ffa1f7522@gmail.com>
+ <cfa5904e-8ae4-6d39-ed4e-35d1b55e2b04@linaro.org>
+ <f39edbfe-75bd-3b39-e325-8d24673a4501@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <f39edbfe-75bd-3b39-e325-8d24673a4501@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Boris Brezillon <boris.brezillon@collabora.com>
+On Fri, Mar 31, 2023 at 10:15:16AM +0800, Jacky Huang wrote:
+> 
+> 
+> On 2023/3/30 下午 09:25, Krzysztof Kozlowski wrote:
+> > On 30/03/2023 12:41, Jacky Huang wrote:
+> > > Dear Rob,
+> > > 
+> > > 
+> > > On 2023/3/29 下午 09:07, Rob Herring wrote:
+> > > > On Mon, Mar 27, 2023 at 9:19 PM Jacky Huang <ychuang570808@gmail.com> wrote:
+> > > > > From: Jacky Huang <ychuang3@nuvoton.com>
+> > > > > 
+> > > > > Rename the bindings/arm/npcm directory as nuvoton.
+> > > > > Add binding for ARMv8 based Nuvotn SoCs and platform boards.
+> > > > > Add initial bindings for ma35d1 series development boards.
+> > > > > 
+> > > > > Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+> > > > > ---
+> > > > >    .../bindings/arm/nuvoton/nuvoton,ma35d1.yaml  | 30 +++++++++++++++++++
+> > > > >    .../nuvoton,npcm-gcr.yaml}                    |  2 +-
+> > > > >    .../npcm.yaml => nuvoton/nuvoton,npcm.yaml}   |  2 +-
+> > > > >    3 files changed, 32 insertions(+), 2 deletions(-)
+> > > > >    create mode 100644 Documentation/devicetree/bindings/arm/nuvoton/nuvoton,ma35d1.yaml
+> > > > >    rename Documentation/devicetree/bindings/arm/{npcm/nuvoton,gcr.yaml => nuvoton/nuvoton,npcm-gcr.yaml} (93%)
+> > > > Since you are moving it, this one should be moved to bindings/soc/nuvoton/
+> > > > 
+> > > > >    rename Documentation/devicetree/bindings/arm/{npcm/npcm.yaml => nuvoton/nuvoton,npcm.yaml} (93%)
+> > > OK, I will move "Documentation/devicetree/bindings/arm/npcm" to
+> > > "Documentation/devicetree/bindings/soc/nuvoton".
+> > To clarify - Rob asked *this one*. Not all.
 
-On RK3588 it's also possible to power down the memory used by the
-particular power domains via PMU_MEM_PWR_GATE_SFTCON. This adds
-support for this feature.
+nuvoton,gcr.yaml is what should be moved to bindings/soc/... The rest 
+are the correct locations.
 
-Tested-by: Vincent Legoll <vincent.legoll@gmail.com>
-Co-Developed-by: Finley Xiao <finley.xiao@rock-chips.com>
-Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- drivers/soc/rockchip/pm_domains.c | 160 +++++++++++++++++++++++-------
- 1 file changed, 125 insertions(+), 35 deletions(-)
+> > 
+> > 
+> > 
+> > Best regards,
+> > Krzysztof
+> > 
+> 
+> Dear Krzysztof,
+> 
+> I am sorry that still cannot get it exactly.
+> 
+> 1. Just only submit  the nuvoton,ma35d1.yaml to
+> Documentation/devicetree/bindings/soc/nuvoton/nuvoton,ma35d1.yaml
+>     and keep Documentation/devicetree/bindings/arm/npcm unchanged
+> 
+> 2. Move the directory "Documentation/devicetree/bindings/arm/npcm" to
+> "Documentation/devicetree/bindings/soc/nuvoton"
+>    and submit  the nuvoton,ma35d1.yaml to
+> "Documentation/devicetree/bindings/soc/nuvoton"
+> 
+> I should do 1 or 2?  Thank you very much.
 
-diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
-index 84bc022f9e5b..e3de49e671dc 100644
---- a/drivers/soc/rockchip/pm_domains.c
-+++ b/drivers/soc/rockchip/pm_domains.c
-@@ -43,8 +43,10 @@ struct rockchip_domain_info {
- 	bool active_wakeup;
- 	int pwr_w_mask;
- 	int req_w_mask;
-+	int mem_status_mask;
- 	int repair_status_mask;
- 	u32 pwr_offset;
-+	u32 mem_offset;
- 	u32 req_offset;
- };
- 
-@@ -54,6 +56,9 @@ struct rockchip_pmu_info {
- 	u32 req_offset;
- 	u32 idle_offset;
- 	u32 ack_offset;
-+	u32 mem_pwr_offset;
-+	u32 chain_status_offset;
-+	u32 mem_status_offset;
- 	u32 repair_status_offset;
- 
- 	u32 core_pwrcnt_offset;
-@@ -119,13 +124,15 @@ struct rockchip_pmu {
- 	.active_wakeup = wakeup,			\
- }
- 
--#define DOMAIN_M_O_R(_name, p_offset, pwr, status, r_status, r_offset, req, idle, ack, wakeup)	\
-+#define DOMAIN_M_O_R(_name, p_offset, pwr, status, m_offset, m_status, r_status, r_offset, req, idle, ack, wakeup)	\
- {							\
- 	.name = _name,					\
- 	.pwr_offset = p_offset,				\
- 	.pwr_w_mask = (pwr) << 16,			\
- 	.pwr_mask = (pwr),				\
- 	.status_mask = (status),			\
-+	.mem_offset = m_offset,				\
-+	.mem_status_mask = (m_status),			\
- 	.repair_status_mask = (r_status),		\
- 	.req_offset = r_offset,				\
- 	.req_w_mask = (req) << 16,			\
-@@ -269,8 +276,8 @@ void rockchip_pmu_unblock(void)
- }
- EXPORT_SYMBOL_GPL(rockchip_pmu_unblock);
- 
--#define DOMAIN_RK3588(name, p_offset, pwr, status, r_status, r_offset, req, idle, wakeup)	\
--	DOMAIN_M_O_R(name, p_offset, pwr, status, r_status, r_offset, req, idle, idle, wakeup)
-+#define DOMAIN_RK3588(name, p_offset, pwr, status, m_offset, m_status, r_status, r_offset, req, idle, wakeup)	\
-+	DOMAIN_M_O_R(name, p_offset, pwr, status, m_offset, m_status, r_status, r_offset, req, idle, idle, wakeup)
- 
- static bool rockchip_pmu_domain_is_idle(struct rockchip_pm_domain *pd)
- {
-@@ -408,17 +415,92 @@ static bool rockchip_pmu_domain_is_on(struct rockchip_pm_domain *pd)
- 	return !(val & pd->info->status_mask);
- }
- 
-+static bool rockchip_pmu_domain_is_mem_on(struct rockchip_pm_domain *pd)
-+{
-+	struct rockchip_pmu *pmu = pd->pmu;
-+	unsigned int val;
-+
-+	regmap_read(pmu->regmap,
-+		    pmu->info->mem_status_offset + pd->info->mem_offset, &val);
-+
-+	/* 1'b0: power on, 1'b1: power off */
-+	return !(val & pd->info->mem_status_mask);
-+}
-+
-+static bool rockchip_pmu_domain_is_chain_on(struct rockchip_pm_domain *pd)
-+{
-+	struct rockchip_pmu *pmu = pd->pmu;
-+	unsigned int val;
-+
-+	regmap_read(pmu->regmap,
-+		    pmu->info->chain_status_offset + pd->info->mem_offset, &val);
-+
-+	/* 1'b1: power on, 1'b0: power off */
-+	return val & pd->info->mem_status_mask;
-+}
-+
-+static int rockchip_pmu_domain_mem_reset(struct rockchip_pm_domain *pd)
-+{
-+	struct rockchip_pmu *pmu = pd->pmu;
-+	struct generic_pm_domain *genpd = &pd->genpd;
-+	bool is_on;
-+	int ret = 0;
-+
-+	ret = readx_poll_timeout_atomic(rockchip_pmu_domain_is_chain_on, pd, is_on,
-+					is_on == true, 0, 10000);
-+	if (ret) {
-+		dev_err(pmu->dev,
-+			"failed to get chain status '%s', target_on=1, val=%d\n",
-+			genpd->name, is_on);
-+		goto error;
-+	}
-+
-+	udelay(20);
-+
-+	regmap_write(pmu->regmap, pmu->info->mem_pwr_offset + pd->info->pwr_offset,
-+		     (pd->info->pwr_mask | pd->info->pwr_w_mask));
-+	wmb();
-+
-+	ret = readx_poll_timeout_atomic(rockchip_pmu_domain_is_mem_on, pd, is_on,
-+					is_on == false, 0, 10000);
-+	if (ret) {
-+		dev_err(pmu->dev,
-+			"failed to get mem status '%s', target_on=0, val=%d\n",
-+			genpd->name, is_on);
-+		goto error;
-+	}
-+
-+	regmap_write(pmu->regmap, pmu->info->mem_pwr_offset + pd->info->pwr_offset,
-+		     pd->info->pwr_w_mask);
-+	wmb();
-+
-+	ret = readx_poll_timeout_atomic(rockchip_pmu_domain_is_mem_on, pd, is_on,
-+					is_on == true, 0, 10000);
-+	if (ret) {
-+		dev_err(pmu->dev,
-+			"failed to get mem status '%s', target_on=1, val=%d\n",
-+			genpd->name, is_on);
-+	}
-+
-+error:
-+	return ret;
-+}
-+
- static void rockchip_do_pmu_set_power_domain(struct rockchip_pm_domain *pd,
- 					     bool on)
- {
- 	struct rockchip_pmu *pmu = pd->pmu;
- 	struct generic_pm_domain *genpd = &pd->genpd;
- 	u32 pd_pwr_offset = pd->info->pwr_offset;
--	bool is_on;
-+	bool is_on, is_mem_on = false;
- 
- 	if (pd->info->pwr_mask == 0)
- 		return;
--	else if (pd->info->pwr_w_mask)
-+
-+	if (on && pd->info->mem_status_mask)
-+		is_mem_on = rockchip_pmu_domain_is_mem_on(pd);
-+
-+	if (pd->info->pwr_w_mask)
- 		regmap_write(pmu->regmap, pmu->info->pwr_offset + pd_pwr_offset,
- 			     on ? pd->info->pwr_w_mask :
- 			     (pd->info->pwr_mask | pd->info->pwr_w_mask));
-@@ -428,6 +510,9 @@ static void rockchip_do_pmu_set_power_domain(struct rockchip_pm_domain *pd,
- 
- 	wmb();
- 
-+	if (is_mem_on && rockchip_pmu_domain_mem_reset(pd))
-+		return;
-+
- 	if (readx_poll_timeout_atomic(rockchip_pmu_domain_is_on, pd, is_on,
- 				      is_on == on, 0, 10000)) {
- 		dev_err(pmu->dev,
-@@ -645,7 +730,9 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
- 	pd->genpd.flags = GENPD_FLAG_PM_CLK;
- 	if (pd_info->active_wakeup)
- 		pd->genpd.flags |= GENPD_FLAG_ACTIVE_WAKEUP;
--	pm_genpd_init(&pd->genpd, NULL, !rockchip_pmu_domain_is_on(pd));
-+	pm_genpd_init(&pd->genpd, NULL,
-+		      !rockchip_pmu_domain_is_on(pd) ||
-+		      (pd->info->mem_status_mask && !rockchip_pmu_domain_is_mem_on(pd)));
- 
- 	pmu->genpd_data.domains[id] = &pd->genpd;
- 	return 0;
-@@ -1024,35 +1111,35 @@ static const struct rockchip_domain_info rk3568_pm_domains[] = {
- };
- 
- static const struct rockchip_domain_info rk3588_pm_domains[] = {
--	[RK3588_PD_GPU]		= DOMAIN_RK3588("gpu",     0x0, BIT(0),  0,       BIT(1),  0x0, BIT(0),  BIT(0),  false),
--	[RK3588_PD_NPU]		= DOMAIN_RK3588("npu",     0x0, BIT(1),  BIT(1),  0,       0x0, 0,       0,       false),
--	[RK3588_PD_VCODEC]	= DOMAIN_RK3588("vcodec",  0x0, BIT(2),  BIT(2),  0,       0x0, 0,       0,       false),
--	[RK3588_PD_NPUTOP]	= DOMAIN_RK3588("nputop",  0x0, BIT(3),  0,       BIT(2),  0x0, BIT(1),  BIT(1),  false),
--	[RK3588_PD_NPU1]	= DOMAIN_RK3588("npu1",    0x0, BIT(4),  0,       BIT(3),  0x0, BIT(2),  BIT(2),  false),
--	[RK3588_PD_NPU2]	= DOMAIN_RK3588("npu2",    0x0, BIT(5),  0,       BIT(4),  0x0, BIT(3),  BIT(3),  false),
--	[RK3588_PD_VENC0]	= DOMAIN_RK3588("venc0",   0x0, BIT(6),  0,       BIT(5),  0x0, BIT(4),  BIT(4),  false),
--	[RK3588_PD_VENC1]	= DOMAIN_RK3588("venc1",   0x0, BIT(7),  0,       BIT(6),  0x0, BIT(5),  BIT(5),  false),
--	[RK3588_PD_RKVDEC0]	= DOMAIN_RK3588("rkvdec0", 0x0, BIT(8),  0,       BIT(7),  0x0, BIT(6),  BIT(6),  false),
--	[RK3588_PD_RKVDEC1]	= DOMAIN_RK3588("rkvdec1", 0x0, BIT(9),  0,       BIT(8),  0x0, BIT(7),  BIT(7),  false),
--	[RK3588_PD_VDPU]	= DOMAIN_RK3588("vdpu",    0x0, BIT(10), 0,       BIT(9),  0x0, BIT(8),  BIT(8),  false),
--	[RK3588_PD_RGA30]	= DOMAIN_RK3588("rga30",   0x0, BIT(11), 0,       BIT(10), 0x0, 0,       0,       false),
--	[RK3588_PD_AV1]		= DOMAIN_RK3588("av1",     0x0, BIT(12), 0,       BIT(11), 0x0, BIT(9),  BIT(9),  false),
--	[RK3588_PD_VI]		= DOMAIN_RK3588("vi",      0x0, BIT(13), 0,       BIT(12), 0x0, BIT(10), BIT(10), false),
--	[RK3588_PD_FEC]		= DOMAIN_RK3588("fec",     0x0, BIT(14), 0,       BIT(13), 0x0, 0,       0,       false),
--	[RK3588_PD_ISP1]	= DOMAIN_RK3588("isp1",    0x0, BIT(15), 0,       BIT(14), 0x0, BIT(11), BIT(11), false),
--	[RK3588_PD_RGA31]	= DOMAIN_RK3588("rga31",   0x4, BIT(0),  0,       BIT(15), 0x0, BIT(12), BIT(12), false),
--	[RK3588_PD_VOP]		= DOMAIN_RK3588("vop",     0x4, BIT(1),  0,       BIT(16), 0x0, BIT(13) | BIT(14), BIT(13) | BIT(14), false),
--	[RK3588_PD_VO0]		= DOMAIN_RK3588("vo0",     0x4, BIT(2),  0,       BIT(17), 0x0, BIT(15), BIT(15), false),
--	[RK3588_PD_VO1]		= DOMAIN_RK3588("vo1",     0x4, BIT(3),  0,       BIT(18), 0x4, BIT(0),  BIT(16), false),
--	[RK3588_PD_AUDIO]	= DOMAIN_RK3588("audio",   0x4, BIT(4),  0,       BIT(19), 0x4, BIT(1),  BIT(17), false),
--	[RK3588_PD_PHP]		= DOMAIN_RK3588("php",     0x4, BIT(5),  0,       BIT(20), 0x4, BIT(5),  BIT(21), false),
--	[RK3588_PD_GMAC]	= DOMAIN_RK3588("gmac",    0x4, BIT(6),  0,       BIT(21), 0x0, 0,       0,       false),
--	[RK3588_PD_PCIE]	= DOMAIN_RK3588("pcie",    0x4, BIT(7),  0,       BIT(22), 0x0, 0,       0,       true),
--	[RK3588_PD_NVM]		= DOMAIN_RK3588("nvm",     0x4, BIT(8),  BIT(24), 0,       0x4, BIT(2),  BIT(18), false),
--	[RK3588_PD_NVM0]	= DOMAIN_RK3588("nvm0",    0x4, BIT(9),  0,       BIT(23), 0x0, 0,       0,       false),
--	[RK3588_PD_SDIO]	= DOMAIN_RK3588("sdio",    0x4, BIT(10), 0,       BIT(24), 0x4, BIT(3),  BIT(19), false),
--	[RK3588_PD_USB]		= DOMAIN_RK3588("usb",     0x4, BIT(11), 0,       BIT(25), 0x4, BIT(4),  BIT(20), true),
--	[RK3588_PD_SDMMC]	= DOMAIN_RK3588("sdmmc",   0x4, BIT(13), 0,       BIT(26), 0x0, 0,       0,       false),
-+	[RK3588_PD_GPU]		= DOMAIN_RK3588("gpu",     0x0, BIT(0),  0,       0x0, 0,       BIT(1),  0x0, BIT(0),  BIT(0),  false),
-+	[RK3588_PD_NPU]		= DOMAIN_RK3588("npu",     0x0, BIT(1),  BIT(1),  0x0, 0,       0,       0x0, 0,       0,       false),
-+	[RK3588_PD_VCODEC]	= DOMAIN_RK3588("vcodec",  0x0, BIT(2),  BIT(2),  0x0, 0,       0,       0x0, 0,       0,       false),
-+	[RK3588_PD_NPUTOP]	= DOMAIN_RK3588("nputop",  0x0, BIT(3),  0,       0x0, BIT(11), BIT(2),  0x0, BIT(1),  BIT(1),  false),
-+	[RK3588_PD_NPU1]	= DOMAIN_RK3588("npu1",    0x0, BIT(4),  0,       0x0, BIT(12), BIT(3),  0x0, BIT(2),  BIT(2),  false),
-+	[RK3588_PD_NPU2]	= DOMAIN_RK3588("npu2",    0x0, BIT(5),  0,       0x0, BIT(13), BIT(4),  0x0, BIT(3),  BIT(3),  false),
-+	[RK3588_PD_VENC0]	= DOMAIN_RK3588("venc0",   0x0, BIT(6),  0,       0x0, BIT(14), BIT(5),  0x0, BIT(4),  BIT(4),  false),
-+	[RK3588_PD_VENC1]	= DOMAIN_RK3588("venc1",   0x0, BIT(7),  0,       0x0, BIT(15), BIT(6),  0x0, BIT(5),  BIT(5),  false),
-+	[RK3588_PD_RKVDEC0]	= DOMAIN_RK3588("rkvdec0", 0x0, BIT(8),  0,       0x0, BIT(16), BIT(7),  0x0, BIT(6),  BIT(6),  false),
-+	[RK3588_PD_RKVDEC1]	= DOMAIN_RK3588("rkvdec1", 0x0, BIT(9),  0,       0x0, BIT(17), BIT(8),  0x0, BIT(7),  BIT(7),  false),
-+	[RK3588_PD_VDPU]	= DOMAIN_RK3588("vdpu",    0x0, BIT(10), 0,       0x0, BIT(18), BIT(9),  0x0, BIT(8),  BIT(8),  false),
-+	[RK3588_PD_RGA30]	= DOMAIN_RK3588("rga30",   0x0, BIT(11), 0,       0x0, BIT(19), BIT(10), 0x0, 0,       0,       false),
-+	[RK3588_PD_AV1]		= DOMAIN_RK3588("av1",     0x0, BIT(12), 0,       0x0, BIT(20), BIT(11), 0x0, BIT(9),  BIT(9),  false),
-+	[RK3588_PD_VI]		= DOMAIN_RK3588("vi",      0x0, BIT(13), 0,       0x0, BIT(21), BIT(12), 0x0, BIT(10), BIT(10), false),
-+	[RK3588_PD_FEC]		= DOMAIN_RK3588("fec",     0x0, BIT(14), 0,       0x0, BIT(22), BIT(13), 0x0, 0,       0,       false),
-+	[RK3588_PD_ISP1]	= DOMAIN_RK3588("isp1",    0x0, BIT(15), 0,       0x0, BIT(23), BIT(14), 0x0, BIT(11), BIT(11), false),
-+	[RK3588_PD_RGA31]	= DOMAIN_RK3588("rga31",   0x4, BIT(0),  0,       0x0, BIT(24), BIT(15), 0x0, BIT(12), BIT(12), false),
-+	[RK3588_PD_VOP]		= DOMAIN_RK3588("vop",     0x4, BIT(1),  0,       0x0, BIT(25), BIT(16), 0x0, BIT(13) | BIT(14), BIT(13) | BIT(14), false),
-+	[RK3588_PD_VO0]		= DOMAIN_RK3588("vo0",     0x4, BIT(2),  0,       0x0, BIT(26), BIT(17), 0x0, BIT(15), BIT(15), false),
-+	[RK3588_PD_VO1]		= DOMAIN_RK3588("vo1",     0x4, BIT(3),  0,       0x0, BIT(27), BIT(18), 0x4, BIT(0),  BIT(16), false),
-+	[RK3588_PD_AUDIO]	= DOMAIN_RK3588("audio",   0x4, BIT(4),  0,       0x0, BIT(28), BIT(19), 0x4, BIT(1),  BIT(17), false),
-+	[RK3588_PD_PHP]		= DOMAIN_RK3588("php",     0x4, BIT(5),  0,       0x0, BIT(29), BIT(20), 0x4, BIT(5),  BIT(21), false),
-+	[RK3588_PD_GMAC]	= DOMAIN_RK3588("gmac",    0x4, BIT(6),  0,       0x0, BIT(30), BIT(21), 0x0, 0,       0,       false),
-+	[RK3588_PD_PCIE]	= DOMAIN_RK3588("pcie",    0x4, BIT(7),  0,       0x0, BIT(31), BIT(22), 0x0, 0,       0,       true),
-+	[RK3588_PD_NVM]		= DOMAIN_RK3588("nvm",     0x4, BIT(8),  BIT(24), 0x4, 0,       0,       0x4, BIT(2),  BIT(18), false),
-+	[RK3588_PD_NVM0]	= DOMAIN_RK3588("nvm0",    0x4, BIT(9),  0,       0x4, BIT(1),  BIT(23), 0x0, 0,       0,       false),
-+	[RK3588_PD_SDIO]	= DOMAIN_RK3588("sdio",    0x4, BIT(10), 0,       0x4, BIT(2),  BIT(24), 0x4, BIT(3),  BIT(19), false),
-+	[RK3588_PD_USB]		= DOMAIN_RK3588("usb",     0x4, BIT(11), 0,       0x4, BIT(3),  BIT(25), 0x4, BIT(4),  BIT(20), true),
-+	[RK3588_PD_SDMMC]	= DOMAIN_RK3588("sdmmc",   0x4, BIT(13), 0,       0x4, BIT(5),  BIT(26), 0x0, 0,       0,       false),
- };
- 
- static const struct rockchip_pmu_info px30_pmu = {
-@@ -1207,6 +1294,9 @@ static const struct rockchip_pmu_info rk3588_pmu = {
- 	.req_offset = 0x10c,
- 	.idle_offset = 0x120,
- 	.ack_offset = 0x118,
-+	.mem_pwr_offset = 0x1a0,
-+	.chain_status_offset = 0x1f0,
-+	.mem_status_offset = 0x1f8,
- 	.repair_status_offset = 0x290,
- 
- 	.num_domains = ARRAY_SIZE(rk3588_pm_domains),
--- 
-2.39.2
+Neither.
 
+Arm board and soc root node bindings go in bindings/arm/...
+
+Miscellaneous system registers that don't fit into any other bindings/* 
+subsystem directory go in bindings/soc/
+
+Rob
