@@ -2,91 +2,112 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73633C76196
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 18:18:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A23C76188
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 18:37:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232952AbjDCSSU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Apr 2023 14:18:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44354 "EHLO
+        id S233273AbjDCShv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Apr 2023 14:37:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232434AbjDCSSQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 14:18:16 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E3C11FD8;
-        Mon,  3 Apr 2023 11:18:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 04E226252A;
-        Mon,  3 Apr 2023 18:18:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9D63C433EF;
-        Mon,  3 Apr 2023 18:18:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680545894;
-        bh=aBv3MIAl7MHy2gxFkA3aRokEYOsWf9pvu+LOh3HggEM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=QfMW9qU5BVF4Lvj70eLSPFbuo/AIl6dggkk0cscwgbF765jelDaa52rRFaZGJyUVD
-         l2w6rkiunDdVCe0yG5t9gs3jNYORHP6njKwIBEoFW2er7WI6nX4ok6NIGt/DqPLAlc
-         GksMbiu/kTG37+RJxXbBK4n2c0N2PZZ3S7uV4AaGoxUP3ut++4/aBV2TKUWtvSgOw0
-         rymKjGl4NQR36luXbxpKX83/ETkJ9mVbgKWmfSC9nNXXH+7has5hoPvvLSXxmGahIy
-         FzVqlIIlE7UG4rVVmodaJWEKpsm8nBj+kFddrXcZCPq5xCbqfAV5/PdT0qtKQNbeL6
-         8aznCOoltjvXg==
-Date:   Mon, 3 Apr 2023 11:18:12 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Jiri Pirko <jiri@resnulli.us>
-Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        Vadim Fedorenko <vadfed@meta.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>
-Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
-Message-ID: <20230403111812.163b7d1d@kernel.org>
-In-Reply-To: <ZBGOWQW+1JFzNsTY@nanopsycho>
-References: <20230312022807.278528-1-vadfed@meta.com>
-        <20230312022807.278528-3-vadfed@meta.com>
-        <ZA9Nbll8+xHt4ygd@nanopsycho>
-        <2b749045-021e-d6c8-b265-972cfa892802@linux.dev>
-        <ZBA8ofFfKigqZ6M7@nanopsycho>
-        <DM6PR11MB4657120805D656A745EF724E9BBE9@DM6PR11MB4657.namprd11.prod.outlook.com>
-        <ZBGOWQW+1JFzNsTY@nanopsycho>
+        with ESMTP id S233284AbjDCShr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 14:37:47 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEBD83C19
+        for <linux-clk@vger.kernel.org>; Mon,  3 Apr 2023 11:37:45 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id h8so121143641ede.8
+        for <linux-clk@vger.kernel.org>; Mon, 03 Apr 2023 11:37:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680547064;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=woHQBzslpxQn8sWqqC0TN46wIMWpqjyxk4syqknSbnU=;
+        b=bFvBbagm8aL0eG1WpkUMpZ7aBLUx6PKp4lseK3TKYNSJLKFTvbdAL/UOpVLQNG7W80
+         6+T9nAIO+CFbrpm+FWmXGLv3iRlsx77POHfwFU7a9hg24cauINgniJsEiBKhlm45+9Zt
+         jdiSe4FQmK1ZDt9moJ7wCgte6na7VoYwXmxWvsdvyoUvAbqvjIPbDOZoIrfa+thb2oen
+         pJKuwQuT1MPNg+BYN/L+ZUa0yIcZL3V7ad9X2JSCYn+GbtBET4ExYrhzv/dGLWNKMrX0
+         aY8Wq8zP6tmnwHk2JvG3m5+v2BlZ5wTQPHX9GIHg7/lCDDWcpU5ePfRmEIyP882gWeQr
+         nULA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680547064;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=woHQBzslpxQn8sWqqC0TN46wIMWpqjyxk4syqknSbnU=;
+        b=BtRabDTnS0hgSEfljBBlE+oTHL7sNbguGxVWGhOQ1ZtTIXu38npG7MzrzB0aAo9zK5
+         BpRYaG5XnC3ZfAPkyDeGEFy9zGOT1U1u3ZJTzeOkjqO1GtJir0oWSlhgYXqrDt043HgP
+         O6ozEDGBV+PkRXZS+iPSS+xSP8+tM3YVBrUsSFKWjjYd2MkmWRa/TSnl4sqsPHPgHTSX
+         WvYdOVUm4IjdEJDIZjPkY9K+WJIuk9HzKZDrsfVLjukIanbGm6juCXloMbd4LJUTvrBU
+         T9/2OysnCQ3dSvC9BQwcsJygAwEiU2yzwC/L5fxgIJdnlceUj5CIbpPov7yl8Y2NsfcD
+         dZEg==
+X-Gm-Message-State: AAQBX9fxp2O580SfCze+cFz5xBRscdaP/TrFW9XtTGgy6zTRF9q2fbKF
+        wIZotfkQEfiuPGp/nQbZx2MsYQ==
+X-Google-Smtp-Source: AKy350aGwqQCodZpb/gzcGe1S8OGxNbhVHt1iC2+Dk0P5OGvd+2PK7IQlx/UQ3iZewsFT9iUWIorCA==
+X-Received: by 2002:a17:906:1c19:b0:92b:f118:ef32 with SMTP id k25-20020a1709061c1900b0092bf118ef32mr36754487ejg.48.1680547064210;
+        Mon, 03 Apr 2023 11:37:44 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:ae90:d80:1069:4805? ([2a02:810d:15c0:828:ae90:d80:1069:4805])
+        by smtp.gmail.com with ESMTPSA id b17-20020a170906491100b008e57b5e0ce9sm4826642ejq.108.2023.04.03.11.37.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Apr 2023 11:37:43 -0700 (PDT)
+Message-ID: <ba5cf9c5-50b2-b31b-eba4-d22eda2de0f3@linaro.org>
+Date:   Mon, 3 Apr 2023 20:37:42 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH RFC 19/20] dt-bindings: interrupt-controller:
+ arm,versatile-fpga-irq: mark oxnas compatible as deprecated
+Content-Language: en-US
+To:     Neil Armstrong <neil.armstrong@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        soc@kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Sebastian Reichel <sre@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Marc Zyngier <maz@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20230331-topic-oxnas-upstream-remove-v1-0-5bd58fd1dd1f@linaro.org>
+ <20230331-topic-oxnas-upstream-remove-v1-19-5bd58fd1dd1f@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230331-topic-oxnas-upstream-remove-v1-19-5bd58fd1dd1f@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 15 Mar 2023 10:22:33 +0100 Jiri Pirko wrote:
-> So basically you say, you can have 2 approaches in app:
-> 1)
-> id = dpll_device_get_id("ice/c92d02a7129f4747/1")
-> dpll_device_set(id, something);
-> dpll_device_set(id, something);
-> dpll_device_set(id, something);
-> 2):
-> dpll_device_set("ice/c92d02a7129f4747/1, something);
-> dpll_device_set("ice/c92d02a7129f4747/1, something);
-> dpll_device_set("ice/c92d02a7129f4747/1, something);
+On 31/03/2023 10:34, Neil Armstrong wrote:
+> Due to lack of maintainance and stall of development for a few years now,
+> and since no new features will ever be added upstream, mark the
+> OX810 and OX820 IRQ compatible as deprecated.
 > 
-> What is exactly benefit of the first one? Why to have 2 handles? Devlink
-> is a nice example of 2) approach, no problem there.
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
 
-IMHO for devlink the neatness of using the name came from the fact 
-that the device name was meaningful. 
 
-With the advent of auxbus that's no longer the case.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-In fact it seems more than likely that changing the name to auxbus
-will break FW update scripts. Maybe nobody has complained yet only
-because prod adoption of these APIs is generally lacking :(
+Best regards,
+Krzysztof
 
-I agree that supporting both name and ID is pointless, user space can
-translate between the two trivially all by itself. But I'd lean towards
-deleting the name support not the ID support :(
