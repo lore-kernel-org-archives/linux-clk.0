@@ -2,121 +2,163 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE865C76196
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Apr 2023 22:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D567C76196
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Apr 2023 00:47:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231932AbjDCWiV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Apr 2023 18:38:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51664 "EHLO
+        id S229763AbjDDAr4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Apr 2023 20:47:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233322AbjDCWiU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 18:38:20 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE7272105
-        for <linux-clk@vger.kernel.org>; Mon,  3 Apr 2023 15:38:18 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id g17so40017387lfv.4
-        for <linux-clk@vger.kernel.org>; Mon, 03 Apr 2023 15:38:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680561497;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FtsOWrQW7hkNYFADGqbjwZ60d4zvSefDrCxExKDl8Ps=;
-        b=hwuZ8XieWgBLN5adU41i6xX2s4eNlMpyUG883h6xHBqIp68TLP0PISWCmEmBxbOFNp
-         La0z50tJWUVSnxmQGKjzd2D0TI3d8OdvzjbH9uwZNYgcJWNoG92y7hvf5wRLkIcNnJkT
-         9xaak/ZDCbwD9kqTd2ISNgfEwhja79Z07uNJPnxcGhHgeZ9/vQGpDOoJeWvRtPZ/2Gxc
-         TvPZiYYuhXrmLzm7gBiYz6zwetuFr+2zYf3U5JHJIDUNZM1JFosfH9/7+5HX0jn7xUye
-         RlhlegeuGZo1+3qU3CEAaNzaV47X5Q9mtT55migZtfvsp6ZvbmSskgy9parZdncdzPQx
-         BKWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680561497;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FtsOWrQW7hkNYFADGqbjwZ60d4zvSefDrCxExKDl8Ps=;
-        b=HzQUJjmhQy958Yb9YcohjoFsUUywOEU2vVoIccVTNuQleViSBkEua22iC/d2rPFzxY
-         iwFh7FP46M4ywx/DhYSm3ODUG2DNjDhCIN8vi7DC0cNGpM1p9Cp5AGfCmbkG0ESirH4/
-         rY8crYaUSdmbhhKLv+PPPuuP6hntiV0bRUlbL65srzSCgBfyZ3RQTLElS/VPBtTcmfFa
-         orWo75hwu3mWIEWqtb7pnlfpgomkcoZVQUcnPT5SOnENyIwvrV0XeHaXHEvXKH/8/3Nr
-         mSJoYf93dBiipsC+HYN8fJDH7p8ukyGTYvjA4KeV1NcYKPsi+KK9Cp5wo/PE/QaxaVrH
-         M1AQ==
-X-Gm-Message-State: AAQBX9fxFrS/Ule2+EzQ2aZnUegYFk4d19lzbp2I4AeqBt6adBaoqkys
-        KMQhAMm0HPbwmsJSQci3xhKM/w==
-X-Google-Smtp-Source: AKy350YZO6iPPjj1sua6F66RRClLCkmeKk/nQmT2y4PKC2eroOuYFkNzuee/Tto92qVvDnzdKwZi/Q==
-X-Received: by 2002:a05:6512:2192:b0:4e8:3da6:485a with SMTP id b18-20020a056512219200b004e83da6485amr56645lft.68.1680561496989;
-        Mon, 03 Apr 2023 15:38:16 -0700 (PDT)
-Received: from [192.168.1.101] (abxj135.neoplus.adsl.tpnet.pl. [83.9.3.135])
-        by smtp.gmail.com with ESMTPSA id u5-20020ac248a5000000b004e9cad1cd7csm1985379lfg.229.2023.04.03.15.38.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Apr 2023 15:38:16 -0700 (PDT)
-Message-ID: <b2e81e6c-a9fa-0cc1-01ed-1d82297454c4@linaro.org>
-Date:   Tue, 4 Apr 2023 00:38:14 +0200
+        with ESMTP id S229532AbjDDArz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 20:47:55 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD9E710CB;
+        Mon,  3 Apr 2023 17:47:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1680569273; x=1712105273;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RXv6nnvuAvYkBkDjFqAcvYEGLIrMuHjL2t3Rp8C34WY=;
+  b=Yg/7+0dM+hAn1wa+OmIDbSZ4Ps3eMY+ElmSmUQZXXueHi5R6tEe0JdUc
+   ly0UclulijRa+Zt8X4O+XiVqZvAIm0m+WWKtHSwNAl+A2Hm05uUoyLZgc
+   DlYotn1NNvKIwmsYCx2GTHA8QnTMIm/qOGqKq1zeLTMkPdrdy8zK3DLOM
+   1U0ek4XYLHZN/GsrFFImBSx6C5UfkNAXT63lV8olAJOpbl1DI/YIly8Nu
+   cJA+GgzHq0Z8XoDFezWyqChnLBTfObfrsham6Zvunwo4AQnm64QZFT5yH
+   WvO88t2/pwBZ/OXj4NCDY9pnHk9R5Av3gcvZKHcPX3eFIRmI/aitEG6UD
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10669"; a="321710748"
+X-IronPort-AV: E=Sophos;i="5.98,316,1673942400"; 
+   d="scan'208";a="321710748"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2023 17:47:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10669"; a="686167807"
+X-IronPort-AV: E=Sophos;i="5.98,316,1673942400"; 
+   d="scan'208";a="686167807"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by orsmga002.jf.intel.com with ESMTP; 03 Apr 2023 17:47:50 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pjUpx-000Oyk-1l;
+        Tue, 04 Apr 2023 00:47:49 +0000
+Date:   Tue, 4 Apr 2023 08:47:37 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] drivers: clk: Add support for versa3 clock driver
+Message-ID: <202304040800.ncpvZq1s-lkp@intel.com>
+References: <20230403103257.328954-3-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH 4/7] dt-bindings: iommu: arm,smmu: enable clocks for
- sa8775p
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>
-References: <20230328193632.226095-1-brgl@bgdev.pl>
- <20230328193632.226095-5-brgl@bgdev.pl>
- <20230403204127.GA1708388-robh@kernel.org>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230403204127.GA1708388-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230403103257.328954-3-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Biju,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on next-20230403]
+[cannot apply to geert-renesas-devel/next robh/for-next linus/master v6.3-rc5]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Biju-Das/dt-bindings-clock-Add-Renesas-versa3-clock-generator-bindings/20230403-183501
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20230403103257.328954-3-biju.das.jz%40bp.renesas.com
+patch subject: [PATCH v3 2/3] drivers: clk: Add support for versa3 clock driver
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20230404/202304040800.ncpvZq1s-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/bd1f4d06603f7dc65276411a65078a8ffaf5b844
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Biju-Das/dt-bindings-clock-Add-Renesas-versa3-clock-generator-bindings/20230403-183501
+        git checkout bd1f4d06603f7dc65276411a65078a8ffaf5b844
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 SHELL=/bin/bash drivers/clk/ drivers/gpio/
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202304040800.ncpvZq1s-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/clk/clk-versaclock3.c:263:8: warning: variable 'premul' is uninitialized when used here [-Wuninitialized]
+                           if (premul & VC3_PLL2_MDIV_DOUBLER)
+                               ^~~~~~
+   drivers/clk/clk-versaclock3.c:244:29: note: initialize the variable 'premul' to silence this warning
+           unsigned int prediv, premul;
+                                      ^
+                                       = 0
+   1 warning generated.
 
 
-On 3.04.2023 22:41, Rob Herring wrote:
-> On Tue, Mar 28, 2023 at 09:36:29PM +0200, Bartosz Golaszewski wrote:
->> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>
->> The KGSL iommu will require the clocks property to be set. Enable it for
-> 
-> Isn't KGSL the name for QCom's adreno vendor driver? What does that have 
-> to do with bindings?
-It's called "KGSL SMMU" (as opposed to the other "APPS SMMU" (Application
-Processor SubSystem) in some places in Qualcommland
+vim +/premul +263 drivers/clk/clk-versaclock3.c
 
-Konrad
-> 
->> sa8775p in the bindings.
->>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Robin Murphy <robin.murphy@arm.com>
->> Cc: Joerg Roedel <joro@8bytes.org>
->> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->> ---
->>  Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
->> index 807cb511fe18..74d5164ed1e8 100644
->> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
->> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
->> @@ -375,7 +375,6 @@ allOf:
->>                - nvidia,smmu-500
->>                - qcom,qcm2290-smmu-500
->>                - qcom,qdu1000-smmu-500
->> -              - qcom,sa8775p-smmu-500
->>                - qcom,sc7180-smmu-500
->>                - qcom,sc8180x-smmu-500
->>                - qcom,sc8280xp-smmu-500
->> -- 
->> 2.37.2
->>
+   238	
+   239	static unsigned long vc3_pfd_recalc_rate(struct clk_hw *hw,
+   240						 unsigned long parent_rate)
+   241	{
+   242		struct vc3_hw_data *vc3 = container_of(hw, struct vc3_hw_data, hw);
+   243		const struct vc3_pfd_data *pfd = vc3->data;
+   244		unsigned int prediv, premul;
+   245		unsigned long rate;
+   246		u8 mdiv;
+   247	
+   248		regmap_read(vc3->regmap, pfd->offs, &prediv);
+   249		if (pfd->num == VC3_PFD1) {
+   250			/* The bypass_prediv is set, PLL fed from Ref_in directly. */
+   251			if (prediv & pfd->mdiv1_bitmsk) {
+   252				/* check doubler is set or not */
+   253				regmap_read(vc3->regmap, VC3_PLL1_CTRL_OUTDIV5, &premul);
+   254				if (premul & VC3_PLL1_CTRL_OUTDIV5_PLL1_MDIV_DOUBLER)
+   255					parent_rate *= 2;
+   256				return parent_rate;
+   257			}
+   258			mdiv = VC3_PLL1_M_DIV(prediv);
+   259		} else if (pfd->num == VC3_PFD2) {
+   260			/* The bypass_prediv is set, PLL fed from Ref_in directly. */
+   261			if (prediv & pfd->mdiv1_bitmsk) {
+   262				/* check doubler is set or not */
+ > 263				if (premul & VC3_PLL2_MDIV_DOUBLER)
+   264					parent_rate *= 2;
+   265				return parent_rate;
+   266			}
+   267	
+   268			mdiv = VC3_PLL2_M_DIV(prediv);
+   269		} else {
+   270			/* The bypass_prediv is set, PLL fed from Ref_in directly. */
+   271			if (prediv & pfd->mdiv1_bitmsk)
+   272				return parent_rate;
+   273	
+   274			mdiv = VC3_PLL3_M_DIV(prediv);
+   275		}
+   276	
+   277		if (prediv & pfd->mdiv2_bitmsk)
+   278			rate = parent_rate / 2;
+   279		else
+   280			rate = parent_rate / mdiv;
+   281	
+   282		return rate;
+   283	}
+   284	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
