@@ -2,256 +2,170 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76C42C6FD1D
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Apr 2023 16:51:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5179C77B60
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Apr 2023 18:36:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235273AbjDDQvJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Apr 2023 12:51:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59226 "EHLO
+        id S236180AbjDDSgj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Apr 2023 14:36:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235610AbjDDQu7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Apr 2023 12:50:59 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D2BD4ED6;
-        Tue,  4 Apr 2023 09:50:40 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 334DUtRG011054;
-        Tue, 4 Apr 2023 16:50:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=l8w1/hgTPworsK3U0QpeR2myc76+4gYZR+4ff0LHt4E=;
- b=Ypq+0VaO12L2B/a/9GQ0cST63QJRaZPKX6uu1XxX8cyNgcrxUc2Hpd0lw3kgkmEdjAVf
- 5/7jJReSwwKjRGJUAqU5WD9OeFqlvbUplUtQdN00QX/gxmmuI93wFm6ETRvr3RJ7cpDt
- J15pVGHv0DUUqkl5Sc/SdfVfXAiXvOUmIhuS3mvrvu+ZSMvydlhh0i39FR2xdaWolroY
- IMc+B2HiWOY1GPZS8Cp1H1KGW3hQw9Xaip/5mfLL/vTOQsjBKYTfJjil8lbejkgAORzq
- eU4ztFHtyPqxO1dsiHr0Kpq45SzeFc+rr09gKwfyNjZNWShc+0+D8K2OkHUIDlQKf/AW WQ== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3prg8wsd6k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 04 Apr 2023 16:50:13 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 334GoCcs015908
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 4 Apr 2023 16:50:12 GMT
-Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Tue, 4 Apr 2023 09:50:03 -0700
-From:   Devi Priya <quic_devipriy@quicinc.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <lpieralisi@kernel.org>,
-        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
-        <krzysztof.kozlowski+dt@linaro.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <mani@kernel.org>, <p.zabel@pengutronix.de>,
-        <linus.walleij@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_ipkumar@quicinc.com>
-Subject: [PATCH V2 9/9] PCI: qcom: Add support for IPQ9574
-Date:   Tue, 4 Apr 2023 22:18:28 +0530
-Message-ID: <20230404164828.8031-10-quic_devipriy@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230404164828.8031-1-quic_devipriy@quicinc.com>
-References: <20230404164828.8031-1-quic_devipriy@quicinc.com>
+        with ESMTP id S236219AbjDDSgW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Apr 2023 14:36:22 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A82F59D2
+        for <linux-clk@vger.kernel.org>; Tue,  4 Apr 2023 11:34:27 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id y15so43512296lfa.7
+        for <linux-clk@vger.kernel.org>; Tue, 04 Apr 2023 11:34:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680633265;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=orJHNSBUSwxWAVFJS4pfzA0KQDggc/uVMZltKMKuHVI=;
+        b=PfUHGnUuhlmgR3aUQAX/r/U8r/ZYPX2YOetxeW8hJRaBzMotkiA9R1EF5V/gusMeA1
+         U1v+FlIHyLCZTiTV0xchtgK/7J2QHmFPFW0+K7Nf3Jhoq9gc37ZVC2G0mq15BeyC0JtV
+         gnL3B5nQ8Z8qFRxblML/TWf+vlgV4vFmjPGLDm6JOKixqKIiu8zckICuxtJLx2DZaNVX
+         IbWlAz6SQzsSOHdd6afDgL94AHR0nNgkREK4lqVSooo0DagE+yO4K0id2y6VtfP974gw
+         AC4bgqrbxYLhBQe+8Q7YqvFpb6I10ByCboefEESi3u1K7lWnhLz3i3C3TrlUpVWI9lzW
+         /GKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680633265;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=orJHNSBUSwxWAVFJS4pfzA0KQDggc/uVMZltKMKuHVI=;
+        b=NjV54i0keTD/T7enYAzhrQfDG1hahsd4zROsN3oFncKtWP67VAVgIUSVcOoB3JwGpk
+         HFpflGCMJNtAXe3qoSMSh4W9ToOp55wxUm3eywPRawBFe0nzdtTyzi2dpLtqZtue4eAU
+         PsFgs8lGlLZ+hGjQqJVY9v6l+Qw/6ofjqy7eo5/Myn11MZE3Ef9WmwyDkTy335XsMSWg
+         eDRCKF+9Hzz09SmB3IRPGomolqfsHEn7itm+gFOd5sV26zux3XNbbBNQw8e3d+y6WAyt
+         GQ271m3TTb/bv+gLW6mmxbDUGpReFEWdzDkDRcQ9KgWsZF0diVqMnSX1pd1HDSeOkUEX
+         t8oQ==
+X-Gm-Message-State: AAQBX9ed6PCHLcfShcYvs2fwSxR3Gfc7viVzwnSsP0caku3pVocDn3uT
+        DuYfdIRTs0F/+TW/SwMbgBIdmg==
+X-Google-Smtp-Source: AKy350aU2IZ6+6MvmW6lXe5XqjRleRRPL08I9gEp/YNZl9ljG2LZXYXvWdP3hWxAhUYJdI2nZY6+nA==
+X-Received: by 2002:ac2:5989:0:b0:4de:e802:b7e3 with SMTP id w9-20020ac25989000000b004dee802b7e3mr923407lfn.19.1680633265603;
+        Tue, 04 Apr 2023 11:34:25 -0700 (PDT)
+Received: from [192.168.1.101] (abxh37.neoplus.adsl.tpnet.pl. [83.9.1.37])
+        by smtp.gmail.com with ESMTPSA id o7-20020a05651238a700b004d887e0e9edsm2439673lft.168.2023.04.04.11.34.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Apr 2023 11:34:25 -0700 (PDT)
+Message-ID: <0d2f0792-c7dd-7cdc-3c1c-454f445405aa@linaro.org>
+Date:   Tue, 4 Apr 2023 20:34:23 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: D_sHUbA0nX3JJkbrHU6AWPoigXkrrOIc
-X-Proofpoint-ORIG-GUID: D_sHUbA0nX3JJkbrHU6AWPoigXkrrOIc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-04_08,2023-04-04_04,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 spamscore=0 phishscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 bulkscore=0 impostorscore=0 priorityscore=1501 clxscore=1015
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2304040156
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH v3 2/3] arm64: dts: qcom: sc8280xp: Add ethernet nodes
+Content-Language: en-US
+To:     Andrew Halaney <ahalaney@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     agross@kernel.org, andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, richardcochran@gmail.com,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, netdev@vger.kernel.org,
+        bmasney@redhat.com, echanude@redhat.com, ncai@quicinc.com,
+        jsuraj@qti.qualcomm.com, hisunil@quicinc.com
+References: <20230331215804.783439-1-ahalaney@redhat.com>
+ <20230331215804.783439-3-ahalaney@redhat.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230331215804.783439-3-ahalaney@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The IPQ9574 platform has 4 Gen3 PCIe controllers: two single-lane
-and two dual-lane based on SNPS core 5.70a
-The Qcom IP rev is 1.27.0 and Synopsys IP rev is 5.80a
-Added a new compatible 'qcom,pcie-ipq9574' and 'ops_1_27_0'
-which reuses all the members of 'ops_2_9_0' except for the post_init
-as the SLV_ADDR_SPACE_SIZE configuration differs between 2_9_0
-and 1_27_0.
-Also, modified get_resources of 'ops 2_9_0' to get the clocks
-from the device tree and modelled the post init sequence as
-a common function to avoid code redundancy
 
-Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
-Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
----
- Changes in V2:
-	- Updated the commit message with details on the PCIe controller
-	- Updated ops_2_9_0 to get the clocks from the DT
-	- Added ops 1_27_0 for ipq9574 which reuses the functions of 
-	  existing ops_2_9_0 except for the post init sequence which is 
-	  modelled as a common function to handle the difference in 
-	  SLV_ADDR_SPACE_SIZE configuration
 
- drivers/pci/controller/dwc/pcie-qcom.c | 62 ++++++++++++++++++--------
- 1 file changed, 44 insertions(+), 18 deletions(-)
+On 31.03.2023 23:58, Andrew Halaney wrote:
+> This platform has 2 MACs integrated in it, go ahead and describe them.
+> 
+> Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
+> ---
+> 
+> Changes since v2:
+>     * Fix spacing (Konrad)
+> 
+> Changes since v1:
+>     * None
+> 
+>  arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 59 ++++++++++++++++++++++++++
+>  1 file changed, 59 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+> index 42bfa9fa5b96..f28ea86b128d 100644
+> --- a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+> @@ -761,6 +761,65 @@ soc: soc@0 {
+>  		ranges = <0 0 0 0 0x10 0>;
+>  		dma-ranges = <0 0 0 0 0x10 0>;
+>  
+> +		ethernet0: ethernet@20000 {
+> +			compatible = "qcom,sc8280xp-ethqos";
+> +			reg = <0x0 0x00020000 0x0 0x10000>,
+> +			      <0x0 0x00036000 0x0 0x100>;
+> +			reg-names = "stmmaceth", "rgmii";
+> +
+> +			clocks = <&gcc GCC_EMAC0_AXI_CLK>,
+> +				 <&gcc GCC_EMAC0_SLV_AHB_CLK>,
+> +				 <&gcc GCC_EMAC0_PTP_CLK>,
+> +				 <&gcc GCC_EMAC0_RGMII_CLK>;
+> +			clock-names = "stmmaceth",
+> +				      "pclk",
+> +				      "ptp_ref",
+> +				      "rgmii";
+> +
+> +			interrupts = <GIC_SPI 946 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 936 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "macirq", "eth_lpi";
+> +			iommus = <&apps_smmu 0x4c0 0xf>;
+> +			power-domains = <&gcc EMAC_0_GDSC>;
+> +
+> +			snps,tso;
+> +			snps,pbl = <32>;
+> +			rx-fifo-depth = <4096>;
+> +			tx-fifo-depth = <4096>;
+> +
+> +			status = "disabled";
+> +		};
+> +
+> +		ethernet1: ethernet@23000000 {
+Nodes under /soc should be ordered by their unit address, so
+in this case it belongs after dispcc1: clock-controller@..
 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index a232b04af048..b03d182eb283 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -114,6 +114,7 @@
- 
- #define PCIE20_v3_PARF_SLV_ADDR_SPACE_SIZE	0x358
- #define SLV_ADDR_SPACE_SZ			0x10000000
-+#define SLV_ADDR_SPACE_SZ_1_27_0		0x08000000
- 
- #define PCIE20_LNK_CONTROL2_LINK_STATUS2	0xa0
- 
-@@ -189,8 +190,9 @@ struct qcom_pcie_resources_2_7_0 {
- };
- 
- struct qcom_pcie_resources_2_9_0 {
--	struct clk_bulk_data clks[5];
-+	struct clk_bulk_data *clks;
- 	struct reset_control *rst;
-+	int num_clks;
- };
- 
- union qcom_pcie_resources {
-@@ -1308,17 +1310,10 @@ static int qcom_pcie_get_resources_2_9_0(struct qcom_pcie *pcie)
- 	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
- 	struct dw_pcie *pci = pcie->pci;
- 	struct device *dev = pci->dev;
--	int ret;
- 
--	res->clks[0].id = "iface";
--	res->clks[1].id = "axi_m";
--	res->clks[2].id = "axi_s";
--	res->clks[3].id = "axi_bridge";
--	res->clks[4].id = "rchng";
--
--	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
--	if (ret < 0)
--		return ret;
-+	res->num_clks = devm_clk_bulk_get_all(dev, &res->clks);
-+	if (res->clks < 0)
-+		return res->num_clks;
- 
- 	res->rst = devm_reset_control_array_get_exclusive(dev);
- 	if (IS_ERR(res->rst))
-@@ -1331,7 +1326,7 @@ static void qcom_pcie_deinit_2_9_0(struct qcom_pcie *pcie)
- {
- 	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
- 
--	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
-+	clk_bulk_disable_unprepare(res->num_clks, res->clks);
- }
- 
- static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
-@@ -1360,19 +1355,16 @@ static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
- 
- 	usleep_range(2000, 2500);
- 
--	return clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
-+	return clk_bulk_prepare_enable(res->num_clks, res->clks);
- }
- 
--static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
-+static int qcom_pcie_post_init(struct qcom_pcie *pcie)
- {
- 	struct dw_pcie *pci = pcie->pci;
- 	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
- 	u32 val;
- 	int i;
- 
--	writel(SLV_ADDR_SPACE_SZ,
--		pcie->parf + PCIE20_v3_PARF_SLV_ADDR_SPACE_SIZE);
--
- 	val = readl(pcie->parf + PCIE20_PARF_PHY_CTRL);
- 	val &= ~BIT(0);
- 	writel(val, pcie->parf + PCIE20_PARF_PHY_CTRL);
-@@ -1401,7 +1393,7 @@ static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
- 	writel(val, pci->dbi_base + offset + PCI_EXP_LNKCAP);
- 
- 	writel(PCI_EXP_DEVCTL2_COMP_TMOUT_DIS, pci->dbi_base + offset +
--			PCI_EXP_DEVCTL2);
-+		PCI_EXP_DEVCTL2);
- 
- 	for (i = 0; i < 256; i++)
- 		writel(0, pcie->parf + PCIE20_PARF_BDF_TO_SID_TABLE_N + (4 * i));
-@@ -1409,6 +1401,26 @@ static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
- 	return 0;
- }
- 
-+static int qcom_pcie_post_init_1_27_0(struct qcom_pcie *pcie)
-+{
-+	writel(SLV_ADDR_SPACE_SZ_1_27_0,
-+	       pcie->parf + PCIE20_v3_PARF_SLV_ADDR_SPACE_SIZE);
-+
-+	qcom_pcie_post_init(pcie);
-+
-+	return 0;
-+}
-+
-+static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
-+{
-+	writel(SLV_ADDR_SPACE_SZ,
-+	       pcie->parf + PCIE20_v3_PARF_SLV_ADDR_SPACE_SIZE);
-+
-+	qcom_pcie_post_init(pcie);
-+
-+	return 0;
-+}
-+
- static int qcom_pcie_link_up(struct dw_pcie *pci)
- {
- 	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-@@ -1620,6 +1632,15 @@ static const struct qcom_pcie_ops ops_2_9_0 = {
- 	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
- };
- 
-+/* Qcom IP rev.: 1.27.0  Synopsys IP rev.: 5.80a */
-+static const struct qcom_pcie_ops ops_1_27_0 = {
-+	.get_resources = qcom_pcie_get_resources_2_9_0,
-+	.init = qcom_pcie_init_2_9_0,
-+	.post_init = qcom_pcie_post_init_1_27_0,
-+	.deinit = qcom_pcie_deinit_2_9_0,
-+	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
-+};
-+
- static const struct qcom_pcie_cfg cfg_1_0_0 = {
- 	.ops = &ops_1_0_0,
- };
-@@ -1652,6 +1673,10 @@ static const struct qcom_pcie_cfg cfg_2_9_0 = {
- 	.ops = &ops_2_9_0,
- };
- 
-+static const struct qcom_pcie_cfg cfg_1_27_0 = {
-+	.ops = &ops_1_27_0,
-+};
-+
- static const struct dw_pcie_ops dw_pcie_ops = {
- 	.link_up = qcom_pcie_link_up,
- 	.start_link = qcom_pcie_start_link,
-@@ -1829,6 +1854,7 @@ static const struct of_device_id qcom_pcie_match[] = {
- 	{ .compatible = "qcom,pcie-ipq8064-v2", .data = &cfg_2_1_0 },
- 	{ .compatible = "qcom,pcie-ipq8074", .data = &cfg_2_3_3 },
- 	{ .compatible = "qcom,pcie-ipq8074-gen3", .data = &cfg_2_9_0 },
-+	{ .compatible = "qcom,pcie-ipq9574", .data = &cfg_1_27_0 },
- 	{ .compatible = "qcom,pcie-msm8996", .data = &cfg_2_3_2 },
- 	{ .compatible = "qcom,pcie-qcs404", .data = &cfg_2_4_0 },
- 	{ .compatible = "qcom,pcie-sa8540p", .data = &cfg_1_9_0 },
--- 
-2.17.1
+With that fixed:
 
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+Konrad
+> +			compatible = "qcom,sc8280xp-ethqos";
+> +			reg = <0x0 0x23000000 0x0 0x10000>,
+> +			      <0x0 0x23016000 0x0 0x100>;
+> +			reg-names = "stmmaceth", "rgmii";
+> +
+> +			clocks = <&gcc GCC_EMAC1_AXI_CLK>,
+> +				 <&gcc GCC_EMAC1_SLV_AHB_CLK>,
+> +				 <&gcc GCC_EMAC1_PTP_CLK>,
+> +				 <&gcc GCC_EMAC1_RGMII_CLK>;
+> +			clock-names = "stmmaceth",
+> +				      "pclk",
+> +				      "ptp_ref",
+> +				      "rgmii";
+> +
+> +			interrupts = <GIC_SPI 929 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 919 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "macirq", "eth_lpi";
+> +
+> +			iommus = <&apps_smmu 0x40 0xf>;
+> +			power-domains = <&gcc EMAC_1_GDSC>;
+> +
+> +			snps,tso;
+> +			snps,pbl = <32>;
+> +			rx-fifo-depth = <4096>;
+> +			tx-fifo-depth = <4096>;
+> +
+> +			status = "disabled";
+> +		};
+> +
+>  		gcc: clock-controller@100000 {
+>  			compatible = "qcom,gcc-sc8280xp";
+>  			reg = <0x0 0x00100000 0x0 0x1f0000>;
