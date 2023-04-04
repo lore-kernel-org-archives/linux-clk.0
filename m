@@ -2,227 +2,309 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2932C6FD1D
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Apr 2023 20:45:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF0AC76188
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Apr 2023 22:47:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232313AbjDDUp6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Apr 2023 16:45:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52624 "EHLO
+        id S236649AbjDDWru (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Apr 2023 18:47:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236052AbjDDUp5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Apr 2023 16:45:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3357544A1;
-        Tue,  4 Apr 2023 13:45:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9EBD763928;
-        Tue,  4 Apr 2023 20:45:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE792C433EF;
-        Tue,  4 Apr 2023 20:45:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680641155;
-        bh=5x4JHtyNUG9OXNDY73lGY3JndJfgfUY6Lj7dBvwC6rs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=II0RIuit1rHSmJj+OR3S6IWkJbkD5UwZHSeKgVGeHqRhRJ1MlL3rkHkgdTjbMlHWM
-         7LV/IPkO2eq00yjsyPwTqFIYOBDc7Dtmv1rHkA7uMvdNbC72dYb5NUWdRAWZujITHD
-         Jbzw49dp2JLMwwch5Hk2VP8AdQittlMW/AgLTZR7V7Vh4z1o0HkDBezF6KiBsMSfsf
-         F0L8/nbMDut6zQloYhDFVYUZO4gsva7QukGVCoqfM1tJR7zONi2435Ux1RglNB1cvg
-         vdVUX/MEmzAQBwK7mBQnjQhqeSvi7fE+XpJwaaOYTS5n25HCCxb4agOTKLHJHs0HQJ
-         M1uT0Y+dvb/yA==
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        patches@lists.linux.dev,
-        "Garmin . Chang" <Garmin.Chang@mediatek.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH v3] clk: mediatek: Use right match table, include mod_devicetable
-Date:   Tue,  4 Apr 2023 13:45:53 -0700
-Message-Id: <20230404204553.1256263-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.40.0.348.gf938b09366-goog
+        with ESMTP id S235754AbjDDWrs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Apr 2023 18:47:48 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0887C2720
+        for <linux-clk@vger.kernel.org>; Tue,  4 Apr 2023 15:47:46 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id j11so44237570lfg.13
+        for <linux-clk@vger.kernel.org>; Tue, 04 Apr 2023 15:47:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680648464;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=n9hExFqp3rfsa5Xr1FlWQxDCQKu/ifdPHYr+ePtML1g=;
+        b=pnLRtgO/bJjn2T6YqMKU0nCLmdge+M6jC0+9/I3Ij5FtgLe4ud041XUXIfN+gWE3wr
+         fMyDC7gfIjcR6gwyN3Oj4IltTHfQbGQPvy4O8UEDliwt1NXtS9QRCorafV9A5+KnIFne
+         os1Gvc6mznp2M0IAVThrrP1fRjzoiByoIhP1RMXH7oLXWt0skOYG2YrqmZe6RJVfsXj5
+         mXKPZN7t/WAPms3RFUcOh0zREuYTIT9G39QqvbZZo6Jhc0r4jOhr/eicd7Fd5fIsTV+N
+         BMano6hqvbsHWodLanAD9PIqYEadaarfyY+LtsnUUSCowJUD5gupm4fPOHBuK0+OP+7A
+         46Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680648464;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n9hExFqp3rfsa5Xr1FlWQxDCQKu/ifdPHYr+ePtML1g=;
+        b=FecsFBJ9UDjXTGje3QpL89LPg5O7aBnT3wXzuFp2jXm9IpWQoFyJIJMf1OOD/kqGKm
+         JF+2aQi49VLIapThFXz5QKkHT0l2AyjIk8MwSI+wsSm4GZoskvudp4zhoyzoDffOF5Y3
+         mxOdP7BVVQmmdKv7CPq6d3AqF+9tajFGLYiM7hPIZhnnwayfJWCR54CpQGUE5D0EfrSo
+         gvVgSuyQeSIDot/hAgepk5Mxzu8XKd7QAqF49CTi+2WqjePXIeEd1q2DP9r0hrhSx8XJ
+         KjXLCtUtSlRHSn54KsDlOCa2eyJmXwjeBRffkb6ZlM1RqxNoyehAPY7jHRnY0rAbL+ZJ
+         tRsQ==
+X-Gm-Message-State: AAQBX9dtfr2zDq10dRfpF0+GCqmx1UytIdT+C3wM8H2gE1RIq0dVC6fX
+        KcDA1fAL06orc0l2M83HSkToQGapFCew6oef4Ew=
+X-Google-Smtp-Source: AKy350ak7OUgZo6HPs4brOwgTKEHifOyuewZv8S2pt0pEd/FnNxQ1gfrVeFunCR7KnI7ySOiNBLp9Q==
+X-Received: by 2002:ac2:569e:0:b0:4dd:9b6b:6b5b with SMTP id 30-20020ac2569e000000b004dd9b6b6b5bmr1169547lfr.16.1680648464286;
+        Tue, 04 Apr 2023 15:47:44 -0700 (PDT)
+Received: from localhost.localdomain (abxh37.neoplus.adsl.tpnet.pl. [83.9.1.37])
+        by smtp.gmail.com with ESMTPSA id v14-20020ac2560e000000b004e8011cbaa0sm2508307lfd.111.2023.04.04.15.47.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Apr 2023 15:47:43 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+To:     linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        agross@kernel.org
+Cc:     marijn.suijten@somainline.org, bhupesh.sharma@linaro.org,
+        vladimir.zapolskiy@linaro.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Iskren Chernev <me@iskren.info>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: gcc-sm6115: Mark RCGs shared where applicable
+Date:   Wed,  5 Apr 2023 00:47:19 +0200
+Message-Id: <20230404224719.909746-1-konrad.dybcio@linaro.org>
+X-Mailer: git-send-email 2.40.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is copy/pasta that breaks modular builds. Fix the match table to
-use the right pointer, or the right device table type. And while we're
-including the header, fix the order to be linux, dt-bindings, and
-finally local.
+The vast majority of shared RCGs were not marked as such. Fix it.
 
-Cc: Garmin.Chang <Garmin.Chang@mediatek.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Fixes: f42b9e9a43e3 ("clk: mediatek: Add MT8188 wpesys clock support")
-Fixes: 0d2f2cefba64 ("clk: mediatek: Add MT8188 adsp clock support")
-Fixes: e4aaa60eae16 ("clk: mediatek: Add MT8188 vdosys0 clock support")
-Fixes: cfa4609f9bbe ("clk: mediatek: Add MT8188 vdosys1 clock support")
-Fixes: bb87c1109ce2 ("clk: mediatek: Add MT8188 vencsys clock support")
-Reported-by: kernel test robot <lkp@intel.com>
-Link: https://lore.kernel.org/oe-kbuild-all/202304011039.UBDX1UOT-lkp@intel.com/
-Link: https://lore.kernel.org/oe-kbuild-all/202304020649.QO2HlpD5-lkp@intel.com/
-Link: https://lore.kernel.org/oe-kbuild-all/202304021055.WDhQPcoS-lkp@intel.com/
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: cbe63bfdc54f ("clk: qcom: Add Global Clock controller (GCC) driver for SM6115")
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/clk/mediatek/clk-mt8188-adsp_audio26m.c | 6 ++++--
- drivers/clk/mediatek/clk-mt8188-imp_iic_wrap.c  | 6 ++++--
- drivers/clk/mediatek/clk-mt8188-vdo0.c          | 4 +++-
- drivers/clk/mediatek/clk-mt8188-vdo1.c          | 4 +++-
- drivers/clk/mediatek/clk-mt8188-venc.c          | 6 ++++--
- drivers/clk/mediatek/clk-mt8188-wpe.c           | 6 ++++--
- 6 files changed, 22 insertions(+), 10 deletions(-)
+ drivers/clk/qcom/gcc-sm6115.c | 50 +++++++++++++++++------------------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt8188-adsp_audio26m.c b/drivers/clk/mediatek/clk-mt8188-adsp_audio26m.c
-index b3c31ffff931..808f2ad3b7ee 100644
---- a/drivers/clk/mediatek/clk-mt8188-adsp_audio26m.c
-+++ b/drivers/clk/mediatek/clk-mt8188-adsp_audio26m.c
-@@ -4,10 +4,12 @@
-  * Author: Garmin Chang <garmin.chang@mediatek.com>
-  */
- 
--#include <dt-bindings/clock/mediatek,mt8188-clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/platform_device.h>
- 
-+#include <dt-bindings/clock/mediatek,mt8188-clk.h>
-+
- #include "clk-gate.h"
- #include "clk-mtk.h"
- 
-@@ -34,7 +36,7 @@ static const struct of_device_id of_match_clk_mt8188_adsp_audio26m[] = {
- 	{ .compatible = "mediatek,mt8188-adsp-audio26m", .data = &adsp_audio26m_desc },
- 	{ /* sentinel */ }
+diff --git a/drivers/clk/qcom/gcc-sm6115.c b/drivers/clk/qcom/gcc-sm6115.c
+index ceb7abd961ac..20ebee2c2005 100644
+--- a/drivers/clk/qcom/gcc-sm6115.c
++++ b/drivers/clk/qcom/gcc-sm6115.c
+@@ -694,7 +694,7 @@ static struct clk_rcg2 gcc_camss_axi_clk_src = {
+ 		.parent_data = gcc_parents_7,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_7),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
  };
--MODULE_DEVICE_TABLE(platform, of_match_clk_mt8188_adsp_audio26m);
-+MODULE_DEVICE_TABLE(of, of_match_clk_mt8188_adsp_audio26m);
  
- static struct platform_driver clk_mt8188_adsp_audio26m_drv = {
- 	.probe = mtk_clk_simple_probe,
-diff --git a/drivers/clk/mediatek/clk-mt8188-imp_iic_wrap.c b/drivers/clk/mediatek/clk-mt8188-imp_iic_wrap.c
-index 2238d2984320..da41a3c59919 100644
---- a/drivers/clk/mediatek/clk-mt8188-imp_iic_wrap.c
-+++ b/drivers/clk/mediatek/clk-mt8188-imp_iic_wrap.c
-@@ -4,10 +4,12 @@
-  * Author: Garmin Chang <garmin.chang@mediatek.com>
-  */
- 
--#include <dt-bindings/clock/mediatek,mt8188-clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/platform_device.h>
- 
-+#include <dt-bindings/clock/mediatek,mt8188-clk.h>
-+
- #include "clk-gate.h"
- #include "clk-mtk.h"
- 
-@@ -65,7 +67,7 @@ static const struct of_device_id of_match_clk_mt8188_imp_iic_wrap[] = {
- 	{ .compatible = "mediatek,mt8188-imp-iic-wrap-en", .data = &imp_iic_wrap_en_desc },
- 	{ /* sentinel */ }
+@@ -715,7 +715,7 @@ static struct clk_rcg2 gcc_camss_cci_clk_src = {
+ 		.parent_data = gcc_parents_9,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_9),
+ 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
  };
--MODULE_DEVICE_TABLE(platform, of_match_clk_mt8188_imp_iic_wrap);
-+MODULE_DEVICE_TABLE(of, of_match_clk_mt8188_imp_iic_wrap);
  
- static struct platform_driver clk_mt8188_imp_iic_wrap_drv = {
- 	.probe = mtk_clk_simple_probe,
-diff --git a/drivers/clk/mediatek/clk-mt8188-vdo0.c b/drivers/clk/mediatek/clk-mt8188-vdo0.c
-index 0c61c2dc4337..d2be44c2f3f5 100644
---- a/drivers/clk/mediatek/clk-mt8188-vdo0.c
-+++ b/drivers/clk/mediatek/clk-mt8188-vdo0.c
-@@ -4,10 +4,12 @@
-  * Author: Garmin Chang <garmin.chang@mediatek.com>
-  */
- 
--#include <dt-bindings/clock/mediatek,mt8188-clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/platform_device.h>
- 
-+#include <dt-bindings/clock/mediatek,mt8188-clk.h>
-+
- #include "clk-gate.h"
- #include "clk-mtk.h"
- 
-diff --git a/drivers/clk/mediatek/clk-mt8188-vdo1.c b/drivers/clk/mediatek/clk-mt8188-vdo1.c
-index 99fcf6d7b1ab..2ef8cae2e16e 100644
---- a/drivers/clk/mediatek/clk-mt8188-vdo1.c
-+++ b/drivers/clk/mediatek/clk-mt8188-vdo1.c
-@@ -4,10 +4,12 @@
-  * Author: Garmin Chang <garmin.chang@mediatek.com>
-  */
- 
--#include <dt-bindings/clock/mediatek,mt8188-clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/platform_device.h>
- 
-+#include <dt-bindings/clock/mediatek,mt8188-clk.h>
-+
- #include "clk-gate.h"
- #include "clk-mtk.h"
- 
-diff --git a/drivers/clk/mediatek/clk-mt8188-venc.c b/drivers/clk/mediatek/clk-mt8188-venc.c
-index 6f6589ccd5a0..245367f33fa5 100644
---- a/drivers/clk/mediatek/clk-mt8188-venc.c
-+++ b/drivers/clk/mediatek/clk-mt8188-venc.c
-@@ -4,10 +4,12 @@
-  * Author: Garmin Chang <garmin.chang@mediatek.com>
-  */
- 
--#include <dt-bindings/clock/mediatek,mt8188-clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/platform_device.h>
- 
-+#include <dt-bindings/clock/mediatek,mt8188-clk.h>
-+
- #include "clk-gate.h"
- #include "clk-mtk.h"
- 
-@@ -39,7 +41,7 @@ static const struct of_device_id of_match_clk_mt8188_venc1[] = {
- 	{ .compatible = "mediatek,mt8188-vencsys", .data = &venc1_desc },
- 	{ /* sentinel */ }
+@@ -738,7 +738,7 @@ static struct clk_rcg2 gcc_camss_csi0phytimer_clk_src = {
+ 		.parent_data = gcc_parents_4,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_4),
+ 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
  };
--MODULE_DEVICE_TABLE(platform, of_match_clk_mt8188_venc1);
-+MODULE_DEVICE_TABLE(of, of_match_clk_mt8188_venc1);
  
- static struct platform_driver clk_mt8188_venc1_drv = {
- 	.probe = mtk_clk_simple_probe,
-diff --git a/drivers/clk/mediatek/clk-mt8188-wpe.c b/drivers/clk/mediatek/clk-mt8188-wpe.c
-index 5abded13cece..393ac38a2172 100644
---- a/drivers/clk/mediatek/clk-mt8188-wpe.c
-+++ b/drivers/clk/mediatek/clk-mt8188-wpe.c
-@@ -4,10 +4,12 @@
-  * Author: Garmin Chang <garmin.chang@mediatek.com>
-  */
- 
--#include <dt-bindings/clock/mediatek,mt8188-clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/platform_device.h>
- 
-+#include <dt-bindings/clock/mediatek,mt8188-clk.h>
-+
- #include "clk-gate.h"
- #include "clk-mtk.h"
- 
-@@ -88,7 +90,7 @@ static const struct of_device_id of_match_clk_mt8188_wpe[] = {
- 	{ .compatible = "mediatek,mt8188-wpesys-vpp0", .data = &wpe_vpp0_desc },
- 	{ /* sentinel */ }
+@@ -753,7 +753,7 @@ static struct clk_rcg2 gcc_camss_csi1phytimer_clk_src = {
+ 		.parent_data = gcc_parents_4,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_4),
+ 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
  };
--MODULE_DEVICE_TABLE(platform, clk_mt8188_vpp1_id_table);
-+MODULE_DEVICE_TABLE(of, of_match_clk_mt8188_wpe);
  
- static struct platform_driver clk_mt8188_wpe_drv = {
- 	.probe = mtk_clk_simple_probe,
+@@ -768,7 +768,7 @@ static struct clk_rcg2 gcc_camss_csi2phytimer_clk_src = {
+ 		.parent_data = gcc_parents_4,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_4),
+ 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -790,7 +790,7 @@ static struct clk_rcg2 gcc_camss_mclk0_clk_src = {
+ 		.parent_data = gcc_parents_3,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_3),
+ 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -805,7 +805,7 @@ static struct clk_rcg2 gcc_camss_mclk1_clk_src = {
+ 		.parent_data = gcc_parents_3,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_3),
+ 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -820,7 +820,7 @@ static struct clk_rcg2 gcc_camss_mclk2_clk_src = {
+ 		.parent_data = gcc_parents_3,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_3),
+ 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -835,7 +835,7 @@ static struct clk_rcg2 gcc_camss_mclk3_clk_src = {
+ 		.parent_data = gcc_parents_3,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_3),
+ 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -857,7 +857,7 @@ static struct clk_rcg2 gcc_camss_ope_ahb_clk_src = {
+ 		.parent_data = gcc_parents_8,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_8),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -881,7 +881,7 @@ static struct clk_rcg2 gcc_camss_ope_clk_src = {
+ 		.parent_data = gcc_parents_8,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_8),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -916,7 +916,7 @@ static struct clk_rcg2 gcc_camss_tfe_0_clk_src = {
+ 		.parent_data = gcc_parents_5,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_5),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -941,7 +941,7 @@ static struct clk_rcg2 gcc_camss_tfe_0_csid_clk_src = {
+ 		.parent_data = gcc_parents_6,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_6),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -956,7 +956,7 @@ static struct clk_rcg2 gcc_camss_tfe_1_clk_src = {
+ 		.parent_data = gcc_parents_5,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_5),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -971,7 +971,7 @@ static struct clk_rcg2 gcc_camss_tfe_1_csid_clk_src = {
+ 		.parent_data = gcc_parents_6,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_6),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -986,7 +986,7 @@ static struct clk_rcg2 gcc_camss_tfe_2_clk_src = {
+ 		.parent_data = gcc_parents_5,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_5),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1001,7 +1001,7 @@ static struct clk_rcg2 gcc_camss_tfe_2_csid_clk_src = {
+ 		.parent_data = gcc_parents_6,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_6),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1024,7 +1024,7 @@ static struct clk_rcg2 gcc_camss_tfe_cphy_rx_clk_src = {
+ 		.parent_data = gcc_parents_10,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_10),
+ 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1046,7 +1046,7 @@ static struct clk_rcg2 gcc_camss_top_ahb_clk_src = {
+ 		.parent_data = gcc_parents_7,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_7),
+ 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1116,7 +1116,7 @@ static struct clk_rcg2 gcc_pdm2_clk_src = {
+ 		.name = "gcc_pdm2_clk_src",
+ 		.parent_data = gcc_parents_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1329,7 +1329,7 @@ static struct clk_rcg2 gcc_ufs_phy_axi_clk_src = {
+ 		.name = "gcc_ufs_phy_axi_clk_src",
+ 		.parent_data = gcc_parents_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1351,7 +1351,7 @@ static struct clk_rcg2 gcc_ufs_phy_ice_core_clk_src = {
+ 		.name = "gcc_ufs_phy_ice_core_clk_src",
+ 		.parent_data = gcc_parents_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1392,7 +1392,7 @@ static struct clk_rcg2 gcc_ufs_phy_unipro_core_clk_src = {
+ 		.name = "gcc_ufs_phy_unipro_core_clk_src",
+ 		.parent_data = gcc_parents_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1414,7 +1414,7 @@ static struct clk_rcg2 gcc_usb30_prim_master_clk_src = {
+ 		.name = "gcc_usb30_prim_master_clk_src",
+ 		.parent_data = gcc_parents_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1483,7 +1483,7 @@ static struct clk_rcg2 gcc_video_venus_clk_src = {
+ 		.parent_data = gcc_parents_13,
+ 		.num_parents = ARRAY_SIZE(gcc_parents_13),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
 -- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+2.40.0
 
