@@ -2,163 +2,214 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D567C76196
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Apr 2023 00:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0146C7618D
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Apr 2023 04:56:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229763AbjDDAr4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Apr 2023 20:47:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55592 "EHLO
+        id S233044AbjDDE4l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Apr 2023 00:56:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229532AbjDDArz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2023 20:47:55 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD9E710CB;
-        Mon,  3 Apr 2023 17:47:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1680569273; x=1712105273;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RXv6nnvuAvYkBkDjFqAcvYEGLIrMuHjL2t3Rp8C34WY=;
-  b=Yg/7+0dM+hAn1wa+OmIDbSZ4Ps3eMY+ElmSmUQZXXueHi5R6tEe0JdUc
-   ly0UclulijRa+Zt8X4O+XiVqZvAIm0m+WWKtHSwNAl+A2Hm05uUoyLZgc
-   DlYotn1NNvKIwmsYCx2GTHA8QnTMIm/qOGqKq1zeLTMkPdrdy8zK3DLOM
-   1U0ek4XYLHZN/GsrFFImBSx6C5UfkNAXT63lV8olAJOpbl1DI/YIly8Nu
-   cJA+GgzHq0Z8XoDFezWyqChnLBTfObfrsham6Zvunwo4AQnm64QZFT5yH
-   WvO88t2/pwBZ/OXj4NCDY9pnHk9R5Av3gcvZKHcPX3eFIRmI/aitEG6UD
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10669"; a="321710748"
-X-IronPort-AV: E=Sophos;i="5.98,316,1673942400"; 
-   d="scan'208";a="321710748"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2023 17:47:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10669"; a="686167807"
-X-IronPort-AV: E=Sophos;i="5.98,316,1673942400"; 
-   d="scan'208";a="686167807"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga002.jf.intel.com with ESMTP; 03 Apr 2023 17:47:50 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pjUpx-000Oyk-1l;
-        Tue, 04 Apr 2023 00:47:49 +0000
-Date:   Tue, 4 Apr 2023 08:47:37 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S233169AbjDDE4k (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Apr 2023 00:56:40 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BD131BE1;
+        Mon,  3 Apr 2023 21:56:38 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2AF3462772;
+        Tue,  4 Apr 2023 04:56:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A8F8C433EF;
+        Tue,  4 Apr 2023 04:56:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680584197;
+        bh=DEj7fP4yjaJYRm0hK8YbMkOV78W9FUtbKMsN0uDAz4Q=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jsIPPz2U4XtabVsmSKvsFRyZNqWTmmtZnTtO9J4sNtkztz51JGfaiKxbX/TaNOBuU
+         fGdbIrMUQIuT29BDoTnmA4nen1n8MQyf9DtBq8coohhLPVIeHHxf3KZmiIxNtC+pz1
+         MRjh/4fID5Zimdum/pVMkX9cqCwkEuiXkuE0txlnR6zsfIdBAShAqNF2OKWttQPuVS
+         VVG7yKFr5/VFKT28MfXCLQTY9fw6+njKgXSqvyOivk4LZk7J1xy1R3kUJ87ShjPSsW
+         zezg11hu1DSVrS+AM5AwGx465qyX6lQGE5aTiFx8MIFEwhtGhqRh5sHVZcUpwMLOOM
+         BMsComMRqpm1g==
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] drivers: clk: Add support for versa3 clock driver
-Message-ID: <202304040800.ncpvZq1s-lkp@intel.com>
-References: <20230403103257.328954-3-biju.das.jz@bp.renesas.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev,
+        "Garmin . Chang" <Garmin.Chang@mediatek.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        kernel test robot <lkp@intel.com>
+Subject: [PATCH v2] clk: mediatek: Use right match table, include mod_devicetable
+Date:   Mon,  3 Apr 2023 21:56:36 -0700
+Message-Id: <20230404045636.1114141-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.40.0.348.gf938b09366-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230403103257.328954-3-biju.das.jz@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Biju,
+This is copy/pasta that breaks modular builds. Fix the match table to
+use the right pointer, or the right device table type. And while we're
+including the header, fix the order to be linux, dt-bindings, and
+finally local.
 
-kernel test robot noticed the following build warnings:
+Cc: Garmin.Chang <Garmin.Chang@mediatek.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Fixes: f42b9e9a43e3 ("clk: mediatek: Add MT8188 wpesys clock support")
+Fixes: 0d2f2cefba64 ("clk: mediatek: Add MT8188 adsp clock support")
+Fixes: e4aaa60eae16 ("clk: mediatek: Add MT8188 vdosys0 clock support")
+Fixes: cfa4609f9bbe ("clk: mediatek: Add MT8188 vdosys1 clock support")
+Fixes: bb87c1109ce2 ("clk: mediatek: Add MT8188 vencsys clock support")
+Fixes: f42b9e9a43e3 ("clk: mediatek: Add MT8188 wpesys clock support")
+Reported-by: kernel test robot <lkp@intel.com>
+Link: https://lore.kernel.org/oe-kbuild-all/202304011039.UBDX1UOT-lkp@intel.com/
+Link: https://lore.kernel.org/oe-kbuild-all/202304020649.QO2HlpD5-lkp@intel.com/
+Link: https://lore.kernel.org/oe-kbuild-all/202304021055.WDhQPcoS-lkp@intel.com/
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/mediatek/clk-mt8188-adsp_audio26m.c | 6 ++++--
+ drivers/clk/mediatek/clk-mt8188-imp_iic_wrap.c  | 6 ++++--
+ drivers/clk/mediatek/clk-mt8188-vdo0.c          | 4 +++-
+ drivers/clk/mediatek/clk-mt8188-vdo1.c          | 4 +++-
+ drivers/clk/mediatek/clk-mt8188-venc.c          | 6 ++++--
+ drivers/clk/mediatek/clk-mt8188-wpe.c           | 2 +-
+ 6 files changed, 19 insertions(+), 9 deletions(-)
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on next-20230403]
-[cannot apply to geert-renesas-devel/next robh/for-next linus/master v6.3-rc5]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Biju-Das/dt-bindings-clock-Add-Renesas-versa3-clock-generator-bindings/20230403-183501
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20230403103257.328954-3-biju.das.jz%40bp.renesas.com
-patch subject: [PATCH v3 2/3] drivers: clk: Add support for versa3 clock driver
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20230404/202304040800.ncpvZq1s-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/bd1f4d06603f7dc65276411a65078a8ffaf5b844
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Biju-Das/dt-bindings-clock-Add-Renesas-versa3-clock-generator-bindings/20230403-183501
-        git checkout bd1f4d06603f7dc65276411a65078a8ffaf5b844
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 SHELL=/bin/bash drivers/clk/ drivers/gpio/
-
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202304040800.ncpvZq1s-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/clk/clk-versaclock3.c:263:8: warning: variable 'premul' is uninitialized when used here [-Wuninitialized]
-                           if (premul & VC3_PLL2_MDIV_DOUBLER)
-                               ^~~~~~
-   drivers/clk/clk-versaclock3.c:244:29: note: initialize the variable 'premul' to silence this warning
-           unsigned int prediv, premul;
-                                      ^
-                                       = 0
-   1 warning generated.
-
-
-vim +/premul +263 drivers/clk/clk-versaclock3.c
-
-   238	
-   239	static unsigned long vc3_pfd_recalc_rate(struct clk_hw *hw,
-   240						 unsigned long parent_rate)
-   241	{
-   242		struct vc3_hw_data *vc3 = container_of(hw, struct vc3_hw_data, hw);
-   243		const struct vc3_pfd_data *pfd = vc3->data;
-   244		unsigned int prediv, premul;
-   245		unsigned long rate;
-   246		u8 mdiv;
-   247	
-   248		regmap_read(vc3->regmap, pfd->offs, &prediv);
-   249		if (pfd->num == VC3_PFD1) {
-   250			/* The bypass_prediv is set, PLL fed from Ref_in directly. */
-   251			if (prediv & pfd->mdiv1_bitmsk) {
-   252				/* check doubler is set or not */
-   253				regmap_read(vc3->regmap, VC3_PLL1_CTRL_OUTDIV5, &premul);
-   254				if (premul & VC3_PLL1_CTRL_OUTDIV5_PLL1_MDIV_DOUBLER)
-   255					parent_rate *= 2;
-   256				return parent_rate;
-   257			}
-   258			mdiv = VC3_PLL1_M_DIV(prediv);
-   259		} else if (pfd->num == VC3_PFD2) {
-   260			/* The bypass_prediv is set, PLL fed from Ref_in directly. */
-   261			if (prediv & pfd->mdiv1_bitmsk) {
-   262				/* check doubler is set or not */
- > 263				if (premul & VC3_PLL2_MDIV_DOUBLER)
-   264					parent_rate *= 2;
-   265				return parent_rate;
-   266			}
-   267	
-   268			mdiv = VC3_PLL2_M_DIV(prediv);
-   269		} else {
-   270			/* The bypass_prediv is set, PLL fed from Ref_in directly. */
-   271			if (prediv & pfd->mdiv1_bitmsk)
-   272				return parent_rate;
-   273	
-   274			mdiv = VC3_PLL3_M_DIV(prediv);
-   275		}
-   276	
-   277		if (prediv & pfd->mdiv2_bitmsk)
-   278			rate = parent_rate / 2;
-   279		else
-   280			rate = parent_rate / mdiv;
-   281	
-   282		return rate;
-   283	}
-   284	
-
+diff --git a/drivers/clk/mediatek/clk-mt8188-adsp_audio26m.c b/drivers/clk/mediatek/clk-mt8188-adsp_audio26m.c
+index b3c31ffff931..808f2ad3b7ee 100644
+--- a/drivers/clk/mediatek/clk-mt8188-adsp_audio26m.c
++++ b/drivers/clk/mediatek/clk-mt8188-adsp_audio26m.c
+@@ -4,10 +4,12 @@
+  * Author: Garmin Chang <garmin.chang@mediatek.com>
+  */
+ 
+-#include <dt-bindings/clock/mediatek,mt8188-clk.h>
+ #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/platform_device.h>
+ 
++#include <dt-bindings/clock/mediatek,mt8188-clk.h>
++
+ #include "clk-gate.h"
+ #include "clk-mtk.h"
+ 
+@@ -34,7 +36,7 @@ static const struct of_device_id of_match_clk_mt8188_adsp_audio26m[] = {
+ 	{ .compatible = "mediatek,mt8188-adsp-audio26m", .data = &adsp_audio26m_desc },
+ 	{ /* sentinel */ }
+ };
+-MODULE_DEVICE_TABLE(platform, of_match_clk_mt8188_adsp_audio26m);
++MODULE_DEVICE_TABLE(of, of_match_clk_mt8188_adsp_audio26m);
+ 
+ static struct platform_driver clk_mt8188_adsp_audio26m_drv = {
+ 	.probe = mtk_clk_simple_probe,
+diff --git a/drivers/clk/mediatek/clk-mt8188-imp_iic_wrap.c b/drivers/clk/mediatek/clk-mt8188-imp_iic_wrap.c
+index 2238d2984320..da41a3c59919 100644
+--- a/drivers/clk/mediatek/clk-mt8188-imp_iic_wrap.c
++++ b/drivers/clk/mediatek/clk-mt8188-imp_iic_wrap.c
+@@ -4,10 +4,12 @@
+  * Author: Garmin Chang <garmin.chang@mediatek.com>
+  */
+ 
+-#include <dt-bindings/clock/mediatek,mt8188-clk.h>
+ #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/platform_device.h>
+ 
++#include <dt-bindings/clock/mediatek,mt8188-clk.h>
++
+ #include "clk-gate.h"
+ #include "clk-mtk.h"
+ 
+@@ -65,7 +67,7 @@ static const struct of_device_id of_match_clk_mt8188_imp_iic_wrap[] = {
+ 	{ .compatible = "mediatek,mt8188-imp-iic-wrap-en", .data = &imp_iic_wrap_en_desc },
+ 	{ /* sentinel */ }
+ };
+-MODULE_DEVICE_TABLE(platform, of_match_clk_mt8188_imp_iic_wrap);
++MODULE_DEVICE_TABLE(of, of_match_clk_mt8188_imp_iic_wrap);
+ 
+ static struct platform_driver clk_mt8188_imp_iic_wrap_drv = {
+ 	.probe = mtk_clk_simple_probe,
+diff --git a/drivers/clk/mediatek/clk-mt8188-vdo0.c b/drivers/clk/mediatek/clk-mt8188-vdo0.c
+index 0c61c2dc4337..d2be44c2f3f5 100644
+--- a/drivers/clk/mediatek/clk-mt8188-vdo0.c
++++ b/drivers/clk/mediatek/clk-mt8188-vdo0.c
+@@ -4,10 +4,12 @@
+  * Author: Garmin Chang <garmin.chang@mediatek.com>
+  */
+ 
+-#include <dt-bindings/clock/mediatek,mt8188-clk.h>
+ #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/platform_device.h>
+ 
++#include <dt-bindings/clock/mediatek,mt8188-clk.h>
++
+ #include "clk-gate.h"
+ #include "clk-mtk.h"
+ 
+diff --git a/drivers/clk/mediatek/clk-mt8188-vdo1.c b/drivers/clk/mediatek/clk-mt8188-vdo1.c
+index 99fcf6d7b1ab..2ef8cae2e16e 100644
+--- a/drivers/clk/mediatek/clk-mt8188-vdo1.c
++++ b/drivers/clk/mediatek/clk-mt8188-vdo1.c
+@@ -4,10 +4,12 @@
+  * Author: Garmin Chang <garmin.chang@mediatek.com>
+  */
+ 
+-#include <dt-bindings/clock/mediatek,mt8188-clk.h>
+ #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/platform_device.h>
+ 
++#include <dt-bindings/clock/mediatek,mt8188-clk.h>
++
+ #include "clk-gate.h"
+ #include "clk-mtk.h"
+ 
+diff --git a/drivers/clk/mediatek/clk-mt8188-venc.c b/drivers/clk/mediatek/clk-mt8188-venc.c
+index 6f6589ccd5a0..245367f33fa5 100644
+--- a/drivers/clk/mediatek/clk-mt8188-venc.c
++++ b/drivers/clk/mediatek/clk-mt8188-venc.c
+@@ -4,10 +4,12 @@
+  * Author: Garmin Chang <garmin.chang@mediatek.com>
+  */
+ 
+-#include <dt-bindings/clock/mediatek,mt8188-clk.h>
+ #include <linux/clk-provider.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/platform_device.h>
+ 
++#include <dt-bindings/clock/mediatek,mt8188-clk.h>
++
+ #include "clk-gate.h"
+ #include "clk-mtk.h"
+ 
+@@ -39,7 +41,7 @@ static const struct of_device_id of_match_clk_mt8188_venc1[] = {
+ 	{ .compatible = "mediatek,mt8188-vencsys", .data = &venc1_desc },
+ 	{ /* sentinel */ }
+ };
+-MODULE_DEVICE_TABLE(platform, of_match_clk_mt8188_venc1);
++MODULE_DEVICE_TABLE(of, of_match_clk_mt8188_venc1);
+ 
+ static struct platform_driver clk_mt8188_venc1_drv = {
+ 	.probe = mtk_clk_simple_probe,
+diff --git a/drivers/clk/mediatek/clk-mt8188-wpe.c b/drivers/clk/mediatek/clk-mt8188-wpe.c
+index 5abded13cece..c372ff703f9c 100644
+--- a/drivers/clk/mediatek/clk-mt8188-wpe.c
++++ b/drivers/clk/mediatek/clk-mt8188-wpe.c
+@@ -88,7 +88,7 @@ static const struct of_device_id of_match_clk_mt8188_wpe[] = {
+ 	{ .compatible = "mediatek,mt8188-wpesys-vpp0", .data = &wpe_vpp0_desc },
+ 	{ /* sentinel */ }
+ };
+-MODULE_DEVICE_TABLE(platform, clk_mt8188_vpp1_id_table);
++MODULE_DEVICE_TABLE(platform, of_match_clk_mt8188_wpe);
+ 
+ static struct platform_driver clk_mt8188_wpe_drv = {
+ 	.probe = mtk_clk_simple_probe,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+
