@@ -2,137 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E18AEC761A6
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Apr 2023 11:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9095EC77B70
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Apr 2023 11:48:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237316AbjDELnu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Apr 2023 07:43:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55544 "EHLO
+        id S237907AbjDELs4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Apr 2023 07:48:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237894AbjDELnt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Apr 2023 07:43:49 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4E725FD8;
-        Wed,  5 Apr 2023 04:43:20 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 335BQKMt015464;
-        Wed, 5 Apr 2023 11:42:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=2u1bt7sISW7gYR56t/sEB8xayuIhGFjBWFB7FY5nIho=;
- b=kRIHBKevPXWIgKQZLuz0h0Tk05ns77bzHnDwj6AwZFGKWel+YUG40bITSkY/jjDdFk11
- 1MjmGUGTmJd36f141wMuYweHn74wZy8N/L2OxX1sKxgGYMpYcaYz0ONsCn2pJOg6Awed
- quv1tMLPvIAihDr/UUKOEIHqTeXo4qAj8wtYknUpAXcqV9cjUoB61P04pYol9qWS81Ux
- PM9KTPGRZXpFMlvDFl86Du6ymqujptR+0ijwskZljtBHQ8Dp0kEAx6/VybVJ0nvcey4q
- dmGLOrqrUP246pxQ3SwmtdWJAr/SOFtNrlaNb7Wj5s+q9Cz1yggiJ9JkQ66TPiPDJ84E Ng== 
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3prwc79bx0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Apr 2023 11:42:27 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 335BgRh1027969
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 5 Apr 2023 11:42:27 GMT
-Received: from varda-linux.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 5 Apr 2023 04:42:21 -0700
-From:   Varadarajan Narayanan <quic_varada@quicinc.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <gregkh@linuxfoundation.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <quic_wcheng@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-CC:     Varadarajan Narayanan <quic_varada@quicinc.com>
-Subject: [PATCH v8 8/8] arm64: dts: qcom: ipq9574: Enable USB
-Date:   Wed, 5 Apr 2023 17:11:27 +0530
-Message-ID: <a1d3329d53af5d0abb978e71c1cde1ed3b9c91df.1680693149.git.quic_varada@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1680693149.git.quic_varada@quicinc.com>
-References: <cover.1680693149.git.quic_varada@quicinc.com>
+        with ESMTP id S237704AbjDELsz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Apr 2023 07:48:55 -0400
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E87940C4;
+        Wed,  5 Apr 2023 04:48:52 -0700 (PDT)
+Received: from ip4d1634d3.dynamic.kabel-deutschland.de ([77.22.52.211] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <heiko@sntech.de>)
+        id 1pk1d2-0006eI-Mo; Wed, 05 Apr 2023 13:48:40 +0200
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        linux-kernel@vger.kernel.org, Hal Feng <hal.feng@starfivetech.com>
+Subject: Re: [PATCH v7 03/22] clk: starfive: Replace SOC_STARFIVE with ARCH_STARFIVE
+Date:   Wed, 05 Apr 2023 13:48:39 +0200
+Message-ID: <23535525.6Emhk5qWAg@diego>
+In-Reply-To: <20230401111934.130844-4-hal.feng@starfivetech.com>
+References: <20230401111934.130844-1-hal.feng@starfivetech.com>
+ <20230401111934.130844-4-hal.feng@starfivetech.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ePSz6AGMWaSZfUlPeFFpaRYyLraPuMsB
-X-Proofpoint-ORIG-GUID: ePSz6AGMWaSZfUlPeFFpaRYyLraPuMsB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-05_07,2023-04-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- malwarescore=0 phishscore=0 priorityscore=1501 bulkscore=0 mlxlogscore=668
- adultscore=0 lowpriorityscore=0 mlxscore=0 spamscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2304050106
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Turn on USB related nodes
+Am Samstag, 1. April 2023, 13:19:15 CEST schrieb Hal Feng:
+> Using ARCH_FOO symbol is preferred than SOC_FOO.
+> Set obj-y for starfive/ in Makefile, so the StarFive drivers
+> can be compiled with COMPILE_TEST=y but ARCH_STARFIVE=n.
+> 
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 
-Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
----
- Changes in v5:
-	- Move "host" mode specification to board dts
-	- Due to dependency with earlier patches board dts
-	  filename changed ipq9574-al02-c7.dts -> ipq9574-rdp433.dts
+Reviewed-by: Heiko Stuebner <heiko.stuebner@vrull.eu>
 
- Changes in v2:
-	- Fix node placement and coding style
-	- "ok" -> "okay"
----
- arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+> ---
+>  drivers/clk/Makefile         | 2 +-
+>  drivers/clk/starfive/Kconfig | 6 +++---
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index e3ca0d058a25..3bed88d67a3a 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -117,7 +117,7 @@ obj-$(CONFIG_PLAT_SPEAR)		+= spear/
+>  obj-y					+= sprd/
+>  obj-$(CONFIG_ARCH_STI)			+= st/
+>  obj-$(CONFIG_ARCH_STM32)		+= stm32/
+> -obj-$(CONFIG_SOC_STARFIVE)		+= starfive/
+> +obj-y					+= starfive/
+>  obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
+>  obj-y					+= sunxi-ng/
+>  obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
+> diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
+> index 003bd2d56ce7..ef3517f4a276 100644
+> --- a/drivers/clk/starfive/Kconfig
+> +++ b/drivers/clk/starfive/Kconfig
+> @@ -2,8 +2,8 @@
+>  
+>  config CLK_STARFIVE_JH7100
+>  	bool "StarFive JH7100 clock support"
+> -	depends on SOC_STARFIVE || COMPILE_TEST
+> -	default SOC_STARFIVE
+> +	depends on ARCH_STARFIVE || COMPILE_TEST
+> +	default ARCH_STARFIVE
+>  	help
+>  	  Say yes here to support the clock controller on the StarFive JH7100
+>  	  SoC.
+> @@ -11,7 +11,7 @@ config CLK_STARFIVE_JH7100
+>  config CLK_STARFIVE_JH7100_AUDIO
+>  	tristate "StarFive JH7100 audio clock support"
+>  	depends on CLK_STARFIVE_JH7100
+> -	default m if SOC_STARFIVE
+> +	default m if ARCH_STARFIVE
+>  	help
+>  	  Say Y or M here to support the audio clocks on the StarFive JH7100
+>  	  SoC.
+> 
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-index 859973b..92ff7ee 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-@@ -44,6 +44,10 @@
- 	};
- };
- 
-+&dwc_0 {
-+	dr_mode = "host";
-+};
-+
- &pcie1_phy {
- 	status = "okay";
- };
-@@ -107,6 +111,14 @@
- 	clock-frequency = <32000>;
- };
- 
-+&usb_0_qmpphy {
-+	status = "okay";
-+};
-+
-+&usb_0_qusbphy {
-+	status = "okay";
-+};
-+
- &tlmm {
- 
- 	pcie_1_pin: pcie-1-state {
-@@ -173,6 +185,10 @@
- 	};
- };
- 
-+&usb3 {
-+	status = "okay";
-+};
-+
- &xo_board_clk {
- 	clock-frequency = <24000000>;
- };
--- 
-2.7.4
+
+
 
