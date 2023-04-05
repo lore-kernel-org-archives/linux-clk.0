@@ -2,99 +2,247 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AA3C7619A
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Apr 2023 13:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B032C7619A
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Apr 2023 14:12:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237974AbjDENv2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Apr 2023 09:51:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60436 "EHLO
+        id S238402AbjDEOMb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Apr 2023 10:12:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237740AbjDENv1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Apr 2023 09:51:27 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62FD3CF
-        for <linux-clk@vger.kernel.org>; Wed,  5 Apr 2023 06:51:25 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id er13so100258647edb.9
-        for <linux-clk@vger.kernel.org>; Wed, 05 Apr 2023 06:51:25 -0700 (PDT)
+        with ESMTP id S238373AbjDEOM0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Apr 2023 10:12:26 -0400
+Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A99B55FEE
+        for <linux-clk@vger.kernel.org>; Wed,  5 Apr 2023 07:11:56 -0700 (PDT)
+Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-5456249756bso679216227b3.5
+        for <linux-clk@vger.kernel.org>; Wed, 05 Apr 2023 07:11:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680702684;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uPqH7o+0wiRlBmcx0MUrrIJplx2idVv42J11sE3f/KY=;
-        b=HSDwUFhV0XqGiVO+Xtk10tawmjOw1BmkD0h5DCHj7+7lDSU9h0va60K2EuqPQAJ0wJ
-         vh17eJDGLMXGwvFJc2Lh7N8y2Qzx+9BDw+B1XDfjJkbEGmma5uQ7p4GXrdqzdGPkhiJK
-         /cuLGMpm0w1aC1SsAKpQI1+Wp2q6E0EWUe1eTmgk6R2V1/Wa7KAm8RYjB7TgXo1DUSOr
-         mxGdz4W4ZfehzI6DY7FqsJiQCXFTMYPWhm1VbcuJhNHqhLFTR8YS2kVzAdhBTHcepKIY
-         3m4qwI+zq8LlvwesdwMxCViebZRXhiKtGuCHxVd8zkGSu7+cOz906fFSNDrtV+ez+Yyq
-         pM6g==
+        d=linaro.org; s=google; t=1680703915;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EMf3CEm47nTLug6fCPtN+WxmLwlongS4K4cghIdEwTU=;
+        b=b2+D20d+G3y26sJt0PGAqN2BwPks7gQqkoFULGuxRE92c66/T8BoUIIZsvO/x2OWF9
+         ULoCwNY6uCF9YDTaNjV5EbaWg6yjghvOKu+xCeB73pXQmXaCmSp2cnsYUZ22R69fni32
+         tY+D4WAb0Lc3TtW+qk0Tam+O8p1h3eWpEQw0yvNZKXM7rZtHXsoKRu9oHiI7PwXWBgZH
+         /s/7SggpWitW+kAqzqtNCtao2mI8DVZXM/Cqhn97f/0436Qiga2MD2M/xiZnQNbBIYLS
+         OQFJ8iTfybzfaBbK/qOkgKogYYi8J1Y21p/48dTudnw8zPhBNbl33Cqin6/wkmP1dMpb
+         SVrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680702684;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uPqH7o+0wiRlBmcx0MUrrIJplx2idVv42J11sE3f/KY=;
-        b=AyOp+AWf8t1ScdVDWG7RVDbk2mdmZuH1GadSTzunnc3LFpf0D42q++4PId3lqi8UqC
-         gEJYRPeU4UsQskMiVkIoQ1AvMwIKJCRAnLXZwDnJO4rQWniSAreSuT1zFGoH7/RFyQix
-         +dof2xJ9btcMcDdX97JhBD3QsfrV1DOybnasqBg9LUtfjvobbUGXluVkQoAmWw/fwU8X
-         bhbvhc0sdJypgoPD2NvjwzYJhaaSefz+OEo6NnJ7TWMmQb4DhWQVxt5SyYz93iqtsJjv
-         6NbIUpDKFQwlBjl7fj44paVjovs+93QnsdtIDm4g8Gep72t7HIQFnYzx8wEjJjeAS5/X
-         UmMg==
-X-Gm-Message-State: AAQBX9fehnV2p4vF8ZO4y+Ue2XaKWwCCIQVWNpqbifPBd36929/d36+z
-        Y5p/ZBRIO8V+aM9jmLqjMUS7jw==
-X-Google-Smtp-Source: AKy350aCSBtfQNEG9ivhJDXRScDkDl7K9FxzN5uKgWKy9JhdSLbTTf3hT9NuDFad11cE5iNMfsxaLw==
-X-Received: by 2002:a17:907:8b95:b0:932:c1e2:9984 with SMTP id tb21-20020a1709078b9500b00932c1e29984mr3530013ejc.58.1680702683903;
-        Wed, 05 Apr 2023 06:51:23 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:3f:6b2:54cd:498e? ([2a02:810d:15c0:828:3f:6b2:54cd:498e])
-        by smtp.gmail.com with ESMTPSA id m23-20020a509317000000b004fbd365fb33sm7391465eda.38.2023.04.05.06.51.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Apr 2023 06:51:23 -0700 (PDT)
-Message-ID: <5bbf9452-43b4-4b7a-8879-003efa26b0f5@linaro.org>
-Date:   Wed, 5 Apr 2023 15:51:22 +0200
+        d=1e100.net; s=20210112; t=1680703915;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EMf3CEm47nTLug6fCPtN+WxmLwlongS4K4cghIdEwTU=;
+        b=TLRfNGZrunNaLEi1ohvhmy7CHdSJdpqiQhnkT/0YODn8XltPKj5dVKfF0RRuiyc8fQ
+         osLeBsOvwYXU19d2BFGwwsb6IGmlq5kjAmfwvEV2lAin4EVxcuBIuhiqy3txlifvdep/
+         sz9kwWxmALaHglphaTy/2813eTx9KqpnmWAsGLV6JZ1fseU/ys/HTB+9UaCzEPaswCtn
+         2e4tpGZwBwxP9shXb2mwEFPKI4ggDHUg5zS8psYTwTCTMSCFrfswoYaFjfwqYZVTvyzX
+         YO/wsZJqT7cpDgfPMtpZ7kXvQ/UMPjj6JSaZH/qYO0dBjMYWtOEAY19TJBfAvmWdusK0
+         ykLA==
+X-Gm-Message-State: AAQBX9f9pXU4dk9zSAd3csBZm1NnaE6clwbt01kNG7twotUMS9HZX7k4
+        JRJbegUyA2EpQn3BfnKqkzFgP+vbMnOhVIAEnP7Pzw==
+X-Google-Smtp-Source: AKy350YIM3whqkVRkgoliO4ELqOTHysvMP2mHMSt3HJC9fOJRdlX3dZXSC6LOSHQXd5zBwLeL+SU3/ZlW/2/8tJ+/Lw=
+X-Received: by 2002:a81:c509:0:b0:549:143f:3d3 with SMTP id
+ k9-20020a81c509000000b00549143f03d3mr3685321ywi.0.1680703914860; Wed, 05 Apr
+ 2023 07:11:54 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v8 0/8] Enable IPQ9754 USB
-Content-Language: en-US
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org, vkoul@kernel.org,
-        kishon@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org,
-        mturquette@baylibre.com, sboyd@kernel.org, quic_wcheng@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-clk@vger.kernel.org
-References: <cover.1680693149.git.quic_varada@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <cover.1680693149.git.quic_varada@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230327193829.3756640-1-abel.vesa@linaro.org>
+ <CAGETcx9f1p2esfyzyfU04EAB1FXh=d9-U81DaGyZNjL_Vti3oQ@mail.gmail.com>
+ <ZCVyBuKMvDV0gQPW@linaro.org> <CAGETcx-mxzzZ_FU6Agju9gMhFOEDhY6Rj78BnvAVJjNtZhif=w@mail.gmail.com>
+ <ZCZolyDL/awnt73K@linaro.org>
+In-Reply-To: <ZCZolyDL/awnt73K@linaro.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 5 Apr 2023 16:11:18 +0200
+Message-ID: <CAPDyKFprQwBfya-TpaVJfn82LgM9N_iE8npO9r-HzAyJXpb-hQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] Allow genpd providers to power off domains on sync state
+To:     Saravana Kannan <saravanak@google.com>,
+        Abel Vesa <abel.vesa@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05/04/2023 13:41, Varadarajan Narayanan wrote:
-> This patch series adds the relevant phy and controller
-> configurations for enabling USB on IPQ9754
-> 
-> Depends on:
-> https://lore.kernel.org/all/20230217142030.16012-1-quic_devipriy@quicinc.com/
-> 
-> [v8]:
-> 	- Update bindings for the clock name change
-> [v7]:
-> 	- com_aux -> cfg_ahb in patch 7
-> 
-> [v6]:
->         - Incorporated review comments
-> 	- Resolve make dtbs_check messages
-> 	- Fixed pcs_usb offset
-> 	- Board dts file name changed
-> 
+Abel, Saravana,
 
-Thanks for the patches. Three submissions within few hours it is a bit
-too many. Please slow down a bit, give reviewers chance to respond and
-wait with new versions at least one day.
-Best regards,
-Krzysztof
+On Fri, 31 Mar 2023 at 06:59, Abel Vesa <abel.vesa@linaro.org> wrote:
+>
+> On 23-03-30 12:50:44, Saravana Kannan wrote:
+> > On Thu, Mar 30, 2023 at 4:27=E2=80=AFAM Abel Vesa <abel.vesa@linaro.org=
+> wrote:
+> > >
+> > > On 23-03-27 17:17:28, Saravana Kannan wrote:
+> > > > On Mon, Mar 27, 2023 at 12:38=E2=80=AFPM Abel Vesa <abel.vesa@linar=
+o.org> wrote:
+> > > > >
+> > > > > There have been already a couple of tries to make the genpd "disa=
+ble
+> > > > > unused" late initcall skip the powering off of domains that might=
+ be
+> > > > > needed until later on (i.e. until some consumer probes). The conc=
+lusion
+> > > > > was that the provider could return -EBUSY from the power_off call=
+back
+> > > > > until the provider's sync state has been reached. This patch seri=
+es tries
+> > > > > to provide a proof-of-concept that is working on Qualcomm platfor=
+ms.
+> > > >
+> > > > I'm giving my thoughts in the cover letter instead of spreading it
+> > > > around all the patches so that there's context between the comments=
+.
+> > > >
+> > > > 1) Why can't all the logic in this patch series be implemented at t=
+he
+> > > > framework level? And then allow the drivers to opt into this behavi=
+or
+> > > > by setting the sync_state() callback.
+> > > >
+> > > > That way, you can land it only for QC drivers by setting up
+> > > > sync_state() callback only for QC drivers, but actually have the sa=
+me
+> > > > code function correctly for non-QC drivers too. And then once we ha=
+ve
+> > > > this functionality working properly for QC drivers for one kernel
+> > > > version (or two), we'll just have the framework set the device's
+> > > > driver's sync_state() if it doesn't have one already.
+> > >
+> > > I think Ulf has already NACK'ed that approach here:
+> > > [1] https://lore.kernel.org/lkml/CAPDyKFon35wcQ+5kx3QZb-awN_S_q8y1Sir=
+-G+GoxkCvpN=3DiiA@mail.gmail.com/
+> >
+> > I would have NACK'ed that too because that's an incomplete fix. As I
+> > said further below, the fix needs to be at the aggregation level where
+> > you aggregate all the current consumer requests. In there, you need to
+> > add in the "state at boot" input that gets cleared out after a
+> > sync_state() call is received for that power domain.
+> >
+>
+> So, just to make sure I understand your point. You would rather have the
+> genpd_power_off check if 'state at boot' is 'on' and return busy and
+> then clear then, via a generic genpd sync state you would mark 'state at
+> boot' as 'off' and queue up a power off request for each PD from there.
+> And as for 'state at boot' it would check the enable bit through
+> provider.
+>
+> Am I right so far?
 
+I am not sure I completely follow what you are suggesting here.
+
+Although, let me point out that there is no requirement from the genpd
+API point of view, that the provider needs to be a driver. This means
+that the sync_state callback may not even be applicable for all genpd
+providers.
+
+In other words, it looks to me that we may need some new genpd helper
+functions, no matter what. More importantly, it looks like we need an
+opt-in behaviour, unless we can figure out a common way for genpd to
+understand whether the sync_state thing is going to be applicable or
+not. Maybe Saravana has some ideas around this?
+
+Note that, I don't object to extending genpd to be more clever and to
+share common code, of course. We could, for example, make
+genpd_power_off() to bail out earlier, rather than calling the
+->power_off() callback and waiting for it to return -EBUSY. Both of
+you have pointed this out to me, in some of the earlier
+replies/discussions too.
+
+>
+> > > And suggested this new approach that this patch series proposes.
+> > > (Unless I missunderstood his point)
+> > >
+> > > >
+> > > > 2) sync_state() is not just about power on/off. It's also about the
+> > > > power domain level. Can you handle that too please?
+> > >
+> > > Well, this patchset only tries to delay the disabling of unused power
+> > > domains until all consumers have had a chance to probe. So we use syn=
+c
+> > > state only to queue up a power-off request to make sure those unused
+> > > ones get disabled.
+> >
+> > Sure, but the design is completely unusable for a more complete
+> > sync_state() behavior. I'm okay if you want to improve the
+> > sync_state() behavior in layers, but don't do it in a way where the
+> > current design will definitely not work for what you want to add in
+> > the future.
+>
+> But you would still be OK with the qcom_cc sync state wrapper, I guess,
+> right? Your concern is only about the sync state callback being not
+> genpd generic one, AFAIU.
+>
+> >
+> > > >
+> > > > 3) In your GDSC drivers, it's not clear to me if you are preventing
+> > > > power off until sync_state() only for GDSCs that were already on at
+> > > > boot. So if an off-at-boot GDSC gets turned on, and then you attemp=
+t
+> > > > to turn it off before all its consumers have probed, it'll fail to
+> > > > power it off even though that wasn't necessary?
+> > >
+> > > I think we can circumvent looking at a GDSC by knowing it there was e=
+ver
+> > > a power on request since boot. I'll try to come up with something in =
+the
+> > > new version.
+> >
+> > Please no. There's nothing wrong with reading the GDSC values. Please
+> > read them and don't turn on GDSC's that weren't on at boot.
+>
+> Sorry for the typos above, I basically said that for this concern of
+> yours, we can add the 'state at boot' thing you mentioned above by
+> looking at the GDSC (as in reading reg).
+>
+> >
+> > Otherwise you are making it a hassle for the case where there is a
+> > consumer without a driver for a GDSC that was off at boot. You are now
+> > forcing the use of timeouts or writing to state_synced file. Those
+> > should be absolute last resorts, but you are making that a requirement
+> > with your current implementation. If you implement it correctly by
+> > reading the GDSC register, things will "just work". And it's not even
+> > hard to do.
+> >
+> > NACK'ed until this is handled correctly.
+> >
+> > >
+> > > >
+> > > > 4) The returning -EBUSY when a power off is attempted seems to be
+> > > > quite wasteful. The framework will go through the whole sequence of
+> > > > trying to power down, send the notifications and then fail and then
+> > > > send the undo notifications. Combined with point (2) I think this c=
+an
+> > > > be handled better at the aggregation level in the framework to avoi=
+d
+> > > > even going that far into the power off sequence.
+> > >
+> > > Again, have a look at [1] (above).
+> >
+> > See my reply above. If you do it properly at the framework level, this
+> > can be done in a clean way and will work for all power domains.
+> >
+> > -Saravana
+> >
+> > >
+> > > Ulf, any thoughts on this 4th point?
+
+Please, see my reply above.
+
+[...]
+
+Kind regards
+Uffe
