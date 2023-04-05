@@ -2,309 +2,116 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF0AC76188
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Apr 2023 22:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C5F6C76188
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Apr 2023 01:40:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236649AbjDDWru (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Apr 2023 18:47:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35172 "EHLO
+        id S236556AbjDEBki convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Apr 2023 21:40:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235754AbjDDWrs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Apr 2023 18:47:48 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0887C2720
-        for <linux-clk@vger.kernel.org>; Tue,  4 Apr 2023 15:47:46 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id j11so44237570lfg.13
-        for <linux-clk@vger.kernel.org>; Tue, 04 Apr 2023 15:47:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680648464;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=n9hExFqp3rfsa5Xr1FlWQxDCQKu/ifdPHYr+ePtML1g=;
-        b=pnLRtgO/bJjn2T6YqMKU0nCLmdge+M6jC0+9/I3Ij5FtgLe4ud041XUXIfN+gWE3wr
-         fMyDC7gfIjcR6gwyN3Oj4IltTHfQbGQPvy4O8UEDliwt1NXtS9QRCorafV9A5+KnIFne
-         os1Gvc6mznp2M0IAVThrrP1fRjzoiByoIhP1RMXH7oLXWt0skOYG2YrqmZe6RJVfsXj5
-         mXKPZN7t/WAPms3RFUcOh0zREuYTIT9G39QqvbZZo6Jhc0r4jOhr/eicd7Fd5fIsTV+N
-         BMano6hqvbsHWodLanAD9PIqYEadaarfyY+LtsnUUSCowJUD5gupm4fPOHBuK0+OP+7A
-         46Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680648464;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n9hExFqp3rfsa5Xr1FlWQxDCQKu/ifdPHYr+ePtML1g=;
-        b=FecsFBJ9UDjXTGje3QpL89LPg5O7aBnT3wXzuFp2jXm9IpWQoFyJIJMf1OOD/kqGKm
-         JF+2aQi49VLIapThFXz5QKkHT0l2AyjIk8MwSI+wsSm4GZoskvudp4zhoyzoDffOF5Y3
-         mxOdP7BVVQmmdKv7CPq6d3AqF+9tajFGLYiM7hPIZhnnwayfJWCR54CpQGUE5D0EfrSo
-         gvVgSuyQeSIDot/hAgepk5Mxzu8XKd7QAqF49CTi+2WqjePXIeEd1q2DP9r0hrhSx8XJ
-         KjXLCtUtSlRHSn54KsDlOCa2eyJmXwjeBRffkb6ZlM1RqxNoyehAPY7jHRnY0rAbL+ZJ
-         tRsQ==
-X-Gm-Message-State: AAQBX9dtfr2zDq10dRfpF0+GCqmx1UytIdT+C3wM8H2gE1RIq0dVC6fX
-        KcDA1fAL06orc0l2M83HSkToQGapFCew6oef4Ew=
-X-Google-Smtp-Source: AKy350ak7OUgZo6HPs4brOwgTKEHifOyuewZv8S2pt0pEd/FnNxQ1gfrVeFunCR7KnI7ySOiNBLp9Q==
-X-Received: by 2002:ac2:569e:0:b0:4dd:9b6b:6b5b with SMTP id 30-20020ac2569e000000b004dd9b6b6b5bmr1169547lfr.16.1680648464286;
-        Tue, 04 Apr 2023 15:47:44 -0700 (PDT)
-Received: from localhost.localdomain (abxh37.neoplus.adsl.tpnet.pl. [83.9.1.37])
-        by smtp.gmail.com with ESMTPSA id v14-20020ac2560e000000b004e8011cbaa0sm2508307lfd.111.2023.04.04.15.47.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Apr 2023 15:47:43 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-To:     linux-arm-msm@vger.kernel.org, andersson@kernel.org,
-        agross@kernel.org
-Cc:     marijn.suijten@somainline.org, bhupesh.sharma@linaro.org,
-        vladimir.zapolskiy@linaro.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Iskren Chernev <me@iskren.info>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: gcc-sm6115: Mark RCGs shared where applicable
-Date:   Wed,  5 Apr 2023 00:47:19 +0200
-Message-Id: <20230404224719.909746-1-konrad.dybcio@linaro.org>
-X-Mailer: git-send-email 2.40.0
+        with ESMTP id S230489AbjDEBkh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Apr 2023 21:40:37 -0400
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4FB32D6A;
+        Tue,  4 Apr 2023 18:40:34 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id A5D6724DBFD;
+        Wed,  5 Apr 2023 09:40:27 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 5 Apr
+ 2023 09:40:27 +0800
+Received: from [172.16.16.231] (183.27.98.171) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 5 Apr
+ 2023 09:40:26 +0800
+Message-ID: <39a2c174-c7f5-cb0f-5430-87b859a2ea5c@starfivetech.com>
+Date:   Wed, 5 Apr 2023 09:40:27 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH v7 21/22] riscv: dts: starfive: Add StarFive JH7110
+ VisionFive 2 board device tree
+To:     Shengyu Qu <wiagn233@outlook.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>
+CC:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor@kernel.org>,
+        "Palmer Dabbelt" <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20230401111934.130844-1-hal.feng@starfivetech.com>
+ <20230401111934.130844-22-hal.feng@starfivetech.com>
+ <TY3P286MB26110E2983EB074270B7610898939@TY3P286MB2611.JPNP286.PROD.OUTLOOK.COM>
+Content-Language: en-US
+From:   Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <TY3P286MB26110E2983EB074270B7610898939@TY3P286MB2611.JPNP286.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset="UTF-8"
+X-Originating-IP: [183.27.98.171]
+X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The vast majority of shared RCGs were not marked as such. Fix it.
+On Wed, 5 Apr 2023 02:38:25 +0800, Shengyu Qu wrote:
+> Hi Hal,
+> 
+>> +    aliases {
+>> +        i2c0 = &i2c0;
+>> +        i2c2 = &i2c2;
+>> +        i2c5 = &i2c5;
+>> +        i2c6 = &i2c6;
+>> +        serial0 = &uart0;
+>> +    };
+>> +
+>> +    chosen {
+>> +        stdout-path = "serial0:115200n8";
+>> +    };
+>> +
+>> +    cpus {
+>> +        timebase-frequency = <4000000>;
+> 
+> Is mtime frequency on JH7110 could be modified?  If not, I think it's better
+> 
+> to put it into jh7110.dtsi.
 
-Fixes: cbe63bfdc54f ("clk: qcom: Add Global Clock controller (GCC) driver for SM6115")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/clk/qcom/gcc-sm6115.c | 50 +++++++++++++++++------------------
- 1 file changed, 25 insertions(+), 25 deletions(-)
+This frequency is from (osc / 6). This is based on the frequency
+of the crystal oscillator on the board. So we set it here.
 
-diff --git a/drivers/clk/qcom/gcc-sm6115.c b/drivers/clk/qcom/gcc-sm6115.c
-index ceb7abd961ac..20ebee2c2005 100644
---- a/drivers/clk/qcom/gcc-sm6115.c
-+++ b/drivers/clk/qcom/gcc-sm6115.c
-@@ -694,7 +694,7 @@ static struct clk_rcg2 gcc_camss_axi_clk_src = {
- 		.parent_data = gcc_parents_7,
- 		.num_parents = ARRAY_SIZE(gcc_parents_7),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -715,7 +715,7 @@ static struct clk_rcg2 gcc_camss_cci_clk_src = {
- 		.parent_data = gcc_parents_9,
- 		.num_parents = ARRAY_SIZE(gcc_parents_9),
- 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -738,7 +738,7 @@ static struct clk_rcg2 gcc_camss_csi0phytimer_clk_src = {
- 		.parent_data = gcc_parents_4,
- 		.num_parents = ARRAY_SIZE(gcc_parents_4),
- 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -753,7 +753,7 @@ static struct clk_rcg2 gcc_camss_csi1phytimer_clk_src = {
- 		.parent_data = gcc_parents_4,
- 		.num_parents = ARRAY_SIZE(gcc_parents_4),
- 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -768,7 +768,7 @@ static struct clk_rcg2 gcc_camss_csi2phytimer_clk_src = {
- 		.parent_data = gcc_parents_4,
- 		.num_parents = ARRAY_SIZE(gcc_parents_4),
- 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -790,7 +790,7 @@ static struct clk_rcg2 gcc_camss_mclk0_clk_src = {
- 		.parent_data = gcc_parents_3,
- 		.num_parents = ARRAY_SIZE(gcc_parents_3),
- 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -805,7 +805,7 @@ static struct clk_rcg2 gcc_camss_mclk1_clk_src = {
- 		.parent_data = gcc_parents_3,
- 		.num_parents = ARRAY_SIZE(gcc_parents_3),
- 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -820,7 +820,7 @@ static struct clk_rcg2 gcc_camss_mclk2_clk_src = {
- 		.parent_data = gcc_parents_3,
- 		.num_parents = ARRAY_SIZE(gcc_parents_3),
- 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -835,7 +835,7 @@ static struct clk_rcg2 gcc_camss_mclk3_clk_src = {
- 		.parent_data = gcc_parents_3,
- 		.num_parents = ARRAY_SIZE(gcc_parents_3),
- 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -857,7 +857,7 @@ static struct clk_rcg2 gcc_camss_ope_ahb_clk_src = {
- 		.parent_data = gcc_parents_8,
- 		.num_parents = ARRAY_SIZE(gcc_parents_8),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -881,7 +881,7 @@ static struct clk_rcg2 gcc_camss_ope_clk_src = {
- 		.parent_data = gcc_parents_8,
- 		.num_parents = ARRAY_SIZE(gcc_parents_8),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -916,7 +916,7 @@ static struct clk_rcg2 gcc_camss_tfe_0_clk_src = {
- 		.parent_data = gcc_parents_5,
- 		.num_parents = ARRAY_SIZE(gcc_parents_5),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -941,7 +941,7 @@ static struct clk_rcg2 gcc_camss_tfe_0_csid_clk_src = {
- 		.parent_data = gcc_parents_6,
- 		.num_parents = ARRAY_SIZE(gcc_parents_6),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -956,7 +956,7 @@ static struct clk_rcg2 gcc_camss_tfe_1_clk_src = {
- 		.parent_data = gcc_parents_5,
- 		.num_parents = ARRAY_SIZE(gcc_parents_5),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -971,7 +971,7 @@ static struct clk_rcg2 gcc_camss_tfe_1_csid_clk_src = {
- 		.parent_data = gcc_parents_6,
- 		.num_parents = ARRAY_SIZE(gcc_parents_6),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -986,7 +986,7 @@ static struct clk_rcg2 gcc_camss_tfe_2_clk_src = {
- 		.parent_data = gcc_parents_5,
- 		.num_parents = ARRAY_SIZE(gcc_parents_5),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -1001,7 +1001,7 @@ static struct clk_rcg2 gcc_camss_tfe_2_csid_clk_src = {
- 		.parent_data = gcc_parents_6,
- 		.num_parents = ARRAY_SIZE(gcc_parents_6),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -1024,7 +1024,7 @@ static struct clk_rcg2 gcc_camss_tfe_cphy_rx_clk_src = {
- 		.parent_data = gcc_parents_10,
- 		.num_parents = ARRAY_SIZE(gcc_parents_10),
- 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -1046,7 +1046,7 @@ static struct clk_rcg2 gcc_camss_top_ahb_clk_src = {
- 		.parent_data = gcc_parents_7,
- 		.num_parents = ARRAY_SIZE(gcc_parents_7),
- 		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -1116,7 +1116,7 @@ static struct clk_rcg2 gcc_pdm2_clk_src = {
- 		.name = "gcc_pdm2_clk_src",
- 		.parent_data = gcc_parents_0,
- 		.num_parents = ARRAY_SIZE(gcc_parents_0),
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -1329,7 +1329,7 @@ static struct clk_rcg2 gcc_ufs_phy_axi_clk_src = {
- 		.name = "gcc_ufs_phy_axi_clk_src",
- 		.parent_data = gcc_parents_0,
- 		.num_parents = ARRAY_SIZE(gcc_parents_0),
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -1351,7 +1351,7 @@ static struct clk_rcg2 gcc_ufs_phy_ice_core_clk_src = {
- 		.name = "gcc_ufs_phy_ice_core_clk_src",
- 		.parent_data = gcc_parents_0,
- 		.num_parents = ARRAY_SIZE(gcc_parents_0),
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -1392,7 +1392,7 @@ static struct clk_rcg2 gcc_ufs_phy_unipro_core_clk_src = {
- 		.name = "gcc_ufs_phy_unipro_core_clk_src",
- 		.parent_data = gcc_parents_0,
- 		.num_parents = ARRAY_SIZE(gcc_parents_0),
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -1414,7 +1414,7 @@ static struct clk_rcg2 gcc_usb30_prim_master_clk_src = {
- 		.name = "gcc_usb30_prim_master_clk_src",
- 		.parent_data = gcc_parents_0,
- 		.num_parents = ARRAY_SIZE(gcc_parents_0),
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -1483,7 +1483,7 @@ static struct clk_rcg2 gcc_video_venus_clk_src = {
- 		.parent_data = gcc_parents_13,
- 		.num_parents = ARRAY_SIZE(gcc_parents_13),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
--- 
-2.40.0
+Best regards,
+Hal
+
+> 
+>> +    };
+>> +
+>> +    memory@40000000 {
+>> +        device_type = "memory";
+>> +        reg = <0x0 0x40000000 0x1 0x0>;
+>> +    };
+>> +
+>> +    gpio-restart {
+>> +        compatible = "gpio-restart";
+>> +        gpios = <&sysgpio 35 GPIO_ACTIVE_HIGH>;
+>> +        priority = <224>;
+>> +    };
+>> +};
+>> +
+> 
+> Best regards,
+> 
+> Shengyu
+> 
 
