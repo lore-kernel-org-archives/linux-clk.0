@@ -2,116 +2,69 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C5F6C76188
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Apr 2023 01:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6239DC77B62
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Apr 2023 04:06:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236556AbjDEBki convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Apr 2023 21:40:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54754 "EHLO
+        id S236814AbjDEEGZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Apr 2023 00:06:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230489AbjDEBkh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Apr 2023 21:40:37 -0400
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4FB32D6A;
-        Tue,  4 Apr 2023 18:40:34 -0700 (PDT)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id A5D6724DBFD;
-        Wed,  5 Apr 2023 09:40:27 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 5 Apr
- 2023 09:40:27 +0800
-Received: from [172.16.16.231] (183.27.98.171) by EXMBX172.cuchost.com
- (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 5 Apr
- 2023 09:40:26 +0800
-Message-ID: <39a2c174-c7f5-cb0f-5430-87b859a2ea5c@starfivetech.com>
-Date:   Wed, 5 Apr 2023 09:40:27 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v7 21/22] riscv: dts: starfive: Add StarFive JH7110
- VisionFive 2 board device tree
-To:     Shengyu Qu <wiagn233@outlook.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>
-CC:     Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S236802AbjDEEGY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Apr 2023 00:06:24 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 903D046A8;
+        Tue,  4 Apr 2023 21:06:23 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2C3EB63967;
+        Wed,  5 Apr 2023 04:06:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8D1DC433EF;
+        Wed,  5 Apr 2023 04:06:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680667582;
+        bh=B2jXylkttF8JMZ1fNKwW05vowoDuKvZ8TQ/oLz1P9l0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=SfbYKTmejnNI0Z242I0xXYOIvLaIHHLyysUH+o9llQDdri7Dyh9smLRWWNwHCFkCq
+         mVL1K3d62cNS1iV5LV/vmNjRRp/ci5ZpUZIea4m0cx6JUQ6C7/SrOjQp3CHdetGk93
+         1rt8Ou100I91ExMy3NfpnEhsZofLaDk0I/BIC1If8AKTI4UkTUEeQlbIYV87RWBRYg
+         Ri9dqpZWVhcLCSPXxzbqsKQAyYRthqbqooc9qz6E4/jOAcyEYZsB09WHhgjq9FWJBX
+         r4PXPI8tg5JxL8UmVzqZFC51AFKzLFAvTx43qZNQyPOivhW81dibLmqJHADHx+i8NR
+         t6IleI+qeyPug==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor@kernel.org>,
-        "Palmer Dabbelt" <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        "Daniel Lezcano" <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        <linux-kernel@vger.kernel.org>
-References: <20230401111934.130844-1-hal.feng@starfivetech.com>
- <20230401111934.130844-22-hal.feng@starfivetech.com>
- <TY3P286MB26110E2983EB074270B7610898939@TY3P286MB2611.JPNP286.PROD.OUTLOOK.COM>
-Content-Language: en-US
-From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <TY3P286MB26110E2983EB074270B7610898939@TY3P286MB2611.JPNP286.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset="UTF-8"
-X-Originating-IP: [183.27.98.171]
-X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX172.cuchost.com
- (172.16.6.92)
-X-YovoleRuleAgent: yovoleflag
-Content-Transfer-Encoding: 8BIT
+        Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/2] Add MDSS_CORE reset on QCM2290
+Date:   Tue,  4 Apr 2023 21:08:54 -0700
+Message-Id: <168066774414.443656.16797951336713258256.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230316-topic-qcm_dispcc_reset-v1-0-dd3708853014@linaro.org>
+References: <20230316-topic-qcm_dispcc_reset-v1-0-dd3708853014@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 5 Apr 2023 02:38:25 +0800, Shengyu Qu wrote:
-> Hi Hal,
+On Thu, 16 Mar 2023 12:48:03 +0100, Konrad Dybcio wrote:
+> Add the MDSS_CORE reset which can be used to reset the state of MDSS.
 > 
->> +    aliases {
->> +        i2c0 = &i2c0;
->> +        i2c2 = &i2c2;
->> +        i2c5 = &i2c5;
->> +        i2c6 = &i2c6;
->> +        serial0 = &uart0;
->> +    };
->> +
->> +    chosen {
->> +        stdout-path = "serial0:115200n8";
->> +    };
->> +
->> +    cpus {
->> +        timebase-frequency = <4000000>;
 > 
-> Is mtime frequency on JH7110 could be modified?  If not, I think it's better
-> 
-> to put it into jh7110.dtsi.
 
-This frequency is from (osc / 6). This is based on the frequency
-of the crystal oscillator on the board. So we set it here.
+Applied, thanks!
+
+[2/2] clk: qcom: dispcc-qcm2290: Add MDSS_CORE reset
+      commit: 002c3fb6f4f38b50ef0514247c2d55fc6ed8c6d4
 
 Best regards,
-Hal
-
-> 
->> +    };
->> +
->> +    memory@40000000 {
->> +        device_type = "memory";
->> +        reg = <0x0 0x40000000 0x1 0x0>;
->> +    };
->> +
->> +    gpio-restart {
->> +        compatible = "gpio-restart";
->> +        gpios = <&sysgpio 35 GPIO_ACTIVE_HIGH>;
->> +        priority = <224>;
->> +    };
->> +};
->> +
-> 
-> Best regards,
-> 
-> Shengyu
-> 
-
+-- 
+Bjorn Andersson <andersson@kernel.org>
