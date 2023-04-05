@@ -2,142 +2,170 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2042CC761A6
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Apr 2023 15:34:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A36D6C7619A
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Apr 2023 16:05:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231799AbjDEPev (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Apr 2023 11:34:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40484 "EHLO
+        id S238882AbjDEQFP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Apr 2023 12:05:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238770AbjDEPes (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Apr 2023 11:34:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68244E64;
-        Wed,  5 Apr 2023 08:34:47 -0700 (PDT)
+        with ESMTP id S237481AbjDEQFO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Apr 2023 12:05:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C07065BC
+        for <linux-clk@vger.kernel.org>; Wed,  5 Apr 2023 09:05:06 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E08EC63E21;
-        Wed,  5 Apr 2023 15:34:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF7C9C433EF;
-        Wed,  5 Apr 2023 15:34:34 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7538063D40
+        for <linux-clk@vger.kernel.org>; Wed,  5 Apr 2023 16:05:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 332BFC433EF;
+        Wed,  5 Apr 2023 16:05:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680708886;
-        bh=q6hazTR3zs7E7OVM3zxpzK5DagX6jtQENEamOL0SGKU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mlbEhXatZkXJ9X7FsGvPf2rH95VpY5tOnyIMJWR/0y9to3LuusuWOEW94RzKcDlKg
-         HsFf5CsPOKukH8P5uoSP2Z0JlxMdLwy9OxF/8G86S5WBCQNQtEOwVMDqSea8cvrsDU
-         564oj+TiTuatTLbxixAITrHG3+c5+iQ5kEWuaj8LLDEFmeZMfABdscXZNA/eAMWJAk
-         0YkRM5fCov8t3qCX2aBvV3kmH3qO4N9tKQnMqdz4QY5qygfyDOUcQlTmMnAu3at4ih
-         jXuoUGUjvrX+RS3OfX29rQcD6mKS146C1VyprHv8nlDm6+/mgIZ+D1r/IpS6sIO5UV
-         4+HTzWQ25QIJA==
-Date:   Wed, 5 Apr 2023 16:34:31 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
-        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org
-Subject: Re: [PATCH v3 43/65] ASoC: tlv320aic32x4: Add a determine_rate hook
-Message-ID: <fcc11e4d-eba6-4eff-b3e5-9488a4da84c3@sirena.org.uk>
-References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
- <20221018-clk-range-checks-fixes-v3-43-9a1358472d52@cerno.tech>
- <01f32440-8dd2-4030-9006-a3123be55845@sirena.org.uk>
- <erm4iq3mygnrr4h2gd5cag3sfuovv47ibdqsbmxcfabngvnwy4@z63ksvj55zuu>
+        s=k20201202; t=1680710705;
+        bh=sNSqkINxFI7A8wFSv179kl/bjwEC7TLZju7EuQ1QQEI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=jy/9OyLr7LVbwEuVaPmVcNXhOB5xrE4mgZlQlsgycdFg+AwwB5RR77CVqzemKaV88
+         S/8tHF7OFIa8Q7RQ7kUeLU4Hg9k4pTFhXuztU5GU2mpuYUeBCx9P2lymWuW/4EzPyV
+         bNn1aSE6soxFu3pqURKQPqYkv3QhEXDGlPQquqsQZE6uqgj5YlvgScY4vdxAsW5ld0
+         mWWxZsNfETKPJqLTR+AS5ePHOIu0M9VcwNM8wuI/cpJB2isJEsFgTCe3o/NwGcqTZV
+         X2OjjaPxfO/HBI0aL66sn4WRgWswVkPD1pkeDRlPoLu6FTbnw3gy0hGZ9DEA7V+29m
+         G0UIiTakGVpOg==
+Date:   Wed, 5 Apr 2023 17:05:01 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     sboyd@kernel.org, p.zabel@pengutronix.de
+Cc:     linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+        hal.feng@starfivetech.com, emil.renner.berthing@canonical.com,
+        conor@kernel.org, mturquette@baylibre.com
+Subject: [GIT PULL] Initial clk/reset support for JH7110 for v6.4
+Message-ID: <20230405-constant-dreamily-0128e071c665@spud>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="rWy5+BLE6plJ+54H"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="VxiQgXSLDZ82ap6c"
 Content-Disposition: inline
-In-Reply-To: <erm4iq3mygnrr4h2gd5cag3sfuovv47ibdqsbmxcfabngvnwy4@z63ksvj55zuu>
-X-Cookie: 1 bulls, 3 cows.
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---rWy5+BLE6plJ+54H
+--VxiQgXSLDZ82ap6c
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Apr 05, 2023 at 05:17:21PM +0200, Maxime Ripard wrote:
-> On Tue, Apr 04, 2023 at 04:26:18PM +0100, Mark Brown wrote:
+Hey Stephen, (and Philipp if you want I guess?),
 
-> > To be honest it's surprising that we'd have to manually specify this, I
-> > would expect to be able to reparent.  I suspect it'd be better to go the
-> > other way here and allow reparenting.
+Here's a PR for the StarFive JH7110 clk/reset bits since I'd like to
+take the DT this cycle & depend on the binding headers.
 
-> Yeah, I think I'd prefer to allow reparenting too, but as can be seen
-> from the other reviewers in that thread, it seems like we have a very
-> split community here, so that doesn't sound very realistic without some
-> major pushback :)
+I've picked up R-B tags from Emil on all that patches, despite him being
+listed as an author, as things have changed quite a lot since he was
+involved in writing things many months ago.
 
-For these ASoC drivers I think we should just do the reparenting,
-they're very much at the leaf of the tree so the considerations that
-make it a problem sometimes are unlikely to apply.
+The base here is -rc2 rather than -rc1 as -rc1 has issues booting on
+this platform. Please pull and all that lark..
 
---rWy5+BLE6plJ+54H
+Cheers,
+Conor.
+
+The following changes since commit eeac8ede17557680855031c6f305ece2378af326:
+
+  Linux 6.3-rc2 (2023-03-12 16:36:44 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/ tags/riscv-jh7110-clk-reset-for-6.4
+
+for you to fetch changes up to 63a30e1f44d5e3afbb47efe8a15fd86feeb62b4b:
+
+  MAINTAINERS: generalise StarFive clk/reset entries (2023-04-05 15:52:25 +0100)
+
+----------------------------------------------------------------
+Initial JH7110 clk/reset support
+
+A rake of patches, initially worked on by Emil & later picked up by Hal
+that add support for the sys/aon clock & reset controllers on StarFive's
+JH7110 SoC.
+This SoC is largely similar to the existing JH7100, so a bunch of
+refactoring is done to share as many bits as possible between the two.
+What's here (plus the already applied pinctrl bits) should be sufficient
+to boot a basic initramfs.
+
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+
+----------------------------------------------------------------
+Emil Renner Berthing (13):
+      dt-bindings: clock: Add StarFive JH7110 system clock and reset generator
+      dt-bindings: clock: Add StarFive JH7110 always-on clock and reset generator
+      clk: starfive: Factor out common JH7100 and JH7110 code
+      clk: starfive: Rename clk-starfive-jh7100.h to clk-starfive-jh71x0.h
+      clk: starfive: Rename "jh7100" to "jh71x0" for the common code
+      reset: Create subdirectory for StarFive drivers
+      reset: starfive: Factor out common JH71X0 reset code
+      reset: starfive: Extract the common JH71X0 reset code
+      reset: starfive: Rename "jh7100" to "jh71x0" for the common code
+      reset: starfive: jh71x0: Use 32bit I/O on 32bit registers
+      clk: starfive: Add StarFive JH7110 system clock driver
+      clk: starfive: Add StarFive JH7110 always-on clock driver
+      MAINTAINERS: generalise StarFive clk/reset entries
+
+Hal Feng (3):
+      clk: starfive: Replace SOC_STARFIVE with ARCH_STARFIVE
+      reset: starfive: Replace SOC_STARFIVE with ARCH_STARFIVE
+      reset: starfive: Add StarFive JH7110 reset driver
+
+ .../bindings/clock/starfive,jh7110-aoncrg.yaml     | 107 +++
+ .../bindings/clock/starfive,jh7110-syscrg.yaml     | 104 +++
+ MAINTAINERS                                        |  22 +-
+ drivers/clk/Makefile                               |   2 +-
+ drivers/clk/starfive/Kconfig                       |  33 +-
+ drivers/clk/starfive/Makefile                      |   6 +-
+ drivers/clk/starfive/clk-starfive-jh7100-audio.c   |  74 +--
+ drivers/clk/starfive/clk-starfive-jh7100.c         | 716 ++++++---------------
+ drivers/clk/starfive/clk-starfive-jh7100.h         | 112 ----
+ drivers/clk/starfive/clk-starfive-jh7110-aon.c     | 156 +++++
+ drivers/clk/starfive/clk-starfive-jh7110-sys.c     | 490 ++++++++++++++
+ drivers/clk/starfive/clk-starfive-jh7110.h         |  11 +
+ drivers/clk/starfive/clk-starfive-jh71x0.c         | 333 ++++++++++
+ drivers/clk/starfive/clk-starfive-jh71x0.h         | 123 ++++
+ drivers/reset/Kconfig                              |   8 +-
+ drivers/reset/Makefile                             |   2 +-
+ drivers/reset/reset-starfive-jh7100.c              | 173 -----
+ drivers/reset/starfive/Kconfig                     |  20 +
+ drivers/reset/starfive/Makefile                    |   5 +
+ drivers/reset/starfive/reset-starfive-jh7100.c     |  74 +++
+ drivers/reset/starfive/reset-starfive-jh7110.c     |  70 ++
+ drivers/reset/starfive/reset-starfive-jh71x0.c     | 131 ++++
+ drivers/reset/starfive/reset-starfive-jh71x0.h     |  14 +
+ include/dt-bindings/clock/starfive,jh7110-crg.h    | 221 +++++++
+ include/dt-bindings/reset/starfive,jh7110-crg.h    | 154 +++++
+ 25 files changed, 2297 insertions(+), 864 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-aoncrg.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+ delete mode 100644 drivers/clk/starfive/clk-starfive-jh7100.h
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-aon.c
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-sys.c
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7110.h
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh71x0.c
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh71x0.h
+ delete mode 100644 drivers/reset/reset-starfive-jh7100.c
+ create mode 100644 drivers/reset/starfive/Kconfig
+ create mode 100644 drivers/reset/starfive/Makefile
+ create mode 100644 drivers/reset/starfive/reset-starfive-jh7100.c
+ create mode 100644 drivers/reset/starfive/reset-starfive-jh7110.c
+ create mode 100644 drivers/reset/starfive/reset-starfive-jh71x0.c
+ create mode 100644 drivers/reset/starfive/reset-starfive-jh71x0.h
+ create mode 100644 include/dt-bindings/clock/starfive,jh7110-crg.h
+ create mode 100644 include/dt-bindings/reset/starfive,jh7110-crg.h
+
+--VxiQgXSLDZ82ap6c
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmQtlQYACgkQJNaLcl1U
-h9B5kwgAhgnq7R11Qu+B0UHvMPR+YuXSbduHynE7TqBLfStAOBSo1K13PASgQaa9
-wrmguaiF0D05AzsDdSViUh7jt1zNtO3da+OYl8oXujrIbMZbGni9L/fGVLPLH9LH
-S4EKLVYbDM7dTpVx0aDXvlVCYW21kOHRWWv/J6PmtESnjJOfnQGHe3Xs1h8ZgovN
-olevNVv7bIIBbK+syW2trg9ueeQFhIP8zFvA7seKaKplyJQN6b6ZBpF5/0RIVobC
-9KooGdA4p3nEKzSBi+TYDZL/NYxlB7m/Y8nMussyk40gnvHmlVGYXLA0nVd3MP6U
-GEwYUUby6V7fvlt7mTxduZug5WAoPQ==
-=MZpO
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZC2cLQAKCRB4tDGHoIJi
+0lbzAQDfmv4s4TWUytYT+wpNfRfL91KsrUTqRM6RxNFhK728YgD9Ems0KgF/+RSI
+il/aq997LhB3O5joLUCnUUAkaHQy+ws=
+=rSdZ
 -----END PGP SIGNATURE-----
 
---rWy5+BLE6plJ+54H--
+--VxiQgXSLDZ82ap6c--
