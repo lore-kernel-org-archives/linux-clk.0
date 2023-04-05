@@ -2,84 +2,145 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5BFDC7619A
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Apr 2023 18:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA5BBC76188
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Apr 2023 19:09:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231167AbjDES41 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Apr 2023 14:56:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51294 "EHLO
+        id S229712AbjDETJQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Apr 2023 15:09:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230465AbjDES40 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Apr 2023 14:56:26 -0400
+        with ESMTP id S229379AbjDETJP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Apr 2023 15:09:15 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B57073A9D
-        for <linux-clk@vger.kernel.org>; Wed,  5 Apr 2023 11:56:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5B184ED2;
+        Wed,  5 Apr 2023 12:09:12 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 50BA762B25
-        for <linux-clk@vger.kernel.org>; Wed,  5 Apr 2023 18:56:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9687DC433EF;
-        Wed,  5 Apr 2023 18:56:24 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4E5A863D39;
+        Wed,  5 Apr 2023 19:09:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A187BC433D2;
+        Wed,  5 Apr 2023 19:09:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680720984;
-        bh=q5qYr0bDTHFNnVhax8wxJFcwYPGay87vGGt/38MrzVM=;
+        s=k20201202; t=1680721751;
+        bh=veS5PP6wsJDCVk4tZWNSoKTVnJNfOSHkHbVmPeuAOv8=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=glqBOJMr8awz1mYdAzkoze7HARaPDSh33fnCgunQmkPD1kudtRvLMlJWOUK6+5qmk
-         e/LhCe6gVRYUNG6k78yW9cdgZmKRURvAoUVC8LUaY0noQHyOn9sLCrSMw9mIcsUK3u
-         /h/XTNwc9/KkhV5bPSKtUJsKgZrTuHVMbaTwcNcK+sF7J6b7MD74x3VagG8r4Jc+rr
-         TE9Bsew1Dbh0TlCg58VQM6E0Tma3v3hUku5wy5mPoSsBQjeYh58Pk27gwj3IOCGdye
-         lFCAYpldQM+wQn3bbHoY77/Mvuq8T7hzyCA7Pa6rmBwQ5MH9iiATTsSV/Rj/Bp6MnS
-         /xFM20BGXz1Yw==
-Message-ID: <85648045b35c889f61a536cdd568b867.sboyd@kernel.org>
+        b=nG7fYdveHgxqZSjemxhtaTnjPeNNHfVk9qBCzEwzlcHGko/Ea2rdTmFyPS2DBbUVD
+         ewZOdz6eKJE4PFkFDZ+rycKtaEZBAi3Nh3b13JJhS7DfLel5ToHTZj2w3kYm8eZhYN
+         JeoHY0Qgk0gNcL8mGIshljfIjGrEe9EfUtoEH8W6XzusQrblg9ktBwViV8C7fyX4af
+         kv9/uiD6D9Svq8e7ghnymJ2Zq9jhBifMsh5dPaiZSsTCH0/avsGKh0sZqqWM7ke3Sn
+         ufBbVKu53840bbRXqOxgsy69s/pXHBEjgO9xjj/oQZKw4LkI7SQ6e2E50ZLhJjUOFj
+         fHUH++Idn00wQ==
+Message-ID: <099514a84f97c694d2382812b03aad1e.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230405-constant-dreamily-0128e071c665@spud>
-References: <20230405-constant-dreamily-0128e071c665@spud>
-Subject: Re: [GIT PULL] Initial clk/reset support for JH7110 for v6.4
+In-Reply-To: <CAP6Zq1hOHJWQSmGoVDz5bSjwdhNyQmaZVOEE8_dX6S4HCFQ2Jg@mail.gmail.com>
+References: <20230309194402.119562-1-tmaimon77@gmail.com> <20230309194402.119562-2-tmaimon77@gmail.com> <495fcc93ab28ff8949569ededee954c1.sboyd@kernel.org> <CAP6Zq1hOHJWQSmGoVDz5bSjwdhNyQmaZVOEE8_dX6S4HCFQ2Jg@mail.gmail.com>
+Subject: Re: [PATCH v15 1/1] clk: npcm8xx: add clock controller
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-        hal.feng@starfivetech.com, emil.renner.berthing@canonical.com,
-        conor@kernel.org, mturquette@baylibre.com
-To:     Conor Dooley <conor@kernel.org>, p.zabel@pengutronix.de
-Date:   Wed, 05 Apr 2023 11:56:22 -0700
+Cc:     avifishman70@gmail.com, benjaminfair@google.com, joel@jms.id.au,
+        mturquette@baylibre.com, tali.perry1@gmail.com, venture@google.com,
+        yuenn@google.com, openbmc@lists.ozlabs.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Tomer Maimon <tmaimon77@gmail.com>
+Date:   Wed, 05 Apr 2023 12:09:09 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Conor Dooley (2023-04-05 09:05:01)
-> Hey Stephen, (and Philipp if you want I guess?),
->=20
-> Here's a PR for the StarFive JH7110 clk/reset bits since I'd like to
-> take the DT this cycle & depend on the binding headers.
->=20
-> I've picked up R-B tags from Emil on all that patches, despite him being
-> listed as an author, as things have changed quite a lot since he was
-> involved in writing things many months ago.
->=20
-> The base here is -rc2 rather than -rc1 as -rc1 has issues booting on
-> this platform. Please pull and all that lark..
->=20
-> Cheers,
-> Conor.
->=20
-> The following changes since commit eeac8ede17557680855031c6f305ece2378af3=
-26:
->=20
->   Linux 6.3-rc2 (2023-03-12 16:36:44 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/ tags/r=
-iscv-jh7110-clk-reset-for-6.4
->=20
-> for you to fetch changes up to 63a30e1f44d5e3afbb47efe8a15fd86feeb62b4b:
->=20
->   MAINTAINERS: generalise StarFive clk/reset entries (2023-04-05 15:52:25=
- +0100)
->=20
-> ----------------------------------------------------------------
+Quoting Tomer Maimon (2023-03-31 11:07:19)
+> On Mon, 20 Mar 2023 at 21:50, Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Tomer Maimon (2023-03-09 11:44:02)
+> > > diff --git a/drivers/clk/clk-npcm8xx.c b/drivers/clk/clk-npcm8xx.c
+> > > new file mode 100644
+> > > index 000000000000..67058f121251
+> > > --- /dev/null
+> > > +++ b/drivers/clk/clk-npcm8xx.c
+> > > +       { NPCM8XX_CLK_S_PLL0, { .name =3D NPCM8XX_CLK_S_REFCLK }, NPC=
+M8XX_PLLCON0, 0 },
+> > > +       { NPCM8XX_CLK_S_PLL1, { .name =3D NPCM8XX_CLK_S_REFCLK }, NPC=
+M8XX_PLLCON1, 0 },
+> > > +       { NPCM8XX_CLK_S_PLL2, { .name =3D NPCM8XX_CLK_S_REFCLK }, NPC=
+M8XX_PLLCON2, 0 },
+> > > +       { NPCM8XX_CLK_S_PLL_GFX, { .name =3D NPCM8XX_CLK_S_REFCLK }, =
+NPCM8XX_PLLCONG, 0 },
+> > > +};
+> > > +
+> > > +static const u32 cpuck_mux_table[] =3D { 0, 1, 2, 7 };
+> > > +static const struct clk_parent_data cpuck_mux_parents[] =3D {
+> > > +       { .fw_name =3D NPCM8XX_CLK_S_PLL0, .name =3D NPCM8XX_CLK_S_PL=
+L0 },
+> >
+> > You should only have .fw_name or .index when introducing new drivers.
+> > The .name field is for existing drivers that want to migrate to
+> > clk_parent_data.
+> I thought using .name was done when the clock defines in the DT, like
+> the ref clock.
+> If the other clocks are not defined both .fw_name and .name the clocks
+> are not registered properly.
 
-Thanks. Pulled into clk-next
+Are you saying that having .name fixes it?
+
+> >
+> > > +       { .fw_name =3D NPCM8XX_CLK_S_PLL1, .name =3D NPCM8XX_CLK_S_PL=
+L1 },
+> > > +       { .name =3D NPCM8XX_CLK_S_REFCLK },
+> >
+> > Note, this line says to use '.index =3D 0', and .name will be ignored.
+> > Maybe just use the index for everything? That makes it simpler and
+> > potentially faster because we don't have to do string comparisons
+> > anywhere.
+> Should the clk_parent_data mux use only .index? if yes how should the
+> clock tree have a connection between the parent's clock and the mux
+> for example:
+> for example, how should the driver connect between
+> NPCM8XX_CLK_S_PLL1_DIV2 and the index number in the clk_parent_data?
+
+It's not required, but it makes things simpler to only use .index or
+direct clk_hw pointers (.hw). I'm working on a clk documentation
+overhaul series right now, about 4 years later than I should have done
+it. It will cover this.
+
+The .index field corresponds to the cell index in your devicetree
+'clocks' property of the clk provider (the node with #clock-cells
+property). If the clk is internal, just use a .hw member and point to it
+directly. Don't consume your own clks in DT. If NPCM8XX_CLK_S_PLL1_DIV2
+is a clk provided/registered by this device then it should be pointed to
+directly with the clk_hw pointer. If NPCM8XX_CLK_S_PLL1_DIV2 is an
+external clk that is consumed via the 'clocks' property in DT, then it
+should be specified as a parent via the .index member.
+
+> > > +
+> > > +static int npcm8xx_clk_probe(struct platform_device *pdev)
+> > > +{
+> > > +       struct clk_hw_onecell_data *npcm8xx_clk_data;
+> > > +       struct device *dev =3D &pdev->dev;
+> > > +       void __iomem *clk_base;
+> > > +       struct resource *res;
+> > > +       struct clk_hw *hw;
+> > > +       unsigned int i;
+> > > +       int err;
+> > > +
+> > > +       npcm8xx_clk_data =3D devm_kzalloc(dev, struct_size(npcm8xx_cl=
+k_data, hws,
+> > > +                                                        NPCM8XX_NUM_=
+CLOCKS),
+> > > +                                       GFP_KERNEL);
+> > > +       if (!npcm8xx_clk_data)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > > +       clk_base =3D devm_ioremap(dev, res->start, resource_size(res)=
+);
+> >
+> > Can you use devm_platform_ioremap_resource() instead?
+> We should use devm_ioremap since the clock register is used for the
+> reset driver as well.
+
+Are the clk and reset drivers sharing the register range? If so, please
+use auxiliary bus to register the reset driver, and map the register
+region once in the driver that registers the auxiliary device. Pass the
+iomem pointer to the auxiliary device.
