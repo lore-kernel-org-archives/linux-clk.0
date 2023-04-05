@@ -2,247 +2,256 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B032C7619A
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Apr 2023 14:12:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE1ECC761A6
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Apr 2023 14:31:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238402AbjDEOMb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Apr 2023 10:12:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33122 "EHLO
+        id S237958AbjDEObJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Apr 2023 10:31:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238373AbjDEOM0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Apr 2023 10:12:26 -0400
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A99B55FEE
-        for <linux-clk@vger.kernel.org>; Wed,  5 Apr 2023 07:11:56 -0700 (PDT)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-5456249756bso679216227b3.5
-        for <linux-clk@vger.kernel.org>; Wed, 05 Apr 2023 07:11:56 -0700 (PDT)
+        with ESMTP id S238037AbjDEObH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Apr 2023 10:31:07 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C09C6E9E
+        for <linux-clk@vger.kernel.org>; Wed,  5 Apr 2023 07:30:53 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id r29so36390654wra.13
+        for <linux-clk@vger.kernel.org>; Wed, 05 Apr 2023 07:30:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680703915;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EMf3CEm47nTLug6fCPtN+WxmLwlongS4K4cghIdEwTU=;
-        b=b2+D20d+G3y26sJt0PGAqN2BwPks7gQqkoFULGuxRE92c66/T8BoUIIZsvO/x2OWF9
-         ULoCwNY6uCF9YDTaNjV5EbaWg6yjghvOKu+xCeB73pXQmXaCmSp2cnsYUZ22R69fni32
-         tY+D4WAb0Lc3TtW+qk0Tam+O8p1h3eWpEQw0yvNZKXM7rZtHXsoKRu9oHiI7PwXWBgZH
-         /s/7SggpWitW+kAqzqtNCtao2mI8DVZXM/Cqhn97f/0436Qiga2MD2M/xiZnQNbBIYLS
-         OQFJ8iTfybzfaBbK/qOkgKogYYi8J1Y21p/48dTudnw8zPhBNbl33Cqin6/wkmP1dMpb
-         SVrg==
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1680705052;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=EgLadd94O8XczIdn8YeDNTRC0ay46l/3/7AZ410rDto=;
+        b=FWJq9Q1aODrqJntWSOyXbnNZ0SBHSDnck8NBF5YwVSAa5xsAoKATvHscFzmJaT+ssV
+         +qHyfK7v+pgz3Sw4j4sSkWTYWXdSY40bEr5dYJjOrknxaIiWcDC4ZbdCQKgHsbotcHYK
+         ue8qZ+qKHWP78RU0P7X/t03TR9uQG9XRUKr479v3Rjmy7Q1gOOygYnBZiAWtWAilvVaJ
+         /Td0/17FzBRb6LHFhbcdu7ZeTEv1f4fyTRrw7oBRi6SyQ5hZj40m4KY/y/9FptlV8sUD
+         s5ryAfBonG1trHXmoPOD8JIa3ZUxIiX1WDrQpX/giovXjA0gK26bPFhjlEYmROb732gy
+         3WDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680703915;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EMf3CEm47nTLug6fCPtN+WxmLwlongS4K4cghIdEwTU=;
-        b=TLRfNGZrunNaLEi1ohvhmy7CHdSJdpqiQhnkT/0YODn8XltPKj5dVKfF0RRuiyc8fQ
-         osLeBsOvwYXU19d2BFGwwsb6IGmlq5kjAmfwvEV2lAin4EVxcuBIuhiqy3txlifvdep/
-         sz9kwWxmALaHglphaTy/2813eTx9KqpnmWAsGLV6JZ1fseU/ys/HTB+9UaCzEPaswCtn
-         2e4tpGZwBwxP9shXb2mwEFPKI4ggDHUg5zS8psYTwTCTMSCFrfswoYaFjfwqYZVTvyzX
-         YO/wsZJqT7cpDgfPMtpZ7kXvQ/UMPjj6JSaZH/qYO0dBjMYWtOEAY19TJBfAvmWdusK0
-         ykLA==
-X-Gm-Message-State: AAQBX9f9pXU4dk9zSAd3csBZm1NnaE6clwbt01kNG7twotUMS9HZX7k4
-        JRJbegUyA2EpQn3BfnKqkzFgP+vbMnOhVIAEnP7Pzw==
-X-Google-Smtp-Source: AKy350YIM3whqkVRkgoliO4ELqOTHysvMP2mHMSt3HJC9fOJRdlX3dZXSC6LOSHQXd5zBwLeL+SU3/ZlW/2/8tJ+/Lw=
-X-Received: by 2002:a81:c509:0:b0:549:143f:3d3 with SMTP id
- k9-20020a81c509000000b00549143f03d3mr3685321ywi.0.1680703914860; Wed, 05 Apr
- 2023 07:11:54 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1680705052;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EgLadd94O8XczIdn8YeDNTRC0ay46l/3/7AZ410rDto=;
+        b=taHU+37il30m5yBLX56EQhZ7w/E2TOrI0ekFgksv0ZGpQa6xiSS7o/h3QO1S1R+iWA
+         5O1bn8mnNt6GEJ2FUGuEFT9E7n+pMwxP1Xwy3NxXP1Ave47UyDFoYaB4PBI1nWPwbeSI
+         KWjpH+cW8X90PnXg4qcUFXvL5jTZEGNgFnq66PePU7TdEbamRf2LomVp5pCBBlQ5lbtT
+         TB7iz6tPMgATMxKXo9Qn3+Q2q8FwEn9LUeXUloZKV1pda58E3k/rqGfM8OJArYUKQILr
+         Wq6q4sYHkqmuDPKAagqUNRBo/4ghzl7Ksp/NSUE75PAt4CmPv9SlpvvcAoXYh6D05IaZ
+         VduA==
+X-Gm-Message-State: AAQBX9f6jkedFZnED1w1tdW6V/KR6i1q+YtwdzicSrlhufswypnmW1cS
+        NU1Oh2z26cL9bs71aQGYqSNTdg==
+X-Google-Smtp-Source: AKy350bKIW36MwRanv80akKe3S3w+vDG8PDIWtrl9tvFe8SCq2HgcGIvbVqSLvzGKUvHr5qZAdkeIw==
+X-Received: by 2002:a5d:6391:0:b0:2e4:cc1c:1036 with SMTP id p17-20020a5d6391000000b002e4cc1c1036mr4406813wru.62.1680705051753;
+        Wed, 05 Apr 2023 07:30:51 -0700 (PDT)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id r8-20020a5d4e48000000b002c70e60abd4sm15370114wrt.2.2023.04.05.07.30.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Apr 2023 07:30:51 -0700 (PDT)
+References: <20230404155332.9571-1-ddrokosov@sberdevices.ru>
+ <20230404155332.9571-7-ddrokosov@sberdevices.ru>
+User-agent: mu4e 1.8.13; emacs 28.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>,
+        neil.armstrong@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
+        martin.blumenstingl@googlemail.com
+Cc:     jian.hu@amlogic.com, kernel@sberdevices.ru, rockosov@gmail.com,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v12 6/6] clk: meson: a1: add Amlogic A1 Peripherals
+ clock controller driver
+Date:   Wed, 05 Apr 2023 16:13:44 +0200
+In-reply-to: <20230404155332.9571-7-ddrokosov@sberdevices.ru>
+Message-ID: <1j8rf6flk5.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-References: <20230327193829.3756640-1-abel.vesa@linaro.org>
- <CAGETcx9f1p2esfyzyfU04EAB1FXh=d9-U81DaGyZNjL_Vti3oQ@mail.gmail.com>
- <ZCVyBuKMvDV0gQPW@linaro.org> <CAGETcx-mxzzZ_FU6Agju9gMhFOEDhY6Rj78BnvAVJjNtZhif=w@mail.gmail.com>
- <ZCZolyDL/awnt73K@linaro.org>
-In-Reply-To: <ZCZolyDL/awnt73K@linaro.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 5 Apr 2023 16:11:18 +0200
-Message-ID: <CAPDyKFprQwBfya-TpaVJfn82LgM9N_iE8npO9r-HzAyJXpb-hQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] Allow genpd providers to power off domains on sync state
-To:     Saravana Kannan <saravanak@google.com>,
-        Abel Vesa <abel.vesa@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Doug Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Android Kernel Team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Abel, Saravana,
 
-On Fri, 31 Mar 2023 at 06:59, Abel Vesa <abel.vesa@linaro.org> wrote:
->
-> On 23-03-30 12:50:44, Saravana Kannan wrote:
-> > On Thu, Mar 30, 2023 at 4:27=E2=80=AFAM Abel Vesa <abel.vesa@linaro.org=
-> wrote:
-> > >
-> > > On 23-03-27 17:17:28, Saravana Kannan wrote:
-> > > > On Mon, Mar 27, 2023 at 12:38=E2=80=AFPM Abel Vesa <abel.vesa@linar=
-o.org> wrote:
-> > > > >
-> > > > > There have been already a couple of tries to make the genpd "disa=
-ble
-> > > > > unused" late initcall skip the powering off of domains that might=
- be
-> > > > > needed until later on (i.e. until some consumer probes). The conc=
-lusion
-> > > > > was that the provider could return -EBUSY from the power_off call=
-back
-> > > > > until the provider's sync state has been reached. This patch seri=
-es tries
-> > > > > to provide a proof-of-concept that is working on Qualcomm platfor=
-ms.
-> > > >
-> > > > I'm giving my thoughts in the cover letter instead of spreading it
-> > > > around all the patches so that there's context between the comments=
-.
-> > > >
-> > > > 1) Why can't all the logic in this patch series be implemented at t=
-he
-> > > > framework level? And then allow the drivers to opt into this behavi=
-or
-> > > > by setting the sync_state() callback.
-> > > >
-> > > > That way, you can land it only for QC drivers by setting up
-> > > > sync_state() callback only for QC drivers, but actually have the sa=
-me
-> > > > code function correctly for non-QC drivers too. And then once we ha=
-ve
-> > > > this functionality working properly for QC drivers for one kernel
-> > > > version (or two), we'll just have the framework set the device's
-> > > > driver's sync_state() if it doesn't have one already.
-> > >
-> > > I think Ulf has already NACK'ed that approach here:
-> > > [1] https://lore.kernel.org/lkml/CAPDyKFon35wcQ+5kx3QZb-awN_S_q8y1Sir=
--G+GoxkCvpN=3DiiA@mail.gmail.com/
-> >
-> > I would have NACK'ed that too because that's an incomplete fix. As I
-> > said further below, the fix needs to be at the aggregation level where
-> > you aggregate all the current consumer requests. In there, you need to
-> > add in the "state at boot" input that gets cleared out after a
-> > sync_state() call is received for that power domain.
-> >
->
-> So, just to make sure I understand your point. You would rather have the
-> genpd_power_off check if 'state at boot' is 'on' and return busy and
-> then clear then, via a generic genpd sync state you would mark 'state at
-> boot' as 'off' and queue up a power off request for each PD from there.
-> And as for 'state at boot' it would check the enable bit through
-> provider.
->
-> Am I right so far?
+On Tue 04 Apr 2023 at 18:53, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
 
-I am not sure I completely follow what you are suggesting here.
+> +/* Array of all clocks registered by this provider */
+> +static struct clk_hw_onecell_data a1_periphs_clks = {
+> +	.hws = {
+> +		/* DT exposed clocks */
+> +		[CLKID_FIXPLL_IN]		= &fixpll_in.hw,
+> +		[CLKID_USB_PHY_IN]		= &usb_phy_in.hw,
+> +		[CLKID_USB_CTRL_IN]		= &usb_ctrl_in.hw,
+> +		[CLKID_HIFIPLL_IN]		= &hifipll_in.hw,
+> +		[CLKID_SYSPLL_IN]		= &syspll_in.hw,
+> +		[CLKID_DDS_IN]			= &dds_in.hw,
+> +		[CLKID_SYS]			= &sys.hw,
+> +		[CLKID_CLKTREE]			= &clktree.hw,
+> +		[CLKID_RESET_CTRL]		= &reset_ctrl.hw,
+> +		[CLKID_ANALOG_CTRL]		= &analog_ctrl.hw,
+> +		[CLKID_PWR_CTRL]		= &pwr_ctrl.hw,
+> +		[CLKID_PAD_CTRL]		= &pad_ctrl.hw,
+> +		[CLKID_SYS_CTRL]		= &sys_ctrl.hw,
+> +		[CLKID_TEMP_SENSOR]		= &temp_sensor.hw,
+> +		[CLKID_AM2AXI_DIV]		= &am2axi_dev.hw,
+> +		[CLKID_SPICC_B]			= &spicc_b.hw,
+> +		[CLKID_SPICC_A]			= &spicc_a.hw,
+> +		[CLKID_MSR]			= &msr.hw,
+> +		[CLKID_AUDIO]			= &audio.hw,
+> +		[CLKID_JTAG_CTRL]		= &jtag_ctrl.hw,
+> +		[CLKID_SARADC_EN]		= &saradc_en.hw,
+> +		[CLKID_PWM_EF]			= &pwm_ef.hw,
+> +		[CLKID_PWM_CD]			= &pwm_cd.hw,
+> +		[CLKID_PWM_AB]			= &pwm_ab.hw,
+> +		[CLKID_CEC]			= &cec.hw,
+> +		[CLKID_I2C_S]			= &i2c_s.hw,
+> +		[CLKID_IR_CTRL]			= &ir_ctrl.hw,
+> +		[CLKID_I2C_M_D]			= &i2c_m_d.hw,
+> +		[CLKID_I2C_M_C]			= &i2c_m_c.hw,
+> +		[CLKID_I2C_M_B]			= &i2c_m_b.hw,
+> +		[CLKID_I2C_M_A]			= &i2c_m_a.hw,
+> +		[CLKID_ACODEC]			= &acodec.hw,
+> +		[CLKID_OTP]			= &otp.hw,
+> +		[CLKID_SD_EMMC_A]		= &sd_emmc_a.hw,
+> +		[CLKID_USB_PHY]			= &usb_phy.hw,
+> +		[CLKID_USB_CTRL]		= &usb_ctrl.hw,
+> +		[CLKID_SYS_DSPB]		= &sys_dspb.hw,
+> +		[CLKID_SYS_DSPA]		= &sys_dspa.hw,
+> +		[CLKID_DMA]			= &dma.hw,
+> +		[CLKID_IRQ_CTRL]		= &irq_ctrl.hw,
+> +		[CLKID_NIC]			= &nic.hw,
+> +		[CLKID_GIC]			= &gic.hw,
+> +		[CLKID_UART_C]			= &uart_c.hw,
+> +		[CLKID_UART_B]			= &uart_b.hw,
+> +		[CLKID_UART_A]			= &uart_a.hw,
+> +		[CLKID_SYS_PSRAM]		= &sys_psram.hw,
+> +		[CLKID_RSA]			= &rsa.hw,
+> +		[CLKID_CORESIGHT]		= &coresight.hw,
+> +		[CLKID_AM2AXI_VAD]		= &am2axi_vad.hw,
+> +		[CLKID_AUDIO_VAD]		= &audio_vad.hw,
+> +		[CLKID_AXI_DMC]			= &axi_dmc.hw,
+> +		[CLKID_AXI_PSRAM]		= &axi_psram.hw,
+> +		[CLKID_RAMB]			= &ramb.hw,
+> +		[CLKID_RAMA]			= &rama.hw,
+> +		[CLKID_AXI_SPIFC]		= &axi_spifc.hw,
+> +		[CLKID_AXI_NIC]			= &axi_nic.hw,
+> +		[CLKID_AXI_DMA]			= &axi_dma.hw,
+> +		[CLKID_CPU_CTRL]		= &cpu_ctrl.hw,
+> +		[CLKID_ROM]			= &rom.hw,
+> +		[CLKID_PROC_I2C]		= &prod_i2c.hw,
+> +		[CLKID_DSPA_EN]			= &dspa_en.hw,
+> +		[CLKID_DSPA_EN_NIC]		= &dspa_en_nic.hw,
+> +		[CLKID_DSPB_EN]			= &dspb_en.hw,
+> +		[CLKID_DSPB_EN_NIC]		= &dspb_en_nic.hw,
+> +		[CLKID_RTC]			= &rtc.hw,
+> +		[CLKID_CECA_32K]		= &ceca_32k_out.hw,
+> +		[CLKID_CECB_32K]		= &cecb_32k_out.hw,
+> +		[CLKID_24M]			= &clk_24m.hw,
+> +		[CLKID_12M]			= &clk_12m.hw,
+> +		[CLKID_FCLK_DIV2_DIVN]		= &fclk_div2_divn.hw,
+> +		[CLKID_GEN]			= &gen.hw,
+> +		[CLKID_SARADC]			= &saradc.hw,
+> +		[CLKID_PWM_A]			= &pwm_a.hw,
+> +		[CLKID_PWM_B]			= &pwm_b.hw,
+> +		[CLKID_PWM_C]			= &pwm_c.hw,
+> +		[CLKID_PWM_D]			= &pwm_d.hw,
+> +		[CLKID_PWM_E]			= &pwm_e.hw,
+> +		[CLKID_PWM_F]			= &pwm_f.hw,
+> +		[CLKID_SPICC]			= &spicc.hw,
+> +		[CLKID_TS]			= &ts.hw,
+> +		[CLKID_SPIFC]			= &spifc.hw,
+> +		[CLKID_USB_BUS]			= &usb_bus.hw,
+> +		[CLKID_SD_EMMC]			= &sd_emmc.hw,
+> +		[CLKID_PSRAM]			= &psram.hw,
+> +		[CLKID_DMC]			= &dmc.hw,
+> +		[CLKID_GEN_SEL]			= &gen_sel.hw,
+> +		[CLKID_PWM_A_SEL]		= &pwm_a_sel.hw,
+> +		[CLKID_PWM_B_SEL]		= &pwm_b_sel.hw,
+> +		[CLKID_PWM_C_SEL]		= &pwm_c_sel.hw,
+> +		[CLKID_PWM_D_SEL]		= &pwm_d_sel.hw,
+> +		[CLKID_PWM_E_SEL]		= &pwm_e_sel.hw,
+> +		[CLKID_PWM_F_SEL]		= &pwm_f_sel.hw,
+> +		[CLKID_DSPA_A_SEL]		= &dspa_a_sel.hw,
+> +		[CLKID_DSPA_B_SEL]		= &dspa_b_sel.hw,
+> +		[CLKID_DSPB_A_SEL]		= &dspb_a_sel.hw,
+> +		[CLKID_DSPB_B_SEL]		= &dspb_b_sel.hw,
+> +		[CLKID_CECA_32K_SEL]		= &ceca_32k_sel.hw,
+> +		[CLKID_CECA_32K_SEL_PRE]	= &ceca_32k_sel_pre.hw,
+> +		[CLKID_CECB_32K_SEL]		= &cecb_32k_sel.hw,
+> +		[CLKID_CECB_32K_SEL_PRE]	= &cecb_32k_sel_pre.hw,
+> +
+> +		/* Internal clocks */
 
-Although, let me point out that there is no requirement from the genpd
-API point of view, that the provider needs to be a driver. This means
-that the sync_state callback may not even be applicable for all genpd
-providers.
+There is no need to make such groups within the table.
+I don't think such change was requested in the previous reviews.
 
-In other words, it looks to me that we may need some new genpd helper
-functions, no matter what. More importantly, it looks like we need an
-opt-in behaviour, unless we can figure out a common way for genpd to
-understand whether the sync_state thing is going to be applicable or
-not. Maybe Saravana has some ideas around this?
+Also grouping the IDs the way you did is a bad idea.
 
-Note that, I don't object to extending genpd to be more clever and to
-share common code, of course. We could, for example, make
-genpd_power_off() to bail out earlier, rather than calling the
-->power_off() callback and waiting for it to return -EBUSY. Both of
-you have pointed this out to me, in some of the earlier
-replies/discussions too.
+1) Since the clocks are registered in the order of the table, this will
+make a lot of orphans during the registration of the controller. It does
+work but it is not ideal performance wise. Whenever possible, it is
+better to register the clocks from the roots to the leafs.
 
->
-> > > And suggested this new approach that this patch series proposes.
-> > > (Unless I missunderstood his point)
-> > >
-> > > >
-> > > > 2) sync_state() is not just about power on/off. It's also about the
-> > > > power domain level. Can you handle that too please?
-> > >
-> > > Well, this patchset only tries to delay the disabling of unused power
-> > > domains until all consumers have had a chance to probe. So we use syn=
-c
-> > > state only to queue up a power-off request to make sure those unused
-> > > ones get disabled.
-> >
-> > Sure, but the design is completely unusable for a more complete
-> > sync_state() behavior. I'm okay if you want to improve the
-> > sync_state() behavior in layers, but don't do it in a way where the
-> > current design will definitely not work for what you want to add in
-> > the future.
->
-> But you would still be OK with the qcom_cc sync state wrapper, I guess,
-> right? Your concern is only about the sync state callback being not
-> genpd generic one, AFAIU.
->
-> >
-> > > >
-> > > > 3) In your GDSC drivers, it's not clear to me if you are preventing
-> > > > power off until sync_state() only for GDSCs that were already on at
-> > > > boot. So if an off-at-boot GDSC gets turned on, and then you attemp=
-t
-> > > > to turn it off before all its consumers have probed, it'll fail to
-> > > > power it off even though that wasn't necessary?
-> > >
-> > > I think we can circumvent looking at a GDSC by knowing it there was e=
-ver
-> > > a power on request since boot. I'll try to come up with something in =
-the
-> > > new version.
-> >
-> > Please no. There's nothing wrong with reading the GDSC values. Please
-> > read them and don't turn on GDSC's that weren't on at boot.
->
-> Sorry for the typos above, I basically said that for this concern of
-> yours, we can add the 'state at boot' thing you mentioned above by
-> looking at the GDSC (as in reading reg).
->
-> >
-> > Otherwise you are making it a hassle for the case where there is a
-> > consumer without a driver for a GDSC that was off at boot. You are now
-> > forcing the use of timeouts or writing to state_synced file. Those
-> > should be absolute last resorts, but you are making that a requirement
-> > with your current implementation. If you implement it correctly by
-> > reading the GDSC register, things will "just work". And it's not even
-> > hard to do.
-> >
-> > NACK'ed until this is handled correctly.
-> >
-> > >
-> > > >
-> > > > 4) The returning -EBUSY when a power off is attempted seems to be
-> > > > quite wasteful. The framework will go through the whole sequence of
-> > > > trying to power down, send the notifications and then fail and then
-> > > > send the undo notifications. Combined with point (2) I think this c=
-an
-> > > > be handled better at the aggregation level in the framework to avoi=
-d
-> > > > even going that far into the power off sequence.
-> > >
-> > > Again, have a look at [1] (above).
-> >
-> > See my reply above. If you do it properly at the framework level, this
-> > can be done in a clean way and will work for all power domains.
-> >
-> > -Saravana
-> >
-> > >
-> > > Ulf, any thoughts on this 4th point?
+2) These 2 nice groups are going away the minute you add another clock which
+was not part of the original submission. This is why IDs have no meaning,
+no even groups.
 
-Please, see my reply above.
-
-[...]
-
-Kind regards
-Uffe
+> +		[CLKID_XTAL_IN]			= &xtal_in.hw,
+> +		[CLKID_DSPA_SEL]		= &dspa_sel.hw,
+> +		[CLKID_DSPB_SEL]		= &dspb_sel.hw,
+> +		[CLKID_SARADC_SEL]		= &saradc_sel.hw,
+> +		[CLKID_SYS_A_SEL]		= &sys_a_sel.hw,
+> +		[CLKID_SYS_A_DIV]		= &sys_a_div.hw,
+> +		[CLKID_SYS_A]			= &sys_a.hw,
+> +		[CLKID_SYS_B_SEL]		= &sys_b_sel.hw,
+> +		[CLKID_SYS_B_DIV]		= &sys_b_div.hw,
+> +		[CLKID_SYS_B]			= &sys_b.hw,
+> +		[CLKID_DSPA_A_DIV]		= &dspa_a_div.hw,
+> +		[CLKID_DSPA_A]			= &dspa_a.hw,
+> +		[CLKID_DSPA_B_DIV]		= &dspa_b_div.hw,
+> +		[CLKID_DSPA_B]			= &dspa_b.hw,
+> +		[CLKID_DSPB_A_DIV]		= &dspb_a_div.hw,
+> +		[CLKID_DSPB_A]			= &dspb_a.hw,
+> +		[CLKID_DSPB_B_DIV]		= &dspb_b_div.hw,
+> +		[CLKID_DSPB_B]			= &dspb_b.hw,
+> +		[CLKID_RTC_32K_IN]		= &rtc_32k_in.hw,
+> +		[CLKID_RTC_32K_DIV]		= &rtc_32k_div.hw,
+> +		[CLKID_RTC_32K_XTAL]		= &rtc_32k_xtal.hw,
+> +		[CLKID_RTC_32K_SEL]		= &rtc_32k_sel.hw,
+> +		[CLKID_CECB_32K_IN]		= &cecb_32k_in.hw,
+> +		[CLKID_CECB_32K_DIV]		= &cecb_32k_div.hw,
+> +		[CLKID_CECA_32K_IN]		= &ceca_32k_in.hw,
+> +		[CLKID_CECA_32K_DIV]		= &ceca_32k_div.hw,
+> +		[CLKID_DIV2_PRE]		= &fclk_div2_divn_pre.hw,
+> +		[CLKID_24M_DIV2]		= &clk_24m_div2.hw,
+> +		[CLKID_GEN_DIV]			= &gen_div.hw,
+> +		[CLKID_SARADC_DIV]		= &saradc_div.hw,
+> +		[CLKID_PWM_A_DIV]		= &pwm_a_div.hw,
+> +		[CLKID_PWM_B_DIV]		= &pwm_b_div.hw,
+> +		[CLKID_PWM_C_DIV]		= &pwm_c_div.hw,
+> +		[CLKID_PWM_D_DIV]		= &pwm_d_div.hw,
+> +		[CLKID_PWM_E_DIV]		= &pwm_e_div.hw,
+> +		[CLKID_PWM_F_DIV]		= &pwm_f_div.hw,
+> +		[CLKID_SPICC_SEL]		= &spicc_sel.hw,
+> +		[CLKID_SPICC_DIV]		= &spicc_div.hw,
+> +		[CLKID_SPICC_SEL2]		= &spicc_sel2.hw,
+> +		[CLKID_TS_DIV]			= &ts_div.hw,
+> +		[CLKID_SPIFC_SEL]		= &spifc_sel.hw,
+> +		[CLKID_SPIFC_DIV]		= &spifc_div.hw,
+> +		[CLKID_SPIFC_SEL2]		= &spifc_sel2.hw,
+> +		[CLKID_USB_BUS_SEL]		= &usb_bus_sel.hw,
+> +		[CLKID_USB_BUS_DIV]		= &usb_bus_div.hw,
+> +		[CLKID_SD_EMMC_SEL]		= &sd_emmc_sel.hw,
+> +		[CLKID_SD_EMMC_DIV]		= &sd_emmc_div.hw,
+> +		[CLKID_SD_EMMC_SEL2]		= &sd_emmc_sel2.hw,
+> +		[CLKID_PSRAM_SEL]		= &psram_sel.hw,
+> +		[CLKID_PSRAM_DIV]		= &psram_div.hw,
+> +		[CLKID_PSRAM_SEL2]		= &psram_sel2.hw,
+> +		[CLKID_DMC_SEL]			= &dmc_sel.hw,
+> +		[CLKID_DMC_DIV]			= &dmc_div.hw,
+> +		[CLKID_DMC_SEL2]		= &dmc_sel2.hw,
+> +
+> +		[NR_CLKS]			= NULL,
+> +	},
+> +	.num = NR_CLKS,
+> +};
