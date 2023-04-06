@@ -2,120 +2,189 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2368C7618D
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 07:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C70EC77B6C
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 07:42:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235135AbjDFHMd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Apr 2023 03:12:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55980 "EHLO
+        id S236210AbjDFHmr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Apr 2023 03:42:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235569AbjDFHMc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 03:12:32 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F336310D1;
-        Thu,  6 Apr 2023 00:12:28 -0700 (PDT)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id B452724E32C;
-        Thu,  6 Apr 2023 15:03:16 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 6 Apr
- 2023 15:03:16 +0800
-Received: from [192.168.125.87] (183.27.97.179) by EXMBX172.cuchost.com
- (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 6 Apr
- 2023 15:03:15 +0800
-Message-ID: <ce311dcf-67a5-bf15-d0da-88967baf4ee9@starfivetech.com>
-Date:   Thu, 6 Apr 2023 15:03:14 +0800
+        with ESMTP id S236174AbjDFHmW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 03:42:22 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D12718A7A
+        for <linux-clk@vger.kernel.org>; Thu,  6 Apr 2023 00:41:52 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id b20so147175264edd.1
+        for <linux-clk@vger.kernel.org>; Thu, 06 Apr 2023 00:41:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680766911;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hpp+0JOz+FKGY7fsBLSsdfNUNXwCqAnXR6glr6qNRMw=;
+        b=U9/EmzMV+No/XF5Nq4LYvmSGD7hlHQqob5/GLw7OH9v6PeKs+BIbVHC4yEqvo3zLIM
+         ewwpZeEJXgJJICeVEqDaWdKohsl5KIMAZuYGR7CgDPjCq1y3vV8etQO+WiSNRj+qmNEW
+         Rjf/rCSk22jFq/DmvYb2cnlASTRzytXbuTVClOVDAhm1CxAMtuLT6RgUnkxcSvKQj2Cn
+         eV03fmlQsJ8QyuN+/0Ul+K5dZvyTx2+dhtU2prTABH4Bf/7VsuzHIEXHeW9mVABRH3fJ
+         QK9U5oMPUAguypNu/vx3B8jF5ZlHBPKr9evFQieqkQKvQ0lHM3kaZNvm6ywNXt4uhuy5
+         o3aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680766911;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hpp+0JOz+FKGY7fsBLSsdfNUNXwCqAnXR6glr6qNRMw=;
+        b=0H3vKc29ARy6xU3EGGVluY3QPvsZmq2GMjh1cBGrOzsUb1Nqypq59v3KF78gfX1B2F
+         cx2CLK68dV1wS8kqC+FXHFZUH8mNESge6hOHnQ1IEnG9Pjv5KcR6kVyRMBkpmXZjQD0E
+         C8VhJt5hGiO+M+uF4zvb3f9WkppBy3TaRXsMYcU62yqjgftwjKFynCpQ74fmse8XmUnP
+         jMMIIV/ZBHo+DqU+8gL5GOEFVX29P61oMIE7q0Vs3/cZN4vZQHYAmNp43n5PPy60GsUd
+         ai0En3/3E2SQkqFLq+QD4t2e9WVl7pzQtfNyBCJFo+iOx/efSBJ3+uOlgIEXJtBM296f
+         ZV8A==
+X-Gm-Message-State: AAQBX9fPtUVkOSDXi2+1Wn+UJyAZS2oX0lQZ61zVaLxcq8j4WlUt1JII
+        Epso0KUW76tUeBg/62e2pV2Bxg==
+X-Google-Smtp-Source: AKy350bkNdf5O2eZ4KmOp+DCXA33pjr3OARoKNaTAwi7CozBGDwR42LmdRmdeTHeYyrr7Aa+Kp1SBA==
+X-Received: by 2002:a17:906:c014:b0:947:c8d5:bfab with SMTP id e20-20020a170906c01400b00947c8d5bfabmr5034771ejz.35.1680766910962;
+        Thu, 06 Apr 2023 00:41:50 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:49e6:bb8c:a05b:c4ed? ([2a02:810d:15c0:828:49e6:bb8c:a05b:c4ed])
+        by smtp.gmail.com with ESMTPSA id y11-20020a17090629cb00b00949173c1dcfsm455419eje.18.2023.04.06.00.41.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Apr 2023 00:41:50 -0700 (PDT)
+Message-ID: <0a66e291-a86d-1ff9-e674-839b8cc8f1da@linaro.org>
+Date:   Thu, 6 Apr 2023 09:41:49 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v7 00/22] Basic clock, reset & device tree support for
- StarFive JH7110 RISC-V SoC
-To:     Conor Dooley <conor@kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>
-CC:     Conor Dooley <conor.dooley@microchip.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Ben Dooks <ben.dooks@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Marc Zyngier" <maz@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        <linux-kernel@vger.kernel.org>
-References: <20230401111934.130844-1-hal.feng@starfivetech.com>
- <20230405-wharf-rejoin-5222e5958611@spud>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH v8 2/8] dt-bindings: phy: qcom,qmp-usb: Add IPQ9574 USB3
+ PHY
 Content-Language: en-US
-From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <20230405-wharf-rejoin-5222e5958611@spud>
-Content-Type: text/plain; charset="UTF-8"
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org, vkoul@kernel.org,
+        kishon@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org,
+        mturquette@baylibre.com, sboyd@kernel.org, quic_wcheng@quicinc.com,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-clk@vger.kernel.org
+References: <cover.1680693149.git.quic_varada@quicinc.com>
+ <1efa9a64499767d939efadd0aef897ac4a6e54eb.1680693149.git.quic_varada@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <1efa9a64499767d939efadd0aef897ac4a6e54eb.1680693149.git.quic_varada@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [183.27.97.179]
-X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
- (172.16.6.92)
-X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed,  5 Apr 2023 22:30:45 +0100, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
+On 05/04/2023 13:41, Varadarajan Narayanan wrote:
+> Add dt-bindings for USB3 PHY found on Qualcomm IPQ9574
 > 
-> On Sat, 01 Apr 2023 19:19:12 +0800, Hal Feng wrote:
->> This patch series adds basic clock, reset & DT support for StarFive
->> JH7110 SoC.
->> 
->> @Stephen and @Conor, I have made this series start with the shared
->> dt-bindings, so it will be easier to merge.
->> 
->> @Conor, patch 1, 2, 16~21 were already in your branch. Patch 22 is the
->> same with the patch [1] I submitted before, which you had accepted but
->> not merge it into your branch.
->> 
->> [...]
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+>  Changes in v8:
+> 	- Update clock names for ipq9574
 > 
-> Applied to riscv-dt-for-next, thanks!
+>  Changes in v6:
+> 	- Made power-domains optional
+> 
+> Note: In the earlier patch sets, had used the (legacy)
+> specification available in qcom,msm8996-qmp-usb3-phy.yaml. Moved
+> to newer specification in qcom,sc8280xp-qmp-usb3-uni-phy.yaml
+> ---
+>  .../phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml        | 43 +++++++++++++++++++---
+>  1 file changed, 37 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml
+> index 16fce10..e902a0d 100644
+> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml
+> @@ -16,6 +16,7 @@ description:
+>  properties:
+>    compatible:
+>      enum:
+> +      - qcom,ipq9574-qmp-usb3-phy
+>        - qcom,sc8280xp-qmp-usb3-uni-phy
+>  
+>    reg:
+> @@ -25,11 +26,7 @@ properties:
+>      maxItems: 4
+>  
+>    clock-names:
+> -    items:
+> -      - const: aux
+> -      - const: ref
+> -      - const: com_aux
+> -      - const: pipe
+> +    maxItems: 4
+>  
+>    power-domains:
+>      maxItems: 1
+> @@ -60,7 +57,6 @@ required:
+>    - reg
+>    - clocks
+>    - clock-names
+> -  - power-domains
+>    - resets
+>    - reset-names
+>    - vdda-phy-supply
+> @@ -71,6 +67,41 @@ required:
+>  
+>  additionalProperties: false
+>  
+> +allOf:
 
-Thank you so much.
+As you can see in example-schema, allOf goes before
+additionalProperties: false.
 
-> 
-> [01/22] dt-bindings: clock: Add StarFive JH7110 system clock and reset generator
->         https://git.kernel.org/conor/c/7fce1e39f019
-> [02/22] dt-bindings: clock: Add StarFive JH7110 always-on clock and reset generator
->         https://git.kernel.org/conor/c/3de0c9103258
-> 
-> These two are shared with clk.
-> 
-> [16/22] dt-bindings: timer: Add StarFive JH7110 clint
->         https://git.kernel.org/conor/c/1ff5482ab9a5
-> [17/22] dt-bindings: interrupt-controller: Add StarFive JH7110 plic
->         https://git.kernel.org/conor/c/8406d19ca049
-> 
-> I took these bindings too, as Palmer has done that in the past for new
-> SoC support.
-> 
-> [18/22] dt-bindings: riscv: Add SiFive S7 compatible
->         https://git.kernel.org/conor/c/8868caa2a073
-> [19/22] riscv: dts: starfive: Add initial StarFive JH7110 device tree
->         https://git.kernel.org/conor/c/60bf0a39842e
-> [20/22] riscv: dts: starfive: Add StarFive JH7110 pin function definitions
->         https://git.kernel.org/conor/c/e22f09e598d1
-> [21/22] riscv: dts: starfive: Add StarFive JH7110 VisionFive 2 board device tree
->         https://git.kernel.org/conor/c/54baba33392d
-> [22/22] riscv: dts: starfive: jh7110: Correct the properties of S7 core
->         (squashed)
-> 
-> Hal, can you get your folks to resend whatever dts bits that are now
-> applicable? IOW, the dt-bindings for the entries are in a for-next
-> branch for some subsystem.
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,ipq9574-qmp-usb3-phy
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 4
 
-Of course. As far as I know, these nodes include trng / pmu / mmc / qspi.
+Don't need clocks here.
+
+> +        clock-names:
+> +          items:
+> +            - const: aux
+> +            - const: ref
+> +            - const: cfg_ahb
+> +            - const: pipe
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,sc8280xp-qmp-usb3-uni-phy
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 4
+
+Neither here.
+
+> +        clock-names:
+> +          items:
+> +            - const: aux
+> +            - const: ref
+> +            - const: com_aux
+
+Can anyone explain me why do we name these (here and other Qualcomm
+bindings) based on clock name, not input? Just because different clock
+is fed to the block, does not necessarily mean the input should be named
+differently.
+
+> +            - const: pipe
+> +
+>  examples:
+>    - |
+>      #include <dt-bindings/clock/qcom,gcc-sc8280xp.h>
 
 Best regards,
-Hal
+Krzysztof
+
