@@ -2,86 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3671DC77B6F
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 15:03:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09217C76196
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 17:23:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239581AbjDFPDZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Apr 2023 11:03:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50898 "EHLO
+        id S239681AbjDFRX3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Apr 2023 13:23:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239516AbjDFPDW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 11:03:22 -0400
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9711D2D4F;
-        Thu,  6 Apr 2023 08:03:11 -0700 (PDT)
-Received: by mail-ot1-f50.google.com with SMTP id cm7-20020a056830650700b006a11f365d13so19543429otb.0;
-        Thu, 06 Apr 2023 08:03:11 -0700 (PDT)
+        with ESMTP id S239470AbjDFRXY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 13:23:24 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9F3FAD0A
+        for <linux-clk@vger.kernel.org>; Thu,  6 Apr 2023 10:22:53 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-93db98f7b33so111784466b.2
+        for <linux-clk@vger.kernel.org>; Thu, 06 Apr 2023 10:22:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680801708;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=145yGzODgxY+rJbwAEpe0vSJYcWx7FkVo4x57vw/2Ds=;
+        b=J3QonWmOAxHMqJ1EOSUj4Rs4updaQcuUihcgcTFNhvmsCy6vBtmalIIUSokDtx0F3o
+         6nHdCIpzrLSH+VxgApjJ8P2UKckkNOkxX/fwqeuvB1cGopdBPEPwOnwC0KJ3GsZyHB2W
+         lszpadIv4hDgi03TskBGJpV3t+bDZsTEL0pGZgx1pl2e+DHeJwKaUvIFHVjPHSxHNkqP
+         jZtZPk3HiuFjSs3/9EMd2Q1h/dPqJqn3uopp1XusIxh+cfVVyR84rP6A1HeFr3Huklb5
+         JjnpiK3qXY8wlTF4ziKCllgSkJV7EMH3nOtGeRVKFnwORSESnC2LfbhneG+9pO1Bz2WS
+         sPmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680793391;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wYgmHMtE4Z7gXY8fARqNrSklFArQd85DUjhl84S7U8k=;
-        b=46RUrTNkogma/31YfsGCMzy2HZvD4gtizmbuY91BYs2wRCBkBqAeS6meEvd04VQZ0I
-         bI6c9nuoqh1bcH2XaMPQUZisgOcUSBqOYEDb88zipwA41PZedCDS5sJDBXgFPGkIJXXK
-         hui8mywnr1MrDm94fvcvY0+MHbUJ0Esbq+H9x8wGEmKXLcULhlu54Io5Na3LWpePvFH7
-         xlhl8xH4KOoPQOdLb3XoKpsAvYwdRDdECq7oN6hf6wnhxUO1urp7U9Bm6XClDhZRPUGO
-         SkjoOTe5yRLwwTDjkMt9RvM0L+aG6NudWpBa3yuu1shxWjUlbIUbyQFeYHVaVSEulg0E
-         dwiw==
-X-Gm-Message-State: AAQBX9fzWXpDJtvdWJyIrZnXXkiuQyknwt+6NFkMVODDJHV9fq5C8iPC
-        fX3GISgekHIzREQBwm03nQ==
-X-Google-Smtp-Source: AKy350bZD4DjQUO7AVGHEVenQnfIMLuXNlrLc4gknaEfA4cOh4RhwrUIHpdfd4pE2Dh1CZs3PVEqRQ==
-X-Received: by 2002:a05:6830:1390:b0:697:bfe5:93a0 with SMTP id d16-20020a056830139000b00697bfe593a0mr3732206otq.10.1680793390855;
-        Thu, 06 Apr 2023 08:03:10 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id c2-20020a9d75c2000000b006a154373578sm765278otl.39.2023.04.06.08.03.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Apr 2023 08:03:10 -0700 (PDT)
-Received: (nullmailer pid 3093825 invoked by uid 1000);
-        Thu, 06 Apr 2023 15:03:09 -0000
-Date:   Thu, 6 Apr 2023 10:03:09 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Brendan Higgins <brendan.higgins@linux.dev>,
-        devicetree@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        kunit-dev@googlegroups.com, Maxime Ripard <maxime@cerno.tech>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        David Gow <davidgow@google.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, patches@lists.linux.dev,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v3 10/11] dt-bindings: clk: Add KUnit clk_parent_data test
-Message-ID: <168079338907.3093774.3664348677242434161.robh@kernel.org>
-References: <20230327222159.3509818-1-sboyd@kernel.org>
- <20230327222159.3509818-11-sboyd@kernel.org>
+        d=1e100.net; s=20210112; t=1680801708;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=145yGzODgxY+rJbwAEpe0vSJYcWx7FkVo4x57vw/2Ds=;
+        b=USM/bGi2pPv9ZbZ+L3s9jEXMkuPmNWp9YIBP+dhn+rnhO/LbgsYGUAXysDtbd4/olI
+         u8ZFlgAczu3/YRtyFcQ2HutV3fR6W6sC2DB4+So77qpzf97ChBvxpgnm6iNrcoMAR+6h
+         WcwY+e4X6VbsSF3g0nYePBbzzJsxFFMqWLvwHoqpkik9rrqB6a1KE5m3dA2DHGcP35yJ
+         dc22hnTRV+TESfE6OnYY3NeGGoLWaYggNIBhIiq6AGRRUhub6WrXvc2GR7gDcOwZa32X
+         0aQQl0ZT843isLVhiKJQ2oBrpW33+K/r2UOqaIZKnmOM3tzm9kafHmU2E2GI6Ex3Q50U
+         H1iQ==
+X-Gm-Message-State: AAQBX9eHQBRUzbecPQr1JzZZkPq0jp2watQr1XqImquVVe0a9sTOay/c
+        LCdLehzmvdTKbT5A4oinfflHHA==
+X-Google-Smtp-Source: AKy350YRBx7KoZyPvNoeZ4w8rpaupgS8OEN5BdZpbF0ZP0CslF/6SZi49GUb5ys+HM8ofDMXceerJw==
+X-Received: by 2002:a05:6402:344:b0:502:246e:6739 with SMTP id r4-20020a056402034400b00502246e6739mr235993edw.27.1680801707878;
+        Thu, 06 Apr 2023 10:21:47 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:49e6:bb8c:a05b:c4ed? ([2a02:810d:15c0:828:49e6:bb8c:a05b:c4ed])
+        by smtp.gmail.com with ESMTPSA id jr3-20020a170906a98300b00933356c681esm1046545ejb.150.2023.04.06.10.21.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Apr 2023 10:21:47 -0700 (PDT)
+Message-ID: <c79ca1c4-d7d7-50f5-ee2c-1c1ff459c429@linaro.org>
+Date:   Thu, 6 Apr 2023 19:21:46 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230327222159.3509818-11-sboyd@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH 1/5] dt-bindings: Add Blaize vendor prefix
+Content-Language: en-US
+To:     Niko Pasaloukos <nikolaos.pasaloukos@blaize.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "soc@kernel.org" <soc@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        James Cowgill <james.cowgill@blaize.com>,
+        Matt Redfearn <matthew.redfearn@blaize.com>,
+        Neil Jones <neil.jones@blaize.com>
+References: <20230406102149.729726-1-nikolaos.pasaloukos@blaize.com>
+ <20230406102149.729726-2-nikolaos.pasaloukos@blaize.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230406102149.729726-2-nikolaos.pasaloukos@blaize.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Mon, 27 Mar 2023 15:21:58 -0700, Stephen Boyd wrote:
-> Describe a binding for a device that provides and consumes clks in DT so
-> that a KUnit test can register clks based on the device node and test
-> clk_hw_register() with clk_parent_data.
+On 06/04/2023 12:22, Niko Pasaloukos wrote:
+> Blaize, Inc. (www.blaize.com) is a SoC manufacturer with integrated
+> programmable Graph-Streaming-Processors for AI and ML.
 > 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-> Cc: Brendan Higgins <brendan.higgins@linux.dev>
-> Cc: David Gow <davidgow@google.com>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
->  .../bindings/clock/test,clk-parent-data.yaml  | 47 +++++++++++++++++++
->  1 file changed, 47 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/test,clk-parent-data.yaml
-> 
+> Co-developed-by: James Cowgill <james.cowgill@blaize.com>
+> Signed-off-by: James Cowgill <james.cowgill@blaize.com>
+> Co-developed-by: Matt Redfearn <matt.redfearn@blaize.com>
+> Signed-off-by: Matt Redfearn <matt.redfearn@blaize.com>
+> Co-developed-by: Neil Jones <neil.jones@blaize.com>
+> Signed-off-by: Neil Jones <neil.jones@blaize.com>
+> Signed-off-by: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Four people were working on one pattern in vendor prefixes? I have
+doubts, because this is very trivial patch.
+
+
+
+Best regards,
+Krzysztof
 
