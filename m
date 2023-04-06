@@ -2,113 +2,206 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5574BC76196
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 09:27:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE1DC76196
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 10:59:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235883AbjDFJ1D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Apr 2023 05:27:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37786 "EHLO
+        id S237430AbjDFK7u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Apr 2023 06:59:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235352AbjDFJ1C (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 05:27:02 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 139686EAF
-        for <linux-clk@vger.kernel.org>; Thu,  6 Apr 2023 02:26:51 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pkLtH-0007A1-Qs; Thu, 06 Apr 2023 11:26:47 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pkLtH-009LiD-3b; Thu, 06 Apr 2023 11:26:47 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pkLtG-00B0Co-Av; Thu, 06 Apr 2023 11:26:46 +0200
-Date:   Thu, 6 Apr 2023 11:26:46 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH] clk: Disambiguate comment about clk_get_rate() for
- disabled clocks
-Message-ID: <20230406092646.ykkppfahiemfvp7h@pengutronix.de>
-References: <20230201082309.233348-1-u.kleine-koenig@pengutronix.de>
- <Y+UX2ysd1B5/cHpk@shell.armlinux.org.uk>
- <20230214090652.dq2gdipvxnrxil7p@pengutronix.de>
+        with ESMTP id S236617AbjDFK7t (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 06:59:49 -0400
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 879CB7A9D
+        for <linux-clk@vger.kernel.org>; Thu,  6 Apr 2023 03:59:47 -0700 (PDT)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-54bfa5e698eso65671687b3.13
+        for <linux-clk@vger.kernel.org>; Thu, 06 Apr 2023 03:59:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680778786;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nD1WTAK58/vqm28JkhVU6GZOl4ufBXsw089tkC+xpWw=;
+        b=rstXWKv7UVHpBvrj+D64aEpmhqkUePscquDSERUiqCo/2kvTPcISLn9/T2z9bf71N5
+         y0F67VeMCuWYtTzRt5GraOjnIm0DMkNgtxlH3xUKfYpi+g9eqKFeWWifs/ffvnsshV8M
+         zfXSNfMUBkYgvZx5x8XwfQELCVomMs8nyj8GHtdNZPBpsBLi068gpr7siuqqTOgoYdIM
+         dRmcs9prAopv9R3upqAW3YKcWonOSqYQKnyvCcP3BQuCoUmQq7vqqSgiaXBXdZgbVh/9
+         8pnZ/+3XBphz+u92hF1zMFIvv1FTUubcEn4lCz1GlGMus7rbkeBCuajJ/JNYDZzTsGUV
+         edxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680778786;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nD1WTAK58/vqm28JkhVU6GZOl4ufBXsw089tkC+xpWw=;
+        b=HbCnHzVzagASnpZRaSvbIyCh+Idg5dLCJWRSEKbdj+0o5FftFSlzWzI4ax3P9bWKrz
+         8tZVzXmcYTsXJeVYJ6qgsayi6ZKOwvNRBNXHKtSwMo2/eGoDbwh7Fp/QKEuMIiL7sMcG
+         eVcmZJNV+eWkPwTpcNjsYFdR0duUbs7SOl63DM+FC26Pf4Y7wnozyzbGPS8bVxmIyhSY
+         q9zH5gWI0HY7mYV6iVyNi1MA4RD5u7UImXqrfsVsUTSXMgBs1dOQoF2gQUhFpSsdmPem
+         U9OxR7UmIVkPsk8v+UYHaECwKVSksZk0Gv0dVK5xDHrxvDBoK/66L8baoVmRWi1A1+Qe
+         aI5g==
+X-Gm-Message-State: AAQBX9dIS5BnSK4dgDODu4AC55QJPdfwcAHu2eG0/CwGsxCb1Tiu9AB0
+        jr+qwsAOLieAtsQXEWHiTBFMDXprmWtTiTsVnisrvg==
+X-Google-Smtp-Source: AKy350ZACGkl1itmcqbB+J8+S3w/c5Fd4Xstg5YxzxM0WeHeUtq63AtbTh7cY2Mf2KPnXQ8bjOeG3IRZrGTmICYhEDs=
+X-Received: by 2002:a81:c509:0:b0:549:143f:3d3 with SMTP id
+ k9-20020a81c509000000b00549143f03d3mr5573053ywi.0.1680778786661; Thu, 06 Apr
+ 2023 03:59:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="5vbncwnxcsarc2gn"
-Content-Disposition: inline
-In-Reply-To: <20230214090652.dq2gdipvxnrxil7p@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20230327193829.3756640-1-abel.vesa@linaro.org>
+ <CAGETcx9f1p2esfyzyfU04EAB1FXh=d9-U81DaGyZNjL_Vti3oQ@mail.gmail.com>
+ <ZCVyBuKMvDV0gQPW@linaro.org> <CAGETcx-mxzzZ_FU6Agju9gMhFOEDhY6Rj78BnvAVJjNtZhif=w@mail.gmail.com>
+ <ZCZolyDL/awnt73K@linaro.org> <CAPDyKFprQwBfya-TpaVJfn82LgM9N_iE8npO9r-HzAyJXpb-hQ@mail.gmail.com>
+ <ZC6QLZOldOLNaCSg@linaro.org>
+In-Reply-To: <ZC6QLZOldOLNaCSg@linaro.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 6 Apr 2023 12:59:10 +0200
+Message-ID: <CAPDyKFo+_qxjMaQyT9=zDOuTYjF35G2q=DfS+AhHr+PdJZJz6g@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] Allow genpd providers to power off domains on sync state
+To:     Abel Vesa <abel.vesa@linaro.org>
+Cc:     Saravana Kannan <saravanak@google.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, 6 Apr 2023 at 11:26, Abel Vesa <abel.vesa@linaro.org> wrote:
+>
+> On 23-04-05 16:11:18, Ulf Hansson wrote:
+> > Abel, Saravana,
+> >
+> > On Fri, 31 Mar 2023 at 06:59, Abel Vesa <abel.vesa@linaro.org> wrote:
+> > >
+> > > On 23-03-30 12:50:44, Saravana Kannan wrote:
+> > > > On Thu, Mar 30, 2023 at 4:27=E2=80=AFAM Abel Vesa <abel.vesa@linaro=
+.org> wrote:
+> > > > >
+> > > > > On 23-03-27 17:17:28, Saravana Kannan wrote:
+> > > > > > On Mon, Mar 27, 2023 at 12:38=E2=80=AFPM Abel Vesa <abel.vesa@l=
+inaro.org> wrote:
+> > > > > > >
+> > > > > > > There have been already a couple of tries to make the genpd "=
+disable
+> > > > > > > unused" late initcall skip the powering off of domains that m=
+ight be
+> > > > > > > needed until later on (i.e. until some consumer probes). The =
+conclusion
+> > > > > > > was that the provider could return -EBUSY from the power_off =
+callback
+> > > > > > > until the provider's sync state has been reached. This patch =
+series tries
+> > > > > > > to provide a proof-of-concept that is working on Qualcomm pla=
+tforms.
+> > > > > >
+> > > > > > I'm giving my thoughts in the cover letter instead of spreading=
+ it
+> > > > > > around all the patches so that there's context between the comm=
+ents.
+> > > > > >
+> > > > > > 1) Why can't all the logic in this patch series be implemented =
+at the
+> > > > > > framework level? And then allow the drivers to opt into this be=
+havior
+> > > > > > by setting the sync_state() callback.
+> > > > > >
+> > > > > > That way, you can land it only for QC drivers by setting up
+> > > > > > sync_state() callback only for QC drivers, but actually have th=
+e same
+> > > > > > code function correctly for non-QC drivers too. And then once w=
+e have
+> > > > > > this functionality working properly for QC drivers for one kern=
+el
+> > > > > > version (or two), we'll just have the framework set the device'=
+s
+> > > > > > driver's sync_state() if it doesn't have one already.
+> > > > >
+> > > > > I think Ulf has already NACK'ed that approach here:
+> > > > > [1] https://lore.kernel.org/lkml/CAPDyKFon35wcQ+5kx3QZb-awN_S_q8y=
+1Sir-G+GoxkCvpN=3DiiA@mail.gmail.com/
+> > > >
+> > > > I would have NACK'ed that too because that's an incomplete fix. As =
+I
+> > > > said further below, the fix needs to be at the aggregation level wh=
+ere
+> > > > you aggregate all the current consumer requests. In there, you need=
+ to
+> > > > add in the "state at boot" input that gets cleared out after a
+> > > > sync_state() call is received for that power domain.
+> > > >
+> > >
+> > > So, just to make sure I understand your point. You would rather have =
+the
+> > > genpd_power_off check if 'state at boot' is 'on' and return busy and
+> > > then clear then, via a generic genpd sync state you would mark 'state=
+ at
+> > > boot' as 'off' and queue up a power off request for each PD from ther=
+e.
+> > > And as for 'state at boot' it would check the enable bit through
+> > > provider.
+> > >
+> > > Am I right so far?
+> >
+> > I am not sure I completely follow what you are suggesting here.
+>
+> Please have a look at this:
+> https://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/commit=
+/?h=3Dqcom/genpd/ignore_unused_until_sync_state&id=3D4f9e6140dfe77884012383=
+f8ba2140cadb62ca4a
+>
+> Keep in mind that is WIP for now. Once I have something, I'll post it on
+> mailing list. Right now, there is a missing piece mentioned in that
+> commit message.
 
---5vbncwnxcsarc2gn
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I had a quick look and it seems rather promising, but I will have a
+closer look when you post it.
 
-Hello Russell,
+>
+> >
+> > Although, let me point out that there is no requirement from the genpd
+> > API point of view, that the provider needs to be a driver. This means
+> > that the sync_state callback may not even be applicable for all genpd
+> > providers.
+>
+> Yes, I'm considering that case too.
 
-On Tue, Feb 14, 2023 at 10:06:52AM +0100, Uwe Kleine-K=F6nig wrote:
-> On Thu, Feb 09, 2023 at 03:57:15PM +0000, Russell King (Oracle) wrote:
-> > On Wed, Feb 01, 2023 at 09:23:09AM +0100, Uwe Kleine-K=F6nig wrote:
-> > > The sentence "[clk_get_rate()] is only valid once the clock source has
-> > > been enabled." can be understood in two ways:
-> > >=20
-> > > a) When called for a disabled clock the return value might be wrong; =
-or
-> > > b) The disabled clock must be enabled before it runs at the returned
-> > > rate.
-> > >=20
-> > > It's hard to find evidence what is actually meant, but given that the
-> > > clock tree can change between the call to clk_get_rate() and the retu=
-rn
-> > > of a later clk_enable() call, it's prudent to assume a).
-> > >=20
-> > > Adapt the comment accordingly to be unambiguous.
-> >=20
-> > From the API perspective, it's both.
->=20
-> I documented a) now which is weaker than b), so b) is (only somewhat?)
-> implied.
->=20
-> I wonder if your mail is essentialy an Ack, or if you are unhappy with
-> my change. Can you suggest an alternative wording?
+Good.
 
-Would you pleas care to share your thoughts about this patch? I think
-the patch is fine, but I didn't understood your reply if you're in
-favour of it or you'd prefer a different wording.
+>
+> >
+> > In other words, it looks to me that we may need some new genpd helper
+> > functions, no matter what. More importantly, it looks like we need an
+> > opt-in behaviour, unless we can figure out a common way for genpd to
+> > understand whether the sync_state thing is going to be applicable or
+> > not. Maybe Saravana has some ideas around this?
+> >
+> > Note that, I don't object to extending genpd to be more clever and to
+> > share common code, of course. We could, for example, make
+> > genpd_power_off() to bail out earlier, rather than calling the
+> > ->power_off() callback and waiting for it to return -EBUSY. Both of
+> > you have pointed this out to me, in some of the earlier
+> > replies/discussions too.
+>
+> The above link basically does this. I hope this is what Saravana has in
+> mind as well.
 
-Best regards
-Uwe
+Okay, let's see what Saravana thinks.
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+Maybe it's easier to post an RFC, based upon the above and continue
+the discussion around that?
 
---5vbncwnxcsarc2gn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmQukFUACgkQj4D7WH0S
-/k5U7gf9GZjBp1xU2qDoQG9quxcr4swH27mpFJahO8bdhZWERwjxqKo/94fEIpVA
-kRboOwqrt8cwDXB3wKYT0P+oN0ukToA51iXh3TlKUgtLpNUmfTSICH+5Dyilzmvo
-e8UltxaQFac1tl0a6bjW35b9WmC2FFAVIO/lH48FcmHjXJAbX2fCqpYdtZ2m/tOd
-cYcBucPRoBLhtrf9HjGfcxyxqChjaIEjzuoJkap79WsSLnz0rThVdg8tZKfP2qxe
-4w1p+j86xK98J/OdgSo+jhXFrYr6YCb5syMyaJ0HLYlhq+Nraunr6EPlEht1lqsF
-TXcEBTAMjIydf02YX8Au+qccGVk8NA==
-=Zt9O
------END PGP SIGNATURE-----
-
---5vbncwnxcsarc2gn--
+Kind regards
+Uffe
