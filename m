@@ -2,125 +2,90 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04385C77B6E
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 11:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 806A9C7618D
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 11:27:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235234AbjDFLVI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Apr 2023 07:21:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51908 "EHLO
+        id S237767AbjDFL1z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Apr 2023 07:27:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236669AbjDFLVH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 07:21:07 -0400
-Received: from mail-vs1-xe2e.google.com (mail-vs1-xe2e.google.com [IPv6:2607:f8b0:4864:20::e2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FA379010
-        for <linux-clk@vger.kernel.org>; Thu,  6 Apr 2023 04:20:45 -0700 (PDT)
-Received: by mail-vs1-xe2e.google.com with SMTP id d18so34106138vsv.11
-        for <linux-clk@vger.kernel.org>; Thu, 06 Apr 2023 04:20:45 -0700 (PDT)
+        with ESMTP id S236925AbjDFL1y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 07:27:54 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8691F1FE7
+        for <linux-clk@vger.kernel.org>; Thu,  6 Apr 2023 04:27:52 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id n14so21348999plc.8
+        for <linux-clk@vger.kernel.org>; Thu, 06 Apr 2023 04:27:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1680780044;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1Ne77xaqbtLGoxF/3ZhDrpD5vvfWoYyoJmdpcIYFNEQ=;
-        b=k6I0+4BXskzhRAwmd43QNMVzFMrPVNOkbwwXevTPqhk0D8YtPACw3R0r5oUZIcMPVv
-         Y5BUW4ArX1KppvMqptjnxTQn8Eg44+0ZQbizMDjOHAqI9XfPy9ky1Y5/sUTSgx9/3FRG
-         GR5QFc6MPGSsDoUOxRB5gBdVgCLmVxbo9cbOTuympKKj/3m64qK3GAZCfrJM9pQXJcku
-         pvfwlQ1j6C33FTc8uKtsSlENf9ePLJrXjcA1JInY3DAKtB/WJMRZSF/W23COOL1TWHxe
-         TSC2bb+7xWVyX3JOmd+CRHjYYjZg/2CHUVzK5aidd/2lKi4HS6aRnEedqroKaBR6YcFQ
-         KZ2Q==
+        d=linaro.org; s=google; t=1680780472;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VVYIWGq4i6dA7mptOSiojPV+t8IuNlJMGsWdumEtmJY=;
+        b=aBRp2TybN8A4n7Pbx5BHPBr1pbUuJ0Fl3dWc1qpre611cKpnH5K0INx9pyGMMEk9x8
+         wQnaKbV1klXy7jb+YbVBQrYUiDsfJblpn8ceDB/KqbmfElOnpZIwMpQdqPTrGtKEoNR/
+         K/X8g847ziUeBmxzFjfnapI2bhcnXF4GrhB2rGSfR3dsWmCleeOetxcJ7l+ghXmqLbov
+         YA2gbbbWaQ0Hh31m3lGLpdYXXCuzpUu3qS5vd96TlI5LYaHyQhWq9gF9EGUaceydiI+y
+         /RC6aHNeXi8XUAzb4tzdSh7mhVON3kz3ZhTTSb0XAByM9xQPrL11TkXwg75tVNpKyMTq
+         Avmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680780044;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1Ne77xaqbtLGoxF/3ZhDrpD5vvfWoYyoJmdpcIYFNEQ=;
-        b=zMAc/j/b9HesLjdhA9OSpZhMNnYgnxD9MsNYfsMkH8YIh/znfOIWguWM2Wd0jYHQ7D
-         h3HCBl3VyeLeyxWg02ftPlMYM5N9ZQ2zw5Ys7ffnquGxo8612mojukMxgK0VFqz/8xWH
-         ORzYjwBElI8cffkwojOWMgZJOyVq0TNyROwpVylfG4IbJnuOkDnFWd30uuyrbhHlqEJ8
-         hgoDiBA2PhcqQmIF8/8iEkjj49fkpmh7cydgimq77FyTCan4mdLv0Z37JTQIJ/jmSn38
-         CuANeCsVuzA/GtuMnNCHoWNmAqkrdMrlo7hF8+/UeMF1cWuMUeNELCzn5gaOVUA0Evnr
-         I2zQ==
-X-Gm-Message-State: AAQBX9em7jSh0FPr4L2i4+CAg3XFMNfLpp+SwUVm12yiSMo+gOOa+rts
-        ZZtCroSp+7wqQ0E52E7sPlJ4IV+RXGxSoNDX4LKuLA==
-X-Google-Smtp-Source: AKy350bXUnbyNurB9zPd2ZQDGbD2zJLY7NQCuR5Vz4KL/7JSPzMrGSkVI2JVi1D35K2mHZB5WX3gQMWRx9D513knC9w=
-X-Received: by 2002:a67:c19a:0:b0:426:b051:1c4 with SMTP id
- h26-20020a67c19a000000b00426b05101c4mr7770691vsj.0.1680780044683; Thu, 06 Apr
- 2023 04:20:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230328193632.226095-1-brgl@bgdev.pl> <20230328193632.226095-3-brgl@bgdev.pl>
- <72286603300630b890705c99b42f05a4.sboyd@kernel.org>
-In-Reply-To: <72286603300630b890705c99b42f05a4.sboyd@kernel.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 6 Apr 2023 13:20:33 +0200
-Message-ID: <CAMRc=McM1DfCoMmuUYcChFFBG=H1PgZFAWcuxnQsdhRdYrT+yA@mail.gmail.com>
-Subject: Re: [PATCH 2/7] clk: qcom: add the GPUCC driver for sa8775p
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        Shazad Hussain <quic_shazhuss@quicinc.com>,
+        d=1e100.net; s=20210112; t=1680780472;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VVYIWGq4i6dA7mptOSiojPV+t8IuNlJMGsWdumEtmJY=;
+        b=rqqNbfXzfcoNLmzM43GtJHZXT2rJoZ5b9mc40JOmSQiRLTQfbw0mJX66giOLqJp4kY
+         f5MOuf6mw8aOXsbN9QneQgWFTgwJz5tT44MGQH2fcQJOQi+alpgmOrWuST4p7gYdNdWi
+         DP/R28VbrmeB0d1zBHqnUqvk17iCttJQ/Q8ZnxjPm0ffbdKsjmbXZk4R53fuxGT5ZkcZ
+         4iBtyEZ18PD0sVeRBoPkb41dOB44XlshIAFszd4wp6NY+qJjpP2LREpdH1w81SLiDfMD
+         9jHdLCEpoj+MgxQGTnrD7Rp3eYMKd90i9JDunmB9/YpoRh7BnPm2QX+7NNyZ6iFa/GPX
+         yy1w==
+X-Gm-Message-State: AAQBX9dDdnU5hhE4aM/tz3NcoeAdOHQh/njvB7TGIfHDAJssMrnIwCvU
+        VHA6BGTLYIiAxBsfTRVwLohYXg==
+X-Google-Smtp-Source: AKy350b4HH2qgiktRKNUFlB289vs+6SvWgcS7MS+wyHRJKWKtgYCTAhRYwSjZd5dp+CNfj6s+HuwtQ==
+X-Received: by 2002:a17:90b:4d90:b0:240:95a7:be70 with SMTP id oj16-20020a17090b4d9000b0024095a7be70mr10383649pjb.19.1680780471973;
+        Thu, 06 Apr 2023 04:27:51 -0700 (PDT)
+Received: from dragon (80.251.214.228.16clouds.com. [80.251.214.228])
+        by smtp.gmail.com with ESMTPSA id p13-20020a17090a348d00b002310ed024adsm2973879pjb.12.2023.04.06.04.27.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Apr 2023 04:27:51 -0700 (PDT)
+Date:   Thu, 6 Apr 2023 19:27:39 +0800
+From:   Shawn Guo <shawn.guo@linaro.org>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        agross@kernel.org, marijn.suijten@somainline.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gcc-qcm2290: Mark RCGs shared where applicable
+Message-ID: <20230406112739.GA132120@dragon>
+References: <20230403174807.345185-1-konrad.dybcio@linaro.org>
+ <20230406040433.GA111746@dragon>
+ <bb3cdcfa-943e-074d-04f6-bfd8b2cd378d@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bb3cdcfa-943e-074d-04f6-bfd8b2cd378d@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 29, 2023 at 4:15=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wro=
-te:
->
-> Quoting Bartosz Golaszewski (2023-03-28 12:36:27)
-> > diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> > index 449bc8314d21..5e1919738aeb 100644
-> > --- a/drivers/clk/qcom/Kconfig
-> > +++ b/drivers/clk/qcom/Kconfig
-> > @@ -437,6 +437,14 @@ config SA_GCC_8775P
-> >           Say Y if you want to use peripheral devices such as UART, SPI=
-,
-> >           I2C, USB, UFS, SDCC, etc.
-> >
-> > +config SA_GPUCC_8775P
-> > +       tristate "SA8775P Graphics clock controller"
-> > +       select SA_GCC_8775P
->
-> Should select QCOM_GDSC as well.
->
+On Thu, Apr 06, 2023 at 01:18:44PM +0200, Konrad Dybcio wrote:
+> 
+> 
+> On 6.04.2023 06:04, Shawn Guo wrote:
+> > On Mon, Apr 03, 2023 at 07:48:07PM +0200, Konrad Dybcio wrote:
+> >> The vast majority of shared RCGs were not marked as such. Fix it.
+> > 
+> > It seems we completely missed this shared RCG thing, as vendor drivers
+> > do not use it.  Could you help me understand a couple of things?
+> > 
+> > - How does vendor driver handle shared RCGs?
+> See paths with enable_safe_config in e.g. 
+> 
+> https://git.codelinaro.org/clo/la/kernel/msm-5.4/-/blob/66f3180d36f49f9bf6c1a6712acbb0c75f6ff516/drivers/clk/qcom/clk-rcg2.c
 
-Why if it's already selected indirectly by SA_GCC_8775P? Other GPUCCs
-in here don't select it either.
+Thanks, Konrad!
 
-Bart
+For the patch:
 
-> > +       help
-> > +         Support for the graphics clock controller on SA8775P devices.
-> > +         Say Y if you want to support graphics controller devices and
-> > +         functionality such as 3D graphics.
-> > +
-> >  config SC_GCC_7180
-> >         tristate "SC7180 Global Clock Controller"
-> >         select QCOM_GDSC
-> > diff --git a/drivers/clk/qcom/gpucc-sa8775p.c b/drivers/clk/qcom/gpucc-=
-sa8775p.c
-> > new file mode 100644
-> > index 000000000000..46d73bd0199b
-> > --- /dev/null
-> > +++ b/drivers/clk/qcom/gpucc-sa8775p.c
-> > @@ -0,0 +1,633 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright (c) 2021-2022, Qualcomm Innovation Center, Inc. All right=
-s reserved.
-> > + * Copyright (c) 2023, Linaro Limited
-> > + */
-> > +
-> > +#include <linux/clk.h>
->
-> Is this include used? If not, remove it as this is a clk provider and
-> not a clk consumer.
+Acked-by:  Shawn Guo <shawn.guo@linaro.org>
