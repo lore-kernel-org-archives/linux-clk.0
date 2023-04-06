@@ -2,206 +2,173 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE1DC76196
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 10:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9DAC7618D
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 11:18:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237430AbjDFK7u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Apr 2023 06:59:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54152 "EHLO
+        id S237625AbjDFLSP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Apr 2023 07:18:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236617AbjDFK7t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 06:59:49 -0400
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 879CB7A9D
-        for <linux-clk@vger.kernel.org>; Thu,  6 Apr 2023 03:59:47 -0700 (PDT)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-54bfa5e698eso65671687b3.13
-        for <linux-clk@vger.kernel.org>; Thu, 06 Apr 2023 03:59:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680778786;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nD1WTAK58/vqm28JkhVU6GZOl4ufBXsw089tkC+xpWw=;
-        b=rstXWKv7UVHpBvrj+D64aEpmhqkUePscquDSERUiqCo/2kvTPcISLn9/T2z9bf71N5
-         y0F67VeMCuWYtTzRt5GraOjnIm0DMkNgtxlH3xUKfYpi+g9eqKFeWWifs/ffvnsshV8M
-         zfXSNfMUBkYgvZx5x8XwfQELCVomMs8nyj8GHtdNZPBpsBLi068gpr7siuqqTOgoYdIM
-         dRmcs9prAopv9R3upqAW3YKcWonOSqYQKnyvCcP3BQuCoUmQq7vqqSgiaXBXdZgbVh/9
-         8pnZ/+3XBphz+u92hF1zMFIvv1FTUubcEn4lCz1GlGMus7rbkeBCuajJ/JNYDZzTsGUV
-         edxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680778786;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nD1WTAK58/vqm28JkhVU6GZOl4ufBXsw089tkC+xpWw=;
-        b=HbCnHzVzagASnpZRaSvbIyCh+Idg5dLCJWRSEKbdj+0o5FftFSlzWzI4ax3P9bWKrz
-         8tZVzXmcYTsXJeVYJ6qgsayi6ZKOwvNRBNXHKtSwMo2/eGoDbwh7Fp/QKEuMIiL7sMcG
-         eVcmZJNV+eWkPwTpcNjsYFdR0duUbs7SOl63DM+FC26Pf4Y7wnozyzbGPS8bVxmIyhSY
-         q9zH5gWI0HY7mYV6iVyNi1MA4RD5u7UImXqrfsVsUTSXMgBs1dOQoF2gQUhFpSsdmPem
-         U9OxR7UmIVkPsk8v+UYHaECwKVSksZk0Gv0dVK5xDHrxvDBoK/66L8baoVmRWi1A1+Qe
-         aI5g==
-X-Gm-Message-State: AAQBX9dIS5BnSK4dgDODu4AC55QJPdfwcAHu2eG0/CwGsxCb1Tiu9AB0
-        jr+qwsAOLieAtsQXEWHiTBFMDXprmWtTiTsVnisrvg==
-X-Google-Smtp-Source: AKy350ZACGkl1itmcqbB+J8+S3w/c5Fd4Xstg5YxzxM0WeHeUtq63AtbTh7cY2Mf2KPnXQ8bjOeG3IRZrGTmICYhEDs=
-X-Received: by 2002:a81:c509:0:b0:549:143f:3d3 with SMTP id
- k9-20020a81c509000000b00549143f03d3mr5573053ywi.0.1680778786661; Thu, 06 Apr
- 2023 03:59:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230327193829.3756640-1-abel.vesa@linaro.org>
- <CAGETcx9f1p2esfyzyfU04EAB1FXh=d9-U81DaGyZNjL_Vti3oQ@mail.gmail.com>
- <ZCVyBuKMvDV0gQPW@linaro.org> <CAGETcx-mxzzZ_FU6Agju9gMhFOEDhY6Rj78BnvAVJjNtZhif=w@mail.gmail.com>
- <ZCZolyDL/awnt73K@linaro.org> <CAPDyKFprQwBfya-TpaVJfn82LgM9N_iE8npO9r-HzAyJXpb-hQ@mail.gmail.com>
- <ZC6QLZOldOLNaCSg@linaro.org>
-In-Reply-To: <ZC6QLZOldOLNaCSg@linaro.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 6 Apr 2023 12:59:10 +0200
-Message-ID: <CAPDyKFo+_qxjMaQyT9=zDOuTYjF35G2q=DfS+AhHr+PdJZJz6g@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] Allow genpd providers to power off domains on sync state
-To:     Abel Vesa <abel.vesa@linaro.org>
-Cc:     Saravana Kannan <saravanak@google.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Doug Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Android Kernel Team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+        with ESMTP id S237624AbjDFLSL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 07:18:11 -0400
+X-Greylist: delayed 1800 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 06 Apr 2023 04:18:09 PDT
+Received: from mx07-0063e101.pphosted.com (mx07-0063e101.pphosted.com [205.220.184.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39824EC;
+        Thu,  6 Apr 2023 04:18:09 -0700 (PDT)
+Received: from pps.filterd (m0247495.ppops.net [127.0.0.1])
+        by mx08-0063e101.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 336A0G4N030839;
+        Thu, 6 Apr 2023 11:22:25 +0100
+Received: from ind01-max-obe.outbound.protection.outlook.com (mail-maxind01lp2171.outbound.protection.outlook.com [104.47.74.171])
+        by mx08-0063e101.pphosted.com (PPS) with ESMTPS id 3pp9v0k1xe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 06 Apr 2023 11:22:25 +0100
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=O550XE+a7YawjZJMLo/BzJpUQ96WWhH9BakoWeY6t2cpzvYL4jOvN2eJqfeksJ5BQJqT2LTyL6dEEAS7z70MlfjQtz1lyL9wfAyv7HyexevINZaMRq7IsvYayf0fXytZIuFOq4KXL4pRiDfBeBDURhZBhyjWtkio3ZkE84rzDOHlHcIqH3/zcFYmqTu7CF6Pk8jvVNkqVEQwbcRMsFwwkWrBtHtvVxGeds8eWHkSsdKQMWsW20P55zS0u8jq8rswYEMQzEcxbf4zgf8BngXHIyP4Gdo4vvFUqg+uNmR0hTFpVi/ZbnTi3AMdEMJVJgZ+N5/sPxWLFJYuuKIOFexC0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FPcoOC+n2CUwQAFphWgINmOek+38iaG0yEJzoTVLLmU=;
+ b=WV36bbZrOgllfR/E/1+LcfytIxJtGrfKAGVBFHPbiYdDNG9Ag/54/dlz3gbOuaVnO0ZKHBwwsJpmS2BV7nrDQkjp/PhRvLbXxK70uVeObnjgPW9WrF4PqX5AONTRNdqsjQNOO9Y99INXInAn8VUFGAXsUAwcJCZe/8miGw+VAN0ImH5aHxCKllDcgk6YFA59wmkOTmFiMhqk+ABMx/Pk/F0TayjFnH3G5wbRMPOYPRRgYYvOfVAAoih/jJIhazSXpmAgPwGNxZa8/HQV4MPA8dsv1vY/3vqYoHKe2U42HcwhQYhMVBh4rVXTtAvtmtjiv6J1VfhkWKgrLeCAVMgvsQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=blaize.com; dmarc=pass action=none header.from=blaize.com;
+ dkim=pass header.d=blaize.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=BLAIZE.COM;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FPcoOC+n2CUwQAFphWgINmOek+38iaG0yEJzoTVLLmU=;
+ b=TwU7qBRdb7UeZr0Q6tiUCI7jCLBbDHWqGw/EGyXagocgxnVc9glQKUEjNcj8xXNPIvh7o3h3htNo4GQu6hIAFJl8UO/Xosp0w3UhUv9BX6iU5LNvqDKRnpkGg/yoyewQa3p5W8SSsJXunMEHU/cPA0/8pLTFNHqdKRrJHbxHiIs=
+Received: from MA0PR01MB6906.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:37::10)
+ by PN3PR01MB7647.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:ca::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.35; Thu, 6 Apr
+ 2023 10:22:20 +0000
+Received: from MA0PR01MB6906.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::527d:d71c:fe10:7e23]) by MA0PR01MB6906.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::527d:d71c:fe10:7e23%8]) with mapi id 15.20.6277.031; Thu, 6 Apr 2023
+ 10:22:20 +0000
+From:   Niko Pasaloukos <nikolaos.pasaloukos@blaize.com>
+To:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "soc@kernel.org" <soc@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        Niko Pasaloukos <nikolaos.pasaloukos@blaize.com>
+Subject: [PATCH 0/5] Add support for Blaize BLZP1600 SoC
+Thread-Topic: [PATCH 0/5] Add support for Blaize BLZP1600 SoC
+Thread-Index: AQHZaHGrXEnng/cLckC9Sl+p+VJ2OA==
+Date:   Thu, 6 Apr 2023 10:22:19 +0000
+Message-ID: <20230406102149.729726-1-nikolaos.pasaloukos@blaize.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MA0PR01MB6906:EE_|PN3PR01MB7647:EE_
+x-ms-office365-filtering-correlation-id: 4636e976-85e2-4f1b-14d8-08db3688cdd1
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: wSgGjiSY93ijJ+R5g0Ml+SRKzRy+791FDVobpzb4rl8qwsGsCwOJofOllxyajAIDgBjzkxAtfrStv7sdaba4UlwvEAuzj/hxg/9uyI6LjT57eSm1RJg9/tocmRv46G0Uo4ZzogxRMtSgI/7qzChQxH9Md53+jNILwpuMR6Ity1lzigou5vxrv/PI2LUp6OMhLON0W1/zFjPGtjSJJqlWC/XYqOdbSQL/90IR43l8v+QAZxG6xkMnPTAG8Cs9TjgpmroGfD6wCc2A4eN3L9uMkhz4B3CUCLivPRPGQwiR8t1sdPx9As3SeX8IlUT6O4W7oUlRrZ/4Z0SnTT2B15TtlfZQgbZvXnwMapxVVMi7PmQHuq25PdYDe+9h3tSC8OkwadUZ7Plg+qi/IwbH66yja8mSRxoQ5MR7va6jpZD1gGEmoVb52V3o0hxY2raCHGfIL5mRVb4cBKq5kE4g2xY9Q40Hp9VjADTreTCKB60C0R9hvO/EXcAua8DzhOtZpr3PjSVJVrQ/Ua859WVXbLTRgmucDVokTk5Cdq/VTa68ACZudxkmePlNSig4+BFebJfJhwT0VHaxY/YKjX9JxHwn7JPS1x63QNpPgBB0c1dzPtqYZffiITthlQWnkol1ZpxH
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MA0PR01MB6906.INDPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(136003)(376002)(396003)(346002)(39840400004)(366004)(451199021)(6486002)(4326008)(91956017)(110136005)(54906003)(66446008)(64756008)(76116006)(66946007)(66556008)(316002)(8676002)(36756003)(66476007)(122000001)(6506007)(83380400001)(6512007)(107886003)(2616005)(186003)(26005)(1076003)(38100700002)(5660300002)(41300700001)(71200400001)(478600001)(8936002)(38070700005)(86362001)(2906002)(7416002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?DBgzFdedntDDIY+vt6SvXqmdhJfGWwhGKLTIgJuY7DtRQIMPTKTbWvaxUC?=
+ =?iso-8859-1?Q?yLe8LB30wrzuarrXkuqH+PFG2cAd2yLB6mOPUxkQd5uUZuBFzVbp/cJuft?=
+ =?iso-8859-1?Q?gg/OB+UKAD6Fhfvb420Dj4Ju1dT1/ayy+Vhx9pM56ZEJpWwDyHWjmR72qm?=
+ =?iso-8859-1?Q?jVwB6xHTwBlo8b0sYXBSJVfdwC1DwCfU1pKreLzO7o0pb5WIM0E9nqJ+vE?=
+ =?iso-8859-1?Q?ATa1CI2urOOfqwDi6Pc/opIfkezBU6aeH4I1JPuSh86iFIogPo3WQwKKS3?=
+ =?iso-8859-1?Q?qG6p9OuxIegyHFiWIVBhqdjB6WR8svOXVEtOHbiRO+8k/mVE1lRcJM8DFY?=
+ =?iso-8859-1?Q?1nBGYvdW//xQEytD/UBBMM2pkXnvU/aLFXC0gp3AhT4C4eZQorFzlpwsoN?=
+ =?iso-8859-1?Q?SVarv5b13WeLiNG3K3uNj4/kmjfdBhFcOCghkNZfbOSwZSw6afpxW8v3ky?=
+ =?iso-8859-1?Q?gazyZsye8lVX+afoRacqkT7SCmn3qmKyvi7vo0tKMrlmIG5n91AZukI5xs?=
+ =?iso-8859-1?Q?UpsvON9wKnxRvI4+/daHpwuG7V+gTyompNcE/Ku9LBhlSBliDIUfSt7qkO?=
+ =?iso-8859-1?Q?eRYrBWt0VnTrCXC6AzG2DYeT4CEBjqKg3afa0LdS6rTEUuree/jsKtRJk9?=
+ =?iso-8859-1?Q?eSWOAxZgxrajDq2YFKs+C+1N4CZl4GwHRTvmg/zaW9Sll02FtK3dkP3+1J?=
+ =?iso-8859-1?Q?uiD1GzYm1rjoSD/jNDM2xAk0Iqb3N0hakna/xzfiKSeNLUuH8E264oMC2a?=
+ =?iso-8859-1?Q?KFCmPuBZj/Jf+b9cnZ+o9/lkHhC3emcNgNa3aTRw2PKC4tEpDooMyhEkth?=
+ =?iso-8859-1?Q?ThhUhN2TpKCQIze+HCLbwfR5VpB+hjxYevnDYVEDFtV6lJ339q/mvKuUqp?=
+ =?iso-8859-1?Q?8J8TCJg8MN+ftZvidbv2fO1XRHH0r/YEy9aGhv5tEH3Nc447kLTddKozgQ?=
+ =?iso-8859-1?Q?dYZGzex5PcakPMNjurOg2MHBa2l6jWqmGzKxJEruAoj2C9yGXdIMVBmBMr?=
+ =?iso-8859-1?Q?xRP8GPEJX8NGjCkn9yGNfuhE8BG7GVbOGHfkOAozGmFTXkqCMtPPYFEeL2?=
+ =?iso-8859-1?Q?NcsVPLAEOx9NathZJVjokqtA0FtOt2a6vQhOPkTpqi0u+sW6VKykC8xc+7?=
+ =?iso-8859-1?Q?TtSzm2YpzM+h3raNQty5/5QOoxZR1Z/LSMcTw+M23XnNqjfRgzQlHaDsVc?=
+ =?iso-8859-1?Q?C9YgMU4CD+Y6nZjCH0lOg3zXxvQqQtKKiCsjD9VhxcWp+3rGFk+kLsVdrp?=
+ =?iso-8859-1?Q?rgEQhO2+O1JJ/+iEayzV79j4/VAkN4zvR2Ef5+GQgcDMv/hKABtF+Oq9Us?=
+ =?iso-8859-1?Q?+ERU910E3b6h5Vad6lmVdIw1tY1ZakWZoFd2XlWQzpoctYQ6WnguUknG4q?=
+ =?iso-8859-1?Q?xgrY/GtIFwpN6ziRX9jt13YsoiGNbUdIi85BS9VBWASTrhILrnZeNTSxpo?=
+ =?iso-8859-1?Q?wh4aC0X2xEg45k5prVmQBEo8n/8usdQKpM04t88WgvwlOGpnMSXfCXjHx+?=
+ =?iso-8859-1?Q?SpzuHkI4kKaBr6AQuVVGGtWnMsLDRLFZ5neDaqehzvYvbz1VVFw1Cvgd4e?=
+ =?iso-8859-1?Q?nfq7qUbRtCEbDiGFQrsIJzC/mEB8+DXMk+mkUsq/ddNgOMDrpDJFcROXKN?=
+ =?iso-8859-1?Q?zCAf/vi1JMksSCaJb1AMD/qkDFAF6bK9AlOiuHRRMf3FxQH2zK+voN/A?=
+ =?iso-8859-1?Q?=3D=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: blaize.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MA0PR01MB6906.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4636e976-85e2-4f1b-14d8-08db3688cdd1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Apr 2023 10:22:19.9072
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 9d1c3c89-8615-4064-88a7-bb1a8537c779
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: QqSbYZT5nbtO5RNEnXdUjWMkzOrEhnNpzU5jojZxS9k4voZyfF9E9KTcV2MrbDSt4zZXs2Aj/RfGGjv2pLhaY8kD19Hvc47F/UeosV6Mat0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3PR01MB7647
+X-Proofpoint-ORIG-GUID: -FJt74ccbIDvoiWpTmb-FpWXQRqdHelZ
+X-Proofpoint-GUID: -FJt74ccbIDvoiWpTmb-FpWXQRqdHelZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-06_04,2023-04-06_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ adultscore=0 clxscore=1011 bulkscore=0 spamscore=0 phishscore=0
+ mlxlogscore=498 priorityscore=1501 impostorscore=0 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304060090
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 6 Apr 2023 at 11:26, Abel Vesa <abel.vesa@linaro.org> wrote:
->
-> On 23-04-05 16:11:18, Ulf Hansson wrote:
-> > Abel, Saravana,
-> >
-> > On Fri, 31 Mar 2023 at 06:59, Abel Vesa <abel.vesa@linaro.org> wrote:
-> > >
-> > > On 23-03-30 12:50:44, Saravana Kannan wrote:
-> > > > On Thu, Mar 30, 2023 at 4:27=E2=80=AFAM Abel Vesa <abel.vesa@linaro=
-.org> wrote:
-> > > > >
-> > > > > On 23-03-27 17:17:28, Saravana Kannan wrote:
-> > > > > > On Mon, Mar 27, 2023 at 12:38=E2=80=AFPM Abel Vesa <abel.vesa@l=
-inaro.org> wrote:
-> > > > > > >
-> > > > > > > There have been already a couple of tries to make the genpd "=
-disable
-> > > > > > > unused" late initcall skip the powering off of domains that m=
-ight be
-> > > > > > > needed until later on (i.e. until some consumer probes). The =
-conclusion
-> > > > > > > was that the provider could return -EBUSY from the power_off =
-callback
-> > > > > > > until the provider's sync state has been reached. This patch =
-series tries
-> > > > > > > to provide a proof-of-concept that is working on Qualcomm pla=
-tforms.
-> > > > > >
-> > > > > > I'm giving my thoughts in the cover letter instead of spreading=
- it
-> > > > > > around all the patches so that there's context between the comm=
-ents.
-> > > > > >
-> > > > > > 1) Why can't all the logic in this patch series be implemented =
-at the
-> > > > > > framework level? And then allow the drivers to opt into this be=
-havior
-> > > > > > by setting the sync_state() callback.
-> > > > > >
-> > > > > > That way, you can land it only for QC drivers by setting up
-> > > > > > sync_state() callback only for QC drivers, but actually have th=
-e same
-> > > > > > code function correctly for non-QC drivers too. And then once w=
-e have
-> > > > > > this functionality working properly for QC drivers for one kern=
-el
-> > > > > > version (or two), we'll just have the framework set the device'=
-s
-> > > > > > driver's sync_state() if it doesn't have one already.
-> > > > >
-> > > > > I think Ulf has already NACK'ed that approach here:
-> > > > > [1] https://lore.kernel.org/lkml/CAPDyKFon35wcQ+5kx3QZb-awN_S_q8y=
-1Sir-G+GoxkCvpN=3DiiA@mail.gmail.com/
-> > > >
-> > > > I would have NACK'ed that too because that's an incomplete fix. As =
-I
-> > > > said further below, the fix needs to be at the aggregation level wh=
-ere
-> > > > you aggregate all the current consumer requests. In there, you need=
- to
-> > > > add in the "state at boot" input that gets cleared out after a
-> > > > sync_state() call is received for that power domain.
-> > > >
-> > >
-> > > So, just to make sure I understand your point. You would rather have =
-the
-> > > genpd_power_off check if 'state at boot' is 'on' and return busy and
-> > > then clear then, via a generic genpd sync state you would mark 'state=
- at
-> > > boot' as 'off' and queue up a power off request for each PD from ther=
-e.
-> > > And as for 'state at boot' it would check the enable bit through
-> > > provider.
-> > >
-> > > Am I right so far?
-> >
-> > I am not sure I completely follow what you are suggesting here.
->
-> Please have a look at this:
-> https://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/commit=
-/?h=3Dqcom/genpd/ignore_unused_until_sync_state&id=3D4f9e6140dfe77884012383=
-f8ba2140cadb62ca4a
->
-> Keep in mind that is WIP for now. Once I have something, I'll post it on
-> mailing list. Right now, there is a missing piece mentioned in that
-> commit message.
+Adds basic support for the Blaize BLZP1600 SoC.
+This SoC contains two cores of Cortex-A53 CPUs, one Blaize
+Graph Streaming Processor (GSP) and several other IPs.
 
-I had a quick look and it seems rather promising, but I will have a
-closer look when you post it.
+Nikolaos Pasaloukos (5):
+  dt-bindings: Add Blaize vendor prefix
+  dt-bindings: arm: blaize: Add Blaize BLZP1600 SoC
+  dt-bindings: reset: Add binding constants for BLZP1600
+  dt-bindings: clock: Add binding constants for BLZP1600
+  arm64: Add initial support for Blaize BLZP1600 CB2
 
->
-> >
-> > Although, let me point out that there is no requirement from the genpd
-> > API point of view, that the provider needs to be a driver. This means
-> > that the sync_state callback may not even be applicable for all genpd
-> > providers.
->
-> Yes, I'm considering that case too.
+ .../devicetree/bindings/arm/blaize.yaml       |  28 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/arm64/Kconfig.platforms                  |   5 +
+ arch/arm64/boot/dts/Makefile                  |   1 +
+ arch/arm64/boot/dts/blaize/Makefile           |   2 +
+ .../dts/blaize/blaize-blzp1600-som-cb.dtsi    | 217 +++++
+ .../dts/blaize/blaize-blzp1600-som-cb2.dts    | 103 ++
+ .../boot/dts/blaize/blaize-blzp1600-som.dtsi  | 104 ++
+ .../boot/dts/blaize/blaize-blzp1600.dtsi      | 894 ++++++++++++++++++
+ arch/arm64/configs/defconfig                  |   1 +
+ .../dt-bindings/clock/blaize,blzp1600-clk.h   |  67 ++
+ .../dt-bindings/reset/blaize,blzp1600-reset.h |  76 ++
+ 12 files changed, 1500 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/blaize.yaml
+ create mode 100644 arch/arm64/boot/dts/blaize/Makefile
+ create mode 100644 arch/arm64/boot/dts/blaize/blaize-blzp1600-som-cb.dtsi
+ create mode 100644 arch/arm64/boot/dts/blaize/blaize-blzp1600-som-cb2.dts
+ create mode 100644 arch/arm64/boot/dts/blaize/blaize-blzp1600-som.dtsi
+ create mode 100644 arch/arm64/boot/dts/blaize/blaize-blzp1600.dtsi
+ create mode 100644 include/dt-bindings/clock/blaize,blzp1600-clk.h
+ create mode 100644 include/dt-bindings/reset/blaize,blzp1600-reset.h
 
-Good.
+--=20
+2.25.1
 
->
-> >
-> > In other words, it looks to me that we may need some new genpd helper
-> > functions, no matter what. More importantly, it looks like we need an
-> > opt-in behaviour, unless we can figure out a common way for genpd to
-> > understand whether the sync_state thing is going to be applicable or
-> > not. Maybe Saravana has some ideas around this?
-> >
-> > Note that, I don't object to extending genpd to be more clever and to
-> > share common code, of course. We could, for example, make
-> > genpd_power_off() to bail out earlier, rather than calling the
-> > ->power_off() callback and waiting for it to return -EBUSY. Both of
-> > you have pointed this out to me, in some of the earlier
-> > replies/discussions too.
->
-> The above link basically does this. I hope this is what Saravana has in
-> mind as well.
-
-Okay, let's see what Saravana thinks.
-
-Maybe it's easier to post an RFC, based upon the above and continue
-the discussion around that?
-
-Kind regards
-Uffe
