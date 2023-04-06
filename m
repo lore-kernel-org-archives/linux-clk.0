@@ -2,81 +2,153 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E9C9C76196
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 14:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF2AFC7618D
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 14:45:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238894AbjDFOhx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Apr 2023 10:37:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34010 "EHLO
+        id S238785AbjDFOpL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Apr 2023 10:45:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239000AbjDFOhl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 10:37:41 -0400
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 875B8BDD8;
-        Thu,  6 Apr 2023 07:35:28 -0700 (PDT)
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-183f4efa98aso1472442fac.2;
-        Thu, 06 Apr 2023 07:35:28 -0700 (PDT)
+        with ESMTP id S239482AbjDFOo4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 10:44:56 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1732FB75B
+        for <linux-clk@vger.kernel.org>; Thu,  6 Apr 2023 07:44:04 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id br6so51098257lfb.11
+        for <linux-clk@vger.kernel.org>; Thu, 06 Apr 2023 07:44:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680792240;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7GoNU+GadKU3QWy/XxC84RJUEWk73D4f2JeVQMiCKdk=;
+        b=BbUoiW8L6w/9wIsJcUDeO4bohDNl4/APFqKc3mJbXYdtAtYDYg8Oyqk2KJ9ItHYdyU
+         OaW5HWGOSeUoVvl11cBS3QLK7a08IckT4NRs5K2wsznr8TqP477NOPZ5u7Zsj0/V0wrW
+         BaJqQih9q03ya5rTy21LwSQkG7dPHTfqp8brhdH4EPgrWHe+S4aTvx7qDudAaZPX/vrG
+         HHdu1XB7oRddVvdrIei3NCTsXobMh7K5WOPN+azBA6YVV/3aad8lw/jHASitOD6hio1v
+         rs7wfq98vEaZTzzq2tGJgEChBNsVREU9Xos0kvNjVkT5XYKFZKcVxC4YXtquk4UFvJEz
+         SNlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680791716;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aXDlqaghZBjXgA0NY19GPZNJThwtj3XENjKUz55y22o=;
-        b=2vBC9p03X6mj/2hMtXggWy4nbCnffg3+ntCGqE55cvBqhafmaRW6CkWsmFvqgvIonO
-         EzRz2IXEILlEB/rZmG0k/wZRbxbRwaCzupivZuxamb2u/GcSz0xEp6RTZfMwwCgEDBs6
-         7eOrXC9G0BcbF7zpBfNT7EW1DLRzH4iXXcB6N66PMEXU9jiyeSPVbZlCn6jteF5yDxwc
-         7kmTFm1q3HIORB5ARmb3CECJ95hlaFo+KX2+R1RvbBVHDhTb7U0ibtCw/gshwit9afFe
-         lF/uuRLr/jJtfhlHrMEJjPH3mPkyJ8uRhGRkOVwQ+RDaTJvGSTDlO6xMJDC6d+OYm8oT
-         YRJQ==
-X-Gm-Message-State: AAQBX9eCc5met2OjN0qG3MeEvMwOMSNeEkcadXUSqidSZdsPcnY6PuoR
-        kdgoxIWM4fJkcFOYZlUjew==
-X-Google-Smtp-Source: AKy350ZCYG3gr3sW4VveqNyY6bipIYXv8tUa2i2axB2wuzwFS916oDDGB8n9GEfOAKcJhYwRJufQ2g==
-X-Received: by 2002:a05:6870:d10b:b0:177:b62d:cc20 with SMTP id e11-20020a056870d10b00b00177b62dcc20mr5204205oac.25.1680791715952;
-        Thu, 06 Apr 2023 07:35:15 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id h17-20020a9d7991000000b0069dd3d98ec6sm750727otm.44.2023.04.06.07.35.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Apr 2023 07:35:15 -0700 (PDT)
-Received: (nullmailer pid 3056260 invoked by uid 1000);
-        Thu, 06 Apr 2023 14:35:14 -0000
-Date:   Thu, 6 Apr 2023 09:35:14 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        patches@lists.linux.dev,
-        Brendan Higgins <brendan.higgins@linux.dev>,
-        David Gow <davidgow@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        kunit-dev@googlegroups.com, Maxime Ripard <maxime@cerno.tech>
-Subject: Re: [PATCH v3 02/11] of: Add test managed wrappers for
- of_overlay_apply()/of_node_put()
-Message-ID: <20230406143514.GA3036886-robh@kernel.org>
-References: <20230327222159.3509818-1-sboyd@kernel.org>
- <20230327222159.3509818-3-sboyd@kernel.org>
+        d=1e100.net; s=20210112; t=1680792240;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7GoNU+GadKU3QWy/XxC84RJUEWk73D4f2JeVQMiCKdk=;
+        b=ch7QIv7jsZwFQIQU/qJVLroSyByOOqswmBahL0ktmivJ9bx3fZJE+1/GapQnA6/I5T
+         elNQulDpwReGL4AHxMSCLIM4xsIgAw3Otai82XMCJsT0Bw2bwSxlRkox4xFjgUaShcet
+         0kLLi/J36BRu4HQdzpU0a5HDRVbaIgMPdWBz92vlEg75QRx5H+E3n873Rs4wHXREjM+F
+         RSSIq9vj7NYuXJDJqhbjLPeOH9DAhqcKCqFz+tD9cFo+RLa9+ItnERuyhxjuMm8AIDxV
+         bvm1zSpziHmP3UtlcKsQcUSqdIckzxPJKbvo2ViqUaEUfRDUdwfBJomqUc11EI4OekkM
+         cpjA==
+X-Gm-Message-State: AAQBX9de5c073Uyhmpoop9oM8cSwQcY/zz4L05kATfEDgHsRVlCPryrw
+        w24fzLvfiGfmIaKk2qg60T3KKEnJdcGST+qr0R0=
+X-Google-Smtp-Source: AKy350aqIKjEC6AQIfwUvpbuilrqhaKUX62eLL1udBptHHLvM+Xc0uqllkudj+V48kd7U8ZGJtMtaw==
+X-Received: by 2002:ac2:5e91:0:b0:4ea:e688:a048 with SMTP id b17-20020ac25e91000000b004eae688a048mr2761195lfq.69.1680792240131;
+        Thu, 06 Apr 2023 07:44:00 -0700 (PDT)
+Received: from [192.168.1.101] (abxh37.neoplus.adsl.tpnet.pl. [83.9.1.37])
+        by smtp.gmail.com with ESMTPSA id y10-20020ac2446a000000b004b4b600c093sm289472lfl.92.2023.04.06.07.43.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Apr 2023 07:43:59 -0700 (PDT)
+Message-ID: <fed27bde-f7c7-fae2-de6f-a997587b93b1@linaro.org>
+Date:   Thu, 6 Apr 2023 16:43:55 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230327222159.3509818-3-sboyd@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH RFT v2 02/14] clk: qcom: smd-rpm: Add .is_enabled hook
+Content-Language: en-US
+To:     Bjorn Andersson <andersson@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        devicetree@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>
+References: <20230303-topic-rpmcc_sleep-v2-0-ae80a325fe94@linaro.org>
+ <20230303-topic-rpmcc_sleep-v2-2-ae80a325fe94@linaro.org>
+ <20230322030218.7xjrsgt3abqft2y7@ripper>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230322030218.7xjrsgt3abqft2y7@ripper>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Mar 27, 2023 at 03:21:50PM -0700, Stephen Boyd wrote:
-> Add test managed wrappers for of_overlay_apply() that automatically
-> removes the overlay when the test is finished. This API is intended for
-> use by KUnit tests that test code which relies on 'struct device_node's
-> and of_*() APIs.
+
+
+On 22.03.2023 04:02, Bjorn Andersson wrote:
+> On Wed, Mar 08, 2023 at 10:35:18PM +0100, Konrad Dybcio wrote:
+>> From: Shawn Guo <shawn.guo@linaro.org>
+>>
+>> The RPM clock enabling state can be found with 'enabled' in struct
+>> clk_smd_rpm.  Add .is_enabled hook so that clk_summary in debugfs can
+>> show a correct enabling state for RPM clocks.
+>>
 > 
-> KUnit tests will call of_overlay_apply_kunit() to load an overlay that's
-> been built into the kernel image. When the test is complete, the overlay
-> will be removed.
+> I don't think .is_enabled should be implemented for clocks where the
+> actual state can't be queried.
+> 
+> E.g. should a clock which is is_enabled = false be unprepared during
+> disable_unused? It's already disabled...
+That's true, it sounds silly.
 
-What if one wants to test the removal part itself?
+However, I feel like it's the least painful option, as trying to disable
+a clock that's already actually disabled (read, in hw+RPM, not Linux)
+will not do any harm.
 
-Rob
+Not adding this (and by extension not making use of any sort of unused
+clk cleanup) will prevent the system from hitting low power modes and
+SMD RPM is strictly speaking, too dumb to figure out that these clocks
+aren't really consumed.
+
+Konrad
+> 
+> Regards,
+> Bjorn
+> 
+>> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+>> [Konrad: rebase]
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> ---
+>>  drivers/clk/qcom/clk-smd-rpm.c | 9 +++++++++
+>>  1 file changed, 9 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+>> index 198886c1b6c8..ecacfbc4a16c 100644
+>> --- a/drivers/clk/qcom/clk-smd-rpm.c
+>> +++ b/drivers/clk/qcom/clk-smd-rpm.c
+>> @@ -424,18 +424,27 @@ static int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm)
+>>  	return 0;
+>>  }
+>>  
+>> +static int clk_smd_rpm_is_enabled(struct clk_hw *hw)
+>> +{
+>> +	struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
+>> +
+>> +	return r->enabled;
+>> +}
+>> +
+>>  static const struct clk_ops clk_smd_rpm_ops = {
+>>  	.prepare	= clk_smd_rpm_prepare,
+>>  	.unprepare	= clk_smd_rpm_unprepare,
+>>  	.set_rate	= clk_smd_rpm_set_rate,
+>>  	.round_rate	= clk_smd_rpm_round_rate,
+>>  	.recalc_rate	= clk_smd_rpm_recalc_rate,
+>> +	.is_enabled	= clk_smd_rpm_is_enabled,
+>>  };
+>>  
+>>  static const struct clk_ops clk_smd_rpm_branch_ops = {
+>>  	.prepare	= clk_smd_rpm_prepare,
+>>  	.unprepare	= clk_smd_rpm_unprepare,
+>>  	.recalc_rate	= clk_smd_rpm_recalc_rate,
+>> +	.is_enabled	= clk_smd_rpm_is_enabled,
+>>  };
+>>  
+>>  DEFINE_CLK_SMD_RPM_BRANCH_A(bi_tcxo, QCOM_SMD_RPM_MISC_CLK, 0, 19200000);
+>>
+>> -- 
+>> 2.39.2
+>>
