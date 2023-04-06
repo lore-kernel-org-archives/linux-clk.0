@@ -2,107 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B27AEC77B75
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 06:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2368C7618D
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 07:12:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235226AbjDFGPB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Apr 2023 02:15:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53186 "EHLO
+        id S235135AbjDFHMd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Apr 2023 03:12:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235252AbjDFGOs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 02:14:48 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BE59A262;
-        Wed,  5 Apr 2023 23:14:43 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3365mVqH010210;
-        Thu, 6 Apr 2023 06:14:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=6rwuZF8mzX7l8hx7N+XPul1iEDF3nWQNfgg0pshbXPI=;
- b=LKhaNa3L2UxjzoroalaWE0EsvQmwrAqrTdtEyqAX3lfo+f21/3iAxNfP0pL4StPOV+GK
- FmEITVGeuNbe/lRqrZLSQXqRat2gpHyRDrIMSE+MikQrda599AchwlxYEMGtgIJJPm/f
- GtmK2m5ut2FWMNW6ctoUW1FbuIvHBtMEkwdeOyPna4cjnzf4FkLlHw+nV+t/QwNVznyR
- 6ag1er/VjH05hgdbhrAFg/IUy/rDNW+FLuxzOllIlFUiwhxu8LqAhahJ2P66Lg2q9Zoy
- vU0d4NMciYv92HpvmkzQKEGNJQ7MsimRaV+Le6G8vqOCpw4TLRDwG/BRHqch78afGD0L Ag== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3psgehgy04-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 06 Apr 2023 06:14:20 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3366E4uZ019178
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 6 Apr 2023 06:14:04 GMT
-Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 5 Apr 2023 23:13:55 -0700
-From:   Devi Priya <quic_devipriy@quicinc.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <dmitry.baryshkov@linaro.org>, <arnd@arndb.de>,
-        <geert+renesas@glider.be>, <nfraprado@collabora.com>,
-        <broonie@kernel.org>, <rafal@milecki.pl>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
-        <quic_anusha@quicinc.com>, <quic_ipkumar@quicinc.com>
-Subject: [PATCH V3 3/5] dt-bindings: mailbox: qcom: add compatible for IPQ9574 SoC
-Date:   Thu, 6 Apr 2023 11:43:12 +0530
-Message-ID: <20230406061314.10916-4-quic_devipriy@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230406061314.10916-1-quic_devipriy@quicinc.com>
-References: <20230406061314.10916-1-quic_devipriy@quicinc.com>
+        with ESMTP id S235569AbjDFHMc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 03:12:32 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F336310D1;
+        Thu,  6 Apr 2023 00:12:28 -0700 (PDT)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id B452724E32C;
+        Thu,  6 Apr 2023 15:03:16 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 6 Apr
+ 2023 15:03:16 +0800
+Received: from [192.168.125.87] (183.27.97.179) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 6 Apr
+ 2023 15:03:15 +0800
+Message-ID: <ce311dcf-67a5-bf15-d0da-88967baf4ee9@starfivetech.com>
+Date:   Thu, 6 Apr 2023 15:03:14 +0800
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: JO7xQljQd_AhaSarzz2oQ-SXtjHhQnmW
-X-Proofpoint-ORIG-GUID: JO7xQljQd_AhaSarzz2oQ-SXtjHhQnmW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-06_02,2023-04-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- clxscore=1015 lowpriorityscore=0 bulkscore=0 priorityscore=1501
- impostorscore=0 spamscore=0 mlxlogscore=999 phishscore=0 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2304060054
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v7 00/22] Basic clock, reset & device tree support for
+ StarFive JH7110 RISC-V SoC
+To:     Conor Dooley <conor@kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>
+CC:     Conor Dooley <conor.dooley@microchip.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Ben Dooks <ben.dooks@sifive.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Marc Zyngier" <maz@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        <linux-kernel@vger.kernel.org>
+References: <20230401111934.130844-1-hal.feng@starfivetech.com>
+ <20230405-wharf-rejoin-5222e5958611@spud>
+Content-Language: en-US
+From:   Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <20230405-wharf-rejoin-5222e5958611@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [183.27.97.179]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the mailbox compatible for IPQ9574 SoC.
+On Wed,  5 Apr 2023 22:30:45 +0100, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
+> 
+> On Sat, 01 Apr 2023 19:19:12 +0800, Hal Feng wrote:
+>> This patch series adds basic clock, reset & DT support for StarFive
+>> JH7110 SoC.
+>> 
+>> @Stephen and @Conor, I have made this series start with the shared
+>> dt-bindings, so it will be easier to merge.
+>> 
+>> @Conor, patch 1, 2, 16~21 were already in your branch. Patch 22 is the
+>> same with the patch [1] I submitted before, which you had accepted but
+>> not merge it into your branch.
+>> 
+>> [...]
+> 
+> Applied to riscv-dt-for-next, thanks!
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
----
- Changes in V3:
-	- picked up the Acked-by tag
+Thank you so much.
 
- .../devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml       | 1 +
- 1 file changed, 1 insertion(+)
+> 
+> [01/22] dt-bindings: clock: Add StarFive JH7110 system clock and reset generator
+>         https://git.kernel.org/conor/c/7fce1e39f019
+> [02/22] dt-bindings: clock: Add StarFive JH7110 always-on clock and reset generator
+>         https://git.kernel.org/conor/c/3de0c9103258
+> 
+> These two are shared with clk.
+> 
+> [16/22] dt-bindings: timer: Add StarFive JH7110 clint
+>         https://git.kernel.org/conor/c/1ff5482ab9a5
+> [17/22] dt-bindings: interrupt-controller: Add StarFive JH7110 plic
+>         https://git.kernel.org/conor/c/8406d19ca049
+> 
+> I took these bindings too, as Palmer has done that in the past for new
+> SoC support.
+> 
+> [18/22] dt-bindings: riscv: Add SiFive S7 compatible
+>         https://git.kernel.org/conor/c/8868caa2a073
+> [19/22] riscv: dts: starfive: Add initial StarFive JH7110 device tree
+>         https://git.kernel.org/conor/c/60bf0a39842e
+> [20/22] riscv: dts: starfive: Add StarFive JH7110 pin function definitions
+>         https://git.kernel.org/conor/c/e22f09e598d1
+> [21/22] riscv: dts: starfive: Add StarFive JH7110 VisionFive 2 board device tree
+>         https://git.kernel.org/conor/c/54baba33392d
+> [22/22] riscv: dts: starfive: jh7110: Correct the properties of S7 core
+>         (squashed)
+> 
+> Hal, can you get your folks to resend whatever dts bits that are now
+> applicable? IOW, the dt-bindings for the entries are in a for-next
+> branch for some subsystem.
 
-diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-index 8f924bb4c583..c5f56c197cd4 100644
---- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-+++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-@@ -19,6 +19,7 @@ properties:
-       - items:
-           - enum:
-               - qcom,ipq5332-apcs-apps-global
-+              - qcom,ipq9574-apcs-apps-global
-           - const: qcom,ipq6018-apcs-apps-global
-       - items:
-           - enum:
--- 
-2.17.1
+Of course. As far as I know, these nodes include trng / pmu / mmc / qspi.
 
+Best regards,
+Hal
