@@ -2,124 +2,276 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1956EC77B71
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 14:45:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39EA4C761A6
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 15:00:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239208AbjDFOpq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Apr 2023 10:45:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43098 "EHLO
+        id S239239AbjDFPAB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Apr 2023 11:00:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239285AbjDFOpa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 10:45:30 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11C40AD3A
-        for <linux-clk@vger.kernel.org>; Thu,  6 Apr 2023 07:44:34 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id x17so51189816lfu.5
-        for <linux-clk@vger.kernel.org>; Thu, 06 Apr 2023 07:44:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680792272;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NEzI51ciZrgIncfhw5bsm8CrnZlchCYmEqfodjJXk5A=;
-        b=MHGsl5pAsYot9e+osKLnMyXGsWxprs2n2YzElSZZv1aoMVEJcw+5DmKy264jhyL0w9
-         iGMyTkBGY/7zmg5i+l8jGz/O8k86LUS1iqtzTermHmOOaWocancJZj9Wk/ev1vbzosmD
-         lUM4+Re/DHufKHQJXpxJOgrs38hLD8jwTDlp/4ND/0GjqsmraWIBJ/LSCF+QomJllpl2
-         ZuJ2Du2FMBRCMqkawg21IaCYMTWFHfO83AlTtqnfmhlB25ickb5ziN/oHDXUZOJjJMVS
-         pj7cPkun6F+3bKbsmLyfxP26IxYRU/D8sVaWDCplTUiHFtAcryZArkMlOql/0piopdqF
-         ICwg==
+        with ESMTP id S239360AbjDFO7t (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 10:59:49 -0400
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB5F79EE1;
+        Thu,  6 Apr 2023 07:59:24 -0700 (PDT)
+Received: by mail-oi1-f169.google.com with SMTP id l18so29235947oic.13;
+        Thu, 06 Apr 2023 07:59:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680792272;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NEzI51ciZrgIncfhw5bsm8CrnZlchCYmEqfodjJXk5A=;
-        b=b0UXSpDWT9Y3m1flGdC3CU7q1FwsIn+sOwlMawb88AOipnqYuwGN+jNamX1doBQPfl
-         7iZ6zjjZceoRVDSZ89w3Ur6otNbgk8JQ1s1sgCv4zH1croDlB3tXQKpY7Vsv2JIn30iV
-         PomA39Z+8Z3B2YgejZBU6JVk413cid9rnzXRjpADDlEAg+G87DxbOTYhun8exO4BuF49
-         SZuPRsODeyosMkSi+k64YUSjBsm+97dQPWVONkq8IafkxgYkZJu3MZg7mMAd0+vUH0TP
-         P5Zozd+KgXCg0Y90SRXs1X3QkO4r/ypZouXoDWozaNx8NjCR1ZSgCmEL9VRWlivo2nv0
-         DOCg==
-X-Gm-Message-State: AAQBX9epA8+pyAtoU3gHfW3L6e+lZHHlu7pfc5LPigY3ROKy35V603kJ
-        J619+Q3FdUlsxeUJpJrKtG4Cbw==
-X-Google-Smtp-Source: AKy350bgBhHXkKVdgwxsnJCnlU8McRMzVeEfNKkTmL+OwJoS3L2ugnZcDbPKs2h/5yE6WPVb752TEA==
-X-Received: by 2002:ac2:5dd1:0:b0:4eb:79:fa5 with SMTP id x17-20020ac25dd1000000b004eb00790fa5mr2839908lfq.25.1680792271873;
-        Thu, 06 Apr 2023 07:44:31 -0700 (PDT)
-Received: from [192.168.1.101] (abxh37.neoplus.adsl.tpnet.pl. [83.9.1.37])
-        by smtp.gmail.com with ESMTPSA id d7-20020ac25447000000b004eb4357122bsm287925lfn.259.2023.04.06.07.44.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Apr 2023 07:44:31 -0700 (PDT)
-Message-ID: <2a379401-fe87-9e30-5449-513dd23c52f5@linaro.org>
-Date:   Thu, 6 Apr 2023 16:44:28 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH RFT v2 01/14] dt-bindings: clock: qcom,rpmcc: Add a way to
- enable unused clock cleanup
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        d=1e100.net; s=20210112; t=1680793158;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wcyQ9PVr/q3d+Z2b5CyPmPNAX1Bn6Htbl2OP4BAR1uE=;
+        b=xtIPrB9mnPkv01wG6BfT/mBnevWeJrS1Gci3xHrEVKnYznV5VRRFa3iIbpDKvg/7pY
+         MqlmcEAShgk/ozYFQ4C1L5r+lKQC1QE+tzfVsHVR3TvPG6mClO6CTOtErvvEiKA6pqcv
+         pBoYMeY6e/7k4JxxtfaEtJjdXgty2TuSFty5xb/P2Kcpe4hPpRAme2cHkd/nhsfhgRM/
+         wl/JLBW4BVyoEF69U2xQbLJuzgM3P5l+NrPjznREDxL9tJ3wx5OE9+L6DBxyrfnTwjZX
+         3YMXtZ5oucR3RqlWEgIH8eMLBG/s+L6rNKrtyKU24+9dzasMZb+DCopaQG5iiFI/fxKs
+         Q5kA==
+X-Gm-Message-State: AAQBX9fiNTETMRNi1mAhNtEnyZygrewjztiiOci7sr+G3VcI64oHaQGT
+        keAhXgZtLHtwFBx7+5W1Vg==
+X-Google-Smtp-Source: AKy350bjhoej/GkPRCQguDVc7FGMvBb8pRji3Y3UcdAY1y3ZiLemp4BMpemZ7xkxLgitjCt5O7uYJQ==
+X-Received: by 2002:a05:6808:f12:b0:389:122c:ad2c with SMTP id m18-20020a0568080f1200b00389122cad2cmr5138452oiw.27.1680793157817;
+        Thu, 06 Apr 2023 07:59:17 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id 17-20020aca1211000000b0038b862bc35bsm401800ois.8.2023.04.06.07.59.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Apr 2023 07:59:17 -0700 (PDT)
+Received: (nullmailer pid 3082000 invoked by uid 1000);
+        Thu, 06 Apr 2023 14:59:16 -0000
+Date:   Thu, 6 Apr 2023 09:59:16 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev,
+        Brendan Higgins <brendan.higgins@linux.dev>,
+        David Gow <davidgow@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Christian Marangi <ansuelsmth@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        devicetree@vger.kernel.org
-References: <20230303-topic-rpmcc_sleep-v2-0-ae80a325fe94@linaro.org>
- <20230303-topic-rpmcc_sleep-v2-1-ae80a325fe94@linaro.org>
- <20230316225803.GA4036689-robh@kernel.org>
- <62533d5a-f39a-0806-b4d9-932e2af6beef@linaro.org>
- <5601e0edc19dc03d0fc516f9ffe4d1aa.sboyd@kernel.org>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <5601e0edc19dc03d0fc516f9ffe4d1aa.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        devicetree@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kunit-dev@googlegroups.com, Maxime Ripard <maxime@cerno.tech>
+Subject: Re: [PATCH v3 05/11] of: Add a KUnit test for overlays and test
+ managed APIs
+Message-ID: <20230406145916.GB3036886-robh@kernel.org>
+References: <20230327222159.3509818-1-sboyd@kernel.org>
+ <20230327222159.3509818-6-sboyd@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230327222159.3509818-6-sboyd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 17.03.2023 19:20, Stephen Boyd wrote:
-> Quoting Konrad Dybcio (2023-03-16 17:31:34)
->>
->> On 16.03.2023 23:58, Rob Herring wrote:
->>> On Wed, Mar 08, 2023 at 10:35:17PM +0100, Konrad Dybcio wrote:
->>>>  
->>>> +  qcom,clk-disable-unused:
->>>> +    type: boolean
->>>> +    description:
->>>> +      Indicates whether unused RPM clocks can be shut down with the common
->>>> +      unused clock cleanup. Requires a functional interconnect driver.
->>>
->>> I don't think this should be QCom specific. Come up with something 
->>> common (which will probably have some debate). 
->> Generally the opposite (ignoring unused clocks during the cleanup) is
->> the thing you need to opt into.
->>
->> I can however see how (especially with the focus on not breaking things
->> for older DTs) somebody else may also decide to only allow them to be
->> cleaned up conditionally (by marking the clocks that were enabled earlier
->> as enabled in Linux OR not addding clk.flags |= CLK_IGNORE_UNUSED) as we
->> do here.
->>
->> Stephen, Rob, would `clk-disable-unused` be a fitting generic property
->> name for that? Should we also think about `clk-ignore-unused` as a
->> clock-controller-specific alternative to the CCF-wide clk_ignore_unused
->> cmdline?
->>
+On Mon, Mar 27, 2023 at 03:21:53PM -0700, Stephen Boyd wrote:
+> Test the KUnit test managed overlay APIs. Confirm that platform devices
+> are created and destroyed properly. This provides us confidence that the
+> test managed work correctly and can be relied upon to provide tests with
+> fake platform devices and device nodes via overlays compiled into the
+> kernel image.
 > 
-> There are multiple threads on the list about disabling unused clks.
-> Moving the decision to disable unused clks to a DT property is yet
-> another approach. I'd rather not do that, because it really isn't
-> describing the hardware configuration. If anything, I'd expect the
-> property to be describing which clks are enabled by the firmware and
-> then leave the decision to disable them because they're unused up to the
-> software.
-After some more thinking, I realized that this could be made opt-in
-simply with driver_data..
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Frank Rowand <frowand.list@gmail.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  drivers/of/.kunitconfig            |   2 +
+>  drivers/of/Kconfig                 |  10 +++
+>  drivers/of/Makefile                |   1 +
+>  drivers/of/kunit_overlay_test.dtso |   9 +++
+>  drivers/of/overlay_test.c          | 110 +++++++++++++++++++++++++++++
+>  5 files changed, 132 insertions(+)
+>  create mode 100644 drivers/of/kunit_overlay_test.dtso
+>  create mode 100644 drivers/of/overlay_test.c
+> 
+> diff --git a/drivers/of/.kunitconfig b/drivers/of/.kunitconfig
+> index 5a8fee11978c..7d570cb922a1 100644
+> --- a/drivers/of/.kunitconfig
+> +++ b/drivers/of/.kunitconfig
+> @@ -1,3 +1,5 @@
+>  CONFIG_KUNIT=y
+>  CONFIG_OF=y
+>  CONFIG_OF_KUNIT_TEST=y
+> +CONFIG_OF_OVERLAY=y
+> +CONFIG_OF_OVERLAY_KUNIT_TEST=y
+> diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+> index 1b995cecf5be..5bdeba11268d 100644
+> --- a/drivers/of/Kconfig
+> +++ b/drivers/of/Kconfig
+> @@ -113,6 +113,16 @@ config OF_OVERLAY
+>  	  While this option is selected automatically when needed, you can
+>  	  enable it manually to improve device tree unit test coverage.
+>  
+> +config OF_OVERLAY_KUNIT_TEST
+> +	tristate "Device Tree overlay KUnit tests" if !KUNIT_ALL_TESTS
+> +	depends on OF_OVERLAY
+> +	depends on KUNIT
+> +	default KUNIT_ALL_TESTS
+> +	help
+> +	  This option builds KUnit unit tests for the device tree overlay code.
+> +
+> +	  If unsure, say N here, but this option is safe to enable.
+> +
+>  config OF_NUMA
+>  	bool
+>  
+> diff --git a/drivers/of/Makefile b/drivers/of/Makefile
+> index c694f998b9f5..2ad60d5b87ac 100644
+> --- a/drivers/of/Makefile
+> +++ b/drivers/of/Makefile
+> @@ -21,5 +21,6 @@ endif
+>  
+>  obj-$(CONFIG_KUNIT) += of_kunit.o
+>  obj-$(CONFIG_OF_KUNIT_TEST) += of_test.o
+> +obj-$(CONFIG_OF_OVERLAY_KUNIT_TEST) += overlay_test.o kunit_overlay_test.dtbo.o
+>  
+>  obj-$(CONFIG_OF_UNITTEST) += unittest-data/
+> diff --git a/drivers/of/kunit_overlay_test.dtso b/drivers/of/kunit_overlay_test.dtso
+> new file mode 100644
+> index 000000000000..85f20b4b4c16
+> --- /dev/null
+> +++ b/drivers/of/kunit_overlay_test.dtso
+> @@ -0,0 +1,9 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/dts-v1/;
+> +/plugin/;
+> +
+> +&{/} {
+> +	kunit-test {
+> +		compatible = "test,empty";
+> +	};
+> +};
+> diff --git a/drivers/of/overlay_test.c b/drivers/of/overlay_test.c
+> new file mode 100644
+> index 000000000000..66b1dceea568
+> --- /dev/null
+> +++ b/drivers/of/overlay_test.c
+> @@ -0,0 +1,110 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * KUnit tests for device tree overlays
+> + */
+> +#include <linux/device/bus.h>
+> +#include <linux/kconfig.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include <kunit/of.h>
+> +#include <kunit/test.h>
+> +
+> +static const char * const kunit_node_name = "kunit-test";
+> +static const char * const kunit_compatible = "test,empty";
+> +
+> +/* Test that of_overlay_apply_kunit() adds a node to the live tree */
+> +static void of_overlay_apply_kunit_apply(struct kunit *test)
+> +{
+> +	struct device_node *np;
+> +
+> +	KUNIT_ASSERT_EQ(test, 0,
+> +			of_overlay_apply_kunit(test, kunit_overlay_test));
+> +
+> +	np = of_find_node_by_name(NULL, kunit_node_name);
+> +	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, np);
+> +	of_node_put(np);
+> +}
+> +
+> +static int bus_match_np(struct device *dev, const void *data)
+> +{
+> +	const struct device_node *np = data;
+> +
+> +	return np == dev->of_node;
+> +}
+> +
+> +/*
+> + * Test that of_overlay_apply_kunit() creates platform devices with the
+> + * expected device_node
+> + */
+> +static void of_overlay_apply_kunit_platform_device(struct kunit *test)
+> +{
+> +	struct device *dev;
+> +	struct device_node *np;
+> +
+> +	KUNIT_ASSERT_EQ(test, 0,
+> +			of_overlay_apply_kunit(test, kunit_overlay_test));
+> +
+> +	np = of_find_node_by_name(NULL, kunit_node_name);
+> +	of_node_put_kunit(test, np);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
+> +
+> +	dev = bus_find_device(&platform_bus_type, NULL, np, bus_match_np);
 
-WDYT?
+of_find_device_by_node()
 
-Konrad
+> +	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, dev);
+> +	put_device(dev);
+> +}
+> +
+> +static int of_overlay_bus_match_compatible(struct device *dev, const void *data)
+> +{
+> +	return of_device_is_compatible(dev->of_node, data);
+> +}
+> +
+> +/* Test that of_overlay_apply_kunit() cleans up after the test is finished */
+> +static void of_overlay_apply_kunit_cleanup(struct kunit *test)
+> +{
+> +	struct device *dev;
+> +	struct device_node *np;
+> +
+> +	KUNIT_ASSERT_EQ(test, 0,
+> +			of_overlay_apply_kunit(test, kunit_overlay_test));
+> +
+> +	np = of_find_node_by_name(NULL, kunit_node_name);
+> +	of_node_put(np); /* Not derefing 'np' after this */
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
+> +
+> +	dev = bus_find_device(&platform_bus_type, NULL, np, bus_match_np);
+
+And here.
+
+> +	put_device(dev); /* Not derefing 'device' after this */
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, dev);
+> +
+> +	/* Remove overlay */
+> +	kunit_cleanup(test);
+
+I guess this is testing the cleanup. It's not that obvious given the 
+overlay is removed by kunit_cleanup(). Not sure if anything can be done 
+though...
+
+> +
+> +	np = of_find_node_by_name(NULL, kunit_node_name);
+> +	KUNIT_EXPECT_PTR_EQ(test, NULL, np);
+> +	of_node_put(np);
+> +
+> +	dev = bus_find_device(&platform_bus_type, NULL, kunit_compatible,
+> +			      of_overlay_bus_match_compatible);
+> +	KUNIT_EXPECT_PTR_EQ(test, NULL, dev);
+> +	put_device(dev);
+> +}
+> +
+> +static struct kunit_case of_overlay_apply_kunit_test_cases[] = {
+> +	KUNIT_CASE(of_overlay_apply_kunit_apply),
+> +	KUNIT_CASE(of_overlay_apply_kunit_platform_device),
+> +	KUNIT_CASE(of_overlay_apply_kunit_cleanup),
+> +	{}
+> +};
+> +
+> +/*
+> + * Test suite for test managed device tree overlays.
+> + */
+> +static struct kunit_suite of_overlay_apply_kunit_suite = {
+> +	.name = "of_overlay_apply_kunit",
+> +	.test_cases = of_overlay_apply_kunit_test_cases,
+> +};
+> +
+> +kunit_test_suites(
+> +	&of_overlay_apply_kunit_suite,
+> +);
+> +MODULE_LICENSE("GPL");
+> -- 
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+> https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+> 
