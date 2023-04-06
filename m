@@ -2,98 +2,75 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E64B5C76196
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 17:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF08C7618D
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 18:42:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239476AbjDFRfJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Apr 2023 13:35:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53094 "EHLO
+        id S229770AbjDFSmS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Apr 2023 14:42:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239497AbjDFRez (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 13:34:55 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 131CAA276
-        for <linux-clk@vger.kernel.org>; Thu,  6 Apr 2023 10:34:27 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id sg7so3197020ejc.9
-        for <linux-clk@vger.kernel.org>; Thu, 06 Apr 2023 10:34:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680802464;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8o3EoZ1JRk710zUyDpdKYa+magSoQJ+Man8QMgiHo6Q=;
-        b=CTi/ZXhL3hOFciRN9KFDq+NfuU4tBzhjNWf1azXXymquM8nG1Sasbb16e5cuVzFi0H
-         xzETDrvvAFIZlA/7B9UXS9u+BMBdAQOjXzdSdT2Ta1vnliqVSrOXQLdnOzytDVYS0Q0c
-         YC7p5f25tQHaE2y6VegCYklQ+ufUwQqX+OsBzUVENuX7z/xPFzN18jZHLFtON6x8AD0E
-         o1CFZv7yDX63QjykmoemK+d+LSiMMeC3rM9JBCrVLVtstlYvetA+yWPVe2ri8ov7RsB0
-         cRY6UterViYwxThApTz2bwwZno7RHwHVbhgPQG7nhgv5ijnBf1uUpQ0qGp+7m9tOHAwF
-         Zo9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680802464;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8o3EoZ1JRk710zUyDpdKYa+magSoQJ+Man8QMgiHo6Q=;
-        b=vVOrQ1CAKAk6ZGEdywwsEPHrO7DnMEVZ3SObIzBReJsV28pqIPJ9GFkBHETKLGWgDF
-         0YeQDgWuFv85cBmHkYIxMIQqsBCwbb05juANsvEimSVydROz1hotV80V5jCVrwo2+t5S
-         9xDYtlWHQWeHft7ausHRtm1FwZhT/7VfQZf2ZaDgc3I1Z9SbHjrRz+D4FSAQbmFiwl47
-         ZatRVj27IINHKEOiunJWzqSNqxT+ffjbcYWeXGr/6CnmK0VDLr0FKWXM7UhlUjalCzti
-         bV3iXWxY+og2ztcbZC0j9RcM3ICyYzJIrBhbZZ3medKNCcAfS7Qfej55imGlpIWl2+LT
-         urNA==
-X-Gm-Message-State: AAQBX9eIMyCav5Ybghxn8axL3odpi0XZIDS+D2ZO52szGqm9s80h3hDZ
-        oCYXi58eVg+9Mj4neHTWZJa2Zg==
-X-Google-Smtp-Source: AKy350Zbh0P1Aw932RSOPLQD+3BjO5PlqOGIucWLDsJF9mruynrNaAF87yNNnH1iwPMfg7zfaPiMog==
-X-Received: by 2002:a17:906:8a75:b0:931:6921:bdb7 with SMTP id hy21-20020a1709068a7500b009316921bdb7mr6690097ejc.60.1680802463784;
-        Thu, 06 Apr 2023 10:34:23 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:49e6:bb8c:a05b:c4ed? ([2a02:810d:15c0:828:49e6:bb8c:a05b:c4ed])
-        by smtp.gmail.com with ESMTPSA id p1-20020a1709060e8100b0092421bf4927sm1072728ejf.95.2023.04.06.10.34.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Apr 2023 10:34:23 -0700 (PDT)
-Message-ID: <0a09e2f4-b3aa-7f23-48b1-743e8f561635@linaro.org>
-Date:   Thu, 6 Apr 2023 19:34:22 +0200
+        with ESMTP id S229735AbjDFSmR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 14:42:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BF096A47;
+        Thu,  6 Apr 2023 11:42:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A083464B01;
+        Thu,  6 Apr 2023 18:42:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D14C4C433EF;
+        Thu,  6 Apr 2023 18:42:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680806536;
+        bh=TYg6LIY1PZ5kQT6OISGeT6SEjX/2L5Unzfeoc5UztMQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HWeRrnzu3MAhOJg1LJp9tu1KcIN5zs5XUHT3O81/od3FX16fu7AAE3miXeUYufjiP
+         nEtirGd+fwAVe/uYE1sMg+izdpuQQbl2FvJK5324yyjzWvHl6Ji30/blxzchY5745J
+         O9X7DO1a84rIXgakz8tUcd5T4CCzgqSgrh1APZnKZPAMAYAaxpQeQFKgRtRUkfsKoQ
+         x8cWD7Sxf17iT+5mg6ofT3cor+xBso0RgCe0fnpdbQOrwbyTXDSOyQiGtN+4E4Z4OO
+         X5g3XBooU/PoWaA8p3g3n/w1b7m3XyieyQ9LiEuhiAUK1dB5KBVOmawppIT+iYKYEP
+         7EjuyD0oTMR4g==
+Date:   Thu, 6 Apr 2023 11:45:06 -0700
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc:     agross@kernel.org, konrad.dybcio@linaro.org, vkoul@kernel.org,
+        kishon@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org,
+        mturquette@baylibre.com, sboyd@kernel.org, quic_wcheng@quicinc.com,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 4/8] clk: qcom: gcc-ipq9574: Add USB related clocks
+Message-ID: <20230406184506.65d2gjycuvrley6f@ripper>
+References: <cover.1677749625.git.quic_varada@quicinc.com>
+ <cover.1679388632.git.quic_varada@quicinc.com>
+ <24293be77ccdcf5e9b1fa0fd219de6152f234616.1679388632.git.quic_varada@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH 0/5] Add support for Blaize BLZP1600 SoC
-Content-Language: en-US
-To:     Niko Pasaloukos <nikolaos.pasaloukos@blaize.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "soc@kernel.org" <soc@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "sboyd@kernel.org" <sboyd@kernel.org>
-References: <20230406102149.729726-1-nikolaos.pasaloukos@blaize.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230406102149.729726-1-nikolaos.pasaloukos@blaize.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <24293be77ccdcf5e9b1fa0fd219de6152f234616.1679388632.git.quic_varada@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/04/2023 12:22, Niko Pasaloukos wrote:
-> Adds basic support for the Blaize BLZP1600 SoC.
-> This SoC contains two cores of Cortex-A53 CPUs, one Blaize
-> Graph Streaming Processor (GSP) and several other IPs.
-> 
-> Nikolaos Pasaloukos (5):
->   dt-bindings: Add Blaize vendor prefix
->   dt-bindings: arm: blaize: Add Blaize BLZP1600 SoC
->   dt-bindings: reset: Add binding constants for BLZP1600
->   dt-bindings: clock: Add binding constants for BLZP1600
->   arm64: Add initial support for Blaize BLZP1600 CB2
+On Tue, Mar 21, 2023 at 02:24:22PM +0530, Varadarajan Narayanan wrote:
+> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
+[..]
+> diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+> index c89e96d..96b7c0b 100644
+> --- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+> +++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+> @@ -214,4 +214,6 @@
+>  #define GCC_SNOC_PCIE1_1LANE_S_CLK			205
+>  #define GCC_SNOC_PCIE2_2LANE_S_CLK			206
+>  #define GCC_SNOC_PCIE3_2LANE_S_CLK			207
+> +#define GCC_USB0_PIPE_CLK				208
+> +#define GCC_USB0_SLEEP_CLK				209
 
-You miss maintainers entry. Cc soc@kernel when your submission is ready,
-because now it is too early.
+Please split out the dt binding/include change in a separate patch, to
+better facilitate picking both the clock and dts patch for the same
+kernel version.
 
-Best regards,
-Krzysztof
-
+Thanks,
+Bjorn
