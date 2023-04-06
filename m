@@ -2,155 +2,372 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A93C761A6
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 02:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB8ABC761A6
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 04:04:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231406AbjDFCJx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Apr 2023 22:09:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41554 "EHLO
+        id S234945AbjDFEEq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Apr 2023 00:04:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230059AbjDFCJw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Apr 2023 22:09:52 -0400
+        with ESMTP id S234103AbjDFEEp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 00:04:45 -0400
 Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31FA44EEB;
-        Wed,  5 Apr 2023 19:09:51 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id mp3-20020a17090b190300b0023fcc8ce113so41445536pjb.4;
-        Wed, 05 Apr 2023 19:09:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 424EF93F2
+        for <linux-clk@vger.kernel.org>; Wed,  5 Apr 2023 21:04:42 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id lr16-20020a17090b4b9000b0023f187954acso39433600pjb.2
+        for <linux-clk@vger.kernel.org>; Wed, 05 Apr 2023 21:04:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1680746990;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jDj+eIZP1IBl3cm+vrX+HXVFRJPLqgSdyxr8utmbIjE=;
-        b=h6Q+NXLQyIEa36PKr/1WzGbsDNDfKEYm+dOiV/ApaoLGt+7ZNuBj8Irn7W504d10ly
-         5emknI7Pfxxinw9eMxy/md4IIN6GkWotv04pDaUoIlP+J8MAL++Pj6u0koDVFUgu3stS
-         FoOZEum5KCkP+Vr0ryyZqdE2GGWmd3nKrgSqdSn1ft2BCuKrT/tuS7rCOMBWQ6XWKhEj
-         pT7LEyVOEz33oTEBOw4LQ9Rbdk545ytJ4nVaB3VftzqN2b/uaTt7UoQlsTUuxSTE7tv7
-         fxf24juZkHTuL8zitk5WpMF61A9/oKTV3hRY5Dg7PeHAtlKSguoRQi53XrIhgDZT/trc
-         0B1g==
+        d=linaro.org; s=google; t=1680753881;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RwLGYJpkSUvkezkjBSZxDdx6SLvlS1QDZ05xZHf9C8s=;
+        b=f5TVPL/AF/lWTHvhMDuOC7QySlTjg7gYCRAjhBH4uQ62esYtlqAxldfcLCuYSApMGZ
+         Mv7PvEMGxpnPzatDGQClsf9PlRGCZsXAsM8rgrlIF0I0mdWcL8GGX7P/Mt6nlRJOZQUD
+         ZhIUw/eM1Vktn7UqPHDeefC5nY7tO9Qxl4L1WHPd1hJMvdMHRrUyacOlYwdCz+gHovO9
+         7EqLdICzAcSuGWKhzbk0mSMiSx++3fMvkvUGdHRZBcbINfdkZx3YxBPwFScZ/VpaGFk8
+         GyC3KPHZaDCbp2W+BUo6W1RP8eY9gjATzCzFRO05zK6SaQ+oSfuGFM38J9AiTRILrC9G
+         X3SA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680746990;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jDj+eIZP1IBl3cm+vrX+HXVFRJPLqgSdyxr8utmbIjE=;
-        b=JkS6CcZhJ/F3ob5BSXA8oGYiG9yhGJWMGeZa2v5M4NNKbAGRBjZ8ZBD17PfoImf6xJ
-         BT3fuN6SYctGYaUnVeaav7OkilNOAmKBrP2Tzgfdt26oEZhhUgTSiH/MHWxL3DOSMNIA
-         edMEKth5HC0tHdgKKo/f8CCis0dX1yBa5k1MpxL4OcEIee3C12etZpL3Br6QtdHJm7up
-         t7joYDsmFiLOvoCRC93kITdKUD6UOX3A/GTCmSS5PRypA7PGKnTCdp1f2wCIGt+4b99e
-         B5JTxmOfmWTH28zHLT/3I5R5i7QdPLMECyPz8LWxjc055g9TaNwutlmCfrEjcy0VKU2N
-         aPaA==
-X-Gm-Message-State: AAQBX9etnHqEHrFRgYl98EiFHJWbx6QYytTBdFv1Y9R20aUqzJltVB2j
-        A+3Y5c7MIiyky1LaXE3Oap0=
-X-Google-Smtp-Source: AKy350aamNfXjrdleRXHKCW87e/AlADBfBL5Ykcht2rfnwOkDw7oTlMOzLwKwFp3d1HKMch7gEwaxg==
-X-Received: by 2002:a17:90b:1d81:b0:23f:7c82:2468 with SMTP id pf1-20020a17090b1d8100b0023f7c822468mr9357903pjb.31.1680746990495;
-        Wed, 05 Apr 2023 19:09:50 -0700 (PDT)
-Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id p13-20020a17090a348d00b002310ed024adsm2032412pjb.12.2023.04.05.19.09.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Apr 2023 19:09:50 -0700 (PDT)
-Message-ID: <dd5c3875-ad42-d41c-0c21-94472828484a@gmail.com>
-Date:   Thu, 6 Apr 2023 10:09:45 +0800
+        d=1e100.net; s=20210112; t=1680753881;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RwLGYJpkSUvkezkjBSZxDdx6SLvlS1QDZ05xZHf9C8s=;
+        b=wn1urFB6YFi1fgqqXWQuixpIH3faQE8eP3sPYJ+ICw7MvC0BFc4VG0TPMsur7jCFkm
+         XtKuhpbkRjS1ZMNGgup3MBGNZbM5oxtedYPs3n2rcG1Q8Fc3RcZGDvf6oD2leH0doMJY
+         dqm7zxcgUjstD4+1mS5MLFgv2qMbpPvcncFvnPPCqybRVPiqL7qjSc6HQD+uAIBeJWNA
+         qUgOry9SLtfa/WgcY4cohB8ODGHgwZt9kwXCMATKIJrViRuZq7DqvR5AkC4MJpcbRodv
+         Ut8BTF+eynEQ5v87OURvEkoMwkEWJwA/flRm+OEU7MmmPkqq/sf7NIcf/E9BLY50hCmy
+         e4Rg==
+X-Gm-Message-State: AAQBX9eUjmKM2kbQKFwSsrVKHkgJtjzoUPph+0wrIhn4uOvy3uUIc1NR
+        vP1VcyRfGxAiDV9YzYqdTM83ow==
+X-Google-Smtp-Source: AKy350ZNp41dp/n2ozwLSh2ZspXcNbVwAuoURK+zspTfFxPXT9Vj2fU+SeUuGtC7FtsjNSbfA1Npjw==
+X-Received: by 2002:a17:902:cf52:b0:1a2:23f7:1fe with SMTP id e18-20020a170902cf5200b001a223f701femr7122770plg.44.1680753881501;
+        Wed, 05 Apr 2023 21:04:41 -0700 (PDT)
+Received: from dragon (80.251.214.228.16clouds.com. [80.251.214.228])
+        by smtp.gmail.com with ESMTPSA id o11-20020a170902bccb00b001898ee9f723sm320489pls.2.2023.04.05.21.04.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Apr 2023 21:04:40 -0700 (PDT)
+Date:   Thu, 6 Apr 2023 12:04:33 +0800
+From:   Shawn Guo <shawn.guo@linaro.org>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        agross@kernel.org, marijn.suijten@somainline.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gcc-qcm2290: Mark RCGs shared where applicable
+Message-ID: <20230406040433.GA111746@dragon>
+References: <20230403174807.345185-1-konrad.dybcio@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v6 06/12] dt-bindings: arm: Add initial bindings for
- Nuvoton platform
-To:     Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
-        Jacky Huang <ychuang3@nuvoton.com>
-References: <20230328021912.177301-1-ychuang570808@gmail.com>
- <20230328021912.177301-7-ychuang570808@gmail.com>
- <CAL_JsqKrrWyOKGUAaT-8r-nKvtS5f_gHAhE5=XaXuGtuYC2gCw@mail.gmail.com>
- <a497eb9c-8279-d4e9-3b8d-537ffa1f7522@gmail.com>
- <cfa5904e-8ae4-6d39-ed4e-35d1b55e2b04@linaro.org>
- <f39edbfe-75bd-3b39-e325-8d24673a4501@gmail.com>
- <20230403203349.GA1692472-robh@kernel.org>
-Content-Language: en-US
-From:   Jacky Huang <ychuang570808@gmail.com>
-In-Reply-To: <20230403203349.GA1692472-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230403174807.345185-1-konrad.dybcio@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, Apr 03, 2023 at 07:48:07PM +0200, Konrad Dybcio wrote:
+> The vast majority of shared RCGs were not marked as such. Fix it.
 
+It seems we completely missed this shared RCG thing, as vendor drivers
+do not use it.  Could you help me understand a couple of things?
 
-On 2023/4/4 上午 04:33, Rob Herring wrote:
-> On Fri, Mar 31, 2023 at 10:15:16AM +0800, Jacky Huang wrote:
->>
->> On 2023/3/30 下午 09:25, Krzysztof Kozlowski wrote:
->>> On 30/03/2023 12:41, Jacky Huang wrote:
->>>> Dear Rob,
->>>>
->>>>
->>>> On 2023/3/29 下午 09:07, Rob Herring wrote:
->>>>> On Mon, Mar 27, 2023 at 9:19 PM Jacky Huang <ychuang570808@gmail.com> wrote:
->>>>>> From: Jacky Huang <ychuang3@nuvoton.com>
->>>>>>
->>>>>> Rename the bindings/arm/npcm directory as nuvoton.
->>>>>> Add binding for ARMv8 based Nuvotn SoCs and platform boards.
->>>>>> Add initial bindings for ma35d1 series development boards.
->>>>>>
->>>>>> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
->>>>>> ---
->>>>>>     .../bindings/arm/nuvoton/nuvoton,ma35d1.yaml  | 30 +++++++++++++++++++
->>>>>>     .../nuvoton,npcm-gcr.yaml}                    |  2 +-
->>>>>>     .../npcm.yaml => nuvoton/nuvoton,npcm.yaml}   |  2 +-
->>>>>>     3 files changed, 32 insertions(+), 2 deletions(-)
->>>>>>     create mode 100644 Documentation/devicetree/bindings/arm/nuvoton/nuvoton,ma35d1.yaml
->>>>>>     rename Documentation/devicetree/bindings/arm/{npcm/nuvoton,gcr.yaml => nuvoton/nuvoton,npcm-gcr.yaml} (93%)
->>>>> Since you are moving it, this one should be moved to bindings/soc/nuvoton/
->>>>>
->>>>>>     rename Documentation/devicetree/bindings/arm/{npcm/npcm.yaml => nuvoton/nuvoton,npcm.yaml} (93%)
->>>> OK, I will move "Documentation/devicetree/bindings/arm/npcm" to
->>>> "Documentation/devicetree/bindings/soc/nuvoton".
->>> To clarify - Rob asked *this one*. Not all.
-> nuvoton,gcr.yaml is what should be moved to bindings/soc/... The rest
-> are the correct locations.
->
->>>
->>>
->>> Best regards,
->>> Krzysztof
->>>
->> Dear Krzysztof,
->>
->> I am sorry that still cannot get it exactly.
->>
->> 1. Just only submit  the nuvoton,ma35d1.yaml to
->> Documentation/devicetree/bindings/soc/nuvoton/nuvoton,ma35d1.yaml
->>      and keep Documentation/devicetree/bindings/arm/npcm unchanged
->>
->> 2. Move the directory "Documentation/devicetree/bindings/arm/npcm" to
->> "Documentation/devicetree/bindings/soc/nuvoton"
->>     and submit  the nuvoton,ma35d1.yaml to
->> "Documentation/devicetree/bindings/soc/nuvoton"
->>
->> I should do 1 or 2?  Thank you very much.
-> Neither.
->
-> Arm board and soc root node bindings go in bindings/arm/...
->
-> Miscellaneous system registers that don't fit into any other bindings/*
-> subsystem directory go in bindings/soc/
->
-> Rob
+- How does vendor driver handle shared RCGs?
+- How did you find out these shared RCGs?
 
-Dear Rob,
+Shawn
 
-Thank you very much. I got it now.
-
-
-Best regards,
-Jacky Huang
-
-
-
+> 
+> Fixes: 496d1a13d405 ("clk: qcom: Add Global Clock Controller driver for QCM2290")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>  drivers/clk/qcom/gcc-qcm2290.c | 62 +++++++++++++++++-----------------
+>  1 file changed, 31 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-qcm2290.c b/drivers/clk/qcom/gcc-qcm2290.c
+> index 096deff2ba25..48995e50c6bd 100644
+> --- a/drivers/clk/qcom/gcc-qcm2290.c
+> +++ b/drivers/clk/qcom/gcc-qcm2290.c
+> @@ -650,7 +650,7 @@ static struct clk_rcg2 gcc_usb30_prim_mock_utmi_clk_src = {
+>  		.name = "gcc_usb30_prim_mock_utmi_clk_src",
+>  		.parent_data = gcc_parents_0,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_0),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -686,7 +686,7 @@ static struct clk_rcg2 gcc_camss_axi_clk_src = {
+>  		.name = "gcc_camss_axi_clk_src",
+>  		.parent_data = gcc_parents_4,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_4),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -706,7 +706,7 @@ static struct clk_rcg2 gcc_camss_cci_clk_src = {
+>  		.name = "gcc_camss_cci_clk_src",
+>  		.parent_data = gcc_parents_9,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_9),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -728,7 +728,7 @@ static struct clk_rcg2 gcc_camss_csi0phytimer_clk_src = {
+>  		.name = "gcc_camss_csi0phytimer_clk_src",
+>  		.parent_data = gcc_parents_5,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_5),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -742,7 +742,7 @@ static struct clk_rcg2 gcc_camss_csi1phytimer_clk_src = {
+>  		.name = "gcc_camss_csi1phytimer_clk_src",
+>  		.parent_data = gcc_parents_5,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_5),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -764,7 +764,7 @@ static struct clk_rcg2 gcc_camss_mclk0_clk_src = {
+>  		.parent_data = gcc_parents_3,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_3),
+>  		.flags = CLK_OPS_PARENT_ENABLE,
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -779,7 +779,7 @@ static struct clk_rcg2 gcc_camss_mclk1_clk_src = {
+>  		.parent_data = gcc_parents_3,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_3),
+>  		.flags = CLK_OPS_PARENT_ENABLE,
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -794,7 +794,7 @@ static struct clk_rcg2 gcc_camss_mclk2_clk_src = {
+>  		.parent_data = gcc_parents_3,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_3),
+>  		.flags = CLK_OPS_PARENT_ENABLE,
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -809,7 +809,7 @@ static struct clk_rcg2 gcc_camss_mclk3_clk_src = {
+>  		.parent_data = gcc_parents_3,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_3),
+>  		.flags = CLK_OPS_PARENT_ENABLE,
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -830,7 +830,7 @@ static struct clk_rcg2 gcc_camss_ope_ahb_clk_src = {
+>  		.name = "gcc_camss_ope_ahb_clk_src",
+>  		.parent_data = gcc_parents_6,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_6),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -854,7 +854,7 @@ static struct clk_rcg2 gcc_camss_ope_clk_src = {
+>  		.parent_data = gcc_parents_6,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_6),
+>  		.flags = CLK_SET_RATE_PARENT,
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -888,7 +888,7 @@ static struct clk_rcg2 gcc_camss_tfe_0_clk_src = {
+>  		.name = "gcc_camss_tfe_0_clk_src",
+>  		.parent_data = gcc_parents_7,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_7),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -912,7 +912,7 @@ static struct clk_rcg2 gcc_camss_tfe_0_csid_clk_src = {
+>  		.name = "gcc_camss_tfe_0_csid_clk_src",
+>  		.parent_data = gcc_parents_8,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_8),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -926,7 +926,7 @@ static struct clk_rcg2 gcc_camss_tfe_1_clk_src = {
+>  		.name = "gcc_camss_tfe_1_clk_src",
+>  		.parent_data = gcc_parents_7,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_7),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -940,7 +940,7 @@ static struct clk_rcg2 gcc_camss_tfe_1_csid_clk_src = {
+>  		.name = "gcc_camss_tfe_1_csid_clk_src",
+>  		.parent_data = gcc_parents_8,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_8),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -963,7 +963,7 @@ static struct clk_rcg2 gcc_camss_tfe_cphy_rx_clk_src = {
+>  		.parent_data = gcc_parents_10,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_10),
+>  		.flags = CLK_OPS_PARENT_ENABLE,
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -984,7 +984,7 @@ static struct clk_rcg2 gcc_camss_top_ahb_clk_src = {
+>  		.name = "gcc_camss_top_ahb_clk_src",
+>  		.parent_data = gcc_parents_4,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_4),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -1006,7 +1006,7 @@ static struct clk_rcg2 gcc_gp1_clk_src = {
+>  		.name = "gcc_gp1_clk_src",
+>  		.parent_data = gcc_parents_2,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_2),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -1020,7 +1020,7 @@ static struct clk_rcg2 gcc_gp2_clk_src = {
+>  		.name = "gcc_gp2_clk_src",
+>  		.parent_data = gcc_parents_2,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_2),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -1034,7 +1034,7 @@ static struct clk_rcg2 gcc_gp3_clk_src = {
+>  		.name = "gcc_gp3_clk_src",
+>  		.parent_data = gcc_parents_2,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_2),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -1054,7 +1054,7 @@ static struct clk_rcg2 gcc_pdm2_clk_src = {
+>  		.name = "gcc_pdm2_clk_src",
+>  		.parent_data = gcc_parents_0,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_0),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -1082,7 +1082,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s0_clk_src_init = {
+>  	.name = "gcc_qupv3_wrap0_s0_clk_src",
+>  	.parent_data = gcc_parents_1,
+>  	.num_parents = ARRAY_SIZE(gcc_parents_1),
+> -	.ops = &clk_rcg2_ops,
+> +	.ops = &clk_rcg2_shared_ops,
+>  };
+>  
+>  static struct clk_rcg2 gcc_qupv3_wrap0_s0_clk_src = {
+> @@ -1098,7 +1098,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s1_clk_src_init = {
+>  	.name = "gcc_qupv3_wrap0_s1_clk_src",
+>  	.parent_data = gcc_parents_1,
+>  	.num_parents = ARRAY_SIZE(gcc_parents_1),
+> -	.ops = &clk_rcg2_ops,
+> +	.ops = &clk_rcg2_shared_ops,
+>  };
+>  
+>  static struct clk_rcg2 gcc_qupv3_wrap0_s1_clk_src = {
+> @@ -1114,7 +1114,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s2_clk_src_init = {
+>  	.name = "gcc_qupv3_wrap0_s2_clk_src",
+>  	.parent_data = gcc_parents_1,
+>  	.num_parents = ARRAY_SIZE(gcc_parents_1),
+> -	.ops = &clk_rcg2_ops,
+> +	.ops = &clk_rcg2_shared_ops,
+>  };
+>  
+>  static struct clk_rcg2 gcc_qupv3_wrap0_s2_clk_src = {
+> @@ -1130,7 +1130,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s3_clk_src_init = {
+>  	.name = "gcc_qupv3_wrap0_s3_clk_src",
+>  	.parent_data = gcc_parents_1,
+>  	.num_parents = ARRAY_SIZE(gcc_parents_1),
+> -	.ops = &clk_rcg2_ops,
+> +	.ops = &clk_rcg2_shared_ops,
+>  };
+>  
+>  static struct clk_rcg2 gcc_qupv3_wrap0_s3_clk_src = {
+> @@ -1146,7 +1146,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s4_clk_src_init = {
+>  	.name = "gcc_qupv3_wrap0_s4_clk_src",
+>  	.parent_data = gcc_parents_1,
+>  	.num_parents = ARRAY_SIZE(gcc_parents_1),
+> -	.ops = &clk_rcg2_ops,
+> +	.ops = &clk_rcg2_shared_ops,
+>  };
+>  
+>  static struct clk_rcg2 gcc_qupv3_wrap0_s4_clk_src = {
+> @@ -1162,7 +1162,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s5_clk_src_init = {
+>  	.name = "gcc_qupv3_wrap0_s5_clk_src",
+>  	.parent_data = gcc_parents_1,
+>  	.num_parents = ARRAY_SIZE(gcc_parents_1),
+> -	.ops = &clk_rcg2_ops,
+> +	.ops = &clk_rcg2_shared_ops,
+>  };
+>  
+>  static struct clk_rcg2 gcc_qupv3_wrap0_s5_clk_src = {
+> @@ -1219,7 +1219,7 @@ static struct clk_rcg2 gcc_sdcc1_ice_core_clk_src = {
+>  		.name = "gcc_sdcc1_ice_core_clk_src",
+>  		.parent_data = gcc_parents_0,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_0),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -1266,7 +1266,7 @@ static struct clk_rcg2 gcc_usb30_prim_master_clk_src = {
+>  		.name = "gcc_usb30_prim_master_clk_src",
+>  		.parent_data = gcc_parents_0,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_0),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -1280,7 +1280,7 @@ static struct clk_rcg2 gcc_usb3_prim_phy_aux_clk_src = {
+>  		.name = "gcc_usb3_prim_phy_aux_clk_src",
+>  		.parent_data = gcc_parents_13,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_13),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -1303,7 +1303,7 @@ static struct clk_rcg2 gcc_video_venus_clk_src = {
+>  		.parent_data = gcc_parents_14,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_14),
+>  		.flags = CLK_SET_RATE_PARENT,
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> -- 
+> 2.40.0
+> 
