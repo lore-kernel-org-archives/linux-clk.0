@@ -2,49 +2,57 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B967C77B74
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Apr 2023 17:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B20AC6FD1D
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Apr 2023 17:39:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229994AbjDGRie (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Apr 2023 13:38:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41800 "EHLO
+        id S230409AbjDGRjN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Apr 2023 13:39:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229826AbjDGRid (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Apr 2023 13:38:33 -0400
+        with ESMTP id S230158AbjDGRjA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Apr 2023 13:39:00 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09CF2B45E;
-        Fri,  7 Apr 2023 10:38:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90F0DC178;
+        Fri,  7 Apr 2023 10:38:41 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 990A4652B1;
-        Fri,  7 Apr 2023 17:38:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AB73C4339E;
-        Fri,  7 Apr 2023 17:38:31 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8B8BA65330;
+        Fri,  7 Apr 2023 17:38:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F34E0C4339C;
+        Fri,  7 Apr 2023 17:38:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680889112;
-        bh=C+CTkyDzUyGXXgBG+BbaCjjthUJ0gPkzKjAOImPDXB8=;
+        s=k20201202; t=1680889120;
+        bh=i289+hl/QqcGgL1+leVcwWwADguaW9LS68DYAjdH9Mo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rX75Cd7omYeT4Hu7UgW9m4dzPnm+k6M9M+qHekYzt2RzUxbe/7Wklsj6khTWffAAM
-         qaFGYZ631LzoNl2FUdoTUY4JmDM5LCizWDmXRfCV7dx66DIMqhTKRd8SpbecaxL0Rb
-         gnL6adaybfBrlzR5IsbB3NEjNL6VpwxsyLiwnmyuPzmyxIlWllE/o91X/zoim9iVvN
-         jQEE76DqOuB1ZRzFkpOSH4SjcjYeSeBMbcctH2OJdl7fBV69rDplc/51k0ZmQmuG01
-         mxIp7kbVxa4A1Wi75jPXyjHqscOHTQa2z+jLpOcImCxSFo/2kI9VG+aaViO9+6uFzu
-         uwkQNLL9kpCjA==
+        b=JWLeHXHmokaY2r3rykciN0xUhAeEamO9zMzY4WWx/3SkbcE9EcKR2dSIK/j+iZQ//
+         OvHAPTbx51/BnOxM6YBN0K3t6FzE6S92HmeiRRCtDYU3yNQIJ2d+GOLrgIQIGEEQoy
+         jDdU9P205AqyxhOj15IIIwDbH2hIkjO0V3r8wRk6KFPk4HJQTzffRQmN4UkGRXMGFn
+         f2i2xTzEv7gkPrzhjkpC06Kg7vPh5Lmhf5wLIgQKSlg76JohKSkZFWl00IQ8Zx7U5e
+         lWFk6lmBSJObibkqbm3zj0O/5U86f0D2JmnBZ5S4RtqNij8WPJtBmTBrQWDVfJY222
+         57jr7wThylOpw==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     agross@kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>,
+To:     mturquette@baylibre.com, robh+dt@kernel.org,
+        p.zabel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, will@kernel.org,
+        devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        shawnguo@kernel.org, arnd@arndb.de, catalin.marinas@arm.com,
+        linux-clk@vger.kernel.org, agross@kernel.org,
+        linus.walleij@linaro.org, dmitry.baryshkov@linaro.org,
+        nfraprado@collabora.com, linux-kernel@vger.kernel.org,
+        konrad.dybcio@linaro.org, Devi Priya <quic_devipriy@quicinc.com>,
+        broonie@kernel.org, sboyd@kernel.org, marcel.ziswiler@toradex.com,
         linux-arm-msm@vger.kernel.org
-Cc:     Stephen Boyd <sboyd@kernel.org>, marijn.suijten@somainline.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gpucc-sm6375: Configure CX_GDSC disable wait value
-Date:   Fri,  7 Apr 2023 10:41:09 -0700
-Message-Id: <168088927579.2561591.3779420398674639585.b4-ty@kernel.org>
+Cc:     quic_poovendh@quicinc.com, quic_kathirav@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_srichara@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
+        quic_gokulsri@quicinc.com
+Subject: Re: (subset) [PATCH V9 0/6] Add minimal boot support for IPQ9574
+Date:   Fri,  7 Apr 2023 10:41:16 -0700
+Message-Id: <168088927579.2561591.423595679057929869.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230329140135.2178957-1-konrad.dybcio@linaro.org>
-References: <20230329140135.2178957-1-konrad.dybcio@linaro.org>
+In-Reply-To: <20230316072940.29137-1-quic_devipriy@quicinc.com>
+References: <20230316072940.29137-1-quic_devipriy@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -52,16 +60,21 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 29 Mar 2023 16:01:35 +0200, Konrad Dybcio wrote:
-> Configure the disable wait value on the CX GDSC to ensure we don't get
-> any undefined behavior. This was omitted when first adding the driver.
+On Thu, 16 Mar 2023 12:59:34 +0530, Devi Priya wrote:
+> The IPQ9574 is Qualcomm's 802.11ax SoC for Routers,
+> Gateways and Access Points
 > 
+> This series adds minimal board boot support for ipq9574-al02-c7 board
 > 
+> V8 can be found at:
+> https://lore.kernel.org/linux-arm-kernel/20230214163116.9924-1-quic_devipriy@quicinc.com/
+> 
+> [...]
 
 Applied, thanks!
 
-[1/1] clk: qcom: gpucc-sm6375: Configure CX_GDSC disable wait value
-      commit: 93f21d925f787eb4a91e7ade77a544df30be0605
+[6/6] arm64: defconfig: Enable IPQ9574 SoC base configs
+      commit: 34d1a90bdb8a2759b9646c8596eea495b4cb02ac
 
 Best regards,
 -- 
