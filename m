@@ -2,27 +2,27 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE7EC76196
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Apr 2023 07:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 772C8C77B6E
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Apr 2023 08:38:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230194AbjDGHxc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Apr 2023 03:53:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40828 "EHLO
+        id S232540AbjDGIiJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Apr 2023 04:38:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbjDGHxc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Apr 2023 03:53:32 -0400
-Received: from m12.mail.163.com (m12.mail.163.com [220.181.12.196])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2E3076A6B;
-        Fri,  7 Apr 2023 00:53:29 -0700 (PDT)
+        with ESMTP id S233146AbjDGIiI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Apr 2023 04:38:08 -0400
+Received: from m12.mail.163.com (m12.mail.163.com [220.181.12.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7A25746BF;
+        Fri,  7 Apr 2023 01:38:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=c9Q3W
-        9lb23cFj+DGwrbVCpopAjiEpJ3qsb46oaSt7qs=; b=DgHePW1x0fmO5rVwZvRxs
-        swQajzjD27XpQ3DzzAPV1H90U9/arbRxb4oq/KIW3Z9l3HpzcnrJVYqhQV/TnbMP
-        95AnwLSCZ6eSkn8UMriTEB28Pm4c/CF6KHmK6XNVY60bsBkMFxoET6VdIEbalCYx
-        wFG/nm679CAFZRkgoynEm8=
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=bvMeT
+        VYjDyKEP8ZQMTHGrWbs6rZELtxOvEXtr+caOtg=; b=Y48temyT0/21qJteKk2rk
+        s1ByLfixQXhq8XSvWsoiN7b3/nmJdRfFjA2EczXHyZ68Iz1ihOin55DaQWJC+WG4
+        BoMA96tUeD1WHi60zS8ZuBgtBqDLVKw+dpgTJVyy5fbfCDWZzL4r3Hj2+ooM7akC
+        fSEjcmv8P/KyzKvgV24lq0=
 Received: from ubuntu.localdomain (unknown [115.156.140.143])
-        by zwqz-smtp-mta-g1-0 (Coremail) with SMTP id _____wAnBKrWyy9kiP0wAw--.39596S4;
-        Fri, 07 Apr 2023 15:52:55 +0800 (CST)
+        by zwqz-smtp-mta-g1-4 (Coremail) with SMTP id _____wCnrdpS1i9kggMuAw--.20049S4;
+        Fri, 07 Apr 2023 16:37:39 +0800 (CST)
 From:   Xinyi Hou <Y_Ashley@163.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -33,19 +33,19 @@ Cc:     Xinyi Hou <Y_Ashley@163.com>, Dongliang Mu <dzm91@hust.edu.cn>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v3] clk: mediatek: clk-mt7986-infracfg: delete the code related to 'base'
-Date:   Fri,  7 Apr 2023 15:49:30 +0800
-Message-Id: <20230407074931.31247-1-Y_Ashley@163.com>
+Subject: [PATCH] clk: mediatek: clk-mt7986-infracfg: delete the code related to 'base'
+Date:   Fri,  7 Apr 2023 16:37:28 +0800
+Message-Id: <20230407083729.31498-1-Y_Ashley@163.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: _____wAnBKrWyy9kiP0wAw--.39596S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ur1ktF4rXF1rKr47ur1DAwb_yoW8JF43pF
-        y0gF4akFy5Aw4xCr48ZrZ7u343A3Z29Fy5KFy7Z3WDtr13Can2gr18K392g3WkAFWkZa4Y
-        qr1j9348AFW2gFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p_2NtUUUUUU=
+X-CM-TRANSID: _____wCnrdpS1i9kggMuAw--.20049S4
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZF47Wry3uw48Zw48Xr4xWFg_yoWkWFX_Zr
+        s5ur97Zr17KF4kGr47Wwn2vF9rtFs3Zr97Z3WYywn8JFyxKa1rJr1vqa95Aw47Ww4Svry5
+        Jrn7Kry7CF4rZjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRLF4EPUUUUU==
 X-Originating-IP: [115.156.140.143]
-X-CM-SenderInfo: p1bd2xxoh1qiywtou0bp/xtbB0xxKxFXlyq1mMAAAsA
+X-CM-SenderInfo: p1bd2xxoh1qiywtou0bp/1tbiShRKxGI0XrQwOgAAsm
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -58,8 +58,6 @@ Fix this by deleting 'base' and the code related to it.
 Signed-off-by: Xinyi Hou <Y_Ashley@163.com>
 Reviewed-by: Dongliang Mu <dzm91@hust.edu.cn>
 ---
-v2 -> v3: Directly deleted 'base' and its related code based on master.
-v1 -> v2: Directly deleted 'base' and its related code based on PATCH v1.
 
  drivers/clk/mediatek/clk-mt7986-infracfg.c | 7 -------
  1 file changed, 7 deletions(-)
