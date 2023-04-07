@@ -2,80 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B20AC6FD1D
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Apr 2023 17:39:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71809C6FD1D
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Apr 2023 18:16:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230409AbjDGRjN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Apr 2023 13:39:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42014 "EHLO
+        id S229849AbjDGSQF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Apr 2023 14:16:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230158AbjDGRjA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Apr 2023 13:39:00 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90F0DC178;
-        Fri,  7 Apr 2023 10:38:41 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8B8BA65330;
-        Fri,  7 Apr 2023 17:38:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F34E0C4339C;
-        Fri,  7 Apr 2023 17:38:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680889120;
-        bh=i289+hl/QqcGgL1+leVcwWwADguaW9LS68DYAjdH9Mo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JWLeHXHmokaY2r3rykciN0xUhAeEamO9zMzY4WWx/3SkbcE9EcKR2dSIK/j+iZQ//
-         OvHAPTbx51/BnOxM6YBN0K3t6FzE6S92HmeiRRCtDYU3yNQIJ2d+GOLrgIQIGEEQoy
-         jDdU9P205AqyxhOj15IIIwDbH2hIkjO0V3r8wRk6KFPk4HJQTzffRQmN4UkGRXMGFn
-         f2i2xTzEv7gkPrzhjkpC06Kg7vPh5Lmhf5wLIgQKSlg76JohKSkZFWl00IQ8Zx7U5e
-         lWFk6lmBSJObibkqbm3zj0O/5U86f0D2JmnBZ5S4RtqNij8WPJtBmTBrQWDVfJY222
-         57jr7wThylOpw==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     mturquette@baylibre.com, robh+dt@kernel.org,
-        p.zabel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, will@kernel.org,
-        devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        shawnguo@kernel.org, arnd@arndb.de, catalin.marinas@arm.com,
-        linux-clk@vger.kernel.org, agross@kernel.org,
-        linus.walleij@linaro.org, dmitry.baryshkov@linaro.org,
-        nfraprado@collabora.com, linux-kernel@vger.kernel.org,
-        konrad.dybcio@linaro.org, Devi Priya <quic_devipriy@quicinc.com>,
-        broonie@kernel.org, sboyd@kernel.org, marcel.ziswiler@toradex.com,
-        linux-arm-msm@vger.kernel.org
-Cc:     quic_poovendh@quicinc.com, quic_kathirav@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_srichara@quicinc.com,
-        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
-        quic_gokulsri@quicinc.com
-Subject: Re: (subset) [PATCH V9 0/6] Add minimal boot support for IPQ9574
-Date:   Fri,  7 Apr 2023 10:41:16 -0700
-Message-Id: <168088927579.2561591.423595679057929869.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230316072940.29137-1-quic_devipriy@quicinc.com>
-References: <20230316072940.29137-1-quic_devipriy@quicinc.com>
+        with ESMTP id S231751AbjDGSQD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Apr 2023 14:16:03 -0400
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11E73BBB8;
+        Fri,  7 Apr 2023 11:15:58 -0700 (PDT)
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 337CYiXC012385;
+        Fri, 7 Apr 2023 20:15:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=selector1;
+ bh=jMXGQTJig0Tnfo5wXxWSxNs8s4SjycIUQ78y3LxaRYQ=;
+ b=6oOHOxSHwQKwvJpyJFbrUQOYKfQYoXjGSIGfOAYyow9Y0aR2KfbMbDaOrRc0nQ8ezA+r
+ OfLyANP8eC1ZGydbXbiIENi0mAG1kQCE68GY98sjv+eeN9ubW3zoa46rX3gUvzt9DiXw
+ rjlzziiMKB7giMOC2FlmDf02niKMqKIv0DhJaizrUZ/ovafN6mXNkx/Gdy/Ea+8xJQD6
+ XoM3ZCFfExWnHfZmh+Dr44Tm1W5tocKxOryqK3+xpBUL6eIlDtO2vDuN27p1JoeLmrww
+ WHm4FTS+FhmfwlI+L08CFqIR9DY654uReW2fxBA8GJlFvTzITMrbtMuR/TDUww9HH6MM sA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3pteygu3k7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 07 Apr 2023 20:15:44 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6BEB210002A;
+        Fri,  7 Apr 2023 20:15:44 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 64BC324C45E;
+        Fri,  7 Apr 2023 20:15:44 +0200 (CEST)
+Received: from localhost (10.48.0.157) by SHFDAG1NODE3.st.com (10.75.129.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.17; Fri, 7 Apr
+ 2023 20:15:44 +0200
+From:   Patrick Delaunay <patrick.delaunay@foss.st.com>
+To:     Alexandre TORGUE <alexandre.torgue@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC:     <gabriel.fernandez@st.com>, <gabriel.fernandez@foss.st.com>,
+        "Patrick Delaunay" <patrick.delaunay@foss.st.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH] dt-bindings: rcc: stm32: Fix STM32MP13 include file
+Date:   Fri, 7 Apr 2023 20:15:33 +0200
+Message-ID: <20230407201526.1.I417093ddcea282be479f10a37147d1935a9050b7@changeid>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.157]
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-07_12,2023-04-06_03,2023-02-09_01
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 16 Mar 2023 12:59:34 +0530, Devi Priya wrote:
-> The IPQ9574 is Qualcomm's 802.11ax SoC for Routers,
-> Gateways and Access Points
-> 
-> This series adds minimal board boot support for ipq9574-al02-c7 board
-> 
-> V8 can be found at:
-> https://lore.kernel.org/linux-arm-kernel/20230214163116.9924-1-quic_devipriy@quicinc.com/
-> 
-> [...]
+Minor cosmetic change, aligned with files in U-Boot:
+- change obsolete SPDX id : GPL-2.0+
+- use correct address gabriel.fernandez@foss.st.com
+- remove extra space
 
-Applied, thanks!
+Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
+---
 
-[6/6] arm64: defconfig: Enable IPQ9574 SoC base configs
-      commit: 34d1a90bdb8a2759b9646c8596eea495b4cb02ac
+ include/dt-bindings/clock/stm32mp13-clks.h   | 6 +++---
+ include/dt-bindings/reset/stm32mp13-resets.h | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-Best regards,
+diff --git a/include/dt-bindings/clock/stm32mp13-clks.h b/include/dt-bindings/clock/stm32mp13-clks.h
+index 02befd25edce..da4cb7567430 100644
+--- a/include/dt-bindings/clock/stm32mp13-clks.h
++++ b/include/dt-bindings/clock/stm32mp13-clks.h
+@@ -1,7 +1,7 @@
+-/* SPDX-License-Identifier: GPL-2.0+ or BSD-3-Clause */
++/* SPDX-License-Identifier: GPL-2.0-or-later or BSD-3-Clause */
+ /*
+  * Copyright (C) STMicroelectronics 2020 - All Rights Reserved
+- * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
++ * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for STMicroelectronics.
+  */
+ 
+ #ifndef _DT_BINDINGS_STM32MP13_CLKS_H_
+@@ -64,7 +64,7 @@
+ #define CK_MCO1		38
+ #define CK_MCO2		39
+ 
+-/*  IP clocks */
++/* IP clocks */
+ #define SYSCFG		40
+ #define VREF		41
+ #define DTS		42
+diff --git a/include/dt-bindings/reset/stm32mp13-resets.h b/include/dt-bindings/reset/stm32mp13-resets.h
+index 934864e90da6..1b83a01de8f0 100644
+--- a/include/dt-bindings/reset/stm32mp13-resets.h
++++ b/include/dt-bindings/reset/stm32mp13-resets.h
+@@ -1,7 +1,7 @@
+-/* SPDX-License-Identifier: GPL-2.0 or BSD-3-Clause */
++/* SPDX-License-Identifier: GPL-2.0-or-later or BSD-3-Clause */
+ /*
+  * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
+- * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
++ * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for STMicroelectronics.
+  */
+ 
+ #ifndef _DT_BINDINGS_STM32MP13_RESET_H_
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.25.1
+
