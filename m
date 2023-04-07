@@ -2,99 +2,86 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA54C7618D
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Apr 2023 20:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60741C761A6
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Apr 2023 01:46:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239305AbjDFU7G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Apr 2023 16:59:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55892 "EHLO
+        id S239105AbjDGBqb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Apr 2023 21:46:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240035AbjDFU6p (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 16:58:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1EB486AC;
-        Thu,  6 Apr 2023 13:58:39 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 50D2064BDA;
-        Thu,  6 Apr 2023 20:58:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FAEBC4339C;
-        Thu,  6 Apr 2023 20:58:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680814718;
-        bh=hPhh8oTx1kYLc913G4HIdxuV/0cdfFWp2HgdjSh+vKE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uExbzvaTeBK8FlkbTfXpl+myDNnYUfc3M+u9y5qwGUKWlFphYo/+osPoZLU/y+oMl
-         muWRLkrK2GuHVwNFIul5kMhjhgkkEoHmutbFJb1n5Ga/MgeVhFG4IpbrQcfXL4li7l
-         kRpeUyrWe2U1g9ehZ3RDwmSzdMy70t1MZCMXsuSufSJjtAY6VQdfSupVK06PkLLn+u
-         POzOU6xTsqPl1C0fARDoPfY8MproJ8TT6C4+mT0hH+2Nppwjm3RLqtJUaKGMXIQpoD
-         3LRmwrvFcLyJ5p9wdRwpfY34JaAu7c43C5E2vpJ1LU5kweXBPdCK6JRYGtZYzK3DCk
-         MDUccGPJH+FmQ==
-From:   Conor Dooley <conor@kernel.org>
-To:     linux-riscv@lists.infradead.org
-Cc:     conor@kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+        with ESMTP id S238742AbjDGBqa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Apr 2023 21:46:30 -0400
+Received: from hust.edu.cn (unknown [202.114.0.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 180056E82;
+        Thu,  6 Apr 2023 18:46:28 -0700 (PDT)
+Received: from DESKTOP-DE31U50.localdomain ([10.12.190.69])
+        (user=m202171776@hust.edu.cn mech=LOGIN bits=0)
+        by mx1.hust.edu.cn  with ESMTP id 3371iIP2031817-3371iIP3031817
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 7 Apr 2023 09:44:21 +0800
+From:   Hao Luo <m202171776@hust.edu.cn>
+To:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Subject: [PATCH v1 4/4] serial: make SiFive serial drivers depend on ARCH_ symbols
-Date:   Thu,  6 Apr 2023 21:57:50 +0100
-Message-Id: <20230406-carnival-aspirate-fcf69a30078c@spud>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230406-undertake-stowing-50f45b90413a@spud>
-References: <20230406-undertake-stowing-50f45b90413a@spud>
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>
+Cc:     hust-os-kernel-patches@googlegroups.com,
+        Hao Luo <m202171776@hust.edu.cn>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: imx: clk-imx8mn: fix memory leak in imx8mn_clocks_probe
+Date:   Fri,  7 Apr 2023 09:44:14 +0800
+Message-Id: <20230407014414.22237-1-m202171776@hust.edu.cn>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1169; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=/uqEAT4mwA891sbEf4x2pVtUF/+D0Dq2ST7GwztNFHQ=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDCn6Rl5R2spbv9u90F5UuaaO5erlaZvmnu/cxvSQ9Wjqm wslG1cadpSyMIhxMMiKKbIk3u5rkVr/x2WHc89bmDmsTCBDGLg4BWAiB6sZGW4uq/Y16WEukDZk rKlvKHrFfXKHYWP422dLndbMbSgRmM7wV3K/9/yq1/9j5l+vnZulbCLz9NVmu7Mmq9/7K7892BT MxQwA
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
+X-FEAS-AUTH-USER: m202171776@hust.edu.cn
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Conor Dooley <conor.dooley@microchip.com>
+Use devm_platform_ioremap_resource() instead of of_iomap() to automatically
 
-As part of converting RISC-V SOC_FOO symbols to ARCH_FOO to match the
-use of such symbols on other architectures, convert the SiFive serial
-driver Kconfig entries from the SOC_ symbols to ARCH_ instead.
+handle the unused ioremap region. If any error occurs, regions allocated by
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+kzalloc() will leak, but using devm_kzalloc() instead will automatically
+
+free the memory using devm_kfree().
+
+Signed-off-by: Hao Luo <m202171776@hust.edu.cn>
 ---
-I hope you like the message-id Greg ;)
----
- drivers/tty/serial/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/imx/clk-imx8mn.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 39a0078f54f6..398e5aac2e77 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -951,7 +951,7 @@ config SERIAL_OMAP_CONSOLE
- config SERIAL_SIFIVE
- 	tristate "SiFive UART support"
- 	depends on OF
--	default SOC_SIFIVE || SOC_CANAAN
-+	default ARCH_SIFIVE || ARCH_CANAAN
- 	select SERIAL_CORE
- 	help
- 	  Select this option if you are building a kernel for a device that
-@@ -961,7 +961,7 @@ config SERIAL_SIFIVE
- config SERIAL_SIFIVE_CONSOLE
- 	bool "Console on SiFive UART"
- 	depends on SERIAL_SIFIVE=y
--	default SOC_SIFIVE || SOC_CANAAN
-+	default ARCH_SIFIVE || ARCH_CANAAN
- 	select SERIAL_CORE_CONSOLE
- 	select SERIAL_EARLYCON
- 	help
+diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
+index a042ed3a9d6c..b054412f6373 100644
+--- a/drivers/clk/imx/clk-imx8mn.c
++++ b/drivers/clk/imx/clk-imx8mn.c
+@@ -323,7 +323,7 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
+ 	void __iomem *base;
+ 	int ret;
+ 
+-	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws,
++	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws,
+ 					  IMX8MN_CLK_END), GFP_KERNEL);
+ 	if (WARN_ON(!clk_hw_data))
+ 		return -ENOMEM;
+@@ -340,10 +340,10 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
+ 	hws[IMX8MN_CLK_EXT4] = imx_get_clk_hw_by_name(np, "clk_ext4");
+ 
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mn-anatop");
+-	base = of_iomap(np, 0);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	of_node_put(np);
+-	if (WARN_ON(!base)) {
+-		ret = -ENOMEM;
++	if (WARN_ON(IS_ERR(base))) {
++		ret = PTR_ERR(base);
+ 		goto unregister_hws;
+ 	}
+ 
 -- 
-2.39.2
+2.34.1
 
