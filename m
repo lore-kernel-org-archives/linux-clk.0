@@ -2,87 +2,131 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 772C8C77B6E
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Apr 2023 08:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E5BC77B61
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Apr 2023 09:23:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232540AbjDGIiJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Apr 2023 04:38:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58318 "EHLO
+        id S240508AbjDGJXq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Apr 2023 05:23:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233146AbjDGIiI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Apr 2023 04:38:08 -0400
-Received: from m12.mail.163.com (m12.mail.163.com [220.181.12.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7A25746BF;
-        Fri,  7 Apr 2023 01:38:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=bvMeT
-        VYjDyKEP8ZQMTHGrWbs6rZELtxOvEXtr+caOtg=; b=Y48temyT0/21qJteKk2rk
-        s1ByLfixQXhq8XSvWsoiN7b3/nmJdRfFjA2EczXHyZ68Iz1ihOin55DaQWJC+WG4
-        BoMA96tUeD1WHi60zS8ZuBgtBqDLVKw+dpgTJVyy5fbfCDWZzL4r3Hj2+ooM7akC
-        fSEjcmv8P/KyzKvgV24lq0=
-Received: from ubuntu.localdomain (unknown [115.156.140.143])
-        by zwqz-smtp-mta-g1-4 (Coremail) with SMTP id _____wCnrdpS1i9kggMuAw--.20049S4;
-        Fri, 07 Apr 2023 16:37:39 +0800 (CST)
-From:   Xinyi Hou <Y_Ashley@163.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     Xinyi Hou <Y_Ashley@163.com>, Dongliang Mu <dzm91@hust.edu.cn>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH] clk: mediatek: clk-mt7986-infracfg: delete the code related to 'base'
-Date:   Fri,  7 Apr 2023 16:37:28 +0800
-Message-Id: <20230407083729.31498-1-Y_Ashley@163.com>
+        with ESMTP id S240396AbjDGJXo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Apr 2023 05:23:44 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9166283C0;
+        Fri,  7 Apr 2023 02:23:43 -0700 (PDT)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3377ME9R028672;
+        Fri, 7 Apr 2023 09:23:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=cuzmSQCjSKwcDD9KbSa3FwHIeHuBiI4YqOnU2J0y1c4=;
+ b=YR0TzhrJc47dYMcGAJhiXrId7RM/nZCW/vNJqoEQEW+valhgk7vOUVj6TatJ05G5wwyY
+ O4XAT/eX27QFloRwbekHIwNF7Yy1O9Ft148aPpfUyYzGfYo5KUugQUGWk2k53zLtT4c1
+ Ipsrb96g5tVw0VBXV3j/vv3TB16OEzNXKAeGkltl6T3JRUmHFaZ2MYk3t/T2QN/V/ZmE
+ Ws4Zcaz40YjyJZ2JhXzfnrBXPN/KGZ/WCXUrlqCoqCQWmilPmuVcjWRSItfRjV73Esxi
+ vzyScTX57/4FC9J3Bv0LQZ5oWZ74EYDisCIegkhHKdEFBQ9QivI8r5Bye6pClbMSJoYb ZA== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ptcrn0dn8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 07 Apr 2023 09:23:28 +0000
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3379NRi6009216
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 7 Apr 2023 09:23:27 GMT
+Received: from hu-mohs-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Fri, 7 Apr 2023 02:23:22 -0700
+From:   Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+To:     <swboyd@chromium.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>, <robh+dt@kernel.org>,
+        <broonie@kernel.org>, <quic_plai@quicinc.com>,
+        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_rohkumar@quicinc.com>, <quic_visr@quicinc.com>
+CC:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Subject: [PATCH v11 0/3] Add resets for ADSP based audio clock controller driver
+Date:   Fri, 7 Apr 2023 14:52:52 +0530
+Message-ID: <20230407092255.119690-1-quic_mohs@quicinc.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: _____wCnrdpS1i9kggMuAw--.20049S4
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZF47Wry3uw48Zw48Xr4xWFg_yoWkWFX_Zr
-        s5ur97Zr17KF4kGr47Wwn2vF9rtFs3Zr97Z3WYywn8JFyxKa1rJr1vqa95Aw47Ww4Svry5
-        Jrn7Kry7CF4rZjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRLF4EPUUUUU==
-X-Originating-IP: [115.156.140.143]
-X-CM-SenderInfo: p1bd2xxoh1qiywtou0bp/1tbiShRKxGI0XrQwOgAAsm
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: vXCWGOL1dPv692pcAyJBUB1cYjleCJXg
+X-Proofpoint-GUID: vXCWGOL1dPv692pcAyJBUB1cYjleCJXg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-07_05,2023-04-06_03,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 bulkscore=0 mlxscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 phishscore=0 spamscore=0 mlxlogscore=974 suspectscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304070086
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In clk_mt7986_infracfg_probe(), 'base' is allocated but never used,
-either not released on both success failure path.
+Add resets and remove qdsp6ss clock controller for audioreach based platforms.
 
-Fix this by deleting 'base' and the code related to it.
+Changes since v10:
+    -- drop #define macro for max_register.
+    -- Add max_register value for top_cc register.
+Changes since v9:
+    -- Drop "clk: qcom: lpassaudiocc-sc7280: Modify qcom_cc_probe" patch.
+    -- Update Fixes tag in Add the required gdsc's in lpass_cc_sc7280_desc patch.
+    -- Add the max_register value in Skip qdsp6ss clock registration patch.
+Changes since v8:
+    -- Add the required gdsc's in lpass_cc_sc7280_desc structure.
+    -- Modify qcom_cc_probe to qcom_cc_probe_by_index.
+    -- Update the commit message for v8,4/5 patch, which is not required for new logic.
+    -- Drop "Add binding headers for lpasscc" patch.
+    -- Drop "Skip lpass_aon_cc_pll config" patch.
+Changes since v7:
+    -- Modiy AHB clock probing method in "Merge lpasscc into lpass_aon patch".
+    -- Fix Typo errors in "Merge lpasscc into lpass_aon patch".
+    -- Update commit message in "Merge lpasscc into lpass_aon patch"
+Changes since v6:
+    -- Update commit message in "Merge lpasscc into lpass_aon patch" patch.
+    -- Drop "Skip lpasscorecc registration" patch.
+    -- Add comment in the code in "Skip lpass_aon_cc_pll config" patch.
+Changes since v5:
+    -- Fix compilation issue.
+Changes since v4:
+    -- Update Fixes tag in Merge lpasscc into lpass_aon patch.
+    -- Revert removal of clk_regmap structure in Merge lpasscc into lpass_aon patch.
+Changes since v3:
+    -- Remove duplicate clock resets patch.
+    -- Add binding headers for q6 clocks.
+    -- Create new patch for merging lpasscc q6 clocks into lpass_aon.
+    -- Create new patches for handling conflicts of ADSP and bypass solution.
+Changes since v2:
+    -- Revert removing qdsp6ss clock control.
+    -- Add Conditional check for qdsp6ss clock registration.
+Changes since v1:
+    -- Update commit message.
+    -- Remove qdsp6ss clock control.
 
-Signed-off-by: Xinyi Hou <Y_Ashley@163.com>
-Reviewed-by: Dongliang Mu <dzm91@hust.edu.cn>
----
+Mohammad Rafi Shaik (1):
+  clk: qcom: lpassaudiocc-sc7280: Add required gdsc power domain clks in
+    lpass_cc_sc7280_desc
 
- drivers/clk/mediatek/clk-mt7986-infracfg.c | 7 -------
- 1 file changed, 7 deletions(-)
+Srinivasa Rao Mandadapu (2):
+  dt-bindings: clock: qcom,sc7280-lpasscc: Add qcom,adsp-pil-mode
+    property
+  clk: qcom: lpasscc-sc7280: Skip qdsp6ss clock registration
 
-diff --git a/drivers/clk/mediatek/clk-mt7986-infracfg.c b/drivers/clk/mediatek/clk-mt7986-infracfg.c
-index e80c92167c8f..76b32f3a16b2 100644
---- a/drivers/clk/mediatek/clk-mt7986-infracfg.c
-+++ b/drivers/clk/mediatek/clk-mt7986-infracfg.c
-@@ -174,16 +174,9 @@ static int clk_mt7986_infracfg_probe(struct platform_device *pdev)
- 	struct clk_hw_onecell_data *clk_data;
- 	struct device_node *node = pdev->dev.of_node;
- 	int r;
--	void __iomem *base;
- 	int nr = ARRAY_SIZE(infra_divs) + ARRAY_SIZE(infra_muxes) +
- 		 ARRAY_SIZE(infra_clks);
- 
--	base = of_iomap(node, 0);
--	if (!base) {
--		pr_err("%s(): ioremap failed\n", __func__);
--		return -ENOMEM;
--	}
--
- 	clk_data = mtk_alloc_clk_data(nr);
- 
- 	if (!clk_data)
+ .../bindings/clock/qcom,sc7280-lpasscc.yaml      |  7 +++++++
+ drivers/clk/qcom/lpassaudiocc-sc7280.c           |  2 ++
+ drivers/clk/qcom/lpasscc-sc7280.c                | 16 ++++++++++------
+ 3 files changed, 19 insertions(+), 6 deletions(-)
+
 -- 
 2.25.1
 
