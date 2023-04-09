@@ -2,152 +2,116 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E18C77B6C
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Apr 2023 14:37:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A64F0C761A6
+	for <linux-clk@archiver.kernel.org>; Sun,  9 Apr 2023 07:51:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229559AbjDHOhp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 8 Apr 2023 10:37:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56268 "EHLO
+        id S229473AbjDIHvz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 9 Apr 2023 03:51:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230075AbjDHOhn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 8 Apr 2023 10:37:43 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FD4DCA0B;
-        Sat,  8 Apr 2023 07:37:41 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 095D360B9F;
-        Sat,  8 Apr 2023 14:37:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B31FBC433D2;
-        Sat,  8 Apr 2023 14:37:33 +0000 (UTC)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Adam Skladowski <a_skl39@protonmail.com>,
-        Sireesh Kodali <sireeshkodali@protonmail.com>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: clock: qcom,gcc-msm8953: split to separate schema
-Date:   Sat,  8 Apr 2023 16:37:29 +0200
-Message-Id: <20230408143729.84097-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S229458AbjDIHvy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Apr 2023 03:51:54 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 089724ED4
+        for <linux-clk@vger.kernel.org>; Sun,  9 Apr 2023 00:51:52 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id j1so6103901wrb.0
+        for <linux-clk@vger.kernel.org>; Sun, 09 Apr 2023 00:51:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20210112.gappssmtp.com; s=20210112; t=1681026710; x=1683618710;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dfO6Q33trJc9amyhdRbPtb/0kOtWlf2GzxFdUmEYiZk=;
+        b=xu7oqttuRrYeLuPwLeDqLWb1YoZ2oNd1KlEtRiVW19w9PN84nrTEoob2dNVqjAD9if
+         cZdXB0iwrxjSRq00/78tUW84AOS/LKBqANL8Kba4+ZetKECF6QpXg9lZL6tO7k+w6tEt
+         2MZz30BfwHo3HJmn+g/tvTeLYe76HtSh7mg1QMFQm7XKH3Uy3jAILiR0h8uACNBKJPuk
+         TDQjU3qcdm+cLcnc69nC6WBBw4W0EmdwaBKnD700yE7yCLtC2B/xnkXk/KPAdbH1iRr7
+         OjYYlLCCbzJFGM8nBTm+g678wcPsBZQy47Q1BK4gifH4PBIiqJolIS2RPA+Pe7JEf3Q0
+         eMAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1681026710; x=1683618710;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dfO6Q33trJc9amyhdRbPtb/0kOtWlf2GzxFdUmEYiZk=;
+        b=7lPVXHi7MMl5YSXXE/eXoPZPyb5QmUYHMbUt/lHygwUGws84w8OLGyorHbDzsmLB4P
+         aQIMGPBLM3qrMq770lw2C5HMMTD647Ocap2qIalyPFPxoaKfaiR3nO+5utbASgGg0YQk
+         eiUR3gqHv9bTXONGFiuf2ywDxHYylvsc1osx8nw6iVTwxE5sVJifrfkdW/b76P0VrVvJ
+         2P3lN+mbn3ExfNtF6o3bJGZozeE/eWNhdUZItVMfwAS+L3FENn/LoqKQM0ps07y9hezO
+         z+Cr6vDQ8tihMh9n5QbHM/3b91x7dML0NdrxftSn5/tqODFTpiNtzRG7N0ky68rhzEv3
+         T6tg==
+X-Gm-Message-State: AAQBX9dJTFUK+8nF6oKcem4APWawrHGoT/DXV1lk7Z2Wq4FxSCvtlRx6
+        AfQtIQjd/BCFz11BcxCpvWDTpQ==
+X-Google-Smtp-Source: AKy350a7jE9qhPToVvbG60Udd4ofHEpP3TiNv3InRKJaBJlwkFhj4NxtJ4QB9S7gt55caA0ys3LmQQ==
+X-Received: by 2002:adf:f60b:0:b0:2ef:bbbc:de7d with SMTP id t11-20020adff60b000000b002efbbbcde7dmr2140633wrp.46.1681026710389;
+        Sun, 09 Apr 2023 00:51:50 -0700 (PDT)
+Received: from localhost ([86.61.181.4])
+        by smtp.gmail.com with ESMTPSA id h18-20020a5d5052000000b002cfe0ab1246sm8642373wrt.20.2023.04.09.00.51.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Apr 2023 00:51:49 -0700 (PDT)
+Date:   Sun, 9 Apr 2023 09:51:48 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        Vadim Fedorenko <vadfed@meta.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
+Message-ID: <ZDJulCXj9H8LH+kl@nanopsycho>
+References: <20230312022807.278528-1-vadfed@meta.com>
+ <20230312022807.278528-3-vadfed@meta.com>
+ <ZA9Nbll8+xHt4ygd@nanopsycho>
+ <2b749045-021e-d6c8-b265-972cfa892802@linux.dev>
+ <ZBA8ofFfKigqZ6M7@nanopsycho>
+ <DM6PR11MB4657120805D656A745EF724E9BBE9@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZBGOWQW+1JFzNsTY@nanopsycho>
+ <20230403111812.163b7d1d@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230403111812.163b7d1d@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Qualcomm MSM8953 GCC clock controller has clock inputs, thus
-existing gcc-other.yaml was not describing it fully.  Move the binding
-to its own schema file and document the clocks based on DTS.  Add driver
-contributors as its maintainers.
+Mon, Apr 03, 2023 at 08:18:12PM CEST, kuba@kernel.org wrote:
+>On Wed, 15 Mar 2023 10:22:33 +0100 Jiri Pirko wrote:
+>> So basically you say, you can have 2 approaches in app:
+>> 1)
+>> id = dpll_device_get_id("ice/c92d02a7129f4747/1")
+>> dpll_device_set(id, something);
+>> dpll_device_set(id, something);
+>> dpll_device_set(id, something);
+>> 2):
+>> dpll_device_set("ice/c92d02a7129f4747/1, something);
+>> dpll_device_set("ice/c92d02a7129f4747/1, something);
+>> dpll_device_set("ice/c92d02a7129f4747/1, something);
+>> 
+>> What is exactly benefit of the first one? Why to have 2 handles? Devlink
+>> is a nice example of 2) approach, no problem there.
+>
+>IMHO for devlink the neatness of using the name came from the fact 
+>that the device name was meaningful. 
+>
+>With the advent of auxbus that's no longer the case.
+>
+>In fact it seems more than likely that changing the name to auxbus
+>will break FW update scripts. Maybe nobody has complained yet only
+>because prod adoption of these APIs is generally lacking :(
+>
+>I agree that supporting both name and ID is pointless, user space can
+>translate between the two trivially all by itself. But I'd lean towards
+>deleting the name support not the ID support :(
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/clock/qcom,gcc-msm8953.yaml      | 73 +++++++++++++++++++
- .../bindings/clock/qcom,gcc-other.yaml        |  1 -
- 2 files changed, 73 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
-
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
-new file mode 100644
-index 000000000000..fe9fd4cb185f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
-@@ -0,0 +1,73 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,gcc-msm8953.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Global Clock & Reset Controller on MSM8953
-+
-+maintainers:
-+  - Adam Skladowski <a_skl39@protonmail.com>
-+  - Sireesh Kodali <sireeshkodali@protonmail.com>
-+
-+description: |
-+  Qualcomm global clock control module provides the clocks, resets and power
-+  domains on MSM8953.
-+
-+  See also: include/dt-bindings/clock/qcom,gcc-msm8953.h
-+
-+properties:
-+  compatible:
-+    const: qcom,gcc-msm8953
-+
-+  clocks:
-+    items:
-+      - description: Board XO source
-+      - description: Sleep clock source
-+      - description: Byte clock from DSI PHY0
-+      - description: Pixel clock from DSI PHY0
-+      - description: Byte clock from DSI PHY1
-+      - description: Pixel clock from DSI PHY1
-+
-+  clock-names:
-+    items:
-+      - const: xo
-+      - const: sleep
-+      - const: dsi0pll
-+      - const: dsi0pllbyte
-+      - const: dsi1pll
-+      - const: dsi1pllbyte
-+
-+required:
-+  - compatible
-+  - clocks
-+  - clock-names
-+
-+allOf:
-+  - $ref: qcom,gcc.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,rpmcc.h>
-+
-+    clock-controller@1800000 {
-+        compatible = "qcom,gcc-msm8953";
-+        reg = <0x01800000 0x80000>;
-+        clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-+                 <&sleep_clk>,
-+                 <&dsi0_phy 1>,
-+                 <&dsi0_phy 0>,
-+                 <&dsi1_phy 1>,
-+                 <&dsi1_phy 0>;
-+        clock-names = "xo",
-+                      "sleep",
-+                      "dsi0pll",
-+                      "dsi0pllbyte",
-+                      "dsi1pll",
-+                      "dsi1pllbyte";
-+        #clock-cells = <1>;
-+        #reset-cells = <1>;
-+        #power-domain-cells = <1>;
-+    };
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
-index ae01e7749534..ba969e7a57bf 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
-@@ -30,7 +30,6 @@ properties:
-     enum:
-       - qcom,gcc-ipq6018
-       - qcom,gcc-mdm9607
--      - qcom,gcc-msm8953
-       - qcom,gcc-mdm9615
- 
- required:
--- 
-2.34.1
-
+Wait, not sure you get the format of the "name". It does not contain any
+bus address, so the auxdev issue you pointed out is not applicable.
+It is driver/clock_id/index.
+All 3 are stable and user can rely on them. Do you see any issue in
+that?
