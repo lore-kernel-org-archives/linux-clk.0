@@ -2,71 +2,68 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B21C77B61
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Apr 2023 19:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45935C76196
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Apr 2023 19:58:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229694AbjDJTm5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Apr 2023 15:42:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35302 "EHLO
+        id S229683AbjDJT6X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Apr 2023 15:58:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229755AbjDJTm4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Apr 2023 15:42:56 -0400
+        with ESMTP id S229593AbjDJT6W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Apr 2023 15:58:22 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A75551BE7;
-        Mon, 10 Apr 2023 12:42:55 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A6C610DB
+        for <linux-clk@vger.kernel.org>; Mon, 10 Apr 2023 12:58:21 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 43DB7617F3;
-        Mon, 10 Apr 2023 19:42:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88E2CC433EF;
-        Mon, 10 Apr 2023 19:42:54 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 11C1961416
+        for <linux-clk@vger.kernel.org>; Mon, 10 Apr 2023 19:58:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61BC6C4339B;
+        Mon, 10 Apr 2023 19:58:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681155774;
-        bh=noGi/I5C0/iTcFd+H+j4kCxKuu9iJ65cPO2EiqdW3us=;
+        s=k20201202; t=1681156700;
+        bh=fiVAVmMtF7xzrptDMrJyichMbbhY5MrqVI3X9HuNS4I=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=rKPmeI3WMQQ2LAbv2M2wjN4MhIQxvOnuQkj3iy4FPumsBbwHmR1Jb5xsFHdE2jitd
-         9dYO23ScL+tKRtGJdJTb7lJskDd9woI4b36CcAaG2Q9IqCfNI50gdGVvoWlNpQL85P
-         L4w1CKsNuMLrEH/DjgWlBMCElKmtWIHtIF+lEXQjVc7ZJfUg5pksbAaT6LPgyCWe7r
-         PKZSU3JOqsNsryxyE3zw3jZMiRVWzu6djOS/1dr6zX1LTUHeZ6DrAxP8XMl59o6Udu
-         LRggXKGSGPQD7Ek3PUdmabKMAgQjY2VDCJeRUIJ009Ao+72pZnXiFCL7DUdFKITkYn
-         hb0ow5ETdUcHg==
-Message-ID: <1c40e83e1d6ff18253e59d24dcaca2a6.sboyd@kernel.org>
+        b=ibrplrcmuGxDjc8jl05oxP/Ox669jzYfbuSu7PT3m8UuLO31MDtpT8GNsztUIWU2a
+         sB1xZn/d1IhLSZNkhggIcCIyUMAz+asDjzfI+IlODkHEt+dP/ktQim1RlHzgIOOWAa
+         jZU8UiGZlNHTwbMCHibLaHwr66610BRhNrFmrwjnR73Amk1jjk3BgdpszinSM8pzDZ
+         +CK0u6On7SIWoLj+lgJqo+bP/qwFOWUUgaFSetI7OuOwXIg91r5h/XWZb6i+NuU5Kw
+         z3c8VSsCzeRjGlIg2hZdaxzu1BbTnappIVMnHtQ+FQ797jfRBaL4DxXLlN6y5XgEyk
+         NhENQiLHhmYVw==
+Message-ID: <e1da09167583cfa29ce5410a6f9b01f1.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1681113399.git.geert+renesas@glider.be>
-References: <cover.1681113399.git.geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v6.4 (take two)
+In-Reply-To: <20230410014502.27929-1-lars@metafoo.de>
+References: <20230410014502.27929-1-lars@metafoo.de>
+Subject: Re: [PATCH 01/11] clk: axi-clkgen: Use managed `of_clk_add_hw_provider()`
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+Cc:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Mike Looijmans <mike.looijmans@topic.nl>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        linux-clk@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
+To:     Lars-Peter Clausen <lars@metafoo.de>,
         Michael Turquette <mturquette@baylibre.com>
-Date:   Mon, 10 Apr 2023 12:42:51 -0700
+Date:   Mon, 10 Apr 2023 12:58:18 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2023-04-10 01:01:26)
->         Hi Mike, Stephen,
+Quoting Lars-Peter Clausen (2023-04-09 18:44:52)
+> Use the managed `devm_of_clk_add_hw_provider()` instead of
+> `of_clk_add_hw_provider()`. This makes sure the provider gets automatical=
+ly
+> removed on unbind and allows to completely eliminate the drivers `remove(=
+)`
+> callback.
 >=20
-> The following changes since commit 72cd8436ece036294322fecf91567fef3ce3e8=
-68:
->=20
->   clk: renesas: Convert to platform remove callback returning void (2023-=
-03-16 16:54:21 +0100)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v6.4-tag2
->=20
-> for you to fetch changes up to 5e96c2e0e88d3617477313b071cf199bfc29d794:
->=20
->   clk: renesas: r8a77980: Add I2C5 clock (2023-03-30 16:44:04 +0200)
->=20
-> ----------------------------------------------------------------
+> Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+> ---
 
-Thanks. Pulled into clk-next
+Applied to clk-next
