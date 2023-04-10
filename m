@@ -2,218 +2,71 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 116DAC76196
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Apr 2023 19:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B21C77B61
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Apr 2023 19:42:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229605AbjDJTfd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Apr 2023 15:35:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59204 "EHLO
+        id S229694AbjDJTm5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Apr 2023 15:42:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229523AbjDJTfc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Apr 2023 15:35:32 -0400
-Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 726511BD9;
-        Mon, 10 Apr 2023 12:35:31 -0700 (PDT)
-Received: from g550jk.localnet (unknown [62.108.10.64])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 1E9F8D0A48;
-        Mon, 10 Apr 2023 19:35:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1681155329; bh=KbEuGUIi0s6/94T6L/JiQ3ZZo0mA/S1llGGhaJ960U8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=jKc4P0lco0H+CliWWY23j1/2Xs+YAI44p1Dw5VFtIsAnA7IRjlLT7hOG7n7fCdS19
-         EBuM5iw9HCqOXQQhPjQ6oXl4NQ/n9Jt8+J+fxKk+rz4TUnQm5DWIwe++LqJ/R4LzxP
-         AvI1L3IGEIvj3a1ZKbGPjTZy8xRWQkdYD+mPI4jM=
-From:   Luca Weiss <luca@z3ntu.xyz>
-To:     agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@somainline.org, mturquette@baylibre.com,
-        sboyd@kernel.org, mka@chromium.org,
-        Rajendra Nayak <quic_rjendra@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        johan+linaro@kernel.org, quic_kriskura@quicinc.com,
-        dianders@chromium.org, linux-clk@vger.kernel.org,
-        angelogioacchino.delregno@collabora.com,
-        ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v3 1/3] clk: qcom: gdsc: Fix the handling of PWRSTS_RET support
-Date:   Mon, 10 Apr 2023 21:35:27 +0200
-Message-ID: <2674085.mvXUDI8C0e@z3ntu.xyz>
-In-Reply-To: <2619574.X9hSmTKtgW@z3ntu.xyz>
-References: <20220920111517.10407-1-quic_rjendra@quicinc.com>
- <5c2442d3-1f65-9106-2ef4-d6beec159538@quicinc.com>
- <2619574.X9hSmTKtgW@z3ntu.xyz>
+        with ESMTP id S229755AbjDJTm4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Apr 2023 15:42:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A75551BE7;
+        Mon, 10 Apr 2023 12:42:55 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 43DB7617F3;
+        Mon, 10 Apr 2023 19:42:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88E2CC433EF;
+        Mon, 10 Apr 2023 19:42:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681155774;
+        bh=noGi/I5C0/iTcFd+H+j4kCxKuu9iJ65cPO2EiqdW3us=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=rKPmeI3WMQQ2LAbv2M2wjN4MhIQxvOnuQkj3iy4FPumsBbwHmR1Jb5xsFHdE2jitd
+         9dYO23ScL+tKRtGJdJTb7lJskDd9woI4b36CcAaG2Q9IqCfNI50gdGVvoWlNpQL85P
+         L4w1CKsNuMLrEH/DjgWlBMCElKmtWIHtIF+lEXQjVc7ZJfUg5pksbAaT6LPgyCWe7r
+         PKZSU3JOqsNsryxyE3zw3jZMiRVWzu6djOS/1dr6zX1LTUHeZ6DrAxP8XMl59o6Udu
+         LRggXKGSGPQD7Ek3PUdmabKMAgQjY2VDCJeRUIJ009Ao+72pZnXiFCL7DUdFKITkYn
+         hb0ow5ETdUcHg==
+Message-ID: <1c40e83e1d6ff18253e59d24dcaca2a6.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <cover.1681113399.git.geert+renesas@glider.be>
+References: <cover.1681113399.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v6.4 (take two)
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Mon, 10 Apr 2023 12:42:51 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rajendra,
-
-On Mittwoch, 1. Februar 2023 19:04:37 CEST Luca Weiss wrote:
-> On Montag, 23. J=E4nner 2023 05:30:55 CET Rajendra Nayak wrote:
-> > On 1/22/2023 5:45 AM, Luca Weiss wrote:
-> > > Hi Rajendra,
-> > >=20
-> > > On Dienstag, 20. September 2022 13:15:15 CET Rajendra Nayak wrote:
-> > >> GDSCs cannot be transitioned into a Retention state in SW.
-> > >> When either the RETAIN_MEM bit, or both the RETAIN_MEM and
-> > >> RETAIN_PERIPH bits are set, and the GDSC is left ON, the HW
-> > >> takes care of retaining the memory/logic for the domain when
-> > >> the parent domain transitions to power collapse/power off state.
-> > >>=20
-> > >> On some platforms where the parent domains lowest power state
-> > >> itself is Retention, just leaving the GDSC in ON (without any
-> > >> RETAIN_MEM/RETAIN_PERIPH bits being set) will also transition
-> > >> it to Retention.
-> > >>=20
-> > >> The existing logic handling the PWRSTS_RET seems to set the
-> > >> RETAIN_MEM/RETAIN_PERIPH bits if the cxcs offsets are specified
-> > >> but then explicitly turns the GDSC OFF as part of _gdsc_disable().
-> > >> Fix that by leaving the GDSC in ON state.
-> > >>=20
-> > >> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> > >> Cc: AngeloGioacchino Del Regno
-> > >> <angelogioacchino.delregno@collabora.com>
-> > >> ---
-> > >> v3:
-> > >> Updated changelog
-> > >>=20
-> > >> There are a few existing users of PWRSTS_RET and I am not
-> > >> sure if they would be impacted with this change
-> > >>=20
-> > >> 1. mdss_gdsc in mmcc-msm8974.c, I am expecting that the
-> > >> gdsc is actually transitioning to OFF and might be left
-> > >> ON as part of this change, atleast till we hit system wide
-> > >> low power state.
-> > >> If we really leak more power because of this
-> > >> change, the right thing to do would be to update .pwrsts for
-> > >> mdss_gdsc to PWRSTS_OFF_ON instead of PWRSTS_RET_ON
-> > >> I dont have a msm8974 hardware, so if anyone who has can report
-> > >> any issues I can take a look further on how to fix it.
-> > >=20
-> > > Unfortunately indeed this patch makes problems on msm8974, at least on
-> > > fairphone-fp2 hardware.
-> > >=20
-> > > With this patch in place, the screen doesn't initialize correctly in
-> > > maybe
-> > > 80% of boots and is stuck in weird states, mostly just becomes
-> > > completely
-> > > blue.
-> > >=20
-> > > Kernel log at least sometimes includes messages like this:
-> > > [   25.847541] dsi_cmds2buf_tx: cmd dma tx failed, type=3D0x39,
-> > > data0=3D0x51,
-> > > len=3D8, ret=3D-110
-> > >=20
-> > > Do you have anything I can try on msm8974? For now, reverting this pa=
-tch
-> > > makes display work again on v6.1
-> >=20
-> > hmm, I was really expecting this to leak more power than break anything
-> > functionally, Did you try moving to PWRSTS_OFF_ON instead of PWRSTS_RET=
-_ON
-> > for mdss_gdsc?
+Quoting Geert Uytterhoeven (2023-04-10 01:01:26)
+>         Hi Mike, Stephen,
 >=20
-> Hi Rajendra,
+> The following changes since commit 72cd8436ece036294322fecf91567fef3ce3e8=
+68:
 >=20
-> yes with this change the display init works fine again. Do you think this=
- is
-> the intended solution then? I also haven't tested really more than this
-> simple case.
+>   clk: renesas: Convert to platform remove callback returning void (2023-=
+03-16 16:54:21 +0100)
 >=20
-> Let me know what you think.
-
-Any feedback on this? Would be great to get this fixed sometime soon, quite=
-=20
-annoying to carry a patch for this locally.
-
-Regards
-Luca
-
+> are available in the Git repository at:
 >=20
-> Regards
-> Luca
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v6.4-tag2
 >=20
-> diff --git a/drivers/clk/qcom/mmcc-msm8974.c
-> b/drivers/clk/qcom/mmcc-msm8974.c index 26f3f8f06edf..f95e38abde13 100644
-> --- a/drivers/clk/qcom/mmcc-msm8974.c
-> +++ b/drivers/clk/qcom/mmcc-msm8974.c
-> @@ -2389,7 +2389,7 @@ static struct gdsc mdss_gdsc =3D {
->  	.pd =3D {
->  		.name =3D "mdss",
->  	},
-> -	.pwrsts =3D PWRSTS_RET_ON,
-> +	.pwrsts =3D PWRSTS_OFF_ON,
->  };
+> for you to fetch changes up to 5e96c2e0e88d3617477313b071cf199bfc29d794:
 >=20
->  static struct gdsc camss_jpeg_gdsc =3D {
+>   clk: renesas: r8a77980: Add I2C5 clock (2023-03-30 16:44:04 +0200)
 >=20
-> > > Regards
-> > > Luca
-> > >=20
-> > >> 2. gpu_gx_gdsc in gpucc-msm8998.c and
-> > >>=20
-> > >>     gpu_gx_gdsc in gpucc-sdm660.c
-> > >>=20
-> > >> Both of these seem to add support for 3 power state
-> > >> OFF, RET and ON, however I dont see any logic in gdsc
-> > >> driver to handle 3 different power states.
-> > >> So I am expecting that these are infact just transitioning
-> > >> between ON and OFF and RET state is never really used.
-> > >> The ideal fix for them would be to just update their resp.
-> > >> .pwrsts to PWRSTS_OFF_ON only.
-> > >>=20
-> > >>   drivers/clk/qcom/gdsc.c | 10 ++++++++++
-> > >>   drivers/clk/qcom/gdsc.h |  5 +++++
-> > >>   2 files changed, 15 insertions(+)
-> > >>=20
-> > >> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> > >> index d3244006c661..ccf63771e852 100644
-> > >> --- a/drivers/clk/qcom/gdsc.c
-> > >> +++ b/drivers/clk/qcom/gdsc.c
-> > >> @@ -368,6 +368,16 @@ static int _gdsc_disable(struct gdsc *sc)
-> > >>=20
-> > >>   	if (sc->pwrsts & PWRSTS_OFF)
-> > >>   =09
-> > >>   		gdsc_clear_mem_on(sc);
-> > >>=20
-> > >> +	/*
-> > >> +	 * If the GDSC supports only a Retention state, apart from ON,
-> > >> +	 * leave it in ON state.
-> > >> +	 * There is no SW control to transition the GDSC into
-> > >> +	 * Retention state. This happens in HW when the parent
-> > >> +	 * domain goes down to a Low power state
-> > >> +	 */
-> > >> +	if (sc->pwrsts =3D=3D PWRSTS_RET_ON)
-> > >> +		return 0;
-> > >> +
-> > >>=20
-> > >>   	ret =3D gdsc_toggle_logic(sc, GDSC_OFF);
-> > >>   	if (ret)
-> > >>   =09
-> > >>   		return ret;
-> > >>=20
-> > >> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-> > >> index 5de48c9439b2..981a12c8502d 100644
-> > >> --- a/drivers/clk/qcom/gdsc.h
-> > >> +++ b/drivers/clk/qcom/gdsc.h
-> > >> @@ -49,6 +49,11 @@ struct gdsc {
-> > >>=20
-> > >>   	const u8			pwrsts;
-> > >>  =20
-> > >>   /* Powerdomain allowable state bitfields */
-> > >>   #define PWRSTS_OFF		BIT(0)
-> > >>=20
-> > >> +/*
-> > >> + * There is no SW control to transition a GDSC into
-> > >> + * PWRSTS_RET. This happens in HW when the parent
-> > >> + * domain goes down to a low power state
-> > >> + */
-> > >>=20
-> > >>   #define PWRSTS_RET		BIT(1)
-> > >>   #define PWRSTS_ON		BIT(2)
-> > >>   #define PWRSTS_OFF_ON		(PWRSTS_OFF | PWRSTS_ON)
+> ----------------------------------------------------------------
 
-
-
-
+Thanks. Pulled into clk-next
