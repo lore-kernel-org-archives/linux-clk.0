@@ -2,67 +2,65 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F6AC76196
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Apr 2023 23:36:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02EBFC77B61
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Apr 2023 23:59:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229591AbjDJXg0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Apr 2023 19:36:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47830 "EHLO
+        id S229690AbjDJX7e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Apr 2023 19:59:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229702AbjDJXgZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Apr 2023 19:36:25 -0400
+        with ESMTP id S229605AbjDJX7d (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Apr 2023 19:59:33 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB1371BC7;
-        Mon, 10 Apr 2023 16:36:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC0701BE7;
+        Mon, 10 Apr 2023 16:59:31 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 56A6E62003;
-        Mon, 10 Apr 2023 23:36:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A49ABC433D2;
-        Mon, 10 Apr 2023 23:36:23 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6AEF16201F;
+        Mon, 10 Apr 2023 23:59:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4B11C433EF;
+        Mon, 10 Apr 2023 23:59:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681169783;
-        bh=TirLwEYBbP4VCi+NhiloSleSjPJ6R//R3r7qXDcBu9I=;
+        s=k20201202; t=1681171170;
+        bh=JVXtANLCoXKH4bGk9XkI7snII9iDxlueE91bJgDTERM=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=g8NZ85bPEriDDh2zVqaVoPv4YOphP1x+jqdyhswCs08JNo32vx/uYplhfJmCSIKY0
-         BtnpSARwyar60MHcxFJSDO0Kzl4Qys/FwC9jLiCu3c+MpcJANIMbkMTB0yNlrWfJpI
-         9MTcOpBJ952vtKUngt7jwgtFfRaEni39llZhTcrGA8MprqhHOp7xVAFSLGuLhmheYn
-         SvIVXC6xKsLfhRqdopJO3Za9tVcS+zdmR/n8lNcZgnuW9d4pvdYstlMM/4ZwV51CRI
-         bH3pcNUkb8szMUfCFodqES2p20hmnF/cOevZzKSLrtWe0+3MxRse7xA2p0xOzCIHl/
-         qe3jScwMooj9g==
-Message-ID: <216176104e507b860e24399bf020d836.sboyd@kernel.org>
+        b=k6A7+qy1kZ+Sfd2025/ayUX8uj9rh0rS6djSM6jD5ilFLdGQ1kACZvpNWq0UWh7jQ
+         ZGGmcdbzYYd0qFPIyUkySlNe2M3YlFPPRYZp7yyFwfPUSXVNArr0pshgN77ZrMrSSi
+         6YJVthmIfXDPBQXnWlTh1Ti+2S8gWaKjvPYd7/RsO3Y74IF5//1wt9XmaUwG4i/oBz
+         hnxC+cT24qIHDjzJHAWs8ZGtzdGp0K0EzTEoU0Tmz+LQMO3OMeNb/eAZSIEBQqHtve
+         yvzYtpvLGl0MegvHkh8vxuctEb919+dCkd0NlB3OcBEUvqL416KjvgLyJfRwPcLRd5
+         pfn5oUKxVy/qQ==
+Message-ID: <502bacd2b6b0f448106d82b2d8c5c9d4.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230327-mvebu-clk-fixes-v1-2-438de1026efd@kernel.org>
-References: <20230327-mvebu-clk-fixes-v1-0-438de1026efd@kernel.org> <20230327-mvebu-clk-fixes-v1-2-438de1026efd@kernel.org>
-Subject: Re: [PATCH 2/3] clk: mvebu: Use of_get_cpu_hwid() to read CPU ID
+In-Reply-To: <20230406010935.1944976-1-trix@redhat.com>
+References: <20230406010935.1944976-1-trix@redhat.com>
+Subject: Re: [PATCH] clk: mediatek: fhctl: set varaiables fhctl_offset_v1,2 storage-class-specifier to static
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Date:   Mon, 10 Apr 2023 16:36:21 -0700
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, Tom Rix <trix@redhat.com>
+To:     Tom Rix <trix@redhat.com>, angelogioacchino.delregno@collabora.com,
+        edward-jw.yang@mediatek.com, johnson.wang@mediatek.com,
+        matthias.bgg@gmail.com, mturquette@baylibre.com, wenst@chromium.org
+Date:   Mon, 10 Apr 2023 16:59:28 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rob Herring (2023-03-27 11:43:19)
-> Use of_get_cpu_hwid() rather than the open coded reading of the CPU
-> nodes "reg" property. The existing code is in fact wrong as the "reg"
-> address cells size is 2 cells for arm64. The existing code happens to
-> work because the DTS files are wrong as well.
+Quoting Tom Rix (2023-04-05 18:09:35)
+> smatch reports
+> drivers/clk/mediatek/clk-fhctl.c:17:27: warning: symbol
+>   'fhctl_offset_v1' was not declared. Should it be static?
+> drivers/clk/mediatek/clk-fhctl.c:30:27: warning: symbol
+>   'fhctl_offset_v2' was not declared. Should it be static?
 >=20
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> These variables are only used in one file so should be static.
+>=20
+> Signed-off-by: Tom Rix <trix@redhat.com>
 > ---
-> Note this should be marked for stable so that if/when the DTS files are
-> fixed, then at least stable kernels will work. This is untested, so I
-> didn't mark for stable.
 
-That makes it sound like it breaks for existing DTS files. Is that the
-case?
+Applied to clk-next
