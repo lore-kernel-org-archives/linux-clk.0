@@ -2,84 +2,69 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7601C77B61
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Apr 2023 19:09:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8AA7C77B61
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Apr 2023 19:31:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229624AbjDJTJf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Apr 2023 15:09:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41730 "EHLO
+        id S229775AbjDJTbr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Apr 2023 15:31:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229523AbjDJTJf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Apr 2023 15:09:35 -0400
+        with ESMTP id S229778AbjDJTbq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Apr 2023 15:31:46 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B316170B;
-        Mon, 10 Apr 2023 12:09:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 026F31BD8;
+        Mon, 10 Apr 2023 12:31:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 05405617AC;
-        Mon, 10 Apr 2023 19:09:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B3B1C433EF;
-        Mon, 10 Apr 2023 19:09:33 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6F8BE61EE5;
+        Mon, 10 Apr 2023 19:31:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6552C433D2;
+        Mon, 10 Apr 2023 19:31:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681153773;
-        bh=6AM3IaSISpi2UJXkc2lWWcX+1778WF33N4cnk40E1co=;
+        s=k20201202; t=1681155096;
+        bh=j0W1NgpsGtMj+qMWpb0ESDcDqJCah6edrt3yjwegYDM=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=APr9zLvB/hh3+87BtMdUNx3eVQRO9c+qp/4UX7vboA4/APxZW/a9tR9DAeAzPl8jL
-         TmckCAQ8j71bQxFTOFAClgd3J9mKG3EXOQGtEPMUrVSLs5+ilsbTPo51Mh/P+CEzNo
-         v0Fc7dW7BcQQi814hq9MI7DlDpaeBrNrRKyphlMlE2+yqXB+oR4Kmp0GYtxUD+M3LU
-         ciMdrJwSVwHmvgunvcJh8hovFPDkLtCwl7CLx+b5Pu4tq+OaRbzPkouw/3OJozzmT2
-         QdULEzivBcPN+tcbcD3lW12chUvGOFjzqo7BNsRyZfzc/gIAKt2lPafAXYFa/IRSJz
-         7Kgv0RbOfApvA==
-Message-ID: <c8847456a3a30b31bb3b3aa3c32a5a8b.sboyd@kernel.org>
+        b=LSNvJyrDwPkm6jr0O6Ny1HLBf2vqWINPXcQUMmXjl8Rj6KALbsiP0bnGfcrIKCClC
+         4+DI1mmLfWvGh7dR6NHk2N6BD5R7l/m9lAxdTnJCgagT3heTtg0QwooxYlu+SdyyLt
+         EvjHIwkyw5Boouqx3HzS4AaFUmdmHwjGJxE0B9ThxpHg+zcrLT6VuGCwb6zqPA+mRy
+         7R5UE+N6YAiqr1nJTtQgE/ESKQqc4C028nFvGVIVlRReZ0NO7TLBhkxp3/dZqIWe6I
+         nZG9/1x5Uc/1YxGyJyrVOmjoB68iylz/5LkoOKReCRqK32UrIY2PrJmAk4DHbkpTtG
+         jo71mVfJL+2Dw==
+Message-ID: <3b118384151cb56123dc11349249a664.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAMRc=McM1DfCoMmuUYcChFFBG=H1PgZFAWcuxnQsdhRdYrT+yA@mail.gmail.com>
-References: <20230328193632.226095-1-brgl@bgdev.pl> <20230328193632.226095-3-brgl@bgdev.pl> <72286603300630b890705c99b42f05a4.sboyd@kernel.org> <CAMRc=McM1DfCoMmuUYcChFFBG=H1PgZFAWcuxnQsdhRdYrT+yA@mail.gmail.com>
-Subject: Re: [PATCH 2/7] clk: qcom: add the GPUCC driver for sa8775p
+In-Reply-To: <20230406061314.10916-2-quic_devipriy@quicinc.com>
+References: <20230406061314.10916-1-quic_devipriy@quicinc.com> <20230406061314.10916-2-quic_devipriy@quicinc.com>
+Subject: Re: [PATCH V3 1/5] dt-bindings: clock: qcom,a53pll: add IPQ9574 compatible
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        Shazad Hussain <quic_shazhuss@quicinc.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 10 Apr 2023 12:09:31 -0700
+Cc:     quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
+        quic_kathirav@quicinc.com, quic_arajkuma@quicinc.com,
+        quic_anusha@quicinc.com, quic_ipkumar@quicinc.com
+To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, arnd@arndb.de, broonie@kernel.org,
+        catalin.marinas@arm.com, devicetree@vger.kernel.org,
+        dmitry.baryshkov@linaro.org, geert+renesas@glider.be,
+        jassisinghbrar@gmail.com, konrad.dybcio@linaro.org,
+        krzysztof.kozlowski+dt@linaro.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        nfraprado@collabora.com, rafal@milecki.pl, robh+dt@kernel.org,
+        will@kernel.org
+Date:   Mon, 10 Apr 2023 12:31:34 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bartosz Golaszewski (2023-04-06 04:20:33)
-> On Wed, Mar 29, 2023 at 4:15=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> w=
-rote:
-> >
-> > Quoting Bartosz Golaszewski (2023-03-28 12:36:27)
-> > > diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> > > index 449bc8314d21..5e1919738aeb 100644
-> > > --- a/drivers/clk/qcom/Kconfig
-> > > +++ b/drivers/clk/qcom/Kconfig
-> > > @@ -437,6 +437,14 @@ config SA_GCC_8775P
-> > >           Say Y if you want to use peripheral devices such as UART, S=
-PI,
-> > >           I2C, USB, UFS, SDCC, etc.
-> > >
-> > > +config SA_GPUCC_8775P
-> > > +       tristate "SA8775P Graphics clock controller"
-> > > +       select SA_GCC_8775P
-> >
-> > Should select QCOM_GDSC as well.
-> >
+Quoting Devi Priya (2023-04-05 23:13:10)
+> IPQ9574 uses A73 PLL of type Huayra. Add the IPQ9574 A73 compatible to A53
+> bindings as the PLL properties match with that of A53.
 >=20
-> Why if it's already selected indirectly by SA_GCC_8775P? Other GPUCCs
-> in here don't select it either.
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+> ---
 
-For completeness.
+Acked-by: Stephen Boyd <sboyd@kernel.org>
