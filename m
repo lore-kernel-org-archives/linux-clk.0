@@ -2,168 +2,213 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3DFDC77B6F
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 13:45:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 484A3C77B6F
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 13:56:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230083AbjDKNpR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Apr 2023 09:45:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59672 "EHLO
+        id S230509AbjDKN4O convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Apr 2023 09:56:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229641AbjDKNpQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 09:45:16 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD8CAE48
-        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 06:45:14 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id z8so12290828lfb.12
-        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 06:45:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681220713;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i8j4IUlVj3riTiWQmjJ2d73DxaHhOYBTiZKwAU5TtVk=;
-        b=Nmxt/npRMsGRl91Njy5uOxNJ5ZRJhRyCTrLxKD/Im/NDTaIgtmneBfPNbAruinun7N
-         3xxyphT+PJ3k1wYimkETsSUmNMrA0nkqltYApc7EPmzqLqKmimOf3dDLFlTM4R7PT4fu
-         JwYNREFqbZPPnfJlXWHla/k3hr1P9Dd98fOJpXLHwGlp/f6k42UgDXZzPyVcAPCswcWC
-         e6LAjm9WFUKcS1GHS3AM9u2vteWpjLxasAlp4WhwJSeGA/5BFkp8BWklwpXInYHZRTxF
-         lQfp2paWZX3THOc3prZdCfhTi3oWEwv6UR8hcziugtLy+siHknPG5CddfAhl364umhVU
-         xadA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681220713;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i8j4IUlVj3riTiWQmjJ2d73DxaHhOYBTiZKwAU5TtVk=;
-        b=C5EcfF9vao2prftq6fYInLHNExnd60BbxLgxfFDMzz0V9eQWwH3Kpk/sjaMAhgL4ds
-         GYP7/38bdVOm4rE5hduAPM/fVPC9c5w3+DBe8XpmdzxOO6YuUe565kkRx7pHgg+BugBK
-         X2+Ow/71Wmtojz+TgM4BlLgCPodTitDMEPrfdtS+bnO97f4+oFmPk8sbM5ZHYVpGcHAr
-         FW7T3/kS3ef3CHbsSDBnFtow4xy8Tn4Pmj7tUeR6AwVHt/24VVg+dVoFMUHqHm2vvd2v
-         bUzCceAyKHNEU6y8Bcv7JoPk7dXyyudrrQYQHvexvj3txlxWcMx8CyrPygjbTSDObQG1
-         wBkA==
-X-Gm-Message-State: AAQBX9cGXTQF8agFl0vTAb57IhU20l1RXBZPYoUkB9B9QMm0pRvuosBs
-        4X0Rys1qWFVvhd+qc3+W9HzhCg==
-X-Google-Smtp-Source: AKy350adz8ggqqAG288YMHm5u14GdIex1vPv1WF39fLVqGlUbAg65w3Uv4Sc4D2fh9YQ6CmM4Vqpfw==
-X-Received: by 2002:a05:6512:11ef:b0:4db:3847:12f0 with SMTP id p15-20020a05651211ef00b004db384712f0mr3366560lfs.50.1681220713146;
-        Tue, 11 Apr 2023 06:45:13 -0700 (PDT)
-Received: from [192.168.1.101] (abxj23.neoplus.adsl.tpnet.pl. [83.9.3.23])
-        by smtp.gmail.com with ESMTPSA id r6-20020a056512102600b004e843d6244csm2569541lfr.99.2023.04.11.06.45.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Apr 2023 06:45:12 -0700 (PDT)
-Message-ID: <6406469d-289b-af4e-83f8-8259f5dcaf00@linaro.org>
-Date:   Tue, 11 Apr 2023 15:45:11 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH 2/3] dt-bindings: clock: qcom,gcc-sc7180: document CX
- power domain
-Content-Language: en-US
-To:     Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S230490AbjDKN4N (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 09:56:13 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94F5C10FE;
+        Tue, 11 Apr 2023 06:56:07 -0700 (PDT)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id C9FA924E02F;
+        Tue, 11 Apr 2023 21:56:04 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 11 Apr
+ 2023 21:56:04 +0800
+Received: from localhost.localdomain (113.72.145.176) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 11 Apr
+ 2023 21:56:03 +0800
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+To:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230408134820.76050-1-krzysztof.kozlowski@linaro.org>
- <20230408134820.76050-2-krzysztof.kozlowski@linaro.org>
- <4757c33c-7e71-262d-a51a-c5f9fb53ff41@linaro.org>
- <d4a8054c-443e-d9ba-9641-ff721254d254@quicinc.com>
- <c70c1a4d-50c5-2b50-18c9-7c46c3803cd4@linaro.org>
- <2f9f9cdd-cfbe-ca22-7308-d6b1f0c1c455@quicinc.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <2f9f9cdd-cfbe-ca22-7308-d6b1f0c1c455@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Conor Dooley <conor@kernel.org>,
+        "Emil Renner Berthing" <kernel@esmil.dk>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        Xingyu Wu <xingyu.wu@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH v4 00/10] Add new partial clock and reset drivers for StarFive JH7110
+Date:   Tue, 11 Apr 2023 21:55:48 +0800
+Message-ID: <20230411135558.44282-1-xingyu.wu@starfivetech.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [113.72.145.176]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+This patch serises are base on the basic JH7110 SYSCRG/AONCRG
+drivers and add new partial clock drivers and reset supports
+about System-Top-Group(STG), Image-Signal-Process(ISP)
+and Video-Output(VOUT) for the StarFive JH7110 RISC-V SoC. These
+clocks and resets could be used by DMA, VIN and Display modules.
+
+Patch 1 adds struct members to support STG/ISP/VOUT resets.
+
+Patches 2 and 3 are about the System-Top-Group clock and reset
+generator(STGCRG) part. The first patch adds docunmentation to
+describe STG bindings, and the second patch adds clock driver to
+support STG clocks and resets as auxiliary device for JH7110.
+
+Patches 4 and 5 are about the Image-Signal-Process clock and reset
+gennerator(ISPCRG) part. The first patch adds docunmentation to
+describe ISP bindings, and the second patch adds clock driver to
+support ISP clocks and resets as auxiliary device for JH7110.
+And ISP clocks should power on and enable the SYSCRG clocks first
+before registering.
+
+Patches 6 and 7 are about the Video-Output clock and reset
+generator(VOUTCRG) part. The first patch adds docunmentation to
+describe VOUT bindings, and the second patch adds clock driver to
+support VOUT clocks and resets as auxiliary device for JH7110.
+And VOUT clocks also should power on and enable the SYSCRG clocks
+first before registering.
+
+Patch 8 adds the maintainer who take charge of the STGCRG/ISPCRG/VOUTCRG
+for JH7110.
+Patch 9 adds external clocks which ISP and VOUT clock driver need.
+Patch 10 adds device node about STGCRG, ISPCRG and VOUTCRG to JH7110 dts.
+
+Patches 1, 3, 5, 7 and 8 are dependent on the patchset [1] which
+is about JH71x0 clock and reset driver (Accepted and will merge).
+Patchdes 9 and 10 are dependent on the patchset [1] and [2] which is
+about JH7110 device tree and PMU node.
+This patchset should be applied after the patchset [1], [2]:
+[1] https://lore.kernel.org/all/20230401111934.130844-1-hal.feng@starfivetech.com/
+[2] https://lore.kernel.org/all/20230116074259.22874-4-walker.chen@starfivetech.com/
+
+Changes since v3:
+- Rebased on the lastest JH71X0 clock and reset driver of patchset[1]
+  and modified the parameters of the register reset functions.
+- The patch 1 combined three commits on STG/ISP/VOUT resets into one.
+  And Changed the auxiliary_device_id name from
+  "clk_starfive_jh71x0.reset-*" to "clk_starfive_jh7110_sys.rst-*".
+- Added a maintainer in STARFIVE JH71X0 CLOCK DRIVERS.
+
+v3: https://lore.kernel.org/all/20230314124404.117592-1-xingyu.wu@starfivetech.com/
+
+Changes since v2: 
+Patch 1:
+- Dropped the modification of maintainers.
+- Modified clock and reset names in the dt-bindings header files.
+Patch 3:
+- Added 'Emil Renner Berthing' as the author.
+- Used 'default m' in Kconfig file.
+- Changed the flags of 'CLK_IGNORE_UNUSED' to 0 or 'CLK_IS_CRITICAL'.
+Patch 4:
+- Dropped the 'reset-names' property.
+- Shortened the clock and reset names in the dt-bindings header files.
+Pacth 6:
+- Used 'default m' in Kconfig file.
+- Changed the flags of 'CLK_IGNORE_UNUSED' to 0.
+- Set reset_control struct to a local variable because it just is used
+  one time in probe.
+Pacth 7:
+- Dropped the 'reset-names' property.
+Patch 9:
+- Used 'default m' in Kconfig file.
+- Set reset_control struct to a local variable because it just is used
+  one time in probe.
+Patch 10:
+- Changed the order of externel clock in alphanumerical order.
+Patch 11:
+- Dropped the 'reset-names' property in ispcrg and voutcrg node.
+
+v2: https://lore.kernel.org/all/20230221083323.302471-1-xingyu.wu@starfivetech.com/
+
+Changes since v1:
+- Modified the binding and dropped the indentation.
+- Removed the useless header files in the drivers.
+- Used an array lookup instead of a pile of conditions about parent
+  clocks' name.
+- Added clocks operation on driver remove.
+
+v1: https://lore.kernel.org/all/20230120024445.244345-1-xingyu.wu@starfivetech.com/
+
+Emil Renner Berthing (1):
+  clk: starfive: Add StarFive JH7110 System-Top-Group clock driver
+
+Xingyu Wu (9):
+  reset: starfive: jh7110: Add StarFive STG/ISP/VOUT resets support
+  dt-bindings: clock: Add StarFive JH7110 System-Top-Group clock and
+    reset generator
+  dt-bindings: clock: Add StarFive JH7110 Image-Signal-Process clock and
+    reset generator
+  clk: starfive: Add StarFive JH7110 Image-Signal-Process clock driver
+  dt-bindings: clock: Add StarFive JH7110 Video-Output clock and reset
+    generator
+  clk: starfive: Add StarFive JH7110 Video-Output clock driver
+  MAINTAINERS: Update maintainer of JH71x0 clock drivers
+  riscv: dts: starfive: jh7110: Add DVP and HDMI TX pixel external
+    clocks
+  riscv: dts: starfive: jh7110: Add STGCRG/ISPCRG/VOUTCRG nodes
+
+ .../clock/starfive,jh7110-ispcrg.yaml         |  87 +++++++
+ .../clock/starfive,jh7110-stgcrg.yaml         |  82 ++++++
+ .../clock/starfive,jh7110-voutcrg.yaml        |  90 +++++++
+ MAINTAINERS                                   |   1 +
+ .../jh7110-starfive-visionfive-2.dtsi         |   8 +
+ arch/riscv/boot/dts/starfive/jh7110.dtsi      |  67 +++++
+ drivers/clk/starfive/Kconfig                  |  33 +++
+ drivers/clk/starfive/Makefile                 |   3 +
+ .../clk/starfive/clk-starfive-jh7110-isp.c    | 232 +++++++++++++++++
+ .../clk/starfive/clk-starfive-jh7110-stg.c    | 175 +++++++++++++
+ .../clk/starfive/clk-starfive-jh7110-vout.c   | 239 ++++++++++++++++++
+ .../reset/starfive/reset-starfive-jh7110.c    |  30 +++
+ .../dt-bindings/clock/starfive,jh7110-crg.h   |  74 ++++++
+ .../dt-bindings/reset/starfive,jh7110-crg.h   |  60 +++++
+ 14 files changed, 1181 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-ispcrg.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-stgcrg.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-voutcrg.yaml
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-isp.c
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-stg.c
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-vout.c
 
 
-On 11.04.2023 15:31, Rajendra Nayak wrote:
-> 
-> On 4/11/2023 4:57 PM, Konrad Dybcio wrote:
->>
->>
->> On 11.04.2023 06:56, Rajendra Nayak wrote:
->>>
->>>
->>> On 4/8/2023 7:33 PM, Konrad Dybcio wrote:
->>>>
->>>>
->>>> On 8.04.2023 15:48, Krzysztof Kozlowski wrote:
->>>>> The GCC clock controller needs CX power domain, at least according to
->>>>> DTS:
->>>>>
->>>>>     sc7180-trogdor-pompom-r3.dtb: clock-controller@100000: Unevaluated properties are not allowed ('power-domains' was unexpected)
->>>>>
->>>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>> ---
->>>> +CC Rajendra (author of 5d6fc6321db1 ("arm64: dts: qcom:
->>>> sc7180: Add required-opps for USB"))
->>>>
->>>> Rajendra, shouldn't SC7180 GCC have PM ops to make sure a vote
->>>> is only there when AP is active?
->> So IIUC, CX is never supposed to be shut down?
-> 
-> Atleast sc7180 and sc7280 do not support full CX shutdown (or power
-> collapse as its called), it only transitions to a Retention state
-> and even that in the system-wide suspend path only
-And won't outstanding votes on that resource prevent the system
-from entering a system-wide low power state?
+base-commit: 197b6b60ae7bc51dd0814953c562833143b292aa
+prerequisite-patch-id: 388b8adbb0fe2daf4d07a21eafd4f1bd50ce2403
+prerequisite-patch-id: 1117ecaa40a353c667b71802ab34ecf9568d8bb2
+prerequisite-patch-id: b00c6b21fbd0353d88b7c9b09093ba30b765f45b
+prerequisite-patch-id: 08ec9027e8a5c6fdf201726833168c7464a9b94d
+prerequisite-patch-id: fb5120248e48fe1faf053ae0b490c92507ec2b44
+prerequisite-patch-id: 4b93d8d590b0a2abe7b4be5287232c494c35be4a
+prerequisite-patch-id: 89f049f951e5acf75aab92541992f816fd0acc0d
+prerequisite-patch-id: c09c4c68af017b8e5c97b515cb50b70c18a2e705
+prerequisite-patch-id: 0df8ccb0e848c2df4c2da95026494bebecede92d
+prerequisite-patch-id: 315303931e4b6499de7127a88113763f86e97e16
+prerequisite-patch-id: 40cb8212ddb024c20593f73d8b87d9894877e172
+prerequisite-patch-id: a1673a9e9f19d6fab5a51abb721e54e36636f067
+prerequisite-patch-id: d57cc467fb036241b9276320ff076c4a30d376d6
+prerequisite-patch-id: 6e563d68bc5dbf951d4ced17897f9cc4d56169fe
+prerequisite-patch-id: 61ec2caa21fd0fc60e57977f7d16d3f72b135745
+prerequisite-patch-id: 1387a7e87b446329dfc21f3e575ceae7ebcf954c
+prerequisite-patch-id: 258ea5f9b8bf41b6981345dcc81795f25865d38f
+prerequisite-patch-id: 8b6f2c9660c0ac0ee4e73e4c21aca8e6b75e81b9
+prerequisite-patch-id: dbb0c0151b8bdf093e6ce79fd2fe3f60791a6e0b
+prerequisite-patch-id: 9007c8610fdcd387592475949864edde874c20a2
+prerequisite-patch-id: d57e95d31686772abc4c4d5aa1cadc344dc293cd
+prerequisite-patch-id: 0a0ac5a8a90655b415f6b62e324f3db083cdaaee
+prerequisite-patch-id: 2ddada18ab6ea5cd1da14212aaf59632f5203d40
+-- 
+2.25.1
 
-Konrad
-> 
->>
->> Konrad
->>>
->>> hmm, I am not quite sure why we would want the performance votes
->>> from peripherals dropped when CPUs go down in idle?
->>>
->>>> Are all GDSCs powered by CX?
->>>> If not, wouldn't this also need power-domain-names to
->>>> facilitate e.g. potential MX-powered ones?
->>>
->>> For sc7180 GCC, yes.
->>>
->>>>
->>>> Konrad
->>>>>    .../devicetree/bindings/clock/qcom,gcc-sc7180.yaml         | 7 +++++++
->>>>>    1 file changed, 7 insertions(+)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
->>>>> index 06dce0c6b7d0..8bf9b6f49550 100644
->>>>> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
->>>>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
->>>>> @@ -32,6 +32,10 @@ properties:
->>>>>          - const: bi_tcxo_ao
->>>>>          - const: sleep_clk
->>>>>    +  power-domains:
->>>>> +    items:
->>>>> +      - description: CX domain
->>>>> +
->>>>>    required:
->>>>>      - compatible
->>>>>      - clocks
->>>>> @@ -45,6 +49,8 @@ unevaluatedProperties: false
->>>>>    examples:
->>>>>      - |
->>>>>        #include <dt-bindings/clock/qcom,rpmh.h>
->>>>> +    #include <dt-bindings/power/qcom-rpmpd.h>
->>>>> +
->>>>>        clock-controller@100000 {
->>>>>          compatible = "qcom,gcc-sc7180";
->>>>>          reg = <0x00100000 0x1f0000>;
->>>>> @@ -52,6 +58,7 @@ examples:
->>>>>                   <&rpmhcc RPMH_CXO_CLK_A>,
->>>>>                   <&sleep_clk>;
->>>>>          clock-names = "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
->>>>> +      power-domains = <&rpmhpd SC7180_CX>;
->>>>>          #clock-cells = <1>;
->>>>>          #reset-cells = <1>;
->>>>>          #power-domain-cells = <1>;
