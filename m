@@ -2,186 +2,144 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B4CC7619A
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 10:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5437C77B6F
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 10:58:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229805AbjDKK2R convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Apr 2023 06:28:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55460 "EHLO
+        id S229762AbjDKK6U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Apr 2023 06:58:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229787AbjDKK2Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 06:28:16 -0400
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C313E49;
-        Tue, 11 Apr 2023 03:28:14 -0700 (PDT)
-Received: by mail-ot1-f46.google.com with SMTP id i15-20020a9d610f000000b006a11f365d13so2901392otj.0;
-        Tue, 11 Apr 2023 03:28:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681208893;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9k4ZTujQ4vL3rn+nuolFAvnH5smJoZ+VnOtxKctHstQ=;
-        b=y+0bH845JCNTfFSKJ0B1MNOHn231uHjFfzkjSJyaq98rD8+jejuBRzoyTS8HhnoNsO
-         8jQ0bd7bTqaZURCPChYQYxcPRSs7oyztbrQDGH3EQAa+rc3jkxU/hdBWk908Q1jRcEBD
-         MRxiWJpu5gvekAKHSXCg2vGClTRugX04MBZZy4Kje2/PBxfpSq/pGiuATVcYKzGxG4p1
-         3urjx9jdH9H2ImVyeelhhnhTvDRI3YejMMpWCWeMZ4s+LCNLUVhFVzA17grZmnFhAGlG
-         jbl9XUx5k4pxksCLilIFkF5uzXvqEjaBwX59XSJJnun9IBrkMSZr6cWBRu5bR8R1NM7Q
-         FRmA==
-X-Gm-Message-State: AAQBX9fL7mSESR+2nvw+f/aGHSDFxg7E8T6wyWC0Q+6AyiOEoINmtg4c
-        9qmfuOeOiXyBbgolJirbePzAEaVVepxtJt9a
-X-Google-Smtp-Source: AKy350an1xN/hishtaGm9b8dpgu3i42ccxwem6GQPxV40Cnc+i419snNpiA8gUUu82rkDrPlDBj9fg==
-X-Received: by 2002:a9d:7ac4:0:b0:69f:b541:3f6e with SMTP id m4-20020a9d7ac4000000b0069fb5413f6emr6422271otn.19.1681208893360;
-        Tue, 11 Apr 2023 03:28:13 -0700 (PDT)
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com. [209.85.210.51])
-        by smtp.gmail.com with ESMTPSA id d16-20020a9d5e10000000b006a305c68617sm5237126oti.53.2023.04.11.03.28.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Apr 2023 03:28:12 -0700 (PDT)
-Received: by mail-ot1-f51.google.com with SMTP id cp25-20020a056830661900b00693ce5a2f3eso3621124otb.8;
-        Tue, 11 Apr 2023 03:28:12 -0700 (PDT)
-X-Received: by 2002:a25:d74c:0:b0:b46:c5aa:86ef with SMTP id
- o73-20020a25d74c000000b00b46c5aa86efmr5126210ybg.12.1681208871324; Tue, 11
- Apr 2023 03:27:51 -0700 (PDT)
+        with ESMTP id S229758AbjDKK6L (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 06:58:11 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FBB03AAA;
+        Tue, 11 Apr 2023 03:58:10 -0700 (PDT)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33BAljGr018908;
+        Tue, 11 Apr 2023 10:57:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=14mScYbVQyWzJ/LrV2BGO+8sFIwuc83cAGGYkYjZpjA=;
+ b=d5mqj90HrxHyVDaA0URCPX12v6GueiJTRsIbIFutDDFiWXRdQYbMtP1uHktFqE7FHQO1
+ b1GpzmIjvizl5Tnpmiw3zw33fTzaCTA0J/XxdqEXi5BwH2G9oJJZK2i+N2JN2iFW28I7
+ trmjmSy70Prdl6JPbVBo90aXYFuBXmVZysMO/WtD8ByPnDm08AppNJeO21Ds1CUzkG7l
+ R5TiyaCId7hftJB35aN0RJC38N6Jw3Fro001ZZCd3azHf3IUByWL86DbqyAHEc0qouDT
+ D/UUgtJ5Dk3uh55/m6tdd/dzri/Abc15EQfLyOnSA+iSHw4i/Yhkt2vL5TmqEkCeeD56 fQ== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pvggntqxs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 Apr 2023 10:57:48 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33BAvlMN004561
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 Apr 2023 10:57:47 GMT
+Received: from [10.216.4.20] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 11 Apr
+ 2023 03:57:37 -0700
+Message-ID: <999dfe1c-3b0d-1cc1-7407-e0917fc62d77@quicinc.com>
+Date:   Tue, 11 Apr 2023 16:27:23 +0530
 MIME-Version: 1.0
-References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech> <20221018-clk-range-checks-fixes-v3-28-9a1358472d52@cerno.tech>
-In-Reply-To: <20221018-clk-range-checks-fixes-v3-28-9a1358472d52@cerno.tech>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 11 Apr 2023 12:27:38 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXUEOP_3zjf8nwDyHvZVG-D0AsBjnr=esKzejMMcEiLSQ@mail.gmail.com>
-Message-ID: <CAMuHMdXUEOP_3zjf8nwDyHvZVG-D0AsBjnr=esKzejMMcEiLSQ@mail.gmail.com>
-Subject: Re: [PATCH v3 28/65] clk: renesas: r9a06g032: Add a determine_rate hook
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
-        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Ralph Siemsen <ralph.siemsen@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH V2 5/9] dt-bindings: PCI: qcom: Add IPQ9574
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <lpieralisi@kernel.org>,
+        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
+        <krzysztof.kozlowski+dt@linaro.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <mani@kernel.org>, <p.zabel@pengutronix.de>,
+        <linus.walleij@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_ipkumar@quicinc.com>
+References: <20230404164828.8031-1-quic_devipriy@quicinc.com>
+ <20230404164828.8031-6-quic_devipriy@quicinc.com>
+ <79ddaff0-00a9-36db-2bc0-4c844ffd9528@linaro.org>
+From:   Devi Priya <quic_devipriy@quicinc.com>
+In-Reply-To: <79ddaff0-00a9-36db-2bc0-4c844ffd9528@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: FO9cNzbKgPi3ECrYyo59DBGcwno5Oyfe
+X-Proofpoint-ORIG-GUID: FO9cNzbKgPi3ECrYyo59DBGcwno5Oyfe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-11_06,2023-04-11_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=878
+ lowpriorityscore=0 clxscore=1015 priorityscore=1501 mlxscore=0 bulkscore=0
+ malwarescore=0 adultscore=0 impostorscore=0 phishscore=0 spamscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304110103
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CC Gareth, Hervé, Miquel, Ralph
 
-On Tue, Apr 4, 2023 at 2:44 PM Maxime Ripard <maxime@cerno.tech> wrote:
-> The Renesas r9a06g032 bitselect clock implements a mux with a set_parent
-> hook, but doesn't provide a determine_rate implementation.
->
-> This is a bit odd, since set_parent() is there to, as its name implies,
-> change the parent of a clock. However, the most likely candidate to
-> trigger that parent change is a call to clk_set_rate(), with
-> determine_rate() figuring out which parent is the best suited for a
-> given rate.
->
-> The other trigger would be a call to clk_set_parent(), but it's far less
-> used, and it doesn't look like there's any obvious user for that clock.
->
-> So, the set_parent hook is effectively unused, possibly because of an
-> oversight. However, it could also be an explicit decision by the
-> original author to avoid any reparenting but through an explicit call to
-> clk_set_parent().
->
-> The latter case would be equivalent to setting the flag
-> CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
-> to __clk_mux_determine_rate(). Indeed, if no determine_rate
-> implementation is provided, clk_round_rate() (through
-> clk_core_round_rate_nolock()) will call itself on the parent if
-> CLK_SET_RATE_PARENT is set, and will not change the clock rate
-> otherwise. __clk_mux_determine_rate() has the exact same behavior when
-> CLK_SET_RATE_NO_REPARENT is set.
->
-> And if it was an oversight, then we are at least explicit about our
-> behavior now and it can be further refined down the line.
->
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
-LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-But I do not have the hardware.
-
-> --- a/drivers/clk/renesas/r9a06g032-clocks.c
-> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
-> @@ -1121,6 +1121,7 @@ static int r9a06g032_clk_mux_set_parent(struct clk_hw *hw, u8 index)
->  }
->
->  static const struct clk_ops clk_bitselect_ops = {
-> +       .determine_rate = __clk_mux_determine_rate,
->         .get_parent = r9a06g032_clk_mux_get_parent,
->         .set_parent = r9a06g032_clk_mux_set_parent,
->  };
-> @@ -1145,7 +1146,7 @@ r9a06g032_register_bitsel(struct r9a06g032_priv *clocks,
->
->         init.name = desc->name;
->         init.ops = &clk_bitselect_ops;
-> -       init.flags = CLK_SET_RATE_PARENT;
-> +       init.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT;
->         init.parent_names = names;
->         init.num_parents = 2;
+On 4/5/2023 12:28 PM, Krzysztof Kozlowski wrote:
+> On 04/04/2023 18:48, Devi Priya wrote:
+>> Add bindings for PCIe hosts on IPQ9574 platform and allow
+>> msi-parent property
+> 
+> Missing full stop. Also in your other patches.
+Okay
+> 
+>>
+>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+>> ---
+>>   Changes in V2:
+>> 	- Updated the commit message and dropped the aggr_noc entries
+>> 	  as it will be handled via interconnect driver
+>>
+>>   .../devicetree/bindings/pci/qcom,pcie.yaml    | 48 +++++++++++++++++++
+>>   1 file changed, 48 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
+>> index fb32c43dd12d..8657ab65008c 100644
+>> --- a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
+>> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
+>> @@ -26,6 +26,7 @@ properties:
+>>             - qcom,pcie-ipq8064-v2
+>>             - qcom,pcie-ipq8074
+>>             - qcom,pcie-ipq8074-gen3
+>> +          - qcom,pcie-ipq9574
+>>             - qcom,pcie-msm8996
+>>             - qcom,pcie-qcs404
+>>             - qcom,pcie-sa8540p
+>> @@ -105,6 +106,8 @@ properties:
+>>       items:
+>>         - const: pciephy
+>>   
+>> +  msi-parent: true
 >
 
-Gr{oetje,eeting}s,
+Yes right, will rebase it on Mani's series.
+But, as you have pointed out don't see the binding changes
+in linux-next/master
+Mani, could you please provide the tree details onto which the
+binding change is merged?
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Isn't this conflicting with Mani's series:
+> https://lore.kernel.org/all/20230108203340.GA229573-robh@kernel.org/
+> https://lore.kernel.org/all/20230111123004.21048-1-manivannan.sadhasivam@linaro.org/#t
+> 
+> Although for some reason Mani's patch references non-existing commit and
+> hunk...
+> 
+> Best regards,
+> Krzysztof
+> 
+Best Regards,
+Devi Priya
