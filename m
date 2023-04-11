@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D53FAC76196
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D3C5C77B7D
 	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 13:56:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231157AbjDKN4S convert rfc822-to-8bit (ORCPT
+        id S230522AbjDKN4R convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Apr 2023 09:56:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46126 "EHLO
+        Tue, 11 Apr 2023 09:56:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231124AbjDKN4P (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 09:56:15 -0400
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80B183581;
-        Tue, 11 Apr 2023 06:56:13 -0700 (PDT)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        with ESMTP id S230506AbjDKN4O (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 09:56:14 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAED030DC;
+        Tue, 11 Apr 2023 06:56:12 -0700 (PDT)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id EB21124E31A;
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 2904524E337;
         Tue, 11 Apr 2023 21:56:11 +0800 (CST)
-Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 11 Apr
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 11 Apr
  2023 21:56:11 +0800
 Received: from localhost.localdomain (113.72.145.176) by EXMBX061.cuchost.com
  (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 11 Apr
- 2023 21:56:10 +0800
+ 2023 21:56:09 +0800
 From:   Xingyu Wu <xingyu.wu@starfivetech.com>
 To:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
         "Michael Turquette" <mturquette@baylibre.com>,
@@ -41,9 +41,9 @@ CC:     Rob Herring <robh+dt@kernel.org>,
         Hal Feng <hal.feng@starfivetech.com>,
         Xingyu Wu <xingyu.wu@starfivetech.com>,
         <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH v4 09/10] riscv: dts: starfive: jh7110: Add DVP and HDMI TX pixel external clocks
-Date:   Tue, 11 Apr 2023 21:55:57 +0800
-Message-ID: <20230411135558.44282-10-xingyu.wu@starfivetech.com>
+Subject: [PATCH v4 08/10] MAINTAINERS: Update maintainer of JH71x0 clock drivers
+Date:   Tue, 11 Apr 2023 21:55:56 +0800
+Message-ID: <20230411135558.44282-9-xingyu.wu@starfivetech.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230411135558.44282-1-xingyu.wu@starfivetech.com>
 References: <20230411135558.44282-1-xingyu.wu@starfivetech.com>
@@ -58,71 +58,26 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add DVP and HDMI TX pixel external fixed clocks and the rates are
-74.25MHz and 297MHz.
+Add a new maintainer which is in charge of StarFive JH7110
+STG/ISP/VOUT clock drivers.
 
 Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
 ---
- .../dts/starfive/jh7110-starfive-visionfive-2.dtsi   |  8 ++++++++
- arch/riscv/boot/dts/starfive/jh7110.dtsi             | 12 ++++++++++++
- 2 files changed, 20 insertions(+)
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-index 2a6d81609284..1155b97b593d 100644
---- a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-+++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-@@ -38,6 +38,10 @@ gpio-restart {
- 	};
- };
- 
-+&dvp_clk {
-+	clock-frequency = <74250000>;
-+};
-+
- &gmac0_rgmii_rxin {
- 	clock-frequency = <125000000>;
- };
-@@ -54,6 +58,10 @@ &gmac1_rmii_refin {
- 	clock-frequency = <50000000>;
- };
- 
-+&hdmitx0_pixelclk {
-+	clock-frequency = <297000000>;
-+};
-+
- &i2srx_bclk_ext {
- 	clock-frequency = <12288000>;
- };
-diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-index 30e1f34d5cf8..336ee2b0ffb5 100644
---- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
-+++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-@@ -164,6 +164,12 @@ core4 {
- 		};
- 	};
- 
-+	dvp_clk: dvp-clock {
-+		compatible = "fixed-clock";
-+		clock-output-names = "dvp_clk";
-+		#clock-cells = <0>;
-+	};
-+
- 	gmac0_rgmii_rxin: gmac0-rgmii-rxin-clock {
- 		compatible = "fixed-clock";
- 		clock-output-names = "gmac0_rgmii_rxin";
-@@ -188,6 +194,12 @@ gmac1_rmii_refin: gmac1-rmii-refin-clock {
- 		#clock-cells = <0>;
- 	};
- 
-+	hdmitx0_pixelclk: hdmitx0-pixel-clock {
-+		compatible = "fixed-clock";
-+		clock-output-names = "hdmitx0_pixelclk";
-+		#clock-cells = <0>;
-+	};
-+
- 	i2srx_bclk_ext: i2srx-bclk-ext-clock {
- 		compatible = "fixed-clock";
- 		clock-output-names = "i2srx_bclk_ext";
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4c0b39c44957..5f9c544bc189 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19914,6 +19914,7 @@ F:	drivers/mmc/host/dw_mmc-starfive.c
+ STARFIVE JH71X0 CLOCK DRIVERS
+ M:	Emil Renner Berthing <kernel@esmil.dk>
+ M:	Hal Feng <hal.feng@starfivetech.com>
++M:	Xingyu Wu <xingyu.wu@starfivetech.com>
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/clock/starfive,jh71*.yaml
+ F:	drivers/clk/starfive/clk-starfive-jh71*
 -- 
 2.25.1
 
