@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65751C77B79
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 12:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58366C76196
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 12:59:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230193AbjDKM7g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Apr 2023 08:59:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54058 "EHLO
+        id S230146AbjDKM7p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Apr 2023 08:59:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230172AbjDKM7c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 08:59:32 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34B0B49D0
-        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 05:59:21 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id v20-20020a05600c471400b003ed8826253aso882622wmo.0
-        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 05:59:21 -0700 (PDT)
+        with ESMTP id S230045AbjDKM7f (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 08:59:35 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F36A4EE9
+        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 05:59:22 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id v20-20020a05600c471400b003ed8826253aso882684wmo.0
+        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 05:59:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1681217959;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1681217961;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TuLAeQGEV5K3iInBKoewzkhME+2oUBqCQOoUHj0zOJc=;
-        b=PyPA+z9wzuCADbJtJNpxfh193DbvsBKQKRFsnEfdj2lux9LDV4aSpKu/Sl/j/gaY6D
-         ff1p7jAPq70oW11rHUG0e/JHYABUvaI5p6p9GAY8Ed6gQvH3EyelCkOXAmD0OLsu5IvE
-         3On13qxxWDP8hytuA7PMIGBmRRi3Ajv35irx15owRr11QSYeL1uZ/S+ci5YMEt25UfFz
-         J3jUc7nvNQGsFxBDwZgQVmuwS1wEMY75SVRm9ZLYiWMgtw5rXZ9grW2MwCw+D6srA522
-         d17sR+X/yCvaFxX6XaJ+jMVpEjFuaX3+dTC4FAUqWUG8Co7PMz4BS3urZXyS0wJGih8n
-         2Idg==
+        bh=h5SvLGWiNz4qmlRx78+7Ty5fH+kaR1oDoC8UPKZhMno=;
+        b=D/9uWMyGk1Hrj+4toN4XStrE8KQKPdXCs1L8wJLAHIIYSv8bWwKpaiXQWgOxKzpsza
+         Eb6qrR7gyKM7gdceNdyi36w0lcrlkUXfM/GTW+57U5c/sYDtGFnDei4eV8UyR3FUyBdE
+         Bsyvk3AoMODLaeR1Dmjbg6+FAqfZH2stDgfZaVJBU8DcWabCsMbYevxGaVyrGwXsTHxr
+         W2hBEZ9lvssrTFnR4pi5nym46WbNcSOAjbixq+SFxPdXMI6N06DiztlF+H/6+BSjraT0
+         8sJAfVnTjMq7zyhgCx4xSfMXm8XW49KVq7tTKO6Fcu5nzEuzaZfqbuJrva+slA2f4dMc
+         JStw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681217959;
+        d=1e100.net; s=20210112; t=1681217961;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TuLAeQGEV5K3iInBKoewzkhME+2oUBqCQOoUHj0zOJc=;
-        b=QbzkAAMMM0alNdmUOtXMVJq+Ha7Ah9a3CWygnnl6yV4BVGdcKRl/w3BNrbHZo/pC1u
-         4tvZLicaopWQ+dtypaGZC5rFlBActJv64G4PrG7WfT/xbPMCyKj0wUDiiTYZWScXeNYs
-         5kJuZbqO3odYJyKJGA1ptpMysO5nPjIk1GTaHzR5+W+etR2WFwXco+xR9PFmm2g6Jt85
-         N+A7jfobohWaxBFsqsmvDoAVDP4Y6NxGxLS1paOVhUIuu7T2FfeLyVBvAkbwbxMJdcJ8
-         ceTSclE2i7ocgSbahVAKXDN2zfmdgUExtJLIJje4EiXBRsTCxDMGBadekBkABVVx0LFK
-         GCbg==
-X-Gm-Message-State: AAQBX9eGAiRCUZgb0Zln1DPMZSRPhpdfMjuPK770SUkQ54O25ztjvqZ0
-        O4G3wpKIBMegsKPjvFfVREc0IA==
-X-Google-Smtp-Source: AKy350bBn4WjRe9oZZ13H+/2ZdNlHiC6u5ndF+nHtCFdwE/SHGsCimjWqVYVI8eMvSCk4yMuQkOmNw==
-X-Received: by 2002:a05:600c:2189:b0:3ed:5d41:f95c with SMTP id e9-20020a05600c218900b003ed5d41f95cmr10128112wme.11.1681217959220;
-        Tue, 11 Apr 2023 05:59:19 -0700 (PDT)
+        bh=h5SvLGWiNz4qmlRx78+7Ty5fH+kaR1oDoC8UPKZhMno=;
+        b=aTGh+um9qaJjC4SWUZhva1BwRCtzSIEu2boVeISk2PpWnrL2Eqb0UW92DCsJuJU9Ki
+         HtBDZR9gOr5ZQJvFiwIKNsXwShzvGmqxTkrZB3Wqy8c4yUYYkoeOZqOzPOUzrexYR0Ey
+         G5yJiRXXj60KCSa3jiWWVS2SXFiZa/qtGiwmyoqJSGISptT/pYWREy9IaGrzvvxWWAq9
+         UnngEdn8lyOZMpOCtO+NsFxhuti7rN8ipCu26Vr0PfUDkSMnxw0T+lY3wql0IqErsNg1
+         /97MEXmTAbOeFpfTHl++VTdKKPkqtaCCj2kD/OQrcHOJqVxIeJ4kBcQ/Pc9mYEZ6QvSU
+         gpXw==
+X-Gm-Message-State: AAQBX9dK7ZLxU4HPr09gmemTRsYEYHBCX1UonxpSSRSB25N0EAQsvZ0m
+        nG8dZjP4JHlUbbYfuU4kxEp86A==
+X-Google-Smtp-Source: AKy350bBD2bgvD4lyvkS8LWoDViy8rkoWZiSH6bPVKfr7CifLxmGkc8oIQN02kxSR+VYq1YUYtM15g==
+X-Received: by 2002:a05:600c:2214:b0:3eb:2e1e:beae with SMTP id z20-20020a05600c221400b003eb2e1ebeaemr6773198wml.25.1681217961408;
+        Tue, 11 Apr 2023 05:59:21 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:a099:fc1d:c99a:bfc3])
-        by smtp.gmail.com with ESMTPSA id e24-20020a05600c219800b003eae73f0fc1sm16944591wme.18.2023.04.11.05.59.18
+        by smtp.gmail.com with ESMTPSA id e24-20020a05600c219800b003eae73f0fc1sm16944591wme.18.2023.04.11.05.59.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Apr 2023 05:59:18 -0700 (PDT)
+        Tue, 11 Apr 2023 05:59:21 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Bjorn Andersson <andersson@kernel.org>,
         Andy Gross <agross@kernel.org>,
@@ -66,9 +66,9 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
         Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v3 4/7] arm64: dts: qcom: sa8775p: add the pcie smmu node
-Date:   Tue, 11 Apr 2023 14:59:07 +0200
-Message-Id: <20230411125910.401075-5-brgl@bgdev.pl>
+Subject: [PATCH v3 6/7] dt-bindings: iommu: arm,smmu: enable clocks for sa8775p Adreno SMMU
+Date:   Tue, 11 Apr 2023 14:59:09 +0200
+Message-Id: <20230411125910.401075-7-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20230411125910.401075-1-brgl@bgdev.pl>
 References: <20230411125910.401075-1-brgl@bgdev.pl>
@@ -80,99 +80,45 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Add the PCIe SMMU node for sa8775p platforms.
+The GPU SMMU will require the clocks property to be set so put the
+relevant compatible into the adreno if-then block.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 74 +++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+ Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 2343df7e0ea4..a23175352a20 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -809,6 +809,80 @@ apps_smmu: iommu@15000000 {
- 				     <GIC_SPI 891 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		pcie_smmu: iommu@15200000 {
-+			compatible = "qcom,sa8775p-smmu-500", "qcom,smmu-500", "arm,mmu-500";
-+			reg = <0x0 0x15200000 0x0 0x80000>;
-+			#iommu-cells = <2>;
-+			#global-interrupts = <2>;
-+
-+			interrupts = <GIC_SPI 920 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 921 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 925 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 926 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 927 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 928 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 950 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 951 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 952 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 953 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 954 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 955 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 956 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 957 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 958 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 885 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 886 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 887 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 888 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 820 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 822 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 823 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 447 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 452 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 840 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 841 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 842 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 843 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 844 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 845 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 846 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 847 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 848 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 849 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 802 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 803 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 804 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 805 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 806 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 807 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 808 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 809 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 810 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 811 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 812 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 813 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 814 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 836 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 837 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 838 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 839 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 854 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 855 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 856 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 790 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 791 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 792 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 793 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 794 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 795 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 796 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 639 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 640 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
- 		intc: interrupt-controller@17a00000 {
- 			compatible = "arm,gic-v3";
- 			reg = <0x0 0x17a00000 0x0 0x10000>,     /* GICD */
+diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+index 807cb511fe18..d966dc65ce10 100644
+--- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
++++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+@@ -79,6 +79,7 @@ properties:
+       - description: Qcom Adreno GPUs implementing "arm,smmu-500"
+         items:
+           - enum:
++              - qcom,sa8775p-smmu-500
+               - qcom,sc7280-smmu-500
+               - qcom,sm8150-smmu-500
+               - qcom,sm8250-smmu-500
+@@ -317,7 +318,9 @@ allOf:
+       properties:
+         compatible:
+           contains:
+-            const: qcom,sc7280-smmu-500
++            enum:
++              - qcom,sa8775p-smmu-500
++              - qcom,sc7280-smmu-500
+     then:
+       properties:
+         clock-names:
+@@ -375,7 +378,6 @@ allOf:
+               - nvidia,smmu-500
+               - qcom,qcm2290-smmu-500
+               - qcom,qdu1000-smmu-500
+-              - qcom,sa8775p-smmu-500
+               - qcom,sc7180-smmu-500
+               - qcom,sc8180x-smmu-500
+               - qcom,sc8280xp-smmu-500
 -- 
 2.37.2
 
