@@ -2,150 +2,230 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AEDBC7619A
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 04:56:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50ABCC7619A
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 07:03:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229605AbjDKE4n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Apr 2023 00:56:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57644 "EHLO
+        id S230295AbjDKHDV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Apr 2023 03:03:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229499AbjDKE4m (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 00:56:42 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14A85173E;
-        Mon, 10 Apr 2023 21:56:40 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33B4M6Il026832;
-        Tue, 11 Apr 2023 04:56:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=CPnsQXa10tpoYv4jCyjrL4WFQ2AlyQmNvURMMyN3zqM=;
- b=aWLQ3+kY3lktc3angB+yKKmuiQMcXiBwq1m4PwcCzaMASh7cfSsNAthOhQ+RO6Z+1Jka
- usetRinXfV30iHgLAJPMafygaLB9UtYHLZG5U4O7fo/gAZM44TD736V4JD+b65Z/WKg2
- MZ/eD2SkJmsMZNibaaZvLDNpNdPudOKp9Mn2KYvFZg//ZB8M6Pu2AHChrNrCj4U5rMKl
- VGGMdY8YvIX+tTGbks4x9RAv1AbzFqb0hW8FcCX3qGxwY2mslAU7XZW/BWV9Ya88Gp7z
- gK9zZtnxwaskbFgCOg8Fr06zMfYBMaRAflkUu+xd9BMth5/DQqPV/I1v0j6zFL/w32vv IQ== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pvvux0fst-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 11 Apr 2023 04:56:12 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33B4uAuH014550
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 11 Apr 2023 04:56:10 GMT
-Received: from [10.50.52.2] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 10 Apr
- 2023 21:56:06 -0700
-Message-ID: <d4a8054c-443e-d9ba-9641-ff721254d254@quicinc.com>
-Date:   Tue, 11 Apr 2023 10:26:03 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH 2/3] dt-bindings: clock: qcom,gcc-sc7180: document CX
- power domain
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        with ESMTP id S230197AbjDKHDS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 03:03:18 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FEB7E7C
+        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 00:03:16 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id v14-20020a05600c470e00b003f06520825fso8953690wmo.0
+        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 00:03:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1681196594; x=1683788594;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8hfUaJK5K49gfETGPOisBCfJxa2HZGrxX8QV+fOnnOk=;
+        b=HnYFK4qZqI4RcIXlAvUrDPNcSifFMcVs8GEkxM0XP7F+xTSBSNj/S7IiVL0iGDSoFy
+         pRqgAqa/xOFc0p/iNoWRXqes2yZZ6L168sZJR7TGUA9ylELoqrMdSJLDOBlh1hMBLpob
+         yvDnmI6GszfQ6KYoSKVsMMfzYVDk5EmCE6jhxYSehWFN8SBgZ/ReFYsShee1Gdytf2X2
+         riJ1rHZEh/69HQvHFsInHqTbwPJEj8aOvWF7A5+ABkyqPi7XDWm0l62zy/5L6NVIY45A
+         5Oxx+55Ss7yvmexk/9StbJuIunmqcDfef6fEBTzXOCdfk7zTBGttdyj5sXaF19YkgEzG
+         mBXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1681196594; x=1683788594;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8hfUaJK5K49gfETGPOisBCfJxa2HZGrxX8QV+fOnnOk=;
+        b=oWhRTDJ6skEnoN58qnc/nWgP2WX5BAe33CUGAkFpAk+MkYA3Z7HsE8+ouhyQRRZPxO
+         kk46O32fUNbRpLJeus4nadYs/U7/NUPvMqRefeF9AP34HOYMffEp8oApEHeILOy3Px06
+         R9LJZGbMYd7Qw+gLAM7JnbtHfigr2b2NfyVf6fD5ppTLY9d5iOcMtyKT7Pp7OhXqmp3C
+         uEURCQjK6DTMJKOGrug4Wngidzm+vqdtSdY+c3fymHX4puBqi4lKYjRmT9bXk1C7BZKK
+         O0UIJzdXppKYtQEHnZy/N6rbrNjE5hi9NqwNe2voGfeM4gL+0S3d1hNM6OPx5YigajCU
+         ivlQ==
+X-Gm-Message-State: AAQBX9fL3baiYdMB/FjXjWWyDRAbUeJ++lUp1mtNIF5pynQOaBjXBGfx
+        FvZm0K6G3o1/p2VibkLotPazhg==
+X-Google-Smtp-Source: AKy350a8CllWGeVxvR6LgE7adUkYW/miVmQdA9w/Zz0JH4Oqzoo7pwigEO21rIknjgkedlOCSp0FfQ==
+X-Received: by 2002:a05:600c:20e:b0:3ed:29db:cb80 with SMTP id 14-20020a05600c020e00b003ed29dbcb80mr6010292wmi.18.1681196594540;
+        Tue, 11 Apr 2023 00:03:14 -0700 (PDT)
+Received: from localhost ([2a04:cec0:11b6:9335:e66a:358b:d934:608b])
+        by smtp.gmail.com with ESMTPSA id fm7-20020a05600c0c0700b003f063a709dbsm1688043wmb.2.2023.04.11.00.03.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Apr 2023 00:03:13 -0700 (PDT)
+References: <20230320113445.17260-1-yu.tu@amlogic.com>
+ <CAFBinCAE-ihq9oeXc=GqUEHVKUYM+n_e+2_5+gDMTGQcEEhRtg@mail.gmail.com>
+ <b5e647e2-4561-e6c1-016f-2c3b260916bb@amlogic.com>
+ <1jsfdy77n8.fsf@starbuckisacylon.baylibre.com>
+ <d403dda4-e3db-4f26-6996-090a8c520b94@amlogic.com>
+ <1j8rfp6u0h.fsf@starbuckisacylon.baylibre.com>
+ <2e68acd1-f3d1-adbc-5ed2-66c40e006579@amlogic.com>
+User-agent: mu4e 1.8.13; emacs 28.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Yu Tu <yu.tu@amlogic.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20230408134820.76050-1-krzysztof.kozlowski@linaro.org>
- <20230408134820.76050-2-krzysztof.kozlowski@linaro.org>
- <4757c33c-7e71-262d-a51a-c5f9fb53ff41@linaro.org>
-From:   Rajendra Nayak <quic_rjendra@quicinc.com>
-In-Reply-To: <4757c33c-7e71-262d-a51a-c5f9fb53ff41@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: i6c5O3ZhfELru_es5pv8z-TwzCwHevvA
-X-Proofpoint-ORIG-GUID: i6c5O3ZhfELru_es5pv8z-TwzCwHevvA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-11_02,2023-04-06_03,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- lowpriorityscore=0 malwarescore=0 clxscore=1011 priorityscore=1501
- impostorscore=0 suspectscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2304110045
+        Stephen Boyd <sboyd@kernel.org>, kelvin.zhang@amlogic.com,
+        qi.duan@amlogic.com
+Subject: Re: [PATCH V2] clk: meson: vid-pll-div: added meson_vid_pll_div_ops
+ support
+Date:   Tue, 11 Apr 2023 09:02:11 +0200
+In-reply-to: <2e68acd1-f3d1-adbc-5ed2-66c40e006579@amlogic.com>
+Message-ID: <1jleiyyk7k.fsf@starbuckisacylon.baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+On Fri 07 Apr 2023 at 18:08, Yu Tu <yu.tu@amlogic.com> wrote:
 
-On 4/8/2023 7:33 PM, Konrad Dybcio wrote:
-> 
-> 
-> On 8.04.2023 15:48, Krzysztof Kozlowski wrote:
->> The GCC clock controller needs CX power domain, at least according to
->> DTS:
->>
->>    sc7180-trogdor-pompom-r3.dtb: clock-controller@100000: Unevaluated properties are not allowed ('power-domains' was unexpected)
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
-> +CC Rajendra (author of 5d6fc6321db1 ("arm64: dts: qcom:
-> sc7180: Add required-opps for USB"))
-> 
-> Rajendra, shouldn't SC7180 GCC have PM ops to make sure a vote
-> is only there when AP is active?
+> On 2023/3/22 16:41, Jerome Brunet wrote:
+>> [ EXTERNAL EMAIL ]
+>> On Wed 22 Mar 2023 at 15:46, Yu Tu <yu.tu@amlogic.com> wrote:
+>>=20
+>>> On 2023/3/21 17:41, Jerome Brunet wrote:
+>>>> [ EXTERNAL EMAIL ]
+>>> Hi Jerome,
+>>> 	Thank you for your reply.
+>>>> On Tue 21 Mar 2023 at 10:29, Yu Tu <yu.tu@amlogic.com> wrote:
+>>>>
+>>>>> Hi Martin=EF=BC=8C
+>>>>> 	First of all, thank you for your reply.
+>>>>>
+>>>>> On 2023/3/20 23:35, Martin Blumenstingl wrote:
+>>>>>> [ EXTERNAL EMAIL ]
+>>>>>> Hello Yu Tu,
+>>>>>> On Mon, Mar 20, 2023 at 12:35=E2=80=AFPM Yu Tu <yu.tu@amlogic.com> w=
+rote:
+>>>>>>>
+>>>>>>> Since the previous code only provides "ro_ops" for the vid_pll_div
+>>>>>>> clock. In fact, the clock can be set. So add "ops" that can set the
+>>>>>>> clock, especially for later chips like S4 SOC and so on.
+>>>>>>>
+>>>>>>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
+>>>>>>> ---
+>>>>>> please describe the changes you did compared to the previous version=
+(s)
+>>>>>
+>>>>> I'll add it in the next version.
+>>>>>
+>>>>>> [...]
+>>>>>>> diff --git a/drivers/clk/meson/vid-pll-div.h b/drivers/clk/meson/vi=
+d-pll-div.h
+>>>>>>> index c0128e33ccf9..bbccab340910 100644
+>>>>>>> --- a/drivers/clk/meson/vid-pll-div.h
+>>>>>>> +++ b/drivers/clk/meson/vid-pll-div.h
+>>>>>>> @@ -10,11 +10,14 @@
+>>>>>>>     #include <linux/clk-provider.h>
+>>>>>>>     #include "parm.h"
+>>>>>>>
+>>>>>>> +#define VID_PLL_DIV_TABLE_SIZE         14
+>>>>>> In v1 you used ARRAY_SIZE(vid_pll_div_table) wherever this new macro
+>>>>>> is used instead.
+>>>>>> I think using ARRAY_SIZE is the better approach because it means the
+>>>>>> references will update automatically if an entry is added/removed fr=
+om
+>>>>>> vid_pll_div_table
+>>>>>
+>>>>> I agree with you. Perhaps the key is to understand what Jerome said.
+>>>> I asked you to describe how this divider actually works. Not remove
+>>>> ARRAY_SIZE().
+>>>
+>>> OKay! I misunderstood your meaning.
+>>>
+>>>> This divider uses tables only because the parameters are "magic".
+>>>> I'd like the driver to be able come up with "computed" values instead.
+>>>> What I requested is some explanation about how this HW clock works
+>>>> because the documentation is not very clear when it comes to this. The=
+se
+>>>> values must come from somewhere, I'd like to understand "how".
+>>>> This is the same as the PLL driver which can take a range and come up
+>>>> with the different parameters, instead of using big pre-computed table=
+s.
+>>>>
+>>>>>
+>>>>>> Also I think there's a different understanding about what Jerome
+>>>>>> previously wrote:
+>>>>>>> It would be nice to actually describe how this vid pll work so we c=
+an
+>>>>>>> stop using precompute "magic" values and actually use the IP to its=
+ full
+>>>>>>> capacity.
+>>>>>>    From what I understand is that you interpreted this as "let's cha=
+nge
+>>>>>> ARRAY_SIZE(vid_pll_div_table) to a new macro called
+>>>>>> VID_PLL_DIV_TABLE_SIZE".
+>>>>>> But I think what Jerome meant is: "let's get rid of vid_pll_div_table
+>>>>>> and implement how to actually calculate the clock rate - without
+>>>>>> hard-coding 14 possible clock settings in vid_pll_div_table". Look at
+>>>>>> clk-mpll.c and/or clk-pll.c which allow calculating arbitrary rates
+>>>>>> without any hard-coded tables.
+>>>>>
+>>>> exactly ... or at least an explanation about how it works and
+>>>> why it is too complicated to compute the values at runtime.
+>>>>
+>>>>> In fact, pll and mpll are also fixed register writes corresponding
+>>>>> values.
+>>>> That is not true. The pll and mpll drivers are able to compute their
+>>>> values at runtime. Please have a look at the drivers.
+>>>>
+>>>
+>>> After consulting the engineer of the chip design, the clock is a digital
+>>> frequency divider, and the frequency divider is verified by the sequence
+>>> generator, which is bit0-bi15. bit16-bit17 confirms the size of the
+>>> frequency division.
+>> That, we already know. This is what the datasheet already give us.
+>> It is still a bit light.
+>> You don't set the bit randomly and check the output, do you ?
+>> The question is how setting this bit impact the relation between
+>> the input and output rate? IOW, from these 17bits, how do you come up
+>> with the multiplier and divider values (and the other way around) ?
+>>=20
+>>> Whereas other PLLS and MPLLS are analog dividers so
+>>> there are fixed formulas to calculate.
+>>>
+>>> So Neil had no problem implementing it this way. So now I want to know =
+your
+>>> advice what should I do next?
+>> 1) Neil did what he could to get compute the rate (RO) which the little
+>> information he had. You are trying to extend the driver, keeping an
+>> dummy approach. It is only fair that I ask you to make this a real
+>> driver.
+>> 2) Because something has been done once, it not necessarily appropriate
+>> to continue ... this type of argument hardly a valid reason.
+>> I don't want to keep adding table based driver unless necessary.
+>> So far, you have not proved this approach is really required, nor
+>> provided the necessary information to make the calculation.
+>
+> Technically you are right. I am communicating and confirming with the chip
+> designer to see if the general calculation formula can be given. If not, I
+> will explain why. Please give me some time.
+>
+> But I have to mention that the SOC, although there is this register but
+> actually does not use the clock. Can we treat this as a separate patch th=
+at
+> we will continue to send and explain later?
+>
+> This way I can continue with the other patches of S4 SOC first, and this
+> clock stays the same way as the G12A first. Later, after the patch of the
+> clock is corrected, it can be corrected to "ops" as required.Otherwise, we
+> cannot continue other driver patches. I don't know if you agree?
+>
 
-hmm, I am not quite sure why we would want the performance votes
-from peripherals dropped when CPUs go down in idle?
+Sure you can send your s4 series with RO ops and change to RW later on
+if necessary.
 
-> Are all GDSCs powered by CX?
-> If not, wouldn't this also need power-domain-names to
-> facilitate e.g. potential MX-powered ones?
+>>=20
+>>>
+>>>>> But every SOC is different, so it makes more sense to set it
+>>>>> outside. The VID PLL is a fixed value for all current SoCs.
+>>>>>
+>>>>>> Best regards,
+>>>>>> Martin
+>>>>>>
+>>>>
+>>=20
 
-For sc7180 GCC, yes.
-
-> 
-> Konrad
->>   .../devicetree/bindings/clock/qcom,gcc-sc7180.yaml         | 7 +++++++
->>   1 file changed, 7 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
->> index 06dce0c6b7d0..8bf9b6f49550 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
->> @@ -32,6 +32,10 @@ properties:
->>         - const: bi_tcxo_ao
->>         - const: sleep_clk
->>   
->> +  power-domains:
->> +    items:
->> +      - description: CX domain
->> +
->>   required:
->>     - compatible
->>     - clocks
->> @@ -45,6 +49,8 @@ unevaluatedProperties: false
->>   examples:
->>     - |
->>       #include <dt-bindings/clock/qcom,rpmh.h>
->> +    #include <dt-bindings/power/qcom-rpmpd.h>
->> +
->>       clock-controller@100000 {
->>         compatible = "qcom,gcc-sc7180";
->>         reg = <0x00100000 0x1f0000>;
->> @@ -52,6 +58,7 @@ examples:
->>                  <&rpmhcc RPMH_CXO_CLK_A>,
->>                  <&sleep_clk>;
->>         clock-names = "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
->> +      power-domains = <&rpmhpd SC7180_CX>;
->>         #clock-cells = <1>;
->>         #reset-cells = <1>;
->>         #power-domain-cells = <1>;
