@@ -2,146 +2,205 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83E86C77B70
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 12:59:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8765C77B6F
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 13:09:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230056AbjDKM74 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Apr 2023 08:59:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54304 "EHLO
+        id S229787AbjDKNJ6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Apr 2023 09:09:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230081AbjDKM7h (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 08:59:37 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35867524D
-        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 05:59:23 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id v14-20020a05600c470e00b003f06520825fso9529888wmo.0
-        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 05:59:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1681217962;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ti2ysbW8Cc+oBh8xPSaQGRD6NB9f1GZWXnz69twS12o=;
-        b=OcPBHkjTTSWddEDKyoUb2+Rw1AzfeC+W1Z4KEsw+L9fguKR4yDvpigeQSdoc4A4+HQ
-         VVMrOqsX63Ff5/4h3UHRyc22kAmZugXh1CUgBkKmGFMSFlqcvDSAP20oZW/aXMwW1FEN
-         1F5AgwZ3dEsz7OLIr24DceU49mjUodZkXHjERTF67qXS/0MyT6thWsi23DEa6QbFyKL2
-         F8Oe3Nzf+USVMvY71bwaeI3Bj+a8LLmUdbuzH4Po2C1l/bf+k0DYolNItPadZpw70aJf
-         JGjw+TNmlEZjB/VG94rJRw45W9drqYB1WbFeatRLbwF1zVLypvmKwqYKdtx5iOQaDmKn
-         YcHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681217962;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ti2ysbW8Cc+oBh8xPSaQGRD6NB9f1GZWXnz69twS12o=;
-        b=j3XbS81RVEVkm+cozsqzy/eDLG0e01fCh+T49CNZur+HpvnDiLzo5qIMc1Lxn2mM1k
-         kC+45nQ8IqN4TvL7zsC+J+K+WJ3TSc0SXjMIDskBhAqrQYm36SlJDWfQGf8wsKJ7G41A
-         dD4ymc9CmeKYxxBtZaOODhulYgnDc2c/RXNRJz2p5JIelrPqkP+Afd6FB8EKYnU92Vtg
-         xOvGuF984Ht3xNWmOs608mfuths4boOk1NE8VacOx4dN177wuI3YbWiBm4qLvnoWnMDu
-         Np7gyFDOtbM2WgqRdTZTWbQXXLP7iv9ikC5N8XcubvqexRCeeSMmX8lsCge2TPGBRezr
-         opWg==
-X-Gm-Message-State: AAQBX9c5kPCXS5IPNc+z7s+PfEWKkaMxyVS5eLJ63oKFHA32aP/wU2L+
-        W/yFzntVGpBcj6GYk+Kh2nK0Nw==
-X-Google-Smtp-Source: AKy350YVTDFNb5Qk8eaZ2+Vqkq8JCY99+JvsaLSibJbCz5fAyWy94GjBnHTh0QE50XOU3hHs0BKOhQ==
-X-Received: by 2002:a7b:c354:0:b0:3ed:301c:375c with SMTP id l20-20020a7bc354000000b003ed301c375cmr7357343wmj.21.1681217962443;
-        Tue, 11 Apr 2023 05:59:22 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:334:ac00:a099:fc1d:c99a:bfc3])
-        by smtp.gmail.com with ESMTPSA id e24-20020a05600c219800b003eae73f0fc1sm16944591wme.18.2023.04.11.05.59.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Apr 2023 05:59:22 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        with ESMTP id S230047AbjDKNJv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 09:09:51 -0400
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1E014690;
+        Tue, 11 Apr 2023 06:09:47 -0700 (PDT)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 8667320007;
+        Tue, 11 Apr 2023 13:09:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1681218585;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=zj1JtAKrv3GVkrzExsf9B7vpxAMSpGNgfjgQje0eTak=;
+        b=oNG2Rb7etLGd3op/Iz2fmq0xokA2awaHaTUwmpMIqfWRcdiVNffJhH1OiD/NJa8U8VhbyA
+        yF9MXtYH8Fxz3M+cAq/7V/oq1xoDx4mXB50I/MCViACuf5Xj/3sm+jiFSUhQyd/GFiKSU+
+        MvbhXoQ5xcQFvUgIZ6glZLEM1HPSvT3ZkSE8cIw3GiRKuf3ey7u+ch+9vo/URZlNg8hBkX
+        sdQ/9ZojYLUArwz1K4ERP3d5/cBFRF6/83yyqSdXppNVR0gRdgwuMipAeMDZ8IGKN7s335
+        n6r/K2t/A0PaaBtBH3FUkAWJV3CrDikEbkeZlUHa/BD6XrUBmGFFsgVYyetBaQ==
+Date:   Tue, 11 Apr 2023 15:09:30 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Maxime Ripard <maxime@cerno.tech>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v3 7/7] arm64: dts: qcom: sa8775p: add the GPU IOMMU node
-Date:   Tue, 11 Apr 2023 14:59:10 +0200
-Message-Id: <20230411125910.401075-8-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20230411125910.401075-1-brgl@bgdev.pl>
-References: <20230411125910.401075-1-brgl@bgdev.pl>
+        Andreas =?UTF-8?B?RsOkcmJlcg==?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        David Lechner <david@lechnology.com>,
+        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Ralph Siemsen <ralph.siemsen@linaro.org>
+Subject: Re: [PATCH v3 28/65] clk: renesas: r9a06g032: Add a determine_rate
+ hook
+Message-ID: <20230411150930.4fb22d7e@xps-13>
+In-Reply-To: <CAMuHMdXUEOP_3zjf8nwDyHvZVG-D0AsBjnr=esKzejMMcEiLSQ@mail.gmail.com>
+References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
+        <20221018-clk-range-checks-fixes-v3-28-9a1358472d52@cerno.tech>
+        <CAMuHMdXUEOP_3zjf8nwDyHvZVG-D0AsBjnr=esKzejMMcEiLSQ@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Geert & Maxime,
 
-Add the Adreno GPU IOMMU for sa8775p-based platforms.
+geert@linux-m68k.org wrote on Tue, 11 Apr 2023 12:27:38 +0200:
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 37 +++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+> CC Gareth, Herv=C3=A9, Miquel, Ralph
+>=20
+> On Tue, Apr 4, 2023 at 2:44=E2=80=AFPM Maxime Ripard <maxime@cerno.tech> =
+wrote:
+> > The Renesas r9a06g032 bitselect clock implements a mux with a set_parent
+> > hook, but doesn't provide a determine_rate implementation.
+> >
+> > This is a bit odd, since set_parent() is there to, as its name implies,
+> > change the parent of a clock. However, the most likely candidate to
+> > trigger that parent change is a call to clk_set_rate(), with
+> > determine_rate() figuring out which parent is the best suited for a
+> > given rate.
+> >
+> > The other trigger would be a call to clk_set_parent(), but it's far less
+> > used, and it doesn't look like there's any obvious user for that clock.
+> >
+> > So, the set_parent hook is effectively unused, possibly because of an
+> > oversight. However, it could also be an explicit decision by the
+> > original author to avoid any reparenting but through an explicit call to
+> > clk_set_parent().
+> >
+> > The latter case would be equivalent to setting the flag
+> > CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
+> > to __clk_mux_determine_rate(). Indeed, if no determine_rate
+> > implementation is provided, clk_round_rate() (through
+> > clk_core_round_rate_nolock()) will call itself on the parent if
+> > CLK_SET_RATE_PARENT is set, and will not change the clock rate
+> > otherwise. __clk_mux_determine_rate() has the exact same behavior when
+> > CLK_SET_RATE_NO_REPARENT is set.
+> >
+> > And if it was an oversight, then we are at least explicit about our
+> > behavior now and it can be further refined down the line.
+> >
+> > Signed-off-by: Maxime Ripard <maxime@cerno.tech> =20
+>=20
+> LGTM, so
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 191b510b5a1a..11f3d80dd869 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -7,6 +7,7 @@
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
- #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
-+#include <dt-bindings/clock/qcom,sa8775p-gpucc.h>
- #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
- #include <dt-bindings/power/qcom-rpmpd.h>
- #include <dt-bindings/soc/qcom,rpmh-rsc.h>
-@@ -605,6 +606,42 @@ gpucc: clock-controller@3d90000 {
- 			#power-domain-cells = <1>;
- 		};
- 
-+		adreno_smmu: iommu@3da0000 {
-+			compatible = "qcom,sa8775p-smmu-500", "qcom,adreno-smmu",
-+				     "arm,mmu-500";
-+			reg = <0x0 0x03da0000 0x0 0x20000>;
-+			#iommu-cells = <2>;
-+			#global-interrupts = <2>;
-+			dma-coherent;
-+			power-domains = <&gpucc GPU_CC_CX_GDSC>;
-+			clocks = <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
-+				 <&gcc GCC_GPU_SNOC_DVM_GFX_CLK>,
-+				 <&gpucc GPU_CC_AHB_CLK>,
-+				 <&gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>,
-+				 <&gpucc GPU_CC_CX_GMU_CLK>,
-+				 <&gpucc GPU_CC_HUB_CX_INT_CLK>,
-+				 <&gpucc GPU_CC_HUB_AON_CLK>;
-+			clock-names = "gcc_gpu_memnoc_gfx_clk",
-+				      "gcc_gpu_snoc_dvm_gfx_clk",
-+				      "gpu_cc_ahb_clk",
-+				      "gpu_cc_hlos1_vote_gpu_smmu_clk",
-+				      "gpu_cc_cx_gmu_clk",
-+				      "gpu_cc_hub_cx_int_clk",
-+				      "gpu_cc_hub_aon_clk";
-+			interrupts = <GIC_SPI 673 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 674 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 678 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 679 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 680 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 681 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 682 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 683 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 684 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 685 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 686 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 687 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
- 		pdc: interrupt-controller@b220000 {
- 			compatible = "qcom,sa8775p-pdc", "qcom,pdc";
- 			reg = <0x0 0x0b220000 0x0 0x30000>,
--- 
-2.37.2
+I searched for 'possible callers', I didn't find any places
+where this would be used on the consumer side. However, downstream,
+there is a rzn1-clock-bitselect.c clock driver which states:
 
++ * This clock provider handles the case of the RZN1 where you have periphe=
+rals
++ * that have two potential clock source and two gates, one for each of the
++ * clock source - the used clock source (for all sub clocks) is selected b=
+y a
++ * single bit.
++ * That single bit affects all sub-clocks, and therefore needs to change t=
+he
++ * active gate (and turn the others off) and force a recalculation of the =
+rates.
+
+I don't know how much of this file has been upstreamed (under a
+different form) but this might very well be related to the fact that
+reparenting in some cases would be a major issue and thus needs to be
+avoided unless done on purpose (guessing?).
+
+Maybe Ralph can comment, but for what I understand,
+
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+
+> But I do not have the hardware.
+>=20
+> > --- a/drivers/clk/renesas/r9a06g032-clocks.c
+> > +++ b/drivers/clk/renesas/r9a06g032-clocks.c
+> > @@ -1121,6 +1121,7 @@ static int r9a06g032_clk_mux_set_parent(struct cl=
+k_hw *hw, u8 index)
+> >  }
+> >
+> >  static const struct clk_ops clk_bitselect_ops =3D {
+> > +       .determine_rate =3D __clk_mux_determine_rate,
+> >         .get_parent =3D r9a06g032_clk_mux_get_parent,
+> >         .set_parent =3D r9a06g032_clk_mux_set_parent,
+> >  };
+> > @@ -1145,7 +1146,7 @@ r9a06g032_register_bitsel(struct r9a06g032_priv *=
+clocks,
+> >
+> >         init.name =3D desc->name;
+> >         init.ops =3D &clk_bitselect_ops;
+> > -       init.flags =3D CLK_SET_RATE_PARENT;
+> > +       init.flags =3D CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT;
+> >         init.parent_names =3D names;
+> >         init.num_parents =3D 2;
+> > =20
+>=20
+> Gr{oetje,eeting}s,
+>=20
+>                         Geert
+>=20
+
+Thanks,
+Miqu=C3=A8l
