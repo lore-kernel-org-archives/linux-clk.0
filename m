@@ -2,162 +2,83 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB58C76196
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 14:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7276C76196
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 14:04:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231230AbjDKOBk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Apr 2023 10:01:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56602 "EHLO
+        id S230036AbjDKOEM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Apr 2023 10:04:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231246AbjDKOBf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 10:01:35 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 732D53C26;
-        Tue, 11 Apr 2023 07:01:22 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33BDREG7000410;
-        Tue, 11 Apr 2023 14:00:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=i4JXZ/+C19m2J5iqS6POWClSCNVPg9jd/RyGMq+Bk6Y=;
- b=UD9pjPxeXir2p/IXG0Hn+4Ij9yyTcgvXdK/7RLwSHldFk+900CZt0EvF1H8HVg9Hu43/
- f1vuyKdiKJb83W57c/mT3Zv7lowMsUIvnjLhGu8Xu5JVXFxMv0fdAuw+xmAduA1Pwibt
- vjwQWq8+JsTv/ncvkLbacHviS19fpSeSNbFdlhaOU4vX8kOuk/l85vYCzCfpF5CanFDd
- wxfo/LxumMsBrk/lriNdO7+fXsUxUbXHkrJZm+Y+6qjjr3tcBnhs+UWW0n9C+ddxLOSw
- CxzgnG+PXr6L/IraAhSuv9rMyLo6pr8oa0Ycgee0dwB3vColi5ruwRE8kIzXsZTs6fDj uw== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pvvux1j00-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 11 Apr 2023 14:00:55 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33BE0Tt7025460
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 11 Apr 2023 14:00:29 GMT
-Received: from [10.216.4.20] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 11 Apr
- 2023 07:00:19 -0700
-Message-ID: <9fd81c81-7d54-80ef-3054-9dc3b0c379e1@quicinc.com>
-Date:   Tue, 11 Apr 2023 19:30:15 +0530
+        with ESMTP id S229654AbjDKOEL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 10:04:11 -0400
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1A6830CA;
+        Tue, 11 Apr 2023 07:04:03 -0700 (PDT)
+Received: by mail-oi1-f170.google.com with SMTP id z16so5135107oib.9;
+        Tue, 11 Apr 2023 07:04:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1681221843; x=1683813843;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Aewvq7Qyi31VTr5PdaFcbjGaZV7Zh9U8Jss5DyPyZ6k=;
+        b=N83P46YZqXyn2sFCjGzwLWiJes3CIoAf6dJvG+33Iftm/ry5R8pp/eK36aA5ddpIlQ
+         Qj5sXKMympjasoB/Wwp0ARIjQR0H3Fmnj3wFMVGs5phRFFYuOzvyuGedXeQKzZ87I8EL
+         iJgXOnk1kx3FrIc/+uHQvIQgcalEXR+N8y6AxL77g41CKwFB5e0uPOXMy0mVxHnwK+oy
+         ghexeUOa13mdY/ldv0KnGM8bOoaPwnI4SAAtkwfg0fnK0w2pnmlIPoZx++OopcIOWHy7
+         X7Mf/eOSFvn122dWmqvEc8U63QJAJqmgNMHttoeo5/ktjyRTK2xVGZJ1odKNB3ht2HPT
+         uX5g==
+X-Gm-Message-State: AAQBX9f2biSlQa05XczewTMPzqJYGUP6GPSEKzcHaJAtoPwInURDqzMp
+        6HkWf07kHcqsUN7r1PEqbA==
+X-Google-Smtp-Source: AKy350ZtVObD4H0kcB6Kxrdgy3xaGWSl03KtG/6TAmlqg3kjYEkbJgm/DeGs/e+KiMT4OJJnhxHjjg==
+X-Received: by 2002:a05:6808:249:b0:387:1e71:e4d3 with SMTP id m9-20020a056808024900b003871e71e4d3mr5213892oie.11.1681221842953;
+        Tue, 11 Apr 2023 07:04:02 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id u10-20020a056808150a00b0037832f60518sm5550740oiw.14.2023.04.11.07.04.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Apr 2023 07:04:02 -0700 (PDT)
+Received: (nullmailer pid 2981771 invoked by uid 1000);
+        Tue, 11 Apr 2023 14:04:01 -0000
+Date:   Tue, 11 Apr 2023 09:04:01 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/3] clk: mvebu: Use of_get_cpu_hwid() to read CPU ID
+Message-ID: <20230411140401.GA2963980-robh@kernel.org>
+References: <20230327-mvebu-clk-fixes-v1-0-438de1026efd@kernel.org>
+ <20230327-mvebu-clk-fixes-v1-2-438de1026efd@kernel.org>
+ <216176104e507b860e24399bf020d836.sboyd@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH V2 5/9] dt-bindings: PCI: qcom: Add IPQ9574
-Content-Language: en-US
-To:     Manivannan Sadhasivam <mani@kernel.org>
-CC:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <lpieralisi@kernel.org>,
-        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
-        <krzysztof.kozlowski+dt@linaro.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <p.zabel@pengutronix.de>, <linus.walleij@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <quic_srichara@quicinc.com>,
-        <quic_gokulsri@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
-        <quic_anusha@quicinc.com>, <quic_ipkumar@quicinc.com>
-References: <20230404164828.8031-1-quic_devipriy@quicinc.com>
- <20230404164828.8031-6-quic_devipriy@quicinc.com>
- <79ddaff0-00a9-36db-2bc0-4c844ffd9528@linaro.org>
- <999dfe1c-3b0d-1cc1-7407-e0917fc62d77@quicinc.com>
- <20230411115201.GM5333@thinkpad>
-From:   Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <20230411115201.GM5333@thinkpad>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: vHMpBYB7vrtU41ZLYNZaDoGP4xpUEXGe
-X-Proofpoint-ORIG-GUID: vHMpBYB7vrtU41ZLYNZaDoGP4xpUEXGe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-11_09,2023-04-11_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- lowpriorityscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
- impostorscore=0 suspectscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2304110130
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <216176104e507b860e24399bf020d836.sboyd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, Apr 10, 2023 at 04:36:21PM -0700, Stephen Boyd wrote:
+> Quoting Rob Herring (2023-03-27 11:43:19)
+> > Use of_get_cpu_hwid() rather than the open coded reading of the CPU
+> > nodes "reg" property. The existing code is in fact wrong as the "reg"
+> > address cells size is 2 cells for arm64. The existing code happens to
+> > work because the DTS files are wrong as well.
+> > 
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > ---
+> > Note this should be marked for stable so that if/when the DTS files are
+> > fixed, then at least stable kernels will work. This is untested, so I
+> > didn't mark for stable.
+> 
+> That makes it sound like it breaks for existing DTS files. Is that the
+> case?
 
+No, if the DTS files are fixed, then they will not work with the 
+existing code. This change should work for both existing and fixed DTS 
+files.
 
-On 4/11/2023 5:22 PM, Manivannan Sadhasivam wrote:
-> On Tue, Apr 11, 2023 at 04:27:23PM +0530, Devi Priya wrote:
->>
->>
->> On 4/5/2023 12:28 PM, Krzysztof Kozlowski wrote:
->>> On 04/04/2023 18:48, Devi Priya wrote:
->>>> Add bindings for PCIe hosts on IPQ9574 platform and allow
->>>> msi-parent property
->>>
->>> Missing full stop. Also in your other patches.
->> Okay
->>>
->>>>
->>>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
->>>> ---
->>>>    Changes in V2:
->>>> 	- Updated the commit message and dropped the aggr_noc entries
->>>> 	  as it will be handled via interconnect driver
->>>>
->>>>    .../devicetree/bindings/pci/qcom,pcie.yaml    | 48 +++++++++++++++++++
->>>>    1 file changed, 48 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
->>>> index fb32c43dd12d..8657ab65008c 100644
->>>> --- a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
->>>> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
->>>> @@ -26,6 +26,7 @@ properties:
->>>>              - qcom,pcie-ipq8064-v2
->>>>              - qcom,pcie-ipq8074
->>>>              - qcom,pcie-ipq8074-gen3
->>>> +          - qcom,pcie-ipq9574
->>>>              - qcom,pcie-msm8996
->>>>              - qcom,pcie-qcs404
->>>>              - qcom,pcie-sa8540p
->>>> @@ -105,6 +106,8 @@ properties:
->>>>        items:
->>>>          - const: pciephy
->>>> +  msi-parent: true
->>>
->>
->> Yes right, will rebase it on Mani's series.
->> But, as you have pointed out don't see the binding changes
->> in linux-next/master
->> Mani, could you please provide the tree details onto which the
->> binding change is merged?
->>
-> 
-> Looks like the initial msi-map binding's patch [1] never got merged even though
-> the dts patch went in.
-> 
-> I'll squash the later fix to this, post v4 and CC you.
-
-Thanks for that..I could see V4 posted!
-> 
-> - Mani
-> 
-> [1] https://lore.kernel.org/all/20230102105821.28243-3-manivannan.sadhasivam@linaro.org/
-> 
->>> Isn't this conflicting with Mani's series:
->>> https://lore.kernel.org/all/20230108203340.GA229573-robh@kernel.org/
->>> https://lore.kernel.org/all/20230111123004.21048-1-manivannan.sadhasivam@linaro.org/#t
->>>
->>> Although for some reason Mani's patch references non-existing commit and
->>> hunk...
->>>
->>> Best regards,
->>> Krzysztof
->>>
->> Best Regards,
->> Devi Priya
-> 
+Rob
