@@ -2,73 +2,73 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93817C76196
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 18:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE75C7619A
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 18:45:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229920AbjDKSpI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Apr 2023 14:45:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35018 "EHLO
+        id S229890AbjDKSpL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Apr 2023 14:45:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229888AbjDKSpF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 14:45:05 -0400
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-cy1gcc01bn2011.outbound.protection.outlook.com [52.100.19.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 185B310EA;
-        Tue, 11 Apr 2023 11:45:03 -0700 (PDT)
+        with ESMTP id S229877AbjDKSpI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 14:45:08 -0400
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05hn2249.outbound.protection.outlook.com [52.100.175.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76FF012A;
+        Tue, 11 Apr 2023 11:45:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nHfrKvIf6uhW+PIvN7eGwoBrowmdKIkqx5wJ0m5ZL2o=;
- b=c5+gZ2s1Urwk/vUo1PNLp+DSM8UKLyMfMUlUqG53kzY2jxyLHkFNTxISRSWHjYytAdtXLWGKEJCpcT1gQcimhrgfLGHX2R1JAXqpYtFfWkArtTcQ8daykbP3+RISQ9oTY7C+uunwGDzEFI7KpVzJB+Ocmdc+c3dXH2jfbIgPJ9DnLEkZ06TDxVS9DrjYe5udfIsnWPiwJETEOUy3Hu8CjzfOLTa4/BY+QSiDRp3t579g9m8SVdF0xa5Mgkdykt5TPLIeiEEA6a8oGg2q6N7qODtA+DXFjF83/z3V4/VJpSVWAWTtj5jlWxaoh67qyQo2WhM9/c94efa9LaF++3UrVg==
-Received: from AS9PR05CA0067.eurprd05.prod.outlook.com (2603:10a6:20b:499::23)
- by AS8PR03MB6808.eurprd03.prod.outlook.com (2603:10a6:20b:29c::16) with
+ bh=Iie0Bl1raO6MNQbx9dABBRV7HF/h/2HGK/e4/Sj3ooA=;
+ b=OUkWJY6YvSQuxjNqJJ+aMDe42dTF9ePpWNhN4GRAA5Dx4Ev9apRzi4PBZHIYG2ZXq6K+PSOg9bO4cbS3Mlh8neP8iU/VmQjyzMLwM+UpXnj3myG1nJGi9BgwH3mjz7TUJPnuR8JbGXpr7m4S/H/p2O5pRjWPj4sCu2R2J7j0LKW0dAr5/5lYsRR/VrP6Axk3NTrNlRWL9ikolbHgcHuSY5yOINIw6kc2Ix/vqhB37a1YF0MFTOQRUgYisGSD9XIS3kiGMgp/DiiKW21XDGNVtqJuP0iOwA4xmbiBlor1iEcaodr5l0JFj5Etpt6/h0zfQ3IKCwo5E1AEYqPaUwKEBA==
+Received: from AS9PR05CA0140.eurprd05.prod.outlook.com (2603:10a6:20b:497::14)
+ by AS2PR03MB10109.eurprd03.prod.outlook.com (2603:10a6:20b:57b::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.38; Tue, 11 Apr
- 2023 18:44:59 +0000
-Received: from AM6EUR05FT054.eop-eur05.prod.protection.outlook.com
- (2603:10a6:20b:499:cafe::65) by AS9PR05CA0067.outlook.office365.com
- (2603:10a6:20b:499::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.40 via Frontend
- Transport; Tue, 11 Apr 2023 18:44:59 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 20.160.56.84)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.35; Tue, 11 Apr
+ 2023 18:45:03 +0000
+Received: from AM6EUR05FT009.eop-eur05.prod.protection.outlook.com
+ (2603:10a6:20b:497:cafe::43) by AS9PR05CA0140.outlook.office365.com
+ (2603:10a6:20b:497::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.29 via Frontend
+ Transport; Tue, 11 Apr 2023 18:45:03 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 20.160.56.81)
  smtp.mailfrom=seco.com; dkim=pass (signature was verified)
  header.d=seco.com;dmarc=pass action=none header.from=seco.com;
 Received-SPF: Pass (protection.outlook.com: domain of seco.com designates
- 20.160.56.84 as permitted sender) receiver=protection.outlook.com;
- client-ip=20.160.56.84; helo=inpost-eu.tmcas.trendmicro.com; pr=C
-Received: from inpost-eu.tmcas.trendmicro.com (20.160.56.84) by
- AM6EUR05FT054.mail.protection.outlook.com (10.233.240.85) with Microsoft SMTP
+ 20.160.56.81 as permitted sender) receiver=protection.outlook.com;
+ client-ip=20.160.56.81; helo=inpost-eu.tmcas.trendmicro.com; pr=C
+Received: from inpost-eu.tmcas.trendmicro.com (20.160.56.81) by
+ AM6EUR05FT009.mail.protection.outlook.com (10.233.241.9) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6298.28 via Frontend Transport; Tue, 11 Apr 2023 18:44:59 +0000
-Received: from outmta (unknown [192.168.82.135])
-        by inpost-eu.tmcas.trendmicro.com (Trend Micro CAS) with ESMTP id 157122008026F;
-        Tue, 11 Apr 2023 18:44:59 +0000 (UTC)
+ 15.20.6298.25 via Frontend Transport; Tue, 11 Apr 2023 18:45:02 +0000
+Received: from outmta (unknown [192.168.82.132])
+        by inpost-eu.tmcas.trendmicro.com (Trend Micro CAS) with ESMTP id 2A1C320080270;
+        Tue, 11 Apr 2023 18:45:02 +0000 (UTC)
 Received: from EUR03-AM7-obe.outbound.protection.outlook.com (unknown [104.47.51.239])
-        by repre.tmcas.trendmicro.com (Trend Micro CAS) with ESMTPS id 4769220080079;
-        Tue, 11 Apr 2023 18:46:04 +0000 (UTC)
+        by repre.tmcas.trendmicro.com (Trend Micro CAS) with ESMTPS id 5EE6820080076;
+        Tue, 11 Apr 2023 18:46:01 +0000 (UTC)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nNYpJ7fEKd0FuXr/rtU2bCcCkasQfF09SZZi5kRR/alJV/XBWyQu8+B6v3nVbOkSHMaHUqhbkumltl7sEzdF6oVos+CjHjdAIDPFpV9ad81MGuVJyCqnE2CXHgYmX6Dt+CIGrTVbp4KSd0OYVkfb5gBX4hf5FSdhTHfE8KCO3fj6oatPQCT0p319d4wzetCWomRbO0DuyyRkfqItK4jt6lRNqd8SC8wlESBEKhXybXnp5iq9YBB+HNkqjXgyFJlJwwN+HXBv+sFbjB3ZTv+hqAcYy3C/m/Exj8hplAwCxGQ2TxcJAgBMOvazV0PO3wpbLtuSm25Jmpt4KOFHfHXPHQ==
+ b=T6eM2gneCgP3W31/DaQcEFrC2FuE7St3+7rSpIB/e5qwjXlZ4/NFSdDmJ+z0i/dwVcjAEk4Pva4MEuSfh2QlXwwrqA481Eyp4Ltto1V8MRH3IOxI6q+wSdjq2r/Z7rYcT3pMdbi0J2qOjeE4/9Id6domNdG3H2URsjgbyP9OOESRGnsnlR6XLnV9GpoyxPPXnD5k+nLrG4FkTWsyuVSK4fVybgqVs/bmbpEtIGpD5dcQcFR7xtCIuBU+O6SQMR8rBBBM0MW9uZesEgJWu+8HP+pfQieFbqawgXpEniox4NqLfNZZEiHJ+pCPSwCmebPHkAQVKw2IZBOH07v9iZAQ7Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nHfrKvIf6uhW+PIvN7eGwoBrowmdKIkqx5wJ0m5ZL2o=;
- b=d0+f6z380xqbq2YbPl0K1TSen02ZvzIsWwdRmde9FIohXBrkV94H/DDBJ0tjRVVgpROFlIfPuBkA5FJayWvZrLDQcfIbTsE5KIF1X1c2QoSdZlzxHgt4mb5Yy/9rdUbvN5eVkBFE3lI2MKgopFQsIc+3qJ2ElpqzJ1a9Qa/B6WTdcAycnTqV5piQMqjsBf2lq1rMf8y5jC57f8MUIeyAlcTrOxD8ab25MVDIlSfNkEdNHOVUpUna4s62kK0ZH38U4VDaJoO3V77v6kZTaabK7rf+BFqYnnRG0c27dyjTQIk7iHC3572LaKLNsYm3tH4/ohx57Xl32JOgNFIAtUi23A==
+ bh=Iie0Bl1raO6MNQbx9dABBRV7HF/h/2HGK/e4/Sj3ooA=;
+ b=Bqp2bmkxgiYDOqjxiqi/l78AGmu5fKHM+4Nr0MtdqhV9WSlsLfp3QiSvdKF1FvDaCPbvkH3OIJ2EBa16bKAcaUJ9M8MZmdnz1YWG8LEKWqfP+nWqKBIZ+UE7CaexgNFmXFmE631PcH99AUW1hPmMIlufkmSHfSmYHTdwl08saYjEmpmaAmS0ZCOJEaw90RcKRj8SrRQsaiK6wSNT1KndgsE3YUgC3wEClMq4YDE43V0KqoVSxhO5Yy/evIInIFtpDiKAukUY6N1XEmWUn6mZ1SwEBiWh65QSpgJBRxpjQwdRlJmCo7ax+lwSPYGoj0kUgXwX1oPy2mmCkg1xxYdiMw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=seco.com; dmarc=pass action=none header.from=seco.com;
  dkim=pass header.d=seco.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nHfrKvIf6uhW+PIvN7eGwoBrowmdKIkqx5wJ0m5ZL2o=;
- b=c5+gZ2s1Urwk/vUo1PNLp+DSM8UKLyMfMUlUqG53kzY2jxyLHkFNTxISRSWHjYytAdtXLWGKEJCpcT1gQcimhrgfLGHX2R1JAXqpYtFfWkArtTcQ8daykbP3+RISQ9oTY7C+uunwGDzEFI7KpVzJB+Ocmdc+c3dXH2jfbIgPJ9DnLEkZ06TDxVS9DrjYe5udfIsnWPiwJETEOUy3Hu8CjzfOLTa4/BY+QSiDRp3t579g9m8SVdF0xa5Mgkdykt5TPLIeiEEA6a8oGg2q6N7qODtA+DXFjF83/z3V4/VJpSVWAWTtj5jlWxaoh67qyQo2WhM9/c94efa9LaF++3UrVg==
+ bh=Iie0Bl1raO6MNQbx9dABBRV7HF/h/2HGK/e4/Sj3ooA=;
+ b=OUkWJY6YvSQuxjNqJJ+aMDe42dTF9ePpWNhN4GRAA5Dx4Ev9apRzi4PBZHIYG2ZXq6K+PSOg9bO4cbS3Mlh8neP8iU/VmQjyzMLwM+UpXnj3myG1nJGi9BgwH3mjz7TUJPnuR8JbGXpr7m4S/H/p2O5pRjWPj4sCu2R2J7j0LKW0dAr5/5lYsRR/VrP6Axk3NTrNlRWL9ikolbHgcHuSY5yOINIw6kc2Ix/vqhB37a1YF0MFTOQRUgYisGSD9XIS3kiGMgp/DiiKW21XDGNVtqJuP0iOwA4xmbiBlor1iEcaodr5l0JFj5Etpt6/h0zfQ3IKCwo5E1AEYqPaUwKEBA==
 Authentication-Results-Original: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=seco.com;
 Received: from DB9PR03MB8847.eurprd03.prod.outlook.com (2603:10a6:10:3dd::13)
  by DB4PR03MB9433.eurprd03.prod.outlook.com (2603:10a6:10:3fa::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.38; Tue, 11 Apr
- 2023 18:44:48 +0000
+ 2023 18:44:42 +0000
 Received: from DB9PR03MB8847.eurprd03.prod.outlook.com
  ([fe80::2226:eb03:a8c:a7e5]) by DB9PR03MB8847.eurprd03.prod.outlook.com
  ([fe80::2226:eb03:a8c:a7e5%2]) with mapi id 15.20.6277.035; Tue, 11 Apr 2023
- 18:44:48 +0000
+ 18:44:42 +0000
 From:   Sean Anderson <sean.anderson@seco.com>
 To:     Vinod Koul <vkoul@kernel.org>,
         Kishon Vijay Abraham I <kishon@kernel.org>,
@@ -85,9 +85,9 @@ Cc:     Camelia Alexandra Groza <camelia.groza@nxp.com>,
         Rob Herring <robh@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH v13 05/15] dt-bindings: clock: Add ids for Lynx 10g PLLs
-Date:   Tue, 11 Apr 2023 14:43:02 -0400
-Message-Id: <20230411184313.3679145-6-sean.anderson@seco.com>
+Subject: [PATCH v13 02/15] dt-bindings: phy: Add Lynx 10G phy binding
+Date:   Tue, 11 Apr 2023 14:42:59 -0400
+Message-Id: <20230411184313.3679145-3-sean.anderson@seco.com>
 X-Mailer: git-send-email 2.35.1.1320.gc452695387.dirty
 In-Reply-To: <20230411184313.3679145-1-sean.anderson@seco.com>
 References: <20230411184313.3679145-1-sean.anderson@seco.com>
@@ -97,82 +97,352 @@ X-ClientProxiedBy: BL1PR13CA0350.namprd13.prod.outlook.com
  (2603:10b6:208:2c6::25) To DB9PR03MB8847.eurprd03.prod.outlook.com
  (2603:10a6:10:3dd::13)
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic: DB9PR03MB8847:EE_|DB4PR03MB9433:EE_|AM6EUR05FT054:EE_|AS8PR03MB6808:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7a6083c8-6f31-448c-f384-08db3abcda68
+X-MS-TrafficTypeDiagnostic: DB9PR03MB8847:EE_|DB4PR03MB9433:EE_|AM6EUR05FT009:EE_|AS2PR03MB10109:EE_
+X-MS-Office365-Filtering-Correlation-Id: 433dec24-6573-4da0-4968-08db3abcdc56
 X-TrendMicro-CAS-OUT-LOOP-IDENTIFIER: 656f966764b7fb185830381c646b41a1
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: AI2bUyQKPhdiBlSiVu4jCtSJDlizkwtWgEX7UYMw6AOY1LHTYGdpSvuQS6BfcT5cMDj/PUC6JN9PUGPvlmzHzmIveUhm1kLqkkH4DAIupNoxtKLYRmxBq1CwrNMVfveI8tB4ob7Gd8jMfLgS+8jpG4ksKfBWxvq9gUSomCW3R0X7nWWXsv5lufty9w/acHA90GCnmaN2T7WB0armo1L2+wgb3mbrmB3YSiOMrlTUi2t2MR/2bX43ryCrnYjgxGzQXjwoNoMBMNN4ey3CBiUihz0emGokfcwZ6GBBxjqwX1sDeuBRwBYkuHIhsdf1Ebvz9FxMiqTfRV6DpNp2VHqJMCLlCz/fwoH0zhDFL+BXzTi20tF/IHHaFHJiOWVkbFXarsMqiwke6Dj2ZcvvonelLIsE3uDrXxcaGb+LJJs3uZYDh7T4E/s72rGk26g2mDMtrrZUzDrX3tbyAIzni+/Ck5qzpMOhcsrdYOHROy84To4UI5CKkycKDjH1lkvUBQNBIkDriXdAbEaiOt59VHNAfpSucq+SvbsKHMY6xBIGgumdxsBYSPIYVqagYFeIwQ9Kh5dHAmpSzvLQ47g0tUWbV/nTy46e6ecvNUUdHdwLuNIxg+tPEeo3OX8oBbyv9mbS
-X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR03MB8847.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(366004)(39850400004)(396003)(136003)(376002)(346002)(451199021)(316002)(110136005)(38350700002)(38100700002)(54906003)(66556008)(66476007)(8676002)(66946007)(4326008)(86362001)(478600001)(186003)(2616005)(26005)(41300700001)(36756003)(6506007)(1076003)(6512007)(2906002)(83380400001)(44832011)(8936002)(6666004)(52116002)(5660300002)(7416002)(6486002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info-Original: Fud6holjypvv9JKv2q5jKJ1EyhMF60WzHBOOJnwtQwcpPm3OUY0/ovAjwswZ84Brzn/bWgKU3rrmihZZ/6zo2xR/EJEmrEE/zI7pF7JWdtUvuYIOCGv//lUnv4z3jpyX+a6Rr+97+x0I8DNz27Ud9hU8gDXHw8tXPfwFST42q2Q9XVa3vN4qLfWIDDbFRcGnqBYufNh6y7rigtHR0rm29pxVZCUp3b9cHAXREbLpsoPm/mTPZC07O8A7VDe0nqvahJAM65zmhTsAkusL55X/ZgrfI6eCZXMJHrhzuNgPgb8wc2+kzI4TgzIqCraegplLX+UbGb3Fi3i1yE6Sak5E9HAtocIZLXkMFHTmVWV/U+qmF+wz2Sc+EOFvIfz1VDjGFyhMYP2fnEmMnsbinZqSYrKst1axwZNvMYK9jI0k51Pglet4i/jtP7wknRY1kHMyvpi80m6OYXmNP0PQZsvw5EI65gmWQ2wxrfr/G6QeHCOmhMDR5z1O/1r2+M+En85Nn/I9suOwl7Wf8uYdz9p+0SQ04cqt2dPHtiQIn92lNbqJ4zX1fCa53rpV9gw3JCEN8+ukMY6D/URyPJr0DrjmCmR8X+4Iq3FO32faOfM5KzY=
+X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR03MB8847.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(366004)(39850400004)(396003)(136003)(376002)(346002)(451199021)(316002)(110136005)(38350700002)(38100700002)(54906003)(66556008)(66476007)(8676002)(66946007)(4326008)(86362001)(478600001)(186003)(2616005)(26005)(41300700001)(36756003)(6506007)(1076003)(6512007)(2906002)(83380400001)(44832011)(8936002)(6666004)(52116002)(5660300002)(7416002)(966005)(6486002);DIR:OUT;SFP:1101;
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB4PR03MB9433
 X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: AM6EUR05FT054.eop-eur05.prod.protection.outlook.com
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: AM6EUR05FT009.eop-eur05.prod.protection.outlook.com
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs: ad75789b-b6fb-4082-3fba-08db3abcd392
+X-MS-Office365-Filtering-Correlation-Id-Prvs: e521bfb0-f3ca-4f20-adb4-08db3abcd02d
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: xBL3kV/t3tAp92LZRIZTSrbxa5X0lbiBmwKODMo6X097CyrehPBnM/sjHBcPJXqZCiCfNwTkupzoFEej8ggK5yqZqoDyK2tYkFk75BC8C3mGg1Jik/7t6dAPmy+1uu9Oqn/ryLXpmHhq0uC6CoYQIdDyB0MsZ17gFsF86UA5mqYMkVHMfHomz/sohnP6GrnNTFmBv999B8sflkcc0n2632n8WUX0MZ9k0x8UKfBSVlH+Qsg+F1kU0PiFZrnYI3unJyiSwyWjJc3SGgLztcf90SKmG3GAT4kqW+EdtINucgHXbynvuuljrc/HD4JOu3eEsbORG6Y1PNL9C3x3Q9Q7vb8APopIG/TJbZdAi41pQc6AxK32JA30q2tu88d7j5hbiLs1IuYPaMEHiX0gY0Vpg65m7R1pFCKxwdQMT1yxEliXJAgEoQBztKJWVQDC0p1q5Exe4CvzSH90Qh+asHClO948IEg1sl741nThSiKrrPXAomdouFwOxXl2uWFnAEPgNfliHaOXimxK1jsEA6RNnx3GRZhFnFlQAwoJxCkcEhfMKA9BiBgK4WXxcH7EhdUr4DOlarirLcv1DLk9ZEv4NcErIagHbiUc52MQcBkSlXhhijzzvLJfXBPSUZt//lrhM8wDoLL4x/KJK9mxW6zyNtHXar+2ZfXAorLJNNtYvkvuQWkUdgdxaImfWNDJtR0XW4Z+/NIyv5oTctsDjuL1ay185ACA483eNqdoZKsIWYeKoQEKKQzgzVvlqhrgHEWnn6SrbOfXFmnMGXAYCgtrhw==
-X-Forefront-Antispam-Report: CIP:20.160.56.84;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:inpost-eu.tmcas.trendmicro.com;PTR:inpost-eu.tmcas.trendmicro.com;CAT:NONE;SFS:(13230028)(136003)(346002)(376002)(396003)(39850400004)(451199021)(5400799015)(40470700004)(46966006)(36840700001)(6486002)(356005)(7596003)(7636003)(82740400003)(36756003)(47076005)(336012)(83380400001)(186003)(40480700001)(2616005)(36860700001)(1076003)(6512007)(6506007)(26005)(34070700002)(6666004)(40460700003)(44832011)(4326008)(8676002)(70586007)(70206006)(2906002)(54906003)(110136005)(82310400005)(41300700001)(316002)(8936002)(86362001)(5660300002)(7416002)(478600001)(12100799027);DIR:OUT;SFP:1501;
+X-Microsoft-Antispam-Message-Info: yeOoXIQLou3Hq+EMn/QFMJmQTdJVU/V6oMcHlPQ8UQ95oYyYahdJ6ftGgr4UviV/n5TSaNH6oQNONbBKHoO3Wwbmx7p0TL6MTZbhxPg0UuV9LeXyZ58smIIp0AIB0h2TA9qCU+oSRWxSxRRp3Ydg1qII/Gj8pGQkiJrLfPY9qYH09X6yGL0vxyOEqayNOJsz+rdXp21hpXniN6t4ocWwnKOdOHkPlqwQavQyY4LmmirGD4VQN1BVoO3/ryzGaT3ghpn7cvYH7KlMDFBqAiFldQo59YSY2YF3r0IqqFEjlJrPx+EcGeLGv4eoTGotkqL0oJGESmb6pFnAuP5n8WYVMmyeSthoZrv5bHdYJAhj46jsTuQmr1z2kAi84DNCqS5vAmzp5zFLAc9feHGPLMIpD1RMqPTA6vvt/TiltqpubHrARhQ7dzwoS9+IGW5U3MHIPMoB8g/LqgHBk/PseV00Pr7UrpHICEPMdNmlR0XRd+S9fTcinU2XNEaouZ4c7ABL7zQH3V6QQslZsG2wLP/6TjmZyyHsfpI0NuI3LIxxVCwmhZSimAfdNZTfVymClKKqgzs72l7DbvZWk79xbzB8Vwq04r6ZA/b0b3LrlIZNEyobCYRrMxF0AVFsTgPvqZ+GHqatr08YTss9ipezlm2KSZvZW3UlDN4I95WFHGCTksLCy0/0jdXoDHIUHsSvEgNjRAfizPTHuVgmNO+1g2Z3lHrKY1VRKgmESb41K24wlQzlbthBlWiMsl+Txi5U0h5E
+X-Forefront-Antispam-Report: CIP:20.160.56.81;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:inpost-eu.tmcas.trendmicro.com;PTR:inpost-eu.tmcas.trendmicro.com;CAT:NONE;SFS:(13230028)(136003)(396003)(346002)(376002)(39850400004)(451199021)(5400799015)(46966006)(40470700004)(36840700001)(478600001)(1076003)(6506007)(36860700001)(54906003)(336012)(316002)(110136005)(26005)(6512007)(186003)(7416002)(44832011)(966005)(2906002)(70586007)(70206006)(4326008)(8936002)(6666004)(8676002)(82310400005)(41300700001)(5660300002)(6486002)(7636003)(7596003)(356005)(82740400003)(47076005)(40480700001)(83380400001)(86362001)(40460700003)(36756003)(2616005)(34070700002)(12100799027);DIR:OUT;SFP:1501;
 X-OriginatorOrg: seco.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2023 18:44:59.5162
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2023 18:45:02.7493
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a6083c8-6f31-448c-f384-08db3abcda68
+X-MS-Exchange-CrossTenant-Network-Message-Id: 433dec24-6573-4da0-4968-08db3abcdc56
 X-MS-Exchange-CrossTenant-Id: bebe97c3-6438-442e-ade3-ff17aa50e733
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bebe97c3-6438-442e-ade3-ff17aa50e733;Ip=[20.160.56.84];Helo=[inpost-eu.tmcas.trendmicro.com]
-X-MS-Exchange-CrossTenant-AuthSource: AM6EUR05FT054.eop-eur05.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bebe97c3-6438-442e-ade3-ff17aa50e733;Ip=[20.160.56.81];Helo=[inpost-eu.tmcas.trendmicro.com]
+X-MS-Exchange-CrossTenant-AuthSource: AM6EUR05FT009.eop-eur05.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR03MB6808
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR03MB10109
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This adds ids for the Lynx 10g SerDes's internal PLLs. These may be used
-with assigned-clock* to specify a particular frequency to use. For
-example, to set the second PLL (at offset 0x20)'s frequency, use
-LYNX10G_PLLa(1). These are for use only in the device tree, and are not
-otherwise used by the driver.
+This adds a binding for the SerDes module found on QorIQ processors.
+Each phy is a subnode of the top-level device, possibly supporting
+multiple lanes and protocols. This "thick" #phy-cells is used due to
+allow for better organization of parameters. Note that the particular
+parameters necessary to select a protocol-controller/lane combination
+vary across different SoCs, and even within different SerDes on the same
+SoC.
+
+The driver is designed to be able to completely reconfigure lanes at
+runtime. Generally, the phy consumer can select the appropriate
+protocol using set_mode.
+
+There are two PLLs, each of which can be used as the master clock for
+each lane. Each PLL has its own reference. For the moment they are
+required, because it simplifies the driver implementation. Absent
+reference clocks can be modeled by a fixed-clock with a rate of 0.
 
 Signed-off-by: Sean Anderson <sean.anderson@seco.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 
-(no changes since v6)
+(no changes since v9)
+
+Changes in v9:
+- Add fsl,unused-lanes-reserved to allow for a gradual transition
+  between firmware and Linux control of the SerDes
+- Change phy-type back to fsl,type, as I was getting the error
+    '#phy-cells' is a dependency of 'phy-type'
+
+Changes in v7:
+- Use double quotes everywhere in yaml
 
 Changes in v6:
-- frequence -> frequency
-
-Changes in v5:
-- Update commit description
-- Dual id header
+- fsl,type -> phy-type
 
 Changes in v4:
-- New
+- Use subnodes to describe lane configuration, instead of describing
+  PCCRs. This is the same style used by phy-cadence-sierra et al.
 
- include/dt-bindings/clock/fsl,lynx-10g.h | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
- create mode 100644 include/dt-bindings/clock/fsl,lynx-10g.h
+Changes in v3:
+- Manually expand yaml references
+- Add mode configuration to device tree
 
-diff --git a/include/dt-bindings/clock/fsl,lynx-10g.h b/include/dt-bindings/clock/fsl,lynx-10g.h
+Changes in v2:
+- Rename to fsl,lynx-10g.yaml
+- Refer to the device in the documentation, rather than the binding
+- Move compatible first
+- Document phy cells in the description
+- Allow a value of 1 for phy-cells. This allows for compatibility with
+  the similar (but according to Ioana Ciornei different enough) lynx-28g
+  binding.
+- Remove minItems
+- Use list for clock-names
+- Fix example binding having too many cells in regs
+- Add #clock-cells. This will allow using assigned-clocks* to configure
+  the PLLs.
+- Document the structure of the compatible strings
+
+ .../devicetree/bindings/phy/fsl,lynx-10g.yaml | 248 ++++++++++++++++++
+ 1 file changed, 248 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/fsl,lynx-10g.yaml
+
+diff --git a/Documentation/devicetree/bindings/phy/fsl,lynx-10g.yaml b/Documentation/devicetree/bindings/phy/fsl,lynx-10g.yaml
 new file mode 100644
-index 000000000000..15362ae85304
+index 000000000000..7c364f7de85c
 --- /dev/null
-+++ b/include/dt-bindings/clock/fsl,lynx-10g.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
-+/*
-+ * Copyright (C) 2022 Sean Anderson <sean.anderson@seco.com>
-+ */
++++ b/Documentation/devicetree/bindings/phy/fsl,lynx-10g.yaml
+@@ -0,0 +1,248 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/phy/fsl,lynx-10g.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#ifndef __DT_BINDINGS_CLK_LYNX_10G_H
-+#define __DT_BINDINGS_CLK_LYNX_10G_H
++title: NXP Lynx 10G SerDes
 +
-+#define LYNX10G_CLKS_PER_PLL 2
++maintainers:
++  - Sean Anderson <sean.anderson@seco.com>
 +
-+#define LYNX10G_PLLa(a)		((a) * LYNX10G_CLKS_PER_PLL)
-+#define LYNX10G_PLLa_EX_DLY(a)	((a) * LYNX10G_CLKS_PER_PLL + 1)
++description: |
++  These Lynx "SerDes" devices are found in NXP's QorIQ line of processors. The
++  SerDes provides up to eight lanes. Each lane may be configured individually,
++  or may be combined with adjacent lanes for a multi-lane protocol. The SerDes
++  supports a variety of protocols, including up to 10G Ethernet, PCIe, SATA, and
++  others. The specific protocols supported for each lane depend on the
++  particular SoC.
 +
-+#endif /* __DT_BINDINGS_CLK_LYNX_10G_H */
++properties:
++  compatible:
++    items:
++      - enum:
++          - fsl,ls1046a-serdes
++          - fsl,ls1088a-serdes
++      - const: fsl,lynx-10g
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++  "#clock-cells":
++    const: 1
++    description: |
++      The cell contains an ID as described in dt-bindings/clock/fsl,lynx-10g.h.
++      Note that when assigning a rate to a PLL, the PLL's rate is divided by
++      1000 to avoid overflow. A rate of 5000000 corresponds to 5GHz.
++
++  clocks:
++    maxItems: 2
++    description: |
++      Clock for each PLL reference clock input.
++
++  clock-names:
++    minItems: 2
++    maxItems: 2
++    items:
++      enum:
++        - ref0
++        - ref1
++
++  fsl,unused-lanes-reserved:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description: |
++      Unused lanes are reserved for firmware use, and should not be disabled.
++      Normally, groups containing unused lanes may be reconfigured or disabled
++      to save power. However, when this property is present, unused lanes will
++      not be touched until they are used by another driver. This allows
++      migrating from firmware control of lanes to driver control.
++
++      Lanes not present in any group will never be modified, regardless of the
++      presence of this property.
++
++  reg:
++    maxItems: 1
++
++patternProperties:
++  "^phy@":
++    type: object
++
++    description: |
++      A contiguous group of lanes which will be configured together. Each group
++      corresponds to one phy device. Lanes not described by any group will be
++      left as-is.
++
++    properties:
++      "#phy-cells":
++        const: 0
++
++      reg:
++        minItems: 1
++        maxItems: 8
++        description:
++          The lanes in the group. These must be listed in order. The first lane
++          will have the FIRST_LANE bit set in GCR0. The order of lanes also
++          determines the reset order (TRSTDIR).
++
++    patternProperties:
++      "^(q?sgmii|xfi)":
++        type: object
++
++        description: |
++          A protocol controller which may control the group of lanes. Each
++          controller is selected through the PCCRs. In addition to protocols
++          desired for use by the OS, protocols which may have been configured
++          by the bootloader must also be described. This ensures that only one
++          protocol controller is attached to a group of lanes at once.
++
++        properties:
++          fsl,pccr:
++            $ref: /schemas/types.yaml#/definitions/uint32
++            description: |
++              The index of the PCCR which configures this protocol controller.
++              This is the same as the register name suffix. For example, PCCR8
++              would use a value of 8 for an offset of 0x220 (0x200 + 4 * 8).
++
++          fsl,index:
++            $ref: /schemas/types.yaml#/definitions/uint32
++            description: |
++              The index of the protocol controller. This corresponds to the
++              suffix in the documentation. For example, PEXa would be 0, PEXb
++              1, etc. Generally, higher fields occupy lower bits.
++
++          fsl,cfg:
++            $ref: /schemas/types.yaml#/definitions/uint32
++            minimum: 1
++            description: |
++              The configuration value to program into the protocol controller
++              field.
++
++          fsl,type:
++            $ref: /schemas/types.yaml#/definitions/uint32
++            enum:
++              - 8 # PHY_TYPE_SGMII
++              - 9 # PHY_TYPE_QSGMII
++              - 13 # PHY_TYPE_2500BASEX
++              - 14 # PHY_TYPE_10GBASER
++            description: |
++              The category of protocols supported by this controller. See
++              "dt-bindings/phy/phy.h" for the relevant definitions. Individual
++              protocols are selected by the phy consumer. The availability of
++              1000BASE-KX and 10GBASE-KR depends on the SoC.
++
++              - PHY_TYPE_SGMII: 1000BASE-X, SGMII, and 1000BASE-KX
++              - PHY_TYPE_2500BASEX: 2500BASE-X, 1000BASE-X, SGMII, and
++                                    1000BASE-KX
++              - PHY_TYPE_QSGMII: QSGMII
++              - PHY_TYPE_10GBASER: 10GBASE-R and 10GBASE-KR
++
++        required:
++          - fsl,pccr
++          - fsl,index
++          - fsl,cfg
++          - fsl,type
++
++        additionalProperties: false
++
++    required:
++      - "#phy-cells"
++      - reg
++
++    additionalProperties: false
++
++required:
++  - "#address-cells"
++  - "#clock-cells"
++  - "#size-cells"
++  - compatible
++  - clocks
++  - clock-names
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/phy/phy.h>
++
++    serdes1: serdes@1ea0000 {
++      #address-cells = <1>;
++      #size-cells = <0>;
++      #clock-cells = <1>;
++      compatible = "fsl,ls1046a-serdes", "fsl,lynx-10g";
++      reg = <0x1ea0000 0x2000>;
++      clocks = <&clk_100mhz>, <&clk_156mhz>;
++      clock-names = "ref0", "ref1";
++
++      serdes1_0: phy@0 {
++        #phy-cells = <0>;
++        reg = <0>;
++
++        /* SGMII.6 */
++        sgmii-0 {
++          fsl,pccr = <0x8>;
++          fsl,index = <0>;
++          fsl,cfg = <0x1>;
++          fsl,type = <PHY_TYPE_SGMII>;
++        };
++      };
++
++      serdes1_1: phy@1 {
++        #phy-cells = <0>;
++        reg = <1>;
++
++        /* SGMII.5 */
++        sgmii-1 {
++          fsl,pccr = <0x8>;
++          fsl,index = <1>;
++          fsl,cfg = <0x1>;
++          fsl,type = <PHY_TYPE_2500BASEX>;
++        };
++      };
++
++      serdes1_2: phy@2 {
++        #phy-cells = <0>;
++        reg = <2>;
++
++        /* SGMII.10 */
++        sgmii-2 {
++          fsl,pccr = <0x8>;
++          fsl,index = <2>;
++          fsl,cfg = <0x1>;
++          fsl,type = <PHY_TYPE_2500BASEX>;
++        };
++
++        /* XFI.10 */
++        xfi-0 {
++          fsl,pccr = <0xb>;
++          fsl,index = <0>;
++          fsl,cfg = <0x2>;
++          fsl,type = <PHY_TYPE_10GBASER>;
++        };
++      };
++
++      serdes1_3: phy@3 {
++        #phy-cells = <0>;
++        reg = <3>;
++
++        /* SGMII.9 */
++        sgmii-3 {
++          fsl,pccr = <0x8>;
++          fsl,index = <3>;
++          fsl,cfg = <0x1>;
++          fsl,type = <PHY_TYPE_2500BASEX>;
++        };
++
++        /* XFI.9 */
++        xfi-1 {
++          fsl,pccr = <0xb>;
++          fsl,index = <1>;
++          fsl,cfg = <0x1>;
++          fsl,type = <PHY_TYPE_10GBASER>;
++        };
++      };
++    };
++...
 -- 
 2.35.1.1320.gc452695387.dirty
 
