@@ -2,273 +2,128 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58C3EC77B6F
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 16:36:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12AA3C77B6F
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 17:43:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229939AbjDKQg2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Apr 2023 12:36:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40142 "EHLO
+        id S229650AbjDKRnq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Apr 2023 13:43:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229679AbjDKQgV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 12:36:21 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4676740D7
-        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 09:35:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1681230933;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IbtBPHSuNg+l9dd12JhHU9qMR/3P53aSjvaTRVqWAQ8=;
-        b=LZZSfwEJa1G1db0gsj3BPH/yU+nYO6SIeiTTr0vl5JRXEY+YWY3ylnqrEfA8n3rGLduCa3
-        MAdAy/6dbCU6qyeSHBUhDYR0kASxEb6gm1XdDokBiMlcBZHn+ksvpCLwwnLhgzt2NByNW/
-        vHtEUHKpm9qCmm4X41SVEngBcHK+nPI=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-317-Aqwolqu-NoSP42byNJPo7g-1; Tue, 11 Apr 2023 12:35:32 -0400
-X-MC-Unique: Aqwolqu-NoSP42byNJPo7g-1
-Received: by mail-qt1-f199.google.com with SMTP id e3-20020ac84e43000000b003e259c363f9so6885094qtw.22
-        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 09:35:32 -0700 (PDT)
+        with ESMTP id S229631AbjDKRnp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 13:43:45 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E64F137;
+        Tue, 11 Apr 2023 10:43:44 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id 20so10404418plk.10;
+        Tue, 11 Apr 2023 10:43:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1681235024;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FHN+T7G6mWgrt+GPxH8Y3vfnE/oCvVXhlPd0WPZa4C0=;
+        b=Iljm/6Dgj9Zg+wo86q3DupzYS/mlYhhb5GuE+Y+Bkva5L8C19OudQDHeyaSR9+saVI
+         E2zYGONtapK5MnRmfVUDPelQGHzFyPKaOpA/b7S/NK6tivNtZWt82yq17Ij1X/RE4F3r
+         owjXRe+ZMgud8VONQGRKuditdA/QaEt/Dr1FgsUUe5FztIlX9gX0Xh0th/gLXk0aNnuH
+         3xn9m3uV6Tw6rx8IA9Q+1I0IjrI0l8smZdiTYC7Tz9ARHdDkj8kGWDq/g09uN5xjP39T
+         mxA4vlsRZyO27yNCTItnN7Dt9hE33WOn3DqGFoT4mGQpGgue7CrmLHbSsO0hJXhxOCAG
+         t2qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681230931;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IbtBPHSuNg+l9dd12JhHU9qMR/3P53aSjvaTRVqWAQ8=;
-        b=jQhV8b4T7VfuGjm/8qQu1Aw35r1Y/lF5gOVWo9l7DuAGj2bcgLvMhlSBByVeODhDcK
-         wQtsXoV06KfQcQx7EacEJOyGm0tl7ZUjTOz48rSI/xpnY2wDPwo8LCmiCgbCAjuceVwS
-         kqOgF5OFXrgXhOM9R/dlrIHyd/J5V95rGtxan3OuhCv97lhwPFJJkVpGifY4n4+j6PSk
-         wYp4kWRaCFQGKJNGNavkk4anWk6CPBYOgaPYXYdyze/vFFu5UnpK83jWXIoV7RLBseUr
-         SVB2PLJZJrtonQqN2qUnT1PQ2PDNRqrHNiN4hK+aywWeeOsPBqIa/fK2YgEgi2vW1OAz
-         LmQQ==
-X-Gm-Message-State: AAQBX9ctMdpr5NBB+JJ4SaBWfV6uEB34obwk1vjDVgdRrexnM8NgnG+0
-        wQEYF3YNum7wu5lbAt2XenL6Hm/QCW/CjbMBqyo7+IXNdHO7nyEk2ijBt3xb3OicgKO8K0BWGMG
-        KAL+W2W/k+Jmy8nd41hVm
-X-Received: by 2002:a05:6214:2a89:b0:5c7:640:8997 with SMTP id jr9-20020a0562142a8900b005c706408997mr3573784qvb.51.1681230931532;
-        Tue, 11 Apr 2023 09:35:31 -0700 (PDT)
-X-Google-Smtp-Source: AKy350bz1KQkDBTysgmiRm14e0+NS6PAvNiFxR+tz4hZ7NOPxEDAPL3RlewV0I8v19gSu2uwEYzMtg==
-X-Received: by 2002:a05:6214:2a89:b0:5c7:640:8997 with SMTP id jr9-20020a0562142a8900b005c706408997mr3573740qvb.51.1681230931179;
-        Tue, 11 Apr 2023 09:35:31 -0700 (PDT)
-Received: from localhost (pool-71-184-142-128.bstnma.fios.verizon.net. [71.184.142.128])
-        by smtp.gmail.com with ESMTPSA id cz10-20020a056214088a00b005e8d802ce32sm2964371qvb.143.2023.04.11.09.35.30
+        d=1e100.net; s=20210112; t=1681235024;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FHN+T7G6mWgrt+GPxH8Y3vfnE/oCvVXhlPd0WPZa4C0=;
+        b=4f1YqTz3912yj1kfOuYZ+GrFSO3R9HcnH1rPmnJOECgH9HGUztlpJ9JeSNcCnpE5zJ
+         PD2axrx5dIUasnFbz2Zgi/m4O6t4s0qDWkgGQSmK5SM84dRmX0NEyfvoO1TPa6eb6BhS
+         sRIy8UGZF9w0nTiyscTJLedQMe7TcIcMrioKrZEZiialfXkCzqQ3ykmjcec6t+r5ttAi
+         DlU16vzc1G5DKE1aa67fJ08xIcjYMyDwkQPJ0gNggVzoquXOXRrh5e1M7iBv7fDC7HZY
+         812nwjDxsDkXaHpTlKuaKfJTSkBLJ/JhV4cVLL8eA53YXP4BDa8VCAW4zGAZBoYQwtDl
+         mIKw==
+X-Gm-Message-State: AAQBX9eJagi3LpsFnOYTlzU0Zu+QOvuKQubjtdpsXKiI5IcZ0W7IQIMK
+        aNd7TUZbzYryi0wNuK16xMinR/jTWoKM4sCuPmE=
+X-Google-Smtp-Source: AKy350aYfwApn1Q3poaPk1VHqhVzBoRTpd5SmVdOBvkm61+59VAZEsUER9aVmc4nBQwSv/KCIkuObA==
+X-Received: by 2002:a17:902:ecc3:b0:1a2:8866:e8a4 with SMTP id a3-20020a170902ecc300b001a28866e8a4mr21355885plh.1.1681235023676;
+        Tue, 11 Apr 2023 10:43:43 -0700 (PDT)
+Received: from d.home.yangfl.dn42 ([104.28.213.202])
+        by smtp.gmail.com with ESMTPSA id w23-20020a1709027b9700b001a655738a42sm1900805pll.172.2023.04.11.10.43.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Apr 2023 09:35:30 -0700 (PDT)
-Date:   Tue, 11 Apr 2023 12:35:33 -0400
-From:   Eric Chanudet <echanude@redhat.com>
-To:     Shazad Hussain <quic_shazhuss@quicinc.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Tue, 11 Apr 2023 10:43:43 -0700 (PDT)
+From:   David Yang <mmyangfl@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     David Yang <mmyangfl@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux.dev,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Parikshit Pareek <quic_ppareek@quicinc.com>
-Subject: Re: [PATCH v2 5/7] arm64: dts: qcom: sa8775p: add the pcie smmu node
-Message-ID: <20230411163533.wyhzu4cfqecxjsmv@echanude>
-References: <20230406200723.552644-1-brgl@bgdev.pl>
- <20230406200723.552644-6-brgl@bgdev.pl>
- <20230410201145.6e2qsl5gtwh7n3k7@echanude>
- <CAMRc=MdSTqO0bW1=_it43K_pn7EuBWRPvBF29N1gdqsh3TpAcg@mail.gmail.com>
- <24804682-6ead-03b1-8b21-3ac413187c4a@quicinc.com>
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 00/13] clk: hisilicon: Migrate devm APIs
+Date:   Wed, 12 Apr 2023 01:43:09 +0800
+Message-Id: <20230411174329.424763-1-mmyangfl@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <24804682-6ead-03b1-8b21-3ac413187c4a@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Apr 11, 2023 at 09:53:53PM +0530, Shazad Hussain wrote:
-> On 4/11/2023 5:20 PM, Bartosz Golaszewski wrote:
-> > On Mon, Apr 10, 2023 at 10:11 PM Eric Chanudet <echanude@redhat.com> wrote:
-> > > 
-> > > On Thu, Apr 06, 2023 at 10:07:21PM +0200, Bartosz Golaszewski wrote:
-> > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > > > 
-> > > > Add the PCIe SMMU node for sa8775p platforms.
-> > > > 
-> > > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > > > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > > > ---
-> > > >   arch/arm64/boot/dts/qcom/sa8775p.dtsi | 74 +++++++++++++++++++++++++++
-> > > >   1 file changed, 74 insertions(+)
-> > > > 
-> > > > diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> > > > index 2343df7e0ea4..9ab630c7d81b 100644
-> > > > --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> > > > +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> > > > @@ -809,6 +809,80 @@ apps_smmu: iommu@15000000 {
-> > > >                                     <GIC_SPI 891 IRQ_TYPE_LEVEL_HIGH>;
-> > > >                };
-> > > > 
-> > > > +             pcie_smmu: iommu@15200000 {
-> > > > +                     compatible = "qcom,sa8775p-smmu-500", "qcom,smmu-500", "arm,mmu-500";
-> > > > +                     reg = <0x0 0x15200000 0x0 0x800000>;
-> > > 
-> > > Testing on the board, applying on next-20230406:
-> > > [    1.041869] arm-smmu 15200000.iommu: SMMU address space size (0x80000) differs from mapped region size (0x800000)!
-> > > 
-> > > In the downstream sources, the size is 0x80000[1].
-> > > 
-> > > On reboot, I also get a synchronous abort, but the second line, from the
-> > > following output on the serial, could indicate the hypervisor is behind
-> > > it:
-> > > 
-> > > [   26.906206] arm-smmu 15200000.iommu: disabling translation
-> > > 3      33.244434 Injecting instruction/data abort to VM 3, original ESR_EL2 = 0x93800047, fault VA = 0xffff80000a380000, fault IPA = 0x15200000, ELR_EL2 = 0xffffd064f70c9de8
-> > > [   26.942083] Internal error: synchronous external abort: 0000000096000010 [#1] PREEMPT SMP
-> > > [   26.948506] Modules linked in: nvmem_qcom_spmi_sdam qcom_pon spi_geni_qcom nvmem_reboot_mode crct10dif_ce i2c_qcom_geni phy_qcom_qmp_ufs gpucc_sa8775p ufs_qcom socinfo fuse ipv6
-> > > [   26.966702] CPU: 3 PID: 1 Comm: systemd-shutdow Not tainted 6.3.0-rc5-next-20230406-00019-g9d08a3c17f54-dirty #134
-> > > [   26.977315] Hardware name: Qualcomm SA8775P Ride (DT)
-> > > [   26.982505] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > > [   26.989651] pc : arm_smmu_device_shutdown+0x88/0x1d8
-> > > [   26.994773] lr : arm_smmu_device_shutdown+0x70/0x1d8
-> > > [   26.999875] sp : ffff80000805bbf0
-> > > [   27.003283] x29: ffff80000805bbf0 x28: ffff0e69400a0000 x27: 0000000000000000
-> > > [   27.010608] x26: ffffd064f8130f38 x25: 0000000000000001 x24: ffffd064f8eac028
-> > > [   27.017932] x23: ffff0e6940eeb490 x22: ffffd064f8f24f80 x21: ffff0e6940eeb410
-> > > [   27.025254] x20: ffff0e6940808c80 x19: ffff0e6940eeb410 x18: 0000000000000006
-> > > [   27.032579] x17: 0000000000000001 x16: 0000000000000014 x15: ffff80000805b5c0
-> > > [   27.039903] x14: 0000000000000000 x13: ffffd064f8ac19a8 x12: 0000000000000606
-> > > [   27.047226] x11: 0000000000000202 x10: ffffd064f8b199a8 x9 : ffffd064f8ac19a8
-> > > [   27.054549] x8 : 00000000ffffefff x7 : ffffd064f8b199a8 x6 : 80000000fffff000
-> > > [   27.061872] x5 : 000000000000bff4 x4 : 0000000000000000 x3 : 0000000000000000
-> > > [   27.069195] x2 : 0000000000000000 x1 : ffff80000a380000 x0 : 0000000000000001
-> > > [   27.076520] Call trace:
-> > > [   27.079041]  arm_smmu_device_shutdown+0x88/0x1d8
-> > > [   27.083787]  platform_shutdown+0x24/0x34
-> > > [   27.087825]  device_shutdown+0x150/0x258
-> > > [   27.091859]  kernel_restart+0x40/0xc0
-> > > [   27.095632]  __do_sys_reboot+0x1f0/0x274
-> > > [   27.099664]  __arm64_sys_reboot+0x24/0x30
-> > > [   27.103786]  invoke_syscall+0x48/0x114
-> > > [   27.107644]  el0_svc_common+0x40/0xf4
-> > > [   27.111410]  do_el0_svc+0x3c/0x9c
-> > > [   27.114822]  el0_svc+0x2c/0x84
-> > > [   27.117969]  el0t_64_sync_handler+0xf4/0x120
-> > > [   27.122357]  el0t_64_sync+0x190/0x194
-> > > [   27.126126] Code: f9400404 b50008e4 f9400681 52800020 (b9000020)
-> > > [   27.132385] ---[ end trace 0000000000000000 ]---
-> > > 
-> > 
-> > Adding Shazad
-> > 
-> > Eric: This is supposedly gone in the latest meta but I thought you're
-> > already on the most recent release?
-> > 
-> > Shazad, what version exactly should Eric test this on?
-> > 
-> > Bart
-> > 
-> 
-> Hi Bart, We should use r00004.1 to verify this. Adding Parikshit to
-> confirm on the same.
+Migrate devm APIs for HiSilicon clock drivers and remove redundant codes.
 
-I do not have a system with that version flashed on yet. The one I had
-must have been on r00003.4. I'll redo the test on an upgraded system.
+This series is a partial improvement of [1]
 
-> 
-> -Shazad
-> 
-> > > [1] https://git.codelinaro.org/clo/la/kernel/ark-5.14/-/blob/ES2/arch/arm64/boot/dts/qcom/lemans.dtsi#L3498
-> > > 
-> > > > +                     #iommu-cells = <2>;
-> > > > +                     #global-interrupts = <2>;
-> > > > +
-> > > > +                     interrupts = <GIC_SPI 920 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 921 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 925 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 926 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 927 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 928 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 950 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 951 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 952 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 953 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 954 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 955 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 956 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 957 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 958 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 885 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 886 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 887 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 888 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 820 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 822 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 823 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 447 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 452 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 840 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 841 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 842 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 843 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 844 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 845 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 846 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 847 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 848 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 849 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 802 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 803 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 804 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 805 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 806 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 807 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 808 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 809 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 810 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 811 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 812 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 813 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 814 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 836 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 837 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 838 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 839 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 854 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 855 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 856 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 790 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 791 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 792 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 793 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 794 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 795 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 796 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 639 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                  <GIC_SPI 640 IRQ_TYPE_LEVEL_HIGH>;
-> > > > +             };
-> > > > +
-> > > >                intc: interrupt-controller@17a00000 {
-> > > >                        compatible = "arm,gic-v3";
-> > > >                        reg = <0x0 0x17a00000 0x0 0x10000>,     /* GICD */
-> > > > --
-> > > > 2.37.2
-> > > > 
-> > > 
-> > > --
-> > > Eric Chanudet
-> > > 
-> 
+v2: fix test robot error
+v3:
+  * size_t for all these num types
+  * hisi_clk_unregister() change into separate patch
+  * keep relevant header inclusions
+  * split driver files changes into separate patches
+  * explain hisi_clk_register_fn() checkpatch warnings
+  * not fixed: MODULE_LICENSE("GPL v2"), as stated in SPDX-License-Identifier
+  * not fixed: "hisilicon,hip04-clock" un-documented, as none of dts files in
+    arch/ use it, better to ask hisi people why they pushed this driver
+v4:
+  * typo: hisi_clocks_get_nr() should check clks->nr first
+  * unexport hisi_clk_unregister_fn() as no one use them outside
 
+Links:
+[1]: https://lore.kernel.org/r/20230322164201.2454771-1-mmyangfl@gmail.com
+v1: https://lore.kernel.org/r/20230326052757.297551-1-mmyangfl@gmail.com
+v2: https://lore.kernel.org/r/20230329075104.165176-1-mmyangfl@gmail.com
+v3: https://lore.kernel.org/r/20230410110733.192151-1-mmyangfl@gmail.com
+
+David Yang (13):
+  clk: hisilicon: Add helper functions for platform driver
+  clk: hisilicon: hi3516cv300: Use helper functions
+  clk: hisilicon: hi3798cv200: Use helper functions
+  clk: hisilicon: Remove hisi_crg_funcs
+  clk: hisilicon: hi3519: Use helper functions
+  clk: hisilicon: hi3559a: Use helper functions
+  clk: hisilicon: hi3660: Convert into module
+  clk: hisilicon: hi3670: Convert into module
+  clk: hisilicon: hi3620: Convert into platform driver module
+  clk: hisilicon: hi6220: Convert into platform driver module
+  clk: hisilicon: hip04: Convert into platform driver module
+  clk: hisilicon: hix5hd2: Convert into platform driver module
+  clk: hisilicon: Migrate devm APIs
+
+ drivers/clk/hisilicon/clk-hi3519.c        | 128 +-----
+ drivers/clk/hisilicon/clk-hi3559a.c       | 253 +++---------
+ drivers/clk/hisilicon/clk-hi3620.c        | 212 +++++-----
+ drivers/clk/hisilicon/clk-hi3660.c        | 192 +++------
+ drivers/clk/hisilicon/clk-hi3670.c        | 248 ++++--------
+ drivers/clk/hisilicon/clk-hi6220-stub.c   |   9 +-
+ drivers/clk/hisilicon/clk-hi6220.c        | 229 ++++++-----
+ drivers/clk/hisilicon/clk-hip04.c         |  39 +-
+ drivers/clk/hisilicon/clk-hisi-phase.c    |  13 +-
+ drivers/clk/hisilicon/clk-hix5hd2.c       |  98 +++--
+ drivers/clk/hisilicon/clk.c               | 458 +++++++++++-----------
+ drivers/clk/hisilicon/clk.h               | 141 ++++---
+ drivers/clk/hisilicon/clkdivider-hi6220.c |  24 +-
+ drivers/clk/hisilicon/clkgate-separated.c |  26 +-
+ drivers/clk/hisilicon/crg-hi3516cv300.c   | 172 +-------
+ drivers/clk/hisilicon/crg-hi3798cv200.c   | 201 ++--------
+ drivers/clk/hisilicon/crg.h               |  11 +-
+ drivers/clk/hisilicon/reset.c             |  43 ++
+ 18 files changed, 941 insertions(+), 1556 deletions(-)
+
+
+base-commit: 09a9639e56c01c7a00d6c0ca63f4c7c41abe075d
 -- 
-Eric Chanudet
+2.39.2
 
