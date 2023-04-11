@@ -2,154 +2,260 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BAF6C76196
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 03:03:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF31C76196
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 04:51:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230011AbjDKDDW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Apr 2023 23:03:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50004 "EHLO
+        id S229837AbjDKEvN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Apr 2023 00:51:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229947AbjDKDDI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Apr 2023 23:03:08 -0400
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2062.outbound.protection.outlook.com [40.107.21.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90F972D54;
-        Mon, 10 Apr 2023 20:03:05 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IMlCfJaS35IKwfSOpT0rVYPBX/rpI1IxOhDb5zqoJvvaCS48OB/ri93lBw1rhHWSfQZv/H2XAE+zvMizNNzUEvRCC747FGpR8AqHVLi8hWZAZD9BsM/qwEQnswcV6O1+3TWj2xh8IO2G2nUTr95bl5IsE58hXbWfCt8nqZDiBfcdEcnjRDfgq+KcYdSeKaYVoj9ZTgsYN4K271RvBn1C7X42No4UOjIqerY07a+ULE5zcQxiOfo+BUgnr8jPVkRszTAPqvzR4WlsBblx0ZV7GMrAn+QDulxA8QS6tOEreWK3hcW7tE8zxD0PWfHQoelbRlquylRiQmblYentD2yknw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LE72B9UHoMBjPBX8mbA63s8mwwWuc25N21KsFWPNBLU=;
- b=RWL1WmP6wunG5uJ1MfTxpVuWr37oEq9tou4LulNzPfbnEL6S4k9HZaQMQgqMEUHbwwB3a6E8EgEBqqM5na3eZj/GCpAj4SIdPyQxYLYEl9vqnwyMNeLngnFVjnFv3ONScwcElvDyHE/q947Q9LMljlaC77w8Ml8n4yeaaI2MXAJGMpqafD8C0WSKaPjagSWrudTYBTf2rfVX47AvxZ78bro4XWIbp/mITd8d0WK2japZyBrVjKS00/jv0kzoMUSAd+UNUdr1MNLY9C7rJ1Tf76in3RZTiH1y1smgBlzdbLmHbnAo9sG+LJwxl2lpEjdonsChl3qZq7Obd7jlQbiUuA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LE72B9UHoMBjPBX8mbA63s8mwwWuc25N21KsFWPNBLU=;
- b=XjwSmLxjEKWv1Pg9N4CD0pyhUIt63Yk9a6kLWewrLuq8XUwxNx5rf0atX1QpaemM2Ms2ioeG4hCp2YdD4Ul2aTsvnEENnsRboFGnKAzGKYJfsyb4gAZ5iuXLPwH2uViTliCiKVkpOwgz+ieADpg7sMofphhHd/O79CuZt9OCscU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by PAXPR04MB9278.eurprd04.prod.outlook.com (2603:10a6:102:2b8::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.36; Tue, 11 Apr
- 2023 03:03:00 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::b999:f2c6:a8cc:7b4]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::b999:f2c6:a8cc:7b4%5]) with mapi id 15.20.6277.036; Tue, 11 Apr 2023
- 03:03:00 +0000
-From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com
-Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V3] clk: imx: imx6sx: spdif clock rate is too high for asrc
-Date:   Tue, 11 Apr 2023 11:08:01 +0800
-Message-Id: <20230411030801.2964482-1-peng.fan@oss.nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0033.apcprd02.prod.outlook.com
- (2603:1096:4:1f6::14) To DU0PR04MB9417.eurprd04.prod.outlook.com
- (2603:10a6:10:358::11)
+        with ESMTP id S229507AbjDKEvL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 00:51:11 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A400173E;
+        Mon, 10 Apr 2023 21:51:10 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33B2Zlg2016084;
+        Tue, 11 Apr 2023 04:50:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=xEsYMOgDc5UtyBbsPqN6xODbHdfQenujILq3Mlmocak=;
+ b=nLYhyyi4X2/9e/u+hd0jNETFE/yZexMOpcgni4ImqArmGK4KNhlaSUGdQmRa7PjeUV3x
+ Wp19lQJWIMhCpjMX9aG02iKtdxm+rt6m3nhlSMQAbzmIGkp93koansWRu9EczfPdGC4T
+ XvCF7EAlMkH6PSGvwAee4ezz3QRCusrBYDHuysC+LBO69LeuOrjodzmgiItJJVNvvZll
+ +wO5GjipGnmtqvfPb0oQ/SrcDuMBlqRtbYaNCGAZAzC3txesfK30E45E3qs/vipOIFhy
+ yAkVDqk8dqlu9sWFAyCkdPs6vFrpo3z3SE0bxDLO+VQanlo0+SMCDmuYVqzx4kJZInqL ZQ== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pvu4srker-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 Apr 2023 04:50:56 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33B4ot7n009765
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 Apr 2023 04:50:55 GMT
+Received: from [10.50.52.2] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 10 Apr
+ 2023 21:50:50 -0700
+Message-ID: <016fd82f-b0a6-d8e8-769f-ddee63d22eb4@quicinc.com>
+Date:   Tue, 11 Apr 2023 10:20:47 +0530
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|PAXPR04MB9278:EE_
-X-MS-Office365-Filtering-Correlation-Id: 39fb5c0f-c415-40e8-158c-08db3a3941fe
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Cx3GHFdXCiSztwneoBPoWctTinIeb1Rk/pqv5FFlN0MjFROBUr7ChbOiwMfWcdxZ3ZU/LZRpWAQPQCJuHnfplf2GY1mp0W45CCkbfkiGoMgi/fg/pVYCHM8jXYCxa2ngeW5lG9k+JGYmMQ3Fzy0JLwW9J43pMbVbynb6rhqI7jKgV8Eqkj1oTP1KWIG6Fl/h8uwgi0kgtUzuJ4amRETkPNGEU7CjXzr0dH251/8dS6LYYe8VpOciYR0BJ/Fw/Tv9ILWyiPebf6hPdXiPGHBZqoWGoS/e8Gk919rG0y8uNnNXnjqQw/Q3+6mDUVUJw9yIibXt4xjXSCCjmQGXRcG9x3D17CcOPpevv41Hif4zLTBFGqaVkEbckYADOindjq1yKhazZrnHRpc0DnCMNh1rH/vTyzMT5y2V+bq+z6rrSolAxHAsiay4oVgLT0xqHw/432jbpUI+irjCUHsaePg2pCjca891cT7/VYsYPrGIPbqvbhvDatpe9v6G6RVtgMay02u71KDn2WQF3HsZjVpeL63EKXaBPfNBfpZd0qkmpE9oe4Z7eqi76v9bWV9xaP3DHdsnykwUNLj8D1bTg+GfmdKXqpwKvWh2ThP+WvtoE7pBgVK+GxEzNO9DiqJMTc02lEx7hLZgSbuxXCoW30yUgA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(366004)(346002)(396003)(39860400002)(136003)(451199021)(52116002)(8936002)(66899021)(7416002)(6486002)(5660300002)(86362001)(4326008)(8676002)(66556008)(66476007)(66946007)(478600001)(38350700002)(38100700002)(316002)(54906003)(83380400001)(2906002)(1076003)(6506007)(6512007)(186003)(2616005)(41300700001)(26005)(32563001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?SlImfBVrrtxGQaFL2NDpmcjdDS1AW0rX80kUzBHHBm81PTvSNoHckRh2Eot/?=
- =?us-ascii?Q?FlaPyZnl+BLEyv6jFoNkDKy2o2DQMYg3bfNMHvuEVsK33J6ddli4nsFIEsyW?=
- =?us-ascii?Q?UKLB69HElaAjNDaCEulmsljsxNrvotb+3WDU5Mqj/fEDkE5feUgEpjZaLvID?=
- =?us-ascii?Q?BJS/YZJf/KKwip+vnuAbdqbwd0Zpobim7ToVv4noDJt/GB1DU7zpBWe8fVtZ?=
- =?us-ascii?Q?rS1Oy4OxclyyDW7oKb9RqsONQs7jODTc0SmUJ+W5zxuT8E4EYSodHtnC10km?=
- =?us-ascii?Q?pFUnOEiEeJAux8CuiyPD26DTbXgKhiOi1UKNOWJ8Ykun5xMWIc/aLpkFY5Sh?=
- =?us-ascii?Q?S5+7pvyTB/5luN/Y/afhidhF2eqtPes+4X6HLZun6W5sKArovkrlctMmnz50?=
- =?us-ascii?Q?05XBe5VL1naASHO09P0nPv4d08DLbfMCzo299DGFcGuP6lfaUhVAOdsSOLbP?=
- =?us-ascii?Q?lI3hWCAtMJwRVv8Kj83GNU3HEEijinZnsrtdykImT9Dx/VgkCYwPb1+xGinG?=
- =?us-ascii?Q?v1xmxQpGHn3F7vTR38FisUzVCesF8XZQEFslDbpMvryLR5Ehk4hCGQVHUPs5?=
- =?us-ascii?Q?/a5HbYm8Zr/81cFd39yUtEmjKR+rpCQ14Z0JpKRtScuowvNRmjx792ycSbWi?=
- =?us-ascii?Q?nN1i9EwCEYJvQ3QMsDzQCN+ztVH2Aj4yRmv3C2IkyQQEiWbFeKkSlxAlZjxW?=
- =?us-ascii?Q?4Por7+tMRVzl29gjU4XShDHK9MQ8Q76mgarNE1AuQHKksrJghFtkvkZKDTeC?=
- =?us-ascii?Q?YbQn24vnN109p89PjqEoCxNm3FQheGW0j1IBikC7i8u9VVrcesFQ69DreVTL?=
- =?us-ascii?Q?09VifZG8Xr9wGXuVZsyPIH8riCmZXAARiJEmPYKYm7GYIssmu35gBq734ZhL?=
- =?us-ascii?Q?SU5zuVZk+X5XjzKNo+pWnAXfcMQlTvcOpE6eG66oFg+KfPS+dtx1MGGsjWIr?=
- =?us-ascii?Q?5LYVsRdNXglXoEPcCa3cSNL222Ro+McUOyDu/NbehGjgQYRNsKhb5/GEEvm/?=
- =?us-ascii?Q?jp0HpIzKOl13f9qPe+QD+Lo07JiWV2njCUbftvqvIm3yR1kBO6E/kVQUOcrs?=
- =?us-ascii?Q?+yQnSdhTi7mwmNGW8HD3n34mw67DpCZfY3ssxrJRud1QbH5uDHr1dIQQduYe?=
- =?us-ascii?Q?P1bGWnzdgvegP+TVDxVXReefQrt0mghv7T0H3NQCp0P5DPHTYkjg4mDlzT3n?=
- =?us-ascii?Q?eHmXfYFwStEiytBHmQyB6jgmJvec09fjkYREDVF0pEopwfQimXkZDY9oXsMU?=
- =?us-ascii?Q?YH982ckuItCCni5HWLCcZBV1n1sdsnwqK4mdsLhmqdRZ4oiAdpJ/REo99+FW?=
- =?us-ascii?Q?QgtYSTPlrQGs2wuOD+Tr86s/2yQVGJ8HH7GLi4LHeRiOFTw8ylMJVYZQYqbQ?=
- =?us-ascii?Q?Nm5qtpfkLQaaD1dQ9PEhMYi8tPGdCZ8HgQePoHcYva8HktYjBK/OzqLITXBx?=
- =?us-ascii?Q?W+UriHZm+y/j/U4GW3k1gj1ow71x2S6q/wG8e07Cca3sCKE9CRhQglXv17na?=
- =?us-ascii?Q?J3rJsyA6MWFzA703+pm7ruok5637nm7PmrU2/KJyj+hY9vOU+HGgeQjMDGd4?=
- =?us-ascii?Q?B4W9sx4T39usK6BbPEZfijpzjmrI9b826ph60P3b?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 39fb5c0f-c415-40e8-158c-08db3a3941fe
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2023 03:03:00.0424
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Gnhqb3pXjMhIXT8AMxR+1erPqGAtkyNloIgtbyRl3qVFJMmQTk525Fp2oUxZxC0XELdChy/N+3wEejj8z4IEeg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9278
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH v3 1/3] clk: qcom: gdsc: Fix the handling of PWRSTS_RET
+ support
+Content-Language: en-US
+To:     Luca Weiss <luca@z3ntu.xyz>, <agross@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@somainline.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <mka@chromium.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <johan+linaro@kernel.org>, <quic_kriskura@quicinc.com>,
+        <dianders@chromium.org>, <linux-clk@vger.kernel.org>,
+        <angelogioacchino.delregno@collabora.com>,
+        <~postmarketos/upstreaming@lists.sr.ht>
+References: <20220920111517.10407-1-quic_rjendra@quicinc.com>
+ <5c2442d3-1f65-9106-2ef4-d6beec159538@quicinc.com>
+ <2619574.X9hSmTKtgW@z3ntu.xyz> <2674085.mvXUDI8C0e@z3ntu.xyz>
+From:   Rajendra Nayak <quic_rjendra@quicinc.com>
+In-Reply-To: <2674085.mvXUDI8C0e@z3ntu.xyz>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: mAIYpEaSCwc-TZNQqvgkDn2GNvhP0_WH
+X-Proofpoint-ORIG-GUID: mAIYpEaSCwc-TZNQqvgkDn2GNvhP0_WH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-11_02,2023-04-06_03,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
+ malwarescore=0 priorityscore=1501 suspectscore=0 phishscore=0
+ mlxlogscore=999 spamscore=0 bulkscore=0 clxscore=1011 mlxscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304110044
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
 
-spdif clock is one of the asrc clock source, which is used
-for ideal ratio mode. when set to 98.304MHz, it cause the
-divider of asrc input clock and output clock exceed the
-maximum value, and asrc driver saturate the value to maximum
-value, which will cause the ASRC's performance very bad.
-So we need to set spdif clock to a proper rate. which make asrc
-divider not exceed maximum value, at least one of divider not
-exceed maximum value.
-The target is spdif clock rate / output(or input) sample rate
-less than 1024(which is maximum divider).
 
-Fixes: d55135689019 ("ARM: imx: add clock driver for imx6sx")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
+On 4/11/2023 1:05 AM, Luca Weiss wrote:
+> Hi Rajendra,
+> 
+> On Mittwoch, 1. Februar 2023 19:04:37 CEST Luca Weiss wrote:
+>> On Montag, 23. Jänner 2023 05:30:55 CET Rajendra Nayak wrote:
+>>> On 1/22/2023 5:45 AM, Luca Weiss wrote:
+>>>> Hi Rajendra,
+>>>>
+>>>> On Dienstag, 20. September 2022 13:15:15 CET Rajendra Nayak wrote:
+>>>>> GDSCs cannot be transitioned into a Retention state in SW.
+>>>>> When either the RETAIN_MEM bit, or both the RETAIN_MEM and
+>>>>> RETAIN_PERIPH bits are set, and the GDSC is left ON, the HW
+>>>>> takes care of retaining the memory/logic for the domain when
+>>>>> the parent domain transitions to power collapse/power off state.
+>>>>>
+>>>>> On some platforms where the parent domains lowest power state
+>>>>> itself is Retention, just leaving the GDSC in ON (without any
+>>>>> RETAIN_MEM/RETAIN_PERIPH bits being set) will also transition
+>>>>> it to Retention.
+>>>>>
+>>>>> The existing logic handling the PWRSTS_RET seems to set the
+>>>>> RETAIN_MEM/RETAIN_PERIPH bits if the cxcs offsets are specified
+>>>>> but then explicitly turns the GDSC OFF as part of _gdsc_disable().
+>>>>> Fix that by leaving the GDSC in ON state.
+>>>>>
+>>>>> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+>>>>> Cc: AngeloGioacchino Del Regno
+>>>>> <angelogioacchino.delregno@collabora.com>
+>>>>> ---
+>>>>> v3:
+>>>>> Updated changelog
+>>>>>
+>>>>> There are a few existing users of PWRSTS_RET and I am not
+>>>>> sure if they would be impacted with this change
+>>>>>
+>>>>> 1. mdss_gdsc in mmcc-msm8974.c, I am expecting that the
+>>>>> gdsc is actually transitioning to OFF and might be left
+>>>>> ON as part of this change, atleast till we hit system wide
+>>>>> low power state.
+>>>>> If we really leak more power because of this
+>>>>> change, the right thing to do would be to update .pwrsts for
+>>>>> mdss_gdsc to PWRSTS_OFF_ON instead of PWRSTS_RET_ON
+>>>>> I dont have a msm8974 hardware, so if anyone who has can report
+>>>>> any issues I can take a look further on how to fix it.
+>>>>
+>>>> Unfortunately indeed this patch makes problems on msm8974, at least on
+>>>> fairphone-fp2 hardware.
+>>>>
+>>>> With this patch in place, the screen doesn't initialize correctly in
+>>>> maybe
+>>>> 80% of boots and is stuck in weird states, mostly just becomes
+>>>> completely
+>>>> blue.
+>>>>
+>>>> Kernel log at least sometimes includes messages like this:
+>>>> [   25.847541] dsi_cmds2buf_tx: cmd dma tx failed, type=0x39,
+>>>> data0=0x51,
+>>>> len=8, ret=-110
+>>>>
+>>>> Do you have anything I can try on msm8974? For now, reverting this patch
+>>>> makes display work again on v6.1
+>>>
+>>> hmm, I was really expecting this to leak more power than break anything
+>>> functionally, Did you try moving to PWRSTS_OFF_ON instead of PWRSTS_RET_ON
+>>> for mdss_gdsc?
+>>
+>> Hi Rajendra,
+>>
+>> yes with this change the display init works fine again. Do you think this is
+>> the intended solution then? I also haven't tested really more than this
+>> simple case.
+>>
+>> Let me know what you think.
+> 
+> Any feedback on this? Would be great to get this fixed sometime soon, quite
+> annoying to carry a patch for this locally.
 
-V3:
- Update Fixes tag
-V2:
- Add Fixes tag
+Hi Luca, really sorry I seem to have completely missed your previous
+email. Yes, moving the gdsc from PWRSTS_RET_ON to PWRSTS_OFF_ON seems to
+be the right thing to do. The behavior of the RET state was same as that
+of OFF prior to my patch, so the change should ideally make display go
+back to having the same behavior as before.
+I can certainly ack the change if you send in a patch.
+thanks,
+Rajendra
 
- drivers/clk/imx/clk-imx6sx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
-index 7cf86707bc39..3face052527d 100644
---- a/drivers/clk/imx/clk-imx6sx.c
-+++ b/drivers/clk/imx/clk-imx6sx.c
-@@ -520,7 +520,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 	clk_set_rate(hws[IMX6SX_CLK_PLL4_AUDIO_DIV]->clk, 393216000);
- 
- 	clk_set_parent(hws[IMX6SX_CLK_SPDIF_SEL]->clk, hws[IMX6SX_CLK_PLL4_AUDIO_DIV]->clk);
--	clk_set_rate(hws[IMX6SX_CLK_SPDIF_PODF]->clk, 98304000);
-+	clk_set_rate(hws[IMX6SX_CLK_SPDIF_PODF]->clk, 24576000);
- 
- 	clk_set_parent(hws[IMX6SX_CLK_AUDIO_SEL]->clk, hws[IMX6SX_CLK_PLL3_USB_OTG]->clk);
- 	clk_set_rate(hws[IMX6SX_CLK_AUDIO_PODF]->clk, 24000000);
--- 
-2.37.1
-
+> 
+> Regards
+> Luca
+> 
+>>
+>> Regards
+>> Luca
+>>
+>> diff --git a/drivers/clk/qcom/mmcc-msm8974.c
+>> b/drivers/clk/qcom/mmcc-msm8974.c index 26f3f8f06edf..f95e38abde13 100644
+>> --- a/drivers/clk/qcom/mmcc-msm8974.c
+>> +++ b/drivers/clk/qcom/mmcc-msm8974.c
+>> @@ -2389,7 +2389,7 @@ static struct gdsc mdss_gdsc = {
+>>   	.pd = {
+>>   		.name = "mdss",
+>>   	},
+>> -	.pwrsts = PWRSTS_RET_ON,
+>> +	.pwrsts = PWRSTS_OFF_ON,
+>>   };
+>>
+>>   static struct gdsc camss_jpeg_gdsc = {
+>>
+>>>> Regards
+>>>> Luca
+>>>>
+>>>>> 2. gpu_gx_gdsc in gpucc-msm8998.c and
+>>>>>
+>>>>>      gpu_gx_gdsc in gpucc-sdm660.c
+>>>>>
+>>>>> Both of these seem to add support for 3 power state
+>>>>> OFF, RET and ON, however I dont see any logic in gdsc
+>>>>> driver to handle 3 different power states.
+>>>>> So I am expecting that these are infact just transitioning
+>>>>> between ON and OFF and RET state is never really used.
+>>>>> The ideal fix for them would be to just update their resp.
+>>>>> .pwrsts to PWRSTS_OFF_ON only.
+>>>>>
+>>>>>    drivers/clk/qcom/gdsc.c | 10 ++++++++++
+>>>>>    drivers/clk/qcom/gdsc.h |  5 +++++
+>>>>>    2 files changed, 15 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+>>>>> index d3244006c661..ccf63771e852 100644
+>>>>> --- a/drivers/clk/qcom/gdsc.c
+>>>>> +++ b/drivers/clk/qcom/gdsc.c
+>>>>> @@ -368,6 +368,16 @@ static int _gdsc_disable(struct gdsc *sc)
+>>>>>
+>>>>>    	if (sc->pwrsts & PWRSTS_OFF)
+>>>>>    	
+>>>>>    		gdsc_clear_mem_on(sc);
+>>>>>
+>>>>> +	/*
+>>>>> +	 * If the GDSC supports only a Retention state, apart from ON,
+>>>>> +	 * leave it in ON state.
+>>>>> +	 * There is no SW control to transition the GDSC into
+>>>>> +	 * Retention state. This happens in HW when the parent
+>>>>> +	 * domain goes down to a Low power state
+>>>>> +	 */
+>>>>> +	if (sc->pwrsts == PWRSTS_RET_ON)
+>>>>> +		return 0;
+>>>>> +
+>>>>>
+>>>>>    	ret = gdsc_toggle_logic(sc, GDSC_OFF);
+>>>>>    	if (ret)
+>>>>>    	
+>>>>>    		return ret;
+>>>>>
+>>>>> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+>>>>> index 5de48c9439b2..981a12c8502d 100644
+>>>>> --- a/drivers/clk/qcom/gdsc.h
+>>>>> +++ b/drivers/clk/qcom/gdsc.h
+>>>>> @@ -49,6 +49,11 @@ struct gdsc {
+>>>>>
+>>>>>    	const u8			pwrsts;
+>>>>>    
+>>>>>    /* Powerdomain allowable state bitfields */
+>>>>>    #define PWRSTS_OFF		BIT(0)
+>>>>>
+>>>>> +/*
+>>>>> + * There is no SW control to transition a GDSC into
+>>>>> + * PWRSTS_RET. This happens in HW when the parent
+>>>>> + * domain goes down to a low power state
+>>>>> + */
+>>>>>
+>>>>>    #define PWRSTS_RET		BIT(1)
+>>>>>    #define PWRSTS_ON		BIT(2)
+>>>>>    #define PWRSTS_OFF_ON		(PWRSTS_OFF | PWRSTS_ON)
+> 
+> 
+> 
+> 
