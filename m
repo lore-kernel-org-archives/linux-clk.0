@@ -2,185 +2,233 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 438E6C77B70
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 14:42:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A23C77B6F
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 16:07:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229779AbjDKOmG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Apr 2023 10:42:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60780 "EHLO
+        id S229622AbjDKQH3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Apr 2023 12:07:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229628AbjDKOmF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 10:42:05 -0400
-Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ECD03ABB
-        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 07:42:02 -0700 (PDT)
-Received: by mail-vs1-xe2b.google.com with SMTP id y13so7773145vss.0
-        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 07:42:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1681224121;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0IsUqzAOOGwTdW6oKTQYTYQ5rspex3tOJ/uzBmQs6E4=;
-        b=m67XMiBjyE3LGndoYzB34x0EN0by382QLFad3fSrEBAfHC1Y1WMZ6keTHWmp9WJgXr
-         JKscIfMjwcVQhjeq3BE359R9ISZ+NRUl8RoVQSYQL7GJ3AlYEsS1Nrqz9vNQvyRFMQ7d
-         R2kAd04SmmVwd2yCelv7dr9h5y/MWOuA/OqYkr7nX0CTYo50QHcDmxuzNpQBE8nSv6xK
-         5fV5HCu9aLJLa8iWTNfegA4tAIawXp2LFCBwAK4ZnyszQ7gYkywcoH302ircJq1aqUjP
-         F5L3FjuFkOSrdpTkkhS1r3UhVTmIekMMQEsT4goBX8K3AQ87VtvGrkZooWkwaS33VEJ7
-         bwpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681224121;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0IsUqzAOOGwTdW6oKTQYTYQ5rspex3tOJ/uzBmQs6E4=;
-        b=ZizlcCJOUIxsuvujHAZO/u8NRzQ2K9iKt5mVD2CHvzFjBcOI/4Ysa5aZS4419sMDSg
-         A6Q4anQbrABsxk6DNLCViaxATl4rV0k5F3KZQh0wLLsM4LX11ea0DIdALdsHspx8ARi2
-         H7ELNJjg5zsc55lDMHFG/swVlrlNBXGvG7zHlqHXvZ1ySnA/i/oAFoM4KPC2SuYWd059
-         BUNPxm2fS4bomUHOdpMXPW3s+isdWcF/uiJSD1gjOE/JdT/smQv1VHU71xjg50U//aoY
-         nSvaSTsP0sWAEHX9+Wb3LnStlisPyPq8xMbISVQQSGOo/O0PEtTYo+d3wnhgKZ4HiLgG
-         dggg==
-X-Gm-Message-State: AAQBX9cnNa93OKXfjbZg9lHRgjG6nmT9qd7KfJ905U6M6IihlPU5yFKb
-        MAjCybJkE5NfMPoP9kb6FFJe/ZKJ4fuFaGFOmQZyCw==
-X-Google-Smtp-Source: AKy350a1MTHqScxDS1gDZ+TEOp6sZEA+LrjI4KfWxPLlXutjQPKll5t0VC5GNPpg/ojsniiIfjxnn+OWFZwBml1l9PA=
-X-Received: by 2002:a67:e0c4:0:b0:42c:515f:4a48 with SMTP id
- m4-20020a67e0c4000000b0042c515f4a48mr5688372vsl.0.1681224121594; Tue, 11 Apr
- 2023 07:42:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230411125910.401075-1-brgl@bgdev.pl> <20230411125910.401075-8-brgl@bgdev.pl>
- <6c75d434-bb5d-278f-a125-d096fd6b387d@linaro.org>
-In-Reply-To: <6c75d434-bb5d-278f-a125-d096fd6b387d@linaro.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 11 Apr 2023 16:41:50 +0200
-Message-ID: <CAMRc=MdLckYzUjDQzbNUaaviuABEDXcs0ctW6+-3fZiCbvfYQA@mail.gmail.com>
-Subject: Re: [PATCH v3 7/7] arm64: dts: qcom: sa8775p: add the GPU IOMMU node
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
+        with ESMTP id S229549AbjDKQH2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 12:07:28 -0400
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2092.outbound.protection.outlook.com [40.107.113.92])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 045E5BD;
+        Tue, 11 Apr 2023 09:07:27 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=g+PZJpTCwCUKOoTs+NfbmtvvBx9PXtjV807AZMmT3R2vcoovxxzBd7EM8bQQhoVs4peTKy6W+zNf5w6rip+ptOQU6CW8NTEcIN0VaFk4AOetHw0CWz/yhoYUUUI5BnNu3K6OcSS364yi4PEZZHZvke+nxsECConZYEHjDyt3aQl163f6/cNitl6SIDuyvE0LLm4BxyLJhlF58aipCu3CVzNTlWXqXLKx3c/WzO/5ycBldnczH+eCRkAmIJjRWbmCq3jaTLXSa+VMFHop2eEC65Us08e4AXQ+eC1iidBS5JqTGxaB9m0CPG0cDYtbJAdl7DyNKulT7tid3NdbFnbL6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hWPjczhmWkUuWxst+kXcg8VAIuDYzd9evRsYtD2Cv+E=;
+ b=Sn7/Q6Zu/jgOVPvxzz0H++dKBwUq7m4y5BD17lc2g7NEl4my7O1SUzv+XOb/oqYG2Slqby5yAL2JrEKlSQmAR/9FZOFoKwawbfTcLqbY8Yw5BY8nMm7nivvFq2KPHaSI3yp4PmMbYkccNnF2uILvOsl5n2BjdD/ErSjOG5k1JvysAknVwxiVR5PWTPAPL0ZC5gIIe3f+VELtPuGlc+2W6oDYw7PDGQLbkE7lJ/+Z4JTgCE8Uw3WNe1ap4KZF8CMUYLCRAXwzCSqkv6bJxd9bEWaIhxuBFZhxVuCe6qHI7K6roWGSKyA7+2lqldYHMlSJ652Gm5OGEM+vwhfdhtDpSA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hWPjczhmWkUuWxst+kXcg8VAIuDYzd9evRsYtD2Cv+E=;
+ b=lPr65wUrfTR+vrPEMmm4y/qXzdBFxkihFgGPidpQZdL03gku2fs13o366xdWDoVaKd2GGIC2USc0/jn8lLdTnE3bAwSWx81cc+xkjzTJc2BaGEkdNYawmo0pag13byTo6jYzd7WA2pzMfhbTv1clfNzSR9RXfVwLG9VKmqE64aU=
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
+ by TYCPR01MB9584.jpnprd01.prod.outlook.com (2603:1096:400:196::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.35; Tue, 11 Apr
+ 2023 16:07:23 +0000
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::e521:994c:bb0e:9bf6]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::e521:994c:bb0e:9bf6%8]) with mapi id 15.20.6298.029; Tue, 11 Apr 2023
+ 16:07:20 +0000
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Dan Carpenter <error27@gmail.com>,
+        "oe-kbuild@lists.linux.dev" <oe-kbuild@lists.linux.dev>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux.dev,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>
+CC:     "lkp@intel.com" <lkp@intel.com>,
+        "oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v4 2/3] drivers: clk: Add support for versa3 clock driver
+Thread-Topic: [PATCH v4 2/3] drivers: clk: Add support for versa3 clock driver
+Thread-Index: AQHZZtUKenNCkns3JkyXtPHgRXRPcK8lz4CAgABvYgA=
+Date:   Tue, 11 Apr 2023 16:07:19 +0000
+Message-ID: <OS0PR01MB5922390F504FC1F51F3B4025869A9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+References: <20230404090823.148226-3-biju.das.jz@bp.renesas.com>
+ <7351b44c-f577-4df3-a01e-e9b1039fa928@kili.mountain>
+In-Reply-To: <7351b44c-f577-4df3-a01e-e9b1039fa928@kili.mountain>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|TYCPR01MB9584:EE_
+x-ms-office365-filtering-correlation-id: 9b49e114-17af-4fce-087e-08db3aa6d414
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: hG6zWwDNpSM9nReQDPcs5iiM/Mui04OqY+fozj9qvis/9YpOECcNRVgocfjBovN2h92WguFAutXa0f8+IkSdtQP34D7Y3uuVxdnCNVGZMVVGzYuroqe5r3GJbSotC3oCdTHA4MmrKmpgJzR4FPJ/1Sj9hHXUD7LQigpyYfJwhTpTNQ6aAfd9Bozsq7wHL0ZXzEzNuawtPD3IJQe/nqZMNjFgFa2SxrXaqoAG6pdoyPfDG2/2GPTwCuIoL0rZ/9V2gjvA0zikqEoPCsic5VetjQP2SuiJTWrRtqpjr1QXNCCB2t5x8/QwRNJLNqCJpcGlOu88o6OodhbZvrey56PPzpZ2sQNe9BsyWyMnBfwkQEvzoGLjsO8cvBQ1YnRK6xjFCypHb9l6jkdJO9W1rx7Aq2DDKZSrLkqFTM7XvCEoyCegu2dq0gy14LuQbsLWEXlHAxEajejB/WHBbVjkJ0bwKFH4AcCDwGg4LbsLyZXKFjQ1zI3Of3R65TrubxE/Xv0viZ286ofcTQfQRQkgveRyLJMgHjmfR0BfxK15axNhyAdyjfwC6ZL6s7xmpDRijdIvkjrSeFQHZ89XkAWjw0TuF4E+tvsA2H/VY66NW5GfN/kjA4iN5/qDCCekSPo3dxaa
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(39860400002)(136003)(346002)(376002)(366004)(451199021)(55016003)(186003)(53546011)(478600001)(76116006)(41300700001)(52536014)(9686003)(4326008)(66446008)(66476007)(7696005)(8676002)(71200400001)(38100700002)(54906003)(316002)(66946007)(6506007)(83380400001)(122000001)(38070700005)(110136005)(33656002)(2906002)(86362001)(64756008)(5660300002)(8936002)(66556008);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?D+tYSsJROz9F7xihE8Z3B1wwvDlehxiKKlpF2WFRdUr6PVvSS5JOs0DjZp0n?=
+ =?us-ascii?Q?BMusP/SnaJXRJtnLUoVWV9jr+rHgEuY8aJgkVdCfv/0Rs5ZBA8yT1BtVSbU6?=
+ =?us-ascii?Q?y46gfEnrveA88Jfb5jPa2RvVdNT1hjapXeryMQ4ELh2JD0Dp2TOnQC4QVQTn?=
+ =?us-ascii?Q?EkEVyJgvPB2lL1BQ9tHTJTR/DpHzQWAbZsygJkFqewTWTHEZ6UUjJhrExikf?=
+ =?us-ascii?Q?f6qrZE8I690Lx5/2LpthGq3qwYAvhjjQaMZnXWIHcQxYm1rU/5us01aV2LOm?=
+ =?us-ascii?Q?YBoKccMY/B+FsH9wikcZPVYckOf70mhcALOhVx4OqdlKiQgWo0giL2l/QgJq?=
+ =?us-ascii?Q?0pRkBICVQ7KysKJ26nUR5fEu/KFQpCk3hIxwfuJu4KMCHf4sgnlhfNEfmkg5?=
+ =?us-ascii?Q?wyCnc6puWB1IPSF4eyXHsnlzWb7iQa8WNQ7v9LIURaa4FveOzHVrqwZ0IvC8?=
+ =?us-ascii?Q?2zucRqlLEhCxAr6rW676V1HQIuZqk2wsSt1NfQMY+hkDunjiranKDybBqFNq?=
+ =?us-ascii?Q?lw3MECM6VPTvxXfgdU09tzs9PkwIZOVfl1LKAnTJxBas5WvLlrkpNaNPQbI1?=
+ =?us-ascii?Q?BrRPmAVHHLJfJ2SFnUgiuP68euoh0Bq+flmxKdBGVSqk9oQPOBTJUH0Z/GX3?=
+ =?us-ascii?Q?TPLZlU1L4ooL5ai1HWboen9Dl+RXX29z9MNcACjAwAHq8K3w/QCFDwAVhYdu?=
+ =?us-ascii?Q?dvbjMnf9qeqRO/nPcQgmozxiOV+m2kV8s9vRdNMaQOL0SyDm5dirmoaBHUEC?=
+ =?us-ascii?Q?CLWfPeTAhdsBTeyTE3VZjcah7ahjTuaUBXHsRp8Tc8Et1TrE9gdOGzi5UCtM?=
+ =?us-ascii?Q?LXaf+knuygh+TxNe2J3hiT5fqnlzZ6TPqvhA/txABlvzpof8Ubwicug2TW3c?=
+ =?us-ascii?Q?uzGQ9Z2Zw5n1NwLUu4pTfns0RgHKxYfevgHwTRQ4ap5z187Lt6qgynj0eJHP?=
+ =?us-ascii?Q?+LBKPBMdIY3RE6NkVKfHkssV8vJrIeFT0RwKlycebIpvpHK4/1xKLkz51CZJ?=
+ =?us-ascii?Q?BXV4hOg8chpSOd4FDLljVfmpLdKkpsG7fSOv6BmZc4OTrwm3uCmFc3izDdg7?=
+ =?us-ascii?Q?yTx/Nh9hjiRcMqhi7Sh6XOeOFC2DVo/niBYzlr6MINGfs6rgPnfzR8s/QK2w?=
+ =?us-ascii?Q?Fsqr4j0UyDMAQSRe91dH++aet5pCLdpK9+uX1GHL53C2rm8BoXHGCQqJvhd2?=
+ =?us-ascii?Q?PTlnCpO04JXuQ+YABkX4bTpVILNROrr8b/oo8i4C+T0glNEXaiGkEjulDBnD?=
+ =?us-ascii?Q?pQrq7x6W/sg4wjIgL5AXwvduoPYnHexklERUQZ6OpYcv23/Hqml4d0zbopgF?=
+ =?us-ascii?Q?6jLvizY689DMtrAScKGDD+iUZSVFJ7NQS1DgsyTnLwbPtargXHrWZ0y34sKX?=
+ =?us-ascii?Q?v5pVOjELSxu/HPJREIE2ptq5caFS0jtTmEQbzb5q6mwdjs095C9nJ95rm9W9?=
+ =?us-ascii?Q?GrqlfO4Wbvo0G68iYh1UCZL8lVNTZsIciW8RLHo6VxGtrYVQNybo49c89xXk?=
+ =?us-ascii?Q?YaZ+aN32TAIPgqrOJLJCYd5lA0GZm32lm2jOQrR50WWfbP2l30Y1ntU4Uduh?=
+ =?us-ascii?Q?NaoGabS17tyKphwI+ik=3D?=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9b49e114-17af-4fce-087e-08db3aa6d414
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Apr 2023 16:07:19.9767
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: HqLRz0KPc4Qx2xXUqAOztP9xwadGiMVNYwnYiC/xC6OzKUQUWIp72TYcMDC4khwNku8gvKBvhuBaTdytvVX9PrsFO59k02BCkVIUCw2jd9E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB9584
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Apr 11, 2023 at 3:16=E2=80=AFPM Konrad Dybcio <konrad.dybcio@linaro=
-.org> wrote:
->
->
->
-> On 11.04.2023 14:59, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Add the Adreno GPU IOMMU for sa8775p-based platforms.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 37 +++++++++++++++++++++++++++
-> >  1 file changed, 37 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dt=
-s/qcom/sa8775p.dtsi
-> > index 191b510b5a1a..11f3d80dd869 100644
-> > --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> > @@ -7,6 +7,7 @@
-> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> >  #include <dt-bindings/clock/qcom,rpmh.h>
-> >  #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
-> > +#include <dt-bindings/clock/qcom,sa8775p-gpucc.h>
-> >  #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
-> >  #include <dt-bindings/power/qcom-rpmpd.h>
-> >  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
-> > @@ -605,6 +606,42 @@ gpucc: clock-controller@3d90000 {
-> >                       #power-domain-cells =3D <1>;
-> >               };
-> >
-> > +             adreno_smmu: iommu@3da0000 {
-> > +                     compatible =3D "qcom,sa8775p-smmu-500", "qcom,adr=
-eno-smmu",
-> > +                                  "arm,mmu-500";
-> Err.. does it even boot like this? You dropped the qcom,smmu-500 compatib=
-le
-> which means it's getting bound to the generic SMMU driver (without
-> QC quirks). If that was a mistake, you should have had all 4
->
-> "qcom,sa8775p-smmu-500", qcom,adreno-smmu, "qcom,smmu-500", "arm,mmu-500"
->
-> Without falling into the qc-specific codepaths, the Adreno compat does
-> nothing.
->
+Hi Dan Carpenter,
 
-I did that initially, then noticed dtbs_check fails because the
-existing adreno GPUs implementing "arm,smmu-500" expect three
-compatibles like in this commit. I did that and the driver still
-probed the same so I assumed all's good. You're right of course, the
-adreno impl is not being assigned without "qcom,smmu-500". Are the
-bindings wrong in this case and should it be something like the
-following?
+Thanks for the feedback.
 
-diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-index d966dc65ce10..cd1b052a7242 100644
---- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-+++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-@@ -84,6 +84,7 @@ properties:
-               - qcom,sm8150-smmu-500
-               - qcom,sm8250-smmu-500
-           - const: qcom,adreno-smmu
-+          - const: qcom,smmu-500
-           - const: arm,mmu-500
-       - description: Qcom Adreno GPUs implementing "arm,smmu-v2"
-         items:
+> -----Original Message-----
+> From: Dan Carpenter <error27@gmail.com>
+> Sent: Tuesday, April 11, 2023 9:21 AM
+> To: oe-kbuild@lists.linux.dev; Biju Das <biju.das.jz@bp.renesas.com>;
+> Michael Turquette <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.o=
+rg>
+> Cc: lkp@intel.com; oe-kbuild-all@lists.linux.dev; Biju Das
+> <biju.das.jz@bp.renesas.com>; linux-clk@vger.kernel.org; Geert Uytterhoev=
+en
+> <geert+renesas@glider.be>; Prabhakar Mahadev Lad <prabhakar.mahadev-
+> lad.rj@bp.renesas.com>; linux-renesas-soc@vger.kernel.org
+> Subject: Re: [PATCH v4 2/3] drivers: clk: Add support for versa3 clock
+> driver
+>=20
+> Hi Biju,
+>=20
+> kernel test robot noticed the following build warnings:
+>=20
+> url:
+> base:   1bd575707d704530a52d5dd320c29d79e9cff42d
+> patch link:
+> patch subject: [PATCH v4 2/3] drivers: clk: Add support for versa3 clock
+> driver
+> config: arc-randconfig-m031-20230405
+> compiler: arc-elf-gcc (GCC) 12.1.0
+>=20
+> If you fix the issue, kindly add following tag where applicable
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Reported-by: Dan Carpenter <error27@gmail.com>
+> | Link:
+>=20
+> smatch warnings:
+> drivers/clk/clk-versaclock3.c:546 vc3_clk_mux_determine_rate() warn: repl=
+ace
+> divide condition 'req->best_parent_rate / req->rate' with 'req-
+> >best_parent_rate >=3D req->rate'
+>=20
+> vim +546 drivers/clk/clk-versaclock3.c
+>=20
+> fe68e1ca2f2871 Biju Das 2023-04-04  538  static int
+> vc3_clk_mux_determine_rate(struct clk_hw *hw,
+> fe68e1ca2f2871 Biju Das 2023-04-04  539  				      struct
+> clk_rate_request *req)
+> fe68e1ca2f2871 Biju Das 2023-04-04  540  {
+> fe68e1ca2f2871 Biju Das 2023-04-04  541  	int ret;
+> fe68e1ca2f2871 Biju Das 2023-04-04  542  	int frc;
+> fe68e1ca2f2871 Biju Das 2023-04-04  543
+> fe68e1ca2f2871 Biju Das 2023-04-04  544  	ret =3D
+> clk_mux_determine_rate_flags(hw, req, CLK_SET_RATE_PARENT);
+> fe68e1ca2f2871 Biju Das 2023-04-04  545  	if (ret) {
+> fe68e1ca2f2871 Biju Das 2023-04-04 @546  		if (req->best_parent_rate
+> / req->rate) {
+>=20
+> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ What is this testing?  In terms of micr=
+o
+> optimizing, divide operations are normally slow.  And >=3D is more readab=
+le.
+> But maybe this is something which makes sense with more context...
 
-Bartosz
+I agree ">=3D" sufficient here.=20
 
-> Konrad
-> > +                     reg =3D <0x0 0x03da0000 0x0 0x20000>;
-> > +                     #iommu-cells =3D <2>;
-> > +                     #global-interrupts =3D <2>;
-> > +                     dma-coherent;
-> > +                     power-domains =3D <&gpucc GPU_CC_CX_GDSC>;
-> > +                     clocks =3D <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
-> > +                              <&gcc GCC_GPU_SNOC_DVM_GFX_CLK>,
-> > +                              <&gpucc GPU_CC_AHB_CLK>,
-> > +                              <&gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>,
-> > +                              <&gpucc GPU_CC_CX_GMU_CLK>,
-> > +                              <&gpucc GPU_CC_HUB_CX_INT_CLK>,
-> > +                              <&gpucc GPU_CC_HUB_AON_CLK>;
-> > +                     clock-names =3D "gcc_gpu_memnoc_gfx_clk",
-> > +                                   "gcc_gpu_snoc_dvm_gfx_clk",
-> > +                                   "gpu_cc_ahb_clk",
-> > +                                   "gpu_cc_hlos1_vote_gpu_smmu_clk",
-> > +                                   "gpu_cc_cx_gmu_clk",
-> > +                                   "gpu_cc_hub_cx_int_clk",
-> > +                                   "gpu_cc_hub_aon_clk";
-> > +                     interrupts =3D <GIC_SPI 673 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 674 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 678 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 679 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 680 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 681 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 682 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 683 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 684 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 685 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 686 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 687 IRQ_TYPE_LEVEL_HIGH>;
-> > +             };
-> > +
-> >               pdc: interrupt-controller@b220000 {
-> >                       compatible =3D "qcom,sa8775p-pdc", "qcom,pdc";
-> >                       reg =3D <0x0 0x0b220000 0x0 0x30000>,
+For eg: 8000Hz playback. 8000 is multiple of 12280000.
+
+
+When clk_mux_determine_rate_flags fails,=20
+it finds a factor for best_parent_rate and req->rate eg:( 11289600/2822400)=
+ =3D 4
+
+With this it again calls clk_mux_determine_rate_flags, that results in (112=
+89600/2048000) =3D 6
+2048000 * 6 =3D 12280000 and select the clocksrc with "12280000" rate.
+
+Logs:
+Stream parameters are [   41.694036] ####vc3_clk_mux_determine_rate 1128960=
+0/2822400/4###
+8000Hz, S16_LE, [   46.777454] ####vc3_clk_mux_determine_rate 11289600/2048=
+000/6###
+
+Similarly, 11025Hz playback,11025 is multiple of 11289600.
+
+When clk_mux_determine_rate_flags fails,=20
+then it finds a factor for best_parent_rate and req->rate eg:( 11289600/564=
+4800) =3D 2
+and select the clksrc with "11289600" rate.
+
+Logs:
+Stream parameters are 11025Hz, S16_LE, 2 chann[   36.591803] ####vc3_clk_mu=
+x_determine_rate 11289600/5644800/2###
+
+Cheers,
+Biju
+
+>=20
+> fe68e1ca2f2871 Biju Das 2023-04-04  547  			frc =3D
+> DIV_ROUND_CLOSEST_ULL(req->best_parent_rate,
+> fe68e1ca2f2871 Biju Das 2023-04-04  548
+> req->rate);
+> fe68e1ca2f2871 Biju Das 2023-04-04  549  			req->rate *=3D frc;
+> fe68e1ca2f2871 Biju Das 2023-04-04  550  			return
+> clk_mux_determine_rate_flags(hw, req,
+> fe68e1ca2f2871 Biju Das 2023-04-04  551
+> 	    CLK_SET_RATE_PARENT);
+> fe68e1ca2f2871 Biju Das 2023-04-04  552  		}
+> fe68e1ca2f2871 Biju Das 2023-04-04  553  		ret =3D 0;
+> fe68e1ca2f2871 Biju Das 2023-04-04  554  	}
+> fe68e1ca2f2871 Biju Das 2023-04-04  555
+> fe68e1ca2f2871 Biju Das 2023-04-04  556  	return ret;
+> fe68e1ca2f2871 Biju Das 2023-04-04  557  }
+>=20
+
