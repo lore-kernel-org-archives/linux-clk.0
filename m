@@ -2,83 +2,185 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7276C76196
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 14:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 438E6C77B70
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 14:42:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230036AbjDKOEM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Apr 2023 10:04:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60924 "EHLO
+        id S229779AbjDKOmG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Apr 2023 10:42:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229654AbjDKOEL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 10:04:11 -0400
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1A6830CA;
-        Tue, 11 Apr 2023 07:04:03 -0700 (PDT)
-Received: by mail-oi1-f170.google.com with SMTP id z16so5135107oib.9;
-        Tue, 11 Apr 2023 07:04:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681221843; x=1683813843;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        with ESMTP id S229628AbjDKOmF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 10:42:05 -0400
+Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ECD03ABB
+        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 07:42:02 -0700 (PDT)
+Received: by mail-vs1-xe2b.google.com with SMTP id y13so7773145vss.0
+        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 07:42:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1681224121;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Aewvq7Qyi31VTr5PdaFcbjGaZV7Zh9U8Jss5DyPyZ6k=;
-        b=N83P46YZqXyn2sFCjGzwLWiJes3CIoAf6dJvG+33Iftm/ry5R8pp/eK36aA5ddpIlQ
-         Qj5sXKMympjasoB/Wwp0ARIjQR0H3Fmnj3wFMVGs5phRFFYuOzvyuGedXeQKzZ87I8EL
-         iJgXOnk1kx3FrIc/+uHQvIQgcalEXR+N8y6AxL77g41CKwFB5e0uPOXMy0mVxHnwK+oy
-         ghexeUOa13mdY/ldv0KnGM8bOoaPwnI4SAAtkwfg0fnK0w2pnmlIPoZx++OopcIOWHy7
-         X7Mf/eOSFvn122dWmqvEc8U63QJAJqmgNMHttoeo5/ktjyRTK2xVGZJ1odKNB3ht2HPT
-         uX5g==
-X-Gm-Message-State: AAQBX9f2biSlQa05XczewTMPzqJYGUP6GPSEKzcHaJAtoPwInURDqzMp
-        6HkWf07kHcqsUN7r1PEqbA==
-X-Google-Smtp-Source: AKy350ZtVObD4H0kcB6Kxrdgy3xaGWSl03KtG/6TAmlqg3kjYEkbJgm/DeGs/e+KiMT4OJJnhxHjjg==
-X-Received: by 2002:a05:6808:249:b0:387:1e71:e4d3 with SMTP id m9-20020a056808024900b003871e71e4d3mr5213892oie.11.1681221842953;
-        Tue, 11 Apr 2023 07:04:02 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id u10-20020a056808150a00b0037832f60518sm5550740oiw.14.2023.04.11.07.04.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Apr 2023 07:04:02 -0700 (PDT)
-Received: (nullmailer pid 2981771 invoked by uid 1000);
-        Tue, 11 Apr 2023 14:04:01 -0000
-Date:   Tue, 11 Apr 2023 09:04:01 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/3] clk: mvebu: Use of_get_cpu_hwid() to read CPU ID
-Message-ID: <20230411140401.GA2963980-robh@kernel.org>
-References: <20230327-mvebu-clk-fixes-v1-0-438de1026efd@kernel.org>
- <20230327-mvebu-clk-fixes-v1-2-438de1026efd@kernel.org>
- <216176104e507b860e24399bf020d836.sboyd@kernel.org>
+        bh=0IsUqzAOOGwTdW6oKTQYTYQ5rspex3tOJ/uzBmQs6E4=;
+        b=m67XMiBjyE3LGndoYzB34x0EN0by382QLFad3fSrEBAfHC1Y1WMZ6keTHWmp9WJgXr
+         JKscIfMjwcVQhjeq3BE359R9ISZ+NRUl8RoVQSYQL7GJ3AlYEsS1Nrqz9vNQvyRFMQ7d
+         R2kAd04SmmVwd2yCelv7dr9h5y/MWOuA/OqYkr7nX0CTYo50QHcDmxuzNpQBE8nSv6xK
+         5fV5HCu9aLJLa8iWTNfegA4tAIawXp2LFCBwAK4ZnyszQ7gYkywcoH302ircJq1aqUjP
+         F5L3FjuFkOSrdpTkkhS1r3UhVTmIekMMQEsT4goBX8K3AQ87VtvGrkZooWkwaS33VEJ7
+         bwpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1681224121;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0IsUqzAOOGwTdW6oKTQYTYQ5rspex3tOJ/uzBmQs6E4=;
+        b=ZizlcCJOUIxsuvujHAZO/u8NRzQ2K9iKt5mVD2CHvzFjBcOI/4Ysa5aZS4419sMDSg
+         A6Q4anQbrABsxk6DNLCViaxATl4rV0k5F3KZQh0wLLsM4LX11ea0DIdALdsHspx8ARi2
+         H7ELNJjg5zsc55lDMHFG/swVlrlNBXGvG7zHlqHXvZ1ySnA/i/oAFoM4KPC2SuYWd059
+         BUNPxm2fS4bomUHOdpMXPW3s+isdWcF/uiJSD1gjOE/JdT/smQv1VHU71xjg50U//aoY
+         nSvaSTsP0sWAEHX9+Wb3LnStlisPyPq8xMbISVQQSGOo/O0PEtTYo+d3wnhgKZ4HiLgG
+         dggg==
+X-Gm-Message-State: AAQBX9cnNa93OKXfjbZg9lHRgjG6nmT9qd7KfJ905U6M6IihlPU5yFKb
+        MAjCybJkE5NfMPoP9kb6FFJe/ZKJ4fuFaGFOmQZyCw==
+X-Google-Smtp-Source: AKy350a1MTHqScxDS1gDZ+TEOp6sZEA+LrjI4KfWxPLlXutjQPKll5t0VC5GNPpg/ojsniiIfjxnn+OWFZwBml1l9PA=
+X-Received: by 2002:a67:e0c4:0:b0:42c:515f:4a48 with SMTP id
+ m4-20020a67e0c4000000b0042c515f4a48mr5688372vsl.0.1681224121594; Tue, 11 Apr
+ 2023 07:42:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <216176104e507b860e24399bf020d836.sboyd@kernel.org>
+References: <20230411125910.401075-1-brgl@bgdev.pl> <20230411125910.401075-8-brgl@bgdev.pl>
+ <6c75d434-bb5d-278f-a125-d096fd6b387d@linaro.org>
+In-Reply-To: <6c75d434-bb5d-278f-a125-d096fd6b387d@linaro.org>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 11 Apr 2023 16:41:50 +0200
+Message-ID: <CAMRc=MdLckYzUjDQzbNUaaviuABEDXcs0ctW6+-3fZiCbvfYQA@mail.gmail.com>
+Subject: Re: [PATCH v3 7/7] arm64: dts: qcom: sa8775p: add the GPU IOMMU node
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux.dev,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Apr 10, 2023 at 04:36:21PM -0700, Stephen Boyd wrote:
-> Quoting Rob Herring (2023-03-27 11:43:19)
-> > Use of_get_cpu_hwid() rather than the open coded reading of the CPU
-> > nodes "reg" property. The existing code is in fact wrong as the "reg"
-> > address cells size is 2 cells for arm64. The existing code happens to
-> > work because the DTS files are wrong as well.
-> > 
-> > Signed-off-by: Rob Herring <robh@kernel.org>
+On Tue, Apr 11, 2023 at 3:16=E2=80=AFPM Konrad Dybcio <konrad.dybcio@linaro=
+.org> wrote:
+>
+>
+>
+> On 11.04.2023 14:59, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Add the Adreno GPU IOMMU for sa8775p-based platforms.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > > ---
-> > Note this should be marked for stable so that if/when the DTS files are
-> > fixed, then at least stable kernels will work. This is untested, so I
-> > didn't mark for stable.
-> 
-> That makes it sound like it breaks for existing DTS files. Is that the
-> case?
+> >  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 37 +++++++++++++++++++++++++++
+> >  1 file changed, 37 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dt=
+s/qcom/sa8775p.dtsi
+> > index 191b510b5a1a..11f3d80dd869 100644
+> > --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> > @@ -7,6 +7,7 @@
+> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> >  #include <dt-bindings/clock/qcom,rpmh.h>
+> >  #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
+> > +#include <dt-bindings/clock/qcom,sa8775p-gpucc.h>
+> >  #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
+> >  #include <dt-bindings/power/qcom-rpmpd.h>
+> >  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+> > @@ -605,6 +606,42 @@ gpucc: clock-controller@3d90000 {
+> >                       #power-domain-cells =3D <1>;
+> >               };
+> >
+> > +             adreno_smmu: iommu@3da0000 {
+> > +                     compatible =3D "qcom,sa8775p-smmu-500", "qcom,adr=
+eno-smmu",
+> > +                                  "arm,mmu-500";
+> Err.. does it even boot like this? You dropped the qcom,smmu-500 compatib=
+le
+> which means it's getting bound to the generic SMMU driver (without
+> QC quirks). If that was a mistake, you should have had all 4
+>
+> "qcom,sa8775p-smmu-500", qcom,adreno-smmu, "qcom,smmu-500", "arm,mmu-500"
+>
+> Without falling into the qc-specific codepaths, the Adreno compat does
+> nothing.
+>
 
-No, if the DTS files are fixed, then they will not work with the 
-existing code. This change should work for both existing and fixed DTS 
-files.
+I did that initially, then noticed dtbs_check fails because the
+existing adreno GPUs implementing "arm,smmu-500" expect three
+compatibles like in this commit. I did that and the driver still
+probed the same so I assumed all's good. You're right of course, the
+adreno impl is not being assigned without "qcom,smmu-500". Are the
+bindings wrong in this case and should it be something like the
+following?
 
-Rob
+diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+index d966dc65ce10..cd1b052a7242 100644
+--- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
++++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+@@ -84,6 +84,7 @@ properties:
+               - qcom,sm8150-smmu-500
+               - qcom,sm8250-smmu-500
+           - const: qcom,adreno-smmu
++          - const: qcom,smmu-500
+           - const: arm,mmu-500
+       - description: Qcom Adreno GPUs implementing "arm,smmu-v2"
+         items:
+
+Bartosz
+
+> Konrad
+> > +                     reg =3D <0x0 0x03da0000 0x0 0x20000>;
+> > +                     #iommu-cells =3D <2>;
+> > +                     #global-interrupts =3D <2>;
+> > +                     dma-coherent;
+> > +                     power-domains =3D <&gpucc GPU_CC_CX_GDSC>;
+> > +                     clocks =3D <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
+> > +                              <&gcc GCC_GPU_SNOC_DVM_GFX_CLK>,
+> > +                              <&gpucc GPU_CC_AHB_CLK>,
+> > +                              <&gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>,
+> > +                              <&gpucc GPU_CC_CX_GMU_CLK>,
+> > +                              <&gpucc GPU_CC_HUB_CX_INT_CLK>,
+> > +                              <&gpucc GPU_CC_HUB_AON_CLK>;
+> > +                     clock-names =3D "gcc_gpu_memnoc_gfx_clk",
+> > +                                   "gcc_gpu_snoc_dvm_gfx_clk",
+> > +                                   "gpu_cc_ahb_clk",
+> > +                                   "gpu_cc_hlos1_vote_gpu_smmu_clk",
+> > +                                   "gpu_cc_cx_gmu_clk",
+> > +                                   "gpu_cc_hub_cx_int_clk",
+> > +                                   "gpu_cc_hub_aon_clk";
+> > +                     interrupts =3D <GIC_SPI 673 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 674 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 678 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 679 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 680 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 681 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 682 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 683 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 684 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 685 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 686 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 687 IRQ_TYPE_LEVEL_HIGH>;
+> > +             };
+> > +
+> >               pdc: interrupt-controller@b220000 {
+> >                       compatible =3D "qcom,sa8775p-pdc", "qcom,pdc";
+> >                       reg =3D <0x0 0x0b220000 0x0 0x30000>,
