@@ -2,152 +2,265 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 512B0C76196
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 11:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EFEAC77B74
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 11:50:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229525AbjDKL1X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Apr 2023 07:27:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36824 "EHLO
+        id S229939AbjDKLuu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Apr 2023 07:50:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229581AbjDKL1X (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 07:27:23 -0400
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 488AA35B5
-        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 04:27:21 -0700 (PDT)
-Received: by mail-lj1-x22f.google.com with SMTP id b33so3783372ljf.2
-        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 04:27:21 -0700 (PDT)
+        with ESMTP id S229969AbjDKLun (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 07:50:43 -0400
+Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1206E1AD
+        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 04:50:41 -0700 (PDT)
+Received: by mail-ua1-x935.google.com with SMTP id z23so5414411uav.8
+        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 04:50:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681212439;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mO52s6mKQHmY0l0OyHS8ECqMNi9aQa6bkpfbk2zZBzI=;
-        b=j7Pt8ae8gKTdfQX0/1NJQfb8hKrdEeyPzRerwfez1/I2fK3jK3W4BNfQa4Q6a42vmV
-         7qI0iuY9Q+0fHNXNKNhWFofsiXJdG6mz8/6O80H4DDuW3/RIuDwz1ybPAr2Lucq2allR
-         ZSVPxjhXxYZnja3uqyCyLC/W6qaBmmyfiNgW3tilT7PKr2rVN+VW0Ak+0NQHW2rU8rwh
-         zgVSr9G+cXHy7dEwRVcDIlykcNEm3CcJfcQ59RcOyKheecqppez+jtOnZuypa14/8vjx
-         IFKlh1y5ul2PXkIIZGXW+66Vj5UEH7Y4lIL7jjf9+5HHg4YeUKbzDgjI66eVBmczKMC4
-         malQ==
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112; t=1681213840;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6ABpILrsve0qKJe1rMKA0UqVkX+F1EsDxDxKGNDuqxY=;
+        b=KVatqVw52IhcfqXAGvQ6AjlQ/yo8uGrRN9sI3RW602XortnUT2neEdIsKww/J3pESI
+         q8VyhEI9l83LXxWinWmRr2Dx1rwUD+CP60tV4liiCOxXohXH8BKmR34+FG7Crskv7VfT
+         g0Br2FHi6ZEibqFxCokZ7e/WzFa25EuCF7XjU8DhOUGz2Ph1oRQ4SfJIIq2/ughG0yWu
+         syNKBSbZ8oJFgvETJXmEIuanWIcayd4ojVs2bXyfHs2mXGaWTl2KvVLF7YK8Xv2V64xc
+         GhoGH4ZmPPueePCpALN0ihgV5WxrHR7/8xz15A7FhAKBvTLPChGltfHBwlobxsKZQOzo
+         /AOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681212439;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mO52s6mKQHmY0l0OyHS8ECqMNi9aQa6bkpfbk2zZBzI=;
-        b=EDRgVx/0Mu6NW2uONqkygOtzKAXrNeyYdXvODixAGIWLGnQjI0HIHkdzpQVya/QzLj
-         lQYF/AHM/K1bBrfhyOXqOOOltSCXhiWYgCHJkXi2ZBHIQ/Jqzofv/T0Bx36yyKiHeS2+
-         q6wyRD6XnEW0FhhLCDOKXgy1+UvTxLuBphAW9/UphTheDTYTI328tFsx3+8jAHTMYdgF
-         YeFA1rmoX+ctSmEukOpvAgqEjVA1wUQ7qFZYla6vCyf1UqT9VtCKWxC3PbtkZ5KwYgjy
-         +Gm4a/yntu1BZDRNjMJ9Qqd5IMXYTCAT5GV3Hk56PdK7u7FF/b1B/ZgQk+B/t7j+VhhH
-         yezw==
-X-Gm-Message-State: AAQBX9d+vNJ9NUJaHnmncn7KLG+pEuj3Y4hCClg8MGMdM8lY6KQTzjqp
-        9YOjvsouknDYxKoNT1amwWbtdw==
-X-Google-Smtp-Source: AKy350aejn/8Hcjtk66/DqgIybyC1DZcxyDNOI/nSDQVYWI3mRsceJbmbDV+4ggUY4QIULbx1kPfsA==
-X-Received: by 2002:a2e:6a06:0:b0:293:4e6d:9194 with SMTP id f6-20020a2e6a06000000b002934e6d9194mr2813065ljc.24.1681212439462;
-        Tue, 11 Apr 2023 04:27:19 -0700 (PDT)
-Received: from [192.168.1.101] (abxj23.neoplus.adsl.tpnet.pl. [83.9.3.23])
-        by smtp.gmail.com with ESMTPSA id i15-20020a2e940f000000b002a615c75bf2sm2751558ljh.6.2023.04.11.04.27.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Apr 2023 04:27:19 -0700 (PDT)
-Message-ID: <c70c1a4d-50c5-2b50-18c9-7c46c3803cd4@linaro.org>
-Date:   Tue, 11 Apr 2023 13:27:17 +0200
+        d=1e100.net; s=20210112; t=1681213840;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6ABpILrsve0qKJe1rMKA0UqVkX+F1EsDxDxKGNDuqxY=;
+        b=DMARQwMwVBmbrxjk/pQuLp39LwmfS9ceF+Aa54/EFkL+X1CtiAKBpTnrI7r8vJUEs3
+         YAhn4KEWg9nH15scYOTDMxlHmz38aoIB9ybIfERVjIBYYkn2qhuTGg30zyQlG6AKCWVS
+         l+Jzn8KEb9Eb4ZnkyF45eU8+6B4brwHsWGFlbSo4qNju+j+Yi8I2/Uz1Y4RPhQS5cdYz
+         tjJP7Kgb63CMzU+oY9lFd/FzV7wX8orMTRrWGqBb1OvJp6Rojlq8jxfW+pEGbrwugLBy
+         rhH1WIFzpq7Z0P1Y7LHLgMhBkGSGByM7w8bDqLV+8wqFYXfdH29Fz2m6I+O1xmdWYy8d
+         NcdQ==
+X-Gm-Message-State: AAQBX9fMoJCWXWVRLJ4T5WiAwGQ+fIbnHc1KLGH/3OzbeWfy9zqwF2Kz
+        Gc983zdbDuIqePKxMGT9UZmt9ggCNCbn9cU62lqOQg==
+X-Google-Smtp-Source: AKy350ag+4vkSjC293eEA+Ezldj6pBfYQecQW+ykIdx4osj27F89whguE2mB4gHKphxIOhL2WeYzVkfq7A9AKhhY7TY=
+X-Received: by 2002:a9f:3014:0:b0:68a:6c1e:1aab with SMTP id
+ h20-20020a9f3014000000b0068a6c1e1aabmr8693102uab.2.1681213840148; Tue, 11 Apr
+ 2023 04:50:40 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH 2/3] dt-bindings: clock: qcom,gcc-sc7180: document CX
- power domain
-Content-Language: en-US
-To:     Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+References: <20230406200723.552644-1-brgl@bgdev.pl> <20230406200723.552644-6-brgl@bgdev.pl>
+ <20230410201145.6e2qsl5gtwh7n3k7@echanude>
+In-Reply-To: <20230410201145.6e2qsl5gtwh7n3k7@echanude>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 11 Apr 2023 13:50:29 +0200
+Message-ID: <CAMRc=MdSTqO0bW1=_it43K_pn7EuBWRPvBF29N1gdqsh3TpAcg@mail.gmail.com>
+Subject: Re: [PATCH v2 5/7] arm64: dts: qcom: sa8775p: add the pcie smmu node
+To:     Eric Chanudet <echanude@redhat.com>,
+        Shazad Hussain <quic_shazhuss@quicinc.com>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
         Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230408134820.76050-1-krzysztof.kozlowski@linaro.org>
- <20230408134820.76050-2-krzysztof.kozlowski@linaro.org>
- <4757c33c-7e71-262d-a51a-c5f9fb53ff41@linaro.org>
- <d4a8054c-443e-d9ba-9641-ff721254d254@quicinc.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <d4a8054c-443e-d9ba-9641-ff721254d254@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux.dev,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, Apr 10, 2023 at 10:11=E2=80=AFPM Eric Chanudet <echanude@redhat.com=
+> wrote:
+>
+> On Thu, Apr 06, 2023 at 10:07:21PM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Add the PCIe SMMU node for sa8775p platforms.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 74 +++++++++++++++++++++++++++
+> >  1 file changed, 74 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dt=
+s/qcom/sa8775p.dtsi
+> > index 2343df7e0ea4..9ab630c7d81b 100644
+> > --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> > @@ -809,6 +809,80 @@ apps_smmu: iommu@15000000 {
+> >                                    <GIC_SPI 891 IRQ_TYPE_LEVEL_HIGH>;
+> >               };
+> >
+> > +             pcie_smmu: iommu@15200000 {
+> > +                     compatible =3D "qcom,sa8775p-smmu-500", "qcom,smm=
+u-500", "arm,mmu-500";
+> > +                     reg =3D <0x0 0x15200000 0x0 0x800000>;
+>
+> Testing on the board, applying on next-20230406:
+> [    1.041869] arm-smmu 15200000.iommu: SMMU address space size (0x80000)=
+ differs from mapped region size (0x800000)!
+>
+> In the downstream sources, the size is 0x80000[1].
+>
+> On reboot, I also get a synchronous abort, but the second line, from the
+> following output on the serial, could indicate the hypervisor is behind
+> it:
+>
+> [   26.906206] arm-smmu 15200000.iommu: disabling translation
+> 3      33.244434 Injecting instruction/data abort to VM 3, original ESR_E=
+L2 =3D 0x93800047, fault VA =3D 0xffff80000a380000, fault IPA =3D 0x1520000=
+0, ELR_EL2 =3D 0xffffd064f70c9de8
+> [   26.942083] Internal error: synchronous external abort: 00000000960000=
+10 [#1] PREEMPT SMP
+> [   26.948506] Modules linked in: nvmem_qcom_spmi_sdam qcom_pon spi_geni_=
+qcom nvmem_reboot_mode crct10dif_ce i2c_qcom_geni phy_qcom_qmp_ufs gpucc_sa=
+8775p ufs_qcom socinfo fuse ipv6
+> [   26.966702] CPU: 3 PID: 1 Comm: systemd-shutdow Not tainted 6.3.0-rc5-=
+next-20230406-00019-g9d08a3c17f54-dirty #134
+> [   26.977315] Hardware name: Qualcomm SA8775P Ride (DT)
+> [   26.982505] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYP=
+E=3D--)
+> [   26.989651] pc : arm_smmu_device_shutdown+0x88/0x1d8
+> [   26.994773] lr : arm_smmu_device_shutdown+0x70/0x1d8
+> [   26.999875] sp : ffff80000805bbf0
+> [   27.003283] x29: ffff80000805bbf0 x28: ffff0e69400a0000 x27: 000000000=
+0000000
+> [   27.010608] x26: ffffd064f8130f38 x25: 0000000000000001 x24: ffffd064f=
+8eac028
+> [   27.017932] x23: ffff0e6940eeb490 x22: ffffd064f8f24f80 x21: ffff0e694=
+0eeb410
+> [   27.025254] x20: ffff0e6940808c80 x19: ffff0e6940eeb410 x18: 000000000=
+0000006
+> [   27.032579] x17: 0000000000000001 x16: 0000000000000014 x15: ffff80000=
+805b5c0
+> [   27.039903] x14: 0000000000000000 x13: ffffd064f8ac19a8 x12: 000000000=
+0000606
+> [   27.047226] x11: 0000000000000202 x10: ffffd064f8b199a8 x9 : ffffd064f=
+8ac19a8
+> [   27.054549] x8 : 00000000ffffefff x7 : ffffd064f8b199a8 x6 : 80000000f=
+ffff000
+> [   27.061872] x5 : 000000000000bff4 x4 : 0000000000000000 x3 : 000000000=
+0000000
+> [   27.069195] x2 : 0000000000000000 x1 : ffff80000a380000 x0 : 000000000=
+0000001
+> [   27.076520] Call trace:
+> [   27.079041]  arm_smmu_device_shutdown+0x88/0x1d8
+> [   27.083787]  platform_shutdown+0x24/0x34
+> [   27.087825]  device_shutdown+0x150/0x258
+> [   27.091859]  kernel_restart+0x40/0xc0
+> [   27.095632]  __do_sys_reboot+0x1f0/0x274
+> [   27.099664]  __arm64_sys_reboot+0x24/0x30
+> [   27.103786]  invoke_syscall+0x48/0x114
+> [   27.107644]  el0_svc_common+0x40/0xf4
+> [   27.111410]  do_el0_svc+0x3c/0x9c
+> [   27.114822]  el0_svc+0x2c/0x84
+> [   27.117969]  el0t_64_sync_handler+0xf4/0x120
+> [   27.122357]  el0t_64_sync+0x190/0x194
+> [   27.126126] Code: f9400404 b50008e4 f9400681 52800020 (b9000020)
+> [   27.132385] ---[ end trace 0000000000000000 ]---
+>
 
+Adding Shazad
 
-On 11.04.2023 06:56, Rajendra Nayak wrote:
-> 
-> 
-> On 4/8/2023 7:33 PM, Konrad Dybcio wrote:
->>
->>
->> On 8.04.2023 15:48, Krzysztof Kozlowski wrote:
->>> The GCC clock controller needs CX power domain, at least according to
->>> DTS:
->>>
->>>    sc7180-trogdor-pompom-r3.dtb: clock-controller@100000: Unevaluated properties are not allowed ('power-domains' was unexpected)
->>>
->>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>> ---
->> +CC Rajendra (author of 5d6fc6321db1 ("arm64: dts: qcom:
->> sc7180: Add required-opps for USB"))
->>
->> Rajendra, shouldn't SC7180 GCC have PM ops to make sure a vote
->> is only there when AP is active?
-So IIUC, CX is never supposed to be shut down?
+Eric: This is supposedly gone in the latest meta but I thought you're
+already on the most recent release?
 
-Konrad
-> 
-> hmm, I am not quite sure why we would want the performance votes
-> from peripherals dropped when CPUs go down in idle?
-> 
->> Are all GDSCs powered by CX?
->> If not, wouldn't this also need power-domain-names to
->> facilitate e.g. potential MX-powered ones?
-> 
-> For sc7180 GCC, yes.
-> 
->>
->> Konrad
->>>   .../devicetree/bindings/clock/qcom,gcc-sc7180.yaml         | 7 +++++++
->>>   1 file changed, 7 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
->>> index 06dce0c6b7d0..8bf9b6f49550 100644
->>> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
->>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
->>> @@ -32,6 +32,10 @@ properties:
->>>         - const: bi_tcxo_ao
->>>         - const: sleep_clk
->>>   +  power-domains:
->>> +    items:
->>> +      - description: CX domain
->>> +
->>>   required:
->>>     - compatible
->>>     - clocks
->>> @@ -45,6 +49,8 @@ unevaluatedProperties: false
->>>   examples:
->>>     - |
->>>       #include <dt-bindings/clock/qcom,rpmh.h>
->>> +    #include <dt-bindings/power/qcom-rpmpd.h>
->>> +
->>>       clock-controller@100000 {
->>>         compatible = "qcom,gcc-sc7180";
->>>         reg = <0x00100000 0x1f0000>;
->>> @@ -52,6 +58,7 @@ examples:
->>>                  <&rpmhcc RPMH_CXO_CLK_A>,
->>>                  <&sleep_clk>;
->>>         clock-names = "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
->>> +      power-domains = <&rpmhpd SC7180_CX>;
->>>         #clock-cells = <1>;
->>>         #reset-cells = <1>;
->>>         #power-domain-cells = <1>;
+Shazad, what version exactly should Eric test this on?
+
+Bart
+
+> [1] https://git.codelinaro.org/clo/la/kernel/ark-5.14/-/blob/ES2/arch/arm=
+64/boot/dts/qcom/lemans.dtsi#L3498
+>
+> > +                     #iommu-cells =3D <2>;
+> > +                     #global-interrupts =3D <2>;
+> > +
+> > +                     interrupts =3D <GIC_SPI 920 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 921 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 925 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 926 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 927 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 928 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 950 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 951 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 952 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 953 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 954 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 955 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 956 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 957 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 958 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 885 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 886 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 887 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 888 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 820 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 822 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 823 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 447 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 452 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 840 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 841 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 842 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 843 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 844 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 845 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 846 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 847 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 848 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 849 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 802 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 803 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 804 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 805 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 806 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 807 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 808 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 809 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 810 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 811 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 812 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 813 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 814 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 836 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 837 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 838 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 839 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 854 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 855 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 856 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 790 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 791 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 792 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 793 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 794 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 795 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 796 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 639 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                  <GIC_SPI 640 IRQ_TYPE_LEVEL_HIGH>;
+> > +             };
+> > +
+> >               intc: interrupt-controller@17a00000 {
+> >                       compatible =3D "arm,gic-v3";
+> >                       reg =3D <0x0 0x17a00000 0x0 0x10000>,     /* GICD=
+ */
+> > --
+> > 2.37.2
+> >
+>
+> --
+> Eric Chanudet
+>
