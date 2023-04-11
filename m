@@ -2,65 +2,92 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02EBFC77B61
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Apr 2023 23:59:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B3BC76196
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 01:52:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229690AbjDJX7e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Apr 2023 19:59:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57528 "EHLO
+        id S229697AbjDKBwf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Apr 2023 21:52:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229605AbjDJX7d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Apr 2023 19:59:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC0701BE7;
-        Mon, 10 Apr 2023 16:59:31 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6AEF16201F;
-        Mon, 10 Apr 2023 23:59:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4B11C433EF;
-        Mon, 10 Apr 2023 23:59:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681171170;
-        bh=JVXtANLCoXKH4bGk9XkI7snII9iDxlueE91bJgDTERM=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=k6A7+qy1kZ+Sfd2025/ayUX8uj9rh0rS6djSM6jD5ilFLdGQ1kACZvpNWq0UWh7jQ
-         ZGGmcdbzYYd0qFPIyUkySlNe2M3YlFPPRYZp7yyFwfPUSXVNArr0pshgN77ZrMrSSi
-         6YJVthmIfXDPBQXnWlTh1Ti+2S8gWaKjvPYd7/RsO3Y74IF5//1wt9XmaUwG4i/oBz
-         hnxC+cT24qIHDjzJHAWs8ZGtzdGp0K0EzTEoU0Tmz+LQMO3OMeNb/eAZSIEBQqHtve
-         yvzYtpvLGl0MegvHkh8vxuctEb919+dCkd0NlB3OcBEUvqL416KjvgLyJfRwPcLRd5
-         pfn5oUKxVy/qQ==
-Message-ID: <502bacd2b6b0f448106d82b2d8c5c9d4.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229624AbjDKBwe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Apr 2023 21:52:34 -0400
+Received: from hust.edu.cn (mail.hust.edu.cn [202.114.0.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 843CCE67;
+        Mon, 10 Apr 2023 18:52:33 -0700 (PDT)
+Received: from DESKTOP-DE31U50.localdomain ([10.12.190.56])
+        (user=m202171776@hust.edu.cn mech=LOGIN bits=0)
+        by mx1.hust.edu.cn  with ESMTP id 33B1p8AW016919-33B1p8AX016919
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 11 Apr 2023 09:51:12 +0800
+From:   Hao Luo <m202171776@hust.edu.cn>
+To:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>
+Cc:     hust-os-kernel-patches@googlegroups.com,
+        Hao Luo <m202171776@hust.edu.cn>,
+        Dongliang Mu <dzm91@hust.edu.cn>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: imx: clk-imx8mn: fix memory leak in imx8mn_clocks_probe
+Date:   Tue, 11 Apr 2023 09:51:07 +0800
+Message-Id: <20230411015107.2645-1-m202171776@hust.edu.cn>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230406010935.1944976-1-trix@redhat.com>
-References: <20230406010935.1944976-1-trix@redhat.com>
-Subject: Re: [PATCH] clk: mediatek: fhctl: set varaiables fhctl_offset_v1,2 storage-class-specifier to static
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, Tom Rix <trix@redhat.com>
-To:     Tom Rix <trix@redhat.com>, angelogioacchino.delregno@collabora.com,
-        edward-jw.yang@mediatek.com, johnson.wang@mediatek.com,
-        matthias.bgg@gmail.com, mturquette@baylibre.com, wenst@chromium.org
-Date:   Mon, 10 Apr 2023 16:59:28 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
+X-FEAS-AUTH-USER: m202171776@hust.edu.cn
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tom Rix (2023-04-05 18:09:35)
-> smatch reports
-> drivers/clk/mediatek/clk-fhctl.c:17:27: warning: symbol
->   'fhctl_offset_v1' was not declared. Should it be static?
-> drivers/clk/mediatek/clk-fhctl.c:30:27: warning: symbol
->   'fhctl_offset_v2' was not declared. Should it be static?
->=20
-> These variables are only used in one file so should be static.
->=20
-> Signed-off-by: Tom Rix <trix@redhat.com>
-> ---
+Use devm_of_iomap() instead of of_iomap() to automatically handle
+the unused ioremap region.
 
-Applied to clk-next
+If any error occurs, regions allocated by kzalloc() will leak,
+but using devm_kzalloc() instead will automatically free the memory
+using devm_kfree().
+
+Fixes: daeb14545514 ("clk: imx: imx8mn: Switch to clk_hw based API")
+Fixes: 96d6392b54db ("clk: imx: Add support for i.MX8MN clock driver")
+Signed-off-by: Hao Luo <m202171776@hust.edu.cn>
+Reviewed-by: Dongliang Mu <dzm91@hust.edu.cn>
+---
+The issue is discovered by static analysis, and the patch is not tested yet.
+---
+ drivers/clk/imx/clk-imx8mn.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
+index a042ed3a9d6c..569b2abf4052 100644
+--- a/drivers/clk/imx/clk-imx8mn.c
++++ b/drivers/clk/imx/clk-imx8mn.c
+@@ -323,7 +323,7 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
+ 	void __iomem *base;
+ 	int ret;
+ 
+-	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws,
++	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws,
+ 					  IMX8MN_CLK_END), GFP_KERNEL);
+ 	if (WARN_ON(!clk_hw_data))
+ 		return -ENOMEM;
+@@ -340,10 +340,10 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
+ 	hws[IMX8MN_CLK_EXT4] = imx_get_clk_hw_by_name(np, "clk_ext4");
+ 
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mn-anatop");
+-	base = of_iomap(np, 0);
++	base = devm_of_iomap(dev, np, 0, NULL);
+ 	of_node_put(np);
+-	if (WARN_ON(!base)) {
+-		ret = -ENOMEM;
++	if (WARN_ON(IS_ERR(base))) {
++		ret = PTR_ERR(base);
+ 		goto unregister_hws;
+ 	}
+ 
+-- 
+2.34.1
+
