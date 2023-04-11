@@ -2,197 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 701E8C77B73
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 19:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E20C77B72
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 20:21:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229558AbjDKTuy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Apr 2023 15:50:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44128 "EHLO
+        id S229527AbjDKUVY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Apr 2023 16:21:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbjDKTux (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 15:50:53 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ED142D66
-        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 12:50:49 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id m4so11668723lfj.13
-        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 12:50:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681242648;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yOaG+PaHenUckG/HmcCcVyiFAGvfVYsjP1gKXvLt2sQ=;
-        b=J0q5NPXG+H8BAby7O6g2YcHLXCo4+0dRypQpWSlXYUf+22+ThYj80nRh2c8dF1kJML
-         IUa0sk0CdVDCwCUwM3S/6+gTywNXhZC/4AwMpUmlHvRq5oPuPgDYBdVtlinYO3yzCGVn
-         x9XpoURBuY/TWj5m22OI30xpNyADp6YqQCRN/dHpSbTO4m81KLIFTcUyuw4mQZ6b6kmU
-         b0O6+rbhEiOOcFRCwK90/mcG1eGnNpNudTmjtASHmMj+CQozJbHSdF0z6OZdJpjAMiqe
-         LxmhynN6wwyo6HiW8+5PoEyg74eUy6t5F88TaRf31eSIgtCg5EERBaplLTAKffnhViYn
-         52nw==
+        with ESMTP id S229805AbjDKUVW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 16:21:22 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60A8B46A5
+        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 13:20:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1681244425;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=1X1257RiPm0+EqIQdLdY8EZJdNOboaVApm9s8W5RPoA=;
+        b=VUOCpcvpr9wsNj9SWXB+DvZTkYCav0TQy2bYRPwb9gV+RI/I6up6fHe46YyGwuKEj3J0w2
+        47+1jW4XxnpbeEFy8HegdxQqMGfveZRxz6e8Sw7QLvzMnVRmoLKlbTzkaAu8lmw5Gf7nok
+        czwN4EW5M5zlNnHAwirRElOQgZkpBg4=
+Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com
+ [209.85.161.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-34-zeBXpb_rMv2CPDfVE8L93Q-1; Tue, 11 Apr 2023 16:20:24 -0400
+X-MC-Unique: zeBXpb_rMv2CPDfVE8L93Q-1
+Received: by mail-oo1-f71.google.com with SMTP id j3-20020a4a9443000000b0053b693ef13dso3066971ooi.16
+        for <linux-clk@vger.kernel.org>; Tue, 11 Apr 2023 13:20:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681242648;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yOaG+PaHenUckG/HmcCcVyiFAGvfVYsjP1gKXvLt2sQ=;
-        b=gghphWPy55kZBuJ8CazvQc6McTR6D+kMcsn/DccWP6c046yAm5N3leofOlWJ7npsGX
-         r2TylobOu6R154vsnBDrjIYqiXqoOpcxhlvEAGb7z8tde+DeuWrRqQ+o1ny93IeoMkz4
-         2iH+s95IhS5HV9uC2rRrA29ACkhCGJD5crcWr6yt9BMgI3lQMHv1IM0RoW3tBV+2lNMs
-         6JI6GTPB3QRTqCyGgfu9+FgqGhzztmsBHKnRbGn3DZxL/Yg+VyoRJULhXM2Zmk7o9mLV
-         1lL9gmTyckKSUcYkMPPBnEbIsbzubhsy+60jD6FwbenLVw288Mo3ghcvOC8QnCC9fBWV
-         5/5g==
-X-Gm-Message-State: AAQBX9eYtuBOeZHIAWuwAJh6Fz4+yITIJPZSjFaqgRfdOGH8xu6L8fcF
-        DScmoFS9OCxu14qxxPQwXnkoUw==
-X-Google-Smtp-Source: AKy350aYtghLr2w5tKRLDF4OjwB0D514YZIPVY+ttfl5WYaiNDwkx4YnlL0vMDYjUsFepxoQsC4mCw==
-X-Received: by 2002:a05:6512:3b2a:b0:4d8:86c1:477d with SMTP id f42-20020a0565123b2a00b004d886c1477dmr98465lfv.18.1681242647825;
-        Tue, 11 Apr 2023 12:50:47 -0700 (PDT)
-Received: from [192.168.1.101] (abxj23.neoplus.adsl.tpnet.pl. [83.9.3.23])
-        by smtp.gmail.com with ESMTPSA id b7-20020ac24107000000b004e9b307d2c8sm2656277lfi.238.2023.04.11.12.50.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Apr 2023 12:50:47 -0700 (PDT)
-Message-ID: <923fb538-a28a-2172-569f-b58349157d49@linaro.org>
-Date:   Tue, 11 Apr 2023 21:50:44 +0200
+        d=1e100.net; s=20210112; t=1681244423;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1X1257RiPm0+EqIQdLdY8EZJdNOboaVApm9s8W5RPoA=;
+        b=d5IWmJHMDjnfIZwdZu+c3Fy8iHs2VptMxerNuicPmBRne6vQrEJvP6qXREYxZBDTdf
+         kTINS7DrbmFC296lrYyFbGBWr2SfFPQw1+Ik7irXp77Sxn8QZAwWdT2JC8tz4YEnHNFU
+         Wq79m/jdYHKTYjOhT1phf5jm8ech+r8VdBC5sP3e6xnMljJ+qRF+O2qIA5mDs5Pe8fps
+         kY53jP7Ct8Xwq2K6GE70xT9zzqSU07Vr7qvOSJGee8fwpNW8hFB7eswnTuoT2KkQnLLh
+         WqiyLI0TQjSGGT+nY1xhAYiRDfyPoFjiIY6z02LyHGg1lKddIAS+ogiXZf6YHdrBIlXk
+         oOSg==
+X-Gm-Message-State: AAQBX9dPtg+pDVNydulDcEf1B+rvtpiA5V45vbIWHDx4ZFkE6EBpNMwJ
+        dasC0Z0FjLRqkDQ0g5rJ272eyXvpi4iaLuhBx6s2bmPINSpps3BtQSyAEwAg38f3pHD417o/1+P
+        ttMhMZmdOnWqjjTG1vesz
+X-Received: by 2002:aca:2116:0:b0:384:2d3d:8dab with SMTP id 22-20020aca2116000000b003842d3d8dabmr6403623oiz.58.1681244423569;
+        Tue, 11 Apr 2023 13:20:23 -0700 (PDT)
+X-Google-Smtp-Source: AKy350YJHMM7YveuM1hzKClhx7F7zKb9Wmh+6PKHIi//bXeiNy/POD5elG9ihQ3BmihU0dfLzqgvfg==
+X-Received: by 2002:aca:2116:0:b0:384:2d3d:8dab with SMTP id 22-20020aca2116000000b003842d3d8dabmr6403605oiz.58.1681244423339;
+        Tue, 11 Apr 2023 13:20:23 -0700 (PDT)
+Received: from halaney-x13s.attlocal.net (104-53-165-62.lightspeed.stlsmo.sbcglobal.net. [104.53.165.62])
+        by smtp.gmail.com with ESMTPSA id a6-20020a056808120600b003874631e249sm5976710oil.36.2023.04.11.13.20.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Apr 2023 13:20:22 -0700 (PDT)
+From:   Andrew Halaney <ahalaney@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        richardcochran@gmail.com, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        netdev@vger.kernel.org, bmasney@redhat.com, echanude@redhat.com,
+        ncai@quicinc.com, jsuraj@qti.qualcomm.com, hisunil@quicinc.com,
+        Andrew Halaney <ahalaney@redhat.com>
+Subject: [PATCH v4 0/3] Add EMAC3 support for sa8540p-ride (devicetree/clk bits)
+Date:   Tue, 11 Apr 2023 15:20:06 -0500
+Message-Id: <20230411202009.460650-1-ahalaney@redhat.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v3 7/7] arm64: dts: qcom: sa8775p: add the GPU IOMMU node
-Content-Language: en-US
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux.dev,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20230411125910.401075-1-brgl@bgdev.pl>
- <20230411125910.401075-8-brgl@bgdev.pl>
- <6c75d434-bb5d-278f-a125-d096fd6b387d@linaro.org>
- <CAMRc=MdLckYzUjDQzbNUaaviuABEDXcs0ctW6+-3fZiCbvfYQA@mail.gmail.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <CAMRc=MdLckYzUjDQzbNUaaviuABEDXcs0ctW6+-3fZiCbvfYQA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-type: text/plain
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+This is a forward port / upstream refactor of code delivered
+downstream by Qualcomm over at [0] to enable the DWMAC5 based
+implementation called EMAC3 on the sa8540p-ride dev board.
+
+From what I can tell with the board schematic in hand,
+as well as the code delivered, the main changes needed are:
+
+    1. A new address space layout for dwmac5/EMAC3 MTL/DMA regs
+    2. A new programming sequence required for the EMAC3 base platforms
+
+This series addresses the devicetree and clock changes to support this
+hardware bringup.
+
+As requested[1], it has been split up by compile deps / maintainer tree.
+The associated v4 of the netdev specific changes can be found at [2].
+Together, they result in the ethernet controller working for
+both controllers on this platform.
+
+[0] https://git.codelinaro.org/clo/la/kernel/ark-5.14/-/commit/510235ad02d7f0df478146fb00d7a4ba74821b17
+[1] https://lore.kernel.org/netdev/20230320202802.4e7dc54c@kernel.org/
+[2] https://lore.kernel.org/netdev/20230411200409.455355-1-ahalaney@redhat.com/T/#t
+
+v3: https://lore.kernel.org/netdev/20230331215804.783439-1-ahalaney@redhat.com/T/#m2f267485d215903494d9572507417793e600b2bf
+v2: https://lore.kernel.org/netdev/20230320221617.236323-1-ahalaney@redhat.com/
+v1: https://lore.kernel.org/netdev/20230313165620.128463-1-ahalaney@redhat.com/
+
+Thanks,
+Andrew
 
 
-On 11.04.2023 16:41, Bartosz Golaszewski wrote:
-> On Tue, Apr 11, 2023 at 3:16 PM Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->>
->>
->>
->> On 11.04.2023 14:59, Bartosz Golaszewski wrote:
->>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>
->>> Add the Adreno GPU IOMMU for sa8775p-based platforms.
->>>
->>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>> ---
->>>  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 37 +++++++++++++++++++++++++++
->>>  1 file changed, 37 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>> index 191b510b5a1a..11f3d80dd869 100644
->>> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>> @@ -7,6 +7,7 @@
->>>  #include <dt-bindings/interrupt-controller/arm-gic.h>
->>>  #include <dt-bindings/clock/qcom,rpmh.h>
->>>  #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
->>> +#include <dt-bindings/clock/qcom,sa8775p-gpucc.h>
->>>  #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
->>>  #include <dt-bindings/power/qcom-rpmpd.h>
->>>  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
->>> @@ -605,6 +606,42 @@ gpucc: clock-controller@3d90000 {
->>>                       #power-domain-cells = <1>;
->>>               };
->>>
->>> +             adreno_smmu: iommu@3da0000 {
->>> +                     compatible = "qcom,sa8775p-smmu-500", "qcom,adreno-smmu",
->>> +                                  "arm,mmu-500";
->> Err.. does it even boot like this? You dropped the qcom,smmu-500 compatible
->> which means it's getting bound to the generic SMMU driver (without
->> QC quirks). If that was a mistake, you should have had all 4
->>
->> "qcom,sa8775p-smmu-500", qcom,adreno-smmu, "qcom,smmu-500", "arm,mmu-500"
->>
->> Without falling into the qc-specific codepaths, the Adreno compat does
->> nothing.
->>
-> 
-> I did that initially, then noticed dtbs_check fails because the
-> existing adreno GPUs implementing "arm,smmu-500" expect three
-> compatibles like in this commit. I did that and the driver still
-> probed the same so I assumed all's good. You're right of course, the
-> adreno impl is not being assigned without "qcom,smmu-500". Are the
-> bindings wrong in this case and should it be something like the
-> following?
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> index d966dc65ce10..cd1b052a7242 100644
-> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> @@ -84,6 +84,7 @@ properties:
->                - qcom,sm8150-smmu-500
->                - qcom,sm8250-smmu-500
->            - const: qcom,adreno-smmu
-> +          - const: qcom,smmu-500
->            - const: arm,mmu-500
->        - description: Qcom Adreno GPUs implementing "arm,smmu-v2"
->          items:
-> 
-> Bartosz
-Check
+Andrew Halaney (3):
+  clk: qcom: gcc-sc8280xp: Add EMAC GDSCs
+  arm64: dts: qcom: sc8280xp: Add ethernet nodes
+  arm64: dts: qcom: sa8540p-ride: Add ethernet nodes
 
-https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/commit/?h=for-joerg/arm-smmu/bindings&id=5c3686616b1840b3143b227eb58fb1c1621d204e
+ arch/arm64/boot/dts/qcom/sa8540p-ride.dts     | 180 ++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sc8280xp.dtsi        |  59 ++++++
+ drivers/clk/qcom/gcc-sc8280xp.c               |  18 ++
+ include/dt-bindings/clock/qcom,gcc-sc8280xp.h |   2 +
+ 4 files changed, 259 insertions(+)
 
-Konrad
-> 
->> Konrad
->>> +                     reg = <0x0 0x03da0000 0x0 0x20000>;
->>> +                     #iommu-cells = <2>;
->>> +                     #global-interrupts = <2>;
->>> +                     dma-coherent;
->>> +                     power-domains = <&gpucc GPU_CC_CX_GDSC>;
->>> +                     clocks = <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
->>> +                              <&gcc GCC_GPU_SNOC_DVM_GFX_CLK>,
->>> +                              <&gpucc GPU_CC_AHB_CLK>,
->>> +                              <&gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>,
->>> +                              <&gpucc GPU_CC_CX_GMU_CLK>,
->>> +                              <&gpucc GPU_CC_HUB_CX_INT_CLK>,
->>> +                              <&gpucc GPU_CC_HUB_AON_CLK>;
->>> +                     clock-names = "gcc_gpu_memnoc_gfx_clk",
->>> +                                   "gcc_gpu_snoc_dvm_gfx_clk",
->>> +                                   "gpu_cc_ahb_clk",
->>> +                                   "gpu_cc_hlos1_vote_gpu_smmu_clk",
->>> +                                   "gpu_cc_cx_gmu_clk",
->>> +                                   "gpu_cc_hub_cx_int_clk",
->>> +                                   "gpu_cc_hub_aon_clk";
->>> +                     interrupts = <GIC_SPI 673 IRQ_TYPE_LEVEL_HIGH>,
->>> +                                  <GIC_SPI 674 IRQ_TYPE_LEVEL_HIGH>,
->>> +                                  <GIC_SPI 678 IRQ_TYPE_LEVEL_HIGH>,
->>> +                                  <GIC_SPI 679 IRQ_TYPE_LEVEL_HIGH>,
->>> +                                  <GIC_SPI 680 IRQ_TYPE_LEVEL_HIGH>,
->>> +                                  <GIC_SPI 681 IRQ_TYPE_LEVEL_HIGH>,
->>> +                                  <GIC_SPI 682 IRQ_TYPE_LEVEL_HIGH>,
->>> +                                  <GIC_SPI 683 IRQ_TYPE_LEVEL_HIGH>,
->>> +                                  <GIC_SPI 684 IRQ_TYPE_LEVEL_HIGH>,
->>> +                                  <GIC_SPI 685 IRQ_TYPE_LEVEL_HIGH>,
->>> +                                  <GIC_SPI 686 IRQ_TYPE_LEVEL_HIGH>,
->>> +                                  <GIC_SPI 687 IRQ_TYPE_LEVEL_HIGH>;
->>> +             };
->>> +
->>>               pdc: interrupt-controller@b220000 {
->>>                       compatible = "qcom,sa8775p-pdc", "qcom,pdc";
->>>                       reg = <0x0 0x0b220000 0x0 0x30000>,
+-- 
+2.39.2
+
