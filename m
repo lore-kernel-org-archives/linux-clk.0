@@ -2,92 +2,140 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B3BC76196
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 01:52:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00FA0C76196
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 03:03:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229697AbjDKBwf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Apr 2023 21:52:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52244 "EHLO
+        id S229932AbjDKDDB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Apr 2023 23:03:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229624AbjDKBwe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Apr 2023 21:52:34 -0400
-Received: from hust.edu.cn (mail.hust.edu.cn [202.114.0.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 843CCE67;
-        Mon, 10 Apr 2023 18:52:33 -0700 (PDT)
-Received: from DESKTOP-DE31U50.localdomain ([10.12.190.56])
-        (user=m202171776@hust.edu.cn mech=LOGIN bits=0)
-        by mx1.hust.edu.cn  with ESMTP id 33B1p8AW016919-33B1p8AX016919
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 11 Apr 2023 09:51:12 +0800
-From:   Hao Luo <m202171776@hust.edu.cn>
-To:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S229626AbjDKDCv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Apr 2023 23:02:51 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EC092D6D;
+        Mon, 10 Apr 2023 20:02:50 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A187A6209E;
+        Tue, 11 Apr 2023 03:02:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA33DC433EF;
+        Tue, 11 Apr 2023 03:02:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681182169;
+        bh=W5LkOo7VObRorAOwM+Ysl+U3TaX0yQUWO6dGaS2s9/U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=e3UF/BZ1HAjWlEtz7VkRn9CMskyu9E3pWhCFv8dX+rD0WHM5TvoWMJOSojWd6ntPA
+         ywa0+1Vd1zQOH6mNDSWreD/s+oFdVDHbbFpjlbUikUQl4XBe4bZf7mbI8U6G6lPIhQ
+         HChDd563Gum1iJAVIq6EjBOKtyiZO2VcZ15ctRDv3tHCIGlLD2k1Q17+/PA6TLPZca
+         qyzonBkzId5V2HCtlAQIV/uLbchVJfjwsOL9RelF4pU2cg20P+Ird99MQX0lGhHMh8
+         kCcpOXFDb+c4P2bMnDfsiljROzSXHiDjbKD98aRtbtGtZz7xnXlBK5S4UMNzG49O2/
+         mOAfMORkyFA5w==
+Date:   Mon, 10 Apr 2023 20:06:30 -0700
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Abel Vesa <abel.vesa@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>
-Cc:     hust-os-kernel-patches@googlegroups.com,
-        Hao Luo <m202171776@hust.edu.cn>,
-        Dongliang Mu <dzm91@hust.edu.cn>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: imx: clk-imx8mn: fix memory leak in imx8mn_clocks_probe
-Date:   Tue, 11 Apr 2023 09:51:07 +0800
-Message-Id: <20230411015107.2645-1-m202171776@hust.edu.cn>
-X-Mailer: git-send-email 2.34.1
+        Saravana Kannan <saravanak@google.com>,
+        linux-pm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH v3 2/4] soc: qcom: rpmhpd: Do proper power off when state
+ synced
+Message-ID: <20230411030630.z5nl5ynjl6wzp3bh@ripper>
+References: <20230327193829.3756640-1-abel.vesa@linaro.org>
+ <20230327193829.3756640-3-abel.vesa@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-FEAS-AUTH-USER: m202171776@hust.edu.cn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230327193829.3756640-3-abel.vesa@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use devm_of_iomap() instead of of_iomap() to automatically handle
-the unused ioremap region.
+On Mon, Mar 27, 2023 at 10:38:27PM +0300, Abel Vesa wrote:
+> Instead of aggregating different corner values on sync state callback,
+> call the genpd API for queuing up the power off. This will also mark the
+> domain as powered off in the debugfs genpd summary. Also, until sync
+> state has been reached, return busy on power off request, in order to
+> allow genpd core to know that the actual domain hasn't been powered of
+> from the "disable unused" late initcall.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  drivers/soc/qcom/rpmhpd.c | 19 +++++++------------
+>  1 file changed, 7 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
+> index f20e2a49a669..ec7926820772 100644
+> --- a/drivers/soc/qcom/rpmhpd.c
+> +++ b/drivers/soc/qcom/rpmhpd.c
+> @@ -649,8 +649,12 @@ static int rpmhpd_power_off(struct generic_pm_domain *domain)
+>  	mutex_lock(&rpmhpd_lock);
+>  
+>  	ret = rpmhpd_aggregate_corner(pd, 0);
+> -	if (!ret)
+> -		pd->enabled = false;
+> +	if (!ret) {
+> +		if (!pd->state_synced)
+> +			ret = -EBUSY;
+> +		else
+> +			pd->enabled = false;
+> +	}
+>  
+>  	mutex_unlock(&rpmhpd_lock);
+>  
+> @@ -810,10 +814,8 @@ static void rpmhpd_sync_state(struct device *dev)
+>  {
+>  	const struct rpmhpd_desc *desc = of_device_get_match_data(dev);
+>  	struct rpmhpd **rpmhpds = desc->rpmhpds;
+> -	unsigned int corner;
+>  	struct rpmhpd *pd;
+>  	unsigned int i;
+> -	int ret;
+>  
+>  	mutex_lock(&rpmhpd_lock);
+>  	for (i = 0; i < desc->num_pds; i++) {
+> @@ -822,14 +824,7 @@ static void rpmhpd_sync_state(struct device *dev)
+>  			continue;
+>  
+>  		pd->state_synced = true;
+> -		if (pd->enabled)
+> -			corner = max(pd->corner, pd->enable_corner);
 
-If any error occurs, regions allocated by kzalloc() will leak,
-but using devm_kzalloc() instead will automatically free the memory
-using devm_kfree().
+Note that the intent of this line is to lower the corner from max to
+either a requested performance_state or the lowest non-disabled corner.
+I don't think your solution maintains this behavior?
 
-Fixes: daeb14545514 ("clk: imx: imx8mn: Switch to clk_hw based API")
-Fixes: 96d6392b54db ("clk: imx: Add support for i.MX8MN clock driver")
-Signed-off-by: Hao Luo <m202171776@hust.edu.cn>
-Reviewed-by: Dongliang Mu <dzm91@hust.edu.cn>
----
-The issue is discovered by static analysis, and the patch is not tested yet.
----
- drivers/clk/imx/clk-imx8mn.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> -		else
+> -			corner = 0;
+> -
+> -		ret = rpmhpd_aggregate_corner(pd, corner);
+> -		if (ret)
+> -			dev_err(dev, "failed to sync %s\n", pd->res_name);
+> +		pm_genpd_queue_power_off(&pd->pd);
 
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index a042ed3a9d6c..569b2abf4052 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -323,7 +323,7 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
- 	void __iomem *base;
- 	int ret;
- 
--	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws,
-+	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws,
- 					  IMX8MN_CLK_END), GFP_KERNEL);
- 	if (WARN_ON(!clk_hw_data))
- 		return -ENOMEM;
-@@ -340,10 +340,10 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MN_CLK_EXT4] = imx_get_clk_hw_by_name(np, "clk_ext4");
- 
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mn-anatop");
--	base = of_iomap(np, 0);
-+	base = devm_of_iomap(dev, np, 0, NULL);
- 	of_node_put(np);
--	if (WARN_ON(!base)) {
--		ret = -ENOMEM;
-+	if (WARN_ON(IS_ERR(base))) {
-+		ret = PTR_ERR(base);
- 		goto unregister_hws;
- 	}
- 
--- 
-2.34.1
+In the event that the power-domain has a single device attached, and no
+subdomains, wouldn't pm_genpd_queue_power_off() pass straight through
+all checks and turn off the power domain? Perhaps I'm just missing
+something?
 
+Regards,
+Bjorn
+
+>  	}
+>  	mutex_unlock(&rpmhpd_lock);
+>  }
+> -- 
+> 2.34.1
+> 
