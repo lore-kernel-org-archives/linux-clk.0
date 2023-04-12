@@ -2,273 +2,143 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF65C77B6E
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Apr 2023 20:46:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87773C7619A
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Apr 2023 21:25:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229847AbjDLUqf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Apr 2023 16:46:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55826 "EHLO
+        id S229599AbjDLVZb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Apr 2023 17:25:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229596AbjDLUqe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2023 16:46:34 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0D664EC5
-        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2023 13:46:32 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id i6so4637778lfp.1
-        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2023 13:46:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681332391; x=1683924391;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=a6Emo09CCLf/plGwNFLqZjmgSdrNmUy8E7AyaPJFF70=;
-        b=pAQ0VwoClK2BLTfd4hXRFYopE2ziTbzRSGF0W06LrIYuVEbVs4nnW76sRnvPLtlloX
-         8Q93A9dY8IOLEugXaklEpY3Dp0EEXuk0u67mCFyvkdE1+HyU/deQ1p1btrl4KOu7fgGq
-         7ePFNcmR961dhsa8dkIUbDb0jewTFV7DKS5BX07gfV9XxTSxshbuR/7CK4RUsqwVTA0x
-         GpNrSYf+U6wDTS1pifYfdHXrnyF7H3uvk+jxyTu1LedYGFSzE+D+5L+RTHqihgG9dAlh
-         1szJyPdkFpEyBXqVvy8/aKRU0WbrMBPMgpPPdJlVA3nRnKFfOk77+x4lVpyWSB2v3nl0
-         eDlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681332391; x=1683924391;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a6Emo09CCLf/plGwNFLqZjmgSdrNmUy8E7AyaPJFF70=;
-        b=WQfoN24uBzyteYadHp5kKJjS/ijBDlxgSHwtSp8EKkF5WfsWHM0S6SC9i1MbcgAfs1
-         v7ReEFwQYYw2iPSzHTC1qSiXA/UaFOiNQRkfrre42Qwuf7BEA2p3PsYpyyFCoIkgY8rV
-         eenEk5OUKg0VvuLTVqQq2k2RDzm1TOL1bgvofhwXoHsp9NSxfHFzRXisCbptuUoZPMEK
-         PlTdx/+kNFXfXbZ+nm393ZlIIE1hI0Uvvd13k8Mhy6Q1X1LkwXd9zyYKe1TVJIlxIAm/
-         0Vqrefngp7rwQXr8mvZGwCP0N9KQWoYfWtJNotLsp492YRvbdQx6R2E0CVU9eWqEG0U4
-         L6yg==
-X-Gm-Message-State: AAQBX9eJXmb2iWd47V3lt9px4ux+lbZ8jaadumXMpvPpwXLF7wshoGJR
-        lY52jme5vjZKleNnauAAX5RpwA==
-X-Google-Smtp-Source: AKy350a5RBGKlHJXw3i/gSzdU4PAsc78wrlKrPLZuM3LPt2X7QO34SvkbYChUN+VghVnBLGqOhBBHA==
-X-Received: by 2002:ac2:429a:0:b0:4eb:4552:61aa with SMTP id m26-20020ac2429a000000b004eb455261aamr40493lfh.12.1681332390865;
-        Wed, 12 Apr 2023 13:46:30 -0700 (PDT)
-Received: from [192.168.1.101] (abxj23.neoplus.adsl.tpnet.pl. [83.9.3.23])
-        by smtp.gmail.com with ESMTPSA id b7-20020a056512024700b004eca8b92936sm87784lfo.61.2023.04.12.13.46.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Apr 2023 13:46:30 -0700 (PDT)
-Message-ID: <a599d157-002f-26ef-5f31-a3fb0925dfba@linaro.org>
-Date:   Wed, 12 Apr 2023 22:46:27 +0200
+        with ESMTP id S229683AbjDLVZa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2023 17:25:30 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E76BFC;
+        Wed, 12 Apr 2023 14:25:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net; s=s31663417;
+        t=1681334692; i=j.neuschaefer@gmx.net;
+        bh=1lJ48Ks8BJLDV0858j+7zFjPkSScyLQQDytPILWRroU=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=MqM6pNlGjibfGdC5QKhvhl0yAmQ6mAkFTyqgS2272odvCrSvQmS4ltpfUkiY90dI5
+         d3KUzTohx/Co/RD0hnN6ghpmwAeJtDx2GC4NRUGTn5jjlk1gTbvaijwzTt5xuB/yBQ
+         UtpJrZswJHgcWG/B0kU8KoLDZXahrC8QML3dTaUaoWGBSzq8Mgp89+O0A3tmcJP3rX
+         Kd9sbSxVE9+YEhrPSaMKhM1YeGbn7b2J0EG52rDY2Rt1pkFvkvYX+NULQyO9konDpU
+         nSyRULg01htzm+6FiJnP4+z9zjOVNB2XyPGqFZuIKu1HcKq/nUpjoDXFJsOYdlDybS
+         xP0NGKdsOecqA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from probook ([185.66.193.41]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N6siz-1qQmcN1JRn-018LPv; Wed, 12
+ Apr 2023 23:24:52 +0200
+Date:   Wed, 12 Apr 2023 23:24:49 +0200
+From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Subject: Re: [PATCH v5 3/6] dt-bindings: clock: Add Nuvoton WPCM450
+ clock/reset controller
+Message-ID: <ZDchofAGChRo3rUi@probook>
+References: <20221104161850.2889894-1-j.neuschaefer@gmx.net>
+ <20221104161850.2889894-4-j.neuschaefer@gmx.net>
+ <20221209202120.0AFACC433D2@smtp.kernel.org>
+ <ZDcC9JBidzfu94NW@probook>
+ <ed34eacdb1d35be8b9b2c44944f828e7.sboyd@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH V12 3/4] arm64: dts: qcom: Add support for ipq9574 SoC and
- RDP433 variant
-Content-Language: en-US
-To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linus.walleij@linaro.org,
-        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
-        shawnguo@kernel.org, arnd@arndb.de, marcel.ziswiler@toradex.com,
-        dmitry.baryshkov@linaro.org, geert+renesas@glider.be,
-        rafal@milecki.pl, nfraprado@collabora.com, broonie@kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
-        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
-        quic_poovendh@quicinc.com
-References: <20230410135948.11970-1-quic_devipriy@quicinc.com>
- <20230410135948.11970-4-quic_devipriy@quicinc.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230410135948.11970-4-quic_devipriy@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ijRhWXEzdUKaiJe1"
+Content-Disposition: inline
+In-Reply-To: <ed34eacdb1d35be8b9b2c44944f828e7.sboyd@kernel.org>
+X-Provags-ID: V03:K1:11HHXOJlEmu5SAf22Qo6cW7aqsbyy3MHsKrLND7Ec+YYY+jpmto
+ 9zVADJVVK4YnjFYNDkNIn9xJ5m64xdfkRF0cFN3m7pLlp8NoQAxYUUbftgABatNOuPzNnRh
+ nFGcF345rtT+y5LlMU/PPajrz1crlQv82C79eWKcdRPue/rfQFkbJ1iniuNOFPXkQ+aMWCU
+ VX+gD2p6lVWxttOseUhzA==
+UI-OutboundReport: notjunk:1;M01:P0:NqMDQeZ0dwY=;T2pOs7OeULQAguNA9usaI6xaFqM
+ 4vCrI2hHUwH7+38dwDt8IM/G1OYZic062fuk27MXLOzR3jaDUCBqYRjHqPEBp25vxH4zNuRiQ
+ QCM+GdqPnNPkPOjR4OP3lg/Av5ynhpA4AUAVIewcY/pGeET2smtIX7e70UFsUEdiz97n2wSFe
+ jWL0mLsDB60LbgIr3pBymlfBBIGY7ymC9WuaDzMrhPFbjYi8bqQPVSmMXrkGZvk0+NeNGJ+je
+ qwAMHy3HPnImwruXp/7EbZUnnEzMgd7RxBvnSyFI33B6iIulf/WApJcdeCUYdJy6k3WlTz8kz
+ 0Y17UzFIUAbCTExbUs4J58JAoVQzdMdgPQIFTaag49ePD+NVT9LHK6GowJpEu5yQO66DA3wyk
+ vsJuXnYzv3ceyryUkqWPv20WeJcrj1o7KXa2r3ZlQuVnc9/SMsocT1RwzUq4aonySjZSobW5u
+ 2fXVQYaTNp5pAZQJfuAuEbgsXe4Ddnk7pb8jmYUGJkN8VLBmgCjmcJL5oucjGowKAqHFeSLzP
+ SXIW5PtFLaWaoww2YLmeW8/vRGNIztthhnBJTW2LPsvlmJ6Eid59L336rd/lKktz+xojsvLBR
+ vclo1nlQgrloQst5MD+HnPsQ3JeyPfQtQZUE8Octg4cU3cyOGcuA2yG/o2qxXd397PT+ZisZ3
+ 6lVNH5X2n6Helyibrew/sEdnSGenLf4EI+LJFOHiO/2i/9zPvdBud1L4p2zAhrzcKzrW3bXnO
+ Ge1yLYPJPC70hyoJ3zpCV31Qjipq/w2BsKchdrQp3sogwtxk44NszHSZq8mnyaAtromqYqNCT
+ XB1QylVqZv1h6QD1c7MQm3nFfZdEronREeG3TFwbZPI+nzoFWT0m/zJyt6FsTno5/SAqen45X
+ m0GJ9sI7i18QLof6ZhcDLOBvZ2s/+oSPZBFBv9c1TmUZpozw61L53Cx15jVEWTYGNL7fWX+ss
+ ONi7jw==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+--ijRhWXEzdUKaiJe1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 10.04.2023 15:59, Devi Priya wrote:
-> Add initial device tree support for Qualcomm IPQ9574 SoC and
-> Reference Design Platform(RDP) 433 which is based on IPQ9574
-> family of SoCs
-> 
-> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-> Co-developed-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
-> Signed-off-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
-> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> ---
+On Wed, Apr 12, 2023 at 01:34:20PM -0700, Stephen Boyd wrote:
+> Quoting Jonathan Neusch=C3=A4fer (2023-04-12 12:13:56)
+> > Hi,
+> >=20
+> > On Fri, Dec 09, 2022 at 12:21:17PM -0800, Stephen Boyd wrote:
+> > > Quoting Jonathan Neusch=C3=A4fer (2022-11-04 09:18:47)
+> > > > The Nuvoton WPCM450 SoC has a combined clock and reset controller.
+> > > > Add a devicetree binding for it, as well as definitions for the bit
+> > > > numbers used by it.
+> > > >=20
+> > > > Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+> > > > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > > > ---
+> > >=20
+> > > Applied to clk-next
+> >=20
+> > I don't see this patch in clk/linux.git's clk-next branch. Did it get
+> > lost somehow?
+> >=20
+>=20
+> Must have gotten lost. I don't see it in my branch history locally.
+> Resend?
 
-> +	soc: soc@0 {
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0 0 0 0xffffffff>;
-this is equal to:
+Will do.
 
-ranges;
+Thanks,
+Jonathan
 
-Could you fix that up when applying, Bjorn, should there be
-no other issues?
+--ijRhWXEzdUKaiJe1
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+-----BEGIN PGP SIGNATURE-----
 
-Konrad
+iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmQ3IYAACgkQCDBEmo7z
+X9v0qA//ZCyWw17Vh1uj88edHIAvM13FiSkcbtje9SXoTMnffVwvHTaP5fh82Zs0
+RJ7zJy080xBuP5dpeNcFKwNy+lv8XULtk3Y1ACzQjsZZRWUf37VEcaKZuuE9cjNJ
+QjArNXSqv0PVk0DJAcSCGOrJe11A51whZy8Tv/vF+67nu6QjFaGKFAtuG9RMtYLm
+5trTn96XKvFAOwckwzQe4FMLMLxXsHnsOk0G2fMj+jVoEDrMW9iC603lAIMqOCFJ
+ODk+NlA5IpDBFC/Z+yayafGX9YVuoMlOimWvSxKWh313uD84EfgDfuoEhM3MwSzZ
+c02XfSNQaWdMwFA93sj5Zw0Ar5wxDDuDxUkCTRH4PQo6RNSItsly8NfwnRKypysd
+140br+efe14Gv67Z37Z2XhfYLd64B7fjRJhz9ukqi8cOrS/eQlapCK5JASnFzJdZ
+f5HCXDNHF41HBL4r+hWgXsTCrB82N3jjGBptqr+qs9i7ZNKxxMKqy0NjTbAa2SzS
+4WMEib4xX3fuELGor6g2NoKrftduQ2uHKmdT9kPo+PdtHh/gp4l7yIvSmKZPqqJy
+oYnYWN+Yo/LkIV1mgXpLSzZTLuW0iyKv0iUM9N8jXRm4wQWfO0VjCpj69pk/26zq
+QEsxsPNA3UYQzMcO8vIOMbYJ8X5LGVK393TvACKt0TBodX4k2dA=
+=EKxn
+-----END PGP SIGNATURE-----
 
-> +
-> +		tlmm: pinctrl@1000000 {
-> +			compatible = "qcom,ipq9574-tlmm";
-> +			reg = <0x01000000 0x300000>;
-> +			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			gpio-ranges = <&tlmm 0 0 65>;
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +
-> +			uart2_pins: uart2-state {
-> +				pins = "gpio34", "gpio35";
-> +				function = "blsp2_uart";
-> +				drive-strength = <8>;
-> +				bias-disable;
-> +			};
-> +		};
-> +
-> +		gcc: clock-controller@1800000 {
-> +			compatible = "qcom,ipq9574-gcc";
-> +			reg = <0x01800000 0x80000>;
-> +			clocks = <&xo_board_clk>,
-> +				 <&sleep_clk>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>;
-> +			#clock-cells = <1>;
-> +			#reset-cells = <1>;
-> +			#power-domain-cells = <1>;
-> +		};
-> +
-> +		sdhc_1: mmc@7804000 {
-> +			compatible = "qcom,ipq9574-sdhci", "qcom,sdhci-msm-v5";
-> +			reg = <0x07804000 0x1000>, <0x07805000 0x1000>;
-> +			reg-names = "hc", "cqhci";
-> +
-> +			interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "hc_irq", "pwr_irq";
-> +
-> +			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
-> +				 <&gcc GCC_SDCC1_APPS_CLK>,
-> +				 <&xo_board_clk>;
-> +			clock-names = "iface", "core", "xo";
-> +			non-removable;
-> +			status = "disabled";
-> +		};
-> +
-> +		blsp1_uart2: serial@78b1000 {
-> +			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-> +			reg = <0x078b1000 0x200>;
-> +			interrupts = <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&gcc GCC_BLSP1_UART3_APPS_CLK>,
-> +				 <&gcc GCC_BLSP1_AHB_CLK>;
-> +			clock-names = "core", "iface";
-> +			status = "disabled";
-> +		};
-> +
-> +		intc: interrupt-controller@b000000 {
-> +			compatible = "qcom,msm-qgic2";
-> +			reg = <0x0b000000 0x1000>,  /* GICD */
-> +			      <0x0b002000 0x2000>,  /* GICC */
-> +			      <0x0b001000 0x1000>,  /* GICH */
-> +			      <0x0b004000 0x2000>;  /* GICV */
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			interrupt-controller;
-> +			#interrupt-cells = <3>;
-> +			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-> +			ranges = <0 0x0b00c000 0x3000>;
-> +
-> +			v2m0: v2m@0 {
-> +				compatible = "arm,gic-v2m-frame";
-> +				reg = <0x00000000 0xffd>;
-> +				msi-controller;
-> +			};
-> +
-> +			v2m1: v2m@1000 {
-> +				compatible = "arm,gic-v2m-frame";
-> +				reg = <0x00001000 0xffd>;
-> +				msi-controller;
-> +			};
-> +
-> +			v2m2: v2m@2000 {
-> +				compatible = "arm,gic-v2m-frame";
-> +				reg = <0x00002000 0xffd>;
-> +				msi-controller;
-> +			};
-> +		};
-> +
-> +		timer@b120000 {
-> +			compatible = "arm,armv7-timer-mem";
-> +			reg = <0x0b120000 0x1000>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			ranges;
-> +
-> +			frame@b120000 {
-> +				reg = <0x0b121000 0x1000>,
-> +				      <0x0b122000 0x1000>;
-> +				frame-number = <0>;
-> +				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-> +					     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-> +			};
-> +
-> +			frame@b123000 {
-> +				reg = <0x0b123000 0x1000>;
-> +				frame-number = <1>;
-> +				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@b124000 {
-> +				reg = <0x0b124000 0x1000>;
-> +				frame-number = <2>;
-> +				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@b125000 {
-> +				reg = <0x0b125000 0x1000>;
-> +				frame-number = <3>;
-> +				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@b126000 {
-> +				reg = <0x0b126000 0x1000>;
-> +				frame-number = <4>;
-> +				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@b127000 {
-> +				reg = <0x0b127000 0x1000>;
-> +				frame-number = <5>;
-> +				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@b128000 {
-> +				reg = <0x0b128000 0x1000>;
-> +				frame-number = <6>;
-> +				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-> +				status = "disabled";
-> +			};
-> +		};
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-> +	};
-> +};
+--ijRhWXEzdUKaiJe1--
