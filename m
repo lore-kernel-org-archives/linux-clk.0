@@ -2,105 +2,100 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59493C77B6E
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Apr 2023 14:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D06FC77B6E
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Apr 2023 14:53:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230156AbjDLODv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Apr 2023 10:03:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36318 "EHLO
+        id S229907AbjDLOxQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Apr 2023 10:53:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbjDLODt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2023 10:03:49 -0400
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4584E49;
-        Wed, 12 Apr 2023 07:03:46 -0700 (PDT)
-Received: by mail-oi1-f174.google.com with SMTP id w13so28323187oik.2;
-        Wed, 12 Apr 2023 07:03:46 -0700 (PDT)
+        with ESMTP id S229626AbjDLOxQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2023 10:53:16 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD963A3
+        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2023 07:53:14 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id h12so10114749lfj.8
+        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2023 07:53:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1681311193; x=1683903193;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vo0PVdHC7kP43WA73kPUfBUKoSLqf85EiM6RS5+7abY=;
+        b=IO4AXact9XduaF0D+qwBwd49iBb3FQ/YCz4SFI8z2YIai6VApG1qyRZXQaSTX9Fp4B
+         sKiHxQfUrdKE2/cqiuSMc0b3by1vRC07q50R1Y9z1KMowYEBNpgiwRpu6vZYmFaI/Vz/
+         hgSspkbfkhc9XDzARqqeU1Co3txq5EVFTam6A9KH++L7z1UJD61VxNLGt2QvxhZYxBz3
+         AThHeOHUEuUwJSbZlPBeE7Ce0fzMwppSvc0iv5ojVXg/FICpdIgqJsVeEyW0ahFgc0xx
+         jZRa4T/p5EWzxRgAcp/t8KwNWUYX+RlNzox/iprORYwWkA6VPoFlk7N5GKgsU0uzDRm2
+         L9eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681308226; x=1683900226;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XkKJbGcmCESOp5kGHyfKWXGMOOU/ouU4bAVhUJXQjqA=;
-        b=tl+5V09PvydyydndoVI67mjeSLhi3IhyuMMHX1eOjbKuOiKOfx4DWPvA0kmzJeOgQJ
-         LuW424x8hiu8YeTMSbZ9vhzsUsRR1jEpVHCuUSkbq0izVzrq78RDWOoGbt+Uctgx2/K5
-         GAmL4akCjBT7e2RfaXschMyXnNoizx0u1duPb0N1qpL2b0kEKSuVJZjiV1GJUJVnQrmu
-         0vz7SDptp6uG6/UMhlQQ2UdsTtXG+zWF/UW4p40vC+FoevH5Y7h0Zcp31IYYC5WjuwzK
-         LZU6nzpNP/aVue3TQAbQEvesJc9AeN7AhTf5kI0yetFR1N9F5hE2UJRyrGaD+kGPWBix
-         iJog==
-X-Gm-Message-State: AAQBX9em0ZNGAMXv2eacSULwseyAH/s04gBKXdlaJZUFq4hnFCpDctqF
-        8SBkyVvmOn+h+9ObTfaMZQ==
-X-Google-Smtp-Source: AKy350Y4tWN4Ri2Yf9zEZz08i2glwRo8Dr90/wmyCM6hmihMUWaqoNcTtQG0LOp2GloTALjDW2dmog==
-X-Received: by 2002:a05:6808:352:b0:38b:a4f9:2570 with SMTP id j18-20020a056808035200b0038ba4f92570mr3031262oie.16.1681308225748;
-        Wed, 12 Apr 2023 07:03:45 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id p5-20020a4a95c5000000b0053a7aaa85a0sm7063881ooi.0.2023.04.12.07.03.44
+        d=1e100.net; s=20210112; t=1681311193; x=1683903193;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vo0PVdHC7kP43WA73kPUfBUKoSLqf85EiM6RS5+7abY=;
+        b=nplkXgqfgOVCTH3uKjEUob3AOsvE+x8JWCvB5VSrJQNMH7HrzfGnSkysyAkywxHF8j
+         cZ/kQWaA1wUlvBINAA+NMO3T3VIvvIwKiAi6y3/8I4cEiabGgMsL5wvWsVMCjZ/G11qZ
+         HqMgO+xllyimT0HKoLliQVGG+vHT1GoQ9mOxMZvRQps4Pxkaw5Ff4uDE6+Nl5UrWe8CB
+         X6NDwhDicT1XwSCjg9gnkpfmHCCgNq3XUB0diDQWkpQKcN4K2/0E0ZG6YYbU9VDhMgda
+         7WgCtr7Q3j46+zRmTUyYXs4Dt14z7tf2XoqTRLyFPEsar2J8xa7qpXZEIvKRUjpLYQr4
+         OQCA==
+X-Gm-Message-State: AAQBX9dQDS9uN3C+DmTABlTofim+jkgAHBm26vvLSNlItJ2UmZDRGTNP
+        tmH36/Qb3pjUwQVs0FTwnmgnow==
+X-Google-Smtp-Source: AKy350aryqi+RuV9ljHi+CiqeqROnOEaSpFLworokp2d3dRVTqbHuPLuSNQpo7lLT4JuNVeqQaf5VA==
+X-Received: by 2002:ac2:418a:0:b0:4eb:2d47:603 with SMTP id z10-20020ac2418a000000b004eb2d470603mr3524825lfh.47.1681311192963;
+        Wed, 12 Apr 2023 07:53:12 -0700 (PDT)
+Received: from [192.168.1.101] (abxj23.neoplus.adsl.tpnet.pl. [83.9.3.23])
+        by smtp.gmail.com with ESMTPSA id w5-20020ac24425000000b004e95f1c9e7dsm3015367lfl.78.2023.04.12.07.53.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Apr 2023 07:03:45 -0700 (PDT)
-Received: (nullmailer pid 2248174 invoked by uid 1000);
-        Wed, 12 Apr 2023 14:03:44 -0000
-Date:   Wed, 12 Apr 2023 09:03:44 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Niko Pasaloukos <nikolaos.pasaloukos@blaize.com>
-Cc:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "soc@kernel.org" <soc@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        James Cowgill <james.cowgill@blaize.com>,
-        Matt Redfearn <matthew.redfearn@blaize.com>,
-        Neil Jones <neil.jones@blaize.com>
-Subject: Re: [PATCH 5/5] arm64: Add initial support for Blaize BLZP1600 CB2
-Message-ID: <20230412140344.GA2234522-robh@kernel.org>
-References: <20230406102149.729726-1-nikolaos.pasaloukos@blaize.com>
- <20230406102149.729726-6-nikolaos.pasaloukos@blaize.com>
+        Wed, 12 Apr 2023 07:53:12 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH 0/3] QCM2290 dispcc fixups
+Date:   Wed, 12 Apr 2023 16:53:04 +0200
+Message-Id: <20230412-topic-qcm_dispcc-v1-0-bf2989a75ae4@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230406102149.729726-6-nikolaos.pasaloukos@blaize.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANDFNmQC/x2N0QqDMAwAf0XyvEDtZKC/MmS0aZwBV2vjxkD89
+ 4U93sFxByhXYYWhOaDyR1TWbNBeGqA55CejJGPwzl9d13rc1yKEG70eSbQQ4dTdKCYOHHsHlsW
+ gjLGGTLOF+b0sJkvlSb7/z308zx9Qoh0UdwAAAA==
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Loic Poulain <loic.poulain@linaro.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1681311191; l=639;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=3pZCCb38mF6dE6fGvbscnrKT4drmGOehX7gKEqn0iY8=;
+ b=vYBbHNflqlhC9OjbffvWz7vSYZc7FAEIPLGCRDfUV8bc8j+/qXj1oyJSQeNY8xV2iG5Qc/V9L35X
+ HF0hXTgXAh89Q1wW8RoJHXlP1dKvROOiYLpzVWsML1/ZXBnDAuJH
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Apr 06, 2023 at 10:22:32AM +0000, Niko Pasaloukos wrote:
-> Adds support for the Blaize CB2 development board based on
-> BLZP1600 SoC. This consists of a Carrier-Board and a SoM.
-> 
-> The blaize-blzp1600.dtsi is the common part for the SoC,
-> blaize-blzp1600-som.dtsi is the common part for the SoM and
-> blaize-blzp1600-som-cb2.dts is the board specific file.
-> 
-> Co-developed-by: James Cowgill <james.cowgill@blaize.com>
-> Signed-off-by: James Cowgill <james.cowgill@blaize.com>
-> Co-developed-by: Matt Redfearn <matt.redfearn@blaize.com>
-> Signed-off-by: Matt Redfearn <matt.redfearn@blaize.com>
-> Co-developed-by: Neil Jones <neil.jones@blaize.com>
-> Signed-off-by: Neil Jones <neil.jones@blaize.com>
-> Signed-off-by: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
-> ---
->  arch/arm64/Kconfig.platforms                  |   5 +
->  arch/arm64/boot/dts/Makefile                  |   1 +
->  arch/arm64/boot/dts/blaize/Makefile           |   2 +
->  .../dts/blaize/blaize-blzp1600-som-cb.dtsi    | 217 +++++
->  .../dts/blaize/blaize-blzp1600-som-cb2.dts    | 103 ++
->  .../boot/dts/blaize/blaize-blzp1600-som.dtsi  | 104 ++
->  .../boot/dts/blaize/blaize-blzp1600.dtsi      | 894 ++++++++++++++++++
->  arch/arm64/configs/defconfig                  |   1 +
->  8 files changed, 1327 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/blaize/Makefile
->  create mode 100644 arch/arm64/boot/dts/blaize/blaize-blzp1600-som-cb.dtsi
->  create mode 100644 arch/arm64/boot/dts/blaize/blaize-blzp1600-som-cb2.dts
->  create mode 100644 arch/arm64/boot/dts/blaize/blaize-blzp1600-som.dtsi
->  create mode 100644 arch/arm64/boot/dts/blaize/blaize-blzp1600.dtsi
+I noticed some very msm-downstream-y bugs in the QCM2290 dispcc..
+Let's fix them up..
 
-New platforms should be free of warnings from 'make dtbs_check'. Please 
-run and fix if you have not, and confirm that in the commit message.
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+Konrad Dybcio (3):
+      clk: qcom: dispcc-qcm2290: Fix BI_TCXO_AO handling
+      clk: qcom: dispcc-qcm2290: Remove inexistent DSI1PHY clk
+      clk: qcom: dispcc-qcm2290: Fix GPLL0_OUT_DIV handling
 
-Rob
+ drivers/clk/qcom/dispcc-qcm2290.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+---
+base-commit: 7d8214bba44c1aa6a75921a09a691945d26a8d43
+change-id: 20230412-topic-qcm_dispcc-f46cbdeaeb90
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@linaro.org>
+
