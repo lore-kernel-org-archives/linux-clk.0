@@ -2,102 +2,88 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B685C77B73
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Apr 2023 15:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F8CC77B6E
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Apr 2023 16:26:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230122AbjDLP0f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Apr 2023 11:26:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55688 "EHLO
+        id S229832AbjDLQ0n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Apr 2023 12:26:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230341AbjDLP0c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2023 11:26:32 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 565A0127
-        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2023 08:25:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1681313141;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=qYKh8FdFO1QSNtMcyFw/EOs8sZAgGQFCkTPMptXscZI=;
-        b=LCT6qXQen4l3PCm5oF41Fo3TR6zlUWCO6LdSt0XDiFvsoHy9ZTMlC7i7sVJGtlm29DNzqI
-        AJlPDxMfiQAIPl+awXOxCz3jvDcnzdHULqDjMbLLKhUXDLvllhyzXPhALxnndBxGK2tjvf
-        1tm5ODM61BIZSIdE8OtjFhGePK5uqV8=
-Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com
- [209.85.219.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-63-_zRTNEMxNpW8YYYAixzByA-1; Wed, 12 Apr 2023 11:25:40 -0400
-X-MC-Unique: _zRTNEMxNpW8YYYAixzByA-1
-Received: by mail-yb1-f198.google.com with SMTP id b124-20020a253482000000b00b8f1b9d74ecso6574233yba.18
-        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2023 08:25:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681313139;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qYKh8FdFO1QSNtMcyFw/EOs8sZAgGQFCkTPMptXscZI=;
-        b=2RKTnsDWwA9ktzTMB1LFoImrYFeOwa0llzqHc8lpD4fntmyt5X8hIJ3jMs7cfag7S2
-         /mfzKGjVgijc0bUDb4sCsq00MA/gLvnKuoIz3ujpfKp8QoTZaeNlqT9+WEdqP1Sx3V3z
-         yy5zQYMzq1yw3BNcED/20fKHYVELbQVD/bfjP582XeEghnE9PWhVVj2vGu7FycUi5V4k
-         AILVTkj1GHD31fsxQi30EISpy9edYXIGHd51vhtoSeT+39QoySvN1clT2sMwYqMI9FRf
-         +T7IivgP10fepsko3ZCo/96hh56OcWtUoNwpiXhN0N8QNxStSjk7yqRT6qwcclGdhp/4
-         DwPQ==
-X-Gm-Message-State: AAQBX9eBlOu3Jt3tOnTSQeGy9m3SbM9N/qL+r8N1rAOPF+18+L1JMIxL
-        oYhPo8jaMC+rl1QXSBJ5PLaD28wnb7SzV+l2PjpTCIG+7GVO/uGAhrbA6sCeLKSFhj20YJ+CZlJ
-        ersxhI6EOgwAZl++eSj15bV+524Cd
-X-Received: by 2002:a0d:e543:0:b0:536:eace:3a77 with SMTP id o64-20020a0de543000000b00536eace3a77mr5537545ywe.40.1681313139014;
-        Wed, 12 Apr 2023 08:25:39 -0700 (PDT)
-X-Google-Smtp-Source: AKy350aQJ4oa7t3dVS8AqwS5Qn+O71awkukNvK/6B1mDWaGqRW2D1r9R25FsfDQKlgi+zts06ET0Cg==
-X-Received: by 2002:a0d:e543:0:b0:536:eace:3a77 with SMTP id o64-20020a0de543000000b00536eace3a77mr5537524ywe.40.1681313138788;
-        Wed, 12 Apr 2023 08:25:38 -0700 (PDT)
-Received: from x1 (c-73-214-169-22.hsd1.pa.comcast.net. [73.214.169.22])
-        by smtp.gmail.com with ESMTPSA id q63-20020a81b242000000b0054c0c9e4043sm4252004ywh.95.2023.04.12.08.25.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Apr 2023 08:25:38 -0700 (PDT)
-Date:   Wed, 12 Apr 2023 11:25:36 -0400
-From:   Brian Masney <bmasney@redhat.com>
-To:     Andrew Halaney <ahalaney@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, richardcochran@gmail.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, netdev@vger.kernel.org,
-        echanude@redhat.com, ncai@quicinc.com, jsuraj@qti.qualcomm.com,
-        hisunil@quicinc.com
-Subject: Re: [PATCH v4 0/3] Add EMAC3 support for sa8540p-ride
- (devicetree/clk bits)
-Message-ID: <ZDbNcDGIbJrm/x6L@x1>
-References: <20230411202009.460650-1-ahalaney@redhat.com>
+        with ESMTP id S229492AbjDLQ0m (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2023 12:26:42 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A49DEB9
+        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2023 09:26:41 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pmdIu-00032w-1i; Wed, 12 Apr 2023 18:26:40 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pmdIt-00AmN5-5A; Wed, 12 Apr 2023 18:26:39 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1pmdIs-00Cep5-8P; Wed, 12 Apr 2023 18:26:38 +0200
+Date:   Wed, 12 Apr 2023 18:26:38 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Russell King <linux@armlinux.org.uk>
+Cc:     linux-clk@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH] clk: Fix a typo "opereation" -> "operation"
+Message-ID: <20230412162638.cgw42il3gc4os6ja@pengutronix.de>
+References: <20230215083701.124786-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="764rucbsjgpjk4cs"
 Content-Disposition: inline
-In-Reply-To: <20230411202009.460650-1-ahalaney@redhat.com>
-User-Agent: Mutt/2.2.7 (2022-08-07)
+In-Reply-To: <20230215083701.124786-1-u.kleine-koenig@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Apr 11, 2023 at 03:20:06PM -0500, Andrew Halaney wrote:
-> This is a forward port / upstream refactor of code delivered
-> downstream by Qualcomm over at [0] to enable the DWMAC5 based
-> implementation called EMAC3 on the sa8540p-ride dev board.
-> 
-> From what I can tell with the board schematic in hand,
-> as well as the code delivered, the main changes needed are:
-> 
->     1. A new address space layout for dwmac5/EMAC3 MTL/DMA regs
->     2. A new programming sequence required for the EMAC3 base platforms
-> 
-> This series addresses the devicetree and clock changes to support this
-> hardware bringup.
-> 
-> As requested[1], it has been split up by compile deps / maintainer tree.
-> The associated v4 of the netdev specific changes can be found at [2].
-> Together, they result in the ethernet controller working for
-> both controllers on this platform.
 
-Looks good to me!
+--764rucbsjgpjk4cs
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Tested-by: Brian Masney <bmasney@redhat.com>
+Hello Russell,
 
+On Wed, Feb 15, 2023 at 09:37:01AM +0100, Uwe Kleine-K=F6nig wrote:
+> While touching that comment also add an article and a full stop at the end
+> of the sentence
+>=20
+> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+
+I received no feedback on this patch. Is the patch system the right
+place to submit this driver? Or is this supposed to go via the clk tree
+with your ack?
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--764rucbsjgpjk4cs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmQ2270ACgkQj4D7WH0S
+/k414Af/bD5T/ek5bHpqN4HJlC2Uf8F4llMKsDg2ZfFUUtahm4or1xSO0P3RW8sd
+8xKdSUZc+IvRnZRDZ8IOxCFM3yJ/375KkR2U2rc29r9YUJyRVfP1aogu7wHkrR/0
+JMasCt46a9ZkTvWzFYx8Hl7z+xldT2POSSBJBNXPgjHaE3pdxDfseYTH/5yEJQgh
+ewLOFpA0ctc1JELtnPeKDkSGbmH8QoxVRAVoNjh+QLGy4oKF1O6kYcQSzlJEsxnh
+Vh/sYUwir/1xm7BJ60MNAcV3z7bsT1WB9maDJWrueu0yfM47SrquCOzCj7RkmW4X
+UpgNzDDf4fPsTwgm0ehQqdTNAShPdw==
+=zYxv
+-----END PGP SIGNATURE-----
+
+--764rucbsjgpjk4cs--
