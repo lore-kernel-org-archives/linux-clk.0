@@ -2,91 +2,162 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD52DC77B6E
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Apr 2023 11:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 847BCC7619A
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Apr 2023 13:23:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229685AbjDLLud (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Apr 2023 07:50:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56700 "EHLO
+        id S231548AbjDLNXk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Apr 2023 09:23:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229602AbjDLLu2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2023 07:50:28 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79C9861B2
-        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2023 04:50:19 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id l26-20020a05600c1d1a00b003edd24054e0so7852042wms.4
-        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2023 04:50:19 -0700 (PDT)
+        with ESMTP id S230194AbjDLNXT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2023 09:23:19 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26E7AF1
+        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2023 06:22:52 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id ud9so28601864ejc.7
+        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2023 06:22:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1681300218; x=1683892218;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JzlTWhv62VaZiRKLsbAHxTcR/RMyd3VLsnHpLPYjrZ0=;
-        b=HITWWXT1ZzgwSMkiDkpU3WdtyXJc4v0U9neVhd181NDfHOUczICq3WXhblylRXoyzu
-         Jpllv9hABzVEP4o6rQaXal1iPTHlN4SdKPrmPIuyDHqJ3JA+O7GhBUNnKR9kwIpuc345
-         U4T4N/hGTsDpfB+06tBUdnUZHCfOgK90gGvXaL2v93gv7ekDQfyL4vntnNkLwtoRkbYY
-         8xzJGAyrcX/Wj38O/dGgEhp2P1FJi6bBoZpEHLH2giOWTRkRbLshk/j5eHoxwJRX/tGo
-         l2GHDoeAVvBCn3Nwlf3DNtEffGNKsUHWQhobjc1kJVWQj58C10D/v0Mzt2uXvH2Eievc
-         LL/w==
+        d=linaro.org; s=google; t=1681305768; x=1683897768;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RltCn4YUT7RCxDnBevIyhwMQuU2SIbRp5f9zMV5Sv38=;
+        b=oJwrggjQyBcBt2mLYzHpfAF7i+mxFiLq1Mpirouy+E/X0TAzG02bnlP4Xl+3otboYq
+         rOW/j+zA6IIz8vD+403FKll3p0eLCMoo0s2zW2VkuKpHoky0B3Xbc4AVKe/dQEpFcm32
+         PiaCE46mgpOZKyGsBTJoGPLMDFNnJ3PfrNDs0bVlMDDdvdcmpene550CpXpkQ89ZGkaN
+         1saQFtKwQAKXOYq9kLn/ibQxy9BH081x2K6KWPjQNVc/YcdpaZ2jUh0w9ZqAA58ZFiKA
+         GnEjw8t6NCM9eLRd2QmsILwV+ST9F1RrtR7+1hNVTpIY0CWt9mZMaHzKYVs1eb8V20V7
+         xDgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681300218; x=1683892218;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JzlTWhv62VaZiRKLsbAHxTcR/RMyd3VLsnHpLPYjrZ0=;
-        b=0YfpVqSMrgH/0F5Ao4YohJMzI6E4ESTMRvXn5yeNuREAUBzGfa0ze/xaU38yf/m066
-         BdMe3lDuMcTvYMtligtWewBUNavUlwR0bXFSrsy90+0cCYky36E8Bft6QrONPDOUDD6m
-         AAcDm9mq0nxegO3pDTi1sg0lWIMemlbZ3ep734q3ngBad1nHBmYmj+JZnsJdg/1Bg7GU
-         g8oewwuxLSfgP33pdWBhTJm+IgOYKAPO3ft271oKBrJ/CkSlj0PflZQdCYMoU0wBAJZd
-         XO2MGdVW498oWCbmo/UygUGx8JaOaZkxznnpLGRQOyE4Wt0D4Rm0fmnXj6seC4s1y+Uq
-         PA2A==
-X-Gm-Message-State: AAQBX9d6/QquwntUyWYJNHEjTr8Jb+1+Ls+sXojeKft8YGWh+HnSmA8g
-        W6yk7vtRToXFXt27o6WfZlfgvg==
-X-Google-Smtp-Source: AKy350ZoKAMx3Ue6bjpGi/c1fA/CMA+3bO7CJPgucbkUmBjCfM2fVW6GejBg7uF/c/JaGaaF/y1McQ==
-X-Received: by 2002:a7b:cb86:0:b0:3ed:cf2a:3fe8 with SMTP id m6-20020a7bcb86000000b003edcf2a3fe8mr12684691wmi.8.1681300217907;
-        Wed, 12 Apr 2023 04:50:17 -0700 (PDT)
-Received: from [192.168.1.172] (158.22.5.93.rev.sfr.net. [93.5.22.158])
-        by smtp.gmail.com with ESMTPSA id n20-20020a05600c4f9400b003ed51cdb94csm2189863wmq.26.2023.04.12.04.50.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Apr 2023 04:50:17 -0700 (PDT)
-Message-ID: <aabc8050-2bf2-131a-6ce7-5b9580ff86b2@baylibre.com>
-Date:   Wed, 12 Apr 2023 13:50:16 +0200
+        d=1e100.net; s=20210112; t=1681305768; x=1683897768;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RltCn4YUT7RCxDnBevIyhwMQuU2SIbRp5f9zMV5Sv38=;
+        b=D8wlUOoGO+jmwcnYSHk1YFEDTBBdbDhMl24E6Rk3bQKS4pifUerzkzjhjnmUyCmvhw
+         OSDAiXUwHnne2UdzqHfoaJV60TyBg4+OtR/hR97zdl0nptT6vUvyB9mQs510e+Mz7Erx
+         R9InDWiadMr6ksVOI2Y/RATS5YsxpSHKURIkxC1d1ZcAk1CM4hQhjLd2dIkPWcdoGDIk
+         BV8vxTG4iJ2cNNWUciGK/mRG8uJ5K+4N1TjMpHtOQx0l8Uadby7HCJhS+EQrAx/oqjNu
+         V/WXOOiY1Xc/MCJr6aCCc8EtXtpC4HwyujmfnF7c3C9yZ33wUtcAaGKbiH3qeR6XxBU9
+         aDyw==
+X-Gm-Message-State: AAQBX9eoBC7efrCp2nIHVbuDsfZfWYcabNvd08R84Zb1GJqW0LRVgiq4
+        3HupVGqGJLnkRztOvkfwYcXdO+YvdWZSFpiqx5U=
+X-Google-Smtp-Source: AKy350ZlPNmI2nk6q0LkOGaoiAINrP7ST/oN8cxvmAfyq2lpEbXEs7WyioeCtEeM99j5Z8R9hYZOkA==
+X-Received: by 2002:a17:906:70cf:b0:939:e870:2b37 with SMTP id g15-20020a17090670cf00b00939e8702b37mr16048317ejk.70.1681305768583;
+        Wed, 12 Apr 2023 06:22:48 -0700 (PDT)
+Received: from localhost.localdomain ([82.79.186.233])
+        by smtp.gmail.com with ESMTPSA id hp39-20020a1709073e2700b0094e621086c8sm648189ejc.106.2023.04.12.06.22.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Apr 2023 06:22:48 -0700 (PDT)
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] clk: imx: Updates for v6.4
+Date:   Wed, 12 Apr 2023 16:22:43 +0300
+Message-Id: <20230412132243.3849779-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH] clk: mediatek: clk-mt7986-infracfg: delete the code
- related to 'base'
-Content-Language: en-US
-To:     Xinyi Hou <Y_Ashley@163.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     Dongliang Mu <dzm91@hust.edu.cn>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <20230407083729.31498-1-Y_Ashley@163.com>
-From:   Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <20230407083729.31498-1-Y_Ashley@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 07/04/2023 10:37, Xinyi Hou wrote:
-> In clk_mt7986_infracfg_probe(), 'base' is allocated but never used,
-> either not released on both success failure path.
-> 
-> Fix this by deleting 'base' and the code related to it.
-> 
-> Signed-off-by: Xinyi Hou<Y_Ashley@163.com>
-> Reviewed-by: Dongliang Mu<dzm91@hust.edu.cn>
+The following changes since commit fe15c26ee26efa11741a7b632e9f23b01aca4cc6:
 
-Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
+  Linux 6.3-rc1 (2023-03-05 14:52:03 -0800)
 
--- 
-Regards,
-Alexandre
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.4
+
+for you to fetch changes up to 8a05f5cccdbe851265bf513643ada48c26b1267f:
+
+  clk: imx: imx8ulp: update clk flag for system critical clock (2023-04-09 17:12:49 +0300)
+
+----------------------------------------------------------------
+i.MX clocks changes for 6.4
+
+- Add clock generic devm_clk_hw_register_gate_parent_data.
+- Add audiomix block control for i.MX8MP.
+- Add support for determine_rate to composite-8m.
+- Add new macro for composite-8m to allow custom flags.
+- Let the LCDIF Pixel clock of i.MX8MM and i.MX8MN set parent rate.
+- Provide clock name in error message for clk-gpr-mux on get parent
+  failure.
+- Drop duplicate imx_clk_mux_flags macro.
+- Register the i.MX8MP Media Disp2 Pix clock as bus clock.
+- Add Media LDB root clock to i.MX8MP.
+- Make i.MX8MP nand_usdhc_bus clock as non-critical.
+- Fix the rate table for fracn-gppll.
+- Disable HW control for the fracn-gppll in order to be controlled by
+  register write.
+- Add support for interger PLL in fracn-gppll.
+- Add mcore_booted module parameter to i.MX93 provider.
+- Add NIC, A55 and ARM PLL clocks to i.MX93.
+- Fix i.MX8ULP XBAR_DIVBUS and AD_SLOW clock parents.
+- Use "divider closest" clock type for PLL4_PFD dividers on i.MX8ULP to
+  get more accurate clock rates.
+- Mark the MU0_Bi and TPM5 clocks on i.MX8ULP as critical.
+- Update some of the critical clocks flags to allow glitchless
+  on-the-fly rate change.
+
+----------------------------------------------------------------
+Adam Ford (4):
+      clk: imx: composite-8m: Add support to determine_rate
+      clk: imx: Add imx8m_clk_hw_composite_flags macro
+      clk: imx8mm: Let IMX8MM_CLK_LCDIF_PIXEL set parent rate
+      clk: imx: Let IMX8MN_CLK_DISP_PIXEL set parent rate
+
+Haibo Chen (1):
+      clk: imx: imx8mp: change the 'nand_usdhc_bus' clock to non-critical
+
+Jacky Bai (5):
+      clk: imx: fracn-gppll: Add 300MHz freq support for imx9
+      clk: imx: imx8ulp: Add divider closest support to get more accurate clock rate
+      clk: imx: imx8ulp: keep MU0_B clock enabled always
+      clk: imx: imx8ulp: Add tpm5 clock as critical gate clock
+      clk: imx: imx8ulp: update clk flag for system critical clock
+
+Liu Ying (1):
+      clk: imx: imx8mp: Add LDB root clock
+
+Marek Vasut (3):
+      clk: Introduce devm_clk_hw_register_gate_parent_data()
+      clk: imx: imx8mp: Add audiomix block control
+      dt-bindings: clock: imx8mp: Add audiomix block control
+
+Peng Fan (10):
+      clk: imx: drop duplicated macro
+      clk: imx: imx8mp: correct DISP2 pixel clock type
+      dt-bindings: clock: imx8mp: Add LDB clock entry
+      clk: imx: fracn-gppll: fix the rate table
+      clk: imx: fracn-gppll: disable hardware select control
+      clk: imx: fracn-gppll: support integer pll
+      clk: imx: imx93: add mcore_booted module paratemter
+      dt-bindings: clock: imx93: add NIC, A55 and ARM PLL CLK
+      clk: imx: imx93: Add nic and A55 clk
+      clk: imx: imx8ulp: Fix XBAR_DIVBUS and AD_SLOW clock parents
+
+Stefan Wahren (1):
+      clk: imx: clk-gpr-mux: Provide clock name in error message
+
+ .../devicetree/bindings/clock/imx8mp-audiomix.yaml |  79 ++++++
+ drivers/clk/imx/Makefile                           |   2 +-
+ drivers/clk/imx/clk-composite-8m.c                 |   7 +
+ drivers/clk/imx/clk-composite-93.c                 |   8 +-
+ drivers/clk/imx/clk-fracn-gppll.c                  |  91 +++++--
+ drivers/clk/imx/clk-gpr-mux.c                      |   3 +-
+ drivers/clk/imx/clk-imx8mm.c                       |   2 +-
+ drivers/clk/imx/clk-imx8mn.c                       |   2 +-
+ drivers/clk/imx/clk-imx8mp-audiomix.c              | 277 +++++++++++++++++++++
+ drivers/clk/imx/clk-imx8mp.c                       |   5 +-
+ drivers/clk/imx/clk-imx8ulp.c                      |  34 +--
+ drivers/clk/imx/clk-imx93.c                        |  19 +-
+ drivers/clk/imx/clk.h                              |  23 +-
+ include/dt-bindings/clock/imx8mp-clock.h           |   4 +-
+ include/dt-bindings/clock/imx93-clock.h            |   6 +-
+ include/linux/clk-provider.h                       |  19 ++
+ 16 files changed, 535 insertions(+), 46 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+ create mode 100644 drivers/clk/imx/clk-imx8mp-audiomix.c
