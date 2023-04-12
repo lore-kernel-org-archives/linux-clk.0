@@ -2,125 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4342BC77B78
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Apr 2023 14:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B73CC77B6F
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Apr 2023 15:14:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229927AbjDLOxf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Apr 2023 10:53:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50614 "EHLO
+        id S229854AbjDLPOK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Apr 2023 11:14:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230088AbjDLOxU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2023 10:53:20 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09619729F
-        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2023 07:53:18 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id t20so15038761lfd.5
-        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2023 07:53:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681311196; x=1683903196;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QcBUTwrPn98Ub9uNAVdB99KXgqzNGzqHRdwuVwi4QY0=;
-        b=FTE84kV8JcYu5Uc3XNq6UbkUo6STYOeJDee4Oi0FFI5g2B7rq+su2i53iiAZCi/zoY
-         MA9UvPc0qtcz7w/pihTBVcZIW88OHfX89fkJyribV8Qc3k3NkO4Vizs2sQ4v8XLHnS+k
-         zpwIjJtXmBl6T4/73l56oUYq+9eNpd72crloZ9lyi/yGMFrgItAt1NSSFpTg7wk4cXgp
-         v5CMMJhj17eNhCX/UknNx2b4UrT/kfXkoaRoxKT+X4dd8YWF4QX5K27Olhc3PEM/s99M
-         pVKxRZ+H/TceYszlcwcOn9M2mzH4CdRUz9DTxD+XYCn36cnBgwMg2diHxsiWFC47+bKN
-         NGFA==
+        with ESMTP id S229612AbjDLPOJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2023 11:14:09 -0400
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09C5361AB;
+        Wed, 12 Apr 2023 08:14:07 -0700 (PDT)
+Received: by mail-oi1-f179.google.com with SMTP id ec6so1216399oib.8;
+        Wed, 12 Apr 2023 08:14:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681311196; x=1683903196;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QcBUTwrPn98Ub9uNAVdB99KXgqzNGzqHRdwuVwi4QY0=;
-        b=EkIZUzcifwSOdasu2bCu/orAUyI3CFYirM2xgCx/4a9D/o+N5/CTqMncnC2ZrvoM/R
-         lRHN6KIoO4SsXsGYkIilULnzt8RZ9V+Es5QTo6tQAxD/jB+bZ1IEsd/JbwwvHoJFscRu
-         j+22tYBPNExa6aEYoNzHsLxAwk9npLcRw6AEREKtHLe5XB5mToTVqDDCVSCczulTXsdW
-         mwPsrQKpaRCAjrhwgOuc+uZNvsWRyVdhj9zod7mInwdBIc+GFBhcxg8mLUeinVe9Cnjl
-         esdyfo6mtgQNRT40EEVNxx9v9QXg2t4HlxJ0phNEhiIJ/FmQk+CHQlJ4yQPsifij/RxS
-         alzg==
-X-Gm-Message-State: AAQBX9f/u8zYSk+zaY+GRH4JiN/dzhoe6FqH04brtedmTB0hfcofQInE
-        Hyay2hDnlPXXgaew8+7L0AepRw==
-X-Google-Smtp-Source: AKy350Y9FVP7ihnyoOGS8FPwJJAmnb/lbALdSo5FRLgLoL55Oom6+cjZTh74PqxMOAV+qZGCkInBNQ==
-X-Received: by 2002:ac2:51a6:0:b0:4ea:f8f0:545f with SMTP id f6-20020ac251a6000000b004eaf8f0545fmr3831047lfk.52.1681311196306;
-        Wed, 12 Apr 2023 07:53:16 -0700 (PDT)
-Received: from [192.168.1.101] (abxj23.neoplus.adsl.tpnet.pl. [83.9.3.23])
-        by smtp.gmail.com with ESMTPSA id w5-20020ac24425000000b004e95f1c9e7dsm3015367lfl.78.2023.04.12.07.53.15
+        d=1e100.net; s=20210112; t=1681312446; x=1683904446;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rLO2+mslMgJt7oEF3zMGiAxK8M13LsE3IAK5PmmHYrE=;
+        b=REdxege8GbEImPRAQkS0OO5WEFvoRRMAky64e292PwPk1rOkhZrx1h7GRC7ACLZfeV
+         JexmRqJTXAy1jugUzqRm1r8p8yrKRbKic6v8m95X0i2yk4o6bUV/OiMEH7dpf51WAFUU
+         gib6EQIRjIcDS/bBq0nX+wM8U1RzNwTM5ZLDEQwVgs3WcHC/Eo4bdNEmySGc0dBPZDIk
+         3VQP1IYyGiELonJTv+Hn8nwHR2abIVPPrj5pzG6lrzfwBTRtz32LqQWsSB+S3NRY7NSE
+         lPKNsAVr/0zFthKXhfDbHWls+VOuCT07PA0tQn8s7CgmF4errynLx8Twf8NDNKv/lDCD
+         WLfA==
+X-Gm-Message-State: AAQBX9fzxcqPx6I+5mmvtdVI82PhBiTAhewC6k1q/fnngy24heuWSPS0
+        LpZzPANnly3N3gNiVf8BVg==
+X-Google-Smtp-Source: AKy350Z/1Wya1b06p9v1jxp3a5/8Dsk/0yLxaZGXg6Xk+G947KmvJd2M/mU6HaijGWztsLvxUWZp1w==
+X-Received: by 2002:aca:d743:0:b0:386:9720:77da with SMTP id o64-20020acad743000000b00386972077damr6060729oig.26.1681312445919;
+        Wed, 12 Apr 2023 08:14:05 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id en12-20020a056808394c00b003898ebb8be0sm6699276oib.48.2023.04.12.08.14.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Apr 2023 07:53:16 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Wed, 12 Apr 2023 16:53:07 +0200
-Subject: [PATCH 3/3] clk: qcom: dispcc-qcm2290: Fix GPLL0_OUT_DIV handling
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230412-topic-qcm_dispcc-v1-3-bf2989a75ae4@linaro.org>
-References: <20230412-topic-qcm_dispcc-v1-0-bf2989a75ae4@linaro.org>
-In-Reply-To: <20230412-topic-qcm_dispcc-v1-0-bf2989a75ae4@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        Wed, 12 Apr 2023 08:14:05 -0700 (PDT)
+Received: (nullmailer pid 2446977 invoked by uid 1000);
+        Wed, 12 Apr 2023 15:14:04 -0000
+Date:   Wed, 12 Apr 2023 10:14:04 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Patrick Delaunay <patrick.delaunay@foss.st.com>
+Cc:     Alexandre TORGUE <alexandre.torgue@foss.st.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Loic Poulain <loic.poulain@linaro.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1681311191; l=1435;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=0ujSVRUiOXtdaFduY1BUwp/tKHCvG84AuQ805mYqR5c=;
- b=44aZNte1QZmDbZwJffhUosLZ1SYc+AmEHM4NinljzKhiUgke/oDbeX8sOLmZe9criHLgNua6QdwX
- 8qWTpd6eB7m8nPI7tqzUdpkW24oZmgUlAkzIOqi40/UYZQ6lt7KM
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        gabriel.fernandez@st.com, gabriel.fernandez@foss.st.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH] dt-bindings: rcc: stm32: Fix STM32MP13 include file
+Message-ID: <20230412151404.GA2372294-robh@kernel.org>
+References: <20230407201526.1.I417093ddcea282be479f10a37147d1935a9050b7@changeid>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230407201526.1.I417093ddcea282be479f10a37147d1935a9050b7@changeid>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-GPLL0_OUT_DIV was previously shoved in under the name of its undivided
-sibling in parent_map_2. Resolve it.
+On Fri, Apr 07, 2023 at 08:15:33PM +0200, Patrick Delaunay wrote:
+> Minor cosmetic change, aligned with files in U-Boot:
+> - change obsolete SPDX id : GPL-2.0+
+> - use correct address gabriel.fernandez@foss.st.com
+> - remove extra space
 
-Fixes: cc517ea3333f ("clk: qcom: Add display clock controller driver for QCM2290")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/clk/qcom/dispcc-qcm2290.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Make the subject reflect the purpose: 'Sync with u-boot copy'
 
-diff --git a/drivers/clk/qcom/dispcc-qcm2290.c b/drivers/clk/qcom/dispcc-qcm2290.c
-index ee62aca4e5bb..44dd5cfcc150 100644
---- a/drivers/clk/qcom/dispcc-qcm2290.c
-+++ b/drivers/clk/qcom/dispcc-qcm2290.c
-@@ -28,6 +28,7 @@ enum {
- 	P_DISP_CC_PLL0_OUT_MAIN,
- 	P_DSI0_PHY_PLL_OUT_BYTECLK,
- 	P_DSI0_PHY_PLL_OUT_DSICLK,
-+	P_GPLL0_OUT_DIV,
- 	P_GPLL0_OUT_MAIN,
- 	P_SLEEP_CLK,
- };
-@@ -84,7 +85,7 @@ static const struct clk_parent_data disp_cc_parent_data_1[] = {
- 
- static const struct parent_map disp_cc_parent_map_2[] = {
- 	{ P_BI_TCXO_AO, 0 },
--	{ P_GPLL0_OUT_MAIN, 4 },
-+	{ P_GPLL0_OUT_DIV, 4 },
- };
- 
- static const struct clk_parent_data disp_cc_parent_data_2[] = {
-@@ -153,8 +154,8 @@ static struct clk_regmap_div disp_cc_mdss_byte0_div_clk_src = {
- 
- static const struct freq_tbl ftbl_disp_cc_mdss_ahb_clk_src[] = {
- 	F(19200000, P_BI_TCXO_AO, 1, 0, 0),
--	F(37500000, P_GPLL0_OUT_MAIN, 8, 0, 0),
--	F(75000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
-+	F(37500000, P_GPLL0_OUT_DIV, 8, 0, 0),
-+	F(75000000, P_GPLL0_OUT_DIV, 4, 0, 0),
- 	{ }
- };
- 
+> 
+> Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
+> ---
+> 
+>  include/dt-bindings/clock/stm32mp13-clks.h   | 6 +++---
+>  include/dt-bindings/reset/stm32mp13-resets.h | 4 ++--
+>  2 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/dt-bindings/clock/stm32mp13-clks.h b/include/dt-bindings/clock/stm32mp13-clks.h
+> index 02befd25edce..da4cb7567430 100644
+> --- a/include/dt-bindings/clock/stm32mp13-clks.h
+> +++ b/include/dt-bindings/clock/stm32mp13-clks.h
+> @@ -1,7 +1,7 @@
+> -/* SPDX-License-Identifier: GPL-2.0+ or BSD-3-Clause */
+> +/* SPDX-License-Identifier: GPL-2.0-or-later or BSD-3-Clause */
+>  /*
+>   * Copyright (C) STMicroelectronics 2020 - All Rights Reserved
+> - * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
+> + * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for STMicroelectronics.
+>   */
+>  
+>  #ifndef _DT_BINDINGS_STM32MP13_CLKS_H_
+> @@ -64,7 +64,7 @@
+>  #define CK_MCO1		38
+>  #define CK_MCO2		39
+>  
+> -/*  IP clocks */
+> +/* IP clocks */
+>  #define SYSCFG		40
+>  #define VREF		41
+>  #define DTS		42
+> diff --git a/include/dt-bindings/reset/stm32mp13-resets.h b/include/dt-bindings/reset/stm32mp13-resets.h
+> index 934864e90da6..1b83a01de8f0 100644
+> --- a/include/dt-bindings/reset/stm32mp13-resets.h
+> +++ b/include/dt-bindings/reset/stm32mp13-resets.h
+> @@ -1,7 +1,7 @@
+> -/* SPDX-License-Identifier: GPL-2.0 or BSD-3-Clause */
+> +/* SPDX-License-Identifier: GPL-2.0-or-later or BSD-3-Clause */
 
--- 
-2.40.0
+Really, the Linux copy came first, so you should use its license. Your 
+company's lawyers are good with GPLv3 and then v4?
 
+>  /*
+>   * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
+> - * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
+> + * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for STMicroelectronics.
+>   */
+>  
+>  #ifndef _DT_BINDINGS_STM32MP13_RESET_H_
+> -- 
+> 2.25.1
+> 
