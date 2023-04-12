@@ -2,193 +2,91 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A232BC77B71
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Apr 2023 10:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD52DC77B6E
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Apr 2023 11:50:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229752AbjDLKfB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Apr 2023 06:35:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44930 "EHLO
+        id S229685AbjDLLud (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Apr 2023 07:50:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229708AbjDLKfB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2023 06:35:01 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A0DC448F
-        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2023 03:34:59 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id r27so14113902lfe.0
-        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2023 03:34:59 -0700 (PDT)
+        with ESMTP id S229602AbjDLLu2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2023 07:50:28 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79C9861B2
+        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2023 04:50:19 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id l26-20020a05600c1d1a00b003edd24054e0so7852042wms.4
+        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2023 04:50:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681295697; x=1683887697;
-        h=content-transfer-encoding:in-reply-to:from:references:to
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112; t=1681300218; x=1683892218;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=4HYP1E62hZMod1XVNBzfyD/sK2aIAa5ZCyJ04UGDkE8=;
-        b=MXIhSo/wAmI6d3Prg/WfOICdVN4TkNa/122j2dZPh703T6YEtMk8tdP20jFagefEHS
-         53M7rK/CD1hDdlV8naz1A4ijkp8BpWou9r3icDTH5vDOMeuhpcR+dGqLOZcBE2fpQxVS
-         R3gaICweFaG244TfSAU1YKelRJTJXaYRCbh7I1WE6MIUh6Ctk+z4i5cWTsLYnjEp1w18
-         LmEiN03r9dLBnQR47Ii1d79Wz0aXFPuuLg0fTygtDLoIKwfRUgcpEvwZxvgqAYzfSsOm
-         LZ7Ahbe1GFvg7Hiusf0L93G6Mw1k7O3UdpL1vNeFN2Kc/4rd+F7hriniQL1AgP+MPDi7
-         Nh+Q==
+        bh=JzlTWhv62VaZiRKLsbAHxTcR/RMyd3VLsnHpLPYjrZ0=;
+        b=HITWWXT1ZzgwSMkiDkpU3WdtyXJc4v0U9neVhd181NDfHOUczICq3WXhblylRXoyzu
+         Jpllv9hABzVEP4o6rQaXal1iPTHlN4SdKPrmPIuyDHqJ3JA+O7GhBUNnKR9kwIpuc345
+         U4T4N/hGTsDpfB+06tBUdnUZHCfOgK90gGvXaL2v93gv7ekDQfyL4vntnNkLwtoRkbYY
+         8xzJGAyrcX/Wj38O/dGgEhp2P1FJi6bBoZpEHLH2giOWTRkRbLshk/j5eHoxwJRX/tGo
+         l2GHDoeAVvBCn3Nwlf3DNtEffGNKsUHWQhobjc1kJVWQj58C10D/v0Mzt2uXvH2Eievc
+         LL/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681295697; x=1683887697;
-        h=content-transfer-encoding:in-reply-to:from:references:to
+        d=1e100.net; s=20210112; t=1681300218; x=1683892218;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4HYP1E62hZMod1XVNBzfyD/sK2aIAa5ZCyJ04UGDkE8=;
-        b=qmbdn+AtNayRgeLztyMolVj+qn3ShB5WfiiAiwQwhFoRKpLHNmFUuZALlk58bTEAAy
-         WYjCKZmJZ/OitBqhRYgUC5jktMy50zesdX/mIyOVA1e2TCbhQ+9uHIpFMvVTSTK9skJX
-         n4WpFBuszed+7SOlr/p0Gi0B8wazw6OF0N5rQpBdEIUcR2+phUh/ifbh3kk0O/7zQ2Qu
-         NrknpzQoWJgZah4f5UySu7XfiQ6Ojce4hRxxixD63pryfX7aD6a0jmR6ejUoh7tF222b
-         USthOpJ3jZjTShV2Bu4csOw2KWadpDvKxk/vQ58ChH9YqNmXkX1S1gfcC2ZAdturFvC0
-         kmDg==
-X-Gm-Message-State: AAQBX9eOHtrWyoFgn/9NvAKoL9i5euoENrKeZHF12X5VNMaMQEJuqecB
-        ugkHx7OxcTwlZU84zTxjOJehww==
-X-Google-Smtp-Source: AKy350Y/y0xS8SNG2pWuCP31NpheHI341wXm1QiuOUJaGfor+CBT+sfNXYDCnxVWvKbYdnxxgeAQng==
-X-Received: by 2002:ac2:5e91:0:b0:4eb:29b0:1ca4 with SMTP id b17-20020ac25e91000000b004eb29b01ca4mr474557lfq.8.1681295697594;
-        Wed, 12 Apr 2023 03:34:57 -0700 (PDT)
-Received: from [192.168.1.101] (abxj23.neoplus.adsl.tpnet.pl. [83.9.3.23])
-        by smtp.gmail.com with ESMTPSA id t11-20020a19ad0b000000b004dc4d26c324sm2935225lfc.143.2023.04.12.03.34.56
+        bh=JzlTWhv62VaZiRKLsbAHxTcR/RMyd3VLsnHpLPYjrZ0=;
+        b=0YfpVqSMrgH/0F5Ao4YohJMzI6E4ESTMRvXn5yeNuREAUBzGfa0ze/xaU38yf/m066
+         BdMe3lDuMcTvYMtligtWewBUNavUlwR0bXFSrsy90+0cCYky36E8Bft6QrONPDOUDD6m
+         AAcDm9mq0nxegO3pDTi1sg0lWIMemlbZ3ep734q3ngBad1nHBmYmj+JZnsJdg/1Bg7GU
+         g8oewwuxLSfgP33pdWBhTJm+IgOYKAPO3ft271oKBrJ/CkSlj0PflZQdCYMoU0wBAJZd
+         XO2MGdVW498oWCbmo/UygUGx8JaOaZkxznnpLGRQOyE4Wt0D4Rm0fmnXj6seC4s1y+Uq
+         PA2A==
+X-Gm-Message-State: AAQBX9d6/QquwntUyWYJNHEjTr8Jb+1+Ls+sXojeKft8YGWh+HnSmA8g
+        W6yk7vtRToXFXt27o6WfZlfgvg==
+X-Google-Smtp-Source: AKy350ZoKAMx3Ue6bjpGi/c1fA/CMA+3bO7CJPgucbkUmBjCfM2fVW6GejBg7uF/c/JaGaaF/y1McQ==
+X-Received: by 2002:a7b:cb86:0:b0:3ed:cf2a:3fe8 with SMTP id m6-20020a7bcb86000000b003edcf2a3fe8mr12684691wmi.8.1681300217907;
+        Wed, 12 Apr 2023 04:50:17 -0700 (PDT)
+Received: from [192.168.1.172] (158.22.5.93.rev.sfr.net. [93.5.22.158])
+        by smtp.gmail.com with ESMTPSA id n20-20020a05600c4f9400b003ed51cdb94csm2189863wmq.26.2023.04.12.04.50.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Apr 2023 03:34:57 -0700 (PDT)
-Message-ID: <40ccea6a-c536-82ba-3f97-634cbc9a5869@linaro.org>
-Date:   Wed, 12 Apr 2023 12:34:55 +0200
+        Wed, 12 Apr 2023 04:50:17 -0700 (PDT)
+Message-ID: <aabc8050-2bf2-131a-6ce7-5b9580ff86b2@baylibre.com>
+Date:   Wed, 12 Apr 2023 13:50:16 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH 2/3] dt-bindings: clock: qcom,gcc-sc7180: document CX
- power domain
+ Thunderbird/102.9.0
+Subject: Re: [PATCH] clk: mediatek: clk-mt7986-infracfg: delete the code
+ related to 'base'
 Content-Language: en-US
-To:     Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+To:     Xinyi Hou <Y_Ashley@163.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230408134820.76050-1-krzysztof.kozlowski@linaro.org>
- <20230408134820.76050-2-krzysztof.kozlowski@linaro.org>
- <4757c33c-7e71-262d-a51a-c5f9fb53ff41@linaro.org>
- <d4a8054c-443e-d9ba-9641-ff721254d254@quicinc.com>
- <c70c1a4d-50c5-2b50-18c9-7c46c3803cd4@linaro.org>
- <2f9f9cdd-cfbe-ca22-7308-d6b1f0c1c455@quicinc.com>
- <6406469d-289b-af4e-83f8-8259f5dcaf00@linaro.org>
- <40854a28-3f64-c0fd-9b77-db92cb0fbe13@quicinc.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <40854a28-3f64-c0fd-9b77-db92cb0fbe13@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     Dongliang Mu <dzm91@hust.edu.cn>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+References: <20230407083729.31498-1-Y_Ashley@163.com>
+From:   Alexandre Mergnat <amergnat@baylibre.com>
+In-Reply-To: <20230407083729.31498-1-Y_Ashley@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 12.04.2023 07:42, Rajendra Nayak wrote:
+On 07/04/2023 10:37, Xinyi Hou wrote:
+> In clk_mt7986_infracfg_probe(), 'base' is allocated but never used,
+> either not released on both success failure path.
 > 
-> On 4/11/2023 7:15 PM, Konrad Dybcio wrote:
->>
->>
->> On 11.04.2023 15:31, Rajendra Nayak wrote:
->>>
->>> On 4/11/2023 4:57 PM, Konrad Dybcio wrote:
->>>>
->>>>
->>>> On 11.04.2023 06:56, Rajendra Nayak wrote:
->>>>>
->>>>>
->>>>> On 4/8/2023 7:33 PM, Konrad Dybcio wrote:
->>>>>>
->>>>>>
->>>>>> On 8.04.2023 15:48, Krzysztof Kozlowski wrote:
->>>>>>> The GCC clock controller needs CX power domain, at least according to
->>>>>>> DTS:
->>>>>>>
->>>>>>>      sc7180-trogdor-pompom-r3.dtb: clock-controller@100000: Unevaluated properties are not allowed ('power-domains' was unexpected)
->>>>>>>
->>>>>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>>>> ---
->>>>>> +CC Rajendra (author of 5d6fc6321db1 ("arm64: dts: qcom:
->>>>>> sc7180: Add required-opps for USB"))
->>>>>>
->>>>>> Rajendra, shouldn't SC7180 GCC have PM ops to make sure a vote
->>>>>> is only there when AP is active?
->>>> So IIUC, CX is never supposed to be shut down?
->>>
->>> Atleast sc7180 and sc7280 do not support full CX shutdown (or power
->>> collapse as its called), it only transitions to a Retention state
->>> and even that in the system-wide suspend path only
->> And won't outstanding votes on that resource prevent the system
->> from entering a system-wide low power state?
+> Fix this by deleting 'base' and the code related to it.
 > 
-> I think most of what you are asking was discussed at https://lore.kernel.org/all/5ff21b1e-3af9-36ef-e13e-fa33f526d0e3@quicinc.com/
-> 
-OK so 7[12]80 never actually power off CX fully. Understood.
+> Signed-off-by: Xinyi Hou<Y_Ashley@163.com>
+> Reviewed-by: Dongliang Mu<dzm91@hust.edu.cn>
 
-> Are we seeing something broken on sc7180/sc7280 platforms?
-I don't know, I don't have any devices. I'm just asking questions
-to make sure things weren't unintentionally broken.
+Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
 
-> If there is an outstanding vote on CX it would prevent CX from
-> going down, but ideally we should not have an outstanding vote
-> from USB (atleast) since we now support RET for the USB GDSC.
-> If there is some other GDSC (within GCC) thats left turned ON,
-> yes, that would still prevent CX from going down.
-Makes sense!
+-- 
+Regards,
+Alexandre
 
-Konrad
-> 
->>
->> Konrad
->>>
->>>>
->>>> Konrad
->>>>>
->>>>> hmm, I am not quite sure why we would want the performance votes
->>>>> from peripherals dropped when CPUs go down in idle?
->>>>>
->>>>>> Are all GDSCs powered by CX?
->>>>>> If not, wouldn't this also need power-domain-names to
->>>>>> facilitate e.g. potential MX-powered ones?
->>>>>
->>>>> For sc7180 GCC, yes.
->>>>>
->>>>>>
->>>>>> Konrad
->>>>>>>     .../devicetree/bindings/clock/qcom,gcc-sc7180.yaml         | 7 +++++++
->>>>>>>     1 file changed, 7 insertions(+)
->>>>>>>
->>>>>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
->>>>>>> index 06dce0c6b7d0..8bf9b6f49550 100644
->>>>>>> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
->>>>>>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
->>>>>>> @@ -32,6 +32,10 @@ properties:
->>>>>>>           - const: bi_tcxo_ao
->>>>>>>           - const: sleep_clk
->>>>>>>     +  power-domains:
->>>>>>> +    items:
->>>>>>> +      - description: CX domain
->>>>>>> +
->>>>>>>     required:
->>>>>>>       - compatible
->>>>>>>       - clocks
->>>>>>> @@ -45,6 +49,8 @@ unevaluatedProperties: false
->>>>>>>     examples:
->>>>>>>       - |
->>>>>>>         #include <dt-bindings/clock/qcom,rpmh.h>
->>>>>>> +    #include <dt-bindings/power/qcom-rpmpd.h>
->>>>>>> +
->>>>>>>         clock-controller@100000 {
->>>>>>>           compatible = "qcom,gcc-sc7180";
->>>>>>>           reg = <0x00100000 0x1f0000>;
->>>>>>> @@ -52,6 +58,7 @@ examples:
->>>>>>>                    <&rpmhcc RPMH_CXO_CLK_A>,
->>>>>>>                    <&sleep_clk>;
->>>>>>>           clock-names = "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
->>>>>>> +      power-domains = <&rpmhpd SC7180_CX>;
->>>>>>>           #clock-cells = <1>;
->>>>>>>           #reset-cells = <1>;
->>>>>>>           #power-domain-cells = <1>;
