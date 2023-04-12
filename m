@@ -2,40 +2,39 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F9AEC77B6F
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Apr 2023 21:35:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F8ABC77B70
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Apr 2023 02:12:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229953AbjDKVfU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Apr 2023 17:35:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50832 "EHLO
+        id S229514AbjDLCM4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Apr 2023 22:12:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229972AbjDKVfR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 17:35:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1991055B8;
-        Tue, 11 Apr 2023 14:35:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A322062C50;
-        Tue, 11 Apr 2023 21:35:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ADD6C433D2;
-        Tue, 11 Apr 2023 21:35:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681248911;
-        bh=EdaTBmGx5ipL6ZGZ09wYqo4JAou9hrLMcyRMGOrp9DQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uhUFqokuwM/PyAhB7StoT6t2VzBtM7UGp+T7j4inc9RuXXVwW/5E2V+fqSftbitNw
-         E3thFeDNKDeNS20UZTghwRH+tmRCrWsH8X1f9kOn1+uGEXTFXfOwaMQX25IqoHHFhS
-         vf/pxUp8kjgqzQUYbyDfuhXWTz7Hvv1euQ7mp1HFYs8/ui43r/IiG8pjy3pYhJgP34
-         wLgmuk1aJ09RsqsSwQhaaQJYnmCpPLdjyli+UZkiJg3VffSny90DRwnkJuS8FJo/wM
-         UQq/lWZnxtz9xnoEmEZ27TbK/ghWyFzvYDUVqjZgYSeg2smR3zOkFDJyZp2R+p1swE
-         lR0OvIJSlBIRg==
-Date:   Tue, 11 Apr 2023 22:35:04 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Hal Feng <hal.feng@starfivetech.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org,
+        with ESMTP id S229482AbjDLCMz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2023 22:12:55 -0400
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F89649F1;
+        Tue, 11 Apr 2023 19:12:54 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id 6CE4324E053;
+        Wed, 12 Apr 2023 10:12:46 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 12 Apr
+ 2023 10:12:46 +0800
+Received: from [192.168.125.87] (113.72.145.176) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 12 Apr
+ 2023 10:12:45 +0800
+Message-ID: <91855baa-88cb-96b1-d571-4881ea6d24c8@starfivetech.com>
+Date:   Wed, 12 Apr 2023 10:12:44 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v7 00/22] Basic clock, reset & device tree support for
+ StarFive JH7110 RISC-V SoC
+To:     Conor Dooley <conor@kernel.org>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>,
         Conor Dooley <conor.dooley@microchip.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -48,55 +47,44 @@ Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Ben Dooks <ben.dooks@sifive.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
+        "Marc Zyngier" <maz@kernel.org>,
         Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 00/22] Basic clock, reset & device tree support for
- StarFive JH7110 RISC-V SoC
-Message-ID: <20230411-gleaming-parasail-34e2b7c3de2e@spud>
+        <linux-kernel@vger.kernel.org>
 References: <20230401111934.130844-1-hal.feng@starfivetech.com>
  <20230405-wharf-rejoin-5222e5958611@spud>
  <ce311dcf-67a5-bf15-d0da-88967baf4ee9@starfivetech.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="YCHkUOSmswIkgJOR"
-Content-Disposition: inline
-In-Reply-To: <ce311dcf-67a5-bf15-d0da-88967baf4ee9@starfivetech.com>
+ <20230411-gleaming-parasail-34e2b7c3de2e@spud>
+Content-Language: en-US
+From:   Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <20230411-gleaming-parasail-34e2b7c3de2e@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [113.72.145.176]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Tue, 11 Apr 2023 22:35:04 +0100, Conor Dooley wrote:
+> On Thu, Apr 06, 2023 at 03:03:14PM +0800, Hal Feng wrote:
+>> On Wed,  5 Apr 2023 22:30:45 +0100, Conor Dooley wrote:
+> 
+>> > Hal, can you get your folks to resend whatever dts bits that are now
+>> > applicable? IOW, the dt-bindings for the entries are in a for-next
+>> > branch for some subsystem.
+>> 
+>> Of course. As far as I know, these nodes include trng / pmu / mmc / qspi.
+> 
+> Just FYI, you can get the lads to resend them whenever, but it's too
+> late for v6.4 now.
 
---YCHkUOSmswIkgJOR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I knew it later that, trng depends on stg clock dt-bindings, mmc depends on
+syscon dt-bindings which will be merged into the pll clock driver, the
+dt-bindings of qspi need to be fixed due to the actual number of clock
+inputs it need is 3. Walker plans to resend the pmu bits these days, but
+sorry to hear that it's too late now.
 
-On Thu, Apr 06, 2023 at 03:03:14PM +0800, Hal Feng wrote:
-> On Wed,  5 Apr 2023 22:30:45 +0100, Conor Dooley wrote:
-
-> > Hal, can you get your folks to resend whatever dts bits that are now
-> > applicable? IOW, the dt-bindings for the entries are in a for-next
-> > branch for some subsystem.
->=20
-> Of course. As far as I know, these nodes include trng / pmu / mmc / qspi.
-
-Just FYI, you can get the lads to resend them whenever, but it's too
-late for v6.4 now.
-
-Cheers,
-Conor.
-
-
---YCHkUOSmswIkgJOR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZDXSiAAKCRB4tDGHoIJi
-0n8bAP46Wjui6uRCpo1EmY/80+MrDWfxuiE6As1sjptafoKLNQEAltQ+fCrJjdwm
-DA8tnYqSuOh1dsY1ECOqI2M2mTb6EwU=
-=8yVv
------END PGP SIGNATURE-----
-
---YCHkUOSmswIkgJOR--
+Best regards,
+Hal
