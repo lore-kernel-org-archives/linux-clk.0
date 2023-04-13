@@ -2,57 +2,87 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91AA6C77B61
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 22:29:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3059BC77B6F
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 22:41:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229457AbjDMW31 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Apr 2023 18:29:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45838 "EHLO
+        id S230156AbjDMWk7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Apr 2023 18:40:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229668AbjDMW30 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 18:29:26 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CC0D86AA
-        for <linux-clk@vger.kernel.org>; Thu, 13 Apr 2023 15:29:22 -0700 (PDT)
+        with ESMTP id S229794AbjDMWk5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 18:40:57 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5051746B9;
+        Thu, 13 Apr 2023 15:40:50 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 249FC60B47
-        for <linux-clk@vger.kernel.org>; Thu, 13 Apr 2023 22:29:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E007C433D2;
-        Thu, 13 Apr 2023 22:29:21 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9A188640D3;
+        Thu, 13 Apr 2023 22:40:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFD7EC4339B;
+        Thu, 13 Apr 2023 22:40:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681424961;
-        bh=fgXeHdsdHaqlbfQ66S2URD3VgCs99Ny01gmqZGMyl8M=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=LFhIJV+RcUNGtJpZGVuhnl1osZVCFsnCm46lseMLFPw2T67uzv5T1YK9g8KNZwc0F
-         FNjRwKUk/a7qbLxnxPTyO6y8pFvj7HVKWwkzD5pRsn+nQSvOGn+u7AvM19MjVCcWyW
-         PD4VKP7pdl1/EnW4pulPRE39OUMLE7cSFp1wS1XkwJYrRoIANoeCano+2FA6XHq/fM
-         XTm2PE5ItZ1UmGXd/YsdnJNBl9CZORYcuOQdMCF2JrC3RkTHNM8Nfx5uYJ2uSzyDhw
-         F37HIUyiYJzJAzinX8CRwvl6Lyd4Co5TD1StWisNKRjPnHua2OxRi8AY5hOl6u4rct
-         v7LXUliNBTc1w==
-Message-ID: <f336e108d8651f1e317fae39dc058966.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <4eb4755b-7a06-6cd9-7c9d-6d088d05ab19@gmail.com>
-References: <4eb4755b-7a06-6cd9-7c9d-6d088d05ab19@gmail.com>
-Subject: Re: [PATCH] clk: change clk_hw_create_clk() to avoid being unable to remove module
+        s=k20201202; t=1681425648;
+        bh=P+m9x9eEgk5Ng//ljxoFy7pjRpbkHM5pR2YeVTuo/eM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=LBM8uwd7ohnplvuWZD9DQZPC0Chd9i4lF/DhrAfh5NxmMs5S6mB584W8Yc6rB0vkg
+         /7Bk6ntr1t/S59gk/XHr5jXslbSv2CvTrTHO2J8EWVxcnYRN3chlBj0o8rKPfxPVlL
+         h/krdbcesQLTvMIoYKbBRk9ZxWnZP+ouUCu05EaigEPR2tuXLVkyWFDSq+++0skaCj
+         HMEAu3Q9f3xO/YNmqmSDbWaM5xPzu9B7xfkxxwmM4HXpUcV1I7JdCAeaOataZF3NVf
+         L3T1xzIoVaNScUuTxVP/af0/DbPPo7LLoy6i2J4xvjBeF3ZieFaN48AWNXBQHuuFI4
+         YF2l8DyMabvyQ==
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Thu, 13 Apr 2023 15:29:19 -0700
-User-Agent: alot/0.10
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v6.3-rc6
+Date:   Thu, 13 Apr 2023 15:40:47 -0700
+Message-ID: <20230413224047.4086269-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.40.0.634.g4ca3ef3211-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Heiner Kallweit (2023-04-13 14:39:28)
-> With clk_hw_create_clk() we have the problem that module unloading
-> is impossible if consumer and provider module owner are the same and
-> refcount is incremented. See also following comment in __clk_register().
+The following changes since commit 5cf9d015be160e2d90d29ae74ef1364390e8fce8:
 
-Do you never call clk_put() on the clk that you get from
-clk_hw_create_clk()?
+  clk: Avoid invalid function names in CLK_OF_DECLARE() (2023-03-09 15:40:49 -0800)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to 632e04739c8f45c2d9ca4d4c5bd18d80c2ac9296:
+
+  clk: rs9: Fix suspend/resume (2023-03-21 10:47:06 -0700)
+
+----------------------------------------------------------------
+A few more clk driver fixes
+
+ - Set the max_register member of the spreadtrum regmap so that reads
+   don't go off the end of the I/O space
+
+ - Avoid a clk parent error in the i.MX imx6ul driver when the selector
+   is unknown
+
+ - Fix an oops due to REGCACHE_NONE usage by the Renesas 9-series driver
+
+----------------------------------------------------------------
+Alexander Stein (1):
+      clk: rs9: Fix suspend/resume
+
+Chunyan Zhang (1):
+      clk: sprd: set max_register according to mapping range
+
+Oleksij Rempel (1):
+      clk: imx6ul: fix "failed to get parent" error
+
+ drivers/clk/clk-renesas-pcie.c |  3 ++-
+ drivers/clk/imx/clk-imx6ul.c   | 10 ++++++----
+ drivers/clk/sprd/common.c      |  9 ++++++---
+ 3 files changed, 14 insertions(+), 8 deletions(-)
+
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
