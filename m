@@ -2,325 +2,93 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 611B3C77B71
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 19:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4933C77B61
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 19:27:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230097AbjDMTRd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Apr 2023 15:17:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55864 "EHLO
+        id S229861AbjDMT1g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Apr 2023 15:27:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230111AbjDMTR2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 15:17:28 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECB2C86AA
-        for <linux-clk@vger.kernel.org>; Thu, 13 Apr 2023 12:15:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1681413358;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xTgGczCO0mNwpgaEE0ax8YC4P9ZUQjVz+mrfnTw0NtY=;
-        b=HY3EpJoztDfFOaolJ940Vs7kk9o2s8euVrXVmsYu1IWQ74Ca+iNJ4d2iFAztGDE2aIY17p
-        PXQylC6ZNX8VTt+8mfH9o9FCtKC2aTi5uWzTkCaZPq5qGP5lXqteb9nKXweUl5Im59eHQ4
-        +8E1HbOtfr5UCtPmsdkwb92mV3xmQwA=
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
- [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-146-EcPTpkMwN4CIwbvQ2hCqQA-1; Thu, 13 Apr 2023 15:15:57 -0400
-X-MC-Unique: EcPTpkMwN4CIwbvQ2hCqQA-1
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-54fd5d0ad7cso17913557b3.1
-        for <linux-clk@vger.kernel.org>; Thu, 13 Apr 2023 12:15:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681413355; x=1684005355;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        with ESMTP id S229804AbjDMT1f (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 15:27:35 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0CDD5B9A
+        for <linux-clk@vger.kernel.org>; Thu, 13 Apr 2023 12:27:34 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id o6-20020a05600c4fc600b003ef6e6754c5so6880710wmq.5
+        for <linux-clk@vger.kernel.org>; Thu, 13 Apr 2023 12:27:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681414053; x=1684006053;
+        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
+         :content-language:user-agent:mime-version:date:message-id:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xTgGczCO0mNwpgaEE0ax8YC4P9ZUQjVz+mrfnTw0NtY=;
-        b=a1zhsy8LxbY6MZA0V7KQb3Kd+LsfqOfnj77KOMevbFFEJkPUkyxEkp+BmsDCiGzVZ6
-         YoXTjnSjVaK0nuUUZ7CoWmYzIzTbaKAlW8efARJhPWxea5wbQSKDwU3MkeH0HWvsnaN4
-         CSG2wG7tN9oo8NY/pSXgm+odVk2mDjYxJk5HWTQD6ies+SK7hzWHjYVSOS/+Q4Haj7sU
-         i+eouqI0LycScMlkmw9Fxq46ay4BocheDwD8dcf2lpG7zlpgQWRlwk0uviAJcro6WA7n
-         wJR+KyvnhtI6/zuVVnEza/HO+OnDcjj2gzmTN6YAKzxZKTOr1eIN1N3RXhMKBL+8CypG
-         H4Kg==
-X-Gm-Message-State: AAQBX9cPMAIayMH1JXhroPbkdQ7gwTAblfQ8uPfdh3O3iKY4WOkCC6YL
-        HPXmK51g3Qrtc1H4vG8X0CwwaQA4hnXQi0sPb9LQmwa4IfRKWZa4eOLTNhguZelMY/9f0kg0Ak0
-        eCGd35FraYAJ9hnflzrit
-X-Received: by 2002:a81:4810:0:b0:536:3451:b2ab with SMTP id v16-20020a814810000000b005363451b2abmr2997364ywa.51.1681413355405;
-        Thu, 13 Apr 2023 12:15:55 -0700 (PDT)
-X-Google-Smtp-Source: AKy350Z+kPXa1HPrZbBVBQ9Hvi0ho/p670nRIUBtqxHPLoBYgdWfhEUIgtsd9juVQgyaVIGCkR8Wyw==
-X-Received: by 2002:a81:4810:0:b0:536:3451:b2ab with SMTP id v16-20020a814810000000b005363451b2abmr2997349ywa.51.1681413355120;
-        Thu, 13 Apr 2023 12:15:55 -0700 (PDT)
-Received: from halaney-x13s.redhat.com (104-53-165-62.lightspeed.stlsmo.sbcglobal.net. [104.53.165.62])
-        by smtp.gmail.com with ESMTPSA id t11-20020a81780b000000b00545a4ec318dsm673203ywc.13.2023.04.13.12.15.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Apr 2023 12:15:54 -0700 (PDT)
-From:   Andrew Halaney <ahalaney@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        richardcochran@gmail.com, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        netdev@vger.kernel.org, bmasney@redhat.com, echanude@redhat.com,
-        ncai@quicinc.com, jsuraj@qti.qualcomm.com, hisunil@quicinc.com,
-        Andrew Halaney <ahalaney@redhat.com>
-Subject: [PATCH v5 3/3] arm64: dts: qcom: sa8540p-ride: Add ethernet nodes
-Date:   Thu, 13 Apr 2023 14:15:41 -0500
-Message-Id: <20230413191541.1073027-4-ahalaney@redhat.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230413191541.1073027-1-ahalaney@redhat.com>
-References: <20230413191541.1073027-1-ahalaney@redhat.com>
+        bh=FcMh6APG+ogvPI2t49xqZgWanwCihHvKp78VS7f/hSM=;
+        b=Yxmp7+168zOr92zA+oQK1zTGsV6bw8e8enk88M2iA1XTibmE46VxWYJgHvdM65baui
+         4+2m9fu5JwBx1YaNeTCgkmKRYGhWR7pPYJhmSbrUBbLA5veft2+PMEjNvPFOIgPGmGRb
+         iQ8TU0355SfymkZb+QQz03FdoEosqDWlpPsYNIm+8SjelP1sV5T4JN4yHmgZAJZrdkmJ
+         /+6O49s01ZHbEGMhdT5yhTtma/GKLJTdTXMsDBkKqzRKeyZLWniEDJgTx9eNKOYplurc
+         L9Sq+ODGSCmxxy2i7zdRSQsr+at5DBgPiDo+yB0+3mRg1Ho+W9e9JG1Rq9DUP/xaE5LO
+         rq5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681414053; x=1684006053;
+        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
+         :content-language:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FcMh6APG+ogvPI2t49xqZgWanwCihHvKp78VS7f/hSM=;
+        b=CbklocI72JZh4RSFyYr79XM3W57YPbvM3YWOfMNr6MNTMmjRZfMiRpQr6nmN7LumgJ
+         9Sh3pZ86Km3mk7uOx1W+5yDj+v5GZjIvArcCiC9brjk/KNVMhzMjHhdXOpuR/tQoIJRf
+         C65nLbxjK7zvu0ColH3UL/vRlT2JN8QjeewZwW7qLb/cGr3nW0N190jGjyE3RIGGDuRh
+         nmz1IQ+JcNyp1xT4+OSQcblD7xt/iM5cwuDqY8R+eKAcvLi4phLBBB5UKthAWZkCnDE2
+         V5i2kMpVTuT6Bfrni0sdw3qwnbCj6SjtPvysBR0IhA0z/+8cIXDEtsbidP05TriLFmSt
+         xrpw==
+X-Gm-Message-State: AAQBX9cR9fOaEHNZ3EM+NY2NaA5RTEj+3z16DisR5s9SDKyr6Fu7FPZL
+        8QCGVBjPZMMbKp54g8U38R30FNHHJik=
+X-Google-Smtp-Source: AKy350Y2WBLthXSbeM3ahrW2avGURmcwgjEiT/t4xi0P6yg5omCYN1fz4APWRSwlwjv/TmewJbrldw==
+X-Received: by 2002:a05:600c:229a:b0:3ef:76dc:4b92 with SMTP id 26-20020a05600c229a00b003ef76dc4b92mr2580729wmf.28.1681414053111;
+        Thu, 13 Apr 2023 12:27:33 -0700 (PDT)
+Received: from ?IPV6:2a01:c22:738e:4400:f580:be04:1a64:fc5e? (dynamic-2a01-0c22-738e-4400-f580-be04-1a64-fc5e.c22.pool.telefonica.de. [2a01:c22:738e:4400:f580:be04:1a64:fc5e])
+        by smtp.googlemail.com with ESMTPSA id iw11-20020a05600c54cb00b003f0a96b21d3sm2167798wmb.7.2023.04.13.12.27.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Apr 2023 12:27:32 -0700 (PDT)
+Message-ID: <170e812b-01ad-2a5f-51fe-3d63f988ad68@gmail.com>
+Date:   Thu, 13 Apr 2023 21:27:27 +0200
 MIME-Version: 1.0
-Content-type: text/plain
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk@vger.kernel.org
+References: <af85927b-0da3-3495-2ed4-64bda91cd239@gmail.com>
+ <7b16c4d703dc00efd6e1b4062b5fd6d7.sboyd@kernel.org>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH] clk: mux: let clk_mux_val_to_index return U8_MAX in the
+ error case
+In-Reply-To: <7b16c4d703dc00efd6e1b4062b5fd6d7.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Enable both the MACs found on the board.
+On 13.04.2023 21:10, Stephen Boyd wrote:
+> Quoting Heiner Kallweit (2023-04-11 23:19:04)
+>> Currently this function may return a negative errno, but almost no
+>> user checks for the error case. Only imx_clk_gpr_mux_get_parent()
+>> does, but mentions in a comment that they'd prefer a dummy value.
+>> Other users cast the negative errno to u8 instead, what may result
+>> in unwanted results.
+>> Let's deal with this by returning u8 and U8_MAX in the error case.
+>> Then clk_core_get_parent_by_index() can detect that the index is
+>> out of range.
+> 
+> Is this causing problems for you?
 
-ethernet0 and ethernet1 both ultimately go to a series of on board
-switches which aren't managed by this processor.
+I'm not directly impacted. I came across this when working on a driver
+with the following scenario:
 
-ethernet0 is connected to a Marvell 88EA1512 phy via RGMII. That goes to
-the series of switches via SGMII on the "media" side of the phy.
-RGMII_SGMII mode is enabled via devicetree register descriptions.
-The switch on the "media" side has auto-negotiation disabled, so
-configuration from userspace similar to:
-
-        ethtool -s eth0 autoneg off speed 1000 duplex full
-
-is necessary to get traffic flowing on that interface.
-
-ethernet1 is in a mac2mac/fixed-link configuration going to the same
-series of switches directly via RGMII.
-
-Tested-by: Brian Masney <bmasney@redhat.com>
-Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
----
-
-This patch is why there's a v5, I couldn't ignore the needless
-interrupts-parent Konrad pointed out in the sa8155-adp.dts over at:
-https://lore.kernel.org/linux-arm-msm/88d41729-86be-95cb-2fda-1b809f07ed6b@linaro.org/
-
-Changes since v4:
-    * Remove needless interrupt-parent (Konrad)
-    * Add Tested-by (Brian)
-
-Changes since v3:
-    * Compatible goes first in node (Krzysztof)
-
-Changes since v1 and v2:
-    * None
-
- arch/arm64/boot/dts/qcom/sa8540p-ride.dts | 179 ++++++++++++++++++++++
- 1 file changed, 179 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sa8540p-ride.dts b/arch/arm64/boot/dts/qcom/sa8540p-ride.dts
-index 40db5aa0803c..650cd54f418e 100644
---- a/arch/arm64/boot/dts/qcom/sa8540p-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/sa8540p-ride.dts
-@@ -28,6 +28,65 @@ aliases {
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	mtl_rx_setup: rx-queues-config {
-+		snps,rx-queues-to-use = <1>;
-+		snps,rx-sched-sp;
-+
-+		queue0 {
-+			snps,dcb-algorithm;
-+			snps,map-to-dma-channel = <0x0>;
-+			snps,route-up;
-+			snps,priority = <0x1>;
-+		};
-+
-+		queue1 {
-+			snps,dcb-algorithm;
-+			snps,map-to-dma-channel = <0x1>;
-+			snps,route-ptp;
-+		};
-+
-+		queue2 {
-+			snps,avb-algorithm;
-+			snps,map-to-dma-channel = <0x2>;
-+			snps,route-avcp;
-+		};
-+
-+		queue3 {
-+			snps,avb-algorithm;
-+			snps,map-to-dma-channel = <0x3>;
-+			snps,priority = <0xc>;
-+		};
-+	};
-+
-+	mtl_tx_setup: tx-queues-config {
-+		snps,tx-queues-to-use = <1>;
-+		snps,tx-sched-sp;
-+
-+		queue0 {
-+			snps,dcb-algorithm;
-+		};
-+
-+		queue1 {
-+			snps,dcb-algorithm;
-+		};
-+
-+		queue2 {
-+			snps,avb-algorithm;
-+			snps,send_slope = <0x1000>;
-+			snps,idle_slope = <0x1000>;
-+			snps,high_credit = <0x3e800>;
-+			snps,low_credit = <0xffc18000>;
-+		};
-+
-+		queue3 {
-+			snps,avb-algorithm;
-+			snps,send_slope = <0x1000>;
-+			snps,idle_slope = <0x1000>;
-+			snps,high_credit = <0x3e800>;
-+			snps,low_credit = <0xffc18000>;
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -151,6 +210,66 @@ vreg_l8g: ldo8 {
- 	};
- };
- 
-+&ethernet0 {
-+	snps,mtl-rx-config = <&mtl_rx_setup>;
-+	snps,mtl-tx-config = <&mtl_tx_setup>;
-+
-+	max-speed = <1000>;
-+	phy-handle = <&rgmii_phy>;
-+	phy-mode = "rgmii-txid";
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&ethernet0_default>;
-+
-+	status = "okay";
-+
-+	mdio {
-+		compatible = "snps,dwmac-mdio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		/* Marvell 88EA1512 */
-+		rgmii_phy: phy@8 {
-+			reg = <0x8>;
-+
-+			interrupts-extended = <&tlmm 127 IRQ_TYPE_EDGE_FALLING>;
-+
-+			reset-gpios = <&pmm8540c_gpios 1 GPIO_ACTIVE_LOW>;
-+			reset-assert-us = <11000>;
-+			reset-deassert-us = <70000>;
-+
-+			device_type = "ethernet-phy";
-+
-+			/* Set to RGMII_SGMII mode and soft reset. Turn off auto-negotiation
-+			 * from userspace to talk to the switch on the SGMII side of things
-+			 */
-+			marvell,reg-init =
-+				/* Set MODE[2:0] to RGMII_SGMII */
-+				<0x12 0x14 0xfff8 0x4>,
-+				/* Soft reset required after changing MODE[2:0] */
-+				<0x12 0x14 0x7fff 0x8000>;
-+		};
-+	};
-+};
-+
-+&ethernet1 {
-+	snps,mtl-rx-config = <&mtl_rx_setup>;
-+	snps,mtl-tx-config = <&mtl_tx_setup>;
-+
-+	max-speed = <1000>;
-+	phy-mode = "rgmii-txid";
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&ethernet1_default>;
-+
-+	status = "okay";
-+
-+	fixed-link {
-+		speed = <1000>;
-+		full-duplex;
-+	};
-+};
-+
- &i2c0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c0_default>;
-@@ -316,6 +435,66 @@ &xo_board_clk {
- /* PINCTRL */
- 
- &tlmm {
-+	ethernet0_default: ethernet0-default-state {
-+		mdc-pins {
-+			pins = "gpio175";
-+			function = "rgmii_0";
-+			drive-strength = <16>;
-+			bias-pull-up;
-+		};
-+
-+		mdio-pins {
-+			pins = "gpio176";
-+			function = "rgmii_0";
-+			drive-strength = <16>;
-+			bias-pull-up;
-+		};
-+
-+		rgmii-tx-pins {
-+			pins = "gpio183", "gpio184", "gpio185", "gpio186", "gpio187", "gpio188";
-+			function = "rgmii_0";
-+			drive-strength = <16>;
-+			bias-pull-up;
-+		};
-+
-+		rgmii-rx-pins {
-+			pins = "gpio177", "gpio178", "gpio179", "gpio180", "gpio181", "gpio182";
-+			function = "rgmii_0";
-+			drive-strength = <16>;
-+			bias-disable;
-+		};
-+	};
-+
-+	ethernet1_default: ethernet1-default-state {
-+		mdc-pins {
-+			pins = "gpio97";
-+			function = "rgmii_1";
-+			drive-strength = <16>;
-+			bias-pull-up;
-+		};
-+
-+		mdio-pins {
-+			pins = "gpio98";
-+			function = "rgmii_1";
-+			drive-strength = <16>;
-+			bias-pull-up;
-+		};
-+
-+		rgmii-tx-pins {
-+			pins = "gpio105", "gpio106", "gpio107", "gpio108", "gpio109", "gpio110";
-+			function = "rgmii_1";
-+			drive-strength = <16>;
-+			bias-pull-up;
-+		};
-+
-+		rgmii-rx-pins {
-+			pins = "gpio99", "gpio100", "gpio101", "gpio102", "gpio103", "gpio104";
-+			function = "rgmii_1";
-+			drive-strength = <16>;
-+			bias-disable;
-+		};
-+	};
-+
- 	i2c0_default: i2c0-default-state {
- 		/* To USB7002T-I/KDXVA0 USB hub (SIP1 only) */
- 		pins = "gpio135", "gpio136";
--- 
-2.39.2
+I have a clock muxer where I want to exclude one of the mux parents
+by using clk_mux.table. If by chance the boot loader used this mux
+parent, then clk_mux_val_to_index() would return an errno.
+Also within clk core the return value isn't checked in
+clk_mux_get_parent().
 
